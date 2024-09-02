@@ -1,64 +1,65 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385321C3310
-	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 09:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6269D1D2F74
+	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 09:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268898; cv=none; b=ErMd4Adenja7CYa6pxbLE2b5nF5esNu0rm3GPa2BNkTh1oK0G0psOLk/FnNDbIXTgX+D5dB2rj8gcrDmqsMuZWOdLhmg6zerGjlZIsEWn6kmH3c7SKwjZAcCCliojJhQVqcvizQ054C7+aFmlr5lJBh9TKA9np6qRp0wWMHKOJE=
+	t=1725269638; cv=none; b=JYwIr6Y6yIDNAFtqcILJLfGmvcTbSBLEYQx7mFqk6VELlZdbuNr+xYzqLEBwmMfcw4o5CX0RRYCzmojEWvwHVzTBYMzdTEtbhXIoATZLd2phRawmKgw/r18klS1VaFEpg5Py6X9fUXfLtMB0L1qmBKvQ1uNgwv9gKw+UL9x9WQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268898; c=relaxed/simple;
-	bh=BSpqubEdJ/sRUU6vWaBwncVg7qOd28rdyPPZgAweRno=;
+	s=arc-20240116; t=1725269638; c=relaxed/simple;
+	bh=bZT6HOFefTCtK8dJDH5XgBal9zoVpEOw5ZS27xXJrBw=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyyrPSz+kiigdl9pkqNXoKaK3AE9xjPC3kEMZPc5I6Jmm4pOFyTHSUwRM3L0VzWRi1/bThlimD9nq/hQHIamRp7MPMOYG2ETNToqoPNheHido+FqB3Q9GiGc5L+vbdjVjGmPUTCozHaNXFojFXLW+p9wXCfkc22xzExy+ZryMqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UA7k4zL2; arc=none smtp.client-ip=209.85.218.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cylz7cpabf+fwTVBzHkwg1mO1hNEvkP3/Z23Hz/ycAG2jV7b3SEVtuYWf3V2k63NB5X3s+IxMOFYKIuTWT663W1uyn2REhQQwr/JN/wTjtpI1vFwRWKMiCk6wwSerQyLa0gq5sWtS1RhwACt0nRD8jRzdQtmtjXBFXlILpPClWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XwhWPDX8; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UA7k4zL2"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a869f6ce2b9so428141066b.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 02:21:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XwhWPDX8"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso3481799a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 02:33:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725268894; x=1725873694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZDs/9l3dOZ4/JRpcNDnT31Gwsua2/3rtLsltEu9Mww=;
-        b=UA7k4zL27EtQiyL1sHrgRCfTMPBXKeFmHxdZe3ebhOMpjrG/LvCIEKtNXE/wR+fdC0
-         nGc8eVPdONCBPfmOl9gVV5Fv0lB3hSjTq0u7jK/66YtY2pXMeS7fTFAN/VGpzWJRkzbn
-         XkzYzfEsazl03MK/eExlEnIgkIx/NmtK0yvuqYc+fGv4VEIvD6oZ63hEUR6e55d0Th+H
-         ragU4vi9H2cqQqxMviFP196JUbdigDpKSrLJLnTZGWB3zija/D7YC9Eh6CtjA96jSPtL
-         GZudEXjpOBEz/hjpIjWhdIeragV3oITHm659ApbXz3h2is871vprXeJBwVBuOXrAGPUJ
-         LX/g==
+        d=suse.com; s=google; t=1725269635; x=1725874435; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nkFfwghHSavbjYo+VJPUeYMN2TlcRh+j2R34rUyvbNY=;
+        b=XwhWPDX8jDvrKTPDva8jFo1mIstNKJ+KKz71PfS3MtcQeLxeml9Q+OajUJ+06327j/
+         jdVLQf2odYjxixUQf5X8EgRpw2usche70C4PtzsaYFk85k91ypUWcZ0x8zMNATRlBnnU
+         cmKnsRDcBX6l5w4pvahJdOc/TJ104e19SXvB8hC6QiKr/8Y96/ot2vgiEJBXPqN2UTlk
+         isRGM1OiJiS3Hweqp1yvUvXIugM57DoMB20gVoJEgu1nluhvF2zjVqVh8l/8Tskdanm8
+         UZ+wlOK1U0mgTBpRXZmslX0qiuXcft5gZGR7SvBRPrTN2Srnt9hD1eXk2wgzIk2fOty8
+         PRgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725268894; x=1725873694;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ZDs/9l3dOZ4/JRpcNDnT31Gwsua2/3rtLsltEu9Mww=;
-        b=k3lyournvlabA23PJkRU5zIn8EwvrswMswa1ruEEWI7FrLlMoR1bDC5pejLZd7/s3G
-         CpT5C1JCpOR6cmh5TtOOewI92GFzNUagFF85/l9lepqkNWhGna2h6Rd910oFOPKWpYWi
-         VOGntK9bp0RDwn6zSsMLxOKyq2GLwE3eWFKDmkF3I4wX5yE9K7j4X49ERbCuLMdlVVta
-         T0pdX14eUVgCA/QKox739HFD2On83wv4JFAS9UkMo9YDHIqSb3anDL0I5N+CPx8zgJl1
-         ABIyzjbt327+g0hlBaz1OkzN3Nuc9+RsAJW+j1UUzT1MTNDNY57wzixWXel/YyyT5NRp
-         c5eA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu1ArpFrW43l5NZGkTpOl/hfJtzECJqaZ+Fq5JuAoF+OyzNskChVyCNO0m2iMFyTqU9qZkeJfR/v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyItL0sENWiNqXXoTO2l6FR8OUyr17MpXVrqLZBteofKEEYYnWe
-	HlwR3FrMCXkTvubzUzLdtEQHud+4PAvryaRHfe/ghCbhxhkUMtJkU060NlWDmKs=
-X-Google-Smtp-Source: AGHT+IFiJyKI83M4pAEH+bJt4D+2x9ZKVCIWaumLPxOS3x0JckDJtyYxve6HAvVZNlN6e2kKZafDDw==
-X-Received: by 2002:a17:907:6094:b0:a7a:adac:57d5 with SMTP id a640c23a62f3a-a897f84d7efmr930072566b.18.1725268894023;
-        Mon, 02 Sep 2024 02:21:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725269635; x=1725874435;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nkFfwghHSavbjYo+VJPUeYMN2TlcRh+j2R34rUyvbNY=;
+        b=LdwbasGf5xz5otg3ZmQ0y6DyD0Ta/5MKFwZOtSpHoKWuHdsih/vgaUej0raMzf+g7A
+         5Q2UsfCVUiOSfB6Bgk9aaEjHO6IHRVuE8NjsB6YfFy5GiZ1dVtZRbB7ukB+IJdOws9EO
+         B8JoXlj+tDnuKAqVPg0JkaLFtmSoVSV99eSTB3wpqc2hvCtdAQEn0jc8WCD6nEWBHcd7
+         g4quXdiQeuI5qm+zaInLDtwb9UyMZWhGIB+GlyprBK2HnqP0eFhXdzPJeJRFUWYo6fGb
+         4FeuygUbsVljYwtDrS2zfTvqXWt/Z+TKgJd/rh9SzAWIxaVvkHXV0bmWVuhyEuJQsOXg
+         Sk5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXxGn1azg/DEaRQH5Fhr3Nmu27JQNdEex2YqYds/CXDF0NgfVx0T881EyVH6ibs3VvqpE4T6NADZFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwY1BVAOlXne/tdYJLrNm8jq3uxg0WlEEyVS/3Kx8brD3G5QJ6
+	NJxMio/lTSaGMT3WudX7bxGgL6VltLnK5g5rIaEPzQHwLPROh4u5MrRGkV6t5Ls=
+X-Google-Smtp-Source: AGHT+IFzqMMMEekpBj1FaMcTXT8G69ZzPIWqB+7+/4FijlOwcga3oDJHGPe2vbWjoVRgbBwsvahR5w==
+X-Received: by 2002:a17:906:d7c8:b0:a86:9fac:6939 with SMTP id a640c23a62f3a-a89a29f3862mr1013061366b.30.1725269634232;
+        Mon, 02 Sep 2024 02:33:54 -0700 (PDT)
 Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891db42fsm527788266b.184.2024.09.02.02.21.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89892220e5sm527704366b.195.2024.09.02.02.33.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 02:21:33 -0700 (PDT)
+        Mon, 02 Sep 2024 02:33:53 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 2 Sep 2024 11:21:41 +0200
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+Date: Mon, 2 Sep 2024 11:34:01 +0200
+To: Rob Herring <robh@kernel.org>
+Cc: Stefan Wahren <wahrenst@gmx.net>,
+	Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -81,58 +82,49 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
 	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
- DT overlay
-Message-ID: <ZtWDpaqUG9d9yPPf@apocalypse>
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZtWGiXUsWZOVAXRv@apocalypse>
 References: <cover.1724159867.git.andrea.porta@suse.com>
- <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
- <Zsb_ZeczWd-gQ5po@apocalypse>
- <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
- <ZtBjMpMGtA4WfDij@apocalypse>
- <e6e6c230-370f-4b04-8cb7-4158dd51efdc@lunn.ch>
- <ZtFWyAX_7OR5yYDS@apocalypse>
- <334b382a-c9ab-47e4-b860-b8477f04c3fb@lunn.ch>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <98c570cb-c2ca-4816-9ca4-94033f7fb3fb@gmx.net>
+ <ZshZ6yAmyFoiF5qu@apocalypse>
+ <015a0dd9-7a13-45b7-971a-19775a6bdd04@gmx.net>
+ <Zsi5fNftL21vqJ3w@apocalypse>
+ <CAL_Jsq+XSWEfNF-Dn3paf1io0vxTmfFNbPf7AfRWFf4XiOYkaw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <334b382a-c9ab-47e4-b860-b8477f04c3fb@lunn.ch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+XSWEfNF-Dn3paf1io0vxTmfFNbPf7AfRWFf4XiOYkaw@mail.gmail.com>
 
-Hi Andrew,
+Hi Rob,
 
-On 16:10 Fri 30 Aug     , Andrew Lunn wrote:
-> > On a second thought, are you really sure we want to proceed with the header file?
-> > After all the only line in it would be the extern declaration and the only one to
-> > include it would be rp1-dev.c. Moreover, an header file would convey the false
-> > premise that you can include it and use that symbol while in fact it should be
-> > only used inside the driver.
-> > OTOH, not creating that header file will continue to trigger the warning...
+On 13:27 Fri 30 Aug     , Rob Herring wrote:
+> On Fri, Aug 23, 2024 at 11:31 AM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
+> >
+...
+> >
+> > Since u-boot is lacking support for RP1 we cannot really produce some test
+> > results to check the compatibility versus kernel dtb overlay but we can
+> > speculate a little bit about it. AFAIK u-boot would probably place the rp1
+> > node directly under its pcie@12000 node in DT while the dtb overlay will use
+> > dynamically created PCI endpoint node (dev@0) as parent for rp1 node.
 > 
-> The header file does not need to be in global scope. It could be in
-> the driver source directory. As such, nothing outside of the driver
-> can use it.
+> u-boot could do that and it would not be following the 25+ year old
+> PCI bus bindings. Some things may be argued about as "Linux bindings",
+> but that isn't one of them.
 
-Ack.
+Indeed. It was just speculation, not something I would bet on.
 
-> 
-> Headers like this have multiple proposes. One is they make a symbol
-> visible to the linker. But having two different .c files include the
-
-Hmm... not sure what second file is including it, since only rp1_pci.c needs it.
-
-> header enables type checking, which for long term maintenance is just
-> as important. So a one line header is fine.
-
-Done.
-
-Cheers,
+Regards,
 Andrea
 
 > 
-> 	Andrew
-> 
+> Rob
