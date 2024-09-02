@@ -1,86 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBC6176AC3;
-	Mon,  2 Sep 2024 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9658D186607
+	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 08:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266416; cv=none; b=m3w5/LdEAT6p0jjRSHH+7Pstkhcutqbbljr2uRqmGa2HrvxuKOU3tqND9ug6+rwMwuepGxgEHZ6ajgiidhKkRPKxGn+HQAwtQczkzsyPt5wHhqXhoacHz43jgnk/A1eRFM/vcVYoNNaJvnlQInxtloMq6Q9nm3BRmWJSzuO336c=
+	t=1725266661; cv=none; b=fDVauG8Rn9y9VaUEvd0MKjWXoZE1oTjidGOUfvT/+V9JITXmSmEg//dEM+1ubtFgpzRCOSXUI5fcuPwpilYfCOuSvKrr2d05zNNfr/HPIluzIgLCLM4BcZqhOhPc1/yU8yZDQME95kNB4YloWF77AVQrPmk3G6+9+kPZ6EI5nJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266416; c=relaxed/simple;
-	bh=zNVBx7xviAwbKHTfx4Cd4SpNx0sNkP8Yw7ZfBh6EPaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCNBxOyhE17HCDup5gJU+bikIokFfKWtfcoQpGaBe+r2PS36xK7fV6lygW12qtUf5javLVfyGbxWRa4kAttBcoEFHdmgoTjZZcB2eOretEIebjbxmVzqCOa+VbBomap9TTEFTZyOGi6LAI9xhC3MUow2nYXDXC9QTIK8ZnuVGKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpwSpcqh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725266661; c=relaxed/simple;
+	bh=LN6JNZFcXNQtWOPufPtp0JNJPUrJ2pZL1p27gLGF2IY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfJbR9w6y1CYNueeW8jGPOReNSRuT/J3kBKrpIkHFU2rJVeZeN37O/OrRCcI72M5QHbpXZpLJd73TRpkwfjoPu87uCcq0OBajw8ZiiQKE5GQMr/QVDTKvfRzBSdQrdyvfbxuAv6jN1oX2UKHSQ0n8dfSyDNJ8X2dJLU48FtFTtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PKU9ECjX; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpwSpcqh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 915DBC4CEC2;
-	Mon,  2 Sep 2024 08:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725266416;
-	bh=zNVBx7xviAwbKHTfx4Cd4SpNx0sNkP8Yw7ZfBh6EPaU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tpwSpcqhmnWAu+sU4aTQSQpuSEhRXp5ZtfY5kld0q7iyzbrpXcRQzlKhTtefV/ENX
-	 h/VeLM5nAwY473H9knvD1GDei7UjB5f3lv/xA2HlaN5RWJAcvP4P4h5ZB+1ulQu6ax
-	 H5cqSMMy/VVYsrvEu20SYMUp1VqSY8aN/sp1R2RcPttiClDJwteDcrjgowUtlk7uCw
-	 WESLblhafjlxwzT+2QQQYV9sSvpqhCbUP6LtXfts9CHe3rt6zQ5NLO6Ire977WTpD3
-	 Hgmunb5RfV9NTRjomAiId8Gj3QE4MLVQoY6MLNr+YjiamkpnihRZaDg+YUrtTCBNjR
-	 JzRMkkRNOGWEg==
-Date: Mon, 2 Sep 2024 10:40:13 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PKU9ECjX"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86b64ebd8aso244761166b.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 01:44:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725266658; x=1725871458; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DtFvUOlggwnSeLAOJpUbgPD+rPcosq7JSEShF0DBVDE=;
+        b=PKU9ECjXqYYYZd+EgOrpddJ7gjntAgBch69LAvTaqeFsw/Q5HhZhNQvQE1K0NuWGyQ
+         A+euPMUH4u3HLf5Zs3977HYTTkEb/yr6+ybtIyGCusMspUNCnGbyvZi1Iw8tj614pE9M
+         phwuW8Q7xz94M9p0CGn801SqEQjMDnGt6olrqMwp2HtMkROcXM+286Qy22K3FL6/ovaB
+         y3trBB0hRJYg2XJsxKZ4tGlG+BuqPld8jnSmeYZbFC2NJkBJ9QOrGyUj/C5qLtAFaS/+
+         J8OFkINSiiniHyrale2zfpDIfWY2/FKfKYXcM2ps9ukDgXNYcTpC74ZSH+5GFvUfXaFf
+         Feew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725266658; x=1725871458;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DtFvUOlggwnSeLAOJpUbgPD+rPcosq7JSEShF0DBVDE=;
+        b=lmU1QjAOdOnTSEAGHaPxmFtDLBYsDRp75LnHSlNCw90kR2hxWKS9NxjwqmW7KPFlrn
+         mb/zoDqIT9T4QEn7vF4Aflyy4Ha9BEvg0YHCQ/aGh59c3G186rCfFmqLr5k+T7P7SmmV
+         gfVXh7uHy7sSZd93hUTmSR7hL88nruzI+IVKG64erft4EFq8wF5LG780ZylNSgQboxx2
+         HKy7olxhQvHMk24kziQVPsc/jXVmQQFMmR6lx3KFqbV37nuqiu4ZiyG3RlVwlLg/bm+N
+         cAtVyRAxQiPul4RFOIZzp8RznrT2tNja0wBuPdtwX/t9gcJiO0Nt7OOL6LqdruPIUr/w
+         3VVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV9pgfiX0OU32/qWLRGrgUK8dfaHHinAax/74QziCpxBMoAMxKVplGoksGm7VclGU4j7aqVSvOIbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNN/crLob0p8vi0ColD3xlJhDFHiilW1C74nhhw/6EIOPD5XdX
+	op+VqTWmJGmPGsTO1/YF/B1/E6Xm/V4q2LvbMNy30f+KKH8WAxp4WqAPKKE2RKA=
+X-Google-Smtp-Source: AGHT+IG98mGI6ewy00GdXcZOqWLixBDXOEPu/wYdqw/JNaxYhNTMsSkYAS1b2LLsz7REgS8Iyi90kg==
+X-Received: by 2002:a05:6402:40ca:b0:5be:9bc5:f6b4 with SMTP id 4fb4d7f45d1cf-5c21ed315fbmr13546644a12.8.1725266657478;
+        Mon, 02 Sep 2024 01:44:17 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c1f7sm4978743a12.42.2024.09.02.01.44.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 01:44:17 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 2 Sep 2024 10:44:24 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, upstream@airoha.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com,
-	ansuelsmth@gmail.com
-Subject: Re: [PATCH 2/7] clk: en7523: set REG_PCIE*_{MEM,MEM_MASK} via syscon
-Message-ID: <ZtV57eqI_9PbU1Pl@lore-desk>
-References: <20240831-clk-en7581-syscon-v1-0-5c2683541068@kernel.org>
- <20240831-clk-en7581-syscon-v1-2-5c2683541068@kernel.org>
- <20240902-supplier-identify-b11b89a9a4da@squawk>
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 02/11] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+Message-ID: <ZtV66FOMJitMmtTv@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <82d57814075ed1bc76bf17bde124c5c83925ac59.1724159867.git.andrea.porta@suse.com>
+ <5zlaxts46utk66k2n2uxeqr6umppfasnqoxhwdzah44hcmyfnp@euwjda6zk5rh>
+ <ZtGdTjZPYtm3EGM0@apocalypse>
+ <e05705c1-95dc-4d77-8a0d-8c2a785b0b05@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BNuYohvowyycDFEL"
-Content-Disposition: inline
-In-Reply-To: <20240902-supplier-identify-b11b89a9a4da@squawk>
-
-
---BNuYohvowyycDFEL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e05705c1-95dc-4d77-8a0d-8c2a785b0b05@kernel.org>
 
-> On Sat, Aug 31, 2024 at 09:18:44AM +0200, Lorenzo Bianconi wrote:
-> > +	map =3D syscon_regmap_lookup_by_compatible("airoha,en7581-pbus-csr");
->=20
-> Is this compatible documented? (On a laptop in an airport with no recent
-> kernel tree, so I had to resort to searching on github which turned up
-> nothing).
+Hi Krzysztof,
 
-ack, I missed that. I will fix it in v2.
+On 13:46 Fri 30 Aug     , Krzysztof Kozlowski wrote:
+> On 30/08/2024 12:22, Andrea della Porta wrote:
+> > Hi Krzysztof,
+> > 
+> 
+> ...
+> 
+> >>> +#define RP1_USBHOST0_AXIS_BASE 0x200000
+> >>> +#define RP1_USBHOST1_AXIS_BASE 0x300000
+> >>> +#define RP1_EXAC_BASE 0x400000
+> >>> +
+> >>> +/* Interrupts */
+> >>> +
+> >>> +#define RP1_INT_IO_BANK0 0
+> >>> +#define RP1_INT_IO_BANK1 1
+> >>
+> >> Also no, interrupt numbers are not considered bindings. That's too much
+> >> churn. Otherwise, please point me to driver code using the define
+> >> (directly! that's the requirement).
+> > 
+> > As mentioned above, RP1_INT_END is used in rp1-pci.c. To get rid of all those
+> 
+> Number of interrupts is not a binding, either. Does not appear in the DTS.
+
+Ack.
+
+> 
+> > macroes from dt-binding would mean to hardcode the interrupt number in both
+> > the binding example and in dtso, from this:
+> > 
+> > interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
+> >              <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
+> >              <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
+> > 
+> > to this:
+> > 
+> > interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
+> > 	     <1 IRQ_TYPE_LEVEL_HIGH>,
+> >              <2 IRQ_TYPE_LEVEL_HIGH>;
+> > 
+> > is this what you are proposing?
+> 
+> Yes, just like every DTS does. I think the hard-coding of numbers is not
+> a problem.
+
+Ack.
 
 Regards,
-Lorenzo
+Andrea
 
---BNuYohvowyycDFEL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZtV57QAKCRA6cBh0uS2t
-rLjmAP9CjFkXxw7p5AKa8zaywzRHZjMqC1JLFryTYF5XX6HqQQEAqKLlPfd+LGI2
-S+cy+NVvz6MN2CYue7KUUBdTP8RS1Qs=
-=ySg+
------END PGP SIGNATURE-----
-
---BNuYohvowyycDFEL--
+> 
+> Best regards,
+> Krzysztof
+> 
