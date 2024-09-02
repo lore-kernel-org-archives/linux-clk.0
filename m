@@ -1,125 +1,120 @@
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0242139D7;
-	Mon,  2 Sep 2024 13:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B494D19C556;
+	Mon,  2 Sep 2024 13:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725283934; cv=none; b=rgjM8uhk0BZje+/CoZLPJfLZdAMHxwR0ob0ujAoSEb2HjaAAeIP6dKtPDnSrCIC+tMULwEUL60Wq2dT5I1d0AllWg39GLC1H1vc2ePIECxBmvEgF/tZxvj490ZoD6BmQid/Pi7XB00PGv6/b5aiwL9VRbqSy88T0MPBS2/wXctM=
+	t=1725285202; cv=none; b=N6wLu0wNOQdrO079WxNWgqikyk+md4NamcQmGk7SBs18Uk0xSjRrVQAb/um4jxlXeklfCrt3QJnbs1v+wCLBoJA6qgMNeH3QKs0Q+QGiLIyIapGAp5hZi6cuneyIxvuERE5aGdji8bLubsBUCqV2Wp2CA75G7ODLT2EbAyP2NeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725283934; c=relaxed/simple;
-	bh=RxBAlD4Bmy7Hb1bcAu9RLBPtaYpWhDz4yd1KvfnADhY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N7GeS56dtasWhVyp2JTIHmv4FYHR+ZweEcL9tNOZ9dqkTn7hVPo3uFUlxhKozUKag6AhEbqaipR0qwf91sGwW5gVzP3opvOLk5ZDYGbYz0bsCm+xNFhn9qktIDZNDzwWjRIFHJtXLLUWAVltb1r0O17GZgU8uaorsmzJt0hGXXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=qHQCAU+G; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="qHQCAU+G"
-Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2222:0:640:c513:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 801FF614BA;
-	Mon,  2 Sep 2024 16:32:00 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id xVaJQFSb2Sw0-lrFnftlD;
-	Mon, 02 Sep 2024 16:31:59 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1725283919; bh=RxBAlD4Bmy7Hb1bcAu9RLBPtaYpWhDz4yd1KvfnADhY=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=qHQCAU+GMDC2B5xoDTjogKJ5OtVR4HVOSqypeP5rbl65yW1S4r1y2lILiRlDuOf5X
-	 H0DQ/9a4e2USKKzRMhnVgEVnpwGERYoJHNZJrkCv/nYV7E8RyNE7YY3qKEsjoBBcnn
-	 Vpz+c7e+K24K/9AwneB37oi7AQUlCR2+REMk7N2Y=
-Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
-Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
- <devnull+nikita.shubin.maquefel.me@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date: Mon, 02 Sep 2024 16:31:59 +0300
-In-Reply-To: <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-	 <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
-	 <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
-	 <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
-	 <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1725285202; c=relaxed/simple;
+	bh=eoC7Vo0Z8zGYb7p6xxvVkvrh1N8gQvobck3gC48jZxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+eki2PjGCspqK2FFDwThQdI9/FffmiOlRsCg3OkTjEtjjlZuEuW7N3He9yGhSzkC1H8eludTlD03Hlbe99JlIBxurr2ajWbpFrCEuV1wQNVuKfiHgZwnpefLJ3xB9XoT+mYJSoJ+2RcePbK7AlDUd7isDmTIvrMM70YcS1oOgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6c3f1939d12so35897897b3.2;
+        Mon, 02 Sep 2024 06:53:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725285199; x=1725889999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eIVZ4SCF9RhVKGpVGbpDiZIJZpiVYxTpgIR0F0Tjc0g=;
+        b=Gq3lhEgV2gHv5x3UsaQGP3LCiOCIgC5FX7PAN/ey9W8SuTROykQbL7U2Hd46gOZrCM
+         rihVvQomhkr/mmjMPT2i3RYDn3iY/zYxaCVcu2PAYpd/6JMnGgfI4wcTHwUCD9OkvAoD
+         n3PyqsB25Oms0Cd4c/NI2UNl7hk1tL1MhLs2ZzC3bu3uSi9LSD0cqPCNOh1Sy0v3P3Iq
+         0krGd2FI0fuqED3EYBGk7HhyoombRY/06HbPbxS0VrZlX3WM2S+bfT6yYuLpLolzD2TW
+         5SOuDGPLoj1ThtX/qjQBi2XleuoeFdx10eBB30vSZuLKEte7yTdWzhCNngKfh9MeKWUU
+         XuZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUd8UM3urYyUSCfDQju3J2xDd2ong0FSwLW66tkR3Wj3mIcUMfY9dl6FwW3QMQgjT00OPVEvpuI9+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqhSA0pPpVbmzONn6QpkphZPpLCoRbvQZrKAq/hGMfBpotHqxv
+	CTy0FtUpPkeOC9vXC/9Dg0InhAEYb71fPrWfbUXrbrKqnIVzZx4XxPZ3oy7V
+X-Google-Smtp-Source: AGHT+IF+zgsXPww+le7nFQbuDLh2YNFcpLI6l/qgnzpfIiNrJZCkUAks9LVy+c0RytQm86QEDScdmg==
+X-Received: by 2002:a05:690c:610c:b0:664:8646:4d02 with SMTP id 00721157ae682-6d40dd720bdmr116457217b3.12.1725285199355;
+        Mon, 02 Sep 2024 06:53:19 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d7938268dbsm3586647b3.126.2024.09.02.06.53.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 06:53:19 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d6e2b2fbc4so10436877b3.0;
+        Mon, 02 Sep 2024 06:53:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWLbogqu6wYRxD9xChVi08O722KYRRUuT+hznosy7FU4hwMF03e+QFrDYKLcC3WNKMUbwi+dkCvx1E=@vger.kernel.org
+X-Received: by 2002:a05:690c:fca:b0:6d3:f51b:38c3 with SMTP id
+ 00721157ae682-6d40d88d522mr133229097b3.7.1725285198923; Mon, 02 Sep 2024
+ 06:53:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240603234139.280629b2@aktux>
+In-Reply-To: <20240603234139.280629b2@aktux>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 2 Sep 2024 15:53:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+Message-ID: <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+Subject: Re: clk mess on omap4460 with mpu clock
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, 
+	Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
-> Quoting Nikita Shubin (2024-08-30 02:23:12)
-> > Hello Stephen!
-> >=20
-> > On Wed, 2024-08-28 at 13:44 -0700, Stephen Boyd wrote:
-> > > Quoting Nikita Shubin via B4 Relay (2024-07-15 01:38:07)
-> > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > > index 3e9099504fad..234b0a8b7650 100644
-> > > > --- a/drivers/clk/Kconfig
-> > > > +++ b/drivers/clk/Kconfig
-> > > > @@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This driver =
-provides the fixed clocks and gates
-> > > > present
-> > > > on Airoha
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ARM silicon.
-> > > > =C2=A0
-> > > > +config COMMON_CLK_EP93XX
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Clock driver for Cirrus=
- Logic ep93xx SoC"
-> > >=20
-> > > tristate?
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_EP93XX || COM=
-PILE_TEST
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select MFD_SYSCON
-> > >=20
-> > > Why is this selecting syscon?
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select REGMAP
-> > >=20
-> > > Is this needed either?
-> >=20
-> > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not required,
-> > but
-> > it needs AUXILIARY_BUS.
->=20
-> I don't see REGMAP selected by COMMON_CLK. Did I miss something?
+Hi Andreas,
 
-Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK on
-make tinyconfig + COMPILE_TEST.
+On Mon, Jun 3, 2024 at 11:41=E2=80=AFPM Andreas Kemnade <andreas@kemnade.in=
+fo> wrote:
+> just stumbled across this on 6.10-rc1:
+>
+> [    1.475830] ocp:target-module@48210000:mpu:fck: device ID is greater t=
+han 24
+> [    1.483154] ti-sysc ocp:target-module@48210000: could not add child cl=
+ock fck: -12
 
-Then we require REGMAP because we are using regmap_read() in clk
-driver.
+And on boneblack:
 
->=20
-> >=20
-> > > > +#define
-> > > > devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev,
-> > > > name, parent_data, flags, fixed_rate)=C2=A0 \
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk_hw_register_fixed_rate(=
-(dev), NULL, (name), NULL,
-> > > > NULL, \
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (pare=
-nt_data), (flags),
-> > > > (fixed_rate), 0, 0, true)
-> > >=20
-> > > Is this to workaround a missing
-> > > devm_clk_hw_register_fixed_rate_parent_data() macro?
-> >=20
-> > Yes, if it's okay - i'll fire next revision, all other comments are
-> > acknowledged.
-> >=20
->=20
-> Can you add the macro so others can use it in another patch?
+48000000.interconnect:segment@200000:target-module@0:mpu@0:fck: device
+ID is greater than 24
+target-module@4b000000:target-module@140000:pmu@0:fck: device ID is
+greater than 24
 
-Sure.
+> Maybe
+>         /*
+>          * Use clkdev_add() instead of clkdev_alloc() to avoid the MAX_DE=
+V_ID
+>          * limit for clk_get(). If cl ever needs to be freed, it should b=
+e done
+>          * with clkdev_drop().
+>          */
+> in ti-sysc.c does not work anymore?
+>
+> The offending clock definition is in omap4.dtsi
+>
+> clocks =3D <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
+>
+> Did not bisect that yet.
 
+Commit 8d532528ff6a6b1b ("clkdev: report over-sized strings when
+creating clkdev entries") in v6.10-rc1, with follow-up commit
+616501eccb58615f ("clkdev: don't fail clkdev_alloc() if over-sized")
+in v6.10-rc4.
+
+I have no idea if these clkdev registrations are still necessary/used.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
