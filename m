@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5201DC720;
-	Tue,  3 Sep 2024 19:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311A61DC73C;
+	Tue,  3 Sep 2024 19:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392886; cv=none; b=E4sqaFolTM9pRXSDRbJbtEu+Ov+rWlIqZRREMQstgwtGGIDbr202hrM7x4We1Hs6lroKz3K6gCbbAlOIzB6LD/9ZwDZlzhf6lHcx9Eisf11Hkas0+beOFaUsu3wXFbTD387dJIXt3pJCzq6fHqPBTZ/3mToWQ7XHf0Q0Fd9K4o0=
+	t=1725393311; cv=none; b=D80gaufIlK5MFvZtiCroi2koaherJMqNC9BtJch8ZYy2kV11lfqfbn4gsBvaOdl5goYBXTG9u6Aq5xTx3EWSL0os1ewdGJelfqzhsvpywKql7wR77esCy85MFj4y38cLyegJJFxsj2+yGXPM3Nuo33J2uXMvsH2BWv9rvd58uz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392886; c=relaxed/simple;
-	bh=3p0g7g5p3i50KQ2x/lFG1FmicesjihiO7bM0HYwDHBY=;
+	s=arc-20240116; t=1725393311; c=relaxed/simple;
+	bh=LmjZ5WVu9+gaNJJ9kk1RITONyd5+Jfpn3l706IYYomc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=dQ+FkNlt4qppexpm0z9atIeqQBosP87a465F1ccGT/8bFVW2XjbMkFw7nQishmBWEhofgE1gwJfHk/h2RbG0Sfxfq46io5IIqFWNJeYnsb8MDzgAvwywbVpH9tDOYFVqzqel3tXyAAZMijbcpAcEhchx/1wlNC82uaxGdXbpQuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOiBXY/; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=su0xs0XhrIi55Vk6YqUq2uMcFHgpv1PnKqV1dhu9iEyw0wT3J6tBP70yg6LBGOBPRmu2C2feKScrjpcjawCdc99iPZa8PdfkEqtQDTcqBArL1oKFKbqySl3SF2wF6ARTAJkp9CzDLe8XdxBeklvvXRT0uZF3T8WHZmLjrvcBxx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nICfBoUw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOiBXY/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D6BC4CEC4;
-	Tue,  3 Sep 2024 19:48:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nICfBoUw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8D2C4CEC4;
+	Tue,  3 Sep 2024 19:55:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725392885;
-	bh=3p0g7g5p3i50KQ2x/lFG1FmicesjihiO7bM0HYwDHBY=;
+	s=k20201202; t=1725393309;
+	bh=LmjZ5WVu9+gaNJJ9kk1RITONyd5+Jfpn3l706IYYomc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=WaOiBXY/KVKWzml45UCJb+WWIBSw0lvuhE0Mv7k/zWUsAqIsb4Mma5kz3NxWBQ0bq
-	 Q5p2ZfbrI+3zDeagmBF4/6SsbBGUnCt9Gb07whtcTgm+Yn9V4kqIHjm2WRtzTCL3Ti
-	 etT4gj82eXuH2jyWUUA61XPuxMAYeWXuCztfUklSF0l/KuB+auXZVOC2lwBBoR2ulI
-	 5OnSKLo0z4pYiY++tp1dAgKItd46IXo+cd8RZ7GM6DotjLox9rxNPM1u2FKZ9vOsj6
-	 WrMHdMs4peE8U35yOBAcPUURlOazdQiP08efgujoHR0JylWzVrkkfqi+wYLOQtSJYs
-	 z+Y3lm9vigyDA==
-Message-ID: <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org>
+	b=nICfBoUwhj1gTPS0bR4mOpR/rlmg7s+sLyJiKGgQlLYWy+KFvby5uRK+QFuzYZiZz
+	 W9Oqu8142ENn3iQjdLH/atJzAcEvSOHfmZpYcB1xurir0inDOleoTzdeW/H1oA0jTe
+	 gvxjZ9tYljgvFKic+1lzTWbieBS8pjhz2+WNGqvToTEjKVG6sMkn35McbE7K/T9796
+	 vKd+Hr77VF2baztVvEWa8HP61MUnXVTdN1t99Qd+18FbSq1HgeNQ9lT4tuLBiJn9Qy
+	 Tke+a62gVkHqLHRFZTJQI13JR7YSSTmwcTx4mr1q6skYxwlYfs+RmPVL43/SFlAMdb
+	 JG+65j0geFPwg==
+Message-ID: <8a02734c7b64efa186e97a54eb34c632.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,56 +35,45 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+In-Reply-To: <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
+References: <20240828171722.1251587-1-swboyd@chromium.org> <20240828171722.1251587-2-swboyd@chromium.org> <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org> <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com> <CAE-0n53rNuyXcVcqTBSgbNzuJzCBkaHE21dPNkMTrs=BCTkmPg@mail.gmail.com> <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks at init
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Tue, 03 Sep 2024 12:48:03 -0700
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, patches@lists.linux.dev, linux-clk@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
+To: Johan Hovold <johan@kernel.org>
+Date: Tue, 03 Sep 2024 12:55:07 -0700
 User-Agent: alot/0.10
 
-Quoting Claudiu (2024-08-30 06:02:13)
-> diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
-/dts/renesas/r9a08g045.dtsi
-> index 067a26a66c24..247fa80a4f53 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> @@ -160,6 +160,18 @@ i2c3: i2c@10090c00 {
->                         status =3D "disabled";
->                 };
-> =20
-> +               vbattb: vbattb@1005c000 {
-> +                       compatible =3D "renesas,r9a08g045-vbattb";
-> +                       reg =3D <0 0x1005c000 0 0x1000>;
-> +                       interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&=
-vbattb_xtal>;
-> +                       clock-names =3D "bclk", "rtx";
-> +                       #clock-cells =3D <1>;
-> +                       power-domains =3D <&cpg>;
-> +                       resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
-> +                       status =3D "disabled";
-> +               };
-> +
->                 cpg: clock-controller@11010000 {
->                         compatible =3D "renesas,r9a08g045-cpg";
->                         reg =3D <0 0x11010000 0 0x10000>;
-> @@ -425,4 +437,11 @@ timer {
->                 interrupt-names =3D "sec-phys", "phys", "virt", "hyp-phys=
-",
->                                   "hyp-virt";
->         };
-> +
-> +       vbattb_xtal: vbattb-xtal {
+Quoting Johan Hovold (2024-09-02 00:15:53)
+> On Fri, Aug 30, 2024 at 03:29:22PM -0700, Stephen Boyd wrote:
+> > Quoting Stephen Boyd (2024-08-29 09:34:05)
+>=20
+> > > It sounds like it's better to make the default always park at
+> > > registration time and special case the one or two places where that
+> > > isn't possible, i.e. USB because it has special rate requirements. So=
+ I
+> > > should just go back to v1 then and pile on the QUP patches.
+> >=20
+> > I've done this now and I'll push out clk-fixes with the QUP patches.
+>=20
+> I assumed you'd fix up all the other SoCs affected by this, but I only
+> saw fixes for sm8550, sm8650 and x1e80100 in your fixes branch.
+>=20
+> Just sent a corresponding fix for sc8280xp, which I've confirmed also
+> needs this for QUP:
 
-The node name should be something like clock-<frequency> but if the
-frequency is different per-board then I don't know what should happen
-here. Can you leave the vbattb_xtal phandle up above and then require
-the node to be defined in the board with the proper frequency after the
-dash?
+Thanks!
 
-> +               compatible =3D "fixed-clock";
-> +               #clock-cells =3D <0>;
-> +               /* This value must be overridden by the board. */
-> +               clock-frequency =3D <0>;
+>=20
+>         https://lore.kernel.org/lkml/20240902070830.8535-1-johan+linaro@k=
+ernel.org/
+>=20
+> But what about the sm8550 USB issue? Don't the other platforms also need
+> a corresponding fix (e.g. for when booting from USB)?
+
+I don't know. Are you seeing USB host issues on other platforms with
+shared RCG clk_ops for the USB clk? It looks inconsistent that sometimes
+there's a USB GDSC but the shared clk ops aren't used. If nothing is
+broken then let's work on the proper fix, which is parking RCGs when the
+GDSC is turned off so that turning on the GDSC always works. If USB is
+broken for you then send another patch.
