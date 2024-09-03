@@ -1,177 +1,149 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C494D1C768F
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 12:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74E1C9879
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 12:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366361; cv=none; b=GZNO71rtPM4VwDEgivvASwPubRqtDjTe6e9e5V8AmFdsDZ/hTPrQyZvgKe55zlZBpviE8uyjeW7yEjuqcwc+lD7xXuOBNMOCjcOYxfnlPv6UMLxWCFL6UhOMv7q9mgyCMk2FvyF9Vp2bqNHISqqoED18HjPV8YNSiiifdtRJJzE=
+	t=1725366555; cv=none; b=IrWB6AcO2fLfJoDmxUtzlgGI29L/RPfUy4ADK4HufImGqLtKJtYzKf8Rmb9Q60UBUBeZFkvf85p+oXYNtlaJGhFgZgwuHcNPuOjl0oL3egT151MS3ekkHAS5Jt90a8AophexG2LtRC9DGZJzJ8+Gd45eOg+B7Yx5pvzq7mfO7iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366361; c=relaxed/simple;
-	bh=a0Dd4JWmM7haDwR0iXBE1kfomv0PSlhhIKArOk1RZzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nImq6Y13jXxcFyhattodTcK35gIrfrqZhoni8ZkCTvB10xQcvnETyWIDGVYcsbLu5oRSSo3OUft3WLEOb5sV7SnjUsi3m+VzS4qGosq+32v0/VspXXfWinG9XMO6Xp7hOsYM2WWmP8VHfrn9hPjIkBt5gH2K25BFaPEAs/6TVdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ba6EToGn; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1725366555; c=relaxed/simple;
+	bh=LYZ3g1BOQrAmEV2a5L00wMHSlNaPPgLH0lWGP87X9VE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvq3mmcm37MBbvmNl5FB4Y1hQ88/oKNrt/aBF5aUFMgtukR2HIC0wivIav/77iMh3/O7J7m6lR8GuLbYUTcfqLjvIt5frDs28hS3EmDVEdTNaHkAwoPL6oToqZgP+KxpyoKSwFNl42wFAYgkg/CtiHfQc3waqyHai021smJNrsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IbY6SCP4; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ba6EToGn"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c26b5f1ea6so979284a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 05:25:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IbY6SCP4"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533488ffaebso6308044e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 05:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725366358; x=1725971158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+cdIRXo5VTqWR2KdDzO1DTS+Vt8PiHUf2RGCvnaGFsQ=;
-        b=ba6EToGnZTcjtlxOZnx4KqVxMNNTjMd9eK/EiS3OXuLybDIRe/EAOXmxjOAyakw0qL
-         Y4TUlOKJEv4sKlfLgwyBCBSCoGYrLNIRgYT0R3Zpj39eTIylWHzinbHFa/6hmWuKU6sZ
-         KMaCSCvyFLzagyJKL+yjieGzCBVbu09BMr3FnJtbyAyKh0TTGhTkg/EErV63OnZPli8b
-         TIhWCDyBFFHHc3H0DQALOhttviHm2xd/Fsf4XYgTaP6lPdfr7YZVZPJ2hVBH54xYe/Vt
-         /9XBaakV8wZuG7WtCMeRTrQ8YWgAoDUypyOU2Ye/JIZpkQbnG284zwgT7dm4RFT/JNSv
-         vrPg==
+        d=suse.com; s=google; t=1725366551; x=1725971351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pQaEXKZRWyREIUo8wC8RcTnNWfD1rXPNnUAij9Sr27k=;
+        b=IbY6SCP4WWPPL2wU29cTSHcvBDgNnVeuU2grWCJXHhk+8cJGN+SSnRloO9PpTLhe4b
+         LfHYLzWEfoCva2m/GdE8rJ7f62g5YKa0X0eUeeJlCOfybn5LI79N6kFW66kvOiFeQsI4
+         nwhl2hdZbXWiAMrbE89ngBhyAfDA6Df5AKAs07lJUXb6dklEVIGdpN3/ZMrhQn61wc8k
+         NCfOuJ+8YGx7apRuj0krn9P0DlpMk0AeQ+/8hLUd/EjOSK4WIsr6Fz8kMpCSPR04ocF7
+         Ur+e4xK+Hlp8/W0ymMOcrQ9WaxoE++Mj9jQUuF92/3dQCfDuJ/lUIytA6SwFu0eK6Jvt
+         /r1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725366358; x=1725971158;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+cdIRXo5VTqWR2KdDzO1DTS+Vt8PiHUf2RGCvnaGFsQ=;
-        b=wsQylrMBY6/DxY0L5W4AyWbLPafvzoCYVUuZwwQ3SzMDFcPrRFIIaA+lplXEwFqqrb
-         NLeskW8O2gC4kCbdkhmPSgvbZKTNzFIKGD3o4PFizN80RqWxLJbovCixkvq9OJQKeXMu
-         NtTiZ0cT/U/t+SFSi5tyhSWzPTs/9JZK6Dhhrk815WToDhoc18hcpGvfwPYRKsLRmMCa
-         bepndLtGtUqSEds/tluXgVL+AN3cIdlQ3kEER497p0q5CWpG7GuRv4MWFjqH9nzxDUa0
-         2oEFFvMWRyNqgf152+eWgjbYO4CctW257oCRgR0ABWocKZIWVEtcjZF6bvXLhbjTCkQg
-         ZOJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXklfAoA3zWnV7OcF6ZmYgZqrwtKCwpTHgyceOtkJRQCZnkJu+LsemRlG+i1ulbGterRUyiYQn2JoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr7kmeDcfTGTzmXDzh9WC7v2XveafoMEIuu76pQy/4FbIuEeSu
-	s2RPYlRzsl13LCXz5tWUyBTI9WxNp3wliMycNVT8k3BjFF4GG6C8jkboVRh9FVM=
-X-Google-Smtp-Source: AGHT+IGCJSAfsQxh53LJgcY+qGaZ+a7jTX6q5V6OFCLQvyiQ7yrxNllyp0cepO9Zz23djK5zaAK9PQ==
-X-Received: by 2002:a05:6402:4310:b0:5a2:2654:7fc4 with SMTP id 4fb4d7f45d1cf-5c25c3a717amr5389144a12.8.1725366357788;
-        Tue, 03 Sep 2024 05:25:57 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a3cdsm6412278a12.12.2024.09.03.05.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 05:25:57 -0700 (PDT)
-Message-ID: <0b73544b-0253-43b9-b631-6578b48eaca8@tuxon.dev>
-Date: Tue, 3 Sep 2024 15:25:55 +0300
+        d=1e100.net; s=20230601; t=1725366551; x=1725971351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pQaEXKZRWyREIUo8wC8RcTnNWfD1rXPNnUAij9Sr27k=;
+        b=eS/D3J01IeM9zKHpA5IrGTIkLJe3k4HFGYGOCPLEjc2Bha8dptstwt/x8t4yO20YmW
+         sNMd+K6/+8mUJ1Ah2S4srw5yjDK9OLO1Ib/HLkpc9vzi2VSGdfqJZEprLJ+YMwiVAm3+
+         plxvPWR6/U3vJ0DWR/sfmtZDSiOpoTjqPzLhfmTpuMtNYjzpwXG8tVlj79aFxo0GjF9t
+         lRsd+f0HGyJxDO1K83pBZKv9b6WkoCXbILfS9aWXV08ODYi1douq9KPplXqCw80y11qf
+         TRMk7QHxT8YxNCxxWWdwZjKRGDh6VUcWsIb8rmtmJZo39nkG4Wrv9+jV2ebsSj3nXuL1
+         KyJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUe14kLIldItoQZ7rsTueGeQQAK927XNc9VE6jZJIncUHExnbPp6NY1OM8R0qnCypL44mdrYAZOWWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiExgQX9v+vU/Cyw3gp7lnVukp7ybhKmGoiY65uYBYKtFVxUbj
+	uekuM4KFq5MJjkIsExWBt5aO4w1dY0iTJZ7U7rTfsbL/C7OAbYH7P1lMsUSYGbU=
+X-Google-Smtp-Source: AGHT+IFq5h7rZ8oQIIXm6nz6CibNpWmLcPJNLG4TGtm/2ICu6a9ZqKTz9NHYYqSXDVwrc61upSj1pQ==
+X-Received: by 2002:a05:6512:2254:b0:530:ea60:7e07 with SMTP id 2adb3069b0e04-53546bb9455mr9237621e87.58.1725366550821;
+        Tue, 03 Sep 2024 05:29:10 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d7834sm688285166b.177.2024.09.03.05.29.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 05:29:10 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 3 Sep 2024 14:29:18 +0200
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 05/11] vmlinux.lds.h: Preserve DTB sections from being
+ discarded after init
+Message-ID: <ZtcBHvI9JxgH9iFT@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <12d0909b1612fb6d2caa42b4fda5e5ae63d623a3.1724159867.git.andrea.porta@suse.com>
+ <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
- "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
- <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
- <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
- <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB1134648BF51F1B52BFE34DD6D86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
- <TYCPR01MB11332EF1A8D064C491D8F261286932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <f7c57e76-b890-491f-880d-62d060b7b31e@tuxon.dev>
- <TYCPR01MB11332BE2EDB318950B9C7B54C86932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org>
 
+Hi Stephen,
 
-
-On 03.09.2024 15:00, Biju Das wrote:
+On 12:46 Fri 30 Aug     , Stephen Boyd wrote:
+> Quoting Andrea della Porta (2024-08-20 07:36:07)
+> > The special section .dtb.init.rodata contains dtb and dtbo compiled
+> > as objects inside the kernel and ends up in .init.data sectiion that
+> > will be discarded early after the init phase. This is a problem for
+> > builtin drivers that apply dtb overlay at runtime since this happens
+> > later (e.g. during bus enumeration) and also for modules that should
+> > be able to do it dynamically during runtime.
+> > Move the dtb section to .data.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  include/asm-generic/vmlinux.lds.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> > index ad6afc5c4918..3ae9097774b0 100644
+> > --- a/include/asm-generic/vmlinux.lds.h
+> > +++ b/include/asm-generic/vmlinux.lds.h
+> > @@ -365,6 +365,7 @@
+> >         TRACE_PRINTKS()                                                 \
+> >         BPF_RAW_TP()                                                    \
+> >         TRACEPOINT_STR()                                                \
+> > +       KERNEL_DTB()                                                    \
 > 
-> 
->> -----Original Message-----
->> From: Biju Das <biju.das.jz@bp.renesas.com>
->> Sent: Tuesday, September 3, 2024 12:07 PM
->> To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>; Ulf Hansson <ulf.hansson@linaro.org>
->> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
->> p.zabel@pengutronix.de; geert+renesas@glider.be; magnus.damm@gmail.com; gregkh@linuxfoundation.org;
->> mturquette@baylibre.com; sboyd@kernel.org; Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>;
->> linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> renesas-soc@vger.kernel.org; linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
->>
->> Hi Claudiu,
->>
->>> -----Original Message-----
->>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>> Sent: Tuesday, September 3, 2024 12:00 PM
->>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
->>> RZ/G3S SoC
->>>
->>>
->>>
->>> On 03.09.2024 13:31, Biju Das wrote:
->>>>>> During boot clr USB PWR READY signal in TF-A.
->>>>>> STR case, suspend set USB PWR READY signal in TF-A.
->>>>>> STR case, resume clr USB PWR READY signal in TF-A.
->>>>> As I said previously, it can be done in different ways. My point
->>>>> was to let Linux set what it needs for all it's devices to work. I
->>>>> think the way to go forward is a
->>> maintainer decision.
->>>>
->>>> I agree, there can be n number of solution for a problem.
->>>>
->>>> Since you modelled system state signal (USB PWRRDY) as reset control
->>>> signal, it is reset/DT maintainer's decision to say the final word
->>>> whether this signal fits in reset
->>> system framework or not?
->>>
->>> I was thinking:
->>> 1/ Geert would be the best to say if he considers it OK to handle this
->>>    in Linux
->>
->> I agree Geert is the right person for taking SYSTEM decisions, since the signal is used only during
->> state transitions (Table 41.6.4 AWO to ALL_ON and 41.6.3 ALL_ON to AWO)
-> 
-> One more info, as per [1], this USB PWRRDY signal setting to be before Linux kernel boots.
+> The KERNEL_DTB() macro shows the section name is dtb.init.rodata. Can
+> you remove the ".init." part if this isn't initdata anymore? And
+> shouldn't it be in the RO_DATA() macro?
 
-The "controlled by" column mentions CA-55 on PWRRDY signal control line and
-it is b/w steps "DDR exits from retention mode" and  "clock start settings
-for system bus and peripheral modules". AFAICT, after DDR exists retention
-mode Linux is ready to run.
-
-E.g. on resume Linux doesn't sets the clocks of all peripheral in sequence
-and then runs the rest of settings for each peripheral, in turn it sets the
-clock of one peripheral along with all the other necessary peripheral
-settings and then continues with the rest of peripherals (including their
-clocks).
+Ack.
 
 > 
-> All clocks/reset happens after setting USB PWRRDY signal
-> 
-> https://pasteboard.co/qbz021q7KPyi.png
-> 
-> Cheers,
-> Biju
+> It would be nice to keep the initdata properties when this isn't used
+> after init as well. Perhaps we need another macro and/or filename to
+> indicate that the DTB{O} can be thrown away after init/module init.
+
+We can certainly add some more filename extension that would place the
+relevant data in a droppable section. 
+Throwing away the dtb/o after init is like the actual KERNEL_DTB macro that
+is adding teh data to section .init.data, but this would mean t would be
+useful only at very early init stage, just like for CONFIG_OF_UNITTEST.
+Throwing after module init could be more difficult though, I think,
+for example we're not sure when to discard the section in case of deferred
+modules probe.
+
+Many thanks,
+Andrea
