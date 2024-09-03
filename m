@@ -1,94 +1,48 @@
-Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B95C18732E
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378A92AE66;
+	Tue,  3 Sep 2024 15:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375405; cv=none; b=YO4NZoaV1q/v6we3yIgoS3sSO2YdwIcnkgdJmvdVY8m/VVyUfwMuunLmMblSsgGnRUn8RZIcxhYquGr+yWYFRnVPCyqofl6dTtONeP9eVOxljBZKdUEbuG8llO/2rzHzdRXsqludP7NqfQm/c7LL6O976rbXRq8S5Ic7IjFWaEc=
+	t=1725375880; cv=none; b=i42NxPMGhSzdvk9zjZfN3RN19CJ8gY5sTplZ1umT352N2Ccfg9WhegNPOpPyOo5wzQ8lZKtn4rrTWrGfTkg91dYqIe20tE76XRXRd5hSckq3TyulexbRwOI3O50VYp8QdKp2xgauowdrfMShZCS+fgr+N1tS3OQpaM0ASbMpIz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375405; c=relaxed/simple;
-	bh=gXdcYhlkFiZc7PZFYt6CuTb/sBzByoIKPWKoUDitZO4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=an2GDVuCeoO333DSfwLs80MDzboKrHjINd9uUseKAnft7imlqSLPQTp2gTCJhvnlC4hcfQAeZsTuHdqZ/FezAX2uAB2OVan/bJKnzlJxJyC8coJFC/BsUBGkeaz2RSA5Sco5+CF+hO4QzaEwIBcdJv/7+j8Fmg3z8OMyVU20db0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q0Tc4FtZ; arc=none smtp.client-ip=209.85.208.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1725375880; c=relaxed/simple;
+	bh=sf3xNg203/lr8nt9OtokONsd4BgI7GDuvGcxFo78X+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilq462CgPvM8G42VYuAiHoFmHO5+vO8hzE6OEtRWmiUX5CEc1JJTXLC6RtHS9NowwKJAj0uz/sDp3WCB7HKmJib5iI9kcvuGCc1+2kFQDdp5Zx4jAMsiFJYT4DXCajz3sKoI22LeAjFcm42kgpBPvgysTeAjA+VIaLrJaBPPsjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiGr66dR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q0Tc4FtZ"
-Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-2f51b67e16dso62855711fa.3
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 07:56:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725375402; x=1725980202; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
-        b=Q0Tc4FtZ9SyE23cE51CxIDm3wr4xpdfEF1VKGG6D4hTRBcgGU5VbqgJQ2ZOvvsiokB
-         O897E9H8Ceu35GO2fLP7wWkVj1zNiOz8o/yzTXtv1IQpcjEu6FZE0i20hK5UhLjGfpm3
-         Tz6y34T9Z+D6FaXMRl6+35GiVoDPpbhYuIjsnFnc64aLPewU1Wpn9QNkXUdtRMzZjRF/
-         UOo6xTuJ2HKJHVHXFdcjiVlLeFiRL5Uvov8jurz90Zh9bm/54N4qQ0PIecWdbt1GRigt
-         wvuLIAD+7FbwJsD2yJkqpyEEpiIUpSI9lBYP8DhbFcnzaN5Kg/pp8wcDzR/7FMWCasNB
-         wjpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725375402; x=1725980202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
-        b=OIl3F95yHneLH53R3/UOEmEd6nG+OD7Y2wPZJuxJ9BGQUHwQ47QrGCPeM2/7j9P03s
-         nOJplzKEOA1Nc0fg8H8NjxPzp8PKHGAgar3gNlr3m1jaehpV60vi/sJaER3kKxIqoPV+
-         o4MxmdCAMF6/QsgwA2HiGASpQp7+yXmPWKQdFa6PnDLJHY8LdfLEj32ph1xvIbJJG0MS
-         AVHN5Iyu6c3FkgrrhhjqQfw+85Au5qBKspCdP0FRjqpi33MMo/dmi5QFFMhixoHtil7M
-         ea5IbtgzppfacjocZlYR+F4BtmNbmmrH9h+vRKPSSYdpvqYCZLosU7H50jQrmIqXntOF
-         NY4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXokO9s/PiuvRSZ2wRu/AOhQuNTOKmIYhOADJa/p6RwtEsNhewdqGRikQWjK1WK2YqWjtTB6IaAcmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHj6Cc41999ZgAfjSUIsYOYTW7XZtjD2x9J33iUz/QBvmyuYEk
-	LlC2Qe73b0PGMiPeobxY1PXXBSJLzTLCGZAbEsrKcvNAQRjc33NrLxlFshbLC+4=
-X-Google-Smtp-Source: AGHT+IGPXzXKjSyzj6ohNmy2x1Ly5xLLwbpSN9O7C4k6PqMn2bhMNSeS1m3Dv1qGKiKQSC913q2XHw==
-X-Received: by 2002:a2e:4e01:0:b0:2f3:b76e:4983 with SMTP id 38308e7fff4ca-2f64d4aa546mr6486601fa.22.1725375401093;
-        Tue, 03 Sep 2024 07:56:41 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a29bsm6517320a12.17.2024.09.03.07.56.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 07:56:40 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 16:56:48 +0200
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiGr66dR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F2FBC4CEC4;
+	Tue,  3 Sep 2024 15:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725375879;
+	bh=sf3xNg203/lr8nt9OtokONsd4BgI7GDuvGcxFo78X+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JiGr66dRo72VmOAc29W41ELqSFMOOqKgnA1OPWzIih5KTat9VKMC91k50pdB65QDc
+	 yiVJn6AuPC8CPVBxQUqri90qDBy3D4CdfqqoFfuriBmycV0Ah8PWaRtOnz8J83Z1va
+	 7Rmuhm1r3E8w+4G2d10XXLNsG2dl1tF1ckLXa6k4qv6f7MQlME3sETQAhKWlhQNYOJ
+	 3BzYzrf6+ruGFfgs0FtIWtQsWWY4We2rNdQrA2BNMHQZ4TR5Zj/OvhLyffF4xkKuRO
+	 daiNlB8OF+jPEP0mU9lSPRhsXAG+AC6Jwd3L/jl3SqqObpMFDBOHd7atGc0twCdCl/
+	 wDPFqRC5hoo8Q==
+Date: Tue, 3 Sep 2024 10:04:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZtcjsHnIb7iuDfhw@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
- <ZtHN0B8VEGZFXs95@apocalypse>
- <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
+	Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, upstream@airoha.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com,
+	ansuelsmth@gmail.com
+Subject: Re: [PATCH 1/7] dt-bindings: clock: airoha: update reg mapping for
+ EN7581 SoC.
+Message-ID: <20240903150438.GA1008227-robh@kernel.org>
+References: <20240831-clk-en7581-syscon-v1-0-5c2683541068@kernel.org>
+ <20240831-clk-en7581-syscon-v1-1-5c2683541068@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -97,56 +51,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
+In-Reply-To: <20240831-clk-en7581-syscon-v1-1-5c2683541068@kernel.org>
 
-Hi Andrew,
-
-On 16:21 Fri 30 Aug     , Andrew Lunn wrote:
-> On Fri, Aug 30, 2024 at 03:49:04PM +0200, Andrea della Porta wrote:
-> > Hi Krzysztof,
-> > 
-> > On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> > > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
-> > > > The RaspberryPi RP1 is ia PCI multi function device containing
-> > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > > > and others.
-> > > > Implement a bare minimum driver to operate the RP1, leveraging
-> > > > actual OF based driver implementations for the on-borad peripherals
-> > > > by loading a devicetree overlay during driver probe.
-> > > > The peripherals are accessed by mapping MMIO registers starting
-> > > > from PCI BAR1 region.
-> > > > As a minimum driver, the peripherals will not be added to the
-> > > > dtbo here, but in following patches.
-> > > > 
-> > > > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > > > ---
-> > > >  MAINTAINERS                           |   2 +
-> > > >  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
-> > > 
-> > > Do not mix DTS with drivers.
-> > > 
-> > > These MUST be separate.
-> > 
-> > Separating the dtso from the driver in two different patches would mean
-> > that the dtso patch would be ordered before the driver one. This is because
-> > the driver embeds the dtbo binary blob inside itself, at build time. So
-> > in order to build the driver, the dtso needs to be there also. This is not
-> > the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
-> > ordered last wrt the driver it refers to.
-> > Are you sure you want to proceed in this way?
+On Sat, Aug 31, 2024 at 09:18:43AM +0200, Lorenzo Bianconi wrote:
+> clk-en7523 driver for EN7581 SoC is mapping all the scu memory region
+> while it is configuring the chip-scu one via a syscon. Update the reg
+> mapping definition for this device. This patch does not introduce any
+> backward incompatibility since the dts for EN7581 SoC is not public yet.
 > 
-> It is more about they are logically separate things. The .dtb/dtbo
-> describes the hardware. It should be possible to review that as a
-> standalone thing. The code them implements the binding. It makes no
-> sense to review the code until the binding is correct, because changes
-> to the binding will need changes to the code. Hence, we want the
-> binding first, then the code which implements it.
-
-Ack.
-
-Cheers,
-Andrea
-
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/airoha,en7523-scu.yaml         | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-> 	Andrew
+> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> index 84353fd09428..ca426c328535 100644
+> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> @@ -34,8 +34,8 @@ properties:
+>            - airoha,en7581-scu
+>  
+>    reg:
+> -    minItems: 2
+> -    maxItems: 4
+> +    minItems: 1
+> +    maxItems: 2
+
+This should really have the 'items' list here instead of in the if/then 
+schemas.
+>  
+>    "#clock-cells":
+>      description:
+> @@ -75,9 +75,6 @@ allOf:
+>          reg:
+>            items:
+>              - description: scu base address
+> -            - description: misc scu base address
+> -            - description: reset base address
+> -            - description: pb scu base address
+
+And then this would be just 'maxItems: 1' and the other if 'minItems: 
+2'.
+
+Rob
