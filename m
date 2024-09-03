@@ -1,59 +1,59 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49DC13E025
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EE244C6F
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374771; cv=none; b=DXbtcpFXZYtynwNXeMlDRTW7lkxp/EmoMbrAcPg8QuWKjljfFeggigrCB0eXIiPfuY36Aji2GqbEqVb69a56VpwUva5jdWA8c6CL30I2EH5UOwi9Lqn5QjGJpG4WRHU4Ce+SpzfgZZpRCnDUyMAe7MsP1tdtKxOZT3xIZjZ4m4c=
+	t=1725374904; cv=none; b=XAWomQc/fgvtyPJGNON8f+XSb59WCVWp1AFC8/dtufEoDnrAZYH7Wa31ZUOhTPgaDRH7zt5UV0mjPq+QJBprULIcfZeKRh/kH7D/RhXgMYD+edwup+TNzvlVAVeczo+PJpnVIgSSSV5qFZKuQmM9bgRzyQwLytEGNcEKoqSWsuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374771; c=relaxed/simple;
-	bh=Z4BjGtamMnnJf4aAKLMsPWYV6C8APwGl9my/5sXf9NI=;
+	s=arc-20240116; t=1725374904; c=relaxed/simple;
+	bh=sTTEsGQXRaTOXecmyjXOSuS6JlHB333ozxO7Dg7qzYU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luxWCSupWFSOGiyAjrnqZPEGhtMWzimAiSX8gZu/5YsPSbOpVoMuBZrX4/cfs6LC9g9C1Tkulq9PQGf18jicx6wYIN7Pp2QT0aVoXKFCWy4QAHBI3j2bIWn73XxPBx3X1GMfDGjxDI19ELd2ilV/iKR7bZTs812e/4BU+wQilOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JHyIPsv5; arc=none smtp.client-ip=209.85.208.176
+	 In-Reply-To:Content-Type; b=G7zn+368J37dhY+nAxAi1/se/CqEUr2+qlT/Zm70yjh2nu+cORh4wgZAG7ekXAvGBPxM4f+03URqNi7EP56WdN/mucRMSIoKgIJEucEjPvJ84EEqVIwvA76gtCOfLdHhuoWN0pC7E/Y1naREiUCqy5JPhZYvAO8cW5aupB4zwjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rRWyX9YU; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JHyIPsv5"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f40a1a2c1aso51940321fa.3
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 07:46:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rRWyX9YU"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c251ba0d1cso2318477a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 07:48:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725374767; x=1725979567; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1725374901; x=1725979701; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=10RLo6vQI16ZQLY55PJnQinuqmPpyY7pcz6lIln/dYk=;
-        b=JHyIPsv5kMj2R2fk38yqLy96tMjyWMBNMh+wNeh9a6vDgO7Gj4n2csTjZPoCmVP63L
-         tC70m7VXjdgudChbPhas/xJH/RnAWZVCeyQ4AQPi6bXJJ9wMIkPYbMev8klcMfOu/SE7
-         XTM2ZwJXPt5iyGVGMkkgM+ZnhcazNfNUoCp+V6qbC01m9+P3w2Ta4O1TotLDjrO7Tkpt
-         diyuLUsfvnztZAnsuX19BsBouWG4T81Bt2IHfdamQE9THnWL4CjMPsYWg9QWa+Lq28FK
-         vPIei3CRtDKRrTC8cVc06NASPdvcamyvjD22fZRn0ZKR2gncd/R4L0n8kKJX1yu2j0s0
-         LEJw==
+        bh=tYCfjFhT6V80KL60H9R9UPi35bzaxYeuXsMEcnoS+3o=;
+        b=rRWyX9YUX9SqwHSnrxuI7oaTaq9MJy7/30elrIJebVrmX1xXCK0Bk1ciQ+ZUAQSFXl
+         e/yfO23xhPauPTGKIURfOXBfGV8arNOSRIOpm+/zM/+B9kznKICtYHO3FUid+K23lwy+
+         XFhlHTeYfBUJZplag421cG5WLwykwSfLvID0PJRq82oiSY8SagVjiEeFe+nOGsjwZOBv
+         DE1DIcJtzNMjjyepyXf3UuEnznw0kwbE/4FZ2rfO1YchcAfo7PPrbe78SqbLR79JWY1+
+         rA5t/ziBfmTYO9EyFt+yJpId+kd4SXRkPURRuFGLiC4HHAafCLBexlk7E+E2CIZF//Ee
+         4jeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725374767; x=1725979567;
+        d=1e100.net; s=20230601; t=1725374901; x=1725979701;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=10RLo6vQI16ZQLY55PJnQinuqmPpyY7pcz6lIln/dYk=;
-        b=udaRT1zARUbgTG8WwQdtRSI6DMx+9hFDp08xIgi7L4ZMV/sWbFqtFUJGpMGXMfVsJN
-         ZmqyVAKRb+pYvi6ZqcbySIcjI2yT+zJ81pPFkA3056I+9bRSVaKaDOuxlLyYKgEH80qZ
-         pkoWDHXqmaduSp4AHqSE80eIuFcCEjQA9+4Rjihp1kRIbuAeMVbaE7Eb8VGQfrLKDt3W
-         79vZ4Sj3rQtoZ2UHv6WSYxJlls+zfeamQ8/r7wP6nxCdGOCSGaKQcRU+DVrmanrkcn6Y
-         GuXAiaWTRwihWlk/a07h5b9DgI+4+YoyCgT9QTo7mtgcflCA10uGNoS6NkuaPOlj4VF+
-         icdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUntsKinK16JiItM3PFEKYg0winY74xLgc8GcS3VobAgab2c3kvFkNL8dwN5mn0fNs/vlJalaQglYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTkOXEQo4VWPPLlMtT6BVZg5cV3UruEIyEdTGvhR8Lz/Xu0vl9
-	bMKA8oGmbG/Ax8G34ESoPnFoz9Ra9I9cswQUpQ6lyMPfu8Or3dwZUHyLM4w6NI8=
-X-Google-Smtp-Source: AGHT+IHBF7/z9fE2IIPqXvT2mCPSoKoEFEBXPrIEjkmEaUhTM3epbcIR3W3mZTjeBzvwo0J9N98xnA==
-X-Received: by 2002:a2e:a99b:0:b0:2f1:59ed:879d with SMTP id 38308e7fff4ca-2f61038cbe8mr134852401fa.1.1725374766668;
-        Tue, 03 Sep 2024 07:46:06 -0700 (PDT)
+        bh=tYCfjFhT6V80KL60H9R9UPi35bzaxYeuXsMEcnoS+3o=;
+        b=oM8sq/PtEFJs/966Q6ijyA7XVqVWO9AG8zPfSZ3fj9WfnqhmDEBuLtHlEkM3/SGg0n
+         BL/bajGS58HenHif7chj6AA6fgM3I2tnKXXMlWPsqJSOtW+A0wC+AJT1dOdTJc6COwxW
+         00QXF/HjF0kbdLIHVC4jFGWkeSTTZK9/aomitpovyHC8+/ontwz/XjAa9rZfleIM0gNo
+         uPsdcNcq1THODmew0GtYCcf3JknF0OoGwnbzw0LFjOA953tAQDYh3eRqnD8Yaicz1JWH
+         k+GmPkpVT/2ZOWRav7qcYHMphB1GKULJvCqod71rnmZBPzPTEKT+nauHn4I74snqUMze
+         llKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2LDDmlDGN+ej8WPpwA/AQztwdropoVRe3z1GCNuFp1b9Ed6kVCF3DpLInRzQaxUKt9TLtbKHaJPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGIzFhV6vvkfSbX4iCsqO7cl2EpC2/os+U4AKZ6nN1gKlok+li
+	fmkRTfTk8IjhAfv724aMfx1TvlP03yAe7NgluJZyty1H8DzxyKIwT1LN8yTh1H4=
+X-Google-Smtp-Source: AGHT+IHbatOQ4VEqyYMrobH7Q1bov/exBOit5pFJyMdS0ZVwH1qUlYUaswymHBX8ZBxtVmsniM7/IA==
+X-Received: by 2002:a17:907:980f:b0:a86:7af3:8299 with SMTP id a640c23a62f3a-a8a1d2c8675mr318571466b.25.1725374901005;
+        Tue, 03 Sep 2024 07:48:21 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a46esm6583009a12.3.2024.09.03.07.46.04
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb31fsm702013566b.17.2024.09.03.07.48.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 07:46:05 -0700 (PDT)
-Message-ID: <7ffb6419-b8f0-4940-99d9-7779eec9bbb7@tuxon.dev>
-Date: Tue, 3 Sep 2024 17:46:03 +0300
+        Tue, 03 Sep 2024 07:48:20 -0700 (PDT)
+Message-ID: <d64243fe-48ea-4cb5-b6d6-e9f820e1b8a3@tuxon.dev>
+Date: Tue, 3 Sep 2024 17:48:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -99,22 +99,20 @@ References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
  <0b73544b-0253-43b9-b631-6578b48eaca8@tuxon.dev>
  <TY3PR01MB1134689573A785E91A9041E1886932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
  <5bcdc677-e61e-4312-a19b-57b4600685d3@tuxon.dev>
- <TY3PR01MB11346FAC6022C81ED8B9B2DC386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB1134690F9D37E3BB4814D864386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346FAC6022C81ED8B9B2DC386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB1134690F9D37E3BB4814D864386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 03.09.2024 16:09, Biju Das wrote:
+On 03.09.2024 16:45, Biju Das wrote:
 > Hi Claudiu,
 > 
 >> -----Original Message-----
 >> From: claudiu beznea <claudiu.beznea@tuxon.dev>
 >> Sent: Tuesday, September 3, 2024 1:57 PM
-> -
->> clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
 >>
 >>
@@ -213,10 +211,6 @@ On 03.09.2024 16:09, Biju Das wrote:
 >> path.
 >>
 >> Is this from HW manual or some specific documentation? I'm referring at "resume" == "steps 11-->14"
-
-You branched the discussion, there was at least this question that I've
-asked you above that interested me.
-
 >>
 >>>
 >>> Step 8, Cortex-A55 Exit from DDR retention mode (when using) Setting
@@ -230,44 +224,26 @@ asked you above that interested me.
 >> something wrong though. We don't know at the moment what this involves in terms of power consumption,
 >> if it means something...
 > 
-> You mean, you modelled this as reset signal just to reduce power consumption by calling runtime PM
-> calls to turn on/off this signal??
-
-In this series it is though a reset control driver.
-
-The internal BSP propose the control of this signal though SMC calls in
-each individual USB driver; I think the hardware team was checked for this;
-I may be wrong, as I don't have this insight.
-
-As you know, the initial control of these bits in the BSP was though SMC
-calls and you propose to have a separate Linux driver to control this after
-finding that these registers are accessible in normal world. As a result,
-this series, with reset approach, which you were against, but I felt this
-was the best way (I know) to describe the hardware and the relation b/w
-hardware blocks. To conclude, you initially proposed me internally to have
-it in Linux.
-
-To answer your question, the answer is no, I didn't try to just model
-something fancy just to be fancy. I did it based on what is proposed in BSP
-as this may have been checked with hardware team and I did tests around
-this. And considering this best describes the HW and the relation b/w
-individual hardware blocks and in this way Linux can have at its hand all
-the resources it needs w/o relying on third parties. And from the HW manual
-description my understanding was that this is possible. I never said that
-this solution is the best. I'm just adding information here as I requested
-help from maintainers to guide on the proper direction.
-
-You were adding information to sustain your TF-A idea, too.
-
+> IIUC,
+> The only information we have is,
 > 
-> Does will it have any system stability issue as hardware manual says to do it at very early stage
-> before starting any clocks/resets?? Have you checked with hardware team?
+> "SYS_USB_PWRRDY and SYS_PCIE_RST_RSM_B are used when transition from ALL_ON to AWO (or from AWO to ALL_ON).
+> "When turning off USB PHY and PCIe PHY, if they are not controlled, PHY may break"
+> 
+> ALL_ON to AWO_MODE state transition: 
+> USB/PCIe are part of PD_ISOVCC power domain and before turning PD_ISOVCC to off,
+> we need to set USBPWRRDY signal.
+> 
+> AWO_MODE to ALL_ON state transition:
+> 
+> Turn on PD_ISOVCC first, then clr USBPWRRDY signal for USB usage in linux.
+> 
+> Maybe we need to ask hw team, exact usage of USBPWRRDY signal other than state transition.
 
-All the implementation of this is based on what has been proposed on BSP,
-the same approach was proposed there, meaning the control of these signals
-was done on probe/remove, suspend/resume in Linux.
-
+As you may already know, this is open for quite some time and is ongoing.
 
 > 
 > Cheers,
 > Biju
+> 
+> 
