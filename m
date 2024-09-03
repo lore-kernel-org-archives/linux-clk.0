@@ -1,260 +1,189 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4874017DFF4
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 16:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE0618B466
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 16:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379747; cv=none; b=ZmEcYkRedShaFQSUwveZgd5sQHb78vtoKCsJOm/vE/28hsedQP+gtTxQdp5MMfRbBjNtrupIbb/TC6tLC9glIhdeb6Tc1SVo7Na7FFeorXl6TAxpEgA9TWMJF9C9A538OIGuiZjUWYO7E4UyI4c9qMJAY8LQBTbvHoVuFhF/PzU=
+	t=1725380107; cv=none; b=s4+n2A04yc8hcBeX5hbim2/Xjg/n9O8w1K6RfHLK9DL2uhWWen3f1mMFG28Nkhn3p1CdmpX4b6rRvL4LLBPbfivqV93z0l8BHgCos2p/ah7B2F4NO607J9U+vNtJN18NzzBWg3sZtp4fBQVlc6b4nbZscDiVmGxIjBIcOoLF/Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379747; c=relaxed/simple;
-	bh=y5SL93VBSG2PaFcIjScLBdkpp7+Kda8Df14EgSpWRn0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=knTB+jLvMqBd46NfV2nqGgAxC2Z7c7WT1WVtuW+7wa7vauh3mdsk60BRTREcnlHLDoPy+5JxTJrn+wWBzw82vWEMBu7OiPxCcTE8fSC8iiFIGMHkmyczuJtAh9xSSpdzTVWla2Y3T8igQ0N3OlGBRG0/Ql2O38dwOmUwqzDcFT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mbK6qNV4; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1725380107; c=relaxed/simple;
+	bh=xpPrjjx3C5+Im8uDKPe6tjHcImbiqGdfdOEgJ6hTna4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7G7TOm46c6cZVsdJaWVUPE5yCzyUUWDm+xhvqe2OsWpi/tE2/jpzGdfs/vhKmoPCi7oC7jmhryoSSZMFGlsjk2CCNlPc6ugQXmMJTSFT2lk7jWypuZqV+m6+YWBJnbKzAeSMydzKKJTUQszF83QNXVKnJmzq0ISQsnvBAMbee4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WmFFff2k; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mbK6qNV4"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-534366c194fso5071905e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 09:09:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WmFFff2k"
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8682bb5e79so684457866b.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 09:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725379743; x=1725984543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8l/509FpNkymjZk6uQDQhCFKV86rdSFlJhhBluR1lWQ=;
-        b=mbK6qNV4Fi9dqEktBv1jzHT0Mnt0m0mWZTCV1q0uqJpV5Nfuxkm03fVg2NukbcEkgo
-         Ryqsph6TqgcGAJYnwaUgsaFTusB/2a/wgzLMiVo6LobZOGhov+X0Rvn4k/WzqLsFv6lx
-         +HW+fs96QRi3+AuFsADiiXZYyKLE+fHQsFickhgG45QywOFlgfvzRJ0OkcSsCo/PuTWd
-         GY0CT02kV/Sj1hRqWau/JCjgHQE3l1FEZYLRMH7FRhcpRYF7CV5/t4hACP3RF1JvbI+G
-         dtBxWIFph5o8qzQf7WoZZFWmaE9hFTo4bJiDcDcblEQyDJ1uhCAK+sBx0p0fsy4CllxT
-         dSyg==
+        d=suse.com; s=google; t=1725380103; x=1725984903; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ujcJQ5WbiK5TK1a1sgf7j5ujXkTQVZFXM9n+2iP5G8w=;
+        b=WmFFff2kFIq19MtQaDjm0FzF2D+n4UmBArivKNenpVoyPiaLTVuuoy/2JRdmVHz05u
+         Lqa4vliOXLpIra5yAWbRIRmH/gr73eNVqOuCZmERDdoW4IBJPAW0sYaVGWss4Y3rKkFr
+         4krm7cnvbgu1nkic+2VZPaHyF42IWfbWvSKSNHgM6O3W1GyyexRpDg7m2fL5vczsU6T9
+         rrPJgADQIB4TeWtAEmnA82LaI4PPec7TQ4J02+Yu8Ger2/dtigf3afQhVAjjOCTzdvv+
+         35EMIx1mozZG7cBMF6y4hcXC4tVN306+ThGE/zCgjgLD3OTRWnpd8TJymP+El+OaQLAH
+         PeVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725379743; x=1725984543;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725380103; x=1725984903;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8l/509FpNkymjZk6uQDQhCFKV86rdSFlJhhBluR1lWQ=;
-        b=AqAoSdKJuthhNb34IIkPC8W6G6qo46mb1oWJwPxe8vHNS1wl8P9p6cRFodfpw2kLU2
-         oolrpChlKnWtR3PQKUgoWCCDcbwBhTk0IQMEIPbnt9CjS7ret6Xp2jqrYNJOXz+P3zEp
-         ja82fu7TJUoMo/7musKZWY4VZcaa7zlO1f3hF9akgz/P9x1gSzBkx9Ufq4VMT9IcUjjQ
-         cJ1X4+U0A7M4MuW0KnOZY21oYkxolAVfo/ZlugvFjHhMVzKw2GNWcAnFA+NPNBZSxN1E
-         /cx46ZJYu3qoaGg5FQbbnBRhf9xuwPtARvrezVZ8cPRAXePCdD7bPC64+5l3TuxrsrLm
-         7KPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwnbOsUGma8cK37+t0h64MnaM1eqX/5p/doxIydjwna5ZIcCOwN1vm4vaetoqwMe6UaEeYkokVfLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl5gFogfgyTApdOe24RvZzet8Dfko4A0tbmVxDZIwwk5W1e8uY
-	7ZoVqB3rG5zaw8qX6BebfDt9I6vChd5tDfox5hXsodFXE+nZTs4EAaj3C3bJku2r16jhXfvp0JF
-	X
-X-Google-Smtp-Source: AGHT+IHRgADNb3niI6r59DDvi2vKw+KXHb9j7aF21MTBrDxSrH2/p6N4jk8lRMTOk+xwkvlxmsucsA==
-X-Received: by 2002:a05:6512:b98:b0:52f:2adf:d445 with SMTP id 2adb3069b0e04-53546baacdbmr10597606e87.41.1725379743051;
-        Tue, 03 Sep 2024 09:09:03 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898919686bsm693150066b.134.2024.09.03.09.09.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 09:09:02 -0700 (PDT)
-Message-ID: <2e49b73c-c645-446c-8606-7a531e0a74f8@tuxon.dev>
-Date: Tue, 3 Sep 2024 19:09:00 +0300
+        bh=ujcJQ5WbiK5TK1a1sgf7j5ujXkTQVZFXM9n+2iP5G8w=;
+        b=b2OxdGFgbNxaWrB0XQB93korTmDhxz2jeGR0npFRkf0AlUekm9YFU3GXEsaIss2X6p
+         pZ7sBBHL1MOc9slaBp11SGfOsQcclRHTcjF0R7D4FQ8ygKIOTjd/z/jSMQVyzLu0ozIn
+         Bj6B4/Ysj2zV28+0Jatl69bNW+foqF+fwD8UN8EYeaK6ioLqFAhjQ/qSfD4m7ng0h9ga
+         2BG0DaMGX+sCkd2b7kqI/krstwLwB0i0vdOE85NjEufPpHPq/DyxmSsWVfpkqdfrVhB6
+         ibGH8iR4eiZUPpa7qgRncRJj3B2UOdT4sXWJ9EG/nL+AGhBJiu56rVW3H1aoyb8JcGfS
+         ffgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS2hhaUafHAjtUail4gLt1nqliWJ8ENy9ndoVKkMQFFgrakNoRTm5EMAcKcG/J7sI+uXx2jzKOM48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIbaz8USr5v9g2WWxm9qBy4jiEf2Xu/br1JRvhdivSCh7aCtvk
+	XRLaQKgBFwV2X6AKvmkijt3frhJ92d5fsQ7rB2riD+mBt0fjzX+fEF6Y9vqS1R4=
+X-Google-Smtp-Source: AGHT+IGOVI/KlbnVkPKcUFB/WP4ky/V34Mnqxzaki61Es6M5ZEdZH9hu90OMWXXvI1MZc9xKoKdrvw==
+X-Received: by 2002:a17:907:d08:b0:a86:6d39:cbfd with SMTP id a640c23a62f3a-a89fafad393mr618619866b.57.1725380102711;
+        Tue, 03 Sep 2024 09:15:02 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a1dbfba91sm145366666b.225.2024.09.03.09.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 09:15:02 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 3 Sep 2024 18:15:09 +0200
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <Ztc2DadAnxLIYFj-@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+ <20240821001618.GA2309328-robh@kernel.org>
+ <ZsWi86I1KG91fteb@apocalypse>
+ <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
+ <ZtBJ0jIq-QrTVs1m@apocalypse>
+ <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+ <ZtChPt4cD8PzfEkF@apocalypse>
+ <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <202408302225417622f1e7@mail.local>
- <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
-In-Reply-To: <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
 
-Hi, Alexandre,
+Hi Rob,
 
-On 02.09.2024 17:49, claudiu beznea wrote:
-> Hi, Alexandre,
-> 
-> On 31.08.2024 01:25, Alexandre Belloni wrote:
->> On 30/08/2024 16:02:12+0300, Claudiu wrote:
->>> +	priv->rtc_dev->range_min = mktime64(2000, 1, 1, 0, 0, 0);
->>
->> RTC_TIMESTAMP_BEGIN_2000
-> 
-> OK
-> 
->>
->>> +	priv->rtc_dev->range_max = mktime64(2099, 12, 31, 23, 59, 59);
->>
->> RTC_TIMESTAMP_END_2099
-> 
-> OK
-> 
->>
->>> +
->>> +	return devm_rtc_register_device(priv->rtc_dev);
->>> +}
->>> +
->>> +static void rtca3_remove(struct platform_device *pdev)
->>> +{
->>> +	struct rtca3_priv *priv = platform_get_drvdata(pdev);
->>> +
->>> +	guard(spinlock_irqsave)(&priv->lock);
->>> +
->>> +	/* Disable alarm, periodic interrupts. */
->>> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
->>
->> Why do you disable alarms on driver remove? I think you need to add a
->> comment if this is because it can't system up, else this is a bad
->> practice.
-> 
-> The RTC cannot power on the system after a power off. It can't also resume
-> it from a deep sleep state (when only the SoC area where the RTC resides
-> remains power on (there is no way to signal from RTC to the power supply
-> chain that an alarm happened)). It can only wake it up from s2idle mode
-> where all SoC components remains powered on.
+On 14:37 Fri 30 Aug     , Rob Herring wrote:
+> On Thu, Aug 29, 2024 at 11:26 AM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
+> >
+> > Hi Rob,
+> >
 
-FTR, this is still valid.
+...
 
 > 
-> Also, w/o this change the RTC remains blocked under the following scenarios
-> if the interrupts are not disabled in remove:
+> I think simple-bus where you have it is fine. It is really 1 level up
+> that needs to be specified. Basically something that's referenced from
+> the specific PCI device's schema (e.g. the RP1 schema (which you are
+> missing)).
+> 
+> That schema needs to roughly look like this:
+> 
+> properties:
+>   "#address-cells":
+>     const: 3
+>   "#size-cells":
+>     const: 2
+>   ranges:
+>     minItems: 1
+>     maxItems: 6
+>     items:
+>       additionalItems: true
+>       items:
+>         - maximum: 5  # The BAR number
+>         - const: 0
+>         - const: 0
+>         - # TODO: valid PCI memory flags
+> 
+> patternProperties:
+>   "^bar-bus@[0-5]$":
+>     type: object
+>     additionalProperties: true
+>     properties:
+>       compatible:
+>         const: simple-bus
+>       ranges: true
+>
 
-This intrigued me and did some further investigation. I found that
-something is wrong on the driver as described bellow.
+Hmmm.. not sure how this is going to work. The PCI device (RP1) will
+havei, at runtime, a compatible like this:
 
-The failures described in the previous emails were due to the fact that the
-RTC counter clock was requested by the driver as devres managed resource.
-This is the clock that feeds the RTC counting logic.
+compatible = "pci1de4,1\0pciclass,0200000\0pciclass,0200";
 
-With the bellow diff applied on top of this series scenarios 1/ and 2/
-described in the previous email works just fine.
+that is basically generated automatically by the OF framework. So, in the
+schema you proposed above, I can put something like:
 
-For scenario 3/ the system is not powered up (as expected) but there are no
-more failures on the next boots.
+properties:
+  compatible:
+    contains:
+      pattern: '^pci1de4,1'
 
-diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-index f908d2a1017d..c9adcadc58c0 100644
---- a/drivers/rtc/rtc-renesas-rtca3.c
-+++ b/drivers/rtc/rtc-renesas-rtca3.c
-@@ -747,10 +747,14 @@ static int rtca3_probe(struct platform_device *pdev)
-        if (ret)
-                return ret;
+or maybe I could omit the compatible entirely, like in:
 
--       clk = devm_clk_get_enabled(dev, "counter");
-+       clk = devm_clk_get(dev, "counter");
-        if (IS_ERR(clk))
-                return PTR_ERR(clk);
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-iommu.yaml
 
-+       ret = clk_prepare_enable(clk);
-+       if (ret)
-+               return ret;
-+
-        spin_lock_init(&priv->lock);
-        atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
-        init_completion(&priv->set_alarm_completion);
-@@ -783,7 +787,7 @@ static void rtca3_remove(struct platform_device *pdev)
+that seems to refer to generic compatible values.
+In both cases though, I don't see how these binding could work with
+make dt_binding_check, since there's no compatible known at compile
+time (for the first approach), or no compatible at all (the second
+approach).
+Is it intended only as a loose documentation?
+Or are you proposing that for a future new bus (hence with a new, specific,
+compatible) that could be described by the schema above?
 
-        guard(spinlock_irqsave)(&priv->lock);
-
--       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-+       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
- }
-
-Question is: the RTC counter clock should stay on when the driver is
-unbinded, right?
-
-Thank you,
-Claudiu Beznea
-
+Many thanks,
+Andrea
+ 
+> There were some discussions around interrupt handling that might also
+> factor into this.
 > 
-> 1/ Configure wake alarm and unbind the RTC driver with the following commands:
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > unbind
-> # sleep 12
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > bind
-> 
-> When rebinding the re-configuration of the RTC device times out:
-> [  121.854190] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  121.861511] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 2/ Configure wake alarm, unbind the RTC driver and switch to s2idle with
-> the following commands:
-> # echo s2idle > /sys/power/mem_sleep
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/31004ec00.rtc > unbind
-> # echo mem > /sys/power/state
-> # #system is resumed by non RTC wakeup source (as the RTC alarm is not
-> working anymore in this case)
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > bind
-> 
-> The system is not waked up from RTC alarm (as expected) and the rebinding
-> fails again:
-> 
-> [  172.483688] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  172.491003] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 3/ configure the RTC alarm, unbind and power off (with the following commands):
-> # echo +60 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > unbind
-> # poweroff
-> 
-> The system is not started after 60 seconds and at the next reboot the RTC
-> configuration on probe is failing the same:
-> 
-> [    0.292068] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [    0.292182] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> 
-> In all scenarios the RTC is recovered only if removing/re-applying the
-> power to the SoC area where it resides.
-> 
-> These tests were done with the patches in this series and then I tried it
-> with the following diff on top of the patches in this series. The results
-> were the same:
-> 
-> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-> index 822c055b6e4d..720fdac3adc6 100644
-> --- a/drivers/rtc/rtc-renesas-rtca3.c
-> +++ b/drivers/rtc/rtc-renesas-rtca3.c
-> @@ -586,7 +586,7 @@ static int rtca3_initial_setup(struct clk *clk, struct
-> rtca3_priv *priv)
->         usleep_range(sleep_us, sleep_us + 10);
-> 
->         /* Disable alarm and carry interrupts. */
-> -       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
-> +       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
->         ret = rtca3_alarm_irq_set_helper(priv, mask, 0);
->         if (ret)
->                 return ret;
-> @@ -784,7 +784,7 @@ static void rtca3_remove(struct platform_device *pdev)
->         guard(spinlock_irqsave)(&priv->lock);
-> 
->         /* Disable alarm, periodic interrupts. */
-> -       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-> +       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
->  }
-> 
-> Thank you,
-> Claudiu Beznea
-> 
+> Rob
