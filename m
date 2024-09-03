@@ -1,98 +1,152 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454C4626CB
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B95C18732E
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375125; cv=none; b=XB9DQeFDilXGAWfEwPlOGvXQkDz2Eoe0rYxkDEVMVo+36/wBGhQoGES9GV/3rwj59aW7ycSBq9yaoZjim07roPll0kfrWdis5+J0icY9SS9TDs09IqI1sLsaYC6RdorJtJ3vPc61HGT/BVvbsG4fco4TZB00ier8xS3tS6whdPE=
+	t=1725375405; cv=none; b=YO4NZoaV1q/v6we3yIgoS3sSO2YdwIcnkgdJmvdVY8m/VVyUfwMuunLmMblSsgGnRUn8RZIcxhYquGr+yWYFRnVPCyqofl6dTtONeP9eVOxljBZKdUEbuG8llO/2rzHzdRXsqludP7NqfQm/c7LL6O976rbXRq8S5Ic7IjFWaEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375125; c=relaxed/simple;
-	bh=txIaqTC8DhHaj91jCjO8MtFAOGFGFeWEJULdmoawAUA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=loL3Q5kk13rlTV4IxQeRz1rpnXt1pGKUpJNbeH4q+7KZHou0aTIvTgJENGRq1vwEj7cVMPtFzr4H/3fF3Pvbr2MbiDpOW3ahdiRgzWfmClYwXQWnnlgWCMe5Z8KFLpHKTlovolGEgMyBWGwS7+kutdFzY54I/yTp7+bsffPNt9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b015:4053:6b25:396c])
-	by baptiste.telenet-ops.be with cmsmtp
-	id 7qs02D0060nYyzV01qs0cZ; Tue, 03 Sep 2024 16:52:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1slUsv-001zei-9x;
-	Tue, 03 Sep 2024 16:52:00 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1slUsx-003oRw-VJ;
-	Tue, 03 Sep 2024 16:51:59 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.12 (take two)
-Date: Tue,  3 Sep 2024 16:51:57 +0200
-Message-Id: <cover.1725374868.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725375405; c=relaxed/simple;
+	bh=gXdcYhlkFiZc7PZFYt6CuTb/sBzByoIKPWKoUDitZO4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=an2GDVuCeoO333DSfwLs80MDzboKrHjINd9uUseKAnft7imlqSLPQTp2gTCJhvnlC4hcfQAeZsTuHdqZ/FezAX2uAB2OVan/bJKnzlJxJyC8coJFC/BsUBGkeaz2RSA5Sco5+CF+hO4QzaEwIBcdJv/7+j8Fmg3z8OMyVU20db0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q0Tc4FtZ; arc=none smtp.client-ip=209.85.208.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q0Tc4FtZ"
+Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-2f51b67e16dso62855711fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 07:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725375402; x=1725980202; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
+        b=Q0Tc4FtZ9SyE23cE51CxIDm3wr4xpdfEF1VKGG6D4hTRBcgGU5VbqgJQ2ZOvvsiokB
+         O897E9H8Ceu35GO2fLP7wWkVj1zNiOz8o/yzTXtv1IQpcjEu6FZE0i20hK5UhLjGfpm3
+         Tz6y34T9Z+D6FaXMRl6+35GiVoDPpbhYuIjsnFnc64aLPewU1Wpn9QNkXUdtRMzZjRF/
+         UOo6xTuJ2HKJHVHXFdcjiVlLeFiRL5Uvov8jurz90Zh9bm/54N4qQ0PIecWdbt1GRigt
+         wvuLIAD+7FbwJsD2yJkqpyEEpiIUpSI9lBYP8DhbFcnzaN5Kg/pp8wcDzR/7FMWCasNB
+         wjpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725375402; x=1725980202;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
+        b=OIl3F95yHneLH53R3/UOEmEd6nG+OD7Y2wPZJuxJ9BGQUHwQ47QrGCPeM2/7j9P03s
+         nOJplzKEOA1Nc0fg8H8NjxPzp8PKHGAgar3gNlr3m1jaehpV60vi/sJaER3kKxIqoPV+
+         o4MxmdCAMF6/QsgwA2HiGASpQp7+yXmPWKQdFa6PnDLJHY8LdfLEj32ph1xvIbJJG0MS
+         AVHN5Iyu6c3FkgrrhhjqQfw+85Au5qBKspCdP0FRjqpi33MMo/dmi5QFFMhixoHtil7M
+         ea5IbtgzppfacjocZlYR+F4BtmNbmmrH9h+vRKPSSYdpvqYCZLosU7H50jQrmIqXntOF
+         NY4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXokO9s/PiuvRSZ2wRu/AOhQuNTOKmIYhOADJa/p6RwtEsNhewdqGRikQWjK1WK2YqWjtTB6IaAcmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHj6Cc41999ZgAfjSUIsYOYTW7XZtjD2x9J33iUz/QBvmyuYEk
+	LlC2Qe73b0PGMiPeobxY1PXXBSJLzTLCGZAbEsrKcvNAQRjc33NrLxlFshbLC+4=
+X-Google-Smtp-Source: AGHT+IGPXzXKjSyzj6ohNmy2x1Ly5xLLwbpSN9O7C4k6PqMn2bhMNSeS1m3Dv1qGKiKQSC913q2XHw==
+X-Received: by 2002:a2e:4e01:0:b0:2f3:b76e:4983 with SMTP id 38308e7fff4ca-2f64d4aa546mr6486601fa.22.1725375401093;
+        Tue, 03 Sep 2024 07:56:41 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a29bsm6517320a12.17.2024.09.03.07.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 07:56:40 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 3 Sep 2024 16:56:48 +0200
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZtcjsHnIb7iuDfhw@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <ZtHN0B8VEGZFXs95@apocalypse>
+ <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
 
-	Hi Mike, Stephen,
+Hi Andrew,
 
-The following changes since commit 120c2833b72f4bdbd67ea2cf70b9d96d1c235717:
+On 16:21 Fri 30 Aug     , Andrew Lunn wrote:
+> On Fri, Aug 30, 2024 at 03:49:04PM +0200, Andrea della Porta wrote:
+> > Hi Krzysztof,
+> > 
+> > On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+> > > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> > > > The RaspberryPi RP1 is ia PCI multi function device containing
+> > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > > > and others.
+> > > > Implement a bare minimum driver to operate the RP1, leveraging
+> > > > actual OF based driver implementations for the on-borad peripherals
+> > > > by loading a devicetree overlay during driver probe.
+> > > > The peripherals are accessed by mapping MMIO registers starting
+> > > > from PCI BAR1 region.
+> > > > As a minimum driver, the peripherals will not be added to the
+> > > > dtbo here, but in following patches.
+> > > > 
+> > > > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > > ---
+> > > >  MAINTAINERS                           |   2 +
+> > > >  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
+> > > 
+> > > Do not mix DTS with drivers.
+> > > 
+> > > These MUST be separate.
+> > 
+> > Separating the dtso from the driver in two different patches would mean
+> > that the dtso patch would be ordered before the driver one. This is because
+> > the driver embeds the dtbo binary blob inside itself, at build time. So
+> > in order to build the driver, the dtso needs to be there also. This is not
+> > the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
+> > ordered last wrt the driver it refers to.
+> > Are you sure you want to proceed in this way?
+> 
+> It is more about they are logically separate things. The .dtb/dtbo
+> describes the hardware. It should be possible to review that as a
+> standalone thing. The code them implements the binding. It makes no
+> sense to review the code until the binding is correct, because changes
+> to the binding will need changes to the code. Hence, we want the
+> binding first, then the code which implements it.
 
-  clk: renesas: r8a779h0: Add CANFD clock (2024-08-20 09:48:24 +0200)
+Ack.
 
-are available in the Git repository at:
+Cheers,
+Andrea
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.12-tag2
-
-for you to fetch changes up to 3aeccbe08171b79f82fb802393a6324c7b732669:
-
-  clk: renesas: r9a09g057: Add clock and reset entries for GTM/RIIC/SDHI/WDT (2024-09-02 10:15:38 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.12 (take two)
-
-  - Add USB clocks, resets and power domains on RZ/G3S,
-  - Add Generic Timer (GTM), I2C Bus Interface (RIIC), SD/MMC Host
-    Interface (SDHI) and Watchdog Timer (WDT) clocks and resets on
-    RZ/V2H,
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (1):
-      clk: renesas: r9a08g045: Add clocks, resets and power domains for USB
-
-Krzysztof Kozlowski (1):
-      dt-bindings: clock: renesas,cpg-clocks: Add top-level constraints
-
-Lad Prabhakar (2):
-      clk: renesas: rzv2h: Add support for dynamic switching divider clocks
-      clk: renesas: r9a09g057: Add clock and reset entries for GTM/RIIC/SDHI/WDT
-
- .../bindings/clock/renesas,cpg-clocks.yaml         |   8 +-
- drivers/clk/renesas/r9a08g045-cpg.c                |  17 +++
- drivers/clk/renesas/r9a09g057-cpg.c                |  84 +++++++++++
- drivers/clk/renesas/rzv2h-cpg.c                    | 165 ++++++++++++++++++++-
- drivers/clk/renesas/rzv2h-cpg.h                    |  43 +++++-
- 5 files changed, 312 insertions(+), 5 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> 
+> 	Andrew
