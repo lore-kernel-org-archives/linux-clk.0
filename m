@@ -1,135 +1,194 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56231A4E7C
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6E71B12CB
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 10:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359752; cv=none; b=MQ18GWlbnmUXDpe2LJijygPioj3njS8A5vsVy7n/ERr1llhalWgRx4PLCe0aWtXefL7IJbpuGg3M2VtWlVIO36VkshWlxJXWvKWL1T7XN71VhBzEuLkO72mga5ggqFN1mn54XVS7sEkC42Hz9CBUZ6DjIWrwhakEvgt9yD2Bu34=
+	t=1725361101; cv=none; b=gtCOzJNk3sxjt9vrqVgtvEWVylmWzuSWubYaC06v47YroVd0kDFislWIjhvUfMVuprLZdO7SWIARpcsbR9P2qtXdWIP+qx2eoQAOW92NMMFr7Ky4KHxMYfaKuS/NwUXaBBniaMLKQicYdObpLCQg+3qxMbtCG+mkGcTLTO5NyTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359752; c=relaxed/simple;
-	bh=YmkObPnyVEltJM+bKrCa4h0N/EDBel+3Kr+3oHWQ2A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u57zmOZcEpPL33s6XbrWWYChjySfJOH/7IGUqA2P6zpJ7CMo7oIWmVWEBUde5h6fSRdZwU0HKm2jSsbd5MLilTS+U3XSw1wA5huqizkl8bnlVo4Xhn9/mdu1igIo+eo82OIdtQZxn7clf5WycsNxkfbIxxjV2ZWmXTyRj9zhb3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sovQNizJ; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725361101; c=relaxed/simple;
+	bh=G+wfkTxv/p3JhAs8yWro+dghNLKXoq5Zfa8T3z/KDrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CWegbaa1FEb7DhI8bkSQ+oIOpqDHDDJ5LS0iRP8AoIJdZ/z7i7Z6r6YhhTmMQVypyW3gIX+kMOqnD3cp5C4Q24wIA9xkT6vH87A+6XjR2qIb2dVcFBufz12vejLfQu1GqeG9wbkgTPe0iPQ0tyQSQau1WoFBkQb7GI2yz9WaBrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QF44Gsyk; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sovQNizJ"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e179c28d5e8so5355096276.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 03:35:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QF44Gsyk"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bc19e94bdso27563545e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 03:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725359749; x=1725964549; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wk8IQrj3Ag1NuoIr8ToTqjuTDbNQapkqLJ16Fkg4zcI=;
-        b=sovQNizJxr+0yvKgumskp0xKen9pTaJ8GptymK4oIeq42YTMxsgeCYcG7575+Wb6dZ
-         UGtifC4UVeFVq4PFMrcDhsPyqPcsj9miMflt60nthF/GkXBRZYUh1AMUOpdcx7sS5D/q
-         ow1NJ1nGolKafoGzEHAEou4VfOJOyRcGXZmL1HYsSefkDf+fYYH3MT6aPh1crSZ6y+sV
-         S2kuldHCGyJ70u3sz54wPvNFrTeWKFt/k4PxF7Lt5i+OLJSIa24WR2eExCoRbYnaJ58r
-         mS3xkcKpz9v4YbNDRQgea9yxhkEvUyOHZPlwRWjDtUXN/+8tj54bFeXz8eNRp/x13Kv3
-         4yxw==
+        d=tuxon.dev; s=google; t=1725361098; x=1725965898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IiyTYtjACDnUS+yMHRQJxA78DUiZLSpdAQkLFojBlZU=;
+        b=QF44Gsyk1qkIlHRsOoPGAevX5PIlOx6q35ITfgDBRLOvA4s83fI5PFzij4VCz68Ilg
+         CG1UCHqeR+5rB4nQ9y4wvYAQV0ZW/B6WR6ofppY3zSglnl3gAj11N0YFtPIZzUsbVuvX
+         mJrvf8ffU+mRGxh/2Nvsu6XqnF6EKjDgSWi5oVVEbrTUrQ0krUBG9u9tQ7v+9MGqhJvG
+         ChRdSsUXf+IrFfkJFra6UbiYTiCOOdTjakK4EqjNiN475tzrkpRn8Fpo8TzXsI0UJOHP
+         om9b0AzjtoInvvFInwYqExkSB59q3Pp3FVgIsq6QJxLz2MshAaTaVftfcpdStO5jrUh+
+         TOHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359749; x=1725964549;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wk8IQrj3Ag1NuoIr8ToTqjuTDbNQapkqLJ16Fkg4zcI=;
-        b=JPRrkvoJJVItw2C/iJn8wkM66Dd8OKmbL9Zwb85xOs3dTsZ3oDziWfNjB/vXp+8f82
-         vJRptGT9K1bpUdK9usMb0klDPeMjSDAamzMJgzAoXsvomCV7Y6frbNktT0Jl8czBBivp
-         ggwVHCEndNCzwBdtSrilwtN1yiBdsU3QbVRwfcW/zFnJDrWkc200CuTi8y3JGrr7P4gO
-         08oCegQdNu4MJu1IDn3rHO29gCcEYRiRTwQAMcvcS1v7uBle/h4IIZk7sM08dRmrW6A3
-         r+i8d447aBLlp0rzA9WOvZfQRyHFqVxUsTmRpsq1tHtumWM7pWhjTlub+yLAv5Y2DccM
-         x/Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSd6DgR8kyZ8ZcyR/E9Cc2PATGBwP2HVS2L4m2USLwJzxJH91zltOwnbpU5KkL6MKxeo+BWzT5zoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV3CBPw2oe+SpnqORrcyd8vk2ZlXcnueLfmnSMCy9uGD3ruZLi
-	a8Puy+ZE/MC0ixDyTOjBMT+aRSZg6sNUKecVMx6jEZMclY1Jnw5T08vJq+Khu3efMUbH+fY6HME
-	+Iaew5LxnB29P/f0YdWdGhwy0ULzR2sDGE9jMmw==
-X-Google-Smtp-Source: AGHT+IEptjQ9HnzO7IsNO1D9S4qr5WM4xYdZM3VIT60UnRxgn+glo0EzcUHzkrVnacRkJvKM+kyKu9xW5IsYaduxCjQ=
-X-Received: by 2002:a05:6902:120d:b0:e16:55cc:215c with SMTP id
- 3f1490d57ef6-e1a79fe3948mr17521678276.6.1725359748806; Tue, 03 Sep 2024
- 03:35:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725361098; x=1725965898;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IiyTYtjACDnUS+yMHRQJxA78DUiZLSpdAQkLFojBlZU=;
+        b=KJMOxpycjJtBTe+ThPJnO8vUAq2FceiRpwEwG3YHq004Ai0YyfX7h5BCTdyfzcdfIo
+         6zDm3W4i0NX02xpmMFWCrbZWcm9fB76MDp8055SSYo0w07orZtZAymYYEfStWrwjVoGd
+         WPiLF/OUUnNTk+ED/f87gHpdYTmU83eqUtLHpjXUHnCDwtTse2bI9jji/xT3YCHnlm/i
+         iIxbNb2I4o1yqU7E9aduHF5LzzNHh1DFz4fBh5hNjyPQR3oO9hv28XktCP4Q6M3dYyyV
+         piElJyjrU1QMm1YLf6+GAzjA8zlTNM4KpE4Ei7edijVGr8FuOxmNKtbR9eppHvs4Wq44
+         x0VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7h5Klj4Y0xFfNHaNOImnQcNJvQh7MpceIiThCFV13wFgj2Wym4i1/GpYo158MPxWCoJwVi1xuErk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfxJEvUrWi/BN0gKG8EDTInC1hf+rimhBPkfOEVBVGKYZ+ERD8
+	Rr6N2YzbGfCmXUm7nwc0tbiLuzHKj4HX/XYH2oGsNoUgVVIJxltUOFQtjQ0Lo/Q=
+X-Google-Smtp-Source: AGHT+IGznagqoviE6ySUvt6lxPt835b+hPmScaIpmlICIM82eo24CPYzqVSzQJR1lwMuNCXz+hrYhg==
+X-Received: by 2002:a5d:5387:0:b0:374:c69c:2273 with SMTP id ffacd0b85a97d-376dd80faadmr265958f8f.37.1725361097737;
+        Tue, 03 Sep 2024 03:58:17 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb73e20b7sm168108285e9.14.2024.09.03.03.58.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 03:58:17 -0700 (PDT)
+Message-ID: <da4c57ff-de2b-418f-ba2c-e83c1d399b94@tuxon.dev>
+Date: Tue, 3 Sep 2024 13:58:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
  <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
- <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev> <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
-In-Reply-To: <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 12:35:12 +0200
-Message-ID: <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
+ <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
+ <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
+ <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 31 Aug 2024 at 12:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
+
+
+On 03.09.2024 13:35, Ulf Hansson wrote:
+> On Sat, 31 Aug 2024 at 12:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>
+>> [...]
+>>
+>>>>
+>>>> If not, there are two other options that can be considered I think.
+>>>> *) Using the genpd on/off notifiers, to really allow the consumer
+>>>> driver of the reset-control to know when the PM domain gets turned
+>>>> on/off.
+>>>> **) Move the entire reset handling into the PM domain provider, as it
+>>>> obviously knows when the domain is getting turned on/off.
+>>>
+>>> This option is what I've explored, tested on my side.
+>>>
+>>> I explored it in 2 ways:
+>>>
+>>> 1/ SYSC modeled as an individual PM domain provider (this is more
+>>>    appropriate to how HW manual described the hardware) with this the PHY
+>>>    reset DT node would have to get 2 PM domains handlers (one for the
+>>>    current PM domain provider and the other one for SYSC):
+>>>
+>>> +               phyrst: usbphy-ctrl@11e00000 {
+>>> +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
+>>> +                       reg = <0 0x11e00000 0 0x10000>;
+>>> +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
+>>> +                       resets = <&cpg R9A08G045_USB_PRESETN>;
+>>> +                       power-domain-names = "cpg", "sysc";
+>>> +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
+>>> R9A08G045_SYSC_PD_USB>;
+>>> +                       #reset-cells = <1>;
+>>> +                       status = "disabled";
+>>> +
+>>> +                       usb0_vbus_otg: regulator-vbus {
+>>> +                               regulator-name = "vbus";
+>>> +                       };
+>>> +               };
+>>> +
+>>
+>> According to what you have described earlier/above, modelling the SYSC
+>> as a PM domain provider seems like a better description of the HW to
+>> me. Although, as I said earlier, if you prefer the reset approach, I
+>> would not object to that.
+> 
+> Following the discussion I believe I should take this back. If I
+> understand correctly, SYSC signal seems best to be modelled as a
+> reset.
+> 
+>  Although, it looks like the USB PM domain provider should rather be
+> the consumer of that reset, instead of having the reset being consumed
+> by the consumers of the USB PM domain.
+
+The PM domain provider for USB is the provider for the rest of IPs. To work
+like this the SYSC these signals should be handled in the USB domains power
+on/off function. It's not impossible to have it implemented like this but
+it will complicate a bit the code, AFAICT. This will not describe the
+hardware, also.
+
+With the information that we had up to yesterday, the connection b/w HW
+blocks was something as follows:
+
+                 USB area
+              +--------------------------+
+      sig     | PHY -> USB controller X  |
+SYSC -------->|  ^                       |
+              |  |                       |
+              | PHY reset                |
+              +--------------------------+
+
+In this implementation the SYSC signal was connected to PHY reset block as
+it is the root of the devices used in the USB setup and no USB
+functionality can exist w/o the PHY reset being setup.
+
+There is a new information arrived just yesterday from hardware team saying
+this about SYSC signals: "When turning off USB PHY and PCIe PHY, if they
+are not controlled, PHY may break" which may means that it is just
+connected to the PHYs not to the USB area/region or PCIe area/region as
+initially expressed in HW manual.
+
+With that the HW connection b/w the USB devices and SYSC might become
+something like:
+
+                 USB area
+              +--------------------------+
+     sig   +--->PHY -> USB controller X  |
+SYSC ------+  |  ^                       |
+              |  |                       |
+              | PHY reset                |
+              +--------------------------+
+
+I haven't got the chance to test this topology, though.
+
+With this new information would you be OK to still have it as a reset
+signal and connected only to the PHY driver ?
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Did that make sense?
+> 
 > [...]
->
-> > >
-> > > If not, there are two other options that can be considered I think.
-> > > *) Using the genpd on/off notifiers, to really allow the consumer
-> > > driver of the reset-control to know when the PM domain gets turned
-> > > on/off.
-> > > **) Move the entire reset handling into the PM domain provider, as it
-> > > obviously knows when the domain is getting turned on/off.
-> >
-> > This option is what I've explored, tested on my side.
-> >
-> > I explored it in 2 ways:
-> >
-> > 1/ SYSC modeled as an individual PM domain provider (this is more
-> >    appropriate to how HW manual described the hardware) with this the PHY
-> >    reset DT node would have to get 2 PM domains handlers (one for the
-> >    current PM domain provider and the other one for SYSC):
-> >
-> > +               phyrst: usbphy-ctrl@11e00000 {
-> > +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
-> > +                       reg = <0 0x11e00000 0 0x10000>;
-> > +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-> > +                       resets = <&cpg R9A08G045_USB_PRESETN>;
-> > +                       power-domain-names = "cpg", "sysc";
-> > +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
-> > R9A08G045_SYSC_PD_USB>;
-> > +                       #reset-cells = <1>;
-> > +                       status = "disabled";
-> > +
-> > +                       usb0_vbus_otg: regulator-vbus {
-> > +                               regulator-name = "vbus";
-> > +                       };
-> > +               };
-> > +
->
-> According to what you have described earlier/above, modelling the SYSC
-> as a PM domain provider seems like a better description of the HW to
-> me. Although, as I said earlier, if you prefer the reset approach, I
-> would not object to that.
-
-Following the discussion I believe I should take this back. If I
-understand correctly, SYSC signal seems best to be modelled as a
-reset.
-
- Although, it looks like the USB PM domain provider should rather be
-the consumer of that reset, instead of having the reset being consumed
-by the consumers of the USB PM domain.
-
-Did that make sense?
-
-[...]
-
-Kind regards
-Uffe
+> 
+> Kind regards
+> Uffe
