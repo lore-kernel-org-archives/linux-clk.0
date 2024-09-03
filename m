@@ -1,160 +1,324 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010025.outbound.protection.outlook.com [52.101.229.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724CB19CC04;
-	Mon,  2 Sep 2024 20:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725308906; cv=none; b=nuzs90xHmvx8KvrNH1g3oVpMA8QrBlMv9ArJ8OV4sVY78deThWPvReN9eED8S0MtEvOCTk8KqyXHKMYFIBueXAAtkXOf821stVuAWN5qbuopVmhDdxwAbep9wHDEsRP2KIol8LB+N5Q3qgO7q/EKPmTBxmbFLJn9M/4BBlWNUZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725308906; c=relaxed/simple;
-	bh=byvMvMs6cQe+rkDvGuGDD5gUm8DvBPi1Lovd4gjQBhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ejNTgAgW3OAGEmLBz9E2VFn8pIydnhce2qXvC+f+bhvshnQkjb/4P+LkkYexLdASCYxs5VNPnmMuTKq+QbwhhDfkFpAEmhvFuOnYiSKaGfk4x7u0gEIRfxagAEVmWEduXKYoRqjsEcdyzMzmFwp2Jqv9yyDR5gMA7to7nZONV98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F3Qc+8AX; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606851D61B8;
+	Tue,  3 Sep 2024 06:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725346707; cv=fail; b=AfarLzAXTTR3gGaf0cJBD83BXWFl4NAB7A6OPH7rjWKxzIzeWyyCW9VD/LL3md5o+RMaxGqJqGQM0j21oJdm8pFOf+TF6UryTallPe1IHeTZyOg+H8KCm298eYvItzOxh/jAnGQ85teDvwxKhCuYbY0gYy8umi5zPKY+VjNGSis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725346707; c=relaxed/simple;
+	bh=omje5I0/uemsv/t3dPXMFX7YHF59nNHxbsXYRgO2fAc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=M//Yv89LXJRFA0Xh/ol9e1/ZICyeqFWPk4d0blql1GlXr/TX8kbfy3ldmHoXVO3OUuCTD4Ui29ArYZmjOUwsFtjamrT3kPq12OMI8H4+OuQsg9l2B54YgWmChK6aPDdBASDzVeuw9fm2+eRqmDpIJYMThKUzEiuwqVXIMSrI01c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=GjwwOTob; arc=fail smtp.client-ip=52.101.229.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F3Qc+8AX"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0B9FA60002;
-	Mon,  2 Sep 2024 20:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725308901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/acNWIGC7J/l+lCj9xbwfTsap0VDe5s6cnY9+w/1Cgo=;
-	b=F3Qc+8AXy4XVfyxeE/R7AjyxDNhZStf4Ngzq3cE/0udfpTXLq5utZIhTRlno2r5HNxDqFW
-	7FYsHvNI2HirrQv1DaQjwcuBZmNSDzFcz9CxhEiebQYoCy+gfOJ1k0jarbgqFu22bbaOb6
-	tFlKj00ASPoxjX4Lc1JOzAnRHtjPVzDuHY42HxzOtCqemhBOtE7G7Y8LOm1dL2UYQyzxKP
-	0AQEna6l8JcAoX7cFb43qflsYcmmYoMZs5aTfU7KEFdxqlrNUEJ654L+/DOz7negI+iw0D
-	ctLVRyaFGnT/XT/FPCu2zeftLhyP90QGqO6j8prD0p4RtcUoLB+7bMrWA6ja5w==
-Date: Mon, 2 Sep 2024 22:28:19 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <20240902202819e2bf5630@mail.local>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="GjwwOTob"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CH+Kb/GmNKY6pKmGIDng9x+ySfNrWdD9t6/P165+GEQP2jhCK+hCNWTGZ4VMF1k9Eh3vrGZ+AF/hcm151mLkNU8l/ZhXQxRSsSBx7Wl3RHspc+XlAE8UMmEJCHwMDJcjo+hBjeLMFjike3W0GnyfggBnB1eS1cWapP4yu5MlBAYY6J+IvFOHjQow2mc3ltm4/kdl4JexIoT7Nmin/PV8txy23VwJgVo68xArzo4ym6x3wuxbPcjaDB3jJLI3tlHTL39nF0X08NaxIdHjFNaNnDJayybkalQYcP17RyGFciOHcZ921edtnvLhYvmzZpNTL/ocLbvVhT5Ul6daIHsPhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NSz+bcrPCI9ycBf1DlZlA6+9c06Lx42YY1bzF323Jxc=;
+ b=W3L7d+a+f8FkQAuGkBpPvabSyRda1AASIoozwkqGB2M8gi1ym1OG5bpP4XrM2Bhv+JA86td7gNETlcNMiGwDyfV1cCEAEwfNzf8l3i9s1qdE3ePR5C827NqMp3sX/a/6MuLcmumPjhzAbekTDzY/MKJRsxgzoA6bI30+v0SGRN84RDfGUUyGmbCusHNp7CE+lMOrlk2HJKfu7+HHZBxaKHMwiF3vQyROVmS3NBHh/9VgTaqNOD8MLOceO92qZkzDzf9FgssgQKQnBujkrZ1+hU2QIkaoXyP1xl5LdkdPDx2vnykkyoFviSte2v3KQAZ+tU8ySyH8A5KdKc8/RRfbfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NSz+bcrPCI9ycBf1DlZlA6+9c06Lx42YY1bzF323Jxc=;
+ b=GjwwOTobe1zZ4GnoxsMu14csFr4LBfU7QQ0bEzKGCIG6KxYWMnwKchexndDfISlcQc0Z4mfuLR9ZxZYOATwpTZynvvU14TL4+ytFisQfs5/pdUBbV+FgYwOQHutz170Z4lavPWI9If02AtDV4/hoee4wbxv/i5cjtR4tyMl3qes=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS9PR01MB13305.jpnprd01.prod.outlook.com (2603:1096:604:30b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 06:58:15 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 06:58:15 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "geert+renesas@glider.be"
+	<geert+renesas@glider.be>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>
+CC: Claudiu.Beznea <claudiu.beznea@tuxon.dev>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Thread-Topic: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Thread-Index: AQHa+tztyXN6WBwX60SzraGfzO2XvrJFpXxQ
+Date: Tue, 3 Sep 2024 06:58:15 +0000
+Message-ID:
+ <TY3PR01MB11346D59E486D88611E8F254F86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <202408302225417622f1e7@mail.local>
- <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
+ <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB13305:EE_
+x-ms-office365-filtering-correlation-id: 72e97183-5bbd-41f5-1489-08dccbe5c87f
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?8eoQyF/px/x2qGsqCQKbDHt3bwqrEhWpmXB/eSuDC7J4600bARpLIOltx7Nh?=
+ =?us-ascii?Q?5W08VhkbdBQYG7R/JdvKZt3vdY76MYI5EceJBz62C70nJNzK1gveSz7BkqLa?=
+ =?us-ascii?Q?IoK2oRvf2aJOPqLUE2ErK0lE0l7hofgo3hMVQUabo2cyyHcZ0MSZLKOO/VqJ?=
+ =?us-ascii?Q?gySOVsJfzBll0YSPArJy4U+A7WEDD2A2rnoHNjj88VD+u1o3KFiN9bLtA482?=
+ =?us-ascii?Q?op8TmHW8gC6a9Y4HXqEpLfkYp3ZvbBxMlE/pLcEdq3r101Ni/zwwDTtThxHC?=
+ =?us-ascii?Q?aOf18VHOzbaVl5ARfC8EqUYTcji6qJSxAIGaokp2VgZh/jeHJEZbORbp+Z43?=
+ =?us-ascii?Q?dSoOA43I7aZ811uCDJUzgcNahWagUTOKeR6ga3DV6YD13IkOZehRXgGyPgoJ?=
+ =?us-ascii?Q?5/xQbYRz+LM/5FpMYg/wDbTPN1UYCq56pL8BNRCsKk1E45Aw/HQnyoQpTi8f?=
+ =?us-ascii?Q?0uikiMYNjY5hxya/0eR2cAziOltAKaHxDxZlYELagCPnREB9HrSASmIQ2vva?=
+ =?us-ascii?Q?UQirXbne6Gkk7o/xBIaJ0/CYgxxgakzMvNy85uNXPpEFvvc7UrFueaoWbjiV?=
+ =?us-ascii?Q?RoX6B75ANuZLVSl8hZMLuYVZJqwOa7PZT+NRfbMlK0wRc+j4L3GmzgYjmDpg?=
+ =?us-ascii?Q?zufIWxFrMRhRAGkDd5ZnKQ7ijEuFJc/G93+dCJcbYe5AZ6fL8W1fNpUjvGss?=
+ =?us-ascii?Q?R90iVeKGfahh7cqwJhdk8W8IWhH4FmSx9QdYdFUZhx5NrEOTUbT7u59BSm03?=
+ =?us-ascii?Q?BL3Y3hrreTyDWl2lFlpe+N/qtt+7d0v+M77/A1Q8LzPvEQQTIvTg1lraUDSv?=
+ =?us-ascii?Q?rJUSteIRQ9rdn5ejbvaSMBFRg3AMzAX1lAoIYZ2pkDK/8+SPi0gT8xR42v3P?=
+ =?us-ascii?Q?asa25pn8+UP29nQyZbyrRLhSi0R+FHzh26a+RherxnwhrOaZ5RcIoWWTUdsI?=
+ =?us-ascii?Q?HqExh965Rz4hIer+2/n9EQDcZIZbgs9E2oOrtzmoO7Ob3DRgOTDHhcwtholU?=
+ =?us-ascii?Q?7g/OI0+FRy1mPIo7vzQ6PHb9FJE/14NOPo4pbYFMxCHwKmqHbdiXbFgLnjUr?=
+ =?us-ascii?Q?6DOYYlM62fE42KHYV3hIqFhMBSZE6etl+t4unWaTPJwDXGn1Cz01fe+OHw3s?=
+ =?us-ascii?Q?EKzDP7QVeocD3N1/lW6zeBAwhPLnYDkw7Ldf9l+8i+pbngth+px07JszAe6l?=
+ =?us-ascii?Q?Fe7oDPsG+b9zzQAwffbalWtdDEtjzcHhh03VWmvTYLtGVi1YNEW3OZtd1Q0K?=
+ =?us-ascii?Q?9YHtNKnDUR6pZ5ru8p1vvlmAA6glCMeulfH/jFcglR4x7GmmlpNuwCAzTdPq?=
+ =?us-ascii?Q?6Mo/vhRAOBeNVuAzGphbSslpBY3bFFsYnwRdcSQb1CyJrVjzur4+eJebwXwC?=
+ =?us-ascii?Q?X2M3IJfB1Hpl+ei2WIDTanSkob2k?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?8gi6i3k0dcLwdGTUqWwlpVZ8Y9IJlLYVzvPUDLquk//g+Tgki+TahMqhhR3i?=
+ =?us-ascii?Q?mrkQzQZkjAULGV0u2C5oISOoExvlrJDw8cYujBXYJ6Z4iFJ/fGSXKMxOcZbD?=
+ =?us-ascii?Q?3tS53TQevZd6TAE0ddCu73k59/4vF4I09zj2Yl61R/qtxA0g7BgbCyxMtEuZ?=
+ =?us-ascii?Q?zbhGOF9Gd/i2Rlw4lGVFgwSf73TYhHpYbVnA+1pyk3yJmDCtq20zSGAqp4F1?=
+ =?us-ascii?Q?uJKsHQGzrThTK0W6OKhdSbb/KE6lkC2b08U1ywo9u9V7440iZwsgtE4TGwxE?=
+ =?us-ascii?Q?RC/dbEYaLzsQrHpXkVPvsNDSfPdRni1QFFjwVHjI0vR4XwCDjkfPxFbKVsN5?=
+ =?us-ascii?Q?DaLVFP3neJGXxiFWqwkZRrcbLR4ijxGd583fWfXOH8E+P38nhdjQVjDuGF0v?=
+ =?us-ascii?Q?3Vhuik/2vhan9nZwmMCe/FOQ4sd+7ZYcjGOK5LXBMEfp04+nMObw5j4N3kr8?=
+ =?us-ascii?Q?T4EJGOfcN/n4E6QFW3sET4ymUvHrLciZgJDPlJWKeNzlgVHACg+bwePR5Ub+?=
+ =?us-ascii?Q?1ZSJyakYbnhC7f5dTsWdt+Ik+rxs7ua6eMrmMCGj+sBj4KCuAljSoivoFpLQ?=
+ =?us-ascii?Q?mjCJ5cLbwJjyUfR9U4g1pODlXbIbZja3l5QtC8OuWhWGNzZ25G8cTEROHhDo?=
+ =?us-ascii?Q?VRsbq9pHNWE3Dtt2H6Lq9+YYgse4P1A73YkMXu7ZP6ZN8sifA5wLEOhGbjFE?=
+ =?us-ascii?Q?UDjeC534+q3ILx3VieC4BOPjDBjl4DbCLSOfVvjgYDSH4ERtE85Kpd9rp17K?=
+ =?us-ascii?Q?bHxnZ9s37OLWl200o4mHNwyQ7ctmYrSX5Uxlpm81TzdWKHh1Y9WwFHyjmdQg?=
+ =?us-ascii?Q?kbkfVcmu5Nb9L4Dx5Q9AWIuJ9jYuncD0NZjJNJQU3gFuLIpCdOa70QYUIupn?=
+ =?us-ascii?Q?HGbnq7PE3AMpHKjeAVDWS073kMovIZgui0E8emBfqoa1MGsyRNvVg7QRyy7F?=
+ =?us-ascii?Q?MDO1flxUqvLu9Xqojynv4fOR4OPgm+bwOiAM9kiRsvWzxCwKZmH+bfa6W38j?=
+ =?us-ascii?Q?SWuklz6U8DZJSfMw8mRl+9PbiYZWB+r6bZCip8L9ilTlg+gKKWWIq9ctcPet?=
+ =?us-ascii?Q?qqmr6YHv3+uIlHPJGFuMAsUitmS9ffLy3eaLWb9RPnPn7qCJq2eZkXB7szZa?=
+ =?us-ascii?Q?NlKFWJfSzqT9+weHDkee1KsgWpakwBx8+nZf2eIo12dUjCfMS48rePSvLsqc?=
+ =?us-ascii?Q?7dXsdqAo8ExqsbjM5U1NST6TrB/dMUTQwsIYWdXtKmBY9SHg6jg9lCo1jsrC?=
+ =?us-ascii?Q?kqlxNVW/Ez8R2c2tZnLbJDj84jDBCkf7RLOVvkGCZ/voJmZ4euqbDJ1YKylO?=
+ =?us-ascii?Q?CkqQL9XxX7GFe5fikrqSC5NyxUa7Qz8X2ZDAhoMW+SfqWDTxgjthdp4c9qP6?=
+ =?us-ascii?Q?4xTiyyrq4dyU+eagRK6tOHvjbyF9XZ/kwTXo2XLu/nRZZF18aqJrBW+H6dFW?=
+ =?us-ascii?Q?ogfLcMfiq5+4zuIjXhQKMMt9fEimQ2TnyElW1JPBHiKDkNM3DiF0lSM1prEs?=
+ =?us-ascii?Q?cYjSTuRgDCG0n+wRC8bqnt9EYPRC0d3PwBZWI3Nt5cfEk1CsoGAyHvRE6G77?=
+ =?us-ascii?Q?bmszLLrgRiVbEyfgGXvcAw7AuIo6lLW33ZGYDAuXmWiAFJFEEue+zpOSj+2k?=
+ =?us-ascii?Q?RQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72e97183-5bbd-41f5-1489-08dccbe5c87f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 06:58:15.0992
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Tm4IjhCT3zyRDlolfLwLl9jD00AbVb8l9TlCuU7VQgYp8lsgkAfijY+FJaXOHaBAwKBuNEKEC8C6vB7g4sKiFTclTgeYAxfBogb+gntyhto=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB13305
 
-On 02/09/2024 17:49:14+0300, claudiu beznea wrote:
-> >> +	/* Disable alarm, periodic interrupts. */
-> >> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-> > 
-> > Why do you disable alarms on driver remove? I think you need to add a
-> > comment if this is because it can't system up, else this is a bad
-> > practice.
-> 
-> The RTC cannot power on the system after a power off. It can't also resume
-> it from a deep sleep state (when only the SoC area where the RTC resides
-> remains power on (there is no way to signal from RTC to the power supply
-> chain that an alarm happened)). It can only wake it up from s2idle mode
-> where all SoC components remains powered on.
-> 
-> Also, w/o this change the RTC remains blocked under the following scenarios
-> if the interrupts are not disabled in remove:
-> 
-> 1/ Configure wake alarm and unbind the RTC driver with the following commands:
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > unbind
-> # sleep 12
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > bind
-> 
-> When rebinding the re-configuration of the RTC device times out:
-> [  121.854190] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  121.861511] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 2/ Configure wake alarm, unbind the RTC driver and switch to s2idle with
-> the following commands:
-> # echo s2idle > /sys/power/mem_sleep
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/31004ec00.rtc > unbind
-> # echo mem > /sys/power/state
-> # #system is resumed by non RTC wakeup source (as the RTC alarm is not
-> working anymore in this case)
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > bind
-> 
-> The system is not waked up from RTC alarm (as expected) and the rebinding
-> fails again:
-> 
-> [  172.483688] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  172.491003] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 3/ configure the RTC alarm, unbind and power off (with the following commands):
-> # echo +60 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > unbind
-> # poweroff
-> 
-> The system is not started after 60 seconds and at the next reboot the RTC
-> configuration on probe is failing the same:
-> 
-> [    0.292068] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [    0.292182] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> 
-> In all scenarios the RTC is recovered only if removing/re-applying the
-> power to the SoC area where it resides.
-> 
-> These tests were done with the patches in this series and then I tried it
-> with the following diff on top of the patches in this series. The results
-> were the same:
-> 
-> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-> index 822c055b6e4d..720fdac3adc6 100644
-> --- a/drivers/rtc/rtc-renesas-rtca3.c
-> +++ b/drivers/rtc/rtc-renesas-rtca3.c
-> @@ -586,7 +586,7 @@ static int rtca3_initial_setup(struct clk *clk, struct
-> rtca3_priv *priv)
->         usleep_range(sleep_us, sleep_us + 10);
-> 
->         /* Disable alarm and carry interrupts. */
-> -       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
-> +       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
->         ret = rtca3_alarm_irq_set_helper(priv, mask, 0);
->         if (ret)
->                 return ret;
-> @@ -784,7 +784,7 @@ static void rtca3_remove(struct platform_device *pdev)
->         guard(spinlock_irqsave)(&priv->lock);
-> 
->         /* Disable alarm, periodic interrupts. */
-> -       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-> +       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
->  }
+Hi Claudiu,
 
-Thanks for the detailed explanation. Can you add a small comment, I
-really want t avoid people cargo-culting this behavior as this has
-already been the case.
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Friday, August 30, 2024 2:02 PM
+> Subject: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb: D=
+ocument VBATTB
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC, the t=
+amper detector and a small
+> general usage memory of 128B. Add documentation for it.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>=20
+> Changes in v3:
+> - moved the file to clock dt bindings directory as it is the
+>   only functionality supported at the moment; the other functionalities
+>   (tamper detector, SRAM) are offered though register spreaded
+>   though the address space of the VBATTB IP and not actually
+>   individual devices; the other functionalities are not
+>   planned to be supported soon and if they will be I think they
+>   fit better on auxiliary bus than MFD
+> - dropped interrupt names as requested in the review process
+> - dropped the inner node for clock controller
+> - added #clock-cells
+> - added rtx clock
+> - updated description for renesas,vbattb-load-nanofarads
+> - included dt-bindings/interrupt-controller/irq.h in examples section
+>=20
+> Changes in v2:
+> - changed file name and compatible
+> - updated title, description sections
+> - added clock controller part documentation and drop dedicated file
+>   for it included in v1
+> - used items to describe interrupts, interrupt-names, clocks, clock-names=
+,
+>   resets
+> - dropped node labels and status
+> - updated clock-names for clock controller to cope with the new
+>   logic on detecting the necessity to setup bypass
+>=20
+>  .../clock/renesas,r9a08g045-vbattb.yaml       | 81 +++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08=
+g045-vbattb.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vb=
+attb.yaml
+> b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+> new file mode 100644
+> index 000000000000..29df0e01fae5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.y
+> +++ aml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/renesas,r9a08g045-vbattb.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas Battery Backup Function (VBATTB)
+> +
+> +description:
+> +  Renesas VBATTB is an always on powered module (backed by battery)
+> +which
+> +  controls the RTC clock (VBATTCLK), tamper detection logic and a small
+> +  general usage memory (128B).
+> +
+> +maintainers:
+> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: renesas,r9a08g045-vbattb
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: tamper detector interrupt
+> +
+> +  clocks:
+> +    items:
+> +      - description: VBATTB module clock
+> +      - description: RTC input clock (crystal oscillator or external
+> + clock device)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bclk
+> +      - const: rtx
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
 
+Not sure, you need to document "PD_VBATT" power domain=20
+as per Table 41.2, this LSI supports 3 power domains(PD_ISOVCC, PD_VCC, PD_=
+VBATT)
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Power Mode PD_ISOVCC PD_VCC PD_VBATT
+ALL_ON      ON          ON    ON
+AWO         OFF         ON    ON
+VBATT       OFF         OFF   ON
+ALL_OFF     OFF         OFF   OFF
+
+PD_VBATT domain is the area where the RTC/backup register is located, works=
+ on battery power when the power of
+PD_VCC and PD_ISOVCC domain are turned off.
+
+Cheers,
+Biju
+
+> +
+> +  resets:
+> +    items:
+> +      - description: VBATTB module reset
+> +
+> +  renesas,vbattb-load-nanofarads:
+> +    description: load capacitance of the on board crystal oscillator
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [ 4000, 7000, 9000, 12500 ]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - power-domains
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    vbattb@1005c000 {
+> +        compatible =3D "renesas,r9a08g045-vbattb";
+> +        reg =3D <0x1005c000 0x1000>;
+> +        interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+> +        clock-names =3D "bclk", "rtx";
+> +        #clock-cells =3D <1>;
+> +        power-domains =3D <&cpg>;
+> +        resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
+> +        renesas,vbattb-load-nanofarads =3D <12500>;
+> +    };
+> --
+> 2.39.2
+>=20
+
