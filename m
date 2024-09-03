@@ -1,234 +1,200 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1BB1CEABC
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 09:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95281A0BD1
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 10:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355989; cv=none; b=on4kzLELJgiQ102AA93UrTIgR+X18UYm4N2xuAXpS/swU90BwK06j8Gt5+nRbOTGOK1siyv5BMuY6xtRgodwU2ruzKyTfPTWX7jZNPEYkpZXEkYIEIC+HMSovpDRQr4CGXp9TEIOS9E1QvjykAnpYjMElvbzsSilUD9XRIBhDHg=
+	t=1725358790; cv=none; b=NzvZ4momxW4j+03HUf5XiJGx7O2xm/GkzEBVWapWYGSPmJOO7oj9NCjkHVex3seYgu58ZZhQXzN5nHZtWaPzjV0iPqCzeSNffTBZa8uJ6P6iXDZTJCmMmx1Hyle0wpp6uFSu43HTBWWYwoWgX4op8BsWPQSpJP9haiWpYtCJ5wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355989; c=relaxed/simple;
-	bh=9bwQymfzf4ndqd3FHXuhSQAaB8hV+38lgAKZNuAsONE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nB+5bGF4uMg5U2ichV4YjCcEz9n6efzNtDkBP+83RrnoqFZLHgdnQY+z/BTc4pAWSp4OGKgNL01eTYHqyB1nh+sZ7Ql49hXswg47eUFBIS+qCSjUrfZOO66Fmg/IDr++NZW7JlwDaioRLLnX7LfZQ23auj5Z1k4RDPkSRse+aC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ID+2qPcP; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1725358790; c=relaxed/simple;
+	bh=C8KF0NATt/6MEKo6hjD8oYxBGb+BnkEDDEBROE2tMCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkCQGToe5YYtDgnibE3R5l6jj/QsGtWoNmQzbXQzLk2m9oWXRVcaOxaSQLHP6TrSPz0i1W6OHhTTFkg0CfGGKi+G3xG9qA92VEAwVzQdO6OWu8OwGR3pVJfu1kChdUIO36jXVhnB0/DnMtNpEmewKz37WntSDPiK9kdlKXY2ZvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OFxJCAnc; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ID+2qPcP"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8692bbec79so569008866b.3
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 02:33:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OFxJCAnc"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53345dcd377so7108444e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 03:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725355985; x=1725960785; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wTnKFrfUmE/uIkrL7Z9DoBSa27AtxRfrH2Z2SWNCR6U=;
-        b=ID+2qPcPviliUAh87/JIQZz+GwIz0+ikXhuwcYGZa9KU6XMlIU8hFqVZRSbEdsPIqr
-         MZ78jllU9dwC2lQ7yQsdVW9FRGjchQFvttzbA8u9FExn48Ek0g8SwUcTUp6kABIsboFJ
-         p4N4aWiEW0akaDfCUe+a/XbTz0mC65VUvR6UxL93A7ImF5ivD7UTiuPVUm1cGNzWM514
-         xPQfTF0sp6IBRDO/nNmPZd3k8qjC1RGxuwvbITv5tPpgzgva7ucgxfmgn98mN7dhFPnC
-         AOkbFRyJv6vQJSMupMAO1d7rVN2dxZAPCccFCd6xrJi3fMINK4Xy6po0g50gS0w3rNZT
-         0yig==
+        d=tuxon.dev; s=google; t=1725358787; x=1725963587; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iJS4mKwDt71f+czvCGcc6KmwF1qHOE0EcsdjnmVJivo=;
+        b=OFxJCAncAWZH82ldEgVo3pSwlwXgGZ6kPzJIcnSj0b2oRNk4qg46x0VhvupnrCk97w
+         LmIOT0HFm4ZDSTe7IIKcY5rlfUfgTjggUqQLU1IObU8a3uZSgnTOTZwAra0kwd17wyqx
+         Hnb4PDBG3NWND+zyFG/j0eaUHKmabelAToIS1nT57HQga7sPC/jSccWAG5gAkT5XjFz7
+         m1dQl6Oef4O+40Tqu+mjNXTqOhZcQHvcGJtxy4mTadb6kMsxxGdf5YHWrmANnhmNUDyF
+         eGFXbgaywzYAvuEr3bwjQ1jWejN6QWR6BzlaWBRFGG80dRYbQeKEYTNqhStI/mLzTwJd
+         uJhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725355985; x=1725960785;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1725358787; x=1725963587;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wTnKFrfUmE/uIkrL7Z9DoBSa27AtxRfrH2Z2SWNCR6U=;
-        b=GFlldQEnkbbaUng7f3Ptd8NjNYnrje0KaqcQYkgACPz7pc9qYwhERb20mS2BjjnAee
-         R/o/uYyS5/55eLh9qt0LMM8X/jMGBe7u7XTTBN8nRvm59+vSNY6/bY1Ws/LMyevtEtQz
-         eUscnhj8agxhK43ZDszhphKflp+N8C71CXHEbjotgUP/V8h0g9p2D1D84fkxlxAjjFum
-         QjsgNlb0Lzs/KB3vw7CRs5Cb0uP1cjGEXaKRIX8gBaL+WT10OhkC5MnM4xVu1gGgXwpG
-         uHKFGSaYWEq+l5JmWCZV802UxmEs67M9MQ0DBUeZA+D6kzkrE/iBhLBiK7VzWqkXWp7e
-         41QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhOvtBSX1Pz3botBm8cPELajX0jqqfmVV5lKMUbH3Kg+fE00AK+7t+jEAC5pz+Qov5l4w5Ju7LFjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi5808tOxiD6Zlbhqrg5+5W/aa8svezn1qHtClFux6Esn0Z92V
-	5Q2hjgU6SRXbfO/WYUFJBnxJuwPpIeMYMImUWTokZVvtAU4SE3jWr7rhyNr9J4o=
-X-Google-Smtp-Source: AGHT+IF1reVINALdSgJc0RMsY6rt9TxEJ4rR+Xojf3y9r57wj6wnX0V9PBsi2NJ940berEZ0OfsA7Q==
-X-Received: by 2002:a17:907:72c7:b0:a86:a30f:4aef with SMTP id a640c23a62f3a-a89a35dee4cmr901597466b.22.1725355985011;
-        Tue, 03 Sep 2024 02:33:05 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988bdcf57sm659603066b.0.2024.09.03.02.33.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 02:33:04 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 11:33:12 +0200
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <ZtbX2NZ6A6ATqQLh@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org>
- <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse>
- <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
- <ZtChPt4cD8PzfEkF@apocalypse>
- <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
- <20240903110953.2b1f55b6@bootlin.com>
+        bh=iJS4mKwDt71f+czvCGcc6KmwF1qHOE0EcsdjnmVJivo=;
+        b=M+XeiXiR+uRS0CVeJe7U0Lpe2zP9bogbPQ14Ly8YJ7tTSAcO9vaDyO5fajTStRabXa
+         Ibq9hCKOyxLIoP3zWXuko933VDmIh3hLE5x3NsCr2xPizGeObP1ZrRCCjQXKWSVZYWp6
+         +sVAKYy/CkxGrr8AZU3ImiCVIIHaXn82X4DUrg+2mTvU4jV2caPE4okibqcNg0YlqFwA
+         hWu6MMFhYAGE1iuoFF+cHRjtsBnPam0Lx1G/e5EFAw1wU+1O+b72RJGwCOFK6Iil7n25
+         ZidPThjgsfXrdltCLBhO9cQkrY4zLHs3mD+j2+O/V2jT0wE8gVlY2/1Ov6l3yTpbISDC
+         j8tA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLL2iTvptLS9a/kSh6dI2dQxkQuMJJGoTFesYUc2BGo1fGqFCJJGI+VEQLa6a3jfSfJIDqFtrqF4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl4t4v5bO3Y5KJZpsKIafvWQ6bll8d2eS19mRBT5FCLeGKwHeB
+	nP6B7ttCgx9eS2DgOcWSrVdzFNpk+eckfVqHZDHVs0Tg5gSSmd/W5RzxG9lzoqo=
+X-Google-Smtp-Source: AGHT+IEls7cIQ+6hQSbZxyc8bV5YfWpE5Og0ZDGcEK0Z3VxswtkW6lt0WU0csWHFdZCyWxXy9FAPkw==
+X-Received: by 2002:a05:6512:108c:b0:52e:7125:c70a with SMTP id 2adb3069b0e04-53546b93fd9mr8417306e87.47.1725358786595;
+        Tue, 03 Sep 2024 03:19:46 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb0e5sm675067666b.12.2024.09.03.03.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 03:19:46 -0700 (PDT)
+Message-ID: <4cb2f788-1ba6-40f6-a48d-1fd2e5293aa8@tuxon.dev>
+Date: Tue, 3 Sep 2024 13:19:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903110953.2b1f55b6@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
+ "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
+ <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
+ <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
+ <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Herve,
 
-On 11:09 Tue 03 Sep     , Herve Codina wrote:
-> Hi,
-> 
-> On Fri, 30 Aug 2024 14:37:54 -0500
-> Rob Herring <robh@kernel.org> wrote:
-> 
-> ...
-> 
-> > > this view is much like Bootlin's approach, also my pci-ep-bus node now would look
-> > > like this:
-> > >  ...
-> > >  pci-ep-bus@0 {
-> > >         ranges = <0xc0 0x40000000
-> > >                   0x01 0x00 0x00000000
-> > >                   0x00 0x00400000>;
-> > >         ...
-> > >  };
-> > >
-> > > and also the correct unit address here is 0 again, since the parent address in
-> > > ranges is 0x01 0x00 0x00000000 (0x01 is the flags and in this case represent
-> > > BAR1, I assume that for the unit address I should use only the address part that
-> > > is 0, right?).  
-> > 
-> > No, it should be 1 for BAR1. It's 1 node per BAR.
-> 
-> It should be 1 node per BAR but in some cases it is not.
-> 
-> Indeed, in the LAN966x case, the pci-ep-bus need to have access to several
-> BARs and we have:
 
-I second this, on RP1 there are multiple BARs too, but for this minimal
-implementation we need only one. Splitting them in one bus per BAR or
-merging them with multiple ranges entries depend on whether the peripherals
-can access different BARs simultaneously. Besides this contraint, I would
-say both approach are viable.
+On 02.09.2024 13:47, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Monday, September 2, 2024 11:41 AM
+>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+>>
+>>
+>>
+>> On 02.09.2024 12:18, Biju Das wrote:
+>>>>>>> Do you have any plan to control this power transitions(ALL_ON to AWO and vice versa) in linux?
+>>>>>> As you know, the RZ/G3S USB PM code is already prepared. This is
+>>>>>> also configuring these signals when going to suspend/exiting from resume.
+>>>>>> W/o configuring properly these signals the USB is not working after a suspend/resume cycle.
+>>>>> One option is to handle SYSC USB PWRRDY signal in TF-A, if you plan
+>>>>> to handle system transitions
+>>>> there??
+>>>>
+>>>> As I mentioned, the settings in these registers may be changed by intermediary booting
+>> applications.
+>>>> Depending on that, Linux need to control it also on probe for USB to
+>>>> work (it should be the same with PCIe, these signals seems similar from HW manual description).
+>>> You mean system transition settings will be override by U-boot, so Linux needs to restore it back??
+>>
+>> It was talking about booting...
+> 
+> I am also referring to boot. Boot starts with TF-A and it has a system state.
+> 
+>>
+>> You proposed to handle SYSC signals from TF-A in a discussion about system power transitions:
+>>
+>> "One option is to handle SYSC USB PWRRDY signal in TF-A,  if you plan to handle system transitions"
+>>
+>> (I was guessing the "system transition" statement there refers to power states transitions, ALL_ON <->
+>> AWO/VBAT)
+> 
+> That is correct.
+> 
+>>
+>> and I gave the booting process as a counter example: if we handle it in TF-A it may not be enough as
+>> these signals might be changed by intermediary booting applications (e.g., U-Boot).
+> 
+> Why should U-boot override, system state signals such as USB PWRREADY? Can you please give an example.
 
-> 	...
-> 	pci-ep-bus@0 {
-> 		compatible = "simple-bus";
-> 		#address-cells = <1>;
-> 		#size-cells = <1>;
-> 
-> 		/*
-> 		 * map @0xe2000000 (32MB) to BAR0 (CPU)
-> 		 * map @0xe0000000 (16MB) to BAR1 (AMBA)
-> 		 */
-> 		ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
-> 		          0xe0000000 0x01 0x00 0x00 0x1000000>;
-> 	...
-> 
-> Some devices under this bus need to use both BARs and use two regs values
-> in their reg properties to access BAR0 and BAR1.
-> 
-> 
-> > > > > > The assumption so far with all of this is that you have some specific
-> > > > > > PCI device (and therefore a driver). The simple-buses under it are
-> > > > > > defined per BAR. Not really certain if that makes sense in all cases,
-> > > > > > but since the address assignment is dynamic, it may have to. I'm also
-> > > > > > not completely convinced we should reuse 'simple-bus' here or define
-> > > > > > something specific like 'pci-bar-bus' or something.  
-> > > > >
-> > > > > Good point. Labeling a new bus for this kind of 'appliance' could be
-> > > > > beneficial to unify the dt overlay approach, and I guess it could be
-> > > > > adopted by the aforementioned Bootlin's Microchip patchset too.
-> > > > > However, since the difference with simple-bus would be basically non
-> > > > > existent, I believe that this could be done in a future patch due to
-> > > > > the fact that the dtbo is contained into the driver itself, so we do
-> > > > > not suffer from the proliferation that happens when dtb are managed
-> > > > > outside.  
-> > > >
-> > > > It's an ABI, so we really need to decide first.  
-> > >
-> > > Okay. How should we proceed?  
-> > 
-> > I think simple-bus where you have it is fine. It is really 1 level up
-> > that needs to be specified. Basically something that's referenced from
-> > the specific PCI device's schema (e.g. the RP1 schema (which you are
-> > missing)).
-> > 
-> > That schema needs to roughly look like this:
-> > 
-> > properties:
-> >   "#address-cells":
-> >     const: 3
-> >   "#size-cells":
-> >     const: 2
-> >   ranges:
-> >     minItems: 1
-> >     maxItems: 6
-> >     items:
-> >       additionalItems: true
-> >       items:
-> >         - maximum: 5  # The BAR number
-> >         - const: 0
-> >         - const: 0
-> >         - # TODO: valid PCI memory flags
-> > 
-> > patternProperties:
-> >   "^bar-bus@[0-5]$":
-> >     type: object
-> >     additionalProperties: true
-> >     properties:
-> >       compatible:
-> >         const: simple-bus
-> >       ranges: true
-> > 
-> 
-> IMHO, the node should not have 'bar' in the name.
-> In the LAN966x PCI use case, multiple BARs have to be accessed by devices
-> under this simple-bus. That's why I choose pci-ep-bus for this node name.
->
+I didn't say *should* but *might* and I was referring to a hypothetical
+situation where any used application (bootloader) might trigger this signal
+for whatever reason. My point was to let Linux to handle all the settings
+that it can do for a particular functionality. The resisters in SYSC
+address space controlling these signals are accessible to normal world
+compared to others in the SYSC address spaces.
 
-Agreed for your scenario. Anyway, since the dtbo and driver are shipped together,
-we are free to change the name anytime without impacting anything.
+> 
+>>
+>> To conclude, there are 3 scenarios I see where these signals need to be
+>> handled:
+>> 1/ booting 
+>> 2/ suspend to RAM
+>> 3/ driver unbind/bind
+> 
+> --> It should be OK as linux is not handling USB PWRREADY signal.
+> 
+>>
+>> In case of booting: if we have TF-A to set signals there might be intermediary booting applications
+>> (e.g. U-Boot) that set these signals also. If it leaves it in improper state and Linux wants to use
+>> USB then the USB will not work (if Linux doesn't handle it).
+> 
+> That is the problem of U-boot. U-boot should not override system state signals such as USB PWRREADY.
 
-Many thanks,
-Andrea
- 
-> Best regards,
-> Hervé
+U-Boot can also use USB as well.
+
+> 
+>>
+>> In case of suspend to RAM: as TF-A is the only application in the suspend to RAM chain, it should work
+>> handling it in TF-A.
+> 
+> That is correct, TF-A should handle based on system state.
+> 
+>>
+>> In case of unbind/bind: currently we don't know if these signals introduces any kind of power saving
+>> so asserting/de-asserting them in Linux may be useful from this perspective, if any.
+> 
+> These are system signals, according to me should not be used in unbind/bind.
+
+It can be done whatever way. I would just prefer to work for all scenarios.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> I may be wrong.
+> 
+> Cheers,
+> Biju
