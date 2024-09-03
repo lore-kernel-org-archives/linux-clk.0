@@ -1,182 +1,273 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C230154426
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49DC13E025
+	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 14:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372502; cv=none; b=nM9NRfDWlW2fgEJRp2sOLobr3+YbrESWdHrwLfG+AOFX2iPBYIVEBG7HduNCLrm/G1tuiN9l/q6wAiKklOwrhH5Jeidm+8TkjYgCGvpQVm2baovnNO3WaL4Wl3XV9I917UqIB8iemoCOQU78bDpVi2Krd0dMvV/xFpAwqAu4Dg0=
+	t=1725374771; cv=none; b=DXbtcpFXZYtynwNXeMlDRTW7lkxp/EmoMbrAcPg8QuWKjljfFeggigrCB0eXIiPfuY36Aji2GqbEqVb69a56VpwUva5jdWA8c6CL30I2EH5UOwi9Lqn5QjGJpG4WRHU4Ce+SpzfgZZpRCnDUyMAe7MsP1tdtKxOZT3xIZjZ4m4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372502; c=relaxed/simple;
-	bh=PYDFmhH004F05lzTv1GKSY6wqwPlgkWOeG78AnecACA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PlwuVb8735lyVQWlv9/cTS3VTanS/dqgSKntvsXJlu48gBTfx2Dz/2dv3V1Da8ckCCizdMj4OEoDDta/qWmUUIsmIA7hzbEklfTajRkbyxyMAoBjERCcaUOJG1LS/likPu9rWwi3RVUeMUn6DsK3RxSEuVzG5VUtQq32n/yzgW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K7hw1Bbi; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725374771; c=relaxed/simple;
+	bh=Z4BjGtamMnnJf4aAKLMsPWYV6C8APwGl9my/5sXf9NI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=luxWCSupWFSOGiyAjrnqZPEGhtMWzimAiSX8gZu/5YsPSbOpVoMuBZrX4/cfs6LC9g9C1Tkulq9PQGf18jicx6wYIN7Pp2QT0aVoXKFCWy4QAHBI3j2bIWn73XxPBx3X1GMfDGjxDI19ELd2ilV/iKR7bZTs812e/4BU+wQilOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JHyIPsv5; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K7hw1Bbi"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6d74ff7216eso18274427b3.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 07:08:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JHyIPsv5"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f40a1a2c1aso51940321fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 07:46:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725372499; x=1725977299; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5ZjoGlDyH7WTupR02DGYrQPD4B+RoOSwZCsEGdWmkU=;
-        b=K7hw1BbisNJx5otamQIxk1hHwG5B4EC2JZqcORHEDloateLWrWiSodBieuhpsBuUsv
-         13wlGzTQN77jbZ9mz2iTptDDNJIYqIUr5ewbDVqXCJ+jGPSkW3O0NVe1guwIKCg8ahIV
-         uftMGPw3ElDbFTuiJ3eqrc0wYXBpyZ6kHU1k1vqJVLljMy+NtcgEkLEaLL6uUv2Gqg8g
-         m8PaqNe3IBKGV69BRq2IPh/CTuedzjhvwEHjqCHS6J2S8crDtPRGrxB3Qk20CFBALIQd
-         Gefb3oRtpRW5OnbldLdbr+JELHGPJ1IGwQxapn9njlBI2vb/yJi+RSYpAiWfbZuCDUcG
-         o6uw==
+        d=tuxon.dev; s=google; t=1725374767; x=1725979567; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=10RLo6vQI16ZQLY55PJnQinuqmPpyY7pcz6lIln/dYk=;
+        b=JHyIPsv5kMj2R2fk38yqLy96tMjyWMBNMh+wNeh9a6vDgO7Gj4n2csTjZPoCmVP63L
+         tC70m7VXjdgudChbPhas/xJH/RnAWZVCeyQ4AQPi6bXJJ9wMIkPYbMev8klcMfOu/SE7
+         XTM2ZwJXPt5iyGVGMkkgM+ZnhcazNfNUoCp+V6qbC01m9+P3w2Ta4O1TotLDjrO7Tkpt
+         diyuLUsfvnztZAnsuX19BsBouWG4T81Bt2IHfdamQE9THnWL4CjMPsYWg9QWa+Lq28FK
+         vPIei3CRtDKRrTC8cVc06NASPdvcamyvjD22fZRn0ZKR2gncd/R4L0n8kKJX1yu2j0s0
+         LEJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725372499; x=1725977299;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d5ZjoGlDyH7WTupR02DGYrQPD4B+RoOSwZCsEGdWmkU=;
-        b=U3RFE644sU3Ty5Yo2FM/13AGZPE9dSQuOeI2W7qmnkDI41o+f/eIr4ubtNsKvc/LPc
-         PEz0IXO0T7EXsqHHixPNyzvKgBz+2nUTBgr2Vjhde9qyQ6t8tXyo9+P03sRg9sioPxjn
-         UPNzAxW3Z2uib6ucyKfX8wuaN11YV0yjB7aISKy/MhagVyUXqUJgNPyT5U4WG5LdyL9s
-         +8fQqQrviZr441zEObbIOgIqIO0WLGT7zZGhRnN3vst2D5UwsQs5B23vXByuWfhOGIlQ
-         Npyo3xeJFzjDTVsxjsiLRGQUdRl5sQ87zhkn3RUHpnLmm6QrUF0qOZNIoDfpLAtfdrRo
-         mLSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZkGe76hRztdfIdit8sFaWUX655lPe9/t3/8fRS6ie9rdjhT6Swcw1d2aRFkJ2QzrGDPGihfSCCCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRmzIgzChOOvIcpK3cgIAg++2Du9rlBIj2FXlWjxgto7HegeFg
-	uYOFQPk5Ji/nNqFii8HcA8VeR52ruja9i/M9SSSIIZ1yw5/1hjaBjLYIuOfhNSMcTvcN6MkwQzx
-	6rSwoHFdg1rfH7SuyEHKghyuyHgNFco3z+Fgf2Q==
-X-Google-Smtp-Source: AGHT+IHOJqt3dK+xwatmPRONcTjksoCVRekZUAmbh32HsEjF/j6bm6l8pQayA56IIHJJvdniQqggzEe+KANvQ7eVwtc=
-X-Received: by 2002:a05:690c:4706:b0:664:a85d:47c6 with SMTP id
- 00721157ae682-6d410cb4214mr110396847b3.33.1725372498831; Tue, 03 Sep 2024
- 07:08:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725374767; x=1725979567;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=10RLo6vQI16ZQLY55PJnQinuqmPpyY7pcz6lIln/dYk=;
+        b=udaRT1zARUbgTG8WwQdtRSI6DMx+9hFDp08xIgi7L4ZMV/sWbFqtFUJGpMGXMfVsJN
+         ZmqyVAKRb+pYvi6ZqcbySIcjI2yT+zJ81pPFkA3056I+9bRSVaKaDOuxlLyYKgEH80qZ
+         pkoWDHXqmaduSp4AHqSE80eIuFcCEjQA9+4Rjihp1kRIbuAeMVbaE7Eb8VGQfrLKDt3W
+         79vZ4Sj3rQtoZ2UHv6WSYxJlls+zfeamQ8/r7wP6nxCdGOCSGaKQcRU+DVrmanrkcn6Y
+         GuXAiaWTRwihWlk/a07h5b9DgI+4+YoyCgT9QTo7mtgcflCA10uGNoS6NkuaPOlj4VF+
+         icdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUntsKinK16JiItM3PFEKYg0winY74xLgc8GcS3VobAgab2c3kvFkNL8dwN5mn0fNs/vlJalaQglYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTkOXEQo4VWPPLlMtT6BVZg5cV3UruEIyEdTGvhR8Lz/Xu0vl9
+	bMKA8oGmbG/Ax8G34ESoPnFoz9Ra9I9cswQUpQ6lyMPfu8Or3dwZUHyLM4w6NI8=
+X-Google-Smtp-Source: AGHT+IHBF7/z9fE2IIPqXvT2mCPSoKoEFEBXPrIEjkmEaUhTM3epbcIR3W3mZTjeBzvwo0J9N98xnA==
+X-Received: by 2002:a2e:a99b:0:b0:2f1:59ed:879d with SMTP id 38308e7fff4ca-2f61038cbe8mr134852401fa.1.1725374766668;
+        Tue, 03 Sep 2024 07:46:06 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a46esm6583009a12.3.2024.09.03.07.46.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 07:46:05 -0700 (PDT)
+Message-ID: <7ffb6419-b8f0-4940-99d9-7779eec9bbb7@tuxon.dev>
+Date: Tue, 3 Sep 2024 17:46:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
- <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com> <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
- <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com> <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
- <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org> <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com>
- <6sk7sx4pz2gnne2tg3d5lsphmnp6vqjj2tjogqcop7fwn3yk3r@ftevsz77w6pt> <492e3c19-c06d-4faa-8064-e6b73c46b13e@quicinc.com>
-In-Reply-To: <492e3c19-c06d-4faa-8064-e6b73c46b13e@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Sep 2024 17:08:07 +0300
-Message-ID: <CAA8EJpqSFp_cETNE_3iiC1viLhPD5TE+H1F=m8UksybEpAvKHQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for
- IPQ SoC
-To: Jie Luo <quic_luoj@quicinc.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, 
-	quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, 
-	quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, 
-	srinivas.kandagatla@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Tue, 3 Sept 2024 at 17:00, Jie Luo <quic_luoj@quicinc.com> wrote:
->
->
->
-> On 9/3/2024 2:39 AM, Dmitry Baryshkov wrote:
-> > On Mon, Sep 02, 2024 at 11:33:57PM GMT, Jie Luo wrote:
-> >>
-> >>
-> >> On 8/31/2024 6:24 AM, Stephen Boyd wrote:
-> >>> Quoting Jie Luo (2024-08-30 09:14:28)
-> >>>> Hi Stephen,
-> >>>> Please find below a minor update to my earlier message on clk_ops usage.
-> >>>
-> >>> Ok. Next time you can trim the reply to save me time.
-> >>
-> >> OK.
-> >>
-> >>>
-> >>>> On 8/28/2024 1:44 PM, Jie Luo wrote:
-> >>>>> On 8/28/2024 7:50 AM, Stephen Boyd wrote:
-> >>>>>> Quoting Luo Jie (2024-08-27 05:46:00)
-> >>>>>>> +       case 48000000:
-> >>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> >>>>>>> +               break;
-> >>>>>>> +       case 50000000:
-> >>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
-> >>>>>>> +               break;
-> >>>>>>> +       case 96000000:
-> >>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> >>>>>>> +               val &= ~CMN_PLL_REFCLK_DIV;
-> >>>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
-> >>>>>>> +               break;
-> >>>>>>> +       default:
-> >>>>>>> +               return -EINVAL;
-> >>>>>>> +       }
-> >>>>>>
-> >>>>>> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
-> >>>>>
-> >>>>> OK, I will move this code into the clk_ops::init().
-> >>>>
-> >>>> This code is expected to be executed once for initializing the CMN PLL
-> >>>> to enable output clocks, and requires the parent clock rate to be
-> >>>> available. However the parent clock rate is not available in the
-> >>>> clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
-> >>>> for this. Please let us know if this approach is fine. Thanks.
-> >>>
-> >>> Sure. It actually sounds like the PLL has a mux to select different
-> >>> reference clks. Is that right? If so, it seems like there should be
-> >>> multiple 'clocks' for the DT property and many parents possible. If
-> >>> that's the case then it should be possible to have something like
-> >>>
-> >>>     clocks = <0>, <&refclk>, <0>;
-> >>>
-> >>> in the DT node and then have clk_set_rate() from the consumer actually
-> >>> set the parent index in hardware. If that's all static then it can be
-> >>> done with assigned-clock-parents or assigned-clock-rates.
-> >>
-> >> Thanks Stephen. The CMN PLL block always uses a single input reference
-> >> clock pin on any given IPQ SoC, however its rate may be different on
-> >> different IPQ SoC. For example, its rate is 48MHZ on IPQ9574 and 96MHZ
-> >> on IPQ5018.
-> >>
-> >> Your second suggestion seems more apt for this device. I can define the
-> >> DT property 'assigned-clock-parents' to configure the clock parent of
-> >> CMN PLL. The code for reference clock selection will be added in
-> >> clk_ops::set_parent(). Please let us know if this approach is fine.
-> >
-> > What is the source of this clock? Can you call clk_get_rate() on this
-> > input?
-> >
->
-> The source (parent clock) for CMN PLL is always from on-board Wi-Fi
-> block for any given IPQ SoC.
->
->  From the discussion so far, it seems there are two approaches possible
-> which I would like to summarize below to be clear. Please let us know
-> if this understanding or approach needs correction. Thanks.
->
-> 1. clk_get_rate() requires the parent clock instance to be acquired by
-> devm_clk_get(). Per our understanding from Stephen's previous comment,
-> it is preferred that a clock provider driver (this) does not use the
-> _get_ APIs on the parent clock to get the rate. Instead the parent rate
-> should be passed to the clk_ops using parent data. So the parent clock
-> should be specified in the DT using assigned-clock-parents property, and
-> can be accessed from the clk_ops::set_parent(). This seems like a more
-> reasonable method.
-
-assigned-clock-parents is necessary if there are multiple possible
-parents. As you wrote that there is just one possible parent, then
-there is no need to use it.
-Stephen, your opinion?
-
-> 2. Alternatively, if it is architecturally acceptable to use
-> devm_clk_get() and clk_get_rate() in this clock provider driver, we can
-> save this parent clock rate into a local driver data structure and then
-> access it from clk_ops::init() for configuring the PLL.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
+ "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
+ <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB1134648BF51F1B52BFE34DD6D86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
+ <TYCPR01MB11332EF1A8D064C491D8F261286932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <f7c57e76-b890-491f-880d-62d060b7b31e@tuxon.dev>
+ <TYCPR01MB11332BE2EDB318950B9C7B54C86932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <0b73544b-0253-43b9-b631-6578b48eaca8@tuxon.dev>
+ <TY3PR01MB1134689573A785E91A9041E1886932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5bcdc677-e61e-4312-a19b-57b4600685d3@tuxon.dev>
+ <TY3PR01MB11346FAC6022C81ED8B9B2DC386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346FAC6022C81ED8B9B2DC386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
--- 
-With best wishes
-Dmitry
+
+On 03.09.2024 16:09, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, September 3, 2024 1:57 PM
+> -
+>> clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+>>
+>>
+>>
+>> On 03.09.2024 15:37, Biju Das wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>> Sent: Tuesday, September 3, 2024 1:26 PM
+>>>> To: Biju Das <biju.das.jz@bp.renesas.com>; Ulf Hansson
+>>>> <ulf.hansson@linaro.org>
+>>>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
+>>>> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de;
+>>>> geert+renesas@glider.be; magnus.damm@gmail.com;
+>>>> gregkh@linuxfoundation.org; mturquette@baylibre.com;
+>>>> sboyd@kernel.org; Yoshihiro Shimoda
+>>>> <yoshihiro.shimoda.uh@renesas.com>;
+>>>> linux-phy@lists.infradead.org; devicetree@vger.kernel.org;
+>>>> linux-kernel@vger.kernel.org; linux- renesas-soc@vger.kernel.org;
+>>>> linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>>>> linux- clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea
+>>>> <claudiu.beznea.uj@bp.renesas.com>
+>>>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
+>>>> RZ/G3S SoC
+>>>>
+>>>>
+>>>>
+>>>> On 03.09.2024 15:00, Biju Das wrote:
+>>>>>
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: Biju Das <biju.das.jz@bp.renesas.com>
+>>>>>> Sent: Tuesday, September 3, 2024 12:07 PM
+>>>>>> To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>; Ulf Hansson
+>>>>>> <ulf.hansson@linaro.org>
+>>>>>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
+>>>>>> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de;
+>>>>>> geert+renesas@glider.be; magnus.damm@gmail.com;
+>>>>>> gregkh@linuxfoundation.org; mturquette@baylibre.com;
+>>>>>> sboyd@kernel.org; Yoshihiro Shimoda
+>>>>>> <yoshihiro.shimoda.uh@renesas.com>;
+>>>>>> linux-phy@lists.infradead.org; devicetree@vger.kernel.org;
+>>>>>> linux-kernel@vger.kernel.org; linux- renesas-soc@vger.kernel.org;
+>>>>>> linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>>>>>> linux- clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu
+>>>>>> Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas
+>>>>>> RZ/G3S SoC
+>>>>>>
+>>>>>> Hi Claudiu,
+>>>>>>
+>>>>>>> -----Original Message-----
+>>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>>> Sent: Tuesday, September 3, 2024 12:00 PM
+>>>>>>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
+>>>>>>> RZ/G3S SoC
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> On 03.09.2024 13:31, Biju Das wrote:
+>>>>>>>>>> During boot clr USB PWR READY signal in TF-A.
+>>>>>>>>>> STR case, suspend set USB PWR READY signal in TF-A.
+>>>>>>>>>> STR case, resume clr USB PWR READY signal in TF-A.
+>>>>>>>>> As I said previously, it can be done in different ways. My point
+>>>>>>>>> was to let Linux set what it needs for all it's devices to work.
+>>>>>>>>> I think the way to go forward is a
+>>>>>>> maintainer decision.
+>>>>>>>>
+>>>>>>>> I agree, there can be n number of solution for a problem.
+>>>>>>>>
+>>>>>>>> Since you modelled system state signal (USB PWRRDY) as reset
+>>>>>>>> control signal, it is reset/DT maintainer's decision to say the
+>>>>>>>> final word whether this signal fits in reset
+>>>>>>> system framework or not?
+>>>>>>>
+>>>>>>> I was thinking:
+>>>>>>> 1/ Geert would be the best to say if he considers it OK to handle this
+>>>>>>>    in Linux
+>>>>>>
+>>>>>> I agree Geert is the right person for taking SYSTEM decisions,
+>>>>>> since the signal is used only during state transitions (Table
+>>>>>> 41.6.4 AWO to ALL_ON and 41.6.3 ALL_ON to AWO)
+>>>>>
+>>>>> One more info, as per [1], this USB PWRRDY signal setting to be before Linux kernel boots.
+>>>>
+>>>> The "controlled by" column mentions CA-55 on PWRRDY signal control
+>>>> line and it is b/w steps "DDR exits from retention mode" and  "clock
+>>>> start settings for system bus and peripheral modules". AFAICT, after DDR exists retention mode
+>> Linux is ready to run.
+>>>
+>>> DDR retention exit happens in TF-A and it jumps into reset code where it executes BL2 in TF_A. Bl2
+>> checks for warm or cold reset.
+>>> If it is warm reset, it sets required minimal clocks/resets and pass
+>>> the control to linux by calling the SMC callback handler. Which in turn calls resume(step 11-->14)
+>> path.
+>>
+>> Is this from HW manual or some specific documentation? I'm referring at "resume" == "steps 11-->14"
+
+You branched the discussion, there was at least this question that I've
+asked you above that interested me.
+
+>>
+>>>
+>>> Step 8, Cortex-A55 Exit from DDR retention mode (when using) Setting
+>>> for exiting form DDR retention mode Step 9, Cortex-A55 USB PHY PWRRDY
+>>> signal control (if use USB) SYS_USB_PWRRDY Step 10, Cortex-A55 PCIe
+>>> RST_RSM_B signal control (if use PCIe) SYS_PCIE_RST_RSM_B
+>>
+>> Note *if use*: how does the TF-A know if USB/PCIe is used by Linux? The documentation mention to set
+>> it *if use*. Same note is on ALL_ON to VBATT transition documentation (namely "if using USB", "if
+>> using PCIe"). If TF-A will do this it should set this signals unconditionally. It will not be
+>> something wrong though. We don't know at the moment what this involves in terms of power consumption,
+>> if it means something...
+> 
+> You mean, you modelled this as reset signal just to reduce power consumption by calling runtime PM
+> calls to turn on/off this signal??
+
+In this series it is though a reset control driver.
+
+The internal BSP propose the control of this signal though SMC calls in
+each individual USB driver; I think the hardware team was checked for this;
+I may be wrong, as I don't have this insight.
+
+As you know, the initial control of these bits in the BSP was though SMC
+calls and you propose to have a separate Linux driver to control this after
+finding that these registers are accessible in normal world. As a result,
+this series, with reset approach, which you were against, but I felt this
+was the best way (I know) to describe the hardware and the relation b/w
+hardware blocks. To conclude, you initially proposed me internally to have
+it in Linux.
+
+To answer your question, the answer is no, I didn't try to just model
+something fancy just to be fancy. I did it based on what is proposed in BSP
+as this may have been checked with hardware team and I did tests around
+this. And considering this best describes the HW and the relation b/w
+individual hardware blocks and in this way Linux can have at its hand all
+the resources it needs w/o relying on third parties. And from the HW manual
+description my understanding was that this is possible. I never said that
+this solution is the best. I'm just adding information here as I requested
+help from maintainers to guide on the proper direction.
+
+You were adding information to sustain your TF-A idea, too.
+
+> 
+> Does will it have any system stability issue as hardware manual says to do it at very early stage
+> before starting any clocks/resets?? Have you checked with hardware team?
+
+All the implementation of this is based on what has been proposed on BSP,
+the same approach was proposed there, meaning the control of these signals
+was done on probe/remove, suspend/resume in Linux.
+
+
+> 
+> Cheers,
+> Biju
