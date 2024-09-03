@@ -1,153 +1,167 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A30F9DF;
-	Tue,  3 Sep 2024 18:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E2418FDD7;
+	Tue,  3 Sep 2024 18:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725387018; cv=none; b=YLwQIMT/uF1XFULa0meaKqgQUtk9hpr5GQgAzFOPJI534DXf1A6dJBfQeZa6ai5SzsKhZsBi+yTXRYqM/KooQ0w40NE564S5MVMik6UyGzaEcJFVQ76HbHO54ncHj76bdi7vl3xxwz1AR/hYOnC/f4YU2n9v8f5brHEUQ/UTvKA=
+	t=1725388046; cv=none; b=ou/RFko5nRNMFP2DvXOcTkXlgT78LRbdGobEYFNevHkWhV1IJKBcC1Fi+ZJD40zNABztD+fMZZbHxMqW7nOVTr8d6npOAv9aSBrfqHEhGoZ9TSlW/gnsrB0oupFf45EcGAyMcwUa9k74TSsRQakIxJwZiS8+hv9bvn8iQggqtsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725387018; c=relaxed/simple;
-	bh=zVAUhXRHGgf2Ifhv4b5o/0Gn9PNneUNRm6sBJpLkmec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XdqdanMiv5NmgvbqAvMX6DZRMFOCgiJYf/0ekKEmH9yvAXM0xQ4bxXbV4Z2bppTowGHWELpyK62fiBjJzR1dh4lvtFiZ14BAtnCcbdTcL5eoQ0gUnEdIcTxG/Yg06VeNkxvEbyEeM0HcjYJ6ZdI7rhCVRU64AVxUdXImaNSRhWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kA3mvLLq; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1725388046; c=relaxed/simple;
+	bh=jtq+NV2hFNSsN40Ko7LAblrCis08mq85mqLfSbvwx4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GVLkNy11Fcl92VrdgtiaJN7ybo/DNBZ3U3zPIg7ms9i+bEx0bOpLfvoTnD9DcsDsRgJsBfa+UncQO3u7gLswbZbmrk20SgJCqbciy6t8wDSoqkVa3GRfr1lHPQDDU/ULa0dPmmdMBLh9AZAP9cNasa62L543GgoIq2jFAchO6xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZUJ+bTe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kA3mvLLq"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gRkEDbrL97a7XWyV1vQZFD5kTUiM/mZOT/r7ZhvOvyk=; b=kA3mvLLqv6Efq84zwZ11En9y50
-	kwKh1AougOvAhA6RWsLL+PYXuu6Q7UkoP4gjmqGI08SU6Li0WcGfAbD5gSGneBncCsu0h1YeNGKOF
-	jElUo78bPWG5TgLK89eRcyJ1HmDwGIf+o6X6FOq0czmSEMGZrAitVYr0FRrLtLSg7pHkTfoDB3IN0
-	H8abBmjd/3AvhUUwrpO4RkCS8feXywkofa+aUiMh6bm34Q/g0IhLvfBDfpPOQhVjHmDJ8dP7oAgG8
-	i2tFc2mgoGPfUeMirGwc0K5Dr1Qc6gmOVIGEQECFBx0nge7GxNkTFOF5VU7XUrz2lJM2wYuhIFoYO
-	9Sfn39yQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52434)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1slXyd-0007vM-2x;
-	Tue, 03 Sep 2024 19:10:03 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1slXya-0002uf-1L;
-	Tue, 03 Sep 2024 19:10:00 +0100
-Date: Tue, 3 Sep 2024 19:10:00 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: Re: clk mess on omap4460 with mpu clock
-Message-ID: <ZtdQ+Ay9DKAooahN@shell.armlinux.org.uk>
-References: <20240603234139.280629b2@aktux>
- <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
- <20240903143357.2532258b@akair>
- <CAMuHMdWF4G5Uon1=6TMzBogN2CX8EuiVBMuCPtAAMPNa-DtiOw@mail.gmail.com>
- <20240903192203.1dddbf0d@akair>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZUJ+bTe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F48FC4CEC5;
+	Tue,  3 Sep 2024 18:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725388045;
+	bh=jtq+NV2hFNSsN40Ko7LAblrCis08mq85mqLfSbvwx4A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cZUJ+bTeqLi5y51bzBiYvYdQHngkR/4dba4aCV397G5bKm7jE99jg4yrTptWd3CTm
+	 /eEbjScXUiD/gVAKNKlGmafp3i5yrPI2V4t91OpF105/nMYV2sSVHssF8+W+QGmMLK
+	 JdqP/bwxwprfZCNmaFuoPq/FSWeGZ3iuFRCQbrV4iwdvxJYp3IGphdluTKzdOprdQH
+	 FZ3X4Cm1vfYA5tjyYrJbVaVIvudaOqno31GQQc5OpYL8+x3yoLziuN0Z9/7guSd5dE
+	 MIrzLZyOjhvGNjE1OkfiWm+GrcAuRgpr6pjLNN1jjchtLM+S3aPzAp3d5fU+tWc5fK
+	 UPPgxFN4IYuoA==
+Message-ID: <39735704-ae94-4ff8-bf4d-d2638b046c8e@kernel.org>
+Date: Tue, 3 Sep 2024 20:27:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903192203.1dddbf0d@akair>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <ZtHN0B8VEGZFXs95@apocalypse>
+ <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
+ <ZtcoFmK6NPLcIwVt@apocalypse>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZtcoFmK6NPLcIwVt@apocalypse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 03, 2024 at 07:22:03PM +0200, Andreas Kemnade wrote:
-> Am Tue, 3 Sep 2024 14:36:05 +0200
-> schrieb Geert Uytterhoeven <geert@linux-m68k.org>:
+On 03/09/2024 17:15, Andrea della Porta wrote:
+>>>>> +
+>>>>> +				rp1_clocks: clocks@c040018000 {
+>>>>
+>>>> Why do you mix MMIO with non-MMIO nodes? This really does not look
+>>>> correct.
+>>>>
+>>>
+>>> Right. This is already under discussion here:
+>>> https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
+>>>
+>>> IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
+>>> using CLK_OF_DECLARE.
+>>
+>> Depends. Where are these clocks? Naming suggests they might not be even
+>> part of this device. But if these are part of the device, then why this
+>> is not a clock controller (if they are controllable) or even removed
+>> (because we do not represent internal clock tree in DTS).
 > 
-> > Hi Andreas,
-> > 
-> > On Tue, Sep 3, 2024 at 2:34 PM Andreas Kemnade <andreas@kemnade.info>
-> > wrote:
-> > > Am Mon, 2 Sep 2024 15:53:07 +0200
-> > > schrieb Geert Uytterhoeven <geert@linux-m68k.org>:  
-> > > > On Mon, Jun 3, 2024 at 11:41 PM Andreas Kemnade
-> > > > <andreas@kemnade.info> wrote:  
-> > > > > just stumbled across this on 6.10-rc1:
-> > > > >
-> > > > > [    1.475830] ocp:target-module@48210000:mpu:fck: device ID is
-> > > > > greater than 24 [    1.483154] ti-sysc
-> > > > > ocp:target-module@48210000: could not add child clock fck: -12  
-> > > >
-> > > > And on boneblack:
-> > > >
-> > > > 48000000.interconnect:segment@200000:target-module@0:mpu@0:fck:
-> > > > device ID is greater than 24
-> > > > target-module@4b000000:target-module@140000:pmu@0:fck: device ID
-> > > > is greater than 24
-> > > >  
-> > > > > Maybe
-> > > > >         /*
-> > > > >          * Use clkdev_add() instead of clkdev_alloc() to avoid
-> > > > > the MAX_DEV_ID
-> > > > >          * limit for clk_get(). If cl ever needs to be freed, it
-> > > > > should be done
-> > > > >          * with clkdev_drop().
-> > > > >          */
-> > > > > in ti-sysc.c does not work anymore?
-> > > > >
-> > > > > The offending clock definition is in omap4.dtsi
-> > > > >
-> > > > > clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
-> > > > >
-> > > > > Did not bisect that yet.  
-> > > >
-> > > > Commit 8d532528ff6a6b1b ("clkdev: report over-sized strings when
-> > > > creating clkdev entries") in v6.10-rc1, with follow-up commit
-> > > > 616501eccb58615f ("clkdev: don't fail clkdev_alloc() if
-> > > > over-sized") in v6.10-rc4.
-> > > >
-> > > > I have no idea if these clkdev registrations are still
-> > > > necessary/used. 
-> > > well, it might explain some mystery behavior in the past. Lets
-> > > see where it comes from. As the comment says, there should be a
-> > > workaround against that limitation. So the problem should not be
-> > > there in the first place. I have some strange problems with
-> > > clk_disable_unused.
-> > >
-> > > I first thought it is a id < 24 issue and not a strlen(something) <
-> > > 24.  
-> > 
-> > Me too :-(
-> > 
-> Ok, setting
-> MAX_DEV_ID to 64 in clkdev.c lets the warnings disappear. ti-sys.c
-> has at one place precautions for overlong dev_ids, but on another place
-> it happily calls clkdev_create() running into this issue. 
+> xosc is a crystal connected to the oscillator input of the RP1, so I would
+> consider it an external fixed-clock. If we were in the entire dts, I would have
+> put it in root under /clocks node, but here we're in the dtbo so I'm not sure
+> where else should I put it.
+
+But physically, on which PCB, where is this clock located?
+
 > 
-> The follow-up commit then again at least does not cause a failure for
-> dev registration. I am still unsure what the consequences are. Between
-> 6.10 and 6.11 something interesting happened which makes the bt200
-> reliably boot with near-mainline u-boot+spl even without
-> clk_ignore_unused. So no frankenstein-boot (vendor X-Loader + new
-> U-boot) anymore.
+> Regarding pclk and hclk, I'm still trying to understand where they come from.
+> If they are external clocks (since they are fixed-clock too), they should be
+> in the same node as xosc. CLK_OF_DECLARE does not seem to fit here because
 
-The bottom line: if you are getting warnings that the strings exceed the
-existing sizes, then _any_ lookups using clkdev will have been failing.
-Nothing has changed with that. The only thing that changed recently was
-to print a warning for this case, and initially to fail the attempt to
-register with clkdev. However, that broke stuff, so it was made not to
-fail, but still report the problem.
+There is no such node as "/clocks" so do not focus on that. That's just
+placeholder but useless and it is inconsistent with other cases (e.g.
+regulators).
 
-Essentially, if you see the warning, the registration with clkdev is
-both pointless and useless.
+If this is external oscillator then it is not part of RP1 and you cannot
+put it inside just to satisfy your drivers.
 
--- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
+> there's no special management of these clocks, so no new clock definition is
+> needed.
 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> If they are internal tree, I cannot simply get rid of them because rp1_eth node
+> references these two clocks (see clocks property), so they must be decalred 
+> somewhere. Any hint about this?.
+> 
+
+Describe the hardware. Show the diagram or schematics where is which device.
+
+Best regards,
+Krzysztof
+
