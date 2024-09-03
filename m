@@ -1,149 +1,102 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74E1C9879
-	for <linux-clk@vger.kernel.org>; Tue,  3 Sep 2024 12:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F041B12F0;
+	Tue,  3 Sep 2024 12:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366555; cv=none; b=IrWB6AcO2fLfJoDmxUtzlgGI29L/RPfUy4ADK4HufImGqLtKJtYzKf8Rmb9Q60UBUBeZFkvf85p+oXYNtlaJGhFgZgwuHcNPuOjl0oL3egT151MS3ekkHAS5Jt90a8AophexG2LtRC9DGZJzJ8+Gd45eOg+B7Yx5pvzq7mfO7iA=
+	t=1725366851; cv=none; b=Ph7UO2t5N/tiCqUZt4NSOkDlOQT321TSQjOTC49CLp8Nxl4TzFVSMNxvYA+DDvE/KbsVftaAeedvSnf5YGt9qlcq6tNvZoGf5sdr7ffDdjyFGXIaWJcp4T3vid5G2gj4Em+l9RgfP82F53NJlzuCJ8U9aA49NX0HLdTLBrKbKEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366555; c=relaxed/simple;
-	bh=LYZ3g1BOQrAmEV2a5L00wMHSlNaPPgLH0lWGP87X9VE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvq3mmcm37MBbvmNl5FB4Y1hQ88/oKNrt/aBF5aUFMgtukR2HIC0wivIav/77iMh3/O7J7m6lR8GuLbYUTcfqLjvIt5frDs28hS3EmDVEdTNaHkAwoPL6oToqZgP+KxpyoKSwFNl42wFAYgkg/CtiHfQc3waqyHai021smJNrsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IbY6SCP4; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1725366851; c=relaxed/simple;
+	bh=SiWgR6Peib7WlhWUO98AWvrkTvEyVs3s6lWHMwz0cMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SRKs/ZFELXItEFfU8/6vHGrW/gV4Dl6e/4MxccySGHIVHwDAaQAZEJFO1moelyQWjbwGShKZ7HnvP32FPC35pDwDzDQtvdn5gfYjbBzrqKN4ThG9yoGKhkZUeZ5DWzNundfkYNvYx+CUmYHN4xF2UjYK4qGA81MtAuPlsfQK1iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=woK6q5Ro; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IbY6SCP4"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533488ffaebso6308044e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2024 05:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725366551; x=1725971351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pQaEXKZRWyREIUo8wC8RcTnNWfD1rXPNnUAij9Sr27k=;
-        b=IbY6SCP4WWPPL2wU29cTSHcvBDgNnVeuU2grWCJXHhk+8cJGN+SSnRloO9PpTLhe4b
-         LfHYLzWEfoCva2m/GdE8rJ7f62g5YKa0X0eUeeJlCOfybn5LI79N6kFW66kvOiFeQsI4
-         nwhl2hdZbXWiAMrbE89ngBhyAfDA6Df5AKAs07lJUXb6dklEVIGdpN3/ZMrhQn61wc8k
-         NCfOuJ+8YGx7apRuj0krn9P0DlpMk0AeQ+/8hLUd/EjOSK4WIsr6Fz8kMpCSPR04ocF7
-         Ur+e4xK+Hlp8/W0ymMOcrQ9WaxoE++Mj9jQUuF92/3dQCfDuJ/lUIytA6SwFu0eK6Jvt
-         /r1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725366551; x=1725971351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pQaEXKZRWyREIUo8wC8RcTnNWfD1rXPNnUAij9Sr27k=;
-        b=eS/D3J01IeM9zKHpA5IrGTIkLJe3k4HFGYGOCPLEjc2Bha8dptstwt/x8t4yO20YmW
-         sNMd+K6/+8mUJ1Ah2S4srw5yjDK9OLO1Ib/HLkpc9vzi2VSGdfqJZEprLJ+YMwiVAm3+
-         plxvPWR6/U3vJ0DWR/sfmtZDSiOpoTjqPzLhfmTpuMtNYjzpwXG8tVlj79aFxo0GjF9t
-         lRsd+f0HGyJxDO1K83pBZKv9b6WkoCXbILfS9aWXV08ODYi1douq9KPplXqCw80y11qf
-         TRMk7QHxT8YxNCxxWWdwZjKRGDh6VUcWsIb8rmtmJZo39nkG4Wrv9+jV2ebsSj3nXuL1
-         KyJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe14kLIldItoQZ7rsTueGeQQAK927XNc9VE6jZJIncUHExnbPp6NY1OM8R0qnCypL44mdrYAZOWWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiExgQX9v+vU/Cyw3gp7lnVukp7ybhKmGoiY65uYBYKtFVxUbj
-	uekuM4KFq5MJjkIsExWBt5aO4w1dY0iTJZ7U7rTfsbL/C7OAbYH7P1lMsUSYGbU=
-X-Google-Smtp-Source: AGHT+IFq5h7rZ8oQIIXm6nz6CibNpWmLcPJNLG4TGtm/2ICu6a9ZqKTz9NHYYqSXDVwrc61upSj1pQ==
-X-Received: by 2002:a05:6512:2254:b0:530:ea60:7e07 with SMTP id 2adb3069b0e04-53546bb9455mr9237621e87.58.1725366550821;
-        Tue, 03 Sep 2024 05:29:10 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d7834sm688285166b.177.2024.09.03.05.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 05:29:10 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 3 Sep 2024 14:29:18 +0200
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 05/11] vmlinux.lds.h: Preserve DTB sections from being
- discarded after init
-Message-ID: <ZtcBHvI9JxgH9iFT@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <12d0909b1612fb6d2caa42b4fda5e5ae63d623a3.1724159867.git.andrea.porta@suse.com>
- <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="woK6q5Ro"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=8SZt66SCL+CHxXSRTJ++DcbJFimuD6NwOHrMPTPVYMo=; b=woK6q5RoG65QNGY6HhHuL0JE/X
+	9T24IIMQyUb82tDr903PeWWsT8KIOeAJ3imB+Muzn3JADVEEFfOm6HFOWjvxmLVFWui730N7XfVuv
+	wpvEwsq9Q5gGYAXqt5c6H25UULG6XqN9cZhycXVPQTsDyk6A4lbfhuDITieuBVoh12BMXOS1U4QAL
+	Fdn8Vcvzuc+k41wFqAwPNoyIU/AvwFRnCdHL9TpSOvciZp2gioZfigwM8PB+IM3yePkkU/LoPIPty
+	l2Kr6sgaQFd4YVS3apJK0nRYkegqXYRwL8ypsgXhfR30FBrOigltCGMvIyKcY5hAtdMPVgm4XMwKM
+	jXm3G/0A==;
+Date: Tue, 3 Sep 2024 14:33:57 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, "Russell King
+ (Oracle)" <rmk+kernel@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>,
+ Tony Lindgren <tony@atomide.com>
+Subject: Re: clk mess on omap4460 with mpu clock
+Message-ID: <20240903143357.2532258b@akair>
+In-Reply-To: <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+References: <20240603234139.280629b2@aktux>
+	<CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Am Mon, 2 Sep 2024 15:53:07 +0200
+schrieb Geert Uytterhoeven <geert@linux-m68k.org>:
 
-On 12:46 Fri 30 Aug     , Stephen Boyd wrote:
-> Quoting Andrea della Porta (2024-08-20 07:36:07)
-> > The special section .dtb.init.rodata contains dtb and dtbo compiled
-> > as objects inside the kernel and ends up in .init.data sectiion that
-> > will be discarded early after the init phase. This is a problem for
-> > builtin drivers that apply dtb overlay at runtime since this happens
-> > later (e.g. during bus enumeration) and also for modules that should
-> > be able to do it dynamically during runtime.
-> > Move the dtb section to .data.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  include/asm-generic/vmlinux.lds.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > index ad6afc5c4918..3ae9097774b0 100644
-> > --- a/include/asm-generic/vmlinux.lds.h
-> > +++ b/include/asm-generic/vmlinux.lds.h
-> > @@ -365,6 +365,7 @@
-> >         TRACE_PRINTKS()                                                 \
-> >         BPF_RAW_TP()                                                    \
-> >         TRACEPOINT_STR()                                                \
-> > +       KERNEL_DTB()                                                    \
-> 
-> The KERNEL_DTB() macro shows the section name is dtb.init.rodata. Can
-> you remove the ".init." part if this isn't initdata anymore? And
-> shouldn't it be in the RO_DATA() macro?
+> Hi Andreas,
+>=20
+> On Mon, Jun 3, 2024 at 11:41=E2=80=AFPM Andreas Kemnade
+> <andreas@kemnade.info> wrote:
+> > just stumbled across this on 6.10-rc1:
+> >
+> > [    1.475830] ocp:target-module@48210000:mpu:fck: device ID is
+> > greater than 24 [    1.483154] ti-sysc ocp:target-module@48210000:
+> > could not add child clock fck: -12 =20
+>=20
+> And on boneblack:
+>=20
+> 48000000.interconnect:segment@200000:target-module@0:mpu@0:fck: device
+> ID is greater than 24
+> target-module@4b000000:target-module@140000:pmu@0:fck: device ID is
+> greater than 24
+>=20
+> > Maybe
+> >         /*
+> >          * Use clkdev_add() instead of clkdev_alloc() to avoid the
+> > MAX_DEV_ID
+> >          * limit for clk_get(). If cl ever needs to be freed, it
+> > should be done
+> >          * with clkdev_drop().
+> >          */
+> > in ti-sysc.c does not work anymore?
+> >
+> > The offending clock definition is in omap4.dtsi
+> >
+> > clocks =3D <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
+> >
+> > Did not bisect that yet. =20
+>=20
+> Commit 8d532528ff6a6b1b ("clkdev: report over-sized strings when
+> creating clkdev entries") in v6.10-rc1, with follow-up commit
+> 616501eccb58615f ("clkdev: don't fail clkdev_alloc() if over-sized")
+> in v6.10-rc4.
+>=20
+> I have no idea if these clkdev registrations are still necessary/used.
+>=20
+well, it might explain some mystery behavior in the past. Lets
+see where it comes from. As the comment says, there should be a
+workaround against that limitation. So the problem should not be there
+in the first place. I have some strange problems with
+clk_disable_unused.
 
-Ack.
+I first thought it is a id < 24 issue and not a strlen(something) < 24.
 
-> 
-> It would be nice to keep the initdata properties when this isn't used
-> after init as well. Perhaps we need another macro and/or filename to
-> indicate that the DTB{O} can be thrown away after init/module init.
-
-We can certainly add some more filename extension that would place the
-relevant data in a droppable section. 
-Throwing away the dtb/o after init is like the actual KERNEL_DTB macro that
-is adding teh data to section .init.data, but this would mean t would be
-useful only at very early init stage, just like for CONFIG_OF_UNITTEST.
-Throwing after module init could be more difficult though, I think,
-for example we're not sure when to discard the section in case of deferred
-modules probe.
-
-Many thanks,
-Andrea
+Regards,
+Andreas
