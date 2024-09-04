@@ -1,63 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5788E50A80;
-	Wed,  4 Sep 2024 03:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ACA1FC8;
+	Wed,  4 Sep 2024 05:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725420938; cv=none; b=WDs47FHVDz8pBaD0a5NSDm7iDH7ax+GzG7x911PNdgWRTASZpNW5Q6t25oBUyuD2jM/EX8/01yfDZ2tWvGwVLwMG2SzCphNVvRKA+LXhfBpKwp0r2xG+igKf3h0MLQ/CpaHR0NLlsPbVwR8DKVqqWrNf0SgraI+SlhZ/NkGn9KE=
+	t=1725429470; cv=none; b=I/VEuMNyY0OPq3WnlItKYeIc930GyntQvQmaBj04rbLt0yP5ik6GVT5WuJWssaTQhZc530fRfmecONo/rvZx9k9aUUFz0K3WOglr4C9Jc5ku+2gcsdFjQq54DJQ+PS4iTstlxOG0OZQtkJLdbUGNhislr7rqpqsLuac6wQOWd9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725420938; c=relaxed/simple;
-	bh=qLcWIE7Fw1J7ruZJ/d/CJptuuKw68JLFc6/6jjyj7xQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ID1f+ktYUY2vnlaj3PvNIFOHSy94m7e+9YrSf9Wx4kVMOzet6AHZ9CPALo7D0WdpJZ5KPRWWLUUsbpZPfujmyrO2cG2ss0RYR1he4Fb6WuBwR/GcLQ9WEmPDeOp+gkg52i8wSv2pnRj3E9kITi7d6nuPd2firoktPYv1o+WmoDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oxw4RyNm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725429470; c=relaxed/simple;
+	bh=1Uq+s42VoGWl7UxVx2ytzpaQeaggcvLNs5AnTqz4oYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbsNPzRDcJea4PgjRluyyWyCoc2XRVuPdHDEJ7KcXVkoUWCye1iKqeKEpBEm/Tuj9eDSxK0PPgdd4zNetdDpLnM2oicGzncEdnceIDdkiy5OH6v3MS76mt9551NdPQV8XfIazAsGbiVRc1argnWMjp6G/LhPsePPlkd08OMSVLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qB4IvGAT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oxw4RyNm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770FAC4CEC3;
-	Wed,  4 Sep 2024 03:35:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qB4IvGAT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6D2C4CEC2;
+	Wed,  4 Sep 2024 05:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725420937;
-	bh=qLcWIE7Fw1J7ruZJ/d/CJptuuKw68JLFc6/6jjyj7xQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=Oxw4RyNmEhnFMTsEBmUk0IvVzvP1WaYglu45+1v+68smrL2bIhUwreMa1TBjVgh1H
-	 z3rSKx1LKrFBnF31SQZc+5EnI5h8K/m4PXJxOpcear3L4ShDFgUQFMDw/EWJZolQv4
-	 hZN/J5TqcewpO7nl523xHkmw2WZKy9/qQI7rim+vnls8f1YkS4VeKRj8Bnresr5fIE
-	 8QvyDH2fKUi5ZHEWSUjc/uunTTIkf/cBS18LaJHIf+56FBO7eUhmZnx0uZJ/drTy6j
-	 yYDSf0GxHrh80m0Rqs9ogCQXYRca9IceoxLKqi7GEWkn8UfK/+VHEY34WUqUx+jSCq
-	 NqOpx9urZkIPg==
-Date: Tue, 03 Sep 2024 22:35:36 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1725429469;
+	bh=1Uq+s42VoGWl7UxVx2ytzpaQeaggcvLNs5AnTqz4oYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qB4IvGATZyM4MYlUC2TsiGOS/gY25DDr/DiwLysYex8m2mD67lCvNm+Sf3fKWur0c
+	 knXljQnxyvukXdy6v86Qy1wCP5osdrCqglIfHbnCc+rzFFSomhyUDQA0O9dyY4pznt
+	 Nb+CVOiXuzeDd4MV/mfo/Yqo1KP6aDH1osR6yQSHNBFf3pXvwU87kpQ8nF5PYSaDtI
+	 YY8hXg9AaSiKgdA2t1CYs6ndXR7iZzmfy8KGQGQODTRBmrQ/uII1/KTx9iBh/UpfWd
+	 ToyM8/JQQrFGGLvZ7rC/g5Pz+A6L6LyUugDwae928wN7s5oStFmOgSqarzXE11lcPI
+	 ERJvhdV4DK+6A==
+Date: Wed, 4 Sep 2024 07:57:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v4 4/7] dt-bindings: media: camss: Add qcom,sdm670-camss
+Message-ID: <h2i6qigozgzjxnlq5gmo3m7obdy5hmvfdnpsrcs325dc6hgezo@mrhok2ljnxni>
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+ <20240904020448.52035-13-mailingradian@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Richard Acayan <mailingradian@gmail.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-media@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
- Todor Tomov <todor.too@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, devicetree@vger.kernel.org, 
- linux-i2c@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Robert Foss <rfoss@kernel.org>, 
- linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 In-Reply-To: <20240904020448.52035-13-mailingradian@gmail.com>
-References: <20240904020448.52035-9-mailingradian@gmail.com>
- <20240904020448.52035-13-mailingradian@gmail.com>
-Message-Id: <172542093648.3614760.12247493613483168165.robh@kernel.org>
-Subject: Re: [PATCH v4 4/7] dt-bindings: media: camss: Add
- qcom,sdm670-camss
 
-
-On Tue, 03 Sep 2024 22:04:53 -0400, Richard Acayan wrote:
+On Tue, Sep 03, 2024 at 10:04:53PM -0400, Richard Acayan wrote:
 > As found in the Pixel 3a, the Snapdragon 670 has a camera subsystem with
 > 3 CSIDs and 3 VFEs (including 1 VFE lite). Add this camera subsystem to
 > the bindings.
@@ -66,60 +61,9 @@ On Tue, 03 Sep 2024 22:04:53 -0400, Richard Acayan wrote:
 > 
 > Signed-off-by: Richard Acayan <mailingradian@gmail.com>
 > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/media/qcom,sdm670-camss.yaml     | 318 ++++++++++++++++++
->  1 file changed, 318 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+This wasn't tested.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:0: 'gcc_camera_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:1: 'gcc_camera_axi' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:2: 'soc_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:3: 'camnoc_axi' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:4: 'cpas_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:5: 'csi0' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:6: 'csi1' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:7: 'csi2' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:8: 'csiphy0' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:9: 'csiphy0_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:10: 'csiphy1' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:11: 'csiphy1_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:12: 'csiphy2' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sdm670-camss.example.dtb: camss@ac65000: clock-names:13: 'csiphy2_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sdm670-camss.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240904020448.52035-13-mailingradian@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+Krzysztof
 
