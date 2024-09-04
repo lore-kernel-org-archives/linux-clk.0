@@ -1,109 +1,115 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8852B1CEE88
-	for <linux-clk@vger.kernel.org>; Wed,  4 Sep 2024 09:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD9C1CCB43;
+	Wed,  4 Sep 2024 11:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725443845; cv=none; b=u8RO6tzlK1YDDcNe2eqKF/wZp9GBPOKRwI49EAGw67bIKhpMYhEh56q3kovCwDnUDdTWBlmpntoPLIVAc9AXulES6UPMzVusWQt5EnjvXP/4NH+qwwIt61y69AgFkddZsUy1wCIUm/Q1AKbQRiEvefl2tjoVnbY28JdnaXsTXcQ=
+	t=1725450074; cv=none; b=Clz/uI024Kha/CfQkNW3JlVhmPYliV260+iT5W3IYCC9q7h++lUk8T6Vjlnm9Crv/MMM0rjdKlu5cnMdBbOaRWULTCa08Peoegjrrrqyt0aXF4u6jx/iOMbmnRbeBx29EQjZ4CXJW8CjCayVS0UsrIZ2O2h3gMTCGOUcAUUd4/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725443845; c=relaxed/simple;
-	bh=FTjiDZN9yInQz1hWZ/h7wkmO4TF9Z15WUfoej4IaTi8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ua046fhMe40lNbwkBVH0/PGIIS9f7iywZtTnOgEqHjRLVAff1smZjq5lMPi+iwxY+jVCbAzNQd6JBpbUop8ZM4/NBWqt88o8CFrAMAVFGq0N5kNUMz5FkNAHU1EczxrqoZcK/YV52damZ99WA8BIdxKrwNUtqffN12dCbrZzZww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rD4X1bCw; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725450074; c=relaxed/simple;
+	bh=LbFW91VPcN5CCwLrLiHjJBysPMZp8cnj63xvRHHWltc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ps56uH8Osf/WubFin6KT0cfYeskcN5GBdC+S6KPoaNZUnBIS02EPr0/65xRhWbp//HdUlm4MnV5dP/4mHeEDCJ8bPVYR1WjTbBYwi4kreqFL0346Uth+Qzvm+JUapK9mfUmZF9B3RTwe77aRtjV4zqk8Uxad67J8l9LMRq84k0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXqCs5yb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rD4X1bCw"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8692bbec79so730410166b.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Sep 2024 02:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725443842; x=1726048642; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VG3SCtSxXoO9kJ5qHjWCI3Ghtvll31qds48f+pV4lgI=;
-        b=rD4X1bCwGOBvitJHen45c4x8u46QDcFb1O+/cG8Yp7e6P3PkWs0zrLPKe8uzKZ1XBK
-         DusovKHjjLPg/ZUYDiT69KunU3kICUh/VEf4iBVaoHJGXpXDjouOxB9383Dt1p3MFQIH
-         f3giDMJko1rwrlOs2lt/gGTnGO2Jjv7w/Q/K0Uteb5OK8wqry1em3hleSKUUkzc1pBA9
-         SqnmCEMA3aRqDfmv7HmmtklU9ad0whi9XZX6EGX1e+RsJ9p927mX5335xbIMMNZXSyEX
-         Er56b33fUdVYF57JYcLmp9AkcQEOgyp+N3nQmg5JuMQl4qkVtGkNR0EG6ROFn+d88nAB
-         FYew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725443842; x=1726048642;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VG3SCtSxXoO9kJ5qHjWCI3Ghtvll31qds48f+pV4lgI=;
-        b=gq+TLAPGH9K4VdUsGC5zjD0sUBHDUUTiu7NmgrkPbInh4P8bgh3B9LiFxpQHD9IVSl
-         ulvLdXZYvcdz0Aq4+6shnl92P4heNZjZQZniN271jispshSA4uP2/EHSpez6p72ERHhS
-         xNiXGgL32tQR5sDSFfj6knBSROFYyPur+mkbtvz3eAfJlYPbuW4bnrUm1Yv8M4leW2MT
-         id/1j0bgm8qfgPT3ZQo9eBp6nRCVgFeWJB/i8ko87lZ/wrTHRcYzeDOTsw4JRJUwo1tq
-         tuhRKZ+2d5SKPQBCteRFZ+Hi0bXHrpPYcqot+ZWYXALmFqvG+4art7TcVJZFu3I8Y6B6
-         +sCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD15qctyx/mJxTOaVdTG5mJC4E9AltYXH3qD8AL37P1YTxXoKxwqCoEXlEE4G4OWSTk3cy9Zv8bak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoGaZrbutdSjvhk3w5Q6TpXGpSv3EBs/r5WizLys6Bc6vYlklf
-	Ks/1eJPmLzRiK7wSjo9uTY7mbqIknQSm3OH4/7NL20w0/NbI2r82/Fiv85Xh+zo=
-X-Google-Smtp-Source: AGHT+IE+2W/EhIoP1awAXccexwE4Hd7T9R6Il9R6pyNmD5WD6nEZ6n3i30rCZtmi+ObSIObIoDmtIQ==
-X-Received: by 2002:a17:907:72c7:b0:a86:a30f:4aef with SMTP id a640c23a62f3a-a89a35dee4cmr1210183566b.22.1725443841806;
-        Wed, 04 Sep 2024 02:57:21 -0700 (PDT)
-Received: from hackbox.lan ([84.232.173.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fefb26sm788422666b.1.2024.09.04.02.57.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 02:57:21 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.12
-Date: Wed,  4 Sep 2024 12:57:10 +0300
-Message-Id: <20240904095710.2813541-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXqCs5yb"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D058C4CEC2;
+	Wed,  4 Sep 2024 11:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725450073;
+	bh=LbFW91VPcN5CCwLrLiHjJBysPMZp8cnj63xvRHHWltc=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=rXqCs5ybpYlZBHRwTbH3RbO3VvWuuvS8vB7qIUZGHBrNDfvGIwcpR5AR/sJ+vKATw
+	 Hon0z/3iP/E/KAScigYcMesxjCRRAYkLHHsYZnO+VqIK94DBYllCcwodyE3uX2qiiv
+	 cenGU/yUVscdISjEO/ihG5kRp/wtA+iDYw3lM4uDlUXuNZzi6AZLxzC79swd18WENP
+	 SkQogcoatP3wNvPLjFwR8UnSL4nqjAqbLdXqOW/r0A59wlzhzGgG8j68wH/mHLJt2k
+	 4jOYw5Cid0m+MCgQ5ggVnQT6B5bCSmrhk8mPbzutTUKRVVx5iuAjhnEDsI1RyK+aao
+	 EG5FiT8rzbIxw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B788CD37B4;
+	Wed,  4 Sep 2024 11:41:13 +0000 (UTC)
+From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
+Date: Wed, 04 Sep 2024 14:41:07 +0300
+Subject: [PATCH] clk: fixed-rate: add
+ devm_clk_hw_register_fixed_rate_parent_data()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240904-devm_clk_hw_register_fixed_rate_parent_data-v1-1-7f14d6b456e5@maquefel.me>
+X-B4-Tracking: v=1; b=H4sIAFJH2GYC/xWNUQqDMBAFryL73UCSBsRepZQlmKcubVPZBFsQ7
+ 974NwPDezsVqKDQrdtJsUmRT27iLh2NS8wzjKTm5K0PdrDBJGxvHl9PXr6smKVUKE/yQ2KNFbx
+ GRa6cYo0m+dC7q3VDA2qLq+Isz7f74zj+9tGLEX0AAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nikita Shubin <nikita.shubin@maquefel.me>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725450072; l=1857;
+ i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
+ bh=J7DnDW2A1MJFcbrAhVPLzVkKMJjwXrfE3ffVHEB0sZk=;
+ b=6R2yziTvOZcOMtb4T1iRVn+0YljewW1VpSDEBwPBRoKPOwJuM9m5JVIHPVlr+OiLsyX+vUztfo8P
+ Hbn+Gd+YA8FU/lpKFKd0cUCeN3tlYwgkIFo3hFFdju+tLwI8Mo+J
+X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
+ with auth_id=65
+X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Reply-To: nikita.shubin@maquefel.me
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Add devm_clk_hw_register_fixed_rate_parent_data(), devres-managed helper
+to register fixed-rate clock with parent_data.
 
-are available in the Git repository at:
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+Hello Stephen!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.12
+Sending devm version of clk_hw_register_fixed_rate_parent_data(),
+as promised in:
 
-for you to fetch changes up to 32c055ef563c3a4a73a477839f591b1b170bde8e:
+https://lore.kernel.org/lkml/79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org/
+---
+ include/linux/clk-provider.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-  clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL (2024-09-04 12:39:38 +0300)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a537260f655..7e43caabb54b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -393,6 +393,20 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ #define devm_clk_hw_register_fixed_rate(dev, name, parent_name, flags, fixed_rate)  \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name), NULL, \
+ 				     NULL, (flags), (fixed_rate), 0, 0, true)
++/**
++ * devm_clk_hw_register_fixed_rate_parent_data - register fixed-rate clock with
++ * the clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_data: parent clk data
++ * @flags: framework-specific flags
++ * @fixed_rate: non-adjustable clock rate
++ */
++#define devm_clk_hw_register_fixed_rate_parent_data(dev, name, parent_data, flags, \
++						    fixed_rate)			   \
++	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,		   \
++				     (parent_data), (flags), (fixed_rate), 0,	   \
++				     0, true)
+ /**
+  * clk_hw_register_fixed_rate_parent_hw - register fixed-rate clock with
+  * the clock framework
 
-----------------------------------------------------------------
-i.MX clocks changes for 6.12
+---
+base-commit: 88fac17500f4ea49c7bac136cf1b27e7b9980075
+change-id: 20240904-devm_clk_hw_register_fixed_rate_parent_data-d24713019d24
 
-- Use clk_hw pointer instead of fw_name for acm_aud_clk[0-1]_sel clocks
-  on i.MX8Q as parents in ACM provider
-- Add i.MX95 NETCMIX support to the block control provider
-- Fix parents for ENETx_REF_SEL clocks on i.MX6UL
+Best regards,
+-- 
+Nikita Shubin <nikita.shubin@maquefel.me>
 
-----------------------------------------------------------------
-Michel Alex (1):
-      clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL
 
-Shengjiu Wang (1):
-      clk: imx: imx8: Use clk_hw pointer for self registered clock in clk_parent_data
-
-Wei Fang (3):
-      dt-bindings: clock: add i.MX95 NETCMIX block control
-      dt-bindings: clock: add RMII clock selection
-      clk: imx95: enable the clock of NETCMIX block control
-
- .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  1 +
- drivers/clk/imx/clk-imx6ul.c                       |  4 +--
- drivers/clk/imx/clk-imx8-acm.c                     | 38 +++++++++++++++++-----
- drivers/clk/imx/clk-imx95-blk-ctl.c                | 30 +++++++++++++++++
- include/dt-bindings/clock/nxp,imx95-clock.h        |  3 ++
- 5 files changed, 65 insertions(+), 11 deletions(-)
