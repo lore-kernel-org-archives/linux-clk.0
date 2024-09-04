@@ -1,112 +1,160 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E189145A05
-	for <linux-clk@vger.kernel.org>; Wed,  4 Sep 2024 07:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725434488; cv=none; b=rO2ku5nLlhz4ex/grxYCXb8usf0tsRyn+sSIBw62tsVhm6oWVfjpTKFWkZjaE+7iYXoT2oCAos38DwGiHqcvBlXsHYcvPpPTJz6q6c2g9Tu4B0U2DE8euK8b0/zBjgP5pSOHOkAr640uEoU406SoYEQAOkvZvSPLKuJi8Q+xrqA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725434488; c=relaxed/simple;
-	bh=xtIuBFj64TqzREt993EeXv6lHl7brb98Y/F5SYmD1/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qMDB4gu4sSsPcpYxU0TQ9KfMQ3IC0C4nritWWxz1VJlNDF5ASnOtrsIlR5J+yfHuOGmHgvbqJogkxjVDH4htbJyTGj+K6TYw5cszMQI3nxsIvQM93Dyj92mGqk4sGU8zB8fLDDXD6odiHvD+6/oLKNZq+ktKkSvyoEz7qSYQdx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KnPWITyq; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49468824AF;
+	Wed,  4 Sep 2024 07:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725434809; cv=pass; b=qoaqTaPcnS88hUDDdevKoEGQ7WkKXLJtoqGzAERxECxsXvaEzI/MZUbRnBuz7eYzpByAPa1ZuR/ZQXrIfuRgbvcIjrmSUaIFMhRayUgdQhAFD3hOEa57p2WR3duiJZgcNRLGm5KTxNiSesv2edFFaxYeTSL6RvjmHu111Yb8NxA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725434809; c=relaxed/simple;
+	bh=3T72XQFSu/yiZiZCfDC1sHZ+3ChFnoL4Il9ChEqwYcw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=P1uXPWmz9rkd7rlNMk6TZ+X4X9RnpeYRqu+6YzIa8Ww2cC21Ondoh+Rs+n6XK3WVO4K1n8dvbFp5ss8zegocPDTzq5CuzXArc/w7Z+lmlEMVhrhMIkxTH3hsqN7IlH12SGNxPPd6BVXO8pSBTOcAP3jvOE7BMeCsSuq6hyS0TPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=ENbuBTjJ; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=Tj1zsPl6; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KnPWITyq"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c09fd20eddso5859342a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Sep 2024 00:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725434485; x=1726039285; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mkHGl27JPuKpbUR7dPRGY7PRbaxLttTpVVEj3eSuKXg=;
-        b=KnPWITyqG2X/0vQcFb8DxlNq03SI3aF5R+jKO93ReQIQetrIG+7d9kibaJ59ni/0i/
-         3skSwIKMxTEf5tf7MCVzyhlMoSdRf47icuoubL9BfV51jdZw6cTMhZniz9qllIL+A+e9
-         pj5+NU8fvJdT7gzGU9Rahkkbd1U0G3zPoxXNQjX+OZ5bDK8o9VubbEBj+FpDLUG76/PW
-         yeQId2HQff8QBkU6g7N+ldEJitwffDppyPe8aCKH2eW++3I2kkQLrWl26Ebr6/PgOSzx
-         b+0AMGwAZm5j4VGbbA/QnoGQGQk5lQG0ygKEEcfNcYmGxIHH96SltX2iAwI0OJQjy9hl
-         mBEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725434485; x=1726039285;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mkHGl27JPuKpbUR7dPRGY7PRbaxLttTpVVEj3eSuKXg=;
-        b=VL3Rs9jewwhKMFGEXe6CyEVMGdVIhMCxrdI1weMHxyqVwh3pmQGJii+3B3N3PFaN3J
-         4M50eicmtzEX4L6DcMMZe/g0+FBqcjagELJOY/pGw5gharlkW8uo/UZegaj/7R2mQqwA
-         kA1gv/DlqFVT+LCLSEAx+IIiB3odceDTQ/lNmw1Ui2kmW0eefdRJ8LYk+l0Squ22Po8g
-         qUPKhX/SV8a3WBIvgyGZCSQ3iJoggWhRoH2+J3PnvK0RM2SblAwBLEkB5il99Zqkc+5f
-         sa3tJtiiE+XGUG9Tt8XdDbrY8k/T6wc1X1fEnMaj9nwzdK24ibIvQ+oIsu0eGcD/eEAY
-         Doww==
-X-Forwarded-Encrypted: i=1; AJvYcCUZTdeBi8QjefzN2/ICqzx/V+cQMblBYzRKYo6i/JeDOiESOhHK/KYArFsZVySc9a+ezLJ9iVd0Y6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdlVXNg38SK1d7LlMxY5D56qe7glNWRWzrgGJrQV8xlRqbFzEl
-	F6MTuGhoqsrLAOwXF8g6GpH/PDj22tLrQQOUxdMoRDlKL/UCmbQFK/Zu9VhcNh8p5ycWvDgP3Ht
-	9
-X-Google-Smtp-Source: AGHT+IH1LQ5xqz+xe1tbnZne4HwuUkppc0/9J4/WgsiYbBiwcgFjPkLEsJKagGnCEVoDc2t9X7PT3g==
-X-Received: by 2002:a05:6402:3592:b0:5c0:ad65:ebfa with SMTP id 4fb4d7f45d1cf-5c21ec58f5emr14468100a12.0.1725434485138;
-        Wed, 04 Sep 2024 00:21:25 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a29bsm7238409a12.17.2024.09.04.00.21.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 00:21:24 -0700 (PDT)
-Message-ID: <b76f5e26-3d75-4c8a-b7e7-18d9e7327eed@tuxon.dev>
-Date: Wed, 4 Sep 2024 10:21:23 +0300
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="ENbuBTjJ";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Tj1zsPl6"
+ARC-Seal: i=1; a=rsa-sha256; t=1725434619; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=hpniwhjQ3mOOpznUD3ryni2nAmU7LpbOJ3H0XFa+WVLNScL0ihGJSV5m6FwrhDcaol
+    Ee4fPpTKkZ9Pj+CXCrJD76emAw+NnzyihGu3I4oGpNSBZTtjN73MsBMeGiKE6lrI7zwY
+    mDBS7Qyv4Z0QUDjulFZwgG35al/xM/gJfocitT5wi7Upy8GlYHwUR1Nx/tfQEvDZZ/t6
+    t+rCEW+T8yrjROzQ1kzBg+jNNqhw00fhbay+BF3WP5lGWlw2gIUXrwd8fQQzwe7rEi/w
+    l5e485KfkhVjucZUmVwgtoLQIpWl7KdXNy05VqF1juEQXMpF4sMnSTxB3dIklKbdKBMu
+    c/6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1725434619;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=f7gne7IDJURoYO/MQfIsXrZIsPne4pig9A6tciellDA=;
+    b=q79n1Jg6x2BNV87fHm+0fmjYxnTlSjbMUCgxerbrjtBNCeMNyr9VCHNm/Ju+7QEYTG
+    eY+dfUGl0ebawqMBAHRfGt/BRRMcLl5XlBCqDhiVIHlrvVx4WH8QMEl8SM2/RxxtGVQd
+    w0sFpWAdy+OGByhbR75zbRo/+SDuosJFSmOsSIHrnNBz8eOt9B5UgWbEp9550FvvufCD
+    /KsQ2dXhUF7BRDGwaab1J6UKfPeIfg0NLV1fUIeamwMVd5TFn8VpdL3zsVCRRf4YmpE9
+    kNswmH8VABwjXzuJlyy6G0Z8EfuHhTGNj1B8mIuS941EtqwGo+GRVOo55A+sMn59btbs
+    u3Ag==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1725434619;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=f7gne7IDJURoYO/MQfIsXrZIsPne4pig9A6tciellDA=;
+    b=ENbuBTjJhrGKagVfjDE9c6wTwOo60TsrZWA7JuGBEoJg5u3kIovUmfZzWh6X1XJ2rk
+    mmDKae2+xLX39MVRNFIQWO6M5jRA9NVt9JXwikA90Vd36Rh8tO3c2bSxaJ/ZnXjHgpSi
+    8WZVy8D5Ff1UKt2LX2b7s5CiU6FfAidn7GOirAxcM+Moc4kMaiVSKs3QKiXKY+TNCR5Y
+    9L20NMtlvi6jKMQkxzWdZLInbSLZTEOBBYmWLfsrIaywu8tJUR+RdGfNydutLtHSLddQ
+    3Dop/PGhj6VbvtxvQr3qp05Tv5fJchfZiXaGkyJNGpyI5X1eGk9hiEWmhXLZMQu3X2yx
+    b5ZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1725434619;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=f7gne7IDJURoYO/MQfIsXrZIsPne4pig9A6tciellDA=;
+    b=Tj1zsPl6JBCXtk9c2iM7SzEiYLowbjXUpCxYjhQOaS8RhJnlC56LyFf3CEDL+VVzw+
+    c4cPnAKA2Ri0ExbgfgDA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfzwZ"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 51.2.3 DYNA|AUTH)
+    with ESMTPSA id Q984c20847NcRSH
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Wed, 4 Sep 2024 09:23:38 +0200 (CEST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Microchip clock updates for v6.12
-Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
-References: <20240901133425.2039071-1-claudiu.beznea@tuxon.dev>
- <50577525a098bd1e39b8eed1c8053872.sboyd@kernel.org>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <50577525a098bd1e39b8eed1c8053872.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [Letux-kernel] clk mess on omap4460 with mpu clock
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <1B1B9276-8244-4BFF-9FA3-B06AF8EDFE40@goldelico.com>
+Date: Wed, 4 Sep 2024 09:23:26 +0200
+Cc: Paul Walmsley <paul@pwsan.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ Tony Lindgren <tony@atomide.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1E848917-4408-4BEB-B973-C6DECF7BC30A@goldelico.com>
+References: <20240603234139.280629b2@aktux>
+ <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+ <20240903143357.2532258b@akair>
+ <CAMuHMdWF4G5Uon1=6TMzBogN2CX8EuiVBMuCPtAAMPNa-DtiOw@mail.gmail.com>
+ <21258246-D800-47DC-B1F1-C8D879BA2D71@goldelico.com>
+ <1B1B9276-8244-4BFF-9FA3-B06AF8EDFE40@goldelico.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3776.700.51)
 
+Hi all,
 
+> Am 03.09.2024 um 16:00 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+>=20
+>=20
+>> Am 03.09.2024 um 15:09 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>>=20
+>> I can roll back and try to build&run letux-6.10-rc1 as well.
+>=20
+> Ok, I can confirm this issue in 6.10-rc1:
+>=20
+> [    0.000000] Linux version 6.10.0-rc1-letux+ (hns@iMac.local) =
+(arm-linux-gnueabihf-gcc (GCC) 6.3.0, GNU ld (GNU Binutils) 2.27) #18983 =
+SMP PREEMPT Tue Sep  3 15:18:59 CEST 2024
+> [    0.000000] CPU: ARMv7 Processor [412fc09a] revision 10 (ARMv7), =
+cr=3D10c5387d
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing =
+instruction cache
+> [    0.000000] OF: fdt: Machine model: TI OMAP4 PandaBoard-ES
+> ...
+> [    2.315277] omap_i2c 48350000.i2c: bus 3 rev0.11 at 400 kHz
+> [    2.325073] ocp:target-module@48210000:mpu:fck: device ID is =
+greater than 24
+> [    2.332580] ti-sysc ocp:target-module@48210000: could not add child =
+clock fck: -12
+> [    2.356781] omap_wdt: OMAP Watchdog Timer Rev 0x00: initial timeout =
+60 sec
+>=20
+> Boot process is stuck with=20
+> SELinux:  Could not open policy file <=3D =
+/etc/selinux/targeted/policy/policy.33:  No such file or directory
+>=20
+> Both effects are gone with 6.11-rc6.
 
-On 03.09.2024 23:55, Stephen Boyd wrote:
-> Quoting Claudiu Beznea (2024-09-01 06:34:25)
->> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
->>
->>   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
->>
->> are available in the Git repository at:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.12
->>
->> for you to fetch changes up to 2d6e9ee7cb3e79b1713783c633b13af9aeffc90c:
->>
->>   clk: at91: sama7g5: Allocate only the needed amount of memory for PLLs (2024-08-24 17:44:11 +0300)
->>
->> ----------------------------------------------------------------
-> 
-> Thanks. Pulled into clk-next
+I had made a mistake in updating the kernels and drawn a false =
+conclusion.
+The new result is:
 
-Thanks!
+all kernels I have tested between v6.10-rc1 and v6.11-rc6 report these =
+messages.
 
-> 
-> Please get rid of the clk.h include in sam9x7.c though. Looks like you
-> can use struct clk_parent_data and use fw_name for that.
+But after 6.10-rc1 they appear to be harmless (I did not miss any =
+functions so far)
+and it is not clear if my 6.10-rc1 being stuck is related to this at =
+all.
 
-It's on my todo list. I have something prepared but didn't managed to
-publish something.
+E.g. from 6.11-rc6:
 
-> Also, could it
-> be a simple platform driver instead? That would be ideal.
+root@letux:~# dmesg | fgrep 'device ID is greater than'
+[    2.340148] ocp:target-module@48210000:mpu:fck: device ID is greater =
+than 24
+[    2.414978] ocp:target-module@54000000:pmu:fck: device ID is greater =
+than 24
+[    2.491973] 5a05a400.target-module:iva:fck: device ID is greater than =
+24
+root@letux:~#=20
 
-I'm not sure at the moment as there are clocks that feed the timer. I'll
-have to explore this.
+BR,
+Nikolaus
 
-Thank you,
-Claudiu Beznea
