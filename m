@@ -1,41 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085081DC04A;
-	Wed,  4 Sep 2024 14:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F531DEFE3;
+	Wed,  4 Sep 2024 15:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725461885; cv=none; b=BfljD7tt/YbY/DLyAvZA4Hi62JusfIsGrW87e1smNwnbW79bYpvRzAArB3ugE67eOneM2gLGeyhbivD5YvvBTS61NXURtsfnaonCYxJjsaBAIonWWqww86M6YC8qm8Mc/lVOOeN/CiaZtVx4bfU10Wc45ic03vvkJr4Y14iHX6A=
+	t=1725462047; cv=none; b=Ru8kUeFuk9nHsx0LCAE8Z10/FQAKRu2N+9KkvnvMvw3LUV76h1p2SunDCNVEqOYOxwLPYMMGb6jE3ZHACKlbyoygDUNNxMdyjMtJu2o54vlQybSGR3KrJvTAj2FPADxg4Sdix6XKKxfYn5/BocmWXQMVrFa+8Yq5pUxQvQzqQfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725461885; c=relaxed/simple;
-	bh=oGZHZwM6HjGaDxnYT+XVCkxdCNgyq0qFSfTnY4Dp+kk=;
+	s=arc-20240116; t=1725462047; c=relaxed/simple;
+	bh=uCWg2e4zYQIoF7w5tR8wMPbjGFXaUs+fGVW/n+kzH/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDfq4qjfro8zxrtom5LxX9KJD7Yx7VaMwfTJLu+TTKoWJ7AhXgm32+n1e6tU2ueAs7t+nkfS0e1VBBlph4VEk4+MESQTfbfJ6SdNA/0dHbQp7YpzhD5lY7KpF+7NK8HevRp/p6O/MhG+wFxYYtxv5lnqgbWacRNRHD/Sye96Sm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCd1uN4G; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QeqnWUZlceMh90ZYjcw2CSDwjk7B4vxWo7gmIJriQg1s+s+NUWMzRAvcIzXQamfFhJBSwumF1iDcI9ZBr5jukpZhzf/MprOTAQhlTv5yzJ2d5u4kOqrUosoLusZHWP27TC/JXfWD/64rnvPfPJN3iBwikTexUxGANnMeBv1rAe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdxVIRuM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCd1uN4G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6760CC4CEC2;
-	Wed,  4 Sep 2024 14:58:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdxVIRuM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED51C4CECB;
+	Wed,  4 Sep 2024 15:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725461884;
-	bh=oGZHZwM6HjGaDxnYT+XVCkxdCNgyq0qFSfTnY4Dp+kk=;
+	s=k20201202; t=1725462046;
+	bh=uCWg2e4zYQIoF7w5tR8wMPbjGFXaUs+fGVW/n+kzH/E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SCd1uN4GDdY9vbNIDR+7eKQmL6a1gLuRFCfEJ97YTLF+RuEVhVUi3Y9UWaZ/wSZZr
-	 gQTfBqVSuLNlgge847wbYelcVggWYxx6/XUca1o1LIki1jp1knTuaEx7XnbR6Kcnw0
-	 bX5M0aaNTRS5M5FK2WgpGhw3FaE89tWVPA5ohBOkrFiT2Pw9Q3Og7Ga6jas8GLvhFa
-	 mUx/hKd76CziOQvZDtHASQ5UzximKG8CTelpcfX3PDdSmEJ8nr3PeuBz+iUAQJUycF
-	 W9zL3+7HrBFnXn0VVXKUa28CRt9V7M8Zldy7iI4A6qqBmAloqahzS1Q04Zgg0+DBIY
-	 P5kcX/8H6YZIw==
-Date: Wed, 4 Sep 2024 09:58:03 -0500
+	b=rdxVIRuMGs5EnXW1Ylpf0/4r1TvmJXq6kxrqwToArZgo+7pEElzmhCJp1ttLyqldQ
+	 I6gay62Pb53rUUoF4WHUnq2XoMUUU2+nqZ2LhmKTuqWDoitg09G9r8bTCJoI69PE1F
+	 CWOWGvycglNw32/8gwnc+tjuuzNMwI6x5wIHepOOS8UDe2P5+fB8MMTr8G6JMYiZ21
+	 YHsjsWrHYc1t1LYuVRKEdA8kN6XsBIxtDtXXR6A5O5EFSoBppb3wACiO21C/AEQAgL
+	 E/ohuHVVIJW+DKDgaNtE0DeCLRUD2f/w2dtkjWtjn4UpThMy0WEuX5gqoUSLnLEw4q
+	 qqH5dyR/kfI8A==
+Date: Wed, 4 Sep 2024 10:00:45 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: sboyd@kernel.org, linux-arm-msm@vger.kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, andersson@kernel.org, krzk+dt@kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: drop sm8250 lpass gfm driver
-Message-ID: <172546188216.2558140.18362854925367403125.robh@kernel.org>
-References: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: linux-clk@vger.kernel.org, lorenzo.bianconi83@gmail.com,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Philipp Zabel <p.zabel@pengutronix.de>, ansuelsmth@gmail.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, upstream@airoha.com,
+	angelogioacchino.delregno@collabora.com,
+	Felix Fietkau <nbd@nbd.name>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: clock: airoha: Update reg mapping
+ for EN7581 SoC.
+Message-ID: <172546204488.2561174.6649654649913061182.robh@kernel.org>
+References: <20240903-clk-en7581-syscon-v2-0-86fbe2fc15c3@kernel.org>
+ <20240903-clk-en7581-syscon-v2-1-86fbe2fc15c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,37 +51,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240903-clk-en7581-syscon-v2-1-86fbe2fc15c3@kernel.org>
 
 
-On Mon, 02 Sep 2024 15:52:03 +0100, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Tue, 03 Sep 2024 23:39:45 +0200, Lorenzo Bianconi wrote:
+> clk-en7523 driver for EN7581 SoC is mapping all the scu memory region
+> while it is configuring the chip-scu one via a syscon. Update the reg
+> mapping definition for this device. This patch does not introduce any
+> backward incompatibility since the dts for EN7581 SoC is not upstream
+> yet.
 > 
-> There is no real use for this driver on this platform for below reasons.
-> 
-> - codec drivers can directly use dsp clocks using the static mux setting.
-> - none of the consumers really switch parents and do not handle low power usecases.
-> - all users of this drivers are now removed in next
-> 
-> Remove this driver and associated device tree bindings to aviod any
-> confusion.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 > ---
->  .../bindings/clock/qcom,aoncc-sm8250.yaml     |  61 ----
->  .../bindings/clock/qcom,audiocc-sm8250.yaml   |  61 ----
->  drivers/clk/qcom/Kconfig                      |   7 -
->  drivers/clk/qcom/Makefile                     |   1 -
->  drivers/clk/qcom/lpass-gfm-sm8250.c           | 318 ------------------
->  .../clock/qcom,sm8250-lpass-aoncc.h           |  11 -
->  .../clock/qcom,sm8250-lpass-audiocc.h         |  13 -
->  7 files changed, 472 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
->  delete mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
->  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
->  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+>  .../bindings/clock/airoha,en7523-scu.yaml          | 23 ++++++++--------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
