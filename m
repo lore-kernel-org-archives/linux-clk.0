@@ -1,68 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350CD17741;
-	Thu,  5 Sep 2024 20:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0600A1A727A
+	for <linux-clk@vger.kernel.org>; Thu,  5 Sep 2024 20:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725569455; cv=none; b=REQdhSBOvdnctLk1w1ew7ujiANAiMwbltzEno5ZrPXzKQ3SXxzSqsA2tE0mzbE9659nuTgKFF+LTCEnOYcEFlk1/VPon4GC9YVXGtvx1rz0PVjOFnfNqoH4822tzV3IuJmp9+OpHX88fQiUmZxs2AsDeGCdLWCCHj2Dp2SSPOoM=
+	t=1725569628; cv=none; b=auYoAQHWnM6sdqSedgTgRjObEh4bPeWjqGseVdluc0C6Ps3EoyFsYEU2MgxENSzVWqWlgxUYlMfxySpWF1cIs1O3FG/7LtpKZ3AIqhsAIf3YiaVnlKCun4fu/l9ww+228QQzzSkEzX33ezR/Ov8Nvnh2hXte1xFGCJGis0Zk7uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725569455; c=relaxed/simple;
-	bh=1vmL5mtPyaOpl8ZHVtu7u8CQ2WQzQvvG3t6H2fv4ar4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=UebLPyiJrCd1j0sbSrRpL7CZCs5PexYHAgksQsambHt/QONy1Xzs4bkEvetheJj1CiX0bqJ0MipmZUrsPqNlcVGxw6eXBU4/cBosl4wv32XYAtSlw0fdnQlLyh0yYlh/WT89n2lMbrVCipvH96pg8BxEyUx/nHQuHUxFQm5ENzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHeSYBzS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725569628; c=relaxed/simple;
+	bh=okpSZJ457TOGrWQFhXOsHpza1OncvzJlnkagzXGr9sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bK8qJ1nWxZm1BPtdM9Fs1JQA1w16zthg9sa7xVXhqJZRCzUTZcCTlj8cuu289XP8/YR/+v8cCwkv8NE4d0BQJYIhkNWGXdDfJNH54Q65nfEAB+4aMAflkoZLTNsyL7J9z2V/yac+kzHi9nEiguUUOyRB1jbnvpEJ4BapS4bC5EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BjNVh2mr; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHeSYBzS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98232C4CEC3;
-	Thu,  5 Sep 2024 20:50:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725569454;
-	bh=1vmL5mtPyaOpl8ZHVtu7u8CQ2WQzQvvG3t6H2fv4ar4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qHeSYBzSVm6AL7049QPQ3mmuIgtP8RIixZ2HHcI4aCvgNgyvT54OtyGiSFlhIBm9I
-	 MH3wJGfD9x4JuzSf332ZRVmDVLPcR10Zt5QPLMG8S6/uwfx8aI312+BqoqjWvzU/rZ
-	 MceGC5MIq5Ql+7byWfv/Ee64uAXJdO3nsRCj6aPMtlKbR3x3xA1IafwoKam7Q0kk4Z
-	 1MNeqoiFQqzfgMJkGAbxBo9h4yLLdtO6RLeRkM4l4jQt03tLUMmOPxZuQpRnUVZ0vk
-	 GHVHTgjj9q7xQqiwih9pCcpkxfQZTxr//KkQ6Qj04HnLvvy7bDHX3e5GbILu03ijyX
-	 ALtkFILHsxuGQ==
-Message-ID: <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BjNVh2mr"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53652c3bffdso160593e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 13:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725569625; x=1726174425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nsgr1R8IvjXIPpmmwD+8IYKOWPeLr0RTzjyAwlJwjxI=;
+        b=BjNVh2mrTM4kWiFl9gRX6+hdIguxhEvLYiuJjo+e7nw+BtYtpF2dHdHAVHA8GoVqee
+         MbJQz1brO6A/hzZ7+evFBKX7zReY6dcO0TzxKQRtOlezMe8xe+6dt+r2xZ3PgVO9ohwR
+         Fi9wZvl2WksybE4E05cxoaa4zNNLqsb2CSHP2nD1sCBUH6zkqGVe0iUSONMmk45FxC0r
+         PeeSQsjzNdozzU138fpckLWnXxYLDvP59wYWbwMzzf3Xw5WefwjlsWiwxKy0lbPOFqAY
+         203YG/xkODmJuuqYxNV1V2Xg2/6l2oMis6oOB99rO9kU/3Gabe3q6bVVv6mIf19g6iTF
+         voIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725569625; x=1726174425;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nsgr1R8IvjXIPpmmwD+8IYKOWPeLr0RTzjyAwlJwjxI=;
+        b=IkDWrFkIani0mvp4sSiD2wkPwN9UvH+xiP72UhyBl+2Bm55+11ZDVUOsYFpgYIVORP
+         +QMqvm3xougWfAsfm5sq8PLHFvGC7XguJhlsZfmTYs1sT51ArON5ac+z2PZzSo+4yWYw
+         9mv+3WjtsPorfdY7cV6ywI3TXnmtOW5XW8HcA5YHTX0JiSBjHNhgoQhNjA7WzpToibdq
+         T6lUaXyqnixSwVT8MZMN18nh4/VRZP9lDHbrMZ22Mm1pW3UzLUtC5w92DU4nln9KjP+d
+         Jl/mxvo/TABRiMJxvCbxuNJw4hUnTcU773Vh2RRSdN+br8pB8PMLrqCctFRLglQsHJB+
+         D/fA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6qUZRRc8xbUdCIsadkRddfoMNOfauJImJfhpLzliS9qEgMg4I+3oFtD8h+FUSqvOyJUv87P8nf6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLIo96avYam2hd4j8YpHHQzffX6K2YgKs+57/8Sd9ZLmoReIPk
+	/AMxGG9axYxTvjT3VwV8/G9yJIQZlpxHo7U5wyqvomBtc2aCgk10it81OJ8kZUM=
+X-Google-Smtp-Source: AGHT+IEO4KLXvOMoYHGx7cz+dmpyOoozAeB+4C+XIlp9W2jhjsnqyJ3FcfgbBB1A5mVd/UC9qlSOvw==
+X-Received: by 2002:a2e:b8c7:0:b0:2f0:198e:cf8b with SMTP id 38308e7fff4ca-2f751f3ca74mr1464501fa.4.1725569624887;
+        Thu, 05 Sep 2024 13:53:44 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f7504801fcsm660731fa.121.2024.09.05.13.53.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 13:53:44 -0700 (PDT)
+Message-ID: <1d04e38d-23fd-4646-acee-0d306efaa756@linaro.org>
+Date: Thu, 5 Sep 2024 23:53:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me> <20240715-ep93xx-v11-3-4e924efda795@maquefel.me> <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org> <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me> <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org> <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
-Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin <nikita.shubin@maquefel.me>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Thu, 05 Sep 2024 13:50:52 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
+Content-Language: en-US
+To: Richard Acayan <mailingradian@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-media@vger.kernel.org
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240904020448.52035-9-mailingradian@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Nikita Shubin (2024-09-02 06:31:59)
-> On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
-> > Quoting Nikita Shubin (2024-08-30 02:23:12)
-> > >=20
-> > > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not required,
-> > > but
-> > > it needs AUXILIARY_BUS.
-> >=20
-> > I don't see REGMAP selected by COMMON_CLK. Did I miss something?
->=20
-> Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK on
-> make tinyconfig + COMPILE_TEST.
+On 9/4/24 05:04, Richard Acayan wrote:
+> This adds support for the camera subsystem on the Snapdragon 670.
+> 
+> As of next-20240902, camss seems to be a bit broken, but the same series
+> works on stable (although it is much less reliable now that the CCI clock
+> frequency is not being assigned).
+> 
 
-The meson driver isn't used here?
+Second that, please elaborate on "a bit broken" camss.
 
->=20
-> Then we require REGMAP because we are using regmap_read() in clk
-> driver.
+Regarding the CCI clock frequency, it's a supply clock and it is kind of
+unconnected to the CAMSS driver, here I would expect that some particular
+clock frequency setting either works always or does not work at all without
+anything in the middle.
 
-I think you're supposed to select REGMAP_<BUS> config option, not the
-toplevel REGMAP option. For example, if you're using mmio, then select
-REGMAP_MMIO.
+--
+Best wishes,
+Vladimir
