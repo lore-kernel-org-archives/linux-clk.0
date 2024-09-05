@@ -1,135 +1,190 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4A19E7F0
-	for <linux-clk@vger.kernel.org>; Thu,  5 Sep 2024 16:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C08B1A0734
+	for <linux-clk@vger.kernel.org>; Thu,  5 Sep 2024 16:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552324; cv=none; b=jRFrxEtTVMR2/TDZ+e96zbhR3teWKoUVTFO/PyhSdxq20WBCHRZDmA/7LHcbkcNMkYhxHag9tgD6crvejSLLveXiN/mR8NPefTCUO3MnoOajz+TQeWDRLR3M3TaoujjfsOTKDtilsWp4VZlR7cPE3BzUsEs619KrcuyrfipjKl0=
+	t=1725554022; cv=none; b=Q5w4SNrbsRjYASqVsbJ/kBFaxpTSuRtXO5RdHWz/FylJua5grUxPjXcGRdse8emfQfYCXJBHArYZpdNkU16oqutywEi42XU45omfncxJ8wxGgtqPucC+CSutjDMaS1QM+NZDxCRvc89ICIP0gvpzhMs1GEQzRUshVWRdBJxqYZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552324; c=relaxed/simple;
-	bh=HE6La4IqnKi2giZOdBmLMWGr1Jcgz+tbpv4xmLX3J2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AZ2A7xpGYEaJtoWDr5E/I5rvXNET1O29nb5wS+VDPpWPp/aS1x4S4Ib2QLcpRRAbdomZa4f2XZx7NV0Acb2VDNm7crk9G8H2O5XavV3NBvBWAXIc3Cm5SGYgsjg61rXSMYltd+KziAnqsxN/YeBcspUoZLC6melZfrFbKmupJKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sLDRtVDh; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725554022; c=relaxed/simple;
+	bh=3NAVcB6qwQxaSWihdV8SEeK1WvVXg/JpPm7/aLNJ3gI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFGF5BFeY9s52PmgTTu7+UYIuiBA3pEONfBZj47r0L1HwlartuVMf0Tgj0h98OsrG+VdV69pQq6ehxwkTLKTFuFtlwo2x0bvu/2HmU5E7mVfaThk9FXsKOGtQ5v2nMuidagik/T86Ipx51UVXcrqVIc08Fpfir/now+s4N3YR4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CwUDpRHu; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sLDRtVDh"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a1acb51a7so110330466b.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 09:05:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CwUDpRHu"
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so1174586a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 09:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725552321; x=1726157121; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A3SjbsSfqya3DyiG1kDui0xSVYDrbm2AN9/r4f/fNL4=;
-        b=sLDRtVDhqmjMyzZvgEIupTbP3hfR9t6ck1KC1bdZ5InXzJj8rWZ7uOdWrnQC+ESf4s
-         aNJwXlcUipnJrwcKpZV5Q2IGgnh0gm6mvvgpGGx1MEJHApVvgHyBzEkKIB7eAt9U5U+c
-         Ovl9CTrcMzpHY8oA7YHu0SzJb795UW/HdflOPjKOnJMtuyFc2B+kYsxBtFTzG9qHD1xl
-         FhJzUVYJy2QY0jpd/QPvUYSGnZws3abBM3W4RXRBx1hL7PUQUkrY+yePW+F5YQ1QYFc5
-         uLI4yncs0UjUVA65/jxBFgWkAWXvK5oaNIbjjB6H0hjiteokbb6s4iPbwPEkkujpUkW0
-         7PRA==
+        d=suse.com; s=google; t=1725554018; x=1726158818; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kJHk6dVcMot+83fqcyHPWmLjMUPxP5z8vxp/ZBkDsTM=;
+        b=CwUDpRHumS+xhjkOkSNcYkerUfHWVG+TzIQhXbhoKRrPX3T8LQnbOri7aQY0Mxr+hH
+         zt9JN5f0NuQEW68wTKFZPMxsN0cTQnN277Bx5updO5jz6Mg0MfitxiCobve9Zgj29Wmj
+         s1eNiGWZl0WErt/F4BipQoxnmWnLzxTNOGHpJu4fH+nCdUrkRfLK3o5126IeBhE5xGNq
+         IbVS0h+UpD15k9HDTFTSEkc2nozDjTu5yhu8fLc+0zFX9uJd2fl+MAiXFdeCcW0xR08i
+         PzGb93V+xzaO149I50uhyz0MgRfiEcgUtOmJ2VXPArnCtjCkEpl9ZuE2WXwJjroq8+z/
+         AWsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725552321; x=1726157121;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3SjbsSfqya3DyiG1kDui0xSVYDrbm2AN9/r4f/fNL4=;
-        b=WHvMYbbV0Ay+ievZ7YEmLgwyembzp1o5MJSARLqJ03/wEiz/lv5lQ2jliKzkgJuPF9
-         kbPatY1fwKjhgp0LaggnyKzx7kGaH9wSbFqUMETWsqHaFrRUhNtl7LJObb/ogtRtA+uK
-         vouVeQ0AGUo0ILnYcnWP8S6dSkRaCYqRyAT6bfhkeKRx4lSc93qh+EfbxnvQ4YeSUtPc
-         nDWvzFxl5KR3KjIlaRPq0WFio45kp7rCZH5upTkwql5LjEVuWRskKN0g2/dvlN58tCpg
-         jcGLXA/g3uZ1TgE+W8dXQXn4wuSSUd1AbPtBrgHd98k6S/3E6WXo+IaDo9il5xFDhu6/
-         Uyhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCP3pPE9UslNe0qgCOWEDeo7sTU2wVPlF34aQiD9ISm9Yb9aNK6ouaWwuLsLixyYlgUSgNFik16i0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBQ+h5TpSz+vtrfZdcLUg70qvwYNGqRLi66TWw326IVpFTzdTt
-	ggTxIGVqmiAUazNnl2FxzTsjagL+jmQb+nTLAXr507OrZSc0Vbf46ebUmlI2I2c=
-X-Google-Smtp-Source: AGHT+IGKLIiZ8CzLoWVbsna5e8H1ecKT4pb77ee4/Gxsp14Hf8qUmzgZH4wljbjzNM628eXRI0oSuA==
-X-Received: by 2002:a17:907:3f1c:b0:a86:789c:2d07 with SMTP id a640c23a62f3a-a8a1d29bc25mr883588166b.4.1725552320548;
-        Thu, 05 Sep 2024 09:05:20 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a796a2bd6sm70318666b.189.2024.09.05.09.05.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 09:05:20 -0700 (PDT)
-Message-ID: <1914fc07-d7be-4747-971b-40ef360d050a@linaro.org>
-Date: Thu, 5 Sep 2024 17:05:19 +0100
+        d=1e100.net; s=20230601; t=1725554018; x=1726158818;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kJHk6dVcMot+83fqcyHPWmLjMUPxP5z8vxp/ZBkDsTM=;
+        b=XKdusgmQimTnfvKE7yBmW6KTiRqRX9Dp3hnVUbg2H4ItNRONNXRd0d6NchyF92oDbb
+         OE8ZMgXA5av/wXgLlWiZ5AkIK4EPHE7L6+jzS7LM4eRlX6SamL3MK84N/YboivAG9Hrz
+         JFyJUdRyXdaSqHmnLd4kQi6Pbny7TrOjCi7rEjPRjgX4nXaM2YswnrXiEIC1hZl+2TKL
+         gYU/SonB2SP9rjVla7gyNPa1egc262zFjQvHhmOH30xZYURFWFa30arit2tOg2kSdJlq
+         BAUAOooGzZBvf2xR1/OsIdGqldujF1kmMfygIjN8vIBJNNJlaGyUZcgqeACQUfuDOnyk
+         acfg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/MzmuTYQE4WuWKgNhky348zxQfBrfyx1s2DdWeaPhkjtAhPzGqMH9vlIaYphPdyKgO3nDtecILYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl632ilqMNUM6ygIo/zALYjLID1S9MIW4esQI3JoxypDcra/hg
+	CGcOMo5g2lhpq8hdFrCc58irYQjAWvLsLIMzCA0tHazLTckgCyvuE4zmVxvbmc8=
+X-Google-Smtp-Source: AGHT+IHU/avyIpf1tRzphlO3ca0BhbKJKByf8ZqboDAgvuiywTcmj9UX7KVZcHdK/Ol0/Wbwf0Mx9g==
+X-Received: by 2002:a05:6402:3226:b0:5c2:6bf7:8531 with SMTP id 4fb4d7f45d1cf-5c2caf33541mr5644250a12.33.1725554018023;
+        Thu, 05 Sep 2024 09:33:38 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc528bcfsm1430637a12.16.2024.09.05.09.33.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 09:33:37 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 5 Sep 2024 18:33:45 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZtndaYh2Faf6t3fC@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <ZtHN0B8VEGZFXs95@apocalypse>
+ <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
+ <ZtcoFmK6NPLcIwVt@apocalypse>
+ <39735704-ae94-4ff8-bf4d-d2638b046c8e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] i2c: qcom-cci: Stop complaining about DT set clock
- rate
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Richard Acayan <mailingradian@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20240904020448.52035-9-mailingradian@gmail.com>
- <20240904020448.52035-12-mailingradian@gmail.com>
- <917917cc-3e78-4ab6-8fa4-82d9a6fe3fdd@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <917917cc-3e78-4ab6-8fa4-82d9a6fe3fdd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39735704-ae94-4ff8-bf4d-d2638b046c8e@kernel.org>
 
-On 05/09/2024 14:57, Konrad Dybcio wrote:
-> On 4.09.2024 4:04 AM, Richard Acayan wrote:
->> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>
->> It is common practice in the downstream and upstream CCI dt to set CCI
->> clock rates to 19.2 MHz. It appears to be fairly common for initial code to
->> set the CCI clock rate to 37.5 MHz.
->>
->> Applying the widely used CCI clock rates from downstream ought not to cause
->> warning messages in the upstream kernel where our general policy is to
->> usually copy downstream hardware clock rates across the range of Qualcomm
->> drivers.
->>
->> Drop the warning it is pervasive across CAMSS users but doesn't add any
->> information or warrant any changes to the DT to align the DT clock rate to
->> the bootloader clock rate.
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->> Link: https://lore.kernel.org/linux-arm-msm/20240824115900.40702-1-bryan.odonoghue@linaro.org
->> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
->> ---
+Hi Krzysztof,
+
+On 20:27 Tue 03 Sep     , Krzysztof Kozlowski wrote:
+> On 03/09/2024 17:15, Andrea della Porta wrote:
+> >>>>> +
+> >>>>> +				rp1_clocks: clocks@c040018000 {
+> >>>>
+> >>>> Why do you mix MMIO with non-MMIO nodes? This really does not look
+> >>>> correct.
+> >>>>
+> >>>
+> >>> Right. This is already under discussion here:
+> >>> https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
+> >>>
+> >>> IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
+> >>> using CLK_OF_DECLARE.
+> >>
+> >> Depends. Where are these clocks? Naming suggests they might not be even
+> >> part of this device. But if these are part of the device, then why this
+> >> is not a clock controller (if they are controllable) or even removed
+> >> (because we do not represent internal clock tree in DTS).
+> > 
+> > xosc is a crystal connected to the oscillator input of the RP1, so I would
+> > consider it an external fixed-clock. If we were in the entire dts, I would have
+> > put it in root under /clocks node, but here we're in the dtbo so I'm not sure
+> > where else should I put it.
 > 
-> I.. am not sure this is really a problem? On some platforms the core
-> clock is only 19.2 Mhz, but e.g. on sdm845 we have:
+> But physically, on which PCB, where is this clock located?
+
+xosc is a crystal, feeding the reference clock oscillator input pins of the RP1,
+please see page 12 of the following document:
+https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+On Rpi5, the PCB is the very same as the one on which the BCM2712 (SoC) and RP1
+are soldered. Would you consider it external (since the crystal is outside the RP1)
+or internal (since the oscillator feeded by the crystal is inside the RP1)?
+
 > 
-> static const struct freq_tbl ftbl_cam_cc_cci_clk_src[] = {
->          F(19200000, P_BI_TCXO, 1, 0, 0),
->          F(37500000, P_CAM_CC_PLL0_OUT_EVEN, 16, 0, 0),
->          F(50000000, P_CAM_CC_PLL0_OUT_EVEN, 12, 0, 0),
->          F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
->          { }
-> };
+> > 
+> > Regarding pclk and hclk, I'm still trying to understand where they come from.
+> > If they are external clocks (since they are fixed-clock too), they should be
+> > in the same node as xosc. CLK_OF_DECLARE does not seem to fit here because
+> 
+> There is no such node as "/clocks" so do not focus on that. That's just
+> placeholder but useless and it is inconsistent with other cases (e.g.
+> regulators).
 
-CCI latches the code from DT and I assume that people submitting dts 
-have actually tested their sensors when they do so.
+Fine, I beleve that the root node would be okay then, or some other carefully named
+node in root, if the clock is not internal to any chip.
 
-The complaint about not being 19.2 MHz is surely not valid since, it can 
-be any number of frequencies.
+> 
+> If this is external oscillator then it is not part of RP1 and you cannot
+> put it inside just to satisfy your drivers.
 
-Its a redundant and useless warning.
+Ack.
 
-We can do extra work to align to a set of frequencies sure but, the 
-warning is not a warning about a real thing.
+> 
+> > there's no special management of these clocks, so no new clock definition is
+> > needed.
+> 
+> > If they are internal tree, I cannot simply get rid of them because rp1_eth node
+> > references these two clocks (see clocks property), so they must be decalred 
+> > somewhere. Any hint about this?.
+> > 
+> 
+> Describe the hardware. Show the diagram or schematics where is which device.
 
----
-bod
+Unfortunately I don't have the documentation (schematics or other info) about
+how these two clocks (pclk and hclk) are arranged, but I'm trying to get
+some insight about that from various sources. While we're waiting for some
+(hopefully) more certain info, I'd like to speculate a bit. I would say that
+they both probably be either external (just like xosc), or generated internally
+to the RP1:
 
+If externals, I would place them in the same position as xosc, so root node
+or some other node under root (eg.: /rp1-clocks)
+
+If internals, I would leave them just where they are, i.e. inside the rp1 node
+
+Does it make sense?
+
+Many thnaks,
+Andrea
+
+> 
+> Best regards,
+> Krzysztof
+> 
