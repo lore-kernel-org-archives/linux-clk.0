@@ -1,246 +1,107 @@
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4476718E029
-	for <linux-clk@vger.kernel.org>; Thu,  5 Sep 2024 18:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2093812C7FB;
+	Thu,  5 Sep 2024 19:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725562457; cv=none; b=jLpjkYX4OrEhnozMPL2e/aOJhJNhlwcR2ZZ9Uj0khOWrJZrL9l97uMV/RBe2bUgks8ZhH4Z2mtfq6GSVophoUDJJzpQTjHt+H4zburfwX7TYa3/I+r2pNzpkQUkIvxZv0nsmHdG+hG86fKJQlcFeyk8lDFXNEGzaUxadVBTcGsY=
+	t=1725563168; cv=none; b=D7n5IsGJQA48HwOcnM10yqqEQDSJ5stycZKI71x+QVO8duPZmDweMkm5FySDx3Tq/69YIMVhJE5Creb3s7dQfhrWzuIpoK62QvCgZ620AjkGgLkfmOfz0JxJusjqd8afXBN8+7n9LtKbRXX1xoAMFTVd1puZtRrylKnsrXcsOQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725562457; c=relaxed/simple;
-	bh=+X3EGBbsnfThSA6bfkbEMEawCDcd9CImfSQq8Sv6HaI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeI9IMe1e7jQISz+0iHB2geYraHihgfq/+2Lx0h4ET8aIuH0leVY76NhEjbVBqq/e9eZgcf1/+w9rmBVWjRA9ilM6KURWPACWCyK7d+TD1aE6xFYmY+4HcGplaFuQKFi1hbhz4akYxZg8pbmICvwu1tv2eNlXiAQo/Ij2gNdmB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bppyafcJ; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1725563168; c=relaxed/simple;
+	bh=p1NL4lA6aQW0dc7CsvZOuEyngKVleWJuJw8cqJv4U98=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=bU2eI2uqD9vsatdKZd3ouCHVkmeTKwrBmVUoR7mkXDJAwWFcSjApwJGUyCCyci8++m2z7z/GpXHFwis+6uOr19aGiSLjJt7LJGp8YCy13RCMf4rUrixtJ6eaE7nEEKYEgmzsnqAm1sS6MxGOsBpy+7LXRUFUi6kFNhFNfBKHfe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8rlVhPV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bppyafcJ"
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5c3cdbe4728so1242987a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 11:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725562454; x=1726167254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RxABoZy7M/TZG8opuKEUGg9PIAepW4IWO/Hnr8c+uSo=;
-        b=bppyafcJoWlFgS8M2UEohwoJYcIWa32E1DW48VgOBaEV/dvI4G0dIdbhmRkujthpK/
-         XivKiGFCzh37sUL3g5wMcIK5RYUNXcSoDxSIYJpbW16wBkOUN9eT+9MDETM8yeZOLzhx
-         7bOL4qh4ZD9+M+XXikQI0pLTZbH3EO8wHRL5f1D5wEq2K3Meh3ZYbOhBMxw2ioIeb/wU
-         aaiAHgns6/6NQockmvPY4ZiaMfpitnOxDjaKsMo0VcghnTsI16h3hXg9FlLmwcwXrJN1
-         debI9J+wlOAeXnn6EaqSRyTvuNzO9zcQBKN3xe9VculiteYxvcIMweeueic6SIVQtlb8
-         h0cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725562454; x=1726167254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RxABoZy7M/TZG8opuKEUGg9PIAepW4IWO/Hnr8c+uSo=;
-        b=ZrXFHwJCp4wpbLD73M2c6oCetBc7zzpog5vsmlXT6Abmh4P94wez1nKozR5EvMOikD
-         LVCf3l02XIUNn/BIJIvDU++zs/fBpS5A3dtE2S7YtedAt92246H08rc7mYwP8PXCd2j6
-         suN9S/MNuc40LwPQpqbG+NZY7O1JZHay6GtOvDo11i6JlaPaa2JsDb2tAmcahWtGBBWV
-         yDYV/ZflzFjVEWz815vkiNMZswmPHFb2+XZXokJ0KHWJFfqgSesX4C3pf8M3J0qXF3+R
-         b3qnqYhRggaQslx1Unv+HZ+uUBRJ9jxqzTGJsD67Jr7z69lp1mSbyNF6+WT7vhadKyCh
-         O4uA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsW6ZTPouJdmyrXj7evk6jYjseMCcLyutEDMcOg+67Q4LSyRbTbiQA/6fCg22Cx/7Li+RcElwzbNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5E6HUOHE0n7W1pl5ep2Y306KM21FGFq7CZX3mkTnZSD5mvCkr
-	z754wr/dCm5+nyas5Y98eKvZmB2/pVSJNeThcG6fW5L/qHTZyi75n3ZEVh2nuOw=
-X-Google-Smtp-Source: AGHT+IFjEgRGyH+GaPbngGsdDcuBB5u6KOKaz4oCTouY+y9qZ4ACBcA78wca7rCiKJ55uLq+Ab/vJw==
-X-Received: by 2002:a17:907:9486:b0:a86:b042:585a with SMTP id a640c23a62f3a-a897fad5108mr2030528766b.57.1725562452809;
-        Thu, 05 Sep 2024 11:54:12 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a62038d8bsm168982266b.64.2024.09.05.11.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 11:54:12 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 5 Sep 2024 20:54:20 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Ztn-XOvtk_d3U6XJ@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
- <ZtHN0B8VEGZFXs95@apocalypse>
- <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
- <ZtcoFmK6NPLcIwVt@apocalypse>
- <39735704-ae94-4ff8-bf4d-d2638b046c8e@kernel.org>
- <ZtndaYh2Faf6t3fC@apocalypse>
- <f39edf3d-aa9e-43a0-8997-762d76c9c248@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8rlVhPV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B77C4CEC3;
+	Thu,  5 Sep 2024 19:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725563167;
+	bh=p1NL4lA6aQW0dc7CsvZOuEyngKVleWJuJw8cqJv4U98=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=c8rlVhPVwANDway5HZx0uUdFWaP58i+hiQySG8m7Hpl2FNwo9V8oay7ADf0a65JOl
+	 U9vC1F42lXWdWjmmlIq5wlAB2jNsyIZfUHRkafTpqYskJYDHh+Nz37uy/nnsKrMGVy
+	 RPmzEkMtT6ZgQtXuDjLOvftbmafahfqKfbxD9+zsP0VdKbzshtxxWJ5i7RvU18+nPC
+	 qwurTeTzMnB7l3+PMxDCWJYsZBKPoG6NB/wdvi5VtlEVCnM0Ao0Ks6chQqBYKS3sL/
+	 5LdYLyTFH1MwWiAbqUT2+p44QUjyeO6BfJ5o9PZuMyKoK5BHZYNI/eEDl4dh76oPtJ
+	 VYrC0ADWQQrXw==
+Message-ID: <0161bb1640489c7a677ac26967b65ee1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f39edf3d-aa9e-43a0-8997-762d76c9c248@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240831111056.3864-7-hpausten@protonmail.com>
+References: <20240831111056.3864-1-hpausten@protonmail.com> <20240831111056.3864-7-hpausten@protonmail.com>
+Subject: Re: [PATCH 6/6] clk: clocking-wizard: move dynamic reconfig setup behind flag
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+To: Conor Dooley <conor+dt@kernel.org>, Harry Austen <hpausten@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>
+Date: Thu, 05 Sep 2024 12:06:05 -0700
+User-Agent: alot/0.10
 
-Hi Krzysztof,
+Quoting Harry Austen (2024-08-31 04:13:26)
+> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
+inx/clk-xlnx-clock-wizard.c
+> index 1a65a7d153c35..967eacc28050d 100644
+> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> @@ -1146,20 +1146,6 @@ static int clk_wzrd_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(clk_wzrd->base))
+>                 return PTR_ERR(clk_wzrd->base);
+> =20
+> -       ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->s=
+peed_grade);
+> -       if (!ret) {
+> -               if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > =
+3) {
+> -                       dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
+> -                                clk_wzrd->speed_grade);
+> -                       clk_wzrd->speed_grade =3D 0;
+> -               }
+> -       }
+> -
+> -       clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
+> -       if (IS_ERR(clk_wzrd->clk_in1))
+> -               return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in=
+1),
+> -                                    "clk_in1 not found\n");
+> -
+>         clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_acl=
+k");
+>         if (IS_ERR(clk_wzrd->axi_clk))
+>                 return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_cl=
+k),
+> @@ -1170,31 +1156,48 @@ static int clk_wzrd_probe(struct platform_device =
+*pdev)
+>                 return -EINVAL;
+>         }
+> =20
+> -       ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+> -       if (ret)
+> -               return ret;
+> -
+> -       clk_wzrd->clk_data.num =3D nr_outputs;
+> -       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell=
+_get, &clk_wzrd->clk_data);
+> -       if (ret) {
+> -               dev_err(&pdev->dev, "unable to register clock provider\n"=
+);
+> -               return ret;
+> -       }
+> +       if (of_property_read_bool(np, "xlnx,dynamic-reconfig")) {
 
-On 18:52 Thu 05 Sep     , Krzysztof Kozlowski wrote:
-> On 05/09/2024 18:33, Andrea della Porta wrote:
-> > Hi Krzysztof,
-> > 
-> > On 20:27 Tue 03 Sep     , Krzysztof Kozlowski wrote:
-> >> On 03/09/2024 17:15, Andrea della Porta wrote:
-> >>>>>>> +
-> >>>>>>> +				rp1_clocks: clocks@c040018000 {
-> >>>>>>
-> >>>>>> Why do you mix MMIO with non-MMIO nodes? This really does not look
-> >>>>>> correct.
-> >>>>>>
-> >>>>>
-> >>>>> Right. This is already under discussion here:
-> >>>>> https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
-> >>>>>
-> >>>>> IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
-> >>>>> using CLK_OF_DECLARE.
-> >>>>
-> >>>> Depends. Where are these clocks? Naming suggests they might not be even
-> >>>> part of this device. But if these are part of the device, then why this
-> >>>> is not a clock controller (if they are controllable) or even removed
-> >>>> (because we do not represent internal clock tree in DTS).
-> >>>
-> >>> xosc is a crystal connected to the oscillator input of the RP1, so I would
-> >>> consider it an external fixed-clock. If we were in the entire dts, I would have
-> >>> put it in root under /clocks node, but here we're in the dtbo so I'm not sure
-> >>> where else should I put it.
-> >>
-> >> But physically, on which PCB, where is this clock located?
-> > 
-> > xosc is a crystal, feeding the reference clock oscillator input pins of the RP1,
-> > please see page 12 of the following document:
-> > https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> 
-> That's not the answer. Where is it physically located?
+Is this going to break the existing DTBs? Before the property existed,
+the driver seems to have always tried to read xlnx,speed-grade and then
+setup a notifier, etc. Why would xlnx,speed-grade be set if
+xlnx,dynamic-reconfig wasn't set?
 
-Please see below.
-
-> 
-> > On Rpi5, the PCB is the very same as the one on which the BCM2712 (SoC) and RP1
-> > are soldered. Would you consider it external (since the crystal is outside the RP1)
-> > or internal (since the oscillator feeded by the crystal is inside the RP1)?
-> 
-> So it is on RPi 5 board? Just like every other SoC and every other
-> vendor? Then just like every other SoC and every other vendor it is in
-> board DTS file.
-
-Yes it's on the Rpi5 board. These are two separate thing, though: one is where
-to put it (DTS, DTSO) and another is in what target path relative to root. I
-was trying to understand the latter.
-The clock node should be put in the DTBO since we are loading this driver at
-runtime and we probably don't want to depend on some specific node name to be
-present in the DTS. This is also true because this driver should possibly work
-also on ACPI system and on hypothetical PCI card on which the RP1 could be mounted
-in the future, and in that case a DTS could be not even there. 
-After all, those clocks must be in the immediate proximity to the RP1, and on the
-same board, which may or may not be the main board as the Rpi5 case.
-I think that, since this application is a little bit peculiar, maybe some
-compromises could be legit.
-
-> 
-> > 
-> >>
-> >>>
-> >>> Regarding pclk and hclk, I'm still trying to understand where they come from.
-> >>> If they are external clocks (since they are fixed-clock too), they should be
-> >>> in the same node as xosc. CLK_OF_DECLARE does not seem to fit here because
-> >>
-> >> There is no such node as "/clocks" so do not focus on that. That's just
-> >> placeholder but useless and it is inconsistent with other cases (e.g.
-> >> regulators).
-> > 
-> > Fine, I beleve that the root node would be okay then, or some other carefully named
-> > node in root, if the clock is not internal to any chip.
-> > 
-> >>
-> >> If this is external oscillator then it is not part of RP1 and you cannot
-> >> put it inside just to satisfy your drivers.
-> > 
-> > Ack.
-> > 
-> >>
-> >>> there's no special management of these clocks, so no new clock definition is
-> >>> needed.
-> >>
-> >>> If they are internal tree, I cannot simply get rid of them because rp1_eth node
-> >>> references these two clocks (see clocks property), so they must be decalred 
-> >>> somewhere. Any hint about this?.
-> >>>
-> >>
-> >> Describe the hardware. Show the diagram or schematics where is which device.
-> > 
-> > Unfortunately I don't have the documentation (schematics or other info) about
-> > how these two clocks (pclk and hclk) are arranged, but I'm trying to get
-> > some insight about that from various sources. While we're waiting for some
-> > (hopefully) more certain info, I'd like to speculate a bit. I would say that
-> > they both probably be either external (just like xosc), or generated internally
-> > to the RP1:
-> > 
-> > If externals, I would place them in the same position as xosc, so root node
-> > or some other node under root (eg.: /rp1-clocks)
-> 
-> Just like /clocks, /rp1-clocks is not better. Neither /rp1-foo-clocks.
-
-Right. So in this case, since xosc seems to be on the same level and on the same
-board of the RP1 and the SoC, and it's also external to the RP1, can I assume that
-placing xosc node in root is ok?
-
-> 
-> I think there is some sort of big misunderstanding here. Is this RP1
-> co-processor on the RP board, connected over PCI to Broadcom SoC?
-
-Yes. 
-
- ---------------Rpi5 board---------------------
- |                                            |
- |    SoC ==pci bus==> RP1 <== xosc crystal   |
- |                                            |
- ----------------------------------------------
-
-> 
-> > 
-> > If internals, I would leave them just where they are, i.e. inside the rp1 node
-> > 
-> > Does it make sense?
-> 
-> No, because you do not have xosc there, according to my knowledge.
-
-Hmmm sorry, not sure what this negation was referring to... I was talking about
-hclk and pclk, not xosc here. Could you please add some details?
-
-Many thanks,
-Andrea
-
-> 
-> Best regards,
-> Krzysztof
-> 
+The binding has implicitly had xlnx,dynamic-reconfig set before this
+patch, and we should strive to maintain that. Perhaps the property
+should be inverted, i.e. xlnx,static-config, and the absence of that
+property can imply the reconfig property.
