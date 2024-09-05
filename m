@@ -1,50 +1,50 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0C48289A;
-	Thu,  5 Sep 2024 15:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C10E10940;
+	Thu,  5 Sep 2024 15:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725549550; cv=none; b=RsSSvby/XOJYN5vWSufJhkd/Wwhhw38YwZtUUptE5Cnro7mCdVONZ3g35iJ2cQ2OhuFv0pppYdJvAmsDjJ2vN9STtkXoaeXN5cCMjCLhUQfZVhkdPU/qLUnxsL46xREfQbXVeOB+lmwBHEj0FOhLrC5ZVRAfvLAD381C50TxhU0=
+	t=1725549701; cv=none; b=ti+yCsL7y0+ddmLlSAVJP3xr7XC7EfFvkTdCZXMRXJfmOZIoIoaSVEK9nyyoEX4WnMD9J0RWUM9CSuw9KLYLOKxkWhxUXJpThzMVSh/fQATVS3JtuxUewX6uNNdOoXE0JI14AzTXQ0aG6fnHF9vKFyR/XMxvraYPYWoQEWdDVNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725549550; c=relaxed/simple;
-	bh=h6qYuZYgpSHs+Z6XA/OOd6aWXfix0xnSTXQZqCHk0s8=;
+	s=arc-20240116; t=1725549701; c=relaxed/simple;
+	bh=yGl/dLIM0UZWLi8QRker46izTh0jwKXyeHwDZm0sgp4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Sf46C2GDgopwjuuNbJUIeKJWXq72e9QKxjK0nzjUeE2Ph226W9BRl4O+bVKyP1fyxxQ4FAbJfJAzUtBI8unYbXUdUdb6f6WosWsy/lDI9JA80yIkRs9Kso4gCKNifoNKOU/4VgiM/v9ueKVNlX1GF0KxJEGB5GNMCAV2ozzD3Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CMVVNwIw; arc=none smtp.client-ip=68.232.153.233
+	 In-Reply-To:Content-Type; b=GccygxguCWZOcbpxdR5ay9PqeYIBJIVeRViHrotbpdInYU2VfTJYQmBDBgigukNanAYbm+A+/9KzMOGb7rGtI2ChaqkXGCcEdBqhQfOh/6zOl/JAHpe7BgQotuqu/O3xVZwQ4iOSAEnIwJt2I0tFs251nBnlXqSyM0RjqqpVwSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=S+SbEAlY; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CMVVNwIw"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="S+SbEAlY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725549548; x=1757085548;
+  t=1725549700; x=1757085700;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=h6qYuZYgpSHs+Z6XA/OOd6aWXfix0xnSTXQZqCHk0s8=;
-  b=CMVVNwIwcoa9ruRch+6eeRp5zESN+UL4haKv/wE+ogkP+ETh4bcisW0x
-   yoMbI5gmjGZc/L+5VHRp3Nes4o7fmtASSk01cZKqBXwayxvdF8R++zyLn
-   AOjt5NQYkt/diwAS//rFfeLrV9P2PmjPepFBDD8izV/T28p6gO5xqxeoL
-   muCyWGOYjoG11XY/m+0RTs2LD8Lnn9C+X98iI4ln/tByBzq/e2aSBvYQZ
-   7o9iXms4s/q+Yk7CmZDlOG9tOYKbD4rroTanI5H1zpINnZ+GAlDFvKZef
-   qz1gwl11xmom1vUDQjOdRqneVukkmCVL/6LT0BFrqaxRJhPHjfqM1Awqv
+  bh=yGl/dLIM0UZWLi8QRker46izTh0jwKXyeHwDZm0sgp4=;
+  b=S+SbEAlYnxXijP18oaftgLt+3DjdKsl/mgUYC8LMdC0M1ELQ34Bo7OfR
+   Z10Tqb9DWOjTWPT0TFYILLuHpVKKzDMiJ1vVkRIO1AiOHl8ZUIy1gd+Fo
+   oyqcPDGIwxmUD485oAKg6s8Ii5Xf2sLMsmt2F/8Q0AeypqXYqHzJuVuCG
+   +QOJoYhYQBgbB68nR7kKQhOdhOFZw4vEEfqH/Vo+pMeac/Zb8GfV/ZJdd
+   hq/Irtsxg32iN+cSoK7ev46jaZYKT78GQi7VpLwBgqQpEBTMl8R+BUtBt
+   O3sujx6c13HtMcsitsrHFEef/MYghrcKvQieQVmmfEPXRH9HaRcbZIi+m
    g==;
-X-CSE-ConnectionGUID: YW3ZuO0gRNG7kqx0NbYnYA==
-X-CSE-MsgGUID: z8/lXfkdR0yUdNqwUfDCng==
+X-CSE-ConnectionGUID: 0RjtCNvaTQiSYu+j1QXsrw==
+X-CSE-MsgGUID: fF2QpZm5TmKZcdOPBLO2LA==
 X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="34474291"
+   d="scan'208";a="262338257"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Sep 2024 08:19:06 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Sep 2024 08:21:39 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 5 Sep 2024 08:18:36 -0700
-Received: from [10.180.116.241] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 5 Sep 2024 08:18:33 -0700
-Message-ID: <2e0ab6c7-a7d0-44fa-8e8b-cd04e5c0359c@microchip.com>
-Date: Thu, 5 Sep 2024 17:18:53 +0200
+ 15.1.2507.35; Thu, 5 Sep 2024 08:21:06 -0700
+Received: from [10.180.116.241] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 5 Sep 2024 08:21:04 -0700
+Message-ID: <1da0abbb-94e5-42fd-a2d2-71d5d7d253fb@microchip.com>
+Date: Thu, 5 Sep 2024 17:21:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,67 +52,60 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
+Subject: Re: [PATCH v2 0/3]clk: at91: add sama7d65 clock support
 Content-Language: en-US, fr-FR
-To: Dharma Balasubiramani <dharma.b@microchip.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
+To: <Ryan.Wanner@microchip.com>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <varshini.rajendran@microchip.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <cover.1725392645.git.Ryan.Wanner@microchip.com>
 From: Nicolas Ferre <nicolas.ferre@microchip.com>
 Organization: microchip
-In-Reply-To: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
+In-Reply-To: <cover.1725392645.git.Ryan.Wanner@microchip.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2024 at 11:38, Dharma Balasubiramani wrote:
-> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
-> since the SAMA7D65 PMC shares the same properties and clock requirements
-> as the SAMA7G5.
+On 04/09/2024 at 17:54, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> Hello,
+> 
+> This series adds clock support for the SAMA7D65 SoC. There are also
+> changes to the master clock driver and PLL driver in order to account for
+> the increased amount of clocks being supported in this new SoC.
+> 
+> Trying to account for all the updates happening in this system, this
+> patch set is based off of the most recent updates to at91-next branch.
+> 
+> Changes in v2:
+> - Correct PLL ID from PLL_ID_IMG to PLL_ID_GPU in the description.
+> - Adjust master clock description to match amount of master clocks 0-9.
+> - Correct bad spacing and bad alignment.
+> - Remove double variable definition.
+> - Add missing kfree() at end of function.
+> - Reorganize clk and pll driver changes in patch set.
 
-For the record, driver addition is here:
-v1:
-https://lore.kernel.org/linux-arm-kernel/cover.1724948760.git.Ryan.Wanner@microchip.com/
+To the whole series:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-v2:
-https://lore.kernel.org/linux-arm-kernel/cover.1725392645.git.Ryan.Wanner@microchip.com/
+> Ryan Wanner (3):
+>    clk: at91: clk-master: increase maximum number of clocks
+>    clk: at91: clk-sam9x60-pll: increase maximum amount of plls
+>    clk: at91: sama7d65: add sama7d65 pmc driver
+
+For the record, additions to the DT binding are posed here:
+https://lore.kernel.org/lkml/20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com/
 
 Best regards,
    Nicolas
 
-> ---
->   Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml | 2 ++
->   1 file changed, 2 insertions(+)
+>   drivers/clk/at91/Makefile          |    1 +
+>   drivers/clk/at91/clk-master.c      |    2 +-
+>   drivers/clk/at91/clk-sam9x60-pll.c |    2 +-
+>   drivers/clk/at91/pmc.c             |    1 +
+>   drivers/clk/at91/sama7d65.c        | 1373 ++++++++++++++++++++++++++++
+>   5 files changed, 1377 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/clk/at91/sama7d65.c
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> index c9eb60776b4d..885d47dd5724 100644
-> --- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> @@ -43,6 +43,7 @@ properties:
->                 - atmel,sama5d4-pmc
->                 - microchip,sam9x60-pmc
->                 - microchip,sam9x7-pmc
-> +              - microchip,sama7d65-pmc
->                 - microchip,sama7g5-pmc
->             - const: syscon
->   
-> @@ -90,6 +91,7 @@ allOf:
->               enum:
->                 - microchip,sam9x60-pmc
->                 - microchip,sam9x7-pmc
-> +              - microchip,sama7d65-pmc
->                 - microchip,sama7g5-pmc
->       then:
->         properties:
-> 
-> ---
-> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
-> change-id: 20240829-sama7d65-next-a91d089b56a3
-> 
-> Best regards,
 
