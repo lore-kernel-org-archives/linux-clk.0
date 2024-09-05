@@ -1,109 +1,119 @@
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A449B189522;
-	Thu,  5 Sep 2024 09:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425F3156225;
+	Thu,  5 Sep 2024 09:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526823; cv=none; b=Oib5IQfxxplO6/KQFdG/HRmQZAPs73jDdegymfqh1VeGvAvOWKVa1FksP6tQRgW4AAi++NND+SwYoGQrYqULDmrOIlcnJE4c0G/bCJsIsHWZ9nsGxjuhLzD/3WPMEAaG/eQWObN1be1oRrbBcnVi8p9Hw6byktjSTBk28MYs0Sw=
+	t=1725530079; cv=none; b=s1AcnxTIg2ENzeHneuMVspAYQI+rddR7koJ4Qrn6nVMmcdFH4l5CExYkWXuvdO2Uek8ULt+QEKFm36TTJNrBq+AGBkitadxMBNr6j3YnHkcUtmXvSFioUXqvqby57SAkaWhixCBpXWY0k2Vml5S/5OlnhX3gaIhKerMJo2LNk54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526823; c=relaxed/simple;
-	bh=/hIAToi92n76m3A6x33gRsk+l4AYO6+7aTuIBYt2Ka8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=qy9jsOnWL8ZoAH254QFGkodJX/zRhx4lOXZ1+6CfQQz/WnEHEFW8JLpLCvziqqMvO8H2PLLrJRGfaMbrpGKudnCFCtqfktGGm9gPSjhDOa842AnH3QfjXkPpsRNKNP2vFUcdYxDCigHhj8ClvJdSe+GsI1ZpOr1/1yp9iOUUhTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3677E202348;
-	Thu,  5 Sep 2024 11:00:20 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F142B200D7E;
-	Thu,  5 Sep 2024 11:00:19 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 56DEA183AC0A;
-	Thu,  5 Sep 2024 17:00:18 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v4 2/2] clk: imx95-blk-ctl: Add one clock gate for HSIO block
-Date: Thu,  5 Sep 2024 16:38:55 +0800
-Message-Id: <1725525535-22924-3-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1725525535-22924-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1725525535-22924-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1725530079; c=relaxed/simple;
+	bh=CUa9olPq+AXLi4yjiXb01U/wLckCsRjgHnbju1lATbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dpTyvv7VFiF2oikL6AQZXm2XyRsKttXd0c6GoJHzd7St8AM9wJrem4CIremoulmfcuQSi+NtW4oseZLzhSlrBOMd3xvF79bap8ajsZwjUg2Qx7M0AfKQPwEEcn3GouzHe4aFZcL7doX43FPXdunk9NkdJCpRKk7B7fuFGc8bQxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6bada443ffeso4396757b3.0;
+        Thu, 05 Sep 2024 02:54:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725530075; x=1726134875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9diqHcpO/aE5+LW5NeGeZFj2mzo73WZhkkRkkfun7eI=;
+        b=M1HTyFxbpjnPYDI3A/JNE0D8snsSsYfr1nvHirSeGzggQyUWiHWhDHgQbBMR0nhbRM
+         rPAsjyzoD3V+NLkcvORuAb307h0NIsPpeEmXUxgIkTXK5JdnNkKcsOYWHsXT0A8vdBQ4
+         P5zBiX8cw58BQwGU3b5WYl7S8xQFDBy0o+DxPmxVeHdNEjj+WWtsjmbZ6iffrE5RkmOr
+         IkL5KhbzeVqML+t5aCgkU6ZXdpn9bn3uOilb0XNKu9HQevRcOcyVWVWF7u9KipIMR0OI
+         dcweto9rhs5L2C0h69e7jvWJKId/cHPeXC1vVZh+3OkwJMUuYJfuMJhP+HCI0wBTCnAx
+         o56A==
+X-Forwarded-Encrypted: i=1; AJvYcCUgqWR9t4BDpHtQaPVwAHowEB7HdJxkXBWer8ycxavO+meLYbPNwDGJ+6SkRaGFMNgHgj+2OOxxfyFr1w==@vger.kernel.org, AJvYcCUmT5M7BWOMJ2S6kPqMMdF9Z5p6DzHtPlFkDK6dIVQyHTKVWjHy9wb2L/3WXAbyVEcAXKfwqmdSpX1T@vger.kernel.org, AJvYcCV7xPJNbHwm2+hAQnqVl/L9gvMfTN0maTtZZO9NukNaA4Be3LDfiydRExgkQIiex1KG12TOzF9J7R4g@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsYNSXebRCxJ4+OrfxrNr8b2+TCtftXvme40Bl/nVDMlmA3TFK
+	j+ntgh0GDSMrbiypTZvc1LSldPcPewBM+ZSY7gen4ViJe44TbZjSxGwiu7Tw
+X-Google-Smtp-Source: AGHT+IEzYK4ChgIxHWbhgm2ro+sorU+2H3iZkR8YMryr4b8JZNEdrnuoBKcjn+OvwexdjAbRDL+Srw==
+X-Received: by 2002:a05:690c:6609:b0:6d7:3c0d:3adb with SMTP id 00721157ae682-6db25f5584cmr44724317b3.1.1725530074818;
+        Thu, 05 Sep 2024 02:54:34 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d3cdc309e8sm24561847b3.108.2024.09.05.02.54.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 02:54:34 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6db2a9da800so9476767b3.0;
+        Thu, 05 Sep 2024 02:54:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqUKjy6DUI1ht02qGIbB/iWY87KwdcLHPPMSudAonGUbnIbpxTFsjBetqNuE+vClnBHeMEbsGrirpD@vger.kernel.org, AJvYcCWSma4OzrIedxesHP8LCUSlZvJfj/c8DxOxXXuoMLUhXDQhTE8hBg6zz4kZfZj9Zo2yv2xQYeAJjQ95JQ==@vger.kernel.org, AJvYcCXAZvOj2aE3RUBs8FdfCzYs/2nnjg+Sm6rvl6xxf4tWvTp5QZGL1SeKokNyLm0RH1mUE3dCoV1hscrC@vger.kernel.org
+X-Received: by 2002:a05:6902:1785:b0:e1c:ff8a:68f9 with SMTP id
+ 3f1490d57ef6-e1d1056a277mr4589641276.11.1725530073994; Thu, 05 Sep 2024
+ 02:54:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240213105730.5287-1-tony@atomide.com> <20240213105730.5287-2-tony@atomide.com>
+ <CAMuHMdXZTmn7R8GQWAMFL_9C+VGu4SDfFuMN-8MJmi0AbPMx-g@mail.gmail.com>
+In-Reply-To: <CAMuHMdXZTmn7R8GQWAMFL_9C+VGu4SDfFuMN-8MJmi0AbPMx-g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Sep 2024 11:54:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWb56RdBVOWysOm4CMUrsA85tk2Du-RNrMQA_Danv05ng@mail.gmail.com>
+Message-ID: <CAMuHMdWb56RdBVOWysOm4CMUrsA85tk2Du-RNrMQA_Danv05ng@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: ti: Handle possible address in the node name
+To: Tony Lindgren <tony@atomide.com>
+Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Tero Kristo <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, linux-omap@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Paul Walmsley <paul@pwsan.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CREF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
-enable/disable.
+On Mon, Sep 2, 2024 at 4:03=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+> On Tue, Feb 13, 2024 at 11:59=E2=80=AFAM Tony Lindgren <tony@atomide.com>=
+ wrote:
+> > In order to use #address-cells =3D <1> and start making use of the
+> > standard reg property, let's prepare things to ignore the possible
+> > address in the clock node name.
+> >
+> > Unless the clock-output-names property is used, the legacy clocks still
+> > fall back to matching the clock data based on the node name.
+> >
+> > We use cleanup.h to simplify the return path for freeing tmp.
+> >
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+>
+> Thanks for your patch, which is now commit 3516338543cafb65 ("clk: ti:
+> Handle possible address in the node name") in v6.9-rc1.
+> This causes an early boot crash on BeagleBone Black:
+>
+>     ti_dt_clocks_register: failed to lookup clock node
+> clk-24mhz-clkctrl:0000:0, ret=3D-517
 
-Add compatible string "nxp,imx95-hsio-blk-ctl" to support PCIe REF clock
-out gate.
+I found the culprit: after the move of .dts files to vendor
+sub-directories, I had updated my boot script to:
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx95-blk-ctl.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+    DTB=3Darch/arm/boot/dts/ti/am335x-boneblack.dtb
+    if [ ! -e $DTB ]; then
+        DTB=3Darch/arm/boot/dts/am335x-boneblack.dtb
+    fi
 
-diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-index 74f595f9e5e3..596dfb2f3b75 100644
---- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-+++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-@@ -248,6 +248,25 @@ static const struct imx95_blk_ctl_dev_data dispmix_csr_dev_data = {
- 	.clk_reg_offset = 0,
- };
- 
-+static const struct imx95_blk_ctl_clk_dev_data hsio_blk_ctl_clk_dev_data[] = {
-+	[0] = {
-+		.name = "hsio_blk_ctl_clk",
-+		.parent_names = (const char *[]){ "hsio_pll", },
-+		.num_parents = 1,
-+		.reg = 0,
-+		.bit_idx = 6,
-+		.bit_width = 1,
-+		.type = CLK_GATE,
-+		.flags = CLK_SET_RATE_PARENT,
-+	}
-+};
-+
-+static const struct imx95_blk_ctl_dev_data hsio_blk_ctl_dev_data = {
-+	.num_clks = 1,
-+	.clk_dev_data = hsio_blk_ctl_clk_dev_data,
-+	.clk_reg_offset = 0,
-+};
-+
- static int imx95_bc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -418,6 +437,7 @@ static const struct of_device_id imx95_bc_of_match[] = {
- 	{ .compatible = "nxp,imx95-display-master-csr", },
- 	{ .compatible = "nxp,imx95-lvds-csr", .data = &lvds_csr_dev_data },
- 	{ .compatible = "nxp,imx95-display-csr", .data = &dispmix_csr_dev_data },
-+	{ .compatible = "nxp,imx95-hsio-blk-ctl", .data = &hsio_blk_ctl_dev_data },
- 	{ .compatible = "nxp,imx95-vpu-csr", .data = &vpublk_dev_data },
- 	{ /* Sentinel */ },
- };
--- 
-2.37.1
+I.e. I missed the "/omap" part, causing the install to fall back to
+an old DTB file that no longer works with modern kernels.
 
+Sorry for the noise.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
