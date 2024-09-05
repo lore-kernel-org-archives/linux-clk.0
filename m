@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0021C2E;
-	Thu,  5 Sep 2024 18:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5750D1C2E;
+	Thu,  5 Sep 2024 18:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725559795; cv=none; b=Xr18FvXjTNR/LfSXmUlkMIEhJzfFUTwWaAli3JLtuZ8H7Z2IbqWCPW1EWYBSRQjeUE8ucY/pL6bufVDUp3oDiDguMlydiFe1l+rsAMkL/SYlqYOahtXKogxIxSYT0R+RROmePbp79UjCvH9/R+H/R2hHYm7rYVzvE4tg2cVaeNY=
+	t=1725560740; cv=none; b=O58ykUXnd7oXH6+U5T3IGE56AjFsnQLDWnAKfZlfep7RK3lNJtnhtID/B+sUS8f1bKYsdLqmgfFI2mYP2jFdRA8/MkhJJPpGeGqX8fUshzP8rs8e7gmtRZBvrd5wpIl64CGkdiJIA+CyGNamHvIvU27CTBH7nIK21mk2qHhLozE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725559795; c=relaxed/simple;
-	bh=2Kr5c7ACVjf3HcGMzj4Ae2HcwBKC3Tm5MDry+iTMW38=;
+	s=arc-20240116; t=1725560740; c=relaxed/simple;
+	bh=upDPrIzD3Q5267hh2eQQIgGASxYMEBmzc1rIw5hZSb0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ncsa0QWPhGIojKTQTXaTwPsWrSmjatGxWjafnwzmP0bdHgoUlKbmlkwhJoOmk1pTOK3ZuRFbp6blaqrPoRTNblkMxT0bsOwsQ8W3Dr1jehpya6hrhHICj/GN1JJX1E8Nf3CCHltJZDmyUmG3Yskc2Ja/ZuHHc8k8Lkc5e1Y0ud4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKR11tVw; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=QKRmWoMxBaweszCqLql5PeIxFa7JSrSu8wpU7qn5pySbRY2ZNGLQZgn+Fu67XLplpds6JUOO9qYGE4Yeadd9kT8BOm4EGcvLg2PnjwM3dyEw5EMNH+m4mUZunMOguGlvvBJsKDk3l7qLFEk+5pxcTR08CULi0f0LaDYTrKHdNDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=astDoqXp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKR11tVw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BC0C4CEC3;
-	Thu,  5 Sep 2024 18:09:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="astDoqXp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53A7C4CEC3;
+	Thu,  5 Sep 2024 18:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725559795;
-	bh=2Kr5c7ACVjf3HcGMzj4Ae2HcwBKC3Tm5MDry+iTMW38=;
+	s=k20201202; t=1725560739;
+	bh=upDPrIzD3Q5267hh2eQQIgGASxYMEBmzc1rIw5hZSb0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UKR11tVwN3Zct+7Kpwpg3CyRWI5i1xe8rko66a7OD+OeS8dNzNoXqQraqnH7UkXON
-	 llTaJnxjE8a7pHBO+qymvjgm8Qf0li/2UOlE9tL8+2SZaKzZzGJFTpP2BJrlN4sydQ
-	 t9Dce5y+RNcRXHEXUKxeMMjM34TlxUw6X5DrSo/3OJ6NNJqs8Pfb/woYdq7Rm4KJix
-	 3VBGG2KdTl+laUl3dWgKr0nUrJTtMliwTTdMW9ac6HHXqgHe7ZqLdxbORgW/fPtFv/
-	 aFdOVk7aM9P0q8d63lNxngpAVozVVjcP72O/9PW+F0qchbCNeuHYu5p828OviQo4HK
-	 bbGPFUPpAAHxA==
-Message-ID: <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org>
+	b=astDoqXpHIPiyWN56wTlr1R9sZpmWC+kzNkQY+C60WJJsX6nmAy43OXYgDnib6AEn
+	 AhnewzaLfxc5YRKXiGFzpb4ZAmi1UuChBDsoVaoljMNd050hsx6OdoF5t5n/YNw40i
+	 X+uJM6AItzS7AmqX9pPzoTpDqhUALLPcN71MV2TtLbBi2ITCiK/qehQzkr3Em+NgK9
+	 2ckZKdrQPtjKOD1+eQi7TynpKZQ/RWiLwrdA2rd63r7Goj3X604LiFadDbX2beLgls
+	 dGoC9UhKENadf4xweR+PW7/GWcrOLIQ9xVCzZp1hCaK2+mvj+RC20fZLSsev4PTubt
+	 UhOTSSm0c9scg==
+Message-ID: <a8400f018cc94177b6a91634fd977248.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,31 +35,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com> <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
-Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+In-Reply-To: <20240904095710.2813541-1-abel.vesa@linaro.org>
+References: <20240904095710.2813541-1-abel.vesa@linaro.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.12
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-To: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Thu, 05 Sep 2024 11:09:52 -0700
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
+Date: Thu, 05 Sep 2024 11:25:37 -0700
 User-Agent: alot/0.10
 
-Quoting claudiu beznea (2024-09-04 05:17:30)
-> On 03.09.2024 22:48, Stephen Boyd wrote:
-> >=20
-> > The node name should be something like clock-<frequency> but if the
-> > frequency is different per-board then I don't know what should happen
-> > here.
+Quoting Abel Vesa (2024-09-04 02:57:10)
+> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
+7b:
 >=20
-> The frequency should be always around 32768 Hz but not necessarily exactly
-> 32768 Hz. It depends on what is installed on the board, indeed. RTC can do
-> time error adjustments based on the variations around 32768 Hz.
+>   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 >=20
-> > Can you leave the vbattb_xtal phandle up above and then require
-> > the node to be defined in the board with the proper frequency after the
-> > dash?
+> are available in the Git repository at:
 >=20
-> Is it OK for you something like this (applied on top of this series)?
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-6.12
+>=20
+> for you to fetch changes up to 32c055ef563c3a4a73a477839f591b1b170bde8e:
+>=20
+>   clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL (2024-09-04 =
+12:39:38 +0300)
+>=20
+> ----------------------------------------------------------------
 
-Yes, it's too bad we can't append to a property in DT, or somehow leave
-alone certain cells and only modify one of them.
+Thanks. Pulled into clk-next. I also found the v6.11 PR for clk-imx in my
+repo for some reason :( Sorry about that! I've merged that into clk-next
+as well now so the next merge window will get two cycles worth.
