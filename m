@@ -1,135 +1,639 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E3D194A61;
-	Thu,  5 Sep 2024 10:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289F019CC23
+	for <linux-clk@vger.kernel.org>; Thu,  5 Sep 2024 13:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725533918; cv=none; b=tFCSJPc+6eLcLQxOip++8fF0AS2fIvCpwIFWHpUhVd6y6wFrJJiEqYCfwqub43hebBf3dDRztS2XQoGxWvJ1dIXFC09xgNhwTK58f3yqWqjU0uEzwiCKa3k+ErAIGSAvOZaPMEetSYyC5vmREVK+hBIgYqijU1Nx2SQXardyoIM=
+	t=1725543235; cv=none; b=fu0FsA/WV0BhG+G5qWI/dtmpcsZO2pll4Q7o4QCzTTqalQ8HaYynSXK3YvKwFFyPFfO0B86WfxnnL6o2CrIu9t9Q+cZ0sidt7vlqmM7FHfYsYSEuqUL45m23WnooBLyJVaQOMHQWpO1ImnDi40JtlK5lB7IIZKBiQS9f2sXHYaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725533918; c=relaxed/simple;
-	bh=ZwkspLfNOQ9TNhE5tdhKYQwHyJ5COhMJKvOKhSibXCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X/EB6CgMZOCtXlZctguP3hg5gNkNky42WM/xzbl6Q+7p5OHKYqz8MeWgDdERrzdrJwBA1opXKdw2IJYeWDNEGPQVIzqz/MxJ/ajUUv01Sf38xQKOw3VXD+kROJ8kYPIuEd+tiOhiKyhOF0R3znJuRD6/K5cMopbEz7xacr3BiYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oX3Tlm8Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1725543235; c=relaxed/simple;
+	bh=S7qtaq6/z53wH1nxOmASZXHiQysK1+AvLzQi0Fea+AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QwZkTpknKUhvlun8nSG9PAfoXZBoh/DTFXZYetS8i6n/Hf+9croXLIOTgVg0lb7AKmUmJCuf4aRk+hbryxL0KFDmGi3DpN8HtsxlvDcEs7maEqPF3n6XaLRcpVaPhZroziaakRolA36UJICx1kA0JU9XJ6VoLO1xDGDfyVQPR74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ygMpv68A; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oX3Tlm8Y"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485977YL001846;
-	Thu, 5 Sep 2024 10:58:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Nt7JRRklue1AEPwYRkDlLOKvuMaz+mhwVlqP+uMnYrI=; b=oX3Tlm8YiDGExhE1
-	0WOdEpV2Ialo80mAhOYo/dBalbeYbN1U4F8fuonfor9ro6AxsRgfmxLo8+RwTFxf
-	vJLcKQGNHpdvU0LYrIBetbOFNx/lx54s6N2NuqC1O0xBklMhu3dzbdMRzgKwIIaz
-	cs5hN4HhN+ZUt5PiA1QDdFh6NvnONzIAKjWnVHmwIkbO/GSWJ61KN1C+nmqiUxiL
-	L5nyfi9yEptjRkVZq9y2bVIHee/0l/InPE6ax9EU+G+zlpKA7q1TsZDI9FXSSokp
-	dvGrS48176kaqLeoYn8blrIg3H6+BK988TYjwOXjVEn3obZelhg/PYZxdN9H3ecZ
-	PMfw2A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt675ss6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 10:58:29 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485AwSfY005391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 10:58:28 GMT
-Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
- 03:58:23 -0700
-Message-ID: <29874390-2c8b-400a-9034-cccb929346a2@quicinc.com>
-Date: Thu, 5 Sep 2024 16:28:20 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ygMpv68A"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso929191e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 06:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725543231; x=1726148031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fQJPfi0Wh2Io+0o0IYUBFYdp9QWUTF9dW8Pyx0M1VL4=;
+        b=ygMpv68A5zpUk/bVUlBH8/ZrkLNVUtkPUYGJxYVKLjQt1Ydok/PqXOzcDyaiA52WQ9
+         ViEQC9FbIs+bRjofiGLIp3kfEJMOIsROwc12cg7j1xA9NcWPBpMxEogyUu2yv7nf9z0U
+         oR9gFeJ0dT/4/tnv/FdQXnN+LHlzo/6S4OA2Z2nTja4yWWXKyMNqL72OU+2MEAkZfdO4
+         nEqrxqE2UdB+gd/aEJUyHcJwiDMMM1mnlA+7D1QtH8zruKVpS0avWDlXH4tFNV08xmJB
+         va3onXb+hBONOcZMX36ZM8kE8lzx5CFAUNer0iypwQyidkuUXLOBciXGmbFQkcdB0eJ3
+         ryew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725543231; x=1726148031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fQJPfi0Wh2Io+0o0IYUBFYdp9QWUTF9dW8Pyx0M1VL4=;
+        b=CP7axgypJwHUgzZ+pc3LG5R7e9KdPjK+hSTGjsaiYC7tthDda/JE2CETr0GkO8Z4nl
+         hfY4JjK//W8UDiWXY8RRM0859jOTALReUM/B82W+j+aDBFoBVj+9q7OIvIvlmR257Spq
+         iaV5ogQuwnWaFk4bYI1epnpcGaRGgTF5ThVeX3zsqJ9nkJGPfQzsjzMotVmB/k0Q3NnW
+         bWO9gs8MhaFCU8hQNdT0zAAiBbEciFUtTCBRHvycDHcwkpaNI1l1cvpboBxcgjuqJ9DF
+         7B2gNS1B/3ETZP748OjcLz8jKl2OmLZAZ5N2vTy8daInC5Tr5r67YeNlC/+c1uzOtugu
+         MWHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSryN4hYCgtz4G9PUhgpvoJuAQqOvyU3fArM6LjYNEOCQ40mVW2CUMpWhlS4+gAbg2Es+fhtEbZIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW4kL75//kIOP8MBnpO3nFxNZ0zmCbuwKz71fOp0xYHp2pOY0d
+	rrDqIHakaDCQ+s24oAe2EY72rHBP8Xki6IP+3LY2WBPn6gL80gR4lw00cIMCG5o=
+X-Google-Smtp-Source: AGHT+IEiduL9zN28vCoINNVnT6AswQ/sFJPqrAcmtcaqXKaMp2l4Do9mDayY9B6pEfod1Bn+teKNoQ==
+X-Received: by 2002:a05:6512:2285:b0:535:63a3:c7d1 with SMTP id 2adb3069b0e04-53563a3c9d2mr5460921e87.48.1725543230385;
+        Thu, 05 Sep 2024 06:33:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540853630sm2633522e87.290.2024.09.05.06.33.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 06:33:49 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:33:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andersson@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: drop sm8250 lpass gfm driver
+Message-ID: <u56bph63zl5bu7qrkuwg5gocb3ht56mnbqaa45fl3tnjrvwnl2@gkzarffyucmj>
+References: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-To: Jon Hunter <jonathanh@nvidia.com>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        kernel test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
- <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
- <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
- <a995743c-f208-4afc-95da-449fdc7fab2b@quicinc.com>
- <5b24f86a-b2cc-4c36-aa2f-2a01cbae12fa@nvidia.com>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <5b24f86a-b2cc-4c36-aa2f-2a01cbae12fa@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6a8f7bTIPdYKGfMjfkYGPFAIFdrO2CIe
-X-Proofpoint-GUID: 6a8f7bTIPdYKGfMjfkYGPFAIFdrO2CIe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_06,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
 
-Hi Jon,
+On Mon, Sep 02, 2024 at 03:52:03PM GMT, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> There is no real use for this driver on this platform for below reasons.
+> 
+> - codec drivers can directly use dsp clocks using the static mux setting.
+> - none of the consumers really switch parents and do not handle low power usecases.
+> - all users of this drivers are now removed in next
 
+This means that we are going to break compatibility with existing DT
+files, which can be deployed or handled in other ways.
 
->>>>
->>>> remainder = do_div(rate, prate);
->>>>
->>>>> -    if ((remainder * 2) / prate)
->>>>> +    if ((remainder * 2) >= prate)
->>>>>           *l = *l + 1;
->>>>
->>>> *l = rate + (u32)(remainder * 2 >= prate);
->>>
->>>
->>> The above change does fix this build error for me.
->>>
->>> Satya, did you intend this to be a fix? Can we get this into -next?
->>>
->>
->> Yes, I have posted a v2 for this last week, but there are few open 
->> comments on that, I'll address them and post V3 including the build 
->> error you reported in commit-text.
->>
->>
->> [v2] 
->> https://lore.kernel.org/linux-clk/20240814102005.33493-1-quic_skakitap@quicinc.com/
->
->
-> Have you push a V3 yet?
+We _can_ _not_ drop support for existing compatibles. At least give
+a grace time of one LTS release.
 
+> 
+> Remove this driver and associated device tree bindings to aviod any
+> confusion.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../bindings/clock/qcom,aoncc-sm8250.yaml     |  61 ----
+>  .../bindings/clock/qcom,audiocc-sm8250.yaml   |  61 ----
+>  drivers/clk/qcom/Kconfig                      |   7 -
+>  drivers/clk/qcom/Makefile                     |   1 -
+>  drivers/clk/qcom/lpass-gfm-sm8250.c           | 318 ------------------
+>  .../clock/qcom,sm8250-lpass-aoncc.h           |  11 -
+>  .../clock/qcom,sm8250-lpass-audiocc.h         |  13 -
+>  7 files changed, 472 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+>  delete mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
+>  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+>  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+> deleted file mode 100644
+> index 8b8932bd5a92..000000000000
+> --- a/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+> +++ /dev/null
+> @@ -1,61 +0,0 @@
+> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> -%YAML 1.2
+> ----
+> -$id: http://devicetree.org/schemas/clock/qcom,aoncc-sm8250.yaml#
+> -$schema: http://devicetree.org/meta-schemas/core.yaml#
+> -
+> -title: LPASS Always ON Clock Controller on SM8250 SoCs
+> -
+> -maintainers:
+> -  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> -
+> -description: |
+> -  The clock consumer should specify the desired clock by having the clock
+> -  ID in its "clocks" phandle cell.
+> -  See include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h for the full list
+> -  of Audio Clock controller clock IDs.
+> -
+> -properties:
+> -  compatible:
+> -    const: qcom,sm8250-lpass-aoncc
+> -
+> -  reg:
+> -    maxItems: 1
+> -
+> -  '#clock-cells':
+> -    const: 1
+> -
+> -  clocks:
+> -    items:
+> -      - description: LPASS Core voting clock
+> -      - description: LPASS Audio codec voting clock
+> -      - description: Glitch Free Mux register clock
+> -
+> -  clock-names:
+> -    items:
+> -      - const: core
+> -      - const: audio
+> -      - const: bus
+> -
+> -required:
+> -  - compatible
+> -  - reg
+> -  - '#clock-cells'
+> -  - clocks
+> -  - clock-names
+> -
+> -additionalProperties: false
+> -
+> -examples:
+> -  - |
+> -    #include <dt-bindings/clock/qcom,sm8250-lpass-aoncc.h>
+> -    #include <dt-bindings/sound/qcom,q6afe.h>
+> -    clock-controller@3800000 {
+> -      #clock-cells = <1>;
+> -      compatible = "qcom,sm8250-lpass-aoncc";
+> -      reg = <0x03380000 0x40000>;
+> -      clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+> -      clock-names = "core", "audio", "bus";
+> -    };
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+> deleted file mode 100644
+> index cfca888f6014..000000000000
+> --- a/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+> +++ /dev/null
+> @@ -1,61 +0,0 @@
+> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> -%YAML 1.2
+> ----
+> -$id: http://devicetree.org/schemas/clock/qcom,audiocc-sm8250.yaml#
+> -$schema: http://devicetree.org/meta-schemas/core.yaml#
+> -
+> -title: LPASS Audio Clock Controller on SM8250 SoCs
+> -
+> -maintainers:
+> -  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> -
+> -description: |
+> -  The clock consumer should specify the desired clock by having the clock
+> -  ID in its "clocks" phandle cell.
+> -  See include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h for the full list
+> -  of Audio Clock controller clock IDs.
+> -
+> -properties:
+> -  compatible:
+> -    const: qcom,sm8250-lpass-audiocc
+> -
+> -  reg:
+> -    maxItems: 1
+> -
+> -  '#clock-cells':
+> -    const: 1
+> -
+> -  clocks:
+> -    items:
+> -      - description: LPASS Core voting clock
+> -      - description: LPASS Audio codec voting clock
+> -      - description: Glitch Free Mux register clock
+> -
+> -  clock-names:
+> -    items:
+> -      - const: core
+> -      - const: audio
+> -      - const: bus
+> -
+> -required:
+> -  - compatible
+> -  - reg
+> -  - '#clock-cells'
+> -  - clocks
+> -  - clock-names
+> -
+> -additionalProperties: false
+> -
+> -examples:
+> -  - |
+> -    #include <dt-bindings/clock/qcom,sm8250-lpass-audiocc.h>
+> -    #include <dt-bindings/sound/qcom,q6afe.h>
+> -    clock-controller@3300000 {
+> -      #clock-cells = <1>;
+> -      compatible = "qcom,sm8250-lpass-audiocc";
+> -      reg = <0x03300000 0x30000>;
+> -      clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+> -      clock-names = "core", "audio", "bus";
+> -    };
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index a3e2a09e2105..ce970fe5cf0b 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -1269,13 +1269,6 @@ config KRAITCC
+>  	  Support for the Krait CPU clocks on Qualcomm devices.
+>  	  Say Y if you want to support CPU frequency scaling.
+>  
+> -config CLK_GFM_LPASS_SM8250
+> -	tristate "SM8250 GFM LPASS Clocks"
+> -	depends on ARM64 || COMPILE_TEST
+> -	help
+> -	  Support for the Glitch Free Mux (GFM) Low power audio
+> -          subsystem (LPASS) clocks found on SM8250 SoCs.
+> -
+>  config SM_VIDEOCC_8450
+>  	tristate "SM8450 Video Clock Controller"
+>  	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 2b378667a63f..a4751f6dd3b0 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -20,7 +20,6 @@ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+>  # Keep alphabetically sorted by config
+>  obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
+>  obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
+> -obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
+>  obj-$(CONFIG_CLK_X1E80100_CAMCC) += camcc-x1e80100.o
+>  obj-$(CONFIG_CLK_X1E80100_DISPCC) += dispcc-x1e80100.o
+>  obj-$(CONFIG_CLK_X1E80100_GCC) += gcc-x1e80100.o
+> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
+> deleted file mode 100644
+> index 65d380e30eed..000000000000
+> --- a/drivers/clk/qcom/lpass-gfm-sm8250.c
+> +++ /dev/null
+> @@ -1,318 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/*
+> - * LPASS Audio CC and Always ON CC Glitch Free Mux clock driver
+> - *
+> - * Copyright (c) 2020 Linaro Ltd.
+> - * Author: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> - */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/clk-provider.h>
+> -#include <linux/io.h>
+> -#include <linux/slab.h>
+> -#include <linux/err.h>
+> -#include <linux/pm_clock.h>
+> -#include <linux/pm_runtime.h>
+> -#include <linux/device.h>
+> -#include <linux/of.h>
+> -#include <linux/platform_device.h>
+> -#include <dt-bindings/clock/qcom,sm8250-lpass-audiocc.h>
+> -#include <dt-bindings/clock/qcom,sm8250-lpass-aoncc.h>
+> -
+> -struct lpass_gfm {
+> -	struct device *dev;
+> -	void __iomem *base;
+> -};
+> -
+> -struct clk_gfm {
+> -	unsigned int mux_reg;
+> -	unsigned int mux_mask;
+> -	struct clk_hw	hw;
+> -	struct lpass_gfm *priv;
+> -	void __iomem *gfm_mux;
+> -};
+> -
+> -#define to_clk_gfm(_hw) container_of(_hw, struct clk_gfm, hw)
+> -
+> -static u8 clk_gfm_get_parent(struct clk_hw *hw)
+> -{
+> -	struct clk_gfm *clk = to_clk_gfm(hw);
+> -
+> -	return readl(clk->gfm_mux) & clk->mux_mask;
+> -}
+> -
+> -static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
+> -{
+> -	struct clk_gfm *clk = to_clk_gfm(hw);
+> -	unsigned int val;
+> -
+> -	val = readl(clk->gfm_mux);
+> -
+> -	if (index)
+> -		val |= clk->mux_mask;
+> -	else
+> -		val &= ~clk->mux_mask;
+> -
+> -
+> -	writel(val, clk->gfm_mux);
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct clk_ops clk_gfm_ops = {
+> -	.get_parent = clk_gfm_get_parent,
+> -	.set_parent = clk_gfm_set_parent,
+> -	.determine_rate = __clk_mux_determine_rate,
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_va_mclk = {
+> -	.mux_reg = 0x20000,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "VA_MCLK",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.num_parents = 2,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_VA_CORE_MCLK",
+> -			},
+> -		},
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_tx_npl = {
+> -	.mux_reg = 0x20000,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "TX_NPL",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_VA_CORE_2X_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_wsa_mclk = {
+> -	.mux_reg = 0x220d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "WSA_MCLK",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_WSA_CORE_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_wsa_npl = {
+> -	.mux_reg = 0x220d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "WSA_NPL",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_WSA_CORE_NPL_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_rx_mclk_mclk2 = {
+> -	.mux_reg = 0x240d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "RX_MCLK_MCLK2",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_RX_CORE_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_rx_npl = {
+> -	.mux_reg = 0x240d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "RX_NPL",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_RX_CORE_NPL_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm *aoncc_gfm_clks[] = {
+> -	[LPASS_CDC_VA_MCLK]		= &lpass_gfm_va_mclk,
+> -	[LPASS_CDC_TX_NPL]		= &lpass_gfm_tx_npl,
+> -};
+> -
+> -static struct clk_hw_onecell_data aoncc_hw_onecell_data = {
+> -	.hws = {
+> -		[LPASS_CDC_VA_MCLK]	= &lpass_gfm_va_mclk.hw,
+> -		[LPASS_CDC_TX_NPL]	= &lpass_gfm_tx_npl.hw,
+> -	},
+> -	.num = ARRAY_SIZE(aoncc_gfm_clks),
+> -};
+> -
+> -static struct clk_gfm *audiocc_gfm_clks[] = {
+> -	[LPASS_CDC_WSA_NPL]		= &lpass_gfm_wsa_npl,
+> -	[LPASS_CDC_WSA_MCLK]		= &lpass_gfm_wsa_mclk,
+> -	[LPASS_CDC_RX_NPL]		= &lpass_gfm_rx_npl,
+> -	[LPASS_CDC_RX_MCLK_MCLK2]	= &lpass_gfm_rx_mclk_mclk2,
+> -};
+> -
+> -static struct clk_hw_onecell_data audiocc_hw_onecell_data = {
+> -	.hws = {
+> -		[LPASS_CDC_WSA_NPL]	= &lpass_gfm_wsa_npl.hw,
+> -		[LPASS_CDC_WSA_MCLK]	= &lpass_gfm_wsa_mclk.hw,
+> -		[LPASS_CDC_RX_NPL]	= &lpass_gfm_rx_npl.hw,
+> -		[LPASS_CDC_RX_MCLK_MCLK2] = &lpass_gfm_rx_mclk_mclk2.hw,
+> -	},
+> -	.num = ARRAY_SIZE(audiocc_gfm_clks),
+> -};
+> -
+> -struct lpass_gfm_data {
+> -	struct clk_hw_onecell_data *onecell_data;
+> -	struct clk_gfm **gfm_clks;
+> -};
+> -
+> -static struct lpass_gfm_data audiocc_data = {
+> -	.onecell_data = &audiocc_hw_onecell_data,
+> -	.gfm_clks = audiocc_gfm_clks,
+> -};
+> -
+> -static struct lpass_gfm_data aoncc_data = {
+> -	.onecell_data = &aoncc_hw_onecell_data,
+> -	.gfm_clks = aoncc_gfm_clks,
+> -};
+> -
+> -static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
+> -{
+> -	const struct lpass_gfm_data *data;
+> -	struct device *dev = &pdev->dev;
+> -	struct clk_gfm *gfm;
+> -	struct lpass_gfm *cc;
+> -	int err, i;
+> -
+> -	data = of_device_get_match_data(dev);
+> -	if (!data)
+> -		return -EINVAL;
+> -
+> -	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+> -	if (!cc)
+> -		return -ENOMEM;
+> -
+> -	cc->base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(cc->base))
+> -		return PTR_ERR(cc->base);
+> -
+> -	err = devm_pm_runtime_enable(dev);
+> -	if (err)
+> -		return err;
+> -
+> -	err = devm_pm_clk_create(dev);
+> -	if (err)
+> -		return err;
+> -
+> -	err = of_pm_clk_add_clks(dev);
+> -	if (err < 0) {
+> -		dev_dbg(dev, "Failed to get lpass core voting clocks\n");
+> -		return err;
+> -	}
+> -
+> -	for (i = 0; i < data->onecell_data->num; i++) {
+> -		if (!data->gfm_clks[i])
+> -			continue;
+> -
+> -		gfm = data->gfm_clks[i];
+> -		gfm->priv = cc;
+> -		gfm->gfm_mux = cc->base;
+> -		gfm->gfm_mux = gfm->gfm_mux + data->gfm_clks[i]->mux_reg;
+> -
+> -		err = devm_clk_hw_register(dev, &data->gfm_clks[i]->hw);
+> -		if (err)
+> -			return err;
+> -
+> -	}
+> -
+> -	err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> -					  data->onecell_data);
+> -	if (err)
+> -		return err;
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct of_device_id lpass_gfm_clk_match_table[] = {
+> -	{
+> -		.compatible = "qcom,sm8250-lpass-aoncc",
+> -		.data = &aoncc_data,
+> -	},
+> -	{
+> -		.compatible = "qcom,sm8250-lpass-audiocc",
+> -		.data = &audiocc_data,
+> -	},
+> -	{ }
+> -};
+> -MODULE_DEVICE_TABLE(of, lpass_gfm_clk_match_table);
+> -
+> -static const struct dev_pm_ops lpass_gfm_pm_ops = {
+> -	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+> -};
+> -
+> -static struct platform_driver lpass_gfm_clk_driver = {
+> -	.probe		= lpass_gfm_clk_driver_probe,
+> -	.driver		= {
+> -		.name	= "lpass-gfm-clk",
+> -		.of_match_table = lpass_gfm_clk_match_table,
+> -		.pm = &lpass_gfm_pm_ops,
+> -	},
+> -};
+> -module_platform_driver(lpass_gfm_clk_driver);
+> -MODULE_LICENSE("GPL v2");
+> -MODULE_DESCRIPTION("QTI SM8250 LPASS Glitch Free Mux clock driver");
+> diff --git a/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h b/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+> deleted file mode 100644
+> index f5a1cfac8612..000000000000
+> --- a/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+> +++ /dev/null
+> @@ -1,11 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -
+> -#ifndef _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H
+> -#define _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H
+> -
+> -/* from AOCC */
+> -#define LPASS_CDC_VA_MCLK				0
+> -#define LPASS_CDC_TX_NPL				1
+> -#define LPASS_CDC_TX_MCLK				2
+> -
+> -#endif /* _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H */
+> diff --git a/include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h b/include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> deleted file mode 100644
+> index a1aa6cb5d840..000000000000
+> --- a/include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> +++ /dev/null
+> @@ -1,13 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -
+> -#ifndef _DT_BINDINGS_CLK_LPASS_AUDIOCC_SM8250_H
+> -#define _DT_BINDINGS_CLK_LPASS_AUDIOCC_SM8250_H
+> -
+> -/* From AudioCC */
+> -#define LPASS_CDC_WSA_NPL				0
+> -#define LPASS_CDC_WSA_MCLK				1
+> -#define LPASS_CDC_RX_MCLK				2
+> -#define LPASS_CDC_RX_NPL				3
+> -#define LPASS_CDC_RX_MCLK_MCLK2				4
+> -
+> -#endif /* _DT_BINDINGS_CLK_LPASS_AUDIOCC_SM8250_H */
+> -- 
+> 2.25.1
+> 
 
-Not yet Jon, I had a query regarding Bjorn's comment where he mentioned 
-the patch wouldn't compile on arm32 target, I am trying to check that 
-with him. Once I get the details I'll make the changes accordingly and 
-post V3.
-
-
-Thanks,
-
-Satya priya
-
+-- 
+With best wishes
+Dmitry
