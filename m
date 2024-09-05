@@ -1,119 +1,135 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425F3156225;
-	Thu,  5 Sep 2024 09:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E3D194A61;
+	Thu,  5 Sep 2024 10:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725530079; cv=none; b=s1AcnxTIg2ENzeHneuMVspAYQI+rddR7koJ4Qrn6nVMmcdFH4l5CExYkWXuvdO2Uek8ULt+QEKFm36TTJNrBq+AGBkitadxMBNr6j3YnHkcUtmXvSFioUXqvqby57SAkaWhixCBpXWY0k2Vml5S/5OlnhX3gaIhKerMJo2LNk54=
+	t=1725533918; cv=none; b=tFCSJPc+6eLcLQxOip++8fF0AS2fIvCpwIFWHpUhVd6y6wFrJJiEqYCfwqub43hebBf3dDRztS2XQoGxWvJ1dIXFC09xgNhwTK58f3yqWqjU0uEzwiCKa3k+ErAIGSAvOZaPMEetSYyC5vmREVK+hBIgYqijU1Nx2SQXardyoIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725530079; c=relaxed/simple;
-	bh=CUa9olPq+AXLi4yjiXb01U/wLckCsRjgHnbju1lATbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dpTyvv7VFiF2oikL6AQZXm2XyRsKttXd0c6GoJHzd7St8AM9wJrem4CIremoulmfcuQSi+NtW4oseZLzhSlrBOMd3xvF79bap8ajsZwjUg2Qx7M0AfKQPwEEcn3GouzHe4aFZcL7doX43FPXdunk9NkdJCpRKk7B7fuFGc8bQxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6bada443ffeso4396757b3.0;
-        Thu, 05 Sep 2024 02:54:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725530075; x=1726134875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9diqHcpO/aE5+LW5NeGeZFj2mzo73WZhkkRkkfun7eI=;
-        b=M1HTyFxbpjnPYDI3A/JNE0D8snsSsYfr1nvHirSeGzggQyUWiHWhDHgQbBMR0nhbRM
-         rPAsjyzoD3V+NLkcvORuAb307h0NIsPpeEmXUxgIkTXK5JdnNkKcsOYWHsXT0A8vdBQ4
-         P5zBiX8cw58BQwGU3b5WYl7S8xQFDBy0o+DxPmxVeHdNEjj+WWtsjmbZ6iffrE5RkmOr
-         IkL5KhbzeVqML+t5aCgkU6ZXdpn9bn3uOilb0XNKu9HQevRcOcyVWVWF7u9KipIMR0OI
-         dcweto9rhs5L2C0h69e7jvWJKId/cHPeXC1vVZh+3OkwJMUuYJfuMJhP+HCI0wBTCnAx
-         o56A==
-X-Forwarded-Encrypted: i=1; AJvYcCUgqWR9t4BDpHtQaPVwAHowEB7HdJxkXBWer8ycxavO+meLYbPNwDGJ+6SkRaGFMNgHgj+2OOxxfyFr1w==@vger.kernel.org, AJvYcCUmT5M7BWOMJ2S6kPqMMdF9Z5p6DzHtPlFkDK6dIVQyHTKVWjHy9wb2L/3WXAbyVEcAXKfwqmdSpX1T@vger.kernel.org, AJvYcCV7xPJNbHwm2+hAQnqVl/L9gvMfTN0maTtZZO9NukNaA4Be3LDfiydRExgkQIiex1KG12TOzF9J7R4g@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsYNSXebRCxJ4+OrfxrNr8b2+TCtftXvme40Bl/nVDMlmA3TFK
-	j+ntgh0GDSMrbiypTZvc1LSldPcPewBM+ZSY7gen4ViJe44TbZjSxGwiu7Tw
-X-Google-Smtp-Source: AGHT+IEzYK4ChgIxHWbhgm2ro+sorU+2H3iZkR8YMryr4b8JZNEdrnuoBKcjn+OvwexdjAbRDL+Srw==
-X-Received: by 2002:a05:690c:6609:b0:6d7:3c0d:3adb with SMTP id 00721157ae682-6db25f5584cmr44724317b3.1.1725530074818;
-        Thu, 05 Sep 2024 02:54:34 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d3cdc309e8sm24561847b3.108.2024.09.05.02.54.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 02:54:34 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6db2a9da800so9476767b3.0;
-        Thu, 05 Sep 2024 02:54:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqUKjy6DUI1ht02qGIbB/iWY87KwdcLHPPMSudAonGUbnIbpxTFsjBetqNuE+vClnBHeMEbsGrirpD@vger.kernel.org, AJvYcCWSma4OzrIedxesHP8LCUSlZvJfj/c8DxOxXXuoMLUhXDQhTE8hBg6zz4kZfZj9Zo2yv2xQYeAJjQ95JQ==@vger.kernel.org, AJvYcCXAZvOj2aE3RUBs8FdfCzYs/2nnjg+Sm6rvl6xxf4tWvTp5QZGL1SeKokNyLm0RH1mUE3dCoV1hscrC@vger.kernel.org
-X-Received: by 2002:a05:6902:1785:b0:e1c:ff8a:68f9 with SMTP id
- 3f1490d57ef6-e1d1056a277mr4589641276.11.1725530073994; Thu, 05 Sep 2024
- 02:54:33 -0700 (PDT)
+	s=arc-20240116; t=1725533918; c=relaxed/simple;
+	bh=ZwkspLfNOQ9TNhE5tdhKYQwHyJ5COhMJKvOKhSibXCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X/EB6CgMZOCtXlZctguP3hg5gNkNky42WM/xzbl6Q+7p5OHKYqz8MeWgDdERrzdrJwBA1opXKdw2IJYeWDNEGPQVIzqz/MxJ/ajUUv01Sf38xQKOw3VXD+kROJ8kYPIuEd+tiOhiKyhOF0R3znJuRD6/K5cMopbEz7xacr3BiYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oX3Tlm8Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oX3Tlm8Y"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485977YL001846;
+	Thu, 5 Sep 2024 10:58:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Nt7JRRklue1AEPwYRkDlLOKvuMaz+mhwVlqP+uMnYrI=; b=oX3Tlm8YiDGExhE1
+	0WOdEpV2Ialo80mAhOYo/dBalbeYbN1U4F8fuonfor9ro6AxsRgfmxLo8+RwTFxf
+	vJLcKQGNHpdvU0LYrIBetbOFNx/lx54s6N2NuqC1O0xBklMhu3dzbdMRzgKwIIaz
+	cs5hN4HhN+ZUt5PiA1QDdFh6NvnONzIAKjWnVHmwIkbO/GSWJ61KN1C+nmqiUxiL
+	L5nyfi9yEptjRkVZq9y2bVIHee/0l/InPE6ax9EU+G+zlpKA7q1TsZDI9FXSSokp
+	dvGrS48176kaqLeoYn8blrIg3H6+BK988TYjwOXjVEn3obZelhg/PYZxdN9H3ecZ
+	PMfw2A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt675ss6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 10:58:29 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485AwSfY005391
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 10:58:28 GMT
+Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 03:58:23 -0700
+Message-ID: <29874390-2c8b-400a-9034-cccb929346a2@quicinc.com>
+Date: Thu, 5 Sep 2024 16:28:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240213105730.5287-1-tony@atomide.com> <20240213105730.5287-2-tony@atomide.com>
- <CAMuHMdXZTmn7R8GQWAMFL_9C+VGu4SDfFuMN-8MJmi0AbPMx-g@mail.gmail.com>
-In-Reply-To: <CAMuHMdXZTmn7R8GQWAMFL_9C+VGu4SDfFuMN-8MJmi0AbPMx-g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Sep 2024 11:54:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWb56RdBVOWysOm4CMUrsA85tk2Du-RNrMQA_Danv05ng@mail.gmail.com>
-Message-ID: <CAMuHMdWb56RdBVOWysOm4CMUrsA85tk2Du-RNrMQA_Danv05ng@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: ti: Handle possible address in the node name
-To: Tony Lindgren <tony@atomide.com>
-Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tero Kristo <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, linux-omap@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Paul Walmsley <paul@pwsan.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
+ comparison
+To: Jon Hunter <jonathanh@nvidia.com>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>
+References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
+ <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+ <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
+ <a995743c-f208-4afc-95da-449fdc7fab2b@quicinc.com>
+ <5b24f86a-b2cc-4c36-aa2f-2a01cbae12fa@nvidia.com>
+Content-Language: en-US
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+In-Reply-To: <5b24f86a-b2cc-4c36-aa2f-2a01cbae12fa@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6a8f7bTIPdYKGfMjfkYGPFAIFdrO2CIe
+X-Proofpoint-GUID: 6a8f7bTIPdYKGfMjfkYGPFAIFdrO2CIe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_06,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050080
 
-On Mon, Sep 2, 2024 at 4:03=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
-> On Tue, Feb 13, 2024 at 11:59=E2=80=AFAM Tony Lindgren <tony@atomide.com>=
- wrote:
-> > In order to use #address-cells =3D <1> and start making use of the
-> > standard reg property, let's prepare things to ignore the possible
-> > address in the clock node name.
-> >
-> > Unless the clock-output-names property is used, the legacy clocks still
-> > fall back to matching the clock data based on the node name.
-> >
-> > We use cleanup.h to simplify the return path for freeing tmp.
-> >
-> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+Hi Jon,
+
+
+>>>>
+>>>> remainder = do_div(rate, prate);
+>>>>
+>>>>> -    if ((remainder * 2) / prate)
+>>>>> +    if ((remainder * 2) >= prate)
+>>>>>           *l = *l + 1;
+>>>>
+>>>> *l = rate + (u32)(remainder * 2 >= prate);
+>>>
+>>>
+>>> The above change does fix this build error for me.
+>>>
+>>> Satya, did you intend this to be a fix? Can we get this into -next?
+>>>
+>>
+>> Yes, I have posted a v2 for this last week, but there are few open 
+>> comments on that, I'll address them and post V3 including the build 
+>> error you reported in commit-text.
+>>
+>>
+>> [v2] 
+>> https://lore.kernel.org/linux-clk/20240814102005.33493-1-quic_skakitap@quicinc.com/
 >
-> Thanks for your patch, which is now commit 3516338543cafb65 ("clk: ti:
-> Handle possible address in the node name") in v6.9-rc1.
-> This causes an early boot crash on BeagleBone Black:
 >
->     ti_dt_clocks_register: failed to lookup clock node
-> clk-24mhz-clkctrl:0000:0, ret=3D-517
+> Have you push a V3 yet?
 
-I found the culprit: after the move of .dts files to vendor
-sub-directories, I had updated my boot script to:
 
-    DTB=3Darch/arm/boot/dts/ti/am335x-boneblack.dtb
-    if [ ! -e $DTB ]; then
-        DTB=3Darch/arm/boot/dts/am335x-boneblack.dtb
-    fi
+Not yet Jon, I had a query regarding Bjorn's comment where he mentioned 
+the patch wouldn't compile on arm32 target, I am trying to check that 
+with him. Once I get the details I'll make the changes accordingly and 
+post V3.
 
-I.e. I missed the "/omap" part, causing the install to fall back to
-an old DTB file that no longer works with modern kernels.
 
-Sorry for the noise.
+Thanks,
 
-Gr{oetje,eeting}s,
+Satya priya
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
