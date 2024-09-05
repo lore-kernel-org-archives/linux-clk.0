@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D541117C9B;
-	Thu,  5 Sep 2024 15:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4A19E7F0
+	for <linux-clk@vger.kernel.org>; Thu,  5 Sep 2024 16:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725551636; cv=none; b=nXW5vfIXOLOFYo6JxM23i2Gse8K2k/P9Qr5BupwciRDdPnBZjijHICTb3o2m4OqcbCFaPz14opn8ecevR84+PBxknwOhSKyFjnXu0NW42aKgCymhdfobmBB9eVzbnYAF76Gm0dqA4zKjqE07HnyGZErDEzkEVi8a6wQHCpOzJu4=
+	t=1725552324; cv=none; b=jRFrxEtTVMR2/TDZ+e96zbhR3teWKoUVTFO/PyhSdxq20WBCHRZDmA/7LHcbkcNMkYhxHag9tgD6crvejSLLveXiN/mR8NPefTCUO3MnoOajz+TQeWDRLR3M3TaoujjfsOTKDtilsWp4VZlR7cPE3BzUsEs619KrcuyrfipjKl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725551636; c=relaxed/simple;
-	bh=papRPPleuIjgPSFxRcLNChFUnFrzK9X0UXeAWfp9va0=;
+	s=arc-20240116; t=1725552324; c=relaxed/simple;
+	bh=HE6La4IqnKi2giZOdBmLMWGr1Jcgz+tbpv4xmLX3J2E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fJFVw2tn+qln178Xn80O33M9TcE2uhOKUV2M9q9UotGxJUk7ZcOIoZiEA90zkCJ8NiyCEbIrO/SFKMWRUS8ECZ5jEdFlKOvhcb6q9MSUAlt/RMGMQNg15JbqtScCY/hrUhlJMUV3xopNmj8NL1aZ3Ia61+xvNsSMgHP3npZNCTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlTNkKlZ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=AZ2A7xpGYEaJtoWDr5E/I5rvXNET1O29nb5wS+VDPpWPp/aS1x4S4Ib2QLcpRRAbdomZa4f2XZx7NV0Acb2VDNm7crk9G8H2O5XavV3NBvBWAXIc3Cm5SGYgsjg61rXSMYltd+KziAnqsxN/YeBcspUoZLC6melZfrFbKmupJKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sLDRtVDh; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlTNkKlZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93882C4CEC3;
-	Thu,  5 Sep 2024 15:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725551636;
-	bh=papRPPleuIjgPSFxRcLNChFUnFrzK9X0UXeAWfp9va0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OlTNkKlZ9VR5PgZg6WBM7/aPc7xSOTxQUkVONXHSFceWoo7XR1YaICsGMXqg7Uw8E
-	 E/Wbro0Zk3knWCXQ9GEAhogLFCWvIBO0lZShJpfuVjFlYEAtuLhWPhHVGkdQ7JwoZq
-	 t0LKqEyPkZ5RrwWqn9sJkl01HD/pwOq+IrgJ9Iygfa3l1U15cOOXcyr5n9HWJOSVAp
-	 Ciz2rlUO/Zno/6eROGPbHZ8KPbAKVRjw5T8L1RoUPelwg8YQBIud1UYSchFQ9jKppY
-	 4o2mg29ffGDtqAf5LWwt7ulp84mBRjKeYt6a0qSON1ivbUnn6UjkNnyBJ1fzIkh+pn
-	 aerl9ibPWjGxg==
-Message-ID: <905b7817-56b1-4e50-bb0b-0ff764cc376f@kernel.org>
-Date: Thu, 5 Sep 2024 17:53:49 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sLDRtVDh"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a1acb51a7so110330466b.2
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 09:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725552321; x=1726157121; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A3SjbsSfqya3DyiG1kDui0xSVYDrbm2AN9/r4f/fNL4=;
+        b=sLDRtVDhqmjMyzZvgEIupTbP3hfR9t6ck1KC1bdZ5InXzJj8rWZ7uOdWrnQC+ESf4s
+         aNJwXlcUipnJrwcKpZV5Q2IGgnh0gm6mvvgpGGx1MEJHApVvgHyBzEkKIB7eAt9U5U+c
+         Ovl9CTrcMzpHY8oA7YHu0SzJb795UW/HdflOPjKOnJMtuyFc2B+kYsxBtFTzG9qHD1xl
+         FhJzUVYJy2QY0jpd/QPvUYSGnZws3abBM3W4RXRBx1hL7PUQUkrY+yePW+F5YQ1QYFc5
+         uLI4yncs0UjUVA65/jxBFgWkAWXvK5oaNIbjjB6H0hjiteokbb6s4iPbwPEkkujpUkW0
+         7PRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725552321; x=1726157121;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A3SjbsSfqya3DyiG1kDui0xSVYDrbm2AN9/r4f/fNL4=;
+        b=WHvMYbbV0Ay+ievZ7YEmLgwyembzp1o5MJSARLqJ03/wEiz/lv5lQ2jliKzkgJuPF9
+         kbPatY1fwKjhgp0LaggnyKzx7kGaH9wSbFqUMETWsqHaFrRUhNtl7LJObb/ogtRtA+uK
+         vouVeQ0AGUo0ILnYcnWP8S6dSkRaCYqRyAT6bfhkeKRx4lSc93qh+EfbxnvQ4YeSUtPc
+         nDWvzFxl5KR3KjIlaRPq0WFio45kp7rCZH5upTkwql5LjEVuWRskKN0g2/dvlN58tCpg
+         jcGLXA/g3uZ1TgE+W8dXQXn4wuSSUd1AbPtBrgHd98k6S/3E6WXo+IaDo9il5xFDhu6/
+         Uyhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCP3pPE9UslNe0qgCOWEDeo7sTU2wVPlF34aQiD9ISm9Yb9aNK6ouaWwuLsLixyYlgUSgNFik16i0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBQ+h5TpSz+vtrfZdcLUg70qvwYNGqRLi66TWw326IVpFTzdTt
+	ggTxIGVqmiAUazNnl2FxzTsjagL+jmQb+nTLAXr507OrZSc0Vbf46ebUmlI2I2c=
+X-Google-Smtp-Source: AGHT+IGKLIiZ8CzLoWVbsna5e8H1ecKT4pb77ee4/Gxsp14Hf8qUmzgZH4wljbjzNM628eXRI0oSuA==
+X-Received: by 2002:a17:907:3f1c:b0:a86:789c:2d07 with SMTP id a640c23a62f3a-a8a1d29bc25mr883588166b.4.1725552320548;
+        Thu, 05 Sep 2024 09:05:20 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a796a2bd6sm70318666b.189.2024.09.05.09.05.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 09:05:20 -0700 (PDT)
+Message-ID: <1914fc07-d7be-4747-971b-40ef360d050a@linaro.org>
+Date: Thu, 5 Sep 2024 17:05:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,87 +61,75 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>,
+Subject: Re: [PATCH v4 3/7] i2c: qcom-cci: Stop complaining about DT set clock
+ rate
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Richard Acayan <mailingradian@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
- <2e0ab6c7-a7d0-44fa-8e8b-cd04e5c0359c@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+ <20240904020448.52035-12-mailingradian@gmail.com>
+ <917917cc-3e78-4ab6-8fa4-82d9a6fe3fdd@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2e0ab6c7-a7d0-44fa-8e8b-cd04e5c0359c@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <917917cc-3e78-4ab6-8fa4-82d9a6fe3fdd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 05/09/2024 17:18, Nicolas Ferre wrote:
-> On 29/08/2024 at 11:38, Dharma Balasubiramani wrote:
->> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
->> since the SAMA7D65 PMC shares the same properties and clock requirements
->> as the SAMA7G5.
+On 05/09/2024 14:57, Konrad Dybcio wrote:
+> On 4.09.2024 4:04 AM, Richard Acayan wrote:
+>> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 >>
->> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+>> It is common practice in the downstream and upstream CCI dt to set CCI
+>> clock rates to 19.2 MHz. It appears to be fairly common for initial code to
+>> set the CCI clock rate to 37.5 MHz.
+>>
+>> Applying the widely used CCI clock rates from downstream ought not to cause
+>> warning messages in the upstream kernel where our general policy is to
+>> usually copy downstream hardware clock rates across the range of Qualcomm
+>> drivers.
+>>
+>> Drop the warning it is pervasive across CAMSS users but doesn't add any
+>> information or warrant any changes to the DT to align the DT clock rate to
+>> the bootloader clock rate.
+>>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> Link: https://lore.kernel.org/linux-arm-msm/20240824115900.40702-1-bryan.odonoghue@linaro.org
+>> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+>> ---
 > 
-> For the record, driver addition is here:
-> v1:
-> https://lore.kernel.org/linux-arm-kernel/cover.1724948760.git.Ryan.Wanner@microchip.com/
+> I.. am not sure this is really a problem? On some platforms the core
+> clock is only 19.2 Mhz, but e.g. on sdm845 we have:
 > 
-> v2:
-> https://lore.kernel.org/linux-arm-kernel/cover.1725392645.git.Ryan.Wanner@microchip.com/
-> 
+> static const struct freq_tbl ftbl_cam_cc_cci_clk_src[] = {
+>          F(19200000, P_BI_TCXO, 1, 0, 0),
+>          F(37500000, P_CAM_CC_PLL0_OUT_EVEN, 16, 0, 0),
+>          F(50000000, P_CAM_CC_PLL0_OUT_EVEN, 12, 0, 0),
+>          F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
+>          { }
+> };
 
-Sending driver separately from the binding means there are warnings of
-undocumented compatibles. Submitting bindings also documents this. This
-must be one patchset.
+CCI latches the code from DT and I assume that people submitting dts 
+have actually tested their sensors when they do so.
 
-Best regards,
-Krzysztof
+The complaint about not being 19.2 MHz is surely not valid since, it can 
+be any number of frequencies.
+
+Its a redundant and useless warning.
+
+We can do extra work to align to a set of frequencies sure but, the 
+warning is not a warning about a real thing.
+
+---
+bod
 
