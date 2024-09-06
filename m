@@ -1,130 +1,84 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DB21E49B
-	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 12:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5164E1C9EBB
+	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 12:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725626780; cv=none; b=nQQKLCboyoOpDeuRkzMIbyyY5fMyosiF/pGPk8N4qKtKDYpWgJVZVcZRA3SCphC3/cP+vzqR0zvzUz2IYYu317wlAAbIRYnmqmt/tmRhXquQKOnYcQo6T+P/Gbsh+kNGFI12dKYwpX97L8oh8Up2q3q1PB14p4/nvNqBH19giiQ=
+	t=1725627491; cv=none; b=ZmrxfQ2sidhPTOvD2amZHFb25EMPLhwO81N34yN2aiz7H+1/XED9IL6gl2kBXOpxautUVODhfNzBOfYXhfUJw7H/E/d6FVtQif6ySeqB+pMdjCD1DypUE5ei16KXDkhXeyfNj475NDbGdWLh1Mfg2zZ/XBpyJFhz/VMIbqWpWjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725626780; c=relaxed/simple;
-	bh=hC/tGF8cSl4flBiWeSmMpIIt69LufoFugG+Yk1h7n3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cdRNTFa0NS7vmguCRqzFXbyR/SgEH+Wc4VqCWk3XP1lWdrTfNwNt6AxFlhhdsHUyx/IC6ZrNXafsoW5aDHScKizg5u+u4/5tJeszKnrKQFbbaEmB2hXb3zLAX82R70TxpqhsIgGIC0FB4GkAu9+tTp/SBpLf/yOS5vF21L0de0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fGWH9N5z; arc=none smtp.client-ip=209.85.208.176
+	s=arc-20240116; t=1725627491; c=relaxed/simple;
+	bh=i1Nwn0XSmK5ZTnfmP7suaQ37ZP54sYTUR7IvU2Fuqow=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VbOIfZ7VO9QENe46zXUUfFOSPRtEALd97j0Az4V8E3S4TsSufzplLgs73Q9umYb4THybiuYVrt6N8GSuLqWV9MoZMrgoEerCwYpx7oEHN3r8fqoQoVhzOB/wqHF21kVoNLaa6rKZz2Hpq+GURTgK96zvDLTqEhm2l5o0QWgiP5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMvRo4Wn; arc=none smtp.client-ip=209.85.219.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGWH9N5z"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f751a2a29fso1009771fa.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2024 05:46:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMvRo4Wn"
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e1a82d1ef62so2085439276.0
+        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2024 05:58:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725626777; x=1726231577; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LIRBLYQ4+mKh3KvEse9INuFPvpdgYruUAOkgTL5XFS0=;
-        b=fGWH9N5zfA2Dtwt5RuDLJNA5dsPA1GjBwVyhWIHFKCBb7e0878kF+TWDgefsmrk9V/
-         M4KXwBYqDNqKUxn1r5nVmOLnArUe4hxENAoKKI5n7Gj8N6RHLLxq1CRH/W/sjnDDCY3/
-         RXRZg7ceFu3UvosIdPJeKz1LAaXy6R05QB3mJ/X/lrqMqbGjo0mOU9joj7nXReBPwiCM
-         DG7bzsLtrtmHOVnTJKX3skkDoeJdXT8vZNRaNjClNYdUIoOAEd3okAv+Y+HmErhxbKYG
-         7V9RHRKJlH/UnQJyqcAG3hZ6phwTaF7g6ViXAbS619Uv61en5ox+W8RuFzyYIF/xnlSX
-         8VRQ==
+        d=linaro.org; s=google; t=1725627488; x=1726232288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pZ4UXvk6Hc39FSBqf7SdNKy5PEKmHYp1NAIB/Pp/XHY=;
+        b=VMvRo4Wn5OZkE3959QI9JstFBVcsHVLi3lcQk8TnI8xWb1/cQ4re9sLbl7kCsnzBSW
+         VSMUMvZcCQJSm8Ep1d3JE+DrYrA3c7GITKC4VoxbDlxTkjRqXzHwvBwB8gbXsw+UhlGS
+         Wyt936RgbMaxZjt+W37El496xbBm64Yb1dyyFY9NlDDpqMl0xC8VnOkA6bhjDC2Zqahd
+         YN5uqJVoOQRowu7JjfW84dtSzfQtHhqHREbWnyCq5OcmsKGLYd6QKti93NPi3MEco0xG
+         nnGgCsS7gpM7flxG+HyecDvzICxB9YD0LP7ld8eMIPgkTrsGCzIVT7tMJ9ZJbrTMbZaR
+         D5mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725626777; x=1726231577;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LIRBLYQ4+mKh3KvEse9INuFPvpdgYruUAOkgTL5XFS0=;
-        b=afqLQD4fjm9feiux99Ivcqi3GA+ZVt0XEIOg/RqAz4oRMubxNTkcHHw4iQuQK/eii0
-         BfJQ4k7BNUiomdL0zwGEAJBixv/sAj7fvBmzqVMbUlXEpmDNS2LeaZJ4v+ffPoReiohG
-         WErxLK3CpSdFZxn9gvh3RFaVtlXgCubLPOrAzPQ26Vl8N0w0xooCir3uoKEaX/6cerpG
-         WFBOyb+26d04FuBz+zvEnHMWKM5sMsA7SktzGCZPbCmR79ipdQ9DiXZQ7ecTMlsl5B8Z
-         DB+DBj1yuZxjt00q2MPjcIkH9t0HRiCnhXedy/f/wBxRGF9JVXBBYsgHK7dKFRUwPcpa
-         tH3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXusFLqs2xcGipzKwRW3lwSsFq+Zcb1RNSWdYHCUB43VBUZTdEXHvEgZXEtuc5S2hHDNWvK+N9Wfgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBqBSVovGDHehxr+wHtQTi45dKl0ylc5WcWVyr0g85foyM5d2t
-	KhxQDEDj5QenhVOyH2E2PDNvixdwtzjy1e40kgonW6WbyVjnmtr9uU86z9rR8zk=
-X-Google-Smtp-Source: AGHT+IH7TcjPOhUnSCOztxx0ezKCT+YBhSK1/HnVI58kj/H9R25mEbT+/4axuFgUNssPy7mS67UILQ==
-X-Received: by 2002:a05:651c:541:b0:2ef:27fa:1fc4 with SMTP id 38308e7fff4ca-2f751ea5828mr10045711fa.1.1725626776719;
-        Fri, 06 Sep 2024 05:46:16 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615171f9dsm30793331fa.97.2024.09.06.05.46.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 05:46:16 -0700 (PDT)
-Message-ID: <3ebb955d-ca25-4bbc-bf55-1b3cf2e20525@linaro.org>
-Date: Fri, 6 Sep 2024 15:46:15 +0300
+        d=1e100.net; s=20230601; t=1725627488; x=1726232288;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pZ4UXvk6Hc39FSBqf7SdNKy5PEKmHYp1NAIB/Pp/XHY=;
+        b=DpVz/zEtCEEL3Djuz8hB+5+KbQITTfwSEhch2o8tgfm5dfDoNzo775llxEi9FZ0FHs
+         WbvzUyXbFTYoJ/sq1pHtALJRJXUF7eHE6UvQ1udQuIv5ph1nXvpMjL4NqWNLTHjyBXaG
+         ARLyleaCFK1gwwk8HJYGDjCMDK4FiDc4q4sCb1FkWFnSmM3M11I9/MPKnhUzL/fouTIH
+         KZVbXK0NkU+2BjgcPeUUovwWfiEk2FmXOM5fgfAzNN9JgBgVn250az55Z1O09kEhVU4C
+         nZcAUuw+CWgEkDbMMaBy2J9AYPwkZ/QMCIOJdiBbPQN0UgvOFR6sRYIBA8DMTPd97FnU
+         QPcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEqVR/h5E8V8AXPRN0h62HGtEDtLQMDywesrxvvEOf3Rxai2nLM+iQY6SU0BUjd8Mt8HeRih4Uxks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTReELE38R6EVFEfVsbcpxhvfUTJf3kWWOYRaTvIvQ/TTvtBf2
+	63sk/VCUxP7ICWt9XW/y5IA+cZ+L24kgHwmBZrCsCYUbz6wg/S2zMzS7SF4gXypP0LG/pCL0Nuu
+	HmunNxtnM6XoX0Gec/ObDNCnTH3GLh7wD/R5MLQ==
+X-Google-Smtp-Source: AGHT+IEfPq+1SJTZN/kT/ogG50d/lurOKFue49//AbbEiwtDqcYrHS7wEFlOlmvzaiwpBHdDVphmTOmvHGU0aBmrA1g=
+X-Received: by 2002:a05:6902:2405:b0:e06:df51:fda0 with SMTP id
+ 3f1490d57ef6-e1d349ef8ebmr3092635276.42.1725627488122; Fri, 06 Sep 2024
+ 05:58:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the
- zonda_pll_adjust_l_val()
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Taniya Das <quic_tdas@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Jon Hunter <jonathanh@nvidia.com>,
- kernel test robot <lkp@intel.com>
-References: <20240906113905.641336-1-quic_skakitap@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240906113905.641336-1-quic_skakitap@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Yongqin Liu <yongqin.liu@linaro.org>
+Date: Fri, 6 Sep 2024 20:57:57 +0800
+Message-ID: <CAMSo37Udb-DwXYdGp+RdvKS87-0nTXjR1Dj0W46CALspeW2O2A@mail.gmail.com>
+Subject: [Backport request for 5.4.y] clk: hi6220: use CLK_OF_DECLARE_DRIVER
+To: stable@vger.kernel.org
+Cc: GregKH <gregkh@linuxfoundation.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	John Stultz <jstultz@google.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, 
+	Allison Randal <allison@lohutok.net>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Satya Priya,
+Hi, Greg
 
-On 9/6/24 14:39, Satya Priya Kakitapalli wrote:
-> In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> operator to fix below build error and smatch warning.
-> 
-> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
-> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
-> 
-> smatch warnings:
-> drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn: replace
-> divide condition '(remainder * 2) / prate' with '(remainder * 2) >= prate'
-> 
-> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Could you please help to cherry-pick the following commit to the 5.4.y branch?
 
-thank you for the updates.
+     f1edb498bd9f ("clk: hi6220: use CLK_OF_DECLARE_DRIVER")
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+It's been there since the 5.10 kernel, and  this along with the reset
+controller patch
+are needed for Hikey devices to work with 5.4.y kernels, otherwise it
+will get stuck
+during the boot.
 
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 019713c38f25..f9105443d7db 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
->   
->   	quotient = rate;
->   	remainder = do_div(quotient, prate);
-> -	*l = quotient;
->   
-> -	if ((remainder * 2) / prate)
-> -		*l = *l + 1;
-> +	*l = rate + (u32)(remainder * 2 >= prate);
->   }
->   
->   static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-
---
-Best wishes,
-Vladimir
+-- 
+Best Regards,
+Yongqin Liu
+---------------------------------------------------------------
+#mailing list
+linaro-android@lists.linaro.org
+http://lists.linaro.org/mailman/listinfo/linaro-android
