@@ -1,130 +1,124 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C074C1B969;
-	Fri,  6 Sep 2024 02:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA2483A18;
+	Fri,  6 Sep 2024 05:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725590195; cv=none; b=uDe7FHmYMnqccbX1NQS8SPx2woERup+t1i3Gyh9M5+LgqzI7azdDCTB7vikGv10m0915rpu/J2AmegAFoO5Yo42+/KCOZbjHUZSEnLkt7YWv2edYXC8uJjUTf1a1UmGQ1vA9c3N1RX39cWKnoxdSTL4Ato5zg87PfyWJbr/z5Uo=
+	t=1725601957; cv=none; b=OSgV0HfaA1kU0uCFgrjmlQA+eLM/zTjFfII3xeYpMGyCjg034Rp8ZW5EGnns85uI3vE50fU1ngTzToJyRspDghyjBS8kIA9VwCtJ8k15caa+gjVI0lm5s6sjC/8kb633O2QYJNQwC5RGMH5Pu0royI1vLZS0Z3QZ+aTdGa4sRIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725590195; c=relaxed/simple;
-	bh=l/L5FGZqn4EE3bWvcZ4oUF9HzXQWZkujyE9rwI0wzNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guTumuWo8fp1FDqKWz6MWTdfmCxg8cyeInNKagnbazRdaTlEuvex6CR+NTcZAhbS1waVkaNL7De0eq7vqez7LTvvx9z8xWvu9K72SzbDQUxLbJEoSu9t7tnWCJ2Vsw8Gq3Mrj44JOKkKz1lya9ZPP6kYQi3DJv0/FCj4cz2uloo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQDwoTPC; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725601957; c=relaxed/simple;
+	bh=g01KSPJoXIPurLe84AcyOHvY7DI2Ak8ynhEFBJfoOtg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SDPpuOV01BA2wQLz57du6J8ksMb4IJX1/2QfWJydf8V1rFXZ1gr589esXr2jQm1ihRpmbmoiiAACoNiy1vsdIDJJkfpARLi05SqzKKPUgv4UtAKdrDk+nm7mdzEayCit3TpdMWRjjee3yOh1DX0TCXc6k7HwF0LJpahk6G1NrCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKA+dOgt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQDwoTPC"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a989bd17aso1622170276.1;
-        Thu, 05 Sep 2024 19:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725590193; x=1726194993; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVMdGlIj9xk2r5uxVbI4SIjTki6YfCzvVODN1CuCuF4=;
-        b=fQDwoTPC+78YKZ6MP+CBwjsd+bilaqolyPHTNhTZlMM0RWxFksAG9x8RLCm9x6tOAs
-         exaJ6LUji8q/MfQAq9nWBFQSpazW7rn9mfSmZkuElz59gO4BXlJhYmGbioen9IOKdCBD
-         9TAasB9smhuMSlZ4Yc9BlXyOk+FlDr4AtzTko91SEv6yOZEzgQBcLZQQGJ2qNfR/dMAL
-         f6DgY0G4KUJLHPfDr6leNFw36Axy0spEh+CZVCWUVzQNNe+ysj8XXgPfQ/bZRmyJEL/B
-         Yl6Mawk5pTls1hbMTSn8QZIuuEby13WOXbeXY4qSA8FfKQZldQmH2sF9jjnCRPDzzQAO
-         Ob4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725590193; x=1726194993;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pVMdGlIj9xk2r5uxVbI4SIjTki6YfCzvVODN1CuCuF4=;
-        b=B9ZYu+Mt9uox6xIpzx4IeUa+r0kwJVlhUvaaMfU86nWjHsNO6rji+AWnwYmY0fc14n
-         58i2JqDLbTVbSx3QYATDVdyiI60OvYjoordNo/sN6CkeKF+u6GqNOajJtppHV8zoGVV3
-         wxjCMoX1H0CIXVJzO1XfpYxSa7g9PUX9jBvS65MBXfi5fZ9DN6h0/iR4DA+6Y9Cz3TkL
-         FOq6N/suW9+Git8+f+U71eEZJ6gcpczwYKyzg8RbTUklXi9sBCCf1qLhJOSNO5wOztWb
-         oYJr1ZiGyS6PNflbV0halXqICeJ5N5Ak82F9JgndpJm5NMuSYQrl5hcxm6rSqgkCrlhd
-         vwuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBj7J+ZQcHYJV3/Yg0yzgtKtC12iihi2O250Qd6HbOy4Zb2kJ3b0KB78TFvJABL+6RNvmJqeeKXlkE@vger.kernel.org, AJvYcCV7ReY+OPLEYLJCSSzXDxxJx09VIJji7eKFvW5lsw9tFEZimCH1MLtEo935uD3hJPj7qbwomZhE34axYopSnA==@vger.kernel.org, AJvYcCV9knSbij/dARIrm5AD6J2uajlhH4SiW9TZG6vaDX4DwCG7wwEssEFMy75KJmWYo8kMb8yzcqgfRmsB@vger.kernel.org, AJvYcCVShNLuxzLdVeqEIH5WEGT/mutdoqov9aqMXN5OaCFUPhceCY3rbhYKRrHObV9dLZD0hmog75yoJSZE@vger.kernel.org, AJvYcCWH+REPiqJqbDWwhsdip7Ao6fmnNRAJ20SFRdqOiEJCuRmp95xzXRYn2ayw2nP0e06qoDBjI6WKAJs0RmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7kiCOqldnNF4M+YGpl5f5osml35+Q/2siFyqp2lIzmriR62wL
-	/TSDeKrOef/Lfnmc4tSLCcowH7iEMJn9Xi1A8jiGBdSiQeB6adoL
-X-Google-Smtp-Source: AGHT+IF86jLnkCVqdhTbMHpt4/KAK2kFi9egstzyzRlVhvtwUHnadDj+kjXTpmL6llQZUVva33ipRg==
-X-Received: by 2002:a05:6902:1242:b0:e1a:b04d:673 with SMTP id 3f1490d57ef6-e1d34a3a94emr1447077276.55.1725590192531;
-        Thu, 05 Sep 2024 19:36:32 -0700 (PDT)
-Received: from localhost ([2607:fea8:52a3:d200::4eac])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801b35d07sm12458121cf.27.2024.09.05.19.36.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 19:36:31 -0700 (PDT)
-Date: Thu, 5 Sep 2024 22:36:28 -0400
-From: Richard Acayan <mailingradian@gmail.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
-Message-ID: <ZtpqrANbJurWNOzV@radian>
-References: <20240904020448.52035-9-mailingradian@gmail.com>
- <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKA+dOgt"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AF551C4CEC4;
+	Fri,  6 Sep 2024 05:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725601956;
+	bh=g01KSPJoXIPurLe84AcyOHvY7DI2Ak8ynhEFBJfoOtg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=tKA+dOgttwwsbZFDX0yViM54k+PSdYvK9glYNgdUAgx7tA48HGEhZUiYMQirQHNNq
+	 vziGbqVkZkqUn797wPX8dSXhjE8KpNc2fl2/h1yScVNbRIfYGhRXGgU9Bgv/cnsEwy
+	 hg1vGh8xCCKl6nkU2LfrGAWW8Q5pYYRZSRe8B7yFj39QFQ88Cvk7UewyY1VXojgmMJ
+	 G0yplYeaR4IvJ637ySmGCxUI4Mu+oGoT1vYvn6l3V8LpE33/1vOiKsDrzeaGK/nPbN
+	 Ps8EkwNmMpubGrQkTrrLQCeLvBrIlnaVSPUH2ob0bggbcOTLpGtr8rYI7pqpkMt92F
+	 A0UYPs9rqghwg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B15C54FC6;
+	Fri,  6 Sep 2024 05:52:36 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH 0/4] clk: meson: Fix an issue with inaccurate hifi_pll
+ frequency
+Date: Fri, 06 Sep 2024 13:52:32 +0800
+Message-Id: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKCY2mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSwMT3bTMivjknGxdMzOLNPNEw0SjJEMzJaDqgqJUoBTYpOjY2loAryT
+ uhFkAAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725601955; l=1915;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=g01KSPJoXIPurLe84AcyOHvY7DI2Ak8ynhEFBJfoOtg=;
+ b=XOPNho1g4xaPZsvq42GBw4qtdRF1HzWnaEFGPdOhELlSCEJOlNnmLj11KCyoC+vmwCDfw/SzU
+ R0GqjapV8XlA3dJXBmuCQcEr9UMihJD+wZRxX8G2C3dd7VdbzhpMB49
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Thu, Sep 05, 2024 at 10:09:34PM +0200, Andi Shyti wrote:
-> Hi Richard,
-> 
-> On Tue, Sep 03, 2024 at 10:04:49PM GMT, Richard Acayan wrote:
-> > This adds support for the camera subsystem on the Snapdragon 670.
-> > 
-> > As of next-20240902, camss seems to be a bit broken, but the same series
-> > works on stable (although it is much less reliable now that the CCI clock
-> > frequency is not being assigned).
-> 
-> I am not understanding this bit: is this series making it better
-> or not? Can you please clarify what is broken, what is less
-> reliable and what works?
+Some PLLs with fractional multipliers have fractional denominators that
+are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
 
-When applying this camss series and some camera sensor patches on
-linux-next, the Pixel 3a seems to hang when camera capture starts.
+The hifi_pll for both C3 and S4 supports a fractional multiplier and has
+a fixed fractional denominator of "100000".
 
-When applying the same patches on stable, the camera does not cause the
-Pixel 3a to hang.
+Here are the results of the C3-based command tests (already defined
+CLOCK_ALLOW_WRITE_DEBUGFS):
+* echo 491520000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
+* cat /sys/kernel/debug/clk/hifi_pll/clk_rate
+491520000
+* echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
+* cat /sys/kernel/debug/meson-clk-msr/clks/hifi_pll_clk
+491515625       +/-15625Hz
+* devmem 0xfe008100 32
+0xD00304A3
+* devmem 0xfe008104 32
+0x00014820
 
-When these device tree properties from the previous series were removed:
+Based on the register information read above, it can be obtained:
+m = 0xA3 = 0d163;
+n = 0x1 = 0d1
+frac = 0x14820 = 0d84000
+od = 0x3 = 0d3
 
-			assigned-clocks = <&camcc CAM_CC_CCI_CLK>;
-			assigned-clock-rates = <37500000>;
+hifi_pll calculates the output frequency:
+calc_rate = xtal_rate / n * (m + (frac / frac_max)) >> od;
+calc_rate = 24000000 / 1 * (163 + (84000 / 100000)) >> 3;
+calc_rate = 491520000
 
-the CCI would sometimes fail to probe with the error:
+clk_rate, msr_rate, and calc_rate all match.
 
-	[   51.572732] i2c-qcom-cci ac4a000.cci: deferred probe timeout, ignoring dependency
-	[   51.572769] i2c-qcom-cci ac4a000.cci: probe with driver i2c-qcom-cci failed with error -110
+The test and calculation results of S4 are consistent with those of C3,
+which will not be repeated here.
 
-On further testing, the rate can be set to 19.2 MHz, and there would be
-no failure (or rather, it wouldn't happen often enough for me to witness
-it).
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Chuan Liu (4):
+      clk: meson: Support PLL with fixed fractional denominators
+      clk: meson: c3: pll: hifi_pll frequency is not accurate
+      clk: meson: s4: pll: hifi_pll support fractional multiplier
+      clk: meson: s4: pll: hifi_pll frequency is not accurate
 
-> Besides, I'm reading that this series has not been tested and it
-> makes it difficult for me to take this in, considering that you
-> are adding a new support.
+ drivers/clk/meson/c3-pll.c  |  1 +
+ drivers/clk/meson/clk-pll.c | 22 +++++++++++++++++++---
+ drivers/clk/meson/clk-pll.h |  1 +
+ drivers/clk/meson/s4-pll.c  |  9 +++++++--
+ 4 files changed, 28 insertions(+), 5 deletions(-)
+---
+base-commit: adac147c6a32e2919cb04555387e12e738991a19
+change-id: 20240904-fix_clk-668f7a1a2b16
 
-Of course. This revision of the series wasn't submitted to rush into
-v6.12-rc1. It can wait until everything is resolved.
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
 
-When device tree maintainers comment "not tested" on the documentation,
-it usually means that `make dt_bindings_check DT_SCHEMA_FILES=...` gives
-errors or warnings (even though the device tree and driver may work on
-the hardware). It's a separate test and one of the things I haven't
-scripted into my workflow, although it's still a responsibility.
+
