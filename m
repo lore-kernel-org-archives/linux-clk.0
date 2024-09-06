@@ -1,95 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784A21C9EB7;
-	Fri,  6 Sep 2024 10:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D621C870E;
+	Fri,  6 Sep 2024 11:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725618898; cv=none; b=imwqlrtqebVjgTx9O/PF5x85y+ygF1uTMv25FmeOgpl3ieQsRWrRKkC86UlzGZrldp8Wb/wVCtFSmp7ikOWuE4D8MTczpxkmGrXB09qXHyAqyPB/+HlJZvitioJpW+Xnxme0bn6hkKve0Mzydhin7fKTVcu3Uy6EBHkojb9bipg=
+	t=1725620853; cv=none; b=VvS/pSV0kMsKasLdXsT7gAqqxcvggflS9L5nJi99LoNU+X+sbpvZ6fxKeH3slc0DnbGCROqNQZOYcQ5WPihSdaEfZjDtrrQyqf5dUsw31L45+lEaogiLHt5HDrPklvrJAGLFg9xu1pxuUNWk4V5HQ2Xkq+BhpXz2Z1l3foPzycE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725618898; c=relaxed/simple;
-	bh=wNROTOGwTrtcI0H20f0EmINCmCNdwFiZLjQMJFcLHU0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A+QK2OmJFN5jIGHYWPX0f1ion6SIXPVL8NHEuxHDYpzqlCboSAuNGDCek1SaC6gj6NrRwWyj0khDh77XQ3pusH3Dvu5cCEpARzQ/7Px1uqNyJtaiRb2X97GEhz7OI6COHr2mvRjiosw9Dd+ZKwbzi/Eu2Wu9yPoFvZEYnR9QVaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6FSWxuR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725620853; c=relaxed/simple;
+	bh=pKfwTF6c2QaD2+GpcjqyKDyU9aL3RZoYsLTxYFJU9n0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RGbNLkOD5RAAQBbQ0BwuRra2FmH5cPCNlqZwDzWtAPZEOm9hZKaUDIm9bgERiCStda6swHwGaOMmikf6av2XPew8CZ0iHZMdGxuIlhuvz7RjQD0q8gD4fC9CXsChX69haA/lcKiWUhaB50pwc5GhG7p5mk01lFYgH05k06sY0KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NF8NI09a; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6FSWxuR"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 11535C4CEC8;
-	Fri,  6 Sep 2024 10:34:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725618898;
-	bh=wNROTOGwTrtcI0H20f0EmINCmCNdwFiZLjQMJFcLHU0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Z6FSWxuRSTKe/x3nQ8Q3ngcRLUR2Bmr427Sp2jclLnw+S7ttvc0dj5WuTu6vdwyZZ
-	 Vc08i8ggquZSgUuH45nHbIbuW6ywtNjzKx/kbyNWyHFbJP9vS+sTyddN8DL1h3GxZ3
-	 OI8uwI4W9LwaNVTpCm8262abAHdj/iUUzBmSEKbY2I5qqKbtUQ/PGxrHtXK8YK9ELk
-	 LN7CisCV1g4lZnzHnCQ5z9DBVS741Qd6hjQZU7TRwrGUHkZQHMZWg7xUTCHE6ffDoj
-	 0ELoME1wn29+lHK6llxnq1x7u/5iNbfby9Fb2Aag5Ffa6WWqAlwWHIGB7n4/oLDN8i
-	 S4G71bwzPMJXg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 024A6CE7AFE;
-	Fri,  6 Sep 2024 10:34:58 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 06 Sep 2024 18:34:41 +0800
-Subject: [PATCH v2 2/3] clk: meson: c3: pll: fix frac maximum value for
- hifi_pll
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NF8NI09a"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868WSZL021614;
+	Fri, 6 Sep 2024 11:07:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+hZPgsc0UonS5+Y7zpgIk0QEA80noiDkCUkzS9NO9hI=; b=NF8NI09aXY2Oprpy
+	1ngwIqdr2/UkNpUS7EovbtaId631TOeXZMtwg1xrIZ+7uWgmfMe3EZ1i5PWxLdmX
+	apvlotxTZDU96KjTR4kn5T0uNF/+7UXKagUOB88xLJYeBErdoz8x649yGJZ+21VT
+	blIn1fLQbeuVagVllIei9kwQ7d3otrKCqPbytgHYJ1Xki+gVdUYdMr6GInEsaWje
+	az8VxkPdbeKzE+hwD86A/T7bdaSHfUorVcoWTE4FMh+X34W04eB4DNJxu/a3uxpd
+	ZZS9pz+Fb2A0pIOtmijr9Gx93Ivs8oRMNeIWQuRIlIE/1UR9CJ6beLH25zTsDyCX
+	ZKW7pg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu22dv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 11:07:24 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486B7NSF022570
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 11:07:23 GMT
+Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Sep 2024
+ 04:07:18 -0700
+Message-ID: <bc9c90c0-0b5a-4459-aeea-606f946a7fe7@quicinc.com>
+Date: Fri, 6 Sep 2024 16:37:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240906-fix_clk-v2-2-7a3941eb2cdf@amlogic.com>
-References: <20240906-fix_clk-v2-0-7a3941eb2cdf@amlogic.com>
-In-Reply-To: <20240906-fix_clk-v2-0-7a3941eb2cdf@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725618896; l=770;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=I33Vhd+oqJKtNl4x++Y8xPKvaKodnZowE3DBu//z/PA=;
- b=SADKBH0Q0M4WKvE3kt3/P9oBlUQyRQdTGwUXOIBOYeC1DM1J+oIsLeZanYu9JVZEUNfkwxyeO
- LKUG7LOZoIMBf9/qE6ZBzEJkfCtwZ+SCdrrj54fGqYCVjdoC0hTkw2F
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
+ comparison
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
+ <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+Content-Language: en-US
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+In-Reply-To: <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CRY9L6z4zJiuVOqJ33iSpxfpCap_aUtg
+X-Proofpoint-ORIG-GUID: CRY9L6z4zJiuVOqJ33iSpxfpCap_aUtg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409060081
 
-From: Chuan Liu <chuan.liu@amlogic.com>
-
-The fractional denominator of C3's hifi_pll fractional multiplier is
-fixed to 100000.
-
-Fixes: 8a9a129dc565 ("clk: meson: c3: add support for the C3 SoC PLL clock")
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/meson/c3-pll.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-index 32bd2ed9d304..35fda31a19e2 100644
---- a/drivers/clk/meson/c3-pll.c
-+++ b/drivers/clk/meson/c3-pll.c
-@@ -361,6 +361,7 @@ static struct clk_regmap hifi_pll_dco = {
- 		.range = &c3_gp0_pll_mult_range,
- 		.init_regs = c3_hifi_init_regs,
- 		.init_count = ARRAY_SIZE(c3_hifi_init_regs),
-+		.frac_max = 100000,
- 	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "hifi_pll_dco",
-
--- 
-2.42.0
+Hi Vladimir,
 
 
+On 8/14/2024 1:31 AM, Vladimir Zapolskiy wrote:
+> On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
+>> In zonda_pll_adjust_l_val() replace the divide operator with comparison
+>> operator since comparisons are faster than divisions.
+>>
+>> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for 
+>> Zonda PLL")
+>
+> Apparently the change is not a fix, therefore I believe the Fixes tag
+> shall be removed.
+>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
+>> b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 2f620ccb41cb..fd8a82bb3690 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned 
+>> long rate, unsigned long prate, u32
+>>       remainder = do_div(quotient, prate);
+>>       *l = quotient;
+>
+> Since it's not a fix, but a simplification, you may wish to remove
+> an unnecessary 'quotient' local variable:
+>
+> remainder = do_div(rate, prate);
+>
+
+I tried removing the quotient variable, but it is leading to below build 
+errors on arm32 architectures, so I will add the quotient variable back 
+on V3,  to make the pointer type compatible for both arm32 and arm64.
+
+
+error: passing argument 1 of '__div64_32' from incompatible pointer type 
+[-Werror=incompatible-pointer-types]
+   238 |   __rem = __div64_32(&(n), __base);
+
+
+expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is 
+of type 'long unsigned int *'
+    24 | static inline uint32_t __div64_32(uint64_t *n, uint32_t base)
+
+
+>>   -    if ((remainder * 2) / prate)
+>> +    if ((remainder * 2) >= prate)
+>>           *l = *l + 1;
+>
+> *l = rate + (u32)(remainder * 2 >= prate);
+>
+> I hope the assignment above is quite clear...
+>
+>>   }
+>
+> With the review comments above implemented, feel free to add to v2
+>
+> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>
+> -- 
+> Best wishes,
+> Vladimir
