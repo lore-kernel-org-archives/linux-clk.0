@@ -1,141 +1,129 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF3E1A2C39
-	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 11:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAEF15852B;
+	Fri,  6 Sep 2024 11:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725621783; cv=none; b=otAl/tKTkK/PCqx/ywDQt+Ze7X/3m8w21GRqv6j/ETGGmZDt/9jfBAcQQfNMAcSn3q2Zo3lfsQV6nyiyEuqhFnCp8vk8fRF3cN9xJYdP6e4byASspDBwRpV4fXE7CGQfhznAbUJZsbAF52+rTQRvecp8i+eIu7TdE2w1J90mCAc=
+	t=1725622789; cv=none; b=q6Nfh5O9yg9B8H7ULsou/LF8NJlgN3z6G9WUleuwCKJq0uax/0EmmrAi0efsK8WPtzX3wN7qEWxa1ILlGg+PoYtvwrCuZwagQCVvbVXz6lEDgqQrGJUaMausKAUmO45a7H651R/n3BVwP8asCrkW5ExuGPijX1JNyvHamSYU78Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725621783; c=relaxed/simple;
-	bh=Wmp19ZLbe2P0V0jL2Ao3BXfy40ExCrN8gOpbuS8Jyqs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=G0jF6Xsy8LpXOl93FyclmNnRYi9OfN0lMAllKgEvCDrf+CxECJBi1plkXXwcKHnoBPYMhKx9pQ3OX8f8sujPOs4iumwiFg2fBrD3PAnAKK4q8i+VKgBAS+zM2XK3bp3Fu2ZVI2HTIMRhGd51NuetxKEso/Z9zJYHA58xVcKPxJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nE54EPjy; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1725622789; c=relaxed/simple;
+	bh=nR2isP9SzO3DZ0IhO9CCigww6hmPc5ghtYeDS7Ux/g8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u7tCm8rifu2HV6kLGqE0eYEfRPndKJdXtyceBbF3FMT5hmvCp+vVPdnRQYjCVNsy8PA8TDXGLrZbXkDBZuBimCS1b72nH7B6RXzHEmoNVjiYQ1zJ0iyyNk85gmQm5O21FvbLUjRcdkYz2vDIFlpKQ7eF/0hCkfTqTHKZsyhZ87I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nWjxBUa6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nE54EPjy"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371ba7e46easo1169198f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2024 04:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725621779; x=1726226579; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=92+67uwDsO1hQyzhgte48I/CNhtegYeJx45/P0oF94Y=;
-        b=nE54EPjyF0jn2m0WwJAF3FlM27kyBnolT58IuawqnrzmwnaO3xTnxt1HiJRK16o9F0
-         qAFQvhpfWPXmR1RrUjg7swJApKC8n0JmvI6kXE//WxwSqlgJ0jiovBWjdQzMbTySdKJ8
-         b/zcJpSh4sshb5U62dpOZhGfiFQjii2r7P8gzk2yMXTk+FaNQ/2Kin0T5YRLsXh9YbtK
-         GX/01lYngS4RxRwAJs9/O0WmPz5BuDYHKB8biENXnTDt9kdHFHiC75xw8CNFelMmL5A8
-         fjVplw+3mvpOs6V2a+w1I3YIO0PtyTtuRLJOYsBUGlQCK9sZx1Izvwff0EVjbeaPjX+V
-         E9NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725621779; x=1726226579;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=92+67uwDsO1hQyzhgte48I/CNhtegYeJx45/P0oF94Y=;
-        b=wXBXXd17SRsRq9ovCmB2ywcRTRe/rz9f5XbqxKox9Zl/Dy1F2mlh8qrzouCZaZQzd0
-         6l0zqaFAxAWSW+hi+nnfygCZ1DnxcKdNKBa+GKRdf3bugodJzoVTQxp2pk9cgQkLIiNW
-         7V0fky2PemqZBiHOlMeZHFD+nytHnG7ShnOkTTfgxGn28qvpywnsIoZTCKry+YHUuoLr
-         638KJrZy+khLt+jUXV1SAXa555nGhfDdzUeJDPHCGwzS03R07GBbYONnjz8zkjHLCHva
-         sRgkwdbp15jR6q4kiKoEdyjX32+WMR67kUGdF+DGq0u3UG3jQYDeYBZwm1Q0/2tr3aTE
-         w0Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWf2nfdEoOb3A8ieoouEDN/CcYlcWMmbKF6nDWJiUal6nEtkGIASXqLupkiQeGF6yerRaJL4dUP4hw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKZi8Q+RWHkSIUGpnz+7Gj1BM/LgQNDHS1LheX1IxhVwdlD4Zn
-	fFwS0Qn888ZG8Ye79T1mMGeJCB8vu5fBmJU9jggDY0wq3fazN+B2VXfUv/UH+Os=
-X-Google-Smtp-Source: AGHT+IFj6cn2VhPIBLzycX7f8yDdpZxCP0fnyLUp+RAmxAnbmLYkKHqCh+9DjZxSWH8mgvyVVR5CDA==
-X-Received: by 2002:adf:cd0d:0:b0:371:93eb:78a4 with SMTP id ffacd0b85a97d-378895c5b22mr1505513f8f.9.1725621778667;
-        Fri, 06 Sep 2024 04:22:58 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b0ad:b504:10d4:481d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b34725desm18835563f8f.81.2024.09.06.04.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 04:22:58 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: meson: Support PLL with fixed fractional
- denominators
-In-Reply-To: <20240906-fix_clk-v2-1-7a3941eb2cdf@amlogic.com> (Chuan Liu via's
-	message of "Fri, 06 Sep 2024 18:34:40 +0800")
-References: <20240906-fix_clk-v2-0-7a3941eb2cdf@amlogic.com>
-	<20240906-fix_clk-v2-1-7a3941eb2cdf@amlogic.com>
-Date: Fri, 06 Sep 2024 13:22:57 +0200
-Message-ID: <1jjzfpqb5a.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nWjxBUa6"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868eltj009479;
+	Fri, 6 Sep 2024 11:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iKSTQRVXAjAYk0vB+VbvH9
+	XYTepoF7oCutS3spRWovY=; b=nWjxBUa6TZTApa3ESELcTt4zit+bUUSrHwyll/
+	msHWTlPKaTYcu7jKcgzasWmdSSDEOuNJb7xH+pMQPaX/UWEIG7mcf6oiNeJWISjs
+	h48HloHX7dpRfFpNbYkcvjmzdPmqnAQoOnQ01u9QZOzFltvEY+zDKozetuVA4d42
+	3sUPSFdEaw2iFliOY4ieU2N3sUBkumEZpNm7F1pruLRlp3Knp3i+Zy49vL+I47l8
+	0Y144bd827gxUpaox4RgkxIRJgmkEFkz/YKSIPxKzx7CBMVTGqpXD1v2lWqy5cWk
+	Ag59wvX3j3mnLz1VcHlHovLpWOPkVbSNJyypNoG2ui1+ozqQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwrt5p7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 11:39:41 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486Bdegj012913
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 11:39:40 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Sep 2024 04:39:36 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Dan
+ Carpenter" <dan.carpenter@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "kernel
+ test robot" <lkp@intel.com>
+Subject: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
+Date: Fri, 6 Sep 2024 17:09:05 +0530
+Message-ID: <20240906113905.641336-1-quic_skakitap@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: d0yfOX_VjtyYl2xHa4V5VIv2t0LHPGcb
+X-Proofpoint-GUID: d0yfOX_VjtyYl2xHa4V5VIv2t0LHPGcb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_01,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 priorityscore=1501 phishscore=0
+ malwarescore=0 bulkscore=0 mlxscore=0 adultscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409060084
 
-On Fri 06 Sep 2024 at 18:34, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+In zonda_pll_adjust_l_val() replace the divide operator with comparison
+operator to fix below build error and smatch warning.
 
-> From: Chuan Liu <chuan.liu@amlogic.com>
->
-> Some PLLS with fractional multipliers have fractional denominators with
-> fixed values, instead of the previous "(1 << pll-> frc.width)".
->
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 8 +++++---
->  drivers/clk/meson/clk-pll.h | 1 +
->  2 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index bc570a2ff3a3..a141ab450009 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -57,12 +57,13 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
->  					  struct meson_clk_pll_data *pll)
->  {
->  	u64 rate = (u64)parent_rate * m;
-> +	unsigned int frac_max = unlikely(pll->frac_max) ? pll->frac_max
-> :
-                                 ^ Please don't play with this unless
-                                 you've got justification a for it.
+drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
+clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
 
-By justification, I mean actual numbers showing the difference it makes
-and not just for the platforms listed in this series, but all the
-platforms supported by this driver.
+smatch warnings:
+drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn: replace
+divide condition '(remainder * 2) / prate' with '(remainder * 2) >= prate'
 
-> +							  (1 << pll->frac.width);
->  
->  	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
->  		u64 frac_rate = (u64)parent_rate * frac;
->  
-> -		rate += DIV_ROUND_UP_ULL(frac_rate,
-> -					 (1 << pll->frac.width));
-> +		rate += DIV_ROUND_UP_ULL(frac_rate, frac_max);
->  	}
->  
->  	return DIV_ROUND_UP_ULL(rate, n);
-> @@ -100,7 +101,8 @@ static unsigned int __pll_params_with_frac(unsigned long rate,
->  					   unsigned int n,
->  					   struct meson_clk_pll_data *pll)
->  {
-> -	unsigned int frac_max = (1 << pll->frac.width);
-> +	unsigned int frac_max = unlikely(pll->frac_max) ? pll->frac_max :
-> +							  (1 << pll->frac.width);
->  	u64 val = (u64)rate * n;
->  
->  	/* Bail out if we are already over the requested rate */
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 7b6b87274073..949157fb7bf5 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -43,6 +43,7 @@ struct meson_clk_pll_data {
->  	unsigned int init_count;
->  	const struct pll_params_table *table;
->  	const struct pll_mult_range *range;
-> +	unsigned int frac_max;
->  	u8 flags;
->  };
+Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 019713c38f25..f9105443d7db 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
+ 
+ 	quotient = rate;
+ 	remainder = do_div(quotient, prate);
+-	*l = quotient;
+ 
+-	if ((remainder * 2) / prate)
+-		*l = *l + 1;
++	*l = rate + (u32)(remainder * 2 >= prate);
+ }
+ 
+ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
 -- 
-Jerome
+2.25.1
+
