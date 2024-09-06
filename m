@@ -1,55 +1,55 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7353613D891
-	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 06:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5C51465AC
+	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 06:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605751; cv=none; b=QRW66KsDj4++dMhSNBxjV61q/OUdO/ea9R5UM2CtlqvMDshHB6jOzV1f9YLUhy+8BcbYF/KwtXsoLG7UyL9iLAkmGQ8pt9jJ45bJlq3yGVOvqxEzveuRVe+pdM6vv6HdZL1R5KUcqK84fCZL0So5dhwV5jtBnJv8IIoRZa9OGl0=
+	t=1725605912; cv=none; b=UxcbEiVJY7E2i1D+E+LqCQPZhz6/y6kAkGMxPxV9LUwpNJWd6FfoR129F0gNwpkHDi6bdWdIbGLWjGDUz/7LgSGX4/URGKzoBAi99ldNkCRBw+fTLCJ1mN64PCtSVfERXX++hmrat1yy145cuD7Hc6rgMjO4tVGV6UdsehMdREo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605751; c=relaxed/simple;
-	bh=b7ERu1u+RZvnB2du3wS1+TNHr/1umqo9UDdZVtoPrcQ=;
+	s=arc-20240116; t=1725605912; c=relaxed/simple;
+	bh=MrUJLJe77lTwJNI/F7ntnLZneKog1thDzZ87Z72CBKA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dNg4k8HnHq/geeL3S3mUEBqf5vVq+FH6xI85obAUqAiDeXc9SnmA5ZqrhfTokUX/E2pOkLjEGipqJF0oYaCwyeO+jHPZj3M+2oH8IGHmFUWPrbsJdW/pd3Yti3IEGRyy6N3l6J0WMv8r6P/lprdyxayWw6VEsMztiPTxrIWAKqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c7aXSNpm; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version:Content-Type; b=mvsrGnqTwHAQksVpIW/0svz8v0syl8L8eMO+6g2ja/dyxH2qaDVEU1zErM++f1RRF9kbLqa9ngZ+zXAu3ek98ZQv/zXXzinwHh/Xoi47GUtF10YDWHc29OuydmPbevO/i8HK9eNcdSm9lUzvcvbkp6aiKjzo5v3wzDWY4QLxLXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=p4ag2K48; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c7aXSNpm"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374bd0da617so907714f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 23:55:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="p4ag2K48"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42c7a384b18so13153715e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 23:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725605748; x=1726210548; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725605905; x=1726210705; darn=vger.kernel.org;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXVPGKCWkvIyxnOaace+gmP1pBIJW2/wUZj/AGb7QaY=;
-        b=c7aXSNpm8nEMds3yUZFA6QKMpZCKDqZ991JXoxnQTz3ADR6IEe8lnzxX9dXZpZ62yq
-         oWBlI1qSeWMBaZal6K+0Vb5Kzzg15CGVACYWfy174fO7t9QL+yypK0FZ0PWCoIRkNR7Z
-         QvSG9gHB1n1o2acakxa1rfeqyktVOFxS5Sdqf/NVjNTkiPMpygwaXvJIqY3VRa6d/Kdl
-         TSrBVOIxmDAZNGJKIT9DnUtMpi+pTffNce2wWs0g91evcKyI4pMKwJ+aXQq+IZ0tiflj
-         9ER+5+2FU9En6TWTBesPvT7XpVT7faPXR3WGjWz4P6YzO/+LtimHzWX1PksiTbDdDwX8
-         10Ew==
+        bh=Ix3H5f1VUNP2HoArupSCtbBV1RYMrnCibJgmIW2VIQA=;
+        b=p4ag2K485E+vHmceRt9fDtLz7KfkZnIjWJGpzMMHqIiqkKvQD3FUVkyCpFHdNkq4ID
+         AvzA+6fe48dwN6UvfuYAbBJBOdjJLLEFoMYMNtUwN/xrIf9h/iWm8Eb3UMYgVcJS8XVL
+         YsYkacAbDbf1Eouei56mX+8VADdDfURVnNAZ7VUHpjDddTyHWh/114I325uShpW4Dknt
+         tVRsnksfSHYr/qFH+jlg/wFo/phWMbNurqVB0RSSq2sW2ryd+ha51pWRs0bfZl1XFYDx
+         WSbUcW2jFnhSpYmwSXKGWZp5paBdvcCvNhoQVL/E7mwqUGwytQV5GtO+y6Xlewa+9fvX
+         MQLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725605748; x=1726210548;
+        d=1e100.net; s=20230601; t=1725605905; x=1726210705;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXVPGKCWkvIyxnOaace+gmP1pBIJW2/wUZj/AGb7QaY=;
-        b=f6jXEuu8xeDde/kcLT2zbBkwvZ6znwjB4YIxd6YPtcGolw8rYR3LtN2Gx6ypYubXzB
-         7Bbih+1e5dDzkNYri9FySmtDd+NtAYuPNqPgErMDESbrSptJt1cNTNyPgnpnKykSOyMR
-         eBmR42ZZGJLIwMBjrmqZXXXicaelGT0EIJ8mMnEj+QX0t5EbGiIiljz5mF18gDKxYytU
-         mTW+QkTopssqWYs2tvkq6gBfzoOloS1ZIIAX9RCQyyx0Rz7lKqXjFLm5eDoZ+w6Q1b1Q
-         HBKnZbiBYGxkiza4K1tV1L2R/bPy5ImeegaT+GCLoUrxaRk/aRyrjIpR+Tt5HzpTkRcz
-         JLgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXovebZnoitc/Z5JfwBZD9lATvD/+HILF3I/4xk9+tgoft0iBFXuUKEy1KkYHDvM8ENt67JQaGXML4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/CKsJ8Yo4bJRuJeV/zbvamWnYELhk5dc+fzHPDghxnrwyLW+H
-	aXAdVz/xd3udXYsQq5zIkFr4JfIrHVBHD6Ea9R28K7to9wB2YSXnPIdihvCH3kY=
-X-Google-Smtp-Source: AGHT+IGN9vDlwteKqK7cnYQWXkf07Qewxeb9HmZVyNNN7jUwDQ4VFe4yEkgEVz9AUOTtKtIhJ/ptBw==
-X-Received: by 2002:a5d:5225:0:b0:36b:3384:40e5 with SMTP id ffacd0b85a97d-378895de480mr914131f8f.24.1725605746995;
-        Thu, 05 Sep 2024 23:55:46 -0700 (PDT)
+        bh=Ix3H5f1VUNP2HoArupSCtbBV1RYMrnCibJgmIW2VIQA=;
+        b=wn1F/csYiFhEdSrSfUvOYXuGsUZ+7xWXlUZikkntlQogmhs4Jb58Evc8faE4pVfblj
+         rn+xxb9ZrbjFoaMvoAnXHND8vWXAulb3QH8+T8tTxOK5uwCb3g5Ckru+SPWpPA8N9eMM
+         qUechlM5wcGutvwx2fX01J9BqSeeK8WgAGg41hcyp0Vlzatv0xj/Nd1rZ34wO5gduseI
+         dgnrjhn+jNcGK843m9lILsxZczLjw/JrlKjCEM2Tdyfp5rRoZEzg4Za56YHrxIqIoMAz
+         h2Ei3LHP6SzB2G5qTQHnQFKcTKMd5S+/6Ul8mKt8ukFEPBsWAlk6xjLbb/dqmWVmDQoP
+         9JgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9a3dN2x7B7PyY5wgxZM0/JKwbOYc+/JzNWivgLpWNRmZB+UjEp6I01FC3nlXG6ss4tVeRD5/f0v0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz4FOHVEZOiJ7f/NGqiqmnYXEHmQF3wFzJKSmypDclbqnI08uK
+	mcwAGeaGXty6y0WnyhILPsLfnaTnKLg0hWmes63/cBKRLs+NsvVQL1AhtZckld4=
+X-Google-Smtp-Source: AGHT+IGRqDKkE0IR4DNooBH1qA1IUgx6jQLK/m12iWtXvY9LxpMhMFNXKtqOkdjlNyX16vc5mNGEBw==
+X-Received: by 2002:a05:6000:507:b0:368:41bd:149b with SMTP id ffacd0b85a97d-37889612a68mr849398f8f.34.1725605905322;
+        Thu, 05 Sep 2024 23:58:25 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-375348df4e8sm9303380f8f.115.2024.09.05.23.55.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b9859486sm17815559f8f.111.2024.09.05.23.58.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 23:55:46 -0700 (PDT)
+        Thu, 05 Sep 2024 23:58:24 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
@@ -58,14 +58,14 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
  <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
   linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
   linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: meson: c3: pll: hifi_pll frequency is not
- accurate
-In-Reply-To: <20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com> (Chuan Liu via's
-	message of "Fri, 06 Sep 2024 13:52:34 +0800")
+Subject: Re: [PATCH 3/4] clk: meson: s4: pll: hifi_pll support fractional
+ multiplier
+In-Reply-To: <20240906-fix_clk-v1-3-2977ef0d72e7@amlogic.com> (Chuan Liu via's
+	message of "Fri, 06 Sep 2024 13:52:35 +0800")
 References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-	<20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com>
-Date: Fri, 06 Sep 2024 08:55:46 +0200
-Message-ID: <1jy145qnil.fsf@starbuckisacylon.baylibre.com>
+	<20240906-fix_clk-v1-3-2977ef0d72e7@amlogic.com>
+Date: Fri, 06 Sep 2024 08:58:24 +0200
+Message-ID: <1jttetqne7.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,35 +77,44 @@ Content-Type: text/plain
 On Fri 06 Sep 2024 at 13:52, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
 > From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> The s4's hifi_pll supports a fractional frequency multiplier, but frac
+> parameters are not configured in the driver.
 
-The patch title is not good. the clock innacurate ... Ok, but you are doing
-something about it, right ? Plus just saying that is a bit vague.
-
-How about something like "fix frac maximum value" ? This what you are
-doing, right ?
+That should probably have been sent separately.
+It's about frac, yes, but it has nothing to do with the issue described
+in the cover letter.
 
 >
-> The fractional denominator of C3's hifi_pll fractional multiplier is
-> fixed to 100000, so flag CLK_MESON_PLL_FIXED_FRAC_MAX is added.
->
-> Fixes: 8a9a129dc565 ("clk: meson: c3: add support for the C3 SoC PLL clock")
 > Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 > ---
->  drivers/clk/meson/c3-pll.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/meson/s4-pll.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-> index 32bd2ed9d304..a350173efe90 100644
-> --- a/drivers/clk/meson/c3-pll.c
-> +++ b/drivers/clk/meson/c3-pll.c
-> @@ -361,6 +361,7 @@ static struct clk_regmap hifi_pll_dco = {
->  		.range = &c3_gp0_pll_mult_range,
->  		.init_regs = c3_hifi_init_regs,
->  		.init_count = ARRAY_SIZE(c3_hifi_init_regs),
-> +		.flags = CLK_MESON_PLL_FIXED_FRAC_MAX,
->  	},
->  	.hw.init = &(struct clk_init_data) {
->  		.name = "hifi_pll_dco",
+> diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+> index b0258933fb9d..a97e19057b05 100644
+> --- a/drivers/clk/meson/s4-pll.c
+> +++ b/drivers/clk/meson/s4-pll.c
+> @@ -329,7 +329,6 @@ static struct clk_regmap s4_gp0_pll = {
+>   * Internal hifi pll emulation configuration parameters
+>   */
+>  static const struct reg_sequence s4_hifi_init_regs[] = {
+> -	{ .reg = ANACTRL_HIFIPLL_CTRL1,	.def = 0x00010e56 },
+>  	{ .reg = ANACTRL_HIFIPLL_CTRL2,	.def = 0x00000000 },
+>  	{ .reg = ANACTRL_HIFIPLL_CTRL3,	.def = 0x6a285c00 },
+>  	{ .reg = ANACTRL_HIFIPLL_CTRL4,	.def = 0x65771290 },
+> @@ -354,6 +353,11 @@ static struct clk_regmap s4_hifi_pll_dco = {
+>  			.shift   = 10,
+>  			.width   = 5,
+>  		},
+> +		.frac = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL1,
+> +			.shift   = 0,
+> +			.width   = 17,
+> +		},
+>  		.l = {
+>  			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+>  			.shift   = 31,
 
 -- 
 Jerome
