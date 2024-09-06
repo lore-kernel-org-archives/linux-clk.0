@@ -1,87 +1,115 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410E713BC0D
-	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 07:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E6E17C9B;
+	Fri,  6 Sep 2024 07:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725606679; cv=none; b=oljaXqPgpJ4FNNhoQDMW92A6x0ia3DSjUKGVjTxig/IK4dHGU1IUxftpNREm5GpP8JuZAcVvUkeWW45S1YnXPZiiC+X1+4XtoBb+daHMd1PJ/1h8nF1H8rt9bLzEZ/9C+iuXGWcC49neLgfo/eUpTuOeWFgvx73cYli+GemV02c=
+	t=1725607269; cv=none; b=FVJ3fT4S5c7uODBwQlyL1Gc5CN41OJz8dyPRVh4Jt9bTRNpWQt+0ZnOyO+iU5DGJuOVoB00vUZzFoLHp34Gx1z9eR2/LgzxvpOQ73QAYcPlZ+zXMfi0x0ZBn+xrGrJh7KcwI094afehyeELAZGLd6Gqye0OOeBffGHmYv5ERAmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725606679; c=relaxed/simple;
-	bh=MAXYm/fj1yP8lVOTQpdtw+CtvCrS1ey6DECPR81Pfik=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c9ZxhGZcMZ9meWoLCdKZ/E0Omz27VySKwzWD5092Us6QX1LIA/mfRQxX1asvvy3fYDfboyqHPxlYF5PCqonQuSfXDsDxw+BMV5Mm6zgFWaiSeFPqd8XqCXheJwrNepCNTJeu7HNal6zHlyXS6OJ+idMBmhGtUOlntP+1Egdrg50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Gg/mr5XL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1725607269; c=relaxed/simple;
+	bh=XH2QzjP1CufEq8D/+0yCvenvO3KuEuFwhuTKcq7Vxz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HofZW//Ibn9t8j5BNQt9qhmM8XBzsolKGRmlzDOL2UyppFe4RdnCA9X3QiziKTsuJjkIeVqHfqPYpV7eusxKWSCnps2p+YK5Pt3Q2FjM0HdSSzUawRmfnLwUqe/Ws4owW8+5oKeVcdVeCvwvWe0WJfV9+OfJGIAiaSatEaZpzFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a10YbZlr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Gg/mr5XL"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so12588365e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2024 00:11:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725606676; x=1726211476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBb1m70RMv6UJKegzoNSHZhoQzpn0mL5Ktd2C9pGgiA=;
-        b=Gg/mr5XLF3GDW0gPVc31C11u6SPMeVJhr2sjpcyu3NtoYKSpr4dJmp3jNFyiYn4gW/
-         WRrsH7BUK53WJn+qODNRiGsCVK/rqvKShVq8L13NIDFNnc6GwMJXV9r+/b1zdxx1XK0i
-         T0hL2k6Ny+ovoNZj2jPchpGaCIjFEfvFj+RLjciVjiutEYU7kPpTkxix0wfSPqt8Prf/
-         NMmVONswFxFsxEElbENi7MzHNMQwP0P1+nPaMnFV493HxA2u5QKLzFTTlmkBRcJBdI7R
-         L9+87xqPk1BIpnuRXR2oyPCX3wVooDt/AzlksHT7QRwI/JZkttHUOr5lCfuzKnpIAuJH
-         y0zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725606676; x=1726211476;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mBb1m70RMv6UJKegzoNSHZhoQzpn0mL5Ktd2C9pGgiA=;
-        b=hafnkLOXTrAqEeCnv65fN2V0LpU0qapnx5h6hkdJmwLazPpgG/QO7hFHhF9CrplyE4
-         VOL/J/XtRxMO+303gRd2x/SxdvwhYyF2c6q6HcNmcEXpJyrYGMxbXJz+Eed2G0yUgFLC
-         FWvP/wKAkieBvqGgOIz0WLUfxE8B+rWw9LLFISe+Z//8ixCiwlaDhla3eiZpzDQiSszz
-         PXxhJEW6qLPCoWtEUhf4Cq/5jveBoxAPmEP4SJ361Ti/a3LJV8ezjtMPisU5RTT4QAse
-         NsshUhu7AIK8liKCRG6BKT6kI6VbJiSroPdD7GVA9nr5TZk8A/1t5CigDPOfNbmprRF2
-         OQdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTN8pcyVdyJHimWZatblHSqapOKbBy9EkMqU3nOMJuLi3Ss2NBwvqGRDgaJjhDh9IKvxh9/bnlYqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEDN3mzT5BW90bi+ormpnBQpwVjJ9e0pegmLvyzwtC3NDRdOri
-	3Ot3vPKFnKOdqcE8pbsY+ir2R38u7IYhJo41c4Yt6wWrsDwigIKp02lh6YZHYks=
-X-Google-Smtp-Source: AGHT+IEqdAHSLSbZ7AHGnt96PMoqalKMoCEpht5Cea7Y/2LmhbcK43F8Fn45vpBv/QCzJQC9a1kDYw==
-X-Received: by 2002:a05:600c:154c:b0:426:5416:67de with SMTP id 5b1f17b1804b1-42c9f9d7059mr9170495e9.30.1725606675422;
-        Fri, 06 Sep 2024 00:11:15 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-374ca94e002sm12596485f8f.72.2024.09.06.00.11.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 00:11:15 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Chuan Liu <chuan.liu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-Subject: Re: (subset) [PATCH 0/4] clk: meson: Fix an issue with inaccurate
- hifi_pll frequency
-Message-Id: <172560667467.2965402.16362697378487101558.b4-ty@baylibre.com>
-Date: Fri, 06 Sep 2024 09:11:14 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a10YbZlr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4984FC4CEC4;
+	Fri,  6 Sep 2024 07:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725607269;
+	bh=XH2QzjP1CufEq8D/+0yCvenvO3KuEuFwhuTKcq7Vxz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a10YbZlrC+BkaBwuH8U8LtN0ZB3KbrVXgtag0KdHoq3/qt+tPPotLhyGEaAmy73x+
+	 WcHqA5ncjVzF2JRLrtuubpDHf0ABaIQd+gRUZLBVcHvhaNCfqqMjyaXFGjN/gWXmBa
+	 P349v9CGW8rFADmaC++KQvVa0BQWymFy7i4IKiSSZJVwzxJDQJg2uguJGtEpTgPLgf
+	 o0uAK4daqQhswhX8k7CKjVCYAQume/uP0BL0ptsVDaItKTois/53B/MV7C2WthT58o
+	 kk4/U0KQqJZKgokzptTxgcHM9M0m205K0IvXztv2t50WITZn8qb2FZ/+G/ejtUN8qR
+	 3j3JUVYuDRO1Q==
+Date: Fri, 6 Sep 2024 09:21:04 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
+Message-ID: <vjfddnykgeihdjlp5wzaeu4d4qn2boc22hufe2ceajt5wazznb@nysgwxk4ksdm>
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+ <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
+ <ZtpqrANbJurWNOzV@radian>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtpqrANbJurWNOzV@radian>
 
-Applied to clk-meson (clk-meson-next), thanks!
+Hi Richard,
 
-[3/4] clk: meson: s4: pll: hifi_pll support fractional multiplier
-      https://github.com/BayLibre/clk-meson/commit/80344f4c1a1e
+On Thu, Sep 05, 2024 at 10:36:28PM GMT, Richard Acayan wrote:
+> On Thu, Sep 05, 2024 at 10:09:34PM +0200, Andi Shyti wrote:
+> > Hi Richard,
+> > 
+> > On Tue, Sep 03, 2024 at 10:04:49PM GMT, Richard Acayan wrote:
+> > > This adds support for the camera subsystem on the Snapdragon 670.
+> > > 
+> > > As of next-20240902, camss seems to be a bit broken, but the same series
+> > > works on stable (although it is much less reliable now that the CCI clock
+> > > frequency is not being assigned).
+> > 
+> > I am not understanding this bit: is this series making it better
+> > or not? Can you please clarify what is broken, what is less
+> > reliable and what works?
+> 
+> When applying this camss series and some camera sensor patches on
+> linux-next, the Pixel 3a seems to hang when camera capture starts.
+> 
+> When applying the same patches on stable, the camera does not cause the
+> Pixel 3a to hang.
+> 
+> When these device tree properties from the previous series were removed:
+> 
+> 			assigned-clocks = <&camcc CAM_CC_CCI_CLK>;
+> 			assigned-clock-rates = <37500000>;
+> 
+> the CCI would sometimes fail to probe with the error:
+> 
+> 	[   51.572732] i2c-qcom-cci ac4a000.cci: deferred probe timeout, ignoring dependency
+> 	[   51.572769] i2c-qcom-cci ac4a000.cci: probe with driver i2c-qcom-cci failed with error -110
+> 
+> On further testing, the rate can be set to 19.2 MHz, and there would be
+> no failure (or rather, it wouldn't happen often enough for me to witness
+> it).
+> 
+> > Besides, I'm reading that this series has not been tested and it
+> > makes it difficult for me to take this in, considering that you
+> > are adding a new support.
+> 
+> Of course. This revision of the series wasn't submitted to rush into
+> v6.12-rc1. It can wait until everything is resolved.
+> 
+> When device tree maintainers comment "not tested" on the documentation,
+> it usually means that `make dt_bindings_check DT_SCHEMA_FILES=...` gives
+> errors or warnings (even though the device tree and driver may work on
+> the hardware). It's a separate test and one of the things I haven't
+> scripted into my workflow, although it's still a responsibility.
 
-Best regards,
---
-Jerome
+OK, thanks for clarifying. Then, please, next time, to avoid
+confusion, make it an RFC; or, if the series is in an advanced
+state with little things to improve, state it clearly in the
+cover letter or after the '---' section.
 
+For now, thanks a lot, I will keep the R-b's for the time being
+(unless the reviewers are against) and I will wait for you to
+know the outcome of the tests.
+
+Andi
