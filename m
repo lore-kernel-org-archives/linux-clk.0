@@ -1,56 +1,55 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF1E8175F
-	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 06:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7353613D891
+	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 06:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605481; cv=none; b=oNXEZZytTZ811OzLrGKXgqAefGQamorahiM7HM5Kmrjm2X/MB4JDjtgemm4LNCxuRJv2EvmlTWTn5jrLrqH1tN+V1MlC5p0zYOHfN8GK47GnxU9mr5vO/NML6UedP8tekWyj9YFxhnIfSPCh1uPOSf4MCyyXGofp07jI1xkjy90=
+	t=1725605751; cv=none; b=QRW66KsDj4++dMhSNBxjV61q/OUdO/ea9R5UM2CtlqvMDshHB6jOzV1f9YLUhy+8BcbYF/KwtXsoLG7UyL9iLAkmGQ8pt9jJ45bJlq3yGVOvqxEzveuRVe+pdM6vv6HdZL1R5KUcqK84fCZL0So5dhwV5jtBnJv8IIoRZa9OGl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605481; c=relaxed/simple;
-	bh=dgISMJU/UloEgT58Zmk6Ooz/FxYmL7vxOQUpJEbq+8k=;
+	s=arc-20240116; t=1725605751; c=relaxed/simple;
+	bh=b7ERu1u+RZvnB2du3wS1+TNHr/1umqo9UDdZVtoPrcQ=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sN93YD8+Tx7ZAEBf93uITDt54aeIPfkyM6JNttGmBOfjLS3b3NhPxWwH4KvGBXIgG39iNRi3ok8vYABxromUhIvVg/c3stsKaktH2Xal9bQDoecK0MQzjIKNBXnL6UTe7AYzcbUozRJR7rh8GK9EUiE2918U3iP2ACTUOQ+gyZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B3gDDkq3; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version:Content-Type; b=dNg4k8HnHq/geeL3S3mUEBqf5vVq+FH6xI85obAUqAiDeXc9SnmA5ZqrhfTokUX/E2pOkLjEGipqJF0oYaCwyeO+jHPZj3M+2oH8IGHmFUWPrbsJdW/pd3Yti3IEGRyy6N3l6J0WMv8r6P/lprdyxayWw6VEsMztiPTxrIWAKqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c7aXSNpm; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B3gDDkq3"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb72a5e0bso13192435e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 23:51:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c7aXSNpm"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374bd0da617so907714f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2024 23:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725605477; x=1726210277; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725605748; x=1726210548; darn=vger.kernel.org;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZUwiZqd9TfqNcVUN4h6daMaGyO3lnoY2hjg6KdFRqok=;
-        b=B3gDDkq3glrUH1dzy0pmmvxg55ehhSQz+nWMizf+DZJT3KoOgsw4sbBlCcsTDoHBvY
-         xeDvfz90Jg04V8jW2GfNpaJRYqZBhgdslYVAIpPxDpIIXOUOTu2YzkL5x51jeW5NjrIk
-         DqeIfxVdy6aHEYnMSHNY+tiWvNcj+b2AZUBaojydHS78JngOcnEyTYZu7WNE4C5vfD/r
-         9nAAIunpM4yvK1TUpww/caT5FZ8t6NE7Pd1aouzeevfk2IvBKhWx3X/feStT8DCe7qZ6
-         fTUos1usWFWyQQ/c+euXGjx2Xv3soyrI4Y1h2+5ftpWwXE8S0VoW4w6n5P/6S8wHAlVO
-         CseQ==
+        bh=RXVPGKCWkvIyxnOaace+gmP1pBIJW2/wUZj/AGb7QaY=;
+        b=c7aXSNpm8nEMds3yUZFA6QKMpZCKDqZ991JXoxnQTz3ADR6IEe8lnzxX9dXZpZ62yq
+         oWBlI1qSeWMBaZal6K+0Vb5Kzzg15CGVACYWfy174fO7t9QL+yypK0FZ0PWCoIRkNR7Z
+         QvSG9gHB1n1o2acakxa1rfeqyktVOFxS5Sdqf/NVjNTkiPMpygwaXvJIqY3VRa6d/Kdl
+         TSrBVOIxmDAZNGJKIT9DnUtMpi+pTffNce2wWs0g91evcKyI4pMKwJ+aXQq+IZ0tiflj
+         9ER+5+2FU9En6TWTBesPvT7XpVT7faPXR3WGjWz4P6YzO/+LtimHzWX1PksiTbDdDwX8
+         10Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725605477; x=1726210277;
+        d=1e100.net; s=20230601; t=1725605748; x=1726210548;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZUwiZqd9TfqNcVUN4h6daMaGyO3lnoY2hjg6KdFRqok=;
-        b=lyQuZ8AmEaYRnfCrhfx5QJulTsnWmjVwRHStdIcnc7uByCYVxGFCjBWt/6CPacrxqD
-         EU8uEaN70Irl/kZtUenfFJDfMnzC0mAlPMAj10RZhVMAGIC9LZR2gxAQlXwE+AeAtsXl
-         hF0G6wfFRv9R1gLVIuNj+466IypXcOnaFHa424ZcmPmxHOYUUmN8YINR/1gs4CfAROFn
-         MkHlj9MI1WddR+lYBM7Fl/tkQ7l6Ip9pJ9vz5aP9yGQfJ9jJQQL6DdJPs3QGPpH2JHk9
-         J9xk+J3heFfAwOToOO9sgMEirPH/YhfpzCrtDiYchLwcBobmOvBnX/S2Acm7jE4Wlbg4
-         vF2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWO1qKd7pZO9qoqJEztVUmB3UII+Kz1CNqBIYEbFTAstPWPsJW2U+oRkOuMGwgXrB6LakMB0M01bjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtbbFs8bmkmk6NAfdszArH03SUaCabLx0mziraUJPoX87XbG+9
-	KkNkWgrIXfxrHQtKzTHhxOe0iIu/HysxBVdH85UwzdT1OWy43sw4xYaIZtAAPNIj/qiAAOc5J7/
-	6
-X-Google-Smtp-Source: AGHT+IEAQ8+ZbApQ3oMw8V0g6qInfVZypTuRChEdnmRNkaOEzMCP4G/akqQASSKuY+whN0GPsSSR7g==
-X-Received: by 2002:adf:ea09:0:b0:374:c1be:bf2e with SMTP id ffacd0b85a97d-374c1bec8ecmr12950003f8f.62.1725605476525;
-        Thu, 05 Sep 2024 23:51:16 -0700 (PDT)
+        bh=RXVPGKCWkvIyxnOaace+gmP1pBIJW2/wUZj/AGb7QaY=;
+        b=f6jXEuu8xeDde/kcLT2zbBkwvZ6znwjB4YIxd6YPtcGolw8rYR3LtN2Gx6ypYubXzB
+         7Bbih+1e5dDzkNYri9FySmtDd+NtAYuPNqPgErMDESbrSptJt1cNTNyPgnpnKykSOyMR
+         eBmR42ZZGJLIwMBjrmqZXXXicaelGT0EIJ8mMnEj+QX0t5EbGiIiljz5mF18gDKxYytU
+         mTW+QkTopssqWYs2tvkq6gBfzoOloS1ZIIAX9RCQyyx0Rz7lKqXjFLm5eDoZ+w6Q1b1Q
+         HBKnZbiBYGxkiza4K1tV1L2R/bPy5ImeegaT+GCLoUrxaRk/aRyrjIpR+Tt5HzpTkRcz
+         JLgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXovebZnoitc/Z5JfwBZD9lATvD/+HILF3I/4xk9+tgoft0iBFXuUKEy1KkYHDvM8ENt67JQaGXML4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/CKsJ8Yo4bJRuJeV/zbvamWnYELhk5dc+fzHPDghxnrwyLW+H
+	aXAdVz/xd3udXYsQq5zIkFr4JfIrHVBHD6Ea9R28K7to9wB2YSXnPIdihvCH3kY=
+X-Google-Smtp-Source: AGHT+IGN9vDlwteKqK7cnYQWXkf07Qewxeb9HmZVyNNN7jUwDQ4VFe4yEkgEVz9AUOTtKtIhJ/ptBw==
+X-Received: by 2002:a5d:5225:0:b0:36b:3384:40e5 with SMTP id ffacd0b85a97d-378895de480mr914131f8f.24.1725605746995;
+        Thu, 05 Sep 2024 23:55:46 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05c6facsm10144635e9.9.2024.09.05.23.51.15
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-375348df4e8sm9303380f8f.115.2024.09.05.23.55.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 23:51:16 -0700 (PDT)
+        Thu, 05 Sep 2024 23:55:46 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
@@ -59,14 +58,14 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
  <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
   linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
   linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] clk: meson: Support PLL with fixed fractional
- denominators
-In-Reply-To: <20240906-fix_clk-v1-1-2977ef0d72e7@amlogic.com> (Chuan Liu via's
-	message of "Fri, 06 Sep 2024 13:52:33 +0800")
+Subject: Re: [PATCH 2/4] clk: meson: c3: pll: hifi_pll frequency is not
+ accurate
+In-Reply-To: <20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com> (Chuan Liu via's
+	message of "Fri, 06 Sep 2024 13:52:34 +0800")
 References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-	<20240906-fix_clk-v1-1-2977ef0d72e7@amlogic.com>
-Date: Fri, 06 Sep 2024 08:51:15 +0200
-Message-ID: <1j34mds2ak.fsf@starbuckisacylon.baylibre.com>
+	<20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com>
+Date: Fri, 06 Sep 2024 08:55:46 +0200
+Message-ID: <1jy145qnil.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,96 +77,35 @@ Content-Type: text/plain
 On Fri 06 Sep 2024 at 13:52, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
 > From: Chuan Liu <chuan.liu@amlogic.com>
+
+The patch title is not good. the clock innacurate ... Ok, but you are doing
+something about it, right ? Plus just saying that is a bit vague.
+
+How about something like "fix frac maximum value" ? This what you are
+doing, right ?
+
 >
-> Some PLLs with fractional multipliers have fractional denominators that
-> are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
+> The fractional denominator of C3's hifi_pll fractional multiplier is
+> fixed to 100000, so flag CLK_MESON_PLL_FIXED_FRAC_MAX is added.
 >
+> Fixes: 8a9a129dc565 ("clk: meson: c3: add support for the C3 SoC PLL clock")
 > Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 > ---
->  drivers/clk/meson/clk-pll.c | 22 +++++++++++++++++++---
->  drivers/clk/meson/clk-pll.h |  1 +
->  2 files changed, 20 insertions(+), 3 deletions(-)
+>  drivers/clk/meson/c3-pll.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index bc570a2ff3a3..f0009c174564 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -36,6 +36,12 @@
->  #include "clk-regmap.h"
->  #include "clk-pll.h"
->  
-> +/*
-> + * Some PLLs with fractional multipliers have fractional denominators that
-> + * are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
-> + */
-> +#define FIXED_FRAC_MAX			100000
-
-When the next arbitrary limit comes around, this will get very ugly.
-Instead, please add frac_max to the pll parameter
-
-> +
->  static inline struct meson_clk_pll_data *
->  meson_clk_pll_data(struct clk_regmap *clk)
->  {
-> @@ -57,12 +63,17 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
->  					  struct meson_clk_pll_data *pll)
->  {
->  	u64 rate = (u64)parent_rate * m;
-> +	unsigned int frac_max;
->  
->  	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
->  		u64 frac_rate = (u64)parent_rate * frac;
->  
-> -		rate += DIV_ROUND_UP_ULL(frac_rate,
-> -					 (1 << pll->frac.width));
-> +		if (pll->flags & CLK_MESON_PLL_FIXED_FRAC_MAX)
-> +			frac_max = FIXED_FRAC_MAX;
-> +		else
-> +			frac_max = (1 << pll->frac.width);
-> +
-> +		rate += DIV_ROUND_UP_ULL(frac_rate, frac_max);
->  	}
->  
->  	return DIV_ROUND_UP_ULL(rate, n);
-> @@ -100,13 +111,18 @@ static unsigned int __pll_params_with_frac(unsigned long rate,
->  					   unsigned int n,
->  					   struct meson_clk_pll_data *pll)
->  {
-> -	unsigned int frac_max = (1 << pll->frac.width);
-> +	unsigned int frac_max;
->  	u64 val = (u64)rate * n;
->  
->  	/* Bail out if we are already over the requested rate */
->  	if (rate < parent_rate * m / n)
->  		return 0;
->  
-> +	if (pll->flags & CLK_MESON_PLL_FIXED_FRAC_MAX)
-
-Certainly don't need a flag for that. Use a parameter and default to (1
-<< pll->frac.width) if unset.
-
-> +		frac_max = FIXED_FRAC_MAX;
-> +	else
-> +		frac_max = (1 << pll->frac.width);
-> +
->  	if (pll->flags & CLK_MESON_PLL_ROUND_CLOSEST)
->  		val = DIV_ROUND_CLOSEST_ULL(val * frac_max, parent_rate);
->  	else
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 7b6b87274073..e996d3727eb1 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -29,6 +29,7 @@ struct pll_mult_range {
->  
->  #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
->  #define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
-> +#define CLK_MESON_PLL_FIXED_FRAC_MAX	BIT(2)
-
-Remove this.
-
->  
->  struct meson_clk_pll_data {
->  	struct parm en;
+> diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
+> index 32bd2ed9d304..a350173efe90 100644
+> --- a/drivers/clk/meson/c3-pll.c
+> +++ b/drivers/clk/meson/c3-pll.c
+> @@ -361,6 +361,7 @@ static struct clk_regmap hifi_pll_dco = {
+>  		.range = &c3_gp0_pll_mult_range,
+>  		.init_regs = c3_hifi_init_regs,
+>  		.init_count = ARRAY_SIZE(c3_hifi_init_regs),
+> +		.flags = CLK_MESON_PLL_FIXED_FRAC_MAX,
+>  	},
+>  	.hw.init = &(struct clk_init_data) {
+>  		.name = "hifi_pll_dco",
 
 -- 
 Jerome
