@@ -1,121 +1,130 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6655197A9F;
-	Thu,  5 Sep 2024 22:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C074C1B969;
+	Fri,  6 Sep 2024 02:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725576402; cv=none; b=debU1z/DuIyt5My6UeRuQuWbkalNBI6UORBuN9sdJ2vLaTLeuiwpr2OBJ/8eZ+h1GUugGsywbg7F8McOtOzNB8t42/ieVSZCYGwxIx62nbDRiTE/M3zJ2v9B17SVNhtQ6ER6DqJ8/9syRsbsCJ9+uC4dGU+vynBlm0gQ9nry20s=
+	t=1725590195; cv=none; b=uDe7FHmYMnqccbX1NQS8SPx2woERup+t1i3Gyh9M5+LgqzI7azdDCTB7vikGv10m0915rpu/J2AmegAFoO5Yo42+/KCOZbjHUZSEnLkt7YWv2edYXC8uJjUTf1a1UmGQ1vA9c3N1RX39cWKnoxdSTL4Ato5zg87PfyWJbr/z5Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725576402; c=relaxed/simple;
-	bh=dD91Dh4EHgzPc17u4Z0m/j6eDaluADVRos9DOnh2HKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ot4Y0XHJnYR6b0DlbdtVGC00x/U+Er0opVkQPr9c/DIeCfQwLZhyaHW2tulVa1crovKEdCy9QDu4uw5u5ERzHseaoPYRNwoA/yVzsp0cP74qckRSwtSurNbYd7ctz7MvO55ihPQXMRF5jaL6j6pDPkitZTLjerS9XT4X95wRT/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uSJGTGQH; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1725590195; c=relaxed/simple;
+	bh=l/L5FGZqn4EE3bWvcZ4oUF9HzXQWZkujyE9rwI0wzNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=guTumuWo8fp1FDqKWz6MWTdfmCxg8cyeInNKagnbazRdaTlEuvex6CR+NTcZAhbS1waVkaNL7De0eq7vqez7LTvvx9z8xWvu9K72SzbDQUxLbJEoSu9t7tnWCJ2Vsw8Gq3Mrj44JOKkKz1lya9ZPP6kYQi3DJv0/FCj4cz2uloo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQDwoTPC; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uSJGTGQH"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5te1QcV9bMTGPWXtf57Xlf2pr7w3M9wbPF0XwPSIHhc=; b=uSJGTGQHos+M+bmj9p1/ltqkie
-	+MK+EkuHbcoifynj+z9mrAF9eebJHRy+YRy0z4hE5LEPRnKDN+39pEp117kgMo7BCoVrsGsI1EFB5
-	yE2eSOYPXCHZoWlcqBCUyA8OG8ijrHjlIj6xdAuH7b2KyVJ0pS7MpiD5uhC611wqMV2DPrwJCQVcT
-	jRAW0dGAy3GWm6SAuo25ct70l3fAubQrWimfoZwaX6d/aa+AJZC9WtzoVyXeSFmDceaLpVA+CxLcb
-	o5sQSScP//0lWEPLtMQJ7oMxat2n9gEAHiaS2y921PTYUy6CCbtx3LtBmG/X1yJKURCFHIKOh0IA0
-	Exflxsog==;
-Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1smLFL-0005IK-W6; Fri, 06 Sep 2024 00:46:36 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 4/5] clk: clk-gpio: add driver for gated-fixed-clocks
-Date: Fri, 06 Sep 2024 00:48:35 +0200
-Message-ID: <5168975.haC6HkEk0m@diego>
-In-Reply-To: <9b92b5f03632e8793253ba75fc00f6e3.sboyd@kernel.org>
-References:
- <20240828101503.1478491-1-heiko@sntech.de>
- <20240828101503.1478491-5-heiko@sntech.de>
- <9b92b5f03632e8793253ba75fc00f6e3.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQDwoTPC"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a989bd17aso1622170276.1;
+        Thu, 05 Sep 2024 19:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725590193; x=1726194993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pVMdGlIj9xk2r5uxVbI4SIjTki6YfCzvVODN1CuCuF4=;
+        b=fQDwoTPC+78YKZ6MP+CBwjsd+bilaqolyPHTNhTZlMM0RWxFksAG9x8RLCm9x6tOAs
+         exaJ6LUji8q/MfQAq9nWBFQSpazW7rn9mfSmZkuElz59gO4BXlJhYmGbioen9IOKdCBD
+         9TAasB9smhuMSlZ4Yc9BlXyOk+FlDr4AtzTko91SEv6yOZEzgQBcLZQQGJ2qNfR/dMAL
+         f6DgY0G4KUJLHPfDr6leNFw36Axy0spEh+CZVCWUVzQNNe+ysj8XXgPfQ/bZRmyJEL/B
+         Yl6Mawk5pTls1hbMTSn8QZIuuEby13WOXbeXY4qSA8FfKQZldQmH2sF9jjnCRPDzzQAO
+         Ob4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725590193; x=1726194993;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pVMdGlIj9xk2r5uxVbI4SIjTki6YfCzvVODN1CuCuF4=;
+        b=B9ZYu+Mt9uox6xIpzx4IeUa+r0kwJVlhUvaaMfU86nWjHsNO6rji+AWnwYmY0fc14n
+         58i2JqDLbTVbSx3QYATDVdyiI60OvYjoordNo/sN6CkeKF+u6GqNOajJtppHV8zoGVV3
+         wxjCMoX1H0CIXVJzO1XfpYxSa7g9PUX9jBvS65MBXfi5fZ9DN6h0/iR4DA+6Y9Cz3TkL
+         FOq6N/suW9+Git8+f+U71eEZJ6gcpczwYKyzg8RbTUklXi9sBCCf1qLhJOSNO5wOztWb
+         oYJr1ZiGyS6PNflbV0halXqICeJ5N5Ak82F9JgndpJm5NMuSYQrl5hcxm6rSqgkCrlhd
+         vwuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBj7J+ZQcHYJV3/Yg0yzgtKtC12iihi2O250Qd6HbOy4Zb2kJ3b0KB78TFvJABL+6RNvmJqeeKXlkE@vger.kernel.org, AJvYcCV7ReY+OPLEYLJCSSzXDxxJx09VIJji7eKFvW5lsw9tFEZimCH1MLtEo935uD3hJPj7qbwomZhE34axYopSnA==@vger.kernel.org, AJvYcCV9knSbij/dARIrm5AD6J2uajlhH4SiW9TZG6vaDX4DwCG7wwEssEFMy75KJmWYo8kMb8yzcqgfRmsB@vger.kernel.org, AJvYcCVShNLuxzLdVeqEIH5WEGT/mutdoqov9aqMXN5OaCFUPhceCY3rbhYKRrHObV9dLZD0hmog75yoJSZE@vger.kernel.org, AJvYcCWH+REPiqJqbDWwhsdip7Ao6fmnNRAJ20SFRdqOiEJCuRmp95xzXRYn2ayw2nP0e06qoDBjI6WKAJs0RmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7kiCOqldnNF4M+YGpl5f5osml35+Q/2siFyqp2lIzmriR62wL
+	/TSDeKrOef/Lfnmc4tSLCcowH7iEMJn9Xi1A8jiGBdSiQeB6adoL
+X-Google-Smtp-Source: AGHT+IF86jLnkCVqdhTbMHpt4/KAK2kFi9egstzyzRlVhvtwUHnadDj+kjXTpmL6llQZUVva33ipRg==
+X-Received: by 2002:a05:6902:1242:b0:e1a:b04d:673 with SMTP id 3f1490d57ef6-e1d34a3a94emr1447077276.55.1725590192531;
+        Thu, 05 Sep 2024 19:36:32 -0700 (PDT)
+Received: from localhost ([2607:fea8:52a3:d200::4eac])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801b35d07sm12458121cf.27.2024.09.05.19.36.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 19:36:31 -0700 (PDT)
+Date: Thu, 5 Sep 2024 22:36:28 -0400
+From: Richard Acayan <mailingradian@gmail.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Loic Poulain <loic.poulain@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
+Message-ID: <ZtpqrANbJurWNOzV@radian>
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+ <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
 
-Am Mittwoch, 28. August 2024, 20:30:51 CEST schrieb Stephen Boyd:
-> Quoting Heiko Stuebner (2024-08-28 03:15:02)
-
-[leaving out all the "will fix" parts :-) ]
-
-> > +static struct platform_driver gated_fixed_clk_driver = {
-> > +       .probe          = clk_gated_fixed_probe,
-> > +       .driver         = {
-> > +               .name   = "gated-fixed-clk",
-> > +               .of_match_table = gated_fixed_clk_match_table,
-> > +       },
-> > +};
-> > +builtin_platform_driver(gated_fixed_clk_driver);
+On Thu, Sep 05, 2024 at 10:09:34PM +0200, Andi Shyti wrote:
+> Hi Richard,
 > 
-> The comment above builtin_platform_driver says "Each driver may only use
-> this macro once". Seems that we need to expand the macro.
+> On Tue, Sep 03, 2024 at 10:04:49PM GMT, Richard Acayan wrote:
+> > This adds support for the camera subsystem on the Snapdragon 670.
+> > 
+> > As of next-20240902, camss seems to be a bit broken, but the same series
+> > works on stable (although it is much less reliable now that the CCI clock
+> > frequency is not being assigned).
+> 
+> I am not understanding this bit: is this series making it better
+> or not? Can you please clarify what is broken, what is less
+> reliable and what works?
 
-each _driver_, not each file is the important point I think.
+When applying this camss series and some camera sensor patches on
+linux-next, the Pixel 3a seems to hang when camera capture starts.
 
-Looking at the code generation, it just wants to use the name of the
-driver struct for generating the init functions.
+When applying the same patches on stable, the camera does not cause the
+Pixel 3a to hang.
 
-So in the builtin_driver macro [0] it wants to use the
-gated_fixed_clk_driver to create the init-function as
-gated_fixed_clk_driver_init() hence anybody using the macro a second time
-for the same driver would create that function two times.
+When these device tree properties from the previous series were removed:
 
-Also as can be seen with the imx gpc driver [1], the two-drivers in the
-same file is already in use.
+			assigned-clocks = <&camcc CAM_CC_CCI_CLK>;
+			assigned-clock-rates = <37500000>;
 
-I've also done a practical test with that and did [2], which resulted in
-both drivers getting registered as expected:
-[    0.132087] ----init gpio_clk_driver
-[    0.132160] ----init gated_fixed_clk_driver
+the CCI would sometimes fail to probe with the error:
 
+	[   51.572732] i2c-qcom-cci ac4a000.cci: deferred probe timeout, ignoring dependency
+	[   51.572769] i2c-qcom-cci ac4a000.cci: probe with driver i2c-qcom-cci failed with error -110
 
-So not sure, if I misinterpreted your comment, but I don't think changes
-are necessary for this portion.
+On further testing, the rate can be set to 19.2 MHz, and there would be
+no failure (or rather, it wouldn't happen often enough for me to witness
+it).
 
-Heiko
+> Besides, I'm reading that this series has not been tested and it
+> makes it difficult for me to take this in, considering that you
+> are adding a new support.
 
+Of course. This revision of the series wasn't submitted to rush into
+v6.12-rc1. It can wait until everything is resolved.
 
-[0] https://elixir.bootlin.com/linux/v6.10.8/source/include/linux/device/driver.h#L284
-[1]
-https://elixir.bootlin.com/linux/v6.10.8/source/drivers/pmdomain/imx/gpc.c#L239
-https://elixir.bootlin.com/linux/v6.10.8/source/drivers/pmdomain/imx/gpc.c#L556
-
-[2]
-diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
-index 1fc8b68786de..e306f554cd0f 100644
---- a/include/linux/device/driver.h
-+++ b/include/linux/device/driver.h
-@@ -284,6 +284,7 @@ module_exit(__driver##_exit);
- #define builtin_driver(__driver, __register, ...) \
- static int __init __driver##_init(void) \
- { \
-+       printk("----init %s\n", __stringify(__driver)); \
-        return __register(&(__driver) , ##__VA_ARGS__); \
- } \
- device_initcall(__driver##_init);
-
-
-
+When device tree maintainers comment "not tested" on the documentation,
+it usually means that `make dt_bindings_check DT_SCHEMA_FILES=...` gives
+errors or warnings (even though the device tree and driver may work on
+the hardware). It's a separate test and one of the things I haven't
+scripted into my workflow, although it's still a responsibility.
