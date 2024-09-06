@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370671EB3D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6294913957E;
 	Fri,  6 Sep 2024 05:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725601957; cv=none; b=AM1acYqv96PuGONWIfhOym89NEy3qCS79Yq9K7X0cmckQlpYQu1+28gh1v9B/k7BqZqb7Wf65jjdG1B1K7KieqRw6A+jUKTMN4lRtsEibA7j3CzHI4eW9myYdXyOmPo/NBg+OVNfO0o7dxu2AYGeET7Dj68xiHv16IPEM3UYakY=
+	t=1725601957; cv=none; b=c8Ii+m0g2jGdl4q0XFgIet4EEkjf1vxQyIxs6ojKmvFv4UppRew26+DOXV55SULBhu7IBNKcJw2hAC1KDOY1Ihf/q9FS+SOt263bQtJHscuM5ifev1nanga3X54ViTge4UdKenEntp4s29b+aCCvJ3QeVt2xUj24GB1k32qflWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725601957; c=relaxed/simple;
-	bh=S3mFqsYvIRYGegsx08fYvuzsX6Qwu4VsDx147bN5fYc=;
+	bh=NF51BZTpHooM2jXXouuv+vaFnFg1br4o/kba70yIL58=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MNkCNgG8bH2+WQilTrnmK0nokv9UT6KPu+FM8k0YgCfQ60D6eO2CuW7pRunzW+ZW6OPeEXboecjRddNiVOYcLTvqXMchag51SuVTEW5Je8Ei2LaMZkAGdBz5toHYRTPx9X28NRQjL7bTmHsY6iWuk0dUeuZKhsM/JGpuNYul1PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCUAAoKk; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=nD3TPuYFFGjhtgXeI5OatUqeCEMP+AAis/kOtSxomDtt15L2NICMDYknIa4GbYrcSn1mJ0jaXayyozga29DxaYe9cLppnuPrVSuPI5AdxdPPPxwvR48XX1wNnw0mQn0tXDjly9o0ayrmvRbflrEFc+7Nv1uQv5vWIjv0LAyvT20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFyRRY4N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCUAAoKk"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D445CC4CEC9;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFyRRY4N"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F10CAC4CECD;
 	Fri,  6 Sep 2024 05:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725601956;
-	bh=S3mFqsYvIRYGegsx08fYvuzsX6Qwu4VsDx147bN5fYc=;
+	s=k20201202; t=1725601957;
+	bh=NF51BZTpHooM2jXXouuv+vaFnFg1br4o/kba70yIL58=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YCUAAoKkVzT2EMiB9d27VUcc2cwtreBRMnj8ACMRtWT68xLZHapaFd8VxJwPlmrNa
-	 eXlp8EuZ4p9XYAKbWECgqunAnmbTcFPuU+zFacPZMnNYhA/UO+/Ea8XeXy5AJ/cIHB
-	 D3Rerl1wyv3x3kN56BxKQOMO7+xAshSmTWIECqT7GapOdkQQ+3b3ApMdB26UiuiJzs
-	 fM0m17qCQEL0zynEU1HvIhsQawZeiSyjfqWCehYLajnCZRze4v3up1WYLrTQEHE+Wo
-	 UazDJJwgOj+eQZZArA24Dv+IghHu/ATxBBGjk+1LWiAxTikBDV+o2Mv65hn4gr5Nrc
-	 A4uZUJi2Nikwg==
+	b=BFyRRY4NFXwkS4wHF0H/68dCuyWVIwSnIn0mPwTReAkVJRSePaPLXj5DQtiF83o5G
+	 GH/lzZDuQbcIleoQ2bAYMx4i6j7//0biTUnE59KtzQaJQIhpNzCD2l/WU+VwgPnGNA
+	 yoNUlLd9uGIoCwUGlkwv+rquLXNWHyILYMdjzLiXpiaDncRYAoWxzkhrursQ714/XK
+	 X1ybSLWhNaVRkwHBlZMu/VAWJXvgAnyG7EmdQaydUVXhwGgiQPZEPA7METuLqxnmJv
+	 VRQqzxo8/4iHxnESYxXh5FA3VEhFbsYbCqDPZbuip9AcXaYLMM9v996ebNUg/vuzRY
+	 VE/eYK9RuUvdQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A64CD5BA4;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D0DCE7AB4;
 	Fri,  6 Sep 2024 05:52:36 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 06 Sep 2024 13:52:34 +0800
-Subject: [PATCH 2/4] clk: meson: c3: pll: hifi_pll frequency is not
+Date: Fri, 06 Sep 2024 13:52:36 +0800
+Subject: [PATCH 4/4] clk: meson: s4: pll: hifi_pll frequency is not
  accurate
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com>
+Message-Id: <20240906-fix_clk-v1-4-2977ef0d72e7@amlogic.com>
 References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
 In-Reply-To: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -53,11 +53,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725601955; l=836;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725601955; l=856;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=M/IqRKmFgbyGrESbxg574FVPvS6H4iQmlVvP8JBwBMQ=;
- b=fchMifHrKQ1Qtl5EJeyYwqm5AFN+WR+v2xXBG5jYR5Bv2xcf2EFq/9m415BdgCEIMgcTOHG5p
- ZLaESWUH2lsD2xDLkYxGRCwkuqlxfJmrulvCl1A4FRfKItaqvJsnTzp
+ bh=ro5ykdJDKk3Y3xDmm5Xm1OoCgPIR4AFyD2bYCkCFPEE=;
+ b=IZ/yVuY2wLIpYN/mhZKmh78eSRhQWPOQXk6dCtA0gTmfYzo0NItf/y9PgHvE5d6fhK5WadFzv
+ FjJPFyhAp4AAYn5pGpB2DtD/haOcypyrWQKn+SK+pRys+RXlfwNHg5p
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -67,26 +67,27 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-The fractional denominator of C3's hifi_pll fractional multiplier is
+The fractional denominator of S4's hifi_pll fractional multiplier is
 fixed to 100000, so flag CLK_MESON_PLL_FIXED_FRAC_MAX is added.
 
-Fixes: 8a9a129dc565 ("clk: meson: c3: add support for the C3 SoC PLL clock")
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/meson/c3-pll.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/meson/s4-pll.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-index 32bd2ed9d304..a350173efe90 100644
---- a/drivers/clk/meson/c3-pll.c
-+++ b/drivers/clk/meson/c3-pll.c
-@@ -361,6 +361,7 @@ static struct clk_regmap hifi_pll_dco = {
- 		.range = &c3_gp0_pll_mult_range,
- 		.init_regs = c3_hifi_init_regs,
- 		.init_count = ARRAY_SIZE(c3_hifi_init_regs),
-+		.flags = CLK_MESON_PLL_FIXED_FRAC_MAX,
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index a97e19057b05..a793ac2e8cc7 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -371,7 +371,8 @@ static struct clk_regmap s4_hifi_pll_dco = {
+ 		.range = &s4_gp0_pll_mult_range,
+ 		.init_regs = s4_hifi_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_hifi_init_regs),
+-		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
++		.flags = CLK_MESON_PLL_ROUND_CLOSEST |
++			 CLK_MESON_PLL_FIXED_FRAC_MAX,
  	},
- 	.hw.init = &(struct clk_init_data) {
+ 	.hw.init = &(struct clk_init_data){
  		.name = "hifi_pll_dco",
 
 -- 
