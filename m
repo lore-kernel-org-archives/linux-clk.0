@@ -1,129 +1,90 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAEF15852B;
-	Fri,  6 Sep 2024 11:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066891CC150;
+	Fri,  6 Sep 2024 12:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622789; cv=none; b=q6Nfh5O9yg9B8H7ULsou/LF8NJlgN3z6G9WUleuwCKJq0uax/0EmmrAi0efsK8WPtzX3wN7qEWxa1ILlGg+PoYtvwrCuZwagQCVvbVXz6lEDgqQrGJUaMausKAUmO45a7H651R/n3BVwP8asCrkW5ExuGPijX1JNyvHamSYU78Y=
+	t=1725624525; cv=none; b=nu6TU3vwzpcTrYDq7j9vUrMpCy5QltiCtNxggUDrHmoGlZvObyQWMQ0mZDJuL9z9Ur8KfIv/mNuKW2RXx4ph1l+2HMiuW0WgkGuqRzgbbaAOUTnvqNwwI8nVjQfHAqNKWDbOdUPRap7m55ydWguVw1+8y2jaw5BfKrTXHwqGYBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622789; c=relaxed/simple;
-	bh=nR2isP9SzO3DZ0IhO9CCigww6hmPc5ghtYeDS7Ux/g8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u7tCm8rifu2HV6kLGqE0eYEfRPndKJdXtyceBbF3FMT5hmvCp+vVPdnRQYjCVNsy8PA8TDXGLrZbXkDBZuBimCS1b72nH7B6RXzHEmoNVjiYQ1zJ0iyyNk85gmQm5O21FvbLUjRcdkYz2vDIFlpKQ7eF/0hCkfTqTHKZsyhZ87I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nWjxBUa6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1725624525; c=relaxed/simple;
+	bh=XthwQVOWr2ip0l4CSOQfAjQmHCl1Ylg9z/C8SFjr/gk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EToCaYREsqK+KAnqRL8lhmm1y37tBn2MKpdSENXpTihgJxRywvZ9DpM2Sj02y7WMtICnJF2wg5Vpp2VjoSemD8oShHT3gdvbRUZbj5BopSMPCLax0pBcTaryUWxlLihc7qWIxou8wySIrErKIJNr9b1obDuWNEw28YB+Y12TROA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=o43K4T4E; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nWjxBUa6"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868eltj009479;
-	Fri, 6 Sep 2024 11:39:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=iKSTQRVXAjAYk0vB+VbvH9
-	XYTepoF7oCutS3spRWovY=; b=nWjxBUa6TZTApa3ESELcTt4zit+bUUSrHwyll/
-	msHWTlPKaTYcu7jKcgzasWmdSSDEOuNJb7xH+pMQPaX/UWEIG7mcf6oiNeJWISjs
-	h48HloHX7dpRfFpNbYkcvjmzdPmqnAQoOnQ01u9QZOzFltvEY+zDKozetuVA4d42
-	3sUPSFdEaw2iFliOY4ieU2N3sUBkumEZpNm7F1pruLRlp3Knp3i+Zy49vL+I47l8
-	0Y144bd827gxUpaox4RgkxIRJgmkEFkz/YKSIPxKzx7CBMVTGqpXD1v2lWqy5cWk
-	Ag59wvX3j3mnLz1VcHlHovLpWOPkVbSNJyypNoG2ui1+ozqQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwrt5p7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 11:39:41 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486Bdegj012913
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 11:39:40 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 6 Sep 2024 04:39:36 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Dan
- Carpenter" <dan.carpenter@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "kernel
- test robot" <lkp@intel.com>
-Subject: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
-Date: Fri, 6 Sep 2024 17:09:05 +0530
-Message-ID: <20240906113905.641336-1-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="o43K4T4E"
+Received: from mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:5e9c:0:640:b3f4:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id B476761DF6;
+	Fri,  6 Sep 2024 15:08:31 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id U8dbVMXOneA0-dvV8s3HL;
+	Fri, 06 Sep 2024 15:08:31 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1725624511; bh=XthwQVOWr2ip0l4CSOQfAjQmHCl1Ylg9z/C8SFjr/gk=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=o43K4T4EoPrqI+42jemgKmXH1aXC3VadPYhar7dTHsIT6jGeSvP6joDiC5YE+N4GK
+	 /4AGx/NzNmTiezH/8Q4DhWV+PAhsKfruEVmu6Dt3ImzTK8OaVtpBD4DddcTWA6tWgk
+	 k6kPGuw1hvM67CPrNKv2nX1hP831LyetFi1TrH6Y=
+Authentication-Results: mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <02d50cb52a0b73fb937fa2121bac6812592826d9.camel@maquefel.me>
+Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
+ <devnull+nikita.shubin.maquefel.me@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Date: Fri, 06 Sep 2024 15:08:31 +0300
+In-Reply-To: <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+	 <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+	 <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
+	 <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
+	 <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
+	 <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
+	 <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: d0yfOX_VjtyYl2xHa4V5VIv2t0LHPGcb
-X-Proofpoint-GUID: d0yfOX_VjtyYl2xHa4V5VIv2t0LHPGcb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_01,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 clxscore=1011 priorityscore=1501 phishscore=0
- malwarescore=0 bulkscore=0 mlxscore=0 adultscore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409060084
 
-In zonda_pll_adjust_l_val() replace the divide operator with comparison
-operator to fix below build error and smatch warning.
+On Thu, 2024-09-05 at 13:50 -0700, Stephen Boyd wrote:
+> Quoting Nikita Shubin (2024-09-02 06:31:59)
+> > On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
+> > > Quoting Nikita Shubin (2024-08-30 02:23:12)
+> > > >=20
+> > > > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not
+> > > > required,
+> > > > but
+> > > > it needs AUXILIARY_BUS.
+> > >=20
+> > > I don't see REGMAP selected by COMMON_CLK. Did I miss something?
+> >=20
+> > Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK
+> > on
+> > make tinyconfig + COMPILE_TEST.
+>=20
+> The meson driver isn't used here?
 
-drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
-clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
+This is purely from ARCH=3Darm make tinyconfig - i use it only with
+COMPILE_TEST for testing.
 
-smatch warnings:
-drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn: replace
-divide condition '(remainder * 2) / prate' with '(remainder * 2) >= prate'
+>=20
+> >=20
+> > Then we require REGMAP because we are using regmap_read() in clk
+> > driver.
+>=20
+> I think you're supposed to select REGMAP_<BUS> config option, not the
+> toplevel REGMAP option. For example, if you're using mmio, then
+> select
+> REGMAP_MMIO.
 
-Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 019713c38f25..f9105443d7db 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
- 
- 	quotient = rate;
- 	remainder = do_div(quotient, prate);
--	*l = quotient;
- 
--	if ((remainder * 2) / prate)
--		*l = *l + 1;
-+	*l = rate + (u32)(remainder * 2 >= prate);
- }
- 
- static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.25.1
+Yes this makes sense, REGMAP_MMIO it is.
 
