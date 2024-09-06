@@ -1,90 +1,136 @@
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066891CC150;
-	Fri,  6 Sep 2024 12:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF81315530C
+	for <linux-clk@vger.kernel.org>; Fri,  6 Sep 2024 12:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624525; cv=none; b=nu6TU3vwzpcTrYDq7j9vUrMpCy5QltiCtNxggUDrHmoGlZvObyQWMQ0mZDJuL9z9Ur8KfIv/mNuKW2RXx4ph1l+2HMiuW0WgkGuqRzgbbaAOUTnvqNwwI8nVjQfHAqNKWDbOdUPRap7m55ydWguVw1+8y2jaw5BfKrTXHwqGYBw=
+	t=1725625149; cv=none; b=HMTB7zPBI4U6xuhoyvXTFalO/xEGidE/G08xecPB3vxjYbyDEVN/xr5hQnAnIvCpkXFsjKv1pA9YhrqU6nx+PUHjae3S5M3S+eLPvNUX3UnrJaIvRlUYm4v/fdF2cCeOXucdmZpaYVnDzrBZZbzlAvVN68yi4cuPrpJTT5ZezJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624525; c=relaxed/simple;
-	bh=XthwQVOWr2ip0l4CSOQfAjQmHCl1Ylg9z/C8SFjr/gk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EToCaYREsqK+KAnqRL8lhmm1y37tBn2MKpdSENXpTihgJxRywvZ9DpM2Sj02y7WMtICnJF2wg5Vpp2VjoSemD8oShHT3gdvbRUZbj5BopSMPCLax0pBcTaryUWxlLihc7qWIxou8wySIrErKIJNr9b1obDuWNEw28YB+Y12TROA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=o43K4T4E; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+	s=arc-20240116; t=1725625149; c=relaxed/simple;
+	bh=HqOSDRzaUnhGRLIxiVCdBa6LDvnvu4v5GyRQUYJsm/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LoXtVoyfYZGvfXphqFEVHWQqVWiNtWAdHu18IkDuG9OdFg7MxpJrMTVBR/Dsm1AtIdPVVQjDf7xdW/hpj1QO2bJaxu48KwamPzI7l6FrZiJznyZP+UyQHbXCdeZ7NodvjgQCmpoz+mJ0tjEz5+hNgQ43daSQO1xJj4IVR8lwnT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vs9z3/VQ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="o43K4T4E"
-Received: from mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:5e9c:0:640:b3f4:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id B476761DF6;
-	Fri,  6 Sep 2024 15:08:31 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id U8dbVMXOneA0-dvV8s3HL;
-	Fri, 06 Sep 2024 15:08:31 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1725624511; bh=XthwQVOWr2ip0l4CSOQfAjQmHCl1Ylg9z/C8SFjr/gk=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=o43K4T4EoPrqI+42jemgKmXH1aXC3VadPYhar7dTHsIT6jGeSvP6joDiC5YE+N4GK
-	 /4AGx/NzNmTiezH/8Q4DhWV+PAhsKfruEVmu6Dt3ImzTK8OaVtpBD4DddcTWA6tWgk
-	 k6kPGuw1hvM67CPrNKv2nX1hP831LyetFi1TrH6Y=
-Authentication-Results: mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <02d50cb52a0b73fb937fa2121bac6812592826d9.camel@maquefel.me>
-Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
- <devnull+nikita.shubin.maquefel.me@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date: Fri, 06 Sep 2024 15:08:31 +0300
-In-Reply-To: <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-	 <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
-	 <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
-	 <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
-	 <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
-	 <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
-	 <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vs9z3/VQ"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53659867cbdso862016e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2024 05:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725625146; x=1726229946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qZnagyoqEY/AkJWYldk9pxOfEXujNgZibP5iAapvYX0=;
+        b=vs9z3/VQWSG+WBTY9jfLRmKAy1vxB3i/pq/dugye5DTrHoHdP8afzUbnF/7nVdGPtG
+         4FQT6T4TQ+U7cXqUalUxnk0K5u63OWwvIH9eTjxteO9O059pGtfCae0iG3P9M6KCb2EH
+         LBdhxyPkxRmcK3aak/g3Sxu9yGuSiJQN9Kgo1EwMuD+Lu+FoZDBp58q4u/p2fqgRGTCK
+         vBTyUaiWP6X804KARU8LiOpw4GFnb61ikgVK1FDT7w/JHviwDktHCiLjOVpv2TrIo0aa
+         PfgUWc99xTIo/ffMZbdCpu6Ry49ouGD9hinnG9Xj2Ia4DoBLtQuo366Tkg1tFxwIM1ma
+         22sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725625146; x=1726229946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZnagyoqEY/AkJWYldk9pxOfEXujNgZibP5iAapvYX0=;
+        b=G+6QSKOAMlNEz3nbSyNIAcm/1jnCDV/tT02tojytINK7po/HcnCkfCzthmma0WRlXW
+         qOweh0iqu9KL7IOH2vYudzqdVLZ3phiL6QMZtm7EkAbgOxonGQKX5UVeVOMCfKVsl52v
+         U7qrN+UQPU7m8FgUn/OO5qq23VIayrhYGaWBB26/F83Wg+fAuW3woRi/SeM3wa6VPBu3
+         HaV105Rdgl88xArilMDCM0jj7dMMgOodAxaFKrb2SbRmtbQsCb+oZV83uWZrsRYf/YVG
+         fvFYHASfaR1tV1v4YDTtQVHmhUNfxb74m+Qzvz2roTcAjA6OqYxAV7H8dkLaHg51q039
+         o3KA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGZFjiEIwD1fU1p2RrmGQkOEBaDKcs8tghazt/DbjtUMLvHKc1KfeMnCYplRUrIDUxC8ET1IdlLtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoqEndQzqMWDBCU9rAW5Xm3ErlRoHu0QZ0s/CgQK1NnSaTo01I
+	d7UGhCyJDDyNjIcZEllV2yqaE90EWq6MyeQPLmc+4Hz0K/6a3RJr/KIZ2YJADNs=
+X-Google-Smtp-Source: AGHT+IG74zIVOWX6bQluN94U4nrkIyRLMi3pWfBQY/TtSYoHYIc0SP1Bhu1/uDRSooGa/P5qsj690Q==
+X-Received: by 2002:a05:6512:3e02:b0:52e:9921:6dff with SMTP id 2adb3069b0e04-536587b54efmr2266960e87.26.1725625145620;
+        Fri, 06 Sep 2024 05:19:05 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a83ed05c9sm117085866b.114.2024.09.06.05.19.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 05:19:05 -0700 (PDT)
+Message-ID: <5c58b41a-7fc7-456d-979c-edb8dbe4305d@linaro.org>
+Date: Fri, 6 Sep 2024 13:19:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
+To: Richard Acayan <mailingradian@gmail.com>,
+ Andi Shyti <andi.shyti@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-media@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+ <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
+ <ZtpqrANbJurWNOzV@radian>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <ZtpqrANbJurWNOzV@radian>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-09-05 at 13:50 -0700, Stephen Boyd wrote:
-> Quoting Nikita Shubin (2024-09-02 06:31:59)
-> > On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
-> > > Quoting Nikita Shubin (2024-08-30 02:23:12)
-> > > >=20
-> > > > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not
-> > > > required,
-> > > > but
-> > > > it needs AUXILIARY_BUS.
-> > >=20
-> > > I don't see REGMAP selected by COMMON_CLK. Did I miss something?
-> >=20
-> > Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK
-> > on
-> > make tinyconfig + COMPILE_TEST.
->=20
-> The meson driver isn't used here?
+On 06/09/2024 03:36, Richard Acayan wrote:
+> On Thu, Sep 05, 2024 at 10:09:34PM +0200, Andi Shyti wrote:
+>> Hi Richard,
+>>
+>> On Tue, Sep 03, 2024 at 10:04:49PM GMT, Richard Acayan wrote:
+>>> This adds support for the camera subsystem on the Snapdragon 670.
+>>>
+>>> As of next-20240902, camss seems to be a bit broken, but the same series
+>>> works on stable (although it is much less reliable now that the CCI clock
+>>> frequency is not being assigned).
+>>
+>> I am not understanding this bit: is this series making it better
+>> or not? Can you please clarify what is broken, what is less
+>> reliable and what works?
+> 
+> When applying this camss series and some camera sensor patches on
+> linux-next, the Pixel 3a seems to hang when camera capture starts.
+> 
+> When applying the same patches on stable, the camera does not cause the
+> Pixel 3a to hang.
 
-This is purely from ARCH=3Darm make tinyconfig - i use it only with
-COMPILE_TEST for testing.
+Right so -next isn't stable that's not exactly a revelation.
 
->=20
-> >=20
-> > Then we require REGMAP because we are using regmap_read() in clk
-> > driver.
->=20
-> I think you're supposed to select REGMAP_<BUS> config option, not the
-> toplevel REGMAP option. For example, if you're using mmio, then
-> select
-> REGMAP_MMIO.
 
-Yes this makes sense, REGMAP_MMIO it is.
+> When these device tree properties from the previous series were removed:
+> 
+> 			assigned-clocks = <&camcc CAM_CC_CCI_CLK>;
+> 			assigned-clock-rates = <37500000>;
+> 
+> the CCI would sometimes fail to probe with the error:
 
+Right, we don't have clk_set_rate in the cci driver.
+
+Maybe just leave the assigned clock for this submission and we can do a 
+sweep of fixes to CCI at a later stage including setting the clock 
+instead of having it be assigned.
+
+> 
+> 	[   51.572732] i2c-qcom-cci ac4a000.cci: deferred probe timeout, ignoring dependency
+> 	[   51.572769] i2c-qcom-cci ac4a000.cci: probe with driver i2c-qcom-cci failed with error -110
+> 
+> On further testing, the rate can be set to 19.2 MHz, and there would be
+> no failure (or rather, it wouldn't happen often enough for me to witness
+> it).
+
+That's expected 19.2 and 37.5 MHz are supported by CAMCC for your part.
+
+---
+bod
