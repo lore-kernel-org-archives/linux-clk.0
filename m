@@ -1,67 +1,123 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F5D1B85DC;
-	Fri,  6 Sep 2024 23:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324E92E634;
+	Sat,  7 Sep 2024 18:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725663731; cv=none; b=TOM5cdnJ2a4ZfnBkWArIB1Bez92yXVoNVQoMjt/lDuMtD5NijhXsnauPFAxtT91mzza4Oj3loVpx8M6nieolLTqxfD/JmruswZceq9Yl0Ak7+i6/DpX80IsGy34LxYIgTD0+BxY0uu3DTlmRBOcgW93wEj4QNHftgahzu2KS2TY=
+	t=1725733553; cv=none; b=ODSV348sKis6RnEHhTuDZuPCRIrVx9wMg3H7FiGyjOFfKZYmqjlmcHQHSJ7hS5wAzHGKD0SpLqyrF/0NXHpcKVHeDj/nk9VBU64RwLI1VGS0iXSEqAYfbmo87gU4hC/Ed7S19tXgGnuDbAIcmKkzsycoeNg2AXl2q+EKdGdDLms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725663731; c=relaxed/simple;
-	bh=ldflI04Ts9BSmUuRhFXFjpTFI7d5OrKXMZDtQeiJu+k=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=qi734IPygjejboKA9NJyWtyvY30XjK7iyYp5JYuLflGnkRzRzygLzoF+PotmwO46VgB3a5MuyhlQ8895SAhXIKdGb5FyfYEjWGhcXc4bUYDW6J5W2ivfAK503a63RCdPYFwNlewMONVc50/GD2hs/S/fhwIzr/wpUOv3hUGjHOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHUoICWt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725733553; c=relaxed/simple;
+	bh=XARaDRAkR4sOntqRK+SXz1Qd0JJ/hcAkRh+k6gHp/sg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nYIs41TGdQm6hmYhYAx6+BVBSrQsFp1EkUf8o4PL+LhTi9YSI4EyPFJzwPiCd0B/m8w6qLuQ6FoIcTV1Mw1KTM3reglD6PnKkVvpOIg5u/8KWxtaa5hY/9ivIwTdtl9ETrC/cspDvrVBRQqxfiLAvZcmTYYo9mhM2O8Fx4zgpak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okZUxg7z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHUoICWt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4F0C4CEC5;
-	Fri,  6 Sep 2024 23:02:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okZUxg7z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75364C4CEC2;
+	Sat,  7 Sep 2024 18:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725663730;
-	bh=ldflI04Ts9BSmUuRhFXFjpTFI7d5OrKXMZDtQeiJu+k=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=oHUoICWtCtwGqLgYdGmyD7Ju3yflh55yITURS00j6N3pfj4WeVnawdt9gwXlExhRb
-	 nQVWElBJa+7LSNjsiIAQD4ZefcamFbwjfAwhOWd9Jj8i87bsfTsOYqpen2scJEpV+x
-	 it6MlCsWeQT6Fdq4SDovdESx8h7eHxHHcen8GNoMYES1fVfMFgU6zxbWD0t67j2/hk
-	 vkPNaf75x/KQpJtrSvwO7mwaaVc+rxjqjVpB5d7TtmI3DHjq8DqlVJgXoduUptF9FJ
-	 GNA8D5JDHOZVD0T4j6sJZAuCX8DqzuFLCShteQN2d7ouZcg4oHOYAvk79vgi8GHDkh
-	 65bUcAV0YtX4A==
-Message-ID: <91eca16a2453514123e8ffd5346297eb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725733552;
+	bh=XARaDRAkR4sOntqRK+SXz1Qd0JJ/hcAkRh+k6gHp/sg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=okZUxg7z6Lhxa5d5C/6WSQnoKn73AXyLemkJAmxSDSbscIBouwXqKJ+SHN2CNKJvs
+	 CAVNDHRYIavRq4HUtrAwIAuBzww8y6N+7ZGFms/hY5Tzo5p8MI7JQtQVwvbOU7se7K
+	 GAcIT4U4OnCKZjlqxSNghYZ96hp1sEFz2BX9NzZO/qX7EB4/x37U56Ys1uvqWgqkAL
+	 AseGDu9MrqsFmabURx4wGw/g1cMX2Fvs6zbzecgNvSkl/VOjUTzIuz8u47nR3xcERl
+	 95NtbyIjpZIzo2E3YYfD1P1w4JqYx5zOkSMee9rWvHj2xXnErXZ9u/PW4ilCdp4GsF
+	 ejku3+ZHXizhw==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.11-rc6
+Date: Sat,  7 Sep 2024 11:25:48 -0700
+Message-ID: <20240907182551.128901-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5168975.haC6HkEk0m@diego>
-References: <20240828101503.1478491-1-heiko@sntech.de> <20240828101503.1478491-5-heiko@sntech.de> <9b92b5f03632e8793253ba75fc00f6e3.sboyd@kernel.org> <5168975.haC6HkEk0m@diego>
-Subject: Re: [PATCH v3 4/5] clk: clk-gpio: add driver for gated-fixed-clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>, mturquette@baylibre.com
-Date: Fri, 06 Sep 2024 16:02:08 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Heiko St=C3=BCbner (2024-09-05 15:48:35)
-> Am Mittwoch, 28. August 2024, 20:30:51 CEST schrieb Stephen Boyd:
-> > Quoting Heiko Stuebner (2024-08-28 03:15:02)
->=20
-> [leaving out all the "will fix" parts :-) ]
->=20
-> > > +static struct platform_driver gated_fixed_clk_driver =3D {
-> > > +       .probe          =3D clk_gated_fixed_probe,
-> > > +       .driver         =3D {
-> > > +               .name   =3D "gated-fixed-clk",
-> > > +               .of_match_table =3D gated_fixed_clk_match_table,
-> > > +       },
-> > > +};
-> > > +builtin_platform_driver(gated_fixed_clk_driver);
-> >=20
-> > The comment above builtin_platform_driver says "Each driver may only use
-> > this macro once". Seems that we need to expand the macro.
->=20
-> each _driver_, not each file is the important point I think.
+The following changes since commit 39a3396558fb97e6e7d4c1eb04c2166da31904a9:
 
-Ok!
+  clk: thead: fix dependency on clk_ignore_unused (2024-07-31 14:51:47 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 71c03a8cb213d267853e0d9f520c972480960544:
+
+  clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs (2024-09-03 13:01:34 -0700)
+
+----------------------------------------------------------------
+A pile of Qualcomm clk driver fixes with two main themes: the alpha PLL
+driver and shared RCGs, and one fix for the Starfive JH7110 SoC.
+
+ - The Alpha PLL clk_ops had multiple problems around setting rates.
+   There are a handful of patches here that fix masks and skip enabling
+   the clk from set_rate() when the PLL is disabled. The PLLs are
+   crucial to operation of the system as almost all frequencies in the
+   system are derived from them.
+
+ - Parking shared RCGs at a slow always on clk at registration time
+   breaks stuff. USB host mode can't handle such a slow frequency and
+   the serial console gets all garbled when the UART clk is handed over
+   to the kernel. There's a few patches that don't use the shared
+   clk_ops for the UART clks and another one to skip parking the USB clk
+   at registration time.
+
+ - The Starfive PLL driver used for the CPU was busted causing cpufreq
+   to fail because the clk didn't change to a safe parent during
+   set_rate(). The fix is to register a notifier and switch to a safe
+   parent so the PLL can change rate in a glitch free manner.
+
+----------------------------------------------------------------
+Abel Vesa (1):
+      clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
+
+Bryan O'Donoghue (1):
+      clk: qcom: gcc-x1e80100: Don't use parking clk_ops for QUPs
+
+Johan Hovold (1):
+      clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs
+
+Neil Armstrong (1):
+      clk: qcom: gcc-sm8650: Don't use shared clk_ops for QUPs
+
+Satya Priya Kakitapalli (4):
+      clk: qcom: clk-alpha-pll: Fix the pll post div mask
+      clk: qcom: clk-alpha-pll: Fix the trion pll postdiv set rate API
+      clk: qcom: clk-alpha-pll: Fix zonda set_rate failure when PLL is disabled
+      clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
+
+Stephen Boyd (3):
+      Merge tag 'qcom-clk-fixes-for-6.11' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-fixes
+      clk: qcom: gcc-sm8550: Don't use parking clk_ops for QUPs
+      clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
+
+Xingyu Wu (1):
+      clk: starfive: jh7110-sys: Add notifier for PLL0 clock
+
+devi priya (1):
+      clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
+
+ drivers/clk/qcom/clk-alpha-pll.c               | 25 ++++++++++--
+ drivers/clk/qcom/clk-rcg.h                     |  1 +
+ drivers/clk/qcom/clk-rcg2.c                    | 30 ++++++++++++++
+ drivers/clk/qcom/gcc-ipq9574.c                 | 12 +++---
+ drivers/clk/qcom/gcc-sc8280xp.c                | 48 +++++++++++-----------
+ drivers/clk/qcom/gcc-sm8550.c                  | 54 ++++++++++++-------------
+ drivers/clk/qcom/gcc-sm8650.c                  | 56 +++++++++++++-------------
+ drivers/clk/qcom/gcc-x1e80100.c                | 52 ++++++++++++------------
+ drivers/clk/starfive/clk-starfive-jh7110-sys.c | 31 +++++++++++++-
+ drivers/clk/starfive/clk-starfive-jh71x0.h     |  2 +
+ 10 files changed, 196 insertions(+), 115 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
