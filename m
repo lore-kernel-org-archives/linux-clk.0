@@ -1,177 +1,147 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D7117A5B6;
-	Sun,  8 Sep 2024 21:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD861C01
+	for <linux-clk@vger.kernel.org>; Sun,  8 Sep 2024 21:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725829889; cv=none; b=lPziBdq/Pb/n1vJKHanIpF/uDQE3SEfigk64vr94uSpIHMyo47fslF/vQTXb+uL0yBTPfvtxNGgXNIKQb+WSyfNEyb+7dwY+9RlGmty5HHns5vo0+qPxMCqSwenVhjS5dH/aR7RLXORLO6Jl52hyKHROljo++QJOk2rp1aWW9lc=
+	t=1725832186; cv=none; b=jo6+7YiG2RxU/43kfjpGJmKHbC6d2IqzVolSDWRvxBiXQiKTOqIrI5SZLyNAotRIhldRGQMHjSHj1pLprntBgAobk1XXYjjvqNGmsfsvKdLZ4RHtR8RdtcMdsd7HAR0FA6FaXrWAre1aGShBUDi8CHLXXIwZ7RtGNnu+IuqD/HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725829889; c=relaxed/simple;
-	bh=25RB4FzT4WxgCBCu9L1xAKNbbyb/rhQbiNzzddhqHQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWhJtZh5qMEqcJc0g04QLbw0kQh1wl9IKXLrUS6hhYL+6iIcS4t4tyoxpMP/6jT5Q3AfW5OdZsU9ne9rOJ7i42gGoZ+BAymnA8lRHYecYVALSN5G7LTj7+wyEWVYKEvDmJfKoBnKvbiVaAVJTHwfcuzO543VL1AohIAO6drr8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=s4I0FQ6I; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nZ4yG/7y; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1725832186; c=relaxed/simple;
+	bh=1y0l20v6uSXWBIavuJ8p8SB0cltoYpM4KPGZF3u9yfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cb7Mqz3V0DiXg9W92RV2pINkcqPRI6jl2kBhTfIRASKnXbtAaz5IMi+FGoCPs8zAZxcMiY6j4Cxt1a7XcCMCY1Xc6eOBknKrxpJ/yBzwGgKDYviMnJm+K+vuelNYjYgdQpDRL6y5iWL+RQhw4GFScQTafKmK8X3VQvZsNVPsjmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=f/NJvp6l; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="s4I0FQ6I";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nZ4yG/7y"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4X22h700jSz9sSH;
-	Sun,  8 Sep 2024 23:11:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1725829879;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iu10XaQnGzoRMAyxC23k7fGvV791jxaNF9ONi5fQsDo=;
-	b=s4I0FQ6ImZjC1JOQW/ZFDPaaBo9yHJQMQZ2Cg5+nke7WyifVUZ2g2nNv7pwTyE39oECfz8
-	FIcxAaq6rJ63bcH/LxJwQnEPU4eEC6mlNfRAMdprNW/AOYeZgsSx2ZPb5T7nA51LHNcnGX
-	rGYOng/f+7pk5tqNv0XT7HVMi3Ypi3ZhY6zSblM+s34mRqdPqLJd6CKhpwxY/AsTfrdKvJ
-	arD2CvkHhzgCiQBDp2umHxw8tzbczqZaDAKo/E5x2q/51WG/ApEgL0QbodCG9Bym0APXLG
-	Eu609LS+geyDjGtm65drd9bujG7U2u3RtjBVOkrT3qBANjjQWZbWlAls2jPpnw==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1725829877;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iu10XaQnGzoRMAyxC23k7fGvV791jxaNF9ONi5fQsDo=;
-	b=nZ4yG/7yOwdbuCc/aNK/dCedBMaqt98zEnz6NTF2ZGP4Z+tne1JKqn/+A1uUyZQ0SiqU5x
-	IKzyOLgFUNifc3RH7fQyJtHtNObTt5VDNlYGi0ugjnD0Mam5Ho3ea/TWNt+aCnIhZ5usiW
-	1O5tWqhlq5N0Dxbm7ud1MiyByyAcathWssrXMxlpFCCd61B29Bv89XLDqImGEJfTc2L3R6
-	iYtHLCRkOQugugWD4ceE+ujOAQm6xNq80xmLSDBgLUjLL4kBBUXNPGgQVzuzpjOj274SMJ
-	xI1nC9x8r2RDE07KoDhuUEY9tvm+yiM3G1pqX9rwavQs0SoWAlEVyP7zWEN5LA==
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: trivial: Remove duplicate and trailing empty lines
-Date: Sun,  8 Sep 2024 23:10:40 +0200
-Message-ID: <20240908211056.230784-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="f/NJvp6l"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=O+1lGf+egLrWXX0JMaceIaPCe6zCuqwFkQ/tynXfCvo=; b=f/NJvp6lU6SW7rzkFmZMXUCApn
+	OHUZV3Umn2Jfq5Ek+MVIFX/XtAXcW/60v88c2ZyqNBgthqjPMeayfSChMj90tNA5DsEeNMab0JLRG
+	/XC8IuZOqUto/EQWLfna1c2/4mx1uB81r1P3Tcd3ouqdj4gqtL9mWQwOgH3q46yreSEE6b0L4la4W
+	XO3csrSLLwZfQH8C3q9cp70N74NPswzi1bUdJGhdoDK+LeDYb5OW5O+OnXR0ehbX8xRZ+SFwfSoh4
+	XYBR4x9/qG1F8G/zk+/93tJ+JT91uqA7B0G1o7qQuqnS9xWZQiyWbS4ZessKLY0Y6EpcGStD3kYIh
+	8HJRPu2w==;
+Received: from i5e8616cc.versanet.de ([94.134.22.204] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1snPmv-0004Go-VE; Sun, 08 Sep 2024 23:49:42 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock changes for 6.12 #1
+Date: Sun, 08 Sep 2024 23:51:56 +0200
+Message-ID: <2436757.DCRlREXTYf@diego>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 169ab20e05709d2b496
-X-MBO-RS-META: k8goq9uthstmbf4r5xuwm6uceha4pqq6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Remove the duplicate and trailing empty lines. No functional change.
+Hi Mike, Stephen,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/renesas/clk-r8a73a4.c       | 1 -
- drivers/clk/renesas/clk-r8a7778.c       | 1 -
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 1 -
- drivers/clk/renesas/r9a09g011-cpg.c     | 1 -
- drivers/clk/renesas/rcar-cpg-lib.c      | 1 -
- drivers/clk/renesas/rcar-gen3-cpg.c     | 1 -
- drivers/clk/renesas/renesas-cpg-mssr.c  | 2 --
- 7 files changed, 8 deletions(-)
+please find below a pull-request with some Rockchip clock changes for 6.12
 
-diff --git a/drivers/clk/renesas/clk-r8a73a4.c b/drivers/clk/renesas/clk-r8a73a4.c
-index 4b1815147f77..f331d8bc9daf 100644
---- a/drivers/clk/renesas/clk-r8a73a4.c
-+++ b/drivers/clk/renesas/clk-r8a73a4.c
-@@ -64,7 +64,6 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
- 
--
- 	if (!strcmp(name, "main")) {
- 		u32 ckscr = readl(base + CPG_CKSCR);
- 
-diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
-index 797556259370..6ea173f22251 100644
---- a/drivers/clk/renesas/clk-r8a7778.c
-+++ b/drivers/clk/renesas/clk-r8a7778.c
-@@ -67,7 +67,6 @@ r8a7778_cpg_register_clock(struct device_node *np, const char *name)
- 	return ERR_PTR(-EINVAL);
- }
- 
--
- static void __init r8a7778_cpg_clocks_init(struct device_node *np)
- {
- 	struct clk_onecell_data *data;
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index 4c8e4c69c1bf..9c7e4094705c 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -266,7 +266,6 @@ static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] __initconst = {
- 	{ 2,		128,	1,	192,	1,	32,	},
- };
- 
--
- static int __init r8a779a0_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen4_cpg_pll_config *cpg_pll_config;
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index dda9f29dff33..22272279b104 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -98,7 +98,6 @@ static const struct clk_div_table dtable_divd[] = {
- 	{0, 0},
- };
- 
--
- static const struct clk_div_table dtable_divw[] = {
- 	{0, 6},
- 	{1, 7},
-diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
-index 42b126ea3e13..a45f8e7e9ab6 100644
---- a/drivers/clk/renesas/rcar-cpg-lib.c
-+++ b/drivers/clk/renesas/rcar-cpg-lib.c
-@@ -206,4 +206,3 @@ struct clk * __init cpg_rpcd2_clk_register(const char *name,
- 
- 	return clk;
- }
--
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 20b89eb6c35c..027100e84ee4 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -335,7 +335,6 @@ static u32 cpg_quirks __initdata;
- 
- #define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
- 
--
- static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 	{
- 		.soc_id = "r8a7796", .revision = "ES1.0",
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 1b421b809796..79e7a90c3b1b 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -39,7 +39,6 @@
- #define WARN_DEBUG(x)	do { } while (0)
- #endif
- 
--
- /*
-  * Module Standby and Software Reset register offets.
-  *
-@@ -716,7 +715,6 @@ static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
- }
- #endif /* !CONFIG_RESET_CONTROLLER */
- 
--
- static const struct of_device_id cpg_mssr_match[] = {
- #ifdef CONFIG_CLK_R7S9210
- 	{
--- 
-2.45.2
+Please pull.
+
+Thanks
+Heiko
+
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.12-rockchip-clk1
+
+for you to fetch changes up to 12fd64babaca4dc09d072f63eda76ba44119816a:
+
+  clk: rockchip: fix error for unknown clocks (2024-08-30 16:59:24 +0200)
+
+----------------------------------------------------------------
+Getting rid of the rest of CLK_NR_CLKS defines that reported the
+the max number of clocks, but should never have been part of the
+devicetree binding header.
+New clock controller driver for the rk3576.
+And some fixes for rk3228 and rk3588.
+
+----------------------------------------------------------------
+Alexander Shiyan (1):
+      clk: rockchip: rk3588: Fix 32k clock name for pmu_24m_32k_100m_src_p
+
+Detlev Casanova (1):
+      dt-bindings: clock, reset: Add support for rk3576
+
+Elaine Zhang (2):
+      clk: rockchip: Add new pll type pll_rk3588_ddr
+      clk: rockchip: Add clock controller for the RK3576
+
+Johan Jonker (9):
+      clk: rockchip: px30: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+      clk: rockchip: rk3036: Drop CLK_NR_CLKS usage
+      clk: rockchip: rk3228: Drop CLK_NR_CLKS usage
+      clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
+      clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
+      clk: rockchip: rk3328: Drop CLK_NR_CLKS usage
+      clk: rockchip: rk3368: Drop CLK_NR_CLKS usage
+      clk: rockchip: rk3399: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+      dt-bindings: clock: rockchip: remove CLK_NR_CLKS and CLKPMU_NR_CLKS
+
+Jonas Karlman (1):
+      clk: rockchip: Set parent rate for DCLK_VOP clock on RK3228
+
+Krzysztof Kozlowski (1):
+      dt-bindings: clock: rockchip,rk3588-cru: drop unneeded assigned-clocks
+
+Sebastian Reichel (2):
+      clk: rockchip: rk3588: drop unused code
+      clk: rockchip: fix error for unknown clocks
+
+ .../bindings/clock/rockchip,rk3576-cru.yaml        |   56 +
+ .../bindings/clock/rockchip,rk3588-cru.yaml        |    4 -
+ drivers/clk/rockchip/Kconfig                       |    7 +
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-pll.c                     |    6 +-
+ drivers/clk/rockchip/clk-px30.c                    |   10 +-
+ drivers/clk/rockchip/clk-rk3036.c                  |    5 +-
+ drivers/clk/rockchip/clk-rk3228.c                  |    7 +-
+ drivers/clk/rockchip/clk-rk3288.c                  |    5 +-
+ drivers/clk/rockchip/clk-rk3308.c                  |    5 +-
+ drivers/clk/rockchip/clk-rk3328.c                  |    5 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |    5 +-
+ drivers/clk/rockchip/clk-rk3399.c                  |   10 +-
+ drivers/clk/rockchip/clk-rk3576.c                  | 1820 ++++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3588.c                  |   42 +-
+ drivers/clk/rockchip/clk.c                         |    3 +-
+ drivers/clk/rockchip/clk.h                         |   54 +
+ drivers/clk/rockchip/rst-rk3576.c                  |  651 +++++++
+ include/dt-bindings/clock/px30-cru.h               |    4 -
+ include/dt-bindings/clock/rk3036-cru.h             |    2 -
+ include/dt-bindings/clock/rk3228-cru.h             |    2 -
+ include/dt-bindings/clock/rk3288-cru.h             |    2 -
+ include/dt-bindings/clock/rk3308-cru.h             |    2 -
+ include/dt-bindings/clock/rk3328-cru.h             |    2 -
+ include/dt-bindings/clock/rk3368-cru.h             |    2 -
+ include/dt-bindings/clock/rk3399-cru.h             |    4 -
+ include/dt-bindings/clock/rockchip,rk3576-cru.h    |  592 +++++++
+ include/dt-bindings/reset/rockchip,rk3576-cru.h    |  564 ++++++
+ 28 files changed, 3794 insertions(+), 78 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3576.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3576.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
+
+
 
