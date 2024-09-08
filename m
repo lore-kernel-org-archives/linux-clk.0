@@ -1,63 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A16B14EC5D;
-	Sat,  7 Sep 2024 18:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCD74503C;
+	Sun,  8 Sep 2024 11:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725734170; cv=none; b=eAOrXzZ/ep8UulRvX8Sffdy+b+7eOb9uYPU5UW364LuBlIXGURhuLChPrF8lTrguSpaNoXEsa59VtbbOXq2BeyKEI6PcLb7cp2evz9xQLANvTGoT9ATGO+/WnP7ErRv4ZdT9iRTxEqz8U7HhWLfnQqZFstoKwpcLzXCzj+8wO8c=
+	t=1725796054; cv=none; b=F6uTdUtCwZqHkS0F0qDpjZ/YHgsc7mYyfUxervrudLVioRMgYUDFkSZPztXE9Ksk3hG+5g7ZWNqTTbCXpS0FIXhhHoevwQ9sPh/42FSqKP5RN6i+VRvlz/wftuaR0eGKqSdlzHYLur0Zne1yYMtWyE2mH6DI7LkO738jGeAVxxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725734170; c=relaxed/simple;
-	bh=opUstN2oV1FfjFZjTh58BEl6/xVM27C4vqDk8iSsfPs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qhHOb5eip3JbIte7hmzjrPx1hKBBNJdURisUREK/BmMUtYO3JXeW1Y7utS0swYYLJ2PbD8Wp4Q2ZYkJBTUJ6FVssQBK6h683l/RdDGpFSQkxJzc5+TfA75ajcTE6Jjp7qbHf9z9nGksTytmMdc/KyeuUjiNEOqpbkTNjmXAneMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AafO9SQD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725796054; c=relaxed/simple;
+	bh=TOLe3eD0M33y8treKPXWeCy9wvyflht//GLoHw8oPvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDLJFJdOq7V42/XEOnJbZ4gGC08kjCFqCBIg3lvYpJu0SWc8Eosi6QDE94f3fMjwtY6yj/iLmeLRvnQQKUvVP8Iw+xdmjcbvRSxojoZnCgChoveZKi7XPdN49ctu9KNB+G+dLnopSnJeY4u0bs1zk6Me63Q/9zNzN2YYfHrYV7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NntdXFxN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AafO9SQD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55378C4CEC2;
-	Sat,  7 Sep 2024 18:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725734170;
-	bh=opUstN2oV1FfjFZjTh58BEl6/xVM27C4vqDk8iSsfPs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AafO9SQDD12p8OzLd3Up9nP/C7tKZnAEHx4A7cqw3EsrV3zPxAhCt/8WYVi3Bp28P
-	 HU3MtrHAg4uyS3Ij3k+SUArYIP0iFz84/lcvuwW8LG1lpqcgBbgpEb6Nioxri9PGzD
-	 HLwYlVmBVh4LY1njgApOkldi0BugoNDvpBppD769S0XbNMiRJzgMEoOtC6Ro2rX2UP
-	 Ib1MLZkpoyRQzA/4SBtPJ27auX6NeXY1rYwY0EvXd34Mi0OxmaJvakC9idNE9fcM8p
-	 852ha4AT7DgerKUh9jbQ00d9pQRHswU/Vp48jiEgPgEl/nqMN1W9cA+UEi6Gij5tkJ
-	 EdoE6BLPXoWoA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 887983805D82;
-	Sat,  7 Sep 2024 18:36:12 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.11-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240907182551.128901-1-sboyd@kernel.org>
-References: <20240907182551.128901-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240907182551.128901-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 71c03a8cb213d267853e0d9f520c972480960544
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f
-Message-Id: <172573417137.2736849.13075149320237398415.pr-tracker-bot@kernel.org>
-Date: Sat, 07 Sep 2024 18:36:11 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NntdXFxN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEFCC4CEC3;
+	Sun,  8 Sep 2024 11:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725796054;
+	bh=TOLe3eD0M33y8treKPXWeCy9wvyflht//GLoHw8oPvw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NntdXFxNUTR/kzQtS0Ohd9d4amS+FxyFVJ7FpEvtW2LjUM65Ij5wO67/vdV5CW7qN
+	 qjq8ShR55RIsIT+xQSmyzCTo+EP9cf3zg360IfmKv6+G24F04+GUL3KxD7mdvXoQxA
+	 nKraq6/juJux4mMRNcKno2EtBeihyXPnsKcWHfno=
+Date: Sun, 8 Sep 2024 13:47:31 +0200
+From: GregKH <gregkh@linuxfoundation.org>
+To: Yongqin Liu <yongqin.liu@linaro.org>
+Cc: stable@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>,
+	John Stultz <jstultz@google.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Allison Randal <allison@lohutok.net>, linux-clk@vger.kernel.org
+Subject: Re: [Backport request for 5.4.y] clk: hi6220: use
+ CLK_OF_DECLARE_DRIVER
+Message-ID: <2024090824-cohesive-issuing-e007@gregkh>
+References: <CAMSo37Udb-DwXYdGp+RdvKS87-0nTXjR1Dj0W46CALspeW2O2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMSo37Udb-DwXYdGp+RdvKS87-0nTXjR1Dj0W46CALspeW2O2A@mail.gmail.com>
 
-The pull request you sent on Sat,  7 Sep 2024 11:25:48 -0700:
+On Fri, Sep 06, 2024 at 08:57:57PM +0800, Yongqin Liu wrote:
+> Hi, Greg
+> 
+> Could you please help to cherry-pick the following commit to the 5.4.y branch?
+> 
+>      f1edb498bd9f ("clk: hi6220: use CLK_OF_DECLARE_DRIVER")
+> 
+> It's been there since the 5.10 kernel, and  this along with the reset
+> controller patch
+> are needed for Hikey devices to work with 5.4.y kernels, otherwise it
+> will get stuck
+> during the boot.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Both now queued up, thanks.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+greg k-h
