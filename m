@@ -1,157 +1,82 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371A5172BCE;
-	Mon,  9 Sep 2024 12:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D157A1B9B24;
+	Mon,  9 Sep 2024 13:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725883881; cv=none; b=Y4hoYkYlEBcVXoiwXP+qNrs8i3a6r+k2OYN39EOq+aI8jzQ4P+oXK+9YCbfuM4f+yik7OKJknxDNwogmq4q9Jojv2fUVPNMqIWahVgsciKuX29nPIvxUAvff6BRRm8RZ9+DWlzBgAUBd9ui2qEyVBZPHcNTXviHTaDZJHrq18H8=
+	t=1725889127; cv=none; b=tcn7VlJXg8Lbklki5YefOxar+XifWBdqbdYjawOaoZaLZPglCyCx6Q7k+AKCGG0P06IBVn9QDJlTY3fgfCBG/OABuJ+67jJF1Mb/f0JGmVoQksanI3AtzMdnGnQdlVpz5F7Z+lA5Nj7hx5xnis2L4Vd1iRXtTx6sHUOCqhjXEuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725883881; c=relaxed/simple;
-	bh=39bHDieju2KDrK1NVgP6S2Lyn0IKtZ3wRK9Z+78eCR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jt+3stwVmgsUbJYMN1tFTE1frjmUeyc8/icVIRx38sbSi/e5SgUe6CJD2HVith6NkAvRModiLUDIAVO6eMVaCUroHELAdj79Xc3Oju3+CCX3u4l97BXHQQz3uTsxChb2gT7MEHdqPu3upjuIU2b4h2DLoFKRi1TwQrnqBxQ7TFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6b47ff8a59aso41071177b3.2;
-        Mon, 09 Sep 2024 05:11:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725883877; x=1726488677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jcqCtl6E7A4OPOryoegwZKV2Sgx5JBQZ+r80cmVrDm8=;
-        b=QmQO2MwaqGQl4QsRSvyujyD401EJ6ohNMTZ3QzytKENK+zD+SK1xVVSfbmSmUmNImF
-         /4YccT+P75hhLNMmfEWWvwOQkz3eDQI82bGQqZHWUgmVSnvrvPy9Mh02mxOilUr8AroB
-         Oujuvxq6Afz6FoG9z6KEDaxnshpUl3Ul8z8yYJjHfuGostc5hFLwrwFNAxKlwTwsU6rp
-         3CPiz6IltiNTsGefFCmWn/C7AAi8D2EkR9gtKIht6u5iBGXbGchV7wXtTBY4ri0nQjPp
-         9mVwuz1u+w2mZrAy9snN+PvYuSn0kfsX0D0G3l6ypvCnI/NaVMoZs1i2BNm9SO4U4/MK
-         VgLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUK/Znbi9GkSPXzXl0Qrpn3VmRmhxES4k/yf/0CswKJ9OybwTZ+81OVQqsJel7K3hkwnX1SF2wZ4levIMo4@vger.kernel.org, AJvYcCViwgLiolWg6S636ujbO4ahzCqGJpqk+ICROgyEgxkHjFuGA+OxE1wi+rTZWW0VhXm9LfnThXEgjtdW@vger.kernel.org, AJvYcCWzg0o022zlujWoyfgCegna9RJALm1kvA3gq/Ne90wUBMhgtUIWcBVe6ICUztFyziRJgdgp/vqaO8fA@vger.kernel.org, AJvYcCXC0bcWGCEOQQ+AXhum9IDlq+IUMVmWLyRlI3QAQ9JlCmu3LQ5NYPcMvDO36aBDcR/KIoNPYUU3E4ucsDqqnoSzFmQ=@vger.kernel.org, AJvYcCXmH8uYRiSM90qaStVnE7PQA2DJRhWGa6d1zZpCSrfnlW16L2iElTIFAxrrOS5KyKAfgFNhSk8CgQmW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzueTovKQ4KIQc5ItMbnBB+NAInvrIc3wpwkRAF2H2T8N7f4xfS
-	R7mww10HS0bZClgP2kla17exA+3FzUIG0Dra5rQ+tRhC3pbCEpawWU2MSoDd
-X-Google-Smtp-Source: AGHT+IGDII4HeTicxTe5FjVMRM0+oi+fdq5O0AyQMHadyK9M/YQm7V1LD1w2OYDOnLADgv4fSM1BGw==
-X-Received: by 2002:a05:690c:b:b0:664:a85d:47c6 with SMTP id 00721157ae682-6db4516c241mr120039097b3.33.1725883876780;
-        Mon, 09 Sep 2024 05:11:16 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db5c6229c2sm8912217b3.54.2024.09.09.05.11.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 05:11:16 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-690aabe2600so37544547b3.0;
-        Mon, 09 Sep 2024 05:11:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4WC20Txrnk5UsddshTjusolfUINmyqmegAFCwBBgDfUGFYTC6G+hR0ugxjoi3BvndqTW7FRLK0IpR@vger.kernel.org, AJvYcCU8DmxoRTg2TW11bRaxVxpFrFf01zdaYGkzKuRd8/bBX3pRZJjzSAC9dOPFkICNIUaV50Q/+VkQU1J5@vger.kernel.org, AJvYcCVi7aLnIVlHeaUThepCI9jbWZQPhNVkgXKFLXBjdnMUIalAntWONUwFF/FBHG35LBF/z1e04tKLKb+7Hz7wxKw2azY=@vger.kernel.org, AJvYcCWjKgwvnAUHtt1HAKqIe02n6gz7KIXg+LXj81XovDV/8iFsfJYoygTAx9j1iv3ENSQc0KUCp6wq02Uy@vger.kernel.org, AJvYcCXgzB9ac6wgbNEm141XpyhpDXrUl8hHKBJZmegGxHqcVswBsnKjH+LCU1dZNyNimZYOSNXYFo9xoQu2AJAo@vger.kernel.org
-X-Received: by 2002:a05:690c:64c7:b0:6b0:e813:753b with SMTP id
- 00721157ae682-6db45272fd9mr131856427b3.38.1725883875698; Mon, 09 Sep 2024
- 05:11:15 -0700 (PDT)
+	s=arc-20240116; t=1725889127; c=relaxed/simple;
+	bh=O8gX/5RIGsAcWdIaQgqKjVgDinsG/6/Ad0M6d8EJ2e8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fbtl6isxCXPkf16VG00va5X7hU9F6q84uPYDlKoGqRDReC3RiBgVGl9CkOAr9IvcQT6DA4UEhizqU07UBXwX3h2QBmiPe0jUbmj9Jur0RPBcaRBpZgFISHWdCcIu7/0USseMTbeMeWZNXeX9iT22IWj5tQ85MdVmMpZAyIk2Tzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <adiupina@astralinux.ru>)
+	id 1sneZv-00BKRR-Qi; Mon, 09 Sep 2024 16:37:15 +0300
+Received: from rbta-msk-lt-302690.astralinux.ru (unknown [10.198.22.196])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4X2Sb44xNlz1gxcY;
+	Mon,  9 Sep 2024 16:38:24 +0300 (MSK)
+From: Alexandra Diupina <adiupina@astralinux.ru>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Alexandra Diupina <adiupina@astralinux.ru>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
+Date: Mon,  9 Sep 2024 16:38:07 +0300
+Message-Id: <20240909133807.19403-1-adiupina@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
- <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
- <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org> <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com>
- <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org>
-In-Reply-To: <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Sep 2024 14:11:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
-Message-ID: <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, 
-	conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigrnhgurhgrucffihhuphhinhgruceorgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeduleetfeehffekueeuffektefgudfgffeutdefudfghedvieffheehleeuieehteenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrvddvrdduleeinecurfgrrhgrmhephhgvlhhopehrsghtrgdqmhhskhdqlhhtqdeftddvieeltddrrghsthhrrghlihhnuhigrdhruhdpihhnvghtpedutddrudelkedrvddvrdduleeimeefheekkeeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgvsggrshhtihgrnhdrhhgvshhsvghlsggrrhhthhesghhmrghilhdrtghomhdprhgtphhtth
+ hopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1725884359#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12165610, Updated: 2024-Sep-09 11:24:55 UTC]
 
-Hi Stephen,
+get_div() may return zero, so it is necessary to check
+before calling DIV_ROUND_UP_ULL().
 
-On Sat, Sep 7, 2024 at 1:01=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wrot=
-e:
-> Quoting Geert Uytterhoeven (2024-09-06 00:28:38)
-> > On Thu, Sep 5, 2024 at 8:09=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> =
-wrote:
-> > > Quoting claudiu beznea (2024-09-04 05:17:30)
-> > > > On 03.09.2024 22:48, Stephen Boyd wrote:
-> > > > > The node name should be something like clock-<frequency> but if t=
-he
-> > > > > frequency is different per-board then I don't know what should ha=
-ppen
-> > > > > here.
-> > > >
-> > > > The frequency should be always around 32768 Hz but not necessarily =
-exactly
-> > > > 32768 Hz. It depends on what is installed on the board, indeed. RTC=
- can do
-> > > > time error adjustments based on the variations around 32768 Hz.
-> > > >
-> > > > > Can you leave the vbattb_xtal phandle up above and then require
-> > > > > the node to be defined in the board with the proper frequency aft=
-er the
-> > > > > dash?
-> > > >
-> > > > Is it OK for you something like this (applied on top of this series=
-)?
-> > >
-> > > Yes, it's too bad we can't append to a property in DT, or somehow lea=
-ve
-> > > alone certain cells and only modify one of them.
-> >
-> > My main objections are that (1) this approach is different than the one=
- used
-> > for all other external clock inputs on Renesas SoCs, and (2) this requi=
-res
-> > duplicating part of the clocks property in all board DTS files.
->
-> Can 'clock-ranges' be used here? Leave the cell as null in the SoC dtsi
-> file and then fill it in with clocks property at the parent node. I
-> think you'd have to use clock-names for this though.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-"clock-ranges" does not seem to be well-documented...
+Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
+Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+---
+ drivers/clk/mvebu/armada-37xx-periph.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-IUIC, your suggestion is to:
-  1. Add "clock-ranges" to the /soc subnode,
-  2. Completely leave out the "rtx" clock from the clocks property
-     of the vbattb@1005c000 node,
-  3. Add the following to the board DTS:
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 8701a58a5804..d0e1d591e4f2 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -343,7 +343,10 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+ 	div = get_div(double_div->reg1, double_div->shift1);
+ 	div *= get_div(double_div->reg2, double_div->shift2);
+ 
+-	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
++	if (!div)
++		return 0;
++	else
++		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+ }
+ 
+ static const struct clk_ops clk_double_div_ops = {
+-- 
+2.30.2
 
-        &soc {
-                clocks =3D <&vbattb_xtal>;
-                clock-names =3D "rtx";
-        };
-
-Then, when resolving "rtx" for the vbattb@1005c000 node,
-of_parse_clkspec() would iterate up and find the proper vbattb_xtal.
-Is that correct? And probably that should be done for other external
-clock inputs as well?
-
-Still, it looks a bit complicated and un-intuitive. And what about
-e.g. carrier boards with a SoM, where some clocks are provided by
-the SoM, and some by the carrier? In that case you still have to
-override the clock and clock-names properties in the carrier .dts,
-thus duplicating all clocks provided by the SoM.
-
-So I prefer the original approach, like is done for all other external
-SoC clock inputs on Renesas SoCs.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
