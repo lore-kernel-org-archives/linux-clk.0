@@ -1,148 +1,157 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazolkn19010015.outbound.protection.outlook.com [52.103.43.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527281B5833;
-	Mon,  9 Sep 2024 11:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725880813; cv=fail; b=a+ZPrZ/FRdruv7KByHX/tssU7K6IcS4I+SiKMkHU/y3off3sG2RUx8jshnX9T4E99jDIykGSm7UiTPSiR4mPodkvKI5ytkG7j4NFyTO+8iIEVJizLgB5asDgW5wlGSML48YH8F96xtfsvPlvI9ynPJzTESEWq4fuPCt5hTaBQss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725880813; c=relaxed/simple;
-	bh=uiQnVr6vZNO+O4uAS1PEl8asMcwCSpnnxceII2Q6u1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RtwT6xMQK9B4GgM91xQ7ocxHDNVWIvmFfAOAWvUoNUHdxpE3Momsi+9592hlSKNVXw0bw5N2paMKqN97VblAIS93o+nYRya5Y0CRGqtsNDIfurC/pYCpwpv2avzRWIr4jyV5+q0KBle0pYduETg4HcUkS08xwpDkV8fOTHfH8T8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=F5c9eOhM; arc=fail smtp.client-ip=52.103.43.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="F5c9eOhM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZpHMXfcmDE/8dm3/QWvACQT5DDLpl+fPnQZnJEKPXHbd0CqTx9Ofwp458lCU9qd6Ie7uZOlJisbxxicRdqo+It+tHyN+IRl0oiwQaM846qobOxm3f//RMyGUc3EoGHRruLBzCn36r3N1ISqcQPbL6YXwTfM34YCcX53TLv/JfcIdn8qSlEdsEahrChmkyJEzWq0iW1GY7KPOswJ2Dyr258HAU/ao0wWbWg67DQEENpG3RE+2yyiENu4XEFCCp2P1zQVqiuVXZKOFw5oJcXCIfIo39qH6r2M3ooH6eS38kOifsZWOhX29LsPcxM6cnGnfOA4h3Svwtw5ZQY8GOwTLeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nl8/ptXhjIf6utLKi0vGNX1G8ze7uoKwe/9J9vVL4ks=;
- b=UHmmT4v0jNz2RTlaRf4m9bI8MQYxUkrIaN83GvNNVAw7C8yi5qW6A6h2F4vxgJKAOT7pVqZxkbW+AMjInaFH0KPq9rjjR1hab15bsjN+2cuOnMSNwcM+XeeFvC9xBwQxCaYU8nCpDdy/Wt1UZQBaO2XPkkzsZ/F47bF1Bkk4SWh7IFV8FoSGPY3FHupAWnbBoBKn3uahwBelGxAu0jqlwWMIhM/1Uo6E99GxFz7l/BLsjcCz/N/DbGxba9YTaMWdE44yNAE1fqPCliyv2Fue2K46W35AIDcjpbFIMOL2bzxQFhxwesuM1K82mgtnRCeafI7Lrdme/VO0BmZr1b8D6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nl8/ptXhjIf6utLKi0vGNX1G8ze7uoKwe/9J9vVL4ks=;
- b=F5c9eOhMesioXqmsEpeP/R9ls1cDGD1cf0KjMctqKyULWwIlYU1+4E1UH7XZiZDyRn+K8i9YjeWUyHs8xFRH8SCgA0MMNNTFVQmup934rVChwN3Wi4ngEsTuoEOCSEea/7FKUXQ9fPQbhif9cPxlZ5LTMK2dQD3gtRCMqOy57PFejKz6V4kH/Dwsq6lFECCK0cP5elgA41SfHpLfNT2M6J4H3lPGpI8KubaeBsQbSiqiES8W3ueo38PHx27t99jbLEz9e+xAJi7QA5YImq4u2iEex+koCf45MbLGhLVdhSkm6RVYqhTbd6BiMt1RmCzeIgTQe2QQhggVnOWLbj++nA==
-Received: from TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:85::11)
- by OS9P286MB5189.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:30a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Mon, 9 Sep
- 2024 11:20:07 +0000
-Received: from TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM
- ([fe80::1672:339f:cd51:afdd]) by TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM
- ([fe80::1672:339f:cd51:afdd%7]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
- 11:20:07 +0000
-From: Shiji Yang <yangshiji66@outlook.com>
-To: sergio.paracuellos@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	tsbogend@alpha.franken.de
-Subject: Re: [PATCH] clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
-Date: Mon,  9 Sep 2024 19:17:34 +0800
-Message-ID:
- <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240806142902.224164-1-sergio.paracuellos@gmail.com>
-References: <20240806142902.224164-1-sergio.paracuellos@gmail.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [MjjEMGIXhzlFuFXPzG6nPkBwct2jRAYx]
-X-ClientProxiedBy: SG2PR01CA0171.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::27) To TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:85::11)
-X-Microsoft-Original-Message-ID:
- <20240909111734.25282-1-yangshiji66@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371A5172BCE;
+	Mon,  9 Sep 2024 12:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725883881; cv=none; b=Y4hoYkYlEBcVXoiwXP+qNrs8i3a6r+k2OYN39EOq+aI8jzQ4P+oXK+9YCbfuM4f+yik7OKJknxDNwogmq4q9Jojv2fUVPNMqIWahVgsciKuX29nPIvxUAvff6BRRm8RZ9+DWlzBgAUBd9ui2qEyVBZPHcNTXviHTaDZJHrq18H8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725883881; c=relaxed/simple;
+	bh=39bHDieju2KDrK1NVgP6S2Lyn0IKtZ3wRK9Z+78eCR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jt+3stwVmgsUbJYMN1tFTE1frjmUeyc8/icVIRx38sbSi/e5SgUe6CJD2HVith6NkAvRModiLUDIAVO6eMVaCUroHELAdj79Xc3Oju3+CCX3u4l97BXHQQz3uTsxChb2gT7MEHdqPu3upjuIU2b4h2DLoFKRi1TwQrnqBxQ7TFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6b47ff8a59aso41071177b3.2;
+        Mon, 09 Sep 2024 05:11:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725883877; x=1726488677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jcqCtl6E7A4OPOryoegwZKV2Sgx5JBQZ+r80cmVrDm8=;
+        b=QmQO2MwaqGQl4QsRSvyujyD401EJ6ohNMTZ3QzytKENK+zD+SK1xVVSfbmSmUmNImF
+         /4YccT+P75hhLNMmfEWWvwOQkz3eDQI82bGQqZHWUgmVSnvrvPy9Mh02mxOilUr8AroB
+         Oujuvxq6Afz6FoG9z6KEDaxnshpUl3Ul8z8yYJjHfuGostc5hFLwrwFNAxKlwTwsU6rp
+         3CPiz6IltiNTsGefFCmWn/C7AAi8D2EkR9gtKIht6u5iBGXbGchV7wXtTBY4ri0nQjPp
+         9mVwuz1u+w2mZrAy9snN+PvYuSn0kfsX0D0G3l6ypvCnI/NaVMoZs1i2BNm9SO4U4/MK
+         VgLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK/Znbi9GkSPXzXl0Qrpn3VmRmhxES4k/yf/0CswKJ9OybwTZ+81OVQqsJel7K3hkwnX1SF2wZ4levIMo4@vger.kernel.org, AJvYcCViwgLiolWg6S636ujbO4ahzCqGJpqk+ICROgyEgxkHjFuGA+OxE1wi+rTZWW0VhXm9LfnThXEgjtdW@vger.kernel.org, AJvYcCWzg0o022zlujWoyfgCegna9RJALm1kvA3gq/Ne90wUBMhgtUIWcBVe6ICUztFyziRJgdgp/vqaO8fA@vger.kernel.org, AJvYcCXC0bcWGCEOQQ+AXhum9IDlq+IUMVmWLyRlI3QAQ9JlCmu3LQ5NYPcMvDO36aBDcR/KIoNPYUU3E4ucsDqqnoSzFmQ=@vger.kernel.org, AJvYcCXmH8uYRiSM90qaStVnE7PQA2DJRhWGa6d1zZpCSrfnlW16L2iElTIFAxrrOS5KyKAfgFNhSk8CgQmW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzueTovKQ4KIQc5ItMbnBB+NAInvrIc3wpwkRAF2H2T8N7f4xfS
+	R7mww10HS0bZClgP2kla17exA+3FzUIG0Dra5rQ+tRhC3pbCEpawWU2MSoDd
+X-Google-Smtp-Source: AGHT+IGDII4HeTicxTe5FjVMRM0+oi+fdq5O0AyQMHadyK9M/YQm7V1LD1w2OYDOnLADgv4fSM1BGw==
+X-Received: by 2002:a05:690c:b:b0:664:a85d:47c6 with SMTP id 00721157ae682-6db4516c241mr120039097b3.33.1725883876780;
+        Mon, 09 Sep 2024 05:11:16 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db5c6229c2sm8912217b3.54.2024.09.09.05.11.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 05:11:16 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-690aabe2600so37544547b3.0;
+        Mon, 09 Sep 2024 05:11:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4WC20Txrnk5UsddshTjusolfUINmyqmegAFCwBBgDfUGFYTC6G+hR0ugxjoi3BvndqTW7FRLK0IpR@vger.kernel.org, AJvYcCU8DmxoRTg2TW11bRaxVxpFrFf01zdaYGkzKuRd8/bBX3pRZJjzSAC9dOPFkICNIUaV50Q/+VkQU1J5@vger.kernel.org, AJvYcCVi7aLnIVlHeaUThepCI9jbWZQPhNVkgXKFLXBjdnMUIalAntWONUwFF/FBHG35LBF/z1e04tKLKb+7Hz7wxKw2azY=@vger.kernel.org, AJvYcCWjKgwvnAUHtt1HAKqIe02n6gz7KIXg+LXj81XovDV/8iFsfJYoygTAx9j1iv3ENSQc0KUCp6wq02Uy@vger.kernel.org, AJvYcCXgzB9ac6wgbNEm141XpyhpDXrUl8hHKBJZmegGxHqcVswBsnKjH+LCU1dZNyNimZYOSNXYFo9xoQu2AJAo@vger.kernel.org
+X-Received: by 2002:a05:690c:64c7:b0:6b0:e813:753b with SMTP id
+ 00721157ae682-6db45272fd9mr131856427b3.38.1725883875698; Mon, 09 Sep 2024
+ 05:11:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYAP286MB0746:EE_|OS9P286MB5189:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0977a1a5-7b4e-4c09-e37f-08dcd0c15bc3
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799006|8060799006|5072599009|19110799003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	hoLK6FmEtThfy6Ym7uN0IqqJK/uYs/IOLQBzzHzPIktY/NNF9rYR6XyD9LW2EPQOtV9DUeuFSPa5pysgk6bKTYQn42Z134/vnRnnIlLfdqrh074Clmjh9Tw59m/wT+DY/stXutoYq56GavR6Lvx3FB/x4ONpLpKqDfyQ3Mnik8iJKDneHlv8tbJJuG7mpec8zfs12W3SmqO43dWCsUWZTdicydgd15Tmwy1+h2kqRojWo/XUCXclF4LqvCeVikJ+U/KzG1CfQPo5Zl638ks4m5ql6m6QDlR8JskHTIMSVfMuQ06jcLP/6YAXur1PFgvWHwIXVtD1ZNUGzgHmbezko4ZDOXZdB8adaSZmyBlImRkn9nDvI0GDWXsSizCVzi27nUxzdpbNauL3eNkos0Vw79YsP0xr8UznA0fdkpHgaqIRPIgXlfDasY+fAAILCQLWKTLqWsBqILRyFiU2UgA8YfcqIqyTRlpuzxyJgR/tJOfasoBJ+xElggcE7b2zQUeVL+izptx9g5WjCQBz9bLC3SVqWy3TSM1dG13hPBhsU0QbqpAUILhwOSvnWHHSHq0VLvN1zB+OSrDZICJKICupJu1DtXhWSLVqWEEdj8gpOwvViCeLWmYpqmgEsq157KnJwij8QEJ+KP3FfT7Jmp6efazJ1R9eBFqRkm6xU3avf3D+aPhDlAr3N8ZrYbPyCIx/x/EdjxkFqi5VsYGBDgSGlA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OMu/WLh/AFTwQwPBI37e4qSzRgorE4r8jj66tjqTT5P7IWDDrwEQSaHVfEU0?=
- =?us-ascii?Q?YZ1DfEtpKKP50UIk9Y5AI3ZBj8mSDUoJEskN4O3YIBb+U0sL1zH5dx0I9/RI?=
- =?us-ascii?Q?t/+kEOg3EEhFDBLPbCt/vrd+bnOxXIQ/HkUAw+q7jt7YnaZrAU0zCXOsKDfm?=
- =?us-ascii?Q?g/E7ajb/rkQu27qbaqqGig3rYkX+1kmEDQAjU9Y8hNkpoMctHeeBp/4vB2t4?=
- =?us-ascii?Q?cIE3RAKvS4oXgH6t9IcQqhrR6njH37naSIiBaNApbY3e455iOa9eax9GEOE6?=
- =?us-ascii?Q?FTiPYzwTc/+KTgJ8gjRmb859oleGfrFEwa65GNCPMrSn53/M6L4TFO0c1B1u?=
- =?us-ascii?Q?9mtX6Tv8hPRQf6ZnbEba5jz4eKhWmaRe91lfazO2Vq6CpjcQ/aBxkBjuh7s4?=
- =?us-ascii?Q?3ehEu7PX995+CaqFeUEXq17uwFW1vX4TlHS9MK//WSmNX29hD9UzDxC86lyv?=
- =?us-ascii?Q?5SN0XkmCt0mtJIA85BU+mzLmObXrCCUluezm9oLiLBK6G5qem4UFO2Jvtw2g?=
- =?us-ascii?Q?TItrASEIY90oMibKtuUIAHs2+uubrnFLUXNoH2nK2n2tXCB7bJffd/k/55df?=
- =?us-ascii?Q?BYwCcT7frOWHfqAEWz5qnH+dGtIbK+sMzdBK6umzfuMMqpq3RptK6xTPI+EZ?=
- =?us-ascii?Q?a7tIO6cuwaOK8u6FdN86JZs2xVlLRj383TjNKwe5I4GjdLgaCTdAAbkfG5+F?=
- =?us-ascii?Q?g2E2KxlVBhT34AEtcXTjgFVNEskiWHKnkgdsO3nufQZ6p4hjxqoORm+sN/eP?=
- =?us-ascii?Q?XYfvz2CK4hf4Q6pPPP0FZf/156/4oCXs20/qysR3R2TNcEUeaCwFIn+JpPHo?=
- =?us-ascii?Q?gRKxNf6h9L5nWQQq1JCrL5pNdjMakwfHsRuauJVznivtO4+Bat15J0CvuzOW?=
- =?us-ascii?Q?FQiPp1MgE+v7ihu6sR1doVi3HxkUESVTZ97EtrxMnWAF9bOHdnjnhQPnWxG4?=
- =?us-ascii?Q?3vpeUxp+Yd0OTJIin0lr0y8/xxC2m0je3dl8X8SbShMi4y2li+WAasIPWY2m?=
- =?us-ascii?Q?CdZiF0V8bXuxir5ntNL/HBw6N7fauXc6yXsUHF80XT4zZlDxIKUokcI6J1Ul?=
- =?us-ascii?Q?aUzC/GIWUc1xsRN4IvTMKyUwPxdjAErrF/+LuipADF6AzWjkQX+agRpUHrpI?=
- =?us-ascii?Q?NcbPP0cLdBPfl5ksXmJCSsf54LpURyBy1fmy8F5eA6B1dDUn6e8o/D2hQkUn?=
- =?us-ascii?Q?tCYFOkxtaF9WeeDsaOsrv8DFg5+Tlqct4hmYTAHUBMDC7Ce+VgNnuTCcOtSA?=
- =?us-ascii?Q?cuRyupTyc+ezm7+LcBPZ?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0977a1a5-7b4e-4c09-e37f-08dcd0c15bc3
-X-MS-Exchange-CrossTenant-AuthSource: TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 11:20:07.3270
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9P286MB5189
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+ <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
+ <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org> <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com>
+ <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org>
+In-Reply-To: <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Sep 2024 14:11:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
+Message-ID: <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, 
+	conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  6 Aug 2024 16:29:02 +0200, Sergio Paracuellos wrote:
+Hi Stephen,
 
->diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
->index 50a443bf79ec..787ff3e66b34 100644
->--- a/drivers/clk/ralink/clk-mtmips.c
->+++ b/drivers/clk/ralink/clk-mtmips.c
->@@ -267,6 +267,11 @@ static struct mtmips_clk_fixed rt305x_fixed_clocks[] = {
-> 	CLK_FIXED("xtal", NULL, 40000000)
-> };
-> 
->+static struct mtmips_clk_fixed rt3383_fixed_clocks[] = {
+On Sat, Sep 7, 2024 at 1:01=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wrot=
+e:
+> Quoting Geert Uytterhoeven (2024-09-06 00:28:38)
+> > On Thu, Sep 5, 2024 at 8:09=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> =
+wrote:
+> > > Quoting claudiu beznea (2024-09-04 05:17:30)
+> > > > On 03.09.2024 22:48, Stephen Boyd wrote:
+> > > > > The node name should be something like clock-<frequency> but if t=
+he
+> > > > > frequency is different per-board then I don't know what should ha=
+ppen
+> > > > > here.
+> > > >
+> > > > The frequency should be always around 32768 Hz but not necessarily =
+exactly
+> > > > 32768 Hz. It depends on what is installed on the board, indeed. RTC=
+ can do
+> > > > time error adjustments based on the variations around 32768 Hz.
+> > > >
+> > > > > Can you leave the vbattb_xtal phandle up above and then require
+> > > > > the node to be defined in the board with the proper frequency aft=
+er the
+> > > > > dash?
+> > > >
+> > > > Is it OK for you something like this (applied on top of this series=
+)?
+> > >
+> > > Yes, it's too bad we can't append to a property in DT, or somehow lea=
+ve
+> > > alone certain cells and only modify one of them.
+> >
+> > My main objections are that (1) this approach is different than the one=
+ used
+> > for all other external clock inputs on Renesas SoCs, and (2) this requi=
+res
+> > duplicating part of the clocks property in all board DTS files.
+>
+> Can 'clock-ranges' be used here? Leave the cell as null in the SoC dtsi
+> file and then fill it in with clocks property at the parent node. I
+> think you'd have to use clock-names for this though.
 
-Hi! I found a small issue. The SoC name is rt3883 instead of rt3383.
+"clock-ranges" does not seem to be well-documented...
 
->+	CLK_FIXED("xtal", NULL, 40000000),
->+	CLK_FIXED("periph", "xtal", 40000000)
->+};
->+
-> static struct mtmips_clk_fixed rt3352_fixed_clocks[] = {
-> 	CLK_FIXED("periph", "xtal", 40000000)
-> };
->@@ -779,8 +784,8 @@ static const struct mtmips_clk_data rt3352_clk_data = {
-> static const struct mtmips_clk_data rt3883_clk_data = {
-> 	.clk_base = rt3883_clks_base,
-> 	.num_clk_base = ARRAY_SIZE(rt3883_clks_base),
->-	.clk_fixed = rt305x_fixed_clocks,
->-	.num_clk_fixed = ARRAY_SIZE(rt305x_fixed_clocks),
->+	.clk_fixed = rt3383_fixed_clocks,
->+	.num_clk_fixed = ARRAY_SIZE(rt3383_fixed_clocks),
-> 	.clk_factor = NULL,
-> 	.num_clk_factor = 0,
-> 	.clk_periph = rt5350_pherip_clks,
+IUIC, your suggestion is to:
+  1. Add "clock-ranges" to the /soc subnode,
+  2. Completely leave out the "rtx" clock from the clocks property
+     of the vbattb@1005c000 node,
+  3. Add the following to the board DTS:
 
-Regards,
-Shiji Yang
+        &soc {
+                clocks =3D <&vbattb_xtal>;
+                clock-names =3D "rtx";
+        };
+
+Then, when resolving "rtx" for the vbattb@1005c000 node,
+of_parse_clkspec() would iterate up and find the proper vbattb_xtal.
+Is that correct? And probably that should be done for other external
+clock inputs as well?
+
+Still, it looks a bit complicated and un-intuitive. And what about
+e.g. carrier boards with a SoM, where some clocks are provided by
+the SoM, and some by the carrier? In that case you still have to
+override the clock and clock-names properties in the carrier .dts,
+thus duplicating all clocks provided by the SoM.
+
+So I prefer the original approach, like is done for all other external
+SoC clock inputs on Renesas SoCs.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
