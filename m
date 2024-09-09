@@ -1,113 +1,76 @@
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6101F942;
-	Mon,  9 Sep 2024 14:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3357E146D75;
+	Mon,  9 Sep 2024 14:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725891449; cv=none; b=M3lvWJkJg8p3ZbTpCOwGTYwFScBd6meI+2Jpi/1EGMOUBxzj8DZtkbrRsIWVXevoZ+yZOfYbGfMS5WsxMya/zKiiRpuy2NDE409xXp+wTESvkAZXT5cMATEmWokwdDWRlKKiRjikewmfqYkGZqaM3g9q3GIz68655SVk778uYw0=
+	t=1725892135; cv=none; b=ivpboIF9gM1ilP/c5ScfLwPHcZ5QnuMuUKjpI8ZOgn8PewvfLLWDW2wJHP5m2Z4cuREo1XV/T7O20Ygudozn042dn7V/tLeCNRyL1y8WtAGxenUVI99zzkSheS1+hspfXX7ybwAqOReZPA+/SXA0o0UIkHLyCoNnvp/PPuYKckY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725891449; c=relaxed/simple;
-	bh=lrXpZWxMJMtBvHEtOnh0l+dSZpM73JGQiIsvvw50KPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jEM3gZDHCDCa1giBBdn6jj/uQva7dHqeew9LJkEh6DAHrmWW5wpjVr9PnlxDmS/Oa/I8Je9JJetc8u1qFjSDGLSIM0A+XuVwCEyk6pkDhiAhLWKJLOYaiei6LWe4NaVVpc0gdheI7eoNol3i1FyHdz2RX8ClJlHvW4Z35sCh2Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <adiupina@astralinux.ru>)
-	id 1snfBQ-00BL95-1B; Mon, 09 Sep 2024 17:16:00 +0300
-Received: from [10.198.22.196] (unknown [10.198.22.196])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4X2TRn2MdVz1gxcY;
-	Mon,  9 Sep 2024 17:17:09 +0300 (MSK)
-Message-ID: <6a563471-2268-40a3-9c95-2761bcea5e3c@astralinux.ru>
-Date: Mon, 9 Sep 2024 17:17:08 +0300
+	s=arc-20240116; t=1725892135; c=relaxed/simple;
+	bh=70ECI3PT56H5f+bIxujdNUahh4NNGp8iAXnMrm0sGiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CHBwqXe+yTk7Vr4n5/kBs387HFFPsQ0E+xXMjSbVX0Buzx97AuW3pjLE5MvNDOeUAEPzki9kVjbQ8vQiY8N9y6yJY3YrB71y82pADNoqihQfLXr1CA0Nv00lVoR34paCVu7y08TYsZaBIQabURcjJX906pJSzJafQJgB0NkLGSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMfG4FAH; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMfG4FAH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22335C4CEC5;
+	Mon,  9 Sep 2024 14:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725892135;
+	bh=70ECI3PT56H5f+bIxujdNUahh4NNGp8iAXnMrm0sGiY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bMfG4FAH1F9uqI2ty31tw6aM1zE0QLonfXMxz7JH+MlP7kpt6uFsIpDcKJKOLWdo1
+	 aBcrYv5crh88sSg1jvmbmH8h1QrGd581jp0d2QDTxYe8Cdo/5nXmrhsuky1YtRWght
+	 3Q9JnMf864TZY/3HG2IVVvH3VEQhUrp3eH+Tc4b9wLRYDmzH8OzKbjtDjTuzHJVLVS
+	 JnbzjCMptk2APW9IFsgZ8ES2QyvXvGpzpk+Jllia84Kb+LgS8qvJ27fXsQUyt68jTE
+	 t0gIuFY/eqqLJ+snakH6N+OdDpE7rH0C4sIVY7Mhj5JIoZL/Zy0xml/L1EVBoTfFns
+	 WuTACqLab9WyQ==
+From: Conor Dooley <conor@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 0/2] Add notifier for PLL0 clock and set it 1.5GHz on the JH7110 SoC
+Date: Mon,  9 Sep 2024 15:28:22 +0100
+Message-ID: <20240909-hurled-october-acb5ce74f3bd@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240826080430.179788-1-xingyu.wu@starfivetech.com>
+References: <20240826080430.179788-1-xingyu.wu@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Content-Language: ru
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240909133807.19403-1-adiupina@astralinux.ru>
- <e2d1e181-f094-4d6d-b77e-8d7c0ecd8270@lunn.ch>
-From: Alexandra Diupina <adiupina@astralinux.ru>
-In-Reply-To: <e2d1e181-f094-4d6d-b77e-8d7c0ecd8270@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=808; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=c9PQ+0Yrbg53RFDH/0h7VN9R/+5GlYD5aOg3NQ5HHk4=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGn32ViTeHzVV9cHGBkYb9vaI6vX/U9khe+Kz9OsmEOWX o3689uro5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABPxLmZkmPX+9noXPxUW759H rvpWJQrlGZwQ35cm/PE1p8n3tMVa/owMR+SEIwwn7HuW2rOyjKFv45HH29o/qFUsiP5VUVVo/X0 ZAwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttderjeenucfhrhhomheptehlvgigrghnughrrgcuffhiuhhpihhnrgcuoegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruheqnecuggftrfgrthhtvghrnhepveefleetjeetfffgleeuvedujeffieffgedttdegudejheetfeeikeffueefgffgnecuffhomhgrihhnpehlihhnuhigthgvshhtihhnghdrohhrghenucfkphepuddtrdduleekrddvvddrudelieenucfrrghrrghmpehhvghloheplgdutddrudelkedrvddvrdduleeingdpihhnvghtpedutddrudelkedrvddvrdduleeimeefgeeggedtpdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeelpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsvggsrghsthhirghnrdhhvghsshgvlhgsrghrthhhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehssghohigusehkvghrnhgvlh
- drohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1725884359#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12165719, Updated: 2024-Sep-09 12:19:23 UTC]
 
-Hello, Andrew!
+From: Conor Dooley <conor.dooley@microchip.com>
+
+On Mon, 26 Aug 2024 16:04:28 +0800, Xingyu Wu wrote:
+> This patch is to add the notifier for PLL0 clock and set the PLL0 rate
+> to 1.5GHz to fix the lower rate of CPUfreq on the JH7110 SoC.
+> 
+> The first patch is to add the notifier for PLL0 clock. Setting the PLL0
+> rate need the son clock (cpu_root) to switch its parent clock to OSC
+> clock and switch it back after setting PLL0 rate. It need to use the
+> cpu_root clock from SYSCRG and register the notifier in the SYSCRG
+> driver.
+> 
+> [...]
+
+Applied to riscv-soc-fixes, thanks!
 
 
-09/09/24 17:02, Andrew Lunn пишет:
-> On Mon, Sep 09, 2024 at 04:38:07PM +0300, Alexandra Diupina wrote:
->> get_div() may return zero, so it is necessary to check
->> before calling DIV_ROUND_UP_ULL().
->>
->> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>
->> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
->> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
->> ---
->>   drivers/clk/mvebu/armada-37xx-periph.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
->> index 8701a58a5804..d0e1d591e4f2 100644
->> --- a/drivers/clk/mvebu/armada-37xx-periph.c
->> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
->> @@ -343,7 +343,10 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
->>   	div = get_div(double_div->reg1, double_div->shift1);
->>   	div *= get_div(double_div->reg2, double_div->shift2);
->>   
->> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
->> +	if (!div)
->> +		return 0;
-> Looking at this code, it seems to me some fundamental assumption has
-> gone wrong here, if the dividers are 0. We want to know about this,
-> and a kernel taking a / 0 exception would be a good way to indicate
-> something is very wrong. Won't returning 0 just hide the problem, not
-> make it obvious?
->
-> Checking for a /0 on user input makes a lot of sense, but here, i
-> think you are just hiding bugs. Please consider this when making
-> similar changes in other parts of the kernel. Why has a /0 happened?
->
-> Tools like SVACE just point at possible problems. You then need to
-> look at them in detail, understand the context, and decide on the
-> proper fix, which might actually be, a /0 is good.
->
-> 	Andrew
+[2/2] riscv: dts: starfive: jh7110-common: Fix lower rate of CPUfreq by setting PLL0 rate to 1.5GHz
+      https://git.kernel.org/conor/c/61f2e8a3a941
 
-The value of div depends on double_div->reg1, double_div->reg2,
-double_div->shift1, double_div->shift2.
-The fields reg1, reg2, shift1, shift2 in the clk_double_div structure
-are filled using the PERIPH_DOUBLEDIV macro, which is called from the
-PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
-
-It is not clear what values can be contained in the registers at the
-addresses DIV_SEL0, DIV_SEL1, DIV_SEL2 (can readl() and some bit
-operations give a value > 6 in get_div()), so the final value of div can 
-be zero.
-
-I used just return 0, since the recalc_rate field in the clk_ops structure
-has a comment "If the driver cannot figure out a rate for this clock,
-it must return 0.". I'll fix it to kernel exception, thanks for the tip.
+I applied this last night but forgot to send the ty email.
