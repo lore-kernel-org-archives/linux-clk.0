@@ -1,88 +1,95 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128751B3B2B;
-	Mon,  9 Sep 2024 09:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90316DF58;
+	Mon,  9 Sep 2024 10:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875830; cv=none; b=Kqoel0XXNlkwW7WK7r4vT0Ni4BKOIu4Ca0MrZCkbzQ18ABbIhqm/Z8uQasV1YUulsoKXtn1h9HppI7uISIk62+T1T86nYug/plkXProBVx1KyYqF2EOeCrnqFiviTU/G9+tqIDQvH9ft6+YwjygbFPH1R1ODwUVZamQWa9wP/Ag=
+	t=1725876557; cv=none; b=FbW93uh/sjc8WVzDc4d8OFr6oFHjT6yc69+R7FUXe8z+Bjqw8txOmtEJTq07jcEZcIB3E3ZsJTvXkzVB3Sw5hbUm4zXfql7SWcwyrsz9E/j2RopX/K8TyDCpNe0j3tCVaMMMobdSrKiD1VHNijFdwlBfF00RVUoyVS0urS9T+84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875830; c=relaxed/simple;
-	bh=F5ig9bVaogTQaUWR6VhKGimLjyVujzRzVzKtgAFSPW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iLHBnrV1ctQ6zsCe1wRB9DqqUBV51/v3qS/GD4136+vdBXPCnEGU8wd8D7G00m2q/DZEGNvYaYS6x/S/3MvPsBrpPGTPhX40X8Q4+M3mxB+7CJIYUoHuSQMAx9GKgVysnJTObkgqITBt8HQC46vR/GA80dKRt2OpraSy4uDVTro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b6b9867f81so35610037b3.1;
-        Mon, 09 Sep 2024 02:57:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725875826; x=1726480626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PpP32OtXs2KmofDCBZ/sB3rpoVgR8MDG5uMf2/mZcPA=;
-        b=wj5ixSYWtgDdaUC2novLaCCWo8Kocu/fDO8i9LDYipLdJ4v3Sr6kvtF8EY8r0s2Epp
-         ocz2X5OhjLzxSmX0itZd3oPBvGywgKteo4beI7HrlriJKZVfAMuJIs3mxr+rR1alVeTa
-         Ukgf4ICWItoAWzWn6Hh/5vtG5mnPyjokINOO+m416JDcRC6DmUONkR+c5iZ5/1VSpzrK
-         eiW2pFzdWqCID06XEKgaqDNxnzE562lnEbxlrF5O7Bawo1ESJhRM1XBE42XX6lmiN6E1
-         BuSZc8hS0QgPvnCzES3ebBGQUlNUil+tniatc8KOgltxPspItJNIdf57k4t77YQD8de3
-         NN/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwgtZE86c+/K30q9AZVpt7e1qH32KLut16dnxBwYMuMj10OMc8qR2SRUrZUGd5zCtkUIxVPn0c+8CXw+y2qv8rUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKcA+JqReVgS30dgxptA7zp2/XK2NmAKxvv9YXqHpy4dtaNnc3
-	RP6fzAh2mN7nIbJRqJaUUw+7KlEbrSAzzX3M1dDVb/NNApoTJy/IwSMW2iOS
-X-Google-Smtp-Source: AGHT+IEd6yukD79nWJ3Ec3qQjeZhACCGdXHkGCfZ/FbhIgAyjWMu9TbncokBVJZ4na9kfTfbh5fOtQ==
-X-Received: by 2002:a05:690c:6a01:b0:6d6:73d9:e7ca with SMTP id 00721157ae682-6db45164954mr122934747b3.40.1725875826291;
-        Mon, 09 Sep 2024 02:57:06 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db5c5fff29sm8730397b3.17.2024.09.09.02.57.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 02:57:05 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6b6b9867f81so35609817b3.1;
-        Mon, 09 Sep 2024 02:57:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXng8KMUA8JYzFtGBqiEpb43hMc0N+8UT7iyOGzFTwWZP2RgYzWCSGltK8leLC5mg7BypA8je++kuaOM11lTGh3Aw==@vger.kernel.org
-X-Received: by 2002:a05:690c:4911:b0:6d6:94b2:f3e4 with SMTP id
- 00721157ae682-6db44f2f652mr127588687b3.26.1725875825669; Mon, 09 Sep 2024
- 02:57:05 -0700 (PDT)
+	s=arc-20240116; t=1725876557; c=relaxed/simple;
+	bh=wNROTOGwTrtcI0H20f0EmINCmCNdwFiZLjQMJFcLHU0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HfXMH4X2+C7tjhXYaKhNHXG4umqn4LejkpMHvbXixfWombaWeBBjJP0g6i39JZnMycVqLmoZh1peHFrM+b0P+qIygMp+mfatRVHxv+4bMBe/n0mai8x3cCb+Daynp6mbuS6h+foIleXLldhQrjHudhd6+pCvQUr1CifWKQCG12k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpiYI1LE; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpiYI1LE"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6A638C4CECB;
+	Mon,  9 Sep 2024 10:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725876557;
+	bh=wNROTOGwTrtcI0H20f0EmINCmCNdwFiZLjQMJFcLHU0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=gpiYI1LEY/2NHjn7vKGGHqTn5IIYP40L/Emxy8Ltkz1ktpF9M83Xausz4RkMPJ3nk
+	 7wm/RhYdoooo4Uposni120xm+xloKvICJbyJ3IOVzixIvtbe2LKRKOnK3o9/VVTHFX
+	 cFZKliUsKLg/q5aSHymagdVrWm70X6btCPpbm9LrkhXJmlzqQHmvCV3JWt5twrpyCh
+	 8JrgcFM7DTgo8y++L3LP0cIlYTNVFVp7ErJvXODUMPHrVggdeC6BPsxm0N0hCQgqqM
+	 SJ71RUlfjPFw5sEMpy2QorM+NUxjBZaXBtrfNrjOCniWW3DXjG9Ewwm3freOhHdcsv
+	 qjWRQNgnKfXEQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE36ECE57A;
+	Mon,  9 Sep 2024 10:09:17 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Mon, 09 Sep 2024 18:08:57 +0800
+Subject: [PATCH v3 2/3] clk: meson: c3: pll: fix frac maximum value for
+ hifi_pll
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908211056.230784-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20240908211056.230784-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Sep 2024 11:56:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXw9zOYQ7kUxT8uxf4ue9ikU8mj=2_S_=j9-0RRQXah+w@mail.gmail.com>
-Message-ID: <CAMuHMdXw9zOYQ7kUxT8uxf4ue9ikU8mj=2_S_=j9-0RRQXah+w@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: trivial: Remove duplicate and trailing
- empty lines
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240909-fix_clk-v3-2-a6d8f6333c04@amlogic.com>
+References: <20240909-fix_clk-v3-0-a6d8f6333c04@amlogic.com>
+In-Reply-To: <20240909-fix_clk-v3-0-a6d8f6333c04@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725876555; l=770;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=I33Vhd+oqJKtNl4x++Y8xPKvaKodnZowE3DBu//z/PA=;
+ b=sUDSMpQF9WTheM2ifxOy7eEX8CY4oBwIkOs0u9IEtYYRpSvEcQ5GG9sxdrCKUWqGbm9QBL96f
+ zfj8XzUBaAOC1ifMGVa+iIc+WFvmq83fhWx6zjlCWHOclqLVsF5v7WT
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Sun, Sep 8, 2024 at 11:11=E2=80=AFPM Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Remove the duplicate and trailing empty lines. No functional change.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.13.
+The fractional denominator of C3's hifi_pll fractional multiplier is
+fixed to 100000.
 
-Gr{oetje,eeting}s,
+Fixes: 8a9a129dc565 ("clk: meson: c3: add support for the C3 SoC PLL clock")
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ drivers/clk/meson/c3-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
+diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
+index 32bd2ed9d304..35fda31a19e2 100644
+--- a/drivers/clk/meson/c3-pll.c
++++ b/drivers/clk/meson/c3-pll.c
+@@ -361,6 +361,7 @@ static struct clk_regmap hifi_pll_dco = {
+ 		.range = &c3_gp0_pll_mult_range,
+ 		.init_regs = c3_hifi_init_regs,
+ 		.init_count = ARRAY_SIZE(c3_hifi_init_regs),
++		.frac_max = 100000,
+ 	},
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "hifi_pll_dco",
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+2.42.0
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
