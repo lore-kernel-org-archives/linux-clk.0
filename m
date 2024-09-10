@@ -1,173 +1,110 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D264B17ADF1;
-	Tue, 10 Sep 2024 04:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753EDBA42;
+	Tue, 10 Sep 2024 05:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943233; cv=none; b=E9+3Av9YbgArXN3MkfnNDahLddctLrTigxA6TRwrXE/v8RM8yAOV/AD4L16ApyXNQsELiEdMSlQyezRhU40F16ZjMcR18qbSMJVzsdPrnPYJuncLpIbTKFK4I6NE8/bIHm5TKMdLc5iOzFueO3bLVdNNQRj/hcD1lGPd3/z34PY=
+	t=1725947629; cv=none; b=BQRSLgLPXWoQTPWqtSvVwSItlaM40+4uDRMb8pguduJYnQxMQevxIZdXNSi8xGGbkQ4wyPMSvOS6fvy//ABrGEScSiRTqEBid4XCNlPrcW2JwK1+nofVFtzmOoJi2iTdXI6DfeWL+a3pIKT32sIuWu3OzCCUnO8I2G+lQrapqbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943233; c=relaxed/simple;
-	bh=koJBg8yzwhtGzGx9x9JJA/nipZE2WzOP8mnJFes4NBs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MNQSR+xz2f4RlUTysAm2d6qOou56+jafdIwzexoG7L/7WN14RSJURS0I5FM/QFVUgS8zj7nW0Jb8rybwJRN7a5MMFexE5HuPIERpctM4LNmWmc0ubXThJnefWJF3aNJLrwdkhHmWofDow0ZaTGKof0hxcA+Yt+D/Ebt937BT78A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAoHkugf; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725947629; c=relaxed/simple;
+	bh=uvUT2li9t6kQrgl7EAisZODqTq1+vnL8VvIBaN8rxvA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GBOo0QorfK2yeZqK4/cX8UcAKfKcfAsC0U6piyGvQYCrmNbO7XliPZ+rszQBiqjxfk/ajUuAYfTEWs0PzmIUkW91JZ/IL/oxFzit96+ikMDJFRPSZLV5aWk3L2JMsGXTPXKHggKSGqxQPgOLYOB0uHeVol7OOdxr7xpR+jho9LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEin5f9q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAoHkugf"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cba0dc922so10807875e9.3;
-        Mon, 09 Sep 2024 21:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725943229; x=1726548029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7579wdpHag2FewCMXqF+ybgeA198ZT0CN/Gcy3G4QeE=;
-        b=mAoHkugfxl0X3O0lHBT5HIa4HCCY2C64RJ82Oh3kIOPUBDxKQB++F3gyHDi2hc/+yP
-         Ta8J+dW8zReLA/RK37UuZUqZ1IoCLn2Wct/rZyVwZ4AFurvZNbXezzvv6xXzAeDah7u5
-         MdoSnuxF3S425O2rrsS80F3Jb3DVub825Zo76TRi6T0NniuUanQ+X48rkmyb8lEeUOgw
-         eNR7RqSv5076fNM9NKNGfndVENEeZFt60F07abs+Sl1SKunuCGAGNJ0plXvptRGQwxRd
-         1ZhdLtQlmtHny2KzTQZXQGaOgMY49fzz9J34a6fF+te3Sjm/QcRVmiyxQ7N6FltViTVS
-         XDqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725943229; x=1726548029;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7579wdpHag2FewCMXqF+ybgeA198ZT0CN/Gcy3G4QeE=;
-        b=Tr8JEnBChZQlnXZH0hIYtzEwQjfOXWxtxvDl1VtmBgmy9DmCGrBEB/oawdV++GsP+D
-         ow8L3aW4WC8se2OvUe60GBqyGjFLK+FvB8nX751wMB3UOhmZA50EJflZnqFu3rZskCOZ
-         sj3U29s/JHG1UsMx3uxomEqlvIxcW2TzHjnHfA0v7bL6nXrTqdSZzRRrTOGCJcg4yCzv
-         F6YGd1jCcMdBGyMvOR2iWtlNsxedaUljsoV3h+DXDJiDWuzqkaVwH4/f33Axd1IrPllO
-         Seww+nNxRK/8iNBRaX1p7nXUhCbkaPI9VEln4mmMa01gPR5KCIE+tRqpBomAEh6sBlqK
-         rk7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiyIkCCb9qS9JUid1qT4SjmhwpFt9py08JxdHTl6R399ZLplpHCCSg0GbsCC1WNo8YFO6LBXGol5gi2/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+8v9C2fnU94Nhjpv1ygDmFU6KvI4EqejM4acQjdxKnbjKFvhQ
-	CHRpI4+b8QqB5rf4gfgVdYRo/AEliumz4j1AgSNmK9l4/30QK3dKzvWhPw==
-X-Google-Smtp-Source: AGHT+IHK8xVxjDQwjj3c2e+y3trQYkf/C6Ra0KJNdd53Eniy+vtfLtzIXpLrCh2LZffNsljAIXWLwA==
-X-Received: by 2002:a05:600c:354a:b0:428:1e8c:ff75 with SMTP id 5b1f17b1804b1-42cadb6a47cmr61619375e9.35.1725943229024;
-        Mon, 09 Sep 2024 21:40:29 -0700 (PDT)
-Received: from localhost.localdomain (201.red-88-10-59.dynamicip.rima-tde.net. [88.10.59.201])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc01cae3asm5516055e9.0.2024.09.09.21.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 21:40:28 -0700 (PDT)
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: sboyd@kernel.org,
-	mturquette@baylibre.com,
-	tsbogend@alpha.franken.de,
-	yangshiji66@outlook.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628 and MT7688
-Date: Tue, 10 Sep 2024 06:40:24 +0200
-Message-Id: <20240910044024.120009-4-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
-References: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEin5f9q"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E9F1CC4CEC3;
+	Tue, 10 Sep 2024 05:53:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725947629;
+	bh=uvUT2li9t6kQrgl7EAisZODqTq1+vnL8VvIBaN8rxvA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ZEin5f9qdhlcx+McditaTMcWtfE9Zml5qB6LRe5vnkwOVW0zApcnJNleP/RAMck+k
+	 kcTs/FiX7mCaJxqEwJghiwWmeTq1nJP+yl/dh+r6bTQGJAUIr3MguJdJsk2jQpyzMw
+	 hK9gjkizJzPusJ3qpQscEb4+sskmRJpl7KTgl7oFN7y+kMzkNuEasN/Kn5SLdiW/62
+	 gP8NuONJLPFKhJg0h+UUuXo/iOmciLzg5/1rdOBmbfmoy+27nSKh6obNe9m99xJHlJ
+	 gr9YXpfvKWJRpu2/huD9wGjlr5cFZVNuAoaSHom1EYY2eM1J0G6mgomZlF4J6IPLas
+	 FhpqzdDsZDGdg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D83B2ECE582;
+	Tue, 10 Sep 2024 05:53:48 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Tue, 10 Sep 2024 13:53:44 +0800
+Subject: [PATCH] clk: Fix invalid execution of clk_set_rate
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAOfe32YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0MD3bTMivjknGxdc8Ok5BQjg6QUY+M0JaDqgqJUoBTYpOjY2loA901
+ 2lVkAAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725947627; l=1619;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=3tAKqELYhIvRcXnUoRlXXLtvnJsBHNdrLYPkwEE/zJI=;
+ b=MFbnaaVvkM7y7cG1rTenn+RlC/vW4QvIC4DEqGeAHtl2HMKuRduRtutjrLqkpcqhY9gey+F/U
+ sIwGXwnw06jCuqfqCuVdTeyVvBQZwriPntFkUiKwZrH2I11yHy6aOz6
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-Original architecture clock code from where this driver was derived did not
-include nothing related to mmc clocks. OpenWRT people started to use mtk-sd
-upstream driver recently and they were forced to use a dts 'fixed-clock'
-node with 48 MHz clock:
-- https://github.com/openwrt/openwrt/pull/15896
-The proper thing to do to avoid that is to add the mmc related clocks to the
-driver to avoid a dts with fixed clocks nodes. The minimal documentation in
-the mt7620 programming guide says that there is a BBP_PLL clock of 480 MHz
-derived from the 40 MHz XTAL and from there a clock divider by ten produces
-the desired SDHC clock of 48 MHz for the mmc. Hence add a fixed clock 'bbppll'
-and factor clock 'sdhc' ten divider child to properly set the 'mmc' peripheral
-clock with the desired 48 Mhz rate.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Some clocks have rates that can be changed elsewhere, so add a flag
+CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+the real-time rate is obtained.
+
+When clk_set_rate is called, it is returned if the request to set rate
+is consistent with the current rate. Getting the current rate in
+clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+does not take effect here.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/ralink/clk-mtmips.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+Some clocks have rates that can be changed elsewhere, so add a flag
+CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+the real-time rate is obtained.
 
-diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
-index 76285fbbdeaa..97b8ca0f9181 100644
---- a/drivers/clk/ralink/clk-mtmips.c
-+++ b/drivers/clk/ralink/clk-mtmips.c
-@@ -207,6 +207,7 @@ static struct mtmips_clk mt7620_pherip_clks[] = {
- 	{ CLK_PERIPH("10000b00.spi", "bus") },
- 	{ CLK_PERIPH("10000b40.spi", "bus") },
- 	{ CLK_PERIPH("10000c00.uartlite", "periph") },
-+	{ CLK_PERIPH("10130000.mmc", "sdhc") },
- 	{ CLK_PERIPH("10180000.wmac", "xtal") }
- };
+When clk_set_rate is called, it is returned if the request to set rate
+is consistent with the current rate. Getting the current rate in
+clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+does not take effect here.
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 285ed1ad8a37..79b453b82528 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2536,7 +2536,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	rate = clk_core_req_round_rate_nolock(core, req_rate);
  
-@@ -220,6 +221,7 @@ static struct mtmips_clk mt76x8_pherip_clks[] = {
- 	{ CLK_PERIPH("10000c00.uart0", "periph") },
- 	{ CLK_PERIPH("10000d00.uart1", "periph") },
- 	{ CLK_PERIPH("10000e00.uart2", "periph") },
-+	{ CLK_PERIPH("10130000.mmc", "sdhc") },
- 	{ CLK_PERIPH("10300000.wmac", "xtal") }
- };
+ 	/* bail early if nothing to do */
+-	if (rate == clk_core_get_rate_nolock(core))
++	if (rate == clk_core_get_rate_recalc(core))
+ 		return 0;
  
-@@ -272,8 +274,13 @@ static struct mtmips_clk_fixed rt3352_fixed_clocks[] = {
- 	CLK_FIXED("periph", "xtal", 40000000)
- };
- 
-+static struct mtmips_clk_fixed mt7620_fixed_clocks[] = {
-+	CLK_FIXED("bbppll", "xtal", 480000000)
-+};
-+
- static struct mtmips_clk_fixed mt76x8_fixed_clocks[] = {
--	CLK_FIXED("pcmi2s", "xtal", 480000000),
-+	CLK_FIXED("bbppll", "xtal", 480000000),
-+	CLK_FIXED("pcmi2s", "bbppll", 480000000),
- 	CLK_FIXED("periph", "xtal", 40000000)
- };
- 
-@@ -328,6 +335,15 @@ static struct mtmips_clk_factor rt305x_factor_clocks[] = {
- 	CLK_FACTOR("bus", "cpu", 1, 3)
- };
- 
-+static struct mtmips_clk_factor mt7620_factor_clocks[] = {
-+	CLK_FACTOR("sdhc", "bbppll", 1, 10)
-+};
-+
-+static struct mtmips_clk_factor mt76x8_factor_clocks[] = {
-+	CLK_FACTOR("bus", "cpu", 1, 3),
-+	CLK_FACTOR("sdhc", "bbppll", 1, 10)
-+};
-+
- static int mtmips_register_factor_clocks(struct clk_hw_onecell_data *clk_data,
- 					 struct mtmips_clk_priv *priv)
- {
-@@ -811,10 +827,10 @@ static const struct mtmips_clk_data rt5350_clk_data = {
- static const struct mtmips_clk_data mt7620_clk_data = {
- 	.clk_base = mt7620_clks_base,
- 	.num_clk_base = ARRAY_SIZE(mt7620_clks_base),
--	.clk_fixed = NULL,
--	.num_clk_fixed = 0,
--	.clk_factor = NULL,
--	.num_clk_factor = 0,
-+	.clk_fixed = mt7620_fixed_clocks,
-+	.num_clk_fixed = ARRAY_SIZE(mt7620_fixed_clocks),
-+	.clk_factor = mt7620_factor_clocks,
-+	.num_clk_factor = ARRAY_SIZE(mt7620_factor_clocks),
- 	.clk_periph = mt7620_pherip_clks,
- 	.num_clk_periph = ARRAY_SIZE(mt7620_pherip_clks),
- };
-@@ -824,8 +840,8 @@ static const struct mtmips_clk_data mt76x8_clk_data = {
- 	.num_clk_base = ARRAY_SIZE(mt76x8_clks_base),
- 	.clk_fixed = mt76x8_fixed_clocks,
- 	.num_clk_fixed = ARRAY_SIZE(mt76x8_fixed_clocks),
--	.clk_factor = rt305x_factor_clocks,
--	.num_clk_factor = ARRAY_SIZE(rt305x_factor_clocks),
-+	.clk_factor = mt76x8_factor_clocks,
-+	.num_clk_factor = ARRAY_SIZE(mt76x8_factor_clocks),
- 	.clk_periph = mt76x8_pherip_clks,
- 	.num_clk_periph = ARRAY_SIZE(mt76x8_pherip_clks),
- };
+ 	/* fail on a direct rate set of a protected provider */
+
+---
+base-commit: 2cd6543d82b9dc7b971b9b64f22ad34a1cae3076
+change-id: 20240910-fix_clk-71bcd20bd33f
+
+Best regards,
 -- 
-2.25.1
+Chuan Liu <chuan.liu@amlogic.com>
+
 
