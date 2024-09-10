@@ -1,120 +1,105 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2DC770E2;
-	Tue, 10 Sep 2024 04:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD8F157465;
+	Tue, 10 Sep 2024 04:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725941708; cv=none; b=F4KGSN/Hk9EVUE12/Y0R8MBhpjw18sAzrCAeYratFH1kfc+xz1wUsBypFRNnWRYs4r0fSGu5tQDakzDk+ECOrmsTMQVmU9YC8CGVbQjSowXrtz5dNvykwQv+eSRR+yNJcAQNhr2nw3yLzi4clcGt5MF38ex9R5/p8VtmlkcguMQ=
+	t=1725943229; cv=none; b=m6+/bmKvn2eD2z19wsA1qeh9isYuDeHAniUaR37tQMfp19hfiH9MV6UzZItD3X8tT7wD0X1evh0qEP7yhjlCc+XQ8B7wN/PKBIirMqueHkHjidP/r5Cnh1oar007F1AfhBn+I7Pcrc3sJEUvJqIqzd6M8ip88hMNABY+w4tQYb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725941708; c=relaxed/simple;
-	bh=ONWChnD4WtjLaVWnzZPF0/WnUFQpyPeRsbfOM8cm0UU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C03RWI1z0d84rylfYtvze+AmOgTRMvx5aWqHYGN/xzEjNcktl0x1NtCyyMkPnu2U6zVx1kc0WNsmfAAAJb1dHg7rXXfPMQSm6lhDqqR0F0dnhllgvFq937mxvANJ+z39RdmCmqaOPnnx4x/esgyJi2z5wUlKs+Fku23ssolrfeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHeCyqzN; arc=none smtp.client-ip=209.85.160.45
+	s=arc-20240116; t=1725943229; c=relaxed/simple;
+	bh=/z5BXhIgjUIpkYElzoyDwkqDeDF4MqQez8i033x54dA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pExtKz1YrGeqYg6y9MEZTd8xDAdikLdhU5KRp5nzHKF1/w7DvSV8LiwxXmBpnhe9CZc8Hg/VUpHVFetgLuHREHmTYES2n4Ar8PSONTMJAmeHyMwiu3x8lb8dbmonXEXv9QL2LMN+Sx4ZmddEhJZxEtY3tVqNzZmuKTaTICvg3/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cPy18MtF; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHeCyqzN"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-277e4327c99so2948992fac.0;
-        Mon, 09 Sep 2024 21:15:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPy18MtF"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c326c638so3753250f8f.2;
+        Mon, 09 Sep 2024 21:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725941705; x=1726546505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o+s+5c8Omf1wEXIDwyDQuFABOjgkZQaBttk6gT8y6VY=;
-        b=QHeCyqzNJGWctw5wIFM5ndgGxCc8WxK/lVH/An9601Cvyu1/DS/t4MLLitAqWzdsM+
-         ggxlvy55vPZxZuLxzKcqXARkZ9oYgmksJs8bwQ15OxFZzKg75Xu7a3PvLcdt0KMvNlNb
-         nBBT06kCjszfYwwoHdr5JT1vah7ZbKSbTeATdmN5EzVL8XVZ0QvXuIo9mnt/x7zPmq81
-         N78q5h2+SMqJkyDw9GfipWTQa/NVofvtT9xA1pRTz2pLrmZDCUZ/gDh1TLhfSGcWgR1u
-         3mf5sihR/7ihsQ8gzVK5Of/6CguXIvswey7qnl94GdB9qBv9ksz5CUnEFcB0ggGRYxaK
-         8Ygw==
+        d=gmail.com; s=20230601; t=1725943226; x=1726548026; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsJ8q/7VOmurZioYPpEDxud6PCKTaVIUoy70tilwNYw=;
+        b=cPy18MtFSD7cg5qJFUschuq4pEC4e3mHc+mpQtRnaeh8+Wo88/q82PPON7ZFvTqElz
+         2J6egWMfIDflKFt3OBKgs4li/p+VlC9l2cCvDIftPhlfaEYBxzhLVPG5wiHSEuFxpu/K
+         XzTr1F1bDUEhPRqGcRs5bytqimnjA9Wac3qZvbIEI0qfYnySCgg0MBMWg7rxE9kM6AYz
+         1U2TDh3JVVC5LJHpqTb4BxB/nQiVQpk3R5lkTRRTXoo9Pz7jycUWj57CwngjBgDJJrKd
+         J8MAzccSlcw2uBkO3E5EU2iq6mSJ/JnKYl0x7B+iYy/L0D3puzKcWJdf17TShLO7Lj3p
+         f1UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725941705; x=1726546505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o+s+5c8Omf1wEXIDwyDQuFABOjgkZQaBttk6gT8y6VY=;
-        b=JEfaR1QgQsydVjzDm/BHQZ7ReetG4zRhwr6xPoH8kSWRXLewg9ECHEGsVd+j+c4fyj
-         l90cfhhTSOjUAJ9JL7Y2kf2JiEresewkVyTB7Y9cRZneY4vzGcrVLeEoKquWRr8/BrLZ
-         sC7zABX+TazcTZ9ntyOSpNdtTAiuC8OgNUy8nEHE0i1IygGAWfvj/9EEkonHmWDATuLm
-         T66x/bd9+YjZEVWjGMfiu1bkJKRaFnW2FRX5bqGm7Y65QIrm61f2cE8OxtIYAUoTwGqz
-         7T7BHPW8KskoXrXxAVGH42Ru4BmuYYh6rZ7e57g3u/fAOzRRGYjjJncnR+dEyWQb6sOU
-         6WtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFU096AWinGDdDD6MWibgucxtgLo7JnvY5Jj52gCX77bBKsFoguVFIykBRLgB8CqkwM6C7Gs3XjblLRm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2MADHl+F9LcO+HdGz40jJOnvcu0jeQeSH0uUjVmnjPy6tVrd8
-	eJZF3Fvm7H5+nVzYTsYlwOptF/f8Z+g4o1WSwro6hJXTTcYGYueouCrtLv/J80fwq2pTiD+bC1S
-	/22PI7Rlv8QuKjvsWeEkoKjoEsB/Z1w==
-X-Google-Smtp-Source: AGHT+IFXlsvZmB7pSC0OnIO5zV+J1X5s0KvZEumRTRhAnv5SlVHbn1KE/i0B6VE/5fy7TBX0hfbq75qdHi0DkIT9s7E=
-X-Received: by 2002:a05:6870:610b:b0:25e:1610:9705 with SMTP id
- 586e51a60fabf-27b82dccc41mr14673171fac.2.1725941705391; Mon, 09 Sep 2024
- 21:15:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725943226; x=1726548026;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nsJ8q/7VOmurZioYPpEDxud6PCKTaVIUoy70tilwNYw=;
+        b=xLG3CbQVdfgrSdo+2Ff3hchBNq21Pkc06nU2xT8s2IqSgM5HTpghuKhI8vuco2ZX6F
+         armVZr/NY30Nstikcpj0N3ep3TmX6UyVYzE6Jbp82US4UGq5ROsnaPNUp77vcJDHyC1H
+         bPFsGE/J1zc6DQxNL9QLPzOraY9azmT+EvqHC6tzBw0CwO24E3irSgeEQqMSVMfm6GA4
+         AF2Pc+SyaTyqbqxOzHwYdqZR0BL+2K0wrz/VYNszam7zw45N1D1tPD3FjAIA/GWEJHN+
+         FmFLzRRRZC/f2KGPrpx6BSatcTFlWBpdHau1fRORrPo3Dd73vtMi7+v6tl1gpN41VcaS
+         5N2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVyveDpNu+5CvLFY9NhADMtL4QBPd6ogUvvh2I31IOMyjcUhjuYLWtAu1dMlmmu0ejM8iSPDaIMm2DVElc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxLiNElnKNLk02OjPu9ze9X3N508x5xE+2ClKBYXbGo7zt2LLa
+	+sF1vuzV9oIukyC0VGCWdHA3GADBLp1I9D81Xt2PrncCf0994SpDEJ8n7w==
+X-Google-Smtp-Source: AGHT+IFoMtPhKhOjWEfnKprNyd0E2fJu8wHX/DQCgGBnbm+355qbjty0WZIuVHXbw9JT3O0qD5KcMg==
+X-Received: by 2002:a5d:4e51:0:b0:374:af59:427d with SMTP id ffacd0b85a97d-378896c3a8fmr8103113f8f.49.1725943225881;
+        Mon, 09 Sep 2024 21:40:25 -0700 (PDT)
+Received: from localhost.localdomain (201.red-88-10-59.dynamicip.rima-tde.net. [88.10.59.201])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc01cae3asm5516055e9.0.2024.09.09.21.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 21:40:25 -0700 (PDT)
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org,
+	mturquette@baylibre.com,
+	tsbogend@alpha.franken.de,
+	yangshiji66@outlook.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: ralink: mtmips: some fixes and sdhc clock support
+Date: Tue, 10 Sep 2024 06:40:21 +0200
+Message-Id: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806142902.224164-1-sergio.paracuellos@gmail.com> <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Tue, 10 Sep 2024 06:14:54 +0200
-Message-ID: <CAMhs-H9rJEO8Yje1qsWQ9rt19wLZLbbiVVa3aR_Uwh2QRO9a=Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
-To: Shiji Yang <yangshiji66@outlook.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, tsbogend@alpha.franken.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Shiji,
+Hi Stephen,
 
-On Mon, Sep 9, 2024 at 1:20=E2=80=AFPM Shiji Yang <yangshiji66@outlook.com>=
- wrote:
->
-> On Tue,  6 Aug 2024 16:29:02 +0200, Sergio Paracuellos wrote:
->
-> >diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mt=
-mips.c
-> >index 50a443bf79ec..787ff3e66b34 100644
-> >--- a/drivers/clk/ralink/clk-mtmips.c
-> >+++ b/drivers/clk/ralink/clk-mtmips.c
-> >@@ -267,6 +267,11 @@ static struct mtmips_clk_fixed rt305x_fixed_clocks[=
-] =3D {
-> >       CLK_FIXED("xtal", NULL, 40000000)
-> > };
-> >
-> >+static struct mtmips_clk_fixed rt3383_fixed_clocks[] =3D {
->
-> Hi! I found a small issue. The SoC name is rt3883 instead of rt3383.
+The following first two patches contains several fixes for having a correct
+clock plan from the beggining in old ralink SoCs that could not be tested
+when the driver was mainlained due to the lack of users. Now some issues
+have been reported regarding RT3883 in openWRT[0] so I am addressing and 
+fixing them here.
 
-Ouch :). True. Since I have some other pending patches of this driver
-I will fix this and
-send a new patchset including this fixed.
+The last patch adds new clocks to properly support sdhc 48 MHz clock for
+Mt7620, Mt7628 and Mt7688 SoCs. OpenWRT people updated to use SDHC upstream
+driver so they were forced to add a not desired fixed dts node[1] to make it
+works. The correct thing to do is just support it in mtmips driver. Hence
+we have add it here.
 
-Thanks,
+Thanks in advance for your time.
+
+Best regards,
     Sergio Paracuellos
->
-> >+      CLK_FIXED("xtal", NULL, 40000000),
-> >+      CLK_FIXED("periph", "xtal", 40000000)
-> >+};
-> >+
-> > static struct mtmips_clk_fixed rt3352_fixed_clocks[] =3D {
-> >       CLK_FIXED("periph", "xtal", 40000000)
-> > };
-> >@@ -779,8 +784,8 @@ static const struct mtmips_clk_data rt3352_clk_data =
-=3D {
-> > static const struct mtmips_clk_data rt3883_clk_data =3D {
-> >       .clk_base =3D rt3883_clks_base,
-> >       .num_clk_base =3D ARRAY_SIZE(rt3883_clks_base),
-> >-      .clk_fixed =3D rt305x_fixed_clocks,
-> >-      .num_clk_fixed =3D ARRAY_SIZE(rt305x_fixed_clocks),
-> >+      .clk_fixed =3D rt3383_fixed_clocks,
-> >+      .num_clk_fixed =3D ARRAY_SIZE(rt3383_fixed_clocks),
-> >       .clk_factor =3D NULL,
-> >       .num_clk_factor =3D 0,
-> >       .clk_periph =3D rt5350_pherip_clks,
->
-> Regards,
-> Shiji Yang
+
+[0]: https://github.com/openwrt/openwrt/issues/16054
+[1]: https://github.com/openwrt/openwrt/pull/15896/files
+
+Sergio Paracuellos (3):
+  clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
+  clk: ralink: mtmips: fix clocks probe order in oldest ralink SoCs
+  clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628
+    and MT7688
+
+ drivers/clk/ralink/clk-mtmips.c | 56 ++++++++++++++++++++++++---------
+ 1 file changed, 41 insertions(+), 15 deletions(-)
+
+-- 
+2.25.1
+
