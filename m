@@ -1,90 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1C41AC441;
-	Tue, 10 Sep 2024 22:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B001A1A4AC6;
+	Tue, 10 Sep 2024 23:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726006809; cv=none; b=WGr+SDJ7nEAuDMb5/1rxGhU1HWwqszL/XcTfg2wVlTRJxfbcCjlfRQ64K8VASt2UofKhaoTeiDOwu+Q7IDmHMaJp7TD4dKvnfTIHkd2Lla5Ze5gyJI6FVqdH99d8MbrEtxOn44UlKJpaDg+LT5ki8FXN3EUrSo4VMYPC6ENJTJY=
+	t=1726011858; cv=none; b=uha6CCLp9z9H8IHYzox2UwsOFXo+rpa5V2ZxgjqoJO80SBGWmF2vTfNB02MUIEuxM1wJDV9+m1o0ZbTeI+tRFxSkdbGMrp1ILv/tMy6MCavaDfTOAAljBrkhnmFi57FHT2cnGu71K1t+LFE4aCgyey4/HTJE0hm37m2+4G2qvvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726006809; c=relaxed/simple;
-	bh=48YI4pbgmYlCiPT43kBVwkkPa58PT2DK2GN26WL06Zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5J6Fxxy6VkoR4QujUyqUBtynYNfaL/N5k3jFm5J3aS8/07jaA3LJo16JyJoFHAJgjGONwzV5OGJEkT1MV+VHPW2jneUy1/fBaCvqplPhmbiK8dADnl8QPvhb9orcCvlW+gFKIUjH+BV92+iMJS0+wLhD9SbGNlFK0+sfTC+/VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXvC/AMd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726011858; c=relaxed/simple;
+	bh=52dbOaQAtE+QBJjRy/7NqFe/CweE7AfpiSDKiTqjnSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qrqe18Lju+m70/6idHMOOB0U4eeqoJCH8v5zy230Doer+9r7jP3M+C56lZCvBFSq7Ya5J5DL1Y3ns34xymOioooHEz9LU11OhAhdC7FheXUZfDEKdILygnwHRQnyXeYNIeQj9nKwoJeSd4O0AfosAysTyL1lwPUXxndwxu/t3GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGfW+LQd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXvC/AMd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA255C4CEC3;
-	Tue, 10 Sep 2024 22:20:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGfW+LQd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D33C4CEC3;
+	Tue, 10 Sep 2024 23:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726006808;
-	bh=48YI4pbgmYlCiPT43kBVwkkPa58PT2DK2GN26WL06Zs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bXvC/AMdALgzeciEYcNb3c7MPlwl1Ldpk8m3EmiuiaLfyLLWLC4BnWS4SIe+MdZa6
-	 6mZMlroCrRgIPDG8EyJyzVb39LE+5OAes1gED325p1M9hGm7e8hNTrWk1oAxCuxmy9
-	 iEVZo/7+4ouPBj6jySGz6RzsogWcFaGmQrpjVQchYuIJoCEY5cSdDgGO/udItb1/3t
-	 MqPWOsC7+j7ZUEm8A9BmF0Es+nKRaVpzowcRgRqJMhsA0rYSK6BUJoTclK4mXQN8iV
-	 dPdtSGzTqhto6BkXQMoVkYE3eQs122rcEq6o1b5I1D5+KbbY3Ry5QIsFY3f/9nVqAJ
-	 /zH+eyi3rKtdA==
-Date: Tue, 10 Sep 2024 17:20:07 -0500
+	s=k20201202; t=1726011858;
+	bh=52dbOaQAtE+QBJjRy/7NqFe/CweE7AfpiSDKiTqjnSc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lGfW+LQdt7Hvg6FWWW4JPKtvNm9rou75N0NKO51O5If8V8GEQuEzECS7fs+M0Uonl
+	 cRzvGS8Sz92Cs2kpZ5ZFCE2xXvaWQ7MHzdgxjxchGlB3vJZfN85WFvRwDNUyX5sNi5
+	 EhyXjLXGUQx8ZnNxcdYsWFxUTh80NhM86WTj3d6JvAax2Ni9OkYuNt2sV11aAWfAdf
+	 e5a+rICnZ00EwzhbKE5MH066caMpTYGjWeuqNvB1b0QThx4N0vvPzZ93UDUuQQWmU0
+	 am8J79XYsiueJyXSC3K8hWByRmW0feoHKN5cxclswiZAjVaHkeSRaL3S5LswD/C1go
+	 qr0wQwj+E02ww==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Li Zetao <lizetao1@huawei.com>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>, alsa-devel@alsa-project.org,
-	Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Chancel Liu <chancel.liu@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-sound@vger.kernel.org,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	"J.M.B. Downing" <jonathan.downing@nautel.com>,
-	Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Richard Weinberger <richard@nod.at>, Arnd Bergmann <arnd@arndb.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [Patch v5 02/12] dt-bindings: dma: Add lpc32xx DMA mux binding
-Message-ID: <172600677256.860315.3249804427139743181.robh@kernel.org>
-References: <20240627150046.258795-1-piotr.wojtaszczyk@timesys.com>
- <20240627150046.258795-3-piotr.wojtaszczyk@timesys.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] dt-bindings: clock: mediatek: Drop duplicate mediatek,mt6795-sys-clock.yaml
+Date: Tue, 10 Sep 2024 18:42:37 -0500
+Message-ID: <20240910234238.1028422-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627150046.258795-3-piotr.wojtaszczyk@timesys.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Jun 2024 17:00:20 +0200, Piotr Wojtaszczyk wrote:
-> LPC32XX SoCs use pl080 dma controller which have few request signals
-> multiplexed between peripherals. This binding describes how devices can
-> use the multiplexed request signals.
-> 
-> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> ---
-> Changes for v5:
-> - Corrected property order
-> - Added maxItems to properties
-> - Fixed example
-> - Removed "N:: from the MAINTAINERS entry
-> - Added Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com> to LPC32XX maintainers
-> 
-> Changes for v4:
-> - This patch is new in v4
-> 
->  .../bindings/dma/nxp,lpc3220-dmamux.yaml      | 49 +++++++++++++++++++
->  MAINTAINERS                                   |  9 ++++
->  2 files changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
-> 
+The compatible strings for mt6795 clocks are also documented in other
+schemas:
 
-Applied, thanks!
+"mediatek,mt6795-apmixedsys" in clock/mediatek,apmixedsys.yaml
+"mediatek,mt6795-topckgen" in clock/mediatek,topckgen.yaml
+"mediatek,mt6795-pericfg" in clock/mediatek,pericfg.yaml
+"mediatek,mt6795-infracfg" in clock/mediatek,infracfg.yaml
+
+The only difference is #reset-cells is not allowed in some of these,
+but that aligns with actual users in .dts files.
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../clock/mediatek,mt6795-sys-clock.yaml      | 54 -------------------
+ 1 file changed, 54 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+deleted file mode 100644
+index 378b761237d3..000000000000
+--- a/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
++++ /dev/null
+@@ -1,54 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/clock/mediatek,mt6795-sys-clock.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: MediaTek System Clock Controller for MT6795
+-
+-maintainers:
+-  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+-  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+-
+-description:
+-  The Mediatek system clock controller provides various clocks and system
+-  configuration like reset and bus protection on MT6795.
+-
+-properties:
+-  compatible:
+-    items:
+-      - enum:
+-          - mediatek,mt6795-apmixedsys
+-          - mediatek,mt6795-infracfg
+-          - mediatek,mt6795-pericfg
+-          - mediatek,mt6795-topckgen
+-      - const: syscon
+-
+-  reg:
+-    maxItems: 1
+-
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-required:
+-  - compatible
+-  - reg
+-  - '#clock-cells'
+-
+-additionalProperties: false
+-
+-examples:
+-  - |
+-    soc {
+-        #address-cells = <2>;
+-        #size-cells = <2>;
+-
+-        topckgen: clock-controller@10000000 {
+-            compatible = "mediatek,mt6795-topckgen", "syscon";
+-            reg = <0 0x10000000 0 0x1000>;
+-            #clock-cells = <1>;
+-        };
+-    };
+-- 
+2.45.2
+
