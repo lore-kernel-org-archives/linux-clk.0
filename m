@@ -1,55 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD98F5A;
-	Mon,  9 Sep 2024 23:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2DC770E2;
+	Tue, 10 Sep 2024 04:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725923621; cv=none; b=KX/BAsFy9FwiEyQ6iB/FEDCgNV3VjuxDSDDD/JiHVd+RGCsojyMuCsEFUj4RlABEke9Ks3mnIV4Za1zDSUPSMURZaFgYoEJnip3eJIQ/qUgZVPW4Mp4tGQpk7VjpZhFGQAYPMGnvF330gKt2XNaJtqp0Mdn413ZolFyq0ix7kaw=
+	t=1725941708; cv=none; b=F4KGSN/Hk9EVUE12/Y0R8MBhpjw18sAzrCAeYratFH1kfc+xz1wUsBypFRNnWRYs4r0fSGu5tQDakzDk+ECOrmsTMQVmU9YC8CGVbQjSowXrtz5dNvykwQv+eSRR+yNJcAQNhr2nw3yLzi4clcGt5MF38ex9R5/p8VtmlkcguMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725923621; c=relaxed/simple;
-	bh=voaRQexsgqi637UtNBzxG1lAcobf7Q89NWHna/VDy5o=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=VU6z+gqCcjGhyLnW1JfjKD+1qW2Qn4ssqvJIkzBwiQzitiFSTT7msTt7Pvmu8W42ybwoi/qxTJnDM4rH0vTii2HA/ShFDYgOxhvLJwFFbm/J7SuNbFBq9bvj8iHIG1dRuz8KRXViMQtbe3oAbQYnHpRGflLbA/+RqwAFcfP16Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1KU08Rz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725941708; c=relaxed/simple;
+	bh=ONWChnD4WtjLaVWnzZPF0/WnUFQpyPeRsbfOM8cm0UU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C03RWI1z0d84rylfYtvze+AmOgTRMvx5aWqHYGN/xzEjNcktl0x1NtCyyMkPnu2U6zVx1kc0WNsmfAAAJb1dHg7rXXfPMQSm6lhDqqR0F0dnhllgvFq937mxvANJ+z39RdmCmqaOPnnx4x/esgyJi2z5wUlKs+Fku23ssolrfeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHeCyqzN; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1KU08Rz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 307E9C4CEC5;
-	Mon,  9 Sep 2024 23:13:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725923621;
-	bh=voaRQexsgqi637UtNBzxG1lAcobf7Q89NWHna/VDy5o=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=W1KU08Rz+KgB/ZGt0GC5+VPolQeXAcl7fzBaeHap0puKt0F5R7cWI3NsA2wxA1uWt
-	 hEMf5yojJyxPtInNVFTEl4ju4KvWbSQNHPRzg6vo9ofzcxcRp/MIOqKtti/o91zTI1
-	 nRiQeldT+znzjECXxu+autpEac14gQpDIbwhuu6fSrShFITWcQif+uZsjaenG8yVn9
-	 hMVcKkpdZ5HoMI9qhRJ+x1XOWmsDvs6oIpCpIm0JZbG13HRjEOTfolV1q9wNcOyxgY
-	 rFRhtvCl4GjTKcqA3i0lAqO2Qe43A4QutP5bnoIF7W6JdfhpuZ1zKy541aCXxQbnQf
-	 AxshmVz9E+ViA==
-Message-ID: <8073f2546b0395bb11113650f15dca79.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHeCyqzN"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-277e4327c99so2948992fac.0;
+        Mon, 09 Sep 2024 21:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725941705; x=1726546505; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o+s+5c8Omf1wEXIDwyDQuFABOjgkZQaBttk6gT8y6VY=;
+        b=QHeCyqzNJGWctw5wIFM5ndgGxCc8WxK/lVH/An9601Cvyu1/DS/t4MLLitAqWzdsM+
+         ggxlvy55vPZxZuLxzKcqXARkZ9oYgmksJs8bwQ15OxFZzKg75Xu7a3PvLcdt0KMvNlNb
+         nBBT06kCjszfYwwoHdr5JT1vah7ZbKSbTeATdmN5EzVL8XVZ0QvXuIo9mnt/x7zPmq81
+         N78q5h2+SMqJkyDw9GfipWTQa/NVofvtT9xA1pRTz2pLrmZDCUZ/gDh1TLhfSGcWgR1u
+         3mf5sihR/7ihsQ8gzVK5Of/6CguXIvswey7qnl94GdB9qBv9ksz5CUnEFcB0ggGRYxaK
+         8Ygw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725941705; x=1726546505;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o+s+5c8Omf1wEXIDwyDQuFABOjgkZQaBttk6gT8y6VY=;
+        b=JEfaR1QgQsydVjzDm/BHQZ7ReetG4zRhwr6xPoH8kSWRXLewg9ECHEGsVd+j+c4fyj
+         l90cfhhTSOjUAJ9JL7Y2kf2JiEresewkVyTB7Y9cRZneY4vzGcrVLeEoKquWRr8/BrLZ
+         sC7zABX+TazcTZ9ntyOSpNdtTAiuC8OgNUy8nEHE0i1IygGAWfvj/9EEkonHmWDATuLm
+         T66x/bd9+YjZEVWjGMfiu1bkJKRaFnW2FRX5bqGm7Y65QIrm61f2cE8OxtIYAUoTwGqz
+         7T7BHPW8KskoXrXxAVGH42Ru4BmuYYh6rZ7e57g3u/fAOzRRGYjjJncnR+dEyWQb6sOU
+         6WtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFU096AWinGDdDD6MWibgucxtgLo7JnvY5Jj52gCX77bBKsFoguVFIykBRLgB8CqkwM6C7Gs3XjblLRm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2MADHl+F9LcO+HdGz40jJOnvcu0jeQeSH0uUjVmnjPy6tVrd8
+	eJZF3Fvm7H5+nVzYTsYlwOptF/f8Z+g4o1WSwro6hJXTTcYGYueouCrtLv/J80fwq2pTiD+bC1S
+	/22PI7Rlv8QuKjvsWeEkoKjoEsB/Z1w==
+X-Google-Smtp-Source: AGHT+IFXlsvZmB7pSC0OnIO5zV+J1X5s0KvZEumRTRhAnv5SlVHbn1KE/i0B6VE/5fy7TBX0hfbq75qdHi0DkIT9s7E=
+X-Received: by 2002:a05:6870:610b:b0:25e:1610:9705 with SMTP id
+ 586e51a60fabf-27b82dccc41mr14673171fac.2.1725941705391; Mon, 09 Sep 2024
+ 21:15:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240806142902.224164-1-sergio.paracuellos@gmail.com> <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
+In-Reply-To: <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 10 Sep 2024 06:14:54 +0200
+Message-ID: <CAMhs-H9rJEO8Yje1qsWQ9rt19wLZLbbiVVa3aR_Uwh2QRO9a=Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
+To: Shiji Yang <yangshiji66@outlook.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, tsbogend@alpha.franken.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240909223149.85364-1-heiko@sntech.de>
-References: <20240909223149.85364-1-heiko@sntech.de>
-Subject: Re: [PATCH] dt-bindings: clock, reset: fix top-comment indentation rk3576 headers
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, detlev.casanova@collabora.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Mon, 09 Sep 2024 16:13:39 -0700
-User-Agent: alot/0.10
 
-Quoting Heiko Stuebner (2024-09-09 15:31:49)
-> Block comments should align the * on each line, as checkpatch rightfully
-> pointed out, so fix that style issue on the newly added rk3576 headers.
->=20
-> Fixes: 49c04453db81 ("dt-bindings: clock, reset: Add support for rk3576")
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+Hi Shiji,
 
-Applied to clk-next
+On Mon, Sep 9, 2024 at 1:20=E2=80=AFPM Shiji Yang <yangshiji66@outlook.com>=
+ wrote:
+>
+> On Tue,  6 Aug 2024 16:29:02 +0200, Sergio Paracuellos wrote:
+>
+> >diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mt=
+mips.c
+> >index 50a443bf79ec..787ff3e66b34 100644
+> >--- a/drivers/clk/ralink/clk-mtmips.c
+> >+++ b/drivers/clk/ralink/clk-mtmips.c
+> >@@ -267,6 +267,11 @@ static struct mtmips_clk_fixed rt305x_fixed_clocks[=
+] =3D {
+> >       CLK_FIXED("xtal", NULL, 40000000)
+> > };
+> >
+> >+static struct mtmips_clk_fixed rt3383_fixed_clocks[] =3D {
+>
+> Hi! I found a small issue. The SoC name is rt3883 instead of rt3383.
+
+Ouch :). True. Since I have some other pending patches of this driver
+I will fix this and
+send a new patchset including this fixed.
+
+Thanks,
+    Sergio Paracuellos
+>
+> >+      CLK_FIXED("xtal", NULL, 40000000),
+> >+      CLK_FIXED("periph", "xtal", 40000000)
+> >+};
+> >+
+> > static struct mtmips_clk_fixed rt3352_fixed_clocks[] =3D {
+> >       CLK_FIXED("periph", "xtal", 40000000)
+> > };
+> >@@ -779,8 +784,8 @@ static const struct mtmips_clk_data rt3352_clk_data =
+=3D {
+> > static const struct mtmips_clk_data rt3883_clk_data =3D {
+> >       .clk_base =3D rt3883_clks_base,
+> >       .num_clk_base =3D ARRAY_SIZE(rt3883_clks_base),
+> >-      .clk_fixed =3D rt305x_fixed_clocks,
+> >-      .num_clk_fixed =3D ARRAY_SIZE(rt305x_fixed_clocks),
+> >+      .clk_fixed =3D rt3383_fixed_clocks,
+> >+      .num_clk_fixed =3D ARRAY_SIZE(rt3383_fixed_clocks),
+> >       .clk_factor =3D NULL,
+> >       .num_clk_factor =3D 0,
+> >       .clk_periph =3D rt5350_pherip_clks,
+>
+> Regards,
+> Shiji Yang
