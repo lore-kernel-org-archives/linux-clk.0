@@ -1,96 +1,117 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76B1A0708;
-	Tue, 10 Sep 2024 18:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6234C17A924;
+	Tue, 10 Sep 2024 22:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725994757; cv=none; b=lYGCzaUNL0hlWNvymdQmGYfohqU8xw6/3+p0ceWIo+qCFNJQAQZJVw0q4jiQySoZepsfpejVTeu8Odl/4fj5m2+DqhuMkm2sScvI/tA9x/renxuJZSGEFTOXXtJ3x2y4YAD+JDTZNQ+O/TuL+iGUF10Spg04TBa58Mp4c1mh/U4=
+	t=1726006450; cv=none; b=g1RvLtfmx1XBElJfovP2aBfRHHXBw1o1IVL5vEB2yCNf+dvofKdtgba0dZC0W3afIDxMbPT0fzI333NxvEbWzCb9g9pLp3RrI/FR2+bBssWFHLfJP7IuxZO/Ao2qO/c4s/Oce0wSICR5VeTwBYSS69qMYzTdbx2XkMZAbThe6HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725994757; c=relaxed/simple;
-	bh=f2gKhhCaAZOrRih/26d2mAxc09wPg7jwSjHQwbCur1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyyGYomdZL7cPTtay+q+K+dRO/3r8REOo42RQyITa3eTm42A+SbNpdqkEibNF27b83bx8+AEMyHrPHdKI092eDqI2HxMf+Ik3jbeJ8mYOynAbVO5yyvzNOMwAyYo3NyTA4TpyzxUz9ul3i8Hcbx4wB/kR4MYp2O6melIcU6i3gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s4/P31pr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1726006450; c=relaxed/simple;
+	bh=xyezT7y9nlpRVIh3UdeyEg44+ekoYFwDDBaq+ZQAm04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tISS5bcTuLDE4cLkQ8KXdb7go0rlNAK76URe4t383XDJ3KzNasjyoFzYu4T9ilGGATvl6bNA0QTFk0hfYrGu6bLR5jzJvuL9tH0sIDcethFOutfTfAqbU4XqfpgpNS9KS8SFJarO5QGVTRf2MF9ybCP5JETiuCukIUij1PcksXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKPGahNg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s4/P31pr"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=faIiyJTdeUZNcnYDzrYg0JikXUSOkAxYS32UaSWmdlE=; b=s4/P31prm7EKsDTXjw1Y8d1/aM
-	5f5OUfyiksMzg9/VMCYuTkfiTPc+MB0QV2VCs5X+rH83DbXlVDKkfKc/9lbm0QXT0GBxjceDDJm6w
-	UBJVuBOOJ4R2thDbVP+2eOuES8x4isrTOIz9NiiXRWZv/axiEh5YNpTElyoaxgl3wjqE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1so64s-0078Yb-Mc; Tue, 10 Sep 2024 20:59:02 +0200
-Date: Tue, 10 Sep 2024 20:59:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandra Diupina <adiupina@astralinux.ru>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Message-ID: <82162974-00b5-44c9-bbb8-701e6c871bb0@lunn.ch>
-References: <884103b1-e373-4446-b9fd-1cb06cd75360@lunn.ch>
- <20240910173110.31944-1-adiupina@astralinux.ru>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKPGahNg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04846C4AF09;
+	Tue, 10 Sep 2024 22:14:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726006450;
+	bh=xyezT7y9nlpRVIh3UdeyEg44+ekoYFwDDBaq+ZQAm04=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kKPGahNgIGtIg5pl86yKS59mIlGoLqKIynmh13xXvhH4GdM4AV0WvZqIBSspD4cOm
+	 RwQUwnpSBEoHKBWJZdBvbUWDQgiXv2gOFfJzBBekj9r9XszFsumQtQKmCvieLSKSc1
+	 nw5fzPjRR4+eKbzPz0eCsPWV/Fq6BlqElkvoBYJF/WJnT0ByZM0LNIz4dXr8TnLxgE
+	 NbPRdeaa2jGy+M9pWs1QvD4zq5LmEiZO2o9kg4NL2ICujm2LhU/o3FrYBsATauQsDS
+	 I5R1IhuukAAW1G8/01R7AY/bkw6PS71UnfdvmodsnE98iqtHS7wYdSRRwYEcvb4lfo
+	 BW41/DiA5Rsog==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5356ab89665so7317973e87.1;
+        Tue, 10 Sep 2024 15:14:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU3xQ2CbC1L292nJtH95DqiHcVH2vBNyPwUeRLLIs5uuiKKYFT4x3R61twnqEZPyW9dNoI3Hu/v3q74@vger.kernel.org, AJvYcCVOQzV2wZbYPfSe74OCNZpJxReLhVuvzq3DLsT2yDukWSKXwee1E+X6Ju7qVa/gaZ8SVlN0BpOz/jmBXRnVhj05Bw==@vger.kernel.org, AJvYcCVf99oAoBJkaBE8hjs5ARVCb/q+naFeeO/FFTNbz9X93jDePeZ1W0KOvpjDjDQfM4JQe731XjR4Kmh4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMJAgRy2GTmsDf4jRNHTQfztkjLLpcLIWAJCuRt5fRlbT7umP+
+	iiZjSg6MV7pbWmfs97WUwkvA8FqbyWhbNCKxXo2Fi2mqNpsQBhtQlqWVCk8zOqn7ps/fEp4KY9s
+	yyAEwXZ+ffNjp7TmmHu2abCHwWQ==
+X-Google-Smtp-Source: AGHT+IFvPwRo9z8FDy14Dyiyj2bqiWCSBUDLoZl0L9lIKeqEOJF2/YwFUfDJk9k3Sw4ubOOvQVmvh6ABToN9DxjE2iw=
+X-Received: by 2002:a05:6512:10c3:b0:533:3223:df91 with SMTP id
+ 2adb3069b0e04-536587b9933mr10183673e87.24.1726006448185; Tue, 10 Sep 2024
+ 15:14:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910173110.31944-1-adiupina@astralinux.ru>
+References: <68037ad181991fe0b792f6d003e3e9e538d5ffd7.1673452118.git.geert+renesas@glider.be>
+ <5da02a9b-3d42-a26f-0d18-29a6b5b181e5@seco.com> <20230124091236.1bf8c6da@booty>
+ <CAMuHMdV8_+dF03VD6mST2zMDQ68cgsLLRQi6UeXK2jH-eWqWZg@mail.gmail.com>
+ <232f59aa-704b-a374-6a78-469156ccdbea@seco.com> <83f4f33ebd3706ec7d35acd807b1e44b.sboyd@kernel.org>
+ <20230322093918.33690db3@booty>
+In-Reply-To: <20230322093918.33690db3@booty>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 10 Sep 2024 17:13:55 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKj6A=GvgaZCd9jiF71YPGuQSKJ9Ob6erHT45q8vRR13w@mail.gmail.com>
+Message-ID: <CAL_JsqKj6A=GvgaZCd9jiF71YPGuQSKJ9Ob6erHT45q8vRR13w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clk: vc5: Make SD/OE pin configuration
+ properties not required
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Sean Anderson <sean.anderson@seco.com>, 
+	Michael Turquette <mturquette@baylibre.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-reneas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 08:31:10PM +0300, Alexandra Diupina wrote:
-> get_div() may return zero, so it is necessary to check
-> before calling DIV_ROUND_UP_ULL().
-> 
-> Return value of get_div() depends on reg1, reg2, shift1, shift2
-> fields of clk_double_div structure which are filled using the
-> PERIPH_DOUBLEDIV macro. This macro is called from the
-> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
-> 
-> It is not known exactly what values can be contained in the registers
-> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
-> div can be zero. Print an error message and return 0 in this case.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
-> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
-> ---
-> v2: added explanations to the commit message and printing 
-> of an error message when div==0
->  drivers/clk/mvebu/armada-37xx-periph.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> index 8701a58a5804..8e749a354ffc 100644
-> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> @@ -343,7 +343,13 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
->  	div = get_div(double_div->reg1, double_div->shift1);
->  	div *= get_div(double_div->reg2, double_div->shift2);
->  
-> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> +	if (!div) {
-> +		pr_err("Can't recalculate the rate of clock %s\n",
-> +										hw->init->name);
+On Wed, Mar 22, 2023 at 3:39=E2=80=AFAM Luca Ceresoli <luca.ceresoli@bootli=
+n.com> wrote:
+>
+> Hello Stephen,
+>
+> On Mon, 20 Mar 2023 14:27:56 -0700
+> Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> > Quoting Sean Anderson (2023-01-24 08:23:45)
+> > > On 1/24/23 03:28, Geert Uytterhoeven wrote:
+> > > > Hi Luca,
+> > > >
+> > > > On Tue, Jan 24, 2023 at 9:12 AM Luca Ceresoli <luca.ceresoli@bootli=
+n.com> wrote:
+> > > >> On Thu, 19 Jan 2023 14:27:43 -0500
+> > > >> Sean Anderson <sean.anderson@seco.com> wrote:
+> > > >> > On 1/11/23 10:55, Geert Uytterhoeven wrote:
+> > > >
+> > > >> I'm wondering whether Geert has a practical example of a situation
+> > > >> where it is better to have these properties optional.
+> > > >
+> > > > My issue was that these properties were introduced long after the
+> > > > initial bindings, hence pre-existing DTS does not have them.
+> > > > Yes, we can add them, but then we have to read out the OTP-programm=
+ed
+> > > > settings first. If that's the way to go, I can look into that, thou=
+gh...
+> > >
+> > > FWIW I think there's no need to update existing bindings which don't
+> > > have this property. The required aspect is mainly a reminder for new
+> > > device trees.
+> > >
+> >
+> > Is there any resolution on this thread? I'm dropping this patch from my
+> > queue.
+>
+> IIRC Geert kind of accepted the idea that these properties should stay
+> required. Which is a bit annoying but it's the safest option, so unless
+> there are new complaints with solid use cases for making them optionalm,
+> I think it's OK to drop the patch.
 
-Rather odd indentation!
+The warnings related to this are now at the top of the list (by number
+of occurrences):
 
-It is too late for this merge window. Please fix this and repost on
-top of 6.12-rc1.
+     50 clock-generator@6a: 'idt,shutdown' is a required property
+     50 clock-generator@6a: 'idt,output-enable-active' is a required proper=
+ty
 
-Thanks
-	Andrew
+IMO, if these properties haven't been needed for years, then they
+obviously aren't really required.
+
+Rob
