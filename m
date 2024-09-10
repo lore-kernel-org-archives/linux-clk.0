@@ -1,116 +1,96 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37CC2AD13
-	for <linux-clk@vger.kernel.org>; Tue, 10 Sep 2024 18:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76B1A0708;
+	Tue, 10 Sep 2024 18:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725994539; cv=none; b=vBKErUNd7GUk3CD5cmxz+GY5tEhhl76qAkk6LAQGAlIT0A8UbvUcWKOUAaWlDoqn0dRSvIWqOASvAIiFESWO9m6du8T++YPfgHe7ZngwfYoAs7nwB6bFd4hU+WR52p80b7lTBHMMXzr1VCeB4Rum257N2QHH+OBt37DyCOHvsOA=
+	t=1725994757; cv=none; b=lYGCzaUNL0hlWNvymdQmGYfohqU8xw6/3+p0ceWIo+qCFNJQAQZJVw0q4jiQySoZepsfpejVTeu8Odl/4fj5m2+DqhuMkm2sScvI/tA9x/renxuJZSGEFTOXXtJ3x2y4YAD+JDTZNQ+O/TuL+iGUF10Spg04TBa58Mp4c1mh/U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725994539; c=relaxed/simple;
-	bh=o6nx0UKbm5bX64t0WzJHvUk0BXzglcXipBk50rc0cK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uaGrN8G4+wXLJd2DzJp2En04nT1uoWaObOR3AQ34Ol+UB8RAxVgyRXg+nayXqJkQNq8zqexk3l6304lYrgNszJqTvfF0K0CrSvjHomLx7rI6vyTHOh4VFREWI1/0NQyCE8Q/smwcx0w6S9AtJ6pmM3TG4P0mIKE7Ns/suSf7c6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TDpkkNMP; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725994757; c=relaxed/simple;
+	bh=f2gKhhCaAZOrRih/26d2mAxc09wPg7jwSjHQwbCur1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hyyGYomdZL7cPTtay+q+K+dRO/3r8REOo42RQyITa3eTm42A+SbNpdqkEibNF27b83bx8+AEMyHrPHdKI092eDqI2HxMf+Ik3jbeJ8mYOynAbVO5yyvzNOMwAyYo3NyTA4TpyzxUz9ul3i8Hcbx4wB/kR4MYp2O6melIcU6i3gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s4/P31pr; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TDpkkNMP"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6db9e47ee79so7687747b3.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Sep 2024 11:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725994537; x=1726599337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6nx0UKbm5bX64t0WzJHvUk0BXzglcXipBk50rc0cK0=;
-        b=TDpkkNMPliX3eEVCl+gK5A2yze+0WgfhKO9o5cHvxNPM/voYhw3YFLmxT2QMvZ+rvW
-         Hcuim61A7T0dvD4KwzkiHhxfoDaIGG+weEJnr/8l1b/oxTb8tBPe+lS02FfV8YjXVEGK
-         NvyNacUktMBXfa+9XTTjxDsVz29pXPYljP7kkZgiBa7fueGQqqVYOykU3uTrautInO9Y
-         TkMXhrlHi9VwBaW8Ld+rHwo4YCBwJQrPL+Ag9DACWJSagVSyUwr6P+Jk1WUza9eoSDAh
-         uKigAfYT7zZIwQNcCd6wEaSadH5Zc5TgQ5b1Esr5SXJsJnLsP6qCRmcqRzAY+7wzpfsf
-         AS0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725994537; x=1726599337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o6nx0UKbm5bX64t0WzJHvUk0BXzglcXipBk50rc0cK0=;
-        b=uNxOycTlTLANZj5bUew7+EhlwXrrmFj5ZRtHHyoYYMEVC074gm9CjgC88h+44NPtN4
-         A/EBA1OZtRNouRCpAbBohuXm/EBO9oB6+7PAr7LSscM80wz+B0deTOPFA1d1fdXmvM1H
-         4PdXSrNJrE4LFbIkfLr2TfVRR0sfZGwxU38p6/iQrvqX9s7IEWyGuutG/UCCr8OjtbjU
-         VNbhh/m4wbrGNQl9goH5JdvvfWjWEiTj8BfJe+juqe6/ZMWxHzsTRJyPXyJxHPUNWMXI
-         K77G4MTe8Nt9HBignSPblciXOgBW7PFlKj5+8QaCJqJGVGxdl/jZMNh+ml2V3w2RtkQO
-         SK2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWlEeK+cDvfRuoBrzCU3so4Q59XhKBA1323YL1V8uZHlxuyUxlrnauogJdWpl3FhuQjwyLgRGFUNvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBcGUh5Rwr1vsUBHlA1x1Qdca0D01SCKCQLFbehDujob/ssdkZ
-	Gpp2hfGglNgcVQMy3IpaUT1QtMA4Q1G5B+SAACm8n0bQPUbUlzoxWPakr9/pH+hutYLG8OuahxL
-	qJbZEnp9lKHF/4uMfOfcTgudY7MYJSSQYZOMTGg==
-X-Google-Smtp-Source: AGHT+IHRnJG2FAr96myhBN/iC+lCC23dv/0Awgq54gvlnMb7Q4o7VlXqe2J8odG8+/yujy8sFPRnNQC/N/ypUMfjj/c=
-X-Received: by 2002:a05:690c:4982:b0:6db:2d71:916 with SMTP id
- 00721157ae682-6db44df3824mr197358267b3.14.1725994536995; Tue, 10 Sep 2024
- 11:55:36 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s4/P31pr"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=faIiyJTdeUZNcnYDzrYg0JikXUSOkAxYS32UaSWmdlE=; b=s4/P31prm7EKsDTXjw1Y8d1/aM
+	5f5OUfyiksMzg9/VMCYuTkfiTPc+MB0QV2VCs5X+rH83DbXlVDKkfKc/9lbm0QXT0GBxjceDDJm6w
+	UBJVuBOOJ4R2thDbVP+2eOuES8x4isrTOIz9NiiXRWZv/axiEh5YNpTElyoaxgl3wjqE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1so64s-0078Yb-Mc; Tue, 10 Sep 2024 20:59:02 +0200
+Date: Tue, 10 Sep 2024 20:59:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <82162974-00b5-44c9-bbb8-701e6c871bb0@lunn.ch>
+References: <884103b1-e373-4446-b9fd-1cb06cd75360@lunn.ch>
+ <20240910173110.31944-1-adiupina@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240809115500epcas1p44cb69cea78a73833de38eab552b204fc@epcas1p4.samsung.com>
- <20240809-clk_dpum-v3-0-359decc30fe2@samsung.com> <2e4d3d180f535e57d9cb98e7bac1d14b51ffc5d4.camel@gmail.com>
- <337666703c41856e61f4cc2dee7e69c276d5102b.camel@yahoo.com>
-In-Reply-To: <337666703c41856e61f4cc2dee7e69c276d5102b.camel@yahoo.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 10 Sep 2024 13:55:25 -0500
-Message-ID: <CAPLW+4kmufpcwTSm1Rf2HEs2hNW-7pqSbxvt7py=PAmQ324Xfw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] dpum clock support for Exynos Auto v9 SoC
-To: Kwanghoon Son <kwangson@yahoo.com>, David Virag <virag.david003@gmail.com>
-Cc: Kwanghoon Son <k.son@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chanho Park <chanho61.park@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jaewon Kim <jaewon02.kim@samsung.com>, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910173110.31944-1-adiupina@astralinux.ru>
 
-On Fri, Aug 23, 2024 at 9:56=E2=80=AFAM Kwanghoon Son <kwangson@yahoo.com> =
-wrote:
+On Tue, Sep 10, 2024 at 08:31:10PM +0300, Alexandra Diupina wrote:
+> get_div() may return zero, so it is necessary to check
+> before calling DIV_ROUND_UP_ULL().
+> 
+> Return value of get_div() depends on reg1, reg2, shift1, shift2
+> fields of clk_double_div structure which are filled using the
+> PERIPH_DOUBLEDIV macro. This macro is called from the
+> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
+> 
+> It is not known exactly what values can be contained in the registers
+> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
+> div can be zero. Print an error message and return 0 in this case.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
+> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+> ---
+> v2: added explanations to the commit message and printing 
+> of an error message when div==0
+>  drivers/clk/mvebu/armada-37xx-periph.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 8701a58a5804..8e749a354ffc 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -343,7 +343,13 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+>  	div = get_div(double_div->reg1, double_div->shift1);
+>  	div *= get_div(double_div->reg2, double_div->shift2);
+>  
+> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> +	if (!div) {
+> +		pr_err("Can't recalculate the rate of clock %s\n",
+> +										hw->init->name);
 
-[snip]
+Rather odd indentation!
 
->
-> > If you are not working on a DSIM driver, I'll keep working on it for
-> > 7885. If you are, I'll have to think about how to move forward.
-> >
-> > Best regards,
-> > David
->
-> + I added Sam Protsenko <semen.protsenko@linaro.org>
-> Because I also want to know maybe he has some process for drm, since he
-> worked on exynos850 sysmmu.
->
+It is too late for this merge window. Please fix this and repost on
+top of 6.12-rc1.
 
-I'm not working on DRM at the moment. After enabling SysMMU I've
-switched to other Exynos tasks, not related to graphics. FWIW, I've
-implemented the test driver for SysMMU, which you can use to verify
-your SysMMU driver is functional. It's able to perform address
-translations initiated from the test driver (using regular CPU). That
-way you can test your SysMMU without DPU or other IP blocks initiating
-the translation. You can find SysMMU test driver in GitHub repo [1],
-and the commit adding the driver is [2].
-
-All that said, I'd be excited to see DRM working on Exynos850 some
-day! So please keep me in the loop, and let me know if I can help
-somehow (by testing the code, etc).
-
-Thanks!
-
-[1] https://github.com/joe-skb7/linux/tree/e850-96-mainline-iommu
-[2] https://github.com/joe-skb7/linux/commit/d712fb52a12ac0958118f9c23a4f1f=
-0d7b9276a7
-
-[snip]
+Thanks
+	Andrew
