@@ -1,249 +1,142 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D0D19C552
-	for <linux-clk@vger.kernel.org>; Wed, 11 Sep 2024 15:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975651AE038;
+	Wed, 11 Sep 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726068761; cv=none; b=r1JtoPlG9M6+pNbMM7Z++a4RaP0iSzerKAuJIEeNOpcc19oWmhBh4IgFc+8xfZMHjyGI8+oFBQQSlT04taT3+eHBRz2mgI3Cj/ZLEXeejsXUB6QSJSeLOV8wkdmg3WLKLl0/RyZe0Du0xQsMjhFPejhPCXCBokMhvQFoHxKgBqQ=
+	t=1726071577; cv=none; b=DwareqghLs8ZCLBL2HVXbZlsNyZFD9XcutXMn3RYCUMm8wYzPmqUIVf74btP1agTmlbpAMkiVTUsjjtPtiX9TTxjSIrOOFW1fDdKeRh83eFv/mwenPlXImlfe9aCHvGS0U8oTUK6bUdNpLvw61DgswGQ4eK6v4L6rN5cI1tmdN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726068761; c=relaxed/simple;
-	bh=n/THAopzoKNb9ho6jlx1u+EKvseKQuYpJqcPQgFMlqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfYTnO1P3j7dGTftYOQwF1qknkSisrCNuqkAdUqWhC0YrkxeR1QlO2PFBHwcOBbp0NcKft3ZDySUC+EcMbUG1hNrTIcalogR9RVFstRLoHoSP7etkNbEXTLTjO6BH0xHftWEiqnBXLDkrV7QEXzPeLlIO4dXEZb+rUSzt8nuWsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLuxYG2o; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726071577; c=relaxed/simple;
+	bh=lwlZJUmP9LcD4uQACLs3u1hgzJYRAuuAtfArazJJYQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UyerrgMSeXDAK+fCv4JTOcQ5E02VdQxUt8nHDJe9qEMLMguonm8uYfzOjsgRWAo2e4YWccMiTwF79Ukwl6kiQCII0qfq7FeYd0i2Czwr99ut+u+11CaKsYOhg+TPgKF1t6LJ6gp4qnif2OnYOAdWnQmOihIEowdre0Y/xMVCQJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiSrTmDv; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLuxYG2o"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718816be6cbso4914307b3a.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Sep 2024 08:32:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiSrTmDv"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so2546354e87.2;
+        Wed, 11 Sep 2024 09:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726068759; x=1726673559; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JUnLTmnkKuTjduDvDakmnEv59zQ17ggV64w/1jebL68=;
-        b=TLuxYG2o17aScjBLybw279ioBxR58blaPAE4nIApf+9a9PaFvqMsxOQat190ivSi8v
-         jD4fkfx0tFXfTEbM2/2K3x4Nob2Kymauq4QdP4f6lXfgwarMubQKd/4yKbNeVO+/zfIu
-         VExs1w+kS0bOVwSvjcSNWBD1d3RJxgqgcu3VvRTen+cnLjtjnsCV4ELJxCRVPGseKNh7
-         c1pDkFcTFDcjfr0LpyPJCVupp1NACHgEZHRg8o1uhN0JwLnh2X4S1qMI8y8qkjCFCDW8
-         a2z7sF3ruBXWYnC3TJyJSY4n+CzhlPgVGnvS5ByCIv0ogdwfrfnA4z48YOp/TXFaXP8g
-         EnwA==
+        d=gmail.com; s=20230601; t=1726071573; x=1726676373; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lwlZJUmP9LcD4uQACLs3u1hgzJYRAuuAtfArazJJYQ8=;
+        b=iiSrTmDv8zWDM8Ce73mbj+NyaBn86kLAblS5UiNGEoVmNOhBIONY27IztzWeZMxbqr
+         Ithukyn0UJu4g/kuETqapeg5ZRLo5Ppc+m070OAqOwarsuvcjCMGgKtmFJgwE9B//Ky7
+         iDGp2vTSo+Lcv9NMcitPDyWaW/1vene1DIBSUKeC4srHZhJZHTk/Mebabxi1I75/1qkD
+         MhYJ/TufTFnHhHLC2jPseOj+jp0PtzEzp8RbTU82K/TJgSOWQLmyNwGvYMLsRJcHxtQL
+         HdJJvOMknQdRTKb4Gt/CBZID3YAPB3Ryv8hru0Y7EvfRgPhr89cmUSZZb0kAiA7HLWb8
+         Co+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726068759; x=1726673559;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JUnLTmnkKuTjduDvDakmnEv59zQ17ggV64w/1jebL68=;
-        b=sH3etTFAcXaRJEC4f2MloxB7Yg+SkFPq5DuOkuQ1C2rji+jsfuHp4MnLaNAhxG9uee
-         oTHvXoNIkDzr9+CGBEVfh3/aJ1mvvt+XDlLRDivlG9hBQQlBJdLZswnIxRz1P6OgWWau
-         Cvd6o4DGS6YAvBX6Y1h/VPvNtMHHqMACEk+C1RNZjnUt7ywu/b93/ueu+QVY/4A0/yKB
-         QyyV3A+0l84/7Nmujx/OeZmvRzjXZDmTZ1hmih9GP0A4UYUMVD5gSjZKYtjfZ8OBny33
-         lc47Ah3wUMUmTQH1C481mlU95DaTxmoKAJHW5bidsZB05UAjYOcbelyppz1RJDtkvL06
-         twJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYylcIpM4QfT/CwFoELzAZ2AQ7BOZ9Lj+iEteBJyqbX5mc4BJvQMz07pRKb6qaekP2fic9AQ7xRcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyYB6vGUwtx4+sGaHcrlF8np7ZB3eJCVmkUluhuFUfCKt24boF
-	cWRDOqKqbl9q6HuODlxfOgtrDBrClq0KvjbRgUEmYPo0r3Nb38D9Jnn/mH1Y5g==
-X-Google-Smtp-Source: AGHT+IEgOgO8muSou4mMHOAUIftNXmTF9h5ug/uQEGPL0Bqkvr313ObMh3MqMwuRezxyzZzkjOshzA==
-X-Received: by 2002:a05:6a00:4fc3:b0:717:fd98:4a6 with SMTP id d2e1a72fcca58-718e3fc0534mr21290930b3a.11.1726068758507;
-        Wed, 11 Sep 2024 08:32:38 -0700 (PDT)
-Received: from thinkpad ([120.60.130.207])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fdf67b0sm108896a12.79.2024.09.11.08.32.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 08:32:38 -0700 (PDT)
-Date: Wed, 11 Sep 2024 21:02:28 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, vkoul@kernel.org,
-	kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com,
-	lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
-Message-ID: <20240911153228.7ajcqicxnu2afhbp@thinkpad>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-9-quic_qianyu@quicinc.com>
- <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
- <20240827165826.moe6cnemeheos6jn@thinkpad>
- <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
+        d=1e100.net; s=20230601; t=1726071573; x=1726676373;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lwlZJUmP9LcD4uQACLs3u1hgzJYRAuuAtfArazJJYQ8=;
+        b=MCAjyhocAiHCTRtMSPk6GQg+qBG5D83yp6QQesc1GY5F87KPhBlAe4mp+ybmBx5jgv
+         qRkIY7JExLPmwkoH1BGBfedL36Xbvs2NXOjGc2BDeZau+4GiscTn9UOOYaCS54ZWX2iL
+         mTeneXAII6p5TuB9wEfo+yVweQWZeK4Ur4XDmlvIq2F4HBw12T1vnnhwJv0Az02XY+xT
+         y02Bl3jBVLFooSyXGHL0HZxvAEu/zQu++/2i1QLp1TraF5i1TXlu+HolymNENaW18xd6
+         XPTR0F+xguSqjaJB4MxHmLWGCQI4tUtF8KQHzycy4h/1Sl9WfbeqjcSFh1sm9dkrqbHp
+         6LJA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8rkarfVLONkvil1WbvogxEGRPyeEywOdMoVFRF+riawz2LDh2KJX9hSc7OYpW+1EsF52uRGCtVrINRg==@vger.kernel.org, AJvYcCUxwGUFCLklMaxZreI47KDFTf2UTUA5uO4z16LCGlwZGmOydA9loUzwEn71JSUl4hdIzcrBy8I8mF5P53yl@vger.kernel.org, AJvYcCVKGify8M11hK1Ly6U6pnlAXzdx+6BY3W5qQnfRAzJbS911bvVF0YKknu+VJy1R3yU+zCj+ACRZhYDp@vger.kernel.org, AJvYcCVTq/+DINN7eoathAlwqUssl0RGIyHbCNoqTHkV649iCzq1DJq3hxezE1lsukSIflBXZHG2Xm+LxkwZ@vger.kernel.org, AJvYcCViGBGRIwRDtO53gtbBPLf9pnx4oMvOBMsyHSQP1lTLH9EDBlsmwwrDDgNCpbvvKRBEn821IkF/W7BL@vger.kernel.org, AJvYcCVoFGDFijezUCqEDKiYBOkzxr5LY8zg849EO3R1STLNb9WkcfcK23fJ8fm7UhRFvrImKdh0wG7iU44=@vger.kernel.org, AJvYcCW03NDG0TsX6ZLihBupK4TmIrIlPCufHgOxa8bFRTMSrdG1lvRZdSol991EPKDILAfcG1GBTcyqUBvvIsA=@vger.kernel.org, AJvYcCW8ZRFtXIp/aUawUB5qJL78+uCIL2rm742yO4lbso/GsgXS1vZ1bpKfTORD//EZR6hyBRu1SiNrFMC9@vger.kernel.org, AJvYcCWcVDfTCzZ3ELzePXhUVICP9RshYHigXXoICuWPV9Qgy1ghGEoo/1vefe32SVhpoIpTPO5kDkebXEDBbgjWEp8=@vger.kernel.org, AJvYcCX48OZS5U9iF9erUTOdWN2H/MeIYafbohTjAEdGwXQ7+2Esg5rjH+yqEy3rl2vVk6nge9IxMLtn@vger.kernel.org, AJvYcCXP551LEphZJwnn28J1Kvr3iaWsS45S9PifNrjd9mFrVBBUGqrHj28i8zXPFOJR6vHtdyEABRIsjHXW2Gs=@vger.kernel.org, AJvYcCXWCc9ImALnuuLTdRm0AxwBJu8S7DCnZJts2b+yLg/v7fD8AaACxAPelx1/skYadEcO93FIAK0dr7Dc@vger.kernel.org, AJvYcCXkrhJNRUyiNCOgpJ4m63v5C32O2ge3tlu76+dpHbI1R+7Ck1om8ODUzRunM9PJIhU+7Qs7zwfIhVs7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBbdQw4f1RmKmDCsAdAeymkqq568iWSS/3rmoQaTU7el3Eugw5
+	5teNXOJSy1rqkEoa7yjoI5zhbpyEM06h2y05z4rkWmjjC5yS5YNPibbxGH31IV0SNHiA/COi85u
+	bD+I9osT1UPW5wEdWtfNbdXePy4U=
+X-Google-Smtp-Source: AGHT+IEfiqu9Tkr72UxQfCKwEwXNERhL9+EEF5iQAUfNY4YtEQqPnVlXr1xTzedLm0smIgh8R+iSdzkbG8ZOJ96JeDI=
+X-Received: by 2002:a05:6512:10d6:b0:52b:bf8e:ffea with SMTP id
+ 2adb3069b0e04-53673c96a84mr2008337e87.40.1726071572960; Wed, 11 Sep 2024
+ 09:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
+References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
+ <CAHp75Veusv=f6Xf9-gL3ctoO5Njn7wiWMw-aMN45KbZ=YB=mQw@mail.gmail.com>
+ <0e3902c9a42b05b0227e767b227624c6fe8fd2bb.camel@maquefel.me> <cff6b9b6-6ede-435a-9271-829fde82550d@app.fastmail.com>
+In-Reply-To: <cff6b9b6-6ede-435a-9271-829fde82550d@app.fastmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 11 Sep 2024 19:18:56 +0300
+Message-ID: <CAHp75Vc2Dbj0GAua4b85L8jgcGzdBfMdRgnuTSWNiGj0zKHU7A@mail.gmail.com>
+Subject: Re: [PATCH v12 00/38] ep93xx device tree conversion
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nikita Shubin <nikita.shubin@maquefel.me>, 
+	Hartley Sweeten <hsweeten@visionengravers.com>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Lukasz Majewski <lukma@denx.de>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Mark Brown <broonie@kernel.org>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Sergey Shtylyov <s.shtylyov@omp.ru>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Ralf Baechle <ralf@linux-mips.org>, Aaron Wu <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, 
+	Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	Netdev <netdev@vger.kernel.org>, linux-mtd@lists.infradead.org, 
+	linux-ide@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-sound@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 11, 2024 at 04:17:41PM +0800, Qiang Yu wrote:
-> 
-> On 8/28/2024 12:58 AM, Manivannan Sadhasivam wrote:
-> > On Tue, Aug 27, 2024 at 02:44:09PM +0300, Dmitry Baryshkov wrote:
-> > > On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
-> > > > On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
-> > > > support to use 3.3v, 3.3v aux and 12v regulators.
-> > > First of all, I don't see corresponding bindings change.
-> > > 
-> > > Second, these supplies power up the slot, not the host controller
-> > > itself. As such these supplies do not belong to the host controller
-> > > entry. Please consider using the pwrseq framework instead.
-> > > 
-> > Indeed. For legacy reasons, slot power supplies were populated in the host
-> > bridge node itself until recently Rob started objecting it [1]. And it makes
-> > real sense to put these supplies in the root port node and handle them in the
-> > relevant driver.
-> > 
-> > I'm still evaluating whether the handling should be done in the portdrv or
-> > pwrctl driver, but haven't reached the conclusion. Pwrctl seems to be the ideal
-> > choice, but I see a few issues related to handling the OF node for the root
-> > port.
-> > 
-> > Hope I'll come to a conclusion in the next few days and will update this thread.
-> > 
-> > - Mani
-> > 
-> > [1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
-> Hi Mani, do you have any updates?
-> 
+On Wed, Sep 11, 2024 at 6:13=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Mon, Sep 9, 2024, at 09:02, Nikita Shubin wrote:
+> > On Mon, 2024-09-09 at 11:49 +0300, Andy Shevchenko wrote:
+> >> On Mon, Sep 9, 2024 at 11:12=E2=80=AFAM Nikita Shubin via B4 Relay
+> >> <devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
+> >> >
+> >> > The goal is to recieve ACKs for all patches in series to merge it
+> >> > via Arnd branch.
+> >> >
+> >> > It was decided from the very beginning of these series, mostly
+> >> > because
+> >> > it's a full conversion of platform code to DT and it seemed not
+> >> > convenient to maintain compatibility with both platform and DT.
+> >> >
+> >> > Following patches require attention from Stephen Boyd or clk
+> >> > subsystem:
+> >>
+> >> Does it mean you still have a few patches without tags?
+> >> What are their respective numbers?
+> >
+> > The clk is the last one as i think, all others can be ACKed by
+> > Alexander or by Arnd himself.
+>
+> I've merged the series into the for-next branch of the arm-soc
+> tree now. The timing isn't great as I was still waiting for
+> that final Ack, but it seem better to have it done than to keep
+> respinning the series.
+>
+> I won't send it with the initial pull requests this week
+> but hope to send this one once I get beck from LPC, provided
+> there are no surprises that require a rebase.
 
-I'm working with Bartosz to add a new pwrctl driver for rootports. And we are
-debugging an issue currently. Unfortunately, the progress is very slow as I'm on
-vacation still.
+Thank you!
 
-Will post the patches once it got resolved.
+This, in particular, will move forward to the GPIO descriptor and
+getting rid of old legacy GPIO APIs.
 
-- Mani
-
-> Thanks,
-> Qiang
-> > 
-> > > > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > > > ---
-> > > >   drivers/pci/controller/dwc/pcie-qcom.c | 52 +++++++++++++++++++++++++-
-> > > >   1 file changed, 50 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > index 6f953e32d990..59fb415dfeeb 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > @@ -248,6 +248,8 @@ struct qcom_pcie_cfg {
-> > > >          bool no_l0s;
-> > > >   };
-> > > > 
-> > > > +#define QCOM_PCIE_SLOT_MAX_SUPPLIES                    3
-> > > > +
-> > > >   struct qcom_pcie {
-> > > >          struct dw_pcie *pci;
-> > > >          void __iomem *parf;                     /* DT parf */
-> > > > @@ -260,6 +262,7 @@ struct qcom_pcie {
-> > > >          struct icc_path *icc_cpu;
-> > > >          const struct qcom_pcie_cfg *cfg;
-> > > >          struct dentry *debugfs;
-> > > > +       struct regulator_bulk_data slot_supplies[QCOM_PCIE_SLOT_MAX_SUPPLIES];
-> > > >          bool suspended;
-> > > >          bool use_pm_opp;
-> > > >   };
-> > > > @@ -1174,6 +1177,41 @@ static int qcom_pcie_link_up(struct dw_pcie *pci)
-> > > >          return !!(val & PCI_EXP_LNKSTA_DLLLA);
-> > > >   }
-> > > > 
-> > > > +static int qcom_pcie_enable_slot_supplies(struct qcom_pcie *pcie)
-> > > > +{
-> > > > +       struct dw_pcie *pci = pcie->pci;
-> > > > +       int ret;
-> > > > +
-> > > > +       ret = regulator_bulk_enable(ARRAY_SIZE(pcie->slot_supplies),
-> > > > +                                   pcie->slot_supplies);
-> > > > +       if (ret < 0)
-> > > > +               dev_err(pci->dev, "Failed to enable slot regulators\n");
-> > > > +
-> > > > +       return ret;
-> > > > +}
-> > > > +
-> > > > +static void qcom_pcie_disable_slot_supplies(struct qcom_pcie *pcie)
-> > > > +{
-> > > > +       regulator_bulk_disable(ARRAY_SIZE(pcie->slot_supplies),
-> > > > +                              pcie->slot_supplies);
-> > > > +}
-> > > > +
-> > > > +static int qcom_pcie_get_slot_supplies(struct qcom_pcie *pcie)
-> > > > +{
-> > > > +       struct dw_pcie *pci = pcie->pci;
-> > > > +       int ret;
-> > > > +
-> > > > +       pcie->slot_supplies[0].supply = "vpcie12v";
-> > > > +       pcie->slot_supplies[1].supply = "vpcie3v3";
-> > > > +       pcie->slot_supplies[2].supply = "vpcie3v3aux";
-> > > > +       ret = devm_regulator_bulk_get(pci->dev, ARRAY_SIZE(pcie->slot_supplies),
-> > > > +                                     pcie->slot_supplies);
-> > > > +       if (ret < 0)
-> > > > +               dev_err(pci->dev, "Failed to get slot regulators\n");
-> > > > +
-> > > > +       return ret;
-> > > > +}
-> > > > +
-> > > >   static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > >   {
-> > > >          struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > > @@ -1182,10 +1220,14 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > > 
-> > > >          qcom_ep_reset_assert(pcie);
-> > > > 
-> > > > -       ret = pcie->cfg->ops->init(pcie);
-> > > > +       ret = qcom_pcie_enable_slot_supplies(pcie);
-> > > >          if (ret)
-> > > >                  return ret;
-> > > > 
-> > > > +       ret = pcie->cfg->ops->init(pcie);
-> > > > +       if (ret)
-> > > > +               goto err_disable_slot;
-> > > > +
-> > > >          ret = phy_set_mode_ext(pcie->phy, PHY_MODE_PCIE, PHY_MODE_PCIE_RC);
-> > > >          if (ret)
-> > > >                  goto err_deinit;
-> > > > @@ -1216,7 +1258,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > >          phy_power_off(pcie->phy);
-> > > >   err_deinit:
-> > > >          pcie->cfg->ops->deinit(pcie);
-> > > > -
-> > > > +err_disable_slot:
-> > > > +       qcom_pcie_disable_slot_supplies(pcie);
-> > > >          return ret;
-> > > >   }
-> > > > 
-> > > > @@ -1228,6 +1271,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
-> > > >          qcom_ep_reset_assert(pcie);
-> > > >          phy_power_off(pcie->phy);
-> > > >          pcie->cfg->ops->deinit(pcie);
-> > > > +       qcom_pcie_disable_slot_supplies(pcie);
-> > > >   }
-> > > > 
-> > > >   static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
-> > > > @@ -1602,6 +1646,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
-> > > >                          goto err_pm_runtime_put;
-> > > >          }
-> > > > 
-> > > > +       ret = qcom_pcie_get_slot_supplies(pcie);
-> > > > +       if (ret)
-> > > > +               goto err_pm_runtime_put;
-> > > > +
-> > > >          ret = pcie->cfg->ops->get_resources(pcie);
-> > > >          if (ret)
-> > > >                  goto err_pm_runtime_put;
-> > > > --
-> > > > 2.34.1
-> > > > 
-> > > 
-> > > -- 
-> > > With best wishes
-> > > Dmitry
-
--- 
-மணிவண்ணன் சதாசிவம்
+--=20
+With Best Regards,
+Andy Shevchenko
