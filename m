@@ -1,87 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E531BA26C;
-	Wed, 11 Sep 2024 19:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A173D3B8;
+	Wed, 11 Sep 2024 21:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726082229; cv=none; b=ow/nmnVtwWJn39KH1l3TdBJtGBFgNDNv8IULwKqyZo4cd5yjZKNSKgPNie+XEogz0oZSFwHPlZW+loyuI8qr3P7+QHhZE9LqAoFxfMvjp+obMZ0AYhHfXqUw2iwdHUJqmRmTc2f1MdV2QgPMXdDsV/2Lb+FfoTnAuVTGkfi414o=
+	t=1726089645; cv=none; b=TKyOAzed+YlH3/SyQn9V+qg1GskcMxJO//rO58Ldx3msfQNSkAw1RC2js9N+UoCiisMehYaB8BSVix8R3q+nsvU3Y1/4Be8rekdEAJQalfTfzxQDIY2lQHPexKPjHKZ3V65O6AMLI3kbtK+qSLHMb0qUXRBTb8ZmnBvVaW7DKqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726082229; c=relaxed/simple;
-	bh=3x34o9ccfmgr+Yc5/Xm+YmpddZXSeb8HJ9VjzD4S6cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlR0Yz6PopZHs8vqelKXbNGqiyR0J5VLBjc/O9GB87GKTGYz7aveUDqpvnu45Fsm5Y+4NUYUkL8J7Kw1CHjpb1OJT4dSoUlvtNw71WCCdgSZLV83uxlOZ5AT2FdWIernFYwxLzevnTIdG8HdsLNMj6Kja2rdUSQBPHPqIo0AjCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaOyqbUt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726089645; c=relaxed/simple;
+	bh=+kEoMhwLvy7MWALjn+C4G/QKDgdBbjTFEzXGfVxeOm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PdsdfdrqfRc0PPoh38CKIWsPvYvKCZih1QuHVotG0z4dG9ESPxJbwI6GR1b3NkyoJzaRP2NoFYCdwPmbu/FBRbPcb+H7ZTqBuanjAFqssd4LATHN7c2UZSjjWITL0IsPby7FxfpVeI1lhzDHW5wsQmWqgEl+4sccvFDWW3uB3vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Kf261u0k; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaOyqbUt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C82CC4CEC0;
-	Wed, 11 Sep 2024 19:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726082228;
-	bh=3x34o9ccfmgr+Yc5/Xm+YmpddZXSeb8HJ9VjzD4S6cE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GaOyqbUtFT5BXaPw53avIWqv+U+o7o3dUt27/Pua04UYM0YZ1iJQ/WOVWiYt2rSaW
-	 VA5wluQlEkAHAq6oY1mXmYtmqTOPFvWx9VfDZB9KRmyvMNoeCSb4ozXjT8SrMwVaX8
-	 Ot1EmkJh9sHHeLi9kr4bxvCAyeUJg5JosKmD4LhGbVKxJDIqOQyYojrCrbI7m2qtot
-	 CpisDR0f9567Q2CvRddlBnPCtu9klu49Kr6kFhqlLLJlBh815pIfOvonbECf891CaC
-	 jiVhfAtG+v1WeZBW70gXqhsFgsbKjkrhiPQv3HVWkke944yZCyoB6rqCx6BhLZLAdk
-	 kx6GwtLeN8kZg==
-Date: Wed, 11 Sep 2024 20:17:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Kf261u0k"
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 66A1A44D53;
+	Wed, 11 Sep 2024 23:20:34 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Nuwmy7mKDAIr; Wed, 11 Sep 2024 23:20:33 +0200 (CEST)
+Date: Wed, 11 Sep 2024 21:20:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1726089633; bh=+kEoMhwLvy7MWALjn+C4G/QKDgdBbjTFEzXGfVxeOm8=;
+	h=Date:From:To:Cc:Subject;
+	b=Kf261u0kqHxvVSi8YnbeR0wlyvc6ZivJ4ejV95VsW0Nv/usGVi1sd8rjElyehWB3T
+	 asAs7i/BoEjVfiPzuZ+BMTZoxOGNrMzR0KzCGYp9yOUHidLVxY/7cbWkiP7rBF41Ol
+	 R3YDiV56MHUa2IkmBzNPhKbYkfwBui2ilsl0LxA8uYQ9Oi9p70cZs9kmxz4nCAFPlT
+	 3zQCNz5XEQfcfyc4k8rcTV8ePmxHofI8p6CM6Z1qFpOuD9qAmdxK9JkoslWWEgHfX1
+	 R9BvAp1vRl7DUIC3IddlBjKtWuWqbd6JoAp6hpuET91E74c5ZT5ivLHqIHcLfbg5BH
+	 EEL0GNURA1eyQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: clock: mediatek: Drop duplicate
- mediatek,mt6795-sys-clock.yaml
-Message-ID: <20240911-train-carnage-f19405590f8d@spud>
-References: <20240910234238.1028422-1-robh@kernel.org>
+	Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Possible misleading information in rockchip,rk3588-cru.yaml
+Message-ID: <ZuIJgiN2xp6oPrHD@pineapple>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Kx11F4IBYxbm4SiO"
-Content-Disposition: inline
-In-Reply-To: <20240910234238.1028422-1-robh@kernel.org>
-
-
---Kx11F4IBYxbm4SiO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 06:42:37PM -0500, Rob Herring (Arm) wrote:
-> The compatible strings for mt6795 clocks are also documented in other
-> schemas:
->=20
-> "mediatek,mt6795-apmixedsys" in clock/mediatek,apmixedsys.yaml
-> "mediatek,mt6795-topckgen" in clock/mediatek,topckgen.yaml
-> "mediatek,mt6795-pericfg" in clock/mediatek,pericfg.yaml
-> "mediatek,mt6795-infracfg" in clock/mediatek,infracfg.yaml
->=20
-> The only difference is #reset-cells is not allowed in some of these,
-> but that aligns with actual users in .dts files.
+Hi,
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+rockchip,rk3588-cru.yaml, dt-binding for RK3588 clock and reset module,
+contains description of customized property "rockchip,grf",
 
---Kx11F4IBYxbm4SiO
-Content-Type: application/pgp-signature; name="signature.asc"
+  rockchip,grf:
+    $ref: /schemas/types.yaml#/definitions/phandle
+    description: >
+      phandle to the syscon managing the "general register files". It is
+      used for GRF muxes, if missing any muxes present in the GRF will
+      not be available.
 
------BEGIN PGP SIGNATURE-----
+But after doing some searching, I found that clk-rk3588.c actually
+defines no clock hardware with MUXGRF type. This is also true in in the
+vendor code[1], it seems there is actually no GRF mux on RK3588
+platform.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHssAAKCRB4tDGHoIJi
-0uDqAQCgJaSn0aIreDVI8iXzweTSUXhnaVeVmWq1uBIOFi4VuQEAuIB5sxXIZXZR
-4zajWaprYZit0ZrBumAPqpkI8wjf3wo=
-=W+In
------END PGP SIGNATURE-----
+Best regards,
+Yao Zi
 
---Kx11F4IBYxbm4SiO--
+[1]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/drivers/clk/rockchip/clk-rk3588.c
