@@ -1,91 +1,138 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878751A28D
-	for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A07187552
+	for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 10:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132309; cv=none; b=rKFMwu+ldFiVUuowXtLlCJ/cYmkkyXz2N/GWHIgP4G0RLbv55biICrNqrze3Wcx4cZJNUreDjMORLCAZiyofzjcn/RMB6iKvFR962Oc0D1xGr8py6ptX8jeCO4NAowO34uBFvGxWdWMW/HUJ2LE3Kwc+meM8MVW2v3yk0nH6iuY=
+	t=1726137549; cv=none; b=uj8VvEZbHjPRhuKKboJ2i1fraRpHGI63YOI12KBAUny8U84lbBfQQxICaC9hIoFegB3qyjxXLYdJ/UZ1Iiovj2VJr5TdnAoNP6d/DTTs7dO45f9MaxGyspFE630/6k6BmwpqujCUCJ2UwslLTvjJFMDhEEmv+wIb6RMFU7YRKnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132309; c=relaxed/simple;
-	bh=tr5zd8KezfTEN3Lgsgq9qnwpZazOA4kL3Y5Yyt/VncU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XnnM6iGVoRnKsIlb4r75ar+lchksFysWTMW44nXFrhictzDRaPTKLXt7SyBEJJB1nKT7RbXA8iz0mYOSCXm61w+WihVX9G9cBfDFtJHvq6VYsfOQHabs7RFJkg8ruHNhTnfnv/+z0nO4peN2eYJaDHj9Hg+ur44OGRg8qe6+mHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I5Et9bKB; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1726137549; c=relaxed/simple;
+	bh=KL60dx9fshGB5LmggBDPVvqxNFJ38m0h1l/J+r6RXgI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=hBj1BHl104dGgEozrSesGCGw+1FXpJn3vStSJdEAQot5NlThcnptJsFOYnFmLl52yilkEiZFDQCOE4sYD+YIZOA7Zf9skPP2ku281h7UPe/NLELf4/pyXuvKFw8RGgK+R1zMdODfaaG4lzoFOSetNbZQE6nbp6SV2VPQfrNBR8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bxtPHlzg; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I5Et9bKB"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so6490895e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 02:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726132305; x=1726737105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lzjqhs8y7WhTKRO+ysq0TRz4Ei1eT10sjX1ohSFJoGM=;
-        b=I5Et9bKBhlNGcPna9Lz4jlvQR7WYjhmfpQP0SaTX1iX2cGCUd4LG9oxK3c+BcAbnc5
-         HGYrd3Wxr7vqxduMCVeDYo2rsJgWMKanVkpoxpo3JhYowg6PjNVfT+t45a8OqbznAdR0
-         A6wDuVm1rdQD95MdpNtozZqc1IiolHs8PBfK/ke9INfRI8poHfFiFK5EGidWpIUYp8Ea
-         2jBZeO7oLOysx/XttXzrhQgRDPoegpI1gAjZsjGrN6iqF5vzB1Y7NkizUpDWC4+3yhOT
-         lvoNpiiQXa8EPXMvuJn81xMJ7IuQPWfeiUugowEDxQxk/Tjivd2jZNOouCUeg8a7OB/d
-         7tfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726132305; x=1726737105;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lzjqhs8y7WhTKRO+ysq0TRz4Ei1eT10sjX1ohSFJoGM=;
-        b=q61n3A2+OVF9HYrBQUv4MvgOcNl31LdyLdj1bkHxiuRx4EqgXuoPyaNChZ6AokRQ8T
-         OebIC5VuY33wQcSKe/LjzoH4s7X3wvpfnjmfIapS4EWReLSsRfa2p+GL+NzdNfRDp1t7
-         FRDcXI7l5tAX0ATAAjRRYzkdfdFSBSB8U5vqqpiEDD/3Otu0Dgxhds0G3xeyBzcdsMUT
-         8u4YK1sERcgUnbz9r0wP2iC1FYqdSaoX5xcxDEtrRvFLa3QqGu+fio+VaIrOE69q86kw
-         3kOiVNCFPnFCSJIAKDovEZLuel+I6fJVU5UHO6m6FPMZkcIdKG/X6mw8gjSjMjHU5OeX
-         syZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNbmaGAm1woyQNkR2wGszYAUzzCqYfgIf4BcZdjcCrborNH7W8OI99rISobiVfc1Zf9eIGHAB/ypE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYgr+rB7ZxHmlxKQyptF73+YU7KXkcbJm8UtQ2/jBripkvWoWH
-	mEcOhMyoiol5bcvj7zMPEln25MFbbRqI6BpvZPqk5BYiTOOVIu36prLGtVQ00DY=
-X-Google-Smtp-Source: AGHT+IEuHhjhV4y8vkeinoRMStEHFH4N9AdU6uuWOfgf54EkhTBqvH37tP/rjH+rnOtOdA+OzPDNHw==
-X-Received: by 2002:a05:600c:35c1:b0:42c:bfb1:766e with SMTP id 5b1f17b1804b1-42cdb55006fmr16625665e9.21.1726132304147;
-        Thu, 12 Sep 2024 02:11:44 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:fd24:8a54:e95f:a4e9])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42caeb81611sm168631065e9.32.2024.09.12.02.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 02:11:43 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Chuan Liu <chuan.liu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240909-fix_clk-v3-0-a6d8f6333c04@amlogic.com>
-References: <20240909-fix_clk-v3-0-a6d8f6333c04@amlogic.com>
-Subject: Re: [PATCH v3 0/3] clk: meson: Fix an issue with inaccurate
- hifi_pll frequency
-Message-Id: <172613230299.80574.607879947069442060.b4-ty@baylibre.com>
-Date: Thu, 12 Sep 2024 11:11:42 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bxtPHlzg"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240912103904epoutp037d40d1b8f24e589cb6bf5f122f7f01ec~0ePOObAZT0352203522epoutp03T
+	for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 10:39:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240912103904epoutp037d40d1b8f24e589cb6bf5f122f7f01ec~0ePOObAZT0352203522epoutp03T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726137544;
+	bh=sMHeG2TD6GRnHAxku6ZaajzzNHNByF1tvmQw41lD6vc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=bxtPHlzgmQW+yYfZseWxkVk8LHO/zcXusUzIbBrrT6Ru8nMroQ6GuuiXbUokOnAYh
+	 LWyfJ1HP5SjRqbO3Ptn/y4FWWG5YSz0dhgk/YKkieITMdkNyPjH/a0B2Hw7scq9vYx
+	 4Z1cFFbUEG0SqPYOTFAsxoKen4QM22wnFS86iVK4=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240912103903epcas2p477995dd6377bdc76d28f962f01617b95~0ePNhGIZc0547505475epcas2p4Q;
+	Thu, 12 Sep 2024 10:39:03 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4X4DSl3h9tz4x9Pw; Thu, 12 Sep
+	2024 10:39:03 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	83.2D.10012.7C4C2E66; Thu, 12 Sep 2024 19:39:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240912103903epcas2p3ff3df48eb8b19d27053b2c2fe40ea1c5~0ePMt54nX2496324963epcas2p3x;
+	Thu, 12 Sep 2024 10:39:03 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240912103903epsmtrp205e0626175eba11cf0da69ec76c02e44~0ePMswBPW1077810778epsmtrp2X;
+	Thu, 12 Sep 2024 10:39:03 +0000 (GMT)
+X-AuditID: b6c32a47-c43ff7000000271c-a5-66e2c4c7c0ab
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2C.81.07567.6C4C2E66; Thu, 12 Sep 2024 19:39:02 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240912103902epsmtip1fcb7844cb17f8ded5353b0818d4557f1~0ePMd1oWb3132831328epsmtip12;
+	Thu, 12 Sep 2024 10:39:02 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH 0/3] add clocks support for exynosauto v920 SoC
+Date: Thu, 12 Sep 2024 19:38:53 +0900
+Message-ID: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmue7xI4/SDDpXi1s8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvFy1n32Cw2Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7ombiMveAdS8XS/lOMDYyv
+	mLsYOTgkBEwkmp8rdjFycggJ7GCUOHYrsouRC8j+xChx/u98dgjnG6PE3WUrWECqQBqm/H4L
+	ldjLKLF2fQMThPORUeLEj4lMIGPZBHQl/vxzAImLCOxnkri1YCYriMMscJZRYtXhPWCjhAXs
+	Ja7132MFsVkEVCVOtd0Gi/MCxY+d/wy1Tl7i+uOjTBBxQYmTM5+AxZmB4s1bZzODDJUQaOSQ
+	mHtjJxNEg4vE/N2foJqFJV4d38IOYUtJfH63lw3CzpeYfP0tE0RzA6PEtX/dzBAJe4lFZ36y
+	g7zALKApsX6XPiSQlCWO3ILayyfRcfgvO0SYV6KjTQiiUU3i05XLUENkJI6deAZle0j0LVjE
+	DgnfWIkl05ayT2CUn4Xkm1lIvpmFsHcBI/MqRrHUguLc9NRiowJjeKQm5+duYgQnVS33HYwz
+	3n7QO8TIxMF4iFGCg1lJhHcS26M0Id6UxMqq1KL8+KLSnNTiQ4ymwPCdyCwlmpwPTOt5JfGG
+	JpYGJmZmhuZGpgbmSuK891rnpggJpCeWpGanphakFsH0MXFwSjUwzV81lSNnm29lfvfJ1x1/
+	RGxmVfhXx/vP/HzZ/bpPstSNCEvrVQtTVmmHTKsxtvCo+8H2Z4WQYcra88t39l0sFfrEsVg3
+	c39HPOf5KSui2fbMU7v8W3nX3tD487wr5v95dcHI9GllfPkkacOgbr1EswmvtWySIpKXqS1N
+	mWF/Y3a2/Ssnufx/spUbbv27vDZnDif/w6tK/ue99yQqFlyMVHnMcfq0mpZzg2ZqZpNmnJ6p
+	3uyJNyt/XtSLybCdfW76v5nLl967Eaxh82Q+/8l57aZNP1ckHc0vMU8s6lRs2z1r7oyf9xsD
+	T09+wKdpo5D9QvP5Sz+nyOcvp0sqf60Qn/70anCZxKudaqsuqW/8qsRSnJFoqMVcVJwIAMLj
+	D58zBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsWy7bCSnO6xI4/SDL53Wlo8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvFy1n32Cw2Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZfRM
+	XMZe8I6lYmn/KcYGxlfMXYycHBICJhJTfr9lB7GFBHYzSvQ8NYSIy0hsbPjPDmELS9xvOcLa
+	xcgFVPOeUeL3tR9sXYwcHGwCuhJ//jmAxEUEjjJJbFrwjBnEYRa4zChxdhdEt7CAvcS1/nus
+	IDaLgKrEqbbbLCA2L1D82PnPLBAb5CWuPz7KBBEXlDg58wlYnBko3rx1NvMERr5ZSFKzkKQW
+	MDKtYpRMLSjOTc9NNiwwzEst1ytOzC0uzUvXS87P3cQIDnQtjR2M9+b/0zvEyMTBeIhRgoNZ
+	SYR3EtujNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8hjNmpwgJpCeWpGanphakFsFkmTg4pRqY
+	IhfH9X+apD3VNPGxEu8z7wCL66ds+q9NkP+8kXHagaSYP/vNVvW3qIqKpE51v3mZRf3L9x/v
+	mHSeddS+fG2cZew4h+Hay4in/tXN+4s+14WGP7XOP3Ja0fX58h3x9gwMbzt4uNmj+j9HCEke
+	dp8uqhBz7pbmittyt3g31C7g26YW8NVN5cHcV6GHA8Udfvz9Vbn1URs3f9+LDouJqbM3Rn8R
+	6QhZ1rf+tKfVubkXetaEHdjysuPBj6zkmv4fKlvan/ZfKZS34VrEmlw878x0y5AeUY3Id+Hv
+	66a/n+50+pNhbP/mb+6hibF/deqfuZyOacvkYPervtcw4bmeoX7OLH/xbNkp7MsmT7R/eYBb
+	iaU4I9FQi7moOBEAAwT3D+MCAAA=
+X-CMS-MailID: 20240912103903epcas2p3ff3df48eb8b19d27053b2c2fe40ea1c5
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240912103903epcas2p3ff3df48eb8b19d27053b2c2fe40ea1c5
+References: <CGME20240912103903epcas2p3ff3df48eb8b19d27053b2c2fe40ea1c5@epcas2p3.samsung.com>
 
-Applied to clk-meson (clk-meson-next), thanks!
+This patchset adds the CMU block below to support exynosauto v920 SoC.
+- CMU_PERIC1
+- CMU_MISC
+- CMU_HSI0/1
 
-[1/3] clk: meson: Support PLL with fixed fractional denominators
-      https://github.com/BayLibre/clk-meson/commit/1287bdc8c6db
-[2/3] clk: meson: c3: pll: fix frac maximum value for hifi_pll
-      https://github.com/BayLibre/clk-meson/commit/d4bc8851da59
-[3/3] clk: meson: s4: pll: fix frac maximum value for hifi_pll
-      https://github.com/BayLibre/clk-meson/commit/0ef513560b53
+Sunyeal Hong (3):
+  dt-bindings: clock: exynosautov920: add peric1, misc and hsi0/1 clock
+    definitions
+  clk: samsung: exynosautov920: add peric1, misc and hsi0/1 clock
+    support
+  arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes
 
-Best regards,
---
-Jerome
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  50 +++
+ drivers/clk/samsung/clk-exynosautov920.c      | 290 ++++++++++++++++++
+ .../clock/samsung,exynosautov920.h            |  47 +++
+ 3 files changed, 387 insertions(+)
+
+-- 
+2.46.0
 
