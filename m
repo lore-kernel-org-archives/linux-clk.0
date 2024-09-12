@@ -1,162 +1,250 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005C153365
-	for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 14:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009619F435
+	for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 15:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152585; cv=none; b=lGfVT5vZpO5hhI35XLAaZ1a1Xrnn3NihcFgdembBto9fBljZQrddWSvpDuv9IRaOcr3OOMLHOeuB4FBXx1V3VhNDieWGbsMVZp4E+0SYI/W3RHgyeTulL5BHP6UngNMp+G9QihPudDWmNtpbg71ivd9/rRPOvKbPCydaNSzzWgk=
+	t=1726154344; cv=none; b=PfTnmwZAPuk22A0a4Qe98EjR4L6wUKc7vxosucSe3vNteONuqn8UJMQylhZ8w7TTKz34wEL394Twzbt/pIbljMODQUL6q2gPiyiNrKxh2QxlRl743oarIP5WeWALwrLxQWzWiQUQV7V/vePdFi2t6ItxNmRP0/N3hH86tyz660M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152585; c=relaxed/simple;
-	bh=2sYEXediN52kSljXl1Ler+JGcwYjaz8Qt5oRB8w8bhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jj9pLxpwsIcJr9n/s7U1amTvWKF0cA+YNZgEcjoaEWDR7QEz2muRhcCKz46b35GVCnW0k4TSHghaqhO1yJ5NxU4NRKp9tMD0VCxjrBxPTTUXPdq1P/MvIr8coy65U/44xeaX8ndfVIOxSnu13HgZvy+LubB1IztK2Xv2dpSVQEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h+qzh1ii; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h+qzh1ii"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6dbc5db8a31so3185657b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2024 07:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726152583; x=1726757383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2sYEXediN52kSljXl1Ler+JGcwYjaz8Qt5oRB8w8bhQ=;
-        b=h+qzh1iiyx57msrHUANixZsIKV/FP5DRmaLrSOVwntNZWCtD/1mTI/QgX+fBpI82bm
-         aJ9SGi0OBVSgTlmM4FyHPPErRBDFHEvOgaj5MJRUAsLQKDiPQp9/8UIsK/2t3sNBaEAc
-         vDfbb8w+ln96NqHsScjYNvhZDJ+/4qm+6z4Y0ny/DMqWPwg2cG3MqxSWTA0V7LiU9LMb
-         HWTRoeodWhLjJt5AhyhbbeDSzG7ik1q93+RJbByN06w0A5hkGAsoedrKI+Bb5KeQ1Gy7
-         d/Jq+pmXvr2dpoenVXJ2B8qnquXavnYOYBQN477b1GvB0xpMra/4mc7c7GfCOQZiR/IB
-         o0Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152583; x=1726757383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2sYEXediN52kSljXl1Ler+JGcwYjaz8Qt5oRB8w8bhQ=;
-        b=bnb3j9rDMPNiLKokinq5wg9p+H7EicgfRcm0On7h1bdjyaRp66Di16rFE2073/vBic
-         EKEyoASfRzfPH2cYSYnYzEtbtYAT0EE21HqiOslFwVnBr7VIwAfPP7f9JX9YB4S6iRkP
-         uAkWpJa3YyhQm0P0nZSmMkQhhkoHhxnVDK7iD4yb0wyBM0N40Mnt7J2wTpUANSmq0WWM
-         xZSxxcOfeTOUAnSMhWCSSDsdafC0EHbGwXVBKrqsAi4jyFtSljEz7BeLInn9fHSuwibl
-         eU9U6YPN7oARUEbYfC+W23daIvfKjMquXqA9xDpmyy/c1ZWe57Qw0mkVyumRprBVR0gl
-         8mMA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Ye3bBs+eKgyThhtNIuAOeqQ8MJSL7K03sMQ1UK+4cqPrQpidWYkmMThB2Ym/1rCzoskyTQHaSPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymWhyR0ThOUomgSw20nusBgHoynaXRElzLH8+pMDVinbRQhgxu
-	CPLSKVLLqklQ7QUbM+RPlfdczxz+hFjD6zW9snLS/aP8HCGbegdjzclMuyVcZJYTyHen5loWdZZ
-	sPbQiAWaAamnG86gKJTUzesJ2CkElptiRi8t4KA==
-X-Google-Smtp-Source: AGHT+IE2KRM0NoVbC2puhshNbVNwKJPWz+ICZnqayewbZXPGTeWmAxNTUENEBP7DBBZHS7uwEyDNePXQxVX5eOsi/TM=
-X-Received: by 2002:a05:690c:4483:b0:6d5:e768:4779 with SMTP id
- 00721157ae682-6db9542f7cbmr78436847b3.22.1726152582673; Thu, 12 Sep 2024
- 07:49:42 -0700 (PDT)
+	s=arc-20240116; t=1726154344; c=relaxed/simple;
+	bh=OsLJojm96pMS4IXnyVQSRLVdKdQHtsLTw4J4pA0PcfU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KnVEZQwXN8Fj3sGBEEGvnNIOTRMVJcsG/eM/acH0kgWCBMpfsc98WBbsI9FAHeRysYt2JVDH13MLIGCJjEBDs1/7UfLGa9W88/3+PmVvJ0IGCYlyrjDypr6ky3G9y3pSQLWzUSfly2/UvE2Wn3LLQAw9E+YD/UkebMa2Cd8Nlfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1solae-0001q5-UB; Thu, 12 Sep 2024 17:18:36 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1solad-007PUI-AE; Thu, 12 Sep 2024 17:18:35 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1solad-000BWk-0l;
+	Thu, 12 Sep 2024 17:18:35 +0200
+Message-ID: <d003cb854f9aea30c7d26b4d2b7f50cf467bf225.camel@pengutronix.de>
+Subject: Re: [PATCH RESEND v27 2/3] reset: npcm: register npcm8xx clock
+ auxiliary bus device
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com, 
+ sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+ tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+ yuenn@google.com,  benjaminfair@google.com
+Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Date: Thu, 12 Sep 2024 17:18:35 +0200
+In-Reply-To: <20240815150255.3996258-3-tmaimon77@gmail.com>
+References: <20240815150255.3996258-1-tmaimon77@gmail.com>
+	 <20240815150255.3996258-3-tmaimon77@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-9-quic_qianyu@quicinc.com> <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
- <20240827165826.moe6cnemeheos6jn@thinkpad> <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
- <20240911153228.7ajcqicxnu2afhbp@thinkpad> <9222ef18-2eef-4ba3-95aa-fae540c06925@quicinc.com>
- <d5468dd2-0f81-4d89-a3bd-a546b2395ca6@kernel.org> <20240912144439.fnne4x7qvggveve2@thinkpad>
-In-Reply-To: <20240912144439.fnne4x7qvggveve2@thinkpad>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 12 Sep 2024 17:49:31 +0300
-Message-ID: <CAA8EJppSFb+Me6w5vUpmbogQ4DS2=15FmHu4nzGz2POWQPouwA@mail.gmail.com>
-Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, 
-	kishon@kernel.org, robh@kernel.org, andersson@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, 
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Thu, 12 Sept 2024 at 17:45, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Thu, Sep 12, 2024 at 04:15:56PM +0200, Konrad Dybcio wrote:
-> > On 12.09.2024 3:39 PM, Qiang Yu wrote:
-> > >
-> > > On 9/11/2024 11:32 PM, Manivannan Sadhasivam wrote:
-> > >> On Wed, Sep 11, 2024 at 04:17:41PM +0800, Qiang Yu wrote:
-> > >>> On 8/28/2024 12:58 AM, Manivannan Sadhasivam wrote:
-> > >>>> On Tue, Aug 27, 2024 at 02:44:09PM +0300, Dmitry Baryshkov wrote:
-> > >>>>> On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> =
-wrote:
-> > >>>>>> On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. He=
-nce, add
-> > >>>>>> support to use 3.3v, 3.3v aux and 12v regulators.
-> > >>>>> First of all, I don't see corresponding bindings change.
-> > >>>>>
-> > >>>>> Second, these supplies power up the slot, not the host controller
-> > >>>>> itself. As such these supplies do not belong to the host controll=
-er
-> > >>>>> entry. Please consider using the pwrseq framework instead.
-> > >>>>>
-> > >>>> Indeed. For legacy reasons, slot power supplies were populated in =
-the host
-> > >>>> bridge node itself until recently Rob started objecting it [1]. An=
-d it makes
-> > >>>> real sense to put these supplies in the root port node and handle =
-them in the
-> > >>>> relevant driver.
-> > >>>>
-> > >>>> I'm still evaluating whether the handling should be done in the po=
-rtdrv or
-> > >>>> pwrctl driver, but haven't reached the conclusion. Pwrctl seems to=
- be the ideal
-> > >>>> choice, but I see a few issues related to handling the OF node for=
- the root
-> > >>>> port.
-> > >>>>
-> > >>>> Hope I'll come to a conclusion in the next few days and will updat=
-e this thread.
-> > >>>>
-> > >>>> - Mani
-> > >>>>
-> > >>>> [1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@ker=
-nel.org/
-> > >>> Hi Mani, do you have any updates?
-> > >>>
-> > >> I'm working with Bartosz to add a new pwrctl driver for rootports. A=
-nd we are
-> > >> debugging an issue currently. Unfortunately, the progress is very sl=
-ow as I'm on
-> > >> vacation still.
-> > >>
-> > >> Will post the patches once it got resolved.
-> > >>
-> > >> - Mani
-> > > OK, thanks for your update.
-> >
-> > Qiang, you can still resubmit the rest of the patches without having
-> > to wait on that to be resolved
-> >
->
-> In that case, the slot supplies should be described in the PCIe bridge.
+On Do, 2024-08-15 at 18:02 +0300, Tomer Maimon wrote:
+> Add NPCM8xx clock controller auxiliary bus device registration.
+>=20
+> The NPCM8xx clock controller is registered as an aux device because the
+> reset and the clock controller share the same register region.
+>=20
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> Tested-by: Benjamin Fair <benjaminfair@google.com>
+> ---
+>  drivers/reset/Kconfig               |  1 +
+>  drivers/reset/reset-npcm.c          | 74 ++++++++++++++++++++++++++++-
+>  include/soc/nuvoton/clock-npcm8xx.h | 16 +++++++
+>  3 files changed, 90 insertions(+), 1 deletion(-)
+>  create mode 100755 include/soc/nuvoton/clock-npcm8xx.h
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 67bce340a87e..c6bf5275cca2 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -157,6 +157,7 @@ config RESET_MESON_AUDIO_ARB
+>  config RESET_NPCM
+>  	bool "NPCM BMC Reset Driver" if COMPILE_TEST
+>  	default ARCH_NPCM
+> +	select AUXILIARY_BUS
+>  	help
+>  	  This enables the reset controller driver for Nuvoton NPCM
+>  	  BMC SoCs.
+> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+> index 8935ef95a2d1..aa68b947226a 100644
+> --- a/drivers/reset/reset-npcm.c
+> +++ b/drivers/reset/reset-npcm.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2019 Nuvoton Technology corporation.
+> =20
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> @@ -10,11 +11,14 @@
+>  #include <linux/property.h>
+>  #include <linux/reboot.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of_address.h>
+> =20
+> +#include <soc/nuvoton/clock-npcm8xx.h>
+> +
+>  /* NPCM7xx GCR registers */
+>  #define NPCM_MDLR_OFFSET	0x7C
+>  #define NPCM7XX_MDLR_USBD0	BIT(9)
+> @@ -89,6 +93,7 @@ struct npcm_rc_data {
+>  	const struct npcm_reset_info *info;
+>  	struct regmap *gcr_regmap;
+>  	u32 sw_reset_number;
+> +	struct device *dev;
+>  	void __iomem *base;
+>  	spinlock_t lock;
+>  };
+> @@ -372,6 +377,67 @@ static const struct reset_control_ops npcm_rc_ops =
+=3D {
+>  	.status		=3D npcm_rc_status,
+>  };
+> =20
+> +static void npcm_clock_unregister_adev(void *_adev)
+> +{
+> +	struct auxiliary_device *adev =3D _adev;
+> +
+> +	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void npcm_clock_adev_release(struct device *dev)
+> +{
+> +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> +	struct npcm_clock_adev *rdev =3D to_npcm_clock_adev(adev);
+> +
+> +	kfree(rdev);
+> +}
+> +
+> +static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_dat=
+a *rst_data, char *clk_name)
+> +{
+> +	struct npcm_clock_adev *rdev;
+> +	struct auxiliary_device *adev;
+> +	int ret;
+> +
+> +	rdev =3D kzalloc(sizeof(*rdev), GFP_KERNEL);
+> +	if (!rdev)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	rdev->base =3D rst_data->base;
+> +
+> +	adev =3D &rdev->adev;
+> +	adev->name =3D clk_name;
+> +	adev->dev.parent =3D rst_data->dev;
+> +	adev->dev.release =3D npcm_clock_adev_release;
+> +	adev->id =3D 555u;
+> +
+> +	ret =3D auxiliary_device_init(adev);
+> +	if (ret) {
+> +		kfree(rdev);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return adev;
+> +}
+> +
+> +static int npcm8xx_clock_controller_register(struct npcm_rc_data *rst_da=
+ta, char *clk_name)
+> +{
+> +	struct auxiliary_device *adev;
+> +	int ret;
+> +
+> +	adev =3D npcm_clock_adev_alloc(rst_data, clk_name);
+> +	if (IS_ERR(adev))
+> +		return PTR_ERR(adev);
+> +
+> +	ret =3D auxiliary_device_add(adev);
+> +	if (ret) {
+> +		auxiliary_device_uninit(adev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(rst_data->dev, npcm_clock_unregister_ad=
+ev, adev);
+> +}
+> +
+>  static int npcm_rc_probe(struct platform_device *pdev)
+>  {
+>  	struct npcm_rc_data *rc;
+> @@ -392,6 +458,7 @@ static int npcm_rc_probe(struct platform_device *pdev=
+)
+>  	rc->rcdev.of_node =3D pdev->dev.of_node;
+>  	rc->rcdev.of_reset_n_cells =3D 2;
+>  	rc->rcdev.of_xlate =3D npcm_reset_xlate;
+> +	rc->dev =3D &pdev->dev;
+> =20
+>  	ret =3D devm_reset_controller_register(&pdev->dev, &rc->rcdev);
+>  	if (ret) {
+> @@ -413,7 +480,12 @@ static int npcm_rc_probe(struct platform_device *pde=
+v)
+>  		}
+>  	}
+> =20
+> -	return ret;
+> +	switch (rc->info->bmc_id) {
+> +	case BMC_NPCM8XX:
 
-Patches 1-6 don't seem to depend on slot supplies, so they can be
-submitted separately.
+Here ret is ignored, which may be the return value from
+register_restart_handler() above.
 
->
-> - Mani
->
-> > Konrad
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+> +		return npcm8xx_clock_controller_register(rc, "clk-npcm8xx");
+> +	default:
+> +		return ret;
+> +	}
+>  }
+> =20
+>  static struct platform_driver npcm_rc_driver =3D {
+> diff --git a/include/soc/nuvoton/clock-npcm8xx.h b/include/soc/nuvoton/cl=
+ock-npcm8xx.h
+> new file mode 100755
+> index 000000000000..139130e98c51
+> --- /dev/null
+> +++ b/include/soc/nuvoton/clock-npcm8xx.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SOC_NPCM8XX_CLOCK_H
+> +#define __SOC_NPCM8XX_CLOCK_H
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/container_of.h>
+> +
+> +struct npcm_clock_adev {
+> +	void __iomem *base;
+> +	struct auxiliary_device adev;
+> +};
+> +
+> +#define to_npcm_clock_adev(_adev) \
+> +	container_of((_adev), struct npcm_clock_adev, adev)
 
+Could you make this an inline function instead?
 
+With those two issues addressed,
 
---=20
-With best wishes
-Dmitry
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
