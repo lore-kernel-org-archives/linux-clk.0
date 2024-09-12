@@ -1,71 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D8619F12B;
-	Thu, 12 Sep 2024 23:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6051192D89;
+	Thu, 12 Sep 2024 23:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726183911; cv=none; b=eyd6l+xcaG9a6ZK/hWF8Ds1LqL0Z8aapC3SYr3KC0dQcVJZNj90UQIav6qnJdG+8tGRosaNPx/zxv9CpmctDf4QJ2wWyZcyznLUcX2gond5uu2thGq8d8zlx0qq6evXkLbltGKlKdarirAv7NfERu9L3gk4ul9p0iSV7IjMjLDI=
+	t=1726184408; cv=none; b=oGZO84/LxqLtF/6+Fuxqgv0+u3mYb2VUDXY7M79+/cxT7J3XUm0VBypc97jxqcYWwhf3K6uFxhvoKtg6FE3wNoaiu5/Wq8nlzYUatc8RO9gLdKqLs3zLp9JYrtSqNQ0LvCBi7IRzB7gROGk1vtWwTinj4y68aVKcGjPbsUc40IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726183911; c=relaxed/simple;
-	bh=Z9JSzBM8cUSMozMvf6HU9FhqYubxNBiiPQOmpIc7w7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AaVp/5SA2ot7FzxyySiDM0r0EOvcgxotAlp91QkV0bHLuqMBH0Uoxs1TPTD0mjKp+Gaf5D5fdwsPNvsescIdrYTOxmMInzDJxtJlsdraJJkt/vJSuu1vD5fi4SqkAizeO/NvsYzX+fmyqNFYSPORLZfytIq8nHJAE1DnM1M2Ga4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxIXWoZc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726184408; c=relaxed/simple;
+	bh=nMZ1Qt4lTDufp4/+aSGs1d0rVvLgdokmlczcl/dS7Ks=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VV97JYQrMQyqBFV+5Dc7XwVILW+yyw2S5mm8alsIb/JuBmDn6soVC7PraZma21s7wDb/sEJwoWxgNq+U+60jtgLbFdN9xa1kY9QVpJHzWVW/8U14Ps1/5PJZgufwEZMvZB3gT6qz6LabB9dKSz64/E5AyArEC77Mnx+liLayniM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QF+sUUIU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxIXWoZc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6514DC4CEC3;
-	Thu, 12 Sep 2024 23:31:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QF+sUUIU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C1BBC4CEC3;
+	Thu, 12 Sep 2024 23:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726183910;
-	bh=Z9JSzBM8cUSMozMvf6HU9FhqYubxNBiiPQOmpIc7w7k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JxIXWoZctvIb4DUfEKxvD2ByCiMY9wxJ6s5aYHMFQ3YNjk1NyaJNg3nb/vUYRZ6I0
-	 SORd7BdLpyXrK1ZFWpnQ7c5LYxGa7KInaQ8bloWTTfjSY61RKBF437pmG2QJqYr3+n
-	 lk40DYY5SBM2E5SFgBTQ8/rl0Js+F0QJ6/Hnu7UEWllZXMAHQZBfbAv0HZOz0j1v6W
-	 BjeinMcoDC664zELxZNy4oH4pBiGF09aXDepu8wX5VWUseSXXE45gwqwCis8PU0Iev
-	 KGayqAJT3pcTsCPEZqciE7vnr98PKRLD82Vij07YJClRTtT1AJSeegzDwIP5XfO2A4
-	 G1CsQcmb9z7pg==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.11-rc7
-Date: Thu, 12 Sep 2024 16:31:47 -0700
-Message-ID: <20240912233149.1923482-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+	s=k20201202; t=1726184408;
+	bh=nMZ1Qt4lTDufp4/+aSGs1d0rVvLgdokmlczcl/dS7Ks=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QF+sUUIUPUAf4+b5qiiXkU0JxQDBJNsRrZzfat8WWUNAL5R7guUYBRIJmoVMQ1RG5
+	 GiwP119puq+Egppfd6djI4tlGmJXaxt8Tg8y7kXsDoL3P/1y5ZxAcrhD5pUrPJrVqO
+	 b0UsONuK2PwnNRqxYb4FTzDybQ9g3cMG+9KdJrR6GIsfilhwdMsn+bhcyx1V5liEV4
+	 SnpL3tfFaDtev+r7tMVau2Jblk0r1VcnJXiKR/An/OHhIFKCHrcqsvgHMMRJOjzRd1
+	 ZXI3AidFLgqtz6K3ZcnmqGiZ3lOqPsSwqJKttt4nHNimBqhMZzDkRrQovOPAoFrxeI
+	 zn8oroPpfUQSw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B31C43806644;
+	Thu, 12 Sep 2024 23:40:10 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v6.11-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240912233149.1923482-1-sboyd@kernel.org>
+References: <20240912233149.1923482-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240912233149.1923482-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: a4d89b11aca3ffa73e234f06685261ce85e5fb41
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 196145c606d0f816fd3926483cb1ff87e09c2c0b
+Message-Id: <172618440917.1758740.16559724742965535679.pr-tracker-bot@kernel.org>
+Date: Thu, 12 Sep 2024 23:40:09 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The following changes since commit 71c03a8cb213d267853e0d9f520c972480960544:
+The pull request you sent on Thu, 12 Sep 2024 16:31:47 -0700:
 
-  clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs (2024-09-03 13:01:34 -0700)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/196145c606d0f816fd3926483cb1ff87e09c2c0b
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to a4d89b11aca3ffa73e234f06685261ce85e5fb41:
-
-  clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val() (2024-09-09 14:06:07 -0700)
-
-----------------------------------------------------------------
-One build fix for 32-bit arches using the Qualcomm PLL driver. It's
-cheaper to use a comparison here instead of a division so we just do
-that to fix the build.
-
-----------------------------------------------------------------
-Satya Priya Kakitapalli (1):
-      clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
-
- drivers/clk/qcom/clk-alpha-pll.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
