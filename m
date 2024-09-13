@@ -1,333 +1,215 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6221DC040
-	for <linux-clk@vger.kernel.org>; Fri, 13 Sep 2024 13:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DDD43144;
+	Fri, 13 Sep 2024 14:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235841; cv=none; b=Tf5ZFC+HEuaZVeFzmqer4UEwbsWPK/4PQOX66DYXzWMHqgLJKWKSoN1NsrQHLtsY72fisnsLVPJYHHWEhJsJ/h3t/a06lZqcbMXNHk41GpaGRoY9HyRCyN49ZdTG5nRPh2fzSTtw0iSb4NLD1526vTw7R8GH6vfYHNBiDFtYFgE=
+	t=1726236418; cv=none; b=Jtzb/mBoKeOXtwp3Ujkp9uOhFV08ehVqZPYkpWvvCC71WKBdfe8P2HuSPvAeu74Cw+KiPUB1chOKd32A+vfJjoEE0SpHIl/8DshucwqKRBMJxzbdr1pBZL793oWeu8flqa2aJCaE8GbO8TfAXTOioz5P9oT9VW+dFt8d0mCGIc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235841; c=relaxed/simple;
-	bh=nygQcvBgkEXlQczrMZaRkwU7DMO4Sgzp88nUG5kKe5s=;
+	s=arc-20240116; t=1726236418; c=relaxed/simple;
+	bh=UXwyPH+Uj+G+0UKGaXTyXocMgN54SL5IhIJD9U6CYYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSqSa+kUwg7M0MGEp/qaE38jHbbK634ZGAa6fNeVpPiFc8UKBAGJy3YdfY9iPzby4x4AdCaLMYd4F+kCetNU1529p5FVX6hJsQKnT0qelcjtQ9yoW38NB/vu3tACCrjl/3aPnFGtfbkt2OZ/xZkzH6wZNr7RXE28Od3Q6weAikg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mxCR1lZn; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=UzsLVT6wV/JFSqXDnCbzX6glwOAUSaVKsiPfALfzXVANM5HzDOcrPPkePizKxZlRlG0Jyixe4R8t2fO+uWPYddpiF5J0X+b8QHMDUZZQA9Iiovgyqhyzkj+bOgEsRlOtn3GkC1F9nLlSpBvmnhKZWNTb2KsshjUIRWYt0Tza6C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nyf84WlN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mxCR1lZn"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2057835395aso24970795ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 13 Sep 2024 06:57:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726235839; x=1726840639; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j4zVOa+rsJLoaZtlg7qNm3b8vXOuxAqtzpJMF/Jo70g=;
-        b=mxCR1lZnLia7tXuzndmEmU9G/PqZ3bWM7olWjHgy68VKbkcAa7fFyPgiXkmK3EyeN1
-         I0O6lqAiVB0zxCBLs/U1Yf+0aQ/cRjO+qwDx6rsL6SkJe2QFVETz9C/bd1a3lgkX+8bi
-         tAzvU/Gzv5xXBDYC/V0Vpp6f8SR5L6e+MKOQm/vjKi4olziVi+iXMsbaRu556EAH+6rq
-         9q5YPGCdyYxbZOxMci57owTtPivKZTEOUZp0dVTPWbtXZXd4WhGQpP8o8Dgkzrjj05Pd
-         Z5CwhDH2/+S6mDMlyiDOVojhLse+vhGlMxKWnVsxc+QF16rZTx4sSoyDkLQ/nXQMrKRf
-         RpvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726235839; x=1726840639;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4zVOa+rsJLoaZtlg7qNm3b8vXOuxAqtzpJMF/Jo70g=;
-        b=V87gV+ybXtm6tHIvXCqq0RwzPhGW1iNugz1qjL1t9ZG1TY5KIpOF/sDqK6ZSgyjQ1x
-         eJ6Xyx9h7e91sZR9ukj0DpQff8ERGa3tj2zdalUYb1B73tmbR8f/FLvqh93YaknMtdjq
-         zTpNntpMR5E+9wF0gI4wEzTKvxL/CEaFOKkQ551J4Km/GVyBglZBAd15FZNMGC/d5ezs
-         UBD/nKVN9VZVARUdqbl+XLF0SjR6FoHtyuoHibX25sMH8+zeXDTFWgw2YwldUUdndaDj
-         dt8jgo7tdm/PTM0iW2EMNUlTU14odW5FOC06PAhnYcpQbgWoWXX6V067KTw9Mpd8S+mi
-         H9HA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPgRFSrZyI4vahChXLjzF4RlKUxbzJTV7AvqCEFBYj45TSZwD4gPM1iPiCxG97LVcYEdshyLGizV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPFnN3bqTQXf5xxaglZLNdTx/TjKahhCPZ2bM1564/M7hWllTH
-	ctepBu1pTKekjquf+MP2b3UT6QX/yWLwFtQMQWqkkMOc8lL1kSrFKXipyQJ2NA==
-X-Google-Smtp-Source: AGHT+IF/dhpwnwCRU/9Bk+v+2G3zbmxcvhusIOoU80hBY2klO7C51mKtJhG7H4NPXx22niLc5+SxxA==
-X-Received: by 2002:a17:902:f785:b0:205:7863:2dec with SMTP id d9443c01a7336-2076e3698edmr95862965ad.27.1726235838719;
-        Fri, 13 Sep 2024 06:57:18 -0700 (PDT)
-Received: from thinkpad ([120.60.66.60])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af4739asm28455325ad.66.2024.09.13.06.57.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 06:57:18 -0700 (PDT)
-Date: Fri, 13 Sep 2024 19:27:10 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: x1e80100: Add support for PCIe3
- on x1e80100
-Message-ID: <20240913135710.6ionsmzo45orin6n@thinkpad>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-6-quic_qianyu@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nyf84WlN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EB9C4CEC0;
+	Fri, 13 Sep 2024 14:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726236417;
+	bh=UXwyPH+Uj+G+0UKGaXTyXocMgN54SL5IhIJD9U6CYYY=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
+	b=Nyf84WlNh7ncSAZOfCMWFIolG1UOZsIbD1p4oW6HX5wj8jDtDZUHqANNrjTC3zEGe
+	 SIpn/62Gaj7r6WCehzGD6DZMUyEIpK2irKXY0QO4WPH+/UYIrszeaAqpNyyM1HDP7S
+	 XiRBEBDqRNXQyBvNM/FaJO3sQJ150fnr68tUuqoMTFKpT6QfjxYMnQgubZQUPavzBT
+	 SCt+C5zBID2FIXmzGTk5V2TBftlNdTA4XwPqYjKJY+vtALxdEf8TpNdiGftd0gJvWJ
+	 BhsK28Tbr22uNFkxhQ13fdRf5U2LkfEVH+F4MZlmD6L2dwIShrGm8If9+bbJWQTDD/
+	 Zd6c/kesseV5g==
+Date: Fri, 13 Sep 2024 09:06:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Arturs Artamonovs <arturs.artamonovs@analog.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Malysa <greg.malysa@timesys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Utsav Agarwal <Utsav.Agarwal@analog.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>, soc@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-serial@vger.kernel.org, adsp-linux@analog.com,
+	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Subject: Re: [PATCH 18/21] dt-bindings: serial: adi,uart4: add adi,uart4
+ driver documentation
+Message-ID: <20240913140656.GA3835385-robh@kernel.org>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+ <20240912-test-v1-18-458fa57c8ccf@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240913083724.1217691-6-quic_qianyu@quicinc.com>
+In-Reply-To: <20240912-test-v1-18-458fa57c8ccf@analog.com>
 
-On Fri, Sep 13, 2024 at 01:37:24AM -0700, Qiang Yu wrote:
-> Describe PCIe3 controller and PHY. Also add required system resources like
-> regulators, clocks, interrupts and registers configuration for PCIe3.
+On Thu, Sep 12, 2024 at 07:25:03PM +0100, Arturs Artamonovs wrote:
+> Add serial driver bindings.
+
+Don''t need 'documentation' in the the subject. That's redundant with 
+'dt-bindings'.
+
+
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
+
+Your S-o-b goes last since you are sending the patch.
+
+> Signed-off-by: Utsav Agarwal <Utsav.Agarwal@analog.com>
+
+Not clear what Utsav's role was. Needs Co-developed-by?
+
+> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
+> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
 > ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 202 ++++++++++++++++++++++++-
->  1 file changed, 201 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/serial/adi,uart.yaml       | 85 ++++++++++++++++++++++
+>  1 file changed, 85 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index a36076e3c56b..a7703e4974a6 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -744,7 +744,7 @@ gcc: clock-controller@100000 {
->  
->  			clocks = <&bi_tcxo_div2>,
->  				 <&sleep_clk>,
-> -				 <0>,
-> +				 <&pcie3_phy>,
->  				 <&pcie4_phy>,
->  				 <&pcie5_phy>,
->  				 <&pcie6a_phy>,
-> @@ -2907,6 +2907,206 @@ mmss_noc: interconnect@1780000 {
->  			#interconnect-cells = <2>;
->  		};
->  
-> +		pcie3: pci@1bd0000 {
-
-pcie@
-
-> +			device_type = "pci";
-> +			compatible = "qcom,pcie-x1e80100";
-> +			reg = <0 0x01bd0000 0 0x3000>,
-> +			      <0 0x78000000 0 0xf1d>,
-
-0x0 here and below.
-
-> +			      <0 0x78000f40 0 0xa8>,
-> +			      <0 0x78001000 0 0x1000>,
-> +			      <0 0x78100000 0 0x100000>,
-> +			      <0 0x01bd3000 0 0x1000>;
-> +			reg-names = "parf",
-> +				    "dbi",
-> +				    "elbi",
-> +				    "atu",
-> +				    "config",
-> +				    "mhi";
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
-> +				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
-> +			bus-range = <0x00 0xff>;
+> diff --git a/Documentation/devicetree/bindings/serial/adi,uart.yaml b/Documentation/devicetree/bindings/serial/adi,uart.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..de58059efa7e21acaa5b7f4984ffadca18f7f53a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/adi,uart.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/serial/adi,uart4.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +			dma-coherent;
-> +
-> +			linux,pci-domain = <3>;
-> +			num-lanes = <8>;
-> +
-> +			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi0",
-> +					  "msi1",
-> +					  "msi2",
-> +					  "msi3",
-> +					  "msi4",
-> +					  "msi5",
-> +					  "msi6",
-> +					  "msi7";
+> +title: Analog Devices UART Driver for SC5XX-family processors
 
-Can you add 'global' interrupt as well? While doing so, please make sure the
-global_irq related patches are applied and Link up works fine. Those patches are
-already in linux-next.
+Bindings aren't a driver.
 
 > +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 0 0 220 IRQ_TYPE_LEVEL_HIGH>,
+> +maintainers:
+> +  - Arturs Artamonovs <arturs.artamonovs@analog.com>
+> +  - Utsav Agarwal <Utsav.Agarwal@analog.com>
+> +
+> +description: |
 
-Use GIC_SPI for the parent interrupt specifier.
+Don't need '|'.
 
-- Mani
+> +  Analog Devices UART Driver for SC59X-family processors
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,uart
 
-> +					<0 0 0 2 &intc 0 0 0 221 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 3 &intc 0 0 0 237 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 4 &intc 0 0 0 238 IRQ_TYPE_LEVEL_HIGH>;
+Only 1 UART implementation for all of Analog Devices ever.
+
+compatibles should be specific to SoC.
+
 > +
-> +			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
-> +				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-> +				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
-> +				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
-> +				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
-> +				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
-> +				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
-> +			clock-names = "aux",
-> +				      "cfg",
-> +				      "bus_master",
-> +				      "bus_slave",
-> +				      "slave_q2a",
-> +				      "noc_aggr",
-> +				      "cnoc_sf_axi";
+> +  reg:
+> +    maxItems: 1
 > +
-> +			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
-> +			assigned-clock-rates = <19200000>;
+> +  dmas:
+> +    maxItems: 2
+> +    minItems: 2
+> +    description: TX and RX DMA cluster numbers
 > +
-> +			interconnects = <&pcie_south_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "pcie-mem",
-> +					     "cpu-pcie";
+> +  dma-names:
+> +    maxItems: 2
+> +    minItems: 2
+> +    description: DMA channel names (tx and rx)
+
+Names need to be constraints, not freeform text. Plenty of examples to 
+look at...
+
 > +
-> +			resets = <&gcc GCC_PCIE_3_BCR>,
-> +				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
-> +			reset-names = "pci",
-> +				      "link_down";
+> +  clocks:
+> +    maxItems: 1
+> +    description: Clock being used for UART
+
+That's obvious. Drop description or say something unique to this device.
+
 > +
-> +			power-domains = <&gcc GCC_PCIE_3_GDSC>;
+> +  clock-names:
+> +    maxItems: 1
+> +    description: Clock name (sclk0)
 > +
-> +			phys = <&pcie3_phy>;
-> +			phy-names = "pciephy";
+> +  interrupt-names:
+> +    minItems: 3
+> +    maxItems: 3
+> +    description: Interrupt names (tx + rx + status)
 > +
-> +			operating-points-v2 = <&pcie3_opp_table>;
+> +  interrupts:
+> +    minItems: 3
+> +    maxItems: 3
+> +    description: GIC interrupt numbers
 > +
-> +			status = "disabled";
+> +  adi,use-edbo:
+> +    type: boolean
+> +    description: Enable divide by one in divisor
+
+Versus divide by ???
+
 > +
-> +			pcie3_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupt-names
+> +  - interrupts
 > +
-> +				/* GEN 1 x1 */
-> +				opp-2500000 {
-> +					opp-hz = /bits/ 64 <2500000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +					opp-peak-kBps = <250000 1>;
-> +				};
+> +additionalProperties: false
 > +
-> +				/* GEN 1 x2 and GEN 2 x1 */
-> +				opp-5000000 {
-> +					opp-hz = /bits/ 64 <5000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +					opp-peak-kBps = <500000 1>;
-> +				};
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/clock/adi-sc5xx-clock.h>
 > +
-> +				/* GEN 1 x4 and GEN 2 x2 */
-> +				opp-10000000 {
-> +					opp-hz = /bits/ 64 <10000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +					opp-peak-kBps = <1000000 1>;
-> +				};
+> +    uart0: uart@31003000 {
+
+serial@...
+
+Drop unused labels.
+
+> +      compatible = "adi,uart";
+> +      reg = <0x31003000 0x40>;
+> +      clocks = <&clk ADSP_SC598_CLK_CGU0_SCLK0>;
+> +      clock-names = "sclk0";
+> +      interrupt-parent = <&gic>;
+> +      interrupt-names = "tx", "rx", "status";
+> +      interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
+> +                   <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
+> +                   <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+> +      adi,use-edbo;
+> +      status = "disabled";
+
+Examples should be enabled. Drop.
+
+> +    };
 > +
-> +				/* GEN 1 x8 and GEN 2 x4 */
-> +				opp-20000000 {
-> +					opp-hz = /bits/ 64 <20000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +					opp-peak-kBps = <2000000 1>;
-> +				};
-> +
-> +				/* GEN 2 x8 */
-> +				opp-40000000 {
-> +					opp-hz = /bits/ 64 <40000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +					opp-peak-kBps = <4000000 1>;
-> +				};
-> +
-> +				/* GEN 3 x1 */
-> +				opp-8000000 {
-> +					opp-hz = /bits/ 64 <8000000>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +					opp-peak-kBps = <984500 1>;
-> +				};
-> +
-> +				/* GEN 3 x2 and GEN 4 x1 */
-> +				opp-16000000 {
-> +					opp-hz = /bits/ 64 <16000000>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +					opp-peak-kBps = <1969000 1>;
-> +				};
-> +
-> +				/* GEN 3 x4 and GEN 4 x2 */
-> +				opp-32000000 {
-> +					opp-hz = /bits/ 64 <32000000>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +					opp-peak-kBps = <3938000 1>;
-> +				};
-> +
-> +				/* GEN 3 x8 and GEN 4 x4 */
-> +				opp-64000000 {
-> +					opp-hz = /bits/ 64 <64000000>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +					opp-peak-kBps = <7876000 1>;
-> +				};
-> +
-> +				/* GEN 4 x8 */
-> +				opp-128000000 {
-> +					opp-hz = /bits/ 64 <128000000>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +					opp-peak-kBps = <15753000 1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		pcie3_phy: phy@1be0000 {
-> +			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
-> +			reg = <0 0x01be0000 0 0x10000>;
-> +
-> +			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
-> +				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-> +				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
-> +				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
-> +				 <&gcc GCC_PCIE_3_PIPE_CLK>,
-> +				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
-> +			clock-names = "aux",
-> +				      "cfg_ahb",
-> +				      "ref",
-> +				      "rchng",
-> +				      "pipe",
-> +				      "pipediv2";
-> +
-> +			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
-> +				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
-> +			reset-names = "phy",
-> +				      "phy_nocsr";
-> +
-> +			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
-> +			assigned-clock-rates = <100000000>;
-> +
-> +			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "pcie3_pipe_clk";
-> +
-> +			#phy-cells = <0>;
-> +
-> +			status = "disabled";
-> +		};
-> +
->  		pcie6a: pci@1bf8000 {
->  			device_type = "pci";
->  			compatible = "qcom,pcie-x1e80100";
+> 
 > -- 
-> 2.34.1
+> 2.25.1
 > 
-
--- 
-மணிவண்ணன் சதாசிவம்
