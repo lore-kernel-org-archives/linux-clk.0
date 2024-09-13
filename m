@@ -1,43 +1,43 @@
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBFE146D6D;
-	Fri, 13 Sep 2024 19:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B242F155757;
+	Fri, 13 Sep 2024 19:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254704; cv=none; b=WkIm67YVklnnOp251UdSATknCxmtNgjlwSkLIEMOXs8hp7Hz4t0dqd2AyXBNLyW0TwuyS1pBDrexlcz0lozL5KH9bW8EgE99JHcSD8pqbGWH7cY+CwEKk9TL1wbmzCMVbFR8xuDO1D58DFqeOyPSXEp+mwg/5TrgN8Uu8uHtfqw=
+	t=1726254708; cv=none; b=o64qnT8KyQT+3HHShX2ZjjgbuIa6QsInil+hQQ9ivGB9KEWqtpz6/VYiWR2VlwKR24akG2LskScFe5Q6wMDzdl1Bk2a4uY6likJFHuMpWGbFhf5BLhb3V8MCsbjxdhgxdpNsKvpoGHCv0lR+mn9tDeqNeWhi4chSQYJmh6D1roU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254704; c=relaxed/simple;
-	bh=bxjEfcIAw3G69yFnN1jVI/zDGOe024EvxtZK+xb84Vg=;
+	s=arc-20240116; t=1726254708; c=relaxed/simple;
+	bh=FSP8+aZvygGlFdnBS0yY0alytQkKXdz2tdXRla1srC4=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WqG06+mXbTiZnePaxUEj662edP+zdOhtdzIQUdrTT07r/pjrJXEkV2TBJRBl7IFle+FE6IA3D4Auow+pBd7NPA0wMnAGpZDgDi06/ogJtAU1yUACFx4Dx0GEzU6JwydEzeun7vt3bW4dGkgt6BrmDymI3I5BoQMY5kbLyTcxV1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=RLccJbI1; arc=none smtp.client-ip=185.70.43.16
+	 MIME-Version:Content-Type; b=LOFluyJCO6hlvMUeC98chhbh4VtPxmOlyCgHidNItT1kp3oxp1V1Y/1T4WxbfNi3j+r6bJ4RqHflBmw674IcIx8YUNy4xYpeb9ozUqXBi9a6twNoqE51wOmfcrmWJNQJ000EYbU5xXg77fyyxWOE+13GQgrzpvFoB9ugunM1mw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=uPgWAy7z; arc=none smtp.client-ip=185.70.43.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="RLccJbI1"
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="uPgWAy7z"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1726254701; x=1726513901;
-	bh=BO5F8gZ2+XQmMySVgluXmKZCMf7FHSNQE9WqjQCRqXM=;
+	s=protonmail3; t=1726254704; x=1726513904;
+	bh=6/lBrZ2oDDRZvVUHlxFsYvMr6aYJJQrOCFEf51HfHeg=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=RLccJbI1VyGdM8MwrH96/pvdRmGy5mCuYCBoAOUEUVet9Nz07M+SnLzzkdYUKuV1y
-	 Da6CYpvhxS74hW4RXItAMI2kLxG65JFN5qXT2CIO77m3ijfl+wMhTWZPG6dpu6jA3A
-	 fQ0Seubh8hVtaFLeTf0ek4vOUGsgZEUwYYBDAk9U/l6flDCZztdI3Vxm+F0Gd74upQ
-	 LykWZaY3oSlYlt7uHHtZ0bpmxwkp+7W5tXpHAtlpiNxdo6awmR1ox670f2LebU7lrq
-	 yJcVZA1U/CuHB2pl8U9aAelzrsIHHQtosAqfS5JtTirF4KtnsxQUECJ0ZVvDEtV2+Q
-	 V4z8bzu4LnYQQ==
-Date: Fri, 13 Sep 2024 19:11:37 +0000
+	b=uPgWAy7zSjTBka6AISIp1jmQ42aVGA8jKYC2DYVpZxx9rqR7tLO6EjK75ego4B5m8
+	 V3CFAY0C85OszAvyxLMbhJeSR8FGTgdoEhdXFkEzs3GlUleGiGb0N1C2wn6RaKv1hd
+	 hKBOur9wA4+gIygtUEB4u1HLguqlU3ZH1p38asyQ19lTCMG5AZzCORU2l+yp6DR9+f
+	 vXjKTLJnkl6YM6t7Z4627b75+XLSUfQ4WxO97cupmNVyx1sb8rKQ4QQatnvxZ290Ty
+	 8ks1Zw/DD+/qI8osw832p+c54JoctYTNufEWZJoOqDhy1dPLGwElPvddwGX0Rb79J5
+	 sRT6B1wl4nEIw==
+Date: Fri, 13 Sep 2024 19:11:42 +0000
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
 From: Harry Austen <hpausten@protonmail.com>
 Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
-Subject: [PATCH v2 5/6] dt-bindings: clock: xilinx: describe whether dynamic reconfig is enabled
-Message-ID: <20240913191037.2690-6-hpausten@protonmail.com>
+Subject: [PATCH v2 6/6] clk: clocking-wizard: move dynamic reconfig setup behind flag
+Message-ID: <20240913191037.2690-7-hpausten@protonmail.com>
 In-Reply-To: <20240913191037.2690-1-hpausten@protonmail.com>
 References: <20240913191037.2690-1-hpausten@protonmail.com>
 Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: 2221ecd0086cec656555c1c3be1f8b4e576c5eef
+X-Pm-Message-ID: 5bf6a2b04b808efc1b0da601da58340992b043d8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,50 +48,119 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 Xilinx clocking wizard IP core's dynamic reconfiguration support is
-optionally enabled at build time. Add a devicetree boolean property to
-describe whether the hardware supports this feature or not.
-
-Since dynamic reconfiguration support was previously assumed enabled,
-introduce a property to indicate the inverse, in order to maintain
-devicetree backwards compatibility. Hence, this new xlnx,static-config
-property should be specified when dynamic reconfiguration support is
-disabled in the IP core configuration.
+optionally enabled at build time. Use the new boolean devicetree
+property to indicate whether the hardware supports this feature or not.
 
 Signed-off-by: Harry Austen <hpausten@protonmail.com>
 ---
 v1 -> v2:
-- Invert meaning of the new DT property
-- Renamed from xlnx,dynamic-reconfig to xlnx,static-config
+- Update if condition with renamed inverted DT property
 
- .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml     | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 73 +++++++++++-----------
+ 1 file changed, 38 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.y=
-aml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-index 9d5324dc1027a..b44a76a958f4e 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-@@ -39,6 +39,11 @@ properties:
-       - const: clk_in1
-       - const: s_axi_aclk
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilin=
+x/clk-xlnx-clock-wizard.c
+index 1a65a7d153c35..b2233d3ff9a99 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -1146,20 +1146,6 @@ static int clk_wzrd_probe(struct platform_device *pd=
+ev)
+ =09if (IS_ERR(clk_wzrd->base))
+ =09=09return PTR_ERR(clk_wzrd->base);
 =20
-+  xlnx,static-config:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Indicate whether the core has been configured without support for dy=
-namic
-+      runtime reconfguration of the clocking primitive MMCM/PLL.
+-=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_g=
+rade);
+-=09if (!ret) {
+-=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
+-=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
+-=09=09=09=09 clk_wzrd->speed_grade);
+-=09=09=09clk_wzrd->speed_grade =3D 0;
+-=09=09}
+-=09}
+-
+-=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
+-=09if (IS_ERR(clk_wzrd->clk_in1))
+-=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
+-=09=09=09=09     "clk_in1 not found\n");
+-
+ =09clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+ =09if (IS_ERR(clk_wzrd->axi_clk))
+ =09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_clk),
+@@ -1170,31 +1156,48 @@ static int clk_wzrd_probe(struct platform_device *p=
+dev)
+ =09=09return -EINVAL;
+ =09}
 =20
-   xlnx,speed-grade:
-     $ref: /schemas/types.yaml#/definitions/uint32
-@@ -70,6 +75,7 @@ examples:
-         compatible =3D "xlnx,clocking-wizard";
-         reg =3D <0xb0000000 0x10000>;
-         #clock-cells =3D <1>;
-+        xlnx,static-config;
-         xlnx,speed-grade =3D <1>;
-         xlnx,nr-outputs =3D <6>;
-         clock-names =3D "clk_in1", "s_axi_aclk";
+-=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+-=09if (ret)
+-=09=09return ret;
+-
+-=09clk_wzrd->clk_data.num =3D nr_outputs;
+-=09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get, =
+&clk_wzrd->clk_data);
+-=09if (ret) {
+-=09=09dev_err(&pdev->dev, "unable to register clock provider\n");
+-=09=09return ret;
+-=09}
++=09if (!of_property_present(np, "xlnx,static-config")) {
++=09=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->spee=
+d_grade);
++=09=09if (!ret) {
++=09=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
++=09=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
++=09=09=09=09=09 clk_wzrd->speed_grade);
++=09=09=09=09clk_wzrd->speed_grade =3D 0;
++=09=09=09}
++=09=09}
+=20
+-=09if (clk_wzrd->speed_grade) {
+-=09=09clk_wzrd->nb.notifier_call =3D clk_wzrd_clk_notifier;
++=09=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
++=09=09if (IS_ERR(clk_wzrd->clk_in1))
++=09=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
++=09=09=09=09=09     "clk_in1 not found\n");
+=20
+-=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->clk_in1,
+-=09=09=09=09=09=09 &clk_wzrd->nb);
++=09=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+ =09=09if (ret)
+-=09=09=09dev_warn(&pdev->dev,
+-=09=09=09=09 "unable to register clock notifier\n");
++=09=09=09return ret;
++
++=09=09clk_wzrd->clk_data.num =3D nr_outputs;
++=09=09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_ge=
+t,
++=09=09=09=09=09=09  &clk_wzrd->clk_data);
++=09=09if (ret) {
++=09=09=09dev_err(&pdev->dev, "unable to register clock provider\n");
++=09=09=09return ret;
++=09=09}
+=20
+-=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
+-=09=09=09=09=09=09 &clk_wzrd->nb);
+-=09=09if (ret)
+-=09=09=09dev_warn(&pdev->dev,
+-=09=09=09=09 "unable to register clock notifier\n");
++=09=09if (clk_wzrd->speed_grade) {
++=09=09=09clk_wzrd->nb.notifier_call =3D clk_wzrd_clk_notifier;
++
++=09=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->clk_in1,
++=09=09=09=09=09=09=09 &clk_wzrd->nb);
++=09=09=09if (ret)
++=09=09=09=09dev_warn(&pdev->dev,
++=09=09=09=09=09 "unable to register clock notifier\n");
++
++=09=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
++=09=09=09=09=09=09=09 &clk_wzrd->nb);
++=09=09=09if (ret)
++=09=09=09=09dev_warn(&pdev->dev,
++=09=09=09=09=09 "unable to register clock notifier\n");
++=09=09}
+ =09}
+=20
+ =09return 0;
 --=20
 2.46.0
 
