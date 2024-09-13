@@ -1,83 +1,66 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D69C14D2B8;
-	Fri, 13 Sep 2024 20:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA617BEC7;
+	Fri, 13 Sep 2024 21:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726260090; cv=none; b=D3J8A4evhJuQhbO4MVg0yoVgOFecn+JWZUgjknmZAyIlzOzuaM9DShKm21YYSns0DRC5178ovNjLagY656MZEvvt9K7AvAYsGzqgIwpW3lD/TYzYwm4JupZVVlvJbzHSs8uLg3K/IaZ0CcTq00F4I0vhX6GYrFpgTsIT+CimEHo=
+	t=1726264523; cv=none; b=MVvSHcovw5Yi2KV6/lWKKPJ4C8zGS2BTTD0ZfClMlWEAROPZH2rpboO6sFjGwdFGvxY58i7SkIiSgJD/SvNAMRmhFfr3I+uEXv89vhpJrCqOyniuAu8qPgtR5ckrJcw/GHuRSWMdy8b6UpOdj3vDfiUmBgJuaz4Q1yd+pg4ekYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726260090; c=relaxed/simple;
-	bh=dxtHkHhZlIEtYto+4D7ABktR9JYb+fxPTDKaT0Bg+p4=;
+	s=arc-20240116; t=1726264523; c=relaxed/simple;
+	bh=q6149tWf9a83IHhHEMU2VwoiZlrZy13ezqBewO8qXZM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubymY+v6xpJibfRB6uabDweFx1zIOsQgGcPfa26MEQkDVEi+bTUoMmnzpOWpRkD6kt2oN6H3ZwrwVahcPMzhk+01AJt0IXAT2SNfuUa/dNXUES1OZ4JaejTpDmvDgHUav9XL1yg/92JJfnbrXvqkcCS1+Rgutomt1cgwk1d7mDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FEFRRqqw; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcsuYDbuWAUT87YcEqOy+FEPIAKObB1KrATnnyCW0rBG6ubFiXKzrgraCnr5P8DX2JQnMsWSK5/p9BGKIOCy0q0FRSOARE5xH4y9VRLbXCLXeZyNAsdyByWEfeZoV8JypDfeGWMZMdf7LWYjedBmjkfBPiRGjJrsctihbkobcmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcQMUsYv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FEFRRqqw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726260089; x=1757796089;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dxtHkHhZlIEtYto+4D7ABktR9JYb+fxPTDKaT0Bg+p4=;
-  b=FEFRRqqw99XR1fzmldi4aE/2gu3SzpE0qsz5k/hYLIyAFWrjpaXundza
-   hbnkzWAOf8+KWaMxGV/IYDoiVdDZoWx8YPcnzpsdL2GuqNticiufOHPab
-   kGvs8nT6ib0055yzshaWCbt3fBzglVMWK7Qn8k364Byicte2uACnXtq08
-   1hj0r6K/Zy+qtYPO0KS/OZfmPsNb9isHmqJy9qDi1G55H8OCfuDPcM3fi
-   KQetAtGIoicyaIMmgsKBILdfnxOsa8DGHl8PDAyJOZiapWHhh6xEFUWjT
-   KPQJrDhwDWUqqYaB6VDtZG5I0SAHckhCM67xAJKxh5SqTxAJa1GrpMj4m
-   Q==;
-X-CSE-ConnectionGUID: rdGknI2rQSSfI6dODY7nVA==
-X-CSE-MsgGUID: 5/iOL3BETrO2GjKZojzLfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="35848673"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="35848673"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 13:41:28 -0700
-X-CSE-ConnectionGUID: GVjA4IFURsadu4GOWs5ACw==
-X-CSE-MsgGUID: 1LTFprj9SQKpm0G8VRBwfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="68966522"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 13 Sep 2024 13:41:21 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spD6U-0006yI-2Y;
-	Fri, 13 Sep 2024 20:41:18 +0000
-Date: Sat, 14 Sep 2024 04:40:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arturs Artamonovs via B4 Relay <devnull+arturs.artamonovs.analog.com@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Malysa <greg.malysa@timesys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Utsav Agarwal <Utsav.Agarwal@analog.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcQMUsYv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66B8EC4CECC;
+	Fri, 13 Sep 2024 21:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726264522;
+	bh=q6149tWf9a83IHhHEMU2VwoiZlrZy13ezqBewO8qXZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WcQMUsYvo9iMfCXqKzz6WfBOeSf3QnxCe7qBB55jtluaLCdkajX3PK+h6pyWyBX07
+	 PnEet5lNBh2xMOHyEUtFlosiTzo3hwcMA6t3RS+egfoow2NGG+5Npxa7L2SoCr/Fwq
+	 +7PxDup8jdlmXiDh0wY+Xr8SAzjC+G1FGXhlQ9FtrV5qrJACiTJ7rzq5GLGeGaPylO
+	 GB8gfB5GU9GIUuRgX2zsW3uP0oSuG9V+oz/AGRvxv9tI7ACCSGFP0+5eFAjyG+icUO
+	 Rv2Mvreqixc/gkn8utok04BwajsZETiwRjz2Yoy/B6F6jeyNk8jWAZP9/okZ+fjhXI
+	 EJdZKnyjanX/A==
+Date: Fri, 13 Sep 2024 16:55:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>, soc@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Arturs Artamonovs <arturs.artamonovs@analog.com>,
-	adsp-linux@analog.com,
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-Subject: Re: [PATCH 11/21] irqchip: Add irqchip for ADI ADSP-SC5xx platform
-Message-ID: <202409140451.t2a9fck6-lkp@intel.com>
-References: <20240912-test-v1-11-458fa57c8ccf@analog.com>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	cros-qcom-dts-watchers@chromium.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 05/27] dt-bindings: mfd: add maxim,max77705
+Message-ID: <20240913215521.GA864207-robh@kernel.org>
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-5-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,49 +69,247 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240912-test-v1-11-458fa57c8ccf@analog.com>
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-5-2d2efd5c5877@gmail.com>
 
-Hi Arturs,
+On Fri, Sep 13, 2024 at 06:07:48PM +0300, Dzmitry Sankouski wrote:
+> Add maxim,max77705 core binding part.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> 
+> ---
+> Changes in v4:
+> - change dts example intendation from tabs
+>  to spaces
+> - remove interrupt-names property
+> - remove obvious reg description
+> - split long(>80) lines
+> ---
+>  .../devicetree/bindings/mfd/maxim,max77705.yaml    | 169 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 170 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> new file mode 100644
+> index 000000000000..40a67d15e312
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> @@ -0,0 +1,169 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Maxim MAX77705 Companion Power Management IC and USB Type-C interface IC
+> +
+> +maintainers:
+> +  - Dzmitry Sankouski <dsankouski@gmail.com>
+> +
+> +description: |
+> +  This is a part of device tree bindings for Maxim MAX77705 multi functional
+> +  device.
+> +
+> +  The Maxim MAX77705 is a Companion Power Management and Type-C
+> +  interface IC which includes charger, fuelgauge, LED, haptic motor driver and
+> +  Type-C management IC.
+> +
+> +properties:
+> +  compatible:
+> +    const: maxim,max77705
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  charger:
+> +    $ref: /schemas/power/supply/power-supply.yaml
+> +    additionalProperties: true
 
-kernel test robot noticed the following build warnings:
+No, true is only valid for incomplete schemas (i.e. common ones included 
+by another complete schema).
 
-[auto build test WARNING on da3ea35007d0af457a0afc87e84fddaebc4e0b63]
+And since you reference another schema, you want 'unevaluatedProperties' 
+instead if you want to use any properties defined in power-supply.yaml.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arturs-Artamonovs-via-B4-Relay/arm64-Add-ADI-ADSP-SC598-SoC/20240913-022308
-base:   da3ea35007d0af457a0afc87e84fddaebc4e0b63
-patch link:    https://lore.kernel.org/r/20240912-test-v1-11-458fa57c8ccf%40analog.com
-patch subject: [PATCH 11/21] irqchip: Add irqchip for ADI ADSP-SC5xx platform
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20240914/202409140451.t2a9fck6-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140451.t2a9fck6-lkp@intel.com/reproduce)
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-charger
+> +
+> +    required:
+> +      - compatible
+> +      - monitored-battery
+> +
+> +  fuel_gauge:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140451.t2a9fck6-lkp@intel.com/
+fuel-gauge
 
-All warnings (new ones prefixed by >>):
+> +    $ref: /schemas/power/supply/power-supply.yaml
+> +    type: object
+> +    additionalProperties: true
+> +    description: MAX77705 fuel gauge with ModelGauge m5 EZ algorithm support.
 
->> drivers/irqchip/irq-adi-adsp.c:3: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * ADSP PINT PORT driver.
-   drivers/irqchip/irq-adi-adsp.c:51: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * Each gpio device should be connected to one of the two valid pints with an
-   drivers/irqchip/irq-adi-adsp.c:152: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * This handles the GIC interrupt associated with this PINT being activated.
+blank line
 
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-fuel-gauge
+> +
+> +      shunt-resistor-micro-ohms:
+> +        description: |
 
-vim +3 drivers/irqchip/irq-adi-adsp.c
+Don't need '|'.
 
-   > 3	 * ADSP PINT PORT driver.
-     4	 *
-     5	 * The default mapping is used for all PINTs, refer to the HRM to identify
-     6	 * PORT mapping to PINTs. For example, PINT0 has PORT B (0-15) and PORT A
-     7	 * (16-31).
-     8	 *
-     9	 * Copyright (C) 2022-2024, Analog Devices, Inc.
-    10	 */
-    11	
+> +          The value of current sense resistor in microohms.
+> +
+> +    required:
+> +      - compatible
+> +      - shunt-resistor-micro-ohms
+> +      - monitored-battery
+> +      - power-supplies
+> +
+> +  haptic:
+> +    type: object
+> +    additionalProperties: false
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+blank line
+
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-haptic
+> +
+> +      haptic-supply: true
+> +
+> +      pwms:
+> +        maxItems: 1
+> +
+> +    required:
+> +      - compatible
+> +      - haptic-supply
+> +      - pwms
+> +
+> +  leds:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      Up to 4 LEDs supported. One LED is represented by one child node.
+
+blank line
+
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-led
+> +
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^led@[0-3]$":
+> +        type: object
+> +        $ref: /schemas/leds/common.yaml#
+
+blank line
+
+> +        properties:
+> +          reg:
+> +            description:
+> +              LED index.
+
+blank line
+
+> +        unevaluatedProperties: false
+
+blank line
+
+> +        required:
+> +          - reg
+> +
+> +    required:
+> +      - compatible
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pmic@66 {
+> +            compatible = "maxim,max77705";
+> +            reg = <0x66>;
+> +            interrupt-parent = <&pm8998_gpios>;
+> +            interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +            pinctrl-0 = <&chg_int_default>;
+> +            pinctrl-names = "default";
+> +
+> +            leds {
+> +                compatible = "maxim,max77705-led";
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@1 {
+> +                    reg = <1>;
+> +                    label = "red:usr1";
+> +                };
+> +
+> +                led@2 {
+> +                    reg = <2>;
+> +                    label = "green:usr2";
+> +                };
+> +
+> +                led@3 {
+> +                    reg = <3>;
+> +                    label = "blue:usr3";
+> +                };
+> +            };
+> +
+> +            max77705_charger: charger {
+> +                compatible = "maxim,max77705-charger";
+> +                monitored-battery = <&battery>;
+> +            };
+> +
+> +            fuel_gauge {
+> +                compatible = "maxim,max77705-fuel-gauge";
+> +                monitored-battery = <&battery>;
+> +                power-supplies = <&max77705_charger>;
+> +                rsense = <5>;
+
+Not documented.
+
+> +            };
+> +
+> +
+> +            haptic {
+> +                compatible = "maxim,max77705-haptic";
+> +                haptic-supply = <&vib_regulator>;
+> +                pwms = <&vib_pwm 0 50000>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b65cfa1d322d..59d027591e34 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14064,6 +14064,7 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
+>  F:	Documentation/devicetree/bindings/*/maxim,max14577.yaml
+>  F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
+>  F:	Documentation/devicetree/bindings/*/maxim,max77693.yaml
+> +F:	Documentation/devicetree/bindings/*/maxim,max77705*.yaml
+>  F:	Documentation/devicetree/bindings/*/maxim,max77843.yaml
+>  F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
+>  F:	drivers/*/*max77843.c
+> 
+> -- 
+> 2.39.2
+> 
