@@ -1,169 +1,191 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E86413AD03;
-	Fri, 13 Sep 2024 19:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088294A06;
+	Fri, 13 Sep 2024 19:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726255947; cv=none; b=UlTThsAOpEmr7eASh0WfP0ZOPgTj/uga48V6CKHhzv+7NsRAB2cTG4jafqmF9H7RU/WkrwvavP1AudHSI5ha39kR4oaqwvttgymE3EjjasiZld2k+TZdmWgwFF8LLe3dUIz4UIjCJYgF66HdKRhljAiXjj0/WumjYKifLEYHpFM=
+	t=1726256765; cv=none; b=cUUJKwqPsfsUA43MAddyiBhv1aJj3eqq5bthVyxcqEKjwnYwRnN/WJGEU9yiXbkr50LnZbyxPEigrOybnMokM41gLqxQze9z7IuDuIYSrU1oQBY6W3oW79i0dn5voy01VhS6iehHndUIeINtJRmWhVF5peurk3RIVPSO1wFWM7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726255947; c=relaxed/simple;
-	bh=CAh7OJCKr+ZZWcKaCK8a8dneJu3h6r5pEUsUumEe//Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b6LMG1qL8zNafOZYNbmu7ivrByDMLMJSQhzCQnfybXGz7GProZWxhjqjclNI5i2NSm6Put1ZV1XTmkWNa2j/UgDoNdpcPJe8Zc8s7yyT3gcSPd4TzbrPgo/gk5phtAVUTOvPeaUVO5bjRqYiEVQVBA7177s/SdhQ/Kyno+5+fxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yednq30N; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1726256765; c=relaxed/simple;
+	bh=irzfxl48davcfw8D4U+UFH+kFUss2avEidDpQCzdmW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UTTa6Fvfbul/qhceds6Mw4akyRDK/BcmcKXsILd1nNt5PT41P++TaGPeNHIsicPcGk968FiAmXLZaQWfLWZiCdve6MEtty9S3dKMBWfOmsUdVj9tjWXgpPNzPDcgEMkpPKE7QMgAVfXrFLWOq6Q+jYOYDDJQvUPQtD/a46jM1a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDm2wIMW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yednq30N"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E834F60002;
-	Fri, 13 Sep 2024 19:32:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726255942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x2of1BdHGwZAspl/pHlPclrXtKEUjMefV4+slP9HEaE=;
-	b=Yednq30NTIRFFSqwaFEEiemih/JhA8Y5QpUO/NJaO7jdAS8ykd/LaJYepppl1vRMGh5Bu3
-	5KglUphzYAwMjRSJQoH+XEV6DIJ2Da+phyzUur5iMSwAYes2nj4VNsfsMmjF8Gl/HckJml
-	4DXajWu5uj5Q7VU9IkbYsigpcGBPxafH4Ds/RMHYuP0RYYsSNIaZntl4TYBgI+QTxfiN+I
-	jZGeTI4aD/dxORLSNAD0gP+9GaYgpk3yNBMWY+Ape+coSlLrilqrzBP3ZsyKCKyxqPIQKD
-	0KV3dJBNVEk8f5rUcpOiAGgZVV6iQLNL1fBSq4uuHfNd/Glll+yAyNdQEze0TA==
-Date: Fri, 13 Sep 2024 21:32:19 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, Douglas Anderson
- <dianders@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek
- Szyprowski <m.szyprowski@samsung.com>, Taniya Das <quic_tdas@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 0/5] Fix a deadlock with clk_pm_runtime_get()
-Message-ID: <20240913213219.2d5efa2c@xps-13>
-In-Reply-To: <20240325054403.592298-1-sboyd@kernel.org>
-References: <20240325054403.592298-1-sboyd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDm2wIMW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923DEC4CED3;
+	Fri, 13 Sep 2024 19:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726256764;
+	bh=irzfxl48davcfw8D4U+UFH+kFUss2avEidDpQCzdmW4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gDm2wIMWzTyd7BFXJKoSaho5ZnNS6B8a/yEAnurFH7JZmpv7BCz77S6IIClDIfUZi
+	 SOQ65O7r0w8lACeionWKDvlNIT01OGj6/mSsH3+jbCvcdPYyE7Objjrtk0cfVKtM5g
+	 3hnsYxbB+J7HxoXCyu4ciHdbtYcqOzbqmDf2MCzUJ8fayZdlpQ4VQZHsiiaDgl6F+q
+	 +YfzOtd/75gbZaWdCEFdvGGmucwKFB6keRv+rNEXUQxVxBj86amEDCG242oBsGk1WW
+	 FnHvVorQVKHB/LNSxfCqPJnJNSI3Xr1uHy4+h/JMm1XzqRrlCDEFICnGMYd/FooezM
+	 YyvRgkJJEyz3Q==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso2205249e87.2;
+        Fri, 13 Sep 2024 12:46:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/3CcRqnBI0F15SqJnkctvcGsCfEERIYA008cjWQvee1Emd2xoHFavZ3RHHSutk7lwzMVwNIDBsQwn@vger.kernel.org, AJvYcCV5jLQMBIMqom68uAOxpuRVimBWWMQwwlsCo0/V3RAFU6AFx/qAfIMx9rWuMKpaX4jiC7/quDTqSnaH@vger.kernel.org, AJvYcCXYXUe6dmeXIF25OE0gZbY2fV1RvckcrotEzwS4PADmc47oNYQI8GOeSwwdMs9k2uyJqProm7MkRwzWfpmXU0d2qg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6x+DRuXE5OP8glEbpocjnKXm/Ex9TV1k9G0AJewPMBXuDQscV
+	ZsTeIIDkBsouyGzvFmCiQQy4of65vPf3XPeo33HOkXNCb4JurPB09ctLNNG/o3rnNMD5XW0QTXs
+	9kmvOzRLL4omc+quLeiMHB45BJQ==
+X-Google-Smtp-Source: AGHT+IF8ujH5G7IhHrAEJ1Q7WeKs8dPxgfyl9SMhJtytPlJ29u1zY89ILXutLa7Jid+UQ5+M+KGLOW/C/KhbD9qMLWU=
+X-Received: by 2002:a05:6512:158e:b0:533:71f:3a3d with SMTP id
+ 2adb3069b0e04-5367fee454bmr3952584e87.24.1726256762744; Fri, 13 Sep 2024
+ 12:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <68037ad181991fe0b792f6d003e3e9e538d5ffd7.1673452118.git.geert+renesas@glider.be>
+ <5da02a9b-3d42-a26f-0d18-29a6b5b181e5@seco.com> <20230124091236.1bf8c6da@booty>
+ <CAMuHMdV8_+dF03VD6mST2zMDQ68cgsLLRQi6UeXK2jH-eWqWZg@mail.gmail.com>
+ <232f59aa-704b-a374-6a78-469156ccdbea@seco.com> <83f4f33ebd3706ec7d35acd807b1e44b.sboyd@kernel.org>
+ <20230322093918.33690db3@booty> <CAL_JsqKj6A=GvgaZCd9jiF71YPGuQSKJ9Ob6erHT45q8vRR13w@mail.gmail.com>
+ <20240913170701.156d8e82@booty> <663b1735-5346-4fe7-b269-9d958b090a38@seco.com>
+In-Reply-To: <663b1735-5346-4fe7-b269-9d958b090a38@seco.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 13 Sep 2024 14:45:50 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ5NNSgKxeCHhQ8ZsLm8ARsOHpgibjXLCkKb8cGEinJnA@mail.gmail.com>
+Message-ID: <CAL_JsqJ5NNSgKxeCHhQ8ZsLm8ARsOHpgibjXLCkKb8cGEinJnA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clk: vc5: Make SD/OE pin configuration
+ properties not required
+To: Sean Anderson <sean.anderson@seco.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-reneas-soc@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>, Adam Ford <aford173@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Stephen,
-
-I only discover this thread today, interesting read!
-
-sboyd@kernel.org wrote on Sun, 24 Mar 2024 22:43:57 -0700:
-
-> This patch series fixes a deadlock reported[1] on ChromeOS devices
-> (Qualcomm sc7180 Trogdor). To get there, we allow __clk_release() to run
-
-Not only ChromeOS devices are affected, there have been several reports
-with similar issues on the mailing list, especially on i.MX8MP, where
-the clock and power management domains are tightly connected.
-
-> without the prepare_lock held. Then we add runtime PM enabled clk_core
-> structs to a list that we iterate and enable runtime PM for each entry
-> before grabbing the prepare_lock to walk the clk tree. The details are
-> in patch #4.
-
-I am happy we ended-up leaning to the same solution: runtime PM calls
-should no longer happen after acquiring the prepare lock.
-
-> The patch after that is based on the analysis in the disable unused
-> patch. We similarly resume devices from runtime suspend when walking the
-> clk tree for the debugfs clk_summary.
->=20
-> Unfortunately this doesn't fix all problems with the usage of runtime PM
-> in the clk framework. We still have a problem if preparing a clk happens
-> in parallel to the device providing that clk runtime resuming or
-> suspending. In that case, the task will go to sleep waiting for the
-> runtime PM state to change, and we'll deadlock. This is primarily a
-> problem with the global prepare_lock. I suspect we'll be able to fix
-> this by implementing per-clk locking, because then we will be able to
-> split up the big prepare_lock into smaller locks that don't deadlock on
-> some device runtime PM transitions.
-
-I fear splitting the locks will actually not solve the problems we
-encounter on i.MX8.
-
-Let me quote some parts of your commit log in patch 4/5:
-
----8<---
-> This is a classic ABBA deadlock. To properly fix the deadlock, we
-> must never runtime PM resume or suspend a device with the clk
-> prepare_lock held. Actually doing that is near impossible today
-> because the global prepare_lock would have to be dropped in the
-> middle of the tree, the device runtime PM resumed/suspended, and then
-> the prepare_lock grabbed again to ensure consistency of the clk tree
-> topology. If anything changes with the clk tree in the meantime,
-> we've lost and will need to start the operation all over again.
+On Fri, Sep 13, 2024 at 11:41=E2=80=AFAM Sean Anderson <sean.anderson@seco.=
+com> wrote:
 >
-> Luckily, most of the time we're simply incrementing or decrementing
-> the runtime PM count on an active device, so we don't have the chance
-> to schedule away with the prepare_lock held. Let's fix this immediate
-> problem that can be triggered more easily by simply booting on
-> Qualcomm sc7180.
---->8---
+> On 9/13/24 11:07, Luca Ceresoli wrote:
+> > Hello Sean, Geert,
+> >
+> > On Tue, 10 Sep 2024 17:13:55 -0500
+> > Rob Herring <robh+dt@kernel.org> wrote:
+> >
+> >> On Wed, Mar 22, 2023 at 3:39=E2=80=AFAM Luca Ceresoli <luca.ceresoli@b=
+ootlin.com> wrote:
+> >> >
+> >> > Hello Stephen,
+> >> >
+> >> > On Mon, 20 Mar 2023 14:27:56 -0700
+> >> > Stephen Boyd <sboyd@kernel.org> wrote:
+> >> >
+> >> > > Quoting Sean Anderson (2023-01-24 08:23:45)
+> >> > > > On 1/24/23 03:28, Geert Uytterhoeven wrote:
+> >> > > > > Hi Luca,
+> >> > > > >
+> >> > > > > On Tue, Jan 24, 2023 at 9:12 AM Luca Ceresoli <luca.ceresoli@b=
+ootlin.com> wrote:
+> >> > > > >> On Thu, 19 Jan 2023 14:27:43 -0500
+> >> > > > >> Sean Anderson <sean.anderson@seco.com> wrote:
+> >> > > > >> > On 1/11/23 10:55, Geert Uytterhoeven wrote:
+> >> > > > >
+> >> > > > >> I'm wondering whether Geert has a practical example of a situ=
+ation
+> >> > > > >> where it is better to have these properties optional.
+> >> > > > >
+> >> > > > > My issue was that these properties were introduced long after =
+the
+> >> > > > > initial bindings, hence pre-existing DTS does not have them.
+> >> > > > > Yes, we can add them, but then we have to read out the OTP-pro=
+grammed
+> >> > > > > settings first. If that's the way to go, I can look into that,=
+ though...
+> >> > > >
+> >> > > > FWIW I think there's no need to update existing bindings which d=
+on't
+> >> > > > have this property. The required aspect is mainly a reminder for=
+ new
+> >> > > > device trees.
+> >> > > >
+> >> > >
+> >> > > Is there any resolution on this thread? I'm dropping this patch fr=
+om my
+> >> > > queue.
+> >> >
+> >> > IIRC Geert kind of accepted the idea that these properties should st=
+ay
+> >> > required. Which is a bit annoying but it's the safest option, so unl=
+ess
+> >> > there are new complaints with solid use cases for making them option=
+alm,
+> >> > I think it's OK to drop the patch.
+> >>
+> >> The warnings related to this are now at the top of the list (by number
+> >> of occurrences):
+> >>
+> >>      50 clock-generator@6a: 'idt,shutdown' is a required property
+> >>      50 clock-generator@6a: 'idt,output-enable-active' is a required p=
+roperty
+> >>
+> >> IMO, if these properties haven't been needed for years, then they
+> >> obviously aren't really required.
+> >
+> > I think Rob's point adds to Geert's observation that there are other
+> > "idt,*" properties in the output nodes that may also be important to
+> > have correctly set, and are optional.
+> >
+> > So, Sean, I understand when you state it's safer to have these set.
+> > However this is valid for lots of other optional properties in any
+> > binding. Optional properties _can_ be set if that's important, just
+> > it's not mandatory to set them in all cases.
+> >
+> > As a matter of fact, we have been having for a long time some in-tree
+> > device trees which don't set these properties, which I believe implies
+> > it's OK for those cases to not set them, and to let them be set for the
+> > device trees where it is important.
+> >
+> > Finally, there is a maintenance/legacy issue: if we wanted to keep thes=
+e
+> > properties optional, who would chase all the boards defined in existing
+> > device trees to discover the correct values?
+> >
+> > Bottom line, my Reviewed-by tag is still valid.
+> >
+> > What is your opinion given these last few discussion point Sean?
+>
+> I am willing to send patches adding these properties for the appropriate
+> boards. There are only 6 in tree (all Renesas):
+>
+> $ git grep -l idt,5p49 '**.dts*'
+> arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+> arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+> arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> arch/arm64/boot/dts/renesas/salvator-x.dtsi
+> arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+> arch/arm64/boot/dts/renesas/ulcb.dtsi
+>
+> I was able to find schematics for ULCB. Salvator-X seems to be gone from
+> Renesas's website (in favor of the -XS). I have requested access to the
+> -XS schematics.  The HiHope board doesn't seem to have schematics
+> anywhere I could find (which is pretty unusual for a reference
+> design...). The Beacon schematics are behind a support portal (or so I
+> assume).
 
-Regarding your former statement, I don't think it is impossible, this
-is what I've been trying to do recently. It is really impacting, and
-must be handled specifically for each situation: I am counting three of
-them depending on the action, where either the parents, or the
-children or both sides of the tree should be resumed before
-continuing (with optionally the new parent, when reparenting explicitly
-or doing some rate changes which also involve reparenting). I don't yet
-have a working proof-of-concept -I would have loved to before LPC- but
-this is promising and I believe doable.
+That doesn't sound promising to me.
 
-About your second paragraph however, I am asking whether being "most of
-the time" incrementing or decrementing the runtime PM count is
-acceptable, because if we ever perform a real state change within the
-right conditions, we will just deadlock the platform. This is
-theoretical and is unlikely to happen in general, I agree. But shall we
-consider this situation too unlikely from happening for just ignoring
-it? Shall we instead fix it properly and prepare ourselves for future
-power-optimized architecture with a lot of dependencies between clocks
-and other power-related subsystems? This is an open question.
+> That said, this info should be pretty easy to find for anyone with
+> physical access to a board. Just boot it up and probe the voltage on the
+> SD/OE pin. I've added some people who may have the hardware to CC.
 
-> I'll start working on that problem in earnest now because I'm worried
-> we're going to run into that problem very soon.
+By some definition of easy I guess...
 
-Is there any public branch I could look into?
+I want the warning gone, so I'm going to apply this patch. When/if all
+the cases have been fixed, I'll happily revert it.
 
-On my side I tried to warn about this but got no feedback. I'd have
-loved to be pointed towards this patchset at that time :) Here is the
-report if you want to check it out. FYI, I was asking for feedback on
-very specific questions, which I consider now solved:
-https://lore.kernel.org/all/20240527181928.4fc6b5f0@xps-13/
-
-> Stephen Boyd (5):
->   clk: Remove prepare_lock hold assertion in __clk_release()
->   clk: Don't hold prepare_lock when calling kref_put()
->   clk: Initialize struct clk_core kref earlier
->   clk: Get runtime PM before walking tree during disable_unused
->   clk: Get runtime PM before walking tree for clk_summary
->=20
->  drivers/clk/clk.c | 142 +++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 115 insertions(+), 27 deletions(-)
->=20
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->=20
-> [1] https://lore.kernel.org/all/20220922084322.RFC.2.I375b6b9e0a0a5348962=
-f004beb3dafee6a12dfbb@changeid/
->=20
-> base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
-
-Thanks,
-Miqu=C3=A8l
+Rob
