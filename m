@@ -1,122 +1,134 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD191DA2FE
-	for <linux-clk@vger.kernel.org>; Fri, 13 Sep 2024 12:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072481D9329
+	for <linux-clk@vger.kernel.org>; Fri, 13 Sep 2024 13:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726232002; cv=none; b=tKjYe7Nr69X1hQpWBLVy1UhElX9Kny2RadIf+OUtG+Vd8gKoQZQv9Dan+EvZcsl7WnNRFT2ZzOF+27/AM5sQ5R5pbj8B+OXd/2ogV2ancC+rWrUdPt+hTMaoMY4LRT36wF7tbyF4ojbUGUoDJQKcvKMwnPSQs7fHYpicUz24IcU=
+	t=1726234600; cv=none; b=aqhKVgu4wfp5ZEWNKagixLJ5NinWkCS6un/7DKzXIouNZ+mKiVahjbZw33bCOcNaEcb58yVdRP+/AZSs4RoeGXR4bcNV9AFr2vCQWSoQTe67QQLGktmrJn+UU5vwxw00TgnppI0/qOAhoi0c2XxF+uUexnb8zS6nohd3ApmLB/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726232002; c=relaxed/simple;
-	bh=C6SsqUkpTyfLzyYxGxgCFwe8trUiuCmZPYRrNQEXuRg=;
+	s=arc-20240116; t=1726234600; c=relaxed/simple;
+	bh=gwqedYauqRzar7MyUCIVwmQgQHMRuUMD8QN6HVT/PRQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hK92oH9cZT6wf/FM4yfXngP52CqOeRznGhSnZqCzjADWz/uoafQxS/je1cfrKU/OAzcuUirTdkb8zESOC1fXhznwlSDP8vzvGHTVKoK0IEezIby32uYt4La7OuBFh/JlGi5y9Yg8mEDMyM1q85dgORp569UajZBezrAQY5+iDwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oC/7ZtWo; arc=none smtp.client-ip=209.85.167.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdeMOOWE4mVBt3OhHd/RvjZ871ne/05cNoLkQHeS0BatEH6hKCrAH/Xog7JMOyJI/8mk2imZ5UFkedSz3rBccfb2up391SVHskdVt8QGiOiHIdoyvS6jc5UamHtBF8FrzugnUCtgQZFAwNBYCncYldS65lvHoIXJW2g8sEeqYhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l/B65dM4; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oC/7ZtWo"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5356bb5522bso1216674e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Sep 2024 05:53:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l/B65dM4"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7163489149eso705632a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 13 Sep 2024 06:36:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726231998; x=1726836798; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ulKGIPWaoiiyEGEWVD2HKaFFVOQIntGXX/Asbla3YVM=;
-        b=oC/7ZtWo0dg9LdpFzgnrUMyy2wTeGf/imTYJmkCJyyYnFDdWVRXkfAjXOgBB9X3Al3
-         fE1XnTZln+7ja2oDbt72GcBafquB8EJVer8vUngqeygoqXfdwFT75SYZd2IkZPWS4o9o
-         8bPHpcMo5DV6ZhkVa8UXtcfmqSEKNCN1arJ5ntefLV3Pwq/ONbmQv1x/SRMEJQd7OhhL
-         JJutA367edrexZHextWRTpHqxDaiSEYYUlrlmdj6fXVl5vajIikN/zQiObtdLtxJ7BVa
-         z/ZfvGkvmgbMiZmnu/V8sptOKV4Nbc/apGG8jatbBOMda4eacLGDKexFgY8yfgeQnNpe
-         LBXg==
+        d=linaro.org; s=google; t=1726234598; x=1726839398; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yV+qXor6MhUiKRp/uAsEkmn8ZDHW0/20wv7wV43QfmY=;
+        b=l/B65dM4vZuyC+9GL++JH0LppWBKVS9zNSzpWPAHzpeXsdS4sjndbZzJWqdZYl/nLF
+         g2krccT986RqciDROT68bKmNfubBEypjv+LSwZO05PbyJ4eSHg/OacmJ4zwZhZoYqXSL
+         TSqwZ7M1w7TXosssXBlKWpKSCZOVPen5rwaeKwLmgVpMoLzKgsc9WflONsAfJQH9af88
+         ne/EbhoP7xis2jrQ4VsuInzxkwibaPr2JMyX7vrMVIrh4pPrLDrUp407TvxbyhjcHghV
+         pzOSTetUuITP4xQNxmRxefYaPTHHJShEE0C0bQg1oy1JKQl4ZZS5SE4FpfzvNYdu51nM
+         0Dqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726231998; x=1726836798;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ulKGIPWaoiiyEGEWVD2HKaFFVOQIntGXX/Asbla3YVM=;
-        b=fdhvzY6u6SVJ5yUmbR0k3Ogeu6XO3VR677kq6chY2TfytH9U4DfaX+E1NsaWlm/avv
-         9LB+ukh9YoEK+6v/zUQJC0ej05NCIiA1+G83Yncyud+6uCqQ00QgvGTSFnyTmdEvkBLT
-         ALM+B9vXrmCaR62kTUhCAmwxnwm6wi473FzXWju15WQDr2UG7Dh2F7TivVlNzz5aaSoo
-         xVnKJ610FxPKkrJm/x9XobUNrVNlPun2TMnloOQa3bXvUbwffup/ROsHmDcpjzvTvsRj
-         CjnLmhSFMTVgM6TwmwExFJK6NYexoOstw1tOyqBrxldhzIGm4H8NxOOlCvZy7I6sOjKD
-         mX6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVs5UQQ68KXy/ktD9WQ66SBcKrweyT+UOq4UAg26BLkAM0CRnJ8axvEbwZ8Rdbx3MRcaz04FAL2b64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw65hH4GSRYEAezl2RxnefXLLMldaZFfqKn3LQF90AL1Shz74Ae
-	rNfLLqiv7/kcOlJDmAMSf2zBM1G7LlB1BaE7kWjVGdbJuMj5u85hn3jCBEMWywk=
-X-Google-Smtp-Source: AGHT+IGMrI1iP0NSdtqsSAApfYvR65iW6wVAWhHwP/sGM4okfHDWoDQvz4JwneKed7XnN5mSPcy7Yg==
-X-Received: by 2002:a05:6512:4020:b0:536:533c:c460 with SMTP id 2adb3069b0e04-5367ff295a6mr1358763e87.50.1726231998229;
-        Fri, 13 Sep 2024 05:53:18 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90d482sm2280238e87.262.2024.09.13.05.53.17
+        d=1e100.net; s=20230601; t=1726234598; x=1726839398;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yV+qXor6MhUiKRp/uAsEkmn8ZDHW0/20wv7wV43QfmY=;
+        b=S0TyLyviznXsl1EYbJGdKRrHh+j+KILwjulleZR5/uLaYbgUmzaBhVFPqtwl3MOg72
+         1N9Wlw3sXGDAMeClXoThPCjM8d4+OaYNtzQTQ6oZbdjG2ay2AzRW+PVh979vcEXZykE7
+         ywXkcpk52jF89IiLOu9cumcO8Vzxv3ElzbfBWUXXKlsy2wgKQNQI5DSJC6H3soNkznjQ
+         Hf+BlepqlNIxuuWVwdvYRGNZ2B7MAi0O3zFE73QrXx66mGPsOw4HOAhGAfSNEIqE5Y+p
+         mztIG6kmQlPM5lJ+C8APKOGzJR9EirCCJKjT8DPigpUdnK2TAXHgRaxU9qFsGPJd8Y+s
+         eqkg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9qnc4/TQgyKxyIBlfHn4XcSNevaqJg+4xNIuOT4D7upI+TiD6M10bZgMFfkOPlnsh6ZD0xHxopUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYzF1E3j6Q8fCoRhHLc5UnWWOtp1jJuGnko9fe/uL1tThj3JEr
+	lSdlMr1LOKiQT0EzdhMEfwwasrX3KGwd6SBZUccdgEAwEMWZ0q6DZaw5IPqSfg==
+X-Google-Smtp-Source: AGHT+IFcp2jTl5mrKJuFCPH6264r7HZB1RvFjZQoHrVr3k/nmvKN3GCesQlgt2QE0HCgz4564DsufA==
+X-Received: by 2002:a05:6a21:6481:b0:1cf:539c:56f0 with SMTP id adf61e73a8af0-1d112eaf2eemr4459577637.47.1726234598009;
+        Fri, 13 Sep 2024 06:36:38 -0700 (PDT)
+Received: from thinkpad ([120.60.66.60])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909226fsm6286989b3a.98.2024.09.13.06.36.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 05:53:17 -0700 (PDT)
-Date: Fri, 13 Sep 2024 15:53:16 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sricharan R <quic_srichara@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
-	p.zabel@pengutronix.de, geert+renesas@glider.be, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com
-Subject: Re: [PATCH 8/8] arm64: defconfig: Enable IPQ5424 SoC base configs
-Message-ID: <4dxqbm4uuuuht5db7kt6faz2pdeodn224hd34np322divs22ba@dzmjveze3b4f>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-9-quic_srichara@quicinc.com>
+        Fri, 13 Sep 2024 06:36:37 -0700 (PDT)
+Date: Fri, 13 Sep 2024 19:06:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org,
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] dt-bindings: PCI: qcom: Add OPP table for X1E80100
+Message-ID: <20240913133619.z7cc4whhpvs2uecb@thinkpad>
+References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
+ <20240913083724.1217691-3-quic_qianyu@quicinc.com>
+ <tf4z475uqjenohdgqj4ltoty3j3gopxnbdhrrn6zo3ug5yuvyq@us2nysv2ggxh>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240913121250.2995351-9-quic_srichara@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tf4z475uqjenohdgqj4ltoty3j3gopxnbdhrrn6zo3ug5yuvyq@us2nysv2ggxh>
 
-On Fri, Sep 13, 2024 at 05:42:50PM GMT, Sricharan R wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On Fri, Sep 13, 2024 at 03:30:59PM +0300, Dmitry Baryshkov wrote:
+> On Fri, Sep 13, 2024 at 01:37:21AM GMT, Qiang Yu wrote:
+> > Add OPP table so that PCIe is able to adjust power domain performance
+> > state and ICC peak bw according to PCIe gen speed and link width.
+> > 
+> > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> > ---
+> >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > index a9db0a231563..e2d6719ca54d 100644
+> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > @@ -70,6 +70,10 @@ properties:
+> >        - const: pci # PCIe core reset
+> >        - const: link_down # PCIe link down reset
+> >  
+> > +  operating-points-v2: true
+> > +  opp-table:
+> > +    type: object
 > 
-> Enable the clock and pinctrl configs for Qualcomm IPQ5332 SoC
-
-Please name the device rather than the platform. The defconfig affects
-all users, so it should be justified.
-
+> I think these properties are generic enough and we might want to have
+> them for most if not all platforms. Maybe we should move them to
+> qcom,pcie-common.yaml?
 > 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Usual comment.
+Agree. It should be moved to qcom,pcie-common.yaml.
 
-> ---
->  arch/arm64/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
+- Mani
+
+> Krzysztof, Mani, WDYT?
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 81ca46e3ab4b..f1043a40846a 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -595,6 +595,7 @@ CONFIG_PINCTRL_IMX93=y
->  CONFIG_PINCTRL_MSM=y
->  CONFIG_PINCTRL_IPQ5018=y
->  CONFIG_PINCTRL_IPQ5332=y
-> +CONFIG_PINCTRL_IPQ5424=y
->  CONFIG_PINCTRL_IPQ8074=y
->  CONFIG_PINCTRL_IPQ6018=y
->  CONFIG_PINCTRL_IPQ9574=y
-> @@ -1304,6 +1305,7 @@ CONFIG_IPQ_APSS_6018=y
->  CONFIG_IPQ_APSS_5018=y
->  CONFIG_IPQ_GCC_5018=y
->  CONFIG_IPQ_GCC_5332=y
-> +CONFIG_IPQ_GCC_5424=y
->  CONFIG_IPQ_GCC_6018=y
->  CONFIG_IPQ_GCC_8074=y
->  CONFIG_IPQ_GCC_9574=y
+> > +
+> >  allOf:
+> >    - $ref: qcom,pcie-common.yaml#
+> >  
+> > -- 
+> > 2.34.1
+> > 
+> > 
+> > -- 
+> > linux-phy mailing list
+> > linux-phy@lists.infradead.org
+> > https://lists.infradead.org/mailman/listinfo/linux-phy
+> 
 > -- 
-> 2.34.1
-> 
+> With best wishes
+> Dmitry
 
 -- 
-With best wishes
-Dmitry
+மணிவண்ணன் சதாசிவம்
