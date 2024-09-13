@@ -1,57 +1,64 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB941D933E;
-	Fri, 13 Sep 2024 12:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96411DC04D;
+	Fri, 13 Sep 2024 12:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229650; cv=none; b=prdA++0u01YvCNl1izZiXMYWAMPLVrigziEomZKxghw1cFdriIgwcYolRdbu+qUc09TGbEgno9L60wuO8+PkDIgMpUw19m3DUgitwAw6n16AhgIzgDUHF9xTVz+DDRGvHBQND5ElsqhJX4W9sQEFC3x+gkK0EjOc8jH34g1kMzk=
+	t=1726229655; cv=none; b=Adl6AOmXFVHGPXyyRngbb+oCY8vRrDRkN+CUdz9GropJvtAM/UEogGjgH8rTP7TNUUSGfvumuUvyXoGPwqB5DVZqbiN98g5nVh0hB7XxZeXQzYzIf6GSKoOEopcwqCTY1COJT3GNgI+++DeoeVBza2auZ/z4nAdiViUHbmuqSfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229650; c=relaxed/simple;
-	bh=sisUvgjegvflOLIbNMGUCkvW3zDnLNhm4kyJyVidDeU=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFCbaRLrmYt6giGJfCI8AhOwKOHzbK6dJd7JbAtSsissXRU+tP+1e1LQBkFlQwUVN+dZyKrsMPoRUurTq26oinIB1jUwEXYZbhXL1hBqsrW1xfjfmb0WA/BcMHB/FhoG0fsLQyYQjfWOdo0EPFgexC/Wh7XUHuVnsNuFGviybPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=uNDMuwpv; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1726229655; c=relaxed/simple;
+	bh=ZEXawxqTdMpZ9okV/exJBKRiAgt5lMZRP0/YPE2BBAM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OKSjZQhP0SHn5c0LCETaizgJfApxussTYGtvhv74cZYsi7fYG8VG9I5lBihrb+RwAIQe6nfyfzyTzbIcjGNGti6j93ihWXAJzsnSt3gEBePfxh2rw04PcSFWqHRO9LoMD95m8E9V2r9Kh8et2OfxfmtKMyIFgjgBZ2bBD7tMlxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gdxuusja; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="uNDMuwpv"
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 7104412000D;
-	Fri, 13 Sep 2024 15:14:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7104412000D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1726229643;
-	bh=yXLY+1tf7GfYvb7UJsfHTDmuHxAIV43FFqOLNnjEQLQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=uNDMuwpvAYDIieho8Fv4SHxmhqqk4ZH6o7ayEEeq5FAj9IgXv4c3LIZ5QsZBwQKuc
-	 ymC/D/4bKu/6WlgOs6+IUeUAo/zGXKxi1+h5nvIzZ9vwIkgGRZ/cZ7mS+xdvUhntmT
-	 cwZVcdio1+wBjFGrD9xa+9HDYB0Vrr7sw/UHX/x6l5uvVL9S4hSEqkcgORO2Fx/z/C
-	 WFqN9/x1A2kTj7trb48TF3vbQOLTano6Zw52RhgMsJ+EvOG0Xp35OSVcfrnelk76MC
-	 prsVj7sz4VOYfDkcht++JO+BG0fATVLqQ73SDpeKSnUzduuEZbPA9x+WTdIbtbM4+r
-	 6keqPW1d7jtIw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 13 Sep 2024 15:14:03 +0300 (MSK)
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [RFC PATCH v4 3/5] dt-bindings: clock: axg-audio: document A1 SoC audio clock controller driver
-Date: Fri, 13 Sep 2024 15:11:50 +0300
-Message-ID: <20240913121152.817575-4-jan.dakinevich@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gdxuusja"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DAnPEr020973;
+	Fri, 13 Sep 2024 12:13:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	E4MVA5OkmX0VMfmkXPVJtfLOdj2vjaV9cXSoVg1UKWA=; b=gdxuusjanLlj+5QC
+	5/aA7QjbzWt4UC3tLnacTLmzWNbJjRJBrHY+7xOATJJsK6FqJu9d/w5ImiCEbyWU
+	J8S8PwD9Z1SVuREPteWoV8+kL1vRo93iwGuWtMB0Hm2xhpAMsDoBAmmTH1IoDfXZ
+	j2ZE2h5ypg46e//e0SdC/2nvucSmvveD0gBy5oY22o65FHVA1FyZQL6IOzEqV8L9
+	QNB1RgxVpIXoiq9bB0G1x2ALN+wws7kj3/+B1F6jcBFao0iWWJjaNOoAkHzxCDNQ
+	KShSqTSFKI6Exza0WMvfJzbinM4ysutFzM2oMv0edxngCwVB0pLWgOrplXygntDG
+	Xxo2DA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6pgm0f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 12:13:55 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48DCDskO026282
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 12:13:54 GMT
+Received: from hu-srichara-blr.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 13 Sep 2024 05:13:47 -0700
+From: Sricharan R <quic_srichara@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: [PATCH 6/8] dt-bindings: qcom: Add ipq5424 boards
+Date: Fri, 13 Sep 2024 17:42:48 +0530
+Message-ID: <20240913121250.2995351-7-quic_srichara@quicinc.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
-References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,220 +67,54 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187732 [Sep 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_smtp_not_equal_from}, sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/13 10:05:00 #26575345
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _scY5VY1d4e_1Bmbd7V0cAiTduocKVhL
+X-Proofpoint-GUID: _scY5VY1d4e_1Bmbd7V0cAiTduocKVhL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409130085
 
-Add device tree bindings for A1 SoC audio clock and reset controllers.
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Document the new ipq5424 SoC/board device tree bindings
+
+Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 ---
- .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
- .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++++++++++++++
- .../reset/amlogic,meson-a1-audio-reset.h      |  29 +++++
- 3 files changed, 154 insertions(+)
- create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
- create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+ Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-index fd7982dd4cea..df9eb8ce28dc 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-+++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-@@ -18,6 +18,8 @@ description:
- properties:
-   compatible:
-     enum:
-+      - amlogic,a1-audio-clkc
-+      - amlogic,a1-audio-vad-clkc
-       - amlogic,axg-audio-clkc
-       - amlogic,g12a-audio-clkc
-       - amlogic,sm1-audio-clkc
-@@ -114,6 +116,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - amlogic,a1-audio-clkc
-               - amlogic,g12a-audio-clkc
-               - amlogic,sm1-audio-clkc
-     then:
-diff --git a/include/dt-bindings/clock/amlogic,a1-audio-clkc.h b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
-new file mode 100644
-index 000000000000..6534d1878816
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
-@@ -0,0 +1,122 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ *
-+ * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-+ */
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index c0529486810f..be4ba058d386 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -25,6 +25,7 @@ description: |
+         ipq4018
+         ipq5018
+         ipq5332
++        ipq5424
+         ipq6018
+         ipq8074
+         ipq9574
+@@ -350,6 +351,11 @@ properties:
+               - qcom,ipq5332-ap-mi01.9
+           - const: qcom,ipq5332
+ 
++      - items:
++          - enum:
++              - qcom,ipq5424-rdp466
++          - const: qcom,ipq5424
 +
-+#ifndef __A1_AUDIO_CLKC_BINDINGS_H
-+#define __A1_AUDIO_CLKC_BINDINGS_H
-+
-+#define AUD_CLKID_DDR_ARB		1
-+#define AUD_CLKID_TDMIN_A		2
-+#define AUD_CLKID_TDMIN_B		3
-+#define AUD_CLKID_TDMIN_LB		4
-+#define AUD_CLKID_LOOPBACK		5
-+#define AUD_CLKID_TDMOUT_A		6
-+#define AUD_CLKID_TDMOUT_B		7
-+#define AUD_CLKID_FRDDR_A		8
-+#define AUD_CLKID_FRDDR_B		9
-+#define AUD_CLKID_TODDR_A		10
-+#define AUD_CLKID_TODDR_B		11
-+#define AUD_CLKID_SPDIFIN		12
-+#define AUD_CLKID_RESAMPLE		13
-+#define AUD_CLKID_EQDRC			14
-+#define AUD_CLKID_LOCKER		15
-+#define AUD_CLKID_MST_A_MCLK_SEL	16
-+#define AUD_CLKID_MST_A_MCLK_DIV	17
-+#define AUD_CLKID_MST_A_MCLK		18
-+#define AUD_CLKID_MST_B_MCLK_SEL	19
-+#define AUD_CLKID_MST_B_MCLK_DIV	20
-+#define AUD_CLKID_MST_B_MCLK		21
-+#define AUD_CLKID_MST_C_MCLK_SEL	22
-+#define AUD_CLKID_MST_C_MCLK_DIV	23
-+#define AUD_CLKID_MST_C_MCLK		24
-+#define AUD_CLKID_MST_D_MCLK_SEL	25
-+#define AUD_CLKID_MST_D_MCLK_DIV	26
-+#define AUD_CLKID_MST_D_MCLK		27
-+#define AUD_CLKID_SPDIFIN_CLK_SEL	28
-+#define AUD_CLKID_SPDIFIN_CLK_DIV	29
-+#define AUD_CLKID_SPDIFIN_CLK		30
-+#define AUD_CLKID_RESAMPLE_CLK_SEL	31
-+#define AUD_CLKID_RESAMPLE_CLK_DIV	32
-+#define AUD_CLKID_RESAMPLE_CLK		33
-+#define AUD_CLKID_LOCKER_IN_CLK_SEL	34
-+#define AUD_CLKID_LOCKER_IN_CLK_DIV	35
-+#define AUD_CLKID_LOCKER_IN_CLK		36
-+#define AUD_CLKID_LOCKER_OUT_CLK_SEL	37
-+#define AUD_CLKID_LOCKER_OUT_CLK_DIV	38
-+#define AUD_CLKID_LOCKER_OUT_CLK	39
-+#define AUD_CLKID_EQDRC_CLK_SEL		40
-+#define AUD_CLKID_EQDRC_CLK_DIV		41
-+#define AUD_CLKID_EQDRC_CLK		42
-+#define AUD_CLKID_MST_A_SCLK_PRE_EN	43
-+#define AUD_CLKID_MST_A_SCLK_DIV	44
-+#define AUD_CLKID_MST_A_SCLK_POST_EN	45
-+#define AUD_CLKID_MST_A_SCLK		46
-+#define AUD_CLKID_MST_B_SCLK_PRE_EN	47
-+#define AUD_CLKID_MST_B_SCLK_DIV	48
-+#define AUD_CLKID_MST_B_SCLK_POST_EN	49
-+#define AUD_CLKID_MST_B_SCLK		50
-+#define AUD_CLKID_MST_C_SCLK_PRE_EN	51
-+#define AUD_CLKID_MST_C_SCLK_DIV	52
-+#define AUD_CLKID_MST_C_SCLK_POST_EN	53
-+#define AUD_CLKID_MST_C_SCLK		54
-+#define AUD_CLKID_MST_D_SCLK_PRE_EN	55
-+#define AUD_CLKID_MST_D_SCLK_DIV	56
-+#define AUD_CLKID_MST_D_SCLK_POST_EN	57
-+#define AUD_CLKID_MST_D_SCLK		58
-+#define AUD_CLKID_MST_A_LRCLK_DIV	59
-+#define AUD_CLKID_MST_A_LRCLK		60
-+#define AUD_CLKID_MST_B_LRCLK_DIV	61
-+#define AUD_CLKID_MST_B_LRCLK		62
-+#define AUD_CLKID_MST_C_LRCLK_DIV	63
-+#define AUD_CLKID_MST_C_LRCLK		64
-+#define AUD_CLKID_MST_D_LRCLK_DIV	65
-+#define AUD_CLKID_MST_D_LRCLK		66
-+#define AUD_CLKID_TDMIN_A_SCLK_SEL	67
-+#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	68
-+#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	69
-+#define AUD_CLKID_TDMIN_A_SCLK		70
-+#define AUD_CLKID_TDMIN_A_LRCLK		71
-+#define AUD_CLKID_TDMIN_B_SCLK_SEL	72
-+#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	73
-+#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	74
-+#define AUD_CLKID_TDMIN_B_SCLK		75
-+#define AUD_CLKID_TDMIN_B_LRCLK		76
-+#define AUD_CLKID_TDMIN_LB_SCLK_SEL	77
-+#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	78
-+#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	79
-+#define AUD_CLKID_TDMIN_LB_SCLK		80
-+#define AUD_CLKID_TDMIN_LB_LRCLK	81
-+#define AUD_CLKID_TDMOUT_A_SCLK_SEL	82
-+#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	83
-+#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	84
-+#define AUD_CLKID_TDMOUT_A_SCLK		85
-+#define AUD_CLKID_TDMOUT_A_LRCLK	86
-+#define AUD_CLKID_TDMOUT_B_SCLK_SEL	87
-+#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	88
-+#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	89
-+#define AUD_CLKID_TDMOUT_B_SCLK		90
-+#define AUD_CLKID_TDMOUT_B_LRCLK	91
-+
-+#define AUD_CLKID_VAD_DDR_ARB		1
-+#define AUD_CLKID_VAD_PDM		2
-+#define AUD_CLKID_VAD_TDMIN		3
-+#define AUD_CLKID_VAD_TODDR		4
-+#define AUD_CLKID_VAD			5
-+#define AUD_CLKID_VAD_AUDIOTOP		6
-+#define AUD_CLKID_VAD_MCLK_SEL		7
-+#define AUD_CLKID_VAD_MCLK_DIV		8
-+#define AUD_CLKID_VAD_MCLK		9
-+#define AUD_CLKID_VAD_CLK_SEL		10
-+#define AUD_CLKID_VAD_CLK_DIV		11
-+#define AUD_CLKID_VAD_CLK		12
-+#define AUD_CLKID_VAD_PDM_DCLK_SEL	13
-+#define AUD_CLKID_VAD_PDM_DCLK_DIV	14
-+#define AUD_CLKID_VAD_PDM_DCLK		15
-+#define AUD_CLKID_VAD_PDM_SYSCLK_SEL	16
-+#define AUD_CLKID_VAD_PDM_SYSCLK_DIV	17
-+#define AUD_CLKID_VAD_PDM_SYSCLK	18
-+
-+#endif /* __A1_AUDIO_CLKC_BINDINGS_H */
-diff --git a/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
-new file mode 100644
-index 000000000000..653fddba1d8f
---- /dev/null
-+++ b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ *
-+ * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
-+#define _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
-+
-+#define AUD_RESET_DDRARB	0
-+#define AUD_RESET_TDMIN_A	1
-+#define AUD_RESET_TDMIN_B	2
-+#define AUD_RESET_TDMIN_LB	3
-+#define AUD_RESET_LOOPBACK	4
-+#define AUD_RESET_TDMOUT_A	5
-+#define AUD_RESET_TDMOUT_B	6
-+#define AUD_RESET_FRDDR_A	7
-+#define AUD_RESET_FRDDR_B	8
-+#define AUD_RESET_TODDR_A	9
-+#define AUD_RESET_TODDR_B	10
-+#define AUD_RESET_SPDIFIN	11
-+#define AUD_RESET_RESAMPLE	12
-+#define AUD_RESET_EQDRC		13
-+#define AUD_RESET_LOCKER	14
-+#define AUD_RESET_TOACODEC	30
-+#define AUD_RESET_CLKTREE	31
-+
-+#endif /* _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H */
+       - items:
+           - enum:
+               - mikrotik,rb3011
 -- 
 2.34.1
 
