@@ -1,151 +1,230 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350323D0AD;
-	Fri, 13 Sep 2024 15:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB426AED;
+	Fri, 13 Sep 2024 15:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726240028; cv=none; b=eHsK++eF4Dd1evKyxeiKSdhs/lsuW3hW1jYqbPqcPXTqExrL3B68c3BbY+wEB9LJvHNdI1Xrs7JACB9JQ/O3nt2YN5UddL0SAIAUiwx/LiSlH6qZT6TcPKyHjCjx+I1d6f+LIU4DUSAoRY98r2qyOhnv1z58+qwsNuBLcsZcG5k=
+	t=1726240093; cv=none; b=VikjrV2D7Yf67dAKI39aDsvYvzzvWkyDnnvnKbPPl1NoFhELjBGR0fDQGE5YzQakxBiRK8HRi+qb9mP+/PYM/GM/zlR0v/veyP9J0+kmE3siX2EFaNW8Q6GpUo+67yHq1R4B6taUfMr1WfIQnA7JeaVyqd2dpuxJhRNu7RtAWhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726240028; c=relaxed/simple;
-	bh=fdxr/+NcgOFEgpqvCcM0x/YMCOOjci/kaxB4FgoVlE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FSm2bhwe/Dz37ijw7x6tFdy10xqPNXdvzAAG7WXEFtH5qdFmxiZLPXkPR9ER78nkrvSrkGHd/jt5QVvq2FEEGZNdX4yPUi3n9c3E4GFngI1XKTNXxQsopc/vlTSTlPumK6s169nzHa/syp+kxQcAHFrMpILJBOVCoNcNVu0i7lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mxF669fu; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1726240093; c=relaxed/simple;
+	bh=zNden+m4S4qeBBrgrI7oJVPZCF0D5TInPx+aEZ7wheQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rQRqmiwm6fbt51wmOWaVSlXNozrMrQY+3krgBtKE/1pSLEF6btAGeYXlr1AIagTuOENtYekVk7OxOpYOjeCa/ItBTRyk4AsReewsSDd+fCXNyM8yKe1Y9qYk8ZXrCiUJ66lY1NYD4NaRNjLAE2UUEk+idXnghleRHd2IS6Wa40E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lGkq9+RJ; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mxF669fu"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 92C76E0007;
-	Fri, 13 Sep 2024 15:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726240023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7hFep7FBNfQJPEegIvZJdJrOuXZLo3lloLOnAxbR2ug=;
-	b=mxF669fuWKi5zWdc5tmGKBir+QS06sn6tr3K048hhE/psQQ0xgLHRjn7ImztcGQvKWp9aZ
-	ER7uXeRy0a4QPPfiy5TukSfzd+Flr5J+DDwtQv7zWj2Ol3zs9Hnhcjn1Y4W0K6lSxDfx7u
-	/OAbMZAsFdPWQrvbe/5vUYX2P7pIELgFKzj/VlgbmNX4mEQdTLO5GMguKf/bCfSlDFyhMF
-	N+nIPS2IW7vQEP17SREY7AxM6+cxw5HrLRAFzh0raMuljH0JTYM+TiL0WhbxTH5n6Ne9Pf
-	FlAic1nCNFS/z11Hv68FPfM6sk4BuFea/r1hhO+r/YVzGrRT8CoGhrw9epNqfg==
-Date: Fri, 13 Sep 2024 17:07:01 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Rob Herring <robh+dt@kernel.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Sean Anderson <sean.anderson@seco.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Marek Vasut <marek.vasut@gmail.com>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-reneas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clk: vc5: Make SD/OE pin configuration
- properties not required
-Message-ID: <20240913170701.156d8e82@booty>
-In-Reply-To: <CAL_JsqKj6A=GvgaZCd9jiF71YPGuQSKJ9Ob6erHT45q8vRR13w@mail.gmail.com>
-References: <68037ad181991fe0b792f6d003e3e9e538d5ffd7.1673452118.git.geert+renesas@glider.be>
-	<5da02a9b-3d42-a26f-0d18-29a6b5b181e5@seco.com>
-	<20230124091236.1bf8c6da@booty>
-	<CAMuHMdV8_+dF03VD6mST2zMDQ68cgsLLRQi6UeXK2jH-eWqWZg@mail.gmail.com>
-	<232f59aa-704b-a374-6a78-469156ccdbea@seco.com>
-	<83f4f33ebd3706ec7d35acd807b1e44b.sboyd@kernel.org>
-	<20230322093918.33690db3@booty>
-	<CAL_JsqKj6A=GvgaZCd9jiF71YPGuQSKJ9Ob6erHT45q8vRR13w@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lGkq9+RJ"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c4136f7f1fso2521810a12.2;
+        Fri, 13 Sep 2024 08:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726240089; x=1726844889; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8TL6f8TKN7Y/fNaq3ZvIvFLqSapBDT3e44bO5HpzYRM=;
+        b=lGkq9+RJaP5Xldycl/gkyudJeHK1E/APrNpM8CuDUJnPKMlUH48mfVH2eWPbaPH2OE
+         NDg+uxWz8UPkOXQxJbmqUyS1+XO2dNXWbGtl0y8EOlzgqFXiVjqGfJMlGfoZYnXOjHHC
+         O7vqZJBFWXaVMh0c+SHirm39rK8Fw7dig3JAWSotk/pg9th3jMd93FXGNikACJAmzu0g
+         C+B9Er8nCgsWpbqvJLbfhjuv6nSPIkwCIVIe8u52w9L/1b5cqom82K/wBS+95eOuiGyp
+         oxT+kv++T8BcOE77iz3srsQxnzXN2QDmeqF3Cp7IEYVnvMSZ4t9PUHN3eibGWIn9OX76
+         BP2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726240089; x=1726844889;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8TL6f8TKN7Y/fNaq3ZvIvFLqSapBDT3e44bO5HpzYRM=;
+        b=c7XQwZoIVqs7cfnpRtUH8LRmvmAPltvOtDE8oPMzRPs1rAWOq/v9Wd7IoVCnFJT6cB
+         iL86Mip8Yz+3ocv3PDM6Q2yiPlrVUmvmvnLEiqh5k+9Yzo1i2zZyi8L3ZmtSOby3VhFH
+         qcaqfgxgFDWoZkCEginOBFW1lStBesrSJmllU8e9S4jAguhnUiS62e2S5rtjMaPbukQ5
+         fvkvDBuLQk1W3LE2Rx705d4o/O6RI/THE3L9dPwBZX83mFTbdk/7rcXQcBeD3/lIktxP
+         2/eN5OaZsxQ6hzbNkKaMUALPyC0t0jqLf1eQlnRBtlgc/xYD17mQQmdo+ekxhBZEMP3A
+         SHsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOedyt7/reIr5de7j/J+psibw97xFeYQzMX8+6tIwArJ5QarqtYsZgnxP4/ViIfh39DOD6MlTZzzLjnqw=@vger.kernel.org, AJvYcCUdYOSdZ/vtQWIAW3NKhLOBbONNSlt8BW7ppvBlKpzzOszzeF43kfIPzR4V5oTa7GVsvURABgiYkX19@vger.kernel.org, AJvYcCVbaDgp/6M41ae/7c+/yTtkpmjcyYlaLqS08qmQjzpY1EmeRffhgC9VPo40EodDla0qo5RPuIbTzKeufJok@vger.kernel.org, AJvYcCVu7tGxB4zYAWLXNkIQ6FEOP8itaYkx7XrEQWeFsXl932QdOD5XV2L6m2onHKBTcQluYthq/02BoLwIFQ==@vger.kernel.org, AJvYcCVz7vD8iVbjn6786PRMHxRzGWDcYsSiJr+JrHVA3IWBJ97d+70CvgtsyayZ5tvfWeOpuapSuuib/H2aJqj2Se4X8Kw=@vger.kernel.org, AJvYcCWkPAZkskQF5XtcFmrNtuSghYzTSro4mHydLKOsYpZzzScoApm5787LS5ozazNyOfTw9Q5I2lbWmgWK@vger.kernel.org, AJvYcCWt9XWAR9RrmoQZmMb9wgPQPifnZrixc0Dst/mr551SpUyiiXr1Az1svIJUQTJQVXLrJtziZ6ICGlPAbO16rQ==@vger.kernel.org, AJvYcCX+LKWXhBls7H75euJbZ3jwdZEvhG0KEMHEHu6ArkkHrn7HPJx8afmYQBgN/auqc40fkpG8k27pLEIh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsFP+ijDCwzZoqOG2Ytb0dzd1ivRRpVlKVUUPRgWZ8DZuSY5Ml
+	jDAsVoqOBapiNEdBzanlI7juSPQVovJEvvx9igN2/2I3NCnnX0krCfCtsA==
+X-Google-Smtp-Source: AGHT+IGCrPHc6XJmItNolCKG1S2T9m458hednz3DQSJjw+4zbXzSksgr4EytAX8pJ7+f4cKbcW2T4A==
+X-Received: by 2002:a05:6402:254d:b0:5be:eb19:ee56 with SMTP id 4fb4d7f45d1cf-5c413e4beb1mr4913390a12.24.1726240088850;
+        Fri, 13 Sep 2024 08:08:08 -0700 (PDT)
+Received: from [127.0.1.1] ([178.127.153.210])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd523b4sm7774318a12.51.2024.09.13.08.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 08:08:08 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v4 00/27] This is continued work on Samsung S9(SM-9600)
+ starqltechn
+Date: Fri, 13 Sep 2024 18:07:43 +0300
+Message-Id: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEBV5GYC/4WOQQ6DIBREr2JYlwbBoumq92iM+dCvkCBaQNPGe
+ PdSk667fJPMvNlIxGAxkmuxkYCrjXbyGapTQbQBPyC1j8yEM14xWdY0JghPl1Ab31mfcAiQcqd
+ b5pgCwkiVbmRzYYr3KEieURCRqgBemzzkF+dyOAfs7evw3tvMxsY0hfdxYxXf9Gds/htXQRlF0
+ UspOStr0LdhBOvOehpJu+/7B8ia1HHlAAAA
+To: Sebastian Reichel <sre@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+ Simona Vetter <simona@ffwll.ch>, cros-qcom-dts-watchers@chromium.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Simona Vetter <simona.vetter@ffwll.ch>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726240085; l=6082;
+ i=dsankouski@gmail.com; s=20240618; h=from:subject:message-id;
+ bh=zNden+m4S4qeBBrgrI7oJVPZCF0D5TInPx+aEZ7wheQ=;
+ b=UUZqRammNe7VcfWZLb30fPL0Xxh1/CVZzJysjzjyy73+yDJfntHzaz6edzfCSsVZPKwnXtfqT
+ U0ypRVySOtbBmhAnJqwywXsdHXAhJEiJ+ZWn4X6xLJ47gQEVHvejpSv
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=6pMMVVDDReSiRgPCbMOUauN5nS3ty4Sf5b7a2gi4x0M=
 
-Hello Sean, Geert,
+Add support for new features:
+- sound (headphones and mics only)
+- gpu
+- panel
+- buttons
+- MAX77705 MFD:
+  - charger
+  - fuelgauge
+  - haptic
+  - led
 
-On Tue, 10 Sep 2024 17:13:55 -0500
-Rob Herring <robh+dt@kernel.org> wrote:
+Changes in version 2:
+- s2dos05 regulator:
+  - hex to decimal in regulator values
+  - fix compatible value
+  - remove interrupt specific code, because it's
+    empty in vendor kernel, and I cannot test it on
+    available hardware anyway.
 
-> On Wed, Mar 22, 2023 at 3:39=E2=80=AFAM Luca Ceresoli <luca.ceresoli@boot=
-lin.com> wrote:
-> >
-> > Hello Stephen,
-> >
-> > On Mon, 20 Mar 2023 14:27:56 -0700
-> > Stephen Boyd <sboyd@kernel.org> wrote:
-> > =20
-> > > Quoting Sean Anderson (2023-01-24 08:23:45) =20
-> > > > On 1/24/23 03:28, Geert Uytterhoeven wrote: =20
-> > > > > Hi Luca,
-> > > > >
-> > > > > On Tue, Jan 24, 2023 at 9:12 AM Luca Ceresoli <luca.ceresoli@boot=
-lin.com> wrote: =20
-> > > > >> On Thu, 19 Jan 2023 14:27:43 -0500
-> > > > >> Sean Anderson <sean.anderson@seco.com> wrote: =20
-> > > > >> > On 1/11/23 10:55, Geert Uytterhoeven wrote: =20
-> > > > > =20
-> > > > >> I'm wondering whether Geert has a practical example of a situati=
-on
-> > > > >> where it is better to have these properties optional. =20
-> > > > >
-> > > > > My issue was that these properties were introduced long after the
-> > > > > initial bindings, hence pre-existing DTS does not have them.
-> > > > > Yes, we can add them, but then we have to read out the OTP-progra=
-mmed
-> > > > > settings first. If that's the way to go, I can look into that, th=
-ough... =20
-> > > >
-> > > > FWIW I think there's no need to update existing bindings which don't
-> > > > have this property. The required aspect is mainly a reminder for new
-> > > > device trees.
-> > > > =20
-> > >
-> > > Is there any resolution on this thread? I'm dropping this patch from =
-my
-> > > queue. =20
-> >
-> > IIRC Geert kind of accepted the idea that these properties should stay
-> > required. Which is a bit annoying but it's the safest option, so unless
-> > there are new complaints with solid use cases for making them optionalm,
-> > I think it's OK to drop the patch. =20
->=20
-> The warnings related to this are now at the top of the list (by number
-> of occurrences):
->=20
->      50 clock-generator@6a: 'idt,shutdown' is a required property
->      50 clock-generator@6a: 'idt,output-enable-active' is a required prop=
-erty
->=20
-> IMO, if these properties haven't been needed for years, then they
-> obviously aren't really required.
+Changes in version 3:
+Version 3 has significant changes:
+- more drivers added
+- s2dos05 driver converted to MFD
+- disable crypto patch removed(disabled on distro level)
+- dts framebuffer node along with related patches removed,
+because panel driver added
+- fix 'make O=.output_arm64 CHECK_DTBS=y qcom/sdm845-samsung-starqltechn.dtb'
+errors, but it still complains on 'monitored-battery' and
+'power-supplies' though I have 'power-supply.yaml' link in charger
+and fuel gauge bindings.
 
-I think Rob's point adds to Geert's observation that there are other
-"idt,*" properties in the output nodes that may also be important to
-have correctly set, and are optional.
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-So, Sean, I understand when you state it's safer to have these set.
-However this is valid for lots of other optional properties in any
-binding. Optional properties _can_ be set if that's important, just
-it's not mandatory to set them in all cases.
+---
+Dzmitry Sankouski (27):
+      power: supply: add undervoltage health status property
+      clk: qcom: clk-rcg2: name refactoring
+      gcc-sdm845: Add general purpose clock ops
+      dt-bindings: panel: add Samsung s6e3ha8
+      dt-bindings: mfd: add maxim,max77705
+      dt-bindings: mfd: add samsung,s2dos05
+      drm/panel: Add support for S6E3HA8 panel driver
+      mfd: max77693: remove unused declarations
+      mfd: Add new driver for MAX77705 PMIC
+      input: max77693: add max77705 haptic support
+      power: supply: max77705: Add charger driver for Maxim 77705
+      power: supply: max77705: Add fuel gauge driver for Maxim 77705
+      leds: max77705: Add LEDs support
+      mfd: sec-core: add s2dos05 support
+      regulator: add s2dos05 regulator support
+      arm64: dts: qcom: sdm845: enable gmu
+      arm64: dts: qcom: starqltechn: remove wifi
+      arm64: dts: qcom: starqltechn: fix usb regulator mistake
+      arm64: dts: qcom: starqltechn: refactor node order
+      arm64: dts: qcom: starqltechn: remove excess reserved gpios
+      arm64: dts: qcom: starqltechn: add gpio keys
+      arm64: dts: qcom: starqltechn: add max77705 PMIC
+      arm64: dts: qcom: starqltechn: add display PMIC
+      arm64: dts: qcom: starqltechn: add touchscreen support
+      arm64: dts: qcom: starqltechn: add initial sound support
+      arm64: dts: qcom: starqltechn: add graphics support
+      arm64: dts: qcom: starqltechn: add modem support
 
-As a matter of fact, we have been having for a long time some in-tree
-device trees which don't set these properties, which I believe implies
-it's OK for those cases to not set them, and to let them be set for the
-device trees where it is important.
+ .../bindings/display/panel/samsung,s6e3ha8.yaml    |  75 +++
+ .../devicetree/bindings/mfd/maxim,max77705.yaml    | 169 ++++++
+ .../devicetree/bindings/mfd/samsung,s2dos05.yaml   |  99 ++++
+ MAINTAINERS                                        |  12 +
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi         |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts         |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts            |   4 -
+ .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi |   4 -
+ .../boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 573 +++++++++++++++++++-
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts  |   4 -
+ .../boot/dts/qcom/sdm845-sony-xperia-tama.dtsi     |   4 -
+ .../dts/qcom/sdm845-xiaomi-beryllium-common.dtsi   |   4 -
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts |   4 -
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   2 -
+ drivers/clk/qcom/clk-rcg.h                         |   1 +
+ drivers/clk/qcom/clk-rcg2.c                        | 243 ++++++++-
+ drivers/clk/qcom/gcc-sdm845.c                      |  21 +-
+ drivers/gpu/drm/panel/Kconfig                      |   7 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c      | 350 ++++++++++++
+ drivers/input/misc/Kconfig                         |   4 +-
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/max77693-haptic.c               |  15 +-
+ drivers/leds/Kconfig                               |   6 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-max77705.c                       | 158 ++++++
+ drivers/mfd/Kconfig                                |  12 +
+ drivers/mfd/Makefile                               |   2 +
+ drivers/mfd/max77705.c                             | 248 +++++++++
+ drivers/mfd/sec-core.c                             |  11 +
+ drivers/power/supply/Kconfig                       |  13 +
+ drivers/power/supply/Makefile                      |   2 +
+ drivers/power/supply/max77705_charger.c            | 585 +++++++++++++++++++++
+ drivers/power/supply/max77705_fuel_gauge.c         | 348 ++++++++++++
+ drivers/regulator/Kconfig                          |   8 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/s2dos05-regulator.c              | 176 +++++++
+ include/linux/mfd/max77693-common.h                |   6 +-
+ include/linux/mfd/max77693-private.h               |  11 -
+ include/linux/mfd/max77705-private.h               | 180 +++++++
+ include/linux/mfd/max77705_charger.h               | 215 ++++++++
+ include/linux/mfd/samsung/core.h                   |   1 +
+ include/linux/power/max77705_fuelgauge.h           |  65 +++
+ include/linux/power_supply.h                       |   1 +
+ include/linux/regulator/s2dos05.h                  |  73 +++
+ 45 files changed, 3627 insertions(+), 101 deletions(-)
+---
+base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
 
-Finally, there is a maintenance/legacy issue: if we wanted to keep these
-properties optional, who would chase all the boards defined in existing
-device trees to discover the correct values?
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-Bottom line, my Reviewed-by tag is still valid.
-
-What is your opinion given these last few discussion point Sean?
-
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
