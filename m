@@ -1,94 +1,122 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49AB1CEAC4;
-	Sat, 14 Sep 2024 09:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5A91CF2B0;
+	Sat, 14 Sep 2024 14:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726307874; cv=none; b=bD4cJOcWBBrqxRUtEkbnpoTmPg/bT42t+DfwbqI3whxI8vsMZaJDtMF6lX6z3t41wMRW8MYsN68saIT+0y0f6IyvoBKf5nsT/jrABx9GY5b6Fo0wnSJAiOTRFO2y+smcOsdB2W9zs5B9FEbNOqdDUxpzAukMeqPxHkIep6yfx5M=
+	t=1726323552; cv=none; b=mN1wUtf1MSNc3Jig69WGK9VMAw8OnNnVTK6rfxPUMTsR4546TCiUy6RWrR3WS6ZFqMCfbmBKYhXIHGI9FNZE63WacsV+F4ZrqhykN8OGQ4a/HL3HiygxYv4Z5rU2Vsn9lsig137c6M7GhcMMpLTITjPKN/i3q29wg1JthL5Dmcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726307874; c=relaxed/simple;
-	bh=lQuCovKkPxKUqkSM6dLvf+LTYz3rx59/IsS3+vLvl2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X6N0Oy94uwLplEvUU+VdMMeldZ1ECuB8sIjrZuCZM7nmTLMG6/TqsjKcT1Lxt9fML20asvjBlmJoIZdryyZKYtUP3D0sxRJ/V04q0QX5vG/JvAGASQcS5koZRV2GhosMrUjwnowP621mcYhowfaUYjmuipSBMROqLhvJlctL3fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=V/si4WmR; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1726323552; c=relaxed/simple;
+	bh=N9wMgdRefGu42K7ypeuSJnPQEd7Ns/OJA/BRmLa/8qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJJp/zNV6wlh/bIXFG2F2Eswyc4T3XC0E8BnKqw93pziEiNWswDrzzsOfVFA9+5O+Z4HH+G3SJiBTci5KCjGqMe8qKfnzSWLXWWaEKDCXABVD4zN1hpQuMNata+f+2ZV9oPPTlgbUNJPsEapFQGTEmh6UMDKeO643hJMp2DtX78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=USgBtCjV; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="V/si4WmR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=93cKUn+WXxWXdpPau06HwygofLes83prKM3wRZ1aJSA=; b=V/si4WmRcwGdDPY7xSTd9CPgiY
-	b2zGH7yKIppATzRtzFjSP+bqwhygBumjZDykoWXinEwGBDrDaDD+tDTmmWyqdy1P/Z9eoy/l8uU5F
-	y+S+So88DF7xxP2dhn1lWErZD3Z+RzSONVJOJKPlxzClscIHyggbf0JU3BOMhwCkI85l5k6oLn4yH
-	tZEoVfHcUWfmxmonXSYaZQWTYWVSjtvN/2uJlR6TJ5mO1slUtK46Y4SYvibf0J6ErvGFr25LX/Vdg
-	BMDOOC+C0Ho8j8brHKV6uI3WhPVEMxpl6D3aTAodiNouI61WkvNBL31mla6JEU2A1ElS5X873oRPu
-	vXyO90tg==;
-Received: from i53875af6.versanet.de ([83.135.90.246] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1spPX6-0002qE-48; Sat, 14 Sep 2024 11:57:36 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Yao Zi <ziyao@disroot.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH] clk: rockchip: fix finding of maximum clock ID
-Date: Sat, 14 Sep 2024 11:57:35 +0200
-Message-ID: <5815159.DvuYhMxLoT@diego>
-In-Reply-To: <20240912133204.29089-2-ziyao@disroot.org>
-References: <20240912133204.29089-2-ziyao@disroot.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="USgBtCjV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726323552; x=1757859552;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N9wMgdRefGu42K7ypeuSJnPQEd7Ns/OJA/BRmLa/8qc=;
+  b=USgBtCjVcxufnJh9KVshcT6/3aSddwTsIRIxa+Ulnels+esyy0gAXEV5
+   PNr3wAGmQi8cgru5XhKuinNueGZcFwEpm0rFBztt5uzCOm77k2vLGLJU8
+   2Z0nq27B7TjEI7DJoTe7/EdyIwRLmoUR1k52Aw1Pn1DFwN9oPTKN+mZ89
+   5/lXiJhlrhm+GJzMLX1Mhlf9P2/34yeY6EVYNhPS5vqmsBlvYHMF7bI2d
+   B5TUdbze0dKXJUHn/R8R474SKgwNYd1eqwdvgifl5IWm2sUDwklZOlq42
+   WYUJr/ZbWJm4IEPZKh9j9LYBAqTaXcSxhb7V6s8fKHnYXNlTpGjUTA82N
+   w==;
+X-CSE-ConnectionGUID: cQGj1BAaSe64yTfLvQ6EMQ==
+X-CSE-MsgGUID: AVh9oKYtQ3aaT2zxoofULA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11195"; a="25090381"
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="25090381"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2024 07:19:11 -0700
+X-CSE-ConnectionGUID: bLVvHNP4RYS89Cob7sBRYA==
+X-CSE-MsgGUID: 1WBix8DISMO95aCgNnVb5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,229,1719903600"; 
+   d="scan'208";a="99080744"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 Sep 2024 07:19:03 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spTc5-0007pg-0v;
+	Sat, 14 Sep 2024 14:19:01 +0000
+Date: Sat, 14 Sep 2024 22:18:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arturs Artamonovs via B4 Relay <devnull+arturs.artamonovs.analog.com@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Malysa <greg.malysa@timesys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Utsav Agarwal <Utsav.Agarwal@analog.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>, soc@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+	Arturs Artamonovs <arturs.artamonovs@analog.com>,
+	adsp-linux@analog.com,
+	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Subject: Re: [PATCH 07/21] clock: Add driver for ADI ADSP-SC5xx clock
+Message-ID: <202409142102.LvuMEIro-lkp@intel.com>
+References: <20240912-test-v1-7-458fa57c8ccf@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912-test-v1-7-458fa57c8ccf@analog.com>
 
-Am Donnerstag, 12. September 2024, 15:32:05 CEST schrieb Yao Zi:
-> If an ID of a branch's child is greater than current maximum, we should
-> set new maximum to the child's ID, instead of its parent's.
-> 
-> Fixes: 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+Hi Arturs,
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+kernel test robot noticed the following build warnings:
 
-@Stephen: can you put that on top of the other Rockchip changes for 6.12
-please?
+[auto build test WARNING on da3ea35007d0af457a0afc87e84fddaebc4e0b63]
 
-Thanks a lot
-Heiko
+url:    https://github.com/intel-lab-lkp/linux/commits/Arturs-Artamonovs-via-B4-Relay/arm64-Add-ADI-ADSP-SC598-SoC/20240913-022308
+base:   da3ea35007d0af457a0afc87e84fddaebc4e0b63
+patch link:    https://lore.kernel.org/r/20240912-test-v1-7-458fa57c8ccf%40analog.com
+patch subject: [PATCH 07/21] clock: Add driver for ADI ADSP-SC5xx clock
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
 
-> ---
->  drivers/clk/rockchip/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 73d2cbdc716b..0972e9f87470 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -439,7 +439,7 @@ unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
->  		if (list->id > max)
->  			max = list->id;
->  		if (list->child && list->child->id > max)
-> -			max = list->id;
-> +			max = list->child->id;
->  	}
->  
->  	return max;
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409142102.LvuMEIro-lkp@intel.com/
 
+includecheck warnings: (new ones prefixed by >>)
+>> drivers/clk/adi/clk-adi-sc598.c: linux/clk.h is included more than once.
 
+vim +9 drivers/clk/adi/clk-adi-sc598.c
 
+   > 9	#include <linux/clk.h>
+    10	#include <linux/clk-provider.h>
+  > 11	#include <linux/clk.h>
+    12	#include <linux/err.h>
+    13	#include <linux/module.h>
+    14	#include <linux/of_address.h>
+    15	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
