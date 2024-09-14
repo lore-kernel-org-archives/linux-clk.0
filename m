@@ -1,108 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAA6522F;
-	Sat, 14 Sep 2024 17:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F391CF2A7;
+	Sat, 14 Sep 2024 18:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726336574; cv=none; b=WtgyLB5XCKpA7ioEWVtxsCz3uPfxQKhRBY4JBVWudomC3ChKl9b5C35x0D/SGn1QdHl2r0pA+uwwnjfFewNuVUEe2X2mECOO2kDEtj85QLm73XDEpyclUvD5tlKnh2Gs3/Gh7DuMJrhu0wgjITNxticNFDn69mSItbtBFkMVsOk=
+	t=1726337134; cv=none; b=oVttEY4zWY81X9GmG7x05H5TZ460Elc6D8Ci/cTu2YvosmaMf89LNvlx3tNWdoDu22vTOMXYpH93DzocvQhUaIDqGBX4auc9TEPOp8a5jAt45Flyd3ScqQ+w/CXQWSZW+VYSOLdqGVVNx1TUA6lIHp9aeKU6FTEpy1OVgQwiffc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726336574; c=relaxed/simple;
-	bh=usg5zuvL6dMiMtReqxAmcXPlYBF1AWzxevclY567A/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGPxkqOOeL2frg0ZxgqulD244E4Pn3cRqlgLHYfr5DlwhmK1eAXyi2ScBrvMhgaHNfN6+Bn8MX1c33+kQSZXNuGbynbL7n6v+bacrvua2YQSoIFMZLSfG8eiZxup+bUZq/kpSwzgEWD56dCsu32TGYxjlDro0ArzPuMq4QtE03c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BCKnMStk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726337134; c=relaxed/simple;
+	bh=kQivVsyi2YlK67afNcK79cSiM+Ffg1dHW0BzqsTjx8k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nZi3cmvN8MeFRGaDZr2NZr7fSPxmuyDIEwjQqrXh529Gq878yPojEdxF3Wegz5yQcMy3bDhjMfq8BizhhNq403NzYGEs3NKR8kfsCZ8kd61/lOsu2BYGENCCppzHwrIys8j39Tsgstg4Xv6/aNfBx4YfLVCyWD2IBDmAdnomAdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QaAZ5WQa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BCKnMStk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78388C4CEC0;
-	Sat, 14 Sep 2024 17:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726336573;
-	bh=usg5zuvL6dMiMtReqxAmcXPlYBF1AWzxevclY567A/4=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
-	b=BCKnMStk0KD+KF5iLNc2XB3G3YDXTC7IF5zt1upbDpbkyTewGa+L+bN3T+QCIm+/Y
-	 dcUP4wpxJ5OVej1SrXlGVNH6rMQsZ8gFAsxwg3lKkaE7rzFkVGFbcQIkMnzvhVM6Kr
-	 M5RTY7BxqmGcL3I30T4qtMRxT9JvvK30B023vO8c=
-Date: Sat, 14 Sep 2024 19:56:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Arturs Artamonovs <Arturs.Artamonovs@analog.com>,
-	Greg Malysa <greg.malysa@timesys.com>,
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>,
-	Utsav Agarwal <Utsav.Agarwal@analog.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	soc@kernel.org, Andi Shyti <andi.shyti@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Olof Johansson <olof@lixom.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, adsp-linux@analog.com
-Subject: Re: [PATCH 01/21] arm64: Add ADI ADSP-SC598 SoC
-Message-ID: <2024091459-company-diabolic-a9ed@gregkh>
-References: <20240912-test-v1-1-458fa57c8ccf@analog.com>
- <b6af2603-7f72-47d7-98b9-6dc2761dfb74@web.de>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QaAZ5WQa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726337130;
+	bh=kQivVsyi2YlK67afNcK79cSiM+Ffg1dHW0BzqsTjx8k=;
+	h=From:Subject:Date:To:Cc:From;
+	b=QaAZ5WQafNNj1cfv14YvHb8U/KAgVqINKInYWQekhy4GTqUbK4pwB1jY7MAkSzVUE
+	 tV8INcZ1lcZiQ6uPywKWEHNq9nrvQ2rWoyGxiGAoeu0aekEN+Q44eHb8XjzsGf3dio
+	 I7Vyb43JJ3q7sZOBWuCuZbDcuOL6qHpcnh26F81Be2go39kXPPy9Av5R5hOmrDn9Te
+	 X9BhzP6x8OECuL6Oyjs28wXuhQkDy4EadY74y0MmYxQHXfLLsGnJqdea9TKek1tz76
+	 ptNGyVco4XVmfSDqaG7hgsJI4YFJv0kJDVuxROzza2TKH5SuNxggoR4JzBss+fpMHB
+	 SLTK+5SLoKRjQ==
+Received: from localhost (unknown [188.27.55.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4810617E3606;
+	Sat, 14 Sep 2024 20:05:30 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Date: Sat, 14 Sep 2024 21:04:53 +0300
+Message-Id: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b6af2603-7f72-47d7-98b9-6dc2761dfb74@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEXQ5WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Mj3eSc7PikUiCRmpcYn5ZZoWtolpRobm5sapGSkqYE1FZQlAoUBhs
+ ZHVtbCwBEpezdYgAAAA==
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.14.1
 
-On Sat, Sep 14, 2024 at 07:15:08PM +0200, Markus Elfring wrote:
-> …
-> > +++ b/drivers/soc/adi/system.c
-> > @@ -0,0 +1,257 @@
-> …
-> > +static void adi_system_config_remove(struct platform_device *pdev)
-> +{
-> > +	struct adi_system_config *config = platform_get_drvdata(pdev);
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&adi_system_config_lock, flags);
-> > +	list_del(&config->list);
-> > +	spin_unlock_irqrestore(&adi_system_config_lock, flags);
-> > +}
-> …
-> 
-> Under which circumstances would you become interested to apply a statement
-> like “guard(spinlock_irqsave)(&adi_system_config_lock);”?
-> https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/spinlock.h#L572
-> 
-> Regards,
-> Markus
-> 
+Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+return the number of clocks stored in the clk_bulk_data table referenced
+by the clks argument.
 
+That is required in case there is a need to iterate these clocks later,
+therefore I couldn't see any use case of this parameter and should have
+been simply removed from the function declaration.
 
-Hi,
+The first patch in the series provides devm_clk_bulk_get_all_enabled()
+variant, which is consistent with devm_clk_bulk_get_all() in terms of
+the returned value:
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+ > 0 if one or more clocks have been stored
+ = 0 if there are no clocks
+ < 0 if an error occurred
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+the past form of 'enable'.
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+The next two patches switch existing users of devm_clk_get_enable() to
+the new helper - there were only two, as of next-20240913.
 
-thanks,
+The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+helper.
 
-greg k-h's patch email bot
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Cristian Ciocaltea (4):
+      clk: Provide devm_clk_bulk_get_all_enabled() helper
+      soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
+      PCI: exynos: Switch to devm_clk_bulk_get_all_enabled()
+      clk: Drop obsolete devm_clk_bulk_get_all_enable() helper
+
+ drivers/clk/clk-devres.c                | 30 ++++++++++++++++--------------
+ drivers/pci/controller/dwc/pci-exynos.c |  2 +-
+ drivers/soc/mediatek/mtk-pmic-wrap.c    |  4 ++--
+ include/linux/clk.h                     | 12 +++++++-----
+ 4 files changed, 26 insertions(+), 22 deletions(-)
+---
+base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
+change-id: 20240912-clk_bulk_ena_fix-16ba77358ddf
+
