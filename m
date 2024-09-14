@@ -1,139 +1,158 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A26D7344C;
-	Sat, 14 Sep 2024 03:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE792E62B;
+	Sat, 14 Sep 2024 04:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726286386; cv=none; b=mxQryzgSJDWEsFcVjZ3DPqfx86xzBDpXzIgXnjQMoLndHjPPsoruHJejYYbNZe33nEq2YiDN2lvGlvwvU8nRv6wi3RqKBxTP8p0Sg5dT0q7ZjM3cMntOQ1yQVpM2+hB6nJDBkSSIGHUJMpet5pFNcuk34LhA5bUDV2Zk3X3b/m8=
+	t=1726289509; cv=none; b=QSKtfkLueyMcTMlnXBq7ubzyrrYCTEVzMaDfpMYs0/oQsFZJacgRTK+LQK+Lg3oifEryxF4eolY8E39rNszIFzCRaZntbdNKMCpvygCt9X2+GMZFAZ/PxtSzBDni9WK7Fu3Kq8qoYYiA2qIGzYt+3duQ90BbIJjx+NFxwaAd0lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726286386; c=relaxed/simple;
-	bh=06upt1Vs+/DbmoMxTZMYSr4eiBax5V3t8bLJ+fYqkVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rRF7LxcAA7MbS0aKi76XVJcASSlBx0I4TarwiPKYo4YfS32lS30OsbBgdmwUErMDD7IIxj09rOu3kX1NHGEQqtBahSQoiEKT58N3Lgg0hnTX5PfxdCk1XKVOlQJiN8Y8+Aa51Jl1Uz0ywJx+MJWmXu8G6AZh3XVuGyQp7120JmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dWZr7WPS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1726289509; c=relaxed/simple;
+	bh=d/8X4Idqvm5bT+suEtQZD2BhDw8gn9M8PvI/hQGY6LQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VtLkLwO5JU1Jroo3P6B8oyhYTbySnIl3oEsHX3A1Vzx3F1FzqnGjXL8aCwQ5U5+9L/7XdxdX0Pm6KSqyTmaOpTNmZqqrFnbAryaMvsvMBSaMybaRp0Is/nAHLmzfkng0cW3EUIEzUzq9ZmhKj8aeOIwPA7M8E/osrqWO0VqNN+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NPuQqJbL; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dWZr7WPS"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48E0K2rd029091;
-	Sat, 14 Sep 2024 03:59:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iA/kORVBL6Wxi6a/guxYnyVIschyH2EOUiO0lvyRjFk=; b=dWZr7WPST3zK1SYM
-	e5AOEV3hgapNEn59a8Z2qG7wO069I6mEu7jE0ozy6fcxiz9gQ+NKtIKHNBnlYXAo
-	7Uvpb4j5LwP267Fwtil94dNau2/Hm0S2+xKZO8M+uY59FFgcAJi4VR9Q5IeTWzSN
-	j6iAal/17XtVTkSfdhwL8yW8i7EZgzZqFQuAgUfCr75fzzqPyKY/rErTzIC0/cG+
-	Z3BHZcx5TTVon3tybhzyTVz5p3WxL4RuVmOqArXjxjjXN/rbZe4bkT9ERRAUcZh/
-	wOXmPsSep+Dd2tccayag0P42R+qnBmH13skPiIzDIZHzpM+ZNws6XnlkbubpMTVs
-	6/1r1A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41myumrarv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Sep 2024 03:59:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48E3xUFo030003
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Sep 2024 03:59:30 GMT
-Received: from [10.216.29.174] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Sep
- 2024 20:59:22 -0700
-Message-ID: <36bd9f69-e263-08a1-af07-45185ea03671@quicinc.com>
-Date: Sat, 14 Sep 2024 09:29:17 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NPuQqJbL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726289508; x=1757825508;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d/8X4Idqvm5bT+suEtQZD2BhDw8gn9M8PvI/hQGY6LQ=;
+  b=NPuQqJbL1UinnKL7GiUD7+uEIPbeU1hEIlLu3yRmnxlISYjW6gsxRdgE
+   WSxwFK3sSm9iVV0l5tGH+Xkuuu+WQ77d1qYljuyPbrdBT3+PqfamUpadg
+   ROipLNnxGVkt2jkgzMjWudzqH4xeHhp0yWUIaddK2gvG9cS083/M64lml
+   Ol3C2Z+O11912d6qXjpK7ndGkwX2H7816b+RSuWWJnyWArhKMK7dKXU39
+   wOaWf9EbCuNL6f6nXTWJGYArD6DBZiuCUVYyt3L4EO+B+fpe7g5oimds4
+   1EmSVtAhPDTYJfdAgNZmw7yqcbov1CFti9ht9D/C/6OFXFrDWKgSuBMnv
+   w==;
+X-CSE-ConnectionGUID: xt/i6EuaQymmgDhLE+iyiQ==
+X-CSE-MsgGUID: AB/TWMl2QVqy3T6BAyP+Xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25323649"
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="25323649"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 21:51:47 -0700
+X-CSE-ConnectionGUID: cRIVJ7dhT1GeBL0U5a6Y6w==
+X-CSE-MsgGUID: k+X960AwScmh1lLLeEIj5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
+   d="scan'208";a="73317504"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 13 Sep 2024 21:51:40 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spKkz-0007NQ-2n;
+	Sat, 14 Sep 2024 04:51:37 +0000
+Date: Sat, 14 Sep 2024 12:51:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	cros-qcom-dts-watchers@chromium.org,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 03/27] gcc-sdm845: Add general purpose clock ops
+Message-ID: <202409141246.H3882zgF-lkp@intel.com>
+References: <20240913-starqltechn_integration_upstream-v4-3-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 0/5] Add support for PCIe3 on x1e80100
-Content-Language: en-US
-To: Qiang Yu <quic_qianyu@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>
-CC: <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zFX8fzgqJUywOZLiwxkJshUCOO-16e_o
-X-Proofpoint-GUID: zFX8fzgqJUywOZLiwxkJshUCOO-16e_o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- bulkscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 adultscore=0
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409140026
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-3-2d2efd5c5877@gmail.com>
 
-Hi qiang,
+Hi Dzmitry,
 
-In next series can you add logic in controller driver
-to have new ops for this x1e80100 since this hardware
-has smmuv3 support but currently the ops_1_9_0 ops which
-is being used has configuring bdf to sid table which will
-be not present for this devices.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 5acd9952f95fb4b7da6d09a3be39195a80845eb6]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20240913-231027
+base:   5acd9952f95fb4b7da6d09a3be39195a80845eb6
+patch link:    https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-3-2d2efd5c5877%40gmail.com
+patch subject: [PATCH v4 03/27] gcc-sdm845: Add general purpose clock ops
+config: i386-buildonly-randconfig-004-20240914 (https://download.01.org/0day-ci/archive/20240914/202409141246.H3882zgF-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141246.H3882zgF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409141246.H3882zgF-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/clk/qcom/gcc-sdm845.c:291:9: warning: braces around scalar initializer
+     291 |         .freq_tbl = {},
+         |         ^
+   drivers/clk/qcom/gcc-sdm845.c:291:9: note: (near initialization for 'gcc_gp1_clk_src.<anonymous>.freq_tbl')
+>> drivers/clk/qcom/gcc-sdm845.c:291:21: error: empty scalar initializer
+     291 |         .freq_tbl = {},
+         |                     ^
+   drivers/clk/qcom/gcc-sdm845.c:291:21: note: (near initialization for 'gcc_gp1_clk_src.<anonymous>.freq_tbl')
+   drivers/clk/qcom/gcc-sdm845.c:305:9: warning: braces around scalar initializer
+     305 |         .freq_tbl = {},
+         |         ^
+   drivers/clk/qcom/gcc-sdm845.c:305:9: note: (near initialization for 'gcc_gp2_clk_src.<anonymous>.freq_tbl')
+   drivers/clk/qcom/gcc-sdm845.c:305:21: error: empty scalar initializer
+     305 |         .freq_tbl = {},
+         |                     ^
+   drivers/clk/qcom/gcc-sdm845.c:305:21: note: (near initialization for 'gcc_gp2_clk_src.<anonymous>.freq_tbl')
+   drivers/clk/qcom/gcc-sdm845.c:319:9: warning: braces around scalar initializer
+     319 |         .freq_tbl = {},
+         |         ^
+   drivers/clk/qcom/gcc-sdm845.c:319:9: note: (near initialization for 'gcc_gp3_clk_src.<anonymous>.freq_tbl')
+   drivers/clk/qcom/gcc-sdm845.c:319:21: error: empty scalar initializer
+     319 |         .freq_tbl = {},
+         |                     ^
+   drivers/clk/qcom/gcc-sdm845.c:319:21: note: (near initialization for 'gcc_gp3_clk_src.<anonymous>.freq_tbl')
 
 
-- Krishna Chaitanya.
+vim +291 drivers/clk/qcom/gcc-sdm845.c
 
-On 9/13/2024 2:07 PM, Qiang Yu wrote:
-> This series add support for PCIe3 on x1e80100.
-> 
-> PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
-> PHY configuration compare other PCIe instances on x1e80100. Hence add
-> required resource configuration and usage for PCIe3.
-> 
-> v2->v1:
-> 1. Squash [PATCH 1/8], [PATCH 2/8],[PATCH 3/8] into one patch and make the
->     indentation consistent.
-> 2. Put dts patch at the end of the patchset.
-> 3. Put dt-binding patch at the first of the patchset.
-> 4. Add a new patch where opp-table is added in dt-binding to avoid dtbs
->     checking error.
-> 5. Remove GCC_PCIE_3_AUX_CLK, RPMH_CXO_CLK, put in TCSR_PCIE_8L_CLKREF_EN
->     as ref.
-> 6. Remove lane_broadcasting.
-> 7. Add 64 bit bar, Remove GCC_PCIE_3_PIPE_CLK_SRC,
->     GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK is changed to
->     GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK.
-> 8. Add Reviewed-by tag.
-> 9. Remove [PATCH 7/8], [PATCH 8/8].
-> 
-> Qiang Yu (5):
->    dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100
->      QMP PCIe PHY Gen4 x8
->    dt-bindings: PCI: qcom: Add OPP table for X1E80100
->    phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
->    clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
->    arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-> 
->   .../bindings/pci/qcom,pcie-x1e80100.yaml      |   4 +
->   .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   3 +
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 202 ++++++++++++++++-
->   drivers/clk/qcom/gcc-x1e80100.c               |  10 +-
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 211 ++++++++++++++++++
->   .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 +++
->   drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
->   7 files changed, 468 insertions(+), 6 deletions(-)
->   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
->   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> 
+   285	
+   286	static struct clk_rcg2 gcc_gp1_clk_src = {
+   287		.cmd_rcgr = 0x64004,
+   288		.mnd_width = 8,
+   289		.hid_width = 5,
+   290		.parent_map = gcc_parent_map_1,
+ > 291		.freq_tbl = {},
+   292		.clkr.hw.init = &(struct clk_init_data){
+   293			.name = "gcc_gp1_clk_src",
+   294			.parent_data = gcc_parent_data_1,
+   295			.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+   296			.ops = &clk_rcg2_gp_ops,
+   297		},
+   298	};
+   299	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
