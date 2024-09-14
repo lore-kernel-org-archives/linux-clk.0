@@ -1,187 +1,185 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14914199BC;
-	Sat, 14 Sep 2024 05:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFB449649;
+	Sat, 14 Sep 2024 05:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726290770; cv=none; b=ekDjqycMR/MpHEDkeWM2zStbsPjuBvhCEbsKN1nMlir2taYl78OtP2pihSyCDxk8VpiKkhDiMMY+nFxFQAqrTdNwedyvMgWjB92WwDIixbarxzOiFrxrpk7zzoD1dLwPKRrL5R8+w5Uw9FWmeiTrI+xsqyiZmhDoDlvrbXlkdQs=
+	t=1726291532; cv=none; b=YmB0yJ4H4bPS3hoxHpf9RFPWt6FdrxVnp0PzDigf2HsflKHTwGVRz3R1lxe2T3ay7UagAEtzAH8uZeTVDSyxBD0R479LRPk2MV6y1WNzxoHFWyVZ0EZtAUxaD1lkadP7GAeLMNmwXD3FZshrMNp9LzesAzTdtbsmJNsrnAJUMRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726290770; c=relaxed/simple;
-	bh=/HB28poQFqti82eKAs8KNttYZol5FFOa8Hcja/yKtL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ox4PyJ3aWXDJrix6eFFFh42ofwuiFkdSZ+25YVIas35MdlrNzxQzYJcW2HlXRpu7hxI+nH6QoUccdA/IAAK00l1ZkQVP85yhLJyXR6eiza1GM8MwrgOl4fBBaNZ3L5+I0cXnehr6Qfnrifx1rQxQbIH0MOj9oaOqqtrfbocU1YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OLv+Vh6K; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1726291532; c=relaxed/simple;
+	bh=XxOwoFH80Bhk5qESbi1I1pviMO4Ixnnb+WUrAi02KNk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ixz9zKq/bvOC38mQ7z0o4KeYBuHYfiz9KWdcWz4j1dH3txe2GtTiJe68IvWIjmfY0Rlt6oXNiBbUESQlXTmn14otAzNr+xJ7TDZJbcW3xdRsiOZI+byommG4dZ81ZqvSNqMv1MHYJtlBY8bhBD/+UQ3CcUt3VBmlMpDouIx3xQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVoJ8qtR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OLv+Vh6K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726290769; x=1757826769;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/HB28poQFqti82eKAs8KNttYZol5FFOa8Hcja/yKtL0=;
-  b=OLv+Vh6Kh7SzTrYSEexJPAZ4V/og19giFKa5PERf/gSx6D6AhlSj2Z8V
-   YN477blbVKgtjahRWb9iNK8KgQw4v5cqKCboTiegbEVot+KfbGghHL5/U
-   66FG073UOUdww/zTWn1Z/jTs3YRxpn19J5ssPSfqGE9M/GHdJGn2kRpk9
-   StIM/RQudgO0qYgX+k3krLM5eJao3sSWrMZzdAknKcOoVE9NrKKchmYp2
-   D+Ni1TnJr2fg50GT0z6Qc5KHGTZ0wtN45ANCskICfyFbEr/Dl3VTJpeCQ
-   HKuS7k1uBK/VIR/x5P7L9TqXeerXKtyMR2OZ82yRyp493cW9tGcWSxGd8
-   Q==;
-X-CSE-ConnectionGUID: lHa43aCLTFiSyLgv+NGwKQ==
-X-CSE-MsgGUID: DGVWiKjPQwy5kmisw1ZJeQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="35874422"
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="35874422"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 22:12:48 -0700
-X-CSE-ConnectionGUID: 9kMl8jvvTEqx02Vo7dS9nw==
-X-CSE-MsgGUID: gDe/TK+gT7mkd/ggLB2mrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,228,1719903600"; 
-   d="scan'208";a="73322579"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 13 Sep 2024 22:12:41 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spL5K-0007Or-2w;
-	Sat, 14 Sep 2024 05:12:38 +0000
-Date: Sat, 14 Sep 2024 13:12:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	cros-qcom-dts-watchers@chromium.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 11/27] power: supply: max77705: Add charger driver for
- Maxim 77705
-Message-ID: <202409141322.ptabmnJ9-lkp@intel.com>
-References: <20240913-starqltechn_integration_upstream-v4-11-2d2efd5c5877@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVoJ8qtR"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 698BCC4CEC6;
+	Sat, 14 Sep 2024 05:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726291532;
+	bh=XxOwoFH80Bhk5qESbi1I1pviMO4Ixnnb+WUrAi02KNk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=EVoJ8qtRaS2sV7hcYyvvwwk6rXga7bS2sH7cy7Q0+1RgFgAoilX0oHnaYM4zNpbmy
+	 lMe0wIf6DMAWOtr8SE+CNWnnMyPESAqc6XL4E80RhVtgq7kKd4m9rcoZ+bh2SxI2xK
+	 jse4DcplsIx7ESdnA9KpShWDum9ib2ZRMvd5CN+WpEhd5Glh+sLmt38bbe0BDdfCr1
+	 DPcKCICjoEbO2KujWaXbj/86zIkx2KhBxVF2SWb08rToxLt0UnBVCTzSi2tuveYpfj
+	 vvZtg73TN1JHWKELvoe2tfPbvzdo6v0pFloezMoqOFb+PpEVOGOReVb693NMe+V9HX
+	 0gg0xOC7eS+vA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563C6FC618E;
+	Sat, 14 Sep 2024 05:25:32 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Sat, 14 Sep 2024 13:25:23 +0800
+Subject: [PATCH 1/5] dt-bindings: clock: add Amlogic A5 PLL clock
+ controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-11-2d2efd5c5877@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240914-a5-clk-v1-1-5ee2c4f1b08c@amlogic.com>
+References: <20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com>
+In-Reply-To: <20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726291530; l=3134;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=lsom9knZP0lHkNe6jVzPiJ0BTgKhyMmo+ZKlPTInwcA=;
+ b=yS6oZdIBel/t0WlOzbHPs8yDp55NT8uCAIH90lPpC1SKuLiNj9Pbfo9I1AFRulbMfX01vw5oT
+ F2ERa6kW2UIBRQaj8an7TTI67sJqClsKT+CDUPc4/aV8C/Ae9DqH1FQ
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Hi Dzmitry,
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-kernel test robot noticed the following build errors:
+Add the PLL clock controller dt-bindings for Amlogic A5 SoC family.
 
-[auto build test ERROR on 5acd9952f95fb4b7da6d09a3be39195a80845eb6]
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        | 62 ++++++++++++++++++++++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    | 24 +++++++++
+ 2 files changed, 86 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20240913-231027
-base:   5acd9952f95fb4b7da6d09a3be39195a80845eb6
-patch link:    https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-11-2d2efd5c5877%40gmail.com
-patch subject: [PATCH v4 11/27] power: supply: max77705: Add charger driver for Maxim 77705
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240914/202409141322.ptabmnJ9-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409141322.ptabmnJ9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409141322.ptabmnJ9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/power/supply/max77705_charger.c: In function 'max77705_charger_probe':
->> drivers/power/supply/max77705_charger.c:523:48: error: assignment of member 'irq_drv_data' in read-only object
-     523 |         max77705_charger_irq_chip.irq_drv_data = chg;
-         |                                                ^
-
-
-vim +/irq_drv_data +523 drivers/power/supply/max77705_charger.c
-
-   497	
-   498	static int max77705_charger_probe(struct platform_device *pdev)
-   499	{
-   500		struct power_supply_config pscfg = {};
-   501		struct max77693_dev *max77705;
-   502		struct max77705_charger_data *chg;
-   503		struct device *dev, *parent;
-   504		struct regmap_irq_chip_data *irq_data;
-   505		int ret;
-   506	
-   507		dev = &pdev->dev;
-   508		parent = dev->parent;
-   509		max77705 = dev_get_drvdata(parent);
-   510	
-   511		chg = devm_kzalloc(dev, sizeof(*chg), GFP_KERNEL);
-   512		if (!chg)
-   513			return -ENOMEM;
-   514	
-   515		platform_set_drvdata(pdev, chg);
-   516	
-   517		chg->regmap = max77705->regmap_chg;
-   518		if (!chg->regmap)
-   519			return -ENODEV;
-   520	
-   521		chg->dev = dev;
-   522	
- > 523		max77705_charger_irq_chip.irq_drv_data = chg;
-   524		ret = devm_regmap_add_irq_chip(chg->dev, chg->regmap, max77705->irq,
-   525						IRQF_ONESHOT | IRQF_SHARED, 0,
-   526						&max77705_charger_irq_chip,
-   527						&irq_data);
-   528		if (ret) {
-   529			dev_err(dev, "failed to add irq chip: %d\n", ret);
-   530			return ret;
-   531		}
-   532	
-   533		ret = regmap_update_bits(chg->regmap,
-   534					MAX77705_CHG_REG_INT_MASK,
-   535					MAX77705_CHGIN_IM, 0);
-   536	
-   537		if (ret)
-   538			return ret;
-   539	
-   540		chg->wqueue = create_singlethread_workqueue(dev_name(dev));
-   541		if (IS_ERR(chg->wqueue)) {
-   542			dev_err(dev, "failed to create workqueue\n");
-   543			return PTR_ERR(chg->wqueue);
-   544		}
-   545		INIT_WORK(&chg->chgin_work, max77705_chgin_isr_work);
-   546	
-   547		pscfg.of_node = dev->of_node;
-   548		pscfg.drv_data = chg;
-   549	
-   550		chg->psy_chg = devm_power_supply_register(dev, &max77705_charger_psy_desc,
-   551							  &pscfg);
-   552		if (IS_ERR(chg->psy_chg))
-   553			return PTR_ERR(chg->psy_chg);
-   554	
-   555		max77705_charger_initialize(chg);
-   556	
-   557		return max77705_charger_enable(chg);
-   558	}
-   559	
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,a5-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a5-pll-clkc.yaml
+new file mode 100644
+index 000000000000..ef9e40193a1c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,a5-pll-clkc.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) 2024 Amlogic, Inc. All rights reserved
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,a5-pll-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic A5 series PLL Clock Controller
++
++maintainers:
++  - Chuan Liu <chuan.liu@amlogic.com>
++  - Xianwei Zhao <xianwei.zhao@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,a5-pll-clkc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: input oscillator (usually at 24MHz)
++      - description: input fix pll dco
++      - description: input fix pll
++
++  clock-names:
++    items:
++      - const: xtal_24m
++      - const: fix_dco
++      - const: fix
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    apb {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clock-controller@8000 {
++            compatible = "amlogic,a5-pll-clkc";
++            reg = <0x0 0x8000 0x0 0x1a4>;
++            clocks = <&xtal_24m>,
++                     <&scmi_clk 6>,
++                     <&scmi_clk 7>;
++            clock-names = "xtal_24m",
++                          "fix_dco",
++                          "fix";
++            #clock-cells = <1>;
++        };
++    };
+diff --git a/include/dt-bindings/clock/amlogic,a5-pll-clkc.h b/include/dt-bindings/clock/amlogic,a5-pll-clkc.h
+new file mode 100644
+index 000000000000..a74c448a8d8a
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,a5-pll-clkc.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
++ * Author: Chuan Liu <chuan.liu@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A5_PLL_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_A5_PLL_CLKC_H
++
++#define CLKID_MPLL_PREDIV			0
++#define CLKID_MPLL0_DIV				1
++#define CLKID_MPLL0				2
++#define CLKID_MPLL1_DIV				3
++#define CLKID_MPLL1				4
++#define CLKID_MPLL2_DIV				5
++#define CLKID_MPLL2				6
++#define CLKID_MPLL3_DIV				7
++#define CLKID_MPLL3				8
++#define CLKID_GP0_PLL_DCO			9
++#define CLKID_GP0_PLL				10
++#define CLKID_HIFI_PLL_DCO			11
++#define CLKID_HIFI_PLL				12
++
++#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A5_PLL_CLKC_H */
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.37.1
+
+
