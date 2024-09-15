@@ -1,118 +1,97 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F74F11CA0;
-	Sun, 15 Sep 2024 04:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BF13D551;
+	Sun, 15 Sep 2024 19:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726374314; cv=none; b=EiNQcQqZGpdTupblH69W00wjaRVVar8yhVJdr9tIsJVa0NaN3xxJfz24sdYkpwxR6UQ7NYFrquDwXtRpYzEFMR2txmZM+0TgVj2nYl1RjHhTj+/3lc5jb40MJHbv1teoWNlzcYJ/UF5HNJYCHBKj8KxNYTw2Y84V30dehj3R96E=
+	t=1726428352; cv=none; b=JmtOMyGvhUCfd0QCAOz8HHWyyzqSZ1w49T+HzWFrsR81NP8EAiWfdO9Vk1ZaboVVFko4JGNd/kxllNlMLM9XiIRydqJHF75Let+RDzLAL0t2ZCZX2Lbnr1hBjM/aakjFVXnHWJkZI0xNJ+g1UGN6sNABf8TFS5GH2sFrjs1DwFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726374314; c=relaxed/simple;
-	bh=Hs3A/0NgMdrdsVPIXyw3hBiawKKXZLwpEf6kATB+HVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OXiMROAxODCBvTlydI1IP+iqx+mYLyEDJWIEAvoJBtgc66w0zZC+r3TgOWulT7ro1Uen7O9/c1NPSbDYT+9zb8fQi9qfviYV1bFR5lynOx9mZk3HIVB8IpgO9wWR52vUGj65evExJZjePd/up7vWCa5fdFILIhA+jZhn/zEkbtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=amkJhq5b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1726428352; c=relaxed/simple;
+	bh=dsFMrp52owgT+QXsdARrXyzoDdIWrvC9j2u21aCjt/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R6JkvBpqPxVelrZ59N8d/cX8ntp81gYUPopw6auIEiJ/xj9+qmruzwn//ok8vprm38qzgJ+oN3JPk+KqAN1p0Tds+HtDuMzA/r62yTkUOth6W60Vkhc1TjEvvOSLu4K1U1rpDgrIFLmVGniEFbFXDkh2uplVzcVB+eYP1/WSO18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ixq+9ZfE; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="amkJhq5b"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48F40F18024744;
-	Sun, 15 Sep 2024 04:24:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1Di0Oqdi4xGJgoL6vNrrVyWlC/CcTvosN/PQueUb9K8=; b=amkJhq5bbK41F5hj
-	wCdJVIXbdBku5mFAUvKq1ZvjUBux2X0pTe1pHfQJnXNcNPArMnK8wk96Outuq4Rm
-	9EahMgreag/zyAKNceMWspsWi+k5uI2QjLgChL2z4U/+NpIS1inwXvba67p3zBsh
-	b9JIto8jvu0xCgWqY40urgdD/zneQi9fm3Ost00g8gmTabDSyFnzaEkWgCEnJ0El
-	tWhXkrH0ZL0y9G39q5f++mD6dB5Zreq1fKN6ArzCUxJRv/b0zKb/pVYnsld/g5lK
-	xmXX47ZAsPJ/1jOgcdP6s1kR/Q0VOTyutV9z2gelfqHnNqdVRfVYeYiWbzK1tNAQ
-	Ir1OTw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hf9dd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 15 Sep 2024 04:24:40 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48F4OdNG016839
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 15 Sep 2024 04:24:39 GMT
-Received: from [10.50.62.96] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 14 Sep
- 2024 21:24:28 -0700
-Message-ID: <306acd78-cb7d-4fd2-9bdd-540426bac50d@quicinc.com>
-Date: Sun, 15 Sep 2024 09:54:29 +0530
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ixq+9ZfE"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-205909afad3so39763475ad.2;
+        Sun, 15 Sep 2024 12:25:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1726428351; x=1727033151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dsFMrp52owgT+QXsdARrXyzoDdIWrvC9j2u21aCjt/E=;
+        b=ixq+9ZfE7a8lBazixy8cfGWC3Y0xGA+isuAsqt0wh/p4Rtrt80ry1MhuH0gYHb0kXT
+         tmUWyDX9plxuNra9cSie4cTPA83KCFL7mNWveDw1fT4TihzseaLAqN3xGjYkUug2fvwt
+         3/j2LyIZ774wJNoMBLE6PWKj05ftd0+SeHyv1/tTErAMg9xdzzsRKC6zUPvGVGLODAki
+         uvBkttM6J+HM94hmtRqrT8q67MehzCv0WhAItYlIsv28hsMa4jLIxytwvc6sZ16mupL4
+         Ht1iAa3XtTEG67rdCcW58BagxKCsn18VurIGN1ksABm93j37M/SBVebA3MLlsBuUkl62
+         mc6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726428351; x=1727033151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dsFMrp52owgT+QXsdARrXyzoDdIWrvC9j2u21aCjt/E=;
+        b=TYYUDQT9T/gbsTViq1kf68RUPG5kg5QHX1CGRDGqQCwKkuJUxIeu8JL/9LkvEi4oV8
+         8bHhNqCMAnYJdEkEpIJg9tizjeA7l7LOTb0MRrh1sEdRM2UPmP1Kw0WXzGn4b6RziK8A
+         4+p28b8wtuIwxhPeX7UQ2d5Rg98Mp9eTLwxnyq1rGx7eDqugjrqBv6RHmmKNwendLDSG
+         3ZXkPReiH9OEuTzmnHuOTEvHnuFIFngBU2UfqMG4qAv1RvQysXpzSGT7O/k2dhXONaUH
+         wG4Dx+CMKBQYvmU6EbyO+KNQC5jP7Co0QEbnyKpqaY+FrzbjJrQ7YvBgo3DwoNGgmwws
+         qvUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVpqq5fnFz+6MpANExEyLLQlOpgal8p9DfnXTyPcIzldQmclJg8QXvmx+GuOmmXWQADVx6recSseM8@vger.kernel.org, AJvYcCVlAyJ7nUAs+4HtC8z59xOBEFITsNnZaFuyjHqIpusHUw1FayqruWmLiNhICWoaXSA4Fgw+nxL+DOhP@vger.kernel.org, AJvYcCXJ5fk+oDVjJHdTzgULIje8GyE7l/Fhu2YYXntDQF9E9ymq2jbMVkanEfmwM1z1PmlmeLuGPAl82OiAg/Pb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Ov3QJBfIahPzQEWQFEIlDxlyciOSg3lavUUwwJyBXG9Ni+J9
+	fZY5Vmpg66ESYQhqNpymPGbO2tqjfx3aXWLSL+3VkQ99Ly+MJPbVNJb2Vo5QJJ8bcffK6uD7KNS
+	LTFQciQ5WOitoDOwFPYYQsWb3OHI=
+X-Google-Smtp-Source: AGHT+IH+Uh1qYC1xAfKonOLcFVaIB/RFxfFjSDlBJUEqbp07iFMSDQJBm36Rof9f/CiWuchgMutW+DT9FNYBnFttrAk=
+X-Received: by 2002:a17:902:d546:b0:205:9112:efea with SMTP id
+ d9443c01a7336-2076e39c879mr190881715ad.35.1726428350658; Sun, 15 Sep 2024
+ 12:25:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] pinctrl: qcom: Introduce IPQ5424 TLMM driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-5-quic_srichara@quicinc.com>
- <rp6hhamsqwtneyfrf6lwrchd4p35blaqzgiq66wfkn66xofbar@7dgexti4qs4u>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <rp6hhamsqwtneyfrf6lwrchd4p35blaqzgiq66wfkn66xofbar@7dgexti4qs4u>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vah4GJY3KHbLBr0dESlP-hYGzFbTr_1K
-X-Proofpoint-ORIG-GUID: vah4GJY3KHbLBr0dESlP-hYGzFbTr_1K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=777 mlxscore=0
- impostorscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409150030
+References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
+In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 15 Sep 2024 21:25:39 +0200
+Message-ID: <CAFBinCBZ8kowT_R6MnVkQO_BpxPA88xz-=KPStFDYQgH=P5upA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: convert amlogic,meson8b-clkc.txt to dtschema
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Neil,
 
+On Wed, Sep 11, 2024 at 5:09=E2=80=AFPM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+>
+> Convert the Amlogic Meson8, Meson8b and Meson8m2 Clock and
+> Reset Controller to dt-schema.
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Thank you for working on this! First of all this patch is:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-On 9/13/2024 6:09 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 05:42:46PM GMT, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> The IPQ5424 SoC comes with a TLMM block, like all other Qualcomm
->> platforms, so add a driver for it.
->>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> The order of trailers is strange. It lists you as an author, but then
-> Varadarajan's SoB comes first and yours (authors) comes afterwards. If
-> it was a joing effort, please use Co-developed-by tag in addition to SoB.
-> 
-  ok, will add the co-developed.
+Do you want me to send a patch to document the
+"amlogic,meson-hhi-sysctrl" compatible string next?
+We either have to update
+Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.=
+yaml
+or create a similar binding file for the older SoCs.
+Also I think when documenting that compatible string we'll have to add
+per-SoC compatibles as I think this generic one is not enough.
 
->> ---
->>   drivers/pinctrl/qcom/Kconfig.msm       |   9 +
->>   drivers/pinctrl/qcom/Makefile          |   1 +
->>   drivers/pinctrl/qcom/pinctrl-ipq5424.c | 792 +++++++++++++++++++++++++
->>   3 files changed, 802 insertions(+)
->>   create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq5424.c
-> 
-> The rest LGTM
-> 
-Thanks
-
-Regards,
-  Sricharan
+Best regards,
+Martin
