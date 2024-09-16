@@ -1,156 +1,174 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2020.outbound.protection.outlook.com [40.92.53.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405DD13D53A
-	for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2024 08:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726476924; cv=none; b=IxvhoAPE4ydE5ENzTQTWCHT1QYiEsvCBu0zVyGxSSXWAIQWcCGRjjeRw+/GiVFPrsyhPVRnDQx7TIcwvaDuOohtwStm40hTfrGl2SRmdEh2P/MCrmWmcdf8Gnzq0d8562GG8QfAmT+JJoHvFdG0vCsVknX96ZIVylAKVQeve6w8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726476924; c=relaxed/simple;
-	bh=E1VyYQAQurwU8p+dmCtqZx+FfsqwR9JKSuHmyzm/i8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nLNWGuvk4FP7tg75yx1PYevgmNALOzeROLYxA68rAMGaO7WUsmwE7tAh5esYE71mdVl6VCP2SAQwxmRSUw8yLhXeCOnuz+m13WIn/lW4rV1xkW0bCgRLH70H6JaPsHWafKA8QvLZ+L9gIcH+MQJp/ba/47MFPa3JCVpWcbRKKyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lW82FDGa; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D241A28C;
+	Mon, 16 Sep 2024 09:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726477229; cv=fail; b=fiSz0Z7dr0jORO6j2iahJGxBpDzQHZRbxfbyNCZFePcQfFAKN6ewoYj4QJ0XR24Rl5YElxTLYL1qmydeCbdYpKfo8dIRha7ZGMkBlDP6UBBbKgHtdrZ4Yu83cvYse1jl4frVU+2IHJHAdDkWUAsrYB63hto9+QhiwG8iAyT1Mo8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726477229; c=relaxed/simple;
+	bh=Or/poj/8YXatiQXfPFES0kSkb+UiS33KnjK5HBDBu7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jr1tFr4ymsoNgH5vVhQjicOccOToiQeT6Sa0PRWZm2fiLZ6jNEoaLoyZ9DH/LvtfHWf7qW30TVe9L9og1xMaQCRKhYbZr/qE2tPhG9TF29Y7t5uTH729Bt1rjkFnS/IWvdOsYUeSOvAwjO3qXPWrqtsZrKHFoEp086anTBYssV8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=qHlYloSm; arc=fail smtp.client-ip=40.92.53.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lW82FDGa"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so5215477e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2024 01:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726476920; x=1727081720; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xR2jDKAsU3oH2uxMnF0+jo329Pwfq7dBz/E22uv0AZQ=;
-        b=lW82FDGa3Xyz94la5QhkwSNbbQJupNC4HqxsS5tVX7d6oc6O8DnrARB/hcUppr4y+t
-         qYrWQb+MkP8uliAyDBV1S45P89S8FS/G0MQljSb2zDbGIqOlnqfTiIEAE2H43njv9PzQ
-         /qadxxUe3gdL+pHKBcl1Okv/tUwU00h4eVIoDWInC4/JgM8hiPzdqDfNQksyrsdRF/8M
-         EDJCgUciXVmB1hydOlrmmhXo6krhWYN5QPcS230BHYdO1spSxGGelHg6zFegntk5bmsh
-         AUIDEfZ3b4gf8VRJ5+gmR4LwCAd7iw+sKdBcSdBDSO7ymwYuF4l4W4OYlL8ueUdY9h8r
-         E/EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726476920; x=1727081720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xR2jDKAsU3oH2uxMnF0+jo329Pwfq7dBz/E22uv0AZQ=;
-        b=U8OkN7crcDqKW69SPFIJzbUkmX7OaO+Hq9imHMTJdSR/JtcY5eEVrMYnOCH8THLY3U
-         DCY4SF1D3htskcp/V9gFwHLLCeapg4j1r7wYlUK/A5vrpz8+3NTkVgcBMukCkh2ji29R
-         ms17v0rGmJYbUgJk0Q/fRJGO2t8hBtt4RB0tzUDiXfBP/Yi3vtj53mdrSTKVmuiGLFQ9
-         Sf89qkWtfGfd3f3HuGHZCV86EzZiC6kVtt9ZlqOS5IWPUt0I4joom7wyYLuhVjatjS+C
-         Ftce5m9l1gOfYk2yFR+uzYuh+nOn7KsN/fIZYA/bOIDVXWLpRSj7l2TyL++Nz+u8A/LI
-         ywgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJDQfs6uQwyUJZ2/Quv6BvSJgxbgayWtgjiwNLtWJT/F6oaYvlKK4xgPbJTAMPiyTAl+es1nNKmiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAq4+iK42bDXTv4LlAqbfJtdqKrfttNkfItR/EEeWCJ7NeyNVb
-	1Fnrxt8K75jBD9Y9ENx74KtmynAninY56AyzMo1xa3CXHbxJwPDtTOBKBZ0a/SM=
-X-Google-Smtp-Source: AGHT+IHDgMPI5T0jfG61Jbaz3vU73dD+DIaHA1ZXDycd61JvCkYD4pYWwuEBP/jGdSBOxVH4v/LUsQ==
-X-Received: by 2002:a05:6512:2352:b0:535:3ce5:6173 with SMTP id 2adb3069b0e04-53678feb5e9mr8380576e87.37.1726476919287;
-        Mon, 16 Sep 2024 01:55:19 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870466ddsm809521e87.25.2024.09.16.01.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 01:55:18 -0700 (PDT)
-Date: Mon, 16 Sep 2024 11:55:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="qHlYloSm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=shU+WLGf6XYISU81B/NvqTnhxhyIm6nQgPn7qzm3mCLqaVEpqArOK5UWB/wbHoX0SxESJa7sqw3mGT9CBHCIvDyB57YC6hDAigNetD/Aen0JLdD1MXTC1Os3hZeZEaBSONSkwjSZD3qj78BtLhxMoc3JpvaaIesCN4mdlKZEghLzcQ/u2FxK4wGmqHhy66fum+R2nElOK4oVExqWlBDOT9LxkaOAHWjfW1sSjdAGSDVaIPBYAWe03Govj7WHJ9PPgf/35L4tC2s180k3pBlL2Sb7h+S0sNULwLUJdi4xk7UtUtcwdI6/MSMJe8YXZJ2Fjyka9Jbb5CAU0Lv7LZ3TCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U7u6FTVx6uNmqYsA63GYH/zM9fXfsl8IFHOpsY1j300=;
+ b=b/c0Zcf/vB8mxTRJ1y+1vfyLyWGqhlnLwu5SU1S+eacYoacgfNfHuDmw6dbqD7oIvexNDU4liJnwIy+f2sRPGH3hDd6tXo76+BAZqzmjbwLs8p8PUaX8OCd7aznUCqnj4TqvLHneXk93rmnfTRiaCZOs6cMmWaZt5ee7wJh/AmoQSRKqP96XKTKMVON+NxiI6+csRdbeAv5bVLRq9M2qYf6bghuJqfJbJPUZFIH6MoN1/OybXWOOMqReCiQwQMG3F91arKbmxuqd8Un/D46YpJ5IdOvGb7/ULRS82qLpD+HPLL8LAql06y6dDjdq5FwSqAd/173hwm1UVKQV2U+N2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U7u6FTVx6uNmqYsA63GYH/zM9fXfsl8IFHOpsY1j300=;
+ b=qHlYloSmAJfJBsZjbhuzceKtO1sS/9njO1ZyWZTdnI+vovQhw8INr8m23joT8nrRrVkwLRvZthk1sXplZthhlwFV0DMPhqThABHwQSzRJOvMjIjYjhODRwaYDFPfHftPb3gU3mGk7N46hOQcWAaI9YswsCM19pid9SYb9TmD4VtKwqCVnBWTlAJEc7xwRspwiZeFwq1SbI58k2U9BXQP6DDZnybqW+artyzticxKsAh9jkZH5BkGRvoxwf+PKOcPPh94TjtVtPPoGUimrj2iUrX48h3IXWuYyvoMGc6ImbFXQj0m9uSba5TG977iv0+3fyIEsaZG5/Vv3BqAfWs3KA==
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12) by TYZPR01MB4764.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:28a::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.22; Mon, 16 Sep
+ 2024 09:00:19 +0000
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756%2]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
+ 09:00:19 +0000
+Date: Mon, 16 Sep 2024 09:00:14 +0000
+From: Haylen Chu <heylenay@outlook.com>
+To: Chen Wang <unicornxdotw@foxmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] clk: qcom: lpassaudiocc-sc7280: Add support for
- LPASS resets for QCM6490
-Message-ID: <ya6aqhq27mizdozfhaa6evwt6kqjdryafozdxvwdm3l75cfd24@wloodcwrgkyu>
-References: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
- <20240816-qcm6490-lpass-reset-v1-2-a11f33cad3c5@quicinc.com>
- <67819a53-8e99-469b-a458-8c00034fec4a@kernel.org>
- <936f151e-6951-4dea-95ed-35374ab249cf@quicinc.com>
- <9b3350ba-eafe-4bb0-a6cc-f1b0a06d623e@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: spacemit: Add clock controlers
+ of Spacemit K1 SoC
+Message-ID:
+ <SEYPR01MB4221797DA56316CEF3966E65D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+References: <SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <tencent_443CD854D495576C1821D5843AAC5FCC5808@qq.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_443CD854D495576C1821D5843AAC5FCC5808@qq.com>
+X-ClientProxiedBy: TYAPR01CA0215.jpnprd01.prod.outlook.com
+ (2603:1096:404:29::35) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12)
+X-Microsoft-Original-Message-ID: <ZufzntqU2rBBEFrG@ketchup>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b3350ba-eafe-4bb0-a6cc-f1b0a06d623e@kernel.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TYZPR01MB4764:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35499a84-02fb-456d-f517-08dcd62dfd89
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|6090799003|37102599003|15080799006|8060799006|19110799003|5072599009|461199028|440099028|3412199025|4302099013|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	8/TwyJOZzIqoohYZz9T8AojAUAdQJkBrHUFWHw8lxieyDu7APHQaVBiWyHp42EtFnkUX2zqw+axsTQrv7D87Y5yLKc0ar1OZFsiClrETmgGn3iOY6MkvV45WnsU/LsYGdXviAfPp1AwdNBXkSEKLHIBYZ/r95JOEH8AhjVZPFnsUieDsoAlDh73AfxDtDzGPqO8mHON9WEujsTCRG9lLRTMxzIdfjcMrUfhGATLJxdft5wSYiRwu8kYq0b2mymrDM7rC9AhXzuTb0XkutTO7KOo/cAHv5mrAS59wDqWdAIOBDOuNC8rT3ampTX51gm4KKNoj73r+6UjdBz6iQw0k2skjpLWKjvZcJDJFtb1lYE+gKweGv7hxPaACCq8MCRzGjOvURRrDgGK07dW/byr/LexE+YAwRhpveuwbLBIhE8k7yT1xESAoednzgJmIroP32DeJ5DQ5uGDSmy1PNTHqYWt0c6770DZfrzubyVk7ZBnrenoSm15u3St3W4RDNZYJWIDZwsOC4ziCtNUVc++DU0zxX2+mMYsR2A1YHZiJ5YZigDWSRpgT81nps8mCXaekWytpLeQ64S7a7Zb+FWZUi+SlVU7ElzPHYg2URGLCyBUa8F3a4KI2QuPrQot5omkj3Fp9D85RBhyOTeRY1Po4SNALHMlO0Swx6FgiXFp/oaL8UgHjBcDQDgWHY7WC71SaTNTSEY7v5dciYWxHv9Y6GY5UaBllxNd9uPfNZgczlKbcJgJ1cBtI+IWPxEMPkdYPEx01419ehxWU3ti3ke/uCUkIs2NHRJMtCWCgitN6utXAK6DrovdNYraVnDIHbEWmn9neHHog7d7Fuon72DV2XDqb0irDMSzDtiCS5E4pCj8mlu9EjNS4wbHg77diiCOw
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nV6WscXf4JhBDFxYgQb/wUKFQn9VpkHWqs0QOjuwzHUQ3eVjU6cVYY3t0t+w?=
+ =?us-ascii?Q?AK7YQvqnx7jLhsI6Gi65rJ5WPTfCkIWCLK9C050PZzBA7VChnB7UM+92hyjV?=
+ =?us-ascii?Q?VlakfVbArNL9Zxon9UvAc3LOxIAEVEnLeghIe8/jFD6kADMXRA0Fg7ENUAKH?=
+ =?us-ascii?Q?Xjn8rXvP1Ut6/lM25Hy2XP9Lz6/GCaZWLMmz11JPrkVy/TGsqY4uocIQPrIP?=
+ =?us-ascii?Q?HOuFdoAP3uDIEw09qCgav75xY6bluiZf/fssmcj+p68rYnw//ZYMTo3BDGLL?=
+ =?us-ascii?Q?V0wEUd9J+T4y6iXlWlo2uVCorcG4ugtRD1QaRLzImc0o0fm+LGEzWNKsa4wu?=
+ =?us-ascii?Q?7uyP8p0rECwoqYz5HVkKbmpY+jUJqyQLHvsHLleSVpddUprojFdDc0mcUYgA?=
+ =?us-ascii?Q?ryKdX0G4FI/bXJpcy+d8onp6adwR2H9tKA3glcCCZHQBsXUDD/1DryZF8KCD?=
+ =?us-ascii?Q?TWiSF3iXThBUO31efL/A6y2gDvytqU9Tz6yrOnd+a4feKfL9Fi/OjkQRyb7X?=
+ =?us-ascii?Q?PPMMoufk7RLINNBsfUjBLd6Ey968ZE6lLwojGT4Ug3bXvCL/GiaPap3vWU0Q?=
+ =?us-ascii?Q?FM9n6jzzaxw1DrsRKO6TzzkC9pCfmBA31l+7WjgfUSkALgQuQjK1X2YJf23d?=
+ =?us-ascii?Q?TqDMPLwlVHI2sU9Ek8auEGuOYMeqoPq9gC4+0HoGJkHNbLQ6Fv5R8RV7jiHZ?=
+ =?us-ascii?Q?tN8W2pzLytBOw4WmwoRNL77uSFgjKJmt3x2viTd12e+4XfZOTp0bd6qbc/Q5?=
+ =?us-ascii?Q?F+68XJIZ+cjyQMRaqLYte3+i9mzRUZ3AXE48aBNVyYGNFDJnepyKYrWi5Hwv?=
+ =?us-ascii?Q?AF0xp7LM1UZS3EwPDRXRdtywrWjjUTQms+9e7dAPglPUzJCCNIvu51ak9eta?=
+ =?us-ascii?Q?QaCdKJ5qhi3kwYQKTocyCOyIT3Ek7x8NyT3B4DMJAeVw8JMMYL0peb96wN9D?=
+ =?us-ascii?Q?E6mU5E8WRKRnnFnSapyRbvMBUIEuJAE4xjK5PXmRacli+ktrDsHnwuJZ+GQz?=
+ =?us-ascii?Q?am/LHU6VzOz+S8gpoFAalRMLZTx+GumpaHVf6jC/duWD1zdwnkND0yzZb3RE?=
+ =?us-ascii?Q?NEy+lLLN8VVf0WwwaooCCciE602KqWV/E174K1k2SKbxSsGHTRPvYHdenGFy?=
+ =?us-ascii?Q?IZ9PFg0ZXPU8tm0TU55tQuCmhX5AfeulU+38Vy9sU4y48VxZfNJC7YtRmCdy?=
+ =?us-ascii?Q?cmyXsjngL6mhoNJ2aY0urgQDj+fAQ4P7D+1NFaJ//Z71TiDFxRX+A5Z/fqk?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35499a84-02fb-456d-f517-08dcd62dfd89
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 09:00:19.7732
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR01MB4764
 
-On Mon, Sep 16, 2024 at 10:33:21AM GMT, Krzysztof Kozlowski wrote:
-> On 13/09/2024 07:31, Taniya Das wrote:
-> > 
-> > 
-> > On 8/17/2024 2:55 PM, Krzysztof Kozlowski wrote:
-> >> On 16/08/2024 10:32, Taniya Das wrote:
-> >>> On the QCM6490 boards the LPASS firmware controls the complete clock
-> >>> controller functionalities. But the LPASS resets are required to be
-> >>> controlled from the high level OS. The Audio SW driver should be able to
-> >>> assert/deassert the audio resets as required. Thus in clock driver add
-> >>> support for the resets.
-> >>>
-> >>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >>> ---
-> >>>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
-> >>>   1 file changed, 19 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >>> index 45e726477086..b64393089263 100644
-> >>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >>> @@ -1,6 +1,7 @@
-> >>>   // SPDX-License-Identifier: GPL-2.0-only
-> >>>   /*
-> >>>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> >>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> >>>    */
-> >>>   
-> >>>   #include <linux/clk-provider.h>
-> >>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
-> >>>   	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-> >>>   };
-> >>>   
-> >>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
-> >>> +	.name = "lpassaudio_cc_reset",
-> >>> +	.reg_bits = 32,
-> >>> +	.reg_stride = 4,
-> >>> +	.val_bits = 32,
-> >>> +	.fast_io = true,
-> >>> +	.max_register = 0xc8,
-> >>> +};
-> >>> +
-> >>>   static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-> >>> -	.config = &lpass_audio_cc_sc7280_regmap_config,
-> >>> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
-> >>>   	.resets = lpass_audio_cc_sc7280_resets,
-> >>>   	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
-> >>>   };
-> >>>   
-> >>>   static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
-> >>> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
-> >>> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
-> >>
-> >> That's odd to see sc7280 reset added for qcm6490, but not used fot
-> >> sc7280 at all. Didn't you mean here lpass_audio_cc_qcm6409_desc?
-> >>
-> >>
-> > The resets descriptor(lpass_audio_cc_reset_sc7280_desc) is not part of 
-> > the global clock descriptor(lpass_cc_sc7280_desc) as these are part of 
-> > different regmaps.
-> > 
-> > On a non-QCM6490(SC7280) boards the resets are registered after the 
-> > global descriptor is registered.
-> > 
-> > But on QCM6490 board we need to register only the reset descriptor and 
-> > no clocks are to be handled/registered and thus passed the match data 
-> > for QCM6490 boards only.
+On Fri, Sep 06, 2024 at 05:51:44PM +0800, Chen Wang wrote:
 > 
-> Yeah, but why this is sc7280?
+> On 2024/8/31 23:47, Haylen Chu wrote:
+> > Add definition for the clock controllers of Spacemit K1 SoC. The clock
+> > tree is managed by several SoC parts, thus different compatible strings
+> > are added for each.
+> > 
+> > Signed-off-by: Haylen Chu <heylenay@outlook.com>
+> > ---
+> >   .../bindings/clock/spacemit,ccu.yaml          | 116 +++++++++++
+> >   include/dt-bindings/clock/spacemit,ccu.h      | 197 ++++++++++++++++++
+> >   2 files changed, 313 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> >   create mode 100644 include/dt-bindings/clock/spacemit,ccu.h
+> 
+> Suggest to use format: <vendor name>,<soc name>-<clk name>, look at the
+> files under Documentation/devicetree/bindings/clock
+> 
+> For example:
+> 
+> starfive,jh7110-pll
+> 
+> For your case:
+> 
+> spacemit,k1-xxx
 
-Because it's more or less the same HW, different TZ and hyp firmware?
+Thanks for your advice.
 
--- 
-With best wishes
-Dmitry
+> BTW, What's "CCU"?
+
+The name is taken from vendor code and I think it should be "clock
+control unit".
+
+> > diff --git a/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> > new file mode 100644
+> > index 000000000000..90ddfc5e2a2f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> > @@ -0,0 +1,116 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/spacemit,ccu.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Spacemit SoC Clock Controller
+> > +
+> > +maintainers:
+> > +  - Haylen Chu <heylenay@outlook.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - spacemit,ccu-apbs
+> > +      - spacemit,ccu-mpmu
+> > +      - spacemit,ccu-apbc
+> > +      - spacemit,ccu-apmu
+> 
+> Same as filename, compatible string should contain soc codename to differ
+> from other soc of spacemit.
