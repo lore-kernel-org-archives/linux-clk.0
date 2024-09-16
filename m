@@ -1,48 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C191339B1;
-	Mon, 16 Sep 2024 07:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678F138DC7;
+	Mon, 16 Sep 2024 08:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726473065; cv=none; b=XKrAP/GfDmc5S6mdVahGmMxTzrsO9i9wmSfo7feVBMxhjmEGodG+HApNNTahFsYgnGaCWQPasl8ljJlDxv9NIwJ8L0pZwPxC+XIFLaqLQXvPtUviLb3H3FCoi3vDWEFUMvWO9j0QeOf5M0NJJW5emx7aKEMjh46Rkfhdh4xPx7E=
+	t=1726475608; cv=none; b=eChd5qa5kWihKz0tD/wMOMYyLB86ONrl+diytScOBUKIq3GXuTBJFnZYCetgXBGpmSm+QT2b5vz6qnZFiRU1QKkwVp7hued9LLWWyqiGJ42R/U8EXXY76Xl7GnbTihNRRY55EUAHXhqWJkakFO25qGe7NNzzmf0TYbw1Upaf8hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726473065; c=relaxed/simple;
-	bh=Z9uIWG2PKf2KyhsARs6C+a8hCyFUNF7z+oDNfDWyUlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X30wxTdhmpOySvugy7czh9QD45L9AVgwds0DhSqTZTBB2bwOVaVwgEITid+Lykq6nAzR/pQ+8apLiFyLVxheAVY/tFJ5EOGN9GRZcMKRP4UsKe9iAz+ZIHKY1gJBX3YjvlYfMXqHaiOg4gkLhaFD31OdU2/YY7faH0+bLwYzywA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxF5/PLI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1726475608; c=relaxed/simple;
+	bh=y6G0w1k8wCTHPI42q0IZ5qhumkioYskDX5lCNwhj6Zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NhPyOXR9vE20uI6d5vjvcoBcyGCOoFjQulZPMXdziLmJL7pjVQ/3itVR6CG3qhluvvJKRiElYeN6Y7c7hv72vSIffrsJkitfYLFOPCwDUxIf9u8bWEYE2KF3x1fsWIJQQPbReO+lBQ79av4bnvlu5YpRTonQtYEZ25kFe+gAOn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZ4Lx+Ge; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxF5/PLI"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48FNmwBA024426;
-	Mon, 16 Sep 2024 07:50:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gBgmFYIDtjCkjwPRAQZ3OnNLyodUiCbqaDvzxqA+Jog=; b=LxF5/PLIqnNscV1V
-	h5fsKk2lNKyAB+/1ODBuwJa29nB1U10CeqfixNcxascuUhmI7KAzaphLLU43jtBb
-	4MENoySc0b7apl5JuzSo5LADUyYXKsptKy64B/iMkCXPBDEK6yzUcjY5hb35QWip
-	4NcICcQYFSvDSWYREEpsvvlsb/sFdRV8OwZBTb7/D3f+zbwIgyoGWpKj7O7el10e
-	PFVF2OT7fhJrZakDFjJkkRTJCQ8IY22EX/rZ2ROVA1glSOAMfPF0h+i6qQiI16ww
-	vaDQpJJzet2nDxk94/4iu/Adr+uZA0LXvTkTSjmTTCMDY8nxVuu848nJiD2UnfNU
-	bSJ4Zg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gcu60a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 07:50:34 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48G7oXGF012618
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Sep 2024 07:50:33 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Sep
- 2024 00:50:27 -0700
-Message-ID: <f9126534-3a46-4d01-9026-58e0b65c08d2@quicinc.com>
-Date: Mon, 16 Sep 2024 13:20:24 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZ4Lx+Ge"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D957C4CEC4;
+	Mon, 16 Sep 2024 08:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726475607;
+	bh=y6G0w1k8wCTHPI42q0IZ5qhumkioYskDX5lCNwhj6Zw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WZ4Lx+Gee+siSPrvZHtHooitT6X43knXk2JLgwFqrQcdgXtSnLJnUi74ZxD9nA+h0
+	 B1sQLIO3MvClyqX72d5hv8HZfMtyrf2Y7JHY/Er+qDat0QGk3RA58Dj3Yj7La8oRx0
+	 D7qaIvNZRfLBM5Bvi0cZe1BGUj9OdL8aiWGHKJ17RcFEkJXjBqGiV8lZYTF16aBJOh
+	 /miiZiHtn9xEFMb0h9q+0jc6srS2KL96qFvCWLXjdjeBCAV5yP83lzqm6IcCCHPut5
+	 xvJHEvtllyEGS2mxlcmgFs3omcI7u5twpNIFUryo/T/F3mjJpSX+ngYbQrp7/9DGa5
+	 nh9464x8A4+9Q==
+Message-ID: <9b3350ba-eafe-4bb0-a6cc-f1b0a06d623e@kernel.org>
+Date: Mon, 16 Sep 2024 10:33:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,339 +35,138 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] clk: qcom: add Global Clock controller (GCC) driver
- for IPQ5424 SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-6-quic_srichara@quicinc.com>
- <glkvcne5eius5l7dro7gzd7hyztc6vc4eekcbbxz6c4wwolwqy@aoj66qbrxezg>
+Subject: Re: [PATCH v2 2/5] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ quic_imrashai@quicinc.com, quic_jkona@quicinc.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
+ <20240816-qcm6490-lpass-reset-v1-2-a11f33cad3c5@quicinc.com>
+ <67819a53-8e99-469b-a458-8c00034fec4a@kernel.org>
+ <936f151e-6951-4dea-95ed-35374ab249cf@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <glkvcne5eius5l7dro7gzd7hyztc6vc4eekcbbxz6c4wwolwqy@aoj66qbrxezg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <936f151e-6951-4dea-95ed-35374ab249cf@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lGQJOmdExYP4olx6XnTSFvayGnhWWGDd
-X-Proofpoint-GUID: lGQJOmdExYP4olx6XnTSFvayGnhWWGDd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409160048
 
-
-
-On 9/13/2024 6:16 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 05:42:47PM GMT, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On 13/09/2024 07:31, Taniya Das wrote:
+> 
+> 
+> On 8/17/2024 2:55 PM, Krzysztof Kozlowski wrote:
+>> On 16/08/2024 10:32, Taniya Das wrote:
+>>> On the QCM6490 boards the LPASS firmware controls the complete clock
+>>> controller functionalities. But the LPASS resets are required to be
+>>> controlled from the high level OS. The Audio SW driver should be able to
+>>> assert/deassert the audio resets as required. Thus in clock driver add
+>>> support for the resets.
+>>>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> ---
+>>>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>>>   1 file changed, 19 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>> index 45e726477086..b64393089263 100644
+>>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>> @@ -1,6 +1,7 @@
+>>>   // SPDX-License-Identifier: GPL-2.0-only
+>>>   /*
+>>>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>    */
+>>>   
+>>>   #include <linux/clk-provider.h>
+>>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+>>>   	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>>>   };
+>>>   
+>>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
+>>> +	.name = "lpassaudio_cc_reset",
+>>> +	.reg_bits = 32,
+>>> +	.reg_stride = 4,
+>>> +	.val_bits = 32,
+>>> +	.fast_io = true,
+>>> +	.max_register = 0xc8,
+>>> +};
+>>> +
+>>>   static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+>>> -	.config = &lpass_audio_cc_sc7280_regmap_config,
+>>> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>>>   	.resets = lpass_audio_cc_sc7280_resets,
+>>>   	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>>>   };
+>>>   
+>>>   static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+>>> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
+>>> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
 >>
->> Add support for the global clock controller found on IPQ5424 SoC.
+>> That's odd to see sc7280 reset added for qcm6490, but not used fot
+>> sc7280 at all. Didn't you mean here lpass_audio_cc_qcm6409_desc?
 >>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> Same comment regarding tags.
-> 
-ok
->> ---
->>   drivers/clk/qcom/Kconfig       |    7 +
->>   drivers/clk/qcom/Makefile      |    1 +
->>   drivers/clk/qcom/gcc-ipq5424.c | 3333 ++++++++++++++++++++++++++++++++
->>   3 files changed, 3341 insertions(+)
->>   create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
 >>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index a3e2a09e2105..c41e3318c2a7 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -213,6 +213,13 @@ config IPQ_GCC_5332
->>   	  Say Y if you want to use peripheral devices such as UART, SPI,
->>   	  i2c, USB, SD/eMMC, etc.
->>   
->> +config IPQ_GCC_5424
->> +	tristate "IPQ5424 Global Clock Controller"
->> +	help
->> +	  Support for the global clock controller on ipq5424 devices.
->> +	  Say Y if you want to use peripheral devices such as UART, SPI,
->> +	  i2c, USB, SD/eMMC, etc.
->> +
->>   config IPQ_GCC_6018
->>   	tristate "IPQ6018 Global Clock Controller"
->>   	help
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index 2b378667a63f..d58ba0f9a482 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -32,6 +32,7 @@ obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
->>   obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->>   obj-$(CONFIG_IPQ_GCC_5018) += gcc-ipq5018.o
->>   obj-$(CONFIG_IPQ_GCC_5332) += gcc-ipq5332.o
->> +obj-$(CONFIG_IPQ_GCC_5424) += gcc-ipq5424.o
->>   obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->>   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->>   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
->> new file mode 100644
->> index 000000000000..72d2c9bfa986
->> --- /dev/null
->> +++ b/drivers/clk/qcom/gcc-ipq5424.c
->> @@ -0,0 +1,3333 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,ipq5424-gcc.h>
->> +#include <dt-bindings/reset/qcom,ipq5424-gcc.h>
->> +
->> +#include "clk-alpha-pll.h"
->> +#include "clk-branch.h"
->> +#include "clk-rcg.h"
->> +#include "clk-regmap.h"
->> +#include "clk-regmap-divider.h"
->> +#include "clk-regmap-mux.h"
->> +#include "clk-regmap-phy-mux.h"
->> +#include "common.h"
->> +#include "reset.h"
->> +
->> +enum {
->> +	DT_XO,
->> +	DT_SLEEP_CLK,
->> +	DT_PCIE30_PHY0_PIPE_CLK,
->> +	DT_PCIE30_PHY1_PIPE_CLK,
->> +	DT_PCIE30_PHY2_PIPE_CLK,
->> +	DT_PCIE30_PHY3_PIPE_CLK,
->> +	DT_USB_PCIE_WRAPPER_PIPE_CLK,
+> The resets descriptor(lpass_audio_cc_reset_sc7280_desc) is not part of 
+> the global clock descriptor(lpass_cc_sc7280_desc) as these are part of 
+> different regmaps.
 > 
-> This doesn't seem to match bindings.
+> On a non-QCM6490(SC7280) boards the resets are registered after the 
+> global descriptor is registered.
 > 
-ok, will fix
->> +};
->> +
->> +enum {
->> +	P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC,
->> +	P_GPLL0_OUT_AUX,
->> +	P_GPLL0_OUT_MAIN,
->> +	P_GPLL2_OUT_AUX,
->> +	P_GPLL2_OUT_MAIN,
->> +	P_GPLL4_OUT_AUX,
->> +	P_GPLL4_OUT_MAIN,
->> +	P_SLEEP_CLK,
->> +	P_XO,
->> +	P_USB3PHY_0_PIPE,
->> +};
->> +
->> +static const struct clk_parent_data gcc_parent_data_xo = { .index = DT_XO };
->> +
->> +static struct clk_alpha_pll gpll0 = {
->> +	.offset = 0x20000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gpll0",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.ops = &clk_alpha_pll_ops,
->> +			.flags = CLK_IS_CRITICAL,
-> 
-> This deserves a comment
-> 
-ok will add
->> +		},
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor gpll0_div2 = {
->> +	.mult = 1,
->> +	.div = 2,
->> +	.hw.init = &(const struct clk_init_data) {
->> +		.name = "gpll0_div2",
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&gpll0.clkr.hw
->> +		},
->> +		.num_parents = 1,
->> +		.ops = &clk_fixed_factor_ops,
->> +	},
->> +};
->> +
->> +static struct clk_alpha_pll gpll2 = {
->> +	.offset = 0x21000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(1),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gpll2",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.ops = &clk_alpha_pll_ops,
->> +		},
->> +	},
->> +};
->> +
->> +static const struct clk_div_table post_div_table_gpll2_out_main[] = {
->> +	{ 0x1, 2 },
->> +	{ }
->> +};
->> +
->> +static struct clk_alpha_pll_postdiv gpll2_out_main = {
->> +	.offset = 0x21000,
->> +	.post_div_table = post_div_table_gpll2_out_main,
->> +	.num_post_div = ARRAY_SIZE(post_div_table_gpll2_out_main),
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->> +	.clkr.hw.init = &(const struct clk_init_data) {
->> +		.name = "gpll2_out_main",
->> +		.parent_hws = (const struct clk_hw*[]) {
->> +			&gpll2.clkr.hw,
->> +		},
->> +		.num_parents = 1,
->> +		.ops = &clk_alpha_pll_postdiv_ro_ops,
->> +	},
->> +};
->> +
->> +static struct clk_alpha_pll gpll4 = {
->> +	.offset = 0x22000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(2),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gpll4",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.flags = CLK_IS_CRITICAL,
-> 
-> Comment, please.
-> 
-ok, will add
->> +			.ops = &clk_alpha_pll_ops,
->> +		},
->> +	},
->> +};
->> +
-> 
-> [skipped]
-> 
->> +
->> +static struct clk_rcg2 gcc_pcnoc_bfdcd_clk_src = {
->> +	.cmd_rcgr = 0x31004,
->> +	.mnd_width = 0,
->> +	.hid_width = 5,
->> +	.parent_map = gcc_parent_map_0,
->> +	.freq_tbl = ftbl_gcc_pcnoc_bfdcd_clk_src,
->> +	.clkr.hw.init = &(const struct clk_init_data) {
->> +		.name = "gcc_pcnoc_bfdcd_clk_src",
->> +		.parent_data = gcc_parent_data_0,
->> +		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->> +		.flags = CLK_IS_CRITICAL,
-> 
-> Comment
-> 
-ok
->> +		.ops = &clk_rcg2_ops,
->> +	},
->> +};
->> +
-> 
-> [skipped]
-> 
->> +
->> +static struct clk_branch gcc_qdss_dap_clk = {
->> +	.halt_reg = 0x2d058,
->> +	.clkr = {
->> +		.enable_reg = 0x2d058,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gcc_qdss_dap_clk",
->> +			.parent_hws = (const struct clk_hw *[]) {
->> +				&gcc_qdss_dap_sync_clk_src.hw
->> +			},
->> +			.num_parents = 1,
->> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> 
-> Comment
-> 
-ok
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
->> +static struct clk_branch gcc_qdss_at_clk = {
->> +	.halt_reg = 0x2d034,
->> +	.clkr = {
->> +		.enable_reg = 0x2d034,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gcc_qdss_at_clk",
->> +			.parent_hws = (const struct clk_hw *[]) {
->> +				&gcc_qdss_at_clk_src.clkr.hw
->> +			},
->> +			.num_parents = 1,
->> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> 
-> Comment
-> 
-ok
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
-> 
-> [skipped]
-> 
->> +
->> +static int gcc_ipq5424_probe(struct platform_device *pdev)
->> +{
->> +	struct regmap *regmap;
->> +	struct qcom_cc_desc ipq5424_desc = gcc_ipq5424_desc;
->> +	int ret;
->> +
->> +	regmap = qcom_cc_map(pdev, &ipq5424_desc);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
->> +
->> +	ret = qcom_cc_really_probe(&pdev->dev, &ipq5424_desc, regmap);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "Failed to register GCC clocks ret=%d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	dev_info(&pdev->dev, "Registered GCC clocks\n");
->> +
->> +	return ret;
-> 
-> Drop all the cruft and use qcom_cc_probe() directly.
-> 
-ok
+> But on QCM6490 board we need to register only the reset descriptor and 
+> no clocks are to be handled/registered and thus passed the match data 
+> for QCM6490 boards only.
 
-Regards,
-  Sricharan
+Yeah, but why this is sc7280?
+
+Best regards,
+Krzysztof
 
