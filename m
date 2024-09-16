@@ -1,78 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1254F155336;
-	Mon, 16 Sep 2024 14:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B65158D92;
+	Mon, 16 Sep 2024 15:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726498035; cv=none; b=Gv2Zsj57Y5qeoo5gA9+0dWL2O2D134uLHdTY+faNEy6NiJUP9hFw7cMlEr+kOZ2hbLhHDTMI1u7+ino5W/TvGZNweL2OSsQ26z73Z01coecoqkIJIS/ybwPrjoeqBwuUBxZj/Edy81Dca/FrKsiOT9vvRDv+Xyij7hYwgZHAc1s=
+	t=1726499731; cv=none; b=kqjlMwCTlAhw3JMTVHHvk8FjZbna36OYCHuVThmDUcoKEc8cRmVqKfb3i6SqwvbHRk6H9nqcNMSD406XGi+C67VsiSWrfI+DargqTUYMVYBh1s8TNQJTYmeXEuq7p7nzTYvtF12PkeGvLFIsebjzdpnl277irTX8mBh2EBEM9ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726498035; c=relaxed/simple;
-	bh=viFxBNafyARwAl0FfQrShBY6t3IX0oa4er8jBzriwpg=;
+	s=arc-20240116; t=1726499731; c=relaxed/simple;
+	bh=4TdVLpYx1lgwkyzc41haI4RdxMTF/JxI6OjO9YWCj4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+q1vb+SeR14vMWUatvi0Qs1m+UWBHjM2f4M6HQ6LcUmbywX1Gi6Cp/DZviVOx4E3l9j6mOU5RPMP2Dbdbv0fQfFShrYXL35nUwPThWtaXkurCcR3Eyfje01yCZBWlhGdYgIwBXx99bBfJK/2mSrqHlwi0jrhEPrdM2obO38VD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jojvh/dI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5iLfnXSBfe9hCJ/DZ8xcOq8my6YvHid8ynhG8bSS0bcEmrVG/kdGqfzpyGNFZcx8ZrbYJLp/TH4mUStRvIgBfH0DyVVAtT6L+8GtQbFXHCBp++lb2K3ZwxDuuzkS7HZ39wLpsuTVMsT9tFbDLfipCbZJ7z8pfRm5eowOeZzz5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKH7k+VI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jojvh/dI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC62C4CEC4;
-	Mon, 16 Sep 2024 14:47:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKH7k+VI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46491C4CEC5;
+	Mon, 16 Sep 2024 15:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726498034;
-	bh=viFxBNafyARwAl0FfQrShBY6t3IX0oa4er8jBzriwpg=;
+	s=k20201202; t=1726499730;
+	bh=4TdVLpYx1lgwkyzc41haI4RdxMTF/JxI6OjO9YWCj4A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jojvh/dIoCzRiqDsVf8SWmNsWB5OCxSH2ENrfdoqC5JxV8Cvpd77rNrgQZ83aNjv8
-	 bRs6N7sR4IzNCqTxnQGWEMuYCw+lCzv/wrsU6gOmHyaW5n3n1FINaAKSEPky/OkcEw
-	 bu+5uQSU8QMr7Spy9Ilb4baA3tFTvoXnMjVOweCScPfLPmIJWxDBzchZFBAZvVarRs
-	 iKI2NWhhKVgbl+ZP0ArDJ+4+DaV6/7KT1sWFc6hQnt7C9Hqx+H/WSlDWtCPFabHwEA
-	 udIdY7vBt++2Kg4TNMnGW+VQyBreIjtXax4tbOO0IgHjW03gKESbpwOIr8OEb5rBB5
-	 YlI8YmzIL/xpw==
-Date: Mon, 16 Sep 2024 09:47:13 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Harry Austen <hpausten@protonmail.com>
-Cc: Michal Simek <michal.simek@amd.com>, Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] dt-bindings: clock: xilinx: describe whether
- dynamic reconfig is enabled
-Message-ID: <172649803240.390306.18107448041621061846.robh@kernel.org>
-References: <20240913191037.2690-1-hpausten@protonmail.com>
- <20240913191037.2690-6-hpausten@protonmail.com>
+	b=BKH7k+VIZBrm4oujHkgnsLvErv4jKlX1g9fiHCjAQozfXepJ3pO9n26T0sM/A2uZz
+	 ILLjs2hxjdvJmzeq7STTjBoZhpOi3EfgEANWfMrp+ssL9dIJs5YJa8xUUNL8GIZYkB
+	 2wSBUUXLIimH7kKmSyqgmcCH8b+d42FBlxZ+m0ZJH+54t94z2IC1Sen+Nf87ikCEV8
+	 azPRH7KtcUiCzwgkFpqUSPyJNuu2jU1wEeYs8xRm4hmQopFhp1LfWJ2R7VtwSBNZOa
+	 UFGLWIwzSVYcYvt9BpTU2m95J7OQlazC1xbJE5vIKFBl4l9KCYY4gvHJSucQWiu+vB
+	 tH4dqXogfCkQA==
+Date: Mon, 16 Sep 2024 17:15:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
+	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, 
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the X1E80100 QMP PCIe PHY Gen4 x8
+Message-ID: <lrcridndulcurod7tc5z76tmfhcf5uqumkw7cijsqicmad2rim@blyor66wt4e4>
+References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
+ <20240913083724.1217691-2-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240913191037.2690-6-hpausten@protonmail.com>
+In-Reply-To: <20240913083724.1217691-2-quic_qianyu@quicinc.com>
 
+On Fri, Sep 13, 2024 at 01:37:20AM -0700, Qiang Yu wrote:
+> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
+> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
 
-On Fri, 13 Sep 2024 19:11:37 +0000, Harry Austen wrote:
-> Xilinx clocking wizard IP core's dynamic reconfiguration support is
-> optionally enabled at build time. Add a devicetree boolean property to
-> describe whether the hardware supports this feature or not.
+And this is really different hardware? Not just different number of lanes? We discussed it, but I don't see the explanation in commit msg.
+
 > 
-> Since dynamic reconfiguration support was previously assumed enabled,
-> introduce a property to indicate the inverse, in order to maintain
-> devicetree backwards compatibility. Hence, this new xlnx,static-config
-> property should be specified when dynamic reconfiguration support is
-> disabled in the IP core configuration.
-> 
-> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
 > ---
-> v1 -> v2:
-> - Invert meaning of the new DT property
-> - Renamed from xlnx,dynamic-reconfig to xlnx,static-config
+>  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml    | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml     | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> index dcf4fa55fbba..680ec3113c2b 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> @@ -41,6 +41,7 @@ properties:
+>        - qcom,x1e80100-qmp-gen3x2-pcie-phy
+>        - qcom,x1e80100-qmp-gen4x2-pcie-phy
+>        - qcom,x1e80100-qmp-gen4x4-pcie-phy
+> +      - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>  
+>    reg:
+>      minItems: 1
+> @@ -172,6 +173,7 @@ allOf:
+>                - qcom,sc8280xp-qmp-gen3x2-pcie-phy
+>                - qcom,sc8280xp-qmp-gen3x4-pcie-phy
+>                - qcom,x1e80100-qmp-gen4x4-pcie-phy
+> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>      then:
+>        properties:
+>          clocks:
+> @@ -201,6 +203,7 @@ allOf:
+>                - qcom,sm8550-qmp-gen4x2-pcie-phy
+>                - qcom,sm8650-qmp-gen4x2-pcie-phy
+>                - qcom,x1e80100-qmp-gen4x2-pcie-phy
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Hm, why 4x4 is not here?
+
+Best regards,
+Krzysztof
 
