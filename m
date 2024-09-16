@@ -1,89 +1,117 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4262149C4D;
-	Mon, 16 Sep 2024 15:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68F826AD3;
+	Mon, 16 Sep 2024 15:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726500029; cv=none; b=tpJLdBz+Fp5PWvUGGCLdexWvwiSh5ClPV71Btvhd5jIPK9PoiL9o4tKIevAOoX2XI7iC5bgUPKwyGEfP9VmfArKluboJklOx/Jk44TDeM5vVJv87NxkrHZ/ZELRJP1vVgJF2P7Hw4fowInC+0Ifao6hpTYyzURAulLP/CcXURD8=
+	t=1726500791; cv=none; b=JOsFRypqNYk3oSOnMMMuEmOlRIXM3vw0DL0uhAF4arAggzTApAz7JlOciWw98bKWuRnEDbHw9NfaxOtKjVHw+1B8cNCDovreyFh0v3fyE/YXcyeOZMTCNRID/s8eLR4Jho2tZKk51QDhYfDWkaW5GXJaufTEyV/74ajPRRNTo8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726500029; c=relaxed/simple;
-	bh=dI8QA7UEh9kQ4aiH5s1VwA/ah6vGvZinGPk/2zxpCWs=;
+	s=arc-20240116; t=1726500791; c=relaxed/simple;
+	bh=fvCAW49HWtfdjAIL050rgmIiTlHJz8PHGcnFkw1Ppq8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1Z2axwzJ8MoWPtfwoUhG+DN32S27gE2j0lUlGTw6w1kWeS5jV22Mn2rPx1G3FIIZDSbltzwTsbK4m0FYLU0jp64Gq7xc3C/mA66uZS4tibTfOMOeDnAtAMYgzCdNFKgWaJu+ZczQPfdhGUiX9mabul8G4Y9iIhl+vDcMt6HCPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwMtQmJ9; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWHC6t6Cmv9M8oPlV8q45/VonZWFq/B7UKBaS++WJtRkGRSrL3E6aR8nDxxYH5fR0Kps4SaGnyHAZTB1Fjy2ZwMTaivfx+Ue3aggwmIS8LHzXydB2AJ+tkr26MQYGHk2OxzMT6Gy3X8EdDICWRZaLL3fojSTibIleLW5kjJBGvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG4D9/W3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwMtQmJ9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984C2C4CECE;
-	Mon, 16 Sep 2024 15:20:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG4D9/W3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA30C4CEC4;
+	Mon, 16 Sep 2024 15:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726500029;
-	bh=dI8QA7UEh9kQ4aiH5s1VwA/ah6vGvZinGPk/2zxpCWs=;
+	s=k20201202; t=1726500791;
+	bh=fvCAW49HWtfdjAIL050rgmIiTlHJz8PHGcnFkw1Ppq8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mwMtQmJ9gaRprRQtCndPijrsfTrBfedlVjsFa2vL3ichPSWdEQ/7LmfE+RvhOdO1c
-	 0PEoK4ACAi5iNCLycGMHDPuhb6iFUQSq1dXfkkg1EE02oBTkm/PNatMEVf1+ZdRchJ
-	 XCxmwHvHifr157iq+xtAaBq7W7RI8x6kwtyAwbYNUpTuepMj/a1ciTLgvVb5e3moFm
-	 AMfiFr80svPV9y2bD/injtAIfF28T0KFJpR45Ld4MlEjmKekE25oZfpTEOL6ki3h71
-	 SUVuB8p/KeBhd+VTJBUgzR0N8K6TaEvmckyqEXBdOb4wCtvH15ykvi2SC0JexcaB+l
-	 OgTUWSBiJKYqw==
-Date: Mon, 16 Sep 2024 17:20:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com, 
-	quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: PCI: qcom: Add OPP table for X1E80100
-Message-ID: <npm3szetf55hw6ghmscol2rl5jb5h3neywit2axea53vbgarvh@pgqq5j5y5pcb>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-3-quic_qianyu@quicinc.com>
- <tf4z475uqjenohdgqj4ltoty3j3gopxnbdhrrn6zo3ug5yuvyq@us2nysv2ggxh>
- <20240913133619.z7cc4whhpvs2uecb@thinkpad>
+	b=jG4D9/W3xyJwEIxQUvSD1o6dLD9X7vglkFtM16njr0VX+K+EjC73NN0OvjW7xaIIQ
+	 2mILZ0ROMt0Nbu4SXwMhjwOwrGJUMpmU+RAH7CUq6JMs3+//k8k5B4LnoGk3uixUDN
+	 n50E9qxYqCdzTyMhhZI24hRfMBmCJfyVNqaumWXdHjDzIfMp2CKii0RWOGT+T1F/F5
+	 M9PK72+ffMTaNIA9GNkm7fOTKX8K16LJLtbG5cjW1uPL4XxYg3RoxQlDcmcbuALT2z
+	 nWFTOesGJdGztipH3VWAstO3bNJOPkNu2Ws/naKaETYwmdoMJbhA6n9Vwa4llIdjOL
+	 rEWN2J7y+KacQ==
+Date: Mon, 16 Sep 2024 16:33:06 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: add support for lan969x
+Message-ID: <20240916-foster-improvise-8019e7e0c023@spud>
+References: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
+ <20240916-lan969x-clock-v1-1-0e150336074d@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kPX2Kx7cBCQm6ZKc"
 Content-Disposition: inline
-In-Reply-To: <20240913133619.z7cc4whhpvs2uecb@thinkpad>
+In-Reply-To: <20240916-lan969x-clock-v1-1-0e150336074d@microchip.com>
 
-On Fri, Sep 13, 2024 at 07:06:19PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Sep 13, 2024 at 03:30:59PM +0300, Dmitry Baryshkov wrote:
-> > On Fri, Sep 13, 2024 at 01:37:21AM GMT, Qiang Yu wrote:
-> > > Add OPP table so that PCIe is able to adjust power domain performance
-> > > state and ICC peak bw according to PCIe gen speed and link width.
-> > > 
-> > > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > > index a9db0a231563..e2d6719ca54d 100644
-> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > > @@ -70,6 +70,10 @@ properties:
-> > >        - const: pci # PCIe core reset
-> > >        - const: link_down # PCIe link down reset
-> > >  
-> > > +  operating-points-v2: true
-> > > +  opp-table:
-> > > +    type: object
-> > 
-> > I think these properties are generic enough and we might want to have
-> > them for most if not all platforms. Maybe we should move them to
-> > qcom,pcie-common.yaml?
-> > 
-> 
-> Agree. It should be moved to qcom,pcie-common.yaml.
 
-Yep, ack.
+--kPX2Kx7cBCQm6ZKc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Mon, Sep 16, 2024 at 11:49:19AM +0200, Daniel Machon wrote:
+> Lan969x is going to reuse the existing lan966x clock driver - document
+> that by adding compatible strings for the different SKU's that we
+> support.
+>=20
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+> ---
+>  .../devicetree/bindings/clock/microchip,lan966x-gck.yaml    | 13 +++++++=
++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/microchip,lan966x-gc=
+k.yaml b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> index df2bec188706..16106e8b637f 100644
+> --- a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> +++ b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> @@ -16,7 +16,18 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    const: microchip,lan966x-gck
+> +    oneOf:
+> +      - enum:
+> +          - microchip,lan966x-gck
+> +          - microchip,lan9691-gck
+> +      - items:
+> +          - enum:
+> +              - microchip,lan9698-gck
+> +              - microchip,lan9696-gck
+> +              - microchip,lan9694-gck
+> +              - microchip,lan9693-gck
+> +              - microchip,lan9692-gck
+> +          - const: microchip,lan9691-gck
+> =20
+>    reg:
+>      minItems: 1
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--kPX2Kx7cBCQm6ZKc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuhPsgAKCRB4tDGHoIJi
+0hEaAQCO90t6Ag+nnyWSBLH16pNMwcU0v0g9LpAkFS/Aml3JfAEAmZQXnUzRo9zC
+Dt49fBk7OkDAc/UXPkcr9wnJ6g2hWwA=
+=vh5t
+-----END PGP SIGNATURE-----
+
+--kPX2Kx7cBCQm6ZKc--
