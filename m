@@ -1,33 +1,41 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from a7-29.smtp-out.eu-west-1.amazonses.com (a7-29.smtp-out.eu-west-1.amazonses.com [54.240.7.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713C441C62;
-	Mon, 16 Sep 2024 10:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92001155300;
+	Mon, 16 Sep 2024 12:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481338; cv=none; b=A2BANZvs9c8/AVg98w96G2sxZyFb5IjdKKFiOheZvW9NfalOX5bV9Gyu5yjnejS4pWMRk3KxEGzsbVTZ1fYvGbP/g0IG0gxLae9c7MXrYUD/fcGxhoTBOZVticCY/66cXKxvOdlpBTF2weTL7nfKc8jCyBdNn/Je033SI39snz0=
+	t=1726488508; cv=none; b=moyQoJPOET2ic1I+i7s+huV9r+S+OZ03ceAsV0/KBysMYuh8zRquoWD63kzJ3HoenejFJ7vAyuKB5URDIi9NKaOhhO+a0JeBoLaahrz6aUWSd3D3QSOnqzRFnRizaBFQcw0vmWPlwxUysAflQqLV4D6YtLc2vQUDJgvSIIf/P7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481338; c=relaxed/simple;
-	bh=T8PPk/YjtiwccMrPvJSUH0/CkXxHzepMK8YfYya0uIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KrTvdSbkT06o3UeTaiWEsQq00TAbEdDaRTJ5eCHJ6Da5HqVnk6GuL1pnuw4mebEC3ydz5QGF2XvZIibHg/LPp+hiZ1RcjoGWJ861JwpbvrJYxdYXhfvkb78TVBtpf82c/pkiRdpC1G9F31NSxubE06vhdBHSQYLcyudjRQS/8Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKCVaXHp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726488508; c=relaxed/simple;
+	bh=VW9wIzceX735i9yX1DBCBq4IDNjS/8cghksJ8RpmIAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hrjMy7t4GfSYm5RKOfywTzM702qejHpQJQu6O9b0W65wBGaMv23l0Z6JNc8sWjF3QdZ7MnYX+IJN8neRxEvSIA/JS3VYjwL6otxjA+JvD+Dw2i2VzXwBIxI8FcTWznUA6UbvsBqd4SaQZd9yiuXVdICYQPjaxqnm7HYUC1fi23Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BiCCPcW7; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=D0+zkQ9J; arc=none smtp.client-ip=54.240.7.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKCVaXHp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D7CC4CEC7;
-	Mon, 16 Sep 2024 10:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726481338;
-	bh=T8PPk/YjtiwccMrPvJSUH0/CkXxHzepMK8YfYya0uIY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=OKCVaXHpyuFTiSIHNJfFNzkEYZ61+i5SfGrDGnyySHLsCQYclH0uge3MRD1nczVug
-	 hUje13rPUBrxTGSiV2p0sCQYgw5JmGqp1qMRUFQroQK7E3IVXBCMGTFOsY5gIq43DE
-	 BY91V4O+kcwF0V0eB08/GAGjrFYwyPFSIVjvDENrSX2F0XD3ST/vo7GKLwGcbQ1BA2
-	 L3gErmdmvVhKYPaDQVBbwaVrzicGH0z6dCghSduxJCHfN36Q7s61HUferH5G/Gsi7+
-	 9wCxRUkINNPACPB0dC7Bn5cz0Moh3FHvYjdagkyctsS84q/UQRHZrU8ZumRR9G2i0Y
-	 FT36aGYd/t+Dg==
-Message-ID: <9b356379-907c-4112-8e24-1810cfa40ef6@kernel.org>
-Date: Mon, 16 Sep 2024 12:08:50 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BiCCPcW7";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="D0+zkQ9J"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726488505;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=VW9wIzceX735i9yX1DBCBq4IDNjS/8cghksJ8RpmIAs=;
+	b=BiCCPcW7FpAQ9cCduF+vD7iu7ISsJXjdWA445Ch7452VshuCOIpIApAaQy8cMBIC
+	pXQUxV2vp3KZ+5kmYJYUUFnfdLWh5LvY/RyeDpEPhxao8hrpMvSGkBCWk2Qsc7F8d+g
+	WPK3OkXvJcs4UwIPEjtqeegvzC2CnBo5L4D5K55UmdNcOhiC9pDzhD5g4b782q+C5au
+	dqEXBSdiRQvA8wEBfBF9O+eoUmIktQvEC2mzW+wVHh20IEa3gjLBs5K4LUisms3hvOD
+	3nW0Nh/ImCNiacG+A1CbN6F3q665uf+IGFGxoDKtvYyZ9CZRvTdCSo5kZC0omIMUT9n
+	oa2kbvt3OQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726488505;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=VW9wIzceX735i9yX1DBCBq4IDNjS/8cghksJ8RpmIAs=;
+	b=D0+zkQ9JwNw3ps90exTefnChDf6Q6MI3liaa3ZfKUbaUdywcVt1KjhlXOEPgnZL/
+	V5uPjAWBrBl45bxrM5a8nPqyOqKkGVGVJvY5QC0VOm5YxPHqO9zqhPHx2qt9TPiQUwP
+	BLsDok/7f9aroB4ixEojZ1d2d31QKY//z8BRcnjE=
+Message-ID: <01020191fabbea05-14368d2a-b504-4fad-b1a1-48435821d7f1-000000@eu-west-1.amazonses.com>
+Date: Mon, 16 Sep 2024 12:08:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,144 +43,140 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: aspeed: support for AST2700
-To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org
-References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
- <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 4/4] clk: Drop obsolete devm_clk_bulk_get_all_enable()
+ helper
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org
+References: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
+ <20240914-clk_bulk_ena_fix-v1-4-ce3537585c06@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240914-clk_bulk_ena_fix-v1-4-ce3537585c06@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.16-54.240.7.29
 
-On 16/09/2024 11:10, Ryan Chen wrote:
-> Add compatible support for AST2700 clk, reset, pinctrl, silicon-id for AST2700 scu.
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
+Il 14/09/24 20:04, Cristian Ciocaltea ha scritto:
+> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> return the number of clocks stored in the clk_bulk_data table referenced
+> by the clks argument.  Without knowing the number, it's not possible to
+> iterate these clocks when needed, hence the argument is useless and
+> could have been simply removed.
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> A new helper devm_clk_bulk_get_all_enabled() has been introduced, which
+> is consistent with devm_clk_bulk_get_all() in terms of the returned
+> value.
+> 
+> Drop the obsolete function since all users switched to the new helper.
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+
+This should probably be done in two (three?) cycles if we want to avoid
+immutable branches... but anyway, for the commit itself:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 > ---
->  .../devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+>   drivers/clk/clk-devres.c | 32 --------------------------------
+>   include/linux/clk.h      | 22 ----------------------
+>   2 files changed, 54 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> index 86ee69c0f45b..127a357051cd 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> @@ -9,6 +9,8 @@ title: Aspeed System Control Unit
->  description:
->    The Aspeed System Control Unit manages the global behaviour of the SoC,
->    configuring elements such as clocks, pinmux, and reset.
-> +  In AST2700 SOC which has two soc connection, each soc have its own scu
-> +  register control, ast2700-scu0 for soc0, ast2700-scu1 for soc1.
->  
->  maintainers:
->    - Joel Stanley <joel@jms.id.au>
-> @@ -21,6 +23,8 @@ properties:
->            - aspeed,ast2400-scu
->            - aspeed,ast2500-scu
->            - aspeed,ast2600-scu
-> +          - aspeed,ast2700-scu0
-> +          - aspeed,ast2700-scu1
->        - const: syscon
->        - const: simple-mfd
->  
-> @@ -30,10 +34,12 @@ properties:
->    ranges: true
->  
->    '#address-cells':
-> -    const: 1
-> +    minimum: 1
-> +    maximum: 2
->  
->    '#size-cells':
-> -    const: 1
-> +    minimum: 1
-> +    maximum: 2
-
-Why do the children have 64 bit addressing?
-
->  
->    '#clock-cells':
->      const: 1
-> @@ -56,6 +62,8 @@ patternProperties:
->              - aspeed,ast2400-pinctrl
->              - aspeed,ast2500-pinctrl
->              - aspeed,ast2600-pinctrl
-> +            - aspeed,ast2700-soc0-pinctrl
-> +            - aspeed,ast2700-soc1-pinctrl
-
-Are these devices different?
-
-Where is this binding documented (fully)? Provide link to lore patch in
-the changelog.
-
->  
->      required:
->        - compatible
-> @@ -76,6 +84,7 @@ patternProperties:
->                - aspeed,ast2400-silicon-id
->                - aspeed,ast2500-silicon-id
->                - aspeed,ast2600-silicon-id
-> +              - aspeed,ast2700-silicon-id
-
-This one is fine.
-
->            - const: aspeed,silicon-id
->  
->        reg:
-
-Best regards,
-Krzysztof
-
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index 4203aaaa7544..14a657f336fe 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -218,38 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
+>   	clk_bulk_put_all(devres->num_clks, devres->clks);
+>   }
+>   
+> -int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> -					      struct clk_bulk_data **clks)
+> -{
+> -	struct clk_bulk_devres *devres;
+> -	int ret;
+> -
+> -	devres = devres_alloc(devm_clk_bulk_release_all_enable,
+> -			      sizeof(*devres), GFP_KERNEL);
+> -	if (!devres)
+> -		return -ENOMEM;
+> -
+> -	ret = clk_bulk_get_all(dev, &devres->clks);
+> -	if (ret > 0) {
+> -		*clks = devres->clks;
+> -		devres->num_clks = ret;
+> -	} else {
+> -		devres_free(devres);
+> -		return ret;
+> -	}
+> -
+> -	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
+> -	if (!ret) {
+> -		devres_add(dev, devres);
+> -	} else {
+> -		clk_bulk_put_all(devres->num_clks, devres->clks);
+> -		devres_free(devres);
+> -	}
+> -
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+> -
+>   int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+>   					       struct clk_bulk_data **clks)
+>   {
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 158c5072852e..b607482ca77e 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
+>   int __must_check devm_clk_bulk_get_all(struct device *dev,
+>   				       struct clk_bulk_data **clks);
+>   
+> -/**
+> - * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consumer (managed)
+> - * @dev: device for clock "consumer"
+> - * @clks: pointer to the clk_bulk_data table of consumer
+> - *
+> - * Returns success (0) or negative errno.
+> - *
+> - * This helper function allows drivers to get all clocks of the
+> - * consumer and enables them in one operation with management.
+> - * The clks will automatically be disabled and freed when the device
+> - * is unbound.
+> - */
+> -
+> -int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> -					      struct clk_bulk_data **clks);
+> -
+>   /**
+>    * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consumer (managed)
+>    * @dev: device for clock "consumer"
+> @@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
+>   	return 0;
+>   }
+>   
+> -static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> -						struct clk_bulk_data **clks)
+> -{
+> -	return 0;
+> -}
+> -
+>   static inline int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+>   						struct clk_bulk_data **clks)
+>   {
