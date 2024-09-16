@@ -1,96 +1,230 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from msa.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8881C158A1F;
-	Mon, 16 Sep 2024 17:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E6E158A00
+	for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2024 18:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726508371; cv=none; b=kfcfOfwjn5bnmX1O+dq0m6YEYmZTKO+qAdO6CRQlNu9aMZXygIvbEqgB11tSP3aHjf3h37c2wvR2g3nJg8TvB72FCAletMwhlLsuRufkzu/R7ZsauVvRS4ycEvVk6Tz2E7IB9X1A/aIGIo9Jd7RRibUGkQXeENDTQg8F/+fliZI=
+	t=1726512079; cv=none; b=RDW8KqIZlBJnL3h92SUBBH7mX3Xv5uyHcagpPBi3MrUaiV/iqlw2P9PLFik0vt4ApRo8T/FwUB4OUZCiUXafodbX1jg/iJiX8WjazLVk/1BkqQsuqEFfsXGhDj76xueq6k5oF9IVah3o1YSsPLyk20Fp9c2fYgk8j4WMXk3LVtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726508371; c=relaxed/simple;
-	bh=4uA3yvxhGcyJm/hRudJ642pDYzrgInwohFwQ2QiPijI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8jPrqyuLWscCpsjFWEW4YXdr1ZA/GEIcrKEvrkTJrksQdEk76IwINCxRubUdvyQxDN05Px0NhYL+kXSaKWfDrKimrYfk9BmlzLQKyHH8IoM49mD7mxImX6yNbYDOSejleC8jOVIjc7i71eNyCT4fg/s0KqzSFEOAhq8Ep69BTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=KbPSoLkP; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1726512079; c=relaxed/simple;
+	bh=z++b2vIVng5A7qfGWkzR33HvgEbugXtTHFnPz1pLS3c=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:Cc:To:
+	 In-Reply-To:Content-Type; b=R7ZNZ8tI/ccCye1YvH5q7G3ngRZ4r+rTsqzRRPvGdT/2Ong4MENeJrFGqkcQ62KH+tO0wZgPuyXGaB4Emv0Knud5ADfRuXwhpbwzBp8M/DwEQ7TmCqB8fOgKcfImB29CUVwBUGF9rmMFZUfmWX++n5DiW23/HcY6/iEl6n78luw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Umuy9vmo; arc=none smtp.client-ip=80.12.242.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="KbPSoLkP"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 8B2A923D79;
-	Mon, 16 Sep 2024 19:39:26 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id yp1IwWCoYNUG; Mon, 16 Sep 2024 19:39:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1726508365; bh=4uA3yvxhGcyJm/hRudJ642pDYzrgInwohFwQ2QiPijI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KbPSoLkPaT3Iyig84kQNoT1JHhpRH+vTj6BvS7EgQY1vQK7XqFz1xeb1apY3hjexY
-	 OdpKeTOVNNk09a5Q62gq4sqks4/HFDhsBxmShdzpl8jGDhPXTFYI+qDIcS21zl969O
-	 5owirBiEt9Aq/T8CYBSgsGJIYachaUBOsQXUlbmVgko51YTTzkMApXxEBxxLz4etBp
-	 pkMSwuh6f31vVPoW1u8QCG3m5XsjEUk4KZjjXh8pAFTHhlVkLO8EtNyKdFezL3z/Pj
-	 TMsRu4rEdG5H/XFiotaGsiVsLxVFz504S7mthCkyh6UTI73fjJf4aYBOR61pW5m719
-	 c2pKS//7sgVsw==
-Date: Mon, 16 Sep 2024 17:38:56 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: Possible misleading information in rockchip,rk3588-cru.yaml
-Message-ID: <ZuhtMHgx8XlZaayp@pineapple>
-References: <ZuIJgiN2xp6oPrHD@pineapple>
- <20240916-neuron-surfer-32db6440e1ad@spud>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Umuy9vmo"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id qGejs0tbUMDtnqGejs6ORx; Mon, 16 Sep 2024 20:41:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726512068;
+	bh=4xZynbdl8X5dZpBdrXoCTH9SQCCxnA23WyVw+eu7ov4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=Umuy9vmoqB8++ffA9IDEPiXyccpaqSGlZJ+hM6PzPz0YG+9NXI7rywiELOlaYJkn5
+	 wmPHmP8tqV4sAg6yeGpgfTZOab4052OPPDujeZJfoGnAj15+6c7agfSql08BCQy2/t
+	 Q+d284VcBFUGlTAlMD3XVVAjDNNa3AJF6z/wIBBtPzciUesU2DPdhsCN/fudipS7pF
+	 C2i8EMzoSHLLi3fhx3946s4eo60JTpiBpIOx0/AHDfs29sInV3gj/lSXhWdbgvJv+U
+	 KDafN/BsJyRSex913RgAE8CD+jUKxU7xZ1ibxseOMls2gA3FVsgXiOugrq0t+oCBJ5
+	 I5Suw0wfVpd0g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 16 Sep 2024 20:41:08 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8412982c-17c0-4596-a9eb-cd28ad747048@wanadoo.fr>
+Date: Mon, 16 Sep 2024 20:41:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916-neuron-surfer-32db6440e1ad@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] reset: aspeed: register AST2700 reset auxiliary
+ bus device
+References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
+ <20240916091039.3584505-4-ryan_chen@aspeedtech.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+In-Reply-To: <20240916091039.3584505-4-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 05:33:49PM +0100, Conor Dooley wrote:
-> On Wed, Sep 11, 2024 at 09:20:02PM +0000, Yao Zi wrote:
-> > Hi,
-> > 
-> > rockchip,rk3588-cru.yaml, dt-binding for RK3588 clock and reset module,
-> > contains description of customized property "rockchip,grf",
-> > 
-> >   rockchip,grf:
-> >     $ref: /schemas/types.yaml#/definitions/phandle
-> >     description: >
-> >       phandle to the syscon managing the "general register files". It is
-> >       used for GRF muxes, if missing any muxes present in the GRF will
-> >       not be available.
-> > 
-> > But after doing some searching, I found that clk-rk3588.c actually
-> > defines no clock hardware with MUXGRF type. This is also true in in the
-> > vendor code[1], it seems there is actually no GRF mux on RK3588
-> > platform.
+Le 16/09/2024 à 11:10, Ryan Chen a écrit :
+> The AST2700 reset driver is registered as an auxiliary device
+> due to reset and clock controller share the same register region.
 > 
-> Have you been able to check the datasheet/register map for this piece of
-> hardware? Does it have a grf register region?
-> Wouldn't be surprised if it didn't, and the cause of it being in the
-> binding was nothing more than copy-paste.
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 
-Have checked a public datasheet[1], RK3588 does have corresponding grf
-region and there are only clock related bits in PHP_GRF_CLK_CON1[2].
+Hi,
 
-But these gmac clocks bits are used in dwmac-rk GMAC driver[3]
-internally, out of the common clock driver, rk3588-cru. So I don't think
-the CRU needs access to the grf by design.
+...
 
-Best regards,
-Yao Zi
+> +static const struct ast2700_reset_signal ast2700_reset0_signals[] = {
+> +	[SCU0_RESET_SDRAM] = { true, SCU0_RESET_CTRL1, BIT(0) },
+> +	[SCU0_RESET_DDRPHY] = { true, SCU0_RESET_CTRL1, BIT(1) },
+> +	[SCU0_RESET_RSA]     = { true, SCU0_RESET_CTRL1, BIT(2) },
+> +	[SCU0_RESET_SHA3]	= { true, SCU0_RESET_CTRL1, BIT(3) },
+> +	[SCU0_RESET_HACE]	= { true, SCU0_RESET_CTRL1, BIT(4) },
+> +	[SCU0_RESET_SOC]	= { true, SCU0_RESET_CTRL1, BIT(5) },
+> +	[SCU0_RESET_VIDEO]	= { true, SCU0_RESET_CTRL1, BIT(6) },
+> +	[SCU0_RESET_2D]	= { true, SCU0_RESET_CTRL1, BIT(7) },
+> +	[SCU0_RESET_PCIS]	= { true, SCU0_RESET_CTRL1, BIT(8) },
+> +	[SCU0_RESET_RVAS0]		= { true, SCU0_RESET_CTRL1, BIT(9) },
+> +	[SCU0_RESET_RVAS1]		= { true, SCU0_RESET_CTRL1, BIT(10) },
+> +	[SCU0_RESET_SM3]		= { true, SCU0_RESET_CTRL1, BIT(11) },
+> +	[SCU0_RESET_SM4]		= { true, SCU0_RESET_CTRL1, BIT(12) },
+> +	[SCU0_RESET_CRT0]	= { true, SCU0_RESET_CTRL1, BIT(13) },
+> +	[SCU0_RESET_ECC]	= { true, SCU0_RESET_CTRL1, BIT(14) },
+> +	[SCU0_RESET_DP_PCI]	= { true, SCU0_RESET_CTRL1, BIT(15) },
+> +	[SCU0_RESET_UFS]	= { true, SCU0_RESET_CTRL1, BIT(16) },
+> +	[SCU0_RESET_EMMC]	= { true, SCU0_RESET_CTRL1, BIT(17) },
+> +	[SCU0_RESET_PCIE1RST]	= { true, SCU0_RESET_CTRL1, BIT(18) },
+> +	[SCU0_RESET_PCIE1RSTOE]	= { true, SCU0_RESET_CTRL1, BIT(19) },
+> +	[SCU0_RESET_PCIE0RST]		= { true, SCU0_RESET_CTRL1, BIT(20) },
+> +	[SCU0_RESET_PCIE0RSTOE]	= { true, SCU0_RESET_CTRL1, BIT(21) },
+> +	[SCU0_RESET_JTAG]	= { true, SCU0_RESET_CTRL1, BIT(22) },
+> +	[SCU0_RESET_MCTP0] = { true, SCU0_RESET_CTRL1, BIT(23) },
+> +	[SCU0_RESET_MCTP1]		= { true, SCU0_RESET_CTRL1, BIT(24) },
+> +	[SCU0_RESET_XDMA0]	= { true, SCU0_RESET_CTRL1, BIT(25) },
+> +	[SCU0_RESET_XDMA1]	= { true, SCU0_RESET_CTRL1, BIT(26) },
+> +	[SCU0_RESET_H2X1]	= { true, SCU0_RESET_CTRL1, BIT(27) },
+> +	[SCU0_RESET_DP]	= { true, SCU0_RESET_CTRL1, BIT(28) },
+> +	[SCU0_RESET_DP_MCU]	= { true, SCU0_RESET_CTRL1, BIT(29) },
+> +	[SCU0_RESET_SSP]	= { true, SCU0_RESET_CTRL1, BIT(30) },
+> +	[SCU0_RESET_H2X0]	= { true, SCU0_RESET_CTRL1, BIT(31) },
+> +	[SCU0_RESET_PORTA_VHUB]	= { true, SCU0_RESET_CTRL2, BIT(0) },
+> +	[SCU0_RESET_PORTA_PHY3]	= { true, SCU0_RESET_CTRL2, BIT(1) },
+> +	[SCU0_RESET_PORTA_XHCI]	= { true, SCU0_RESET_CTRL2, BIT(2) },
+> +	[SCU0_RESET_PORTB_VHUB]	= { true, SCU0_RESET_CTRL2, BIT(3) },
+> +	[SCU0_RESET_PORTB_PHY3]	= { true, SCU0_RESET_CTRL2, BIT(4) },
+> +	[SCU0_RESET_PORTB_XHCI]	= { true, SCU0_RESET_CTRL2, BIT(5) },
+> +	[SCU0_RESET_PORTA_VHUB_EHCI]	= { true, SCU0_RESET_CTRL2, BIT(6) },
+> +	[SCU0_RESET_PORTB_VHUB_EHCI]	= { true, SCU0_RESET_CTRL2, BIT(7) },
+> +	[SCU0_RESET_UHCI]	= { true, SCU0_RESET_CTRL2, BIT(8) },
+> +	[SCU0_RESET_TSP]	= { true, SCU0_RESET_CTRL2, BIT(9) },
+> +	[SCU0_RESET_E2M0]	= { true, SCU0_RESET_CTRL2, BIT(10) },
+> +	[SCU0_RESET_E2M1]	= { true, SCU0_RESET_CTRL2, BIT(11) },
+> +	[SCU0_RESET_VLINK]	= { true, SCU0_RESET_CTRL2, BIT(12) },
+> +};
 
-[1]: https://github.com/FanX-Tek/rk3588-TRM-and-Datasheet/blob/master/Rockchip%20RK3588%20TRM%20V1.0-Part1-20220309.pdf
-[2]: Page 836 in [1]
-[3]: net/ethernet/stmicro/stmmac/dwmac-rk.c:1132
+The sapces and tabs in both tables look not consistent.
+
+> +
+> +static const struct ast2700_reset_signal ast2700_reset1_signals[] = {
+> +	[SCU1_RESET_LPC0] = { true, SCU1_RESET_CTRL1, BIT(0) },
+> +	[SCU1_RESET_LPC1] = { true, SCU1_RESET_CTRL1, BIT(1) },
+> +	[SCU1_RESET_MII]     = { true, SCU1_RESET_CTRL1, BIT(2) },
+> +	[SCU1_RESET_PECI]	= { true, SCU1_RESET_CTRL1, BIT(3) },
+> +	[SCU1_RESET_PWM]	= { true, SCU1_RESET_CTRL1, BIT(4) },
+> +	[SCU1_RESET_MAC0]	= { true, SCU1_RESET_CTRL1, BIT(5) },
+> +	[SCU1_RESET_MAC1]	= { true, SCU1_RESET_CTRL1, BIT(6) },
+> +	[SCU1_RESET_MAC2]	= { true, SCU1_RESET_CTRL1, BIT(7) },
+> +	[SCU1_RESET_ADC]	= { true, SCU1_RESET_CTRL1, BIT(8) },
+> +	[SCU1_RESET_SD]		= { true, SCU1_RESET_CTRL1, BIT(9) },
+> +	[SCU1_RESET_ESPI0]		= { true, SCU1_RESET_CTRL1, BIT(10) },
+> +	[SCU1_RESET_ESPI1]		= { true, SCU1_RESET_CTRL1, BIT(11) },
+> +	[SCU1_RESET_JTAG1]		= { true, SCU1_RESET_CTRL1, BIT(12) },
+> +	[SCU1_RESET_SPI0]	= { true, SCU1_RESET_CTRL1, BIT(13) },
+> +	[SCU1_RESET_SPI1]	= { true, SCU1_RESET_CTRL1, BIT(14) },
+> +	[SCU1_RESET_SPI2]	= { true, SCU1_RESET_CTRL1, BIT(15) },
+> +	[SCU1_RESET_I3C0]	= { true, SCU1_RESET_CTRL1, BIT(16) },
+> +	[SCU1_RESET_I3C1]	= { true, SCU1_RESET_CTRL1, BIT(17) },
+> +	[SCU1_RESET_I3C2]	= { true, SCU1_RESET_CTRL1, BIT(18) },
+> +	[SCU1_RESET_I3C3]	= { true, SCU1_RESET_CTRL1, BIT(19) },
+> +	[SCU1_RESET_I3C4]		= { true, SCU1_RESET_CTRL1, BIT(20) },
+> +	[SCU1_RESET_I3C5]	= { true, SCU1_RESET_CTRL1, BIT(21) },
+> +	[SCU1_RESET_I3C6]	= { true, SCU1_RESET_CTRL1, BIT(22) },
+> +	[SCU1_RESET_I3C7] = { true, SCU1_RESET_CTRL1, BIT(23) },
+> +	[SCU1_RESET_I3C8]		= { true, SCU1_RESET_CTRL1, BIT(24) },
+> +	[SCU1_RESET_I3C9]	= { true, SCU1_RESET_CTRL1, BIT(25) },
+> +	[SCU1_RESET_I3C10]	= { true, SCU1_RESET_CTRL1, BIT(26) },
+> +	[SCU1_RESET_I3C11]	= { true, SCU1_RESET_CTRL1, BIT(27) },
+> +	[SCU1_RESET_I3C12]	= { true, SCU1_RESET_CTRL1, BIT(28) },
+> +	[SCU1_RESET_I3C13]	= { true, SCU1_RESET_CTRL1, BIT(29) },
+> +	[SCU1_RESET_I3C14]	= { true, SCU1_RESET_CTRL1, BIT(30) },
+> +	[SCU1_RESET_I3C15]	= { true, SCU1_RESET_CTRL1, BIT(31) },
+> +	[SCU1_RESET_MCU0]	= { true, SCU1_RESET_CTRL2, BIT(0) },
+> +	[SCU1_RESET_MCU1]	= { true, SCU1_RESET_CTRL2, BIT(1) },
+> +	[SCU1_RESET_H2A_SPI1]	= { true, SCU1_RESET_CTRL2, BIT(2) },
+> +	[SCU1_RESET_H2A_SPI2]	= { true, SCU1_RESET_CTRL2, BIT(3) },
+> +	[SCU1_RESET_UART0]	= { true, SCU1_RESET_CTRL2, BIT(4) },
+> +	[SCU1_RESET_UART1]	= { true, SCU1_RESET_CTRL2, BIT(5) },
+> +	[SCU1_RESET_UART2]	= { true, SCU1_RESET_CTRL2, BIT(6) },
+> +	[SCU1_RESET_UART3]	= { true, SCU1_RESET_CTRL2, BIT(7) },
+> +	[SCU1_RESET_I2C_FILTER]	= { true, SCU1_RESET_CTRL2, BIT(8) },
+> +	[SCU1_RESET_CALIPTRA]	= { true, SCU1_RESET_CTRL2, BIT(9) },
+> +	[SCU1_RESET_XDMA]	= { true, SCU1_RESET_CTRL2, BIT(10) },
+> +	[SCU1_RESET_FSI]	= { true, SCU1_RESET_CTRL2, BIT(12) },
+> +	[SCU1_RESET_CAN]	= { true, SCU1_RESET_CTRL2, BIT(13) },
+> +	[SCU1_RESET_MCTP]	= { true, SCU1_RESET_CTRL2, BIT(14) },
+> +	[SCU1_RESET_I2C]	= { true, SCU1_RESET_CTRL2, BIT(15) },
+> +	[SCU1_RESET_UART6]	= { true, SCU1_RESET_CTRL2, BIT(16) },
+> +	[SCU1_RESET_UART7]	= { true, SCU1_RESET_CTRL2, BIT(17) },
+> +	[SCU1_RESET_UART8]	= { true, SCU1_RESET_CTRL2, BIT(18) },
+> +	[SCU1_RESET_UART9]	= { true, SCU1_RESET_CTRL2, BIT(19) },
+> +	[SCU1_RESET_LTPI0]	= { true, SCU1_RESET_CTRL2, BIT(20) },
+> +	[SCU1_RESET_VGAL]	= { true, SCU1_RESET_CTRL2, BIT(21) },
+> +	[SCU1_RESET_LTPI1]	= { true, SCU1_RESET_CTRL2, BIT(22) },
+> +	[SCU1_RESET_ACE]	= { true, SCU1_RESET_CTRL2, BIT(23) },
+> +	[SCU1_RESET_E2M]	= { true, SCU1_RESET_CTRL2, BIT(24) },
+> +	[SCU1_RESET_UHCI]	= { true, SCU1_RESET_CTRL2, BIT(25) },
+> +	[SCU1_RESET_PORTC_USB2UART]	= { true, SCU1_RESET_CTRL2, BIT(26) },
+> +	[SCU1_RESET_PORTC_VHUB_EHCI]	= { true, SCU1_RESET_CTRL2, BIT(27) },
+> +	[SCU1_RESET_PORTD_USB2UART]	= { true, SCU1_RESET_CTRL2, BIT(28) },
+> +	[SCU1_RESET_PORTD_VHUB_EHCI]	= { true, SCU1_RESET_CTRL2, BIT(29) },
+> +	[SCU1_RESET_H2X]	= { true, SCU1_RESET_CTRL2, BIT(30) },
+> +	[SCU1_RESET_I3CDMA]	= { true, SCU1_RESET_CTRL2, BIT(31) },
+> +	[SCU1_RESET_PCIE2RST]	= { false, SCU1_PCIE3_CTRL, BIT(0) },
+> +};
+
+...
+
+> +static int aspeed_reset_probe(struct auxiliary_device *adev,
+> +			      const struct auxiliary_device_id *id)
+> +{
+> +	struct aspeed_reset *reset;
+> +	struct device *dev = &adev->dev;
+> +
+> +	reset = devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
+> +	if (!reset)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&reset->lock);
+> +
+> +	reset->info	= (struct aspeed_reset_info *)(id->driver_data);
+> +	reset->rcdev.owner     = THIS_MODULE;
+> +	reset->rcdev.nr_resets = reset->info->nr_resets;
+> +	reset->rcdev.ops       = &aspeed_reset_ops;
+> +	reset->rcdev.of_node   = dev->parent->of_node;
+> +	reset->rcdev.dev	      = dev;
+> +	reset->rcdev.of_reset_n_cells = 1;
+> +	reset->base            = (void __iomem *)adev->dev.platform_data;
+
+The spaces and tabs look broken for 'info' and 'rcdev.dev'.
+
+> +
+> +	if (!reset->base)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, reset);
+
+Is it needed?
+(there is no dev_get_drvdata())
+
+> +
+> +	return devm_reset_controller_register(dev, &reset->rcdev);
+> +}
+
+...
+
+CJ
