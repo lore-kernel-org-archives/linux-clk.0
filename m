@@ -1,143 +1,88 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44EA4C62A
-	for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2024 07:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCE2200A3;
+	Mon, 16 Sep 2024 07:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726471251; cv=none; b=OhQav6j7ujT7t0csmcbZ7ovn8BNa7p7aKtzkikoTD5IzMkXWPO6g9nO4IBAdxCi02H/+4FoX8fg00uZOrso43Yc/LoYaKj+XcicVhAqyBkPr8SEnmvetNtdTfM3YW6cX7byGdfDOWX8upsFaW4y36BT29GtMlvrLQPKiprpIGVk=
+	t=1726471928; cv=none; b=O+rSVkWlY7C58ZkMCuiHVBQOcOEoGkP2+3gfGUV2pdS6I+3tYJqzH7QIMDdeN2bhTkQYPX+Eb6dDbylpdvKZhqKKMVFI6+0ydYXhvBVU9VguUUk1C5l7+eV0kbILtA1TGysZEiykKQL500CB2FP5WZwPFWcTFCQQTOEHkmOef5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726471251; c=relaxed/simple;
-	bh=9mPn+F8Bj7AoM9q+BHrYAjNZXQCWRr4pIG11ZkDFRjM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nVz61iiFgoCTkHv7P8xHXtVH9j5Bo4ZtsCg/vGkXA35tzjrdft2zrfEcxV4Vkq7fAWlAkTRxMAtRwp/MpBy1AFjMPAoth2yzTHwpprXYAJ/dw0TNL4dhywGtpTFd+TbGkUflE0EI94iTtnSpI8QglUcSy2A2DuYvDYL23O+mCq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iiF1tHqp; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726471928; c=relaxed/simple;
+	bh=2bTZu7joD1ImKzjNsHvEHaAk+oEt0DZuYQsH7FNuClA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OI5d6V3H7k220V6ytKLQnDqUt4577qEPchyz2bn0xX24dagNaXWjnfO3/tmmAoMul0NqB65ZLcfRApY6CxIAppNgfy16+Ogtx4MNUxqoMe1jkHG0FZg7X6W/XYoqgqKK1jjbGbNUjjK0iRcNZzZsHcm9/0NOWdPDiqbU3YtEFwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IetheAX8; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iiF1tHqp"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cae102702so23220785e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2024 00:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726471247; x=1727076047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F4G2KoVlFImQyEEBlvtWpQhFz3zZpE+7zDeyjIho9XI=;
-        b=iiF1tHqp+rCYV/mDUY/OKUvK8S3JwUOaVs0a9EMC42ElgYW0bWob9zib+bTGFWleIV
-         /dlaYjJTwWCJwDxm8/dW5uQaBT+a1ZktKq36wiobfS1cdOpi/8Z2YnEo7Ye1rAdFP4pk
-         MdKKAZpfHvZL2XOHxSIpFIseLTFyh8XLCEQsqnPykhGogHmhiy6JVhW3aSqYrWI1keUL
-         ezV52lJXlFwWGFEqZ8Oxahxq+eOZOjomhOmveLr+Z60Ayf32sKJRKu1aDppG62ovzFOS
-         jB9q+vNrude26gVjyNDmdudW4fYTRR/pRcYdC034Io4pe7A267MUVcHLAuXSsLJJY3OH
-         t3QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726471247; x=1727076047;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=F4G2KoVlFImQyEEBlvtWpQhFz3zZpE+7zDeyjIho9XI=;
-        b=iyItII1AFPReqXO4AIMS7gT5bX6PnsMWYah22gDd45rKInD97HMYePBnhox4qQVBnl
-         WaHWeNRKD20qmZoNrilZgXt/02H+XR3aFWf5CPHjaysNhwFj0GPwK/5sedDF6Vc/4pao
-         SRmKgAouIy9tKIeTDB/4+hT78x7K3uEo01iQSwnU3xEamEcma9DpdJjyj1rOnSQvaFFB
-         c3Jl7RwBQBPNzK4QXUFxBxZ6DsJJmUt8H3WHrlFzwzrH26+YUUBP7Te7hofMDwxMITZV
-         D5H3EhcTF5QJpOwwHRm6EsSLD5i5PzxxA3dxrISDw8qpgAz+aI8ljxLT96jM/JwEzSLW
-         ZzAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUDiJoBOfqWjrfzaqmJ+odv7MjZY1EUWFhe6lPpVnAQQEywQjFi6KtC64XIevs5tvXV8f8s1K9qsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM2wtJJLvVL/ebsKOzycf/8xsvyMpOsPuxhLWmZITiSfBLjQzw
-	LHItx+1y70VOBsv9n0DQBr1X/ky2e/8oDFNSmlgC8KYgycwMNTR1dV1aZKo0CF8=
-X-Google-Smtp-Source: AGHT+IF+BiCZpHlNGDJ0WVsb2BbNS1rcnnfUaWDIzT2pr8fr1gMxHSS2QBCjtZVj34KgbZSFWvXMFg==
-X-Received: by 2002:a05:600c:63d3:b0:426:6a53:e54f with SMTP id 5b1f17b1804b1-42d964e10b0mr60254615e9.33.1726471246241;
-        Mon, 16 Sep 2024 00:20:46 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:46e0:9b1e:8680:c41c? ([2a01:e0a:982:cbb0:46e0:9b1e:8680:c41c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da2427227sm67433715e9.44.2024.09.16.00.20.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 00:20:45 -0700 (PDT)
-Message-ID: <c9392d3a-8336-4cac-83c6-6b85a8cb92f0@linaro.org>
-Date: Mon, 16 Sep 2024 09:20:46 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IetheAX8"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 2184123C92;
+	Mon, 16 Sep 2024 09:31:55 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Ra5D3m98mpsN; Mon, 16 Sep 2024 09:31:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1726471914; bh=2bTZu7joD1ImKzjNsHvEHaAk+oEt0DZuYQsH7FNuClA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IetheAX8+p3M6gP7pLTOWuWhvl9kGjnfZOauuxwVXDSJ2zICGrOQMVR3BaMxODbaY
+	 u+xU3gOx5GNQnZ3b+bhIswcJb230xPFXAqgtbj838ED5OHo/0pXoCUrPt4HxVRXCtX
+	 J0hQFjPBnoFqAmNgDur4NAd3w3NZkEh4d5LJJjW8ShKjrYj1uqdXg006qk5Sktk6o6
+	 KsdtTCTaZ+kXmch5EqHSpyb7kcUY8VQ+K+ueZkkLnBsROFMcYo3ZL5Dfh+HLa+b/Zj
+	 IYVQ80HlUWPFcyWo8507eVn6FV5ynA8L2vmfrLCP85QRRfwfFJAIh+48qO9dXuF9db
+	 0FfYZ5BOeL9iw==
+Date: Mon, 16 Sep 2024 07:31:25 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: fix finding of maximum clock ID
+Message-ID: <Zufezf_lr7GlYm6u@pineapple>
+References: <20240912133204.29089-2-ziyao@disroot.org>
+ <fmfvorsje7fjto3c4bwyqxsa6xrs234xlse4whcsu3ebm3lrvs@oyppckftaeok>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] dt-bindings: clock: convert amlogic,meson8b-clkc.txt to
- dtschema
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
- <CAFBinCBZ8kowT_R6MnVkQO_BpxPA88xz-=KPStFDYQgH=P5upA@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAFBinCBZ8kowT_R6MnVkQO_BpxPA88xz-=KPStFDYQgH=P5upA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fmfvorsje7fjto3c4bwyqxsa6xrs234xlse4whcsu3ebm3lrvs@oyppckftaeok>
 
-Hi,
-
-On 15/09/2024 21:25, Martin Blumenstingl wrote:
-> Hi Neil,
+On Sat, Sep 14, 2024 at 08:48:53AM +0200, Sebastian Reichel wrote:
+> Hi,
 > 
-> On Wed, Sep 11, 2024 at 5:09 PM Neil Armstrong
-> <neil.armstrong@linaro.org> wrote:
->>
->> Convert the Amlogic Meson8, Meson8b and Meson8m2 Clock and
->> Reset Controller to dt-schema.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Thank you for working on this! First of all this patch is:
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> On Thu, Sep 12, 2024 at 01:32:05PM GMT, Yao Zi wrote:
+> > If an ID of a branch's child is greater than current maximum, we should
+> > set new maximum to the child's ID, instead of its parent's.
+> > 
+> > Fixes: 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
 > 
-> Do you want me to send a patch to document the
-> "amlogic,meson-hhi-sysctrl" compatible string next?
-> We either have to update
-> Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-> or create a similar binding file for the older SoCs.
-> Also I think when documenting that compatible string we'll have to add
-> per-SoC compatibles as I think this generic one is not enough.
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> 
+> oops, good catch. Note, that the function returns the correct value
+> for RK3588, since the clocks with the highest IDs are of GATE_LINK
+> type and do not have their child field set.
 
-I have it ready already, waiting for this one to go upstream first!
+yes, but it does hit me when working for rk3528 clock controller unit.
 
-https://git.codelinaro.org/neil.armstrong/linux/-/commit/1be8f8c67e5b83fa4069ccbcfa80d0614f668a65
+> I have not checked all
+> the Rockchip SoCs converted for 6.12, so I suggest sending this as
+> fixes material for 6.12.
 
-Neil
+I have done a rough check and think no code in 6.11 release is affected.
 
 > 
-> Best regards,
-> Martin
+> Greetings,
+> 
+> -- Sebastian
 
+Cheers,
+Yao Zi
