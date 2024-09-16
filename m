@@ -1,94 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF10015A84E;
-	Mon, 16 Sep 2024 16:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF1C143C63;
+	Mon, 16 Sep 2024 17:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726504435; cv=none; b=iZE0ZHmKNEILd21XwhywD/l3tQw+f5fGzR95NgvybzSdPpj5sTUQ9WR+Id070+HfMIjssqzMChUpPkB9gFByzJL6GD9L0hbZXaNabHOdaG+HhXOcL0uK62LHPLxYFNk3uv2gXRcLn91JGTI6UmGdBrv4Hp6RDzHeW1SvQS2Jk0E=
+	t=1726507393; cv=none; b=AY0XSVmlopzEO7Ee/EHUuYnZeEgbXg6vluxdG61zEwqZn4LaHjsdxzpCiDQ/PRfh8ky1l1BP1zo1duS6RHYEATMjILH9GGnvCTmbJvvLuwLDPW9Kje/yDeqy7IknzzxX7AcbHXl87GFxGvRrJmabm7uROK8SOELpOUuzo0X27o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726504435; c=relaxed/simple;
-	bh=QqNjHfV+bL/edqLFl7taMwluNBafAR8LxONwNNjOAcU=;
+	s=arc-20240116; t=1726507393; c=relaxed/simple;
+	bh=nBMpe9G5hX+7mnkTEs+rD8NKlNfpBVsk7V90+43erik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogUmFv2q152kH8VPpGvelCSsYd2afS1FFgc9XoaMCTRlee3J/kvpRyPa48B827VwzKucf2V9NAVuy9aHx647GCMpAQuYfSKzVgrCfWkj8Uw8LgPD4yBqSB3maYyMZkcPrDgygpaudZR0yvixaNrqU3M+tFCm7tf7CVeRUuJSWRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCtmew8R; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=k8Pii/O4CEaB2mxbOHpy4AZq86chcCB1Pn4NWE+joemGmbZerWl19W4/s3B/o9EIDHrn/+dh715ivG96AdL6OkcIpP1xa3KS6p+7+RmP+GEYaQaklLsqclZLrNGFIksT+9gzZziEmB/89t9pQ6BxYDmqIgdwMd1Nlbi9tGkVLLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ad4X7v/v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCtmew8R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 085B2C4CEC4;
-	Mon, 16 Sep 2024 16:33:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ad4X7v/v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D086AC4CEC4;
+	Mon, 16 Sep 2024 17:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726504434;
-	bh=QqNjHfV+bL/edqLFl7taMwluNBafAR8LxONwNNjOAcU=;
+	s=k20201202; t=1726507393;
+	bh=nBMpe9G5hX+7mnkTEs+rD8NKlNfpBVsk7V90+43erik=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dCtmew8RuqFe0tIQcMcetN0cyzAHNDgdFZ96zEVYKfPmrkzcqwxb+1XhE7mAjR4uI
-	 RxKQ7chmm1h6BYcrJXRsxT9njZjF6rjVr0+FErjNGqUjkGMgLomRcrQxQHUOufoZJK
-	 Q56W8acdw/sfpxF1s6kcXcgR8FGgDk6g+4J46bIvaZvjNqkg6QWpFrERfBpIDB/XcV
-	 E/fo1OC8fdawkQS+t1f6RjqYhvTh85RgAYOKLCkZYpFZm0daWBK6XVkr3QJR6wOdPB
-	 TaLIt9sTOdxyZSoRXm/ItCMVC4RyphBNSwbYFAbtvvNYR+Sf4AIy7i2/X5hFkFSFTX
-	 9HSjvaOEucs7w==
-Date: Mon, 16 Sep 2024 17:33:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
+	b=ad4X7v/v7VOIVBO5YYXnJF6fy7P7yN6RTL+277um3XnwWhj9KpGXfHuDCZJUWlw1G
+	 4YWGavyLmyw6nMohxL6DbeB5LlsCweNA2Xe7R1TWx8mx739Z3Y375FTkL4TEWZE/pV
+	 C2TY0sqoINVoBIyQ55c5wt/SbTAfPqcR5nuJk/fWFW5NoaFexcHEJScsrQlrMqp8rP
+	 dhCr/jqrKmOtdOPQfSqVbd4OvdQHAXUEBXQFyaJ5oTD19vLE/LzwNHuyi3SBUuvfXF
+	 08TGx2pAB0r61UPwg3qD9bsa37VkiZ1rQRed0aN4cA9NT98NCdNLna0zBTIzqWFnOS
+	 f3xVO8HlQVdww==
+Date: Mon, 16 Sep 2024 12:23:11 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: Possible misleading information in rockchip,rk3588-cru.yaml
-Message-ID: <20240916-neuron-surfer-32db6440e1ad@spud>
-References: <ZuIJgiN2xp6oPrHD@pineapple>
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: clock: convert amlogic,meson8b-clkc.txt to
+ dtschema
+Message-ID: <172650738929.834858.9318382302373477607.robh@kernel.org>
+References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="762l3reB4+o5LV48"
-Content-Disposition: inline
-In-Reply-To: <ZuIJgiN2xp6oPrHD@pineapple>
-
-
---762l3reB4+o5LV48
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
 
-On Wed, Sep 11, 2024 at 09:20:02PM +0000, Yao Zi wrote:
-> Hi,
->=20
-> rockchip,rk3588-cru.yaml, dt-binding for RK3588 clock and reset module,
-> contains description of customized property "rockchip,grf",
->=20
->   rockchip,grf:
->     $ref: /schemas/types.yaml#/definitions/phandle
->     description: >
->       phandle to the syscon managing the "general register files". It is
->       used for GRF muxes, if missing any muxes present in the GRF will
->       not be available.
->=20
-> But after doing some searching, I found that clk-rk3588.c actually
-> defines no clock hardware with MUXGRF type. This is also true in in the
-> vendor code[1], it seems there is actually no GRF mux on RK3588
-> platform.
 
-Have you been able to check the datasheet/register map for this piece of
-hardware? Does it have a grf register region?
-Wouldn't be surprised if it didn't, and the cause of it being in the
-binding was nothing more than copy-paste.
+On Wed, 11 Sep 2024 17:09:06 +0200, Neil Armstrong wrote:
+> Convert the Amlogic Meson8, Meson8b and Meson8m2 Clock and
+> Reset Controller to dt-schema.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../bindings/clock/amlogic,meson8-clkc.yaml        | 45 +++++++++++++++++++
+>  .../bindings/clock/amlogic,meson8b-clkc.txt        | 51 ----------------------
+>  2 files changed, 45 insertions(+), 51 deletions(-)
+> 
 
---762l3reB4+o5LV48
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuhd7QAKCRB4tDGHoIJi
-0sfLAP4rUDigw1FDwiNdvnZREugTaL9WpuIT1BHZHS4TrWxCZgEApyjlEt72BdfD
-fapeDQzlfMZjPRcI/2jXPFZkPzGcuw8=
-=2kPB
------END PGP SIGNATURE-----
-
---762l3reB4+o5LV48--
