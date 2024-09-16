@@ -1,43 +1,44 @@
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazolkn19011028.outbound.protection.outlook.com [52.103.64.28])
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazolkn19011039.outbound.protection.outlook.com [52.103.64.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D8026286;
-	Mon, 16 Sep 2024 22:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.64.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2F55258;
+	Mon, 16 Sep 2024 22:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.64.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726525316; cv=fail; b=AxO0wrnh4qtx0kqnBMx0NfP2a1xkWkWJpNBMKG0Oe4+wFAtK5WaPmud4B5naYvNRpvV2kDka63Llrs7Ns5fIx49n6fHxLcV6U3Ogkp0r1cce8Z77zb0xvOx6BBMI+VidF3zftRGE00ELOuPQXiXh7ONB8ffqOWWCBSjapSkRSeU=
+	t=1726525429; cv=fail; b=hY0odGQ7p+QwudX/GEDyXPqyyeu7AUJJ0OJBUKYLj/p2n1Az/S78C04GifBhAj0RKxQh8qSH29nR4oSWhHS2USK7J+Tq1JtNWUzSDDBSCYDBUU8HcGCCm1IWQtTXB4TO7X7N8Lv4/+bkcNzttYKnwNAz3T6VJCHDHAFUJOlYJQw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726525316; c=relaxed/simple;
-	bh=8G1uNCV3G9fi+ztEz1P+JWut9WAFVtyaVDd7PA7lq74=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dTEfbpFxH/SmsiR+3iRXmsvashr8ZrOeK6haZ/+TRuepcG5fzVSck552QvRq1CU17AC+po8TlitLeG+WjhxVXleF8QEeQ7AvfgYKNNi9fvcU03QYwCTtYY3+SpvRLWofPx6xGD7gLQ6PsE3zCgYMxmKBwtbRuSB8IXv9lFnXfnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=F3Vkrx6c; arc=fail smtp.client-ip=52.103.64.28
+	s=arc-20240116; t=1726525429; c=relaxed/simple;
+	bh=89bYxQhykbB587mJqNGtbemhNHnqTSJ/pHLPY2AhCLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aZVkePaiKczi/U37oEhgZbFZNMjRj4zU+0HU0hnvgTpyYzed2cwXn1f541wZNfRRrytVZBVeXlH9yfGFl87bfUlmQXpAmG74JZgBTnf+uYNLa7ztuzOI7p67LHo+DNiBusFX0/K93vZ6JQCNk+8G8BmTqoNz5B2rfEamclNAloc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EcozGenq; arc=fail smtp.client-ip=52.103.64.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="F3Vkrx6c"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EcozGenq"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OxJiQU4lJxRmuvsoFGhgb09ErcaC3zHxfqlVEkGUO6JRCugWGNspT7u6proHaHzePFOy4gQQAvyY8Gd8nhxow02D4zOX//p+kfQb5BsBMVl2KoFwu2B4poaMArq60Wsr69gOchLvhtNranFkCSui6IG9idbm0UX/9UCRiLvxxNxqDxWgKiO47qF9+0PNYkoCjGij2+/hjkkP0PBLUn6oIhLwOsbn6yHuRIpC4iBhqvFTnO8y5VzpK3LprQqS2fINlnOmcxX7BS+iHRbBjl0vomgZGcks+qwrWZzbeekilOQSP4Pgd0Cj0rbRSNlNMZUXhivj3m6uPuMt29WJHAVT6A==
+ b=alJxBQUKZDC2IHEAi8h1rjUPz1Yx02TqtEm/sEn1KGTtnwFg/+q0NqHjfpXNPa4dsaea64/wLnKG0kLuWk+qgSXejmuDugxQuzzIileNwWZnZMsH+AYA/M6TLay4NEVlUmSEm/qn7H3nlIIyo+mAKTy5MASSxePo8rFxiveH6drBNPKz4+gNhajOY1UnxJT6rOfR8/7kkZ3hPMdWlEliTfdNGjjKASHD1cwESr8lYnykuY5mbgiphkLIriIqMC5cthF/G5B7Q6XKg3wAEVxv/uQzRQSBTGmr8yOp/QeW4ri5fBc6wV55si6pnFlBJb2MJrbZEdQk0aOiph4lovIBYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1EHZzDJqAb8jp+F8MfhiOkiBZmAlRClaBFpPKa+YdtY=;
- b=qjXAwCP+vGhG8fVrWt7audCC6eA5uS0RO5tqjMpO/D7J+tUSo58mdy42NHcWzBIaR7Q5vXaBOJpe031n4/TDLuCrXtAaIE5gOPaTncIMxe/p7o1oFnRZ6pZyg0pHiGKZSHcZP3WbvX+QXEEcY/bYWB51rDUoWDpXpUazwm4r8WA39Y6uGM1ay+ydKZGQ88yKYVhp9HytSg7KMGEIGMt9yUPFsizb76HQ9xhgab7TuXi8kKXJewaIjH368ftywDupWDww6UMr6dhcAnOfJDc+sjCuOev6T/wyKpw5q3GEuVFBEwZHRGOuUuq5l9+a9l28ekcZ74wm33JtQlyL8Rt7Yw==
+ bh=sMkXkE+ym+kBbeehwMuFPawz3HA0EZTobv741VQUSUA=;
+ b=lyhtxbvHa7sqcwKF20xdYckWzw8KB4L2XR/VTxytEiMpTjK3nmQnXiLw9BXtzWFMNwd6DepLUNG+M2S8A3e4zWbphjMIOUW1cCxmjcDufbAUVh30fDoxtvcF4qszwoQhJe2+dAHpqk410H6YD4veKk31KuCDVxNCS3lCGsXCMNo06hjX8Gr5Ea1SrdP47FvWrR2ucyAtgNLWelMeq7hQG5F2r79ByTFFwpsU9nr9TnE3BOLOhKCm6dvxJoTa+YayKPDxM9pX5tRYSXKrfjCguaBPAhca7C1kRSKiRdDIYteA9GoNnu0IgroMMvj4kpVlwHaTjtH8XFtDmwJ8+74DXw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1EHZzDJqAb8jp+F8MfhiOkiBZmAlRClaBFpPKa+YdtY=;
- b=F3Vkrx6cahed1UdOY6AKEX9mW8WBfj9TfqNwTPem0pA6uWXZgtVuP/PneM3xXLkXf28wu/AlQ2cIwHrqkAlj5SXkYOYJDs4jbt85JOJW+CtkyxGeEaN5ZvEg0dtKt6RsUsA7tMwik8iupn5CN4r/tQVdXZjzNZSl0o9ScvMQgtgna17tq1SlMDLVPg6q91VEn1fleLu9l2Vkq2kh5k/UGr6dNXszkef9ATE4XxTrEo8hom0eLZZlOB51lshhYEq0lcovpj3dheDIJuX50Dfx0khRLQ1m5ygHZ0GcBnLpBw2AYJQcFiIolbzCyToxooE9xzmeajhpKIy15xbaCEqT0Q==
+ bh=sMkXkE+ym+kBbeehwMuFPawz3HA0EZTobv741VQUSUA=;
+ b=EcozGenqOg3BVt1tkk2gNmfZ9rbKzuOvOYrBy0cIamVATl4Ju44q8ZvUeLM6XF1dvP4N3WR/6ifzUJkOB2O2ShR5UBH3PTvYzTa8v8fxqDnU/2T8HMU2Puedq0UEvoX1QGQ5gli2xlnt1uySN+FPWzK+5VTqgQ7LrVHpSoe2ESWa9rHP4ApprBpcRd7cMHkxaikQAd9p3S1jCNpNWdC0OD2AWE3KMRdOZwpHkh+GaTy5Nnj1l1mFIGYeut9tZYs8bSR/KFq2P9zbwjOCYIjZQxHXiaqEjPEieRYNGPqJrI1ITQR/vAkCaiCO4lZw/XEhQkVkYh3bJ8EK/uavrXfi5g==
 Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
  (2603:1096:101:56::12) by TYZPR01MB4847.apcprd01.prod.exchangelabs.com
  (2603:1096:400:285::10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
- 2024 22:21:50 +0000
+ 2024 22:23:42 +0000
 Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
  ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
  ([fe80::b674:8f70:6e29:3756%2]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
- 22:21:50 +0000
+ 22:23:42 +0000
 From: Haylen Chu <heylenay@outlook.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -52,17 +53,19 @@ Cc: linux-riscv@lists.infradead.org,
 	Chen Wang <unicornxdotw@foxmail.com>,
 	Jisheng Zhang <jszhang@kernel.org>,
 	Haylen Chu <heylenay@outlook.com>
-Subject: [PATCH v2 0/3] Add clock controller support for Spacemit K1
-Date: Mon, 16 Sep 2024 22:20:57 +0000
+Subject: [PATCH v2 1/3] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Date: Mon, 16 Sep 2024 22:23:08 +0000
 Message-ID:
- <SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <SEYPR01MB42212A60B191731DF9759B7DD7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+References: <SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0314.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:38b::18) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+X-ClientProxiedBy: TYCP286CA0243.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:456::17) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
  (2603:1096:101:56::12)
-X-Microsoft-Original-Message-ID: <20240916222057.43218-2-heylenay@outlook.com>
+X-Microsoft-Original-Message-ID: <20240916222309.43259-2-heylenay@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,40 +75,40 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TYZPR01MB4847:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12f002e5-137e-4723-4d03-08dcd69df55b
+X-MS-Office365-Filtering-Correlation-Id: 4fa8b857-386d-4c7c-eaf1-08dcd69e384d
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799006|5062599005|37102599003|19110799003|5072599009|461199028|8060799006|1602099012|440099028|4302099013|3412199025|1710799026;
+	BCL:0;ARA:14566002|15080799006|37102599003|19110799003|5072599009|461199028|8060799006|1602099012|440099028|4302099013|3412199025|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	gRTpZI4GjzW5vgU8oF9Fg6Cmq4a9lHbF3oLfw0qyVDw7/4jBoiQyLvBLmN9DxTfvCvcCT0SZm1EHbXumMdPpypIxjbWeIaYXWYfoz3Ty2xzJ302GN24XiN7No78f5Rgne1HbUkVll15S3TJvv5xLotMdkS+dPv8up3E6ME7M87yYSWvZ89kmR5q+98bc5kOU2H5L6XS/cuV2tMVdz/cGJccKr1K+lXmJfG6PwQT0g4GybH0laN4Vv1fY6456Ml85V7DzCMOUmd11GXiqf+4TsTKAJaUS4tuXHDnq5KkqFFKa7JyPgStoZyt1VNgJiPYMZYXJkp/HhzAbcLJ0WPlCt6XkbNWSTFFCK3pLWFngaaAo1NjTR2zybiMI6hPeVlB5HjiwmOkGimV+t2MbPb1HmNJLA+p6SuTnGfPEMoYo+yYEvrjJ530J6+yw6OrrhDNmGxV7X0jEZ90O53klS1YG/tqZQDhcA/qKONoMPJbFYqbZdNMjG58I64FO89jfRtgPCiMje/j/huUZaGLyUN/AvF925iNQkKYiG55E5+qwSIOPpHlkvATgtY6gGXZSC2iePi/yuStu9m9MPuLeyUN5H9CNC0d8G+p2AEu/hEHkosEz9v9xx69uQYIvSy3aLdPTfl5yIPrI0WHH6JNYPzUD1P0FLH9QtUfm89qzs4rvTaAxgtS2qw/zdaniYxlTjQ+uYu48tHKxfu+ZZX0qvTuvY/DeMV9lKR4b630Ir2+qbfy+oABFzpVcfbqGXEKqF6Gz5h7Y7I1R+ThLbx0XRl/Av1oK9xHVGOM/ZK9kw+hId4uvMxx+6osv00O0ERVQIp8f2hNPcKoapnsUhYEfryc3wONtKwkMvkLUFtLlwEXcESnMSJmIYoQjXlfzbGVNgB7/2zOxdvq2ZeKZBSrgJK3wEgGsM2d6qJz3OG4JWmB1oYY=
+	3hjoTC5kzJxoeJgqUP2X1c7ClKbK5RdmgKtbeYR9iYYR1yqTVUw2jlseZ63vrkuddiWurEh83g0b6OGEgzgP9jHL6E8WoKE1iK1ccb5QRy/0pniRweUXX8J1qznoKroBS95p3f5G+RZVnpC77aAbELZNcZ41w+cbtYGCXJiGrtUjpA5opd4lw46F+9XbFjgn3RORstPZrwl2BDBKB8OredSokCw/CkQOwjGolmx1n2g/aQop+7RAtpGFhHFsK3pcJyEy/o7GgMT/5cNYpEaKBGW11TFp4OyaBhZ+kcbW/go8jOc/tc3wdKY6d5YsuMVy1I5humRwUlQ86SeZmvnHSD8fLVN437K+YDBNFxdqmxIZYIFWTmdtN8u3kqJqR3x0LWo7VCRyShnyszZ6oOCYlSX6pWBaNMPs3O86Hup0Nin1wCJuHLhG5EcWiN/F0VVE+uN5NZyo73EyHbfKaopfO+bMp1Fvw0L7zV5NT6UeyI2GOCLwPuAZzBpB6+xRwY78qpw1cqjqYfAZ4R0biGkbuLOfNfmkIygrBJnj0Bue7IuFCP4cIqgfKhwfmCS7UoptX8X4GRG2rNQtCCJb8kF2nUcugRuYNWUVDuj4sZEiQd7zmcytZSeQd/V1pvJBSftqRqUV3QgW/9L7x8zi816kseydppLMnU70eBYp1uVsURCh1TmXeF2je+LFFqPw6ewslrORoE9I7lP57lXz5IaPiiO5w+4VRmt71E1T1xl7rsfe+zUNIpw2mxHoYg5hESiSpcaeGPl/J1IO/1b4D4oVOj1nx5GfgIogu87JaIg5XZFi8QdHSsMOu6DTovE3DfehMUhwY8XqKCGrs6HQegOpAgvyDzoIGlxv++/H/PEnXJ3VtOnshBQ4sItnTG5c5Us6
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ATes8BrCD5ZS62lHzYLkovgTlfVvhPIe/AqQrTShqwAzu8dhErjCF6yghRLC?=
- =?us-ascii?Q?tTUnaClxKZ2INmtLloI2bj3WLnaRpwt4uREZ0OdahpUjZLvEtntcF2TVgbT9?=
- =?us-ascii?Q?EPOu/JsAk7q2ZT/7RPDAWL93zfU1wkmJvG9s5KeGBwNYreeoTPbTwSNlKLsa?=
- =?us-ascii?Q?/APRe3vBYpjlGfMU1YA5/fkgg4uKIlNiSc8rCE8H8ygKAdMvEALEYBmC8XBv?=
- =?us-ascii?Q?SxTbgI94hF5bwHSbnOxfBqa0douxYLp5oCRfqd//xWa9N/I3fc4uofhmB1YR?=
- =?us-ascii?Q?bgA9Ao5hPTJUXeKjJm8Fwu1Ik6A6GAX66YoQpjT7X8R2Y+a2wQQWzbdBlrAG?=
- =?us-ascii?Q?ePzF8bNCmEEhNddKoFzPRqRxQoSsrNkZV0h2RRxXZ1o+TvydQF81BN83/Vn1?=
- =?us-ascii?Q?ejwKqVlhq/Sq5//i7AmSQqtPhC3DSdizYoHTFJjpYIz/fwKXIRzCNd+BGBsA?=
- =?us-ascii?Q?W4c9wb4VJI/cosfgtY/V5pvwYpjM1bUGX/0ucZcJL4bpv88BrszsKPF0b1Gh?=
- =?us-ascii?Q?f9+dGEA14pCdunSWp7mAWrgcmSb6iDVofFapp04El7gyNsebkwJWpDPNfTxF?=
- =?us-ascii?Q?jU6tBU8rUod8jdWMFuzYeWaSa7kqo6muWJrlLaCAb0Nw+Sj0hoWbQ3DarF4+?=
- =?us-ascii?Q?2doEeGhztDnt4jpc2oFnlXTKlH4MFLj48dPDPSdlsh7BjO/z7tRpCCLUsQrI?=
- =?us-ascii?Q?uuJy+9YSCNHfszj9cnzMGmlj6cA/Wzm2KHZjSw3CIW+zVFGSbtC5RZJ2Vovy?=
- =?us-ascii?Q?7J7T4YoPYoKOp4f1Vvu2FyW4Ux2gdbmv1PbJ56YJZqxKZ4/VS9MSMFQk1MQ1?=
- =?us-ascii?Q?KV84zSrzoyPMtKlfkWvach0RX9KP1nkyQam9vvwAn6YPNEBbA4i3WMTk95GE?=
- =?us-ascii?Q?021fPmQ+cwtF/prlL6H+NmtiCbCYEgDqQ4ERm67/dGBcLZRnP2KaO4srA0Iz?=
- =?us-ascii?Q?h+0WvaubDKrw4BD2axhvKwu47zNQEJqor7FYHU4yRswPtT4D9zWsFINDD+h5?=
- =?us-ascii?Q?IHpoyy2sglfGbWQpKd0ynxXpwlqt/05cBLVuAvhufICAD17yigkKuj9k2Gyf?=
- =?us-ascii?Q?Ng/JjoWW69XiN4HeIm67z32VOEWP6TYxbNU4C574Uile6Isrju0xm4S8fdMD?=
- =?us-ascii?Q?gnCNvuIOgd8c+SqTZVYWX8NGBq099sYuj6KltAOp++H8H0q3olpukc9KIP4f?=
- =?us-ascii?Q?htq0P57JYn40eHZLmYvSA8/uKC9z1An5HFRM45CUmJ2jyvvNFqkdMmKQGDw?=
+	=?us-ascii?Q?75ejY7nWRhqKY0nLACMAWao1ig9QhcVWgcARudkfV6xkRy2ORXuzMR3DSNNB?=
+ =?us-ascii?Q?vefMB4+B50ID64PBGP9MXd80kRgfpVdjz5d0AjxP4BYMLrM1SFDiF4ng5rWC?=
+ =?us-ascii?Q?xn9x1ib9fWWpFE4DVPCDE9grxDCQOWU8cmeus0aA10Ul3Otbg1DcjaQ6ZWfn?=
+ =?us-ascii?Q?pNqHkGSbOVdXx3i9XP1gjXm6RIf/qe50Yo08LxBiL/hXkfW5/Rs03/84HfBY?=
+ =?us-ascii?Q?0bkwzUjNvmyvVYZSylOisbWpSIFf09UuKnED8lOu2Xzj+IcQAWgC+gJWU1l5?=
+ =?us-ascii?Q?lNo6spDx5tf14kczpqUW4SybyOHJtyJrdYQB457xu1CTS27mGJ5TWVO1EpSh?=
+ =?us-ascii?Q?ctIltYbUKFBZfpPGEli3XuPp7gb4Q45rD62tEWJhnvqQzgUe5/UI4lR0/6R4?=
+ =?us-ascii?Q?gJvHd/tuZY0Oi/5/J1m3TBDy4KLIk3xrwgNmwnFCh/OfHIBqCX3Tb2EV2zfW?=
+ =?us-ascii?Q?DiqXnLN66VGOo6c2bxf0JpU0EClFHvH8mqmptb/T1vNV8ders9D1ZxR6MnxF?=
+ =?us-ascii?Q?gWYSisWrS6wzAFLlzxP0x2JMtiXWKKYJZ/pj6Q4xa/DIcr5tRxRMIq5PKG/+?=
+ =?us-ascii?Q?t1N8x4EAk4xIyyoRB+fdGXNddhCNzZ3ViDwYjY4F/xBDyEeppTc5MtM5b8Pa?=
+ =?us-ascii?Q?XdHyQdwAJpUT90BNFZvYTHHAGkzK6XMaRF8HbVOrXpHcm9+lk/JkifIK0Yyk?=
+ =?us-ascii?Q?HcyYEM2b8QiCJMdZX4yPltFFgRoaAbz/Db4VElCKKOZfG9thJd/uR7vuaziG?=
+ =?us-ascii?Q?BZ62OTXW/yAaRmIfn10JZdYB0gR47A5wTxV0COLyeN/og0MzJui6bC9TyEv2?=
+ =?us-ascii?Q?7y0n+auVvoGwosn3EBZKr0xbyv1X8uipiGmw3ZYVKI5njrsxXdRDhJ/eg49W?=
+ =?us-ascii?Q?xx3ng3xOA21TQHlwwJL2pjxADiA7DyrxmZtyH/C72WqygtZWDOpKq7qhnYEQ?=
+ =?us-ascii?Q?xlhX2TKnJMk79w6ApW5LgNYyTsN7gSqemj5d6825x/mwXe4MSJrRXrhEwzlH?=
+ =?us-ascii?Q?ewAnL5aa9UFHRZwv+6hj+J+0qPOzWNh6jnZh9r99KAcJTstQPt61GkG2BNN0?=
+ =?us-ascii?Q?Za2SUogQtbVNAzp5cjAHTRdTIUh8jQBKA1+0gf5gpyQ9eitV55DWkcP3VHcd?=
+ =?us-ascii?Q?LIUexu1zPqbjkeJ+2HpeRgxRtrUkLk8gsFgb5SerwH4OQnTckHwk2RBMvNUJ?=
+ =?us-ascii?Q?E6DtvMIsfC5X0PnAEwgdWbzYTxFYJFqRzO7yfqmPEpeFyGltvCfQRS039vU?=
  =?us-ascii?Q?=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12f002e5-137e-4723-4d03-08dcd69df55b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fa8b857-386d-4c7c-eaf1-08dcd69e384d
 X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 22:21:49.7405
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 22:23:41.9825
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -113,81 +116,67 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR01MB4847
 
-The clock tree of Spacemit K1 is managed by several independent
-controllers in different SoC parts. In this series, all clock hardwares
-in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
-driver, CPU cores and UARTs could be brought up (see below). More clocks
-will be implemented later soon.
+Add documentation to describe Spacemit K1 system controller registers.
 
-No device tree changes are included since Spacemit K1 UART needs two
-clocks to operate, but for now the driver gets only one. I would like to
-defer the changes until this is resolved.
-
-Tested on BananaPi-F3 board, a clock tree dump could be obtained here[1].
-
-This series depends on
-https://lore.kernel.org/all/20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org/
-
-[1]: https://gist.github.com/heylenayy/425f4efff93b135f8b17584fa1d0f135
-
-Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-
-Changed from v1
-- add SoC prefix (k1)
-- relicense dt-binding header
-- misc fixes and style improvements for dt-binding
-- document spacemit,k1-syscon
-- implement all APBS, MPMU, APBC and APMU clocks
-- code cleanup
-- Link to v1: https://lore.kernel.org/all/SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
-
-Haylen Chu (3):
-  dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-  dt-bindings: clock: spacemit: Add clock controllers of Spacemit K1 SoC
-  clk: spacemit: Add clock support for Spacemit K1 SoC
-
- .../bindings/clock/spacemit,k1-ccu.yaml       |   71 +
- .../soc/spacemit/spacemit,k1-syscon.yaml      |   51 +
- drivers/clk/Kconfig                           |    1 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/spacemit/Kconfig                  |   20 +
- drivers/clk/spacemit/Makefile                 |    5 +
- drivers/clk/spacemit/ccu-k1.c                 | 1341 +++++++++++++++++
- drivers/clk/spacemit/ccu_common.h             |   55 +
- drivers/clk/spacemit/ccu_ddn.c                |  166 ++
- drivers/clk/spacemit/ccu_ddn.h                |   82 +
- drivers/clk/spacemit/ccu_mix.c                |  336 +++++
- drivers/clk/spacemit/ccu_mix.h                |  348 +++++
- drivers/clk/spacemit/ccu_pll.c                |  226 +++
- drivers/clk/spacemit/ccu_pll.h                |   82 +
- include/dt-bindings/clock/spacemit,k1-ccu.h   |  198 +++
- 15 files changed, 2983 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/spacemit,k1-ccu.yaml
+Signed-off-by: Haylen Chu <heylenay@outlook.com>
+---
+ .../soc/spacemit/spacemit,k1-syscon.yaml      | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
- create mode 100644 drivers/clk/spacemit/Kconfig
- create mode 100644 drivers/clk/spacemit/Makefile
- create mode 100644 drivers/clk/spacemit/ccu-k1.c
- create mode 100644 drivers/clk/spacemit/ccu_common.h
- create mode 100644 drivers/clk/spacemit/ccu_ddn.c
- create mode 100644 drivers/clk/spacemit/ccu_ddn.h
- create mode 100644 drivers/clk/spacemit/ccu_mix.c
- create mode 100644 drivers/clk/spacemit/ccu_mix.h
- create mode 100644 drivers/clk/spacemit/ccu_pll.c
- create mode 100644 drivers/clk/spacemit/ccu_pll.h
- create mode 100644 include/dt-bindings/clock/spacemit,k1-ccu.h
 
-
-base-commit: 3d5f968a177d468cd13568ef901c5be84d83d32b
-prerequisite-patch-id: 47dcf6861f7d434d25855b379e6d7ef4ce369c9c
-prerequisite-patch-id: 77787fe82911923aff15ccf565e8fa451538c3a6
-prerequisite-patch-id: b0bdb1742d96c5738f05262c3b0059102761390b
-prerequisite-patch-id: 3927d39d8d77e35d5bfe53d9950da574ff8f2054
-prerequisite-patch-id: a98039136a4796252a6029e474f03906f2541643
-prerequisite-patch-id: c95f6dc0547a2a63a76e3cba0cf5c623b212b4e6
-prerequisite-patch-id: 66e750e438ee959ddc2a6f0650814a2d8c989139
-prerequisite-patch-id: 29a0fd8c36c1a4340f0d0b68a4c34d2b8abfb1ab
-prerequisite-patch-id: 0bdfff661c33c380d1cf00a6c68688e05f88c0b3
-prerequisite-patch-id: 99f15718e0bfbb7ed1a96dfa19f35841b004dae9
+diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+new file mode 100644
+index 000000000000..4e3a72b48aff
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spacemit K1 SoC System Controller
++
++maintainers:
++  - Haylen Chu <heylenay@outlook.com>
++
++description:
++  The Spacemit K1 SoC system controller provides access to shared register files
++  for related SoC modules, such as clock controller and reset controller.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - spacemit,k1-apbc-syscon
++          - spacemit,k1-apbs-syscon
++          - spacemit,k1-apmu-syscon
++          - spacemit,k1-mpmu-syscon
++      - const: syscon
++      - const: simple-mfd
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    syscon_mpmu: system-controller@d4050000 {
++        compatible = "spacemit,mpmu-syscon", "syscon", "simple-mfd";
++        reg = <0xd4050000 0x209c>;
++    };
 -- 
 2.46.0
 
