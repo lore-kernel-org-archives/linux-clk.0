@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F934965B;
-	Mon, 16 Sep 2024 10:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713C441C62;
+	Mon, 16 Sep 2024 10:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726481220; cv=none; b=QqMsjMro88XMwuz6GfFD40i2d1ETMU09s0I74t/uE1aWijWcElpnPbkEgGg06w2mkxNuaB7Cnj2u+Fi76D0thcXx55/RGIY4eYRiVNIU4VwCXpGrHNLy5muLX1onmMrKioSP8CF++1Y5vdayqIoMn2G/L+YvfE+Ftyj6bi+Rbd0=
+	t=1726481338; cv=none; b=A2BANZvs9c8/AVg98w96G2sxZyFb5IjdKKFiOheZvW9NfalOX5bV9Gyu5yjnejS4pWMRk3KxEGzsbVTZ1fYvGbP/g0IG0gxLae9c7MXrYUD/fcGxhoTBOZVticCY/66cXKxvOdlpBTF2weTL7nfKc8jCyBdNn/Je033SI39snz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726481220; c=relaxed/simple;
-	bh=WKkLu9wfALhg/L0cGpegTCJTJzWhfFCyZsiBVX4rlmo=;
+	s=arc-20240116; t=1726481338; c=relaxed/simple;
+	bh=T8PPk/YjtiwccMrPvJSUH0/CkXxHzepMK8YfYya0uIY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pONLKl/M9C85ygCOjJNuYg55HPANUogZfmqPk8JDuk23nLk28ID1i8EqvfEm4oWDbeh/fD6hYpOTvcY93wK8ZCWLnCaJ8mpQWFIbr8752Z2ptUIF0a7+m5OjGzKxExSAkpD1BOBUkFTHxI9xanF2uuQKIIxUD60dtYp05sCUf+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEce7qQz; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KrTvdSbkT06o3UeTaiWEsQq00TAbEdDaRTJ5eCHJ6Da5HqVnk6GuL1pnuw4mebEC3ydz5QGF2XvZIibHg/LPp+hiZ1RcjoGWJ861JwpbvrJYxdYXhfvkb78TVBtpf82c/pkiRdpC1G9F31NSxubE06vhdBHSQYLcyudjRQS/8Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKCVaXHp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEce7qQz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BCECC4CEC4;
-	Mon, 16 Sep 2024 10:06:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKCVaXHp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D7CC4CEC7;
+	Mon, 16 Sep 2024 10:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726481220;
-	bh=WKkLu9wfALhg/L0cGpegTCJTJzWhfFCyZsiBVX4rlmo=;
+	s=k20201202; t=1726481338;
+	bh=T8PPk/YjtiwccMrPvJSUH0/CkXxHzepMK8YfYya0uIY=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=PEce7qQzDsH5xl2TAhS/mYdVc8rQwjANOC88fG9MYQxhNPOY2F2gSE8KMUflwzbjc
-	 nv3y9s7U+M/QI3DH0yUvWe++jqFgPd1jlGazXzhFOu+aGu9eco/oAzry2l2etA5F9t
-	 mTDr27MD8JpCRcx7HSvlffoCF+q+zFtGWsGB/sCZU3J0Fx2ngdXhg/QYqMwSANpH8c
-	 xz9UiLHwnJReI2hTRxi1QLQPJSq+7WcFR8p6iPGYk1wGQp0dCqxv0IQ6VRkFcgf/BI
-	 GUcgNjrwjn+kxGnqnotEbMdWOY0uG84KIdpcJlJQO5Y+bSXMXQ+sipIuPb+qM4NERx
-	 +HzQIiPu9xO0g==
-Message-ID: <b9bf19af-0c3c-4622-9124-a66d9df649b2@kernel.org>
-Date: Mon, 16 Sep 2024 12:06:52 +0200
+	b=OKCVaXHpyuFTiSIHNJfFNzkEYZ61+i5SfGrDGnyySHLsCQYclH0uge3MRD1nczVug
+	 hUje13rPUBrxTGSiV2p0sCQYgw5JmGqp1qMRUFQroQK7E3IVXBCMGTFOsY5gIq43DE
+	 BY91V4O+kcwF0V0eB08/GAGjrFYwyPFSIVjvDENrSX2F0XD3ST/vo7GKLwGcbQ1BA2
+	 L3gErmdmvVhKYPaDQVBbwaVrzicGH0z6dCghSduxJCHfN36Q7s61HUferH5G/Gsi7+
+	 9wCxRUkINNPACPB0dC7Bn5cz0Moh3FHvYjdagkyctsS84q/UQRHZrU8ZumRR9G2i0Y
+	 FT36aGYd/t+Dg==
+Message-ID: <9b356379-907c-4112-8e24-1810cfa40ef6@kernel.org>
+Date: Mon, 16 Sep 2024 12:08:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: Add AST2700 bindings
+Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: aspeed: support for AST2700
 To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
@@ -43,7 +43,7 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-aspeed@lists.ozlabs.org
 References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
- <20240916091039.3584505-3-ryan_chen@aspeedtech.com>
+ <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,33 +89,89 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240916091039.3584505-3-ryan_chen@aspeedtech.com>
+In-Reply-To: <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/09/2024 11:10, Ryan Chen wrote:
-> Add reset, clock dt bindings for AST2700.
+> Add compatible support for AST2700 clk, reset, pinctrl, silicon-id for AST2700 scu.
+
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
 > 
 > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 > ---
->  .../dt-bindings/clock/aspeed,ast2700-clk.h    | 163 ++++++++++++++++++
->  .../dt-bindings/reset/aspeed,ast2700-reset.h  | 124 +++++++++++++
->  2 files changed, 287 insertions(+)
-
-This is supposed to be part of the commit adding these bindings. You got
-this comment already, didn't you?
-
->  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
->  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
+>  .../devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-> new file mode 100644
-> index 000000000000..63021af3caf5
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> index 86ee69c0f45b..127a357051cd 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> @@ -9,6 +9,8 @@ title: Aspeed System Control Unit
+>  description:
+>    The Aspeed System Control Unit manages the global behaviour of the SoC,
+>    configuring elements such as clocks, pinmux, and reset.
+> +  In AST2700 SOC which has two soc connection, each soc have its own scu
+> +  register control, ast2700-scu0 for soc0, ast2700-scu1 for soc1.
+>  
+>  maintainers:
+>    - Joel Stanley <joel@jms.id.au>
+> @@ -21,6 +23,8 @@ properties:
+>            - aspeed,ast2400-scu
+>            - aspeed,ast2500-scu
+>            - aspeed,ast2600-scu
+> +          - aspeed,ast2700-scu0
+> +          - aspeed,ast2700-scu1
+>        - const: syscon
+>        - const: simple-mfd
+>  
+> @@ -30,10 +34,12 @@ properties:
+>    ranges: true
+>  
+>    '#address-cells':
+> -    const: 1
+> +    minimum: 1
+> +    maximum: 2
+>  
+>    '#size-cells':
+> -    const: 1
+> +    minimum: 1
+> +    maximum: 2
 
-Use compatible as filename.
+Why do the children have 64 bit addressing?
 
+>  
+>    '#clock-cells':
+>      const: 1
+> @@ -56,6 +62,8 @@ patternProperties:
+>              - aspeed,ast2400-pinctrl
+>              - aspeed,ast2500-pinctrl
+>              - aspeed,ast2600-pinctrl
+> +            - aspeed,ast2700-soc0-pinctrl
+> +            - aspeed,ast2700-soc1-pinctrl
+
+Are these devices different?
+
+Where is this binding documented (fully)? Provide link to lore patch in
+the changelog.
+
+>  
+>      required:
+>        - compatible
+> @@ -76,6 +84,7 @@ patternProperties:
+>                - aspeed,ast2400-silicon-id
+>                - aspeed,ast2500-silicon-id
+>                - aspeed,ast2600-silicon-id
+> +              - aspeed,ast2700-silicon-id
+
+This one is fine.
+
+>            - const: aspeed,silicon-id
+>  
+>        reg:
 
 Best regards,
 Krzysztof
