@@ -1,93 +1,122 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FE914B07A;
-	Mon, 16 Sep 2024 09:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F934965B;
+	Mon, 16 Sep 2024 10:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726480239; cv=none; b=ZardCDoHH4NzLAyXMAaRQiriyn9c4lSa7GAFK9fsZzohd+aWgYJN0XAvLW6h55lvB3XmT+oIAXUAfIDNemh22sIspA1Yis80WLC/+qcT9/76q9HLHzU1Q2isvpq/hWdMOUMPh5aDV/rmjRGq02MfLv9+I8pxl8SAjBUwt+xLfp8=
+	t=1726481220; cv=none; b=QqMsjMro88XMwuz6GfFD40i2d1ETMU09s0I74t/uE1aWijWcElpnPbkEgGg06w2mkxNuaB7Cnj2u+Fi76D0thcXx55/RGIY4eYRiVNIU4VwCXpGrHNLy5muLX1onmMrKioSP8CF++1Y5vdayqIoMn2G/L+YvfE+Ftyj6bi+Rbd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726480239; c=relaxed/simple;
-	bh=IMTQEf/JsEhNn9hxmAfyuprjfemrvmpeaN0K8J1Fyo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ttQ0D587mo/yPJtQcnZDxh9cDeh8FDDBEslgMBmmnl0p7Ba3Fl9Ybrj+YdyIxCb0xNmkGSj5bToTvTRzV+xqPc+GZfMpVsdceOS1pXYLq8mE3itIoDkRTHV0jkkC8ZrbiLC/q1Iws4fNOobMynSA9VmFmuRF5dbjax9+iUNi3Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BuNgnnO4; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1726481220; c=relaxed/simple;
+	bh=WKkLu9wfALhg/L0cGpegTCJTJzWhfFCyZsiBVX4rlmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pONLKl/M9C85ygCOjJNuYg55HPANUogZfmqPk8JDuk23nLk28ID1i8EqvfEm4oWDbeh/fD6hYpOTvcY93wK8ZCWLnCaJ8mpQWFIbr8752Z2ptUIF0a7+m5OjGzKxExSAkpD1BOBUkFTHxI9xanF2uuQKIIxUD60dtYp05sCUf+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEce7qQz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BuNgnnO4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726480238; x=1758016238;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=IMTQEf/JsEhNn9hxmAfyuprjfemrvmpeaN0K8J1Fyo4=;
-  b=BuNgnnO4ZMhjXnrUjWHIojSXKy7aZvRLa0sf/JV0PTq6D6xSg9Dh/xus
-   zTHFz/eQ/4D9z5tfEXOU4PZ/NTenF63xJZUeXmOTvs//X1L5w0tU2iIWs
-   56Sj5ta13cwUSgX3v3HVoEdKw9Z2Pb68G6ldC+8L6nnCe7fDGHH26mAzh
-   XjmIQexrgQn0eMMIkS4TOj5tQZJwjSMzrJxmiSo/C6LQJTx3chHWbfIfP
-   3FfwbRR9e0jV9Lx2t/MmaCgazK72rxKoWOK9c5SdMl3dSE3Y7tcoKtKjq
-   id2wZp/CE4DXKYTbr8UjIn/elt/8J16DDb3FF9mFJ5OQTDdXT5L19KByC
-   A==;
-X-CSE-ConnectionGUID: FMt8JCZwTJSUmtKKgkwdXA==
-X-CSE-MsgGUID: qpwBePRKSymtVYn7wrpYAg==
-X-IronPort-AV: E=Sophos;i="6.10,233,1719903600"; 
-   d="scan'208";a="199259965"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2024 02:50:35 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Sep 2024 02:50:19 -0700
-Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Sep 2024 02:50:17 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Mon, 16 Sep 2024 11:49:20 +0200
-Subject: [PATCH 2/4] clk: lan966x: make clk_names const char * const
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEce7qQz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BCECC4CEC4;
+	Mon, 16 Sep 2024 10:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726481220;
+	bh=WKkLu9wfALhg/L0cGpegTCJTJzWhfFCyZsiBVX4rlmo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=PEce7qQzDsH5xl2TAhS/mYdVc8rQwjANOC88fG9MYQxhNPOY2F2gSE8KMUflwzbjc
+	 nv3y9s7U+M/QI3DH0yUvWe++jqFgPd1jlGazXzhFOu+aGu9eco/oAzry2l2etA5F9t
+	 mTDr27MD8JpCRcx7HSvlffoCF+q+zFtGWsGB/sCZU3J0Fx2ngdXhg/QYqMwSANpH8c
+	 xz9UiLHwnJReI2hTRxi1QLQPJSq+7WcFR8p6iPGYk1wGQp0dCqxv0IQ6VRkFcgf/BI
+	 GUcgNjrwjn+kxGnqnotEbMdWOY0uG84KIdpcJlJQO5Y+bSXMXQ+sipIuPb+qM4NERx
+	 +HzQIiPu9xO0g==
+Message-ID: <b9bf19af-0c3c-4622-9124-a66d9df649b2@kernel.org>
+Date: Mon, 16 Sep 2024 12:06:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: Add AST2700 bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
+ <20240916091039.3584505-3-ryan_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240916091039.3584505-3-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240916-lan969x-clock-v1-2-0e150336074d@microchip.com>
-References: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
-In-Reply-To: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kavyasree Kotagiri
-	<kavyasree.kotagiri@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14-dev
 
-Change clk_names to const char * const to silence checkpatch in
-subsequent patches.
+On 16/09/2024 11:10, Ryan Chen wrote:
+> Add reset, clock dt bindings for AST2700.
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../dt-bindings/clock/aspeed,ast2700-clk.h    | 163 ++++++++++++++++++
+>  .../dt-bindings/reset/aspeed,ast2700-reset.h  | 124 +++++++++++++
+>  2 files changed, 287 insertions(+)
 
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
----
- drivers/clk/clk-lan966x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is supposed to be part of the commit adding these bindings. You got
+this comment already, didn't you?
 
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-index 870fd7df50c1..4dbd4eb0e507 100644
---- a/drivers/clk/clk-lan966x.c
-+++ b/drivers/clk/clk-lan966x.c
-@@ -24,7 +24,7 @@
- 
- #define DIV_MAX		255
- 
--static const char *clk_names[N_CLOCKS] = {
-+static const char * const clk_names[N_CLOCKS] = {
- 	"qspi0", "qspi1", "qspi2", "sdmmc0",
- 	"pi", "mcan0", "mcan1", "flexcom0",
- 	"flexcom1", "flexcom2", "flexcom3",
+>  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
+> 
+> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+> new file mode 100644
+> index 000000000000..63021af3caf5
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
 
--- 
-2.34.1
+Use compatible as filename.
+
+
+Best regards,
+Krzysztof
 
