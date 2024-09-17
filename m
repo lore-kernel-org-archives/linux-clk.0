@@ -1,126 +1,99 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128DB14D444;
-	Tue, 17 Sep 2024 13:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C6B4C66;
+	Tue, 17 Sep 2024 13:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726578690; cv=none; b=DruKSpR0fjLVlhtjchFB2fmqusHsZFrGMd04SUS+GQ9BcVUri9S1Sf9oW72McjvSodRzxpo4oQZCnhj/BuWZcgnENi59Xl58XLkebY7oKRt3OYVk98RTf7ESnVZgcaQvpl2rp9/yeMZhQPCvFKCdlQ2ngy4K8X4GlGt7C9qhjyw=
+	t=1726579380; cv=none; b=SSlVKAHhO8rvKT3iOJwcyI1TkTaNLEAH3vZ7SSnKImVKlK5KsLSGZDbjDEyKT2tXyfsPj+cvWdpdAbcox1R6A2FpjIjqe7TgI7vIW3S+p3VagaBEFMp0HtLAnz+8FXIMZz1DIbikR13HeYvGGqKPAzzc+B/0wrKFyOw2io8xG0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726578690; c=relaxed/simple;
-	bh=6Ke2LO7s4ZzmToKebEatmGWtotLu0wOhxrNMZgnJtPM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JEZY3okqEpaN35VUS7FZ/yaofD5l4KP50T/nXa4Qe2Xn9V1zJWsP2PfNii5Bu8w2lo0uP5R7ESqKZxMQgkWeOYVMW0FMmVnkqh2Rsy/CxysJHl0B7hZ0tQQMeAm5kOwun1vf2Eh8zmbcXumKf/cAmmqVhNg5pAa2wn+mzCOL5co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QdiBXc6b; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QdiBXc6b"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726578637; x=1727183437; i=markus.elfring@web.de;
-	bh=J6JjhpLStxd4n+dG1pBrTv7bWU/OYj2EwD1A9TDg+Uo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QdiBXc6bBeQKfjStchkZf+tdKyVhFizxZlMo17Kmn9/mDeCUp+4EersR6DLPnfjx
-	 0TCEuMjNlN+eSx4Ux3i3B58va+a7Ejc2259jXqIPQXZogNxv8VCAq8QdQlFu1TpFz
-	 hD/wJD6RRzs8yImVIl76WKzKTYJW8zNsU5voJWZonYnb1DUHv+B+UjCNMGvZ4aa5n
-	 ZhoG5LdjjWnZojIyX+qmwC6gKjXFj9y7XMsvX9VcWzlEPY5ZCkXMSWBQyvyS9OAdD
-	 /f80A6T3Z7z22Z6wBlNkBVsTYdH20wswktEvj4qo8ZO6SuXWgS69IA8DMKRtSqQuv
-	 G+0Lr4p8UHrAH5QHMA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1rPI-1soL363S2q-00EsWt; Tue, 17
- Sep 2024 15:10:36 +0200
-Message-ID: <79d31fe5-6ec1-4e40-be5f-85e1f61811c1@web.de>
-Date: Tue, 17 Sep 2024 15:10:32 +0200
+	s=arc-20240116; t=1726579380; c=relaxed/simple;
+	bh=sjod+E4bj0zjVaCFVHpuJ7kBig2rZ+x3vecW1/4QbF0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SiCQzldyaOtRTYdOQmLyjdLAHSGUnI0KgICLT/iOyew0lHh5E5K3i+E+86Qg1RQEccHCMyaOpiXczwO6+htr0uypV4k4XIFr76uLgeM0CTj/EQxnxDa3ue/gS0akzildcyqH871Tuuixt/OxRxFJEVrgkCUQWSFq+6bTV4pK+/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.109] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <adiupina@astralinux.ru>)
+	id 1sqY8g-00D6mY-No; Tue, 17 Sep 2024 16:21:06 +0300
+Received: from rbta-msk-lt-302690.astralinux.ru (unknown [10.198.39.98])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4X7Mrt42DFzkXGg;
+	Tue, 17 Sep 2024 16:22:22 +0300 (MSK)
+From: Alexandra Diupina <adiupina@astralinux.ru>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Alexandra Diupina <adiupina@astralinux.ru>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v3] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
+Date: Tue, 17 Sep 2024 16:22:01 +0300
+Message-Id: <20240917132201.17513-1-adiupina@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <82162974-00b5-44c9-bbb8-701e6c871bb0@lunn.ch>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-clk@vger.kernel.org, David Lechner <david@lechnology.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Nishka Dasgupta <nishkadg.linux@gmail.com>, Stephen Boyd <sboyd@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: davinci: Use common error handling code in
- of_davinci_pll_init()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WOVzW7HcSsZRvtHPLh/BFCBgt2D5JVmVJu8CtJercp308RlgUaD
- InUVNi+WfMaTRaGx2Lls9emimQOZRpOgoi/OxQbj+VlC+Frt+/c5LxA8yY+O6xxpuIwwrSH
- M79qZG65N2HhX+ZTf8JvBaFwm6fSM188aKSOOeDT3p4xdmxskLXxORkVVXNbDa4bkcr/e69
- E47GHZAnv4xzhIub1fZ7A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yuBg0OJDkpA=;NVABBst3JDN/DTznxHGOmRkwHbE
- 1Ych8FIXAMu3Av8IH/n/WR4tQtVhHlzpoUuhCjfgd1GHy1mS+sthPVBeGwZ7Jf498wSsW3hl4
- sNTnhPcT+utXJsyzsAU2s4etVCVmlZ6eEnza1yzs9g6Cwuv5ZTQ6KITM0TWWKOcJZIDlFc9qf
- x2BQK7yt/HduNmkTGPoJmfU/RY3ZY57U4ITWKYSJxf+UuzCS4T+Pi0UsfCaCSt2z0eaLyZFX3
- SEyiSEDiDUtIcVTvDbHWJgCUx38XHxlY0yEB+h6W7/J7QS6E0socqYDq2IjjyICZC4XqR06cm
- a8GdaMOlVsK8aLY4c6RsCdmA7G1FzOBAthgx+ybUEdhAXEH9M0kXS/rUHomsiG3ktZ0d2mht/
- R8+z/JueY3V1SvJ0yZy/KENC7vutrePmP5FMo3lcuw87bI79431zV4vRWLRX25nfbF7cd4Lht
- ior4K6WysY3NVxulgE7SkbzEJp/AgbkYiZ/VCGvmtap144VbMIPljv0z+Q7WVmVdKNILRLLjH
- 9ckTt5/BvsBmjJQim5jrEJZHSSESphx7w1HXhjVyvbl4Im6XnyQMnaApob+EVsvgR2OOVLfDh
- dFdRsscPkJ+pydX270RVdQ8ZboLoCS3bLYM2OAhSC+vFmSGg/XUpxsBKaxAVSrDPEB7vpXnXj
- Z40hnZi09qlZSsl4omRYEyG1+S8nyNhXBwVbuQoaNeNm8WWySxKp+aRxEJzEmAMDBEFK0mwtB
- sDM9KavAoqljR579t9LwKVeJGg3nIF1EUlNcje2U9PuEhwhkuYlJ9jJXfsSaH19XeECNWcPX8
- 3FaZJ5gUPn2+dpGF0b07cdZw==
+Content-Transfer-Encoding: 8bit
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigrnhgurhgrucffihhuphhinhgruceorgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeefkedufedvkeffuedtgfdugeeutdegvdffffejfffgleffieduhfejvdelffdvudenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrfeelrdelkeenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdqfedtvdeiledtrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrdduleekrdefledrleekmeegudegheeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgvsggrshhtihgrnhdrhhgvshhsvghlsggrrhhthhesghhmrghilhdrtghomhdprhgtphhtth
+ hopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1726239283#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12178289, Updated: 2024-Sep-16 05:03:55 UTC]
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Sep 2024 15:00:53 +0200
+get_div() may return zero, so it is necessary to check
+before calling DIV_ROUND_UP_ULL().
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function implementation.
+Return value of get_div() depends on reg1, reg2, shift1, shift2
+fields of clk_double_div structure which are filled using the
+PERIPH_DOUBLEDIV macro. This macro is called from the
+PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
 
-This issue was detected by using the Coccinelle software.
+It is not known exactly what values can be contained in the registers
+at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
+div can be zero. Print an error message and return 0 in this case.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/davinci/pll.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 5bbbb3a66477..eb79424f216d 100644
-=2D-- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -777,16 +777,13 @@ int of_davinci_pll_init(struct device *dev, struct d=
-evice_node *node,
- 		int i;
+Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
+Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+---
+v3: fix indentation
+v2: added explanations to the commit message and printing 
+of an error message when div==0
+ drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- 		clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
--		if (!clk_data) {
--			of_node_put(child);
--			return -ENOMEM;
--		}
-+		if (!clk_data)
-+			goto put_node;
-
- 		clks =3D kmalloc_array(n_clks, sizeof(*clks), GFP_KERNEL);
- 		if (!clks) {
- 			kfree(clk_data);
--			of_node_put(child);
--			return -ENOMEM;
-+			goto put_node;
- 		}
-
- 		clk_data->clks =3D clks;
-@@ -838,6 +835,10 @@ int of_davinci_pll_init(struct device *dev, struct de=
-vice_node *node,
- 	of_node_put(child);
-
- 	return 0;
-+
-+put_node:
-+	of_node_put(child);
-+	return -ENOMEM;
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 8701a58a5804..b32c6d4d7ee5 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+ 	div = get_div(double_div->reg1, double_div->shift1);
+ 	div *= get_div(double_div->reg2, double_div->shift2);
+ 
+-	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
++	if (!div) {
++		pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
++		return 0;
++	} else {
++		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
++	}
  }
-
- static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct dev=
-ice *dev)
-=2D-
-2.46.0
+ 
+ static const struct clk_ops clk_double_div_ops = {
+-- 
+2.30.2
 
