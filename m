@@ -1,39 +1,39 @@
 Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C9B2BAEB;
-	Tue, 17 Sep 2024 12:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128DB14D444;
+	Tue, 17 Sep 2024 13:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726576526; cv=none; b=VX7baO8+9kSUqLEKXUONYrLwopt5w96holvk/BNPm9TyD6SN8TIT8eTwufWASIw/vKDyOKVWoQANJL+iCb29/7eU1YTZlBk4Y7fuqYrYTYgNNrWm8Xs3dztgIzWHSHX7VzmJiQkih4wXJlOeFK9RPno3fcwapnYvQzlhGDzkjqI=
+	t=1726578690; cv=none; b=DruKSpR0fjLVlhtjchFB2fmqusHsZFrGMd04SUS+GQ9BcVUri9S1Sf9oW72McjvSodRzxpo4oQZCnhj/BuWZcgnENi59Xl58XLkebY7oKRt3OYVk98RTf7ESnVZgcaQvpl2rp9/yeMZhQPCvFKCdlQ2ngy4K8X4GlGt7C9qhjyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726576526; c=relaxed/simple;
-	bh=enTnHquxyJZPMPtmxWrd5Pmmnrbw9m85b7BmxIajlOM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rOTJJAhIkcmRTXQ6mYM6XlotlHbyaLRBExndQlbXOGIlthqfTbzl2VuBESSNJ8Ypvih3hr3v0vAglHnEIuadJlMDxufD02tLus0U1geAr5qEm8I/gTTAtha55QS0H1Ws9vq2SmHG3LjOje3jxZsPbJtPXrveLXYDs5c7iS3Hqzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TzwY6rVs; arc=none smtp.client-ip=212.227.15.3
+	s=arc-20240116; t=1726578690; c=relaxed/simple;
+	bh=6Ke2LO7s4ZzmToKebEatmGWtotLu0wOhxrNMZgnJtPM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JEZY3okqEpaN35VUS7FZ/yaofD5l4KP50T/nXa4Qe2Xn9V1zJWsP2PfNii5Bu8w2lo0uP5R7ESqKZxMQgkWeOYVMW0FMmVnkqh2Rsy/CxysJHl0B7hZ0tQQMeAm5kOwun1vf2Eh8zmbcXumKf/cAmmqVhNg5pAa2wn+mzCOL5co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QdiBXc6b; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TzwY6rVs"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QdiBXc6b"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726576495; x=1727181295; i=markus.elfring@web.de;
-	bh=AR+2QbPAYHmh/nYYxodXBMvQhRocE+1jEAfAlV44MUI=;
+	s=s29768273; t=1726578637; x=1727183437; i=markus.elfring@web.de;
+	bh=J6JjhpLStxd4n+dG1pBrTv7bWU/OYj2EwD1A9TDg+Uo=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=TzwY6rVsElAo9g99wh48sBhvrXItzrzO26bekGfAKxxQP5HHwyp3eR7Th7lPXHR0
-	 TUzpsENv3Wx518lXyFlQKBrlPyfkeJPe2tnmwHDBDPlgGV7jUJ4bGLzA22suQ4Etj
-	 F7U0nRtINSWMPfoqkMTKLsE0BpFUJl4V7jSWc/cLJ1UvhD0KDYZwPFS0rPSfseZkC
-	 EnmWFkvYiOA8S648oRQ4VmsNjn6YgSta0Vuq2N2+iSrzAZ42UwIjM7oPBPyjp11yq
-	 GVkysc/xgb5NHV2NsWOX0mMi34N4AStcfrykgcRq+od4LeXUyrVwuMgnK1evKYshR
-	 yY9s6HrT+szn3duRgA==
+	b=QdiBXc6bBeQKfjStchkZf+tdKyVhFizxZlMo17Kmn9/mDeCUp+4EersR6DLPnfjx
+	 0TCEuMjNlN+eSx4Ux3i3B58va+a7Ejc2259jXqIPQXZogNxv8VCAq8QdQlFu1TpFz
+	 hD/wJD6RRzs8yImVIl76WKzKTYJW8zNsU5voJWZonYnb1DUHv+B+UjCNMGvZ4aa5n
+	 ZhoG5LdjjWnZojIyX+qmwC6gKjXFj9y7XMsvX9VcWzlEPY5ZCkXMSWBQyvyS9OAdD
+	 /f80A6T3Z7z22Z6wBlNkBVsTYdH20wswktEvj4qo8ZO6SuXWgS69IA8DMKRtSqQuv
+	 G+0Lr4p8UHrAH5QHMA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9qgz-1svjx41pkj-00BpVp; Tue, 17
- Sep 2024 14:34:55 +0200
-Message-ID: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
-Date: Tue, 17 Sep 2024 14:34:54 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1rPI-1soL363S2q-00EsWt; Tue, 17
+ Sep 2024 15:10:36 +0200
+Message-ID: <79d31fe5-6ec1-4e40-be5f-85e1f61811c1@web.de>
+Date: Tue, 17 Sep 2024 15:10:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,39 +41,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+To: linux-clk@vger.kernel.org, David Lechner <david@lechnology.com>,
  Michael Turquette <mturquette@baylibre.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Stephen Boyd <sboyd@kernel.org>
+ Nishka Dasgupta <nishkadg.linux@gmail.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: at91: pmc: Use common error handling code in
- pmc_register_ops()
+Subject: [PATCH] clk: davinci: Use common error handling code in
+ of_davinci_pll_init()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PZWjTGhf79w7fR4r4mZCkzhToXuovw4nJYNcXGTM43TaQallncl
- 7PldTylJyEVnrdFvnOsGhrxgYx70UAN0EfVDwccCpkt8AhlmNnDQbmJero/vz0SrUZasyqg
- zD6mMb00eT80nwDLVdYZ5ioTnH+M5vQj0GLbaJQcLKObPzcqNiR5VUJDUCC9YxQYkx/Ezh3
- ghCrMDRpWqAl6i8pOohHQ==
+X-Provags-ID: V03:K1:WOVzW7HcSsZRvtHPLh/BFCBgt2D5JVmVJu8CtJercp308RlgUaD
+ InUVNi+WfMaTRaGx2Lls9emimQOZRpOgoi/OxQbj+VlC+Frt+/c5LxA8yY+O6xxpuIwwrSH
+ M79qZG65N2HhX+ZTf8JvBaFwm6fSM188aKSOOeDT3p4xdmxskLXxORkVVXNbDa4bkcr/e69
+ E47GHZAnv4xzhIub1fZ7A==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7hq542Msv1M=;uoDC2VziJexpsDnW81Ls1kOivCP
- KYyN3yuQJECp02zXqW2XUhK3o59auhNUEwGCnGDOIeb6+3LOM0B6Diw1L/onEFHcRz0mn9o0r
- 1nZF7rM4DKEaB9Mb5wBSzehybSbvqJ9Mj0ALXURL1zUnw0ZT7cW5gd2C1nn784eJAmXnTExVW
- x+ddmAwatzO6OUx7TeySjCqO8cUDCC5Bed/woFe2b/xM+w4r2HcFkdLaP+a6oxk5OEDzRZyje
- 6UVNJZBEI8tdMyMjKFELWN+lDhZt3bH5mwDepEEBTEonZAyw6NoK2NLtzcZ1+kMZfhJclBp/Q
- iER9fCTN3beZKWTk0gkst/30Q8h9nxKTljJyvgHuh3P/fuBiGplskUqcPBJSknbQFlt8ZafNn
- hrCJFCX6IlM3Gfbse9/bnhfjZKcNpcBW/bUwHDfmdDJZ+bcsHtJ9E6UNKL+cjkPKKhcq/LYR1
- pHzDPsteD5lnmx/uEwPHL+cYHkJHi2aaEXv20RiKF6TT8lQUl0Y9cCGvsfNtuIVd/RjAa+c6r
- mZIVqpzAEeggqd+lzZVUE3IT/Paz7ShWLY7e0jHV2IMDNBGFLKnK36dfc4QH1MqDMnntCFNPX
- oCk4e+JJa7yx4pYcgwXhviAoHxY/QGW88umN/5sg/HpP4gW475q+iYOxfYh44sSWKMGbGQr02
- 7epZd9novJV+nCq/5kJb8mEu1iEXYV2vOqB/8u710wyxk298kef8DtN79MI1k91jaiYyJrcw+
- gXavI6847POddfiRm15Yxy+8fwsBLqKD9xuuKMyNeMI+gUOySG4JpqMJYvJZh8OMK7vbcNSfj
- p3GMHe/yaLG5ERxqsRJt5aiw==
+UI-OutboundReport: notjunk:1;M01:P0:yuBg0OJDkpA=;NVABBst3JDN/DTznxHGOmRkwHbE
+ 1Ych8FIXAMu3Av8IH/n/WR4tQtVhHlzpoUuhCjfgd1GHy1mS+sthPVBeGwZ7Jf498wSsW3hl4
+ sNTnhPcT+utXJsyzsAU2s4etVCVmlZ6eEnza1yzs9g6Cwuv5ZTQ6KITM0TWWKOcJZIDlFc9qf
+ x2BQK7yt/HduNmkTGPoJmfU/RY3ZY57U4ITWKYSJxf+UuzCS4T+Pi0UsfCaCSt2z0eaLyZFX3
+ SEyiSEDiDUtIcVTvDbHWJgCUx38XHxlY0yEB+h6W7/J7QS6E0socqYDq2IjjyICZC4XqR06cm
+ a8GdaMOlVsK8aLY4c6RsCdmA7G1FzOBAthgx+ybUEdhAXEH9M0kXS/rUHomsiG3ktZ0d2mht/
+ R8+z/JueY3V1SvJ0yZy/KENC7vutrePmP5FMo3lcuw87bI79431zV4vRWLRX25nfbF7cd4Lht
+ ior4K6WysY3NVxulgE7SkbzEJp/AgbkYiZ/VCGvmtap144VbMIPljv0z+Q7WVmVdKNILRLLjH
+ 9ckTt5/BvsBmjJQim5jrEJZHSSESphx7w1HXhjVyvbl4Im6XnyQMnaApob+EVsvgR2OOVLfDh
+ dFdRsscPkJ+pydX270RVdQ8ZboLoCS3bLYM2OAhSC+vFmSGg/XUpxsBKaxAVSrDPEB7vpXnXj
+ Z40hnZi09qlZSsl4omRYEyG1+S8nyNhXBwVbuQoaNeNm8WWySxKp+aRxEJzEmAMDBEFK0mwtB
+ sDM9KavAoqljR579t9LwKVeJGg3nIF1EUlNcje2U9PuEhwhkuYlJ9jJXfsSaH19XeECNWcPX8
+ 3FaZJ5gUPn2+dpGF0b07cdZw==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Sep 2024 14:28:22 +0200
+Date: Tue, 17 Sep 2024 15:00:53 +0200
 
 Add a jump target so that a bit of exception handling can be better reused
 at the end of this function implementation.
@@ -82,52 +80,47 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/clk/at91/pmc.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/clk/davinci/pll.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 5aa9c1f1c886..040b70e1ffbc 100644
-=2D-- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -162,20 +162,18 @@ static int __init pmc_register_ops(void)
- 	if (!np)
- 		return -ENODEV;
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 5bbbb3a66477..eb79424f216d 100644
+=2D-- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -777,16 +777,13 @@ int of_davinci_pll_init(struct device *dev, struct d=
+evice_node *node,
+ 		int i;
 
--	if (!of_device_is_available(np)) {
--		of_node_put(np);
--		return -ENODEV;
--	}
-+	if (!of_device_is_available(np))
-+		goto put_node;
-+
- 	of_node_put(np);
+ 		clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+-		if (!clk_data) {
+-			of_node_put(child);
+-			return -ENOMEM;
+-		}
++		if (!clk_data)
++			goto put_node;
 
- 	np =3D of_find_compatible_node(NULL, NULL, "atmel,sama5d2-securam");
- 	if (!np)
- 		return -ENODEV;
+ 		clks =3D kmalloc_array(n_clks, sizeof(*clks), GFP_KERNEL);
+ 		if (!clks) {
+ 			kfree(clk_data);
+-			of_node_put(child);
+-			return -ENOMEM;
++			goto put_node;
+ 		}
 
--	if (!of_device_is_available(np)) {
--		of_node_put(np);
--		return -ENODEV;
--	}
-+	if (!of_device_is_available(np))
-+		goto put_node;
-+
- 	of_node_put(np);
-
- 	at91_pmc_backup_suspend =3D of_iomap(np, 0);
-@@ -187,6 +185,10 @@ static int __init pmc_register_ops(void)
- 	register_syscore_ops(&pmc_syscore_ops);
+ 		clk_data->clks =3D clks;
+@@ -838,6 +835,10 @@ int of_davinci_pll_init(struct device *dev, struct de=
+vice_node *node,
+ 	of_node_put(child);
 
  	return 0;
 +
 +put_node:
-+	of_node_put(np);
-+	return -ENODEV;
++	of_node_put(child);
++	return -ENOMEM;
  }
- /* This has to happen before arch_initcall because of the tcb_clksrc driv=
-er */
- postcore_initcall(pmc_register_ops);
+
+ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct dev=
+ice *dev)
 =2D-
 2.46.0
 
