@@ -1,127 +1,133 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ED31714D8
-	for <linux-clk@vger.kernel.org>; Tue, 17 Sep 2024 10:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C9B2BAEB;
+	Tue, 17 Sep 2024 12:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726569219; cv=none; b=J4UEkqbjwghofHInXP2uCGWR6uO1py1Q8jIxmKguVQOf8KXzlCnX5WkFC6iuy4PzzxSq87y9O12l1es3jsvv4i3kM+fbGRjWWGpNGfQzjWOEmDAK+ZUqVEOZr42rwPLEojYbBD1OpXh3rnYr8KdbgiNDKmdMp+Ul7k9nS6paWdU=
+	t=1726576526; cv=none; b=VX7baO8+9kSUqLEKXUONYrLwopt5w96holvk/BNPm9TyD6SN8TIT8eTwufWASIw/vKDyOKVWoQANJL+iCb29/7eU1YTZlBk4Y7fuqYrYTYgNNrWm8Xs3dztgIzWHSHX7VzmJiQkih4wXJlOeFK9RPno3fcwapnYvQzlhGDzkjqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726569219; c=relaxed/simple;
-	bh=wFmEbMkEzlPbuPfC3c+tamOfbSHUUHjpQhPX+5Sufk4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=FM0zpCxVMYgagvgnCVM7+stBXsHRTAxNmiZ6fq9NZifj2RmxCuY+afK3Rhva8MJ8Yxe5FibSJjaQptz9lFLwSizqdq3daJadfM2CZ3Vr53RVFcdI2ZrUcxRVnHeVFLV626RtTOm/vCbg2uiPrk4cYJpW4lumoOJoBLygytn5n1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LAijLutj; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1726576526; c=relaxed/simple;
+	bh=enTnHquxyJZPMPtmxWrd5Pmmnrbw9m85b7BmxIajlOM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rOTJJAhIkcmRTXQ6mYM6XlotlHbyaLRBExndQlbXOGIlthqfTbzl2VuBESSNJ8Ypvih3hr3v0vAglHnEIuadJlMDxufD02tLus0U1geAr5qEm8I/gTTAtha55QS0H1Ws9vq2SmHG3LjOje3jxZsPbJtPXrveLXYDs5c7iS3Hqzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TzwY6rVs; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LAijLutj"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240917103336epoutp0320ba96fd0974994bc30f8a6eaa90d3e3~2AY3vd_x42195521955epoutp03x
-	for <linux-clk@vger.kernel.org>; Tue, 17 Sep 2024 10:33:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240917103336epoutp0320ba96fd0974994bc30f8a6eaa90d3e3~2AY3vd_x42195521955epoutp03x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726569216;
-	bh=Z8XYZZkTSZ22gWjKptOQjy8umR+ZxclxkelN6v3Qikw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=LAijLutjLXKR8DViUUoLkZ9vv/wAv2GvnpFo9LSsC7yM/4D0xwYWtw5hE1PQR+o98
-	 P9DPovB8ruPzXzsof0LkJSWstKm6hNwyjHE1+6ZKOgeZIhedqaYA7KZAjp2dlKOjZy
-	 1tijW4qqp2Q0+dAIy5lr4GOVc3ZY2axxtf0j88So=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240917103335epcas5p2cf85f5a01fc6bf3f89680578a5eeb20e~2AY3NwuEy0999909999epcas5p2K;
-	Tue, 17 Sep 2024 10:33:35 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4X7J6648ggz4x9Q1; Tue, 17 Sep
-	2024 10:33:34 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4A.62.09642.EFA59E66; Tue, 17 Sep 2024 19:33:34 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240917094449epcas5p37c2593fe8f181d6b19a9a1b290488186~1-uSGk5B40143801438epcas5p3f;
-	Tue, 17 Sep 2024 09:44:49 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240917094449epsmtrp1bb162bc53ff618ec8adf7de9ef6a63a5~1-uSFyhsc2430324303epsmtrp1C;
-	Tue, 17 Sep 2024 09:44:49 +0000 (GMT)
-X-AuditID: b6c32a4b-613ff700000025aa-8c-66e95afe8497
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FD.DE.08456.19F49E66; Tue, 17 Sep 2024 18:44:49 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240917094447epsmtip154016eeee7cee221e30b04bc64588fbc~1-uQCUFtP2146621466epsmtip1S;
-	Tue, 17 Sep 2024 09:44:47 +0000 (GMT)
-From: Inbaraj E <inbaraj.e@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com, Inbaraj E
-	<inbaraj.e@samsung.com>
-Subject: [PATCH 0/2] clk: samsung: remove number of clocks from bindings
-Date: Tue, 17 Sep 2024 15:13:53 +0530
-Message-Id: <20240917094355.37887-1-inbaraj.e@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsWy7bCmlu6/qJdpBrMvyFg8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvFzQM7mSzu/pnEZnH+/AZ2i48991gtLu+aw2Yx4/w+JouLp1wtFm39wm7x
-	f88OdovDb9pZLf5d28jiwO/x/kYru8emVZ1sHn1bVjF6fN4kF8ASlW2TkZqYklqkkJqXnJ+S
-	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
-	tCRVISO/uMRWKbUgJafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y8uip8wFm5krtj/cyd7A
-	eJWpi5GTQ0LAROLLwr8sXYxcHEICuxklrj0/zAjhfGKU+NO0mRnC+cYosfTbeXaYlovbbkK1
-	7GWUeH76NCuE08okMeXQFhaQKjYBdYkN3d/ZQBIiAmuYJFbPPsEKkmAWCJc4N/0imC0s4CHR
-	83EZG4jNIqAqsfrRLbCreAWsJJY/2cQCsU5eYvWGA2B3SAjcY5fY9nUWI0TCRWLd+SusELaw
-	xKvjW6Duk5J42d8GZftI7J/zC6o+Q+LY9uVQ9fYSB67MAVrAAXSQpsT6XfoQYVmJqafWMUHc
-	ySfR+/sJNJR4JXbMg7GVJWYeuc8GYUtK7Ly8E+pOD4mNlzvAxgsJxEpcnXecbQKj7CyEDQsY
-	GVcxSqYWFOempxabFhjnpZbDoyo5P3cTIzgFannvYHz04IPeIUYmDsZDjBIczEoivLa/n6YJ
-	8aYkVlalFuXHF5XmpBYfYjQFhtlEZinR5HxgEs4riTc0sTQwMTMzM7E0NjNUEud93To3RUgg
-	PbEkNTs1tSC1CKaPiYNTqoGpWU/vHm+88WeBO0u966Zyi61MXc22SnWfVnvs0o/9fzgcpbwq
-	5VXWRz/4HayomHfOsW2b3c1TPyTVH103yyy8uWVD0v+SDxbrGhVsGAsYF0p2/ipyXLwh7dKc
-	ojV/I34lxVzvPCW5uJup+8flYxeYDvzumGlWoHunf5vzK8dzF/dwlHNavEz0+/8qvHWflbCD
-	/fFP6UdN9itvZGA8tuD4YdWZYSX3v7z4fcB01saZaXP+X+nYMPm2ZcbW1N1WV/UeX127qCdI
-	LfMZa+svkfDd/5J9xXiUXzFEWYR4zTZuWjUnrScpedLNFc3Fv74umdKjMru9PfPm9r2801yn
-	P16w91pjSNS55sgGLe12r0lWSizFGYmGWsxFxYkAlAW5SQoEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrELMWRmVeSWpSXmKPExsWy7bCSnO5E/5dpBsfOKVg8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvFzQM7mSzu/pnEZnH+/AZ2i48991gtLu+aw2Yx4/w+JouLp1wtFm39wm7x
-	f88OdovDb9pZLf5d28jiwO/x/kYru8emVZ1sHn1bVjF6fN4kF8ASxWWTkpqTWZZapG+XwJWx
-	ZdFT5oLNzBXbH+5kb2C8ytTFyMkhIWAicXHbTZYuRi4OIYHdjBKfZ0yFSkhKzP49nR3CFpZY
-	+e85O0RRM5PE0msdbCAJNgF1iQ3d39lAEiICu5gkpi/ezgiSYBaIlPjRvhWsW1jAQ6Ln4zKw
-	BhYBVYnVj26BbeAVsJJY/mQTC8QGeYnVGw4wT2DkWcDIsIpRMrWgODc9t9iwwCgvtVyvODG3
-	uDQvXS85P3cTIzgYtbR2MO5Z9UHvECMTB+MhRgkOZiURXtvfT9OEeFMSK6tSi/Lji0pzUosP
-	MUpzsCiJ83573ZsiJJCeWJKanZpakFoEk2Xi4JRqYOo99LAnW1DwS07rxefZ65NdTGSvBzRp
-	7VuStCF7Xc6UD6Vn8wWfHnC9d8+jYqO0/Zyee5V6jIuOWnMzmTQZrkp4p8S3JIYj/OCibrnH
-	5cGz1wpyXl1y2iHoY+gR99P/nYIu9TKdm1HpPyEiP71dfYa+ZtxZxY11LyK4zr8MOF0rszsg
-	gfN0ru6x2IREhffPVtonl39RK7uzbN79sxdjT3PUMsUde1Kqqeq6TFBd5plmzUH+2SuEK1+Z
-	mKx+osKu+bKHWSGl5tHee/Nm35m97PXkK5Eleip3nj7s/M5W6bqkaXX3J4HlHHqLZqblWHzk
-	fvm4yiLpQ3tmzQcz1UXKlg6zJr4wmvLplEqHn0eTjBJLcUaioRZzUXEiAMiCGxq1AgAA
-X-CMS-MailID: 20240917094449epcas5p37c2593fe8f181d6b19a9a1b290488186
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240917094449epcas5p37c2593fe8f181d6b19a9a1b290488186
-References: <CGME20240917094449epcas5p37c2593fe8f181d6b19a9a1b290488186@epcas5p3.samsung.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TzwY6rVs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726576495; x=1727181295; i=markus.elfring@web.de;
+	bh=AR+2QbPAYHmh/nYYxodXBMvQhRocE+1jEAfAlV44MUI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TzwY6rVsElAo9g99wh48sBhvrXItzrzO26bekGfAKxxQP5HHwyp3eR7Th7lPXHR0
+	 TUzpsENv3Wx518lXyFlQKBrlPyfkeJPe2tnmwHDBDPlgGV7jUJ4bGLzA22suQ4Etj
+	 F7U0nRtINSWMPfoqkMTKLsE0BpFUJl4V7jSWc/cLJ1UvhD0KDYZwPFS0rPSfseZkC
+	 EnmWFkvYiOA8S648oRQ4VmsNjn6YgSta0Vuq2N2+iSrzAZ42UwIjM7oPBPyjp11yq
+	 GVkysc/xgb5NHV2NsWOX0mMi34N4AStcfrykgcRq+od4LeXUyrVwuMgnK1evKYshR
+	 yY9s6HrT+szn3duRgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9qgz-1svjx41pkj-00BpVp; Tue, 17
+ Sep 2024 14:34:55 +0200
+Message-ID: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
+Date: Tue, 17 Sep 2024 14:34:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] clk: at91: pmc: Use common error handling code in
+ pmc_register_ops()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PZWjTGhf79w7fR4r4mZCkzhToXuovw4nJYNcXGTM43TaQallncl
+ 7PldTylJyEVnrdFvnOsGhrxgYx70UAN0EfVDwccCpkt8AhlmNnDQbmJero/vz0SrUZasyqg
+ zD6mMb00eT80nwDLVdYZ5ioTnH+M5vQj0GLbaJQcLKObPzcqNiR5VUJDUCC9YxQYkx/Ezh3
+ ghCrMDRpWqAl6i8pOohHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7hq542Msv1M=;uoDC2VziJexpsDnW81Ls1kOivCP
+ KYyN3yuQJECp02zXqW2XUhK3o59auhNUEwGCnGDOIeb6+3LOM0B6Diw1L/onEFHcRz0mn9o0r
+ 1nZF7rM4DKEaB9Mb5wBSzehybSbvqJ9Mj0ALXURL1zUnw0ZT7cW5gd2C1nn784eJAmXnTExVW
+ x+ddmAwatzO6OUx7TeySjCqO8cUDCC5Bed/woFe2b/xM+w4r2HcFkdLaP+a6oxk5OEDzRZyje
+ 6UVNJZBEI8tdMyMjKFELWN+lDhZt3bH5mwDepEEBTEonZAyw6NoK2NLtzcZ1+kMZfhJclBp/Q
+ iER9fCTN3beZKWTk0gkst/30Q8h9nxKTljJyvgHuh3P/fuBiGplskUqcPBJSknbQFlt8ZafNn
+ hrCJFCX6IlM3Gfbse9/bnhfjZKcNpcBW/bUwHDfmdDJZ+bcsHtJ9E6UNKL+cjkPKKhcq/LYR1
+ pHzDPsteD5lnmx/uEwPHL+cYHkJHi2aaEXv20RiKF6TT8lQUl0Y9cCGvsfNtuIVd/RjAa+c6r
+ mZIVqpzAEeggqd+lzZVUE3IT/Paz7ShWLY7e0jHV2IMDNBGFLKnK36dfc4QH1MqDMnntCFNPX
+ oCk4e+JJa7yx4pYcgwXhviAoHxY/QGW88umN/5sg/HpP4gW475q+iYOxfYh44sSWKMGbGQr02
+ 7epZd9novJV+nCq/5kJb8mEu1iEXYV2vOqB/8u710wyxk298kef8DtN79MI1k91jaiYyJrcw+
+ gXavI6847POddfiRm15Yxy+8fwsBLqKD9xuuKMyNeMI+gUOySG4JpqMJYvJZh8OMK7vbcNSfj
+ p3GMHe/yaLG5ERxqsRJt5aiw==
 
-This patch series moves number of clock from dt-binding to driver for FSD
-SoC.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Sep 2024 14:28:22 +0200
 
-Inbaraj E (2):
-  clk: samsung: fsd: do not define number of clocks in bindings
-  dt-bindings: clock: samsung: remove define with number of clocks for
-    FSD
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
- drivers/clk/samsung/clk-fsd.c       | 23 ++++++++++++++++-------
- include/dt-bindings/clock/fsd-clk.h |  7 -------
- 2 files changed, 16 insertions(+), 14 deletions(-)
+This issue was detected by using the Coccinelle software.
 
--- 
-2.17.1
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/clk/at91/pmc.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 5aa9c1f1c886..040b70e1ffbc 100644
+=2D-- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -162,20 +162,18 @@ static int __init pmc_register_ops(void)
+ 	if (!np)
+ 		return -ENODEV;
+
+-	if (!of_device_is_available(np)) {
+-		of_node_put(np);
+-		return -ENODEV;
+-	}
++	if (!of_device_is_available(np))
++		goto put_node;
++
+ 	of_node_put(np);
+
+ 	np =3D of_find_compatible_node(NULL, NULL, "atmel,sama5d2-securam");
+ 	if (!np)
+ 		return -ENODEV;
+
+-	if (!of_device_is_available(np)) {
+-		of_node_put(np);
+-		return -ENODEV;
+-	}
++	if (!of_device_is_available(np))
++		goto put_node;
++
+ 	of_node_put(np);
+
+ 	at91_pmc_backup_suspend =3D of_iomap(np, 0);
+@@ -187,6 +185,10 @@ static int __init pmc_register_ops(void)
+ 	register_syscore_ops(&pmc_syscore_ops);
+
+ 	return 0;
++
++put_node:
++	of_node_put(np);
++	return -ENODEV;
+ }
+ /* This has to happen before arch_initcall because of the tcb_clksrc driv=
+er */
+ postcore_initcall(pmc_register_ops);
+=2D-
+2.46.0
 
