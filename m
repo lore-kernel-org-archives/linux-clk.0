@@ -1,44 +1,41 @@
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C6B4C66;
-	Tue, 17 Sep 2024 13:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C27186613;
+	Tue, 17 Sep 2024 17:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726579380; cv=none; b=SSlVKAHhO8rvKT3iOJwcyI1TkTaNLEAH3vZ7SSnKImVKlK5KsLSGZDbjDEyKT2tXyfsPj+cvWdpdAbcox1R6A2FpjIjqe7TgI7vIW3S+p3VagaBEFMp0HtLAnz+8FXIMZz1DIbikR13HeYvGGqKPAzzc+B/0wrKFyOw2io8xG0w=
+	t=1726594413; cv=none; b=D/MaUaoaNakdSWYVbAsSfS4vWoA1O7cBWV/lCnmzbnqItE+G8pVNll15N3n9DcHIMIUVte0MDXjXc+y9oR5lad3yP4yTX6mKOAmwzDg0Q3aVOEgIl+r9zvBqCgARkH9rDqIqBhjnwOTOGjDifXghqyF/WtJaJ1yZ/WuHkS45Jso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726579380; c=relaxed/simple;
-	bh=sjod+E4bj0zjVaCFVHpuJ7kBig2rZ+x3vecW1/4QbF0=;
+	s=arc-20240116; t=1726594413; c=relaxed/simple;
+	bh=8LS6ufNdRJUNRFVXypRecuCps9qMtNArhdt6bQtPMVo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SiCQzldyaOtRTYdOQmLyjdLAHSGUnI0KgICLT/iOyew0lHh5E5K3i+E+86Qg1RQEccHCMyaOpiXczwO6+htr0uypV4k4XIFr76uLgeM0CTj/EQxnxDa3ue/gS0akzildcyqH871Tuuixt/OxRxFJEVrgkCUQWSFq+6bTV4pK+/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.109] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <adiupina@astralinux.ru>)
-	id 1sqY8g-00D6mY-No; Tue, 17 Sep 2024 16:21:06 +0300
-Received: from rbta-msk-lt-302690.astralinux.ru (unknown [10.198.39.98])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4X7Mrt42DFzkXGg;
-	Tue, 17 Sep 2024 16:22:22 +0300 (MSK)
-From: Alexandra Diupina <adiupina@astralinux.ru>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alexandra Diupina <adiupina@astralinux.ru>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+	 MIME-Version; b=Skgl0bct8798ayteaQLH+muH6s8lGPEaWLd7iRFofvEsc7AMufLwEOeTaLtV0r7JEacDb43kWgPMgeAsXw54TcJKNa/9uIehAc85oM5W+rYnxYQv6ROdOfUMz2ALhwluwGj1UfB7TfEL48ncuVE01qE/hEQTh/J1X5NGLviQJ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.10,235,1719846000"; 
+   d="scan'208";a="218976908"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 18 Sep 2024 02:33:29 +0900
+Received: from mulinux.example.org (unknown [10.226.92.130])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4E1D04011F7F;
+	Wed, 18 Sep 2024 02:33:26 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v3] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
-Date: Tue, 17 Sep 2024 16:22:01 +0300
-Message-Id: <20240917132201.17513-1-adiupina@astralinux.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <82162974-00b5-44c9-bbb8-701e6c871bb0@lunn.ch>
-References: 
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4/6] clk: renesas: r9a09g057: Add clock and reset entries for ICU
+Date: Tue, 17 Sep 2024 18:32:47 +0100
+Message-Id: <20240917173249.158920-5-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
+References: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,54 +43,35 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigrnhgurhgrucffihhuphhinhgruceorgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeefkedufedvkeffuedtgfdugeeutdegvdffffejfffgleffieduhfejvdelffdvudenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrfeelrdelkeenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdqfedtvdeiledtrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrdduleekrdefledrleekmeegudegheeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgvsggrshhtihgrnhdrhhgvshhsvghlsggrrhhthhesghhmrghilhdrtghomhdprhgtphhtth
- hopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1726239283#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12178289, Updated: 2024-Sep-16 05:03:55 UTC]
 
-get_div() may return zero, so it is necessary to check
-before calling DIV_ROUND_UP_ULL().
+Add clock and reset entries for the Renesas RZ/V2H(P) ICU IP block.
 
-Return value of get_div() depends on reg1, reg2, shift1, shift2
-fields of clk_double_div structure which are filled using the
-PERIPH_DOUBLEDIV macro. This macro is called from the
-PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
-
-It is not known exactly what values can be contained in the registers
-at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
-div can be zero. Print an error message and return 0 in this case.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
-Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 ---
-v3: fix indentation
-v2: added explanations to the commit message and printing 
-of an error message when div==0
- drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r9a09g057-cpg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 8701a58a5804..b32c6d4d7ee5 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
- 	div = get_div(double_div->reg1, double_div->shift1);
- 	div *= get_div(double_div->reg2, double_div->shift2);
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 3ee32db5c0af..b82fee006d65 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -78,6 +78,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ };
  
--	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+	if (!div) {
-+		pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
-+		return 0;
-+	} else {
-+		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+	}
- }
+ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
++	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5),
+ 	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3),
+ 	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4),
+ 	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5),
+@@ -119,6 +120,7 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ };
  
- static const struct clk_ops clk_double_div_ops = {
+ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
++	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
+ 	DEF_RST(6, 13, 2, 30),		/* GTM_0_PRESETZ */
+ 	DEF_RST(6, 14, 2, 31),		/* GTM_1_PRESETZ */
+ 	DEF_RST(6, 15, 3, 0),		/* GTM_2_PRESETZ */
 -- 
-2.30.2
+2.34.1
 
