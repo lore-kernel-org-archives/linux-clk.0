@@ -1,183 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B61A920;
-	Tue, 17 Sep 2024 06:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4678A136352
+	for <linux-clk@vger.kernel.org>; Tue, 17 Sep 2024 07:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726555182; cv=none; b=UkzV+i65lEYIC06wkkbrJteTmRE0vbB0nYyGXRRXnT705LZTO+QFU8MnzGVjOoObJMPye+tqEnKBXGNMeB3nS4dOE9NRC41df/enQNqWqqIQX6uj/2o/iFFL9tF1SfQCyqJ7zvBcr83eO57SuYEEyoKUDLIjuJ/alf3NIlop6Oo=
+	t=1726557938; cv=none; b=ZDSRG4UTXsYH67SsRnBEA8G5EC1EgvlqMpud2nRrB6y1B7HdoSXpPnN26k3RRVve7ObBjGadJvTt/U2dP2iERwPQ/M1Watm9NGzCFH0Z3VZ/WPm2LhpcxbPzUkaEcE3W/g1nv54twwNnPO8apUczIMzx8BY6DgnZwgwVIbC9UvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726555182; c=relaxed/simple;
-	bh=KOEJZeVljojcmRdwqwJWhjQoq6gbxqBjzRiz12hG9lw=;
+	s=arc-20240116; t=1726557938; c=relaxed/simple;
+	bh=HyoSAr6BPjEYTVZ4vMJY8wWkvVzIse2sP4JsFpS79wE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2J6svtYdP9C8esx5iFjTcE9cEAUsrcVezqrPfOAF5UXdFqY6zBwbHm/JrqX184KKXA/gWb1Xm1ceSzjdulgUuAuxr/FZbZ9PRttyfanIHXlSwHFwMXlJ3ydb1Shff9z3+yil+ale6Y6sFlJdBYyHpPUFyYnJMlDorRvwTiXZxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXyvubyG; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIMqdO6PW1QeBs2Zk8rEik6+0wWbTyw1Tp1GNrdkcTQ4cv3hYRrlYlyUaHcGj+4KgKnQKgwI2m5pgq63SqIn+w5H0mB0IqOJFfab+99fKmlgRiI6KIRvJFVeMeSLq8E3zovs9fbxbVzBjKnAdQlbV99nDllReLb7WxBCUYLKTyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUJqdh9w; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXyvubyG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2762AC4CEC6;
-	Tue, 17 Sep 2024 06:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726555182;
-	bh=KOEJZeVljojcmRdwqwJWhjQoq6gbxqBjzRiz12hG9lw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AXyvubyGaCUUsTrHT+W7VZ7JeaIytYlT3RDrRDLrKg0sS6oE6PMzgPaDG91555GFs
-	 0Tzg4SM3D6OH2dOdx83Qy6CvHDAUZwf4yazQcDTdX9p/lOGxPyWCDb1FR/qF/xvGYf
-	 V10susybUX8F7Vd9CaqjgDsV4DRyQE9r6Gj7JAIy5Un42raGcSMmsif99H5T12BgYx
-	 44c+hzVKxXIZ07xoLR0r7wL2CMpd9Hh5/WciDMr7a/LZ9H7Z1lZ0G/439wKpFL7T51
-	 2tGLthWSxHpVT01kFntNdV3lxaHP6ULgYwzI0s5Ntl0WdwQA5mOQjhTR9x5DnB6Ng7
-	 3g0wfta/r/ZBg==
-Date: Tue, 17 Sep 2024 08:39:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haylen Chu <heylenay@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>, 
-	Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
-Message-ID: <zsayhliz4a4fauzmvkimd4uzucuunt6gmkypjlqh4omle4uqx4@cbknudobc57g>
-References: <SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221BDC11EE244C7D70C229DD7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUJqdh9w"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53655b9bbcdso6198128e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 17 Sep 2024 00:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726557934; x=1727162734; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=65taDXGYJvoQR7ZX9bcjdcEeKfQ/XK8T31XZzveD3cs=;
+        b=WUJqdh9wlvw1ffBWMeOdE2jBE9ANJCatJA5BbmLcbuZCZhHlw3leRVVElPdg4rZIPL
+         10Z9XVrOliI6un+BbIP7gspZhGnGuRY0kcGsd07lJPYGyX6WMLLccnthk7jULUjLfLkK
+         gq/Bz1FHBEwpW0vIKsQktzhsCw71t+m9MNGJ0ycz8Y1eXFdoWV/YmBu2Eb8B2Pv3KSJX
+         BIgvEE6X00hwZ8ZW5ire2X3qSckCBt9ac8uRpB283BjF4NBhAula8uGNGq3wdRBiFKI3
+         scKH8Bmsz61VfJy5nuE+BEfYGyJvdnSYM3iIOv0QWWC02BwUhKC+G60YS2W6ndUvn5/r
+         mmww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726557934; x=1727162734;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=65taDXGYJvoQR7ZX9bcjdcEeKfQ/XK8T31XZzveD3cs=;
+        b=r/MGFLUfckPaEWOSOSWX5wZZxpkIg/0jhlcVDgyVM+Jgh9qu0w7Yrpp+vXOdBLk8+M
+         Z35KFC0YN0uEutK9AOXxVYfUKPhHgG+YZT6MxWq07USLp/0ZhppIDAvwd2ma5PZ86Spz
+         PEqT6OMZ9RxrV6aNMfYB34BmqaA8mX/9R6aKcQ74DaB296CQeUMnVbgB/ahlnpSjICd5
+         ZE1qNCXOmtOvqXp99zikW/GoiHeNLZhYd0/yp2BsVpaOVzi0Jh8OOAilnkH8ZY1w/4kz
+         wAAT3K3dk9j7SWeLMXgswDD01/78nRJxBa0JtAyKo6HJbj2gJteTn1w6ZJg0MpVtJPD2
+         L1zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTPUZHms+IMA9bSgzsB/+32SRS7cF4F2OL3ZiiHE21dsYNDfMuYTZutC38OOYfJSsxgtrHvMp1eHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUS3hwhZ5H21+IieZSr1hgIIW2mh6NbIp+4QbXra6+axeM4eaY
+	iGBRB6lk3p/VomwMfbDnFoRLfmQ2CKuhZkk/at3awWtMQTGZDFoXQV8Wo+uga4k=
+X-Google-Smtp-Source: AGHT+IHQpFCTUkCw36WEI0kVSJP18ShUuagXXkc4qen2q05uioc7kdKMuRA3BV4gAjP6XAzriGdlpw==
+X-Received: by 2002:ac2:5685:0:b0:534:543e:1895 with SMTP id 2adb3069b0e04-53678fe64ebmr9788486e87.39.1726557933816;
+        Tue, 17 Sep 2024 00:25:33 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704db0bsm1116026e87.114.2024.09.17.00.25.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 00:25:33 -0700 (PDT)
+Date: Tue, 17 Sep 2024 10:25:31 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
+	p.zabel@pengutronix.de, geert+renesas@glider.be, neil.armstrong@linaro.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com
+Subject: Re: [PATCH 7/8] arm64: dts: qcom: add IPQ5424 SoC and rdp466 board
+ support
+Message-ID: <g5fcdu4gyolk5g3qcgvitrzrmabw2uv5vumlhxlgmrk2bd2rl5@bn7htykazo2x>
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-8-quic_srichara@quicinc.com>
+ <fyoh72in62sfmsw3syqswr2p3pcv26zoce2tvlx53mu4lpoakx@ixyvy4oylms3>
+ <ed57cffb-147f-4f5b-a9a3-6b9048b4756b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SEYPR01MB4221BDC11EE244C7D70C229DD7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <ed57cffb-147f-4f5b-a9a3-6b9048b4756b@quicinc.com>
 
-On Mon, Sep 16, 2024 at 10:23:09PM +0000, Haylen Chu wrote:
-> Add definition for the clock controllers of Spacemit K1 SoC. The clock
-> tree is managed by several SoC parts, thus different compatible strings
-> are added for each.
+On Tue, Sep 17, 2024 at 11:58:29AM GMT, Sricharan Ramabadhran wrote:
 > 
-> spacemit,k1-syscon.yaml is updated as well to allow clock controller
-> being its subnode.
 > 
-> Signed-off-by: Haylen Chu <heylenay@outlook.com>
+> On 9/13/2024 6:22 PM, Dmitry Baryshkov wrote:
+> > On Fri, Sep 13, 2024 at 05:42:49PM GMT, Sricharan R wrote:
+> > > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > > 
+> > > Add initial device tree support for the Qualcomm IPQ5424 SoC and
+> > > rdp466 board.
+> > > 
+> > > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/Makefile           |   1 +
+> > >   arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  63 +++++
+> > >   arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 294 ++++++++++++++++++++
+> > >   3 files changed, 358 insertions(+)
+> > >   create mode 100644 arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > >   create mode 100644 arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> > > index 197ab325c0b9..46c4eb758799 100644
+> > > --- a/arch/arm64/boot/dts/qcom/Makefile
+> > > +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > > @@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp441.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp442.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp468.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp474.dtb
+> > > +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5424-rdp466.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c1.dtb
+> > > diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > > new file mode 100644
+> > > index 000000000000..c8597a9ba175
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
 
-Please order patches correctly. First this, then the parent so you will
-not submit incomplete binding.
+> > > +		intc: interrupt-controller@f200000 {
+> > > +			compatible = "arm,gic-v3";
+> > > +			reg = <0 0xf200000 0 0x10000>, /* GICD */
+> > > +			      <0 0xf240000 0 0x80000>; /* GICR * 4 regions */
+> > > +			#interrupt-cells = <0x3>;
+> > > +			interrupt-controller;
+> > > +			#redistributor-regions = <1>;
+> > > +			redistributor-stride = <0x0 0x20000>;
+> > > +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			mbi-ranges = <672 128>;
+> > > +			msi-controller;
+> > 
+> > No ITS?
+>  ITS/LPI is not supported.
 
-You still must test it, though :(
+Ack
 
-> ---
->  .../bindings/clock/spacemit,k1-ccu.yaml       |  71 +++++++
->  .../soc/spacemit/spacemit,k1-syscon.yaml      |   4 +
->  include/dt-bindings/clock/spacemit,k1-ccu.h   | 198 ++++++++++++++++++
->  3 files changed, 273 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/spacemit,k1-ccu.yaml
->  create mode 100644 include/dt-bindings/clock/spacemit,k1-ccu.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/spacemit,k1-ccu.yaml b/Documentation/devicetree/bindings/clock/spacemit,k1-ccu.yaml
-> new file mode 100644
-> index 000000000000..0186722cfd87
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/spacemit,k1-ccu.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/spacemit,k1-ccu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Spacemit K1 SoC Clock Controller
-> +
-> +maintainers:
-> +  - Haylen Chu <heylenay@outlook.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - spacemit,k1-ccu-apbs
-> +      - spacemit,k1-ccu-mpmu
-> +      - spacemit,k1-ccu-apbc
-> +      - spacemit,k1-ccu-apmu
-> +
-> +  clocks:
-> +    minItems: 4
-
-Drop
-
-> +    maxItems: 4
-> +
-> +  clock-names:
-> +    items:
-> +      - const: clk_32k
-> +      - const: vctcxo_1
-> +      - const: vctcxo_24
-> +      - const: vctcxo_3
-> +
-> +  spacemit,mpmu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the syscon managing "Main PMU (MPMU)" registers. It is used to
-> +      check PLL lock status.
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/spacemit,k1-ccu.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-
-Move it after allOf block
-
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: spacemit,k1-ccu-apbs
-> +    then:
-> +      required:
-> +        - compatible
-> +        - "#clock-cells"
-
-Drop both, redundant
-
-
-> +        - spacemit,mpmu
-> +
-> +examples:
-> +  - |
-> +    syscon_apbs: system-control@d4090000 {
-
-Only one example, keep it in parent node.
-
-> +        compatible = "spacemit,k1-apbs-syscon", "syscon", "simple-mfd";
-> +        reg = <0x0 0xd4090000 0x0 0x1000>;
-> +
-> +        clk_apbs: clock-controller {
-> +            compatible = "spacemit,k1-ccu-apbs";
-> +            #clock-cells = <1>;
-> +            spacemit,mpmu = <&syscon_mpmu>;
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> index 4e3a72b48aff..08efda207101 100644
-> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> @@ -27,6 +27,10 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  clock-controller:
-> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
-> +    type: object
-> +
-
-This MUST be part of other patch.
-
-Best regards,
-Krzysztof
-
+-- 
+With best wishes
+Dmitry
