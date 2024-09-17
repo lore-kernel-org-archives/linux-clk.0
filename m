@@ -1,41 +1,48 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C27186613;
-	Tue, 17 Sep 2024 17:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A40185E6E;
+	Tue, 17 Sep 2024 17:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726594413; cv=none; b=D/MaUaoaNakdSWYVbAsSfS4vWoA1O7cBWV/lCnmzbnqItE+G8pVNll15N3n9DcHIMIUVte0MDXjXc+y9oR5lad3yP4yTX6mKOAmwzDg0Q3aVOEgIl+r9zvBqCgARkH9rDqIqBhjnwOTOGjDifXghqyF/WtJaJ1yZ/WuHkS45Jso=
+	t=1726594694; cv=none; b=XXEdLTOixrHRlj172d4nXSzV7Iap7JLdP8EvAzadH6ymPaRVXrw3ig/I05SzRrSzRBnqyG7MhhZtMmF9WxiXQYEpScYpXDB8L0pIosrz7lYmxIPNn3dne2x14F1m48l9jXv1S2ld+/DWNuG8j3dHPZdKnJ8SZPyA5G54yhMSNqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726594413; c=relaxed/simple;
-	bh=8LS6ufNdRJUNRFVXypRecuCps9qMtNArhdt6bQtPMVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Skgl0bct8798ayteaQLH+muH6s8lGPEaWLd7iRFofvEsc7AMufLwEOeTaLtV0r7JEacDb43kWgPMgeAsXw54TcJKNa/9uIehAc85oM5W+rYnxYQv6ROdOfUMz2ALhwluwGj1UfB7TfEL48ncuVE01qE/hEQTh/J1X5NGLviQJ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+	s=arc-20240116; t=1726594694; c=relaxed/simple;
+	bh=+rM0ld0Q3iZ12G+o9sup0LaePc8MDJ2kpjxmQ9OAK7k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fsgK2E6So7ctWY+Rjz68ke2l6o5YrpsI8e7fckAOvKUH9yIk2a7uw4UFZJv9EuEWAlY7t5R4wzPSRksb7FjsWVw0566yMCmqFVDkcTiC3FRtqCSXRAeOCPqO59adBP36K97n5PoceiQ7naJpKI5sTbFOnKBdZ2tu8gYlcAGLyGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 X-IronPort-AV: E=Sophos;i="6.10,235,1719846000"; 
-   d="scan'208";a="218976908"
+   d="scan'208";a="222945881"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Sep 2024 02:33:29 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2024 02:33:03 +0900
 Received: from mulinux.example.org (unknown [10.226.92.130])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4E1D04011F7F;
-	Wed, 18 Sep 2024 02:33:26 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7776C4007F25;
+	Wed, 18 Sep 2024 02:32:57 +0900 (JST)
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Marc Zyngier <maz@kernel.org>,
 	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 4/6] clk: renesas: r9a09g057: Add clock and reset entries for ICU
-Date: Tue, 17 Sep 2024 18:32:47 +0100
-Message-Id: <20240917173249.158920-5-fabrizio.castro.jz@renesas.com>
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 0/6] Add support for the RZ/V2H Interrupt Control Unit
+Date: Tue, 17 Sep 2024 18:32:43 +0100
+Message-Id: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
-References: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,34 +51,38 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add clock and reset entries for the Renesas RZ/V2H(P) ICU IP block.
+Dear All,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
- drivers/clk/renesas/r9a09g057-cpg.c | 2 ++
- 1 file changed, 2 insertions(+)
+This series adds whatever is required for supporting NMI, IRQ, and
+TINT interrupts to the Renesas RZ/V2H SoC.
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 3ee32db5c0af..b82fee006d65 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -78,6 +78,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- };
- 
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
-+	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5),
- 	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3),
- 	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4),
- 	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5),
-@@ -119,6 +120,7 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- };
- 
- static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
-+	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
- 	DEF_RST(6, 13, 2, 30),		/* GTM_0_PRESETZ */
- 	DEF_RST(6, 14, 2, 31),		/* GTM_1_PRESETZ */
- 	DEF_RST(6, 15, 3, 0),		/* GTM_2_PRESETZ */
+Thanks,
+Fab
+
+Fabrizio Castro (6):
+  dt-bindings: pinctrl: renesas: rzg2l-pinctrl: Add interrupt-parent
+  pinctrl: renesas: rzg2l: Remove RZG2L_TINT_IRQ_START_INDEX
+  dt-bindings: interrupt-controller: Add Renesas RZ/V2H(P) Interrupt
+    Controller
+  clk: renesas: r9a09g057: Add clock and reset entries for ICU
+  irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver
+  arm64: dts: renesas: r9a09g057: Add ICU node
+
+ .../renesas,rzv2h-icu.yaml                    | 278 ++++++++++
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   4 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  88 +++
+ drivers/clk/renesas/r9a09g057-cpg.c           |   2 +
+ drivers/irqchip/Kconfig                       |   7 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-renesas-rzv2h.c           | 517 ++++++++++++++++++
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |   8 +-
+ drivers/soc/renesas/Kconfig                   |   1 +
+ .../interrupt-controller/icu-rzv2h.h          |  48 ++
+ 10 files changed, 952 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
+ create mode 100644 drivers/irqchip/irq-renesas-rzv2h.c
+ create mode 100644 include/dt-bindings/interrupt-controller/icu-rzv2h.h
+
 -- 
 2.34.1
 
