@@ -1,113 +1,115 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19482AEEE;
-	Tue, 17 Sep 2024 21:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0153D2B2D7;
+	Wed, 18 Sep 2024 04:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726607635; cv=none; b=ZE8zLdcN3jf9ik6SyRz5mw9tK23XA/2I+T1GMObfvUcj2A5dtsOpEagSKLGXtVOs8XShYzRJi2R81y9yFrsYeNlGrcXUltE9fvOnwovyJO6q/KxTV2O8l3D4Ee4R8/SEUsi6wizaeQ6eQqUSoSZLVz9jX/uoDNSycj3zCOJ7x/Y=
+	t=1726635145; cv=none; b=Qr/7fCfG6Ptp2UIgWKIwJ6n/hh21uU55ts8Yn2oNe4b4VSka0MJIN60HBni6rrU++vDWvZZG0WcmwZ3zUVMsllxbSbtEBb9I4jwEPU64dhT298+SFfa/o3oO0j0icTPAxkVUt94GGzldvJ6rcPeEdIV6esVHX1sl+4olY2xYtLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726607635; c=relaxed/simple;
-	bh=h6tfNn4BixxJYWQYKrDQLr7/eqjQkFy0kULBd/P+I4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UD2glWYTSx+z+ruNNbVVk7yHm+/XIHqbv+7WXR6GpZE+KC61BiXyTGYcqOrg1mlMRQ2q3laEUXs0vkbQMtUhV9wiEusmzIwURJN5wCl752r5Bxm//6X7d8sOE6WkhaLtrHjT3BnAURG8tP2EzChNWIBNlA+UnqzPhrkN73IzxrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyE8X+Gq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726635145; c=relaxed/simple;
+	bh=ujButzrmQBfySaN+Xdg8ancXimehUSSrRankT58rsBM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=vBp+01yyuGz52qLj0cQr3NwIlEQUOIj03OHXZQZZPKSlVsxg0+UwXidTfT5BHmqM8yp14OyyvTB4zfgianqdZgCZdUmo7TpeVi1augq13o338KeYpRpg2sykH/doue3XfU7NyhpFUZo1eiZzpBbgEhcFH/gLNEEeTHGBvj6lwWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9aBB5IJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyE8X+Gq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DC3C4CEC5;
-	Tue, 17 Sep 2024 21:13:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9aBB5IJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D316C4CEC3;
+	Wed, 18 Sep 2024 04:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726607635;
-	bh=h6tfNn4BixxJYWQYKrDQLr7/eqjQkFy0kULBd/P+I4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TyE8X+GqWp7Z/p5furrj0+eAxM/KsS6HaBJHLmVLo8Koq88/0VSzkyTGN5IKW1HZG
-	 OPwMjuyM78k+lDKtOBlMtoDD5NvXGC/HfGb0ZP4s+t0l70B3tkUCXZeU0Q/u/X0M/Q
-	 a54APR/wJoX5/8nmIxkF6XPa3vuriJP7Jy7pCGTgpleDJnyjg/vJppLeEKS8rrwkm8
-	 PUV0AxR9m5qcOUzETL8CZ409Ff01O8bxO3wotbiUby33e7RDVvXN89v5cQqtYX4P/C
-	 gPYxufC+CdP2VL3vdg9U2I7ilIp5Y6DgI5t6CP5vLyuEb7fjJ4SSh3pNKahZ/CrqYg
-	 DQM4Xhac7Mb5A==
-Date: Tue, 17 Sep 2024 22:13:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: Possible misleading information in rockchip,rk3588-cru.yaml
-Message-ID: <20240917-flypaper-december-3719ea838b3c@squawk>
-References: <ZuIJgiN2xp6oPrHD@pineapple>
- <20240916-neuron-surfer-32db6440e1ad@spud>
- <ZuhtMHgx8XlZaayp@pineapple>
+	s=k20201202; t=1726635144;
+	bh=ujButzrmQBfySaN+Xdg8ancXimehUSSrRankT58rsBM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=b9aBB5IJzeq4UwxhVXXbKLNkx2WiXLNEO+AzczMloxtTm4fN2tlDQlfdYy/Z2SFsO
+	 TRkFXsQHbxwrC5G4Gr6DSQOY9OA71JSGw/HHEoQT84QeK8aVbI51D1d0kd+SJ78pVA
+	 wn+V8ko7hYFmPiWkYOERnx/5CVAHxADIjAcYJZUHgVap9PahcUjW5PUJ9IoZ+nG0/m
+	 bHdj3ZjesXzBDjg9gIQR3YWFPueQXvOLgzBP6aPY8ptuGX642yCpjL69Fcrn4l/Csb
+	 d1/zduqCLMjB2hhIga+/kBF6TS6XXOvRocU2TA+Jj91wmrS7PxAMWN3k18EEW2LM5S
+	 LUBKURNn8rGDw==
+Message-ID: <4fb2e38ab5de3be67992c88cc7e9eb3f.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RIDGw94K0j/yawb4"
-Content-Disposition: inline
-In-Reply-To: <ZuhtMHgx8XlZaayp@pineapple>
-
-
---RIDGw94K0j/yawb4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240730-mbly-clk-v3-3-4f90fad2f203@bootlin.com>
+References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com> <20240730-mbly-clk-v3-3-4f90fad2f203@bootlin.com>
+Subject: Re: [PATCH RESEND v3 3/4] clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Tue, 17 Sep 2024 21:52:22 -0700
+User-Agent: alot/0.10
 
-On Mon, Sep 16, 2024 at 05:38:56PM +0000, Yao Zi wrote:
-> On Mon, Sep 16, 2024 at 05:33:49PM +0100, Conor Dooley wrote:
-> > On Wed, Sep 11, 2024 at 09:20:02PM +0000, Yao Zi wrote:
-> > > Hi,
-> > >=20
-> > > rockchip,rk3588-cru.yaml, dt-binding for RK3588 clock and reset modul=
-e,
-> > > contains description of customized property "rockchip,grf",
-> > >=20
-> > >   rockchip,grf:
-> > >     $ref: /schemas/types.yaml#/definitions/phandle
-> > >     description: >
-> > >       phandle to the syscon managing the "general register files". It=
- is
-> > >       used for GRF muxes, if missing any muxes present in the GRF will
-> > >       not be available.
-> > >=20
-> > > But after doing some searching, I found that clk-rk3588.c actually
-> > > defines no clock hardware with MUXGRF type. This is also true in in t=
-he
-> > > vendor code[1], it seems there is actually no GRF mux on RK3588
-> > > platform.
-> >=20
-> > Have you been able to check the datasheet/register map for this piece of
-> > hardware? Does it have a grf register region?
-> > Wouldn't be surprised if it didn't, and the cause of it being in the
-> > binding was nothing more than copy-paste.
->=20
-> Have checked a public datasheet[1], RK3588 does have corresponding grf
-> region and there are only clock related bits in PHP_GRF_CLK_CON1[2].
->=20
-> But these gmac clocks bits are used in dwmac-rk GMAC driver[3]
-> internally, out of the common clock driver, rk3588-cru. So I don't think
-> the CRU needs access to the grf by design.
+Quoting Th=C3=A9o Lebrun (2024-07-30 09:04:45)
+> @@ -538,7 +544,7 @@ struct clk_hw *__clk_hw_register_divider(struct devic=
+e *dev,
+>                 struct device_node *np, const char *name,
+>                 const char *parent_name, const struct clk_hw *parent_hw,
+>                 const struct clk_parent_data *parent_data, unsigned long =
+flags,
+> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
+gs,
+> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
+ags,
 
-That sounds like a reasonable justification for deleting it - but please
-check U-Boot etc to make sure that other projects are not using this in
-a different manner to the kernel. If they are not using it, then please
-send a patch :)
+It would be better to make this unsigned long instead of u16 (for all
+the registration wrappers) so that if we add more flags we don't have to
+change these lines again. Seems unlikely we'll have more than 32 flags,
+but I could be wrong.
 
---RIDGw94K0j/yawb4
-Content-Type: application/pgp-signature; name="signature.asc"
+>                 const struct clk_div_table *table, spinlock_t *lock)
+>  {
+>         struct clk_divider *div;
+> @@ -610,7 +616,7 @@ EXPORT_SYMBOL_GPL(__clk_hw_register_divider);
+>  struct clk *clk_register_divider_table(struct device *dev, const char *n=
+ame,
+>                 const char *parent_name, unsigned long flags,
+>                 void __iomem *reg, u8 shift, u8 width,
+> -               u8 clk_divider_flags, const struct clk_div_table *table,
+> +               u16 clk_divider_flags, const struct clk_div_table *table,
+>                 spinlock_t *lock)
+>  {
+>         struct clk_hw *hw;
+> @@ -664,7 +670,7 @@ struct clk_hw *__devm_clk_hw_register_divider(struct =
+device *dev,
+>                 struct device_node *np, const char *name,
+>                 const char *parent_name, const struct clk_hw *parent_hw,
+>                 const struct clk_parent_data *parent_data, unsigned long =
+flags,
+> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
+gs,
+> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
+ags,
+>                 const struct clk_div_table *table, spinlock_t *lock)
+>  {
+>         struct clk_hw **ptr, *hw;
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 4a537260f655..cb348e502e41 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -675,13 +675,15 @@ struct clk_div_table {
+>   * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses a=
+re used
+>   *     for the divider register.  Setting this flag makes the register a=
+ccesses
+>   *     big endian.
+> + * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
+> + *     Formula is 2 * (value read from hardware + 1).
+>   */
+>  struct clk_divider {
+>         struct clk_hw   hw;
+>         void __iomem    *reg;
+>         u8              shift;
+>         u8              width;
+> -       u8              flags;
+> +       u16             flags;
 
------BEGIN PGP SIGNATURE-----
+This can stay as u16 to save space of course.
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZunxEgAKCRB4tDGHoIJi
-0tzwAPsEW69ocfhtVR+GMWt0pS+MPPaBskZvsdl4XuVumMe3NAEAvsgdPy+i81Ec
-ZX8q4UQyEvwTSKQHOQvpLTNM8UhH0gw=
-=GlRo
------END PGP SIGNATURE-----
-
---RIDGw94K0j/yawb4--
+>         const struct clk_div_table      *table;
+>         spinlock_t      *lock;
+>  };
