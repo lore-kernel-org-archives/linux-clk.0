@@ -1,105 +1,136 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD482189BBE;
-	Wed, 18 Sep 2024 12:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475104409;
+	Wed, 18 Sep 2024 12:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664029; cv=none; b=NvNLSnVCzT0VWwY8KZILof7q+ldO6Avzk1iD+PPUcJ99/0ONVoTsi6aLD9mCwctSQqD8PMByv2OPglQkKh2Qehgs9cHLhjjaYRljbyU3CdAmoGM+zzpDVno39LLurYlUoUjeI90op41ETWXOoP85SImiiV3mHux0dU1Av2i9Qz8=
+	t=1726664335; cv=none; b=SWsRbWuOgi1t5cXq0n7K1Frgwjqk7haaQcW9RCSfXFKLYcZpvlWSOZ578nHxZU5AJjkDC3bo0cSelhBYe5dn4Gg8ProaSSUEkaa1gyS8x5cq1AVPFWC5SO3N3u0QchDOm8OPB+VwBCnIMmZFANwRQgIzquuR7POiVDUKZTGyGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664029; c=relaxed/simple;
-	bh=o7BH08dOrugi4nkBMnNUfU+B6Wt6p41IPzWcjUkFlFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g6jc5iX9Bv/CJGXe4NI6UUh/uYFbzFU8z9DlGo48quLySjqNlmo1B65ya72bivZcTqZgmt29erKX6qCaTf1ca9indLi5zGJrmtzoK+xm8iWJ6YIHuTkUK9UZrpSpL/koMXA2Z6D50BzFNSQFI2O2ZMLy7DwzePVr8yKPaIhvlDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ah2XXmak; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726664335; c=relaxed/simple;
+	bh=WHN2Or2KmX97EgplTcnWv9pNo/oOs7of4tjRXWWWC8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NKyUEH6NeU4h2XG001Nn/4ty6R4iSWY/QO2J/8h4IyW68qA8AdN/PzHun32GKkQ9LCa7c1tKjs+UdIH54mLaL7tiBgrjaW1/LaZuhZq0b2MDtP/7j/O6pO5z7UBMV4nVnZBqRa83x2mxpSDbZqrTP4MSWN/699PXLHx4l9tfHPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dI0iUyOS; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ah2XXmak"
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49becc93d6aso1939784137.1;
-        Wed, 18 Sep 2024 05:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726664027; x=1727268827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/g9NdqeVcPa5WEMV/Sz1b6LsprRcVfh5a8jA898vriU=;
-        b=ah2XXmakCk6CbSAzsfALS21qxd9YbB9mmTi0oNqb+oBOeWZr95K2sP9FBsCQLmlmfW
-         Q+zlmqcu9zx0vhlW69IixlnUJAuI+irIL7UEJCc9Dy/Lt2OpNrk5qkFlhBdup0ssffe7
-         6HszpG/+Op2qPmcoyoEVQd3m+SjOLLKJDxJ5Gosw5GrnwjdukXjVdxDf4vNcdknQvecT
-         5EGxNvHvHX5dP2enBQRN9H3/qGv30EOBRMqyYoFRGqn30k/6ZIDoNqtrX6OFCm3Q8HOS
-         GndmomhDYgiWfckSxotEhA0XIcfldzF7YgiobUWFQFccLEzdaBjHV1F7aYs4J+NohLhC
-         EqWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726664027; x=1727268827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/g9NdqeVcPa5WEMV/Sz1b6LsprRcVfh5a8jA898vriU=;
-        b=V7NXa1+2lWJ5RVdpAaRTqzYXGFftJSrtXVN2YUMN38kNlLVp9TAnICvGiAxkEf9H/b
-         6mMyPcvghmAriCXKA9bUeldk13LNUefIbddtbwBUbuTRO/MWgo75jRC6IZt1TMoffRTp
-         lZ2/uhKDcbP+txWXaxWhP3Wi6UgQOotVSUMoHFewU+5BqoYsQJ7dq1bEwWahpKl4QqQF
-         nhQ1O5qbaVUWvMB+Cj5yx/iZADOLlbEYu9gw89O4Azbwi3bYtkx/bOoba0ZgMXsQP2xs
-         +aTL55QfznK9ySSp2G+xPC0KDlQAtw4UELwDhMVxGjvwwdKNiUHxFFOytuCxVnBusixO
-         gFeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCJOVZQl1QNsfS0M/16wfo5P5OuIkB3YO9al3EdkIY9Y68GysOgBamPB7bSUNfFbHA7Sy0UILmIUn9PtPydpmQ8bQ=@vger.kernel.org, AJvYcCVHHyQrZQ7Fk8GNjfj8QQ3VKUGW59rAECEOC9fIE7sjbwpDVi5BsJ2wp6hdZR0Bs50VaFbH2KfshDSR@vger.kernel.org, AJvYcCVIuiqG5k+32dIVV/cEJ7GSNe+4gr26/1ygfW7dfTkmpIik8OHJDPuJmdIW8EZsmBA11w1Z03slFp5I@vger.kernel.org, AJvYcCVTEJE2TQWNx0suFmjtZ5a5IJh+TtQwfPTFFBhTvFxSZGQ+USN8Vyey8WLeNkXmR48Gl6BW4vHcw+kLC4U=@vger.kernel.org, AJvYcCW9oc8R/9q1zt8rszvbX+vreoeQk+dmNz/UX7Xr9Lbg+9E8uaMoKY/zpuWai9TthM/XOcy6/3YGnTU=@vger.kernel.org, AJvYcCWUdtMu6Q3rLt7XfF1aaIyq+OY5cv9+VkxU1z1pqNh15Fb6n+aY4N2c4ryWsJxbpwCGCNQroYss/NEPoA==@vger.kernel.org, AJvYcCWcrVvktCBo33ZCF0LVmXMIbSnBAjU3gMNhVuv4wdn33PnPh1+tTfCB/SpMHEpacTdmczG9AWxQnV2hpWr7eg==@vger.kernel.org, AJvYcCXWt2PCdpIxr+x6nCde8DTqXpHZ8kFFXF7VYMjTuVf3MCqDLdmPU1emZ6+rarXekCgPpJVVvlq55Vwn@vger.kernel.org, AJvYcCXd66fI7PXrKyenx49vANalHSGgVvFeFy2KX1E7OukAI+29UkpAKSBb88Lmu1TGegxbnkjVSNO6QBOwLLIQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxusXEQGUTWCeBe8DJ5WDw2Idow0JmE/o7y1754bFjU1kpGZohr
-	jPxxFqwO0qew1epPDn6TVbjdxlf4J+YPkVUyzEMg6Zdd7NQyrrk/PeoEMV4Jt6PnmL/5ibQBMa5
-	c+B3Q+LIidRAwTTkyrqhG6hFBW4o=
-X-Google-Smtp-Source: AGHT+IFGmph15ldtpeLTYgiO51oUhmQH5ahITzDspFrnSZzNrk9TuFGJLzehC4MTF6p1O8lGGsMcGjzI/fRVh7pjEYU=
-X-Received: by 2002:a05:6102:3746:b0:49b:facb:15f0 with SMTP id
- ada2fe7eead31-49d4147e852mr16147058137.12.1726664026626; Wed, 18 Sep 2024
- 05:53:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dI0iUyOS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726664333; x=1758200333;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WHN2Or2KmX97EgplTcnWv9pNo/oOs7of4tjRXWWWC8M=;
+  b=dI0iUyOSkIhdEDM/5LFCaEzSSKc2ybCWWxLMHWhUxtgEmvrkflcTHcPO
+   7VKpvaRl0YWwy2zqvuOM8XJbtiiLhsUn2oJNoTkjZ4vLPQ7tbnlBaQmRE
+   0SEF1gHgYWtOa7YPOKSGW5+o79MfVE4By3Sx6b5g0SWz58kz6vezTDlu+
+   oKSLvKArSVQfu9/H7f4LmA7iaJoiXbcpIYkB8dzdc68qGBjee2CMDjJOO
+   IhN4lJMp1mQLq5JlF3+CSdn94VCidn09S014pWpavjFfUm0FuL+XWyvyD
+   ZIvPWj4zzauCAE1cOhZRMcf2xgZwf8bBjsdh2OJ397nN2LG+zJoBtZFCD
+   A==;
+X-CSE-ConnectionGUID: 6wyIBGIQTUq+t6epY6O5fA==
+X-CSE-MsgGUID: d/oozOpsSRqyFWoxElkoRw==
+X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
+   d="scan'208";a="199377516"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2024 05:58:51 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 18 Sep 2024 05:58:21 -0700
+Received: from [10.171.248.44] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 18 Sep 2024 05:58:19 -0700
+Message-ID: <672befa1-cefb-480e-b474-ff40e4fe80ed@microchip.com>
+Date: Wed, 18 Sep 2024 14:58:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-8-2d2efd5c5877@gmail.com> <wywp6vj2pqqe7to55k7ssh5sbqrmy7emvwruvm2waytancf3r4@aygtw3y6huwx>
-In-Reply-To: <wywp6vj2pqqe7to55k7ssh5sbqrmy7emvwruvm2waytancf3r4@aygtw3y6huwx>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Wed, 18 Sep 2024 15:53:34 +0300
-Message-ID: <CABTCjFAvXYrRJS3Dwf-TMq3OW_vN1hskk+qPjosbRym7xOvy1Q@mail.gmail.com>
-Subject: Re: [PATCH v4 08/27] mfd: max77693: remove unused declarations
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: pmc: Use common error handling code in
+ pmc_register_ops()
+Content-Language: en-US, fr-FR
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>
+References: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=D0=BF=D0=BD, 16 =D1=81=D0=B5=D0=BD=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 12:1=
-0, Krzysztof Kozlowski <krzk@kernel.org>:
->
-> On Fri, Sep 13, 2024 at 06:07:51PM +0300, Dzmitry Sankouski wrote:
-> > Remove `enum max77693_irq_source` declaration because unused.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> >  include/linux/mfd/max77693-private.h | 11 -----------
-> >  1 file changed, 11 deletions(-)
->
-> Please split your patchset per subsystems. There is no dependency on MFD
-> bits from your DTS... (if there is, this needs to be fixed anyway)
+On 17/09/2024 at 14:34, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 17 Sep 2024 14:28:22 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Indeed, my dts has no dependency on this patch.
-However, my dts has dependency on MAX77705, so AFAIU,
-I should send this patch separately, while leaving other drivers in same
-patchset, right?
+Bad track record and no real benefit from the patch:
+NACK, sorry.
+
+Regards,
+   Nicolas
+
+> ---
+>   drivers/clk/at91/pmc.c | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 5aa9c1f1c886..040b70e1ffbc 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -162,20 +162,18 @@ static int __init pmc_register_ops(void)
+>          if (!np)
+>                  return -ENODEV;
+> 
+> -       if (!of_device_is_available(np)) {
+> -               of_node_put(np);
+> -               return -ENODEV;
+> -       }
+> +       if (!of_device_is_available(np))
+> +               goto put_node;
+> +
+>          of_node_put(np);
+> 
+>          np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-securam");
+>          if (!np)
+>                  return -ENODEV;
+> 
+> -       if (!of_device_is_available(np)) {
+> -               of_node_put(np);
+> -               return -ENODEV;
+> -       }
+> +       if (!of_device_is_available(np))
+> +               goto put_node;
+> +
+>          of_node_put(np);
+> 
+>          at91_pmc_backup_suspend = of_iomap(np, 0);
+> @@ -187,6 +185,10 @@ static int __init pmc_register_ops(void)
+>          register_syscore_ops(&pmc_syscore_ops);
+> 
+>          return 0;
+> +
+> +put_node:
+> +       of_node_put(np);
+> +       return -ENODEV;
+>   }
+>   /* This has to happen before arch_initcall because of the tcb_clksrc driver */
+>   postcore_initcall(pmc_register_ops);
+> --
+> 2.46.0
+> 
+
