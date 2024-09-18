@@ -1,66 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8831C1736;
-	Wed, 18 Sep 2024 16:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D683D1AD3F8;
+	Wed, 18 Sep 2024 17:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726678796; cv=none; b=S8UZdrFShItUvoYAdYSvKtI0nRQeNTFh9s1FYHuH7+6oPvDoa1CtnY7FggqISzJb07iG93zouWY+4WB+UInf5ldMZAsmNqxy0SRtSLNfNTKjhuY3PxyaTSzTTjLNbSH8+plEK4fEFB9ih+o6knhoiNTWdpBLzy6Sq2DtCDN0jZQ=
+	t=1726679868; cv=none; b=fqbvZQ9fdysEOU0djvfVhRv26/BHLOZnvdrD1MjfiLh5IeKLhVsmPFO+J9iXu7RWJ6YgdHmY3Pj6r1TyunOj3JYfk8AhV3x2JM2apRMoSz/jYBzBkNHGJvV7tae4h8ztAltGaM5ZWAtFpPIfj1gzYwSzJ0azBJlP/hULnSPSGK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726678796; c=relaxed/simple;
-	bh=NC9j+2ZyLN39hfDlR7lvY1YWapL1nV0mLnxgFAj1QaQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=k10XhXoRnOLPzdm4WRQDwmCuynMSO8hVVUwy+1RtRYRqUNxV0Hs/vbThNF/loAFaBcf4IsSnXlswjrHKzkxk3MXnco/1B2yN8JEbyE0nAC+4vK+laSQ9zdFk4GYsqJ4Q553dHVn+92/kDWmNOUc2eiM80PrdPfOqUKGhcfjQX1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIuXeXLR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726679868; c=relaxed/simple;
+	bh=rF59NlVc8RdVfJ1BvQvUzd07bfrQYtLfcHPmONHYpGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dd/nBnS/O6LjYDA2kZ4BiY6JMik/bqpynBDfLsgb4Z7UwREt0bnuNJV3pSPZTqZ0P2umWhkR1Up4lftQEN6IOGezt2edXOCZQ0IebtS7wr27PvaZ/PGoNDiYFR0yKIPtFLH7oTuMJgjvqAoQhDJMgcpRrgHy/qXYMpZxrWQzEZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtoLPaq7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIuXeXLR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53176C4CED1;
-	Wed, 18 Sep 2024 16:59:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtoLPaq7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F865C4CEC2;
+	Wed, 18 Sep 2024 17:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726678795;
-	bh=NC9j+2ZyLN39hfDlR7lvY1YWapL1nV0mLnxgFAj1QaQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=vIuXeXLRfNt4cPiR81A0Xra4qQiN9AIYGL/AcHOalR/QFAQM+fwBRVg16KB5CeIgK
-	 U9+yxMxfTXJliP4cylJl2UfBpOXehCb7quimSGRaZA/AG8EsMJkN+iQm1wv/uo7sNY
-	 XKsnmsg8r907jZIu7kEfn1f6g2JxN8h3uXOAaRT4U9bYtskWCFKIRAahZla7KrIh9/
-	 wcLGYYHB5m64UyO2skiFgxavqaVRYabm8WRUYoU7dK8dbX1pTuZ9qZk3EknWxul3n6
-	 RGNcTEf+tkhCJF5DE5wlIc06CCR29Vrqd0GAli8vfCDH/zJLkvEyv/r5mKWWsJbzx0
-	 uokv3la2tRRuQ==
-Message-ID: <038cdb46c8e0a615894b25e3aac5483e.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726679867;
+	bh=rF59NlVc8RdVfJ1BvQvUzd07bfrQYtLfcHPmONHYpGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RtoLPaq7qufGYckdBFCgTUn8u95FViuUhtLsCxwPFPZ1TgLZC2oNCakgAqqDMjqSL
+	 EVhY8lL3ZqKHmR5f2i+tnkvH2ifmJl0PuuMStSsQic/whvK5SZf2skRuHV3iKA5Tfj
+	 l6ABgqD/1McUwZMc1npsOs/C6k0pEDH9c9q7QiVrRq6FRNhlbSXDj7n6itCj/cEytS
+	 z/JfeQ6WBM/TrZKUwWtZVKeIUOIktYwTmQCJxCft0ItDUCNWn3KkuIuMN6tLmQ1CXy
+	 JLsM6d6l/yXwhT3+9h24SttkQzbFPJWrIMTo88Ot1GihYXr4re9kotTAfsdnnI5cqm
+	 Am+7pAz5mcJtQ==
+Date: Wed, 18 Sep 2024 12:17:46 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Inbaraj E <inbaraj.e@samsung.com>
+Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, krzk@kernel.org,
+	conor+dt@kernel.org, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com,
+	linux-clk@vger.kernel.org, cw00.choi@samsung.com,
+	gost.dev@samsung.com, devicetree@vger.kernel.org,
+	mturquette@baylibre.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH 2/2] dt-bindings: clock: samsung: remove define with
+ number of clocks for FSD
+Message-ID: <172667986572.1820528.6558113024982582816.robh@kernel.org>
+References: <20240917094355.37887-1-inbaraj.e@samsung.com>
+ <CGME20240917094454epcas5p22a75e3bb5a09b12eb269f1dcde573741@epcas5p2.samsung.com>
+ <20240917094355.37887-3-inbaraj.e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240914223233.1342-1-andersson@kernel.org>
-References: <20240914223233.1342-1-andersson@kernel.org>
-Subject: Re: [GIT PULL] Qualcomm clock updates for v6.12
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, Varadarajan Narayanan <quic_varada@quicinc.com>, Luca Weiss <luca@lucaweiss.eu>, AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Mike Tipton <quic_mdtipton@quicinc.com>, Rayyan Ansari <rayyan.ansari@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, Vedang Nagar <quic_vnagar@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
-Date: Wed, 18 Sep 2024 09:59:53 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917094355.37887-3-inbaraj.e@samsung.com>
 
-Quoting Bjorn Andersson (2024-09-14 15:32:32)
->=20
-> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
-7b:
->=20
->   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-6.12
->=20
-> for you to fetch changes up to d628455ab3c22bf633935f5d09451530c44c4ba3:
->=20
->   clk: qcom: videocc-sm8550: Use HW_CTRL_TRIGGER flag for video GDSC's (2=
-024-08-20 17:15:16 -0500)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+On Tue, 17 Sep 2024 15:13:55 +0530, Inbaraj E wrote:
+> Number of clocks supported by Linux drivers might vary - sometimes we
+> add new clocks, not exposed previously.  Therefore these numbers of
+> clocks should not be in the bindings, as that prevents changing them.
+> Remove it entirely from the bindings, once Linux drivers stopped using
+> them.
+> 
+> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> ---
+>  include/dt-bindings/clock/fsd-clk.h | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
