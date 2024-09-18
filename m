@@ -1,73 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A85C172BDE;
-	Wed, 18 Sep 2024 16:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8831C1736;
+	Wed, 18 Sep 2024 16:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726675996; cv=none; b=N9E5XVi6qBdqoz+gxQPHxTyTY/NtSsiUWp7d7VDdExJ1ey9loe5ipez01pbPzM/TI4DUnX6QLWS3ksSkp5Ngx8GEFKOI4j/L25cGon6N4CUdxzk8m/BQPzSiJL/PCEQSJa1uSiMqXyr8ZpxKht/Qudiq99th8kGlyWHuN4idevM=
+	t=1726678796; cv=none; b=S8UZdrFShItUvoYAdYSvKtI0nRQeNTFh9s1FYHuH7+6oPvDoa1CtnY7FggqISzJb07iG93zouWY+4WB+UInf5ldMZAsmNqxy0SRtSLNfNTKjhuY3PxyaTSzTTjLNbSH8+plEK4fEFB9ih+o6knhoiNTWdpBLzy6Sq2DtCDN0jZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726675996; c=relaxed/simple;
-	bh=u1M8MKMhNRnijK3CL3rzuoog41ZY0dXAPy6BCeSJHuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dbJNsAzBX88Fk2lTgIQvYSpPQ0550uKAY2D2O3DDO/qQRA8p9uLlcPxYdOSTk2gBtV6B55U+vouLbcwcWmz4qKMFQW/4+6aD5m0LwprU4zu/cc66Skaz1LMR5WpF27v2znzrunEnVPV91HhqahNacHOGsJy9eSSnGIJ/HSRXF6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXjuTYUh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726678796; c=relaxed/simple;
+	bh=NC9j+2ZyLN39hfDlR7lvY1YWapL1nV0mLnxgFAj1QaQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=k10XhXoRnOLPzdm4WRQDwmCuynMSO8hVVUwy+1RtRYRqUNxV0Hs/vbThNF/loAFaBcf4IsSnXlswjrHKzkxk3MXnco/1B2yN8JEbyE0nAC+4vK+laSQ9zdFk4GYsqJ4Q553dHVn+92/kDWmNOUc2eiM80PrdPfOqUKGhcfjQX1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIuXeXLR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXjuTYUh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037A1C4CEC2;
-	Wed, 18 Sep 2024 16:13:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIuXeXLR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53176C4CED1;
+	Wed, 18 Sep 2024 16:59:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726675996;
-	bh=u1M8MKMhNRnijK3CL3rzuoog41ZY0dXAPy6BCeSJHuQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CXjuTYUhL39XIqyWFC6xLoXn/kV2acdLKv4EN70nhxn1/Tu8PVpFBkW1o0SrSjRD8
-	 ssfGoU+P2JAJoNE381z+yBucS16enc6dSFRD4ScwfcQoSBNO0QWgxJvJxIYu0SiyvL
-	 aPcXnilxSDV4Nvl1IDSjmNnJuTKK0Oxbfx8xMlIZkn4dStsIknMqASV4BOEE+lpZPb
-	 G9tXWwgdtDeh9y3M55t/j8qq+2VfY6Ff7H3JHikb0Eds1XGK3kwDgV9UfNYJ93QlUR
-	 lJJSED/eacD2nC1JiW3xdoOeqjDQsBzG675JbzuLHuyDdnYHkCimJ+icMYs2gYtRRc
-	 rGEdCneZ8phXQ==
-Date: Wed, 18 Sep 2024 11:13:14 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 3/5] dt-bindings: clock: add Amlogic A5 peripherals clock
- controller
-Message-ID: <172667599449.1714611.1180499286206997006.robh@kernel.org>
-References: <20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com>
- <20240914-a5-clk-v1-3-5ee2c4f1b08c@amlogic.com>
+	s=k20201202; t=1726678795;
+	bh=NC9j+2ZyLN39hfDlR7lvY1YWapL1nV0mLnxgFAj1QaQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=vIuXeXLRfNt4cPiR81A0Xra4qQiN9AIYGL/AcHOalR/QFAQM+fwBRVg16KB5CeIgK
+	 U9+yxMxfTXJliP4cylJl2UfBpOXehCb7quimSGRaZA/AG8EsMJkN+iQm1wv/uo7sNY
+	 XKsnmsg8r907jZIu7kEfn1f6g2JxN8h3uXOAaRT4U9bYtskWCFKIRAahZla7KrIh9/
+	 wcLGYYHB5m64UyO2skiFgxavqaVRYabm8WRUYoU7dK8dbX1pTuZ9qZk3EknWxul3n6
+	 RGNcTEf+tkhCJF5DE5wlIc06CCR29Vrqd0GAli8vfCDH/zJLkvEyv/r5mKWWsJbzx0
+	 uokv3la2tRRuQ==
+Message-ID: <038cdb46c8e0a615894b25e3aac5483e.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240914-a5-clk-v1-3-5ee2c4f1b08c@amlogic.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240914223233.1342-1-andersson@kernel.org>
+References: <20240914223233.1342-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.12
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, Varadarajan Narayanan <quic_varada@quicinc.com>, Luca Weiss <luca@lucaweiss.eu>, AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Mike Tipton <quic_mdtipton@quicinc.com>, Rayyan Ansari <rayyan.ansari@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, Vedang Nagar <quic_vnagar@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Wed, 18 Sep 2024 09:59:53 -0700
+User-Agent: alot/0.10
 
+Quoting Bjorn Andersson (2024-09-14 15:32:32)
+>=20
+> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
+7b:
+>=20
+>   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.12
+>=20
+> for you to fetch changes up to d628455ab3c22bf633935f5d09451530c44c4ba3:
+>=20
+>   clk: qcom: videocc-sm8550: Use HW_CTRL_TRIGGER flag for video GDSC's (2=
+024-08-20 17:15:16 -0500)
+>=20
+> ----------------------------------------------------------------
 
-On Sat, 14 Sep 2024 13:25:25 +0800, Xianwei Zhao wrote:
-> From: Chuan Liu <chuan.liu@amlogic.com>
-> 
-> Add the peripherals clock controller dt-bindings for Amlogic A5 SoC family.
-> 
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  .../clock/amlogic,a5-peripherals-clkc.yaml         | 126 +++++++++++++++++++
->  .../clock/amlogic,a5-peripherals-clkc.h            | 139 +++++++++++++++++++++
->  2 files changed, 265 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Thanks. Pulled into clk-next
