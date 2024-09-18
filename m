@@ -1,117 +1,120 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DD418A6B6
-	for <linux-clk@vger.kernel.org>; Wed, 18 Sep 2024 12:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1175A176FA7;
+	Wed, 18 Sep 2024 12:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726662762; cv=none; b=IFvQBMclsJIQinT1MTi+A1IBOt79HJai+4PEM/OaZyDRE3+a8n+6rBWGstHed+PXf9B/8bO79S9x7uOqyZlwRA/5Gn23XbpNUDB5aI6Jwc2BUU5vGv/JiDTGXeiYz7VUikcFq8B2bbBKJ3Tj86RDfRZnd8DvTX1dSDe0FkR60x8=
+	t=1726663182; cv=none; b=XhMKfphe0WNRPR7UQCBImWmydJyYQaCPaaTEGV3rGYifNtPdCTTWpOKc7hLFFY8620CMtbJkmqlPIdZFnfdYdnhumw8tBJOHTA/VaPD+jtJitLoC/HRs5UeehYBt9EMtrvFZp7lx+nsW3m5U5RVuqDfB2y9evI8NvewL/NwLu1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726662762; c=relaxed/simple;
-	bh=kOxd9hIIzrOu+J19O/SGnOcMPFAhrQs2vHhAmEtEjpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LjCQM1mqUm1pcKBQ5iKFeZIOrkDrJ/NRYEddxIN+hXM+8eXhvQUqYFQhI/ik6sPPtRDLj2+vvfcDIvlin9tB1nmZH/CWNAEjCwiEGiBDZGaTVDJQ8H486rblHkkiDEDU3nB4c4vAsSF4fLYj8hun3iayvw5Gj1HWofek3qdptjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fmqGxc8M; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1726663182; c=relaxed/simple;
+	bh=zHSCkLBbHvxeaweQ+w3KKgu2flmd7IQg7nm+C+PPzAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DXWAzItBnQG8LEW7jB0bBoUfZ7UeNH+y5hulvXimOryl/Mu7A8qtczCo2BpnZTzwsFchkcZVob+w4xXQqmVkOhuLmFySgOd6LItRYp36ixUTqLjjCHuMUKyB9LOG3VCAK+i0/06hkY8Ta9yHUxG45l2zzsuAATCK2qbd55Nr0Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcx9q3Gg; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fmqGxc8M"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso145994066b.1
-        for <linux-clk@vger.kernel.org>; Wed, 18 Sep 2024 05:32:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcx9q3Gg"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dddca05a60so7029567b3.0;
+        Wed, 18 Sep 2024 05:39:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726662759; x=1727267559; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726663180; x=1727267980; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C/FoiqPcoMPi8o1D9aYXEQxqaTmmjAQElRJaLfC5ZU8=;
-        b=fmqGxc8MMukvScUPyjv4UnrOZ5w8NUpnzcw2SWaU4JNUyH4Ndpab5QXs+MFf6Mlx7n
-         htEIhGHavFbb9uO85YrGbKWXum/rWKmTJ5b+Af1Pb/vPdrWxvjOE7JxV9o4FToNHxY+z
-         zZFrSEFyqYVcDjUcFCiB8+oZpR5f1up74w/jmzil2UGV5gltLqDGxgMS7bXnpv04FiF4
-         Evl5t9JA1kuFFT/QPlqJYiMMUBoGfJ5bg/kgj36T9rqq+QvprWI/UKg9Za1HaHhyXjPR
-         Efk9Z9lQwLa41YbG5FJL8tmcm7NJYHFaw9dcS+f2ngA4YRKvFGiXZMUNtHWZpFdoySA4
-         bR7A==
+        bh=yohxMWQQzG9Yvh0JnaHxDE74VTtOz+kSVjviSCcxYOM=;
+        b=bcx9q3Gg1ROzHoGbV4QC/2JH01Rj7N/QDrrHSdhODyrQJS+LI7S9fuDyOKJTKAdbcq
+         QPpmKxCuRAAXxRjk+C9VvPzDmSawjE9ilcbTT+537th49Urymy1EFDoHV/W5TNB4NQpU
+         F+bOpOc3yQOYe0tr7+IMc49tnAQ/ecJ1wGJ/XTbhH1dsfBha80yFkB5J/LK9JkwRzBb9
+         7JO9M1lI3qnLatfMLXKwK62GR//DKgzbPrGQCVVmQwSUJxpXSNQkQbNaRs/Psoj+mD9d
+         GK6J5yFHk6IyDvEaRM3zEGvSvHHoS3Eso6EwJX5sgjLOKdOtJ2iJjCKVWVwrJ9PnM6Ie
+         ArGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726662759; x=1727267559;
+        d=1e100.net; s=20230601; t=1726663180; x=1727267980;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C/FoiqPcoMPi8o1D9aYXEQxqaTmmjAQElRJaLfC5ZU8=;
-        b=oULo5jbwUvPWG5mE/7WN4RbvsgdIu3G1cclm4XYdaTjiWm0C7eRtNIVOWhyAojom8U
-         YGiK211QWOfAk6vIoeGs/51LTRW/h+KhqQOOqdL8prXv3gALYvrtUdSkmE4SzMAEHQnJ
-         DTO2SMWj9ynhFtf0SC4G0Kw+6H95bfbUCO2k5SwcO2z5N+30l6ig6cx7dUtqF243B9BI
-         7uT2eMSuUq7eIlDst2E5wQ3RVFL19wYWQgxg8I10m+vmN/HBNxVHU8Dk1P6A9bZXfsyu
-         8aEzT35S8U0jznBt+/UmA0RvBWEoZ5+8D/IxdlvG08oS/p65HVc2oKgTerSLH4cXLP75
-         nYfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvmtEldw9AtP180C7aXl2E/EHDHgtyVzTKCQFFBMKUeqTd9k3lu6jyS/3+UgBeOaq6UerQCOm2dh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs4Zd7H2bM+/NUf9U/bilwPtte3OmMSiuj2LEPxO71G22h2IuL
-	Q7OmSfxwYaQ/sPyR0/kcR5PkL/VkAVdjbX37uEiWKrPskrS/rVJnSDRbR/SnaNM=
-X-Google-Smtp-Source: AGHT+IE5Jxem8UHzHB+VP+MJx/8nOqZr7Uu7MQy/5IwXdfgOYZc1XDlhB2tBKk/HW3Jb8uOyGMxEVQ==
-X-Received: by 2002:a17:907:72d1:b0:a8d:6372:2d38 with SMTP id a640c23a62f3a-a8ffabc1d72mr3041383566b.18.1726662758730;
-        Wed, 18 Sep 2024 05:32:38 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:a2bb:f619:b5e9:672f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9060f39a8fsm585047566b.0.2024.09.18.05.32.38
+        bh=yohxMWQQzG9Yvh0JnaHxDE74VTtOz+kSVjviSCcxYOM=;
+        b=M+EoN0Otmx7QMfuLKS29phw0me32iunKvSTN9s1iU1E3XHteqsf9rqA3Cdem8ufye7
+         8vh3mTH19SiQxKVLyRDuaTNBV7BtIL6x1y7rVHhKYsucLMwxUrE01Nteq+kfN1WiZDEN
+         5WHb1LZx8Dzj9uiAPd/f+ArSVwIdPXpPkOL0yeGonS1vlX0hlxvWS4W4ijUQdHHevQ4L
+         zMpHBuPgmAt6uoMXZzhE2z1ZGGAtgduo1F+k4NauIdKONMx1g2Ta9eQbklBvbGFUHMYk
+         mSMYDxhv+KPJB8RuF6eW0vLyb197d2EN8Z5pK9dKG+zJYVMBTUMfKu6VHsKwYTQM7bjP
+         MxgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGyVeFaDmqBQEJUboSq+Qr4Pxfi4pihvigydAXrUuX1N2cnhOO01I8CaLXt7H69wKKjZ4O3trmAKA4j+Zk@vger.kernel.org, AJvYcCVoli6515X8qk/X8CU8Ka6Mo3P2bKfLadOyiPwsgcbL9z9DhLzo4D349FRvhNOA0ANHtfoauQngL34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTOvcTpmzqV3Q44jo9ZllThyER0PgbM9eQADYm6MIQv/YJVIHg
+	4sl8LqJy8AOrOSZP7vEmXzSvibwxEMr0wvQioZTMy+9t+p14c0nnFNpuOg==
+X-Google-Smtp-Source: AGHT+IG002jAs5oeAqIDjeSQ5SV1OXrDk3gre1xyD7dcxrivorEh+vkIJFGBtj6OGra92Wh/VnfZcg==
+X-Received: by 2002:a05:690c:6906:b0:6dd:ba98:5c9b with SMTP id 00721157ae682-6ddba985e7amr87723827b3.22.1726663180021;
+        Wed, 18 Sep 2024 05:39:40 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dbe2e0da2asm17691817b3.36.2024.09.18.05.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:32:38 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+        Wed, 18 Sep 2024 05:39:39 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Cc: Max Filippov <jcmvbkbc@gmail.com>,
+Cc: David Hunter <david.hunter.linux@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-Date: Wed, 18 Sep 2024 14:31:51 +0200
-Message-ID: <20240918123150.1540161-9-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	linux-kernel@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	shuah@kernel.org
+Subject: [PATCH v3 1/1] clk: clk-qoriq: Replace of_node_put() with __free()
+Date: Wed, 18 Sep 2024 08:39:23 -0400
+Message-ID: <20240918123925.41511-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1323; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=kOxd9hIIzrOu+J19O/SGnOcMPFAhrQs2vHhAmEtEjpM=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm6shAr19LilaNvFAzfO8S0L/dGkK42FS6l4DJy z/2xkG3wG6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZurIQAAKCRCPgPtYfRL+ TksiB/9YD0/tcZ59j1vmS0BJK/DFdgSsCbJcLA1+5ue+VfD4rfoS907Qy1sGJx5WwaopQm19Olt cKNgNyhVqi6WYx4vsjCJoWNt7IBs8JjoJDnlnSNL3XffwkuHHkMqUGbOeaMpz98GQ4xmr0OvZ4t M5zFLjd5EJdYa2mJCAG5eIupmwPJKqNW3T4Um2RSO+pLU8SkiCJiTXMd6BnfjpMfZ71BrL1ksBE 7SK5dL8dS0Q1AETWcBEO7ClQrsHnlcu7wBw7NrauYNMhkzvr7QbFUbiue50oL4bPx7i+P3E0E5l KG7WfXhnu36rz6dJ88+oDRLFrJvYiu8uTnEuAOjwJk18v3Hp
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-These drivers don't use the driver_data member of struct i2c_device_id,
-so don't explicitly initialize this member.
+Use __free() to have automatic cleanup instead of calling of_node_put()
+manually.
 
-This prepares putting driver_data in an anonymous union which requires
-either no initialization or named designators. But it's also a nice
-cleanup on its own.
+Compiled without errors or warnings.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
 ---
- drivers/clk/clk-cdce706.c | 2 +-
- drivers/clk/clk-si514.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The following commit has information on _free(device_node):
+9448e55d032d99af8e23487f51a542d51b2f1a48
 
-diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
-index dd3d42d9ad86..d0705bb03a2a 100644
---- a/drivers/clk/clk-cdce706.c
-+++ b/drivers/clk/clk-cdce706.c
-@@ -678,7 +678,7 @@ MODULE_DEVICE_TABLE(of, cdce706_dt_match);
- #endif
+v3
+	- Changed subject
+v2 -  https://lore.kernel.org/all/20240821010739.15293-1-david.hunter.linux@gmail.com/
+	- Improved message body 
+	- Use change log to give more information about __free()
+v1 - https://lore.kernel.org/all/20240820013550.4906-1-david.hunter.linux@gmail.com/
+---
+ drivers/clk/clk-qoriq.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4dcde305944c..a560edeb4b55 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -9,6 +9,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
- static const struct i2c_device_id cdce706_id[] = {
--	{ "cdce706", 0 },
-+	{ "cdce706" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, cdce706_id);
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 6ee148e5469d..1127c35ce57d 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -371,7 +371,7 @@ static int si514_probe(struct i2c_client *client)
+ #include <dt-bindings/clock/fsl,qoriq-clockgen.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+@@ -1065,11 +1066,8 @@ static void __init _clockgen_init(struct device_node *np, bool legacy);
+ static void __init legacy_init_clockgen(struct device_node *np)
+ {
+ 	if (!clockgen.node) {
+-		struct device_node *parent_np;
+-
+-		parent_np = of_get_parent(np);
++		struct device_node *parent_np __free(device_node) = of_get_parent(np);
+ 		_clockgen_init(parent_np, true);
+-		of_node_put(parent_np);
+ 	}
  }
  
- static const struct i2c_device_id si514_id[] = {
--	{ "si514", 0 },
-+	{ "si514" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, si514_id);
-
-base-commit: 55bcd2e0d04c1171d382badef1def1fd04ef66c5
 -- 
-2.45.2
+2.43.0
 
