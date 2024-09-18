@@ -1,136 +1,141 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475104409;
-	Wed, 18 Sep 2024 12:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73D218C029;
+	Wed, 18 Sep 2024 14:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664335; cv=none; b=SWsRbWuOgi1t5cXq0n7K1Frgwjqk7haaQcW9RCSfXFKLYcZpvlWSOZ578nHxZU5AJjkDC3bo0cSelhBYe5dn4Gg8ProaSSUEkaa1gyS8x5cq1AVPFWC5SO3N3u0QchDOm8OPB+VwBCnIMmZFANwRQgIzquuR7POiVDUKZTGyGwA=
+	t=1726668027; cv=none; b=Ug0ufV4Q8iNWoujPJP3LFEQNa4CJMav0grPZXKwRZIg34BLXiTQjSGDrnKWfD/C4YrKbDMk7R5zhD/mQvdC7qrv8LQudFxn8OuHK8GYEt1uC/zN6/wFUEkvdca9RMJ1IihK7tmaI3ViKFGtbVT2aqjq1woaQzd14XhVsluQ5QCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664335; c=relaxed/simple;
-	bh=WHN2Or2KmX97EgplTcnWv9pNo/oOs7of4tjRXWWWC8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NKyUEH6NeU4h2XG001Nn/4ty6R4iSWY/QO2J/8h4IyW68qA8AdN/PzHun32GKkQ9LCa7c1tKjs+UdIH54mLaL7tiBgrjaW1/LaZuhZq0b2MDtP/7j/O6pO5z7UBMV4nVnZBqRa83x2mxpSDbZqrTP4MSWN/699PXLHx4l9tfHPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dI0iUyOS; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1726668027; c=relaxed/simple;
+	bh=KEtGf6HmdMYHaZ9RCRIH2yfhCQ1fDsi0eLvOUTqcDZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TJkNcJTb5kP1/cJJGh4NDJ2DozmVECmXZBJnJ5GFn+e4bdPBV+cR9RqsUvgn80G1kVsArHlDjCQ85UNV+y9+qn7OUn9wwFZCp+7FFAN5YgjHI2swffWiDKkFGXvLAZqp6MBD0Gvye/Ee5Z6raaPhiY7xZieY0bXWKSqusnZuM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTIeW6f6; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dI0iUyOS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726664333; x=1758200333;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WHN2Or2KmX97EgplTcnWv9pNo/oOs7of4tjRXWWWC8M=;
-  b=dI0iUyOSkIhdEDM/5LFCaEzSSKc2ybCWWxLMHWhUxtgEmvrkflcTHcPO
-   7VKpvaRl0YWwy2zqvuOM8XJbtiiLhsUn2oJNoTkjZ4vLPQ7tbnlBaQmRE
-   0SEF1gHgYWtOa7YPOKSGW5+o79MfVE4By3Sx6b5g0SWz58kz6vezTDlu+
-   oKSLvKArSVQfu9/H7f4LmA7iaJoiXbcpIYkB8dzdc68qGBjee2CMDjJOO
-   IhN4lJMp1mQLq5JlF3+CSdn94VCidn09S014pWpavjFfUm0FuL+XWyvyD
-   ZIvPWj4zzauCAE1cOhZRMcf2xgZwf8bBjsdh2OJ397nN2LG+zJoBtZFCD
-   A==;
-X-CSE-ConnectionGUID: 6wyIBGIQTUq+t6epY6O5fA==
-X-CSE-MsgGUID: d/oozOpsSRqyFWoxElkoRw==
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="199377516"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2024 05:58:51 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 18 Sep 2024 05:58:21 -0700
-Received: from [10.171.248.44] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 18 Sep 2024 05:58:19 -0700
-Message-ID: <672befa1-cefb-480e-b474-ff40e4fe80ed@microchip.com>
-Date: Wed, 18 Sep 2024 14:58:36 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTIeW6f6"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae102702so46868045e9.0;
+        Wed, 18 Sep 2024 07:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726668022; x=1727272822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B5Xbmpy6v6pWsNREd3+6VoQ9i2+Ug3PNQHxuk+oN7X8=;
+        b=jTIeW6f6X3lYZG02oSVZJ1kaka6aDZFgiDh6/AoK0Wc3ll0jyIamf7J4SoqTa4ymA1
+         Q4eapZQaMkKTN76BlE7m3R2Y3p+S4wAhm7qqMNk8qNgs5OmjpICNzYDUNAs4x6QoJtwb
+         5z+pVohYZSJOkZdhvkkkfAAfq2hujgL9VH760f1kOZ3VWvL3hVk+VDYjmVoY1NwQdZR/
+         +j4KfgNXM51+Wl939aLh/O6lpOk0bkUxnukEKh4DMd+yMKkc7bu9XcgVuLnb3Y4ioHwa
+         p94QWaPcXPQpqvJwY+BtDrGuA5PJ/oFBbcKaGzKwVre1wOrYTALvlB4KOsXXk/a81Pe7
+         BgbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726668022; x=1727272822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B5Xbmpy6v6pWsNREd3+6VoQ9i2+Ug3PNQHxuk+oN7X8=;
+        b=egyFI8w05RHINLeYDJjzNyVGxDF7HSYLg4EPawZ+Q2UDwSqRcEcF1BVDbEOsunU1dn
+         UEn3o4kUcz198Z7DMXRIAaopsDsbY86Vxx8/JqnnaP69Hr4usbQtUSjZYNaCbsDhFSNC
+         BTy/f41QZxDIhF6AxSrgILUeiv4eVgqtiTYNYf7NtGJlHyHoSZ0ZbdanROsVrnYYHddg
+         NNQ3OoZpgscuRaWJqKXaBXHZUbyCdfrE8nerh7cAGmuHqfHkzZafQ3LdSJuJr+ojb+S3
+         OERxvSjQsgCQzaSug4xrOBudHdovfbxeN2bo54+vcg0F29BK/szqwpqmDHMqG4mynEm2
+         sxUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVklqwDWBeCx+I/xdw+AN4Hv8ncZhqbMbqV6Cs51A1yzIalAlj8OUHAVo7IO4v66qb2wG9RJdWTDLg=@vger.kernel.org, AJvYcCWWbqMHFC9we2v7yIbkKQzAlX7yLUaYzq8qZVDD4aLmis9GdRWgrm0VrW4D6mK3zewX2Ng0x8aR6LPUXqym@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNu/3pxLc0/qYc1P4y82tBg9HiseVhJf4c+U2Koi7pTIpXO0/B
+	yNVl3n3rPP7ahTgek/CwoYMr+EqYUypMX84KpgBe9IYTCFccRSa7
+X-Google-Smtp-Source: AGHT+IHbEqPSMCUcoSqtLPyaZBqlpj5Uvorf2iJ37KTJXr9vai7zfKDCPHObgt39844jCP5qA/sv2w==
+X-Received: by 2002:a05:600c:501f:b0:42c:a7cc:cb64 with SMTP id 5b1f17b1804b1-42d9070d985mr134813735e9.3.1726668021765;
+        Wed, 18 Sep 2024 07:00:21 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7053581csm17765455e9.46.2024.09.18.07.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 07:00:21 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a09g057: Add CA55 core clocks
+Date: Wed, 18 Sep 2024 14:59:57 +0100
+Message-Id: <20240918135957.290101-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: at91: pmc: Use common error handling code in
- pmc_register_ops()
-Content-Language: en-US, fr-FR
-To: Markus Elfring <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>
-References: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <4a82fe70-b07c-4878-bd31-6ae07b61f522@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/09/2024 at 14:34, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 17 Sep 2024 14:28:22 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Bad track record and no real benefit from the patch:
-NACK, sorry.
+Add CA55 core clocks which are derived from PLLCA55.
 
-Regards,
-   Nicolas
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a09g057-cpg.c | 16 ++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  5 +++++
+ 2 files changed, 21 insertions(+)
 
-> ---
->   drivers/clk/at91/pmc.c | 18 ++++++++++--------
->   1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 5aa9c1f1c886..040b70e1ffbc 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -162,20 +162,18 @@ static int __init pmc_register_ops(void)
->          if (!np)
->                  return -ENODEV;
-> 
-> -       if (!of_device_is_available(np)) {
-> -               of_node_put(np);
-> -               return -ENODEV;
-> -       }
-> +       if (!of_device_is_available(np))
-> +               goto put_node;
-> +
->          of_node_put(np);
-> 
->          np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-securam");
->          if (!np)
->                  return -ENODEV;
-> 
-> -       if (!of_device_is_available(np)) {
-> -               of_node_put(np);
-> -               return -ENODEV;
-> -       }
-> +       if (!of_device_is_available(np))
-> +               goto put_node;
-> +
->          of_node_put(np);
-> 
->          at91_pmc_backup_suspend = of_iomap(np, 0);
-> @@ -187,6 +185,10 @@ static int __init pmc_register_ops(void)
->          register_syscore_ops(&pmc_syscore_ops);
-> 
->          return 0;
-> +
-> +put_node:
-> +       of_node_put(np);
-> +       return -ENODEV;
->   }
->   /* This has to happen before arch_initcall because of the tcb_clksrc driver */
->   postcore_initcall(pmc_register_ops);
-> --
-> 2.46.0
-> 
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 3ee32db5c0af..d7e88550c1db 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -41,6 +41,14 @@ enum clk_ids {
+ 	MOD_CLK_BASE,
+ };
+ 
++static const struct clk_div_table dtable_1_8[] = {
++	{0, 1},
++	{1, 2},
++	{2, 4},
++	{3, 8},
++	{0, 0},
++};
++
+ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 2},
+ 	{1, 4},
+@@ -74,6 +82,14 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 
+ 	/* Core Clocks */
+ 	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
++	DEF_DDIV(".ca55_0_coreclk0", R9A09G057_CA55_0_CORE_CLK0,
++		 CLK_PLLCA55, CDDIV1_DIVCTL0, dtable_1_8),
++	DEF_DDIV(".ca55_0_coreclk1", R9A09G057_CA55_0_CORE_CLK1,
++		 CLK_PLLCA55, CDDIV1_DIVCTL1, dtable_1_8),
++	DEF_DDIV(".ca55_0_coreclk2", R9A09G057_CA55_0_CORE_CLK2,
++		 CLK_PLLCA55, CDDIV1_DIVCTL2, dtable_1_8),
++	DEF_DDIV(".ca55_0_coreclk3", R9A09G057_CA55_0_CORE_CLK3,
++		 CLK_PLLCA55, CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
+ };
+ 
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index 1bd406c69015..819029c81904 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -32,8 +32,13 @@ struct ddiv {
+ 	})
+ 
+ #define CPG_CDDIV0		(0x400)
++#define CPG_CDDIV1		(0x404)
+ 
+ #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
++#define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
++#define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
++#define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
++#define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
+ 
+ /**
+  * Definitions of CPG Core Clocks
+-- 
+2.34.1
 
