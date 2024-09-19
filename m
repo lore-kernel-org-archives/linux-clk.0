@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3151618F2E8;
-	Thu, 19 Sep 2024 06:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920C91917E1;
+	Thu, 19 Sep 2024 07:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726729101; cv=none; b=gzH2vB3kYIcxM3rZxNTEzd3lUYgXJxI1W26p+1hbquTA4tAXelMMWFzuEDvAqMNxPWjn/2em/oU8ZtJvO/O79hai6AMC3x2LslCd0Z8p1ND77Y+xHQm12qkJDW9tDnSsFHd4k/bH24+top1gdu1pjekJihCcri8KpyE88IXOxEg=
+	t=1726729228; cv=none; b=NoMxZu53A74fnrPsETkrur50TWfZzKt0Yb+u921tINLobVMWK6I1y+wBbQyhHIdF6EqsGQZ9thXsOyyDkktuiVweio+o7xGs77/ch7A7AGQKFdpwmkuOlEFvv7tlAUIniNUMom80o7xX9/5VdctMGvcmO8pmWhbekqhGsHiUFT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726729101; c=relaxed/simple;
-	bh=9nAAqlkZKYZfGfpiwhBJTJ0OpaigkF/Yg1OCPN+DQDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IqHOx0aW7eMkBOOJQNwA6AS0XhQ87+1Zi8RUee8kkZLkH6y+gmLwuSvmRf+SuICtbPFEXfE4KgHaf/1A45g54FH0DNtVCdL7ZiYu1e2vXVC5B2B/Rmo92nsY7i/lBeLI/hyjSYJEgFyT9rLhncMbGq0mg4ALc9Xq9pGWkjw15ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a57OZkQa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726729228; c=relaxed/simple;
+	bh=t9RtZpRZoGBiHu7vK8NzRJulyoUBoTT7NAXEVYpBF0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7bdJBucc+vXpT2XwkPZvJlftazfJ3dpKWha3CrdEzN7U/H433CtRoZgbAJdF4OskpoHj8uJacVn1DUZTfHOMnerBO4S5WkX1WXXlYIlMfwoi6SF6O1YlBoTlRIrAllDg3zdd2lySmbX5qgxFpq694u6uA1nojBGWHGmyAOw1Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p01w6N9S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a57OZkQa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28420C4CEC4;
-	Thu, 19 Sep 2024 06:58:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p01w6N9S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B04BC4CEC4;
+	Thu, 19 Sep 2024 07:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726729100;
-	bh=9nAAqlkZKYZfGfpiwhBJTJ0OpaigkF/Yg1OCPN+DQDY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=a57OZkQaISJR9pevwvenRJhjMsji5Nh16A9bNVdWyERJG4qEePMxH5MxFZpRThbA7
-	 AY52hwTCJp+LW9W1eZ/WRtl/pnhQXPwk8lr1A0ejgzHc4mHv00XMOS8UKm0A6/jJ4S
-	 24hsr1FcMyX3fr1Y2OSDLjISOoFtfcDLl6wS3wnygJkXpIJTkb8YP85bzQaqeUeZnl
-	 7lXPgC7SZlIGvtKzuWG2cnjlOBoYmu2ZqsSOUVSlpUI85MWp16EcF4ZjhaV3l2X7m4
-	 LvWD4vDIeScxWGjevtJ+O2KJRVDekGW3Z9GvmD1AZlhEmSwH7mVwILdrpDx+m/JHVz
-	 wWr5gO+pTG/jA==
-Message-ID: <195a8bfe-e4d7-4140-9635-b86a6ce3c663@kernel.org>
-Date: Thu, 19 Sep 2024 08:58:13 +0200
+	s=k20201202; t=1726729228;
+	bh=t9RtZpRZoGBiHu7vK8NzRJulyoUBoTT7NAXEVYpBF0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p01w6N9SmtQ8dez7aT8RhvBSczsPephbuWni4AnI7frtx5xWTa+i9Err35w827rj+
+	 OK9ZQVjmtA+Me4r88/dv/frvOXEasTpU+2ZlQRC1heeChyVR7zM+LfsU8NLOMEjY5i
+	 vCIqpBeHs2Fb59qtxk9DLkgE+a/VW8UYmXYPAefO9fNg1unuJL4t66fsJ1zEsrVR9T
+	 MZ2VUmf4gLEXzE030u8TH8QQMpQMBGyjKA5cxKD6HJzDBLUtuUQla63ZiitjLVOnVL
+	 bWg6mVy5Rtrqb3vtkO5ptBLQo2uq0E5LGvTeBVVIkGzrWUzq1knXC3wkJsTmofMmyG
+	 GBvpQhSHbNdXg==
+Message-ID: <6886f561-b9e4-468b-9515-72053d57911f@kernel.org>
+Date: Thu, 19 Sep 2024 09:00:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,25 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: Add AST2700 bindings
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
- <joel@jms.id.au>, "andrew@codeconstruct.com.au"
- <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
-References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
- <20240916091039.3584505-3-ryan_chen@aspeedtech.com>
- <b9bf19af-0c3c-4622-9124-a66d9df649b2@kernel.org>
- <OS8PR06MB754148AD165538D3D6B6C3DDF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v4 08/27] mfd: max77693: remove unused declarations
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>,
+ cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>,
+ Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-8-2d2efd5c5877@gmail.com>
+ <wywp6vj2pqqe7to55k7ssh5sbqrmy7emvwruvm2waytancf3r4@aygtw3y6huwx>
+ <CABTCjFAvXYrRJS3Dwf-TMq3OW_vN1hskk+qPjosbRym7xOvy1Q@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,48 +106,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <OS8PR06MB754148AD165538D3D6B6C3DDF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
+In-Reply-To: <CABTCjFAvXYrRJS3Dwf-TMq3OW_vN1hskk+qPjosbRym7xOvy1Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/09/2024 08:01, Ryan Chen wrote:
->> Subject: Re: [PATCH v3 2/4] dt-bindings: Add AST2700 bindings
+On 18/09/2024 14:53, Dzmitry Sankouski wrote:
+> пн, 16 сент. 2024 г. в 12:10, Krzysztof Kozlowski <krzk@kernel.org>:
 >>
->> On 16/09/2024 11:10, Ryan Chen wrote:
->>> Add reset, clock dt bindings for AST2700.
+>> On Fri, Sep 13, 2024 at 06:07:51PM +0300, Dzmitry Sankouski wrote:
+>>> Remove `enum max77693_irq_source` declaration because unused.
 >>>
->>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+>>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 >>> ---
->>>  .../dt-bindings/clock/aspeed,ast2700-clk.h    | 163
->> ++++++++++++++++++
->>>  .../dt-bindings/reset/aspeed,ast2700-reset.h  | 124 +++++++++++++
->>>  2 files changed, 287 insertions(+)
+>>>  include/linux/mfd/max77693-private.h | 11 -----------
+>>>  1 file changed, 11 deletions(-)
 >>
->> This is supposed to be part of the commit adding these bindings. You got this
->> comment already, didn't you?
+>> Please split your patchset per subsystems. There is no dependency on MFD
+>> bits from your DTS... (if there is, this needs to be fixed anyway)
 > 
-> Sorry, I may mis-understood your point in previous.
-> I think you are ask, yaml and dt-binding header to be the same patch, right?
+> Indeed, my dts has no dependency on this patch.
+> However, my dts has dependency on MAX77705, so AFAIU,
+> I should send this patch separately, while leaving other drivers in same
+> patchset, right?
 
-It is one patch adding the binding for the device and headers.
-
-> 
->>
->>>  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
->>>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
->>>
->>> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h
->>> b/include/dt-bindings/clock/aspeed,ast2700-clk.h
->>> new file mode 100644
->>> index 000000000000..63021af3caf5
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
->>
->> Use compatible as filename.
-> Modify from aspeed,ast2700-clk.h to aspeed, clk-ast2700.h, is it ok?
-> How about the aspeed,ast2700-reset.h file name is ok ?
-
-No. For both use the same filename, so the full compatible. FULL.
+How DTS could have dependency on MAX77705? It's a clear no go - broken
+patch. And something very weird, almost never happening for new hardware.
 
 Best regards,
 Krzysztof
