@@ -1,40 +1,39 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848FD199FAB;
-	Thu, 19 Sep 2024 09:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EAE199FD0;
+	Thu, 19 Sep 2024 09:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726737116; cv=none; b=PLDr3i5oR+u/xolyFfuX9LRG1MZV1BOEPBDZqgVhvdXGPW3vCw5xUC6moU9AO0kGMceXrRpi8zQGdUftKyAG6hedhWSkLo6LacB/R3PWS6SNHKPs31oUuTl73AGj3zzbHmu8S6eevLc2YS0T78hZjLMYJ77m4d7r2ivCeqCwBws=
+	t=1726737117; cv=none; b=buNWBao+5UzlnVLzQIp337aXy8/8eEbhLL2IiIRmuGRr8CuF8zbXxhlRcOjFRp4ywlmlG35X9qMPumJBGvBl6y5k8PB43WDFWnx0QCoBMg3nCI5zWcTS+I6RrQUm2Jnt6/Aihn0j4tNoiLyiZTMdaPUd1i1hTJGQSboeLVQa3pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726737116; c=relaxed/simple;
-	bh=rITSry2xLNISMJCkk+Pk0SePa7cy3UVe1V/XbJQtXgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RoRJiKaaoj9O3Mi5GZ7kYzlyV1DIzsixkcIvHh2RsIPWDbwZHmhAgo3saLalSoZQeAJkILLosGkqVZKZOGFmeh/DM5rEfbAAXwY169MvucIUt9hMF1iaOqLPQsszy3N0cjjyFyArfVh0l+Yx/VDAEk0lIKqiXqXKC3BAYLeB1pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Kdnz/tjQ; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1726737117; c=relaxed/simple;
+	bh=pNaf7kLwQz0ZXW1YTJO3AvZykLEvEWfqetO/wNMvKO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ECWyClSARUFKZ3IrzyY2zHunMh1gcdoci9aJZy7hnwSMkL+6zFWxhkfuR4RBR/xVwsyvE+EA1QQuWRZSEPYqChX72L+AZjhCL2w7xT4/ioCyFPMaSH7kZm3lHOJvDMv2BxCqDeql/y52VrM3lVJ3b+iemYPXXmITPWffKgHFt/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cy/feXQK; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Kdnz/tjQ"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cy/feXQK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1726737107;
-	bh=rITSry2xLNISMJCkk+Pk0SePa7cy3UVe1V/XbJQtXgg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Kdnz/tjQ5byJTA+DvSctoa3Vz01fgPgCX0G8MqA7HRCbTzRo4NWpA8IxF4X+CJMU1
-	 JnEmsoH4G9XzXgQCTljjekl5c8cLuL2vzpCTHtXqguySVQX1X1Og//OwHN0gGCggNg
-	 eMxMongx/Lki+CnfS3WxL5CpT0FbGVfenk8V3SxrILzWmKcGNYGrqhwO2KmPQR7b9R
-	 0QmYvidbVmAUJSpLaaF6WsLdLXmRFiD0zqr84vcAxOiqDh4WxWT3XIYbxZWXImLQiP
-	 bCnDRxAU4aYOgXV6wD4NcjHYZWc4a+/CxeBZeagGGaQD/S7UowchzbLpGr9WHwwHmC
-	 ifucprR8DMb4w==
+	bh=pNaf7kLwQz0ZXW1YTJO3AvZykLEvEWfqetO/wNMvKO4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cy/feXQKL3OC3cDGxm1U2KdxCwlOLI6/oIb2sKRdp3WkBcbRfjOshWDxLI1n1FA36
+	 PIQW0XR0vs2smFCB2AJpIA1M7wFqqM8oyAu3HehQnv4+H1Di/v2UEEYPvxOOVz1ssN
+	 gmy7wCyZf7D9Ctb/Q8LZiHJVjdHUaqUy5fqsvy0+T6rjcPTl4bocgZOvVoxhfdt8M4
+	 YdStS1emcDwSvr0v6jINHR3vPiIg2xMhUrmn3TiDqg3Vl4Skr/XGhFOTCfPIkDKxR7
+	 +I3Bxx/Xe2PC0DNwdkXrMgkPs3iDKF0CBs+KE+rGjAcAWoqg07oTTPPQdmz3gVeiV6
+	 GBPggaluXozdQ==
 Received: from jupiter.universe (dyndsl-091-248-208-160.ewe-ip-backbone.de [91.248.208.160])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6BC3D17E1067;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6D1A117E1073;
 	Thu, 19 Sep 2024 11:11:47 +0200 (CEST)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 20FB6480083; Thu, 19 Sep 2024 11:11:47 +0200 (CEST)
+	id 1F97D480076; Thu, 19 Sep 2024 11:11:47 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -54,12 +53,10 @@ Cc: Elaine Zhang <zhangqing@rock-chips.com>,
 	linux-rockchip@lists.infradead.org,
 	Sebastian Reichel <sebastian.reichel@collabora.com>,
 	kernel@collabora.com
-Subject: [PATCH v11 1/5] clk: rockchip: support clocks registered late
-Date: Thu, 19 Sep 2024 11:09:44 +0200
-Message-ID: <20240919091129.83500-2-sebastian.reichel@collabora.com>
+Subject: [PATCH v11 0/5] rockchip: clk: add GATE_LINK support
+Date: Thu, 19 Sep 2024 11:09:43 +0200
+Message-ID: <20240919091129.83500-1-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240919091129.83500-1-sebastian.reichel@collabora.com>
-References: <20240919091129.83500-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,107 +65,59 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When some clocks are registered late and some clocks are registered
-early we need to make sure the late registered clocks report probe defer
-until the final registration has happened.
+Hi,
 
-But we do not want to keep reporting probe defer after the late
-registration has happened. Also not all Rockchip SoCs have late
-registered clocks and may not need to report probe defer at all.
+This implements proper GATE_LINK support following the suggestion from Stephen
+Boyd to use clk PM operations by creating MFD dynamically. This required some
+restructuring, since CLK_OF_DECLARE() is called before devices are available.
 
-This restructures code a bit, so that there is a new function
-rockchip_clk_init_early(), which should be used for initializing the CRU
-structure on SoCs making use of late initialization in addition to the
-early init. These platforms should call rockchip_clk_finalize()
-once all clocks have been registered.
+Apart from improved power consumption, this fixes the runtime errors from the
+pmdomain driver (failed to set idle on domain '%s').
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/clk/rockchip/clk.c | 35 +++++++++++++++++++++++++++++++----
- drivers/clk/rockchip/clk.h |  3 +++
- 2 files changed, 34 insertions(+), 4 deletions(-)
+Changes since PATCHv10:
+ * https://lore.kernel.org/linux-rockchip/20240913184720.57381-1-sebastian.reichel@collabora.com/
+ * make struct platform_driver static
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 2fa7253c73b2..0d80729c18d6 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -359,14 +359,17 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
- 	return hw->clk;
- }
- 
--struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
--						void __iomem *base,
--						unsigned long nr_clks)
-+static struct rockchip_clk_provider *rockchip_clk_init_base(
-+		struct device_node *np, void __iomem *base,
-+		unsigned long nr_clks, bool has_late_clocks)
- {
- 	struct rockchip_clk_provider *ctx;
- 	struct clk **clk_table;
-+	struct clk *default_clk_val;
- 	int i;
- 
-+	default_clk_val = ERR_PTR(has_late_clocks ? -EPROBE_DEFER : -ENOENT);
-+
- 	ctx = kzalloc(sizeof(struct rockchip_clk_provider), GFP_KERNEL);
- 	if (!ctx)
- 		return ERR_PTR(-ENOMEM);
-@@ -376,7 +379,7 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 		goto err_free;
- 
- 	for (i = 0; i < nr_clks; ++i)
--		clk_table[i] = ERR_PTR(-ENOENT);
-+		clk_table[i] = default_clk_val;
- 
- 	ctx->reg_base = base;
- 	ctx->clk_data.clks = clk_table;
-@@ -393,8 +396,32 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 	kfree(ctx);
- 	return ERR_PTR(-ENOMEM);
- }
-+
-+struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
-+						void __iomem *base,
-+						unsigned long nr_clks)
-+{
-+	return rockchip_clk_init_base(np, base, nr_clks, false);
-+}
- EXPORT_SYMBOL_GPL(rockchip_clk_init);
- 
-+struct rockchip_clk_provider *rockchip_clk_init_early(struct device_node *np,
-+						      void __iomem *base,
-+						      unsigned long nr_clks)
-+{
-+	return rockchip_clk_init_base(np, base, nr_clks, true);
-+}
-+EXPORT_SYMBOL_GPL(rockchip_clk_init_early);
-+
-+void rockchip_clk_finalize(struct rockchip_clk_provider *ctx)
-+{
-+	int i;
-+
-+	for (i = 0; i < ctx->clk_data.clk_num; ++i)
-+		if (ctx->clk_data.clks[i] == ERR_PTR(-EPROBE_DEFER))
-+			ctx->clk_data.clks[i] = ERR_PTR(-ENOENT);
-+}
-+
- void rockchip_clk_of_add_provider(struct device_node *np,
- 				  struct rockchip_clk_provider *ctx)
- {
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index fd3b476dedda..e90d04fcd0ee 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -971,6 +971,9 @@ struct rockchip_clk_branch {
- 
- struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 			void __iomem *base, unsigned long nr_clks);
-+struct rockchip_clk_provider *rockchip_clk_init_early(struct device_node *np,
-+			void __iomem *base, unsigned long nr_clks);
-+void rockchip_clk_finalize(struct rockchip_clk_provider *ctx);
- void rockchip_clk_of_add_provider(struct device_node *np,
- 				struct rockchip_clk_provider *ctx);
- unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
+Changes since PATCHv9:
+ * https://lore.kernel.org/linux-rockchip/20240325193609.237182-1-sebastian.reichel@collabora.com/
+ * drop patches 1 & 5 (merged)
+ * keep reporting ENOENT for missing clocks after CRU has been fully initialized
+ * drop module remove support for the linked gate clock driver
+
+Changes since PATCHv8:
+ * https://lore.kernel.org/linux-rockchip/20240126182919.48402-1-sebastian.reichel@collabora.com/
+ * rebased to v6.9-rc1
+ * dropped all merged patches (i.e. all but the last one)
+ * rewrote and split the final patch
+   - should be easier to review
+   - properly calls pm_clk_suspend/pm_clk_resume
+   - now works on Orange Pi
+
+Changes since PATCHv7:
+ * https://lore.kernel.org/all/20231213185114.47565-1-sebastian.reichel@collabora.com/
+ * rebased to v6.8-rc1
+ * Collected Reviewed-by/Acked-by from Krzysztof Kozlowski for DT binding patches
+ * support nr_clk=0 in rockchip_clk_find_max_clk_id() for smatch
+
+Greetings,
+
+-- Sebastian
+
+Sebastian Reichel (5):
+  clk: rockchip: support clocks registered late
+  clk: rockchip: rk3588: register GATE_LINK later
+  clk: rockchip: expose rockchip_clk_set_lookup
+  clk: rockchip: implement linked gate clock support
+  clk: rockchip: rk3588: drop RK3588_LINKED_CLK
+
+ drivers/clk/rockchip/Makefile     |   1 +
+ drivers/clk/rockchip/clk-rk3588.c | 116 ++++++++++++++++++------------
+ drivers/clk/rockchip/clk.c        | 101 ++++++++++++++++++++++----
+ drivers/clk/rockchip/clk.h        |  40 +++++++++++
+ drivers/clk/rockchip/gate-link.c  |  85 ++++++++++++++++++++++
+ 5 files changed, 285 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/clk/rockchip/gate-link.c
+
 -- 
 2.45.2
 
