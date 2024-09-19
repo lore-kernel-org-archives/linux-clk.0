@@ -1,106 +1,138 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCE2179AE;
-	Thu, 19 Sep 2024 13:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D27F1DFF0;
+	Thu, 19 Sep 2024 13:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726751878; cv=none; b=rYjBxAhVyTeBKVkarcO4aFvqJkSezto2ONt7j4a4THMIyq2p/2uXZArazfbPACGAmnmIRKeGCMHgFNCjGABFRzwdNPkJmp7olohkkHYeunklsFKC4HxKsSGFZtmwYg1LdJG+FHFIEmVquu0x5txPGkQYN59mRJDaBVKUa77yPvU=
+	t=1726753692; cv=none; b=XHTmuISRQ7Oj7nl0bAVqxShSLDS3KNvxGl6vhAys4mJXiKfSwEMMiz5jEnVnMkcd5RPstqJGXOUfYnAKxwqWJ1MqwdlrSjwERYsRtaSnzU5064P9ZNbeJuN03VeKqmWERob0OCvGxTCvmOt1nK5ZqN9xU41ONfRjfSUKlkw30xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726751878; c=relaxed/simple;
-	bh=8RMp6DtzWha32Via1txQCdHxjj/HpMtXKzFb3Ncg6pk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7oMNaykL64mEe2zNmwCDEVBnp4rHoukcD1+tCQKmDOfDBxQSH6gsIzeiVAf1rbQChyYbEPy6yiakXr29DZEocN5N2aCu7QIydG1nhk2phhvC1McbiK314ReUxxjDgtyq+Yq+OEQuwyjmU/kt4ziVMRl86MMAHMwnIT+xucJBFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2k6WjgM; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726753692; c=relaxed/simple;
+	bh=IjtSn80u0k+rqHsc4HIqQUn4txsXju6Qc/BEN2LzhiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DPpcLE56d0EK0mbJRgEhfywTixTTtz6lXmD9epBARCYnaS9gdQICEMLcW8AZjh0Yw8SivlkmDORwKAJOg0ZPicgX0xNNLXf0kSPrb5/49ulsZhLRvWqrspTgdztm2JyGio9Nl+yVLiYbVfOhWO1WN8bAntvu/VY5ZX3wOrArifY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cNI8GUnY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2k6WjgM"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a99fd5beb6so166887685a.0;
-        Thu, 19 Sep 2024 06:17:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726751876; x=1727356676; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=anfCIpzkOCIiGL9EDPttCS594d1L2okUuXy0ncEeGXA=;
-        b=a2k6WjgMX/6aSU1FZ8m0ofRnfO9HCGtDFY99hBd4dz7iXD9yifokzlc0HE6fAOwvbW
-         PLN+ykaab2istqyQ0vDtKviF62JziNXWPkcpO1L9SSWQORee/vo+gkCTHDSJ2TXgHe5I
-         RfzXuTNaRL6eAThEQYZv7pQRRqgoPVY0WgNkfKxY98ujhXCE98wYxIGz2I7BHlXflvGs
-         bssqWyIUCSUmeBVxRxZ3GXfnmv2Imyxzk+LcRGm6Nsy5D+z103lyDoTwtRT8Q/vo8abv
-         gw2KtjvMAsvXdEMlxbzvC64RKiqCeerP9/IH2uXS8CSsH8mE8W+6m5b+z4J+UtfTqrW+
-         1YNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726751876; x=1727356676;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=anfCIpzkOCIiGL9EDPttCS594d1L2okUuXy0ncEeGXA=;
-        b=TzeQR6/yIdR2denFDdnonZ0wqDJFB5p7jdhhtgSAwseRpcko2zazQ8cv/0e7hNG3dI
-         R8YzcZ9nkzjZe4aQzNMNM3fBdAgO6SWZQ1zeOKlzehQEwJ2b3VdrABEBdJdYBHnCtEuw
-         +z8NIRDiXawHlVPyGk8GN6Wq6m1gKHIseqd9S0c94zBBK7gZAry/kssdJl0vi2Oayos/
-         Z9OBSOgF2F2XxqVKb+RBCZWwus5W3gufgkhY3Wxq+1O51qvM6DFbsTJw+GVwXSNzywmG
-         /dfKaW97fCoA47TNurmwT+uIvvUrX/uzuHQ/LP+BJ+WHGABGlY1uit8R4yj+jrHCc705
-         a2tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVcXknJUiMsmRSHTvl8HV+0+m96Sk5vAL+P4s8nCR4/T994uCTIrdB+S7mVYi26YdP1yNcvSAdtemj8cc=@vger.kernel.org, AJvYcCUi8XNvpifqpLA48ULy1e9zRNpB0vUXlXAst7RydrF9o0VNu0C98Pc6Mda6hhfDr6ktq0dQfphq97scRB54@vger.kernel.org, AJvYcCV+tA37Dz0H191AB5jARvvdkIdNzibyt0gy3GKhQ0LDgrQKLDp3nhcQBNWboOJiEfh7nsVnrw8koYY=@vger.kernel.org, AJvYcCVt4SxzhPXDPU2CEQRiZuRCFfmGr5xvsR7L/YEnRiYRWXl3CujW/fHWccIWhVWofMHRvfMGb/sTZVAZ30H8hQ==@vger.kernel.org, AJvYcCW+IFMVOpjM1WF3i6WYkb/rZutccb7/n+ZutqA0hcnm7qpMY0Ev9+MeU3J0pMoFv+HHJF0pbG7yJXpcmL6BUJeyj4s=@vger.kernel.org, AJvYcCWGPE5g6LNLgVbbhoTE0d674035HJ6vgfz/UEeARbSSX70FrTHU1bl/nZ4ybVUShSslXwwvgSDc2t93@vger.kernel.org, AJvYcCWqyX+36ywZxFH0ClvGSP3PmUYpk0jm3CUY6+kUXz65CBQQ2bppqakGa/ncvcZOZNKzajsOLFCA218e8A==@vger.kernel.org, AJvYcCX9d+1J79SH2NxHZ7ZKCvUEhOhERlYEKJpz6M83i7Q8XbtgzJOrAViyHD6jWjSk/TJXQBKRXaSkUR2w@vger.kernel.org, AJvYcCXxv+1yVPNgg9I5SvXlzTeYWDhh2/ERUlCXqBT3S9v/lBN47T/IE+vPG/h/l40v7l/uSZLpZUm+9ucc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYycFoAXJR585/2Yvx2Maq0pa5LIKQncZRD8fyTND7njdx4DHG
-	rvcOYXmPigTq9PZrDejBt+0y/Utpsg14hp124VghCjOO8x7IfHzVL4b/c09JCiln0GNuQC7yyPH
-	WQ57xsFfEsX4bi1qiEn7bl+Ta+kA=
-X-Google-Smtp-Source: AGHT+IF9IGnoFymNrY96ZdfBvRdXpeFvTASmMi6xugMQ0/+PzTD5PFJN6ulZK08RbShyMHH/uKX0/0RAUmq5n3tkuIs=
-X-Received: by 2002:a05:620a:1728:b0:7a7:d6f2:95f8 with SMTP id
- af79cd13be357-7acaf5a0246mr459527785a.20.1726751875987; Thu, 19 Sep 2024
- 06:17:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cNI8GUnY"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J9LYej024791;
+	Thu, 19 Sep 2024 13:47:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hDBCaMgpGL9eOfWjmuYLuKpODfSFLLqQaCiE5cxk4WY=; b=cNI8GUnYLteAkbbj
+	KG7YRa+uwnPcyizs6Lc7JFvOs3ACVbsVm0f96sf1r8zy3IgakX7v7GiEAUaImfhv
+	ij+XZgFpUfUt+r3nW+251H9kZeZK9yYwmNxwxccwR1k2Kg+qScPsCv49xDh1NpsO
+	iTdGHoLB3MPWZNT3r9wZFDINgPDPUqFPh4xpa+lEm13fRxkR9Lb88Iq9raeR1BWQ
+	DGVt80PnNQKJICZCSXoyQofw4Wu7hMVK+Xx7hioJYXWq4Xj3zT+w/YOscxtJodId
+	k1l4gfsuFxNU5eBuAhD4sEq0PCesBFwXQJGYc+VjOe8qRpi/6RDXUAyWNYNNQnCF
+	EWlDGg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gedc32-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 13:47:57 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48JDluPJ002844
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 13:47:56 GMT
+Received: from [10.253.37.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Sep
+ 2024 06:47:52 -0700
+Message-ID: <1dff17e3-580b-4829-b889-0c559db64f26@quicinc.com>
+Date: Thu, 19 Sep 2024 21:47:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-23-2d2efd5c5877@gmail.com> <rfoxnd4axyqxvexgq3mm2zntzvpihv4g424hepkoh7bfr2izjz@htjeqbfuq2gu>
-In-Reply-To: <rfoxnd4axyqxvexgq3mm2zntzvpihv4g424hepkoh7bfr2izjz@htjeqbfuq2gu>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 19 Sep 2024 16:17:44 +0300
-Message-ID: <CABTCjFCwg9HJcAQOG4+jeHviPiXoSiQgzX-ogUPQt1M2494aBQ@mail.gmail.com>
-Subject: Re: [PATCH v4 23/27] arm64: dts: qcom: starqltechn: add display PMIC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the X1E80100 QMP PCIe PHY Gen4 x8
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
+ <20240913083724.1217691-2-quic_qianyu@quicinc.com>
+ <20240913133751.2yegqbobvfzbogxc@thinkpad>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <20240913133751.2yegqbobvfzbogxc@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UZwaA9CQWVSHI1Ll4zedF_4M1zgh8_7H
+X-Proofpoint-ORIG-GUID: UZwaA9CQWVSHI1Ll4zedF_4M1zgh8_7H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 impostorscore=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409190091
 
-> > +             pmic@60 {
-> > +                     compatible = "samsung,s2dos05";
-> > +                     reg = <0x60>;
-> > +
-> > +                     regulators {
-> > +                             s2dos05_ldo1: ldo1 {
-> > +                                     regulator-active-discharge = <1>;
-> > +                                     regulator-enable-ramp-delay = <12000>;
-> > +                                     regulator-min-microvolt = <1500000>;
-> > +                                     regulator-max-microvolt = <2000000>;
-> > +                                     regulator-name = "s2dos05-ldo1";
+
+On 9/13/2024 9:37 PM, Manivannan Sadhasivam wrote:
+> On Fri, Sep 13, 2024 at 01:37:20AM -0700, Qiang Yu wrote:
+>> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
+>> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
+>>
+> Nit: please use 'Gen 4 x8'
+Will update in next version patch.
+
+Thanks,
+Qiang
 >
-> Useless name. Please use rather names from the schematics, but I guess
-> you might not have them, so maybe downstream has reasonable name?
-
-Unfortunately, downstream uses that same name.
-
--- 
-
-Best regards,
-Dzmitry
+> - Mani
+>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml    | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+>> index dcf4fa55fbba..680ec3113c2b 100644
+>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+>> @@ -41,6 +41,7 @@ properties:
+>>         - qcom,x1e80100-qmp-gen3x2-pcie-phy
+>>         - qcom,x1e80100-qmp-gen4x2-pcie-phy
+>>         - qcom,x1e80100-qmp-gen4x4-pcie-phy
+>> +      - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>>   
+>>     reg:
+>>       minItems: 1
+>> @@ -172,6 +173,7 @@ allOf:
+>>                 - qcom,sc8280xp-qmp-gen3x2-pcie-phy
+>>                 - qcom,sc8280xp-qmp-gen3x4-pcie-phy
+>>                 - qcom,x1e80100-qmp-gen4x4-pcie-phy
+>> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>>       then:
+>>         properties:
+>>           clocks:
+>> @@ -201,6 +203,7 @@ allOf:
+>>                 - qcom,sm8550-qmp-gen4x2-pcie-phy
+>>                 - qcom,sm8650-qmp-gen4x2-pcie-phy
+>>                 - qcom,x1e80100-qmp-gen4x2-pcie-phy
+>> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>>       then:
+>>         properties:
+>>           resets:
+>> -- 
+>> 2.34.1
+>>
