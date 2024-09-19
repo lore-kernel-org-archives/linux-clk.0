@@ -1,121 +1,174 @@
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB600198A30;
-	Thu, 19 Sep 2024 08:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848FD199FAB;
+	Thu, 19 Sep 2024 09:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735246; cv=none; b=TAHo8GZgpn1K1cERAhS37dnPVZka11ovKWPldfiPyoIMQ+/uObhxHzz/uO7EEkW5UPxLAgCdj7UgpHq/XDlSa2asLAU3c4rYllOYWx3lANHh8i/pY+N5uuWehTUBZuAigg2jT9Uz1zVHouT+0OsxSI8VphmSM9rMRiUb/F1lqGg=
+	t=1726737116; cv=none; b=PLDr3i5oR+u/xolyFfuX9LRG1MZV1BOEPBDZqgVhvdXGPW3vCw5xUC6moU9AO0kGMceXrRpi8zQGdUftKyAG6hedhWSkLo6LacB/R3PWS6SNHKPs31oUuTl73AGj3zzbHmu8S6eevLc2YS0T78hZjLMYJ77m4d7r2ivCeqCwBws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735246; c=relaxed/simple;
-	bh=D0CUj5d6cc8AqQcicr95QuM3BKdQKimPOjS1AgGc/c8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IkcprS9+ZmMhn2MFFjqOAxn2MRuj5Lxj1xEgKtDoOCtnPw3lD74iJa5ILn+fsctWayUL3DF14hYpMH9fBhd6V78Haai2cKNDfStxaMiBxlD8dZ3pW0o3VbidrDGIOLiJXNdmSZt3y0qJPbtf75bnEAENhLLCgAL7pEieK4cPCkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IxqfnCPu; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726737116; c=relaxed/simple;
+	bh=rITSry2xLNISMJCkk+Pk0SePa7cy3UVe1V/XbJQtXgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RoRJiKaaoj9O3Mi5GZ7kYzlyV1DIzsixkcIvHh2RsIPWDbwZHmhAgo3saLalSoZQeAJkILLosGkqVZKZOGFmeh/DM5rEfbAAXwY169MvucIUt9hMF1iaOqLPQsszy3N0cjjyFyArfVh0l+Yx/VDAEk0lIKqiXqXKC3BAYLeB1pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Kdnz/tjQ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxqfnCPu"
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-49bcd11fc37so182383137.3;
-        Thu, 19 Sep 2024 01:40:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726735243; x=1727340043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xykemnfjHLjw1rPIo+7O6AS00C6CkkoCorxyDrzMaEQ=;
-        b=IxqfnCPuWq0aTqLERSIlOiIpwacHfWTvlWFPPxTksJjhS2vt2ntz05f1qmnClbD4fJ
-         PU2FGlTIpcvJTwYIzDBlNRHCYjxYLOpMsN/y9lbup76w1SoJvMuYl9LKzx5On+C0dTzJ
-         /c7rPL2JrdEx7vyVukXKaFL0+KdveXPN9ZihOvVBjx2F52BtdhwYUX5ntVNmOEXLLwFV
-         STH4K1tBf5nU9Tfwzcu8ShIf/iP1JG7cxZy6UqvNkVxzlWTKWOHCse7UFgnEmaV4oZZK
-         e0jFcHCQaScxd78NckHpONcqgsPzX4fnsL3+5xffXPJS83fFO2d6u2o5HDA2CVuuKTmu
-         uD0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726735243; x=1727340043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xykemnfjHLjw1rPIo+7O6AS00C6CkkoCorxyDrzMaEQ=;
-        b=qWsKzq9CSSGC/i/ctk+2yZjt3ZhibOnLsFPovwK69lswussNOSWq1aCXO6IbUVLVHk
-         LTd/FhXdlIWNFKF5TYA2z/C9z+Fj9VqdoP1c/aT/otP+Yd+skRlFI6/DOvPtd3gJWGor
-         k6zFlS8F13+cJCg0QdHOCsB0AG8tw1UVaRw8hGexdW6+ZNcyjBBjCrvX10vipA5mi/wA
-         yB97X6z8X+DgzHgDDBvCL9uNjodK2kCU7aOlwrApm/jkV0pwnHso+fKgrvF6qWaACkUz
-         g3aF2ligj4nuZ+rKOYJdDNI31lhIr8jHbtkfj7F930evnaMjH9bim2raUN+sMNOauZj0
-         UfDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7xw/JWmy52kWpzYNA1mWo2+wSEg2URjMVF3m8hJmFyrk7FQxeQh5wihK4xIhlWOzwcJaKV9YPIvyP@vger.kernel.org, AJvYcCUTHapgoPAyvgGgmuICY22biBM8n4in6wqMhv0YGxGIKtZRSmcpkvju1Iy+5c9/6MNIA7/pcsAy5Zs=@vger.kernel.org, AJvYcCUfHUs9OJDNRYYqkMmrBYo2SiM3JJOW06a0D/qCSLe4SL4ozzRJzky32ViCRO5krG7CI1APQsjYcwp2@vger.kernel.org, AJvYcCVHO9M0HTO9Big+vs6zrYqotjrdAE0oR9DDZG03pQbdbKu+fNsyfK6ra2XBzNz0qTuSQAvstRIUK4E1PbZp@vger.kernel.org, AJvYcCVu3G20I1T09Gcn0QBMq8Um3GuTOxm4VFW0DKaAmxCwVwHFlJkHkeCkdwE/akm46+fIejSd9qnYeG8eJQ==@vger.kernel.org, AJvYcCW/kkuYeNQZ/JL6RbuyAkviemGHVHvN/gkOLHFLFfFMpXTgaq81a8AS4m+NcTYm+CoiSITtz+aNzxRqGcY30w==@vger.kernel.org, AJvYcCXHKrkNQONjmFIzA1sLUoCUYLvao//e62WGcnlneDghfeziAmIrWYn4QInPTIdYSZoRsoquM76Dkzsu@vger.kernel.org, AJvYcCXJpdpLoxg67umQGfE4iBdNMdSZr0SHnS2bhl6VAJ1NC2GNW4rSjkM5CwRVPFcdaYlBVRwJhyC5ERy84sI=@vger.kernel.org, AJvYcCXn0kgOg1WcFfP7P6b/OAv3lK6ULCmTOKsPo0ncIEqGsSO2mBmF71daRkLAUDKZdp3W3JqGlYd9rLHtTO2Sc1++TPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzN3cEU7FsFpxo4NpzVagGxAY/UsgPmUVRqjndQ8zAeaUYELiO
-	0KsDjK8fF7cn4oLurGNaMbvL2bjDwzNZSqyqNexSyiyOCOzTKx29i8JXS9rSPdxzxdPDls9UeuZ
-	GHIqqlIEylGw4e6xs5gh7AbZipH4=
-X-Google-Smtp-Source: AGHT+IEPF6qaPSTwKWIjFiNSfRRNnkJYm1P330LaZ6f6Fgj87ECtB4FGVzstCMCjXzBEMRn+f/qNz2tsedSZyWrs7oI=
-X-Received: by 2002:a05:6102:38d1:b0:49b:f5ed:4bcb with SMTP id
- ada2fe7eead31-49d4157db8cmr17162683137.24.1726735243511; Thu, 19 Sep 2024
- 01:40:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Kdnz/tjQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726737107;
+	bh=rITSry2xLNISMJCkk+Pk0SePa7cy3UVe1V/XbJQtXgg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Kdnz/tjQ5byJTA+DvSctoa3Vz01fgPgCX0G8MqA7HRCbTzRo4NWpA8IxF4X+CJMU1
+	 JnEmsoH4G9XzXgQCTljjekl5c8cLuL2vzpCTHtXqguySVQX1X1Og//OwHN0gGCggNg
+	 eMxMongx/Lki+CnfS3WxL5CpT0FbGVfenk8V3SxrILzWmKcGNYGrqhwO2KmPQR7b9R
+	 0QmYvidbVmAUJSpLaaF6WsLdLXmRFiD0zqr84vcAxOiqDh4WxWT3XIYbxZWXImLQiP
+	 bCnDRxAU4aYOgXV6wD4NcjHYZWc4a+/CxeBZeagGGaQD/S7UowchzbLpGr9WHwwHmC
+	 ifucprR8DMb4w==
+Received: from jupiter.universe (dyndsl-091-248-208-160.ewe-ip-backbone.de [91.248.208.160])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6BC3D17E1067;
+	Thu, 19 Sep 2024 11:11:47 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 20FB6480083; Thu, 19 Sep 2024 11:11:47 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	huangtao@rock-chips.com,
+	andy.yan@rock-chips.com,
+	Michal Tomek <mtdev79b@gmail.com>,
+	Ilya K <me@0upti.me>,
+	Chad LeClair <leclair@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH v11 1/5] clk: rockchip: support clocks registered late
+Date: Thu, 19 Sep 2024 11:09:44 +0200
+Message-ID: <20240919091129.83500-2-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240919091129.83500-1-sebastian.reichel@collabora.com>
+References: <20240919091129.83500-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-8-2d2efd5c5877@gmail.com>
- <wywp6vj2pqqe7to55k7ssh5sbqrmy7emvwruvm2waytancf3r4@aygtw3y6huwx>
- <CABTCjFAvXYrRJS3Dwf-TMq3OW_vN1hskk+qPjosbRym7xOvy1Q@mail.gmail.com> <6886f561-b9e4-468b-9515-72053d57911f@kernel.org>
-In-Reply-To: <6886f561-b9e4-468b-9515-72053d57911f@kernel.org>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 19 Sep 2024 11:40:32 +0300
-Message-ID: <CABTCjFDKuEM2wogLcJXX+0eCOTCDUSycPi7JCjvdRCbXaP2EOg@mail.gmail.com>
-Subject: Re: [PATCH v4 08/27] mfd: max77693: remove unused declarations
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-=D1=87=D1=82, 19 =D1=81=D0=B5=D0=BD=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 10:0=
-0, Krzysztof Kozlowski <krzk@kernel.org>:
->
-> On 18/09/2024 14:53, Dzmitry Sankouski wrote:
-> > =D0=BF=D0=BD, 16 =D1=81=D0=B5=D0=BD=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 =
-12:10, Krzysztof Kozlowski <krzk@kernel.org>:
-> >>
-> >> On Fri, Sep 13, 2024 at 06:07:51PM +0300, Dzmitry Sankouski wrote:
-> >>> Remove `enum max77693_irq_source` declaration because unused.
-> >>>
-> >>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> >>> ---
-> >>>  include/linux/mfd/max77693-private.h | 11 -----------
-> >>>  1 file changed, 11 deletions(-)
-> >>
-> >> Please split your patchset per subsystems. There is no dependency on M=
-FD
-> >> bits from your DTS... (if there is, this needs to be fixed anyway)
-> >
-> > Indeed, my dts has no dependency on this patch.
-> > However, my dts has dependency on MAX77705, so AFAIU,
-> > I should send this patch separately, while leaving other drivers in sam=
-e
-> > patchset, right?
->
-> How DTS could have dependency on MAX77705? It's a clear no go - broken
-> patch. And something very weird, almost never happening for new hardware.
->
-Oh right, dts only depends on driver bindings, not driver code, so I
-can send dts
-patches with bindings in separate series, and per subsystem series for new
-driver code.
+When some clocks are registered late and some clocks are registered
+early we need to make sure the late registered clocks report probe defer
+until the final registration has happened.
+
+But we do not want to keep reporting probe defer after the late
+registration has happened. Also not all Rockchip SoCs have late
+registered clocks and may not need to report probe defer at all.
+
+This restructures code a bit, so that there is a new function
+rockchip_clk_init_early(), which should be used for initializing the CRU
+structure on SoCs making use of late initialization in addition to the
+early init. These platforms should call rockchip_clk_finalize()
+once all clocks have been registered.
+
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ drivers/clk/rockchip/clk.c | 35 +++++++++++++++++++++++++++++++----
+ drivers/clk/rockchip/clk.h |  3 +++
+ 2 files changed, 34 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 2fa7253c73b2..0d80729c18d6 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -359,14 +359,17 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
+ 	return hw->clk;
+ }
+ 
+-struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+-						void __iomem *base,
+-						unsigned long nr_clks)
++static struct rockchip_clk_provider *rockchip_clk_init_base(
++		struct device_node *np, void __iomem *base,
++		unsigned long nr_clks, bool has_late_clocks)
+ {
+ 	struct rockchip_clk_provider *ctx;
+ 	struct clk **clk_table;
++	struct clk *default_clk_val;
+ 	int i;
+ 
++	default_clk_val = ERR_PTR(has_late_clocks ? -EPROBE_DEFER : -ENOENT);
++
+ 	ctx = kzalloc(sizeof(struct rockchip_clk_provider), GFP_KERNEL);
+ 	if (!ctx)
+ 		return ERR_PTR(-ENOMEM);
+@@ -376,7 +379,7 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+ 		goto err_free;
+ 
+ 	for (i = 0; i < nr_clks; ++i)
+-		clk_table[i] = ERR_PTR(-ENOENT);
++		clk_table[i] = default_clk_val;
+ 
+ 	ctx->reg_base = base;
+ 	ctx->clk_data.clks = clk_table;
+@@ -393,8 +396,32 @@ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+ 	kfree(ctx);
+ 	return ERR_PTR(-ENOMEM);
+ }
++
++struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
++						void __iomem *base,
++						unsigned long nr_clks)
++{
++	return rockchip_clk_init_base(np, base, nr_clks, false);
++}
+ EXPORT_SYMBOL_GPL(rockchip_clk_init);
+ 
++struct rockchip_clk_provider *rockchip_clk_init_early(struct device_node *np,
++						      void __iomem *base,
++						      unsigned long nr_clks)
++{
++	return rockchip_clk_init_base(np, base, nr_clks, true);
++}
++EXPORT_SYMBOL_GPL(rockchip_clk_init_early);
++
++void rockchip_clk_finalize(struct rockchip_clk_provider *ctx)
++{
++	int i;
++
++	for (i = 0; i < ctx->clk_data.clk_num; ++i)
++		if (ctx->clk_data.clks[i] == ERR_PTR(-EPROBE_DEFER))
++			ctx->clk_data.clks[i] = ERR_PTR(-ENOENT);
++}
++
+ void rockchip_clk_of_add_provider(struct device_node *np,
+ 				  struct rockchip_clk_provider *ctx)
+ {
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index fd3b476dedda..e90d04fcd0ee 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -971,6 +971,9 @@ struct rockchip_clk_branch {
+ 
+ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+ 			void __iomem *base, unsigned long nr_clks);
++struct rockchip_clk_provider *rockchip_clk_init_early(struct device_node *np,
++			void __iomem *base, unsigned long nr_clks);
++void rockchip_clk_finalize(struct rockchip_clk_provider *ctx);
+ void rockchip_clk_of_add_provider(struct device_node *np,
+ 				struct rockchip_clk_provider *ctx);
+ unsigned long rockchip_clk_find_max_clk_id(struct rockchip_clk_branch *list,
+-- 
+2.45.2
+
