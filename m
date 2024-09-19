@@ -1,130 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8EE19B3E3;
-	Thu, 19 Sep 2024 12:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991C419D894;
+	Thu, 19 Sep 2024 12:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726749104; cv=none; b=tsYU3Kpt/NTJnHl5BrCtf3nyS+MLVCITMjxk252rlFP1PLnzh/m0D+OyzSoCjyn1QIqvsFhvlorxj76NemlOHO1APhov2ruFJ/Q7t2xkY3pKiSKZemMwxxYgrzQVGiWzmGxTRZToIwYbAdJNKSPIzWIYlTs2/4nH/WpNeolk93k=
+	t=1726749595; cv=none; b=Vwk4eosJivM1WOCs8XrqwT57f2T9+aKAYJYRsGPXcso1KgHebDwXXj0tPVoiyOF9jsdMKsAHYFZw11avY53stYaMPvliATJSWRFpw26FM8+XqOz9GH6ppwrQje2R03N28xIyao6nsdZIo0DI6OJ9V2FmtobQYuDSQlCLw9th0QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726749104; c=relaxed/simple;
-	bh=Y+lqYF/Ng0G7yZGMjhbQ8WgJL8U2eedtCQjr6g7E1KY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cOCY0EwZkjoRcPEGPpBEYxw8HRXessjTyw5+nPrD6XyQM7h9PWh7hJWd2toljZFRJZS5eGY1BPClNJOPgGMp6ZGyP/apvaztXYxoYYtalPBIuxvHrOQTJSeUmIVYSh/IUjm21sVRWYkxiweC7oiDEsCftwNcuzTyFZMpaxqZJDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSXDN+XT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726749595; c=relaxed/simple;
+	bh=iT/z+gt7N6FCrIsgjLpdKSk3oGQDEb+Vb2nnmn2Yo5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2cdDPbQqH3159tLKjNstdr1454MioHNnCcyPhFVdP9kKP7LceDfESPaAUL6eGUZTTsgMe7PhkOD2YhAM6kvMdIlJNEa6B7IUbwwbo5E+Jw/y4nsLQW3Dw8IK41pY0dZmgGwJ/g68Kjxy7ajK3Jvxz1dpV79yuG5c6PI5J5FRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=oPe/FfHh; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSXDN+XT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F9AC4CEC6;
-	Thu, 19 Sep 2024 12:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726749103;
-	bh=Y+lqYF/Ng0G7yZGMjhbQ8WgJL8U2eedtCQjr6g7E1KY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DSXDN+XTfpUvavhJqdwbMhRnFjNt5cdtPQXJh4g7CpObXM0EYy36uosth0YuSiVqj
-	 zH1qIPXoydAuXWSHpNH2vfuSnWdwLqWPTDh3h7PNQj/nRk7CwqbCCqrpxCtcff+g+1
-	 nRQ8cPHFLKd72uhu5BNkw3KyPvaSVZCLleppE9yXA5Y6wc6Bij8zjFmRlxDyPIQcXd
-	 eqQBHxyubQy9eCWevE/2ooS3tY/NRp+thP4BIJ6ymUYimF+8wjnFffNCVyV0bUvR3y
-	 JsM/FdCwF9GwTiddBMuySXtE7hxg5FNI00Cv1/h37bRPjGqqp2IutYSjVajuMM6P1o
-	 fTOnWkJxrQppw==
-Message-ID: <10887d65-e643-4ab2-a9e7-af0f829e88ec@kernel.org>
-Date: Thu, 19 Sep 2024 14:31:34 +0200
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="oPe/FfHh"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 786EF14858E0;
+	Thu, 19 Sep 2024 14:39:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1726749584; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=UBmm9nbuKx5Az853ydHco1hV3oceAC7ff+CGGG7c6PU=;
+	b=oPe/FfHh+kitawSCJxXOgsPXhXaYJ8QQyigAOrqiMEIuoCyJPR0RWMcUjLMycD+FaE+pVA
+	oFC1AyMeBNONTzV0FXu3GIQUjm5TCrphFzMYWFV74/WLLyuSjjP0evNpg8kIW4ZauVes75
+	q3bNFAuOd1WzniHiyFtOfzRAocbnPcyAZyB4t+9DC4d5qi6EKOU7t22zzT/Sj+xkLqLJPo
+	MG2zIMyy0ufJ+kO0+aGgYUp6JBOuU0MgKirc/x8Ey47HmNKD2s6gXhI+SoTSGuhtyAZ1z2
+	f7F5FdEgKzVbNsPkTnZDyWat7rNrfTYWx9lcn9Ore08B1YOaK6xSZNG5LSCRgg==
+Date: Thu, 19 Sep 2024 14:39:40 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Christian Melki <christian.melki@t2data.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
+ through DT
+Message-ID: <20240919-outsider-extending-e0a926bd23fa@thorsis.com>
+Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Christian Melki <christian.melki@t2data.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+References: <20240821105943.230281-1-ada@thorsis.com>
+ <20240821105943.230281-10-ada@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: add IPQ5424 SoC and rdp466 board
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Sricharan R <quic_srichara@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, ulf.hansson@linaro.org, linus.walleij@linaro.org,
- catalin.marinas@arm.com, p.zabel@pengutronix.de, geert+renesas@glider.be,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- quic_varada@quicinc.com
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-8-quic_srichara@quicinc.com>
- <fyoh72in62sfmsw3syqswr2p3pcv26zoce2tvlx53mu4lpoakx@ixyvy4oylms3>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <fyoh72in62sfmsw3syqswr2p3pcv26zoce2tvlx53mu4lpoakx@ixyvy4oylms3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821105943.230281-10-ada@thorsis.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 13/09/2024 14:52, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 05:42:49PM GMT, Sricharan R wrote:
+Hello Claudiu,
 
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +	interrupt-parent = <&intc>;
->> +
->> +	clocks {
->> +		xo_board: xo-board-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		sleep_clk: sleep-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
+after being busy with other things, I'm back looking at this series.
+As Nicolas pointed out [1], we need three clocks for the OTPC to work,
+quote:
+
+  "for all the products, the main RC oscillator, the OTPC peripheral
+  clock and the MCKx clocks associated to OTP must be enabled."
+
+I have a problem with making the main_rc_osc accessible for both
+SAM9X60 and SAMA7G5 here, see below.
+
+Am Wed, Aug 21, 2024 at 12:59:40PM +0200 schrieb Alexander Dahl:
+> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
+> says:
 > 
-> I think Krzysztof lately suggested moving these clocks to board DT
-> files.
+>     "The OTPC is clocked through the Power Management Controller (PMC).
+>     The user must power on the main RC oscillator and enable the
+>     peripheral clock of the OTPC prior to reading or writing the OTP
+>     memory."
 > 
+> The code for enabling/disabling that clock is already present, it was
+> just not possible to hook into DT anymore, after at91 clk devicetree
+> binding rework back in 2018 for kernel v4.19.
+> 
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> ---
+>  drivers/clk/at91/sam9x60.c       | 3 ++-
+>  include/dt-bindings/clock/at91.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+> index e309cbf3cb9a..4d5ee20b8fc4 100644
+> --- a/drivers/clk/at91/sam9x60.c
+> +++ b/drivers/clk/at91/sam9x60.c
+> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+>  	if (IS_ERR(regmap))
+>  		return;
+>  
+> -	sam9x60_pmc = pmc_data_allocate(PMC_PLLACK + 1,
+> +	sam9x60_pmc = pmc_data_allocate(PMC_MAIN_RC + 1,
+>  					nck(sam9x60_systemck),
+>  					nck(sam9x60_periphck),
+>  					nck(sam9x60_gck), 8);
+> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+>  					   50000000);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+> +	sam9x60_pmc->chws[PMC_MAIN_RC] = hw;
+>  
+>  	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
+>  	if (IS_ERR(hw))
+> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
+> index 3e3972a814c1..f957625cb3ac 100644
+> --- a/include/dt-bindings/clock/at91.h
+> +++ b/include/dt-bindings/clock/at91.h
+> @@ -25,6 +25,7 @@
+>  #define PMC_PLLBCK		8
+>  #define PMC_AUDIOPLLCK		9
+>  #define PMC_AUDIOPINCK		10
+> +#define PMC_MAIN_RC		11
+>  
+>  /* SAMA7G5 */
+>  #define PMC_CPUPLL		(PMC_MAIN + 1)
 
-The node can stay. Just the frequency goes to DTSI. See also DTS coding
-style document.
+There are IDs defined in the devicetree bindings here, which are used
+both in dts and in driver code as array indexes.  In v1 of the patch
+series I just added a new last element in the end of the generic list
+and used that for SAM9X60.
 
-Best regards,
-Krzysztof
+For SAMA7G5 those IDs are branched of from PMC_MAIN in between, making
+SAMA7G5 using a different last element, and different values after
+PMC_MAIN.
 
+Now we need a new ID for main rc osc, but not only for SAM9X60, but
+also for SAMA7G5.  I'm not sure what the implications would be, if the
+new ID would be added in between before PMC_MAIN, so all values would
+change?  Adding it to the end of the lists would probably be safe, but
+then you would need a diffently named variant for SAMA7G5's different
+IDs.  I find the current status somewhat unfortunate for future
+extensions.  How should this new ID be added here?  What would be the
+way forward?
+
+Greets
+Alex
+
+[1] https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
+
+> -- 
+> 2.39.2
+> 
+> 
