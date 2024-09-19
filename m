@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1232D1DA23;
-	Thu, 19 Sep 2024 12:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9CA199FCD;
+	Thu, 19 Sep 2024 12:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726747395; cv=none; b=M85ZhexddNYqOEM8s6RESy6tL+nQUYyzkaYxx78C7oU19sBRDPyT0sUKkubEItzsEwGwHGq2v1cf+7Zdgy/zcga8RjaSiWbP+a6sycyDv8vw8OwxRVHOeeVTuVTlGCgRh4qGvIQI49JEpnahCGCvLftDX85fzYh+aEouycDp+Ug=
+	t=1726748351; cv=none; b=JzISEeld+BmIdMS3Ty6jUe6bjDey9T5c+/Wi5A3o7OL6Hw8jBOKYSKMVEqjnFNF0Qo1ioSf5sUJL0on7GFrFkzoC8/1M7zB56uzZ5BF0TFLv28gik+LQv8hMduyFjXGGPnJQn9SJ9ZH88KwUOIe17MZ7GMGrtl7TrGi0rXsRJpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726747395; c=relaxed/simple;
-	bh=teahakDqIA9+ghw7dKhk5KIoyLfefOvhzf0eXt39Qec=;
+	s=arc-20240116; t=1726748351; c=relaxed/simple;
+	bh=taaw8LwEHq5DD8Vi+uoR330jSnGyZqdK2PLB3LsNNmE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iVQQrTAwmsC23+7r1CbgJjdOvnzuqeOEqgf9Q7d1xkRLIUivemyijzNew72DxLZE7DTAtd2bvzICfz1j79l3F84W1gKfWC5z5/RmSVrDxZXOF0+V+cFrO6bmd0VkVnpB1njOC8pIFqxeGikkmOYsP5QrSKSTKSVhzyJ+zVTfk8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDvPOKfb; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=FwGDnLyi9jMU2MnJroOpG3pVfR31nlPeuG+ZU+bLfkyrOPG9GS6iIr34hQDa2cefMbhNwjHES1NazYQd/4focUvOFQ8xMPrD+3JAKIRNK07iXkW6/R1OP2/nNc6ysCc0ymHmGJ8G2nG1d7nxAOdic2FngxcpCgb3lFIt5K5Yhbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsJq3cVd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDvPOKfb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E21C4CEC4;
-	Thu, 19 Sep 2024 12:03:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsJq3cVd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E500FC4CEC4;
+	Thu, 19 Sep 2024 12:19:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726747394;
-	bh=teahakDqIA9+ghw7dKhk5KIoyLfefOvhzf0eXt39Qec=;
+	s=k20201202; t=1726748350;
+	bh=taaw8LwEHq5DD8Vi+uoR330jSnGyZqdK2PLB3LsNNmE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rDvPOKfbq9KHyOx5YMOYo2Hjx1mO77vuvKBt2jOPuA/gxlqvy3Y8Lwt5oXZ1jd8mZ
-	 wpLlWdIHP5DGZ8KWzoN5Gw8Oi0HOi5f2zObY5cVrYqSldFotzhKtPvRU8BcxBPrNkO
-	 hfgkZIWwT+ZAu4eDoWTR8dk6HufK70XVVYbCPwC1UZDbJy1R4F6mm1hFrJHhzwKdmd
-	 T6hNRFPPc0Ne0M3uic1Lg2E/xUr7uaqcNj1N2Nx4oCw7B37C6qG0uWos3sREoB0yzA
-	 JQ9YqJ6XG7gs1rFPbkLg+xpwRLAaWKTBDVMnRRKctAKHhMhcs5K8bv9D32NZ50TdJ1
-	 BG1NvCZUBbG8A==
-Message-ID: <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
-Date: Thu, 19 Sep 2024 14:03:08 +0200
+	b=fsJq3cVdH/7q/QM8Szujxem7FRIjCMcBP30oduB8VnZBS1kafrFJ9hcILBAkzl9nv
+	 tfkuBSDBsCyWe4i1tM61Kl15+Bb+xxm4fakleobp4nvb441wTDBffqHJsK+w1jGcze
+	 CIqhz+MqEQodjfnC2DdNANPq5xABSVCmeD097gKyazxig06/UkK9WSQXPI12wuAp25
+	 Ag+2jmQn4q7+I3xMEiY8imoUzXPu8eIue+SFf5Dhmkjife1ui3QDG2EuNLpm6Dvh3y
+	 fULxl/L03BAvvtfWC3G7hhD5zjIpLkzl/aQChy3Ad6Jndgy7zd4c5bkDB0TKN6NlHS
+	 GEoUNK7I9h1Qw==
+Message-ID: <96e54706-3e49-4d78-8edc-fa3a66215a1c@kernel.org>
+Date: Thu, 19 Sep 2024 14:19:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,16 +35,19 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-To: Inbaraj E <inbaraj.e@samsung.com>, 'Stephen Boyd' <sboyd@kernel.org>,
- alim.akhtar@samsung.com, cw00.choi@samsung.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- mturquette@baylibre.com, s.nawrocki@samsung.com
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
- <20240917101016.23238-1-inbaraj.e@samsung.com>
- <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
- <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings
+ for QCS615
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240919-qcs615-clock-driver-v1-0-51c0cc92e3a2@quicinc.com>
+ <20240919-qcs615-clock-driver-v1-1-51c0cc92e3a2@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,48 +93,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
+In-Reply-To: <20240919-qcs615-clock-driver-v1-1-51c0cc92e3a2@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 13:33, Inbaraj E wrote:
+On 19/09/2024 09:32, Taniya Das wrote:
+> Add bindings and update documentation for clock rpmh driver on QCS615
+> SoCs.
 > 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->> -----Original Message-----
->> From: Stephen Boyd <sboyd@kernel.org>
->> Sent: 19 September 2024 15:51
->> To: Inbaraj E <inbaraj.e@samsung.com>; alim.akhtar@samsung.com;
->> cw00.choi@samsung.com; krzk@kernel.org; linux-clk@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
->> mturquette@baylibre.com; s.nawrocki@samsung.com
->> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com; Inbaraj E
->> <inbaraj.e@samsung.com>
->> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->>
->> Quoting Inbaraj E (2024-09-17 03:10:16)
->>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
->>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock framework
->> will
->>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
->>> PLL_CAM_CSI is causing sytem level halt.
->>>
->>> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI
->>> stop streaming through pm_runtime_put system is getting halted. So
->>> marking PLL_CAM_CSI as critical to prevent disabling.
->>>
->>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
->>> ---
->>
->> Please add a fixes tag. Although this is likely a band-aid fix because marking
->> something critical leaves it enabled forever.
-> 
-> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-> supplying clock even for CMU SFR access of CSI block, so we can't
-> gate this.
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> index ca857942ed6c..58ed4a1aa727 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> @@ -18,6 +18,7 @@ properties:
+>    compatible:
+>      enum:
+>        - qcom,qdu1000-rpmh-clk
+> +      - qcom,qcs615-rpmh-clk
 
-Hm, I am not so sure. The CMU driver should just take appropriate clock.
-Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
-
+This goes before qdu, keep alphabetical order please.
 
 Best regards,
 Krzysztof
