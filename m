@@ -1,183 +1,136 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010028.outbound.protection.outlook.com [52.101.69.28])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD9E6E2AE;
-	Fri, 20 Sep 2024 08:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726819353; cv=fail; b=aWtHKOS60SCoVTmUDaL3UMLc99EfAQJ7S7WAQjZbgthI+7fZGSfXCYjwTZwT+V2JT1hZeW5chlBspZ7B2z90fQmKcvpg6rRTcYzdjqzGY+HwKX5xklNZS/mgWlgN9JLaBYPa4PDsrTxwcv0RZ6m43WTICJoJ88E3xgiMVP+HsSo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726819353; c=relaxed/simple;
-	bh=yYKEbA21jDafxKZziN8CVp7J79MVqMq1S9Nd85HaBHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GtvJWwfoma+SJqvxxJz/QcoDYrRbih9uggBfLg5nKkfAHnEzpl7FJKAaeTimWxnxZiitYYAfC9Rk7a7moHdhS9j4qtDlqiKcNn2inirYdIJ0S/PVUq+XuQKvHF5NRsk7Ba/+LIjMKynM5UFKCg6iJMrR0YPD7dX4jQ05rBtqN08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=P+ZRCVUT; arc=fail smtp.client-ip=52.101.69.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765AE18EB1;
+	Fri, 20 Sep 2024 08:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726820029; cv=none; b=Im22ePhE4orb3SJOLoRfxY3jhgf7GY67CkzOyAI6qraozb7mke7DMmdd7bhwgSDZdtauhSn1W8wrXXavMQn+fH1jzgULbzZYSz4mDjjGOMlcZw8HE+oTKHJoDLfFUZ6Owm3HmHfKJvjcqRO7VjTpSMJ5znCPzZ5EYCm3cPznstc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726820029; c=relaxed/simple;
+	bh=9hmMsURfWQvQALeUJoUpEIlJ5bSjiG5NcrH3pWDEfjA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rYndd45kF8wMepeTD/5HFFxxboQSgqM+Tf7grnDGoxCABy6luVqDJlWElAiRFbt+KD7j1zMgL0MXlqfX2299OMaEcZ3sy887bmsFr06bm4frNpbY6u/AoNPJf5uTfuoq2VxquFhJbPjiOB/tOmDrB2l17szne5qE21j0JlPEn4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmQdpQUW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="P+ZRCVUT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ueo7uzt2ZXcV6xrqOZiM6Rix1uzil3GS3+Tmc02Z+tU5nJ07fUppdSQk3gr3ia8o78pA2TQKZMmtSTW1b2W9FzOEq1x+CGmhjkALLhSgHO5toh0eUiqBcUE66TqFvX6jV4jCEBROnmmtorrs5zx7fVPjrsPaP15+WXjEI9HlJOTxYyg/BzTfVo3K0I4xycmkGf5yc2nDfmnSq16jzOzcg7vFOLw6tClXfcs7abBTTwaVlVM236kurwL6umU3o3ErKwSmqofzUd0Hjo/TSiFtvL/AaWNi2+2IFFMIJP+j6lfhBEPFjFRD1prtk7yxPJdDwJaZK89JS4oVdHsNFPc88g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t0eDkm6a87mRDn1DwvuZAAsJ+xNntA+Du036K0tky1c=;
- b=RK03HgUiO+t9IrMv76jVrxLUtnkgQlMvZiMSDTSY/8kj9m67FrFPmG2DcJNyogpJbykXqtmBh7RKSU0XBQVj5uq0m0ua5h8NExEYvc7EaesOcGtsFFrHZYA5EClxaUd2hqcDyiUgq3fqih26eFN/1hZM58bfXRJ30+aCix/4VHQe1GCui4sHFJlcmiGZRwnWqtNCZz7Yl1f+6JH65hsD+Ll0bfV8AtAorBeK4DiGu1z2Ta/h2YHnAzhQqxZSKuR92rJssaajRTTnBWesh0bp1Ep5c4bMqHB9tJYc0m5ZP/ygLrmitJT0DP4zB+sZLAkGulhk3nYuLNyybmkmcafuLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t0eDkm6a87mRDn1DwvuZAAsJ+xNntA+Du036K0tky1c=;
- b=P+ZRCVUTGLixHIT4B/bkIvq1V4m9BXSYtOfyzPN9sTLbBqyrDwuoH0FrKZwmsDBkTUX4Lt+ZycMV9W60DymoeIYxbmpmg/QH/Ah4qzydIaX4O3Q26F7Uss4olmvXY2BMrhCX5fbs0qJyLpdPtYfcRKJwmA0R8DkmyxH0PErKiZbKulJPOxLS+OoA4tI3BsamNtH+FJIeSoKtNIoPyXWLanjESknPTkqj50qjeKqCXDhrzRlRTgqVJC4dKZkKtb47K5Pk5SS55xr4yM3t1Bs4C8n+a6NI5YLhqGNXntTp57pMJUq6LTlcTFTQECw9s5KAkUxF/LabarglMM0gVexOUg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB8PR04MB7065.eurprd04.prod.outlook.com (2603:10a6:10:127::9)
- by PA1PR04MB10649.eurprd04.prod.outlook.com (2603:10a6:102:48c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
- 2024 08:02:27 +0000
-Received: from DB8PR04MB7065.eurprd04.prod.outlook.com
- ([fe80::8af7:8659:9d42:bd84]) by DB8PR04MB7065.eurprd04.prod.outlook.com
- ([fe80::8af7:8659:9d42:bd84%6]) with mapi id 15.20.7982.012; Fri, 20 Sep 2024
- 08:02:27 +0000
-Date: Fri, 20 Sep 2024 17:04:19 -0700
-From: Pengfei Li <pengfei.li_1@nxp.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
-	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
-	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
-Message-ID: <Zu4Ng6DAYcQHCqPJ@pengfei-OptiPlex-Tower-Plus-7010>
-References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
- <ZtAeGWtJDMyTVkjc@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtAeGWtJDMyTVkjc@linaro.org>
-X-ClientProxiedBy: AM0PR03CA0002.eurprd03.prod.outlook.com
- (2603:10a6:208:14::15) To DB8PR04MB7065.eurprd04.prod.outlook.com
- (2603:10a6:10:127::9)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmQdpQUW"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD219C4CEC5;
+	Fri, 20 Sep 2024 08:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726820028;
+	bh=9hmMsURfWQvQALeUJoUpEIlJ5bSjiG5NcrH3pWDEfjA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=AmQdpQUW4VQVNjjs1Mab7sJO5EUTftLM5IK8CyRi3A53qii1LSKP1sQeD4llp4VHV
+	 r0vEKZ46AJSoWj7i7/7LvGae6i8svaLxVvXUy5o5fg/RsTtXcrJsYdHci3mYq+Irqp
+	 n04RfQyEf8vdIlOjJiPSI3Lb2Hceh8iZexI4SVLh0xp2QyDk+m70IqJTQyq+nhUzTK
+	 xVSJpQ1DGPSYQHA3OKNoOq0vD/5cNtXpmfF1HLTaE5IdV0Buj3IQB1JtkT3awcKns+
+	 1NCayfrra1d4ppsJJw2mcTusLiAXS7Upwem11mwWY5e0ynKeCHq4D9TLxeOgozAW3m
+	 7hQgSgikkZ0Mg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCAFCF58DD;
+	Fri, 20 Sep 2024 08:13:48 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Fri, 20 Sep 2024 16:13:13 +0800
+Subject: [PATCH] clk: meson: pll: Update the meson_clk_pll_init execution
+ judgment logic
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB8PR04MB7065:EE_|PA1PR04MB10649:EE_
-X-MS-Office365-Filtering-Correlation-Id: d32a7f2c-128d-44b8-98df-08dcd94a916b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Aj97ziWStHAZGGD/WVQVL1RAdY1pxzRUNdA9taUYK5TWAxb9bTCeuuzSHMzY?=
- =?us-ascii?Q?Szr+iNFMedvUevu2govIeuab+aNCOVJZ1iLvG1YkVGjkFKwi/cdfMpWnpSvM?=
- =?us-ascii?Q?Nx2+09PKLA/6mp8JhqAqi0lF36tfbk69za7Aoy69oK3i2qXyWtHc7UCFZGrS?=
- =?us-ascii?Q?cBAyrN3kDKTwzx0xlDowwil8u6+WJYUnbUKbqK8VAaVLgVMIcrZS14MjzywI?=
- =?us-ascii?Q?BJCIVavWqN9RL5uTaViZlHsyxvHJHe2FTDITLTGV9jfjvi3KYg7tkFfF2C+T?=
- =?us-ascii?Q?q4xJcJ7Y40090sNeoT1jtSEoP4fOQEY1LOR1DmPXv8OYTeWt3wBfDWDhxwNq?=
- =?us-ascii?Q?1gFo101PDQNK4jWy0S8A2Wkn4N4gxfU2OwO0V6646juXBD3RqZOOCPlSsiKw?=
- =?us-ascii?Q?AzQcOFxU+9HhbgCat0o4UbBHEs2MGEfRQLArGg899GV8z9R2m7GgEyknLSdb?=
- =?us-ascii?Q?vTBcneCQC33QMYJbM4fz2U93TWY8z480FAigFDH8PbvL71kQs5bUEMKoho6F?=
- =?us-ascii?Q?BzAleaV3/i8a4LF9bN9yb2MzpxjkPAG0dfG3kYh96vH+fEZkPjEek8Js2Wj6?=
- =?us-ascii?Q?+lISHleb5bhIiGZygD1HfyBFVkc9Ps3MQIkoTDlaNHdBqlmzDmKySRJlY64q?=
- =?us-ascii?Q?AlZ/cUYuTJDvu4U6TNdvzuH/PjCejIyuuRIEek8PmwUA1Nlz167O1y7Zclk0?=
- =?us-ascii?Q?bAqgxHNk+tnyWl9eAD+mpu350+bQL4X4KGFYJ+h25NYMZeZk1YlxHmw0+G0q?=
- =?us-ascii?Q?mt6IKuFYyfEpGv+WFd+nKCdxMMxw3nLSy1bG+x/yaVtS8nnnJkLEgOORU+hJ?=
- =?us-ascii?Q?tqoEKixgkZtCVi+eGQ4BEHE8i/U+EYtwCpWxOdC4ZRPTTrvRT0BM1SgOiVUI?=
- =?us-ascii?Q?2n7z+zdGZH7n86yD3MToG3InD74sT7jUVhRtk4UZpjNH6i9tWGh8JFaYOR/p?=
- =?us-ascii?Q?wcpjr047KVryfdcUr6kg15C5FpPqiWvrK39V5/LVRTUr35dbw+2VP0X1CPnT?=
- =?us-ascii?Q?DRqazChYbGi2O8AbdPRCQYMtSe+H+WivraYJFkjAOUB3X8JolbjEYmSj7iT7?=
- =?us-ascii?Q?ucSLsVmcQdVmzCM09hz9nslwfQakUIuMKHALC0RRms7AOEov6+BvfJ2ZhQgB?=
- =?us-ascii?Q?3le6kF+ighvYyKYmlJe6xEaInyVscCG4cvb5i4rV9pzb2HKuAzHul0LCOxG5?=
- =?us-ascii?Q?BhED32qtVEl5OCXoz6rawNYptg5JeH3yJfp9/dnv5DsQ705E0d9fsF7EFhHa?=
- =?us-ascii?Q?+m60kuDuw7piompeU8MaU/+/Fi72aY963GWi14OBZLxflAzKdhalwZqkTDSS?=
- =?us-ascii?Q?Hr6Vkbb0DruGkEg+z1n17Q1xonuUoJgU4wXBQEZJf4StLFr13td7psQA9YPc?=
- =?us-ascii?Q?g2oDCKzp+JYPDEihpOgVFZfsyUTOL6j7gp+FOZ5SJOJXhMfKMQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7065.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TWvaZu9WLRvc7ha6n9gequ8dxQ1KIf8XAvGK1nUzKdp+I6IG+oxwykbpLIwt?=
- =?us-ascii?Q?FIRWzuKy73pUfQcXmb01ViAWLvpwGYX1YUAWFISJEc1KliAyMLLX/o5xg1kQ?=
- =?us-ascii?Q?7b26jfsYRv1l8gVT0MdEWh3fxRGnu66t8NswVOqjwa52dTN0XhoZiQDHaf1Z?=
- =?us-ascii?Q?KcPAjAx2P6Uz3MODyW9J3Wckaessu0MS8mfp0CctbJyHa9TIHeCSxz9fGs2q?=
- =?us-ascii?Q?uU0ZTXKGedOUkq3+61+ipndI+JgkkTGCwfRIM+6tg5FLKof1vLrCnEEoz3j1?=
- =?us-ascii?Q?JyxH0laZfcx6PymXWd6AiJCHRGNeZpdvJj4IH3nVffKgB2bC11nnRsAVwFGf?=
- =?us-ascii?Q?AVFUz5ZTZQSgBS9FvJ1+3AwS6Sc+Ogl7SNoCSbIc95MYuwp/q1CDM4ZrJQ02?=
- =?us-ascii?Q?An2ZTE/mnHchoR5w5UVsavyOTvGorNLW5qafrZifh/OMYG+r2sxBbhYjy5gp?=
- =?us-ascii?Q?/jvtuDkA+r0ObTV8yo7n+9zSBDN3sUo5fgV0P3uee5SuTHyudEkcMy0TPX8n?=
- =?us-ascii?Q?EgauI0opB2tMWX2RRNwc33CQ8KbzLfq61ET+bGfn57kMQFpmlnXe9EIL1PPt?=
- =?us-ascii?Q?J6Ap7sVs4sruTibNFHE6pEzLzzUPhjx7dbp9i8F1BIdUqIh1h1tUR3d+IGXN?=
- =?us-ascii?Q?WwNvJa5cTXQFfmfOK8vvuzPHtA0c7yVb619zsv3WFE7jj5GowdSSD7plLgFv?=
- =?us-ascii?Q?pYpfb0CAOKrTm06mAPtCq5LTRGEZwEm+psIlHJ/kL1w8Ja85j0u9eGefRqM9?=
- =?us-ascii?Q?QGLXw0e2mANmuIEZ1V0e1wt3JOUlla7G2dXLgPD8QaAFpLzRT6khp9cs7b6/?=
- =?us-ascii?Q?C9MUmeFYiSq7hYZdUo7MRzq03ZqdNRq/LJTTVZyPlBt+Szuoh7mWhzTzNbQx?=
- =?us-ascii?Q?sqweLuq1rC8YE5prWxELB486M7By/UB9U5mMKAKuzifEGb6wczV7MDuTrY2F?=
- =?us-ascii?Q?jXks61pgMZ4cKnXw0NwfcyHDCRjcEvLy2jajK7TlL5k4nSatVJmARhdsD4jY?=
- =?us-ascii?Q?sQ+Ag0FAIj/zEbNUIh0ATTYTe0jIwvi+lfhRKtVAfKr6ZKtd58hK/K7XVyXy?=
- =?us-ascii?Q?OswbGj6DBUV8s1tOV0kCXm9Gw7tFk/U2SJmZW6FzAV9CI4jkeLgyiGOxniip?=
- =?us-ascii?Q?vhtk7DlyRT+rFZyuqJO7iIHDgIJPEENSfo0XpEF+KpCyMANuETJNbcAPEguE?=
- =?us-ascii?Q?tG0KuKS5tGE0OzLr3pwQB7LGdEFZM7JPa0q/HnMRFdSKDNtjoDO280YI9mlV?=
- =?us-ascii?Q?unQq8glrSuasEDrUpnjmTBe9euIxNIxfZ5fw75AJbQ/Tb3vM1RnI5udXK/Y9?=
- =?us-ascii?Q?d0AOP5qWcBNxZf5rYyi1BuD0jnuJMSORleoJlPxYWbUEOBsQU7dpft7MayBa?=
- =?us-ascii?Q?9MnrQwyqRTvrIcg18UbzxJYjEFiOatCRHUc/Oh1+D6GS9TfslhBcbawWk1ia?=
- =?us-ascii?Q?ggGQ+o2cquyKKxP7uU617OAtxRM4t7l6eq73sImny2XHqMld6AoDgMIFnKmA?=
- =?us-ascii?Q?C9t8sLteiJqyleHoCJkpYnMarZY7Y9w3gIADu4KH8EarWW6k0c9YxCIYgqvO?=
- =?us-ascii?Q?MJy1urn3WwWRqxR4R6qkPXL/d8gyNRXxzyXwrRD0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d32a7f2c-128d-44b8-98df-08dcd94a916b
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7065.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 08:02:27.1912
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ClzBuZlYA3EcYdh3b34T1ZPd+dmYiV0bbp+5p2/shh4G7O0vwGv4S0sggT1WQeOjgt9B9da7ccGdTqTmnVFLAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10649
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240920-optimize_pll_flag-v1-1-c90d84a80a51@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAJgu7WYC/x3M0QpAMBSA4VfRubZixOFVJC07m1PD2iSRd7dcf
+ hf//0CkwBShzx4IdHLkfUso8wzmRW2WBOtkkIWsi65EsfuDV75p8s5NxikrmhYVopaVQQmp84E
+ MX/9zGN/3A4BHfd1jAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820026; l=2429;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=Bxi0pv+eCzIxvYRz/WWiwYenjJWhGAFp4yX+VQVeYR0=;
+ b=SHfpgZJ0kfXUg89lZ7xFZh4+atixE7c7aAQxxNKPJ4Pj5PBehGSJ/C39ZYFB1y/QIK1IadLCz
+ 53bEMsO8fveCj1E6BYhN0C3BkiwU/wYlJIhy/UB7GJvLoLoI4Jb/f73
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Thu, Aug 29, 2024 at 10:07:05AM +0300, Abel Vesa wrote:
-> On 24-06-27 16:24:24, Pengfei Li wrote:
-> > 'IMX93_CLK_END' macro was previously defined in imx93-clock.h to
-> > indicate the number of clocks, but it is not part of the ABI, so
-> > it should be moved to clk driver.
-> > 
-> 
-> Right, why?
-> 
-> All other providers have been using the _CLK_END from the bindings
-> header. What is so special about this ? AFAICT, nothing.
-> 
-> > ---
-> > Change for v2:
-> > - Use pre-processor define to simplify code.
-> > - link to v1: https://lore.kernel.org/all/20240625175147.94985-1-pengfei.li_1@nxp.com/
-> > 
-> > Pengfei Li (2):
-> >   clk: imx93: Move IMX93_CLK_END macro to clk driver
-> >   dt-bindings: clock: imx93: Drop IMX93_CLK_END macro definition
-> > 
-> >  drivers/clk/imx/clk-imx93.c             | 2 ++
-> >  include/dt-bindings/clock/imx93-clock.h | 1 -
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > -- 
-> > 2.34.1
-> > 
-> 
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Hi Abel,
+The hardware property of PLL determines that PLL can only be enabled
+after PLL has been initialized. If PLL is not initialized, the
+corresponding lock bit will not be set to 1, resulting in
+meson_clk_pll_is_enabled() returning "false".
 
-This is a modification based on previous comments: https://lore.kernel.org/all/20240604150447.GA604729-robh@kernel.org/
-Actually, whether this _CLK_END macro change is added or not, both is ok for me.
-I just want to add some new clocks to bindings header.
+Therefore, if PLL is already enabled, there is no need to repeat
+initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
+meson_clk_pll_init() appears redundant.
 
-BR,
-Pengfei Li
+---
+The hardware property of PLL determines that PLL can only be enabled
+after PLL has been initialized. If PLL is not initialized, the
+corresponding lock bit will not be set to 1, resulting in
+meson_clk_pll_is_enabled() returning "false".
+
+Therefore, if PLL is already enabled, there is no need to repeat
+initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
+meson_clk_pll_init() appears redundant.
+
+In actual application scenarios, PLL configuration is determined during
+the bootloader phase. If PLL has been configured during the bootloader
+phase, you need to add a flag to the kernel to avoid PLL
+re-initialization, which will increase the coupling between the kernel
+and the bootloader.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ drivers/clk/meson/clk-pll.c | 3 +--
+ drivers/clk/meson/clk-pll.h | 1 -
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 89f0f04a16ab..8df2add40b57 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -316,8 +316,7 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ 	 * Keep the clock running, which was already initialized and enabled
+ 	 * from the bootloader stage, to avoid any glitches.
+ 	 */
+-	if ((pll->flags & CLK_MESON_PLL_NOINIT_ENABLED) &&
+-	    meson_clk_pll_is_enabled(hw))
++	if (meson_clk_pll_is_enabled(hw))
+ 		return 0;
+ 
+ 	if (pll->init_count) {
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index 949157fb7bf5..cccbf52808b1 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -28,7 +28,6 @@ struct pll_mult_range {
+ 	}
+ 
+ #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+-#define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
+ 
+ struct meson_clk_pll_data {
+ 	struct parm en;
+
+---
+base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
+change-id: 20240918-optimize_pll_flag-678a88d23f82
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
