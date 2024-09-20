@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA066F307;
-	Fri, 20 Sep 2024 08:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435A574BE1;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820176; cv=none; b=PtQ3pr3idbnnAPyKI+4qkncDkwYrUX4eE5EvZZxManp2xj+YBIw7jiiRwW2cCGfH46YMge3uDYQ3CvxX5NkHa/9qDw/KGHsEgD16hWqmAktCqbPsNXqeyDHN+3b3gbAYX32Lg7d/yNzrUSrTwrIslKYjf8p6hGvyLmdDkCggJ+c=
+	t=1726820176; cv=none; b=dvbxucs2JxPeS1Hs4lnsWOXfXJlVn2X/iJsGJ8w7TGx7V8k8czAju32XkcoEV60SGjT5PaGC3LbB9HK43o1K7khrRgBnhhlMfE1uZU9SvRe0/M6KmPRmju438FJKV7VYQvyinhty7+V9f9LS8wKilUB5HKJh8oOcRA5BiaKhINs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726820176; c=relaxed/simple;
-	bh=KFoyhl3w36LgJKQF6XlNX6jdkTChd706ofq02msKEhg=;
+	bh=DradNtZLKYKI/pe922nGMOfjuaKzkzgQd7KVWBEvvso=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tXDtVrdkDaVhzvkPFjHLvaoUkymwpUIAFaUtwth/6WC3GwkcNKy8YLdHvPLn9j6MjNz3LemYzrnSnenxI/7JxXrpKTgyKxR2ky8Wu7BX+kGzhvB6k7+savUpp1LjgqG6BbqElwpAY7hTPlogRPbz7ztrYBwu9eUpsCo5CE1lRlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NocuYjic; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=su/AJCQvOzZqeeCcUUuvM1bOufNwgUNwZcMibenFYQPAG9ls1T3cz5sMtwuegwzx/j3yA5WfuzRxGYcif8BUhgcCgqley4CR9zja5m3oDRlSmxtGFfLoEzKkVpdnls1ER6KRE6+pfXVZxCaN+/LNF2s8YF+uqhaBB6jCXWXSExM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aimu5PHd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NocuYjic"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F233DC4CED8;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aimu5PHd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D399AC4CED3;
 	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726820176;
-	bh=KFoyhl3w36LgJKQF6XlNX6jdkTChd706ofq02msKEhg=;
+	s=k20201202; t=1726820175;
+	bh=DradNtZLKYKI/pe922nGMOfjuaKzkzgQd7KVWBEvvso=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NocuYjicviiHW9dkiMF1PZAPN+bOKTEV8Q/8GI/dVG4rWnrBzWMf3t/lahZSH2iy7
-	 VS/32v06yE9EdLx9H+qpjXgD3j98icutMRSmYJxWIk85Pt8iQAthT+CWUIjI7/oeBQ
-	 HmOHaCYWHWq5g9tESqP6uXE178bzI2/SQ64wVwrp3DZpR8aSO00L/oe7MZLmBOnetu
-	 70buGgFLqBcdp4uaKx936hjQ4eCFNBEh/TGCfpaz2K7mPh9sl+eTtJ4DlYazqihHCb
-	 byhDbV1jXYdfjjNeDFKzW719lTG0gIK5EwsC7C5QAl2xRROoWpeZDr1VbXUFc0ja6N
-	 CzHJQS+MNsn1g==
+	b=aimu5PHdTxRSviYw9IsCYWW8ejEKajFIc+y5xuoRBSDZ9PGRi5K73TKVN3QHu2Szv
+	 mMQjURBzxf901Kz4Zl2JNwmTh7yU/8SDCUQxAIEY0H8Hb/iYpBIt3Yu9c9a9ih1AQ3
+	 Sdto4RJCrHUs68epLAPhIaCdYKGdxj84vrj5UrxCpEjUxUPRwLarV2Jv2sjIzliNt2
+	 KIcDnmvY7f5TLgUvmlTe3kozbMIotNuDDrnP9lhJ/rAQOepWJgDCYQ5wAvmY97IsSD
+	 bg7yRrz3zZdBK6ersKzt04Kq+V1c9XGPh9aiFQJbadF2eyT1XmaddU+TSUCind7iml
+	 LC8vSj3PZkriw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90D9CF58E5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54D9CF58DD;
 	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 20 Sep 2024 16:16:16 +0800
-Subject: [PATCH 6/6] clk: meson: s4: Delete the spinlock from the MPLL
+Date: Fri, 20 Sep 2024 16:16:14 +0800
+Subject: [PATCH 4/6] clk: meson: gxbb: Delete the spinlock from the MPLL
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240920-mpll_spinlock-v1-6-5249a9a7e2b7@amlogic.com>
+Message-Id: <20240920-mpll_spinlock-v1-4-5249a9a7e2b7@amlogic.com>
 References: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
 In-Reply-To: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -52,11 +52,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820174; l=1660;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820173; l=1458;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=kO2S9WluZnKsZu8WbD08FCxRfFkq+Y8JsWEudLTTuJE=;
- b=XoCk+GChXy9oiDtXd6sz8adYDgdcRqK51hXoqH8GCDNNc/qoUkYn7Gv9MKWO5M+QWeYQuOBUM
- L6QxNxGTq4kCsmICSgdLYk2oDQPdZiwAsiVXPVaK4uYGyhXIAE4IDFG
+ bh=r/V4f8IDG1LGpMtumtpaJ0LFZXwZ5q/tzNNHh8H7+Ng=;
+ b=NtifgucIpJ4Mvxn1mZSWmWBsWYiHyWJUsScY1EzaHpJAZqr8qLzhX8/r5U3bVyAU6Q7KgpmrE
+ 5Qi+Dq7JQwADH+ieFl7XPqEZ9egM5mtM6IaxvziEggqp0Z8Gfgv2thW
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -70,54 +70,54 @@ It is meaningless to define a spinlock in the struct meson_clk_mpll_data.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/meson/s4-pll.c | 6 ------
+ drivers/clk/meson/gxbb.c | 6 ------
  1 file changed, 6 deletions(-)
 
-diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
-index 9697f6577e06..d8e621e79428 100644
---- a/drivers/clk/meson/s4-pll.c
-+++ b/drivers/clk/meson/s4-pll.c
-@@ -17,8 +17,6 @@
- #include "meson-clkc-utils.h"
- #include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index f071faad1ebb..262c318edbd5 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -19,8 +19,6 @@
+ 
+ #include <dt-bindings/clock/gxbb-clkc.h>
  
 -static DEFINE_SPINLOCK(meson_clk_lock);
 -
- /*
-  * These clock are a fixed value (fixed_pll is 2GHz) that is initialized by ROMcode.
-  * The chip was changed fixed pll for security reasons. Fixed PLL registers are not writable
-@@ -547,7 +545,6 @@ static struct clk_regmap s4_mpll0_div = {
- 			.shift   = 29,
- 			.width	 = 1,
+ static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
+ 	PLL_PARAMS(32, 1),
+ 	PLL_PARAMS(33, 1),
+@@ -731,7 +729,6 @@ static struct clk_regmap gxbb_mpll0_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
  		},
 -		.lock = &meson_clk_lock,
- 		.init_regs = s4_mpll0_init_regs,
- 		.init_count = ARRAY_SIZE(s4_mpll0_init_regs),
  	},
-@@ -601,7 +598,6 @@ static struct clk_regmap s4_mpll1_div = {
- 			.shift   = 29,
- 			.width	 = 1,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -760,7 +757,6 @@ static struct clk_regmap gxl_mpll0_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
  		},
 -		.lock = &meson_clk_lock,
- 		.init_regs = s4_mpll1_init_regs,
- 		.init_count = ARRAY_SIZE(s4_mpll1_init_regs),
  	},
-@@ -655,7 +651,6 @@ static struct clk_regmap s4_mpll2_div = {
- 			.shift   = 29,
- 			.width	 = 1,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -812,7 +808,6 @@ static struct clk_regmap gxbb_mpll1_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
  		},
 -		.lock = &meson_clk_lock,
- 		.init_regs = s4_mpll2_init_regs,
- 		.init_count = ARRAY_SIZE(s4_mpll2_init_regs),
  	},
-@@ -709,7 +704,6 @@ static struct clk_regmap s4_mpll3_div = {
- 			.shift   = 29,
- 			.width	 = 1,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -855,7 +850,6 @@ static struct clk_regmap gxbb_mpll2_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
  		},
 -		.lock = &meson_clk_lock,
- 		.init_regs = s4_mpll3_init_regs,
- 		.init_count = ARRAY_SIZE(s4_mpll3_init_regs),
  	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
 
 -- 
 2.42.0
