@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7131E4B2;
-	Fri, 20 Sep 2024 12:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643013D52B;
+	Fri, 20 Sep 2024 12:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836205; cv=none; b=jw+N8QG0ENgH6+zs+WAgEB1P2dtFHfsLHT0mIveqjVKqXDwlbZ3sveA5MKhehdlGeqpZd/jWHO7Mz6IsT3fLsO1bO2cPBPIr8915ip/5NDQ/gSt/1TUHuybxWvyen8dUVnI2rh42pVf43plQIZCBtmYv+hLJ38mR7TgV2MyWRYg=
+	t=1726836274; cv=none; b=Cm0UtULHa3BXFYQn+z46fB3XISSBcUdGVUpb6/2oFlPbEIDwUP4zyCjTLe6qvU7fOGZJmv61QOeGh2KJ6AY5yJoLxrOLj3syWakIaphbiKVQk6sZ6lGq1vLQsWoqk8whvzfdLWVBM7jd0DR9TVML66n4zBb4aMgjpqE9LXxNlVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836205; c=relaxed/simple;
-	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
+	s=arc-20240116; t=1726836274; c=relaxed/simple;
+	bh=l3N4z2t/DFfwO/uan9wDbusPXHDlLtxdDU82/BxByyQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHVToTzU43QfbdIJ/YYOOj5U7pyeJVpv8rHjFK/LMIH3IoC56mvFevNY99+I9t93oAhoBWtyim+ZFPvl+Y59PKtgQQHwoackJVsATyq76gw38qBa7CNTnI7120BQnYGh17K4Usnoqs5ALNbz6rOMGTvVE1rxy8fGvoGHsT8ehg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLBxDlQE; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=UkVvEMrRLdpuqh+UjBic+UPK44tWdwzM90Tbw2kY2Q+Fo4rft+j7oQLE6rV6t/KNsQDDy+XEjFlGUUFDk0PAjOA27R5D/gEajzVxX5JHVU8IWeW11yGpruBPaOBN3J9bGoFB1exwhMxrAP6rYC0Wx/dV3P7ms+6OPVkOUS6Mo90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fA0h2HlJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLBxDlQE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB329C4CEC3;
-	Fri, 20 Sep 2024 12:43:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fA0h2HlJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26BB7C4CEC3;
+	Fri, 20 Sep 2024 12:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726836204;
-	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
+	s=k20201202; t=1726836274;
+	bh=l3N4z2t/DFfwO/uan9wDbusPXHDlLtxdDU82/BxByyQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cLBxDlQEtybkGjB66prbdRTwZuBVdzT93kUTdR0i6MoOYAGSOV5dwl0Bcx+3muMET
-	 JyKipgaSRytC2OkVEijHgzDMjlOLTPQGX/7quMhwcq7mGcit45CM1fNZYErugdSMLb
-	 F2A5DTBtb6IiKdf6Baj55A7zFYrMTTYXCYABGfk25TWjxfX74o25D4Ytr/1dk1L6y9
-	 yqRQ6O9e+emHBprJyrd734OAs2+E77Y8lTyS56q2I5E0gmBD7D4p3x9CIkaSAV8Pxt
-	 hGgTvEFhyfCX4iyVFTulFkQBxrr35pJr8yKmpIElqE0OiIgONeAWLhzz0CVAea4CLm
-	 UPv6zRRU4ZfCQ==
-Message-ID: <04ad8ea5-2c76-4007-b9ad-87b935072b8b@kernel.org>
-Date: Fri, 20 Sep 2024 14:43:20 +0200
+	b=fA0h2HlJn8kKW45n262aJao2Oil96tYVnA8lOpaotbnRmlU4pIrrJwrypLrGDimpf
+	 DVvdXyJx3fFyv4O67mnTTmhdhKxU7uJQ1UUG1sBnDwyN2l/FeJcfA8/JgOD2LQRn8a
+	 XJ1CzHILHj/rdnoFsSZUIsluUzvL/M4WZOH04VrxMFmsOivQ3Ou4FSvD0lpw368OVy
+	 QDHFCiX7llidUDuxenzZZbAPJ1pC9VtgIJWONvmIc9Wz2/dz5RKnOn6i9ccs3XrSKQ
+	 N2z5Spa+C+735QnR7ljAfzC+jjy6M53kf8zYA3sjYTRIKj6XobBDARlXaatjDkgWnA
+	 W/BwoBXJhx3YQ==
+Message-ID: <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
+Date: Fri, 20 Sep 2024 14:44:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,14 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-To: Inbaraj E <inbaraj.e@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
-References: <CGME20240919124112epcas5p1527a15ea137d853dee5625902769580e@epcas5p1.samsung.com>
- <20240919123954.33000-1-inbaraj.e@samsung.com>
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com,
+ p.zabel@pengutronix.de, geert+renesas@glider.be,
+ dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: quic_varada@quicinc.com
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-2-quic_srichara@quicinc.com>
+ <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
+ <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,25 +96,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240919123954.33000-1-inbaraj.e@samsung.com>
+In-Reply-To: <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 14:39, Inbaraj E wrote:
-> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
-> block. When we gate ACLK or PCLK, the clock framework will subsequently
-> disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
-> system level halt.
+On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
 > 
-> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
-> streaming through pm_runtime_put system is getting halted. So marking
-> PLL_CAM_CSI as critical to prevent disabling.
+>>> +
+>>> +allOf:
+>>> +  - $ref: qcom,gcc.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,ipq5424-gcc
+>>
+>> So everything i sthe same as 5332? Why not adding it there?
+>>
+> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
+> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
+> bindings in v2 accordingly.
 
-No, please do not send new versions while discussion is going.
-
-See my replies in previous version.
-
-Also, if this stays, then you miss Cc-stable.
+Hm? What is the difference in the bindings? I don't see. Maybe some diff
+would help.
 
 Best regards,
 Krzysztof
