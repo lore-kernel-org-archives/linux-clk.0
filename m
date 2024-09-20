@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643013D52B;
-	Fri, 20 Sep 2024 12:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6646E1607AA;
+	Fri, 20 Sep 2024 13:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836274; cv=none; b=Cm0UtULHa3BXFYQn+z46fB3XISSBcUdGVUpb6/2oFlPbEIDwUP4zyCjTLe6qvU7fOGZJmv61QOeGh2KJ6AY5yJoLxrOLj3syWakIaphbiKVQk6sZ6lGq1vLQsWoqk8whvzfdLWVBM7jd0DR9TVML66n4zBb4aMgjpqE9LXxNlVI=
+	t=1726837869; cv=none; b=dcG3t6IXp5bY/NiOBY4PKKuUkxS73rgQClghEWuJFt17ujlFBRs53yN7QIBpOpu453JF0QH6Aj3uvt1tn8d01JlkLyNPIClPOj7R5mutdE9IaIjaD+l1heijGjae5SZpDm4SyfqjR5foOvNOAZX/tsapLQ8vxK12Olmwm3W6cHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836274; c=relaxed/simple;
-	bh=l3N4z2t/DFfwO/uan9wDbusPXHDlLtxdDU82/BxByyQ=;
+	s=arc-20240116; t=1726837869; c=relaxed/simple;
+	bh=3Booy9TjPzCKkfhN9vsfLPVWn76vF92OPdVabDATPO0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UkVvEMrRLdpuqh+UjBic+UPK44tWdwzM90Tbw2kY2Q+Fo4rft+j7oQLE6rV6t/KNsQDDy+XEjFlGUUFDk0PAjOA27R5D/gEajzVxX5JHVU8IWeW11yGpruBPaOBN3J9bGoFB1exwhMxrAP6rYC0Wx/dV3P7ms+6OPVkOUS6Mo90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fA0h2HlJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=GrAyX2wuFOrjf59Lb3zjQGXlHFEmWy8nssJlB0BuaF+/apKval+hIw4Xtb7R9g+sKsTHEHe9ZWqT4PWw/pB8JCICMQUBhIQEqRlzXweewrUAreVz/eZWQdolYYUb8GZwtyNuoLJQYG7uRPl67FINj1ACKuALPu1rIGtpWb85ro8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDqPvzVN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fA0h2HlJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26BB7C4CEC3;
-	Fri, 20 Sep 2024 12:44:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDqPvzVN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCDEC4CECE;
+	Fri, 20 Sep 2024 13:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726836274;
-	bh=l3N4z2t/DFfwO/uan9wDbusPXHDlLtxdDU82/BxByyQ=;
+	s=k20201202; t=1726837869;
+	bh=3Booy9TjPzCKkfhN9vsfLPVWn76vF92OPdVabDATPO0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fA0h2HlJn8kKW45n262aJao2Oil96tYVnA8lOpaotbnRmlU4pIrrJwrypLrGDimpf
-	 DVvdXyJx3fFyv4O67mnTTmhdhKxU7uJQ1UUG1sBnDwyN2l/FeJcfA8/JgOD2LQRn8a
-	 XJ1CzHILHj/rdnoFsSZUIsluUzvL/M4WZOH04VrxMFmsOivQ3Ou4FSvD0lpw368OVy
-	 QDHFCiX7llidUDuxenzZZbAPJ1pC9VtgIJWONvmIc9Wz2/dz5RKnOn6i9ccs3XrSKQ
-	 N2z5Spa+C+735QnR7ljAfzC+jjy6M53kf8zYA3sjYTRIKj6XobBDARlXaatjDkgWnA
-	 W/BwoBXJhx3YQ==
-Message-ID: <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
-Date: Fri, 20 Sep 2024 14:44:26 +0200
+	b=WDqPvzVN0/NQb2dZ6TiitnTqhWEiHihJngtgAV3NEWUnmhHZEa/OLLTS5cOeBgqH2
+	 /7adLyUKXQUszPPZ0oKNpjmbvyNO24P46HWz2Rw1I/UKkCa3nk8vPxTfgWPP4sIUlI
+	 1Uqtw+KTiraOEpAz2+ZoDiGKXtudEkUcBDF4ZJGt4Tovf4m7mgQGbPs55sTTc29ns2
+	 8o32OvtlmaZ3SDnWbFfEvaS0XI/wVNgW9EhheZDRxQGoR8WNa5m/CHLHyJqSluS9Ga
+	 765shqDRUt9xT96zumeuSsjxEq5jcbr2B4rx+PQIxS/w2Of8tFzM5XHY/iIF+BjEaI
+	 uExdlEXdk3zQQ==
+Message-ID: <9487889c-90ab-4eb3-99eb-cc11a3b6f2fc@kernel.org>
+Date: Fri, 20 Sep 2024 15:11:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,19 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
-To: Sricharan Ramabadhran <quic_srichara@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com,
- p.zabel@pengutronix.de, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: quic_varada@quicinc.com
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-2-quic_srichara@quicinc.com>
- <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
- <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC
+ bindings for QCS615
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240920-qcs615-clock-driver-v2-0-2f6de44eb2aa@quicinc.com>
+ <20240920-qcs615-clock-driver-v2-1-2f6de44eb2aa@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,28 +93,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
+In-Reply-To: <20240920-qcs615-clock-driver-v2-1-2f6de44eb2aa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+On 20/09/2024 12:38, Taniya Das wrote:
+> Add bindings and update documentation for clock rpmh driver on QCS615
+> SoCs.
 > 
->>> +
->>> +allOf:
->>> +  - $ref: qcom,gcc.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,ipq5424-gcc
->>
->> So everything i sthe same as 5332? Why not adding it there?
->>
-> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
-> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
-> bindings in v2 accordingly.
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
-Hm? What is the difference in the bindings? I don't see. Maybe some diff
-would help.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
