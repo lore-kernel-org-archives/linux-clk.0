@@ -1,121 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A48176FA7;
-	Fri, 20 Sep 2024 13:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB2017A589;
+	Fri, 20 Sep 2024 13:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726838854; cv=none; b=FnxOhGWzJr+x/xxr2mpp9VHFF4MD2g+teN+9C/317Ry9l7NGoKAH16k+BLnPi8nl5+Xv/5LdiWsbkgVL2Tt9YGYDsPxczVzGRB1+1dNQdcj7/ScqYNgRyiKfFnABL/xDyEbTEsu03XbEzqIngAXZr1RgewH/0wNlOF64AsqX2vs=
+	t=1726839742; cv=none; b=HGELSR1Qw2phvqICV3gzfUEg738Zui09HnMZpO6jEFtrLy2lXCPBElIrOTmrGq22xgALuxVgnMr4ocXNr0yJRVj9Szthh6l28pYf4IhmztvV81CM9CjNnAvKO0FjxtbEYG9a0+gBHNVqiL+98psI6Dy0f0YyWNw/6cpy6RfWDwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726838854; c=relaxed/simple;
-	bh=niOtjG2YTN1Iz90NyfU/TevFq3qo+cQql7x0uhAxvxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8lK/7iODilZxyQCbedOkpcUFyCN8AuW51rJGY5Tban7CTGpXLWekjXy6G6ZyLektUkP9KqqGlBLgMp5eM30hG95NoDTxO9SdeKSoK64iyxaG3AUMMdRc7jzXAtsTXAU/8YUI+alFKnbg+V6YgpksoWotM5r9HW8CI/qN7k5jWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7lA9l+G; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726839742; c=relaxed/simple;
+	bh=IH1eK1Q/V1ah8TGPJ6j95/WVqEb3Xyc0mGclcgPqgFQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JKHQ69Cj5+CuNH6vk/6Q8Ym0jnBKAILYgt2nshmwHG5IDRuFhbuygJPYFaXtaXJPz1+OK6QUfkGKMVHYQoUbSGYkkfXGgKnAChDRV0rHQTuG3Q0A1je2QFeeEU8zfXojxJToz+wruiTGqz1VTLktjXqbccc/L3MvKz0KilSRr7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=cLrYyQSr; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7lA9l+G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872B7C4CEC3;
-	Fri, 20 Sep 2024 13:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726838853;
-	bh=niOtjG2YTN1Iz90NyfU/TevFq3qo+cQql7x0uhAxvxE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r7lA9l+GV49kpeOJuZyPEhuTucuILKRo42ENLKHrhjdIGoUNsw6HEiSJbZu4oXgPu
-	 ds9VWTK0fPT4FR4o9bVWiv7AbzXZQk33LBc1ci34fqo7dtxeNrEG2zsFwNpFFpdHep
-	 u+vfqAT1znd9n9AAliO+iSMebecw+g7Gcd5clYO3wsINPwDyfvupxUxUnfsL+eFhuQ
-	 x1zU2qxd4ZPSm7cNyEGhI78jGDw8U2L+rwDDNxMgL3HBLwa3oYyx71g0VlruIfU5kJ
-	 wG1TWJxO1hmKWuzjrapjGtLEfvEfcESP2zni97kCzgzziAMeYnf+MM5qBhkOlSPGFT
-	 KMEqXeicxaUkA==
-Message-ID: <a07828a4-8040-42cb-8c62-8939cac4d9de@kernel.org>
-Date: Fri, 20 Sep 2024 15:27:26 +0200
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="cLrYyQSr"
+X-UUID: 243eb79a775611ef8b96093e013ec31c-20240920
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=jdGS2Redugm+6yZAwL+vZjmNIVgfyGtJQLHlHzdoyr8=;
+	b=cLrYyQSrvVQ0Cw7c8sRJzWPRIwo/KrBm8gIeyXnOpHhic8hlmxYGO4sZr1a9d08efdROnHi0Nfpf1VQxfX/dLrmqWQvN+gG6JiQxIAA6ADugYW8h5pekiofPZb5KHvmPr51uvEMo+vvAMruQJGNzDNpFOWhtia8x3aIyc2FEcSQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:0fe5b65a-a41b-44bd-b2b6-5825297f6e5a,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:66b94e9e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 243eb79a775611ef8b96093e013ec31c-20240920
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 268247819; Fri, 20 Sep 2024 21:42:13 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 20 Sep 2024 21:42:10 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 20 Sep 2024 21:42:10 +0800
+From: Pablo Sun <pablo.sun@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Srinivas
+ Kandagatla" <srinivas.kandagatla@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Pablo Sun <pablo.sun@mediatek.com>
+Subject: [PATCH 0/5] Enable Mali GPU on MediaTek Genio 700 EVK
+Date: Fri, 20 Sep 2024 21:41:06 +0800
+Message-ID: <20240920134111.19744-1-pablo.sun@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
-To: Abel Vesa <abel.vesa@linaro.org>, Pengfei Li <pengfei.li_1@nxp.com>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
- ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com, frank.li@nxp.com,
- kernel@pengutronix.de, festevam@gmail.com, linux-clk@vger.kernel.org,
- imx@lists.linux.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
- <ZtAeGWtJDMyTVkjc@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ZtAeGWtJDMyTVkjc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--0.191900-8.000000
+X-TMASE-MatchedRID: 9hizXfD21ds77EsBOi8++odlc1JaOB1TnhD9A3Sa7pa48McbajxWsC/k
+	D8Mn5brMtJRCaLO6y7uf4k2rUca3tGGBe5Zc3tN2kPoFsM336M4xXH/dlhvLv1wpnAAvAwazdO+
+	/9tNlGWiVMlcqqHWd7aBVvEjzNBpCHxPMjOKY7A8LbigRnpKlKZx+7GyJjhAUYlEZe7KrQtZx+J
+	e1fezGIAwOQ5ymuQBGw4C83QCL2crUqZcgNHQfiSeTaJ1EC2jFSb5MQ3rtK9UN2krgd0tMduYLh
+	V1S6S8pSZrfNhP3sgUBh9AgBSEFrJm+YJspVvj2xkvrHlT8euI+kK598Yf3Mg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.191900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 6C40CAEC85C00BB6034421F075345033D6F50A9AE679C36B035BBA50599BD0782000:8
+X-MTK: N
 
-On 29/08/2024 09:07, Abel Vesa wrote:
-> On 24-06-27 16:24:24, Pengfei Li wrote:
->> 'IMX93_CLK_END' macro was previously defined in imx93-clock.h to
->> indicate the number of clocks, but it is not part of the ABI, so
->> it should be moved to clk driver.
->>
-> 
-> Right, why?
-> 
-> All other providers have been using the _CLK_END from the bindings
-> header. What is so special about this ? AFAICT, nothing.
+This series is based on linux-next, tag: next-20240920
 
-Because usually we do no consider number of clocks as an ABI. For
-starters it does no really appear in DTS. But what's more important -
-new clocks are described later, which contradicts this define. So either
-this is an ABI or it is not. If it is, you are not allowed to add any
-new clock. If it is not, then this should have never been part of bindings.
+Update efuse and clock settings for mt8188, and enable the GPU
+on mt8390-genio-700-evk.dts. The panfrost driver probed with dmesg:
 
-We did the same (removal of END/NUM macros) for several other platforms
-already.
+panfrost 13000000.gpu: clock rate = 390000000
+panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x0 status 0x0
+panfrost 13000000.gpu: features: 00000000,000019f7,
+	 issues: 00000003,80000400
+panfrost 13000000.gpu: Features: L2:0x08130206 Shader:0x00000000
+         Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+panfrost 13000000.gpu: shader_present=0x10005 l2_present=0x1
+[drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
 
-Best regards,
-Krzysztof
+Pablo Sun (5):
+  arm64: dts: mediatek: mt8188: Fix wrong clock provider in MFG1 power
+    domain
+  clk: mediatek: clk-mt8188-topckgen: Remove univpll from parents of
+    mfg_core_tmp
+  nvmem: mtk-efuse: Enable postprocess for mt8188 GPU speed binning
+  arm64: dts: mediatek: mt8188: Add efuse for GPU speed binning
+  arm64: dts: mediatek: mt8390-genio-700-evk: Enable Mali GPU
+
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 11 +++++++--
+ .../dts/mediatek/mt8390-genio-700-evk.dts     | 24 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-topckgen.c    |  7 ++++--
+ drivers/nvmem/mtk-efuse.c                     |  5 ++++
+ 4 files changed, 43 insertions(+), 4 deletions(-)
+
+-- 
+2.45.2
 
