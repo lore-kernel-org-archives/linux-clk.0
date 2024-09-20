@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA4E2B9B7;
-	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA066F307;
+	Fri, 20 Sep 2024 08:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820176; cv=none; b=G+U5zvW4frGveaMFO7YaLIaXqEgwOXCo48/7L3++Vm6UQb4ixWKeKroxt3iMmYSqnn3VhVBzTq3jH9w+Wf5642HqJyl+e5YF6AEvIfK/COT8isOe0Of8S8RmMQlB9O0cldVRiddSVelMEQFLPJdG8bXW1jXyPu0niFUSABh8SHM=
+	t=1726820176; cv=none; b=PtQ3pr3idbnnAPyKI+4qkncDkwYrUX4eE5EvZZxManp2xj+YBIw7jiiRwW2cCGfH46YMge3uDYQ3CvxX5NkHa/9qDw/KGHsEgD16hWqmAktCqbPsNXqeyDHN+3b3gbAYX32Lg7d/yNzrUSrTwrIslKYjf8p6hGvyLmdDkCggJ+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726820176; c=relaxed/simple;
-	bh=RY6C6fgg/u2FQqsycCMOcuCyZ6IO+mQm4xQLZhTAfLU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S+pNuPDTeECds7HBPo8dFdzz//D+0YuS2zcH/NYeLy/lnhH5/P/UUglgrsCwPY2Y4SEbbCSsTk37LOepdLXiPgPHTOOFOxj6Ur3zRd8syZP70fxI3YJh/Ej4i3842BcN49Cy9IE8N47CImb688oFIbkd70tAu9x3alxY38Xfhng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rznLJj3/; arc=none smtp.client-ip=10.30.226.201
+	bh=KFoyhl3w36LgJKQF6XlNX6jdkTChd706ofq02msKEhg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tXDtVrdkDaVhzvkPFjHLvaoUkymwpUIAFaUtwth/6WC3GwkcNKy8YLdHvPLn9j6MjNz3LemYzrnSnenxI/7JxXrpKTgyKxR2ky8Wu7BX+kGzhvB6k7+savUpp1LjgqG6BbqElwpAY7hTPlogRPbz7ztrYBwu9eUpsCo5CE1lRlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NocuYjic; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rznLJj3/"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AFE9C4CEC3;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NocuYjic"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F233DC4CED8;
 	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726820175;
-	bh=RY6C6fgg/u2FQqsycCMOcuCyZ6IO+mQm4xQLZhTAfLU=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=rznLJj3/j4Y33sCWx4vMGgJbObJootBWRDxFOVas4+uMuqz+pMCu6KqTPMbQFo2JE
-	 u1xTbuwdZUZEaq/TUxV5vU4kLP+OMqVdoWxBsP23g4A6ychrD0O8Mu80xFx/EV6uxn
-	 gSe1g5tc0/a5lmmRHdv8HyHCwzLJBwGEjGBGw4WPrGzQ3yK/Jv7PnCxBXDJD1gaP55
-	 q1kk4QJSQcxJ1sLjuOYc+E65UwIPyLQzrdWH3esYxxd8igJP/DjOug4HmetJ9786ZP
-	 9xMBrq2iP+jOb77FgOPW8jZo63QkVDQp9GBvwI2Oj4o0GaZEbW+RwIUAD7WRTjDQZ3
-	 brCiVJeuMz1GQ==
+	s=k20201202; t=1726820176;
+	bh=KFoyhl3w36LgJKQF6XlNX6jdkTChd706ofq02msKEhg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=NocuYjicviiHW9dkiMF1PZAPN+bOKTEV8Q/8GI/dVG4rWnrBzWMf3t/lahZSH2iy7
+	 VS/32v06yE9EdLx9H+qpjXgD3j98icutMRSmYJxWIk85Pt8iQAthT+CWUIjI7/oeBQ
+	 HmOHaCYWHWq5g9tESqP6uXE178bzI2/SQ64wVwrp3DZpR8aSO00L/oe7MZLmBOnetu
+	 70buGgFLqBcdp4uaKx936hjQ4eCFNBEh/TGCfpaz2K7mPh9sl+eTtJ4DlYazqihHCb
+	 byhDbV1jXYdfjjNeDFKzW719lTG0gIK5EwsC7C5QAl2xRROoWpeZDr1VbXUFc0ja6N
+	 CzHJQS+MNsn1g==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F15FCF58E5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90D9CF58E5;
 	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH 0/6] clk: meson: Delete a meaningless spinlock from the
- MPLL
-Date: Fri, 20 Sep 2024 16:16:10 +0800
-Message-Id: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
+Date: Fri, 20 Sep 2024 16:16:16 +0800
+Subject: [PATCH 6/6] clk: meson: s4: Delete the spinlock from the MPLL
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,9 +40,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEov7WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0ML3dyCnJz44oLMvJz85GxdkyTLJFPTZBOTtBRTJaCegqLUtMwKsHn
- RsbW1ACypo2ZfAAAA
+Message-Id: <20240920-mpll_spinlock-v1-6-5249a9a7e2b7@amlogic.com>
+References: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
+In-Reply-To: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -53,11 +52,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820173; l=1441;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820174; l=1660;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=RY6C6fgg/u2FQqsycCMOcuCyZ6IO+mQm4xQLZhTAfLU=;
- b=Bel3Jh1Lzlk031mBbSqUOf1Dk86SKnJakYDwJxNS3ho8IG5uNcg8mx+X7/EfDSiy6iKQyUMhu
- 3KqlnI81BLTAVgJmOjGOvofYkUdDus+QNqhGaVI3qnas/eAXOOemQf7
+ bh=kO2S9WluZnKsZu8WbD08FCxRfFkq+Y8JsWEudLTTuJE=;
+ b=XoCk+GChXy9oiDtXd6sz8adYDgdcRqK51hXoqH8GCDNNc/qoUkYn7Gv9MKWO5M+QWeYQuOBUM
+ L6QxNxGTq4kCsmICSgdLYk2oDQPdZiwAsiVXPVaK4uYGyhXIAE4IDFG
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -65,41 +64,62 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-The existing locking mechanism of CCF can effectively avoid concurrent
-register access. struct meson_clk_mpll_data has no meaning in defining
-a spinlock repeatedly.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-In addition, the register corresponding to MPLL does not share the same
-register with other module drivers, so there is no concurrent access to
-the register with other modules drivers.
-
-Every driver file with mpll defines a spinlock with the same name (even
-if defined as "static"), giving the illusion of repeated definitions?
+It is meaningless to define a spinlock in the struct meson_clk_mpll_data.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
-Chuan Liu (6):
-      clk: meson: mpll: Delete a meaningless spinlock from the MPLL
-      clk: meson: axg: Delete the spinlock from the MPLL
-      clk: meson: meson8b: Delete the spinlock from the MPLL
-      clk: meson: gxbb: Delete the spinlock from the MPLL
-      clk: meson: g12a: Delete the spinlock from the MPLL
-      clk: meson: s4: Delete the spinlock from the MPLL
+ drivers/clk/meson/s4-pll.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
- drivers/clk/meson/axg.c      |  6 ------
- drivers/clk/meson/clk-mpll.c | 11 -----------
- drivers/clk/meson/clk-mpll.h |  1 -
- drivers/clk/meson/g12a.c     |  6 ------
- drivers/clk/meson/gxbb.c     |  6 ------
- drivers/clk/meson/meson8b.c  |  3 ---
- drivers/clk/meson/s4-pll.c   |  6 ------
- 7 files changed, 39 deletions(-)
----
-base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
-change-id: 20240918-mpll_spinlock-4b9b55c44fd5
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index 9697f6577e06..d8e621e79428 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -17,8 +17,6 @@
+ #include "meson-clkc-utils.h"
+ #include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ /*
+  * These clock are a fixed value (fixed_pll is 2GHz) that is initialized by ROMcode.
+  * The chip was changed fixed pll for security reasons. Fixed PLL registers are not writable
+@@ -547,7 +545,6 @@ static struct clk_regmap s4_mpll0_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll0_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll0_init_regs),
+ 	},
+@@ -601,7 +598,6 @@ static struct clk_regmap s4_mpll1_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll1_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll1_init_regs),
+ 	},
+@@ -655,7 +651,6 @@ static struct clk_regmap s4_mpll2_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll2_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll2_init_regs),
+ 	},
+@@ -709,7 +704,6 @@ static struct clk_regmap s4_mpll3_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll3_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll3_init_regs),
+ 	},
 
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
