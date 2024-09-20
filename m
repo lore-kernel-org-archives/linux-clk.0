@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765AE18EB1;
-	Fri, 20 Sep 2024 08:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9D526AE8;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820029; cv=none; b=Im22ePhE4orb3SJOLoRfxY3jhgf7GY67CkzOyAI6qraozb7mke7DMmdd7bhwgSDZdtauhSn1W8wrXXavMQn+fH1jzgULbzZYSz4mDjjGOMlcZw8HE+oTKHJoDLfFUZ6Owm3HmHfKJvjcqRO7VjTpSMJ5znCPzZ5EYCm3cPznstc=
+	t=1726820176; cv=none; b=AjbRfn+dCe9NWVXobmdXQ8W0yHFXLyPouuwvs+W0/XcHYhjrt46q8CttG5MOe2V1y4h+ggJ5LdvV4+lnGgVY8Q2N5MT2DRMpoKv0NV5laoaTcQE3ZZKdQiJ/NKevdHcFnXwAnJIUwa5V2DTyokIEx2yeB9PvhROAt/GAkvFhpEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820029; c=relaxed/simple;
-	bh=9hmMsURfWQvQALeUJoUpEIlJ5bSjiG5NcrH3pWDEfjA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rYndd45kF8wMepeTD/5HFFxxboQSgqM+Tf7grnDGoxCABy6luVqDJlWElAiRFbt+KD7j1zMgL0MXlqfX2299OMaEcZ3sy887bmsFr06bm4frNpbY6u/AoNPJf5uTfuoq2VxquFhJbPjiOB/tOmDrB2l17szne5qE21j0JlPEn4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmQdpQUW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726820176; c=relaxed/simple;
+	bh=uDJ/JfCAZYzKjfsCM7SEEMTMXp/hsTtivqJC8/88TmQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jMWUfHMPCeUNEffxbNkGiiLXtT3O5z3mwsxpd6FT2/K7DhD5bIJCMipI1x5nZ04YpdlocuWJMcZyL2650Xs92ie56zAFr8yKPDdjEZ6Pg0vTRp60oGpfBiWgS5/0v4ekBi1wrLVh11MgG1toQ/P8BBtZhUGgL8v+Zf61NZP+hNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sR3R6Mgu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmQdpQUW"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DD219C4CEC5;
-	Fri, 20 Sep 2024 08:13:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sR3R6Mgu"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B5AA0C4CECE;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726820028;
-	bh=9hmMsURfWQvQALeUJoUpEIlJ5bSjiG5NcrH3pWDEfjA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=AmQdpQUW4VQVNjjs1Mab7sJO5EUTftLM5IK8CyRi3A53qii1LSKP1sQeD4llp4VHV
-	 r0vEKZ46AJSoWj7i7/7LvGae6i8svaLxVvXUy5o5fg/RsTtXcrJsYdHci3mYq+Irqp
-	 n04RfQyEf8vdIlOjJiPSI3Lb2Hceh8iZexI4SVLh0xp2QyDk+m70IqJTQyq+nhUzTK
-	 xVSJpQ1DGPSYQHA3OKNoOq0vD/5cNtXpmfF1HLTaE5IdV0Buj3IQB1JtkT3awcKns+
-	 1NCayfrra1d4ppsJJw2mcTusLiAXS7Upwem11mwWY5e0ynKeCHq4D9TLxeOgozAW3m
-	 7hQgSgikkZ0Mg==
+	s=k20201202; t=1726820175;
+	bh=uDJ/JfCAZYzKjfsCM7SEEMTMXp/hsTtivqJC8/88TmQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=sR3R6MguRXUzRqDWyPt9p6vqAPTNrX+We6G0fTU+DbxS2ndvmqYJZr08N9wlyBMg0
+	 uglZrVlhz5TwGDqhk3DHcG6VkAuEQsCZZkwNYHMKkxKAegI6cce0u6HLi47Fq9brOH
+	 r91gRteRO1b/qMlMxcaru0Psecmup3LhNlxJSMis+9d/Qm3sS8grp+8EcJwdu5AK1+
+	 rPZTZdjgBLjzoaGf1jhkWIl9K72h1Ga90WO+PQKYd56GgmFJEdlFeCrIBie5DcYgCj
+	 R12jpj/SVR7iB/CDKBVnrCMM/ewzB30qSaGH0GFHs+REhERxdE4cwOmOtKNNZr0Dxg
+	 Zs9jI1cZexriw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCAFCF58DD;
-	Fri, 20 Sep 2024 08:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BD3CF58E9;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 20 Sep 2024 16:13:13 +0800
-Subject: [PATCH] clk: meson: pll: Update the meson_clk_pll_init execution
- judgment logic
+Date: Fri, 20 Sep 2024 16:16:12 +0800
+Subject: [PATCH 2/6] clk: meson: axg: Delete the spinlock from the MPLL
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,10 +40,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240920-optimize_pll_flag-v1-1-c90d84a80a51@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAJgu7WYC/x3M0QpAMBSA4VfRubZixOFVJC07m1PD2iSRd7dcf
- hf//0CkwBShzx4IdHLkfUso8wzmRW2WBOtkkIWsi65EsfuDV75p8s5NxikrmhYVopaVQQmp84E
- MX/9zGN/3A4BHfd1jAAAA
+Message-Id: <20240920-mpll_spinlock-v1-2-5249a9a7e2b7@amlogic.com>
+References: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
+In-Reply-To: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -53,11 +52,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820026; l=2429;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820173; l=1500;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=Bxi0pv+eCzIxvYRz/WWiwYenjJWhGAFp4yX+VQVeYR0=;
- b=SHfpgZJ0kfXUg89lZ7xFZh4+atixE7c7aAQxxNKPJ4Pj5PBehGSJ/C39ZYFB1y/QIK1IadLCz
- 53bEMsO8fveCj1E6BYhN0C3BkiwU/wYlJIhy/UB7GJvLoLoI4Jb/f73
+ bh=A66AwGhQ5KfvBGuX3+8YPfqlQmWjyAOHLmEF/9YfExU=;
+ b=bC07qWlOnIwGnXk6bbO3cqsQy+tRulPBMDppiO6cLZkxQu92f1niJme+f0EGewC2yIcRM9eSX
+ uoKBnEkizCdDJKW8+cYsx8Ay+NjiznMnc324fuKn0XBL08ySyMbrG3s
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -67,70 +66,60 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-The hardware property of PLL determines that PLL can only be enabled
-after PLL has been initialized. If PLL is not initialized, the
-corresponding lock bit will not be set to 1, resulting in
-meson_clk_pll_is_enabled() returning "false".
-
-Therefore, if PLL is already enabled, there is no need to repeat
-initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
-meson_clk_pll_init() appears redundant.
-
----
-The hardware property of PLL determines that PLL can only be enabled
-after PLL has been initialized. If PLL is not initialized, the
-corresponding lock bit will not be set to 1, resulting in
-meson_clk_pll_is_enabled() returning "false".
-
-Therefore, if PLL is already enabled, there is no need to repeat
-initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
-meson_clk_pll_init() appears redundant.
-
-In actual application scenarios, PLL configuration is determined during
-the bootloader phase. If PLL has been configured during the bootloader
-phase, you need to add a flag to the kernel to avoid PLL
-re-initialization, which will increase the coupling between the kernel
-and the bootloader.
+It is meaningless to define a spinlock in the struct meson_clk_mpll_data.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/meson/clk-pll.c | 3 +--
- drivers/clk/meson/clk-pll.h | 1 -
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/meson/axg.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 89f0f04a16ab..8df2add40b57 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -316,8 +316,7 @@ static int meson_clk_pll_init(struct clk_hw *hw)
- 	 * Keep the clock running, which was already initialized and enabled
- 	 * from the bootloader stage, to avoid any glitches.
- 	 */
--	if ((pll->flags & CLK_MESON_PLL_NOINIT_ENABLED) &&
--	    meson_clk_pll_is_enabled(hw))
-+	if (meson_clk_pll_is_enabled(hw))
- 		return 0;
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 757c7a28c53d..1b08daf579b2 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -23,8 +23,6 @@
  
- 	if (pll->init_count) {
-diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-index 949157fb7bf5..cccbf52808b1 100644
---- a/drivers/clk/meson/clk-pll.h
-+++ b/drivers/clk/meson/clk-pll.h
-@@ -28,7 +28,6 @@ struct pll_mult_range {
- 	}
+ #include <dt-bindings/clock/axg-clkc.h>
  
- #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
--#define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
- 
- struct meson_clk_pll_data {
- 	struct parm en;
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static struct clk_regmap axg_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -506,7 +504,6 @@ static struct clk_regmap axg_mpll0_div = {
+ 			.shift   = 0,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -557,7 +554,6 @@ static struct clk_regmap axg_mpll1_div = {
+ 			.shift   = 1,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -613,7 +609,6 @@ static struct clk_regmap axg_mpll2_div = {
+ 			.shift   = 2,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -664,7 +659,6 @@ static struct clk_regmap axg_mpll3_div = {
+ 			.shift   = 3,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
 
----
-base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
-change-id: 20240918-optimize_pll_flag-678a88d23f82
-
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
