@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04391E50B;
-	Fri, 20 Sep 2024 12:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7131E4B2;
+	Fri, 20 Sep 2024 12:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726835803; cv=none; b=jDT/EwWQ/tzyf9sTSBKbPnkD5eAQqIRWYG9onQD0uXmkYvyiAgCEztIfkvQ2dENf3RI+y0WPkdq8MByrEMvUHHjTI9y6sKx/LtlEpBx2M1V2uhbow/srAKNE9Jh11krGNOgUUXBrQA6JjU5NL8D+UW8zJYxUJKTtxgBGb2RLRIU=
+	t=1726836205; cv=none; b=jw+N8QG0ENgH6+zs+WAgEB1P2dtFHfsLHT0mIveqjVKqXDwlbZ3sveA5MKhehdlGeqpZd/jWHO7Mz6IsT3fLsO1bO2cPBPIr8915ip/5NDQ/gSt/1TUHuybxWvyen8dUVnI2rh42pVf43plQIZCBtmYv+hLJ38mR7TgV2MyWRYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726835803; c=relaxed/simple;
-	bh=sX+koPWYyb+HTqwuKE13tVkzTG40JdkQAM3ue8rQglA=;
+	s=arc-20240116; t=1726836205; c=relaxed/simple;
+	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F61mX90YUueZOhYKHZuNmh5CxfcHecBTT5jyvz2mTJdAC4AH+ISzDO7jaYUhc6gvZMajqMDM+Nv8oJMORp8IKkVnLw+Jo0wMxQNRAY5s6OdmPwLOqueoxudN5VvUnDuo7txew2JY14aTOhfs3SloYr8eB7BhfShdC5jtM/COCK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8ONaiyr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HHVToTzU43QfbdIJ/YYOOj5U7pyeJVpv8rHjFK/LMIH3IoC56mvFevNY99+I9t93oAhoBWtyim+ZFPvl+Y59PKtgQQHwoackJVsATyq76gw38qBa7CNTnI7120BQnYGh17K4Usnoqs5ALNbz6rOMGTvVE1rxy8fGvoGHsT8ehg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLBxDlQE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8ONaiyr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3A9C4CEC3;
-	Fri, 20 Sep 2024 12:36:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLBxDlQE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB329C4CEC3;
+	Fri, 20 Sep 2024 12:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726835802;
-	bh=sX+koPWYyb+HTqwuKE13tVkzTG40JdkQAM3ue8rQglA=;
+	s=k20201202; t=1726836204;
+	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i8ONaiyrkkfQtVxEJVVQNoAHSJkbJ9ZKCr+RPWPGlNzL7jsKMoY/v1NdqMnOvY+Um
-	 lxC8vTsLc9Guq1RH2cxfKfGRfeUvV+Ifd4daK+eVrlX2xybCQk6EKSG530bmaFgSRF
-	 x6bpWfRbUcXME2bqVJf95P+Crx2sQNjYCgWm3CXoFXJBYOaMFx7WPnUGYQsTkDCPEC
-	 5hWqXD6rRwLan4Ds4pPrThkYJU0NiTOXKPI8bERv5TsZUIpcuen4mIXrIWaDp1stBk
-	 BnjlzIQcKmPvEGKw7848BUtG8VSVKn2eMv2SyLAnDJdE56KbWN/WN2F+XF5BjkZyx7
-	 ij9q3AJut3uAw==
-Message-ID: <1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
-Date: Fri, 20 Sep 2024 14:36:37 +0200
+	b=cLBxDlQEtybkGjB66prbdRTwZuBVdzT93kUTdR0i6MoOYAGSOV5dwl0Bcx+3muMET
+	 JyKipgaSRytC2OkVEijHgzDMjlOLTPQGX/7quMhwcq7mGcit45CM1fNZYErugdSMLb
+	 F2A5DTBtb6IiKdf6Baj55A7zFYrMTTYXCYABGfk25TWjxfX74o25D4Ytr/1dk1L6y9
+	 yqRQ6O9e+emHBprJyrd734OAs2+E77Y8lTyS56q2I5E0gmBD7D4p3x9CIkaSAV8Pxt
+	 hGgTvEFhyfCX4iyVFTulFkQBxrr35pJr8yKmpIElqE0OiIgONeAWLhzz0CVAea4CLm
+	 UPv6zRRU4ZfCQ==
+Message-ID: <04ad8ea5-2c76-4007-b9ad-87b935072b8b@kernel.org>
+Date: Fri, 20 Sep 2024 14:43:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,18 +35,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-To: Inbaraj E <inbaraj.e@samsung.com>, 'Stephen Boyd' <sboyd@kernel.org>,
- alim.akhtar@samsung.com, cw00.choi@samsung.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- mturquette@baylibre.com, s.nawrocki@samsung.com
+Subject: Re: [PATCH v2] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+To: Inbaraj E <inbaraj.e@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
- <20240917101016.23238-1-inbaraj.e@samsung.com>
- <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
- <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
- <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
- <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+References: <CGME20240919124112epcas5p1527a15ea137d853dee5625902769580e@epcas5p1.samsung.com>
+ <20240919123954.33000-1-inbaraj.e@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,100 +88,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+In-Reply-To: <20240919123954.33000-1-inbaraj.e@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/09/2024 06:15, Inbaraj E wrote:
+On 19/09/2024 14:39, Inbaraj E wrote:
+> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
+> block. When we gate ACLK or PCLK, the clock framework will subsequently
+> disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
+> system level halt.
 > 
-> 
->> -----Original Message-----
->> From: Inbaraj E <inbaraj.e@samsung.com>
->> Sent: 20 September 2024 09:35
->> To: 'Krzysztof Kozlowski' <krzk@kernel.org>; 'Stephen Boyd'
->> <sboyd@kernel.org>; 'alim.akhtar@samsung.com'
->> <alim.akhtar@samsung.com>; 'cw00.choi@samsung.com'
->> <cw00.choi@samsung.com>; 'linux-clk@vger.kernel.org' <linux-
->> clk@vger.kernel.org>; 'linux-kernel@vger.kernel.org' <linux-
->> kernel@vger.kernel.org>; 'linux-samsung-soc@vger.kernel.org' <linux-
->> samsung-soc@vger.kernel.org>; 'mturquette@baylibre.com'
->> <mturquette@baylibre.com>; 's.nawrocki@samsung.com'
->> <s.nawrocki@samsung.com>
->> Cc: 'pankaj.dubey@samsung.com' <pankaj.dubey@samsung.com>;
->> 'gost.dev@samsung.com' <gost.dev@samsung.com>
->> Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->>
->>
->>
->>> -----Original Message-----
->>> From: Krzysztof Kozlowski <krzk@kernel.org>
->>> Sent: 19 September 2024 17:33
->>> To: Inbaraj E <inbaraj.e@samsung.com>; 'Stephen Boyd'
->>> <sboyd@kernel.org>; alim.akhtar@samsung.com;
->> cw00.choi@samsung.com;
->>> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
->>> linux-samsung- soc@vger.kernel.org; mturquette@baylibre.com;
->>> s.nawrocki@samsung.com
->>> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com
->>> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->>>
->>> On 19/09/2024 13:33, Inbaraj E wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Stephen Boyd <sboyd@kernel.org>
->>>>> Sent: 19 September 2024 15:51
->>>>> To: Inbaraj E <inbaraj.e@samsung.com>; alim.akhtar@samsung.com;
->>>>> cw00.choi@samsung.com; krzk@kernel.org; linux-clk@vger.kernel.org;
->>>>> linux- kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
->>>>> mturquette@baylibre.com; s.nawrocki@samsung.com
->>>>> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com; Inbaraj E
->>>>> <inbaraj.e@samsung.com>
->>>>> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as
->>>>> critical
->>>>>
->>>>> Quoting Inbaraj E (2024-09-17 03:10:16)
->>>>>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
->>>>>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock
->> framework
->>>>> will
->>>>>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
->>>>>> PLL_CAM_CSI is causing sytem level halt.
->>>>>>
->>>>>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
->>>>>> CSI stop streaming through pm_runtime_put system is getting halted.
->>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
->>>>>>
->>>>>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
->>>>>> ---
->>>>>
->>>>> Please add a fixes tag. Although this is likely a band-aid fix
->>>>> because marking something critical leaves it enabled forever.
->>>>
->>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
->>>> supplying clock even for CMU SFR access of CSI block, so we can't
->>>> gate this.
->>>
->>> Hm, I am not so sure. The CMU driver should just take appropriate clock.
->>> Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
->>
->> As per HW design, PLL_CAM_CSI is responsible for suppling clock to CSI SFR,
->> CMU SFR and some internal block of CAM_CSI. In this some of the clock is not
->> handled by any driver but it is required for CSI to work properly. For example
->> CSI NOC clock. So this is the reason we are marking PLL_CAM_CSI as critical.
->>
-> 
-> This is clock hierarchy for CMU_CAM_CSI block.
-> 
-> PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
-> 			|
-> 			|----> DIVIDER --------> CMU_SFR clock
-> 			|
-> 			|----> DIVIDER --------> CSI NOC clock. 
-> 
+> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
+> streaming through pm_runtime_put system is getting halted. So marking
+> PLL_CAM_CSI as critical to prevent disabling.
 
-And what is the problem in adding proper handling in the driver? You
-just described case valid for 99% of SoC components.
+No, please do not send new versions while discussion is going.
+
+See my replies in previous version.
+
+Also, if this stays, then you miss Cc-stable.
 
 Best regards,
 Krzysztof
