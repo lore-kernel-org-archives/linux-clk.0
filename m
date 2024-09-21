@@ -1,55 +1,55 @@
 Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7F4155C8D;
-	Sat, 21 Sep 2024 09:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB98156F5D;
+	Sat, 21 Sep 2024 09:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726912364; cv=none; b=RSg8D6rF8DDd6Lo33bMFYMyOV8yDGXxukpid+UoYvUI/7BP39AM3scaie1eUyuLFbZa+b3UsaVn87eOLOvvyPinVYdSqdab/QRZ7VcOjbPwnasGNst9IVnrTqs1ySpJZrizMKsRBcqZ9QRXaMsLA2VLmcDmQrdWmeHtS1xG/u6c=
+	t=1726912371; cv=none; b=jMqLydA2AdQfdQjNIH+61QB87rIibkg92lvbJ11ILKUZVCqsxO7Zt0onIqWrBC4CktNYNSX/klG8BvPSGM0tgmmfXBJ16eHEE+hxYaMpNXAKDVzropBJfdSNp3QX8d+CXp0AENk7Kw6sZFjXmhO+JbVTalu6OY2VTzfiLk92kpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726912364; c=relaxed/simple;
-	bh=tPJ9Tui6obnlmYZAQz+oFV/G191xzjhDWCaH9JGS6I8=;
+	s=arc-20240116; t=1726912371; c=relaxed/simple;
+	bh=5N7dKt3+JRM4U7IvBaBa1K71v9qWqjKB54iGk7SerSo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j84DA83ZF4K3j3TH/Na69APAN32xjzmE1HXvIxFobXy9d9S7AMv6Y//LahTo7KGpv/i0OspGNTUolO+sfCg3lM0dTuTR/KGp9iCd5wTMUPs5jiLLmRWIaE+w2DoSyKfRMjArHRjpsvbih+xo7W0dms0bj4K8swv1UIr+VBqqyUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=0mCRCEL+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LudYP/BP; arc=none smtp.client-ip=103.168.172.154
+	 MIME-Version; b=Kh+P96adXVLyDI8Bv9PbNUYJgJDqX63oQsRo6TQz0WE+G9Bq5V08RVFD2VhhoQlrEYFgv5yQnCvQ9vOK4CP1D/W1FZBuSmJhgpT7wHnrmN9KefsicZBPjZHO8Y/xE6/xOlTjhVDCJ4QpHwKQvHYklHgraDy+dVDCbWA3ZHzxb/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=uwswMxnJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ogc+tI7k; arc=none smtp.client-ip=103.168.172.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="0mCRCEL+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LudYP/BP"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 834BA114024F;
-	Sat, 21 Sep 2024 05:52:42 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="uwswMxnJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ogc+tI7k"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id ED0781140253;
+	Sat, 21 Sep 2024 05:52:48 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Sat, 21 Sep 2024 05:52:42 -0400
+  by phl-compute-05.internal (MEProxy); Sat, 21 Sep 2024 05:52:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1726912362; x=
-	1726998762; bh=j39o6gjNS9OmLnvkrdvnX7rGkSbKds69G+QiPuGs8E4=; b=0
-	mCRCEL+800+je9tBPukjrCxgq2IO/JEAXlAqEAcPYNJakx8gPXX/1/CAO+Cp4FrT
-	3yMIM92K0rsSe3X/cie6X58sp4fIX2neRDb09BJ0CbUbO+ALGN031gPMXEnmZxxy
-	tPNFDh9awI9QHadAVSI++yVjGAHNpQBhKcFp28V61g9+miikXzxISWu05PPWJcUv
-	BAQ4Ya7Ottw+/M4iH5cz57GQCntfzR7lj9eWi1GgcSt0Bppz7lAdrOei0Np5PFDU
-	q3N7IuT3xsT5DqK+WaUb2zR51vdM1xPN5mCGY/ws9vIL87BXCbP/yrS3bhQM2IO+
-	6YcuELOqpXEIMav6LrqQw==
+	:reply-to:subject:subject:to:to; s=fm2; t=1726912368; x=
+	1726998768; bh=nay3ZyN0cN/80lVEv9bgr4vS0wpneM/GiqVSWG6S8J8=; b=u
+	wswMxnJRVGPk1w0GshhQ3R16g7oTbJ/m6qkHiHeQcBdMAC3yfKzGw6oo194ROMsK
+	qeY5TABEliiPacbLsqt/sBOVpyDR7GOFdzxVsffUFvUBESd4NPQj/4sGyeyCDa9p
+	kMUYkJnzC/oNOu9Q3gTgeD67bGyDfDbNbGFvkPYfGDPrmmM9ITcQ2x6/mjwFkmu9
+	ud8lyRK2iL+M0J6+25qWV58K+ut3Ct0GqI4SoW5btABX4rKrmbSIY1KgsOZLX2OT
+	03pBz+rzHuv6Z7YAc/ZGXIGee2NUa31dcenZpOTdpqxWuC7gWwAL7CCK5SEJuGi7
+	q+TxAkCfiNSj0MnIqUaAA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1726912362; x=
-	1726998762; bh=j39o6gjNS9OmLnvkrdvnX7rGkSbKds69G+QiPuGs8E4=; b=L
-	udYP/BP8Az6z6q7xQXdJLAL5eeaHeU+MGnVzFEX+fXVM7Y5rsriZq+n+gvI3BSVf
-	juDAIC307Xky9Zk6dP+tDEhSyrnVZuQnp1R+yDrrg1IpBwM/N1wuZc9U5Ke79mZM
-	3EiJWCgArSJwROJm/gSsq551xc+0r5NL0cS2qRZVJqRsNm21aJomDfyHCvn/CHd4
-	w4va7sVFnalXlpLGruM2AZYW3V/p5dtIPDImg07eM8AfN/HbDIYeZk6cpCVJuZe/
-	AKWiivBdxotx9jTr9mqHsotrS8rmb43K3KpNObmfzQfJf1DCoN0gWJNuRq/PyqHQ
-	6g6jtX5HdDiX6YThQKwLg==
-X-ME-Sender: <xms:apfuZj0pCXfA8QUTSVHnLprh_FujRH8Mp9DbMXmPeXTnI7ts8mZSwQ>
-    <xme:apfuZiF5JRwZ8yj2AB3CqeWhMZf9F2iuSLZdj5zVOyvlPDMybfLT1xcnjt375vitz
-    8eqMQtA7EZvEu9uyw>
-X-ME-Received: <xmr:apfuZj6RlOa6Tg2I3sDXQlWty6BdUh6jfBu-AxEC_yhzaZ0tkExFN10srZDNZXivAtT68nXW4AjDecHwWZloRPldY0OOdTaWSe3keqYLtdrHnmBc>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1726912368; x=
+	1726998768; bh=nay3ZyN0cN/80lVEv9bgr4vS0wpneM/GiqVSWG6S8J8=; b=O
+	gc+tI7kx3oco+4QyFzLhXet0hno+iwlIg/TQeOi42k9bcFl/Bpz54Y8Og8As/DEC
+	TBHqry5oOPjlqCvJdtvBGgPibntLtHO0Pzc0yU1ELH3nhsZwe/2x4aTHfFTSaIfv
+	AOGZe7eBbpKN4J8VQJSj9HSJq7iFRH6fUupYxM27z0ANWrR9kM7NCHxQxEAkb+tq
+	nTtft4hyrklyrJSMBKf5q85Dz7VhYvFjyO/IoJdnyAG9j4dKLPPZZ+ctyfeKDr1r
+	sm0Bs9keXr4EVy3MQAN++OCByZaY8+6ZbulE+qaDdoI1pFsjoQ33BXk2BpZc6XIE
+	jqwBnhqUs56blB2HaPoKw==
+X-ME-Sender: <xms:cJfuZqLG8PHGnTGjn16fuYhpnlxIWuAXYWbwIQgz6YmlS7GdbYP3fw>
+    <xme:cJfuZiI7SDe0XShkZunfLC7vModL5wOVFfiZIk5sEdjidvNZqso13zpoClQMBIfa2
+    QqU-CDhONO3HyqR3w>
+X-ME-Received: <xmr:cJfuZqsRmmVJmrthHlr5RZIcH1-r0w37qFe6kwWaAtEWCOX4JOQVcBHvvwvZdQnbwT6rcHA7U6Mx3nFcKLMQ_8789PB5rIDv_qS_JqUsV_uSDeCc>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelhedgvdduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
@@ -66,14 +66,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelhedgvdduucetufdoteggod
     hffihllhdrtghhpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhl
     rdgtohhmpdhrtghpthhtohepshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprhgtph
     htthhopehrohgshheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:apfuZo33ypXtRACPsaIEiSeKCOl0CRgcEt0VEccxtVqnJrYQYDmFcA>
-    <xmx:apfuZmHZE9oMCkyEvKWeZQ19VazyhNplpsH-RMpkS9pqpn9z_PG-Fg>
-    <xmx:apfuZp9QE7QQxvW1WbnG-WshVEpKmSlKLtT7Fzz6Z4hmcrr0sm8-1w>
-    <xmx:apfuZjm_2a3aBwo13ga2gIsWrWDiRD_JyrqhSyF3y14-8AKCn7WpVQ>
-    <xmx:apfuZv2lRI65njnCysqEU-FzqN-cF-a5sU68uJiMyL-MPYpvKEXzpz4Y>
+X-ME-Proxy: <xmx:cJfuZvaTAIdugz_mg8_4ANCNWbPPOvLytHG_GEJAtsujf0U5TIRfug>
+    <xmx:cJfuZhbIOffah3ba8w6_z8d_uvS0wdgDIQfsQbLZIahOn4U4xItjIQ>
+    <xmx:cJfuZrCRjDYnX9vSgIjSilzzwk38zkqKA3woG4YPZujMMWfIRDFtNw>
+    <xmx:cJfuZna5m-XKGg05MtUpgkC4WD1RbzO5uK_mOlwa46hFdYdgID1ujA>
+    <xmx:cJfuZuLZx_1LXWGi2bocp8O-18fR441BLaTBKieconAvzDtW7jwSSeO8>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 21 Sep 2024 05:52:36 -0400 (EDT)
+ 21 Sep 2024 05:52:42 -0400 (EDT)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Maxime Ripard <mripard@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -97,9 +97,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH v4 03/26] drm: sun4i: de2/de3: call csc setup also for UI layer
-Date: Sat, 21 Sep 2024 21:45:52 +1200
-Message-ID: <20240921095153.213568-4-ryan@testtoast.com>
+Subject: [PATCH v4 04/26] drm: sun4i: de2: Initialize layer fields earlier
+Date: Sat, 21 Sep 2024 21:45:53 +1200
+Message-ID: <20240921095153.213568-5-ryan@testtoast.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20240921095153.213568-1-ryan@testtoast.com>
 References: <20240921095153.213568-1-ryan@testtoast.com>
@@ -113,62 +113,73 @@ Content-Transfer-Encoding: 8bit
 
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Currently, only VI layer calls CSC setup function. This comes from DE2
-limitation, which doesn't have CSC unit for UI layers. However, DE3 has
-separate CSC units for each layer. This allows display pipeline to make
-output signal in different color spaces. To support both use cases, add
-a call to CSC setup function also in UI layer code. For DE2, this will
-be a no-op, but it will allow DE3 to output signal in multiple formats.
+drm_universal_plane_init() can already call some callbacks, like
+format_mod_supported, during initialization. Because of that, fields
+should be initialized beforehand.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Co-developed-by: Ryan Walklin <ryan@testtoast.com>
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/gpu/drm/sun4i/sun8i_csc.c      | 8 +++++---
- drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 6 ++++++
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 9 +++++----
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-index 0dcbc0866ae82..68d955c63b05b 100644
---- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-@@ -209,8 +209,10 @@ void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
- 		return;
- 	}
- 
--	base = ccsc_base[mixer->cfg->ccsc][layer];
-+	if (layer < mixer->cfg->vi_num) {
-+		base = ccsc_base[mixer->cfg->ccsc][layer];
- 
--	sun8i_csc_setup(mixer->engine.regs, base,
--			fmt_type, encoding, range);
-+		sun8i_csc_setup(mixer->engine.regs, base,
-+				fmt_type, encoding, range);
-+	}
- }
 diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-index b90e5edef4e88..aa987bca1dbb9 100644
+index aa987bca1dbb9..cb9b694fef101 100644
 --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
 +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-@@ -20,6 +20,7 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_probe_helper.h>
+@@ -295,6 +295,11 @@ struct sun8i_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
+ 	if (!layer)
+ 		return ERR_PTR(-ENOMEM);
  
-+#include "sun8i_csc.h"
- #include "sun8i_mixer.h"
- #include "sun8i_ui_layer.h"
- #include "sun8i_ui_scaler.h"
-@@ -135,6 +136,11 @@ static int sun8i_ui_layer_update_formats(struct sun8i_mixer *mixer, int channel,
- 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch_base, overlay),
- 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_MASK, val);
- 
-+	/* Note: encoding and range arguments are ignored for RGB */
-+	sun8i_csc_set_ccsc(mixer, channel, FORMAT_TYPE_RGB,
-+			   DRM_COLOR_YCBCR_BT601,
-+			   DRM_COLOR_YCBCR_FULL_RANGE);
++	layer->mixer = mixer;
++	layer->type = SUN8I_LAYER_TYPE_UI;
++	layer->channel = channel;
++	layer->overlay = 0;
 +
- 	return 0;
- }
+ 	if (index == 0)
+ 		type = DRM_PLANE_TYPE_PRIMARY;
  
+@@ -325,10 +330,6 @@ struct sun8i_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&layer->plane, &sun8i_ui_layer_helper_funcs);
+-	layer->mixer = mixer;
+-	layer->type = SUN8I_LAYER_TYPE_UI;
+-	layer->channel = channel;
+-	layer->overlay = 0;
+ 
+ 	return layer;
+ }
+diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+index f3a5329351caa..3c657b069d1f4 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+@@ -478,6 +478,11 @@ struct sun8i_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
+ 	if (!layer)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	layer->mixer = mixer;
++	layer->type = SUN8I_LAYER_TYPE_VI;
++	layer->channel = index;
++	layer->overlay = 0;
++
+ 	if (mixer->cfg->is_de3) {
+ 		formats = sun8i_vi_layer_de3_formats;
+ 		format_count = ARRAY_SIZE(sun8i_vi_layer_de3_formats);
+@@ -536,10 +541,6 @@ struct sun8i_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&layer->plane, &sun8i_vi_layer_helper_funcs);
+-	layer->mixer = mixer;
+-	layer->type = SUN8I_LAYER_TYPE_VI;
+-	layer->channel = index;
+-	layer->overlay = 0;
+ 
+ 	return layer;
+ }
 -- 
 2.46.1
 
