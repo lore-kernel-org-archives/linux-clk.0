@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5FE41C6D;
-	Sun, 22 Sep 2024 20:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F9041C6D;
+	Sun, 22 Sep 2024 20:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727038342; cv=none; b=sjUkWLed+vRshEEfpKxYBGAQYZQE25P68sB4HCtLZZY3bRsroij6YQpnuyKRg0eJjFN+q/sdigu92mtJLw4rPD5MXi/CWc8nzoFtMqAFoNRGaEu1aJVrOYq6p/BReTNSPAqxR/f7fRSS2Nx8YcLXsM4OSvBkLL7p6YYIj4z0Fq0=
+	t=1727038351; cv=none; b=J/3Mv3aZ6BlT0ikEnBosh5mgUmzFqyBa0qOmdghNz7EfbnPFTjDtrB6NBjd1wcAvJFREfUYnbKq0KWFTavrDN/BnLFgN1V7+6u3+egqlrRJxJiGHRZKCI06xT6SOSa0sZKaOZnPaswbVnQYoNyBAOCd4QQEv0xi2WBb/znXAuFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727038342; c=relaxed/simple;
-	bh=uN5prV2zXq5e0gOnXEUkWyF7g1wrmftUQs3tUHdtCAs=;
+	s=arc-20240116; t=1727038351; c=relaxed/simple;
+	bh=8JrG0Uk0kZt0pPnpYEAf3tP6cQIGfmWcka0ttvTK1t4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UyGTVuP3tAkagK/141WPjk3LqY8xOtkI+cmK7z9mLqirGIsnCuSlTez/AnmHWay+UK3AasALUaJEtp5oHRZU5wyy5srDBrTVSLqQLoBTXYMof6H4DEbCdWqSEDaJPJjDEM8XHQIXgevbkmusUDQ28GFIRbh7v8ogpYCTVsfuFq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tN4JMxKE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNLVd+8xz6Y6v5tHIHbF7jqmHdP9ah276fD6QC6UL3Bf8ylJgNCGCs5ThygWzESQYus0gN8vysWXQHWUXG2M0o7hrvS2mcrqzsNjZVBhLpueAo69CcCXPmNcUIFBQtnkcroL40vDCx2lWuIEBc5BTK45BVvis7GG3wHiOoy/wqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAkQkxL4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tN4JMxKE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856E4C4CEC3;
-	Sun, 22 Sep 2024 20:52:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAkQkxL4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D30CC4CEC3;
+	Sun, 22 Sep 2024 20:52:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727038342;
-	bh=uN5prV2zXq5e0gOnXEUkWyF7g1wrmftUQs3tUHdtCAs=;
+	s=k20201202; t=1727038351;
+	bh=8JrG0Uk0kZt0pPnpYEAf3tP6cQIGfmWcka0ttvTK1t4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tN4JMxKEdLst5ymxG9/DaCuXUErphUlZc60D4paWVBR3bpr+Krqw001D1qEdmcmIw
-	 r95zi3RBY1mA6kfFBTvNlNbk5fnErDTDB9I0p4NcJYwc9UMcLI5NhbHBqPGCWT+Czz
-	 nkJbHRUSpPoDQi1WsSRrzL0jaTUEa1Quz/pc5FTRKqp2itg1uPAiPOcki/TszvZStn
-	 wlU7arMOsNZASOOThnHXB6sW4ZFYqOX+iq+SSqEZ+iqVYunwn2mNws8AZOLeBCxKhI
-	 DwZHmYTL3DQDmcBY+hnEIxlf+jZ8HZvdJn7pPi2DsCasQ8DMGZM4PSHuo4oSWvFTL7
-	 TBRhiWkdK4kLA==
-Date: Sun, 22 Sep 2024 22:52:18 +0200
+	b=vAkQkxL4rcNHWlT6M1CEWN3M+1s3E+OXtDX6LlnCnYtx8bG81bgDEpF9o55hD0Sqm
+	 32rXi9dn+AL+LCIkwPajLCPIIy1R43q2PK/D8UpKuxvOkvHZe4l7wBorGKE8d9MXTb
+	 RBN6wJB35L490ZQiDJwm5yUimwXUnOgnz/RugSi7cT4Y2wv7BQv7wjniUJIEa+aaj1
+	 f1LbQdTM8BP8PKa6z/sYi+aeCNsOESZ15/4iBuYaSxwOMIh/BRHNcoigUKpYuhXftK
+	 WhiFt7JgdLBc/eSiJ/Tvt4OFmvgJNJ+hpfvGPynEosVt7lpSG607REbER+hk5HOOUK
+	 Vc038O5X8q7xA==
+Date: Sun, 22 Sep 2024 22:52:27 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
@@ -39,11 +39,11 @@ Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 	Chris Morgan <macroalpha82@gmail.com>, John Watts <contact@jookia.org>, dri-devel@lists.freedesktop.org, 
 	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, 
 	linux-clk@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 19/26] dt-bindings: allwinner: add H616 DE33 bus
+Subject: Re: [PATCH v4 20/26] dt-bindings: allwinner: add H616 DE33 clock
  binding
-Message-ID: <qxudqhcsulj2jfewhi32ymd4dhds34zk5f2mhks3bckhfqhko7@wzj23fkatjxg>
+Message-ID: <stdck3whwhbiyryo7uwv22piaktfr6ibawl4ckjnbuxanpcmsf@7o5hybvzyrnw>
 References: <20240921095153.213568-1-ryan@testtoast.com>
- <20240921095153.213568-20-ryan@testtoast.com>
+ <20240921095153.213568-21-ryan@testtoast.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,13 +52,13 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240921095153.213568-20-ryan@testtoast.com>
+In-Reply-To: <20240921095153.213568-21-ryan@testtoast.com>
 
-On Sat, Sep 21, 2024 at 09:46:08PM +1200, Ryan Walklin wrote:
+On Sat, Sep 21, 2024 at 09:46:09PM +1200, Ryan Walklin wrote:
 > The Allwinner H616 and variants have a new display engine revision
 > (DE33).
 > 
-> Add a display engine bus binding for the DE33.
+> Add a clock binding for the DE33.
 > 
 > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 > Acked-by: Conor Dooley <conor.dooley@microchip.com>
@@ -66,12 +66,7 @@ On Sat, Sep 21, 2024 at 09:46:08PM +1200, Ryan Walklin wrote:
 > 
 > --
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run  and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
+Ditto
 
 Best regards,
 Krzysztof
