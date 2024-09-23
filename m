@@ -1,146 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CDA40855;
-	Mon, 23 Sep 2024 09:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5821946A4;
+	Mon, 23 Sep 2024 09:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082586; cv=none; b=rlKOgAW2IrPpi+kFZvZvNO+Uzu62iM+xKkMPKkOkMamBnYMR2u6wEhwdhfk6h75NLwKIUz8VqvqWXiQX8Xvz547N7djZg7e9fieAx4CvUYvRbW9x1musIsACzOlVt3TcZ/NLspUvlLxcfUSP2pMK5Gm+ZLWn91hjo5ZV8aFp/9I=
+	t=1727083274; cv=none; b=J27VpytP3ZchXrUr8v6AcUOIBWE/3HG4XrAdmNSquAR8wM4DT20XfYB4h8HcUy8nYKq63K1hi3Xe6pDt9v0Nzp1ydEuG+qN90mxrUk6Hkvj5tCHKWhkshZBvoZDGrICiCDn19yZlzY9a+BJdVnf/BpifmRs7ut41vu1hc/SJa/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082586; c=relaxed/simple;
-	bh=Kgq8MYspzutcGWDFpoter0hnpOzpTVNYh7jCbDxMsAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bl8pLyLydWFLxyiVBB32OtiuIs5xvSv/QcTkcXnD6qmyR+4e6JPej+xkZ5MUffbeiTm7V3wyzy2SaX50azcrWcO4OM4EtCdYMBasfrXtlkdDI+MVtaSfviVjyDNNIW31YrhWINLJH/fzeWSzARurimNZnsxUsbyfQrpXcF5jiOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yi/EQek8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727083274; c=relaxed/simple;
+	bh=XkTMzR+QaaPQ9beNXFFpDntWSUyMlJZakghbnU0IjVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EI7TlBjpkRhI52Kh3tkyZYfpZkkax5uJ5dp8qUGFcs5Z9PABxaRl9aQ6DdmqY0922oAwD3A5HTuKPEqyrQgkpwqPvz9DyDdsZRIRVSnjz3YmqGKmAtNXIdi6j53M7VOdEr3EFNpaqDIivzXBLlUjhdxKk6Fnz+IxHTbVBrBTy6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=j092psrs; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yi/EQek8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4B9C4CEC4;
-	Mon, 23 Sep 2024 09:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727082585;
-	bh=Kgq8MYspzutcGWDFpoter0hnpOzpTVNYh7jCbDxMsAk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Yi/EQek8n+LGMeJcPmz85ejoyJhmDFhRC9JCAyDW7hYyuZ143NMZa8APZ1nauT2FJ
-	 HClH4FZxtInJTnd4on1QnRXu6JKi5QGhrqk5gqwgL9R7m7Kb8F5AJ6EKmDbae3EDei
-	 nPUNBDj/jhh4QHm0REAFnWIJDy0RFi/sF4tZEwxvrWwWsJNhjG0NvHf1+4CLFa5F4e
-	 yqoWssip6iIhnlm5a6nQqI9O2f3/vKuFQehXuWAaY+m//hnB4x2j6d5icM3GFmEUUc
-	 sWuUHfNZZdVbCCb35v9fxoqqu0sDgh8DSULm31v7p2HUSP/bCj/biw6Dv6agyve8gG
-	 t1kj0i0YGT0gQ==
-Message-ID: <c02f84d2-1306-480b-b6b3-15d3ccae16ad@kernel.org>
-Date: Mon, 23 Sep 2024 11:09:38 +0200
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="j092psrs"
+X-UUID: 27eabd06798d11ef8b96093e013ec31c-20240923
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=gjZj/08QvvsJ8Imgl9uWiUrtWHG3Yj6fTeZovpkIvPE=;
+	b=j092psrsPIOVqOfFiiHzAcaVFEJDZfhobjAR/DceUmZ++cq6FBKYvtsn4zYnPQxG2eDQO0P1qwYUPq8+qReH/wuUnrMKAuz0ztDAcrYmeRBzVpbp5L6oKc4PkGkHe+nGwONWYcyPgrnDdl4ukNGOiKj7xYIKI/dYmop+MTGC8gI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:2517809b-de0c-43c1-b60b-ccbad6e3382d,IP:0,U
+	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:1
+X-CID-META: VersionHash:6dc6a47,CLOUDID:edb56a9e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 27eabd06798d11ef8b96093e013ec31c-20240923
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1536765249; Mon, 23 Sep 2024 17:21:03 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 23 Sep 2024 17:20:59 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Mon, 23 Sep 2024 17:20:52 +0800
+Message-ID: <2914fee8-c94a-fecb-a69c-0d58a40caded@mediatek.com>
+Date: Mon, 23 Sep 2024 17:20:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: mfd: aspeed: support for AST2700
-To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org
-References: <20240923075012.2264573-1-ryan_chen@aspeedtech.com>
- <20240923075012.2264573-2-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 3/5] nvmem: mtk-efuse: Enable postprocess for mt8188 GPU
+ speed binning
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240923075012.2264573-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+References: <20240920134111.19744-1-pablo.sun@mediatek.com>
+ <20240920134111.19744-4-pablo.sun@mediatek.com>
+ <866d7cd8-856b-431a-9408-527cdc021922@collabora.com>
+From: Pablo Sun <pablo.sun@mediatek.com>
+In-Reply-To: <866d7cd8-856b-431a-9408-527cdc021922@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.754000-8.000000
+X-TMASE-MatchedRID: u1zqiMeMcroNtKv7cnNXnSa1MaKuob8Pt3aeg7g/usAM74Nf6tTB9rsI
+	asnPqvyQfVSuQp/lqthxq+Aq7jUw2GN6tywQmwQMngIgpj8eDcC063Wh9WVqgjuUMbK1NdLP+gt
+	Hj7OwNO2OhzOa6g8KrQg299MEvOql1vSXLi9e57Sdpgh/0Y9xmmUJIWO8gdo5djIFhP3krtZiou
+	j39kMFs02viMYyOMeglkEG27gbXTQ3u31m+KVydpeZT8XNJIzV
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.754000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	8FFCC96B34A170870F29F0F6648320318BC4090AB294D4AB700CD9D0A14064CA2000:8
 
-On 23/09/2024 09:50, Ryan Chen wrote:
-> Add reset, clk dt bindings headers, and update compatible
-> support for AST2700 clk, silicon-id in yaml.
+Hi Angelo,
+
+On 9/23/24 16:37, AngeloGioacchino Del Regno wrote:
+[snipped]
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |   8 +-
->  .../dt-bindings/clock/aspeed,ast2700-scu.h    | 163 ++++++++++++++++++
->  .../dt-bindings/reset/aspeed,ast2700-scu.h    | 124 +++++++++++++
->  3 files changed, 294 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-scu.h
->  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-scu.h
+> Please reuse mtk_mt8186_efuse_pdata. There's no need to add a duplicate.
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> index 86ee69c0f45b..c800d5e53b65 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> @@ -9,6 +9,8 @@ title: Aspeed System Control Unit
->  description:
->    The Aspeed System Control Unit manages the global behaviour of the SoC,
->    configuring elements such as clocks, pinmux, and reset.
-> +  In AST2700 SOC which has two soc connection, each soc have its own scu
-> +  register control, ast2700-scu0 for soc0, ast2700-scu1 for soc1.
->  
->  maintainers:
->    - Joel Stanley <joel@jms.id.au>
-> @@ -21,6 +23,8 @@ properties:
->            - aspeed,ast2400-scu
->            - aspeed,ast2500-scu
->            - aspeed,ast2600-scu
-> +          - aspeed,ast2700-scu0
-> +          - aspeed,ast2700-scu1
->        - const: syscon
->        - const: simple-mfd
->  
-> @@ -30,7 +34,8 @@ properties:
->    ranges: true
->  
->    '#address-cells':
-> -    const: 1
-> +    minimum: 1
-> +    maximum: 2
+> { .compatible = "mediatek,mt8188-efuse", .data = &mtk_mt8186_efuse_pdata },
 
-I would still argue that children do not need full 64-bit addressing,
-but fine, you can grow their space as much as possible.
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, will fix in v2.
 
 Best regards,
-Krzysztof
+Pablo
+
+
 
