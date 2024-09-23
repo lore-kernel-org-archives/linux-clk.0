@@ -1,120 +1,152 @@
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A611946CD;
-	Mon, 23 Sep 2024 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715D27641D;
+	Mon, 23 Sep 2024 12:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727086492; cv=none; b=QFtlvJdfI5W0XDGl/l0DWw1k/Ro7wOqlfVWlXxHFhc0U3jlOtH1YE0na3eoayvY81lzW7Sj0dqCV8bQ288B8ZBPr7O89DmVXv2sHLnoe+mZqMcGEQrFFgWbMYmj8r6OUZDto64IsI7AI6cdridEaIRUftxQMpYGuC03USZUCsr8=
+	t=1727093101; cv=none; b=WwtW/6hQMucdJZY6ePh/qN8+frlYU1NVFUJiA+H/xvLenuQ3dG8rDGjQL5EatfCsuGJpn56WCdwDBz15ouxN6mXCW8B6yx0k0wvisQtv5waIyYaWJIc7LqZwD1bG1SoUjl/8hHNNyAHVUU8bhGsPvY+FV63mp9aC2csUw3bST8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727086492; c=relaxed/simple;
-	bh=4naAvuRiTLh/W08mGlC6sR55eAP2/bE+rIZw3yBKwIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jOX+wKDib8aN5hQ4BwCG05glye2zrJgFXVlzMiPGBAENB1DKHkHBNuLrd6KxifDlw6Y4vMDZhn//R8MmEJLyRmFQlxRW8+sBAOmW115C3uBxEFWMvBjHuZiYTQ9EOmZe5cpCJRobF6nKRpsUS11WFdNRVi/7ZVX9CCK5LRxOV1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=BLye5v/T; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1727093101; c=relaxed/simple;
+	bh=qi1PjlEounPLmGZYg7mFt0VV1DkZCSccR1+CiRtSriA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ngtPBVup0iV8ecF16drQBG18mlGaUfFAfpURb0asYHuo4Il+iNOhypbVyfJkV0UdPe7XQCso4O+20OqgcFHEsZHun2uh/HA3pOUz4PQaOtyX7rZIw1qoaoAX8kWqOcsX1KQbdI8DUKifxECkLVyE0ZhDj7O1XG1/srzDO3S1Chk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=NU6ilw1s; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="BLye5v/T"
-X-UUID: a64aa178799411efb66947d174671e26-20240923
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=gbUKc5+M4A13tRhLrQDCXFDg4LvyvHUNk+/1687J63Y=;
-	b=BLye5v/Tw+C33mJcqD2PHgoj51pf5r3SInQlFIx4NwyOTNED3kD95PR+glE15XnKxEn7OyW/R08j985zrQEICjtptJHR67GFVIQ7nUcgqELQYAfKbMft4sXogTz0H37yffoMExJGqem4EBuFnoQ8zbbX4c2KVPI3AqJoWzUQT1I=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:672d9825-9eba-4cec-90d9-caf44858dce2,IP:0,U
-	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:6dc6a47,CLOUDID:472b1c18-b42d-49a6-94d2-a75fa0df01d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: a64aa178799411efb66947d174671e26-20240923
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1772811456; Mon, 23 Sep 2024 18:14:42 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 23 Sep 2024 18:14:41 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Mon, 23 Sep 2024 18:14:38 +0800
-Message-ID: <bf45531a-eacf-22a9-65f1-f6474a2ca843@mediatek.com>
-Date: Mon, 23 Sep 2024 18:14:38 +0800
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="NU6ilw1s"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=944JnV41oDL5cWaTC4YkKMMn7PnL1zs+tDD23HR6gmU=; b=NU6ilw1scRJqTBU9WERjk0Lais
+	fWLooE72b+yK18VuzcpbrqHOSeEjlibWqZ9dXkNQpOhCCbUzcHAClurvjhQEC0ue2QhDec2YD0V0o
+	tGOzf+mKnmNXX4BQ0BnkfWJwrt3uDnKslDmKvkauCWyiOz8cXyueqOrfDFBilnk0b9TpRUpOrUmO7
+	ZKsLVxG4qSkxut/Eh4Jpk20skQhykd5K6bLYhA6JzGYnRFWBLCGnfli6WhzcGEjk4ndIZSdCV32kK
+	NDOtc5hcqmdPHepBopaJwIqTJ98XIIpc5qJvl1nlQUuPEXpgY3alX6RIIVWnLiyHDatsl8JPs0PxB
+	O+JUB4hA==;
+Date: Mon, 23 Sep 2024 14:04:47 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>, Tony Lindgren
+ <tony@atomide.com>
+Subject: Re: clk mess on omap4460 with mpu clock
+Message-ID: <20240923140447.60c5efff@akair>
+In-Reply-To: <ZtdQ+Ay9DKAooahN@shell.armlinux.org.uk>
+References: <20240603234139.280629b2@aktux>
+	<CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+	<20240903143357.2532258b@akair>
+	<CAMuHMdWF4G5Uon1=6TMzBogN2CX8EuiVBMuCPtAAMPNa-DtiOw@mail.gmail.com>
+	<20240903192203.1dddbf0d@akair>
+	<ZtdQ+Ay9DKAooahN@shell.armlinux.org.uk>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- Mali GPU
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240920134111.19744-1-pablo.sun@mediatek.com>
- <20240920134111.19744-6-pablo.sun@mediatek.com>
- <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
-From: Pablo Sun <pablo.sun@mediatek.com>
-In-Reply-To: <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Angelo,
+Am Tue, 3 Sep 2024 19:10:00 +0100
+schrieb "Russell King (Oracle)" <linux@armlinux.org.uk>:
 
-On 9/23/24 16:45, AngeloGioacchino Del Regno wrote:
-[snipped]
-> 
-> Is there any real difference between MT8390 and MT8188 in terms of the 
-> GPU OPPs?
-> 
-> I see that on MT8188, frequencies up to 880MHz want a DVDD_SRAM_GPU of 
-> 0.750V,
-> then 0.775/0.762/0.750 (bin1-4/5/6) on 915MHz, and 0.800/0.775/0.750 
-> (bin1-4/5/6)
-> on 950MHz.
-> 
-> Those never call for 0.850V...! So is MT8188 (Chromebooks) wrong, or is 
-> MT8390
-> different in that?
+> On Tue, Sep 03, 2024 at 07:22:03PM +0200, Andreas Kemnade wrote:
+> > Am Tue, 3 Sep 2024 14:36:05 +0200
+> > schrieb Geert Uytterhoeven <geert@linux-m68k.org>:
+> >  =20
+> > > Hi Andreas,
+> > >=20
+> > > On Tue, Sep 3, 2024 at 2:34=E2=80=AFPM Andreas Kemnade
+> > > <andreas@kemnade.info> wrote: =20
+> > > > Am Mon, 2 Sep 2024 15:53:07 +0200
+> > > > schrieb Geert Uytterhoeven <geert@linux-m68k.org>:   =20
+> > > > > On Mon, Jun 3, 2024 at 11:41=E2=80=AFPM Andreas Kemnade
+> > > > > <andreas@kemnade.info> wrote:   =20
+> > > > > > just stumbled across this on 6.10-rc1:
+> > > > > >
+> > > > > > [    1.475830] ocp:target-module@48210000:mpu:fck: device
+> > > > > > ID is greater than 24 [    1.483154] ti-sysc
+> > > > > > ocp:target-module@48210000: could not add child clock fck:
+> > > > > > -12   =20
+> > > > >
+> > > > > And on boneblack:
+> > > > >
+> > > > > 48000000.interconnect:segment@200000:target-module@0:mpu@0:fck:
+> > > > > device ID is greater than 24
+> > > > > target-module@4b000000:target-module@140000:pmu@0:fck: device
+> > > > > ID is greater than 24
+> > > > >   =20
+> > > > > > Maybe
+> > > > > >         /*
+> > > > > >          * Use clkdev_add() instead of clkdev_alloc() to
+> > > > > > avoid the MAX_DEV_ID
+> > > > > >          * limit for clk_get(). If cl ever needs to be
+> > > > > > freed, it should be done
+> > > > > >          * with clkdev_drop().
+> > > > > >          */
+> > > > > > in ti-sysc.c does not work anymore?
+> > > > > >
+> > > > > > The offending clock definition is in omap4.dtsi
+> > > > > >
+> > > > > > clocks =3D <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
+> > > > > >
+> > > > > > Did not bisect that yet.   =20
+> > > > >
+> > > > > Commit 8d532528ff6a6b1b ("clkdev: report over-sized strings
+> > > > > when creating clkdev entries") in v6.10-rc1, with follow-up
+> > > > > commit 616501eccb58615f ("clkdev: don't fail clkdev_alloc() if
+> > > > > over-sized") in v6.10-rc4.
+> > > > >
+> > > > > I have no idea if these clkdev registrations are still
+> > > > > necessary/used.  =20
+> > > > well, it might explain some mystery behavior in the past. Lets
+> > > > see where it comes from. As the comment says, there should be a
+> > > > workaround against that limitation. So the problem should not be
+> > > > there in the first place. I have some strange problems with
+> > > > clk_disable_unused.
+> > > >
+> > > > I first thought it is a id < 24 issue and not a
+> > > > strlen(something) < 24.   =20
+> > >=20
+> > > Me too :-(
+> > >  =20
+> > Ok, setting
+> > MAX_DEV_ID to 64 in clkdev.c lets the warnings disappear. ti-sys.c
+> > has at one place precautions for overlong dev_ids, but on another
+> > place it happily calls clkdev_create() running into this issue.=20
+> >=20
+> > The follow-up commit then again at least does not cause a failure
+> > for dev registration. I am still unsure what the consequences are.
+> > Between 6.10 and 6.11 something interesting happened which makes
+> > the bt200 reliably boot with near-mainline u-boot+spl even without
+> > clk_ignore_unused. So no frankenstein-boot (vendor X-Loader + new
+> > U-boot) anymore. =20
+>=20
+> The bottom line: if you are getting warnings that the strings exceed
+> the existing sizes, then _any_ lookups using clkdev will have been
+> failing. Nothing has changed with that. The only thing that changed
+> recently was to print a warning for this case, and initially to fail
+> the attempt to register with clkdev. However, that broke stuff, so it
+> was made not to fail, but still report the problem.
+>=20
+yes, understood. The main question what bothers me is whether we have
+some real problems behind it. The warning message is just an indicator
+of something odd which was already odd before the message was
+introduced.
+I have seen something working with some u-boot and some other not,
+so things might not get properly initialized...=20
 
-To the best of my knowledge, MT8390 and MT8188 has identical GPU
-subsystem. Thus, the OPP table should have no difference.
+So the way forward is to check whether that registration is really
+needed at:
+https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L2380
+If yes, then
+a) increade the size of the name in the clk subsystem or
+b) workaround like
+https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L353
 
-To be specific, I list the link to the OPP table of Genio 700 EVK
-(MT8390) in reference in [1]. It should match the setting in Chromebook
-kernel branches.
-
-The "typical" voltage in the datasheet is the voltage that would work
-for all frequency settings. As long as it is smaller than the maximum
-operating voltage, setting voltages higher than the ones specified in
-the OPP table does not damage the hardware.
-
-But this 0.85V setting is indeed not optimal. We should follow the
-voltages described in the OPP table, if we want power savings.
-
-I also considered model the regulator setting with 
-'regulator-coupled-with' and 'regulator-coupled-max-spread', but I am 
-not entirely sure how to describe the relation that "DVDD_GPU_SRAM 
-should follow DVDD_GPU
-if and only if DVDD_GPU is higher than 0.75V" - should I simply
-set min-voltage to 0.75V and set 'regulator-coupled-with' ?
-
-[1]: 
-https://gitlab.com/mediatek/aiot/rity/meta-mediatek-bsp/-/blob/kirkstone/recipes-kernel/dtbo/mt8390/gpu-mali.dts
-
-Many thanks,
-Pablo
-
+Regards,
+Andreas
