@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E898244C8C;
-	Mon, 23 Sep 2024 09:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CDA40855;
+	Mon, 23 Sep 2024 09:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082477; cv=none; b=pZ4HMQ1k1WyfvWQzkLtyPAsFjHhosfXzyUqNYMbKT+Dc5jS2fF76ZwGDbwcN2Ek+pSYhwMTnlVXbqu9Og+UB9ZKUZ5qjtK9B4qUGGpg4QqiZaxseeV4S7GeU6tlS6pkG+KSebXzV/IpCNZbs0BLlXcG+luhX3eFMMK9e4mQ8pN0=
+	t=1727082586; cv=none; b=rlKOgAW2IrPpi+kFZvZvNO+Uzu62iM+xKkMPKkOkMamBnYMR2u6wEhwdhfk6h75NLwKIUz8VqvqWXiQX8Xvz547N7djZg7e9fieAx4CvUYvRbW9x1musIsACzOlVt3TcZ/NLspUvlLxcfUSP2pMK5Gm+ZLWn91hjo5ZV8aFp/9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082477; c=relaxed/simple;
-	bh=W6F+drqeVQY8anfgFzgcTsVi8eDl1gwiANr19rdOjAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P4UNOHdZBc8uEamOOdxDlJmZlTf6Z+zcqha0tBqLXgHDIq90M63AqwZZx5R1zmrHaGwxNBsdOBx2+z0WZzbaWPHjWgZJahuFYVDfZcQqztCpH4IynuMDNTrPXGTgYO7U1LQNwDNStqPjQjVMEvnKh6SB9F4VqlUNQqctr92Ggfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQXn+BfH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727082586; c=relaxed/simple;
+	bh=Kgq8MYspzutcGWDFpoter0hnpOzpTVNYh7jCbDxMsAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bl8pLyLydWFLxyiVBB32OtiuIs5xvSv/QcTkcXnD6qmyR+4e6JPej+xkZ5MUffbeiTm7V3wyzy2SaX50azcrWcO4OM4EtCdYMBasfrXtlkdDI+MVtaSfviVjyDNNIW31YrhWINLJH/fzeWSzARurimNZnsxUsbyfQrpXcF5jiOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yi/EQek8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQXn+BfH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC97AC4CECE;
-	Mon, 23 Sep 2024 09:07:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yi/EQek8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4B9C4CEC4;
+	Mon, 23 Sep 2024 09:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727082476;
-	bh=W6F+drqeVQY8anfgFzgcTsVi8eDl1gwiANr19rdOjAM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hQXn+BfH5rvpKN7zEHR88iCtdLgFZS/+sMhsY7ivsgmBdJhNp+hvtVJM/Z4qXuFIZ
-	 aI6FPy+rli4WWddaH/AIfZy4GWq/ygfNep16xk9Sx7/9XF+JzDDCzTCqYmk4ZaFbhk
-	 LOHnQQ6rFMzXFUNe4BLrVEF549kuUhTugha38aZnUdjC12zQsLsYji60EP0UNxJpCV
-	 OLQCE3nYmiaAi8zrpPLvhqnk/C0BcZ5Tua0ovve0jSJsvnevZmjMvx9yfIU5KZBTiI
-	 I6FLHThtt+XIe50kFRKrrNLT5cBXNsD6TbtxLUF3XSWnw6QKpLVUM6iE2fWOdgEMQT
-	 OTv+YZR2RL6Pg==
-Message-ID: <292aa90c-51da-4cc1-91a5-ad1cb4bd11bf@kernel.org>
-Date: Mon, 23 Sep 2024 11:07:43 +0200
+	s=k20201202; t=1727082585;
+	bh=Kgq8MYspzutcGWDFpoter0hnpOzpTVNYh7jCbDxMsAk=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Yi/EQek8n+LGMeJcPmz85ejoyJhmDFhRC9JCAyDW7hYyuZ143NMZa8APZ1nauT2FJ
+	 HClH4FZxtInJTnd4on1QnRXu6JKi5QGhrqk5gqwgL9R7m7Kb8F5AJ6EKmDbae3EDei
+	 nPUNBDj/jhh4QHm0REAFnWIJDy0RFi/sF4tZEwxvrWwWsJNhjG0NvHf1+4CLFa5F4e
+	 yqoWssip6iIhnlm5a6nQqI9O2f3/vKuFQehXuWAaY+m//hnB4x2j6d5icM3GFmEUUc
+	 sWuUHfNZZdVbCCb35v9fxoqqu0sDgh8DSULm31v7p2HUSP/bCj/biw6Dv6agyve8gG
+	 t1kj0i0YGT0gQ==
+Message-ID: <c02f84d2-1306-480b-b6b3-15d3ccae16ad@kernel.org>
+Date: Mon, 23 Sep 2024 11:09:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,32 +35,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/27] regulator: add s2dos05 regulator support
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>,
- cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>,
- Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-15-2d2efd5c5877@gmail.com>
- <35liocltjuxv3gjueuvpaytx44crebbc4c63atztakuq5dfpax@bquve7tkrvtx>
- <CABTCjFCNuMKTeF8YyqCHGQ2CCQ76C1djL_3rja7itLfBM5vogQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: mfd: aspeed: support for AST2700
+To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+References: <20240923075012.2264573-1-ryan_chen@aspeedtech.com>
+ <20240923075012.2264573-2-ryan_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,30 +89,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CABTCjFCNuMKTeF8YyqCHGQ2CCQ76C1djL_3rja7itLfBM5vogQ@mail.gmail.com>
+In-Reply-To: <20240923075012.2264573-2-ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 16:28, Dzmitry Sankouski wrote:
->>> diff --git a/include/linux/regulator/s2dos05.h b/include/linux/regulator/s2dos05.h
->>> new file mode 100644
->>> index 000000000000..2e89fcbce769
->>> --- /dev/null
->>> +++ b/include/linux/regulator/s2dos05.h
->>> @@ -0,0 +1,73 @@
->>> +/* SPDX-License-Identifier: GPL-2.0+ */
->>
->> Are you sure that here (and other places) you want any newer GPL? This
->> is quite odd. Does original code (from which you took 2016 copyrights)
->> have this as well?
->>
-> Original code permits redistribution under 2+ license [1].
-> Is 2+ preferable over 2 only?
+On 23/09/2024 09:50, Ryan Chen wrote:
+> Add reset, clk dt bindings headers, and update compatible
+> support for AST2700 clk, silicon-id in yaml.
 > 
-> [1]: https://github.com/klabit87/twrp_android_samsung_kernel_sdm845/blob/android-8.0/include/linux/regulator/s2dos05.h#L9
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |   8 +-
+>  .../dt-bindings/clock/aspeed,ast2700-scu.h    | 163 ++++++++++++++++++
+>  .../dt-bindings/reset/aspeed,ast2700-scu.h    | 124 +++++++++++++
+>  3 files changed, 294 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-scu.h
+>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-scu.h
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> index 86ee69c0f45b..c800d5e53b65 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> @@ -9,6 +9,8 @@ title: Aspeed System Control Unit
+>  description:
+>    The Aspeed System Control Unit manages the global behaviour of the SoC,
+>    configuring elements such as clocks, pinmux, and reset.
+> +  In AST2700 SOC which has two soc connection, each soc have its own scu
+> +  register control, ast2700-scu0 for soc0, ast2700-scu1 for soc1.
+>  
+>  maintainers:
+>    - Joel Stanley <joel@jms.id.au>
+> @@ -21,6 +23,8 @@ properties:
+>            - aspeed,ast2400-scu
+>            - aspeed,ast2500-scu
+>            - aspeed,ast2600-scu
+> +          - aspeed,ast2700-scu0
+> +          - aspeed,ast2700-scu1
+>        - const: syscon
+>        - const: simple-mfd
+>  
+> @@ -30,7 +34,8 @@ properties:
+>    ranges: true
+>  
+>    '#address-cells':
+> -    const: 1
+> +    minimum: 1
+> +    maximum: 2
 
-For new code we usually suggest 2-only, but your work looks like
-derivative, so keeping 2+ is fine.
+I would still argue that children do not need full 64-bit addressing,
+but fine, you can grow their space as much as possible.
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
