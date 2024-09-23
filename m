@@ -1,40 +1,33 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4CC194138;
-	Mon, 23 Sep 2024 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E898244C8C;
+	Mon, 23 Sep 2024 09:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727081156; cv=none; b=BeW/byNSwnvLLd/inMm2P4BWXSBe0PSkJe5JkYoEgsLGXWaEnfOJF2PZAyOA9gUSl/iLxINkDuIFAJY54Ous/jgr95JGNsc0p5of2UCfs345XT8MrnUYuoSwAyP1W1O8oIOwzxbotGN+wq5ejWICmC4WsSz6uVDPHEY9aqHZGoU=
+	t=1727082477; cv=none; b=pZ4HMQ1k1WyfvWQzkLtyPAsFjHhosfXzyUqNYMbKT+Dc5jS2fF76ZwGDbwcN2Ek+pSYhwMTnlVXbqu9Og+UB9ZKUZ5qjtK9B4qUGGpg4QqiZaxseeV4S7GeU6tlS6pkG+KSebXzV/IpCNZbs0BLlXcG+luhX3eFMMK9e4mQ8pN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727081156; c=relaxed/simple;
-	bh=mXPvosYulSuPT7ayp0NuQzaRA/qTKHHryuamBJ6tKAg=;
+	s=arc-20240116; t=1727082477; c=relaxed/simple;
+	bh=W6F+drqeVQY8anfgFzgcTsVi8eDl1gwiANr19rdOjAM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkl1CVSYSGn+84inLuquQA8JyAYtEODwJb1wf5xg6dfkN7Wg/kaiEQPv+YF7pAH59Ye+kmoTMb6xNbyeQFETMO35FLzG+pVs5AXwIMwO/tFinvrIOEwVpL2AIPucmC/i+AQ8H/EnbgulWagnz9Ryto1Oew2VmthSS9X1m2kWu7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ab2SuDMw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 In-Reply-To:Content-Type; b=P4UNOHdZBc8uEamOOdxDlJmZlTf6Z+zcqha0tBqLXgHDIq90M63AqwZZx5R1zmrHaGwxNBsdOBx2+z0WZzbaWPHjWgZJahuFYVDfZcQqztCpH4IynuMDNTrPXGTgYO7U1LQNwDNStqPjQjVMEvnKh6SB9F4VqlUNQqctr92Ggfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQXn+BfH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ab2SuDMw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727081152;
-	bh=mXPvosYulSuPT7ayp0NuQzaRA/qTKHHryuamBJ6tKAg=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQXn+BfH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC97AC4CECE;
+	Mon, 23 Sep 2024 09:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727082476;
+	bh=W6F+drqeVQY8anfgFzgcTsVi8eDl1gwiANr19rdOjAM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ab2SuDMwkBRp5z1ddjV1kndbZFoRoDJs/gbRp/1F6QHds+SsCPAzvxlvzwfr1kenn
-	 NZiDzC1RWIb20y3TC0kfXXVsLYmVVvs0+TWow8hdLM2B0/jhqI99oyJuR5RGymHlIZ
-	 vQ1niFnx6iCwtONJyeTXI6WtJK1pC3JKJVebO6e03M1PGQAg/AilT3w3v6VFyn2m4i
-	 iTvp8OTsqw+/CUexEupeYI1I7VjyV69dstsjESnmZPGG4LYz5O+6D3azcm6dhKapdS
-	 9lYKdJ1R2mcDAxtgizIdjq1TGMDv2N4nJSqCnYsMc8bJ3GU0ANeYVZliPo/qFcoj/R
-	 HaAZMWUNdAj7Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4419E17E1063;
-	Mon, 23 Sep 2024 10:45:52 +0200 (CEST)
-Message-ID: <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
-Date: Mon, 23 Sep 2024 10:45:51 +0200
+	b=hQXn+BfH5rvpKN7zEHR88iCtdLgFZS/+sMhsY7ivsgmBdJhNp+hvtVJM/Z4qXuFIZ
+	 aI6FPy+rli4WWddaH/AIfZy4GWq/ygfNep16xk9Sx7/9XF+JzDDCzTCqYmk4ZaFbhk
+	 LOHnQQ6rFMzXFUNe4BLrVEF549kuUhTugha38aZnUdjC12zQsLsYji60EP0UNxJpCV
+	 OLQCE3nYmiaAi8zrpPLvhqnk/C0BcZ5Tua0ovve0jSJsvnevZmjMvx9yfIU5KZBTiI
+	 I6FLHThtt+XIe50kFRKrrNLT5cBXNsD6TbtxLUF3XSWnw6QKpLVUM6iE2fWOdgEMQT
+	 OTv+YZR2RL6Pg==
+Message-ID: <292aa90c-51da-4cc1-91a5-ad1cb4bd11bf@kernel.org>
+Date: Mon, 23 Sep 2024 11:07:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,114 +35,102 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- Mali GPU
-To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v4 15/27] regulator: add s2dos05 regulator support
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240920134111.19744-1-pablo.sun@mediatek.com>
- <20240920134111.19744-6-pablo.sun@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>,
+ cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>,
+ Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-15-2d2efd5c5877@gmail.com>
+ <35liocltjuxv3gjueuvpaytx44crebbc4c63atztakuq5dfpax@bquve7tkrvtx>
+ <CABTCjFCNuMKTeF8YyqCHGQ2CCQ76C1djL_3rja7itLfBM5vogQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20240920134111.19744-6-pablo.sun@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABTCjFCNuMKTeF8YyqCHGQ2CCQ76C1djL_3rja7itLfBM5vogQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 20/09/24 15:41, Pablo Sun ha scritto:
-> Configure GPU regulator supplies and enable GPU for GENIO 700 EVK.
+On 19/09/2024 16:28, Dzmitry Sankouski wrote:
+>>> diff --git a/include/linux/regulator/s2dos05.h b/include/linux/regulator/s2dos05.h
+>>> new file mode 100644
+>>> index 000000000000..2e89fcbce769
+>>> --- /dev/null
+>>> +++ b/include/linux/regulator/s2dos05.h
+>>> @@ -0,0 +1,73 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0+ */
+>>
+>> Are you sure that here (and other places) you want any newer GPL? This
+>> is quite odd. Does original code (from which you took 2016 copyrights)
+>> have this as well?
+>>
+> Original code permits redistribution under 2+ license [1].
+> Is 2+ preferable over 2 only?
 > 
-> The GPU in MT8390 & MT8188 has two power inputs: "DVDD_GPU" and
-> "DVDD_SRAM_GPU". In Genio 700 EVK, DVDD_GPU is supplied by
-> mt6359_vproc2_buck_reg, and DVDD_SRAM_GPU is supplied by
-> mt6359_vsram_others_ldo_reg.
-> 
-> According to section 5.2 "Recommended Operating Conditions" in
-> MT8390 IoT Application Processor Datasheet v1.9, The recommended
-> operating voltage ranges are:
-> 
-> - DVDD_GPU: min 0.55V, max 0.86V, typical 0.75V
-> - DVDD_SRAM_GPU: min 0.71V, max 0.92V, typical 0.85V
-> 
-> In this commit, we set DVDD_SRAM_GPU to typical 0.85V. It is possbile
-> to couple it to the DVDD_GPU in future patches.
-> 
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> [1]: https://github.com/klabit87/twrp_android_samsung_kernel_sdm845/blob/android-8.0/include/linux/regulator/s2dos05.h#L9
 
-Is there any real difference between MT8390 and MT8188 in terms of the GPU OPPs?
+For new code we usually suggest 2-only, but your work looks like
+derivative, so keeping 2+ is fine.
 
-I see that on MT8188, frequencies up to 880MHz want a DVDD_SRAM_GPU of 0.750V,
-then 0.775/0.762/0.750 (bin1-4/5/6) on 915MHz, and 0.800/0.775/0.750 (bin1-4/5/6)
-on 950MHz.
-
-Those never call for 0.850V...! So is MT8188 (Chromebooks) wrong, or is MT8390
-different in that?
-
-Cheers,
-Angelo
-
-> ---
->   .../dts/mediatek/mt8390-genio-700-evk.dts     | 24 +++++++++++++++++++
->   1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-> index 1474bef7e754..a1d6f4cd4e5f 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-> @@ -190,6 +190,11 @@ usb_p2_vbus: regulator-10 {
->   	};
->   };
->   
-> +&gpu {
-> +	mali-supply = <&mt6359_vproc2_buck_reg>;
-> +	status = "okay";
-> +};
-> +
->   &i2c0 {
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&i2c0_pins>;
-> @@ -253,6 +258,14 @@ &i2c6 {
->   	status = "okay";
->   };
->   
-> +&mfg0 {
-> +	domain-supply = <&mt6359_vproc2_buck_reg>;
-> +};
-> +
-> +&mfg1 {
-> +	domain-supply = <&mt6359_vsram_others_ldo_reg>;
-> +};
-> +
->   &mmc0 {
->   	status = "okay";
->   	pinctrl-names = "default", "state_uhs";
-> @@ -314,6 +327,11 @@ &mt6359_vpa_buck_reg {
->   	regulator-max-microvolt = <3100000>;
->   };
->   
-> +&mt6359_vproc2_buck_reg {
-> +	regulator-min-microvolt = <550000>;
-> +	regulator-max-microvolt = <860000>;
-> +};
-> +
->   &mt6359_vpu_buck_reg {
->   	regulator-always-on;
->   };
-> @@ -326,6 +344,12 @@ &mt6359_vsim1_ldo_reg {
->   	regulator-enable-ramp-delay = <480>;
->   };
->   
-> +/* for GPU SRAM */
-> +&mt6359_vsram_others_ldo_reg {
-> +	regulator-min-microvolt = <850000>;
-> +	regulator-max-microvolt = <850000>;
-> +};
-> +
->   &mt6359_vufs_ldo_reg {
->   	regulator-always-on;
->   };
+Best regards,
+Krzysztof
 
