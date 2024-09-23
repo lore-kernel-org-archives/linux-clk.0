@@ -1,126 +1,115 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B966E195B14;
-	Mon, 23 Sep 2024 12:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DC980C0C;
+	Mon, 23 Sep 2024 12:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727094313; cv=none; b=erdPkMrWxTzSNyp+gAhospmI4QhrqNapgKlAiPYGF5SmOgL2Uqt1hkpCw8g18fHzFDGvt7I3whRRuyBY47TFgQgqQ9rNoE6vVN3YnNXPO55KjjiYdX18WT3+YVvxX/R31GCKm2FBPEoiIgtEW1UVbiHPSRwzw37+viTPULPzcUc=
+	t=1727096259; cv=none; b=NpIdagBXnAKQGTGXj3+jfBrk4bdXT0x9VIlVbfG19kaCVLLcH0WZ3fb9B/xIoMpUpb8kDG2PjGty1AQKr433o5BDyd4wfJKLUO6eH4Q42f9YdlXltKY4arYGyGcNN9Ilyxv2om2ZlMg2jRRLc7OwfTEiUH5Ztlby1552wAEhfDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727094313; c=relaxed/simple;
-	bh=oVnappwI2asg1Mmf+oMcKojkg9+Z0J7WmOxhJWSM3kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UsGAD2KnKSWsSxZ4WrEQ8pfNVupEAVxhnafJ4mLJ2o45LkxrIZvppKb8xpJoA78F2LeKJReNcc3BomtoLFTlnHp7UDkyL5UQeSNTkPBNngIB1N/6KNJXljevmmZx4MpewxN5hWx1cN7h1IoFPA63tlvQP+3tANFoetLVxjP1vL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Tj/L4nvR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1727096259; c=relaxed/simple;
+	bh=YQM9aJ0gvjGWqUZvamoBA8pN6Un7ptWRrnsNZJkF9/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C7lX4W4g4HGF8YFWj7GSK3DlOsIcjLQWLQr5bkdLi4HVilYOBq9e19Jzq4CIfswSbsRr4b9DBmkshgHhVIrEXESJi7WrYvlD2A9Ak4MjYr63c30Naz7E6paWbpLaPucKq9MQwOjBUZm/Xp8+LmC74ypOpvpQCmtqF5fGOcjhFmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d8o5iZfT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Tj/L4nvR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727094309;
-	bh=oVnappwI2asg1Mmf+oMcKojkg9+Z0J7WmOxhJWSM3kc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Tj/L4nvRSp5Oa5oywuog3blCYKnRcOhvwJvam8UXfvTh1zG0pASOMhRoDtDkiGfqO
-	 pB6vekai1WFqwSw3bww3yvYXWjavV6cR/8bTXfAUex/Zuvw2K6uvq3HAwegPKO3M9i
-	 DNjlEJLMjzrbxxnmHjsk1zEV8/T2cuyQbAombyyddafGJMMIcEjsPBlC6eUHTvdDLn
-	 TfP1T2k5CDNte7JF9YXwQ4e7QfHt0kXR7FY8B95H8Wi3xWZ9IInMzsEUPSyJG6P+GI
-	 y+fxOvLEU486ptT4KFrQlH3ZZsyZvZ/wPmXbQrMWncY3tYS1XeBB53x+mItSG24WP2
-	 1Q7KulaV9+G7A==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E36817E121B;
-	Mon, 23 Sep 2024 14:25:09 +0200 (CEST)
-Message-ID: <228c9508-76c3-4772-bf0a-56e85a47af78@collabora.com>
-Date: Mon, 23 Sep 2024 14:25:09 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d8o5iZfT"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NB0Ila001351;
+	Mon, 23 Sep 2024 12:57:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=fU1ljihyn/b
+	Wb5BE9A3hbhtbiWjroef5/cEiofHz7LA=; b=d8o5iZfTUVe3XUH4N90L+5y0bVj
+	reonr/Lllp7N4X0hzidIiu8ILOnrJZFyBlCYa0MdKVrh7ty8IoXxeCeZ5O9MQpOP
+	EScIcdDKBpncScfaKBcT0NF+Gxqytr8BsrPBpLR7xLpTRcsIFRsNL0hlUd6HySw9
+	BVqjs3Jg5JtKZQoht0Ixi+D9Jel9LGMPAendnLKt3Xh873XMEJ6bbz5zj9ILKovj
+	moe4wLkRqlTfbbTJ4znXdE1G/eGCEwF1xoNfif2WIM/1MGy2HgWj+qhtA/owPXE/
+	YMmMkxmizqrgHXc7LutKzUs8Rm9Jf+iNNyTMJ67hEL2V9Coaxdvf0qYsvQA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakcmh8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 12:57:18 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48NCrTAg028339;
+	Mon, 23 Sep 2024 12:57:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 41sq7ktnb1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 12:57:17 +0000
+Received: from NALASPPMTA01.qualcomm.com (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48NCvG5e001794;
+	Mon, 23 Sep 2024 12:57:16 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 48NCvGwU001791
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 12:57:16 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
+	id 7212865F; Mon, 23 Sep 2024 05:57:16 -0700 (PDT)
+From: Qiang Yu <quic_qianyu@quicinc.com>
+To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
+        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+        quic_devipriy@quicinc.com
+Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
+Subject: [PATCH v3 2/6] dt-bindings: PCI: qcom: Add OPP table for X1E80100
+Date: Mon, 23 Sep 2024 05:57:09 -0700
+Message-Id: <20240923125713.3411487-3-quic_qianyu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240923125713.3411487-1-quic_qianyu@quicinc.com>
+References: <20240923125713.3411487-1-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- Mali GPU
-To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240920134111.19744-1-pablo.sun@mediatek.com>
- <20240920134111.19744-6-pablo.sun@mediatek.com>
- <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
- <bf45531a-eacf-22a9-65f1-f6474a2ca843@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <bf45531a-eacf-22a9-65f1-f6474a2ca843@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TlkPX4tWXIndkgqDoxkDYI0AOnWBiM6m
+X-Proofpoint-GUID: TlkPX4tWXIndkgqDoxkDYI0AOnWBiM6m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
+ clxscore=1015 malwarescore=0 lowpriorityscore=0 mlxlogscore=970
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409230095
 
-Il 23/09/24 12:14, Pablo Sun ha scritto:
-> Hi Angelo,
-> 
-> On 9/23/24 16:45, AngeloGioacchino Del Regno wrote:
-> [snipped]
->>
->> Is there any real difference between MT8390 and MT8188 in terms of the GPU OPPs?
->>
->> I see that on MT8188, frequencies up to 880MHz want a DVDD_SRAM_GPU of 0.750V,
->> then 0.775/0.762/0.750 (bin1-4/5/6) on 915MHz, and 0.800/0.775/0.750 (bin1-4/5/6)
->> on 950MHz.
->>
->> Those never call for 0.850V...! So is MT8188 (Chromebooks) wrong, or is MT8390
->> different in that?
-> 
-> To the best of my knowledge, MT8390 and MT8188 has identical GPU
-> subsystem. Thus, the OPP table should have no difference.
-> 
-> To be specific, I list the link to the OPP table of Genio 700 EVK
-> (MT8390) in reference in [1]. It should match the setting in Chromebook
-> kernel branches.
-> 
-> The "typical" voltage in the datasheet is the voltage that would work
-> for all frequency settings. As long as it is smaller than the maximum
-> operating voltage, setting voltages higher than the ones specified in
-> the OPP table does not damage the hardware.
-> 
-> But this 0.85V setting is indeed not optimal. We should follow the
-> voltages described in the OPP table, if we want power savings.
-> 
-> I also considered model the regulator setting with 'regulator-coupled-with' and 
-> 'regulator-coupled-max-spread', but I am not entirely sure how to describe the 
-> relation that "DVDD_GPU_SRAM should follow DVDD_GPU
-> if and only if DVDD_GPU is higher than 0.75V" - should I simply
-> set min-voltage to 0.75V and set 'regulator-coupled-with' ?
-> 
+Add OPP table so that PCIe is able to adjust power domain performance
+state and ICC peak bw according to PCIe gen speed and link width.
 
-VSRAM_GPU regulator:
+Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+---
+ Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-	regulator-min-microvolt = <750000>;
-	regulator-max-microvolt = <800000>;
-	regulator-coupled-with = <&(vgpu regulator)>;
-	regulator-coupled-max-spread = <1000>;
-
-VGPU regulator:
-	regulator-min-microvolt = <400000>;
-	regulator-max-microvolt = <800000>;
-	regulator-coupled-with = <&(vsram_gpu regulator)>;
-	regulator-coupled-max-spread = <1000>;
-
-Cheers,
-Angelo
-
-> [1]: 
-> https://gitlab.com/mediatek/aiot/rity/meta-mediatek-bsp/-/blob/kirkstone/recipes-kernel/dtbo/mt8390/gpu-mali.dts
-> 
-> Many thanks,
-> Pablo
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+index 704c0f58eea5..3c6430fe9331 100644
+--- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
++++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+@@ -78,6 +78,10 @@ properties:
+     description: GPIO controlled connection to WAKE# signal
+     maxItems: 1
+ 
++  operating-points-v2: true
++  opp-table:
++    type: object
++
+ required:
+   - reg
+   - reg-names
+-- 
+2.34.1
 
