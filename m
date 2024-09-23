@@ -1,40 +1,40 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6882E2F2D;
-	Mon, 23 Sep 2024 08:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8460679DC7;
+	Mon, 23 Sep 2024 08:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727080704; cv=none; b=ZZrYJEJIYTqq9FFKOovlHaYLAApEMpjF+LxU5nbzd/JWCC41IZVm2BHQvHO8vKEaE6MJLGdWljWRJlEc+s2sABSN+fDm+9Rkehwf+YoqbO+o4PPcgT6afLLAyal1XpeiFbwKNaeUuA5TCS4kf2kxbccyqnIk0VIpGZyUL22JRBI=
+	t=1727080788; cv=none; b=hYG/rqw3dmC2u7I5cfn9Ao4pZzUk1mkJ0Y8OpgmziPIpoLAlFUry2Qu71m/MWQbjVabspT9Vp4npSAIpG/UQ8RMEgqUmG2nlSr0YKhpl1TqJEXjSZ6vo71vqCymoIMHWbg4N8SH6TPOw9xBWPwKXFQR5wNDhxzGWptjmcLsIExk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727080704; c=relaxed/simple;
-	bh=rcivXolReutd/1EqUvrpD3Vx/mkT+TgRwYLp20qEAFg=;
+	s=arc-20240116; t=1727080788; c=relaxed/simple;
+	bh=bSnbgZUAu2nk9hGR+H3RrZqnwocCi9HL5rpRcPXtGaI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMqdXwm9acEpCGMCx1+BR6zAhQzWzEYhCQThfGTEgqqijznl/ePFo0z4V/vgwcD3VB0lo9+nBwppxWq1P5fibWYJblu0Uk/QoAj++vZfA1VOafOs3u0Wbb6V/HjbyajSms3qcbDe1TAUO9bkQX4hfoWv8athtLgdggCMi+FbNXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Yc4yh4II; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=EFR2qzhnQa7JvrwEto0pbqqLcvyMLEuWBLwQPuxIITfLzuNiSKPODPW/hmzFJmJbp+ZZn7ewuGr+zHC24Qf9sx42yopEwTxImCdzeVouOjysiZMMhGymdwZz7jRYJVyxDCi0vkHgXE5KhRmP6j6bHOjPbCaXAYtRF+jIaS6aCug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JkzibY8y; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Yc4yh4II"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JkzibY8y"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727080700;
-	bh=rcivXolReutd/1EqUvrpD3Vx/mkT+TgRwYLp20qEAFg=;
+	s=mail; t=1727080783;
+	bh=bSnbgZUAu2nk9hGR+H3RrZqnwocCi9HL5rpRcPXtGaI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yc4yh4IIsBOEZ8VMS85XjlBoF93yTvLouVXm+ZJRDYk4ufZtVgvE2QZvOVey8j4Yz
-	 39B+x6EbQFr4+Nmqnx7BMgqzq9wnQ5H/Aw6YYuLQuARSI2miIbjsX0Uyq19+ri2Ic8
-	 YgzfivkH9sHlcTUNxZwHh6EQP7sfFCr12AdJSdoiNzL6F8U0YIhHa0l7e6JfJHWoE9
-	 tWaH+AsYq4/5K2wS8MkDOySW7M/tT63ugKatzUNj7wuNh0sJSH9d/mXo0BvQDMwwlr
-	 BvC9I1zp4fucbr2DLmAKE6xi76HWw1lARPGt3iml6xw2qTUugYKRTmAN4BDoK8MX2i
-	 oX9Mk+szMRFhQ==
+	b=JkzibY8yNoTP0KVx9uvdQYEKOluf/YYmnFnjWXH9RkneDbndgYynZYAtEgd3JDo4+
+	 1iLmgiTGCcZyz24ISK1uM9G1+G9+VR/4jX6qADGbfXGSiL4vK5cLYeFv4OiPaYA5Wz
+	 sHWpRtI0o899VRGs6shQ9/z5cDA6PW/m+vmj2EAIpfVmHOmlL5tpmapKkpE29JioCa
+	 y2zj87+GisB5Y36KWf/f3dFD4JolE8beUs7dddk68Rmo6pUzyy7XFztVv42mA1v/bi
+	 x7CJHSQErAy5x4gAL1CWENK599Fi5MvsCnJg+Rg4ZflyeLhpksz0ATwdC40keXqL2a
+	 svVCitdpgG9RA==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F26E717E1060;
-	Mon, 23 Sep 2024 10:38:19 +0200 (CEST)
-Message-ID: <3f5055ad-924b-423e-88a6-9e5d46cd8c13@collabora.com>
-Date: Mon, 23 Sep 2024 10:38:19 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4E0DC17E1060;
+	Mon, 23 Sep 2024 10:39:43 +0200 (CEST)
+Message-ID: <ae69d0f6-97ff-478f-8e58-662fe4a923f4@collabora.com>
+Date: Mon, 23 Sep 2024 10:39:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,8 +42,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] clk: mediatek: clk-mt8188-topckgen: Remove univpll
- from parents of mfg_core_tmp
+Subject: Re: [PATCH 4/5] arm64: dts: mediatek: mt8188: Add efuse for GPU speed
+ binning
 To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
@@ -53,34 +53,20 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  linux-clk@vger.kernel.org
 References: <20240920134111.19744-1-pablo.sun@mediatek.com>
- <20240920134111.19744-3-pablo.sun@mediatek.com>
+ <20240920134111.19744-5-pablo.sun@mediatek.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20240920134111.19744-3-pablo.sun@mediatek.com>
+In-Reply-To: <20240920134111.19744-5-pablo.sun@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 20/09/24 15:41, Pablo Sun ha scritto:
-> Same as MT8195, MT8188 GPU clock is primarly supplied by the dedicated
-> mfgpll. The clock "mfg_core_tmp" is only used as an alt clock when
-> setting mfgpll clock rate.
+> The OPP table of mt8188 GPU contains duplicated frequencies
+> for different speed bins.
 > 
-> If we keep the univpll parents from mfg_core_tmp, when setting
-> GPU frequency to 390000000, the common clock framework would switch
-> the parent to univpll, instead of setting mfgpll to 390000000:
-> 
->      mfgpll                            0        0        0   949999756
->      univpll                           2        2        0  2340000000
->         univpll_d6                     1        1        0   390000000
->            top_mfg_core_tmp            1        1        0   390000000
->               mfg_ck_fast_ref          1        1        0   390000000
->                  mfgcfg_bg3d           1        1        0   390000000
-> 
-> This results in failures when subsequent devfreq operations need to
-> switch to other frequencies. So remove univpll from the parent list.
-> 
-> This solution is taken from commit 72d38ed720e9 ("clk: mediatek:
-> clk-mt8195-topckgen: Drop univplls from mfg mux parents")
+> In order to support OPP table, we need to provide the speed bin info
+> in the efuse data so the GPU driver could properly set the
+> supported hardware speed bin.
 > 
 > Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
 
