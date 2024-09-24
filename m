@@ -1,113 +1,252 @@
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A4C1E505;
-	Tue, 24 Sep 2024 13:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AE31A76AF
+	for <linux-clk@vger.kernel.org>; Tue, 24 Sep 2024 13:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727183734; cv=none; b=MQqKfnJzpJiDMDvsIHWhnVLokV8H6jljlA4pjma9sVdlYu/YgXFFMvk1lGFpwfO5alAJ7BRIEwCa59g1MKYLGAAwgUxrpNGMUtIfr4UQ3aX4GsgQt31627spPq6NLSDYtKSV03rvl659ZaUfrp9DPnziow0N6jDlhaYE4QrxlQ8=
+	t=1727184962; cv=none; b=D8JBa5dCdUONhmw6ycwFvi7bhjaBploUInWsOtjeCqOm2iB+zsM4Mnh6SRnRmqUgFMycLIb6NdCXtoobqED+WyQ0eI0G0qYmJY4pkt77xpexvfEbx87+CUA5qLn9OWHms2JC23FelCBvtcFCwaqsUUxcgHzeOe55S5/B3CgaUZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727183734; c=relaxed/simple;
-	bh=SOwz93M5OOM4wXDqepkCz9ZtA45fzHr7ITDXWtX3T3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W0ZmaGj65ich1cUpWno/E/rSl+gpoZDphLzOLSE9pHdV2dt1SKuX5iWQFc4kUZq9JbnCoeIuxqi4i2FX1Z+i382IFaHyP8ChisXMxlrcYxnV1iD8RJhUFywDpnW4fwKffRvFPE5l2Uf/XXpw8u5bUW2bAJCEsYjCFhe1xKPZpc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <adiupina@astralinux.ru>)
-	id 1st5ME-00Ee27-BV; Tue, 24 Sep 2024 16:13:34 +0300
-Received: from [10.198.26.104] (unknown [10.198.26.104])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XCgM70ylCz1gxcy;
-	Tue, 24 Sep 2024 16:14:59 +0300 (MSK)
-Message-ID: <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
-Date: Tue, 24 Sep 2024 16:14:44 +0300
+	s=arc-20240116; t=1727184962; c=relaxed/simple;
+	bh=a+CvjNi+x4ymrYTU0qFM3/gPdUn+AY63C+zKoxxXt9k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sdejp0eG4AHmOQpSwFR8tmEwvH5srZicoT3VUpC7QEdpGvL5w2roXeb8mPf8czULumbtxfiIUzVRUkBh/8ZA3S5eexzTKgfje7Dc7uruTnyv8u5bsky7EekJ8weY7e+XE70tQiMTDZTgPC3rq9TGOx20GMgjtFh6NSx5pX4WQQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kuDeqfmn; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kuDeqfmn"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cc8782869so53108585e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 24 Sep 2024 06:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727184957; x=1727789757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3E6b+gVIkbGGzSkS722nePILW289klIZmg9uMPH6KhA=;
+        b=kuDeqfmnlAuRtlbTLHFkxtuc9FI92tgYrtY8vF17EH/Y5j1KNIBpV6NmElaS8hV4AW
+         HRjbHP6cVdlIwcJ4Dgv8V2AhbXwtH8CCTVbn717nRc3+sjrm+l58bl0eUgkrx50UPfRi
+         s9Nwxn99oG1gBa5BFaVaM1a9QT4wpa6Fs923o4moAFCLXAWY4NgghpiMuoGJ5oJQsXba
+         1WwWDCqGAlhP+1klWlVkGapcOCPf4R9aNzGwFl7/4aShyjXKpWNIHTmSm35seR9rOoB1
+         rwV6VoFgF5DnynqpF/mfRWO9ENk0UCy5z73lyvghmkDLw8POg/O/ObZ06aT0BYl1cX2a
+         Wflg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727184957; x=1727789757;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3E6b+gVIkbGGzSkS722nePILW289klIZmg9uMPH6KhA=;
+        b=dyvRWYd56uHAr+cLRNTNrGekdq5GgnufWm6hr2VOM5cYto9alRzWtjZEBQu6fI47wQ
+         8wHh2+B32Ziq5mYsbvkUcvxjXyzQItFxPQljrHqViBdFECl8CRTSchHe9nvDYDMRRnWu
+         +9h+2V6zs8cmAdwS8QJsPwwMNvQgJ9qlNF3yXo6rzDfStgeLu4ilnqmG9NTuHfdKwsXn
+         QUZeiNsrdxJAeBxKNEpJW9G9EtRwP4hcxNP5wF15Ezf6ecWIvBVqAt8JR4Q+UhnPQQlZ
+         fQneSn8cald/S++Zz4ds0qfPoq4rYTk6R0i/8vQDJgb38kQUevNe0DgGncWJoAPPF0cb
+         apUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzD86zxaHsIZmoUrAFChRU/pLrRGl8wUBugDax4VYLk5ROlfvCgea3cFXzeNAjMXKSaIljyR/dRkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv3XypibBdbmmEDuujIh1oGs2uU/kJHY1SuWtswGcHrC7yLisW
+	uMTbg2rf1ApvsITepWmz1UR9SXnPIyvkM6ECcKoIdrLSI7qSVA1W/51uhesqm4M=
+X-Google-Smtp-Source: AGHT+IGBgky4n9wPxuyc6QNRHlbrRzfXmDQaavcvSD3rrUDX/VSO0yvgDNj5ySKrNuM0F3m0fGobvg==
+X-Received: by 2002:a05:600c:470d:b0:42c:b63e:fea6 with SMTP id 5b1f17b1804b1-42e7ada50d8mr130393715e9.22.1727184956966;
+        Tue, 24 Sep 2024 06:35:56 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:e1a:2f3f:4335:573b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e9029eec6sm22472085e9.21.2024.09.24.06.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 06:35:56 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,  Neil
+ Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: pll: Update the meson_clk_pll_init
+ execution judgment logic
+In-Reply-To: <e458a1c6-5e85-4ecd-a21a-3407a6dd832b@amlogic.com> (Chuan Liu's
+	message of "Tue, 24 Sep 2024 18:27:04 +0800")
+References: <20240920-optimize_pll_flag-v1-1-c90d84a80a51@amlogic.com>
+	<1jy13hxwp2.fsf@starbuckisacylon.baylibre.com>
+	<e458a1c6-5e85-4ecd-a21a-3407a6dd832b@amlogic.com>
+Date: Tue, 24 Sep 2024 15:35:55 +0200
+Message-ID: <1jtte5xjgk.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Content-Language: ru
-To: Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-References: <20240917132201.17513-1-adiupina@astralinux.ru>
- <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
-From: Alexandra Diupina <adiupina@astralinux.ru>
-In-Reply-To: <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttderjeenucfhrhhomheptehlvgigrghnughrrgcuffhiuhhpihhnrgcuoegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruheqnecuggftrfgrthhtvghrnhepveefleetjeetfffgleeuvedujeffieffgedttdegudejheetfeeikeffueefgffgnecuffhomhgrihhnpehlihhnuhigthgvshhtihhnghdrohhrghenucfkphepuddtrdduleekrddviedruddtgeenucfrrghrrghmpehhvghloheplgdutddrudelkedrvdeirddutdegngdpihhnvghtpedutddrudelkedrvdeirddutdegmeegiedvleekpdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeelpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsvggsrghsthhirghnrdhhvghsshgvlhgsrghrthhhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvg
- drtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1727174896#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12181954, Updated: 2024-Sep-24 11:32:51 UTC]
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+On Tue 24 Sep 2024 at 18:27, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-
-19/09/24 13:24, Stephen Boyd пишет:
-> Quoting Alexandra Diupina (2024-09-17 06:22:01)
->> get_div() may return zero, so it is necessary to check
->> before calling DIV_ROUND_UP_ULL().
+> On 2024/9/24 16:50, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
 >>
->> Return value of get_div() depends on reg1, reg2, shift1, shift2
->> fields of clk_double_div structure which are filled using the
->> PERIPH_DOUBLEDIV macro. This macro is called from the
->> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
+>> On Fri 20 Sep 2024 at 16:13, Chuan Liu via B4 Relay <devnull+chuan.liu.a=
+mlogic.com@kernel.org> wrote:
 >>
->> It is not known exactly what values can be contained in the registers
->> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
->> div can be zero. Print an error message and return 0 in this case.
->>
->> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>
->> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
->> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
->> ---
->> v3: fix indentation
->> v2: added explanations to the commit message and printing
->> of an error message when div==0
-> Please stop sending as replies to previous patches.
+>>> From: Chuan Liu <chuan.liu@amlogic.com>
+>>>
+>>> The hardware property of PLL determines that PLL can only be enabled
+>>> after PLL has been initialized. If PLL is not initialized, the
+>>> corresponding lock bit will not be set to 1, resulting in
+>>> meson_clk_pll_is_enabled() returning "false".
+>>>
+>>> Therefore, if PLL is already enabled, there is no need to repeat
+>>> initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
+>>> meson_clk_pll_init() appears redundant.
+>> Apparently you messed something up with b4 ...
 >
->>   drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
->> index 8701a58a5804..b32c6d4d7ee5 100644
->> --- a/drivers/clk/mvebu/armada-37xx-periph.c
->> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
->> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
->>          div = get_div(double_div->reg1, double_div->shift1);
->>          div *= get_div(double_div->reg2, double_div->shift2);
->>   
->> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
->> +       if (!div) {
->> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
-> hw->init is set to NULL after registration (see clk_register() code). If
-> div is 0 what does the hardware do?
-
-Thanks for noticing the error. Yes, hw->init is set to zero,
-I will replace that code with clk_hw_get_name(hw).
-If the value of div is 0, should I return 0 as stated in the
-comment for .recalc_rate (in struct clk_ops) or should I
-return parent_rate as in some other similar rate recalculation
-functions (in some other drivers)?
 >
->> +               return 0;
->> +       } else {
->> +               return DIV_ROUND_UP_ULL((u64)parent_rate, div);
->> +       }
->>   }
->>
+> emmmm... I'm not familiar with this tool=F0=9F=98=82
+>
+>
+>>> ---
+>>> The hardware property of PLL determines that PLL can only be enabled
+>>> after PLL has been initialized. If PLL is not initialized, the
+>>> corresponding lock bit will not be set to 1, resulting in
+>>> meson_clk_pll_is_enabled() returning "false".
+>>>
+>>> Therefore, if PLL is already enabled, there is no need to repeat
+>>> initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
+>>> meson_clk_pll_init() appears redundant.
+>
+>
+> You have a point, but we do get this kind of situation all the time:
+>
+> For example, hifi_pll provides a clock for audio, which needs to be
+> configured
+>
+> in the bootloader phase in order to play audio as soon as possible after
+> boot.
+>
+> After entering the kernel, the hifi_pll frequency may be dynamically
+> adjusted
 
+Whatever was feeding the audio fifo is gone by that stage and fifo, tdm
+and everything will be reset as soon the audio drivers are probed.
+I hardly see how keeping the PLL init through boot could apply to audio,
+especially with the use of assigned-rate in DT.
+
+>
+> (to match the audio bit rate/audio and video synchronization, etc.). The
+> gp_pll
+>
+> that provides the clock for eMMC and the hdmi_pll that provides the clock
+> for
+>
+> HDMI are all configured during the bootloader phase and cannot be configu=
+red
+>
+> as RO in the kernel.
+
+HDMI, you presumably want to avoid a glitch in video until you're ready
+to reconfigure the pipeline. That would be a valid use-case for
+CLK_MESON_PLL_NOINIT_ENABLED.
+
+>
+>
+> My idea is to still describe the init_regs information in the kernel in t=
+he
+> driver:
+>
+> 1) If the bootloader is not enabled, the PLL will be judged as unused
+> during the
+>
+> bootloader phase, and then enter the kernel for initialization.
+>
+> 2) If the bootloader has enabled PLL, in order to ensure clock continuity
+> after
+>
+> entering the kernel, it will not repeat initialization (re-initialization
+> may cause the
+>
+> module that references PLL to work abnormally).
+
+I understood your idea the first time around. I still do not agree.
+Use CLK_MESON_PLL_NOINIT_ENABLED if you must keep an enabled PLL and
+justify the use with a proper comment. For eMMC I'm not convinced.
+
+>
+> Can the coupling between bootloader and kernel be avoided on the premise =
+of
+>
+> ensuring functional integrity.
+>
+>
+>> If the PLL is enabled, it has been initiallized, to some extent
+>> yes. However we have no idea what the setting was. In general, I really
+>> don't like inheriting settings from bootloader. It brings all sorts of
+>> issues depending on the bootloader origin and version used by the
+>> specific platform.
+>>
+>> So in general a PLL should be re-initialized when possible. When it is
+>> not possible, in most case it means the PLL should be RO and linux
+>> should just use it.
+>>
+>> Someone brought a specific case in between, where they needed to keep
+>> the PLL on boot, but still be able to relock it later on. The flag
+>> properly identify those PLLs. Much like CLK_IS_CRITICAL or
+>> CLK_IGNORE_UNUSED, each usage shall be properly documented.
+>>
+>>> In actual application scenarios, PLL configuration is determined during
+>>> the bootloader phase. If PLL has been configured during the bootloader
+>>> phase, you need to add a flag to the kernel to avoid PLL
+>>> re-initialization, which will increase the coupling between the kernel
+>>> and the bootloader.
+>> The vast majority of those PLL should be RO then.
+>> If you can relock it, you should be able to re-init it as well.
+>
+>
+> re-init may cause glitch in the PLL, which affects module work at later P=
+LL
+> levels.
+>
+>
+>>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+>>> ---
+>>>   drivers/clk/meson/clk-pll.c | 3 +--
+>>>   drivers/clk/meson/clk-pll.h | 1 -
+>>>   2 files changed, 1 insertion(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+>>> index 89f0f04a16ab..8df2add40b57 100644
+>>> --- a/drivers/clk/meson/clk-pll.c
+>>> +++ b/drivers/clk/meson/clk-pll.c
+>>> @@ -316,8 +316,7 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+>>>         * Keep the clock running, which was already initialized and ena=
+bled
+>>>         * from the bootloader stage, to avoid any glitches.
+>>>         */
+>>> -     if ((pll->flags & CLK_MESON_PLL_NOINIT_ENABLED) &&
+>>> -         meson_clk_pll_is_enabled(hw))
+>>> +     if (meson_clk_pll_is_enabled(hw))
+>>>                return 0;
+>> I'm not OK with this.
+>>
+>>>        if (pll->init_count) {
+>>> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+>>> index 949157fb7bf5..cccbf52808b1 100644
+>>> --- a/drivers/clk/meson/clk-pll.h
+>>> +++ b/drivers/clk/meson/clk-pll.h
+>>> @@ -28,7 +28,6 @@ struct pll_mult_range {
+>>>        }
+>>>
+>>>   #define CLK_MESON_PLL_ROUND_CLOSEST  BIT(0)
+>>> -#define CLK_MESON_PLL_NOINIT_ENABLED BIT(1)
+>>>
+>>>   struct meson_clk_pll_data {
+>>>        struct parm en;
+>>>
+>>> ---
+>>> base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
+>>> change-id: 20240918-optimize_pll_flag-678a88d23f82
+>>>
+>>> Best regards,
+>> --
+>> Jerome
+
+--=20
+Jerome
