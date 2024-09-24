@@ -1,132 +1,140 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B247C86277;
-	Tue, 24 Sep 2024 11:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5741A7261;
+	Tue, 24 Sep 2024 12:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177542; cv=none; b=oPvfTIHXhCiJfsues6mcUDhexkzOS9wbRmEwhcnJhlYMDcDtdDXNzRDb6z2pZGlb3a1/QcPYRpRITlEeeCKvCR2+YtYJWAyp1iRr83mGSVeJXhg7+gktnQ4dhsu6SbaQXZ+CJD5H5oq8P9JaBD1gUQ7gPpJJYF1tMctlmMvKIeQ=
+	t=1727179884; cv=none; b=X1YCCxO2maMgF+e+4mTX66ft5CVVhFZrWNSY945jj9mQTwjvKvGsscRQy0ma8JzeueINRZnLdgi5/jqzZlAcOpiDXNM1lWDtWmGbEFrVVW5xnF7ePaZ4KiRoLPLCzIHSgJMuGjpkNxj8KSd4ktL7fRqT7ylpS4jUaTUARvYMPNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177542; c=relaxed/simple;
-	bh=274mWF5yEg9y+wkgxhf4U9sHZqXg34pBvu3HEUVXSrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GEPQvljxFpebMkMFcQpo9O8nDqVpIrewVK3fqO8iXPiStl80GXLysSub6I0tCgVz+hmZhYW5pQw904VpTsXn2tR9sxQCAWo34YNOlUTwqAYjy54gMr4JxHp/2nMS1Y8dbT6EHDnjE6zSRFkH7bnbl2/ZCj7P1/xTxUvsJYdMCwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1a9463037cso4304698276.2;
-        Tue, 24 Sep 2024 04:32:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727177539; x=1727782339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jm6h96BED8DQTfet2QAIovV1CqCtWAjpatPZ7/UosWI=;
-        b=O+FdUPxWG3BBt8tugF2UAreSMvSpqGm3qBzno0F/nxwd1e0810kPCFVNI721Dee6k0
-         /kejpfHO6bN6qMZUOEoOGL6WAX3s7J3GOzWuihkbg872ePFfzg3fxJOWObWU+8WXDvDU
-         5bRO9Izbpl3gS/1xjmSQ67wpvWovW9J4C/t7hkAxnLKcxkeFpbED44NLzGdgi2Op9Gyo
-         Qp0KUwdGc6A1KuKzAP7fRlWcq7CMc9vLidelweyahE3xTGTbJ0OwR70IuZYOUrgnpWYe
-         b6izvWhaSWTfmq1lYEjVOmhFu05kdaSBZAxkyjtL1jT+EJ6kEtvoQKJnY2oMgzEI9xqA
-         RBEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5P6ccXBzvGpHDE7MQHd0YrV2PvUZmFiRMszkplB1hzIg1WGXOGLtSyogf/0e4+UTMqCQnUM2vzCs=@vger.kernel.org, AJvYcCUMPNGoZorrpCJmLYbBYDhogP9IW4IGF+WMJpXQ3W2kQcJ2H5FbEeykrzSE5YtMF/1iHYFoXtKoexAy@vger.kernel.org, AJvYcCVGNliva32m4NIL3A8qRoUBKpB3MgX4c2T9vfHa8iBLXMwoxJZ47A6fmHUU01ZXuCxGKMCMH9tN7WPCrGREuRHltiE=@vger.kernel.org, AJvYcCVjizAiX2k1eUb9uRFmKnfrVdnzdG8UT5qCiWTwEkXYSnr6R4WY7pUZz+AbYSd4trMmTZ2Pyl7KuroJ@vger.kernel.org, AJvYcCX/84m2rNLWcyKJm5F9lRlq7WVa/bHtE/J8TsvnpEq9sJoJBxu0IqPbs0Aqh1XDPPVGfZ0bRoAqCaQK@vger.kernel.org, AJvYcCXwRd/1MEmNlP97mK/dXRYsJrxRddzQg03FuBycpibRSYWitdOkWL5Y4s8ox7KVgE0MVewKdSFr8q6BVYfl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1V+5qE++4ULbYMEDrqV2LzjuMNgiPetjWP4vfRo8qfMZ8ozJL
-	9/RWpt90UVe+kJOQvCv1uCd3iX0XOwLFNm87ipseox1zgSWySRia27dDwie2
-X-Google-Smtp-Source: AGHT+IGd1dnlMbgebNUguoCcxM9oWkJXb0wuXHGJaBip1RtFNA0UIc2YRhkqnwJTUIzowHL1bZkcCg==
-X-Received: by 2002:a05:690c:2507:b0:647:7782:421a with SMTP id 00721157ae682-6dfef019bb1mr70492647b3.45.1727177538769;
-        Tue, 24 Sep 2024 04:32:18 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d2a7b4asm2117897b3.143.2024.09.24.04.32.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 04:32:17 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6da395fb97aso40617217b3.0;
-        Tue, 24 Sep 2024 04:32:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeckDrUJBOL1K0zfCMg/uLugj4l6mcROczcwmycRmFIcBibsXEneeObLw8GZT4Tjp9nzlSSrvOLxJxtqg0C+J/VeA=@vger.kernel.org, AJvYcCUm1yLINOEa2+aQnyN46koR6dLCw5WhdvzkpL3ZHf9JFvpFzw1OYdWMHAJwzDuMudslYo3Xij6e1jmO@vger.kernel.org, AJvYcCV5ef23bMFkoIIf9rfPquqml7hVw5DkEJ1B1QKQq+3B55eqtvfRDSEFX0NnTqc6golq+88vlXzywUfX@vger.kernel.org, AJvYcCVxnEAcO7i7cxzBdVLLGzpOuEnH2+Wlf0im4jWjEYX2S7rcj5MVfu3sZnosi3DdHNrMPXiki1RQ8iE=@vger.kernel.org, AJvYcCWk1ZnXAolXPZx5b0vIowIiOI7Rt+Ph2/UNceHvOUsVL6FRPXDpsAR7A12sftELdIi7BinoEYKq7RaP@vger.kernel.org, AJvYcCWwZI/P5NQvoQdOI55FVLfA48XhbIYpPtVJKiEtWDFjKQO9djJAwE3tLaVuVo+bcpMvSNTMhB79v43m4dV5@vger.kernel.org
-X-Received: by 2002:a05:690c:48c1:b0:6af:eaaf:2527 with SMTP id
- 00721157ae682-6dfeed87f8cmr127931067b3.18.1727177537112; Tue, 24 Sep 2024
- 04:32:17 -0700 (PDT)
+	s=arc-20240116; t=1727179884; c=relaxed/simple;
+	bh=S+5ZTdN1pPJa9IuFwdIuX2jtdc1wF/KYf3fatFFndeE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=PqKzPOBx3sLCW7WJOS3Sk4dCA/fW3q4TCri6bmba6y1NV0ItQezH9Wh25WZYKLiqkvjDMJqoZ/kPi7AanuyKlZEQ97G02vK6F0JhLdKRWiisSMwSthlyJHovjcu/0myrH3lI+ZTBHje1HOwHDNmepW125CZmMXoIZj9zJ7ifmDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PGQs6pD4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PGQs6pD4"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O9fAkp017406;
+	Tue, 24 Sep 2024 12:11:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vvNGpzffxQxSM2lHDEfUn4zL+xA1sFHMMkiqkZlU+qo=; b=PGQs6pD4D7IRQ4C8
+	KhmnSJkukKR099RoCamN4s1/ox3gmKy9GjpOdKCNLPETVi08G73gOXwcer9ly6Zp
+	38EfOuRIUreY9OCh39falA8hlZ+ZMeuXJa6ZcIZgwqJWVEf8HbTj/kaEhce6JBZv
+	0MxcSWYSMjS3QWbyYPqmm7fI/WyjOAZ437q+LxMVpLv5SDJh7C4TYUJqMvj8xdaY
+	VsFlhJoEhdPs4J97X5X46mCRybYUbQf4Wm+EGPOfRXIm21uafSjoVNxmg8J8E5aM
+	xoh5IFTW7wGFBFmyj1xyF3cfE6FQZ8tROYvegA5Iu3CHcJYZP6jg2PJgLW2hn4PC
+	zNFFIQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqygjnb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:11:04 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OCB22u011774
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:11:02 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
+ 2024 05:10:55 -0700
+Message-ID: <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
+Date: Tue, 24 Sep 2024 17:40:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com> <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Sep 2024 13:32:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
-Message-ID: <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
-Subject: Re: [PATCH 04/16] soc: renesas: Add SYSC driver for Renesas RZ/G3S
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: <quic_varada@quicinc.com>
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-2-quic_srichara@quicinc.com>
+ <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
+ <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
+ <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
+Content-Language: en-US
+In-Reply-To: <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Njq9SLglo7LSV5tU12g90qC4kLC3UrBc
+X-Proofpoint-ORIG-GUID: Njq9SLglo7LSV5tU12g90qC4kLC3UrBc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=949
+ spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409240085
 
-Hi Claudiu,
 
-On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The RZ/G3S SYS Controller has 2 registers (one for PCIE one for USB) that
-> need to be configured before/after powering off/on the PCI or USB
-> ares. The bits in these registers control signals to PCIE and USB that
-> need to be de-asserted/asserted after/before power on/off event. For this
-> add SYSC controller driver that registers a reset controller driver on
-> auxiliary bus which allows USB, PCIE drivers to control these signals.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch!
+On 9/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
+> On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+>>
+>>>> +
+>>>> +allOf:
+>>>> +  - $ref: qcom,gcc.yaml#
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: qcom,ipq5424-gcc
+>>>
+>>> So everything i sthe same as 5332? Why not adding it there?
+>>>
+>> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
+>> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
+>> bindings in v2 accordingly.
+> 
+> Hm? What is the difference in the bindings? I don't see. Maybe some diff
+> would help.
+> 
 
-> --- /dev/null
-> +++ b/drivers/reset/reset-rzg3s-sysc.c
-> @@ -0,0 +1,140 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Renesas RZ/G3S SYSC reset driver
-> + *
-> + * Copyright (C) 2024 Renesas Electronics Corp.
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
+For IPQ5424, clocks items is like this
 
-Using the Auxiliary Bus requires selecting AUXILIARY_BUS.
-Elsse you might run into build failures:
+       - description: Board XO clock source
+       - description: Sleep clock source
+       - description: PCIE 2lane PHY0 pipe clock source
+       - description: PCIE 2lane PHY1 pipe clock source
+       - description: PCIE 2lane PHY2 pipe clock source
+       - description: PCIE 2lane PHY3 pipe clock source
+       - description: USB PCIE wrapper pipe clock source
 
-aarch64-linux-gnu-ld: drivers/soc/renesas/rzg3s-sysc.o: in function
-`rzg3s_sysc_probe':
-rzg3s-sysc.c:(.text+0x21c): undefined reference to `auxiliary_device_init'
-aarch64-linux-gnu-ld: rzg3s-sysc.c:(.text+0x264): undefined reference
-to `__auxiliary_device_add'
-aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
-`rzg3s_sysc_reset_driver_init':
-reset-rzg3s-sysc.c:(.init.text+0x1c): undefined reference to
-`__auxiliary_driver_register'
-aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
-`rzg3s_sysc_reset_driver_exit':
-reset-rzg3s-sysc.c:(.exit.text+0x10): undefined reference to
-`auxiliary_driver_unregister'
 
-Gr{oetje,eeting}s,
+For IPQ5332, its like this,
 
-                        Geert
+       - description: Board XO clock source
+       - description: Sleep clock source
+       - description: PCIE 2lane PHY pipe clock source
+       - description: PCIE 2lane x1 PHY pipe clock source
+       - description: USB PCIE wrapper pipe clock source
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+So for IPQ5424, there are 2 additional PCI phy's.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+So would it be fine to add the new IPQ5424 compatible to
+IPQ5322 file itself with a 'if:' of compatibles ?
+
+Regards,
+  Sricharan
+
+
