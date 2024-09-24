@@ -1,140 +1,113 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5741A7261;
-	Tue, 24 Sep 2024 12:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A4C1E505;
+	Tue, 24 Sep 2024 13:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179884; cv=none; b=X1YCCxO2maMgF+e+4mTX66ft5CVVhFZrWNSY945jj9mQTwjvKvGsscRQy0ma8JzeueINRZnLdgi5/jqzZlAcOpiDXNM1lWDtWmGbEFrVVW5xnF7ePaZ4KiRoLPLCzIHSgJMuGjpkNxj8KSd4ktL7fRqT7ylpS4jUaTUARvYMPNA=
+	t=1727183734; cv=none; b=MQqKfnJzpJiDMDvsIHWhnVLokV8H6jljlA4pjma9sVdlYu/YgXFFMvk1lGFpwfO5alAJ7BRIEwCa59g1MKYLGAAwgUxrpNGMUtIfr4UQ3aX4GsgQt31627spPq6NLSDYtKSV03rvl659ZaUfrp9DPnziow0N6jDlhaYE4QrxlQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179884; c=relaxed/simple;
-	bh=S+5ZTdN1pPJa9IuFwdIuX2jtdc1wF/KYf3fatFFndeE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=PqKzPOBx3sLCW7WJOS3Sk4dCA/fW3q4TCri6bmba6y1NV0ItQezH9Wh25WZYKLiqkvjDMJqoZ/kPi7AanuyKlZEQ97G02vK6F0JhLdKRWiisSMwSthlyJHovjcu/0myrH3lI+ZTBHje1HOwHDNmepW125CZmMXoIZj9zJ7ifmDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PGQs6pD4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PGQs6pD4"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O9fAkp017406;
-	Tue, 24 Sep 2024 12:11:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vvNGpzffxQxSM2lHDEfUn4zL+xA1sFHMMkiqkZlU+qo=; b=PGQs6pD4D7IRQ4C8
-	KhmnSJkukKR099RoCamN4s1/ox3gmKy9GjpOdKCNLPETVi08G73gOXwcer9ly6Zp
-	38EfOuRIUreY9OCh39falA8hlZ+ZMeuXJa6ZcIZgwqJWVEf8HbTj/kaEhce6JBZv
-	0MxcSWYSMjS3QWbyYPqmm7fI/WyjOAZ437q+LxMVpLv5SDJh7C4TYUJqMvj8xdaY
-	VsFlhJoEhdPs4J97X5X46mCRybYUbQf4Wm+EGPOfRXIm21uafSjoVNxmg8J8E5aM
-	xoh5IFTW7wGFBFmyj1xyF3cfE6FQZ8tROYvegA5Iu3CHcJYZP6jg2PJgLW2hn4PC
-	zNFFIQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqygjnb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:11:04 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OCB22u011774
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:11:02 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 05:10:55 -0700
-Message-ID: <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
-Date: Tue, 24 Sep 2024 17:40:52 +0530
+	s=arc-20240116; t=1727183734; c=relaxed/simple;
+	bh=SOwz93M5OOM4wXDqepkCz9ZtA45fzHr7ITDXWtX3T3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W0ZmaGj65ich1cUpWno/E/rSl+gpoZDphLzOLSE9pHdV2dt1SKuX5iWQFc4kUZq9JbnCoeIuxqi4i2FX1Z+i382IFaHyP8ChisXMxlrcYxnV1iD8RJhUFywDpnW4fwKffRvFPE5l2Uf/XXpw8u5bUW2bAJCEsYjCFhe1xKPZpc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <adiupina@astralinux.ru>)
+	id 1st5ME-00Ee27-BV; Tue, 24 Sep 2024 16:13:34 +0300
+Received: from [10.198.26.104] (unknown [10.198.26.104])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XCgM70ylCz1gxcy;
+	Tue, 24 Sep 2024 16:14:59 +0300 (MSK)
+Message-ID: <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+Date: Tue, 24 Sep 2024 16:14:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-2-quic_srichara@quicinc.com>
- <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
- <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
- <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
-Content-Language: en-US
-In-Reply-To: <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Njq9SLglo7LSV5tU12g90qC4kLC3UrBc
-X-Proofpoint-ORIG-GUID: Njq9SLglo7LSV5tU12g90qC4kLC3UrBc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=949
- spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240085
+User-Agent: RuPost Desktop
+Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Content-Language: ru
+To: Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+ <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+From: Alexandra Diupina <adiupina@astralinux.ru>
+In-Reply-To: <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttderjeenucfhrhhomheptehlvgigrghnughrrgcuffhiuhhpihhnrgcuoegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruheqnecuggftrfgrthhtvghrnhepveefleetjeetfffgleeuvedujeffieffgedttdegudejheetfeeikeffueefgffgnecuffhomhgrihhnpehlihhnuhigthgvshhtihhnghdrohhrghenucfkphepuddtrdduleekrddviedruddtgeenucfrrghrrghmpehhvghloheplgdutddrudelkedrvdeirddutdegngdpihhnvghtpedutddrudelkedrvdeirddutdegmeegiedvleekpdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeelpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsvggsrghsthhirghnrdhhvghsshgvlhgsrghrthhhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvg
+ drtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1727174896#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12181954, Updated: 2024-Sep-24 11:32:51 UTC]
+
+Hi
 
 
-
-On 9/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
-> On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+19/09/24 13:24, Stephen Boyd пишет:
+> Quoting Alexandra Diupina (2024-09-17 06:22:01)
+>> get_div() may return zero, so it is necessary to check
+>> before calling DIV_ROUND_UP_ULL().
 >>
->>>> +
->>>> +allOf:
->>>> +  - $ref: qcom,gcc.yaml#
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: qcom,ipq5424-gcc
->>>
->>> So everything i sthe same as 5332? Why not adding it there?
->>>
->> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
->> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
->> bindings in v2 accordingly.
-> 
-> Hm? What is the difference in the bindings? I don't see. Maybe some diff
-> would help.
-> 
+>> Return value of get_div() depends on reg1, reg2, shift1, shift2
+>> fields of clk_double_div structure which are filled using the
+>> PERIPH_DOUBLEDIV macro. This macro is called from the
+>> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
+>>
+>> It is not known exactly what values can be contained in the registers
+>> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
+>> div can be zero. Print an error message and return 0 in this case.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+>> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
+>> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+>> ---
+>> v3: fix indentation
+>> v2: added explanations to the commit message and printing
+>> of an error message when div==0
+> Please stop sending as replies to previous patches.
+>
+>>   drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+>> index 8701a58a5804..b32c6d4d7ee5 100644
+>> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+>> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+>> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+>>          div = get_div(double_div->reg1, double_div->shift1);
+>>          div *= get_div(double_div->reg2, double_div->shift2);
+>>   
+>> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+>> +       if (!div) {
+>> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
+> hw->init is set to NULL after registration (see clk_register() code). If
+> div is 0 what does the hardware do?
 
-For IPQ5424, clocks items is like this
-
-       - description: Board XO clock source
-       - description: Sleep clock source
-       - description: PCIE 2lane PHY0 pipe clock source
-       - description: PCIE 2lane PHY1 pipe clock source
-       - description: PCIE 2lane PHY2 pipe clock source
-       - description: PCIE 2lane PHY3 pipe clock source
-       - description: USB PCIE wrapper pipe clock source
-
-
-For IPQ5332, its like this,
-
-       - description: Board XO clock source
-       - description: Sleep clock source
-       - description: PCIE 2lane PHY pipe clock source
-       - description: PCIE 2lane x1 PHY pipe clock source
-       - description: USB PCIE wrapper pipe clock source
-
-So for IPQ5424, there are 2 additional PCI phy's.
-
-So would it be fine to add the new IPQ5424 compatible to
-IPQ5322 file itself with a 'if:' of compatibles ?
-
-Regards,
-  Sricharan
-
+Thanks for noticing the error. Yes, hw->init is set to zero,
+I will replace that code with clk_hw_get_name(hw).
+If the value of div is 0, should I return 0 as stated in the
+comment for .recalc_rate (in struct clk_ops) or should I
+return parent_rate as in some other similar rate recalculation
+functions (in some other drivers)?
+>
+>> +               return 0;
+>> +       } else {
+>> +               return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+>> +       }
+>>   }
+>>
 
