@@ -1,114 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A32D1AC8BE;
-	Tue, 24 Sep 2024 18:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B491768FD;
+	Tue, 24 Sep 2024 22:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203170; cv=none; b=lKNRe+XJcSLiNK6DJqV8ky4OG4/5YxnyrSNKkST5vN1UsLwfjHGsDR6kry0VQAC9MJBBGQLDaMlJeDLgdb1F1EuoUIMPLDgHZDi41wG3uekq6o6TjJX35a5ZAGv4LNcpBEVaFWxV3XV5Qdlh3jV4LDJMVevLHsRxoWeua9xIehg=
+	t=1727216115; cv=none; b=ott40MMtlhhsg3yPcph1waZ1HLiQtc43aAlFOR1Dry/sh/qQ45f/zghbdcHMh2DUd3iT7SQ6QuD9DokZdzbyZ1EPr7uklCGDZHJES/WdaP20Lbmm7CB+0vml82Iu5p933zffq690BDVurMr7gHDKmXBNFCVSxwgZAJtGUYEJ2/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203170; c=relaxed/simple;
-	bh=wzehy+b1qqLL8OTawQ1M6yaZDocl+IDjT2tUky8lGqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kkpatKyiY8S9yffcA+JgQWrfPfvletD7DGtHQKfEILpZbsZX4UruZqjhhIUttIpECcHnjZy3UvjRZNlTKKXwkXvXyGykMsvL9qjjHV4JZ7o4mwtAZF+T1Txez6dtnoH48gvOmB8MCCu14blNfQkgP/KGBxtehhGdHAG2RnzgYAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fq4YZClR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727216115; c=relaxed/simple;
+	bh=eO7rpd+j+GkUt3i9+9myWUGwe6iHUbQ4BQWoQ6/BBJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NzyC2q+HYnc7FM53o3AzuDP0PMqTvjUFjivFJKO2Q+ZBYvVHLG9nTL3Wj4Cg/BZw3xwKzK+sGXWy+4PT1gqqdmdWNpmu3fev+ql3nQMd5/nFa/xC3Uk3CNNQTvLbMmX4A9VaH0GfJAOfl86PxqOlC62sDlhHwR8zZ+D/y1IlTY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUaxKOuq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fq4YZClR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F03A1C4CEC5;
-	Tue, 24 Sep 2024 18:39:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUaxKOuq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2347C4CEC4;
+	Tue, 24 Sep 2024 22:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727203169;
-	bh=wzehy+b1qqLL8OTawQ1M6yaZDocl+IDjT2tUky8lGqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fq4YZClR2OdQ6phVcGXx9vGCe426M6TIwMiaXPX02UhmNw6NlJLzucw8ZKNkpUjw6
-	 mHC9uADFtLPlJPI10x9Nitd8gpTeQ+VjBi4BMlQHksMLAU1X6yNma56Q+rnmLXauPG
-	 5114beqs6/qmN+kKDpFzu7lKoGPbLN8NA8gmmv2wRGmzXcdeRQ3y3/tr8vdXuoi1NE
-	 egOVBogMn+4df1mnzZ9pQLjLkk2R8wMT3ZXaJcmMDCovKCQm38l2it3OrpOoq9BhiD
-	 pXoQ4JuG9y/kevN2jK7YLZ7DgTSlBlwoxSeAwNqBkXtiLFHON5HQyg6tghcxGA3oTQ
-	 SX7ZeI5suWeFA==
-Message-ID: <50e0e837-1c70-4d6d-bb55-a68dec3dcd3b@kernel.org>
-Date: Tue, 24 Sep 2024 20:39:20 +0200
+	s=k20201202; t=1727216114;
+	bh=eO7rpd+j+GkUt3i9+9myWUGwe6iHUbQ4BQWoQ6/BBJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tUaxKOuqXzekKuBfH86uEC03wJyrrruiQuMGqlzqKReuFlRHloFn85wsNtTMl7Ocd
+	 ByRHrijjcTCvPfJ8LALpGhufpgbrx2P5m+malRWXJDs+76WFwNJsHWadQt04Yu2NAg
+	 OgBWFvJwg7FXxV96GuACn2+PZiygU6l3jkUPSq7nXTgArya6mDn4GfTsXBwZFUhf2s
+	 sw78buDxWxHZdZG7WCAKvtDaHy6n/XmfjMnRBtIROfC7uSpD8B1xT7uG6JkpvqLzxi
+	 YF2qWbG/pM3DBS3/OlYf5i40CXUrLAq9WWElXNGIzo7izTzg4ccQ4l9HP6J037/Ep2
+	 1ovg919ytQuBw==
+Date: Tue, 24 Sep 2024 17:15:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrea della Porta <andrea.porta@suse.com>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	devicetree@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH v3 1/2] kbuild: move non-boot built-in DTBs to .rodata
+ section
+Message-ID: <20240924221514.GA374455-robh@kernel.org>
+References: <20240923075704.3567313-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] dt-bindings: PCI: qcom: Move OPP table to
- qcom,pcie-common.yaml
-To: Qiang Yu <quic_qianyu@quicinc.com>, manivannan.sadhasivam@linaro.org,
- vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
- quic_msarkar@quicinc.com, quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-3-quic_qianyu@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240924101444.3933828-3-quic_qianyu@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923075704.3567313-1-masahiroy@kernel.org>
 
-On 24/09/2024 12:14, Qiang Yu wrote:
-> OPP table is a generic property that is also required by other qcom
-> platforms. Hence move this property to qcom,pcie-common.yaml so that PCIe
-> on other qcom platforms is able to adjust power domain performance state
-> and ICC peak bw according to PCIe gen speed and link width.
+On Mon, Sep 23, 2024 at 04:56:02PM +0900, Masahiro Yamada wrote:
+> Commit aab94339cd85 ("of: Add support for linking device tree blobs
+> into vmlinux") introduced a mechanism to embed DTBs into vmlinux.
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> Initially, it was used for wrapping boot DTBs in arch/*/boot/dts/, but
+> it is now reused for more generic purposes, such as testing.
+> 
+> Built-in DTBs are discarded because KERNEL_DTB() is part of INIT_DATA,
+> as defined in include/asm-generic/vmlinux.lds.h.
+> 
+> This has not been an issue so far because OF unittests are triggered
+> during boot, as defined by late_initcall(of_unittest).
+> 
+> However, the recent clk KUnit test additions have caused problems
+> because KUnit can execute test suites after boot.
+> 
+> For example:
+> 
+>   # echo > /sys/kernel/debug/kunit/clk_register_clk_parent_data_device/run
+> 
+> This command triggers a stack trace because built-in DTBs have already
+> been freed.
+> 
+> While it is possible to move such test suites from kunit_test_suites to
+> kunit_test_init_section_suites, it would be preferable to avoid usage
+> limitations.
+> 
+> This commit moves non-boot built-in DTBs to the .rodata section. Since
+> these generic DTBs are looked up by name, they do not need to be placed
+> in the special .dtb.init.rodata section.
+> 
+> Boot DTBs should remain in .dtb.init.rodata because the arch boot code
+> generally does not know the DT name, thus it uses the __dtb_start symbol
+> to locate it.
+> 
+> This separation also ensures that the __dtb_start symbol references the
+> boot DTB. Currently, the .dtb.init.rodata is a mixture of both boot and
+> non-boot DTBs. The __dtb_start symbol must be followed by the boot DTB,
+> but we currently rely on the link order (i.e., the order in Makefiles),
+> which is very fragile.
+> 
+> Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test managed APIs")
+> Fixes: 5776526beb95 ("clk: Add KUnit tests for clk fixed rate basic type")
+> Fixes: 274aff8711b2 ("clk: Add KUnit tests for clks registered with struct clk_parent_data")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
+> 
+> Changes in v3:
+>   - Move to .rodata section instead of .init.rodata
+> 
+>  scripts/Makefile.dtbs | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
