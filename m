@@ -1,115 +1,132 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4D319B3DA;
-	Tue, 24 Sep 2024 10:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B247C86277;
+	Tue, 24 Sep 2024 11:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727174185; cv=none; b=EzMh3ZU67ajzatUb+pA9ceGeK/LWL+9QhZXr90e5aeLvpPuR8ePC7kLjB1RE9sHcBrVGtKrQ3SQ+uFWZiI0cajnBZpziNwTftR2y6BAdSW/61Y9dV8iPehPcRqsbs+2om1t+7CZqcD9Luh/ff2TnwJQwxa9ZI4WWBd1t9FggIqM=
+	t=1727177542; cv=none; b=oPvfTIHXhCiJfsues6mcUDhexkzOS9wbRmEwhcnJhlYMDcDtdDXNzRDb6z2pZGlb3a1/QcPYRpRITlEeeCKvCR2+YtYJWAyp1iRr83mGSVeJXhg7+gktnQ4dhsu6SbaQXZ+CJD5H5oq8P9JaBD1gUQ7gPpJJYF1tMctlmMvKIeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727174185; c=relaxed/simple;
-	bh=1BN+w4icsJqnSoeyr3f4t8JijwHW52VeRpA3xYQUpW0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GLJdOg8L1yAZAE2FgYETR/80Bws20xDt405BbWuO6CMgpuGiPuFByrFujOtew+kFeXR3ed5S7kriEYrG7W3wEbta0KkwZGys3EqIdtyPhaQTtz71kr27KDr6udS/Dhnqs7BPEGo9r8Gb6ZwPr4RW26xS2zPh5aIeFIqk8RvSB2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=hv/RTq5m; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="hv/RTq5m"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=vZXYny9/seDB8PSOeqkyiTWjYP0lrEzG+TN6Gq6usMc=; b=hv/RTq5mGd7izDMnSrsR0PrNXb
-	cbbqXnGe5N8Myzm62FXsHyC1wsXnD+AXjvVI+vcT8PXDfVXgxpzYo7DkjU4J74UkurhOPUsVQoJ2z
-	jmbOHK6AtTsRzlzZ2aWAjkx9IFy67ePeLNM2wakpo1dM4tr7EPEY4Ntsdi35TkuMrg3e+SXe9rRZy
-	LTKFeRHbZMsCkKkb822k0lqRAcXGPrcOAg5BJm2bHfRs0HxhZxQ91NXpsG5C2I0T3eeENa4H5pQOl
-	GOiTcRP2g9PmuwLjg8Raj6WwvRlXacR9cew0vFdEz3CbjYH8Ks0ay+9Q4QumhwN9SJObyT3SEHeC9
-	tQRp4Iag==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>,
-	linux-omap@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-clk@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 1/2] mfd: twl-core: Add a clock subdevice for the TWL6030
-Date: Tue, 24 Sep 2024 12:36:08 +0200
-Message-Id: <20240924103609.12513-2-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240924103609.12513-1-andreas@kemnade.info>
-References: <20240924103609.12513-1-andreas@kemnade.info>
+	s=arc-20240116; t=1727177542; c=relaxed/simple;
+	bh=274mWF5yEg9y+wkgxhf4U9sHZqXg34pBvu3HEUVXSrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GEPQvljxFpebMkMFcQpo9O8nDqVpIrewVK3fqO8iXPiStl80GXLysSub6I0tCgVz+hmZhYW5pQw904VpTsXn2tR9sxQCAWo34YNOlUTwqAYjy54gMr4JxHp/2nMS1Y8dbT6EHDnjE6zSRFkH7bnbl2/ZCj7P1/xTxUvsJYdMCwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1a9463037cso4304698276.2;
+        Tue, 24 Sep 2024 04:32:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727177539; x=1727782339;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jm6h96BED8DQTfet2QAIovV1CqCtWAjpatPZ7/UosWI=;
+        b=O+FdUPxWG3BBt8tugF2UAreSMvSpqGm3qBzno0F/nxwd1e0810kPCFVNI721Dee6k0
+         /kejpfHO6bN6qMZUOEoOGL6WAX3s7J3GOzWuihkbg872ePFfzg3fxJOWObWU+8WXDvDU
+         5bRO9Izbpl3gS/1xjmSQ67wpvWovW9J4C/t7hkAxnLKcxkeFpbED44NLzGdgi2Op9Gyo
+         Qp0KUwdGc6A1KuKzAP7fRlWcq7CMc9vLidelweyahE3xTGTbJ0OwR70IuZYOUrgnpWYe
+         b6izvWhaSWTfmq1lYEjVOmhFu05kdaSBZAxkyjtL1jT+EJ6kEtvoQKJnY2oMgzEI9xqA
+         RBEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5P6ccXBzvGpHDE7MQHd0YrV2PvUZmFiRMszkplB1hzIg1WGXOGLtSyogf/0e4+UTMqCQnUM2vzCs=@vger.kernel.org, AJvYcCUMPNGoZorrpCJmLYbBYDhogP9IW4IGF+WMJpXQ3W2kQcJ2H5FbEeykrzSE5YtMF/1iHYFoXtKoexAy@vger.kernel.org, AJvYcCVGNliva32m4NIL3A8qRoUBKpB3MgX4c2T9vfHa8iBLXMwoxJZ47A6fmHUU01ZXuCxGKMCMH9tN7WPCrGREuRHltiE=@vger.kernel.org, AJvYcCVjizAiX2k1eUb9uRFmKnfrVdnzdG8UT5qCiWTwEkXYSnr6R4WY7pUZz+AbYSd4trMmTZ2Pyl7KuroJ@vger.kernel.org, AJvYcCX/84m2rNLWcyKJm5F9lRlq7WVa/bHtE/J8TsvnpEq9sJoJBxu0IqPbs0Aqh1XDPPVGfZ0bRoAqCaQK@vger.kernel.org, AJvYcCXwRd/1MEmNlP97mK/dXRYsJrxRddzQg03FuBycpibRSYWitdOkWL5Y4s8ox7KVgE0MVewKdSFr8q6BVYfl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1V+5qE++4ULbYMEDrqV2LzjuMNgiPetjWP4vfRo8qfMZ8ozJL
+	9/RWpt90UVe+kJOQvCv1uCd3iX0XOwLFNm87ipseox1zgSWySRia27dDwie2
+X-Google-Smtp-Source: AGHT+IGd1dnlMbgebNUguoCcxM9oWkJXb0wuXHGJaBip1RtFNA0UIc2YRhkqnwJTUIzowHL1bZkcCg==
+X-Received: by 2002:a05:690c:2507:b0:647:7782:421a with SMTP id 00721157ae682-6dfef019bb1mr70492647b3.45.1727177538769;
+        Tue, 24 Sep 2024 04:32:18 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d2a7b4asm2117897b3.143.2024.09.24.04.32.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 04:32:17 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6da395fb97aso40617217b3.0;
+        Tue, 24 Sep 2024 04:32:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUeckDrUJBOL1K0zfCMg/uLugj4l6mcROczcwmycRmFIcBibsXEneeObLw8GZT4Tjp9nzlSSrvOLxJxtqg0C+J/VeA=@vger.kernel.org, AJvYcCUm1yLINOEa2+aQnyN46koR6dLCw5WhdvzkpL3ZHf9JFvpFzw1OYdWMHAJwzDuMudslYo3Xij6e1jmO@vger.kernel.org, AJvYcCV5ef23bMFkoIIf9rfPquqml7hVw5DkEJ1B1QKQq+3B55eqtvfRDSEFX0NnTqc6golq+88vlXzywUfX@vger.kernel.org, AJvYcCVxnEAcO7i7cxzBdVLLGzpOuEnH2+Wlf0im4jWjEYX2S7rcj5MVfu3sZnosi3DdHNrMPXiki1RQ8iE=@vger.kernel.org, AJvYcCWk1ZnXAolXPZx5b0vIowIiOI7Rt+Ph2/UNceHvOUsVL6FRPXDpsAR7A12sftELdIi7BinoEYKq7RaP@vger.kernel.org, AJvYcCWwZI/P5NQvoQdOI55FVLfA48XhbIYpPtVJKiEtWDFjKQO9djJAwE3tLaVuVo+bcpMvSNTMhB79v43m4dV5@vger.kernel.org
+X-Received: by 2002:a05:690c:48c1:b0:6af:eaaf:2527 with SMTP id
+ 00721157ae682-6dfeed87f8cmr127931067b3.18.1727177537112; Tue, 24 Sep 2024
+ 04:32:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com> <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Sep 2024 13:32:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
+Message-ID: <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
+Subject: Re: [PATCH 04/16] soc: renesas: Add SYSC driver for Renesas RZ/G3S
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
+	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Also the TWL6030 has some clocks, so add a subdevice for that.
+Hi Claudiu,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/mfd/twl-core.c | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The RZ/G3S SYS Controller has 2 registers (one for PCIE one for USB) that
+> need to be configured before/after powering off/on the PCI or USB
+> ares. The bits in these registers control signals to PCIE and USB that
+> need to be de-asserted/asserted after/before power on/off event. For this
+> add SYSC controller driver that registers a reset controller driver on
+> auxiliary bus which allows USB, PCIE drivers to control these signals.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-index c130ffef182f..c981922f62d5 100644
---- a/drivers/mfd/twl-core.c
-+++ b/drivers/mfd/twl-core.c
-@@ -711,6 +711,10 @@ static struct of_dev_auxdata twl_auxdata_lookup[] = {
- 	{ /* sentinel */ },
- };
- 
-+static const struct mfd_cell twl6030_cells[] = {
-+	{ .name = "twl6030-clk" },
-+};
-+
- static const struct mfd_cell twl6032_cells[] = {
- 	{ .name = "twl6032-clk" },
- };
-@@ -861,17 +865,25 @@ twl_probe(struct i2c_client *client)
- 				 TWL4030_DCDC_GLOBAL_CFG);
- 	}
- 
--	if (id->driver_data == (TWL6030_CLASS | TWL6032_SUBCLASS)) {
--		status = devm_mfd_add_devices(&client->dev,
--					      PLATFORM_DEVID_NONE,
--					      twl6032_cells,
--					      ARRAY_SIZE(twl6032_cells),
--					      NULL, 0, NULL);
--		if (status < 0)
--			goto free;
--	}
--
- 	if (twl_class_is_6030()) {
-+		if (id->driver_data & TWL6032_SUBCLASS) {
-+			status = devm_mfd_add_devices(&client->dev,
-+						      PLATFORM_DEVID_NONE,
-+						      twl6032_cells,
-+						      ARRAY_SIZE(twl6032_cells),
-+						      NULL, 0, NULL);
-+			if (status < 0)
-+				goto free;
-+		} else {
-+			status = devm_mfd_add_devices(&client->dev,
-+						      PLATFORM_DEVID_NONE,
-+						      twl6030_cells,
-+						      ARRAY_SIZE(twl6030_cells),
-+						      NULL, 0, NULL);
-+			if (status < 0)
-+				goto free;
-+		}
-+
- 		if (of_device_is_system_power_controller(node)) {
- 			if (!pm_power_off)
- 				pm_power_off = twl6030_power_off;
--- 
-2.39.5
+Thanks for your patch!
 
+> --- /dev/null
+> +++ b/drivers/reset/reset-rzg3s-sysc.c
+> @@ -0,0 +1,140 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas RZ/G3S SYSC reset driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+
+Using the Auxiliary Bus requires selecting AUXILIARY_BUS.
+Elsse you might run into build failures:
+
+aarch64-linux-gnu-ld: drivers/soc/renesas/rzg3s-sysc.o: in function
+`rzg3s_sysc_probe':
+rzg3s-sysc.c:(.text+0x21c): undefined reference to `auxiliary_device_init'
+aarch64-linux-gnu-ld: rzg3s-sysc.c:(.text+0x264): undefined reference
+to `__auxiliary_device_add'
+aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
+`rzg3s_sysc_reset_driver_init':
+reset-rzg3s-sysc.c:(.init.text+0x1c): undefined reference to
+`__auxiliary_driver_register'
+aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
+`rzg3s_sysc_reset_driver_exit':
+reset-rzg3s-sysc.c:(.exit.text+0x10): undefined reference to
+`auxiliary_driver_unregister'
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
