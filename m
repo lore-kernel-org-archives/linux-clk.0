@@ -1,82 +1,155 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC2E1A4F0C;
-	Tue, 24 Sep 2024 16:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBBC1AC45A;
+	Tue, 24 Sep 2024 18:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727196803; cv=none; b=nfjmw8LbaYIB7ohwF810CAChRPGCGlIOEBLvL1ExZieIOJJQjlHBWm9h8/WNvW8K+IG1YkuiDdIxQ6ACb7KSgCcpFe4tO0MIsXc7vC4EyvhJatqwrJa6RhAA2EDIP0h907M5mf5aq4pqRp5A3JmokNAKvxBK/t9rW+aH0DAhPMg=
+	t=1727203145; cv=none; b=BSQ+OeOK0JSLrD6TcnAUT+6UkL3WPp9piREpURPLE2mklgLdZ8kIiM3EOFsc4Nd2/Td/6izwlKHdo9l6pITmQhSgQYJ2dtk++HFqyBNhLvP2VZLeH9WcMVXIpgm/6o1bmpe5RFI9qe2iMVrnQiu1m/eSk7p80A4B1njUpShToDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727196803; c=relaxed/simple;
-	bh=4AfOwKBsz+Hue+wqsjnOb5eB1YfYBPv7QSwJXi4tWew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqVp+W5Kdh8pI2dCo3cAwrApUjswGNW+5MtBnd8LxdBd5WOXQDQYeOhLxKZtBFBasYqDGZZPOrxNX4I8SNE+SgZLKcaboCxdmdYkILeSeZ7biTf5c0S0cuk6FF/TqVFg14sWzTxfjVckb+a2jvPR62zWWLc3kqulClk6T20K2Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0yQK//tf; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1727203145; c=relaxed/simple;
+	bh=qlVpmiFg8i15nd6jTmVhMDRAo08ef/F5oFu+Ie4XXWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a18bB8vyUEQUlhkh9pev6st07Xrl/1RJVD7h2j2GIqV/0PpQRlkfoe4KSnOSSC4VvuECXAGYAM7ua3J4nHmQEnJHzP+iTMUKFC0oSG1guCkS0S4ulPimA8TMODS9vP+wgK3vlVYTUDQC+tzpR9gsRH1YVKgdOQk1LiEOmyrEffw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REJayGTy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0yQK//tf"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lghdmMqPtdFFzMso3aFSPggmycBw6rFOEbv5T/gFw6U=; b=0yQK//tfIzJWo2mOwQoF9qJvUb
-	x0HZfTXf5yiv8JxhubWkXnnitYNaZ0+xAEaAXdq5Qp9ZjOHXjxrmjpkr+bz6AhPAm8kdhA3+Wqr8/
-	85KbqRYIARcW5IeXIpgKHpTVE+R4/G+2brKMGz8iVV8IT08nfslY3vFZu5zydZTY3Nb8646lgkodB
-	0XHrR0+dBe7diwBJ1jaVk18onQiWklJKdNdnmwz/TM0Tjk4YxbNY09OTsBA168Yz44toh6sV9AMYN
-	VvBSw7hbC8nnW/9CCE6gL8hA51ltHPvMPwZV763tSOIqxF26fKDB5zd3c9bbVSHi6hD1K5CekD9lv
-	H+7oNTiw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35852)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1st8mt-0005hM-15;
-	Tue, 24 Sep 2024 17:53:18 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1st8mr-0006WV-2a;
-	Tue, 24 Sep 2024 17:53:17 +0100
-Date: Tue, 24 Sep 2024 17:53:17 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: Re: clk mess on omap4460 with mpu clock
-Message-ID: <ZvLufU15ZJ4CKuuv@shell.armlinux.org.uk>
-References: <20240603234139.280629b2@aktux>
- <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
- <20240903143357.2532258b@akair>
- <CAMuHMdWF4G5Uon1=6TMzBogN2CX8EuiVBMuCPtAAMPNa-DtiOw@mail.gmail.com>
- <20240903192203.1dddbf0d@akair>
- <ZtdQ+Ay9DKAooahN@shell.armlinux.org.uk>
- <20240923140447.60c5efff@akair>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REJayGTy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45C8C4CEC4;
+	Tue, 24 Sep 2024 18:38:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727203144;
+	bh=qlVpmiFg8i15nd6jTmVhMDRAo08ef/F5oFu+Ie4XXWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=REJayGTy8xykHFAGb/Xv8u89d6lVZBeu1JnaC+VcXSN0W830ViRMBbEu/QYTdbq21
+	 Okhe0DmMfWcSVtPD2SeQQwm93Vizrow+4CbxjNNbBo+0FwWYx4CcUqB4df4ve6eCfz
+	 quNZ45+rsC6NGYHJ4TxcpuAjdoZuVkXPtdYJTKRnGxMQLM49KdFtqLWyIgbGeZ6mre
+	 Ny+P7BwilrdvqXDBn6V5QCrHrWbUadUY7mMnreMTHWBh1MZxIiXznZz3qd7lF3MV3H
+	 s9awMR+y3fD8vyVXHYS4lGmDzWbVD9UOdiJ3WCWt8KVli5TWhn2E274Cw9Gd4zfaz6
+	 Q9gvJr/3/vW2Q==
+Message-ID: <823fe98e-eb80-4b6d-8c35-3c14cbb52dda@kernel.org>
+Date: Tue, 24 Sep 2024 20:38:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923140447.60c5efff@akair>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com,
+ p.zabel@pengutronix.de, geert+renesas@glider.be,
+ dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: quic_varada@quicinc.com
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-2-quic_srichara@quicinc.com>
+ <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
+ <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
+ <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
+ <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 02:04:47PM +0200, Andreas Kemnade wrote:
-> So the way forward is to check whether that registration is really
-> needed at:
-> https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L2380
-> If yes, then
-> a) increade the size of the name in the clk subsystem or
-> b) workaround like
-> https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L353
+On 24/09/2024 14:10, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 9/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
+>> On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+>>>
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - $ref: qcom,gcc.yaml#
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: qcom,ipq5424-gcc
+>>>>
+>>>> So everything i sthe same as 5332? Why not adding it there?
+>>>>
+>>> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
+>>> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
+>>> bindings in v2 accordingly.
+>>
+>> Hm? What is the difference in the bindings? I don't see. Maybe some diff
+>> would help.
+>>
+> 
+> For IPQ5424, clocks items is like this
+> 
+>        - description: Board XO clock source
+>        - description: Sleep clock source
+>        - description: PCIE 2lane PHY0 pipe clock source
+>        - description: PCIE 2lane PHY1 pipe clock source
+>        - description: PCIE 2lane PHY2 pipe clock source
+>        - description: PCIE 2lane PHY3 pipe clock source
+>        - description: USB PCIE wrapper pipe clock source
 
-I'll also mention that if one is using DT, then the clkdev tables should
-not be relevant - the lookups of clocks should be done by parsing the
-clocks property in the description of the device.
+But that's not true. Open your patch and look:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
++  clocks:
++    items:
++      - description: Board XO clock source
++      - description: Sleep clock source
++      - description: PCIE 2lane PHY pipe clock source
++      - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
++      - description: USB PCIE wrapper pipe clock source
+
+Either you sent incomplete binding or we talk about different things.
+Looks like first case, so the binding is just not ready. I am not going
+to review it.
+
+Best regards,
+Krzysztof
+
