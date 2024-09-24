@@ -1,192 +1,188 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD201B85D5;
-	Tue, 24 Sep 2024 15:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3EC1A265D;
+	Tue, 24 Sep 2024 16:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727193162; cv=none; b=pIK0mnfOpRqmZ+eIz+f3V7vIQ7X8NXaE4G293p62Jc91mV1qdats4y7lf0JZz7WD/vAsNXGRhcgwhAE0dtexOs1ou0kSNlXVSh3BuLnvZySojeo3Q+X5tHdR2A0jhDl+hTjT7J8u5Rkd2c8v0jjxpzSmOE6K7VQSgWW4Pdv59Yo=
+	t=1727196733; cv=none; b=D3uOmw7cVpHPSwHmqfYnsWeRPt/sQn1hFT98bMUBcNplbWw8LW8wW4anRRAseKZLGGDp8kszJqqcxcge1L+p2bMbURnxZAchHZ9HO7chnGmmvAzNdg0VEZPHZK6UVd/nmyQh6uvMBoNQasA0j+23dFVfONshoLjv+3vAxY8l/ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727193162; c=relaxed/simple;
-	bh=7E+7UEkwjUbxfbsRFm3hKw2YmniUAtebWb+XuKT1dtw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:CC:
-	 In-Reply-To:Content-Type; b=UQ2rzd/4fZCbJBmWAWEAnuuw/gCAOamOlidQuNzAFln6YJZEnb0UGfzIprdY2iGNdnWYXdlqeXLv7BX3eFZEvfMaoG5MHgDfAtCvQ9kfeh7Bb7J6LaSXrtCoVbvxyXQcWzlLXJgPLalOEEjWcXZCUx47EDEbtc2VoFBZENaKk8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zCVMOEXL; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1727196733; c=relaxed/simple;
+	bh=8iDPaWel+pdHTsoyWlGxncS4Ko0Ek2fo6ErMWjypTaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDIFcQDsB07qajIYBMMxduqIGTQAZlGCKfi8bQm5wVigDDZ2i9MGL/oeH7qfKwBKiNC5F1DzGhdrGgfdwaagjqOUgQ4ZvWtJ+XhYYX69x185v282Lhow2e5xwa1NiNJXaVQ40FKRscW7ReTIQu2DWaz0FISjoO0p/Hn35qzsKcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BE4FaaLB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zCVMOEXL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727193160; x=1758729160;
-  h=message-id:date:mime-version:subject:to:references:from:
-   cc:in-reply-to:content-transfer-encoding;
-  bh=7E+7UEkwjUbxfbsRFm3hKw2YmniUAtebWb+XuKT1dtw=;
-  b=zCVMOEXLHikO+32DwLVsFKwvGnbFZc9c/hUb/HDFRYfHJAKNsOQtYAHf
-   p0ORMq9QAPc4Yu3W8+RMOeGi5GdXZ9FU+uOuO77DpUOsgbU/Suj90qJ/C
-   qyxPqJ39vepuqgUJ25F2K/WTcH1Tr7ReW9xeA8nN6JShge/4VGl8al6he
-   AYEOtf3s+wlujZyDH/yJ2ykMV7pATDrBinuSCX+J/BKxl0foBhNjz+iyD
-   80li0R65a29EA7aKq66l0Uz5rmKKVAVaCvB4fW7t3odhJzrT97XKTJ9dR
-   c0bg3HZek+/cA8nByQUTHo4aa8QlzeatMEVlKFRAxxD9AmTW1QnK5RDMW
-   A==;
-X-CSE-ConnectionGUID: 1OMnI0PRS827S4FmdZcQZQ==
-X-CSE-MsgGUID: XGDFMa1pQuuOEYOAZgyD7A==
-X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
-   d="scan'208";a="32795531"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Sep 2024 08:52:39 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 24 Sep 2024 08:52:22 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 24 Sep 2024 08:52:22 -0700
-Message-ID: <464f599a-7f0b-4e4e-901a-8f88a25428d6@microchip.com>
-Date: Tue, 24 Sep 2024 08:52:22 -0700
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BE4FaaLB"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KyJjheGAjypbHgOz2sBZ/DaTwBD+LkgwhOrIrfFbTuw=; b=BE4FaaLB+ITgp5tuo9upo3QSIb
+	Q0blx/GUFryJNfvom1vr7TSA67py8n4Sg9q2NX/DHxX4tgSxOHv7HXSpVvpIpX8M37JmdRuLMPChN
+	L2J5o+2W+WE48Bh+qASiXbl1k+4rsPCQ3w9rMmxiZVyz8UYvoqysYCKh4AP2J4zSbgCBDZr8TnJca
+	imteOnZ32WUZpJyeEB4G14L+rEtrBvayAumQFXh4I86iowRbmlue/utmWd+1hKaiIpuHTShFO2veV
+	IQ5RoJSpcmOZ+FtESzGVE8XPSPDFBTM6k52Rc9iHf60zpAn8+R0t+YsS/N1OW8dnpwwZOm56e3j6J
+	GRMfWojQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:32962)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1st8lg-0005hC-22;
+	Tue, 24 Sep 2024 17:52:04 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1st8lc-0006WN-14;
+	Tue, 24 Sep 2024 17:52:00 +0100
+Date: Tue, 24 Sep 2024 17:52:00 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>,
+	Tony Lindgren <tony@atomide.com>
+Subject: Re: clk mess on omap4460 with mpu clock
+Message-ID: <ZvLuMJxv8a0h9gpq@shell.armlinux.org.uk>
+References: <20240603234139.280629b2@aktux>
+ <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
+ <20240903143357.2532258b@akair>
+ <CAMuHMdWF4G5Uon1=6TMzBogN2CX8EuiVBMuCPtAAMPNa-DtiOw@mail.gmail.com>
+ <20240903192203.1dddbf0d@akair>
+ <ZtdQ+Ay9DKAooahN@shell.armlinux.org.uk>
+ <20240923140447.60c5efff@akair>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
- through DT
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, <ada@thorsis.com>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-10-ada@thorsis.com>
- <20240919-outsider-extending-e0a926bd23fa@thorsis.com>
-From: Ryan Wanner <ryan.wanner@microchip.com>
-Content-Language: en-US
-CC: Conor Dooley <conor+dt@kernel.org>, "moderated list:ARM/Microchip (AT91)
- SoC support" <linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, "open list:OPEN FIRMWARE AND FLATTENED
- DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:COMMON CLK
- FRAMEWORK" <linux-clk@vger.kernel.org>, Rob Herring <robh@kernel.org>, "open
- list" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Christian Melki <christian.melki@t2data.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"Nicolas Ferre" <nicolas.ferre@microchip.com>
-In-Reply-To: <20240919-outsider-extending-e0a926bd23fa@thorsis.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923140447.60c5efff@akair>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello Alex,
+On Mon, Sep 23, 2024 at 02:04:47PM +0200, Andreas Kemnade wrote:
+> The main question what bothers me is whether we have
+> some real problems behind it. The warning message is just an indicator
+> of something odd which was already odd before the message was
+> introduced.
 
-I think a possible solution is to put the DT binding ID for main rc oc
-after PMC_MCK and then add 1 to all the other IDs that are not dependent
-on PMC_MAIN, the IDs that are before the branch for the sama7g54.
+Indeed.
 
-One issue I see with this solution is with SoCs that do not want the
-main rc os exported to the DT the driver array might be allocating too
-much memory, this can be solved by removing the +1 that is in the clock
-drivers next to the device tree binding macro, since this macro is now
-increased by 1 with this change.
+> I have seen something working with some u-boot and some other not,
+> so things might not get properly initialized... 
+> 
+> So the way forward is to check whether that registration is really
+> needed at:
+> https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L2380
+> If yes, then
+> a) increade the size of the name in the clk subsystem or
+> b) workaround like
+> https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L353
 
-Doing a quick test on the sam9x60 and sama7g54 I did not see any glaring
-issues with this potential solution.
+Or we make the arrays larger - at the moment, the struct is a nice round
+64 bytes in 32-bit systems - 6 pointers (24 bytes) plus 24 plus 16 = 64.
+For 64-bit systems, this is 88 bytes.
 
-Best,
+An alternative approach may be this (untested, not even compile tested):
 
-Ryan
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 2f83fb97c6fb..222f0ccf9fc0 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -149,8 +149,7 @@ void clkdev_add_table(struct clk_lookup *cl, size_t num)
+ 
+ struct clk_lookup_alloc {
+ 	struct clk_lookup cl;
+-	char	dev_id[MAX_DEV_ID];
+-	char	con_id[MAX_CON_ID];
++	char	strings[0];
+ };
+ 
+ static struct clk_lookup * __ref
+@@ -158,60 +157,36 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+ 	va_list ap)
+ {
+ 	struct clk_lookup_alloc *cla;
+-	struct va_format vaf;
+-	const char *failure;
+ 	va_list ap_copy;
+-	size_t max_size;
+-	ssize_t res;
++	size_t size;
++	char *strp;
+ 
+-	cla = kzalloc(sizeof(*cla), GFP_KERNEL);
++	size = sizeof(*cla);
++	if (con_id)
++		size += 1 + strlen(con_id);
++	if (dev_fmt) {
++		va_copy(ap_copy, ap);
++		size += 1 + vsprintf(NULL, dev_fmt, ap_copy);
++		va_end(ap_copy);
++	}
++
++	cla = kzalloc(size, GFP_KERNEL);
+ 	if (!cla)
+ 		return NULL;
+ 
+-	va_copy(ap_copy, ap);
+-
+ 	cla->cl.clk_hw = hw;
++	strp = cla->strings;
+ 	if (con_id) {
+-		res = strscpy(cla->con_id, con_id, sizeof(cla->con_id));
+-		if (res < 0) {
+-			max_size = sizeof(cla->con_id);
+-			failure = "connection";
+-			goto fail;
+-		}
+-		cla->cl.con_id = cla->con_id;
++		strcpy(strp, con_id);
++		cla->cl.con_id = strp;
++		strp += 1 + strlen(con_id);
+ 	}
+ 
+ 	if (dev_fmt) {
+-		res = vsnprintf(cla->dev_id, sizeof(cla->dev_id), dev_fmt, ap);
+-		if (res >= sizeof(cla->dev_id)) {
+-			max_size = sizeof(cla->dev_id);
+-			failure = "device";
+-			goto fail;
+-		}
+-		cla->cl.dev_id = cla->dev_id;
++		vsprintf(strp, dev_fmt, ap);
++		cla->cl.dev_id = strp;
+ 	}
+ 
+-	va_end(ap_copy);
+-
+-	return &cla->cl;
+-
+-fail:
+-	if (dev_fmt)
+-		vaf.fmt = dev_fmt;
+-	else
+-		vaf.fmt = "null-device";
+-	vaf.va = &ap_copy;
+-	pr_err("%pV:%s: %s ID is greater than %zu\n",
+-	       &vaf, con_id, failure, max_size);
+-	va_end(ap_copy);
+-
+-	/*
+-	 * Don't fail in this case, but as the entry won't ever match just
+-	 * fill it with something that also won't match.
+-	 */
+-	strscpy(cla->con_id, "bad", sizeof(cla->con_id));
+-	strscpy(cla->dev_id, "bad", sizeof(cla->dev_id));
+-
+ 	return &cla->cl;
+ }
+ 
 
-
-On 9/19/24 05:39, Alexander Dahl wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Hello Claudiu,
-> 
-> after being busy with other things, I'm back looking at this series.
-> As Nicolas pointed out [1], we need three clocks for the OTPC to work,
-> quote:
-> 
->   "for all the products, the main RC oscillator, the OTPC peripheral
->   clock and the MCKx clocks associated to OTP must be enabled."
-> 
-> I have a problem with making the main_rc_osc accessible for both
-> SAM9X60 and SAMA7G5 here, see below.
-> 
-> Am Wed, Aug 21, 2024 at 12:59:40PM +0200 schrieb Alexander Dahl:
->> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
->> says:
->>
->>     "The OTPC is clocked through the Power Management Controller (PMC).
->>     The user must power on the main RC oscillator and enable the
->>     peripheral clock of the OTPC prior to reading or writing the OTP
->>     memory."
->>
->> The code for enabling/disabling that clock is already present, it was
->> just not possible to hook into DT anymore, after at91 clk devicetree
->> binding rework back in 2018 for kernel v4.19.
->>
->> Signed-off-by: Alexander Dahl <ada@thorsis.com>
->> ---
->>  drivers/clk/at91/sam9x60.c       | 3 ++-
->>  include/dt-bindings/clock/at91.h | 1 +
->>  2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
->> index e309cbf3cb9a..4d5ee20b8fc4 100644
->> --- a/drivers/clk/at91/sam9x60.c
->> +++ b/drivers/clk/at91/sam9x60.c
->> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->>       if (IS_ERR(regmap))
->>               return;
->>
->> -     sam9x60_pmc = pmc_data_allocate(PMC_PLLACK + 1,
->> +     sam9x60_pmc = pmc_data_allocate(PMC_MAIN_RC + 1,
->>                                       nck(sam9x60_systemck),
->>                                       nck(sam9x60_periphck),
->>                                       nck(sam9x60_gck), 8);
->> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->>                                          50000000);
->>       if (IS_ERR(hw))
->>               goto err_free;
->> +     sam9x60_pmc->chws[PMC_MAIN_RC] = hw;
->>
->>       hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
->>       if (IS_ERR(hw))
->> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
->> index 3e3972a814c1..f957625cb3ac 100644
->> --- a/include/dt-bindings/clock/at91.h
->> +++ b/include/dt-bindings/clock/at91.h
->> @@ -25,6 +25,7 @@
->>  #define PMC_PLLBCK           8
->>  #define PMC_AUDIOPLLCK               9
->>  #define PMC_AUDIOPINCK               10
->> +#define PMC_MAIN_RC          11
->>
->>  /* SAMA7G5 */
->>  #define PMC_CPUPLL           (PMC_MAIN + 1)
-> 
-> There are IDs defined in the devicetree bindings here, which are used
-> both in dts and in driver code as array indexes.  In v1 of the patch
-> series I just added a new last element in the end of the generic list
-> and used that for SAM9X60.
-> 
-> For SAMA7G5 those IDs are branched of from PMC_MAIN in between, making
-> SAMA7G5 using a different last element, and different values after
-> PMC_MAIN.
-> 
-> Now we need a new ID for main rc osc, but not only for SAM9X60, but
-> also for SAMA7G5.  I'm not sure what the implications would be, if the
-> new ID would be added in between before PMC_MAIN, so all values would
-> change?  Adding it to the end of the lists would probably be safe, but
-> then you would need a diffently named variant for SAMA7G5's different
-> IDs.  I find the current status somewhat unfortunate for future
-> extensions.  How should this new ID be added here?  What would be the
-> way forward?
-> 
-> Greets
-> Alex
-> 
-> [1] https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
-> 
->> --
->> 2.39.2
->>
->>
-> 
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
