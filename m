@@ -1,137 +1,97 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4185139579;
-	Wed, 25 Sep 2024 08:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9797913AA53;
+	Wed, 25 Sep 2024 09:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727254649; cv=none; b=ldRd3BHuIri4R5GxMBwpLKnenM6os8H5IxiaRsLJZi7Taz9/MmY461+vlw0SXfpN9XLdSeZpWIzpfcky3kll7QnuX7FoQqbdAGbwud9yfiVWdqAXM+JtJlMlRPo1VAUHUaka+4kd5voFxCfAPzFD+6IOpbbNuioXeHP+OSLwgFc=
+	t=1727256667; cv=none; b=C++zxxjgXd9Rkp75TCq4Fzh8aFOOG5ymUvQvYr1RExsxkoIIV/5Eb3eVsF3oUcJ45BN/2o2DDtbz+G7qhMRLrh/KHLelwJiI1z8SzO3go46yr5mtSNOrILlO+iTgnOnGv8HynBnqklpgU7akVxEaJTOdKJl1WiquZxSbr+Xo8F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727254649; c=relaxed/simple;
-	bh=eo2S88LGbOk65bCaErC1aJ2fAv7jCTnyq2xyYtx6pTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jLDlTYY5TayUtrE2xbULAepMAA26KYh1MMjT1iE1qT9o4+UlEXPA2aZcEd8So0j1bmf+UJ/WCsfVFjLeEHWcQLA7uxJ3tdj13NSWXijh8tFNSSXlmD8RaGoPGGW3nqO0+cXYL1v59PPm9K3OIAEsKW7M5E76WQQi0VGCl+EU480=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=eLc97JeQ; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1727256667; c=relaxed/simple;
+	bh=x2JF9xWznc10DmqXgd7CuRvcJk+8ONpVG+QxkOmFgQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OlrRiMg/MODneNK5AvT6IWGxtOtxus+UaRHM9+FIcjQDLnAIt52j1cUshbpvEBsGzHN437yes8Io8CPOnWeXGwOEscXK2B1AGCCIywrYQBRfNsFjljpnBb9a+bc6SDcL1KPWdvJVq+CwJz3eMGXouA6M5iO+ZmikyC/7oPzMzFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgJL/c0e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="eLc97JeQ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=UPVAbGUWQRK3gMTBkFDlAu38DoluSQAsHZS2y6KLxhE=; b=eLc97JeQNRfIY1Stp1hZzHTrKD
-	ZS6ZDfdsO2ZIpVTO9Go5aWPsWtqz7OqSPHoZh1t8M1kRs7sq+Y0K255A3KCMakd5EI8sPCcgRvwYw
-	QFPRZIak9EhAO8DlE8kkmgfzxfq7d1Htsb1PHfiZibOmH76gk0LDD7AbFacnE5ONtOHS6KJD2GiMu
-	Y4U+YhSm3xkNY1+q4fGRuhxwpcvEkXbjV/EUUmV0G0Hixua/O3X3H3mzMfAcEMNOK0Gj9iEeIKxlE
-	zq31du59ytUZ64Ml/kY6TniKGTsCrl/skohmSaFJPQjNpDzHrywGB7qlXx065ukZ2LVDxrXdIKqjm
-	rNu150NQ==;
-Date: Wed, 25 Sep 2024 10:57:22 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>, Tony Lindgren
- <tony@atomide.com>
-Subject: Re: clk mess on omap4460 with mpu clock
-Message-ID: <20240925105722.7921af47@akair>
-In-Reply-To: <ZvLuMJxv8a0h9gpq@shell.armlinux.org.uk>
-References: <20240603234139.280629b2@aktux>
-	<CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
-	<20240903143357.2532258b@akair>
-	<CAMuHMdWF4G5Uon1=6TMzBogN2CX8EuiVBMuCPtAAMPNa-DtiOw@mail.gmail.com>
-	<20240903192203.1dddbf0d@akair>
-	<ZtdQ+Ay9DKAooahN@shell.armlinux.org.uk>
-	<20240923140447.60c5efff@akair>
-	<ZvLuMJxv8a0h9gpq@shell.armlinux.org.uk>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgJL/c0e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D58CC4CEC3;
+	Wed, 25 Sep 2024 09:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727256667;
+	bh=x2JF9xWznc10DmqXgd7CuRvcJk+8ONpVG+QxkOmFgQI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tgJL/c0eI0Pzf2B14LODbJDI0p7Z1IRoiFIPHVUhJmHt29pRVg44j0S6NJ1wu7U+I
+	 efHRQyL5Sv494fYPtYfE69s8ypF1aujlHoaBRg0p7w5t903YIkVuKDWp1GxP65ojzj
+	 RWtRattmI7qzgQPuwXiYIniC0A5ACI+FZBbRfUiwF2Fx9WHMjvPlSCobdvPNlUZBVF
+	 KrGo5EfOPUdKPJhsOVEP/59fecriOcNb5m31bn8CuTbdLXp4XZroRS2m5AF5ByDsmT
+	 W0dJJHcjOzgcIY1j63WcVxDr1syWtU9eTvzqiOeytfvuwfmd48Q+dz3o9np34mzgCA
+	 26OMZh5GnUnCA==
+Message-ID: <4ee4d016-9d68-4925-9f49-e73a4e7fa794@kernel.org>
+Date: Wed, 25 Sep 2024 11:30:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3
+ on x1e80100
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
+ robh@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+ dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
+ <20240924101444.3933828-7-quic_qianyu@quicinc.com>
+ <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
+ <20240925080522.qwjeyrpjtz64pccx@thinkpad>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240925080522.qwjeyrpjtz64pccx@thinkpad>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Am Tue, 24 Sep 2024 17:52:00 +0100
-schrieb "Russell King (Oracle)" <linux@armlinux.org.uk>:
-
-> On Mon, Sep 23, 2024 at 02:04:47PM +0200, Andreas Kemnade wrote:
-> > The main question what bothers me is whether we have
-> > some real problems behind it. The warning message is just an
-> > indicator of something odd which was already odd before the message
-> > was introduced.  
+On 25.09.2024 10:05 AM, Manivannan Sadhasivam wrote:
+> On Tue, Sep 24, 2024 at 04:26:34PM +0200, Konrad Dybcio wrote:
+>> On 24.09.2024 12:14 PM, Qiang Yu wrote:
+>>> Describe PCIe3 controller and PHY. Also add required system resources like
+>>> regulators, clocks, interrupts and registers configuration for PCIe3.
+>>>
+>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>
+>> Qiang, Mani
+>>
+>> I have a RTS5261 mmc chip on PCIe3 on the Surface Laptop.
 > 
-> Indeed.
+> Is it based on x1e80100?
+
+You would think so :P
+
 > 
-> > I have seen something working with some u-boot and some other not,
-> > so things might not get properly initialized... 
-> > 
-> > So the way forward is to check whether that registration is really
-> > needed at:
-> > https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L2380
-> > If yes, then
-> > a) increade the size of the name in the clk subsystem or
-> > b) workaround like
-> > https://elixir.bootlin.com/linux/v6.11/source/drivers/bus/ti-sysc.c#L353
-> >  
+>> Adding the global irq breaks sdcard detection (the chip still comes
+>> up fine) somehow. Removing the irq makes it work again :|
+>>
+>> I've confirmed that the irq number is correct
+>>
 > 
-> Or we make the arrays larger - at the moment, the struct is a nice
-> round 64 bytes in 32-bit systems - 6 pointers (24 bytes) plus 24 plus
-> 16 = 64. For 64-bit systems, this is 88 bytes.
+> Yeah, I did see some issues with MSI on SM8250 (RB5) when global interrupts are
+> enabled and I'm working with the hw folks to understand what is going on. But
+> I didn't see the same issues on newer platforms (sa8775p etc...).
 > 
-of course that is a nice size, but since the devid string is not
-directly visible, so chances are high, that an innocent looking
-commit might mess it up.
+> Can you please confirm if the issue is due to MSI not being received from the
+> device? Checking the /proc/interrutps is enough.
 
-> An alternative approach may be this (untested, not even compile
-> tested):
-> 
-so this looks like my favourite approach.
+There's no msi-map for PCIe3. I recall +Johan talking about some sort of
+a bug that prevents us from adding it?
 
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index 2f83fb97c6fb..222f0ccf9fc0 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -149,8 +149,7 @@ void clkdev_add_table(struct clk_lookup *cl,
-> size_t num) 
->  struct clk_lookup_alloc {
->  	struct clk_lookup cl;
-> -	char	dev_id[MAX_DEV_ID];
-> -	char	con_id[MAX_CON_ID];
-> +	char	strings[0];
->  };
->  
->  static struct clk_lookup * __ref
-> @@ -158,60 +157,36 @@ vclkdev_alloc(struct clk_hw *hw, const char
-> *con_id, const char *dev_fmt, va_list ap)
->  {
->  	struct clk_lookup_alloc *cla;
-> -	struct va_format vaf;
-> -	const char *failure;
->  	va_list ap_copy;
-> -	size_t max_size;
-> -	ssize_t res;
-> +	size_t size;
-> +	char *strp;
->  
-> -	cla = kzalloc(sizeof(*cla), GFP_KERNEL);
-> +	size = sizeof(*cla);
-> +	if (con_id)
-> +		size += 1 + strlen(con_id);
-> +	if (dev_fmt) {
-> +		va_copy(ap_copy, ap);
-> +		size += 1 + vsprintf(NULL, dev_fmt, ap_copy);
-                
-size += 1 + vsnprintf(NULL, 0, dev_fmt, ap_copy);
-
-works for me.
-> +		va_end(ap_copy);
-> +	}
-> +
-or setting size to some big enough value here...
-
-without that, even earlycon is silent.
-
-Regards,
-Andreas
+Konrad
