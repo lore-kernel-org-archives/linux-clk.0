@@ -1,142 +1,384 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485F31714B0
-	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 12:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9001798C
+	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 13:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727268752; cv=none; b=cP5g5Ojn53H8F/mF9oN/N73/wzRRILkp3h+P06s5nWwh6cxzGxY2FTPb0gxcIVxFoL0HyIEkHGlGfROyezkZnDLYXasnVR9UZMMgKDHfLMOdYcH3RM+AF96r6dN7606qXW3SrTUhm/+v3VDqkw4oZ7oX5Jc0wY2G1m7Xu+D2MHY=
+	t=1727271957; cv=none; b=VVWXe2+/DNd/nynUYyOYwciXOC0Pezp93YnY9cOj1w6oYyLQWwcfsI6oWVnnDfxDAHDgOBBYzRzGPgE92NsItKcrgbNciBVZhqSRuUkaBNKcQJJj8Wz7YNDAqCld914Ysw7gJeJ/hmRlpI1oVvgPukcaFO6ZdsOyeUwNchvaj9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727268752; c=relaxed/simple;
-	bh=v8nFyWsksEF8DTF1lg3ZcP05G+mbIViNLRepJVEIEcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWSUYjtUqPY+8W2kjISR52E5WBQ/eFuW5gEwLueJ1SyILNOrawcVFzaWlEIwjeSSualoXKTVf4iJmAXnsDstYYa9IdeThMDy7B4hdMSrvVEw/cD/EZA0H0E+hOMOF6asAaFJ50IitXF0zZrgYyVDVudiw/rKORmyEp3A1iBzsIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gQjWamgQ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gQjWamgQ"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso65893745e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 05:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727268747; x=1727873547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PsYnTiQnoLJmTLqLligtuj1TznoQqpggCMnS36XtOaI=;
-        b=gQjWamgQeu3mY706fYbRPb4Gs8vSsRR+e3bgL0K/iQzkJPdYswAepkH8PWLUa+ixnq
-         zsedIwwnQWGWYOwXHRSrXF+4Hr09O0fSNJ2GCTnWxq7d5TUordl0GkJalTEfCDFYEwrQ
-         1QnXG2LijNVLY3x5r+Lsf7Z8MUTyUENcxBAZ0iwDE/nkYLlL3BLl5+iXTYzD8ckJJWH7
-         GRyBABHG5O3v6VBswCiSVwgVUX9nn8hW0od394L5vTTLH/y8b7juIG+Utpsa+7ftOd+L
-         sqSogyw7Fp8+0lDCLDme/zc07qyj1VAzJF0e7NgI/MFPhAIA2AWgL25k426fXseOFgTz
-         UlwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727268747; x=1727873547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsYnTiQnoLJmTLqLligtuj1TznoQqpggCMnS36XtOaI=;
-        b=o4qj3I6AWmkr7xl23cr7jLI4/LQtsOZYE8G0rQ/pBVoDWmucGS8hgtoictFxhCr3Rv
-         9QGVy2Z7Fam3v3ezSzGm/FLblzij1zsXm5q2AxCWSDms7sZSjHKAnwQbhrGdpBNlswhv
-         Df8m4uEX1IKs/A3p9YKau+xZqLDnLegwsW/HJgnws1476astuagQrU+HB/a43FDvFXh9
-         7VvIQ2YLFbHCsBh7nPCUbcagtjgFeyHmZaTSibKm8S+xQ++a2N+da/nu31/t6f6q1/tX
-         eZJZ7EBg2Jg/E4WNaR/R3JGqTbLL4u2Su7AQDI16lEqjXQRAo48KJmSgYbk9uAA7xubd
-         FYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaQOgh1PgB9BjDS7vPP73dbnlSmwfL6I9zvbYTUZxzPCIPiww10lKP32PASqe+7KgsmY6tvbjmMs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwljYrBPK3g76YoHTQMXJkUHJM6d0BCrM1ApwHEYdgl8njj4z7m
-	XFqs4SJKzDxPUBLZnIPYjTPBCV+1eS+kfFeyBGyr+B9twB/IxMSVZ1A4RR90hw==
-X-Google-Smtp-Source: AGHT+IG4lPaaPhhTrY0nQowUBPj7qZopeTwFGYzQZG1u0Frm/UegncIuXWSeBUCFGZpQxJONnfZ1dw==
-X-Received: by 2002:a05:600c:3581:b0:426:602d:a246 with SMTP id 5b1f17b1804b1-42e962456cbmr18604785e9.32.1727268747527;
-        Wed, 25 Sep 2024 05:52:27 -0700 (PDT)
-Received: from thinkpad ([62.67.186.33])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969a8bd5sm18569155e9.0.2024.09.25.05.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 05:52:26 -0700 (PDT)
-Date: Wed, 25 Sep 2024 14:52:24 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org,
-	kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3
- on x1e80100
-Message-ID: <20240925125224.53g6rw46qufxsw6m@thinkpad>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-7-quic_qianyu@quicinc.com>
- <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
- <20240925080522.qwjeyrpjtz64pccx@thinkpad>
- <4ee4d016-9d68-4925-9f49-e73a4e7fa794@kernel.org>
- <2731e17d-c1ad-4fb4-ab60-82ceafeffbaf@kernel.org>
+	s=arc-20240116; t=1727271957; c=relaxed/simple;
+	bh=UVSWg4IhujBXfCfAJw6n4/iGqi2iZtmhH8p2LGOtxZ8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DGxGP2CyXS4DMX4K3aIqKLcbThyPM6oPJCHM92XrQdD3eGg/SXXf5GH3tzJhFdi8XrZ4WN32bNL9OtsA3rSWeetce6J7GI22F3g7O6voNbh3y14iDh6k37kOxefeSd4d1EaWKZGLSKm7gAGcfpz/ZZqWwJEj3b/UDjbSzv3NjfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1stSKZ-0007pI-SU; Wed, 25 Sep 2024 15:45:23 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1stSKW-001SeW-M8; Wed, 25 Sep 2024 15:45:20 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1stSKW-000K5C-1x;
+	Wed, 25 Sep 2024 15:45:20 +0200
+Message-ID: <d2289e43e0ede95eb125562dbe889e658ee3a522.camel@pengutronix.de>
+Subject: Re: [PATCH v4 2/3] reset: aspeed: register AST2700 reset auxiliary
+ bus device
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com, 
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+  joel@jms.id.au, andrew@codeconstruct.com.au, linux-kernel@vger.kernel.org,
+  linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Date: Wed, 25 Sep 2024 15:45:20 +0200
+In-Reply-To: <20240923075012.2264573-3-ryan_chen@aspeedtech.com>
+References: <20240923075012.2264573-1-ryan_chen@aspeedtech.com>
+	 <20240923075012.2264573-3-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2731e17d-c1ad-4fb4-ab60-82ceafeffbaf@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Wed, Sep 25, 2024 at 11:46:35AM +0200, Konrad Dybcio wrote:
-> On 25.09.2024 11:30 AM, Konrad Dybcio wrote:
-> > On 25.09.2024 10:05 AM, Manivannan Sadhasivam wrote:
-> >> On Tue, Sep 24, 2024 at 04:26:34PM +0200, Konrad Dybcio wrote:
-> >>> On 24.09.2024 12:14 PM, Qiang Yu wrote:
-> >>>> Describe PCIe3 controller and PHY. Also add required system resources like
-> >>>> regulators, clocks, interrupts and registers configuration for PCIe3.
-> >>>>
-> >>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> >>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>> ---
-> >>>
-> >>> Qiang, Mani
-> >>>
-> >>> I have a RTS5261 mmc chip on PCIe3 on the Surface Laptop.
-> >>
-> >> Is it based on x1e80100?
-> > 
-> > You would think so :P
-> > 
-> >>
-> >>> Adding the global irq breaks sdcard detection (the chip still comes
-> >>> up fine) somehow. Removing the irq makes it work again :|
-> >>>
-> >>> I've confirmed that the irq number is correct
-> >>>
-> >>
-> >> Yeah, I did see some issues with MSI on SM8250 (RB5) when global interrupts are
-> >> enabled and I'm working with the hw folks to understand what is going on. But
-> >> I didn't see the same issues on newer platforms (sa8775p etc...).
-> >>
-> >> Can you please confirm if the issue is due to MSI not being received from the
-> >> device? Checking the /proc/interrutps is enough.
-> > 
-> > There's no msi-map for PCIe3. I recall +Johan talking about some sort of
-> > a bug that prevents us from adding it?
-> 
+Hi,
 
-Yeah, that's for using GIC-ITS to receive MSIs. But the default one is the
-internal MSI controller in DWC.
+On Mo, 2024-09-23 at 15:50 +0800, Ryan Chen wrote:
+> The AST2700 reset driver is registered as an auxiliary device
+> due to reset and clock controller share the same register region.
+>=20
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  drivers/reset/Kconfig        |   6 +
+>  drivers/reset/Makefile       |   1 +
+>  drivers/reset/reset-aspeed.c | 257 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 264 insertions(+)
+>  create mode 100644 drivers/reset/reset-aspeed.c
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 67bce340a87e..612f22e1180d 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -22,6 +22,12 @@ config RESET_A10SR
+>  	  This option enables support for the external reset functions for
+>  	  peripheral PHYs on the Altera Arria10 System Resource Chip.
+> =20
+> +config RESET_ASPEED
+> +	tristate "ASPEED Reset Driver"
+> +	depends on ARCH_ASPEED || COMPILE_TEST
 
-> Unless you just meant the msi0..=7 interrupts, then yeah, I only get one irq
-> event with "global" in place and it seems to never get more
-> 
+This is missing:
 
-Ok. Then most likely the same issue I saw on SM8250 as well. But I'm confused
-why Qiang didn't see the issue. I specifically asked him to add the global
-interrupt and test it with the endpoint to check if the issue arises or not.
+	select AUXILIARY_BUS
 
-Qiang, can you please confirm?
+> +	help
+> +	  This enables the reset controller driver for AST2700.
+> +
+>  config RESET_ATH79
+>  	bool "AR71xx Reset Driver" if COMPILE_TEST
+>  	default ATH79
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 27b0bbdfcc04..97482bb56416 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -5,6 +5,7 @@ obj-y +=3D starfive/
+>  obj-y +=3D sti/
+>  obj-y +=3D tegra/
+>  obj-$(CONFIG_RESET_A10SR) +=3D reset-a10sr.o
+> +obj-$(CONFIG_RESET_ASPEED) +=3D reset-aspeed.o
+>  obj-$(CONFIG_RESET_ATH79) +=3D reset-ath79.o
+>  obj-$(CONFIG_RESET_AXS10X) +=3D reset-axs10x.o
+>  obj-$(CONFIG_RESET_BCM6345) +=3D reset-bcm6345.o
+> diff --git a/drivers/reset/reset-aspeed.c b/drivers/reset/reset-aspeed.c
+> new file mode 100644
+> index 000000000000..40cc6e76df70
+> --- /dev/null
+> +++ b/drivers/reset/reset-aspeed.c
+> @@ -0,0 +1,257 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (c) 2024 ASPEED Technology Inc.
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#include <dt-bindings/reset/aspeed,ast2700-scu.h>
+> +
+> +#define SCU0_RESET_CTRL1 0x200
+> +#define SCU0_RESET_CTRL2 0x220
+> +#define SCU1_RESET_CTRL1 0x200
+> +#define SCU1_RESET_CTRL2 0x220
+> +#define SCU1_PCIE3_CTRL 0x908
+> +
+> +struct ast2700_reset_signal {
+> +	bool dedicated_clr; /* dedicated reset clr offset */
+> +	u32 offset, bit;
+> +};
+> +
+> +struct aspeed_reset_info {
+> +	unsigned int nr_resets;
+> +	const struct ast2700_reset_signal *signal;
+> +};
+> +
+> +struct aspeed_reset {
+> +	struct reset_controller_dev rcdev;
+> +	struct aspeed_reset_info *info;
+> +	spinlock_t lock; /* Protect read-modify-write cycle */
+> +	void __iomem *base;
+> +};
+> +
+> +static const struct ast2700_reset_signal ast2700_reset0_signals[] =3D {
+> +	[SCU0_RESET_SDRAM] =3D { true, SCU0_RESET_CTRL1, BIT(0) },
+> +	[SCU0_RESET_DDRPHY] =3D { true, SCU0_RESET_CTRL1, BIT(1) },
+> +	[SCU0_RESET_RSA] =3D { true, SCU0_RESET_CTRL1, BIT(2) },
+> +	[SCU0_RESET_SHA3] =3D { true, SCU0_RESET_CTRL1, BIT(3) },
+> +	[SCU0_RESET_HACE] =3D { true, SCU0_RESET_CTRL1, BIT(4) },
+> +	[SCU0_RESET_SOC] =3D { true, SCU0_RESET_CTRL1, BIT(5) },
+> +	[SCU0_RESET_VIDEO] =3D { true, SCU0_RESET_CTRL1, BIT(6) },
+> +	[SCU0_RESET_2D] =3D { true, SCU0_RESET_CTRL1, BIT(7) },
+> +	[SCU0_RESET_PCIS] =3D { true, SCU0_RESET_CTRL1, BIT(8) },
+> +	[SCU0_RESET_RVAS0] =3D { true, SCU0_RESET_CTRL1, BIT(9) },
+> +	[SCU0_RESET_RVAS1] =3D { true, SCU0_RESET_CTRL1, BIT(10) },
+> +	[SCU0_RESET_SM3] =3D { true, SCU0_RESET_CTRL1, BIT(11) },
+> +	[SCU0_RESET_SM4] =3D { true, SCU0_RESET_CTRL1, BIT(12) },
+> +	[SCU0_RESET_CRT0] =3D { true, SCU0_RESET_CTRL1, BIT(13) },
+> +	[SCU0_RESET_ECC] =3D { true, SCU0_RESET_CTRL1, BIT(14) },
+> +	[SCU0_RESET_DP_PCI] =3D { true, SCU0_RESET_CTRL1, BIT(15) },
+> +	[SCU0_RESET_UFS] =3D { true, SCU0_RESET_CTRL1, BIT(16) },
+> +	[SCU0_RESET_EMMC] =3D { true, SCU0_RESET_CTRL1, BIT(17) },
+> +	[SCU0_RESET_PCIE1RST] =3D { true, SCU0_RESET_CTRL1, BIT(18) },
+> +	[SCU0_RESET_PCIE1RSTOE] =3D { true, SCU0_RESET_CTRL1, BIT(19) },
+> +	[SCU0_RESET_PCIE0RST] =3D { true, SCU0_RESET_CTRL1, BIT(20) },
+> +	[SCU0_RESET_PCIE0RSTOE] =3D { true, SCU0_RESET_CTRL1, BIT(21) },
+> +	[SCU0_RESET_JTAG] =3D { true, SCU0_RESET_CTRL1, BIT(22) },
+> +	[SCU0_RESET_MCTP0] =3D { true, SCU0_RESET_CTRL1, BIT(23) },
+> +	[SCU0_RESET_MCTP1] =3D { true, SCU0_RESET_CTRL1, BIT(24) },
+> +	[SCU0_RESET_XDMA0] =3D { true, SCU0_RESET_CTRL1, BIT(25) },
+> +	[SCU0_RESET_XDMA1] =3D { true, SCU0_RESET_CTRL1, BIT(26) },
+> +	[SCU0_RESET_H2X1] =3D { true, SCU0_RESET_CTRL1, BIT(27) },
+> +	[SCU0_RESET_DP] =3D { true, SCU0_RESET_CTRL1, BIT(28) },
+> +	[SCU0_RESET_DP_MCU] =3D { true, SCU0_RESET_CTRL1, BIT(29) },
+> +	[SCU0_RESET_SSP] =3D { true, SCU0_RESET_CTRL1, BIT(30) },
+> +	[SCU0_RESET_H2X0] =3D { true, SCU0_RESET_CTRL1, BIT(31) },
+> +	[SCU0_RESET_PORTA_VHUB] =3D { true, SCU0_RESET_CTRL2, BIT(0) },
+> +	[SCU0_RESET_PORTA_PHY3] =3D { true, SCU0_RESET_CTRL2, BIT(1) },
+> +	[SCU0_RESET_PORTA_XHCI] =3D { true, SCU0_RESET_CTRL2, BIT(2) },
+> +	[SCU0_RESET_PORTB_VHUB] =3D { true, SCU0_RESET_CTRL2, BIT(3) },
+> +	[SCU0_RESET_PORTB_PHY3] =3D { true, SCU0_RESET_CTRL2, BIT(4) },
+> +	[SCU0_RESET_PORTB_XHCI] =3D { true, SCU0_RESET_CTRL2, BIT(5) },
+> +	[SCU0_RESET_PORTA_VHUB_EHCI] =3D { true, SCU0_RESET_CTRL2, BIT(6) },
+> +	[SCU0_RESET_PORTB_VHUB_EHCI] =3D { true, SCU0_RESET_CTRL2, BIT(7) },
+> +	[SCU0_RESET_UHCI] =3D { true, SCU0_RESET_CTRL2, BIT(8) },
+> +	[SCU0_RESET_TSP] =3D { true, SCU0_RESET_CTRL2, BIT(9) },
+> +	[SCU0_RESET_E2M0] =3D { true, SCU0_RESET_CTRL2, BIT(10) },
+> +	[SCU0_RESET_E2M1] =3D { true, SCU0_RESET_CTRL2, BIT(11) },
+> +	[SCU0_RESET_VLINK] =3D { true, SCU0_RESET_CTRL2, BIT(12) },
+> +};
+> +
+> +static const struct ast2700_reset_signal ast2700_reset1_signals[] =3D {
+> +	[SCU1_RESET_LPC0] =3D { true, SCU1_RESET_CTRL1, BIT(0) },
+> +	[SCU1_RESET_LPC1] =3D { true, SCU1_RESET_CTRL1, BIT(1) },
+> +	[SCU1_RESET_MII] =3D { true, SCU1_RESET_CTRL1, BIT(2) },
+> +	[SCU1_RESET_PECI] =3D { true, SCU1_RESET_CTRL1, BIT(3) },
+> +	[SCU1_RESET_PWM] =3D { true, SCU1_RESET_CTRL1, BIT(4) },
+> +	[SCU1_RESET_MAC0] =3D { true, SCU1_RESET_CTRL1, BIT(5) },
+> +	[SCU1_RESET_MAC1] =3D { true, SCU1_RESET_CTRL1, BIT(6) },
+> +	[SCU1_RESET_MAC2] =3D { true, SCU1_RESET_CTRL1, BIT(7) },
+> +	[SCU1_RESET_ADC] =3D { true, SCU1_RESET_CTRL1, BIT(8) },
+> +	[SCU1_RESET_SD] =3D { true, SCU1_RESET_CTRL1, BIT(9) },
+> +	[SCU1_RESET_ESPI0] =3D { true, SCU1_RESET_CTRL1, BIT(10) },
+> +	[SCU1_RESET_ESPI1] =3D { true, SCU1_RESET_CTRL1, BIT(11) },
+> +	[SCU1_RESET_JTAG1] =3D { true, SCU1_RESET_CTRL1, BIT(12) },
+> +	[SCU1_RESET_SPI0] =3D { true, SCU1_RESET_CTRL1, BIT(13) },
+> +	[SCU1_RESET_SPI1] =3D { true, SCU1_RESET_CTRL1, BIT(14) },
+> +	[SCU1_RESET_SPI2] =3D { true, SCU1_RESET_CTRL1, BIT(15) },
+> +	[SCU1_RESET_I3C0] =3D { true, SCU1_RESET_CTRL1, BIT(16) },
+> +	[SCU1_RESET_I3C1] =3D { true, SCU1_RESET_CTRL1, BIT(17) },
+> +	[SCU1_RESET_I3C2] =3D { true, SCU1_RESET_CTRL1, BIT(18) },
+> +	[SCU1_RESET_I3C3] =3D { true, SCU1_RESET_CTRL1, BIT(19) },
+> +	[SCU1_RESET_I3C4] =3D { true, SCU1_RESET_CTRL1, BIT(20) },
+> +	[SCU1_RESET_I3C5] =3D { true, SCU1_RESET_CTRL1, BIT(21) },
+> +	[SCU1_RESET_I3C6] =3D { true, SCU1_RESET_CTRL1, BIT(22) },
+> +	[SCU1_RESET_I3C7] =3D { true, SCU1_RESET_CTRL1, BIT(23) },
+> +	[SCU1_RESET_I3C8] =3D { true, SCU1_RESET_CTRL1, BIT(24) },
+> +	[SCU1_RESET_I3C9] =3D { true, SCU1_RESET_CTRL1, BIT(25) },
+> +	[SCU1_RESET_I3C10] =3D { true, SCU1_RESET_CTRL1, BIT(26) },
+> +	[SCU1_RESET_I3C11] =3D { true, SCU1_RESET_CTRL1, BIT(27) },
+> +	[SCU1_RESET_I3C12] =3D { true, SCU1_RESET_CTRL1, BIT(28) },
+> +	[SCU1_RESET_I3C13] =3D { true, SCU1_RESET_CTRL1, BIT(29) },
+> +	[SCU1_RESET_I3C14] =3D { true, SCU1_RESET_CTRL1, BIT(30) },
+> +	[SCU1_RESET_I3C15] =3D { true, SCU1_RESET_CTRL1, BIT(31) },
+> +	[SCU1_RESET_MCU0] =3D { true, SCU1_RESET_CTRL2, BIT(0) },
+> +	[SCU1_RESET_MCU1] =3D { true, SCU1_RESET_CTRL2, BIT(1) },
+> +	[SCU1_RESET_H2A_SPI1] =3D { true, SCU1_RESET_CTRL2, BIT(2) },
+> +	[SCU1_RESET_H2A_SPI2] =3D { true, SCU1_RESET_CTRL2, BIT(3) },
+> +	[SCU1_RESET_UART0] =3D { true, SCU1_RESET_CTRL2, BIT(4) },
+> +	[SCU1_RESET_UART1] =3D { true, SCU1_RESET_CTRL2, BIT(5) },
+> +	[SCU1_RESET_UART2] =3D { true, SCU1_RESET_CTRL2, BIT(6) },
+> +	[SCU1_RESET_UART3] =3D { true, SCU1_RESET_CTRL2, BIT(7) },
+> +	[SCU1_RESET_I2C_FILTER] =3D { true, SCU1_RESET_CTRL2, BIT(8) },
+> +	[SCU1_RESET_CALIPTRA] =3D { true, SCU1_RESET_CTRL2, BIT(9) },
+> +	[SCU1_RESET_XDMA] =3D { true, SCU1_RESET_CTRL2, BIT(10) },
+> +	[SCU1_RESET_FSI] =3D { true, SCU1_RESET_CTRL2, BIT(12) },
+> +	[SCU1_RESET_CAN] =3D { true, SCU1_RESET_CTRL2, BIT(13) },
+> +	[SCU1_RESET_MCTP] =3D { true, SCU1_RESET_CTRL2, BIT(14) },
+> +	[SCU1_RESET_I2C] =3D { true, SCU1_RESET_CTRL2, BIT(15) },
+> +	[SCU1_RESET_UART6] =3D { true, SCU1_RESET_CTRL2, BIT(16) },
+> +	[SCU1_RESET_UART7] =3D { true, SCU1_RESET_CTRL2, BIT(17) },
+> +	[SCU1_RESET_UART8] =3D { true, SCU1_RESET_CTRL2, BIT(18) },
+> +	[SCU1_RESET_UART9] =3D { true, SCU1_RESET_CTRL2, BIT(19) },
+> +	[SCU1_RESET_LTPI0] =3D { true, SCU1_RESET_CTRL2, BIT(20) },
+> +	[SCU1_RESET_VGAL] =3D { true, SCU1_RESET_CTRL2, BIT(21) },
+> +	[SCU1_RESET_LTPI1] =3D { true, SCU1_RESET_CTRL2, BIT(22) },
+> +	[SCU1_RESET_ACE] =3D { true, SCU1_RESET_CTRL2, BIT(23) },
+> +	[SCU1_RESET_E2M] =3D { true, SCU1_RESET_CTRL2, BIT(24) },
+> +	[SCU1_RESET_UHCI] =3D { true, SCU1_RESET_CTRL2, BIT(25) },
+> +	[SCU1_RESET_PORTC_USB2UART] =3D { true, SCU1_RESET_CTRL2, BIT(26) },
+> +	[SCU1_RESET_PORTC_VHUB_EHCI] =3D { true, SCU1_RESET_CTRL2, BIT(27) },
+> +	[SCU1_RESET_PORTD_USB2UART] =3D { true, SCU1_RESET_CTRL2, BIT(28) },
+> +	[SCU1_RESET_PORTD_VHUB_EHCI] =3D { true, SCU1_RESET_CTRL2, BIT(29) },
+> +	[SCU1_RESET_H2X] =3D { true, SCU1_RESET_CTRL2, BIT(30) },
+> +	[SCU1_RESET_I3CDMA] =3D { true, SCU1_RESET_CTRL2, BIT(31) },
+> +	[SCU1_RESET_PCIE2RST] =3D { false, SCU1_PCIE3_CTRL, BIT(0) },
+> +};
+> +
+> +#define to_aspeed_reset(p) container_of(p, struct aspeed_reset, rcdev)
 
-- Mani
+Please turn this into a static inline function.
 
--- 
-மணிவண்ணன் சதாசிவம்
+> +static int aspeed_reset_assert(struct reset_controller_dev *rcdev, unsig=
+ned long id)
+> +{
+> +	struct aspeed_reset *rc =3D to_aspeed_reset(rcdev);
+> +	void __iomem *reg_offset =3D rc->base + rc->info->signal[id].offset;
+> +	unsigned long flags;
+> +
+> +	if (rc->info->signal[id].dedicated_clr) {
+> +		writel(rc->info->signal[id].bit, reg_offset);
+> +	} else {
+> +		spin_lock_irqsave(&rc->lock, flags);
+
+You could use guard(spinlock_irqsave)(&rc->lock) to save a few lines.
+
+> +		writel(readl(reg_offset) & ~rc->info->signal[id].bit, reg_offset);
+> +		spin_unlock_irqrestore(&rc->lock, flags);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int aspeed_reset_deassert(struct reset_controller_dev *rcdev, uns=
+igned long id)
+> +{
+> +	struct aspeed_reset *rc =3D to_aspeed_reset(rcdev);
+> +	void __iomem *reg_offset =3D rc->base + rc->info->signal[id].offset;
+> +	unsigned long flags;
+> +
+> +	if (rc->info->signal[id].dedicated_clr) {
+> +		writel(rc->info->signal[id].bit, reg_offset + 0x04);
+> +	} else {
+> +		spin_lock_irqsave(&rc->lock, flags);
+> +		writel(readl(reg_offset) | rc->info->signal[id].bit, reg_offset);
+> +		spin_unlock_irqrestore(&rc->lock, flags);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int aspeed_reset_status(struct reset_controller_dev *rcdev, unsig=
+ned long id)
+> +{
+> +	struct aspeed_reset *rc =3D to_aspeed_reset(rcdev);
+> +	void __iomem *reg_offset =3D rc->base + rc->info->signal[id].offset;
+> +
+> +	return (readl(reg_offset) & rc->info->signal[id].bit) ? 1 : 0;
+> +}
+> +
+> +static const struct reset_control_ops aspeed_reset_ops =3D {
+> +	.assert =3D aspeed_reset_assert,
+> +	.deassert =3D aspeed_reset_deassert,
+> +	.status =3D aspeed_reset_status,
+> +};
+> +
+> +static int aspeed_reset_probe(struct auxiliary_device *adev,
+> +			      const struct auxiliary_device_id *id)
+> +{
+> +	struct aspeed_reset *reset;
+> +	struct device *dev =3D &adev->dev;
+> +
+> +	reset =3D devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
+> +	if (!reset)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&reset->lock);
+> +
+> +	reset->info =3D (struct aspeed_reset_info *)(id->driver_data);
+
+Unnecessary parentheses.
+
+> +	reset->rcdev.owner =3D THIS_MODULE;
+> +	reset->rcdev.nr_resets =3D reset->info->nr_resets;
+> +	reset->rcdev.ops =3D &aspeed_reset_ops;
+> +	reset->rcdev.of_node =3D dev->parent->of_node;
+> +	reset->rcdev.dev =3D dev;
+> +	reset->rcdev.of_reset_n_cells =3D 1;
+> +	reset->base =3D (void __iomem *)adev->dev.platform_data;
+> +
+> +	if (!reset->base)
+> +		return -ENOMEM;
+> +
+> +	return devm_reset_controller_register(dev, &reset->rcdev);
+> +}
+> +
+> +static const struct aspeed_reset_info ast2700_reset0_info =3D {
+> +	.nr_resets =3D ARRAY_SIZE(ast2700_reset0_signals),
+> +	.signal =3D ast2700_reset0_signals,
+> +};
+> +
+> +static const struct aspeed_reset_info ast2700_reset1_info =3D {
+> +	.nr_resets =3D ARRAY_SIZE(ast2700_reset1_signals),
+> +	.signal =3D ast2700_reset1_signals,
+> +};
+> +
+> +static const struct auxiliary_device_id aspeed_reset_ids[] =3D {
+> +	{ .name =3D "clk_ast2700.reset0", .driver_data =3D (kernel_ulong_t)&ast=
+2700_reset0_info },
+> +	{ .name =3D "clk_ast2700.reset1", .driver_data =3D (kernel_ulong_t)&ast=
+2700_reset1_info },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, aspeed_reset_ids);
+> +
+> +static struct auxiliary_driver aspeed_reset_driver =3D {
+> +	.probe		=3D aspeed_reset_probe,
+> +	.id_table	=3D aspeed_reset_ids,
+> +};
+> +
+> +module_auxiliary_driver(aspeed_reset_driver);
+> +
+> +MODULE_AUTHOR("Ryan Chen <ryan_chen@aspeedtech.com>");
+> +MODULE_DESCRIPTION("ASPEED SoC Reset Controller Driver");
+> +MODULE_LICENSE("GPL");
+
+regards
+Philipp
