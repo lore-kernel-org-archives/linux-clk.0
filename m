@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C10C2CA6;
-	Wed, 25 Sep 2024 04:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AC7146D6D;
+	Wed, 25 Sep 2024 06:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727237865; cv=none; b=Q3ZV/nCCy4DmP+JXrdZ0Idse16qXTgp+uzg4CoPrwxkGImCsUb7F0GkCn3tI+DSAN/yiUiaLbWQXd1dP4ZPOQPf6sFjwl5CP+2Tf0EqNsnkatNYHTA4etByE44BE/kUkB9do3uAWZ9iFqcTGKZdeQWr5VZpnuJtsdNhfXJDOIG8=
+	t=1727245837; cv=none; b=RgvZvMwKnKMAvzmx9zQfj1xgr0JGilh83Z8kNrEYKX766aH0DKwHKKA1JGeOhS6VR8trlZPe00oxZRqmtNIZJBa31fU2jdZOJcLsIqurL8iZS5/lMnDFgooOLiD1GGKGDJRgb3Y0V4dWEJcLwa5R5JPL0jyqSNXz8IpZvDlUrDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727237865; c=relaxed/simple;
-	bh=KOtJjfbQO25dIwdv+f4iH8x+aV0gECM+IZPInPTm17U=;
+	s=arc-20240116; t=1727245837; c=relaxed/simple;
+	bh=wjphIDvrAwAtBoSsWPWOJBcUlHt8tGB/oz86BF4TP8s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xi16XM5JDMS+bieJd6aNdBP5krM74RUNcyfuY0IVLyEbqQpFx1NaAMuAxjHA68xGD00OmA8Sg2wCVyCmZYQcfWGvmtT/4E0W1s5nMqj+Qr10uIBQcQNzae1gjd5SJTg/GvdOObfsJzIfzTdTKDMIn3QWPyU8DM4FVtVd7TSeRdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JDrQwnqA; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=VQ9k+tsh9SLcM3+ZZq1IFPh/o+kqLi6AbSR+5Nr/8ACkf8y8RgXF8L5V6j0XX8Mz6bk8bI+YkU9xROPwOlLOOTRfrRj0+3UgXqZSd7niqDJCzTbRsk0Bt6W/WDyDtujulPKAlOjTSbrpk9LMiE4mFOD1Qqw2l6n55OgPvPq2oy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dEGxYpLD; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JDrQwnqA"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHOk64006035;
-	Wed, 25 Sep 2024 03:44:59 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dEGxYpLD"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHbalX004309;
+	Wed, 25 Sep 2024 06:30:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZhbqxxGnNn6iWuWZcW4la2E8zNouyHAN9O3d1uNJ50A=; b=JDrQwnqAeHFbZEBb
-	3cATDigDpyfO5/dAknAPPdebAnb0nHiwdG7exO2p0zv0tM9wgFumjYIEGnsvzGq4
-	AtPbC9naAgNM7XRrPJ4kZPEJYHw4kB4iVz3YWhB1WkaHuTfV0oc/GkovNu042SgT
-	JowtNhBbrKc+TRK5tQgbZzhChVes1d6e4Is0/tzYe4EXMc/IeIZZ7aGFsMqB9IG5
-	11b52V5Ieytr+vtn2tzC+qAlH+zJV7JrD69+H044cu3MioQu2wJ1Vr3JIg27N4sl
-	kB7w0q9R4J6HfhVbM9U7zdrBBP2HteVjIfXWaehSBIOieVJ5FZ83VJbdmhh3/SiP
-	Pb+72Q==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe9ag98-1
+	/wNTZXVclLHJXjkD3qw9H+DrfG6SxHUeL4C6Wqx7CWY=; b=dEGxYpLDMJpdVBy9
+	sP9peXd1CHcX6Du6gcds0HBisSe+NSW7gDFBV191l5f/7ZQvT1qkcvAY9PNQubbZ
+	+LXt6oxtV1MnEBYpDWPsQ0pGtbb/aIzifxcllrNnLzA+8dBIz16PDDnQ97+kXZyj
+	pi+7w8IB87D8hq/Oa9++p5cZTaGXE6lnb1qn9kERjfF5QTSK5qyIHQfKYfser8k2
+	xlPCcui0vnpy6XybAA51gAfE4EBGuQY5A9nzp0kSCNVzjGoC3yKarcliH/Cj25a8
+	ku/TC2BKlWg+TVN7t2dthD5xJpvRBQ7mU+yAkKdy+AC5JIy7Z4fPd8mJcktFkZ+8
+	TK2GUA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snfh398c-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:44:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P3iwj6018823
+	Wed, 25 Sep 2024 06:30:19 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P6UGNW017043
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:44:58 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 25 Sep 2024 06:30:16 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 20:44:54 -0700
-Message-ID: <3f454d6f-b40e-49e5-89eb-b77bcca35043@quicinc.com>
-Date: Wed, 25 Sep 2024 11:44:51 +0800
+ 2024 23:30:10 -0700
+Message-ID: <4d812be2-5dfc-4e33-bbd1-bf1ae3601991@quicinc.com>
+Date: Wed, 25 Sep 2024 12:00:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,123 +50,104 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] PCI: qcom: Add support for X1E80100 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-6-quic_qianyu@quicinc.com>
- <20240924135021.ybpyoahlpuvedma5@thinkpad>
+        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: <quic_varada@quicinc.com>
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-2-quic_srichara@quicinc.com>
+ <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
+ <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
+ <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
+ <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
+ <823fe98e-eb80-4b6d-8c35-3c14cbb52dda@kernel.org>
 Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <20240924135021.ybpyoahlpuvedma5@thinkpad>
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <823fe98e-eb80-4b6d-8c35-3c14cbb52dda@kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NEvl7Hnmhc16mCowiCBdCrSnCaYaxu0v
-X-Proofpoint-GUID: NEvl7Hnmhc16mCowiCBdCrSnCaYaxu0v
+X-Proofpoint-ORIG-GUID: 7QDEpP3anhKXL5bR8r0MXPwe__aOginp
+X-Proofpoint-GUID: 7QDEpP3anhKXL5bR8r0MXPwe__aOginp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250025
+ engine=8.19.0-2408220000 definitions=main-2409250044
 
 
-On 9/24/2024 9:50 PM, Manivannan Sadhasivam wrote:
-> On Tue, Sep 24, 2024 at 03:14:43AM -0700, Qiang Yu wrote:
->> X1E80100 has PCIe ports that support up to Gen4 x8 based on hardware IP
->> version 1.38.0.
->>
->> Currently the ops_1_9_0 which is being used for X1E80100 has config_sid
->> callback to config BDF to SID table. However, this callback is not
->> required for X1E80100 because it has smmuv3 support and BDF to SID table
->> will be not present.
->>
->> Hence add support for X1E80100 by introducing a new ops and cfg structures
->> that don't require the config_sid callback. This could be reused by the
->> future platforms based on SMMUv3.
->>
-> Oops... I completely overlooked that you are not adding the SoC support but
-> fixing the existing one :( Sorry for suggesting a commit message that changed
-> the context.
->
-> For this, you can have something like:
->
-> "PCI: qcom: Fix the ops for X1E80100 SoC
->
-> X1E80100 SoC is based on SMMUv3, hence it doesn't need the BDF2SID mapping
-> present in the existing cfg_1_9_0 ops. This is fixed by introducing new ops
-> 'ops_1_38_0' and cfg 'cfg_1_38_0' structures. These are exactly same as the
-> 1_9_0 ones, but they don't have the 'config_sid()' callback that handles the
-> BDF2SID mapping in the hardware. These new structures could also be used by the
-> future SoCs making use of SMMUv3."
-Never mind, thanks for your suggestions. Will update the commit msg in next
-version.
 
-Thanks,
-Qiang Yu
->
-> - Mani
->
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-qcom.c | 16 +++++++++++++++-
->>   1 file changed, 15 insertions(+), 1 deletion(-)
+On 9/25/2024 12:08 AM, Krzysztof Kozlowski wrote:
+> On 24/09/2024 14:10, Sricharan Ramabadhran wrote:
 >>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index 88a98be930e3..56ba8bc72f78 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
->>   	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->>   };
->>   
->> +/* Qcom IP rev.: 1.38.0 */
->> +static const struct qcom_pcie_ops ops_1_38_0 = {
->> +	.get_resources = qcom_pcie_get_resources_2_7_0,
->> +	.init = qcom_pcie_init_2_7_0,
->> +	.post_init = qcom_pcie_post_init_2_7_0,
->> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->> +	.deinit = qcom_pcie_deinit_2_7_0,
->> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->> +};
->> +
->>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
->>   	.ops = &ops_1_0_0,
->>   };
->> @@ -1409,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
->>   	.no_l0s = true,
->>   };
->>   
->> +static const struct qcom_pcie_cfg cfg_1_38_0 = {
->> +	.ops = &ops_1_38_0,
->> +};
->> +
->>   static const struct dw_pcie_ops dw_pcie_ops = {
->>   	.link_up = qcom_pcie_link_up,
->>   	.start_link = qcom_pcie_start_link,
->> @@ -1837,7 +1851,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->>   	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
->>   	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
->>   	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
->> -	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
->> +	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_38_0 },
->>   	{ }
->>   };
->>   
->> -- 
->> 2.34.1
 >>
+>> On 9/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
+>>> On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+>>>>
+>>>>>> +
+>>>>>> +allOf:
+>>>>>> +  - $ref: qcom,gcc.yaml#
+>>>>>> +
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    const: qcom,ipq5424-gcc
+>>>>>
+>>>>> So everything i sthe same as 5332? Why not adding it there?
+>>>>>
+>>>> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
+>>>> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
+>>>> bindings in v2 accordingly.
+>>>
+>>> Hm? What is the difference in the bindings? I don't see. Maybe some diff
+>>> would help.
+>>>
+>>
+>> For IPQ5424, clocks items is like this
+>>
+>>         - description: Board XO clock source
+>>         - description: Sleep clock source
+>>         - description: PCIE 2lane PHY0 pipe clock source
+>>         - description: PCIE 2lane PHY1 pipe clock source
+>>         - description: PCIE 2lane PHY2 pipe clock source
+>>         - description: PCIE 2lane PHY3 pipe clock source
+>>         - description: USB PCIE wrapper pipe clock source
+> 
+> But that's not true. Open your patch and look:
+> 
+> +  clocks:
+> +    items:
+> +      - description: Board XO clock source
+> +      - description: Sleep clock source
+> +      - description: PCIE 2lane PHY pipe clock source
+> +      - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
+> +      - description: USB PCIE wrapper pipe clock source
+> 
+> Either you sent incomplete binding or we talk about different things.
+Sorry for the confusion, the 2 additional PHY bindings needs to be
+appended here, as well as to DTS. Will add that.
+
+> Looks like first case, so the binding is just not ready. I am not going
+> to review it.
+
+Sorry yeah, i missed the 2 instances in V1. In that case, would it be
+fine to go with the approach of adding the compatible to 
+ipq5332-gcc.yaml with a 'if:' of compatibles ?
+
+
+Regards,
+  Sricharan
+
