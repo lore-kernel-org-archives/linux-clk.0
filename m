@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4545B132103;
-	Wed, 25 Sep 2024 07:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2112155CB3
+	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 07:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248055; cv=none; b=BEvtdqYqsuBx1YODrHV0VWxoqLSiku3Vrrnm14evmFAP7cwxh/JJWXrOqNA6opWi91qaMNuhqwC31oBmZzC0o1y4TJGu6NuWr6tL2C58UVd1CAAUt1q1Q2j+pFPRrkCx+ym0b5h+8jSD4aemswudHbzrthNfYzrGCOVM+b5/zqQ=
+	t=1727250634; cv=none; b=QbMEgvp+F2cG6Xy5fgCzL7xp9Ai5DkMSQsrxsVwsrfyQY4ZYIughrM17bGa13fJFyVtiAZYiB819rYNvdIDMwCzNRKEhNEsgue3AuIXaI+oXOnQGTuwjPXFKHDOKgIkPXec60Y9XVTEftvrJKOSYRhDUWVL5673rTRW9FyQfBo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248055; c=relaxed/simple;
-	bh=TSGsyKlj+xheK0shDTdEtR6NWfwiOu5gzzjKjqLIDq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bzp3ewMha1z91oz8j7520s7C/S98Nr5aXwmOCsGyT6+acX0vZ1VU/6W1AnkWNHle3joCJeWbjXXIRgS1nLJD7eHxYgmt8XYOSG1o2hhSdO3Er+ibgzr9ulyqda9z1nexxstFrE9Q+QDnePY7anlSS0KA/0PxQBGV27AiCZ37wt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhoaE7dH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727250634; c=relaxed/simple;
+	bh=LQJL9XnZ7aqpWYvsQHqnHYPGaY781b2/pcH4k8tMXf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SzjycOwwYYaSzBI2r+mKai0WHK8nr+jx+bbKGO0BzpzOVmqGln3TILzsPPENx3xZtOn0LNFBTqEDzQ2ObI1FpkPYOKaAC2dvIvnrgBfnD0gTG0R+h1lZz5gQFHoatSN9uphypfSeDw4JA+z/VobBivAv61wTbxOb2CgO9IWHfno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qTaOKFwu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhoaE7dH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82503C4CEC3;
-	Wed, 25 Sep 2024 07:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727248054;
-	bh=TSGsyKlj+xheK0shDTdEtR6NWfwiOu5gzzjKjqLIDq4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MhoaE7dHCC8Z6cTvhQs5+k94wwc6uUXKBjIN4m7/3krr04wN2sYI8vZPlTsSdKQta
-	 qnuijkRBQQuhF9dB9cRHPHzVFYQwOPzPbQS89HI37qV6fyo0uRN+76Jb5VXl8tLlKM
-	 VPgMXf48yUeJLJ3ux4djRaCdAkWapQkzZ936X2P/2aBTTBDr3kmOoeuXF1vHb9su7I
-	 dUzx1oJdVrZ+NKXWe2mLqVK+//zI4gHZNFq4kzRTLxxxpzESR3F0Vn/cV9vywqaaqe
-	 uhRGnwbA+JuRljL/yOLaODHfJD/b52kQ0Kfjy24l/iV4JQkTW3NBIxpNiBLqFpxnjY
-	 OXHDIy31b8xXw==
-Message-ID: <9b7f6995-586e-44ee-a73b-9baf1bf23a69@kernel.org>
-Date: Wed, 25 Sep 2024 10:07:29 +0300
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qTaOKFwu"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb806623eso55627315e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 00:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1727250629; x=1727855429; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YFiXClqbPRW4CJclRDKGkw40xsL++a9HxAmJhaouAR4=;
+        b=qTaOKFwur8NWzwTTOKUrLm2/lHaFRxfR3ELJKonQIhw+faVILbQrhWbbHFlQgiRd+4
+         o6pLBn+8gKElH5zchy3DKzfCY7waSwihtH1rOyWFkOv1i7Bl8MqLzaIKwaBHS4Mok+/m
+         SBTcQF6DT1edztz9ppNB8L4bTaem7rhnL5ooU6NV/39Oz+21dGxY2om7OhSlqzK+7VHu
+         qUBtovz2P508UiV0Odjs+yNPwKRYCWp7oaAXMC+txQ/Jzxvn5aDDC0R4dXetWNV+F+Ns
+         OhYMZLEpKunfm6ct24sL3wHb7Ud/u9ql5C98gadYlpIQO95GLGJCkTq99XI1FCm9f+70
+         9Adw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727250629; x=1727855429;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFiXClqbPRW4CJclRDKGkw40xsL++a9HxAmJhaouAR4=;
+        b=dcw05arb1hnJv9QnRwIU4g6lH3fIVH/YM+APr5K6d3ToVrxrkBB88vMXwyTUJdcODu
+         WOFz8nl6CIQ4v4bBW7RDNh/f0opSUqfGY9GJ/yENPyhWajl/vSsc2qTl8fvAjXgZVHIi
+         ipbS6T++3BJXsYrTeX6DFoAXKbQSmYCl8lacsXp9QRU/hevP9vI5V7Owv+7qXlZB7gG9
+         sHKiebqx3AmHVy2UFcBqI4BYGfsk09rMvXl5M49662/XkHxJHI8B2j8+EkahfouVoWkr
+         5boiq2Pa0Zhvc0eFeXW3RHhl8U6Os6Fuupz4lPj3eZsvhX44EUuEBTrfw8EAI9DH2eaK
+         IXgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9bhxIMkyZhgay9EHmHt5IJ0nvsLxaBtvdXjXw7U2h6yXnz3B74z80zbI/yPhyl30EGsrEu9/Nxac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcQ+5eZ2gd1bAn0rFqr2fgcfGCdTX3EJR4eS4Lpu5peS7LPFon
+	j/vjE/CIXj2wPeYJaJehx6hc341zLWZxoC7qkTDHTS61jCRvBs/aFHF0zLG2YaM=
+X-Google-Smtp-Source: AGHT+IFSqrWOgvLYloNvVXm1vEQkjP+JD1QteKQEPhT8fVsIjwexzPr+xFJfYUTXmrkXaAxZ4I2zWw==
+X-Received: by 2002:adf:f58e:0:b0:36d:2984:ef6b with SMTP id ffacd0b85a97d-37cc2466ff9mr1203849f8f.11.1727250629008;
+        Wed, 25 Sep 2024 00:50:29 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.115])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969feb45sm10046135e9.20.2024.09.25.00.50.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 00:50:27 -0700 (PDT)
+Message-ID: <23531a70-cf50-4b32-a9fd-81e6cfcbcf9d@tuxon.dev>
+Date: Wed, 25 Sep 2024 10:50:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,229 +61,81 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: twl: add TWL6030 support
-To: Andreas Kemnade <andreas@kemnade.info>, linux-omap@vger.kernel.org,
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>, linux-kernel@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Tony Lindgren <tony@atomide.com>,
- linux-clk@vger.kernel.org
-References: <20240924103609.12513-1-andreas@kemnade.info>
- <20240924103609.12513-3-andreas@kemnade.info>
+Subject: Re: [PATCH 04/16] soc: renesas: Add SYSC driver for Renesas RZ/G3S
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240924103609.12513-3-andreas@kemnade.info>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Andreas,
+Hi, Geert,
 
-On 24/09/2024 13:36, Andreas Kemnade wrote:
-> The TWL6030 has similar clocks, so add support for it. Take care of the
-> resource grouping handling needed.
+On 24.09.2024 14:32, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  drivers/clk/clk-twl.c | 97 ++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 95 insertions(+), 2 deletions(-)
+> On Thu, Aug 22, 2024 at 5:28 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The RZ/G3S SYS Controller has 2 registers (one for PCIE one for USB) that
+>> need to be configured before/after powering off/on the PCI or USB
+>> ares. The bits in these registers control signals to PCIE and USB that
+>> need to be de-asserted/asserted after/before power on/off event. For this
+>> add SYSC controller driver that registers a reset controller driver on
+>> auxiliary bus which allows USB, PCIE drivers to control these signals.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
+> Thanks for your patch!
+> 
+>> --- /dev/null
+>> +++ b/drivers/reset/reset-rzg3s-sysc.c
+>> @@ -0,0 +1,140 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Renesas RZ/G3S SYSC reset driver
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#include <linux/auxiliary_bus.h>
+> 
+> Using the Auxiliary Bus requires selecting AUXILIARY_BUS.
 
-You will have to add information about TWL6030 to Kconfig.
-
-"config CLK_TWL
-        tristate "Clock driver for the TWL PMIC family"
-        depends on TWL4030_CORE
-        help
-          Enable support for controlling the clock resources on TWL family
-          PMICs. These devices have some 32K clock outputs which can be
-          controlled by software. For now, only the TWL6032 clocks are
-          supported."
-
-> index eab9d3c8ed8a..194f11ac5e14 100644
-> --- a/drivers/clk/clk-twl.c
-> +++ b/drivers/clk/clk-twl.c
-> @@ -11,10 +11,22 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  
-> -#define VREG_STATE              2
-> +#define VREG_STATE		2
-> +#define VREG_GRP		0
->  #define TWL6030_CFG_STATE_OFF   0x00
->  #define TWL6030_CFG_STATE_ON    0x01
->  #define TWL6030_CFG_STATE_MASK  0x03
-> +#define TWL6030_CFG_STATE_GRP_SHIFT	5
-> +#define TWL6030_CFG_STATE_APP_SHIFT	2
-> +#define TWL6030_CFG_STATE_MASK		0x03
-
-unnecessary change?
-let's leave TWL6030_CFG_STATE_MASK before TWL6030_CFG_STATE_GRP_SHIFT.
-
-> +#define TWL6030_CFG_STATE_APP_MASK	(0x03 << TWL6030_CFG_STATE_APP_SHIFT)
-> +#define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
-> +						TWL6030_CFG_STATE_APP_SHIFT)
-> +#define P1_GRP BIT(0) /* processor power group */
-What are the other power groups? Looks like there are 2 more from below code.
-
-> +#define ALL_GRP (BIT(0) | BIT(1) | BIT(2))
-Please use earlier defined groups (P1_GRP, etc) instead of re-defining with BIT().
-
-> +
-> +#define DRIVER_DATA_TWL6030 0
-> +#define DRIVER_DATA_TWL6032 1
->  
->  struct twl_clock_info {
->  	struct device *dev;
-> @@ -53,6 +65,49 @@ static unsigned long twl_clks_recalc_rate(struct clk_hw *hw,
->  	return 32768;
->  }
->  
-> +static int twl6030_clks_prepare(struct clk_hw *hw)
-> +{
-> +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> +	int grp;
-> +
-> +	grp = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-> +	if (grp < 0)
-> +		return grp;
-> +
-> +	return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> +			    grp << TWL6030_CFG_STATE_GRP_SHIFT |
-> +			    TWL6030_CFG_STATE_ON);
-> +}
-> +
-> +static void twl6030_clks_unprepare(struct clk_hw *hw)
-> +{
-> +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> +
-> +	twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> +		     ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |
-
-Why are you unpreparing ALL_GRP? In prepare you only used VREG_GRP.
-
-> +		     TWL6030_CFG_STATE_OFF);
-> +}
-> +
-> +static int twl6030_clks_is_prepared(struct clk_hw *hw)
-> +{
-> +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> +	int val;
-> +
-> +	val = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-> +	if (val < 0)
-> +		return val;
-> +
-> +	if (!(val & P1_GRP))
-> +		return 0;
-> +
-> +	val = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE);
-> +	if (val < 0)
-> +		return val;
-> +
-> +	val = TWL6030_CFG_STATE_APP(val);
-> +	return val == TWL6030_CFG_STATE_ON
-
-Is there a possibility that after calling twl6030_clks_prepare()
-the clock can still remain OFF?
-If not then we could just use a private flag to indicate clock
-prepared status and return that instead of reading the registers again.
+Thank you for pointing it. I'll adjust it in the next version, if it will
+be one.
 
 
-> +}
-> +
->  static int twl6032_clks_prepare(struct clk_hw *hw)
->  {
->  	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> @@ -93,6 +148,13 @@ static int twl6032_clks_is_prepared(struct clk_hw *hw)
->  	return val == TWL6030_CFG_STATE_ON;
->  }
->  
-> +static const struct clk_ops twl6030_clks_ops = {
-> +	.prepare	= twl6030_clks_prepare,
-> +	.unprepare	= twl6030_clks_unprepare,
-> +	.is_prepared	= twl6030_clks_is_prepared,
-> +	.recalc_rate	= twl_clks_recalc_rate,
-> +};
-
-Instead of re-defining all the clock ops can't we just reuse the
-existing twl6032 clock ops?
-
-We just need to tackle the twl6030 specific stuff inside the ops based on
-some platform driver data flag.
-
-> +
->  static const struct clk_ops twl6032_clks_ops = {
->  	.prepare	= twl6032_clks_prepare,
->  	.unprepare	= twl6032_clks_unprepare,
-> @@ -105,6 +167,28 @@ struct twl_clks_data {
->  	u8 base;
->  };
->  
-> +static const struct twl_clks_data twl6030_clks[] = {
-> +	{
-> +		.init = {
-> +			.name = "clk32kg",
-> +			.ops = &twl6030_clks_ops,
-> +			.flags = CLK_IGNORE_UNUSED,
-> +		},
-> +		.base = 0x8C,
-> +	},
-> +	{
-> +		.init = {
-> +			.name = "clk32kaudio",
-> +			.ops = &twl6030_clks_ops,
-> +			.flags = CLK_IGNORE_UNUSED,
-> +		},
-> +		.base = 0x8F,
-> +	},
-> +	{
-> +		/* sentinel */
-> +	}
-> +};
-> +
-
-This clock data is identical to twl6032.
-We could implement the same feature with a lot less code if we just
-reuse the data and clock ops.
-
->  static const struct twl_clks_data twl6032_clks[] = {
->  	{
->  		.init = {
-> @@ -127,6 +211,11 @@ static const struct twl_clks_data twl6032_clks[] = {
->  	}
->  };
->  
-> +static const struct twl_clks_data *const twl_clks[] = {
-> +	[DRIVER_DATA_TWL6030] = twl6030_clks,
-> +	[DRIVER_DATA_TWL6032] = twl6032_clks,
-> +};
-> +
->  static int twl_clks_probe(struct platform_device *pdev)
->  {
->  	struct clk_hw_onecell_data *clk_data;
-> @@ -137,7 +226,7 @@ static int twl_clks_probe(struct platform_device *pdev)
->  	int i;
->  	int count;
->  
-> -	hw_data = twl6032_clks;
-> +	hw_data = twl_clks[platform_get_device_id(pdev)->driver_data];
->  	for (count = 0; hw_data[count].init.name; count++)
->  		;
->  
-> @@ -176,7 +265,11 @@ static int twl_clks_probe(struct platform_device *pdev)
->  
->  static const struct platform_device_id twl_clks_id[] = {
->  	{
-> +		.name = "twl6030-clk",
-> +		.driver_data = DRIVER_DATA_TWL6030,
-> +	}, {
->  		.name = "twl6032-clk",
-> +		.driver_data = DRIVER_DATA_TWL6032,
->  	}, {
->  		/* sentinel */
->  	}
-
--- 
-cheers,
--roger
+> Elsse you might run into build failures:
+> 
+> aarch64-linux-gnu-ld: drivers/soc/renesas/rzg3s-sysc.o: in function
+> `rzg3s_sysc_probe':
+> rzg3s-sysc.c:(.text+0x21c): undefined reference to `auxiliary_device_init'
+> aarch64-linux-gnu-ld: rzg3s-sysc.c:(.text+0x264): undefined reference
+> to `__auxiliary_device_add'
+> aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
+> `rzg3s_sysc_reset_driver_init':
+> reset-rzg3s-sysc.c:(.init.text+0x1c): undefined reference to
+> `__auxiliary_driver_register'
+> aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
+> `rzg3s_sysc_reset_driver_exit':
+> reset-rzg3s-sysc.c:(.exit.text+0x10): undefined reference to
+> `auxiliary_driver_unregister'
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
