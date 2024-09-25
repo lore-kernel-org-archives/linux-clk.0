@@ -1,64 +1,64 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F5715854F
-	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 07:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00A158DC4
+	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 08:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727251144; cv=none; b=htMTLOe4H4EZZZpkHzAtf6EL6XS4wjA2SYvSq3OkaIQO3hSDvSpChpFlK5RABOhD8DlctDd80dGtYFOKLWrHq9hoIFfm4mNGO7d4u8+RgLRIy1mhaSelVh5F/tmSY/fWMHk476V/MLMyNT/SJB+lEwHhQsQU742yIRZ9AgGWfKQ=
+	t=1727251527; cv=none; b=XVt4S5EsQiMBAlwqzI5EYw/FNC8Xbgq55dxB2GvD8eXJfsfvKPPBtn7lrdOOyVFpeM+FmlNewCW2qkjXeY6NUIjv5RKJnKfC7GNEfYXXRM+h1V0Irp+LTkKNcAUt2iU+jjvuAvQCoGi7LLetdBmKTg5kEwo9N95azLkt53qs/3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727251144; c=relaxed/simple;
-	bh=Hc+LCHMm4RDQ9GTVn7gf8E/cTxLuUSUoH4rgKkOqOT0=;
+	s=arc-20240116; t=1727251527; c=relaxed/simple;
+	bh=Ge+7LszBaOT5Dm6+t5UCLcHOk904zSSAP9mOUFtAaLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZEkX4oGRY1Hvq98sm+/SZAQWMejOoc5H9dh7+3Fy92OR3NoUojUI5zgrR0NZXPZHO2zRuGIm8DfgCepDyl/1oZ+Kv0XUeF7fpw6hf61S9iWf2h3IF7D+t5qzwhoBkNUXZor83szrczPxKvnd6GoVrKOnuJinrNcdlWpwFKdyrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bbqV20Nu; arc=none smtp.client-ip=209.85.221.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=tKagvFrCvFhh8DrQnCQsUkcbwTHV0fNLivmNBRi3NjsKuvOUDlP0J5X1EPa4NWZTxeIJihGtw1Iz4xP+ZM7cWYRX9LC3nFUR7Lif8mxaIJhSVLAs8zs6DZWAyLfdFclposyO97d3e4K8XDdTT7QI7fVvfFJBX1KN6SmO9rDabRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yc9/tr21; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbqV20Nu"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37cc4e718ecso227544f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 00:59:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yc9/tr21"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37cc5fb1e45so187665f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 01:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727251141; x=1727855941; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727251524; x=1727856324; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=bapYHrGCRxq+5Z8fPQWisdRvflJnfm7FCmo91yCvTzg=;
-        b=bbqV20Nu4WOcVFoCgpRpACsANHDTTYiD4uCkkknliQaNFvKMuajE+2rrUs7qGaa7Le
-         LPCn/VPkRXg2ywwEsby6gWnq27hXh8I+8FLFIJ29X3bgc9vmOd2+lX9VZM3cRDv4avhp
-         IO5e50GbLxAO3ZCIsmTGO/zQFDn1x7LbQjBDeAIMpD0Vxm7Wr7OJ09WMybfxeOsrg8nZ
-         zQ5iHUpcRGTV7Z2ouCtV6A7ynVnoBYh35ftbOAXy44EbhWDzP4LL4356iRWLq+ARX9jI
-         fQaDvwr6HvR2r/kyWADPVr8fS8fWO7OLH2Yk7PBqoBvkmLQUFu/MowTWXID+rLu4K6/r
-         GBpw==
+        bh=fmE1UeERqrchW40NVacg6nrSR6Vcco0wZ6da4wq9+7A=;
+        b=yc9/tr21EW3GzcNSMPS2Z+skDSEURgLHh543NbLFnQy/R3ccxmO4zmG48598TV3/8R
+         MbQl/HfzMXpMd6YqAXIGT8giyg3w1d7+bczZL0jJwnnLZOEsbTHZanyFKjvG+HvJjr64
+         GHbcJCSrI4S2wu9ru5NELW5sFvLnGcChKkjvpbCaAB2wuejaC4uXagXB/ofxLTvRF9oo
+         D+Pkch73c++xHNqwtxx+x640Kj+CBdDIfiGICpZ3fCy3VZaQ2Hx5s9eMK5yowW1Xwbo3
+         m7LpIbi/d2xfX0z6cgq1Do6TlnTsSyOPXXRR5nngfz2yc96Q9o3nDi1AT5SiQZvv5F/G
+         F+3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727251141; x=1727855941;
+        d=1e100.net; s=20230601; t=1727251524; x=1727856324;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bapYHrGCRxq+5Z8fPQWisdRvflJnfm7FCmo91yCvTzg=;
-        b=FwKm4fln2suU7LIKdAOSmqBDadzevpXKPVvlh0jl5YFgh/po+p5mjj3z2vSiQy2rD1
-         fuUuOVR24wuTWf/rR+p3wTpKmu6UYVTZC8U6UP9/VhO4QN13Ru9gxvL/jVbSzCZ+U7cK
-         bd+CKQgrAhrshXaNrZkpsoEHIfweC1AyaTXkkZYH3nJvf1dDIgdSojFV41GmwDKmL6iv
-         d58jk3RMx7OgTGBpWhIXdToD6sr8/r+/+IjxXaLA314A0r94U2p12UA3pWIIGxs6J/5/
-         HfU2AEWkwke2J+fMlkAqHSJBmFz4w6dXF4iQNJmY9+1a2iyfHYkhxASWEadzayZa1LQ+
-         ZAeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv+c6hpeKz9HTmSbWngFN/XBHyFMrFtzdudZlAsCAZRuFvX7XAD06tJ2lU6jNRLzspWDRtZkT4WRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzybY6tTy1cxnAZjpaVtLP0LbaWzk1QG36QAwVgeSW+E6+GQK6
-	kfM32uknBEAYXVtf3oK08kXr7WZ/2Aw+SErpBwuw1kxlvkG4R1s14sfh31okJw==
-X-Google-Smtp-Source: AGHT+IG3djtkgvDwFjL5SMyfW3qLoXY0CLRwpTQ//e0lJY1MODc0J/w7hgvsNBnFokru+vE1owYtFw==
-X-Received: by 2002:adf:f886:0:b0:371:8cc3:3995 with SMTP id ffacd0b85a97d-37cc24847f5mr1254992f8f.34.1727251141533;
-        Wed, 25 Sep 2024 00:59:01 -0700 (PDT)
+        bh=fmE1UeERqrchW40NVacg6nrSR6Vcco0wZ6da4wq9+7A=;
+        b=p18t+2DBP7TBY2pwirdQsVlBpWJBt9aXhG5fGzNFrKepATpv0F3GeF35VMnJlCj1uX
+         Nybrmw5dMhkTBfuoUn/hCfVV7GfKGKfH2p8MnPbl+xAc3W2PMEbUu1vy4MOEH3LXUlHJ
+         0IRF+7aWB+AHvStCvo0rjSkg1a/ifMXKoa24HejYmyOC2D3ODs5b0j56CcyFJtxDKF7k
+         vgj8XlP/RmSF9quF5BeMIBVjuyyEZ936NLpJbT6FDqhuWx5ups6R3n2+ew6hscW0nuBf
+         tcnrVEsxHioFPLS/F6GRBpxSX5+iPQctSdFQr9g4WexdGc9tn7E5w59dujIKY7bg0VzF
+         +4oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU8fsC5W3F9gG2uNPcw8oHj80kfwchDIGoMyjHkV3nYlpKaSprcH3RuutQkDubrIEkDPdA9x5kbh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycKefIprh+x5EUFzROEAbV9BW4b1qKIoHN1Zq8nZkHmqKwTnSe
+	aEqtXXUFpOJHtII8ocyht39O9IsICYtJct4ckuVoVqNKaXSZtdtsMnsoCiJnVw==
+X-Google-Smtp-Source: AGHT+IGu+EQFdqJdQRNdKI2O1nnUzgvF8rHWsav7UIwu3lMA5nKO4ePunuX3F80nTqxwvNWJ8lBRwg==
+X-Received: by 2002:adf:e7cf:0:b0:374:c64d:5379 with SMTP id ffacd0b85a97d-37cc247945emr1246796f8f.27.1727251523891;
+        Wed, 25 Sep 2024 01:05:23 -0700 (PDT)
 Received: from thinkpad ([80.66.138.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc31f77esm3313206f8f.108.2024.09.25.00.59.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e90cd8c5asm40971185e9.1.2024.09.25.01.05.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 00:59:01 -0700 (PDT)
-Date: Wed, 25 Sep 2024 09:58:59 +0200
+        Wed, 25 Sep 2024 01:05:23 -0700 (PDT)
+Date: Wed, 25 Sep 2024 10:05:22 +0200
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, vkoul@kernel.org, kishon@kernel.org,
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
+	robh@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
 	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
 	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
 	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
@@ -66,11 +66,10 @@ Cc: Johan Hovold <johan@kernel.org>, vkoul@kernel.org, kishon@kernel.org,
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3
  on x1e80100
-Message-ID: <20240925075859.4vbb4faaworc6eyz@thinkpad>
+Message-ID: <20240925080522.qwjeyrpjtz64pccx@thinkpad>
 References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
  <20240924101444.3933828-7-quic_qianyu@quicinc.com>
- <ZvLQFSjwR-TvHbm_@hovoldconsulting.com>
- <ee32742d-9daf-4bff-948b-cf2e705bc73f@quicinc.com>
+ <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,51 +79,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ee32742d-9daf-4bff-948b-cf2e705bc73f@quicinc.com>
+In-Reply-To: <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
 
-On Wed, Sep 25, 2024 at 02:37:41PM +0800, Qiang Yu wrote:
+On Tue, Sep 24, 2024 at 04:26:34PM +0200, Konrad Dybcio wrote:
+> On 24.09.2024 12:14 PM, Qiang Yu wrote:
+> > Describe PCIe3 controller and PHY. Also add required system resources like
+> > regulators, clocks, interrupts and registers configuration for PCIe3.
+> > 
+> > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
 > 
-> On 9/24/2024 10:43 PM, Johan Hovold wrote:
-> > On Tue, Sep 24, 2024 at 03:14:44AM -0700, Qiang Yu wrote:
-> > > Describe PCIe3 controller and PHY. Also add required system resources like
-> > > regulators, clocks, interrupts and registers configuration for PCIe3.
-> > > @@ -2907,6 +2907,208 @@ mmss_noc: interconnect@1780000 {
-> > >   			#interconnect-cells = <2>;
-> > >   		};
-> > > +		pcie3: pcie@1bd0000 {
-> > > +			device_type = "pci";
-> > > +			compatible = "qcom,pcie-x1e80100";
-> > > +			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			interrupt-names = "msi0",
-> > > +					  "msi1",
-> > > +					  "msi2",
-> > > +					  "msi3",
-> > > +					  "msi4",
-> > > +					  "msi5",
-> > > +					  "msi6",
-> > > +					  "msi7",
-> > > +					  "global";
-> > This ninth "global" interrupt is not described by the bindings, which
-> > would also need to be updated. What is it used for?
+> Qiang, Mani
 > 
-> As of now, the global interrupts is mainly used to get link up event so
-> that the device driver can enumerate the PCIe endpoint devices without
-> user intervention. You can refer to
-> https://lore.kernel.org/linux-pci/20240828-pci-qcom-hotplug-v4-11-263a385fbbcb@linaro.org.
+> I have a RTS5261 mmc chip on PCIe3 on the Surface Laptop.
+
+Is it based on x1e80100?
+
+> Adding the global irq breaks sdcard detection (the chip still comes
+> up fine) somehow. Removing the irq makes it work again :|
 > 
-> I see this global interrupts has been documented in qcom,pcie-sm8450.yaml.
-> Do I need to move it to qcom,pcie-common.yaml?
+> I've confirmed that the irq number is correct
 > 
 
-No, you need to describe it in qcom,pcie-x1e80100.yaml.
+Yeah, I did see some issues with MSI on SM8250 (RB5) when global interrupts are
+enabled and I'm working with the hw folks to understand what is going on. But
+I didn't see the same issues on newer platforms (sa8775p etc...).
+
+Can you please confirm if the issue is due to MSI not being received from the
+device? Checking the /proc/interrutps is enough.
 
 - Mani
 
