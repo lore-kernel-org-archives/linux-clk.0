@@ -1,109 +1,104 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081FB24B21;
-	Wed, 25 Sep 2024 19:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36391D5AD5
+	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 21:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727291129; cv=none; b=NJrYvwAX32tUKlJN7hwYuke3jjOGWpm24ZTQGuAKZ6sGJSN8Wz1hKKT6urxxO35MZ67DvHWkzDzKQilGRFMmqM3vgI+5E3C9WDVIB1jt85uEzuRfzuzB3UjZTfHSH1rAX2j82QDZeeBOrQfJDktGb9WzYqw2T+Jkho7BAmbgXh4=
+	t=1727299727; cv=none; b=q3Wof/PmXxPlsyNolFZIouriuKd6dN/g1Jl0LBwesD367u4Glu4xqYiouPaf6+HPPQfIjgWVEmGJrRchvYEjP9XgJXgbv9/JYUpnbKw74D6LI/tG2NHdC/HASQpRuKvhpagin6TJr3wH4MuIhfVwIq41iyfJa+FOVKtltVT5M5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727291129; c=relaxed/simple;
-	bh=qVyuQ6fOCy7zVhuYfHZM/BSnMq7CmNDmuS9VNsG6Fus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aAs0LPWJpYJXzyDvnL6LPtQCY52xMX+27qYQ+yfJ/k3AHhZy4VtkK0VUXbUmY9jbQkoVWS3N+htHuWpFe3+BD6cnXu7fPRJwQCb1x/pXRdoDMun5PhvufC4++u4lhu/Xf5aYvljKSSonZBK9lR2HzAEcg0QiaYKldn32TWf8+lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPzsKG+p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1727299727; c=relaxed/simple;
+	bh=WucR+djirwpM6STmHdVUy4UR5ERz2gZtg/GRT0C4+GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYGvCwM6LwUOZSK5mjYaIwMTsI9XqsQ+QcTv6YE2PviP8VRYmyc40s1yJK6m2pXnFutIq3S0JM92OIT5tS5wdscaBf21OIIG7rV4m4Q8NaW/jFMFYU/cSMRc6H8EqGcGpgm9LpU0ZVzNlfzArLVyb6NddfbItsJ6eN91I+ldfMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6P9byp+; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPzsKG+p"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Cu6027637;
-	Wed, 25 Sep 2024 19:05:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wpseR5rYPGLdp3ACOwGjh50SXZEk1xxy1xMTOQ/DvPs=; b=gPzsKG+pSfX1KG4l
-	9EIvIw4VF7/CWfkK5H8T+A5SId10xkCQYVa9bVW2adl5E6GIRbSRpxqB4YEJJg15
-	RcDbea19Gfi7eseiFhVJm7Pl45asCO4Q9hBIwswwAcceSgZgUxALMD6Njx48TT2I
-	ilUOqwJUYKcbtlVU7dXdc/sKlY1/jJZ/3FG2mq5SurRjFDbZo0NK1R9QdYNHXj85
-	fTJd4niXcEnWKROIJELhPMYPUkHPFKljbAdyT/P8Ly+HVL0oAVzC+ccmDuy3N+zY
-	t4qEhROMvqcwXjCmmfc2Dx6zoDyUyDvJzSrUyIOnmWScaeYmh0bYfZ//yyBNH5Qz
-	IU8xQQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spc2w3jx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 19:05:10 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PJ59if010435
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 19:05:09 GMT
-Received: from [10.50.63.248] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
- 2024 12:05:00 -0700
-Message-ID: <2a16d5a2-17a5-4988-8a25-34ac10ff3d08@quicinc.com>
-Date: Thu, 26 Sep 2024 00:34:56 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6P9byp+"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75de9a503so3198371fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 14:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727299724; x=1727904524; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gwTr0ZjzKHD8edFYUSKF8PBtaT++xT7YsKjfFnre+JY=;
+        b=M6P9byp+++VgGzj3JjemOtwY976DKBqxqAII/DgM4aNnkiS1sYNXCw+EUwxQTkvLAT
+         GG7TQdk5sgipr9UPMLraayYGIG5oki9x9QDgJeuoWeh29mCugfrLacEm05apNh35PD1l
+         vvfE0QgUQEOfNwNh28+LSn/BxBGuhIINM55223ygPTzZvEwy6QeM4uC55l4iJB5AGkcV
+         xtTW+eH4E6Dvli43X0wilQ/PLPUDEBPkpguG86UC5pyIDb9Mnp/DyGG5jL7TQ6kFzVVZ
+         GEPd/g+OQ8TG8j1w3asTDgbMMmHBxkK9QS0glr4yk76+TF3MFli6Oec8clg6+rUdwMaK
+         5hgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727299724; x=1727904524;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwTr0ZjzKHD8edFYUSKF8PBtaT++xT7YsKjfFnre+JY=;
+        b=dsSCXMNkddMnCdKHpG+TMzp0JdxtOZ6N8f58ApvUx6Tdke+a7BruIQtAV7zYxwD86O
+         rWSJsG48igrh82+gF9KBVA6+bbT4+NmTbj9RyO2vvDlaGgkBy40kmMI8zOkDZHU9hPwJ
+         P5H9VGHunVSTiqdykesKD9wWaLHxnJTDKI/nrdpHNUc8QERvQvkocUukceng5lkI5duH
+         rgNJzsLSfqOfMYgnRrHKDvUdogIlVXEI4NwOQnGo6T3OVXZn9Qq81GToCaD4DwlphSJg
+         p5VyDXedsleFbk4qjGkN1Xzyr/BC35ZMi9Dq9Y+3c44JCGgILph21DgRouFCAwXeJyl0
+         zpPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuhkca6uyw2wyiFsLY+YCJTq6iR89xtQ3MP4xB3OjU3NAZMkIuXfJnf9zjKQsWcqae1A/2G86t4Ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoycjNpOeaJDj+J4K/w7uqk6ugbaDUrAe3dn0zpb3+vUSwewq+
+	Lv73cwMLaak9iluAsvSIlUalxu8FN+brXqW0Xoj5vRLr54mU0Tu/ku+oVz6Ki28=
+X-Google-Smtp-Source: AGHT+IFr4Ny4+GpZtXRbkLD1/XaxRB6oYcW6d6Gw9eijaSV1QXJ3oFhYYiPUQKPns6/AJEWKpEWAAA==
+X-Received: by 2002:a05:651c:2117:b0:2f7:4f84:50a2 with SMTP id 38308e7fff4ca-2f91ca426ffmr26443491fa.31.1727299723711;
+        Wed, 25 Sep 2024 14:28:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d283bfd0sm6173091fa.42.2024.09.25.14.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 14:28:42 -0700 (PDT)
+Date: Thu, 26 Sep 2024 00:28:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] clk: qcom: clk-alpha-pll: Fix pll post div mask when
+ width is not set
+Message-ID: <jlmnxzkferigmhh5akcr5uumrdychjxyy2flftx5u2sg2w62aa@566u2lqj5od2>
+References: <20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] arm64: defconfig: Enable IPQ5424 SoC base configs
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-9-quic_srichara@quicinc.com>
- <4dxqbm4uuuuht5db7kt6faz2pdeodn224hd34np322divs22ba@dzmjveze3b4f>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <4dxqbm4uuuuht5db7kt6faz2pdeodn224hd34np322divs22ba@dzmjveze3b4f>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: csX6H1xMjELLFnLE93bvSt3TXFmGLJf0
-X-Proofpoint-ORIG-GUID: csX6H1xMjELLFnLE93bvSt3TXFmGLJf0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxlogscore=561
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250135
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org>
 
-
-
-On 9/13/2024 6:23 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 05:42:50PM GMT, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Enable the clock and pinctrl configs for Qualcomm IPQ5332 SoC
+On Wed, Sep 25, 2024 at 08:33:20PM GMT, Barnabás Czémán wrote:
+> Many qcom clock drivers do not have .width set. In that case value of
+> (p)->width - 1 will be negative which breaks clock tree. Fix this
+> by checking if width is zero, and pass 3 to GENMASK if that's the case.
 > 
-> Please name the device rather than the platform. The defconfig affects
-> all users, so it should be justified.
-> 
-Sorry, to understand correctly, you mean to use the board name here ?
+> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
+> Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div mask")
 
->>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> Usual comment.
-ok, will fix.
+I think one Fixes tag should be enough.
 
-Regards,
-  Sricharan
+Nevertheless,
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+> Changes in v2:
+> - Pass 3 to GENMASK instead of 0.
+> - Add more Fixes tag for reference root cause.
+> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+With best wishes
+Dmitry
