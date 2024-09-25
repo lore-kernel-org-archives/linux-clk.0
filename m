@@ -1,59 +1,40 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2112155CB3
-	for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 07:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F244147C9B;
+	Wed, 25 Sep 2024 07:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727250634; cv=none; b=QbMEgvp+F2cG6Xy5fgCzL7xp9Ai5DkMSQsrxsVwsrfyQY4ZYIughrM17bGa13fJFyVtiAZYiB819rYNvdIDMwCzNRKEhNEsgue3AuIXaI+oXOnQGTuwjPXFKHDOKgIkPXec60Y9XVTEftvrJKOSYRhDUWVL5673rTRW9FyQfBo4=
+	t=1727250769; cv=none; b=G8LNwIdInuEnxMl+rBeogMv5J8RyIMArX+U/oNvEq/52L4v7ifwYWJyXwnjqS1wR5BEj8BZaHOYe5Bc78KG0TPJvIoltQRo8nixWAKtEWcqpNbqGKAtPNNiiLOsKR0RawhFXDmKsxXdwWaQeVepDNAW3Dv63dU2x96lpHD/HfOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727250634; c=relaxed/simple;
-	bh=LQJL9XnZ7aqpWYvsQHqnHYPGaY781b2/pcH4k8tMXf0=;
+	s=arc-20240116; t=1727250769; c=relaxed/simple;
+	bh=HaGjCo2JkmzWG5vS1IbRUjPXbfLtQiEoKu06nA0Sy8E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SzjycOwwYYaSzBI2r+mKai0WHK8nr+jx+bbKGO0BzpzOVmqGln3TILzsPPENx3xZtOn0LNFBTqEDzQ2ObI1FpkPYOKaAC2dvIvnrgBfnD0gTG0R+h1lZz5gQFHoatSN9uphypfSeDw4JA+z/VobBivAv61wTbxOb2CgO9IWHfno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qTaOKFwu; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	 In-Reply-To:Content-Type; b=SuFCnbBjda88CUk6jasLRQiqq9egGUCrmdAKia3BgY8uIWAkX890AypExtdYfL/UOf7/l1nCvbnC69/tGdGsQdXf9ys/fi2FRIWHdjXH6aFN3nkrEFNvlSQJ7Benl8tEHoy1SUECU/T/q2EuORpZIoNhW32UO/oTsuzZiRiMpR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CwS0OhQx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qTaOKFwu"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb806623eso55627315e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2024 00:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1727250629; x=1727855429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YFiXClqbPRW4CJclRDKGkw40xsL++a9HxAmJhaouAR4=;
-        b=qTaOKFwur8NWzwTTOKUrLm2/lHaFRxfR3ELJKonQIhw+faVILbQrhWbbHFlQgiRd+4
-         o6pLBn+8gKElH5zchy3DKzfCY7waSwihtH1rOyWFkOv1i7Bl8MqLzaIKwaBHS4Mok+/m
-         SBTcQF6DT1edztz9ppNB8L4bTaem7rhnL5ooU6NV/39Oz+21dGxY2om7OhSlqzK+7VHu
-         qUBtovz2P508UiV0Odjs+yNPwKRYCWp7oaAXMC+txQ/Jzxvn5aDDC0R4dXetWNV+F+Ns
-         OhYMZLEpKunfm6ct24sL3wHb7Ud/u9ql5C98gadYlpIQO95GLGJCkTq99XI1FCm9f+70
-         9Adw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727250629; x=1727855429;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YFiXClqbPRW4CJclRDKGkw40xsL++a9HxAmJhaouAR4=;
-        b=dcw05arb1hnJv9QnRwIU4g6lH3fIVH/YM+APr5K6d3ToVrxrkBB88vMXwyTUJdcODu
-         WOFz8nl6CIQ4v4bBW7RDNh/f0opSUqfGY9GJ/yENPyhWajl/vSsc2qTl8fvAjXgZVHIi
-         ipbS6T++3BJXsYrTeX6DFoAXKbQSmYCl8lacsXp9QRU/hevP9vI5V7Owv+7qXlZB7gG9
-         sHKiebqx3AmHVy2UFcBqI4BYGfsk09rMvXl5M49662/XkHxJHI8B2j8+EkahfouVoWkr
-         5boiq2Pa0Zhvc0eFeXW3RHhl8U6Os6Fuupz4lPj3eZsvhX44EUuEBTrfw8EAI9DH2eaK
-         IXgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9bhxIMkyZhgay9EHmHt5IJ0nvsLxaBtvdXjXw7U2h6yXnz3B74z80zbI/yPhyl30EGsrEu9/Nxac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcQ+5eZ2gd1bAn0rFqr2fgcfGCdTX3EJR4eS4Lpu5peS7LPFon
-	j/vjE/CIXj2wPeYJaJehx6hc341zLWZxoC7qkTDHTS61jCRvBs/aFHF0zLG2YaM=
-X-Google-Smtp-Source: AGHT+IFSqrWOgvLYloNvVXm1vEQkjP+JD1QteKQEPhT8fVsIjwexzPr+xFJfYUTXmrkXaAxZ4I2zWw==
-X-Received: by 2002:adf:f58e:0:b0:36d:2984:ef6b with SMTP id ffacd0b85a97d-37cc2466ff9mr1203849f8f.11.1727250629008;
-        Wed, 25 Sep 2024 00:50:29 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.115])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969feb45sm10046135e9.20.2024.09.25.00.50.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 00:50:27 -0700 (PDT)
-Message-ID: <23531a70-cf50-4b32-a9fd-81e6cfcbcf9d@tuxon.dev>
-Date: Wed, 25 Sep 2024 10:50:24 +0300
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CwS0OhQx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727250765;
+	bh=HaGjCo2JkmzWG5vS1IbRUjPXbfLtQiEoKu06nA0Sy8E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CwS0OhQxMMFoCFIS6sWAgehLjs+WK4NyXWcz5SdQxnF2oNJwCpRne9wX7fynkCv8j
+	 iPauMQi2R6OYgNdiJWrC7ivCyzeni29NvIX+2iNMItm4zxgeLqMMHFmBlzNt0KDTod
+	 0qTbNIOnOFmBAbXWk6uFWt3MGjFIjjJDLY4mseWzeLuvZ/gv1IyMoEKN3eIde1r+8b
+	 P9v4oBY1TCCKBxIM8xMKwP4ZE3JJun1fXde27hUjvjb0XhsqPuQAbWG32d5haO4+0S
+	 nuk0wGZKjuMb0BPSwBOgCD0ShW8+PZONX5VygD0/n7R0vgLgNgXp/MS/C+o6NdKm79
+	 6fQ5I9D047oOA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8408617E1045;
+	Wed, 25 Sep 2024 09:52:44 +0200 (CEST)
+Message-ID: <70a24964-990b-4606-bdc8-4dd42c44785a@collabora.com>
+Date: Wed, 25 Sep 2024 09:52:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,81 +42,87 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/16] soc: renesas: Add SYSC driver for Renesas RZ/G3S
+Subject: Re: [PATCH 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
+ <20240924143634.pqpdsewoqxn3liqi@thinkpad>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
- magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
- sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
- biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240924143634.pqpdsewoqxn3liqi@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Geert,
-
-On 24.09.2024 14:32, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, Aug 22, 2024 at 5:28 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Il 24/09/24 16:36, Manivannan Sadhasivam ha scritto:
+> On Sat, Sep 14, 2024 at 09:04:53PM +0300, Cristian Ciocaltea wrote:
+>> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+>> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+>> return the number of clocks stored in the clk_bulk_data table referenced
+>> by the clks argument.
 >>
->> The RZ/G3S SYS Controller has 2 registers (one for PCIE one for USB) that
->> need to be configured before/after powering off/on the PCI or USB
->> ares. The bits in these registers control signals to PCIE and USB that
->> need to be de-asserted/asserted after/before power on/off event. For this
->> add SYSC controller driver that registers a reset controller driver on
->> auxiliary bus which allows USB, PCIE drivers to control these signals.
+>> That is required in case there is a need to iterate these clocks later,
+>> therefore I couldn't see any use case of this parameter and should have
+>> been simply removed from the function declaration.
 >>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Thanks for your patch!
+> Is there an user that currerntly does this?
 > 
->> --- /dev/null
->> +++ b/drivers/reset/reset-rzg3s-sysc.c
->> @@ -0,0 +1,140 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Renesas RZ/G3S SYSC reset driver
->> + *
->> + * Copyright (C) 2024 Renesas Electronics Corp.
->> + */
->> +
->> +#include <linux/auxiliary_bus.h>
-> 
-> Using the Auxiliary Bus requires selecting AUXILIARY_BUS.
 
-Thank you for pointing it. I'll adjust it in the next version, if it will
-be one.
+Yes and the patch wasn't sent upstream yet, but anyway, regardless of that,
+this series is fixing inconsistency with both naming and usage between the
+clock (bulk) API functions, with that being the only function acting
+different from the others, at best confusing people.
+
+Cheers,
+Angelo
+
+> - Mani
+> 
+>> The first patch in the series provides devm_clk_bulk_get_all_enabled()
+>> variant, which is consistent with devm_clk_bulk_get_all() in terms of
+>> the returned value:
+>>
+>>   > 0 if one or more clocks have been stored
+>>   = 0 if there are no clocks
+>>   < 0 if an error occurred
+>>
+>> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+>> the past form of 'enable'.
+>>
+>> The next two patches switch existing users of devm_clk_get_enable() to
+>> the new helper - there were only two, as of next-20240913.
+>>
+>> The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+>> helper.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>> Cristian Ciocaltea (4):
+>>        clk: Provide devm_clk_bulk_get_all_enabled() helper
+>>        soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
+>>        PCI: exynos: Switch to devm_clk_bulk_get_all_enabled()
+>>        clk: Drop obsolete devm_clk_bulk_get_all_enable() helper
+>>
+>>   drivers/clk/clk-devres.c                | 30 ++++++++++++++++--------------
+>>   drivers/pci/controller/dwc/pci-exynos.c |  2 +-
+>>   drivers/soc/mediatek/mtk-pmic-wrap.c    |  4 ++--
+>>   include/linux/clk.h                     | 12 +++++++-----
+>>   4 files changed, 26 insertions(+), 22 deletions(-)
+>> ---
+>> base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
+>> change-id: 20240912-clk_bulk_ena_fix-16ba77358ddf
+>>
+> 
 
 
-> Elsse you might run into build failures:
-> 
-> aarch64-linux-gnu-ld: drivers/soc/renesas/rzg3s-sysc.o: in function
-> `rzg3s_sysc_probe':
-> rzg3s-sysc.c:(.text+0x21c): undefined reference to `auxiliary_device_init'
-> aarch64-linux-gnu-ld: rzg3s-sysc.c:(.text+0x264): undefined reference
-> to `__auxiliary_device_add'
-> aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
-> `rzg3s_sysc_reset_driver_init':
-> reset-rzg3s-sysc.c:(.init.text+0x1c): undefined reference to
-> `__auxiliary_driver_register'
-> aarch64-linux-gnu-ld: drivers/reset/reset-rzg3s-sysc.o: in function
-> `rzg3s_sysc_reset_driver_exit':
-> reset-rzg3s-sysc.c:(.exit.text+0x10): undefined reference to
-> `auxiliary_driver_unregister'
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
