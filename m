@@ -1,102 +1,352 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785F128F3;
-	Wed, 25 Sep 2024 09:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01432158557;
+	Wed, 25 Sep 2024 10:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727257605; cv=none; b=k+i9b8/KZHTtVKtAbGdU7mBYigcfr1jXYt1VU4Sv8Hs8eBIIEZdSVEgvEW01zkHDcCQ+gDjwF+f1zOfAqmmMxCIgCd47Paj+w5AssrK6wN9sUe4bdcyOVcFL3YojeQXZhI4ElQ2XtJX9WkNM1Qg0a3CJHk2XT2u8jvlQqkvVvFs=
+	t=1727258932; cv=none; b=OkANSdOEuSeWYV2Nyb1tLkzxFdLkpZnvBuuXZJrcF8i/jzaUaNUmmIe1741WlDtoyxR1qC/uFYJyx1shl/2SSj9cERhHq8xj3ZYQoMJnRIMP0JYFhXMm7YbYY/KcK+lvbW6rZp+C7KF/KK4y16MKeAsAE+CW0+gpvEvX2oCJBA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727257605; c=relaxed/simple;
-	bh=wtn5+KuMLTAqeZweMoRuxkoCjg49C5loEg74Pkq8niU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDkzo5gNF/uMNfbk0Lvk1ISlm1kFHXsqqKvAU/p/BNoA6tiF1G2qE4gVyTxvgGIz3Ly02BcG68gFh2WM9arnXIgs1dD1Ii3Z12CIxcdUtM9gqcfaS5viI23MUPr1yZk8eTzha1ziUXS8m9IOGp2FS2n5TNc8UXWp+fWgr5LnhSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMl089XN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727258932; c=relaxed/simple;
+	bh=mKg1Pn/wp7JBOz5guJCa/oeTDBDmbcFvcIbh2hBt8k4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xgq2TD9/dd/8oV8rZRy1j7hEqwBrRKx97p4mWjWy2A08Qzb8cEB4R4x7ldzhs/SPVEYu7MgVKHjpoW0mLT7B4sSU/Z8+zAy/ba6srrW7Hnv1JuXAkA/IaTlTo9RkS6YtYRX27gqmzfk6B0kiTQ6xjvurh2q/UiS1r2E5AZySDOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjqVg1ob; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMl089XN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15EA2C4CEC3;
-	Wed, 25 Sep 2024 09:46:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjqVg1ob"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 705FAC4CEC3;
+	Wed, 25 Sep 2024 10:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727257605;
-	bh=wtn5+KuMLTAqeZweMoRuxkoCjg49C5loEg74Pkq8niU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rMl089XNFRAEGqGjifzGH4vHmkqYCn0PuSiSSxoa44g9uXf9m4QFeUwMFyWZ4/Jrl
-	 RaWXD3u0L8Qt22vg1xvfKfhEXnEe51XdG2dZYT7Xw1P6J0/FadUCOm49X5dW6kf4zE
-	 hT1lEuWPSW5mbij8dbwOKHzfa5Rhyr+ZhFoZ6OxzHE3IZeYZhDa2sRoSDqE7jqdSA0
-	 8gz/HaruwpjM77EOo8nPk4GT+zFAAKpD8cMPuedCRqi+afrz3e5QVRuyl59+Rc3uXE
-	 +tjJZ18viIKSWYX490NH6d9/dZcdd2dpWfj8j/G2Tee3pwbN31N28qqnWwHoIfyStT
-	 leX5AWRIOWgAA==
-Message-ID: <2731e17d-c1ad-4fb4-ab60-82ceafeffbaf@kernel.org>
-Date: Wed, 25 Sep 2024 11:46:35 +0200
+	s=k20201202; t=1727258931;
+	bh=mKg1Pn/wp7JBOz5guJCa/oeTDBDmbcFvcIbh2hBt8k4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=KjqVg1obzL7Xzzzia2RIzH3R6tHWs/Rc1oj5NgibOkkWr2tldQwKLMblVdTjw6blJ
+	 7mlfQJ0MP7+89tclHYBZGOe6hG2BbqxbvYEXHr+2gXPPB/4RIB7udHzvpsjhnWmb37
+	 vIsUB1Kkwlcn2eVXRW0IGdYs0Eu8l10eiVOFz8blpgSWboiXAOnPynpWPN4rOQ3cTk
+	 5VaaqleVQE56zYGeiCHC5LcRtfV7yep5dnj661Mk9s7zPjLS8i28742dwqAlsL6gTe
+	 cdJz79uE07iF5AlUKMEsiRwde7rknBxFEM/rSypPundfW+wp0V+MYiRcLR7pKlANKw
+	 eGKrLk9qe6FuQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0D4C369C8;
+	Wed, 25 Sep 2024 10:08:51 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Wed, 25 Sep 2024 18:08:28 +0800
+Subject: [PATCH v2] clk: meson: mpll: Delete a useless spinlock from the
+ MPLL
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3
- on x1e80100
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Johan Hovold <johan+linaro@kernel.org>
-Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
- dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-7-quic_qianyu@quicinc.com>
- <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
- <20240925080522.qwjeyrpjtz64pccx@thinkpad>
- <4ee4d016-9d68-4925-9f49-e73a4e7fa794@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <4ee4d016-9d68-4925-9f49-e73a4e7fa794@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240925-mpll_spinlock-v2-1-8f9b73588ec1@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIABvh82YC/13MSwrDIBSF4a2EO67FiJLaUfcRQlFjkkt9BC3SE
+ rL32tBRh/+B822QbUKb4dpskGzBjDHUYKcGzKLCbAmOtYFRxqlsL8Svzt3zisFF8yBcSy2E4Xw
+ aBdTPmuyEr8Prh9oL5mdM74Mv7Xf9SYz+SaUllAjGpZKqs0x3N+VdnNGcTfQw7Pv+AQaGveasA
+ AAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727258930; l=8347;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=ZyPnj+RyKrSajBhQmyfJU1szWyHwl1WcQqsqZnpTU7o=;
+ b=U/+tnxrfGff37ZUf7sYlp/cNh53Yt2f8WNnAnhJ4kn7XfzEjnQhjRRCLExzt4S4f2YPnJf5bH
+ NG1ejpqmzuEDkAaX4lW5Dd2Via7P1aOkswd4UDgyix31p4VpDTuFPsl
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On 25.09.2024 11:30 AM, Konrad Dybcio wrote:
-> On 25.09.2024 10:05 AM, Manivannan Sadhasivam wrote:
->> On Tue, Sep 24, 2024 at 04:26:34PM +0200, Konrad Dybcio wrote:
->>> On 24.09.2024 12:14 PM, Qiang Yu wrote:
->>>> Describe PCIe3 controller and PHY. Also add required system resources like
->>>> regulators, clocks, interrupts and registers configuration for PCIe3.
->>>>
->>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>> ---
->>>
->>> Qiang, Mani
->>>
->>> I have a RTS5261 mmc chip on PCIe3 on the Surface Laptop.
->>
->> Is it based on x1e80100?
-> 
-> You would think so :P
-> 
->>
->>> Adding the global irq breaks sdcard detection (the chip still comes
->>> up fine) somehow. Removing the irq makes it work again :|
->>>
->>> I've confirmed that the irq number is correct
->>>
->>
->> Yeah, I did see some issues with MSI on SM8250 (RB5) when global interrupts are
->> enabled and I'm working with the hw folks to understand what is going on. But
->> I didn't see the same issues on newer platforms (sa8775p etc...).
->>
->> Can you please confirm if the issue is due to MSI not being received from the
->> device? Checking the /proc/interrutps is enough.
-> 
-> There's no msi-map for PCIe3. I recall +Johan talking about some sort of
-> a bug that prevents us from adding it?
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Unless you just meant the msi0..=7 interrupts, then yeah, I only get one irq
-event with "global" in place and it seems to never get more
+The register corresponding to MPLL does not share the same register
+with other module drivers, so there is no concurrent access to the
+register with other modules drivers. The spinlock defined in struct
+meson_clk_mpll_data is no longer useful.
 
-Konrad
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Changes in v2:
+- Squeeze into a patch.
+- Modifying commit Information.
+- Link to v1: https://lore.kernel.org/r/20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com
+---
+ drivers/clk/meson/axg.c      |  6 ------
+ drivers/clk/meson/clk-mpll.c | 11 -----------
+ drivers/clk/meson/clk-mpll.h |  1 -
+ drivers/clk/meson/g12a.c     |  6 ------
+ drivers/clk/meson/gxbb.c     |  6 ------
+ drivers/clk/meson/meson8b.c  |  3 ---
+ drivers/clk/meson/s4-pll.c   |  6 ------
+ 7 files changed, 39 deletions(-)
+
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 757c7a28c53d..1b08daf579b2 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -23,8 +23,6 @@
+ 
+ #include <dt-bindings/clock/axg-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static struct clk_regmap axg_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -506,7 +504,6 @@ static struct clk_regmap axg_mpll0_div = {
+ 			.shift   = 0,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -557,7 +554,6 @@ static struct clk_regmap axg_mpll1_div = {
+ 			.shift   = 1,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -613,7 +609,6 @@ static struct clk_regmap axg_mpll2_div = {
+ 			.shift   = 2,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -664,7 +659,6 @@ static struct clk_regmap axg_mpll3_div = {
+ 			.shift   = 3,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index f639d56f0fd3..aa9abd06ae65 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -112,26 +112,15 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
+ 	unsigned int sdm, n2;
+-	unsigned long flags = 0;
+ 
+ 	params_from_rate(rate, parent_rate, &sdm, &n2, mpll->flags);
+ 
+-	if (mpll->lock)
+-		spin_lock_irqsave(mpll->lock, flags);
+-	else
+-		__acquire(mpll->lock);
+-
+ 	/* Set the fractional part */
+ 	meson_parm_write(clk->map, &mpll->sdm, sdm);
+ 
+ 	/* Set the integer divider part */
+ 	meson_parm_write(clk->map, &mpll->n2, n2);
+ 
+-	if (mpll->lock)
+-		spin_unlock_irqrestore(mpll->lock, flags);
+-	else
+-		__release(mpll->lock);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
+index a991d568c43a..4ffd3aeef799 100644
+--- a/drivers/clk/meson/clk-mpll.h
++++ b/drivers/clk/meson/clk-mpll.h
+@@ -20,7 +20,6 @@ struct meson_clk_mpll_data {
+ 	struct parm misc;
+ 	const struct reg_sequence *init_regs;
+ 	unsigned int init_count;
+-	spinlock_t *lock;
+ 	u8 flags;
+ };
+ 
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 02dda57105b1..d3539fe9f7af 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -28,8 +28,6 @@
+ 
+ #include <dt-bindings/clock/g12a-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static struct clk_regmap g12a_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -2225,7 +2223,6 @@ static struct clk_regmap g12a_mpll0_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll0_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll0_init_regs),
+ 	},
+@@ -2279,7 +2276,6 @@ static struct clk_regmap g12a_mpll1_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll1_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll1_init_regs),
+ 	},
+@@ -2333,7 +2329,6 @@ static struct clk_regmap g12a_mpll2_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll2_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll2_init_regs),
+ 	},
+@@ -2387,7 +2382,6 @@ static struct clk_regmap g12a_mpll3_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll3_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll3_init_regs),
+ 	},
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index f071faad1ebb..262c318edbd5 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -19,8 +19,6 @@
+ 
+ #include <dt-bindings/clock/gxbb-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
+ 	PLL_PARAMS(32, 1),
+ 	PLL_PARAMS(33, 1),
+@@ -731,7 +729,6 @@ static struct clk_regmap gxbb_mpll0_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -760,7 +757,6 @@ static struct clk_regmap gxl_mpll0_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -812,7 +808,6 @@ static struct clk_regmap gxbb_mpll1_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -855,7 +850,6 @@ static struct clk_regmap gxbb_mpll2_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index b7417ac262d3..5011768c0f4e 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -492,7 +492,6 @@ static struct clk_regmap meson8b_mpll0_div = {
+ 			.shift   = 25,
+ 			.width   = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -537,7 +536,6 @@ static struct clk_regmap meson8b_mpll1_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -582,7 +580,6 @@ static struct clk_regmap meson8b_mpll2_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index 9697f6577e06..d8e621e79428 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -17,8 +17,6 @@
+ #include "meson-clkc-utils.h"
+ #include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ /*
+  * These clock are a fixed value (fixed_pll is 2GHz) that is initialized by ROMcode.
+  * The chip was changed fixed pll for security reasons. Fixed PLL registers are not writable
+@@ -547,7 +545,6 @@ static struct clk_regmap s4_mpll0_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll0_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll0_init_regs),
+ 	},
+@@ -601,7 +598,6 @@ static struct clk_regmap s4_mpll1_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll1_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll1_init_regs),
+ 	},
+@@ -655,7 +651,6 @@ static struct clk_regmap s4_mpll2_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll2_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll2_init_regs),
+ 	},
+@@ -709,7 +704,6 @@ static struct clk_regmap s4_mpll3_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll3_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll3_init_regs),
+ 	},
+
+---
+base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
+change-id: 20240918-mpll_spinlock-4b9b55c44fd5
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
