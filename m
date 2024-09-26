@@ -1,266 +1,135 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0623A18E055
-	for <linux-clk@vger.kernel.org>; Thu, 26 Sep 2024 07:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF07347B4;
+	Thu, 26 Sep 2024 10:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727336586; cv=none; b=DD9LRDpTRjlvw9ga4x7iQP2vemydI1iZfHits4oENFBHg+URQsZ4kSQ9co7HMlUqgVhO/pZrp9Y5SrxPalw0u1XxUOvLA8HkVF/e9m2warpyuKhMka3bdOcVqv3WwOie6BUHxJwBdkKuPxQjrG2XLb8fEOxbnL0CmzqHKAXN9sM=
+	t=1727347126; cv=none; b=TZA12Hca98w9w5gxXT0I1EgDHy5LfwiEat8iRTfhRnprS/0i8/7dPQDdT8NxgLLgI/Gqfr2Fb3n+y9oEOLKH46nP6N2W3XdeLH6Op7ldKaXijJhSxEQROT/rn0NfTEVx8s9TGBlAdrGXuP25gVOtDedbBFGsDOPQ5QNQRTpWKcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727336586; c=relaxed/simple;
-	bh=+nnlS1M7aeM09zElGK7XTOGlyP0eEhDm1RTB4QdNMaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GeXwW4f9kbnOLGgQBmwJsbR23PonUmRcOq06ejcu6mAFV9wkdtEkQ/xBA7D1prFXeEr548/Z9ED7Dzjt0+MYKyfFHCcpDMYTMntv5VmJqVlO70p83AvvA5lyUEH3IPXQ0FGZzM7AMRWOipekLOWmoB/OY1kwAVsFdxx69oczBLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=afJVYSFA; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1727347126; c=relaxed/simple;
+	bh=+qcwPAH5CWuhj09/E6HWAImsCw7nT/5uSGGKzcjVS5Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eYGS0v2XQDa1+20QbprAuy9AUabLJO50fb+phQX5ZBsWwbMKR+njgxh1F4/VcHu6dHRoiXfyxlJ2vAdlZAk9NXWzhWHQPpkSNC5qGh7CesYE3kNiJ2Zyy2Iy/CCIOh62frCDJY8Nk3lEaSEJ70ckP6Z8x5rBkVdPIN+iT4GXRDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDLVKc41; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="afJVYSFA"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c3400367so526523f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 26 Sep 2024 00:43:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDLVKc41"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f75e5f3debso7381961fa.1;
+        Thu, 26 Sep 2024 03:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1727336582; x=1727941382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QQkR69sKp8Yewhrmn8jwB2Hc/tFxgtKhEZk1YzyJXlA=;
-        b=afJVYSFATHBbbVO7Ijr+9+h80yLpKn5fxkC4yIcJn/ryeSva7/RWhr4aH5fuqCL3sA
-         sEYSEesWnKNsgec3CWOu441EX6Z2YbFjYxaiWMa9LDswInMoQJ47wYd6JBYJic0XFGaO
-         uGGh26Xzvv4IHpaYJBRPiMjbsXEQ3V+uxDGB5gMqNLlKa8loIyrMHNlPGZrjjbhSfAD/
-         UF0pbIaNCJqjwUrMpArrCVYxXdHmpFgZ8sf6FPuI363To0GJCo40y9DdQ1H7skqfdVAF
-         dof8CUjXX6/8au/Q+3V+AmOneYbIuCRYlcoN+4OoZ4R6dCxmL41mVJbBgiKOYPoNjZHr
-         c8yA==
+        d=gmail.com; s=20230601; t=1727347122; x=1727951922; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=le5ANOrzvZoJzrfQColCGsuooOBHCuVJFSkbRGME1l4=;
+        b=HDLVKc41fTwbneLrgnCMhs2f8fYFuukefKoRLWMRspMGxuRD3t8NeLV46KNbdNMICJ
+         8bpMyPF832nmXAEGNVOM3EzwQ1BD37tRSsoDzFN2rlejoicmD1XkfBJ0MzmoPws2KrcH
+         9Q+OqToGClKjx8W2qrjSkNRV5aO+kO9zSdd5n13l0zjTqZHkba+nbOGi0WCBKApMq7V9
+         XM5pigYxkSjY4GYSsEXImDCd3i8PmRbHYLkJKu9azc4uRCMXLZEF2hFQQbauVYWSO47X
+         Diz3BgfVSlJYCmZ4S7tL3VmgKLmrLNV4FLkgFQ9SSIFXlfuS+HFAls6YLA74fkI77bBG
+         CWOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727336582; x=1727941382;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQkR69sKp8Yewhrmn8jwB2Hc/tFxgtKhEZk1YzyJXlA=;
-        b=wa63v3m7XkJ41dRNm9Kb07VCUfylj+QhWx3bdogBXQ8WZVguNZOrnmGNwVI2ed95pe
-         I0EuuvMssG0m5EIjIuFkRwvxYRZvvekHOITrgTmeoTEx8QbS3q+CKAp3EsgdVI3dArZF
-         DGO9k/GCrZJao3Esxw3qXrYvDGPk3RUD8/6e4TjT7Pql2O0G2mTaQQOy+dbI0n+l4/R5
-         9lLHXTkJkx8gorqRvUPmv+3JsgylxTfUNobRA6R4dyI8UoruvSO8fx9q6P6xSjmfT0K1
-         Nx+C5pyKBNftEVaVcDB0IytC6ao9uIAkZrDQf0QLwCGtz0I2F4q6grR9bnPqrAGC6BEH
-         +nJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnT71oWThuXfh8z4GSLt/Op7IMVwn+81xT2XEwlrwuBFEkWi8eYSlN29Vm17p+6XSbxeiK9znfaj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw26vSRXmQLCBl+NERug4w3z+JZRXoORKN8JdN6aZoGY70fdMel
-	LtKs6wC55OhRGV/33FoO6GuwYXbh0JXddqjx+d5B688mH2WXjm1PPiLjpvnwfKM=
-X-Google-Smtp-Source: AGHT+IHBv+8cCJ4P//uZgQU9mGKQlD7W6/9RP/K5Q7QoHFn/s97lU6vtCpnQ8hrmoZ5KSMACjGqOMw==
-X-Received: by 2002:adf:fbcc:0:b0:374:c44e:ef27 with SMTP id ffacd0b85a97d-37cc245dd30mr4407870f8f.8.1727336581837;
-        Thu, 26 Sep 2024 00:43:01 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.115])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ccd370ab7sm1819223f8f.25.2024.09.26.00.43.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 00:43:01 -0700 (PDT)
-Message-ID: <e6c10efa-0ed6-4040-8fe2-e83d3903547a@tuxon.dev>
-Date: Thu, 26 Sep 2024 10:42:59 +0300
+        d=1e100.net; s=20230601; t=1727347122; x=1727951922;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=le5ANOrzvZoJzrfQColCGsuooOBHCuVJFSkbRGME1l4=;
+        b=N83nTNBLI4F0n8jHmA0p/Ck+sQNLIIJ1AcjxxVA9Dm+NG3EuF+/oW8h1A2+1gmA1fc
+         DDLxXo8RZ3L3CV/hOAC6CdoozVGHAeElE79QaAgabqpYUGUOW8knLw8h+2bu6hfEZOXm
+         +lw55a9INNKxkPapVi/XcsFXjOjvED+3JVy96XVIZxMku0XI5L7ge2yQI3+WA9wEw5Bb
+         N1guPpCBYQrU87JP7Wa32GBiK8VRB4sU9Q8F/Q0SU4ZnP9turLORIT2ywS4yTYe9Pe6E
+         V2nK+Q24BfSEPiyCkLEFEj+NlF9UV9eJG7gnBt2DgKyr/8/8xnQvSFwoGu6wENHJsxPu
+         n6Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVY1EKxpThm4/QMysJQeEoXeTD4EtEHZ7GVCoXqP2gusFlgZ+Qe/ntzUXQ9ch4uzQTpsN5nope0HchtG1nV@vger.kernel.org, AJvYcCVlKHvbZ5c1+i720A4ZErefgVTsqhSYsISkwiKVOiGoJTP2wHrffWdmAXpw9BsUGivn5xCIOoKIHc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYe2AKj9sOd0WoMnB0hbYC7H8NQRkg2D0jJ5EkWjOOhM8wbeA0
+	GMxFDLuGZYbqeiTPmqnLrOQuVKDKlgKYqZxEp1qz10edrW/HYGmp
+X-Google-Smtp-Source: AGHT+IFvlc3qdoIDjeZIFAD4TysLNLgMZ3yQFMyZvkuaMgNliPkwUyywGAPZ+4pvKIIUZR2cn/+qgA==
+X-Received: by 2002:a2e:851:0:b0:2f6:4cc0:5438 with SMTP id 38308e7fff4ca-2f91ca407c8mr28188701fa.29.1727347122285;
+        Thu, 26 Sep 2024 03:38:42 -0700 (PDT)
+Received: from [127.0.1.1] (mm-20-1-84-93.mgts.dynamic.pppoe.byfly.by. [93.84.1.20])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2f8d289ee94sm7863791fa.120.2024.09.26.03.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 03:38:40 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v5 0/2] Add divisor computation feature for sdm845 gp
+ clocks
+Date: Thu, 26 Sep 2024 13:38:14 +0300
+Message-Id: <20240617-starqltechn_integration_upstream-v5-0-761795ea5084@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
- through DT
-Content-Language: en-US
-To: Ryan Wanner <ryan.wanner@microchip.com>, ada@thorsis.com
-Cc: Conor Dooley <conor+dt@kernel.org>,
- "moderated list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- Rob Herring <robh@kernel.org>, open list <linux-kernel@vger.kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Christian Melki <christian.melki@t2data.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-10-ada@thorsis.com>
- <20240919-outsider-extending-e0a926bd23fa@thorsis.com>
- <464f599a-7f0b-4e4e-901a-8f88a25428d6@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <464f599a-7f0b-4e4e-901a-8f88a25428d6@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJY59WYC/43O0Q6CIBQG4FdxXEdDULCueo/WHOJR2RQNkNWc7
+ x66tbqry//fzvefBTmwGhw6JwuyELTTo4khPyRIddK0gHUdM6KEZoSnAjsv7b33oDpTauOhtdL
+ Hm3KenLcgB1ypghc5qWgDDEWmkg5wZaVRXYTM3PexnCw0+rHvXm8xd9r50T73NwLb2vdi8XsxM
+ EwwsIZzTkkqpLq0g9T9UY0D2vCQfcBTyv4AswjSmkJT5yovhPgG13V9Ad5rAaM2AQAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727347119; l=2239;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=+qcwPAH5CWuhj09/E6HWAImsCw7nT/5uSGGKzcjVS5Q=;
+ b=gKZKCAqwrb0LGnUPDlBsxmlEX2n5s0TnAxf+aVPZ7zOFtEruk54QeV3Z+VwedfLj+ZboKLyTK
+ 46AfT6x+LZ6Am0bMvj1ox4Ek/xUn0lzOLUQyQOfiThn6TPQropQiChQ
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi, Ryan, Alexander,
+SDM845 has "General Purpose" clocks that can be muxed to
+SoC pins to clock various external devices.
+Those clocks may be used as e.g. PWM sources for external peripherals.
+    
+GPCLK can in theory have arbitrary value depending on the use case, so
+the concept of frequency tables, used in rcg2 clock driver, is not
+efficient, because it allows only defined frequencies.
+    
+Introduce clk_rcg2_gp_ops, which automatically calculate clock
+mnd values for arbitrary clock rate. The calculation done as follows:
+- upon determine rate request, we calculate m/n/pre_div as follows:
+  - find parent(from our client's assigned-clock-parent) rate
+  - find scaled rates by dividing rates on its greatest common divisor
+  - assign requested scaled rate to m
+  - factorize scaled parent rate, put multipliers to n till max value
+    (determined by mnd_width)
+- validate calculated values with *_width:
+  - if doesn't fit, delete divisor and multiplier by 2 until fit
+- return determined rate
+    
+Limitations:
+- The driver doesn't select a parent clock (it may be selected by client
+  in device tree with assigned-clocks, assigned-clock-parents properties)
 
-Sorry for returning late, I took some time to think about it...
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v5:
+- Split patchset per subsystem
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
 
-On 24.09.2024 18:52, Ryan Wanner wrote:
-> Hello Alex,
-> 
-> I think a possible solution is to put the DT binding ID for main rc oc
-> after PMC_MCK and then add 1 to all the other IDs that are not dependent
-> on PMC_MAIN, the IDs that are before the branch for the sama7g54.
+Changes in v4:
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-If I understand correctly, wouldn't this shift also the rest of the IDs
-and break the DT ABI?
+---
+Dzmitry Sankouski (2):
+      clk: qcom: clk-rcg2: document calc_rate function
+      gcc-sdm845: Add general purpose clock ops
 
-> 
-> One issue I see with this solution is with SoCs that do not want the
-> main rc os exported to the DT the driver array might be allocating too
-> much memory, this can be solved by removing the +1 that is in the clock
-> drivers next to the device tree binding macro, since this macro is now
-> increased by 1 with this change.
-> 
-> Doing a quick test on the sam9x60 and sama7g54 I did not see any glaring
-> issues with this potential solution.
-> 
-> Best,
-> 
-> Ryan
-> 
-> 
-> On 9/19/24 05:39, Alexander Dahl wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> Hello Claudiu,
->>
->> after being busy with other things, I'm back looking at this series.
->> As Nicolas pointed out [1], we need three clocks for the OTPC to work,
->> quote:
->>
->>   "for all the products, the main RC oscillator, the OTPC peripheral
->>   clock and the MCKx clocks associated to OTP must be enabled."
->>
->> I have a problem with making the main_rc_osc accessible for both
->> SAM9X60 and SAMA7G5 here, see below.
->>
->> Am Wed, Aug 21, 2024 at 12:59:40PM +0200 schrieb Alexander Dahl:
->>> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
->>> says:
->>>
->>>     "The OTPC is clocked through the Power Management Controller (PMC).
->>>     The user must power on the main RC oscillator and enable the
->>>     peripheral clock of the OTPC prior to reading or writing the OTP
->>>     memory."
->>>
->>> The code for enabling/disabling that clock is already present, it was
->>> just not possible to hook into DT anymore, after at91 clk devicetree
->>> binding rework back in 2018 for kernel v4.19.
->>>
->>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
->>> ---
->>>  drivers/clk/at91/sam9x60.c       | 3 ++-
->>>  include/dt-bindings/clock/at91.h | 1 +
->>>  2 files changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
->>> index e309cbf3cb9a..4d5ee20b8fc4 100644
->>> --- a/drivers/clk/at91/sam9x60.c
->>> +++ b/drivers/clk/at91/sam9x60.c
->>> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->>>       if (IS_ERR(regmap))
->>>               return;
->>>
->>> -     sam9x60_pmc = pmc_data_allocate(PMC_PLLACK + 1,
->>> +     sam9x60_pmc = pmc_data_allocate(PMC_MAIN_RC + 1,
->>>                                       nck(sam9x60_systemck),
->>>                                       nck(sam9x60_periphck),
->>>                                       nck(sam9x60_gck), 8);
->>> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->>>                                          50000000);
->>>       if (IS_ERR(hw))
->>>               goto err_free;
->>> +     sam9x60_pmc->chws[PMC_MAIN_RC] = hw;
->>>
->>>       hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
->>>       if (IS_ERR(hw))
->>> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
->>> index 3e3972a814c1..f957625cb3ac 100644
->>> --- a/include/dt-bindings/clock/at91.h
->>> +++ b/include/dt-bindings/clock/at91.h
->>> @@ -25,6 +25,7 @@
->>>  #define PMC_PLLBCK           8
->>>  #define PMC_AUDIOPLLCK               9
->>>  #define PMC_AUDIOPINCK               10
->>> +#define PMC_MAIN_RC          11
->>>
->>>  /* SAMA7G5 */
->>>  #define PMC_CPUPLL           (PMC_MAIN + 1)
->>
->> There are IDs defined in the devicetree bindings here, which are used
->> both in dts and in driver code as array indexes.  In v1 of the patch
->> series I just added a new last element in the end of the generic list
->> and used that for SAM9X60.
->>
->> For SAMA7G5 those IDs are branched of from PMC_MAIN in between, making
->> SAMA7G5 using a different last element, and different values after
->> PMC_MAIN.
+ drivers/clk/qcom/clk-rcg.h    |   1 +
+ drivers/clk/qcom/clk-rcg2.c   | 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/qcom/gcc-sdm845.c |  11 ++----
+ 3 files changed, 198 insertions(+), 15 deletions(-)
+---
+base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
 
-Looking at it now, I think it was a bad decision to do this branch.
-Thinking at it maybe it would be better to have per SoC specific bindings
-to avoid this kind of issue in future. The PMC IP b/w different SAM SoCs is
-anyway different and, as it happens now, we may reach to a point where, due
-to issues in datasheet, or whatever human errors, we may reach this problem
-again.
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-So, what do you think about having separate binding files for each SoC?
-
-Another option would be to xlate the clocks not by directly indexing in
-struct pmc_data::chws but by matching the driver clock ID and DT provided
-id. This will increase the lookup time, from O(1) to O(N), N being 13 for
-SAMA7G5, 15 for SAM9X7 and SAMA7D55. And will need adjustment at least for
-SAM9X{60, 7} and SAMA7{G5, D55}. With this the of_clk_hw_pmc_get() will be
-something like:
-
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 5aa9c1f1c886..22191d1ca78b 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -52,8 +52,10 @@ struct clk_hw *of_clk_hw_pmc_get(struct of_phandle_args
-*clkspec, void *data)
-
-        switch (type) {
-        case PMC_TYPE_CORE:
--               if (idx < pmc_data->ncore)
--                       return pmc_data->chws[idx];
-+               for (int i = 0; i < pmc_data->ncore; i++) {
-+                       if (pmc_data->chws.idx[i] == i)
-+                               return pmc_data->chws.hws[i];
-+               }
-                break;
-
-
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 4fb29ca111f7..f7e88f9872dc 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -19,7 +19,10 @@ extern spinlock_t pmc_pcr_lock;
-
- struct pmc_data {
-        unsigned int ncore;
--       struct clk_hw **chws;
-+       struct {
-+               struct clk_hw **hws;
-+               int *idx;
-+       } chws;
-
-Thank you,
-Claudiu Beznea
-
->>
->> Now we need a new ID for main rc osc, but not only for SAM9X60, but
->> also for SAMA7G5.  I'm not sure what the implications would be, if the
->> new ID would be added in between before PMC_MAIN, so all values would
->> change?  Adding it to the end of the lists would probably be safe, but
->> then you would need a diffently named variant for SAMA7G5's different
->> IDs.  I find the current status somewhat unfortunate for future
->> extensions.  How should this new ID be added here?  What would be the
->> way forward?
->>
->> Greets
->> Alex
->>
->> [1] https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
->>
->>> --
->>> 2.39.2
->>>
->>>
->>
-> 
