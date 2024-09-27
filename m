@@ -1,130 +1,122 @@
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0611BBBF1;
-	Fri, 27 Sep 2024 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38761CD31;
+	Fri, 27 Sep 2024 10:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727431852; cv=none; b=kQOrUVDkD4m9q2M1/XqgNOeCD0GJNETjO07TbLIxhVw+JUbfv/ALDVv0XklSXOJ7cSMHMfCZkv875e9NBURoUAjtGoLUECmAav8zXoCePWPaqWJX7DhzZmLrsyW6MnxDLgq3WORBTyoIoCW8UDR2i9+CVNXJmu+FB0jbg2OrTCU=
+	t=1727433053; cv=none; b=iyv55fvjWm+1RIlh/USfgvMOfBdiiJVTkBcgG4RtlRYVlw9LWoNPfvxcC07LUPhlDcb5RgxM/hbXQA931CYWgOf6l9aePbcdgoaSXmzE7mWDHh9ylmwFsWkD0zfLSSVvY7LHz83ASeHTHUuJHpGipgsHj0W6O6L2cCL7pQjf11I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727431852; c=relaxed/simple;
-	bh=46DKFiOZKtMOy5C/LqDJYVkvP8CaYTA8ZDmphOoRNmI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t0n92j90NnF8tmwC6FTQuz928twixCxQix999b89tah8BVWY4/RJRhpBhwFXJYUms3hmhT8EAY/tPNC26OBKUIH7lJcIq69m09/SlHtnw/HHynJ9f/+Pdr3yB/GAe+YdC2Nm6RHMZmOid5h0lVtxhYAPfmjpqkFZ4P6xysbscss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XFR6D3g4vz1SBK2;
-	Fri, 27 Sep 2024 18:09:56 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id F1B6E180042;
-	Fri, 27 Sep 2024 18:10:46 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 27 Sep
- 2024 18:10:46 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<alim.akhtar@samsung.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<sunyeal.hong@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] clk: samsung: Fix out-of-bound access of of_match_node()
-Date: Fri, 27 Sep 2024 18:21:04 +0800
-Message-ID: <20240927102104.3268790-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727433053; c=relaxed/simple;
+	bh=gGlVStBekd6tn5scRrWK5ZAhxic3Z9UU5MfQzxxUMJ4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HpOxp56y2ZlvcuDhnOMks72t6GdwTlt1GNJQJRWMQoa3qIL4bPWQzxez21aJgb54lQU6UlcE9/diSsQJ91UaFcbrI5xydy814KY964f7GDBCkEYwiEEH4XtzTOiuu2xaUGSIGbfnWEtdq06V4PtrjamcvolLSGc92LXxuQ9UQy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HnBMVLhb; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HnBMVLhb"
+X-UUID: 8d713dd67cbb11efb66947d174671e26-20240927
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=m46+FnCMQHOmqn0PoIzre0+LrIPiIFVNgGTSNn1G4lU=;
+	b=HnBMVLhbPhUcs3t0NSgzyZJgxtovAZPaNcI0ORLMOmq+G36QMcdIAjAAhdYVH3V/+ZxenL18+OiKYELWCxfab731z2/zRfpjNNsxd4OVwR+ziTHYVnLAdHkNTIXxpweK/I9niv4vRy+NqDJuvqYwzKezUORbctVkCEi6oBMkQ+8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:5a2343ec-6235-44f3-8d97-821c9dd2ee93,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:c231ded0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8d713dd67cbb11efb66947d174671e26-20240927
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 288267427; Fri, 27 Sep 2024 18:30:44 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 27 Sep 2024 18:30:41 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 27 Sep 2024 18:30:41 +0800
+From: Pablo Sun <pablo.sun@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Srinivas
+ Kandagatla" <srinivas.kandagatla@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Pablo Sun <pablo.sun@mediatek.com>
+Subject: [PATCH v2 0/6] Enable Mali GPU on MediaTek Genio 700 EVK
+Date: Fri, 27 Sep 2024 18:29:59 +0800
+Message-ID: <20240927103005.17605-1-pablo.sun@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--0.806400-8.000000
+X-TMASE-MatchedRID: 9hizXfD21dsmTNBjrl+CAW3NvezwBrVmojQrbrPpzzqGisL/BZ/9PdW+
+	IybvzGvgNj6y7Vt/6GWC5iz+AfW7iGUlOh2o2oTOXP5rFAucBUGUi9wB9gmcSg6QlBHhBZuwdO+
+	/9tNlGWiVMlcqqHWd7aBVvEjzNBpCHxPMjOKY7A8LbigRnpKlKZx+7GyJjhAUhkdrz87uCrRgoB
+	lboHSVM/+AFuk/l+IJhhE+xzpC0Amtj3NsCFywmxooWenQjZ+C/qp3hdj9VidpK/dq5WMpuQtpr
+	0rlZmVdSZrfNhP3sgUBh9AgBSEFrJm+YJspVvj2xkvrHlT8euI+kK598Yf3Mg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.806400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	D0C318A38EBB130AA739C695458581D634A5D984CB05CC042F6AC14E61DE43042000:8
+X-MTK: N
 
-Currently, there is no terminator entry for exynosautov920_cmu_of_match,
-hence facing below KASAN warning,
+This series is based on linux-next, tag: next-20240927
 
-	==================================================================
-	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
-	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
+Enables the GPU on mt8390-genio-700-evk.dts. 
+The panfrost driver probed with dmesg:
 
-	CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0+ #334
-	Hardware name: linux,dummy-virt (DT)
-	Call trace:
-	 dump_backtrace+0x94/0xec
-	 show_stack+0x18/0x24
-	 dump_stack_lvl+0x90/0xd0
-	 print_report+0x1f4/0x5b4
-	 kasan_report+0xc8/0x110
-	 __asan_report_load1_noabort+0x20/0x2c
-	 of_match_node+0x120/0x13c
-	 of_match_device+0x70/0xb4
-	 platform_match+0xa0/0x25c
-	 __device_attach_driver+0x7c/0x2d4
-	 bus_for_each_drv+0x100/0x188
-	 __device_attach+0x174/0x364
-	 device_initial_probe+0x14/0x20
-	 bus_probe_device+0x128/0x158
-	 device_add+0xb3c/0x10fc
-	 of_device_add+0xdc/0x150
-	 of_platform_device_create_pdata+0x120/0x20c
-	 of_platform_bus_create+0x2bc/0x620
-	 of_platform_populate+0x58/0x108
-	 of_platform_default_populate_init+0x100/0x120
-	 do_one_initcall+0x110/0x788
-	 kernel_init_freeable+0x44c/0x61c
-	 kernel_init+0x24/0x1e4
-	 ret_from_fork+0x10/0x20
+panfrost 13000000.gpu: clock rate = 390000000
+panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x0 status 0x0
+panfrost 13000000.gpu: features: 00000000,000019f7, 
+  issues: 00000003,80000400
+panfrost 13000000.gpu: Features: L2:0x08130206 Shader:0x00000000
+  Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+panfrost 13000000.gpu: shader_present=0x10005 l2_present=0x1
+[drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
 
-	The buggy address belongs to the variable:
-	 exynosautov920_cmu_of_match+0xc8/0x2c80
+Changes in v2:
+- Fixes the "Fixes" tag in patch ("arm64: dts: mediatek: mt8188: 
+  Fix wrong clock provider in MFG1 power domain")
+- Reuse mtk_mt8186_efuse_pdata
+- Remove comma at the end of mainpll_d5_d2
+- Add patch ("soc: mediatek: mediatek-regulator-coupler: Support mt8188")
+- Couple GPU SRAM voltage to GPU voltage instead of fixed value
 
-	The buggy address belongs to the virtual mapping at
-	 [ffffffe31c7d0000, ffffffe31d700000) created by:
-	 paging_init+0x424/0x60c
+Pablo Sun (6):
+  arm64: dts: mediatek: mt8188: Fix wrong clock provider in MFG1 power
+    domain
+  clk: mediatek: clk-mt8188-topckgen: Remove univpll from parents of
+    mfg_core_tmp
+  nvmem: mtk-efuse: Enable postprocess for mt8188 GPU speed binning
+  arm64: dts: mediatek: mt8188: Add efuse for GPU speed binning
+  soc: mediatek: mediatek-regulator-coupler: Support mt8188
+  arm64: dts: mediatek: mt8390-genio-700-evk: Enable Mali GPU
 
-	The buggy address belongs to the physical page:
-	page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4349e
-	flags: 0x3fffe0000002000(reserved|node=0|zone=0|lastcpupid=0x1ffff)
-	raw: 03fffe0000002000 fffffffec00d2788 fffffffec00d2788 0000000000000000
-	raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-	page dumped because: kasan: bad access detected
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 11 +++++--
+ .../dts/mediatek/mt8390-genio-700-evk.dts     | 31 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-topckgen.c    |  9 ++++--
+ drivers/nvmem/mtk-efuse.c                     |  1 +
+ drivers/soc/mediatek/mtk-regulator-coupler.c  |  1 +
+ 5 files changed, 48 insertions(+), 5 deletions(-)
 
-	Memory state around the buggy address:
-	 ffffffe31cc9e500: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
-	 ffffffe31cc9e580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	>ffffffe31cc9e600: 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 04 f9 f9 f9
-	                                  ^
-	 ffffffe31cc9e680: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
-	 ffffffe31cc9e700: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
-	==================================================================
-
-Add a dummy terminator entry at the end to assist
-of_match_node() in traversing up to the terminator entry
-without accessing an out-of-boundary index.
-
-Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/clk/samsung/clk-exynosautov920.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-index 7ba9748c0526..a3634003b29b 100644
---- a/drivers/clk/samsung/clk-exynosautov920.c
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -1155,6 +1155,7 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
- 		.compatible = "samsung,exynosautov920-cmu-peric0",
- 		.data = &peric0_cmu_info,
- 	},
-+	{ },
- };
- 
- static struct platform_driver exynosautov920_cmu_driver __refdata = {
 -- 
-2.34.1
+2.45.2
 
