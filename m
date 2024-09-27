@@ -1,109 +1,136 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8765A18784A
-	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 09:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E315873501
+	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727427732; cv=none; b=WppSpLJOjsLDkM+9jSjhE6P1AikmhSA1jJqvwRv9jK0ZJWkTlf7ooACfDZIhJ8M+CxEta2MGM4XQD1ZOm8obrhS/xQfQHbW6v5lkbBmrjhC3S8iy2ft2EzxFK+t7I2VjDrq7CkyywC5stvr8+rkMSFSS/D7tTGOux2L30EEVcog=
+	t=1727428964; cv=none; b=uv1mMYS/zifMhEX8yUMaplhVAVpRcMsut8/RPWI7flNBVMdFhlvBbOox2/dHwG3iKn3px+VghyBpIobjcDzJheJkzUP7Im2bt1jW3dUqAKM7sXypA4gzeEhRut2bWXAr6dD7zoQi3xwmKz+85eb5cZxJmkTVoVkX6DBTHme22Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727427732; c=relaxed/simple;
-	bh=OzTlkDrZ5UNBFj2egyQHy9ztwtmLwwcWSRs7QSGkC50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=suNqBVOmmbXsN7i3/8R0p4+gDcdrDSMoYbZn4Rhf1NmD5PWU3WRmK5bY6kyTyBOSsAqQOj34z/fUfZCXABaRxoFeyIx6pMGNDo8iPk3GKLoULtPrQ0Fn15A4fLw+VNeWZuv0xQaYMkYLQse+WfNusTkDg7R47XSuTLZ6UAzTZek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hg+L5Rs1; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727428964; c=relaxed/simple;
+	bh=nUpUWNBamg84qW5iTRwtodgh/0RU7dlLqiD9L8w4Y9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Csei12WkrdnDAfXAn620RoGbqVRSLqw/O56cPv6tbaCh0BG3o1havbLoupI7K6dISuwr6UerIEYgSADb+P0yimrKyVXIK++tLRDoPxfuu3gziSWAgzaQ0qMa+OUrQkEhqOYRMGcEnWT+U08LGPvFUtYQ3ZcyDsc+H9EPLm0U8v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WUlQQfua; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hg+L5Rs1"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365a9574b6so3029039e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 02:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727427729; x=1728032529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JWb73ryEVZ2J3BVL15FqHfUHxoOk+Qe9ibuCLa7loPI=;
-        b=hg+L5Rs1pReWVvspjzeOE+foIQAtENSDFZU/5kgir7LJKflnOTlFKzbJoOnFgvNCbD
-         cSamnnba7WGZfdYRguBTPftPWvnqP7Q7CXt1MnTW/LOxYDCTtAeUEa+IDDzyt9+BxCwE
-         z2MVIuvjSmpSoMqWIM4YJXZf2qUX3hD9SxBtoXQvOYQP3qDoUT5OCYt3wXlga0oK2Nld
-         c7GtRxXDydCFSR0alay70Co9JJYNOKTy1/smdh1fsyiX5z12QHcl/Yp3jXnbmOBfB8o4
-         1sfITV7OT4KJmLq9yaahgi+RQaZRrCVbhtuAo4ne79kQQsrNxQ6NtlZcAjb/wrdzYpqw
-         Kndg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WUlQQfua"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727428959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DqW1Z6ilDYncO6WIxfWW4lU0O53b+hjUNpAszcdmBJA=;
+	b=WUlQQfua8huLWyDzJVXMjZnffzf8kydwLWj3RkusJCSqa9yNWYrojJ84c+jQZC5C/cvva5
+	/qo7ge45ATnHIm35gg6CX4Drg7MlEPLQE2q4lxKcCHoE5RcugEwT1UJu30NjvH8346Tb+a
+	vxn39B8w0ZugrJmRyckr3CnQ3ABPH3k=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-ZFGd92BiMNGKuS-k1FIccg-1; Fri, 27 Sep 2024 05:22:38 -0400
+X-MC-Unique: ZFGd92BiMNGKuS-k1FIccg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb33e6299so14102045e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 02:22:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727427729; x=1728032529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JWb73ryEVZ2J3BVL15FqHfUHxoOk+Qe9ibuCLa7loPI=;
-        b=Edr4EzEXeHszDlAsEIYnFs6n/IlNu3619or9+6Zlf754A5CA4uw6HP3iAUqxbMMzHq
-         /mw9upTbAGyBrujr2MBx1pxID3ZPuoBGvQEVu2T9qr2dMv7wBsLGt7SRfzs3VVr1HBI/
-         Toxlhyc3zEcDy84RpQ00NfXEWnpSWPbcQ+NYQBmGY5NxWrKgsfzdgAr4yX2UYDJXQjKM
-         y8X10NysLXnmjauz3iHJ7dLp6bJTo2ACofzXX8VOgqFTME9Y8LpmsRRuioPH3WqsDW0u
-         YuZJChUOTszsk3nNoRVobKgfFI57Y5gy66e9BeZpG/eXQPzZdq7leS4vA9Ni7xioRRcE
-         pp9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgV4kqBEpyzdBZaQO8w6kKbGL5UWedMdrYRwvGZNxd1/SdwBxFG4cNpD+y0wT/41C5d0cDZQ88ESk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/azwHSwCsA1NVOhucmyZC72Cp+pqfLdNWRJoBJFpbLOp4wG5Q
-	YT/R6Wfrx/MC7ywGEeE5nJJNtND9Pe7M9X0P4pnaRtC7d/8Z7TOHzy4rL2Ew6Jw=
-X-Google-Smtp-Source: AGHT+IFdzeCd6YYS6wM/QqC+S3hSNA2f3XY8BHe1b5ScvCd2SfMlzBQM0TBaxSb+NfI+Cw6mQEmOgA==
-X-Received: by 2002:a05:6512:eaa:b0:535:6a34:b8c3 with SMTP id 2adb3069b0e04-5389fc34366mr2411280e87.5.1727427728569;
-        Fri, 27 Sep 2024 02:02:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e3c5sm233552e87.106.2024.09.27.02.02.06
+        d=1e100.net; s=20230601; t=1727428957; x=1728033757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DqW1Z6ilDYncO6WIxfWW4lU0O53b+hjUNpAszcdmBJA=;
+        b=P8ea0wQ1Ud4EeLR2jGG+VqvwiNBvCQksM+UqoSnMndKW/B1DW4/wSgmUBH8Hngkd2y
+         EcpeRfeSCmxCy2PZG0RjIQnppkilTnKxprF4wfVLqbVCQHTUhiJudkYL5RttYJSvDPb/
+         V2gdDbGjts9iuf0Ni1R0+xxq4hQ3rs1HwKiCZ7BmedsX9bMoYWNLCP4D5y3pX40vttHj
+         9xdiGOcLAB5KIwJolSJpnHkuM3ACRlihwyacInbuYgt6h2aw2s0mZf9nWuRdlstcGkhR
+         bClilqz1Tq2WSLS4ZW+80mBm1pGlfEz/9IDStFT2UMu3cC9IarzmCKYyOoWpFWRnRgjW
+         9mQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO564VfWIShEsMWV1M1X09bB8Svc0sWw3Tq7bOhmR9GdTZr3K5nxorls/8TnuIdbm4XhgwJ+AJ0jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWsPx8SKooeSGYkInYEQmdYmCjyF0z9Gf+Rm4JoMbVAb8Bo1sU
+	+6Yr1vttoPlY4hTHzgsTfzBDaiW0iJtwp/7S5f9hDdq/w8jMmopFXAoFvAUruUMkZLhD1LyeFfP
+	NDcPCDRYyq1J/L9Y8Qbd6zY1uemSjZ1mBWFuLzjjRWaAF/yrbydRuuBtP9A==
+X-Received: by 2002:a05:600c:3b93:b0:42c:b995:20d3 with SMTP id 5b1f17b1804b1-42f58484b34mr16809175e9.26.1727428957289;
+        Fri, 27 Sep 2024 02:22:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJWCF/p5auGwFMcVVPbMUAZcGcxwmZH59KUVxG01mmgdWdNTVcOZrU3cbtQVowAR5ZCeffkg==
+X-Received: by 2002:a05:600c:3b93:b0:42c:b995:20d3 with SMTP id 5b1f17b1804b1-42f58484b34mr16808955e9.26.1727428956917;
+        Fri, 27 Sep 2024 02:22:36 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddadcsm68540605e9.7.2024.09.27.02.22.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:02:07 -0700 (PDT)
-Date: Fri, 27 Sep 2024 12:02:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sricharan R <quic_srichara@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
-	p.zabel@pengutronix.de, geert+renesas@glider.be, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com
-Subject: Re: [PATCH V2 6/9] clk: qcom: add Global Clock controller (GCC)
- driver for IPQ5424 SoC
-Message-ID: <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
-References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
- <20240927065244.3024604-7-quic_srichara@quicinc.com>
+        Fri, 27 Sep 2024 02:22:36 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] clk: mediatek: drop two dead config options
+Date: Fri, 27 Sep 2024 11:22:32 +0200
+Message-ID: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927065244.3024604-7-quic_srichara@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 12:22:41PM GMT, Sricharan R wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> Add support for the global clock controller found on IPQ5424 SoC.
-> 
-> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->   [v2] Remove CLK_IS_CRITICAL for all clks
->        Added CLK_IGNORE_UNUSED only for gpll0 temporarily till
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-This should be gpll4, not gpll0 (no need to resend just to fix the
-changelog though).
+Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
+module build") adds a number of new COMMON_CLK_MT8195_* config options.
+Among those, the config options COMMON_CLK_MT8195_AUDSYS and
+COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
+used in the Makefile to include a specific file.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
+COMMON_CLK_MT8195_MSDC.
 
+Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow module build")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/clk/mediatek/Kconfig | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
->        dependent consumers are enabled
->        Fixed probe to use qcom_cc_probe
-> 
->  drivers/clk/qcom/Kconfig       |    8 +
->  drivers/clk/qcom/Makefile      |    1 +
->  drivers/clk/qcom/gcc-ipq5424.c | 3309 ++++++++++++++++++++++++++++++++
->  3 files changed, 3318 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
-> 
-
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 70a005e7e1b1..486401e1f2f1 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -887,13 +887,6 @@ config COMMON_CLK_MT8195_APUSYS
+ 	help
+ 	  This driver supports MediaTek MT8195 AI Processor Unit System clocks.
+ 
+-config COMMON_CLK_MT8195_AUDSYS
+-	tristate "Clock driver for MediaTek MT8195 audsys"
+-	depends on COMMON_CLK_MT8195
+-	default COMMON_CLK_MT8195
+-	help
+-	  This driver supports MediaTek MT8195 audsys clocks.
+-
+ config COMMON_CLK_MT8195_IMP_IIC_WRAP
+ 	tristate "Clock driver for MediaTek MT8195 imp_iic_wrap"
+ 	depends on COMMON_CLK_MT8195
+@@ -908,14 +901,6 @@ config COMMON_CLK_MT8195_MFGCFG
+ 	help
+ 	  This driver supports MediaTek MT8195 mfgcfg clocks.
+ 
+-config COMMON_CLK_MT8195_MSDC
+-	tristate "Clock driver for MediaTek MT8195 msdc"
+-	depends on COMMON_CLK_MT8195
+-	default COMMON_CLK_MT8195
+-	help
+-	  This driver supports MediaTek MT8195 MMC and SD Controller's
+-	  msdc and msdc_top clocks.
+-
+ config COMMON_CLK_MT8195_SCP_ADSP
+ 	tristate "Clock driver for MediaTek MT8195 scp_adsp"
+ 	depends on COMMON_CLK_MT8195
 -- 
-With best wishes
-Dmitry
+2.46.1
+
