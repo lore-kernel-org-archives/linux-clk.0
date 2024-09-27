@@ -1,112 +1,186 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E989316C6A1;
-	Fri, 27 Sep 2024 13:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFB21C0DF0;
+	Fri, 27 Sep 2024 14:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727442236; cv=none; b=h7CDXuJpdwgVXTif/EBJ3WUPWImJfwuycQk/rRHJFAPUZs8EnThSX1KNfPNZYK8y9RLbvp6FnsJiZA6W3uZCry1OZH4uwdp9IUI9e/jW0gPnhrNY3IMdu5XMg+ulFTJfWZYspjcpurbb9ht9RbtFE5jUk4988JM9IGUcQmsRA9Y=
+	t=1727448757; cv=none; b=I2dwKsoUrzeC7s0sl1emKW7SxcTQ0M+SdmCkm88y8OyAPbChtAUuUyiD/q0jsrUBXN1WiiqqgsU0loXlLi48+2/3y7RzFmIfOgQ/BvXqC31D8x+l2lt9e5gPH35x/5iqFpQhgxBfz3JJzDZ0cXDWi7CxKv74URNM90DfQViY+/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727442236; c=relaxed/simple;
-	bh=KGaBNjNO7DouBka7wHY7CLPjOBmuYFckfmsZhp4KAVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XXGdQy6CCVru7VhmuwXQKl2oI5Zq6TwERrzEKJKgVc0Xv+u4AIn1k45Ap0+exodTnzmISlfSYdLDk4QTOLmtvXAI+G+ezj02eRgjhXQ0x8vDKawOcPpymjUS6D/JjO3K6yMV1l+QFjNX4BxeER9igVulzPMYQ+PT5eA4ITErYIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XwyNXTd8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1727448757; c=relaxed/simple;
+	bh=gDwgLjsgEbVK6CAyiM/XC4tlQtgHp+sr8EE3XMvYS1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ARSCLMulwsFYHpF/Wd0PZ/A5ISHTgWp7BLG0rS/+Ic61ZG6z4EQB/JcEOCPqiyrLuCEn4skjIff1okJaBfvIjHx5nsaqVIkkk/MTftDDMm0UZJIH4T6nDf9vrNyXAw0vr/DIj0wWSsGPfsQldyYAsIbzDXlc/WwSHzHLE1GYS1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpFybpCq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XwyNXTd8"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6umUH001908;
-	Fri, 27 Sep 2024 13:03:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jgDk6xMKnrNMczCXf9wyrjb0y6qIThGjEzlCc7vi6a0=; b=XwyNXTd8nQ31TWuy
-	xksBVRoa6BujLruof/UBDybf+EW0RCgEVbNVFzu2viFVubv9SkSFUOtpqWsxbHTR
-	t/9pA3CDzJptp0u+GFRaj1GtrVZEoBWcI5QtOBzeZosPLPKUOVoy8Da5WibHP4fN
-	bf4/nkDLc7TUAeXgCTiSjFiWmzz5lqv/k0K6PVOcZctmfxjEyPCesExylbOthPAQ
-	Pes7BbDf/VFmjTtPhfITXWUQbGTlZ54gyJTdz84w5QZ3zovcOa6Bci/JxCNBINIK
-	UTpQZ8fqDqqx68k852abI0/Ai/TmqBKwOwAjcWCHU90GiKZLo3yr45M5j7jS93Qu
-	KPn84w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skgnkjp2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 13:03:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RD3PNW028858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 13:03:25 GMT
-Received: from [10.50.40.232] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
- 2024 06:03:18 -0700
-Message-ID: <21d89d9d-8bac-4bb8-a4e3-81328e783241@quicinc.com>
-Date: Fri, 27 Sep 2024 18:33:15 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpFybpCq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92FF5C4CED0;
+	Fri, 27 Sep 2024 14:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727448756;
+	bh=gDwgLjsgEbVK6CAyiM/XC4tlQtgHp+sr8EE3XMvYS1o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LpFybpCqnFA6+C6gS+W/DRPRA05bJjtJusc6ZI8dESfsW4Bn26AuZ8Mmx7ZReOECo
+	 GrQonou4zP8OqRft0P7hCVeHkllH3eUvZIyVJRQhk1vR1vakq/a4yrLwwQ2CM4V3MT
+	 kzwhNqksp/On5K2/zcOMg/p9jhDZK2qb2ept9NOUUPruT04Zj3UiAnjdrEF08uW0Fq
+	 0OyBkYDV9u5ehoAG4KbwPlj2EfEXAyWrg1i0iLvg7pIKgMTKO0ScuSwnhZco1C2NUc
+	 7FeuP8uxincskeUTOmfoR5s1PpJqG/1g02BW4SkgBLSne9rUyT+cGdmKDut3q9doBc
+	 NHPtjtHXQ1YcA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so2872021e87.0;
+        Fri, 27 Sep 2024 07:52:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaK1q82xZQWyAUFxfW77OehMEX3AM8K3BXG02Fb7JcQdhq4n74zIYkE70qMZEKJQSyT1UmTfUQyVsd@vger.kernel.org, AJvYcCWvkoh/tuoxSLeREdKJL6pug2qZ9nVK9K+eKlVFV79dxiWgNwaVq/iz9/rLaB5UhZIONsN2isnIZhWZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcSOvDtjSrLCElwuy/Knmh0Xetp6VdzViPMIYAxvsKPyO42lI+
+	Lh8A3CY7PdlExbErCJqOR+TojY1AiU+DUhBg1034TgqzDPnNfyejmT9GzNoioFrA1FozaRgMZj1
+	rtQ0prWiYkyYhGtu5tH5jWavLaFk=
+X-Google-Smtp-Source: AGHT+IHb8xgqd7Gm6Y55ygBHuwhYVS4X0q4tFLNa0w8W2c5fHVscGYifd8lNeY6zB2uUsxl35QFzqU27pcJ8AY/skp0=
+X-Received: by 2002:a05:6512:33d3:b0:535:6892:3be6 with SMTP id
+ 2adb3069b0e04-5389fc7fe55mr2285769e87.54.1727448755139; Fri, 27 Sep 2024
+ 07:52:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 6/9] clk: qcom: add Global Clock controller (GCC)
- driver for IPQ5424 SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_varada@quicinc.com>
-References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
- <20240927065244.3024604-7-quic_srichara@quicinc.com>
- <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <hitzcz3gjp4mywesnoicjnv4sfy4sckgepbl43bjjndp74etpl@adnjplfj3pfg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eGJXufWxpeO_VZ9kBbgYTb7N3xRbGydw
-X-Proofpoint-GUID: eGJXufWxpeO_VZ9kBbgYTb7N3xRbGydw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxlogscore=856 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270094
+References: <20240923075704.3567313-1-masahiroy@kernel.org>
+In-Reply-To: <20240923075704.3567313-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 27 Sep 2024 23:51:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARrs18T74-+JOnLCPqP1-nJEnVaOAGOZVDOvxEH0y2_pg@mail.gmail.com>
+Message-ID: <CAK7LNARrs18T74-+JOnLCPqP1-nJEnVaOAGOZVDOvxEH0y2_pg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] kbuild: move non-boot built-in DTBs to .rodata section
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrea della Porta <andrea.porta@suse.com>, 
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
+	Brendan Higgins <brendanhiggins@google.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 23, 2024 at 4:57=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> Commit aab94339cd85 ("of: Add support for linking device tree blobs
+> into vmlinux") introduced a mechanism to embed DTBs into vmlinux.
+>
+> Initially, it was used for wrapping boot DTBs in arch/*/boot/dts/, but
+> it is now reused for more generic purposes, such as testing.
+>
+> Built-in DTBs are discarded because KERNEL_DTB() is part of INIT_DATA,
+> as defined in include/asm-generic/vmlinux.lds.h.
+>
+> This has not been an issue so far because OF unittests are triggered
+> during boot, as defined by late_initcall(of_unittest).
+>
+> However, the recent clk KUnit test additions have caused problems
+> because KUnit can execute test suites after boot.
+>
+> For example:
+>
+>   # echo > /sys/kernel/debug/kunit/clk_register_clk_parent_data_device/ru=
+n
+>
+> This command triggers a stack trace because built-in DTBs have already
+> been freed.
+>
+> While it is possible to move such test suites from kunit_test_suites to
+> kunit_test_init_section_suites, it would be preferable to avoid usage
+> limitations.
+>
+> This commit moves non-boot built-in DTBs to the .rodata section. Since
+> these generic DTBs are looked up by name, they do not need to be placed
+> in the special .dtb.init.rodata section.
+>
+> Boot DTBs should remain in .dtb.init.rodata because the arch boot code
+> generally does not know the DT name, thus it uses the __dtb_start symbol
+> to locate it.
+>
+> This separation also ensures that the __dtb_start symbol references the
+> boot DTB. Currently, the .dtb.init.rodata is a mixture of both boot and
+> non-boot DTBs. The __dtb_start symbol must be followed by the boot DTB,
+> but we currently rely on the link order (i.e., the order in Makefiles),
+> which is very fragile.
+>
+> Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test managed =
+APIs")
+> Fixes: 5776526beb95 ("clk: Add KUnit tests for clk fixed rate basic type"=
+)
+> Fixes: 274aff8711b2 ("clk: Add KUnit tests for clks registered with struc=
+t clk_parent_data")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+> Changes in v3:
+>   - Move to .rodata section instead of .init.rodata
+>
+>  scripts/Makefile.dtbs | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.dtbs b/scripts/Makefile.dtbs
+> index 46009d5f1486..3e81cca6f68a 100644
+> --- a/scripts/Makefile.dtbs
+> +++ b/scripts/Makefile.dtbs
+> @@ -34,12 +34,14 @@ $(obj)/dtbs-list: $(dtb-y) FORCE
+>  # Assembly file to wrap dtb(o)
+>  # ----------------------------------------------------------------------=
+-----
+>
+> +builtin-dtb-section =3D $(if $(filter arch/%, $(obj)),.dtb.init.rodata,.=
+rodata)
+
+
+For more precise matching, I will change as follows:
+
+
+diff --git a/scripts/Makefile.dtbs b/scripts/Makefile.dtbs
+index 3e81cca6f68a..8d56c0815f33 100644
+--- a/scripts/Makefile.dtbs
++++ b/scripts/Makefile.dtbs
+@@ -34,7 +34,7 @@ $(obj)/dtbs-list: $(dtb-y) FORCE
+ # Assembly file to wrap dtb(o)
+ # ------------------------------------------------------------------------=
+---
+
+-builtin-dtb-section =3D $(if $(filter arch/%, $(obj)),.dtb.init.rodata,.ro=
+data)
++builtin-dtb-section =3D $(if $(filter arch/$(SRCARCH)/boot/dts%,
+$(obj)),.dtb.init.rodata,.rodata)
+
+ # Generate an assembly file to wrap the output of the device tree compiler
+ quiet_cmd_wrap_S_dtb =3D WRAP    $@
 
 
 
-On 9/27/2024 2:32 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 27, 2024 at 12:22:41PM GMT, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Add support for the global clock controller found on IPQ5424 SoC.
->>
->> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>    [v2] Remove CLK_IS_CRITICAL for all clks
->>         Added CLK_IGNORE_UNUSED only for gpll0 temporarily till
-> 
-> This should be gpll4, not gpll0 (no need to resend just to fix the
-> changelog though).
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-  ok, Thanks !
+Applied to linux-kbuild/fixes.
 
-Regards,
-  Sricharan
 
+
+
+> +
+>  # Generate an assembly file to wrap the output of the device tree compil=
+er
+>  quiet_cmd_wrap_S_dtb =3D WRAP    $@
+>        cmd_wrap_S_dtb =3D {                                              =
+                 \
+>                 symbase=3D__$(patsubst .%,%,$(suffix $<))_$(subst -,_,$(n=
+otdir $*));      \
+>                 echo '\#include <asm-generic/vmlinux.lds.h>';            =
+               \
+> -               echo '.section .dtb.init.rodata,"a"';                    =
+               \
+> +               echo '.section $(builtin-dtb-section),"a"';              =
+               \
+>                 echo '.balign STRUCT_ALIGNMENT';                         =
+               \
+>                 echo ".global $${symbase}_begin";                        =
+               \
+>                 echo "$${symbase}_begin:";                               =
+               \
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
