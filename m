@@ -1,78 +1,39 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E315873501
-	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 09:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0611BBBF1;
+	Fri, 27 Sep 2024 10:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727428964; cv=none; b=uv1mMYS/zifMhEX8yUMaplhVAVpRcMsut8/RPWI7flNBVMdFhlvBbOox2/dHwG3iKn3px+VghyBpIobjcDzJheJkzUP7Im2bt1jW3dUqAKM7sXypA4gzeEhRut2bWXAr6dD7zoQi3xwmKz+85eb5cZxJmkTVoVkX6DBTHme22Us=
+	t=1727431852; cv=none; b=kQOrUVDkD4m9q2M1/XqgNOeCD0GJNETjO07TbLIxhVw+JUbfv/ALDVv0XklSXOJ7cSMHMfCZkv875e9NBURoUAjtGoLUECmAav8zXoCePWPaqWJX7DhzZmLrsyW6MnxDLgq3WORBTyoIoCW8UDR2i9+CVNXJmu+FB0jbg2OrTCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727428964; c=relaxed/simple;
-	bh=nUpUWNBamg84qW5iTRwtodgh/0RU7dlLqiD9L8w4Y9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Csei12WkrdnDAfXAn620RoGbqVRSLqw/O56cPv6tbaCh0BG3o1havbLoupI7K6dISuwr6UerIEYgSADb+P0yimrKyVXIK++tLRDoPxfuu3gziSWAgzaQ0qMa+OUrQkEhqOYRMGcEnWT+U08LGPvFUtYQ3ZcyDsc+H9EPLm0U8v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WUlQQfua; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WUlQQfua"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727428959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DqW1Z6ilDYncO6WIxfWW4lU0O53b+hjUNpAszcdmBJA=;
-	b=WUlQQfua8huLWyDzJVXMjZnffzf8kydwLWj3RkusJCSqa9yNWYrojJ84c+jQZC5C/cvva5
-	/qo7ge45ATnHIm35gg6CX4Drg7MlEPLQE2q4lxKcCHoE5RcugEwT1UJu30NjvH8346Tb+a
-	vxn39B8w0ZugrJmRyckr3CnQ3ABPH3k=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-ZFGd92BiMNGKuS-k1FIccg-1; Fri, 27 Sep 2024 05:22:38 -0400
-X-MC-Unique: ZFGd92BiMNGKuS-k1FIccg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb33e6299so14102045e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 02:22:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727428957; x=1728033757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DqW1Z6ilDYncO6WIxfWW4lU0O53b+hjUNpAszcdmBJA=;
-        b=P8ea0wQ1Ud4EeLR2jGG+VqvwiNBvCQksM+UqoSnMndKW/B1DW4/wSgmUBH8Hngkd2y
-         EcpeRfeSCmxCy2PZG0RjIQnppkilTnKxprF4wfVLqbVCQHTUhiJudkYL5RttYJSvDPb/
-         V2gdDbGjts9iuf0Ni1R0+xxq4hQ3rs1HwKiCZ7BmedsX9bMoYWNLCP4D5y3pX40vttHj
-         9xdiGOcLAB5KIwJolSJpnHkuM3ACRlihwyacInbuYgt6h2aw2s0mZf9nWuRdlstcGkhR
-         bClilqz1Tq2WSLS4ZW+80mBm1pGlfEz/9IDStFT2UMu3cC9IarzmCKYyOoWpFWRnRgjW
-         9mQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUO564VfWIShEsMWV1M1X09bB8Svc0sWw3Tq7bOhmR9GdTZr3K5nxorls/8TnuIdbm4XhgwJ+AJ0jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWsPx8SKooeSGYkInYEQmdYmCjyF0z9Gf+Rm4JoMbVAb8Bo1sU
-	+6Yr1vttoPlY4hTHzgsTfzBDaiW0iJtwp/7S5f9hDdq/w8jMmopFXAoFvAUruUMkZLhD1LyeFfP
-	NDcPCDRYyq1J/L9Y8Qbd6zY1uemSjZ1mBWFuLzjjRWaAF/yrbydRuuBtP9A==
-X-Received: by 2002:a05:600c:3b93:b0:42c:b995:20d3 with SMTP id 5b1f17b1804b1-42f58484b34mr16809175e9.26.1727428957289;
-        Fri, 27 Sep 2024 02:22:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJWCF/p5auGwFMcVVPbMUAZcGcxwmZH59KUVxG01mmgdWdNTVcOZrU3cbtQVowAR5ZCeffkg==
-X-Received: by 2002:a05:600c:3b93:b0:42c:b995:20d3 with SMTP id 5b1f17b1804b1-42f58484b34mr16808955e9.26.1727428956917;
-        Fri, 27 Sep 2024 02:22:36 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddadcsm68540605e9.7.2024.09.27.02.22.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 02:22:36 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] clk: mediatek: drop two dead config options
-Date: Fri, 27 Sep 2024 11:22:32 +0200
-Message-ID: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727431852; c=relaxed/simple;
+	bh=46DKFiOZKtMOy5C/LqDJYVkvP8CaYTA8ZDmphOoRNmI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t0n92j90NnF8tmwC6FTQuz928twixCxQix999b89tah8BVWY4/RJRhpBhwFXJYUms3hmhT8EAY/tPNC26OBKUIH7lJcIq69m09/SlHtnw/HHynJ9f/+Pdr3yB/GAe+YdC2Nm6RHMZmOid5h0lVtxhYAPfmjpqkFZ4P6xysbscss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XFR6D3g4vz1SBK2;
+	Fri, 27 Sep 2024 18:09:56 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id F1B6E180042;
+	Fri, 27 Sep 2024 18:10:46 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 27 Sep
+ 2024 18:10:46 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<alim.akhtar@samsung.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<sunyeal.hong@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] clk: samsung: Fix out-of-bound access of of_match_node()
+Date: Fri, 27 Sep 2024 18:21:04 +0800
+Message-ID: <20240927102104.3268790-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,57 +41,90 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Currently, there is no terminator entry for exynosautov920_cmu_of_match,
+hence facing below KASAN warning,
 
-Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
-module build") adds a number of new COMMON_CLK_MT8195_* config options.
-Among those, the config options COMMON_CLK_MT8195_AUDSYS and
-COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
-used in the Makefile to include a specific file.
+	==================================================================
+	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
+	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
 
-Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
-COMMON_CLK_MT8195_MSDC.
+	CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0+ #334
+	Hardware name: linux,dummy-virt (DT)
+	Call trace:
+	 dump_backtrace+0x94/0xec
+	 show_stack+0x18/0x24
+	 dump_stack_lvl+0x90/0xd0
+	 print_report+0x1f4/0x5b4
+	 kasan_report+0xc8/0x110
+	 __asan_report_load1_noabort+0x20/0x2c
+	 of_match_node+0x120/0x13c
+	 of_match_device+0x70/0xb4
+	 platform_match+0xa0/0x25c
+	 __device_attach_driver+0x7c/0x2d4
+	 bus_for_each_drv+0x100/0x188
+	 __device_attach+0x174/0x364
+	 device_initial_probe+0x14/0x20
+	 bus_probe_device+0x128/0x158
+	 device_add+0xb3c/0x10fc
+	 of_device_add+0xdc/0x150
+	 of_platform_device_create_pdata+0x120/0x20c
+	 of_platform_bus_create+0x2bc/0x620
+	 of_platform_populate+0x58/0x108
+	 of_platform_default_populate_init+0x100/0x120
+	 do_one_initcall+0x110/0x788
+	 kernel_init_freeable+0x44c/0x61c
+	 kernel_init+0x24/0x1e4
+	 ret_from_fork+0x10/0x20
 
-Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow module build")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+	The buggy address belongs to the variable:
+	 exynosautov920_cmu_of_match+0xc8/0x2c80
+
+	The buggy address belongs to the virtual mapping at
+	 [ffffffe31c7d0000, ffffffe31d700000) created by:
+	 paging_init+0x424/0x60c
+
+	The buggy address belongs to the physical page:
+	page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4349e
+	flags: 0x3fffe0000002000(reserved|node=0|zone=0|lastcpupid=0x1ffff)
+	raw: 03fffe0000002000 fffffffec00d2788 fffffffec00d2788 0000000000000000
+	raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+	page dumped because: kasan: bad access detected
+
+	Memory state around the buggy address:
+	 ffffffe31cc9e500: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
+	 ffffffe31cc9e580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>ffffffe31cc9e600: 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 04 f9 f9 f9
+	                                  ^
+	 ffffffe31cc9e680: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
+	 ffffffe31cc9e700: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
+	==================================================================
+
+Add a dummy terminator entry at the end to assist
+of_match_node() in traversing up to the terminator entry
+without accessing an out-of-boundary index.
+
+Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/clk/mediatek/Kconfig | 15 ---------------
- 1 file changed, 15 deletions(-)
+ drivers/clk/samsung/clk-exynosautov920.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 70a005e7e1b1..486401e1f2f1 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -887,13 +887,6 @@ config COMMON_CLK_MT8195_APUSYS
- 	help
- 	  This driver supports MediaTek MT8195 AI Processor Unit System clocks.
+diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+index 7ba9748c0526..a3634003b29b 100644
+--- a/drivers/clk/samsung/clk-exynosautov920.c
++++ b/drivers/clk/samsung/clk-exynosautov920.c
+@@ -1155,6 +1155,7 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
+ 		.compatible = "samsung,exynosautov920-cmu-peric0",
+ 		.data = &peric0_cmu_info,
+ 	},
++	{ },
+ };
  
--config COMMON_CLK_MT8195_AUDSYS
--	tristate "Clock driver for MediaTek MT8195 audsys"
--	depends on COMMON_CLK_MT8195
--	default COMMON_CLK_MT8195
--	help
--	  This driver supports MediaTek MT8195 audsys clocks.
--
- config COMMON_CLK_MT8195_IMP_IIC_WRAP
- 	tristate "Clock driver for MediaTek MT8195 imp_iic_wrap"
- 	depends on COMMON_CLK_MT8195
-@@ -908,14 +901,6 @@ config COMMON_CLK_MT8195_MFGCFG
- 	help
- 	  This driver supports MediaTek MT8195 mfgcfg clocks.
- 
--config COMMON_CLK_MT8195_MSDC
--	tristate "Clock driver for MediaTek MT8195 msdc"
--	depends on COMMON_CLK_MT8195
--	default COMMON_CLK_MT8195
--	help
--	  This driver supports MediaTek MT8195 MMC and SD Controller's
--	  msdc and msdc_top clocks.
--
- config COMMON_CLK_MT8195_SCP_ADSP
- 	tristate "Clock driver for MediaTek MT8195 scp_adsp"
- 	depends on COMMON_CLK_MT8195
+ static struct platform_driver exynosautov920_cmu_driver __refdata = {
 -- 
-2.46.1
+2.34.1
 
