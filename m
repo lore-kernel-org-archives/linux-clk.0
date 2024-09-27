@@ -1,111 +1,104 @@
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB21E1BC9E6;
-	Fri, 27 Sep 2024 10:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A1D13698F
+	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 10:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433066; cv=none; b=r9Ng14F/lbPrVrl+qDHmwCQs7xALQ09BHbYoJEFRcUNnrYYBl67oLStCQXlzT3smDWd+ud1UjZ4sUpT1LXxrOf29Z+P6X39HEv0nmOL8E6XLhT+mrcITzw5/3X4i1X6bhYSNNTIxzHHirC6eWRdQGNPuYfcCHKnlo4K4rrKh+Og=
+	t=1727433140; cv=none; b=V+Batt8u+LzF73pIkmNZAOirNiaTXgYKvIhUDVuxQftDenXvoFbz5OWoDX89f2ShEdHd3G0mmC7Zf1XlpiTSiz0azigaYQqlI87sr6xVx5hyNAPa6+de/clM5oRcYl/b3O63D6SWn7vXFivWKKKw1AhLzEXRV5pw8i985hiFc3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433066; c=relaxed/simple;
-	bh=3jeHIz3CzfYt0YlG8Xs7c472A5tNrbVjbV6+o2SkaiY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LTjzGEPJGYyfm8/rVddq8zraQm9dvXCFMF1RIgNr8ClFzzfZN8LMwaXUVbTQ9eoP3sJ9WSEA1abbqVTaUqmWoNeuqkgn3sgrFw2bYkc9pes+U445dDYMWcXzsv47XCytDnTVef7egz8SfyJmvQ7dpxJ/nLfO0TZsvcyjRhngN3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PV1hMPdh; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1727433140; c=relaxed/simple;
+	bh=VpBNp249YzpZXC9Rky5huhq6sb6/jAcrlMwbud4eelw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQcjNcmbcj1MtrNXql7xgch0Yv2eKor6AB0kGUvRGgKRJQxxTu+rtZyZM/pO0a4V2/eo13uU1d+ejwEQLGw9J3bEjSqXlb7AdSY0ChvWkYKRpLPg7Viomi+LLOwhErI/61/iM90btOTByVEtNzR3/oghXZOOrDG9dHsPJUTT5co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PGVNDkIL; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PV1hMPdh"
-X-UUID: 9474ad207cbb11efb66947d174671e26-20240927
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=BTEB+qw5pfDIJJoYTtxRNkXgNsq9QruJuOS6fxVByGo=;
-	b=PV1hMPdhfcb6d30oi0C12WkjiQStUPzJdWC0LUoRrW2NTFBnIChbTPcwD2DqBrXFm6+q2acFFTvlIhGwJnw7adFi+s9q5XM4ZDQ4bMswm1D9ABwLr9r55d8LVNmCQweOvjS5bLHjLB+CkfL0Ud6Et3O3lJOuQrgLtLTDx3n/rfA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:26c16793-1c0d-473c-8649-54687eedb33a,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:3438aa9e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 9474ad207cbb11efb66947d174671e26-20240927
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 169920955; Fri, 27 Sep 2024 18:30:56 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 27 Sep 2024 03:30:55 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 27 Sep 2024 18:30:55 +0800
-From: Pablo Sun <pablo.sun@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, Pablo Sun <pablo.sun@mediatek.com>
-Subject: [PATCH v2 4/6] arm64: dts: mediatek: mt8188: Add efuse for GPU speed binning
-Date: Fri, 27 Sep 2024 18:30:03 +0800
-Message-ID: <20240927103005.17605-5-pablo.sun@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240927103005.17605-1-pablo.sun@mediatek.com>
-References: <20240927103005.17605-1-pablo.sun@mediatek.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PGVNDkIL"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f8c439bc1dso1202611fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 03:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727433136; x=1728037936; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrSvEBMT63eFKBOH/M9CK7Cc9dzPCKyHIsn8PR3V8co=;
+        b=PGVNDkILwM8JGOC4US6aEYRU1JRSuX682QuDqca4HbFhaKfonBQgjkdqGnzp84B6lk
+         Sv4vqXVNhZDF+QhXMC3iIRLmFYPHWmQbru2SoZ0IrETAGr4dsIIOtrQ8d5w6QzwPVpH0
+         Jl6P+1c4horo/TWfMdsL1LxrIlzVkAOtc8JyHujCOaMFqnFw7AvMwHfpe0gerkUrKa+/
+         olGHz4RFWweGzmaqkOf56KQhUe024yShNSXsjmSLmEnGzkM9g0EmwVxDIZqWmuG/drE5
+         2cdUq1mkeXH7gLLyNW3A1Qc3Jhh+qqM7jeiVSQO3ogHtpIX38uolhpXTQloK288/wr4b
+         rq4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727433136; x=1728037936;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OrSvEBMT63eFKBOH/M9CK7Cc9dzPCKyHIsn8PR3V8co=;
+        b=CJ94mRH6STZozG98NzE3zTcTDHjlqpTqbuYQ+FzxYorvmdu7fLUVSiUgf+StttJ012
+         ceXxhRj2hEaLNy+1oBtLIcKL0X1TJArr58X/YQtW6uKDWNeiT8siOKOWLDE3r7HqFjJk
+         clUzeMVP2tiuJq9p2+h3HePtVaVIYHn771vOFR8ooKjafekdp/L9L3tdUBrqNixjwZfJ
+         EilYA4ySrOK/v5IbXanobRwYTqxKspmWf8cARH4tLy+1NVeJO0W8I2q059Kt3J9a8JqC
+         XopUNBYu06BKJAU7DA/8hjJw9VAmfS7y9TYOF5PsObYQgOIRueMZtJAqrNahNEyhDQiI
+         gqWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcT2y1MxDI8g4azKqUWgdNV+lInmao4pf4kh3IRJIO79dON4kQX+b85ZPg6fLbkAxpbpqfinTIBkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUkffCdsEVh9TD+M0a3eslp513rEuVVMzgk2ckflF/Zh+Hx7AG
+	58iE3Tx5YikcU+6Bqdi/Q11Epv1GdboRoj/KHeXsRLL6GjxbMD3DIFZzKehs2Yo=
+X-Google-Smtp-Source: AGHT+IGcdmN2CX08WxP43TGUcVs80qumV8LOKvPfnAtO/+6Y5H5nrPaYJjWrIlkM9WODMBJ1MMd2rg==
+X-Received: by 2002:a05:651c:54c:b0:2f7:5c23:98fd with SMTP id 38308e7fff4ca-2f9d41c1bc0mr5341211fa.12.1727433136151;
+        Fri, 27 Sep 2024 03:32:16 -0700 (PDT)
+Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e333sm259724e87.76.2024.09.27.03.32.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 03:32:14 -0700 (PDT)
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/3] arm: qcom: sm8550: Change camcc power domain from  MMCX to MXC
+Date: Fri, 27 Sep 2024 13:32:09 +0300
+Message-ID: <20240927103212.4154273-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 8bit
 
-The OPP table of mt8188 GPU contains duplicated frequencies
-for different speed bins.
+The problem is trivial to reproduce and the fix is trivial to verify,
+it's sufficient to enable SM8550 camera clock controller and a CCI
+controller, for instance on SM8550-QRD CCI0 or CCI1 can be enabled:
 
-In order to support OPP table, we need to provide the speed bin info
-in the efuse data so the GPU driver could properly set the
-supported hardware speed bin.
+    &cci0 {
+	status = "okay";
+    };
 
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+I made a special effort to check that the power domain in SM8550 camcc
+is sufficient to be replaced, and Titan and other provided GDSCs can
+be turned on/off, if the clock controller is disconneced from MMCX and
+MMCX is off according to /sys/kernel/debug/pm_genpd/pm_genpd_summary.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index 02a5bb4dbd1f..129edaf33704 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -1752,6 +1752,11 @@ efuse: efuse@11f20000 {
- 			lvts_efuse_data1: lvts1-calib@1ac {
- 				reg = <0x1ac 0x40>;
- 			};
-+
-+			gpu_speedbin: gpu-speedbin@580 {
-+				reg = <0x581 0x1>;
-+				bits = <0 3>;
-+			};
- 		};
- 
- 		gpu: gpu@13000000 {
-@@ -1763,6 +1768,8 @@ gpu: gpu@13000000 {
- 				     <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH 0>,
- 				     <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH 0>;
- 			interrupt-names = "job", "mmu", "gpu";
-+			nvmem-cells = <&gpu_speedbin>;
-+			nvmem-cell-names = "speed-bin";
- 			operating-points-v2 = <&gpu_opp_table>;
- 			power-domains = <&spm MT8188_POWER_DOMAIN_MFG2>,
- 					<&spm MT8188_POWER_DOMAIN_MFG3>,
+Vladimir Zapolskiy (3):
+  arm64: dts: qcom: sm8550: Change camcc power domain from MMCX to MXC
+  dt-bindings: clock: qcom,sm8450-camcc: do not restrict power domain to MMCX
+  dt-bindings: clock: qcom,sm8450-camcc: generalize title and description
+
+ .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml      | 8 ++++----
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                      | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+
+base-commit: 11a299a7933e03c83818b431e6a1c53ad387423d
 -- 
 2.45.2
 
