@@ -1,83 +1,92 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A078158559;
-	Fri, 27 Sep 2024 04:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E402165F0E
+	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 06:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727411980; cv=none; b=tiqGHGCxkzw4yKVpNrchPptNPgNnt1SlgsAZVf77SDRu7yz/A1VBf8f9u9M9Pwi++xMOKlvIJS9LuO7F/a+6yNywoWzDS45RUO6+a5z+JD4InOasWnmSC9ZfeSLlOKzhn1K1BYZrjzFHlIpTIZa3IZ7tSQn9AJExmKa2dC8jz0A=
+	t=1727419699; cv=none; b=qfZue5dYATVEiTTa0mTvYQh0r/qQhSkFYT3zkn2OepWD7+cSQ941h0WeUk9CD0hmIJQYdpQ02IoJSvpKFQuXEYFpMSGqRRRaH7NLs9oCrHEGkn/R9S6JrT/FESSjvjsI9CvG4MVfQ7xjTw7TmlDTtoqhyip1drTHMXiCjfyLHY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727411980; c=relaxed/simple;
-	bh=fnuMouiKEyLaGvP0fibwaDVaQx4o0ggHSL2sDNMPTE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHB89PaGpE3i4UoxcbpFO1ZAcuC49pwBg7YrzSwAEW3gMi3Y93PZPhhWzCkP2ITTNTqp2fjTQBD4171cjsQarLLU2nngRBiSrnn8NO4i+6GcCCGzwLCbEmzoLCb9oY9GoIyGu1IMMoTIEi78KXMes2W56I9Xnlluf0nv4o/vN58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDEs4/Xo; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727419699; c=relaxed/simple;
+	bh=seoZJVVkae3s3IXICNZ9fMVHO4f0TO87iEurq5MP/xM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMqANpkM6NXSJ1lk1P7euxZClwvdL5tcxoAQ5wJw7ewgysMb3s6VK3munM1aYQA6aE+j92TpZTji8Z4wGERr/mpBY+j47PRwLlxqUg7+oBIUykxQGgHfeU6IQ/+TdULvetI9AyV4LcSrgkwrcdEga+F9Kbg3SN2YywoIpJAcN6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QcRqs906; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDEs4/Xo"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7e6afa8baeaso1397082a12.3;
-        Thu, 26 Sep 2024 21:39:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QcRqs906"
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so229216566b.3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Sep 2024 23:48:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727411978; x=1728016778; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1727419696; x=1728024496; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WkeWKlYqDtXSyz5lb3aYllnaQqnV6uJYVg8fzlxg5tg=;
-        b=iDEs4/Xorkfa3zfrfqQkfCnh2Dr6PmTR5VkGj0feXmPhfljq1RAJ78e9ufwYr+AYxs
-         /V13RJEoahDcsK8mJ9dpYu0S1evMrkGQlMW1iXFfmdqQ2dHxiWoqYRE0eiarLtWuKEnf
-         4O3yjDpUd088bl3w6bLM0JVyWXbhDkEYJ9IsbiNAkrN6tprs0Z9q5Y8WplAdxL/28HO+
-         +DKK+LvSLK4WlFeC2dare5aAFtHDoQYtx+gUYc31tpVJUDDDK6YDw4I95wfDF85ySuoe
-         7To3Oc975vp9PRqqtAnmxZut4GtNI3HXrt4aPV/LiP/htqGVVwhYA5uJXTr9zOfACXCr
-         BCqg==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vBJMtcLG7aQHBsMfuf0SnmVlujb00WcTg7o4/+0tb1U=;
+        b=QcRqs906kEG4AOJd4M8ypDrdj2F7Nmar84H0DYraYjLszLCJ5eQcHrp9r3IRQKUsGU
+         8Kp/MBCZx6IDm6LcAyBnCM9tf/lzbqp/0fgWz49c0aB9KaF9lj/JnKCBeTbbZ/4N0/ne
+         o8+nWNeLPRaAZkq4stpvTHPU9CP7yDs7407FDueyaGYH09XAIs51p0VsaQRefuR+z5ti
+         34apjIEAnL5QrI7enG5CLXENbyyD3/ANx0J/76IKxekr5PzUJecsLkv4erB2lfa5YF/Z
+         q/8GwsBenU/tt9NgSC84WyrpWiQ7MAGaO+gPtSG1LaGvwbDuXY5LCpq3nbAYMf1qU1b2
+         K1YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727411978; x=1728016778;
+        d=1e100.net; s=20230601; t=1727419696; x=1728024496;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WkeWKlYqDtXSyz5lb3aYllnaQqnV6uJYVg8fzlxg5tg=;
-        b=oPjM2pddSxYVk+WwksoUrwChuw5kBV5ysxZYai520VE5Zq9mh8FfOIDpO+XQsRxTFH
-         alaQpZg8Eb9TJmR3Vg9fC3Tv9Kg/qTYUg/Lj2RARI+DQcBD0AhFOOZBXIcicm1dGpW1R
-         4MXVOeYBH6AuPbcyE7UwgT+77oZEvFFaPAfLg91c6fS1SQr0gD8nMVrT/LBI/RxiaGyY
-         RgNwX6sLDSvAtg8BP3mu8BqOnhfkl+PNgig7K1WLhxP9+DVpu3pfaFtpxJxGuul/S2JA
-         lt1vXOIY8VL5C4VUudhL9qFNJXtlrtiiPM5xeLC9zyLaZNHw2isDwo7PjS62bUJMWyh/
-         4t2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjCtdQJHKG3+SE9v0UaBgpgz00ZzQCRN6WiSWCPE5M73L4GlnkhefapmNcqH4MdXO4M2ryptR5bFesXCIe@vger.kernel.org, AJvYcCWAayJqMMzrndRl2FJ15X7lTyE8ce4nI3JJ8GjqbW3K8Ft5/4sQ1NtaUjOcgP9wcFE7QPgFS0U9WBWr@vger.kernel.org, AJvYcCWNHtvA2P2LlwP6opP6TtOEx0lVcIQDfQciP5ByJ0vlcNJ4UZ8KbnXPCdBsBe2Zy+4Kb4cPRQ4FbSTw@vger.kernel.org, AJvYcCXptez1Wh0u2LUhGxgi3LEqorbD4YXFXlU9CDBoqtS5yXz5UTQm9Pe0qhiSrpxgGlHE1DX225EvgAqtZ0wcMXDq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUfoR99+DWz0XpsdXHeUR6n6+yduX7VFTMCkS4UejQLDfkGw/t
-	nQT6DS7uvl2y5xPOS0qdwgzlfx2YwNwlsGA7VN+l9dxGg6KSAxzH
-X-Google-Smtp-Source: AGHT+IEfM+rRMxnYnAc6tMRBBhgU2qe67B99fXVKBiUZ3r0r2t2KmJEVITgi/OZS2CHi1py9nNGxkg==
-X-Received: by 2002:a05:6a21:3405:b0:1d2:bb49:908b with SMTP id adf61e73a8af0-1d4fa67b980mr2948871637.18.1727411978276;
-        Thu, 26 Sep 2024 21:39:38 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db60e3fasm721443a12.78.2024.09.26.21.39.36
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vBJMtcLG7aQHBsMfuf0SnmVlujb00WcTg7o4/+0tb1U=;
+        b=VaICYZx8GVenSOxDAKGcpqBlkrkjwyqO8mouL0bYZuhjHaBzCZb3D4h/Kb8dZcSYGq
+         fPze+ptxK74iL2lNvp+GArfVLTthrQweLJs4J3GIXi2Ail78ufBUCW5Besv4LRqyDqFH
+         nKTRBOJlUG+O092KrjnXsOG+cNQ1ES/FH06kZEQV7mXcX5PvH2SNtOHGn4l38JqcBY35
+         YCnwo95bxYOn687DvZ6ZlYx184qGQPIARDrAEekhgKculhigyRW3iEsa4c2MCnoidqE4
+         /uj6Z8/Qgp6BvBmWJxusxmy1mhhKK+FDlcCeI4N5NgYrIt9aP7L8N6lzE//wTF2XT4hh
+         WsuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUc1bbOxp7oUdSu5g/Zid77VTwjBb4U59I4plnPcx8tPGCzkXOuERszJqg/emf0OmvEyso00mQQtNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuCNUcRiiY1LvdAswXHyRsjlTJxgRYnmavEq0rWdSeHZ3VxRzM
+	JogInMLJiFkxwy/txZXj+mYGY0gcJbx/SoFj0PX0bDJxPaoqleShRygMZ7M1ZZg=
+X-Google-Smtp-Source: AGHT+IGLDHBeNa6D6RZfpkGvMPVnCQ8ZzsxDN0YoVSie0mpImcNcS8+a9hjT0lBohBj3W/lmYOd11w==
+X-Received: by 2002:a17:906:c113:b0:a8a:7d13:297e with SMTP id a640c23a62f3a-a93c4c284cfmr178037066b.55.1727419695753;
+        Thu, 26 Sep 2024 23:48:15 -0700 (PDT)
+Received: from localhost (host-79-32-222-228.retail.telecomitalia.it. [79.32.222.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2997e64sm87199066b.190.2024.09.26.23.48.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 21:39:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 26 Sep 2024 21:39:36 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	patches@lists.linux.dev, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Daniel Latypov <dlatypov@google.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thu, 26 Sep 2024 23:48:15 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 27 Sep 2024 08:48:28 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <maxime@cerno.tech>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with
- struct clk_parent_data
-Message-ID: <a339ec8c-38f6-425a-94d1-ad69b5ddbd88@roeck-us.net>
-References: <20240718210513.3801024-1-sboyd@kernel.org>
- <20240718210513.3801024-9-sboyd@kernel.org>
- <6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net>
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <ZvZVPA6ov5XgScpz@apocalypse>
+References: <Ztnft3p3tb_kP1jc@apocalypse>
+ <20240905201656.GA391855@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,81 +95,104 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net>
+In-Reply-To: <20240905201656.GA391855@bhelgaas>
 
-On Thu, Sep 26, 2024 at 09:14:11PM -0700, Guenter Roeck wrote:
-> Hi Stephen,
+Hi Bjorn,
+
+On 15:16 Thu 05 Sep     , Bjorn Helgaas wrote:
+> [+cc Lizhi]
 > 
-> On Thu, Jul 18, 2024 at 02:05:07PM -0700, Stephen Boyd wrote:
-> > Test that clks registered with 'struct clk_parent_data' work as
-> > intended and can find their parents.
+> On Thu, Sep 05, 2024 at 06:43:35PM +0200, Andrea della Porta wrote:
+> > On 17:26 Tue 03 Sep     , Bjorn Helgaas wrote:
+> > > On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
+> > > > On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
+> > > > > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
+> > > > > > The of_pci_set_address() function parses devicetree PCI range
+> > > > > > specifier assuming the address is 'sanitized' at the origin,
+> > > > > > i.e. without checking whether the incoming address is 32 or 64
+> > > > > > bit has specified in the flags.  In this way an address with no
+> > > > > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
+> > > > > > the upper 32 bits of the address will be set too, and this
+> > > > > > violates the PCI specs stating that in 32 bit address the upper
+> > > > > > bit should be zero.
+> > > 
+> > > > > I don't understand this code, so I'm probably missing something.  It
+> > > > > looks like the interesting path here is:
+> > > > > 
+> > > > >   of_pci_prop_ranges
+> > > > >     res = &pdev->resource[...];
+> > > > >     for (j = 0; j < num; j++) {
+> > > > >       val64 = res[j].start;
+> > > > >       of_pci_set_address(..., val64, 0, flags, false);
+> > > > >  +      if (OF_PCI_ADDR_SPACE_MEM64)
+> > > > >  +        prop[1] = upper_32_bits(val64);
+> > > > >  +      else
+> > > > >  +        prop[1] = 0;
+> > ...
+> > > However, the CPU physical address space and the PCI bus address are
+> > > not the same.  Generic code paths should account for that different by
+> > > applying an offset (the offset will be zero on many platforms where
+> > > CPU and PCI bus addresses *look* the same).
+> > > 
+> > > So a generic code path like of_pci_prop_ranges() that basically copies
+> > > a CPU physical address to a PCI bus address looks broken to me.
 > > 
+> > Hmmm, I'd say that a translation from one bus type to the other is
+> > going on nonetheless, and this is done in the current upstream function
+> > as well. This patch of course does not add the translation (which is
+> > already in place), just to do it avoiding generating inconsistent address.
 > 
-> When testing this on arm64, I see the error below. The error is only
-> seen if I boot through efi, i.e., with "-bios QEMU_EFI-aarch64.fd"
-> qemu parameter.
+> I think I was looking at this backwards.  I assumed we were *parsing"
+> a "ranges" property, but I think in fact we're *building* a "ranges"
+> property to describe an existing PCI device (either a PCI-to-PCI
+> bridge or an endpoint).  For such devices there is no address
+> translation.
 > 
-> Any idea what might cause the problem ?
+> Any address translation would only occur at a PCI host bridge that has
+> CPU address space on the upstream side and PCI address space on the
+> downstream side.
 > 
-I noticed that the new overlay tests fail as well, also with "path '/' not
-found".
+> Since (IIUC), we're building "ranges" for a device in the interior of
+> a PCI hierarchy where address translation doesn't happen, I think both
+> the parent and child addresses in "ranges" should be in the PCI
+> address space.
+> 
+> But right now, I think they're both in the CPU address space, and we
+> basically do this:
+> 
+>   of_pci_prop_ranges(struct pci_dev *pdev, ...)
+>     res = &pdev->resource[...];
+>     for (j = 0; j < num; j++) {   # iterate through BARs or windows
+>       val64 = res[j].start;       # CPU physical address
+>       # <convert to PCI address space>
+>       of_pci_set_address(..., rp[i].parent_addr, val64, ...)
+>         rp[i].parent_addr = val64
+>       if (pci_is_bridge(pdev))
+>         memcpy(rp[i].child_addr, rp[i].parent_addr)
+>       else
+>         rp[i].child_addr[0] = j   # child addr unset/unused
+> 
+> Here "res" is a PCI BAR or bridge window, and it contains CPU physical
+> addresses, so "val64" is a CPU physical address.  It looks to me like
+> we should convert to a PCI bus address at the point noted above, based
+> on any translation described by the PCI host bridge.  That *should*
+> naturally result in a 32-bit value if OF_PCI_ADDR_SPACE_MEM64 is not
+> set.
 
-[Maybe] answering my own question: I think the problem may be that there
-is no devicetree file and thus no devicetree root when booting through
-efi (in other words, of_root is NULL). Would it make sense to skip the
-tests in that case ?
+That's exactly the point, ecxept that right now a 64 bit address would
+"unnaturally" pass through even if OF_PCI_ADDR_SPACE_MEM64 is not set.
+Hence the purpose of this patch.
 
-Thanks,
-Guenter
+Many thanks,
+Andrea
 
-> Thanks,
-> Guenter
 > 
-> ---
-> [   20.464809]     KTAP version 1
-> [   20.464865]     # Subtest: clk_register_clk_parent_data_of
-> [   20.464936]     # module: clk_test
-> [   20.464979]     1..1
-> [   20.465098]         KTAP version 1
-> [   20.465208]         # Subtest: clk_register_clk_parent_data_of_test
-> [   20.468964] OF: overlay: find target, node: /fragment@0, path '/' not found
-> [   20.469558] OF: overlay: init_overlay_changeset() failed, ret = -22
-> [   20.470177]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
-> [   20.470177]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
-> [   20.470177]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
-> [   20.471793]         not ok 1 clk_parent_data_of_index_test
-> [   20.474095] OF: overlay: find target, node: /fragment@0, path '/' not found
-> [   20.474373] OF: overlay: init_overlay_changeset() failed, ret = -22
-> [   20.474737]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
-> [   20.474737]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
-> [   20.474737]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
-> [   20.477677]         not ok 2 clk_parent_data_of_fwname_test
-> [   20.479773] OF: overlay: find target, node: /fragment@0, path '/' not found
-> [   20.479941] OF: overlay: init_overlay_changeset() failed, ret = -22
-> [   20.480160]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
-> [   20.480160]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
-> [   20.480160]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
-> [   20.481513]         not ok 3 clk_parent_data_of_name_test
-> [   20.483711] OF: overlay: find target, node: /fragment@0, path '/' not found
-> [   20.483878] OF: overlay: init_overlay_changeset() failed, ret = -22
-> [   20.484100]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
-> [   20.484100]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
-> [   20.484100]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
-> [   20.485444]         not ok 4 clk_parent_data_of_fwname_name_test
-> [   20.487432] OF: overlay: find target, node: /fragment@0, path '/' not found
-> [   20.487600] OF: overlay: init_overlay_changeset() failed, ret = -22
-> [   20.487841]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
-> [   20.487841]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
-> [   20.487841]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
-> [   20.489207]         not ok 5 clk_parent_data_of_index_name_priority_test
-> [   20.490998] OF: overlay: find target, node: /fragment@0, path '/' not found
-> [   20.491504] OF: overlay: init_overlay_changeset() failed, ret = -22
-> [   20.491725]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
-> [   20.491725]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
-> [   20.491725]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
-> [   20.493053]         not ok 6 clk_parent_data_of_index_fwname_name_priority_test
-> [   20.493583]     # clk_register_clk_parent_data_of_test: pass:0 fail:6 skip:0 total:6
-> [   20.493701]     not ok 1 clk_register_clk_parent_data_of_test
-> [   20.493822] # clk_register_clk_parent_data_of: pass:0 fail:1 skip:0 total:1
-> [   20.493920] # Totals: pass:0 fail:6 skip:0 total:6
-> [   20.494032] not ok 49 clk_register_clk_parent_data_of
+> > > Maybe my expectation of this being described in DT is mistaken.
+> > 
+> > Not sure what you mean here, the address being translated are coming from
+> > DT, in fact they are described by "ranges" properties.
+> 
+> Right, for my own future reference since I couldn't find a generic
+> description of "ranges" in Documentation/devicetree/:
+> 
+> [1] https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges
