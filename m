@@ -1,126 +1,153 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567244D8C8
-	for <linux-clk@vger.kernel.org>; Thu, 26 Sep 2024 15:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B5B2AE84;
+	Fri, 27 Sep 2024 04:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727364850; cv=none; b=pRuv7YsQEIEPc8cJwjkfzLvR7G1saknF7F9KGs8vcdjNqUeOCTv0WWlMhBYfpOBR6nB1GEdI9QChOPcSSZ6euCrcGN273BGEWrFkXUisRhUP+DIWuacRlspcwnKhgPUQyfy+8/9+oHRQ8jCFUs2jrU8t9n+KE4ec9YYnETjO9iw=
+	t=1727410453; cv=none; b=bjyV9bmjq9ERUsHqeRNPyIeSA+Ukrg1u7jZa0BxyPl1G6S0OhPcrMuPka4uKJKhnOp4aEx8EoGifVoJZGujwt0q5eaDV2tm/yAKRV0fvSTe6HszfA5IT8yvh9gETcV8S1zDxP7cG6jv+s+iLSb3iIy4j7xd2JR/CC49CLzulPzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727364850; c=relaxed/simple;
-	bh=Z2erKCz0U8c+h5Ktpp0aggL95u0PsF6aQ4wW3yJQjm4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=QJie8GUr+hqzI5vAo84Uird6vrXtmg+0IGG0EY9luO65R+fxxM1NUjta11zJYQVpa2wb2CwGaWtF/3fNHS3O3FED+r9w2bMTYghb9cZB529UvUV+Vz7KVJAVm+p7p6A2yE6Nq2zoLSGeLIUOML+GrBrCuzR4lH7XFM89hY7zI44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SN/0oRu0; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1727410453; c=relaxed/simple;
+	bh=JVL2fUPhe7PhfPh2yglWF3nfspxFiAyHvNIEuOzsF4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VE04jW3FGvpLXcO40vPcc42nMqSstjl9XUQbC1/MNBjRf6JnElYIpMiqMhzPE/KPF5lWamkcMPRF3++m76t59WiTyWE0zE8iM64KFrBE9lQLglsA2o/1fSx4D0cgqdEHO1+wCfpckE/Vp7alMvaM3TJRDX9hgB4m6yul/BJenMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qur09JOl; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SN/0oRu0"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240926153406epoutp04ba7db70eff34bf88508aad1fe09a2a99~41S0J6Q9s0286102861epoutp04I
-	for <linux-clk@vger.kernel.org>; Thu, 26 Sep 2024 15:34:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240926153406epoutp04ba7db70eff34bf88508aad1fe09a2a99~41S0J6Q9s0286102861epoutp04I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727364846;
-	bh=6g2/Yv8LRZHcuTNohjSQe7MhKxKk+4pTuQkyJGh4qCM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=SN/0oRu0/U6owg7gN0jW3K/R+I1PYRmz7wXdr+UvTRn3VMhyHRop9cDo3zEPqexpJ
-	 4f1iJKUxj7UHpiqhp95gvq18V8M/ExY276DRN/zoM7y5WrofiAhpaEVftp6hNpQvDa
-	 WM3MXScDE3pCqZl4NZLFoQ0v98+KqXdpbay1pCNQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240926153405epcas5p2c0d726c61580ef8c0c4dab10130c217e~41SzQ3Uzq2335223352epcas5p26;
-	Thu, 26 Sep 2024 15:34:05 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XDyLh00zRz4x9Pv; Thu, 26 Sep
-	2024 15:34:04 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CC.7E.19863.BEE75F66; Fri, 27 Sep 2024 00:34:03 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240926144716epcas5p330d6374d8b647f45e056143f237a55aa~40p7WW3H02295422954epcas5p3k;
-	Thu, 26 Sep 2024 14:47:16 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240926144716epsmtrp243a68a1bb8e182cab9e2dfe37218e4dc~40p7VgqkL0901909019epsmtrp2-;
-	Thu, 26 Sep 2024 14:47:16 +0000 (GMT)
-X-AuditID: b6c32a50-c73ff70000004d97-8a-66f57eeb0a6b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B3.CB.07567.4F375F66; Thu, 26 Sep 2024 23:47:16 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240926144714epsmtip13c94ef8817afabe4713b1576fd8b400d~40p5Pb70D1886218862epsmtip1i;
-	Thu, 26 Sep 2024 14:47:14 +0000 (GMT)
-From: Varada Pavani <v.pavani@samsung.com>
-To: krzk@kernel.org, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>
-Subject: [PATCH 0/2] clk: samsung: Update PLL locktime and samsung function
-Date: Thu, 26 Sep 2024 20:15:11 +0530
-Message-Id: <20240926144513.71349-1-v.pavani@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmlu7ruq9pBk/aTC0ezNvGZnFo81Z2
-	i+tfnrNa3Dywk8ni/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrVYtHWL+wWh9+0s1r8
-	u7aRxWJD7yt2Bz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
-	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
-	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGec79jKWHCBueL9hbOsDYw/
-	mLoYOTkkBEwkzizax97FyMUhJLCHUWLbnw0sEM4nRomzN25AOd8YJW63rmfrYuQAa/m2WQEi
-	vpdR4tySR6wQTiuTxKXDy1hA5rIJaEmsnrqcFcQWETjCJPHnRCqIzSxgJ7F+6lxmEFtYwFvi
-	+v5DYDUsAqoSj7dsZAOxeQUsJX7+2scIcZ+8xOoNB5hBFkgIvGSX2PZjLztEwkXi7cVJUEXC
-	Eq+Ob4GKS0l8frcX6tJkifZP3BDhHIlLu1dB/WwvceDKHBaQEmYBTYn1u/QhwrISU0+tY4I4
-	k0+i9/cTqHJeiR3zYGwliZ07JkDZEhJPV69hg7A9JOa+bQOLCwnESlzY3c04gVF2FsKGBYyM
-	qxilUguKc9NTk00LDHXzUsvhEZWcn7uJEZz8tAJ2MK7e8FfvECMTB+MhRgkOZiUR3kk3P6YJ
-	8aYkVlalFuXHF5XmpBYfYjQFhtlEZinR5Hxg+s0riTc0sTQwMTMzM7E0NjNUEud93To3RUgg
-	PbEkNTs1tSC1CKaPiYNTqoFp87xpxonBi28c+RmyUH6Z1K8s1v8hHufE1neYRZnrr+qMMbVX
-	aGe9Hbxb4raI9p3fvzpK8o6un6AUcsE6R/uCgrzyjS9P9orw7D0W45wzf8LUW206xg8li0Vs
-	fm5I3OLZ3R/Wev9aWs7NGerrw/Mqbd6+WJOs9j+NIXANn0ng/4Jq71lNmaJ+j5kUfLjVT/i3
-	ZEZl7dSvC6s95JPH+fTVUk/X85fcrrY42i13KrnouzBH+ML+R85/K6LObzO6XMtr0li6/WN+
-	Vcu7haZyu+c1rV+0WGadq0/35HUqceI72NnsDrhNq0r5U8XYJNt5k8O23PayTkD1p5ytqi3b
-	Gee/lPn++OxdTf0JzfxCrkosxRmJhlrMRcWJAFgq0LIHBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrALMWRmVeSWpSXmKPExsWy7bCSnO6X4q9pBmd+KFs8mLeNzeLQ5q3s
-	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
-	d20ji8WG3lfsDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZZzv
-	2MpYcIG54v2Fs6wNjD+Yuhg5OCQETCS+bVboYuTiEBLYzShx+eckti5GTqC4hMTOb63MELaw
-	xMp/z9khipqZJO6f6GACSbAJaEmsnrqcFSQhInCJSeLAkSfsIAlmAQeJi2efsIDYwgLeEtf3
-	H2IFsVkEVCUeb9kItoFXwFLi5699jBAb5CVWbzjAPIGRZwEjwypGydSC4tz03GTDAsO81HK9
-	4sTc4tK8dL3k/NxNjOBA1NLYwXhv/j+9Q4xMHIyHGCU4mJVEeCfd/JgmxJuSWFmVWpQfX1Sa
-	k1p8iFGag0VJnNdwxuwUIYH0xJLU7NTUgtQimCwTB6dUA9PcCOH8hbOOHLGocItzOCgk1Ft7
-	NevB2RAVYR1rpUcpYY++GDvN+bv9lPpxFvE5v9hUdU/w5kWWKvDPuflxxdtZSv5q+6y452yp
-	tnukyt9oxrIi8uYa+c4F/HWyyu9Mp+ROiXLJfdYm8Ek5JysjuuvsprDj2w271378/jFrY5o8
-	R1vE3SmGGzhcDyY8O35XYHXXq1XOTcoa30uv8LaUHIs68WJfxTJjK6eT6X2T5hWvqDl6coPQ
-	C5fCJSK1m+YyOZQ9f7SxZ+VxJ6njSzNcr3SbnWS/2mXixiYXd1Tu0uqLJboZhRmV/aysewt1
-	1//vSLFuPhJz8ZfBOZlTi4+vF3l/fUn4n+ZbtWKPNA74LFNiKc5INNRiLipOBAAoAjo9swIA
-	AA==
-X-CMS-MailID: 20240926144716epcas5p330d6374d8b647f45e056143f237a55aa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240926144716epcas5p330d6374d8b647f45e056143f237a55aa
-References: <CGME20240926144716epcas5p330d6374d8b647f45e056143f237a55aa@epcas5p3.samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qur09JOl"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-206aee4073cso17849155ad.1;
+        Thu, 26 Sep 2024 21:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727410451; x=1728015251; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zmPC7xOEq4xiQYbTsTCCja7E17GlGBjk59a6Y6qmbow=;
+        b=Qur09JOlkHbBXshLpChKTSxuQZSAykBrwObI3ikF2+MvvZELFM4eGQgtUk3wXoWpwW
+         KLCoGrj/1fEQCr89g+5wJoq2X7CtWPlUT1qeW6AC7JImyf9SpeIhrUEVbAWdW7wi5znd
+         9LjVZbhWquXcGdZUJandrFfN9yuag35g9nYe8h59pGnKrqql21uILunwxZ6nrfrwLhht
+         YWEfdrha3uADqAhw0HgcSj255/JHaiLHGOq9Yvaa95oGDpk7oj+uo64M3qqyciQ1/EO2
+         M1h4kXzgDwde53BahlA7OXS/xpbiphYmbi/agZAPJQ0YXCk0LxKafU9cFJugDW7iyoNK
+         1Y8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727410451; x=1728015251;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zmPC7xOEq4xiQYbTsTCCja7E17GlGBjk59a6Y6qmbow=;
+        b=wiM8P6i9hKJiC5jmI5DWytLSpSFq3kO9VrTJ4Fh7laoLO+ISo9MhDDsoUc6TL71Nsr
+         aFp3rNsd08eDlK0uSoQugUcGcTyn6gGge3Nu6V73Sct5YAbGbBSQXKLlR3mReUbtfP3I
+         a4+wtNCwry6zXLJoe5GRGYoix3D6Id751DD4Dyukkcv415H9hVpF0Tcfq1QBUmn+41qK
+         vf35ssjZYgHDSTmInn2Ug9xLfWgvmNXoM8s/TbYzATZFbJe9A9Tjq4wJkfTM14IkF/Gn
+         kaJrCwCFI+y9YrhNHwaEjJ9Jsc9YTGu+A13K8cD77fi5f11TTOlSTqyq8KGMkYY4202x
+         e1Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2ZXaP4ugo0HY8z39XAxnc/aTVg95XEsOxCLGvrPuxzlqBhWqOW55zJdes+CYxjy3rFtltoP418DUw@vger.kernel.org, AJvYcCWVGAweQmd4H+CmCPC7oOOe5JLlSXF4yBW0lGP2VjILbvhD/Z9KiTk/RU5kd9GAsN1jO1MZlcSlAfIB@vger.kernel.org, AJvYcCWXu8U7S+fM+wGO6M2BNFtzRXhESfxdtaarghy6FxdV4MWy3nQ5HxX1pc00i0q47cNvGGgIrTSeZRVMXYtZ@vger.kernel.org, AJvYcCXq99sVKXXEpdLOVNcuZbGagTUhoi5sBYWwJlRug5A+vPqDBev2z/lESzi2od5TFCFP3Ve9J3nlWn2e77on8hQ3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfnI6O7hHO25AeH3gx+/yiaK0stT1Epe9H3OK5Cwo57bWXiHu7
+	S5FcWZ0BwjogIjj1K5FJ4cgDPMRIWFNo0qPG4LmTw3yrAoP8ojNN
+X-Google-Smtp-Source: AGHT+IHDmvSZ+vvEz962F4lkQhrBabPVtLhowwYwbXZHolk9sYGt9iof/C7/GGTTa5vwr7vZ0BjGBw==
+X-Received: by 2002:a17:902:da81:b0:206:adf0:4f15 with SMTP id d9443c01a7336-20b367d035emr34323555ad.8.1727410450894;
+        Thu, 26 Sep 2024 21:14:10 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2bc531sm689914a12.32.2024.09.26.21.14.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 21:14:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 26 Sep 2024 21:14:08 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	patches@lists.linux.dev, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Daniel Latypov <dlatypov@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <maxime@cerno.tech>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with
+ struct clk_parent_data
+Message-ID: <6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net>
+References: <20240718210513.3801024-1-sboyd@kernel.org>
+ <20240718210513.3801024-9-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718210513.3801024-9-sboyd@kernel.org>
 
-This patch series updates samsung clock driver with common samsung
-CCF function and defines locktime value for PLL142XX controller.
+Hi Stephen,
 
-Varada Pavani (2):
-  clk: samsung: Use samsung CCF common function
-  clk: samsung: Fixes PLL locktime for PLL142XX used on FSD platfom
+On Thu, Jul 18, 2024 at 02:05:07PM -0700, Stephen Boyd wrote:
+> Test that clks registered with 'struct clk_parent_data' work as
+> intended and can find their parents.
+> 
 
- drivers/clk/samsung/clk-exynos4.c | 78 +++++++++++++++++--------------
- drivers/clk/samsung/clk-pll.c     |  7 ++-
- 2 files changed, 50 insertions(+), 35 deletions(-)
+When testing this on arm64, I see the error below. The error is only
+seen if I boot through efi, i.e., with "-bios QEMU_EFI-aarch64.fd"
+qemu parameter.
 
--- 
-2.17.1
+Any idea what might cause the problem ?
 
+Thanks,
+Guenter
+
+---
+[   20.464809]     KTAP version 1
+[   20.464865]     # Subtest: clk_register_clk_parent_data_of
+[   20.464936]     # module: clk_test
+[   20.464979]     1..1
+[   20.465098]         KTAP version 1
+[   20.465208]         # Subtest: clk_register_clk_parent_data_of_test
+[   20.468964] OF: overlay: find target, node: /fragment@0, path '/' not found
+[   20.469558] OF: overlay: init_overlay_changeset() failed, ret = -22
+[   20.470177]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
+[   20.470177]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
+[   20.470177]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
+[   20.471793]         not ok 1 clk_parent_data_of_index_test
+[   20.474095] OF: overlay: find target, node: /fragment@0, path '/' not found
+[   20.474373] OF: overlay: init_overlay_changeset() failed, ret = -22
+[   20.474737]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
+[   20.474737]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
+[   20.474737]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
+[   20.477677]         not ok 2 clk_parent_data_of_fwname_test
+[   20.479773] OF: overlay: find target, node: /fragment@0, path '/' not found
+[   20.479941] OF: overlay: init_overlay_changeset() failed, ret = -22
+[   20.480160]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
+[   20.480160]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
+[   20.480160]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
+[   20.481513]         not ok 3 clk_parent_data_of_name_test
+[   20.483711] OF: overlay: find target, node: /fragment@0, path '/' not found
+[   20.483878] OF: overlay: init_overlay_changeset() failed, ret = -22
+[   20.484100]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
+[   20.484100]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
+[   20.484100]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
+[   20.485444]         not ok 4 clk_parent_data_of_fwname_name_test
+[   20.487432] OF: overlay: find target, node: /fragment@0, path '/' not found
+[   20.487600] OF: overlay: init_overlay_changeset() failed, ret = -22
+[   20.487841]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
+[   20.487841]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
+[   20.487841]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
+[   20.489207]         not ok 5 clk_parent_data_of_index_name_priority_test
+[   20.490998] OF: overlay: find target, node: /fragment@0, path '/' not found
+[   20.491504] OF: overlay: init_overlay_changeset() failed, ret = -22
+[   20.491725]     # clk_register_clk_parent_data_of_test: ASSERTION FAILED at drivers/clk/clk_test.c:2760
+[   20.491725]     Expected 0 == ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }), but
+[   20.491725]         ({ extern uint8_t __dtbo_kunit_clk_parent_data_test_begin[]; extern uint8_t __dtbo_kunit_clk_parent_data_test_end[]; __of_overlay_apply_kunit((test), __dtbo_kunit_clk_parent_data_test_begin, __dtbo_kunit_clk_parent_data_test_end); }) == -22 (0xffffffffffffffea)
+[   20.493053]         not ok 6 clk_parent_data_of_index_fwname_name_priority_test
+[   20.493583]     # clk_register_clk_parent_data_of_test: pass:0 fail:6 skip:0 total:6
+[   20.493701]     not ok 1 clk_register_clk_parent_data_of_test
+[   20.493822] # clk_register_clk_parent_data_of: pass:0 fail:1 skip:0 total:1
+[   20.493920] # Totals: pass:0 fail:6 skip:0 total:6
+[   20.494032] not ok 49 clk_register_clk_parent_data_of
