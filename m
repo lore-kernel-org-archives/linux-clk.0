@@ -1,59 +1,48 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19340188CC3
-	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 10:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DE116C6A1;
+	Fri, 27 Sep 2024 13:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433454; cv=none; b=YwO7KL5K/cU2P6cuYjaLp5m4b1ZNCU6eycAY5IpY2fsuk5sqQt0h8QHjSWayFvYvG0v5+ZFkMiVsh+yh3yXrOv0pdWmUqmRZk6/jIOWbZbcgYE2KeJ3eGnD+4O1t0eyKjJtkpSdBjh0Yp+CK1Uv8VSHmjgPdx227C4RzoBeQIPc=
+	t=1727442163; cv=none; b=F1PRB8d4KKpT4C8xwk3YdluiTrEpQUrRiu8Of6lrZDnxYxDMPv3X+IBICybWIzSd1I9yu94AiYH41Ob2y+MLZu4UcTZXB8X14c07SzX7WpAMjCQFb/lBtBWteMc7+2XY1C02YBm371gaANIo0Ggkletyazy/t0lAyRAsVPlRSuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433454; c=relaxed/simple;
-	bh=OgP3jifrL8Ct5x65TV8/lEd2rCG5LjI4wvV4B4XvfJs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XXJRr8XNJfhG7RTkXIICTRmIekCDpMsV+ZaCvUNT/zQfWb+rrFUUIeOIr0fZSE87rS4VDC3J7AykUrkV6b7N2SZgnnyj3hfLAIqu6twQsoZ8pZ20zoQjUHIKSgSGi5Vv1Ihsb5Tg/k+zBB+jGa7Nyu290YD6QwUux74MYU7vTBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZB2sASHh; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727442163; c=relaxed/simple;
+	bh=quDg/WTHOUWxyG4wdkg0y+YyZgY3G7BZqKrSLPoqeYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qXA0OwWeeS3CBwXtsLFyJMZXQB8r4LLYi0ykTbQAY+SOf+qNED9a5viyM5Aq24cN6Nnhx4Eop3ZCse1ZGKDRkW2YaSq028Ba6iEln3qHhmrsQ4mQHam8JP9cKt0wsByhHwcMJFXXLY8/NKBSzKNVM5eJckXAGDqbPuHQcAr6pgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XG+nKQ2g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZB2sASHh"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5389fca1fdbso115441e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 03:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727433451; x=1728038251; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jxCQQv8nseHXKvWI2V2VeIzQSET9G7fTF+kn5DAMxlM=;
-        b=ZB2sASHhk1b1IuRU/5enpZnbYuwFLtO1RkgP3x/HL4JxawDctsN+EpJ6cjbxKDBXEP
-         LL657nFOce1jKt92V43+Kb2MX4UmAEa9DZTvvYPI5DLNGrSxK99DyIUh9+uXkLbRM/pl
-         hevFaAEjV7YuGzg2IjDbO3nWzpukWumoWx4qOqBk3qtUDzR9dj8B+PLgH1sXierJm9Pk
-         n8pK+4UVJqlwwpCEhwC25CcRIKPS8qBJOrhpxaildTa7LLJeP+x8YI6cfWxoE1bIBsku
-         6YUeXgHlEfsh1Sdq2sMDuWkZhs9qFYAkeSTX+O5Jf81bWdLPZa1Kf8D1jto2F4E/dmRG
-         sWCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727433451; x=1728038251;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jxCQQv8nseHXKvWI2V2VeIzQSET9G7fTF+kn5DAMxlM=;
-        b=oBouza+fZk7z3ebu8GSei35SJSxscrgf0uJCgl3+ubV4aBvigQEuGt695HhmZ2+7Z5
-         xYSQG+Jyt82PybNKt4BDHA8q/vM5SNV3sco9xGtA7zBrsvDUAfMvSTks3W/yA1+R98Ic
-         XXV11LD94ijdz9Mj5udbsYpLkFZpUr0f6yOP9u2b9xsPdn5arHqjlbxjUvuXALq7i/ZY
-         79w+PcZ4qHRQT0/LaOm6/LGx6uO5ZKYcU4yHdqNp83Zh0dOtIP5Q9Rbkiy2KEw+g3fB8
-         NlhPhlftCf2hwb9+sYLekBRyjgktIiaeJ73N8+TAtQ/jWRy4S1LQpjlFcgOTdpPITOp9
-         01SA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDcY7mBR8l0FAu2RvicRWusQtuzlr/BL+Owicm/Bm4gcj2hxNL05w6MsZmkznPQqg/+ttLD3PA/ZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC94dqwZHz/v9ohaEzkosYe8Eh9xdGfPPgcl6YVL6qBCR/Kcp3
-	B29z13gAeRk1YceaZ+fQDOEqgYoSa6UbS2GBiFXm62YbQut2qsskjThqehu0RfM=
-X-Google-Smtp-Source: AGHT+IG7ynyLstx3Pi9UHSoRCnsUH8RtujLbfgmjOqmHaTU+xxXzj+c1HpZYW8sJlwwRrZw4mKcYDg==
-X-Received: by 2002:a05:6512:b90:b0:52c:ce28:82bf with SMTP id 2adb3069b0e04-5389fc42665mr360337e87.5.1727433451098;
-        Fri, 27 Sep 2024 03:37:31 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a043b3eesm254529e87.230.2024.09.27.03.37.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2024 03:37:30 -0700 (PDT)
-Message-ID: <b0cd4862-3060-4c01-b861-6fe1e650d088@linaro.org>
-Date: Fri, 27 Sep 2024 13:37:21 +0300
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XG+nKQ2g"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48RD04qW026375;
+	Fri, 27 Sep 2024 13:02:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4cB22I4o+uZPMHUCsQ4G8pU+CQy1I+qeGUQIDjJ0fEM=; b=XG+nKQ2gifreiJ6e
+	TrD+NHXiW3Kkp8kO01CkA6t8DvaOmE4hKrLs/LkbLEc5hySfITd6U9Ds4m2C03ad
+	GEtZl6i2F/xcMDBE0Fws3tEzZvE1x8y9AKDjQySqohD2uLHpr7KHLsFl0U262Grq
+	odvUokH01gKvZY3jDSlq5i8FoSwGjMdW7E0ZSW2nWBC4M6nlDxQQYHcZEpb+Ded8
+	TEqRyoltyIVYWKiuuoIhtF0yBA8L9qy076fmSOk5tse2DT9xmsllaa5kq368HZlt
+	fG1FK+p2Zfk5V93mT4T/37hGe3ynzYOHL/e4biUeBdcUtDtpC7eoksoPOB/KOagk
+	+/F4jA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ww7080d6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 13:02:22 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48RD2L0o027936
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Sep 2024 13:02:21 GMT
+Received: from [10.50.40.232] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Sep
+ 2024 06:02:13 -0700
+Message-ID: <64c24ac5-f689-4226-8f28-1f597aa3b892@quicinc.com>
+Date: Fri, 27 Sep 2024 18:32:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,44 +50,106 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] arm: qcom: sm8550: Change camcc power domain from
- MMCX to MXC
+Subject: Re: [PATCH V2 2/9] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>
+References: <20240927065244.3024604-1-quic_srichara@quicinc.com>
+ <20240927065244.3024604-3-quic_srichara@quicinc.com>
+ <ruti7hmkxkayzmqfbme6rw6j2vbhlx4ul4ptcckwamcpd4cyfx@owufhxwpvlcj>
 Content-Language: en-US
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240927103212.4154273-1-vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240927103212.4154273-1-vladimir.zapolskiy@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <ruti7hmkxkayzmqfbme6rw6j2vbhlx4ul4ptcckwamcpd4cyfx@owufhxwpvlcj>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j_Hh1pZZyt3a_TVkV6tK8IgFT9N0cvtO
+X-Proofpoint-ORIG-GUID: j_Hh1pZZyt3a_TVkV6tK8IgFT9N0cvtO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409270094
 
-On 9/27/24 13:32, Vladimir Zapolskiy wrote:
-> The problem is trivial to reproduce and the fix is trivial to verify,
-> it's sufficient to enable SM8550 camera clock controller and a CCI
-> controller, for instance on SM8550-QRD CCI0 or CCI1 can be enabled:
+
+
+On 9/27/2024 2:13 PM, Krzysztof Kozlowski wrote:
+> On Fri, Sep 27, 2024 at 12:22:37PM +0530, Sricharan R wrote:
+>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> Add binding for the Qualcomm IPQ5424 Global Clock Controller
+>>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>> [v2] Added the bindings as a part of ipq5332-gcc.yaml itself.
+>>       Difference between ipq5332 and ipq5424 being 2 additional phy's.
+>>
+>>   .../bindings/clock/qcom,ipq5332-gcc.yaml      |  57 +++-
+>>   include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
+>>   include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
+>>   3 files changed, 508 insertions(+), 15 deletions(-)
+>>   create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
+>>   create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> index 9193de681de2..aaa8b399c3b4 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> @@ -4,31 +4,24 @@
+>>   $id: http://devicetree.org/schemas/clock/qcom,ipq5332-gcc.yaml#
+>>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>   
+>> -title: Qualcomm Global Clock & Reset Controller on IPQ5332
+>> +title: Qualcomm Global Clock & Reset Controller on IPQ5332 and IPQ5424
+>>   
+>>   maintainers:
+>>     - Bjorn Andersson <andersson@kernel.org>
+>>   
+>>   description: |
+>>     Qualcomm global clock control module provides the clocks, resets and power
+>> -  domains on IPQ5332.
+>> +  domains on IPQ5332 and IPQ5424.
+>>   
+>> -  See also:: include/dt-bindings/clock/qcom,gcc-ipq5332.h
+>> -
+>> -allOf:
+>> -  - $ref: qcom,gcc.yaml#
+>> +  See also::
+>> +    include/dt-bindings/clock/qcom,gcc-ipq5332.h
+>> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,ipq5332-gcc
+>> -
+>> -  clocks:
+>> -    items:
+>> -      - description: Board XO clock source
+>> -      - description: Sleep clock source
+>> -      - description: PCIE 2lane PHY pipe clock source
+>> -      - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
+>> -      - description: USB PCIE wrapper pipe clock source
 > 
->      &cci0 {
-> 	status = "okay";
->      };
+> You cannot remove properties from top-level. Unify the list, so it uses
+> common part (ipq5332) and keep it here with minItems.  Then in allOf you
+> only control min/maxItems.
 > 
-> I made a special effort to check that the power domain in SM8550 camcc
-> is sufficient to be replaced, and Titan and other provided GDSCs can
-> be turned on/off, if the clock controller is disconneced from MMCX and
-> MMCX is off according to /sys/kernel/debug/pm_genpd/pm_genpd_summary.
-> 
+ok, got it. Will fix in V3. Thanks !!
 
-Additionally it makes sense to mention that the fix alone has been already
-sent for a review as an RFT change:
-
-* https://lore.kernel.org/all/20240612214812.1149019-1-vladimir.zapolskiy@linaro.org/
-
---
-Best wishes,
-Vladimir
+Regards,
+  Sricharan
