@@ -1,58 +1,57 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433CE156864
-	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 10:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACCB1891D2
+	for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 10:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727433144; cv=none; b=OA8RRA1ONm7m6rWITmVvkwcmOc5mI+PoCWwEOPbOPaLLaxKi9qq+8a6lpPYiETQW0zFvu2JPVD6onNl00JaqpV8afOQehov6RgjbyQaVyIfjAUiqYYG2vpG31MYPKRgVRhrA4Inn+l4kSxnRRaGRbPTX2eiz9hK1IBvSr2pRdvU=
+	t=1727433149; cv=none; b=C4ivLt+jtn98hnbrfW5YJXj4Hu7mKgcdMvno2erGrxAv/BwZKtJYXjWf92hzPEFCvQuklQcmbFixRNSuO4y2OfjMDQ6R3MlrHMRYXBCEpUITGgiw/DrUNK5tdonAABcqcGI4C1XurDD+noLDO6E3lGJg1KjUz4Ea4b70r46+Ykc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727433144; c=relaxed/simple;
-	bh=0A1LQywnK3IEs/dJCQF/pjVGz9ROfKsL66sFCOAtKr0=;
+	s=arc-20240116; t=1727433149; c=relaxed/simple;
+	bh=5Q3cmv5EQmEMsB47Dt0/46SxxuBAOTXYPTZ6B+4yiFE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NozjPS2qQtDzJLUPtlUvQYT41V/UHevOqHrRhB71MkrEv9fMFDqDQBdOK3yc+JPBWhy2EFxM/kyHJG5RbcHmmoFrFTLTxqx1tILmaBHoDTpxiA8uanyxjsNuqYZ30jZrQNa23qMtYw4lXoqLdb8/zbAeVZL/72s9pG8xBf4rMZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hvmdSrbV; arc=none smtp.client-ip=209.85.167.51
+	 MIME-Version; b=bRRiyqZMVAotUfCrFC8ygReuOJTkzWZ9pwI3G+D4l1ajCZKk72K8cMUpYY807JwXDlaRFve4CpBU+tu14LrmcvtWmRP5PZWUL0+zVGIFF/1QvYtRscQfWmWy5j1AKsm9oy6ol1gcHMAb/stY83Vvtjc275r4j1u+wY87IZGemBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pEdJHcSl; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvmdSrbV"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5356a0a56f4so304900e87.3
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 03:32:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pEdJHcSl"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f8c439bc1dso1202711fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2024 03:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727433140; x=1728037940; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727433138; x=1728037938; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M3x4RQzAfiGs4G4EtS1NlPhVbjDckiadnHMOCI+hhBk=;
-        b=hvmdSrbVavR/D5Uwn05ChnzyKCDsJJt1rxFYy8LSJ39KJtPq17IMFU2O3FTnO81+Kz
-         7lhVOFKaghfp5uHRX4soDoZ4W3jX2ttlyiHJ19oxaVbnIugefegC85vXF0vw9kcdlv6c
-         hNI33AKZTpGmuj1cJ5R0bm0UeC/MXoAvuHKlafhWTjlTQ8CqxS//AcDgeVRDXOt+bIpu
-         wyFJaamSP1HSviCd4Vzl70rnFjQXVACOP1l5lPOFQ8nfVwvoCEtBLCW7MV19HgCjI4OJ
-         zng1cfAGED1I/D5RfC2rU2FN5dhmQe+5sxxaIkbwoxZswFARcdnDGDxfIEToOhhRl1yy
-         WBQA==
+        bh=52wlC560kwOQzivXvwj4mN7rE9VozvLwChFkY3NipRg=;
+        b=pEdJHcSloeIA2nNjUUZqdJXtydxoTHlc1Vkhi/GLrsYHgO2rN+CCYZbyNoMbmMS/KG
+         sgmlz9Y1mOWlU/rpZO6pVQ3ZIso4cadUphaWsceLawiEf2xtIRv9R8zC9EtzeOeIcpyO
+         P8eI3EM7oBGcJY8NdmndmdW4x+eSnjYfd2AFOPHgCDLgjaV2H62mkdqbMzgISTDhrsBg
+         LU5Ck9v1ggoyNcECqig59ebk8GBZK+0oQMi7u61h0IacuN/r108wwKSdbaNbDEU53mFW
+         PYBZK5MPQ/SNUwqcQV4Drp1aRNe0ZwWGy0X191G5XhmDYp2CySauzTWc+ya7Ji2P7DLM
+         vXtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727433140; x=1728037940;
+        d=1e100.net; s=20230601; t=1727433138; x=1728037938;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M3x4RQzAfiGs4G4EtS1NlPhVbjDckiadnHMOCI+hhBk=;
-        b=sqn4eBavDaTi1bgRWdYvPfr2uQ3PvuLAG+itLcuzxTckwf2LQdgwkkyl23mA5W6gQ1
-         XoaQ1FcH+5QURkN2Lrj9NUa4Js1UUEYVJpqq7rhZxAGjKajo9BobMra3uZvZprcIOptp
-         q0ZlmZckbRQlblhwUQHFbiGr5/39797HXYOnzTVfaJaWHyqWPNZYtCjBRemE49cc3MWI
-         x9g+Nk9Qlk0esECcrwzpzqtq1YPFamlUnvSp7VFdFsxmCfojdFbN5phSYeIHOnA66sfk
-         mhUy/Gz7F7O9gpzU3KfMPi+8hdot96bVSIPqyPGEzSbGao9ESlQPywNQIi6cEYpeM67e
-         fkwg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2BPRQiDvMa3I8PMisQiKIoQY4BcMs9m28IlFTwsgTcPAvLN7bvKxTfFSjmJpqniYB+CC9m0al7yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztwVSKb7BIqzGrFLuNENP4KGY3RF14kEnFClrLr9ItDL5p2Vuy
-	CqZ6jR0SzqusW3feRmvoFKbjECWb1vAd8rELI/FJnRP/zOXJPxdXpfGFOEa54lRAaIv8AJXvNZe
-	GGz8=
-X-Google-Smtp-Source: AGHT+IEv9j6EshoAauBGgGokdQ8POVQu/cEHbHUPQhJmCoBBGkI2ZoztPJMY+IG05HKEcAcaQgtUVg==
-X-Received: by 2002:a05:651c:516:b0:2ef:27fa:1fc4 with SMTP id 38308e7fff4ca-2f9d3e37874mr5383221fa.1.1727433140345;
-        Fri, 27 Sep 2024 03:32:20 -0700 (PDT)
-Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e333sm259724e87.76.2024.09.27.03.32.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=52wlC560kwOQzivXvwj4mN7rE9VozvLwChFkY3NipRg=;
+        b=ilUsCHhFwkCyWR4PdImXAjNgsxQK2NPv6QCoeFMdlewm5s/HrVnRbB8VsM/SlCi1AA
+         23sRIF0/pQ8Kaipd4aW8kddKJj9TIMcfmb1u37fZ2sjPreNGZifqZxJSlLVhuqZlFZIC
+         w+Q7gBuern2z2SmF0ghjp9Kiyrr77IfaU62+AlUhj5PfOctrKLXNteStqq4MH1lbKsHB
+         XgR1QMKRnzJSC9Fm7WTfmr14mLo3wQ/9N4UO6l08u2SfH3ELupOpDpOqQOt6pgnVK0OL
+         VRMXO+NU0vJABntIFiSrgIRnoy4Za7YzXc7Y9GdAR9N03LFCtoGRI6cuXZVQNY6R7BBU
+         bsrw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9av0ak4zdA/ebJcstXA3doPXz1/pJd5dzqgY46+1IZNGf/+pHKAHRjHbDEgYxdtLIqH8fvHP0GT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Xd8aFIsG2Ug4utvCs1kl8J2NZW79h6odCnpPCWyDunGD2T2D
+	/jgQk2iqBoScf+dI5Kx19JEKIx1Jb/qSTnq9oSKRpZ5jUfyvf1d++c7PxVT4E2M=
+X-Google-Smtp-Source: AGHT+IEuem5Ukvnh7hEKUSiof3sC+jX4FK3/GktzYOT5D48aCARk19ZzL5cPvnEJ5OxdISqq4g0xGQ==
+X-Received: by 2002:a05:6512:3e0c:b0:536:9efb:bb19 with SMTP id 2adb3069b0e04-5389fc399b0mr443073e87.3.1727433138192;
         Fri, 27 Sep 2024 03:32:18 -0700 (PDT)
+Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e333sm259724e87.76.2024.09.27.03.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 03:32:17 -0700 (PDT)
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
@@ -66,9 +65,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: clock: qcom,sm8450-camcc: generalize title and description
-Date: Fri, 27 Sep 2024 13:32:12 +0300
-Message-ID: <20240927103212.4154273-4-vladimir.zapolskiy@linaro.org>
+Subject: [PATCH 2/3] dt-bindings: clock: qcom,sm8450-camcc: do not restrict power domain to MMCX
+Date: Fri, 27 Sep 2024 13:32:11 +0300
+Message-ID: <20240927103212.4154273-3-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240927103212.4154273-1-vladimir.zapolskiy@linaro.org>
 References: <20240927103212.4154273-1-vladimir.zapolskiy@linaro.org>
@@ -80,14 +79,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently the qcom,sm8450-camcc.yaml IP documentation serves as
-a description of camera clock controllers of Qualcomm SC8280xp, SM8450,
-SM8550, SM8650 and X1E80100 SoCs, and there is a room for more
-controllers to be supported by this device tree bindings documentation
-in future.
-
-Generalize the title and description in the documentation file similarly
-to a number of other Qualcomm clock controller documentation files.
+It was unveiled that Qualcomm SM8550 Camera clock controller is attached
+to MXC power domain, therefore it has to be reflected and generalized in
+the device tree bindings description.
 
 Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
@@ -95,27 +89,24 @@ Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-index 9ef967523987..11febb5937f3 100644
+index 26afbbe65511..9ef967523987 100644
 --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
 +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+@@ -40,12 +40,12 @@ properties:
+   power-domains:
+     maxItems: 1
+     description:
+-      A phandle and PM domain specifier for the MMCX power domain.
++      A phandle and PM domain specifier for the supplying power domain.
  
--title: Qualcomm Camera Clock & Reset Controller on SM8450
-+title: Qualcomm Camera Clock & Reset Controller
+   required-opps:
+     maxItems: 1
+     description:
+-      A phandle to an OPP node describing required MMCX performance point.
++      A phandle to an OPP node describing the power domain's performance point.
  
- maintainers:
-   - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-@@ -12,7 +12,7 @@ maintainers:
- 
- description: |
-   Qualcomm camera clock control module provides the clocks, resets and power
--  domains on SM8450.
-+  domains on Qualcomm SoCs.
- 
-   See also:
-     include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+   reg:
+     maxItems: 1
 -- 
 2.45.2
 
