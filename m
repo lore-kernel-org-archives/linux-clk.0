@@ -1,246 +1,254 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B4923774;
-	Sat, 28 Sep 2024 20:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEAC2CA8;
+	Sat, 28 Sep 2024 21:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727554640; cv=none; b=rD9oQZlM1czX9pW+L9DSjhkIEG77TnaxdHKayjfqdxEOeKkcUQua6O6jz3v9eA9VmwmaaNQKTzYHjaGG2FKQpiTUcKiYrJ9dGyBBOFDV+fWCzJcAowGZlRFh9yYOuc1mh1AhdAt0pxM6p3kXXq49nSo4lUv+CUy4U/i/08zdeJ4=
+	t=1727559163; cv=none; b=cCSzfyvdwQXZAl0j+ATpc4uee7y5HkZMBYSmrk/9n7Esty8+jJmrB3yPY8cvJ/VdvrgQtQbKJv3Wd+L1iCHRaVzldcaHKG/0UwPbjnlXSMWhHSK6XbVZWbJX9ZQrwYetwn/dTq/OexwvAYMv01kTxZxiggkv8RiSdHlc7ZobEYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727554640; c=relaxed/simple;
-	bh=GxLnxv0XYQXvlin9TcvZ4RiHtAZjSqilKKtgN9ttjaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bWpU6JlkPjs+vIpWZ+oLa20d2VyokvAP86K7sShakOYkoYvbYslFNPNFiQ/SHPh3j09ieqKNh1Fez4x3LKuk5J30gkudSrpWqil1UumFqHtax/wi+9cG39CxU/RBSB0+ByPyInUKs4bIVKD7BaswLk21aBELEVkbQbc5OmE5lb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN6l/kql; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727559163; c=relaxed/simple;
+	bh=J6dwjekvHhc6lard0YJQTOrwb5C5Bq/heygrtrluqeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VDaQq8URSq/r78J1V6iUVc7SY2JKVqTx8Ru2sZY/+89IC7ViDE3itoTZdGzz3QYPoAB1yIDSnkBZ8MxkLZGsi3mZMPcNLoV6LKE2uk3SoaoYHq62rOPAL7gYAM1NiIgDaNZVq4aPbvyGJQmG+TWWWLsUa/1BMXZcbANPg81OFQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0zMjgyZ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN6l/kql"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85778C4CEC3;
-	Sat, 28 Sep 2024 20:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727554639;
-	bh=GxLnxv0XYQXvlin9TcvZ4RiHtAZjSqilKKtgN9ttjaY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HN6l/kqlpNLRnX4Tj3J6WmkbDtid6/YNBPS/tnLJtWZVxlTextqj2bwj8ktQuWByR
-	 TYBf6EnmSnIf1nXJODJHVTzzqZ4s8nq3czWZ9esZozC1LrmBHzsBdYHxjGulC3Gwmi
-	 KgNMC1fUuAf+wWNHdjhMht8FJNaYv/bV5HpQ0RlrS+0ZsPoFrDolCPWENRUPmxF93k
-	 G8pecxcSctXbSKJ67xAHr1Zs8GuZg6LHhZrrxt24NTJJyXPmo4SdafNQ8WkjSEsVW+
-	 zLblasZLivej8yvdAgRi1/mG7+RPJvxgwkp6csgTsA0646WhXcvKTUdQ/MaGnV0W7z
-	 H1TjnpPJ3ff5A==
-Date: Sat, 28 Sep 2024 15:17:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
- parsed from DT
-Message-ID: <20240928201717.GA99402@bhelgaas>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0zMjgyZ"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20551eeba95so31598745ad.2;
+        Sat, 28 Sep 2024 14:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727559161; x=1728163961; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=YP5C5sb9/S1CBp32rgGNh9i41OJdRJponvkLQNw/TMU=;
+        b=O0zMjgyZZFuNPwz0iXx8/3p4FH0gwWgRdA/uTZZ7jqA3bkIrRXwGcCzNoN+FF4aBJG
+         GpjCtJXz19+AmFQhCVhcZTwgJ1yu4ObPyVzHCXJh6x95u37sO9cWTonK8aYEkspX1vcq
+         0mnKObwPq9SWA2lJ1nnljheN/a34GJ2WONtMSudN09SaRVme3GxKrMbbcSN1+gLnmhpU
+         gfDBFlJhgy2PjewjWkchf6gM3p4xFlBxxo6sUFxUSNUjV4d7Wr6FTkdAX2W3+eNsOZzT
+         m2vIGF8GL06dXdiWL+4EGZgUMJ6LuFll2dIEflsYuPDJSIFw4LuFv99+ppGm20fd0a4D
+         YzgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727559161; x=1728163961;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YP5C5sb9/S1CBp32rgGNh9i41OJdRJponvkLQNw/TMU=;
+        b=K8rZIg6xBMD9Sf8C+mVjUL2m3E5ObqTe1Z+2nnME1FD+7TSpEumHcikqyKgnrlr1H2
+         63a+mMoPoFL8pjnWIX9vp29E1MTz8Ne16PEG3sm+0jDyfnCPSvyIoMZPJ8oA0I7t5cfS
+         BlXnDqsnEFnRs5PvpijEmapWXHsdaSU4EwV65vrGeXRyoMjsC9ujtQF3xXQ9wF2zQiNw
+         nNju2iSVhAZr23gipektRZWczxsCUX1yagxpFUZYi5A+ZWtVrKZmORBttIt56hxt4Nx9
+         Qup8MGRH7syk4kj6bEC9KYu7F2ZvJwHwTKhybtIUiwV2k3Mi/fFJSjT+04XovHaCwy7Q
+         jsnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUy2RBShJraatBPKLEE+KgjsCv3RR1eoho+pij7e0kke0GPGVzAHhf5cLMcbYrxylNko0pxy/S4aXIz@vger.kernel.org, AJvYcCVYeeOMPNeN5UcTZyUzhmuha/YrUm0umd2MFG+vuLqdMRoxyinpgUpMaB4tbWt3xHWWmUODQJNmjxYRVVak0Vul@vger.kernel.org, AJvYcCWcidMFyE8EN1dMv1oSlJGvxbHpcDS08os5W9ZXvuStxsKiIeiXIaDzLjGsZn2R3Qc9OuQIH4rITwG5Bqrc@vger.kernel.org, AJvYcCWrYcVjAgr5DUkX9H9qa6AFVSGftrjg4xSkEmEDlcVcNasLsxDyLo+wFi++ZDgszbiMOrQxCyEBXmc5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZgCevNkub8uq6AqJ7xjAhYBXo0AubsXVqYh60wQihOrc2NfSi
+	BEU6Th3+Up0Xw3c/50Qr/ZblGoZO/DDQAbaD8AGBdGTYxJOQUK0C
+X-Google-Smtp-Source: AGHT+IEmTwzDUx5UTP7lyRpx6IWQLxeALqPfM6iu19eYnPcKfIhjmZz3c91oAC2kwc/XZa2m5HlO+A==
+X-Received: by 2002:a17:902:d550:b0:206:96bf:b0cf with SMTP id d9443c01a7336-20b367098c9mr114156025ad.0.1727559159621;
+        Sat, 28 Sep 2024 14:32:39 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d6717fsm31078535ad.14.2024.09.28.14.32.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Sep 2024 14:32:38 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f5f1c42d-77c0-48c7-ac52-3d4a3b5c2b47@roeck-us.net>
+Date: Sat, 28 Sep 2024 14:32:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvZVPA6ov5XgScpz@apocalypse>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with
+ struct clk_parent_data
+To: Shuah Khan <skhan@linuxfoundation.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ patches@lists.linux.dev, kunit-dev@googlegroups.com,
+ linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Daniel Latypov
+ <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20240718210513.3801024-1-sboyd@kernel.org>
+ <20240718210513.3801024-9-sboyd@kernel.org>
+ <6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net>
+ <a339ec8c-38f6-425a-94d1-ad69b5ddbd88@roeck-us.net>
+ <dcd8894f-1eb6-4b5c-9e6f-f6e584c601d2@roeck-us.net>
+ <6f5a5b5f-71a7-4ed3-8cb3-d930bbce599b@linuxfoundation.org>
+ <ba88a29c-f05e-4ca3-82d1-0a634613caee@roeck-us.net>
+ <4216b852-11a2-41ae-bb01-5f9b578ee41b@roeck-us.net>
+ <879831a8-2039-4cdb-bce2-aefdeb7ab25f@linuxfoundation.org>
+ <da260b77-2ecb-4486-90cb-6db456d381ef@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <da260b77-2ecb-4486-90cb-6db456d381ef@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 08:48:28AM +0200, Andrea della Porta wrote:
-> On 15:16 Thu 05 Sep     , Bjorn Helgaas wrote:
-> > On Thu, Sep 05, 2024 at 06:43:35PM +0200, Andrea della Porta wrote:
-> > > On 17:26 Tue 03 Sep     , Bjorn Helgaas wrote:
-> > > > On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
-> > > > > On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
-> > > > > > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
-> > > > > > > The of_pci_set_address() function parses devicetree PCI range
-> > > > > > > specifier assuming the address is 'sanitized' at the origin,
-> > > > > > > i.e. without checking whether the incoming address is 32 or 64
-> > > > > > > bit has specified in the flags.  In this way an address with no
-> > > > > > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
-> > > > > > > the upper 32 bits of the address will be set too, and this
-> > > > > > > violates the PCI specs stating that in 32 bit address the upper
-> > > > > > > bit should be zero.
-> > > > 
-> > > > > > I don't understand this code, so I'm probably missing something.  It
-> > > > > > looks like the interesting path here is:
-> > > > > > 
-> > > > > >   of_pci_prop_ranges
-> > > > > >     res = &pdev->resource[...];
-> > > > > >     for (j = 0; j < num; j++) {
-> > > > > >       val64 = res[j].start;
-> > > > > >       of_pci_set_address(..., val64, 0, flags, false);
-> > > > > >  +      if (OF_PCI_ADDR_SPACE_MEM64)
-> > > > > >  +        prop[1] = upper_32_bits(val64);
-> > > > > >  +      else
-> > > > > >  +        prop[1] = 0;
-> > > ...
-> > > > However, the CPU physical address space and the PCI bus address are
-> > > > not the same.  Generic code paths should account for that different by
-> > > > applying an offset (the offset will be zero on many platforms where
-> > > > CPU and PCI bus addresses *look* the same).
-> > > > 
-> > > > So a generic code path like of_pci_prop_ranges() that basically copies
-> > > > a CPU physical address to a PCI bus address looks broken to me.
-> > > 
-> > > Hmmm, I'd say that a translation from one bus type to the other is
-> > > going on nonetheless, and this is done in the current upstream function
-> > > as well. This patch of course does not add the translation (which is
-> > > already in place), just to do it avoiding generating inconsistent address.
-> > 
-> > I think I was looking at this backwards.  I assumed we were *parsing"
-> > a "ranges" property, but I think in fact we're *building* a "ranges"
-> > property to describe an existing PCI device (either a PCI-to-PCI
-> > bridge or an endpoint).  For such devices there is no address
-> > translation.
-> > 
-> > Any address translation would only occur at a PCI host bridge that has
-> > CPU address space on the upstream side and PCI address space on the
-> > downstream side.
-> > 
-> > Since (IIUC), we're building "ranges" for a device in the interior of
-> > a PCI hierarchy where address translation doesn't happen, I think both
-> > the parent and child addresses in "ranges" should be in the PCI
-> > address space.
-> > 
-> > But right now, I think they're both in the CPU address space, and we
-> > basically do this:
-> > 
-> >   of_pci_prop_ranges(struct pci_dev *pdev, ...)
-> >     res = &pdev->resource[...];
-> >     for (j = 0; j < num; j++) {   # iterate through BARs or windows
-> >       val64 = res[j].start;       # CPU physical address
-> >       # <convert to PCI address space>
-> >       of_pci_set_address(..., rp[i].parent_addr, val64, ...)
-> >         rp[i].parent_addr = val64
-> >       if (pci_is_bridge(pdev))
-> >         memcpy(rp[i].child_addr, rp[i].parent_addr)
-> >       else
-> >         rp[i].child_addr[0] = j   # child addr unset/unused
-> > 
-> > Here "res" is a PCI BAR or bridge window, and it contains CPU physical
-> > addresses, so "val64" is a CPU physical address.  It looks to me like
-> > we should convert to a PCI bus address at the point noted above, based
-> > on any translation described by the PCI host bridge.  That *should*
-> > naturally result in a 32-bit value if OF_PCI_ADDR_SPACE_MEM64 is not
-> > set.
+On 9/28/24 12:27, Shuah Khan wrote:
+> On 9/28/24 11:54, Shuah Khan wrote:
+>> On 9/28/24 11:31, Guenter Roeck wrote:
+>>> On 9/27/24 17:08, Guenter Roeck wrote:
+>>>> On 9/27/24 13:45, Shuah Khan wrote:
+>>>>> On 9/27/24 10:19, Guenter Roeck wrote:
+>>>>>> Copying devicetree maintainers.
+>>>>>>
+>>>>>> On Thu, Sep 26, 2024 at 09:39:38PM -0700, Guenter Roeck wrote:
+>>>>>>> On Thu, Sep 26, 2024 at 09:14:11PM -0700, Guenter Roeck wrote:
+>>>>>>>> Hi Stephen,
+>>>>>>>>
+>>>>>>>> On Thu, Jul 18, 2024 at 02:05:07PM -0700, Stephen Boyd wrote:
+>>>>>>>>> Test that clks registered with 'struct clk_parent_data' work as
+>>>>>>>>> intended and can find their parents.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> When testing this on arm64, I see the error below. The error is only
+>>>>>>>> seen if I boot through efi, i.e., with "-bios QEMU_EFI-aarch64.fd"
+>>>>>>>> qemu parameter.
+>>>>>>>>
+>>>>>>>> Any idea what might cause the problem ?
+>>>>>>>>
+>>>>>>> I noticed that the new overlay tests fail as well, also with "path '/' not
+>>>>>>> found".
+>>>>>>>
+>>>>>>> [Maybe] answering my own question: I think the problem may be that there
+>>>>>>> is no devicetree file and thus no devicetree root when booting through
+>>>>>>> efi (in other words, of_root is NULL). Would it make sense to skip the
+>>>>>>> tests in that case ?
+>>>>>>>
+>>>>>>
+>>>>>> The problem is that of_root is not initialized in arm64 boots if ACPI
+>>>>>> is enabled.
+>>>>>>
+>>>>>>  From arch/arm64/kernel/setup.c:setup_arch():
+>>>>>>
+>>>>>>     if (acpi_disabled)
+>>>>>>         unflatten_device_tree();        // initializes of_root
+>>>>>>
+>>>>>> ACPI is enabled if the system boots from EFI. This also affects
+>>>>>> CONFIG_OF_KUNIT_TEST, which explicitly checks if of_root exists and
+>>>>>> fails the test if it doesn't.
+>>>>>>
+>>>>>> I think those tests need to add a check for this condition, or affected
+>>>>>> machines won't be able to run those unit tests. The obvious solution would
+>>>>>> be to check if of_root is set, but then the associated test case in
+>>>>>> CONFIG_OF_KUNIT_TEST would not make sense.
+>>>>>>
+>>>>>> Any suggestions ?
+>>>>>>
+>>>>>
+>>>>> Would it work if these tests check if acpi_disabled and skip if it isn't
+>>>>> disabled? It might be low overhead condition to check from these tests.
+>>>>>
+>>>>> acpi_disabled is exported:
+>>>>>
+>>>>> arch/arm64/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
+>>>>> arch/loongarch/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
+>>>>> arch/riscv/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
+>>>>> arch/x86/kernel/acpi/boot.c:EXPORT_SYMBOL(acpi_disabled);
+>>>>>
+>>>>
+>>>> I don't think that would work. Looking through the use of acpi_init,
+>>>> I don't think that of_root is always NULL when acpi_init is false; that
+>>>> just happens to be the case on arm64 when booting through efi.
+>>>> However, even arm64 has the following code.
+>>>>
+>>>>          if (acpi_disabled)
+>>>>                  psci_dt_init();
+>>>>          else
+>>>>                  psci_acpi_init();
+>>>>
+>>>> While psci_dt_init() doesn't set of_root, it does try to do a devicetree
+>>>> match. So there must be some other condition where acpi_disabled is set
+>>>> but of_root is set anyway. I just have not found that code path.
+>>>>
+>>>
+>>> I ended up disabling all affected unit tests for arm64. I'll do the same
+>>> for other architectures if I encounter the problem there as well.
+>>>
+>>> Unfortunately that includes all clock unit tests because the tests requiring
+>>> devicetree support can not be enabled/disabled separately, but that can't be
+>>> helped and is still better than "mandatory" failures.
+>>>
+>>
 > 
-> That's exactly the point, except that right now a 64 bit address would
-> "unnaturally" pass through even if OF_PCI_ADDR_SPACE_MEM64 is not set.
-> Hence the purpose of this patch.
+> of_root is set in drivers/of/pdt.c when it creates the root node.
+> This could be a definitive test for kunit tests that depend on
+> devicetree support.
+> 
 
-From your earlier email
-(https://lore.kernel.org/r/Zszcps6bnCcdFa54@apocalypse):
+That is not always the case, including arm64. It is primarily set in
+unflatten_devicetree(), which is not called on arm64 unless acpi_is disabled
+(see above).
 
-> Without this patch the range translation chain is broken, like this:
+> It is an exported symbol. drivers/of/base.c exports it.
+> 
 
-> pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
-> ~~~ chain breaks here ~~~
-> pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
-> dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
-> rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+Yes, checking if of_root is NULL and skipping the test in that case might help,
+but then there is the of_dtb_root_node_populates_of_root unit test which
+explicitly fails if of_root is NULL. The comment describing the test is
 
-The cover letter said "RP1 is an MFD chipset that acts as a
-south-bridge PCIe endpoint .. the RP1 as an endpoint itself is
-discoverable via usual PCI enumeration".
+/*
+  * Test that the 'of_root' global variable is always populated when DT code is
+  * enabled. Remove this test once of_root is removed from global access.
+  */
 
-I assume pcie@120000 is the PCI host bridge and is already in the
-original DT describing the platform.  I assume pci@0 is a Root Port
-and dev@0,0 is the RP1 Endpoint, and the existing code already adds
-them as they are enumerated when pci_bus_add_device() calls
-of_pci_make_dev_node(), and I think this series adds the rp1@0
-description.
+The devicetree unit test code explicitly assumes that of_root is set if
+CONFIG_OF_EARLY_FLATTREE is enabled, but that is not always the case
+(again, of_root is NULL on arm64 unless acpi is disabled).
 
-And the "ranges" properties are built when of_pci_make_dev_node()
-eventually calls of_pci_prop_ranges().  With reference to sec 2.2.1.1
-of https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
-and
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges,
-I *think* your example says:
+Guenter
 
-pcie@120000 has:
-  child phys.hi	      0x02000000    n=0 p=0 t=0 ss=10b
-  child phys.mid,lo   0x00000000_00000000
-  parent phys.hi,lo   0x0000001f_00000000
-  length hi,lo        0x00000000_fffffffc
-
-which would make it a bridge where the child (PCI) address space is
-relocatable non-prefetchable 32-bit memory space at
-0x00000000-0xfffffffc, and the corresponding parent address space is
-0x1f_00000000-0x1f_fffffffc.  That means the host bridge applies an
-address translation of "child_addr = parent_addr - 0x1f_00000000".
-
-pci@0 has:
-  child phys.hi	      0x82000000    n=1 p=0 t=0 ss=10b
-  child phys.mid,lo   0x0000001f_00000000
-  parent phys.hi      0x82000000    n=1 p=0 t=0 ss=10b
-  parent phys.mid,lo  0x0000001f_00000000
-  length hi,lo        0x00000000_00600000
-
-which would make it a PCI-to-PCI bridge (I assume a PCIe Root Port),
-where the child (secondary bus) address space is the non-relocatable
-non-prefetchable 32-bit memory space 0x1f_00000000-0x1f_005fffff and
-the parent (primary bus) address space is also non-relocatable
-non-prefetchable 32-bit memory space at 0x1f_00000000-0x1f_005fffff.
-
-This looks wrong to me because the pci@0 parent address space
-(0x1f_00000000-0x1f_005fffff) should be inside the pcie@120000 child
-address space (0x00000000-0xfffffffc), but it's not.
-
-IIUC, this patch clears the upper 32 bits in the pci@0 parent address
-space.  That would make things work correctly in this case because
-that happens to be the exact translation of pcie@120000, so it results
-in pci@0 parent address space of 0x00000000-0x005fffff.
-
-But I don't think it works in general because there's no requirement
-that the host bridge address translation be that simple.  For example,
-if we have two host bridges, and we want each to have 2GB of 32-bit
-PCI address space starting at 0x0, it might look like this:
-
-  0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
-  0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
-
-In this case simply ignoring the high 32 bits of the CPU address isn't
-the correct translation for the second host bridge.  I think we should
-look at each host bridge's "ranges", find the difference between its
-parent and child addresses, and apply the same difference to
-everything below that bridge.
-
-> while with the patch applied the chain correctly become:
-
-> pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
-> pci@0      : <0x82000000 0x00 0x00   0x82000000 0x00 0x00     0x00 0x600000>;
-> dev@0,0    : <0x01 0x00 0x00         0x82010000 0x00 0x00     0x00 0x400000>;
-> rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
-
-> > > > Maybe my expectation of this being described in DT is mistaken.
-> > > 
-> > > Not sure what you mean here, the address being translated are coming from
-> > > DT, in fact they are described by "ranges" properties.
-> > 
-> > Right, for my own future reference since I couldn't find a generic
-> > description of "ranges" in Documentation/devicetree/:
-> > 
-> > [1] https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#ranges
