@@ -1,124 +1,205 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209FC19FA86
-	for <linux-clk@vger.kernel.org>; Sat, 28 Sep 2024 08:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2D218308A
+	for <linux-clk@vger.kernel.org>; Sat, 28 Sep 2024 10:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727512706; cv=none; b=DJvcz81kCa8PO14M0jWhadDOStwbHcEJ3hAnuJBlnkoVS0qBBT7GS8ZtdSFZD4YKM4AH8bCE1jMCRly1O85+NQG3HWmqB82YXopoJyjuOtnRXMZlsP5MWGgnN1sHBTixtxxLluRIZLEovGwvH3wW19WNbgRWfFMuRCera+DpqEg=
+	t=1727520404; cv=none; b=EgIcNGgllqT2XCIUXPfzZxJqIdhkcFg2ksviE31+0JpSTqOtytJeeicr28043iIhvlEg7Uybw84s/0o5OnuX+ooVWGI+25iS3N0nvP1tcGLwZEJz4vT+yHWeEEau4smFhWzXgKv1+CxC3sBx3fKVHK+apNH50H58ZMS9Bm1XAns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727512706; c=relaxed/simple;
-	bh=V3GcAzqNjwMg5/Hvh9jUbJqltmtUfAEm3aT6HuannLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PbEv6a52TJkXn2hWvv4ufKOFk6nAvDwrf6GXx6ckMjReuuf6y1/vPvt6ft1lbQZu+7lmMeMmTB4wfbnfzPlcblGHoDMQd5yqnMbIlPXi9vLniqermnONdloc2L0LOyAfwKqGHYTvU2TcaP3po4ivrvofbIvlPuEE36VP+jaULlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=qiSANEgL; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1727520404; c=relaxed/simple;
+	bh=Ei6/ccAdpO9+K8ToXprbjnDvfcVFhhzoN0+sWM3un3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LCAMELJZXQpCaHIT3zkjWFq+4sETFi9hcAez3D9kOfJlTSwbGOimhPoQmbx7NMuZqvFlySvsPv9EkAok1dfSVZ3Q+onNlO+xohX5a+CqrL02cgkZHaLtMb1mOJM9qBHRJmatccD1nInMtrSqs96a8GP+48dQEGFVfkFMBLgMv5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q2i/naNj; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qiSANEgL"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a93b2070e0cso326362866b.3
-        for <linux-clk@vger.kernel.org>; Sat, 28 Sep 2024 01:38:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q2i/naNj"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5398aeceb51so137441e87.0
+        for <linux-clk@vger.kernel.org>; Sat, 28 Sep 2024 03:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1727512703; x=1728117503; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqdVHCjP2z3b3GmppGHkZvxobZmXnCslqoKDvGYxVNw=;
-        b=qiSANEgLeOLGWQyy5tnnP6VXs0nVQe/dPqlz9M3tZaeTLRNTj2PVG2InewFnFt3XbO
-         7NSgi6bIUGpdy1kyJLaXbpNIYrawe7VFbx2eHc8pkMi64I3clIT68CFMedBFQdA/fSuE
-         WowWWPiwlkjhpLcIDROVbNN54lFHWDoSa/FfM=
+        d=linaro.org; s=google; t=1727520400; x=1728125200; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TXl4k8mZsxgHoI3VWw6PVnVAQPFUA35ZT1bf6htZGpw=;
+        b=Q2i/naNjF5E89/ugKAV7A5ioLVfKbTsnt/K6+sbBksI6Kcp/4uFm3a4Mrxy0vR2UGO
+         FCNexXdm1RCaPY2NZ0Sd0UlOGi6Br4xTKcq+45Om36KAJ8VHCox/HNPCt0zdL4x+N7hl
+         4j41uORW0UzfYY6CJH+QOM4zmiVPDLJIZiiBnl8/7xQSogv9qdanValGxq1TJtqzzED+
+         w4ROtf8l60IYA58P/22jU3DBkiSztZB0X0VWjnTEhY77NFX97aiy+OLpgEziehrEwZvP
+         8kccJFFqU2MbdgpX4FrD9D090Gx8ogL3aqh07PvTVCPdVsxma55oDjx7Ewp2N6HZtFTD
+         RZMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727512703; x=1728117503;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqdVHCjP2z3b3GmppGHkZvxobZmXnCslqoKDvGYxVNw=;
-        b=VeRN02uIwXi03WCYGHNYtqkQFisCoo6CqusUwL/XNL1TPb3ifzlDDeAOiOaqJNsaET
-         Ru/xFC03HYy9ni+alfjhSlf6FSrwBwWu65cZZjmq8vT2OrbcmS/MFL9YcUcLx7t3vuU3
-         lDv5UjsR0dW14bBqQ8kC/xHl22F7aQr3ycs/FOy+EZZOaYPMAbtK3jtPyumzg+lvr3/s
-         NJCFUtI2q9eCg49+F/VJkU771Zs5hsIgiNPOoYnO5ZPh8BXSz+yj41iQtw7E3HCg5LIW
-         h7cnHpWyinFV5opCcTJYo9wZpxRQ7kloAh1PME1UGkJlVWv3N8vBbvE7QscwmP7lZAsG
-         iMvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP74HT841VgfBGMmeBkHz2WLdLsRH+6aatLON01Q7hrVAo0IFxwDDRGLJvxp/pNXscF9YCWY6lm/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKDSSEwlJe04tAoKek84sKh0Q4dhaQ3Mr/mNo+ZyeApJ4KqcOF
-	pPtwLF3nEOuEAs0mFHEeYpXNE8mUDH5CMoU7h8djYpSSavea3mUAlBONBcVPOPI=
-X-Google-Smtp-Source: AGHT+IFep0uHWu7o5r2mN7w6qghEp9xGMWpGJDUw5UfEylXMOmM7N6REhb0d7hr9vD0ZU94R0/JpCA==
-X-Received: by 2002:a17:907:74c:b0:a8a:3ece:d073 with SMTP id a640c23a62f3a-a93c48f1b54mr526812266b.10.1727512703361;
-        Sat, 28 Sep 2024 01:38:23 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-54-102-102.retail.telecomitalia.it. [79.54.102.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2947a48sm223679466b.118.2024.09.28.01.38.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 01:38:23 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 6/6] clk: imx8mp: support spread spectrum clock generation
-Date: Sat, 28 Sep 2024 10:37:54 +0200
-Message-ID: <20240928083804.1073942-7-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
-References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+        d=1e100.net; s=20230601; t=1727520400; x=1728125200;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TXl4k8mZsxgHoI3VWw6PVnVAQPFUA35ZT1bf6htZGpw=;
+        b=ruH9+BzQhDdv1Ha/FEaAmu/n4GyYplzAP4E3Nc2vCFDIRQjVKDQdakLeqqUxQn4mbg
+         PxB2Cp8nUl6nfiMg5Cj9DiYDC3shdXqfSvVFawn6Nv+gQeNrikurTxKo9YexmwqaX6Tz
+         a9WKatsEpBoNs/DHmG9JmLEUPhwhhE4EzlIeoGHQUBFh4Wb32Q1ggmlq7JAC6UKYGuXb
+         Gy5+0p1CfNnDZYEE+Tut4V5urnpwZD5qL3Hg0mDivA3sUfZLJXhJzSLn5X1TUxRbDNFQ
+         PwTIYsjkyWo+gplPvP+5opvquArt2D78vaFXGlnWbDA6HbAVoab6Lu3cqOaxf6CZ5Keh
+         mMvA==
+X-Forwarded-Encrypted: i=1; AJvYcCURDD2P+C3NaOZJnOyfnLq8fV89KhJkrzHdUTGbSUmy0mhqPnwnaC9LZiAgI9jcGmQQ1d8FzGBMnlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0dhH7DrScnIWiDRgQik6/jtc0HQxrZhGMicNi1X0hkWxlh8WC
+	S2H3po2ADiYt66T4Mm6iSq5QVyk4+rDXiYEi82N9xo3yS8ah+g/JOflf3IT0Ze0=
+X-Google-Smtp-Source: AGHT+IGsmYsnTJi0UA9gkkFBqJigGWkiZumRwMsuVRnPqYW+9Inz7cEUrpbiw3sVbiDeWsbzm89sxQ==
+X-Received: by 2002:a05:6512:1396:b0:52c:def2:d8af with SMTP id 2adb3069b0e04-5389fc430a0mr1143476e87.4.1727520400331;
+        Sat, 28 Sep 2024 03:46:40 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a0458ffesm610795e87.300.2024.09.28.03.46.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Sep 2024 03:46:38 -0700 (PDT)
+Message-ID: <f8d1ef2d-3bf8-4c34-914c-7c3277264751@linaro.org>
+Date: Sat, 28 Sep 2024 13:46:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
+Content-Language: en-US
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-media@vger.kernel.org
+References: <20240904020448.52035-9-mailingradian@gmail.com>
+ <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
+ <ZtpqrANbJurWNOzV@radian> <5c58b41a-7fc7-456d-979c-edb8dbe4305d@linaro.org>
+ <a27adb94-5280-4213-a532-0dcc907f80b7@linaro.org> <ZvcwbCh97WKnvarS@radian>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <ZvcwbCh97WKnvarS@radian>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The patch adds support for spread spectrum clock generation for the
-audio, video, and DRAM PLLs.
+Hi Richard.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+On 9/28/24 01:23, Richard Acayan wrote:
+> On Fri, Sep 06, 2024 at 04:00:32PM +0300, Vladimir Zapolskiy wrote:
+>> Hi Bryan, Richard,
+>>
+>> On 9/6/24 15:19, Bryan O'Donoghue wrote:
+>>> On 06/09/2024 03:36, Richard Acayan wrote:
+>>>> On Thu, Sep 05, 2024 at 10:09:34PM +0200, Andi Shyti wrote:
+>>>>> Hi Richard,
+>>>>>
+>>>>> On Tue, Sep 03, 2024 at 10:04:49PM GMT, Richard Acayan wrote:
+>>>>>> This adds support for the camera subsystem on the Snapdragon 670.
+>>>>>>
+>>>>>> As of next-20240902, camss seems to be a bit broken, but the same series
+>>>>>> works on stable (although it is much less reliable now that the CCI clock
+>>>>>> frequency is not being assigned).
+>>>>>
+>>>>> I am not understanding this bit: is this series making it better
+>>>>> or not? Can you please clarify what is broken, what is less
+>>>>> reliable and what works?
+>>>>
+>>>> When applying this camss series and some camera sensor patches on
+>>>> linux-next, the Pixel 3a seems to hang when camera capture starts.
+>>>>
+>>>> When applying the same patches on stable, the camera does not cause the
+>>>> Pixel 3a to hang.
+>>>
+>>> Right so -next isn't stable that's not exactly a revelation.
+>>>
+>>>
+>>>> When these device tree properties from the previous series were removed:
+>>>>
+>>>> 			assigned-clocks = <&camcc CAM_CC_CCI_CLK>;
+>>>> 			assigned-clock-rates = <37500000>;
+>>>>
+>>>> the CCI would sometimes fail to probe with the error:
+>>>
+>>> Right, we don't have clk_set_rate in the cci driver.
+>>>
+>>> Maybe just leave the assigned clock for this submission and we can do a
+>>> sweep of fixes to CCI at a later stage including setting the clock
+>>> instead of having it be assigned.
+>>
+>> first of all it would be nice to confirm that the setting of a particular
+>> clock frequency is actually needed.
+>>
+>> Fortunately it's pretty trivial to check it in runtime with a temporary
+>> modification in the board dts file, namely disable CAMSS in board dts file,
+>> but keep CCI enabled, then simply scan the bus with a regular "i2cdetect"
+>> tool in runtime.
+>>
+>> If i2cdetect on the CCI bus works only for 37.5MHz clock frequency, then it
+>> is needed, otherwise (and this is my expectation) it is not needed neither
+>> in the dtsi files nor in the driver.
+>>
+>>>>
+>>>> 	[   51.572732] i2c-qcom-cci ac4a000.cci: deferred probe timeout, ignoring dependency
+>>>> 	[   51.572769] i2c-qcom-cci ac4a000.cci: probe with driver i2c-qcom-cci failed with error -110
+>>>>
+>>>> On further testing, the rate can be set to 19.2 MHz, and there would be
+>>>> no failure (or rather, it wouldn't happen often enough for me to witness
+>>>> it).
+>>>
+>>> That's expected 19.2 and 37.5 MHz are supported by CAMCC for your part.
+>>>
+>>
+>> I read it as the setting of 37.5MHz clock frequency is not needed, please
+>> correct me.
+> 
+> It is not. My test setup just needs specific EPROBE_DEFER behaviour
+> (my setup being postmarketOS with a full-disk encryption password prompt
+> and camcc-sdm845 loaded after mounting the root filesystem).
 
----
+Good, let the assigned clock frequency be dropped from the dtsi file then.
 
- drivers/clk/imx/clk-imx8mp.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+> In drivers/base/platform.c, the platform_probe() function calls
+> of_clk_set_defaults() then dev_pm_domain_attach() prior to probing the
+> driver:
+> 
+> 	static int platform_probe(struct device *_dev)
+> 	{
+> 		...
+> 		ret = of_clk_set_defaults(_dev->of_node, false);
+> 		if (ret < 0)
+> 			return ret;
+> 	
+> 		ret = dev_pm_domain_attach(_dev, true);
+> 		if (ret)
+> 			goto out;
+> 	
+> 		if (drv->probe) {
+> 			ret = drv->probe(dev);
+> 			if (ret)
+> 				dev_pm_domain_detach(_dev, true);
+> 		}
+> 		...
+> 	}
+> 
+> When handling the assigned-clock-rates property,
+> of_clk_get_hw_from_clkspec() eventually returns ERR_PTR(-EPROBE_DEFER),
+> being propagated all the way.
+> 
+> When handling the power-domains property (if not avoided by deferring
+> with the assigned clock), __genpd_dev_pm_attach() returns a value
+> returned by driver_deferred_probe_check_state(), which is immediately
+> -ETIMEDOUT.
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index b2778958a572..460e8271def5 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -410,6 +410,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np, *anatop_np;
- 	void __iomem *anatop_base, *ccm_base;
-+	struct imx_pll14xx_ssc pll1443x_ssc;
- 	int err;
- 
- 	anatop_np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
-@@ -449,10 +450,14 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_SYS_PLL2_REF_SEL] = imx_clk_hw_mux("sys_pll2_ref_sel", anatop_base + 0x104, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
- 	hws[IMX8MP_SYS_PLL3_REF_SEL] = imx_clk_hw_mux("sys_pll3_ref_sel", anatop_base + 0x114, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
- 
--	hws[IMX8MP_AUDIO_PLL1] = imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_ref_sel", anatop_base, &imx_1443x_pll);
--	hws[IMX8MP_AUDIO_PLL2] = imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_ref_sel", anatop_base + 0x14, &imx_1443x_pll);
--	hws[IMX8MP_VIDEO_PLL1] = imx_clk_hw_pll14xx("video_pll1", "video_pll1_ref_sel", anatop_base + 0x28, &imx_1443x_pll);
--	hws[IMX8MP_DRAM_PLL] = imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel", anatop_base + 0x50, &imx_1443x_dram_pll);
-+	imx_clk_pll14xx_get_ssc_conf(anatop_np, IMX8MP_AUDIO_PLL1, &pll1443x_ssc);
-+	hws[IMX8MP_AUDIO_PLL1] = imx_clk_hw_pll14xx_ssc("audio_pll1", "audio_pll1_ref_sel", anatop_base, &imx_1443x_pll, &pll1443x_ssc);
-+	imx_clk_pll14xx_get_ssc_conf(anatop_np, IMX8MP_AUDIO_PLL2, &pll1443x_ssc);
-+	hws[IMX8MP_AUDIO_PLL2] = imx_clk_hw_pll14xx_ssc("audio_pll2", "audio_pll2_ref_sel", anatop_base + 0x14, &imx_1443x_pll, &pll1443x_ssc);
-+	imx_clk_pll14xx_get_ssc_conf(anatop_np, IMX8MP_VIDEO_PLL1, &pll1443x_ssc);
-+	hws[IMX8MP_VIDEO_PLL1] = imx_clk_hw_pll14xx_ssc("video_pll1", "video_pll1_ref_sel", anatop_base + 0x28, &imx_1443x_pll, &pll1443x_ssc);
-+	imx_clk_pll14xx_get_ssc_conf(anatop_np, IMX8MP_DRAM_PLL, &pll1443x_ssc);
-+	hws[IMX8MP_DRAM_PLL] = imx_clk_hw_pll14xx_ssc("dram_pll", "dram_pll_ref_sel", anatop_base + 0x50, &imx_1443x_dram_pll, &pll1443x_ssc);
- 	hws[IMX8MP_GPU_PLL] = imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", anatop_base + 0x64, &imx_1416x_pll);
- 	hws[IMX8MP_VPU_PLL] = imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", anatop_base + 0x74, &imx_1416x_pll);
- 	hws[IMX8MP_ARM_PLL] = imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", anatop_base + 0x84, &imx_1416x_pll);
--- 
-2.43.0
+I grasp it from the problem description, thank you for the explanation.
 
+For sake of simplicity please make camcc-sdm845 as a built-in driver while
+testing, it will allow to progress with the platform CAMSS support.
+
+The issue with the observed ETIMEDOUT is generic and it's kind of unrelated
+to the CCI/CAMSS support on SDM670.
+
+--
+Best wishes,
+Vladimir
