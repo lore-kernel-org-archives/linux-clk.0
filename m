@@ -1,59 +1,33 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2D218308A
-	for <linux-clk@vger.kernel.org>; Sat, 28 Sep 2024 10:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E41381A4;
+	Sat, 28 Sep 2024 12:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727520404; cv=none; b=EgIcNGgllqT2XCIUXPfzZxJqIdhkcFg2ksviE31+0JpSTqOtytJeeicr28043iIhvlEg7Uybw84s/0o5OnuX+ooVWGI+25iS3N0nvP1tcGLwZEJz4vT+yHWeEEau4smFhWzXgKv1+CxC3sBx3fKVHK+apNH50H58ZMS9Bm1XAns=
+	t=1727525350; cv=none; b=R05967L1cX//NAP+kUJVyqBw3FI5F3+a17KjlhQ4WkarJd5F23YptD3l00JKId3FFhhFjbXxPxbYn9Fm/z7l2hJM66j0LS78q67fIdb5O05zRh7a60SC3wjjDwq4LAIddFQKPS325p+AuOjTt16We1idjjO8Wnb+QEPKBxi3NAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727520404; c=relaxed/simple;
-	bh=Ei6/ccAdpO9+K8ToXprbjnDvfcVFhhzoN0+sWM3un3o=;
+	s=arc-20240116; t=1727525350; c=relaxed/simple;
+	bh=nYd2z7+Rgz2kvjtUPQM5r9bB4wMPpzSss5HUUF5gCvM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCAMELJZXQpCaHIT3zkjWFq+4sETFi9hcAez3D9kOfJlTSwbGOimhPoQmbx7NMuZqvFlySvsPv9EkAok1dfSVZ3Q+onNlO+xohX5a+CqrL02cgkZHaLtMb1mOJM9qBHRJmatccD1nInMtrSqs96a8GP+48dQEGFVfkFMBLgMv5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q2i/naNj; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=rcYqxHkRUvs/rF+PQmmA3EoTc4lhfc88HLMyrK4hkUYNcK6XUdobR56Ip851xFLLEcv4Cp6wb6sE+ol377Q18WdwVoaSwkN5y7F0I4HQfVBsF6kXUZiCjnVM4BhLYdYvD8+lJYuFn9dZjrlkVdcis8KJcXQGz5OnHfZk1V9l/0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqIVTF1x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q2i/naNj"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5398aeceb51so137441e87.0
-        for <linux-clk@vger.kernel.org>; Sat, 28 Sep 2024 03:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727520400; x=1728125200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TXl4k8mZsxgHoI3VWw6PVnVAQPFUA35ZT1bf6htZGpw=;
-        b=Q2i/naNjF5E89/ugKAV7A5ioLVfKbTsnt/K6+sbBksI6Kcp/4uFm3a4Mrxy0vR2UGO
-         FCNexXdm1RCaPY2NZ0Sd0UlOGi6Br4xTKcq+45Om36KAJ8VHCox/HNPCt0zdL4x+N7hl
-         4j41uORW0UzfYY6CJH+QOM4zmiVPDLJIZiiBnl8/7xQSogv9qdanValGxq1TJtqzzED+
-         w4ROtf8l60IYA58P/22jU3DBkiSztZB0X0VWjnTEhY77NFX97aiy+OLpgEziehrEwZvP
-         8kccJFFqU2MbdgpX4FrD9D090Gx8ogL3aqh07PvTVCPdVsxma55oDjx7Ewp2N6HZtFTD
-         RZMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727520400; x=1728125200;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TXl4k8mZsxgHoI3VWw6PVnVAQPFUA35ZT1bf6htZGpw=;
-        b=ruH9+BzQhDdv1Ha/FEaAmu/n4GyYplzAP4E3Nc2vCFDIRQjVKDQdakLeqqUxQn4mbg
-         PxB2Cp8nUl6nfiMg5Cj9DiYDC3shdXqfSvVFawn6Nv+gQeNrikurTxKo9YexmwqaX6Tz
-         a9WKatsEpBoNs/DHmG9JmLEUPhwhhE4EzlIeoGHQUBFh4Wb32Q1ggmlq7JAC6UKYGuXb
-         Gy5+0p1CfNnDZYEE+Tut4V5urnpwZD5qL3Hg0mDivA3sUfZLJXhJzSLn5X1TUxRbDNFQ
-         PwTIYsjkyWo+gplPvP+5opvquArt2D78vaFXGlnWbDA6HbAVoab6Lu3cqOaxf6CZ5Keh
-         mMvA==
-X-Forwarded-Encrypted: i=1; AJvYcCURDD2P+C3NaOZJnOyfnLq8fV89KhJkrzHdUTGbSUmy0mhqPnwnaC9LZiAgI9jcGmQQ1d8FzGBMnlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0dhH7DrScnIWiDRgQik6/jtc0HQxrZhGMicNi1X0hkWxlh8WC
-	S2H3po2ADiYt66T4Mm6iSq5QVyk4+rDXiYEi82N9xo3yS8ah+g/JOflf3IT0Ze0=
-X-Google-Smtp-Source: AGHT+IGsmYsnTJi0UA9gkkFBqJigGWkiZumRwMsuVRnPqYW+9Inz7cEUrpbiw3sVbiDeWsbzm89sxQ==
-X-Received: by 2002:a05:6512:1396:b0:52c:def2:d8af with SMTP id 2adb3069b0e04-5389fc430a0mr1143476e87.4.1727520400331;
-        Sat, 28 Sep 2024 03:46:40 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a0458ffesm610795e87.300.2024.09.28.03.46.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Sep 2024 03:46:38 -0700 (PDT)
-Message-ID: <f8d1ef2d-3bf8-4c34-914c-7c3277264751@linaro.org>
-Date: Sat, 28 Sep 2024 13:46:37 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqIVTF1x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2B4C4CEC3;
+	Sat, 28 Sep 2024 12:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727525349;
+	bh=nYd2z7+Rgz2kvjtUPQM5r9bB4wMPpzSss5HUUF5gCvM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tqIVTF1xuUAA7dG76w9jC6EoGBbWsQNa+yb1h1V5JZ9u1Lqv9+7dQjiMMpGnhZ5+0
+	 Uv92UX38IYvrsiF0t+Sb03UEw9OAa1BjUGErqMeW9hX4EEtnq9S5BK2CxY+7qTP7MP
+	 Aj25nLhsbX/A/h6n7JAeCTDBNCDYabaqLzqmKv32XWFQ7m25P7SkGN7PhwCC5epAte
+	 djMTDgNp8w5LgAbJ8rd5xTf3D4M90TeLPsk2q23WnRJ1VlzYOiG8RiBmDqpXfR/3dj
+	 cTKQca01I0pgr1rJetfs9+Q+HgBDjkcyC7Lc255AQvZ1iKm8N2FzDl+s2jSr7odg0N
+	 pF3V/otwCZ48g==
+Message-ID: <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
+Date: Sat, 28 Sep 2024 14:09:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,145 +35,133 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] Add SDM670 camera subsystem
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
+ spectrum clocking
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+ <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Richard Acayan <mailingradian@gmail.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Andi Shyti <andi.shyti@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-media@vger.kernel.org
-References: <20240904020448.52035-9-mailingradian@gmail.com>
- <tthbaop6bkyvebpibiyvyct4khrd5o4apdbipqdthnidxmu2cx@m726xv4ocblg>
- <ZtpqrANbJurWNOzV@radian> <5c58b41a-7fc7-456d-979c-edb8dbe4305d@linaro.org>
- <a27adb94-5280-4213-a532-0dcc907f80b7@linaro.org> <ZvcwbCh97WKnvarS@radian>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <ZvcwbCh97WKnvarS@radian>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Richard.
-
-On 9/28/24 01:23, Richard Acayan wrote:
-> On Fri, Sep 06, 2024 at 04:00:32PM +0300, Vladimir Zapolskiy wrote:
->> Hi Bryan, Richard,
->>
->> On 9/6/24 15:19, Bryan O'Donoghue wrote:
->>> On 06/09/2024 03:36, Richard Acayan wrote:
->>>> On Thu, Sep 05, 2024 at 10:09:34PM +0200, Andi Shyti wrote:
->>>>> Hi Richard,
->>>>>
->>>>> On Tue, Sep 03, 2024 at 10:04:49PM GMT, Richard Acayan wrote:
->>>>>> This adds support for the camera subsystem on the Snapdragon 670.
->>>>>>
->>>>>> As of next-20240902, camss seems to be a bit broken, but the same series
->>>>>> works on stable (although it is much less reliable now that the CCI clock
->>>>>> frequency is not being assigned).
->>>>>
->>>>> I am not understanding this bit: is this series making it better
->>>>> or not? Can you please clarify what is broken, what is less
->>>>> reliable and what works?
->>>>
->>>> When applying this camss series and some camera sensor patches on
->>>> linux-next, the Pixel 3a seems to hang when camera capture starts.
->>>>
->>>> When applying the same patches on stable, the camera does not cause the
->>>> Pixel 3a to hang.
->>>
->>> Right so -next isn't stable that's not exactly a revelation.
->>>
->>>
->>>> When these device tree properties from the previous series were removed:
->>>>
->>>> 			assigned-clocks = <&camcc CAM_CC_CCI_CLK>;
->>>> 			assigned-clock-rates = <37500000>;
->>>>
->>>> the CCI would sometimes fail to probe with the error:
->>>
->>> Right, we don't have clk_set_rate in the cci driver.
->>>
->>> Maybe just leave the assigned clock for this submission and we can do a
->>> sweep of fixes to CCI at a later stage including setting the clock
->>> instead of having it be assigned.
->>
->> first of all it would be nice to confirm that the setting of a particular
->> clock frequency is actually needed.
->>
->> Fortunately it's pretty trivial to check it in runtime with a temporary
->> modification in the board dts file, namely disable CAMSS in board dts file,
->> but keep CCI enabled, then simply scan the bus with a regular "i2cdetect"
->> tool in runtime.
->>
->> If i2cdetect on the CCI bus works only for 37.5MHz clock frequency, then it
->> is needed, otherwise (and this is my expectation) it is not needed neither
->> in the dtsi files nor in the driver.
->>
->>>>
->>>> 	[   51.572732] i2c-qcom-cci ac4a000.cci: deferred probe timeout, ignoring dependency
->>>> 	[   51.572769] i2c-qcom-cci ac4a000.cci: probe with driver i2c-qcom-cci failed with error -110
->>>>
->>>> On further testing, the rate can be set to 19.2 MHz, and there would be
->>>> no failure (or rather, it wouldn't happen often enough for me to witness
->>>> it).
->>>
->>> That's expected 19.2 and 37.5 MHz are supported by CAMCC for your part.
->>>
->>
->> I read it as the setting of 37.5MHz clock frequency is not needed, please
->> correct me.
+On 28/09/2024 10:37, Dario Binacchi wrote:
+> The patch adds the DT bindings for enabling and tuning spread spectrum
+> clocking generation.
 > 
-> It is not. My test setup just needs specific EPROBE_DEFER behaviour
-> (my setup being postmarketOS with a full-disk encryption password prompt
-> and camcc-sdm845 loaded after mounting the root filesystem).
-
-Good, let the assigned clock frequency be dropped from the dtsi file then.
-
-> In drivers/base/platform.c, the platform_probe() function calls
-> of_clk_set_defaults() then dev_pm_domain_attach() prior to probing the
-> driver:
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> ---
 > 
-> 	static int platform_probe(struct device *_dev)
-> 	{
-> 		...
-> 		ret = of_clk_set_defaults(_dev->of_node, false);
-> 		if (ret < 0)
-> 			return ret;
-> 	
-> 		ret = dev_pm_domain_attach(_dev, true);
-> 		if (ret)
-> 			goto out;
-> 	
-> 		if (drv->probe) {
-> 			ret = drv->probe(dev);
-> 			if (ret)
-> 				dev_pm_domain_detach(_dev, true);
-> 		}
-> 		...
-> 	}
+>  .../bindings/clock/fsl,imx8m-anatop.yaml      | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 > 
-> When handling the assigned-clock-rates property,
-> of_clk_get_hw_from_clkspec() eventually returns ERR_PTR(-EPROBE_DEFER),
-> being propagated all the way.
-> 
-> When handling the power-domains property (if not avoided by deferring
-> with the assigned clock), __genpd_dev_pm_attach() returns a value
-> returned by driver_deferred_probe_check_state(), which is immediately
-> -ETIMEDOUT.
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> index bbd22e95b319..c91eb4229ed3 100644
+> --- a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> @@ -32,6 +32,47 @@ properties:
+>  
+>    '#clock-cells':
+>      const: 1
+> +if:
 
-I grasp it from the problem description, thank you for the explanation.
+This should be allOf: and placed after required: block, like in example
+schema.
 
-For sake of simplicity please make camcc-sdm845 as a built-in driver while
-testing, it will allow to progress with the platform CAMSS support.
 
-The issue with the observed ETIMEDOUT is generic and it's kind of unrelated
-to the CCI/CAMSS support on SDM670.
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - fsl,imx8mm-anatop
+> +
+> +then:
+> +  properties:
+> +    fsl,ssc-clocks:
 
---
-Best wishes,
-Vladimir
+Nope. Properties must be defined in top-level.
+
+> +      $ref: /schemas/types.yaml#/definitions/phandle-array
+> +      description:
+> +        The phandles to the PLLs with spread spectrum clock generation
+> +        hardware capability.
+
+These should be clocks.
+
+> +      maxItems: 4
+> +
+> +    fsl,ssc-modfreq-hz:
+> +      $ref: /schemas/types.yaml#/definitions/uint32-array
+
+This should fail. I don't think you tested this patch.
+
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+
+> +      description:
+> +        The values of modulation frequency (Hz unit) of spread spectrum
+> +        clocking for each PLL.
+> +      maxItems: 4
+> +
+> +    fsl,ssc-modrate-percent:
+
+Same problems
+
+
+
+Best regards,
+Krzysztof
+
