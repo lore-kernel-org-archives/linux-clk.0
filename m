@@ -1,57 +1,58 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3BE1EA84
-	for <linux-clk@vger.kernel.org>; Sun, 29 Sep 2024 17:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9D22C1A2
+	for <linux-clk@vger.kernel.org>; Sun, 29 Sep 2024 17:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727630869; cv=none; b=E6dXxJnmI4V8fcpAn3zCDESlQf4BSqTbRf5jYjzvHHOVkGugEwZPy0Z47CbamOpcQAiAkoJAGUGINK5ck/T/usI+teB4UfmN321IYGCx5ax3xsfh2a/9PWX7URB1U0pARwmVEXRcy+x+Npnv4ROnvzFXefP770lWfItRvEx7Bps=
+	t=1727630871; cv=none; b=u/GfVS/BNd8cP82UYJueubQUH8Vk2rTCWB7kZ8+s0JFJI772xgsJdod9HQqdwTgiSCkAs7PComjkT7LuKnBSoDUECzhNKMob4WxhKrbrREjcD8kDdumIS8RWvNq2mMGllkfOJLnLWgfQwVASzas12TN/FM36XN9WG1UqmVgrMQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727630869; c=relaxed/simple;
-	bh=WUERIKhk0ysr6XjanYIBJIslPRVSyrgdwPzHbxGARM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oz8Pt3YP6nqGIBmU1JOR14JED5AWNptXuZy1Bho4Q5MPuCZ8QRDag6HgsIKZOGjUljQXWmE0+dIWiCh45/lB2DAU41VLdQop9BJi3UEkG6bQGNt7NAqF6HRt7MTl9N5R9tkfSjq656YHlAji7kGsveK7ZzGY94xa2xoiKoNv/r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=FR6NZGAA; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1727630871; c=relaxed/simple;
+	bh=uvG2ZBBvlONgFb6ld/20Z5sUyTEIwR4mml2r/1eTS0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nhrHii+t53XwqtiWeudarEVSkEw04bZc6NlrhbQpCu5ZF3VvQVamqTyfc2iRtmUuq8JZDgN4vb7qvSdemb4FeM0tlJcl8AkeAoOidDfgKm411EcrwPaJRGVw/VKHogXZ3UBeUiT98RLvk+GG0XNSF5y+hUA1ua9CIHaORmCHowc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=BvSAKI2j; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FR6NZGAA"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so856432966b.1
-        for <linux-clk@vger.kernel.org>; Sun, 29 Sep 2024 10:27:47 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BvSAKI2j"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d3cde1103so500646966b.2
+        for <linux-clk@vger.kernel.org>; Sun, 29 Sep 2024 10:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1727630866; x=1728235666; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N1af6m0P26utxo00AsF/VQkLQHLRIxDCh3EYFZpR7sY=;
-        b=FR6NZGAA3kMI1HJk892P0c8Z+mfm5ApKukLyvEsFo0vOyjnYaloPQFE+RzSh4e0ZIk
-         rHwBdA1j3Gobh1dqlpmA+vBHYh2lffkdcmQWkp2rnr94mJ1/Al4RfPxnwjqcwSiazTuK
-         A1JtToMIlhC4vOM2aULb9jmISxkna/0T7+I7Y=
+        d=amarulasolutions.com; s=google; t=1727630868; x=1728235668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zsgh0kyD9U5ZxoRxA8QRLb2QSbsWIvPPTG1CIfNu7Us=;
+        b=BvSAKI2jmHIwip2Gm1EwxGgDYXK5QOo6YOmqsK55xjp4geggKiLEVhz5Z4P2S0SZMs
+         67UTvIebprLPCasWNLj7I+334ZdGm3efwF1he7byN7UZHQfgS/zRFkIcDBIXwMukrjJk
+         Iwq8hlVdpy1LjTNQH8t8fKcilzoOUVKcS9Xyo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727630866; x=1728235666;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N1af6m0P26utxo00AsF/VQkLQHLRIxDCh3EYFZpR7sY=;
-        b=xPFSOO966qCSOr/NQYJI6Fd42HsxywDAJ2uci4OIKfEwFmvMgyRCV9AI0IVfmJEEZk
-         8iWpKz3kz2nP8bNilSHPp5Mo8pIaQKF3A5CbIV2+nihBbVItNSkVRVaFtxr3lc3heXRT
-         fcDFIvFWuKg9aI4tVVGr0HMy7hXi5Dx8hbSJ8jqyU12bp3d/0hQ51z4f7LZVe+41sViF
-         +8tKhxp4LvqMwsQzVT4vqKGADAbejFI3av0Qudab7/IZb2pPjZZ1FTtIuYY5ubK9ocBD
-         RMRGhYK8wmkxtvh7RKmhh6RPTv+/BdmogYlMxax8At5xbeXa/HBdHwd2nzYfjyL7j6Uv
-         rl7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdBIkh+W1TGfacSIkGGh/E2C5lLSo7fdlEAZnosguLDeqXTOJfb6hwLmlHTwXOaxFCb7CW3Oa0Vao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH7Y2XVqLmTsZJ5vfpaRR7CykwJ62QOkzHHwn/c/u/CYo2iG0T
-	4A/ho1l6k/PAM9NafBOwPcce7NmDBh6I2Dr9E5y3s4p0/fe0n7JsOezMKFDW9Yg=
-X-Google-Smtp-Source: AGHT+IHeQSLDDGaGM06C3DmT6DPfJ9OxZZEG7iZ3wShlX9PB2tTp0g7klku7UD5UU2zkoa72aIzLJg==
-X-Received: by 2002:a17:907:7f26:b0:a75:7a8:d70c with SMTP id a640c23a62f3a-a93c3098a87mr1230197566b.4.1727630866257;
-        Sun, 29 Sep 2024 10:27:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727630868; x=1728235668;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zsgh0kyD9U5ZxoRxA8QRLb2QSbsWIvPPTG1CIfNu7Us=;
+        b=HqyLw9QA9ba9yjnio12BlFRKswRqE1ZP3+YMaiu3U5isbemLveVlaOJSmjUrBCoJb6
+         trzSDveF0relLtH+8XqzjBuwkkgX95FfY3a5iHabmH7up8MGbcXvEaneGmZrCC35BXt0
+         TKdiegVZi6koBgAolLBcwy2/PdX+zknTqy0k0DnXlmzPdWh9u2XP28J9O+L02zgC6XGE
+         4Ipvtz7TwCGI5LuWo9/TW1NHBo4bkgr/muIYClplCjrF21Yu0RWqsbX74vbEvJ1M9rhd
+         thGRcvSB2+3a3ShinVs0sWaLzdDsWLr26UhphjbLJVr1+039AMTdJ3G+cdL00YrpnTxs
+         iMUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIX/BKUeBz3OYJjW4oUTDlyRqpBOd0/D6IxdJOUHZMrexvLri+pljNIS7EzSyZoBjcpN09foEeQc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSnyeSpsnxfgmznzimza3kcUNmKQjBFTeQ9/XjOLOo2k2WQ3/V
+	y3oi1ASX2H18KCz+d8/33o2oMJeb7trhxsiLVMdwS+iwrRG+J56vGZmeH8y3xc0=
+X-Google-Smtp-Source: AGHT+IH0U0CFGTyBm5aWi0+/zzNcuCbHRfOuBcATCnCKjGvCfFUbitCFY9qFU4g74wA0OIxwoHN6QQ==
+X-Received: by 2002:a17:907:3182:b0:a7a:a892:8e05 with SMTP id a640c23a62f3a-a93c492a4eemr1095867166b.33.1727630867626;
+        Sun, 29 Sep 2024 10:27:47 -0700 (PDT)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-54-102-102.retail.telecomitalia.it. [79.54.102.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27776a1sm403176866b.8.2024.09.29.10.27.45
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27776a1sm403176866b.8.2024.09.29.10.27.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 10:27:45 -0700 (PDT)
+        Sun, 29 Sep 2024 10:27:47 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Abel Vesa <abelvesa@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Fabio Estevam <festevam@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -66,10 +67,12 @@ Cc: linux-amarula@amarulasolutions.com,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/6] Support spread spectrum clocking for i.MX8{M,N,P} PLLs
-Date: Sun, 29 Sep 2024 19:27:10 +0200
-Message-ID: <20240929172743.1758292-1-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v2 1/6] dt-bindings: clock: imx8m-anatop: support spread spectrum clocking
+Date: Sun, 29 Sep 2024 19:27:11 +0200
+Message-ID: <20240929172743.1758292-2-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240929172743.1758292-1-dario.binacchi@amarulasolutions.com>
+References: <20240929172743.1758292-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,9 +81,12 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The series adds support for spread spectrum clocking for i.MX8M{N,M,P}
-PLLs (audio, video and DRAM). It has been tested for the video PLL on
-a board using the i.MX8MP.
+The patch adds the DT bindings for enabling and tuning spread spectrum
+clocking generation.
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+
+---
 
 Changes in v2:
 - Add "allOf:" and place it after "required:" block, like in the
@@ -88,23 +94,70 @@ Changes in v2:
 - Move the properties definition to the top-level.
 - Drop unit types as requested by the "make dt_binding_check" command.
 
-Dario Binacchi (6):
-  dt-bindings: clock: imx8m-anatop: support spread spectrum clocking
-  clk: imx: pll14xx: support spread spectrum clock generation
-  clk: imx8mm: support spread spectrum clock generation
-  clk: imx8mn: support spread spectrum clock generation
-  clk: imx8mp: don't lose the anatop device node
-  clk: imx8mp: support spread spectrum clock generation
+ .../bindings/clock/fsl,imx8m-anatop.yaml      | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
- .../bindings/clock/fsl,imx8m-anatop.yaml      |  45 ++++++++
- drivers/clk/imx/clk-imx8mm.c                  |  13 ++-
- drivers/clk/imx/clk-imx8mn.c                  |  13 ++-
- drivers/clk/imx/clk-imx8mp-audiomix.c         |   2 +-
- drivers/clk/imx/clk-imx8mp.c                  |  21 ++--
- drivers/clk/imx/clk-pll14xx.c                 | 102 +++++++++++++++++-
- drivers/clk/imx/clk.h                         |  24 ++++-
- 7 files changed, 200 insertions(+), 20 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+index bbd22e95b319..a142c04fef00 100644
+--- a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
++++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+@@ -33,11 +33,56 @@ properties:
+   '#clock-cells':
+     const: 1
+ 
++  fsl,ssc-clocks:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      List of phandle and clock specifier pairs of PLLs with spread
++      spectrum generation hardware capability.
++    maxItems: 4
++
++  fsl,ssc-modfreq-hz:
++    description:
++      The values of modulation frequency (Hz unit) of spread spectrum
++      clocking for each PLL.
++    maxItems: 4
++
++  fsl,ssc-modrate-percent:
++    description:
++      The percentage values of modulation rate of spread spectrum
++      clocking for each PLL.
++    maxItems: 4
++
++  fsl,ssc-modmethod:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    description:
++      The modulation techniques of spread spectrum clocking for
++      each PLL.
++    oneOf:
++      - enum:
++          - down-spread
++          - up-spread
++          - center-spread
++    maxItems: 4
++
+ required:
+   - compatible
+   - reg
+   - '#clock-cells'
+ 
++allOf:
++  - if:
++      not:
++        properties:
++          compatible:
++            contains:
++              const: fsl,imx8mm-anatop
++    then:
++      properties:
++        fsl,ssc-clocks: false
++        fsl,ssc-modfreq-hz: false
++        fsl,ssc-modrate-percent: false
++        fsl,ssc-modmethod: false
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.43.0
 
