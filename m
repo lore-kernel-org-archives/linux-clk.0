@@ -1,46 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9807438382;
-	Sun, 29 Sep 2024 19:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3FE8F6D;
+	Sun, 29 Sep 2024 19:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727639114; cv=none; b=UNqz3bg+YWC06YcdM+Kz1BnHaQ/Ao6LGulBv1MClLG7mApXo3Q76SXQz+xqBr2jP/j2A+SwimGdT58v34cZrJWYzkKfl+AubTcg/KXAvJwko0azRMWXz9OlrsKPZamlv2JPphYtjTGn6U7r3NFDHuBp8U7nw776VE4NYkCfbZ8s=
+	t=1727639769; cv=none; b=ECkc4w1XjRIkdDMWL3mlJebOp8yvjuFjVD8mYy16q2DGIZmJHoY4zliEZ3oMWkTsBmKtE4nAHc9CfBai0O64A4+qSOSjHZxbXZA9sD/ExuPHiaT3lyViDNVmYk8363Ph665ucH/C07oBsrzmCF3sOwIJIiSl9wConJRvKkUbNJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727639114; c=relaxed/simple;
-	bh=WLzoHAmvgk+kdS0lUkhv1MhbfAgTre8V7/wWH+dkjeU=;
+	s=arc-20240116; t=1727639769; c=relaxed/simple;
+	bh=jzMzK7O17Re10O0mCQmGTuApUnxf3vcL8SpmRfsRi78=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0UkBb1oeylSTIkRpxHVYn1YrUnkkKrJpdUeSbJbDL1sAgc9QVRET4SbICP6zsN8e4unD8uS8U2mcbgsTRkFY4EcXyU6Xwqml0K9I4UeEUlnl6wUJ1rMYV59u4MBZccEqnvlQXJ5eg9KVPRgvW40V8zgf4NuoSuMlgp0jMu7AYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LImsKV1n; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdu7HOtv77VNX3/GBB9DoZukqJpFXv+inSf36vcEOmbCwdbE+jbIm/YaDsrIM5KoVIWQXxtlCu4XCFP14IVlKuqnWdlU3XnUxFS6SX1HHWx4M75upjprlB582POLvcX+Ok9kY607jvuPXphxdrkxDMBt68AgkKeSq7OrgcwMKmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USmky+oY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LImsKV1n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7425AC4CEC5;
-	Sun, 29 Sep 2024 19:45:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USmky+oY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BAF4C4CEC5;
+	Sun, 29 Sep 2024 19:56:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727639114;
-	bh=WLzoHAmvgk+kdS0lUkhv1MhbfAgTre8V7/wWH+dkjeU=;
+	s=k20201202; t=1727639768;
+	bh=jzMzK7O17Re10O0mCQmGTuApUnxf3vcL8SpmRfsRi78=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LImsKV1n5ncMCQk/d3KlTGOUhdZXvwGa/N4ENmo0Tp6AD0GTY0ZFmA0J5hpac7csF
-	 /RsNnx9usT7caVvKDwpXVQfa/8Qa7kpbsrE5oG0MWHdh7yvHI7dGDI/RMq+7rUaFQU
-	 EVI1w2ARgdKj/1NyvGcNRjxf2Cxg5SUH7FpkFFxo6TemRNd3h2GXGKXxCo4cd6E1Nb
-	 4ZWrD5/DYmSFI7pXRlMXwQVItZ4pM86M0QkEE63XOk3d8m8t7Ao0dTXl3juElQGSKO
-	 gziDCwRsllTkqxWnjNyfx9IKdoGMTQnvctJxG0ghCgk59ymXCB7d8Iz5KMu/P4cfym
-	 8bRJem+pEyJrg==
-Date: Sun, 29 Sep 2024 21:45:11 +0200
+	b=USmky+oYw5OKlBJLTygMRdumEiD+nUWz9yiuj+NebiQvDWk9ykwvVk+E7MV91f+cn
+	 nw1qId0A8v8yjlGdsmEmB4QdGECjjj2mjPk7xRr2/y7nK8P3BYw310BRxVq1I0S2wv
+	 sxoVKyh/nsDO956cKjLj7sSPvjQbW8C3PBzbd+WT4p79M96EygdYkOvTEvoOGRAaaV
+	 wjf7OH1X5mjni5mSPdkUZOU5zi5rjI+zW6MTdqaR0AoDViyZZhqWBoDna8t70pMJr6
+	 d9GstqIkJf8vfeaghQfToJWW26Mkigm2gqCZo2IfHeq5t6i5T/eiV2Xo3ZTlS8zqix
+	 w1wNaXJaHsGxw==
+Date: Sun, 29 Sep 2024 21:56:04 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: imx8m-anatop: support spread
- spectrum clocking
-Message-ID: <3rbqwhjt567tj3jlddb5dyxotx2dha2op4xhdlq2x5qmu62ady@qscyq2p44jls>
-References: <20240929172743.1758292-1-dario.binacchi@amarulasolutions.com>
- <20240929172743.1758292-2-dario.binacchi@amarulasolutions.com>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/6] dt-bindings: allwinner: add H616 sun4i audio codec
+ binding
+Message-ID: <dwp5z7ioahw7hb5celwhmeooaku2sgj4srzq7z4xmb3i3sa7y6@27rnjl72a2fo>
+References: <20240929100750.860329-1-ryan@testtoast.com>
+ <20240929100750.860329-5-ryan@testtoast.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,49 +47,121 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240929172743.1758292-2-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20240929100750.860329-5-ryan@testtoast.com>
 
-On Sun, Sep 29, 2024 at 07:27:11PM +0200, Dario Binacchi wrote:
-> The patch adds the DT bindings for enabling and tuning spread spectrum
-> clocking generation.
+On Sun, Sep 29, 2024 at 11:06:05PM +1300, Ryan Walklin wrote:
+> The H616 has an audio codec compatible with the sun4i-a10 driver.
 > 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> The codec is relatively cut down compared to some of the other Allwinner
+> SoCs and only has a single line-out route (relying on a separate digital
+> microphone IP block for input). HDMI and SPDIF audio are handled
+> separately by an audio hub IP block, which is not currently implemented
+> in mainline kernels. This and the use of SDM requires some additional
+> flexibility to the DMA and clock bindings.
 > 
+> Add compatible string and routing for the H616 audio codec, and update
+> the required clock and DMA descriptions.
+> 
+> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 > ---
+>  .../sound/allwinner,sun4i-a10-codec.yaml      | 55 +++++++++++++++----
+>  1 file changed, 43 insertions(+), 12 deletions(-)
 > 
-> Changes in v2:
-> - Add "allOf:" and place it after "required:" block, like in the
->   example schema.
-> - Move the properties definition to the top-level.
-> - Drop unit types as requested by the "make dt_binding_check" command.
-> 
->  .../bindings/clock/fsl,imx8m-anatop.yaml      | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> index bbd22e95b319..a142c04fef00 100644
-> --- a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
-> @@ -33,11 +33,56 @@ properties:
->    '#clock-cells':
->      const: 1
+> diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
+> index 78273647f7665..5838600dbc730 100644
+> --- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
+> +++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
+> @@ -22,6 +22,7 @@ properties:
+>        - allwinner,sun8i-a23-codec
+>        - allwinner,sun8i-h3-codec
+>        - allwinner,sun8i-v3s-codec
+> +      - allwinner,sun50i-h616-codec
 >  
-> +  fsl,ssc-clocks:
+>    reg:
+>      maxItems: 1
+> @@ -30,24 +31,40 @@ properties:
+>      maxItems: 1
+>  
+>    clocks:
+> -    items:
+> -      - description: Bus Clock
+> -      - description: Module Clock
+> +    oneOf:
+> +      - items:
+> +          - description: Bus Clock
+> +          - description: Module Clock
+> +      - items:
+> +          - description: Bus Clock
+> +          - description: Module Clock
+> +          - description: Module Clock (4X)
 
-<form letter>
-This is a friendly reminder during the review process.
+No, grow the list and add minItems instead.
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+>  
+>    clock-names:
+> -    items:
+> -      - const: apb
+> -      - const: codec
+> +    oneOf:
+> +      - items:
+> +          - const: apb
+> +          - const: codec
+> +      - items:
+> +          - const: apb
+> +          - const: codec
+> +          - const: audio-codec-4x
 
-Thank you.
-</form letter>
+Same comment.
 
-You just ignored my email and never cared to respond.
+>  
+>    dmas:
+> -    items:
+> -      - description: RX DMA Channel
+> -      - description: TX DMA Channel
+> +    oneOf:
+> +      - items:
+> +          - description: RX DMA Channel
+> +          - description: TX DMA Channel
+> +      - items:
+> +          - description: TX DMA Channel
+>  
+>    dma-names:
+> -    items:
+> -      - const: rx
+> -      - const: tx
+> +    oneOf:
+> +      - items:
+> +          - const: rx
+> +          - const: tx
+> +      - items:
+> +          - const: tx
 
-Implement the feedback.
+These two properties are fine.
+
+>  
+>    resets:
+>      maxItems: 1
+> @@ -229,6 +246,20 @@ allOf:
+>                - Mic
+>                - Speaker
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - allwinner,sun50i-h616-codec
+> +
+> +    then:
+> +      properties:
+> +        allwinner,audio-routing:
+> +          items:
+> +            enum:
+> +              - LINEOUT
+> +              - Line Out
+
+That's odd, why two same names?
+
+You must restrict the properties you just changed per each variant.
 
 Best regards,
 Krzysztof
