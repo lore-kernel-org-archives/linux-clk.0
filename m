@@ -1,79 +1,79 @@
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CAF14EC79;
-	Sun, 29 Sep 2024 10:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FED513D521;
+	Sun, 29 Sep 2024 10:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727604505; cv=none; b=n5zaPVR+/z0n6Lt8RKWmlzwg3bkOjycyjQRuhRIcdV+P450WXfmEfrX3tp2IPybXh0twhOpG7FThbc4Vvzy8C+XE2jjcT9zdpanzXqtNfdZgRyM27/Elkz/yaRndHTD8XommJSgzHXkYan/13tAU00aq7blXhYl4mbHd9bIc5IQ=
+	t=1727604509; cv=none; b=aImUGvqlFwFVCtF4YKhAkhfW3ODSNy3UFYMBbOTdZaZZUGCEAWF0fG/ojrs/rHHm6CvCAMntqFWtMmXqjCMp1Lln+fKE9sIM8IGgHS4DSZ1THM0N+KyEJurDwMdAR26pmWYjkMZdm9DuS7S4kojPUFJCOLViuwrqz/YSP9AWWKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727604505; c=relaxed/simple;
-	bh=FAysSLtF4bmarv2M82yp2XFvqGD8AuInp7K5nSd99Cg=;
+	s=arc-20240116; t=1727604509; c=relaxed/simple;
+	bh=Xf3yj3dIOlCtkNgBfN7NX5HZUtIESTwJr/bXCodVHu8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mc2O8ZeyG1OFnP+uKQ6lYGRYrjBJjDp06sSb8MrsnxNJgM3+hRROH6BmZq1TojLoIgSldQdjzizof2ejR9nmx1MkgHZdLlFyQavwKgXZ1EAHJzzgiCQe9nVBmJ75+IR52/KTeVjDCyyZxlTQ+vFdjdeRBdjrQoKaKXu8Zt9zdL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=W7QxWS6m; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IMhD28jo; arc=none smtp.client-ip=103.168.172.153
+	 MIME-Version:Content-Type; b=Rfi+5eDCnoFcEfXqtLssq3/rnjml0lUyjBu03TQCV+2rl5BH0uDvxOWovtpg8mIyDybgd5gCOKGf7Oy6VWIY27pl7JcteABPdg+MhwK8YbDE8jJP6yjdRf3E/gOr1yyo40lbohnTOixP5cSLm/kp8Ih5PYuCgjzlqrsAmhY7sFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=JEIIWKFy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pjmAeWKN; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="W7QxWS6m";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IMhD28jo"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 35E5D11402B6;
-	Sun, 29 Sep 2024 06:08:23 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="JEIIWKFy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pjmAeWKN"
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 73A31138064E;
+	Sun, 29 Sep 2024 06:08:27 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sun, 29 Sep 2024 06:08:23 -0400
+  by phl-compute-01.internal (MEProxy); Sun, 29 Sep 2024 06:08:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1727604503; x=
-	1727690903; bh=lC8SNcb098lNqNGIZkeNhkroHm/BrSc1dzW9sPJ4q7M=; b=W
-	7QxWS6mbfhS9DCW/jYpBj1U6F7hiaA2t6feK/tORA38d2TsfqEH6rBxQayo48Nh4
-	wB6w08ElHa6bmw60oDMM3RWKeOqiTq1CDOZ27qRpt+XAxszU8UdrJTlTaG3STKVt
-	jD3sVjA+4zuFjLPBj+XPOC6os92AZ+tZ1YTsIhB70XPl5pUIYTalOx9q1hkPIlMv
-	f0rDMyRDOVD8uuMhAnRiiKXwwsiIh/+5PsybZoYG4LB6YWglr4rfQKGaLEj6pxuW
-	QdKDvFFl3mC4CAHft2ErXlJDmX1c6jgl9Xvgdz2S/5qSN9iNcaydgjVZP1oacsA7
-	3NMgl/5iq1v8Wg7h3J0zA==
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1727604507; x=1727690907; bh=kI9jiRejvnEG1yIosoeMXofEAOiFIwN3
+	PPEUQ2VA7fA=; b=JEIIWKFyMXHuWh7fohqiYbDMJ+kHHnwV+CfGmyfv9lfi08KZ
+	0L6VqI8bsTJegbYInM8cTQ17gLcJ9OjFX9IyttZnrky/ha1axZv8sFsYqRidFcDy
+	lgilp7Uz9Zo2sv28a3VrYUw6etfcePNkcrydqgIlrOO9dsLDjTtVO9v7k0EryhJs
+	3HD0c2y64t9pJC7MW/9ZqJRHbCvrmgSbPGjUz+uqTSkg+6LdVLfbAsCWR57jx9TV
+	M+hlislujiV5xHcwHE67kk2k+rqvxf6GVcvbMWxhUHKzU+d3ql+k8dMW7kiA1Tut
+	8knchbDvXgMvJgFoEeHMJ0isouQEBZWPKo3F6g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727604503; x=
-	1727690903; bh=lC8SNcb098lNqNGIZkeNhkroHm/BrSc1dzW9sPJ4q7M=; b=I
-	MhD28joWycI6C+nCJ5zhMGjo5kouXKvEwnqOtZyLcc172N10Q2eFdECMzle58wpr
-	q0iuG0wfl0li+AYZpnfxTOUPd8jDmCYytbDmWQBahzKCySRrCdm0hFC6LHEr7vg/
-	JHK6C9Y0MGgcl6LGYXROjwHXFMjyHLIgbSUY5DMdHW1eGiLyHEHcIgXr0Ere5Am9
-	9uqkSsrpkrMQjyyMm/w88erxluJfh9ssr9DM4UrvPOl/lV1vs/+ko/nI9gNJ6Saq
-	wNnu2PNNx4ilhpw81lXcTXQoUfSXZJbuNUelDOxwrOKEoryuXkgQlYWG/9Y94reQ
-	VGmnP4kQ8S3xayQK16Mtg==
-X-ME-Sender: <xms:Fif5ZqwJPfbUjGbB1fETkZWf1yNvudl5eMUjlKhahsy659wnoxw4jw>
-    <xme:Fif5ZmTCMwkoqATtY_1m-QLfJ4zORvdkW_xf6sVQ9hyIDE_l08oR6zi2brjok3O02
-    2-lSBl9X_YyKEyIeA>
-X-ME-Received: <xmr:Fif5ZsX0P0_v9MWeOGtkc9PlmlMNtt10hb_gWzr6qGaSiHN1-oGRHBl06MsfFCCRnOXf-UUG7E-UUC_e2JROQX7kbA158nFIJfSp65KffxidDzsO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddufedgvdejucetufdoteggodetrfdotf
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727604507; x=
+	1727690907; bh=kI9jiRejvnEG1yIosoeMXofEAOiFIwN3PPEUQ2VA7fA=; b=p
+	jmAeWKNKOvVKzqRA8uk9xJXzz6gVcxDprtWYtv/OCBKn02eooiVBiV8fBoIsa/Lc
+	cpiZXOmqFFjTP7jIqMTyXj6jerAyU4ukm7uBHhzwAgwy/u1Ml7q0dLtKXfr0axdO
+	yfnNAA4JCHw2J6BOJVtoO2JSxSMuih/B85K+3erBptdOaHDpAgeP8AEJwoxNZIV3
+	++f/g6T1xFIewZ26wD5qESHG+WcFtGQQ/zFVL3RsK/Z6t4OAkZQop7aLHoGyStOU
+	oFGK6DJQP2cPG+UoKwPpO9jtJaNGNmhpIu90O32P0IrkvK8h99PBdGv70w4Cw9vH
+	jfz/Cn1nwGTpLob1+L7oQ==
+X-ME-Sender: <xms:Gyf5ZnJmlNinh1kzjxct9UGGll569XicydGEyOggJQsQ9Yfrzimz-A>
+    <xme:Gyf5ZrImSCAk9WGa5q_42vShtYQH18-CUzDyD0AHswAmWPQjflhgZKE2CaJA5wgX0
+    Z-RBCPx2E-NBLp_mQ>
+X-ME-Received: <xmr:Gyf5Zvu99JDb1S5W3fHPQpPN5MEzBPL1xrEOH6Zr-0UpR607KsvyypFhMgJIEM3L-lHsSG9xXpxX_p_wpw2fArcFrXI1ZOMwlTEhcq3bHmUQieIZ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddufedgvdeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomheptfihrghnucghrghlkhhlihhnuceorhihrghnsehtvghsthhtohgrshhtrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeffheeiffegtdfgffejteevgeefkeelieelkeev
-    ueetffetteduffevgeeiieehteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgspghrtghp
-    thhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlghhirhgufihooh
-    gusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtghpthhtohepthhifi
-    grihesshhushgvrdgtohhmpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgt
-    phhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtth
-    hopehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    shhouhhnugesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    grrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:Fyf5Zgiio_Tdvke_MygWfa9Xs4pzs_9jiOxrqgpuV_RSAGl1bvar5w>
-    <xmx:Fyf5ZsDx4rhvayYOe1Z11qObBfYZDf3INQPi-jekWiVRjT23KZa9NQ>
-    <xmx:Fyf5ZhILunvzGnBkTz6yVCJ2kocpH_DRmF7pQXWZmepY4vZIBQlddA>
-    <xmx:Fyf5ZjB0XhefVJAW8I7G2tOhVuQJx9Ca01y8cjQF9eh05sdc7Fc8cw>
-    <xmx:Fyf5ZgysCw8_RKwaeVMY_T0dJaFFN8ANDTyXl8h_NeU8f_PBfWtOL82->
+    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhggtgfgsehtkeertdertdej
+    necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
+    drtghomheqnecuggftrfgrthhtvghrnhepieeiledvfeekfeduhedvtdeiteefleekteev
+    udeitefgffehvefggfduvefhveetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
+    phhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhgihhrugifoh
+    hougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtphhtthhopehtih
+    ifrghisehsuhhsvgdrtghomhdprhgtphhtthhopeifvghnshestghsihgvrdhorhhgpdhr
+    tghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpth
+    htohepshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhsohhunhgusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:Gyf5ZgbSK60_sGeaI7fYIJ64A60esLl-GwiNeNechbhQ2TSST5Ky3g>
+    <xmx:Gyf5ZuaUJShPEKqHyeYvasYi-3pBKH-Rbxutm4eOPQIlJwu7WTP3AQ>
+    <xmx:Gyf5ZkCmtRSre600NSw3IS4UC2-EHEszbc_9LEw-Uv0sx43rEQ5NQw>
+    <xmx:Gyf5ZsbaUjq_V1eBDUYJ-Xk7_0PvSfzIOZDjxpqN1Cs5l-YVGjxKuw>
+    <xmx:Gyf5ZmpRpilPXo-O8ML_O0Td-YQIO8FrngHsi7whNZFH6D3kvHVLGBq5>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Sep 2024 06:08:19 -0400 (EDT)
+ 29 Sep 2024 06:08:23 -0400 (EDT)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -88,9 +88,9 @@ Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH 4/6] dt-bindings: allwinner: add H616 sun4i audio codec binding
-Date: Sun, 29 Sep 2024 23:06:05 +1300
-Message-ID: <20240929100750.860329-5-ryan@testtoast.com>
+Subject: [PATCH 5/6] ASoC: sun4i-codec: support allwinner H616 codec
+Date: Sun, 29 Sep 2024 23:06:06 +1300
+Message-ID: <20240929100750.860329-6-ryan@testtoast.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20240929100750.860329-1-ryan@testtoast.com>
 References: <20240929100750.860329-1-ryan@testtoast.com>
@@ -100,111 +100,267 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The H616 has an audio codec compatible with the sun4i-a10 driver.
+The H616 SoC codec is playback-only with a single line-out route, and
+has some register differences from prior codecs.
 
-The codec is relatively cut down compared to some of the other Allwinner
-SoCs and only has a single line-out route (relying on a separate digital
-microphone IP block for input). HDMI and SPDIF audio are handled
-separately by an audio hub IP block, which is not currently implemented
-in mainline kernels. This and the use of SDM requires some additional
-flexibility to the DMA and clock bindings.
-
-Add compatible string and routing for the H616 audio codec, and update
-the required clock and DMA descriptions.
+Add the required compatible string, registers, quirks, DAPM widgets,
+codec controls and routes, based on existing devices and the H616
+datasheet.
 
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 ---
- .../sound/allwinner,sun4i-a10-codec.yaml      | 55 +++++++++++++++----
- 1 file changed, 43 insertions(+), 12 deletions(-)
+ sound/soc/sunxi/sun4i-codec.c | 202 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
-index 78273647f7665..5838600dbc730 100644
---- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
-+++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
-@@ -22,6 +22,7 @@ properties:
-       - allwinner,sun8i-a23-codec
-       - allwinner,sun8i-h3-codec
-       - allwinner,sun8i-v3s-codec
-+      - allwinner,sun50i-h616-codec
+diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+index 312d2655c3f4e..1cdda20e8ed59 100644
+--- a/sound/soc/sunxi/sun4i-codec.c
++++ b/sound/soc/sunxi/sun4i-codec.c
+@@ -226,6 +226,43 @@
+ #define SUN8I_H3_CODEC_DAC_DBG			(0x48)
+ #define SUN8I_H3_CODEC_ADC_DBG			(0x4c)
  
-   reg:
-     maxItems: 1
-@@ -30,24 +31,40 @@ properties:
-     maxItems: 1
- 
-   clocks:
--    items:
--      - description: Bus Clock
--      - description: Module Clock
-+    oneOf:
-+      - items:
-+          - description: Bus Clock
-+          - description: Module Clock
-+      - items:
-+          - description: Bus Clock
-+          - description: Module Clock
-+          - description: Module Clock (4X)
- 
-   clock-names:
--    items:
--      - const: apb
--      - const: codec
-+    oneOf:
-+      - items:
-+          - const: apb
-+          - const: codec
-+      - items:
-+          - const: apb
-+          - const: codec
-+          - const: audio-codec-4x
- 
-   dmas:
--    items:
--      - description: RX DMA Channel
--      - description: TX DMA Channel
-+    oneOf:
-+      - items:
-+          - description: RX DMA Channel
-+          - description: TX DMA Channel
-+      - items:
-+          - description: TX DMA Channel
- 
-   dma-names:
--    items:
--      - const: rx
--      - const: tx
-+    oneOf:
-+      - items:
-+          - const: rx
-+          - const: tx
-+      - items:
-+          - const: tx
- 
-   resets:
-     maxItems: 1
-@@ -229,6 +246,20 @@ allOf:
-               - Mic
-               - Speaker
- 
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - allwinner,sun50i-h616-codec
++/* H616 specific registers */
++#define SUN50I_H616_CODEC_DAC_FIFOC		(0x10)
 +
-+    then:
-+      properties:
-+        allwinner,audio-routing:
-+          items:
-+            enum:
-+              - LINEOUT
-+              - Line Out
++#define SUN50I_DAC_FIFO_STA			(0x14)
++#define SUN50I_DAC_TXE_INT			(3)
++#define SUN50I_DAC_TXU_INT			(2)
++#define SUN50I_DAC_TXO_INT			(1)
 +
- unevaluatedProperties: false
++#define SUN50I_DAC_CNT				(0x24)
++#define SUN50I_DAC_DG_REG			(0x28)
++#define SUN50I_DAC_DAP_CTL			(0xf0)
++
++#define SUN50I_H616_DAC_AC_DAC_REG		(0x310)
++#define SUN50I_H616_DAC_LEN			(15)
++#define SUN50I_H616_DAC_REN			(14)
++#define SUN50I_H616_LINEOUTL_EN			(13)
++#define SUN50I_H616_LMUTE			(12)
++#define SUN50I_H616_LINEOUTR_EN			(11)
++#define SUN50I_H616_RMUTE			(10)
++#define SUN50I_H616_RSWITCH			(9)
++#define SUN50I_H616_RAMPEN			(8)
++#define SUN50I_H616_LINEOUTL_SEL		(6)
++#define SUN50I_H616_LINEOUTR_SEL		(5)
++#define SUN50I_H616_LINEOUT_VOL			(0)
++
++#define SUN50I_H616_DAC_AC_MIXER_REG		(0x314)
++#define SUN50I_H616_LMIX_LDAC			(21)
++#define SUN50I_H616_LMIX_RDAC			(20)
++#define SUN50I_H616_RMIX_RDAC			(17)
++#define SUN50I_H616_RMIX_LDAC			(16)
++#define SUN50I_H616_LMIXEN			(11)
++#define SUN50I_H616_RMIXEN			(10)
++
++#define SUN50I_H616_DAC_AC_RAMP_REG		(0x31c)
++#define SUN50I_H616_RAMP_STEP			(4)
++#define SUN50I_H616_RDEN			(0)
++
+ /* TODO H3 DAP (Digital Audio Processing) bits */
  
- examples:
+ struct sun4i_codec {
+@@ -1520,6 +1557,149 @@ static struct snd_soc_card *sun8i_v3s_codec_create_card(struct device *dev)
+ 	return card;
+ };
+ 
++static const struct snd_kcontrol_new sun50i_h616_codec_codec_controls[] = {
++	SOC_SINGLE_TLV("DAC Playback Volume", SUN4I_CODEC_DAC_DPC,
++		       SUN4I_CODEC_DAC_DPC_DVOL, 0x3f, 1,
++		       sun6i_codec_dvol_scale),
++	SOC_SINGLE_TLV("Line Out Playback Volume",
++		       SUN50I_H616_DAC_AC_DAC_REG,
++		       SUN50I_H616_LINEOUT_VOL, 0x1f, 0,
++		       sun6i_codec_lineout_vol_scale),
++	SOC_DOUBLE("Line Out Playback Switch",
++		   SUN50I_H616_DAC_AC_DAC_REG,
++		   SUN50I_H616_LINEOUTL_EN,
++		   SUN50I_H616_LINEOUTR_EN, 1, 0),
++};
++
++static const struct snd_kcontrol_new sun50i_h616_codec_mixer_controls[] = {
++	SOC_DAPM_DOUBLE("DAC Playback Switch",
++			SUN50I_H616_DAC_AC_MIXER_REG,
++			SUN50I_H616_LMIX_LDAC,
++			SUN50I_H616_RMIX_RDAC, 1, 0),
++	SOC_DAPM_DOUBLE("DAC Reversed Playback Switch",
++			SUN50I_H616_DAC_AC_MIXER_REG,
++			SUN50I_H616_LMIX_RDAC,
++			SUN50I_H616_RMIX_LDAC, 1, 0),
++};
++
++static SOC_ENUM_DOUBLE_DECL(sun50i_h616_codec_lineout_src_enum,
++			    SUN50I_H616_DAC_AC_DAC_REG,
++			    SUN50I_H616_LINEOUTL_SEL,
++			    SUN50I_H616_LINEOUTR_SEL,
++			    sun6i_codec_lineout_src_enum_text);
++
++static const struct snd_kcontrol_new sun50i_h616_codec_lineout_src[] = {
++		SOC_DAPM_ENUM("Line Out Source Playback Route",
++			      sun50i_h616_codec_lineout_src_enum),
++};
++
++static const struct snd_soc_dapm_widget sun50i_h616_codec_codec_widgets[] = {
++	/* Digital parts of the DACs */
++	SND_SOC_DAPM_SUPPLY("DAC Enable", SUN4I_CODEC_DAC_DPC,
++			    SUN4I_CODEC_DAC_DPC_EN_DA, 0,
++			    NULL, 0),
++
++	/* Analog parts of the DACs */
++	SND_SOC_DAPM_DAC("Left DAC", "Codec Playback",
++			 SUN50I_H616_DAC_AC_DAC_REG,
++			 SUN50I_H616_DAC_LEN, 0),
++	SND_SOC_DAPM_DAC("Right DAC", "Codec Playback",
++			 SUN50I_H616_DAC_AC_DAC_REG,
++			 SUN50I_H616_DAC_REN, 0),
++
++	/* Mixers */
++	SOC_MIXER_ARRAY("Left Mixer", SUN50I_H616_DAC_AC_MIXER_REG,
++			SUN50I_H616_LMIXEN, 0,
++			sun50i_h616_codec_mixer_controls),
++	SOC_MIXER_ARRAY("Right Mixer", SUN50I_H616_DAC_AC_MIXER_REG,
++			SUN50I_H616_RMIXEN, 0,
++			sun50i_h616_codec_mixer_controls),
++
++	/* Line Out path */
++	SND_SOC_DAPM_MUX("Line Out Source Playback Route",
++			 SND_SOC_NOPM, 0, 0, sun50i_h616_codec_lineout_src),
++	SND_SOC_DAPM_OUT_DRV("Line Out Ramp Controller",
++			     SUN50I_H616_DAC_AC_RAMP_REG,
++			     SUN50I_H616_RDEN, 0, NULL, 0),
++	SND_SOC_DAPM_OUTPUT("LINEOUT"),
++};
++
++static const struct snd_soc_component_driver sun50i_h616_codec_codec = {
++	.controls   = sun50i_h616_codec_codec_controls,
++	.num_controls   = ARRAY_SIZE(sun50i_h616_codec_codec_controls),
++	.dapm_widgets   = sun50i_h616_codec_codec_widgets,
++	.num_dapm_widgets = ARRAY_SIZE(sun50i_h616_codec_codec_widgets),
++	.idle_bias_on   = 1,
++	.use_pmdown_time  = 1,
++	.endianness   = 1,
++};
++
++static const struct snd_kcontrol_new sun50i_h616_card_controls[] = {
++	SOC_DAPM_PIN_SWITCH("LINEOUT"),
++};
++
++static const struct snd_soc_dapm_widget sun50i_h616_codec_card_dapm_widgets[] = {
++	SND_SOC_DAPM_LINE("Line Out", NULL),
++	SND_SOC_DAPM_SPK("Speaker", sun4i_codec_spk_event),
++};
++
++/* Connect digital side enables to analog side widgets */
++static const struct snd_soc_dapm_route sun50i_h616_codec_card_routes[] = {
++	/* DAC Routes */
++	{ "Left DAC", NULL, "DAC Enable" },
++	{ "Right DAC", NULL, "DAC Enable" },
++
++	/* Left Mixer Routes */
++	{ "Left Mixer", "DAC Playback Switch", "Left DAC" },
++	{ "Left Mixer", "DAC Reversed Playback Switch", "Right DAC" },
++
++	/* Right Mixer Routes */
++	{ "Right Mixer", "DAC Playback Switch", "Right DAC" },
++	{ "Right Mixer", "DAC Reversed Playback Switch", "Left DAC" },
++
++	/* Line Out Routes */
++	{ "Line Out Source Playback Route", "Stereo", "Left Mixer" },
++	{ "Line Out Source Playback Route", "Stereo", "Right Mixer" },
++	{ "Line Out Source Playback Route", "Mono Differential", "Left Mixer" },
++	{ "Line Out Source Playback Route", "Mono Differential", "Right Mixer" },
++	{ "Line Out Ramp Controller", NULL, "Line Out Source Playback Route" },
++	{ "LINEOUT", NULL, "Line Out Ramp Controller" },
++};
++
++static struct snd_soc_card *sun50i_h616_codec_create_card(struct device *dev)
++{
++	struct snd_soc_card *card;
++	int ret;
++
++	card = devm_kzalloc(dev, sizeof(*card), GFP_KERNEL);
++	if (!card)
++		return ERR_PTR(-ENOMEM);
++
++	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
++	if (!card->dai_link)
++		return ERR_PTR(-ENOMEM);
++
++	card->dai_link->playback_only = true;
++	card->dai_link->capture_only = false;
++
++	card->dev		= dev;
++	card->owner		= THIS_MODULE;
++	card->name		= "H616 Audio Codec";
++	card->controls		= sun50i_h616_card_controls;
++	card->num_controls	= ARRAY_SIZE(sun50i_h616_card_controls);
++	card->dapm_widgets	= sun50i_h616_codec_card_dapm_widgets;
++	card->num_dapm_widgets	= ARRAY_SIZE(sun50i_h616_codec_card_dapm_widgets);
++	card->dapm_routes	= sun50i_h616_codec_card_routes;
++	card->num_dapm_routes	= ARRAY_SIZE(sun50i_h616_codec_card_routes);
++	card->fully_routed	= true;
++
++	ret = snd_soc_of_parse_audio_routing(card, "allwinner,audio-routing");
++	if (ret)
++		dev_warn(dev, "failed to parse audio-routing: %d\n", ret);
++
++	return card;
++};
++
+ static const struct regmap_config sun4i_codec_regmap_config = {
+ 	.reg_bits	= 32,
+ 	.reg_stride	= 4,
+@@ -1562,6 +1742,14 @@ static const struct regmap_config sun8i_v3s_codec_regmap_config = {
+ 	.max_register	= SUN8I_H3_CODEC_ADC_DBG,
+ };
+ 
++static const struct regmap_config sun50i_h616_codec_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= SUN50I_H616_DAC_AC_RAMP_REG,
++	.cache_type	= REGCACHE_NONE,
++};
++
+ struct sun4i_codec_quirks {
+ 	const struct regmap_config *regmap_config;
+ 	const struct snd_soc_component_driver *codec;
+@@ -1647,6 +1835,15 @@ static const struct sun4i_codec_quirks sun8i_v3s_codec_quirks = {
+ 	.has_reset	= true,
+ };
+ 
++static const struct sun4i_codec_quirks sun50i_h616_codec_quirks = {
++	.regmap_config	= &sun50i_h616_codec_regmap_config,
++	.codec		= &sun50i_h616_codec_codec,
++	.create_card	= sun50i_h616_codec_create_card,
++	.reg_dac_fifoc	= REG_FIELD(SUN50I_H616_CODEC_DAC_FIFOC, 0, 31),
++	.reg_dac_txdata	= SUN8I_H3_CODEC_DAC_TXDATA,
++	.has_reset	= true,
++};
++
+ static const struct of_device_id sun4i_codec_of_match[] = {
+ 	{
+ 		.compatible = "allwinner,sun4i-a10-codec",
+@@ -1672,6 +1869,10 @@ static const struct of_device_id sun4i_codec_of_match[] = {
+ 		.compatible = "allwinner,sun8i-v3s-codec",
+ 		.data = &sun8i_v3s_codec_quirks,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-h616-codec",
++		.data = &sun50i_h616_codec_quirks,
++	},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_codec_of_match);
+@@ -1860,4 +2061,5 @@ MODULE_AUTHOR("Emilio López <emilio@elopez.com.ar>");
+ MODULE_AUTHOR("Jon Smirl <jonsmirl@gmail.com>");
+ MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
+ MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
++MODULE_AUTHOR("Ryan Walklin <ryan@testtoast.com");
+ MODULE_LICENSE("GPL");
 -- 
 2.46.1
 
