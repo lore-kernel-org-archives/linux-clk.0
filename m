@@ -1,99 +1,75 @@
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D1A14B970;
-	Sun, 29 Sep 2024 10:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3BE1EA84
+	for <linux-clk@vger.kernel.org>; Sun, 29 Sep 2024 17:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727604513; cv=none; b=dHqAGeimeiauDMOlBtpI8W+s0COFe7r3fyDam67Vtj/pLfqA6uMj6fTxoaupg+bwJ+sRth50sNAc+P4aeI8FusbZHvNO0LXhhagHuDJdty/DSGQcqL9YhoukuSMih+yRX/4bf01cMZJu7bzBfFebKdwSEJBUrDoGfFT03Rd2FPQ=
+	t=1727630869; cv=none; b=E6dXxJnmI4V8fcpAn3zCDESlQf4BSqTbRf5jYjzvHHOVkGugEwZPy0Z47CbamOpcQAiAkoJAGUGINK5ck/T/usI+teB4UfmN321IYGCx5ax3xsfh2a/9PWX7URB1U0pARwmVEXRcy+x+Npnv4ROnvzFXefP770lWfItRvEx7Bps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727604513; c=relaxed/simple;
-	bh=0caErVZPlpzndpHmj+voRZvMX3al5mRLBGXESVLHSSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RssVOjUaMpQ6r1iEo69jml2Augg6XIOr3ct9EVCx2zrVvF9Ydqnj6fYo/GkxEEw5VidnDrH3j4WrE3JplU8z7MaFPzZUO2NPKkQYo/Elwm342m61G/BDCmcvWf20fiHkFord7FeQCZEn7lWFRR0aE4VgId1LUuLaN/4oD2u5ZPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=SXNfqtJe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WgBBXh4d; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1727630869; c=relaxed/simple;
+	bh=WUERIKhk0ysr6XjanYIBJIslPRVSyrgdwPzHbxGARM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oz8Pt3YP6nqGIBmU1JOR14JED5AWNptXuZy1Bho4Q5MPuCZ8QRDag6HgsIKZOGjUljQXWmE0+dIWiCh45/lB2DAU41VLdQop9BJi3UEkG6bQGNt7NAqF6HRt7MTl9N5R9tkfSjq656YHlAji7kGsveK7ZzGY94xa2xoiKoNv/r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=FR6NZGAA; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="SXNfqtJe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WgBBXh4d"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B39B311402B9;
-	Sun, 29 Sep 2024 06:08:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sun, 29 Sep 2024 06:08:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1727604511; x=
-	1727690911; bh=pz+twYS3K1z8m9MxHiKtXSoqES3mtjf9wkrxGDpITqs=; b=S
-	XNfqtJewp84yXFraiGlUQYjljI//PHhEuR95vdGQ12I/4UvoN9X55ratDt2LMY8E
-	g9+GePUvtKir2g9Sm9mCmZ4WVRgy1bnssHwbkmBtjAO0X2s52shGGsJMdUWHebIA
-	/B5iAO5iuwK4Y33Wmx/PgNnLPRTZXjAdG1yuKgU7CoDrr/AvwsRDWlMik5n+ONzf
-	i9ZTHwjEwUsjWoI3RNDVukyawwYaO5LAD41bwJJjrV5bDWc5hqtvo5g4NSRVyfa/
-	1DnhL54XjdrqS33K8i/dke8NB/p+SAE+gcq1Igx5Lj+v8pwCL33n6qPr+LtRGCuC
-	mNP9jHEgHdIUXaBqr7mPw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727604511; x=
-	1727690911; bh=pz+twYS3K1z8m9MxHiKtXSoqES3mtjf9wkrxGDpITqs=; b=W
-	gBBXh4dCjZEdIrqzcKaVAci7dLpHyna7vu9b6R0z8n66DC3laRlZ1AZtdWde0Yoi
-	FEuj2UovcqyaFwVb6PeE3S6APcJUgm1ScPSQiR642/9u6592rYnmG6G2YFoA3AOW
-	1yLKiRQjixgcDsJKq0Kaf0YC6RLWl/NtNAhAOi4jCIKxPeAqVv3KC1wxXaUy0OdQ
-	Kjrdyl2w0TukqBDc8XgcD9C+3UYIGhHBMTmthEhfdIEG0BoUPHpawaawAwHRejfV
-	LuqVMbYZhibHReFwP7SETd96fVTJ3zwJ0yA1sqtlaqh/yFF0PsHLYBpUWGJunEjG
-	2A3jr8Alcj14anwk5YIYg==
-X-ME-Sender: <xms:Hyf5ZvFqLz8S0Fc-BkeHbnaTmWWk9PQNNbWWsSkGF1yFXxRncgO_aA>
-    <xme:Hyf5ZsUqZ115lgurNo1WBUvvaOAR3fKWU9fIL94N5bpNVFJj0gPui6b8Tta88N8Zo
-    VIuDkTWg0lrCnTwzA>
-X-ME-Received: <xmr:Hyf5ZhKMVrA9MIc-OzS7BBMNgURTg5hNxQtXaZ4SZSjdtqzo3xUhVYgwQxFqJiqcVdhrn-UPpYmIChu9_ZMjhUqLGV37-vtoh7NwomW_JkV6BuOi>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddufedgvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomheptfihrghnucghrghlkhhlihhnuceorhihrghnsehtvghsthhtohgrshhtrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeffheeiffegtdfgffejteevgeefkeelieelkeev
-    ueetffetteduffevgeeiieehteenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgspghrtghp
-    thhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlghhirhgufihooh
-    gusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtghpthhtohepthhifi
-    grihesshhushgvrdgtohhmpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgt
-    phhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtth
-    hopehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    shhouhhnugesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    grrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:Hyf5ZtE7LdhlwKjU-QqapCchWr1k2Aoqua1wXAbSJ03EaQ7I3xGYeQ>
-    <xmx:Hyf5ZlUC8E2f9PIuopeJ-LCTusmk4CqUMQ2JxvxlhvTQ5SMbMOApKA>
-    <xmx:Hyf5ZoP4iy75HM98llTlFnRUoey3z0-vCaht2JqSfeaPCd9-mGp0zQ>
-    <xmx:Hyf5Zk0TQLgOODMutXc9_ZixS4pKob3xRrbBAnx6oYJp9TiaAtUonw>
-    <xmx:Hyf5ZqWB7nYSKkfkJ5a_YpQ95jCz8hMjt4rRiTiXSUai48SUjMS0gRp5>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Sep 2024 06:08:27 -0400 (EDT)
-From: Ryan Walklin <ryan@testtoast.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FR6NZGAA"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so856432966b.1
+        for <linux-clk@vger.kernel.org>; Sun, 29 Sep 2024 10:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1727630866; x=1728235666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N1af6m0P26utxo00AsF/VQkLQHLRIxDCh3EYFZpR7sY=;
+        b=FR6NZGAA3kMI1HJk892P0c8Z+mfm5ApKukLyvEsFo0vOyjnYaloPQFE+RzSh4e0ZIk
+         rHwBdA1j3Gobh1dqlpmA+vBHYh2lffkdcmQWkp2rnr94mJ1/Al4RfPxnwjqcwSiazTuK
+         A1JtToMIlhC4vOM2aULb9jmISxkna/0T7+I7Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727630866; x=1728235666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N1af6m0P26utxo00AsF/VQkLQHLRIxDCh3EYFZpR7sY=;
+        b=xPFSOO966qCSOr/NQYJI6Fd42HsxywDAJ2uci4OIKfEwFmvMgyRCV9AI0IVfmJEEZk
+         8iWpKz3kz2nP8bNilSHPp5Mo8pIaQKF3A5CbIV2+nihBbVItNSkVRVaFtxr3lc3heXRT
+         fcDFIvFWuKg9aI4tVVGr0HMy7hXi5Dx8hbSJ8jqyU12bp3d/0hQ51z4f7LZVe+41sViF
+         +8tKhxp4LvqMwsQzVT4vqKGADAbejFI3av0Qudab7/IZb2pPjZZ1FTtIuYY5ubK9ocBD
+         RMRGhYK8wmkxtvh7RKmhh6RPTv+/BdmogYlMxax8At5xbeXa/HBdHwd2nzYfjyL7j6Uv
+         rl7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXdBIkh+W1TGfacSIkGGh/E2C5lLSo7fdlEAZnosguLDeqXTOJfb6hwLmlHTwXOaxFCb7CW3Oa0Vao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH7Y2XVqLmTsZJ5vfpaRR7CykwJ62QOkzHHwn/c/u/CYo2iG0T
+	4A/ho1l6k/PAM9NafBOwPcce7NmDBh6I2Dr9E5y3s4p0/fe0n7JsOezMKFDW9Yg=
+X-Google-Smtp-Source: AGHT+IHeQSLDDGaGM06C3DmT6DPfJ9OxZZEG7iZ3wShlX9PB2tTp0g7klku7UD5UU2zkoa72aIzLJg==
+X-Received: by 2002:a17:907:7f26:b0:a75:7a8:d70c with SMTP id a640c23a62f3a-a93c3098a87mr1230197566b.4.1727630866257;
+        Sun, 29 Sep 2024 10:27:46 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-54-102-102.retail.telecomitalia.it. [79.54.102.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27776a1sm403176866b.8.2024.09.29.10.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 10:27:45 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH 6/6] arm64: dts: allwinner: h616: Add audio codec node
-Date: Sun, 29 Sep 2024 23:06:07 +1300
-Message-ID: <20240929100750.860329-7-ryan@testtoast.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240929100750.860329-1-ryan@testtoast.com>
-References: <20240929100750.860329-1-ryan@testtoast.com>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/6] Support spread spectrum clocking for i.MX8{M,N,P} PLLs
+Date: Sun, 29 Sep 2024 19:27:10 +0200
+Message-ID: <20240929172743.1758292-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,40 +78,33 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the sun4i codec driver supports the H616, add a node in the
-device tree for it.
+The series adds support for spread spectrum clocking for i.MX8M{N,M,P}
+PLLs (audio, video and DRAM). It has been tested for the video PLL on
+a board using the i.MX8MP.
 
-Signed-off-by: Ryan Walklin <ryan@testtoast.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Changes in v2:
+- Add "allOf:" and place it after "required:" block, like in the
+  example schema.
+- Move the properties definition to the top-level.
+- Drop unit types as requested by the "make dt_binding_check" command.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-index e88c1fbac6acc..006fdb7e7e0ae 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
-@@ -645,6 +645,21 @@ spdif: spdif@5093000 {
- 			status = "disabled";
- 		};
- 
-+		codec: codec@05096000 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun50i-h616-codec";
-+			reg = <0x05096000 0x31c>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_AUDIO_CODEC>,
-+				 <&ccu CLK_AUDIO_CODEC_1X>,
-+				 <&ccu CLK_AUDIO_CODEC_4X>;
-+			clock-names = "apb", "codec", "audio-codec-4x";
-+			resets = <&ccu RST_BUS_AUDIO_CODEC>;
-+			dmas = <&dma 6>;
-+			dma-names = "tx";
-+			status = "disabled";
-+		};
-+
- 		gpadc: adc@5070000 {
- 			compatible = "allwinner,sun50i-h616-gpadc",
- 				     "allwinner,sun20i-d1-gpadc";
+Dario Binacchi (6):
+  dt-bindings: clock: imx8m-anatop: support spread spectrum clocking
+  clk: imx: pll14xx: support spread spectrum clock generation
+  clk: imx8mm: support spread spectrum clock generation
+  clk: imx8mn: support spread spectrum clock generation
+  clk: imx8mp: don't lose the anatop device node
+  clk: imx8mp: support spread spectrum clock generation
+
+ .../bindings/clock/fsl,imx8m-anatop.yaml      |  45 ++++++++
+ drivers/clk/imx/clk-imx8mm.c                  |  13 ++-
+ drivers/clk/imx/clk-imx8mn.c                  |  13 ++-
+ drivers/clk/imx/clk-imx8mp-audiomix.c         |   2 +-
+ drivers/clk/imx/clk-imx8mp.c                  |  21 ++--
+ drivers/clk/imx/clk-pll14xx.c                 | 102 +++++++++++++++++-
+ drivers/clk/imx/clk.h                         |  24 ++++-
+ 7 files changed, 200 insertions(+), 20 deletions(-)
+
 -- 
-2.46.1
+2.43.0
 
