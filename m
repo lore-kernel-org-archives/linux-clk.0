@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695F47F53;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A5A52F9B;
 	Sun, 29 Sep 2024 06:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727590228; cv=none; b=WLJlwFIp8+ie/4ohu9Rhs12r4j+vZ8+JpQO/uz8z6aIHlDQZLaWv+mMkGPDVkE8Tq7bF2Xm/Fx1p6+wScteEPE3MroBf8wOQV/f/KWt2kknuzTRsi6dq2PHPxfdj9TZ6RYuw1k1vp7GTa0xNGOG3bUQcWRjzjUTTrEctU/Yz4gQ=
+	t=1727590228; cv=none; b=VL0i2y5erzZDhW18+8nPArZwp/giUNiH3fJrH9LJbNvfp7PV3ISbeH48ynu4AVV20aiPA/sMzC3XVC2gQVeRXCMe7kkZfeQqoXh11eDlyH7cXe5BcNk4dn/ZV2Ql3SQBDgXe2d3cH7c7myLrBuXitPdWpDyDQJ38ycCgMuGQMEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727590228; c=relaxed/simple;
-	bh=VuF+6B8clsCESzRY45mjWVDnp0roeP9EanMgzGgHiWE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nBYV9jFpp6W0YaraYDnu1KJDcHfoCzUuecfzGzdUFzjODwEwOZB+fBvd9AxuoYAENHH1UIZ4OcKsyo8A3AApB5PnJ21W9xKDg2rZ8hjPhUsfdf1kHqqJ8m7OcFxVFXMYEVgZHvOYqd9BXESbovbhr6T9PD7D4wa2v2uXoQQiB9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMvI8bvP; arc=none smtp.client-ip=10.30.226.201
+	bh=5CPvQ6p78bqZi3ugnMq/mnWHLrGLVbFRKmPC/Xy/YmU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ljZUohDKNcocQ66+jbCQXkmZRJxYB807cWAhcEJbtaTLHkmnM/Sm1FwEI/R1jQ3AxqIoEaHBINBIFpIXyGUKvhduNYxApKqTIKGZfzdTdtg9DDu3M5KLcn+SkNrlR0RJ7V3NgkmYl7wIlOmcVsgMhUJDtJU1NGwLWBD0LsOdBds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ds0YKh0b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMvI8bvP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C1419C4CEC5;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ds0YKh0b"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E01AAC4CECF;
 	Sun, 29 Sep 2024 06:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727590227;
-	bh=VuF+6B8clsCESzRY45mjWVDnp0roeP9EanMgzGgHiWE=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=PMvI8bvPOh99P0uhs1qw02qI/4fAiG+OaPeubI6weUSf7yES471ck+AnnR9LmruEZ
-	 YCYeBHzXZ2pPvRu7YSY7svBrXGAUf5wBT7bdtfhfvAWuAdI52KN7zaEVAl2hrkz0AX
-	 VhuxAKvcOK1j7935S1vzvVNXWIYDfL9um59N9pc6LIlseZWGLBHJ1jGXeaDrmgzumU
-	 PFtqe1oFUzmFFYAo6J8kTq3so1uJqc7UjU1HxIq76Wa5MVP6mpRK/WsKH1N+GKmnNm
-	 LPbshINP3VSGxN2nD3kh2shDro1j1VG5GL3T89dxojjimjeb8zyzhUWP3UpbHP0LDV
-	 DBAbnsJ8FW2Jg==
+	s=k20201202; t=1727590228;
+	bh=5CPvQ6p78bqZi3ugnMq/mnWHLrGLVbFRKmPC/Xy/YmU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Ds0YKh0beBd1iKgeQ5XGCN1JTMNladCMo93PoXhkZJANmbhL4FUjro3aQnSDowEr+
+	 N6V46h6RQpg7js0KeNuisgkFOsyPKSHlXO1/J9oSWaMGQ+v64B3C4YQQdkInKXyV1T
+	 naM3V8vN2HrPgmSdQonm1FJin69uBX83LzZzBXf5ig35wMpIh4I7fxmpbWOHh+o6Hm
+	 qHpKyXSR6rJtL1zeaZe2KoIPCUNJHcP/GHeBfuwy8YTyoUo1kqQQa15IV0+bT2jNx/
+	 IK2h4vk5Lsz1kPrD+1uvVJiKXG/jNVi6tiGnPMuZFbQ+73h+k72BfiQ26NKlTQS+UQ
+	 3wFGy8eBITMGg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF78ECF6498;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD9CCF649E;
 	Sun, 29 Sep 2024 06:10:27 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH 0/2] clk: Fix issues related to CLK_IGNORE_UNUSED failures
- and amlogic glitch free mux
-Date: Sun, 29 Sep 2024 14:10:04 +0800
-Message-Id: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
+Date: Sun, 29 Sep 2024 14:10:06 +0800
+Subject: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,9 +40,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADzv+GYC/x2MQQqAIBAAvxJ7TtCtg/aVCAlbdSEsNCII/550H
- JiZFwplpgJT90KmmwsfqYHqO3BxTYEEb40BJY7SoBGeHxt2vly0PhMJNNJpbXBwg4JWnZma8h/
- npdYP3BY0HWEAAAA=
+Message-Id: <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
+In-Reply-To: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
  Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
@@ -52,11 +51,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727590225; l=2225;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727590225; l=13770;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=VuF+6B8clsCESzRY45mjWVDnp0roeP9EanMgzGgHiWE=;
- b=uv2V//H+abP/S3Lw1qAz+VmyJFzrQupRRNbZVAZLVVbSOXL4PGoneT4nrv9LXoR4p9o9RDGqB
- VeQpA48RrjADXJl+sHwiniuTizO/DMQ0PwSjqDVVZVEBJLoBCahwUM5
+ bh=L3VAxB25xJXcMFUVId4du0KkatengYbFRtL0k4k303o=;
+ b=HnvntC8NRHhLcjfJshb754IypomnY64nXnMOtUom66/OC+DxSEl//wq8Y3bPb6NxvDODM8DWs
+ q/mWbkqMuGXAzo0U52qUc0v5rUyeXjARIxZoqpjyVepvCK+W5RHPAgS
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -64,63 +63,478 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-If CLK_OPS_PARENT_ENABLE is configured for clock,
-clk_core_disable_unprepare() is called in clk_disable_unused_subtree().
-Even clocks that are configured with CLK_IGNORE_UNUSED are disabled,
-resulting in the failure of CLK_IGNORE_UNUSED.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-To ensure that amlogic glitch free mux can switch clock channels
-properly, add flag CLK_OPS_PARENT_ENABLE to glitch free mux. The issue
-that CLK_OPS_PARENT_ENABLE in CCF causes CLK_IGNORE_UNUSED to fail is
-also exposed.
+glitch free mux has two clock channels (channel 0 and channel 1) with
+the same configuration. When the frequency needs to be changed, the two
+channels ping-pong to ensure clock continuity and suppress glitch.
 
-glitch free mux channel switchover failure issue(Test vpu_clk on S4):
-step 1:
-$ cat /sys/kernel/debug/clk/vpu/clk_parent 
-vpu_0
-$ cat /sys/kernel/debug/clk/vpu_0/clk_rate 
-399999994
-$ cat /sys/kernel/debug/clk/vpu_1/clk_rate 
-666666656
-$ echo 1 > /sys/kernel/debug/clk/vpu/clk_prepare_enable 
-$ cat /sys/kernel/debug/meson-clk-msr/clks/cts_vpu_clk
-399987500       +/-12500Hz
+Channel 0 of glitch free mux is not only the clock source for the mux,
+but also the working clock for glitch free mux. Therefore, when glitch
+free mux switches, it is necessary to ensure that channel 0 has a clock
+input, otherwise glitch free mux will not work and cannot switch to the
+target channel.
 
-step 2:
-$ echo 0 > /sys/kernel/debug/clk/vpu/clk_prepare_enable 
-$ echo 1 > /sys/kernel/debug/clk/vpu/clk_parent 
-$ cat /sys/kernel/debug/clk/vpu/clk_parent 
-vpu_1
-$ cat /sys/kernel/debug/clk/vpu/clk_rate 
-666666656
-$ echo 1 > /sys/kernel/debug/clk/vpu/clk_prepare_enable 
-$ cat /sys/kernel/debug/meson-clk-msr/clks/cts_vpu_clk
-0       +/-3125Hz
+Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
+switchover to suppress glitch.
 
-In step2, vpu_0 is disabled, and the vpu is not switched to vpu_1. At
-this time, the vpu is still connected to vpu_0 and vpu_0 is disabled at
-this time, resulting in the clk-measure not measuring the clock.
+glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that channel 0
+has clock input when switching channels.
 
+Change-Id: I6fa6ff92f7b2e0a13dd7a27feb0e8568be3ca9f9
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
-Chuan Liu (2):
-      clk: Fix the CLK_IGNORE_UNUSED failure issue
-      clk: meson: Fix glitch free mux related issues
+ drivers/clk/meson/a1-peripherals.c | 12 ++++++------
+ drivers/clk/meson/axg.c            | 16 ++++++++++------
+ drivers/clk/meson/c3-peripherals.c |  6 +++---
+ drivers/clk/meson/g12a.c           | 18 +++++++++++-------
+ drivers/clk/meson/gxbb.c           | 18 +++++++++++-------
+ drivers/clk/meson/s4-peripherals.c | 32 ++++++++++++++++----------------
+ 6 files changed, 57 insertions(+), 45 deletions(-)
 
- drivers/clk/clk.c                  | 67 ++++++++++++++++++++++++++++++++++++--
- drivers/clk/meson/a1-peripherals.c | 12 +++----
- drivers/clk/meson/axg.c            | 16 +++++----
- drivers/clk/meson/c3-peripherals.c |  6 ++--
- drivers/clk/meson/g12a.c           | 18 ++++++----
- drivers/clk/meson/gxbb.c           | 18 ++++++----
- drivers/clk/meson/s4-peripherals.c | 32 +++++++++---------
- 7 files changed, 122 insertions(+), 47 deletions(-)
----
-base-commit: e736da1956cf0880a02ec5023f3487eea7611b5f
-change-id: 20240929-fix_glitch_free-290c88923c31
+diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+index 7aa6abb2eb1f..7f515e002adb 100644
+--- a/drivers/clk/meson/a1-peripherals.c
++++ b/drivers/clk/meson/a1-peripherals.c
+@@ -423,7 +423,7 @@ static struct clk_regmap dspa_a = {
+ 			&dspa_a_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -471,7 +471,7 @@ static struct clk_regmap dspa_b = {
+ 			&dspa_b_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -489,7 +489,7 @@ static struct clk_regmap dspa_sel = {
+ 			&dspa_b.hw,
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -569,7 +569,7 @@ static struct clk_regmap dspb_a = {
+ 			&dspb_a_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -617,7 +617,7 @@ static struct clk_regmap dspb_b = {
+ 			&dspb_b_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -635,7 +635,7 @@ static struct clk_regmap dspb_sel = {
+ 			&dspb_b.hw,
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 1b08daf579b2..e2d3266f4b45 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -1077,7 +1077,8 @@ static struct clk_regmap axg_vpu_0 = {
+ 		 * We want to avoid CCF to disable the VPU clock if
+ 		 * display has been set by Bootloader
+ 		 */
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1126,7 +1127,8 @@ static struct clk_regmap axg_vpu_1 = {
+ 		 * We want to avoid CCF to disable the VPU clock if
+ 		 * display has been set by Bootloader
+ 		 */
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1144,7 +1146,7 @@ static struct clk_regmap axg_vpu = {
+ 			&axg_vpu_1.hw
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1194,7 +1196,8 @@ static struct clk_regmap axg_vapb_0 = {
+ 			&axg_vapb_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1242,7 +1245,8 @@ static struct clk_regmap axg_vapb_1 = {
+ 			&axg_vapb_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1260,7 +1264,7 @@ static struct clk_regmap axg_vapb_sel = {
+ 			&axg_vapb_1.hw
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+index 7dcbf4ebee07..27343a73a521 100644
+--- a/drivers/clk/meson/c3-peripherals.c
++++ b/drivers/clk/meson/c3-peripherals.c
+@@ -1364,7 +1364,7 @@ static struct clk_regmap hcodec_0 = {
+ 			&hcodec_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1411,7 +1411,7 @@ static struct clk_regmap hcodec_1 = {
+ 			&hcodec_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1431,7 +1431,7 @@ static struct clk_regmap hcodec = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_data = hcodec_parent_data,
+ 		.num_parents = ARRAY_SIZE(hcodec_parent_data),
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index d3539fe9f7af..21a25001e904 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -2746,7 +2746,8 @@ static struct clk_regmap g12a_vpu_0 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_0_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -2790,7 +2791,8 @@ static struct clk_regmap g12a_vpu_1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_1_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -2812,7 +2814,7 @@ static struct clk_regmap g12a_vpu = {
+ 			&g12a_vpu_1.hw,
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -3035,7 +3037,8 @@ static struct clk_regmap g12a_vapb_0 = {
+ 			&g12a_vapb_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -3083,7 +3086,8 @@ static struct clk_regmap g12a_vapb_1 = {
+ 			&g12a_vapb_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -3105,7 +3109,7 @@ static struct clk_regmap g12a_vapb_sel = {
+ 			&g12a_vapb_1.hw,
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -4039,7 +4043,7 @@ static struct clk_regmap g12a_mali = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_mali_parent_hws,
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 262c318edbd5..812b3e20c366 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1132,7 +1132,7 @@ static struct clk_regmap gxbb_mali = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = gxbb_mali_parent_hws,
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1543,7 +1543,8 @@ static struct clk_regmap gxbb_vpu_0 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_0_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1591,7 +1592,8 @@ static struct clk_regmap gxbb_vpu_1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_1_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1613,7 +1615,7 @@ static struct clk_regmap gxbb_vpu = {
+ 			&gxbb_vpu_1.hw
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1674,7 +1676,8 @@ static struct clk_regmap gxbb_vapb_0 = {
+ 			&gxbb_vapb_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1726,7 +1729,8 @@ static struct clk_regmap gxbb_vapb_1 = {
+ 			&gxbb_vapb_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
++			 CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1748,7 +1752,7 @@ static struct clk_regmap gxbb_vapb_sel = {
+ 			&gxbb_vapb_1.hw
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index c930cf0614a0..cf10be40141d 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -1404,7 +1404,7 @@ static struct clk_regmap s4_mali_mux = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_mali_parent_hws,
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1466,7 +1466,7 @@ static struct clk_regmap s4_vdec_p0 = {
+ 			&s4_vdec_p0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1516,7 +1516,7 @@ static struct clk_regmap s4_vdec_p1 = {
+ 			&s4_vdec_p1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1536,7 +1536,7 @@ static struct clk_regmap s4_vdec_mux = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_vdec_mux_parent_hws,
+ 		.num_parents = ARRAY_SIZE(s4_vdec_mux_parent_hws),
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1586,7 +1586,7 @@ static struct clk_regmap s4_hevcf_p0 = {
+ 			&s4_hevcf_p0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1636,7 +1636,7 @@ static struct clk_regmap s4_hevcf_p1 = {
+ 			&s4_hevcf_p1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1656,7 +1656,7 @@ static struct clk_regmap s4_hevcf_mux = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_hevcf_mux_parent_hws,
+ 		.num_parents = ARRAY_SIZE(s4_hevcf_mux_parent_hws),
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1712,7 +1712,7 @@ static struct clk_regmap s4_vpu_0 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_0_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1756,7 +1756,7 @@ static struct clk_regmap s4_vpu_1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_1_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1774,7 +1774,7 @@ static struct clk_regmap s4_vpu = {
+ 			&s4_vpu_1.hw,
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -1921,7 +1921,7 @@ static struct clk_regmap s4_vpu_clkc_p0 = {
+ 			&s4_vpu_clkc_p0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1969,7 +1969,7 @@ static struct clk_regmap s4_vpu_clkc_p1 = {
+ 			&s4_vpu_clkc_p1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -1989,7 +1989,7 @@ static struct clk_regmap s4_vpu_clkc_mux = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_vpu_mux_parent_hws,
+ 		.num_parents = ARRAY_SIZE(s4_vpu_mux_parent_hws),
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+@@ -2049,7 +2049,7 @@ static struct clk_regmap s4_vapb_0 = {
+ 			&s4_vapb_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -2097,7 +2097,7 @@ static struct clk_regmap s4_vapb_1 = {
+ 			&s4_vapb_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -2115,7 +2115,7 @@ static struct clk_regmap s4_vapb = {
+ 			&s4_vapb_1.hw
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
 
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
