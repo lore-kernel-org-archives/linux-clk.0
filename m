@@ -1,154 +1,215 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7372190675
-	for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 12:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3C518E36C
+	for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 12:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698741; cv=none; b=MhK3YRUM08Wr6N11F/rVrPb4nHm+s5vv8skdRv7rqnbaZgj4y8A1pW/hq1rbL5oWln8hvZSSx67/GKhklQayDR3/H2XxmJZjmTINtvAzb391w7vaONEiGgoYD0FwLMZi3aZ3V96YENQBPw0iI7EtJWZQlCxmkXcj6C2xLkhi1Z4=
+	t=1727699231; cv=none; b=ihPQpNbTCjuzLeslQtGXwNH1/W5qGJ7BmmOOsR748K99R/Wd4b15azWlL57pKFHC7Z8MipFMr3+E7crMWvDClmKPLLQJIyJIMv9/KXX4/8R/S2J9542/4nrRNPa7BHALaGqYBZBSx7huGXWqdJsBgCl+Pr0xVktEMX7bdsaeTd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698741; c=relaxed/simple;
-	bh=vBy7OFug84v0/K0Vd+HlF324zw+uJF9x+kHFONfOVqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=WWep2fHULCd5+oHTYd10MNwe8jKcQ60H0pMX6pXsTxDRPf0WqYTXvujlm9QC5fbqXEZBJehdmCr28pnxi/Kbp9LXncJCnTyWcQvkAnPVpY2WE/upS1Sxu8NWFEw0fwIku80XmjiZCUJcbbY8fok6cXtSPVls09PX+vYzbNNqjwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gNwuM+EX; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1727699231; c=relaxed/simple;
+	bh=9luUmW0e0udbsWVyb6Sp3e6/GNXruTPLS3d+14tW2rI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZFA8yRV2D3BruRNqG/eCQu6YnrK8BOEgFWby1ROmFt3XgsaCjhJs8XDfjY+jG+q/MdFxQToMO69hZxNq0mCUw63yeui6bK/zkRd0MdFSreEWvFqUpXO1Gxmw3GwiwXR8WBZEVeR0xe1U+D40Eb0LKNikGyTajsxy2H/GKEq+VpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xsNOmBj+; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gNwuM+EX"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240930121858epoutp0464e2f859583e269846a8ba3a7aa8db6d~6BNlEggiT2091020910epoutp04Q
-	for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 12:18:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240930121858epoutp0464e2f859583e269846a8ba3a7aa8db6d~6BNlEggiT2091020910epoutp04Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727698738;
-	bh=sfSiZshNltBPyKbM7f8L8Q015QrPMyWEOljZ3sJgHEM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gNwuM+EXvEKRw5E4bJrNQIYsztG+15o5EW5y3q+nBkcQGJNnLF5S3B4TPsJGw4fNO
-	 yfryurxmgs72FwPgugXUI10kJf/PGqq60zvmUdNLDeWmH99V0/C02Jcd5E/D3U6dt7
-	 Tm67ty/70hYKxlmXElaWG7WyjveTo8A+8CO3D/cA=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240930121857epcas5p49237819634a1a4c2495b41604a0a0916~6BNkuReZ30681106811epcas5p49;
-	Mon, 30 Sep 2024 12:18:57 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XHKqh4z6pz4x9Q2; Mon, 30 Sep
-	2024 12:18:56 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	63.7D.18935.0379AF66; Mon, 30 Sep 2024 21:18:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67~6AbeqYbyM2495924959epcas5p2O;
-	Mon, 30 Sep 2024 11:21:35 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240930112135epsmtrp1743da13a16b4401159e1c7a8d98ca372~6AbepoOGR2631226312epsmtrp1W;
-	Mon, 30 Sep 2024 11:21:35 +0000 (GMT)
-X-AuditID: b6c32a50-cb1f8700000049f7-2c-66fa973031bb
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F8.57.08227.FB98AF66; Mon, 30 Sep 2024 20:21:35 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240930112133epsmtip2aabb8e0f2086f34c47bdb457a284a90e~6AbcoJIpt3034630346epsmtip2V;
-	Mon, 30 Sep 2024 11:21:33 +0000 (GMT)
-From: Varada Pavani <v.pavani@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
-	gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] clk: samsung: Fixes PLL locktime for PLL142XX used on
- FSD platfom
-Date: Mon, 30 Sep 2024 16:48:59 +0530
-Message-Id: <20240930111859.22264-3-v.pavani@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240930111859.22264-1-v.pavani@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTQ9dg+q80g+V9ahYP5m1jszi0eSu7
-	xfUvz1ktbh7YyWRx/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVqsWjrF3aLw2/aWS3+
-	XdvIYrFg4yNGiw29r9gd+D3e32hl99i0qpPNY/OSeo++LasYPT5vkgtgjcq2yUhNTEktUkjN
-	S85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6VkmhLDGnFCgUkFhcrKRv
-	Z1OUX1qSqpCRX1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnfHl8SK2gs2cFc8v
-	9rM1MD5i72Lk5JAQMJG4ePIPWxcjF4eQwB5GidP/rrBAOJ8YJVauW8kI4XxjlOjY9ZQVpmXl
-	hEusEIm9jBKvn02HamllkpjXsh2sik1AS2L11OVgVSICfUwSd09MYAJxmAX6GCVa2p6DrRcW
-	iJDo6n4BZrMIqErcWXWADcTmFbCUuHnjNdSJ8hKrNxxgBrE5BawkLs35ww4ySEKgkUNi/vZX
-	UEe5SOw8fJkRwhaWeHV8C1SzlMTL/jYgmwPITpZo/8QNEc6RuLR7FROEbS9x4MocFpASZgFN
-	ifW79CHCshJTT60DK2EW4JPo/f0EqpxXYsc8GFtJYueOCVC2hMTT1WvYIGwPiXmT9kCDqJdR
-	YuGP1UwTGOVmIaxYwMi4ilEqtaA4Nz012bTAUDcvtRweccn5uZsYwWlSK2AH4+oNf/UOMTJx
-	MB5ilOBgVhLhvXfoZ5oQb0piZVVqUX58UWlOavEhRlNgAE5klhJNzgcm6rySeEMTSwMTMzMz
-	E0tjM0Mlcd7XrXNThATSE0tSs1NTC1KLYPqYODilGpgqn71W/OJoHKh6prdgXdsdPUHrZcnM
-	M49wse0orBYJyautMjpXq2bxtOSIq0/ytk1ybSz+OXK/xAqnlKtUrLrxKMcl/tvxo5tyLjiL
-	f533K3TuEnXLO/WfXJanaUef+bAysnPb4tc5F6b21VitvXFLoOq5wdnbb1Suv5i84tMPy7SX
-	qmkGTkECvvOfGTzZde/N88kVP5xPlR2f/eNlite8huz7XX+WtKkvmGE6Vfuw0+uD168zr+uK
-	X7t1DXPJhznFmj8rDnzcs0NCf9mMbQfeH5v9sT5+vQPf0gUXpmk2KK8+nxy3ryiFSeSoyFe/
-	O0e6LuWeFtyrYe0m1pf1pndjcmp50Ow9DwJK77rn+LHFKLEUZyQaajEXFScCAI7CFkccBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSvO7+zl9pBg9nCFg8mLeNzeLQ5q3s
-	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
-	d20ji8WCjY8YLTb0vmJ34Pd4f6OV3WPTqk42j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjf
-	LoEr48vjRWwFmzkrnl/sZ2tgfMTexcjJISFgIrFywiXWLkYuDiGB3YwS3y98YYVISEjs/NbK
-	DGELS6z895wdoqiZSeLi9xVg3WwCWhKrpy4H6xYRmMUkMXfJBxYQh1lgEqPEuj/ngao4OIQF
-	wiRWv+cCaWARUJW4s+oAG4jNK2ApcfPGa6gz5CVWbzgAto1TwEri0pw/YK1CIDUvsyYw8i1g
-	ZFjFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcwlpaOxj3rPqgd4iRiYPxEKMEB7OS
-	CO+9Qz/ThHhTEiurUovy44tKc1KLDzFKc7AoifN+e92bIiSQnliSmp2aWpBaBJNl4uCUamBS
-	CC6Yv2LqRpX8CfOMj/xPnmEw+3/K383BnQYelh8+3ur5u2DOnc9xlRLLZia73e/xMerSO3A1
-	zXfK9pmTfwSmTe279iT+BWPWbS99XeE7hfGLfpw1S+3WniedrTbtzrmOCq0vezdzS3FKCKre
-	2mLd+r9Qc7mZ1wTT+sVfrl+t4dGZutlmb4rVkbdvl99LTPlqq8Kw5rl95cyKYyKvuc8sXPuq
-	fF1CBedU8X9b3S96d04Sbnu5TubdgctbVr7R7oze7fak54fli9cBLydf14/4o7y5ztbXMv58
-	4iSPyyFvdcpWc5wxmLWqdgdbaJTSBPsjq5V1CqMLnHJuTp+x2qpVqfEyY83yW/KBPdN7Vq9p
-	VWIpzkg01GIuKk4EAKHIgknQAgAA
-X-CMS-MailID: 20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67
-References: <20240930111859.22264-1-v.pavani@samsung.com>
-	<CGME20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67@epcas5p2.samsung.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xsNOmBj+"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37ce6a5b785so706557f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 05:27:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727699226; x=1728304026; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TnfvxkU+3SpvaCEsw37+aVnbvjFaWPB2+8ZOExgpE60=;
+        b=xsNOmBj+J6zGTNSWjHtXgDpVsb3dww5vFJfnmKWVB8yJpFK1wilADKKPH2IzZMM6Cf
+         VFacb7EalZqUr0WVM+SRlc9xcACE8LgAcRfZU5TsZ9EFaECFBUjEdvC+tJ8TiHKrl4yv
+         xLsBv05WJfOR0ezUQa+OcB8H2UUC93ERU1hYbyRYdoa3xGL3Wjx++j9yAeG78R3Ql1eD
+         mt8zXcALFGJ9dfz7zmE3lmXfBOZ6e8gyl3m0yD8F2RkZFAeFCv5kKp2n8FTN9NB5wfLR
+         fat9c1IkEodNc0s2pz4v6D0bON6RuU18XfKROD4HIODObiC2LoMG93k3XOzq2n6JgeAU
+         tokQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727699226; x=1728304026;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TnfvxkU+3SpvaCEsw37+aVnbvjFaWPB2+8ZOExgpE60=;
+        b=d7voPRgHPnjZAEolpsh9eLJ1Ci2ndQCfgUo/Fk82s77It+cC1xQTgudP7Nka0MpnX9
+         79OFCICRbW/y8PFPX/6Qn7a+Qu4sxg+PiDCi5rH3j/M7ThjoQilodIiCNn08wSskK7kC
+         InayZ63Z9KLWndRrj2kzvfQMfv70393kmoZQ7WhZvyAo0FTAXswhPfnoNnMb1ivnizUj
+         qz8k3NIwOm0PEcCJZH8WpadrYlUaRpDGC7UYlmqFrcDDJkz6V2aPBy6zuMZaWQSUsClB
+         zpOP/uA9Eaiz3RSExzfwQ+HRzAir6EX1Se4eegX9Bs5AzN7J3RyUMXjwar1Um/yUXdLd
+         WpYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOjk+1OuBJtLQdiT2urJud/d1fN+Di4XKNXK0Ts4ObeO4CSo9fRwsS3UdrgaEoYRytOvPv6XhoGh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziKxpY5qEt2W9J9/E969evWsD6s42V+FhanuwKlnJ4UuAv+ouH
+	B8SHdycFSy24GryejqF1ylzDMuhvkPDFMIjBDXRdKzUXJDmrld9I9vUbv+EcXZ8=
+X-Google-Smtp-Source: AGHT+IE14OFcN1Aoo5OXrKzTjQCJkSgzSoOhRyTY+Vz61AiXH/EbYZGwPtPCvJZVvzG7X4TErPBjKw==
+X-Received: by 2002:a5d:500f:0:b0:374:ba78:9013 with SMTP id ffacd0b85a97d-37cd568e21cmr6844128f8f.9.1727699226325;
+        Mon, 30 Sep 2024 05:27:06 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b6ba:bab:ced3:2667])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd5752a09sm8911834f8f.108.2024.09.30.05.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 05:27:05 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: Fix the CLK_IGNORE_UNUSED failure issue
+In-Reply-To: <20240929-fix_glitch_free-v1-1-22f9c36b7edf@amlogic.com> (Chuan
+	Liu via's message of "Sun, 29 Sep 2024 14:10:05 +0800")
+References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
+	<20240929-fix_glitch_free-v1-1-22f9c36b7edf@amlogic.com>
+Date: Mon, 30 Sep 2024 14:27:04 +0200
+Message-ID: <1jed51tjhj.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Add PLL locktime for PLL142XX controller.
+On Sun 29 Sep 2024 at 14:10, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-Fixes: 4f346005aaed ("clk: samsung: fsd: Add initial clock support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Varada Pavani <v.pavani@samsung.com>
----
- drivers/clk/samsung/clk-pll.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> When the clk_disable_unused_subtree() function disables an unused clock,
+> if CLK_OPS_PARENT_ENABLE is configured on the clock,
+> clk_core_prepare_enable() and clk_core_disable_unprepare() are called
+> directly, and these two functions do not determine CLK_IGNORE_UNUSED,
+> This causes the clock to be disabled even if CLK_IGNORE_UNUSED is
+> configured when clk_core_disable_unprepare() is called.
+>
+> Two new functions clk_disable_unprepare_unused() and
+> clk_prepare_enable_unused() are added to resolve the preceding
+> situation. The CLK_IGNORE_UNUSED judgment logic is added to these two
+> functions. To prevent clock configuration CLK_IGNORE_UNUSED from
+> possible failure.
+>
+> Change-Id: I56943e17b86436254f07d9b8cdbc35599328d519
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  drivers/clk/clk.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 65 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 285ed1ad8a37..5d3316699b57 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -94,6 +94,7 @@ struct clk_core {
+>  	struct hlist_node	debug_node;
+>  #endif
+>  	struct kref		ref;
+> +	bool			ignore_enabled;
+>  };
+>  
+>  #define CREATE_TRACE_POINTS
+> @@ -1479,6 +1480,68 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+>  	}
+>  }
+>  
+> +static void __init clk_disable_unprepare_unused(struct clk_core *core)
+> +{
+> +	unsigned long flags;
+> +
+> +	lockdep_assert_held(&prepare_lock);
+> +
+> +	if (!core)
+> +		return;
+> +
+> +	if ((core->enable_count == 0) && core->ops->disable &&
+> +	    !core->ignore_enabled) {
+> +		flags = clk_enable_lock();
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 4be879ab917e..d4c5ae20de4f 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -206,6 +206,7 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
-  */
- /* Maximum lock time can be 270 * PDIV cycles */
- #define PLL35XX_LOCK_FACTOR	(270)
-+#define PLL142XX_LOCK_FACTOR	(150)
- 
- #define PLL35XX_MDIV_MASK       (0x3FF)
- #define PLL35XX_PDIV_MASK       (0x3F)
-@@ -272,7 +273,11 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	}
- 
- 	/* Set PLL lock time. */
--	writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
-+	if (pll->type == pll_142xx)
-+		writel_relaxed(rate->pdiv * PLL142XX_LOCK_FACTOR,
-+			pll->lock_reg);
-+	else
-+		writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
- 			pll->lock_reg);
- 
- 	/* Change PLL PMS values */
+Used core->enable_count without taking the lock
+
+> +		core->ops->disable(core->hw);
+
+If the there is any CLK_IS_CRITICAL in the path, it is game over.
+You've basically disregarded all the other CCF flags which are equally
+important to the ones you are dealing with.
+
+> +		clk_enable_unlock(flags);
+> +	}
+> +
+> +	if ((core->prepare_count == 0) && core->ops->unprepare &&
+> +	    !core->ignore_enabled)
+> +		core->ops->unprepare(core->hw);
+> +
+> +	core->ignore_enabled = false;
+> +
+> +	clk_disable_unprepare_unused(core->parent);
+
+Here you are disabling the parent of any CLK_IGNORE_UNUSED clock.
+IMO, the problem is not solved. It just shifted.
+
+> +}
+> +
+> +static int __init clk_prepare_enable_unused(struct clk_core *core)
+> +{
+> +	int ret = 0;
+> +	unsigned long flags;
+> +
+> +	lockdep_assert_held(&prepare_lock);
+> +
+> +	if (!core)
+> +		return 0;
+> +
+> +	ret = clk_prepare_enable_unused(core->parent);
+> +	if (ret)
+> +		return ret;
+
+That's adding another recursion in CCF, something Stephen would like to remove
+
+> +
+> +	if ((core->flags & CLK_IGNORE_UNUSED) && clk_core_is_enabled(core))
+> +		core->ignore_enabled = true;
+> +
+> +	if ((core->prepare_count == 0) && core->ops->prepare) {
+> +		ret = core->ops->prepare(core->hw);
+> +		if (ret)
+> +			goto disable_unprepare;
+> +	}
+> +
+> +	if ((core->enable_count == 0) && core->ops->enable) {
+> +		flags = clk_enable_lock();
+> +		ret = core->ops->enable(core->hw);
+> +		clk_enable_unlock(flags);
+> +		if (ret)
+> +			goto disable_unprepare;
+> +	}
+> +
+> +	return 0;
+> +disable_unprepare:
+> +	clk_disable_unprepare_unused(core->parent);
+> +	return ret;
+> +}
+> +
+>  static void __init clk_disable_unused_subtree(struct clk_core *core)
+>  {
+>  	struct clk_core *child;
+> @@ -1490,7 +1553,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>  		clk_disable_unused_subtree(child);
+>  
+>  	if (core->flags & CLK_OPS_PARENT_ENABLE)
+> -		clk_core_prepare_enable(core->parent);
+> +		clk_prepare_enable_unused(core->parent);
+>  
+>  	flags = clk_enable_lock();
+>  
+> @@ -1517,7 +1580,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>  unlock_out:
+>  	clk_enable_unlock(flags);
+>  	if (core->flags & CLK_OPS_PARENT_ENABLE)
+> -		clk_core_disable_unprepare(core->parent);
+> +		clk_disable_unprepare_unused(core->parent);
+>  }
+>  
+>  static bool clk_ignore_unused __initdata;
+
 -- 
-2.17.1
-
+Jerome
