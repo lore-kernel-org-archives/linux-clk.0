@@ -1,446 +1,93 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9484617BB11
-	for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 10:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1640126AEC;
+	Mon, 30 Sep 2024 10:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727691391; cv=none; b=tjGpDYcxqm1U8DEBh9eJyMvwhLeMgeizdWLF8nH/lskQiWZJv+gxWsBwNJFzeoDO3UD2Y2EKcXXEQEUCnI+s3I507L/42DBP5TcI2pOtq5v2zQrOjrtKmmOt+U13jWoan2OVKOKMjl+mQ7UTad31olWkoJainbOWIsMp4RSZitA=
+	t=1727692196; cv=none; b=Oho8QnplqhDc2h6ewkCpZTgt3QfZTNzeuX0bJ/XzVDtk/eHmmpgHmrTYNBkD4bjIE6vf9rbga6JJ3RtQjaHY9Si5ZCSor4Y0CklrqW8ywCHD5YXRrulAEHm90jK8E0C7SqhFdftvxkCQEzny6gDgMd1VI2mj26g0u3ciGun6qHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727691391; c=relaxed/simple;
-	bh=nxnkKpVKYhz1uhaTWThL3G5q2cQLmLgqieyZA2MyJek=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NR7sPHDTbrBKiXcKbv2SZZLymJu9oCUI8pH5Q8SzFvLxFepHtpIYnbdHnXv7k9K4L4LP077RX/tdKL8TKMZ2vTx4DeZhUEPITb+9MfW5o/oH7h/RuhdFYf1k8KEBlKhBGi6bJRVp8UeMWPh+t/azAuuvo0ruHj3Lv+l5u3CuSaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mjcziuuf; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mjcziuuf"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37cc846fbc4so2950851f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 03:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727691387; x=1728296187; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ept6PF3z6zGmfanJb7Xv6BjUTwCdrXXzgAXSokyXkdU=;
-        b=mjcziuufC6R9m5Yt/HvavDc3MxBTL+pj5LUqC60w/oTIMCdmLQoKt+ERwQm7utiJlg
-         WxQh2mZrIeql0GJum6e20xXlggtnlrAN0bop36gFweFRrnfiepbUz0dyyry9EzjsvZ4w
-         Hvt4mrPICkgr0UR8d9lhXoaeiRb5Fz25jm22fEXY0ctoRtEdwzXVT1WBl8Cbv5MFoZv8
-         YpndRW7JfNoU7dDfe1oLYoEoD0VoBvAHTOjHkw0hSJ4StWkzN98RyS6yz1Ox27pltW5T
-         rlulRFepXX5IrA0tdAalULBh33f6RedGE2/lwDqS0bLIHDsCQGDgiW4YFH/0p7a+lUI8
-         YpqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727691387; x=1728296187;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ept6PF3z6zGmfanJb7Xv6BjUTwCdrXXzgAXSokyXkdU=;
-        b=UWQTV5w9lIhym37aDA6q3s4dSWGtULDffQYA+UC0xCFzLKuePrMEvEUG6U2Tq+GTy7
-         fHmbPgp4zp2po+GdaZbuQPFI+Av2lJLj0Fb/B5uywrXJ350J33ivS+VTkprR8vp6o9DN
-         s0DagY5P/Y7I416Rmvt04ZMTLvv871s52jR3BtYwTfFBMRkNPTkD5SkksTNc7Il4huEs
-         7NHXPdjB+Cr8RvAJ7FybGxSiR5Y1XL1umVAy8oo1c2wv//vBoZGSpP/OqU5Htt9UOJqe
-         eRNnq5eteKMKGPr0CZXrtYn8+AEWShJm2M9vGht7Lxi0lVP1yFqnR+lezgU5gBMiQvY1
-         cX2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVmZkq2as5YDg+BE2epadOqiX+LKQfka2HROdeb2lb/SVKBOcMKaFwl8Zgnn9IqGVdE5aZkK/5n32Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyYBMbbZy4/xmGy5F0XRfi2T0Qcpk88/6cIIQFT3FBUCU+9Ihr
-	9o1VbWMF6NWJfAi/17hrv/ioirjUCwuuBCWjWTGKr+RWmbJ20mSHiI0rpSKGXDI=
-X-Google-Smtp-Source: AGHT+IE9hAG6wDYLSDHEcerPNno3aHUL2cQSG0dDgw4C8t0z2/bGDDaSzeigceSgmlLPCKImmNAdcg==
-X-Received: by 2002:adf:fec7:0:b0:37c:d11c:aa45 with SMTP id ffacd0b85a97d-37cd5b1ebcfmr5961790f8f.59.1727691386672;
-        Mon, 30 Sep 2024 03:16:26 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b6ba:bab:ced3:2667])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd565e433sm8645836f8f.36.2024.09.30.03.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 03:16:26 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
-  Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  Chuan Liu <chuan.liu@amlogic.com>,  Kevin
- Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/5] clk: meson: add A5 clock peripherals controller driver
-In-Reply-To: <4ce0c864-fd82-42f3-8122-7ff921b5cc8b@amlogic.com> (Xianwei
-	Zhao's message of "Sun, 29 Sep 2024 16:44:03 +0800")
-References: <20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com>
-	<20240914-a5-clk-v1-5-5ee2c4f1b08c@amlogic.com>
-	<1jjzf1xf55.fsf@starbuckisacylon.baylibre.com>
-	<4ce0c864-fd82-42f3-8122-7ff921b5cc8b@amlogic.com>
-Date: Mon, 30 Sep 2024 12:16:25 +0200
-Message-ID: <1jldz9tpja.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1727692196; c=relaxed/simple;
+	bh=bVUnemnRJlAkNfmj4POjrlh67Wjw48pMhrhhoQHlkyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RbI4tmzs643KZBKYXzMy81UlCQ/8sPUqzASprfy501ZWaUgrxLypyRxEU9QMKYC2r3i9DZvyd/tfxzYlmEDv4ZIAFlu5TpsWupualPmT4heTpjVygIGzD2M4YVyKUUG1w5nllwvHiswsXzBjYQag9Vq+Cx6q515K2y1N1MALNY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F2CEDA7;
+	Mon, 30 Sep 2024 03:30:22 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F412E3F587;
+	Mon, 30 Sep 2024 03:29:50 -0700 (PDT)
+Date: Mon, 30 Sep 2024 11:29:45 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	sunyeal.hong@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: Fix out-of-bound access of of_match_node()
+Message-ID: <Zvp9mWLKveSz5Xdo@J2N7QTR9R3>
+References: <20240927102104.3268790-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927102104.3268790-1-ruanjinjie@huawei.com>
 
-On Sun 29 Sep 2024 at 16:44, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
+On Fri, Sep 27, 2024 at 06:21:04PM +0800, Jinjie Ruan wrote:
+> Currently, there is no terminator entry for exynosautov920_cmu_of_match,
+> hence facing below KASAN warning,
+> 
+> 	==================================================================
+> 	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
+> 	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
 
-[...]
+> 	The buggy address belongs to the variable:
+> 	 exynosautov920_cmu_of_match+0xc8/0x2c80
 
->>> +static A4_SYS_GATE(sys_eth_mac,              CLKCTRL_SYS_CLK_EN0_REG0, 26, 0);
->>> +
->>> +/*
->>> + * FIXME: sys_gic provides the clock for GIC(Generic Interrupt Controller).
->>> + * After clock is disabled, The GIC cannot work properly. At present, the driver
->>> + * used by our GIC is the public driver in kernel, and there is no management
->>> + * clock in the driver.
->>> + */
->>> +static A4_SYS_GATE(sys_gic,          CLKCTRL_SYS_CLK_EN0_REG0, 27, CLK_IS_CRITICAL);
->> The GIC has a driver. If it needs clock, maybe it should request it and
->> enable it, maybe as optional.
->> 
->
-> This has been explained in C3. GIC is a public driver that does not
-> reference clock, so you suggest setting it as CRITICAL and adding the
-> "FIXME" annotation.
+> Add a dummy terminator entry at the end to assist
+> of_match_node() in traversing up to the terminator entry
+> without accessing an out-of-boundary index.
+> 
+> Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
-Yes indeed ... and at some point, it is expected something will be done
-a actually fix the situation ... not just pile-up FIXME comments.
+FWIW, I'm hitting this while testing on v6.12-rc1, and my local fix was
+essentially the same (adding a '{ /* sentintel */ }' entry), so FWIW,
+with one minor nit below:
 
-Adding a clock to a driver that should have one seems doable.
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
->
->>> +static A4_SYS_GATE(sys_rama,         CLKCTRL_SYS_CLK_EN0_REG0, 28, 0);
->>> +
->>> +/*
->>> + * NOTE: sys_big_nic provides the clock to the control bus of the NIC(Network
->>> + * Interface Controller) between multiple devices(CPU, DDR, RAM, ROM, GIC,
->>> + * SPIFC, CAPU, JTAG, EMMC, SDIO, sec_top, USB, Audio, ETH, SPICC) in the
->>> + * system. After clock is disabled, The NIC cannot work.
->>> + */
->> This comment looks like a clock that should be passed as ressource to a
->> bus or power-domain to be properly manage. This is a pattern that keeps
->> on repeating. I will not block you on it this time around but I strong
->> suggest you fix up the situation on the related platform. Next time
->> around, the reason won't be a valid one.
->> 
->
-> There are too many modules associated with this clock... The most important
-> is the inclusion of some system-level modules that are not managed by the
-> driver in the kernel and cannot close their clocks, perhaps it is not
-> appropriate to describe it here.
->
-> In the next version I moved it to scmi-clk for management?
+> ---
+>  drivers/clk/samsung/clk-exynosautov920.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+> index 7ba9748c0526..a3634003b29b 100644
+> --- a/drivers/clk/samsung/clk-exynosautov920.c
+> +++ b/drivers/clk/samsung/clk-exynosautov920.c
+> @@ -1155,6 +1155,7 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
+>  		.compatible = "samsung,exynosautov920-cmu-peric0",
+>  		.data = &peric0_cmu_info,
+>  	},
+> +	{ },
 
-No. The number of module associated with a clock should not be a
-concern and SCMI should not be a 'Hide all the things I don't want to do
-in linux things'.
+Nit: the sentinal entry is meant to be the last entry, so it shouldn't
+have a trailing comma.
 
-You've got a bus that needs a clocks. There are possibilities associate
-a clock with bus in DT, either directly or through power-domains. Please
-do it correctly.
+Regardless of that, it'd be nice to have this fix in -rc2, since anyone
+trying to test with KASAN is going to hit this at boot time.
 
->
->>> +static A4_SYS_GATE(sys_big_nic,              CLKCTRL_SYS_CLK_EN0_REG0, 29, CLK_IS_CRITICAL);
->>> +static A4_SYS_GATE(sys_ramb,         CLKCTRL_SYS_CLK_EN0_REG0, 30, 0);
->>> +static A4_SYS_GATE(sys_audio_top,    CLKCTRL_SYS_CLK_EN0_REG1, 0, 0);
->>> +static A4_SYS_GATE(sys_audio_vad,    CLKCTRL_SYS_CLK_EN0_REG1, 1, 0);
->>> +static A4_SYS_GATE(sys_usb,          CLKCTRL_SYS_CLK_EN0_REG1, 2, 0);
->>> +static A4_SYS_GATE(sys_sd_emmc_a,    CLKCTRL_SYS_CLK_EN0_REG1, 3, 0);
->>> +static A4_SYS_GATE(sys_sd_emmc_c,    CLKCTRL_SYS_CLK_EN0_REG1, 4, 0);
->>> +static A4_SYS_GATE(sys_pwm_ab,               CLKCTRL_SYS_CLK_EN0_REG1, 5, 0);
->>> +static A4_SYS_GATE(sys_pwm_cd,               CLKCTRL_SYS_CLK_EN0_REG1, 6, 0);
->>> +static A4_SYS_GATE(sys_pwm_ef,               CLKCTRL_SYS_CLK_EN0_REG1, 7, 0);
->>> +static A4_SYS_GATE(sys_pwm_gh,               CLKCTRL_SYS_CLK_EN0_REG1, 8, 0);
->>> +static A4_SYS_GATE(sys_spicc_1,              CLKCTRL_SYS_CLK_EN0_REG1, 9, 0);
->>> +static A4_SYS_GATE(sys_spicc_0,              CLKCTRL_SYS_CLK_EN0_REG1, 10, 0);
->>> +static A4_SYS_GATE(sys_uart_a,               CLKCTRL_SYS_CLK_EN0_REG1, 11, 0);
->>> +static A4_SYS_GATE(sys_uart_b,               CLKCTRL_SYS_CLK_EN0_REG1, 12, 0);
->>> +static A4_SYS_GATE(sys_uart_c,               CLKCTRL_SYS_CLK_EN0_REG1, 13, 0);
->>> +static A4_SYS_GATE(sys_uart_d,               CLKCTRL_SYS_CLK_EN0_REG1, 14, 0);
->>> +static A4_SYS_GATE(sys_uart_e,               CLKCTRL_SYS_CLK_EN0_REG1, 15, 0);
->>> +static A4_SYS_GATE(sys_i2c_m_a,              CLKCTRL_SYS_CLK_EN0_REG1, 16, 0);
->>> +static A4_SYS_GATE(sys_i2c_m_b,              CLKCTRL_SYS_CLK_EN0_REG1, 17, 0);
->>> +static A4_SYS_GATE(sys_i2c_m_c,              CLKCTRL_SYS_CLK_EN0_REG1, 18, 0);
->>> +static A4_SYS_GATE(sys_i2c_m_d,              CLKCTRL_SYS_CLK_EN0_REG1, 19, 0);
->>> +static A4_SYS_GATE(sys_rtc,          CLKCTRL_SYS_CLK_EN0_REG1, 21, 0);
->>> +
->>> +#define A4_AXI_GATE(_name, _reg, _bit, _flags)                               \
->>> +     A4_CLK_GATE(_name, _reg, _bit, axiclk,                          \
->>> +                 &clk_regmap_gate_ops, _flags)
->>> +
->>> +static A4_AXI_GATE(axi_audio_vad,    CLKCTRL_AXI_CLK_EN0, 0, 0);
->>> +static A4_AXI_GATE(axi_audio_top,    CLKCTRL_AXI_CLK_EN0, 1, 0);
->>> +
->>> +/*
->>> + * NOTE: axi_sys_nic provides the clock to the AXI bus of the system NIC. After
->>> + * clock is disabled, The NIC cannot work.
->>> + */
->>> +static A4_AXI_GATE(axi_sys_nic,              CLKCTRL_AXI_CLK_EN0, 2, CLK_IS_CRITICAL);
->>> +static A4_AXI_GATE(axi_ramb,         CLKCTRL_AXI_CLK_EN0, 5, 0);
->>> +static A4_AXI_GATE(axi_rama,         CLKCTRL_AXI_CLK_EN0, 6, 0);
->>> +
->>> +/*
->>> + * NOTE: axi_cpu_dmc provides the clock to the AXI bus where the CPU accesses
->>> + * the DDR. After clock is disabled, The CPU will not have access to the DDR.
->>> + */
->>> +static A4_AXI_GATE(axi_cpu_dmc,              CLKCTRL_AXI_CLK_EN0, 7, CLK_IS_CRITICAL);
->>> +static A4_AXI_GATE(axi_nna,          CLKCTRL_AXI_CLK_EN0, 12, 0);
->>> +
->>> +/*
->>> + * NOTE: axi_dev1_dmc provides the clock for the peripherals(EMMC, SDIO,
->>> + * sec_top, USB, Audio) to access the AXI bus of the DDR.
->>> + */
->> Same.
->> 
->
-> These normal peripheral drivers manage the clock without a problem.
->
->>> +static A4_AXI_GATE(axi_dev1_dmc,     CLKCTRL_AXI_CLK_EN0, 13, 0);
->>> +
->>> +/*
->>> + * NOTE: axi_dev0_dmc provides the clock for the peripherals(ETH and SPICC)
->>> + * to access the AXI bus of the DDR.
->>> + */
->>> +static A4_AXI_GATE(axi_dev0_dmc,     CLKCTRL_AXI_CLK_EN0, 14, 0);
->>> +static A4_AXI_GATE(axi_dsp_dmc,              CLKCTRL_AXI_CLK_EN0, 15, 0);
->>> +
->>> +static struct clk_regmap clk_12_24m_in = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = CLKCTRL_CLK12_24_CTRL,
->>> +             .bit_idx = 11,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "clk_12_24m_in",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_data = &(const struct clk_parent_data) {
->>> +                     .fw_name = "xtal_24m",
->>> +             },
->>> +             .num_parents = 1,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap clk_12_24m = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = CLKCTRL_CLK12_24_CTRL,
->>> +             .shift = 10,
->>> +             .width = 1,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "clk_12_24m",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &clk_12_24m_in.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +     },
->>> +};
->>> +
->>> +/* FIXME: set value 0 will div by 2 like value 1 */
->> Again, it is fine when it happens once, like the c3.
->> When the pattern starts repeating, it is time to do something about it.
->> 
->
-> The corresponding suggestions have been made to the hardware designer, but
-> now the designed chip cannot be repaired.
+Mark.
 
-Not asking to fix the HW (although that would be nice if you could)
-The HW is what it is. The SW needs fixing. That you can do.
-
->
->>> +static struct clk_regmap fclk_25m_div = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = CLKCTRL_CLK12_24_CTRL,
->>> +             .shift = 0,
->>> +             .width = 8,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "fclk_25m_div",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_data = &(const struct clk_parent_data) {
->>> +                     .fw_name = "fix",
->>> +             },
->>> +             .num_parents = 1,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap fclk_25m = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = CLKCTRL_CLK12_24_CTRL,
->>> +             .bit_idx = 12,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "fclk_25m",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &fclk_25m_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +/*
->>> + * Channel 3(ddr_dpll_pt_clk) is manged by the DDR module; channel 12(cts_msr_clk)
->>> + * is manged by clock measures module. Their hardware are out of clock tree.
->> Yet, they exist and should be part of the bindings since they are
->> obviously input to this clock.
->> 
->
-> Will add it to bindings, as optional input clock source.
->
->>> + * Channel 4 5 8 9 10 11 13 14 15 16 18 are not connected.
->>> + *
->>> + * gp1 is designed for DSU (DynamIQ Shared Unit) alone. It cannot be changed
->>> + * arbitrarily. gp1 is read-only in the kernel and is only open for debug purposes.
->>> + */
->>> +static u32 gen_parent_table[] = { 0, 1, 2, 6, 7, 17, 19, 20, 21, 22, 23, 24, 25,
->>> +                               26, 27, 28};
->>> +
->>> +static const struct clk_parent_data gen_parent_data[] = {
->>> +     { .fw_name = "oscin" },
->>> +     { .hw = &rtc_clk.hw },
->>> +     { .fw_name = "sysplldiv16" },
->>> +     { .fw_name = "gp1" },
->>> +     { .fw_name = "hifi" },
->>> +     { .fw_name = "cpudiv16" },
->>> +     { .fw_name = "fdiv2" },
->>> +     { .fw_name = "fdiv2p5" },
->>> +     { .fw_name = "fdiv3" },
->>> +     { .fw_name = "fdiv4" },
->>> +     { .fw_name = "fdiv5" },
->>> +     { .fw_name = "fdiv7" },
->>> +     { .fw_name = "mpll0" },
->>> +     { .fw_name = "mpll1" },
->>> +     { .fw_name = "mpll2" },
->>> +     { .fw_name = "mpll3" }
->>> +};
-
-[...]
-
->>> +
->>> +static struct clk_regmap pwm_h_sel =
->>> +     AML_PWM_CLK_MUX(pwm_h, CLKCTRL_PWM_CLK_GH_CTRL, 25);
->>> +static struct clk_regmap pwm_h_div =
->>> +     AML_PWM_CLK_DIV(pwm_h, CLKCTRL_PWM_CLK_GH_CTRL, 16);
->>> +static struct clk_regmap pwm_h =
->>> +     AML_PWM_CLK_GATE(pwm_h, CLKCTRL_PWM_CLK_GH_CTRL, 24);
->>> +
->>> +/* Channel 7 is gp1. */
->> and ? if GP1 is RO, why can't you add it here ?
->> 
->
-> gp1_pll is a special clock for DSU, it is integrated into dsu_clk, we
-> don't want other modules to reference it.
->
-> My understanding is that gp1_pll should not be provided to the peripheral
-> clock tree, perhaps this is a redundant design.
-
-Then /* Channel 7 is gp1 which is reserved for DSU */
-
-Note that if GP1 is actually RO and DSU does not change the rate at
-runtime through other means, then listing GP1 here should not be a
-problem, spi would just be user of an available PLL.
-
->
->>> +static const struct clk_parent_data spicc_parent_data[] = {
->>> +     { .fw_name = "oscin" },
->>> +     { .fw_name = "sysclk" },
->>> +     { .fw_name = "fdiv4" },
->>> +     { .fw_name = "fdiv3" },
->>> +     { .fw_name = "fdiv2" },
->>> +     { .fw_name = "fdiv5" },
->>> +     { .fw_name = "fdiv7" }
->>> +};
->>> +
->>> +static struct clk_regmap spicc_0_sel = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = CLKCTRL_SPICC_CLK_CTRL,
->>> +             .mask = 0x7,
->>> +             .shift = 7,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "spicc_0_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_data = spicc_parent_data,
->>> +             .num_parents = ARRAY_SIZE(spicc_parent_data),
->>> +     },
->>> +};
-
-[...]
-
->>> +
->>> +static struct clk_regmap dspa_1 = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = CLKCTRL_DSPA_CLK_CTRL0,
->>> +             .bit_idx = 29,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "dspa_1",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &dspa_1_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
->> A word about SET_RATE_GATE ?
->> 
->
-> Look at the response to one of the questions below.
-
-Still a word ? your comment below does justify this flag clearly.
-
->
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap dspa = {
->>> +     .data = &(struct clk_regmap_mux_data){
->>> +             .offset = CLKCTRL_DSPA_CLK_CTRL0,
->>> +             .mask = 0x1,
->>> +             .shift = 15,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "dspa",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &dspa_0.hw,
->>> +                     &dspa_1.hw
->>> +             },
->>> +             .num_parents = 2,
->>> +             /*
->>> +              * NOTE: This level of mux is "no glitch mux", and mux_0
->>> +              * (here dspa_0) is not only the clock source for mux, but also
->>> +              * provides a working clock for "no glitch mux". "no glitch mux"
->>> +              * can be switched only when mux_0 has a clock input. Therefore,
->>> +              * add flag CLK_OPS_PARENT_ENABLE to ensure that mux_0 has clock
->>> +              * when "no glitch mux" works.
->>> +              */
->>> +             .flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
->> Humm CLK_OPS_PARENT_ENABLE is not how we have handling glitch free mux
->> so far. What changed ?
->> 
->
-> This is a hidden problem we have discovered in recent years, the previous
-> chip use is ping-pong switching "no-glitch-mux/glitch free" have this
-> problem. If mux_0 does not have a clock "no-glitch-mux", it will not be
-> able to switch channels, and I will organize and submit patch to fix it
-> later.
-
-The NOTE comment and what the code does are not aligned.
-* Your comment says that input #0 must be enabled for the mux to work
-* The flag ensure that parent is enabled before switching to it. There
-  is nothing specific about input #0
-
->
->>> +     },
->>> +};
->>> +
->>> +/* Channel 6 is gp1. */
->>> +static u32 nna_parent_table[] = { 0, 1, 2, 3, 4, 5, 7};
->>> +
->>> +static const struct clk_parent_data nna_parent_data[] = {
->>> +     { .fw_name = "oscin" },
->>> +     { .fw_name = "fdiv2p5" },
->>> +     { .fw_name = "fdiv4" },
->>> +     { .fw_name = "fdiv3" },
->>> +     { .fw_name = "fdiv5" },
->>> +     { .fw_name = "fdiv2" },
->>> +     { .fw_name = "hifi" }
->>> +};
-
+>  };
+>  
+>  static struct platform_driver exynosautov920_cmu_driver __refdata = {
+> -- 
+> 2.34.1
+> 
