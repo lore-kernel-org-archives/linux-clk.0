@@ -1,97 +1,102 @@
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5313918BB9E;
-	Mon, 30 Sep 2024 10:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9512318BB9E
+	for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 10:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693417; cv=none; b=fMrqRiYu7WbHrrH2QcSg2UsEFe4ZhmYTvJpH6pZWyJvWEh12fb2vFjakm60oPwW207S89He5frC8LfM8j4+hA0iI7GgpCTjDpc4FiC2X2w7pAyRt7CACK5VLbaRjANIWwFVgDZHEs+dzJuKlMQG7BgSj43UwX69rFrhQQ81Beeg=
+	t=1727693518; cv=none; b=DY37Yv1iwwTxc9y2435PVb+kes8dOwqXMaUWirnGMyNIg0KL5XwKLaKczzXizzJ02IrVesHgBXnP8wvAWIwbGavy4Oiogmm+x8oDnlrFmIZKITu8EJC2TqSIvCtee3RXLerp+QFkthzG6MMsm0jVktxa2YWKgMquqOD0TqG6o88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693417; c=relaxed/simple;
-	bh=w4J45orhsf8tZYcUUE666E7eYUVbtcrj8y83qf8plJw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qm7oHFUrG7hc+k3RuePLaJRx5enI16tMS29vSUFDURDY6J0kD/LPDk9zHvmRxyF008+UFYHGQTZQeWCyrW41VAKm4OU3iFXa2qBT0DAqqdg1/dQ+cNaeOIAoCJ7NuMC0OoXyrTP8iW3KDgfJKridbOD3gM8DexgAHbSacifqtqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <adiupina@astralinux.ru>)
-	id 1svDwx-00Fdfn-N7; Mon, 30 Sep 2024 13:48:19 +0300
-Received: from rbta-msk-lt-302690.astralinux.ru (unknown [10.198.42.81])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XHHrt5xRnz1gwkc;
-	Mon, 30 Sep 2024 13:49:50 +0300 (MSK)
-From: Alexandra Diupina <adiupina@astralinux.ru>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alexandra Diupina <adiupina@astralinux.ru>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v4] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
-Date: Mon, 30 Sep 2024 13:49:34 +0300
-Message-Id: <20240930104934.4342-1-adiupina@astralinux.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1727693518; c=relaxed/simple;
+	bh=qs7ZJEUvQkDuGY/NdNPSo7a5/3b+K7XWq8qcKl9g+0Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rOaIzlxIvNHwZIZw7OUkggnNEhT/VIQqAz+PPJOxV58Zo8Odw2DF/mjuDpTHum8ehrvCMU3CZu0NRQUftcruWtzoHyDwGLxSLV9Sq7YbAauyQoeuVQ+487hgBuX/5PTzKrHmW9Br4yAlmLxN+K+pvRI2RuVY7wm2BWfcVTbPj9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eZSo/vkJ; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZSo/vkJ"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e6dbc8c7dso5849505e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Sep 2024 03:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727693515; x=1728298315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5NrpcGzq2X7FUeooo3oK/NoZGdoCws8o9zjwmd3SwC4=;
+        b=eZSo/vkJNw2QUhTp47vWhqDHAXDX5Ph+nFm7KsItW3z3SZ0GvjtKtPMFetYX8sUfBT
+         GoBdVqXSuZZjiY0uzgcuHNw/uw+ncDn71HZGcqe5c5P8mpffUckUsMRggzExSHs4MTvI
+         aouGbHhxbkD64ErVgr6rbAqnN5UyElu6oXyFZzll3ty3MmPqPTCcUUWC84iGtVPjpIVJ
+         1xhtnwmN8GttYO2tfUw3RjkDAVS9HitI2V31ACqbP5vblH3YCjqiRtObQyuTbkBlH7vD
+         S7BWNocvGQXDPEmcmPodixFUaN4ZKJ9zSGs1H180n4a1ff+XIyyvQyfvC6xOv4ynaSF/
+         WU2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727693515; x=1728298315;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5NrpcGzq2X7FUeooo3oK/NoZGdoCws8o9zjwmd3SwC4=;
+        b=PQdnPvB7CIYeZkBzgafbbc9avVzlpj4lwkzd6+oFjxbuMotBFu7WWpXDKbarhS+1Ps
+         LaH4didOmr02PIrAvNquxNNzaA2W9iH4g2eQtT8N+uc6m2GBS79kSNL3IRwDRXY1q+sX
+         EcWH8ED4Us+IMdJC+bxv6TTFjtUJBlzxJPbx4B9tAThfXnrQ+6cyIBniKAwrKEW+Ryfi
+         +JisQusoF9StrIKAXgfmXVs+3yfqQp7tGyP8bgbFg2kSdTOhWDX3+WzS+uIxsgvrBSxb
+         2xIPB5kK+UV1IcKLgy/n4zBvT+HE5B7Ij2DmNS4YiFpqZWVpu/i56XbLcBtnykIiXrEk
+         zh3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXNoiI+Bs8CJ2CP6C3uDZllvwgyi4b9d32Z7CA0Q0O7gX0+hGJq/NPA3KdmknxDRXynbgPX2+tgirQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7YM07H34UmOfgGl8jidhpZkVDXLM6sbQIZEBLhn3jC0K7Ntww
+	XhCeWNuYpW9YcTsln1VBts8UShMlZwJ+1e8UxcYou1U7/8vJPVvkdwbxjnOZrKBI69hvk/irUXM
+	It6Q=
+X-Google-Smtp-Source: AGHT+IEOO29rsmHXOq1A8VX2uRLf7D10lSyWawJH83ILxagvL2rZ5u7vPabfYAr/tIknh/8GVqnDTg==
+X-Received: by 2002:a05:600c:4fd2:b0:42c:baba:13cb with SMTP id 5b1f17b1804b1-42f5e37365bmr26702885e9.2.1727693515024;
+        Mon, 30 Sep 2024 03:51:55 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dd3106sm98632815e9.7.2024.09.30.03.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 03:51:54 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+ alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, Inbaraj E <inbaraj.e@samsung.com>
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
+In-Reply-To: <20240917094355.37887-1-inbaraj.e@samsung.com>
+References: <CGME20240917094449epcas5p37c2593fe8f181d6b19a9a1b290488186@epcas5p3.samsung.com>
+ <20240917094355.37887-1-inbaraj.e@samsung.com>
+Subject: Re: [PATCH 0/2] clk: samsung: remove number of clocks from
+ bindings
+Message-Id: <172769351330.28623.202959929040095252.b4-ty@linaro.org>
+Date: Mon, 30 Sep 2024 12:51:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigrnhgurhgrucffihhuphhinhgruceorgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeduleetfeehffekueeuffektefgudfgffeutdefudfghedvieffheehleeuieehteenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrgedvrdekudenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdqfedtvdeiledtrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrdduleekrdegvddrkedumeegtdeludeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgvsggrshhtihgrnhdrhhgvshhsvghlsggrrhhthhesghhmrghilhdrtghomhdprhgtphhtthhope
- hmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1727684630#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12190301, Updated: 2024-Sep-30 09:34:50 UTC]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-get_div() may return zero, so it is necessary to check
-before calling DIV_ROUND_UP_ULL().
 
-Return value of get_div() depends on reg1, reg2, shift1, shift2
-fields of clk_double_div structure which are filled using the
-PERIPH_DOUBLEDIV macro. This macro is called from the
-PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
+On Tue, 17 Sep 2024 15:13:53 +0530, Inbaraj E wrote:
+> This patch series moves number of clock from dt-binding to driver for FSD
+> SoC.
+> 
+> Inbaraj E (2):
+>   clk: samsung: fsd: do not define number of clocks in bindings
+>   dt-bindings: clock: samsung: remove define with number of clocks for
+>     FSD
+> 
+> [...]
 
-It is not known exactly what values can be contained in the registers
-at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
-div can be zero. Print an error message and return 0 in this case.
+Applied, thanks!
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+[1/2] clk: samsung: fsd: do not define number of clocks in bindings
+      https://git.kernel.org/krzk/linux/c/a86ffa40a64bd4d119c260a99e28f2a71f86d9f4
+[2/2] dt-bindings: clock: samsung: remove define with number of clocks for FSD
+      https://git.kernel.org/krzk/linux/c/2d3e0135cefccbcd8459112a8afe260e7b51ff6d
 
-Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
-Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
----
-v4: replace hw->init->name with clk_hw_get_name(hw)
-v3: fix indentation
-v2: added explanations to the commit message and printing 
-of an error message when div==0
- drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 13906e31bef8..2f0145a76f22 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
- 	div = get_div(double_div->reg1, double_div->shift1);
- 	div *= get_div(double_div->reg2, double_div->shift2);
- 
--	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+	if (!div) {
-+		pr_err("Can't recalculate the rate of clock %s\n", clk_hw_get_name(hw));
-+		return 0;
-+	} else {
-+		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+	}
- }
- 
- static const struct clk_ops clk_double_div_ops = {
+Best regards,
 -- 
-2.30.2
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
