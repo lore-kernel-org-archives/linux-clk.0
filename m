@@ -1,90 +1,139 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0141925A3;
-	Mon, 30 Sep 2024 14:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EE1131E2D;
+	Mon, 30 Sep 2024 20:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708303; cv=none; b=c4lgWcnjxiOHZCqMWADdSMM5INOW6kQrZVfTsZg+8mBHPy0SLSEzmffQcaeWY9XtoGQzAlCDDJM/wm5T4M2CRE2MoEX5SJXlJ9qfMrMZNTUNM+Ah9kG9smMasbMlKjIYMz8xN+1pxW7wSI56d3Jl2ght62pzVKhrIjC84vluY6c=
+	t=1727726914; cv=none; b=Gnj+gi4tKBS8iYLPoyEN29ZlcOQO6pace3lPVDkSYQ3jmNVp/vdVXfrgsbfIXXel5UDKlkSjXkQYNMKtre7/KzfsdcbW61H8TppkTfpBB/yW6SQxafd3891s9bqMXCwb37M0SLDK/MY7kp7S7Lv6ZwAIrffQuQe4ST50RfBA9yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708303; c=relaxed/simple;
-	bh=7RX6RwRNa67Vv/ld0q+wViNY36r0TS+nBtx/sUS5LYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E8HcQCS1AiGHQ4wj4JBzUkskDc3NHmymF5nzGlzuXVX2gxeNUQHrehFP+6fA1O/JSVLX8uDJ9xvOGI+W0PA3K9gGUDfzol9Rgae36fM+/WkKFfU1TM1RAiXTanZmnau1zDeANdh5Awp1SticUlXJkKsdavEqpbrhWq/gXwi2FyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-IronPort-AV: E=Sophos;i="6.11,165,1725289200"; 
-   d="scan'208";a="220366597"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Sep 2024 23:53:12 +0900
-Received: from mulinux.home (unknown [10.226.92.226])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3763A4204B8B;
-	Mon, 30 Sep 2024 23:52:54 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/5] Add support for the RZ/V2H Interrupt Control Unit
-Date: Mon, 30 Sep 2024 15:52:39 +0100
-Message-Id: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727726914; c=relaxed/simple;
+	bh=pT1dL8lysN8vggO0eK3mScXgfCxlzNq4RmSSqIJ9kKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tUh7N0L4HbngApe/+NKuJ32DFxkiZKOP8AnmWuJWG/DjmVgh3PhxcsrvHim1R4WJVb5K7fuWNTwj5HNn0DEG7pCyaAV+Ni8s86pjVZhF+b/9K6vOgHiGyYA96p1St/6i40EJU7GrsR/sw/+yxk00aJTZVTE306FT6rTxduOcxN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=adH4EL2x; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="adH4EL2x"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b95359440so10425345ad.0;
+        Mon, 30 Sep 2024 13:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1727726912; x=1728331712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pT1dL8lysN8vggO0eK3mScXgfCxlzNq4RmSSqIJ9kKA=;
+        b=adH4EL2x+P1e1QGueyCXcWECeIgdbW96hoh+pnY5GrF/TWuV2phtyz1k/PgmGJP+Xk
+         /HvgdV3A6cn079/b5Ony960OxmdrIjBx0y/wPwCzUpQAd+fgiqYPHfV+sFveEuYrUQpL
+         SorpcJyn1eEorsc7Uui2Q3efjbqXyLKTjG+fUW0XGh4KD+t1OFj6uz7zPLw7dApb9DgY
+         0CjQ5z7R2qSA10Hm8vFkqD6HeehmT8rBfUhbU64jwo4DKg2JLqVB56m5o0Ip6XkL0FJR
+         H2wsu0OxNrqdYp5Ax32uRulz+y3IiMvCmPiBVbtMp/EaTISTe3Oox7bE63aXJE78YDDA
+         qszQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727726912; x=1728331712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pT1dL8lysN8vggO0eK3mScXgfCxlzNq4RmSSqIJ9kKA=;
+        b=BENLg3TSCRA+R4zmRuGvu13zJlwgLRASmv7/OfXALNWtVlZ0KFCt6PTfg6RCGJzdtp
+         p+tIm2/veb4zIMb3P5LbQuxQQLmGzOEGIPwVWJmwDi4WUQeL/rIRw2vpiMifqxYXLsHI
+         B33PQKKa8yPputUhm8wm5PUigLSZT4IBWA0vxfNukhqyEwpiSZAoWqg4DJ2ZXdBKMrxl
+         qtpCNZLu4xQ1BgfnlLY/wHDz1qIljjCjEE6gUNbXY7+/QfJRNiVmgvTJulGvukrcQguh
+         ssYphCM2SisIHvayMJLu8Hk2PFB42OW0gRkwF34EUUyMQijZ9XAap7bqnI85K2ql9naz
+         UONg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG77TmCXfPpIoJ9j//SjN4l7hYpcDVSr72ijo+Il/Mlh4q17+WYccf3UzpQw+Jn0BaIpU8xOmFWD3FCM9g@vger.kernel.org, AJvYcCWndmPMQTMV8QAgGdnjWS/PTWqh6nsikrKdf4wneWcFuZ5/UdsRLrmY3oHd2xRBbaM2LY3S+l/TyVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyf7OZUnsl2AGYEY2pQA1SS4pdvMzui2LISgOes94YfpYB9M3V
+	W6iS/AdnGuI/91sxH7bBmll69a/+ryU6He8LszR97gb/BCo1dtysvVXr/lDX3MxEbhvvuNDPRC2
+	oGeidNvUNmIzedUuqRYggx/OuPMc=
+X-Google-Smtp-Source: AGHT+IEs2DmofWhzUH0ql6mNKV1LnAfUh+w0gmpzifWQCksoK4G24DGc3LF4HeEZB6BMBG7TMZ9Aw+33F5R9xGMlPBc=
+X-Received: by 2002:a17:903:2307:b0:20b:5046:35b with SMTP id
+ d9443c01a7336-20b5046080bmr160097295ad.57.1727726912048; Mon, 30 Sep 2024
+ 13:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com> <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+In-Reply-To: <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 30 Sep 2024 22:08:21 +0200
+Message-ID: <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
+To: chuan.liu@amlogic.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear All,
+Hello,
 
-This series adds whatever is required for supporting NMI, IRQ, and
-TINT interrupts to the Renesas RZ/V2H SoC.
+On Sun, Sep 29, 2024 at 8:10=E2=80=AFAM Chuan Liu via B4 Relay
+<devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> glitch free mux has two clock channels (channel 0 and channel 1) with
+> the same configuration. When the frequency needs to be changed, the two
+> channels ping-pong to ensure clock continuity and suppress glitch.
+You describe the solution to this below:
+> Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
+> switchover to suppress glitch.
+It would be great to have this change in a separate patch.
+The clocks to which you're adding CLK_SET_RATE_GATE aren't switched at
+runtime in mainline kernels (at least I think so).
 
-v1->v2:
-* Dropped patch "dt-bindings: pinctrl: renesas: rzg2l-pinctrl: Add interrupt-parent".
-* Patch "dt-bindings: interrupt-controller: Add Renesas RZ/V2H(P) Interrupt Controller"
-  amended as per Rob's comments.
-* Patch "irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver"
-  fixed missing put_device.
+> Channel 0 of glitch free mux is not only the clock source for the mux,
+> but also the working clock for glitch free mux. Therefore, when glitch
+> free mux switches, it is necessary to ensure that channel 0 has a clock
+> input, otherwise glitch free mux will not work and cannot switch to the
+> target channel.
+[...]
+> glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that channel 0
+> has clock input when switching channels.
+This describes a second problem. I think it's best to have this in a
+separate commit/patch.
+Also you're updating some mali clocks (e.g. on G12 and GX) but not all
+of them (Meson8b for example is missing).
 
-Thanks,
-Fab
+I still have some questions to the CLK_OPS_PARENT_ENABLE approach -
+please share your findings on this.
 
-Fabrizio Castro (5):
-  pinctrl: renesas: rzg2l: Remove RZG2L_TINT_IRQ_START_INDEX
-  dt-bindings: interrupt-controller: Add Renesas RZ/V2H(P) Interrupt
-    Controller
-  clk: renesas: r9a09g057: Add clock and reset entries for ICU
-  irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver
-  arm64: dts: renesas: r9a09g057: Add ICU node
+There's multiple clocks involved in a glitch-free mux hierarchy:
+- a number of clock inputs (e.g. fclk, xtal, ...)
+- two muxes (one for every channel of the glitch-free mux)
+- two dividers (one for every channel of the glitch-free mux)
+- two gates (one for every channel of the glitch-free mux)
+- the glitch-free mux
 
- .../renesas,rzv2h-icu.yaml                    | 276 +++++++++
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  88 +++
- drivers/clk/renesas/r9a09g057-cpg.c           |   2 +
- drivers/irqchip/Kconfig                       |   7 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-renesas-rzv2h.c           | 527 ++++++++++++++++++
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |   8 +-
- drivers/soc/renesas/Kconfig                   |   1 +
- 8 files changed, 908 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
- create mode 100644 drivers/irqchip/irq-renesas-rzv2h.c
+When switching from channel 0 (which is active and enabled) CCF
+(common clock framework) will:
+a) on channel 1:
+- find the best input clock
+- choose the best input clock in the mux
+- set the divider
+- enable the gate
+b) switch the glitch-free mux
+c) on channel 2:
+- disable the gate
 
--- 
-2.34.1
+To me it's not clear at which level the problem occurs (glitch-free
+mux, gate, divider, mux, input clock).
+Also I don't understand why enabling the clocks with
+CLK_OPS_PARENT_ENABLE solves any problem since CCF is doing things
+automatically for us.
+Can you please explain (preferably with an example) what problem is
+solved with this approach?
 
+Last but not least: if we're running into bugs when
+CLK_OPS_PARENT_ENABLE is missing then that patch should carry a Fixes
+tag.
+
+
+Best regards,
+Martin
