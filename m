@@ -1,110 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB4B17DFEB;
-	Mon, 30 Sep 2024 13:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC547192599;
+	Mon, 30 Sep 2024 14:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704075; cv=none; b=T8JhfJvYqE+WDmU76lxTZ1yp+fMnpotrstV9BNNC7PIFwaupQAn5asQ/tB5Km8Kq72XfrOrrrtytXjTP705IWHX469IjQNCSize0h4xTZapNDTictu+n62w1uxjRM9UUUIUM7Ag0cZRFuvf8Fj2GloDsFW7iJHXDea0VF2Bpm7s=
+	t=1727708008; cv=none; b=LDK+YD6hKoHvrki+B7NEYJLsGmrDE726EA+IZBj5Vsw0g0Lwq8wN7gpmccrOoTfnFqSNoMHhU5fGDF85BTcwVWdhVAwsN79sBAL0zQpjCoXhA0/ocJFN7H2lQMoeMJBV9qerUZ1FAAUMTtjzI6tFaG1IDeLP1/5t3wuNdseFoe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704075; c=relaxed/simple;
-	bh=XzNX2t1xxnZjsa7RwzNfCX2nQJVLYaCqjyt7jh1gGFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgiwlwhEEkv1AICQ4C/U92wUrpwItqXBgBRy2BQCivS/2F3NsZ+f7niWM4uVScvEILoS2ClAYUOInCVhuZSeaAvE2ZETeKwN0RMUgMDVtwW2C0cD8l3LMu12pwJk7s+p5z45dxrDMFVroFN2ZdPvs6KgroOqbub7ENggscQn0RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FV97WcvE; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FV97WcvE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE964C4CEC7;
-	Mon, 30 Sep 2024 13:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704075;
-	bh=XzNX2t1xxnZjsa7RwzNfCX2nQJVLYaCqjyt7jh1gGFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FV97WcvEspdNiIELdtSLP0YgKC1mXjqYTLWmnYS+2VcsRv3+ZQ5Dl8JmAQ3Q0vP5r
-	 62xEk7CbD9QzZzTax9fNs48PgkJfmdKO8uW54DVHmWJLEMfpQVyYw4WtOECC53eqYK
-	 HavTuduBMipJQvS/lUyQ9S7hY0VcPv85i7tqwSUDUJwFYQ0FzqEAKfVuezOlNNk/dT
-	 gvRknUCS+jh1MGm5LaXY1x/UIHXCCpytGlgmephdhnBLoymxg0ymce772lJxqG6RBT
-	 zoAdkLb/HeY8NOmZSQXrGi5BBUTLbj4dWIUDNgUJpiKVkllF6Z7BDcP+9xZtdngRyH
-	 G2vlT3i20/yqQ==
-Date: Mon, 30 Sep 2024 14:47:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: pierre-henry.moussay@microchip.com
-Cc: Linux4Microchip@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 08/20] dt-bindings: clock: mpfs-clkcfg: Add
- PIC64GX compatibility
-Message-ID: <20240930-twister-coveting-2861bab77048@spud>
-References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-9-pierre-henry.moussay@microchip.com>
+	s=arc-20240116; t=1727708008; c=relaxed/simple;
+	bh=skhX5iggBsH2GvmQkeGyNH4KLXmlyqwdCB2pLRX3xUg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LkWqUIzQpawDb4F4e3ML5BbHq510cU0P3HqwNPI/vTB+vlVPxHLIMAInqfaFSxKGyuMmRTDJuoYpvMnZsBJYjW7OF292ePndM45SYHDq2jGU+OYXdzVhv20IDv6W6f/WwScjvcDmIxKU6aQcKv2+4TplrlUERqF8aOi0YMBLZlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.11,165,1725289200"; 
+   d="scan'208";a="224342622"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 30 Sep 2024 23:53:25 +0900
+Received: from mulinux.home (unknown [10.226.92.226])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1E6C24204B8B;
+	Mon, 30 Sep 2024 23:53:14 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 3/5] clk: renesas: r9a09g057: Add clock and reset entries for ICU
+Date: Mon, 30 Sep 2024 15:52:42 +0100
+Message-Id: <20240930145244.356565-4-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com>
+References: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nX8cDUaRrz3hvHbN"
-Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-9-pierre-henry.moussay@microchip.com>
+Content-Transfer-Encoding: 8bit
 
+Add clock and reset entries for the Renesas RZ/V2H(P) ICU IP block.
 
---nX8cDUaRrz3hvHbN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+---
+v1->v2:
+* No change
 
-On Mon, Sep 30, 2024 at 10:54:37AM +0100, pierre-henry.moussay@microchip.co=
-m wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
->=20
-> PIC64GX has a clock controller compatible whith mpfs-clkcfg
+ drivers/clk/renesas/r9a09g057-cpg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-NAK, v1 comments need to be addressed before this can be done.
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 3ee32db5c0af..b82fee006d65 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -78,6 +78,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
++	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5),
+ 	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3),
+ 	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4),
+ 	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5),
+@@ -119,6 +120,7 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ };
+ 
+ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
++	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
+ 	DEF_RST(6, 13, 2, 30),		/* GTM_0_PRESETZ */
+ 	DEF_RST(6, 14, 2, 31),		/* GTM_1_PRESETZ */
+ 	DEF_RST(6, 15, 3, 0),		/* GTM_2_PRESETZ */
+-- 
+2.34.1
 
->=20
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> ---
->  .../devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml    | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcf=
-g.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-> index e4e1c31267d2..ca889f5df87a 100644
-> --- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-> +++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-> @@ -19,7 +19,11 @@ description: |
-> =20
->  properties:
->    compatible:
-> -    const: microchip,mpfs-clkcfg
-> +    oneOf:
-> +      - items:
-> +          - const: microchip,pic64gx-clkcfg
-> +          - const: microchip,mpfs-clkcfg
-> +      - const: microchip,mpfs-clkcfg
-> =20
->    reg:
->      items:
-> --=20
-> 2.30.2
->=20
->=20
-
---nX8cDUaRrz3hvHbN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqsBgAKCRB4tDGHoIJi
-0kWoAP90aUTipNz/ZVbmJigGdbXIDI8KgMG45+NYCz6lVdWSYAD/aANBl+86hp5W
-hdXibaIItA0jDG1eYPCvKYWoUVxHvA8=
-=fM/P
------END PGP SIGNATURE-----
-
---nX8cDUaRrz3hvHbN--
