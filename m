@@ -1,311 +1,137 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893803A267;
-	Tue,  1 Oct 2024 02:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A2D1A302A;
+	Tue,  1 Oct 2024 03:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750211; cv=none; b=me6OTnvQIns7VA978zxO6Tv6EcXu/yK+QG/P0r5METu9zAmTUCqMjGi2QlR+0L+jriHtNFnCAAXFj67kQHlJlwnaLBnqekfOwkhCfMsBBIxKFHzILKiVRJZUi2+uHOQ4VWqTzlKOBpypbjFjYMVPG1eyFT+U/9CenrwkD+uijYI=
+	t=1727753927; cv=none; b=IJ745l6R1MLSDRgNn5EMNqE27KyYqjIZkLWC/LCVG22cvgNd0XZdOPUbJ7vGhKNboPOWvsQfnK0pcFRbtzROSnYoZMxGCkO8zQFslVtwohG/lp+lDVw65UgPjfLobwMd1aGJUMhKWxBwTi3iG6w1JUkNw3C+MV6J/UL9FfzDUpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750211; c=relaxed/simple;
-	bh=RUzfem2+A+6X/IbGCFdAYXlDUmmSXdAtuhH7PjAg9Is=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iSvsjlK/qy6QXZmcwkxK7qgli5oVfiMWOtmsUaXi2IxRpyIDp/Hj1XtbOy4l7nEX2PjL8G12ShaF6prXXZnCqdN/tSecSmkqRzosqoKRpn5Nm250T/5OKyr30xjHVxDcizLzGIW4Eushh17lS4p+N7H8J+4IdGwPwlRiDTKVGms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7m42Ag2; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727753927; c=relaxed/simple;
+	bh=BruhvztGVRz244FjNt3OmnFlYUoo08jl3Gsy1pYwjiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JoJh6pB7Y1FDQBePrQEBuMqyIhKu6weRMvZXzAWtRtzeTgRl1EEYrcV1iOxWkjaKVl0m/yl087BYbuKNkSEMcS+VB6PbN1C5issW9/elERXpqkhhnpODyGVySNTnl2HAQJdcMBdN0fTQJ2bzJ0tvuThBAJ5xccgKYk8p9lTFEzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=nmebeck7; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7m42Ag2"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7acd7d9dbefso600101885a.3;
-        Mon, 30 Sep 2024 19:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727750208; x=1728355008; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xvE1bk25FPWJ1QwZ3W8oNtHHuv+uTz4I7G4xaEVim6M=;
-        b=m7m42Ag2pOrZCbpaeVh+xmfbVpDYxKfl3PCSvleyr3HgkSES02BJBsSBtVaU1pj9xn
-         HXufTUDICpJNOPHwfeidCLzdMHSulavWUF+SXROqvDS/3LaxRutTjM7rnjtgwdJC4KM4
-         Q+wIpiTO/+aHUwFzq+dAtmOWlMtrS7yIDjqRwBwFJeQntd3IHXwLTEHroAg/fQ0ne0ck
-         bQ5QV9IuawOc4X3wAK9QchBMg0mzypapstPAZsmVx9NGB146z4xkgdNe5Wq+1lOhk3lC
-         /TKbLdpONRmM7PHvIDMn57iTbODCzI3ywq13ovs0rc54WUso77M4OquDbSymMwPzRRso
-         5zmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727750208; x=1728355008;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xvE1bk25FPWJ1QwZ3W8oNtHHuv+uTz4I7G4xaEVim6M=;
-        b=kSvuPOp78Q2QFTHJ7Wahe6slHTcNnh8cCZDv4unOT1CDqTBUSRuzSiq3WsrrZ4puPB
-         AhpUGTIE78fn7pautnJM7kY5OTclqmOSpTO2oC8lVVYNga5ueeXDnUPMRszrvwhQjPZk
-         CRqONaGQIgjsD8v8NkKsnZvMp+sh4sDW7DKtTOfPFS0sm3Rfp1k548JOurV6+bUoRqmi
-         JC2dcfdZNcWniWzAxFHHi0JCHzQxmZ38HfZxIogV3bTqUAbIZij2RANtXFMO7brjIB8l
-         P4o/OyOgg871nFV7S8iRM4+x718uylp3XI+SMRP8r6sAYLM8cmjFMTwO6YsEZ/N6BBYf
-         xPFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNaGVK/StmR26EyfHbEtQLnxuFmyVGedbKTr35g+fw4LpfepUFrEu99PcruFie2UidvShsiYVv0jRRvlw=@vger.kernel.org, AJvYcCV3T3IFooRXyMmDS198BEMioWM0gYhs/1Jt0/tOG0nYqBr4E3jtDMBU8iEyF0pIee0FOSRezvcWB6RA/OBMww==@vger.kernel.org, AJvYcCW3PlFKR2Riu0rWkGXwvKYDevSKAieVnryVXkpAYZT3bACKscgazGlsnd1EKMsyZdZ0H/3IgdLI0D95@vger.kernel.org, AJvYcCX4RIvZdAbJb6hF0ZdkuBWlHpoahYqJ23c44JaqHjojTA9NlEvM+GSF8bGKsJfXDjLUSWTx5+JBPjDH@vger.kernel.org, AJvYcCXf+VKECcH7n4+7fmQmmOVv7JIeZbMznwLWt+3u1g6K4+3Bv7VbApE1p5IBK3gBu+PD0WKMKC85Uqve@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWO4fO2zHVkLfdHKgPg9DVixj8Ei5hQzOyaQJMRI5NeWlgDtV5
-	xlCUZWCf6y6/BkFeQupDuY/sQVco2CNHsSnWmyY8u+9KpKPaRlUB0ZZGTeUf
-X-Google-Smtp-Source: AGHT+IGNUqg0hfxOcyGETnBGMq5zhNJSkpMojzUxGvdbwCaDBmGSxkwKmQ4Q8I2ALZy9X92Ycu2/wA==
-X-Received: by 2002:a05:620a:1791:b0:7ac:9aa1:b64d with SMTP id af79cd13be357-7ae378dd74emr2340578485a.57.1727750208340;
-        Mon, 30 Sep 2024 19:36:48 -0700 (PDT)
-Received: from localhost ([2607:fea8:52a3:d200::1a17])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae377bc91asm463743385a.25.2024.09.30.19.36.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 19:36:47 -0700 (PDT)
-From: Richard Acayan <mailingradian@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Richard Acayan <mailingradian@gmail.com>
-Subject: [PATCH v5 7/7] arm64: dts: qcom: sdm670: add camss and cci
-Date: Mon, 30 Sep 2024 22:35:28 -0400
-Message-ID: <20241001023520.547271-16-mailingradian@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001023520.547271-9-mailingradian@gmail.com>
-References: <20241001023520.547271-9-mailingradian@gmail.com>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nmebeck7"
+X-UUID: a45739047fa611ef8b96093e013ec31c-20241001
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=Gjo5+pSdTGHwq6JJECrTZEup0IvHwkFVyPMeb0WdRaM=;
+	b=nmebeck7ebIeyinQZ2dJqTvoYFiPslU4ffov857EPbhwoXhLMHz9MBIbRsi1UhKBceD4msWOXH6cL2d/RLc87VCeM9NtaxnNbOHxkQFwNBPJ4ugyZ0tjZSzWpjAlJ6hJLzmD2yYJtucQ1ZDsgeAUKtCQzbUzJ+olXYxdICxcVp8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:6375fd9d-b426-4f14-9928-58c5951137ea,IP:0,U
+	RL:0,TC:0,Content:3,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:3
+X-CID-META: VersionHash:6dc6a47,CLOUDID:c986d39e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: a45739047fa611ef8b96093e013ec31c-20241001
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1679239653; Tue, 01 Oct 2024 11:38:37 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 1 Oct 2024 11:38:35 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Tue, 1 Oct 2024 11:38:33 +0800
+Message-ID: <329b554b-e029-0dfe-7c18-67c7c58f8302@mediatek.com>
+Date: Tue, 1 Oct 2024 11:38:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2 3/6] nvmem: mtk-efuse: Enable postprocess for mt8188
+ GPU speed binning
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+References: <20240927103005.17605-1-pablo.sun@mediatek.com>
+ <20240927103005.17605-4-pablo.sun@mediatek.com>
+ <57dfe684-c9a1-4cb3-8c87-9d2fef09aed7@collabora.com>
+From: Pablo Sun <pablo.sun@mediatek.com>
+In-Reply-To: <57dfe684-c9a1-4cb3-8c87-9d2fef09aed7@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add the camera subsystem and CCI used to interface with cameras on the
-Snapdragon 670.
+Hi Angelo,
 
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm670.dtsi | 185 +++++++++++++++++++++++++++
- 1 file changed, 185 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm670.dtsi b/arch/arm64/boot/dts/qcom/sdm670.dtsi
-index 02f87200690a..d1b84c9f7481 100644
---- a/arch/arm64/boot/dts/qcom/sdm670.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm670.dtsi
-@@ -6,6 +6,7 @@
-  * Copyright (c) 2022, Richard Acayan. All rights reserved.
-  */
- 
-+#include <dt-bindings/clock/qcom,camcc-sdm845.h>
- #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-@@ -1168,6 +1169,34 @@ tlmm: pinctrl@3400000 {
- 			gpio-ranges = <&tlmm 0 0 151>;
- 			wakeup-parent = <&pdc>;
- 
-+			cci0_default: cci0-default-state {
-+				pins = "gpio17", "gpio18";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			cci0_sleep: cci0-sleep-state {
-+				pins = "gpio17", "gpio18";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
-+			cci1_default: cci1-default-state {
-+				pins = "gpio19", "gpio20";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			cci1_sleep: cci1-sleep-state {
-+				pins = "gpio19", "gpio20";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
- 			qup_i2c0_default: qup-i2c0-default-state {
- 				pins = "gpio0", "gpio1";
- 				function = "qup0";
-@@ -1400,6 +1429,162 @@ spmi_bus: spmi@c440000 {
- 			#interrupt-cells = <4>;
- 		};
- 
-+		cci: cci@ac4a000 {
-+			compatible = "qcom,sdm670-cci", "qcom,msm8996-cci";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			reg = <0 0x0ac4a000 0 0x4000>;
-+			interrupts = <GIC_SPI 460 IRQ_TYPE_EDGE_RISING>;
-+			power-domains = <&camcc TITAN_TOP_GDSC>;
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_SOC_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CCI_CLK>;
-+			clock-names = "camnoc_axi",
-+				      "soc_ahb",
-+				      "cpas_ahb",
-+				      "cci";
-+
-+			pinctrl-names = "default", "sleep";
-+			pinctrl-0 = <&cci0_default &cci1_default>;
-+			pinctrl-1 = <&cci0_sleep &cci1_sleep>;
-+
-+			status = "disabled";
-+
-+			cci_i2c0: i2c-bus@0 {
-+				reg = <0>;
-+				clock-frequency = <1000000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			cci_i2c1: i2c-bus@1 {
-+				reg = <1>;
-+				clock-frequency = <1000000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
-+		camss: camera-controller@ac65000 {
-+			compatible = "qcom,sdm670-camss";
-+			reg = <0 0x0ac65000 0 0x1000>,
-+			      <0 0x0ac66000 0 0x1000>,
-+			      <0 0x0ac67000 0 0x1000>,
-+			      <0 0x0acaf000 0 0x4000>,
-+			      <0 0x0acb3000 0 0x1000>,
-+			      <0 0x0acb6000 0 0x4000>,
-+			      <0 0x0acba000 0 0x1000>,
-+			      <0 0x0acc4000 0 0x4000>,
-+			      <0 0x0acc8000 0 0x1000>;
-+			reg-names = "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "vfe0",
-+				    "csid0",
-+				    "vfe1",
-+				    "csid1",
-+				    "vfe_lite",
-+				    "csid2";
-+
-+			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid2",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe_lite";
-+
-+			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&gcc GCC_CAMERA_AXI_CLK>,
-+				 <&camcc CAM_CC_SOC_AHB_CLK>,
-+				 <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>;
-+			clock-names = "gcc_camera_ahb",
-+				      "gcc_camera_axi",
-+				      "soc_ahb",
-+				      "camnoc_axi",
-+				      "cpas_ahb",
-+				      "csi0",
-+				      "csi1",
-+				      "csi2",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "vfe0_axi",
-+				      "vfe0",
-+				      "vfe0_cphy_rx",
-+				      "vfe1_axi",
-+				      "vfe1",
-+				      "vfe1_cphy_rx",
-+				      "vfe_lite",
-+				      "vfe_lite_cphy_rx";
-+
-+			iommus = <&apps_smmu 0x808 0x0>,
-+				 <&apps_smmu 0x810 0x8>,
-+				 <&apps_smmu 0xc08 0x0>,
-+				 <&apps_smmu 0xc10 0x8>;
-+
-+			power-domains = <&camcc IFE_0_GDSC>,
-+					<&camcc IFE_1_GDSC>,
-+					<&camcc TITAN_TOP_GDSC>;
-+			power-domain-names = "ife0",
-+					     "ife1",
-+					     "top";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				camss_port0: port@0 {
-+					reg = <0>;
-+				};
-+
-+				camss_port1: port@1 {
-+					reg = <1>;
-+				};
-+
-+				camss_port2: port@2 {
-+					reg = <2>;
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ad00000 {
- 			compatible = "qcom,sdm670-camcc", "qcom,sdm845-camcc";
- 			reg = <0 0x0ad00000 0 0x10000>;
--- 
-2.46.2
+On 9/30/24 17:40, AngeloGioacchino Del Regno wrote:
+> Il 27/09/24 12:30, Pablo Sun ha scritto:
+>> Similar to mt8186, the efuse data for mt8188's GPU speed binning
+>> requires post-process to convert the bit field format expected
+>> by the OPP table.
+>>
+>> Since mt8188 efuse is not compatible to mt8186, add a new compatible
+>> entry for mt8188 and enable postprocess.
+>>
+>> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> 
+> I know I told you to just reuse the pdata from 8186, but there's something else
+> that came to mind, here...
+> 
+> ...actually, the efuse block from 8188 is indeed compatible with 8186, meaning
+> that the register r/w, etc, are all the same (bar the addresses, yes)
+> 
+> So, I wonder if it's not just a better idea to not even add mt8188-efuse in this
+> driver's of_device_id array, and just add that to the binding so that we permit
+> using
+>          efuse: efuse@11f20000 {
+>              compatible = "mediatek,mt8188-efuse",
+>                       "mediatek,mt8186-efuse", "mediatek,efuse";
+>              [etc]
+>          }
 
+Thanks for proposing this. I agree that in the case of Mali GPU speed binning
+info, mt8188 behaves exactly the same as mt8186, only the cell addresses are
+different.
+
+I wrote "mt8188 efuse is not compatible to mt8186" because I thought
+different eFuse cell layout leads to incompatibility, but it is correct that
+the cell layout differences can be expressed by the device tree nodes,
+so they are actually compatible in terms of hardware interface.
+
+I'll drop this patch ("nvmem: mtk-efuse: Enable postprocess for mt8188 GPU speed binning")
+in v3 and update dt-binding "mediatek,efuse.yaml" instead.
+
+> Means that in mediatek,efuse.yaml you'll have to add...
+> 
+>        - items:
+>            - enum:
+>                - mediatek,mt8188-efuse
+>            - const: mediatek,mt8186-efuse
+>            - const: mediatek,efuse <---- or without this, even.
+> 
+> In the end, the "mediatek,efuse" property is somewhat deprecated, so that'd
+> also be a good time to start the dropping process, as I imagine that future SoCs
+> would also need the same speedbin transformations - which means that they'll all
+> be compatible with 8186....
+[snip]
+
+But I am not sure if we should now drop "mediatek,efuse". The post-process for
+GPU speed binning info is only applicable to ARM Mali. Since there are MediaTek
+SoCs that are not using ARM Mali, or not having GPU at all, would it make more sense
+to keep the "mediatek,efuse" fallback compatible for those cases?
+
+
+Best regards,
+Pablo
