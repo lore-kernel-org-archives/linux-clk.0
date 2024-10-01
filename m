@@ -1,137 +1,106 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A2D1A302A;
-	Tue,  1 Oct 2024 03:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E351B5301;
+	Tue,  1 Oct 2024 04:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727753927; cv=none; b=IJ745l6R1MLSDRgNn5EMNqE27KyYqjIZkLWC/LCVG22cvgNd0XZdOPUbJ7vGhKNboPOWvsQfnK0pcFRbtzROSnYoZMxGCkO8zQFslVtwohG/lp+lDVw65UgPjfLobwMd1aGJUMhKWxBwTi3iG6w1JUkNw3C+MV6J/UL9FfzDUpY=
+	t=1727756742; cv=none; b=QIUd4Q2m0eUD02GuAHuZCCxmU9434dKeX+CRchLNYE2PGsOwT4+JSANxOuGDPszmzu4/DjYb5SbzGsdgOczmBOdKoUWhdyPS4Y0Kss/hPKlqNPxrSFJsI39T7i+xkp4WCl3Ygp8Jj0PZ0K4yyp5E09F/ZYH/4B84zLE4SLXR+Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727753927; c=relaxed/simple;
-	bh=BruhvztGVRz244FjNt3OmnFlYUoo08jl3Gsy1pYwjiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JoJh6pB7Y1FDQBePrQEBuMqyIhKu6weRMvZXzAWtRtzeTgRl1EEYrcV1iOxWkjaKVl0m/yl087BYbuKNkSEMcS+VB6PbN1C5issW9/elERXpqkhhnpODyGVySNTnl2HAQJdcMBdN0fTQJ2bzJ0tvuThBAJ5xccgKYk8p9lTFEzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=nmebeck7; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1727756742; c=relaxed/simple;
+	bh=VH7yflsNi1fts3RAMpJZ/C/k4OPfVtdy5jAhDmpXDSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p5HOeKtu5BU8sBTXzFEQPBg9U451fms62xcUhHzEEQrOs8xgBCbU13uIK9BtLV4fKFVsx84jg7o1kuZfKozV2TTCSjf2fe1LwUf3Jgni1in16XHPxx2u1jOZNWCKptA1wo0i8UDvekd0J7g1kiWMkmVaVpf2QAfxvXyHiNRWomc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fBXVrLWM; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nmebeck7"
-X-UUID: a45739047fa611ef8b96093e013ec31c-20241001
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=Gjo5+pSdTGHwq6JJECrTZEup0IvHwkFVyPMeb0WdRaM=;
-	b=nmebeck7ebIeyinQZ2dJqTvoYFiPslU4ffov857EPbhwoXhLMHz9MBIbRsi1UhKBceD4msWOXH6cL2d/RLc87VCeM9NtaxnNbOHxkQFwNBPJ4ugyZ0tjZSzWpjAlJ6hJLzmD2yYJtucQ1ZDsgeAUKtCQzbUzJ+olXYxdICxcVp8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:6375fd9d-b426-4f14-9928-58c5951137ea,IP:0,U
-	RL:0,TC:0,Content:3,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:3
-X-CID-META: VersionHash:6dc6a47,CLOUDID:c986d39e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a45739047fa611ef8b96093e013ec31c-20241001
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1679239653; Tue, 01 Oct 2024 11:38:37 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 1 Oct 2024 11:38:35 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Tue, 1 Oct 2024 11:38:33 +0800
-Message-ID: <329b554b-e029-0dfe-7c18-67c7c58f8302@mediatek.com>
-Date: Tue, 1 Oct 2024 11:38:33 +0800
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fBXVrLWM"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D706F23D8F;
+	Tue,  1 Oct 2024 06:25:29 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id U8AI-d-3s4H9; Tue,  1 Oct 2024 06:25:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1727756729; bh=VH7yflsNi1fts3RAMpJZ/C/k4OPfVtdy5jAhDmpXDSI=;
+	h=From:To:Cc:Subject:Date;
+	b=fBXVrLWMqy9MtllBQKTbPJHQT341uaNCB+Wc/sBHRel0h9X/Hz7JazCACC9G7uu5V
+	 zbJLoQa5AhwrCtTRWmvoXiTYEQFbyHaXOxSKnK4z2KHGdlcc/kO6GwZKkW+Bt2y2MG
+	 YjAi6nH1RMkvkGFJgJYhlzsnJ65ZKbYZTWEvAYn/v8wP83RF89Kun4vxlanJG5pbji
+	 7KP2y2QSgspX17zXQCaX/RU3dhisPoS1GyJy2hiyOBrolspJstaN15lqliE2nqAnnq
+	 dZfAHSskvgOdCthlwCLN38KA5UG8eRbCOyFFlM6V8MlRl2MBTbpsKIveyy7UcICg7b
+	 I1S9a0d1I01VA==
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Celeste Liu <CoelacanthusHex@gmail.com>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/8] Support clock and reset unit of Rockchip RK3528
+Date: Tue,  1 Oct 2024 04:23:54 +0000
+Message-ID: <20241001042401.31903-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2 3/6] nvmem: mtk-efuse: Enable postprocess for mt8188
- GPU speed binning
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240927103005.17605-1-pablo.sun@mediatek.com>
- <20240927103005.17605-4-pablo.sun@mediatek.com>
- <57dfe684-c9a1-4cb3-8c87-9d2fef09aed7@collabora.com>
-From: Pablo Sun <pablo.sun@mediatek.com>
-In-Reply-To: <57dfe684-c9a1-4cb3-8c87-9d2fef09aed7@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Angelo,
+This series adds clock and reset driver as well as corresponding
+dt-bindings and headers for RK3528 SoC.
+
+Similar to previous Rockchip SoCs, reset controller shares MMIO region
+with clock controller, combined as Clock and Reset Unit (CRU).
+
+This depends on previous basic dt series[1]. Tested on Radxa E20C board,
+a clock tree dump could be obtained here[2].
+
+[1]: https://lore.kernel.org/all/20240829092705.6241-2-ziyao@disroot.org/T/#t
+[2]: https://gist.github.com/ziyao233/47c24014d94e0fa1c67e8aa2ea9d3a27
+
+Yao Zi (8):
+  dt-bindings: clock: Add clock ID definition for Rockchip RK3528
+  dt-bindings: reset: Add reset ID definition for Rockchip RK3528
+  dt-bindings: clock: Add rockchip,rk3528-cru
+  clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
+  clk: rockchip: Add clock type GATE_NO_SET_RATE
+  clk: rockchip: Add clock controller driver for RK3528 SoC
+  arm64: dts: rockchip: Add clock generators for RK3528 SoC
+  arm64: dts: rockchip: Add UART clocks for RK3528 SoC
+
+ .../bindings/clock/rockchip,rk3528-cru.yaml   |   63 +
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   66 +-
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-pll.c                |   10 +-
+ drivers/clk/rockchip/clk-rk3528.c             | 1194 +++++++++++++++++
+ drivers/clk/rockchip/clk.c                    |    8 +
+ drivers/clk/rockchip/clk.h                    |   36 +
+ .../dt-bindings/clock/rockchip,rk3528-cru.h   |  453 +++++++
+ .../dt-bindings/reset/rockchip,rk3528-cru.h   |  292 ++++
+ 10 files changed, 2125 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3528.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3528-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3528-cru.h
 
 
-On 9/30/24 17:40, AngeloGioacchino Del Regno wrote:
-> Il 27/09/24 12:30, Pablo Sun ha scritto:
->> Similar to mt8186, the efuse data for mt8188's GPU speed binning
->> requires post-process to convert the bit field format expected
->> by the OPP table.
->>
->> Since mt8188 efuse is not compatible to mt8186, add a new compatible
->> entry for mt8188 and enable postprocess.
->>
->> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-> 
-> I know I told you to just reuse the pdata from 8186, but there's something else
-> that came to mind, here...
-> 
-> ...actually, the efuse block from 8188 is indeed compatible with 8186, meaning
-> that the register r/w, etc, are all the same (bar the addresses, yes)
-> 
-> So, I wonder if it's not just a better idea to not even add mt8188-efuse in this
-> driver's of_device_id array, and just add that to the binding so that we permit
-> using
->          efuse: efuse@11f20000 {
->              compatible = "mediatek,mt8188-efuse",
->                       "mediatek,mt8186-efuse", "mediatek,efuse";
->              [etc]
->          }
+base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+prerequisite-patch-id: 00765e79597b500b66104626b59192bd0f29728a
+prerequisite-patch-id: e4a9167d8787c6e852e45fc7815e5d552843fe48
+prerequisite-patch-id: cc3802151c49f4c57c8a88be4ab785070b5e4d17
+prerequisite-patch-id: c70c2ef39ebef152c9f3a8720daf06ae361d0416
+-- 
+2.46.0
 
-Thanks for proposing this. I agree that in the case of Mali GPU speed binning
-info, mt8188 behaves exactly the same as mt8186, only the cell addresses are
-different.
-
-I wrote "mt8188 efuse is not compatible to mt8186" because I thought
-different eFuse cell layout leads to incompatibility, but it is correct that
-the cell layout differences can be expressed by the device tree nodes,
-so they are actually compatible in terms of hardware interface.
-
-I'll drop this patch ("nvmem: mtk-efuse: Enable postprocess for mt8188 GPU speed binning")
-in v3 and update dt-binding "mediatek,efuse.yaml" instead.
-
-> Means that in mediatek,efuse.yaml you'll have to add...
-> 
->        - items:
->            - enum:
->                - mediatek,mt8188-efuse
->            - const: mediatek,mt8186-efuse
->            - const: mediatek,efuse <---- or without this, even.
-> 
-> In the end, the "mediatek,efuse" property is somewhat deprecated, so that'd
-> also be a good time to start the dropping process, as I imagine that future SoCs
-> would also need the same speedbin transformations - which means that they'll all
-> be compatible with 8186....
-[snip]
-
-But I am not sure if we should now drop "mediatek,efuse". The post-process for
-GPU speed binning info is only applicable to ARM Mali. Since there are MediaTek
-SoCs that are not using ARM Mali, or not having GPU at all, would it make more sense
-to keep the "mediatek,efuse" fallback compatible for those cases?
-
-
-Best regards,
-Pablo
