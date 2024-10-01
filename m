@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA19EB67D;
-	Tue,  1 Oct 2024 10:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8DEB67D;
+	Tue,  1 Oct 2024 10:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727776835; cv=none; b=L/EcmWbhUk1tLyh/yZA92m5fgTsNXB+FmV38pSDrYtWbc1MIIx7M4j0x9AulyP62cqXTEjpdtO9rmZchadpNmButQB1VEhLmRc0fOksAcSAom/MrmCjBHM4IAVdnvCgVNcayM3h1ldedfkfQhJ/t4E3cQa9aRymzAmDOn/yje4Q=
+	t=1727777023; cv=none; b=Lwnkblpvju7We6m+HDF74FsiVeyxPkTllmO1qSao8n7nSRGYILJx3M3NGNdHg+mYFShJX0QQv/rBjOFFVO0pOG65FQqh3cGvWnx8udVRyWSNhiG46Zl15RVX2Njwj8JrnJWNRkQktE/S9fpLdFNROcD0P697Za5Aj5uMo3nO7EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727776835; c=relaxed/simple;
-	bh=L18kY3Hi4NirIDL3N4HZfh4hTLuUjuq/kXl6br9Vuus=;
+	s=arc-20240116; t=1727777023; c=relaxed/simple;
+	bh=R0yiSX1l72I4yRald3Wlhl78SafQgVaAFg/joVg2G80=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PJocmqni0D3nuuWqKNPs9SzLx6mV89pRy0Y9Q2WiVhmrcfpXYjhifuVXSO0sdTvuJGFOel8G1k5nndiWTaAenRdNIVxl5RE0QtCy7hqGUJ5ejmPmCiIeLf3VRWikx5Nd+yzG+4CLjtLMbaiaMyxFjqha7k4qzfHcLNCO4zYKmIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cs03Zo/F; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=BFeeeT9cq0OWeHUdGVSDG6TUTz4xUlnrPviTpsYt9cm8u1SPMOAZN+MI5udMPozyMSdPm1JiXPNJc/ZeKcmxc4vLTAxd0JgSqzVNfrUEQg9Xeb5+e6tNpc4fSqDpJ8sX5buZ4ZtkZ4zCgnhsRJ56yD1WvZ0klY5/V4NQ15NwXMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clYwriZ9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cs03Zo/F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33108C4CEC6;
-	Tue,  1 Oct 2024 10:00:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clYwriZ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7AB8C4CEC6;
+	Tue,  1 Oct 2024 10:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727776834;
-	bh=L18kY3Hi4NirIDL3N4HZfh4hTLuUjuq/kXl6br9Vuus=;
+	s=k20201202; t=1727777023;
+	bh=R0yiSX1l72I4yRald3Wlhl78SafQgVaAFg/joVg2G80=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cs03Zo/FEqO4lAHTZKDnzIGcaqclATvBJNez8GLjHDpl7ojkgLRsOiEetGA9mZe0r
-	 b4fi7Z8czM3hOMzed0PxROamiF/d1jY52i7xt+IIWm7Gl0Ybq8Kb+is8A+Hlh+HKbD
-	 OiHdmLD0xOLj1PAXqqMfThk9hz5vkHYhmhJqlVODyJ97vJ5JmjpncME5YjW0oEm+Sn
-	 +TqCYhXFLgeja8TvPmJVuapiwXgwQkq4GnBKd59xBliCPvYugUdmRxayIsaccOfPr7
-	 ljk+OhI1LS0qJNKQTjgbSrn82WxKNGRt5At7Fap3Js5l+To/E90s7vEIk6e5iW/uD2
-	 XrI2cAF4bmE7A==
-Message-ID: <2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
-Date: Tue, 1 Oct 2024 12:00:27 +0200
+	b=clYwriZ98+588H5Op0vLBIwuTI6WOacnzte8sSIIXqV7E6eePZmQM9ucO2TUub5jp
+	 t2HT1+u4FoP3qoGMTQOV5oZtHsYzctbVbNkBtTTZ/o8hEZb6dIXf5nXnm0pPKZjwVl
+	 r9LGVKSdPi9RvQkupsKzpR+Uc4Ufptw/XJTM6xk66AflMrnG26beSglM236ba0d0la
+	 cdQpAbJb01ViAZvHZe3nH8bKaG3TdzT68hTpDYx70hi8rTNaBLULxEH9+m1e7Jh3mV
+	 a9PZViUahnpgHPusqH98loQqv2EfCJrLW6BHNge8E0O4HG8qIjugDDeFsQ6dI75Lcf
+	 8RO8yBxb6av8w==
+Message-ID: <8f11c99b-f3ca-4501-aec4-0795643fc3a9@kernel.org>
+Date: Tue, 1 Oct 2024 12:03:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,20 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-To: Inbaraj E <inbaraj.e@samsung.com>, 'Stephen Boyd' <sboyd@kernel.org>,
- alim.akhtar@samsung.com, cw00.choi@samsung.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- mturquette@baylibre.com, s.nawrocki@samsung.com
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
- <20240917101016.23238-1-inbaraj.e@samsung.com>
- <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
- <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
- <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
- <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
- <1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
- <03ca01db13e3$bc12e360$3438aa20$@samsung.com>
+Subject: Re: [PATCH v5 4/7] dt-bindings: media: camss: Add qcom,sdm670-camss
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Richard Acayan <mailingradian@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-media@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20241001023520.547271-9-mailingradian@gmail.com>
+ <20241001023520.547271-13-mailingradian@gmail.com>
+ <aleot5kegf5xvlvzmws6tmxcqxw3gnmxndclkb7rdzcxnmehel@varsfzbmiszm>
+ <306b0806-70c5-4dfb-b7e3-5614a20699d2@linaro.org>
+ <094a889a-497d-4569-9798-04918cea63e7@kernel.org>
+ <652b3b74-65d0-479c-a863-7e8f32be7fc9@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,84 +101,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <03ca01db13e3$bc12e360$3438aa20$@samsung.com>
+In-Reply-To: <652b3b74-65d0-479c-a863-7e8f32be7fc9@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/10/2024 11:24, Inbaraj E wrote:
->>>>>>>> CSI stop streaming through pm_runtime_put system is getting
->> halted.
->>>>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
->>>>>>>>
->>>>>>>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
->>>>>>>> ---
->>>>>>>
->>>>>>> Please add a fixes tag. Although this is likely a band-aid fix
->>>>>>> because marking something critical leaves it enabled forever.
->>>>>>
->>>>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
->>>>>> supplying clock even for CMU SFR access of CSI block, so we can't
->>>>>> gate this.
->>>>>
->>>>> Hm, I am not so sure. The CMU driver should just take appropriate clock.
->>>>> Sprinkling CLK_CRITICAL looks as substitute of missing clock
->>>>> handling/
->>>>
->>>> As per HW design, PLL_CAM_CSI is responsible for suppling clock to
->>>> CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some of
->>>> the clock is not handled by any driver but it is required for CSI to
->>>> work properly. For example CSI NOC clock. So this is the reason we are
->> marking PLL_CAM_CSI as critical.
->>>>
->>>
->>> This is clock hierarchy for CMU_CAM_CSI block.
->>>
->>> PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
->>> 			|
->>> 			|----> DIVIDER --------> CMU_SFR clock
->>> 			|
->>> 			|----> DIVIDER --------> CSI NOC clock.
->>>
->>
->> And what is the problem in adding proper handling in the driver? You just
->> described case valid for 99% of SoC components.
+On 01/10/2024 11:54, Bryan O'Donoghue wrote:
+> On 01/10/2024 10:47, Krzysztof Kozlowski wrote:
+>>> These are appearing in address order, which is preferred over reg-name
+>>> ordering AFAIU.
+>> First time I hear about such rule. Where is this ordering preference
+>> documented? We always ask to keep the same order in each file.
 > 
-> Hi Kryzstof,
+> Eh evidently just my impression because we sort nodes by address.
 > 
-> Sorry, but it seems I was not able to explain the issue. Let me add more
-> details:
-> So for CSI IP we have two clocks as ACLK and PCLK which needs to be
-> handled by the driver during start and stop streaming. 
-> 
-> In BLK_CSI we have CSI IP along with other bunch supporting modules such
-> as CMU_CSI, NOC_CSI, CSI_SFR. For all these components of BLK_CSI we have
-> a single top level parent PLL clock as PLL_CAM_CSI. 
-> 
-> Now if we look into CSI driver perspective it needs only ACLK and PCLK
-> clocks for it's operations. But to access CMU SFRs (including ACLK/PCLK
-> or any other CMU SFR of BLK_CSI) we need parent clock keep supplying 
-> clocks. While we try to gate ACLK clock, due to propagation logic of clock
-> gating the CCF scans all the clocks from leaf level to the parent clock
-> and tries to gate clocks if enable/disable ops is valid for any such
-> clock. 
-> 
-> Issue here is that we are trying to gate PLL_CAM_CSI which itself is
-> accessible only when this clock is enabled. In fact none of CMU_SFR will
-> be accessible as soon as PLL_CAM_CSI is gated. CSI driver is not intended
+> Yes, definitely agree both the regs and interrupts should be sorted the 
+> same way, its inconsistent to have one set sorted by address but the 
+> other sorted by name.
 
-Obviously, but your CMU is taking the necessary clock and enabled it so
-what is the problem?
-
-> to gate this PLL clock but only the leaf level clock which is supplying to
-> CSI IP. So in absence of any alternate source of clock hierarchy which
-> can supply clock for CMU_CSI we can't gate PLL_CAM_CSI. 
-> 
-> Please let us know if you have any other queries why we are insisting on
-> marking PLL_CAM_CSI as CRITICAL clock.
-
-This is so far quite obvious - just like in all other cases, you need
-the top clock taken by proper driver. I don't think you are looking at
-right drivers and right problem here.
+I don't imply sorting by name is any better. The only rule is that all
+devices from same family type must have the same order. This is even
+explicitly expressed for several devices by sharing binding or sharing
+bindings.
 
 Best regards,
 Krzysztof
