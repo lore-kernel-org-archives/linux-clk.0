@@ -1,114 +1,126 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF6919CC01;
-	Tue,  1 Oct 2024 09:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F35A19B3C1
+	for <linux-clk@vger.kernel.org>; Tue,  1 Oct 2024 09:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773250; cv=none; b=TyLvKg3cZxAMJ+qiJPLSzI68DE/DQFAfElLViIcx8fiIW1WTImnZB0FHY2nD5pOGXDDlvEyh3nCigvh03fK7/Z7gVHqGwFlgMqrV45yRJTEHkB7/7bm2WiN/jiHCTv6gWzN0VzN4W9yCF6Hwp35IMLcRriC4DgPnU6Dp9trv47A=
+	t=1727773755; cv=none; b=EIRwk3eSLnay3PrXlmcWn1nlG1n8NEgrZPfptUyY8gFuIeAcCiZynxWPzls19MhM6m4sBC7JPO5+PTT5hejMBVMO5aaBx2OIeJZGhvyzPW0TXE9VVli4Sh3teDO+ydXBgvELajCivpJYiHZyxY/ZuiRsX/tv9sihqCTPiJi7aTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773250; c=relaxed/simple;
-	bh=YYyX6j8uQn7d3Guk0PQtxICyQihBXK/fHoWUcUbez70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=izjpySuEL7Yw/Pt+/z28Fu2OSOnvFf6KqSDdVUUG3vPanmPHez89iNmopnVzwPTKK97eKKIJBbJ2i/Eljb02XpTh8lffDxu5008BT66FcW7OjCaEy3zjse6nQoHDFKXKDhB2TACE0R3x2UJNzyZ3RHqvvr3aGX4TEQCok2hF0RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+Pp6s7h; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727773755; c=relaxed/simple;
+	bh=m4g9Fj328u373FQgoh9ByEPxnYiUpxDQxkHpAC2kNuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRu9C8PiWGLVHOcmMuI5R62wUHIWreLf8mwi9lxb4sfo1lsveQ6MUrh9w96lAaFJ4fPe1W3wMwjSH5SeaQxhxjv9/PkYeSCbVdIsjVYNIx1BMkdr5BDLGyWF9YHzj8q3ay4kKEgcEfDX16CxH5gZlSgU5K97qse+fGbKy4aiheA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AkavaydY; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+Pp6s7h"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d3cde1103so733681866b.2;
-        Tue, 01 Oct 2024 02:00:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AkavaydY"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c88e4a7c53so3216740a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2024 02:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727773247; x=1728378047; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ta/M52vXDQGmyxnycoYjK6h0KssiYla75zVz5uuRkOg=;
-        b=T+Pp6s7h5AMUwUiRN0lM5UOhh4vlPTLLi8B01gA5b8hkcjZ1gBLlEjJ/fS+2ganhdu
-         GuTS9sdFRDQ7aju9wdAzoC5lr5gWWTijt3tkwPjRjJelHTlh4EVHnkKaTCw/da/OaAja
-         5oeKvHms3/Bfu7EgIHDQgqI1Y9dVE1Fdyj7vW1GqByC5aCRB7DN0/v5U4Fn96iIWpLeA
-         Q2Nq7/6jtQMYiFOGO0QUbhKXZSRbVCoqnnd3ZKfziunY8PTmGiv4aMJgL1uhN7A8hldJ
-         IKV8JwGwZha3KBBb1KMgSNkgB4hQOYzWDfUQnKHNzcTVEInZQdMm0MIyE5J2xtrcJnU+
-         0PMw==
+        d=linaro.org; s=google; t=1727773752; x=1728378552; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r6fXJEyonWR/8EacTP5XqZH01/Wa+2HpA3vaYRJrrRQ=;
+        b=AkavaydYEVqXnWr1zkv2U7rIsKjireppsgch93gHCWTi14ckWojgFDAojwwTxO+dOC
+         +O1xYAbWl4Bt3xp45LlwVL5uAwILy9ELbxiTFhJKZ7f6eiE04mcsdjnXd3xQ6z59x5+e
+         7SzmysWrufuWvvWHRTGCvsaLF90HqY3ga3sPfg7yLG+Gcueh/WrE9ax9tZuOaf5D29op
+         p8bO/LIf0JLz6QyNK1OmK70z5NOLNUWPOPJXT3VGxCN1n+VVW6yxqcs0Ba3gD+M9UEn5
+         SUud7Dsh4O4A7PZ4OrXC3gLnZjRxRNoELlb3e+liADsoe4tZ7C3vF4MWJBDxMWKK3OW8
+         HLEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727773247; x=1728378047;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ta/M52vXDQGmyxnycoYjK6h0KssiYla75zVz5uuRkOg=;
-        b=LPFV2OVahFAKvmjiEdu93hJWQScBGn5SPPTr4i6qtOgT25Dn2f3Ujxft5Lb7yRXsfC
-         NByz1B4bbDvlNabNLO93hK5KrZrV4k2RK0gMwOd4geQfVjnyLSLE6Yv8N2vdqQHeVHb4
-         DiDZY2G/H/X9nV8Tp2Ay58OPyfwfNay5rEzczCQeFyoXC50eBIpCnHNgKCcovoZ6YEbH
-         FLvZlkBqBgvQcTCpBptCCbw8vaxsyK8sY8Ua8FHb7MVipcWDspDb047YeOojYEWtzGDf
-         4N5BIIx/fpf2xE7QPl2eZpeKXcG25Xl3U160HYPl+Gfydp1LN3uQxw22DJRGp4PCHYYG
-         cjFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVT07MBx8UESD8fzBY7/Nm3DuR0GMq1a1+MjH9mWR2DmMuoCUaFQijrMiJcrueHiuWof2G8vFYYafLQ2jQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIeU1WRNqUBxC9TT4Ix2F85wVGcJ6Z29aXup/xjDu1oAv052Dj
-	RtFtFw5FtAqeFR/nchEggKWYweQ/gRerfAYyNRZFL7LinSPsXiu9xBXjUSPo
-X-Google-Smtp-Source: AGHT+IGZ5FpVDywSlALeip17hIK5NEsxEIfl8zZBTzwiKs73dSPcKdSH4ZAWONOjf6OHRfeWTz2OtQ==
-X-Received: by 2002:a17:907:6d20:b0:a8a:66b6:58d with SMTP id a640c23a62f3a-a93c4a4e104mr1496812366b.41.1727773246301;
-        Tue, 01 Oct 2024 02:00:46 -0700 (PDT)
-Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27ed053sm675867466b.93.2024.10.01.02.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 02:00:45 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Tue, 01 Oct 2024 11:00:11 +0200
-Subject: [PATCH] clk: cdce925: make regmap_cdce925_bus constant
+        d=1e100.net; s=20230601; t=1727773752; x=1728378552;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r6fXJEyonWR/8EacTP5XqZH01/Wa+2HpA3vaYRJrrRQ=;
+        b=vSlkHYhD+RVJv8XlHqfnGtehbFW+3Lby1VL6vXoT7WvAANmJiLjmLyfIxN74aLXhbf
+         CF+ZZntKZz9SOndgVPLWu7KJoDtTalCH5xtYCApezNjy16xsp5kIl8HH71sXscZDY8Tq
+         1MYK+ABeHh/BI6E1Gf1oFb4dBdr12Q47ee1318RQzuPkWMHVcdcCoteril/EHAKmG8Pp
+         12ufz8hvLVsBEmLbQWQ22v5bm8Al+8Rf24qMstJu5pHelnfx0+t4kwGO3EoDqE9DVYMS
+         YmpGOxmIZcce1/ZkAXspCaHjsYTCeaCCYDt3TvfHr8toR0nhwb4AwAq0vGZT+zgH84n1
+         bsmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuC9xkYX2XyZ6dB/NZq73dHXogXE/vlNCpV32Sl82NGplz0NpIWYHg5VurL8FaHAWSPZjJewkfLl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpMS0FJ/ntiRjpYYrrTPbqODqLjoSZvT7UttMMrhOIZ23tC9Dd
+	+aKVKuVoqo047VyFX93E0jsL8BQyP2shJ++mMNS5d9F4u9oq1QYgFAYERG0fmlY=
+X-Google-Smtp-Source: AGHT+IHDUPzks78aQFTskmf42JXCM1g0xERxSPBxrPEBW/hfzXcGDP2kNdeHp5M5NxOLBA80JFAvcw==
+X-Received: by 2002:a50:858b:0:b0:5c5:c059:63ba with SMTP id 4fb4d7f45d1cf-5c88261009emr11723136a12.35.1727773752474;
+        Tue, 01 Oct 2024 02:09:12 -0700 (PDT)
+Received: from [192.168.0.15] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245e9d7sm5861727a12.57.2024.10.01.02.09.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 02:09:11 -0700 (PDT)
+Message-ID: <306b0806-70c5-4dfb-b7e3-5614a20699d2@linaro.org>
+Date: Tue, 1 Oct 2024 10:09:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/7] dt-bindings: media: camss: Add qcom,sdm670-camss
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Richard Acayan <mailingradian@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-media@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20241001023520.547271-9-mailingradian@gmail.com>
+ <20241001023520.547271-13-mailingradian@gmail.com>
+ <aleot5kegf5xvlvzmws6tmxcqxw3gnmxndclkb7rdzcxnmehel@varsfzbmiszm>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <aleot5kegf5xvlvzmws6tmxcqxw3gnmxndclkb7rdzcxnmehel@varsfzbmiszm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-clk-cdce925-regmap_bus-const-v1-1-49fc11555b04@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABq6+2YC/x3MwQrCMAwA0F8ZORtoMz10vyIiW5LNMO1Go0MY+
- 3eLx3d5O7gWU4eu2aHoZm5LroinBvjR50nRpBoo0DmGEJGfM7KwJrpg0enVr/fh48hL9je2KQq
- NgxBLglqsRUf7/vvr7Th+f2tQOW4AAAA=
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727773245; l=1219;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=YYyX6j8uQn7d3Guk0PQtxICyQihBXK/fHoWUcUbez70=;
- b=IDOMSzw1KMEmp04qNVmgD8Y05gJKzxqR87MBuXVLu2JIzuEGWlngFjqhzTBDeWUNrzaR6CUf1
- aRkLAFooHA/AO+8th20n+5MEnMGA1zBQluzzw+l4QB+QMPeek9ywuDQ
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-This struct is only used for the regmap initialization via
-devm_regmap_init() (which expects a pointer to a const struct
-regmap_bus, as it will not modify the struct), and it is not modified
-after its declaration.
+On 01/10/2024 07:53, Krzysztof Kozlowski wrote:
+>> +  reg-names:
+>> +    items:
+>> +      - const: csiphy0
+>> +      - const: csiphy1
+>> +      - const: csiphy2
+>> +      - const: vfe0
+>> +      - const: csid0
+>> +      - const: vfe1
+>> +      - const: csid1
+>> +      - const: vfe_lite
+>> +      - const: csid2
+> Why this order is so different than all others? This is supposed to
+> match other devices. Look at sdm845 for example.
 
-Move regmap_cdce925_bus to a read-only section.
+These are appearing in address order, which is preferred over reg-name 
+ordering AFAIU.
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/clk/clk-cdce925.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index e48be7a6c0e2..c51818c1af98 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -601,7 +601,7 @@ static int cdce925_regulator_enable(struct device *dev, const char *name)
- 
- /* The CDCE925 uses a funky way to read/write registers. Bulk mode is
-  * just weird, so just use the single byte mode exclusively. */
--static struct regmap_bus regmap_cdce925_bus = {
-+static const struct regmap_bus regmap_cdce925_bus = {
- 	.write = cdce925_regmap_i2c_write,
- 	.read = cdce925_regmap_i2c_read,
- };
++            reg = <0 0x0ac65000 0 0x1000>,
++                  <0 0x0ac66000 0 0x1000>,
++                  <0 0x0ac67000 0 0x1000>,
++                  <0 0x0acaf000 0 0x4000>,
++                  <0 0x0acb3000 0 0x1000>,
++                  <0 0x0acb6000 0 0x4000>,
++                  <0 0x0acba000 0 0x1000>,
++                  <0 0x0acc4000 0 0x4000>,
++                  <0 0x0acc8000 0 0x1000>;
++            reg-names = "csiphy0",
++                        "csiphy1",
++                        "csiphy2",
++                        "vfe0",
++                        "csid0",
++                        "vfe1",
++                        "csid1",
++                        "vfe_lite",
++                        "csid2";
 
 ---
-base-commit: 77df9e4bb2224d8ffbddec04c333a9d7965dad6c
-change-id: 20241001-clk-cdce925-regmap_bus-const-391d2fbd2cd9
-
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+bod
