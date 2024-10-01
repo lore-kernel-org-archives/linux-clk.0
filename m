@@ -1,82 +1,91 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFE51BE23B
-	for <linux-clk@vger.kernel.org>; Tue,  1 Oct 2024 10:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A39A1C1ACE
+	for <linux-clk@vger.kernel.org>; Tue,  1 Oct 2024 12:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727779825; cv=none; b=mGHO5opv7MMERIy/QXOFlmIYOrt7fboyjuc0LI6280A3rcyyfbqVXin7B3ESkbuNFDlyBKfrqvdDKJxp04zGePPezwNpjPE46J9XxzrUx3+PysX8YHXdhygi/DPGolpBCw/7YBEOyUWdsL+fN89WbxlHcf8Bz7nIMLnPDJAH08k=
+	t=1727785136; cv=none; b=WkIJdpjEWir8bluObw8zyLBVPHmGSEkjQJWuDOFbSSaxPlQiyiXu9Fo054Qw/bkKs7D+NDtaTLj6xYpAx5f6wPl7HyPeeurRREDvXP7L7yiL7VAfKN/LqgvKPCI0AmKfbNTQ780Zi77BkGV84YNI4GkR9NdnancCEzD20XmjDYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727779825; c=relaxed/simple;
-	bh=1G3LMez02c5t95GOUk4Fetsv+HHSqHBWtJzivVVscXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CYRzWGuikJnIbWMwy81IpAzqRON42MC3WQQxqxhKGcgx+L22PBLEdZLllLyeJPPMux+hbAYwgU1BYOZJfmlwfzV65TL67IokO35MC1c3RjPhsBXDQ78wRHDnL2V+LDolub6mo+Z8BccLmn4dKPMANv3AeEDWoyv5Q9MrmYbx7AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47DB0339;
-	Tue,  1 Oct 2024 03:50:52 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.101.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F21F3F587;
-	Tue,  1 Oct 2024 03:50:21 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH] clk: sunxi-ng: d1: Fix PLL_AUDIO0 preset
-Date: Tue,  1 Oct 2024 11:50:16 +0100
-Message-Id: <20241001105016.1068558-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1727785136; c=relaxed/simple;
+	bh=lkBDPJFJkho1FBYDgIB5sEyVfdFnZBI+EiZwZtGMIzo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pmRshqwvTiVCwxKhs70eVJAlsFjBQswVrbAszqUfYprh0ZHJ5hNaJIzrkXqdS7ER905BriKIwcZO19nc3aRUSuhqTPMgW4Zptch3PtRveQDmldz4TUONoJQalonLrgBitacg+7CQFPS5Zspda4pmPcuz1Q1FJcXoCJrphIdA8+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPFPMDCQ; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPFPMDCQ"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5389917ef34so6257193e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2024 05:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727785131; x=1728389931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lkBDPJFJkho1FBYDgIB5sEyVfdFnZBI+EiZwZtGMIzo=;
+        b=HPFPMDCQkYI3qNvZgy1dJNS0JidDb3tFPA3aert86VhoGdLMMTaRel7nmfaKcpLUfF
+         WjsY1iL7hS7D7Wjs6Kas0Axr2lyqYiEDdPwiMh6kV5mOmp3GGpqi35+Q6Je7mOIvxInv
+         WjpgtdgJv/TFp95aNk+cntrYFVINvmYY/hONBFWKGS28XH2gtB6iNr+kd0qC9kb8LPuJ
+         BRhwgGXmFeCF25ev25QXPc5clTWn6CshJ76w+L2FL+lpMtZRWiAg239zOAMwngXarPev
+         nSap6+iLAg2HIjtHUJJEuG9aPt2d+c8neaxDDHEeXVJ2Dg6gkhpoWXMzGCNGN3onfDM9
+         wEhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727785131; x=1728389931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lkBDPJFJkho1FBYDgIB5sEyVfdFnZBI+EiZwZtGMIzo=;
+        b=hVPos3z/oW5jxa84E9/pu9w/RkfFV0p4R+NrgrTHRK0DS9/nlIlhHAxJdjYylVYRS7
+         CQ3NQ7IzJx2WYJfEsc1Qw0sd0X4NnoDatO82iVLj25OlyWKQD7DdTSK8bt/MAg0TU93X
+         PtL9MxzfuAuFTIwxMOhS46FjfJ4eTheMQiT3ahPQ5xl5kyDQs7ppiItNmHrTCowH1jTr
+         qygJLsSoqZuYaFgiwhNDndzNFeTK+ScgWUKGn1GB/BjDygllh7ag92FuG9zOQLOuiZu8
+         B72qH8b4nmmhYpLI24e10OkdFq3ZOA7lfNUM0CI/W9pKlWD3Br2K4095UhgyB6WPWu7R
+         LTKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGEV7GhAYNtVXSZG/9nu7yuQEKuCr2e9c/D9xVHe+QqZUWX1XSb0kLxuO9hdQr9f7jHlxZX9CIVR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVme5/FYAxcDhYQzKCUz2C6NjQG4+NnTEa+V5BqmtGekN0L7w5
+	pz4r4vkGDql48Uym2FyhCuCmXVBtfPBuwa5+3OSTH6EN3LfyVcRdigknOsxHZ6tGKtGhzP7stYP
+	s1PAA8w/MWFcE4Zst7bydBQ9uOoG1qleT6Bv1Nw==
+X-Google-Smtp-Source: AGHT+IFpRUvfChvcK0Zoknz0HBqA3HdDr3PNgNW4cdaJXr3HKoPBRRlGzU93KJDaW6ywdlCJIaqqDOXZQOUqvXb/T9Q=
+X-Received: by 2002:a05:6512:acd:b0:539:8f68:e03e with SMTP id
+ 2adb3069b0e04-5398f68e0b1mr4792752e87.56.1727785131410; Tue, 01 Oct 2024
+ 05:18:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240927065244.3024604-1-quic_srichara@quicinc.com> <20240927065244.3024604-4-quic_srichara@quicinc.com>
+In-Reply-To: <20240927065244.3024604-4-quic_srichara@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 1 Oct 2024 14:18:40 +0200
+Message-ID: <CACRpkdbV6JHnVU2_z4LaCUf_V-HM8nrXBfAs4ym5w+pQJexRFA@mail.gmail.com>
+Subject: Re: [PATCH V2 3/9] dt-bindings: pinctrl: qcom: add IPQ5424 pinctrl
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, ulf.hansson@linaro.org, catalin.marinas@arm.com, 
+	p.zabel@pengutronix.de, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	quic_varada@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To work around a limitation in our clock modelling, we try to force two
-bits in the AUDIO0 PLL to 0, in the CCU probe routine.
-However the ~ operator only applies to the first expression, and does
-not cover the second bit, so we end up clearing only bit 1.
+On Fri, Sep 27, 2024 at 8:53=E2=80=AFAM Sricharan R <quic_srichara@quicinc.=
+com> wrote:
 
-Group the bit-ORing with parentheses, to make it both clearer to read
-and actually correct.
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>
+> Add device tree bindings for IPQ5424 TLMM block.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Fixes: 35b97bb94111 ("clk: sunxi-ng: Add support for the D1 SoC clocks")
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
-Hi,
+Patch applied to the pinctrl tree for v6.13.
 
-this should double that PLL's frequency by 0, since we drop the unwanted
-divider. Not sure if anyone has spotted the problem before, and maybe
-worked around it?
-If that extra divider is correct, the comment should be adjusted
-instead.
-
-Cheers,
-Andre
-
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-index 9b5cfac2ee70c..3f095515f54f9 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-@@ -1371,7 +1371,7 @@ static int sun20i_d1_ccu_probe(struct platform_device *pdev)
- 
- 	/* Enforce m1 = 0, m0 = 0 for PLL_AUDIO0 */
- 	val = readl(reg + SUN20I_D1_PLL_AUDIO0_REG);
--	val &= ~BIT(1) | BIT(0);
-+	val &= ~(BIT(1) | BIT(0));
- 	writel(val, reg + SUN20I_D1_PLL_AUDIO0_REG);
- 
- 	/* Force fanout-27M factor N to 0. */
--- 
-2.25.1
-
+Yours,
+Linus Walleij
