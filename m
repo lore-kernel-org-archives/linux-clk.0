@@ -1,229 +1,185 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5621C244C
-	for <linux-clk@vger.kernel.org>; Tue,  1 Oct 2024 12:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F153F1EB46;
+	Tue,  1 Oct 2024 13:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786693; cv=none; b=a709RRIiVCeGKCHcKeJzEo1hU6HqGXFqBEFeoHRv/KJGinRQU6i1uDQHHF4XntXzOt2xVfNnlfqB74EAnjDiGHg/LM504asOlH+pjYBNXDE5VUKrtNssSJWAW/W/EWXZqaHfE6yLQKdWX7Ce21mrQkof70hOI38b7mZcLTGU9KU=
+	t=1727789338; cv=none; b=euzGtB3XTOwBTunhEIyTIBRoYUq6+0HAmGpjl/40UTcu2mWH+0RgAJwSMnQD+Ur04cddqcwJSSWjFHLLxePT0V6derB978k7BubbWn4hNNg33XSaMZmPkQsH4EpK5FU5WPiylEAenkh5HTZiglz/3PmJLlsGiS9kL3h0EfC4p0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786693; c=relaxed/simple;
-	bh=rMWaD774gg0hu/gWCIVWwnbAb1bXuoiTiGBgOQS7Zec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ulwadmxx8N92NnpCEpqvBdxdBpuoVYR6pF5LNijNqo+2EFolcS7yDDmLEXY+R97yZe8P3qkYX8DQS561h3f63zySML/ZUA8p3pLl7Twp61mvETaPvgvxaU6Ri+lxSWcE7nW4hCIW1ybNux3kZTpaH+MN6nDlG46R9ccT578cjK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lLMCacNG; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lLMCacNG"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398b2f43b9so3123865e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2024 05:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727786690; x=1728391490; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qJdk49FPom1vhJW6KLrc9xb2N9g+9cOy2pAI61oaoAo=;
-        b=lLMCacNGmO60AITwTaB13ldfWdq+1sky6i7FU2wmf2qG/on1zDzzggLVvXjI/o0OQg
-         tRK5IapCTws78bIjG0KxOcJ/dGR0Mb4cE2Uo36ScJ2pX9+Vd/g9zu0pUAQwerRUASB0l
-         9bCo3p9+bwMDDh8K6GGhiaG9yo551TYkEdQyrWH5jFqXB7RSA2jFl3QR5ts3F/1viKWw
-         s2tALVPX436idsZewMhiez3Dh/F5Fg+6ZPJg9SE3Oreij6POLZOXyZYLb2xwDGBPpM4c
-         l9o2jYswicZm4yLXQyI46fVDcWoiGQrPEXhbw+ih3cg0sHroKYjDma2sGbSisePl1XNe
-         Nxbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727786690; x=1728391490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qJdk49FPom1vhJW6KLrc9xb2N9g+9cOy2pAI61oaoAo=;
-        b=b+5PIHVViqC863zDEO7dAii6w637kn/FdLXi7VcbgXcj4ux13qXDNjsM4uwunTAP68
-         F02ZwNVtBCRkxvqXtiXhibfdujEDPb6bjOaQhjlbxmcLpftlolajlXklUPe0MH9lfByd
-         KTq0oPzdbR1zP5geUY3dMflQ77qrgY48ZLxpZftGk8ugFSzTXs4bq1R9W5quGB74yldp
-         XQWAgvLhxU6P1owZ8ikHR4I7GuKuc0o1mo0DiVGydazEdem9o80TxJUrYxTmWlWH6s4Y
-         1IafvWJwYpBpOmHqEG+7uN4AlKTSLT/eAj/ttKAH/M+KmxJRrC8/lyERaBrS1DQwAIij
-         OTCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxKR2ShrSwKN5yp9mA6tSVlBClyKinhLi10LxzKk3jlxF5vN0GSywGPU2JYR3iCi7XR2hHVyW/k6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3jkBjmphkOOlsb94dy7t53G/M8+7l+YYBZBWfstzU+62D/vgz
-	hic7DQS3ehSx2GgFj50QN2eOPI7NnV5mJ0hp0oLvRcPh5IACpG7++mtV/ZdVqkr5iCrC52bNjbR
-	Agd6VQlBIXuy6p3DWBWyE0NV+lIf9/tGXARr0FA==
-X-Google-Smtp-Source: AGHT+IFpLEVSrtSEfceUFr1y/mkuGvz43bOehtQ1kSTprLlq+kFdHRQGWxpV7X7Wx0HYBHJpzMV+133mIhupsz3X9bs=
-X-Received: by 2002:a05:6512:6c6:b0:52f:30d:526c with SMTP id
- 2adb3069b0e04-5399a23f44cmr1103973e87.5.1727786689856; Tue, 01 Oct 2024
- 05:44:49 -0700 (PDT)
+	s=arc-20240116; t=1727789338; c=relaxed/simple;
+	bh=1QT+2obgp7SCSU5glw0/9WjUKxr02K/paJ8QAMmhxu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FNrITMbjhWNEkFUbfXnVM1jmkdMEhLxl6ijkX0jkqj+o+fBW1yE0YIUGLrCUIcZWKjWpIYyDnlutrCAAa83GLDWPYmkyus7Ahj3YTq1foU+k7M2YznWFSPmXZ/5FgTKsdbszxaJacccjv5YCZGEv9iw9bqLB+zy8b4anAfNQpug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9651339;
+	Tue,  1 Oct 2024 06:29:24 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 251D13F64C;
+	Tue,  1 Oct 2024 06:28:53 -0700 (PDT)
+Date: Tue, 1 Oct 2024 14:28:50 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu
+ Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, linux-sound@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/6] clk: sunxi-ng: h616: Add sigma-delta modulation
+ settings for audio PLL
+Message-ID: <20241001142850.1c275f78@donnerap.manchester.arm.com>
+In-Reply-To: <20240929100750.860329-4-ryan@testtoast.com>
+References: <20240929100750.860329-1-ryan@testtoast.com>
+	<20240929100750.860329-4-ryan@testtoast.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com> <20240912-test-v1-9-458fa57c8ccf@analog.com>
-In-Reply-To: <20240912-test-v1-9-458fa57c8ccf@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 14:44:39 +0200
-Message-ID: <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com>
-Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
-To: arturs.artamonovs@analog.com
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Greg Malysa <greg.malysa@timesys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org, adsp-linux@analog.com, 
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Arturs,
+On Sun, 29 Sep 2024 23:06:04 +1300
+Ryan Walklin <ryan@testtoast.com> wrote:
 
-thanks for your patch!
+Hi Ryan,
 
-On Thu, Sep 12, 2024 at 8:20=E2=80=AFPM Arturs Artamonovs via B4 Relay
-<devnull+arturs.artamonovs.analog.com@kernel.org> wrote:
+> Allwinner has previously released a H616 audio driver which also
+> provides sigma-delta modulation for the audio PLL clocks. This approach
+> is used in other Allwinner SoCs, including the H3 and A64.
+> 
+> One change from the vendor code is made to the PLL clocks, the 
+> vendor-specified dividers of 4/2/1 for the 1/2/4x clocks respectively result 
+> in audio playback that is too slow by 50%. Therefore the dividers are simply
+> doubled to 8/4/2 which results in correct playback rates.
 
-> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
->
-> Add ADSP-SC5xx GPIO driver.
-> - Support all GPIO ports
-> - Each gpio support seperate PINT interrupt controller
->
-> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
-> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
-> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
+The reason for that is you force .M0 to 1 (divide by 2), in the fixup
+below (in the probe routine).
+So for instance for the 4x clock, the formula is:
+	PLL_AUDIO(4X) = 24MHz*N/M0/M1/P
+M1 is cleared (div by 1), M0 is set (div by 2), P is exposed as .m, and N
+as .n in the ccu_nm struct. So you get that extra by-2 divider, that is
+invisible to the CCF, hence you need to compensate for that.
 
-(...)
+But with tweaking the dividers only in the fixed-factor clocks below, you
+still leave the original (_hs) clock wrong, which is a parent to other
+clocks, if I see this correctly.
 
-> +config GPIO_ADI_ADSP_PORT
-> +       bool "ADI ADSP PORT GPIO driver"
-> +       depends on OF_GPIO
-> +       select GPIO_GENERIC
+Can you try to add a .fixed_post_div = 2 in the ccu_nm definition, and
+then put the real dividers in the fixed-factor clocks?
 
-If you select this then you need to use it in the idiomatic way.
+And please explain all this in comments ...
 
-+#include <linux/soc/adi/adsp-gpio-port.h>
+> Add SDM to the H616 clock control unit driver.
+> 
+> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 36 +++++++++++++-------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> index 84e406ddf9d12..be272947b0fee 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> @@ -215,20 +215,23 @@ static struct ccu_nkmp pll_de_clk = {
+>  	},
+>  };
+>  
+> -/*
+> - * TODO: Determine SDM settings for the audio PLL. The manual suggests
+> - * PLL_FACTOR_N=16, PLL_POST_DIV_P=2, OUTPUT_DIV=2, pattern=0xe000c49b
+> - * for 24.576 MHz, and PLL_FACTOR_N=22, PLL_POST_DIV_P=3, OUTPUT_DIV=2,
+> - * pattern=0xe001288c for 22.5792 MHz.
+> - * This clashes with our fixed PLL_POST_DIV_P.
+> - */
 
-Drop this, just bring the contents into this file all register defines
-etc.
-
-+#include "gpiolib.h"
-
-No way, do this:
-#include <linux/gpio/driver.h>
-
-> +static int adsp_gpio_direction_input(struct gpio_chip *chip, unsigned in=
-t offset)
-> +{
-> +       struct adsp_gpio_port *port =3D to_adsp_gpio_port(chip);
+>  #define SUN50I_H616_PLL_AUDIO_REG	0x078
 > +
-> +       __adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_DIR_CLEAR);
 
-Ah these __adsp_gpio_writew/readw things are too idiomatic. Just
-use the base and common writew() please.
+Can you please (re-)add a comment here explaining the sources of these
+parameters? Because the values deviate from the ones in the manual.
+And also please mention here that there are two more divider bits (named
+m0 and m1 in the manual), that we cannot model in our ccu_nm struct, and
+thus force them to fixed values in the probe routine below?
 
-> +       __adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_INEN_SET);
-
-Interrupt enable in the direction function? No thanks, poke the
-interrupt registers in your irqchip if you make one (you currently
-do not) in this case I'd say just disable all interrupts in probe()
-using something like writew(base + ADSP_PORT_REG_INEN_SET, 0xffff)
-and be done with it.
-
-> +static int adsp_gpio_get_value(struct gpio_chip *chip, unsigned int offs=
-et)
-> +{
-> +       struct adsp_gpio_port *port =3D to_adsp_gpio_port(chip);
+> +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
+> +	{ .rate = 90316800, .pattern = 0xc001288d, .m = 3, .n = 22 },
+> +	{ .rate = 98304000, .pattern = 0xc001eb85, .m = 5, .n = 40 },
+> +};
 > +
-> +       return !!(__adsp_gpio_readw(port, ADSP_PORT_REG_DATA) & BIT(offse=
-t));
-> +}
+>  static struct ccu_nm pll_audio_hs_clk = {
+>  	.enable		= BIT(31),
+>  	.lock		= BIT(28),
+> -	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+> -	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+> +	.n			= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+> +	.m			= _SUNXI_CCU_DIV(16, 6),
 
-This becomes a reimplemenation of generic GPIO.
+Can you please keep the original indentation? You could add a "post-div"
+comment after the .m parameter, to map to the manual.
 
-> +static int adsp_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct adsp_gpio_port *port =3D to_adsp_gpio_port(chip);
-> +       irq_hw_number_t irq =3D offset + port->irq_offset;
-> +       int map =3D irq_find_mapping(port->irq_domain, irq);
+And add that ".fixed_post_div = 2," here.
+
+> +	.sdm		= _SUNXI_CCU_SDM(pll_audio_sdm_table,
+> +				  BIT(24), 0x178, BIT(31)),
 > +
-> +       if (map)
-> +               return map;
-> +
-> +       return irq_create_mapping(port->irq_domain, irq);
-> +}
+>  	.common		= {
+> +		.features = CCU_FEATURE_SIGMA_DELTA_MOD,
 
-This irqdomain in the "port" looks weird.
+Please indent like the other parameters below.
 
-Implement the irqchip in the GPIO driver instead.
+>  		.reg		= 0x078,
+>  		.hw.init	= CLK_HW_INIT("pll-audio-hs", "osc24M",
+>  					      &ccu_nm_ops,
+> @@ -690,13 +693,13 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
+>   */
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_1x_clk, "pll-audio-1x",
+>  			    clk_parent_pll_audio,
+> -			    96, 1, CLK_SET_RATE_PARENT);
+> +			    8, 1, CLK_SET_RATE_PARENT);
 
-If the domain *has* to be external to the GPIO driver then
-you need to use hierarchical irqdomains.
+As mentioned, with the fixed_post_div, you should be able to put the real
+divider values in here.
 
-> +static int adsp_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct adsp_gpio_port *gpio;
-> +       int ret;
-> +
-> +       gpio =3D devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
-> +       if (!gpio)
-> +               return -ENOMEM;
-> +
-> +       gpio->regs =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(gpio->regs))
-> +               return PTR_ERR(gpio->regs);
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+>  			    clk_parent_pll_audio,
+> -			    48, 1, CLK_SET_RATE_PARENT);
+> +			    4, 1, CLK_SET_RATE_PARENT);
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
+>  			    clk_parent_pll_audio,
+> -			    24, 1, CLK_SET_RATE_PARENT);
+> +			    2, 1, CLK_SET_RATE_PARENT);
+>  
+>  static const struct clk_hw *pll_periph0_parents[] = {
+>  	&pll_periph0_clk.common.hw
+> @@ -1135,13 +1138,10 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
+>  		writel(val, reg + usb2_clk_regs[i]);
+>  	}
+>  
+> -	/*
+> -	 * Force the post-divider of pll-audio to 12 and the output divider
+> -	 * of it to 2, so 24576000 and 22579200 rates can be set exactly.
+> -	 */
 
-So you have gpio->regs which is the base.
+Can you please keep the comment, and adjust it accordingly? Saying that
+the recommended BSP parameters for the PLL audio recommend M0 to be 1, and
+M1 to be 0, and that we enforce this here?
 
-> +       gpio->dev =3D dev;
-> +
-> +       ret =3D adsp_attach_pint_to_gpio(gpio);
-> +       if  (ret)
-> +               dev_err_probe(gpio->dev, ret, "error attaching interupt t=
-o gpio pin\n");
-> +
-> +       spin_lock_init(&gpio->lock);
-> +
-> +       gpio->gpio.label =3D "adsp-gpio";
-> +       gpio->gpio.direction_input =3D adsp_gpio_direction_input;
-> +       gpio->gpio.direction_output =3D adsp_gpio_direction_output;
-> +       gpio->gpio.get =3D adsp_gpio_get_value;
-> +       gpio->gpio.set =3D adsp_gpio_set_value;
-> +       gpio->gpio.to_irq =3D adsp_gpio_to_irq;
-> +       gpio->gpio.request =3D gpiochip_generic_request;
-> +       gpio->gpio.free =3D gpiochip_generic_free;
-> +       gpio->gpio.ngpio =3D ADSP_PORT_NGPIO;
-> +       gpio->gpio.parent =3D dev;
-> +       gpio->gpio.base =3D -1;
-> +       return devm_gpiochip_add_data(dev, &gpio->gpio, gpio);
+Cheers,
+Andre
 
-Look in e.g. drivers/gpio/gpio-ftgpio010.c for an example of
-how to use generic GPIO (with an irqchip!). It will be something like:
+>  	val = readl(reg + SUN50I_H616_PLL_AUDIO_REG);
+> -	val &= ~(GENMASK(21, 16) | BIT(0));
+> -	writel(val | (11 << 16) | BIT(0), reg + SUN50I_H616_PLL_AUDIO_REG);
+> +	val &= ~BIT(1);
+> +	val |= BIT(0);
+> +	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
+>  
+>  	/*
+>  	 * First clock parent (osc32K) is unusable for CEC. But since there
 
-        ret =3D bgpio_init(&g->gc, dev, 2,
-                         gpio->regs + ADSP_PORT_REG_DATA,
-                         gpio->regs + ADSP_PORT_REG_DATA_SET,
-                         gpio->regs + ADSP_PORT_REG_DATA_CLEAR,
-                         gpio->regs + ADSP_PORT_REG_DIR_SET,
-                         gpio->regs + ADSP_PORT_REG_DIR_CLEAR,
-                         0);
-        if (ret) {
-                dev_err(dev, "unable to init generic GPIO\n");
-                goto dis_clk;
-        }
-        g->gc.label =3D dev_name(dev);
-        g->gc.base =3D -1;
-        g->gc.parent =3D dev;
-        g->gc.owner =3D THIS_MODULE;
-        /* ngpio is set by bgpio_init() */
-
-You can augment the generic driver instance with an extra config function
-to set the special open drain bits.
-
-Yours,
-Linus Walleij
