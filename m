@@ -1,51 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EE1D131B;
-	Wed,  2 Oct 2024 21:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A56C1AAD7;
+	Wed,  2 Oct 2024 23:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727905292; cv=none; b=NhpFBc8pv/J1bsO7WziR271WF2rWQWIrVnkQTDiHKDYHQvJ5hlmL7+t9JsbaV0JyuBt0QMio1EA5MAz1THNs7yAl3cYOAx/qoI3aXhPHU7krdhdaZekVIELSFeVz6gQ5XQKGUjGCRJmCwGQWtqJnb4Lmwg6tvS0PyUdjh/bhLOY=
+	t=1727910841; cv=none; b=ouzl/2uP+doCbP7AQx9CrwaWzNoIq38P7ArzQ8Ri/u7zN+EWgFGwVeo1DArPRPKXHPDwudVvEfc1xpyFl0BLKApjF0avtzCqwGLnnc+ps+hXyyfO9gduk9OHZ5/Vt+Lx8DSt+PTtt674688x5cWAVeJ0AIYYJEqq+7e9nkgoTuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727905292; c=relaxed/simple;
-	bh=MhCybmHtvHC9lNdIeEmiXoehkqXFqlzKTsDQ0Q7WLRI=;
+	s=arc-20240116; t=1727910841; c=relaxed/simple;
+	bh=7YYc3tKXWLUFk4DRNKpYVMKBIua9W9e+ZaMQmUrPvjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PrJzfgh7QJzq5NW3QJIRDwtRk64PCda/OiXAJTyUoiAXX8Q4fOry0HMXwX261nRFYKGySaMolKAgLS2/lKcfxgDalGJpN1gY/A7k417UepNxd2WWRan5IWqo+5/vj+99kZVjy5aPo8SiSvFt68hdSlaaMmfoQMV+DtbwzimV250=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvFdxoa2; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTSmvY9BirQFFb5CdoHdlgYSuvSr42r2HXJV3z27gwzPUoOmuNdX2dzIM7PDBNynPMG0msjJf4Fe05IlBE1Z5cynPzPLt7wkR+QqvPQHuRtaNTN9c4Iq0ogne+QzI9Y1ajIdBwVHcEAnjw5b0cxGSeuMR6c4+dlRF6fiszU7M4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVwAaUa2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvFdxoa2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E25EC4CEC2;
-	Wed,  2 Oct 2024 21:41:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVwAaUa2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71AFEC4CEC2;
+	Wed,  2 Oct 2024 23:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727905290;
-	bh=MhCybmHtvHC9lNdIeEmiXoehkqXFqlzKTsDQ0Q7WLRI=;
+	s=k20201202; t=1727910841;
+	bh=7YYc3tKXWLUFk4DRNKpYVMKBIua9W9e+ZaMQmUrPvjs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XvFdxoa2dpgVrMZnOltYN8stAk4+Ke6MW6IomUDz5jEwpj3L5VJDEqKCATIpOsC7H
-	 hYd/YH2cP2eIEzddFsR/HpjJ8A5hYzlDkMC85CxcimtwHAzRqwZnsu5YaCH2hG5W+I
-	 okdyeL1bfrJnlASIUxNeooNbYjeFvGjPHphRtz6gt8kegKihJG6jXKoz4FJg6rO5hu
-	 J6+jX9LhdU5fUJQFcupBOd+nPQ2PMQCqSFoLIsBQIvX7LAV4pkN3EqK2xOAHOcCFCi
-	 SAjVSnsPPK93OJkYgpfnhX4mqZs8H2LXgl80Ynygp9KCeQJ/1b43+77YH9sc51Lg1J
-	 dFSKORiF7JTiw==
-Date: Wed, 2 Oct 2024 16:41:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
-	monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-	Conor Dooley <conor+dt@kernel.org>,
+	b=qVwAaUa2LFESEmFu1zJ1Wzg+AJn37DVAWFp+xiTwBy9mcgc4iR9He3UQpBwbVTMzf
+	 fisplMEFSlwzBvZR1vHIPVcL8fZdCBN+8ZQw5WDCFISKGZpv4kazuav4ShDEECwWTy
+	 Nbaj16s5mrN38IV1SomH8OHbpMtCN/QqzYhOZOqxewImA0zPBD+4QVyKrhU4p4TxFM
+	 2A9/Xb1UOyUe5ZGBXgWB9Y7yWgaZMKuKZC7G9pDLYvXm/EYsuubOGY/QfEFClFYreT
+	 CEqnSPreSw7RiWM6xk9CCHjUt8RCZ0pvzVcm15OHgz2H/DsTuQyl8+oeu0XLMuifFQ
+	 +BuUUk0k+B/WQ==
+Date: Wed, 2 Oct 2024 18:13:51 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
 	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, pierre-henry.moussay@microchip.com,
 	Stephen Boyd <sboyd@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: si5351: Make compatible string
- required property
-Message-ID: <20241002214129.GA1347474-robh@kernel.org>
-References: <b4b626c85ef3f75a0de936c818b2fff389e92c6d.1727855465.git.michal.simek@amd.com>
- <fa249ec7-409f-4dee-b853-736c5de464be@kernel.org>
- <74e07428-2ed4-47e2-a8ef-360df0252e17@amd.com>
- <7695cae2-33a3-4879-b8e5-d296d81ffece@amd.com>
- <938253b4-91d3-4217-a2c5-d8bd707f0e47@kernel.org>
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	valentina.fernandezalanis@microchip.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Lee Jones <lee@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Albert Ou <aou@eecs.berkeley.edu>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v1 01/11] dt-bindings: mailbox: mpfs: fix reg properties
+Message-ID: <172791083082.1519634.10076484205246276978.robh@kernel.org>
+References: <20241002-private-unequal-33cfa6101338@spud>
+ <20241002-stingily-condone-576e948e6d67@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,45 +59,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <938253b4-91d3-4217-a2c5-d8bd707f0e47@kernel.org>
+In-Reply-To: <20241002-stingily-condone-576e948e6d67@spud>
 
-On Wed, Oct 02, 2024 at 02:17:22PM +0200, Krzysztof Kozlowski wrote:
-> On 02/10/2024 12:31, Michal Simek wrote:
-> > 
-> > 
-> > On 10/2/24 10:24, Michal Simek wrote:
-> >>
-> >>
-> >> On 10/2/24 10:19, Krzysztof Kozlowski wrote:
-> >>> On 02/10/2024 09:51, Michal Simek wrote:
-> >>>> Compatible property is likely also required property.
-> >>>>
-> >>>> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> >>>> ---
-> >>>
-> >>> That's a convention but not necessary, a no-op.
-> >>
-> >> But how do you identify device then?
-> >> Or are you saying that device description is valid even if there is no 
-> >> compatible string?
-> > 
-> > One more thing
-> > commit 524dfbc4e9fc ("dt-bindings: clock: si5351: convert to yaml") is showing
-> > that compatible property was required in txt file.
-> > 
-> > -Required properties:
-> > -- compatible: shall be one of the following:
-> > -       "silabs,si5351a" - Si5351a, QFN20 package
-> > -       "silabs,si5351a-msop" - Si5351a, MSOP10 package
-> > 
-> > I can update commit message to describe it too.
+
+On Wed, 02 Oct 2024 11:47:59 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> Devices do not work without compatible, so this is obvious... and like
-> said - it is already required, so the change is redundant. Does not
-> harm, though.
+> When the binding for this was originally written, and later modified,
+> mistakes were made - and the precise nature of the later modification
+> should have been a giveaway, but alas I was naive at the time.
+> 
+> A more correct modelling of the hardware is to use two syscons and have
+> a single reg entry for the mailbox, containing the mailbox region. The
+> two syscons contain the general control/status registers for the mailbox
+> and the interrupt related registers respectively. The reason for two
+> syscons is that the same mailbox is present on the non-SoC version of
+> the FPGA, which has no interrupt controller, and the shared part of the
+> rtl was unchanged between devices.
+> 
+> This is now coming to a head, because the control/status registers share
+> a register region with the "tvs" (temperature & voltage sensors)
+> registers and, as it turns out, people do want to monitor temperatures
+> and voltages...
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/mailbox/microchip,mpfs-mailbox.yaml    | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
 
-To put it another way, by the time the schema is applied, we already 
-know that compatible is present because that is *how* the schema gets 
-applied in the first place.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
