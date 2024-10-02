@@ -1,138 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B8D1E7669;
-	Wed,  2 Oct 2024 10:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC9F19409C;
+	Wed,  2 Oct 2024 11:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866145; cv=none; b=j/PddaUsqUmnWoMoViz0CDpfNSx1SHXOUBLhPVWTZlyr+ITJGfCn7M+nKiK+V1HCowN6dOx9rFL+g/DUG1EAQ2uB6955Z+XTDLUtkyOHBzu/ZViMiBWfsQMki3pq7cFifGWARbG5QMNA6k764liYDl1bbMoF0Hifh9JC2LNPbII=
+	t=1727867256; cv=none; b=E/fAHDFrY8gGW85h3BeMT/ZIWQBnzHItwiK1lBCiwG4mUntNMCyvHQ/1k+t7jJXJfwj2tcNeHpuf4+2QumX/b1igd4E8gre/vUcGvowM98+KXEwVNcq6BIuQ/xa1EXw8wMsLafVVPMaYBoTVZ/xy21Ye88nGgSrl6ZeK9fxXQcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866145; c=relaxed/simple;
-	bh=qu+RgAvMKGG6eHj1nt3ZqKEHLWp1YZIU8I35f+U8nJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=afS8raPgacB4Kd4qmwjiE/hy8i9/clyRR9FBJAxaht2m3j9cAOlDyopz5ljnjJEAU7utOKZNuel0po44jGcGzf9+qoeBBu3TSdRyX0k+Vfhp+v5HOabZDmESDQb8hHSzleae9pwiBwySQPVbqQpunu4jDsZCZtX84Dv6PGs0/dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghbvx+80; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727867256; c=relaxed/simple;
+	bh=ORTJRm22ddAJfzALidDTq04r5FAZBeXSdbCkuCvQ3Ss=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gVOY66Hm5ubm3CO4mI7C5aoi9gNIFIydamvTaSa5/SEQaAj5IwZYgK0oKU2PI4JfxEwV2LpP4LidT4SWWyFzEW89bUCugyLi98KWHqbxHaicXIq34nALFBdFnLM4mf97TDJdWjYfkSpQ4kAxfXhZS0SngcAJRupgF8UR8ABPQ+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=UKNTM0/L; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghbvx+80"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C795C4CEC5;
-	Wed,  2 Oct 2024 10:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727866145;
-	bh=qu+RgAvMKGG6eHj1nt3ZqKEHLWp1YZIU8I35f+U8nJ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ghbvx+80TtOagxSSx1YVAs9g9hcuxHcr6yLQqp1K5nKrFCl5BE+jQkcvY5Em4LizZ
-	 7TTfyi8Q1r8TcaULi1V78umAH2v2xFGVp7jizdudRRavh7XzSIkt004SYipWNHZHTG
-	 pxNRE7mWBPtSb/DiMBEpYpprx67f+1uZNjJslUZoh3KB5JI0Hz93sHd6cZOtd39/dr
-	 N0siEYxDw/yM27ljqrztpfd7ToSWiyXYdOFd/hCQndIOngs9/gPohQHUsRnCFoWhjf
-	 JjcCU7SDodapmr53g0FNnpZGRx65eKcYekP7qv3pXRoyKT/12Id4B5vvAi77tXDQIK
-	 yXLSJFNQtwPlQ==
-From: Conor Dooley <conor@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="UKNTM0/L"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=O3KKzCLh21dqde597mGqNjSl+BqkXtinmSgN7o8hns4=; b=UKNTM0/Ly52uyCJzEhybtOcEFZ
+	Sxxk9Ue+UGaD+vXL56VcczmLCp9kLfHH/XMJKnm1E84dYQmNmiC/5UMmz/274OJT7gRxUN1eAtd0a
+	4eA9RyvtMC+X+dBu4ikQHPeNbbHRklWuisCTZLCa5496NPkF/OEVcp0r+FJANE4uXYxrcKdiaxihH
+	HnmpSvSutJ3PG3yC3z69TEftYckkChgzaDtrbbJv45mKBaxGQnRlobOWLoulxqdfZfEP7RA8a7tcw
+	9X1w2dJpZ4Ds2McZa+HbPe7lsyCoykONx/MZduR5L94keppmcRDTWBhUZSV/idpGcmErw6MjeYxab
+	4d+U9qbw==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
 	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 11/11] riscv: dts: microchip: convert clock and reset to use syscon
-Date: Wed,  2 Oct 2024 11:48:09 +0100
-Message-ID: <20241002-porous-mangy-4634b6556202@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241002-private-unequal-33cfa6101338@spud>
-References: <20241002-private-unequal-33cfa6101338@spud>
+	linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	linux-omap@vger.kernel.org,
+	Roger Quadros <rogerq@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v2 3/3] clk: twl: add TWL6030 support
+Date: Wed,  2 Oct 2024 13:07:18 +0200
+Message-Id: <20241002110718.528337-4-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241002110718.528337-1-andreas@kemnade.info>
+References: <20241002110718.528337-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2218; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=BB4R12hb6JJv+m+wU7R6gaxBtVYrpHfMfCCdOaNVhVc=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/VR7pXuTMmWI1dz5P/0rJRftzznEdb7XzW3u7THfu9 qnVD5otO0pZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRZ7sY/nC3+v6yfXGLZ+6S xrl5LvOFDT+JsHXWS37dPPtXKdesKB9GhrsvP9jds1yvfTTPX+HuMX/n3LNWxs83TzT3zGQWk8t 5xw8A
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+The TWL6030 has similar clocks, so add support for it. Take care of the
+resource grouping handling needed.
 
-The "subblock" clocks and reset registers on PolarFire SoC are located
-in the mss-top-sysreg region, alongside pinctrl and interrupt control
-functionality. Re-write the devicetree to describe the sys explicitly,
-as its own node, rather than as a region of the clock node.
-Correspondingly, the phandles to the reset controller must be updated to
-the new provider. The drivers will continue to support the old way of
-doing things.
-
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- arch/riscv/boot/dts/microchip/mpfs.dtsi | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/clk/Kconfig   |  2 +-
+ drivers/clk/clk-twl.c | 54 +++++++++++++++++++++++++++++++++----------
+ 2 files changed, 43 insertions(+), 13 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-index f8a45e4f00a0d..08aa4fe03fd30 100644
---- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
-+++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-@@ -251,11 +251,9 @@ pdma: dma-controller@3000000 {
- 			#dma-cells = <1>;
- 		};
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 299bc678ed1b..82ec12f9b82c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -291,7 +291,7 @@ config CLK_TWL
+ 	help
+ 	  Enable support for controlling the clock resources on TWL family
+ 	  PMICs. These devices have some 32K clock outputs which can be
+-	  controlled by software. For now, only the TWL6032 clocks are
++	  controlled by software. For now, the TWL6032 and TWL6030 clocks are
+ 	  supported.
  
--		clkcfg: clkcfg@20002000 {
--			compatible = "microchip,mpfs-clkcfg";
--			reg = <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
--			clocks = <&refclk>;
--			#clock-cells = <1>;
-+		mss_top_sysreg: syscon@20002000 {
-+			compatible = "microchip,mpfs-mss-top-sysreg", "syscon", "simple-mfd";
-+			reg = <0x0 0x20002000 0x0 0x1000>;
- 			#reset-cells = <1>;
- 		};
+ config CLK_TWL6040
+diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
+index 1d684b358401..f3a52f568887 100644
+--- a/drivers/clk/clk-twl.c
++++ b/drivers/clk/clk-twl.c
+@@ -11,13 +11,26 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
-@@ -452,7 +450,7 @@ mac0: ethernet@20110000 {
- 			local-mac-address = [00 00 00 00 00 00];
- 			clocks = <&clkcfg CLK_MAC0>, <&clkcfg CLK_AHB>;
- 			clock-names = "pclk", "hclk";
--			resets = <&clkcfg CLK_MAC0>;
-+			resets = <&mss_top_sysreg CLK_MAC0>;
- 			status = "disabled";
- 		};
- 
-@@ -466,7 +464,7 @@ mac1: ethernet@20112000 {
- 			local-mac-address = [00 00 00 00 00 00];
- 			clocks = <&clkcfg CLK_MAC1>, <&clkcfg CLK_AHB>;
- 			clock-names = "pclk", "hclk";
--			resets = <&clkcfg CLK_MAC1>;
-+			resets = <&mss_top_sysreg CLK_MAC1>;
- 			status = "disabled";
- 		};
- 
-@@ -550,5 +548,12 @@ syscontroller_qspi: spi@37020100 {
- 			clocks = <&scbclk>;
- 			status = "disabled";
- 		};
+-#define VREG_STATE              2
++#define VREG_STATE		2
++#define VREG_GRP		0
+ #define TWL6030_CFG_STATE_OFF   0x00
+ #define TWL6030_CFG_STATE_ON    0x01
+ #define TWL6030_CFG_STATE_MASK  0x03
++#define TWL6030_CFG_STATE_GRP_SHIFT	5
++#define TWL6030_CFG_STATE_APP_SHIFT	2
++#define TWL6030_CFG_STATE_APP_MASK	(0x03 << TWL6030_CFG_STATE_APP_SHIFT)
++#define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
++						TWL6030_CFG_STATE_APP_SHIFT)
++#define P1_GRP BIT(0) /* processor power group */
++#define P2_GRP BIT(1)
++#define P3_GRP BIT(2)
++#define ALL_GRP (P1_GRP | P2_GRP | P3_GRP)
 +
-+		clkcfg: clkcfg@3e001000 {
-+			compatible = "microchip,mpfs-clkcfg";
-+			reg = <0x0 0x3e001000 0x0 0x1000>;
-+			clocks = <&refclk>;
-+			#clock-cells = <1>;
-+		};
- 	};
++#define DRIVER_DATA_TWL6030 0
++#define DRIVER_DATA_TWL6032 1
+ 
+ struct twl_clock_info {
+-	struct device *dev;
++	struct platform_device *pdev;
+ 	u8 base;
+ 	struct clk_hw hw;
  };
+@@ -56,14 +69,21 @@ static unsigned long twl_clks_recalc_rate(struct clk_hw *hw,
+ static int twl6032_clks_prepare(struct clk_hw *hw)
+ {
+ 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
+-	int ret;
+ 
+-	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
+-			   TWL6030_CFG_STATE_ON);
+-	if (ret < 0)
+-		dev_err(cinfo->dev, "clk prepare failed\n");
++	if (platform_get_device_id(cinfo->pdev)->driver_data == DRIVER_DATA_TWL6030) {
++		int grp;
+ 
+-	return ret;
++		grp = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
++		if (grp < 0)
++			return grp;
++
++		return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
++				    grp << TWL6030_CFG_STATE_GRP_SHIFT |
++				    TWL6030_CFG_STATE_ON);
++	}
++
++	return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
++			    TWL6030_CFG_STATE_ON);
+ }
+ 
+ static void twl6032_clks_unprepare(struct clk_hw *hw)
+@@ -71,10 +91,16 @@ static void twl6032_clks_unprepare(struct clk_hw *hw)
+ 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
+ 	int ret;
+ 
+-	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
+-			   TWL6030_CFG_STATE_OFF);
++	if (platform_get_device_id(cinfo->pdev)->driver_data == DRIVER_DATA_TWL6030)
++		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
++				   ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |
++				   TWL6030_CFG_STATE_OFF);
++	else
++		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
++				   TWL6030_CFG_STATE_OFF);
++
+ 	if (ret < 0)
+-		dev_err(cinfo->dev, "clk unprepare failed\n");
++		dev_err(&cinfo->pdev->dev, "clk unprepare failed\n");
+ }
+ 
+ static const struct clk_ops twl6032_clks_ops = {
+@@ -137,7 +163,7 @@ static int twl_clks_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < count; i++) {
+ 		cinfo[i].base = hw_data[i].base;
+-		cinfo[i].dev = &pdev->dev;
++		cinfo[i].pdev = pdev;
+ 		cinfo[i].hw.init = &hw_data[i].init;
+ 		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
+ 		if (ret) {
+@@ -159,7 +185,11 @@ static int twl_clks_probe(struct platform_device *pdev)
+ 
+ static const struct platform_device_id twl_clks_id[] = {
+ 	{
++		.name = "twl6030-clk",
++		.driver_data = DRIVER_DATA_TWL6030,
++	}, {
+ 		.name = "twl6032-clk",
++		.driver_data = DRIVER_DATA_TWL6032,
+ 	}, {
+ 		/* sentinel */
+ 	}
 -- 
-2.45.2
+2.39.5
 
