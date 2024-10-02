@@ -1,161 +1,110 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A651D0485
-	for <linux-clk@vger.kernel.org>; Wed,  2 Oct 2024 13:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C40F1D0796
+	for <linux-clk@vger.kernel.org>; Wed,  2 Oct 2024 13:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875281; cv=none; b=fOZ80PmaOobtrM/pScmwFJagL1WXheEwtCR+gV/ykrMdJsqqypXR9NkX6S8OKLnVJEvpxofRvTkgV+S062BhnKLwcAwympKM479Ba3K1hH73Ag88ypTPnAXu1a+sdrUYaAOI6nID8szIheuegWs21hcwK+tLfMNBtMxN3pmAuks=
+	t=1727877232; cv=none; b=TfZKjzFb/lG0wqWLSY57LSbp39tq+j1OJJ54O4arXJyzuOrBmPPvUo96rDxWVBXhUU08ob62EIU0omQ4B9n8+HDwpIMkKR7qr72bYCv39pQagc8fYHjhbrw72PdJVVIWgEXCi4XrwRbm8u/sCwrWYZZOSwgFjnUsuVNT3N925yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875281; c=relaxed/simple;
-	bh=P9N3fFd3zgvIY3GrSgSJbElHLP5dus/hAJ2j9gU0fvs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jbCa5kPOTqlv9AGpBJewDqbd5uowUcn9lvXahDwRFCjlo2qnLFhVpzIC4aZY/dxiMwwxqzQY7xlzF3SJQkF55usorZD8tbC+dTZEgpL0klSgj4w8n2uAGHlRU2xnx0cJM3MRG1p6cgGMoz1idbmtCaUb+Y0uz5xs9P4/CkQtdFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IXmzOoCB; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1727877232; c=relaxed/simple;
+	bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VwEkr40AU4ZldmNAbZ0jEJx14QJ4rnMLx+T0HH8o/PNlQEg9QTTUsWNdTT3t0/tqcCqHu/y5/Cfra2TBduYYuzDRKeqXqGXSAOW1I08ywkkxl913qXupq/DUKxULj9oLHiQQ/yDE7Atqm/2h14gXePYSmjWV0UfJX2IBlb3hHPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEKqrHZk; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IXmzOoCB"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37cea34cb57so2037946f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 02 Oct 2024 06:21:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEKqrHZk"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5399651d21aso3015860e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 02 Oct 2024 06:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727875277; x=1728480077; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lFcpWszJZ1PatGkbcS9TyyzC+Vcri7WA2fnl3Lvu/mU=;
-        b=IXmzOoCBbsYAKKwb3VaNLcJBjPUCQaCDFVFP2UunfnWQWuZ7CQPDvBjm4ghrr96SNE
-         5kVW/7Dl19ClWf9LejcSM4wDxYiIx6mziSQcLwS/hxybz2lzit9CNQ3Vk39aabJRDaaW
-         OwRo/teAAvPl9i+/uReDfvrrqPLkhL9KvOyNuSKfthKYBV6GP8YAmOvLIpM0uLqhTBfe
-         thYdgDhGCmVpJJ+EyflWpar4UoVbCXvXKN9UwkLbdNT1a1cbcKyDw2g0TGEJ7zXZnLoY
-         p2KKXkOdsgIrd82G4ggmOtnEGETSBuuf3AYI3AQQ7BOmy7K8qdRi09BMUoEWvcWVuVpm
-         Y4fw==
+        d=linaro.org; s=google; t=1727877228; x=1728482028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
+        b=XEKqrHZknefWA6d3N2kVwvX256DlJKf930Ah7NCrJDk20YfcxhYg3m6HznUt8iFKQ6
+         4fFFUqHqW5fLOLzWHVF79/9y69eewoFZsEd0DnJumM/WX/VIxbP7qt0XSG70/HJ05FCi
+         o2O4nnaAXF3kVuAqI0N8XsFOH74gTDLElAGQHqkMzsKtB5WyAxwh6UgcESq3AnvvK6D+
+         6KLM8Z9kTlNw3EjKTpF89RIt2V8krPr/5BpvPjxvPxF1soDFXz2rVjWnTxrD/qdSMKYZ
+         iKRJIj15e82Jk+SOJFqg4uTmtFSPFda8V4ba88a/uFw0pGNKTPzUChyk4Vi8I4vH1L0x
+         TWSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875277; x=1728480077;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lFcpWszJZ1PatGkbcS9TyyzC+Vcri7WA2fnl3Lvu/mU=;
-        b=MGix/kYbUIiLyfeM6w63Tw1rLaT3yYjBo6RhkhQN0eA18GF2Q98n6GRAYB3QN/B5wZ
-         0HgQmvyEIZF0GF1h36qiWr5rBU0OJR1an6McmQoYKjaFnQk/IyYF5dv0Je4obd4jvng7
-         TO39jUYsOi2rWjg9Fqm8bBvjIeNbLo3qlPp1Uck0HYRI30KSviUwkoVVU6EGQp3I68g5
-         Bk58AjLq951rJeHzKqVwDSNNCJTWUbko9+F/o8V4l5EsLXqg6Sm5xWvDXzBX9TJmM2ZC
-         NZSTwikFJd7SfyoZTQGjGr9LmoNF8y+hsIPgB8PArW2TRMUNTrDfrBJUrhQwjkZkRa5A
-         M7vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJDgd9bKi9XULcYrbWcemwnM4HRX78f67qbogdNcPcCCEuzxtbs4/1jgCnneBjt2x27aVgbKQMGjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgi724bdvxIkA36JSr76v3n9+yhke18g/shRbhuNOg3Sfym3jj
-	4knzGOBpD2EI+MDAFFl1kaTUeo03KKCUXSa97k5RHBcNBmM9nb/VpigSh9fMa9c=
-X-Google-Smtp-Source: AGHT+IGtesUnwfGBBqJcevG7GXZS5uKes3Sg3LCKiml2f2atNex2ZhNMu7Ko3bo7Z2LB1PvLr1K3nw==
-X-Received: by 2002:a05:6000:e4e:b0:37c:c9b5:5573 with SMTP id ffacd0b85a97d-37cfb8b57d6mr1834260f8f.17.1727875277309;
-        Wed, 02 Oct 2024 06:21:17 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:eced:891a:c2b9:3db5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd575de73sm13842727f8f.115.2024.10.02.06.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:21:16 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Conor Dooley <conor@kernel.org>,  linux-kernel@vger.kernel.org,  Conor
- Dooley <conor.dooley@microchip.com>,  Daire McNamara
- <daire.mcnamara@microchip.com>,  pierre-henry.moussay@microchip.com,
-  valentina.fernandezalanis@microchip.com,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Jassi Brar
- <jassisinghbrar@gmail.com>,  Lee Jones <lee@kernel.org>,  Paul Walmsley
- <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,  Albert
- Ou <aou@eecs.berkeley.edu>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  Philipp Zabel
- <p.zabel@pengutronix.de>,  linux-riscv@lists.infradead.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to
- common code
-In-Reply-To: <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org> (Neil
-	Armstrong's message of "Wed, 2 Oct 2024 13:20:44 +0200")
-References: <20241002-private-unequal-33cfa6101338@spud>
-	<20241002-hula-unwashed-1c4ddbadbec2@spud>
-	<2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org>
-Date: Wed, 02 Oct 2024 15:21:16 +0200
-Message-ID: <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1727877228; x=1728482028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
+        b=UHdvSUy0J3hOTpjcmKPGmRA5p7pkhHdjMytq+OAkXjlWQdgefIsSdRzemOrBglgF1Y
+         hPKDTQOB01mZ/bzrF+F/nQ61FtFux0A4zVBL6+2az4VarM9+/7ODCdLaCC8Fj74bZK2N
+         ha8BfuAg74MFIvbnD0kvyMSQIo8nGRraMjd2pFvcPP95iC2BVCF5FJxDZL2WtsMtiSWW
+         9wNnKOLYMXg8PUAA5oZ9B+XGdPrG5FR+JLUJv9cusgJBqvC4o6f0zCCCuR0p4ruWGg5S
+         BQx+ts1/DyoT9jPpcgZfH4+LjmGKAjyA2BMYl7XFQQxSiCchWauVjrOnvDyQe8CA7bU+
+         Dl2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUhPcIIOSEsD03BWVnVk52tB+1NlFvIxGaJ/1e90Iybv9sHTI4b/ZlweMn4braHLHvFQJ26gRTExiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc2d91SZ4X3zQAHhKoBl71QLLAlPCZDP6Ilxm1wGrr+41isNVc
+	uOGiWTqUnu2j5vgXZawJtlc4cFnrpwAqpyVbU8Nl9Pvi8tLtmoZ03XIg8T1ZT4M35WFKKX+DgUJ
+	iQTDETqz6tjwjB6cfUbJ/WiVwY7TeCnyP8oS6aA==
+X-Google-Smtp-Source: AGHT+IH6J/1hIBQYUuOO6E4cFW0dSWZmODFCQ9NK7J4/38LglqeQ+e19d7bbsLpye8LH/IrpVT7SzxHTLiNIBgM3MX8=
+X-Received: by 2002:a05:6512:31cd:b0:533:4676:c21c with SMTP id
+ 2adb3069b0e04-539a079f587mr2037762e87.44.1727877228234; Wed, 02 Oct 2024
+ 06:53:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com> <20240912-test-v1-9-458fa57c8ccf@analog.com>
+ <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com> <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
+In-Reply-To: <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Oct 2024 15:53:36 +0200
+Message-ID: <CACRpkdY7jJXOsKwyfbZWGq90jhnufwDeeF3=Dy0Rfps0rxmBGQ@mail.gmail.com>
+Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
+To: Greg Malysa <greg.malysa@timesys.com>
+Cc: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org, adsp-linux@analog.com, 
+	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 02 Oct 2024 at 13:20, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+On Tue, Oct 1, 2024 at 11:58=E2=80=AFPM Greg Malysa <greg.malysa@timesys.co=
+m> wrote:
 
-> On 02/10/2024 12:48, Conor Dooley wrote:
->> From: Conor Dooley <conor.dooley@microchip.com>
->> I like this one better than qualcomms and wish to use it for the
->> PolarFire SoC clock drivers.
->> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->> ---
->>   drivers/clk/Kconfig                           |  4 ++
->>   drivers/clk/Makefile                          |  1 +
->>   drivers/clk/{meson => }/clk-regmap.c          |  2 +-
->>   drivers/clk/meson/Kconfig                     | 46 +++++++++----------
->>   drivers/clk/meson/Makefile                    |  1 -
->>   drivers/clk/meson/a1-peripherals.c            |  2 +-
->>   drivers/clk/meson/a1-pll.c                    |  2 +-
->>   drivers/clk/meson/axg-aoclk.c                 |  2 +-
->>   drivers/clk/meson/axg-audio.c                 |  2 +-
->>   drivers/clk/meson/axg.c                       |  2 +-
->>   drivers/clk/meson/c3-peripherals.c            |  2 +-
->>   drivers/clk/meson/c3-pll.c                    |  2 +-
->>   drivers/clk/meson/clk-cpu-dyndiv.c            |  2 +-
->>   drivers/clk/meson/clk-dualdiv.c               |  2 +-
->>   drivers/clk/meson/clk-mpll.c                  |  2 +-
->>   drivers/clk/meson/clk-phase.c                 |  2 +-
->>   drivers/clk/meson/clk-pll.c                   |  2 +-
->>   drivers/clk/meson/g12a-aoclk.c                |  2 +-
->>   drivers/clk/meson/g12a.c                      |  2 +-
->>   drivers/clk/meson/gxbb-aoclk.c                |  2 +-
->>   drivers/clk/meson/gxbb.c                      |  2 +-
->>   drivers/clk/meson/meson-aoclk.h               |  2 +-
->>   drivers/clk/meson/meson-eeclk.c               |  2 +-
->>   drivers/clk/meson/meson-eeclk.h               |  2 +-
->>   drivers/clk/meson/meson8-ddr.c                |  2 +-
->>   drivers/clk/meson/meson8b.c                   |  2 +-
->>   drivers/clk/meson/s4-peripherals.c            |  2 +-
->>   drivers/clk/meson/s4-pll.c                    |  2 +-
->>   drivers/clk/meson/sclk-div.c                  |  2 +-
->>   drivers/clk/meson/vclk.h                      |  2 +-
->>   drivers/clk/meson/vid-pll-div.c               |  2 +-
->>   .../meson => include/linux/clk}/clk-regmap.h  |  0
->>   32 files changed, 53 insertions(+), 53 deletions(-)
->>   rename drivers/clk/{meson => }/clk-regmap.c (99%)
->>   rename {drivers/clk/meson => include/linux/clk}/clk-regmap.h (100%)
->> 
-> <snip>
+> > Interrupt enable in the direction function? No thanks, poke the
+> > interrupt registers in your irqchip if you make one (you currently
+> > do not) in this case I'd say just disable all interrupts in probe()
+> > using something like writew(base + ADSP_PORT_REG_INEN_SET, 0xffff)
+> > and be done with it.
+> >
 >
-> I don't have objections, but I think Stephen didn't like the idea
-> a few years ago, but perhaps it has changed...
->
-> Anyway, take my:
-> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+> This will come up next time too so I wanted to mention that INEN here
+> means "input enable." The PORT design has two registers for
+> controlling pin direction, one to enable/disable output drivers (DIR)
+> and one to enable input drivers (INEN) to be able to read the pin
+> state from the gpio data register. If I recall the bare metal
+> reference code toggled both but we can review if setting INEN for all
+> pins and leaving it is acceptable as well to simplify things.
 
-We had a similar discussion 3y ago indeed:
-https://lore.kernel.org/linux-clk/162734682512.2368309.12015873010777083014@swboyd.mtv.corp.google.com/
+Aha so that's what it means!
 
-There are needs for a common regmap backed clocks indeed, but allowing
-meson flavored regmap clocks to spread in the kernel was not really the
-prefered way to do it. 
+Yeah play around with it and see what you can come up with.
 
-IIRC, Stephen's idea was more the bring regmap support in clk-gate.c,
-clk-mux, etc ... I'm not quite sure how make iomem and regmap co-exist
-in a manageable/maintainable way within those drivers (without adding yet
-another level of abstraction I mean) ? Silently creating a regmap maybe
-? but that's probably a bit heavy. I did not really had time to dig more
-on this, I guess no one did.
+Perhaps you need to override the input/output enable
+callbacks with local versions rather than the gpio-mmio
+ones to set all bits. (This is possible to do after
+bgpio_init() but before adding the gpio_chip if necessary.)
 
-I don't really have a preference one way or the other but if it is going
-to be exposed in 'include/linux', we need to be sure that's how we want
-to do it. With clocks poping in many driver subsystems, it will
-difficult to change afterward. 
-
->
-> Thanks,
-> Neil
-
--- 
-Jerome
+Yours,
+Linus Walleij
