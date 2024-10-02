@@ -1,106 +1,282 @@
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251F01CEAC5
-	for <linux-clk@vger.kernel.org>; Tue,  1 Oct 2024 21:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C43D967;
+	Wed,  2 Oct 2024 03:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727819911; cv=none; b=Mgs8KxjuZ3jRok2SnV5JvQHurEa9gQNs2cllOCsm9kfyROJ3OvJA3TIUM+kNMjGJFVk3oRyUBRj6G5gT4AHo+wmMGKOMA0etSjZKG3c44sQOCfW+NwheITlVNSIxjpJpSt8GuJsKLqCCPcAuI9hcrduM0i8biSf1tCsjzyXSqUY=
+	t=1727841130; cv=none; b=Eq3NIpiNghrwk8qaM6sg1oRMBKiRpcgVXPRg3igj/hj4CTBVi72eaRDgwX3bAzhr+9eXhMNieQeT4NsN+QTIb0wi2cQV5St7Hue2H4AFswrsiCmoyDb7bRAXVZvEdxuYowhiKvJUYSFsY63CS8kBr0U+WZKUaLtNn3mcGyisbuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727819911; c=relaxed/simple;
-	bh=90cj3MZQ2bSTZsUCDSDy7qQ6PfIFyQv5SQPEYusdK10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ECggRIEtzQ8rTzq7F7JfLIduMJ32Yh1eaFijKncrFiI3jK//mEnrrBixoe8HbrK50GL+lVlWK8abRSsOCfNS5JUepZs2eJHuY4owthRJiYDvRK3uXaBtf+AFbaUZsVuaEkj/FZ3wyxVOm4GZZtsKgcdN123mzV40k7FKCTWWAWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=JMzEvdTk; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+	s=arc-20240116; t=1727841130; c=relaxed/simple;
+	bh=Kw12rTJbU9Y+6eOx/J5y515PoZ8tfyTdO+ZclKqmqrg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=lxuMM7DcOrf63cswaG3IUseSxllLaL3beRHf/Spu6fxI1ScBhpTzRsBVqBeKAWmZTBGfqz9368c0MVb32X7BAMsfew+SIEtBi2H6No8ihJacOiIbnpxqQQsennwIaqnOhNcQaDzkfuy35yigpYRgOq6G4hkqWI8QZDbYxnGJLw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX05lWqC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="JMzEvdTk"
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a340f9dd8aso32860585ab.2
-        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2024 14:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1727819908; x=1728424708; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ypgub8lGo9uIxhP/Ts+gM6FIKRMUkTQXJvJ7axKC0No=;
-        b=JMzEvdTkiuOL6G6w2L0fd5fv+tB4gpLE9wv4xaqcPWTRSe2ZvJ6y6SvKbQTyfsh+Z/
-         ClpVxY2oKl7rx103MA//Y/LrTKwaey8VNOLZ7orVTwk090FR+Iscdbfv9E8KcUnj5YD1
-         tXdKvc4Rft1yaqoY8R6+uTjwKniGYefF3d/W7wXNgvzjpRmv3ZUwhgCWxGFWMqS3nyip
-         8QCjTu+vi6H8zjYn+lilaJy6293cgOY2ecaZvvBSIeNd5wrOTQdp7H50/HQ1b32w8UT+
-         e/R0cyKrmclnFfa7ziTfRUSEO7S7qaKsolXbYU/PpvLdP5wNy2sDemGQbypnumJThH3c
-         g4Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727819908; x=1728424708;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ypgub8lGo9uIxhP/Ts+gM6FIKRMUkTQXJvJ7axKC0No=;
-        b=aWhSWoxAnyw85fA2XmmdmLfdh+Amu8iR5RL5jL7r967ErG/xu1kqWDuHXYrk+L9Ypp
-         t5VS5w2TjVwr7hl8QOHTUTINaGsHjqqLGqKP/1Egfvp0m46ry2fQSgwq6vJUeFm1UQ9y
-         a5ZAxs7EcO6jZpXbBq8J33S8nBakQS03+2AiDUbPV4BDoSsy7M6XZhTfRxVblGHDSdDt
-         MRyfkcv9243HdU7EWtRHIigo3Wu2Tnr4ZA7JCpGeicLHiQ69V1gZ06cBlv3NZhElZ1yd
-         LDPQ72NGHh6ON86nwF+1K6PGj6qczbc/8fvcm49Y5DNsriSssRDnLQwHmwV7npuxHba/
-         tR8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVtrxbLlCf/3+oETu8zwfqVnVwAD2sMNNlCKgBHAkeRxaEUbNa6KCnHi0id1O/ji84JCw0NwBit4To=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHwNZ/zNFhdjxs8ZjCcaisF+rVO4Ucbj9NwHRgPCL5C/So+Pj2
-	EKJjd+nOll1dPJM+TdvtaSLc8IWG6SqVCZvlQZQzN6U9GqPRZBmKWbKLOzx+miQiBV/VKvOXQYE
-	tX7Pah6EsC9ForARNDLUUWmEMK1X68TrCzyGU
-X-Google-Smtp-Source: AGHT+IG8Mbwj1HalbNL61KqJPzFf+za9Ivu70OdRA7nBBfmVxjXJSGKtMf6v6sdYVH+UJ6WqSeqKg1y+vZZ3u8imlbI=
-X-Received: by 2002:a05:6e02:1c87:b0:3a0:a4ac:ee36 with SMTP id
- e9e14a558f8ab-3a365918466mr10985925ab.5.1727819908246; Tue, 01 Oct 2024
- 14:58:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX05lWqC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64825C4CECE;
+	Wed,  2 Oct 2024 03:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727841129;
+	bh=Kw12rTJbU9Y+6eOx/J5y515PoZ8tfyTdO+ZclKqmqrg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=LX05lWqC9ou2sfMhXQxstzacf4urEB+Lr3bNdjygkDQqFHaUt+Ck8zG2r/TRvoR36
+	 PmBEGXHg9XW1cpB9VQ8lhz00PlRxYmL97MGWj4XCMQKLzyz8ewfoNA4BBuKAY1BiY/
+	 nSwlYSSJsaWFZPJxQbbRA4c1Jb37IKPaoyndZNKB8wNYboBkgX8TH/QiMxT3bXMSJ0
+	 RGv+1AE7r7FGD6nJ+NPF3DzCrFv32wVb5URN8Q8Jez0/jiB0O8VdF9QBPgWNmcK7ue
+	 ponkzeBbiWPNuzvh/rpAk88g7dxTMsyb+qjMM/QdjmIM06sj4Of/fC4EY/jd8Ga5/i
+	 SyCLiwmXMbtAw==
+Date: Tue, 01 Oct 2024 22:52:08 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com> <20240912-test-v1-9-458fa57c8ccf@analog.com>
- <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com>
-In-Reply-To: <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com>
-From: Greg Malysa <greg.malysa@timesys.com>
-Date: Tue, 1 Oct 2024 17:57:16 -0400
-Message-ID: <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
-Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org, adsp-linux@analog.com, 
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, 
+ Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ David Wronek <david@mainlining.org>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Rob Herring <robh+dt@kernel.org>, phone-devel@vger.kernel.org, 
+ Tony Lindgren <tony@atomide.com>
+In-Reply-To: <20241001-pxa1908-lkml-v13-0-6b9a7f64f9ae@skole.hr>
+References: <20241001-pxa1908-lkml-v13-0-6b9a7f64f9ae@skole.hr>
+Message-Id: <172784025844.526778.2976668321467466412.robh@kernel.org>
+Subject: Re: [PATCH v13 00/12] Initial Marvell PXA1908 support
 
-Hi Linus,
 
-Thanks for the review.
+On Tue, 01 Oct 2024 16:37:30 +0200, Duje Mihanović wrote:
+> Hello,
+> 
+> This series adds initial support for the Marvell PXA1908 SoC and
+> "samsung,coreprimevelte", a smartphone using the SoC.
+> 
+> USB works and the phone can boot a rootfs from an SD card, but there are
+> some warnings in the dmesg:
+> 
+> During SMP initialization:
+> [    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
+> [    0.006542] CPU features: Unsupported CPU feature variation detected.
+> [    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
+> [    0.010710] Detected VIPT I-cache on CPU2
+> [    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
+> [    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
+> [    0.014849] Detected VIPT I-cache on CPU3
+> [    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
+> [    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
+> 
+> SMMU probing fails:
+> [    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
+> [    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
+> [    0.101816] arm-smmu c0010000.iommu:         no translation support!
+> 
+> A 3.14 based Marvell tree is available on GitHub
+> acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
+> CoderCharmander/g361f-kernel.
+> 
+> Andreas Färber attempted to upstream support for this SoC in 2017:
+> https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
+> 
+> Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+> 
+> Changes in v13:
+> - Better describe the hardware in bindings/arm commit message
+> - Rebase on v6.12-rc1
+> - Link to v12: https://lore.kernel.org/r/20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr
+> 
+> Changes in v12:
+> - Rebase on v6.11-rc4
+> - Fix schmitt properties in accordance with 78d8815031fb ("dt-bindings: pinctrl: pinctrl-single: fix schmitt related properties")
+> - Drop a few redundant includes in clock drivers
+> - Link to v11: https://lore.kernel.org/r/20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr
+> 
+> Changes in v11:
+> - Rebase on v6.11-rc1 (conflict with DTS Makefile), no changes
+> - Link to v10: https://lore.kernel.org/r/20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr
+> 
+> Changes in v10:
+> - Update trailers
+> - Rebase on v6.9-rc5
+> - Clock driver changes:
+>   - Add a couple of forgotten clocks in APBC
+>     - The clocks are thermal_clk, ipc_clk, ssp0_clk, ssp2_clk and swjtag
+>     - The IDs and register offsets were already present, but I forgot to
+>       actually register them
+>   - Split each controller block into own file
+>   - Drop unneeded -of in clock driver filenames
+>   - Simplify struct pxa1908_clk_unit
+>   - Convert to platform driver
+>   - Add module metadata
+> - DTS changes:
+>   - Properly name pinctrl nodes
+>   - Drop pinctrl #size-cells, #address-cells, ranges and #gpio-size-cells
+>   - Fix pinctrl input-schmitt configuration
+> - Link to v9: https://lore.kernel.org/20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr
+> 
+> Changes in v9:
+> - Update trailers and rebase on v6.9-rc2, no changes
+> - Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
+> 
+> Changes in v8:
+> - Drop SSPA patch
+> - Drop broken-cd from eMMC node
+> - Specify S-Boot hardcoded initramfs location in device tree
+> - Add ARM PMU node
+> - Correct inverted modem memory base and size
+> - Update trailers
+> - Rebase on next-20240110
+> - Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
+>   and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
+> 
+> Changes in v7:
+> - Suppress SND_MMP_SOC_SSPA on ARM64
+> - Update trailers
+> - Rebase on v6.6-rc7
+> - Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
+> 
+> Changes in v6:
+> - Address maintainer comments:
+>   - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
+> - Drop GPIO patch as it's been pulled
+> - Update trailers
+> - Rebase on v6.6-rc5
+> - Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
+> 
+> Changes in v5:
+> - Address maintainer comments:
+>   - Move *_NR_CLKS to clock driver from dt binding file
+> - Allocate correct number of clocks for each block instead of blindly
+>   allocating 50 for each
+> - Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
+> 
+> Changes in v4:
+> - Address maintainer comments:
+>   - Relicense clock binding file to BSD-2
+> - Add pinctrl-names to SD card node
+> - Add vgic registers to GIC node
+> - Rebase on v6.5-rc5
+> - Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
+> 
+> Changes in v3:
+> - Address maintainer comments:
+>   - Drop GPIO dynamic allocation patch
+>   - Move clock register offsets into driver (instead of bindings file)
+>   - Add missing Tested-by trailer to u32_fract patch
+>   - Move SoC binding to arm/mrvl/mrvl.yaml
+> - Add serial0 alias and stdout-path to board dts to enable UART
+>   debugging
+> - Rebase on v6.5-rc4
+> - Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
+> 
+> Changes in v2:
+> - Remove earlycon patch as it's been merged into tty-next
+> - Address maintainer comments:
+>   - Clarify GPIO regressions on older PXA platforms
+>   - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
+>   - Add missing includes to clock driver
+>   - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
+>   - Dual license clock bindings
+>   - Change clock IDs to decimal
+>   - Fix underscores in dt node names
+>   - Move chosen node to top of board dts
+>   - Clean up documentation
+>   - Reorder commits
+>   - Drop pxa,rev-id
+> - Rename muic-i2c to i2c-muic
+> - Reword some commits
+> - Move framebuffer node to chosen
+> - Add aliases for mmc nodes
+> - Rebase on v6.5-rc3
+> - Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
+> 
+> ---
+> Andy Shevchenko (1):
+>       clk: mmp: Switch to use struct u32_fract instead of custom one
+> 
+> Duje Mihanović (11):
+>       dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
+>       pinctrl: single: add marvell,pxa1908-padconf compatible
+>       dt-bindings: clock: Add Marvell PXA1908 clock bindings
+>       clk: mmp: Add Marvell PXA1908 APBC driver
+>       clk: mmp: Add Marvell PXA1908 APBCP driver
+>       clk: mmp: Add Marvell PXA1908 APMU driver
+>       clk: mmp: Add Marvell PXA1908 MPMU driver
+>       dt-bindings: marvell: Document PXA1908 SoC and samsung,coreprimevelte
+>       arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+>       arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
+>       MAINTAINERS: add myself as Marvell PXA1908 maintainer
+> 
+>  .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
+>  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
+>  .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
+>  MAINTAINERS                                        |   9 +
+>  arch/arm64/Kconfig.platforms                       |   8 +
+>  arch/arm64/boot/dts/marvell/Makefile               |   3 +
+>  .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 336 +++++++++++++++++++++
+>  arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 300 ++++++++++++++++++
+>  drivers/clk/mmp/Makefile                           |   2 +-
+>  drivers/clk/mmp/clk-frac.c                         |  57 ++--
+>  drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
+>  drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
+>  drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
+>  drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
+>  drivers/clk/mmp/clk-pxa1908-apbc.c                 | 130 ++++++++
+>  drivers/clk/mmp/clk-pxa1908-apbcp.c                |  82 +++++
+>  drivers/clk/mmp/clk-pxa1908-apmu.c                 | 121 ++++++++
+>  drivers/clk/mmp/clk-pxa1908-mpmu.c                 | 112 +++++++
+>  drivers/clk/mmp/clk.h                              |  10 +-
+>  drivers/pinctrl/pinctrl-single.c                   |   1 +
+>  include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
+>  21 files changed, 1299 insertions(+), 57 deletions(-)
+> ---
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> change-id: 20230803-pxa1908-lkml-6830e8da45c7
+> 
+> Best regards,
+> --
+> Duje Mihanović <duje.mihanovic@skole.hr>
+> 
+> 
 
-> > +       __adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_INEN_SET);
->
-> Interrupt enable in the direction function? No thanks, poke the
-> interrupt registers in your irqchip if you make one (you currently
-> do not) in this case I'd say just disable all interrupts in probe()
-> using something like writew(base + ADSP_PORT_REG_INEN_SET, 0xffff)
-> and be done with it.
->
 
-This will come up next time too so I wanted to mention that INEN here
-means "input enable." The PORT design has two registers for
-controlling pin direction, one to enable/disable output drivers (DIR)
-and one to enable input drivers (INEN) to be able to read the pin
-state from the gpio data register. If I recall the bare metal
-reference code toggled both but we can review if setting INEN for all
-pins and leaving it is acceptable as well to simplify things.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Thanks,
-Greg
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
--- 
-Greg Malysa
-Timesys Corporation
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y marvell/pxa1908-samsung-coreprimevelte.dtb' for 20241001-pxa1908-lkml-v13-0-6b9a7f64f9ae@skole.hr:
+
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: /: memory: False schema does not allow {'device_type': ['memory'], 'reg': [[0, 0, 0, 0]]}
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: pinctrl-names: ['default'] is too short
+	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: Unevaluated properties are not allowed ('pinctrl-names' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+
+
+
+
+
