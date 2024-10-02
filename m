@@ -1,155 +1,122 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1E31E7679
-	for <linux-clk@vger.kernel.org>; Wed,  2 Oct 2024 11:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84A15D1;
+	Wed,  2 Oct 2024 12:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727870388; cv=none; b=cRzwbkMMBrZh7Vp94PMS+BWXQQdIyIs7XGs7c4ip52/JnL/Z0XRXSuD0QUsanUjIULQo8bIXaWbkg0zqRCmQRou/k/J1pKMb9f+gQ9dXtTp8aDwZPSrJhXzb+aGP95scz1KQHfBkIFX1O0EfzJxKDjqE1de5TIupSVsAgJ7Sw5w=
+	t=1727870562; cv=none; b=Eno4Nd80cGUL6JIuRVC61jo4Z08Lg6djgTpStJMEwE0ZSZLOViylFSzXANehIN3ZtK8iw7ZrsdfVdRydurJlztWkgiNCx8J8aJv2lRyJV322gNApiaSDW2J6LFTm0oln7PltAn2IQNq7rVj3DgSTr/Ufcr+aqplbmwHCOU0mIQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727870388; c=relaxed/simple;
-	bh=tDGiDJeefuiVVlNrYVk6rYgvo7Zvpyl3GdFu/mO5AJE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eD5Cy0PZk3tj3zXq35szI1KF1ICRDwztJP4BivJtq6dPbIsKNfzFJXLHME4Oke/49YZQZx3nM0Pdqe8gK+Xf9xZqyNF10dPwqMFDoqpsoD305U4QdwPawElswVunkWDEFbvCIjuVWh1fHDZXOeVPOnXNiqpqConxe6zK5XGYHe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svy0q-0001HD-Pn; Wed, 02 Oct 2024 13:59:24 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svy0p-0036LM-NJ; Wed, 02 Oct 2024 13:59:23 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svy0k-0007fY-1z;
-	Wed, 02 Oct 2024 13:59:18 +0200
-Message-ID: <07764ea71869cc1c1f95200bcb4e0888fd705dec.camel@pengutronix.de>
-Subject: Re: [PATCH v1 06/11] reset: mpfs: add non-auxiliary bus probing
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
- <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, 
- valentina.fernandezalanis@microchip.com, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar
- <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Neil Armstrong <neil.armstrong@linaro.org>, Jerome
- Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-riscv@lists.infradead.org,  linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Date: Wed, 02 Oct 2024 13:59:18 +0200
-In-Reply-To: <20241002-breeze-anywhere-4114da636ec6@spud>
-References: <20241002-private-unequal-33cfa6101338@spud>
-	 <20241002-breeze-anywhere-4114da636ec6@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727870562; c=relaxed/simple;
+	bh=Kg/JYoKqnWNGVZqxdcYr0Et5YhzAPh8xq94ASEFYEws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UaOv2ZLyQJhD5DHLLM8etpq3hJdOmIn4ENxVLZlkxslu2/TXRp45EeIKSOAj00NRsjW+08FMho3bfaJSyiZ07xV9pF+8ekwhrABCyRICC2DVR/rKaWi1vrrVo6PsXZcKFVEc8tEYsuYDEHGP4CKPYWG7Z9TJxfjJGSC9z3Q0wA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qo86jsoV; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qo86jsoV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B36C4CECE;
+	Wed,  2 Oct 2024 12:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727870561;
+	bh=Kg/JYoKqnWNGVZqxdcYr0Et5YhzAPh8xq94ASEFYEws=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Qo86jsoV6G0P/3twuha/zEykk/oVZSd5M0765CTkETQO24hj1AglBndgBU7oKlBjp
+	 VtiDPa5MgbG43E5IoqeqVEoXXW7f4n+tSTZXdckYa4HzEtZEbRNNvNgNkvVLFJ5zBJ
+	 G058QSKidWK5Tas0dimTB/LpeOX2i9fBrRXB1mRzJOugiZjMPXDxqsUWawGjFFB5sT
+	 UTAptZ5+1tPbI6OrLvfXIS1JJ1ahXM0wStwVY2Woawk8vOEsqOqvdIXKNIfEnR70iI
+	 /HYdlVL8KKMK8Gfkwu4EQu0X7cPfALw/Fm5DP+qlhAFRgBJEqw8IIlSwvgV+5nMSiX
+	 +KMXqnge92oAw==
+Message-ID: <16830e3c-5918-4da9-8c40-1606a99695bd@kernel.org>
+Date: Wed, 2 Oct 2024 14:02:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: si5351: Make compatible string
+ required property
+To: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com
+Cc: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+References: <b4b626c85ef3f75a0de936c818b2fff389e92c6d.1727855465.git.michal.simek@amd.com>
+ <fa249ec7-409f-4dee-b853-736c5de464be@kernel.org>
+ <74e07428-2ed4-47e2-a8ef-360df0252e17@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <74e07428-2ed4-47e2-a8ef-360df0252e17@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mi, 2024-10-02 at 11:48 +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> While the auxiliary bus was a nice bandaid, and meant that re-writing
-> the representation of the clock regions in devicetree was not required,
-> it has run its course. The "mss_top_sysreg" region that contains the
-> clock and reset regions, also contains pinctrl and an interrupt
-> controller, so the time has come rewrite the devicetree and probe the
-> reset controller from an mfd devicetree node, rather than implement
-> those drivers using the auxiliary bus. Wanting to avoid propagating this
-> naive/incorrect description of the hardware to the new pic64gx SoC is a
-> major motivating factor here.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  drivers/reset/reset-mpfs.c | 83 ++++++++++++++++++++++++++++++++------
->  1 file changed, 71 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> index 710f9c1676f93..ac72e0fc405ed 100644
-> --- a/drivers/reset/reset-mpfs.c
-> +++ b/drivers/reset/reset-mpfs.c
-> @@ -9,10 +9,12 @@
->  #include <linux/auxiliary_bus.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> +#include <linux/regmap.h>
->  #include <linux/reset-controller.h>
->  #include <dt-bindings/clock/microchip,mpfs-clock.h>
->  #include <soc/microchip/mpfs.h>
-> @@ -27,14 +29,37 @@
->  #define MPFS_SLEEP_MIN_US	100
->  #define MPFS_SLEEP_MAX_US	200
-> =20
-> +#define REG_SUBBLK_RESET_CR	0x88u
-> +
->  /* block concurrent access to the soft reset register */
->  static DEFINE_SPINLOCK(mpfs_reset_lock);
-> =20
->  struct mpfs_reset {
->  	void __iomem *base;
-> +	struct regmap *regmap;
->  	struct reset_controller_dev rcdev;
->  };
-> =20
-> +static inline u32 mpfs_reset_read(struct mpfs_reset *rst)
-> +{
-> +	u32 ret;
-> +
-> +	if (rst->regmap)
-> +		regmap_read(rst->regmap, REG_SUBBLK_RESET_CR, &ret);
-> +	else
-> +		ret =3D readl(rst->base);
-> +
-> +	return ret;
-> +}
-> +
-> +static inline void mpfs_reset_write(struct mpfs_reset *rst, u32 val)
-> +{
-> +	if (rst->regmap)
-> +		regmap_write(rst->regmap, REG_SUBBLK_RESET_CR, val);
-> +	else
-> +		writel(val, rst->base);
-> +}
-> +
->  static inline struct mpfs_reset *to_mpfs_reset(struct reset_controller_d=
-ev *rcdev)
->  {
->  	return container_of(rcdev, struct mpfs_reset, rcdev);
-> @@ -51,9 +76,9 @@ static int mpfs_assert(struct reset_controller_dev *rcd=
-ev, unsigned long id)
-> =20
->  	spin_lock_irqsave(&mpfs_reset_lock, flags);
-> =20
-> -	reg =3D readl(rst->base);
-> +	reg =3D mpfs_reset_read(rst);
->  	reg |=3D BIT(id);
-> -	writel(reg, rst->base);
-> +	mpfs_reset_write(rst, reg);
+On 02/10/2024 10:24, Michal Simek wrote:
+> 
+> 
+> On 10/2/24 10:19, Krzysztof Kozlowski wrote:
+>> On 02/10/2024 09:51, Michal Simek wrote:
+>>> Compatible property is likely also required property.
+>>>
+>>> Signed-off-by: Michal Simek <michal.simek@amd.com>
+>>> ---
+>>
+>> That's a convention but not necessary, a no-op.
+> 
+> But how do you identify device then?
+> Or are you saying that device description is valid even if there is no 
+> compatible string?
 
-This should use regmap_update_bits() in the regmap case, same in
-mpfs_deassert().
+No. I meant your change means nothing to the schema. It's a noop.
+Compatible is implied.
 
-regards
-Philipp
+Best regards,
+Krzysztof
+
