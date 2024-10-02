@@ -1,78 +1,189 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302652F56;
-	Wed,  2 Oct 2024 10:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253B12564;
+	Wed,  2 Oct 2024 10:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727864560; cv=none; b=DZ4qTdv0sfAs+dyXToiaLwpqH5ZNTvpYiN33eats7Glwe0LsXVJOEYRL/+usxSC9nnMMeaymZQPCx3zr7mrYCftixpaQYQblNJqze6jAF+XWj70U+44XeiB5NCv0ShzQnyLo5ZQFSqPVHanBO3vXFFSfr0UyrcCGCQb2sGq5iEc=
+	t=1727864982; cv=none; b=Pj3ZfSNidnOnzPbrop6/8BXktwNlIEmFYysOAifcS2d0gQJwkW5huKbrt6/x/jiD2szQ+mI2Jctqoy77f4z7GrskA/1qWneXpdSmtFET5Jxcq6cgsCNtsysuc94CyMEE42V7LXb0GQkjoPrYBPx8vY4opPuDaN3W/8N1ZnhKzPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727864560; c=relaxed/simple;
-	bh=mJKvs9FLRZJEhIPy4X5obYmCOTWrv4Y6lROopBRIP0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvrYeDLGMQz+H4r/3iHoa1UPj+g/Bqtqiz85/laGdpwsAQzgWUeduEwS/N/ycEb9qu/6UriNG6Grn7lgMXydFYZqlCVL2RorqrXBvs9rWsnKbAK6JHK+K0r/8XwqvIdgFhXsLq0E3AlDBWsX6nNCwe7QXBTBAMOB8/aYGifT7G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ZAUbyOdm; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1727864982; c=relaxed/simple;
+	bh=LDK9u0Rh2qGiHVfadHoNtSjm2vY0JJcNEyZQH38Ru+k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DM00VS+VeXdL+ChT61T9bKtO6/jgDqFBl5n5fDYSrx4N2gcDiso6Z7KmYGXDn4puqy5Rjpylbt3jO6i1SrpkVqaTCuNBAIEGkXCS3zXJHrEr/upegOB81Fwyi+bF0sqkbmQUfG0nWFuU8EdvqSsfRm8ViFIYBLDyqf7TDgTQQ6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yB1oAT7E; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MhIpu/ca; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ZAUbyOdm"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A677D23CB3;
-	Wed,  2 Oct 2024 12:22:37 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JpG7VOy15MuO; Wed,  2 Oct 2024 12:22:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1727864557; bh=mJKvs9FLRZJEhIPy4X5obYmCOTWrv4Y6lROopBRIP0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZAUbyOdmY1iWScCGppAp8saDjp7y/6eUmxNQjbT2zYu8/q+STLhhrCjb2J7gotCOk
-	 7aY3oWJuqtLAjs+jIQnqNjP49GsKu4jI8yWHKMk5bS8yiCn2Kl/VMABiBPDhuXka3H
-	 QMbFMNBfardQhG/pTgPFNy3inTf396+nbzZitoiMuN75kO3rJcGhiqUmm785U6PaxB
-	 nW4xm7PttncmUtKOOK+0FTbZttA8nWJo3szNesn1s68Y4YK+O/rLh6fyPYjyJj+eZ0
-	 jpWrZIRt4V8ZVs2VJMeTWeKxmYCGpn7isvCXFUA0thlmj3fNoXo44GP/1dsiwPsR5G
-	 DzuEwFqnAas2Q==
-Date: Wed, 2 Oct 2024 10:22:15 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Celeste Liu <CoelacanthusHex@gmail.com>
-Subject: Re: [PATCH 4/8] clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
-Message-ID: <Zv0e1_9AdNASLQMr@pineapple>
-References: <20241001042401.31903-2-ziyao@disroot.org>
- <8495918.NyiUUSuA9g@diego>
- <Zv0blIPaF0Y2Pmn1@pineapple>
- <3798659.MHq7AAxBmi@diego>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yB1oAT7E";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MhIpu/ca"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727864979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6PJVrnVEM5cfMb5vScxdTKMt9fhDfO9Z+hAavmEhwIU=;
+	b=yB1oAT7E1XlN630uOzFK88nJIYEI99pPkqNC7MzylFVOj1IHHLL4wQdAvyaZyP4PagTpOx
+	bxnuVy3hPxeaRunRUQWRz7PLnx8jC0XM/QBipRCtwDXt5yk/GnTnLgawl6+Jpj357eInF4
+	feHK1LkX8aAxPoSFSnq6FIiAbwkHqopcOJoxhHy670GOTPC6bBLMxPFLRA0TkjO6QuHrgM
+	dnySzEfNcKCD4u6/Ie7tYBxX+e2CISpmNjazTC0R1oQIBq9Ylik81p5JcGwgXjOL58GSxN
+	55PJEsrPb5JN7Vz1JoYqp0HGychuDbfIpdbgbOUe0N70jPiGXLaRsgrf6hFtoQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727864979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6PJVrnVEM5cfMb5vScxdTKMt9fhDfO9Z+hAavmEhwIU=;
+	b=MhIpu/cax/LLZ8lM46QyQvLchwXnRKNKa5cv+msYl2uLTyj87E3kBnHwolI8nutZOK39SI
+	uCKJQkyTfUQG9jCQ==
+To: Arturs Artamonovs via B4 Relay
+ <devnull+arturs.artamonovs.analog.com@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Malysa
+ <greg.malysa@timesys.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Utsav Agarwal <Utsav.Agarwal@analog.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson
+ <olof@lixom.net>, soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org, Arturs Artamonovs
+ <arturs.artamonovs@analog.com>, adsp-linux@analog.com, Arturs Artamonovs
+ <Arturs.Artamonovs@analog.com>, Nathan Barrett-Morrison
+ <nathan.morrison@timesys.com>
+Subject: Re: [PATCH 11/21] irqchip: Add irqchip for ADI ADSP-SC5xx platform
+In-Reply-To: <20240912-test-v1-11-458fa57c8ccf@analog.com>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+ <20240912-test-v1-11-458fa57c8ccf@analog.com>
+Date: Wed, 02 Oct 2024 12:29:38 +0200
+Message-ID: <87ed4yyezx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3798659.MHq7AAxBmi@diego>
+Content-Type: text/plain
 
-On Wed, Oct 02, 2024 at 12:12:11PM +0200, Heiko Stübner wrote:
-> Am Mittwoch, 2. Oktober 2024, 12:08:20 CEST schrieb Yao Zi:
-> > On Wed, Oct 02, 2024 at 10:16:49AM +0200, Heiko Stübner wrote:
-> > btw, for the documentation, is there any technical reference manual
-> > of RK3528 available publicly? Please let me know if it's true, it will
-> > be quite helpful to understand clock tree better :)
-> 
-> Sadly not. So far there hasn't been a "leak" yet and Rockchip also seems
-> to have gotten more restrictive for whatever strange reason, so with my
-> NDA I also only got part1 of the manual.
+On Thu, Sep 12 2024 at 19:24, Arturs Artamonovs via wrote:
+> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
+>
+> Support seting extra indepdendent interrupt on pin activity.
 
-Oops, sad but also much thanks.
+So the subject says it adds a new interrupt chip. Now the changelog
+mumbles about support of something extra.
 
-Best regards,
-Yao Zi
+Please describe your changes properly and explain what this is
+about. Also spell check your change log.
+
+> +struct adsp_pint {
+> +	struct irq_chip chip;
+> +	void __iomem *regs;
+> +	struct irq_domain *domain;
+> +	unsigned int irq;
+
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+
+And please read and follow the rest of that document too.
+
+> + * This relies on the default configuration of the hardware, which we do not
+> + * expose an interface to change.
+> + */
+> +int adsp_attach_pint_to_gpio(struct adsp_gpio_port *port)
+
+Where is this function declared and where is it used?
+
+> +static void adsp_pint_dispatch_irq(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	struct adsp_pint *pint = to_adsp_pint(chip);
+> +	unsigned int type = irqd_get_trigger_type(&desc->irq_data);
+> +	u32 pos = BIT(desc->irq_data.hwirq);
+> +
+> +	/* for both edge interrupt, toggle invert bit to catch next edge */
+> +	if (type == IRQ_TYPE_EDGE_BOTH) {
+> +		u32 invert = readl(pint->regs + ADSP_PINT_REG_INVERT_SET) & pos;
+> +
+> +		if (invert)
+> +			writel(pos, pint->regs + ADSP_PINT_REG_INVERT_CLEAR);
+> +		else
+> +			writel(pos, pint->regs + ADSP_PINT_REG_INVERT_SET);
+
+What protects pint->regs against concurrent modifications?
+
+> +static void adsp_pint_irq_mask(struct irq_data *d)
+> +{
+> +	struct adsp_pint *pint = irq_data_get_irq_chip_data(d);
+> +
+> +	writel(BIT(d->hwirq), pint->regs + ADSP_PINT_REG_MASK_CLEAR);
+
+Same question.
+
+> +static int adsp_pint_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct adsp_pint *pint;
+> +
+> +	pint = devm_kzalloc(dev, sizeof(*pint), GFP_KERNEL);
+> +	if (!pint)
+> +		return -ENOMEM;
+> +
+> +	pint->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(pint->regs))
+> +		return PTR_ERR(pint->regs);
+> +
+> +	pint->chip.name = "adsp-pint";
+> +	pint->chip.irq_ack = adsp_pint_irq_ack;
+> +	pint->chip.irq_mask = adsp_pint_irq_mask;
+> +	pint->chip.irq_unmask = adsp_pint_irq_unmask;
+> +	pint->chip.irq_set_type = adsp_pint_irq_set_type;
+> +	// @todo potentially only SEC supports wake options, not gic
+> +
+> +	// @todo determine if we actually need a raw spinlock
+
+This should have been determined before posting, no?
+
+> +	pint->domain = irq_domain_add_linear(np, ADSP_PINT_IRQS,
+> +		&adsp_irq_domain_ops, pint);
+
+devm_irq_domain_instantiate()
+
+> +	if (!pint->domain) {
+> +		dev_err(dev, "Could not create irq domain\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	pint->irq = platform_get_irq(pdev, 0);
+> +	if (!pint->irq) {
+> +		dev_err(dev, "Could not find parent interrupt for port\n");
+> +		return -EINVAL;
+
+Then this would not leak the interrupt domain. Also why is this not
+checked _before_ instantiating the domain?
+
+> +static int __init adsp_pint_init(void)
+> +{
+> +	return platform_driver_register(&adsp_pint_driver);
+> +}
+> +
+
+Pointless new line
+
+> +arch_initcall(adsp_pint_init);
+> +
+> +MODULE_DESCRIPTION("Analog Devices IRQChip driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_AUTHOR("Greg Malysa <greg.malysa@timesys.com>");
+> \ No newline at end of file
+
+This message has a meaning, no?
+
+Thanks,
+
+        tglx
