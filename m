@@ -1,99 +1,98 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E51C16419;
-	Wed,  2 Oct 2024 16:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EE1D131B;
+	Wed,  2 Oct 2024 21:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727886604; cv=none; b=mcY+tj2j60d69rTYQYRAT8ZeoBs3Fdr6N6UaIjbQ3mRMYSEbL5YM2HWs5JeMQgivITzcLcq8JnRgGbYiwkEbaIrlO7UD6SXU+SSYrS79EqMbKN23PrniV6V0Cz7XDPdbTqTRexGRtMJg7Yd0TFbvb1DiwHip2MYo6XmKYddzsiw=
+	t=1727905292; cv=none; b=NhpFBc8pv/J1bsO7WziR271WF2rWQWIrVnkQTDiHKDYHQvJ5hlmL7+t9JsbaV0JyuBt0QMio1EA5MAz1THNs7yAl3cYOAx/qoI3aXhPHU7krdhdaZekVIELSFeVz6gQ5XQKGUjGCRJmCwGQWtqJnb4Lmwg6tvS0PyUdjh/bhLOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727886604; c=relaxed/simple;
-	bh=vlT6BUE0i0bCZYlq2mO18x7e5FjTZyQeszvJG4JrHMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nge0ngMbPJ0xjSugOUbRI4+gyKSXAGb70bd7RYWkCEX4Liwvv6FHULn5L1+9THefXugWiZFThW4Joq+vnslQKyu5DB1yZJrWoDF1ZtwZuCY0y+NxvoKYHpE1LqsLqF8iNQobmUlXEMV/VpMTYYgIDcUpwBmErjUIXnGLpTRN1Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=ECYSa+sG; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
+	s=arc-20240116; t=1727905292; c=relaxed/simple;
+	bh=MhCybmHtvHC9lNdIeEmiXoehkqXFqlzKTsDQ0Q7WLRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrJzfgh7QJzq5NW3QJIRDwtRk64PCda/OiXAJTyUoiAXX8Q4fOry0HMXwX261nRFYKGySaMolKAgLS2/lKcfxgDalGJpN1gY/A7k417UepNxd2WWRan5IWqo+5/vj+99kZVjy5aPo8SiSvFt68hdSlaaMmfoQMV+DtbwzimV250=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvFdxoa2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="ECYSa+sG"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 260C323DED;
-	Wed,  2 Oct 2024 18:30:02 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id KDZcdVSI-aPt; Wed,  2 Oct 2024 18:30:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
-	s=mail; t=1727886601;
-	bh=vlT6BUE0i0bCZYlq2mO18x7e5FjTZyQeszvJG4JrHMA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ECYSa+sGpZuvIWEFCI4wlYdPivuIg2u7ufBaP2HCT/Fw+cH8PdM6EXRACD4tALqp6
-	 No7wlyl2wh+POoquqoLkECoExyEZkpcOkQR+2M0ZFG6vi/glGHzQ51FH4lSxOhDULf
-	 S8FLox+BZ0LgxUPyfLXK2rcuiMKg0wV4k3vo9VMCZxBFBY44w1s4YrwW1Lua0bzS/d
-	 pkgT/pRyXntQz2xM4ysm3c9F471AhbRGlm7b6+jW7yPSpXzyhwjKwgtWHnM41jI7K9
-	 iaoHj5e2sgPRCfjordpkMmcPPzLUx5ZQh52ZjWrKy1ztFo/4svrahkeJQUtROcyn91
-	 QkMx0D0XHQNww==
-From: Karl Chan <exxxxkc@getgoogleoff.me>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linus.walleij@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Karl Chan <exxxxkc@getgoogleoff.me>
-Subject: [PATCH v4 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
-Date: Thu,  3 Oct 2024 00:28:12 +0800
-Message-ID: <20241002162812.31606-6-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241002162812.31606-1-exxxxkc@getgoogleoff.me>
-References: <20241002162812.31606-1-exxxxkc@getgoogleoff.me>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvFdxoa2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E25EC4CEC2;
+	Wed,  2 Oct 2024 21:41:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727905290;
+	bh=MhCybmHtvHC9lNdIeEmiXoehkqXFqlzKTsDQ0Q7WLRI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XvFdxoa2dpgVrMZnOltYN8stAk4+Ke6MW6IomUDz5jEwpj3L5VJDEqKCATIpOsC7H
+	 hYd/YH2cP2eIEzddFsR/HpjJ8A5hYzlDkMC85CxcimtwHAzRqwZnsu5YaCH2hG5W+I
+	 okdyeL1bfrJnlASIUxNeooNbYjeFvGjPHphRtz6gt8kegKihJG6jXKoz4FJg6rO5hu
+	 J6+jX9LhdU5fUJQFcupBOd+nPQ2PMQCqSFoLIsBQIvX7LAV4pkN3EqK2xOAHOcCFCi
+	 SAjVSnsPPK93OJkYgpfnhX4mqZs8H2LXgl80Ynygp9KCeQJ/1b43+77YH9sc51Lg1J
+	 dFSKORiF7JTiw==
+Date: Wed, 2 Oct 2024 16:41:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+	monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: si5351: Make compatible string
+ required property
+Message-ID: <20241002214129.GA1347474-robh@kernel.org>
+References: <b4b626c85ef3f75a0de936c818b2fff389e92c6d.1727855465.git.michal.simek@amd.com>
+ <fa249ec7-409f-4dee-b853-736c5de464be@kernel.org>
+ <74e07428-2ed4-47e2-a8ef-360df0252e17@amd.com>
+ <7695cae2-33a3-4879-b8e5-d296d81ffece@amd.com>
+ <938253b4-91d3-4217-a2c5-d8bd707f0e47@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <938253b4-91d3-4217-a2c5-d8bd707f0e47@kernel.org>
 
-Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
+On Wed, Oct 02, 2024 at 02:17:22PM +0200, Krzysztof Kozlowski wrote:
+> On 02/10/2024 12:31, Michal Simek wrote:
+> > 
+> > 
+> > On 10/2/24 10:24, Michal Simek wrote:
+> >>
+> >>
+> >> On 10/2/24 10:19, Krzysztof Kozlowski wrote:
+> >>> On 02/10/2024 09:51, Michal Simek wrote:
+> >>>> Compatible property is likely also required property.
+> >>>>
+> >>>> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> >>>> ---
+> >>>
+> >>> That's a convention but not necessary, a no-op.
+> >>
+> >> But how do you identify device then?
+> >> Or are you saying that device description is valid even if there is no 
+> >> compatible string?
+> > 
+> > One more thing
+> > commit 524dfbc4e9fc ("dt-bindings: clock: si5351: convert to yaml") is showing
+> > that compatible property was required in txt file.
+> > 
+> > -Required properties:
+> > -- compatible: shall be one of the following:
+> > -       "silabs,si5351a" - Si5351a, QFN20 package
+> > -       "silabs,si5351a-msop" - Si5351a, MSOP10 package
+> > 
+> > I can update commit message to describe it too.
+> 
+> Devices do not work without compatible, so this is obvious... and like
+> said - it is already required, so the change is redundant. Does not
+> harm, though.
 
-The approach to include device tree files from other architectures is
-inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-used to build the device tree for both ARM32 and ARM64.
+To put it another way, by the time the schema is applied, we already 
+know that compatible is present because that is *how* the schema gets 
+applied in the first place.
 
-Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
----
- arch/arm/boot/dts/qcom/Makefile                         | 1 +
- arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
- 2 files changed, 3 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-
-diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-index f06c6d425e91..147dbeb30a6a 100644
---- a/arch/arm/boot/dts/qcom/Makefile
-+++ b/arch/arm/boot/dts/qcom/Makefile
-@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-ipq4019-ap.dk04.1-c3.dtb \
- 	qcom-ipq4019-ap.dk07.1-c1.dtb \
- 	qcom-ipq4019-ap.dk07.1-c2.dtb \
-+	qcom-ipq5018-linksys-jamaica.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-ipq8064-rb3011.dtb \
- 	qcom-msm8226-microsoft-dempsey.dtb \
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-new file mode 100644
-index 000000000000..9a6ad767ebd7
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-+#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
--- 
-2.46.1
-
+Rob
