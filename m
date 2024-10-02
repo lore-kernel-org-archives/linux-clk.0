@@ -1,99 +1,87 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010D11BD03B;
-	Wed,  2 Oct 2024 23:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06D81991C9;
+	Wed,  2 Oct 2024 23:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727911790; cv=none; b=BG1bIv1HvwGKfZOZO3dX3GCnT/4rndgidJmXkORRMgbtPkBNs1VyBi28zUA6uavTdHHFGXion0iDm0aO4K5pMuxSCc+RVlifodOKq3qzSAyfkovotHnW2V2B/8VZBpJb4xI0ESH0O2LXulfqR5Yo4adaPVwng373a8o2x+Qh/Lk=
+	t=1727912193; cv=none; b=AsovuofekPOWikdmA8UmH+ZZvxgi1xqDWZ3vrites/mn7sUchCrdc7+qgzCfUNix8LPDmyH7YbWzdJ3xo9BzNyL/k5IRyZyoGNbK1+dWlXWdpGcz5oSu00+SRPINp93RzdIi4BQ32F54ER8JmjHn47Bv07pFkEbd4eF8nmsCtnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727911790; c=relaxed/simple;
-	bh=vlT6BUE0i0bCZYlq2mO18x7e5FjTZyQeszvJG4JrHMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j8gC4OPFlrNK4CLsANtRhBvpL2F0vbtzCorPPv5xame3+k7+DxbN/DtFBLhb6c1fq0xcDoTDftWcmZNs2VnG4t2TNA9jwdwueMg2q/NQVzgzHMq4r3+zZGCJQvgFWfDsyr7+dlce6mdVkCIYZUUcSK+iGJ+U9LJDEJi7xwp/974=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=AvslTyRa; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
+	s=arc-20240116; t=1727912193; c=relaxed/simple;
+	bh=HyrtHeAPOivtYCgQ4nQSGDVQaHlhKfwSeUxDJUJuZZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLizJpFvvJyHYxVDHn2Os+/yiJIGtT2jhp5x6Zm8h1lFEJr7qCmbPeshivBmJCFk6lT11pert59fOmF/mUq74xprQy9uuaxTdvwHDTAW3Ra/y9nVbLe77xe6KSmLngW2yLohZIyzD3Ou04pYSJUmSEwamk21HREgR9meg8WKOv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJSu6Rky; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="AvslTyRa"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id C124523D68;
-	Thu,  3 Oct 2024 01:29:47 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Kk32f1i4-bQ0; Thu,  3 Oct 2024 01:29:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
-	s=mail; t=1727911787;
-	bh=vlT6BUE0i0bCZYlq2mO18x7e5FjTZyQeszvJG4JrHMA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=AvslTyRaiNSOSrD4XVhc0KuthPRVB8YSuDnwWIqRDA5zGZh4fxh9gxpgA/0623h8H
-	 R7qfh3+Y2MbqKd1902EKAgcgItkouVCT/mbPJoQ/7A8lBfil2y7XnZofAQxPnZkQoB
-	 hUtDzya1ncyIaEWEffs3Zufl1PlLxVXcvzYq3fTfFXj7EsbAtlwttvxvVw+oti7Ekl
-	 urbgfY1zJrmWqo6mDDBsnUrfXydjpKDxB7sslb54svTsFjUa4T2bRDh/NUfxgBjrp/
-	 6LkLjNsmvWxYCPX9rJX3ZMX9fgNEawYbZJD7mi9Yk4MYTQQQefxvc2RwiLhrPlVLgx
-	 27vr2CUUczPmA==
-From: Karl Chan <exxxxkc@getgoogleoff.me>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linus.walleij@linaro.org,
-	devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJSu6Rky"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 461A7C4CEC5;
+	Wed,  2 Oct 2024 23:36:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727912191;
+	bh=HyrtHeAPOivtYCgQ4nQSGDVQaHlhKfwSeUxDJUJuZZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qJSu6RkyIIspeq4fY3ihUa+g0MzP3pEl9wiNEl8UmxuIAxITAbXlSEqZfQmu+5lxq
+	 0Vb1Wkd6vjGP8arRiAH7rjOWD+SbdNG/AcmsakHR5jb23UiV68hRD8h3CfT24FYlSh
+	 vnx49MWym7CKuD3Pu71TnSW5Vr+DnIAAkIrx66eNI4p4M/6ColssFiCmFYLba9R9Ca
+	 fd0Vi0tE8jz4VErPYJ+LezJUSjk0vemGQlVEA5AUreAsorZJxYfLl+UIAtn6C5E0MV
+	 i61aEzBVUhNMKgb+kAcCreN/UAMoQ5qVDcPKG99E7Jm954A0fJVieEZDApWUTeudma
+	 ZGyYtD/LvWbpA==
+Date: Wed, 2 Oct 2024 18:36:30 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
+	valentina.fernandezalanis@microchip.com,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-riscv@lists.infradead.org, pierre-henry.moussay@microchip.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Karl Chan <exxxxkc@getgoogleoff.me>
-Subject: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
-Date: Thu,  3 Oct 2024 07:28:04 +0800
-Message-ID: <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
-References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-amlogic@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Lee Jones <lee@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 07/11] dt-bindings: clk: microchip: mpfs: remove first
+ reg region
+Message-ID: <172791218968.1549326.10092947836585074554.robh@kernel.org>
+References: <20241002-private-unequal-33cfa6101338@spud>
+ <20241002-alarm-drop-down-e37c31e50a48@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002-alarm-drop-down-e37c31e50a48@spud>
 
-Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
 
-The approach to include device tree files from other architectures is
-inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-used to build the device tree for both ARM32 and ARM64.
+On Wed, 02 Oct 2024 11:48:05 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> The first reg region in this binding is not exclusively for clocks, as
+> evidenced by the dual role of this device as a reset controller at
+> present. The first region is however better described by a simple-mfd
+> syscon, but this would have require a significant re-write of the
+> devicetree for the platform, so the easy way out was chosen when reset
+> support was first introduced. The region doesn't just contain clock and
+> reset registers, it also contains pinctrl and interrupt controller
+> functionality, so drop the region from the clock binding so that it can
+> be described instead by a simple-mfd syscon rather than propagate this
+> incorrect description of the hardware to the new pic64gx SoC.
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/clock/microchip,mpfs-clkcfg.yaml | 36 +++++++++++--------
+>  1 file changed, 22 insertions(+), 14 deletions(-)
+> 
 
-Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
----
- arch/arm/boot/dts/qcom/Makefile                         | 1 +
- arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
- 2 files changed, 3 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-
-diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-index f06c6d425e91..147dbeb30a6a 100644
---- a/arch/arm/boot/dts/qcom/Makefile
-+++ b/arch/arm/boot/dts/qcom/Makefile
-@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-ipq4019-ap.dk04.1-c3.dtb \
- 	qcom-ipq4019-ap.dk07.1-c1.dtb \
- 	qcom-ipq4019-ap.dk07.1-c2.dtb \
-+	qcom-ipq5018-linksys-jamaica.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-ipq8064-rb3011.dtb \
- 	qcom-msm8226-microsoft-dempsey.dtb \
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-new file mode 100644
-index 000000000000..9a6ad767ebd7
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-+#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
--- 
-2.46.1
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
