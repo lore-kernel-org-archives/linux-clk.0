@@ -1,224 +1,179 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9990B3D68;
-	Thu,  3 Oct 2024 10:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF871474C5;
+	Thu,  3 Oct 2024 11:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727952381; cv=none; b=eZfeSlmKODfZDC32HTzgp/bZVEQWzY5Y9Y9q2FxFYP9jA+RdxyvtNvY8uktPsuSPXz6gIFBY+LBpWKsxZS3WJMXzf9xx53t90hq36oHfZkThnrt4/o6POmHHg8pKVoBIFlQoIM+XDkgul4ANhyff9VNG8QuNKppg/j0UGtam5wM=
+	t=1727955227; cv=none; b=LcST6XARx0TxPJUF708JFnLAofe8zx6Knh9dNgVC9NCnTqH3THye2CDRGHfC0TIFi3qH6SHSQlhZbnsdVwwNIe90xx507YASriflndnhsCQs8WT7eLD+H4S0wHaFltGR+1c8uul6tcdHzVzRmyJD/n6GI7J8wbEdLKPyzhKq/5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727952381; c=relaxed/simple;
-	bh=m9/K6VvhKFRFfOMebN3I5d+4T6RrW1K2nP92qcHvI6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHsmVe+zCWcZFnvq63RhGgSl5Qrm/f4lbgy7eDeXcBiFhoHsCkU1qtJE10cfkBm0KUGReGsgTYeDM1vnELD30o1aZo68KhqyXbjL8j2YIRDcDYMVnzryhgATXDPiPf9Cr5pUqSwxXVzaWXzSylQQelTt3cHrGI0wShzw9K+VpEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVTYgZhj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727955227; c=relaxed/simple;
+	bh=NLctO8JI0MYGf7CqUEPw7Kskjrc+MaQ2Y++XMVrcnE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2W0LVJBAZrolkeEO5UxuPL0MexpaBuhM5t8X5eNjh0ZusxssFUwX3iMV3cmhClyS80h+kksY/BmUurCHLb+evo2KxaJWGbpn3A5GrJMqN6daQURcrv94RKO/K5pmhdLSnKjgMDCLFfvBcx5y712z8CIDDWi7kotxgS1rfrcm0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqWQ7z7R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVTYgZhj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132C5C4CEC5;
-	Thu,  3 Oct 2024 10:46:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqWQ7z7R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ECB1C4CEC5;
+	Thu,  3 Oct 2024 11:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727952381;
-	bh=m9/K6VvhKFRFfOMebN3I5d+4T6RrW1K2nP92qcHvI6A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qVTYgZhjNCrm6XEtRVAvqp8LGSFWQsn68WS1I68rxULa62NDQHN45W2HAGtGnZF+V
-	 n8TWskvwAXqxF8mLnG/z8+Pb0BUVlDrymNvVvYW20yE3+02GDGNxDHPA+XVxXrI12E
-	 pM/g9eyFGc/uOnMzA7WNcCqkgQAM8qfrLTSQUl7KcTtPnNrw8UNGwC73yjM0ZENW9W
-	 9j2fIvsN2mNXlvmrdfPLlXaLhrKLyjgSde+L/euq+2mBrmFTtDvCC0Q0ufduWQm4Rz
-	 JuwecyTgFEB3yrmkmBEoBwVXfU5GTasKyPAlNU5iua3xQrFqTSwItUcYTO9qdgPqBb
-	 2FXjOksl5l8kA==
-Message-ID: <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org>
-Date: Thu, 3 Oct 2024 12:46:13 +0200
+	s=k20201202; t=1727955226;
+	bh=NLctO8JI0MYGf7CqUEPw7Kskjrc+MaQ2Y++XMVrcnE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NqWQ7z7R/QiDmVe1vwzFaIZH3Bfi4p0TGx5ZhHXG8nX5K4Ta30gOCci/jlREHBNET
+	 ezHW/slty1w1mKw5zwX+gk+BRRRkaRJ8c57l1SBYv/W+QqftETZVkcHBEjSJXrSMgG
+	 Kq6rlRNULhQQ1u2YU3kaBIzwrwOHIIbzr76ke6BfQfRd1y3B36m/663nhsZkc3FLr1
+	 qW60VceSzoySuVa0AdGWA1RMBi/5XdjqzA/T0nWhf/JSJE22Q/EuiuG0MZGiEHVwVv
+	 bZXjl/SWowvwIRGo4FaGy0b6B9tM5zrfKqp6FILJH1owDHTMcOew/mUEFfsF/KFKKY
+	 JYJxh5wiQ4sSg==
+Date: Thu, 3 Oct 2024 12:33:40 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to
+ common code
+Message-ID: <20241003-tacking-ladylike-dfe2b633e647@spud>
+References: <20241002-private-unequal-33cfa6101338@spud>
+ <20241002-hula-unwashed-1c4ddbadbec2@spud>
+ <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org>
+ <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
- spectrum clocking
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
- <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
- <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
- <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
- <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org>
- <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 01/10/2024 08:29, Dario Binacchi wrote:
-> On Mon, Sep 30, 2024 at 8:45 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 29/09/2024 22:00, Dario Binacchi wrote:
->>>>
->>>>
->>>>> +  properties:
->>>>> +    compatible:
->>>>> +      contains:
->>>>> +        enum:
->>>>> +          - fsl,imx8mm-anatop
->>>>> +
->>>>> +then:
->>>>> +  properties:
->>>>> +    fsl,ssc-clocks:
->>>>
->>>> Nope. Properties must be defined in top-level.
->>>>
->>>>> +      $ref: /schemas/types.yaml#/definitions/phandle-array
->>>>> +      description:
->>>>> +        The phandles to the PLLs with spread spectrum clock generation
->>>>> +        hardware capability.
->>>>
->>>> These should be clocks.
->>>
->>> Sorry, but I can't understand what you're asking me.
->>> Could you kindly explain it to me in more detail?
->>
->> You added new property instead of using existing one for this purpose:
->> 'clocks'.
-> 
->>
->>
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> I added this new property specifically for managing spread-spectrum.
-> Indeed, not all clocks/PLLs
-> managed by the node/peripheral support spread-spectrum, and the added
-> properties specify
-> parameters for enabling and tuning SSC for each individual PLL based
-> on the index of each list.
-> If I were to use the 'clocks' property and add a clock to this list
-> that does not support SSC, IMHO
-> the pairings would be less clear.
-
-You duplicate property with argument "pairings shall match". Well, I am
-not happy with the duplication. Clocks have specific order, thus it is
-explicit which one needs tuning. Your other properties can match them as
-well, just index from clocks is offset...
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uCgVWK9mZdISCwYL"
+Content-Disposition: inline
+In-Reply-To: <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
 
 
-> 
-> AFAIK the confusion arises from the fact that this node, which is a
-> clock controller, was used only
-> to export its base address, but perhaps it should have also exported
-> its clocks, which the other
-> clock controller does, as shown in:
-> Documentation/devicetree/bindings/clock/imx8m-clock.yaml.
+--uCgVWK9mZdISCwYL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You use it as clocks, so I don't understand this comment.
+On Wed, Oct 02, 2024 at 03:21:16PM +0200, Jerome Brunet wrote:
+> On Wed 02 Oct 2024 at 13:20, Neil Armstrong <neil.armstrong@linaro.org> w=
+rote:
+>=20
+> > On 02/10/2024 12:48, Conor Dooley wrote:
+> >> From: Conor Dooley <conor.dooley@microchip.com>
+> >> I like this one better than qualcomms and wish to use it for the
+> >> PolarFire SoC clock drivers.
+> >> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> >> ---
+> >>   drivers/clk/Kconfig                           |  4 ++
+> >>   drivers/clk/Makefile                          |  1 +
+> >>   drivers/clk/{meson =3D> }/clk-regmap.c          |  2 +-
+> >>   drivers/clk/meson/Kconfig                     | 46 +++++++++--------=
+--
+> >>   drivers/clk/meson/Makefile                    |  1 -
+> >>   drivers/clk/meson/a1-peripherals.c            |  2 +-
+> >>   drivers/clk/meson/a1-pll.c                    |  2 +-
+> >>   drivers/clk/meson/axg-aoclk.c                 |  2 +-
+> >>   drivers/clk/meson/axg-audio.c                 |  2 +-
+> >>   drivers/clk/meson/axg.c                       |  2 +-
+> >>   drivers/clk/meson/c3-peripherals.c            |  2 +-
+> >>   drivers/clk/meson/c3-pll.c                    |  2 +-
+> >>   drivers/clk/meson/clk-cpu-dyndiv.c            |  2 +-
+> >>   drivers/clk/meson/clk-dualdiv.c               |  2 +-
+> >>   drivers/clk/meson/clk-mpll.c                  |  2 +-
+> >>   drivers/clk/meson/clk-phase.c                 |  2 +-
+> >>   drivers/clk/meson/clk-pll.c                   |  2 +-
+> >>   drivers/clk/meson/g12a-aoclk.c                |  2 +-
+> >>   drivers/clk/meson/g12a.c                      |  2 +-
+> >>   drivers/clk/meson/gxbb-aoclk.c                |  2 +-
+> >>   drivers/clk/meson/gxbb.c                      |  2 +-
+> >>   drivers/clk/meson/meson-aoclk.h               |  2 +-
+> >>   drivers/clk/meson/meson-eeclk.c               |  2 +-
+> >>   drivers/clk/meson/meson-eeclk.h               |  2 +-
+> >>   drivers/clk/meson/meson8-ddr.c                |  2 +-
+> >>   drivers/clk/meson/meson8b.c                   |  2 +-
+> >>   drivers/clk/meson/s4-peripherals.c            |  2 +-
+> >>   drivers/clk/meson/s4-pll.c                    |  2 +-
+> >>   drivers/clk/meson/sclk-div.c                  |  2 +-
+> >>   drivers/clk/meson/vclk.h                      |  2 +-
+> >>   drivers/clk/meson/vid-pll-div.c               |  2 +-
+> >>   .../meson =3D> include/linux/clk}/clk-regmap.h  |  0
+> >>   32 files changed, 53 insertions(+), 53 deletions(-)
+> >>   rename drivers/clk/{meson =3D> }/clk-regmap.c (99%)
+> >>   rename {drivers/clk/meson =3D> include/linux/clk}/clk-regmap.h (100%)
+> >>=20
+> > <snip>
+> >
+> > I don't have objections, but I think Stephen didn't like the idea
+> > a few years ago, but perhaps it has changed...
+> >
+> > Anyway, take my:
+> > Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+>=20
+> We had a similar discussion 3y ago indeed:
+> https://lore.kernel.org/linux-clk/162734682512.2368309.120158730107770830=
+14@swboyd.mtv.corp.google.com/
+>=20
+> There are needs for a common regmap backed clocks indeed, but allowing
+> meson flavored regmap clocks to spread in the kernel was not really the
+> prefered way to do it.=20
 
-> If I consider its 'compatible' entries:
-> - 'fsl,imx8mm-ccm' -> drivers/clk/imx/clk-imx8mm.c
-> - 'fsl,imx8mn-ccm' -> drivers/clk/imx/clk-imx8mn.c
-> - 'fsl,imx8mp-ccm' -> drivers/clk/imx/clk-imx8mp.c
-> the probe function, triggered by fsl,imx8m{m,n,p}-ccm (and not
-> fsl,imx8m{m,n,p}-anatop),
-> retrieves the anatop node solely to get its base address, also
-> registering its clocks, which
-> I would have expected to be registered by another driver, specifically
-> the one for anatop:
-> 
-> static int imx8mn_clocks_probe(struct platform_device *pdev)
-> {
-> struct device *dev = &pdev->dev;
-> struct device_node *np = dev->of_node;
-> void __iomem *base;
-> struct imx_pll14xx_ssc pll1443x_ssc;
-> int ret;
-> 
-> clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
->                            IMX8MN_CLK_END), GFP_KERNEL);
-> if (WARN_ON(!clk_hw_data))
->     return -ENOMEM;
-> 
-> clk_hw_data->num = IMX8MN_CLK_END;
-> hws = clk_hw_data->hws;
-> 
-> hws[IMX8MN_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
-> hws[IMX8MN_CLK_24M] = imx_get_clk_hw_by_name(np, "osc_24m");
-> hws[IMX8MN_CLK_32K] = imx_get_clk_hw_by_name(np, "osc_32k");
-> hws[IMX8MN_CLK_EXT1] = imx_get_clk_hw_by_name(np, "clk_ext1");
-> hws[IMX8MN_CLK_EXT2] = imx_get_clk_hw_by_name(np, "clk_ext2");
-> hws[IMX8MN_CLK_EXT3] = imx_get_clk_hw_by_name(np, "clk_ext3");
-> hws[IMX8MN_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
-> 
-> np = of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
-> base = devm_of_iomap(dev, np, 0, NULL);
-> of_node_put(np);
-> if (WARN_ON(IS_ERR(base))) {
->     ret = PTR_ERR(base);
->     goto unregister_hws;
-> }
-> 
-> hws[IMX8MN_AUDIO_PLL1_REF_SEL] = imx_clk_hw_mux("audio_pll1_ref_sel",
-> base + 0x0, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> hws[IMX8MN_AUDIO_PLL2_REF_SEL] = imx_clk_hw_mux("audio_pll2_ref_sel",
-> base + 0x14, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> hws[IMX8MN_VIDEO_PLL_REF_SEL] = imx_clk_hw_mux("video_pll_ref_sel",
-> base + 0x28, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+Cool, thanks for that link.
 
-Sorry, I am not going to dwell into drivers code. We talk here about
-bindings and new properties.
+> IIRC, Stephen's idea was more the bring regmap support in clk-gate.c,
+> clk-mux, etc ... I'm not quite sure how make iomem and regmap co-exist
+> in a manageable/maintainable way within those drivers (without adding yet
+> another level of abstraction I mean) ? Silently creating a regmap maybe
+> ? but that's probably a bit heavy. I did not really had time to dig more
+> on this, I guess no one did.
 
-Best regards,
-Krzysztof
+I guess I have some motivation to looking into it at the moment. I had
+my reservations about the Meson approach too, liking it more than
+Qualcomm's didn't mean I completely liked it.
+It was already my intention to implement point b of your mail, had the
+general idea here been acceptable, cos that's a divergence from how the
+generic clock types (that the driver in question currently uses) work.
+And on that note, I just noticed I left the mild-annoyance variable name
+"sigh" in the submitted driver changes, which I had used for the
+clk_regmap struct that your point b in the link relates to.
 
+> I don't really have a preference one way or the other but if it is going
+> to be exposed in 'include/linux', we need to be sure that's how we want
+> to do it. With clocks poping in many driver subsystems, it will
+> difficult to change afterward.=20
+
+Yeah, I agree. I didn't expect this to go in right away, and I also
+didn't want to surge ahead on some rework of the clock types, were
+people to hate even the reuse.
+
+
+
+--uCgVWK9mZdISCwYL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZv6BFAAKCRB4tDGHoIJi
+0jmWAP9z0C6fhBUSC/WWZ6MZddGsLo6oJD3x2WT9TTBT2I9w/wEAs8bEOsrFDfek
+0QgAHx+Dw07ysrdYhC0Q1STP5zoaUAI=
+=3uTP
+-----END PGP SIGNATURE-----
+
+--uCgVWK9mZdISCwYL--
