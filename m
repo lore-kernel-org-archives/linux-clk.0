@@ -1,284 +1,153 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B225117BBE
-	for <linux-clk@vger.kernel.org>; Fri,  4 Oct 2024 13:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4BB15748E;
+	Fri,  4 Oct 2024 14:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049214; cv=none; b=EcUxg/TutvMuiuY+CV54lhz4qgSXZ0i2zEYlQl9SmZr7nwlsfpCqAoghXVkp9TYC1SSnOlByt0QPaig9eRZOvgT085uPQlVVyOLbEZ8kWX+6dNs2Wg44bfYUXwdwn72tXwrZiygWIo4MeYItOmZTCnxMsrtgZngzTn2/iYEcqa4=
+	t=1728050543; cv=none; b=ah+gc/bW0T5KtoG/iBjAD2uCmFLkmURXvBHABT56u21B6j9L6/wTTrs1MGUdysCoTy/IJdt4sDlSpD4vK2vDg6XPVaCk4BS6qy8hgP9NVRN0WgCQ1LvXXGtjDICefZ/1CunIquyIg9kSvXjc5RdpU31eboYrPqW41U7QzmkRkns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049214; c=relaxed/simple;
-	bh=wntCVapy28GmNxQg5zI25m/BmOa7Bc+u5I7uz3rJkEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lMh/s4OA4JZfkHxlta1FMFz5PsLoqEJIxU/4Alihrr56acNtelMfVegq5kLBN9oDWS9uoxFVW72YGJtyNR6IKupAEmV13LmywGX8J7joip1hvc3NZY2DM4ZiQxQrBM6xl7KIXgZY1Hsm00EAwZm13efhselkGqwqh8Qi/VEPSNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=juz3R45P; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1728050543; c=relaxed/simple;
+	bh=QW0C9c3/EVKwVlM57ULE+y2nHs7/G/DlCmIwV5GuFm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gu5RflgWuXoOjGiGjZjW3sy/V0egx2b+HJ5ydjWM0D7cjDYX7n8RpdV7OjEik3tdZd8J2ZAPhR2owofd7S51OnUzb8JiGt44w2ldDETQdGqCjw+2/WfnObXEt5OpGgjrp2QP59f5r4HWlQdoKRgQ4KvGb3Hozs6td8cjwz10eVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vGDjZQ0Z; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="juz3R45P"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so21052085e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2024 06:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728049210; x=1728654010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jzfLqXZYcdpOPiXhfkVN5MDcqG6LaK1oeXPNWXuwdY4=;
-        b=juz3R45Pa755zCWcS0k4DkhYPsjA1bhyN4eFvvBxj8oHkaW52IpsS8mB8hdVPqHUBh
-         Wbyz5/2VatRsV2fxm7GfhTRPwr4Z5WAJoLz3sR+dzQ9dCHEIozOc6FqogRMNanbs1J9b
-         hQhdODedSzQkX2hDsCFjKPEzLfrCJ5mlaNmzN3VcLu1lrrc1oMuVsVuKEph3qfKeRcvs
-         0KbnI8Poc/hpyvh0xKMi4fUSbmhKF9KrLmf95KUKL9HDnp7wLDlX8M/0NvMDBz27gDUr
-         BNO68WJaXoh+n/QJVuEYuGEzAvf7YIhs7EPkmDw34WYtORzxCEVEnSyhL3zseHFQ4CTo
-         C6XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728049210; x=1728654010;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jzfLqXZYcdpOPiXhfkVN5MDcqG6LaK1oeXPNWXuwdY4=;
-        b=GyS1YPMMcZ32S9Mc90GFoJR6JHW1gf7brY3wNnzRNOvTltdfyUv180wegnCRkv1/Id
-         kPoqNdv0kyeKKXJSUXZNIHPQERqIOe1vuSw7gU3ZbANvWejZWY6M8Uzh/Z3uyvANe+d/
-         ECVI2QNbT7ap6UtOmYzhO3y4z1t6Rhi8FE64ZsUEH2u3oyUzudBCC+p37bnmyUTSM5XP
-         MPNUeb1D0RTH6L56b3rxjkzGSM4PhBn9flUowBNCJgexw7zV9neT4dzqRkJ5bFERazba
-         AINxLrwdbwgNeWWcpGzlbjuGxitE4AKu7ISpQNoA6r2K51o0OhqfOcDtFSqAfl3SXlOB
-         XbvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEfhvJqjtwCptIWRS+d0Of62leh+kSFeU2Di76oC/ov8gz5E8N3WjzK/EMuR7rZGLSdECjhBRE46k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxppPlSHBzl340ouVgeY2vbNZUeTcMfgX0PeCHQnLPMbSRa6WC
-	f0P9h0U77w/zLw8mDZcVfrjTP4JQwOP/rEVEN3h+sJik3J2k8G5zpX4Y1paClcI=
-X-Google-Smtp-Source: AGHT+IHiAyKa6+sTxt5RQjPMcUomxlt2ynxOmN8lxvsxkQAcqSyVNuCpEd+TgC21eAwnlA/Q34jzsw==
-X-Received: by 2002:a05:600c:3b27:b0:42c:de34:34be with SMTP id 5b1f17b1804b1-42f85a6d765mr22106535e9.3.1728049209822;
-        Fri, 04 Oct 2024 06:40:09 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:6080:c6bd:7a14:2250])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f86b4475asm15794285e9.35.2024.10.04.06.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:40:09 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: chuan.liu@amlogic.com,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH] clk: core: refine disable unused clocks
-Date: Fri,  4 Oct 2024 15:39:38 +0200
-Message-ID: <20241004133953.494445-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
-References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vGDjZQ0Z"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=fu3VaCt1xTWMku+JYWxGDTg9qgPJOaVq3TcXvd2ZQk0=; b=vG
+	DjZQ0Z6kq+zCzKgcW5p0z5r/rfnsOF4L0viMGGQkKkh3IyoHMaplUQgf/gEKCcdUv69jL7InwOmt8
+	EqWV6vC1fJA07as/7eE2OthCZbCAbBCKynUK/CVI1slEiIr0i5nCOlpVB7EyYRYgR2GYQTG/v85KD
+	Kt/cztepW5f4grs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swisa-0093HV-S5; Fri, 04 Oct 2024 16:02:00 +0200
+Date: Fri, 4 Oct 2024 16:02:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org,
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+	richardcochran@gmail.com, geert+renesas@glider.be,
+	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+	arnd@arndb.de, m.szyprowski@samsung.com, nfraprado@collabora.com,
+	u-kumar1@ti.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH V4 5/7] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Message-ID: <6a431336-621d-4284-a0ca-b68921de22eb@lunn.ch>
+References: <20240625070536.3043630-1-quic_devipriy@quicinc.com>
+ <20240625070536.3043630-6-quic_devipriy@quicinc.com>
+ <f9d3f263-8559-4357-a1c6-8d4b5fa20b8c@lunn.ch>
+ <302298ef-7827-49e1-8b0f-04467cb38ad7@quicinc.com>
+ <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
 
-As it as been pointed out numerous times, flagging a clock with
-CLK_IGNORE_UNUSED does _not_ guarantee that clock left enabled will stay
-on. The clock will get disabled if any enable/disable cycle happens on it
-or its parent clocks.
+On Fri, Oct 04, 2024 at 01:25:52PM +0530, Manikanta Mylavarapu wrote:
+> 
+> 
+> On 6/26/2024 8:09 PM, Devi Priya wrote:
+> > 
+> > 
+> > On 6/25/2024 8:09 PM, Andrew Lunn wrote:
+> >>> +static struct clk_alpha_pll ubi32_pll_main = {
+> >>> +    .offset = 0x28000,
+> >>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
+> >>> +    .flags = SUPPORTS_DYNAMIC_UPDATE,
+> >>> +    .clkr = {
+> >>> +        .hw.init = &(const struct clk_init_data) {
+> >>> +            .name = "ubi32_pll_main",
+> >>> +            .parent_data = &(const struct clk_parent_data) {
+> >>> +                .index = DT_XO,
+> >>> +            },
+> >>> +            .num_parents = 1,
+> >>> +            .ops = &clk_alpha_pll_huayra_ops,
+> >>> +        },
+> >>> +    },
+> >>> +};
+> >>> +
+> >>> +static struct clk_alpha_pll_postdiv ubi32_pll = {
+> >>> +    .offset = 0x28000,
+> >>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
+> >>> +    .width = 2,
+> >>> +    .clkr.hw.init = &(const struct clk_init_data) {
+> >>> +        .name = "ubi32_pll",
+> >>> +        .parent_hws = (const struct clk_hw *[]) {
+> >>> +            &ubi32_pll_main.clkr.hw
+> >>> +        },
+> >>> +        .num_parents = 1,
+> >>> +        .ops = &clk_alpha_pll_postdiv_ro_ops,
+> >>> +        .flags = CLK_SET_RATE_PARENT,
+> >>> +    },
+> >>> +};
+> >>
+> >> Can these structures be made const? You have quite a few different
+> >> structures in this driver, some of which are const, and some which are
+> >> not.
+> >>
+> > Sure, will check and update this in V6
+> > 
+> > Thanks,
+> > Devi Priya
+> >>     Andrew
+> >>
+> 
+> Hi Andrew,
+> 
+> Sorry for the delayed response.
+> 
+> The ubi32_pll_main structure should be passed to clk_alpha_pll_configure() API to configure UBI32 PLL. clk_alpha_pll_configure() API expects a non-const structure. Declaring it as const will result in the following compilation warning
+> 
+> drivers/clk/qcom/nsscc-ipq9574.c:3067:26: warning: passing argument 1 of ‘clk_alpha_pll_configure’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
+>                           ^
+> In file included from drivers/clk/qcom/nsscc-ipq9574.c:22:0:
+> drivers/clk/qcom/clk-alpha-pll.h:200:6: note: expected ‘struct clk_alpha_pll *’ but argument is of type ‘const struct clk_alpha_pll *’
+>  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>       ^~~~~~~~~~~~~~~~~~~~~~~
 
-Because enable/disable cycles will disable unused clocks,
-clk_disable_unused() should not trigger such cycle. Doing so disregard
-the flag if set for any parent clocks. This is problematic with
-CLK_OPS_PARENT_ENABLE handling.
+As far as i can see, clk_alpha_pll_configure() does not modify pll.
 
-To solve this, and a couple other issues, pass the parent status to the
-child while walking the subtree, and return whether child ignored disable,
-or not.
+https://elixir.bootlin.com/linux/v6.12-rc1/source/drivers/clk/qcom/clk-alpha-pll.c#L391
 
-* Knowing the parent status allows to safely disable clocks with
-  CLK_OPS_PARENT_ENABLE when the parent is enabled. Otherwise it means
-  that, while the clock is not gated it is effectively disabled. Turning on
-  the parents to sanitize the sitation would bring back our initial
-  problem, so just let it sanitize itself when the clock gets used.
+So you can add a const there as well.
 
-* If a clock is not actively used (enabled_count == 0), does not have
-  CLK_IGNORE_UNUSED but the hw enabled all the way to the root clock, and a
-  child ignored the disable, it should ignore the disable too. Doing so
-  avoids disabling what is feading the children. Let the flag trickle down
-  the tree. This has the added benefit to transfer the information to the
-  unprepare path, so we don't unprepare the parent of a clock that ignored
-  a disable.
+> The ubi32_pll is the source for nss_cc_ubi0_clk_src, nss_cc_ubi1_clk_src, nss_cc_ubi2_clk_src, nss_cc_ubi3_clk_src. Therefore, to register ubi32_pll with clock framework, it should be assigned to UBI32_PLL index of nss_cc_ipq9574_clocks array. This assignment will result in the following compilation warning if the ubi32_pll structure is declared as const.
+> 
+> drivers/clk/qcom/nsscc-ipq9574.c:2893:16: warning: initialization discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   [UBI32_PLL] = &ubi32_pll.clkr,
 
-* An enabled clock must be prepared in CCF but we can't rely solely on
-  counts at clk_disable_unused() stage. Make sure an enabled clock is
-  considered prepared too, even if does not implement the related callback.
-  Also make sure only disabled clocks get unprepared.
+Which suggests you are missing a const somewhere else.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+Getting these structures const correct has a few benefits. It makes
+you code smaller, since at the moment at load time it needs to copy
+these structures in to the BSS so they are writable, rather than
+keeping them in the .rodata segment. Also, by making them const, you
+avoid a few security issues, they cannot be overwritten, the MMU will
+protect them. The compiler can also make some optimisations, since it
+knows the values cannot change.
 
- This is sent as an RFC to continue the discussion started by Chuan.
- It is not meant to be applied as it is.
+Now, it could be getting this all const correct needs lots of patches,
+because it has knock-on effects in other places. If so, then don't
+bother. But if it is simple to do, please spend a little time to get
+this right.
 
-
- drivers/clk/clk.c | 92 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 60 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d02451f951cf..41c4504a41f1 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -332,17 +332,6 @@ static bool clk_core_is_enabled(struct clk_core *core)
- 		}
- 	}
- 
--	/*
--	 * This could be called with the enable lock held, or from atomic
--	 * context. If the parent isn't enabled already, we can't do
--	 * anything here. We can also assume this clock isn't enabled.
--	 */
--	if ((core->flags & CLK_OPS_PARENT_ENABLE) && core->parent)
--		if (!clk_core_is_enabled(core->parent)) {
--			ret = false;
--			goto done;
--		}
--
- 	ret = core->ops->is_enabled(core->hw);
- done:
- 	if (core->rpm_enabled)
-@@ -1454,22 +1443,39 @@ static void clk_core_disable_unprepare(struct clk_core *core)
- 	clk_core_unprepare_lock(core);
- }
- 
--static void __init clk_unprepare_unused_subtree(struct clk_core *core)
-+static bool __init clk_unprepare_unused_subtree(struct clk_core *core,
-+						bool parent_prepared)
- {
- 	struct clk_core *child;
-+	bool prepared;
- 
- 	lockdep_assert_held(&prepare_lock);
- 
-+	/*
-+	 * Relying on count is not possible at this stage, so consider
-+	 * prepared an enabled clock, in case only .is_enabled() is
-+	 * implemented
-+	 */
-+	if (parent_prepared)
-+		prepared = (clk_core_is_prepared(core) ||
-+			    clk_core_is_enabled(core));
-+	else
-+		prepared = false;
-+
- 	hlist_for_each_entry(child, &core->children, child_node)
--		clk_unprepare_unused_subtree(child);
-+		if (clk_unprepare_unused_subtree(child, prepared) &&
-+		    prepared && !core->prepare_count)
-+			core->flags |= CLK_IGNORE_UNUSED;
- 
--	if (core->prepare_count)
--		return;
-+	if (core->flags & CLK_IGNORE_UNUSED || core->prepare_count)
-+		goto out;
- 
--	if (core->flags & CLK_IGNORE_UNUSED)
--		return;
-+	if (!parent_prepared && (core->flags & CLK_OPS_PARENT_ENABLE))
-+		goto out;
- 
--	if (clk_core_is_prepared(core)) {
-+	/* Do not unprepare an enabled clock */
-+	if (clk_core_is_prepared(core) &&
-+	    !clk_core_is_enabled(core)) {
- 		trace_clk_unprepare(core);
- 		if (core->ops->unprepare_unused)
- 			core->ops->unprepare_unused(core->hw);
-@@ -1477,27 +1483,50 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
- 			core->ops->unprepare(core->hw);
- 		trace_clk_unprepare_complete(core);
- 	}
-+
-+out:
-+	return (core->flags & CLK_IGNORE_UNUSED) && prepared;
- }
- 
--static void __init clk_disable_unused_subtree(struct clk_core *core)
-+static bool __init clk_disable_unused_subtree(struct clk_core *core,
-+					      bool parent_enabled)
- {
- 	struct clk_core *child;
- 	unsigned long flags;
-+	bool enabled;
- 
- 	lockdep_assert_held(&prepare_lock);
- 
--	hlist_for_each_entry(child, &core->children, child_node)
--		clk_disable_unused_subtree(child);
-+	flags = clk_enable_lock();
- 
--	if (core->flags & CLK_OPS_PARENT_ENABLE)
--		clk_core_prepare_enable(core->parent);
-+	/* Check if the clock is enabled from root to this clock */
-+	if (parent_enabled)
-+		enabled = clk_core_is_enabled(core);
-+	else
-+		enabled = false;
- 
--	flags = clk_enable_lock();
-+	hlist_for_each_entry(child, &core->children, child_node)
-+		/*
-+		 * If any child ignored disable, this clock should too,
-+		 * unless there is, valid reason for the clock to be enabled
-+		 */
-+		if (clk_disable_unused_subtree(child, enabled) &&
-+		    enabled && !core->enable_count)
-+			core->flags |= CLK_IGNORE_UNUSED;
- 
--	if (core->enable_count)
-+	if (core->flags & CLK_IGNORE_UNUSED || core->enable_count)
- 		goto unlock_out;
- 
--	if (core->flags & CLK_IGNORE_UNUSED)
-+	/*
-+	 * If the parent is disabled but the gate is open, we should sanitize
-+	 * the situation. This will avoid an unexpected enable of the clock as
-+	 * soon as the parent is enabled, without control of CCF.
-+	 *
-+	 * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
-+	 * forcefully enabling a whole part of the subtree.  Just let the
-+	 * situation resolve it self on the first enable of the clock
-+	 */
-+	if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
- 		goto unlock_out;
- 
- 	/*
-@@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- 
- unlock_out:
- 	clk_enable_unlock(flags);
--	if (core->flags & CLK_OPS_PARENT_ENABLE)
--		clk_core_disable_unprepare(core->parent);
-+	return (core->flags & CLK_IGNORE_UNUSED) && enabled;
- }
- 
- static bool clk_ignore_unused __initdata;
-@@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
- 	clk_prepare_lock();
- 
- 	hlist_for_each_entry(core, &clk_root_list, child_node)
--		clk_disable_unused_subtree(core);
-+		clk_disable_unused_subtree(core, true);
- 
- 	hlist_for_each_entry(core, &clk_orphan_list, child_node)
--		clk_disable_unused_subtree(core);
-+		clk_disable_unused_subtree(core, true);
- 
- 	hlist_for_each_entry(core, &clk_root_list, child_node)
--		clk_unprepare_unused_subtree(core);
-+		clk_unprepare_unused_subtree(core, true);
- 
- 	hlist_for_each_entry(core, &clk_orphan_list, child_node)
--		clk_unprepare_unused_subtree(core);
-+		clk_unprepare_unused_subtree(core, true);
- 
- 	clk_prepare_unlock();
- 
--- 
-2.45.2
-
+	Andrew
