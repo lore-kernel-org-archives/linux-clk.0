@@ -1,97 +1,137 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FE3157484
-	for <linux-clk@vger.kernel.org>; Fri,  4 Oct 2024 11:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE3215B111;
+	Fri,  4 Oct 2024 11:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728042303; cv=none; b=jrX4abtRvrck9+pzGEd4wqpqu5Wrl+J9HfQ2/REglsEEt/saqkvt5oY4A2vEzx9HD1vl4Pgbu91uURCYfyGUEtM0gf9g2nIldx9cGi3QGDoQ1iGFKjAsVt1L8NcsyDOYGq07pd3r17AzkR2gyUdGV6MSS44PzpMMiO6PQYR1SgA=
+	t=1728042536; cv=none; b=E5MLhR3WUnRiUwKOaMN6sSkGPtZy3iM+ZMmPdA7cgKkDDi/2TTloZpQ45dq0Ze/5VHQ6YQt+NQnHELpCtBETLw4TzqRd1HfLqaLCUFoSpJgAeHuFehWQoP3kLXT+uNbtvIqA870kXYL9PvFiWj135Sx8TQMbmPbIwzxE42JFn3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728042303; c=relaxed/simple;
-	bh=ddGvXf1L/Fq3c4RMPyxrOA14cqgWI9P90J4zJ4pJs4I=;
+	s=arc-20240116; t=1728042536; c=relaxed/simple;
+	bh=Ht0Mlml4UcuysDPVHCDVGvxn/tDaEANke7Vs8aKVFG4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JsGJIry7yye/SgqUXPygZiXOOkWbPcjSvgf/XIy43vcerGi5zoih+pEIjwd6pFQpBovpxC7su69ZIERCDSaZWYeuAifd2t/tbVSGzbBmOxJdviMUvFjvl8dSSzJL+VH1tKO5wWT+xBEPH+D6vPPZNBDRrTuayyjYgSofK1fEwa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HjR8GugK; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 To:Cc:Content-Type; b=nUTCAuOBxcF+zjolPuLk+EqF2z/Ed1Zy4TaBeTq8Ohi8bx/n0KES1u30JmTtaZHfPEf/4VamdTr5bJEl2jWD4dDnPQ/v2Fx1Ne/apLq8T5nPjNtWwGMCgcxp2Uea8QWg7+RQDhot6au5JiK+J5FP+W9BQd83IfhzSqVjL0sI54o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc26v50q; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjR8GugK"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fac49b17ebso16400821fa.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2024 04:45:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc26v50q"
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-502aeeb791eso1127131e0c.1;
+        Fri, 04 Oct 2024 04:48:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728042299; x=1728647099; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728042534; x=1728647334; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Khwkr05lsMPVSpq7TCjaX0gPVi7sWovxm4CAOdt4/3s=;
-        b=HjR8GugKRCDjLPeodO8HloyjgQ1OLPxVoLDlQlXKO2iSZOkvjJy0DTvLv2+4rxk8A2
-         9QtantMsXz4bxkjCWgpec8Nhg9JuUgDOeTjdVEFVgGtnNqcOMvwq36OgW1nPFYPT2760
-         H7fUVJRbq7EXeYfn7sEZMaTr1OYR5cJZuYS+tpPdlNKEtALPfKBeh9XkJ/e0Ta61XMXh
-         c6QGKeRXtjX5gB1uBpNfUrarXzxpsKiV52MAsiv86aduOF4HO7FMIT67lAttqYVjp6Ak
-         EoeC3GBL1oqtoKOPwM9D7toIcqNiuokz8gBOFcgK6dl/x0Xsbosk7zgOdMuVK+3hc5uu
-         If+w==
+        bh=Oq2lzS46UFUr7C4ctAQHCLo6+Q0WwfTBQLO38QvWs/A=;
+        b=Xc26v50qeW16sKxqd5gZ5rqDQSo2ezj6iw+8t6BBYLNBpQwAKGyH9/8bPQ7355rGH9
+         0LUz/jNzX8TIzfOOXuq164vWBjiiHvEXix0K1TuMlATcrRNQmBuSy5W3bobGyP6lf3k4
+         Fb5X3uDNjxQshULRBCl3mxvKArYBuTXNPYXGVIEGnrUG/VrkyFukF/re7a0uocmZey76
+         TIvF3umj6m/k9UvFjsR5+9/fYyhFqGKvoS8qvlOEBUOfOxPecA7hNvqIvVNz02BybZ1z
+         1c0hzk/OjflyCcgnlhqwbYw0tILiOoqwXQixezGRvoiNquqvL1r2R2gghaaLFNgffEKx
+         aNGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728042299; x=1728647099;
+        d=1e100.net; s=20230601; t=1728042534; x=1728647334;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Khwkr05lsMPVSpq7TCjaX0gPVi7sWovxm4CAOdt4/3s=;
-        b=KRmFdQFShpKKBIewXE5mWuJdHqHkpT6DaTQX6zEBYCktdWUZb6LykSgE7juBeZsWkN
-         K1PL1NBycga6pbZCC7wJWeXnaaHiv5kTaeAaFK9E8PYtIsV64BhbyvTSKBa2J6gdg0fz
-         er7tQyczwnxTMG4xvx7XwoE6Cll+uFot/ct+c37Z9SKQz+0B9wsvqHggaG2yPSQO7Vvn
-         PWMZsFOW1RdAMbjZX2ZUrElvEJdw03+gMuiF0yCWD/flhKutL3pUq3GqvWxTm+IWsiDx
-         K2nLCMhX53b9pABF368KT5jd7gw1Unf0MlKrbJTkrG5i0GKQ4HXSFf9vauAV7Ca+8Zkl
-         bRzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAsXqyTMx8b610MUzpxlh3L08E8YTJfESoP8lGQgT/oRbYG3ep4aBnP5uNF/qhNs7eZjBnf1CcTrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD1z+IaHUaBUsYmaANxaNwVYtPMlbVSsMPjpH6he6a2YMxTXIu
-	wC0iorF3JDoxBseiMD6LAbCvfRO4SmYB5fp/vA3pgjYDLqHRB2DJ6yBdu8Am9/e5n6lwZXkygFz
-	C2dId757sr7pCR6jMpf9vzBXEBTaNTBX8KlCHZw==
-X-Google-Smtp-Source: AGHT+IGiTQzYERLjm/jzUGh/crV6ATYuQpv4nXIEVrS7JrXOOcQzJB/z1NXK08Yox/oqqZ9WwDQ8tFMFsN0Zrte3h1I=
-X-Received: by 2002:a05:651c:b22:b0:2fa:d4c1:3b6b with SMTP id
- 38308e7fff4ca-2faf3d74e2cmr12168961fa.33.1728042299452; Fri, 04 Oct 2024
- 04:44:59 -0700 (PDT)
+        bh=Oq2lzS46UFUr7C4ctAQHCLo6+Q0WwfTBQLO38QvWs/A=;
+        b=R4I8N9qpPIRrAttcwLo+6OHSLuw4+wVZgy31iDaRj95TJaWcqDLnkJpPDQ+eCsKcQV
+         18H5fohKQXAQYsl3/1KWe8VG1nRkC6FnvFLMwy+JZS3KKP74yDbvgn0t3WwlKeaWBO9W
+         qnoX6MDA9TxW96o6v9+3jsCsor+VSWBQANxX/oRl7tGQzqjeM+9wOulj0CCjt9AenW65
+         Uunt+VcJXABF4fGHNnWg6RWr7L38T4AKFY3VlXdtp99TEWEmXizKteOvn1dmgpZonfoV
+         2xtADQRWmSIV4y7fjXyHlkYD6+KubGsKxpC+n82mr2arjgox624Tklg6N5C3D0UYpAeb
+         v3Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUTKKrPLBVp0uh+XnlmURT9nvl2FtXUpKGuYoYtNJAJ+qwICg8OU5eb+Wa9pDJpHt47mt+wRPpp5RAldfIB@vger.kernel.org, AJvYcCXKMKI8GfxA7A9xLmKFS0lvFhC7va13ZBGzVK+zc5c3BDu1vBV1S24vrIJ4KRkIfNbOQbUz9l6Eti3jPh7zSgqe6Ig=@vger.kernel.org, AJvYcCXKX0MggD9NNHjsfmzLLVeWXZpV2n9ZkonFFFt3tc9KI2TjaqcHIDxBRAx/cOA/jYSbKWZiQ1bzcaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxggR++0vhvc3HhfGmIHiS6uRZb/7SLpETkuehXiZZkqENOuXEM
+	OFibqtTLQK4+l6fFTepbu4iKT0dH0z5sYfjGdiv9GQSj1TydEVQ1By7CswPXIEdNrxEjqmjWEYU
+	MDK0xn53GNEvaFTTFPSWCCQxVZ+Q=
+X-Google-Smtp-Source: AGHT+IFCzubwgGW2nqW/IcMXCQ2R93NjgQAx33rjNz5Zh89T0t4i2V7RdDiZOWyDi4kJ3U8gWAXvcQrwWak8M20arWw=
+X-Received: by 2002:a05:6122:918:b0:502:b69c:b239 with SMTP id
+ 71dfb90a1353d-50c6d1ec152mr4725263e0c.4.1728042534070; Fri, 04 Oct 2024
+ 04:48:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me> <20241002232804.3867-5-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241002232804.3867-5-exxxxkc@getgoogleoff.me>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 4 Oct 2024 13:44:47 +0200
-Message-ID: <CACRpkdZnBBAEgHZ=HShwvaXaN-6icC5hzwHqDNWWy_PKJDh+Fw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] pinctrl: qcom: ipq5018: allow it to be bulid on arm32
-To: Karl Chan <exxxxkc@getgoogleoff.me>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240918135957.290101-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUiGAo2jz5oeiYzzHMNaaDmpjUo7eR7F1i50iPXEv18MQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUiGAo2jz5oeiYzzHMNaaDmpjUo7eR7F1i50iPXEv18MQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 4 Oct 2024 12:48:28 +0100
+Message-ID: <CA+V-a8sBmELt7BGKuEnYeUPN-S+vQbL_SB7RUm-Ef4UNhh=a0w@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a09g057: Add CA55 core clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 3, 2024 at 1:29=E2=80=AFAM Karl Chan <exxxxkc@getgoogleoff.me> =
-wrote:
+Hi Geert,
 
-> There are some ipq5018 based device's firmware only can able to boot
-> arm32 but the pinctrl driver dont allow it to be compiled on
-> arm32.Therefore this patch needed for those devices.
+Thank you for the review.
+
+On Fri, Oct 4, 2024 at 10:22=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
-(...)
-> -       depends on ARM64 || COMPILE_TEST
-> +       depends on ARM || ARM64 || COMPILE_TEST
+> Hi Prabhakar,
+>
+> On Wed, Sep 18, 2024 at 4:02=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add CA55 core clocks which are derived from PLLCA55.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.13.
+>
+> > --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+> > @@ -74,6 +82,14 @@ static const struct cpg_core_clk r9a09g057_core_clks=
+[] __initconst =3D {
+> >
+> >         /* Core Clocks */
+> >         DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1)=
+,
+> > +       DEF_DDIV(".ca55_0_coreclk0", R9A09G057_CA55_0_CORE_CLK0,
+> > +                CLK_PLLCA55, CDDIV1_DIVCTL0, dtable_1_8),
+> > +       DEF_DDIV(".ca55_0_coreclk1", R9A09G057_CA55_0_CORE_CLK1,
+> > +                CLK_PLLCA55, CDDIV1_DIVCTL1, dtable_1_8),
+> > +       DEF_DDIV(".ca55_0_coreclk2", R9A09G057_CA55_0_CORE_CLK2,
+> > +                CLK_PLLCA55, CDDIV1_DIVCTL2, dtable_1_8),
+> > +       DEF_DDIV(".ca55_0_coreclk3", R9A09G057_CA55_0_CORE_CLK3,
+> > +                CLK_PLLCA55, CDDIV1_DIVCTL3, dtable_1_8),
+>
+> I will drop the leading dots from the clocks' names while applying,
+> as these are not internal clocks.
+>
+Agreed, thanks for taking care of this.
 
-Can we get some more context for this?
+Cheers,
+Prabhakar
 
-Is this another one of those cases where the SoC is actually a
-64bit core but vendors just choose to run it in 32bit mode because
-that is what they want or what is the reason here? AFAIK
-IPQ5018 is always Cortex-A53?
-
-I just want to know if this is something we should encourage
-or leave out-of-tree.
-
-Yours,
-Linus Walleij
+> >         DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33=
+_DIV16, 1, 1),
+> >  };
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
