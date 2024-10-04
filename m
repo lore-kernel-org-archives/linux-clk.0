@@ -1,154 +1,115 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987121E3788;
-	Fri,  4 Oct 2024 16:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B80481CE;
+	Fri,  4 Oct 2024 16:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728059708; cv=none; b=VnuDkMHpdhEN+tAbEaanecdiMksw5E5fTfuWykUMDOM8iNHyoLGqGDjmNjQkdkAKgLgbdMbBpTIh/xHyZY3g5o1MCARPzek0CT9pmVRzooM5o6AXnCKSQ3MFSQoUc0h3YDEr93QNqa7KAykJILvBVQHlJ4cEZJAYu2fZJGmChA4=
+	t=1728060922; cv=none; b=JxMIIOzszQg1dwpo0f/krem6vRJpPsSIyE8ejOPMHEIGhhZcc101s7FCROxMe4vlCw07+FB2VixOXatgNOz+gZ9hqkPDEfmRW64kUB4kFnPiwqLrJOkG8NeI+7Er7Pa6+lVpSthJK5dmwrTvdj+Egv8WC5e+GoROfykD2TLm8SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728059708; c=relaxed/simple;
-	bh=diUUycR6+ooXPRLOO+BIOHZpS588LA7rLTJGJatDnms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g18Mf0Aj5t3fh0RRTSvEvz9clw6zqKXKfQBtw5li9x32y/ydUye3B1oZP9FnwsxuVz37d2jk1ghtBPoE4pYovfNr8inqJYcpkQDonvC5aET3+Yz+Ik4HgGknpapk6S9qU6RxJBCgl5QaKMBaM5ttXzVKJzFvnhZgKQz95LBtq0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LXMyixRN; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1728060922; c=relaxed/simple;
+	bh=2N8Az+6adF+E6pdBqPy0YObeupcf83vhXWtkovYhiN4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=qQCmkLP8R6UHmQzvS2iqOY/O+TaVYjXcJo5Dej/lFHqa+Ih33zJvbvn/Xr8BrGdQvd7/Zp/0PKj+WZ0WIYB911OXrgEmX7G+UYmlx2J40fO0zjBexNDLOE6PNJQ6dkDiLuL4RaV/vVhtnj/C5HFQ9aqsSDMc+2itsRBr7TgYrQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j5dAmvSe; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LXMyixRN"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wlGbsPLnFNgC2wlGbstPZy; Fri, 04 Oct 2024 18:34:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728059698;
-	bh=0M0uxOekSSBYumgofd6cg8jRm/StSafXgAMhA9nh22s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=LXMyixRNqutaKsdCewv4YGQ6iZQOeECWvsey6Xmda2IuyePW2k8ON0Mge6rNwFu6o
-	 V4pZ58jqp8BpUm+6zPmuSlBz3rQ146svxCL8Te2voBLyDqbaYU5+n23TcNRMXcgdwZ
-	 efTnCD8i3/APr2Ee0QVGEoBZ83BkiEt4Y5Z4xvaFm0nSmdzmOwFmWzVBhL57qqIhXa
-	 FOPYl0X5M2V8ypiS5qzLkhZuCIQzq4pxw7KcjfFyj5qVJEaQyk5OFeezleJoGSEjnf
-	 VX81mSnyypCUf2UZHq/v9imAR2ZZ2jzTChLD94VyQrSifbJas5rM+b7WxJmZENw2Qu
-	 caLp1Oai0uPEw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 04 Oct 2024 18:34:58 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
-Date: Fri, 4 Oct 2024 18:34:57 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j5dAmvSe"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E2F96240007;
+	Fri,  4 Oct 2024 16:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728060916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0UaVOGZXc77/9zjUtLUSwZwPDWMsz2YXg6qf1K6eg9E=;
+	b=j5dAmvSertzXppJtGp+wTsEyHhoGVeVB9FlTbh+Xocdih7vUY6x0JPSF67Lxg9JLQEXPJG
+	7IkKvJl5CXtZQzZqU0XALys1xRNRNMqPk82aOo6ZzIHkOI6xC0fZsHwu8j8y5IWW3K/71K
+	FpbvfHVu76IGp2waucfTkcMliMCenah9SO/OWWG3ossV+tHro6lHsAo7JuF56CGZnkvomN
+	hpWruVvE9UQPENX3z09Wuuaos1+/l0tU/ulz2EBJt+XggpifalLQUtvMazQV15g+YM0ZLW
+	EH1EkeUrVTpPotpbprJQvPEVQsIST0rzaxxKOldKs/oabVTWm0XbQk3W+70rlw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 04 Oct 2024 18:55:15 +0200
+Message-Id: <D4N6GX6P0ZCH.2PJGDMKEZ6LLQ@bootlin.com>
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
 Subject: Re: [PATCH v4 4/4] clk: eyeq: add driver
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
 References: <20241004-mbly-clk-v4-0-c72c2e348e1f@bootlin.com>
  <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
+In-Reply-To: <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Le 04/10/2024 à 17:45, Théo Lebrun a écrit :
-> Add Mobileye EyeQ5, EyeQ6L and EyeQ6H clock controller driver. It is
-> both a platform driver and a hook onto of_clk_init() used for clocks
-> required early (GIC timer, UARTs).
-> 
-> For some compatible, it is both at the same time. eqc_early_init()
-> initialises early PLLs and stores clock array in a static linked list.
-> It marks other clocks as deferred. eqc_probe() retrieves the clock
-> array and adds all remaining clocks.
-> 
-> It exposes read-only PLLs derived from the main crystal on board.
-> It also exposes another type of clocks: divider clocks.
-> They always have even divisors and have one PLL as parent.
-> 
-> This driver also bears the responsability for optional reset and pinctrl
-> auxiliary devices. The match data attached to the devicetree node
-> compatible indicate if such devices should be created. They all get
-> passed a pointer to the start of the OLB region.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
+Hello Christophe,
 
-Hi,
+On Fri Oct 4, 2024 at 6:34 PM CEST, Christophe JAILLET wrote:
+> Le 04/10/2024 =C3=A0 17:45, Th=C3=A9o Lebrun a =C3=A9crit=C2=A0:
+> > +static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *p=
+riv)
+> > +{
+> > +	const struct eqc_match_data *data =3D priv->data;
+> > +	unsigned long mult, div, acc;
+> > +	const struct eqc_pll *pll;
+> > +	struct clk_hw *hw;
+> > +	unsigned int i;
+> > +	u32 r0, r1;
+> > +	u64 val;
+> > +	int ret;
+> > +
+> > +	for (i =3D 0; i < data->pll_count; i++) {
+> > +		pll =3D &data->plls[i];
+> > +
+> > +		val =3D readq(priv->base + pll->reg64);
+> > +		r0 =3D val;
+> > +		r1 =3D val >> 32;
+> > +
+> > +		ret =3D eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
+> > +		if (ret) {
+> > +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
+> > +			priv->cells->hws[pll->index] =3D ERR_PTR(ret);
+> > +			continue;
+> > +		}
+> > +
+> > +		hw =3D clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
+> > +				dev->of_node, pll->name, "ref", 0, mult, div, acc);
+>
+> Should this be freed somewhere or is it auto-magically freed by a=20
+> put_something()?
+> Maybe devm_action_or_reset()?
 
-> +static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
-> +{
-> +	const struct eqc_match_data *data = priv->data;
-> +	unsigned long mult, div, acc;
-> +	const struct eqc_pll *pll;
-> +	struct clk_hw *hw;
-> +	unsigned int i;
-> +	u32 r0, r1;
-> +	u64 val;
-> +	int ret;
-> +
-> +	for (i = 0; i < data->pll_count; i++) {
-> +		pll = &data->plls[i];
-> +
-> +		val = readq(priv->base + pll->reg64);
-> +		r0 = val;
-> +		r1 = val >> 32;
-> +
-> +		ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
-> +		if (ret) {
-> +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
-> +			priv->cells->hws[pll->index] = ERR_PTR(ret);
-> +			continue;
-> +		}
-> +
-> +		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
-> +				dev->of_node, pll->name, "ref", 0, mult, div, acc);
+This driver does not support being removed. It provides essential PLLs
+and the system has not chance of working without them.
 
-Should this be freed somewhere or is it auto-magically freed by a 
-put_something()?
-Maybe devm_action_or_reset()?
+Almost all instances will be instantiated at of_clk_init() stage by the
+way (ie before platform bus infrastructure init). Devres isn't a
+solution in those cases.
 
-> +		priv->cells->hws[pll->index] = hw;
-> +		if (IS_ERR(hw))
-> +			dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
-> +	}
-> +}
-> +
-> +static void eqc_probe_init_divs(struct platform_device *pdev, struct device *dev,
-> +				struct eqc_priv *priv)
-> +{
-> +	const struct eqc_match_data *data = priv->data;
-> +	const struct eqc_div *div;
-> +	struct clk_hw *parent;
-> +	void __iomem *reg;
-> +	struct clk_hw *hw;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < data->div_count; i++) {
-> +		div = &data->divs[i];
-> +		reg = priv->base + div->reg;
-> +		parent = priv->cells->hws[div->parent];
-> +
-> +		hw = clk_hw_register_divider_table_parent_hw(dev, div->name,
-> +				parent, 0, reg, div->shift, div->width,
-> +				CLK_DIVIDER_EVEN_INTEGERS, NULL, NULL);
+We are missing suppress_bind_attrs though.
+I can add that at next revision.
 
-Same.
+Thanks,
 
-CJ
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> +		priv->cells->hws[div->index] = hw;
-> +		if (IS_ERR(hw))
-> +			dev_warn(dev, "failed registering %s: %pe\n",
-> +				 div->name, hw);
-> +	}
-> +}
