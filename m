@@ -1,42 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812D021BB12;
-	Fri,  4 Oct 2024 18:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22551F892B;
+	Fri,  4 Oct 2024 18:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066167; cv=none; b=PCtDfhnFRR8Nwc2HRTf+ktXTCfK3mwT0WayThKywhq8yU+FtUzrc5puwci2DJm/MXGDCJ5Hnu6fxBwWZaNw3i+hhqKMo5CQShbn+wzmvCKC4OS09LENR+cJ5LTvIx6yaLgYJxtv0LI1tRtI0kBJpry/faIn9oo+vCzu2LPsgbpk=
+	t=1728066205; cv=none; b=k0v0Bi+4JH1CUaTjjO//aoVBJ5ggwro/nYkrW8yWmSGaAu4mv5UIP2k5LE2s7pdBOnnGF96yDzR8OVYfunMhE8Z5G866uaycRSQVrjpYbbJRXvOSu4x2d4/aWVaCEuGKjvBV/VdxkPcUEKeR1SbHLxyVPhvkO/CG8npxRzkt+kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066167; c=relaxed/simple;
-	bh=ABc0QBjQCqeraLJRnvc3Amm0w2qOe4YTPG226MAJ5fw=;
+	s=arc-20240116; t=1728066205; c=relaxed/simple;
+	bh=U8J2Tw65NFpyqvT4U3DdgcwfsguyzmGDIVIcuB4XB5U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UXvmHIX5jGV7PWHYR4jL4Vktxj2Pj0cqEGARdjj17AQvfIwDCqcndhqH3fJEyEIk/Ig5UYLCYKeiiT6bhCbbI/uRjgkNMDtDvixef+IK5EpvKEud2AmOAfs2W2IFR5eDumes7xbzB5IMZ6FvWw4AbwL5U68bQNCVrzeqibHgcm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSDchKt+; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=d2dWadxFpXdT0ipHoKxNMj/3gRwRKe78xHZ/uZV44SCobqfU+MgdJxeG/o/aVhWsVhJh7Dul/9BLSzICVGrKmHoriINttgW0IvJuRaUd3EBr6vDP8BLvFIfqBoQ7SrdTee5u5myVgzYU3wDZN2IYrBc5wAQ8L6bQfIBFYDEN9Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xq4i4cov; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSDchKt+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF19C4CEC6;
-	Fri,  4 Oct 2024 18:22:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xq4i4cov"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BBB3C4CECD;
+	Fri,  4 Oct 2024 18:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066167;
-	bh=ABc0QBjQCqeraLJRnvc3Amm0w2qOe4YTPG226MAJ5fw=;
+	s=k20201202; t=1728066204;
+	bh=U8J2Tw65NFpyqvT4U3DdgcwfsguyzmGDIVIcuB4XB5U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WSDchKt+KwNHkqCo+Pf5dwu4Tv3nr+JxGUaozAY+90cF5nZf+HwWq/YT+uAALRoDW
-	 DGMN6vdayeOeTZoVwwjHO0FizFKzn+ynLtNpSOsb0b+t3dO6IAMf54FUzMZIyWns6m
-	 oceV6V8WP2wxIZc7m27gedZgpga7e6EZxPQVj9kxYi0n3d+g/d8niDf6n02UcwA61y
-	 gymMvHJvzLThyDM91FTKo+8ysLgkBotdKfnz618RRJRkUUaaYaN86rXbETM+ET3D70
-	 ezV8UP49cyjfCChyMeR+IJTL1iUpFkyScYrrbwGJ3jzhDx63NMdo104kcnYYeAtJuv
-	 j9ZZkNtet06WA==
+	b=Xq4i4covqVYYEg2C5YOHMjfAGQz+puer+/fXsZzNJIoJQjQO06YV4PhTU4YzOf4nL
+	 /4/o0vbB3W6oJHV1w8GMlhoGXyfwg1hjpCcl7coVSkCyjNaBpdSd2u4BiLzD9Uw+Lq
+	 8rIlJ9gR//srVPxuctvCFd5wJHwhzrbZ4K3JHuVE8bVElHqz4I2OGLydcfBUHrJ1GA
+	 fbmjQGxB3/YBl/knum4pRkOf+EQI+5OyDHmJcaPzKDu6vVX2ivucki35+8mh8nJGDk
+	 bP8Omtgfmt4s/EUpmCGOpY9om3F90Pct+sJcqAktXXVEIM6sip5Et1o7daU2h4N7FO
+	 fuUmjGdVJjQOg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
+	abelvesa@kernel.org,
 	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.10 25/70] clk: bcm: bcm53573: fix OF node leak in init
-Date: Fri,  4 Oct 2024 14:20:23 -0400
-Message-ID: <20241004182200.3670903-25-sashal@kernel.org>
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.10 43/70] clk: imx: Remove CLK_SET_PARENT_GATE for DRAM mux for i.MX7D
+Date: Fri,  4 Oct 2024 14:20:41 -0400
+Message-ID: <20241004182200.3670903-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241004182200.3670903-1-sashal@kernel.org>
 References: <20241004182200.3670903-1-sashal@kernel.org>
@@ -51,37 +56,42 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.10.13
 Content-Transfer-Encoding: 8bit
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From: Peng Fan <peng.fan@nxp.com>
 
-[ Upstream commit f92d67e23b8caa81f6322a2bad1d633b00ca000e ]
+[ Upstream commit a54c441b46a0745683c2eef5a359d22856d27323 ]
 
-Driver code is leaking OF node reference from of_get_parent() in
-bcm53573_ilp_init().  Usage of of_get_parent() is not needed in the
-first place, because the parent node will not be freed while we are
-processing given node (triggered by CLK_OF_DECLARE()).  Thus fix the
-leak by accessing parent directly, instead of of_get_parent().
+For i.MX7D DRAM related mux clock, the clock source change should ONLY
+be done done in low level asm code without accessing DRAM, and then
+calling clk API to sync the HW clock status with clk tree, it should never
+touch real clock source switch via clk API, so CLK_SET_PARENT_GATE flag
+should NOT be added, otherwise, DRAM's clock parent will be disabled when
+DRAM is active, and system will hang.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/r/20240826065801.17081-1-krzysztof.kozlowski@linaro.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Link: https://lore.kernel.org/r/20240607133347.3291040-8-peng.fan@oss.nxp.com
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/bcm/clk-bcm53573-ilp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx7d.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
-index 84f2af736ee8a..83ef41d618be3 100644
---- a/drivers/clk/bcm/clk-bcm53573-ilp.c
-+++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
-@@ -112,7 +112,7 @@ static void bcm53573_ilp_init(struct device_node *np)
- 		goto err_free_ilp;
- 	}
- 
--	ilp->regmap = syscon_node_to_regmap(of_get_parent(np));
-+	ilp->regmap = syscon_node_to_regmap(np->parent);
- 	if (IS_ERR(ilp->regmap)) {
- 		err = PTR_ERR(ilp->regmap);
- 		goto err_free_ilp;
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 2b77d1fc7bb94..1e1296e748357 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -498,9 +498,9 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	hws[IMX7D_ENET_AXI_ROOT_SRC] = imx_clk_hw_mux2_flags("enet_axi_src", base + 0x8900, 24, 3, enet_axi_sel, ARRAY_SIZE(enet_axi_sel), CLK_SET_PARENT_GATE);
+ 	hws[IMX7D_NAND_USDHC_BUS_ROOT_SRC] = imx_clk_hw_mux2_flags("nand_usdhc_src", base + 0x8980, 24, 3, nand_usdhc_bus_sel, ARRAY_SIZE(nand_usdhc_bus_sel), CLK_SET_PARENT_GATE);
+ 	hws[IMX7D_DRAM_PHYM_ROOT_SRC] = imx_clk_hw_mux2_flags("dram_phym_src", base + 0x9800, 24, 1, dram_phym_sel, ARRAY_SIZE(dram_phym_sel), CLK_SET_PARENT_GATE);
+-	hws[IMX7D_DRAM_ROOT_SRC] = imx_clk_hw_mux2_flags("dram_src", base + 0x9880, 24, 1, dram_sel, ARRAY_SIZE(dram_sel), CLK_SET_PARENT_GATE);
++	hws[IMX7D_DRAM_ROOT_SRC] = imx_clk_hw_mux2("dram_src", base + 0x9880, 24, 1, dram_sel, ARRAY_SIZE(dram_sel));
+ 	hws[IMX7D_DRAM_PHYM_ALT_ROOT_SRC] = imx_clk_hw_mux2_flags("dram_phym_alt_src", base + 0xa000, 24, 3, dram_phym_alt_sel, ARRAY_SIZE(dram_phym_alt_sel), CLK_SET_PARENT_GATE);
+-	hws[IMX7D_DRAM_ALT_ROOT_SRC]  = imx_clk_hw_mux2_flags("dram_alt_src", base + 0xa080, 24, 3, dram_alt_sel, ARRAY_SIZE(dram_alt_sel), CLK_SET_PARENT_GATE);
++	hws[IMX7D_DRAM_ALT_ROOT_SRC]  = imx_clk_hw_mux2("dram_alt_src", base + 0xa080, 24, 3, dram_alt_sel, ARRAY_SIZE(dram_alt_sel));
+ 	hws[IMX7D_USB_HSIC_ROOT_SRC] = imx_clk_hw_mux2_flags("usb_hsic_src", base + 0xa100, 24, 3, usb_hsic_sel, ARRAY_SIZE(usb_hsic_sel), CLK_SET_PARENT_GATE);
+ 	hws[IMX7D_PCIE_CTRL_ROOT_SRC] = imx_clk_hw_mux2_flags("pcie_ctrl_src", base + 0xa180, 24, 3, pcie_ctrl_sel, ARRAY_SIZE(pcie_ctrl_sel), CLK_SET_PARENT_GATE);
+ 	hws[IMX7D_PCIE_PHY_ROOT_SRC] = imx_clk_hw_mux2_flags("pcie_phy_src", base + 0xa200, 24, 3, pcie_phy_sel, ARRAY_SIZE(pcie_phy_sel), CLK_SET_PARENT_GATE);
 -- 
 2.43.0
 
