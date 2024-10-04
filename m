@@ -1,132 +1,157 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B621465AB;
-	Fri,  4 Oct 2024 09:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6AD148318
+	for <linux-clk@vger.kernel.org>; Fri,  4 Oct 2024 09:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728034303; cv=none; b=bWFl8C9zAsllqDP2OckTaKa5z6fyrl8iJ9eny3Bk3mugClhUcogLtHgIKFXDQ6CdAJKUb+4Hwf6k9LbrenVCMycdviHEPpbUaHHIwEEUpgL5IkYBP8uhkUaT0T70yRrzMp5alNsGx16lP2jsZnFZxHrZ7ZuYR1y2jXgiDNcaDLU=
+	t=1728034880; cv=none; b=qFEORHOLQfP5vDltDxJh8+RwPPLY+/CkdvUONjfX1WIVpcndP7RaORYUt/OAzHtSmfrD/f5Z5npThrd5mx7IGmwP0v5R/YjgzXN/1CYBnpOQLkLL/LY/Ez6Jhze7HGOfAbmEjVgngcNxh3P9XvSjS7tY9u4NIvbfiXc7/5L7jbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728034303; c=relaxed/simple;
-	bh=WCbBCAGratKHLCu4IdtoLMnHCiK7fyEbq5IcXUoRtNw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=OJOB0SouJxUpg2WYyKSsM0W5Qt76shXBYgO4ZvUdRjes166mgeWGFEnwYHP/4fIinfSxyX+6Lgn9JY8ogxZ8RFprgZOctaiV+bHt6qMhIoeM3+RGCkHhMrFdElZskWJ/7abTxrbXc4ESs9qmyYDw0xvtHgWLvt61FmHL+OsaNLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZAQ0vilV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1728034880; c=relaxed/simple;
+	bh=lZo8fHFMFy5jAJqjKs5OEoJm93DVPKI6UUPQWyMIZUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GA4myVOJr7eFpdI2j4IB5JAoqAVL80Hok92LzvZlqupkG26WA6el4lacr4U2/daTBlGYheMNQipetiHX3bOkQcaxDU70FlYHG5X0HQN+A7ksw84HQCJ/uQ0IE3pSideyqYbnq/V+gh4g7+9WKt85J7H8pRF3zfpv2F+JTfdf7aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KDLyoRy3; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZAQ0vilV"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493Hxacw014201;
-	Fri, 4 Oct 2024 09:31:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zcAGaUrfE5HhvhY3mAhAI1Izzrh/AkDt/uOAIu8VL4A=; b=ZAQ0vilV0hYSdAg+
-	nB07/CKc1UNCUt6Vq7w0prlO6hCm6R7GaqEyD4LkrfzfdnJTOkpLlweM1502rN+/
-	w/kVP2CyjUMdPVsSgKmHcyWRCuB8svP9LwRw8emjKwgVAOXmjOix7OgL9zMgaz2v
-	9RURZ+rgcF63glLm7YDnPHEfNf8Y0bYkYCLIp/KG8kLq1pdGENFe/8x8FP9EI7m4
-	vHWnHechI+yqUL+3J1mFORpVNNdyiKp3jgs2/fZdYutOoo/tGtrWPZUXZYMRL3/S
-	AJzOO5eD10iZ4IHwKoACZQSYsvS4h6B+Z7fbpftlIZKMFmJNNXOtL35HtjajQRgi
-	+p3lmA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205e1nnc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 09:31:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4949VauM016682
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 09:31:36 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 02:31:28 -0700
-Message-ID: <7ebe76e5-ed89-4ebd-bf3d-6b130b79c811@quicinc.com>
-Date: Fri, 4 Oct 2024 15:01:25 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KDLyoRy3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728034879; x=1759570879;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lZo8fHFMFy5jAJqjKs5OEoJm93DVPKI6UUPQWyMIZUQ=;
+  b=KDLyoRy3f23lJjG/YCXeBos26CLYK2ozCWNSsgmQKIEXq9L+GzQg8PCs
+   71asUEAVnXQMYafO6uzE8FXPUFw2fDlkXN4hSUYXC1aTc37MuiUTvNaFi
+   nAh9zwsWMtB4oiI6OTycfQlwqHj/31YrRF/6RDPapVuHvrWg4Qbd4zOE1
+   Qt3hRA0MPq4EM2FZtkozGdNvPKKvw8bgk335SDg4+oxOJtAd28i9JXwf6
+   wzbIS88MIQIhDJNtkybL4t7dkyjMTKi6dCxImfbLScaT8POv1/6EF7h+5
+   WEIx+10Nk0LAx/h/ElSiGL65Q+J/3LgVtXy0ujyuqi2+TKTw+acKGYl+7
+   g==;
+X-CSE-ConnectionGUID: Bnn1ULKkT9WxkibzqFF1VQ==
+X-CSE-MsgGUID: NGHZ7lNmSjex7GQcL/aK5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="37856183"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="37856183"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:41:18 -0700
+X-CSE-ConnectionGUID: fPKYe/+7RV6LZEa5HFRS0A==
+X-CSE-MsgGUID: VbnF3bdRRFGEaDdckqwcLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="74331921"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:41:16 -0700
+Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id E8C66120C57;
+	Fri,  4 Oct 2024 12:41:11 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1sweoB-000TVq-32;
+	Fri, 04 Oct 2024 12:41:11 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH 05/51] clk: Switch to __pm_runtime_put_autosuspend()
+Date: Fri,  4 Oct 2024 12:41:11 +0300
+Message-Id: <20241004094111.113436-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
+References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/8] dt-bindings: clock: qcom: Add SA8775P display
- clock controllers
-From: Taniya Das <quic_tdas@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
-        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
- <20240816-sa8775p-mm-v3-v1-5-77d53c3c0cef@quicinc.com>
- <5kaz5wcvxhjtny5yy5i2e63ylzpor74lknvtvdkgpygxkf7yim@m6p5zof755lp>
- <65d129b5-088e-4cdb-a2fa-62448cfd2ad6@kernel.org>
- <52d2ee37-5a83-4ca2-902c-8e48b63b93b3@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <52d2ee37-5a83-4ca2-902c-8e48b63b93b3@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UK1e4zrFCPIwI3Bls8PaozyQQOHNmD1x
-X-Proofpoint-ORIG-GUID: UK1e4zrFCPIwI3Bls8PaozyQQOHNmD1x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
- mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410040068
 
+pm_runtime_put_autosuspend() will soon be changed to include a call to
+pm_runtime_mark_last_busy(). This patch switches the current users to
+__pm_runtime_put_autosuspend() which will continue to have the
+functionality of old pm_runtime_put_autosuspend().
 
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/clk/imx/clk-imx8qxp-lpcg.c     | 2 +-
+ drivers/clk/imx/clk-scu.c              | 2 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c | 4 ++--
+ drivers/clk/qcom/lpasscorecc-sc7180.c  | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-On 9/13/2024 10:35 AM, Taniya Das wrote:
-> 
-> 
-> On 9/6/2024 5:54 PM, Krzysztof Kozlowski wrote:
->> On 18/08/2024 20:02, Krzysztof Kozlowski wrote:
->>> On Fri, Aug 16, 2024 at 12:01:47PM +0530, Taniya Das wrote:
->>>> Add device tree bindings for the display clock controllers
->>>> on Qualcomm SA8775P platform.
->>>>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>>   .../bindings/clock/qcom,sa8775p-dispcc.yaml        | 79 
->>>> ++++++++++++++++++++
->>>>   include/dt-bindings/clock/qcom,sa8775p-dispcc.h    | 87 
->>>> ++++++++++++++++++++++
->>>>   2 files changed, 166 insertions(+)
->>>>
->>>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Un-reviewed.
->>
->> We achieved consensus allowing sa8775p to stay, but now Qualcomm changes
->> point of view and insists on new approach of dropping sa8775p. Therefore
->> this change does not make much sense in the new approach.
->>
-> 
-> Krzysztof could you please re-review the patches again? As I understand 
-> that Qualcomm will support both SA8775p and QCS9100 in Kernel. There’s 
-> no plan to drop SA8775p support. These two SoCs will keep compatible.
-> 
-Krzysztof, Could you please help reviewing the patches again?
-
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+index d0ccaa040225..3916381ba158 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -268,7 +268,7 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
+ 		goto unreg;
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+-	pm_runtime_put_autosuspend(&pdev->dev);
++	__pm_runtime_put_autosuspend(&pdev->dev);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index b1dd0c08e091..a8f08ab2539b 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -568,7 +568,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+ 	if (!((clk->rsrc == IMX_SC_R_A35) || (clk->rsrc == IMX_SC_R_A53) ||
+ 	    (clk->rsrc == IMX_SC_R_A72))) {
+ 		pm_runtime_mark_last_busy(&pdev->dev);
+-		pm_runtime_put_autosuspend(&pdev->dev);
++		__pm_runtime_put_autosuspend(&pdev->dev);
+ 	}
+ 
+ 	dev_dbg(dev, "register SCU clock rsrc:%d type:%d\n", clk->rsrc,
+diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+index 45e726477086..d2093b15a02c 100644
+--- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
++++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+@@ -786,7 +786,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ exit:
+-	pm_runtime_put_autosuspend(&pdev->dev);
++	__pm_runtime_put_autosuspend(&pdev->dev);
+ 
+ 	return ret;
+ }
+@@ -855,7 +855,7 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ exit:
+-	pm_runtime_put_autosuspend(&pdev->dev);
++	__pm_runtime_put_autosuspend(&pdev->dev);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index 726c6378752f..402b012a6ea5 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -415,7 +415,7 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ exit:
+-	pm_runtime_put_autosuspend(&pdev->dev);
++	__pm_runtime_put_autosuspend(&pdev->dev);
+ 
+ 	return ret;
+ }
+@@ -435,7 +435,7 @@ static int lpass_hm_core_probe(struct platform_device *pdev)
+ 	ret = qcom_cc_probe_by_index(pdev, 0, desc);
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+-	pm_runtime_put_autosuspend(&pdev->dev);
++	__pm_runtime_put_autosuspend(&pdev->dev);
+ 
+ 	return ret;
+ }
 -- 
-Thanks & Regards,
-Taniya Das.
+2.39.5
+
