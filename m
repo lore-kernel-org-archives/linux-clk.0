@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991291E0E1F;
-	Fri,  4 Oct 2024 18:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B078230230;
+	Fri,  4 Oct 2024 18:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066685; cv=none; b=g554iPOPrvav0XhUjii4TEz7QnFmK8QbWa2lwxsbQyS9ZkYkuMOMmhuAu8Lk+Mx/3GXlZIP+Vl5rN2rP4/TYHRI99i5/by+1VwwlZTtTR6l/Ysh7rWplFvIzy0P8/+VRm+3+Wh3snkrGrFuXI/Atj8Y++NK+M87WTJiGFVJB7KI=
+	t=1728066726; cv=none; b=NXRCygMaHkfPdbBRhQfOoGWApcfwA1jExtBOiNfiQxUpvavD7NBP/NomthyymxJ7LX+C3LpzF4oVexbeKMEnUmSfoTSBRicfhxjKeNHYdrzo2ShpCw4CvNv4u4diEy05R47Sh/lfKg/Z7OFl5hKMuMVRejg20OzBkDrtNTpsQ+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066685; c=relaxed/simple;
-	bh=ABc0QBjQCqeraLJRnvc3Amm0w2qOe4YTPG226MAJ5fw=;
+	s=arc-20240116; t=1728066726; c=relaxed/simple;
+	bh=cIudPX+z8eB+rsul2HwYMPjgwGJNYwI7JcPY7jOIuNA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RPL/cgFbGqD6HjqaRHaOCboGbeCX4wymzQzmGhUmK5TmTU7HolxPtTDr3FL6eXEIMxwK4uvwQh/M90BzPLz3JN+YadXnZFxyr0x+MTKje7hhW+0H6l8qjFxNs4I+F2bub8T5yywL5YC/mYpYFlCtbq2QMwoC2phUf5hsjakUBy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XATyHhpV; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=QXmeNerNFHRN0hZGnRwKN9JrPSR2wDm31K+LFDapR4tw7i7dLbLbJpPPD/TgTAk/1d1gCoDEyOdFFvs4Fok/X77k0BY5sXW+QiMpOwmQMeYrL0Y81zYOzilmyhdY0Xsav9Z5uGNuyAwlEE4B64Ez+MakDuH7nEGJy7jGpc/lEN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9p00HvB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XATyHhpV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A79C4CECC;
-	Fri,  4 Oct 2024 18:31:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9p00HvB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19630C4CECC;
+	Fri,  4 Oct 2024 18:32:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066685;
-	bh=ABc0QBjQCqeraLJRnvc3Amm0w2qOe4YTPG226MAJ5fw=;
+	s=k20201202; t=1728066725;
+	bh=cIudPX+z8eB+rsul2HwYMPjgwGJNYwI7JcPY7jOIuNA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XATyHhpVrgxtkDeEbK5MVhAOUId3Q+546kWA12rfhbqt43jU6qPRLKZEg8tHcjUDc
-	 AkLSZ2CKG4GlEJCuHOCbk4mmr1fhqFpbSiimG9Pd0L8mEB+V5kA0daXF+C39guAyNb
-	 cF/M3F0JrtJUi+uIO4YCwztTMy9jkaDGGyIiZfeBnr5mGJMeHIYIFbzLGxQ8CQqiYb
-	 76YEy1RL72p0rasRZqut9zaTAHw9I0nwinyRm5GkJPBMsNDh2g3ZLxforI8bHvkHXo
-	 t94gAg8Vfvj7AcRJl9av+N2t80GImGLKPSb1+2flwZyFBof8BEnjISg/HGcCaLxnOq
-	 z1N0MNul5XVog==
+	b=l9p00HvBGwTz1GJPNjqgGHyx/zKjnvUVrYd3pSx/sWQkIVu9ILTPXhB/CTqq7EUrB
+	 K0iwi6kSq3DC4vNU+TrDXwDlxm501qyzOylIj8jgleueEINXM/vU0IzRaFQTC1iPNr
+	 v3pa/RIP3NLa4KG54JGhmUwlniF8gma1hbvInLfTxjh2a4PLdvLE/aQFOuBeMMPy1L
+	 fwjHKSY0AwVjvyH/+B+CEApnx4XKMLO4r4K/39316plRdO86YEBASdeo7sSRag8pRX
+	 QXgBETW49PGNqN99XPb+ODN0uAV6MmVkHutANq0gk3VGGg9xbxeTu2qqDsj/LYnpOl
+	 0bmXHxNv8mrAA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -34,12 +34,12 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 10/21] clk: bcm: bcm53573: fix OF node leak in init
-Date: Fri,  4 Oct 2024 14:30:45 -0400
-Message-ID: <20241004183105.3675901-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 09/16] clk: bcm: bcm53573: fix OF node leak in init
+Date: Fri,  4 Oct 2024 14:31:36 -0400
+Message-ID: <20241004183150.3676355-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004183105.3675901-1-sashal@kernel.org>
-References: <20241004183105.3675901-1-sashal@kernel.org>
+In-Reply-To: <20241004183150.3676355-1-sashal@kernel.org>
+References: <20241004183150.3676355-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,7 +48,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.284
+X-stable-base: Linux 4.19.322
 Content-Transfer-Encoding: 8bit
 
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -70,10 +70,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
-index 84f2af736ee8a..83ef41d618be3 100644
+index 36eb3716ffb00..3bc6837f844db 100644
 --- a/drivers/clk/bcm/clk-bcm53573-ilp.c
 +++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
-@@ -112,7 +112,7 @@ static void bcm53573_ilp_init(struct device_node *np)
+@@ -115,7 +115,7 @@ static void bcm53573_ilp_init(struct device_node *np)
  		goto err_free_ilp;
  	}
  
