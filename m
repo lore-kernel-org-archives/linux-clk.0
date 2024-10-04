@@ -1,101 +1,95 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A2D1482E7;
-	Fri,  4 Oct 2024 09:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03701145B11;
+	Fri,  4 Oct 2024 10:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728035596; cv=none; b=ULtpfaMA+2okSHXwB5RVdPBX5w16wbnXdHaxg6Z//ZMCOFtgIoTeyhECLSiwF2Kt/HiXi5YHrO4zTgXyFxe7dYLuVtrgbUcx7Yw1U9h0TppAJeA7NW7qrBm2bRNqvjAMK9KAYvxQUnqECc0afPNGM+GSBflEZt9GQ2ntwiqBtlw=
+	t=1728036357; cv=none; b=NWRm+91N614ZsMU+NNsBK9KgG8TTdI6g7Bmfh6Mzpp5WDs4s/0WG+BLOh3ZYWKgsxLAeMnrmw5BPkgHkcrnQIND+HsVrLKx55rE0qF0WSnVNnBo2Vgz6hDUBd4ewovKH4QxynYETV4EEaQMFtKGcb5IZdLmLOl1EvnP+xdJrczE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728035596; c=relaxed/simple;
-	bh=GvA50aypOKeES5b88ZtKz66IY5eKMzeUwOBuz7Ro7XQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KUvN/vPugRieyzezeki/wnMvDjyNnXK2moN6MWo6lhuIAf4cHcpFtdyuyQ2NxuWP5cq4HUP/wCKlnHg+mZZs/7b3fZAFIuWGPAKkxuX9hlqVHyXHPsGw4Pud1aucc1gSHj0CxUThdstSZLtlBw3uZ2gzA+W9xTSlOodV7R1V7w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PEx5vMqQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PEx5vMqQ"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493Hxpb5025555;
-	Fri, 4 Oct 2024 09:52:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vzdWHLICmCO4FTlS/c50c7Ra96E1mMn63rdysJ+zNO4=; b=PEx5vMqQds95zx8b
-	5zY7bB3O/ste4l59Cl3eRXAAEz6jdj+jUMVEDmwYrXaLkz5mafiHnlujARElisB/
-	jJeOLhBqM4eo6HNgxTivDF3sdmwrFsfuSY9rr1ou9Q1Y5fj8K8d8L6Li98OhuCK2
-	kj5xsAnbeEFjlVg5J/ia7R3yBVmx45fpXeiwGc3i8brCSXKdgjexVcFKCyjLfL6a
-	AqpIl8jXyPBxEDnsA/gEnSjqqmveQhhYBWWRzTV9n85RlMh9nIVO4EWZH1NdOJ9x
-	ZVhCDRu0ZRScNsHrzvgy+y8tRQ+l/kSU17wbH6nGOUCwf8+H9PBrMlOq8EeOuPIO
-	D/n1GQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205khpct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 09:52:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4949qsHF032461
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 09:52:54 GMT
-Received: from [10.50.18.17] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 4 Oct 2024
- 02:52:46 -0700
-Message-ID: <ab449231-29b1-4ced-8ab1-178b71b1b53b@quicinc.com>
-Date: Fri, 4 Oct 2024 15:22:43 +0530
+	s=arc-20240116; t=1728036357; c=relaxed/simple;
+	bh=HooG/fIfWZpocHxUuHlc7AWwahI7xbpQargXvD8WiJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F9GixYGS4XtN+/IHQCFT9ae4q56zYkByrqh/+K+KDj3ghWGRh8J2U/ooislzXNwN0SAO6YBOB2wba3Kkth9bjvCfe3mNXb8jANN2I6EkmqDGi6xiQ9Q4UoZhxYshGcn452B1TtDkwfmTo4mrs6DWeVvfB1biwKGRmUCWYZ+DiZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db4b602e38so16289097b3.1;
+        Fri, 04 Oct 2024 03:05:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728036354; x=1728641154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QBc8f2cSzHljHbIcuwlK4R1jAe+yaqmseWLuC6kikrc=;
+        b=m35e+ZoW02TVpjnqs8w0unsXykdeCYavWwub7/mueS5Nz11FLWtBEUxq/VW/r0ck5E
+         CAosk0j40ZEwHFJBTsriV+sg4nZDbMjJ2Jkk/TEwNNNr97OQlSHjgsposcAejnnV0yra
+         KhH/55snjzFmqOD+w7nv8L9+TVdb9OWopW5gT0qlOqOWa4PHpk5hI6ifm7LlXXpBF+ti
+         oenaXw04NdlbPQuqzxatBs/S+zzy7n6A43WgmORaFHyytBd08bBZfu/7sDM89b7y0iNO
+         4leyffikFbCX3f9TkOG4zuJtKBKqc4lb+CYzz2gR58q3DN7/mgYMF1waBTTVijAsxh4W
+         5y5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ftX8fHNqarEUA7tqCl7o4ghY8NSoVAfhvnYEqiXkxSnEf2FtdUnlDXtfx+0y1Sd3+vqi78S1lFSJo0TK@vger.kernel.org, AJvYcCVgomTWmB6l2QaPy+mq07FW2Cq0gt2DPBvc5etUDALFc8QJLwJjPC/KdEkin//gsCtJtrvmCDyCaDA=@vger.kernel.org, AJvYcCXD99f0pqjr63q9ByWUefWqgfy+v7yjg+ig7shNuEi8whQAsvkUiPmGSPRaq3FU8A40bfCumuxk+JkUeG3mdIMfRlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySF5XbFEB6hcjvDdYCbOHgeJWq00ETiqtIltYS9wY1TSCt2cN2
+	J8oF1WWRpMBmGQ99NAN0U8/tKiWZzFzBfVYXPSbxAVXYNOFXKiJjnzOa245Q
+X-Google-Smtp-Source: AGHT+IGabHsaXy3EBZfVlVobJWCwFwnQkJbm2FBpus7RmU6MPPePElWmQX0N+wFva/ggKOz/wPy25Q==
+X-Received: by 2002:a05:690c:360a:b0:6db:e280:a3ae with SMTP id 00721157ae682-6e2c7036dbamr20078807b3.23.1728036354248;
+        Fri, 04 Oct 2024 03:05:54 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bbea7477sm5954017b3.39.2024.10.04.03.05.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2024 03:05:53 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e2c4ffa006so8666337b3.3;
+        Fri, 04 Oct 2024 03:05:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW3/yHtp+JhkqP+DERVl6/6PPHD69cZ7FZ8yJqjIqF4RQ4CfuDdxPTBe1GVzgFPqiwz5Mcv0KIJL+A=@vger.kernel.org, AJvYcCWyg4iAF3PIsCyDGdFqB7Ckbuz6yzP3IMTSseJMdYzcHtv+k12TT0LblNW+lXXS19BX/uy+KgKZn38HSLQD@vger.kernel.org, AJvYcCX9dEdT/oy1f5tvKGoWqkb7SzGuOH4H7QjFXnZ/1ZU9RQe3eS9wZgRKOqdH1N5rL5xnWK2tC0y0kKgNeR4cDEppbRQ=@vger.kernel.org
+X-Received: by 2002:a05:690c:38b:b0:6e2:50a:f436 with SMTP id
+ 00721157ae682-6e2c728a00amr16732177b3.36.1728036353760; Fri, 04 Oct 2024
+ 03:05:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/7] Add NSS clock controller support for IPQ9574
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <20241004080332.853503-1-quic_mmanikan@quicinc.com>
+References: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com> <20240930145244.356565-4-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20240930145244.356565-4-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 Oct 2024 12:05:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW1xL=rJPOJu9n_qs-ADng8GKjETOwa4F7CqXwWnWD2BQ@mail.gmail.com>
+Message-ID: <CAMuHMdW1xL=rJPOJu9n_qs-ADng8GKjETOwa4F7CqXwWnWD2BQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: renesas: r9a09g057: Add clock and reset
+ entries for ICU
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1zwEqbC4Q7-Q2kaqquI5G2IxwA3f8GFX
-X-Proofpoint-GUID: 1zwEqbC4Q7-Q2kaqquI5G2IxwA3f8GFX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=884
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410040071
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 30, 2024 at 4:53=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> Add clock and reset entries for the Renesas RZ/V2H(P) ICU IP block.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+> v1->v2:
+> * No change
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.13.
 
-On 10/4/2024 1:33 PM, Manikanta Mylavarapu wrote:
-> Add bindings, driver and devicetree node for networking sub system clock 
-> controller on IPQ9574. Also add support for NSS Huayra type alpha PLL
-> and add support for gpll0_out_aux clock which serves as the parent for 
-> some nss clocks.
-> 
-> Changes in V6:
-> 	- Detailed change logs are added to the respective patches.
-> 
+Gr{oetje,eeting}s,
 
-I missed to update few things. I will post V7, please ignore V6.
+                        Geert
 
-Thanks & Regards,
-Manikanta.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
