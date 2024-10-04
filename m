@@ -1,153 +1,150 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4BB15748E;
-	Fri,  4 Oct 2024 14:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332E12139C9;
+	Fri,  4 Oct 2024 14:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050543; cv=none; b=ah+gc/bW0T5KtoG/iBjAD2uCmFLkmURXvBHABT56u21B6j9L6/wTTrs1MGUdysCoTy/IJdt4sDlSpD4vK2vDg6XPVaCk4BS6qy8hgP9NVRN0WgCQ1LvXXGtjDICefZ/1CunIquyIg9kSvXjc5RdpU31eboYrPqW41U7QzmkRkns=
+	t=1728050862; cv=none; b=DcuT+TPRwkv+2i0ENloR0NFYX25O6DPw92CUQ0+ulsRHv5rG0okPd9AZveGRSXYaHlxczyfZxLNSd2kHADqZ5mWfFUKc4mrR5ySHM45HnWBcOfDWTRd4Il5Igf6ySOABED5/hFXgD0G8IDDgLqO5DrARAUeBSFQAuKYGIYaAZTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050543; c=relaxed/simple;
-	bh=QW0C9c3/EVKwVlM57ULE+y2nHs7/G/DlCmIwV5GuFm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gu5RflgWuXoOjGiGjZjW3sy/V0egx2b+HJ5ydjWM0D7cjDYX7n8RpdV7OjEik3tdZd8J2ZAPhR2owofd7S51OnUzb8JiGt44w2ldDETQdGqCjw+2/WfnObXEt5OpGgjrp2QP59f5r4HWlQdoKRgQ4KvGb3Hozs6td8cjwz10eVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vGDjZQ0Z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1728050862; c=relaxed/simple;
+	bh=uEQAShnggjr5nqIOHpTJeRMq0ADz79WFWaz9pF8A+Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQ3qKCj/Pl33MP7HuBsKQrU/Y9h3sWGMQEoX19brJPup8B27FBvoLbcTHeFunp5IzQV+FN9BKPkfssR94I5b9QBQe6hQmIRGQgKQ4uTaUWLhq19dpQhJ/wqlv+DFePizruPfVC1jSAW+zsHMuA4zyiyXs8Y8KqbLYz1FFUYU1ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KS/GQHSZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vGDjZQ0Z"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=fu3VaCt1xTWMku+JYWxGDTg9qgPJOaVq3TcXvd2ZQk0=; b=vG
-	DjZQ0Z6kq+zCzKgcW5p0z5r/rfnsOF4L0viMGGQkKkh3IyoHMaplUQgf/gEKCcdUv69jL7InwOmt8
-	EqWV6vC1fJA07as/7eE2OthCZbCAbBCKynUK/CVI1slEiIr0i5nCOlpVB7EyYRYgR2GYQTG/v85KD
-	Kt/cztepW5f4grs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1swisa-0093HV-S5; Fri, 04 Oct 2024 16:02:00 +0200
-Date: Fri, 4 Oct 2024 16:02:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org,
-	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-	richardcochran@gmail.com, geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
-	arnd@arndb.de, m.szyprowski@samsung.com, nfraprado@collabora.com,
-	u-kumar1@ti.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH V4 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-Message-ID: <6a431336-621d-4284-a0ca-b68921de22eb@lunn.ch>
-References: <20240625070536.3043630-1-quic_devipriy@quicinc.com>
- <20240625070536.3043630-6-quic_devipriy@quicinc.com>
- <f9d3f263-8559-4357-a1c6-8d4b5fa20b8c@lunn.ch>
- <302298ef-7827-49e1-8b0f-04467cb38ad7@quicinc.com>
- <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KS/GQHSZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D24C4CEC6;
+	Fri,  4 Oct 2024 14:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728050861;
+	bh=uEQAShnggjr5nqIOHpTJeRMq0ADz79WFWaz9pF8A+Gg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KS/GQHSZnva577tebsJ6gZScMy89dnub71y2v73Zo4qFE8trKkybgL8ZT4v5cfHkZ
+	 tOc/YzUmbQ//hrqtqh9xAgjwR8p60H72ssIj3i3WuvgI4wo55qDHG9++XgoO80LIeo
+	 6/OwHzGAk1BnuQ1QNoJDcZ+nY/XSziZ1tiIoTuOuNeCPlh2zf3a3Gv0xD6ivpaDtjy
+	 gSHl/Mq6YkAvNswRfIh8ALJslGQ1rgFo5hf5WOXyvdZHXg5lXPpKHEe1OC/9Cax19V
+	 ZRw5GIWMXZXdwEYkfVcOHULIA79AeR+V1u+EtL7L48bo7gLvxogoD6jzdnHr+34Odf
+	 hDQfQ3G1BodXw==
+Message-ID: <7a9e1523-675b-4e1e-9233-51a0b4ed2895@kernel.org>
+Date: Fri, 4 Oct 2024 16:07:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] dt-bindings: clock: qcom: Add SA8775P display
+ clock controllers
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ quic_imrashai@quicinc.com, quic_jkona@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
+ <20240816-sa8775p-mm-v3-v1-5-77d53c3c0cef@quicinc.com>
+ <5kaz5wcvxhjtny5yy5i2e63ylzpor74lknvtvdkgpygxkf7yim@m6p5zof755lp>
+ <65d129b5-088e-4cdb-a2fa-62448cfd2ad6@kernel.org>
+ <52d2ee37-5a83-4ca2-902c-8e48b63b93b3@quicinc.com>
+ <7ebe76e5-ed89-4ebd-bf3d-6b130b79c811@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7ebe76e5-ed89-4ebd-bf3d-6b130b79c811@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <29b84acf-2c57-4b0e-81f0-82eb6c1e5b18@quicinc.com>
 
-On Fri, Oct 04, 2024 at 01:25:52PM +0530, Manikanta Mylavarapu wrote:
+On 04/10/2024 11:31, Taniya Das wrote:
 > 
 > 
-> On 6/26/2024 8:09 PM, Devi Priya wrote:
-> > 
-> > 
-> > On 6/25/2024 8:09 PM, Andrew Lunn wrote:
-> >>> +static struct clk_alpha_pll ubi32_pll_main = {
-> >>> +    .offset = 0x28000,
-> >>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
-> >>> +    .flags = SUPPORTS_DYNAMIC_UPDATE,
-> >>> +    .clkr = {
-> >>> +        .hw.init = &(const struct clk_init_data) {
-> >>> +            .name = "ubi32_pll_main",
-> >>> +            .parent_data = &(const struct clk_parent_data) {
-> >>> +                .index = DT_XO,
-> >>> +            },
-> >>> +            .num_parents = 1,
-> >>> +            .ops = &clk_alpha_pll_huayra_ops,
-> >>> +        },
-> >>> +    },
-> >>> +};
-> >>> +
-> >>> +static struct clk_alpha_pll_postdiv ubi32_pll = {
-> >>> +    .offset = 0x28000,
-> >>> +    .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
-> >>> +    .width = 2,
-> >>> +    .clkr.hw.init = &(const struct clk_init_data) {
-> >>> +        .name = "ubi32_pll",
-> >>> +        .parent_hws = (const struct clk_hw *[]) {
-> >>> +            &ubi32_pll_main.clkr.hw
-> >>> +        },
-> >>> +        .num_parents = 1,
-> >>> +        .ops = &clk_alpha_pll_postdiv_ro_ops,
-> >>> +        .flags = CLK_SET_RATE_PARENT,
-> >>> +    },
-> >>> +};
-> >>
-> >> Can these structures be made const? You have quite a few different
-> >> structures in this driver, some of which are const, and some which are
-> >> not.
-> >>
-> > Sure, will check and update this in V6
-> > 
-> > Thanks,
-> > Devi Priya
-> >>     Andrew
-> >>
-> 
-> Hi Andrew,
-> 
-> Sorry for the delayed response.
-> 
-> The ubi32_pll_main structure should be passed to clk_alpha_pll_configure() API to configure UBI32 PLL. clk_alpha_pll_configure() API expects a non-const structure. Declaring it as const will result in the following compilation warning
-> 
-> drivers/clk/qcom/nsscc-ipq9574.c:3067:26: warning: passing argument 1 of ‘clk_alpha_pll_configure’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
->   clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
->                           ^
-> In file included from drivers/clk/qcom/nsscc-ipq9574.c:22:0:
-> drivers/clk/qcom/clk-alpha-pll.h:200:6: note: expected ‘struct clk_alpha_pll *’ but argument is of type ‘const struct clk_alpha_pll *’
->  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->       ^~~~~~~~~~~~~~~~~~~~~~~
+> On 9/13/2024 10:35 AM, Taniya Das wrote:
+>>
+>>
+>> On 9/6/2024 5:54 PM, Krzysztof Kozlowski wrote:
+>>> On 18/08/2024 20:02, Krzysztof Kozlowski wrote:
+>>>> On Fri, Aug 16, 2024 at 12:01:47PM +0530, Taniya Das wrote:
+>>>>> Add device tree bindings for the display clock controllers
+>>>>> on Qualcomm SA8775P platform.
+>>>>>
+>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>>> ---
+>>>>>   .../bindings/clock/qcom,sa8775p-dispcc.yaml        | 79 
+>>>>> ++++++++++++++++++++
+>>>>>   include/dt-bindings/clock/qcom,sa8775p-dispcc.h    | 87 
+>>>>> ++++++++++++++++++++++
+>>>>>   2 files changed, 166 insertions(+)
+>>>>>
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> Un-reviewed.
+>>>
+>>> We achieved consensus allowing sa8775p to stay, but now Qualcomm changes
+>>> point of view and insists on new approach of dropping sa8775p. Therefore
+>>> this change does not make much sense in the new approach.
+>>>
+>>
+>> Krzysztof could you please re-review the patches again? As I understand 
+>> that Qualcomm will support both SA8775p and QCS9100 in Kernel. There’s 
+>> no plan to drop SA8775p support. These two SoCs will keep compatible.
+>>
+> Krzysztof, Could you please help reviewing the patches again?
 
-As far as i can see, clk_alpha_pll_configure() does not modify pll.
+They are not in the patchwork anymore, not in my inbox, so I cannot
+review them.
 
-https://elixir.bootlin.com/linux/v6.12-rc1/source/drivers/clk/qcom/clk-alpha-pll.c#L391
+Please resend.
 
-So you can add a const there as well.
+That's generic rule - don't ping needlessly multiple times, but resend.
 
-> The ubi32_pll is the source for nss_cc_ubi0_clk_src, nss_cc_ubi1_clk_src, nss_cc_ubi2_clk_src, nss_cc_ubi3_clk_src. Therefore, to register ubi32_pll with clock framework, it should be assigned to UBI32_PLL index of nss_cc_ipq9574_clocks array. This assignment will result in the following compilation warning if the ubi32_pll structure is declared as const.
-> 
-> drivers/clk/qcom/nsscc-ipq9574.c:2893:16: warning: initialization discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
->   [UBI32_PLL] = &ubi32_pll.clkr,
+Best regards,
+Krzysztof
 
-Which suggests you are missing a const somewhere else.
-
-Getting these structures const correct has a few benefits. It makes
-you code smaller, since at the moment at load time it needs to copy
-these structures in to the BSS so they are writable, rather than
-keeping them in the .rodata segment. Also, by making them const, you
-avoid a few security issues, they cannot be overwritten, the MMU will
-protect them. The compiler can also make some optimisations, since it
-knows the values cannot change.
-
-Now, it could be getting this all const correct needs lots of patches,
-because it has knock-on effects in other places. If so, then don't
-bother. But if it is simple to do, please spend a little time to get
-this right.
-
-	Andrew
