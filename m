@@ -1,87 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B078230230;
-	Fri,  4 Oct 2024 18:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE7F83CC7;
+	Fri,  4 Oct 2024 21:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066726; cv=none; b=NXRCygMaHkfPdbBRhQfOoGWApcfwA1jExtBOiNfiQxUpvavD7NBP/NomthyymxJ7LX+C3LpzF4oVexbeKMEnUmSfoTSBRicfhxjKeNHYdrzo2ShpCw4CvNv4u4diEy05R47Sh/lfKg/Z7OFl5hKMuMVRejg20OzBkDrtNTpsQ+g=
+	t=1728076911; cv=none; b=syV92irpCT+dGGJNgVMc01RCJFWRvcuxa8mGxJuAnrHzyspyzTTI9kMNB1x6LemVJS244yZDGJ4s2f+XKjajr5e3ORH2ZFNahg8jLvNjU/PPnHujxB8dX5EoNwfEYhMeBwJSxpvwvlJ9K2uOcxiFB3Or/9MUdPpR31Ayga4GZmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066726; c=relaxed/simple;
-	bh=cIudPX+z8eB+rsul2HwYMPjgwGJNYwI7JcPY7jOIuNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QXmeNerNFHRN0hZGnRwKN9JrPSR2wDm31K+LFDapR4tw7i7dLbLbJpPPD/TgTAk/1d1gCoDEyOdFFvs4Fok/X77k0BY5sXW+QiMpOwmQMeYrL0Y81zYOzilmyhdY0Xsav9Z5uGNuyAwlEE4B64Ez+MakDuH7nEGJy7jGpc/lEN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9p00HvB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728076911; c=relaxed/simple;
+	bh=6GcKyhloN4GANHNYMbyds7oq2HhvQnkSfXd8F0xWXY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=twbSuI7QYmhsa4Q0OHdD0qmgfgDAmQqQgDBRDUd6JT/KYFUKDY6jslOWsIL3JboTxVhGtrMozZvADsGlHHsGq3fHrAbb7pEpBBU6kMXD7XaAkXbu5/9Jv5KsdNIisyQoEt06dOJ3rxW2lV7Y8CR93WPsBu0VvrojuimHAewXWos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XiLSxzr7; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9p00HvB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19630C4CECC;
-	Fri,  4 Oct 2024 18:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066725;
-	bh=cIudPX+z8eB+rsul2HwYMPjgwGJNYwI7JcPY7jOIuNA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l9p00HvBGwTz1GJPNjqgGHyx/zKjnvUVrYd3pSx/sWQkIVu9ILTPXhB/CTqq7EUrB
-	 K0iwi6kSq3DC4vNU+TrDXwDlxm501qyzOylIj8jgleueEINXM/vU0IzRaFQTC1iPNr
-	 v3pa/RIP3NLa4KG54JGhmUwlniF8gma1hbvInLfTxjh2a4PLdvLE/aQFOuBeMMPy1L
-	 fwjHKSY0AwVjvyH/+B+CEApnx4XKMLO4r4K/39316plRdO86YEBASdeo7sSRag8pRX
-	 QXgBETW49PGNqN99XPb+ODN0uAV6MmVkHutANq0gk3VGGg9xbxeTu2qqDsj/LYnpOl
-	 0bmXHxNv8mrAA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 09/16] clk: bcm: bcm53573: fix OF node leak in init
-Date: Fri,  4 Oct 2024 14:31:36 -0400
-Message-ID: <20241004183150.3676355-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004183150.3676355-1-sashal@kernel.org>
-References: <20241004183150.3676355-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XiLSxzr7"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wpixsDSdxDZIAwpj0svTBI; Fri, 04 Oct 2024 23:20:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728076835;
+	bh=rXaWLfvU0d1YuQl1F4v9J51EjQC/lsdynJrwZhlFI/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XiLSxzr7/1ktmr/6cZudt/x+6ENoOXOOdQdXe5rMuqEuGCxwLHzqBWdWNZgwXqac2
+	 Wn8IZxQCLltv5LTy0zs0AQx/z12Xk33l9bg+oxEoFTOknudA64BYuk99uuElyq7hYY
+	 83pFo0Vjx6ymhkdwymSBE+1qn824IPS6tMvdQC5CY/yCH+uisSwS1fde2s88j3HUDU
+	 FN1/fI7ym3KPaMS+jf9tTbG94loLJ8zv89NMcw8BudZelk6T/siRFajGQrCUClqfLm
+	 EwU0w8Mz1gB+jg79U4R7mhuQeBwV/HmPrOtYBJFU/qXUzSweKhSKivaEYCgu/Vw5/v
+	 EcpBcGMfgF6+w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 04 Oct 2024 23:20:35 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8334a319-96e4-4249-9659-132c8698c895@wanadoo.fr>
+Date: Fri, 4 Oct 2024 23:20:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.322
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] clk: eyeq: add driver
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20241004-mbly-clk-v4-0-c72c2e348e1f@bootlin.com>
+ <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
+ <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
+ <D4N6GX6P0ZCH.2PJGDMKEZ6LLQ@bootlin.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <D4N6GX6P0ZCH.2PJGDMKEZ6LLQ@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Le 04/10/2024 à 18:55, Théo Lebrun a écrit :
+> Hello Christophe,
+> 
+> On Fri Oct 4, 2024 at 6:34 PM CEST, Christophe JAILLET wrote:
+>> Le 04/10/2024 à 17:45, Théo Lebrun a écrit :
+>>> +static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
+>>> +{
+>>> +	const struct eqc_match_data *data = priv->data;
+>>> +	unsigned long mult, div, acc;
+>>> +	const struct eqc_pll *pll;
+>>> +	struct clk_hw *hw;
+>>> +	unsigned int i;
+>>> +	u32 r0, r1;
+>>> +	u64 val;
+>>> +	int ret;
+>>> +
+>>> +	for (i = 0; i < data->pll_count; i++) {
+>>> +		pll = &data->plls[i];
+>>> +
+>>> +		val = readq(priv->base + pll->reg64);
+>>> +		r0 = val;
+>>> +		r1 = val >> 32;
+>>> +
+>>> +		ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
+>>> +		if (ret) {
+>>> +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
+>>> +			priv->cells->hws[pll->index] = ERR_PTR(ret);
+>>> +			continue;
+>>> +		}
+>>> +
+>>> +		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
+>>> +				dev->of_node, pll->name, "ref", 0, mult, div, acc);
+>>
+>> Should this be freed somewhere or is it auto-magically freed by a
+>> put_something()?
+>> Maybe devm_action_or_reset()?
+> 
+> This driver does not support being removed. It provides essential PLLs
+> and the system has not chance of working without them.
+> 
+> Almost all instances will be instantiated at of_clk_init() stage by the
+> way (ie before platform bus infrastructure init). Devres isn't a
+> solution in those cases.
 
-[ Upstream commit f92d67e23b8caa81f6322a2bad1d633b00ca000e ]
+eqc_probe_init_plls() and eqc_probe_init_divs() are called from 
+eqc_probe(), which has several devm_ function calls.
 
-Driver code is leaking OF node reference from of_get_parent() in
-bcm53573_ilp_init().  Usage of of_get_parent() is not needed in the
-first place, because the parent node will not be freed while we are
-processing given node (triggered by CLK_OF_DECLARE()).  Thus fix the
-leak by accessing parent directly, instead of of_get_parent().
+Would it make sense to remove these devm_ ?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/r/20240826065801.17081-1-krzysztof.kozlowski@linaro.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/bcm/clk-bcm53573-ilp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm53573-ilp.c b/drivers/clk/bcm/clk-bcm53573-ilp.c
-index 36eb3716ffb00..3bc6837f844db 100644
---- a/drivers/clk/bcm/clk-bcm53573-ilp.c
-+++ b/drivers/clk/bcm/clk-bcm53573-ilp.c
-@@ -115,7 +115,7 @@ static void bcm53573_ilp_init(struct device_node *np)
- 		goto err_free_ilp;
- 	}
- 
--	ilp->regmap = syscon_node_to_regmap(of_get_parent(np));
-+	ilp->regmap = syscon_node_to_regmap(np->parent);
- 	if (IS_ERR(ilp->regmap)) {
- 		err = PTR_ERR(ilp->regmap);
- 		goto err_free_ilp;
--- 
-2.43.0
+devm_platform_ioremap_resource(),
+devm_kzalloc(),
+devm_of_clk_add_hw_provider(),
+eqc_auxdev_create() which calls devm_add_action_or_reset().
+
+I sent this patch because of these calls.
+
+Either I miss something, either maybe things can be simplified.
+
+CJ
+
+
+> 
+> We are missing suppress_bind_attrs though.
+> I can add that at next revision.
+> 
+> Thanks,
+> 
+> --
+> Théo Lebrun, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
+> 
+> 
 
