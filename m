@@ -1,103 +1,122 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F70F149DF4
-	for <linux-clk@vger.kernel.org>; Sat,  5 Oct 2024 14:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE1515A851;
+	Sat,  5 Oct 2024 18:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728139485; cv=none; b=uX40k1X634+gef6qWSQiVOS4gODS7WOMBspcjmv389wW9T6m/UwMVSfIbj6bvEYBCHO3q6NXuS3MdDmFareUq0THDeV5fnk4uA3v1oJoxnfT8v1eOpTivCvV4WSZ03pQKUo7BViy3Xx8Bp7mkhh5QlYQyrPNLch+HwILunPtG2o=
+	t=1728152626; cv=none; b=jkMNYw7KXnXX5Nuv5Q3RbiRv1OxE5RPnwkGIQtlQ8igqG1iUJ2NV2JOtC4XojeyBqPZmfPbifSS18CSDuFsgAjczdbHFFEfoFLdysLT5Okff89VtiNIa9DPEWGKXmocNA3AF1LlvJG7BfxIT4mWp8faJvJ7bVYxbEFKZtCXJJrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728139485; c=relaxed/simple;
-	bh=iTP6cWkPIw0pnJ4b1Y/YFozqqx/AGnE1FtMJLFjEtCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uCdqQfrQNFy9x6b3INRHwrg02FonnutgNPccClHII1stZ+SHxvy3+TOZfYMU8/I4J9ZEb868PH7IQpauHkOF5c4nERUuhrNxrHKxOlp1DnamAuJ1LJ9XRg0G97G+iGbQDhk36fm+7OPa44yPuMsoroOSv05+F+uvsb/71BsbMcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=hb1qbJrS; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+	s=arc-20240116; t=1728152626; c=relaxed/simple;
+	bh=kxzlIO1kgZa4eBIb9lr2I1n75J/YWBPfbw062Q50ilU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIgGzvhcgcTORF/F6GiHsHuB7/o8MCxgKotL4ZeZBOiSxWrNfsDfcRUiw6+Do8lszyE2H3zR2rrRLzyvWxcpNw/QVmLO0+qYPlGyoedRy4ghtAohDPO14HTSCIo49Dfe88WRA34wiaFOU8MsHdmxtBkn15zB35NcyxGWsRVOHTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OruGk6nX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="hb1qbJrS"
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45812fdcd0aso35514381cf.0
-        for <linux-clk@vger.kernel.org>; Sat, 05 Oct 2024 07:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728139482; x=1728744282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2irbHzwF9Po9AacQzMPdPlNV6/mUQD92x4MGVS434I=;
-        b=hb1qbJrSr7NF+KQklYyF5TofhiqcFxcjTe7Z5C5JXpb/Rr4xAeDGT15nE4gm2ObZr3
-         BbRZWbe4R+rHYiMRdtkaG8a0xLl/cQ/WppElmI5xoSTDB0yDyX9s3ZXoMKDO10jBPP5f
-         DGtehv+hPiayuVoFkIf3TxwDDRDVbgH+UWFay+x1DNCGcNBzJFjd+nqPc0AjYQWp0QQ7
-         2ljlbf+g2IOKfeQdIUNivrz7RbPcGAsbIUvHLf3xy0JyjsGae1Z2qEMUsAxpLk4cV1W5
-         JnK6DMtP0UinyNMsUKKwRvKveQ8ZQYqgJxSW552yAbG/6/kgeT+JZHp+AxYTtkFNRmw2
-         RfOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728139482; x=1728744282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2irbHzwF9Po9AacQzMPdPlNV6/mUQD92x4MGVS434I=;
-        b=wjIzF8JQayaOuwz4/CGgnYzNiD62CAFPavb4pTHQB4gMqxqZGiixX9j4IXx0As3onj
-         Cq4Pw3Rf4MRjMJFvJIIDbXs39I3mHZIUFEI+IKoO0bepyzuiGO9Jtv2w8lTrhxIScjzG
-         BCmeH8vUeN3KbZtUgTa3NylecVKZ67rpcWmG0ZSFprqZEMZr5L7O4T9qZS/qkQdOigQ2
-         R0X82evCf/gLDQ7/FeE0MgwKlaGUazGd8l453FwCsplhbqQAGUG78xk4tRkBPjt/zwsZ
-         hVpeKAnEVPf3vj8cxgEfRKk3c9jgV1+XISbyNCo9GwkTdCW725Fsz+/4Mhar4yHBvAO5
-         GgUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwJ5RtSMKuUVMNVl2UAeycdKpOmQf4epoI5ge1EneGMT1Dwc+cJEjy+MBdvgQC/cW37VxbCVJVoYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+TD8Q/iB7MFJchViFrTIfcTd32gkbASIRf/GELiI7IOKo5yaZ
-	5g9GcKogphYVTUJBbDlzvzPjct3D9E0bP39ZJBWkmOy0Sj7xWRSG9nqX0ro+N4o=
-X-Google-Smtp-Source: AGHT+IF3OeNdLbZZWgL3Lk8D2SFyQw+kmrlDKPxNWjaeBMLNdMGFxCRq8dzDOwoamcsj9IIQDvGLAg==
-X-Received: by 2002:a05:622a:1990:b0:456:80f9:debd with SMTP id d75a77b69052e-45d8d0994e9mr172726441cf.8.1728139482157;
-        Sat, 05 Oct 2024 07:44:42 -0700 (PDT)
-Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da74ec328sm9104721cf.32.2024.10.05.07.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 07:44:41 -0700 (PDT)
-From: Jonathan Marek <jonathan@marek.ca>
-To: linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: qcom: videocc-sm8550: depend on either gcc-sm8550 or gcc-sm8650
-Date: Sat,  5 Oct 2024 10:40:46 -0400
-Message-ID: <20241005144047.2226-1-jonathan@marek.ca>
-X-Mailer: git-send-email 2.45.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OruGk6nX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44C8C4CEC2;
+	Sat,  5 Oct 2024 18:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728152625;
+	bh=kxzlIO1kgZa4eBIb9lr2I1n75J/YWBPfbw062Q50ilU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OruGk6nXMjvr08V9VJT0HhwG3POlNYQCJIs/FElKG8lHmmovlkjs4IGFkTlQ1pTf9
+	 qYSmBZlbrSsEsu0RGxYwV8iCaYYgryvHpE+oUR7pNCroNM1gbfVpnu7/KL+PoOlffw
+	 yoU3sejW5ci25DceAtepuQA95mEcizuucSq+qjyHITnsBearvHD3DXS1atGNbl7cZM
+	 2JjzTbmObo72j3ON+0WY+UhTNRhxuAU3GSA6ZMKlkdzrylOjpGhsr8vu/4kZINox8o
+	 oSPud5kXSWI6OvZfK6A3usUSPZ8D25BtrqjOg/Sm5CQeQzdQwr3ZfqKapKiHkGULYo
+	 AJp2BgQ3iP+zA==
+Date: Sat, 5 Oct 2024 13:23:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	ulf.hansson@linaro.org, linus.walleij@linaro.org,
+	catalin.marinas@arm.com, p.zabel@pengutronix.de,
+	geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_varada@quicinc.com
+Subject: Re: [PATCH V3 2/7] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+ binding
+Message-ID: <20241005182345.GA482031-robh@kernel.org>
+References: <20241004102342.2414317-1-quic_srichara@quicinc.com>
+ <20241004102342.2414317-3-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004102342.2414317-3-quic_srichara@quicinc.com>
 
-This driver is compatible with both sm8550 and sm8650, fix the Kconfig
-entry to reflect that.
+On Fri, Oct 04, 2024 at 03:53:37PM +0530, Sricharan R wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> Add binding for the Qualcomm IPQ5424 Global Clock Controller
+> 
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> ---
+>  [V3] Added only new clocks for IPQ5424 and ordered for both
+>       IPQ5332 and IPQ5424 based on min/max items
+> 
+>  .../bindings/clock/qcom,ipq5332-gcc.yaml      |  40 ++-
+>  include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
+>  include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
+>  3 files changed, 499 insertions(+), 7 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
+>  create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+> index 9193de681de2..1b6d64385116 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+> @@ -4,30 +4,34 @@
+>  $id: http://devicetree.org/schemas/clock/qcom,ipq5332-gcc.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Qualcomm Global Clock & Reset Controller on IPQ5332
+> +title: Qualcomm Global Clock & Reset Controller on IPQ5332 and IPQ5424
+>  
+>  maintainers:
+>    - Bjorn Andersson <andersson@kernel.org>
+>  
+>  description: |
+>    Qualcomm global clock control module provides the clocks, resets and power
+> -  domains on IPQ5332.
+> +  domains on IPQ5332 and IPQ5424.
+>  
+> -  See also:: include/dt-bindings/clock/qcom,gcc-ipq5332.h
+> -
+> -allOf:
+> -  - $ref: qcom,gcc.yaml#
+> +  See also::
+> +    include/dt-bindings/clock/qcom,gcc-ipq5332.h
+> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
+>  
+>  properties:
+>    compatible:
+> -    const: qcom,ipq5332-gcc
+> +    enum:
+> +      - qcom,ipq5332-gcc
+> +      - qcom,ipq5424-gcc
+>  
+>    clocks:
+> +    minItems: 5
+>      items:
+>        - description: Board XO clock source
+>        - description: Sleep clock source
+>        - description: PCIE 2lane PHY pipe clock source
+>        - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
+> +      - description: PCIE 2-lane PHY2 pipe clock source
+> +      - description: PCIE 2-lane PHY3 pipe clock source
+>        - description: USB PCIE wrapper pipe clock source
 
-Fixes: da1f361c887c ("clk: qcom: videocc-sm8550: Add SM8650 video clock controller")
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- drivers/clk/qcom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+New clocks go on the end of the list. Otherwise, it is an ABI break (or 
+the descriptions are wrong in one case).
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a3e2a09e2105b..4444dafa4e3df 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1230,11 +1230,11 @@ config SM_VIDEOCC_8350
- config SM_VIDEOCC_8550
- 	tristate "SM8550 Video Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
--	select SM_GCC_8550
-+	depends on SM_GCC_8550 || SM_GCC_8650
- 	select QCOM_GDSC
- 	help
- 	  Support for the video clock controller on Qualcomm Technologies, Inc.
--	  SM8550 devices.
-+	  SM8550 or SM8650 devices.
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode/decode.
- 
--- 
-2.45.1
-
+Rob
