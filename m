@@ -1,123 +1,108 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9562C189BB6
-	for <linux-clk@vger.kernel.org>; Sun,  6 Oct 2024 20:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB5813A27E;
+	Sun,  6 Oct 2024 20:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728245692; cv=none; b=D6nOm+s3Sz2yfAwHwV5fE1UVLlS3xpbvCCNaHvPVuGbXc0ZJj8U6A2+dha6f2UKz4LRQW6QfHLJPxQM87JVuoPORGvkIRIHVlJAGpnBTpd7AzafbkcmdK8a0oYOb8fl8VDeZkgAGeqU2EnwKO9C0Qvz3c4XpUMBLGCwFA0GUq+U=
+	t=1728247942; cv=none; b=gZZm6ybC8fFVG1TuSXtC4jONAjnviSyTyhpOozBveD6Ys6gCYKhkgAlN1knBSXjwO/sDlY5DP5s+Ioz31kjhM++FR32czU3mD61QoOic+IDOst9Ccb29MhjfteA91w/1GiYXW8BgdIkf3/VdJpzC5cAYKyd4BxWZ75IxVesJa1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728245692; c=relaxed/simple;
-	bh=TAOnruZ+UY0G77/aMNG4re8guO/zoiQVSwbD9ShvBKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tk+UimbcyhhYu3GA5VrJfTA4l62HKqQSm5q/rodWKiAnydLptIdvB0UhqOn1KynFi9Qal2MEgZhFjzoXR45WkHnDtFdcf0tAxdvN0AzxjjGJ0DRmTNGGroL+vHQDce4w9a6H4vdg1oZnTn//z1uMDSjm0VtnKTDAH4nT5Y/q32g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LMrYpC1T; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728247942; c=relaxed/simple;
+	bh=+hx+n3uWbKFfn6OLsZGwd2NwxKuv9y4K6HWEu5tGwyU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pswZiIpcNxLjxDx7lG9wbo/2gUWhWyurh7baWP8pfHOzgpLwgZ+5DJvrlFuPj9B6+YvSiyEsCRtHm28fR7flZ94UJWIOml8gp+EWjVy1J3bcC7k7Jou8jt1tUNpith+Nh3n0tuonDlSHzH/KsbmnvPr/rZR2rJhkAfL3bkIc8kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=c9uvD8Yf; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMrYpC1T"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2facf48166bso42504031fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 06 Oct 2024 13:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728245689; x=1728850489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bbcYT7ADpCO6HhcQ0PCuE8br5sqfMeh1whVSG+rVUPY=;
-        b=LMrYpC1T1SLo3lAIkPZjpOxcyN3lvV8aeALnoPg3jBG2IZCXbm582ff3HinmmG5WJe
-         A68bApvrA1QTgbqZFs8lc/4VxolTb89Dj4Y2d2rm52hMEOC8zVWX2bFkKthch2uW+4J0
-         m1u1w0+x6SZBHK52agdGQGSh/7aPlko+U+DMpmMpHC25djjShF5oMBMe8Dwri6UAkpFM
-         ML5ZTjsx3VFpcldcBrnkFEvjbFVki1nIR0UfrT9kkLmV7jgFhdeic4H/toaLnQ2QFRPB
-         vcAl+f0a+55juaamlfcPZgcox9v6HgR6ObsZ1W/zeLSKjEp8rWvZORQprl3TnwfBj306
-         D3Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728245689; x=1728850489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bbcYT7ADpCO6HhcQ0PCuE8br5sqfMeh1whVSG+rVUPY=;
-        b=bVT/pQMICi4ida1HW/BWSP9YlD+CqMBKFfXpjjYSq0pVyo2Gkh0N2njFpBxpEHunn3
-         uBiyWHNqovcE0K32ntedS0eHksRDphS0/H9OKPcixtfXeDYEgYCCbkUYHhTeYYtf0lT+
-         IJM/7M080sBahy+/01xkNb6F6PMjF2WZm6BS0mnEtwhSe+qGoq16FDQlpc94wSR8W5VX
-         m5SHyDzGNtMzfhk2C2/A5ySrNgnLalFt86oX5K9j5DMj3Ruh+snmSwVg4oFFwF2FS05t
-         AJplgoItVjE7Ufo39dCBr710KwqiB2gr2+SKHq7yHhxI4EPpOBnXnOi+5T8Ak7MzTZq/
-         dW9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVPU9jInIDtEXVOQFfa1hVKPphgret0Yd2BP/gPfSDz+JieVSVE9pYbghb9U6WnY2DZp0Q+pnnSPY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5Jrrqn0sou4V8ZwQ2xmLmA5L2u1jzBE//xvIgrWHsdWzsbQbz
-	Osl9/6z8iurFYrVCqqR3B4vOdfIatkrPA4x43QkTDh0ANbYle+KtagZxH7xqniE=
-X-Google-Smtp-Source: AGHT+IF2Oz64RqFM18CQ1gi7geZOLRwqYHJ8HBR+9K0ClV1bZqi4bkDZKnMb99BP0u3VkiM4VwSzGg==
-X-Received: by 2002:a2e:a99d:0:b0:2fa:cf82:a1b2 with SMTP id 38308e7fff4ca-2faf3d70794mr49136781fa.31.1728245688751;
-        Sun, 06 Oct 2024 13:14:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b3ace7sm6110591fa.132.2024.10.06.13.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 13:14:48 -0700 (PDT)
-Date: Sun, 6 Oct 2024 23:14:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Karl Chan <exxxxkc@getgoogleoff.me>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
- dts from arm64
-Message-ID: <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
-References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
- <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="c9uvD8Yf"
+Received: from [192.168.62.162] (254C1225.nat.pool.telekom.hu [37.76.18.37])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 0F41DE4585;
+	Sun,  6 Oct 2024 20:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1728247932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2OCFzLsOedoGB17wlarfdBAMOUiShKOwPhyarUYtwp8=;
+	b=c9uvD8YfuovzVFRgBKhE+X4DAXDa3XT6M99YA9tN/4Gto+OXTR4bMfx+npzw4lBXWWDbwg
+	7r+GYmrRNbxNbDfFij2BWUU3U2w1T3H2OOpjNjPF9aA0qENmTV7wJOnpCYBLgGO8hb/vpC
+	NlC1qvp7fQA9iWJS+b7HqdbkcZe1OP4m0CW5uJXg75xbVizjHpbUhxjTBlDV/LE+ZhE4/h
+	dBZEfT8XAcSR8ajRPRVFXiYq8/RvHFGBbKDvvqyTCYJzdkWHbND5U2gLz5aiwHsGNPs+QF
+	KNI1YBx7tOsY3Sri5cpwkw/t44DCzWFPrtQx60qLSnjUCZb8CGVw6dDXNegu/g==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Sun, 06 Oct 2024 22:51:58 +0200
+Subject: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when
+ width is not set
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAG74AmcC/4XNwQqDMAwG4FeRntfRxhbdTr7H2KHVqGGzlVbKh
+ vjuq14H2yn84c+XlUUMhJFdi5UFTBTJuxzKU8Ha0bgBOXU5MxCgxAU07+nFZx+XjhKfTHxwa1S
+ FbQclmpLlszlg7hzk7Z7zSHHx4X18SHLf/sCS5JL3lbBG615Jjc1kyD3JkRvOPgxsFxP8UyArt
+ gYtVJ1Hbb+Ubds+R++nr/sAAAA=
+X-Change-ID: 20240925-fix-postdiv-mask-ba47ecd23ea3
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Abhishek Sahu <absahu@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728247931; l=1612;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=+hx+n3uWbKFfn6OLsZGwd2NwxKuv9y4K6HWEu5tGwyU=;
+ b=w2VFi/4n/OjHGdtwvGUXdCcY9cCJtdI3qVUNMyvJ39thJWqA7ctW4OJo5raiiqNB03CC6LAvS
+ 9yoq38YU2loC+49icabzZ/uyVpw2nBoRGHo5iKWTcF6yrM+J6cf2HRT
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Thu, Oct 03, 2024 at 07:28:04AM GMT, Karl Chan wrote:
-> Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
+Many qcom clock drivers do not have .width set. In that case value of
+(p)->width - 1 will be negative which breaks clock tree. Fix this
+by checking if width is zero, and pass 3 to GENMASK if that's the case.
 
--ETOOLONG. Please wrap the line at 75 chars per line.
+Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v3:
+- Remove one of the fixes tag.
+- Link to v2: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org
 
-While doing it please also add the reason for the change (32-bit
-firmware on the router).
+Changes in v2:
+- Pass 3 to GENMASK instead of 0.
+- Add more Fixes tag for reference root cause.
+- Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> The approach to include device tree files from other architectures is
-> inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-> used to build the device tree for both ARM32 and ARM64.
-> 
-> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
-> ---
->  arch/arm/boot/dts/qcom/Makefile                         | 1 +
->  arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
->  2 files changed, 3 insertions(+)
->  create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-> 
-> diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-> index f06c6d425e91..147dbeb30a6a 100644
-> --- a/arch/arm/boot/dts/qcom/Makefile
-> +++ b/arch/arm/boot/dts/qcom/Makefile
-> @@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->  	qcom-ipq4019-ap.dk04.1-c3.dtb \
->  	qcom-ipq4019-ap.dk07.1-c1.dtb \
->  	qcom-ipq4019-ap.dk07.1-c2.dtb \
-> +	qcom-ipq5018-linksys-jamaica.dtb \
->  	qcom-ipq8064-ap148.dtb \
->  	qcom-ipq8064-rb3011.dtb \
->  	qcom-msm8226-microsoft-dempsey.dtb \
-> diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-> new file mode 100644
-> index 000000000000..9a6ad767ebd7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-> @@ -0,0 +1,2 @@
-> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-> +#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
-> -- 
-> 2.46.1
-> 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index f9105443d7dbb104e3cb091e59f43df25999f8b3..be9bee6ab65f6e08d5ae764d94a92e395e227fbc 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -40,7 +40,7 @@
+ 
+ #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
+ # define PLL_POST_DIV_SHIFT	8
+-# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
++# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width ? (p)->width - 1 : 3, 0)
+ # define PLL_ALPHA_MSB		BIT(15)
+ # define PLL_ALPHA_EN		BIT(24)
+ # define PLL_ALPHA_MODE		BIT(25)
 
+---
+base-commit: 58ca61c1a866bfdaa5e19fb19a2416764f847d75
+change-id: 20240925-fix-postdiv-mask-ba47ecd23ea3
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
