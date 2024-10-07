@@ -1,136 +1,114 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F5F1D4618;
-	Mon,  7 Oct 2024 13:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7891D6DA5;
+	Mon,  7 Oct 2024 14:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728309378; cv=none; b=dkYU6o5jQ0usLV+7E5JsPTmEUEfnYJrs7B8v/A3GXAM4N9PTmhlcz6oeUnobf51a6XmoHWaF7RsM2Dsf25msGY6o+2WjenG0XFje4X+Rfeof0/77cgp1JL6CVFSH6Vl48nLi4ycDFuATCJWZycPkQKYYLiay9KAssY7TmUxo3iw=
+	t=1728310610; cv=none; b=rwfu6fHK1jvRAYAlD6Oukol3LPMII4USlqc8eszDWQQdhJd2iKCGwSll4NFhCOtG3TIpzaxH7y48KwBwyIyfwiEhs4CbOuWydXCk3mLISMx52MgTo0B5+uYRsBuoSZaI+Nwz15CSOBg2mhd0lbbYqGIwDeo3zDKn2QCccYO5T+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728309378; c=relaxed/simple;
-	bh=3DWa82qDFPSleOr4UGlJjFaPWyy2oBAJIzcdCVQzIwg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=JeMSjsITMFffuBJBqJFXmHT0r5+ee7Oj3XUj8ZshbWxqrs0wzEcf23GMLld/ksAezp5Q0FSQ7txBGnQxvTKsWFOA9wdzmNRZJLDVllpGX1IuyXMM7PAQeo98Dps85QBwbTPLXzguj1U9kAFAkSK1eqJHuux9KiY1xBTmljlNaPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JkSYhg2Q; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1728310610; c=relaxed/simple;
+	bh=I7q9lk59AZpbFzZMPAN1WPpVBY6l66csCEEr9J5+l44=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Tz/iNHsU46OgKMsAwH/OLnVq0NRP+zZi8yskN8UplkR9EgC6vU0zCBc8cFql0yDF2MbAq8NJcoiUtK8JGlcWCMKZLC368QUxmWH2px/UIIP+Riy7wu3d81Od4/saN3r9JmcWL7e7ut5BYX30QfODA2WOAtQev7H/3UQ6Xxl6RAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhRyqdFm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JkSYhg2Q"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C34B41C0003;
-	Mon,  7 Oct 2024 13:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728309375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lTBCMTyNc51WfzJG+muqvC+lkyLv4Qj65h0etwEqxXY=;
-	b=JkSYhg2QWctq84CBBKk9V5tAc9GlPlmUfysTRacIpJZ0u98rmp67RIt55bPKNJqMDzG1Uk
-	oEDnN1XEFVoRb+MsXtpyoMvk3b7esn1NVBoM+UXXUJ3udkj54TNyNRMNAVTwLrDwurDLFO
-	w6fOvsbRCE4wkHK4RJPyP/TIsUwqmAJYmz9foMopa81nZxfCBmVjDcUI2JXJ5TL4D7SNob
-	eGFSCEFyVu8WsLZoUsR9u3fwZew0mJOiTP/Kf9RN8AfdeOCHHUsWg/YKCt5jb75jrxkmCd
-	6fb9DzNKTgYlo030rnHlQaOOSlU28yw46wgfvhJdoOZOkVP/53KBPxFhDONFPg==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhRyqdFm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279FBC4CEC6;
+	Mon,  7 Oct 2024 14:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728310610;
+	bh=I7q9lk59AZpbFzZMPAN1WPpVBY6l66csCEEr9J5+l44=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=dhRyqdFmMPCSBlCgYzTLbKCgp9Tzmu0mWsCJOU1bwyYXaj0nlMgmihoSPlr9aa9Y/
+	 Ta2m0oI7ek8OivzU7TaabaIdVT8EHSCO8AAxV09mkD3F3aXuwycggEwZ3X7sy0/yql
+	 wnGu/RX2fLIKdgomfuSLg6zDqg2juGphQegmrhyWSPKryOSGGqhOiU4/dIb81Y/doH
+	 7vBdYOOrWBuT61vEf+6lKZw1hjYAl7KtdJbyWE/DbBcTrGZbWY9sv9Ntsllb2rPr0Q
+	 OJZ65GfEB5EYoGUhsKmAhvaeC4XS891sQn8ZIv44aVljXpagE8UnSGkGBXOIcB3nym
+	 498GXkHQSIITQ==
+Date: Mon, 07 Oct 2024 09:16:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 07 Oct 2024 15:56:14 +0200
-Message-Id: <D4PMJHMDRCCJ.HPOLK6JF49DO@bootlin.com>
-Subject: Re: [PATCH v4 4/4] clk: eyeq: add driver
-Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Michael
- Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241004-mbly-clk-v4-0-c72c2e348e1f@bootlin.com>
- <20241004-mbly-clk-v4-4-c72c2e348e1f@bootlin.com>
- <75884d07-f052-435d-9f1a-44e9e0bb755f@wanadoo.fr>
- <D4N6GX6P0ZCH.2PJGDMKEZ6LLQ@bootlin.com>
- <8334a319-96e4-4249-9659-132c8698c895@wanadoo.fr>
-In-Reply-To: <8334a319-96e4-4249-9659-132c8698c895@wanadoo.fr>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Saravana Kannan <saravanak@google.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Derek Kiernan <derek.kiernan@amd.com>, linux-rpi-kernel@lists.infradead.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, linux-clk@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will@kernel.org>, 
+ Herve Codina <herve.codina@bootlin.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Masahiro Yamada <masahiroy@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
+In-Reply-To: <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
+Message-Id: <172831060870.15438.14111281615196403810.robh@kernel.org>
+Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for
+ devices accessible through PCI BARs
 
-On Fri Oct 4, 2024 at 11:20 PM CEST, Christophe JAILLET wrote:
-> Le 04/10/2024 =C3=A0 18:55, Th=C3=A9o Lebrun a =C3=A9crit=C2=A0:
-> > On Fri Oct 4, 2024 at 6:34 PM CEST, Christophe JAILLET wrote:
-> >> Le 04/10/2024 =C3=A0 17:45, Th=C3=A9o Lebrun a =C3=A9crit=C2=A0:
-> >>> +static void eqc_probe_init_plls(struct device *dev, struct eqc_priv =
-*priv)
-> >>> +{
-> >>> +	const struct eqc_match_data *data =3D priv->data;
-> >>> +	unsigned long mult, div, acc;
-> >>> +	const struct eqc_pll *pll;
-> >>> +	struct clk_hw *hw;
-> >>> +	unsigned int i;
-> >>> +	u32 r0, r1;
-> >>> +	u64 val;
-> >>> +	int ret;
-> >>> +
-> >>> +	for (i =3D 0; i < data->pll_count; i++) {
-> >>> +		pll =3D &data->plls[i];
-> >>> +
-> >>> +		val =3D readq(priv->base + pll->reg64);
-> >>> +		r0 =3D val;
-> >>> +		r1 =3D val >> 32;
-> >>> +
-> >>> +		ret =3D eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
-> >>> +		if (ret) {
-> >>> +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
-> >>> +			priv->cells->hws[pll->index] =3D ERR_PTR(ret);
-> >>> +			continue;
-> >>> +		}
-> >>> +
-> >>> +		hw =3D clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
-> >>> +				dev->of_node, pll->name, "ref", 0, mult, div, acc);
-> >>
-> >> Should this be freed somewhere or is it auto-magically freed by a
-> >> put_something()?
-> >> Maybe devm_action_or_reset()?
-> >=20
-> > This driver does not support being removed. It provides essential PLLs
-> > and the system has not chance of working without them.
-> >=20
-> > Almost all instances will be instantiated at of_clk_init() stage by the
-> > way (ie before platform bus infrastructure init). Devres isn't a
-> > solution in those cases.
->
-> eqc_probe_init_plls() and eqc_probe_init_divs() are called from=20
-> eqc_probe(), which has several devm_ function calls.
->
-> Would it make sense to remove these devm_ ?
->
->
-> devm_platform_ioremap_resource(),
-> devm_kzalloc(),
-> devm_of_clk_add_hw_provider(),
-> eqc_auxdev_create() which calls devm_add_action_or_reset().
->
-> I sent this patch because of these calls.
->
-> Either I miss something, either maybe things can be simplified.
 
-You are right, mixing devres and non-devres handled resources was a
-mistake. Things have been simplified in revision v5 [0]. It sets
-suppress_bind_attrs to true and switches to 100% non-devres calls.
+On Mon, 07 Oct 2024 14:39:46 +0200, Andrea della Porta wrote:
+> Common YAML schema for devices that exports internal peripherals through
+> PCI BARs. The BARs are exposed as simple-buses through which the
+> peripherals can be accessed.
+> 
+> This is not intended to be used as a standalone binding, but should be
+> included by device specific bindings.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> 
 
-[0]: https://lore.kernel.org/lkml/20241007-mbly-clk-v5-0-e9d8994269cb@bootl=
-in.com/
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
+yamllint warnings/errors:
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml: 'oneOf' conditional failed, one must be fixed:
+	'unevaluatedProperties' is a required property
+	'additionalProperties' is a required property
+	hint: Either unevaluatedProperties or additionalProperties must be present
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
