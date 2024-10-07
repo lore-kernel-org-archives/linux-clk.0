@@ -1,144 +1,172 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9CE1DD53B
-	for <linux-clk@vger.kernel.org>; Mon,  7 Oct 2024 20:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B246C18C025
+	for <linux-clk@vger.kernel.org>; Mon,  7 Oct 2024 21:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332648; cv=none; b=QcVdxz3A++gRxcGyUZKWNJpC2grxgXmAKUyBCzI6a/caAJbkOT60RScpvTZyAURSiRThtyQR+gSZVbBQ+EHOxEjaF3eGcZ0K97ILr7rwgJMpVCkQp+lqMbd2KOSgQZ+cPezJTJ8EpAWNbmkOSLUiva1ii7WqsV9EAw5jYx5d/tI=
+	t=1728337939; cv=none; b=QFQrXO1wIUDroZ5gvQSviRMRu6dhV9797R4vEUxvdTQHvGonSJcnYbPKgnB8h75InA7aDZISNUSaB6Zpl/WPZ+p8SRqinaZllKxapnsn6NxycUHgCYjGgHUWogIH18GzDUvayaeLRAQ4xvz2WqimbMSRaQ2AibOEa/cf/SLVRf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332648; c=relaxed/simple;
-	bh=rm2osUWB4IgyVq8ykVYBpG6R1/gpKjI5PBwVzeViHPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eNy6NXwccqatNbWSCNdvdd/NpYoxPuk37yK1QIEpLq4JN0WnRGNwH1SQAbXyH3jTwbQ2H5VZ2pVtgWAH0e4PbjRO/Ja2booF1k0xDjb4WSSv31ldfHeBKSp1Kg2kgetSC5jS6qZKm2sutIwTq+QKlwOpnUowylCzr29lvLh7dEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yFJfitYo; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728337939; c=relaxed/simple;
+	bh=V0IYxckZax0MHCL+pk0Wse+pSfLhhZ2PLyVEvlYWrJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JaQSMvA6aSlsnNM2jEnUK6ohPwS5iYeR4OL4p44JyQAK/UbkYqrU2vjokBfWZG06UCtUAKFDUkvwVUa9TGnUJ//H4u4serNrdqwmO2ZDqCxMIU4ZIlkxkcpoSgUW9gAQDNHabySQ2amRXYv9lr2XLjNzcZeGOwEJ9+nX9U7UUUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M2eYu2uZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFJfitYo"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fac9eaeafcso51538321fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 07 Oct 2024 13:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728332644; x=1728937444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lFvl/yEangr8owxbos5zhVtsni37SUgFVrliUsmDQcc=;
-        b=yFJfitYo7WdgQQpQQX90y9ySU/jtNTZEb8VdNervJOiLWt2ZoKZ3eyQxlu1aLNFfXH
-         036q56kgR1aZ3DgIwiw00Z+//NIEt7se1aNo2O9/Ili0vXba4mUnPELixeKgJsKjRn+T
-         RpzUW1VAbfObmTFVvrmn0J4XHZ4YN1+y1TQ5or2VSXx+FC4/J7K4UuZViK9i7jIK7Mp3
-         VN1LHPSAXS39klKqOgiR/OIMZgMqNtbS7LJq+R18DoxQcoduEHTfn7ikpTc593Rq2wSV
-         r6cZe302wQX1LJn0ACWeafftYNHQKlNfiKENgwDwPscM1rX7e8d9ClPWRzzcuQBaUNHL
-         eu8g==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M2eYu2uZ"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497F8Kok032229
+	for <linux-clk@vger.kernel.org>; Mon, 7 Oct 2024 21:52:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5WldPX1HElD7MkR5uLdSM6teFmc3O8Siba0UndRRQH4=; b=M2eYu2uZ8WotBVP9
+	tRHLsARM5MgpgdNUoIfHajRX5wEoxIIQQIindG+57RpPglrwb52K8T0VuuiJi47n
+	6vLHe9henKGAwI2Gp6W3ZKHi5zq1EfDlX6Z1bXpoHkzYS4/ZhKCEwe4OZ6QRxLDk
+	Ol0bg9lKg6BztvGs02+1QUY8XbbFy1txFSHcUaFc4azH/+3Nlq3UUDTo7P1+LmZ9
+	Hlo+OFJ0r30XhZJwfKugGrI/D5XRfai6aXeDTNwWT74Vu1N029DNODVuqH+SRgEd
+	0Yv6TyOv/t5KeMGS5xfl4yjCJ6ezCR3gk/oYEcU2iqxA7MCMetRGpmdEwuillTZz
+	UEa1MQ==
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv8dd53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 07 Oct 2024 21:52:16 +0000 (GMT)
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb0d6fc9fso8018155e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 07 Oct 2024 14:52:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728332644; x=1728937444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lFvl/yEangr8owxbos5zhVtsni37SUgFVrliUsmDQcc=;
-        b=dICdEZW+jI1vrzsG06opILTUAEw4Jj5XCnnjvNGq+g0PJuhHs5zFg1awq2UVIR/O+O
-         ReVPsTjiMbZ194dihcxcHuFJlutCkEVNpuSYKYxmmI2GvmgXw6hgS+FHMsv9MAEJZl2+
-         dfDQ0XtWD3iQB+DTY0TzsckC67b5Fo+/jwyMhq0EK7TRb5J1s0XG2Hh6dnLNixcbHRAy
-         fsWYzJxfhMKTLAPG5qHWbwBswuY4csBtO4v7byG0VuAkHOD8y6VeA1x9VJWg44usydH9
-         MgJvc3Ro+BUIKPPAG3wVyR4aLJDnqLtoGeZJMPV1Wkxrco7FzMJVZX/lvAA4vH2bNTsT
-         uZXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEyQL9SkTfVdJAO1w9qh6lv73HaJg3qI+nvI7cFBY4/bH8SX6tGF7gu2QvloElgCqwf0JMysue/eY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0r+/v+GbZc5Ytd5nMgcZNoXavy75YaenZarVuoQ96yfty+jqL
-	XXtodRJ9IVPUFm48IHKtKNNtg8BJCIAEX3EXZNgGeFz8Y7fuYZ3cmt0LVANSos0OdRqSy9Xpt41
-	o3zy7zR8NNGSV/lYPQbsArqi6I0tfI9SLwP0+cg==
-X-Google-Smtp-Source: AGHT+IF2J2KtODAOg6E0IGOtSHekx3v4Zat7hWdd2giyI0z5Dhlv+dq60y4SCVzsX3JaLj0NPvweMQR6zXmaZGoQZbk=
-X-Received: by 2002:a2e:a545:0:b0:2fa:c913:936 with SMTP id
- 38308e7fff4ca-2faf3c0184emr72904611fa.1.1728332644356; Mon, 07 Oct 2024
- 13:24:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728337934; x=1728942734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WldPX1HElD7MkR5uLdSM6teFmc3O8Siba0UndRRQH4=;
+        b=bu0VsIvlA1p5su7lxsmkO1KXEKqvSSIRPaT9bBjpQBVNUQX5UhfvVSJU7/FVm9ViUP
+         bS2DalCH8k/dGNQlPTgu82G7x+0euAeR0qLDvdOcnXZsltU9s4Pq/MqK5E/g4mdyurru
+         PFqiPYVrGf8ontGhehh4dFiyNlbvL8Sh8OjWvJIDA7XeIuZ4d+gLTOlqCNuxi/kI9zHO
+         TCBgDukD4o6+ZrPxMHdmqIyNHmRRZ7xtA6Ld5DMPVoVtrgJZ2UH0Qle74FRlI2YKQ/dc
+         KEZmbO28Kr3gpyA5Ude6pHpEpfYfDnxAixcpXjRj+X/2aEqdFjbrWHVgWXiktKBhPafV
+         mDIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsyEHDRSk6zW/YqX1DsTEPBkWOBJ8aBADLmW5Poa/zPBi2J57faww5hdIwIoncbz5VW9k96HuA5v8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqtELXrL1J1YHJ67AskjQW4jvrNnGgnWgUtpp+McOo8ornTlG5
+	dtfe8GkmdqdLYDEcLuoijcy5ptnzm4cpInn+d7Sll/i4tP9825jg6JqId3W1tijNDlqJBTXf3KX
+	nH+R8NOsWt3ZkDivLgPW4ok2JN6TjsRFkQKbwyTBBnQV521m30odURm2k+i0=
+X-Received: by 2002:a05:6000:1acc:b0:378:c6f5:9e54 with SMTP id ffacd0b85a97d-37d0e7af459mr3493131f8f.5.1728337934201;
+        Mon, 07 Oct 2024 14:52:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFaMbyT7dDMapB076G7LQwkZU0xFaEj25mSmt+D0+BLMUp3fAakSFZUwmy/E7gSJp44UTpC1w==
+X-Received: by 2002:a05:6000:1acc:b0:378:c6f5:9e54 with SMTP id ffacd0b85a97d-37d0e7af459mr3493115f8f.5.1728337933604;
+        Mon, 07 Oct 2024 14:52:13 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a995253abfasm204148166b.185.2024.10.07.14.52.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 14:52:13 -0700 (PDT)
+Message-ID: <374339b4-3875-4680-a0b6-e0d3e69f4935@oss.qualcomm.com>
+Date: Mon, 7 Oct 2024 23:52:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3
+ (linksys-jamaica)
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Karl Chan <exxxxkc@getgoogleoff.me>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241007163414.32458-1-exxxxkc@getgoogleoff.me>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 7 Oct 2024 22:23:52 +0200
-Message-ID: <CACRpkdbj8fkQf38n0t-==cFZj55TPgoTGM-dzESWgeRGfPHofQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3 (linksys-jamaica)
-To: Karl Chan <exxxxkc@getgoogleoff.me>, Arnd Bergmann <arnd@arndb.de>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <CACRpkdbj8fkQf38n0t-==cFZj55TPgoTGM-dzESWgeRGfPHofQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CACRpkdbj8fkQf38n0t-==cFZj55TPgoTGM-dzESWgeRGfPHofQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: jbUoZS3e3CqMFCPFUo2F0XND02s5hFc9
+X-Proofpoint-GUID: jbUoZS3e3CqMFCPFUo2F0XND02s5hFc9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1011 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410070150
 
-On Mon, Oct 7, 2024 at 6:35=E2=80=AFPM Karl Chan <exxxxkc@getgoogleoff.me> =
-wrote:
+On 7.10.2024 10:23 PM, Linus Walleij wrote:
+> On Mon, Oct 7, 2024 at 6:35 PM Karl Chan <exxxxkc@getgoogleoff.me> wrote:
+> 
+>> Also The original firmware from Linksys can only boot ARM32 kernels.
+>>
+>> As of now There seems to be no way to boot ARM64 kernels on those device.
+> 
+> So this is a Cortex-A53 Aarch64 system running in ARM32 mode.
+> 
+> So I got this interactive U-boot log from Karl showing how the attempt
+> to boot an Aarch64 kernel manifests:
+> 
+> CBT U-Boot ver: 3.2.08  ([IPQ5018].[SPF11.3].[CSU2])
+> 
+> ## Loading kernel from FIT Image at 44000000 ...
+>    Using 'standard' configuration
+>    Trying 'kernel' kernel subimage
+>      Description:  Kernel
+>      Type:         Kernel Image
+>      Compression:  uncompressed
+>      Data Start:   0x440000a8
+>      Data Size:    8249289 Bytes = 7.9 MiB
+>      Architecture: AArch64
+>      OS:           Linux
+>      Load Address: 0x41208000
+>      Entry Point:  0x41208000
+>    Verifying Hash Integrity ... OK
+> (...)
+> ## Loading ramdisk from FIT Image at 44000000 ...
+> (...)
+> ## Loading fdt from FIT Image at 44000000 ...
+> (...)
+> fdt_fixup_qpic: QPIC: unable to find node '/soc/qpic-nand@79b0000'
+> Could not find PCI in device tree
+> Using machid 0x8040001 from environment
+> 
+> Starting kernel ...
+> 
+> undefined instruction
+> pc : [<41208004>]          lr : [<4a921f8f>]
+> reloc pc : [<41208004>]    lr : [<4a921f8f>]
+> sp : 4a822838  ip : 00000001     fp : 00000000
+> r10: 4a83b914  r9 : 4a822ea0     r8 : 00000000
+> r7 : 00000000  r6 : 41208000     r5 : 4a97d848  r4 : 00000000
+> r3 : 644d5241  r2 : 4a0ae000     r1 : 08040001  r0 : 00000000
+> Flags: nzCV  IRQs off  FIQs off  Mode SVC_32
+> Resetting CPU ...
+> 
+> resetting ...
+> 
+> So perhaps someone knows how we can get around this.
+> 
+> It seems to me the U-Boot is in 32bit mode and tries to just
+> execute an Aarch64 binary and that doesn't work.
+> 
+> What we need is a 32bit mode preamble that can switch
+> the machine to Aarch64 and continue.
+> 
+> I don't know *how* to do that, but I would *guess* a botched
+> return from exception where you provide your own stack
+> with the Aarch64 state hardcoded on it should do the job?
+> 
+> The Aarch64 maintainers will know what to do.
+> 
+> Surely it should be possible to add a little code snippet
+> to do this somewhere in memory, and that in turn jumps
+> to execute the actual Aarch64 kernel in Aarch64 mode?
 
-> Also The original firmware from Linksys can only boot ARM32 kernels.
->
-> As of now There seems to be no way to boot ARM64 kernels on those device.
+Not sure about this one, but older (10+yo) qcom socs had a
+secure call to switch to 64bit..
 
-So this is a Cortex-A53 Aarch64 system running in ARM32 mode.
-
-So I got this interactive U-boot log from Karl showing how the attempt
-to boot an Aarch64 kernel manifests:
-
-CBT U-Boot ver: 3.2.08  ([IPQ5018].[SPF11.3].[CSU2])
-
-## Loading kernel from FIT Image at 44000000 ...
-   Using 'standard' configuration
-   Trying 'kernel' kernel subimage
-     Description:  Kernel
-     Type:         Kernel Image
-     Compression:  uncompressed
-     Data Start:   0x440000a8
-     Data Size:    8249289 Bytes =3D 7.9 MiB
-     Architecture: AArch64
-     OS:           Linux
-     Load Address: 0x41208000
-     Entry Point:  0x41208000
-   Verifying Hash Integrity ... OK
-(...)
-## Loading ramdisk from FIT Image at 44000000 ...
-(...)
-## Loading fdt from FIT Image at 44000000 ...
-(...)
-fdt_fixup_qpic: QPIC: unable to find node '/soc/qpic-nand@79b0000'
-Could not find PCI in device tree
-Using machid 0x8040001 from environment
-
-Starting kernel ...
-
-undefined instruction
-pc : [<41208004>]          lr : [<4a921f8f>]
-reloc pc : [<41208004>]    lr : [<4a921f8f>]
-sp : 4a822838  ip : 00000001     fp : 00000000
-r10: 4a83b914  r9 : 4a822ea0     r8 : 00000000
-r7 : 00000000  r6 : 41208000     r5 : 4a97d848  r4 : 00000000
-r3 : 644d5241  r2 : 4a0ae000     r1 : 08040001  r0 : 00000000
-Flags: nzCV  IRQs off  FIQs off  Mode SVC_32
-Resetting CPU ...
-
-resetting ...
-
-So perhaps someone knows how we can get around this.
-
-It seems to me the U-Boot is in 32bit mode and tries to just
-execute an Aarch64 binary and that doesn't work.
-
-What we need is a 32bit mode preamble that can switch
-the machine to Aarch64 and continue.
-
-I don't know *how* to do that, but I would *guess* a botched
-return from exception where you provide your own stack
-with the Aarch64 state hardcoded on it should do the job?
-
-The Aarch64 maintainers will know what to do.
-
-Surely it should be possible to add a little code snippet
-to do this somewhere in memory, and that in turn jumps
-to execute the actual Aarch64 kernel in Aarch64 mode?
-
-Yours,
-Linus Walleij
+Konrad
