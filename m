@@ -1,457 +1,118 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0170B184551
-	for <linux-clk@vger.kernel.org>; Mon,  7 Oct 2024 07:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556681662E4;
+	Mon,  7 Oct 2024 07:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728285520; cv=none; b=AU2JyQSFVBrWbU4OlYe0a1etH7FcqUZ+jS5HR8f6kEM35HcdsNkMhzLWCfBKKVKdGDGhTzK229FYAIQJw95moijrF7bpyc1OgBxHZqZ3JP2loshlcdhVAZ+uKrNYmeTOke4GLKouwP7PpR7UKO33eOSba9HqPvD3hOrMkcMxT3s=
+	t=1728285635; cv=none; b=eZ29BZlTHY1xERIWRTN796tiuiJocV7u7fLRpgRv2CNkQrAQ1cLajT1dogXzOpc1WIl7QwQrresGmJSxMMn44/2RXePd+Fd3r1b6xqtd4JyJ1kBtZgx2y15xnTWdzhk9XfdiHjVsNehMN2Lr3+Mpcfw/DXhXvNNc+J5dwjrumNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728285520; c=relaxed/simple;
-	bh=wFk/MmCtD1njyaZXRAVjwbJkUwNMs5iZ2HsYcLIfZUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=NgLOZQcI9QUi7sSy83C4C2ul5Inq/7QVi4Eyr3FUi0v0iRt1zVhSsDR81KRz1eX5ZoECMnTYoCaHMyfbYrmobNc5r80si4ooVjw9G68JyjNeJXJJQA0RuanJq+F3SjaOT4qOPyHzMZz/rgnmrTO1ea4IVic+GwhSo95Ndu+4Ho4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LEO4afoE; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1728285635; c=relaxed/simple;
+	bh=RsKQ4Cg63MzFTqi17Wh2k/YGd2Yl1AmZCZ3K5KK/PG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JrAJ3zmLcey+euNoWYQwASduxxXIbHd3hzIfm25kQ1qdDRo87vzJjSfvTNV4y4Sx3+/TPRohH1GRXm50Zl+MuzKLHEeggBB7CAYOzVdKm6JsSk14W7W+JHXHCvBNdpBgXAMBKxeUUfrsKrZpp2VByHXx2k8BPuR0KHdD2nFhxVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hD6SoVvt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LEO4afoE"
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241007071836epoutp048b12911a968b28d2fc4b3405432f1124~8GoUjydMj2810228102epoutp04c
-	for <linux-clk@vger.kernel.org>; Mon,  7 Oct 2024 07:18:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241007071836epoutp048b12911a968b28d2fc4b3405432f1124~8GoUjydMj2810228102epoutp04c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728285516;
-	bh=rhAj9kuYBsA53wliGhzjxfdZgLNHovYuS3VZbgQNBTc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LEO4afoEXCW1/HE4ewsmGETDcmJ2eHfgrDgXWLLawHbN79gRjJ0SwLlZZTZQzaLRG
-	 bHV/BGhTSeDPk3c0RwQeX3aobNKcufNVDRyxkLdc1PaE3BszEYY808H3TNNJFxfRdU
-	 b6+wGTwvVFsY2CP9i48e0eMAfldUuCkZdKNWL2WY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241007071835epcas2p15302ceb0481c536ecfe3d8b52fde5a28~8GoT-Qo750296602966epcas2p1h;
-	Mon,  7 Oct 2024 07:18:35 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XMVqt4Tksz4x9Q8; Mon,  7 Oct
-	2024 07:18:34 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9A.89.09776.A4B83076; Mon,  7 Oct 2024 16:18:34 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241007071834epcas2p45175287442b1fc4497aae2f5d0c285de~8GoSv3HFV1419514195epcas2p4X;
-	Mon,  7 Oct 2024 07:18:34 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241007071834epsmtrp258f5a51187ae2bdf4074b791ff27d425~8GoSu8D4k3077230772epsmtrp2W;
-	Mon,  7 Oct 2024 07:18:34 +0000 (GMT)
-X-AuditID: b6c32a47-aefff70000002630-eb-67038b4aaec9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	18.7B.07371.A4B83076; Mon,  7 Oct 2024 16:18:34 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.60]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241007071833epsmtip13ee85b935888de2d42240d6ecc43e8db~8GoSgL5bz0688406884epsmtip1i;
-	Mon,  7 Oct 2024 07:18:33 +0000 (GMT)
-From: Sunyeal Hong <sunyeal.hong@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
-Subject: [PATCH v2 2/3] clk: samsung: exynosautov920: add peric1, misc and
- hsi0/1 clock support
-Date: Mon,  7 Oct 2024 16:18:28 +0900
-Message-ID: <20241007071829.3042094-3-sunyeal.hong@samsung.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241007071829.3042094-1-sunyeal.hong@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hD6SoVvt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56970C4CEC6;
+	Mon,  7 Oct 2024 07:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728285634;
+	bh=RsKQ4Cg63MzFTqi17Wh2k/YGd2Yl1AmZCZ3K5KK/PG0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hD6SoVvtOGx6v2su96YiIwBBsLw+bqiTcEsnyQAKblc2pNJ27knQh3Q/W/OaeQ0V5
+	 fxnv9c9nzTaTRYmDcatwjzHjJrIIUUZ1lEZXeEYQjiM8KFqOik8a7fp87jMOlhqSh7
+	 IDqak9e9QajVfFspqA+yCY9kVf97pMtyfIQk73zNjr2WxjcZZk+ByBSib4jfomSssD
+	 DTKCw6bAOZ2rk+Vsma3qLUIfFd+oGaZZV6tUmOf2+3V9IABp/u8qjCJfLvnbCrQH+l
+	 g8YeNh5WagGHX7aXcTuLr/6cGDZ44Khmm3uRYfpju89wVisOzWveVyQtURv8XDRHF3
+	 up3RMZiITluTw==
+Message-ID: <459e2af0-16a1-45aa-93b8-50b84b359854@kernel.org>
+Date: Mon, 7 Oct 2024 09:20:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmma5XN3O6Qf9ZOYsH87axWazZe47J
-	4vqX56wW84+cY7U4f34Du8Wmx9dYLT723GO1uLxrDpvFjPP7mCwunnK1+L9nB7vF4TftrBb/
-	rm1ksWhatp7Jgc/j/Y1Wdo9NqzrZPDYvqffo27KK0ePzJrkA1qhsm4zUxJTUIoXUvOT8lMy8
-	dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygO5UUyhJzSoFCAYnFxUr6djZF+aUl
-	qQoZ+cUltkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ2Rknjn1hLViRV7H7zl/GBsaO
-	hC5GTg4JAROJhn2PWLoYuTiEBHYwSjz9eIMNwvnEKLF27hF2COcbo8SCtktsMC0P7j6DqtrL
-	KPG47R8rhPORUeLFtmlADgcHm4CuxJ9/DiBxEYE9TBJbzi9hAnGYBc4yStyds4AdpEhYIFHi
-	x055kKksAqoShzc+ZgexeQXsJVZcn8wCsU1e4vrjo0wgNqeAg8TdGx8ZIWoEJU7OfAJWwwxU
-	07x1NjPIfAmBmRwSk57vZIVodpFY//EPE4QtLPHq+BZ2CFtK4vO7vVDv5EtMvv6WCaK5gVHi
-	2r9uZoiEvcSiMz/BDmUW0JRYv0sfxJQQUJY4cgtqL59Ex+G/7BBhXomONiGIRjWJT1cuQw2R
-	kTh24hmU7SFx5c1EaMBNZpSY9XUvywRGhVlI3pmF5J1ZCIsXMDKvYhRLLSjOTU8tNiowhkdx
-	cn7uJkZwwtVy38E44+0HvUOMTByMhxglOJiVRHgj1jCmC/GmJFZWpRblxxeV5qQWH2I0BQb2
-	RGYp0eR8YMrPK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBid86
-	ra1SYfuW4tUzRJP7M5dEVUQypKkfD+s59dXlz4yLx8UyGwxXRzdI/ilcucpJ/dxW+ccWVUum
-	Pef+rvBm9cLFifMk/Vv/yP3+9lvgbd0/x9lakm59EY9XBNYfD7X5o2XSfXDBWUM+We01bGUb
-	z8v7B16Xn7SsWtY98WfB6+3nF0wT2v5h43OtTS7ehTxfCyTuvOL+tEz6eOxBG37OOXFPWJmT
-	hE/e1VzJH8Qmeirnv9qF9rJD0QabMzLjzW+bvzbvMnjN3Lr7Z+8E9qeLpa9O3up+/4Lf8TOX
-	PG/fNngv9ypGxfOCx4HVYrxpdyapPrdK9dry8tnKcKldh04d3LpfZK+WXO6CNzt4zt6dxqfE
-	UpyRaKjFXFScCABjECnjQQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnK5XN3O6wfVNLBYP5m1js1iz9xyT
-	xfUvz1kt5h85x2px/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVq8X/PDnaLw2/aWS3+
-	XdvIYtG0bD2TA5/H+xut7B6bVnWyeWxeUu/Rt2UVo8fnTXIBrFFcNimpOZllqUX6dglcGSeO
-	fWEtWJFXsfvOX8YGxo6ELkZODgkBE4kHd5+xdTFycQgJ7GaUOP1mBzNEQkZiY8N/dghbWOJ+
-	yxFWiKL3jBILr28FSnBwsAnoSvz55wASFxE4xCQx8fNTFhCHWeAyo8Sxu5PBJgkLxEv8ujWf
-	EcRmEVCVOLzxMdhUXgF7iRXXJ7NAbJCXuP74KBOIzSngIHH3xkeweiGgmhdn3zNC1AtKnJz5
-	BKyeGai+eets5gmMArOQpGYhSS1gZFrFKJlaUJybnptsWGCYl1quV5yYW1yal66XnJ+7iREc
-	G1oaOxjvzf+nd4iRiYPxEKMEB7OSCG/EGsZ0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4ryGM2an
-	CAmkJ5akZqemFqQWwWSZODilGph2COo5OX106fh08KqWRM+x3MuZnN0Mz3XtbN3TmptfaRjr
-	pd1t9+hLPxHjcLrus/pvFzb96XFvun84RO/P/vjOY/2ZbV/aLe6s4Kw6J9TLu8OfXzvT3VTo
-	ScqtfzdWfl346ffin1OnTBCY0PywPTQg6uRm40im63fPrGAsa/h8wdRF7eGiwzyKRm1vVW8t
-	OctZwL2pLnpdRMpcNrO1B6xNYj86eAqsmTvnU+2po26MSxcmLzukwlPQGhEifpVDbvs92Tdz
-	qh3DLb+ruYbLuJ53n/i0L9fejFmErevypZbzMZq/RW712no1s9y5FNgcIL/dST4tZm1l+R3N
-	2bfSZ822Ub2nUJUpdX/znWlFr5RYijMSDbWYi4oTAfXhNfH8AgAA
-X-CMS-MailID: 20241007071834epcas2p45175287442b1fc4497aae2f5d0c285de
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241007071834epcas2p45175287442b1fc4497aae2f5d0c285de
-References: <20241007071829.3042094-1-sunyeal.hong@samsung.com>
-	<CGME20241007071834epcas2p45175287442b1fc4497aae2f5d0c285de@epcas2p4.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] add clocks support for exynosauto v920 SoC
+To: Sunyeal Hong <sunyeal.hong@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20241007071833epcas2p213100b34fd5a8192497a41e2e455947a@epcas2p2.samsung.com>
+ <20241007071829.3042094-1-sunyeal.hong@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241007071829.3042094-1-sunyeal.hong@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Register compatible and cmu_info data to support clocks.
-CMU_PERIC1, this provides clocks for USI09 ~ USI17, USI_I2C and USI_I3C.
-CMU_MISC, this provides clocks for MISC, GIC and OTP.
-CMU_HSI0, this provides clocks for PCIE.
-CMU_HSI1, this provides clocks for USB and MMC.
+On 07/10/2024 09:18, Sunyeal Hong wrote:
+> This patchset adds the CMU block below to support exynosauto v920 SoC.
+> - CMU_PERIC1
+> - CMU_MISC
+> - CMU_HSI0/1
+> 
+> Changes in v2:
+>  - Rebase the patch to reflect the latest fixes
 
-Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
----
- drivers/clk/samsung/clk-exynosautov920.c | 290 +++++++++++++++++++++++
- 1 file changed, 290 insertions(+)
+Not much improved. Still blind rebase without addressing the issue I
+pointed out.
 
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-index f60f0a0c598d..f96998b0a864 100644
---- a/drivers/clk/samsung/clk-exynosautov920.c
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -19,6 +19,10 @@
- /* NOTE: Must be equal to the last clock ID increased by one */
- #define CLKS_NR_TOP			(DOUT_CLKCMU_TAA_NOC + 1)
- #define CLKS_NR_PERIC0			(CLK_DOUT_PERIC0_I3C + 1)
-+#define CLKS_NR_PERIC1			(CLK_DOUT_PERIC1_I3C + 1)
-+#define CLKS_NR_MISC			(CLK_DOUT_MISC_OSC_DIV2 + 1)
-+#define CLKS_NR_HSI0			(CLK_DOUT_HSI0_PCIE_APB + 1)
-+#define CLKS_NR_HSI1			(CLK_MOUT_HSI1_USBDRD + 1)
- 
- /* ---- CMU_TOP ------------------------------------------------------------ */
- 
-@@ -974,6 +978,8 @@ static const struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initcon
- 		"mout_shared5_pll", 1, 3, 0),
- 	FFACTOR(DOUT_SHARED5_DIV4, "dout_shared5_div4",
- 		"mout_shared5_pll", 1, 4, 0),
-+	FFACTOR(DOUT_TCXO_DIV2, "dout_tcxo_div2",
-+		"oscclk", 1, 2, 0),
- };
- 
- static const struct samsung_cmu_info top_cmu_info __initconst = {
-@@ -1139,6 +1145,277 @@ static const struct samsung_cmu_info peric0_cmu_info __initconst = {
- 	.clk_name		= "noc",
- };
- 
-+/* ---- CMU_PERIC1 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_PERIC1 (0x10C00000) */
-+#define PLL_CON0_MUX_CLKCMU_PERIC1_IP_USER	0x600
-+#define PLL_CON0_MUX_CLKCMU_PERIC1_NOC_USER	0x610
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_I3C		0x1000
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI09_USI	0x1004
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI10_USI	0x1008
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI11_USI	0x100c
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI12_USI	0x1010
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI13_USI	0x1014
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI14_USI	0x1018
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI15_USI	0x101c
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI16_USI	0x1020
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI17_USI	0x1024
-+#define CLK_CON_MUX_MUX_CLK_PERIC1_USI_I2C	0x1028
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_I3C		0x1800
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI09_USI	0x1804
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI10_USI	0x1808
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI11_USI	0x180c
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI12_USI	0x1810
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI13_USI	0x1814
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI14_USI	0x1818
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI15_USI	0x181c
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI16_USI	0x1820
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI17_USI	0x1824
-+#define CLK_CON_DIV_DIV_CLK_PERIC1_USI_I2C	0x1828
-+
-+static const unsigned long peric1_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_PERIC1_IP_USER,
-+	PLL_CON0_MUX_CLKCMU_PERIC1_NOC_USER,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_I3C,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI09_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI10_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI11_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI12_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI13_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI14_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI15_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI16_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI17_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC1_USI_I2C,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_I3C,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI09_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI10_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI11_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI12_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI13_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI14_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI15_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI16_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI17_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC1_USI_I2C,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_PERIC1 */
-+PNAME(mout_peric1_ip_user_p) = { "oscclk", "dout_clkcmu_peric1_ip" };
-+PNAME(mout_peric1_noc_user_p) = { "oscclk", "dout_clkcmu_peric1_noc" };
-+PNAME(mout_peric1_usi_p) = { "oscclk", "mout_peric1_ip_user" };
-+
-+static const struct samsung_mux_clock peric1_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_PERIC1_IP_USER, "mout_peric1_ip_user",
-+	    mout_peric1_ip_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_IP_USER, 4, 1),
-+	MUX(CLK_MOUT_PERIC1_NOC_USER, "mout_peric1_noc_user",
-+	    mout_peric1_noc_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_NOC_USER, 4, 1),
-+	/* USI09 ~ USI17 */
-+	MUX(CLK_MOUT_PERIC1_USI09_USI, "mout_peric1_usi09_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI09_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI10_USI, "mout_peric1_usi10_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI10_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI11_USI, "mout_peric1_usi11_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI11_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI12_USI, "mout_peric1_usi12_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI12_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI13_USI, "mout_peric1_usi13_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI13_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI14_USI, "mout_peric1_usi14_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI14_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI15_USI, "mout_peric1_usi15_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI15_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI16_USI, "mout_peric1_usi16_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI16_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC1_USI17_USI, "mout_peric1_usi17_usi",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI17_USI, 0, 1),
-+	/* USI_I2C */
-+	MUX(CLK_MOUT_PERIC1_USI_I2C, "mout_peric1_usi_i2c",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_USI_I2C, 0, 1),
-+	/* USI_I3C */
-+	MUX(CLK_MOUT_PERIC1_I3C, "mout_peric1_i3c",
-+	    mout_peric1_usi_p, CLK_CON_MUX_MUX_CLK_PERIC1_I3C, 0, 1),
-+};
-+
-+static const struct samsung_div_clock peric1_div_clks[] __initconst = {
-+	/* USI09 ~ USI17 */
-+	DIV(CLK_DOUT_PERIC1_USI09_USI, "dout_peric1_usi09_usi",
-+	    "mout_peric1_usi09_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI09_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI10_USI, "dout_peric1_usi10_usi",
-+	    "mout_peric1_usi10_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI10_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI11_USI, "dout_peric1_usi11_usi",
-+	    "mout_peric1_usi11_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI11_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI12_USI, "dout_peric1_usi12_usi",
-+	    "mout_peric1_usi12_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI12_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI13_USI, "dout_peric1_usi13_usi",
-+	    "mout_peric1_usi13_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI13_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI14_USI, "dout_peric1_usi14_usi",
-+	    "mout_peric1_usi14_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI14_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI15_USI, "dout_peric1_usi15_usi",
-+	    "mout_peric1_usi15_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI15_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI16_USI, "dout_peric1_usi16_usi",
-+	    "mout_peric1_usi16_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI16_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC1_USI17_USI, "dout_peric1_usi17_usi",
-+	    "mout_peric1_usi17_usi", CLK_CON_DIV_DIV_CLK_PERIC1_USI17_USI,
-+	    0, 4),
-+	/* USI_I2C */
-+	DIV(CLK_DOUT_PERIC1_USI_I2C, "dout_peric1_usi_i2c",
-+	    "mout_peric1_usi_i2c", CLK_CON_DIV_DIV_CLK_PERIC1_USI_I2C, 0, 4),
-+	/* USI_I3C */
-+	DIV(CLK_DOUT_PERIC1_I3C, "dout_peric1_i3c",
-+	    "mout_peric1_i3c", CLK_CON_DIV_DIV_CLK_PERIC1_I3C, 0, 4),
-+};
-+
-+static const struct samsung_cmu_info peric1_cmu_info __initconst = {
-+	.mux_clks		= peric1_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(peric1_mux_clks),
-+	.div_clks		= peric1_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(peric1_div_clks),
-+	.nr_clk_ids		= CLKS_NR_PERIC1,
-+	.clk_regs		= peric1_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(peric1_clk_regs),
-+	.clk_name		= "noc",
-+};
-+
-+/* ---- CMU_MISC --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_MISC (0x10020000) */
-+#define PLL_CON0_MUX_CLKCMU_MISC_NOC_USER	0x600
-+#define CLK_CON_MUX_MUX_CLK_MISC_GIC		0x1000
-+#define CLK_CON_DIV_CLKCMU_OTP			0x1800
-+#define CLK_CON_DIV_DIV_CLK_MISC_NOCP		0x1804
-+#define CLK_CON_DIV_DIV_CLK_MISC_OSC_DIV2	0x1808
-+
-+static const unsigned long misc_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_MISC_NOC_USER,
-+	CLK_CON_MUX_MUX_CLK_MISC_GIC,
-+	CLK_CON_DIV_CLKCMU_OTP,
-+	CLK_CON_DIV_DIV_CLK_MISC_NOCP,
-+	CLK_CON_DIV_DIV_CLK_MISC_OSC_DIV2,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_MISC */
-+PNAME(mout_misc_noc_user_p) = { "oscclk", "dout_clkcmu_misc_noc" };
-+PNAME(mout_misc_gic_p) = { "dout_misc_nocp", "oscclk" };
-+
-+static const struct samsung_mux_clock misc_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_MISC_NOC_USER, "mout_misc_noc_user",
-+	    mout_misc_noc_user_p, PLL_CON0_MUX_CLKCMU_MISC_NOC_USER, 4, 1),
-+	MUX(CLK_MOUT_MISC_GIC, "mout_misc_gic",
-+	    mout_misc_gic_p, CLK_CON_MUX_MUX_CLK_MISC_GIC, 0, 1),
-+};
-+
-+static const struct samsung_div_clock misc_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_MISC_NOCP, "dout_misc_nocp",
-+	    "mout_misc_noc_user", CLK_CON_DIV_DIV_CLK_MISC_NOCP,
-+	    0, 3),
-+};
-+
-+static const struct samsung_fixed_factor_clock misc_fixed_factor_clks[] __initconst = {
-+	FFACTOR(CLK_DOUT_MISC_OTP, "dout_misc_otp",
-+		"oscclk", 1, 10, 0),
-+	FFACTOR(CLK_DOUT_MISC_OSC_DIV2, "dout_misc_osc_div2",
-+		"oscclk", 1, 2, 0),
-+};
-+
-+static const struct samsung_cmu_info misc_cmu_info __initconst = {
-+	.mux_clks		= misc_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(misc_mux_clks),
-+	.div_clks		= misc_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(misc_div_clks),
-+	.fixed_factor_clks	= misc_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(misc_fixed_factor_clks),
-+	.nr_clk_ids		= CLKS_NR_MISC,
-+	.clk_regs		= misc_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(misc_clk_regs),
-+	.clk_name		= "noc",
-+};
-+
-+/* ---- CMU_HSI0 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_HSI0 (0x16000000) */
-+#define PLL_CON0_MUX_CLKCMU_HSI0_NOC_USER	0x600
-+#define CLK_CON_DIV_DIV_CLK_HSI0_PCIE_APB	0x1800
-+
-+static const unsigned long hsi0_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_HSI0_NOC_USER,
-+	CLK_CON_DIV_DIV_CLK_HSI0_PCIE_APB,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_HSI0 */
-+PNAME(mout_hsi0_noc_user_p) = { "oscclk", "dout_clkcmu_hsi0_noc" };
-+
-+static const struct samsung_mux_clock hsi0_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_HSI0_NOC_USER, "mout_hsi0_noc_user",
-+	    mout_hsi0_noc_user_p, PLL_CON0_MUX_CLKCMU_HSI0_NOC_USER, 4, 1),
-+};
-+
-+static const struct samsung_div_clock hsi0_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_HSI0_PCIE_APB, "dout_hsi0_pcie_apb",
-+	    "mout_hsi0_noc_user", CLK_CON_DIV_DIV_CLK_HSI0_PCIE_APB,
-+	    0, 4),
-+};
-+
-+static const struct samsung_cmu_info hsi0_cmu_info __initconst = {
-+	.mux_clks		= hsi0_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(hsi0_mux_clks),
-+	.div_clks		= hsi0_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(hsi0_div_clks),
-+	.nr_clk_ids		= CLKS_NR_HSI0,
-+	.clk_regs		= hsi0_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(hsi0_clk_regs),
-+	.clk_name		= "noc",
-+};
-+
-+/* ---- CMU_HSI1 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_HSI1 (0x16400000) */
-+#define PLL_CON0_MUX_CLKCMU_HSI1_MMC_CARD_USER	0x600
-+#define PLL_CON0_MUX_CLKCMU_HSI1_NOC_USER	0x610
-+#define PLL_CON0_MUX_CLKCMU_HSI1_USBDRD_USER	0x620
-+#define CLK_CON_MUX_MUX_CLK_HSI1_USBDRD		0x1000
-+
-+static const unsigned long hsi1_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_HSI1_MMC_CARD_USER,
-+	PLL_CON0_MUX_CLKCMU_HSI1_NOC_USER,
-+	PLL_CON0_MUX_CLKCMU_HSI1_USBDRD_USER,
-+	CLK_CON_MUX_MUX_CLK_HSI1_USBDRD,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_HSI1 */
-+PNAME(mout_hsi1_mmc_card_user_p) = {"oscclk", "dout_clkcmu_hsi1_mmc_card"};
-+PNAME(mout_hsi1_noc_user_p) = { "oscclk", "dout_clkcmu_hsi1_noc" };
-+PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk", "mout_clkcmu_hsi1_usbdrd" };
-+PNAME(mout_hsi1_usbdrd_p) = { "dout_tcxo_div2", "mout_hsi1_usbdrd_user" };
-+
-+static const struct samsung_mux_clock hsi1_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_HSI1_MMC_CARD_USER, "mout_hsi1_mmc_card_user",
-+	    mout_hsi1_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_HSI1_MMC_CARD_USER, 4, 1),
-+	MUX(CLK_MOUT_HSI1_NOC_USER, "mout_hsi1_noc_user",
-+	    mout_hsi1_noc_user_p, PLL_CON0_MUX_CLKCMU_HSI1_NOC_USER, 4, 1),
-+	MUX(CLK_MOUT_HSI1_USBDRD_USER, "mout_hsi1_usbdrd_user",
-+	    mout_hsi1_usbdrd_user_p, PLL_CON0_MUX_CLKCMU_HSI1_USBDRD_USER, 4, 1),
-+	MUX(CLK_MOUT_HSI1_USBDRD, "mout_hsi1_usbdrd",
-+	    mout_hsi1_usbdrd_p, CLK_CON_MUX_MUX_CLK_HSI1_USBDRD, 4, 1),
-+};
-+
-+static const struct samsung_cmu_info hsi1_cmu_info __initconst = {
-+	.mux_clks		= hsi1_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(hsi1_mux_clks),
-+	.nr_clk_ids		= CLKS_NR_HSI1,
-+	.clk_regs		= hsi1_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(hsi1_clk_regs),
-+	.clk_name		= "noc",
-+};
-+
- static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
- {
- 	const struct samsung_cmu_info *info;
-@@ -1154,6 +1431,19 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
- 	{
- 		.compatible = "samsung,exynosautov920-cmu-peric0",
- 		.data = &peric0_cmu_info,
-+	}, {
-+		 .compatible = "samsung,exynosautov920-cmu-peric1",
-+		 .data = &peric1_cmu_info,
-+	}, {
-+		 .compatible = "samsung,exynosautov920-cmu-misc",
-+		 .data = &misc_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynosautov920-cmu-hsi0",
-+		.data = &hsi0_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynosautov920-cmu-hsi1",
-+		.data = &hsi1_cmu_info,
-+	}, {
- 	},
- 	{ }
- };
--- 
-2.46.0
+Allow people to actually review your patches, instead of sending
+multiple versions within 5 minutes.
+
+One patchset per 24h.
+
+Best regards,
+Krzysztof
 
