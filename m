@@ -1,128 +1,175 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A1614AD17;
-	Mon,  7 Oct 2024 13:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73A71D2223;
+	Mon,  7 Oct 2024 13:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307566; cv=none; b=Pi3cT6BkBBPkgOBxdPvOB/iI6h34tKjeiWZjkVLKT7jietHSXEj7jU+/AHL8rVOre4i9Gs9tsfpvclWjgwSIh5DKV3Q+aH/qmu7v2qqClhKhsSr8CCwteLjou/BdtGR3DTmpdBdkmdt+8LfttGMiuJvxitoqh2QI6pSaONAuwbM=
+	t=1728308969; cv=none; b=OxRH6DAlf+qqESiHfslpP702JLS96yTUjf6+rR2HJpWsXVP/nRK4AFL1/o9RnPGmHtl6iuhKthIhqXsRmHqDqSa3nvjYABsn6vLXJUttw3ij76X4W+VGjQbCpD23JYhCbkpgD3PULaoA6scwFdADHrZoZxFxoa+KAlH0IwTsQ8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307566; c=relaxed/simple;
-	bh=SWGia2W6otTjRDYJY/4ZhIgn9kTOF13TuoNCyPr53Is=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uTlkrtESGjgvm74ej/1vIG7N67XaFRJdCheEY10BZydNSepFyDlR1euFJv5JtweITKMj87JS4SJitzPs8ypiKGeelZYbfhK7gliGLKgOi06cNch4hP/Q2IGY5qkzLJ/Re4ihAFDCSvcysAEg2bblRTjVlR4v0wKicXr8mXIxcRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=UvBTY361; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+	s=arc-20240116; t=1728308969; c=relaxed/simple;
+	bh=GtdWAOnDKB0A6WUIJdQm94EQP8F5hR+MSPrLQ5I4Mzw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MBFrdLyEI0ZpwOu3MipnHkOxMpj2hUNJM7euos0F/p4CElo9J5OFRwee7DuHw7kLPYx+wZOLlUYzXUad93XhqPd/Unbkfpk6k00BBl/LFa3+pvn7W6qgYBMmznajdQXfApRJfp7TDlAFQlW05YK7o/I7qEEkXdxpUH/O3Z5fwLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=beTYfxgK; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="UvBTY361"
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 1DDA321E5E;
-	Mon,  7 Oct 2024 15:26:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1728307560;
-	bh=yJxiIO6CxXoreOtLTDOkCzkK9VuyDNTnsMOel1WnYkw=; h=From:To:Subject;
-	b=UvBTY3618qIkW3NC6jNLnkqniX9pKnlNXIQNRfWdkLYJ05OsJndeGJK/hm6D2BRCf
-	 st2AQDMMK9u/4mDB4kwqI6iTrSdP6fsSAmbq9e0qrvMpjzk/n7WSJ4wknGs3mGEtvx
-	 jxKq5F8Q7qefoZB3XM4MhnVxIgQaLIm0Z+7SaW08Red1DZiAPSAuIAtm9hKSG+v8a/
-	 gWQ9hbj3TX0Yoz+KdG6Omx5sCKFNDIKUBwq4uqUiWNx9f0NgzUpf6+5DY3AiFKdDHd
-	 Sx3SCtJ2t4gh7bpO/DvC1F8ZrrlIeHFbY3FKHpdpoD6sm4D2014rZ1A9OBC5QdE/WI
-	 cl9n23mSXjMtQ==
-Date: Mon, 7 Oct 2024 15:25:55 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: regressions@lists.linux.dev, Adam Ford <aford173@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
-Subject: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on v6.12
-Message-ID: <20241007132555.GA53279@francesco-nb>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="beTYfxgK"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F2F321C000B;
+	Mon,  7 Oct 2024 13:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728308959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TEk0sfeBLjd3oKmi0c7diWxhfhKnoPZV1Hw+hX2dkjQ=;
+	b=beTYfxgKP2arUScSKJHnR6ijyqIv3tRlvjq7MFEKcq3pIvSXdRSaxHi3Q1iAGHkkFvHwH/
+	yxrzdMfs0Q4BKxVMW2MD3U1YMPQxfWVY5OrXxd1T6RuGkfagjA6DVjtfoBEIgkRfK6y0Aj
+	nAottYjaDMgect8G1z6W9mXSLf4Ip5efDF3e7v153C3jQMZMvwQU0FqoVK1H4y7s2j9Qn/
+	Q5sK3YcBj21aVstCMMGutk+s1fFBhIDZEo+DcUQ2olSwD4E5hnfj8zrI92OAJeyEuYmQ4R
+	lM1zihBeVEcRq1PSJNPosgn1JKUgj2AC4otl3QsijY8QxdXFJ3bKfXmReyqVkQ==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v5 0/4] Add Mobileye EyeQ clock support
+Date: Mon, 07 Oct 2024 15:49:15 +0200
+Message-Id: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANzmA2cC/23NQQ6CMBCF4auYrq3pTCsFV97DuIBhKo1ADRAiM
+ dzd4kIxunyTfn8foufOcy8Om4foePS9D20c++1GUJW3F5a+jFugQqMSTGVT1JOk+ioNJVyQhUQ
+ bK+LzW8fO31+p0znuyvdD6KZXeYTl+icyglSSywIYM84NwbEIYah9u6PQiCUz4odapVcUI3WcU
+ gJZlu9t9kv1mq5/1QvVLgdmTB2Xv9S8KShlVtREShYJWZuUwX3TeZ6f0bpCVVMBAAA=
+X-Change-ID: 20240628-mbly-clk-4c6ebc716347
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hello,
-it seems that an old regression is back on v6.12, reproduced on -rc2
-(not sure about rc1).
+This series adds a platform driver dealing with read-only PLLs derived
+from the main crystal, and some divider clocks based on those PLLs. It
+also acts at the one instantiating reset and pinctrl auxiliary devices.
 
-The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
-and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
+One special feature is that some clocks are required before platform
+bus infrastructure is available; we therefore register some clocks at
+of_clk_init() stage.
 
-Is it now back?
+We support EyeQ5, EyeQ6L and EyeQ6H SoCs. The last one is special in
+that there are seven instances of this system-controller. All of those
+handle clocks.
 
-[    4.012850] SError Interrupt on CPU2, code 0x00000000bf000002 -- SError
-[    4.012862] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not tainted 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
-[    4.012869] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
-[    4.012872] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    4.012877] pc : clk_imx8mp_audiomix_runtime_resume+0x38/0x48
-[    4.012891] lr : pm_generic_runtime_resume+0x2c/0x44
-[    4.012897] sp : ffff8000821cb740
-[    4.012899] x29: ffff8000821cb740 x28: ffff8000793c48d8 x27: ffff8000793c48c0
-[    4.012908] x26: ffff0000c0ec90f4 x25: 0000000000000000 x24: 0000000000000000
-[    4.012916] x23: 0000000000000000 x22: ffff0000c1bef180 x21: 0000000000000000
-[    4.012923] x20: ffff0000c0a73000 x19: ffff0000c0ecbc10 x18: ffffffffffffffff
-[    4.012930] x17: 3030303064623033 x16: 2f7375622e303030 x15: 756e285472656c6c
-[    4.012937] x14: ffff800081267458 x13: 6d692c6c73664361 x12: 0000000000000000
-[    4.012944] x11: 00353333333d4d55 x10: ffff8000818020ae x9 : 0000000000000008
-[    4.012951] x8 : 0000000000000008 x7 : 0000000000000000 x6 : ffff0000c5bf2080
-[    4.012958] x5 : ffff800081f10000 x4 : ffff800080c182e8 x3 : ffff0000c0ee7088
-[    4.012965] x2 : 0000000000000000 x1 : 0000000000000004 x0 : ffff800081f10300
-[    4.012973] Kernel panic - not syncing: Asynchronous SError Interrupt
-[    4.012976] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not tainted 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
-[    4.012982] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
-[    4.012985] Call trace:
-[    4.012988]  dump_backtrace+0xd0/0x120
-[    4.012998]  show_stack+0x18/0x24
-[    4.013005]  dump_stack_lvl+0x60/0x80
-[    4.013013]  dump_stack+0x18/0x24
-[    4.013019]  panic+0x168/0x350
-[    4.013025]  add_taint+0x0/0xbc
-[    4.013029]  arm64_serror_panic+0x64/0x70
-[    4.013034]  do_serror+0x3c/0x70
-[    4.013039]  el1h_64_error_handler+0x30/0x54
-[    4.013046]  el1h_64_error+0x64/0x68
-[    4.013050]  clk_imx8mp_audiomix_runtime_resume+0x38/0x48
-[    4.013059]  __genpd_runtime_resume+0x30/0x80
-[    4.013066]  genpd_runtime_resume+0x114/0x29c
-[    4.013073]  __rpm_callback+0x48/0x1e0
-[    4.013079]  rpm_callback+0x68/0x80
-[    4.013084]  rpm_resume+0x3bc/0x6a0
-[    4.013089]  __pm_runtime_resume+0x50/0x9c
-[    4.013095]  pm_runtime_get_suppliers+0x60/0x8c
-[    4.013101]  __driver_probe_device+0x4c/0x14c
-[    4.013108]  driver_probe_device+0x3c/0x120
-[    4.013114]  __driver_attach+0xc4/0x200
-[    4.013119]  bus_for_each_dev+0x7c/0xe0
-[    4.013125]  driver_attach+0x24/0x30
-[    4.013130]  bus_add_driver+0x110/0x240
-[    4.013135]  driver_register+0x68/0x124
-[    4.013142]  __platform_driver_register+0x24/0x30
-[    4.013149]  sdma_driver_init+0x20/0x1000 [imx_sdma]
-[    4.013163]  do_one_initcall+0x60/0x1e0
-[    4.013168]  do_init_module+0x5c/0x21c
-[    4.013175]  load_module+0x1a98/0x205c
-[    4.013181]  init_module_from_file+0x88/0xd4
-[    4.013187]  __arm64_sys_finit_module+0x258/0x350
-[    4.013194]  invoke_syscall.constprop.0+0x50/0xe0
-[    4.013202]  do_el0_svc+0xa8/0xe0
-[    4.013208]  el0_svc+0x3c/0x140
-[    4.013215]  el0t_64_sync_handler+0x120/0x12c
-[    4.013222]  el0t_64_sync+0x190/0x194
-[    4.013228] SMP: stopping secondary CPUs
-[    4.013237] Kernel Offset: disabled
-[    4.013239] CPU features: 0x00,00000000,00200000,4200420b
-[    4.013243] Memory Limit: none
-[    4.316721] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
+The clock driver instantiates reset and pinctrl auxiliary devices
+present in the same system controller. Those drivers are upstream
+already, as well as the devicetree patches to switch from static clocks
+to using this driver:
+ - 487b1b32e317 ("reset: eyeq: add platform driver") since v6.12-rc1
+ - 41795aa1f56a ("pinctrl: eyeq5: add platform driver") since v6.12-rc1
+ - bde4b22dc526 ("dt-bindings: soc: mobileye: add EyeQ OLB system
+   controller") since v6.11-rc1
 
+I had a pending question [0], asking for confirmation that the static
+linked list to inherit cells from of_clk_init() stage to platform
+device probe is indeed the right solution. As -rc1 got released I sent
+the new revision anyway.
 
-Francesco
+This new revision only touches the clk-eyeq driver. We officially
+declare that we do not support unbinding (using .suppress_bind_attrs)
+and remove all devres calls.
+
+Have a nice day,
+Thanks,
+Théo
+
+[0]: https://lore.kernel.org/lkml/D4ELMFAUQYZ7.3LXGQZJSX68UF@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v5:
+- Set `.suppress_bind_attrs = true`.
+- Replace devm_platform_ioremap_resource()
+  by platform_get_resource() + ioremap().
+- Use non-devres version of devm_kzalloc().
+- Use non-devres version of devm_of_clk_add_hw_provider().
+- Remove the eqc_auxdev_unregister() devres action.
+- Link to v4: https://lore.kernel.org/r/20241004-mbly-clk-v4-0-c72c2e348e1f@bootlin.com
+
+Changes in v4:
+- clk-divider:
+  - Switch flags function arguments from u16 to unsigned long.
+- clk-eyeq Kconfig:
+  - Remove OF dependency that is not required.
+- clk-eyeq driver:
+  - eqc_pll_parse_registers():
+    - Make clk accuracy computation more explicit using a comment.
+    - Early return when not spread spectrum, to deindent code.
+  - Rename eqc_init() to eqc_early_init().
+  - Remove the early match table. Register a different function in each
+    CLK_OF_DECLARE_DRIVER(), which calls eqc_early_init() with an
+    additional match data argument.
+  - Add __initconst to early match data structs.
+  - Remove spinlock on static linked list.
+- Link to v3: https://lore.kernel.org/r/20240708-mbly-clk-v3-0-f3fa1ee28fed@bootlin.com
+
+Changes in v3:
+- Kconfig: add "depends on 64BIT" because we use readq(). This removes
+  the ability to COMPILE_TEST the driver on 32bit, which is fine as
+  this is a SoC clk platform driver used on 64bit SoCs.
+- driver: avoid `of_match_node(...)->data` because, if !CONFIG_OF,
+  of_match_node(...) is resolved by the preprocessor to NULL.
+  There is still a warning "eqc_early_match_table declared but unused"
+  if !CONFIG_OF. We fix the <linux/of.h> header in a separate patch:
+  https://lore.kernel.org/lkml/20240708-of-match-node-v1-1-90aaa7c2d21d@bootlin.com/
+- Link to v2: see [1]
+
+Changes in v2:
+- bindings: take Acked-by: Krzysztof Kozlowski.
+- driver: eqc_auxdev_create(): cast the `void __iomem *base` variable to
+  (void __force *) before putting it in platform_data, to avoid sparse
+  warning.
+- Link to v1: see [1]
+
+Changes since OLB v3 [0]:
+ - MAINTAINERS: Move changes into a separate commit to avoid merge
+   conflicts. This commit is in the MIPS series [3].
+ - dt-bindings: split include/dt-bindings/ changes into its own commit.
+   It is part of this clk series.
+ - dt-bindings: Take Reviewed-by: Rob Herring. The include/dt-bindings/
+   new commit has NOT inherited from it, just to make sure.
+
+---
+Théo Lebrun (4):
+      Revert "dt-bindings: clock: mobileye,eyeq5-clk: add bindings"
+      dt-bindings: clock: add Mobileye EyeQ6L/EyeQ6H clock indexes
+      clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
+      clk: eyeq: add driver
+
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         |  51 --
+ drivers/clk/Kconfig                                |  12 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-divider.c                          |  16 +-
+ drivers/clk/clk-eyeq.c                             | 779 +++++++++++++++++++++
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 +
+ include/linux/clk-provider.h                       |  15 +-
+ 7 files changed, 835 insertions(+), 60 deletions(-)
+---
+base-commit: 31d10adec91d1b3e51d7eaea7fdf294f1ebe83df
+change-id: 20240628-mbly-clk-4c6ebc716347
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
 
