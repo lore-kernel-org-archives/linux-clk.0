@@ -1,104 +1,137 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491B543AB3
-	for <linux-clk@vger.kernel.org>; Sun,  6 Oct 2024 21:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CB4184532
+	for <linux-clk@vger.kernel.org>; Mon,  7 Oct 2024 07:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728248628; cv=none; b=u34+K0pqANKiEX6CA0AXvXEirLUOTTVRDxbAoxupstpCPC7g5ZuDrO5S7U+WLdyeg9xfhu0P4b6H1bOYyljCiNsWJh0qyJUmm2FMSe9bppqUlY0KzaWIOEhihOmQvscf9BIdFszHPOGXZLb/fzl7kbs2KlBekwpIx0QBgfG5Vgs=
+	t=1728285104; cv=none; b=R71jMp2FFOqfsXqMBYNwjRKtht+dPa+eo8PRH83cXBoW9xLyzGzeWL6zC+g5B+8fKKj6lp9G4go8HbZyc+jTm4pVzXqrMoyR0QjSwtpPCStKw6wiXDMtqBeer/0D+T1QcsGsgia+dF+a80K+fWZk8octjcSNDddKkiMjMrK/nv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728248628; c=relaxed/simple;
-	bh=3H49pcBVPVHGqfhIW8jHEw+XYpXGnm889OB9D0Eo1Z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvIe79xu0fql3fSPd7BCfmIBAHTVygK+dzWeKwj2PNvoMpSDyhV2IKDuXwmOa2AfWxEEMrIGCL7fujpBFTGxNsmUET/Y2stkSk3w5VsrWBPmd115TLV26uJbNyamJfV0s20JPPbdOTWEDaivSOEKa/GmapvS4fWOGZvYi4zwKlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oijagKcS; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1728285104; c=relaxed/simple;
+	bh=enGkxcbLHOdgAeivRCHbMnChr2GTtrsDDnxdLG3bC7E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=O25dCU67xW34xUHiLTy1gpnrlqJgYSzc4YyfbHDN87N8KoCyLc491XNWGasWaNP2feSVSVmzF96amIjWsPZOPDaLDA/LLjriXJaPzIpL3uEy2zedLvOX0LtuRd4sqPxIMqsL99YInwhZBuCjrl0bXJ2HQh6KMJbVgg7JkmbrMB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCydAS/X; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oijagKcS"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fada911953so45675831fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 06 Oct 2024 14:03:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCydAS/X"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cc84c12c2so2098295f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 07 Oct 2024 00:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728248623; x=1728853423; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2PmXTB9KbHRH15SWXd6BBgKFdgftbTaL4ejOb5/3Tps=;
-        b=oijagKcSosOLvUdmlVO4fczXSTl1LZaYT2lKzWqrH3ZdKiyHpIQj4D4rPHVtXY9f8K
-         ZME673oGaebxr4H30uwd0UwjMJNPFO2bSbYC3x6sBKO3eVFAzZW+Oq8Jkac534S/bdcY
-         6jTZqBX/vlzjaRWJP0DIu456dvXn6fIe3xYw+7g5D7dz7KvX6M201uO9BENpEuXRWDRW
-         6eN8BX6+TwcRasreHbIBkg4qkKTMu3LRHQtTtcB1qQMpr77sU1emQHIROWb8bX6PPiCW
-         c0kp+OoOVLFCEZQcEXDG4MZ/MM11TW2ShM+WqFK/ZSumnCdFXKtVPtNRHx39qBvjrbH6
-         fJQw==
+        d=linaro.org; s=google; t=1728285102; x=1728889902; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gCK80+Zdo5NigUQbZJ/SoQaC/Axw1PHGJT5E+88+pC4=;
+        b=gCydAS/X0g3R1VU0Byf2+yQXbbCB2/71geYstqC5OrPGbikFjm/TPxHzSk/Cgaf26M
+         5ZTO7YIICt6BE82Fla3Smpi4S/uOYrwtpNUzOJji7THmqb/MxltS7UTgs2Y+YoltmFD2
+         3vyRB81BD7BKaBytdaXP3La0AxcwamwVks03YWw6WWZrJqSvPQ5ufWSMi1xd3RjG0QfU
+         SACyfWOIYh2rhs4vwRgf3HBK66WUPwsuuxn9hgPq1WxpUl5IB+1PuRuei5Ucqj7usSFM
+         NJh4gxEQLDqrvZdwCtbq5Rv5GaHHlouXeuVpGHJuJtiZXbzjqyCpaDaQEosh35dCMIY+
+         usWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728248623; x=1728853423;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PmXTB9KbHRH15SWXd6BBgKFdgftbTaL4ejOb5/3Tps=;
-        b=L+GgLcq1b0bv3rBtdot6pn99/Yaqr6zZX7ldu/h3afFuu2+NrNpNuric8XsgQN7vqY
-         WDdz1WuH9pM56/rRjS5ooFLjTRRa0yDmdU1UhgwPtvWQyXoqv5u9jU+5AvYtQJibEWZb
-         7j4K8efFHDqBlFOaHuv0hqvwuolDIGD5a5AlajgIw2caysRrLK6glA9QCeAQGTndXIYG
-         Lu8scIbAq24YfOjXAScyDhqaDri4xkhohyWRYj0osUCFzifZncPVeLLTsvS60qfPvVtT
-         HReaDZTibWpn0cRPg93Q7ljliaEQeZ4XbSFqfWGEy1hZCYb1KcsJzFMjSl03ES1OkqZA
-         7ArA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGgaT/YofKxoOJyeeSc/LNmU52CSKnZf0zYqmiuyShjOT/R1KUCtSIdXzOTtENnEMe3aQkzQesT7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoTM+TQVDyGxqOTdCfEhAyvKgCy3lzFDe1IGCgtC6IGvI9uqd/
-	SfXTIa/zYCTHCtY9uwjsml0plBw3/aGQZ+aiFccGneA1T5spuEXcJ4eQ33pK8xvihGqP8C8grbc
-	R7Bd2RxRO
-X-Google-Smtp-Source: AGHT+IE/TGvBqc3pWkxdu5goo+/KwS8+0cYK6C3rp4J81+RSj/7IrypUYpmkiCoDSLCQt/xpNC6sSQ==
-X-Received: by 2002:a05:6512:31d1:b0:52e:fef4:2cab with SMTP id 2adb3069b0e04-539ac12cbf0mr2606684e87.2.1728248623406;
-        Sun, 06 Oct 2024 14:03:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec80b8sm599524e87.73.2024.10.06.14.03.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2024 14:03:43 -0700 (PDT)
-Date: Mon, 7 Oct 2024 00:03:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when
- width is not set
-Message-ID: <vkfy47q3glm2gehs3rmunerslvzrfyz4wa4egdb6k26ucim7iu@ad24jwkdybeg>
-References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+        d=1e100.net; s=20230601; t=1728285102; x=1728889902;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gCK80+Zdo5NigUQbZJ/SoQaC/Axw1PHGJT5E+88+pC4=;
+        b=iVcVgOCMedfq2BHgywQqQG3K3D504bVoDTJzfQ/Y8hE/YgLVvB6zW1b2jOkH+DMc5H
+         fh1y/ZdTL0NolmUvN/wN1/Df9+dpMrpTNo9QU3bxMg6dijQvRmqqfbHaxBcmlBuLs29l
+         Hgn5g/VNe5TujXe1rRyUUPvaaskUbRjZGw3B0GyI0/hx966FZqeZO3NbHcVnWo3lftFp
+         ZqcfE4huS8YDazNrfZ5TeluketFz7JRLe/Z6NrlvrULnxC4j8dugB4FOs8mKeOm7yP7Z
+         WqNt8q6aKI8PMGWCLL5fKEfvL5nEHerEli82ANmaHLByAAHTgK0gWpl0dJE8lu1bngPq
+         rmGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLnbuNljjWNU43rVDKdbv5Y0AXMknRXvhBwl4MCwyHwl2ASgZ8VLx5SE8Z9lRwi9UJcsHVt9iZicM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAKkHZSsB7vAqIRk17atoWxzSlD9Y+T1kgNVlV4t41mcH6TXD6
+	ZVRXIFi3lmsUWnVtkQzlHr4rYhBYAsseZor82DzcclveYjZ65RI84UNR3QT9rLs=
+X-Google-Smtp-Source: AGHT+IH8tfiHMYgj/TgOBx4ZUIl+xf+sgHiscl6mr6ZInKvVsP/MuD8J42nJA572uZUsXwcr+JPkkQ==
+X-Received: by 2002:a5d:4d52:0:b0:37c:cd0c:1539 with SMTP id ffacd0b85a97d-37d0e766a74mr5740542f8f.24.1728285101581;
+        Mon, 07 Oct 2024 00:11:41 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7? ([2a01:e0a:982:cbb0:a99f:3c24:fa3b:1e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f0b2sm5035226f8f.9.2024.10.07.00.11.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 00:11:41 -0700 (PDT)
+Message-ID: <c32226a8-43ac-4dc7-b2ce-8ce9464c6eba@linaro.org>
+Date: Mon, 7 Oct 2024 09:11:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] clk: qcom: videocc-sm8550: depend on either gcc-sm8550 or
+ gcc-sm8650
+To: Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241005144047.2226-1-jonathan@marek.ca>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241005144047.2226-1-jonathan@marek.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 06, 2024 at 10:51:58PM GMT, Barnabás Czémán wrote:
-> Many qcom clock drivers do not have .width set. In that case value of
-> (p)->width - 1 will be negative which breaks clock tree. Fix this
-> by checking if width is zero, and pass 3 to GENMASK if that's the case.
+On 05/10/2024 16:40, Jonathan Marek wrote:
+> This driver is compatible with both sm8550 and sm8650, fix the Kconfig
+> entry to reflect that.
 > 
-> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> Fixes: da1f361c887c ("clk: qcom: videocc-sm8550: Add SM8650 video clock controller")
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 > ---
-> Changes in v3:
-> - Remove one of the fixes tag.
-> - Link to v2: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org
+>   drivers/clk/qcom/Kconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Changes in v2:
-> - Pass 3 to GENMASK instead of 0.
-> - Add more Fixes tag for reference root cause.
-> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index a3e2a09e2105b..4444dafa4e3df 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -1230,11 +1230,11 @@ config SM_VIDEOCC_8350
+>   config SM_VIDEOCC_8550
+>   	tristate "SM8550 Video Clock Controller"
+>   	depends on ARM64 || COMPILE_TEST
+> -	select SM_GCC_8550
+> +	depends on SM_GCC_8550 || SM_GCC_8650
+>   	select QCOM_GDSC
+>   	help
+>   	  Support for the video clock controller on Qualcomm Technologies, Inc.
+> -	  SM8550 devices.
+> +	  SM8550 or SM8650 devices.
+>   	  Say Y if you want to support video devices and functionality such as
+>   	  video encode/decode.
+>   
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
