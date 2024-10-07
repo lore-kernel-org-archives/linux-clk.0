@@ -1,114 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7891D6DA5;
-	Mon,  7 Oct 2024 14:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC931D414C;
+	Mon,  7 Oct 2024 14:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728310610; cv=none; b=rwfu6fHK1jvRAYAlD6Oukol3LPMII4USlqc8eszDWQQdhJd2iKCGwSll4NFhCOtG3TIpzaxH7y48KwBwyIyfwiEhs4CbOuWydXCk3mLISMx52MgTo0B5+uYRsBuoSZaI+Nwz15CSOBg2mhd0lbbYqGIwDeo3zDKn2QCccYO5T+k=
+	t=1728310754; cv=none; b=NVkzorg+Oo/r1/htLSP/nUqz7ZDNfwkHGhCOZq4Wie0aA7w+uECrjv6jX+7n31ZbxYbhuYt5kWgSAExdoltQv3BmWkzsV3ZwJ3vpvJpSumaYtBh3TNFF/TlsXluQ6UwfZXIfNnPRQpFjnAkqqhS3x3ucSeQ4VqGWH1A8+h53nlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728310610; c=relaxed/simple;
-	bh=I7q9lk59AZpbFzZMPAN1WPpVBY6l66csCEEr9J5+l44=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Tz/iNHsU46OgKMsAwH/OLnVq0NRP+zZi8yskN8UplkR9EgC6vU0zCBc8cFql0yDF2MbAq8NJcoiUtK8JGlcWCMKZLC368QUxmWH2px/UIIP+Riy7wu3d81Od4/saN3r9JmcWL7e7ut5BYX30QfODA2WOAtQev7H/3UQ6Xxl6RAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhRyqdFm; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhRyqdFm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279FBC4CEC6;
-	Mon,  7 Oct 2024 14:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728310610;
-	bh=I7q9lk59AZpbFzZMPAN1WPpVBY6l66csCEEr9J5+l44=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=dhRyqdFmMPCSBlCgYzTLbKCgp9Tzmu0mWsCJOU1bwyYXaj0nlMgmihoSPlr9aa9Y/
-	 Ta2m0oI7ek8OivzU7TaabaIdVT8EHSCO8AAxV09mkD3F3aXuwycggEwZ3X7sy0/yql
-	 wnGu/RX2fLIKdgomfuSLg6zDqg2juGphQegmrhyWSPKryOSGGqhOiU4/dIb81Y/doH
-	 7vBdYOOrWBuT61vEf+6lKZw1hjYAl7KtdJbyWE/DbBcTrGZbWY9sv9Ntsllb2rPr0Q
-	 OJZ65GfEB5EYoGUhsKmAhvaeC4XS891sQn8ZIv44aVljXpagE8UnSGkGBXOIcB3nym
-	 498GXkHQSIITQ==
-Date: Mon, 07 Oct 2024 09:16:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1728310754; c=relaxed/simple;
+	bh=Y4hIzHKKp2pqmmmuX5GcD3u4s5c1SmZz+ccGdmi/E9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rbivfwkQJ5DBrxnGpi1sAWgV8bPflYQI3C69uSpukFVmlyaii6c0nX0lRZ9zQ2GOK5v///pptAad9+kB1uvMWm1Wf6HpKC/PEShqCm0Bk9hghlwJgFyYQB9//bI9o8F/Ktfg0wbcAOeMv7vpSP8+xQnVaCeK3LsfSDfyVK7xREw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e260850140fso4295983276.2;
+        Mon, 07 Oct 2024 07:19:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728310750; x=1728915550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ds8x8rK9fFgQxGIaIXzitG1agS3sP9SVqNHcZua0LkM=;
+        b=geNFtkct+lwek27bk5w0BJiVCgg8cTv4goPFFz+aF7jdNO9I+oOUER5cVNkUYTlWms
+         9lTRkM7QmbWasfYTMQfWl0axVHjJLNHfN37Mc+1INN+ch3r9tvQYRBtwQnUPMsiWa9uu
+         aoN9vAUTfUmYWSuMWnuOxAsRIAfv0uMdVJQpF1zOgJYOcipLwisqjIiLgOcU8IqAbapr
+         +C2kw2M7IvPD+0XIoapf8lXusFC2BzzcDjJ3OfXWs0cZ/2Odz/FMdZIwq9k3GjS0wQTN
+         UdqeLmJ4BnWzps9WwR5RlqS04Pf9/gf8dp3XNxLjnnE2FNfUt3/Lnzq83o74m3wQ+Tys
+         wL2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYn9phrgeU5p3q7wmJvIiUVT8da66I2hf3RdCbKm4FqPJOd5BXC6qa1o7OI0W+4XOtfl+eEk4tfOleOrq0k98=@vger.kernel.org, AJvYcCWEm0sRYjNH5ZR+iRNEmkHS4Mm1vOe7rJ0hW1IKn7Z7GgcN7lHXhihQZmGaVjZ9W5B9JC2vEKN+kY4=@vger.kernel.org, AJvYcCWVNLcHOyD56HkyItcHGWv78/cuVgTu+JU6VDXJexs73rst30uav8fZPwHWivPOzhw3L+73lv2Jlzs6kKaQ4rpoStg=@vger.kernel.org, AJvYcCWy14bbDVf/lQ+PyA49vaCQs6236HEwLCZcBLwomwdGnZVXvlZtgm8m1ZbEez2ZdQkzeMzR0504Dlg=@vger.kernel.org, AJvYcCX1nSvQrtKP/wnQhZcZaF0nz0qaLFh8pUDu7/QzwsWKKw5b8aldujy5xTMe7Hicp3D29TVHEHTMpHUINThq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy69soB2l0cxsFiAmqrPQBA7QTbMMa9bVmdDSvFjmu8mfzAFt0
+	KjQaRBpLfcVorq+MT+LqzPoFqVJedZpXLha7qQ0D1w8CCIk9ORZlF3Vba+B9
+X-Google-Smtp-Source: AGHT+IEOlQDDhooFfyBC4SFKYtPq4+rrdH/7LlNTbGmqqS9stfkLi+e8u3Oqgzp3DY3Jfu1U21OdCw==
+X-Received: by 2002:a25:aa05:0:b0:e26:cc5:4906 with SMTP id 3f1490d57ef6-e2893928939mr6743938276.41.1728310750506;
+        Mon, 07 Oct 2024 07:19:10 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e28a5dbb316sm913306276.64.2024.10.07.07.19.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 07:19:08 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6db836c6bd7so41373417b3.3;
+        Mon, 07 Oct 2024 07:19:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/X/PjTTjn9fR3M4cN5NdmEbtZBquWqSpDlz/ZL0SXprwRdq0iT/+Np5WyKbCKgYIe6jXB1GL2EOg=@vger.kernel.org, AJvYcCVB9mM4WvzHh8hAQp6uIkRJdrWjais3kyultaKzSZkrqQ08MueoL35OMpdhjWTnL9I7coJb6L2sgae8aUB+@vger.kernel.org, AJvYcCW2pd7UIU70GYcI44KoY0C3zNHQoQ0/Nb/ANBPZik15BIruFidx32F6hOlVNa7jbWJcodqLIUQTTRU=@vger.kernel.org, AJvYcCWoacZK3zgPVIim9hRyQKtAiLlkLSaOB/r7C/gYgZadwH8V0L9c91DloJ2gq8eGCLhAXlOiLH0x4vDTRoSIHqxOigY=@vger.kernel.org, AJvYcCXOmfm8dAYKDzSNXJrwU4evv3g+Uv6IRTQ+PiCZexmRRDASNFE+FTRcmICIIp96EPJFHYx2xd5SJNhn8V9SQro=@vger.kernel.org
+X-Received: by 2002:a05:690c:f14:b0:6e2:1626:fc24 with SMTP id
+ 00721157ae682-6e2c6fc3645mr101710117b3.7.1728310748657; Mon, 07 Oct 2024
+ 07:19:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Saravana Kannan <saravanak@google.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Derek Kiernan <derek.kiernan@amd.com>, linux-rpi-kernel@lists.infradead.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Dragan Cvetic <dragan.cvetic@amd.com>, linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will@kernel.org>, 
- Herve Codina <herve.codina@bootlin.com>, Stephen Boyd <sboyd@kernel.org>, 
- linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Andrew Lunn <andrew@lunn.ch>, Masahiro Yamada <masahiroy@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-In-Reply-To: <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
-Message-Id: <172831060870.15438.14111281615196403810.robh@kernel.org>
-Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for
- devices accessible through PCI BARs
+References: <20240902132402.2628900-1-claudiu.beznea.uj@bp.renesas.com> <20240902132402.2628900-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240902132402.2628900-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Oct 2024 16:18:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWF=3svkFT8sVEtTahtDh3tJG4FjqmqhJJKs9JYNd+WCQ@mail.gmail.com>
+Message-ID: <CAMuHMdWF=3svkFT8sVEtTahtDh3tJG4FjqmqhJJKs9JYNd+WCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] clk: renesas: rzg2l-cpg: Move PM domain power on
+ in rzg2l_cpg_pd_setup()
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Claudiu,
 
-On Mon, 07 Oct 2024 14:39:46 +0200, Andrea della Porta wrote:
-> Common YAML schema for devices that exports internal peripherals through
-> PCI BARs. The BARs are exposed as simple-buses through which the
-> peripherals can be accessed.
-> 
-> This is not intended to be used as a standalone binding, but should be
-> included by device specific bindings.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+On Mon, Sep 2, 2024 at 3:24=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Move the PM domain power on in rzg2l_cpg_pd_setup(). With this the
+> previously always-on power domains got
+> struct generic_pm_domain::{power_on, power_off} populated (and
+> registered with simple_qos_governor if #power-domain-cells =3D <1> and
+> with pm_domain_always_on_gov if #power-domain-cells =3D <0>). The values =
+for
+> struct generic_pm_domain::{power_on, power_off} are now populated for
+> all registered domains but used by core only for the domains that can
+> use them (the PM domain should be non always-on and registered with
+> simple_qos_governor). Moreover, the power on/off functions check if the
+> mstop support is valid. The mstop is populated only by the RZ/G3S
+> initialization code at the moment.
+>
+> This approach was chosen to keep the code simple and use the same code
+> across different implementations. There should be no issues with this
+> approach as the always on domains are registered with GENPD_FLAG_ALWAYS_O=
+N
+> and the PM domain core takes care of it.
+>
+> This approach allows doing further cleanups on the rzg2l_cpg power domain
+> registering code that will be handled by the next commit.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> 
+>
+> Changes in v3:
+> - none; this patch is new
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thanks for your patch!
 
-yamllint warnings/errors:
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1680,23 +1680,26 @@ static int rzg2l_cpg_power_off(struct generic_pm_=
+domain *domain)
+>         return 0;
+>  }
+>
+> -static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool alway=
+s_on)
+> +static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd,
+> +                                    struct dev_power_governor *governor)
+>  {
+> -       struct dev_power_governor *governor;
+> +       bool always_on =3D !!(pd->genpd.flags & GENPD_FLAG_ALWAYS_ON);
+> +       int ret;
+>
+>         pd->genpd.flags |=3D GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP=
+;
+>         pd->genpd.attach_dev =3D rzg2l_cpg_attach_dev;
+>         pd->genpd.detach_dev =3D rzg2l_cpg_detach_dev;
+> -       if (always_on) {
+> -               pd->genpd.flags |=3D GENPD_FLAG_ALWAYS_ON;
+> -               governor =3D &pm_domain_always_on_gov;
+> -       } else {
+> -               pd->genpd.power_on =3D rzg2l_cpg_power_on;
+> -               pd->genpd.power_off =3D rzg2l_cpg_power_off;
+> -               governor =3D &simple_qos_governor;
+> -       }
+> +       pd->genpd.power_on =3D rzg2l_cpg_power_on;
+> +       pd->genpd.power_off =3D rzg2l_cpg_power_off;
+> +
+> +       ret =3D pm_genpd_init(&pd->genpd, governor, !always_on);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (governor =3D=3D &simple_qos_governor && always_on)
+> +               ret =3D rzg2l_cpg_power_on(&pd->genpd);
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml: 'oneOf' conditional failed, one must be fixed:
-	'unevaluatedProperties' is a required property
-	'additionalProperties' is a required property
-	hint: Either unevaluatedProperties or additionalProperties must be present
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+I think you can drop the check for simple_qos_governor: in the single
+clock domain case, pd->conf.mstop is zero, so rzg2l_cpg_power_{off,on}()
+become no-ops.  That would also allow you to drop passing the governor
+as a parameter, as it can be set based on the always_on flag, as before.
 
-doc reference errors (make refcheckdocs):
+Regardless:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com
+Gr{oetje,eeting}s,
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+                        Geert
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
