@@ -1,235 +1,150 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085161D8E1D
-	for <linux-clk@vger.kernel.org>; Mon,  7 Oct 2024 15:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB1B1D4166;
+	Mon,  7 Oct 2024 15:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728313371; cv=none; b=dV1STcNHoRbTbEGfsDtf/djoZepesBWBOetg64jWt1/ejFY3lOBr9v7TJpTmsxHLuXelMMR/U4V+CEgmZMaKFKAzos253NAzDFh9Nd7Bg3UU4uqw3zyD8h7hbbl6h9IlT74jBycpCLi6oEqIgMLEYMoejZL64FuqRWanQ+kzcvQ=
+	t=1728313841; cv=none; b=WtAyT2Al4fFkizlye06wMCe96Ldu53wxfhXnxTfs0vUeTX6oPhzRv1seHw1R9zoS7dgDWywNO+mtc8or2DQpM5XUmF5stT8c601YNBnpEGK+Qye/h1bA6jERwQ0OdHOwHU4LR67lrjI+9Cm6RLsX8n/FmMKW3R/uMCoZpzJb4Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728313371; c=relaxed/simple;
-	bh=YFgBzb5t13jGsblwPz4zuJTL9xNOUthC3CzWh+2YRRI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TvTDLljQjn9WVL6KCFdTTZ7a6SVeL/oj5Sd9Ug+YX55gS6OhVZlBKX9rRRriXM2Kn809VTrLXXKHdQBxWXXUsFpDy+7oz+aXDEaLSSoR7+SVGyFoAJ28f2Gjgrcbz4h1IMsL9QQ6pgWug/Lqd+v6MqmrpPl+v+09/VyvwCqHDsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=H9N73oNT; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1728313841; c=relaxed/simple;
+	bh=QODmP8lkkPVyqcqcjsNYQGf3lmTjOZV1uaJ8QJmI5S4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
+	 In-Reply-To:Content-Type; b=a+GtwlARE7zbhMS4kGeK9DYY0OZkDAcgIFp+M7KXhFar4473jSbDW8AFZthKzQiew/2qvx5+yW00H5nJqPD0h/vASZRSTc9iExJ7OXgLly4NVciCe/Suvy81Lg27RbBBausoHyVAS72culD9MprMGUlIHAf5gEcSzfhAapDMfU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=mtxelPCO; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="H9N73oNT"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6d6891012d5so36728887b3.2
-        for <linux-clk@vger.kernel.org>; Mon, 07 Oct 2024 08:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1728313369; x=1728918169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lRXc+qYMpiIpv9iclqrXM3fuvSnpa1ayC+j4HSUgcBA=;
-        b=H9N73oNTNPU06BDaJnnsNshXrwH+uyEuXIlUEnv35yoggdhGgmClD5zYQh5i1nkjE/
-         BUgvR3w8e6Ldwq+/M2T4AJTezzJJcWHYkb/vomQwGPNw60ulw5YUABsQVEedZMGk7GgS
-         lUgFwjg7e1s4kNceEWNmU8iV+3oQW8DOqRVqk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728313369; x=1728918169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lRXc+qYMpiIpv9iclqrXM3fuvSnpa1ayC+j4HSUgcBA=;
-        b=Lp6fIwSKl7fSE36RM59VKeRd+wFYXQKuxh3+31AcYD0jDWB3f/4tsgzTGNLVl6V24B
-         RILtpMlGR/vhPU8VhAi8EsL3MVDLOxnil6zx14K7a5JZaKXAGCDWFELawZQkM8m17kHh
-         4Qt0qalvlNQK9ZFnglBeD+s3tj3UipXDqaq6wmHMEbiWeibcB0z8N+uF/Tk7f1rv4rbO
-         oCRV8o8KpxI9lbsfBexkVDClQ9knxL4UVcOsg6pmvsegyqOLnndMW4/xi/5ws3pmhn7p
-         pzNObqQW3IhlxwO0zcgsLRZcrwP1WZLBTzLN6klshub+wHploc8JCHL1MHyLnzQullvF
-         r8pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcIdHAUpIXXnI4Nf4TV3ioOMAZDswy7+wWW1+QWCSOD8GMdYGKwsqAujJI8rvy/2uQKmOpGFB6FYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUhy5if6OBPPc7P2I2QoHt5kGCS3zCZvzbiarHb44VYqV7kLht
-	TDcQBTuMc1I2ZFKRWa5EEqNl7nR6ijmxNzcNgXs6sd/um8d2pE4l+peH37m3oYnLZMWOqE/swPN
-	px9pw94DUobGQL5kYGDh26CIM//R0vyP17S+FWA==
-X-Google-Smtp-Source: AGHT+IFnJ2aAEnjxDoEAR+k68meuDnN2C3jBt7oao/8Qh8myzaggBhO3fqphRnV4wGyuGqlBgzoWmwVTMtQEKqFZHbA=
-X-Received: by 2002:a05:690c:660b:b0:6e2:b263:1052 with SMTP id
- 00721157ae682-6e2c6fdd536mr92120257b3.6.1728313368916; Mon, 07 Oct 2024
- 08:02:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="mtxelPCO"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 4044A12001B;
+	Mon,  7 Oct 2024 18:01:22 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4044A12001B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1728313282;
+	bh=tDK2N1D0jqnoD+O3ST573uVP5E5qmpYkCDwEUcRwxAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=mtxelPCOxzDQoEKR8h1OhEZ3fmEu7uKxXDrOB55hrZWVkhqe+AUncNiMorF1A2jh4
+	 88KwTu0hgqf3Y9gMweioWko4mPB3hM9uO2yYzFhWdJSWvNfZH6HLEH7BNYMAh0Wh18
+	 GFnvS6x1CNtmNTpXlIydhx0p7BC3KvebkfOCSUmUKdEHilp7pci329QnP5mdvco4MR
+	 94CGF9dYBpmhyIEhvyw7d4Yn5JPYNCAnEX4q/ggE5X90hpwAcu5zkfVUT/YsbkOh1p
+	 cUGdfhXLmuBpfQf4T+SdFq1sVa+u3KNCOQizN1Eqa2aMKTEcaswnQig+2tFtz9BDoZ
+	 wmLIRtuZSKWEQ==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon,  7 Oct 2024 18:01:22 +0300 (MSK)
+Message-ID: <3ec49401-de70-4779-87df-9594d3eb3321@salutedevices.com>
+Date: Mon, 7 Oct 2024 17:59:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
- <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
- <566859c1-a397-4465-987e-0682b07a703e@kernel.org> <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
- <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org> <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
- <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org> <CABGWkvqXZ+YAvo-AtUy+Ftdu0xxXKuhOwcSTwO5Fv6D3yzttNg@mail.gmail.com>
- <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org>
-In-Reply-To: <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Mon, 7 Oct 2024 17:02:37 +0200
-Message-ID: <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
- spectrum clocking
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 0/5] Add A1 Soc audio clock controller driver
+To: Jerome Brunet <jbrunet@baylibre.com>
+References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
+Content-Language: en-US
+CC: Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, "Kevin
+ Hilman" <khilman@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188273 [Oct 07 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;salutedevices.com:7.1.1;sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/07 11:09:00
+X-KSMG-LinksScanning: Clean, bases: 2024/10/07 11:09:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/07 12:27:00 #26713662
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Sun, Oct 6, 2024 at 3:13=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 05/10/2024 10:57, Dario Binacchi wrote:
-> > On Thu, Oct 3, 2024 at 12:46=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >>
-> >> On 01/10/2024 08:29, Dario Binacchi wrote:
-> >>> On Mon, Sep 30, 2024 at 8:45=E2=80=AFAM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> >>>>
-> >>>> On 29/09/2024 22:00, Dario Binacchi wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>>> +  properties:
-> >>>>>>> +    compatible:
-> >>>>>>> +      contains:
-> >>>>>>> +        enum:
-> >>>>>>> +          - fsl,imx8mm-anatop
-> >>>>>>> +
-> >>>>>>> +then:
-> >>>>>>> +  properties:
-> >>>>>>> +    fsl,ssc-clocks:
-> >>>>>>
-> >>>>>> Nope. Properties must be defined in top-level.
-> >>>>>>
-> >>>>>>> +      $ref: /schemas/types.yaml#/definitions/phandle-array
-> >>>>>>> +      description:
-> >>>>>>> +        The phandles to the PLLs with spread spectrum clock gene=
-ration
-> >>>>>>> +        hardware capability.
-> >>>>>>
-> >>>>>> These should be clocks.
-> >>>>>
-> >>>>> Sorry, but I can't understand what you're asking me.
-> >>>>> Could you kindly explain it to me in more detail?
-> >>>>
-> >>>> You added new property instead of using existing one for this purpos=
-e:
-> >>>> 'clocks'.
-> >>>
-> >>>>
-> >>>>
-> >>>>
-> >>>> Best regards,
-> >>>> Krzysztof
-> >>>>
-> >>>
-> >>> I added this new property specifically for managing spread-spectrum.
-> >>> Indeed, not all clocks/PLLs
-> >>> managed by the node/peripheral support spread-spectrum, and the added
-> >>> properties specify
-> >>> parameters for enabling and tuning SSC for each individual PLL based
-> >>> on the index of each list.
-> >>> If I were to use the 'clocks' property and add a clock to this list
-> >>> that does not support SSC, IMHO
-> >>> the pairings would be less clear.
-> >>
-> >> You duplicate property with argument "pairings shall match". Well, I a=
-m
-> >> not happy with the duplication. Clocks have specific order, thus it is
-> >> explicit which one needs tuning. Your other properties can match them =
-as
-> >> well, just index from clocks is offset...
-> >
-> > Just to check if I understood correctly what you are suggesting before
-> > submitting version 3 of the patch.
-> > Something, for example, like:
-> >
-> > clocks =3D <&clk, IMX8MP_AUDIO_PLL1>,  <&clk, IMX8MP_AUDIO_PLL2>, <&clk
-> > IMX8MP_VIDEO_PLL1>;
-> > fsl,ssc-modfreq-hz =3D <0, 3517>, <2, 6818>;
->
-> Hm, what is 0? If clock index, then no, it's redundant. The first item
-> in cannot point to other clock.
->
-> Also, what exactly are you setting here
+Hi, Jerome! Could you take a look at this patch series?
 
-I am enabling and configuring the spread spectrum.
+On 9/13/24 15:11, Jan Dakinevich wrote:
+> This series adds support for audio clock and reset controllers on A1 SoC family.
+> 
+> Dependency: [4]
+> 
+> Changes v3 [3] -> v4
+>  - Use auxiliary reset device implemented in [4]
+>  - Split the driver into files
+>  - Use common with axg-audio yaml schema
+>  - Unify clock-names with axg-audio
+> 
+> Changes v2 [2] -> v3
+>  - reset:
+>    * added auxiliary device
+>  - yaml:
+>    * added declaration of optional clocks
+>    * fixed names in example and another cosmetics
+>  - clocks:
+>    * reworked naming
+>    * stop using of "core" clock name
+>    * fixed wrong parenting
+> 
+> Changes v1 [1] -> v2:
+>  - Detached from v1's series (patch 2, 3, 4, 25).
+>  - Reuse some of defines from axg-audio;
+>  - Split the controller into two memory regions.
+> 
+> Links:
+>  [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
+>  [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
+>  [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
+>  [4] https://lore.kernel.org/lkml/9a4377fe27d8eb940399e452b68fb5a6d678929f.camel@pengutronix.de/
+> 
+> Jan Dakinevich (5):
+>   reset: amlogic: add support for A1 SoC in auxiliary reset driver
+>   clk: meson: axg: share the set of audio helper macro
+>   dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
+>     driver
+>   clk: meson: a1: add the audio clock controller driver
+>   arm64: dts: meson: a1: add the audio clock controller
+> 
+>  .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
+>  arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  48 +++
+>  drivers/clk/meson/Kconfig                     |  14 +
+>  drivers/clk/meson/Makefile                    |   3 +
+>  drivers/clk/meson/a1-audio-clkc.c             | 359 ++++++++++++++++++
+>  drivers/clk/meson/a1-audio-drv.c              | 104 +++++
+>  drivers/clk/meson/a1-audio-vad-clkc.c         |  85 +++++
+>  drivers/clk/meson/a1-audio.h                  | 131 +++++++
+>  drivers/clk/meson/axg-audio.c                 | 138 +------
+>  drivers/clk/meson/meson-audio.h               | 143 +++++++
+>  drivers/reset/amlogic/reset-meson-aux.c       |   9 +
+>  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++
+>  .../reset/amlogic,meson-a1-audio-reset.h      |  29 ++
+>  13 files changed, 1051 insertions(+), 137 deletions(-)
+>  create mode 100644 drivers/clk/meson/a1-audio-clkc.c
+>  create mode 100644 drivers/clk/meson/a1-audio-drv.c
+>  create mode 100644 drivers/clk/meson/a1-audio-vad-clkc.c
+>  create mode 100644 drivers/clk/meson/a1-audio.h
+>  create mode 100644 drivers/clk/meson/meson-audio.h
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> 
 
-Normal clock: Without spread spectrum, the clock signal has a fixed and
-repetitive frequency (e.g., 100 MHz). This frequency generates an
-electromagnetic
-signal concentrated on a single frequency, and if strong enough, it can dis=
-turb
-other devices.
-
-Spread spectrum:  With spread spectrum, the clock frequency is
-slightly "modulated,"
-meaning it oscillates around a central value. For example, if the base
-frequency is 100 MHz,
-the clock might vary between 99.5 MHz and 100.5 MHz in a cyclic manner. Thi=
-s
-small variation spreads the energy over a wider range of frequencies
-(from 99.5 to 100.5 MHz),
-reducing the intensity of the signal at any one frequency.
-
-> and why assigned-clock-rates are
-> not working?
-
-The traditional clock properties, such as clocks,
-assigned-clocks-rates, etc retain their usual
-meaning even when spread spectrum is applied. However, to implement
-the spread spectrum
-mechanism in a circuit with a PLL (Phase-Locked Loop), additional
-specific parameters are
-introduced to properly configure the frequency modulation:
-
- - Modulation frequency: i. e. fsl,ssc-modfreq-hz
- - Modulation rate: i.e.  fsl,ssc-modrate-percent
- - Modulation type:  i. e. fsl,ssc-modmethod (center-spread, down-spread)
-
-Additionally, it should be noted that not all anatop PLLs are equipped
-with circuitry for spread
-spectrum, but only a small subset of them. This is the reason why I
-introduced the property
-"fsl, ssc-clocks".
-
-This is another commit [1] on enabling spread spectrum that I
-implemented some time ago for
-the am335x. The most evident difference is that in that case the node
-was a clock node and not
-a clock controller, as in the case of anatop. The parameters are also
-not exactly the same, but
-that depends on the platform.
-
-[1] 4a8bc2644ef0cbf8e ("dt-bindings: ti: dpll: add spread spectrum support"=
-)
-
-Thanks and regards,
-Dario
-
->
-> Best regards,
-> Krzysztof
->
-
-
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+-- 
+Best regards
+Jan Dakinevich
