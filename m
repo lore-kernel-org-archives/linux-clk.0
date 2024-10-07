@@ -1,132 +1,124 @@
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A9718F2E8;
-	Mon,  7 Oct 2024 14:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A481D4353;
+	Mon,  7 Oct 2024 14:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728311698; cv=none; b=I7izdoIAQnkwvXbosryVqZQK0WQEtQfeJ8dv/gIeDEXuoGVpzKnLGiRjkzYl71yPHL8JP366V7O40LI4YCssZMeU4uX1jjKF+8n2JtWUP4AAcn8/s6ejdu2DFvPpe+OejF12Lh8Nm+AtE0LvXyyPn/RgOf2oEvLR43hbw/p80RM=
+	t=1728313069; cv=none; b=CPsCW2/PRbmEX/weHmKw68v0+dj6aEBB9CWSwGs71J8vhUOPDpq7iJcn3RfbwPVmMgcHGXXGpHoK2q6eRS3iVcjUbTubn7Y91VXq7j/GzP708qDjeP+WBG5wyXuIaZgzz/ctwN6XmaoBJyPub+0fjWhuEWBj2bdQOuctdRN6zd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728311698; c=relaxed/simple;
-	bh=qzQoRyW/Wfplz4M1jSRnf4ZwcMpTMBFYjANqbRji0Ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=krZiV/z2wSI0QtPH+BhDiIhuegp+zQfLIxo8cxAI7wP/Q/yRCOctnIe/CFJ7l8MxHjSZn6PuYfHyjwG1yO+xDqsnd1WznbcvS+I4KTdqxDXrEmU7zRpJJKuOa3WaGfhHCb12XQTuDlSzvVoAeaQ3dDumzMf4XLYBGVbWB7+7rBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e0465e6bd5so1890804b6e.2;
-        Mon, 07 Oct 2024 07:34:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728311696; x=1728916496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hgfRvfIw2hrPqxojAtVAfwakpPvb5MuSIuzV952AQV4=;
-        b=B31Loz/5xdadb6+cyrznSIbMKDZ+zASdpyTvW0YwY/M441e+dkRyJRzq3Jik/BktJK
-         +1xOYSjt714fPK7MxREFhqs4RotpupNsV2fOVGPbf6pKyltRt98Lb1L51s34Ny7Txm2n
-         eDp7mWVc0iCUkQgK8QmtIxGQYlAR80gv2F2FZeZRQ5lyrNqhrkIRVbsjwBgYFH0ej2lV
-         DuBRrLbTYkt10k0W6xnFI7OpY1gjNIbdFxF4bEvaBKFuar8htnaZ/6FdiAdpef3s980C
-         32MzKAzO6hP4wC4fbm18zdK/CFM39xl0LAXUNFZPbPT34GbzaErahdJ2+D7jv6zM/ODc
-         2oxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsxqTkOBFu1L5tP3Fi0/nAO63j46QqHLgGn4TzObfZUQiIe3cfNKiqbU5G6UmYnk7Xt2Tlf4UEol5mQYZ2@vger.kernel.org, AJvYcCXDWAWsNYkHCw9gK3vNw1FewHIDPOYZsDZQV+iPznZ5Hb3XBAojJuMpkFrlnB4+k2RvvMoJjHB0Uc8NTGtdYhY=@vger.kernel.org, AJvYcCXJ2fZp+VFnB1BudVKs48nI1clArlB0Ke+Wv1tSHB1w7Vf6hNpF76T0XbxNd9GH71JTEJqcd5u6yvmwoJMUeXc5EeQ=@vger.kernel.org, AJvYcCXX5dPCrpPO4Vb0m4lB0qDT8Na73ycmiyHME6UHKaL/1dLuYkL2Iz5rYjeFvsaYgt1uktSipmNE484=@vger.kernel.org, AJvYcCXhiwOWBJap2CdBTZmwjuukM53qUNuQsBHwVQ6VswRJgVMp4XR9sUXiv4hZP8maym9oDSA2x/6jc/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlSUGjs9DQKz2W1mSiYfJOSl8/tSKOGRX7bRWFR4DW7R7ATihO
-	p/nPc5ccOYF2ww6HgBNllS7CCtt/w89hFxQLO3X5XzqFD2oSOQAL7IkQc+AH
-X-Google-Smtp-Source: AGHT+IG56zIs+Mq/vyKIbE0CBfsz8UdllP5xm6WEivv+px76KHM+M78FEfhgBNVSfS6u8mIIWiyJbA==
-X-Received: by 2002:a05:6808:3196:b0:3e3:9e8b:8cef with SMTP id 5614622812f47-3e3c131e167mr6383486b6e.4.1728311696205;
-        Mon, 07 Oct 2024 07:34:56 -0700 (PDT)
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com. [209.85.160.51])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e3c902a502sm1464885b6e.23.2024.10.07.07.34.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:34:55 -0700 (PDT)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-287c5745a9bso755092fac.0;
-        Mon, 07 Oct 2024 07:34:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUhAJ/AsZXZybEes7Pa0H3UfyDfwzoMgmg/Y0F23QO+E0mJYHOZBY9T/8lHMinmfoyVZ6geNa0NJ/ftzxPGaTXJdX8=@vger.kernel.org, AJvYcCUo9rnRAQlcZXCynkCFjHMWxD6hyS2KQ/HxZfz+RqIqpocCou92GML9IjW/0KajgZuZse6GdoZmd8U=@vger.kernel.org, AJvYcCW/WltbZd9lCutF/Xna8Vy3Jwd9ZTkcs9EW4qHTGAS50gbpluTFfw2GKGLa14KMaKuB6/Ux3MiohhA=@vger.kernel.org, AJvYcCWGAowGKtxaadHhwmw3JkfiNfMug3e4cX9ZVk1BuvCoA8mzL8Sk3QWtVlWMaY6+QFHdrAZHD6kbQiofiRg73xA=@vger.kernel.org, AJvYcCWx05/D6UIZaZWbUTwkqdkP7sxIdiuzEQSOrwjPl+LpnZwogYdzWdbPZxhfBNJtlKwasoEOasfwZ2pOcm7Z@vger.kernel.org
-X-Received: by 2002:a05:6870:6589:b0:270:1eca:e9fd with SMTP id
- 586e51a60fabf-287c1d3fbe5mr7231243fac.3.1728311695064; Mon, 07 Oct 2024
- 07:34:55 -0700 (PDT)
+	s=arc-20240116; t=1728313069; c=relaxed/simple;
+	bh=VZlt15A8ZzETo+SM/d3aO345eBdq3CKAUbyzP15QZlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U8N92zkdeEv6cDFV1ojLmHqd+fJ8S4WAMiDj33lv2pKyrSYPbL9dZVcJCdmpEsMFdP4McB28iIa3CPodEJO7ZNK+w4V2+6lnCf0c8+5wumYeOpsrFLIDbqMo4ezJU6FRcoFGr5Jk3szohTUWFgj66x+YSHPkclBQxYDzhUn87Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UaEgwyuE; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UaEgwyuE"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6F031E0005;
+	Mon,  7 Oct 2024 14:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728313064;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dL9aA540mEeufB7thObWnGoJTxtAhjB5yU/T3BfooEs=;
+	b=UaEgwyuEu6gLwU9JDdC4Jv0egiVcXYuwXu/pXA5cjTNEz/7NzGS+Du+W7aej+hzJrl/6mm
+	q5QSUK1eG2zCEzIYjpAwjyL5OXr0tlA9fz+Bg4zjNkHLlNFjZUTv1OawpSt5TVQVjCkDN9
+	jRhOPeSpxQe2UQiy5ApnWobz0leWTq/yqHt/v9ccAN42PolVqSlXjibhxbesAUT+rR0Yz3
+	sFGQAt16VsCYJ5WKvxmt245F6w+olonniYKNtULjCnKQUvJ6xmY29C51lcFeQM7bXS9zSl
+	jHy+g/KhX5EuzuxAWgId7ivmZhrpGyuFNIS/04ypczA+8DOfKAIvS4QzYFdGlg==
+Date: Mon, 7 Oct 2024 16:57:40 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, Stefan
+ Wahren <wahrenst@gmx.net>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>
+Subject: Re: [PATCH v2 10/14] arm64: dts: rp1: Add support for RaspberryPi's
+ RP1 device
+Message-ID: <20241007165740.14d372f5@bootlin.com>
+In-Reply-To: <3f6f38c06b065f5f6034ad4ed3a24902ee59f378.1728300190.git.andrea.porta@suse.com>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+	<3f6f38c06b065f5f6034ad4ed3a24902ee59f378.1728300190.git.andrea.porta@suse.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902132402.2628900-1-claudiu.beznea.uj@bp.renesas.com> <20240902132402.2628900-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240902132402.2628900-5-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Oct 2024 16:34:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVU2CRfN0Qpk0QH1qJXV9ohGfY_maybWYsjEi7A8ggpBw@mail.gmail.com>
-Message-ID: <CAMuHMdVU2CRfN0Qpk0QH1qJXV9ohGfY_maybWYsjEi7A8ggpBw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] watchdog: rzg2l_wdt: Power on the watchdog domain
- in the restart handler
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Mon, Sep 2, 2024 at 3:24=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
-rote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
-> this case, the watchdog device need to be powered on in
-> struct watchdog_ops::restart API. This can be done though
-> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
-> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
-> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and th=
-e
-> watchdog device though pm_runtime_irq_safe().
->
-> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
-> context'") pm_runtime_get_sync() was used in watchdog restart handler
-> (which is similar to pm_runtime_resume_and_get() except the later one
-> handles the runtime resume errors).
->
-> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
-> context'") dropped the pm_runtime_get_sync() and replaced it with
-> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
-> in genpd_runtime_resume() being called from atomic context. But
-> clk_prepare_enable() doesn't fit for this either (as reported by
-> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
-> wait context warning as it is not written for this).
->
-> Because the watchdog device is marked now as IRQ safe (though this patch)
-> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() retur=
-ns
-> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
-> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
-> always-on), this being the case for RZ/G3S with old device trees and
-> the rest of the SoCs that use this driver, we can now drop also the
-> clk_prepare_enable() calls in restart handler and rely on
-> pm_runtime_resume_and_get().
->
-> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
-> watchdog restart handler.
->
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Andrea,
+
+On Mon,  7 Oct 2024 14:39:53 +0200
+Andrea della Porta <andrea.porta@suse.com> wrote:
+
+> RaspberryPi RP1 is a multi function PCI endpoint device that
+> exposes several subperipherals via PCI BAR.
+> Add a dtb overlay that will be compiled into a binary blob
+> and linked in the RP1 driver.
+> This overlay offers just minimal support to represent the
+> RP1 device itself, the sub-peripherals will be added by
+> future patches.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 > ---
->
-> Changes in v4:
-> - collected Ulf's tag
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+...
+> +/ {
+> +	fragment@0 {
+> +		target-path="";
+> +		__overlay__ {
+> +			compatible = "pci1de4,1";
 
-Gr{oetje,eeting}s,
+The compatible is not needed here. Indeed, it will be added by the PCI core
+when it scans the bus and adds the missing nodes.
+  https://elixir.bootlin.com/linux/v6.12-rc2/source/drivers/pci/of_property.c#L383
 
-                        Geert
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			pci_ep_bus: pci-ep-bus@1 {
+> +				compatible = "simple-bus";
+> +				ranges = <0xc0 0x40000000
+> +					  0x01 0x00 0x00000000
+> +					  0x00 0x00400000>;
+> +				dma-ranges = <0x10 0x00000000
+> +					      0x43000000 0x10 0x00000000
+> +					      0x10 0x00000000>;
+> +				#address-cells = <2>;
+> +				#size-cells = <2>;
+> +				interrupt-controller;
+> +				interrupt-parent = <&pci_ep_bus>;
+> +				#interrupt-cells = <2>;
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Not sure this node should be an interrupt controller.
+The interrupt controller is the PCI device itself (i.e.the node
+where the overlay is applied).
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best regards,
+Hervé
+
