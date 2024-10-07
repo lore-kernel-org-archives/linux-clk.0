@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB42B198E81;
-	Mon,  7 Oct 2024 11:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652CF1AB51F;
+	Mon,  7 Oct 2024 11:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728299050; cv=none; b=VFj6iSkRgmezUIQZ71B4tHgkdsRIkChYtRZD/nMGey+GDz1ApxcjvVLveanfwdmEBqICBZ9WbFKtUrAX4pS/bSo29YKbwrCDceU0qr5n/dABWtifoZ/+ZNNADjAoC94blgDyNtOaC20sZmK3FhpyYRk+I3bgsdf4yL8pQTaARWE=
+	t=1728299119; cv=none; b=UP+9Q5O9c8Bik96oIiZUtctlSAdmp3A/xWWFARYv7skFtBFg1LgUASTdeFjvYl57m43BYrPaBMcEHYvQ571/nCB8rrgCWaYrITXquOfmfBizQhuPJ71f52yveb7r1Fhe1OgkcmkyDn4V0FP9fARQLXVWO+6N5biH/W4TOTMmvhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728299050; c=relaxed/simple;
-	bh=ujW0TeRwS+eeSWMWIG8idJke6McWZ08+eTH56YXvu4I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=M/DDgYH+ZU+WV+oT3K7/6LhrPh5WXYWCdWGIqqxtKx2cEtDdfFMCO0WSb5Y3g8hV3gOMbpWUPSd/QXRHWPP5XtETmIZlIPANkvaJC5ggrToRIOv6K5qFLWeSJYTVfXt4ryIdBwGaXdi8yam7bDSPAJSssOTKxACRjOzqhX54ESE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2qJJhDO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728299119; c=relaxed/simple;
+	bh=ynHPyZt7Bh1deUnCBdlmOBSkEPy2aO4JzW0/DjScqj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AqQWcvrJa9x0FVGcA6Ba5ALrx5c/L7IJEn2ElMk7qyV/dtXa0XIIrAboc6XEmWXN+N60Vekzcbzr65hd/008X7pA0Q0DLAJdGqr2l3ddU8UjW7wqio4LD2JGb0odC8AX+uGqjPf80ntgUSbgI3XbL0Ikc09HuuDglfmbsfPwD8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbt96yeZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2qJJhDO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFDBAC4CEC6;
-	Mon,  7 Oct 2024 11:04:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbt96yeZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEB5C4CEC6;
+	Mon,  7 Oct 2024 11:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728299049;
-	bh=ujW0TeRwS+eeSWMWIG8idJke6McWZ08+eTH56YXvu4I=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=h2qJJhDOgF7h7+MbFX2RKhB/8tstZUNs59ts1Sq8wHDsQNSiLDhufVJJN06qoWvjc
-	 d2BC35+W+Z8wolgBeIVwEQMfndcZGQizj/y0ZEEs6HsRpmSz4OqARQjW/Gi2f3wOrB
-	 Mpm/Dx+Y8qgKMy0nwdXnSmg8QvKzbHJ6IbvzLl7yYZXHN930m9y8TvaXw9zBLp1N5y
-	 uDvjjUzpTKkcNN3YYgBwabQB6dOToPah9RDwpRVIhHwQwbopVyGdC65V4MneAdTCQL
-	 O+KmzsPBGdfynw3FO9C8sSMsd5wBXwzmEcx6dGpBKS/0xuHOH7x53fEtTml4UFcbZ+
-	 wBZQhyy2Df+bg==
-Message-ID: <5dfa5989-563d-43f2-8391-5b6b03c5ae29@kernel.org>
-Date: Mon, 7 Oct 2024 13:03:58 +0200
+	s=k20201202; t=1728299119;
+	bh=ynHPyZt7Bh1deUnCBdlmOBSkEPy2aO4JzW0/DjScqj0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=sbt96yeZB8a1dbL1F7AhC0SNl1Ae3x5zxhvoHotgCzhXEMer4ZPBChb9y409ilzu0
+	 1feKdqVo7NpDy3i8gYA7QUo3IRYsXX5eRX4e0BL8E1zgQ022T8ctsN4KE9sfRKYBxO
+	 biQDXfI/bQnkam242Sabj2ITrYNXeTi3p3qqKhDV6Md8OTFrcrWzY5atSf2wE9inqC
+	 zMVSYGwrjG9Ivb02Fl2IBUSpzc8esYBbgpoLF51MnLE3cSk4sfjftaqDjihR9bt2WT
+	 f3bX0++reTBeXMENiAtg3Ze6rnFLIkCh7eDFISCoZWxQ8dgq22qIzfPGR3AY1yi+3J
+	 CXhu2UkLfxC9Q==
+Message-ID: <843b411f-8a71-4766-a657-70d326676f9c@kernel.org>
+Date: Mon, 7 Oct 2024 13:05:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,9 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuimhjogW1BBVENIIHYxIDAxLzEwXSBkdC1iaW5kaW5nOiBt?=
- =?UTF-8?Q?fd=3A_aspeed=2Cast2x00-scu=3A_Add_binding_for_ASPEED_AST2700_SCU?=
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: =?UTF-8?B?UmU6IOWbnuimhjogW1BBVENIIHYxIDA4LzEwXSBhcm02NDogZHRzOiBh?=
+ =?UTF-8?Q?speed=3A_Add_initial_AST27XX_device_tree?=
 To: Kevin Chen <kevin_chen@aspeedtech.com>, "robh@kernel.org"
  <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
  "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
@@ -65,10 +64,12 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, "robh@kernel.org"
  "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
  BMC-SW <BMC-SW@aspeedtech.com>
 References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
- <20240726110355.2181563-2-kevin_chen@aspeedtech.com>
- <e6cb6f26-fef2-49bc-ab25-fdc9a659f593@kernel.org>
- <PSAPR06MB494964BEE33B160EE5E2159289802@PSAPR06MB4949.apcprd06.prod.outlook.com>
- <8b3b81eb-a0d2-4beb-a2e1-3064ae985f04@kernel.org>
+ <20240726110355.2181563-9-kevin_chen@aspeedtech.com>
+ <b6be1531-d8e2-44d1-a81a-6db8f9ae4ad4@kernel.org>
+ <PSAPR06MB4949EC0D0E0DA16F50BBF40489802@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <aa3a1835-19e0-43a5-b6a4-4a7e531f3b2e@kernel.org>
+ <PSAPR06MB4949B860119DCC42C9BC0E42897D2@PSAPR06MB4949.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -113,35 +114,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <8b3b81eb-a0d2-4beb-a2e1-3064ae985f04@kernel.org>
+In-Reply-To: <PSAPR06MB4949B860119DCC42C9BC0E42897D2@PSAPR06MB4949.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2024 13:03, Krzysztof Kozlowski wrote:
-> On 15/08/2024 07:50, Kevin Chen wrote:
->> Hi Krzk,
+On 07/10/2024 11:26, Kevin Chen wrote:
+>>>>> diff --git a/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+>>>>> b/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+>>>>> new file mode 100644
+>>>>> index 000000000000..858ab95251e4
+>>>>> --- /dev/null
+>>>>> +++ b/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+>>>>> @@ -0,0 +1,217 @@
+>>>>> +// SPDX-License-Identifier: GPL-2.0-or-later #include
+>>>>> +<dt-bindings/clock/aspeed,ast2700-clk.h>
+>>>>> +#include <dt-bindings/reset/aspeed,ast2700-reset.h>
+>>>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>> +#include <dt-bindings/interrupt-controller/aspeed-scu-ic.h>
+>>>>> +
+>>>>> +/ {
+>>>>> +     model = "Aspeed BMC";
+>>>>
+>>>> Model of what? No, drop.
+>>> Can I change to "model = "AST2700 EVB""
 >>
->> I will speperate clock part in the v3 patch into Ryan's clock series.
->>
->>> Missing commit msg.
->>>
->>> Please use subject prefixes matching the subsystem. You can get them for
->>> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
->>> your patch is touching. For bindings, the preferred subjects are
->>> explained here:
->>> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
->>>
->>> A nit, subject: drop second/last, redundant "bindings for". The
->>> "dt-bindings" prefix is already stating that these are bindings.
->>> See also:
->>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->> Agree, already fixed in another commit in Ryan's series.
->> [1/4] dt-bindings: mfd: aspeed: support fo
-> 
-> Just to make it clear: you responded after 2.5 months. This patchset is
-> neither in my mailbox nor in my brain.
+>> Model of what? No, it does not make sense here.
+> Should I change to model = "Aspeed BMC SoC";
 
-Uh, this was supposed to be replied to your recent emails.
+SoCs do not have models. Please take a look how *every* other SoC is doing.
 
 Best regards,
 Krzysztof
