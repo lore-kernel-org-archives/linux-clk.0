@@ -1,59 +1,33 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20279156875;
-	Mon,  7 Oct 2024 10:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12733FBA5;
+	Mon,  7 Oct 2024 11:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728295253; cv=none; b=CxGf5SqNtO4DWsHg38USDihz3Ds9KAGeG0P2GuRnE0vlb8UL8G6xK9kJeYcobFcBZzBShUwUKual0oD+uzgflDepJV/4zhYexcj0oKrMlx57t1jDKf0iZIw3yn/VijzVLGMJX22n77OwZsMgBBML3gd+uYlI4wnOlaMQ0vHFn3E=
+	t=1728299003; cv=none; b=R3Plm3u2B9ebTBjnsS+ka+/4HyaJGLRzUODqD9roS26SujHbfwQQDW8QLkWQ/z29nl+sIjj9/ORZVQYvXOqqpuwDkzD37+2+KPhl2JwNSXk16+xdlk0BezcJsahiZSEfnqwV+/1hZ/2L+apy+4NvXxQHhvPY1fpyk+tcFPeuPGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728295253; c=relaxed/simple;
-	bh=8jLkDLa1KjvLII9dGVbKrzkDwrGVZgRVLaCZdg+1BGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oN6YHK+9MrPTfQQB8H+k2qMCtBFFOId9SIgNaVEITqUGyqd8pajKFf9aGbXL2TQ8SF+dC3rM3JpCjX4hUVLTRX8Awfakph+a1OWWWWtQu5s4k26KD4nAzQvXf5ovyBSxn7LyFNBfGTXSzVmOuC/pbINRceoE9Jrn+eKSVEvGjnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYiQ1XET; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728299003; c=relaxed/simple;
+	bh=2u2DFRbt1hKFfNauzyFdAYtgKax2eIyjJm1fsO/pedQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DCl/vZdItIB/06v2nOvI/MnVsws2G7yScewbXcNSXqm2NyVuJLkI7KpC9gUe4agc1VomXXMmXArGNrMJs14Dp72U9dtzLbZdbCbSUHkeQymshRm0hesKoHK58eHtKsHhJPhBsOvHB4VEec6MJ96P5uSiOCnG4zPhQMkVWuxOm6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5ex0h/S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYiQ1XET"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53992157528so4401664e87.2;
-        Mon, 07 Oct 2024 03:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728295249; x=1728900049; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+6HLACYIYStp6InlFY/UrXlQ9BZcSDR4bw3DCXtnczc=;
-        b=WYiQ1XET1GlM64YwKbZpRd+Hw9J8M8CedHOvQl3E7Q1A+3WfKJDmCX3L5n1Ea1vSCY
-         KVmEPcbUA1p9pcKwkom4/rG4Qmx4UcoMzmsKKhfzfFHRmeZDUjgRmJ/vN/C5NR//zonY
-         P1PjkYxI0fFM1+fVcHDBlbgbJAVzRoNXCiOolwCIYUzjROFnrzkjeKp4sYnf0gprKeCC
-         tWKHhDFA8Vm2Y30rC6fS5fauEnnilkHAQGL1S5kt0KGQGx/ZBL+XV8Q9nm5/t7QEm+rX
-         gcyWnu/rVtdMChAP7VPQu40BGWi3453owggUeBhXakDspQ7YzrZfbHh027JxtIF8wS6G
-         oIZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728295249; x=1728900049;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+6HLACYIYStp6InlFY/UrXlQ9BZcSDR4bw3DCXtnczc=;
-        b=UahCVPPXaHEq4bpWEqRssliRmWI+fGFuWpHU6OlQ2FgGtsNkZaYMXsSW3gqBtMC7fa
-         efsMHW0yRbJBX45kAV4IwWQgFYyXR3IYcvi2z9o+Ok805M195JQSx8HNeIbGBD2FSjz6
-         UrJsp1VITHqWKps11fr8YUq+ja0l9ygF09ePIhAtWFx9P4VIzbMEKR948/ZTbn3AND++
-         7Irk+41xGgIjDRL0iSt1a1uWKnLsKohhOlJEfaQCRqUy1kp/yMdcp+7xU3BGgRwZjEu3
-         JjvQc+UndaFzXVSjeG0QBDms9xKEQnKzLlvkP0eHfQaqqYURKs80NgvDgW4x7qX4mDtC
-         nJyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWeOTwKfJrWVf9ZAlRbVLUGRkgQh3tbyxOfgCdK8pk5gHhFEjvcNmczSoomQDrwscTgKQ5Hu1U7W17j+EI@vger.kernel.org, AJvYcCWJ1S8051DWYPlLAh+7NhsCQoDSiF9k6PyMAdvmN1NJRz57e/rt3e0Gubmw1TrWg5iHR8bLZ6b46k26@vger.kernel.org, AJvYcCXP1GPZ1C7uKaqEQ48BS3UiMlp3OFt318roQPe0bevHhz9BFNEo/3maPHJbaZRUtH3Y5hurhS62KQKeOnhpxcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGbNZnp7eEdJV9AIOExDo//78iyEHhwRDyHFPRPUM5w16nTLdC
-	rEZqZSCb5SuHg6gYZaq0HkQJqHsN7dxXdmcM94FRz1GZvjhN1gyD
-X-Google-Smtp-Source: AGHT+IE7fzKBCyOHsn6sB/8KjqsNw34RTIfeHeJEYQWXt64wGo1SEdrFPzcHNdDA5aHtq/+F5n0h3g==
-X-Received: by 2002:a05:6512:12ca:b0:538:9b5d:9885 with SMTP id 2adb3069b0e04-539ab6d851emr5214374e87.0.1728295248943;
-        Mon, 07 Oct 2024 03:00:48 -0700 (PDT)
-Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9957d955f8sm99206066b.74.2024.10.07.03.00.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 03:00:48 -0700 (PDT)
-Message-ID: <6181060a-ae36-4d0f-bfe0-c1e5c8a8ab3c@gmail.com>
-Date: Mon, 7 Oct 2024 11:00:46 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5ex0h/S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3722C4CEC6;
+	Mon,  7 Oct 2024 11:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728299003;
+	bh=2u2DFRbt1hKFfNauzyFdAYtgKax2eIyjJm1fsO/pedQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=j5ex0h/SLifF7m53VoC8A7NA/Y/jsd3Rhck3HrQKrDqFojcDvQ33oK9d5fOZmeB5Z
+	 cjRtXiGgCuo9YH/6vWGY03A6JVlPYfsaZvJtOastOfjPSI7l0eER3P5sBbYwz0zGSy
+	 24NJCKny50oLe+/o7PFJdXbkVotFmb++dGStUMe4VxFbV4DDPvcNPd/czIYiXjeWQB
+	 8eQCr/BeBvNJaRutdad2YYbu+vvP4E2qk1qlZL76xGpcVxTJEiKfqIdSYs4Khn6KJP
+	 w0W05ghE5HsAp1MqlcTigj99z3SnBmCYoC624YfCx5KBMy1gXPz7Zyo6qeqmWK9Af6
+	 3sVESXxCIacOQ==
+Message-ID: <8b3b81eb-a0d2-4beb-a2e1-3064ae985f04@kernel.org>
+Date: Mon, 7 Oct 2024 13:03:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,55 +35,110 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] clk: imx: pll14xx: Fix potential integer overflow
- on multiplication
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241007084840.1167527-1-colin.i.king@gmail.com>
- <3e0def9f-ebb6-4171-9395-1da118b0ea29@stanley.mountain>
+Subject: =?UTF-8?B?UmU6IOWbnuimhjogW1BBVENIIHYxIDAxLzEwXSBkdC1iaW5kaW5nOiBt?=
+ =?UTF-8?Q?fd=3A_aspeed=2Cast2x00-scu=3A_Add_binding_for_ASPEED_AST2700_SCU?=
+To: Kevin Chen <kevin_chen@aspeedtech.com>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>, "lee@kernel.org" <lee@kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ "olof@lixom.net" <olof@lixom.net>, "soc@kernel.org" <soc@kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ "u-kumar1@ti.com" <u-kumar1@ti.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ BMC-SW <BMC-SW@aspeedtech.com>
+References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+ <20240726110355.2181563-2-kevin_chen@aspeedtech.com>
+ <e6cb6f26-fef2-49bc-ab25-fdc9a659f593@kernel.org>
+ <PSAPR06MB494964BEE33B160EE5E2159289802@PSAPR06MB4949.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <3e0def9f-ebb6-4171-9395-1da118b0ea29@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <PSAPR06MB494964BEE33B160EE5E2159289802@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/10/2024 10:54, Dan Carpenter wrote:
-> On Mon, Oct 07, 2024 at 09:48:40AM +0100, Colin Ian King wrote:
->> The calculation of fout is using int multiplication and assigning
->> the result to a u64, this can potentially overflow if the int variable
->> mdiv is too large. Fix this by making the 65536 a u64 value to ensure a
->> u64 multiplication is being performed to avoid the overflow.
+On 15/08/2024 07:50, Kevin Chen wrote:
+> Hi Krzk,
+> 
+> I will speperate clock part in the v3 patch into Ryan's clock series.
+> 
+>> Missing commit msg.
 >>
->> Fixes: 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> mdiv is always clamped in then 0-1023 range by one of these:
-> 
-> 	mdiv = FIELD_GET(MDIV_MASK, pll_div_ctl0);
-> 	mdiv = clamp(mdiv, 64, 1023);
-> 
-> so it can't overflow and the Fixes tag is unnecessary.
+>> Please use subject prefixes matching the subsystem. You can get them for
+>> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+>> your patch is touching. For bindings, the preferred subjects are
+>> explained here:
+>> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+>>
+>> A nit, subject: drop second/last, redundant "bindings for". The
+>> "dt-bindings" prefix is already stating that these are bindings.
+>> See also:
+>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> Agree, already fixed in another commit in Ryan's series.
+> [1/4] dt-bindings: mfd: aspeed: support fo
 
-Good point.
+Just to make it clear: you responded after 2.5 months. This patchset is
+neither in my mailbox nor in my brain.
 
-> 
-> I think the reason why "fout" is declared as a u64 is because we were worried
-> that on 32 bit systems the "fout *=" operation could overflow.  That looks
-> reasonable to me.
-
-Yes, that makes perfect sense. NAK my patch. Apologies for the noise.
-
-Colin
-
-> 
-> regards,
-> dan carpenter
-> 
+Best regards,
+Krzysztof
 
