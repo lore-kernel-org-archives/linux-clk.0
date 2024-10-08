@@ -1,75 +1,56 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2DF1386D8
-	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 06:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C20513BC0C;
+	Tue,  8 Oct 2024 06:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728367344; cv=none; b=NBQg/DKZui1P+ModnS9LiXbJ+i5KReqakWMgYraPQO0VFtu12+nftxSYrTo48e5YtXuFelFhbustYxacgL+pLovTTeF8GIojzK4pi6D2zIgmPHRaMzAJf0QHgX4LHSYBsChHCwJK/Er/x0CZct6D6A0bE+Iz7nyF81fUBJOqlXE=
+	t=1728368651; cv=none; b=QeLWJa1KmPvbl97RWf/FpmiIvxe6t5BTrylDbSQPTFXKzAeaNC7M8U1VhjPOoy/D5zbldHWERdvgClsEyAw95ZsJOS6WXQfuSIE1kSL8bYX0QEVUQbxb+dm9RbiO/3pTDhea52w+xboB8UE0cVSXNiW/8F4GHJTRKt0USSq2Drk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728367344; c=relaxed/simple;
-	bh=dFnX9PjNcVwbuqSXpJJLYjtAhapfOLBOMv5cyvvkYNA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VHAceZr+nVfPxmFiYvQcLeI0ZN598BqD0zDl1MSKptsd/aYrwzUdicV3qfX8jyCaFK6Ho5Z50iU8bpcq0NJTSZDo9Tl3JyeQPCkd2WLATAdOncD+nASFtnZAgOMI7ZtQl3lWKzEQvUJI/mkRdi0+M5J2GVaf4TJc60SNW0xCY/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dMAu7ROq; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1728368651; c=relaxed/simple;
+	bh=ZCmpVIO4mKb6ac9euGG9tBUheFL5NjNdMiYA28D1doA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z286YmbRaW0vqM0s2vUAFjYZQ8+vuXbubXDh/y7BUbahFNFBeNSleftcO1R0tVTrjbuag7cQkPgfMdBjK6dyM9gqeUs80Buw91mjKMIrAoo23V5Rt38YAnRqfOwXLLrd7T25uylE6ItawWBvmfTpx9nx1FUyOY9B8fsFowLmVS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipZHQFGf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dMAu7ROq"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ccfbbd467so3708597f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 07 Oct 2024 23:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728367340; x=1728972140; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dFnX9PjNcVwbuqSXpJJLYjtAhapfOLBOMv5cyvvkYNA=;
-        b=dMAu7ROqQInhqCkD9nVSV0u9PqTEpXMLw8leXCuP8/Cf2dKHmAzmLPmJ6FU3xXk5cZ
-         YtnsX6jfInpH7AwJxOl+MkORcK2x7ospBzNxa367eg7NP/KbP/j050VXTL3Tz/Gq0UK9
-         dckjuvsm5lpR0gYz623apVVwic4NE8a0m4MPswQzFx4tYtO3zzQaY41PHNItuzNO9tN6
-         u5i98sWGB12lwYbifG6s9BqEoFN34e5VIAsZJCeS+QHvnx8RIqeKBD4soj7+vYnmmjgU
-         ZG6gRukXnGRoi8m+8qLbbSS0Asn2dDxUgtrC0arCq07p63PGnW4E5Syzf2Q/8OC/AIhB
-         wRLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728367340; x=1728972140;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dFnX9PjNcVwbuqSXpJJLYjtAhapfOLBOMv5cyvvkYNA=;
-        b=NZwTnxWOv1U4wpHZniBQF4IkD78jWag/HJv+EajNTs2NNOHRdBVPtLWTYo1sDEDqf8
-         EgHqkdtLvW84moE2rfUt1U6qGDIrETNH2r4oJD1FOSYOnt3dOTQ+3HM+OfDJWuXMAfh8
-         h/fuGU0AUVyJrVaoxa4q60eGLed4YrBy7sB88XL2yDgPDbSycL8Ncz4K8k+8iGHyf6hA
-         ymejhINiEN4bvHDEYwAkE4I3DDzjG52tdRGkJ4fv3HZuf+HlMoWzAL/Zk2YCz/2snGX1
-         wWZlJF2n1TeA4/zPSGUz0A10YAqzqnqL7YqLd2xYMqMwONLRvQkRGhA0vUd20NobPcF8
-         hDqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGNOAXQ0/hDM4xKgWdPG7Mrt2HbofvceKdxRw7FnvheU276Oru4L29dqBuZtevzdttb8xzN0K5CnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFHu4/TsLezNI2WTlVlHLvGo370mu+PJwL0SHSO9ZlGd99TuFL
-	PJGtwOH7h21ULI7qhFfpuwzBTD9VBz0JT/cAsyffweGtP7TOO3R9VpdVWKEngzO4D+F6ZX9yDbJ
-	kl1I=
-X-Google-Smtp-Source: AGHT+IHe+A9wTyATKAfiRoVRSil4JXvoDYrf57UaYrGEMYze/HZIN0MycxHFtINVSh9VQvZZ8GlaIA==
-X-Received: by 2002:a5d:598f:0:b0:37c:cdcd:68ac with SMTP id ffacd0b85a97d-37d0e8f74e6mr10479650f8f.52.1728367339614;
-        Mon, 07 Oct 2024 23:02:19 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:41f2:4244:ce34:c273])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1697024fsm7195797f8f.95.2024.10.07.23.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 23:02:19 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
- <khilman@baylibre.com>,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-In-Reply-To: <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com> (Chuan Liu's
-	message of "Tue, 8 Oct 2024 13:44:54 +0800")
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
-	<20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
-	<CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
-	<20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
-Date: Tue, 08 Oct 2024 08:02:18 +0200
-Message-ID: <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipZHQFGf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EB5C4CECF;
+	Tue,  8 Oct 2024 06:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728368650;
+	bh=ZCmpVIO4mKb6ac9euGG9tBUheFL5NjNdMiYA28D1doA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipZHQFGfZ1XnYJN4WRfrcd3MzdHHcJ41yv1KeJtYWb+UPOsHVpzBo6/wzTXOB8P6j
+	 qjqRXJBig/73KLYDPllA3NK9ahabtnWKkPJgN3SfPqFUlDco53dMepnMo4uj8uhKeJ
+	 bbPecTaZTCXhWGPQ3e63AuUk/0RHmiXztV0EBElkZxxXQsM/vdbJ5FTGeYv2H0u5Fi
+	 OTYsJKf6Pp/AOals/2GWJifJcQ8a2SEEN1kKihBLVXVfY6nyVe9LRXwKHbYUIotcB6
+	 kY/jFwWek8Z8m6nbyjCXzP6nd/KsxgH/Wa6WNTdRo9OAB1c9tvGbWzOHefG+nbcGB0
+	 N85D/7iJluoow==
+Date: Tue, 8 Oct 2024 08:24:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for devices
+ accessible through PCI BARs
+Message-ID: <flxm3zap4opsjf2s4wfjwdj6idf7p6errgtiru4xgbgkfx4ves@xxiz42cghgvr>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,117 +58,59 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
 
-On Tue 08 Oct 2024 at 13:44, Chuan Liu <chuan.liu@amlogic.com> wrote:
+On Mon, Oct 07, 2024 at 02:39:46PM +0200, Andrea della Porta wrote:
+> Common YAML schema for devices that exports internal peripherals through
+> PCI BARs. The BARs are exposed as simple-buses through which the
+> peripherals can be accessed.
+> 
+> This is not intended to be used as a standalone binding, but should be
+> included by device specific bindings.
 
-> Hi Martin,
->
->
-> On 2024/10/1 4:08, Martin Blumenstingl wrote:
->> [ EXTERNAL EMAIL ]
->>
->> Hello,
->>
->> On Sun, Sep 29, 2024 at 8:10=E2=80=AFAM Chuan Liu via B4 Relay
->> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->>> From: Chuan Liu <chuan.liu@amlogic.com>
->>>
->>> glitch free mux has two clock channels (channel 0 and channel 1) with
->>> the same configuration. When the frequency needs to be changed, the two
->>> channels ping-pong to ensure clock continuity and suppress glitch.
->> You describe the solution to this below:
->>> Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
->>> switchover to suppress glitch.
->> It would be great to have this change in a separate patch.
->> The clocks to which you're adding CLK_SET_RATE_GATE aren't switched at
->> runtime in mainline kernels (at least I think so).
->
->
-> Okay, I will separate it into two patches and submit it in the next versi=
-on.
->
->
->>
->>> Channel 0 of glitch free mux is not only the clock source for the mux,
->>> but also the working clock for glitch free mux. Therefore, when glitch
->>> free mux switches, it is necessary to ensure that channel 0 has a clock
->>> input, otherwise glitch free mux will not work and cannot switch to the
->>> target channel.
->> [...]
->>> glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that channel 0
->>> has clock input when switching channels.
->> This describes a second problem. I think it's best to have this in a
->> separate commit/patch.
->> Also you're updating some mali clocks (e.g. on G12 and GX) but not all
->> of them (Meson8b for example is missing).
->
->
-> Yes, M8 missed it, I will complete it in the next version.
->
->
->>
->> I still have some questions to the CLK_OPS_PARENT_ENABLE approach -
->> please share your findings on this.
->>
->> There's multiple clocks involved in a glitch-free mux hierarchy:
->> - a number of clock inputs (e.g. fclk, xtal, ...)
->> - two muxes (one for every channel of the glitch-free mux)
->> - two dividers (one for every channel of the glitch-free mux)
->> - two gates (one for every channel of the glitch-free mux)
->> - the glitch-free mux
->>
->> When switching from channel 0 (which is active and enabled) CCF
->> (common clock framework) will:
->> a) on channel 1:
->> - find the best input clock
->> - choose the best input clock in the mux
->> - set the divider
->> - enable the gate
->> b) switch the glitch-free mux
->> c) on channel 2:
->> - disable the gate
->>
->> To me it's not clear at which level the problem occurs (glitch-free
->> mux, gate, divider, mux, input clock).
->> Also I don't understand why enabling the clocks with
->> CLK_OPS_PARENT_ENABLE solves any problem since CCF is doing things
->> automatically for us.
->> Can you please explain (preferably with an example) what problem is
->> solved with this approach?
->
->
-> If CLK_OPS_PARENT_ENABLE is configured in mux, 'new_parent' and
-> 'old_parent' will be enabled first when __clk_set_parent_before() is
-> called. And disable them at __clk_set_parent_after(). Our glitch free
-> only has two clock sources, so adding this flag ensures that both
-> channels 0 and 1 are enabled when mux switches.
->
-> In fact, we just need to make sure that channel 0 is enabled. The
-> purpose of CLK_OPS_PARENT_ENABLE may not be to solve our situation,
-> but adding this flag does solve our current problem.
+It still has to be tested before posting... Mailing list is not a
+testing service. My and Rob's machines are not a testing service.
 
-This is last point is important.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> new file mode 100644
+> index 000000000000..9d7a784b866a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common properties for PCI MFD endpoints with peripherals addressable from BARs.
 
-It is OK to use a side effect of CLK_OPS_PARENT_ENABLE but it needs to
-be documented somehow, so what really matters is still known 2y from now.
+Drop full stop and capitalize it.
 
-Make sure the information appears in the code comments at least once.
+> +
+> +maintainers:
+> +  - Andrea della Porta  <andrea.porta@suse.com>
+> +
+> +description:
+> +  Define a generic node representing a PCI endpoint which contains several sub-
+> +  peripherals. The peripherals can be accessed through one or more BARs.
+> +  This common schema is intended to be referenced from device tree bindings, and
+> +  does not represent a device tree binding by itself.
+> +
+> +properties:
+> +  "#address-cells":
 
->
->
->>
->> Last but not least: if we're running into bugs when
->> CLK_OPS_PARENT_ENABLE is missing then that patch should carry a Fixes
->> tag.
->
->
-> Thanks for the heads-up. I'll keep an eye on it in the next version.
->
->
->>
->> Best regards,
->> Martin
+Use consistent quotes, either ' or ".
 
---=20
-Jerome
+Best regards,
+Krzysztof
+
