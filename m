@@ -1,201 +1,143 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666F81DED79;
-	Tue,  8 Oct 2024 12:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060431D12EA;
+	Tue,  8 Oct 2024 12:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728389971; cv=none; b=DG2qvl6QeuF7QfAzNWzjVj4BlsPALSeiBUBgIKzrTThYakO7hiXm9AjrlITYnxhgeUDCqayb5kVITalkjwuLKNpecH8qNxIMr6qUbkEvcg2GjjJjMs1Ap45gRpaa6PDlbwOuWI7VO8X2i54jshNSi58iEv8iDO9+cfiE2qpYuo8=
+	t=1728390000; cv=none; b=Yo8v49aqsvkjsAYoxp+QWY0GkXWEsPgyOdhQw7ezK0qsGlTrmHRErUaAdJztUEdwamusQrY2RevcV1UlBwPoxIWVojz5du+fVxyACY3M+6hvCh4e+hBTHaagn20QuTuKD5TC8oFv4k7/hwhXnkyQz3FSibvzDFA0DsHpdACZTog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728389971; c=relaxed/simple;
-	bh=Uw4dzTmVENShSMMqucDbgPz8pkSnOLY/jsoubkZkZ/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YYsW6Qj8mAxD9ablaE9LbslmEmoJThHzy/IQA8CME1L/dAFCJ6NRUgkLeY/zu/cR+XCFymmh1eQ3yOTZ2xKI3ykR+cjlXra2E6zItHrmA4iLegchj7W/Zea36+M7rcq62Vo6bz3vwSvZFs6GE/Hszykv+/3QeG4wYXj9wNqyLrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQOVeAYX; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728390000; c=relaxed/simple;
+	bh=c4BHYJvWUQYE6LoO0flq5esmA5WZr5DYIqfhtUFQetw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=glyL4FDNfOJy42jS/MqVcZELZIJGi8l5MlS54xnJVHDC932CNMycMmb+HX9LwqVngY4+P+XTeGfzY7+/LN4n/8U0EACX6NVeg+RqcwFiw2srvP6vUxzymAuWyApmSB4VUitpsE87h2Sa9UMZU5y2gIFMiYrm4ekoMlRu2UQRtTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=pwUIxftX; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQOVeAYX"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e29522f0f1so94616a91.0;
-        Tue, 08 Oct 2024 05:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728389969; x=1728994769; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UQdTwVLISuxQ026dh7noBg5OAHYhExXify6BxUSEIb8=;
-        b=iQOVeAYX/M2Nc2RJ8A6wR9fV+eQ3oZTkgfbBoRwsbXtgZfuajvVWrpZX3rJxMIgjnh
-         9vu02aaee/+7CzBidSZfd7/TMeikNsoEQXetoUEn6SI/OsH0f+g8pwMGTc459hrMjwBS
-         0ZZ6nuEEKGCyFWp2XrKEABezbhdxH+MPHIWnZXvVnsw/w6fW90cKfJlKXAe87On50whQ
-         0O0qEBqu0eu94xZkgRhZakFYTZ8YewgWLMPqu2Jy3vowxBNkGAECF3E+LgvLg8LTjzsu
-         i6jzGFnh82sCEZK3CcbnvPq0QeXnefd3ou3lFYWuRK/BSACjfPtIA5xwWS3zDCZQsQ5n
-         WDOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728389969; x=1728994769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UQdTwVLISuxQ026dh7noBg5OAHYhExXify6BxUSEIb8=;
-        b=xF7USZK7/+E5aJ3X/yAMcTzVo8zSzYybbwz67iqJVnbJTcaVCU/x/9t1ZVS1DRqo/p
-         8N1aq0VU9VmqodZXxJIVUibshvIery6fhXM4gX937aiXW/lczo/h+/nUX6BYjoEVg/eR
-         LxmyNOLAiYkGXi08ZWLyp1mZLsL0gMNbqUNxMK76q6rYdNi7ETtWQW2j+wW/J/Nwp8Ao
-         P/JNyi4/UpIygrQAZQ8uAY/CHghEAR3MZsYBssIXn9PLJ3gfSjkxLB+uSwlEls5cvuPA
-         ScM4HAeso5UssONPUO63VTplmaWwhMkf/gnlhewwFeFGYfVjlzxgeZTeQxMIhD3VH1UU
-         Xe+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8CM1IZWgpuEqKy3T7xQ0aknw/R+cOYaSKX1S9+YlP1Josc5U4jcwlKhATRt9CgI6aFjaifAX3dKy88+s5@vger.kernel.org, AJvYcCXEIXhy8vrPePT2fIbOK5gM7+IXXOWXUBzul2FVgRjl4AY6CugdMelxyhjiheJVkEVDVk1QQ1jyfAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf+xpd6L+h3vaG0rKeXnV86kjRS9ot1u6BpAKFu6eRtx9p/0/e
-	AXsr8LQaxXpcetckaZe5x8qME667tnZm7+wBMInPzR8Hw+EIH5EAbvdDEvgVPxrl6LBmgyxmcWr
-	CYe0E6SWHNSZdO6qvFOhciV68El4=
-X-Google-Smtp-Source: AGHT+IGaascgSJ4sxny2mNYDiWLUEeHMIw4kXi/HuNGX5ddTIEdo3ya8zf1Aytc4EHlwRwMJMw1L6M1mlldErYSVDBw=
-X-Received: by 2002:a17:90b:33cc:b0:2d8:53f8:77c0 with SMTP id
- 98e67ed59e1d1-2e1e620dc45mr18482390a91.7.1728389968507; Tue, 08 Oct 2024
- 05:19:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="pwUIxftX"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id DB6DC23E90;
+	Tue,  8 Oct 2024 14:19:54 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id gQSHw2jR1W4o; Tue,  8 Oct 2024 14:19:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
+	s=mail; t=1728389994;
+	bh=c4BHYJvWUQYE6LoO0flq5esmA5WZr5DYIqfhtUFQetw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=pwUIxftXm7MWh9BUVzD7w3V5AZssvvyCB/LCjMXmhQpoFxbpC1fqzXsSY3LOobAaJ
+	 TtvMVdXwWNhusrnF8Nw20h0RrDQJgEN0twlzzf2rT6Vkr98vKBhfGwTersI5Ecqlj3
+	 ggcS7NcEtE+KiBRN9+62To5Uuw8CjKmiPbGqmY/WcFjKxKLMs6eoH48m+PDGbOhmXe
+	 4IXrO7bJ3kWcSuHSAKkpJfPQ/LfxpJ0jkaoRGNBy5oFUp/iSJ2TuLkFFy/udYu6S66
+	 fjt9/P0srikA2DZJkNqX3pcw4hjwRGPtQ3AN4X2/2flFDPQctlEC2z1M11CLHxvvVp
+	 CrXGeplWmJn9Q==
+From: Karl Chan <exxxxkc@getgoogleoff.me>
+To: linus.walleij@linaro.org
+Cc: andersson@kernel.org,
+	arnd@arndb.de,
+	catalin.marinas@arm.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	exxxxkc@getgoogleoff.me,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com,
+	robh@kernel.org,
+	sboyd@kernel.org,
+	will@kernel.org
+Subject: Re: Re: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3 (linksys-jamaica)
+Date: Tue,  8 Oct 2024 20:18:19 +0800
+Message-ID: <20241008121819.16242-1-exxxxkc@getgoogleoff.me>
+In-Reply-To: <CACRpkdaPBH1CE0YXGMKUDQWyJQTZvkYgnW=UTO2uxWmBvecu9g@mail.gmail.com>
+References: <CACRpkdaPBH1CE0YXGMKUDQWyJQTZvkYgnW=UTO2uxWmBvecu9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007132555.GA53279@francesco-nb> <PAXPR04MB84596824B2DFDF20E005F173887E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <PAXPR04MB845980EE67F1B99C9AC9D0DF887E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB845980EE67F1B99C9AC9D0DF887E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Tue, 8 Oct 2024 07:19:15 -0500
-Message-ID: <CAHCN7xLzYVBB=+EkD14xYqGJDR6BRUO7hxBZGOtvzCFLp_kXdg@mail.gmail.com>
-Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on v6.12
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, "S.J. Wang" <shengjiu.wang@nxp.com>, 
-	"abelvesa@kernel.org" <abelvesa@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"festevam@gmail.com" <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, 
-	"shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Mark Brown <broonie@kernel.org>, 
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 3:51=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
->
-> > Subject: RE: clk_imx8mp_audiomix_runtime_resume Kernel panic
-> > regression on v6.12
-> >
-> > > Subject: clk_imx8mp_audiomix_runtime_resume Kernel panic
-> > regression on
-> > > v6.12
-> > >
-> > >
-> > > Is it now back?
-> >
-> > With tag: next-20240930, I need see this issue on i.MX8MP-EVK board.
->
-> Sorry, typo. I not see issue on my board.
-
-I tested RC1 on the Beacon board and didn't see any issues, but I can
-try testing linux-next when I have some time.
-
-adam
->
-> Regards,
-> Peng.
->
-> >
-> > Regards,
-> > Peng.
-> >
-> > >
-> > > [    4.012850] SError Interrupt on CPU2, code 0x00000000bf000002 -
-> > -
-> > > SError
-> > > [    4.012862] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not
-> > tainted
-> > > 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
-> > > [    4.012869] Hardware name: Toradex Verdin iMX8M Plus WB on
-> > > Dahlia Board (DT)
-> > > [    4.012872] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -
-> > SSBS
-> > > BTYPE=3D--)
-> > > [    4.012877] pc :
-> > clk_imx8mp_audiomix_runtime_resume+0x38/0x48
-> > > [    4.012891] lr : pm_generic_runtime_resume+0x2c/0x44
-> > > [    4.012897] sp : ffff8000821cb740
-> > > [    4.012899] x29: ffff8000821cb740 x28: ffff8000793c48d8 x27:
-> > > ffff8000793c48c0
-> > > [    4.012908] x26: ffff0000c0ec90f4 x25: 0000000000000000 x24:
-> > > 0000000000000000
-> > > [    4.012916] x23: 0000000000000000 x22: ffff0000c1bef180 x21:
-> > > 0000000000000000
-> > > [    4.012923] x20: ffff0000c0a73000 x19: ffff0000c0ecbc10 x18:
-> > > ffffffffffffffff
-> > > [    4.012930] x17: 3030303064623033 x16: 2f7375622e303030 x15:
-> > > 756e285472656c6c
-> > > [    4.012937] x14: ffff800081267458 x13: 6d692c6c73664361 x12:
-> > > 0000000000000000
-> > > [    4.012944] x11: 00353333333d4d55 x10: ffff8000818020ae x9 :
-> > > 0000000000000008
-> > > [    4.012951] x8 : 0000000000000008 x7 : 0000000000000000 x6 :
-> > > ffff0000c5bf2080
-> > > [    4.012958] x5 : ffff800081f10000 x4 : ffff800080c182e8 x3 :
-> > > ffff0000c0ee7088
-> > > [    4.012965] x2 : 0000000000000000 x1 : 0000000000000004 x0 :
-> > > ffff800081f10300
-> > > [    4.012973] Kernel panic - not syncing: Asynchronous SError
-> > Interrupt
-> > > [    4.012976] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not
-> > tainted
-> > > 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
-> > > [    4.012982] Hardware name: Toradex Verdin iMX8M Plus WB on
-> > > Dahlia Board (DT)
-> > > [    4.012985] Call trace:
-> > > [    4.012988]  dump_backtrace+0xd0/0x120
-> > > [    4.012998]  show_stack+0x18/0x24
-> > > [    4.013005]  dump_stack_lvl+0x60/0x80
-> > > [    4.013013]  dump_stack+0x18/0x24
-> > > [    4.013019]  panic+0x168/0x350
-> > > [    4.013025]  add_taint+0x0/0xbc
-> > > [    4.013029]  arm64_serror_panic+0x64/0x70
-> > > [    4.013034]  do_serror+0x3c/0x70
-> > > [    4.013039]  el1h_64_error_handler+0x30/0x54
-> > > [    4.013046]  el1h_64_error+0x64/0x68
-> > > [    4.013050]  clk_imx8mp_audiomix_runtime_resume+0x38/0x48
-> > > [    4.013059]  __genpd_runtime_resume+0x30/0x80
-> > > [    4.013066]  genpd_runtime_resume+0x114/0x29c
-> > > [    4.013073]  __rpm_callback+0x48/0x1e0
-> > > [    4.013079]  rpm_callback+0x68/0x80
-> > > [    4.013084]  rpm_resume+0x3bc/0x6a0
-> > > [    4.013089]  __pm_runtime_resume+0x50/0x9c
-> > > [    4.013095]  pm_runtime_get_suppliers+0x60/0x8c
-> > > [    4.013101]  __driver_probe_device+0x4c/0x14c
-> > > [    4.013108]  driver_probe_device+0x3c/0x120
-> > > [    4.013114]  __driver_attach+0xc4/0x200
-> > > [    4.013119]  bus_for_each_dev+0x7c/0xe0
-> > > [    4.013125]  driver_attach+0x24/0x30
-> > > [    4.013130]  bus_add_driver+0x110/0x240
-> > > [    4.013135]  driver_register+0x68/0x124
-> > > [    4.013142]  __platform_driver_register+0x24/0x30
-> > > [    4.013149]  sdma_driver_init+0x20/0x1000 [imx_sdma]
-> > > [    4.013163]  do_one_initcall+0x60/0x1e0
-> > > [    4.013168]  do_init_module+0x5c/0x21c
-> > > [    4.013175]  load_module+0x1a98/0x205c
-> > > [    4.013181]  init_module_from_file+0x88/0xd4
-> > > [    4.013187]  __arm64_sys_finit_module+0x258/0x350
-> > > [    4.013194]  invoke_syscall.constprop.0+0x50/0xe0
-> > > [    4.013202]  do_el0_svc+0xa8/0xe0
-> > > [    4.013208]  el0_svc+0x3c/0x140
-> > > [    4.013215]  el0t_64_sync_handler+0x120/0x12c
-> > > [    4.013222]  el0t_64_sync+0x190/0x194
-> > > [    4.013228] SMP: stopping secondary CPUs
-> > > [    4.013237] Kernel Offset: disabled
-> > > [    4.013239] CPU features: 0x00,00000000,00200000,4200420b
-> > > [    4.013243] Memory Limit: none
-> > > [    4.316721] ---[ end Kernel panic - not syncing: Asynchronous SErr=
-or
-> > > Interrupt ]---
-> > >
-> > >
-> > > Francesco
->
+=0D
+=0D
+I found a uboot for ipq5018 qcom reference boards https://git.codelinaro.or=
+g/clo/qsdk/oss/boot/u-boot-2016 .Considering my router is quite similar to =
+one of those boards so the uboot should workon EA9350 i think?=0D
+=0D
+Let me compile and try to chainload it from the stock uboot.(Btw I have nev=
+er tried chainloading on qcom platform but i did try that on amlogic platfo=
+rm.)=0D
+=0D
+=0D
+U-Boot 2016.01 (Dec 06 2021 - 10:08:47 +0800)=0D
+=0D
+CBT U-Boot ver: 3.2.08  ([IPQ5018].[SPF11.3].[CSU2])=0D
+=0D
+DRAM:  smem ram ptable found: ver: 1 len: 4=0D
+512 MiB=0D
+NAND:  QPIC controller support serial NAND=0D
+ID =3D 22c822c8=0D
+Vendor =3D c8=0D
+Device =3D 22=0D
+Serial Nand Device Found With ID : 0xc8 0x22=0D
+Serial NAND device Manufacturer:GD5F2GQ5REYIH=0D
+Device Size:256 MiB, Page size:2048, Spare Size:64, ECC:4-bit=0D
+SF: Unsupported flash IDs: manuf 00, jedec 0000, ext_jedec 0000=0D
+ipq_spi: SPI Flash not found (bus/cs/speed/mode) =3D (0/0/48000000/0)=0D
+256 MiB=0D
+MMC:   sdhci: Node Not found, skipping initialization=0D
+=0D
+PCI Link Intialized=0D
+PCI1 is not defined in the device tree=0D
+In:    serial@78AF000=0D
+Out:   serial@78AF000=0D
+Err:   serial@78AF000=0D
+machid: 8040001=0D
+eth0 MAC Address from ART is not valid=0D
+eth1 MAC Address from ART is not valid=0D
+=0D
+Updating boot_count ... done=0D
+=0D
+Hit any key to stop autoboot:  3 =08=08=08 0 =0D
+=0D
+Net:   cmbblk is stable 5=0D
+MAC1 addr:0:11:22:33:44:55=0D
+athrs17_reg_init: complete=0D
+S17c init  done=0D
+eth0=0D
+Warning: eth0 MAC addresses don't match:=0D
+Address in SROM is         00:11:22:33:44:55=0D
+Address in environment is  00:03:7f:ba:db:ad=0D
+=0D
+IPQ5018# =0D=0D
+IPQ5018# =0D=0D
+IPQ5018# usb start=0D=0D
+starting USB...=0D
+USB0:   Register 2000140 NbrPorts 2=0D
+Starting the controller=0D
+USB XHCI 1.10=0D
+scanning bus 0 for devices... 2 USB Device(s) found=0D
+IPQ5018# fatload usb 0 ${loadaddr} u-boot.bin=0D=0D
+reading u-boot.bin=0D
+419816 bytes read in 261 ms (1.5 MiB/s)=0D
+IPQ5018# go ${loadaddr}=0D=0D
+## Starting application at 0x44000000 ...=0D
+prefetch abort=0D
+pc : [<44000004>]	   lr : [<4a92891b>]=0D
+reloc pc : [<44000004>]	   lr : [<4a92891b>]=0D
+sp : 4a822840  ip : 0000001c	 fp : 00000002=0D
+r10: 00000000  r9 : 4a822ea0	 r8 : 4a97d300=0D
+r7 : 4a9288f1  r6 : 00000002	 r5 : 44000000  r4 : 4a828b74=0D
+r3 : 44000000  r2 : 4a828b74	 r1 : 4a828b74  r0 : 00000001=0D
+Flags: nzCv  IRQs off  FIQs off  Mode SVC_32=0D
+Resetting CPU ...=0D
+=0D
+resetting ...=0D
+=0D
+=0D
