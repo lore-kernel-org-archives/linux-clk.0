@@ -1,61 +1,33 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C961E2841
-	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 07:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6141DD54F;
+	Tue,  8 Oct 2024 08:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728374019; cv=none; b=VILq4LBI+6yg/JGMShrcKrE7IwJ8cBkRsfbcOPKvuHDV2iJn+Qs/HMz4O9Qm5d20sXj5SrTeFR5pyvzeWyRR/WCty+papxYNlv6vbSM1XAleQG1QzXjZVcc4ISoYI2Xw32xN774FOEHY8yJcFDQqVy2h88CgyMhYvDgFmkKDU9A=
+	t=1728375637; cv=none; b=TU3ljBtI5ft3FhYCHFAEFaX/rGAdt8c5KX9raR2RHz2JyZsWmmVX83TUYlp2mejHtnsXo9YfOKNbvcNuzqht34pfsA1CVw/gev1VHI6iGEwePyEmB3mIVdyvgscW+0z3KP6LTV8Fw5a35+6HTHt8VypXphihvBmlIFdmPRJj4Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728374019; c=relaxed/simple;
-	bh=0XcNuEdnsJcnQuOsxWKes48KwsFqtGg7x5clR6DMIHc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hRYQlZahnET3VODrg/xyyasrQmi1xUxCbVCkz8zOloiBSmxV5pClgQcwsE1kGPFzDZlD8HrSJwcKCkYhQa0Tve4UMQq5QohbyEJaLLXkGmm8HHx7V10pR8Vp1PaM8cnTi/SKbln6ivRtDeflx66cNdPoI/zMX9WVhH9pOK+chc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PKQzdEE8; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728375637; c=relaxed/simple;
+	bh=xCCK6RUOuxARbyEGhETA3FiKI88jMUI0oByK8lc/T6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nZa+j23biGux5NJcqFAGo14AFKozy3+kT+kNlCLJQOYv9ZbYQl1YF86VzB2QP0Ma0yrnZYBHSOHpSO2QCxl1dOnJjDXJZ9F/oSJp0KQWb0j6HtW9spjUvZenF9xnxLoFIZnxj4j1bw4d0DeB7VO1SSHkblzOSr3HQK/vShCI+so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adDnCqNc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKQzdEE8"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbb08a1a5so54455285e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2024 00:53:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728374015; x=1728978815; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6RX7qopexhbVavnycdQHirFwBWrFUkZRiDzEyQ/1rf4=;
-        b=PKQzdEE8v5CU7yTYSrq8it/tw3zAMSvnjn5dmL+X+rv4aaKM18XmUo6gZBwQOOnNZO
-         t5FOukHChAVrIMCXUiYM42PbOLfJ31lsaUvtOAzl8uw0gMj0SCmQ2z21XrAeI9e01lqK
-         yl09i3CRfaQxqGF1bZgzPlNe9Lv/XpjkXnAnNAPeNn4WpfqiecbeTwCmhx35j2D9qE6g
-         Xgby7lA2/uOeRo8NOY6FcKyeU4jh3EKUt3WaKo6ClbNBnzzhMlka9MXzwzEOtBNvrIi5
-         +InwzdU0eDMi6sPwEa67SZPWctlwbIZel1o0TGyR3cYKCwqUtB+G7ShbJ7Xfu21NSMTM
-         D10A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728374015; x=1728978815;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6RX7qopexhbVavnycdQHirFwBWrFUkZRiDzEyQ/1rf4=;
-        b=s5/+V7Vmkfishtawi1aZ3gg9uhqw2jFLOAylCD2T/YDkEdTCuaqOjKolJc8pUsAhWL
-         9WEIidtNCtmEDQblBZzE+eXWYtkdHilcjRvsi68qHqBYBLlEo14mRJlwdVYab3fafUh+
-         sGGMSuCGToCQgSqBNAOrrqsYBG8aNwTwHHXWByoh0VjMMV/mR3GPwmdiIaUqVilWuI0v
-         tMxXW3f+aCo7V1hmBIOeWYCSOLtgQ8lY/+1NE3l5DOWwSg2zcQjGl8gauY0XRIAP5I3s
-         G88Cc8JWlx0iL1CLwkum3e0hswGzqEkPaItpcnAb2UUognMzuvaGnUAmXuYNjxiewj3c
-         t3Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrd4D4wCeeLlfv6CgRXjvaH93tnHDd2VWVO+TqPLh5F8BdSVMMIzfa8l6XxYztrk2NBLe26OTIoKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXYGSQS1AnN5VxQJlUJi3U6q2tnbJRHWNRqe8hbfemLNj2oacT
-	LUSkuSQCCk3j4WW/eUzaMq/NjSS03ub4K/ilOGcpXjLNUhYLHeUCGZa6TSAZkcE=
-X-Google-Smtp-Source: AGHT+IGFHv5Ry+zY2n31M2dmAbybEJIH7Gv8mL9ahXAy4Ch9T/yTPyxZKVo+lTwb3AEZenLkHlRfNA==
-X-Received: by 2002:a05:600c:19c9:b0:428:10d7:a4b1 with SMTP id 5b1f17b1804b1-42f85ae92f4mr110971835e9.25.1728374014302;
-        Tue, 08 Oct 2024 00:53:34 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:4595:23ef:4ba2:2d19? ([2a01:e0a:982:cbb0:4595:23ef:4ba2:2d19])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f89ed957asm100379075e9.44.2024.10.08.00.53.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 00:53:33 -0700 (PDT)
-Message-ID: <f9fc8247-331e-4cdb-992e-bc2f196aa12c@linaro.org>
-Date: Tue, 8 Oct 2024 09:53:33 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adDnCqNc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 239D3C4CEC7;
+	Tue,  8 Oct 2024 08:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728375637;
+	bh=xCCK6RUOuxARbyEGhETA3FiKI88jMUI0oByK8lc/T6M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=adDnCqNcZGwjB6MO8+9wRFVHl/JvqhqZJ7QEPucNZEqfqi7JV+kOP9Fiy09DUY/eg
+	 eXVn+sNyGOaRuvoUyLQzVmfRy4CoJHNY18PYGgyclHxYbccewhTk7FgjpfRxpYcglc
+	 7zA2CS/JMqobi+UlOf7MWZVM4/6MlC7+gy5v6ulehOV1yuY/3HInPCzZlGMSwd51ZO
+	 oJqoDyrNH1enX2ILtDZJ7CVenu/5Fc+vYm2wJAHKnLlLiSna/1FrhIvhbb2s7K/di5
+	 aBle26gb6A3tIyArC4x9W3ZwzHJbeyAqthzNrmfYSgc/4o4Q0Q5ez/QzKqnpfFJQ7X
+	 JzQ3rsFMkXGIQ==
+Message-ID: <7bce31c0-8c74-4d65-812f-01951a0d75d1@kernel.org>
+Date: Tue, 8 Oct 2024 10:20:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,245 +35,207 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] clk: amlogic: axg-audio: use the auxiliary reset
- driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241008-meson-clk-rst-aux-v2-1-682ab9151f4f@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241008-meson-clk-rst-aux-v2-1-682ab9151f4f@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
+ spectrum clocking
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+ <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+ <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
+ <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
+ <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org>
+ <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
+ <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org>
+ <CABGWkvqXZ+YAvo-AtUy+Ftdu0xxXKuhOwcSTwO5Fv6D3yzttNg@mail.gmail.com>
+ <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org>
+ <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 08/10/2024 09:48, Jerome Brunet wrote:
-> Remove the implementation of the reset driver in axg audio
-> clock driver and migrate to the one provided by the reset framework
-> on the auxiliary bus
+On 07/10/2024 17:02, Dario Binacchi wrote:
+> On Sun, Oct 6, 2024 at 3:13 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 05/10/2024 10:57, Dario Binacchi wrote:
+>>> On Thu, Oct 3, 2024 at 12:46 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On 01/10/2024 08:29, Dario Binacchi wrote:
+>>>>> On Mon, Sep 30, 2024 at 8:45 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>>>
+>>>>>> On 29/09/2024 22:00, Dario Binacchi wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> +  properties:
+>>>>>>>>> +    compatible:
+>>>>>>>>> +      contains:
+>>>>>>>>> +        enum:
+>>>>>>>>> +          - fsl,imx8mm-anatop
+>>>>>>>>> +
+>>>>>>>>> +then:
+>>>>>>>>> +  properties:
+>>>>>>>>> +    fsl,ssc-clocks:
+>>>>>>>>
+>>>>>>>> Nope. Properties must be defined in top-level.
+>>>>>>>>
+>>>>>>>>> +      $ref: /schemas/types.yaml#/definitions/phandle-array
+>>>>>>>>> +      description:
+>>>>>>>>> +        The phandles to the PLLs with spread spectrum clock generation
+>>>>>>>>> +        hardware capability.
+>>>>>>>>
+>>>>>>>> These should be clocks.
+>>>>>>>
+>>>>>>> Sorry, but I can't understand what you're asking me.
+>>>>>>> Could you kindly explain it to me in more detail?
+>>>>>>
+>>>>>> You added new property instead of using existing one for this purpose:
+>>>>>> 'clocks'.
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Best regards,
+>>>>>> Krzysztof
+>>>>>>
+>>>>>
+>>>>> I added this new property specifically for managing spread-spectrum.
+>>>>> Indeed, not all clocks/PLLs
+>>>>> managed by the node/peripheral support spread-spectrum, and the added
+>>>>> properties specify
+>>>>> parameters for enabling and tuning SSC for each individual PLL based
+>>>>> on the index of each list.
+>>>>> If I were to use the 'clocks' property and add a clock to this list
+>>>>> that does not support SSC, IMHO
+>>>>> the pairings would be less clear.
+>>>>
+>>>> You duplicate property with argument "pairings shall match". Well, I am
+>>>> not happy with the duplication. Clocks have specific order, thus it is
+>>>> explicit which one needs tuning. Your other properties can match them as
+>>>> well, just index from clocks is offset...
+>>>
+>>> Just to check if I understood correctly what you are suggesting before
+>>> submitting version 3 of the patch.
+>>> Something, for example, like:
+>>>
+>>> clocks = <&clk, IMX8MP_AUDIO_PLL1>,  <&clk, IMX8MP_AUDIO_PLL2>, <&clk
+>>> IMX8MP_VIDEO_PLL1>;
+>>> fsl,ssc-modfreq-hz = <0, 3517>, <2, 6818>;
+>>
+>> Hm, what is 0? If clock index, then no, it's redundant. The first item
+>> in cannot point to other clock.
+>>
+>> Also, what exactly are you setting here
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
-> Change in v2:
-> * Rebase on the applied version of amlogic auxiliary reset driver
-> * Link to v1: https://lore.kernel.org/r/20240719094910.3986450-1-jbrunet@baylibre.com
-> ---
->   drivers/clk/meson/Kconfig     |   1 +
->   drivers/clk/meson/axg-audio.c | 109 ++++--------------------------------------
->   2 files changed, 10 insertions(+), 100 deletions(-)
+> I am enabling and configuring the spread spectrum.
 > 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 78f648c9c97d..7cb21fc223b0 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -106,6 +106,7 @@ config COMMON_CLK_AXG_AUDIO
->   	select COMMON_CLK_MESON_SCLK_DIV
->   	select COMMON_CLK_MESON_CLKC_UTILS
->   	select REGMAP_MMIO
-> +	imply RESET_MESON_AUX
->   	help
->   	  Support for the audio clock controller on AmLogic A113D devices,
->   	  aka axg, Say Y if you want audio subsystem to work.
-> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-> index beda86349389..7714bde5ffc0 100644
-> --- a/drivers/clk/meson/axg-audio.c
-> +++ b/drivers/clk/meson/axg-audio.c
-> @@ -15,6 +15,8 @@
->   #include <linux/reset-controller.h>
->   #include <linux/slab.h>
->   
-> +#include <soc/amlogic/reset-meson-aux.h>
-> +
->   #include "meson-clkc-utils.h"
->   #include "axg-audio.h"
->   #include "clk-regmap.h"
-> @@ -1678,84 +1680,6 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
->   	&sm1_earcrx_dmac_clk,
->   };
->   
-> -struct axg_audio_reset_data {
-> -	struct reset_controller_dev rstc;
-> -	struct regmap *map;
-> -	unsigned int offset;
-> -};
-> -
-> -static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
-> -					unsigned long id,
-> -					unsigned int *reg,
-> -					unsigned int *bit)
-> -{
-> -	unsigned int stride = regmap_get_reg_stride(rst->map);
-> -
-> -	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
-> -	*reg += rst->offset;
-> -	*bit = id % (stride * BITS_PER_BYTE);
-> -}
-> -
-> -static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
-> -				unsigned long id, bool assert)
-> -{
-> -	struct axg_audio_reset_data *rst =
-> -		container_of(rcdev, struct axg_audio_reset_data, rstc);
-> -	unsigned int offset, bit;
-> -
-> -	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-> -
-> -	regmap_update_bits(rst->map, offset, BIT(bit),
-> -			assert ? BIT(bit) : 0);
-> -
-> -	return 0;
-> -}
-> -
-> -static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
-> -				unsigned long id)
-> -{
-> -	struct axg_audio_reset_data *rst =
-> -		container_of(rcdev, struct axg_audio_reset_data, rstc);
-> -	unsigned int val, offset, bit;
-> -
-> -	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-> -
-> -	regmap_read(rst->map, offset, &val);
-> -
-> -	return !!(val & BIT(bit));
-> -}
-> -
-> -static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
-> -				unsigned long id)
-> -{
-> -	return axg_audio_reset_update(rcdev, id, true);
-> -}
-> -
-> -static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
-> -				unsigned long id)
-> -{
-> -	return axg_audio_reset_update(rcdev, id, false);
-> -}
-> -
-> -static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
-> -				unsigned long id)
-> -{
-> -	int ret;
-> -
-> -	ret = axg_audio_reset_assert(rcdev, id);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return axg_audio_reset_deassert(rcdev, id);
-> -}
-> -
-> -static const struct reset_control_ops axg_audio_rstc_ops = {
-> -	.assert = axg_audio_reset_assert,
-> -	.deassert = axg_audio_reset_deassert,
-> -	.reset = axg_audio_reset_toggle,
-> -	.status = axg_audio_reset_status,
-> -};
-> -
->   static struct regmap_config axg_audio_regmap_cfg = {
->   	.reg_bits	= 32,
->   	.val_bits	= 32,
-> @@ -1766,16 +1690,14 @@ struct audioclk_data {
->   	struct clk_regmap *const *regmap_clks;
->   	unsigned int regmap_clk_num;
->   	struct meson_clk_hw_data hw_clks;
-> -	unsigned int reset_offset;
-> -	unsigned int reset_num;
->   	unsigned int max_register;
-> +	const char *rst_drvname;
->   };
->   
->   static int axg_audio_clkc_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	const struct audioclk_data *data;
-> -	struct axg_audio_reset_data *rst;
->   	struct regmap *map;
->   	void __iomem *regs;
->   	struct clk_hw *hw;
-> @@ -1834,22 +1756,11 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
->   
-> -	/* Stop here if there is no reset */
-> -	if (!data->reset_num)
-> -		return 0;
-> -
-> -	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-> -	if (!rst)
-> -		return -ENOMEM;
-> -
-> -	rst->map = map;
-> -	rst->offset = data->reset_offset;
-> -	rst->rstc.nr_resets = data->reset_num;
-> -	rst->rstc.ops = &axg_audio_rstc_ops;
-> -	rst->rstc.of_node = dev->of_node;
-> -	rst->rstc.owner = THIS_MODULE;
-> +	/* Register auxiliary reset driver when applicable */
-> +	if (data->rst_drvname)
-> +		ret = devm_meson_rst_aux_register(dev, map, data->rst_drvname);
->   
-> -	return devm_reset_controller_register(dev, &rst->rstc);
-> +	return ret;
->   }
->   
->   static const struct audioclk_data axg_audioclk_data = {
-> @@ -1869,9 +1780,8 @@ static const struct audioclk_data g12a_audioclk_data = {
->   		.hws = g12a_audio_hw_clks,
->   		.num = ARRAY_SIZE(g12a_audio_hw_clks),
->   	},
-> -	.reset_offset = AUDIO_SW_RESET,
-> -	.reset_num = 26,
->   	.max_register = AUDIO_CLK_SPDIFOUT_B_CTRL,
-> +	.rst_drvname = "rst-g12a",
->   };
->   
->   static const struct audioclk_data sm1_audioclk_data = {
-> @@ -1881,9 +1791,8 @@ static const struct audioclk_data sm1_audioclk_data = {
->   		.hws = sm1_audio_hw_clks,
->   		.num = ARRAY_SIZE(sm1_audio_hw_clks),
->   	},
-> -	.reset_offset = AUDIO_SM1_SW_RESET0,
-> -	.reset_num = 39,
->   	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
-> +	.rst_drvname = "rst-sm1",
->   };
->   
->   static const struct of_device_id clkc_match_table[] = {
+> Normal clock: Without spread spectrum, the clock signal has a fixed and
+> repetitive frequency (e.g., 100 MHz). This frequency generates an
+> electromagnetic
+> signal concentrated on a single frequency, and if strong enough, it can disturb
+> other devices.
 > 
-> ---
-> base-commit: 0e2d37252dd525b117bda4e4e0e6fac178ba569d
-> change-id: 20241008-meson-clk-rst-aux-b118809e53d6
-> 
-> Best regards,
+> Spread spectrum:  With spread spectrum, the clock frequency is
+> slightly "modulated,"
+> meaning it oscillates around a central value. For example, if the base
+> frequency is 100 MHz,
+> the clock might vary between 99.5 MHz and 100.5 MHz in a cyclic manner. This
+> small variation spreads the energy over a wider range of frequencies
+> (from 99.5 to 100.5 MHz),
+> reducing the intensity of the signal at any one frequency.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Sure, so each board will come with its own, different values and you
+will not put into the SoC DTSI?
+
+Where is the DTS? I received only this patch.
+
+> 
+>> and why assigned-clock-rates are
+>> not working?
+> 
+> The traditional clock properties, such as clocks,
+> assigned-clocks-rates, etc retain their usual
+> meaning even when spread spectrum is applied. However, to implement
+> the spread spectrum
+> mechanism in a circuit with a PLL (Phase-Locked Loop), additional
+> specific parameters are
+> introduced to properly configure the frequency modulation:
+> 
+>  - Modulation frequency: i. e. fsl,ssc-modfreq-hz
+>  - Modulation rate: i.e.  fsl,ssc-modrate-percent
+>  - Modulation type:  i. e. fsl,ssc-modmethod (center-spread, down-spread)
+> 
+> Additionally, it should be noted that not all anatop PLLs are equipped
+> with circuitry for spread
+> spectrum, but only a small subset of them. This is the reason why I
+> introduced the property
+> "fsl, ssc-clocks".
+> 
+> This is another commit [1] on enabling spread spectrum that I
+> implemented some time ago for
+> the am335x. The most evident difference is that in that case the node
+> was a clock node and not
+> a clock controller, as in the case of anatop. The parameters are also
+> not exactly the same, but
+> that depends on the platform.
+> 
+> [1] 4a8bc2644ef0cbf8e ("dt-bindings: ti: dpll: add spread spectrum support")
+
+
+OK, I still do not know what "0" was, but the items are fixed, so you
+know exactly which clock you are configuring here.
+
+Best regards,
+Krzysztof
+
