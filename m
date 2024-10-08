@@ -1,159 +1,139 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B405C2256D9
-	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 22:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8778173336;
+	Tue,  8 Oct 2024 23:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728427144; cv=none; b=pN+pmlohPzwaikh+ucA5ji9S35zJBN1ZDJm1Qm/0BbfyIh0I8po07eae0Kg9uQtecThI6Bt1s/SYK8pq3rQmm74h31CpSe3xdsz6dNNhhKG9lGsx+vBsc/4VjBJR4M7dWuxdxEEXGF0sIRwxWvx1GAc2Ujq9uZVAKAqxIaGPqIU=
+	t=1728429124; cv=none; b=dJWnYPv29qXVkAtWl+SOaTKq1UePCpVZu2KTZ4eAu3jwTbqScqRLsrJN20dCOXL8N5j/LAnMHjI1LEXvTIvDCMWBDkLgdFQ9PLWeTnITB34HnvrzrxI7XJ9K/Y6eAHdYruY70rLhbqqFWARmHSl5t3gtWCtOerT8zvCTz3GjYtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728427144; c=relaxed/simple;
-	bh=soNkqk5Z7MS8zG0Vv+pSepZv9b94/acwTkfgSUT1QVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h8/xN9lUm/0j4ZAOhfoAl06yPk0Fw561rivAt0s4bcMbIT9XtsUFmflGi+dKyZNLNkRBZQNSOPDgR3YKjYdb3Zd/q1jDrdsJH3xbzmvCV3GGeG+uejA2uoPYiIjY3EQ+qr46VAVv4doaPRUciQRxbN6F0G/MReYVS+M4qyZ/sRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Ho8P2zPG; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1728429124; c=relaxed/simple;
+	bh=Bki+M28Uxgy/me7xvfPv7pJjxyUy06JPfx4V50qSkoU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=pKcSgRkNAZqIVE90knHhidOfDYxEpbVMGqhf5IdAKEWj1fgt9Eod+9xW5Mdmxl8le9SmnHtEgV1WpkJkDg5wongB/hIfOLGzbTF4Bot9hzqkAGUOGECU6vjf6a4lY5MQiaGGA9z9D+pkZY6zev+JdqT1l67t67ykhs7U/xI9/Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eONwHUSy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Ho8P2zPG"
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 5175688F4B;
-	Wed,  9 Oct 2024 00:38:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728427139;
-	bh=KJKH/WpYHcVDKhYFQkulqQ+jQNo550/ZRk57bNzhqsQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ho8P2zPGsvkWVTq6nno9yUYUNYZAeiKD0pHx3LTu8uLRqwux4wXbpbpuOsVT76RmB
-	 cgrXrgUgyHGXgbtR0HTE/BuE1osAo12f883QukUgk8HMPk5+CnZq9gKKTa8xRPpRDy
-	 aInZNMB0dcY06lGFF2xQsqjbf+nLskckktP9uBvvuefOO5Z5GAYGV/y+CnSSExcZ7Q
-	 IBRy/veAZ2/SRtNpodtdqsJoFPegju8NyeUve0ixY/Jfw6FqUT9E8P9ZeXLkQp3WYI
-	 AVtBX3chfvi5SX6zDorSDh5VbsjewK7Tnyxcejj2xfFb3gqSSseCdWVgWMm/JmEvtU
-	 mBB2Ikbv8Pk+Q==
-From: Marek Vasut <marex@denx.de>
-To: dri-devel@lists.freedesktop.org
-Cc: Marek Vasut <marex@denx.de>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Isaac Scott <isaac.scott@ideasonboard.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Robert Foss <rfoss@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	imx@lists.linux.dev,
-	kernel@dh-electronics.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] drm: bridge: ldb: Configure LDB clock in .mode_set
-Date: Wed,  9 Oct 2024 00:38:20 +0200
-Message-ID: <20241008223846.337162-2-marex@denx.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241008223846.337162-1-marex@denx.de>
-References: <20241008223846.337162-1-marex@denx.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eONwHUSy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47898C4CEC7;
+	Tue,  8 Oct 2024 23:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728429124;
+	bh=Bki+M28Uxgy/me7xvfPv7pJjxyUy06JPfx4V50qSkoU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=eONwHUSy/QglbYsCbdw2Rwy/P6GtWCWP95d3T9XiyozzzzjSkWKtFIRGPqoTYdt6T
+	 a5MVWrbDT3WxfgHTdp2HCkZA5DbWXAgYBWtJ6D28RbhXTAgA/zKWGLLrhl4A1dZZs8
+	 B/QAeWabS7AccKyKwepAUe909Rpk2qfr0sE7sJtdpKqZvnxBIBZLeLmwns0nsDDrUz
+	 i9YX6Np+9iZ8u9HLAudlI6lTqbrCVc9EPz5fZV2dtdPQSD2PinMwxS0S7hLaHUFbKl
+	 wza/yFRmshcoYyi98P/kda2wsf3s/V/NOyNB4FlBvlkyltWCQ5ykKIlXyrrxheuD6f
+	 MYGhWVScEIuqg==
+Message-ID: <ccd372f2754e80d6c01e38a9596bed34.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cb1e0119-6e3e-4fd2-92ea-3fec18f5843d@roeck-us.net>
+References: <20240718210513.3801024-1-sboyd@kernel.org> <ba88a29c-f05e-4ca3-82d1-0a634613caee@roeck-us.net> <4216b852-11a2-41ae-bb01-5f9b578ee41b@roeck-us.net> <879831a8-2039-4cdb-bce2-aefdeb7ab25f@linuxfoundation.org> <da260b77-2ecb-4486-90cb-6db456d381ef@linuxfoundation.org> <f5f1c42d-77c0-48c7-ac52-3d4a3b5c2b47@roeck-us.net> <4a8abb5f501279de7907629f4dd6be24.sboyd@kernel.org> <3e1de608-008c-4439-acd2-647a288dcdc0@roeck-us.net> <cd31493888acc2b64a4986954dfa43ae.sboyd@kernel.org> <cb1e0119-6e3e-4fd2-92ea-3fec18f5843d@roeck-us.net>
+Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with struct clk_parent_data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J.Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Guenter Roeck <linux@roeck-us.net>, Shuah Khan <skhan@linuxfoundation.org>
+Date: Tue, 08 Oct 2024 16:12:02 -0700
+User-Agent: alot/0.10
 
-The LDB serializer clock operate at either x7 or x14 rate of the input
-LCDIFv3 scanout engine clock. Make sure the serializer clock and their
-upstream Video PLL are configured early in .mode_set to the x7 or x14
-rate of pixel clock, before LCDIFv3 .atomic_enable is called which would
-configure the Video PLL to low x1 rate, which is unusable.
+Quoting Guenter Roeck (2024-10-03 21:52:09)
+> On 10/3/24 17:42, Stephen Boyd wrote:
+> >=20
+> > Can you please describe how you run the kunit test? And provide the qemu
+> > command you run to boot arm64 with acpi?
+> >=20
+>=20
+> Example command line:
+>=20
+> qemu-system-aarch64 -M virt -m 512 \
+>       -kernel arch/arm64/boot/Image -no-reboot -nographic \
+>       -snapshot \
+>       -bios /opt/buildbot/rootfs/arm64/../firmware/QEMU_EFI-aarch64.fd \
+>       -device virtio-blk-device,drive=3Dd0 \
+>       -drive file=3Drootfs.ext2,if=3Dnone,id=3Dd0,format=3Draw \
+>       -cpu cortex-a57 -serial stdio -monitor none -no-reboot \
+>       --append "kunit.stats_enabled=3D2 kunit.filter=3Dspeed>slow root=3D=
+/dev/vda rootwait earlycon=3Dpl011,0x9000000 console=3DttyAMA0"
+>=20
+> That works fine for me. Configuration is arm64 defconfig plus various
+> debug and kunit options. I built the efi image myself from sources.
+> The root file system is from buildroot with modified init script.
+> kunit tests are all built into the kernel and run during boot.
 
-With this patch in place, the clock tree is correctly configured. The
-example below is for a 71.1 MHz pixel clock panel, the LDB serializer
-clock is then 497.7 MHz:
+Thanks. I figured out that I was missing enabling CONFIG_ACPI. Here's my
+commandline
 
-video_pll1_ref_sel                      1 1 0  24000000 0 0 50000
-   video_pll1                           1 1 0 497700000 0 0 50000
-      video_pll1_bypass                 1 1 0 497700000 0 0 50000
-         video_pll1_out                 2 2 0 497700000 0 0 50000
-            media_ldb                   1 1 0 497700000 0 0 50000
-               media_ldb_root_clk       1 1 0 497700000 0 0 50000
-            media_disp2_pix             1 1 0  71100000 0 0 50000
-               media_disp2_pix_root_clk 1 1 0  71100000 0 0 50000
+./tools/testing/kunit/kunit.py run --arch=3Darm64 \
+	--kunitconfig=3Ddrivers/of \
+	--qemu_args=3D"-bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd -smp 2" \
+	--kconfig_add=3D"CONFIG_ACPI=3Dy" \
+	--kernel_args=3D"earlycon=3Dpl011,0x9000000"
 
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: Abel Vesa <abelvesa@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Jonas Karlman <jonas@kwiboo.se>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Robert Foss <rfoss@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: imx@lists.linux.dev
-Cc: kernel@dh-electronics.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org
----
- drivers/gpu/drm/bridge/fsl-ldb.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Now I can boot and reproduce the failure, but there's another problem.
+ACPI disables itself when it fails to find tables.
 
-diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-index 0e4bac7dd04ff..a3a31467fcc85 100644
---- a/drivers/gpu/drm/bridge/fsl-ldb.c
-+++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-@@ -278,6 +278,16 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
- 	return MODE_OK;
+ ACPI: Unable to load the System Description Tables
+
+This calls disable_acpi() which sets acpi_disabled to 1. This happens
+before the unit test runs, meaning we can't reliably use 'acpi_disabled'
+as a method to skip.
+
+The best I can come up with then is to test for a NULL of_root when
+CONFIG_ARM64 and CONFIG_ACPI are enabled, because the tests
+intentionally don't work when both those configs are enabled and the
+'of_root' isn't populated. In all other cases the 'of_root' missing is a
+bug. I'll probably make this into some sort of kunit helper function in
+of_private.h and send it to DT maintainers.
+
+---8<----
+diff --git a/drivers/of/of_kunit_helpers.c b/drivers/of/of_kunit_helpers.c
+index 287d6c91bb37..a1330e183230 100644
+--- a/drivers/of/of_kunit_helpers.c
++++ b/drivers/of/of_kunit_helpers.c
+@@ -36,6 +36,9 @@ int of_overlay_fdt_apply_kunit(struct kunit *test, void *=
+overlay_fdt,
+ 	int ret;
+ 	int *copy_id;
+=20
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
++		kunit_skip(test, "arm64+acpi rejects overlays");
++
+ 	copy_id =3D kunit_kmalloc(test, sizeof(*copy_id), GFP_KERNEL);
+ 	if (!copy_id)
+ 		return -ENOMEM;
+diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
+index c85a258bc6ae..6cca43bf8029 100644
+--- a/drivers/of/of_test.c
++++ b/drivers/of/of_test.c
+@@ -38,6 +38,8 @@ static int of_dtb_test_init(struct kunit *test)
+ {
+ 	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
+ 		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE");
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
++		kunit_skip(test, "arm64+acpi doesn't populate a root node on ACPI system=
+s");
+=20
+ 	return 0;
  }
- 
-+static void fsl_ldb_mode_set(struct drm_bridge *bridge,
-+			       const struct drm_display_mode *mode,
-+			       const struct drm_display_mode *adj)
-+{
-+	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-+	unsigned long requested_link_freq = fsl_ldb_link_frequency(fsl_ldb, mode->clock);
-+
-+	clk_set_rate(fsl_ldb->clk, requested_link_freq);
-+}
-+
- static const struct drm_bridge_funcs funcs = {
- 	.attach = fsl_ldb_attach,
- 	.atomic_enable = fsl_ldb_atomic_enable,
-@@ -287,6 +297,7 @@ static const struct drm_bridge_funcs funcs = {
- 	.atomic_get_input_bus_fmts = fsl_ldb_atomic_get_input_bus_fmts,
- 	.atomic_reset = drm_atomic_helper_bridge_reset,
- 	.mode_valid = fsl_ldb_mode_valid,
-+	.mode_set = fsl_ldb_mode_set,
- };
- 
- static int fsl_ldb_probe(struct platform_device *pdev)
--- 
-2.45.2
-
+diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+index 19a292cdeee3..3e7ac97a6796 100644
+--- a/drivers/of/overlay_test.c
++++ b/drivers/of/overlay_test.c
+@@ -64,6 +64,8 @@ static void of_overlay_apply_kunit_cleanup(struct kunit *=
+test)
+=20
+ 	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
+ 		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE for root node");
++	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
++		kunit_skip(test, "arm64+acpi rejects overlays");
+=20
+ 	kunit_init_test(&fake, "fake test", NULL);
+ 	KUNIT_ASSERT_EQ(test, fake.status, KUNIT_SUCCESS);
