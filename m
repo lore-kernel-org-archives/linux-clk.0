@@ -1,130 +1,201 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2423A1CD;
-	Tue,  8 Oct 2024 11:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666F81DED79;
+	Tue,  8 Oct 2024 12:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728387181; cv=none; b=DvIpxS4PB4uL28HFxN97QlFZXl3o5nvK3xtcla/HhHrX/trsAfg0/FzLf6QVa2V9yFYIxJTXdAQGlqzD0mc0F1umQBbhUCysT0pkmGWvDjDXCD5kGL+tUjqv3BkO5qHALEWyc2KkDMi4/dmhTfHKVazBr78OiFpu/2kvpqRAuZA=
+	t=1728389971; cv=none; b=DG2qvl6QeuF7QfAzNWzjVj4BlsPALSeiBUBgIKzrTThYakO7hiXm9AjrlITYnxhgeUDCqayb5kVITalkjwuLKNpecH8qNxIMr6qUbkEvcg2GjjJjMs1Ap45gRpaa6PDlbwOuWI7VO8X2i54jshNSi58iEv8iDO9+cfiE2qpYuo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728387181; c=relaxed/simple;
-	bh=QzyaUahYbY7wgx3pHji+WA9wzaFsyYJmaWXKvJka74o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rzx6UcBp578vznt2UtTltVf1vuibYfOqnt+tVkZWPVoZksGt9QUgyVv0egViQRmKb7RpScIUYGrxWBLRLTKCIJryiKWHVcYqWnCsB/qWVniQMizEJVgJCQBiCxijWCJc16OXCBoIy56EDh9chc9pkJWlkWF9M0LSbtBaleX4Q0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4tEDTD4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728389971; c=relaxed/simple;
+	bh=Uw4dzTmVENShSMMqucDbgPz8pkSnOLY/jsoubkZkZ/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YYsW6Qj8mAxD9ablaE9LbslmEmoJThHzy/IQA8CME1L/dAFCJ6NRUgkLeY/zu/cR+XCFymmh1eQ3yOTZ2xKI3ykR+cjlXra2E6zItHrmA4iLegchj7W/Zea36+M7rcq62Vo6bz3vwSvZFs6GE/Hszykv+/3QeG4wYXj9wNqyLrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQOVeAYX; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4tEDTD4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F97C4CEC7;
-	Tue,  8 Oct 2024 11:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728387180;
-	bh=QzyaUahYbY7wgx3pHji+WA9wzaFsyYJmaWXKvJka74o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W4tEDTD4S7PxWQYOWoI4C3QJ6w3DDsC4Z5yAkieKAxdrDICDJkhZlFYq7S0zZUjZS
-	 wi7d270VytCxELG+5pJ/e9iRnO7UyzrNWdZLRyGM7DJj0gDrCUDHVkXh8nvnp9KHBY
-	 ZUDulr/JHBW3GaBuoo18PouxslEKxzf6kkPCEV04J/D+iPZZlP425yxiUzABCyjGC6
-	 4q7KmYbvS2x/B26gQMWknrH+6DsLGNyVswCf5TtGuF4EwLfJWyuUPxZSJ1tuQDHW7/
-	 QmGHGKjnkPRlacCBbkXjaGfKQAoTSQaNce7TNhMCglg97utINNRT29errGn3J5bSgo
-	 oLdnQ2dqmeoCg==
-Message-ID: <4e2ba7ae-b1e6-40ea-b2d3-7d8950cb367c@kernel.org>
-Date: Tue, 8 Oct 2024 13:32:53 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQOVeAYX"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e29522f0f1so94616a91.0;
+        Tue, 08 Oct 2024 05:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728389969; x=1728994769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UQdTwVLISuxQ026dh7noBg5OAHYhExXify6BxUSEIb8=;
+        b=iQOVeAYX/M2Nc2RJ8A6wR9fV+eQ3oZTkgfbBoRwsbXtgZfuajvVWrpZX3rJxMIgjnh
+         9vu02aaee/+7CzBidSZfd7/TMeikNsoEQXetoUEn6SI/OsH0f+g8pwMGTc459hrMjwBS
+         0ZZ6nuEEKGCyFWp2XrKEABezbhdxH+MPHIWnZXvVnsw/w6fW90cKfJlKXAe87On50whQ
+         0O0qEBqu0eu94xZkgRhZakFYTZ8YewgWLMPqu2Jy3vowxBNkGAECF3E+LgvLg8LTjzsu
+         i6jzGFnh82sCEZK3CcbnvPq0QeXnefd3ou3lFYWuRK/BSACjfPtIA5xwWS3zDCZQsQ5n
+         WDOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728389969; x=1728994769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UQdTwVLISuxQ026dh7noBg5OAHYhExXify6BxUSEIb8=;
+        b=xF7USZK7/+E5aJ3X/yAMcTzVo8zSzYybbwz67iqJVnbJTcaVCU/x/9t1ZVS1DRqo/p
+         8N1aq0VU9VmqodZXxJIVUibshvIery6fhXM4gX937aiXW/lczo/h+/nUX6BYjoEVg/eR
+         LxmyNOLAiYkGXi08ZWLyp1mZLsL0gMNbqUNxMK76q6rYdNi7ETtWQW2j+wW/J/Nwp8Ao
+         P/JNyi4/UpIygrQAZQ8uAY/CHghEAR3MZsYBssIXn9PLJ3gfSjkxLB+uSwlEls5cvuPA
+         ScM4HAeso5UssONPUO63VTplmaWwhMkf/gnlhewwFeFGYfVjlzxgeZTeQxMIhD3VH1UU
+         Xe+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW8CM1IZWgpuEqKy3T7xQ0aknw/R+cOYaSKX1S9+YlP1Josc5U4jcwlKhATRt9CgI6aFjaifAX3dKy88+s5@vger.kernel.org, AJvYcCXEIXhy8vrPePT2fIbOK5gM7+IXXOWXUBzul2FVgRjl4AY6CugdMelxyhjiheJVkEVDVk1QQ1jyfAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf+xpd6L+h3vaG0rKeXnV86kjRS9ot1u6BpAKFu6eRtx9p/0/e
+	AXsr8LQaxXpcetckaZe5x8qME667tnZm7+wBMInPzR8Hw+EIH5EAbvdDEvgVPxrl6LBmgyxmcWr
+	CYe0E6SWHNSZdO6qvFOhciV68El4=
+X-Google-Smtp-Source: AGHT+IGaascgSJ4sxny2mNYDiWLUEeHMIw4kXi/HuNGX5ddTIEdo3ya8zf1Aytc4EHlwRwMJMw1L6M1mlldErYSVDBw=
+X-Received: by 2002:a17:90b:33cc:b0:2d8:53f8:77c0 with SMTP id
+ 98e67ed59e1d1-2e1e620dc45mr18482390a91.7.1728389968507; Tue, 08 Oct 2024
+ 05:19:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: rockchip: fix compatible string rk3328
- cru node
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jbx6244@gmail.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240930215001.1999212-1-heiko@sntech.de>
- <20240930215001.1999212-3-heiko@sntech.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240930215001.1999212-3-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241007132555.GA53279@francesco-nb> <PAXPR04MB84596824B2DFDF20E005F173887E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <PAXPR04MB845980EE67F1B99C9AC9D0DF887E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB845980EE67F1B99C9AC9D0DF887E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 8 Oct 2024 07:19:15 -0500
+Message-ID: <CAHCN7xLzYVBB=+EkD14xYqGJDR6BRUO7hxBZGOtvzCFLp_kXdg@mail.gmail.com>
+Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on v6.12
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>, "S.J. Wang" <shengjiu.wang@nxp.com>, 
+	"abelvesa@kernel.org" <abelvesa@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"festevam@gmail.com" <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, 
+	"shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, Mark Brown <broonie@kernel.org>, 
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/09/2024 23:50, Heiko Stuebner wrote:
-> From: Johan Jonker <jbx6244@gmail.com>
-> 
-> The cru node references undocumented compatibles of "rockchip,cru" and also
-> marks it as syscon.
-> 
-> A general rockchip,cru is way too generic to ever be used anywhere, so
-> needs to go away, similarly the cru should not be written to from other
-> places, instead regular clock routines should be used.
-> 
-> Both mainline Linux as well as the vendor-kernel up to their 6.1 branch
-> only reference the cru via the normal assigned-clocks, clocks and resets
-> properties and do not get a syscon from the node.
-> 
-> Similarly, there is no syscon access by compatible both in mainline
-> nor the vendor-kernel up to their 6.1 branch, through either the
-> rockchip,rk3328-cru nor rockchip,cru compatibles.
-> 
-> So these two really are unused in all publically visible places.
-> 
-> Sidenote: the vendor-kernel does pretty crazy stuff in the camera interface
-> and tdm driver, where they map the cru separately and set clock muxes and
-> gates directly. This should of course never reach mainline anyway.
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> [update commit message, to explain the unused compatibles]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+On Tue, Oct 8, 2024 at 3:51=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: RE: clk_imx8mp_audiomix_runtime_resume Kernel panic
+> > regression on v6.12
+> >
+> > > Subject: clk_imx8mp_audiomix_runtime_resume Kernel panic
+> > regression on
+> > > v6.12
+> > >
+> > >
+> > > Is it now back?
+> >
+> > With tag: next-20240930, I need see this issue on i.MX8MP-EVK board.
+>
+> Sorry, typo. I not see issue on my board.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I tested RC1 on the Beacon board and didn't see any issues, but I can
+try testing linux-next when I have some time.
 
-Best regards,
-Krzysztof
-
+adam
+>
+> Regards,
+> Peng.
+>
+> >
+> > Regards,
+> > Peng.
+> >
+> > >
+> > > [    4.012850] SError Interrupt on CPU2, code 0x00000000bf000002 -
+> > -
+> > > SError
+> > > [    4.012862] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not
+> > tainted
+> > > 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
+> > > [    4.012869] Hardware name: Toradex Verdin iMX8M Plus WB on
+> > > Dahlia Board (DT)
+> > > [    4.012872] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -
+> > SSBS
+> > > BTYPE=3D--)
+> > > [    4.012877] pc :
+> > clk_imx8mp_audiomix_runtime_resume+0x38/0x48
+> > > [    4.012891] lr : pm_generic_runtime_resume+0x2c/0x44
+> > > [    4.012897] sp : ffff8000821cb740
+> > > [    4.012899] x29: ffff8000821cb740 x28: ffff8000793c48d8 x27:
+> > > ffff8000793c48c0
+> > > [    4.012908] x26: ffff0000c0ec90f4 x25: 0000000000000000 x24:
+> > > 0000000000000000
+> > > [    4.012916] x23: 0000000000000000 x22: ffff0000c1bef180 x21:
+> > > 0000000000000000
+> > > [    4.012923] x20: ffff0000c0a73000 x19: ffff0000c0ecbc10 x18:
+> > > ffffffffffffffff
+> > > [    4.012930] x17: 3030303064623033 x16: 2f7375622e303030 x15:
+> > > 756e285472656c6c
+> > > [    4.012937] x14: ffff800081267458 x13: 6d692c6c73664361 x12:
+> > > 0000000000000000
+> > > [    4.012944] x11: 00353333333d4d55 x10: ffff8000818020ae x9 :
+> > > 0000000000000008
+> > > [    4.012951] x8 : 0000000000000008 x7 : 0000000000000000 x6 :
+> > > ffff0000c5bf2080
+> > > [    4.012958] x5 : ffff800081f10000 x4 : ffff800080c182e8 x3 :
+> > > ffff0000c0ee7088
+> > > [    4.012965] x2 : 0000000000000000 x1 : 0000000000000004 x0 :
+> > > ffff800081f10300
+> > > [    4.012973] Kernel panic - not syncing: Asynchronous SError
+> > Interrupt
+> > > [    4.012976] CPU: 2 UID: 0 PID: 186 Comm: (udev-worker) Not
+> > tainted
+> > > 6.12.0-rc2-0.0.0-devel-00004-g8b1b79e88956 #1
+> > > [    4.012982] Hardware name: Toradex Verdin iMX8M Plus WB on
+> > > Dahlia Board (DT)
+> > > [    4.012985] Call trace:
+> > > [    4.012988]  dump_backtrace+0xd0/0x120
+> > > [    4.012998]  show_stack+0x18/0x24
+> > > [    4.013005]  dump_stack_lvl+0x60/0x80
+> > > [    4.013013]  dump_stack+0x18/0x24
+> > > [    4.013019]  panic+0x168/0x350
+> > > [    4.013025]  add_taint+0x0/0xbc
+> > > [    4.013029]  arm64_serror_panic+0x64/0x70
+> > > [    4.013034]  do_serror+0x3c/0x70
+> > > [    4.013039]  el1h_64_error_handler+0x30/0x54
+> > > [    4.013046]  el1h_64_error+0x64/0x68
+> > > [    4.013050]  clk_imx8mp_audiomix_runtime_resume+0x38/0x48
+> > > [    4.013059]  __genpd_runtime_resume+0x30/0x80
+> > > [    4.013066]  genpd_runtime_resume+0x114/0x29c
+> > > [    4.013073]  __rpm_callback+0x48/0x1e0
+> > > [    4.013079]  rpm_callback+0x68/0x80
+> > > [    4.013084]  rpm_resume+0x3bc/0x6a0
+> > > [    4.013089]  __pm_runtime_resume+0x50/0x9c
+> > > [    4.013095]  pm_runtime_get_suppliers+0x60/0x8c
+> > > [    4.013101]  __driver_probe_device+0x4c/0x14c
+> > > [    4.013108]  driver_probe_device+0x3c/0x120
+> > > [    4.013114]  __driver_attach+0xc4/0x200
+> > > [    4.013119]  bus_for_each_dev+0x7c/0xe0
+> > > [    4.013125]  driver_attach+0x24/0x30
+> > > [    4.013130]  bus_add_driver+0x110/0x240
+> > > [    4.013135]  driver_register+0x68/0x124
+> > > [    4.013142]  __platform_driver_register+0x24/0x30
+> > > [    4.013149]  sdma_driver_init+0x20/0x1000 [imx_sdma]
+> > > [    4.013163]  do_one_initcall+0x60/0x1e0
+> > > [    4.013168]  do_init_module+0x5c/0x21c
+> > > [    4.013175]  load_module+0x1a98/0x205c
+> > > [    4.013181]  init_module_from_file+0x88/0xd4
+> > > [    4.013187]  __arm64_sys_finit_module+0x258/0x350
+> > > [    4.013194]  invoke_syscall.constprop.0+0x50/0xe0
+> > > [    4.013202]  do_el0_svc+0xa8/0xe0
+> > > [    4.013208]  el0_svc+0x3c/0x140
+> > > [    4.013215]  el0t_64_sync_handler+0x120/0x12c
+> > > [    4.013222]  el0t_64_sync+0x190/0x194
+> > > [    4.013228] SMP: stopping secondary CPUs
+> > > [    4.013237] Kernel Offset: disabled
+> > > [    4.013239] CPU features: 0x00,00000000,00200000,4200420b
+> > > [    4.013243] Memory Limit: none
+> > > [    4.316721] ---[ end Kernel panic - not syncing: Asynchronous SErr=
+or
+> > > Interrupt ]---
+> > >
+> > >
+> > > Francesco
+>
