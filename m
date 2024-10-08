@@ -1,91 +1,127 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C96185923;
-	Tue,  8 Oct 2024 21:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDD62256D1
+	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 22:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728424691; cv=none; b=QYjnY9fb4ZEH0dyW1yvqgt8hFDx3vVgEkg0rUS5SWtvh2cgUjR76Sl8Vvv/R69bTsnP6p0wRBPGXqmH8DH87GhxFQEuHBAmp9Q05VIqD9zVWOfauZYfpY77lzj7bUFSqRGS3HHn8jdIOyRCIqPJM/gvVzdALc4dFjqcM69OoAs8=
+	t=1728427144; cv=none; b=GFCPmpQsWqpbAgk+rRNYhgV8GvL4BHtHThffTixd+sfGcvDI0jp1f4OQdxaM9qGMNCPrz4yLuzGFFn8k1+8coqY0DGVVCVNYJMxqB+UB5PMu1QN5gU6XV82/+fsEURe/40fxj/Y3P+PMDBpSQYnYPSVjoB8gcDCErxMsUeX8ep8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728424691; c=relaxed/simple;
-	bh=xCkhWr4L99Mc/IQW1K6PzQOytJMgYvq3ru5wDNf8phI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GwkFMj8vN3znE7yqNrNQJiiJTMj0YhKIOOkfSrNKCzubeFMywHUdGKFn+OMO8j0pgY4nlTrTtyGwQvW5O4OOq5o7bY3j6EX+3vanw4iHBWdnBn8UGJHCV9/YB2wUHS6LrXF3v55+8LRKDe2jIFR0PpNvEQ5THaCW9oJC/RQ4mxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rxq824CP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1728427144; c=relaxed/simple;
+	bh=n0hmVuKS+65jnLE7/e+S9qGHmaCcMaHaqNLgzz+3vzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HjgwnmOuV+lKGhyrvSu4NVhB8vCbmsNvaJIMrOvQEyS8T5lUoUTgatLO9Mzg2tujbpyERk4zz0f4nVQjdxQdbV7gORy71ZjYqB2ztnIDXHFEDyj+KbVQ31nyrmVDTKn7bKAxw6qmyiLUNotWET2G/+nOvQ3MUeMuHgS+QPACLvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=MGpBHb/I; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rxq824CP"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Ol6xCRDeAcUBSBVtOuCb1imrILBrc3i/1kc8nU/d/wM=; b=Rxq824CPUR3hYn+96FXudWGxMh
-	Eb4KrySC7FbCtVscNmEUyMB6nZ9KKrQKqO6jhvTd2t665+fLW/OIWL/wDR9KC5/tFo8tmhke8SC6n
-	yLlMmeLgQMPWYcdI0en8RwE3saNCIYa1rrCAbYGvI7n5iHWXk8XiKOc/xXH7eqPnWYOQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1syIDQ-009Pvi-IE; Tue, 08 Oct 2024 23:58:00 +0200
-Date: Tue, 8 Oct 2024 23:58:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Alexandra Diupina <adiupina@astralinux.ru>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="MGpBHb/I"
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 9144588D8F;
+	Wed,  9 Oct 2024 00:38:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728427139;
+	bh=hbGKo8cn7sM7/EYzSCB5grPZ7Igp1Tz0FfX/nbnW3jI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MGpBHb/IRODDTNqOxJiMtE21G1rU12UlYsf6gPSDgz0UCyY0hqdpFPON5z9RgoGXw
+	 wwlB3KifJa6HQ/5nYWsCDG/8rAFatUYya9OYC4RQU42kAq8j0zAoDrHef2J0WV5VI+
+	 tKXY4qFWvWpRJTAFlAOXaAdNedN2hW5hJjGn4HDf2rmW+0icuZ3nxZRsocddbG+DhX
+	 3tXz3grUUKNVd5W1RlsioucqmjArHTfmwO8KJE5gDbsqo9fGcNlXgSR81adRNQ0EOZ
+	 hzxAAXkNCTdSJO4TiyKeU/MfhcZ+/pj7jB6FgrxUHJabi+vNUZ9cpjgVAMvLw6ZVNf
+	 CZKSpH51CXKQQ==
+From: Marek Vasut <marex@denx.de>
+To: dri-devel@lists.freedesktop.org
+Cc: Marek Vasut <marex@denx.de>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Isaac Scott <isaac.scott@ideasonboard.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Message-ID: <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
-References: <20240917132201.17513-1-adiupina@astralinux.ru>
- <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
- <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
- <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Robert Foss <rfoss@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	imx@lists.linux.dev,
+	kernel@dh-electronics.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock reconfigure parent rate
+Date: Wed,  9 Oct 2024 00:38:19 +0200
+Message-ID: <20241008223846.337162-1-marex@denx.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Mon, Oct 07, 2024 at 03:56:29PM -0700, Stephen Boyd wrote:
-> Quoting Alexandra Diupina (2024-09-24 06:14:44)
-> > >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> > >> index 8701a58a5804..b32c6d4d7ee5 100644
-> > >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> > >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> > >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
-> > >>          div = get_div(double_div->reg1, double_div->shift1);
-> > >>          div *= get_div(double_div->reg2, double_div->shift2);
-> > >>   
-> > >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> > >> +       if (!div) {
-> > >> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
-> > > hw->init is set to NULL after registration (see clk_register() code). If
-> > > div is 0 what does the hardware do?
-> > 
-> > Thanks for noticing the error. Yes, hw->init is set to zero,
-> > I will replace that code with clk_hw_get_name(hw).
-> > If the value of div is 0, should I return 0 as stated in the
-> > comment for .recalc_rate (in struct clk_ops) or should I
-> > return parent_rate as in some other similar rate recalculation
-> > functions (in some other drivers)?
-> 
-> It depends on what the hardware does. Does the hardware pass on the
-> parent rate if the divider is zero? If so, then return parent_rate. Or
-> does it turn off completely? If so, return zero.
+The media_ldb_root_clk supply LDB serializer. These clock are usually
+shared with the LCDIFv3 pixel clock and supplied by the Video PLL on
+i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LCDIFv3
+pixel clock. Allow the LDB to reconfigure Video PLL as needed, as that
+results in accurate serializer clock.
 
-I don't think anybody knows what the hardware does in this
-condition. I also suspect it has never happened, or if it has, nobody
-has complained.
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: Abel Vesa <abelvesa@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Jonas Karlman <jonas@kwiboo.se>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Robert Foss <rfoss@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org
+Cc: imx@lists.linux.dev
+Cc: kernel@dh-electronics.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I would say, let is divide by 0, so there is an obvious kernel stack
-trace and hopefully a report of the issue. It can then be investigated
-in a way we can then find out what the hardware actually is doing.
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 516dbd170c8a3..2e61d340b8ab7 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+ 	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+-	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
++	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
+ 	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
+-- 
+2.45.2
 
-   Andrew
