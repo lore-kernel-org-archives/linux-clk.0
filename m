@@ -1,163 +1,91 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8CF215012
-	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 20:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C96185923;
+	Tue,  8 Oct 2024 21:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728419890; cv=none; b=VdJM+gmikBEx4DELvj/jYDq9aUoXoL+ebxi9pEFGIvkWzRzZQk32s//Sw8BTyR+gHYZDpDkXdfT9gHDHGX19sVFRFZXzqWjYrCADkpS9NQrBtONzwVlYVobfosMzltLkeosJ/E/Bsm2+I+vlhF3oXh0NQhTOdhPljOMvPp0S0bk=
+	t=1728424691; cv=none; b=QYjnY9fb4ZEH0dyW1yvqgt8hFDx3vVgEkg0rUS5SWtvh2cgUjR76Sl8Vvv/R69bTsnP6p0wRBPGXqmH8DH87GhxFQEuHBAmp9Q05VIqD9zVWOfauZYfpY77lzj7bUFSqRGS3HHn8jdIOyRCIqPJM/gvVzdALc4dFjqcM69OoAs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728419890; c=relaxed/simple;
-	bh=jBKc56vBxPYaOUWcC+VFZKlnp8sdizUoPysD1KL2n2Y=;
+	s=arc-20240116; t=1728424691; c=relaxed/simple;
+	bh=xCkhWr4L99Mc/IQW1K6PzQOytJMgYvq3ru5wDNf8phI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9hxaFCZfFLwnFxoE8pcsaXAydYU0GwOgr6rmCIpMx5h37u2P1xfx0CYRFXuLNDr9PGcovNB3FjmTovUUbKSdbeWgDCwU6ohDhLNESS2h6hWDxuFyTM1f5joi0uLr58h9u/KFnYHmubIdTLd+NWQR8uJat4+UppM/s1D+YqgT2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=18fWZBkO; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwkFMj8vN3znE7yqNrNQJiiJTMj0YhKIOOkfSrNKCzubeFMywHUdGKFn+OMO8j0pgY4nlTrTtyGwQvW5O4OOq5o7bY3j6EX+3vanw4iHBWdnBn8UGJHCV9/YB2wUHS6LrXF3v55+8LRKDe2jIFR0PpNvEQ5THaCW9oJC/RQ4mxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rxq824CP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="18fWZBkO"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9932aa108cso590533366b.2
-        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2024 13:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728419885; x=1729024685; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jBKc56vBxPYaOUWcC+VFZKlnp8sdizUoPysD1KL2n2Y=;
-        b=18fWZBkO9cDHNP5XkQ39MRLClR2iDC1zySqkncD3SsZKu5Rgs7Dl8pH8lKJp2p962M
-         ZQCXVVOIGzjU5UY81OJcQw0kiLkVxi82epBgL4dI4RqabJSCfzsJV/w4rEU39jnWCoY7
-         yG6e+6Huic3MWrYC1oSE1/3jjgRJEPNAKN3ZTXu7yDRI5rDcTHA6JVJ03K88LUsNIndN
-         hxu1wyd0FmRvkB0XvGhYzl60f9BZXhmzkblJFg6rToFyXPRB5BLZ/aQ9AquxPwlKwAUC
-         26vZdSJyysWVJfHabIaR2zJD8Gkd7meZi0reyXepjlExZa64VCzKDkCcaGkjDZZZyvzq
-         ni5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728419885; x=1729024685;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jBKc56vBxPYaOUWcC+VFZKlnp8sdizUoPysD1KL2n2Y=;
-        b=klBxV4ZHxLA4dUt0PQnZ+uxA5fqBm095IeHL/Bgv7RkHHvtrFTSw6DBcWm7bCBqcvj
-         CBp7gibRCONAtpthejP131RYOxD7CmK9BSOQhmtILZtpAPRzmNoeVdI/PwyJyAHXWFHW
-         cLI6T2WQ9YgA923kHkc5fQygHlyc1oaqCZUTpd0Bgqk1h7/XlU7wssATA8YPvDTk5VRe
-         hk2zI2q0urwnFUVTc/PXwzMdI4mfDtFqk1pBx5MHIRv25B+dEHcNWh9PA/ULIr7ESR+x
-         kD/aKou/jx0VkjmChSXG2fLML8qvq89WHqG5UI9dYBAjbzW4CwuQwB+QSuN76hrHH+UD
-         bucQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3FHo4NU7tyMfv0uHvyO8/wxTBgqY0FoU7yQEF+2vfGXv/RTubgGOmyxPVmaxuwpzQx6QV3W4u3hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy4DjxhkjvtY/sdGkqyI3YKyJDPbMtKTb+FmVm5mwMRjfASjty
-	uSPFEgSQkxp5ATtXFMe3UiN91+pF0bjT43/1iszYINBlTPg6roujS/t3ar4U1eg=
-X-Google-Smtp-Source: AGHT+IFQsuFQDnMORn6KRqls83kXMRALTmz1xji/Zv3nzyXsaV17OwyYMIY5gtZ7u9n9SjQRNHRlFg==
-X-Received: by 2002:a17:907:94d4:b0:a8d:250a:52b2 with SMTP id a640c23a62f3a-a998d114bbemr3268366b.6.1728419884897;
-        Tue, 08 Oct 2024 13:38:04 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:c420:a9b6:c5e1:5b65])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a996274deeesm196971266b.103.2024.10.08.13.38.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 13:38:04 -0700 (PDT)
-Date: Tue, 8 Oct 2024 22:38:02 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org, 
-	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, patches@opensource.cirrus.com, 
-	iommu@lists.linux.dev, imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
-	linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, greybus-dev@lists.linaro.org, 
-	asahi@lists.linux.dev, rafael@kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 00/51] treewide: Switch to __pm_runtime_put_autosuspend()
-Message-ID: <ttmnzgsdyng5vab63pvj7csrotbsmwnultjelvdotrvyg2snac@iv7afgect5f3>
-References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
- <CAPDyKFp0N6UJhnHS164Tdf=xkWB0jzq65L9TdvYazeBQ-6WjeQ@mail.gmail.com>
- <20241007184924.GH14766@pendragon.ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rxq824CP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ol6xCRDeAcUBSBVtOuCb1imrILBrc3i/1kc8nU/d/wM=; b=Rxq824CPUR3hYn+96FXudWGxMh
+	Eb4KrySC7FbCtVscNmEUyMB6nZ9KKrQKqO6jhvTd2t665+fLW/OIWL/wDR9KC5/tFo8tmhke8SC6n
+	yLlMmeLgQMPWYcdI0en8RwE3saNCIYa1rrCAbYGvI7n5iHWXk8XiKOc/xXH7eqPnWYOQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syIDQ-009Pvi-IE; Tue, 08 Oct 2024 23:58:00 +0200
+Date: Tue, 8 Oct 2024 23:58:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Alexandra Diupina <adiupina@astralinux.ru>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+ <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+ <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+ <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ocqjla6tcmukjn3"
-Content-Disposition: inline
-In-Reply-To: <20241007184924.GH14766@pendragon.ideasonboard.com>
-
-
---2ocqjla6tcmukjn3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
 
-Hello,
+On Mon, Oct 07, 2024 at 03:56:29PM -0700, Stephen Boyd wrote:
+> Quoting Alexandra Diupina (2024-09-24 06:14:44)
+> > >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> > >> index 8701a58a5804..b32c6d4d7ee5 100644
+> > >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> > >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> > >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+> > >>          div = get_div(double_div->reg1, double_div->shift1);
+> > >>          div *= get_div(double_div->reg2, double_div->shift2);
+> > >>   
+> > >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> > >> +       if (!div) {
+> > >> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
+> > > hw->init is set to NULL after registration (see clk_register() code). If
+> > > div is 0 what does the hardware do?
+> > 
+> > Thanks for noticing the error. Yes, hw->init is set to zero,
+> > I will replace that code with clk_hw_get_name(hw).
+> > If the value of div is 0, should I return 0 as stated in the
+> > comment for .recalc_rate (in struct clk_ops) or should I
+> > return parent_rate as in some other similar rate recalculation
+> > functions (in some other drivers)?
+> 
+> It depends on what the hardware does. Does the hardware pass on the
+> parent rate if the divider is zero? If so, then return parent_rate. Or
+> does it turn off completely? If so, return zero.
 
-On Mon, Oct 07, 2024 at 09:49:24PM +0300, Laurent Pinchart wrote:
-> On Fri, Oct 04, 2024 at 04:38:36PM +0200, Ulf Hansson wrote:
-> > On Fri, 4 Oct 2024 at 11:41, Sakari Ailus <sakari.ailus@linux.intel.com=
-> wrote:
-> > >
-> > > Hello everyone,
-> > >
-> > > This set will switch the users of pm_runtime_put_autosuspend() to
-> > > __pm_runtime_put_autosuspend() while the former will soon be re-purpo=
-sed
-> > > to include a call to pm_runtime_mark_last_busy(). The two are almost
-> > > always used together, apart from bugs which are likely common. Going
-> > > forward, most new users should be using pm_runtime_put_autosuspend().
-> > >
-> > > Once this conversion is done and pm_runtime_put_autosuspend() re-purp=
-osed,
-> > > I'll post another set to merge the calls to __pm_runtime_put_autosusp=
-end()
-> > > and pm_runtime_mark_last_busy().
-> >=20
-> > That sounds like it could cause a lot of churns.
-> >=20
-> > Why not add a new helper function that does the
-> > pm_runtime_put_autosuspend() and the pm_runtime_mark_last_busy()
-> > things? Then we can start moving users over to this new interface,
-> > rather than having this intermediate step?
->=20
-> I think the API would be nicer if we used the shortest and simplest
-> function names for the most common use cases. Following
-> pm_runtime_put_autosuspend() with pm_runtime_mark_last_busy() is that
-> most common use case. That's why I like Sakari's approach of repurposing
-> pm_runtime_put_autosuspend(), and introducing
-> __pm_runtime_put_autosuspend() for the odd cases where
-> pm_runtime_mark_last_busy() shouldn't be called.
+I don't think anybody knows what the hardware does in this
+condition. I also suspect it has never happened, or if it has, nobody
+has complained.
 
-That's ok for me. However this patch series isn't the optimal path to
-there because most drivers (i.e. those that already today do
-pm_runtime_mark_last_busy() in combination with
-pm_runtime_put_autosuspend()) have to be patched twice.
+I would say, let is divide by 0, so there is an obvious kernel stack
+trace and hopefully a report of the issue. It can then be investigated
+in a way we can then find out what the hardware actually is doing.
 
-The saner route is: Only convert the drivers with a sole
-pm_runtime_put_autosuspend() (i.e. without pm_runtime_mark_last_busy())
-to __pm_runtime_put_autosuspend(). Then add the mark_last_busy() bits to
-pm_runtime_put_autosuspend() and then drop the explicit calls to
-pm_runtime_mark_last_busy() before pm_runtime_put_autosuspend().
-
-(Note this doesn't take into account Rafael's position that
-pm_runtime_put() might be the saner option. My argument applies for that
-conversion analogously.)
-
-Best regards
-Uwe
-
---2ocqjla6tcmukjn3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcFmCEACgkQj4D7WH0S
-/k6xnwf/QOZhbtT562rFFa3JIiBatDxTcqyEXoXClrP7jSyQFY/VFzq2S2jRHOFt
-wM6zQUX1bTUqDtC4HozJIbQDjLxd3qFgc5RoTRLV8VhRJbcq9cOo5Nf1h4KJ5Ip9
-nhpzoHwUHoEjEHj1f9UvEWfnFAVCSLFxgb14ZDHZyb2pQue3G5OYI2f2cJYT8YVB
-xQktDFp7rUu4xWDTzoIxNKvR1Ipy5fGxdf9R2/+IQhW64sWuDG2ZH6tAmfn6mEb8
-ecspbesJx+NMbZ06Zl7wqBvyj/DpQGgPaCnWUQ5cI0Of/kOzqxh4+65JK68CLLs0
-/Goin2zz55IZITGC5zHuAA07bW/c7Q==
-=7Wup
------END PGP SIGNATURE-----
-
---2ocqjla6tcmukjn3--
+   Andrew
