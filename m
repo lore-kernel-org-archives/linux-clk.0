@@ -1,110 +1,90 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E589E16C854
-	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 08:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66277DA76
+	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 09:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728377970; cv=none; b=PYRjR712vaFfq7QEpdelJ3Ap6+GAq4DOC9mAdNuu6SBDCDd84ZHSYNQsGn+VccnuGXQujM6K8UzhBLJJd/NVe38ofqH6dNDVteTiB/1Al+CVZPXfOJ6r69ZRjeIu6Ap41IrnQblDtzmWpjTVKNciT46O25HoQ9nFWkbW80+hZeM=
+	t=1728378734; cv=none; b=NU6GfBWdr0GAf1wNEt0js8jqejJuytBkFgHpc/R9Q+z7z6Jq2/Of79qrQ9eB29IiAPxfCXXKZc/NT+yx/FUT0bKIyxAFjkHOj4EEQURLlZJ/wcyx+8o6altm62ecVyxonGVTSSMZE9pFRs/SgBEzNFqx8op/Ibzq+dd6jkVfxnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728377970; c=relaxed/simple;
-	bh=24CJ/UOc9KNzJisZZSa4q/pwTaUJlPLKc8ycY+1UsDk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=U55WRxomEg1X5skjfa+6rBXhMmpyJX1B2MLH6lY5Xv773fiCBexKPoksHfYefzVdjCgUjgHhgyHwlR5J5VvXRMNjN7H3lwuo0RjU/IwETQpEythylS5CXQRsTgere2ch4quC38B5razYBXX7jv4XHG/XsWpWnmvmHcZOvRXMRJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:af78:ce2e:2b4b:9f2a])
-	by albert.telenet-ops.be with cmsmtp
-	id MkzL2D00F0Eqs9l06kzLLs; Tue, 08 Oct 2024 10:59:21 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sy63i-003RXW-0h;
-	Tue, 08 Oct 2024 10:59:20 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sy63s-00D27I-Dk;
-	Tue, 08 Oct 2024 10:59:20 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779h0: Drop CLK_PLL2_DIV2 to clarify ZCn clocks
-Date: Tue,  8 Oct 2024 10:59:17 +0200
-Message-Id: <0d2789cac2bf306145fe0bbf269c2da5942bb68f.1728377724.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728378734; c=relaxed/simple;
+	bh=8R5mNUaqgWhw+SjU51bMScNSOuHChqgNVLLs9a/h8UA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BWFBH3V6QfP4VBZD11jKeHUarrpEUum4Z1PN/ixRXRNyLIbdC4p3Q0b24eK3fvXo5v8o2VpqpLnk4rAdqQKTDB+qsGQAY8sTXrSW+IXL9oZWwHMm7JGCFF36yxf8MGv5ii28P9mfcbtm7lD3QZzdxKP1dnc19qfNY5cAceXfcYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hl9pAJpY; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hl9pAJpY"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so69489811fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2024 02:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728378731; x=1728983531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8R5mNUaqgWhw+SjU51bMScNSOuHChqgNVLLs9a/h8UA=;
+        b=hl9pAJpY0OMPoMPkT7x5fnU2Hc8B6zbOcLs6m5ueHzuUebAtQgCHTXN7vtw7UEVw04
+         fwqtRafXO0gImfVeJTFL918TVIgUE65xoMc0LOG/LNbteAM2RgFRObJpozJejnKpOIDv
+         bOBrcm+HDcvri/38HG/xIgCt6bZyDQA2Wx1RthPkECVA3crNg5JW2enQpFOY2/ZhhT+i
+         xa08LO1PhKbUa4YdV2kez3P3ZFMWsUBwM/p2grz1j+NqQyKNfML90eM8UN16aR0ipjA8
+         cprRIdRjfBqwaCDE6rE4iMjzZ4rdRrh/AEzHVAEoddEimYEnv8fksD1JZcSvrTm5biju
+         rzdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728378731; x=1728983531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8R5mNUaqgWhw+SjU51bMScNSOuHChqgNVLLs9a/h8UA=;
+        b=i+KInqAsjGPF66VFFqcSfYIrNSVbg+8Bcocho19Z6jDjOnaVF/BzKUwSYlGk+8cmvw
+         6u/VELH6NQwczP+SOHTK1/L8RI/FmpVYRk6AcPZN/ZMERGIsy570tPhzvGsLvJmLhpQ9
+         kAK1ZBs3fbGnD/MOsWIhQZ9yOPojRPIE0oHezouDj00y6NESpMhzsoi39bve6T1OVWtX
+         XCogwqCpDrLWTR1V2Zs7/cIvoeOCqN/CSRtoTbK39pimiU+qD9DVnMHZLYUV+zHBL9O0
+         oZ+unfEXHaAnoI6Kp+oHh/SaK0SH2hEIZORbh60xLpRDdxz9QFCp5w/hUX/djf98HgxK
+         NZMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsNISj0eNIB81KKH03lVmy3U7+xEAperp3uXQzzu6M00Rh+VIpWy0XzzW4gEBptWNlSNxK1199sQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyilmmFVrddU+RMZz97Wj890HilsYcjeGd8XiepukMPQydK1scL
+	2WS8Gv/22QCma/Hh5eK4+Oxa9p2EH7kLO11gg8RSlqiaSxt56XBWhJJqS5+mODVJfRWSlnDjhBM
+	zDclChBJJL+Kvz+cgrL9aAPhyzVLXJRgxA/IhVg==
+X-Google-Smtp-Source: AGHT+IHcBA2jTE1QM6JyuIGCT7tc+Sb9Dr7eXCmaROonw0Ss9mIeMA8MiXWox+luFXYNnTEtJ3oq3bBdjFrsUAeO2LQ=
+X-Received: by 2002:a2e:e01:0:b0:2fa:cdac:8732 with SMTP id
+ 38308e7fff4ca-2faf3d70720mr73174491fa.30.1728378730928; Tue, 08 Oct 2024
+ 02:12:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <ad82005d-729d-4165-afa5-61ca82382bc5@app.fastmail.com> <20241008084744.30819-1-exxxxkc@getgoogleoff.me>
+In-Reply-To: <20241008084744.30819-1-exxxxkc@getgoogleoff.me>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 8 Oct 2024 11:11:59 +0200
+Message-ID: <CACRpkdaPBH1CE0YXGMKUDQWyJQTZvkYgnW=UTO2uxWmBvecu9g@mail.gmail.com>
+Subject: Re: Re: [PATCH v6 0/5] Initial Support for Linksys EA9350 V3 (linksys-jamaica)
+To: Karl Chan <exxxxkc@getgoogleoff.me>
+Cc: arnd@arndb.de, andersson@kernel.org, catalin.marinas@arm.com, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, konradybcio@kernel.org, 
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mturquette@baylibre.com, robh@kernel.org, sboyd@kernel.org, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Early revisions of the R-Car V4M Series Hardware User’s Manual
-contained an incorrect formula for the CPU core clocks:
+On Tue, Oct 8, 2024 at 10:49=E2=80=AFAM Karl Chan <exxxxkc@getgoogleoff.me>=
+ wrote:
 
-    ZCnφ = (PLL2VCO x 1/2) x mult/32
+> Also Other linksys ipq5018 based rotuer is capable of booting arm64.maybe=
+ i could rip the
+> uboot from those rotuer and flash it to ea9350 v3 but i dont have another=
+ linksys ipq5018
+> based rotuer.
 
-Dang-san fixed this by using CLK_PLL2_DIV2 instead of CLK_PLL2 as the
-parent clock.
+It's maybe scary to reflash U-Boot.
 
-In Rev.0.70 of the documentation, the formula was corrected to:
+But you can boot a "new" U-Boot from U-Boot, so if you can compile a
+U-Boot with the proper hardware support and the RMR quirk, you should
+be able to boot that, and then use that to boot Linux into 64bit mode.
 
-    ZCnφ = (PLL2VCO x 1/4) x mult/32
-
-As the CPG Block Diagram now shows a separate 1/4 post-divider for PLL2,
-the use of CLK_PLL2_DIV2 is a recurring source of confusion.  Hence get
-rid of CLK_PLL2_DIV2, and include the proper 1/4 post-divider in the
-invocation of the DEF_GEN4_Z() macro, like is done on other R-Car Gen4
-(and Gen3) SoCs.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v6.13.
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index e20c048bfa9be142..9067e407cbc69f00 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -37,7 +37,6 @@ enum clk_ids {
- 	CLK_PLL5,
- 	CLK_PLL6,
- 	CLK_PLL1_DIV2,
--	CLK_PLL2_DIV2,
- 	CLK_PLL3_DIV2,
- 	CLK_PLL4_DIV2,
- 	CLK_PLL4_DIV5,
-@@ -78,7 +77,6 @@ static const struct cpg_core_clk r8a779h0_core_clks[] __initconst = {
- 	DEF_GEN4_PLL_V8_25(".pll6", 6,	CLK_PLL6,		CLK_MAIN),
- 
- 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
--	DEF_FIXED(".pll2_div2",	CLK_PLL2_DIV2,	CLK_PLL2,	2, 1),
- 	DEF_FIXED(".pll3_div2",	CLK_PLL3_DIV2,	CLK_PLL3,	2, 1),
- 	DEF_FIXED(".pll4_div2",	CLK_PLL4_DIV2,	CLK_PLL4,	2, 1),
- 	DEF_FIXED(".pll4_div5",	CLK_PLL4_DIV5,	CLK_PLL4,	5, 1),
-@@ -101,10 +99,10 @@ static const struct cpg_core_clk r8a779h0_core_clks[] __initconst = {
- 	DEF_RATE(".oco",	CLK_OCO,	32768),
- 
- 	/* Core Clock Outputs */
--	DEF_GEN4_Z("zc0",	R8A779H0_CLK_ZC0,	CLK_TYPE_GEN4_Z,	CLK_PLL2_DIV2,	2, 0),
--	DEF_GEN4_Z("zc1",	R8A779H0_CLK_ZC1,	CLK_TYPE_GEN4_Z,	CLK_PLL2_DIV2,	2, 8),
--	DEF_GEN4_Z("zc2",	R8A779H0_CLK_ZC2,	CLK_TYPE_GEN4_Z,	CLK_PLL2_DIV2,	2, 32),
--	DEF_GEN4_Z("zc3",	R8A779H0_CLK_ZC3,	CLK_TYPE_GEN4_Z,	CLK_PLL2_DIV2,	2, 40),
-+	DEF_GEN4_Z("zc0",	R8A779H0_CLK_ZC0,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	4, 0),
-+	DEF_GEN4_Z("zc1",	R8A779H0_CLK_ZC1,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	4, 8),
-+	DEF_GEN4_Z("zc2",	R8A779H0_CLK_ZC2,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	4, 32),
-+	DEF_GEN4_Z("zc3",	R8A779H0_CLK_ZC3,	CLK_TYPE_GEN4_Z,	CLK_PLL2,	4, 40),
- 	DEF_FIXED("s0d2",	R8A779H0_CLK_S0D2,	CLK_S0,		2, 1),
- 	DEF_FIXED("s0d3",	R8A779H0_CLK_S0D3,	CLK_S0,		3, 1),
- 	DEF_FIXED("s0d4",	R8A779H0_CLK_S0D4,	CLK_S0,		4, 1),
--- 
-2.34.1
-
+Yours,
+Linus Walleij
