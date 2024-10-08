@@ -1,129 +1,110 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A911DF74E;
-	Tue,  8 Oct 2024 13:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CDB1E0DB9
+	for <linux-clk@vger.kernel.org>; Tue,  8 Oct 2024 14:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728395689; cv=none; b=kt50DEBEwPGgQDLEEA2sVr9AtY9ybeSk//ol6k93d/0yWsA8vaHVL8nsjFCsTu+Iix6IwQFvu7V2sLPbgPu+Kdxb0Ykv1mAMoHqp73mV5Xbn5VYILKiv3J45vE5L6gfLG7WIV7WfZiofBfObH1PFRtq4mHgJn9zuFgx3bxIPO9g=
+	t=1728398219; cv=none; b=TLsCUYhKk/xCYN7nnHli6JMQluL2V18QLl6xoUfIJegc5eDbLDTdXf811exGAl5KrScgcHIFI6ho9fH5MRqB6P/itX40kD7nyh7bOwkG6oNr/T9/oBjlhoeX7KvmAfDWlfb7q9ngxFjpvcXPJLBtcczrVBgLPOGAkKdTPEiaYV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728395689; c=relaxed/simple;
-	bh=LO8a+sxjyviC62YLXvVJ3sekmoTsrJ17qcMmxdMKoGQ=;
+	s=arc-20240116; t=1728398219; c=relaxed/simple;
+	bh=Ez1a1h8Ms+1O98dJlfS1HG3cTnUbVG7/3+aSOkVZLW8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rjdVKurlN+8rIjcSJ/pOYIHh5XAhvYTovoiMmAvEHHfg3JhqL/QCNWB5kiWKnzPapf2dp6KwSf/MJPazH4NnioD5VC/zaZOU2vc+MboKJr6SLF/vL3s/swZhq6nRiyXz/QgPDce/z1DnSbYbBDITH4Uno5/UoKlR3FxhvRCksbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e25f3748e0so57073367b3.0;
-        Tue, 08 Oct 2024 06:54:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=E1iP/pyX/XtgIjQObK8FSFKCkZYLk5w6mb0mIkKLk5SdkoEDFISBPcsha7hkE3mG+advqYxlmzmv/D0DEl9quObjVIwWwl104Gof5j7m6QjQbo/3TnvtD2HYmOYL9k1dsmbae2wAQEWszJnG+pcZAkLYw400w0IPqWA7tun6fRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JnA2a081; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnA2a081"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e28e4451e0bso1463772276.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2024 07:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728398217; x=1729003017; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=l0854fPv0lxGwhhEzPUBFcu+X9bL4gK6hC6tSqeFnVo=;
+        b=JnA2a081KOkXDdPKkwHp/I0d0SpNvJcVPgNpQuLwmUclzZvYqOWhtocDcLJe5TYZWa
+         aQroEBpRZyVCuI88ZzODdleKbuJDArEGz7LjO53mrnSiQ2anpN3TSRUFXTNcPqqjbs7O
+         AWxpRFirw5Kyzc4S1tfXVDmbnbPevQdOaRoOvXzO9Om4wSJrnI4BfVR5GrfX9w4O3W+E
+         MJ3ultnGwsqTaqP8Xn84k8QUYANxmTGMWV8k8vPBhzJFBk3GlqSeH+XFavHlNRvIJdG4
+         IBYOEVzcmHJ0d5XAPQa2lgSa0DG4PkaQ5RJDGG3sKrQofUgPrTyhtMQrJMcx53LjxKLF
+         1l9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728395686; x=1729000486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L3uCZskBH2tXjyYuhmNFj34NCuiW42SvvJ2N3l6bLtk=;
-        b=dhsCwCrXWFhQe5q72vZTUVYdVTTC4m/LIpg98PL1c+B/458IzGVMF5ghJsgbwnYc/l
-         /lkx4ppZ8U9T11I1P261RLXrKl7BM8iSEbynD0Tiq6P9LwsUIkoR7CXKGYUaIhS5/yqu
-         gNg0i/3Mkyidy7j+57WPhHSEVDwKokrodkgBvQ45aqj92DxDOMbPSpMqTTizwXNm5lCm
-         nTe1iELkxtKjo/4LJtqId+/n6ckQ6F2SsVBjo4bm+kQriFur7z++N7JkC8XhrtiXwG9J
-         iZwj2QAZ+3JqG300F938PsBx2iZKete5GyYHFlwXlktq4ivK2X/d2J9ELXbMUjzvEMpd
-         Sr1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmtC63cvYYW9ULbFy8Vbg97pQzCjr0iaFGAJuqfmuV347ee23TAscIO9cm73WT1U+glMMHBqPUfjk=@vger.kernel.org, AJvYcCVV1y/li12E9yXlftnPCXIORwREOZ4/40cWNPSo7iJt0NYmyKflHm3NZtKfLp8sFNCvh78NTwG2NHvb@vger.kernel.org, AJvYcCWK+a4ZOTc8WkXjzOJB9ikfKdKZH5ie39Ln33pWNh2kl3JkzGo+03JxaRL+BsvzhOc2pjmxARAM9ryu8iwVFI1wdCc=@vger.kernel.org, AJvYcCWZkVsUE7aJcuMJ/A2bxom8o89p1Xea12PFU8sveQWEYHZvppUrUeY/yLaJofHp1ZCxSSe2HfDAqA+X@vger.kernel.org, AJvYcCWn4gFLkWXZUq0EyCOyd5vuwwZToZ0tefo8Hu1aeESWC7KPsPi72nsvbZ4upQfhsmul0C2D6qQsOfFbFh96@vger.kernel.org, AJvYcCX+luNUrVoFUAUgbTldFLgs95jAyI+Y7SboqRuvMTrzGficVGtX5Ii0k4wKHo12m5zuI+ViYMwsMKw+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOgPPDHFnzBpwwqykHZ+5+Jy4+tyRRMeFB35rH/YmXjaCM8Wz5
-	3d/u/dJhu3onBlSrMZDVRsQO2pQduiVPU6W89n7jqRO5WfK2Z4OkTQ/yMkrU
-X-Google-Smtp-Source: AGHT+IE3dMwOza+AVSqH1LE/rEHn4F9GIOTC8H1byRwwn11XsFIJT227xStdSmI67pYeyiuzj8Cr9g==
-X-Received: by 2002:a05:690c:700a:b0:6b1:2825:a3cd with SMTP id 00721157ae682-6e2c728aa03mr120194077b3.35.1728395686643;
-        Tue, 08 Oct 2024 06:54:46 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d937c4d9sm14337007b3.56.2024.10.08.06.54.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 06:54:46 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e424ab49so23420847b3.3;
-        Tue, 08 Oct 2024 06:54:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURNkZhtyAHS52ACMW77Q6JjbJ2VhIJbZ/ipS1srnisTmEnEppfi+mfuH7rr2GOJl4jce2zcConKNvc@vger.kernel.org, AJvYcCUW5c8rXd5UQDeC1cbvMN/sm1OOi+g7Ffg90C4xF/sUes7n1FMrTTbbRDBHaNs5/VGEoz3BDIClNpuky/5L@vger.kernel.org, AJvYcCUgJOZsrl+gAZrOy02V6O8GOG6nfvjDrTaHeVkdk5uwQZouUnzMcF4gEgp3pN7UfHiryZ4G18Ve4boW@vger.kernel.org, AJvYcCUpKOf4yHncJwcVMOXCtL+YIH621e1/qIUM0zHQn4Lyk2WQtyucf8khqg4WztWQGD7sXMs+q2m0QpGYy3x/TE4z9cQ=@vger.kernel.org, AJvYcCVp2acOyRMm45Hycpv8bXaMU4iwilb6Mqgo6UqyjZ+D/xUDrMKQPlToiSW7frGOalYIxYhoswlMjQjV@vger.kernel.org, AJvYcCVpoOEzYcyugh1nrHUCcEcdqlnEVwHGbFn7nh4TLl7/PtGSr4WUmqaRI/zF3IzmM/PJ85Kjv3EwrRI=@vger.kernel.org
-X-Received: by 2002:a05:690c:6ac8:b0:6de:a3:a7ca with SMTP id
- 00721157ae682-6e2c728a25fmr119511907b3.32.1728395685683; Tue, 08 Oct 2024
- 06:54:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728398217; x=1729003017;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l0854fPv0lxGwhhEzPUBFcu+X9bL4gK6hC6tSqeFnVo=;
+        b=RFMJhYFk2UD3xIwE2mabbpJLVRXLpfU4+6H1759Yf+hiTfxkkwxKOrOncv4BeXBHYu
+         CJccavImLHxSoLOP0lkjRq8lQ1+nSuTlyaAfQeubPwkoBjYW2J/DwS7iezlOGD6mpxtk
+         qwQnZ9BaJ1cpsjLaF82fkFspirOaJX8gGujkOpIV1lUiv/6r879vdwsU4Upz16Rm4hyE
+         HUBuervuGYwyyrxPwNb7o0bXB+hlyfVyjeepU70VTs2Lw+08nvdwNd7nmpX/9Q/vb2Xi
+         hYV7FiiMWULPQplJMsaTCL2TNCumbcCBysZcAkKcylr3GwNtREHtPaSY0K0D7Y6aj6aa
+         cjuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuYyn+af5o9l44DvM8B+ycZb28+2uiUY9SCVRFzEEIi6wJKVqSQACycLZtf6Htkpjs+ySabF7cZqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxa0e3W0WSqQEPNY+vJL7u3/dQZOkCK00DbEXCJfAvuIFWmFSS
+	Xjh52VMjQ/7WpDD+ZIOyXaLsZgPvXdvDnE6qAAy4VyA4dtGA/8Vw6at+OnLAZUAufHncawMlqbt
+	uvZ+LPNJPb+mAAbwIn7bscS+KzWI/osKCJjx6Ig==
+X-Google-Smtp-Source: AGHT+IEpdZ58qdVQo5cCccRj1bt7ZYLuIPFt7p/LlY0sT9qZJ20yILj6veCoP8QqMxVxSPJujYJBI+RkTcFSBtzbu/I=
+X-Received: by 2002:a05:6902:2209:b0:e25:b49f:c8b7 with SMTP id
+ 3f1490d57ef6-e28939555d3mr10923158276.50.1728398217034; Tue, 08 Oct 2024
+ 07:36:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-5-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVQsHx0nC3xwQWVRWyWMnbXd1=RokNn8rkJv3bfG_0p-A@mail.gmail.com> <23531a70-cf50-4b32-a9fd-81e6cfcbcf9d@tuxon.dev>
-In-Reply-To: <23531a70-cf50-4b32-a9fd-81e6cfcbcf9d@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Oct 2024 15:54:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWakggcbrBetKht+JHB5F+fxoi9U-oJMMq=ythUOqtYkA@mail.gmail.com>
-Message-ID: <CAMuHMdWakggcbrBetKht+JHB5F+fxoi9U-oJMMq=ythUOqtYkA@mail.gmail.com>
-Subject: Re: [PATCH 04/16] soc: renesas: Add SYSC driver for Renesas RZ/G3S
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241004102342.2414317-1-quic_srichara@quicinc.com> <20241004102342.2414317-4-quic_srichara@quicinc.com>
+In-Reply-To: <20241004102342.2414317-4-quic_srichara@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Oct 2024 16:36:15 +0200
+Message-ID: <CAPDyKFo-x5RDPwh1XxsCqzofMvspux7qt-mrxWXF7c9Sp3D8ew@mail.gmail.com>
+Subject: Re: [PATCH V3 3/7] dt-bindings: mmc: sdhci-msm: add IPQ5424 compatible
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
+	p.zabel@pengutronix.de, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	quic_varada@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
-
-On Wed, Sep 25, 2024 at 9:50=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 24.09.2024 14:32, Geert Uytterhoeven wrote:
-> > On Thu, Aug 22, 2024 at 5:28=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
-ev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> The RZ/G3S SYS Controller has 2 registers (one for PCIE one for USB) t=
-hat
-> >> need to be configured before/after powering off/on the PCI or USB
-> >> ares. The bits in these registers control signals to PCIE and USB that
-> >> need to be de-asserted/asserted after/before power on/off event. For t=
-his
-> >> add SYSC controller driver that registers a reset controller driver on
-> >> auxiliary bus which allows USB, PCIE drivers to control these signals.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- /dev/null
-> >> +++ b/drivers/reset/reset-rzg3s-sysc.c
-> >> @@ -0,0 +1,140 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Renesas RZ/G3S SYSC reset driver
-> >> + *
-> >> + * Copyright (C) 2024 Renesas Electronics Corp.
-> >> + */
-> >> +
-> >> +#include <linux/auxiliary_bus.h>
-> >
-> > Using the Auxiliary Bus requires selecting AUXILIARY_BUS.
+On Fri, 4 Oct 2024 at 12:24, Sricharan R <quic_srichara@quicinc.com> wrote:
 >
-> Thank you for pointing it. I'll adjust it in the next version, if it will
-> be one.
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>
+> The IPQ5424 supports eMMC with an SDHCI controller. Add the appropriate
+> compatible to the documentation.
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Thanks, the rest LGTM.
+Applied for next, thanks!
 
-Gr{oetje,eeting}s,
+Kind regards
+Uffe
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> index 11979b026d21..2b66c0f3129e 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> @@ -38,6 +38,7 @@ properties:
+>            - enum:
+>                - qcom,ipq5018-sdhci
+>                - qcom,ipq5332-sdhci
+> +              - qcom,ipq5424-sdhci
+>                - qcom,ipq6018-sdhci
+>                - qcom,ipq9574-sdhci
+>                - qcom,qcm2290-sdhci
+> --
+> 2.34.1
+>
