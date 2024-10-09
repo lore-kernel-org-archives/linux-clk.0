@@ -1,132 +1,96 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48281891A9
-	for <linux-clk@vger.kernel.org>; Wed,  9 Oct 2024 08:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07671166F00;
+	Wed,  9 Oct 2024 09:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728463366; cv=none; b=asAskxRovnFKbpPOGw99aOJ6Ye5uE+NhcUnHgOtotfxNwjYsx4YM6UYxo1N4FsGUD/5z6u+sGg3doxFxYCoWMr6+2BehaD794Ekvqbh/XBqlGesRdJRlzyY1hogpfmI1Nx59vdm+8gbWcbyn1lkFKVIvaHLlCSUes+HfH3yNcbM=
+	t=1728464526; cv=none; b=DqGiWdYaWsARClssfP68Zt2g4HxQVXyKRb7AQGf9vqLK8RQahkhUcJVkz5fGEZtdpgZkLsvT+TB8mKOGlZ1ayW+lPDoEt4pgR6qDzXcdF3QH40kvKk8VG6C4lkGwOUZ/3Zj83mQPUDqLYgyWcGymKxiHb4IJUWIBdtnmR524fqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728463366; c=relaxed/simple;
-	bh=XhJiHPGo1+eCnZwKrwKtZoj+qGtS2ActqBF7GqOTjZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXk385DgHv+9qn43EnJ/TP4STrIUbtJSf8OOU2Qs/jQe+4nDzZGRFLnwc3TpyvJy7cQeK/SHeqANdaQABkHF68eVWw0IXKjiSrbLQrDOKCiTTx1qCoUzaKs4wBxIdPj19e09eNLREkA9D8BdmACcLTh75npxSdVYJcaqgLSVg3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=N3MsA3xX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1728464526; c=relaxed/simple;
+	bh=ESDpBhZRaGB14XgN7tzB2HQ8mkUIV3izuk6EsszNpc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ls/7t40Hg/y4txaFVcmgxuJUbp2NVwoPNyux9z5L9wKI83WR4eaT95a3kApEjUUUzHslE9VKmJOpIQe0o27x7wPr+nLgtHTQsYszV8EtQxgKsfW5ZhFpOlnFuv0lDB4Gg4Xn+enNrVhTKFgTIWIMyF67vU9rztZOXsP2XzjIB+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Uhrm+oI+; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="N3MsA3xX"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a998a5ca499so81219566b.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Oct 2024 01:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1728463363; x=1729068163; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NCo1GlPGMO9qRjYk6NqblAPH+ivDBMcmdikYhCEoAX0=;
-        b=N3MsA3xXYhA8BGicfckJzTKfIILQJylZFKBHAuYRpUMZCEwA/MGo1xlfMjbYrppwMZ
-         1ABbNIaLsfWy+n8Jmcp8wGFMp3p0uj+e1t3wYhI4qL9QNlpICl5LZX23lNnVkMmbaHBv
-         DEp/Ve+HON0bMnYDM8TZ1DjHpQ9m3QPEuyubq4S6VFwJ1cWDVuFZc2s02I1dWMgjGU0D
-         i6gu7v4tWYpiAjOym8BXENecX5/8vPT46O4acX3v8gMjc51e0O2rc5avmUq9JgCtisGp
-         lrggl7V+vqye8HtVY5xMd67EFvelC/sNNaMhrfo/TW+jzqv8cJhyNmH606Mqlv595Z+q
-         xSGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728463363; x=1729068163;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NCo1GlPGMO9qRjYk6NqblAPH+ivDBMcmdikYhCEoAX0=;
-        b=ePzTMhuNE8iGy0+glIeoKA9zFjnD7AuoOwgQn+F1pEM7YvIRA/x7wW3X8YXD1rgufT
-         ZBYDBPc8q/I9s8P+aiuk09z6zxv4dzmHG8uffigPNR36ApVYV+pYpBr8EqOIJFs8WpFV
-         OBIwxRLD/OL2O906lwC4Ngf1v8iyUEesYt1SP55ZoQPQzmwqGKtiVo4lib150MUcW6Ax
-         QE4hkoIWj/SFzk6nQg1VTM4dZzOjqIX4VzZPDRAIMpTHeuLXWnt9t8yt/3dgWZ0UtPPs
-         6Il7K+wZwaEzPfAhGxrZ128eMmzj2rXc7gYL3iaeIw8+qar7/7a7siq0gmHjGUORauT2
-         w7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRcKh9LjEMp2t0hNT0dmeI0+KM4CYKM4X50qfcpQMu6YnHzF7ZK9zhUMtu72bJd66ED4FtU9scdp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv8dZJLismt+eX8QSwdz4l4tyQmYBC9Pz768u0YE+nliUh/e/F
-	F6xhRWwRlIBUKb544/081DqX22CySSti8cWCoNwvJYHj0wyZnuk0hffnRQkVTUE=
-X-Google-Smtp-Source: AGHT+IH65Py6ZoVFXJXAzrfoxCpg11Zu8PXx18r+jrhrvKhS9cBYCLJYMJJAgnToJzsiU/Uro8/0AA==
-X-Received: by 2002:a17:906:6a05:b0:a77:c95e:9b1c with SMTP id a640c23a62f3a-a998d1f6694mr148213966b.27.1728463363024;
-        Wed, 09 Oct 2024 01:42:43 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.23])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9957c683d1sm365002866b.203.2024.10.09.01.42.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 01:42:42 -0700 (PDT)
-Message-ID: <cbb9d3ab-ed61-43f6-aca1-8d35316c4ff6@tuxon.dev>
-Date: Wed, 9 Oct 2024 11:42:40 +0300
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Uhrm+oI+"
+Received: from fpc (unknown [10.10.165.14])
+	by mail.ispras.ru (Postfix) with ESMTPSA id F41F440B2786;
+	Wed,  9 Oct 2024 09:01:54 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F41F440B2786
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1728464515;
+	bh=0tBlbvTpMjEqfjlFsN9StBxwVE8haftHBQAgLVgyA/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uhrm+oI+Y9xZzVZUh7+xdeLE6G2fr5xo3ziwvAT9SJePQNWwM2b1WgS1I95IB6+Yp
+	 9pUT/TbEC+igKD/12/XK08TTI5RK+0TXTL2AyZfi+CkpAVqXX7dplqhELc0cHWn8bG
+	 lMfGEU1mrp51lxkAC4luddzLdLYE8ai5Z1+k5k1E=
+Date: Wed, 9 Oct 2024 12:01:51 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Stephen Boyd <sboyd@kernel.org>, lvc-project@linuxtesting.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [lvc-project] [PATCH v3] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+ <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+ <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+ <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
+ <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/16] arm64: dts: renesas: rzg3s-smarc: Enable USB
- support
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
- gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
- ulf.hansson@linaro.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-16-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdXbNRO--0ZGO4owi3At5n1dTMMWo4PTaubyNWEkVnPFFA@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdXbNRO--0ZGO4owi3At5n1dTMMWo4PTaubyNWEkVnPFFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
 
-Hi, Geert,
+Hi Andrew,
 
-On 08.10.2024 18:16, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+On Tue, 08. Oct 23:58, Andrew Lunn wrote:
+> On Mon, Oct 07, 2024 at 03:56:29PM -0700, Stephen Boyd wrote:
+> > Quoting Alexandra Diupina (2024-09-24 06:14:44)
+> > > >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> > > >> index 8701a58a5804..b32c6d4d7ee5 100644
+> > > >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> > > >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> > > >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+> > > >>          div = get_div(double_div->reg1, double_div->shift1);
+> > > >>          div *= get_div(double_div->reg2, double_div->shift2);
+> > > >>   
+> > > >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> > > >> +       if (!div) {
+> > > >> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
+> > > > hw->init is set to NULL after registration (see clk_register() code). If
+> > > > div is 0 what does the hardware do?
+> > > 
+> > > Thanks for noticing the error. Yes, hw->init is set to zero,
+> > > I will replace that code with clk_hw_get_name(hw).
+> > > If the value of div is 0, should I return 0 as stated in the
+> > > comment for .recalc_rate (in struct clk_ops) or should I
+> > > return parent_rate as in some other similar rate recalculation
+> > > functions (in some other drivers)?
+> > 
+> > It depends on what the hardware does. Does the hardware pass on the
+> > parent rate if the divider is zero? If so, then return parent_rate. Or
+> > does it turn off completely? If so, return zero.
 > 
-> On Thu, Aug 22, 2024 at 5:28 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Enable USB support (host, device, USB PHYs and sysc).
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> I don't think anybody knows what the hardware does in this
+> condition. I also suspect it has never happened, or if it has, nobody
+> has complained.
 > 
-> Thanks for your patch!
-> 
->> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->> @@ -144,3 +188,20 @@ &sdhi1 {
->>         max-frequency = <125000000>;
->>         status = "okay";
->>  };
->> +
->> +&sysc {
->> +       status = "okay";
->> +};
->> +
-> 
-> To avoid regressions (/sys/devices/soc0/ disappearing), enabling sysc
-> is a dependency for "[PATCH 05/16] soc: renesas: sysc: Move RZ/G3S
-> SoC detection on SYSC driver", so I think it makes sense to change
-> its status to "okay" in r9a08g045.dtsi instead, and spin that off into
-> its own patch. 
+> I would say, let is divide by 0, so there is an obvious kernel stack
+> trace and hopefully a report of the issue. It can then be investigated
+> in a way we can then find out what the hardware actually is doing.
 
-Good point! I'll add the dtsi changes into "[PATCH 05/16] soc: renesas:
-sysc: Move RZ/G3S SoC detection on SYSC driver".
-
-Thank you,
-Claudiu Beznea
-
- I am not super-worried, so doing the driver and DTS
-> changes in separate patches should be fine, as long as they meet each
-> other in next or upstream.
-> 
-> The rest LGTM.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Is it worth adding some kind of WARN assertions? Or actually just leave it
+for now as is?
