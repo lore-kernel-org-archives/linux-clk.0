@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC621917C0;
-	Wed,  9 Oct 2024 23:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE8169397;
+	Wed,  9 Oct 2024 23:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728515599; cv=none; b=F/xLTyBYG5vtX3Is4avmJK5x835yR7I9TamWsy9pL8jhq5x8WhT4bF8C8+4g5HxBjCbg0wEcoYu/JEUPaP6c5RC4iSTT4oEMyMlzb6vMW4tQAUcx/rbu8uDUIzRfI3b1pJhc7nYDrlcXBflSKfRcuxFfGgH4RNplzTK10GncydM=
+	t=1728516189; cv=none; b=TSOTOHff1MgSzl8pfMZCtHl/LV5cM+wLgkIV+B+hTY9cscXzWFrbC4Z7Uc2ey4OvMalhjCFehEP4a25hvdOVUUVgS0BCo4L56bdsh6L/E1tfDN0FxbTwKJIthesCcDyKud+PIf8l/jyTSwV9aRLtDl7VNmBvE1W5wB0sGa4KC0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728515599; c=relaxed/simple;
-	bh=DM8RvAw1BvSKsI0QPGU4A3VwxMWTZnvvcgKz4arHqrk=;
+	s=arc-20240116; t=1728516189; c=relaxed/simple;
+	bh=60OTD2MYzHbySQtVtLI9W8x5SUpoFaHcLB1gvcDRzsI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=C3JUV2koSd4xHVfv9KEINbraPupI5Lt5GCxhJuoJSgb7pb/3oIp1AGrnPrHoN6BNOKlsLfKeEAMOemPtqZTAkfYVMgNUB077sBW/7DQ1xFWQYO9CrOPAlyR8G4ZdCl/89H/Bn2BtP7ZO3C4ZEfn5XbDOD0PpdoyRM7ypfNPPisI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOs9uj8Z; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=U6ChtMO0s9HCD+HImHhOWqJOVNhgIQgLu62DI58trwE+3aHw79ETI+sEoZX7e0Au9A/uTfWVGgh8BvDjRUIqfPjLIJK/8irJUoZhSbV+Vu+ObCgKPC5pwQpOgRJrpdsFCTbWPYfG/FhyjDHH3eZeFYU+Qc8MbImD1cBd773QXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glHVVIm+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOs9uj8Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2261C4CEC3;
-	Wed,  9 Oct 2024 23:13:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glHVVIm+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5D3C4CEC3;
+	Wed,  9 Oct 2024 23:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728515599;
-	bh=DM8RvAw1BvSKsI0QPGU4A3VwxMWTZnvvcgKz4arHqrk=;
+	s=k20201202; t=1728516188;
+	bh=60OTD2MYzHbySQtVtLI9W8x5SUpoFaHcLB1gvcDRzsI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GOs9uj8Z0Ye2P7h9gQq9Kag6EnGLzEx1LpwwHlpjqNobdGN2jhEEpCZe3bih+fkgH
-	 4xHE6ltc6o1/5lKeX6or5qVpc66I2rnlAFwHuYQRaAxY94Ep6AAE3Oj6CrN4Pq7IWj
-	 MVbnJNpS+9H50YLhxOmC8GmkNpaWkO9w8gHIX587hfpsxQ0Dz4/edjsk6eKyZPWoKZ
-	 i22xOEV37WCHs9J5JoF+gtboH2dCw4KldiudcT/YHjOqGzl8R5VsrB7CB000nJ8vqe
-	 LwRv85jD/TYf0FVvtvG4ugH8Nug14rjwcYb9T1gsEvFCrevfyx7iJKcjATohhv7mC1
-	 s2q9SJFlXp1dQ==
-Message-ID: <461d3f6d9957426f612a3ad6abbe8b76.sboyd@kernel.org>
+	b=glHVVIm+v5m1Mo48+bDF583js/Yh11lgt/F3vjMAhGAdUExGqhHslSe4HoCoqDd3K
+	 O4OZDd8bHshGgG+HdBvmHsDo23Q7NffX2FNkrH0l3/Q12nZnQwGBJk5X+H22AzUl2n
+	 p12cQNAp53ZUL5ABDG7toWNyyeSfNYQa+FbSeengoRFIVvsDeaWk2H6+DDEnU4e5JL
+	 f0sXW9NLonyh0VKGprfNZ9LeIdniKAQSjkS5/z6SsKADGXLdTYaRCuENzPVHtwBc8p
+	 q6Q68Nz9ZimcebK1oM6gTRjAw8NBqm30EKS+OMMf2zOKwQrYBJ1oLjjwbPqggARnAI
+	 LAKJe18SNn/8A==
+Message-ID: <1b9e1d9fb4f803dcbed9abb75e56a0dd.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241001-clk-cdce925-regmap_bus-const-v1-1-49fc11555b04@gmail.com>
-References: <20241001-clk-cdce925-regmap_bus-const-v1-1-49fc11555b04@gmail.com>
-Subject: Re: [PATCH] clk: cdce925: make regmap_cdce925_bus constant
+In-Reply-To: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+References: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] clk: mediatek: drop two dead config options
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 09 Oct 2024 16:13:15 -0700
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Lukas Bulwahn <lbulwahn@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Wed, 09 Oct 2024 16:23:06 -0700
 User-Agent: alot/0.10
 
-Quoting Javier Carrasco (2024-10-01 02:00:11)
-> This struct is only used for the regmap initialization via
-> devm_regmap_init() (which expects a pointer to a const struct
-> regmap_bus, as it will not modify the struct), and it is not modified
-> after its declaration.
+Quoting Lukas Bulwahn (2024-09-27 02:22:32)
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 >=20
-> Move regmap_cdce925_bus to a read-only section.
+> Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
+> module build") adds a number of new COMMON_CLK_MT8195_* config options.
+> Among those, the config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
+> used in the Makefile to include a specific file.
 >=20
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC.
+>=20
+> Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow=
+ module build")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > ---
 
 Applied to clk-next
