@@ -1,87 +1,80 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175181E7C16
-	for <linux-clk@vger.kernel.org>; Wed,  9 Oct 2024 15:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B2B1F130A;
+	Wed,  9 Oct 2024 16:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489448; cv=none; b=l5pyYgjW2fMQmyJy7+KSmlsttbcNq1RWgFeJx8vQOU9vAdHBtaiRS+9bBAIdkeAEROYL9xP46bstwXeWRnFrVtihIAMy4VbkrMleGq7tgUw48EuWO4m9DZvuJWXIQmcyEvUtc9IjOHb/Nb+TCtCpT6sy5xQLa5VEhDI6RJ7YMNk=
+	t=1728490369; cv=none; b=jrfH1IiqyVw60worblUIVHKDRzrU1yOH+8r3WT0/F9tUZOBWC1Wj0xAJkhD7SSYL0B834ZvTwepu7WOFrt8ZHq+yczqs7q1fHYp5a8S78nsaWeB13mCq54k8/ep2SPf8hAJV6Uvx8Lv3x7X6rLOlMCLAsi6FHUrCwZ1aciXEWqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489448; c=relaxed/simple;
-	bh=vrhvjbhG8OdVFx0NG+PSXqXho24Jigne611qnWBqko0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=slqCj5g0wGJJqvD5oWuazSDQGjtQ23aj52zBTBr4qcA1fiHImTRseOAv78aeyNawuZfftnQ32McyBWp4X2tps8NZfB4Ct9bLceDUEl1bWuzbI5dxFQ+PnIOTwPpHeyyx8qjvBw6zDyk8jP//GjDbhhczzNVSJ5YfFRMgcRp68k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=YZ5+vt0I; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1728490369; c=relaxed/simple;
+	bh=S5aG80GvrKdfMXVhakyIDR2NbDXeLTTdwzkg9R4l52A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gfVQwQWLWGM4k/N42KhTFmQ7G1YI0/xT+qJETeISj2+1xLaZItfttmRdMSHKh/OGtQa8pzQvSIZUvjjln3s/5hXnXAf5bpaa8rIehCd57sJLzFJWirizC3ooISyO5Edlb7IMgmKvUBBYMRmzTJQsH4GHJPcDDE6CjrbA7ejufsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxvP+wX7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="YZ5+vt0I"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id B6EBB88363;
-	Wed,  9 Oct 2024 17:57:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728489445;
-	bh=OpXxg2HPPb36VzEMRGPP5fuLV8xBG/0keikb0GF3PJg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YZ5+vt0IlN4+K8ecx9YKyGYBP41Z3aS0CIQCawLFxQ+OAyPcrwRZNwtwqDjtcIVRg
-	 kHk9cKLUq9NFkbD1h29FuXpM8DdKM21Bb6qHV/9AYc5/eSFrMfRLMUIbdN1CC9iWXP
-	 N7GMBJAVcwh7b0KzwiQdt2K2QD3B1QEiCi8kiT5TXCrvFDCKGxCLDKArfeDc3NFqgf
-	 GrtSJNTpTqa023X2WxquD3zrMiYfQYhy+yphmVXYGE3TlU+ujyxY51nPMWMJXrEIPr
-	 ZtNMkwI2/LJjaEe3iS8K+rOUWn34uScb3z2ohSgzIjfKIZ/bgoLU6Nn20iwhXIrAaJ
-	 veu+S5L2FKetA==
-Message-ID: <8b38fbb6-50bd-4135-8737-aa174c6084da@denx.de>
-Date: Wed, 9 Oct 2024 17:43:09 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxvP+wX7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04529C4CEC3;
+	Wed,  9 Oct 2024 16:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728490368;
+	bh=S5aG80GvrKdfMXVhakyIDR2NbDXeLTTdwzkg9R4l52A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hxvP+wX7aPWLqTtiZP+W8BDHgAQNj/T5T8gVd3ljVbXCq7+6iSTL6G8IFidPvHgFc
+	 KVENSUMRVifuvcHhLxz+1mol24tzx4g1EVoBfTmbqkKr9OFtjFEjIa7uxWtpZqtzNq
+	 wZgU/F82FY31jx76spPYH2BrUz2uHoqf7DLMn2JMMdmdglyYA7o/n7BlG2Rgbtdirb
+	 VSQx47sSgJYaWCmy4huSPc0iRSCOJfC/QqAU0B+RlrLPor8c0w1u+w8SdmTJJiE+5/
+	 cfAKtrz9tOVWwLAuLX8q9qjcv70jvJKpZnupmXLtzLB9Lq/CWM9iv0MExz+UeL3NTS
+	 IctUKp5itIGUw==
+From: Lee Jones <lee@kernel.org>
+To: linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20241002-clambake-raider-a8cbb3a021a8@spud>
+References: <20241002-private-unequal-33cfa6101338@spud>
+ <20241002-clambake-raider-a8cbb3a021a8@spud>
+Subject: Re: (subset) [PATCH v1 03/11] dt-bindings: mfd: syscon document
+ the non simple-mfd syscon on PolarFire SoC
+Message-Id: <172849036272.666113.12889452067505651673.b4-ty@kernel.org>
+Date: Wed, 09 Oct 2024 17:12:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
- reconfigure parent rate
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, David Airlie <airlied@gmail.com>,
- Fabio Estevam <festevam@gmail.com>,
- Isaac Scott <isaac.scott@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Robert Foss <rfoss@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- imx@lists.linux.dev, kernel@dh-electronics.com,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20241008223846.337162-1-marex@denx.de>
- <ZwZrtajvhpq50QPH@linaro.org>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <ZwZrtajvhpq50QPH@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On 10/9/24 1:40 PM, Abel Vesa wrote:
-> On 24-10-09 00:38:19, Marek Vasut wrote:
->> The media_ldb_root_clk supply LDB serializer. These clock are usually
->> shared with the LCDIFv3 pixel clock and supplied by the Video PLL on
->> i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LCDIFv3
->> pixel clock. Allow the LDB to reconfigure Video PLL as needed, as that
->> results in accurate serializer clock.
->>
->> Signed-off-by: Marek Vasut <marex@denx.de>
+On Wed, 02 Oct 2024 11:48:01 +0100, Conor Dooley wrote:
+> The "mss_top_scb" register region on PolarFire SoC contains many
+> different functions, including controls for the AXI bus and other things
+> mainly of interest to the bootloader. The interrupt register for the
+> system controller's mailbox is also in here, which is needed by the
+> operating system.
 > 
-> Any fixes tag needed ?
-I now replied to 2/2 , I think this is feature development and should be 
-applied to 6.13 cycle only. I would like to get input from Isaac on 
-whether the DT fix I suggested to them in the original bug report also 
-works, and if so, that should possibly be the Fixes: patch for 6.12 .
+> 
+> [...]
+
+Applied, thanks!
+
+[03/11] dt-bindings: mfd: syscon document the non simple-mfd syscon on PolarFire SoC
+        commit: 8ae16d3b2ff6650a90be78881cb88dcdf1bd1370
+
+--
+Lee Jones [李琼斯]
+
