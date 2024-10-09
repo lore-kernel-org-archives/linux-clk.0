@@ -1,84 +1,72 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3253A1925AF
-	for <linux-clk@vger.kernel.org>; Wed,  9 Oct 2024 11:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548411922DA
+	for <linux-clk@vger.kernel.org>; Wed,  9 Oct 2024 11:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474044; cv=none; b=WcBum+jpYMxq0soGA7YTXNeN2uPRrHCafff5wIPV/+8VXPUoGpEOklUgsA3RAviWvLfNN4Vzg7iZ42QdzhmBlufjv4Ujo7E0k2lskC3/hap92YJBQsg4dsxK1uMoSjPYlSAtxtZG+/BrRFfJADWZx6vCpxIPEjt0XlwoTIOBrnc=
+	t=1728474707; cv=none; b=WDkgd+lfxMtm4uefI5NZLlTRrRCFKimwTwP4NedScSFpWtFHTzkqaiGw29giASO7WjXpkdpeJRJXK2/+aYJSGjlcYvzZmTEMEVkoalFNG3QgzMw6T7J/R7K5jJD7EutLcIWCUgus8v9e9XU8tDitSky0nQF5xQ/opKUiG1vCmAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474044; c=relaxed/simple;
-	bh=h9qy1eidkzqAdVQtLG/tBIVtqvb9J31253seEKXBubQ=;
+	s=arc-20240116; t=1728474707; c=relaxed/simple;
+	bh=7+eISHNu4uiQ47pDt/DSf8ldSBnlnXKbXyoRYwTIlV4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDf4A7AqdUP7m+Axo3RW+pbQQL1Q6Nas6qUxLjODoGuzhrSfg+k+UhjmUEtefZRgOOyxDoZQhRASqJbNRaZQ6G+XtNayU1O+tBXSGGidHfsvOpCZ4PWRM2zcNxbNcy5HAmgUy0pLTmpnPBR0aHUOjyt5dOqvD4FD7CvokXZSm7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPAgVwKW; arc=none smtp.client-ip=209.85.218.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=KeRytNuWMnpz072IEi1EdZcZXdM0w5aWJ15W5uFWsALDZXwsrEj/ZSYFXItigzVkj0baRL8cuQLx+UnZWvyEgWq7y3pRNxCKwmmUIZLqfUii0nEuwU0Z2Br7sh78rd1WZF/pvfvnpHtmBIHLGyVN3tiw6Qtl/YK950816POhMp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bconrrnh; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPAgVwKW"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9977360f9fso220781666b.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Oct 2024 04:40:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bconrrnh"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99422c796eso604430966b.3
+        for <linux-clk@vger.kernel.org>; Wed, 09 Oct 2024 04:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728474040; x=1729078840; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728474704; x=1729079504; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3tPa6oC3GkVBQqXt9lYWOj5WcXfTZQll2lZKEeta0s=;
-        b=MPAgVwKW5OdGMNIz0IQy4IkKXELdRqcgOUUIvdpn6Pz25biWzx5nkkqKsm8yNiw/LH
-         Yf6pv2dNUygWT4JStC8l5ctlNjXQHEgoS+Fm7woL/1Z5sL9GEmeXKXctCWxNmXOjRM1h
-         Jv8f5gW0QhDIG4nwMFXi5RE91NjetnQUq1ZPy/O0FhLSQdGZ9IpDrWELrR9Hqp/XrVpy
-         yGfA6cL3UxPrDXIsRxCMc4g0fMf57CNxA/UnTV9upkhcOYPJvZGwQ4T34RbStBm/6TYr
-         ZxcZKUFrmjQ6SN6N69R//qSHvATy1bmkKhJUqH2PWXWvmZfesZLzj4jSZI3LZQMrTVd+
-         kt6Q==
+        bh=Q6jKWjRvRRcJdMU7TrSrOqImZ9Mn58A79NvUZszvi6E=;
+        b=bconrrnh5UBET17mgUpmkSN1m5qgRjh8eCY5G/Naz8I2SL39LdYZ5Bf64LNbSaPkld
+         P/10x2VoSwFA4xiPciX/BNBSh5TuiHrTbeGU9DJqf1BhrmYtfRirvtbodKDu+svDloKu
+         O3vhd4hmbPZ4LTx0o7PUe2Y6ikDymaKnW5glnhfpDtOCv6o4OM1mDl6CDGPb1AFbCbYc
+         8/zYqR4SuYiNr+tNx1UPGhQzI1oxRVxt9lxpyOqYrfRh86AcfAqSFPnGEj3PFlge6byP
+         2OZu7GY6q0OsjFzYup4QZiFAGx7+zEBR+cUV5YdIk8McceVI6DxE+5c4VSmpTtqGHbcU
+         AH2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728474040; x=1729078840;
+        d=1e100.net; s=20230601; t=1728474704; x=1729079504;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n3tPa6oC3GkVBQqXt9lYWOj5WcXfTZQll2lZKEeta0s=;
-        b=khEsr58aLsSXHJjJK4N51h1AfuwkOQFcOr44DQx1P/qqQKopyO+/rqK+bCEXJQBJha
-         X0DlyiIDCc0ueejN1L+7XeH5SxYPGlHYXcrz+ZxZ2fuMJXp8+AuC42M9nQIyO18WUzEp
-         Nj5xQrEIkQ953DPPeakxdTiEJDHMeRmKSBJt3ev5HD/BRy8iy73QNj+YaLz7oOPJPueY
-         IzpeIrNTmNnfkWjFJX6dpikcT4F7R4W82XQxFSSqU+KBuw5aXEtVR4jsqj0G/NwUzh2E
-         13X7QpXulWci7tGYLSewylVRtzj0Q5RhUwzAQCKl3/X7aYnDEiSTLvavEURG/vBgKK/q
-         hQvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jUSR05v7Ra1n+Tzj2/uS/idtbvifWbo8aMqbZlnedbUHelq/XnoFUnKOhc7LDcMxsQDh12/jNgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7TSVUIJWKiINgS7OvCdcqV9O7CRW7PqkhMcB/ed3cJxxE4CF0
-	mz8JUXbbirnGK74DCOduUjMFsa9TorQp36X60gCeK+SHRzTWovigWScNHOX27s0=
-X-Google-Smtp-Source: AGHT+IHzp7sGsoG0E3MlQedOjt1RQsHdAF3ZWTsO4nfIOk1uH4nyTFSaTS2XpHphmCpbogKsgsVUTg==
-X-Received: by 2002:a17:907:e89:b0:a99:3f4e:6de8 with SMTP id a640c23a62f3a-a998d3832e7mr182256566b.64.1728474040413;
-        Wed, 09 Oct 2024 04:40:40 -0700 (PDT)
+        bh=Q6jKWjRvRRcJdMU7TrSrOqImZ9Mn58A79NvUZszvi6E=;
+        b=VlL0AYa76BWYmN8td8aUMfEs1W7CmqWG06IqF+CS95L1jS8qIGxlHeHq9A1olL/MaY
+         0eD9d38F/V1ImK8c7wVmqWUE8Rve+fMKIk81b4Vwd0G/Oz+yqxF15iIxXx10F5/vHHho
+         6kH3ygHt+C6JhmL+FmXfXZ5bJLUOTPjxwtR8/HLHB47pVgt4j5oJ2s3OPwqGkERfDGDW
+         oaZPudOVvsLCtTVVWVXm2Imhikz2tJF17KN5b1OjpsF1MKa5I3BK791Tu7vMiy1Sukz4
+         pUj4MiyXhxfWC6MHraStdeQSK73sTLCC+kUd2CKnosg6/lyoHn9FxlEkx+KOBL0Q1t3U
+         OeRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXx1hzKiSU6OJPRnijxWL0WJF/CKpm5GbQ9TiySGkG3tDQq/to+ETti2k8Gya/XxIiSN4Z3bEujCxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtSnh9sfwuPFJcwQH7PVIKvsaC+mCjfjqhZ4j8h584+UZXc9nj
+	F8U+yflYlo81rR701AoYi/z3EoYtZUOneLP/9sLXGqFFiZaJ+3g5qIIeLHKO2E00uhCnATWnj6/
+	e
+X-Google-Smtp-Source: AGHT+IGKpe5RJdRvKaNKGeWlJU8yuhUR86qwyFDbVPAhlwFfcx+fGtxwpK017I4wKqBnPOdRSWgB4w==
+X-Received: by 2002:a17:907:3da7:b0:a99:451b:38fe with SMTP id a640c23a62f3a-a998d174df2mr179992766b.26.1728474703666;
+        Wed, 09 Oct 2024 04:51:43 -0700 (PDT)
 Received: from linaro.org ([82.77.84.93])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994a8da5d3sm495547966b.134.2024.10.09.04.40.38
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a995668f4b6sm396323966b.48.2024.10.09.04.51.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 04:40:40 -0700 (PDT)
-Date: Wed, 9 Oct 2024 14:40:37 +0300
+        Wed, 09 Oct 2024 04:51:43 -0700 (PDT)
+Date: Wed, 9 Oct 2024 14:51:41 +0300
 From: Abel Vesa <abel.vesa@linaro.org>
-To: Marek Vasut <marex@denx.de>
-Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Isaac Scott <isaac.scott@ideasonboard.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Robert Foss <rfoss@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, imx@lists.linux.dev,
-	kernel@dh-electronics.com, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
- reconfigure parent rate
-Message-ID: <ZwZrtajvhpq50QPH@linaro.org>
-References: <20241008223846.337162-1-marex@denx.de>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
+	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
+	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
+Message-ID: <ZwZuTWspV54Pn0GN@linaro.org>
+References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
+ <20240627082426.394937-2-pengfei.li_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,66 +75,48 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008223846.337162-1-marex@denx.de>
+In-Reply-To: <20240627082426.394937-2-pengfei.li_1@nxp.com>
 
-On 24-10-09 00:38:19, Marek Vasut wrote:
-> The media_ldb_root_clk supply LDB serializer. These clock are usually
-> shared with the LCDIFv3 pixel clock and supplied by the Video PLL on
-> i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LCDIFv3
-> pixel clock. Allow the LDB to reconfigure Video PLL as needed, as that
-> results in accurate serializer clock.
+On 24-06-27 16:24:25, Pengfei Li wrote:
+> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
+> the number of clocks, but it is not part of the ABI, so it should
+> be moved to clk driver.
 > 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-
-Any fixes tag needed ?
-
-Otherwise, LGTM:
-
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
 > ---
-> Cc: Abel Vesa <abelvesa@kernel.org>
-> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Isaac Scott <isaac.scott@ideasonboard.com>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Jonas Karlman <jonas@kwiboo.se>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Robert Foss <rfoss@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: imx@lists.linux.dev
-> Cc: kernel@dh-electronics.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 516dbd170c8a3..2e61d340b8ab7 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
->  	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
->  	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
-> -	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
-> +	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
->  	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
->  	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
->  	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
+> Notes:
+>     Change for v2:
+>     - Use pre-processor define to simplify code.
+> 
+>  drivers/clk/imx/clk-imx93.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index c6a9bc8ecc1f..c8b65146e76e 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -15,6 +15,8 @@
+>  
+>  #include "clk.h"
+>  
+> +#define IMX93_CLK_END 202
+> +
+
+TBH, I don't like this. And I still don't understand the reason.
+
+Where are the clocks you want to add ?
+
+And why wouldn't it be OK to just keep this in the bindings header even
+if you need to add more clocks ?
+
+For the moment, I don't see the value of this change.
+
+Sorry, but NACK.
+
+>  enum clk_sel {
+>  	LOW_SPEED_IO_SEL,
+>  	NON_IO_SEL,
 > -- 
-> 2.45.2
+> 2.34.1
 > 
