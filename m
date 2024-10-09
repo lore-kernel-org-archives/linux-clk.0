@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E50D18E02A;
-	Wed,  9 Oct 2024 23:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A44318FDAB;
+	Wed,  9 Oct 2024 23:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728516298; cv=none; b=GT+zp7HdxwYbfQXwpphhjEsHOI8eIVoXF3HpzVd+sMvFDOqELE1jAAF4vySWnZLywm+4Bo7y4q+KqdkPSnFsxMlz4GmmfEUDRNyhbklMR0aTwxSVzGy5IpdVI+N1bo8mFY0qIZK2JiI33jEDZKLKKscoPJEzFcAIdro65iAljVg=
+	t=1728516985; cv=none; b=Dupk6FUMBEw1KT0ee0MloSFaqZ2KXyiF91QWvspUM7CtrNr+IYBfWYDxOUIgdvryWs5aHQtWaXagsTGnkUZzV0kPsXQ5+CXlKBn8nID91ItbnMGJ/hI1XENe7+y2MNYQvwVPjLxuk+uYSlQUHSwIWzDmgeQks1vc1FXM07jlnXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728516298; c=relaxed/simple;
-	bh=f8j5Rc2RHHhiF2GJc9OBWL+K6u2nb+DBAE4TxLYBxHE=;
+	s=arc-20240116; t=1728516985; c=relaxed/simple;
+	bh=/VfS4CHIQj+iCyyZqg1FjUxPBhsxt0XrNouVO7Jdyeo=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=MStjuLm66qnELsl++9HbfTXKRg1zcflKAE7wK4izkvcE7po0lzzVi3ErFStKxwn4L60YgEL4stWpqN0iRJ0quh7f+k7xuFDbhHP4tVpB2kpR7OeGz/OGYSLsj+n86zeF9Dxot3Eb7ehyTzyTk9puaGuLC7Ln/9Ba7b9GzRKA17Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dc8FJN6V; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=HEpgFLMUhUqjcscQYTNQX6utZTf3d+qRrWNTK6HcbEMhZrJ1G5FpiwwS/1E+t1WeYPYyMAtmB76wPrUkuWofXPIzFX9Q7chHbI3jn3i5VJO7ejNys2EhVJepqjQlJyvur7Pkx26QwEHOlGPvK+V75tC10dJKbtkQbm/1DB5MoVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPAShg6M; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dc8FJN6V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB812C4CEC3;
-	Wed,  9 Oct 2024 23:24:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPAShg6M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B96C4CEC3;
+	Wed,  9 Oct 2024 23:36:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728516298;
-	bh=f8j5Rc2RHHhiF2GJc9OBWL+K6u2nb+DBAE4TxLYBxHE=;
+	s=k20201202; t=1728516985;
+	bh=/VfS4CHIQj+iCyyZqg1FjUxPBhsxt0XrNouVO7Jdyeo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=dc8FJN6VBianZ1+FazmVZdPlcp9zpSItKgTj557J2VYbbpZjCGF0DvR1E5fMSycW6
-	 DXb32sDm58B9P8HuFphQbt+VNbcZsAl+cwRQ5jGUFZ0UDZSpI0vKJIWdiLpP3vzDMU
-	 R+D+VFXsGwGqlg+PawFSSlqyXsUFh/7DXO6qfHlmgg+yNg+fqYt2wXBlMFGfDYFTSn
-	 fymy11T41cP3QIjZhqapVHEFbW1pw/0UyX+cQpD1AF40ULJ/oyH/44h+uH/8iVoqgo
-	 vY8Bjcc5WpH4jpyebJQckWrxSV8EpxWNc7NKHVmZVsTjIt7XyYdLDHaf4Ydk4kEqUe
-	 ubXaDVaaIdiVQ==
-Message-ID: <e0c20d3cc4490776fd2498bfd72ab6ad.sboyd@kernel.org>
+	b=uPAShg6MCbY9aqslhpIouTyzmfHcbVey4OTAJ0tsbgqmmDH3/oo7SbBRiTxXI6eDZ
+	 ILCSSdQsengNgFPEV6H6gzWy3Gl1P84tIktNxw6ApKa9B+vzdKgltOJvkESO89eoWI
+	 CeNqHfTHo7FSQug0R9UMJhV+enkwDzwB7A4GuS+VOr06IHJ9I/vnZ4goAVJnEk9riH
+	 2LlvAgnfJ3PxlUaaSp8P5Lm66zEPXY9133Y6oDDsg6icBMFpEUQ82lktcJM0psfAQS
+	 yMaNUgc7YmHSa0k8XWk087iaPcd8570J1P/kXwgPDrX2qowfFkMKouma7PxlYYlTBt
+	 ZMrCYi2ItBZNQ==
+Message-ID: <db18990385891d2c47c0c007965b7f41.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,29 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZvuzQxjuN2zRrAMG@lore-desk>
-References: <20240903-clk-en7581-syscon-v2-0-86fbe2fc15c3@kernel.org> <ZvuzQxjuN2zRrAMG@lore-desk>
-Subject: Re: [PATCH v2 0/7] clk: en7523: Update register mapping for EN7581
+In-Reply-To: <20240822002433.1163814-2-sboyd@kernel.org>
+References: <20240822002433.1163814-1-sboyd@kernel.org> <20240822002433.1163814-2-sboyd@kernel.org>
+Subject: Re: [PATCH 1/3] clk: test: Add test managed of_clk_add_hw_provider()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com, angelogioacchino.delregno@collabora.com, linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com, ansuelsmth@gmail.com
-To: Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>
-Date: Wed, 09 Oct 2024 16:24:55 -0700
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Peng Fan <peng.fan@nxp.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Wed, 09 Oct 2024 16:36:22 -0700
 User-Agent: alot/0.10
 
-Quoting Lorenzo Bianconi (2024-10-01 01:30:59)
-> On Sep 03, Lorenzo Bianconi wrote:
-> > Map all clock-controller memory region in a single block for EN7581 SoC.
-> > Introduce chip_scu regmap pointer since EN7581 SoC will access chip-scu
-> > memory area through a syscon node.
-> > REG_PCIE*_MEM and REG_PCIE*_MEM_MASK registers (PBUS_CSR) are not
-> > part of the scu block on the EN7581 SoC and they are used to select the
-> > PCIE ports on the PBUS, so configure them via in the PCIE host driver.
-> > This series does not introduce any backward incompatibility since the
-> > dts for EN7581 SoC is not upstream yet.
+Quoting Stephen Boyd (2024-08-21 17:24:28)
+> Add a test managed version of of_clk_add_hw_provider() that
+> automatically unregisters the clk_hw provider upon test conclusion.
 >=20
-> Hi,
->=20
-> any update on this series? Are we supposed to do something?
->=20
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Rae Moar <rmoar@google.com>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-I was waiting for review from someone like AngeloGioacchino.
+Applied to clk-next
