@@ -1,32 +1,50 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53500537FF
-	for <linux-clk@vger.kernel.org>; Wed,  9 Oct 2024 20:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73E6188926;
+	Wed,  9 Oct 2024 20:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728505797; cv=none; b=r9+NKhkBmRBZiTotkfCDH8s9ITmVFkOMJNAVknLZ/oWEkt4d4xD8MbM9IJJfze1AYV7IQQdLsPOvAJ9/ST81sE9tFLg0AGHq4qzOIYGELYGoUacziah9PPGxccg6bWlkixj3iWUqgIQZAYnDPR5Ztg+hxZwoAP4KOp9whh67Fp4=
+	t=1728507399; cv=none; b=IUHBeapP5vTgtu3HUhYaJlzU+jmXkWwTkSrZM0r1K1w3iOCYNaf2MjrqfC+lnmaJtAA1XT5G9nsosO0BMTKENPOuhFTXtcH3z7BbAwmGTPtAJ5/8whZ5I9+ksYgzAQnfcgTqcJcLxhxRPoQGzCu0j8UZIlOF0qffLKysV/P0iPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728505797; c=relaxed/simple;
-	bh=aXJfbbKnLDlXEL4Q8hawWwCpfkx5WSMtrbN22m67jYk=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=K4LgsFwD1Y0zHWjwyeqesMnQMOv09/QU6+oqr5+YBcJ1fX9CToFvs86YELmPH/M6C5oJTeVBrAyddT5vGjsyFKTSUELB4ThY0mlENgMxunjzZzHVaPTCrV1/eKTUojJukn2jyQgma/FLdmrCkx/UwmDR7JA1PdTxslU7hRxteaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ake4viNk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728507399; c=relaxed/simple;
+	bh=uHecwGZTeAdJYv1+uRlHFdDx0vUd1P+3XExydJncsoU=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Il4SHu3cE2A3HQmPYV9pve7hXKUoRxoVMPBWBz134W3IXnR6Blhxj38DrgTpCWU1rvQIol3VexNAtiqE1PR70krtaxOXgALphqf2gqA/kLA/PC+vsCj2lJJCzay6UEJNdgfpDepC9+SnYFpyR1eadGkWKhNeXUeqZSaSwwpWhqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=dbMHHWHq; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ake4viNk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F15C4CEC3;
-	Wed,  9 Oct 2024 20:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728505797;
-	bh=aXJfbbKnLDlXEL4Q8hawWwCpfkx5WSMtrbN22m67jYk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ake4viNkj5l/16tin7YUXP3k/+2No2/Ky11IEB9Vfu8vVcP/N8QEhNpJCovm9mCZR
-	 ImPUGaLW/j9+yz86Bc4D9+0Jpaz8sOcecV/jR2Fx3UoYx7oZz8vsMzmTR4faETxSsA
-	 yBEvJbugOUqHFJ2VqXx7iZf9rHX0EVBsjY19F34Gvca8t++NV6ecgGNBnLNvkMmv+5
-	 aFoDH/CXyq7iX7Tsbx5zhol8cIqgTfh05lWNhK7bIk1mlhiOjn6rnKKomNEvL6IPkG
-	 2Mdh2b6c/goholCTEPX6GOQYuvxekGMpc2GrsDYJkyJtVyH/fIYiBfVj9xdu2yTsTO
-	 31EbFTxMmlfGg==
-Message-ID: <27ac7ba804d260ca9e1397a17b9e8696.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="dbMHHWHq"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=pcw8S7IZiwFrBBm3SN24yyQYyUIOE4d4lAS5k1CzpUg=; b=dbMHHWHqAZU0hcHHkIX+LRJS1y
+	WgIZF/nZFK+CLATPf0ZxBjtBoUg7YN3y3Ieee2SAB7uvObxcFl7MJ5hsM65RlyXvmifXRbfJsdaD8
+	hwpNCkSZHzEXIOOzoACcoRm/+5enSoiHLYFtSp6I0zAVEWAGV6VfSf71YYKtbrRQFRMCMN2amqrYy
+	obB6maNn464AlbC+nS/uvyx4B+Q8oo0FatVykKuWkk5RnN/Z0ovnx1zoxJs3OK9Cs603mvZwxL7/9
+	vm4mAQiQgFGBQS3UbRyY+o8cF+EQGZ6mQicZ4SildBA2HQJMTZ3APJ3N6MBvi7q43kh1kDWqfx/FK
+	xKl6XGzA==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Tony Lindgren <tony@atomide.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-omap@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Andreas Kemnade <andreas@kemnade.info>,
+	linux-clk@vger.kernel.org,
+	Tero Kristo <kristo@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 0/2] dt-bindings: clock: ti: convert to yaml
+Date: Wed,  9 Oct 2024 22:56:17 +0200
+Message-Id: <20241009205619.16250-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,42 +52,47 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZwXUQOr-afniO-2u@gallifrey>
-References: <ZwXUQOr-afniO-2u@gallifrey>
-Subject: Re: Of clk_hw_unregister_fractional_divider
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-To: Dr. David Alan Gilbert <linux@treblig.org>, mturquette@baylibre.com
-Date: Wed, 09 Oct 2024 13:29:54 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Dr. David Alan Gilbert (2024-10-08 17:54:24)
-> Hi,
->   One of my scripts noticed that clk_hw_unregister_fractional_divider
-> was unused and I was thinking of dead coding it, but thought it worth
-> asking whether it's actually a missing call to it.
->=20
->   It was added in 2016 by:
->=20
-> commit 39b44cff4ad4af6d7abd9dd2acb288b005c26503
-> Author: Stephen Boyd <sboyd@codeaurora.org>
-> Date:   Sun Feb 7 00:15:09 2016 -0800
->=20
->     clk: fractional-divider: Add hw based registration APIs
->    =20
-> and I can see clk_hw_register_fractional_divider is called from
-> clk_register_fractional_divider.
->=20
-> Is that just consequence of them being system devices that never
-> get unregistered or something else?
->=20
+Convert some clock schemas to yaml. These are one of the most used non-yaml
+compatibles.
 
-I don't know what you mean by system devices.
+All can appear under a ti,clksel or without a ti,clksel
 
-The clk_hw prefixed functions and clk_hw based APIs should be used
-instead of struct clk APIs for clk providers in general. I'd accept a
-patch that migrates the two calls to clk_register_fractional_divider()
-with a call to clk_hw_register_fractional_divider() instead. If that's
-done we can remove clk_register_fractional_divider(), which is the
-overall plan but nobody got around to it so far.
+Reason for being RFC. In the comments for the first version, it was said that
+everything which can be below a ti,clksel should be converted at the same
+time. But I want to know whether I am on the right track.
+I plan to convert the clock things from time to time.
+So enforcing certain compatibles below ti,clksel i not there yet.
+
+Open question: I set license to GPL-2 only because the .txt bindings the
+yaml binding was derived from were
+GPL-2. I personally have no problem with dual-licensing the binding.
+No idea about the legal side wether that is possible or who must agree.
+
+Changes in v2:
+- added conversion of divider
+- require reg now, makes sense after
+  https://lore.kernel.org/linux-omap/20240213105730.5287-1-tony@atomide.com/
+- clean up of examples
+- improvement of documentation
+
+v1 is at https://lore.kernel.org/linux-omap/20231127202359.145778-1-andreas@kemnade.info/
+
+Andreas Kemnade (2):
+  dt-bindings: clock: ti: Convert interface.txt to json-schema
+  dt-bindings: clock: ti: Convert divider.txt to json-schema
+
+ .../devicetree/bindings/clock/ti/divider.txt  | 115 ------------
+ .../bindings/clock/ti/interface.txt           |  55 ------
+ .../bindings/clock/ti/ti,divider-clock.yaml   | 175 ++++++++++++++++++
+ .../bindings/clock/ti/ti,interface-clock.yaml |  70 +++++++
+ 4 files changed, 245 insertions(+), 170 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/interface.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+
+-- 
+2.39.5
+
