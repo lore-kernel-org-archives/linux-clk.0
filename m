@@ -1,37 +1,53 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02207199FDE;
-	Wed,  9 Oct 2024 14:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1359199EBB;
+	Wed,  9 Oct 2024 15:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728482591; cv=none; b=YFHGesbWqc5/p/Vycl4f/y/ebHRrSD7ei5Ju5c4bijqhEXZmNpq9OYkqUo0AvS8THwmWBOpqdE9/fkVb2SrB3qmEJ/YZD8dZdgHrYvNQWJBnSsj7ElbG+HOryUueGdrWMwHOtPZM+4kfmyCS+j12qOBehyzEUuPC1QG86UlxO9g=
+	t=1728487042; cv=none; b=tmvrugcPoj3za8hM0OFB2xioslembSPWPgPKOv9hkWjblsrn0MgRqgOewHTwckMiFhtX4nq9yuw/gYM+4Cu+Tmt35dzpx4Tg7RNhigSdYaowzoM0+e7UFgA/19E4fyZxgvIGwIRoNNYdMYQYdRYsXqfd9zG0FDBGftTvQ0SHzaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728482591; c=relaxed/simple;
-	bh=hJeZDcakfe3CkAuKBsUIafm3NiYmVbj0BnQvMMSUKJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NEmGytomnaBsXrnvcSK0bVnjuNx+u6fRriajRSHkmpxV4faWW09jAtzR/b/1rc4wNOvTz4hXlYgjU+5SH0N3CWHVmpNeg3FAwjNevFrcgvkfE/qf5fyiYI1bVL5eHh8XFPt7HfS7w/ABUS97IK730G4s5tvWOMofS28bdd1c8n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.11,189,1725289200"; 
-   d="scan'208";a="225436968"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Oct 2024 23:03:02 +0900
-Received: from localhost.localdomain (unknown [10.226.93.118])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 238A24006DE9;
-	Wed,  9 Oct 2024 23:02:53 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	Hien Huynh <hien.huynh.px@renesas.com>
-Subject: [PATCH] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-Date: Wed,  9 Oct 2024 15:02:46 +0100
-Message-ID: <20241009140251.135085-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728487042; c=relaxed/simple;
+	bh=WLojZZYXzfe5edF9vk2kQJor7cJAz9LslNX0G2dll9M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uHWP1+v0lSBohA7C/dgVGvMjoi/CITYd11prHHEXp4LQS1wR/jL+kxxV8zaDzw72YZGDgX/Znt5B5ZzsDcZO3Y8RTWUXU+1cQ8TKfrreSnpjWN8P39yUgA0PrQyWa64dBk6jveQKR/PGJ+c0HDqEe36PN2hxR5MPgDCRWBSs/5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ieyltvha; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ieyltvha"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499EDuAo029264;
+	Wed, 9 Oct 2024 15:17:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=rnjpDLptlJg6UhO6AX9ItO
+	4+PywHkmUkQrE1B6tEy+g=; b=ieyltvhaPkBOLGduck8iY4B6PEM+r2xchzS4N4
+	dr/fSQ41mHQDAgn1H5g8j5gZyhDm7CJcIFdWH9LBOWupa2vcNF1YGnEp3nLWpRRh
+	IcAsezpgVHM2ZWpkO3UKGBLIRWUs8ji5ybZS4b0eJyUn5RUSnbZ1Y4eq68z3GUSb
+	8JPA4QjG/chTbEKq/PqVcp1Y901lRlwimYQ0gBiAApoGjeNZdIArqFASdUo5CMPV
+	wTY2vtoQSdsspgFTDgeQO7Xq0Do+x4bXdzB0kGF9Q5LjL82xx3Z8+I9im9il0Hn+
+	YIA1Dz6ku2jEWuK+9bzjbT6tI+x/4wWklT+jiRyQ/iBWqdYg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424yj0591x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 15:17:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499FH5FS013598
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 15:17:05 GMT
+Received: from hu-c-gdjako-lv.qualcomm.com (10.49.16.6) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 08:17:05 -0700
+From: Georgi Djakov <quic_c_gdjako@quicinc.com>
+To: <andersson@kernel.org>
+CC: <sboyd@kernel.org>, <mturquette@baylibre.com>, <quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <djakov@kernel.org>
+Subject: [PATCH v2] clk: qcom: gdsc: Add a flag to skip setting power collapse bits
+Date: Wed, 9 Oct 2024 08:16:57 -0700
+Message-ID: <20241009151657.1041691-1-quic_c_gdjako@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,56 +55,98 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WIyPBUHUON1ykk4W1I6ykzSvYVIwmc04
+X-Proofpoint-ORIG-GUID: WIyPBUHUON1ykk4W1I6ykzSvYVIwmc04
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ bulkscore=0 mlxlogscore=989 mlxscore=0 adultscore=0 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090095
 
-While computing foutpostdiv_rate, the value of params->pl5_fracin
-is discarded, which results in the wrong refresh rate. Fix the formula
-for computing foutpostdiv_rate.
+The sdm845 platforms have a hardware issue that requires keeping
+some of the MMNOC GDSCs in SW collapse mode (which is the power-on
+default). But if some driver tries to use these GDSCs and the mode
+is updated because of runtime pm calls, we may get a board hang.
+Introduce a flag to skip any updates to the power collapse settings
+for the impacted GDSCs to avoid unexpected board hangs.
 
-Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 7bb38c20f2b6 ("arm64: dts: qcom: sdm845: Add DT nodes for the TBUs")
+Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
+Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
 ---
-Display resolution:1920x1080@60-->148.5 MHz dot clock
-Before applying patch:
-foutpostdiv_rate=1776000000
-Dot clock = 1776000000/12 = 148 MHz
-After applying patch:
-foutpostdiv_rate=1782000000
-Dot clock = 1782000000/12 = 148.5 MHz
----
- drivers/clk/renesas/rzg2l-cpg.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+v2:
+- Pick up Reviewed-by tag
+- Add Fixes tag
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 88bf39e8c79c..58b7cbb24b5a 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -548,7 +548,7 @@ static unsigned long
- rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
- 			       unsigned long rate)
- {
--	unsigned long foutpostdiv_rate;
-+	unsigned long foutpostdiv_rate, foutvco_rate;
- 
- 	params->pl5_intin = rate / MEGA;
- 	params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
-@@ -557,10 +557,12 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
- 	params->pl5_postdiv2 = 1;
- 	params->pl5_spread = 0x16;
- 
--	foutpostdiv_rate =
--		EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv *
--		((((params->pl5_intin << 24) + params->pl5_fracin)) >> 24) /
--		(params->pl5_postdiv1 * params->pl5_postdiv2);
-+	foutvco_rate = EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv;
-+	foutvco_rate = mul_u64_u32_shr(foutvco_rate,
-+				       (params->pl5_intin << 24) + params->pl5_fracin,
-+				       24);
-+	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-+						 params->pl5_postdiv1 * params->pl5_postdiv2);
- 
- 	return foutpostdiv_rate;
- }
--- 
-2.43.0
+v1: https://lore.kernel.org/r/20240813120015.3242787-1-quic_c_gdjako@quicinc.com/ 
 
+ drivers/clk/qcom/gcc-sdm845.c | 6 +++---
+ drivers/clk/qcom/gdsc.c       | 3 +++
+ drivers/clk/qcom/gdsc.h       | 1 +
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index dc3aa7014c3e..019b780e31c8 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3503,7 +3503,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3512,7 +3512,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3521,7 +3521,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
+ 
+ static struct clk_regmap *gcc_sdm670_clocks[] = {
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index fa5fe4c2a2ee..4b83cec9137c 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -121,6 +121,9 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
+ 	u32 reg, mask;
+ 	int ret;
+ 
++	if (sc->flags & SKIP_SET_COLLAPSE)
++		return 0;
++
+ 	if (sc->collapse_mask) {
+ 		reg = sc->collapse_ctrl;
+ 		mask = sc->collapse_mask;
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 1e2779b823d1..6bb7e023a19a 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -68,6 +68,7 @@ struct gdsc {
+ #define RETAIN_FF_ENABLE	BIT(7)
+ #define NO_RET_PERIPH	BIT(8)
+ #define HW_CTRL_TRIGGER	BIT(9)
++#define SKIP_SET_COLLAPSE	BIT(10)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
