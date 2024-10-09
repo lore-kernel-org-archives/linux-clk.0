@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A275185949;
-	Wed,  9 Oct 2024 22:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A492A1C9;
+	Wed,  9 Oct 2024 23:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728513302; cv=none; b=mfg6CnrbCSqTaRwhp1aDXLWBAOuM6ZxCv9a8WlQbzNKuE+C7KImqI+rAxcY/TU6Ug6fUscie5dUKKhQHCU11IJ238DLvrBxori390/hCz+A9Qls0gCqdtoq+nO+xgYWmDfEpFOIBx1IBCd0VXitZ5FWkEZiJWz9HBwR8YzJage0=
+	t=1728514881; cv=none; b=KQi51htAV6659lMISVIervrufqrp+eTXctxW8N7+mkN2NWdV3rkpbNA1SljFYdiaXmpZaQyt62yDE51y8HI9TrelWSfx4GBGsuLXbY3HDBT9CSaE3J3i+yqk/hQ+UfRD5eG9ql7fsu1kAEOMDDjpVshB6IvBoyieQN2l1gTfrGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728513302; c=relaxed/simple;
-	bh=KufRG1eI3wF+16cp8N6gZC57UtYmhCP4CAviqIFnAEI=;
+	s=arc-20240116; t=1728514881; c=relaxed/simple;
+	bh=uGdAjmstr/NYDBu5FtcI7luJ+EBjhJ14RKCnRsBkAyA=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rtWHhWx8dtoP+xREOyTnaaEmJ5RtWqtKhcqwDNBJK68tHVAjP1/uYG2soGDdhfi668CDapQM0Th2A6WNQQ3h58p9FOcwTehmrWhIzSC2Gn6Q7BLq0+yewSFiqrIAMPfxycRisPZDUVy06XC2/sJclXYH/nY8myM5P+HK23dU/aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uK6CFrCC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ilVZu8lwaKNio8o99aJZNQGklHyCwhX2pxmy/AUydSdE3oTon2k8vTYazNcx/u3puHFqor7qPZ3PrJ1YAVN7moCytboqWCfFaSecnq+u0odgpdgX0Dtb9HJRiH58IO3QllbIcomq6FxUZdk4DWsLDV7dRQGmMeR27OYFh+iMvA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd5imAp+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uK6CFrCC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5B0C4CEC3;
-	Wed,  9 Oct 2024 22:35:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd5imAp+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9054C4CEC3;
+	Wed,  9 Oct 2024 23:01:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728513302;
-	bh=KufRG1eI3wF+16cp8N6gZC57UtYmhCP4CAviqIFnAEI=;
+	s=k20201202; t=1728514879;
+	bh=uGdAjmstr/NYDBu5FtcI7luJ+EBjhJ14RKCnRsBkAyA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=uK6CFrCC2uAKy43YRCNASCWDr7u1xJXqjZvUwZ5ZJeGo8Qo+fjOPUOrKNzQ6CzV/u
-	 4EgAobQZ2SHqoIayZjUYAQGAbkV4gatYSrxvWpfI32tZTlF5Jl5LFXTsmk1yjyysc9
-	 Vm0+RkYZmDTE4h9UcMwK7+wm3Qp9Our+XhRU0DcGz2Vu8BUVojAAsa6HIy9ohNP9SD
-	 gHjLCKiTuTznbomjEj+RK/ttSwIfna8Xuk88PDOz5KgaerffivkDOpFJa/50okOBQn
-	 rC5KIjXYyR4joONnOb0/hBEYY1FnMiS52441B1do9xyz2VhPoKrxh8pgxFG0EFo92B
-	 tKDCSjuBCQxKA==
-Message-ID: <44cd09794e2db7b29c7ec176a4db055b.sboyd@kernel.org>
+	b=Wd5imAp+fA/EiUB0kuhPCKGpACEC5xw97OM/1pOTvaJzer+QSsqMfU3Q6I3effOdZ
+	 yv/QYfVtuzl7u/hQreEhSjAiPrPpfyZFs4qmSfE4duUH8zCVyU8eKAuvYrk3CLPpBe
+	 nNp9pifXvENEmBI/0RlOt97n4d+qjrRJ9r1Mw7m8cDZr8UGuuxHFn8TYh2BvO1uEG+
+	 kA9IMUF22GW72x7HB2n4pJD+Urmhibm2rB0+258gupLfNAd2TFdAOfQau1l+gpPEw/
+	 cL6+tTyEgXbcNxPKs+mslJ9W1b3RbKw+1Q5U2wsZCE9z4qye19s5QcPdE5pYLBVkaR
+	 5bBiAbBSKB2gQ==
+Message-ID: <93bf1c44c5a6e763e9a9590aaf752ec7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,26 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241009003552.254675-1-linux@treblig.org>
-References: <20241009003552.254675-1-linux@treblig.org>
-Subject: Re: [PATCH] clk: Remove unused clk_hw_rate_is_protected
+In-Reply-To: <20240918123925.41511-1-david.hunter.linux@gmail.com>
+References: <20240918123925.41511-1-david.hunter.linux@gmail.com>
+Subject: Re: [PATCH v3 1/1] clk: clk-qoriq: Replace of_node_put() with __free()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Dr. David Alan Gilbert <linux@treblig.org>
-To: linux-clk@vger.kernel.org, linux@treblig.org, mturquette@baylibre.com
-Date: Wed, 09 Oct 2024 15:34:59 -0700
+Cc: David Hunter <david.hunter.linux@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com, shuah@kernel.org
+To: David Hunter <david.hunter.linux@gmail.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 09 Oct 2024 16:01:17 -0700
 User-Agent: alot/0.10
 
-Quoting linux@treblig.org (2024-10-08 17:35:52)
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Quoting David Hunter (2024-09-18 05:39:23)
+> Use __free() to have automatic cleanup instead of calling of_node_put()
+> manually.
 >=20
-> clk_hw_rate_is_protected() was added in 2017's commit
-> e55a839a7a1c ("clk: add clock protection mechanism to clk core")
+> Compiled without errors or warnings.
 >=20
-> but has been unused.
->=20
-> Remove it.
->=20
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
 > ---
 
 Applied to clk-next
