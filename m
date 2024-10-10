@@ -1,240 +1,231 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013070.outbound.protection.outlook.com [52.101.67.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EE61BF33F
-	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 10:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557397; cv=none; b=e15gCdkMrdMc1IZc33DZnqgB4Tx8gmdGOflfGiLxWyu5+4ifdDGPXx1czJ4kE5F99j+MfeXLb7LFvBXtLLs2RSfXWb7bVEbTZW66P0Q+0Ll7lQVOcqwcpFL6YvguFWO28ft44IZZYD9Ay4ZJufyVybNgyltQ8y9yuQIWIlF6Yzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557397; c=relaxed/simple;
-	bh=iMXkWNY0bNQiK/qpWqcYtLcQ5QR2FQuA0xFLkiCEBYY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=pz0o7zfzPxlsnpN74xcWAk87zaj7EckFILGwrYfacoGlLejQQ2bylSIUiOk0mBAk4Vt0jp26cllFAC0nydJhATPO6kembPbGtDsMunf/qYj2kejLDdLstLaZpJi+iqij0KU9lm17W1deNOCCVn2b1Ed5LMeoz3QsHkZJu0nVg4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WW35KARi; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F7E1C2442;
+	Thu, 10 Oct 2024 10:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728557912; cv=fail; b=c619S4QG2BZ0c+4cNssg4kGXika9gtKyRkK9TcQNZ9jMk6PPlcUUaI4krsKniFoBjuFUmSq0pMys4h2QQBjo+E41F3AEUshNbtzvEOnjKmj3YtDCrtWwbCHiD/3H7FvhTTI03g511GqClxE+tUs8jwiKQhqwELl1sHxpwpwH0OM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728557912; c=relaxed/simple;
+	bh=3IQn80MRBFat0jdXoXOkfJu99DLLEno6SlZka/sukhw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eM8B6lrfeBiU2dJbixZFspIlBBNWbETTX9v+H4yVcf3nHQ5/KqmywcjY/MMdqb+V4nF86pLLn8m4AGmAQE45yy84hERbQtcVu8KNshjF6Dfc/ZHno/Q3NXtf2rNTE5eWDWpyuJbatGXBTio5zgVq0svvZk7qygiYPEp+CGqD1iw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DgrBroEy; arc=fail smtp.client-ip=52.101.67.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WW35KARi"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241010104950epoutp0167fa5ea4563993fae0d0c752f4d65008~9EcnYiRVY2191821918epoutp01U
-	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 10:49:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241010104950epoutp0167fa5ea4563993fae0d0c752f4d65008~9EcnYiRVY2191821918epoutp01U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728557390;
-	bh=yaB9itcDCiaaIcwDZvNEYBezr6d2OLBDCgCbD010Qfk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=WW35KARikKErMTLLQaUmbiWQw5c1I8g88JWIl674IHRBrkVffSz0aKxWsWSLQbj0I
-	 LG0f8j+/XgO1NVTh9tLcg00M+G50AUl9lKUp3y3HXI9pFRLCZjP9IqpQ1oiDvI4R39
-	 G9qje+0dY9U7uQPFY/oT4HUr34mMGJah/eK+k5ic=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241010104950epcas5p4652a31c14bbb7849027c6d8333e931bb~9Ecm8uhkP3218632186epcas5p4q;
-	Thu, 10 Oct 2024 10:49:50 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XPRND2hnVz4x9Pw; Thu, 10 Oct
-	2024 10:49:48 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.45.09420.C41B7076; Thu, 10 Oct 2024 19:49:48 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241010104554epcas5p19fa883f33168b2742738e8edcf1f836a~9EZLkRH-22586025860epcas5p1O;
-	Thu, 10 Oct 2024 10:45:54 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241010104554epsmtrp2160f811a65734e82a61728cee45e78be~9EZLjbKzs2675126751epsmtrp2b;
-	Thu, 10 Oct 2024 10:45:54 +0000 (GMT)
-X-AuditID: b6c32a49-0d5ff700000024cc-c0-6707b14cc17b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5C.2C.07371.260B7076; Thu, 10 Oct 2024 19:45:54 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241010104552epsmtip1f5e87c940987a831806f878b5943e0b7~9EZJ76xC_2499324993epsmtip1b;
-	Thu, 10 Oct 2024 10:45:52 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
-	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
-	<s.nawrocki@samsung.com>
-Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
-Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-Date: Thu, 10 Oct 2024 16:15:51 +0530
-Message-ID: <08d001db1b01$94a9b9f0$bdfd2dd0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DgrBroEy"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ech2RzN8BV71A0HMOJeyhLXB+LqefxAUe9cvXufQaatY+3wMpXgRf2lBbfIyDtsZOAuB11nfZtrvtCk8iN/6qjvz6Wsbn1ke13zuxhnxZzUPRNTvJC7+EozCuG6dGO35AoWQIfDDDmij6yBeuNRKTrDho8rYQ5XX0pXBxwXYq+T1dHWUZi/xUTzLKLX8Z6LRLhx9ZSN29SvtwMnRgEpFMIZylg2aXKmG+2QTDIjScCuu9OnnQEJTeSY/54RMhkOn0J0s0JZGDUdzTeT9eNHS1svtCw+g44Ea3vnIa9Z4Gs1olOMB7kE98C9eDjC23+w27IEyguv/4O3s1RaY7jZmYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cnyN99tuUkq+8UFEUcxDPiVuAvvaR4yE5WIQ6HBUBf0=;
+ b=X3hlDaKGUks13guk5iY5HF7t8GvHMsEvm7T7yZHYAq1Pm1+QpVkGOUZLe+6HfYMtZA6os1iUd2cz3yXmir4xB052v+RjY0T8DMbmiq4sVcfeyl9SUe9eg9xL7Pt13rfyyPwUECV+C+2KCsjlkzx+vCsUoiGEFN1GpgwpIzxgYF9lzkOtZ2JY8HS5zBUDbZSqPwS6wKkuP8Rh2JrZTG4A4BFJ1EYtCa30c4eBMdwSZprZUFJYHcDCiCPhA4ABaCGAv0955LyeR9GYNHZz9bK5M7Vk/mcU2ybWbJurBhrKk1c7VB3Qpj8Qs/cWByvPB/TUiC2xmenBlONhSU1ZCUEp4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cnyN99tuUkq+8UFEUcxDPiVuAvvaR4yE5WIQ6HBUBf0=;
+ b=DgrBroEyqOwIeeTX917APMUdH0m44jrGNJ4eT4EsDq6r05dgO6El6MgtnOoGYaq3RBE5QjcHvVc+OfhvcfG1OLB0CoC14zCCaRDixOoVbvGxzKywvdh08DHhGFm824GBogsxXt6dXdNM8AIKnM53NGTCjRkZzixAqeo3MFSSynKAWEQ3gR8VeMC5k+1ZcA3mw5dencbQ+8yXbcuxzXh7Da/Ig39t4bnkbtjoHJUiSq+PHKRNZ8LsMICGTE7MbmirNUWVWPobGetrkzUPi4og/zR/qqVAh3i0J3K6Bgp4wQAHtKRLA5T93KFELAJBTGJmLF8//fi4Bnpl6aIyiyPcgw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM0PR04MB6978.eurprd04.prod.outlook.com (2603:10a6:208:17d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
+ 2024 10:58:26 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
+ 10:58:26 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Pengfei Li <pengfei.li_1@nxp.com>, Abel Vesa <abel.vesa@linaro.org>
+CC: "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "abelvesa@kernel.org" <abelvesa@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, Jacky Bai <ping.bai@nxp.com>, Ye Li
+	<ye.li@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>, Frank Li
+	<frank.li@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
+Thread-Topic: [PATCH v2 0/2] clk: imx93: Move IMX93_CLK_END macro to clk
+ driver
+Thread-Index: AQHayGu6kynBhnOZXkasZ/WWCBKKBbI+M0SAgCOvgICAHAJFgIACkAEg
+Date: Thu, 10 Oct 2024 10:58:26 +0000
+Message-ID:
+ <PAXPR04MB845917B9D27300AAA5FF3AAE88782@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
+ <ZtAeGWtJDMyTVkjc@linaro.org>
+ <Zu4Ng6DAYcQHCqPJ@pengfei-OptiPlex-Tower-Plus-7010>
+ <ZwWMX66RCfxzCkkO@pengfei-OptiPlex-Tower-Plus-7010>
+In-Reply-To: <ZwWMX66RCfxzCkkO@pengfei-OptiPlex-Tower-Plus-7010>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM0PR04MB6978:EE_
+x-ms-office365-filtering-correlation-id: 07b5b516-759d-4506-aecf-08dce91a7771
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?h+dVXkSZai64AykQ24W5p8eUTK54qnuFyV35U4Ro7woSuk65REbNwHwri/M8?=
+ =?us-ascii?Q?RTB0uDcvZ4lZSK3yoB9sr7RG9dSw5JtdMiBpt4kYOMw1ZGkehZ8o2pW+2zOJ?=
+ =?us-ascii?Q?vyLI3Hp75kvf5f9HDEXRYGAy7dxNSgS1Lmk44P6M5S6gwwkY0+yoN2lxRh8n?=
+ =?us-ascii?Q?9i8iZG/K1Qn+iHpta06iWNekNN7hnp4yehkarpRh0fG+/wKxCUDw9MEzvGKL?=
+ =?us-ascii?Q?hOvZwEZQleqTrqHX4PqcftYLqsBf5l63SP0/hGywGpHwHsWvoCOu4pm+IiGz?=
+ =?us-ascii?Q?eZQyrvJkAlLMBnnakcM2dj+z+o+em258Tn1Qe+VnCnqEuJ02eCviu/YCDpq8?=
+ =?us-ascii?Q?usevUNi2jmbudwNtQDuX+pqDOUKKnnh6zXIfIOUAL17EsEitF5Q725DDEpyp?=
+ =?us-ascii?Q?bP0NBZSZDtQuAlbnYfm8EUlujHBjQiHPtG5HGuhNIdN7BHf7j4iG6XC71AJ1?=
+ =?us-ascii?Q?WXKu94cItiuUnRrj2dNA04AXpyv5WT1YDcHygIP2Xm5kKSdPdW450u/AxHBh?=
+ =?us-ascii?Q?e0iHJFbz6LDVUXZPyDlJgvCaPqh5vFT/A1TvNTMCr4Fif/wQTEDet12yBd18?=
+ =?us-ascii?Q?yBWttR/qI+5Zkx3xiEZtwHvZnlVt+xkVD4zNe0/sgeZtlj2TsG1+98nziUIS?=
+ =?us-ascii?Q?GOUUpScWmII6jYaQgFQndcShVjSA19Embw7ebVgozHfloYsY6EcH1/cDJeTL?=
+ =?us-ascii?Q?TC3sQjruNIF1/chS7q9DtzO+MaM2oc2ywKgNtLRfa4PrnU8q7BCx5IwDecpn?=
+ =?us-ascii?Q?YnCU2iwVo+ANuO4p14wF1E5IcVRwHyOLWs4JphLmXcXixSSlHlSU2cIB2dnW?=
+ =?us-ascii?Q?mo6AiC4mG5F9OBKaxM3RyzPs4Pd3gMixVLrTc6gLv3AMUfBQRTpXuFXOZwYZ?=
+ =?us-ascii?Q?F/72Hfr2tZd29BULbGiHslAlM01xJ+AeMhrYjOhRNCvHMUHYqB8iQcz+hf6d?=
+ =?us-ascii?Q?IdvidRg+J31lPUHiAZ6lSfncfQwfdnUmoaoWCpo3DH25YEOaoIvJ3WaI9dNY?=
+ =?us-ascii?Q?EJfe1CLUGFNMny7sT0dMB5K2iCh7rEQBCkSVAZyW667y2HpezI4XP6bSONGA?=
+ =?us-ascii?Q?nkKISwTjXeIah+MNGWCzjQKQPNAqjYZZsDl+tKp6TSylmNOTm7pKTSV/zj2K?=
+ =?us-ascii?Q?BmG6nSCXVzb28YRGB6boGNTdywvSqnbjbWBejNaUY/tL6aOr8Pvnxm29Ou35?=
+ =?us-ascii?Q?oFoF3ZOOrLckcj9RB9tEYVqx+ihGjsHOHmaS8oF+k3Du6Gl0sduLqNEiFaEJ?=
+ =?us-ascii?Q?G8MMoRTjQtpdu9EnsnI+j9RXa6gHf0Nd9Ug65wduRDBrGPTjHCW71QCcmk1z?=
+ =?us-ascii?Q?q5KgnKg7gz7QnGse/AV58Qa5KtvjlRc2+/HodNFyqAPJqQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?2fFm/UcWvNV64tgAqTPq9PBP8NVeKXcgbOIYxn5LYlgf3DC35Y7TNhf3w2cq?=
+ =?us-ascii?Q?d+WEtkeMu8r4pui1gJ77jkGAQ5Rhv1AxZKqnee3dbVLwQEseKcdcRBCISOWX?=
+ =?us-ascii?Q?S8wkf/jl5W1XqSLaxt2DGrqkhnLt4aU2RhOEpaU57dFV9n0MQ6e/U/ApqwEl?=
+ =?us-ascii?Q?/DtLmIR1r2L1jlkI7k9V0bG0+ZsI8uh4G1/O/Xe50McTeAeih4UPDZyBqChb?=
+ =?us-ascii?Q?V8FHalMXulWJ9VMJ0N8UJAw8Q7qK9dGw4s71hriq0eZMmiSOtqS+965cs5qT?=
+ =?us-ascii?Q?itXo2Eul48B4SWyyctN0JK2+nydG/DoG4XLU4JrqzznOIQcngB9aHId5MJhy?=
+ =?us-ascii?Q?z0TcqIL5HQ8gRJiT6mMSSNu5oREcyKLcd5210YCQvliDou19jmliF1ICsF8x?=
+ =?us-ascii?Q?/jiPx1ZJQzNjMYZN6ais9w/y/AYtWyRARoiXZ9YlLGe+fxQtBhouwbQ99nxr?=
+ =?us-ascii?Q?8AoA/VJKsEqQPiNw52WCL5DvNvKjEA4fAO1xmD5+IBSCnll+PY5gN+Am/pDy?=
+ =?us-ascii?Q?9zUAknv5v2kFRt+D5w+/GS9VgJbT8joonAVFGR/SrSuu0WbRHeQYnBVMiiom?=
+ =?us-ascii?Q?1nSw+9Spx+SUfkLRB7QEA3Bqp0xvoR7+EuWzD8ZssGbznvPr9H93HItfcfwl?=
+ =?us-ascii?Q?EaK2eyPMlxa1qxNhz8AzJXph707quJqley63QVuB3NJg2EG20uAYI6L102E5?=
+ =?us-ascii?Q?pfd0V+lJNKvqYKm9b2NhEPDICHK+WL3cmJQOrrzm4tPKghohSvYgOICi3Ayj?=
+ =?us-ascii?Q?YWM5SXDkg740JfhK8ogg00t7oWrqnxvMaQ6DpWFT6Or4ghesUB+6/WGV0U9e?=
+ =?us-ascii?Q?GwbJ801qC8X6INxaihAoD02oD2OQ59hTskcXXIXSE012ZGnBk7GB2DVZStyo?=
+ =?us-ascii?Q?ls1aeN4dgMkVbi1PLBPYdpSWOJNuBRRcic7Z6zKVvjBciZKsvw8z7Hqxsv1F?=
+ =?us-ascii?Q?csvwyMy+jmGrFMpkaYez65izSl460rasG14ZMbRhSdpx7fIg9mvAUcKlMOnd?=
+ =?us-ascii?Q?HwEIe/pKVBDSPzVCpoQvZTbrWWVukqM+oymIoeJmZ6NTYwrgj6KZ8T7pcYVh?=
+ =?us-ascii?Q?dz7g3p/o+A0K8jPoDwu2Nhd3f3KHgcePVcLyDPBrKCbiQdYKUEpjeN6HEKEF?=
+ =?us-ascii?Q?zQoDBJZBuEEZywmIcBTNCI2Q7yfetaj62vv6eL6pjBNQvOQOHR1xy/12AESH?=
+ =?us-ascii?Q?A9rkcUdf6jv4XvrgdoYIsIP3+JWjjm+TkmaCL5CSBSnTgGButsEk9GObi4D3?=
+ =?us-ascii?Q?kbn4k646g62TRX5rT3EtHtufRWm1qJloYOBgKyu+znTde6JBW+ge+X/GiT2Y?=
+ =?us-ascii?Q?Rg2Of5nvZ75ZcbmWeukIvROhA9y0G8AM9W/9yIRNHEyoUtGKNP6+yVrc6czL?=
+ =?us-ascii?Q?xMlaBs0R8s+wN0AeCB4mCSw2bhbG9exQ8zkECS3WAuL2HVof1EYQtDwt4UOu?=
+ =?us-ascii?Q?blej39maAmbJTDMIVjTJLHSP2bHXWLTXv0D+9+n0uTZigSvnmFUHU5FnS7az?=
+ =?us-ascii?Q?gE0Mk7Dk8PhwQZPfh7WXEnXAsCoLOzNx3uvvr2kkVlwwxyNXY2MwjkxwI2s2?=
+ =?us-ascii?Q?sXNlW5Rayw+Sch6KYTg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsAUVIpqkCfYGRoQL0rVzSAfBMA4ivfAuNkA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJJsWRmVeSWpSXmKPExsWy7bCmhq7PRvZ0g+2feS0ezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
-	xNxUWyUXnwBdt8wcoKOUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnF
-	pXnpenmpJVaGBgZGpkCFCdkZf7d0MxVMVq64P8u/gfGLdBcjJ4eEgInEkR3dzF2MXBxCArsZ
-	JWbMnMoC4XxilDhz5ykjhPONUWJ/22EmmJb9tyZDtexllNh5s58NwnnJKHFo3wZWkCo2AU2J
-	m0f/gbWLCCxlkui894MdJMEsYCax5e59sCJOATuJDw0bwOLCAi4SM/5dAhrLwcEioCqxaIYL
-	SJhXwFJi2uMTrBC2oMTJmU9YIMZoSyxb+JoZ4iIFiZ9Pl4HViAhkSRzb/ACqRlzi6M8esEsl
-	BJZySKw/dIURosFF4tnBvVDNwhKvjm9hh7ClJD6/28sGYftI7J/zC6o+Q+LY9uWsELa9xIEr
-	c1hA7mQGenL9Ln2IsKzE1FPrmCD28kn0/n4CDS1eiR3zYGxliZlH7kONl5TYeXknywRGpVlI
-	XpuF5LVZSF6YhbBtASPLKkbJ1ILi3PTUYtMCw7zUcniEJ+fnbmIEp1ktzx2Mdx980DvEyMTB
-	eIhRgoNZSYRXdyFruhBvSmJlVWpRfnxRaU5q8SFGU2BwT2SWEk3OByb6vJJ4QxNLAxMzMzMT
-	S2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamILybAIEvxXvVT4reuODm0y7413x3Osn
-	1nPFXvf/y+XfIVumy7tg+c15si0ll9i33tD9/aE3Vb/L6HB7Fatm/fUOPw+nXX4O7L80396+
-	wXO8iOurxJ6K/2uC9Ff8CmFyZ06Jzm3ZtUDwivLyShXD5ndriwV1vs37+zAiWcNJ+11CesAb
-	vrO/snNmxti/iPDiz1rHJsSiP/mGMPORKIZoz+izzhwNmQHHv6kuOVImWnUn1qGkcrOy8pHQ
-	gz9V010XPN4ueiZc9bPWgtv/vkU2MDj+fdVlLBYv77r/zPTtr9ts+Wfl9je+O1mRcmRH8gq/
-	yY7zF3B6/ZosVP3ESWLLle173wgkvy4oVOc4cWWJEktxRqKhFnNRcSIAZELxqDwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSnG7SBvZ0g/urpCwezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErozfdwsLupUrLq7dxdbAeEO6i5GTQ0LA
-	RGL/rcnMXYxcHEICuxkl/vz6wQiRkJSY/Xs6O4QtLLHy33N2iKLnjBITuyewgSTYBDQlbh79
-	xwiSEBFYyyTRsX0lWDezgIXE8j/X2SA6HjBL9P35DpbgFLCT+NCwAWyssICLxIx/l4B2c3Cw
-	CKhKLJrhAhLmFbCUmPb4BCuELShxcuYTFoiZ2hK9D1sZYexlC18zQ1ynIPHz6TKwehGBLIlj
-	mx9A1YtLHP3ZwzyBUXgWklGzkIyahWTULCQtCxhZVjFKphYU56bnJhsWGOallusVJ+YWl+al
-	6yXn525iBMealsYOxnvz/+kdYmTiYDzEKMHBrCTCq7uQNV2INyWxsiq1KD++qDQntfgQozQH
-	i5I4r+GM2SlCAumJJanZqakFqUUwWSYOTqkGJse2a8ebvn6KK7/86AGXypZ0vv0H/uZw3dod
-	XlZ/vE4x5pXQqxksnI9/6d+VZyoLvSN6w8xF+f6OBqd7nz8eyPQ7JappMu2eqKSlS3SwYv16
-	xkAFEecnLR8+GV7qC2ZZ8NblzfLUNRLZxbXCzEZ8LDtlNdpufnr8vS5x45/oy86Wjze/+HCD
-	s73rbILD8U+dBXvsy/5f+GeywmtO/DvWX2lhbSdZ3S2uTin9yiXCufajvnzr9d7fC08Uf90y
-	Izr4rGjGx5J/jusPNThe9eee9Pf00icPt28VO6Jx0ZRzg8qem7/PMK1/oO1/a9umD08d4mrr
-	JGQO+qb0noyoN34sLPiDfRef6zKlw0K1pl6Py5VYijMSDbWYi4oTATGQXK8kAwAA
-X-CMS-MailID: 20241010104554epcas5p19fa883f33168b2742738e8edcf1f836a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
-	<20240917101016.23238-1-inbaraj.e@samsung.com>
-	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
-	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
-	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
-	<011401db0b13$cbd045f0$6370d1d0$@samsung.com>
-	<1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
-	<03ca01db13e3$bc12e360$3438aa20$@samsung.com>
-	<2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07b5b516-759d-4506-aecf-08dce91a7771
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2024 10:58:26.1621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DNjdop5cXwhbz6xWdzwtKctkihu9IaffMFkqanRNqDilnVKktNcJwno0cQMwvNcDKBfaRbyEFkE0cK86mz+ECw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6978
 
-
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 01 October 2024 15:30
-> To: Inbaraj E <inbaraj.e=40samsung.com>; 'Stephen Boyd'
-> <sboyd=40kernel.org>; alim.akhtar=40samsung.com; cw00.choi=40samsung.com;
-> linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-samsun=
-g-
-> soc=40vger.kernel.org; mturquette=40baylibre.com; s.nawrocki=40samsung.co=
-m
-> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com
-> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+> Subject: Re: [PATCH v2 0/2] clk: imx93: Move IMX93_CLK_END macro
+> to clk driver
 >=20
-> On 01/10/2024 11:24, Inbaraj E wrote:
-> >>>>>>>> CSI stop streaming through pm_runtime_put system is getting
-> >> halted.
-> >>>>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
-> >>>>>>>> ---
-> >>>>>>>
-> >>>>>>> Please add a fixes tag. Although this is likely a band-aid fix
-> >>>>>>> because marking something critical leaves it enabled forever.
-> >>>>>>
-> >>>>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-> >>>>>> supplying clock even for CMU SFR access of CSI block, so we can't
-> >>>>>> gate this.
-> >>>>>
-> >>>>> Hm, I am not so sure. The CMU driver should just take appropriate
-> clock.
-> >>>>> Sprinkling CLK_CRITICAL looks as substitute of missing clock
-> >>>>> handling/
-> >>>>
-> >>>> As per HW design, PLL_CAM_CSI is responsible for suppling clock to
-> >>>> CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some
-> >>>> of the clock is not handled by any driver but it is required for
-> >>>> CSI to work properly. For example CSI NOC clock. So this is the
-> >>>> reason we are
-> >> marking PLL_CAM_CSI as critical.
-> >>>>
-> >>>
-> >>> This is clock hierarchy for CMU_CAM_CSI block.
-> >>>
-> >>> PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
-> >>> 			=7C
-> >>> 			=7C----> DIVIDER --------> CMU_SFR clock
-> >>> 			=7C
-> >>> 			=7C----> DIVIDER --------> CSI NOC clock.
-> >>>
-> >>
-> >> And what is the problem in adding proper handling in the driver? You
-> >> just described case valid for 99% of SoC components.
+> On Fri, Sep 20, 2024 at 05:04:19PM -0700, Pengfei Li wrote:
+> > On Thu, Aug 29, 2024 at 10:07:05AM +0300, Abel Vesa wrote:
+> > > On 24-06-27 16:24:24, Pengfei Li wrote:
+> > > > 'IMX93_CLK_END' macro was previously defined in imx93-clock.h
+> to
+> > > > indicate the number of clocks, but it is not part of the ABI, so
+> > > > it should be moved to clk driver.
+> > > >
+> > >
+> > > Right, why?
+> > >
+> > > All other providers have been using the _CLK_END from the
+> bindings
+> > > header. What is so special about this ? AFAICT, nothing.
+> > >
+> > > > ---
+> > > > Change for v2:
+> > > > - Use pre-processor define to simplify code.
+> > > > - link to v1:
+> > > > https://lore.kernel.org/all/20240625175147.94985-1-
+> pengfei.li_1@nx
+> > > > p.com/
+> > > >
+> > > > Pengfei Li (2):
+> > > >   clk: imx93: Move IMX93_CLK_END macro to clk driver
+> > > >   dt-bindings: clock: imx93: Drop IMX93_CLK_END macro
+> definition
+> > > >
+> > > >  drivers/clk/imx/clk-imx93.c             | 2 ++
+> > > >  include/dt-bindings/clock/imx93-clock.h | 1 -
+> > > >  2 files changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > --
+> > > > 2.34.1
+> > > >
+> > >
 > >
-> > Hi Kryzstof,
+> > Hi Abel,
 > >
-> > Sorry, but it seems I was not able to explain the issue. Let me add
-> > more
-> > details:
-> > So for CSI IP we have two clocks as ACLK and PCLK which needs to be
-> > handled by the driver during start and stop streaming.
+> > This is a modification based on previous comments:
+> > https://lore.kernel.org/all/20240604150447.GA604729-
+> robh@kernel.org/
+> > Actually, whether this _CLK_END macro change is added or not, both
+> is ok for me.
+> > I just want to add some new clocks to bindings header.
 > >
-> > In BLK_CSI we have CSI IP along with other bunch supporting modules
-> > such as CMU_CSI, NOC_CSI, CSI_SFR. For all these components of BLK_CSI
-> > we have a single top level parent PLL clock as PLL_CAM_CSI.
+> > BR,
+> > Pengfei Li
 > >
-> > Now if we look into CSI driver perspective it needs only ACLK and PCLK
-> > clocks for it's operations. But to access CMU SFRs (including
-> > ACLK/PCLK or any other CMU SFR of BLK_CSI) we need parent clock keep
-> > supplying clocks. While we try to gate ACLK clock, due to propagation
-> > logic of clock gating the CCF scans all the clocks from leaf level to
-> > the parent clock and tries to gate clocks if enable/disable ops is
-> > valid for any such clock.
-> >
-> > Issue here is that we are trying to gate PLL_CAM_CSI which itself is
-> > accessible only when this clock is enabled. In fact none of CMU_SFR
-> > will be accessible as soon as PLL_CAM_CSI is gated. CSI driver is not
-> > intended
 >=20
-> Obviously, but your CMU is taking the necessary clock and enabled it so w=
-hat
-> is the problem?
+> Hi Abel, you are the maintainer of clk-imx93.c, so if this patchset is ok=
+,
+> could you help apply it. and then I will send subsequent patchset to
+> add some new clocks.
+
+There is no good way here. I think you v1 patch is fine:
+https://lore.kernel.org/all/20240625175147.94985-2-pengfei.li_1@nxp.com/
+
+Moving END to driver indeed is a bit weird.
+
+Abel,
+
+When you have time, please give a look at upper v1.
+I not find a better way to drop _END from bindings.
+
+Thanks,
+Peng.
+
 >=20
-> > to gate this PLL clock but only the leaf level clock which is
-> > supplying to CSI IP. So in absence of any alternate source of clock
-> > hierarchy which can supply clock for CMU_CSI we can't gate PLL_CAM_CSI.
-> >
-> > Please let us know if you have any other queries why we are insisting
-> > on marking PLL_CAM_CSI as CRITICAL clock.
->=20
-> This is so far quite obvious - just like in all other cases, you need the=
- top clock
-> taken by proper driver. I don't think you are looking at right drivers an=
-d right
-> problem here.
->=20
-
-Hi Krzysztof,
-
-In this case, platform driver need to get this PLL clock and keep it
-enabled always. As PLL_CAM_CSI is source clock for accessing CMU
-registers of CSI block, and PLL_CAM_CSI itself lies in CSI_CMU,
-driver need to prepare and keep it enabled always. This way other PCLK
-and ACLK clocks can be gated. But the PLL_CAM_CSI which is parent of the
-PCLK and ACLK gate clock won't be disabled. Hope this should not be a
-concern.=20
-
-Regards,
-Inbaraj E
-
-> Best regards,
-> Krzysztof
-
-
+> BR,
+> Pengfei Li
