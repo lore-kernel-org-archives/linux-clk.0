@@ -1,137 +1,272 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2082.outbound.protection.outlook.com [40.107.104.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBFF18DF81;
-	Thu, 10 Oct 2024 06:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728541919; cv=none; b=i35yZiF54O4JKFEL9YYNYY2258NHW6Pd8IskHU5H6xU954AN18zqD6qkjZehe3FOR5Aj4+3iReXt566WHfoZWPZ2kgMWohcORO7LY2/ufLWL0s7y1NI/iOYVfVfXl5L9OHULIXyEtZ6g3C2Udu985Cz0k1hjkSSvnQoZkgPigkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728541919; c=relaxed/simple;
-	bh=AOXY/7XJtJw0s2SV+scdj5EAD0vNp2265poPJb6jL9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iOeonlvjN8LMZ4XMIF2mfgPJuSYr0g6EKtpVm7V0SzvTr+bWk/pxNM+Jj8qHaBd/S8ObXICWbgv/Bv84JNa3m/GNaNl9hmkaArUtvkhSK4zRdJnKlw7FQfYn3uHOjV9Mhd+cSXHhgdNVxQYWYyiOYMVlSj3fEWmM+LghvEQdnrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WpyS+KIH; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C21CEE82
+	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 07:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728544502; cv=fail; b=i3aOINeLMQ/4oUBEHk9coq3uD/UeHb7QmQNFfCaUjuQU1rg3ugqTSZS46aqCGIkOxD0spK/aulUVoP7affmJGwT2sc6IEin2yliz2NqdHr5hx6YlLrELca1IavAx8Klsr6mBz/ScVJCtlZ6YL05V0wmHhr1eupYuwYsQ/pqcoSg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728544502; c=relaxed/simple;
+	bh=x60A5WrAfNN+HDfvAIBpL83RXcReoLddchHDguDyZ4Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BPjWXMw9iaaUfdM+leRluu86TctXmysf2HIcw0TDD+cjCd8dG9Z8ngVmew99llNTPaqOrirWoUpzRD61COuqFQDTQH9mqVi+SYq4Cl/eINxMVKKMUdh9QAloatB+Wpth8qqu8ee6WX8utLSyhV6Ge7AN71f3ckIg2fuscOP+E9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Blt5oes6; arc=fail smtp.client-ip=40.107.104.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WpyS+KIH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728541917; x=1760077917;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AOXY/7XJtJw0s2SV+scdj5EAD0vNp2265poPJb6jL9w=;
-  b=WpyS+KIHktYXv481QYTJDhMTEmPX3Rh0RxDwPVBp6NvLZK9mMD1xYNHb
-   vi+hwlbLkmQcmBmnv8lByXW6oc43IgN9KtGhYJZHJiTKuUXwC74q8sZ9a
-   sQg4FWNO8E9ftAxT7jNaVWFqltx5uq5Wuc/4LcwfzCLoY9fwv6appMWMY
-   79nNWDYtGrIQsrROnA1SG53Na50fFCebFs9MA4v+I+gwjTR/t+vNVLET+
-   zjlyCngSA61NV0vNhRPgLkDKgSFj4kgobVc/1m8uIb9GWioZ2KsJ46aEl
-   KIjUPng6hyuywVzSGPUjPMie8nJ8ULr8rU4YBoI4CUYMxtB1lDJWwu+vK
-   A==;
-X-CSE-ConnectionGUID: 2me4YTnzSD6Od4EwQjO+ZQ==
-X-CSE-MsgGUID: nY6kRwlFRJayu7ry55Bm6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="53284277"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="53284277"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 23:31:56 -0700
-X-CSE-ConnectionGUID: CSBrZBxxSSaRjHZRjd9Ufw==
-X-CSE-MsgGUID: b11rVd95R0WakFa04NsjHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="81020464"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Oct 2024 23:31:51 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1symiC-000AHD-2s;
-	Thu, 10 Oct 2024 06:31:48 +0000
-Date: Thu, 10 Oct 2024 14:31:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
-	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-	richardcochran@gmail.com, geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
-	arnd@arndb.de, nfraprado@collabora.com, quic_anusha@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com
-Subject: Re: [PATCH v7 4/6] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-Message-ID: <202410101431.tjpSRNTY-lkp@intel.com>
-References: <20241009074125.794997-5-quic_mmanikan@quicinc.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Blt5oes6"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r2LtfV2ZmkmJrrF/7s2gTaOENdLhLB0gNlgVcUYm2aKf+JKOsb+QXQawUGx523DpGtcLMvLVXZtU/m87bHDTgh7/qEgC5TGxPLa2xFhQChinuC0G+F9G/WDh7vmfQLJRz6gDA/s2rgaHekPrsKEL2M92eAGfOufRrmCnkbVhHFe1Bd2LSP0ZX2qULwijoPO7bl14S6JVDFU+LqK0jX9Xmo31YRdBnaKwJKTVa5N3lahq11ZDBH8xpOolQh9BX3jP2aIPB35l2tRIdkpj1JgtcYct/pxfzytAT+rILmeI/LbBEyfp27nRVX8FFQmjecV3PPtmXdRnoXhzvlrWIEVzrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2sbFD/EluWfeudEJv4FrkqN9B/mvR4rvSrvzHajC7qY=;
+ b=WB+dV7Oe5V7lIUj3P3t7UpyGcPw1QbPDYfLY6xrGiKI1NKeQbwNGTL52JmZmTmSyO2z+aTrHzP0ODxOTzloOFpiNCGfrqlHBgNhCGCxfyAQHd5uBn1ckfYJZYah31MjhvwiJ/u+OC8um03FEURvoI3cc5x2HeNo5C0h8T5x8tkUJHFBK4CW3kmub0+RG06zePFyOJvaRSnvk8g3j+VUDaGM689Dcxo0cMoPsXLZerYAqQ0AXVvrYEZ2ADwqqvGggJ8DgCQK/yvTWM2onatilxE02Iktw9/XruSg2q0rwyeePmTZzS7nhuH/ny//mWjOMU34H6vcqbCHhvEdQfqa2zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2sbFD/EluWfeudEJv4FrkqN9B/mvR4rvSrvzHajC7qY=;
+ b=Blt5oes6y0fN57BBbAUT3BEP47gcA8pLPA7EcIgwyACdKrtC6bgOkImsPcTCpefNKYy7ZVwc7sbwWTftrmbHF+P7wNZbtWqbG67vGx5akUV0oN/c48pZ26VHy0OWBPp/sMdV/WhgDUnMBAPnE7wpZnnOGUYnRIVIQJCsZkyi/k2OtGxuWK2S6dcR6FCx52axpYVZxyreZZrtoVKhXCvrIoLTr4JNWj93Vi0NG8ulUTl8aEmFonPjnET1mOEZp3wDKT31YsNzwmsch6sV/vE42u0QXapbjg2GyD3vagBd6NpG2sRM+lr3YDt5cj/J/OUHVvF6bHBVi0nvNd+C3b2QqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB9641.eurprd04.prod.outlook.com (2603:10a6:102:23f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 07:14:54 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
+ 07:14:54 +0000
+Message-ID: <d6a34efa-47ad-439b-8b0c-a427cf087cb3@nxp.com>
+Date: Thu, 10 Oct 2024 15:15:19 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm: bridge: ldb: Configure LDB clock in .mode_set
+To: Marek Vasut <marex@denx.de>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+ Isaac Scott <isaac.scott@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Robert Foss <rfoss@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ imx@lists.linux.dev, kernel@dh-electronics.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20241008223846.337162-1-marex@denx.de>
+ <20241008223846.337162-2-marex@denx.de>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20241008223846.337162-2-marex@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0053.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::7) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009074125.794997-5-quic_mmanikan@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB9641:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd5a0aeb-48df-4fb5-b791-08dce8fb3d61
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?L01UZUlaMVZYUnVRb0F2aFZxekdrTHV2VEplVzlTWGE1Wit1VUx4SWZ5V29t?=
+ =?utf-8?B?U3ZXanVkUS9MYmtiQStQRkt6OVl0SnBiamRDRGVydXN1ZTExanVhc0dsOGNR?=
+ =?utf-8?B?NUdsbUZIamZMMkZOb2R6elRReEpVQTgrRGtxS2RJZXBES1UzMHhwYmhXMzdi?=
+ =?utf-8?B?RHFTNG9wWEpZNlMydFE0SGRTWmdyN1BHdkZKcGZWbk1DRXFIejFoRDlqK1dy?=
+ =?utf-8?B?dFhDb00xb2g1Z01xU0VUd3prWWt3dWFvdVRQRUZIQkxtRFA1NG41Uyt2ZG1L?=
+ =?utf-8?B?TkZ3UlhHaGd4bmlCRzBiYTl2ZzRERlRUMmNXcVYzK3JCT0VldHBiUTUxWXB2?=
+ =?utf-8?B?OTdoS1h1bkVmZ3d3dDJaeTl4ME4zZ2ZpYXQ4SEdWSERBWVNIOHpjVzliVG04?=
+ =?utf-8?B?eEZwbGlpK01JQnYreGkxbENGL2JPTWtuaUVLbmJKWFBhdnBoNUpuVFVJdWsy?=
+ =?utf-8?B?cWtTSWFOVTFrZTFpQWtmN3BkR3B5MitCQTBYYTU5MGJJMGhXOUZBWmpOcjho?=
+ =?utf-8?B?WmEwRDgrUUtCZU9RQVlpVWJxcHpsMWdMVmUxZ1doai9KQXgxUjRRbzlWblBt?=
+ =?utf-8?B?V2MvbmZZMlR4WVByR0RpTWQxME9ZcnVGdHRtSStHdHJ6bnd0L2RtaWZ1azkv?=
+ =?utf-8?B?TXFETUdSVTkzRExjRWRCVUpobjhIaVBzalFNVDBhekdnL1lRcGp4VVRDMmxl?=
+ =?utf-8?B?TUp1NUNQMmptQm4wY1BFV29hT1JkbGdadWVXU1pBMGdqZ2srbVBZSzd0eTNm?=
+ =?utf-8?B?SDdwNEFNZXFFSTR4YnAzT0R1TjFhVkhwcGlGS1A2VXdoam1Jc1VtWVpDYTN1?=
+ =?utf-8?B?ZVB4NXM2UlhSMjh4WkdXaGxvSndDV2czREJXMnJYTnQ4UjJEWll4N2dybnor?=
+ =?utf-8?B?clAyYVBxRWg5RTdCYW9lVzlVNTZ0dlZRQmJQaTEwN3BCYnVmbUJ0RDRHUkcy?=
+ =?utf-8?B?cVBTUGFuanlLTU9TbzVUYjRzZExDMWZZTkFjZnJ5OWY3Q21XNWtpT09nTDV3?=
+ =?utf-8?B?clNPNlVyN25NT0FuZHBxTXZBWXJ0c1dFeENjbkJPSUZPVGJ3NVhMSXBscDhF?=
+ =?utf-8?B?QWZZdlBieVhPcDhTRklvd0lLZStoc0I3dTlGNTNIbElDYmp6T0E5Z1JRYUQ4?=
+ =?utf-8?B?VWJZblZHQkp6elFHMTZQTUpVeDJEMDRXMTVJc0huWEFoV1JnTFJaY2szTlhk?=
+ =?utf-8?B?aUFySFlIK3FDTDVnU09JSVZEMHJBenNQcEx1MGVUVUl6YU5ic1lpNHBITXhK?=
+ =?utf-8?B?VlBCcWRUWVVGSGZxYmNmb0dRZDY2cUVIam1GTDFiRUthdFdIdXIvUHhpWGJo?=
+ =?utf-8?B?d040dVdVcmgrWDF2ZmtxNWhyOUk0eG1TQ1BBR2VRQWJXd0Fsb05WR0R2QkNz?=
+ =?utf-8?B?MmVvQUE5b2J3bjdXMkRHdnAwMUZZdjZmUmYrQ21nRUJxNmNuT1Q3dXl6VDFs?=
+ =?utf-8?B?R2RCeG5SSG1NUG9RUEhleVVJUjRTNlNPdEZ1R1pjZXF6VmtYSDZJUUhyblA2?=
+ =?utf-8?B?MVRwb1EyZ0FRZVlCNlBMQ2tPQjJvNHVSeTVtUFpSNk9oUnV3NE9pRDgyNlg4?=
+ =?utf-8?B?UWdQMURnMFpuOXJOZklCZk92aTdGb1g4NlZ2dStmNE5aUnd6bGs1WldGWWFz?=
+ =?utf-8?B?QzZDMGI3UUtVTEgyZjJGY0FQWVAxNGZPa1o0aTFHVU80MlAwRUtBanJxQjdh?=
+ =?utf-8?B?b2ptSjBCQ0lKWWV1MWFkaXVySGM5dVB0cmNidXk2NllyVFI1cnBmRDVRPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?QmdjUDd1QkxOdGl5alBkUDNHUUpXMTN6K1BnaEhtMzU1Y3FCOVhKWHNyUjZn?=
+ =?utf-8?B?c1NMMS9pcGNYRm1wWVo1bEFadklWakNMYlFQNXg2UVFodWNTa1dGNE40WWp0?=
+ =?utf-8?B?Y21xZ1BFM2x3NU1DTVFvVlNKSmgxQUJvQUdWUUc2b0pzcm95VWpyZnJpcUF0?=
+ =?utf-8?B?cjJYQ1VsSjJ4Y0RWOHhsRzNaNFdWQkpPRWlxYjVIRnNjRW5kTnZ5Nm1JczBG?=
+ =?utf-8?B?MEtobks4cVpLNDZmT1NoREN3TXg4UHNkbGlVeFBvRHU0UGJjdmt4eE9rbWlF?=
+ =?utf-8?B?NUk0R3ZacTZ6YzRtdHNEd2hnZ0ZwS2VybmpMVjBjWGJOR3hwTkRiSllxL0JE?=
+ =?utf-8?B?MVJURHRRcXVPd2Nnc3IzY0NSeHAvRzFBT0RwaGlIM2xXcjI1RHFmdTlvUEVV?=
+ =?utf-8?B?d1lMbmpuakhHb3MzOE9XYStoajMvanVVN0EzSDMyTEZISWlJYkp5ckYvZUlH?=
+ =?utf-8?B?VXRib3I2U2RjRXFMcExQMktOSjRHRTROdHJ6T3o2blNldGRRZWJkbkJ3bnFr?=
+ =?utf-8?B?SThnVE02Q05oU1ZuT05lS2JMMW5YN0JaMmpBOUJYZmVkWmQ4dGFlNE5RaDk4?=
+ =?utf-8?B?NXc1bDFuaFlsczFJQythMkU0QzA4VHFUY09zUW1PQUFKL2ZkbzhDTFNONEx1?=
+ =?utf-8?B?dEladXc0OG5oZWF0K0VEUnlxeUVYK0E5cFpWalEyRXQvaldnMXpONUZLeEha?=
+ =?utf-8?B?a3loZ0RsZ2dPWVJOOVZjT3FxUmFIUlJicHZWeWplOVhYQmE0azRYb3d6M25a?=
+ =?utf-8?B?UE9QZWZxc0svYmhhLy8zS2JHMThUbG9QTFRJQ3VmN3JJVFFJeWY4Yi9naGhW?=
+ =?utf-8?B?V2h2MS8yeDE0NFVQdXZRNWZvTThLMmhiYmZMVytvdjZHcHlsTHZocGovem5P?=
+ =?utf-8?B?eUVBQ0RJdTJOcy9MdlpvU09uMnhDNUowU2Mvb3lzb29VTjVCVHZhU01qb2xX?=
+ =?utf-8?B?Z2xkd1RGZHZibnVTM2cyakg0NDdUbUhITDdTZXI5QkhWbWM2bGZXWk1PMWll?=
+ =?utf-8?B?Uy81UHZXeHBtcGxvUVM5VU93SytqNE8ra2ZSZEFhd2QxVW53QUI5b1FSenVh?=
+ =?utf-8?B?bi92ZERHd0E2ZWpjd3R1M2dOZ0Z3eERVYTFiNXlFeHJpTWRvbDNXWk5CYUta?=
+ =?utf-8?B?ck8weUNhLzZiMms4TnV3MTgrNVZUQnAzbG44MHNabnczcjB0VEZrc0xoa1NB?=
+ =?utf-8?B?R3pwSGgrMGxOUE1YOW8ySHlGUFUxN0djQkdXMWdORmVBU2NhVnMvYWhISTFC?=
+ =?utf-8?B?RkJCRThiUUFnTjRlanpzaFAxcVhzNVdBdGlrSnNDWXl4dFdMWnVLbGdiUVBv?=
+ =?utf-8?B?VGsrZnpVNDZudW9VR29hbjYwRWhjcXFLN2lOaXNlL1lSMEhlMWs4QmM4UWtZ?=
+ =?utf-8?B?QXRFeXBTblhkT0p2Z2RQZm5nZHQ1U2RLcmEvdVBuVFY0UyszNk4wTkgwOHJv?=
+ =?utf-8?B?ak41U0xjR1l5Z00wbFVGOHZWVFQxZ3JDVWF1QzV0OXg1NmtubTV4NWFKYUV5?=
+ =?utf-8?B?YlU0RDlrSFI3V2R2U3BsSkt6RnczT205elhwVzhHSXhTMDBMWDczWXcrSzJI?=
+ =?utf-8?B?c2ljYnBQNXExNHJHSlV1ZXc0MXkzdUVPbTRpcm1kV0lib1Q5U0UxZmI5TkVS?=
+ =?utf-8?B?QUN3ZTNjQkk2T1VZLzl2UjllVWowTnIrQ3pRRGloK3Nzd2tpV2d1UXpPM3ov?=
+ =?utf-8?B?ZEJmUmlsY3JpTVZjRWV2WU1Gdms4Rlo5TUJqOGErbElZS2I0bStvRU5OdzdV?=
+ =?utf-8?B?S1RJVlRWWUt0NnBSU1ZOZkFDOGFES2RTSGdUTUthb0QySmpYdmFvR0t6U2NQ?=
+ =?utf-8?B?a0RHcW9idjlHMTVDampxQnlYMkdMSktGTUZ3L2JtbXpjYmxiSkN6dlpiTzQ5?=
+ =?utf-8?B?UWRaRU95TzF0cUtRV0JyVEEyc3VsQlFzV1Q5bXNvVXVlZkVwazF5Y3kxTm5Q?=
+ =?utf-8?B?TTFTbGQ4TnNSVXNDMjFCOU5pNERsb0VCZ3ptb0pIZlNuUGpJUUtDTGtBNkJ5?=
+ =?utf-8?B?cmRWMjRORWZOVHFOWmtlSWdrQkt2WFFUZHhIUnppNkdwMU5pU0Q0K29TNzRX?=
+ =?utf-8?B?N1U4VVBMQ2lrMGNNenBScDFUNnZ6Q0hmUnk1b1lKYW9PZVZlWDVwWEV1cWhU?=
+ =?utf-8?Q?KcqSiluGnTQXYiXKNk9uBRikn?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd5a0aeb-48df-4fb5-b791-08dce8fb3d61
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 07:14:54.5332
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jD3R/t2/shtNPKoXfSAS9TrLKJPbfkY2nHJbugLQVZiIbKTNv0acpLPzgaE7TqTIcnDu57FsaexQDYqC8jVCXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9641
 
-Hi Manikanta,
+On 10/09/2024, Marek Vasut wrote:
+> The LDB serializer clock operate at either x7 or x14 rate of the input
 
-kernel test robot noticed the following build errors:
+Isn't it either x7 or 3.5x?
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next arm64/for-next/core linus/master v6.12-rc2 next-20241009]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+s/operate/operates/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Mylavarapu/dt-bindings-clock-gcc-ipq9574-Add-definition-for-GPLL0_OUT_AUX/20241009-154517
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20241009074125.794997-5-quic_mmanikan%40quicinc.com
-patch subject: [PATCH v7 4/6] clk: qcom: Add NSS clock Controller driver for IPQ9574
-config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20241010/202410101431.tjpSRNTY-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410101431.tjpSRNTY-lkp@intel.com/reproduce)
+> LCDIFv3 scanout engine clock. Make sure the serializer clock and their
+> upstream Video PLL are configured early in .mode_set to the x7 or x14
+> rate of pixel clock, before LCDIFv3 .atomic_enable is called which would
+> configure the Video PLL to low x1 rate, which is unusable.
+> 
+> With this patch in place, the clock tree is correctly configured. The
+> example below is for a 71.1 MHz pixel clock panel, the LDB serializer
+> clock is then 497.7 MHz:
+> 
+> video_pll1_ref_sel                      1 1 0  24000000 0 0 50000
+>    video_pll1                           1 1 0 497700000 0 0 50000
+>       video_pll1_bypass                 1 1 0 497700000 0 0 50000
+>          video_pll1_out                 2 2 0 497700000 0 0 50000
+>             media_ldb                   1 1 0 497700000 0 0 50000
+>                media_ldb_root_clk       1 1 0 497700000 0 0 50000
+>             media_disp2_pix             1 1 0  71100000 0 0 50000
+>                media_disp2_pix_root_clk 1 1 0  71100000 0 0 50000
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Isaac Scott <isaac.scott@ideasonboard.com>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Robert Foss <rfoss@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: kernel@dh-electronics.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/gpu/drm/bridge/fsl-ldb.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+> index 0e4bac7dd04ff..a3a31467fcc85 100644
+> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> @@ -278,6 +278,16 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
+>  	return MODE_OK;
+>  }
+>  
+> +static void fsl_ldb_mode_set(struct drm_bridge *bridge,
+> +			       const struct drm_display_mode *mode,
+> +			       const struct drm_display_mode *adj)
+> +{
+> +	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
+> +	unsigned long requested_link_freq = fsl_ldb_link_frequency(fsl_ldb, mode->clock);
+> +
+> +	clk_set_rate(fsl_ldb->clk, requested_link_freq);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410101431.tjpSRNTY-lkp@intel.com/
+The mode_set callback won't be called when only crtc_state->active
+is changed from false to true in an atomic commit, e.g., blanking
+the emulated fbdev first and then unblanking it.  So, in this case,
+the clk_set_rate() in fsl_ldb_atomic_enable() is still called after
+those from mxsfb_kms or lcdif_kms.
 
-All errors (new ones prefixed by >>):
+Also, it doesn't look neat to call clk_set_rate() from both mode_set
+callback and atomic_enable callback.
 
->> drivers/clk/qcom/nsscc-ipq9574.c:80:36: error: 'CLK_ALPHA_PLL_TYPE_NSS_HUAYRA' undeclared here (not in a function); did you mean 'CLK_ALPHA_PLL_TYPE_HUAYRA'?
-      80 |         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                    CLK_ALPHA_PLL_TYPE_HUAYRA
+The idea is to assign a reasonable PLL clock rate in DT to make
+display drivers' life easier, especially for i.MX8MP where LDB,
+Samsung MIPI DSI may use a single PLL at the same time.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
-
-vim +80 drivers/clk/qcom/nsscc-ipq9574.c
-
-    77	
-    78	static struct clk_alpha_pll ubi32_pll_main = {
-    79		.offset = 0x28000,
-  > 80		.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
-    81		.flags = SUPPORTS_DYNAMIC_UPDATE,
-    82		.clkr = {
-    83			.hw.init = &(const struct clk_init_data) {
-    84				.name = "ubi32_pll_main",
-    85				.parent_data = &(const struct clk_parent_data) {
-    86					.index = DT_XO,
-    87				},
-    88				.num_parents = 1,
-    89				.ops = &clk_alpha_pll_huayra_ops,
-    90			},
-    91		},
-    92	};
-    93	
+> +}
+> +
+>  static const struct drm_bridge_funcs funcs = {
+>  	.attach = fsl_ldb_attach,
+>  	.atomic_enable = fsl_ldb_atomic_enable,
+> @@ -287,6 +297,7 @@ static const struct drm_bridge_funcs funcs = {
+>  	.atomic_get_input_bus_fmts = fsl_ldb_atomic_get_input_bus_fmts,
+>  	.atomic_reset = drm_atomic_helper_bridge_reset,
+>  	.mode_valid = fsl_ldb_mode_valid,
+> +	.mode_set = fsl_ldb_mode_set,
+>  };
+>  
+>  static int fsl_ldb_probe(struct platform_device *pdev)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Liu Ying
+
