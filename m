@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD719A2A3;
-	Thu, 10 Oct 2024 21:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D05148301;
+	Thu, 10 Oct 2024 22:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728596921; cv=none; b=bquTt1zPXO31rE1TFcuxhvSXWMYQ686tYnEQo0yOPDRMmxS2NQJl64WM4tvnRbVIf7K5fucPNcuac+8hdt+y6bBh+ogejo3XChLvR3wiI3v/bhfeyXqmThzfJc8mjf9OmHs7TmkN1gkJNA0FNkPLdXpUUezuoSGmWG4dtRUl4jM=
+	t=1728598908; cv=none; b=VRpXtD7w+65hZkQb65abis5Bk9HvhHiOD4+Ben9xQuAe16HyluM7qvOEIyHzSdE9xEPJyZ3wa5zG86prIqi2EV3Ri5lob7skcluVQEr8pr9LcA/7ACsas/BKwh8UwZKGAUatrAAv19VOj5N3FQFmx9rv8rJMhPlCUxU2vxOX1yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728596921; c=relaxed/simple;
-	bh=yrGcbToO/wQ5cOvuutppQRUqlBhyFYBBk1mix09MZro=;
+	s=arc-20240116; t=1728598908; c=relaxed/simple;
+	bh=oBDNpYeXUb77o/FNxNq8pnU5gAz9EMoLLWFXUk5bfy0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kBUU3XuZY6o6r+HoBjdvvJFZQXNPEi1m3c1UO5FLrAMtYa0dmKYyzNsa/iqcGliXGBAQFDxyfzGwHQjojmCtuJhcvFVm92FAXFCg8TUnKEQOzI2ZTuocvzq5lSNhB168QrMU++NeDX+1Z0WP/LYxPJa5KXorrqkCdCvlju3cMig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sx1nSLzC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ReFPVEWkIFlbnyS3oxpc/taRvuGTgseqRwNsU5qh3v0GtuQPEfhKbF1qIeGcC4F2Jw4l4e0aByZcwmtHrgF4A3NMt2XGCOPRCul78hpZJD0rh4jaLdPq/DBnBkqyyHyTEF/Q+6SPPoitzAxeXCdMPBzOSanO6i5yr8F0TmxYrjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZPrhQC2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sx1nSLzC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CB6C4CEC5;
-	Thu, 10 Oct 2024 21:48:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZPrhQC2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E95AC4CEC5;
+	Thu, 10 Oct 2024 22:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728596920;
-	bh=yrGcbToO/wQ5cOvuutppQRUqlBhyFYBBk1mix09MZro=;
+	s=k20201202; t=1728598907;
+	bh=oBDNpYeXUb77o/FNxNq8pnU5gAz9EMoLLWFXUk5bfy0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Sx1nSLzChLIagzSBRgsRR89iZcI/71SyY9dwEM1SPthQygVdPqjXIlZBX85lyovMY
-	 4uSj+0hSslIWxq3rcYzCxsexMBNBT928xFbX9sHb8iDFP3Ffcz46MV9bEeJ6ZPOOF2
-	 N4e30tTgDOuBWkrma6JWhgf2+lbFepDvJGiVD4ohH85DnPOFmX+CJrQYwUZ4B4RRPl
-	 krUYAYTK/NxAE3SZ5CYUbs015gwKvFwJzjCLkVWBUBwkkfa7zLzm65QJOj7ECJbU9W
-	 DNYqoggXyEW0g1/PWzV5jmsntzmDcHqQPy7QNGo2tAWCLH7s8XzpmPZuyqzhQ9Imoj
-	 WICABpMSAkklg==
-Message-ID: <17bc2c2193f9a909457466387a2a9b76.sboyd@kernel.org>
+	b=GZPrhQC28VWzXwSBj/v7nkqdYJ/5RaOhwlNuIdUPmqtovSNJAzaDOg4FHyMBwEYpV
+	 WK+v0bYwfJD0FELKbJy37A7rCThPC1Yn2JbFxSZowJuAdk5Hc/dBhU2YxmpYQJ9wXy
+	 14dA0iJmVopOUba810unxjINPWkgw6Dc8a6UoIG2tlhdgYRiq9v+ORjYyNKG3j9crE
+	 3iVZzWFtpFG+nnf2yN04LieDzxJK+PwSxLWDcMrPiESNs4gEizDThm0X5AILaYGaOP
+	 TbqnuDdxXf/ea1xK9shNT+bYmPppk11f3vecIFFY5u6ajs7RTeGaPhTKoehceujFjK
+	 8oTtXpIj89SZg==
+Message-ID: <eeb311ff8cbfff0166286d1363c8b7d5.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,39 +35,45 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
-References: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL fixes] clk: samsung: fixes for v6.12
+In-Reply-To: <20240910130640.20631-1-abelova@astralinux.ru>
+References: <20240910130640.20631-1-abelova@astralinux.ru>
+Subject: Re: [PATCH] clk: actions: prevent overflow in owl_pll_recalc_rate
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 10 Oct 2024 14:48:38 -0700
+Cc: Anastasia Belova <abelova@astralinux.ru>, Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
+To: Anastasia Belova <abelova@astralinux.ru>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 10 Oct 2024 15:21:45 -0700
 User-Agent: alot/0.10
 
-Quoting Krzysztof Kozlowski (2024-10-10 01:50:35)
-> Hi,
+Quoting Anastasia Belova (2024-09-10 06:06:40)
+> In case of OWL S900 SoC clock driver there are cases
+> where bfreq =3D 24000000, shift =3D 0. If value read from
+> CMU_COREPLL or CMU_DDRPLL to val is big enough, an
+> overflow may occur.
 >=20
-> One patch with a fix for current RC.
+> Add explicit casting to prevent it.
 >=20
-> Best regards,
-> Krzysztof
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 >=20
->=20
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-fixes-6.12
->=20
-> for you to fetch changes up to a03c246d4ec836ae5827a4a16f6b9e730ec5ee8c:
->=20
->   clk: samsung: Fix out-of-bound access of of_match_node() (2024-09-30 13=
-:10:11 +0200)
->=20
-> ----------------------------------------------------------------
+> Fixes: 2792c37e94c8 ("clk: actions: Add pll clock support")
+> Cc: <stable@vger.kernel.org>=20
 
-Thanks. Pulled into clk-fixes.
+Seems like we don't need these tags because it can't overflow.
+
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+>  drivers/clk/actions/owl-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
+> index 155f313986b4..fa17567665ec 100644
+> --- a/drivers/clk/actions/owl-pll.c
+> +++ b/drivers/clk/actions/owl-pll.c
+> @@ -104,7 +104,7 @@ static unsigned long owl_pll_recalc_rate(struct clk_h=
+w *hw,
+>         val =3D val >> pll_hw->shift;
+>         val &=3D mul_mask(pll_hw);
+> =20
+> -       return pll_hw->bfreq * val;
+> +       return (unsigned long)pll_hw->bfreq * val;
+
+I'm lost. Did you intend to cast this to a u64?
