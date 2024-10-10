@@ -1,399 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2059.outbound.protection.outlook.com [40.107.103.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931DFBE57;
-	Thu, 10 Oct 2024 03:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728531875; cv=none; b=ftx0exz5Hr/A0oNzdV7wKr0BaG4pBLQhFtvcGqW4YFpK2ckj2cwyMBjBiJV2ybjj7KJBT4opZAVnqq2tTakWhRnm175T4R2ERayf/ChP8f07mBI2ZVFJLIaOf/YXfbPxqlXlCfSJeP5+eRYVVl0yls8fFZ9DVcAUgez6QEYsi7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728531875; c=relaxed/simple;
-	bh=bYoe6q1x0Sk3adtxUbZFYFT+tsbRQndRmOmd+ZX4Ktc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqj6+/KuwQASzGkTenayzBq0fDojtYVEK1lTk6eLk0dAgjws3lYPpm6UWe9kFUeiSMso7P/ComRkqT3eBvXgx0TJL/+YZbE7vUVo6kBSxIjvC8NFSDHNMw1Y1UtFLj9srNATpFkJfrzovKMsY8+5D3aokPyFof+jyfxdXWpcqZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItucPJuQ; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF87D19DFA7
+	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 05:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728537740; cv=fail; b=CtXOCjjkjSn/081BB5zjEoPe25S3nAi2OXO6COyCM7ge49BzFBqGi1Ncl23+3E0RIOfAVw7oTHHMt7wgCiQ8FGr3PcpKdCE9F3CCe/FK6aD3vUUDpe1eWgKCLM1UzFpRIcHE+l8AEjA5BXCCyfH1BBvWCx9EVvNa8SiZIC9zh6I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728537740; c=relaxed/simple;
+	bh=WA7voeFh95dL55Snrf7FhYBKNRInKNXszJPP8Z3DyL8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cuJ+s6soiHQdUdq/eQ5xPHf9WqrGmEB8uqVqAVu7t/kxdPZDKelrFAd7aPNjDAWbk3GLGmPFGAJwPMfG1DEeLAeNNV8nle4NO2QZtk0n8/XqGAoq3ddJ0dtGlqy9OBAUzYuM3BIDmQdJkQ4KAIo8DMMJTZs1PmjHbjTa2gxVN0k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hdJBE+eA; arc=fail smtp.client-ip=40.107.103.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItucPJuQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1B0C4CEC6;
-	Thu, 10 Oct 2024 03:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728531875;
-	bh=bYoe6q1x0Sk3adtxUbZFYFT+tsbRQndRmOmd+ZX4Ktc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ItucPJuQQITH+ACENUpKJizecJfZEmYJSQhL0TXPYsTkE9C1hmIOrGb98wCIA+777
-	 /Q6Dn8CjurD0c7MZDzdr69P78cb6lQl3EH5DitRrt5fZg4o8bUB9phW9n02NCJEvdS
-	 mtnwoP18BaWxxzSUtCpH0fEnM56zGNZo93njs1b5dyi5xmkmc6bGSWz2/OxkcmZwa8
-	 oC4eLgxvkbPLC/zAp2dD4v4NMwO/4330y0HeSagj5QcxlEhX/VFCoLiYv4TipC3thc
-	 6KY2aID0KzCoYTOX6WSyvY233j+gBf/vD+xHiHCQRQ3TXOn7GKp+VIipLnq8YKpd4r
-	 x9LoAvIO9wTbw==
-Date: Wed, 9 Oct 2024 22:44:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-	Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 2/2] dt-bindings: clock: ti: Convert divider.txt
- to json-schema
-Message-ID: <20241010034434.GB1297859-robh@kernel.org>
-References: <20241009205619.16250-1-andreas@kemnade.info>
- <20241009205619.16250-3-andreas@kemnade.info>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hdJBE+eA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jHUYwEZTXIO/zfmP5kl1c4vy1CaF20hjIky9GPnjiPedLBgcvD57FBLW1rNyIh5u6YMJ0ZPK8FqzpqqE20rW8i+TaP9PA2IyFquGFCIT+q6jIoSlgOcMIHCe+B0LtSxVMbAN0FipsIWx1sv/wUUCVzvpOx0pbiS3acHDejfcfPTJK+DmsHJhYAAilREw3cqJfCz+NlpEDRECLb2U1Xh0/bgOm9JISg3ivZfQS55PN/bIPyTqxiOtyebEcusHAzLqU/PYy7vpfokTksIu6jjGyySwEAv+ZgqljJUwXmSH9THNyBIif7WNV+cMEL5Ejtua23Pr36XtSa+0qe85KoQ4wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jTiWlXUcDL/fSn8of21x+p7Iby3nmNh06hHJOkRV0mA=;
+ b=sX+nOGhLNELCT9WwiBWSUhmtR+3xbUOFq2Ck+w1jpQCA+jtTygOA5Kq3BRv5BDesDtZTv2mLpM88N6oyQntwZ/PC53ENrmKID42WKt40AT5omcuSYfFHHaXyQ+LN3dLanqObJw07cPGTX1d2oUNIblEvpV5SIGlfb4nQCbukGZyV7r3ZRSheRIGWzpkhJs01BSfva9QipEuwaBfXUxQxfQHCqlKMEFCGOswvhRbHh1jdJwt1wnxx1DMJccr/T7Qc/bBctVomZ2cGmy/A48wVKxHXGSg55Fklq9Fo86Ya9U0P5xz0hw6xIKTaWV4U/FcZ8J1ayEH25AlbQbB10MIlVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jTiWlXUcDL/fSn8of21x+p7Iby3nmNh06hHJOkRV0mA=;
+ b=hdJBE+eASgL2HLpbkxb2xYJVs/HL3tobqZtQ0vk4WvqAwEPsClVHr0AjYHMfHhrT2r8e44vXj7uIqP6Yp69SwgJYU/H2SaWzMUVqjDhZXkz7TLwlcci+D9hdPxBEOvbiA/gPJQ3LMvXzc1OWxGb1wNpEefEUm8lDUFvpXabV8zdoJ6TJPzdJK6RxwcsxuqVXqHdZKMKTu+g6XpuQ0DLoyISRlULRkAwgsE5GjOKuhkaeh6F9rSzZNd3Tcrin3FHMVG4ySazfjrwDVHKWDhE1C4xTrTJsriBXkjIBIe3VQ1lDFQ8L03EygBtcmzkmqTMqTaUqGsxqb6dmD7pCewdjwA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PA4PR04MB7663.eurprd04.prod.outlook.com (2603:10a6:102:e9::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Thu, 10 Oct
+ 2024 05:22:15 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
+ 05:22:15 +0000
+Message-ID: <dbede671-c97b-4ad7-8a54-f1b381fea082@nxp.com>
+Date: Thu, 10 Oct 2024 13:22:40 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+To: Marek Vasut <marex@denx.de>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+ Isaac Scott <isaac.scott@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Robert Foss <rfoss@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ imx@lists.linux.dev, kernel@dh-electronics.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20241008223846.337162-1-marex@denx.de>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20241008223846.337162-1-marex@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR06CA0189.apcprd06.prod.outlook.com (2603:1096:4:1::21)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009205619.16250-3-andreas@kemnade.info>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PA4PR04MB7663:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28e948ad-e262-47fb-8268-08dce8eb8067
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?aURnMUVHb1lHL0FqOUtHZGNXdFUrYzVDRUNmeTA0K0Qxa1o3ajFVOXRBMmZN?=
+ =?utf-8?B?RWZmcE13SXIyWGlDZlpIQmxQT1dRUDhKZFJ6VUNKck9FY1FQYThDYnZNSTBI?=
+ =?utf-8?B?ZlRsOXdUemIxaG1Zc2pmZnFHb3pTVWEzUlVCVFN0b1VlZkpQQkdERjRBTHZl?=
+ =?utf-8?B?MFJkaTB3dXBvTXhiekhhaWpySU5mMWxhdGl3UzJmOGJCa0g5VlBRN3kvdkNQ?=
+ =?utf-8?B?L1lOM1BObktKb2ErTlVTb3Z1TXhwTnVTc1dqVXZBOG5nY1Z0MUtiTzJPNnRU?=
+ =?utf-8?B?TU94cEFoaEp3KzM3dEtwVmtKVnprQ05lb0FvNEhKYXFRMjY0U0cyRzNZZ1pR?=
+ =?utf-8?B?eHkzT3ZmWWdSZW1hM0RHT1kyUWFtUzdXRGs3RUVCN3I5eWRQZnpTUmFWS1ho?=
+ =?utf-8?B?d1ZTclFtOHl3WCtDL1AwNjFKMGwzSlFzMUdPRUtOdFNaeU5tWVJJbkJ0ZERD?=
+ =?utf-8?B?a3laZWE5eVF2ZVNoaDc3eVBCL0JFOUJLOHZtVlEyeDdjbEE0elJpa3NnM1VF?=
+ =?utf-8?B?QkljV0NGT3lVRzFtaUJ3ZjdzVytqQXNCaW40VFBuOCtXL2JUS1ZKdmUwVVFl?=
+ =?utf-8?B?VitoaVlLNW5QRGl6RkVDV0xDbU9PVUlSeVlpQTN6NXZkUjJnMFNvenZkeXc0?=
+ =?utf-8?B?Vm9Gb1ZqNWRaMURCRmJzY1JWbW85dm1YcFV0aE8zTjgrMG5iRnc0WStZWVJx?=
+ =?utf-8?B?amo3ckMyWTRqanNGMjQxZWgrMTFMSkR1OGJOOXhOQmMrRjhmSC90MnMwZHpM?=
+ =?utf-8?B?REltTCtGOEVBb3duOGFBbGNRakJXS05ReXpJMmczNVZYamlYWTB5MkR4Qkc4?=
+ =?utf-8?B?SWRnSE9lS0piOTVYUWxYcmxjdmxMdHd2VldsMHdsdHI1U3FoMm9HTTY4Q05E?=
+ =?utf-8?B?ZkFjZnM1di9FK1k5UnVrWjRjbFlVWWFmU2plZ0dROEk0NS9qM29vQWhNQXFl?=
+ =?utf-8?B?UnJSZDZBaDBET3pnMjdNN0ZqN3docDBrNTgxM25ReHlWZE1YdFM0NFMrem1t?=
+ =?utf-8?B?NGdQUzhNRDVTZXpNQm9SN0NJMnVuckhQakJ4clpMdjVyRXdaQXFxTnhDRUdn?=
+ =?utf-8?B?SWpGSUpNdmxPU0FYN2E5dEpjYmR6U2YzTEwxTW9MWThMUXJ6b0dJSzBKZzds?=
+ =?utf-8?B?eHZoMXlRYjlEZ2Y3NE1RbTJMTHd2VFBYNkFHeExmQjJyd1l6ejhCYWNyamU3?=
+ =?utf-8?B?K1JJUUhESFVIRnBOcmxNeHBXWVVOVzYxaklVMy9WWSs4U0QzM3EvY05VUk1r?=
+ =?utf-8?B?a3BUaktMMzJBN1JnSWY5Uy9TR0x1SmNCekxzcmtpOVdrUi9OKzV0clJkWkM5?=
+ =?utf-8?B?L2JZQ2YvOGNyLzU0alg5dEx5ZVFEVHJNUWpXbXpXTVFjNmpjc0Jyd0dtakFW?=
+ =?utf-8?B?bkl4YkV5bk8vQkZqdC9VTU1rMlJJTWNsQ3lBMXZNUG5iQzgvRGpHeDZEcGJn?=
+ =?utf-8?B?SUlyWHQyYlJST1IyOW0rMGZFc2Y5M1dsQU9JRUEvbjd5RUdrNWZYZ0o4Vk9j?=
+ =?utf-8?B?QzBraVpJeVpMWVA5QUdraXdPTHhOTWI5dnlnQXhLc3lqTk9WMFB2enNYaG9G?=
+ =?utf-8?B?T1VIWmlqUmhZdytmQjZsN3JVK0ZsUmRzM0RPWXlUOGtHeE5LcVZBQzZrRFFv?=
+ =?utf-8?Q?oLyzgDKWgqzSCEPuFJN6eblpb+tdd8DLmtRE4sze2Ucg=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?MDAvZ2xmMHUzNGZyU2Jic0psNzNDREdvaGcrelNDdWdHZlNYUnFsMExEbEZy?=
+ =?utf-8?B?M25pUFB0bDV1dHN1UmZacTFmYnExNXFPQVhLUjVseUNZVld5TlVKUWdLcXFs?=
+ =?utf-8?B?cVZCR1ljeVJDbXJTekxHTDRSeWVUK21nZW1uM3g5V21KZnpwZXh1d0Ftd0JO?=
+ =?utf-8?B?YXJQbkpJbVFYam1kNmpyUGJUT1R1Sm1UTlZWKytLeThsWFJOMklocVZqdjZT?=
+ =?utf-8?B?UHZFL0xzWkkyeUl0c1B6V0hUWWtjWTdJTTZ2ZEVxbFBqd1RyYmZUR2psOEdE?=
+ =?utf-8?B?VWpWeTBIRUhRaDJhanI4SDFmMk41N2NkajV3eVFKR3VnT3NjYUJGbllsdjZJ?=
+ =?utf-8?B?SmJoMWNNdngrRU9MbDZJZjVyeGUrUXVLQXV5MU5OWTU4b2l0MTdpWFBsQWVT?=
+ =?utf-8?B?UCtEd0RlZDZ6aFU5VEZXSkJFYVFlcWRZZVpHYXNpZTNOdFNaZndWbCtaMkFv?=
+ =?utf-8?B?VXNzWUVSYVlqOWZRVm9MVjh5bTNuQktCU3kzQitwNHhvYTVqaHJiWEJDcWZX?=
+ =?utf-8?B?U3g4Q2xFZXgrRnNOaERkYWg2TjJ0bEZTSGJGcHhoZVBzWmFPMklVNmZJNEVT?=
+ =?utf-8?B?SHJRZm5KaDM1Skdta0JlUnJtZzBkakVSRVNtdStDSWdUYW1TQldDRU1TOVpt?=
+ =?utf-8?B?QnpPcTVJd01TMWhnMjNhcndCdE85akdXWTB4Y0hORllnbTBsRWZZcElsT01V?=
+ =?utf-8?B?bDJ5cllVRnJtUDdEWUJ3aXBrMExkWnh2NXVXWGVOYWVaZ0lXRXBsTHBqdEl6?=
+ =?utf-8?B?U3d3bzBHWkg0Z2RJU0ZXTC8zL3JqNGJJMXBwZjNpNEZUY0l6c0hidWhvcVI2?=
+ =?utf-8?B?Q3A0VUtVeXNOL2JWRmhtWjVHNnl0YzZuYXBWVVlXb1dSUlo2eGJiUDluTTEy?=
+ =?utf-8?B?SjBtTVNZMkNhazRqTURqSWhObE1QMFpQQnI2eUVHdjFGUFZWenQzQXlaK1dj?=
+ =?utf-8?B?Uk5NKzhpbWVOcDhjZ2E3bmxkOU9QT2tBbncyMDZDYnAwYVJpbGNKVisrblkw?=
+ =?utf-8?B?WW1zSWJhWk1hems4OUdQdEdLakVPNG9XNFg3M0E2UW9RZWZ2WUVvR1kyQmVo?=
+ =?utf-8?B?KzBGdHk0RDZTQS83eUQ0Q015bDIveW1qNzNnbjhmdi8xQnpJQXZ3TThrMXUv?=
+ =?utf-8?B?TEZzWDMvUDhWUjAxTTNQRGVYNXh1SGNXWTlXb3ZBWndEZHI5NDc5OXRHSEpt?=
+ =?utf-8?B?QlFLR2syL20vTFFqMXVVZWFIS2hBTDVlaXVYemVWeUFoKzlyWUlrQWFzOGRN?=
+ =?utf-8?B?Q3plZnZXeno2ZlU1MnF0SC9hUnA5eUJSbU1OdEo4dGNpY3l6dHJGM2tJNVFJ?=
+ =?utf-8?B?Q3plYXV1bEtScko2ZVN1SDNEalJxei9zTi81MVcyNEo3S1VkTlZKMm5adlV0?=
+ =?utf-8?B?akNobG5NaW01QXpSTlJaS1BGZitzWDUvUGdsMVZNUGhXZHVUa2RPcDJBcU1k?=
+ =?utf-8?B?bE1vZDlVcjdITUkyTmV5REtVc09OS1JPRVUwS1UxblJkWDM5OVdrMS9DdU5Y?=
+ =?utf-8?B?U2tMVVM2VmRFY20wWGF5ZjNQNXE2UHVoSG5mQnc4RTdxdmRjVU1TOG9VVllx?=
+ =?utf-8?B?eVdGbDJpc0h3OVBXTUlNM3dRWXNGQlIwVk9sMTlvSXJ4N25mcUNEbXdZT05o?=
+ =?utf-8?B?MkNxNVZmNVdibnptZGIxRnB4dVBtajJBS2d2MnQ4c2E3bnVuL2NEcGhGWjA2?=
+ =?utf-8?B?UHlyaG5JSG1XdFE2dS9RUnAvR3JLdDJFVGpiYlBhcVYyVzlJd0ZLMXBQSGFx?=
+ =?utf-8?B?SHN4am1GZjMrNk5ZR2EyUDVVM0Y4ZXpqSFlJRWpWdGRVN1Y3OHVEcXVGMURG?=
+ =?utf-8?B?Z29pbDhPb0xkUWFCL2lBNjBZUndjc01URktZUUR2RkNMSCszd1ZXMkIwYWtB?=
+ =?utf-8?B?enVaRm1wN0plOHVEbGcybFZ2ODl0QXFKb0NINitiL3ZjK0J6NDBwVVVNTDB5?=
+ =?utf-8?B?QlA4UWpEUEZ3THo4dXZaNlhJdmp4UTB4Vmc4dVhXd0hZbmRFYXhGZmx2MlJV?=
+ =?utf-8?B?WkM2cDNsbHJlVHIxZHBVTjQ1R015ay8zTExMR08wNjBuWkdrS3FZYVo2RUlX?=
+ =?utf-8?B?bkhuY1A4U1VSZlBoVUxPVEY5VGtXTTVzdlJ1OElNNys4aWRmdHJBbmdrT3lz?=
+ =?utf-8?Q?Sxl0/JAGgyXxg7DWBZNt5idxE?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28e948ad-e262-47fb-8268-08dce8eb8067
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 05:22:15.0649
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wlyQcNPJUdrCxmr3fRQrnmcpXlGJ9PLb+xX+v17tQ5UKoIlZaTOEJKA3Uvnzw6QdNXR+rwMPtNZSRKpOjEkU7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7663
 
-On Wed, Oct 09, 2024 at 10:56:19PM +0200, Andreas Kemnade wrote:
-> Convert the OMAP divider clock device tree binding to json-schema.
-> Specify the creator of the original binding as a maintainer.
+On 10/09/2024, Marek Vasut wrote:
+> The media_ldb_root_clk supply LDB serializer. These clock are usually
+> shared with the LCDIFv3 pixel clock and supplied by the Video PLL on
+> i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LCDIFv3
+> pixel clock. Allow the LDB to reconfigure Video PLL as needed, as that
+> results in accurate serializer clock.
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Signed-off-by: Marek Vasut <marex@denx.de>
 > ---
->  .../devicetree/bindings/clock/ti/divider.txt  | 115 ------------
->  .../bindings/clock/ti/ti,divider-clock.yaml   | 175 ++++++++++++++++++
->  2 files changed, 175 insertions(+), 115 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Isaac Scott <isaac.scott@ideasonboard.com>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Robert Foss <rfoss@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: kernel@dh-electronics.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/divider.txt b/Documentation/devicetree/bindings/clock/ti/divider.txt
-> deleted file mode 100644
-> index 4d7c76f0b356..000000000000
-> --- a/Documentation/devicetree/bindings/clock/ti/divider.txt
-> +++ /dev/null
-> @@ -1,115 +0,0 @@
-> -Binding for TI divider clock
-> -
-> -This binding uses the common clock binding[1].  It assumes a
-> -register-mapped adjustable clock rate divider that does not gate and has
-> -only one input clock or parent.  By default the value programmed into
-> -the register is one less than the actual divisor value.  E.g:
-> -
-> -register value		actual divisor value
-> -0			1
-> -1			2
-> -2			3
-> -
-> -This assumption may be modified by the following optional properties:
-> -
-> -ti,index-starts-at-one - valid divisor values start at 1, not the default
-> -of 0.  E.g:
-> -register value		actual divisor value
-> -1			1
-> -2			2
-> -3			3
-> -
-> -ti,index-power-of-two - valid divisor values are powers of two.  E.g:
-> -register value		actual divisor value
-> -0			1
-> -1			2
-> -2			4
-> -
-> -Additionally an array of valid dividers may be supplied like so:
-> -
-> -	ti,dividers = <4>, <8>, <0>, <16>;
-> -
-> -Which will map the resulting values to a divisor table by their index:
-> -register value		actual divisor value
-> -0			4
-> -1			8
-> -2			<invalid divisor, skipped>
-> -3			16
-> -
-> -Any zero value in this array means the corresponding bit-value is invalid
-> -and must not be used.
-> -
-> -The binding must also provide the register to control the divider and
-> -unless the divider array is provided, min and max dividers. Optionally
-> -the number of bits to shift that mask, if necessary. If the shift value
-> -is missing it is the same as supplying a zero shift.
-> -
-> -This binding can also optionally provide support to the hardware autoidle
-> -feature, see [2].
-> -
-> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -[2] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-> -
-> -Required properties:
-> -- compatible : shall be "ti,divider-clock" or "ti,composite-divider-clock".
-> -- #clock-cells : from common clock binding; shall be set to 0.
-> -- clocks : link to phandle of parent clock
-> -- reg : offset for register controlling adjustable divider
-> -
-> -Optional properties:
-> -- clock-output-names : from common clock binding.
-> -- ti,dividers : array of integers defining divisors
-> -- ti,bit-shift : number of bits to shift the divider value, defaults to 0
-> -- ti,min-div : min divisor for dividing the input clock rate, only
-> -  needed if the first divisor is offset from the default value (1)
-> -- ti,max-div : max divisor for dividing the input clock rate, only needed
-> -  if ti,dividers is not defined.
-> -- ti,index-starts-at-one : valid divisor programming starts at 1, not zero,
-> -  only valid if ti,dividers is not defined.
-> -- ti,index-power-of-two : valid divisor programming must be a power of two,
-> -  only valid if ti,dividers is not defined.
-> -- ti,autoidle-shift : bit shift of the autoidle enable bit for the clock,
-> -  see [2]
-> -- ti,invert-autoidle-bit : autoidle is enabled by setting the bit to 0,
-> -  see [2]
-> -- ti,set-rate-parent : clk_set_rate is propagated to parent
-> -- ti,latch-bit : latch the divider value to HW, only needed if the register
-> -  access requires this. As an example dra76x DPLL_GMAC H14 divider implements
-> -  such behavior.
-> -
-> -Examples:
-> -dpll_usb_m2_ck: dpll_usb_m2_ck@4a008190 {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,divider-clock";
-> -	clocks = <&dpll_usb_ck>;
-> -	ti,max-div = <127>;
-> -	reg = <0x190>;
-> -	ti,index-starts-at-one;
-> -};
-> -
-> -aess_fclk: aess_fclk@4a004528 {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,divider-clock";
-> -	clocks = <&abe_clk>;
-> -	ti,bit-shift = <24>;
-> -	reg = <0x528>;
-> -	ti,max-div = <2>;
-> -};
-> -
-> -dpll_core_m3x2_div_ck: dpll_core_m3x2_div_ck {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,composite-divider-clock";
-> -	clocks = <&dpll_core_x2_ck>;
-> -	ti,max-div = <31>;
-> -	reg = <0x0134>;
-> -	ti,index-starts-at-one;
-> -};
-> -
-> -ssi_ssr_div_fck_3430es2: ssi_ssr_div_fck_3430es2 {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,composite-divider-clock";
-> -	clocks = <&corex2_fck>;
-> -	ti,bit-shift = <8>;
-> -	reg = <0x0a40>;
-> -	ti,dividers = <0>, <1>, <2>, <3>, <4>, <0>, <6>, <0>, <8>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> new file mode 100644
-> index 000000000000..31fe876fb40b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> @@ -0,0 +1,175 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti/ti,divider-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments divider clock
-> +
-> +maintainers:
-> +  - Tero Kristo <kristo@kernel.org>
-> +
-> +description: |
-> +  This clock It assumes a register-mapped adjustable clock rate divider
-> +  that does not gate and has only one input clock or parent.  By default the
-> +  value programmed into the register is one less than the actual divisor value.
-> +  E.g:
-> +
-> +  register value    actual divisor value
-> +  0                 1
-> +  1                 2
-> +  2                 3
-> +
-> +  This assumption may be modified by the following optional properties:
-> +
-> +  ti,index-starts-at-one - valid divisor values start at 1, not the default
-> +  of 0.  E.g:
-> +  register value    actual divisor value
-> +  1                 1
-> +  2                 2
-> +  3                 3
-> +
-> +  ti,index-power-of-two - valid divisor values are powers of two.  E.g:
-> +  register value    actual divisor value
-> +  0                 1
-> +  1                 2
-> +  2                 4
-> +
-> +  Additionally an array of valid dividers may be supplied like so:
-> +
-> +  ti,dividers = <4>, <8>, <0>, <16>;
-> +
-> +  Which will map the resulting values to a divisor table by their index:
-> +  register value    actual divisor value
-> +  0                 4
-> +  1                 8
-> +  2                 <invalid divisor, skipped>
-> +  3                 16
-> +
-> +  Any zero value in this array means the corresponding bit-value is invalid
-> +  and must not be used.
-> +
-> +  The binding must also provide the register to control the divider and
-> +  unless the divider array is provided, min and max dividers. Optionally
-> +  the number of bits to shift that mask, if necessary. If the shift value
-> +  is missing it is the same as supplying a zero shift.
-> +
-> +  This binding can also optionally provide support to the hardware autoidle
-> +  feature, see [1].
-> +
-> +  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,divider-clock
-> +      - ti,composite-divider-clock
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ti,dividers: true
-> +
-> +  ti,bit-shift:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      number of bits to shift the divider value
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 516dbd170c8a3..2e61d340b8ab7 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+>  	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
+>  	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+> -	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+> +	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
 
-maximum: 31 ?
-default: 0
+This patch would cause the below in-flight LDB bridge driver
+patch[1] fail to do display mode validation upon display modes
+read from LVDS to HDMI converter IT6263's DDC I2C bus.
+Unsupported display modes cannot be ruled out.  Note that
+"media_ldb" is derived from "video_pll1_out" by default as the
+parent is set in imx8mp.dtsi.  And, the only 4 rates supported
+by "video_pll1" are listed in imx_pll1443x_tbl[] - 1.0395GHz,
+650MHz, 594MHz and 519.75MHz.
 
-> +
-> +  ti,min-div:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      min divisor for dividing the input clock rate, only
-> +      needed if the first divisor is offset from the default value (1)
+[1] https://patchwork.freedesktop.org/patch/616907/?series=139266&rev=1
 
-minimum: 1
-maximum: ?
-default: 1
+>  	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+>  	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
+>  	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
 
-> +
-> +  ti,max-div:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      max divisor for dividing the input clock rate, only needed
-> +      if ti,dividers is not defined.
-> +
-> +  ti,index-starts-at-one:
-> +    type: boolean
-> +    description:
-> +      valid divisor programming starts at 1, not zero,
-> +      only valid if ti,dividers is not defined
-> +
-> +  ti,index-power-of-two:
-> +    type: boolean
-> +    description:
-> +      valid divisor programming must be a power of two,
-> +      only valid if ti,dividers is not defined.
+-- 
+Regards,
+Liu Ying
 
-This can be expressed as:
-
-dependentSchemas:
-  ti,dividers:
-    properties:
-      ti,min-div: false
-      ti,max-div: false
-      ti,index-power-of-two: false
-      ti,index-starts-at-one: false
-
-> +
-> +  ti,autoidle-shift:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      bit shift of the autoidle enable bit for the clock,
-> +      see [1].
-
-maximum: 31
-default: 0
-
-> +
-> +  ti,invert-autoidle-bit:
-> +    type: boolean
-> +    description:
-> +      autoidle is enabled by setting the bit to 0,
-> +      see [1]
-> +
-> +  ti,set-rate-parent:
-> +    type: boolean
-> +    description:
-> +      clk_set_rate is propagated to parent            |
-> +
-> +  ti,latch-bit:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      latch the divider value to HW, only needed if the register
-> +      compatible access requires this. As an example dra76x DPLL_GMAC
-> +      H14 divider implements such behavior.
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    bus {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      dpll_usb_m2_ck: clock-controller@190 {
-
-Drop unused labels.
-
-> +        #clock-cells = <0>;
-> +        compatible = "ti,divider-clock";
-> +        clocks = <&dpll_usb_ck>;
-> +        ti,max-div = <127>;
-> +        reg = <0x190>;
-> +        ti,index-starts-at-one;
-> +      };
-> +
-> +      aess_fclk: clock-controller@528 {
-> +        #clock-cells = <0>;
-> +        compatible = "ti,divider-clock";
-> +        clocks = <&abe_clk>;
-> +        ti,bit-shift = <24>;
-> +        reg = <0x528>;
-> +        ti,max-div = <2>;
-> +      };
-> +
-> +      ssi_ssr_div_fck_3430es2: clock-controller@a40 {
-> +        #clock-cells = <0>;
-> +        compatible = "ti,composite-divider-clock";
-> +        clocks = <&corex2_fck>;
-> +        ti,bit-shift = <8>;
-> +        reg = <0x0a40>;
-> +        ti,dividers = <0>, <1>, <2>, <3>, <4>, <0>, <6>, <0>, <8>;
-> +      };
-> +    };
-> -- 
-> 2.39.5
-> 
