@@ -1,49 +1,72 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96CC1BCA11;
-	Thu, 10 Oct 2024 07:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00E31BC07A
+	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 08:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728546254; cv=none; b=mTn1hdvaV8woI0niR45KE13nx9fh7vL4FhLu0Bc2i7SMGgo+iwt0NhuWnDF3G+NObKu686/F8foZVvWQUYWkfPcpm/OzzteteCneeg59+lndN5o/MCB2ykgbaFGTcTXbvR23PJ04UTgvQw/CLKPRv2lakN1DT50wGFvjNOT8hIk=
+	t=1728550243; cv=none; b=ayNbQo2/sGKjQXCAPRDdaI6aV090LGbHZ49PznBiPjwuWr9recxD5a0fV4waDJbqcr+DqnSQIhwt0/Q6aOGspSr1q4VRn9NL0DuzIBqtqtjdPzS0Tm4XCpdMMidXWbe+uA43we9FXmaBzQqnLbNSC00lIu8DPTQGkr4Bjsc3lUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728546254; c=relaxed/simple;
-	bh=x5FhYGi0PCWOfztI/IQyaGgm3sDuZ7lLD3ZhEv6wc7M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NfCvG/4dzrtAuiBOkc5BKfPi6ZzhKg5oLAuN93N2f7d7OgNPL9Ui/UqrLWV5T+hwDKMFtW69Yg5Vk9JqF2Bq1ImUCFDL9Ej8Y1cg6UD4bXH9Xf+sBoR4EjdI0IFFiYrUHFkbLA2JjtdeSEkUN0+S5HX1JaQSXXAQAl0PH/10tZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=G+IhLX+n; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1728550243; c=relaxed/simple;
+	bh=z3ez/l61dhCVg9HYagG64y4B3JhRbR7Mux5HiKfRdHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y1IUdEz5kWl69EhJ4BWIHWqQrTkaPYQWPN8+BqJnar4afMn0k/IJ/0QErvsvyfXXJwBNxifsxrYCdGX0WW/5YASeormJQBPb/+QDl3Xv1I5wKdjkAqzhJjYM1rAT8vjNI1zr/1wZ/Yf1Y9Vgw3vUOYv52qESB3Dk2FWg1YjCqw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oNVpTv5B; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="G+IhLX+n"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=7tN5cZxpEROorCLkrxgCiTuqn2sXTFFrUxuWOjArPwI=; b=G+IhLX+n58SIUp70ZTrLN+BR9y
-	voqN52PrXemM1U5GHmQBCO6+PlcrBLOZgsJbZyLLK2LJzQSHyX/Ny6pOasFVaBq0fwI6J9SFwuHFn
-	pQA1WFyAnPShXCL85IKrUQQRw+S9sLfHAv02Yh2nXl54tkrZiS4ElsqLLSFfhdvPeaTFAVcDnU5NP
-	b/4X+vIHOIDwPNOQkQEEooxnpv54FY0uhMY/Nv/JC86Um/kexlJSEaICWh0Hb7bcHrvzfsCGo6lz+
-	61mCe/yX8Q8SqScIPiSt5muyH8edQsmnKJoByK3xEWpBkicVvs6dmR9ARkfsmkHelxZnVQNPewa8n
-	1wX7oAOg==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Kevin Hilman <khilman@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	linux-kernel@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oNVpTv5B"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4dbb4a89so11485f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 01:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728550240; x=1729155040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQs7eHLoIcfePSFG7MLMavcGqDeItWvgpHDJCq56Lpk=;
+        b=oNVpTv5BG0g0ihfcC2FsNmIjYAn/xWRv/yc3eJIcLIN98aWKU/EbsEBMMT1S5jPuj9
+         Ay6NrkgV/UxrdxyRM94guj6OjXoR0cttDr06CsF30LnbzDdZL/fJYLNG3n5/AOI+chm9
+         tf/x9ChQ68mqRmwqsK7OMQvnAkGZzbCZrx9MXfwFdmshGRRlJyiLyB3r+bpS3I8qhZwa
+         9jhrzp5OjD6GsAQUjy0UgKClcTcvM7lPgfH5/mR6oRDIRi4s9MvOz4BrL9T+UcGBK38a
+         pUmWvzn2Saz8nlsXn2gJgK7LZ/Wbw5bXrmTX5Tmul1smQMlFdFprERP8YIs8Kr1spx2D
+         YCBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728550240; x=1729155040;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aQs7eHLoIcfePSFG7MLMavcGqDeItWvgpHDJCq56Lpk=;
+        b=fO+jbVf2vQXZBrRjN8113ZHlaWp4/TOieTNOfA+ltR3ziS9A4V41hhBFKXDqOFjJ+u
+         Qh1oQeFs+BX/ofSbe9ZA+c6f+L/6g+bux1AbZ+GhEY+HUP19wUR/fRJcofAo0Ww7yguP
+         jeoKUNONrcQblX4GScNofJd0A1i3n3QQvcBA1YH2rKzbNBAwDurEsDDlDalnKXlJS4M/
+         hEiWfPYRa5mRTz8SpWpIJT+fXArQ0/vGFGazkY3vRnzh+lTcG+TsEVckKOFEiIivipqp
+         0EGWKNfbGK1rcL16Wl2jtc+lqRS2jlJkuq39Gr+VrThKbK9lXLxDMTc9VQT3bLWlEg7v
+         n9sA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvnMuoW1l1rT+ztLQU3+q0TRv0WrYONI2JmU0NgQcLRL6luI1XRivbD4sLfChrpHAUDRWcdBGt11Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT1rIA4STouGPw5uEYoZfqY+i1y2QRSDYgoK0GZdY1erBwQsni
+	Z3KH7O/l+gtf2elOTNu+a37umq0CPPS+gRd8leRuw00iiXOXUQUVyVejw7DCRO8=
+X-Google-Smtp-Source: AGHT+IEgI+7jR7sIccWO+9py/YAWd6yyEGtgtX1NOe1YekWpZOfQUG29typMKN9zwT4RSBHy074ecw==
+X-Received: by 2002:a05:6000:2cc:b0:37d:4db4:ef6a with SMTP id ffacd0b85a97d-37d4db4f48fmr337919f8f.1.1728550240010;
+        Thu, 10 Oct 2024 01:50:40 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b917df3sm879980f8f.111.2024.10.10.01.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 01:50:39 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	linux-clk@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Roger Quadros <rogerq@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-omap@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v4 3/3] clk: twl: add TWL6030 support
-Date: Thu, 10 Oct 2024 09:43:55 +0200
-Message-Id: <20241010074355.58161-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241010074355.58161-1-andreas@kemnade.info>
-References: <20241010074355.58161-1-andreas@kemnade.info>
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL fixes] clk: samsung: fixes for v6.12
+Date: Thu, 10 Oct 2024 10:50:35 +0200
+Message-ID: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,128 +75,35 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TWL6030 has similar clocks, so add support for it. Take care of the
-resource grouping handling needed.
+Hi,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/clk/Kconfig   |  2 +-
- drivers/clk/clk-twl.c | 52 +++++++++++++++++++++++++++++++++++--------
- 2 files changed, 44 insertions(+), 10 deletions(-)
+One patch with a fix for current RC.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 299bc678ed1b..82ec12f9b82c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -291,7 +291,7 @@ config CLK_TWL
- 	help
- 	  Enable support for controlling the clock resources on TWL family
- 	  PMICs. These devices have some 32K clock outputs which can be
--	  controlled by software. For now, only the TWL6032 clocks are
-+	  controlled by software. For now, the TWL6032 and TWL6030 clocks are
- 	  supported.
- 
- config CLK_TWL6040
-diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
-index 1d684b358401..c04bcb61e260 100644
---- a/drivers/clk/clk-twl.c
-+++ b/drivers/clk/clk-twl.c
-@@ -11,13 +11,29 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--#define VREG_STATE              2
-+#define VREG_STATE		2
-+#define VREG_GRP		0
- #define TWL6030_CFG_STATE_OFF   0x00
- #define TWL6030_CFG_STATE_ON    0x01
- #define TWL6030_CFG_STATE_MASK  0x03
-+#define TWL6030_CFG_STATE_GRP_SHIFT	5
-+#define TWL6030_CFG_STATE_APP_SHIFT	2
-+#define TWL6030_CFG_STATE_APP_MASK	(0x03 << TWL6030_CFG_STATE_APP_SHIFT)
-+#define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
-+						TWL6030_CFG_STATE_APP_SHIFT)
-+#define P1_GRP BIT(0) /* processor power group */
-+#define P2_GRP BIT(1)
-+#define P3_GRP BIT(2)
-+#define ALL_GRP (P1_GRP | P2_GRP | P3_GRP)
-+
-+enum twl_type {
-+	TWL_TYPE_6030,
-+	TWL_TYPE_6032,
-+};
- 
- struct twl_clock_info {
- 	struct device *dev;
-+	enum twl_type type;
- 	u8 base;
- 	struct clk_hw hw;
- };
-@@ -56,14 +72,21 @@ static unsigned long twl_clks_recalc_rate(struct clk_hw *hw,
- static int twl6032_clks_prepare(struct clk_hw *hw)
- {
- 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
--	int ret;
- 
--	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
--			   TWL6030_CFG_STATE_ON);
--	if (ret < 0)
--		dev_err(cinfo->dev, "clk prepare failed\n");
-+	if (cinfo->type == TWL_TYPE_6030) {
-+		int grp;
-+
-+		grp = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-+		if (grp < 0)
-+			return grp;
- 
--	return ret;
-+		return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				    grp << TWL6030_CFG_STATE_GRP_SHIFT |
-+				    TWL6030_CFG_STATE_ON);
-+	}
-+
-+	return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+			    TWL6030_CFG_STATE_ON);
- }
- 
- static void twl6032_clks_unprepare(struct clk_hw *hw)
-@@ -71,8 +94,14 @@ static void twl6032_clks_unprepare(struct clk_hw *hw)
- 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
- 	int ret;
- 
--	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
--			   TWL6030_CFG_STATE_OFF);
-+	if (cinfo->type == TWL_TYPE_6032)
-+		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				   ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |
-+				   TWL6030_CFG_STATE_OFF);
-+	else
-+		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				   TWL6030_CFG_STATE_OFF);
-+
- 	if (ret < 0)
- 		dev_err(cinfo->dev, "clk unprepare failed\n");
- }
-@@ -138,6 +167,7 @@ static int twl_clks_probe(struct platform_device *pdev)
- 	for (i = 0; i < count; i++) {
- 		cinfo[i].base = hw_data[i].base;
- 		cinfo[i].dev = &pdev->dev;
-+		cinfo[i].type = platform_get_device_id(pdev)->driver_data;
- 		cinfo[i].hw.init = &hw_data[i].init;
- 		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
- 		if (ret) {
-@@ -159,7 +189,11 @@ static int twl_clks_probe(struct platform_device *pdev)
- 
- static const struct platform_device_id twl_clks_id[] = {
- 	{
-+		.name = "twl6030-clk",
-+		.driver_data = TWL_TYPE_6030,
-+	}, {
- 		.name = "twl6032-clk",
-+		.driver_data = TWL_TYPE_6032,
- 	}, {
- 		/* sentinel */
- 	}
--- 
-2.39.5
+Best regards,
+Krzysztof
 
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-fixes-6.12
+
+for you to fetch changes up to a03c246d4ec836ae5827a4a16f6b9e730ec5ee8c:
+
+  clk: samsung: Fix out-of-bound access of of_match_node() (2024-09-30 13:10:11 +0200)
+
+----------------------------------------------------------------
+Samsung clock controller fixes for v6.12
+
+Add missing sentinel in of_device_id table, so the code iterating over
+it will not go over the size of an array.
+
+----------------------------------------------------------------
+Jinjie Ruan (1):
+      clk: samsung: Fix out-of-bound access of of_match_node()
+
+ drivers/clk/samsung/clk-exynosautov920.c | 1 +
+ 1 file changed, 1 insertion(+)
