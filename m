@@ -1,102 +1,126 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6AD1C2435
-	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 08:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727D1552FC;
+	Thu, 10 Oct 2024 09:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728550509; cv=none; b=AyjnJikt42HYgEIDXrK/tnnP2qlV1KLvaCSbvlTgINzzRTNOWJSEv8Eq9H3Lh1j3NqorhWpqkymFyr8j3rnLYicwqmEm80PVXwF6CajAw3IDMCO3gfH+AYI5dk1OeVNaw9+WDepPoBIJBsLBtVWffdApmjA+FSRvJPAh+LhpRro=
+	t=1728552582; cv=none; b=A6J2eSKIDKv0vGkXAyrOkMnSLCjUPTA8QS+VRzfoUdHOnwx8PpukN6YN1+42dU1M+oVyat820+Snh/D/GeihZ9FD7u8smv2euuOyvsAt5Q3G3SqwJ4ZqyfYREx9PShYoplf7CTc8UUkK52ZSCHLIcboYEYs1PFivfVw6tkCOx8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728550509; c=relaxed/simple;
-	bh=DAPSm/hVLz3ijVUhrjOE6QLXIASBKZCEsq0noyvklTA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=liD+HzrRtarG1bvFzBg4W1kE6CqLm17VZ2U4S+YM0ycgBwa4nz4ZKT7zaa9wkBEFrF+SmkDynuYgnNJiRNKRcGCtNpb/hT8bstFt6aPPcF93BPsgFCP1K1kW7cMBtu+AYC2SyNJ77TXCTq6qmhsQ5im16nBXYas03O3fCihWk7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cz1W01Zz; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cz1W01Zz"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43111bdd54cso1109645e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 01:55:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728550506; x=1729155306; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XrycbDdKyC3E7TIP9ThkxwNY708wBJiiusjj8WwNBJk=;
-        b=cz1W01ZzfUWuR9fsus/Gol3pcabUHqqLqKZLdewIp/fOiKT6j3456+j/Ur23OVkhG1
-         +WvDsEtShkkoIor1ycDm7DKKcTas4DvHyVVZ6UTT8Uq19QpPm9jMvqWGY4nwsy3LAKml
-         eAorEoPiB7nJfT4pKEGbqISHUhHdsztqbSNjx/kIr5J6ihtyimSjTZqPlCwC5x2cs+I8
-         8xqhmuptyyd4pdvR7tzNqptCkGaxA+QMjdB5iaNMlnS+S4Wzo7HXNW9bDXf+LbUY+HAh
-         aOLmp1h3wQ19hIL8TGlGzIM9as3jKp5sLyHGc3UTzAs0DUS10/6qOMNbSoUA2Oo9/8Yp
-         r0vw==
+	s=arc-20240116; t=1728552582; c=relaxed/simple;
+	bh=3PhQhBX/cDzwmSNYvkeaadDnXuaqJFOOfD26tjgtMKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hb71EVscWJ0R9E6pbWc06VAWz2uPv+ipxNUgEAUOt07tV0hlQp4N0YTaWNuXH/IHiQFhuiD2vrr9JZojoMqTuKwSQC/38WZPwPUzWRUHUUeAHZvuRkkC6+gIqeCRa0rlfTZfyEKMfnWfSBCHtYrZF3AxI9ZFZ46ww8YdMQED4ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso733502276.0;
+        Thu, 10 Oct 2024 02:29:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728550506; x=1729155306;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728552578; x=1729157378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XrycbDdKyC3E7TIP9ThkxwNY708wBJiiusjj8WwNBJk=;
-        b=R7CfX079EDLmFWuvcsQFsc7zS8EfnQZPO+nNG2nmnuSVRdIL/Fc8xXL0sGIJjzgyXN
-         xLMKX40QxmDr1MaKJWBO5f6xOJ8oKwJtZaa+K6KvoOLpFdNpNOxGuscWXJSJhRLhBtm8
-         sRDEmLVAzVaWIsryphL9e8QlxESuXwIscnQHeDYQ7XRW4z0JU2Ueni1icfp2GiAqFMOs
-         ZDg4Cw5Qn9wYJZlfvrcqD4SyWSa+C88bD5qDuMX2MMP6Fs7ATp19lTHUn9M1sgTQUFyB
-         MEMmueC3q6ScyD0rcjs1vK0eVp89W7eTJF1mmldaDbtOeRcQZDaGq3dHuTYqI+5oWB/m
-         NwDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAhYzA13IOlSn5dnXakbL6nb7Gmvsc+mXk1iJtqnI4g3vmetODHNV4C7eFa0XgZSafqsT0NieicDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC5/WGgk+tIb3fsRDW/3QLvEok4I7sS1rhzkVHsr1AIlT7sn3s
-	pRVccLIjFvy5nPuVTtVzJ0CvEzebcBQIKmF/U2bqN7gGYrW9f6b+D0gAMmxessQ=
-X-Google-Smtp-Source: AGHT+IE+XisM25TXSMRumwkRzfnx7ug3YKF4W65ELHrKE0cNsyxjqHzTzMSSWw8nejs5fu7CQWuVYA==
-X-Received: by 2002:a5d:47a4:0:b0:37d:4ca3:310f with SMTP id ffacd0b85a97d-37d4ca3320amr425550f8f.12.1728550506310;
-        Thu, 10 Oct 2024 01:55:06 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bcf5bsm902012f8f.32.2024.10.10.01.55.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 01:55:05 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sunyeal Hong <sunyeal.hong@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 3/3] arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes
-Date: Thu, 10 Oct 2024 10:54:57 +0200
-Message-ID: <172855049021.142350.11192744984413757568.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241009042110.2379903-4-sunyeal.hong@samsung.com>
-References: <20241009042110.2379903-1-sunyeal.hong@samsung.com> <CGME20241009042117epcas2p2335311cae816f9c92b15fcd28b56e413@epcas2p2.samsung.com> <20241009042110.2379903-4-sunyeal.hong@samsung.com>
+        bh=yIpkFoyH7xGEmp6Cri7WzAs1H6AzrtVGMzVSG3KUQ5U=;
+        b=d8+TeKmLKo5ucYSvYRKIzom5SJlDVRzv7ETSWFLY+tTLOwzMPQj5zJhVXWb2LvG0MZ
+         nK75Zrkx0t61UCpz36gIqeXOCkRODl6e6sq8QwzebCQ0IjP9p5gnQ5Rs0xrhhbjkt8tO
+         BBmd5cwuRvRGNivCzvyfbneqXOaY1U4FSCO4XKhqDbw3eUYzPKriB1TiEB+B0Kaczpto
+         kdU34KSFWlKZCAxB0n6ateks85WqbcNEyLaIJ1BSp1yQpri/LWaYmDJcAF+MMBM8Qsto
+         CtJPyt6KyCMlBbYxY9YGERir0cNY/gmyUZOCkxQ0fucCL/VSTqHSAP9Lq/+xnaGX9zaQ
+         D0PA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+lPLyolPDnqf/dAm2kkDcabju5ND9UWycLq71bsgFHO91vZ7BmibmyS6gVrwGE0wZhlzyJXbURUpV@vger.kernel.org, AJvYcCXCOXexYkM5Z6d8aG4fZVQBc+qo55zrzAPrSSK5Z8a86I45qOKVd5nOG5zMFYyy+kGyLso2mxKSaKr2@vger.kernel.org, AJvYcCXR/2bPBYLK7lIOcualKUzyITd330VP0qNFfL+02BC1gGxZ0v/Bw6HIE4LTelSvRkwCNC7BhoKrDqhi@vger.kernel.org, AJvYcCXSnBW6mmZIRuyXD4swfPF6JSwgjPIVFMy24TRoZBxFRv3czF6qL1U8PeXSzWhT9n34nZhoMkxnt5DzyK+GC9mA0Es=@vger.kernel.org, AJvYcCXt1zfY7kSvZ1VuGNn3m0MMA/mvwZSKy5//wd0vnYlYf9CDNLCMHjd2+pvU3hD87tua7loWPZbO7c0dWfPx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNFomwiMkHlWrWakAZRwfl5ynMmrv/L4E/3YTQZ5DE5YyUu8zC
+	FK2W7zllNHz5kp9NAin5iHHgIJZlAVUD1SrT64RH0o0kfLPf8FqY6+tc8QVO
+X-Google-Smtp-Source: AGHT+IEITeRqZai7zVrTHzIhSWiLlDHYxuIfLuix/cZ+vAtVjBglIPjXLnLBoOYXIdbbeownnSej5Q==
+X-Received: by 2002:a05:6902:2001:b0:e28:6758:fb0e with SMTP id 3f1490d57ef6-e2909c1a9ecmr2801842276.16.1728552578535;
+        Thu, 10 Oct 2024 02:29:38 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef5c47bsm216133276.42.2024.10.10.02.29.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 02:29:38 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e4237da4so7140377b3.1;
+        Thu, 10 Oct 2024 02:29:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLfSsKUzE2w43UcyebsoUHqbBC1wnikq00+3k361eGNjoClpFbOK1+q5kXQsbVhQDXjYRjUL4cazhu7fRqcCjzSq8=@vger.kernel.org, AJvYcCVad7yFI30fIhqAWJkidI4VNeI7Z+fuQrhgBBxt/gKMb2R2MzCm/0lkEkuy4Jet4iPjMrEywkQclv2TUOyt@vger.kernel.org, AJvYcCWDVfX+edS7UVWcoTe9gZXjACZVrujyk9BPgPCikog1RzhvlKVS77g2ssdtAKGH5tEfUC3AIRXEmQhl@vger.kernel.org, AJvYcCWsCW5x9kJ2pIqnEgdyHmhikhbD8L2v5MfjENG0FyR7caxP63ICuR5UyfBFA6OJrGJSk2InGdagkraD@vger.kernel.org, AJvYcCX+rEp2FmCFetGp9id7mFxl/gYu1wXLyVIk1t4l7/1YbFKbEphEeVGGh2pAc+uhU6X4/oq2muOG6xl/@vger.kernel.org
+X-Received: by 2002:a05:690c:388:b0:6e3:2f9d:59fd with SMTP id
+ 00721157ae682-6e32f9d5d11mr21861857b3.31.1728552577749; Thu, 10 Oct 2024
+ 02:29:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Oct 2024 11:29:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWeGC_N3-XF29+UUR43OGJKqVNNHs042J8HRuNpiD=vOg@mail.gmail.com>
+Message-ID: <CAMuHMdWeGC_N3-XF29+UUR43OGJKqVNNHs042J8HRuNpiD=vOg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document
+ the Renesas RTCA-3 IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Claudiu,
 
-On Wed, 09 Oct 2024 13:21:10 +0900, Sunyeal Hong wrote:
-> Add cmu_peric1 for USI, I2C and I3C clocks respectively.
-> Add cmu_misc for MISC, GIC and OTP clocks respectively.
-> Add cmu_hsi0 for PCIE clocks respectively.
-> Add cmu_hsi1 for USB and MMC clocks respectively.
-> 
-> 
+On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> The RTC IP available on Renesas RZ/V2H is almost identical with the
+> one found on Renesas RZ/G3S (it misses the time capture functionality
+> which is not yet implemented on proposed driver). For this, added also a
+> generic compatible that will be used at the moment as fallback for both
+> RZ/G3S and RZ/V2H.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - added RTC bus clock, reset and power-domain; it has been detected
+>   by reverse engineering that RTC and VBATTB clock, reset and power
+>   domain are shared; HW manual doesn't mention it
+> - updated example with these and with assigned-clock properties
+>   needed to configure the VBATTCLK MUX with proper parent
+> - updated example section with dt-bindings/clock/r9a08g045-cpg.h
+>   and dt-bindings/clock/r9a08g045-vbattb.h includes
+> - for all these, dropped Conor's Rb tag
 
-Applied, thanks!
+Thanks for the update!
 
-[3/3] arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes
-      https://git.kernel.org/krzk/linux/c/ef1c2a54cbc7d9446659115c3a61e03f97ba4a57
+Sorry for chiming in late, but this RTCA-3 block seems to be a
+derivative of the RTC blocks found on older SuperH SoCs, and on RZ/A1
+and RZ/A2 ARM SoCs.  Differences are found in (lack of)
+100/1000-year-count parts and the Year Alarm Enable Register, and in
+some control register bits.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The SuperH and RZ/A1 variant is supported by drivers/rtc/rtc-sh.c;
+DT bindings for the latter are found in
+Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml.
+
+(My first guess was that RTC-A1 is used on RZ/A1, RTC-A2 on RZ/A2,
+ and RTC-A3 on RZ/A3, but apparently RZ/A3UL does not have an RTC...
+ Oh well, at least it is used on later RZ series SoCs...)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
