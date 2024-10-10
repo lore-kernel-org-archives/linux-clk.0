@@ -1,106 +1,120 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA9D7DA62;
-	Thu, 10 Oct 2024 15:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03841C9ECD
+	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 18:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575209; cv=none; b=NH6QOB2utkCnSj9M7gc3RIFceYz7gG9WSVFqW3aNfwNeExYXsg7Ef5A2EloldV1XbWPZ8hACIfT1E5xJSppSzHzstrtG3KVgFuuVrH5CMblBrx89Ua9cIZBcp0wBG3lO4DO2gOMaPS1nwjC/JokyIDyJbai9tOZFPXxmVJmCMRE=
+	t=1728584033; cv=none; b=lqGidLGlVMICEO+478b/Q6o3T+CyEjGwf4n9JVdXDiWz6fAsFFJEzjsl4HRwU+QFTFoDWLw666MLFvqlJDWET6rtZFsXe7B/RRM5PrgAFn0Si00dntjYnKUx920ktDjbBKIO820rpnanJYO6m+Lvr3NBvP3PjBbimPkagV/DGLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575209; c=relaxed/simple;
-	bh=BcklwIPLkpu4fxMwkXRDkGneKnsCV2g/ESM5RSTNm/M=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1a1LI1u02zR0v+5pnEnQ4CaqZjbyJmsjGzO1cKYURPOQUyvj+CONYZOVOHP0N81VTt2JLQF9qRM2h64veau1OezRWcJ/ZBpi6d8wa0zFUU+SH5q1Ra1W/8g4xUWvh9lfDX8NNJArSknyzP9sIkKlgz/NYA4OnLl+XDbdwqdNa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WR4rneAD; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728584033; c=relaxed/simple;
+	bh=LcHcKl9/XI+oyPfjeeNaHZ4YLGnjbUE+QCQI11FraFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPVjJ1PBeY2rQTad83YGGkwWlNr361Bm5/MQrEmWsuACjkyEo5LCn7wdmzhxjFiUoSBx3F71Kr5kgmxw+7EaV6XeiHC8TXfIxqNkG0r8RLl/ZNPsKjx1i5p7RkTpMk6nVIlM97ub+IbqRLo3ZxITBvNirbnNobG9Bf3mZZ4ZDMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kRa9Act8; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WR4rneAD"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-537a399e06dso1231427e87.1;
-        Thu, 10 Oct 2024 08:46:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kRa9Act8"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c91d0eadbfso1649158a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 11:13:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728575205; x=1729180005; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVjZwI6hl2tyZM8ZvNXJ8tMXRypVCi7fijTenIxP7bQ=;
-        b=WR4rneADqckowoEQoE8bGoMopgDfvTh80y0wabZ0tEG2t5LL3DnNhGk1gcrlpxNwfd
-         A8dM4Gw+9KlMhmh1yp4IGiRPKdaMK+H/AaCRo4CU4ZaF3zB8BfVyRhG0z6r1Xxl53A+a
-         p3mGjNi0nqv0uPGu3wX5vQFKSF9iBHsrFiA1GiGJpnJzkCrsq2mTETPis2I9yD/6kn23
-         MGwIK1cVq9X9BNYPkiAF+eosq5vFtceX91Fop6mUoO6ispXZKcNITy3Jhvm+sTpkgbyF
-         sN96CqkTtp4V3Vps0mzSj7IjL8JAFa8rlUL622TrutEVv68H0EC2Tf+UWZR12apkUbHv
-         Wh3A==
+        d=tuxon.dev; s=google; t=1728584030; x=1729188830; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l5b5bg6IlMCHuKDsr7EMlIZJHlhDd4v49aBt5FIXHaM=;
+        b=kRa9Act8dw3REk5x0EsfK/zNomXUqcffChu1BHuD29WcbtZfENrG5ZDkMeWdGr2Rqq
+         vzwjMy7nt00GoFBpqaGmgEI0HtEsp/6/PzV6PLJqsep02T42qoLLepNjsb+pw5UjdZ1i
+         8/ops5KUxjlR2OvfFI51vu4FE7fBeP0wO7XQOmwgpPDHHL8HDom2MuoIry24Emvcll+i
+         tlXbQrd0ixxs48mnmG+uX70GnN7Q1Q7Tfe9tCjRvkx7TrgqtOr3kI5JaekuoroV71KKi
+         PiZPvNR8mDfyeEa/PUNTU0q1s2ka5hwNGtHyTwsKJrmsikoOslQNG2UXtTAR0oABJ7ke
+         7j/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728575205; x=1729180005;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HVjZwI6hl2tyZM8ZvNXJ8tMXRypVCi7fijTenIxP7bQ=;
-        b=bDkUTVKGRmvIpGhpkJrMVSDC9pWIX9drqb8LOBrrW1ScTXQLhJLyciyOtel/UUvlIc
-         8Z/GjWvTdi8ggnLWp2mfSIT4Y9bEuXzE6A9Nz4tGcK5uT4DSv5M7tOXoKevOLCYYQUrn
-         lTY2rwDvHcskCQMkyOsSW4bM7Agq6qmQP5qBoeS4E84wJZHhXxOeLqqWBpqKpc6ppWBY
-         qXV9ohIU3gsN7xur/pWQnKqYLKLokS6vgZ7cvZlF1lLWWgw/BQ1tiNgPHOGScfOPSekM
-         U1mu7IBVmUvXl5vn6pe8/OEmae27Q0XD1WF1/sw1Yam+RyUgVkS+wAEBdsp2v3dQXHwD
-         Sdgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH9MBmc90+PhdyfVIrFgW7UT3cRhl5OcIc/NsJyP8nTZTBZOGp7cgr/ZTEmxbyv5+2oxcLv+uR9bsS@vger.kernel.org, AJvYcCXdsH3KBR1MQYKZVeVTqQxC0MTxgDeCp7dFG1CWMycbhyfakU404nUENXzFZZqc6a7ddf3OM2HH+5Le@vger.kernel.org
-X-Gm-Message-State: AOJu0YximYrcu+UQZ/FM+/bnRNVZDaS174wUG2qK+8jkUZZcbqmBkHKd
-	vsDrrd/oIFDBUbYARpSIKWFbDkNLTFmfE0TCPcdHdvcNKq/kOFWs
-X-Google-Smtp-Source: AGHT+IGBWbU6HUavBl3qImO0Tpr12X4yslnT491e72vOq0sgsHsjujRSayzEAobHVY3rDoJdS1/GeA==
-X-Received: by 2002:a05:6512:1247:b0:538:9eef:918d with SMTP id 2adb3069b0e04-539c488a532mr4300596e87.11.1728575205165;
-        Thu, 10 Oct 2024 08:46:45 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182d790fsm19521105e9.6.2024.10.10.08.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 08:46:44 -0700 (PDT)
-Message-ID: <6707f6e4.050a0220.97bc9.6760@mx.google.com>
-X-Google-Original-Message-ID: <Zwf24dcr1SJq-7Ph@Ansuel-XPS.>
-Date: Thu, 10 Oct 2024 17:46:41 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Felix Fietkau <nbd@nbd.name>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, upstream@airoha.com,
-	linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com
-Subject: Re: [PATCH v2 0/7] clk: en7523: Update register mapping for EN7581
-References: <20240903-clk-en7581-syscon-v2-0-86fbe2fc15c3@kernel.org>
- <ZvuzQxjuN2zRrAMG@lore-desk>
- <e0c20d3cc4490776fd2498bfd72ab6ad.sboyd@kernel.org>
+        d=1e100.net; s=20230601; t=1728584030; x=1729188830;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l5b5bg6IlMCHuKDsr7EMlIZJHlhDd4v49aBt5FIXHaM=;
+        b=RuLaU1VfA0uHHDDU5NcGhshYIyt6HaGSTF8jXS6nRsEtS3q1bFWmkZ1HMeTv6zyja2
+         vVWI/b3E9QGFuWvRMBeZzrdCVYpFhXVCqe0fea0VGCO0qbFlmNrRsDztgV2rD+yDUTQP
+         nNK7Wa2CzvJct+8TuWQds/e3PHXxBLs+LrwuQpYL0Rc9+HM0kX5nm+zheBUZ9w2N8+g6
+         RZTw2XAsRRvxUY9EpEIzZQIs7ukBRm4i6kG9ibamu+cqCzcHrAbA1JAe3DKGNEIZ4hz6
+         WJxxnhhmp0TJamw54oCM/s7LftgNGqDCgR2OT9oHqMh9MYoKnfp+ThCCgLC3RQR11Pzj
+         jX1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVldVudd9hjQJBPbb9vmrJdWfkIGQFaVvB3RrzFqJP0CX8qFjBNPwghouVQwfHkn3Yy6TK/8UGfjdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGNJFhTqhLsS5b4mSmCgl/OWN7ReUKjB9mmgvqgPK4BcJvqTC5
+	k2AInkGYOkyujZxFy4Y+i3P/CxmMwU6sp/1X6Y8rqa8lFBiYS/qZGvFl4RhBgD8=
+X-Google-Smtp-Source: AGHT+IHiJ9c9JsX6LkKAoH4kfF4CrwnhY2DrXX7mxd45mrnLUHEdoXVQPSxTSWMwcAQVhYbRULPSAQ==
+X-Received: by 2002:a05:6402:13c1:b0:5c7:927:6a5e with SMTP id 4fb4d7f45d1cf-5c91d63dad5mr5342327a12.21.1728584029793;
+        Thu, 10 Oct 2024 11:13:49 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.23])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9372608f4sm1075771a12.70.2024.10.10.11.13.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 11:13:48 -0700 (PDT)
+Message-ID: <d970e158-db74-4ffe-9fb4-57026ac0a947@tuxon.dev>
+Date: Thu, 10 Oct 2024 21:13:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0c20d3cc4490776fd2498bfd72ab6ad.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3]clk: at91: add sama7d65 clock support
+Content-Language: en-US
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: varshini.rajendran@microchip.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <cover.1725392645.git.Ryan.Wanner@microchip.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <cover.1725392645.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 04:24:55PM -0700, Stephen Boyd wrote:
-> Quoting Lorenzo Bianconi (2024-10-01 01:30:59)
-> > On Sep 03, Lorenzo Bianconi wrote:
-> > > Map all clock-controller memory region in a single block for EN7581 SoC.
-> > > Introduce chip_scu regmap pointer since EN7581 SoC will access chip-scu
-> > > memory area through a syscon node.
-> > > REG_PCIE*_MEM and REG_PCIE*_MEM_MASK registers (PBUS_CSR) are not
-> > > part of the scu block on the EN7581 SoC and they are used to select the
-> > > PCIE ports on the PBUS, so configure them via in the PCIE host driver.
-> > > This series does not introduce any backward incompatibility since the
-> > > dts for EN7581 SoC is not upstream yet.
-> > 
-> > Hi,
-> > 
-> > any update on this series? Are we supposed to do something?
-> > 
+Hi, Ryan,
+
+Can you, please, re-submit this series and include also the dt-binding
+patch, to follow the process highlighted in [1] ?
+
+Thank you,
+Claudiu Beznea
+
+[1]
+https://lore.kernel.org/lkml/20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com/
+
+On 04.09.2024 18:54, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> I was waiting for review from someone like AngeloGioacchino.
-
-AngeloGioacchino any chance you can help with this? It's sad that these
-simple changes stalled and are currently stopping upstream of the EN7581
-SoC :(
-
--- 
-	Ansuel
+> Hello,
+> 
+> This series adds clock support for the SAMA7D65 SoC. There are also
+> changes to the master clock driver and PLL driver in order to account for
+> the increased amount of clocks being supported in this new SoC.
+> 
+> Trying to account for all the updates happening in this system, this
+> patch set is based off of the most recent updates to at91-next branch.
+> 
+> Changes in v2:
+> - Correct PLL ID from PLL_ID_IMG to PLL_ID_GPU in the description.
+> - Adjust master clock description to match amount of master clocks 0-9.
+> - Correct bad spacing and bad alignment.
+> - Remove double variable definition.
+> - Add missing kfree() at end of function.
+> - Reorganize clk and pll driver changes in patch set.
+> 
+> 
+> Ryan Wanner (3):
+>   clk: at91: clk-master: increase maximum number of clocks
+>   clk: at91: clk-sam9x60-pll: increase maximum amount of plls
+>   clk: at91: sama7d65: add sama7d65 pmc driver
+> 
+>  drivers/clk/at91/Makefile          |    1 +
+>  drivers/clk/at91/clk-master.c      |    2 +-
+>  drivers/clk/at91/clk-sam9x60-pll.c |    2 +-
+>  drivers/clk/at91/pmc.c             |    1 +
+>  drivers/clk/at91/sama7d65.c        | 1373 ++++++++++++++++++++++++++++
+>  5 files changed, 1377 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/clk/at91/sama7d65.c
+> 
