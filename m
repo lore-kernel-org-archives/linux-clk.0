@@ -1,145 +1,131 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A66E1C9DDB
-	for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 13:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1821CB312;
+	Thu, 10 Oct 2024 15:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568267; cv=none; b=G37WJVonHn11fjht+U35HEBIU+U8dRFIvK53pnoudofiCGFGw2B9cl8D0q94+EggWIGJvy3pmCxxz9rCE5NIFl92dUFomZ2QRj69Rzuek1p0+8iBwP/1oKr9acnIUsIIZ7CL6KqIpUy3KIo5F6xpDzaiZVzaJZkv5KuyMgJsOn0=
+	t=1728573450; cv=none; b=Kc6XVjoTUaQrx7J81CPuavoYt7s00U6xq9qhcW2G6IR+eDJWxCy5hXCtyNb+hHNtmmBBgr4IsZ2jZAjTf+jPhMO08K6ME2AtkcvXPslzrKhNupxS0EwBxd8P+v92J9L53kBeUlLKwG8YJr/3/pNdHMHydEV8Jsyvr95IZPeSs5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568267; c=relaxed/simple;
-	bh=kC64z7GxA0jcH+ebK2cfoqjQcd3boIqK8A9Vfxm2t10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WM829E4BfsjP2PtAeGBSw/X/91CPbXt+ghUtJIgofIYai0CtOUvFl9GaCXXmOAQJK+rQ8ko57Kwr2ZS1y8eke2fZKhD+2vAnJ2Q0qRtSn8D7k1cPfjJB/lxnJaxuM2IAMv9JkgoGatSX0m2mrp8348ta3J2dKnLONRT8VnI6QZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CFry+cLB; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFry+cLB"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53988c54ec8so1220161e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 10 Oct 2024 06:51:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728568263; x=1729173063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMqw76UFr3KyOj7RnEC3aqiu0YdHjPevmACOjAMgttE=;
-        b=CFry+cLBW8JFX42tNBJE3JkhTXRuwaKmhH/uz+IXr9WY3yojCpJWO0+zu27MOucocf
-         qJYjugOJjHMo4hz42JCV5lyc9vpyT8E5Vjg5GOZno/kNAVTXaymUC0PRnVWnRXPnQGuC
-         Xd6/ztzgHpYtmTG+FTQldcgu83fuesmTOZH6p5Nj3sAlBfnnd3DTyCXus/MV96EvmNOZ
-         cL4RfQghWq0uc+4ayS8WXinXKqhMsm1UsmxAjKvOM9DR8JTClAVSayDhYs3xgWI5iHgw
-         I29Kbf2bvCHAUzj4NVlpaOrzNieRtWXDsEkYCc1Jlwz/CWkgm7wIqKzvN7jIA3/GJm0y
-         fpsA==
+	s=arc-20240116; t=1728573450; c=relaxed/simple;
+	bh=kAelzetrqpcRN5dm4O6YQ1TH+k97O3PeD6wil9BatBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lcN3tbCsCOQBd97kIOVVut1UrgkAi/f5AORNyge9T5dQiykDA6YKkZod1KcF2wlNdClswzo8JxGqjRyDFK3eaK2Ay4xukkT7g0EovHD4RnrRPmq9425KKun2uvDMrOWGGDMl4FKEXzLkE8qbAjMKTnajAzoO3fKjHmL7rz9H1K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e4237da4so10363437b3.1;
+        Thu, 10 Oct 2024 08:17:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568263; x=1729173063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cMqw76UFr3KyOj7RnEC3aqiu0YdHjPevmACOjAMgttE=;
-        b=nesO7adOfuTxXIO1dzvTgPl1sgNjz5+kQ4Y3ZsiOAR9FsQv/mfewJYQ2yCa9zMjJdq
-         3dsyIqY05dNsgS901fS7gkRF4rRIv5dnSqgkAkesTEgCPOni1pUkuMySD9+qrUhRCo7C
-         72D6UvW04z2Fr83erj48iNFOdmQO1lOL1aN/FU3xWckWb6CXEQgljXiXxm074kXqQcdd
-         LaHf5l3OVYINhiDXJR0uaXo/Zj1ppT1oiaOLq24s9VS+dsaXdHoTHUkR7yczy2hcmfiU
-         XqE9w8d4PABHn8Rrcj1LY2K2lVIvO5Qn+G69Mz6c/agpX511HrAQ3vwVfqZtWZnbpyIz
-         soaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtPiNI+nSpObqkzJ7pB5otOu/kEOxbxGO7Md5PiLgtX4YEqyNFxFpWV1cSErl5CSxmnRcMoyoz8Z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6Wer5eqj1gZpv+JQYA15PuWglUus0Hi2tmRSyDfJ4hwsQiMmu
-	k/7n35ZpljixxqQ/XlNjD2uaudAlEveftBiY9/xc2McV/LN4HB+IdFCILhiDERU=
-X-Google-Smtp-Source: AGHT+IEdFN6tHEPOV5BGfgasm+djxDl4woP34V2NNtQEEnSKQjbMo5AzUtpP2ZOqLjKUa8VMlGqcng==
-X-Received: by 2002:a05:6512:2808:b0:536:54fd:275b with SMTP id 2adb3069b0e04-539c4967edemr4294135e87.54.1728568263124;
-        Thu, 10 Oct 2024 06:51:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c863bsm258410e87.87.2024.10.10.06.51.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:51:01 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:50:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, 
-	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] PCI: qcom: Fix the ops for X1E80100 and SC8280X
- family SoC
-Message-ID: <otipwbhacorpdyjlhvf4g3tpg7ymtqmcuzjirewhkmwv3gbpka@2urxbhufrveb>
-References: <20241009091540.1446-1-quic_qianyu@quicinc.com>
- <20241009091540.1446-7-quic_qianyu@quicinc.com>
+        d=1e100.net; s=20230601; t=1728573445; x=1729178245;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w+Dll4htdUB23BCtM34CclguCZewJgpq4mv0+9yv+gs=;
+        b=GScR9ECKDf7vlokr5bVKCnNAlXbEgFYVlKKq+Ynv2E2rnX1yyCdv8COS6gNyev4H6D
+         ZLX9ISBl+5yLGwjbrnrQV4oov7XKoMVl6GuwoY2ihUZpcWZWWAbCM3+n4YPLuMtae9R+
+         NzUXJ76puhSrVBixE6RnotUbjE81g6DohIhEGDS5y4BboQgyjnkvfpU5DO0LAz44y+95
+         A33CFBT9J+VOgjqDOlb4brpD6MfaEfFvuOg9AGpkTvsGCbcq9twFePZwgG/sELpjn435
+         Rq7ZV0OsLGCjywZseeXHHV0SrByYreVu8n0RjurkLET4SysNGiZm6H4ibAnxKcjkMnAB
+         dxCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqlrJjLgQDfJm159kmHf6RlUxucicsmjQzMvP0Sx5Q3q3vsGN2ZjXYmvMYl5NYUNL0G78mEE2uZz7V@vger.kernel.org, AJvYcCVcc6unLiQ5Tt7v2oR8CO5RfYPfgeZVM5zLs15iLagXUg0CUt8CHy2sEevNgd86Xnpj1tWtu6hzx3v/@vger.kernel.org, AJvYcCVg8MpXM+l0pzwnvaMhNl9K5XtNHsOgO/XFFEg7+E6T4tJDgyKeY/+P0S1wZAXMIn7EF3VUNclhBEdw@vger.kernel.org, AJvYcCWDBZ9iYUiguHwz2hwttAPrW1sgI9RYAm4Azlk98uft5vG2vDcfG6Mx7MbPMraQhkeyO/8ByRelyRHX7zgFjjTK3Mk=@vger.kernel.org, AJvYcCXhcQI6k07fGMOqG0W76nXg4Q0dW0iBq49M/Hyt7lhYicrDedKmHWvDZM/GmfbvjI2pQe8odoLjCg3aaOiL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaOqdtXW4jZRPugAvczkwTNDKh384B9/W39cVcMBYOO4OUSwVR
+	6Q7c/EGnVVl/RlqjNXV4mjM0g6Zh5jf6MIrax2ymR7VnjCdPL4ImkLxnU4Bq
+X-Google-Smtp-Source: AGHT+IH91kgKmCZOzY7Bbhg6gRS3DlpUaEddKN7XcqQDDxdpnNqSvn0tZplJ0LLJGUJs+c23XET1wg==
+X-Received: by 2002:a05:690c:3007:b0:6af:6762:eba1 with SMTP id 00721157ae682-6e32e20e20bmr31969927b3.20.1728573444918;
+        Thu, 10 Oct 2024 08:17:24 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332bad8afsm2394907b3.59.2024.10.10.08.17.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 08:17:24 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e305c2987bso10215917b3.0;
+        Thu, 10 Oct 2024 08:17:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCVicTQBCo/ydHilSvQudrLjFBlS7XIOFQ4Nh3jW1jjVeQDl2iRzYenvXRC9lu6XlkdOvfTzBdxEsZLkKfH8+UyXU=@vger.kernel.org, AJvYcCVmZd4YDU0x56o3Wciw97cbU48auevTPraKHGzRnC4hctKbavZVdQq59GtTrNrMZU/bWHjcwInKQub8@vger.kernel.org, AJvYcCW10ujH9qKHEgwDYzqYbwYuW7jEBGfBza5fGW3kYkbMumwz4OewBXTvxfD9T7+0wYerQ6MVHRL32cx5TC6o@vger.kernel.org, AJvYcCWC3K424Md3KaHoCUqWejEA7MNiWE92jvYGzec1Tc85MePjT2M7ZD+KBqhMGhghzhWfKKK0x68IpaJ0@vger.kernel.org, AJvYcCWzmP47cNYBwBhU7bKFYTftMI7pLeL5m6FLevwS/bLAjBnoCkEN40WZx/YsmffLdr7fasAcPCgsSQx1@vger.kernel.org
+X-Received: by 2002:a05:690c:5605:b0:6e2:b263:105b with SMTP id
+ 00721157ae682-6e32e445686mr46318437b3.41.1728573443947; Thu, 10 Oct 2024
+ 08:17:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009091540.1446-7-quic_qianyu@quicinc.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Oct 2024 17:17:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXVOZ22N6KXFdHgPQQnqs0ujBbmQR+CQ4-ekdpQCzFUHA@mail.gmail.com>
+Message-ID: <CAMuHMdXVOZ22N6KXFdHgPQQnqs0ujBbmQR+CQ4-ekdpQCzFUHA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 02:15:39AM GMT, Qiang Yu wrote:
-> On X1E80100 and SC8280X family SoC, PCIe controllers are connected to
-> SMMUv3, hence they don't need the config_sid() callback in ops_1_9_0
-> struct. Fix it by introducing a new ops struct, namely ops_1_21_0, so
-> that BDF2SID mapping won't be configured during init.
+Hi Claudiu,
 
-Fixes tag missing. Cc:stable if required.
-
-> 
-> In addition, since it is recommended to disable ASPM L0s on X1E80100 as
-> same as SC8280X, hence X1E80100 can simply reuse cfg_sc8280xp as its
-> config.
-
-Separate commit, please with its own description and Fixes tag.
-
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add the DT node for the VBATTB IP along with DT bindings for the clock
+> it provides.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 88a98be930e3..c533e6024ba2 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
->  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->  };
->  
-> +/* Qcom IP rev.: 1.21.0 */
-> +static const struct qcom_pcie_ops ops_1_21_0 = {
-> +	.get_resources = qcom_pcie_get_resources_2_7_0,
-> +	.init = qcom_pcie_init_2_7_0,
-> +	.post_init = qcom_pcie_post_init_2_7_0,
-> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
-> +	.deinit = qcom_pcie_deinit_2_7_0,
-> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-> +};
-> +
->  static const struct qcom_pcie_cfg cfg_1_0_0 = {
->  	.ops = &ops_1_0_0,
->  };
-> @@ -1405,7 +1415,7 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
->  };
->  
->  static const struct qcom_pcie_cfg cfg_sc8280xp = {
-> -	.ops = &ops_1_9_0,
-> +	.ops = &ops_1_21_0,
->  	.no_l0s = true,
->  };
->  
-> @@ -1837,7 +1847,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
->  	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
->  	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
-> -	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
-> +	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_sc8280xp },
->  	{ }
->  };
->  
-> -- 
-> 2.34.1
-> 
+>
+> Changes in v3:
+> - dropped the child nodes of vbattb; along with this dropped ranges,
+>   interrupt-names, #address-cells, #size-cells
+> - added vbattb_xtal as input clock for vbattb
 
--- 
-With best wishes
-Dmitry
+Thanks for the update!
+
+> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> @@ -160,6 +160,18 @@ i2c3: i2c@10090c00 {
+>                         status =3D "disabled";
+>                 };
+>
+> +               vbattb: vbattb@1005c000 {
+
+Please insert this after serial@1004b800, to preserve sort order.
+
+> +                       compatible =3D "renesas,r9a08g045-vbattb";
+> +                       reg =3D <0 0x1005c000 0 0x1000>;
+> +                       interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&=
+vbattb_xtal>;
+> +                       clock-names =3D "bclk", "rtx";
+> +                       #clock-cells =3D <1>;
+> +                       power-domains =3D <&cpg>;
+> +                       resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
+> +                       status =3D "disabled";
+> +               };
+> +
+>                 cpg: clock-controller@11010000 {
+>                         compatible =3D "renesas,r9a08g045-cpg";
+>                         reg =3D <0 0x11010000 0 0x10000>;
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
