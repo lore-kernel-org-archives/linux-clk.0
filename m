@@ -1,135 +1,97 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA39AD517;
-	Fri, 11 Oct 2024 14:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DDC218D91;
+	Fri, 11 Oct 2024 14:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728655659; cv=none; b=CTS0zLDyUGA1Wj7QTAD/1m/5hDTWDW2HAxBNe7MUIoqXm9lz3C3bOki69le3I/o0q6PRpGj+ci6ZyXYPxE5/b291t1muwpNEtlvF1iPH7XmhpeCc0Wn/ljU2hLBeLQvLVyktnIDhQE0EuDwhEoFft8PW4WthwBUoGGi2viSJqRk=
+	t=1728656950; cv=none; b=j153wpbkT2YfnAq9u4uf35lFsGpkSuIeLgGVmLzpb2Lg8x0a6rXUMArM+w/uAsVpWi1Gfu0kmSOWZi7S+G5tNqxeHWpt9GTq1g65YhpCu4IDTz14j+wAQqjumNat18SoZ5oz2NU+ZPr2m330EMLPivYvrFx+xmHpIIlVGMBOJKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728655659; c=relaxed/simple;
-	bh=hG/jykT7QHfvwaNO55epxr06bSo42Z23cANCczqq4+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6sdfH321b5DjrfGokxNsf1BTzc3Wu8MZOF1URDtgNSpLAIozyXRR+wHX22kZABvj3ltFDA3QtpY+z9ppo94gUIEvjqa2wSaJ8xiJMAHN1I9muKmqSYgW/6dVba8nGfytKLRujhRtONXGO5GOT3RqPK61VX/9YJSbee6OShsK58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e22f10cc11so16410437b3.1;
-        Fri, 11 Oct 2024 07:07:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728655656; x=1729260456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wVDkZZ6poqKkGgdiVyl21O+WAwmeYpsejUHDYlcSNIo=;
-        b=PNAtkrcevTB1efbbTQUoFeoLgrpd/JAgf7nkEWj0LBcHQqXVBNLRg91k+ltU9xbXk6
-         FThdZJlP4UPVHxl/TzZr1GBgDTP/6wu8fxf9IHEDFBTG2SDfGJLpzCedE2QgDAzgGAeH
-         QWhnLcgQfwwHyTJRiYWsd+IidhyuqgRWTDtbYnlRHpuDWcWyxwBTsSTy4pGQmZpBMZEC
-         AaphZjHZspqxDABW70t3Wccz1ryvcr8eP5ogf79mHu2rDYbQWXXb6gNZEkI4KCziPyTt
-         0X3nafBHvf0v6zq4VbMskZqCMxWb9g5OpAdR4JSc2lTO6dBoaP+jQG0mhOniiVFvswl6
-         q20Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWhm1kAV8iqpfLSkdxd2BwymrT5D6AV7Aa2KimdvuxR9uD6eJ7eLfKnnBKph5Pi0t/T3OCbiV9zPRQ=@vger.kernel.org, AJvYcCX7gnknoWkMllaZwAxEYZm0juL36mE4kDgkANLyIpnxAnNFBZBC5U7RvnH3NfdeR7d4AnwI8dXRfwEmVmofrsnyH1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfXkMdFBrWnGwop5nn8WbBpcPnNlP1DfRU0K83PjvRMhymEBuz
-	2+eRWtIBalOFhdhL1Cbb6bbzm44/kbAVcF/lCFvi6345i5vRFu6CS8OE1mlMX6U=
-X-Google-Smtp-Source: AGHT+IHE6TcFklBEmEOAc/BBbbiQcLnVZn1VSxdYqwUSgbR0QicT+QitSU2jwl1XklgVjQbQnEoPqg==
-X-Received: by 2002:a05:690c:60c2:b0:6e3:116c:ec0c with SMTP id 00721157ae682-6e347b4b818mr19813657b3.30.1728655656120;
-        Fri, 11 Oct 2024 07:07:36 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332bad813sm6048617b3.69.2024.10.11.07.07.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 07:07:35 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e1f48e7c18so17741837b3.3;
-        Fri, 11 Oct 2024 07:07:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUq26gHlRsaw3oi5FBurRXPefQ/E9oPGKHiGZ4NGL+hc4XUnooKzYhrH3/HmfR1zJMW2gcGF6KPSRMfZvlYBI4MUI=@vger.kernel.org, AJvYcCV6CD9gggkJaRBBhqlwovTpRCo/Mzi4F81sd2vECQuK41Z9dhQRF90OmUgR5N/bi62SrrHIojzG0kU=@vger.kernel.org
-X-Received: by 2002:a05:690c:670e:b0:6e2:636:d9ee with SMTP id
- 00721157ae682-6e3477bae02mr20153267b3.9.1728655655180; Fri, 11 Oct 2024
- 07:07:35 -0700 (PDT)
+	s=arc-20240116; t=1728656950; c=relaxed/simple;
+	bh=x5Yh9ZARIV2G6G4vrTtYlC45ZD0pTEf6aj3oEJa4hpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABiuCRrVZWOGKIkVUyrYL/rFrWpFj/Hs/CWvXNIp4fHa1phk8NZRCpM008NZ9ZQiLvyechWVH17MQxzcZuNVoHPHY6Czjtd4o52vwFi5zYUD3dgCnXh84y470sn9Ltg0v+JcI9r4J4IKimuJ2ecFD4yIVbrZwo3kQt0ps0OUXiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqTtpDhM; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqTtpDhM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5565BC4CEC3;
+	Fri, 11 Oct 2024 14:29:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728656949;
+	bh=x5Yh9ZARIV2G6G4vrTtYlC45ZD0pTEf6aj3oEJa4hpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZqTtpDhMudcNfXn4+2AIzGFl4B+hCGFhOLfi1nrZI9dX93RK3f1hctLn4rE8+JYB5
+	 18QUPCmMRKpB1BNdFm4J4ZD4bTiTnta1UrYWSTn1otbOWhDAyBUKLSxK2YWr4b5niF
+	 AQfR/MQmf4yx3HsEX+EXRMojWlPIMXS6XMbLQjHHjmAFnqwa2SJ9I87ICIeGF9Bm6u
+	 b9jfYVkmpDn09GyXvZiNGLLeQc8rxgizne3UlhedWoxTKFacJZ5Ov4JGC1QHjh2lmH
+	 d6RFRbawDIGxMyOkdtUnRKFYMJNo6rAFrn0vrpnu2Y5S5TQcQ+D09yHT0q8fAWpQZ4
+	 motq+D6upjrtg==
+Date: Fri, 11 Oct 2024 16:29:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Richard Acayan <mailingradian@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
+Message-ID: <jcqgsgp4ivbokn545sy2rvfllm3vnygfpbufxagotuicacfmgd@v2hlnohlwzdf>
+References: <20241011023724.614584-7-mailingradian@gmail.com>
+ <20241011023724.614584-9-mailingradian@gmail.com>
+ <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009140251.135085-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20241009140251.135085-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 11 Oct 2024 16:07:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXqZYqGnNZqNu=8mMbfidCH-+E1Nn1Fr=tjNReqw5gLZw@mail.gmail.com>
-Message-ID: <CAMuHMdXqZYqGnNZqNu=8mMbfidCH-+E1Nn1Fr=tjNReqw5gLZw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
-	Hien Huynh <hien.huynh.px@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
 
-Hi Biju,
+On Fri, Oct 11, 2024 at 10:14:49AM +0300, Vladimir Zapolskiy wrote:
+> > +    soc {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        camss@ac65000 {
+> > +            compatible = "qcom,sdm670-camss";
+> > +
+> > +            reg = <0 0x0acb3000 0 0x1000>,
+> 
+> This is immediately wrong, unit address shall be the same as the address of the
+> first value of reg property.
+> 
+> I still object to the sorting order of reg values dictated by reg-names property.
+> 
+> There are a few recently added CAMSS device tree binding descriptions, where
+> reg values are sorted by address values without a connection to another property
+> values, and I believe this is the correct way to go.
+> 
+> Two most recently added CAMSS IP descriptions (qcom,sm8250-camss.yaml and
+> qcom,sc8280xp-camss.yaml) do implement sorting by reg values, I believe from now on
+> it should be assumed that all subsequently added CAMSS IP descriptions to follow
+> the same established policy.
 
-On Wed, Oct 9, 2024 at 4:03=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
-> wrote:
-> While computing foutpostdiv_rate, the value of params->pl5_fracin
-> is discarded, which results in the wrong refresh rate. Fix the formula
-> for computing foutpostdiv_rate.
->
-> Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-> Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Heh, sc8280xp introduced entirely different sorting also in interrupt-names.
 
-Thanks for your patch!
+Just look at interrupts of sm8250 and sc8280xp. Luckily clocks are still
+keeping style.
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -548,7 +548,7 @@ static unsigned long
->  rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
->                                unsigned long rate)
->  {
-> -       unsigned long foutpostdiv_rate;
-> +       unsigned long foutpostdiv_rate, foutvco_rate;
->
->         params->pl5_intin =3D rate / MEGA;
->         params->pl5_fracin =3D div_u64(((u64)rate % MEGA) << 24, MEGA);
-> @@ -557,10 +557,12 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_pa=
-ram *params,
->         params->pl5_postdiv2 =3D 1;
->         params->pl5_spread =3D 0x16;
->
-> -       foutpostdiv_rate =3D
-> -               EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv *
-> -               ((((params->pl5_intin << 24) + params->pl5_fracin)) >> 24=
-) /
-> -               (params->pl5_postdiv1 * params->pl5_postdiv2);
-> +       foutvco_rate =3D EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdi=
-v;
-> +       foutvco_rate =3D mul_u64_u32_shr(foutvco_rate,
-> +                                      (params->pl5_intin << 24) + params=
-->pl5_fracin,
-> +                                      24);
+Can you start keeping consistency? All bindings from the same family of
+devices, especially if they share something, should have similar order
+in lists.
 
-The first parameter is not u64, but unsigned long, and its value always
-fits in u32, so "mul_u32_u32(..., ...) >> 24" should do?
+How do you imagine writing drivers and request items by order (not by
+name) if the order is different in each flavor?
 
-However, if you care about precision, the division by params->pl5_refdiv
-should be done after all multiplication, too.
+And such change to randomness in style - sometimes reg sorted that way,
+sometimes other, interrupts sometimes like this or like that - should
+not come from Linaro.
 
-> +       foutpostdiv_rate =3D DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-> +                                                params->pl5_postdiv1 * p=
-arams->pl5_postdiv2);
->
->         return foutpostdiv_rate;
->  }
+Best regards,
+Krzysztof
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
