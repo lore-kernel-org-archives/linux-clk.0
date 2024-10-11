@@ -1,52 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10168405FB;
-	Fri, 11 Oct 2024 14:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B618E02D;
+	Fri, 11 Oct 2024 15:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728657691; cv=none; b=lMZ4yBdePkEBUr4RguirOIn9l9uqIIsVRzxHdgb1p7XZouNvFAcLdyBqexxRid5dCq8SwfWlTSCVnu70KLlnTY7zodhpISPCCoKmg3znWuWJQ3pUlLmD/lW/NPT0KYBI+2Z9Vcgbl7qAzCEBf4Ul8GXVTzsXMHEBtDBmrin2iS4=
+	t=1728659422; cv=none; b=PW57Ys0GZitbi9C8g7us1mN3PPGk0HnlbHWiM0g/UC9BcM3F1ZsxyqP1hZf0HqkJfom0CDp+bSfg/lRpWxIIBXH4JqvM/vPalne8km/8+mXDGIo1sv4WAgL8N7TK6N6tXbKiXYPU6N/ylVNH7P40L7fOuHCz14ItZZVEx2kmwLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728657691; c=relaxed/simple;
-	bh=Y0MK6Ir1naH6KdRmkyIQkGi5RdptzjZfItnSwsoMv00=;
+	s=arc-20240116; t=1728659422; c=relaxed/simple;
+	bh=ZU2g8GXMhK2mCBChQNinMtGNp7JF9hb84Aw7s2vufK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUC7z8P4VX/vFi3rYM7wfXTw0cktt0cfSvuKjnoXl+z0vLm5cmRDGs6hPMeBcae6Jeo7oyTmagpQrd+RhSBGBoLTtUEDNIHhqXPzY4fBKTq3/ELurqFK5OrXtZCAO3nASsFE72fK8xr1UzNjVaEviiaUzITVF34vxxjwF1IGfvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cqh9cYii; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0WL6mb0zyYNvvQ82bJduZED634smdpYuiDccS2Vc8Vvo/RfCvRqASRW8VDCgKQYkN7rjs8bGHL69M5R2e5zTb47knfya5lbiIdP/S4i2uedhUvB3JxgcR17rUZ98kebBLyvMUjjjlpZ2V80Q3keUR4GjBDlX7eJQGQSCv1GFcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWYwKt36; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cqh9cYii"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC59AC4CEC3;
-	Fri, 11 Oct 2024 14:41:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWYwKt36"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FCF6C4CEC3;
+	Fri, 11 Oct 2024 15:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728657690;
-	bh=Y0MK6Ir1naH6KdRmkyIQkGi5RdptzjZfItnSwsoMv00=;
+	s=k20201202; t=1728659421;
+	bh=ZU2g8GXMhK2mCBChQNinMtGNp7JF9hb84Aw7s2vufK8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cqh9cYii9B4DdEJVX9zLDAdWcG/3VUNSV92Z8y2h+dbshUodjcbwa3d6Q8EXKbLf/
-	 xy/oxBQz+dGGfq5YldPJ6H9X94o2sSmVvMPmv180t1A6jfarVwdsDM8jSY7+2sgF37
-	 h8wTe4tw+oTMFdRalSTxe9gKcrN7zi3xHQkSKD7yWofbStn4JuCNXQgcuZLYvIhKG+
-	 grhTFMMyNQWPKhLM/ZiiamT/j2utVRg1oB1xhuguPsp+V0mk7uuf9kOWvDNRRh2jLH
-	 ufSAxTXZhBD4c39cHqtOBjX2/1tE6e/jU2w/GiUkeg+pv727iITE8/i35yOZ2cL8mR
-	 /216e8mi8SdmQ==
-Date: Fri, 11 Oct 2024 09:41:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Richard Acayan <mailingradian@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
-Message-ID: <20241011144129.GA2295617-robh@kernel.org>
-References: <20241011023724.614584-7-mailingradian@gmail.com>
- <20241011023724.614584-9-mailingradian@gmail.com>
- <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
- <a230de8f-a11d-41c1-9bc6-7e06e850b51d@linaro.org>
+	b=nWYwKt360LCebFiMVhxFSos5SgFlwEij3Rm2bJZyUmn/QednxSeynRgsTiekX8tS6
+	 BKYCRK4vWjduVTcU+cL+h/gJPEgHSdH8ZMLVge2sJxCvpJMiJqLNnUyJAVbXcZ5zoG
+	 YumUduPP28Z3jsVgiYS1M1wuAPeJLxYDWOJotOfQECkQ4+q7ZLKpFz4QFVlqlHHisW
+	 IOfg+YCEFK8NZftl6kngcvqe1guJK8nYj+C84/0hIfmb+PJyd3pBFl9bzUop+oUnoE
+	 sJJQjXJJHikUCoKeDNXcuhXXWH690xNnXrF/oMqTPFcC2PjyEYyQ8yvpQfr9BJkY/z
+	 x01GrBRNpWOVw==
+Date: Fri, 11 Oct 2024 10:10:19 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: frank.li@nxp.com, aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
+	ye.li@nxp.com, linux-arm-kernel@lists.infradead.org,
+	festevam@gmail.com, peng.fan@nxp.com, devicetree@vger.kernel.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, abelvesa@kernel.org,
+	conor+dt@kernel.org, ping.bai@nxp.com, linux-kernel@vger.kernel.org,
+	s.hauer@pengutronix.de, sboyd@kernel.org, kernel@pengutronix.de,
+	krzk+dt@kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: Add i.MX91 clock support
+Message-ID: <172865941878.2417451.3899149145187240529.robh@kernel.org>
+References: <20241011045736.308338-1-pengfei.li_1@nxp.com>
+ <20241011045736.308338-2-pengfei.li_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,34 +48,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a230de8f-a11d-41c1-9bc6-7e06e850b51d@linaro.org>
+In-Reply-To: <20241011045736.308338-2-pengfei.li_1@nxp.com>
 
-On Fri, Oct 11, 2024 at 09:31:06AM +0100, Bryan O'Donoghue wrote:
-> On 11/10/2024 08:14, Vladimir Zapolskiy wrote:
-> > 
-> > Two most recently added CAMSS IP descriptions (qcom,sm8250-camss.yaml and
-> > qcom,sc8280xp-camss.yaml) do implement sorting by reg values, I believe
-> > from now on
-> > it should be assumed that all subsequently added CAMSS IP descriptions
-> > to follow
-> > the same established policy.
+
+On Thu, 10 Oct 2024 21:57:34 -0700, Pengfei Li wrote:
+> i.MX91 has similar Clock Control Module(CCM) design as i.MX93.
+> Add a new compatible string for i.MX91.
 > 
-> My preference is sort by address not sort by name => we sort the device
-> nodes themselves by address so it seems more consistent to sort by address
-> inside of the devices too.
-
-Strictly speaking, the values of addresses are unknown to the binding, 
-so you can't sort by address. However, if something is truly a single 
-block, then the offsets are probably fixed in order by offset makes 
-sense. But when a block is changed, any rule on sorting may go out 
-the window since we add new regions on the end.
-
-This one in particular I have to wonder why csiphy is not a separate 
-node.
-
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/clock/imx93-clock.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Which means sorting reg by address and irq too.
 
-IRQs make little sense to sort IMO.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
