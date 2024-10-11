@@ -1,105 +1,124 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C295820C47C
-	for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 09:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98121018F;
+	Fri, 11 Oct 2024 10:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728638939; cv=none; b=UQGS1c3mozxmyiNVaHBLGWFarYo9equl/O4AzKq/7M6wqYDn0RzpQZUJihbKZzSRlnTfugaSSfbNFoZAhrbt5WFIJzXWxbqjj072i9mRwaxkm9OXxBjfvzyswO5zITgPg9NzNCc1yezy70DrqhJBMBKlIkE4nrGe/4Est1/t3i8=
+	t=1728641375; cv=none; b=SxDPmaPbKmd8aKSSnrHTF6LIRBqmP01sCyqlUBK1Wopvx2rBXGXulDL6SQXQdPQl5lWKSlE5M13fBlmzzmciV2F4qO8mUIy0TvHFpHvJTDLzduZ42tEZLSjjIWTFUYwqRfWyY1TkhFYnsDYUcjME3HdkA65hWA7HLQi5nbp1PAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728638939; c=relaxed/simple;
-	bh=DltDeVYJEIb6wjca1o7bFaNWh22hJNIaTsco4M0fMzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=flbqtEWluQJ1g6/p8PfmjwraiCDK01E7YeCs3NUQLG9DPE3i5KGWD9+pVtfRYhjhSNWlVTbetyC9mSyqd+Un7szQd4JEUdmgFtI/barOJLOljJCOoTfzEgIKn1Ef+106U25ueQTUTZyJvJyj3cvU7AwukOEGcRUTjh6jyDThApM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0JYwjVO; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728641375; c=relaxed/simple;
+	bh=eoav9wkO+mIe4PV1rHGpqtvnpQN84eRE/FQ5B02sO7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TDQJOf+iO7tWzyFYto8GKSVyjnSdx8k0QTQ8l9dLjKO3agyfPd+Gx6sDzQAY7HzGbYFi1SyM8cpJzg+t9/z21CYCJCPs6rFlED97IB7lNCMwyic+ZkHeRak+Ih5T30xvVcHKEjMAwC4rKsxchRVOKf+EHc3TTH49w28ImE5LyTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=L6KYr/Ho; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0JYwjVO"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so1340871f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 02:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728638936; x=1729243736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3TCoDAR3p+NDgfps8OlJnbGKnp0R3MeEWSzHOxiQY0I=;
-        b=G0JYwjVOmsppUfkGh2OByNk70IarIL6uyAStv2jEJCq8DSCJpanb7SMvPcYJ2/xyQ0
-         JRkGBm9ZAhnVkqdjtlRFW65Ue4D54da5VSVwkHWjM9ueHeaZzBGKw5MvWGrPv5jvqxZE
-         dmPfbKGu3x7r5btEbBttkfSncW6G27rdP7tvLJyRck0jT0yhO14Bya1azt4I/+AM4Tuf
-         NfTHcdMeaWBZBgKeLiY5aPRORKuZ6Euu8oTOPRyvqQt0A6YOlYyW8Io47v7LKFi7OFBV
-         gEpLGJQVY+kH6ce75Lx9tTsFe4NxwDU81okz+USANS2sEsTcAMWAD2Z7Vf9WxPczMSaG
-         d8jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728638936; x=1729243736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3TCoDAR3p+NDgfps8OlJnbGKnp0R3MeEWSzHOxiQY0I=;
-        b=tl9L74CkUc9NewzgVCuso1iagoO3cYJupbnLOuweq1fp35XBUHFn0g0o102ta/NXv1
-         H+Am7a6Ej/BqM7kR/+oAYLWv1Di7mkdboh7f7ll8imb6cuCIifG5HReVdjo9nZZtSMQs
-         dXQc67pjn1mRO8Gf8Ab9gVjC9mqeO+Sq24ubpziLsJuo2tDmKHWvkDf8iYd+PDs/HwGu
-         zzEKrfdGgpc+Kj/DDO44H1I0ZWt0a5VkAUCzbI/LbVLnJNToKRjDa8qzsoHeqvNRJiRk
-         ACIiNrfmSSWKULZXvcUUIz4E3j3el7B5SmfC/j4i1uFU2SMeRdtJGIc5vrBmmnlkUR+1
-         TLkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVW2U2UQm08e9qvUliE8oOFnzZKOEEgcwJI0Cgg9OUtuPL7FFZnC43Dd9dirKTesAR3AeNFGd2qjkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqB10qtqpwqF8m+09z9dO75xOip39ofKafLK+vkPcIHMQbEN2l
-	XO/M0wOYFzQJIINDk4yHO9cEPdBKsaGR757FgQo9h+DREuYF3atVi5rB/W4Vue/0RS0s8mKdniN
-	a6EWPdNUD17Mq5WLRtnPuIq/0sdv7F+Oe3B4IWw==
-X-Google-Smtp-Source: AGHT+IG8wW1q8UJWHHq4y9KQZM4c6D7AmGKumiUzVkMrFvBY3yCJMkHghO6Wg3mIMaH1uDi6/A1L+L4KOCuGGEPI4z4=
-X-Received: by 2002:a5d:5270:0:b0:374:c3e4:d6b1 with SMTP id
- ffacd0b85a97d-37d552ade68mr1496679f8f.44.1728638936030; Fri, 11 Oct 2024
- 02:28:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="L6KYr/Ho"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728641337; x=1729246137; i=wahrenst@gmx.net;
+	bh=eoav9wkO+mIe4PV1rHGpqtvnpQN84eRE/FQ5B02sO7M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=L6KYr/HotO3ODVCzjyupk3DKZ61fWxCKb1v0bpnSZL1CZPvy7oe9/5ir3ZUEuDla
+	 VQWvdKwXXPGlxsM2fwdTM3iGQxt416F6V8/MAaLmqwgXIU8XSvWsowxdnKLoUU0GB
+	 CD/wcoOy6jmxP7i8LtTkXYXiaHWAZ2usivveAZyQkJXfWpDeyvNJcadue/eAGBvGV
+	 ZIHSGPCQUs35ugrNSKiuBVpGKkIWYNuF4h4YOadT+R0/mVIRlBScS5zZisVfeWdRt
+	 d63kF6CSHjBdYyXYTmB1BHgLObVmY8yD5i8bW3HJESGrZevaLuqOXoGxSotQ9ivzH
+	 2roSznDPT2MecF+oPA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N4hzj-1u0UKl2nkF-015B3x; Fri, 11
+ Oct 2024 12:08:56 +0200
+Message-ID: <a1b72875-6224-47b9-bc68-bcc66343bf46@gmx.net>
+Date: Fri, 11 Oct 2024 12:08:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
-In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Fri, 11 Oct 2024 10:28:45 +0100
-Message-ID: <CACr-zFAT9tbmH+YUBLazUjzH+uyjeKSewpd=XFr3HBd7=jaMwA@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when
- width is not set
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/14] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <199a4994312b120c73c95fa368954ad5a2a8aee6.1728300190.git.andrea.porta@suse.com>
+ <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LqY4jNXpUn/szfUlWjhhwIcxwRo5I0Rfv5kZ780LihSoEH5kZEs
+ LBEXN1xvXO3oyM2VurBOq0JyQUCUOFbQy01ZamLt5KFsS3mw08WU1N8sDv11Pmmucpg2KuM
+ mTFNN1/unuc2aK9/oBJXjQGszv4sUl2x3P9K1Qe72TdIv3JxoYwlOMlkzFcJuYkKYtNMQ9C
+ WExkC/oy7cXveyEvXEVWQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gfvBp+EhPSg=;Krp+Dt4+0xc0T3nyoXq1JLBXS+4
+ ssl7ep8XjwEVmqJfN1tBRWWWZWygUXl0AWATC2RYwQpwWy8uFZn2G8A1YS77SobXzuApkCH3T
+ gAujAK/+hYi09B6UIUGrxadmCvoXHScVW8fD1EbKql9k4KdtL4QL9STqL8P2WRDb/GObmbna3
+ v0X4lbplDs53TY2opRzzoia/hisRmP90PlW0ACs/icw4vs8wCcO2TmrvHCtUpDbkk1q3j+XI6
+ /I6m9+q9CiVZERFsOmU/lOOa2nKmYP7XN59T893soEMqrDxmc6pI8onxeFyw2xUqJhGmgVgS7
+ 56xC/OT5sE1nNh2O5/uFRYkPmsyKVQT935g4W3k4XY6a7PpWZH+W71JjWxPRrzLYuz5P/DlDr
+ 0PM9tPFSQO6nLkSCi9YvIFdVKCKfT+kPTfFq4cP6LrCu7l4fVq1Ky6uHS4hpPAbVpkIZYlpG7
+ 2rGZhYKVppBIDMQvcxeIV3wAD/A+66/A2IvW0XYfRc6GbBjwBmm28BTBVSZjVX/MPnohHyws7
+ Q3D7k+D+uI0opPMIHGy3fZsVQ8QkZ3vFV5sOWkqlx5u+gkLnUBWgZwKR0xVxzKi/ZOJXG4N57
+ PaJAzG7M/e0K9mqrAhQgaavITppLM/Fc9DoUzIwbB0cvpik/tc3qBYW8F9YHgfnZU/pM/4Lb1
+ OzFLFVtL/ITPMYrk3lJi9mAPR7jZlBwO5x+48aRf7JhiffhVwBEDOvKxLJT+L44kT5FOSiyzk
+ aQggDfZtmYp244brhtEqY7L7zEiDqAKBQBNl9zyh/x1ZedjDMLmbnklzB8Mb9yTd5SjizUpaB
+ xr4Mo6Y76DusHmA0f6y8DOKA==
 
-On Sun, 6 Oct 2024 at 21:52, Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
-> Many qcom clock drivers do not have .width set. In that case value of
-> (p)->width - 1 will be negative which breaks clock tree. Fix this
-> by checking if width is zero, and pass 3 to GENMASK if that's the case.
+Am 11.10.24 um 11:03 schrieb Linus Walleij:
+> On Mon, Oct 7, 2024 at 2:39=E2=80=AFPM Andrea della Porta <andrea.porta@=
+suse.com> wrote:
 >
-> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
-> ---
-> Changes in v3:
-> - Remove one of the fixes tag.
-> - Link to v2: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v2-1-b8=
-25048b828b@mainlining.org
+>> The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+>> Add minimum support for the gpio only portion. The driver is in
+>> pinctrl folder since upcoming patches will add the pinmux/pinctrl
+>> support where the gpio part can be seen as an addition.
+>>
+>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> This is a nice driver and I find no issues with it, what causes
+> an issue is gpiochip_set_names() as pointed out by Bartosz.
+> If you can live without the names you can remove that part for
+> now and we can merge the driver, then you can add the names
+> later when we sorted out how to share that function.
+I raised the concerns about missing gpio line names in the first version
+of patch, without knowing the real efforts.
+
+So I'm fine with Linus' suggestion, because I don't want to delay the
+upstreaming effort unnecessarily.
+
+Regards
 >
-> Changes in v2:
-> - Pass 3 to GENMASK instead of 0.
-> - Add more Fixes tag for reference root cause.
-> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f7=
-0ba55f415e@mainlining.org
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Yours,
+> Linus Walleij
 
-Hi Barnab=C3=A1s,
-
-This patch fixes a regression with UFS devfreq on msm8996 (introduced
-with the linked commit in your patch) so:
-
-Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
-Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
