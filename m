@@ -1,87 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CD544360;
-	Fri, 11 Oct 2024 15:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A1D195F22
+	for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 15:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728659667; cv=none; b=dKkyhuJcIVY6Ip76QscbN1NAGR1tCwi/ELq2B9sAhbPvrexQhZVvygIQcaY2KMVftoWzvMo51DZSGHXcYEVQnH73aQothK8lp0pKQM3rjkbBx5tol0eax21UPvOzKEieNbBHmemqV9dKOnPRuFcW6Zga4crQrIy/QEEUhLa4U6s=
+	t=1728661338; cv=none; b=EO5lBftva2xcWm2r+RUfrYDv3WDkb8JPOee9GxUStPmblHDQh0jK7wK4dwOXZ240Pf32ZoR8dKbdZT0f42Fv52a6iGaN3WNhOUOIkW4JqqAQBFrDNY2lPQ8Z42aRfSqAyok/aJQqJBFF6UtfE3ZXzZSVNqbSYSuYK2gLkGXujaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728659667; c=relaxed/simple;
-	bh=gUQu/qGPZbWbjcZCsj4kNLDENBFqtKIe1VImg2TkbKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boX9wWk3S2vyTiiJl9rtlWOjpHCc1F+Pp6ryHW6+mTBIN5x6ZSaPtOKUMwZEQT9DHZaXgxSAuPOCVqNvbfOza6EzsTBSXFWx8jUANeKaieOmOannxirS4+E4UI3YRY92eUVZC7Unve7pOz0+G6FtN57VyWs75fD/FL01ckJ/fW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGOE41rp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728661338; c=relaxed/simple;
+	bh=FTB9gGHrl3Jgo0ca2thxV5WEisBt66Y4CiZP+f9CMcA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=pJsJ+sEflSFr+m5itBzxMl2cAdjD3iB/8IKbxEdmI2g4oMLjWuwOS22H3E6XT+Lkw9P7b3kUQdmBn8fsdZB3vtIjOl/MJJZKLVWmGjEW9OTaRtTMuY3F938AHFamkjueOUdaRBqpy+bdSqXahW3Z6401g142HMzqagmvSE0Y7kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sKp+XNi0; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGOE41rp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282FEC4CEC3;
-	Fri, 11 Oct 2024 15:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728659666;
-	bh=gUQu/qGPZbWbjcZCsj4kNLDENBFqtKIe1VImg2TkbKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGOE41rpQBAXTwIbUxp6QUpTdflcHu5sLrb3mPZJwj+3sH/Pdcl/ZwtWIzaBfHO7s
-	 LaYgTlVbq3yBeQx+irIM5J1xHXbyenM1y4hKi9KapSCzwbowFscu3KGhyj9tfQoWRp
-	 XEjR3LP2k55+5gh6+WfvUKVIhJwsZyKXvX3b8xnQ8YebyUxqA2/2dCtHXIoa+E2LO5
-	 kPZwLRzGh0StFzyr11E97cLQf6LqPRliiIizvS54N41wZi62/erqi3c2yLI685eSXO
-	 3wfi6YHxcKfqe8RsZH8NwWk3aJRLlYHKJtkJZV169wnfbkzNkSzbgvStRGXn9n7QD0
-	 76Dy1/tUcuRwA==
-Date: Fri, 11 Oct 2024 10:14:24 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pengfei Li <pengfei.li_1@nxp.com>, krzk+dt@kernel.org,
-	abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	ping.bai@nxp.com, ye.li@nxp.com, peng.fan@nxp.com,
-	aisheng.dong@nxp.com, frank.li@nxp.com, kernel@pengutronix.de,
-	festevam@gmail.com, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: clock: Add i.MX91 clock definition
-Message-ID: <20241011151424.GB2426751-robh@kernel.org>
-References: <20241011045736.308338-1-pengfei.li_1@nxp.com>
- <20241011045736.308338-3-pengfei.li_1@nxp.com>
- <posan34opc4p3crccwstomt7fwvtt3dm6urtcmcrm4wwduoli6@mmzj5qdjp374>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sKp+XNi0"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c693b68f5so22354875ad.1
+        for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 08:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728661336; x=1729266136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FTB9gGHrl3Jgo0ca2thxV5WEisBt66Y4CiZP+f9CMcA=;
+        b=sKp+XNi0BNljQwl4hJt1qpUhGymq25wIhI21H5QnPkIY8EgwgY7RFKJZ03WHCeNlaN
+         t51Z2r3pK/ESS8vavXHHz4BkSXpViHKcFJDMPtEHCFhtqZHkgxxkshzwrra+wx6YID41
+         6GMXqNgE1BLTxcm7KTS4yV60G3TgqkCQde0Oqciiw7Ne/UVGeFJr26cbDLItFB1qxdSq
+         gvNZMSLYhuXFjQRiLr8rTZpoNuuh2UO3KUd1fR/Q1opQtNmh7jcBxvXQtohc9Gg3QZ/8
+         IyhF9MDtOCEbaxPAOg2/bsj+4COOXFqiatd4yrAoMrpFdFQosVHSPqYZdRRxObFe1C0m
+         KPHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728661336; x=1729266136;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FTB9gGHrl3Jgo0ca2thxV5WEisBt66Y4CiZP+f9CMcA=;
+        b=K2S6qtHtWBO76puxt5CbDVq7AB2e67yu+0DMMDSsosXMaKhp59BH5jGdk36QPS842p
+         Hgcwdz2D7HlJFsMuWJuPYcDkF76n6RD/NRZGvXxmQ4vy+h50qvNgxuN0bv5LiUh1kvr4
+         /xat7l5UKzcavaoQPrlBT12jOkZRQnZNu9IECLZkC/0OSgReknsfAS5P+D/wnNydjwuL
+         XkhzLil3j5WcIjK68tG7WDNMvOo5jgWolCYEiC397tkb7FUR6wriSKap37MXeNyMshGm
+         UKwq3iIRnRZA2TkAhW3QTxEG+lHb/76dfSSszb5dvdVbbpkbhpBbKy4yepv3JlnceDlp
+         9w9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZNsj1iMwucmtvW8qh27nJlRabvtG38hdGM0lVIyg46NfDpzenCv7s62QN+O0aBPBR4K8rvHXQDyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhYTeXe2OMa9K7EURVQJ/7Fjm+ctcUgklSkgY+iVRu7ajfGi7s
+	eq27WQ+AIt7lbMhkBftMhJMXHo1bKUDA90RUXQzdGq6SDb8i/xpXYkAB3oRcEA==
+X-Google-Smtp-Source: AGHT+IHp+vfQ0g8KOlGcVVFt/8dwQEWB4fGW+orH2uW909xVMHZ0L705DG0vqVSgL8WCAKaDo4xSUw==
+X-Received: by 2002:a17:903:1c7:b0:20b:5046:354 with SMTP id d9443c01a7336-20ca16c2c0amr34930705ad.55.1728661335888;
+        Fri, 11 Oct 2024 08:42:15 -0700 (PDT)
+Received: from [127.0.0.1] ([36.255.17.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bada634sm24786675ad.5.2024.10.11.08.42.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 08:42:15 -0700 (PDT)
+Date: Fri, 11 Oct 2024 21:12:11 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>
+CC: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
+ quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+ dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_3/8=5D_dt-bindings=3A_PCI=3A_qc?=
+ =?US-ASCII?Q?om=2Cpcie-x1e80100=3A_Add_=27global=27_interrupt?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
+References: <20241011104142.1181773-1-quic_qianyu@quicinc.com> <20241011104142.1181773-4-quic_qianyu@quicinc.com> <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
+Message-ID: <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <posan34opc4p3crccwstomt7fwvtt3dm6urtcmcrm4wwduoli6@mmzj5qdjp374>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 04:40:35PM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Oct 10, 2024 at 09:57:35PM -0700, Pengfei Li wrote:
-> > i.MX91 is similar with i.MX93, only add few new clock compared to i.MX93.
-> > Add i.MX91 related clock definition.
-> > 
-> > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  include/dt-bindings/clock/imx93-clock.h | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/dt-bindings/clock/imx93-clock.h b/include/dt-bindings/clock/imx93-clock.h
-> > index 787c9e74dc96..6c685067288b 100644
-> > --- a/include/dt-bindings/clock/imx93-clock.h
-> > +++ b/include/dt-bindings/clock/imx93-clock.h
-> > @@ -204,6 +204,10 @@
-> >  #define IMX93_CLK_A55_SEL		199
-> >  #define IMX93_CLK_A55_CORE		200
-> >  #define IMX93_CLK_PDM_IPG		201
-> > -#define IMX93_CLK_END			202
-> 
-> This is supposed to be separate patch, because you are removing
-> something from ABI.
 
-But "end" defines are not part of the ABI.
 
-> 
-> If your maintainer NAKed it, then do not sneak it some other way. Sort
-> the problem with maintainer or entire patchset cannot enter.
-> 
-> Best regards,
-> Krzysztof
-> 
+On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel=
+=2Eorg> wrote:
+>On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
+>> Document 'global' SPI interrupt along with the existing MSI interrupts =
+so
+>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
+>> link specific events, safety events, etc=2E
+>
+>Describe the hardware, not what the driver will do=2E
+>
+>>=20
+>> Though adding a new interrupt will break the ABI, it is required to
+>> accurately describe the hardware=2E
+>
+>That's poor reason=2E Hardware was described and missing optional piece
+>(because according to your description above everything was working
+>fine) is not needed to break ABI=2E
+>
+
+Hardware was described but not completely=2E 'global' IRQ let's the contro=
+ller driver to handle PCIe link specific events like Link up, Link down etc=
+=2E=2E=2E They improve user experience like the driver can use those interr=
+upts to start bus enumeration on its own=2E So breaking the ABI for good in=
+ this case=2E
+
+>Sorry, if your driver changes the ABI for this poor reason=2E
+>
+
+Is the above reasoning sufficient?=20
+
+- Mani
+
+>NAK=2E
+>
+>Best regards,
+>Krzysztof
+>
+
+=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
