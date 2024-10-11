@@ -1,57 +1,57 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D46028E7
-	for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 13:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854DC2185B8
+	for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 13:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653821; cv=none; b=brFs7kMyTWbfWH75Hgkd3y23r7wPqX0GrvcPWdnwvSItaIeeyAEZ28bIbjfLLBuB4jHfUv5OEvVY6C3zmTJ+3kAnlSVs4es1m4KJeoQHdKcjjmoKmKk96Ms/N1t1j6B5H+lV6Nttq3LIvoHGJrFi2ZQ8LU/f7/4R8RELZy56XZo=
+	t=1728653831; cv=none; b=OkYTAXu7qQTJc+C//Zq0xYBrtdACAohOiN8vFYrmFuQtdSzKTS9ObU487YWZoOJBW38HI9T6EZ/jKsVI9rBv1WoaChZJGo1EAkvUUvxTRhkQcaF+HAKLzFu3HUzEKjoLEoLp5ncN3QUTpGHXCHpI460e0WikP9auHvINMEEIVnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653821; c=relaxed/simple;
-	bh=SAhP6ZeDNEgR1+A/kJ8320h3rWrwnh7Se7+LoNaV7jM=;
+	s=arc-20240116; t=1728653831; c=relaxed/simple;
+	bh=cjMGxQOW5XddUAB+/xLXi8oiAJnn8YXWVX2jh465DMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4FlW5GY/BpDQhf6xsPdHq5qUzrpf2xLdDZMNpacBWOfR0ITp3AC5dnIiMqrpi4SRoo9jjTlJ1oEnUEM1FSxNrxC4AEwlUuTB/pEl7vU8ImLalxmFU54O0wNPR/9BGnsulO37FqAtrkEfCpVJpoqhP5R4k2bs1jk4nagarVEAtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NIqsoIKv; arc=none smtp.client-ip=209.85.167.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3Sye+0TN06ApNkTTsSGbdsyoVGuTmJIQKKPsU1hWA1wWF2UwtQ3DgyNqaWrM1SFs93FTMf5POuuExMBwTLC1aCQK0bTTqyESDbHp1SrjWfdE3/rgNHcsNA3beW+3oKo6Cp8EXKxSL2cL/+j0INFABGp0UkJ1RLPs79/kppX3Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RIAZ5Sxb; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIqsoIKv"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398939d29eso2676656e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 06:36:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RIAZ5Sxb"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539983beb19so2467421e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 06:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728653818; x=1729258618; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728653828; x=1729258628; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLXvMXXy+onUMhQ6b0XOwwTzakrzaQZRd+ecTFnJkKU=;
-        b=NIqsoIKvGCOiBxo4kTXCl82SIZkw+wuf10CVrZKHd0xPjQF0vzj0uCDPHsPxrXi0ZC
-         jNMIbXt+pexLbk/3+7r398dDmFfKy/DuoilR2dfTaVNI7jfAKbU09uTOrT8Ba8U76y/6
-         A437J+sgDnAp/QlXhkdSN8UradIivahY7Da++nacnILZ9JRZnrroR76187QlaisAhA04
-         cELrfuOcdsn4XD+0T46NjpDGK9Bz362OVQekKgZyX83l7lamBR/PBQclrPeT3JD22Y2X
-         8kr3XY75PXwCDnk20uoVKskLAiggKXbLtRdmmfCY5WCNXPMUduWcKrwW/CdpeAOKKmZu
-         vKHQ==
+        bh=XaGfDqX+Jbu8yXuoPx2CqSC4Xq+Wq/cr4J5BmFZrmFw=;
+        b=RIAZ5SxbvncvdpKUP/SDUacSGr4cZ76tCLsLwt5IfSN/0xgeENHW5cfkO9eMbep2AL
+         NkQ3h22znylJqb5pS24FTBJfjyjfWoVP55Ba3a1sFvDQThgaSdu8uh2jSEsmpHm22pTx
+         U+SJ3gAFmqadfOKkQRDTpJP7q2vu1/08KfvbqQAUQ6+eKs1i2VZCTLilzM+PgX/MYGwz
+         sVy8s3B6Yv39IYlJfzHnyYYE1iKkLXbifzvu0PnwjmezWcT8F/5M/U7XzJeY3NW0deJO
+         7RN2FXoShNWNm580m7agcZ9UkGjkWej2u4XNc3VibZ5wy1Ip0bYqwu3nObJ4ozDSKH61
+         mQsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728653818; x=1729258618;
+        d=1e100.net; s=20230601; t=1728653828; x=1729258628;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LLXvMXXy+onUMhQ6b0XOwwTzakrzaQZRd+ecTFnJkKU=;
-        b=HrAU4syF7mZj03Ym5tVw6kiajfA0IA/7+2LlnLVkwoumLDxTuDjJ7PDSq3sQyPBvnX
-         dCgzG0GujJDVzIKE3dfwUyK9fm2JXHOKXhpHmR4JMlpJO+IyX6aDcuiEhDjeLN1CrkIq
-         HcSGGgdZVJBWGwwrlhv6NcPYQpiUa4mljJN4mh5Jj9LNiWtjrryJDpZG8oxub29WYJzH
-         Eh8WBwuPth/hulisL+JoRsRUSbOhmRHNwTs61mVQ8KsSkIXe0JNVgahZkZX6z2eb7zjg
-         EyOVOlTQ0X88UfEiHPEYbt+cZJZhDIJ8buhsqPTkKnffAsmy9ap6hvRwyGIJ/ZKfC5mx
-         AJeg==
-X-Forwarded-Encrypted: i=1; AJvYcCURhCv3nUgLO9YZZ5AjCplOWC1XlMaQ2dU+X72K0PF5rtTGJW9Teq0+V+ZHVSBOXFGwIuC76cfaj5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxucr2TwC7io9StWzzGg8CK9OE2elNK2+gPNdbTxR3qagBUbU3
-	8HzAd1BCWUQ5h+t+aNOPP9mW2KCReNlpQ5zQ3tjXca03f00VvMASzZ3nF1P0FxQ=
-X-Google-Smtp-Source: AGHT+IGntTefT/PAzN87k4mxkHYGpta3nc0hWK276rYQ9gJXg9bf9uIR3RGfaMXE2WNaM7hpJi69bw==
-X-Received: by 2002:a05:6512:39ce:b0:534:5453:ecc8 with SMTP id 2adb3069b0e04-539da5abc3cmr1478285e87.52.1728653817689;
-        Fri, 11 Oct 2024 06:36:57 -0700 (PDT)
+        bh=XaGfDqX+Jbu8yXuoPx2CqSC4Xq+Wq/cr4J5BmFZrmFw=;
+        b=YB7Qi7/0gGSDk6b9KJWkIbMeLWIgrdsMNg/rndBOPKHHQeR/DKeBkR7LUXzpg1S5Zd
+         W16B+MsqYCWoOdzFBoQom7PZEDfE2g7AQLKKezC3Rq3fPY74Czs4nz5r4+n4hiPlO0qo
+         fAi4IGZ7WuM+PDkE5Pw4+XhwUoSHvUxexyMpJre8kiNLR9uMSOaxD3hoD5Y+u4T4tDAF
+         5QuljWMjGgASA0fWTFzJQI7SCV9EsJa36Q6Th+7Ltrw6jr6x0NDlHpiT8sBfLq+ZpcsO
+         7QdhDSKoIVOML00hF3fMTUYtv05byvA9yCc9PSZu+2WJ7a8Q8U+Heh5MZxGyPCINNUDN
+         0P1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEFVINHHGOzLUBCmqSu9YFx7SQLgOgA3A59wAeVWM0Jqt6NyW9Ppw/jh5fHZm27hPcMVcd45JS6uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoGU0G5N/hk3lAkzznUwnRSDjknEl33IrNEhXmNmVQpqnRGxjW
+	Zbq1xjZVwzP5PTEn/7hin5o8rF+IGb/reHf8SZ0lGyh8CdVLy8gRsmCZaOpcdaE=
+X-Google-Smtp-Source: AGHT+IG3qL3pSC1dHQpXFWaYB+Rn07Kp1WBxWezdJxQFyqZIdB2oubsLQBMVJh2zhElcrmtmyeK9EQ==
+X-Received: by 2002:ac2:4e03:0:b0:536:553f:3ef9 with SMTP id 2adb3069b0e04-539da4e0b9bmr1361860e87.27.1728653827760;
+        Fri, 11 Oct 2024 06:37:07 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb90527dsm605226e87.248.2024.10.11.06.36.56
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c8c9dsm599131e87.119.2024.10.11.06.37.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 06:36:57 -0700 (PDT)
-Date: Fri, 11 Oct 2024 16:36:55 +0300
+        Fri, 11 Oct 2024 06:37:07 -0700 (PDT)
+Date: Fri, 11 Oct 2024 16:37:05 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Qiang Yu <quic_qianyu@quicinc.com>
 Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
@@ -61,10 +61,10 @@ Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
 	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
 	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 6/8] PCI: qcom: Fix the ops for SC8280X family SoC
-Message-ID: <wfwswubquat7a7rprv2oqqzywiiosvmvhefty4tlfe63rlgzl4@6ckw7xrttqnt>
+Subject: Re: [PATCH v6 7/8] PCI: qcom: Fix the cfg for X1E80100 SoC
+Message-ID: <u6n2u7d3sxcq57hfyrbqri2bqehuogdaof6qe2uh7qela4pihy@7mhyjayiucmi>
 References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
- <20241011104142.1181773-7-quic_qianyu@quicinc.com>
+ <20241011104142.1181773-8-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,19 +73,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011104142.1181773-7-quic_qianyu@quicinc.com>
+In-Reply-To: <20241011104142.1181773-8-quic_qianyu@quicinc.com>
 
-On Fri, Oct 11, 2024 at 03:41:40AM -0700, Qiang Yu wrote:
-> On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
-> they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
-> introducing a new ops struct, namely ops_1_21_0, so that BDF2SID mapping
-> won't be configured during init.
+On Fri, Oct 11, 2024 at 03:41:41AM -0700, Qiang Yu wrote:
+> Currently, the cfg_1_9_0 which is being used for X1E80100 has config_sid
+> callback in its ops and doesn't disable ASPM L0s. However, as same as
+> SC8280X, PCIe controllers on X1E80100 are connected to SMMUv3 and it is
+> recommended to disable ASPM L0s. Hence reuse cfg_sc8280xp for X1E80100.
 > 
-> Fixes: d1997c987814 ("PCI: qcom: Disable ASPM L0s for sc8280xp, sa8540p and sa8295p")
+> Fixes: 6d0c39324c5f ("PCI: qcom: Add X1E80100 PCIe support")
 > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
