@@ -1,133 +1,95 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865F92141B9;
-	Fri, 11 Oct 2024 10:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D46028E7
+	for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 13:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643502; cv=none; b=jkQooFh8BlxC+hgosUf0CFXpeQl/B9d9yfBZ4YtVNQF1ITgYzHVDE8GZXPGtIl+kBe+BQNMGI0B+cqhcGKSUhkLCaZQF2ILAQr+BgwFued0aYosSluocjWUEnPDlojFa4TzKw1f9Agdm2oCpdC0PCSQrKkCgkWRhdqX8k+HG0ZI=
+	t=1728653821; cv=none; b=brFs7kMyTWbfWH75Hgkd3y23r7wPqX0GrvcPWdnwvSItaIeeyAEZ28bIbjfLLBuB4jHfUv5OEvVY6C3zmTJ+3kAnlSVs4es1m4KJeoQHdKcjjmoKmKk96Ms/N1t1j6B5H+lV6Nttq3LIvoHGJrFi2ZQ8LU/f7/4R8RELZy56XZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643502; c=relaxed/simple;
-	bh=AC0jtNfFTl/zSciCq2rLaz6mf7W9IeDhLBASwG008cw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EZisQOgNJN2q3Bq5d6ZqT4BI3dU5Co7/XkPIi9bCdb4W5LG5zQ0xI+B2fFsPdZygrKRfv5WIq5Q5UKESfSQU16+EnYUldfv2hbiHKCXQYcTlHvDHS64916WGhqFx3GK8l9iGJ8Uv5jOYXh4+VF6Fh69WUBlHHaTFIuL14TpaXYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gOFcQYSs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1728653821; c=relaxed/simple;
+	bh=SAhP6ZeDNEgR1+A/kJ8320h3rWrwnh7Se7+LoNaV7jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4FlW5GY/BpDQhf6xsPdHq5qUzrpf2xLdDZMNpacBWOfR0ITp3AC5dnIiMqrpi4SRoo9jjTlJ1oEnUEM1FSxNrxC4AEwlUuTB/pEl7vU8ImLalxmFU54O0wNPR/9BGnsulO37FqAtrkEfCpVJpoqhP5R4k2bs1jk4nagarVEAtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NIqsoIKv; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gOFcQYSs"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B869w7014211;
-	Fri, 11 Oct 2024 10:41:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=bPogcdfqVv1
-	6bWCk+Z9Y1/hcsIco/NtXF8dpbiKItgQ=; b=gOFcQYSswC5raprfpva1X2kviHM
-	Nc55+LpArIygaOtEQRbq19kivJaw1+RF3LDKfpcXYV1DKwvxtYAsf1Kq3cN+EZ/t
-	kuojKmqgYu9M8yiwJeN6KupXNzisWN6yxtwh3Ne87YiGbLmqMgBhhUkUMV0JStx6
-	1Pr88Y34+HwpfVEdLadY/y0Q4OQkri9Vp8yRpW+LKk21RWM35GQJ8vhYz04zfCYi
-	rJ8kl/P2CtyBKJHI/XcHtsFUa53lJsqBFMPAkQ97oHxcpQlL63IMabd2A1yGKruk
-	ZIKPvGwOkqiEegrlG6xVWQmg7/AmF9PD65UcSAlhi7jXglO+i5i4N256ZlQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427077ggc9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 10:41:49 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BAfmA8026308;
-	Fri, 11 Oct 2024 10:41:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 426wp7ac3h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 10:41:48 +0000
-Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49BAflXS026294;
-	Fri, 11 Oct 2024 10:41:48 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 49BAfl5L026290
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 10:41:47 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id 9AD20651; Fri, 11 Oct 2024 03:41:47 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH v6 6/8] PCI: qcom: Fix the ops for SC8280X family SoC
-Date: Fri, 11 Oct 2024 03:41:40 -0700
-Message-Id: <20241011104142.1181773-7-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIqsoIKv"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398939d29eso2676656e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 06:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728653818; x=1729258618; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LLXvMXXy+onUMhQ6b0XOwwTzakrzaQZRd+ecTFnJkKU=;
+        b=NIqsoIKvGCOiBxo4kTXCl82SIZkw+wuf10CVrZKHd0xPjQF0vzj0uCDPHsPxrXi0ZC
+         jNMIbXt+pexLbk/3+7r398dDmFfKy/DuoilR2dfTaVNI7jfAKbU09uTOrT8Ba8U76y/6
+         A437J+sgDnAp/QlXhkdSN8UradIivahY7Da++nacnILZ9JRZnrroR76187QlaisAhA04
+         cELrfuOcdsn4XD+0T46NjpDGK9Bz362OVQekKgZyX83l7lamBR/PBQclrPeT3JD22Y2X
+         8kr3XY75PXwCDnk20uoVKskLAiggKXbLtRdmmfCY5WCNXPMUduWcKrwW/CdpeAOKKmZu
+         vKHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728653818; x=1729258618;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LLXvMXXy+onUMhQ6b0XOwwTzakrzaQZRd+ecTFnJkKU=;
+        b=HrAU4syF7mZj03Ym5tVw6kiajfA0IA/7+2LlnLVkwoumLDxTuDjJ7PDSq3sQyPBvnX
+         dCgzG0GujJDVzIKE3dfwUyK9fm2JXHOKXhpHmR4JMlpJO+IyX6aDcuiEhDjeLN1CrkIq
+         HcSGGgdZVJBWGwwrlhv6NcPYQpiUa4mljJN4mh5Jj9LNiWtjrryJDpZG8oxub29WYJzH
+         Eh8WBwuPth/hulisL+JoRsRUSbOhmRHNwTs61mVQ8KsSkIXe0JNVgahZkZX6z2eb7zjg
+         EyOVOlTQ0X88UfEiHPEYbt+cZJZhDIJ8buhsqPTkKnffAsmy9ap6hvRwyGIJ/ZKfC5mx
+         AJeg==
+X-Forwarded-Encrypted: i=1; AJvYcCURhCv3nUgLO9YZZ5AjCplOWC1XlMaQ2dU+X72K0PF5rtTGJW9Teq0+V+ZHVSBOXFGwIuC76cfaj5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxucr2TwC7io9StWzzGg8CK9OE2elNK2+gPNdbTxR3qagBUbU3
+	8HzAd1BCWUQ5h+t+aNOPP9mW2KCReNlpQ5zQ3tjXca03f00VvMASzZ3nF1P0FxQ=
+X-Google-Smtp-Source: AGHT+IGntTefT/PAzN87k4mxkHYGpta3nc0hWK276rYQ9gJXg9bf9uIR3RGfaMXE2WNaM7hpJi69bw==
+X-Received: by 2002:a05:6512:39ce:b0:534:5453:ecc8 with SMTP id 2adb3069b0e04-539da5abc3cmr1478285e87.52.1728653817689;
+        Fri, 11 Oct 2024 06:36:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb90527dsm605226e87.248.2024.10.11.06.36.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 06:36:57 -0700 (PDT)
+Date: Fri, 11 Oct 2024 16:36:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
+	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, 
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 6/8] PCI: qcom: Fix the ops for SC8280X family SoC
+Message-ID: <wfwswubquat7a7rprv2oqqzywiiosvmvhefty4tlfe63rlgzl4@6ckw7xrttqnt>
 References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
+ <20241011104142.1181773-7-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: pk8frON1jYYhTsPVdgXVgN5VIrUcpjji
-X-Proofpoint-ORIG-GUID: pk8frON1jYYhTsPVdgXVgN5VIrUcpjji
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 mlxscore=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011104142.1181773-7-quic_qianyu@quicinc.com>
 
-On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
-they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
-introducing a new ops struct, namely ops_1_21_0, so that BDF2SID mapping
-won't be configured during init.
+On Fri, Oct 11, 2024 at 03:41:40AM -0700, Qiang Yu wrote:
+> On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
+> they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
+> introducing a new ops struct, namely ops_1_21_0, so that BDF2SID mapping
+> won't be configured during init.
+> 
+> Fixes: d1997c987814 ("PCI: qcom: Disable ASPM L0s for sc8280xp, sa8540p and sa8295p")
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
 
-Fixes: d1997c987814 ("PCI: qcom: Disable ASPM L0s for sc8280xp, sa8540p and sa8295p")
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 88a98be930e3..468bd4242e61 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- };
- 
-+/* Qcom IP rev.: 1.21.0 */
-+static const struct qcom_pcie_ops ops_1_21_0 = {
-+	.get_resources = qcom_pcie_get_resources_2_7_0,
-+	.init = qcom_pcie_init_2_7_0,
-+	.post_init = qcom_pcie_post_init_2_7_0,
-+	.host_post_init = qcom_pcie_host_post_init_2_7_0,
-+	.deinit = qcom_pcie_deinit_2_7_0,
-+	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-+};
-+
- static const struct qcom_pcie_cfg cfg_1_0_0 = {
- 	.ops = &ops_1_0_0,
- };
-@@ -1405,7 +1415,7 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
- };
- 
- static const struct qcom_pcie_cfg cfg_sc8280xp = {
--	.ops = &ops_1_9_0,
-+	.ops = &ops_1_21_0,
- 	.no_l0s = true,
- };
- 
 -- 
-2.34.1
-
+With best wishes
+Dmitry
