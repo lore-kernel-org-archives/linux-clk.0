@@ -1,90 +1,133 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5976779E1;
-	Fri, 11 Oct 2024 16:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0364012C489
+	for <linux-clk@vger.kernel.org>; Sat, 12 Oct 2024 04:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728663654; cv=none; b=OYTNVszJdrNyB/ZBVHpfBEc3uSdiLfd4XPQwoEk6U0TLRZrmEHuo/ozHi3o65aePQiqO8IIazSe98eGQC1nbWn12Lp5nYtjvu7vdusSl7c/7hw2aRpxDlPABEy45LQk6vKnO5co1ekK8KubWHhsi4mlLO0jpIAMyVz/KtU9GwwE=
+	t=1728706470; cv=none; b=c05cLQjKd34GNT/QzMeEjswFYC2I0ucdr4Jfzqq0eI05Ivu6/+jePXJ158kDJn2yZv800rRoL/PZR0D6nXyKQaoxXjeOW0PeXdliU957pxL8sgHKItQYslm7wxqMy+Ha6V4W8srBGpWMJlQV9uKd2M7ASONbPZ4Ds6MO6LpHndw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728663654; c=relaxed/simple;
-	bh=PcTJe+5YAXcwnzKBFdT1PrygqIthYzACWMgO77uYbbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tusKXSEUS6MDDabEsgagUgFeZBNNoZEerSDdn5MkRZVI67j2Q0N1ObUI0E1U2BqYqq4UNfwFRdRmvCUwC1kVnX7IYT3PYSxebu4FHRJ9FfCkQE1q5ZCw+JZWLV428uEJXM1PTBkkTFhQyj01i+MiXhGZj2U91c25V9+w6b3kyuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.11,196,1725289200"; 
-   d="scan'208";a="225672738"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Oct 2024 01:20:44 +0900
-Received: from localhost.localdomain (unknown [10.226.92.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E7E584018A17;
-	Sat, 12 Oct 2024 01:20:32 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	Hien Huynh <hien.huynh.px@renesas.com>
-Subject: [PATCH v2] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-Date: Fri, 11 Oct 2024 17:20:27 +0100
-Message-ID: <20241011162030.104489-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728706470; c=relaxed/simple;
+	bh=SuTMPHuKCPfjSdaSBGFmOzbjda4a5abih9KxQ1+GEnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JpQNOJgsqoDjr57RE1Dv20ee/daoEs5plsLBmKLHiQWrtYGfs8IIDEKqHJFiRHchDx6y5ZLXhDLaSgoUuTv2fh4NX9Ob1YAwsyPWWZDFEVJz/1/PPzfehIESDOX/WxBmlPNka+SohRc03Vhe3GqnJofWc2Kz3YWrP1lImZOX8w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eRWsNrf1; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eRWsNrf1"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c693b68f5so27782385ad.1
+        for <linux-clk@vger.kernel.org>; Fri, 11 Oct 2024 21:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728706467; x=1729311267; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RJqJylDUeKhlaDFX6bqWWTyQxNxM099zR8Q/xSAgz7I=;
+        b=eRWsNrf1emWuZQoNuj4A8ALElGTFmiBk3FPBwfxicVn364myMvC3qXOYTdQDlp34Vq
+         o77BfUbxTQCqjjJpvp+RfL/Zpbxfgq0442uE5PEdTMH+CXeBVWMeu5TKcvtj1Z2RPk9R
+         JbaW9fraV96i8KzvfA9Wlt/T8oi8KZKaMqLfJhFwBPN5qNjzqHRMN2rGyPg+eBauHQEh
+         mDNwpdYPtwqtEh40YE68WgSoK1I8a61aPzCcjGTAIfWecXkj7Y6ee0tH1ZQmUfsNKVjE
+         wovUQD2GpQYmCKIoj7wBxqGErRke+VoIYXCgYeyANe9gpzxSatVL+WBuOaZKgNlL13vT
+         rIGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728706467; x=1729311267;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJqJylDUeKhlaDFX6bqWWTyQxNxM099zR8Q/xSAgz7I=;
+        b=wugW0CNEqFZ1Njx3w9wDAZI1HXx/AuG3VaCV+fFEc2gKPDw9NB9PWKWYWVdbxAYZ1A
+         sHadWgOUQgPLzyAa2SlOjQt7sbAZRquTWs4/Txn9iHFrp0g5/53/HBkHN7jzDvI5ITSv
+         KFu57FS2cKYf4YVT6W8kKwvneXFhhMk9+8JG3rJXE0diqwjVuEYa28i/sa0Lk3SaEZkb
+         KHX1LRMTE2K6EJMHSMUymGaQheb5mpzSLwjAZMR61HIKC5dv/i9HW/MvpQSEPvduwIxn
+         S+iY1Z5NCbLr9Vaidgmx8GXrRakDuXo9BY4Ft3gMoLL1Fx/q55Wl/yhiqDX+OT1HO9ck
+         jGEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1sfoikNzIfsLgTgX6/6YZ+NzGUmQgmMmcsQ1YGbPYlsJ/xjneFRF3Vmrhje+DJzqyKL7OJvh5mLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvw1LSxkl14F1E3T+l2TCSxgPWOA+EOB8UgRqPimF5oPdExpdK
+	DGnrPVBybKCWLmCCYxmj8ijVDuzaDFMxg4WPqa4wAkw7kiAIeJVxygE7zIpVUA==
+X-Google-Smtp-Source: AGHT+IG+BMnbXVlgycfAEQ8uJvs3Se6DUQ9wtZpS90iXCykE8vg47B3NvxzG9M8NmLIkK1/Q56WHaA==
+X-Received: by 2002:a17:902:e5ca:b0:20c:8839:c515 with SMTP id d9443c01a7336-20ca16c5a89mr72940785ad.56.1728706467277;
+        Fri, 11 Oct 2024 21:14:27 -0700 (PDT)
+Received: from thinkpad ([36.255.17.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad991csm30855765ad.55.2024.10.11.21.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 21:14:26 -0700 (PDT)
+Date: Sat, 12 Oct 2024 09:44:20 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 1/8] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the X1E80100 QMP PCIe PHY Gen4 x8
+Message-ID: <20241012041420.uwcnzmdcm6kcjho5@thinkpad>
+References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
+ <20241011104142.1181773-2-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241011104142.1181773-2-quic_qianyu@quicinc.com>
 
-While computing foutpostdiv_rate, the value of params->pl5_fracin
-is discarded, which results in the wrong refresh rate. Fix the formula
-for computing foutpostdiv_rate.
+On Fri, Oct 11, 2024 at 03:41:35AM -0700, Qiang Yu wrote:
+> PCIe 3rd instance of X1E80100 supports Gen 4 x8 which needs different
+> 8 lane capable QMP PCIe PHY with hardware revision v6.30. Document Gen
+> 4 x8 PHY as separate module.
+> 
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
 
-Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Improved the precision by division of params->pl5_refdiv
-   done after all multiplication.
----
- drivers/clk/renesas/rzg2l-cpg.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 88bf39e8c79c..a1e22d353689 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -548,7 +548,7 @@ static unsigned long
- rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
- 			       unsigned long rate)
- {
--	unsigned long foutpostdiv_rate;
-+	unsigned long foutpostdiv_rate, foutvco_rate;
- 
- 	params->pl5_intin = rate / MEGA;
- 	params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
-@@ -557,10 +557,12 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
- 	params->pl5_postdiv2 = 1;
- 	params->pl5_spread = 0x16;
- 
--	foutpostdiv_rate =
--		EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv *
--		((((params->pl5_intin << 24) + params->pl5_fracin)) >> 24) /
--		(params->pl5_postdiv1 * params->pl5_postdiv2);
-+	foutvco_rate =
-+		(EXTAL_FREQ_IN_MEGA_HZ * MEGA *
-+		((params->pl5_intin << 24) + params->pl5_fracin) /
-+		params->pl5_refdiv) >> 24;
-+	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-+						 params->pl5_postdiv1 * params->pl5_postdiv2);
- 
- 	return foutpostdiv_rate;
- }
+- Mani
+
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml    | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> index dcf4fa55fbba..680ec3113c2b 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> @@ -41,6 +41,7 @@ properties:
+>        - qcom,x1e80100-qmp-gen3x2-pcie-phy
+>        - qcom,x1e80100-qmp-gen4x2-pcie-phy
+>        - qcom,x1e80100-qmp-gen4x4-pcie-phy
+> +      - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>  
+>    reg:
+>      minItems: 1
+> @@ -172,6 +173,7 @@ allOf:
+>                - qcom,sc8280xp-qmp-gen3x2-pcie-phy
+>                - qcom,sc8280xp-qmp-gen3x4-pcie-phy
+>                - qcom,x1e80100-qmp-gen4x4-pcie-phy
+> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>      then:
+>        properties:
+>          clocks:
+> @@ -201,6 +203,7 @@ allOf:
+>                - qcom,sm8550-qmp-gen4x2-pcie-phy
+>                - qcom,sm8650-qmp-gen4x2-pcie-phy
+>                - qcom,x1e80100-qmp-gen4x2-pcie-phy
+> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
+>      then:
+>        properties:
+>          resets:
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
