@@ -1,147 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBC11C304F;
-	Mon, 14 Oct 2024 15:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16D81AC427;
+	Mon, 14 Oct 2024 16:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728920486; cv=none; b=uixvV63PU3GMAX7jQliHPAW1nIRWLFp/4OWBYD9koDk/RnVltjBElTUdxnOayEQT7h82xS2LQEpgTrZ6B02lqZZhz5SkGzDbtlDnyiXMKTb01jtKukkU8fHfm4jjHuqKkzAViSBctfPFir43UF8Hxw9Qnuwm8Z4u85XZxGEnKu8=
+	t=1728922281; cv=none; b=d2dDjtYfv5NQpv2RsCk2a4IWYm2NL+74Nq6xTjrlCWPLaP6qEgZrxJ/aXMSaBO40SmKVqd5XuILYRZ+j8Ygw+soAp0N1WoAwu/KqVnQsJlf5Yo33WuRrnuE/n17GUsH2XDcV1yngjC+xzM4/Gi3TpGq202XjuCaUJ75I6gw0/MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728920486; c=relaxed/simple;
-	bh=M0aqPwu+dFXtECjVSJ3QQ5hXIYiJbEv0SIsk3LZpeHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOlEeRKYgCW/7c28BQdkU3dqdwhBYQh0ntQqpLGHixG5fCUtqHsfU76rkpGwGHK2wE1ViXsUyGgvkS2F400Mj+Pv4R6qZqdhO5xpLp1wKyZqGFaQFe9bDg7ZazmPF0xYQHlkGNJBIVZrD3+EBlUCQDtIX2v6AgqVOxwXuouLQXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kL297kc0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728922281; c=relaxed/simple;
+	bh=CCqoYBX8pBuwkzPFUfuawngByr5CbP5nCkxTn1wCSCg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VxadRcHDaZCjsFxHZ5WepwElz/8emq36INGhZkLsgyzs4z1RPZBkKBaQKmKtn3kQ09NWriY8ghPtyXwyFkYE87ETyhQmQjywR3ltMgSe+A1IZC0WWJ0RcReRN+pRaPU8MiB+8Su23yNNAoroOYe9puPzQ8190nIJM/SB4MNUIcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=9LrovJmu; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kL297kc0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A2A3C4CEC3;
-	Mon, 14 Oct 2024 15:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728920485;
-	bh=M0aqPwu+dFXtECjVSJ3QQ5hXIYiJbEv0SIsk3LZpeHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kL297kc07fbW2HgkUOc148A271m26BHS4lp+RD+YMjAZNWG7RS3zbnqIpIbvU0UdF
-	 YEK279kohnxZHwrC4PJ1QopPzyzFtrajkawya/r2iMFAFvdzksIsRsz1JzzfXre7FJ
-	 J3zLjgAXQQEAYBNKZEaab3FMjTurNincfIviP+8hZ5gQVHLU8ImzO7wpMEiIStf+HZ
-	 sQ1hd7BhZZMPLovWzebcALmnf7wLcchIEiqvrHOtOgc2Ct2k5lA9yLnRrtB368LIcG
-	 ErIwaBkXsqkfiPkWipkqbpSCdwcVQdoolHAdPju2l59jNRtO18M0ye3nkd26r+pvYh
-	 RBk4ROumnVUgg==
-Date: Mon, 14 Oct 2024 16:41:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="9LrovJmu"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=GA4cCZNoAOxgHgJeiTfPi9G3f1MMYyOonIw27jABOF0=; b=9LrovJmuyzjNeWyHc9x5F+yWFg
+	+YvnQ6F3cqHPrrTaDOQIiBkuuoiN+I0sz4tYr5BiSpeeTPFrHw20en34dQssbg5YekGtbljys9V7i
+	bWkaMJf/FXeEjME91Nol0HHBuH5F9sxnMLfRUdgmZdkmM+2y9KyqvO/q+7Z9X+yz91YNIRRJHhdem
+	8JlmKuD/Eam+QC0dmRovTWCZ97JJIe4CjpuJRqThJxWRn1k7Wrdv/8Wi8tVXVjf4JCrN0zPgcBkp1
+	BClszf1/Y/1ZLxQlbKqb05oF0GwMZFtEmE0KJByuuoRL5L7ixGO6SRkFgyVdF/Phcnf0/fIZgiV+/
+	z0CvWc1Q==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Tony Lindgren <tony@atomide.com>,
+	linux-omap@vger.kernel.org,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Lee Jones <lee@kernel.org>,
 	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 10/11] riscv: dts: microchip: fix mailbox description
-Message-ID: <20241014-decorator-coma-bdaca54f459b@spud>
-References: <20241002-private-unequal-33cfa6101338@spud>
- <20241002-finch-sugar-9958077e8c2b@spud>
+	linux-kernel@vger.kernel.org,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v5 0/3] mfd: twl: Add clock for TWL6030
+Date: Mon, 14 Oct 2024 18:11:06 +0200
+Message-Id: <20241014161109.2222-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AMmGHX8GSM3kEZUA"
-Content-Disposition: inline
-In-Reply-To: <20241002-finch-sugar-9958077e8c2b@spud>
+Content-Transfer-Encoding: 8bit
 
+Previously the clock support for only implemented for TWL6032 so add
+it also for the TWL6030. There are devices out there where especially
+WLAN only works if these clocks are enabled by some patched U-Boot.
+This allows to explicitly specify the clock requirements.
 
---AMmGHX8GSM3kEZUA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in V5:
+- fix unprepare 6032 vs 30 mismatch
 
-On Wed, Oct 02, 2024 at 11:48:08AM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> When the binding for the mailbox on PolarFire SoC was originally
-> written, and later modified, mistakes were made - and the precise
-> nature of the later modification should have been a giveaway, but alas
-> I was naive at the time.
->=20
-> A more correct modelling of the hardware is to use two syscons and have
-> a single reg entry for the mailbox, containing the mailbox region. The
-> two syscons contain the general control/status registers for the mailbox
-> and the interrupt related registers respectively. The reason for two
-> syscons is that the same mailbox is present on the non-SoC version of
-> the FPGA, which has no interrupt controller, and the shared part of the
-> rtl was unchanged between devices.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  arch/riscv/boot/dts/microchip/mpfs.dtsi | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dt=
-s/microchip/mpfs.dtsi
-> index 9883ca3554c50..f8a45e4f00a0d 100644
-> --- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
-> +++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-> @@ -259,6 +259,11 @@ clkcfg: clkcfg@20002000 {
->  			#reset-cells =3D <1>;
->  		};
-> =20
-> +		sysreg_scb: syscon@20003000 {
-> +			compatible =3D "microchip,mpfs-sysreg-scb", "syscon";
-> +			reg =3D <0x0 0x20003000 0x0 0x1000>;
-> +		};
-> +
->  		ccc_se: clock-controller@38010000 {
->  			compatible =3D "microchip,mpfs-ccc";
->  			reg =3D <0x0 0x38010000 0x0 0x1000>, <0x0 0x38020000 0x0 0x1000>,
-> @@ -521,10 +526,14 @@ usb: usb@20201000 {
->  			status =3D "disabled";
->  		};
-> =20
-> -		mbox: mailbox@37020000 {
-> +		control_scb: syscon@37020000 {
-> +			compatible =3D "microchip,mpfs-control-scb", "syscon", "simple-mfd";
-> +			reg =3D <0x0 0x37020000 0x0 0x100>;
+Changes in V4:
+- cleanup if (TWL6032_SUBCLASS)
 
-It came up today that this 0x100 isn't correct - the actual size here is
-4 KiB, so there's a zero missing.
+Changes in V3:
+- use type enum in driver_data and twl_clock_info
+- revert back to store device instead of platform_device
 
-> +		};
-> +
-> +		mbox: mailbox@37020800 {
->  			compatible =3D "microchip,mpfs-mailbox";
-> -			reg =3D <0x0 0x37020000 0x0 0x58>, <0x0 0x2000318C 0x0 0x40>,
-> -			      <0x0 0x37020800 0x0 0x100>;
-> +			reg =3D <0x0 0x37020800 0x0 0x100>;
->  			interrupt-parent =3D <&plic>;
->  			interrupts =3D <96>;
->  			#mbox-cells =3D <1>;
-> --=20
-> 2.45.2
->=20
+Changes in V2:
+- cleanup some defines
+- no separate ops for 6030
+- remove is_prepared()
+- update Kconfig
 
---AMmGHX8GSM3kEZUA
-Content-Type: application/pgp-signature; name="signature.asc"
+Andreas Kemnade (3):
+  mfd: twl-core: Add a clock subdevice for the TWL6030
+  clk: twl: remove is_prepared
+  clk: twl: add TWL6030 support
 
------BEGIN PGP SIGNATURE-----
+ drivers/clk/Kconfig    |  2 +-
+ drivers/clk/clk-twl.c  | 69 ++++++++++++++++++++++++++----------------
+ drivers/mfd/twl-core.c | 26 +++++++++++-----
+ 3 files changed, 62 insertions(+), 35 deletions(-)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZw07nwAKCRB4tDGHoIJi
-0uvxAP9ZQ8cvIGni9H/XnWtk13xiTiUDsVDUdKEmVRW5hAVqsQD/SnIowi8Sck+a
-xDVwEskn483v/i7rcplrFORdLLx7OwQ=
-=2myu
------END PGP SIGNATURE-----
+-- 
+2.39.5
 
---AMmGHX8GSM3kEZUA--
