@@ -1,80 +1,184 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EEC1547F3;
-	Mon, 14 Oct 2024 14:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D34610B;
+	Mon, 14 Oct 2024 14:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915625; cv=none; b=PDi1nrrpT0SKEx91SNQ2f6QoWtXdI1/J9Jl0t/t8+AJMeYnu+iFHIZRT8Ymz5AUyWSjHpkVKeYjWwf2sLqDxa1/LIeutB6aTfTUkyKR+52dUeVStnKaZhLRjUNOZEQLPGH54lPvWLp9Z0bFDZOEKlrnQcAF1sxI6AmuN4Lyq33M=
+	t=1728916327; cv=none; b=s467SCXr3LLB2RHmDLYfd4jokgiz6Q5GkooHiJf6PDOHqTImvflc5RcVtPA03lDk2e4C8CJfqI2Nu6tbflGr1FlZl0Kbl8h2nsoSsi69oiD/sJUWdBR5Z8ileaIVirmX+3L4R41fsdtrZq6c+AbyEIC+mUZCg4rSLiWRG5W+pN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915625; c=relaxed/simple;
-	bh=1U2eFcy8btOrX7BWJkQL0y+3D3BkWa7uYK0HJXmC4Kc=;
+	s=arc-20240116; t=1728916327; c=relaxed/simple;
+	bh=xX2u1RXBfVEYfgRa2sXHuDDh6LmBRyfVEpxZYMlSiPw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PdGOrjUI07EEdsRETOvo2Oia7yiGDPB43whXfSDjm4KRi3yRAD2zl/Mb83PFQ/5mRPswcCx3seJ2lYVurpM/1n3GwvFdDAN0aIg1k+Ok3hfsghg0+HZK9wHChjZzsEZOfELHQWvVeTTyD7kGE3R4g/ohR88SNFUbyshg/QacDm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZquEgqO; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=RCAo+nrVClVqCKfVykF2AblaN6/X6KnJbGVoKbuFiek8cWFnpgP2mntDQ9kZOjUSswXFqma6946F5NcK0jMTxDN3BHCm8oeHZ7+SGdqmYOsnI8mzl4ULy9oFjjeM/VUTTStfUuDpvVa/pk1RJfmXbdHS3ZYsk7q05P3B9cDgSSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZquEgqO"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1445530e87.2;
-        Mon, 14 Oct 2024 07:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728915622; x=1729520422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1U2eFcy8btOrX7BWJkQL0y+3D3BkWa7uYK0HJXmC4Kc=;
-        b=gZquEgqO3m7oJ/yhf7NyWsdDTaqwXiel7VT4fzvGjCowK/pxJKjwv45HlI1nBaUgor
-         fl1eHal+85cVtujw7YyV19N54r3OV6VF3Xc09gP6VfVL5av6ZSm7WVbnU7gg4UADwF/X
-         gd7jUhRVsNiLxABmyvno3WrbF8TDXRPjp09b71SivhGCWbW+3CuJwgVlgyauTdeX8oIF
-         QxBgGAkBJU3mW2e4CAsY++NIZoTQm1xZMzV/VnKGsbyJDSagnAgfY2ZP1KzDkOvnzpwB
-         Y3QQxw5X6TrtzHETXkpEZMRGseQnrP6rIk/IPhRF5Bx9ZMmaK/kEV0RKn9OHlCpC+dE2
-         u/NQ==
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e290d5f83bcso3432167276.0;
+        Mon, 14 Oct 2024 07:32:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728915622; x=1729520422;
+        d=1e100.net; s=20230601; t=1728916323; x=1729521123;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1U2eFcy8btOrX7BWJkQL0y+3D3BkWa7uYK0HJXmC4Kc=;
-        b=n5GbEOBLptQm8wlbWw67qhKFVtqwqfYWLXEkcG9PWx2kgUUTMRWW64NdrYyXtfRNaK
-         i1UvwYjU804orQNsjFzbN2MuANXV5GuC76D19oO/Sd2Qq2ocZdhWWG+5GfvWGd78kxa4
-         VMD63ocTMTbMpB5sz/mkYAtJ98eiE0t/PQBNJ5FO+CTZlyBuvqgLH81hdbcY5VPsj64L
-         D5Y0znL1vLDnldLYgD3irtSaQK12gEB2pKMKUoFHI8hb3Uk465lNsrnic4cZHgu76a2t
-         VGLrhFrkw2s5zpTKp2XwmgKW1zHsMLdAykx0W118+D/AirKiLmCDCTO3FJ5REluF3SLZ
-         +KDg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7o6JNxTAkCwXpMBKy6klYnfeHD5+Vpj8AC1/1OisPQ6c3xng4ecPe1tv1IaP6qHIndcmYTzneadLhl23M@vger.kernel.org, AJvYcCX3/F6pWDRXugMdJyg6dRcp9ovR5DRddajT8cxlfg32mVDoNuv10zm0yO+yJ2v/DgFquweBXhFs37Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTtt9CL+CDxmlH/RHEgSTu7q+fndEJG0hGcFiGy5Q6Na2gnhYr
-	vfHYMUAtAnR9/gRQRcMf0/0Vq59fn50PTgXch6e5Xg4LK26V3f0yQ8YxSeJs97wwngDH4OfGa3y
-	IA8Eu1Yzv9cXBydI+oxTpwec7rwD2cSAK
-X-Google-Smtp-Source: AGHT+IHEFNvqDXKt0pGhSKYkU7CMdg6N4XcIBaTaCc0yZ8gHXEwcN8ltk8mVyRKlKqEx2HfiESSWu0MqDfFpoe9gndQ=
-X-Received: by 2002:ac2:4e16:0:b0:536:554a:24c2 with SMTP id
- 2adb3069b0e04-539da3c5ee1mr6119083e87.13.1728915621449; Mon, 14 Oct 2024
- 07:20:21 -0700 (PDT)
+        bh=mfSK6YpvwPKnZBgXNscdXduSki4zIpfqrIghKqHaqwo=;
+        b=JZC/KhTW3pgyq+iYkuIAwie53Xg+kC00Rj1FU0kF2nzERwuaXPk9y94uaKnTMLm8dJ
+         T35zgskrziSHUUhEuy77/GyM1lChG65drWyrQQ/3yT5TlRbURffpGOn9mvK7Y6o/kjnC
+         snbHtRWWE0NOGai+q09w63V+89+C1tO8/SV/6IQ2X3I7Wrx1pX94RvLTaTcd+FLW+bBP
+         z2LsNwysyVzcwhaH1aB5ChA3xXGbYsbKRwGHwzasv1c7XgbImK5RePQ+n9l7CMN7oxSe
+         O17A3aOYtD4HTdXXCh8f13w+PEEpIWzt2R7yN/7Zg4ShvYgiLwwO8LjlmXHE/H6YoG4M
+         gufw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWIF37PqIN/blF+LpjK4Wb1HKk73ZR1D37VQynD81Q/9IvWjMNVJ99zYOkqJTaMM/cCXqRcT7em8TfCG1NkxFb8Vs=@vger.kernel.org, AJvYcCX0LsCSDOSq/jozEYes3M1lv/iLKqnCRFbeCI9X870GkaRZaoWya2SgFUyA6XX/BNeQEZRa3mCnSDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4KeLpDgCfxnEQ1c9/6V67aj7PZaAG1IYeIbnDIA8hT/vampjL
+	KIUHaYN1BoBQrNCHyqOiyBxUo5+YgNovnkPrwICa+uuCqwit2qb6v2s5PLUR
+X-Google-Smtp-Source: AGHT+IFjO9mHNWr74WOqMVardsGMl9uNGkGO/hk53cGA+tV/+qtgL9JHAPApn5XMchIOQ14XFsNxeA==
+X-Received: by 2002:a05:6902:2683:b0:e22:5bd7:86b with SMTP id 3f1490d57ef6-e2931bd7666mr5129800276.37.1728916323315;
+        Mon, 14 Oct 2024 07:32:03 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e292bf6f3b9sm1693915276.60.2024.10.14.07.32.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 07:32:03 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29327636f3so1539180276.2;
+        Mon, 14 Oct 2024 07:32:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWOJ5DbYNEVSYWYbvmkQDWwX1YbuE+CO+ydTE8rCF6Pjl4JwZYzYHDsDbYWbKq3BR+mRmsO2k/idWI=@vger.kernel.org, AJvYcCXjNnZDL+4lX67xWr1yoG825LkLUJbj/AI8BJyzvCCk9u9RR4pw7SOpUrvTjoI+f2xnxmlzyZyEGvx8dQBVhghcVnY=@vger.kernel.org
+X-Received: by 2002:a05:690c:61c2:b0:6db:3b2f:a18a with SMTP id
+ 00721157ae682-6e36413fbc2mr59380307b3.11.1728916322776; Mon, 14 Oct 2024
+ 07:32:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014-imx-clk-v1-v1-0-ee75876d3102@nxp.com> <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
-In-Reply-To: <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 14 Oct 2024 11:20:09 -0300
-Message-ID: <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata (e10858)
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Aisheng Dong <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
+References: <20241011162030.104489-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdXM8KCd7Fi9dzQt=YUEu_bdwfZGEkaRS1_PaN7ECNFEGA@mail.gmail.com>
+ <TY3PR01MB11346125FF19898F34BD7137F86442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CAMuHMdUii5NfFWOC-4KNMq5Hz-DXnUtYZNuu+=BDDBgNtTq40Q@mail.gmail.com> <TY3PR01MB113461894D98B0DEDC86FB81786442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB113461894D98B0DEDC86FB81786442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Oct 2024 16:31:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0mzLJC7QGHx2cOXKA0Yh_Dez___x-Div3XKQCkVFH2g@mail.gmail.com>
+Message-ID: <CAMuHMdU0mzLJC7QGHx2cOXKA0Yh_Dez___x-Div3XKQCkVFH2g@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	"biju.das.au" <biju.das.au@gmail.com>, Hien Huynh <hien.huynh.px@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 6:03=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
-m> wrote:
+Hi Biju,
 
-> +/* e10858 -LPCG clock gating register synchronization errata */
+On Mon, Oct 14, 2024 at 12:37=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > On Mon, Oct 14, 2024 at 11:55=E2=80=AFAM Biju Das <biju.das.jz@bp.renes=
+as.com> wrote:
+> > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Fri, Oct 11, 202=
+4
+> > > > at 6:20=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > > > > While computing foutpostdiv_rate, the value of params->pl5_fracin
+> > > > > is discarded, which results in the wrong refresh rate. Fix the
+> > > > > formula for computing foutpostdiv_rate.
+> > > > >
+> > > > > Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk
+> > > > > support")
+> > > > > Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
+> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > > ---
+> > > > > v1->v2:
+> > > > >  * Improved the precision by division of params->pl5_refdiv
+> > > > >    done after all multiplication.
+> > > > > ---
+> > > > >  drivers/clk/renesas/rzg2l-cpg.c | 12 +++++++-----
+> > > > >  1 file changed, 7 insertions(+), 5 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/clk/renesas/rzg2l-cpg.c
+> > > > > b/drivers/clk/renesas/rzg2l-cpg.c index 88bf39e8c79c..a1e22d35368=
+9
+> > > > > 100644
+> > > > > --- a/drivers/clk/renesas/rzg2l-cpg.c
+> > > > > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> > > > > @@ -548,7 +548,7 @@ static unsigned long
+> > > > > rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
+> > > > >                                unsigned long rate)  {
+> > > > > -       unsigned long foutpostdiv_rate;
+> > > > > +       unsigned long foutpostdiv_rate, foutvco_rate;
+> > > >
+> > > > While the resulting 64-bit value fits in foutvco_rate because
+> > > > unsigned long is 64-bit on the target platform, I'd rather play it
+> > > > safe
+> > > > (reuse!) and use u64 explicitly.
+> > >
+> > > OK will use u64.
+> > >
+> > > > >         params->pl5_intin =3D rate / MEGA;
+> > > > >         params->pl5_fracin =3D div_u64(((u64)rate % MEGA) << 24,
+> > > > > MEGA); @@ -557,10 +557,12 @@ rzg2l_cpg_get_foutpostdiv_rate(struc=
+t rzg2l_pll5_param *params,
+> > > > >         params->pl5_postdiv2 =3D 1;
+> > > > >         params->pl5_spread =3D 0x16;
+> > > > >
+> > > > > -       foutpostdiv_rate =3D
+> > > > > -               EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv=
+ *
+> > > > > -               ((((params->pl5_intin << 24) + params->pl5_fracin=
+)) >> 24) /
+> > > > > -               (params->pl5_postdiv1 * params->pl5_postdiv2);
+> > > > > +       foutvco_rate =3D
+> > > > > +               (EXTAL_FREQ_IN_MEGA_HZ * MEGA *
+> > > > > +               ((params->pl5_intin << 24) + params->pl5_fracin) =
+/
+> > > > > +               params->pl5_refdiv) >> 24;
+> > > >
+> > > > Shouldn't this use mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
+> > > > ((params->pl5_intin << 24) + params->pl5_fracin)) instead of a plai=
+n
+> > > > multiplication?
+> > > > See also the comment for mul_u32_u32() in <linux/math64.h>.
+> > >
+> > > OK. Will use mul_u32_u32().
+> > >
+> > > > > +       foutpostdiv_rate =3D DIV_ROUND_CLOSEST_ULL(foutvco_rate,
+> > > > > +
+> > > > > + params->pl5_postdiv1 * params->pl5_postdiv2);
+> > > >
+> > > > Unfortunately we don't have a helper macro yet to round the result
+> > > > of div_u64(), so you will have to open-code that (for now).
+> > >
+> > > As per [1], round_closest(x,y) where x is u64 and y is u32
+> > >
+> > > In this case max value of x is 3000MHz < 2^32
+> >
+> > But that is not obvious from the code (and foutvco_rate is u64 soon?).
+> > Also, is that guaranteed? What if the user plugs in a 4K or 8K HDMI dis=
+play?
+>
+> 1080p@60Hz-->148.5MHz --> this is the max dot clock frequency supported[1=
+].
+>
+> 3000MHz is the reset values of the pll.
+>
+> 4k@60-->594 MHz and 8k@60-->2856MHz
 
-Please share the link to the errata doc that contains this e10858.
+OK, if you're sure it can never exceed 32-bit, then keep
+on using unsigned long for foutvco_rate is fine, and using
+DIV_ROUND_CLOSEST_ULL() is fine, too.
+But the "EXTAL_FREQ_IN_MEGA_HZ * MEGA * ((params->pl5_intin << 24) +
+ params->pl5_fracin)" intermediate definitely needs to use mul_u32_u32().
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
