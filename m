@@ -1,184 +1,133 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D34610B;
-	Mon, 14 Oct 2024 14:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3CA1B0137
+	for <linux-clk@vger.kernel.org>; Mon, 14 Oct 2024 14:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916327; cv=none; b=s467SCXr3LLB2RHmDLYfd4jokgiz6Q5GkooHiJf6PDOHqTImvflc5RcVtPA03lDk2e4C8CJfqI2Nu6tbflGr1FlZl0Kbl8h2nsoSsi69oiD/sJUWdBR5Z8ileaIVirmX+3L4R41fsdtrZq6c+AbyEIC+mUZCg4rSLiWRG5W+pN0=
+	t=1728917915; cv=none; b=J+HT8tG2XAVZy1eN4VN/krfFerpr7+EDDKq02K3NOA44BurO2R1FG/r2E5TyiwhEqJfzU2Coa1NAMtEPe1ynX3rcbjXhy9B7IRjEri1gsQkWtgqzLmA0Vs4Wyv6HOTbkuFi33NOF/skM0nVg3jU5804vG5TStROgzbPHSmvLglc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916327; c=relaxed/simple;
-	bh=xX2u1RXBfVEYfgRa2sXHuDDh6LmBRyfVEpxZYMlSiPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCAo+nrVClVqCKfVykF2AblaN6/X6KnJbGVoKbuFiek8cWFnpgP2mntDQ9kZOjUSswXFqma6946F5NcK0jMTxDN3BHCm8oeHZ7+SGdqmYOsnI8mzl4ULy9oFjjeM/VUTTStfUuDpvVa/pk1RJfmXbdHS3ZYsk7q05P3B9cDgSSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e290d5f83bcso3432167276.0;
-        Mon, 14 Oct 2024 07:32:05 -0700 (PDT)
+	s=arc-20240116; t=1728917915; c=relaxed/simple;
+	bh=JRZ44OBgoYCaaa1ufOrPbwGLSAjE/5hwJtri2e3BNE0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QHcG28DlTt0RRsOLATuPCvk65u+1PCmNe3kY1u9rlsDLGrxkwk1gRep59uL7OzVjf1rS2ud3AGnH0Mb7A3+tzNvXlaQ0omDHPTDcbqMVcjACXCN83TICFtN9kdngk33hInb+qWcF2vGuaIJeFSLxpHnoVXCHU+MMAEYYRfBydAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m7lcTqyF; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m7lcTqyF"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43116f8a3c9so49487795e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Oct 2024 07:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728917911; x=1729522711; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKYB8mEjtXz7ct2qSBsLGSgrI4XH9iDG6oysqr2Frdo=;
+        b=m7lcTqyFLSdUSPDFxxVH+4SzXC13xoUmO56ZpzSQ26fLWgaSvWeiCr4f0qY8xz7MGj
+         uDr+iR+rZjdPLh0izbaTy61URABz2Rl6P/mL0kYvei+K5q8K/273Im+3e5xrgc7VyY69
+         jVGhLNxgL0vV08cKKckjwuBa+AIY7XuBEG/1m0mq8hgLEgN1Sg8JxS1wV6YXYuTLbeDQ
+         iekOAk/+xMpwdYOefEhIhUsHsQwG7QPSKn3esb64JWMi/iCJplokmzQOzsmW62bwsIOp
+         y1L9Aj5REVda6hFFw1O0SSxYA9xQgQ6KPdDQNM05CXS6nkmZAfYOU+IYTa+QcQr4Fper
+         l/Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916323; x=1729521123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mfSK6YpvwPKnZBgXNscdXduSki4zIpfqrIghKqHaqwo=;
-        b=JZC/KhTW3pgyq+iYkuIAwie53Xg+kC00Rj1FU0kF2nzERwuaXPk9y94uaKnTMLm8dJ
-         T35zgskrziSHUUhEuy77/GyM1lChG65drWyrQQ/3yT5TlRbURffpGOn9mvK7Y6o/kjnC
-         snbHtRWWE0NOGai+q09w63V+89+C1tO8/SV/6IQ2X3I7Wrx1pX94RvLTaTcd+FLW+bBP
-         z2LsNwysyVzcwhaH1aB5ChA3xXGbYsbKRwGHwzasv1c7XgbImK5RePQ+n9l7CMN7oxSe
-         O17A3aOYtD4HTdXXCh8f13w+PEEpIWzt2R7yN/7Zg4ShvYgiLwwO8LjlmXHE/H6YoG4M
-         gufw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWIF37PqIN/blF+LpjK4Wb1HKk73ZR1D37VQynD81Q/9IvWjMNVJ99zYOkqJTaMM/cCXqRcT7em8TfCG1NkxFb8Vs=@vger.kernel.org, AJvYcCX0LsCSDOSq/jozEYes3M1lv/iLKqnCRFbeCI9X870GkaRZaoWya2SgFUyA6XX/BNeQEZRa3mCnSDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4KeLpDgCfxnEQ1c9/6V67aj7PZaAG1IYeIbnDIA8hT/vampjL
-	KIUHaYN1BoBQrNCHyqOiyBxUo5+YgNovnkPrwICa+uuCqwit2qb6v2s5PLUR
-X-Google-Smtp-Source: AGHT+IFjO9mHNWr74WOqMVardsGMl9uNGkGO/hk53cGA+tV/+qtgL9JHAPApn5XMchIOQ14XFsNxeA==
-X-Received: by 2002:a05:6902:2683:b0:e22:5bd7:86b with SMTP id 3f1490d57ef6-e2931bd7666mr5129800276.37.1728916323315;
-        Mon, 14 Oct 2024 07:32:03 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e292bf6f3b9sm1693915276.60.2024.10.14.07.32.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 07:32:03 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29327636f3so1539180276.2;
-        Mon, 14 Oct 2024 07:32:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWOJ5DbYNEVSYWYbvmkQDWwX1YbuE+CO+ydTE8rCF6Pjl4JwZYzYHDsDbYWbKq3BR+mRmsO2k/idWI=@vger.kernel.org, AJvYcCXjNnZDL+4lX67xWr1yoG825LkLUJbj/AI8BJyzvCCk9u9RR4pw7SOpUrvTjoI+f2xnxmlzyZyEGvx8dQBVhghcVnY=@vger.kernel.org
-X-Received: by 2002:a05:690c:61c2:b0:6db:3b2f:a18a with SMTP id
- 00721157ae682-6e36413fbc2mr59380307b3.11.1728916322776; Mon, 14 Oct 2024
- 07:32:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728917911; x=1729522711;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YKYB8mEjtXz7ct2qSBsLGSgrI4XH9iDG6oysqr2Frdo=;
+        b=BK2t61xRVGeKGuK7EWVpXAoyFLSsUdHhd+mnQ0hNB1JxladFy4MsivekdRoDFwctnT
+         6ZGygWk3jfajXVqB5IqLUQ0wZGkFz3nD7U45+ujzEZBY2F/YjfDKaVh5mHo98bqFrNZy
+         gOXWcKiaOVuB3ypsTxKAr1wQRw4M4lCS5YXukX4abAyXKe7Qur5zKpJyJZ7mjkEbQq+O
+         0KVsB9XX4nXQxH7tTfe/NbeFnJfc857QMPq+qBWT/F2DYfPIOdR7yr6usUlzo7JXejp3
+         BbAqk+oRxtcEhbYA953jlMC/IlSgDz06yqBTf3QpzWgnr4Bz10LzRG3KcN+r5qi2LoBV
+         pRgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDIIsieXJLTpqGpROxRSc85Ha3MlAdb9FOyAmGKPhtR9cKW54mRE6Wg4r2ug038If1L9qZnELDfdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiQAggygpdj6J2lerQFULlOodbXxWtA1XxRGMfPtv/56kp1yYJ
+	T0Aeok1U1d5/x1JYJj9XC/xFUsRtZfCVClitIg/xpTkXA1vBjK0YqTcH/lTSmrg=
+X-Google-Smtp-Source: AGHT+IEYBbeD1Q7jGz6lVOjhol2kYRgWUCHVlTzN3f+mTJX4UKbUMDS1lgLp9CNDHtS5N/8wVLAhCw==
+X-Received: by 2002:a05:600c:1c09:b0:42c:aeaa:6b0d with SMTP id 5b1f17b1804b1-431255dac21mr101952935e9.9.1728917911532;
+        Mon, 14 Oct 2024 07:58:31 -0700 (PDT)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf45dacsm154167905e9.16.2024.10.14.07.58.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 07:58:31 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 14 Oct 2024 17:58:23 +0300
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts
+ flags
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011162030.104489-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdXM8KCd7Fi9dzQt=YUEu_bdwfZGEkaRS1_PaN7ECNFEGA@mail.gmail.com>
- <TY3PR01MB11346125FF19898F34BD7137F86442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdUii5NfFWOC-4KNMq5Hz-DXnUtYZNuu+=BDDBgNtTq40Q@mail.gmail.com> <TY3PR01MB113461894D98B0DEDC86FB81786442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113461894D98B0DEDC86FB81786442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Oct 2024 16:31:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU0mzLJC7QGHx2cOXKA0Yh_Dez___x-Div3XKQCkVFH2g@mail.gmail.com>
-Message-ID: <CAMuHMdU0mzLJC7QGHx2cOXKA0Yh_Dez___x-Div3XKQCkVFH2g@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"biju.das.au" <biju.das.au@gmail.com>, Hien Huynh <hien.huynh.px@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v1-1-241a68c02be7@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAI4xDWcC/x2NzQ7CIBAGX6XZs1/CIhrjqxgPlC6UWCth/alp+
+ u4Sj3OYmZVUahalc7dSlXfW/Jgb8K6jMPo5CfLQmKyxjg07LCwnw8YgTDekEBDzgpf2uBeU8Ys
+ 0aED5VH0q4uSTYi8Hjr23R+8dtW6p0pz/83Ldth/C0EnegwAAAA==
+X-Change-ID: 20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-3e51fba26aa4
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1362; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=JRZ44OBgoYCaaa1ufOrPbwGLSAjE/5hwJtri2e3BNE0=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDTGQvx3yS/HPkaxmpQyopjFM5rcV4BlLoesuq
+ fppq2x6h6eJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZw0xkAAKCRAbX0TJAJUV
+ Vnw2EACeMKXytIIIRe4ajQ44hotO3jfSvrbMHHcjZ1CNrYlATE7F04YkbF6Hl/D95pTKV9hMEou
+ DjPOJWWBhnS45ko0DKd7KUtHkDvCU1S+eoIkxJEAjU1pzgVZ1ARnVQFGRiLb52cSMgNcDS6s1UV
+ b8mkjlKsaDYFyPQ+dQo5HGvQrilHqw8w9e/cPrqIJMdDMBhFV4ntDiN7f9YbxrRjRYOfcQjouew
+ gKolCsLASKG7TkhPxxRiJjxoOVNxzBHWJ4IQhg6EovGujgNATZgh4rTA84xwEqdsmQaw75MmJKK
+ xz9YgVwcd8yIE4Onypn32EAAiKMMB9rCCgi4puakM4abJI7LAYNTCldY8jbrSG+UjG6hK4u6if4
+ GHPOMt9OAr/EEx2bwoXtKpI+6H7W7bAP+GKwdBv0tVwdX9e70PSj/b+dC3bpDoyNvvx9SL4B7EH
+ 6oPE7mnVJfnDBnoDEIBTNB7o3sMURlIl9r/Au0gBk0YUKTgCnzg8Zi84DkIZkiLDwG0oHr0aqW6
+ UdvoQ/IXn09k3fN63sKUynohIR7KcZK8DCREQTJJZobdsMeHiQW4/ihO/cXFeC4ClyuL7oQxwv6
+ FFrrRGv1clx1ClC+t9NDaFmWlNLMZhDAfxa64xpYZfl/GLlxyzVQ8Qh2INUyyKsj31i5zalr07r
+ lMVWtV3jqE8SlyA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Hi Biju,
+Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
+configuration on machine suspend. Currently, the QMP combo PHY driver
+doesn't reinitialise the HW on resume. Under such conditions, the USB
+SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
+RET_ON. This has been already done for USB 0 and 1 SS PHY GDSCs,
+Do this USB MP SS1 PHY GDSC config. The USB MP SS1 PHY GDSC already has
+it.
 
-On Mon, Oct 14, 2024 at 12:37=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Mon, Oct 14, 2024 at 11:55=E2=80=AFAM Biju Das <biju.das.jz@bp.renes=
-as.com> wrote:
-> > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Fri, Oct 11, 202=
-4
-> > > > at 6:20=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > > > > While computing foutpostdiv_rate, the value of params->pl5_fracin
-> > > > > is discarded, which results in the wrong refresh rate. Fix the
-> > > > > formula for computing foutpostdiv_rate.
-> > > > >
-> > > > > Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk
-> > > > > support")
-> > > > > Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > ---
-> > > > > v1->v2:
-> > > > >  * Improved the precision by division of params->pl5_refdiv
-> > > > >    done after all multiplication.
-> > > > > ---
-> > > > >  drivers/clk/renesas/rzg2l-cpg.c | 12 +++++++-----
-> > > > >  1 file changed, 7 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/clk/renesas/rzg2l-cpg.c
-> > > > > b/drivers/clk/renesas/rzg2l-cpg.c index 88bf39e8c79c..a1e22d35368=
-9
-> > > > > 100644
-> > > > > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > > > > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > > > > @@ -548,7 +548,7 @@ static unsigned long
-> > > > > rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
-> > > > >                                unsigned long rate)  {
-> > > > > -       unsigned long foutpostdiv_rate;
-> > > > > +       unsigned long foutpostdiv_rate, foutvco_rate;
-> > > >
-> > > > While the resulting 64-bit value fits in foutvco_rate because
-> > > > unsigned long is 64-bit on the target platform, I'd rather play it
-> > > > safe
-> > > > (reuse!) and use u64 explicitly.
-> > >
-> > > OK will use u64.
-> > >
-> > > > >         params->pl5_intin =3D rate / MEGA;
-> > > > >         params->pl5_fracin =3D div_u64(((u64)rate % MEGA) << 24,
-> > > > > MEGA); @@ -557,10 +557,12 @@ rzg2l_cpg_get_foutpostdiv_rate(struc=
-t rzg2l_pll5_param *params,
-> > > > >         params->pl5_postdiv2 =3D 1;
-> > > > >         params->pl5_spread =3D 0x16;
-> > > > >
-> > > > > -       foutpostdiv_rate =3D
-> > > > > -               EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv=
- *
-> > > > > -               ((((params->pl5_intin << 24) + params->pl5_fracin=
-)) >> 24) /
-> > > > > -               (params->pl5_postdiv1 * params->pl5_postdiv2);
-> > > > > +       foutvco_rate =3D
-> > > > > +               (EXTAL_FREQ_IN_MEGA_HZ * MEGA *
-> > > > > +               ((params->pl5_intin << 24) + params->pl5_fracin) =
-/
-> > > > > +               params->pl5_refdiv) >> 24;
-> > > >
-> > > > Shouldn't this use mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
-> > > > ((params->pl5_intin << 24) + params->pl5_fracin)) instead of a plai=
-n
-> > > > multiplication?
-> > > > See also the comment for mul_u32_u32() in <linux/math64.h>.
-> > >
-> > > OK. Will use mul_u32_u32().
-> > >
-> > > > > +       foutpostdiv_rate =3D DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-> > > > > +
-> > > > > + params->pl5_postdiv1 * params->pl5_postdiv2);
-> > > >
-> > > > Unfortunately we don't have a helper macro yet to round the result
-> > > > of div_u64(), so you will have to open-code that (for now).
-> > >
-> > > As per [1], round_closest(x,y) where x is u64 and y is u32
-> > >
-> > > In this case max value of x is 3000MHz < 2^32
-> >
-> > But that is not obvious from the code (and foutvco_rate is u64 soon?).
-> > Also, is that guaranteed? What if the user plugs in a 4K or 8K HDMI dis=
-play?
->
-> 1080p@60Hz-->148.5MHz --> this is the max dot clock frequency supported[1=
-].
->
-> 3000MHz is the reset values of the pll.
->
-> 4k@60-->594 MHz and 8k@60-->2856MHz
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OK, if you're sure it can never exceed 32-bit, then keep
-on using unsigned long for foutvco_rate is fine, and using
-DIV_ROUND_CLOSEST_ULL() is fine, too.
-But the "EXTAL_FREQ_IN_MEGA_HZ * MEGA * ((params->pl5_intin << 24) +
- params->pl5_fracin)" intermediate definitely needs to use mul_u32_u32().
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 0f578771071fadb0ea7f610f04c5510a85a8485a..33afad9c878d30f487f63b311bcea6296d0653fd 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -6155,7 +6155,7 @@ static struct gdsc gcc_usb3_mp_ss1_phy_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_usb3_mp_ss1_phy_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
 
-Gr{oetje,eeting}s,
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-3e51fba26aa4
 
-                        Geert
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
