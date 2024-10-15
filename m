@@ -1,155 +1,215 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D735C6AB8;
-	Tue, 15 Oct 2024 02:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFA11ADFE9
+	for <linux-clk@vger.kernel.org>; Tue, 15 Oct 2024 07:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728960400; cv=none; b=kM1jDnlNoMHd7mio+1czPEc96lgCzKZRopgk4d6nBPLsN1m3PwN4IWNzs31JtisUGHl8LOUitywgwZGcmp81OSIoXzS3O5OhDcnElnHd5gH3xL1mIHujFrxCC7h7E/L9X59iRlXBQdRNtbzfM+kFw5yeFa3ZVX2IvBSV1mozxx0=
+	t=1728978459; cv=none; b=hUzGFSPkRG0kn+xMDpDlGfVOgLS0Z3AmvoUrVxgaTwxTvyPvumq4mSQoM6zsYld9vzl+kty1oTy44rEbwRRXB86iii+XCKmIzsDUHD4lYWwu9HAEBhmmpwz9/xPfE4TKxNkPWZv+P2T5hMVt39M7f/GLEEQFZv6NXApESYFMurw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728960400; c=relaxed/simple;
-	bh=hb/tXU639KZVM7PWEVuCMASmkvuahxNCAt+oTq3QPNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U7yr+CNSVEH3f/sgMEcWWErFMsHhjf50ldRiJq2oyRJdsMUHkFCP8/rqZh6YXv+lEyB84UNlH5sEr0oyRqQ3E6CGoXk3NMa+Kxct1pvcH4/OlUwv8B13XnJhSOh550XJKMZmohDjKi5doteavcjGhK08G4zCK+6rgdXz7JyUvto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T46TAodU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1728978459; c=relaxed/simple;
+	bh=D6bs8AhbvZ1hhOwFTkRYuSj0EUYlQBuMG38nrex0/Q0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nggdf5xIeI4VYsJ/WeNqJPaxxmMYm7VLwyQpiM3rNiiPQuq1rxIKuBeigxyYH/RzgjBT5qaniBDXI2471tvgoe0JZ4dIjOmS5vI+9a660YAVuCyMgDP1hdTZyd5go/GCgAZXid6vysIC0o7xzWS+SyRXloLsI90SVUNa1i9waF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dy+ck6S7; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T46TAodU"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F1pLdg028934;
-	Tue, 15 Oct 2024 02:46:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pbEGIR5/6gy6kLcA5WidgDGnLnhumHi9DVqfOYna3Nk=; b=T46TAodUUVjBk9FV
-	lN+2YsTYwPAP8uHgd3/C+l+dGKcGfqVj6wQdQ5mxpAsTOSw7cZYyICXKGxjjf7VG
-	kAX1sjF2fbkvN1Dclq7q1bdhd54VoW/zvEjx/bWrpprmFprdOP6NIGRro3xAtpRt
-	jX0oDHghoS90XNPDhgQAJPZosbibbDkMnhyvgLm1OitWmyT2RAzBTdQnkTxPk11d
-	DZWTvgyJNcQrUJ6HCcVW6EMEVyUrt5DxPbEdPpNWSt09y+rggeqvjraAvlLuIN8x
-	eCj7S2Hlw4Ix0142SJlS0gqlotvAftKOmd7Bq5UC7gWmsa6KWuDkuC39Tu6bnPSr
-	Wy5U5g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4292evhwcm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 02:46:24 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F2kNHt003772
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 02:46:23 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 19:46:17 -0700
-Message-ID: <28567b77-9d0c-421a-8c2e-88a310a20704@quicinc.com>
-Date: Tue, 15 Oct 2024 10:46:15 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dy+ck6S7"
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-84fc00f455bso1197843241.2
+        for <linux-clk@vger.kernel.org>; Tue, 15 Oct 2024 00:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728978456; x=1729583256; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1JMqOkw9Vt25iJpUnQeg9aOLmHsYLQqSKR1jmOnHY8=;
+        b=dy+ck6S77AEaMfrkQxeRbZs2rPuckWAXcBu13OOeVfxxo8vN5bYbA0Kjvcdk31iCDT
+         wvQw/HuYtY0jGwbsjCY1DLF9QRmMOvIHZfha/V3x3tJ2aG0YGSaUZ/CFrFaQJlSlJv8K
+         1m4qYJWX2Nt9bWpSw11d28I5XvKKjd18K0AkbLmsZtGHVQnaSTuLBGBpMcHrrc0BwaA1
+         ei1JvBR0134PW58y4teKUkmIeJfVQGkPoX7NAg0pn7H7q2eO5oYz/ctfpoLLbar1ATZr
+         TQYqhpG5kubMlHIqACUUYy2FqgIGQq1zI4jgfgz4ldhbv1xAHRueVVtQWlry8oTyM2Eh
+         qBxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728978456; x=1729583256;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F1JMqOkw9Vt25iJpUnQeg9aOLmHsYLQqSKR1jmOnHY8=;
+        b=gDG0iAHwE/dGinandp1NJx3mziv/U//ZP4KHeM3nPgPkLhLULJh9JFGa/PkG/UFsRD
+         FbBnzlSoDHlw0fBJCbsnRjpryjP4/O59LBfSlAHfMchY5tvIIfx5QXoYktv9TaWwRDF1
+         QDH7CGxOfTLMxL4YBHRhz7Foig6bLvaxFrChZ1x6r4BVgOFTo0p42/Qeu4IowDt5UGFn
+         0+Jyc0nrsyq6WuMzwzw8I7qv3XPdval4rwNuDrGQjqtv5dfmC/aeCsgfcnOeogId375k
+         taM5zWhPH3GpCwnJUpSa3Bb9vJN7LeVtE/R1OaHSJnVD2YbYYHEm4Al+Yx0C764cqdoN
+         WPRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXufg5D5o1ah+eU6I/kIVJznyPxGOa8JSaIxT3Mli6aL2aEGTgnEFsPuzEH0cEyy3OZV4aGygSxDPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC+MGz0mXt9gi7i9Au0YlBBU8dfjkTFy+d0eCRIWdQl+yXJyD/
+	UTOJUOSlv6GzS7h3zx7ef+G3GWBF//QYzPBIjsxDWCo+s/p/XpUE/v4kDRPGsTerdnDmgWRhyCl
+	QpO1B0Rhe+sOYeCC+/LweDXSEJa9VZRkxxN23oQ==
+X-Google-Smtp-Source: AGHT+IGdVCcCuUjhI+WseBShaKTMvVroRB+xVABD2EDZXIOC+Dkk/mBw6Vsr9hWqTFsvCcMpmLqrHD58pwpk6UgsWFA=
+X-Received: by 2002:a05:6102:d87:b0:4a3:d8ab:8938 with SMTP id
+ ada2fe7eead31-4a475f4cdd3mr5869905137.12.1728978456286; Tue, 15 Oct 2024
+ 00:47:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/8] PCI: qcom: Fix the ops for SC8280X family SoC
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Johan Hovold <johan+linaro@kernel.org>
-References: <20241014171807.GA612411@bhelgaas>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <20241014171807.GA612411@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3wDoqdW48Ll3OwwhzQMMW2xvx-lvC8Qx
-X-Proofpoint-ORIG-GUID: 3wDoqdW48Ll3OwwhzQMMW2xvx-lvC8Qx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 impostorscore=0
- suspectscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410150017
+References: <20241014141217.941104064@linuxfoundation.org>
+In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 15 Oct 2024 13:17:24 +0530
+Message-ID: <CA+G9fYv7K3-4M0unzJz_AGG1kySTkDYMaqXXgCFisd2j0iPCEg@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>, Lee Jones <lee@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 10/15/2024 1:18 AM, Bjorn Helgaas wrote:
-> [+cc Johan; if you tag a commit with Fixes:, please cc the author of
-> that commit!]
+On Mon, 14 Oct 2024 at 20:20, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Fri, Oct 11, 2024 at 03:41:40AM -0700, Qiang Yu wrote:
->> On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
->> they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
->> introducing a new ops struct, namely ops_1_21_0, so that BDF2SID mapping
->> won't be configured during init.
-> Can you make the subject line say something specific about what this
-> patch does?  "Fix the ops" really doesn't include any useful
-> information.
-Sure, will directly say Remove BDF2SID mapping config for SC8280XP in 
-subject.
+> This is the start of the stable review cycle for the 6.1.113 release.
+> There are 798 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Based on the Fixes: below, this has to do with ASPM, so the subject
-> line (and the commit log) should probably say something about ASPM.
+> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
+> Anything received after that time might be too late.
 >
-> I don't see the connection between your mention of SMMUv3 and ASPM.
-> Are there two logical changes here that should be two separate
-> patches?
-This patch is to remove config_sid callback for sc8280x as it
-supports SMMUv3.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.113-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This patch is not related to ASPM. Look like using
-70574511f3f ("PCI: qcom: Add support for SC8280XP")
-in Fixes tag is better. Sorry for the confusion.
+As others reported,
 
-Thanks,
-Qiang
->> Fixes: d1997c987814 ("PCI: qcom: Disable ASPM L0s for sc8280xp, sa8540p and sa8295p")
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index 88a98be930e3..468bd4242e61 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
->>   	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->>   };
->>   
->> +/* Qcom IP rev.: 1.21.0 */
->> +static const struct qcom_pcie_ops ops_1_21_0 = {
->> +	.get_resources = qcom_pcie_get_resources_2_7_0,
->> +	.init = qcom_pcie_init_2_7_0,
->> +	.post_init = qcom_pcie_post_init_2_7_0,
->> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->> +	.deinit = qcom_pcie_deinit_2_7_0,
->> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->> +};
->> +
->>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
->>   	.ops = &ops_1_0_0,
->>   };
->> @@ -1405,7 +1415,7 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
->>   };
->>   
->>   static const struct qcom_pcie_cfg cfg_sc8280xp = {
->> -	.ops = &ops_1_9_0,
->> +	.ops = &ops_1_21_0,
->>   	.no_l0s = true,
->>   };
->>   
->> -- 
->> 2.34.1
->>
+The arm build broke on the stable-rc linux-6.1.y branch due to
+following build warnings / errors.
+
+First seen on v6.1.112-799-gc060104c065d
+  GOOD: v6.1.112
+  BAD: v6.1.112-799-gc060104c065d
+
+The bisection pointed to,
+  clk: imx6ul: add ethernet refclock mux support
+    [ Upstream commit 4e197ee880c24ecb63f7fe17449b3653bc64b03c ]
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+List of regressions,
+* arm, build
+  - clang-19-allmodconfig
+  - clang-19-defconfig
+  - clang-19-imx_v6_v7_defconfig
+  - clang-19-lkftconfig
+  - clang-19-lkftconfig-no-kselftest-frag
+  - clang-nightly-defconfig
+  - clang-nightly-imx_v6_v7_defconfig
+  - clang-nightly-lkftconfig
+  - clang-nightly-lkftconfig-kselftest
+  - gcc-13-allmodconfig
+  - gcc-13-defconfig
+  - gcc-13-imx_v6_v7_defconfig
+  - gcc-13-lkftconfig
+  - gcc-13-lkftconfig-debug
+  - gcc-13-lkftconfig-debug-kmemleak
+  - gcc-13-lkftconfig-kasan
+  - gcc-13-lkftconfig-kselftest
+  - gcc-13-lkftconfig-kunit
+  - gcc-13-lkftconfig-libgpiod
+  - gcc-13-lkftconfig-no-kselftest-frag
+  - gcc-13-lkftconfig-perf
+  - gcc-13-lkftconfig-rcutorture
+  - gcc-8-defconfig
+  - gcc-8-imx_v6_v7_defconfig
+
+
+Build log:
+---------
+drivers/clk/imx/clk-imx6ul.c:489:41: error: implicit declaration of
+function 'imx_obtain_fixed_of_clock'; did you mean
+'imx_obtain_fixed_clock'? [-Werror=implicit-function-declaration]
+  489 |         hws[IMX6UL_CLK_ENET1_REF_PAD] =
+imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                         imx_obtain_fixed_clock
+drivers/clk/imx/clk-imx6ul.c:489:39: warning: assignment to 'struct
+clk_hw *' from 'int' makes pointer from integer without a cast
+[-Wint-conversion]
+  489 |         hws[IMX6UL_CLK_ENET1_REF_PAD] =
+imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
+      |                                       ^
+drivers/clk/imx/clk-imx6ul.c:491:41: error: implicit declaration of
+function 'imx_clk_gpr_mux'; did you mean 'imx_clk_hw_mux'?
+[-Werror=implicit-function-declaration]
+  491 |         hws[IMX6UL_CLK_ENET1_REF_SEL] =
+imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
+      |                                         ^~~~~~~~~~~~~~~
+      |                                         imx_clk_hw_mux
+drivers/clk/imx/clk-imx6ul.c:491:39: warning: assignment to 'struct
+clk_hw *' from 'int' makes pointer from integer without a cast
+[-Wint-conversion]
+  491 |         hws[IMX6UL_CLK_ENET1_REF_SEL] =
+imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
+      |                                       ^
+drivers/clk/imx/clk-imx6ul.c:494:39: warning: assignment to 'struct
+clk_hw *' from 'int' makes pointer from integer without a cast
+[-Wint-conversion]
+  494 |         hws[IMX6UL_CLK_ENET2_REF_PAD] =
+imx_obtain_fixed_of_clock(ccm_node, "enet2_ref_pad", 0);
+      |                                       ^
+drivers/clk/imx/clk-imx6ul.c:496:39: warning: assignment to 'struct
+clk_hw *' from 'int' makes pointer from integer without a cast
+[-Wint-conversion]
+  496 |         hws[IMX6UL_CLK_ENET2_REF_SEL] =
+imx_clk_gpr_mux("enet2_ref_sel", "fsl,imx6ul-iomuxc-gpr",
+      |                                       ^
+drivers/clk/imx/clk-imx6ul.c:548:9: error: too few arguments to
+function 'imx_register_uart_clocks'
+  548 |         imx_register_uart_clocks();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/clk/imx/clk-imx6ul.c:19:
+drivers/clk/imx/clk.h:15:6: note: declared here
+   15 | void imx_register_uart_clocks(unsigned int clk_count);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+
+
+Build log link,
+-------------
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.112-799-gc060104c065d/testrun/25432777/suite/build/test/gcc-13-defconfig/log
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwgipt3iHSCkBuMSKQIhwr95q/
+
+metadata:
+----
+  git describe: v6.1.112-799-gc060104c065d
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git sha: c060104c065dc2884e301155e32dd955e6bb45b5
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwgipt3iHSCkBuMSKQIhwr95q/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwgipt3iHSCkBuMSKQIhwr95q/
+  toolchain: clang-19 and gcc-13
+  config: defconfig
+  arch: arm
+
+Steps to reproduce:
+-------
+# tuxmake --runtime podman --target-arch arm --toolchain gcc-13
+--kconfig defconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
