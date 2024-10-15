@@ -1,435 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0B1290F;
-	Tue, 15 Oct 2024 00:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728950628; cv=none; b=niEX6Bhmry6Qj8o5GRKguQFdyTdjYg8BQ7rBT1NQbYx1G090MaC8cUCeMiez7wPaV1MmzcrIHVaUhqOyCpR9OPcHVkfR6BLL8a2IJHn9jgkF3OnDAOLE56WKk/Ffi3blJAdg7wNpnaoxnCw/9UgkyFSV3bJOfIqAiHpdsdG4qAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728950628; c=relaxed/simple;
-	bh=7tMpbJ8Vu4P4hP2iot5d3hf7tVj4juqSjYBupVFsn3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVoU4Dptpsy8SpI/VugZ/Q4kNQFjvUcVddUI8mBOpVob5bX+fYRo5g2IBk+on81T0UziT/lbW5S7JH8WFMbVy1NlgCFqS3tu/Cp6KezWHXAZS7aP5+X/LKBTCiFGHdOb0VzcQpIHFi5AJTNqgS0fBenUN1cuXy8/4w0vF43bwKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ5fLB4E; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9917A184F;
+	Tue, 15 Oct 2024 02:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728959151; cv=fail; b=AvErhK88u3Erd4iWWsDBVxsh3QUj+0lFnAvbHVxucdYnujgAF0yVtGQcJARe1niJLrdPmFThV5S+uDYNn/cRl3rHdOy+teV+lntvDQkms+7lR7teC+CDNiNp2g06lXlZbEJxCU6iMowSkBfnMY0rC5p6vvQ60zFaqlb/1jPDg2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728959151; c=relaxed/simple;
+	bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZgTeDXH5Fv6ewHxQOj9uQ7chgEvGcI0fo9fe3vadLV44XseApGHwhjCzKqeDw2tpin27exz8dtq1k7rP7VCfk+FJ/VD4ctQwRbsY2ckeVzTxTvEao/WlC9IbP/7hIRg2Iv/Fc6PGt+ZCxOPnC2Ap14uhshyE75LiMeAae4c7GYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GQhUe9kF; arc=fail smtp.client-ip=40.107.21.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ5fLB4E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26190C4CEC6;
-	Tue, 15 Oct 2024 00:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728950627;
-	bh=7tMpbJ8Vu4P4hP2iot5d3hf7tVj4juqSjYBupVFsn3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJ5fLB4ElHozodqX8Vxc2V/8LKISf2E3rmd4aIrKEGZNPprGXDzQn1r8CvH3TZ1wW
-	 CXiuXP6OrCTfIk3sxmn0GPa+x4PYpfnuuNpJ1qfcdHUgaTwf3NDv2Y2ryu27jPGyDV
-	 VSt+aj75c1c7XslYoYmCXjvGyjf7BG03k9eKyfOgdxUThjqqJ8VTdCThUc5Fapv3Xs
-	 0aHgDm4LoNrjS2twTtOvUbj0o6qBqsg4QflVmba/ONuFr7wpvhTJbn/hD1H3WeRVXO
-	 yksOtxpB2aTbQk/JtAGAMA2id0PbdmJHxXdGm3BbAPUX8ajIPdVyOQPuwAEXvLTXVn
-	 9jXyefypGhGXg==
-Date: Mon, 14 Oct 2024 19:03:44 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] gcc-sdm845: Add general purpose clock ops
-Message-ID: <eatodbdrn532sjcvmuque5wznspo6rkydp3xkycaxzyoahsiqg@t4vuy3ulbdek>
-References: <20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com>
- <20241007-starqltechn_integration_upstream-v6-2-dd75c06c708d@gmail.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GQhUe9kF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SwQg+8DUrr+5180hKwTelQLF6mZ7jsTybiyfBX5AS9gljKbPUE4QU7T/pN8jjdeZH/HrTr4flFC9V4kK8inWiqEXDHiSZMSuybcqlNDBV43gOFQsVuri2fO6Jx1vTrmGxAedoLd0rp2Ie/o5CBom4LtUhV0yOJ0bLXeac8mHKm2eDQOYfvkwxHM705M51fQ2SeLqKTmb1haZQ4uPPr0gZvS+gOykqVdl05GeqDGx55K25MMrMVjnQjMYdmhadjvS2IVfHQ67ul1Q6vmMc5kLs6GTJ7qMhrAkql1cj4tCxwWtiuLsuXkziVi4+kULItWQbuirmGVS18mw9kS5djUf7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
+ b=ii4+HCj7GcA0xMMaLQIaqJGP5UckadbB4nx4XziguUT333DDNWNtZHdhN6VLVxDE7IckEavIuiJwSiEcdsllFKqFqXF22nLHc56qDbEMQouz4YSGzbGcpxP7o1VlZN9cvU9lombZ6nWjOG7Ruq1jQII8B0LaNj1AHt5KyUCw+h0QnGxMaL3Yo1al5sLfO8u4tNeNLjkUerFnCgLfSaL5S0QWWwOnDE19DikAIyjFmtcd4tCAJmzKBDDYo/pvcOvy7qblRQP9Z8ExWKo295PY32i2g/nmajpuUjaOunL9Rd1p8Tgu/BHgHxua3jhyWRn3+o0wGWFwWqXTNoOi1ZPkKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
+ b=GQhUe9kFIIBn1rKb8U1MD9z3oZy2lTesBGYuqJfif/08OoHSpVqUfU/41Ut4keaAfd95i6MF4UIwe/ELGQmYT0M680FhJKrAYiMEqZeJh97A2dIpCmUl231wNYTvnOsiND3zYqa5brCUG63MMI7+toFBwtk60knsf28rw4CMEs8SH8InU0XE0b8hOPJ4nrANmzEVEvAI+9xoU861i/ddjPe0DxzsDWW/wgTGnGhYDd6zSUp3wwA4fwbaTegWdazfRM2TlANP2f+zmHlE525wr9rVRv0KYr7GLLs7AiJd2tKLfO9PgsyHEVYxIsl3cYh7CX1vtmaviozeEVmIeWT5Sw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VE1PR04MB7245.eurprd04.prod.outlook.com (2603:10a6:800:1b1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 02:25:45 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 02:25:33 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Abel Vesa <abelvesa@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Aisheng Dong <aisheng.dong@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata (e10858)
+Thread-Topic: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata
+ (e10858)
+Thread-Index: AQHbHhfXcCGneoDf+E2/H05k1kIVPrKGTCmAgADJq8A=
+Date: Tue, 15 Oct 2024 02:25:33 +0000
+Message-ID:
+ <PAXPR04MB8459AA95968436898B46267C88452@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20241014-imx-clk-v1-v1-0-ee75876d3102@nxp.com>
+ <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
+ <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
+In-Reply-To:
+ <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VE1PR04MB7245:EE_
+x-ms-office365-filtering-correlation-id: 375da646-7c59-4328-859b-08dcecc0a558
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Q0VEWWxOUlVZUXpDYWdXSU1vL1VIYUZhVGpjbGdZNmRzeXh2SkNjN0dGT3c0?=
+ =?utf-8?B?UVd1dzgwZmV4YnI5cWRHdEN0UTlneXhqL0tvSXc0NU9yejcxUTdnMWtsbXln?=
+ =?utf-8?B?d29SLy9YZ1VQZ3V5azJOWlBUcGpkVWlMeXN6YkFXNU1oRGZMYTh1MVFmNXk2?=
+ =?utf-8?B?blRnUWRqZ3NiVVozay80cktHSGo2Q2RvMGErcndQN0hxNWVpQmo3Y2tSQ01V?=
+ =?utf-8?B?QTdpa1pmSnZXejFGQSt2MFlPRk5hWjN2TVlVQWpJNzJPVW5hSVRHZEtnMEow?=
+ =?utf-8?B?TGFPZEwzWlpNc0ZTbXVFMFEyS2dpZktsMG5FUTJMQSthOHdKU1ArbVI2UWQy?=
+ =?utf-8?B?MS93VXBhN0lxR2kxd1lSVVVjWlJvL0NlQ3F6aEhtK2RnSXVmTFZaWjY5QWdv?=
+ =?utf-8?B?eDB2Vkx4TjR6OFJHNFVFb0luVTcvOFI4ZUlEVEl1RURHYWhpVTYycTdiZDF3?=
+ =?utf-8?B?L0xUeG5IR3lIRElwOEFvajFpY0ZIdTNMVE1OL0tNVGIvYjM4V3hYVndjdEh0?=
+ =?utf-8?B?Wk5zRlJEVStuM3pEMlVmZkZ3b1Zzd05TNE9MMkM3dlpXUzd5a0k1bTRYVUFr?=
+ =?utf-8?B?N3dYT2hIbmMwQXpLaVd3ZUpJNTB3ZUZFWWNXT2UxTnBBRnYxVytTS3p6UnI1?=
+ =?utf-8?B?V0JXSjVMdlV0bmtuRDhtbTZ3OXdTYUppWXhFbjZKdlBuaWhrS3gxZURBTytn?=
+ =?utf-8?B?R3kxSUk5VHViKy9zbXN5TnowY2d5a211cHJudUpEYm5FRkpzSVl1QVJFRGh6?=
+ =?utf-8?B?K0NBRGVPcGNNSEJRZmNpNitBejd5dHE5eWZwK1U1NzlrMmJIR3JvcWsrL2xG?=
+ =?utf-8?B?cTRhMjdrcVRBWWR3eGdCVFdibkV4d2ZMSytNVy8zS0Q1dXBBTmNsSFlXNUFk?=
+ =?utf-8?B?SlZPckVoUjJwWEw0ZjcxYTlmUlhtWmlJZG5vanloS1A4Wm15ZkVBM3FTRDhU?=
+ =?utf-8?B?TG5NSXV1ZjJ1QzJ4Mll6WFNFVDVCL3ZwV3o0YU4xZHFzNXROU2puUmxpYUVP?=
+ =?utf-8?B?SG9QVzVDM3I2ZEtkcjZyWkVSVjVUdzA5UjV6ZjJ2K1pXU3puc3E4SlFJTXRE?=
+ =?utf-8?B?SzFaaHM2UGhCTUg4SVVuTkVkanc3dkQxd1ZHZVR4QUtnalNrM1FOODBvV2g4?=
+ =?utf-8?B?Q1YrNWNFSFAzdFBaajlzM2czQVZzRFBNaVk0Z2ZKcmZna2VQeVlsQ3VicWsx?=
+ =?utf-8?B?eGZhMk5FV1JoRmo1Mm1xVXdvQkV3ZTl6dTcyelE4MHpqQ1g1emx6NWQ0RTc1?=
+ =?utf-8?B?NWJzUWl0d2xhUjRkQ1ltYWRoaUlMRi92WWh3dDJXRU9sMVc4NW9vQ3k4THBI?=
+ =?utf-8?B?T1QwVWRWMUwvSEZHdUhWbUY2blRvdEM0elF6OGlGUHkveE5TWnJKVlBUOW51?=
+ =?utf-8?B?SEc3VmkwVmowRjh0QWNEWTl5alNHNFRyZ3VOU2YwenZBOVFQYjVwMEs4RHFN?=
+ =?utf-8?B?eVdqVzliZER4Z3ZkMHBBd3RBbkVMQTl1a2Z6OWRFQnNQRktaN29lcW5tV3N3?=
+ =?utf-8?B?S1E0WFErTURnUk9icmZMS3FzdlJXVHBMZzRwcFZER3VnSFdzaHFOSjNVcTEr?=
+ =?utf-8?B?YzdGZWJqRzB1K21aWnhpWGREbHg2WE1QV3Fyd1hleWMvQUhJd1BETnlnQmxN?=
+ =?utf-8?B?WkFWQUxxalNpeDVlYUZmaUs1RisvNElUS3NoQVF2cWxpZHg3cnpXLzhjMnVo?=
+ =?utf-8?B?UHNvU0FmeHQ5cjdjeTFENXRxSlJOTUxCbko1MGIzcWlSanZFQlAyUUhtMndY?=
+ =?utf-8?Q?W2L2elmwqKr/Kt864o=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Q0x4eE9LOGF4ZXAweTNYV0V2dnBLSnNqVk84K0M3VTlKOURCcVdTczFodWhL?=
+ =?utf-8?B?VWlHM1l5QmVWc1gvbDJ5Z3kvcU9tZ0EwZDgvd25RbnkwRFl3WXZTNVo0Rmx1?=
+ =?utf-8?B?bHVrR0FJOXlyeHBBYS94S0xsZTZTajRGbGhpMHBvZ1kweGdFb3lqU3lWRXpz?=
+ =?utf-8?B?ZnlINnNlYkRuUDI0cW1DZzVVY0NJbjg2YWRkSlh5VGRlZGYxaThDTXJPSDI2?=
+ =?utf-8?B?TnVSTWlNcGs2eDJnVmV0MHVpMUZQdXpES0dEMVBjblR0NXcxckhpL0tHNmVa?=
+ =?utf-8?B?ZzRHMVFacjhMWFJtMzJJck1aRUg3MFZ6cWIzcjJrUi9IcjFRUEJVZUM3THJG?=
+ =?utf-8?B?Y1hKOWdFcitqK1pzMWx5T05QeUJkcWs1QzROSnVlb2hCeXlxd3Ezd1JpZUZY?=
+ =?utf-8?B?R1dlc0l3Znk3QXBJTU91ZlVSQ0RMZDg3bHA5cHp1VlRrSDlLUER5OTlUL1V6?=
+ =?utf-8?B?eE1ZYnJOSktRMWNTRHZGazRNU3BJYWMxeklDUXZuS0EvOEpyMUJXWStTLzM1?=
+ =?utf-8?B?S09jeG1jbE80MEFreldFYnUrQStaUjg3VDNHNEpvZk42R0JtQTc2TUdmYzBj?=
+ =?utf-8?B?V2trYzc2bzVMSWl4S055WFNsMkd4Q3BsNEh0RVV5cW1YN3RUS1pKcmZaNFpZ?=
+ =?utf-8?B?R0V4ai9XNmZTV3E0amJsc2dlazFYWVZMb3k2TVJvb0M4Q1lCQlFLaXN1L3NH?=
+ =?utf-8?B?NXJpc25XZXdYRElTVjBwU3VraGxSMDNjN3lrU2pLSnIxbk5RUzRkYXN3NDcy?=
+ =?utf-8?B?OWMrbDN1UVR3cFY1bndjaCtyVER1SSsrZTF4aURvbUYvakx3WHZmemJmZ1Ir?=
+ =?utf-8?B?Q1RzRkxvVkUvNnppdVBWcm5TcXNlRFNnK0NpemdtYkJTZnFTWVRuQmt0Mzha?=
+ =?utf-8?B?c010NEtqRHUzenFDSXB3SHI4TElXYWtoVjliS0JOUG9jeGpJVTFBYVB2ZXpw?=
+ =?utf-8?B?YVBtVmdWTDlTcXlIWjdRT1VmSERvUzgzZzJxalFzVXZyTzFCc1c4bk9sYTNY?=
+ =?utf-8?B?QWIxVENIVkU4MFpReHpHTGVXRUltQTBFWnJYQ3VMT1lkdkRxUWZsaWJKSFkz?=
+ =?utf-8?B?emFiNC9UTUtiV3NOU3IvT2NTZjVyL0hKUlg1ZmlyKzErMEtsMUV5TklVT2hi?=
+ =?utf-8?B?VHR5cFlKbVp6ZVJQdVNqbzRRbkJXMlJUdVhuNDhSd3JaekpuV244UWxwYTgr?=
+ =?utf-8?B?OVBiN21vQ0t0ek1MNWE1WVBrb2dGU0VJRERnMit5bG1Fbk1paElhQzhzczFn?=
+ =?utf-8?B?UFJ5aXpSRWY2OTF3dGdZa3dqYjhsL1h4MEttS2t2RWI5WElWd2o0ekE4ZXVX?=
+ =?utf-8?B?dlI2aW9RZ2lVbVpIWVVtUllIa1hsUkRTa2JyTWNJNVVqUzF4cGJ2YXBMSFNB?=
+ =?utf-8?B?Wm9sNTFVV0s0S3EvVmVyZ0h6YTdYY0xLem5xWTVVL3E0eXVLYkVyMkNTUGJn?=
+ =?utf-8?B?Mm82QXlIZEk0WFdxT1hkbjJzOVAwcStqYUtnMVpxbk9iYUd2TXdLR1gvSlZX?=
+ =?utf-8?B?ZXNjYkN6N25aR3hGcnh4VWkrZXBYNmRhNFNhMTg4bHdwK0xnU2hqQ29Ud3A5?=
+ =?utf-8?B?OWVaS0JwcXhtUTJONTFiU0hEVy9waTU5Q01GZGZtYUdhS0dMdWIxNGdsSlFP?=
+ =?utf-8?B?YWJNcWQzcUxRNVQ2REtSLzg3NERBN0ZaRG1KUEZBNUVwcEdkRFcxbnpVNDJI?=
+ =?utf-8?B?cmxSeWdaMU9tNDAwS3MwQTlSUWswK0thLzRqU0pLZ0hLNWx4L0JrVUE5T05R?=
+ =?utf-8?B?MjdjVVo2bk16MjF0bGlXN0hKQ0MyU3dGbGhUMjhhb0NWd3kzRXlwbmFmY0M2?=
+ =?utf-8?B?WXEvV2lVUml3WFc2OVlFSTViVmRoSHVXMU5uZmNkVDlMZ0YvbFhhMzU1ajlY?=
+ =?utf-8?B?L0VhUEFPUGdZRzZRdHF6ZnlPcE1CZ2Myek91cVJ1d282anp1R2tPbmk5a3kr?=
+ =?utf-8?B?RE9qZ0g0WXNvWFVJTGRxcnJ1VG9hWnJnd2VyKzZtbGVqc0k3dlRpWi9Nci8y?=
+ =?utf-8?B?ZVJyTkFSdHlUMWNGbHh1WmRveVB6WkEzTXhJZzk1eVN2dGRPQ0FoQUNPSFMv?=
+ =?utf-8?B?dnhsMSszSnpZVXpnckhtUUlSQ0xMM2w2MkxxVXlYMDhFVnBpbkpGbUdISHkx?=
+ =?utf-8?Q?/bIg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-starqltechn_integration_upstream-v6-2-dd75c06c708d@gmail.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 375da646-7c59-4328-859b-08dcecc0a558
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 02:25:33.1126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qHEwz/uW9lkWodB097N4/UASrREYMg6TefiAMS0clR1g2k3FRWrfXVt5Nnkeq6xAfMy0sh2roblUwFDlUMbAZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7245
 
-On Mon, Oct 07, 2024 at 06:36:12PM GMT, Dzmitry Sankouski wrote:
-> SDM845 has "General Purpose" clocks that can be muxed to
-> SoC pins to clock various external devices.
-> Those clocks may be used as e.g. PWM sources for external peripherals.
-> 
-> GPCLK can in theory have arbitrary value depending on the use case, so
-> the concept of frequency tables, used in rcg2 clock driver, is not
-> efficient, because it allows only defined frequencies.
-> 
-> Introduce clk_rcg2_gp_ops, which automatically calculate clock
-> mnd values for arbitrary clock rate. The calculation done as follows:
-> - upon determine rate request, we calculate m/n/pre_div as follows:
->   - find parent(from our client's assigned-clock-parent) rate
->   - find scaled rates by dividing rates on its greatest common divisor
->   - assign requested scaled rate to m
->   - factorize scaled parent rate, put multipliers to n till max value
->     (determined by mnd_width)
-> - validate calculated values with *_width:
->   - if doesn't fit, delete divisor and multiplier by 2 until fit
-> - return determined rate
-> 
-> Limitations:
-> - The driver doesn't select a parent clock (it may be selected by client
->   in device tree with assigned-clocks, assigned-clock-parents properties)
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> 
-> ---
-> Changes in v6:
-> - remove unused count variable
-> - run sparse and smatch
-> 
-> Changes in v5:
-> - replace '/' to div64_u64 to fix 32 bit gcc error
-> - fix empty scalar initializer
-> ---
->  drivers/clk/qcom/clk-rcg.h    |   1 +
->  drivers/clk/qcom/clk-rcg2.c   | 191 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
->  drivers/clk/qcom/gcc-sdm845.c |  11 +++-----
->  3 files changed, 189 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 8e0f3372dc7a..8817d14bbda4 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
->  	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
->  
->  extern const struct clk_ops clk_rcg2_ops;
-> +extern const struct clk_ops clk_rcg2_gp_ops;
->  extern const struct clk_ops clk_rcg2_floor_ops;
->  extern const struct clk_ops clk_rcg2_fm_ops;
->  extern const struct clk_ops clk_rcg2_mux_closest_ops;
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 0fc23a87b432..ba0cccdc73ec 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -8,11 +8,13 @@
->  #include <linux/err.h>
->  #include <linux/bug.h>
->  #include <linux/export.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/rational.h>
->  #include <linux/regmap.h>
->  #include <linux/math64.h>
-> +#include <linux/gcd.h>
->  #include <linux/minmax.h>
->  #include <linux/slab.h>
->  
-> @@ -32,6 +34,7 @@
->  
->  #define CFG_REG			0x4
->  #define CFG_SRC_DIV_SHIFT	0
-> +#define CFG_SRC_DIV_LENGTH	8
->  #define CFG_SRC_SEL_SHIFT	8
->  #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
->  #define CFG_MODE_SHIFT		12
-> @@ -148,6 +151,14 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
->  	return update_config(rcg);
->  }
->  
-> +// Converts divisors to corresponding clock register values.
-> +// @param f - Frequency table with pure m/n/pre_div parameters.
-
-Please use kernel-doc formatting for these.
-
-> +static void convert_to_reg_val(struct freq_tbl *f)
-> +{
-> +	f->pre_div *= 2;
-> +	f->pre_div -= 1;
-> +}
-> +
->  /*
->   * Calculate m/n:d rate
->   *
-> @@ -400,16 +411,115 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
->  	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
->  }
->  
-> -static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-> -				u32 *_cfg)
-
-Could you split this patch into one that affects the non-gp rcg2
-operations, and then one that adds and uses the gp-ops?
-
-I'd expect that would make it easier to assess the risk to all other
-rcg2 use cases.
-
-> +// Split multiplier that doesn't fit in n neither in pre_div.
-> +//
-> +// @param multiplier - multiplier to split between n and pre_div
-> +// @param pre_div - pointer to pre divisor value
-> +// @param n - pointer to n divisor value
-> +// @param pre_div_max - pre divisor maximum value
-> +//
-> +static inline void clk_rcg2_split_div(int multiplier, unsigned int *pre_div,
-> +				      u16 *n, unsigned int pre_div_max)
-> +{
-> +	*n = mult_frac(multiplier * *n, *pre_div, pre_div_max);
-> +	*pre_div = pre_div_max;
-> +}
-> +
-> +static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
-> +			unsigned int mnd_max, unsigned int pre_div_max)
-> +{
-> +	int i = 2;
-> +	unsigned int pre_div = 1;
-> +	unsigned long rates_gcd, scaled_parent_rate;
-> +	u16 m, n = 1, n_candidate = 1, n_max;
-> +
-> +	rates_gcd = gcd(parent_rate, rate);
-> +	m = div64_u64(rate, rates_gcd);
-> +	scaled_parent_rate = div64_u64(parent_rate, rates_gcd);
-> +	while (scaled_parent_rate > (mnd_max + m) * pre_div_max) {
-> +		// we're exceeding divisor's range, trying lower scale.
-> +		if (m > 1) {
-> +			m--;
-> +			scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
-> +		} else {
-> +			f->n = mnd_max + m;
-> +			f->pre_div = pre_div_max;
-> +			f->m = m;
-> +		}
-> +	}
-> +
-> +	n_max = m + mnd_max;
-> +
-> +	while (scaled_parent_rate > 1) {
-> +		while (scaled_parent_rate % i == 0) {
-> +			n_candidate *= i;
-> +			if (n_candidate < n_max)
-> +				n = n_candidate;
-> +			else if (pre_div * i < pre_div_max)
-> +				pre_div *= i;
-> +			else
-> +				clk_rcg2_split_div(i, &pre_div, &n, pre_div_max);
-> +
-> +			scaled_parent_rate /= i;
-> +		}
-> +		i++;
-> +	}
-> +
-> +	f->m = m;
-> +	f->n = n;
-> +	f->pre_div = pre_div > 1 ? pre_div : 0;
-> +}
-> +
-> +static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
-> +				   struct clk_rate_request *req)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	struct freq_tbl *f;
-> +	int mnd_max = BIT(rcg->mnd_width) - 1;
-> +	int hid_max = BIT(rcg->hid_width) - 1;
-> +	struct clk_hw *parent;
-> +	u64 parent_rate;
-> +
-> +	parent = clk_hw_get_parent(hw);
-> +	parent_rate = clk_get_rate(parent->clk);
-> +	if (!parent_rate)
-> +		return -EINVAL;
-> +
-> +	f = kzalloc(sizeof(*f), GFP_KERNEL);
-
-As far as I can tell sizeof(*f) is 16, so should be fine to just put it
-on the stack?
-
-Regards,
-Bjorn
-
-> +
-> +	if (!f)
-> +		return -ENOMEM;
-> +
-> +	clk_rcg2_calc_mnd(parent_rate, req->rate, f, mnd_max, hid_max / 2);
-> +	convert_to_reg_val(f);
-> +	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
-> +
-> +	kfree(f);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, u8 src, u32 *_cfg)
->  {
-> -	u32 cfg, mask, d_val, not2d_val, n_minus_m;
->  	struct clk_hw *hw = &rcg->clkr.hw;
-> -	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-> +	u32 mask = CFG_SRC_SEL_MASK;
-> +	int index = qcom_find_src_index(hw, rcg->parent_map, src);
->  
->  	if (index < 0)
->  		return index;
->  
-> +	*_cfg &= ~mask;
-> +	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-> +				u32 *_cfg)
-> +{
-> +	u32 cfg, mask, d_val, not2d_val, n_minus_m;
-> +	int ret;
-> +
->  	if (rcg->mnd_width && f->n) {
->  		mask = BIT(rcg->mnd_width) - 1;
->  		ret = regmap_update_bits(rcg->clkr.regmap,
-> @@ -438,9 +548,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
->  	}
->  
->  	mask = BIT(rcg->hid_width) - 1;
-> -	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
-> +	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
->  	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
-> -	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
->  	if (rcg->mnd_width && f->n && (f->m != f->n))
->  		cfg |= CFG_MODE_DUAL_EDGE;
->  	if (rcg->hw_clk_ctrl)
-> @@ -452,6 +561,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
->  	return 0;
->  }
->  
-> +static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-> +				u32 *_cfg)
-> +{
-> +	int ret;
-> +
-> +	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
->  static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
->  {
->  	u32 cfg;
-> @@ -472,6 +597,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
->  	return update_config(rcg);
->  }
->  
-> +static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> +{
-> +	u32 cfg;
-> +	int ret;
-> +
-> +	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return update_config(rcg);
-> +}
-> +
->  static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
->  			       enum freq_policy policy)
->  {
-> @@ -525,6 +670,28 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
->  	return __clk_rcg2_set_rate(hw, rate, CEIL);
->  }
->  
-> +static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
-> +			    unsigned long parent_rate)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	int mnd_max = BIT(rcg->mnd_width) - 1;
-> +	int hid_max = BIT(rcg->hid_width) - 1;
-> +	struct freq_tbl *f;
-> +	int ret;
-> +
-> +	f = kzalloc(sizeof(*f), GFP_KERNEL);
-> +
-> +	if (!f)
-> +		return -ENOMEM;
-> +
-> +	clk_rcg2_calc_mnd(parent_rate, rate, f, mnd_max, hid_max / 2);
-> +	convert_to_reg_val(f);
-> +	ret = clk_rcg2_configure_gp(rcg, f);
-> +	kfree(f);
-> +
-> +	return ret;
-> +}
-> +
->  static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
->  				   unsigned long parent_rate)
->  {
-> @@ -652,6 +819,18 @@ const struct clk_ops clk_rcg2_ops = {
->  };
->  EXPORT_SYMBOL_GPL(clk_rcg2_ops);
->  
-> +const struct clk_ops clk_rcg2_gp_ops = {
-> +	.is_enabled = clk_rcg2_is_enabled,
-> +	.get_parent = clk_rcg2_get_parent,
-> +	.set_parent = clk_rcg2_set_parent,
-> +	.recalc_rate = clk_rcg2_recalc_rate,
-> +	.determine_rate = clk_rcg2_determine_gp_rate,
-> +	.set_rate = clk_rcg2_set_gp_rate,
-> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
-> +
->  const struct clk_ops clk_rcg2_floor_ops = {
->  	.is_enabled = clk_rcg2_is_enabled,
->  	.get_parent = clk_rcg2_get_parent,
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index dc3aa7014c3e..0def0fc0e009 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -284,11 +284,6 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
->  };
->  
->  static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
-> -	F(19200000, P_BI_TCXO, 1, 0, 0),
-> -	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
-> -	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
-> -	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-> -	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
->  	{ }
->  };
->  
-> @@ -302,7 +297,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
->  		.name = "gcc_gp1_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_gp_ops,
->  	},
->  };
->  
-> @@ -316,7 +311,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
->  		.name = "gcc_gp2_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_gp_ops,
->  	},
->  };
->  
-> @@ -330,7 +325,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
->  		.name = "gcc_gp3_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_gp_ops,
->  	},
->  };
->  
-> 
-> -- 
-> 2.39.2
-> 
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvNF0gY2xrOiBpbXg6IGxwY2ctc2N1OiBTVyB3b3JrYXJv
+dW5kIGZvciBlcnJhdGENCj4gKGUxMDg1OCkNCj4gDQo+IE9uIE1vbiwgT2N0IDE0LCAyMDI0IGF0
+IDY6MDPigK9BTSBQZW5nIEZhbiAoT1NTKQ0KPiA8cGVuZy5mYW5Ab3NzLm54cC5jb20+IHdyb3Rl
+Og0KPiANCj4gPiArLyogZTEwODU4IC1MUENHIGNsb2NrIGdhdGluZyByZWdpc3RlciBzeW5jaHJv
+bml6YXRpb24gZXJyYXRhICovDQo+IA0KPiBQbGVhc2Ugc2hhcmUgdGhlIGxpbmsgdG8gdGhlIGVy
+cmF0YSBkb2MgdGhhdCBjb250YWlucyB0aGlzIGUxMDg1OC4NCg0KaHR0cHM6Ly93d3cubnhwLmNv
+bS5jbi9kb2NzL2VuL2VycmF0YS9JTVg4XzFOOTRXLnBkZg0KDQpUaGFua3MsDQpQZW5nLg0K
