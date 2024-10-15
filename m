@@ -1,109 +1,65 @@
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1D91C0DE2;
-	Tue, 15 Oct 2024 07:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA2318BBA2;
+	Tue, 15 Oct 2024 08:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979067; cv=none; b=hT1Urzv9AyIF9Ds9mWZ0MNwdVa9yWNc6QtiMJq03wgqiT/1RFrGVbjHuAkdGTc/a6HGDS6hiXv1RpGjOFLrqqJ7yJj8ewdUE7GIvFmFb+gMojqfqUaZ6toT9t4Iwjxl20CgZ9HLPDptrphJ1AX3yqjje+USfeW7alPX34Nlhj00=
+	t=1728981193; cv=none; b=lY/j8JTM17P4WvLagQUEtTvcKmff5JF4Nx5a+f9MbpGMM93b9/yLFAqQh8Z2E8nvk+FP33XdFOd9wk1GpHACVL3nuGF3Ej9I5e6OSmjvII/yTnPhcHuQkTfMAO92jjmP9lK0HBMD2DR/2q2evEstPw+HCwmLq+KdA98aCMmu/Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979067; c=relaxed/simple;
-	bh=+W7tmOplPpwq8DoVsxdIHh6sDNgpjkPfm6+bC2x1s7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=OeyTNLLiXHDVxeVI4bQgPAeeW3AX1MXW0/nO5o/9Mv+9OI11+1nWfxL9iEeYa5Qlpb3B6SW+G0ZQWpf+bjHeohi7OTS/fI8JJIo5dg2WRYCCMYNOhAT8oqqDE9OKq1L47qaBw3TpSd57K3tmjtLPG4ERwhbvSqiho4y4tdrQG8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 74D5E2001C1;
-	Tue, 15 Oct 2024 09:57:38 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 33BA620055E;
-	Tue, 15 Oct 2024 09:57:38 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 33C5B183DC03;
-	Tue, 15 Oct 2024 15:57:36 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com
-Cc: hongxing.zhu@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de
-Subject: [PATCH v5 2/2] clk: imx95-blk-ctl: Add one clock gate for HSIO block
-Date: Tue, 15 Oct 2024 15:34:04 +0800
-Message-Id: <1728977644-8207-3-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1728977644-8207-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1728977644-8207-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1728981193; c=relaxed/simple;
+	bh=qSHMuG4Fq9b0x2gCn0cRZ9FrjmHewU55gF4kABDNxWM=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XC5jTQqGox1UlqGkdCpi2y5LzgJQlcXIac1J0OmUHxm5M7ScemLdKohBtyYbkcb3irUE4mqa2f/s8QA6hsdheixo0EwJNPWXZjZ+HSEVqu50AlDCQuiAftinnbbdXnm8Op4X+A9C8JuyiEfqunA4LRTJhPrYsjq5QenNGv0+4V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JP3f/g+o; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JP3f/g+o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60009C4CEC7;
+	Tue, 15 Oct 2024 08:33:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728981192;
+	bh=qSHMuG4Fq9b0x2gCn0cRZ9FrjmHewU55gF4kABDNxWM=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=JP3f/g+opdc1UaZ70uB6cQ6IUa/824NdZeIpu4s1so0/WjMWSo+vSs+3fH1k8rx6n
+	 8xyQAfNpQzC+eKxnIoVLHk7u1cG5NExJzfo2kDnFp/u29xoA8h6jCnp8qE2YWKqew2
+	 qTROn8srssPzf0DVTmpaIfJHJa5jVCR/4a9EDAvFMe9g6clsgrkYFtGFnusQ+duvSQ
+	 UXpYWDwFhMHnjeLCDoIbstSCgoXvYW+RdK0ZXG8XSMPNakwDPaiaXNpi6nyf72FX/k
+	 YIee06lE6+LLeh1SjU4gYpyaLRsXyA0j3D6jPQ85FJLVSmt5fM+lzTyh55UMOTRcSw
+	 51UJaPW/LRZyg==
+From: Lee Jones <lee@kernel.org>
+To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, Lee Jones <lee@kernel.org>, 
+ Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, 
+ Roger Quadros <rogerq@kernel.org>, linux-clk@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
+In-Reply-To: <20241014161109.2222-2-andreas@kemnade.info>
+References: <20241014161109.2222-1-andreas@kemnade.info>
+ <20241014161109.2222-2-andreas@kemnade.info>
+Subject: Re: (subset) [PATCH v5 1/3] mfd: twl-core: Add a clock subdevice
+ for the TWL6030
+Message-Id: <172898119013.384451.4986094816910935104.b4-ty@kernel.org>
+Date: Tue, 15 Oct 2024 09:33:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-CREF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
-enable/disable.
+On Mon, 14 Oct 2024 18:11:07 +0200, Andreas Kemnade wrote:
+> Also the TWL6030 has some clocks, so add a subdevice for that.
+> 
+> 
 
-Add compatible string "nxp,imx95-hsio-blk-ctl" to support PCIe REF clock
-out gate.
+Applied, thanks!
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx95-blk-ctl.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+[1/3] mfd: twl-core: Add a clock subdevice for the TWL6030
+      commit: 5ebc60259a0fdd13aef077726b1773f1ae091efc
 
-diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-index 19a62da74be4..25974947ad0c 100644
---- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-+++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-@@ -277,6 +277,25 @@ static const struct imx95_blk_ctl_dev_data netcmix_dev_data = {
- 	.clk_reg_offset = 0,
- };
- 
-+static const struct imx95_blk_ctl_clk_dev_data hsio_blk_ctl_clk_dev_data[] = {
-+	[0] = {
-+		.name = "hsio_blk_ctl_clk",
-+		.parent_names = (const char *[]){ "hsio_pll", },
-+		.num_parents = 1,
-+		.reg = 0,
-+		.bit_idx = 6,
-+		.bit_width = 1,
-+		.type = CLK_GATE,
-+		.flags = CLK_SET_RATE_PARENT,
-+	}
-+};
-+
-+static const struct imx95_blk_ctl_dev_data hsio_blk_ctl_dev_data = {
-+	.num_clks = 1,
-+	.clk_dev_data = hsio_blk_ctl_clk_dev_data,
-+	.clk_reg_offset = 0,
-+};
-+
- static int imx95_bc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -447,6 +466,7 @@ static const struct of_device_id imx95_bc_of_match[] = {
- 	{ .compatible = "nxp,imx95-display-master-csr", },
- 	{ .compatible = "nxp,imx95-lvds-csr", .data = &lvds_csr_dev_data },
- 	{ .compatible = "nxp,imx95-display-csr", .data = &dispmix_csr_dev_data },
-+	{ .compatible = "nxp,imx95-hsio-blk-ctl", .data = &hsio_blk_ctl_dev_data },
- 	{ .compatible = "nxp,imx95-vpu-csr", .data = &vpublk_dev_data },
- 	{ .compatible = "nxp,imx95-netcmix-blk-ctrl", .data = &netcmix_dev_data},
- 	{ /* Sentinel */ },
--- 
-2.37.1
+--
+Lee Jones [李琼斯]
 
