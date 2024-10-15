@@ -1,152 +1,174 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CD81BE854;
-	Tue, 15 Oct 2024 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385031FC7EC;
+	Tue, 15 Oct 2024 14:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728984016; cv=none; b=jKCY6oqQfgHtTPei2u9a0qelwWMvK0SvAj4LbQDX8pu+NsquAVWC2Zia5uO8kccZMoMjgHSq4FoZx67srKUuqic1bjFKWOXQxlT7UGQdfVcJlt31Of07UA+K4mD3TGSODpDsYwXic3/QRMPZwJjiV34mOrgebNJSsN6GPsNPjQ0=
+	t=1729001849; cv=none; b=LrAssONeEIZHv1QhKMVRwEfs4tJp+RMkY19FeHvyPiFyWMKIRwOtA1Bb8NUFjFQJPZpfyuQ55eCd4JKHoSoPO9qv1igmNPBs67rH+N/qgQ5FTjYfS5GR6b5/fabMM1cGPhc0m5Hn+SBznckgloj8mwptngQ8UNZItSQwYUi9B8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728984016; c=relaxed/simple;
-	bh=pMjpsA33HKljwcG406thhN+AjE/RSrGVbJXSs2Kgu0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i4xPvaJb0LI1gP7SqvMdiv9HVTSapXqX4IOMoDqjXu/wCPldDl9+I94sGpEIkmF1DvvjduBUvudVdUwKOGx7g/XBwnlcRq+7e9Iuoq27S6526oF70okGEeeey1zkTMCnE77DHrRX4ORfF7yQ8VnbZTyYBtpZOU+QiCFWQWzvMsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=mkTpvHgg; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=QVGlDmuR reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1729001849; c=relaxed/simple;
+	bh=i79zFnY40N7dlPsjPAz9d5dpzSdeqjeY7NKpv/37xmQ=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=NCrQGNci2zc3A14jTj+6G5aAHXDFg4dtUnLED1624hqi7s6dazGBmP9vFPFDR0in2Bwx1yJf7EGmRPe5PtspEYRPok1jIkTG2qWoNkuPmtK1njKJ/SWb11l7coomWLc33qJv9FfgR64QHsYAS/Ts4KZuCqgjPuyPMX/BhVFHqJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ao4/tEzY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="mkTpvHgg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="QVGlDmuR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1728984013; x=1760520013;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yRWYvJoTuHbugjBlZOZ8pdv+QEbZ7LjBnWhw7r4zZd0=;
-  b=mkTpvHggnxteIehOj/324vYHLeVSh4AZDHQnuUVhHyks2AEzQgtZ0f+h
-   zxUhmzFm43ApXMrDapUNqJ1mMORigG0dtTDgJIqU6mDHsGYkC1Ux4qxv3
-   ReZTn5WcHDRtKz32QR1fItHmI6KFeFf+QHM+1bURs2q/EnMWHrnON6fmY
-   O1FmQNhwWvNxEMwRVvPM91kObFefOHzC/mHsORjHndUFwwGXnx4V0HJiJ
-   8xn6N7huKeMyIHcAo9Bsfq8sdY0fSdH5sVIsQ7p7G7NGHKMODrkZZgyWe
-   jyHjjvL3p+6p8vJw9e1CymmOyK9Nug3z2Nu3DFSPNdKi7u+iTX+oaegZ+
-   w==;
-X-CSE-ConnectionGUID: b4pHya66RRqdT7XiPKu01A==
-X-CSE-MsgGUID: WQu91uJQS+iq46hq620OLQ==
-X-IronPort-AV: E=Sophos;i="6.11,204,1725314400"; 
-   d="scan'208";a="39461348"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 15 Oct 2024 11:19:00 +0200
-X-CheckPoint: {670E3384-23-236878CD-F32272AF}
-X-MAIL-CPID: D13B26775A64319511C59C8BFC121309_2
-X-Control-Analysis: str=0001.0A682F1A.670E3383.0099,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8655E165B6F;
-	Tue, 15 Oct 2024 11:18:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1728983936;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=yRWYvJoTuHbugjBlZOZ8pdv+QEbZ7LjBnWhw7r4zZd0=;
-	b=QVGlDmuR7nAcIpCE5UuGHjm53l7s3RSkZhcuEz/tI6WeMn4T/fbOTDyXRhBgofEW7W1cg6
-	pk2Mql3wcyPqhdyVa1UHcSP15rC8fuJ2UVB6mF7DQmVbbsk+JqNijlzOCQq1lc1Fd4ILjv
-	R1nbFQRlvKRKoFZ5p6M7cLhbGZjfQvL9Cbu4z9eZuUR9arMKxPZnSU7MGtBzRjASIgxiAQ
-	xjXwBeCZeX/uauQWYQQMZgd75ZE1NhjMzbf5dClY+mNgk/sbn3akBpOYolx8icTC0rZS9+
-	8CwJtCIfpzuFpwHs75AJ4tgBOPxW66P5ROFNg3x3HavDUn8Ua8QZg9rjYjU94g==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, Richard Zhu <hongxing.zhu@nxp.com>
-Cc: hongxing.zhu@nxp.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v5 2/2] clk: imx95-blk-ctl: Add one clock gate for HSIO block
-Date: Tue, 15 Oct 2024 11:18:53 +0200
-Message-ID: <4963051.31r3eYUQgx@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <1728977644-8207-3-git-send-email-hongxing.zhu@nxp.com>
-References: <1728977644-8207-1-git-send-email-hongxing.zhu@nxp.com> <1728977644-8207-3-git-send-email-hongxing.zhu@nxp.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ao4/tEzY"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FDkcMB011547;
+	Tue, 15 Oct 2024 14:17:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=X2800jNXRP4KCOfju7R0AF
+	htw657g+Ji8Oi8jJZsgT4=; b=Ao4/tEzYXAvomDo6YhTL/ZiqTrarKWriduo3ZZ
+	B4KlXzw7RmurVeYogkqcVbT1YRCdHuzPOpbzDdEvNURwTD7moD4893JrRLyBChDL
+	Ne109I5GofnIERsmQhPP5IIV9B6wj3/+gk0WBzg/jqXq9ady9vmk4vNJIU16BV4e
+	hFBc/RLmGULZX9An5/yn/Qp2gsHy0wnBx0GqmStYcS/jS6163Euwh9R1jpvGijYN
+	XKhWLvD7avOPX8S5eCExhbsyf+uuVoNOACMSgDlrBy1a9Oo4Hkr6lCHF5/q5lAuh
+	iLQ59WTMPPFIsPIZatoM5AsOXRVqPb4/dn6gxhK2nIazQTGQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429m0f91w9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 14:17:13 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FEHBCs010205
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 14:17:11 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 15 Oct 2024 07:17:06 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v4 0/4] Add CMN PLL clock controller driver for IPQ9574
+Date: Tue, 15 Oct 2024 22:16:50 +0800
+Message-ID: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFN5DmcC/2WNwQ6CMBBEf4Xs2ZptabB68j8MIbIssgkUaJVoC
+ P9u5erxTWberBA5CEe4ZCsEXiTK6BPYQwbU3f2DlTSJwaCxGrVVM41DJdNc0eCnvld1w1jkrrV
+ aF5BWU+BW3rvxVibuJD7H8NkPlvyX7i505vTnWnKFyjHimZjY1eY6v4TE0zEVody27QvG0YrOs
+ AAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729001826; l=3348;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=i79zFnY40N7dlPsjPAz9d5dpzSdeqjeY7NKpv/37xmQ=;
+ b=9HlT4acMtPNAANdi7F86wtCsiCzbfVHptKoJc5go2VEMDvqhBHbbCESYy+5RyO0BpMxJgIO+m
+ 272AizGKokYCzjEpf352W9sRikQll/UBQNmiszZi0HonykmYKV8SYFO
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HDbjAiUeYah5u9OUAzSMOYGn6JuEhSau
+X-Proofpoint-ORIG-GUID: HDbjAiUeYah5u9OUAzSMOYGn6JuEhSau
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1011 phishscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150098
 
-Hi Richard,
+The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+the clocks to the networking hardware blocks that are internal
+or external to the SoC, and to the GCC. This driver configures
+the CMN PLL clock controller to enable the output clocks. The
+networking blocks include the internal blocks such as PPE
+(Packet Process Engine) and PCS blocks, and external hardware
+such as Ethernet PHY or switch. The CMN PLL block also outputs
+fixed rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ
+as sleep clock supplied to GCC.
 
-Am Dienstag, 15. Oktober 2024, 09:34:04 CEST schrieb Richard Zhu:
-> CREF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
-> enable/disable.
->=20
-> Add compatible string "nxp,imx95-hsio-blk-ctl" to support PCIe REF clock
-> out gate.
->=20
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx95-blk-ctl.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->=20
-> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-im=
-x95-blk-ctl.c
-> index 19a62da74be4..25974947ad0c 100644
-> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-> @@ -277,6 +277,25 @@ static const struct imx95_blk_ctl_dev_data netcmix_d=
-ev_data =3D {
->  	.clk_reg_offset =3D 0,
->  };
-> =20
-> +static const struct imx95_blk_ctl_clk_dev_data hsio_blk_ctl_clk_dev_data=
-[] =3D {
-> +	[0] =3D {
-> +		.name =3D "hsio_blk_ctl_clk",
-> +		.parent_names =3D (const char *[]){ "hsio_pll", },
-> +		.num_parents =3D 1,
-> +		.reg =3D 0,
+The controller expects the input reference clock from the internal
+Wi-Fi block acting as the clock source. The output clocks supplied
+by the controller are fixed rate clocks.
 
-According to RM the register LFAST_IO_REG has offset 0xc0. How does the DT =
-node look like?
-If this is the HSIO block control I would have expected this to control the=
- whole block.
+The CMN PLL hardware block does not include any other function
+other than enabling the clocks to the networking hardware blocks
+and GCC.
+
+The driver is being enabled to support IPQ9574 SoC initially, and
+will be extended for other SoCs.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v4:
+- Rename driver file to ipq-cmn-pll.c
+- Register CMN PLL as a 12 GHZ clock.
+- Configure CMN PLL input ref clock using clk_ops::determine_rate().
+  Add the additional output clocks to GCC and PCS.
+- Update the same information in dtbindings.
+- Use PM clock APIs for input clock enablement.
+- Link to v3: https://lore.kernel.org/r/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com
+
+Changes in v3:
+- Update description of dt-binding to explain scope of 'CMN' in CMN PLL.
+- Collect Reviewed-by tags for dtbindings and defconfig patches.
+- Enable PLL_LOCKED check for the stability of output clocks.
+- Link to v2: https://lore.kernel.org/r/20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com
+
+Changes in v2:
+- Rename the dt-binding file with the compatible.
+- Remove property 'clock-output-names' from dt-bindings and define
+  names in the driver. Add qcom,ipq-cmn-pll.h to export the output
+  clock specifier.
+- Alphanumeric ordering of 'cmn_pll_ref_clk' node in DTS.
+- Fix allmodconfig error reported by test robot.
+- Replace usage of "common" to "CMN" to match the name with the
+  hardware specification.
+- Clarify in commit message on scope of CMN PLL function.
+- Link to v1: https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com
+
+---
+Luo Jie (4):
+      dt-bindings: clock: qcom: Add CMN PLL clock controller for IPQ SoC
+      clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+      arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+      arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  85 +++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi   |   6 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  20 +-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/Kconfig                           |  10 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 411 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       |  22 ++
+ 8 files changed, 554 insertions(+), 2 deletions(-)
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-qcom_ipq_cmnpll-bde0638f4116
 
 Best regards,
-Alexander
-
-> +		.bit_idx =3D 6,
-> +		.bit_width =3D 1,
-> +		.type =3D CLK_GATE,
-> +		.flags =3D CLK_SET_RATE_PARENT,
-> +	}
-> +};
-> +
-> +static const struct imx95_blk_ctl_dev_data hsio_blk_ctl_dev_data =3D {
-> +	.num_clks =3D 1,
-> +	.clk_dev_data =3D hsio_blk_ctl_clk_dev_data,
-> +	.clk_reg_offset =3D 0,
-> +};
-> +
->  static int imx95_bc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev =3D &pdev->dev;
-> @@ -447,6 +466,7 @@ static const struct of_device_id imx95_bc_of_match[] =
-=3D {
->  	{ .compatible =3D "nxp,imx95-display-master-csr", },
->  	{ .compatible =3D "nxp,imx95-lvds-csr", .data =3D &lvds_csr_dev_data },
->  	{ .compatible =3D "nxp,imx95-display-csr", .data =3D &dispmix_csr_dev_d=
-ata },
-> +	{ .compatible =3D "nxp,imx95-hsio-blk-ctl", .data =3D &hsio_blk_ctl_dev=
-_data },
->  	{ .compatible =3D "nxp,imx95-vpu-csr", .data =3D &vpublk_dev_data },
->  	{ .compatible =3D "nxp,imx95-netcmix-blk-ctrl", .data =3D &netcmix_dev_=
-data},
->  	{ /* Sentinel */ },
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+-- 
+Luo Jie <quic_luoj@quicinc.com>
 
