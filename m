@@ -1,187 +1,165 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4AD1D5169;
-	Tue, 15 Oct 2024 14:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65681B395A
+	for <linux-clk@vger.kernel.org>; Tue, 15 Oct 2024 16:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729001867; cv=none; b=Y31kGGDBmGIeHGyrtKMJguR2H5IN/JqAYh6cdPeITv22WfTgOBn3PjsEVMwQV8s8ZJNQ5CTF75WLBU+mF0cb090OkDRHP0/aLIaBuqL1HvXyt6fWQiOcEX9rH+RjpbegwQvM+gsk2U3K07DSc+5qYXL+NVoA5im0WagIZh3Ryu4=
+	t=1729010882; cv=none; b=cKldDYmGza/9itcF2ZlF3ROVp/HJszKtjLaXDNLW8jBDlv8atdNm2yu5pTEsEKbf+zAVgZWFTsC6szHHbWMWqdF6imiHKH0iqOgF5ROyDqYH2mmgb6ITdH2viG8CkqJq9X6HblponbV7Q074U9Ph2R/4YnYTQzckbqLUb90zeJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729001867; c=relaxed/simple;
-	bh=1qlEOb3zbkkJKEov99avnQF7hLkBaKYv9MvBZInJLZA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ednPHiz+RFy+gcTIynObPGoMUtpYC86M1E9W5wYHl+x+JTDhG7ihZXFBM34gXcXhjCEetCuhaWvfXfKeKnncTBT1O7AhURi0qNXC7fSJyxyHyhjC8niA7xMhHwZ416kfeJ7xxTRYqUg+TG2UYcQHlgwJhDvzMYFeAEepSozV5IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cLITH08v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729010882; c=relaxed/simple;
+	bh=Rfdl8vCaCgCBwnWghnvEo1yd6nA2LiUGF75OpPkqLJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qIlzAx943fjSf/avXyIOzNv8Fb0vf7+6QYZJcPHT2u3oiU157dxJpS4XGsvfuFnatTmt5j8Rf0S8vhJJ8rC1eA2J8C1G8QzfJzl9KNafXCsAY20PTtty/oxNoYMpAsPuHGyyYfWmDpoSIH8kfYTkCUnS1jsnMQ1sToDolXc07HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YdZcjEDf; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cLITH08v"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F9G0eF018012;
-	Tue, 15 Oct 2024 14:17:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ts0jwMYHJkI1bO8vgq2tmi0+ch81vAeX+SlFOBe9DwE=; b=cLITH08vrS+nvSxS
-	L9izczB8g0KMBMtBT9alWscmKp6y6qCdJZZ/PCEN/bynbFz9H5FqqapF+Re5bfWb
-	gP6zz1vLeQoZoXjz09UDv2Ca8xAagr8gXyCLzS1KqIkaGeDbETDI7rpGfhri/oNZ
-	BuvaxjuRM1DlUBwCQqEEXYZUlxV7N+VqDtvyadvhaakmIbpW4QHTjD6NJDjnqro1
-	bnWDbpmzaNjxlGK2+izaI3UHOW7OYQJNvcvmL1M2WVq/vW6GHfKJtWi0UC24UoCG
-	TRj7s3ifKHk/hbIwHCoFudqroQcwlkD/eLo6bS1WK5GwBO137yiyNIjU+4YY627B
-	QfErHA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429nm3grvt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 14:17:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FEHZOp024803
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 14:17:35 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 07:17:29 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 15 Oct 2024 22:16:54 +0800
-Subject: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YdZcjEDf"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4314735bca2so5515115e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 15 Oct 2024 09:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1729010877; x=1729615677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2AR2YrUQqk7+xhhqenve/PPACMkVnDOGTvsrnF2dq74=;
+        b=YdZcjEDfq/J+Z3YHHh0pQpap/YGfBY+dzQN+qIcnGF4Clrq2O3TfVr5jWZIZfm6Y4b
+         xbBBXruAUYpa06Og3lqAl5asC6RDlZOZPDubNhShHo+l9etKaaNBXD2ZYZmgiXUe/WGi
+         kPh102rRpFCf2DO0Znknj+EqiZjddKXQGReaDO0uRcnwEsn/bZlqKvLVRiuN6g0NwrEP
+         5gYgrbkDyuP/frjjNX93UzYsIUzMi9ZlDDB0kFxnkeDtY3UjXqDcHLgvsgNoO3zSzoVj
+         5NhDoarB5pyb7ntKKIrUsY+/4VSHXrClw+Y9ko+a56Y5BsN8yoduKFwJWa67GnuJt2hT
+         15Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729010877; x=1729615677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2AR2YrUQqk7+xhhqenve/PPACMkVnDOGTvsrnF2dq74=;
+        b=D6pMezSB6pEqCiu3zQSnoMWw+M9iNuTRlBlxFHniC9GBiW/MmNKHE1nOrsaqSeMLmz
+         yvd9sbqU3xIWxJ4lxBgkVK/loaXj1Fiobtxndp040mkAToQuJLw+YY+ftQ1T1cbfQCMh
+         H56YTiG0oTzFWwmeMWuGhw+FA4/AmwAMi4Tpk/l4Eh5pJkXc3KXHhdCoZtu8z0lhQC44
+         UxgbrkP+2bChzfQ8tr1FtokjejbXLWGDB9fjrJ8JTv5c7sn23TnN5mBxWq/v2AdooOSB
+         NedeKV2n4rnVh2HORENL1xoF7hPowRMN5bHm0jVKEiE/7d9vZ+bbCTHHp6/R7PKMn/uQ
+         yJ0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmOuy5M9bJLjMH6LR4g8vEFswDFJUKACjfHnZ9rAZnY7chIEre5ZME0QfY7F6lsvYGb7f8fD/YL7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynhpdvnjNHh/VCmLPp/uz2QrcuR1ht6fsnnARBkaVw+wkCx3+I
+	ySPiDskhXdxolNyrQi3QE3EPfBkGC5gaNBzR5xsBgTLuQNTK83K4sNfSCDs5EC4=
+X-Google-Smtp-Source: AGHT+IEdGlWQWan5QcF5MUQh7T+UcHlApVXWyd8jtWLk9XCMAYKoLdf78C58GnMJlSXZGx70acXOsw==
+X-Received: by 2002:a05:600c:1991:b0:431:44aa:ee2e with SMTP id 5b1f17b1804b1-4314a29549amr10259345e9.4.1729010876670;
+        Tue, 15 Oct 2024 09:47:56 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56eab2sm22882045e9.26.2024.10.15.09.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 09:47:55 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 0/4] watchdog: rzg2l_wdt: Enable properly the watchdog clocks and power domain
+Date: Tue, 15 Oct 2024 19:47:28 +0300
+Message-Id: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
-References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
-In-Reply-To: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729001826; l=2952;
- i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
- bh=1qlEOb3zbkkJKEov99avnQF7hLkBaKYv9MvBZInJLZA=;
- b=oyA8fc08TT+z5Bnja3LgdSb+A35A7IwqicwhqURKdmP3t2w0NT4QHlmMLzP2bi1XQAubmCu1L
- DB27IkPXR28DM890R/pq8aXn7wtevXegWTGlaTX4Ozs9kh9cp5bKLud
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: s5vBph00RxyfUP-j32AHaCz7UOlAQ2wR
-X-Proofpoint-ORIG-GUID: s5vBph00RxyfUP-j32AHaCz7UOlAQ2wR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 suspectscore=0 bulkscore=0
- mlxlogscore=867 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150098
+Content-Transfer-Encoding: 8bit
 
-The CMN PLL clock controller allows selection of an input
-clock rate from a defined set of input clock rates. It in-turn
-supplies fixed rate output clocks to the hardware blocks that
-provide ethernet functions such as PPE (Packet Process Engine)
-and connected switch or PHY, and to GCC.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
- 2 files changed, 24 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-index 91e104b0f865..77e1e42083f3 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 RDP board common device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -164,6 +164,10 @@ &usb3 {
- 	status = "okay";
- };
- 
-+&cmn_pll_ref_clk {
-+	clock-frequency = <48000000>;
-+};
-+
- &xo_board_clk {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 14c7b3a78442..93f66bb83c5a 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -3,10 +3,11 @@
-  * IPQ9574 SoC device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <dt-bindings/clock/qcom,apss-ipq.h>
-+#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
- #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
- #include <dt-bindings/interconnect/qcom,ipq9574.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -19,6 +20,11 @@ / {
- 	#size-cells = <2>;
- 
- 	clocks {
-+		cmn_pll_ref_clk: cmn-pll-ref-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+
- 		sleep_clk: sleep-clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
-@@ -243,6 +249,18 @@ mdio: mdio@90000 {
- 			status = "disabled";
- 		};
- 
-+		cmn_pll: clock-controller@9b000 {
-+			compatible = "qcom,ipq9574-cmn-pll";
-+			reg = <0x0009b000 0x800>;
-+			clocks = <&cmn_pll_ref_clk>,
-+				 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
-+				 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
-+			clock-names = "ref", "ahb", "sys";
-+			#clock-cells = <1>;
-+			assigned-clocks = <&cmn_pll CMN_PLL_CLK>;
-+			assigned-clock-rates-u64 = /bits/ 64 <12000000000>;
-+		};
-+
- 		qfprom: efuse@a4000 {
- 			compatible = "qcom,ipq9574-qfprom", "qcom,qfprom";
- 			reg = <0x000a4000 0x5a1>;
+Watchdog device available on RZ/G3S SoC is part of a software-controlled
+power domain. The watchdog driver implements struct
+watchdog_ops::restart() handler which is called in atomic context via
+this call chain:
+
+kernel_restart() ->
+  machine_restart() ->
+    do_kernel_restart() ->
+      atomic_notifier_call_chain() ->
+        watchdog_restart_notifier()
+          rzg2l_wdt_restart()
+
+When the rzg2l_wdt_restart() is called it may happen that the watchdog
+clocks to be disabled and the associated power domain to be off.
+Accessing watchdog registers in this state leads to aborts and system
+blocks.
+
+To solve this issue the watchdog power domain was marked as IRQ safe
+as well as watchdog device (as proposed by Ulf Hansson). Along with
+it the clk_prepare_enable() calls from the watchdog restart() handler
+were removed and all is based now on pm_runtime_resume_and_get()
+as explained in patch 03/03.
+
+Series contains also power domain driver changes to be able to
+register the watchdog PM domain as an IRQ safe one.
+
+Initial RFC series for solving this issue was posted at [1].
+
+It is safe to merge watchdog and PM domain driver changes though
+different trees.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
+
+Changes in v4:
+- in patch 1/1, function rzg2l_cpg_pd_setup():
+-- call rzg2l_cpg_power_on() unconditionally of governor
+-- drop governor's parameter and decide what governor to use based on
+   always_on
+- collected tags
+
+Changes in v3:
+- added patch "clk: renesas: rzg2l-cpg: Move PM domain power on in
+  rzg2l_cpg_pd_setup()"
+- addressed review comments
+- collected tags
+- per-patch changes are listed in individual patches
+
+Changes in v2:
+- adjusted patch title for patch 02/03
+- adjusted description for patch 03/03 along with comment
+  from code
+
+Changes since RFC:
+- dropped patches 01/03, 02/03 from RFC
+- adjusted power domain driver to be able to register the
+  watchdog PM domain as an IRQ safe one
+- drop clock prepare approach from watchdog driver presented in RFC
+  and rely only on pm_runtime_resume_and_get()
+- mark the watchdog device as IRQ safe
+
+
+Claudiu Beznea (4):
+  clk: renesas: rzg2l-cpg: Move PM domain power on in
+    rzg2l_cpg_pd_setup()
+  clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+  clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as
+    IRQ safe
+  watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
+    handler
+
+ drivers/clk/renesas/r9a08g045-cpg.c | 52 +++++++++++------------------
+ drivers/clk/renesas/rzg2l-cpg.c     | 41 ++++++++++++-----------
+ drivers/clk/renesas/rzg2l-cpg.h     | 10 ++----
+ drivers/watchdog/rzg2l_wdt.c        | 20 +++++++++--
+ 4 files changed, 63 insertions(+), 60 deletions(-)
 
 -- 
-2.34.1
+2.39.2
 
