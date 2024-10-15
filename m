@@ -1,65 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA2318BBA2;
-	Tue, 15 Oct 2024 08:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A62518A6A8;
+	Tue, 15 Oct 2024 08:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728981193; cv=none; b=lY/j8JTM17P4WvLagQUEtTvcKmff5JF4Nx5a+f9MbpGMM93b9/yLFAqQh8Z2E8nvk+FP33XdFOd9wk1GpHACVL3nuGF3Ej9I5e6OSmjvII/yTnPhcHuQkTfMAO92jjmP9lK0HBMD2DR/2q2evEstPw+HCwmLq+KdA98aCMmu/Pc=
+	t=1728982231; cv=none; b=Z+4fqqVXKNyfVrveGMBv/2MiykRTHhqLGMToYQZxB61mH/DKzy3b4Osfq/UdKOp54E+ShWKFiO370vO0dNSyBB0H2oN69uG6ApV0U8keePMbCRKNPhYktremrte/AMU8j8sPysyd4g00eamVWXJo6l6rgqC0624iZnsOW5vKtNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728981193; c=relaxed/simple;
-	bh=qSHMuG4Fq9b0x2gCn0cRZ9FrjmHewU55gF4kABDNxWM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XC5jTQqGox1UlqGkdCpi2y5LzgJQlcXIac1J0OmUHxm5M7ScemLdKohBtyYbkcb3irUE4mqa2f/s8QA6hsdheixo0EwJNPWXZjZ+HSEVqu50AlDCQuiAftinnbbdXnm8Op4X+A9C8JuyiEfqunA4LRTJhPrYsjq5QenNGv0+4V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JP3f/g+o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728982231; c=relaxed/simple;
+	bh=1NQgzWnE3190zr4gxbyrXYFAKHrlKNYxNmEOJhdHd4Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=Uj7v1DHwUXduut2RTirItQx0pVuC/mdELJGX6Hcl3U+nBTdQbsI45roz4xThlBv9Mb783azfMlubh7ol96zZuIwSHRi1/SYSwFqxyWh09yEkVgeNA7h9SochN4DokWw8klpTJNpGgXp/NMzasACnfXpGNHI5sMeC9n4NKWbaB/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EmWB4ip4; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JP3f/g+o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60009C4CEC7;
-	Tue, 15 Oct 2024 08:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728981192;
-	bh=qSHMuG4Fq9b0x2gCn0cRZ9FrjmHewU55gF4kABDNxWM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=JP3f/g+opdc1UaZ70uB6cQ6IUa/824NdZeIpu4s1so0/WjMWSo+vSs+3fH1k8rx6n
-	 8xyQAfNpQzC+eKxnIoVLHk7u1cG5NExJzfo2kDnFp/u29xoA8h6jCnp8qE2YWKqew2
-	 qTROn8srssPzf0DVTmpaIfJHJa5jVCR/4a9EDAvFMe9g6clsgrkYFtGFnusQ+duvSQ
-	 UXpYWDwFhMHnjeLCDoIbstSCgoXvYW+RdK0ZXG8XSMPNakwDPaiaXNpi6nyf72FX/k
-	 YIee06lE6+LLeh1SjU4gYpyaLRsXyA0j3D6jPQ85FJLVSmt5fM+lzTyh55UMOTRcSw
-	 51UJaPW/LRZyg==
-From: Lee Jones <lee@kernel.org>
-To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, Lee Jones <lee@kernel.org>, 
- Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>, linux-clk@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
-In-Reply-To: <20241014161109.2222-2-andreas@kemnade.info>
-References: <20241014161109.2222-1-andreas@kemnade.info>
- <20241014161109.2222-2-andreas@kemnade.info>
-Subject: Re: (subset) [PATCH v5 1/3] mfd: twl-core: Add a clock subdevice
- for the TWL6030
-Message-Id: <172898119013.384451.4986094816910935104.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 09:33:10 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EmWB4ip4"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6E16A1C0010;
+	Tue, 15 Oct 2024 08:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728982227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4xnDRAazvPzZ47xJTR0xO8huRjhANCrx409P3pTb++k=;
+	b=EmWB4ip4lODwtZPBuBqTkUndqJ0ebdPh28tB+aZXccgUEd5jOJMQoiYWKsN+rR61Jzbecv
+	PDOPK8TrQklixhL4utXeYArWGYJEtqnpf1GvEB6uo26TnrVI6ZdLbDJmwsl1QiGYl9fIe6
+	loqbMWI8vic1ta2DuaKJy3jxSU7i7DnncPQC7qGB/CD6Wxbn0w28X+JUpMnyi7Ew3DaHXQ
+	JqS6kELA8MTXbeeK7QkxK3uHgV5NkY29rQVd4DCQeD3qaHFP7AwjCsC557TSmkCUuGdQPj
+	2ctBBdqdBIrbpclQBfPAvDnksCBOgbE5M8Pj1AOSoKrT2C+3ufSgsU2/t62xCQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Oct 2024 10:50:26 +0200
+Message-Id: <D4W91PHV3238.3SL8CZLC15V5O@bootlin.com>
+Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v5 0/4] Add Mobileye EyeQ clock support
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
+In-Reply-To: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Mon, 14 Oct 2024 18:11:07 +0200, Andreas Kemnade wrote:
-> Also the TWL6030 has some clocks, so add a subdevice for that.
-> 
-> 
+Hello Stephen,
 
-Applied, thanks!
+On Mon Oct 7, 2024 at 3:49 PM CEST, Th=C3=A9o Lebrun wrote:
+> This series adds a platform driver dealing with read-only PLLs derived
+> from the main crystal, and some divider clocks based on those PLLs. It
+> also acts at the one instantiating reset and pinctrl auxiliary devices.
 
-[1/3] mfd: twl-core: Add a clock subdevice for the TWL6030
-      commit: 5ebc60259a0fdd13aef077726b1773f1ae091efc
+I'd be curious to get feedback on this series?
+Could it make it before the next merge window?
+
+V4 fixed all your comments but one. You implied the linked list might be
+useless, but I am not convinced:
+
+> I had a pending question [0], asking for confirmation that the static
+> linked list to inherit cells from of_clk_init() stage to platform
+> device probe is indeed the right solution. As -rc1 got released I sent
+> the new revision anyway.
+>
+> [0]: https://lore.kernel.org/lkml/D4ELMFAUQYZ7.3LXGQZJSX68UF@bootlin.com/
+
+Quoting here the original email for full context:
+
+On Tue Sep 24, 2024 at 4:53 PM CEST, Th=C3=A9o Lebrun wrote:
+> On Wed Sep 18, 2024 at 7:28 AM CEST, Stephen Boyd wrote:
+> > Quoting Th=C3=A9o Lebrun (2024-07-30 09:04:46)
+> > > +       list_add_tail(&priv->list, &eqc_list);
+> >
+> > The list is also kind of unnecessary. Set a bool in the match_data and
+> > move on? We could have some sort of static_assert() check to make sure
+> > if there's a CLK_OF_DECLARE_DRIVER() then the bool is set in the
+> > match_data for the driver. Such a design is cheaper than taking a lock,
+> > adding to a list.
+>
+> This list's main goal is not to know what was early-inited. Its only
+> reason for existence is that we want to get, at eqc_probe(), the cells
+> pointer allocated at eqc_init().
+>
+> struct eqc_priv {
+> 	/* this field is why we store priv inside a linked list: */
+> 	struct clk_hw_onecell_data	*cells;
+> 	/* the rest, we don't care much: */
+> 	const struct eqc_early_match_data *early_data;
+> 	const struct eqc_match_data	*data;
+> 	void __iomem			*base;
+> 	struct device_node		*np;
+> 	struct list_head		list;
+> };
+>
+> I do not see how to do that with a bool. We could put the pointer into
+> the match data, but that would mean we'd have to make them writable
+> (currently static const data). We are talking about a linked list with
+> two items in the worst case (EyeQ6H), accessed twice.
+>
+> The reason we store the whole of priv: simpler code and we avoid mapping
+> registers twice (once at eqc_init() and once at eqc_probe()).
+>
+> Can you confirm the current static linked list approach (without any
+> spinlock) will be good for next revision?
+
+Thanks,
 
 --
-Lee Jones [李琼斯]
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
