@@ -1,48 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5228E217331;
-	Wed, 16 Oct 2024 20:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3671218326;
+	Wed, 16 Oct 2024 20:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111360; cv=none; b=mv/Qv+ZY3fJYtS9uCmEDEfvXgPrcfurDeiJUAO+AkUS9u84Q5PEzZzO/6LXkbT+wYLHUTPsGlPrILPqc+yv+3+5KhJpUPvBXc/yvXl+EOUxQw3O9QyMp5g334YvhEkMVQOyKo63NOPGeFG0fVPRaaFaR1qoQIRwojJrYbG85kBE=
+	t=1729111363; cv=none; b=uOyZ9YveygOgsrXvIOVvkjd53m2BGW5tEcgvHcMoLmkKTnx9lhfdjmNm0w3oswNCdUMwP3kL3y1noOpJsp+AvNLCwfMQOw+iRl0mIFkQYh/uky9CgRbOT8OmI2dmLVDkbs/4MLXLropBqabGLH0Nn0pI4H2Z7M1lLRjAkskSsZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111360; c=relaxed/simple;
-	bh=DCMMJYIjuc7ZMf37BzQj4eDjiOxpnIXPVQmAlKpEu3c=;
+	s=arc-20240116; t=1729111363; c=relaxed/simple;
+	bh=xrcHJotXkW6+apfYIXWbfsGkJssZ2jj2GI/l7hlvH1g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DymrvT6vGrTsdCEGDt9gavpJDJ+I1HmyUGC8yRndhh++ceS27aedfMXrxZ/ov6dUKEWXExjjdFDPj2ST4b0asyauitlFTYPkEKN9kj0/o51L7h1LwWKy+bXKd53CCZ03mioklzT/sbtg/8p6mSBE7mghcmAnkraIK/fLaQXtIkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSThATle; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=f+mAzwkO5vI0xGpnFRhSNjyg9c72dQP/ywWW2MXUM2csUH/GAjbxJNT4mNJxPE1h/zJfa3g00yrCI0hJXUicqswgYDNDnDIk8iBgbdhOsspJxvXqCzi+zttt9Pss2ZIdbL63sE1rXPOPmxScYDEG/71fQZ6pWffHe34AF2ZitPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6KqztLa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSThATle"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1D2C4CEC5;
-	Wed, 16 Oct 2024 20:42:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6KqztLa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C65C4CECF;
+	Wed, 16 Oct 2024 20:42:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729111359;
-	bh=DCMMJYIjuc7ZMf37BzQj4eDjiOxpnIXPVQmAlKpEu3c=;
+	s=k20201202; t=1729111362;
+	bh=xrcHJotXkW6+apfYIXWbfsGkJssZ2jj2GI/l7hlvH1g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OSThATleAFfFW7KLsRn0iQxnpDK6LPyeeN+FQezJDT5f8PytTc/GPgvcJxK3esWO9
-	 asyKnuWF6WaeGCEV+sFCSGWkX4RorT8QjHeXtrayKQeIm8RfHj100BrMtJGgYOSHom
-	 Jqle8pw2zT1ONSHMe2olcq7dGMeonMWtsMS7CtvS8lhw1wwCzmj0fxqDekc9cwo9nZ
-	 P3kRsgnQNbEMEpeMOmf/mzZ089uGl9efLArzFtQPDu9npvIo/xXdmY74Q0E25pkc1S
-	 q0ag5nFNXLgejxuNBo4etWBWSipN1NUW1WYw+cdkjdX3HrGyWkzqbe5YMIwYhO46CG
-	 R5jh3QH5wciww==
+	b=N6KqztLapAj49Nee8Te29cfRI+VHZQzVBjKbFOPJq8IyU5BbeNp7CTAVkCmxLhMVC
+	 9P175qYSJa9qHcWdca//MEaGT8esqvuR+p4V6Dwk/BtQuxobmeqjB2DmEjywrL0u6h
+	 0Bjn/lYjfq2xphUqfWqRPPFieGrSTM9cMXhE7ukofZBWjiBFewYsKTRXfKSQbLZDfT
+	 +mMEkhBwCeoZ76eegyokWi+MyoGjg71wZBWIehADBbGhPdLQfRKRPjwS9cM+FxJBC3
+	 E2vgALmuMmWGBzhR15H+XAA0SQoqCbCzbNg3/Pci9iiZTIgnWjIIc8kUPBEwHMsel5
+	 PfRvSzbvgK42w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhishek Sahu <absahu@codeaurora.org>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when width is not set
-Date: Wed, 16 Oct 2024 15:42:27 -0500
-Message-ID: <172911112243.3304.17711997770230846339.b4-ty@kernel.org>
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH] clk: qcom: videocc-sm8350: use HW_CTRL_TRIGGER for vcodec GDSCs
+Date: Wed, 16 Oct 2024 15:42:29 -0500
+Message-ID: <172911112238.3304.13650194719684727274.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
-References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+In-Reply-To: <20240901093024.18841-1-johan+linaro@kernel.org>
+References: <20240901093024.18841-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,17 +54,33 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 06 Oct 2024 22:51:58 +0200, Barnabás Czémán wrote:
-> Many qcom clock drivers do not have .width set. In that case value of
-> (p)->width - 1 will be negative which breaks clock tree. Fix this
-> by checking if width is zero, and pass 3 to GENMASK if that's the case.
+On Sun, 01 Sep 2024 11:30:24 +0200, Johan Hovold wrote:
+> A recent change in the venus driver results in a stuck clock on the
+> Lenovo ThinkPad X13s, for example, when streaming video in firefox:
 > 
+> 	video_cc_mvs0_clk status stuck at 'off'
+> 	WARNING: CPU: 6 PID: 2885 at drivers/clk/qcom/clk-branch.c:87 clk_branch_wait+0x144/0x15c
+> 	...
+> 	Call trace:
+> 	 clk_branch_wait+0x144/0x15c
+> 	 clk_branch2_enable+0x30/0x40
+> 	 clk_core_enable+0xd8/0x29c
+> 	 clk_enable+0x2c/0x4c
+> 	 vcodec_clks_enable.isra.0+0x94/0xd8 [venus_core]
+> 	 coreid_power_v4+0x464/0x628 [venus_core]
+> 	 vdec_start_streaming+0xc4/0x510 [venus_dec]
+> 	 vb2_start_streaming+0x6c/0x180 [videobuf2_common]
+> 	 vb2_core_streamon+0x120/0x1dc [videobuf2_common]
+> 	 vb2_streamon+0x1c/0x6c [videobuf2_v4l2]
+> 	 v4l2_m2m_ioctl_streamon+0x30/0x80 [v4l2_mem2mem]
+> 	 v4l_streamon+0x24/0x30 [videodev]
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: clk-alpha-pll: Fix pll post div mask when width is not set
-      commit: e02bfea4d7ef587bb285ad5825da4e1973ac8263
+[1/1] clk: qcom: videocc-sm8350: use HW_CTRL_TRIGGER for vcodec GDSCs
+      commit: f903663a8dcd6e1656e52856afbf706cc14cbe6d
 
 Best regards,
 -- 
