@@ -1,121 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8351F1D90A2;
-	Wed, 16 Oct 2024 12:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00E1208D6C
+	for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 13:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083456; cv=none; b=vBq8O3AyXEjbkCOp0+1AHPQnKFHMHsjZVXdulygZnbPx8SFBpLNqfqMg9PZqJ7+iNH7eXY77lb+zBJQLcN4jAWdu+vh1tcedNyQmYWQhU9wP7ug3vvwcu98Xm2Eq0IrnTvOQI1eDV8H2nDIihMa/lzokPOigeGKFxz8xDcHmeyo=
+	t=1729086752; cv=none; b=bBt5H2FT+mKcvepjjTfhQtVzy964FumHDYWo7WOWoZ18GHg2Bp6w7kyDiGcXCx2wRudDUtWosDFFJfcT3DoKiFY2mfry/eGgNbEpM28+BNxqObmLI1Z42UjfBrSA51kR8kQ6migZY3yElN4CY4vGQbIJkbUFrjLovqoKxZR7v2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083456; c=relaxed/simple;
-	bh=FfgZGYDcZtRzNtqkV/CBVQD9Jhebbo2tapsViEbSXpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bpaFNeyMssUgNMokYE5O8Xb0arphJ27wCXwEVd5KsqmAIWuFt6S5bxuVtAThv16mc0XvLN4Up21g7kO49PrnbIrMCcO/LnGAYzzFZp3wEU9ENXt8jNh0NYTB2cUf0IC1TaPD3ilrJVKUd3v5KZsw+5VWYcSECsqg/YWCoqb+qCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPf+MQjb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729086752; c=relaxed/simple;
+	bh=VVX/YrughqBZ9ns5PdhCeSOcP7HVYly5xSyjLWSoCXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2fdjhCgqb+BY53/Z1WlWD5AiyQhkgd4P9gLrapjHs59wZ2H7cFHILNcge/LH+gUqVmXbZ7yVVQio6QaYTuV8o8Px3kt5CgvaGY6GBkm1IRSkuaP9oKzUXJqPxlB5A582fAQc2TIy2cNkZu3j90pJf5uE4XwcAnNFyTuetWRFSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0EIQuVk1; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPf+MQjb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18680C4CEC5;
-	Wed, 16 Oct 2024 12:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729083456;
-	bh=FfgZGYDcZtRzNtqkV/CBVQD9Jhebbo2tapsViEbSXpE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uPf+MQjb2Z4epXq2IKSKCOErbGG7QgcsoYx9EYlsgIdCJpcpzIjJgQGj7TiAlU0VH
-	 EpeUkCwMmIAH/A6VNCH2WLxLGjwo0VC0Ws1DN5Nl6qHQ+tkB6wE2hPnMxS5bkid2Zq
-	 nzfMXq/VVJfby6HFDfbOaWpSpRVq24Sp5mmH1oq+8r/fLvORJF8gmAHk8WHK5l6tCj
-	 IAOQFUPVfF5xoFjVQ2VN+fGe1R2sdvx1WVn+WT/v4vOuP6UjrGJAgR1ZtyvqjdTBi+
-	 NQtN003CSKW/Tfru21oTo+jz1Rw2m6vU/Ldl64MYQvDzQGPv2uGyM2r0AsjYo6V+HA
-	 XQ1rqbOAZ4hbA==
-Message-ID: <adecc9c1-0bbc-42ec-8098-aa323a1f5f48@kernel.org>
-Date: Wed, 16 Oct 2024 14:57:28 +0200
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0EIQuVk1"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so4780601a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 06:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729086749; x=1729691549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B4K5n0bY/MNJApsUthAN1NPIj08Soy9GOdy9ssrn3mY=;
+        b=0EIQuVk1RYpfv2q6yHbVisFomkrz76v+bd54R0k+TujCLMa4HAWrrugOLo35eq+k7i
+         gl3zBhDzNrMu0SyrG+Ved2jIJU8iI0Snon54x6JmGnamzEca4cfsGLXmUKek8ySBMJm/
+         ub7/vDTKV2RSs27RZoSzFCpEIWYkEbhtBIyRuFUIF6KbLhKfQqSFLgmKhY4vcQc4BnOX
+         0iMZUf5+Vbp5r9dPo4GZMrJYBc7dYBBA5sBoJpFe++QP+GCL9bmqlRE6FpK1p/yd7FIN
+         R3RmRVHJtpS51AqROAWD13J7IAhbVby9Z8sJBIsQGdUtCYh9qmsNMlLhGWBgRml5rAWm
+         YtvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729086749; x=1729691549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B4K5n0bY/MNJApsUthAN1NPIj08Soy9GOdy9ssrn3mY=;
+        b=cp9LQj8mniJXBT8VSla6JjxtemqBMzfqKSzYZj0tWMT2ge8mlvfHDP1H4tA7LZo0RJ
+         fxC4i7I4USvoFZGh8ijXxIBR46hjJp8LHIgCdbmTKUXqJGeAZtFvmA65X5CmsqrizMpJ
+         hRuzETce4fflUAjTjTYTqeSmBQGzSgj9Zb/hWX6sZopNIogdqFUZeAFCpTTwC/DxSr5e
+         Zlv20E0rnG/t199ZFNOTKCPcfbESprEdTM0AJpOsS8Ce5nkOTGNhAJonLPJwGpD+HUqM
+         qeBvT5pz5w8u8uii/D1opyUWrP1TSWE3deK0LKA4M8M2sUNbQg+pFO3mS2Jo1vQBwQux
+         hKFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxzQyLvWQPMphmIQv2f+4kVdKzedfVfrs6EpZkhNVKT1fyevb6NaeXaUYvHKObYd+CvIQ6KhFWWXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUWsNhfxHmodSaXzqllgiiu3A63+AAobcJMz91REmRvC5Bdj7Z
+	DUQDSUnkSFkjfw+6blggkmA3ai6nmGMPPk3hpdynkg8nQa3WR9O5GGZW6f4dKBA=
+X-Google-Smtp-Source: AGHT+IGoNQzV+Bg1qNjVUvhK/C+rlK7lfaTe4z86a7lUttjr0E2+hamRKC5LOMtljrg6bMBomFnMuA==
+X-Received: by 2002:a05:6402:42c6:b0:5c9:8d36:e2e7 with SMTP id 4fb4d7f45d1cf-5c98d36e3b1mr5159175a12.33.1729086748713;
+        Wed, 16 Oct 2024 06:52:28 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:e416:44e3:8348:4e6f])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d7b4a63sm1754723a12.79.2024.10.16.06.52.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 06:52:28 -0700 (PDT)
+Date: Wed, 16 Oct 2024 15:52:25 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Yassine Oudjana <yassine.oudjana@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Yassine Oudjana <y.oudjana@protonmail.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
+ main clock and reset drivers
+Message-ID: <2ceewj7y4ybqyv4xxnms63zsi3bbw5t6opvjf3z4rorsxlwfq6@jlwzyy4umyif>
+References: <20241010132659.81606-1-y.oudjana@protonmail.com>
+ <20241010132659.81606-3-y.oudjana@protonmail.com>
+ <vn466kmo2uqrf6ap54oat2bipj4lsfri7asnsrptrlthva6j5m@dop6xit2pzjk>
+ <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
-To: Haylen Chu <heylenay@4d2.org>, Haylen Chu <heylenay@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>
-References: <SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221BDC11EE244C7D70C229DD7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <zsayhliz4a4fauzmvkimd4uzucuunt6gmkypjlqh4omle4uqx4@cbknudobc57g>
- <Zw-tTEViagJFPFtv@ketchup>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zw-tTEViagJFPFtv@ketchup>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nn67jih5s63rwj76"
+Content-Disposition: inline
+In-Reply-To: <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
 
-On 16/10/2024 14:10, Haylen Chu wrote:
->>
->>
->>> +        - spacemit,mpmu
->>> +
->>> +examples:
->>> +  - |
->>> +    syscon_apbs: system-control@d4090000 {
->>
->> Only one example, keep it in parent node.
-> 
-> Should I drop the example block in this binding completely and move it
-> to its parent's binding (the syscon) or just drop the parent here?
-> 
 
-Please drop entire example from this binding and implement one, full
-example in the parent binding file (so in the syscon).
+--nn67jih5s63rwj76
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
+ main clock and reset drivers
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+Hello,
 
+On Wed, Oct 16, 2024 at 11:57:12AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 16/10/24 11:28, Uwe Kleine-K=F6nig ha scritto:
+> > On Thu, Oct 10, 2024 at 04:26:57PM +0300, Yassine Oudjana wrote:
+> > > +static struct platform_driver clk_mt6735_apmixedsys =3D {
+> > > +	.probe =3D clk_mt6735_apmixed_probe,
+> > > +	.remove_new =3D clk_mt6735_apmixed_remove,
+> > > +	.driver =3D {
+> > > +		.name =3D "clk-mt6735-apmixedsys",
+> > > +		.of_match_table =3D of_match_mt6735_apmixedsys,
+> > > +	},
+> > > +};
+> >=20
+> > After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> > return void") .remove() is (again) the right callback to implement for
+> > platform drivers. Please just drop "_new".
+>=20
+> Oh wow, I didn't notice that during my review. Sorry about that.
+
+No problem, I blame noone. You cannot be aware of every change in the
+tree.
+
+Best regards
+Uwe
+
+--nn67jih5s63rwj76
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPxQ8ACgkQj4D7WH0S
+/k5qMAgAp6xUYRchPuw1po6lUEMN+JvpwOJDGGuzkdLZRYtB3pAzVFj+6l9LFhDG
+ABrboGHLYWfrdSXu1A6GG/6JkqhqPARGgDcggUaN7v5V7c9uQi7xh07FnEObuj08
+B/UINBv6DDchFLGMFoyla0einCWSwOS9wYejj2w8OtVKl3C934Eyx2FCHmmyS64a
+KNzoeRj8YgFzvOtwyrIshytiX6CwCwDOTNqgVi2KWT60znHiFY2AW4ymZ0Lb/Spv
+jIgDU4PMBuATWRqfcqveSiYi68xVmC92QY1ygM7dHGzFMHy3DlYTeSqzYA0JdM3g
+5Q2yDUlNkA4pfm5E3QiIgZPPfjbC2g==
+=a556
+-----END PGP SIGNATURE-----
+
+--nn67jih5s63rwj76--
