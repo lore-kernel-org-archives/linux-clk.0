@@ -1,60 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182316E86F;
-	Wed, 16 Oct 2024 18:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5228E217331;
+	Wed, 16 Oct 2024 20:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729104692; cv=none; b=t0T6kevo0ezRjZYNra+H2OLT8Sg49O+5e+/mNXKNQ1rXe7hVKUP2gGTZ0+TxXVYNrP5gc5m0XIpI3f7neJVQUN7LuBRLsWo7tT6ykwjJrnHmltcB112Qm8znu7h2sk4R2HbGBewki4CBhYlvSBBpF6Mqg3NLLZNCmj1XipPf/sY=
+	t=1729111360; cv=none; b=mv/Qv+ZY3fJYtS9uCmEDEfvXgPrcfurDeiJUAO+AkUS9u84Q5PEzZzO/6LXkbT+wYLHUTPsGlPrILPqc+yv+3+5KhJpUPvBXc/yvXl+EOUxQw3O9QyMp5g334YvhEkMVQOyKo63NOPGeFG0fVPRaaFaR1qoQIRwojJrYbG85kBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729104692; c=relaxed/simple;
-	bh=MN1HRH02DeXpotThFBo9SNUk9jLPl86YgdWUzF8+UdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VMWhJxuyxgBw4rSRIgtWVthHXCfKKXBl5W8vBrPk7hzTaLNUZPgPq1ohD3FO4nk7hnQ0KWCwe3bMxT47PIKNaIZa1IK0jEMx0NfiFukDeB4Su99N8xtZk4PyFUIpro2Vn2AOeiI5V8fHvqbQ4SfbyO8f6uDTlQzgHz/d10ibWaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj0y9r4p; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729111360; c=relaxed/simple;
+	bh=DCMMJYIjuc7ZMf37BzQj4eDjiOxpnIXPVQmAlKpEu3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DymrvT6vGrTsdCEGDt9gavpJDJ+I1HmyUGC8yRndhh++ceS27aedfMXrxZ/ov6dUKEWXExjjdFDPj2ST4b0asyauitlFTYPkEKN9kj0/o51L7h1LwWKy+bXKd53CCZ03mioklzT/sbtg/8p6mSBE7mghcmAnkraIK/fLaQXtIkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSThATle; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj0y9r4p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AABC4CEC5;
-	Wed, 16 Oct 2024 18:51:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSThATle"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1D2C4CEC5;
+	Wed, 16 Oct 2024 20:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729104692;
-	bh=MN1HRH02DeXpotThFBo9SNUk9jLPl86YgdWUzF8+UdM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dj0y9r4pDeIkUGOWJ64wqYfCuLAi70so7iZDPHZPXs4FAzEVGvLG1u0AqeL6tkpJ7
-	 GD8RJlJVXkec3HoAp8qvkTD3MkY6MmgoCmpOJ8HvP5WyfIL9jUhKQTOAzLvxEc2tv2
-	 eITupwkCwS+/4RDHeYoNGAHZHxpOqBjfujmCGXLUt/PDQvQ1R0xyCPC8ZK/6b9rfIt
-	 tjaB6B6mU/4nKa/wCD32yjZ0ias2pH4XIYywObTyKbIlq115ivut989q/SqDaph6mD
-	 Pdsq44OgANCzKhmoqgGEp//k1Q09wZsAHF6U4Dv5rfmkLTrfeV+z4DMzHflTo1k6I5
-	 kgRjSXOcHSRlA==
-Message-ID: <800c377d-1ba4-4831-9c32-939d640e13dd@kernel.org>
-Date: Wed, 16 Oct 2024 21:51:24 +0300
+	s=k20201202; t=1729111359;
+	bh=DCMMJYIjuc7ZMf37BzQj4eDjiOxpnIXPVQmAlKpEu3c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OSThATleAFfFW7KLsRn0iQxnpDK6LPyeeN+FQezJDT5f8PytTc/GPgvcJxK3esWO9
+	 asyKnuWF6WaeGCEV+sFCSGWkX4RorT8QjHeXtrayKQeIm8RfHj100BrMtJGgYOSHom
+	 Jqle8pw2zT1ONSHMe2olcq7dGMeonMWtsMS7CtvS8lhw1wwCzmj0fxqDekc9cwo9nZ
+	 P3kRsgnQNbEMEpeMOmf/mzZ089uGl9efLArzFtQPDu9npvIo/xXdmY74Q0E25pkc1S
+	 q0ag5nFNXLgejxuNBo4etWBWSipN1NUW1WYw+cdkjdX3HrGyWkzqbe5YMIwYhO46CG
+	 R5jh3QH5wciww==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhishek Sahu <absahu@codeaurora.org>,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when width is not set
+Date: Wed, 16 Oct 2024 15:42:27 -0500
+Message-ID: <172911112243.3304.17711997770230846339.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] clk: twl: add TWL6030 support
-To: Andreas Kemnade <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>,
- linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Lee Jones <lee@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-References: <20241014161109.2222-1-andreas@kemnade.info>
- <20241014161109.2222-4-andreas@kemnade.info>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241014161109.2222-4-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-
-On 14/10/2024 19:11, Andreas Kemnade wrote:
-> The TWL6030 has similar clocks, so add support for it. Take care of the
-> resource grouping handling needed.
+On Sun, 06 Oct 2024 22:51:58 +0200, Barnabás Czémán wrote:
+> Many qcom clock drivers do not have .width set. In that case value of
+> (p)->width - 1 will be negative which breaks clock tree. Fix this
+> by checking if width is zero, and pass 3 to GENMASK if that's the case.
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> 
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Applied, thanks!
+
+[1/1] clk: qcom: clk-alpha-pll: Fix pll post div mask when width is not set
+      commit: e02bfea4d7ef587bb285ad5825da4e1973ac8263
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
