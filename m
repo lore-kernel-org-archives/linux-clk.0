@@ -1,74 +1,60 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00E1208D6C
-	for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 13:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086752; cv=none; b=bBt5H2FT+mKcvepjjTfhQtVzy964FumHDYWo7WOWoZ18GHg2Bp6w7kyDiGcXCx2wRudDUtWosDFFJfcT3DoKiFY2mfry/eGgNbEpM28+BNxqObmLI1Z42UjfBrSA51kR8kQ6migZY3yElN4CY4vGQbIJkbUFrjLovqoKxZR7v2o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086752; c=relaxed/simple;
-	bh=VVX/YrughqBZ9ns5PdhCeSOcP7HVYly5xSyjLWSoCXw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7941B20E021;
+	Wed, 16 Oct 2024 16:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729094869; cv=pass; b=lJmhAKDNSpWJ5D1HlGREAmTOUQKnkmGHhOHk9L9oma08g5jGsDOV4g5ho7WwZVPHp32GKCAruH6VVtEiCKxW3bhQKzgyGNwebPnba5iBQW7JjSufjudZp3mr2j5MdcC22PtXRcBdenry7W560Xni6SVgZ2V8X1W2a16YH0KL2cY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729094869; c=relaxed/simple;
+	bh=hxWI2/T47uvSF3DUHoAloTyflJwmL4doBMivhYm9tdQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2fdjhCgqb+BY53/Z1WlWD5AiyQhkgd4P9gLrapjHs59wZ2H7cFHILNcge/LH+gUqVmXbZ7yVVQio6QaYTuV8o8Px3kt5CgvaGY6GBkm1IRSkuaP9oKzUXJqPxlB5A582fAQc2TIy2cNkZu3j90pJf5uE4XwcAnNFyTuetWRFSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0EIQuVk1; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7c/m30NjomcNGyQMKhXtEMcGB07eO7px8insQH4s8ZYaF7KHHJV5tRW4WaLSvN0RIy0wxq2Jhct5bQckc99SyfT+XHsb7tcMsG/ZEVnTBGQnAB438riLrQHnOvoXqN9Dr4EejueacPSK7gGH1QO/5FYQ5PULT5abtvf8o36Dbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=T0PwhF4z; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0EIQuVk1"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so4780601a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 06:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729086749; x=1729691549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4K5n0bY/MNJApsUthAN1NPIj08Soy9GOdy9ssrn3mY=;
-        b=0EIQuVk1RYpfv2q6yHbVisFomkrz76v+bd54R0k+TujCLMa4HAWrrugOLo35eq+k7i
-         gl3zBhDzNrMu0SyrG+Ved2jIJU8iI0Snon54x6JmGnamzEca4cfsGLXmUKek8ySBMJm/
-         ub7/vDTKV2RSs27RZoSzFCpEIWYkEbhtBIyRuFUIF6KbLhKfQqSFLgmKhY4vcQc4BnOX
-         0iMZUf5+Vbp5r9dPo4GZMrJYBc7dYBBA5sBoJpFe++QP+GCL9bmqlRE6FpK1p/yd7FIN
-         R3RmRVHJtpS51AqROAWD13J7IAhbVby9Z8sJBIsQGdUtCYh9qmsNMlLhGWBgRml5rAWm
-         YtvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729086749; x=1729691549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B4K5n0bY/MNJApsUthAN1NPIj08Soy9GOdy9ssrn3mY=;
-        b=cp9LQj8mniJXBT8VSla6JjxtemqBMzfqKSzYZj0tWMT2ge8mlvfHDP1H4tA7LZo0RJ
-         fxC4i7I4USvoFZGh8ijXxIBR46hjJp8LHIgCdbmTKUXqJGeAZtFvmA65X5CmsqrizMpJ
-         hRuzETce4fflUAjTjTYTqeSmBQGzSgj9Zb/hWX6sZopNIogdqFUZeAFCpTTwC/DxSr5e
-         Zlv20E0rnG/t199ZFNOTKCPcfbESprEdTM0AJpOsS8Ce5nkOTGNhAJonLPJwGpD+HUqM
-         qeBvT5pz5w8u8uii/D1opyUWrP1TSWE3deK0LKA4M8M2sUNbQg+pFO3mS2Jo1vQBwQux
-         hKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxzQyLvWQPMphmIQv2f+4kVdKzedfVfrs6EpZkhNVKT1fyevb6NaeXaUYvHKObYd+CvIQ6KhFWWXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUWsNhfxHmodSaXzqllgiiu3A63+AAobcJMz91REmRvC5Bdj7Z
-	DUQDSUnkSFkjfw+6blggkmA3ai6nmGMPPk3hpdynkg8nQa3WR9O5GGZW6f4dKBA=
-X-Google-Smtp-Source: AGHT+IGoNQzV+Bg1qNjVUvhK/C+rlK7lfaTe4z86a7lUttjr0E2+hamRKC5LOMtljrg6bMBomFnMuA==
-X-Received: by 2002:a05:6402:42c6:b0:5c9:8d36:e2e7 with SMTP id 4fb4d7f45d1cf-5c98d36e3b1mr5159175a12.33.1729086748713;
-        Wed, 16 Oct 2024 06:52:28 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:e416:44e3:8348:4e6f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d7b4a63sm1754723a12.79.2024.10.16.06.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 06:52:28 -0700 (PDT)
-Date: Wed, 16 Oct 2024 15:52:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Yassine Oudjana <yassine.oudjana@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Yassine Oudjana <y.oudjana@protonmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
-Message-ID: <2ceewj7y4ybqyv4xxnms63zsi3bbw5t6opvjf3z4rorsxlwfq6@jlwzyy4umyif>
-References: <20241010132659.81606-1-y.oudjana@protonmail.com>
- <20241010132659.81606-3-y.oudjana@protonmail.com>
- <vn466kmo2uqrf6ap54oat2bipj4lsfri7asnsrptrlthva6j5m@dop6xit2pzjk>
- <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="T0PwhF4z"
+ARC-Seal: i=1; a=rsa-sha256; t=1729094836; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AW33EU2mROFqz8gJGT9DEjsYHa6VTR4uKPZls9h6YaDHN3u3egb3b2iRAD9YlXgzbRb7x7YLUx1/28Qj1V7nl6U6xERC9pHIkprncuRy65RdAA12O5ehcArZGKAfVPpPOyx7BYfiOveOeZ+tKkkqXqv/004bXZ5wHS5WJlLyR2o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729094836; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Kr7rIycrQNv+7/aCXXtLO3K0Lzcz8kTMlFvA5SaaB3I=; 
+	b=W6Y2LmvatyAsB1rCg4h6dyWg+slJO722R03JwGEsZsiVnyrSA1WUkkTwlsaK8Vzwz3aiOF5i8+wHkwljz3CqGFDaS/Otb6P3Xbt+6xUubjSOjKZm3uhcsoCUTRvdqPVMhDQGlEouV2VeaKhUMUovIYyMw9hjJNTeORv29+GyRyk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729094835;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Kr7rIycrQNv+7/aCXXtLO3K0Lzcz8kTMlFvA5SaaB3I=;
+	b=T0PwhF4zBOxc0Feo2lU3E3y8JOWmbbtVhmy7t71xKvfpRE90OthssrtowwFmna4P
+	FdpqVKnY9LTuuL3dAUSAPKzfu5ruLcMEgok46oHleaivTuu2281O2bSQBjz0VWwpPRw
+	TXkSV6wwJU2srhgrjVFmlE3XbMXxv0vfeADOHshI=
+Received: by mx.zohomail.com with SMTPS id 1729094834938486.39137892805354;
+	Wed, 16 Oct 2024 09:07:14 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 3E82C106044F; Wed, 16 Oct 2024 18:07:09 +0200 (CEST)
+Date: Wed, 16 Oct 2024 18:07:09 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Message-ID: <bi7pxgkf6qylkcfa6x2uerfe6zyctbidwravqb4okefjctlvuu@fxmi4pt3fktu>
+References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
+ <9ca2a9dc-b643-40ce-8177-68533d0733d1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,58 +62,95 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nn67jih5s63rwj76"
+	protocol="application/pgp-signature"; boundary="re7lds35svwv2quv"
 Content-Disposition: inline
-In-Reply-To: <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
+In-Reply-To: <9ca2a9dc-b643-40ce-8177-68533d0733d1@collabora.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/228.222.7
+X-ZohoMailClient: External
 
 
---nn67jih5s63rwj76
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+--re7lds35svwv2quv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
+Subject: Re: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
 MIME-Version: 1.0
 
-Hello,
+Hi,
 
-On Wed, Oct 16, 2024 at 11:57:12AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 16/10/24 11:28, Uwe Kleine-K=F6nig ha scritto:
-> > On Thu, Oct 10, 2024 at 04:26:57PM +0300, Yassine Oudjana wrote:
-> > > +static struct platform_driver clk_mt6735_apmixedsys =3D {
-> > > +	.probe =3D clk_mt6735_apmixed_probe,
-> > > +	.remove_new =3D clk_mt6735_apmixed_remove,
-> > > +	.driver =3D {
-> > > +		.name =3D "clk-mt6735-apmixedsys",
-> > > +		.of_match_table =3D of_match_mt6735_apmixedsys,
-> > > +	},
-> > > +};
+On Wed, Oct 16, 2024 at 12:28:37PM +0300, Cristian Ciocaltea wrote:
+> On 9/26/24 1:43 PM, Cristian Ciocaltea wrote:
+> > Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> > clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> > return the number of clocks stored in the clk_bulk_data table referenced
+> > by the clks argument.
 > >=20
-> > After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> > return void") .remove() is (again) the right callback to implement for
-> > platform drivers. Please just drop "_new".
+> > That is required in case there is a need to iterate these clocks later,
+> > therefore I couldn't see any use case of this parameter and should have
+> > been simply removed from the function declaration.
+> >=20
+> > The first patch in the series provides devm_clk_bulk_get_all_enabled()
+> > variant, which is consistent with devm_clk_bulk_get_all() in terms of
+> > the returned value:
+> >=20
+> >  > 0 if one or more clocks have been stored
+> >  =3D 0 if there are no clocks
+> >  < 0 if an error occurred
+> >=20
+> > Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+> > the past form of 'enable'.
+> >=20
+> > The next two patches switch existing users of devm_clk_get_enable() to
+> > the new helper - there were only two, as of next-20240913.
+> >=20
+> > The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+> > helper.
+> >=20
+> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > ---
+> > Changes in v2:
+> > - Dropped references to 'broken' API in commit descriptions, per Mani's
+> >   suggestion
+> > - Added R-b tags from Angelo and Mani
+> > - Link to v1:
+> >   https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06=
+@collabora.com
 >=20
-> Oh wow, I didn't notice that during my review. Sorry about that.
+> [...]
+>=20
+> This still applies cleanly on next-20241016 and there are no new users
+> of devm_clk_bulk_get_all_enable(), hence I wonder if anything else is
+> missing to get it merged.
 
-No problem, I blame noone. You cannot be aware of every change in the
-tree.
+FWIW another potential user for the new function is just being added
+to the kernel:
 
-Best regards
-Uwe
+https://lore.kernel.org/linux-rockchip/20241011065140.19999-1-frawang.cn@gm=
+ail.com/
 
---nn67jih5s63rwj76
+Greetings,
+
+-- Sebastian
+
+--re7lds35svwv2quv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPxQ8ACgkQj4D7WH0S
-/k5qMAgAp6xUYRchPuw1po6lUEMN+JvpwOJDGGuzkdLZRYtB3pAzVFj+6l9LFhDG
-ABrboGHLYWfrdSXu1A6GG/6JkqhqPARGgDcggUaN7v5V7c9uQi7xh07FnEObuj08
-B/UINBv6DDchFLGMFoyla0einCWSwOS9wYejj2w8OtVKl3C934Eyx2FCHmmyS64a
-KNzoeRj8YgFzvOtwyrIshytiX6CwCwDOTNqgVi2KWT60znHiFY2AW4ymZ0Lb/Spv
-jIgDU4PMBuATWRqfcqveSiYi68xVmC92QY1ygM7dHGzFMHy3DlYTeSqzYA0JdM3g
-5Q2yDUlNkA4pfm5E3QiIgZPPfjbC2g==
-=a556
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcP5KUACgkQ2O7X88g7
++pqNIA//eIgyPRPVGxCRGq0n6vayNEPD4IlGMAx1j6M7fmkBgwz/xQvRomNBkwib
+r3o3EYdHbjrcpaSr5mt28GusSOdNrv1Q3OvjHA39mft6dd2vxFkYNxJ5sZ9q0Eo6
+aUO3vkIrt1n0a+HWY7te6uMhs8n9OCs536CcLJ15p2ZsLuEpezFvbb4NU5Ydu1qs
+LdQev0ZSsMQwgUY6HCN8jL2n+pZBEv1epp/ZtHv5W4lnsKghDZMwoPLt2amZER/0
+WgnGswUGQuTPjVrJE16Uq9EI7xS5ueE8oZ3tT3ysJmWSBYvbYApM19Ud2k3Md5xr
+H8DvI99FajZa6t7DCYzv9gCOFz+59pmpJp8+H3pzkkyT9XAPHzHA/039DRY6fmIp
+WrC7EWuilOtOLYn6u5/Vqc1xwvrJETZLCmEnBPXc0IFFh/WR9ujOwevpt/JLB+yJ
+htvchSWQvmbss1Uyjep/Ou0qCtXkBfs5vRwuSBMsaxafaPSoOSkWKRQVhLEvUkXD
+QYktMUFf7ER0Fe2gqkalUqoS1YZijRisdHawJ9rDmqQGfIhxaCWNa+EnPZBwh8Y3
+ZzcBFiB4axozX9By+UtBRoCiQEbwj1+zzH6ALDSGhlWD8YUiyFUr8DlLAbMvbRvX
+3M0dA9Y/vuaxeWbIJSm5t+aMccuTWUuEtFAyHqNKykjQ5FdCOqs=
+=xIQC
 -----END PGP SIGNATURE-----
 
---nn67jih5s63rwj76--
+--re7lds35svwv2quv--
