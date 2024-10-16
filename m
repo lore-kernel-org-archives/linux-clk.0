@@ -1,109 +1,116 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67859205E07;
-	Wed, 16 Oct 2024 09:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167EA205E11
+	for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 09:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070922; cv=none; b=HRrQ4+oLfYQl6sphLVJ1EwHrObg6WI3STeD9MKIebpxuTQlHfc9KOW1kgkJ5BzUnIActv86qEa0pN5QyUqy9ysEs8AxY/SF7X8T5BSG4ix5j98DeyzKyPGGWmLP6st7G7q1Rz6HWyeEj5CmTNH1/uGC9KovPpiL1Ea3+Or8hEzo=
+	t=1729071414; cv=none; b=kfLupc9OVCFYV6dsxNKwjIeGEtEU/lKINR/zlf8OtLbgd2Q8V9Rp9vftvpWr1ldfRiZ2529zyMHfL3l0LUtzekkFAfoLh+RaZwUxC6vBE0XnDfqcg7lwqZPNNPT/OOY1nLFH82i1PLCPeFcUddq9t3DksK/MapdgHf9br3UJcCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070922; c=relaxed/simple;
-	bh=1J6QfXBg9V1ZgA0yYgTnAj6Ox1PdlYEoRDRtJvp7+yI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uAChpFy9dmQp0uAbZhHxs0uyw5xJw1C4G6lLkDX/JJ00QqOqqK6zqMIU+vrPnFNzqafBHdK50kofiGrk7fFJiuZvceR4LT7NkV9vY4fb8xo5sOd6R7+ygFXJbdJ3euACIfIIE2Rn0bkSRGtcMMuCH+hQA2IkQo2W59cJYiK36zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z2WrxwlF; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1729071414; c=relaxed/simple;
+	bh=AF2PqunK1k+XUN3mW+Re5acyYvzfPCvF2Hb4iVv5SHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhSjzSm5UcOW8TTiea3kVuaclyg4JZE3dWPCrRcwjDsJsdGwDPu5scnZLnSLTVjbq2+6W+EER3BEQsV9U0yA7iE9cg8OJKXe9sD1IVKrv/Y0ZrDELuD2OGjVEa6NXTkGZ8EUQU6QxfptSrrF4sQD75Yw/vtYqJHeW/iEBfvmfaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EAx/kyrR; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z2WrxwlF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729070918;
-	bh=1J6QfXBg9V1ZgA0yYgTnAj6Ox1PdlYEoRDRtJvp7+yI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Z2WrxwlF/UbdQHHE3PaQ7S2n7qo/CiLPzkdsI3xTOvi2AKewdUkExHRZztiXYWHPI
-	 UesLbavjU/KvWScNPW/g3Q0UxtvFsB176XHje9NQbBtCP0HV49M9lVqyvD4BKUKrUt
-	 ThVeZukTzs/QEutWPDryjwwccLK4hwHKHEBObU2WmRaEdbWxvM3gPFBrzhBFy4txBr
-	 UxEIYy1mO0MPWI+kUSQ+lC9WfAAYjVYsIgo0w5YoM7kJEz3Nytk1FZ90NuQMgXWG4E
-	 DB87X6qHxD8Qc6Cu++5/3kumSN6xVdRMJJvqiuXdfR9jCKRhCev+eHYXmCiZIPneWd
-	 RobPZ1sJd8dqQ==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F33B617E121F;
-	Wed, 16 Oct 2024 11:28:37 +0200 (CEST)
-Message-ID: <9ca2a9dc-b643-40ce-8177-68533d0733d1@collabora.com>
-Date: Wed, 16 Oct 2024 12:28:37 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EAx/kyrR"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4314b316495so9660635e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 02:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729071411; x=1729676211; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fxIP+503HmacKr52hF4cwN6vKpq9JVczVJoJF+op9ME=;
+        b=EAx/kyrR+Av9RHjIel0Zk3ZKOguBI9KYZ6RbiPrEEYx2C+2zc6dvaNTdxpell8VDdl
+         pFWF6ADVL/tlDRE0jIXOH13tDqy1cuRUBvFHCz8CO2eYbGL/fzcsV09s2MFr2WsLupHw
+         QPOtADxtEgWUH9Cm2o2t1deJokwjiFGtcHPkW4sodffi+UGP2kqJGZDv1Jh6vl/y8Cem
+         EgO/ALORlGfXAx6ttwtVpSkyfIqvIp2zmOdSf2cdjLYAbBjIJCSRUGKeMYX7uw96pGAI
+         416T0+sobZRvZrop9E/MCsxs+SGCpjwsdoyK8kN4iSgvvCjO8ZUijJ/vJv40a+nFcISu
+         c2tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729071411; x=1729676211;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fxIP+503HmacKr52hF4cwN6vKpq9JVczVJoJF+op9ME=;
+        b=dKuEBgDQjbl5vp9HN6NGH/6zRiRWmTA1uy/8oLF/ma1uepuFf88Z9lI5dZHpE59oST
+         OkJTHB0rfz6EoTHanv+sC68HGo6+/03GSLGkolOzZEKbbxXw+cRL+2NIVG01qkBg0hP1
+         ax1xEgN+ukdoc1PVcUZc0diHVOFyLECVzPwvGeyjWLxHckh3n59jeqFhmOD3Ww1w0zPb
+         kyl8AVxF2+44D11fVIX0JD/UuBXeTugLI+8z0J2VThma4PpxwlZ4T1F6ZHtmRJ57XoeN
+         dY8V2S25LLLfmrl8tozh5d+adrxcpFXEB1TP5k1upqUjMXGpUyPdHtZl3Cs/xr1Sc0zI
+         bYog==
+X-Forwarded-Encrypted: i=1; AJvYcCXcXk5XdxLlUrUAjGL2baj6YsUjvjnD0xWqApwuBDeDl47WkbOzHYfy/+i0KrF4VPOPNrvHc4EsqE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlQbBzwcG770DR6uUUnPmvaSYMdSc4O4ckdpbBOJZYeEUoIufb
+	JYEpdwrw/Pp4pCd3PCC7i1gCuO9AOheYYHwlxKmKUfKv0CVoVl7JNryiGEyDzzw=
+X-Google-Smtp-Source: AGHT+IG6fNHMCd9wfwMroBHIryaVFXQVYfqJpieR0jsQIFDOAiMSqq1/ES6dB3VtdNGRUPAFimGMVw==
+X-Received: by 2002:a05:600c:3555:b0:42c:bb96:340e with SMTP id 5b1f17b1804b1-4311df56158mr144236185e9.31.1729071411221;
+        Wed, 16 Oct 2024 02:36:51 -0700 (PDT)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc123dasm3798064f8f.94.2024.10.16.02.36.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 02:36:50 -0700 (PDT)
+Date: Wed, 16 Oct 2024 12:36:48 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
+	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
+	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] clk: imx93: Move IMX93_CLK_END macro to clk driver
+Message-ID: <Zw+JMMUOErRKqEH1@linaro.org>
+References: <20241014182438.732444-1-pengfei.li_1@nxp.com>
+ <20241014182438.732444-2-pengfei.li_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014182438.732444-2-pengfei.li_1@nxp.com>
 
-On 9/26/24 1:43 PM, Cristian Ciocaltea wrote:
-> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-> return the number of clocks stored in the clk_bulk_data table referenced
-> by the clks argument.
+On 24-10-14 11:24:35, Pengfei Li wrote:
+> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
+> the number of clocks. However, it is not part of the ABI. For starters
+> it does no really appear in DTS. But what's more important - new clocks
+> are described later, which contradicts this define in binding header.
+> So move this macro to clock driver.
 > 
-> That is required in case there is a need to iterate these clocks later,
-> therefore I couldn't see any use case of this parameter and should have
-> been simply removed from the function declaration.
-> 
-> The first patch in the series provides devm_clk_bulk_get_all_enabled()
-> variant, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->  > 0 if one or more clocks have been stored
->  = 0 if there are no clocks
->  < 0 if an error occurred
-> 
-> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
-> the past form of 'enable'.
-> 
-> The next two patches switch existing users of devm_clk_get_enable() to
-> the new helper - there were only two, as of next-20240913.
-> 
-> The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
-> helper.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
 > ---
-> Changes in v2:
-> - Dropped references to 'broken' API in commit descriptions, per Mani's
->   suggestion
-> - Added R-b tags from Angelo and Mani
-> - Link to v1:
->   https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com
+>  drivers/clk/imx/clk-imx93.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index c6a9bc8ecc1f..c8b65146e76e 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -15,6 +15,8 @@
+>  
+>  #include "clk.h"
+>  
+> +#define IMX93_CLK_END 202
+> +
 
-[...]
+Sorry for this back and forth.
 
-This still applies cleanly on next-20241016 and there are no new users
-of devm_clk_bulk_get_all_enable(), hence I wonder if anything else is
-missing to get it merged.
+I've been discussing this off-list with Krzysztof and others and
+now I think this is actually not wrong.
 
-Thanks,
-Cristian
+So:
+
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
+>  enum clk_sel {
+>  	LOW_SPEED_IO_SEL,
+>  	NON_IO_SEL,
+> -- 
+> 2.34.1
+> 
