@@ -1,116 +1,88 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167EA205E11
-	for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 09:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A6F199944;
+	Wed, 16 Oct 2024 09:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071414; cv=none; b=kfLupc9OVCFYV6dsxNKwjIeGEtEU/lKINR/zlf8OtLbgd2Q8V9Rp9vftvpWr1ldfRiZ2529zyMHfL3l0LUtzekkFAfoLh+RaZwUxC6vBE0XnDfqcg7lwqZPNNPT/OOY1nLFH82i1PLCPeFcUddq9t3DksK/MapdgHf9br3UJcCQ=
+	t=1729072637; cv=none; b=J9jKvuzrqrHFUlRTqiEr78aJUROve73v0NPRFSwsHrJg8/HD9YwT2G04uCD5yy2CSPsve0iTKq833G5VgkxsxT/pL8BxEV/2D3bZbcEem2G5R8+I07HXrq8kFtzqLF0vEN5UJ+ib/TQsgPtRs6LricmZ8MKOGpfX1ZdngnVYDJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071414; c=relaxed/simple;
-	bh=AF2PqunK1k+XUN3mW+Re5acyYvzfPCvF2Hb4iVv5SHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhSjzSm5UcOW8TTiea3kVuaclyg4JZE3dWPCrRcwjDsJsdGwDPu5scnZLnSLTVjbq2+6W+EER3BEQsV9U0yA7iE9cg8OJKXe9sD1IVKrv/Y0ZrDELuD2OGjVEa6NXTkGZ8EUQU6QxfptSrrF4sQD75Yw/vtYqJHeW/iEBfvmfaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EAx/kyrR; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729072637; c=relaxed/simple;
+	bh=uu+U0uRS375aOOnTfp2lQZkaCO+LNb9NDegcLXMQKmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r6TTMqW+ZLr7ehmnk0X8TFdiIhWc3KHnF92t+9cFJXjNSkHTmMkJdH5nQXNxWE0UBBqNzJMowUAMK4oGAW9EYCiZSOJ8XnwgP5CdSMH1mZt7eOSmUuHJZrqX9azhc9pcFml19vFufkLWZX9BpppDV3hGlxeI/4RuGtSnXNKz47Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PS0AuZKY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EAx/kyrR"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4314b316495so9660635e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 02:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729071411; x=1729676211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxIP+503HmacKr52hF4cwN6vKpq9JVczVJoJF+op9ME=;
-        b=EAx/kyrR+Av9RHjIel0Zk3ZKOguBI9KYZ6RbiPrEEYx2C+2zc6dvaNTdxpell8VDdl
-         pFWF6ADVL/tlDRE0jIXOH13tDqy1cuRUBvFHCz8CO2eYbGL/fzcsV09s2MFr2WsLupHw
-         QPOtADxtEgWUH9Cm2o2t1deJokwjiFGtcHPkW4sodffi+UGP2kqJGZDv1Jh6vl/y8Cem
-         EgO/ALORlGfXAx6ttwtVpSkyfIqvIp2zmOdSf2cdjLYAbBjIJCSRUGKeMYX7uw96pGAI
-         416T0+sobZRvZrop9E/MCsxs+SGCpjwsdoyK8kN4iSgvvCjO8ZUijJ/vJv40a+nFcISu
-         c2tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071411; x=1729676211;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fxIP+503HmacKr52hF4cwN6vKpq9JVczVJoJF+op9ME=;
-        b=dKuEBgDQjbl5vp9HN6NGH/6zRiRWmTA1uy/8oLF/ma1uepuFf88Z9lI5dZHpE59oST
-         OkJTHB0rfz6EoTHanv+sC68HGo6+/03GSLGkolOzZEKbbxXw+cRL+2NIVG01qkBg0hP1
-         ax1xEgN+ukdoc1PVcUZc0diHVOFyLECVzPwvGeyjWLxHckh3n59jeqFhmOD3Ww1w0zPb
-         kyl8AVxF2+44D11fVIX0JD/UuBXeTugLI+8z0J2VThma4PpxwlZ4T1F6ZHtmRJ57XoeN
-         dY8V2S25LLLfmrl8tozh5d+adrxcpFXEB1TP5k1upqUjMXGpUyPdHtZl3Cs/xr1Sc0zI
-         bYog==
-X-Forwarded-Encrypted: i=1; AJvYcCXcXk5XdxLlUrUAjGL2baj6YsUjvjnD0xWqApwuBDeDl47WkbOzHYfy/+i0KrF4VPOPNrvHc4EsqE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlQbBzwcG770DR6uUUnPmvaSYMdSc4O4ckdpbBOJZYeEUoIufb
-	JYEpdwrw/Pp4pCd3PCC7i1gCuO9AOheYYHwlxKmKUfKv0CVoVl7JNryiGEyDzzw=
-X-Google-Smtp-Source: AGHT+IG6fNHMCd9wfwMroBHIryaVFXQVYfqJpieR0jsQIFDOAiMSqq1/ES6dB3VtdNGRUPAFimGMVw==
-X-Received: by 2002:a05:600c:3555:b0:42c:bb96:340e with SMTP id 5b1f17b1804b1-4311df56158mr144236185e9.31.1729071411221;
-        Wed, 16 Oct 2024 02:36:51 -0700 (PDT)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc123dasm3798064f8f.94.2024.10.16.02.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:36:50 -0700 (PDT)
-Date: Wed, 16 Oct 2024 12:36:48 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Pengfei Li <pengfei.li_1@nxp.com>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
-	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
-	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] clk: imx93: Move IMX93_CLK_END macro to clk driver
-Message-ID: <Zw+JMMUOErRKqEH1@linaro.org>
-References: <20241014182438.732444-1-pengfei.li_1@nxp.com>
- <20241014182438.732444-2-pengfei.li_1@nxp.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PS0AuZKY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729072634;
+	bh=uu+U0uRS375aOOnTfp2lQZkaCO+LNb9NDegcLXMQKmI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PS0AuZKYJrVCCKK3XrKXDQ2QvAaUaIhz6w/fnaVnD56CR3D7SwRzySU1u504gbkTM
+	 DftKNAs0B+AjaTuQ8nBWKarGOSOG28HEjev+LaTX/vTpunXEsGVGk6JvgbTq7wSCqu
+	 BNsrhQ670FUq+THX3CAVAoVAkQ60PXjjdo6TYdFRbk7ukUprFgiRpsTo8W/w4Y+hgu
+	 KlEeKnHWRbL8tJKFxOJN0DhTfYfaq1XmhcFFzLZtcQZBWmmi3GmUgRc7c6zhKam96T
+	 la2mItUZHVjK3JCjuUKUySZZ/RY91VyeOP+0wuP7tik/gcQJIUMOzqko4LKG0G+0gf
+	 T+jqqL4Cb0LXQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3EF4517E124E;
+	Wed, 16 Oct 2024 11:57:13 +0200 (CEST)
+Message-ID: <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
+Date: Wed, 16 Oct 2024 11:57:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014182438.732444-2-pengfei.li_1@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
+ main clock and reset drivers
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Sam Shih <sam.shih@mediatek.com>,
+ Daniel Golle <daniel@makrotopia.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20241010132659.81606-1-y.oudjana@protonmail.com>
+ <20241010132659.81606-3-y.oudjana@protonmail.com>
+ <vn466kmo2uqrf6ap54oat2bipj4lsfri7asnsrptrlthva6j5m@dop6xit2pzjk>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <vn466kmo2uqrf6ap54oat2bipj4lsfri7asnsrptrlthva6j5m@dop6xit2pzjk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24-10-14 11:24:35, Pengfei Li wrote:
-> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
-> the number of clocks. However, it is not part of the ABI. For starters
-> it does no really appear in DTS. But what's more important - new clocks
-> are described later, which contradicts this define in binding header.
-> So move this macro to clock driver.
+Il 16/10/24 11:28, Uwe Kleine-König ha scritto:
+> Hello,
 > 
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx93.c | 2 ++
->  1 file changed, 2 insertions(+)
+> On Thu, Oct 10, 2024 at 04:26:57PM +0300, Yassine Oudjana wrote:
+>> +static struct platform_driver clk_mt6735_apmixedsys = {
+>> +	.probe = clk_mt6735_apmixed_probe,
+>> +	.remove_new = clk_mt6735_apmixed_remove,
+>> +	.driver = {
+>> +		.name = "clk-mt6735-apmixedsys",
+>> +		.of_match_table = of_match_mt6735_apmixedsys,
+>> +	},
+>> +};
 > 
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index c6a9bc8ecc1f..c8b65146e76e 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -15,6 +15,8 @@
->  
->  #include "clk.h"
->  
-> +#define IMX93_CLK_END 202
-> +
-
-Sorry for this back and forth.
-
-I've been discussing this off-list with Krzysztof and others and
-now I think this is actually not wrong.
-
-So:
-
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-
->  enum clk_sel {
->  	LOW_SPEED_IO_SEL,
->  	NON_IO_SEL,
-> -- 
-> 2.34.1
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers. Please just drop "_new".
 > 
+
+Oh wow, I didn't notice that during my review. Sorry about that.
+
+Cheers,
+Angelo
