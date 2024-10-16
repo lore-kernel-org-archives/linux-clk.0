@@ -1,80 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC0B125B9;
-	Wed, 16 Oct 2024 21:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4581C1917C4;
+	Wed, 16 Oct 2024 22:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729115397; cv=none; b=Y6tNmbfFsD9g6YS3EvPDzvHH1an1Ypq7yeA9e/3a9j8Ok2WeDMq1DGpA5PsbLt0Ba/IMKX9UMwTwBEePSzigr1Xk9DNpJRTt1drVYo2eYfPM8vkv0rJRLWZBzkGAh77O4dY82TBQdPENEsjU7kPnkjq1HqWEeK+MdpSiBG6PFdY=
+	t=1729116233; cv=none; b=Ug1BGp9yrnltN2I4FMQbOfB7ZFRktC8kQkUwW5vqY/KobHQnHo0MWAod2ZKHtE4aN6XQZTiq1zgQg4veGE1OglUTf68yhKMx++tJowoX8k5y7ZQY1IY0EesiUTBsEI24jYy66H+CUMeQCOHcSFF6xNuy6UnudKBANUUe9FGbQYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729115397; c=relaxed/simple;
-	bh=Hp+H7yoAyapEdhvaBlQzGXZZGhKUy3jtoMpeNHH/Y0o=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=eFRW10rye4ej2OB/r07pw9dhxaX8KtxZtG5nS+NkQhnoMkzNd0hcplcDq8h/OwND9LoDOh4NnFBohHtjvjCQc9hJNYSrw+JOC8RVlzElbgKQFEyqYVQM0FDpnL3K7CHrZ3otwdpMxfkNxRmSBOgkMJqkJEljz1zFA3swU4sB5vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab5xwJqa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729116233; c=relaxed/simple;
+	bh=LphcLYpO7HdQpqaxPOCL6zrIGYzvBc5sdPj8LnbOWes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9iKoNJLZpjnG6GF489uAdIGaP5J6SagirnnFulIw25mWWhIvXoTmNBESOP34PCVRFns+jVxtfTVErEuk0WqcU0USq9BCYaypvDJMSlAC0ndN3McQeObdvH65b/HEW0fRKOr2FNMYJWwYb6t1GzjBWcoE6kqvkB8YTfG217aPH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Tz7CXQc7; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab5xwJqa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC69C4CEC5;
-	Wed, 16 Oct 2024 21:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729115397;
-	bh=Hp+H7yoAyapEdhvaBlQzGXZZGhKUy3jtoMpeNHH/Y0o=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ab5xwJqainPvNFCX2PalKHOxzA3L3nK5zwFARgT7/XEdijZX9hA/UkoSQkW7mAhg7
-	 d+GCqVvXl2YVMFIF6IQHziwyR5aQbcUH/Om7q9iPTziNPrO6mN4HclkwRDecstvltL
-	 PGbCqzvHo26Yka4ACeSDyJL7mGbTcsMmpnv8AXQ36QeRbTgTRsJ9cSZzJIqWLVanpl
-	 IRmnWcCWUUGWAuah2wOXkmrZT6F6tgPWmOp9yA96Al8enfsKSM+zVQUSkYfoSDLFlw
-	 a6q05U84twcZ+PLbdsOsZ5ToLR5vT8WtU61x+hrddn0ZtNeCqin6YLT1lOwGVjFbLR
-	 TgafhqGvGqgmw==
-Message-ID: <4c7956afc86ea05f07b25d98ffb5b80c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Tz7CXQc7"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 415081C0003;
+	Wed, 16 Oct 2024 22:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729116228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W649ciFRM8rbVAGw5XNBosXQcXGpXdRG+9QrhIYNObU=;
+	b=Tz7CXQc7iVINk4/iYg6zXg1Xx669sH2r9t5RJWIqVYo3Nnr9W19lh7b0enuDCtajEtTlFv
+	dh0hibF53mm97MDz+dOFX9tLpWvQhXkITOGMx9BEZy2m11kaIEa/g5VLX17IFDG2dpqI8n
+	jx3pD3T2eeP6WswiQAFLX61WQSa7uge9iQ2AtrAUosvZVbVZ6jH/zjNupWlLgH42HZZV7C
+	4MJLIDN3s0O8z6+oowJPgcaJLCGkmSXSh8UlzaBjXwDlp3/FySheLG81bCM8+H+RlwNMlO
+	jsC50H95GM33spkAhj1ps6f1tbxQGMIlD4tvH2OhrYi507O62AXpOprCrD/mpQ==
+Date: Thu, 17 Oct 2024 00:03:46 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 08/12] arm64: dts: renesas: r9a08g045: Add RTC node
+Message-ID: <2024101622034648032b39@mail.local>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-9-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVqno3vO9T0FtHnNL2afWP4abSE4vmf8vkLRRndg=ws7A@mail.gmail.com>
+ <4ff318b0-cd7c-4857-888c-a07c8985fce9@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241014-imx-clk-v1-v1-4-ee75876d3102@nxp.com>
-References: <20241014-imx-clk-v1-v1-0-ee75876d3102@nxp.com> <20241014-imx-clk-v1-v1-4-ee75876d3102@nxp.com>
-Subject: Re: [PATCH 4/4] clk: imx: fracn-gppll: fix pll power up
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-To: Abel Vesa <abelvesa@kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan (OSS) <peng.fan@oss.nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-Date: Wed, 16 Oct 2024 14:49:55 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ff318b0-cd7c-4857-888c-a07c8985fce9@tuxon.dev>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Quoting Peng Fan (OSS) (2024-10-14 02:11:25)
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> To i.MX93 which features dual Cortex-A55 cores and DSU, when using
-> writel_relaxed to write value to PLL registers, the value might be
-> buffered. To make sure the value has been written into the hardware,
-> using readl to read back the register could make sure the value
-> written into hardware.
->=20
-> current PLL power up flow can be simplified as below:
->   1. writel_relaxed to set the PLL POWERUP bit;
->   2. readl_poll_timeout to check the PLL lock bit:
->      a). timeout =3D ktime_add_us(ktime_get(), timeout_us);
->      b). readl the pll the lock reg;
->      c). check if the pll lock bit ready
->      d). check if timeout
->=20
-> But in some corner cases, both the write in step 1 and read in
-> step 2 will be blocked by other bus transaction in the SoC for a
-> long time, saying the value into real hardware is just before step b).
-> That means the timeout counting has begins for quite sometime since
-> step a), but value still not written into real hardware until bus
-> released just at a point before step b).
->=20
-> Then there maybe chances that the pll lock bit is not ready
-> when readl done but the timeout happens. readl_poll_timeout will
-> err return due to timeout. To avoid such unexpected failure,
-> read back the reg to make sure the write has been done in HW
-> reg.
->=20
-> Introduce fence_write for this purpose.
+On 11/10/2024 13:28:55+0300, claudiu beznea wrote:
+> >> +                       compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
+> >> +                       reg = <0 0x1004ec00 0 0x400>;
+> >> +                       interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       interrupt-names = "alarm", "period", "carry";
+> >> +                       clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb VBATTB_VBATTCLK>;
+> >> +                       clock-names = "bus", "counter";
+> >> +                       assigned-clocks = <&vbattb VBATTB_MUX>;
+> >> +                       assigned-clock-parents = <&vbattb VBATTB_XC>;
+> > 
+> > Don't the assigned-clock* properties belong in the board DTS?
+> 
+> It makes sense to be in the board DTS, indeed.
+> 
+> > In addition, I think they should be documented in the DT bindings,
+> > and be made required, so board developers don't forget about them.
+> 
+> It would be better, indeed.
 
-Please just write out the readl() instead of introducing a bespoke macro
-that isn't generic for all architectures.
+There were multiple recent emails from Rob saying that assigned-clocks
+should not be part of the bindings.
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
