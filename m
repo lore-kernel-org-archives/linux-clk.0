@@ -1,135 +1,85 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71E21DDC13
-	for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2024 12:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BC41DED5D;
+	Thu, 17 Oct 2024 15:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168755; cv=none; b=WHGexIwBrHyqPAaod+ccXWdQpwx/QYJSZ//PFveQ/dUhIzwD08QV0IAwriZnbAAOCuE6JegAzNPVeP+GU1/2NxzI+uZEAX3mB87GRA3JZwF9QKeeRPdKRaKky165FZ4g3+NO1eZGBZ2AxXHdc6wMk67b2y/KETu+2zCM2taIXi8=
+	t=1729179338; cv=none; b=lzSI9hYDEcaIzomfI3A2jXo96uUknLbVEqkxL9V5RuPqO2DS9MRESzPSDwy9u514KJQy/YmyWw6D1P7C5ch5ass193AzDmC4Hwl6HpVUvDeFNdnY6HViet5Yg0rM3aSZG0rfQghXVF2nBUK5MSGmmK2LwDbNmSYfNR5Sw7s+abI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168755; c=relaxed/simple;
-	bh=CmSgG8dgDVGowYqWp/vzfob7NQfDeXXWilwWB40CND8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=NNupek9hmR5CNzlnkXQ38IcSloZRVLvQpyOmmDfGRwn+hno4obs0PCks2MAyLbeA+4BvVPXtHQmRzbBHrWOnIw4UErY2iN6BUIwAluhcT1IMlDGNNGyM1EDKwCAyheLvyhRR83Z4yT18iEJb7euM2cBDABX06h0MITDKVmG4o+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ODnFXsYu; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729179338; c=relaxed/simple;
+	bh=GxocGuKcbIGEx2OEDqTOLN6rngMeEtVz4a6NJzfq1zw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iTF6YZqqixbr93gbNvXwndI2r8e7o7HnIE3oO1TAO353z7eTezhs/T0O1y7KZV01TGfj5yVfd7EYaUNmYh0ZXqFT+jZSH8VDPZCmKVvWax4TUfDujNyNUo48ctpCYLF/c38d4xKofdpj6QgKHNMstaGYSyAq5H3Lg2dcmvx5rF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7ytg1AJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODnFXsYu"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d518f9abcso663606f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2024 05:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729168750; x=1729773550; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLKbd68RzcxlFXK7q4vrGEd+fffJ1TMM8zv/7HYDcsQ=;
-        b=ODnFXsYuVqeN5imNxMuTsXP49rINnfJwbqB6dqlPqXJF1QCS4flU6hHbEdzl9vkPoD
-         JhiXnXVpauDasz71/s1st4xCUEJQyd056XN5/GCmTtwCfHCHEDsbsXVrx1ZzV1tL45LD
-         WdwnIGuoKHJH+WtB34GBxgJsCphjW6AFTpgAqCMm12tnGgGdOsUufQ0fyUuYh71tpMwD
-         emUto0uD3B4WUUNMv3y2yHaD7vclvjNuJi+S/8rLP6pW97i2J81iH0NoGgiAGp1LBvxJ
-         BRWr9YI/XkBEGO6V1wUY5bNyQ85l6I3H8nsIQnsAhbmTotKtoRvVRkhJZFnV6H6lWsXy
-         ZBeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729168750; x=1729773550;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eLKbd68RzcxlFXK7q4vrGEd+fffJ1TMM8zv/7HYDcsQ=;
-        b=nHtBZhC7KhHeZZ3ZTG+nzSOHriGmuP6Cb2ZUKv69okpyYDcRBn+Y8cCsQbr7G+3Qjc
-         QBuvfqQ4rlzznp9Vk9sN6xP52X9vVNGgkjpWI/BByilb44CfGiRbbChdqljotHxnf+iE
-         OokqzRYdTZXbTOvrnAZT92lFVfZFfvhikqGOgsIGouj9RDmZWw2mMeCR9uFBafNMkymT
-         XaeS8n3CNSF1alIzTFqY7AvoiwGqeXYZSeMsv7FH4RDWOD1h3o1QQSABpYc/n8m0vyrd
-         HspR8jqcveeQjlkrvnwuK5/BawEpdhR6g5NiTPhQvbi2COu3HxNxmkIpKSeUaPiP4Zg8
-         I85Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5LfF9UQGllun+k1em+xbs0QHH/o7cmMbSsZsZJILOpYZC1gkfqN1ZCI2OTExETWqak8Qg8Pc8Hss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3eg6POTVQH6PP5e/RmzUYB7gP7dsHFJypWvzEbAE7XvzPdzFp
-	abzWoJrzLxUmItJ1781EENGBj1kycp2WTUQJmnToYBZK1ldNXVhIFhtOmDvRluk=
-X-Google-Smtp-Source: AGHT+IG7ejxJJUoO3H77hYt2WNQRu3rm4oMZyvw11lFYzsiOaPe5DscdwmGO2D+HP8vSEzTm8Trfkg==
-X-Received: by 2002:a5d:5051:0:b0:37d:4fab:c194 with SMTP id ffacd0b85a97d-37d86bd59b0mr4879360f8f.25.1729168750204;
-        Thu, 17 Oct 2024 05:39:10 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf80a4sm7156250f8f.87.2024.10.17.05.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 05:39:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7ytg1AJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A01E2C4CEC3;
+	Thu, 17 Oct 2024 15:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729179338;
+	bh=GxocGuKcbIGEx2OEDqTOLN6rngMeEtVz4a6NJzfq1zw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=R7ytg1AJbSnPVZF2ZcZEVXHNMWMEfKwvN8d6+gfd7wR7ziY2c2yGF/LxUb4L4JmQa
+	 5904WhymBCu6C23yZzVOoCv3o3SE1w0ElTkQ1Lz9UASoAICWcIQhM/kk4LLEFHAFPG
+	 vLTAFOo5KZf0X2keITbpuvxthhF8E3xFsH7sOulhLimsnLd8B00jFLw38zd3m/AxPq
+	 4uJcsx08NQXUYmgp1gcFmlw/u2A7+XVo5HPomNNrfwlfT4bYWWhDpNcZG90HS2fD61
+	 9QvozZ1Kil1SikiJCcJxDq6DcJNccP68+Wim02jJ9U5at1e+3vt9o0ws8dCBk5A5Cb
+	 JH501nUIk6flA==
+From: Vinod Koul <vkoul@kernel.org>
+To: manivannan.sadhasivam@linaro.org, kishon@kernel.org, robh@kernel.org, 
+ andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+ abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, 
+ Qiang Yu <quic_qianyu@quicinc.com>
+Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org, 
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-clk@vger.kernel.org, johan+linaro@kernel.org
+In-Reply-To: <20241017030412.265000-1-quic_qianyu@quicinc.com>
+References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
+Subject: Re: (subset) [PATCH v7 0/7] Add support for PCIe3 on x1e80100
+Message-Id: <172917933229.288841.5057372838921207960.b4-ty@kernel.org>
+Date: Thu, 17 Oct 2024 21:05:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 17 Oct 2024 13:39:08 +0100
-Message-Id: <D4Y35WNU7MWN.2Q3RHCLLZ69Y@linaro.org>
-Cc: <konradybcio@kernel.org>, <konrad.dybcio@oss.qualcomm.com>,
- <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
- <krzk+dt@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
- <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add Qualcomm SM6115 LPASS
- clock controller
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241017005800.1175419-1-alexey.klimov@linaro.org>
- <20241017005800.1175419-2-alexey.klimov@linaro.org>
- <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
-In-Reply-To: <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Thu Oct 17, 2024 at 9:39 AM BST, Krzysztof Kozlowski wrote:
-> On Thu, Oct 17, 2024 at 01:57:59AM +0100, Alexey Klimov wrote:
-> > From: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >=20
-> > SM6115 (and its derivatives or similar SoCs) has an LPASS clock
-> > controller block which provides audio-related resets.
-> >=20
-> > Add bindings for it.
->
-> That's a v2.
->
-> >=20
-> > Cc: Konrad Dybcio <konradybcio@kernel.org>
-> > Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > [alexey.klimov] slightly changed the commit message
-> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->
-> My tag?
->
-> > ---
-> >  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 +++++++++++++++++++
-> >  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
-> >  2 files changed, 68 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115=
--lpasscc.yaml
-> >  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> > +examples:
-> > +  - |
-> > +    lpass_audiocc: clock-controller@a6a9000 {
-> > +        compatible =3D "qcom,sm6115-lpassaudiocc";
-> > +        reg =3D <0x0a6a9000 0x1000>;
-> > +        #reset-cells =3D <1>;
-> > +    };
-> > +
-> > +  - |
-> > +    lpasscc: clock-controller@a7ec000 {
-> > +        compatible =3D "qcom,sm6115-lpasscc";
-> > +        reg =3D <0x0a7ec000 0x1000>;
-> > +        #reset-cells =3D <1>;
-> > +    };
->
-> Not much improved. Don't send same code from whatever repo you got, but
-> go via mailing list.
 
-Ok, thanks! I was not aware that there was a previous version on
-maillist ~ a year ago. My impression was that this was never sent for
-review. I'll update and resend it as v2 if there are no objections so it
-will become a proper v2. I am more interested what should be done
-regarding older email addresses or maybe .mailmap will handle it correctly.
+On Wed, 16 Oct 2024 20:04:05 -0700, Qiang Yu wrote:
+> This series add support for PCIe3 on x1e80100.
+> 
+> PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
+> PHY configuration compare other PCIe instances on x1e80100. Hence add
+> required resource configuration and usage for PCIe3.
+> 
+> v6->v7:
+> 1. Add Acked-by and Reviewed-by tags
+> 2. Use 70574511f3f ("PCI: qcom: Add support for SC8280XP") in Fixes tag
+> 3. Keep minItem of interrupt as 8 in buindings
+> 4. Reword commit msg
+> 5. Remove [PATCH v6 5/8] clk: qcom: gcc-x1e80100: Fix halt_check for
+>    pipediv2 clocks as it was applied
+> 6. Link to v6: https://lore.kernel.org/linux-pci/20241011104142.1181773-1-quic_qianyu@quicinc.com/
+> 
+> [...]
+
+Applied, thanks!
+
+[1/7] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHY Gen4 x8
+      commit: 26fb23ce35e2d2233f810069ab11210851acbf54
+[4/7] phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
+      commit: e961ec81a39bc57119f165cf2e994fc29637fd97
 
 Best regards,
-Alexey
+-- 
+~Vinod
+
 
