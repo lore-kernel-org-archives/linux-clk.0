@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2D7193409;
-	Thu, 17 Oct 2024 19:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9512E1531D8;
+	Thu, 17 Oct 2024 19:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729193412; cv=none; b=aq2bNEfL76kPR8po2uiojJAH27ce3Khp1t1UwbDt3gPDBbStLxs0uuLdkXOwsZql4zego2fODUh4T3HVZLQgKj/4lBWX+ulKToSyM+v7Wju7/1QguapFNTfofAP5Xy0gp9I1tqeqDMzIY6oDcVrRaozTTyhW00rVL/pWfx5x7m4=
+	t=1729194313; cv=none; b=dYCBd5KIaMBENkPZ6ksErCfuc1wUWisxcFB7C5gy+FJDd5cFwHjfighAa7G56CUbmOFyHk43BRlOaWfNSVKZ32Nzp9re3rvhMZvzQYF0qMeb1l89pWS8H2biSy00SQJaBSFXwwAWRQO0NAtE/YtD12d7kDO+jogzGw1BpSEcIcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729193412; c=relaxed/simple;
-	bh=FgGw+348hq+8XaJjRr2RQ3h8zLKyBzjTagmsfJeeBVQ=;
+	s=arc-20240116; t=1729194313; c=relaxed/simple;
+	bh=psIFTuXuseD2WW6j6T3TcBYpbsekC7/1uzW9/8EknCw=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ZHVyoRFp8i/jxGpR2DoFGhD9CcdKxVzBLRCsZshsWYnRAAjoyDufVEMs+j1b1gX0SgEWKYc6sNQhxUz4fXEzc/05goeCMQ/fO2yM0KxbAIW0PNJhmN6c3vRZ5VZzOrAdXN6swNcQtvNGGJ9vixxyI00SB+OXqs6K4LNrcGhiXg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DfJ4KjPz; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=JkQsT0CAeOlCdY1gdNf2IfmXJQTGnKla/OSQUA51sv6OFV6oRRnf3eGOkZdlpQI2K/QM5DtNlIOpdWKMoXljZh8zzwj8TfX/yS5y1jkHpm+B3SzapTtGEunDW25hoK492HsU9nsxwXmxAEzRjSgGdjn/LXZFC5NYd1hP4bdlFOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSqchSS7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfJ4KjPz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBEBC4CEC3;
-	Thu, 17 Oct 2024 19:30:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSqchSS7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C588C4CEC3;
+	Thu, 17 Oct 2024 19:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729193412;
-	bh=FgGw+348hq+8XaJjRr2RQ3h8zLKyBzjTagmsfJeeBVQ=;
+	s=k20201202; t=1729194313;
+	bh=psIFTuXuseD2WW6j6T3TcBYpbsekC7/1uzW9/8EknCw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DfJ4KjPzP5fLnkvbrv1jOSYYFT/OAzw2b/vS+1ZwAyVybbvP1cg5fRueMCn50bs9u
-	 Vrdyaph9ggPybHJPCg7+EqeWM4ptUnLApy8O/HObuu92Qdslz16dfgcUaThYNqQ0r3
-	 q+EAFpsD7A2RILPucjP0D7EYnd/TH6fTpqAuxQs3Z5BTXO5xbe/SiGdSKnrTBwMJB5
-	 UzUUnCOzNudLScpRvofZmg4pr+/64pynMpogFOUlj+XgUiL7oQvuevXYmJeRcET/tv
-	 1fDcoMqwhjCQVY2duwyAl7QKk66QgUMq/AFyKi25fRVVwy3VMv4lpCzDF4LZoXuOED
-	 sOCvRn5ZZD63Q==
-Message-ID: <18b311f580dfd0640db076d066ba5286.sboyd@kernel.org>
+	b=PSqchSS7uwi7mlbtwy+4OMoPLCw3Mz2QYvruFaNFiaijIflbUUGHzwVN4Lx6jDGk6
+	 /8kMkJamzUqb5RkoyDdK3w3nCV4Zc706jos/rYxDOM9ydLTCE3E1pBYVJQSOOP+srb
+	 VRF/gllrmrSFqMWW+ZtaIQCQuvdJaCeRqQFDrCpGCjCpMuGKVImn/FDulfvTvh/DdO
+	 6RH2hWeVLjtONIwHKtxCAz69CD3v/WUZoz7oI9oD+wdnrm43D4bfRic6j3oU30kaw+
+	 REZToRFVO2nML1M0m/uwKYWkdQ8+NGtBmtBr5wx5127W+OHK704bNA9KHHN4uOKVCy
+	 HVUsNIOxLbPbg==
+Message-ID: <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,26 +35,91 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241017071708.38663-3-y.oudjana@protonmail.com>
-References: <20241017071708.38663-1-y.oudjana@protonmail.com> <20241017071708.38663-3-y.oudjana@protonmail.com>
-Subject: Re: [PATCH v7 2/2] clk: mediatek: Add drivers for MediaTek MT6735 main clock and reset drivers
+In-Reply-To: <20240926-clk_bulk_ena_fix-v2-1-9c767510fbb5@collabora.com>
+References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com> <20240926-clk_bulk_ena_fix-v2-1-9c767510fbb5@collabora.com>
+Subject: Re: [PATCH v2 1/4] clk: Provide devm_clk_bulk_get_all_enabled() helper
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Yassine Oudjana <y.oudjana@protonmail.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Sam Shih <sam.shih@mediatek.com>, Yassine Oudjana <yassine.oudjana@gmail.com>
-Date: Thu, 17 Oct 2024 12:30:09 -0700
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Helgaas <bhelgaas@google.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
+Date: Thu, 17 Oct 2024 12:45:10 -0700
 User-Agent: alot/0.10
 
-Quoting Yassine Oudjana (2024-10-17 00:17:06)
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+Quoting Cristian Ciocaltea (2024-09-26 03:43:20)
+> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> return the number of clocks stored in the clk_bulk_data table referenced
+> by the clks argument.  Without knowing the number, it's not possible to
+> iterate these clocks when needed, hence the argument is useless and
+> could have been simply removed.
 >=20
-> Add drivers for MT6735 apmixedsys, topckgen, infracfg and pericfg
-> clock and reset controllers. These provide the base clocks and resets
-> on the platform, enough to bring up all essential blocks including
-> PWRAP, MSDC and peripherals (UART, I2C, SPI).
+> Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
+> with devm_clk_bulk_get_all() in terms of the returned value:
 >=20
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>  > 0 if one or more clocks have been stored
+>  =3D 0 if there are no clocks
+>  < 0 if an error occurred
+>=20
+> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+> the past form of 'enable'.
+>=20
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
 ora.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > ---
+>  drivers/clk/clk-devres.c | 34 ++++++++++++++++++++++++++++++++++
+>  include/linux/clk.h      | 24 ++++++++++++++++++++++++
+>  2 files changed, 58 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index 82ae1f26e634..4203aaaa7544 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -250,6 +250,40 @@ int __must_check devm_clk_bulk_get_all_enable(struct=
+ device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+> =20
+> +int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
 
-Applied to clk-next
+I'm not super excited about the one letter difference in the function
+name as that's likely to lead to confusion for someone.
+
+> +                                              struct clk_bulk_data **clk=
+s)
+> +{
+> +       struct clk_bulk_devres *devres;
+> +       int ret;
+> +
+> +       devres =3D devres_alloc(devm_clk_bulk_release_all_enable,
+> +                             sizeof(*devres), GFP_KERNEL);
+> +       if (!devres)
+> +               return -ENOMEM;
+> +
+> +       ret =3D clk_bulk_get_all(dev, &devres->clks);
+> +       if (ret <=3D 0)
+> +               goto err_free_devres;
+> +
+> +       *clks =3D devres->clks;
+> +       devres->num_clks =3D ret;
+> +
+> +       ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
+> +       if (ret) {
+> +               clk_bulk_put_all(devres->num_clks, devres->clks);
+> +               goto err_free_devres;
+> +       }
+> +
+> +       devres_add(dev, devres);
+> +
+> +       return devres->num_clks;
+> +
+> +err_free_devres:
+> +       devres_free(devres);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enabled);
+
+Instead of duplicating can you make devm_clk_bulk_get_all_enable() use
+the devm_clk_bulk_get_all_enabled() function but not return the number
+of clks all in this patch? It will make the diff much more readable that
+way.
