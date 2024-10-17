@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D421DF990;
-	Thu, 17 Oct 2024 17:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C01762D0;
+	Thu, 17 Oct 2024 18:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729186803; cv=none; b=fAgc9GTsfY1+A6uo3L/AngUoxdWlNw1OdvL0ktYy4v6zQPJbJlizwdK3NJHoNU25KJuo/4Y1X1ZDMVwpTpdJkpM7ti+pk92BrKiqA/cKI2ZIloi4UBXIy+5HQ3825Ipky2Tkyo3YNCGnuSCP0aa65EVf7tVZqYX926qQby7d1Kg=
+	t=1729188203; cv=none; b=Ck+H6i8HV1bvo2de86k27pVlGqvqrt2DnuXmKLofneeFV4JErIL60xXROoRPLwhxPa/RII5xCFSMhvm2RBvKGRo7x6uArtrb0pTcQ7J9fHyC7zk0Uo8W9GtwsqUUXVQhFDH2IHNSHAMKJpM6gPZkBmmJIzFy3zAfz9AeUcAqiXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729186803; c=relaxed/simple;
-	bh=eGmzCTTfolXYxIXlEZqURsG7yQDabkHprLnAi5gYhRI=;
+	s=arc-20240116; t=1729188203; c=relaxed/simple;
+	bh=9owNnoaEPwguo33qITS6ZXvMBbuIoEJY640hlgf0lL0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=VfKE9Xj+lJBeKj5kXwTwAwKUbm3bxGeZtVkeC/7CtdCICoUBfbbf2VCikSaRpvHMye9QChvb83cVmd/5gWXiHQxfYQss5DoklJcQ0iWBv+DV3IuxqkE6ekX91zDzR34XctJvSSEnlA5RMajBBkIgtssN/gkJeOibGr4Uh3sZx9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glSQ5Ir0; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ukG5sfsOy+Crwosu9F/cJrZQaDCXU0oq8FqduTBsCzBomh+wbfIs2GQ6bW6Rd61g0XdNsrFFNyWChE0DH49NijteeI8pjOj2Z75iB5fG9EkcgNmL5L9S0O+/rPbDg1RAg/KdfgsDsCQlaOIA1ZRoPM8Gx5NhVf2lMln/5rQ7CYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzx6aBQ7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glSQ5Ir0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A434AC4CEC3;
-	Thu, 17 Oct 2024 17:40:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzx6aBQ7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11945C4CEC3;
+	Thu, 17 Oct 2024 18:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729186802;
-	bh=eGmzCTTfolXYxIXlEZqURsG7yQDabkHprLnAi5gYhRI=;
+	s=k20201202; t=1729188203;
+	bh=9owNnoaEPwguo33qITS6ZXvMBbuIoEJY640hlgf0lL0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=glSQ5Ir0IXJdd/DeUA5hVUP66u5XhWUN6wV15v/3chTzXH2EC52CLjSCxotkXSVLs
-	 iOCN+0WeaOEu70juaaAyZs780Zw+p4mm+hbncREiNoJGmecpmMTtErM2KHdAFP109D
-	 RoS23lVxMok6ihFN0zQ+EevZNq8UHuTvAayD/4k8ehQ8rVh1CDAH7gtaFooBfOZ7YT
-	 goshtYZyc4FLIKmT4p2zLif7czqgGLeMaYNPh7oWd/JJ/dFEuP5OWaRPylkxyaRrZx
-	 uNBkx5IlfjsQq5WDwD3FmyLJ8DEqo2Faq3wWa2ZKrmO7JtKt+2lUPTR28rzbM52ZCC
-	 5xRMQNYHXHmrg==
-Message-ID: <6bb3565e576062c781e29e414483daec.sboyd@kernel.org>
+	b=kzx6aBQ7k6BRWyRtT0F7NlU2fhAnSLymYVoVY4gKC9cgVORrdrRjwhpJYk89LJ6oa
+	 w3RPncO1xyMhTrumiqq3Czj2VYG10Vwg/sXZ18k3spdEJFd6P5hOg04tE/dXywb5kY
+	 QEg7CJtj1bdbVq+L12BhX6S1wzsEF0iHjfkiEu65DWLG6CvK8KZ4HuHFESAxbBLfQc
+	 5QfxA22PU2P4zXNliOKztKBrNuGC3TVeUHmWOd5DXLyNZrOwbNktSelM1KZsojWalh
+	 e7g/pg1a0YpJWYeyv44JTPdCNx3PZFy6HLodHAWjoImtiWOPqSc5zUEXJ4GmHVGq6e
+	 +ybUTjxS4rMmg==
+Message-ID: <d7989a770f0eb35a5ba346beb5e7548c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,72 +35,60 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <daa8998b-a008-42cf-a941-00218683cce2@quicinc.com>
-References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com> <20241015-qcom_ipq_cmnpll-v4-2-27817fbe3505@quicinc.com> <77ad972276c165acc3d0e9d72df1a021.sboyd@kernel.org> <daa8998b-a008-42cf-a941-00218683cce2@quicinc.com>
-Subject: Re: [PATCH v4 2/4] clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+In-Reply-To: <20241017-sar2130p-clocks-v1-6-f75e740f0a8d@linaro.org>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org> <20241017-sar2130p-clocks-v1-6-f75e740f0a8d@linaro.org>
+Subject: Re: [PATCH 06/14] clk: qcom: clk-branch: Add support for BRANCH_HALT_POLL flag
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-To: Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Jie Luo <quic_luoj@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
-Date: Thu, 17 Oct 2024 10:40:00 -0700
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Date: Thu, 17 Oct 2024 11:03:20 -0700
 User-Agent: alot/0.10
 
-Quoting Jie Luo (2024-10-17 08:35:43)
-> On 10/17/2024 5:37 AM, Stephen Boyd wrote:
-> > Quoting Luo Jie (2024-10-15 07:16:52)
-> >> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> >> index 30eb8236c9d8..3def659fc5cb 100644
-> >> --- a/drivers/clk/qcom/Kconfig
-> >> +++ b/drivers/clk/qcom/Kconfig
-> >> @@ -190,6 +190,16 @@ config IPQ_APSS_6018
-> >>            Say Y if you want to support CPU frequency scaling on
-> >>            ipq based devices.
-> >>  =20
-> >> +config IPQ_CMN_PLL
-> >> +       tristate "IPQ CMN PLL Clock Controller"
-> >> +       depends on IPQ_GCC_9574
-> >=20
-> > What is the build dependency?
+Quoting Dmitry Baryshkov (2024-10-17 09:56:56)
+> From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
 >=20
-> Will remove this dependency. There is no build dependency on=20
-> IPQ_GCC_9574, but only a functional dependency on the SoC's GCC block
-> since the CMNPLL consumes AHB/SYS clocks from the GCC.
+> On some platforms branch clock will be enabled before Linux.
+> It is expectated from the clock provider is to poll on the clock
 
-Ok. It can probably be a select or imply statement then.
+Unfortunately 'expectated' is not a word. The sentence is also
+grammatically incorrect.
 
->=20
-> >=20
-> >> +       help
-> >> +         Support for CMN PLL clock controller on IPQ platform. The
-> >> +         CMN PLL feeds the reference clocks to the Ethernet devices
-> >> +         based on IPQ SoC.
-> >> +         Say Y or M if you want to support CMN PLL clock on the IPQ
-> >> +         based devices.
-> >> +
-> >>   config IPQ_GCC_4019
-> >>          tristate "IPQ4019 Global Clock Controller"
-> >>          help
-> >> diff --git a/drivers/clk/qcom/ipq-cmn-pll.c b/drivers/clk/qcom/ipq-cmn=
--pll.c
-> >> new file mode 100644
-> >> index 000000000000..f5ebc7d93ed8
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/ipq-cmn-pll.c
+> to ensure it is indeed enabled and not HW gated, thus add
+> the BRANCH_HALT_POLL flag.
 [...]
-> >> +       }
-> >> +
-> >> +       ret =3D regmap_update_bits(cmn_pll->regmap, CMN_PLL_REFCLK_CON=
-FIG,
-> >> +                                CMN_PLL_REFCLK_INDEX,
-> >> +                                FIELD_PREP(CMN_PLL_REFCLK_INDEX, val)=
-);
-> >=20
-> > The determine_rate() function shouldn't modify the hardware. This should
-> > be done in the set_rate() callback. Likely you'll need to use
-> > assigned-clock-rates to do that.
->=20
-> OK. I will move the hardware configuration code into clk_ops::set_rate().
-> We are using the DT property assigned-clock-rates-u64 to configure the
-> clock rate of CMN PLL to 12 GHZ since 64 bits are required.
->=20
+> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+> index 229480c5b075a0e70dc05b1cb15b88d29fd475ce..c4c7bd565cc9a3926e24bb12e=
+d6355ec6ddd19fb 100644
+> --- a/drivers/clk/qcom/clk-branch.c
+> +++ b/drivers/clk/qcom/clk-branch.c
+> @@ -76,6 +76,7 @@ static int clk_branch_wait(const struct clk_branch *br,=
+ bool enabling,
+>                 udelay(10);
+>         } else if (br->halt_check =3D=3D BRANCH_HALT_ENABLE ||
+>                    br->halt_check =3D=3D BRANCH_HALT ||
+> +                  br->halt_check =3D=3D BRANCH_HALT_POLL ||
 
-Sounds good. Thanks.
+The name is confusing. The halt check is already "polling", i.e. this
+isn't a different type of halt check. This is really something like
+another branch flag that doesn't have to do with the halt checking and
+only to do with skipping writing the enable bit. Maybe we should
+introduce another clk_ops for these types of clks instead.
+
+>                    (enabling && voted)) {
+>                 int count =3D 200;
+> =20
+> @@ -97,6 +98,10 @@ static int clk_branch_toggle(struct clk_hw *hw, bool e=
+n,
+>         struct clk_branch *br =3D to_clk_branch(hw);
+>         int ret;
+> =20
+> +       if (br->halt_check =3D=3D BRANCH_HALT_POLL) {
+
+Remove braces
+
+> +               return  clk_branch_wait(br, en, check_halt);
+
+Remove extra space      ^
+
+> +       }
+> +
