@@ -1,85 +1,129 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A791DA63D;
-	Thu, 17 Oct 2024 10:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A34713B298
+	for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2024 10:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729161491; cv=none; b=gqtoilxabSDg8tO0+Dgy1F6s7JigBIthGYVDqE4EhdX6I+/8P3Yyvvs4Z2byfavQb8Ai1SRymnAVmsvE/xGujZF4q+C8jJXQtJlXna5RUu/3OQKMt4e3KGeQbQi+H1Z4wgkQMY/Tj58W678lkS5BR6L2nnEklZ4YPKAQYnaR6Zw=
+	t=1729161945; cv=none; b=uTFPGZ9vdhqfsN7TU6WPsfnG79SE2910SfXUBDeI5Cf/JWlt0g6kzzxRAb131D/aVw7m4ZEH7t7h8E7gnyYMqymO9p7nrfqk7CWBmJ5J99nMTZ0HoEZl4qQYGqggRmof9xWsVWfmSzUR2NN2kloBmOMyy0M6aMq66DI3h2JiWq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729161491; c=relaxed/simple;
-	bh=RR6bz3XCL62/D4xY5KpvyClNWTpDgWb9zj1D7PAIJA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jSQSIkxVeNV1GhN0j43ZblYUw/7XPBl9JXsXSS3lMwmeUMRQzaMXFTdMJWTdSEGQWTNa52M17AUn5qRMjKzBCleP+IDuOTlLBt+xrRcLBCcLEkVJ1SJcN+hnkKVmeClkrN+beWc1E+KKgPMlPrWr0vWcYJsFyVa5h+HoBXOmMC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=KSnU/J+K; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1729161945; c=relaxed/simple;
+	bh=QdA6vOlmDZJ7NqYoYDzaqmLd2u3S8tMiLHjIhKDQCVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbYUuU7wf3ayfrQJJiqa6474oV8tMyRb8ERbFq1u94n8+129pEM1P1X1sOw+p7VEfct1B45acxd5gKZz/eqpFCGJ0y6IOkdsOpGA2WsvQ5ekhTuH+rKUXFqahqpP06bN8u1c92W0hZ2ThTcXqA5FKH7c8xH3q670XwOZ4izn41s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HllfLsOi; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="KSnU/J+K"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4jISAdD4xM5sRPnE95Fnijjjk3Ui/0+o9PGVY2w2gFY=; b=KSnU/J+Kh+hnJdgGpxOSa/xuLf
-	rkuIwFzzzCp9E3iAY0S6CpEm17p3owrbe8P0/1xOTeQHITCZqvC134Kr43oEm2XIiws0MmtqRSi7I
-	9mu76khV5nKMkO8LYNoQOjM1Xbq0iLnbExeUL/S9QDq1arKziDESQSe7pub+WwLnLzhE0LgYFvxZa
-	hK+3yEOkZfotA0qE1oFe+ZR05ZVgBSzm2xeeVqmAv3qAFMbNk1kMbV+vCVKGmdqmFrOfl3mrOWks/
-	NhQdROTXNDaoWVtwd5iXmH6IfN9Xb/lJRuOgcuQt2CeL4Y8xLPoUJXaaTvNtMWwIlQYjKFRzwgD/I
-	pjPLpeFQ==;
-Date: Thu, 17 Oct 2024 12:38:02 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Rob Herring <robh@kernel.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
- Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org, Kevin Hilman
- <khilman@baylibre.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 2/2] dt-bindings: clock: ti: Convert divider.txt
- to json-schema
-Message-ID: <20241017123802.2a1fff05@akair>
-In-Reply-To: <20241010034434.GB1297859-robh@kernel.org>
-References: <20241009205619.16250-1-andreas@kemnade.info>
-	<20241009205619.16250-3-andreas@kemnade.info>
-	<20241010034434.GB1297859-robh@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HllfLsOi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/5y0
+	ypsfWq7EM2KRl4pjCSLN0M/AE8QUTI2X2N4U0hY=; b=HllfLsOiSWvJ6YQMcw05
+	CIZu/zpLjm9y9XdHu32UmKfmhK8yZ0Em61+QHu48vt/rReZqr2A75c5ebtWd1dVg
+	+qJ/1W7fhiYtkhGUSuZXcGWmwV65cyFUHi157A4CORMXHIvEXajsv4VORx7S2Gra
+	Mi73/ozkoDlc0AclHnKNLmLa3idXML51+6PumRav1ztPDMEkdPiHP8mZ8TSvWLGa
+	4Vrm5kh3kSxb/zShgpC5TNfSvb3OyTztIx9Vg8J1dpkcJUfCbYjr04kgmm//CDtG
+	INmFzS/TKIZfb7PcisBuTDawK4sZxps95VIgqm8gX84sk6Z6qMytP+p0Vs2p9o6w
+	hQ==
+Received: (qmail 3353394 invoked from network); 17 Oct 2024 12:45:34 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2024 12:45:34 +0200
+X-UD-Smtp-Session: l3s3148p1@t6/R4qkkC0BtKPEX
+Date: Thu, 17 Oct 2024 12:45:33 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
+ available on Renesas RZ/G3S SoC
+Message-ID: <ZxDqzeA2mz0Ml6cZ@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	kernel test robot <lkp@intel.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y12kh0Tsg/wH5L1d"
+Content-Disposition: inline
+In-Reply-To: <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
 
-Am Wed, 9 Oct 2024 22:44:34 -0500
-schrieb Rob Herring <robh@kernel.org>:
 
-> > +
-> > +  ti,min-div:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      min divisor for dividing the input clock rate, only
-> > +      needed if the first divisor is offset from the default value
-> > (1)  
-> 
-> minimum: 1
-> maximum: ?
-> default: 1
+--y12kh0Tsg/wH5L1d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-maximum is complex: there is one place in the code where this runs
-through a u8 (_get_val). although it it read from the devicetree as a
-uint32.
-So, if we do not care about a specific implementation, then
-in the power-of-two case, the theoretical maximum would be 1 << (1 <<
-(32-bitshift) - 1) clipped to UINT32_MAX due to type constraints. And
-also the maximum lifetime of electronics and elementary elements and
-pieces, probably even with the proposed decay time of protons.
-In the index-starts-at-case, we would have (1 << (32-bitshift)) - 1.
-otherwise 1 << (32-bitshift).
+Hi,
 
-I would propose not to define a maximum here.
+sorry for being late to the game. I just noticed this series and
+wonder...
 
-Regards,
-Andreas
+> +/* Counter registers. */
+> +#define RTCA3_RSECCNT			0x2
+> +#define RTCA3_RSECCNT_SEC		GENMASK(6, 0)
+> +#define RTCA3_RMINCNT			0x4
+> +#define RTCA3_RMINCNT_MIN		GENMASK(6, 0)
+> +#define RTCA3_RHRCNT			0x6
+> +#define RTCA3_RHRCNT_HR			GENMASK(5, 0)
+> +#define RTCA3_RHRCNT_PM			BIT(6)
+> +#define RTCA3_RWKCNT			0x8
+> +#define RTCA3_RWKCNT_WK			GENMASK(2, 0)
+> +#define RTCA3_RDAYCNT			0xa
+> +#define RTCA3_RDAYCNT_DAY		GENMASK(5, 0)
+> +#define RTCA3_RMONCNT			0xc
+> +#define RTCA3_RMONCNT_MONTH		GENMASK(4, 0)
+> +#define RTCA3_RYRCNT			0xe
+> +#define RTCA3_RYRCNT_YEAR		GENMASK(7, 0)
+
+... if it has been considered to expand the existing rtc-sh driver? The
+register set looks identical up to RMONAR. From that on, it looks a
+different. Maybe the different offsets and bit positions could be
+abstracted away by some sh_rtc_{read|write} helper? Or is there some
+other new handling which makes re-using rtc-sh cumbersome?
+
+Thanks and happy hacking,
+
+   Wolfram
+
+
+--y12kh0Tsg/wH5L1d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcQ6skACgkQFA3kzBSg
+KbZzFhAAkxKvkdBgA6qdjGdJIVpKSuaZugMZFjvBRXw6WR7IP65QB6OP7P0GHUE1
+OX2i57KUnQfkce0KYw5Ak+rFvPGkE/KbVTJcqno9UyiqhL7MjoRj0sAbOe7z/N3N
+NSZ+gOyAdCYkQ+yau/XhyWoFntbFKEbIknhN7agIm9eTqO5weEwC7hlIoX4JVq2t
++lZ0uMjAhf/QNnNaEeiCWMnZ+ltJuO9gNdFIGwef4dox6LiNy1JSRIy6627N3gx/
+8Lc6ap6k7sKW/4FLxoKkL/7CDfNdx8LlJZH/RgQ1Cvy8kUZ5qUctssDX2sgYz3uL
+V8G/t5cNfjafZd1z5pPbQRpyBG6S8YLRF/TfpekvY/fFgKWsFKoZGSikMsxx3Wua
+3c6dCIp4Bau60iWXCMxdpdP69k16KEgD8EkM4gap24Is14yoyq9VbZXej0pBQfne
+ak5w6P10ddga+AJu//ghA3ML1ZmY12f/jtDMiKDr7iFq0jLaKu9lBlAUbQeoOMQY
+eC4K555DNJYlTr5cFUa2obs9w/+9ATc+wiMYuetNccVnpmcdmoPcUBf2Zo3jSuqz
+hdo9kmzqcerK9YZHhYHCZwnBxl+h4ga9DGMFVJ6dbbiAD5x1Dk5LuOHd9X62b0+8
+H6zskyMykGIuxTlkr0rNkUHDHLpu4XYafiCsyGKSetE2hW66Tu0=
+=bN8G
+-----END PGP SIGNATURE-----
+
+--y12kh0Tsg/wH5L1d--
