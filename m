@@ -1,88 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EFF1D6DBE;
-	Thu, 17 Oct 2024 22:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F271D86C9;
+	Thu, 17 Oct 2024 22:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729205340; cv=none; b=sSG/2JV+TRsZEZ2aS1FugqH5EUi8TyAS3U7gwH2+Npacs30rJ/dy7dl4qh8+OHni9k1mdnMm2MJxnruzKTRUCiN3+G73BXSIV9Ciya6PeMH0OqXL/ucb3EhG26sz1lZgBbBoDw/k+QPSI3NaBiRSaoyAZV2/UBwKN7RfxXWQoeA=
+	t=1729205950; cv=none; b=owjuymRHbLGL9OYPOpyJGPIgaHn4cC1vwRBXZcpaBuzRYgNDL0kr2xMWGLjEpH12hlWnkfdZhj43CGLiiOr8l4bJbEhs+k/nvxX+fdtkx7xUuYntTuJ3IcbTsNBwlvH2obcFD6A5mVf0trJ/mwveugBKrX6Ye1uLg7rysCEWcfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729205340; c=relaxed/simple;
-	bh=Iv+6OmHuMrO+YnI4hpYi4pu0LsU15h8P3GuX6Qr7+UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ObnpLpa1hwi2PL7v8HvHNE1Gse2+9UAfZTK6UNJw3c3OauccUWa22OYZvfzPUaml6iArOk+DNeONR5gPIvmbLlL+okmKXeyAOFFjmlLXJvzUdi0/GHdAfXeg2Ec3+JUrrau4JF5t4GytazlVgyHV18JiuSJMyGcjBr/jRYb8SGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9kmZI6a; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729205950; c=relaxed/simple;
+	bh=DUm1+ScrbfU24VeHu0z6wgDupthU46KiwzyCK69LbIg=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=e3sO/1RCKKEIGP5aNaO3Pp54/9w4Ham/aTGf3t/62dgD+sSBST3E9tzoCVkEN3dZnACtRFpi47BoqRYxQbmow0ClRpdirYFSjOQuXrVY7Yr3Bn23NkJli5moKmwwmxdJ/ryeAkPZocnzSBKPE1wQWkSXd/NtSqBy1GxM379k/pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUoIZcpF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9kmZI6a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7FEC4CEC7;
-	Thu, 17 Oct 2024 22:48:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUoIZcpF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F47AC4CEC3;
+	Thu, 17 Oct 2024 22:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729205340;
-	bh=Iv+6OmHuMrO+YnI4hpYi4pu0LsU15h8P3GuX6Qr7+UM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=V9kmZI6aqNv4Omj7l7ixp9aldfUHsARhgLVlSM1N1j6UEco/PPP3J5BWmSJYLB5Db
-	 lk/euDAKpwhJ5ppiyAb8AvykxOD2lFPYOEYGQtGFTEDnp56cdL1Pro9ZTIZUKLnAeM
-	 9SSfsUQg1dGmyzoFy6DblCFv8rifalGcxc2u/+q+UHv3+dgWTTMfARqmsSR7K58Mw7
-	 A+gjOOgRO+ND7vzjoc0bilM9CWBo3+bV+bU7VleUl+DpskIxNGS7NFRXf0WSPO+6o4
-	 zLSyDmlPz4Lh1fSBZNluMQPFpmoIjtOTDLO/1JeoMKuIH1CS3JdBxQHmF+xW7p1rK4
-	 laN834IB9EqiA==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.12-rc3
-Date: Thu, 17 Oct 2024 15:48:58 -0700
-Message-ID: <20241017224858.2175159-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+	s=k20201202; t=1729205950;
+	bh=DUm1+ScrbfU24VeHu0z6wgDupthU46KiwzyCK69LbIg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BUoIZcpFp+u7BVejOn9jlF3LjKlb26uKwYcPXPkyn3oznt3qOFOY8yITI/hCN8LR4
+	 mR+rxQJzwpDo083TRg51dGge33V/kWJNNwAU2efTyROh71tv7Yrps8SOgBI8cqqPQp
+	 FFWhQkXrotgZiRlaIixwizpQoOizLls40t8PVaso570Igp1Uj18Z0Em9D0ZBUNYUbe
+	 3OiON24Gsz1vLH/mB0c3feKs6B2O0kpjVfWUQ/bzRN8VxLpKkS08aQFARh5gOEwsLy
+	 yOeqi3asGMuiuAMh8/EwcNtKey0Xep+EMdxB3A1BJAZyv4lTaUxgFWn+RSwisKplt9
+	 okFUxbp2aF1UQ==
+Message-ID: <a20e6927d38aed4e5b1cb1f49346ca29.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
+References: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com>
+Subject: Re: [PATCH 0/4] clk: lan966x: add support for lan969x SoC clock driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor+dt@kernel.org>, Daniel Machon <daniel.machon@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Steen Hegelund <Steen.Hegelund@microchip.com>
+Date: Thu, 17 Oct 2024 15:59:08 -0700
+User-Agent: alot/0.10
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+Quoting Daniel Machon (2024-09-16 02:49:18)
+> Add support for the lan969x SoC clock driver in the existing lan966x
+> driver. The lan969x clock controller contains 3 PLLs - cpu_clk, ddr_clk
+> and sys_clk which generates and supplies the clock to various
+> peripherals within the SoC.
+>=20
+> Patch #1 adds compatible strings for lan969x SKU's in the dt-bindings
+>=20
+> Patch #2 makes the clk_names var const char * const
+>=20
+> Patch #3 prepares the lan966x driver for lan969x, by adding private
+>          match data.
+>=20
+> Patch #4 adds support for lan969x
+>=20
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+>=20
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 6b5cca7868fdd2499384e21279fdab86bfa04997:
-
-  clk: test: Fix some memory leaks (2024-10-16 14:39:18 -0700)
-
-----------------------------------------------------------------
-Two clk driver fixes and a unit test fix:
-
- - Terminate the of_device_id table in the Samsung exynosautov920 clk
-   driver so that device matching logic doesn't run off the end of the
-   array into other memory and break matching for any kernel with this
-   driver loaded
-
- - Properly limit the max clk ID in the Rockchip clk driver
-
- - Use clk kunit helpers in the clk tests so that memory isn't leaked
-   after the test concludes
-
-----------------------------------------------------------------
-Jinjie Ruan (2):
-      clk: samsung: Fix out-of-bound access of of_match_node()
-      clk: test: Fix some memory leaks
-
-Stephen Boyd (1):
-      Merge tag 'samsung-clk-fixes-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into clk-fixes
-
-Yao Zi (1):
-      clk: rockchip: fix finding of maximum clock ID
-
- drivers/clk/clk_test.c                   | 61 ++++++++------------------------
- drivers/clk/rockchip/clk.c               |  2 +-
- drivers/clk/samsung/clk-exynosautov920.c |  1 +
- 3 files changed, 16 insertions(+), 48 deletions(-)
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Am I supposed to pick up microchip clk patches myself this time?
