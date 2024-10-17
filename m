@@ -1,98 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4961D47BD;
-	Thu, 17 Oct 2024 08:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A791DA63D;
+	Thu, 17 Oct 2024 10:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729154370; cv=none; b=oEfmu+/u9pfhkSl6n5WTUmshkKq1TD3kB0Ow9IPQuMHTOYDTLjOCDI5reCiMQr170j9yTNYApSSGXyFcRXEn54akir0cVJxbd7+EkuoyaH6cuCkrcV7MQpnITz7ctGK+IpBB4vK9S8YNZvrz7uO99CM/Bw/fxuCu+uE13Z13Qj4=
+	t=1729161491; cv=none; b=gqtoilxabSDg8tO0+Dgy1F6s7JigBIthGYVDqE4EhdX6I+/8P3Yyvvs4Z2byfavQb8Ai1SRymnAVmsvE/xGujZF4q+C8jJXQtJlXna5RUu/3OQKMt4e3KGeQbQi+H1Z4wgkQMY/Tj58W678lkS5BR6L2nnEklZ4YPKAQYnaR6Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729154370; c=relaxed/simple;
-	bh=C6I82LSVUX4hIke8nj8utVE8xSYycvRksb0sGggUz1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SaXP+BGyNkehz6nC0d5jQnZELm7gMOUJ9zpZY8QwDUxzgvWyNUsbOIDQOlgT6wNMYPYmts3tmR8kZT4uJqeyvd3r+MSq9fqKjw3L+tGrs4qg9m6yRK3Nkcq9jGQkjc4EYKLwgkyL3Hs/VNl0yTy1CKO7E4+veeOd0o1AahnnPa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEOcB46s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729161491; c=relaxed/simple;
+	bh=RR6bz3XCL62/D4xY5KpvyClNWTpDgWb9zj1D7PAIJA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jSQSIkxVeNV1GhN0j43ZblYUw/7XPBl9JXsXSS3lMwmeUMRQzaMXFTdMJWTdSEGQWTNa52M17AUn5qRMjKzBCleP+IDuOTlLBt+xrRcLBCcLEkVJ1SJcN+hnkKVmeClkrN+beWc1E+KKgPMlPrWr0vWcYJsFyVa5h+HoBXOmMC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=KSnU/J+K; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEOcB46s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADEC4C4CEC3;
-	Thu, 17 Oct 2024 08:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729154370;
-	bh=C6I82LSVUX4hIke8nj8utVE8xSYycvRksb0sGggUz1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qEOcB46sq1KDs4di9fEJ/F+WFDgLgvT8xAk1DNmg/YUzTHnWDmrLTwhPS8MlsK3fe
-	 lIkGtE4fdmoX6UNXOYSzGK0016KQB4pXr2NEEBkD6URurtL21GajvHifMnR8+mq6kv
-	 tC1B9cxUchunmSUS9il93TZfDTf8ubPPOWEDaCwhJ3zJy5B0bpAdGwmDI219i5j0Z0
-	 U4Y+kz9xQ+/DKbjn0GAwBrsJm+dhja8rEg2+pPnhFqgCevPHDs2iqiVriCmKbFUxvd
-	 0+DD8Mzx3dkmErcs/wvdLQJTl3JKOUYtPUGN4ydTtjf3T86ve0ZdcCJ4p7uoZsgO8W
-	 nsODmpUvyC53A==
-Date: Thu, 17 Oct 2024 10:39:27 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com, 
-	andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, conor+dt@kernel.org, srinivas.kandagatla@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add Qualcomm SM6115 LPASS
- clock controller
-Message-ID: <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
-References: <20241017005800.1175419-1-alexey.klimov@linaro.org>
- <20241017005800.1175419-2-alexey.klimov@linaro.org>
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="KSnU/J+K"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=4jISAdD4xM5sRPnE95Fnijjjk3Ui/0+o9PGVY2w2gFY=; b=KSnU/J+Kh+hnJdgGpxOSa/xuLf
+	rkuIwFzzzCp9E3iAY0S6CpEm17p3owrbe8P0/1xOTeQHITCZqvC134Kr43oEm2XIiws0MmtqRSi7I
+	9mu76khV5nKMkO8LYNoQOjM1Xbq0iLnbExeUL/S9QDq1arKziDESQSe7pub+WwLnLzhE0LgYFvxZa
+	hK+3yEOkZfotA0qE1oFe+ZR05ZVgBSzm2xeeVqmAv3qAFMbNk1kMbV+vCVKGmdqmFrOfl3mrOWks/
+	NhQdROTXNDaoWVtwd5iXmH6IfN9Xb/lJRuOgcuQt2CeL4Y8xLPoUJXaaTvNtMWwIlQYjKFRzwgD/I
+	pjPLpeFQ==;
+Date: Thu, 17 Oct 2024 12:38:02 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Rob Herring <robh@kernel.org>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+ Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org, Kevin Hilman
+ <khilman@baylibre.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 2/2] dt-bindings: clock: ti: Convert divider.txt
+ to json-schema
+Message-ID: <20241017123802.2a1fff05@akair>
+In-Reply-To: <20241010034434.GB1297859-robh@kernel.org>
+References: <20241009205619.16250-1-andreas@kemnade.info>
+	<20241009205619.16250-3-andreas@kemnade.info>
+	<20241010034434.GB1297859-robh@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017005800.1175419-2-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 01:57:59AM +0100, Alexey Klimov wrote:
-> From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Am Wed, 9 Oct 2024 22:44:34 -0500
+schrieb Rob Herring <robh@kernel.org>:
+
+> > +
+> > +  ti,min-div:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description:
+> > +      min divisor for dividing the input clock rate, only
+> > +      needed if the first divisor is offset from the default value
+> > (1)  
 > 
-> SM6115 (and its derivatives or similar SoCs) has an LPASS clock
-> controller block which provides audio-related resets.
-> 
-> Add bindings for it.
+> minimum: 1
+> maximum: ?
+> default: 1
 
-That's a v2.
+maximum is complex: there is one place in the code where this runs
+through a u8 (_get_val). although it it read from the devicetree as a
+uint32.
+So, if we do not care about a specific implementation, then
+in the power-of-two case, the theoretical maximum would be 1 << (1 <<
+(32-bitshift) - 1) clipped to UINT32_MAX due to type constraints. And
+also the maximum lifetime of electronics and elementary elements and
+pieces, probably even with the proposed decay time of protons.
+In the index-starts-at-case, we would have (1 << (32-bitshift)) - 1.
+otherwise 1 << (32-bitshift).
 
-> 
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> [alexey.klimov] slightly changed the commit message
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+I would propose not to define a maximum here.
 
-My tag?
-
-> ---
->  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
->  2 files changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> +examples:
-> +  - |
-> +    lpass_audiocc: clock-controller@a6a9000 {
-> +        compatible = "qcom,sm6115-lpassaudiocc";
-> +        reg = <0x0a6a9000 0x1000>;
-> +        #reset-cells = <1>;
-> +    };
-> +
-> +  - |
-> +    lpasscc: clock-controller@a7ec000 {
-> +        compatible = "qcom,sm6115-lpasscc";
-> +        reg = <0x0a7ec000 0x1000>;
-> +        #reset-cells = <1>;
-> +    };
-
-Not much improved. Don't send same code from whatever repo you got, but
-go via mailing list.
-
-Best regards,
-Krzysztof
-
+Regards,
+Andreas
