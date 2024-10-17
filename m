@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BEC1D54E9;
-	Thu, 17 Oct 2024 22:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FFF1D5CD1;
+	Thu, 17 Oct 2024 22:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729203770; cv=none; b=sUDxN3sLUUr4z76UldUqfT8ZXAKy2ihtr5SpASL4vSATgINqSLNGGLGT+FOZfUILOmteggOBI0ltFTZ0g2bd8JOaMMp0bT/BOy3N6v+sFL8JShBxr3srmPDN+p7a1NjWlzcJM6q1QVQkeXoMJvHcJmLR49akeOMGqSyQEPrRs1k=
+	t=1729203783; cv=none; b=J6m9Mr2inF/2u3C/PDwMDMwvs2x4Kqoymua3pMDjR0LEzaN+x1jbOaihAbsCuqz12rwwvpWGzui0o/P96D6TZnl64XZiYmX+IuyErn7+R2U5Um74gKELhNuqv4At9by+ioLRQNxnK2w7P/oIgrXxru5SjnhI9snUdj5ojPXmzGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729203770; c=relaxed/simple;
-	bh=nwZJpFaMGkIfJiwNAu/kb2SQ2syXsOgdOQCJzbi6/fE=;
+	s=arc-20240116; t=1729203783; c=relaxed/simple;
+	bh=+3MEtwbMVg+pwHIOeCpCnFSyC1XGVPop3/Krqu4bssQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=nqb5d1xG6QQWL08gChZtYM1iC+BJjhQL+d5SaNg/yQ15lJ5Dqcj3PGGNUHGidYwyldybhOjTG6+DT+rRnhhkvO5FLoXQMjYTuT3HCB3J2I86RzuPn0bSVD2iC6Sa4sRTBkbx8LpBgxUHqLx7RKMAjCRBA/+f0gWqCPNW3Ovh7PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdV1IPcM; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=UyHSoyFwdJxuZF4lc91NEW085DJuwYqyPeduvTdErBiNm44k61WtcFHfO5n9TgBe5J7d3jtJnnXUxL12FtdC8BPFSgYJ99uWSVBLCxY08nu3MYCXS+dkNsgQJcfa+SMK6Td3cYTugN25RZq3SQ/s2PPHmxp8hYnhM4naVCA2450=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttsCIhsD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdV1IPcM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5D0C4CEC3;
-	Thu, 17 Oct 2024 22:22:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttsCIhsD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDBAC4CEC7;
+	Thu, 17 Oct 2024 22:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729203770;
-	bh=nwZJpFaMGkIfJiwNAu/kb2SQ2syXsOgdOQCJzbi6/fE=;
+	s=k20201202; t=1729203783;
+	bh=+3MEtwbMVg+pwHIOeCpCnFSyC1XGVPop3/Krqu4bssQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GdV1IPcM10+H6sFnd8NYu7K0PWRGUbsmZFp8bicC/7fby30Z9/6vC7j+rcnYeXb/p
-	 2ptfEOMuDuTjjimma2lFuqBT9zx2hlEGQsMwVpG39ubat7p1iPtL9dUSv8ViCoVjSX
-	 G6Hz01Ikw7KVE9xpAgqpn3dbCnOT8bsvHEWJiKXMJr+IokT/OaSWLaPmivNyn/0LOS
-	 CArW+2A3T/pt6Nq8iYKFHXLzh6jiZxrAaf9bgXSp5vXoRZW9EfO4tzXwAHKnPGf+w/
-	 S/aJXr748ckabDH7O9tpjV7e8Eagaud1OGAqHjVK+7AE0UqVh/okEmK4dmNWZwTDjL
-	 /ySNsSsmYrkjA==
-Message-ID: <46ce613f0e6e5c656f943f5572e95d45.sboyd@kernel.org>
+	b=ttsCIhsDOxpnh4ZxU3GKaWXCvvBSUdXqX6jTUljO5LLzwOHtsf6r4OqsN1iH/Ch5+
+	 PJqgb189ELh3Ie7EpHW6vdOZJl+JfnLofOGVXgz3fXamudWuFK4tBvuQ4ShNH1Zf0d
+	 bTscJprk8amaKk5GdD7Jj/FnmdypN9iM8ZJf9WmFy+7TgML1it4CA0SDuDdlOsdDVu
+	 WMHixm16XLvyW+ZNfSy9Vc9NrJ3FjyOnM0BcTbWcfvbJLMoLMzG8R03Z9fbspgNjr0
+	 bT90uIuLSzGVtfcy4oi9DDLpXX7HX2E8n7TPAmdkzKXEaPd1Q44VkpV2hGcaoOxT7W
+	 sgP3CL8NtiP+w==
+Message-ID: <f85d4a18a18859e15989732caff2144f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,27 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240912191038.981105-2-tmaimon77@gmail.com>
-References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-2-tmaimon77@gmail.com>
-Subject: Re: [PATCH v28 1/3] dt-bindings: reset: npcm: add clock properties
+In-Reply-To: <20240912191038.981105-3-tmaimon77@gmail.com>
+References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-3-tmaimon77@gmail.com>
+Subject: Re: [PATCH v28 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
 To: Tomer Maimon <tmaimon77@gmail.com>, benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org, tali.perry1@gmail.com, venture@google.com, yuenn@google.com
-Date: Thu, 17 Oct 2024 15:22:48 -0700
+Date: Thu, 17 Oct 2024 15:23:01 -0700
 User-Agent: alot/0.10
 
-Quoting Tomer Maimon (2024-09-12 12:10:36)
-> This commit adds a 25MHz reference clock and clock-cell properties to
-> the NPCM reset document. The addition is necessitated by the integration
-> of the NPCM8xx clock auxiliary bus device into the NPCM reset driver.
+Quoting Tomer Maimon (2024-09-12 12:10:37)
+> Add NPCM8xx clock controller auxiliary bus device registration.
 >=20
-> The inclusion of the NPCM8xx clock properties in the reset document is
-> crucial as the reset block also serves as a clock provider for the
-> NPCM8xx clock. This enhancement is intended to facilitate the use of the
-> NPCM8xx clock driver.
+> The NPCM8xx clock controller is registered as an aux device because the
+> reset and the clock controller share the same register region.
 >=20
 > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Tested-by: Benjamin Fair <benjaminfair@google.com>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 > ---
 
 Applied to clk-next
