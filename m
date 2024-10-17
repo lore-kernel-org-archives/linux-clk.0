@@ -1,47 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C301D416E;
-	Thu, 17 Oct 2024 07:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4961D47BD;
+	Thu, 17 Oct 2024 08:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729151883; cv=none; b=Z8NS0WvQpJ7FLv6C2jURviSLL0izEHodVW1JThRgQ1WMSIFM5R88i56w4jJmdQBSUQ7yPsznV244nV/COSu1PC1v3ASE72+iimhNb1rWfsncYMfnt0cUWFy3n07tF9GMDeBS7Oq9QBbiW+FoEMmYqIiat/kTpZaUohbqFivozJU=
+	t=1729154370; cv=none; b=oEfmu+/u9pfhkSl6n5WTUmshkKq1TD3kB0Ow9IPQuMHTOYDTLjOCDI5reCiMQr170j9yTNYApSSGXyFcRXEn54akir0cVJxbd7+EkuoyaH6cuCkrcV7MQpnITz7ctGK+IpBB4vK9S8YNZvrz7uO99CM/Bw/fxuCu+uE13Z13Qj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729151883; c=relaxed/simple;
-	bh=TT5FczrKxysAiZJvvPtBBY0kZo8jywbmX45UXo/wZWc=;
+	s=arc-20240116; t=1729154370; c=relaxed/simple;
+	bh=C6I82LSVUX4hIke8nj8utVE8xSYycvRksb0sGggUz1k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8CeeoNBhvA86BCi9g/QyF4yiRQOaxiNnlmT+94Vb/8ISyPe6Ylk0cgETZh+Yd7bMlEhf5NVZbgO5YYXrhHyNbKPTeZfkuGinTUgySGlIExLROyLzbVe869kNmA6Xw3YpnYeQSulwVWwLPgX4toASLoskQ4a7HYV5ngPsvRyhcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiDeOPU0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SaXP+BGyNkehz6nC0d5jQnZELm7gMOUJ9zpZY8QwDUxzgvWyNUsbOIDQOlgT6wNMYPYmts3tmR8kZT4uJqeyvd3r+MSq9fqKjw3L+tGrs4qg9m6yRK3Nkcq9jGQkjc4EYKLwgkyL3Hs/VNl0yTy1CKO7E4+veeOd0o1AahnnPa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEOcB46s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiDeOPU0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457F3C4CEC3;
-	Thu, 17 Oct 2024 07:58:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEOcB46s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADEC4C4CEC3;
+	Thu, 17 Oct 2024 08:39:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729151883;
-	bh=TT5FczrKxysAiZJvvPtBBY0kZo8jywbmX45UXo/wZWc=;
+	s=k20201202; t=1729154370;
+	bh=C6I82LSVUX4hIke8nj8utVE8xSYycvRksb0sGggUz1k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hiDeOPU0DvCq5r0uudv036FZfkakGno/3tHGLt0F7GaaDT6a0qa/6l3xUEpzn5PyN
-	 1coUKmQEbq3ay/ofxkhom+gmQ+PqzqEWgTF8vqwOkfcOnACXTV5jDzcxAKQCncHw1A
-	 gL2VR03J6fVDcM0MO6sfEDlbfic66fefS4w0blPkRCb+bqaDIQ/s3AD/G9gZyyv4WW
-	 fsQOgohaqzV6qkmjE8Uo/Bcrj/js4jQFQVIIKX7vlEDtPRHHvqfcvRrsOU6kll/iQe
-	 UssdRmeQmKDtacTqXYvemzQww2AXuuO23OxK2OTnuE0s6C/rMC4xLTiWaBIBi+xUCs
-	 cQY4SAicN7XLQ==
-Date: Thu, 17 Oct 2024 09:58:00 +0200
+	b=qEOcB46sq1KDs4di9fEJ/F+WFDgLgvT8xAk1DNmg/YUzTHnWDmrLTwhPS8MlsK3fe
+	 lIkGtE4fdmoX6UNXOYSzGK0016KQB4pXr2NEEBkD6URurtL21GajvHifMnR8+mq6kv
+	 tC1B9cxUchunmSUS9il93TZfDTf8ubPPOWEDaCwhJ3zJy5B0bpAdGwmDI219i5j0Z0
+	 U4Y+kz9xQ+/DKbjn0GAwBrsJm+dhja8rEg2+pPnhFqgCevPHDs2iqiVriCmKbFUxvd
+	 0+DD8Mzx3dkmErcs/wvdLQJTl3JKOUYtPUGN4ydTtjf3T86ve0ZdcCJ4p7uoZsgO8W
+	 nsODmpUvyC53A==
+Date: Thu, 17 Oct 2024 10:39:27 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, 
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v7 3/7] dt-bindings: PCI: qcom,pcie-x1e80100: Add
- 'global' interrupt
-Message-ID: <a6yxt4o5alnu5oa5t4guvjq4x37xa6t664ae3palhmumztawlv@n3r3mnrnui2f>
-References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
- <20241017030412.265000-4-quic_qianyu@quicinc.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com, 
+	andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, srinivas.kandagatla@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add Qualcomm SM6115 LPASS
+ clock controller
+Message-ID: <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
+References: <20241017005800.1175419-1-alexey.klimov@linaro.org>
+ <20241017005800.1175419-2-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,27 +47,51 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241017030412.265000-4-quic_qianyu@quicinc.com>
+In-Reply-To: <20241017005800.1175419-2-alexey.klimov@linaro.org>
 
-On Wed, Oct 16, 2024 at 08:04:08PM -0700, Qiang Yu wrote:
-> Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
-> to the host CPU. This interrupt can be used by the device driver to handle
-> PCIe link specific events such as Link up and Link down, which give the
-> driver a chance to start bus enumeration on its own when link is up and
-> initiate link training if link goes to a bad state. The PCIe driver can
-> still work without this interrupt but it will provide a nice user
-> experience when device gets plugged and removed.
+On Thu, Oct 17, 2024 at 01:57:59AM +0100, Alexey Klimov wrote:
+> From: Konrad Dybcio <konrad.dybcio@linaro.org>
 > 
-> Hence, document it in the binding along with the existing MSI interrupts.
-> Global interrupt is parsed as optional in driver, so adding it in bindings
-> will not break the ABI.
+> SM6115 (and its derivatives or similar SoCs) has an LPASS clock
+> controller block which provides audio-related resets.
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> Add bindings for it.
+
+That's a v2.
+
+> 
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> [alexey.klimov] slightly changed the commit message
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+
+My tag?
+
 > ---
->  .../devicetree/bindings/pci/qcom,pcie-x1e80100.yaml      | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
+>  2 files changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> +examples:
+> +  - |
+> +    lpass_audiocc: clock-controller@a6a9000 {
+> +        compatible = "qcom,sm6115-lpassaudiocc";
+> +        reg = <0x0a6a9000 0x1000>;
+> +        #reset-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    lpasscc: clock-controller@a7ec000 {
+> +        compatible = "qcom,sm6115-lpasscc";
+> +        reg = <0x0a7ec000 0x1000>;
+> +        #reset-cells = <1>;
+> +    };
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Not much improved. Don't send same code from whatever repo you got, but
+go via mailing list.
 
 Best regards,
 Krzysztof
