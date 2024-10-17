@@ -1,111 +1,140 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C81DB924
-	for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2024 11:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6C5770E2;
+	Thu, 17 Oct 2024 12:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163049; cv=none; b=qlxISIPvt3e1rHFOEnlT5wKvWVk+kJqsk4MdyY/2crXo2y5DuKp0haXq8QBAZRxlKBDk575XoZh+SnpEqbbRKzaw7/zQfgCTNhSIwrBqxIaMhJ1YYpW6Ud/+nzF9pL/Y2GD25vZaYQZ/dQRTcxuyMWzXDXOeGl2gS/bNS0ZSbTw=
+	t=1729168641; cv=none; b=Gz2xBT0BkWYGZ2U+BBxb8Qgbn3W0IeEA3LrRGDi8YDBtrb69Vs86XM92NLnQaZn4G/0NmZi6kV/H/uaMtoyMF3G3EFc8BxMxQ4jUiqmQ/UCAjuS5SMOsou+bPX7lxNTF4FOse7Q2+1rjPD5R3xi4Tg5xvPNdAouDIQDX2ODZ7gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163049; c=relaxed/simple;
-	bh=M02vPbZefKtzgbtnglUdvhk8inJ/586iO3nEwG12f9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDNgPAMyaujvO6QN6K52ykWpbL4UdrLB+vMB+vvIe6oBq5KWE/25fuKrrYjaRkYY0OR3h4h+iy1ijzJGny67rNyQ4llPIjSKToKbR6JesOD80pRFKcBUFzGJrZM1eN8aQuRNNjZ5Kr9rmytHyoTsuq1d/byL6cqspII/1qOVE6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O61kXz6V; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1729168641; c=relaxed/simple;
+	bh=P43vvQY7QwRBYdVwY9ZYKdcL19CO/phnKdn/2s2DWkk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uo2IOFMzhHx7w4w4Few7p/Yv9aI9PcHK44FY71cZ4qsJtE9fuC5h6rmQSg9P+CvovRH+rErEx+8yn/J+D8GhMV7lhPitpvAHRbo3rXTLRUAQeP+SmCrOPG9VOcTYebh66eZdF9gWz6I54kVKHVgzZmmgHD2ut45j3XPVotM6nkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ANeo6lLC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O61kXz6V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=M02v
-	PbZefKtzgbtnglUdvhk8inJ/586iO3nEwG12f9A=; b=O61kXz6VJz9lGprNXARt
-	RZ9Cg4RlmikIp0nJ6cfrHZ7FmYvJC5gXF/deT+gaZdEGBKKQU7VR0c8L1fPHqJ5t
-	fStipJ26Xn3A0v2eMNNWIz+MTxZVktZLZrNbfwk3BRXXFUdRYNoEegyhw9dt2lg0
-	unZdKHwHl13jLH02q6jDLXt5hPFuZJqaFfgcJpf5SafnXqtB7nVD99G1AgeYyGpO
-	FBYiYW6MGWx5CMfGCJu0PIOkazucB9tpwGxfOH8D1TnqauLXYrWgstI9SKJc20qP
-	ZrQqXiILOdiDdM38jahSvIkGmy1ocSNm0jXSEL5vGVNF4cCJfhu4wOA8p5J3VrAD
-	BA==
-Received: (qmail 3358213 invoked from network); 17 Oct 2024 13:04:05 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2024 13:04:05 +0200
-X-UD-Smtp-Session: l3s3148p1@l0sMJaokT31tKPEX
-Date: Thu, 17 Oct 2024 13:04:04 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <ZxDvJCq_GOBm8nUC@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <ZxDqzeA2mz0Ml6cZ@shikoro>
- <CAMuHMdU=o0MzQUoEs5-HrEVP-snXN-hUef1K3U8Ppj18P6HVCg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ANeo6lLC"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H7fQrs001755;
+	Thu, 17 Oct 2024 12:36:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ya+Bougvk+y8vWeqZgeUhx
+	wz/Goy6iuGevzYINz6usg=; b=ANeo6lLCSeLLnwfpYnpIPwXbCVkpEbql5lo8BH
+	uQvu6GknI2YAKYXX/M4D5q1RmrMaZaowGZT/u2JAmNjjlrE0ws3iChtr+HQ/B5Zg
+	pyaKS9nAlNBLLRUAFvow4A6inMfqImK3v9rZWJreqYJ8IuzbOCLRgElOQVmReQWJ
+	kJGsvtHCPR0U4W0HGPLnA+seVhKI5Ar0imFQLj9mAWuzv9vgYskUwPzwJr5oAPJF
+	NW+Mn2gECpvET4L+jO9m7wXqQfsG6Wj+cf5GnTbFiQJnCi/h3TtUafqo82DN6nrv
+	p/L5nlSpwWI1wIqYS72iLOaTkiQc4GLYXsce5xIYIKG6WoMQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ajm5ahcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 12:36:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HCaqsJ021975
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 12:36:52 GMT
+Received: from hu-srichara-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 17 Oct 2024 05:36:46 -0700
+From: Sricharan R <quic_srichara@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: [PATCH V4 0/6] Add minimal boot support for IPQ5424
+Date: Thu, 17 Oct 2024 18:06:20 +0530
+Message-ID: <20241017123626.204421-1-quic_srichara@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lNCG8WzO0TPLyYgP"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU=o0MzQUoEs5-HrEVP-snXN-hUef1K3U8Ppj18P6HVCg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: M8thuauK12XX8lSuWlzqFatioqJ7UvMw
+X-Proofpoint-ORIG-GUID: M8thuauK12XX8lSuWlzqFatioqJ7UvMw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=845
+ mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170086
 
+The IPQ5424 is Qualcomm's 802.11be SoC for Routers, Gateways and
+Access Points.
 
---lNCG8WzO0TPLyYgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series adds minimal board boot support for ipq5424-rdp466 board.
 
+Picked up patch [1] from previous post, this is a dependency for this
+series.
 
-> > ... if it has been considered to expand the existing rtc-sh driver? The
+[1] https://patchwork.kernel.org/project/linux-clk/patch/20240626143302.810632-2-quic_devipriy@quicinc.com/
 
-...
+[V4] Only change in patch #2 to fix adding 2 new clk bindings to end of list.
+     Dropped patch #3 from [V3], since it is applied now.
+     No change in other patches.
 
-> Yes it has ;-)
+[V3]
+    Fixed patch#2 as per Krzysztof Kozlowski comments
+    Added Reviewed tag for patch #5
+    Dropped patch #3 and #5 , pinctrl --> Already merged
 
-Thanks for the pointer. Well, a few of the limitations apply for RZA1 as
-well but they are not handled in the rtc-sh driver yet (from a glimpse).
+[v2]
+   Fixed all review comments from Dmitry Baryshkov, Krzysztof Kozlowski,
+   Varadarajan Narayanan.
+   Added Rob Herring acked-by for patch #3.
+   Added Krzysztof Kozlowski reviewed-by and acked-by for patch #2,
+   and patch #6 respectively.
+   Added detailed description about change in respective patch.
 
-Nonetheless, given the other limitations and the bit shuffling in the
-control registers, I agree that a new driver makes sense here.
+Devi Priya (1):
+  clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
 
+Sricharan Ramabadhran (5):
+  dt-bindings: clock: Add Qualcomm IPQ5424 GCC binding
+  clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC
+  dt-bindings: qcom: Add ipq5424 boards
+  arm64: dts: qcom: add IPQ5424 SoC and rdp466 board support
+  arm64: defconfig: Enable IPQ5424 RDP466 base configs
 
---lNCG8WzO0TPLyYgP
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../devicetree/bindings/arm/qcom.yaml         |    6 +
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |   40 +-
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts   |   59 +
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  291 ++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   11 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    1 +
+ drivers/clk/qcom/gcc-ipq5424.c                | 3309 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5424-gcc.h  |  156 +
+ include/dt-bindings/reset/qcom,ipq5424-gcc.h  |  310 ++
+ 13 files changed, 4188 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5424.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.34.1
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcQ7yQACgkQFA3kzBSg
-Kbbb9A//YJ9DUgYEiBVtqS/ma7iA7F8MGfIClcoTBk3HhHlJIaxdXSRQ9Ld19DTB
-5fXKn9jRUQwsOK/O6WU62VW+jr9b70D+EXu0PEEAI2qUI9/LX1acdHwTdp9EVhGg
-JPp1Hn0CGPGQVwgTbe/veNTXMUakpHWP2h+QbSMwRka+a+skEDshgiyZZqeo2l1E
-+o1wseF8obYpb2+iydJA4Vp+DdEEJoHpMJZ0DZbgrIGicnVhDRi1O0tiQ+RIqiBP
-XcP5VWGb9ceABCJuBaXxW3uSJ+2fdJy6Q7f4Tmh7DP+r1R5q5lTO4wEQ9QiGVjvx
-S4JAA2hJskl6wQVcfHeG/tCWByahC3APq2PFGV/4YtvysyK7mke3GEhPknT/aIfu
-UZTkqZottd6vNcHJM+knvTuT+5WJ7Y5kOUpVZ8Ed83Oa3LtuVjTRg7iG+VT01plo
-yaLY0++R5uZNF+ABlM5lO91BSl5VpRAb6xWYOzCq7vU8U99fpXnwGwWw3Wmk7Z/f
-fDMDEz1XhpmR6ETIjCVtIGu9t/Deyyg5tC9esoDe6FP80hhdFps6Mi0/sKW//iiA
-/NaB2XsnC7H1GV7yCSQKCGTKcJNvzSdGFQnsq0DWWHloOfl6nbFdfpjiy/lAcolU
-N2X59O6146VnHrhWtwaC2rt2nBz6qPVobXn+d1L6TA6Xx3ww6kg=
-=bTvk
------END PGP SIGNATURE-----
-
---lNCG8WzO0TPLyYgP--
