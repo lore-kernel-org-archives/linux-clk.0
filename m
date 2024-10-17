@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA76318133F;
-	Thu, 17 Oct 2024 18:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A421218D84;
+	Thu, 17 Oct 2024 18:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729190583; cv=none; b=S4ZNDSF6Z5PAkMbkDrdsXj1S563+fxXQA7sDcaVX9rUotrAQXk+u1dCCsNlRBCgpOC4igMGRvFXyapxIUdHyn3MbvztFrXUM9R7gVu+hYDDd9WfRF3ti1TbmZGazPuqhTB6r4E41qzNC6893yst4qBFZ3eDmTVtUQdiZ3U8EPvE=
+	t=1729190888; cv=none; b=rmqwnXggqckYNgrEXwP11iUX2O9I5r+9XkXKE3luNQ/aL0Q/gBkJ3tVY/h5jZYcg/qcpT1Fohv/gOuqNHre/lPHO3dP8QAAR+LcRTqzryoquJRNccTKh9NZPR0o1AsSsNkM11dqvCgZYvjIVdU/ZWFr+7T+byiLt8vbl8FvrhPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729190583; c=relaxed/simple;
-	bh=PcQXk4kA+O+U2bVu5sDiymybdRXz3rGK1neJUq0+tyU=;
+	s=arc-20240116; t=1729190888; c=relaxed/simple;
+	bh=R1fTXPYghBFCnLBr4a/59yh3e9rLOOUfHsrNYnRfLTU=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=EluEER1SySfTZPKA0mtrJ7rk2jC9Ap5huDl0+JLpHx5ibiaLngC/FpwKNRJQUdbfc2x1/PfTXMBZWDqay53bNMDTg/6I/zof+VEdz4/Ucg2k+IlNPqoB5VgW9w+V6EVAU8QupQ9uzG3Xmdd9Pb6ngNNT3idky/lgQHBkRKskvG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUbnJ5va; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Qt68WAAPeBToLlKAJfO+7pA9X10xDw2/g1ZpLFOeKGwOhQfPYQqfrlTfttOM1nXYkOhwkiMUysW+Sy0n7uUYzi27bDPdl56Xwjz9IRrG4GIm39fa5ws+qU+cnmJL6NoT12eWSBo2vBf/gJim6Ovm7TGNpAqenXCxwxLh0bnWYmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyWdtG9y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUbnJ5va"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853E0C4CEC3;
-	Thu, 17 Oct 2024 18:43:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyWdtG9y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F434C4CEC3;
+	Thu, 17 Oct 2024 18:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729190582;
-	bh=PcQXk4kA+O+U2bVu5sDiymybdRXz3rGK1neJUq0+tyU=;
+	s=k20201202; t=1729190888;
+	bh=R1fTXPYghBFCnLBr4a/59yh3e9rLOOUfHsrNYnRfLTU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nUbnJ5vajUPC0jmPEmsFVx+1DO/R1FPQqChPvjEWoAQxUoTpL819cQ7nzI9FS6Ud2
-	 J3P1NNt8AtmQ1hzFcOmFyGjTP0wwYVWVYMz6YFAv1VFw0StniVq/H+Xpl9j+9PjXff
-	 9D7SpEwjiV5In+T31SHbzg51+W2m1VU55okPGzS/2aocIly262DuGBHLonj2BUesRw
-	 gA3yt+TEHJQYHghYjD1qbi4Ps/ekr8/wvAUsgnx/MFz+y0HFtjRl5U2e4DA7kV+X9a
-	 A+qttaTCW/cjPJmqOYt6e13kdby7UdMyhgI/Tut4G4aBuhe1tIiI9bzppietkOwTYG
-	 DTcglYOh1CCgA==
-Message-ID: <3412c930fdb120032478c65e90e4b971.sboyd@kernel.org>
+	b=iyWdtG9yI152Swu9/jocY6+ckvgPlCxEdDk05qoPEyANqsMeWWQdCcVwX1PfFrsZN
+	 LmJRjYPrCi7PLN7KrBm+S1Q2IpeqzrZ+RC9JniGo3qldqgkPT8s+BOQ4mopfwk9f5o
+	 wIuCODdjMvtpLvMflaevug7UZ+RYWytPPq0nJW8eJY6BIeq/3/cxlRxSetRfLcOkRC
+	 vWBJaeucJLgEDgb3zC2LteLJK6ssTvAO5apSbrYOvbB88JxgYzs/CTYdysW7rVdLmi
+	 qFmYKU+ATv3CqLzLoSDq0WOmYaST+5NgECEGza7pbxzVAOkLReGMskYTrz24/wp0dr
+	 LaX5Tdj6/YEcA==
+Message-ID: <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,97 +35,159 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <D4W91PHV3238.3SL8CZLC15V5O@bootlin.com>
-References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com> <D4W91PHV3238.3SL8CZLC15V5O@bootlin.com>
-Subject: Re: [PATCH v5 0/4] Add Mobileye EyeQ clock support
+In-Reply-To: <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com>
+References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com> <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com>
+Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
 To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Thu, 17 Oct 2024 11:42:59 -0700
+Date: Thu, 17 Oct 2024 11:48:06 -0700
 User-Agent: alot/0.10
 
-Quoting Th=C3=A9o Lebrun (2024-10-15 01:50:26)
-> Hello Stephen,
->=20
-> On Mon Oct 7, 2024 at 3:49 PM CEST, Th=C3=A9o Lebrun wrote:
-> > This series adds a platform driver dealing with read-only PLLs derived
-> > from the main crystal, and some divider clocks based on those PLLs. It
-> > also acts at the one instantiating reset and pinctrl auxiliary devices.
->=20
-> I'd be curious to get feedback on this series?
-> Could it make it before the next merge window?
->=20
-> V4 fixed all your comments but one. You implied the linked list might be
-> useless, but I am not convinced:
->=20
-> > I had a pending question [0], asking for confirmation that the static
-> > linked list to inherit cells from of_clk_init() stage to platform
-> > device probe is indeed the right solution. As -rc1 got released I sent
-> > the new revision anyway.
-> >
-> > [0]: https://lore.kernel.org/lkml/D4ELMFAUQYZ7.3LXGQZJSX68UF@bootlin.co=
-m/
->=20
-> Quoting here the original email for full context:
+Quoting Th=C3=A9o Lebrun (2024-10-07 06:49:19)
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 299bc678ed1b9fcd9110bb8c5937a1bd1ea60e23..ae7caa28985481ce7280421de=
+7d3f2340f8f9ab3 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -226,6 +226,18 @@ config COMMON_CLK_EP93XX
+>         help
+>           This driver supports the SoC clocks on the Cirrus Logic ep93xx.
+> =20
+> +config COMMON_CLK_EYEQ
+> +       bool "Clock driver for the Mobileye EyeQ platform"
+> +       depends on 64BIT # for readq()
 
-Thanks!
+This makes my build test script blow up. Please just pick one or the
+other header as you don't really care. I will apply something like this
+patch either way.
 
->=20
-> On Tue Sep 24, 2024 at 4:53 PM CEST, Th=C3=A9o Lebrun wrote:
-> > On Wed Sep 18, 2024 at 7:28 AM CEST, Stephen Boyd wrote:
-> > > Quoting Th=C3=A9o Lebrun (2024-07-30 09:04:46)
-> > > > +       list_add_tail(&priv->list, &eqc_list);
-> > >
-> > > The list is also kind of unnecessary. Set a bool in the match_data and
-> > > move on? We could have some sort of static_assert() check to make sure
-> > > if there's a CLK_OF_DECLARE_DRIVER() then the bool is set in the
-> > > match_data for the driver. Such a design is cheaper than taking a loc=
-k,
-> > > adding to a list.
-> >
-> > This list's main goal is not to know what was early-inited. Its only
-> > reason for existence is that we want to get, at eqc_probe(), the cells
-> > pointer allocated at eqc_init().
-> >
-> > struct eqc_priv {
-> >       /* this field is why we store priv inside a linked list: */
-> >       struct clk_hw_onecell_data      *cells;
-> >       /* the rest, we don't care much: */
-> >       const struct eqc_early_match_data *early_data;
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index ae7caa289854..bb8f4fb5f996 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -228,7 +228,6 @@ config COMMON_CLK_EP93XX
+=20
+ config COMMON_CLK_EYEQ
+ 	bool "Clock driver for the Mobileye EyeQ platform"
+-	depends on 64BIT # for readq()
+ 	depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
+ 	select AUXILIARY_BUS
+ 	default MACH_EYEQ5 || MACH_EYEQ6H
+diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
+index 762885333c03..2fd44e0d27f6 100644
+--- a/drivers/clk/clk-eyeq.c
++++ b/drivers/clk/clk-eyeq.c
+@@ -28,7 +28,9 @@
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/io-64-nonatomic-hi-lo.h>
+ #include <linux/list.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
 
-This is __initconst and won't be valid after init, which is possible if
-the driver probe is delayed beyond the time that init memory is freed.
+> diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..762885333c0336e9ff1162a36=
+77f5fb815fd461a
+> --- /dev/null
+> +++ b/drivers/clk/clk-eyeq.c
+> @@ -0,0 +1,779 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * PLL clock driver for the Mobileye EyeQ5, EyeQ6L and EyeQ6H platforms.
+> + *
+> + * This controller handles read-only PLLs, all derived from the same main
+> + * crystal clock. It also exposes divider clocks, those are children to =
+PLLs.
+> + * Parent clock is expected to be constant. This driver's registers live=
+ in
+> + * a shared region called OLB. Some PLLs are initialised early by of_clk=
+_init().
+> + *
+> + * We use eqc_ as prefix, as-in "EyeQ Clock", but way shorter.
+> + *
+> + * Copyright (C) 2024 Mobileye Vision Technologies Ltd.
+> + */
+> +
+> +/*
+> + * Set pr_fmt() for printing from eqc_early_init().
+> + * It is called at of_clk_init() stage (read: really early).
+> + */
+> +#define pr_fmt(fmt) "clk-eyeq: " fmt
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
 
-> >       const struct eqc_match_data     *data;
-> >       void __iomem                    *base;
-> >       struct device_node              *np;
-> >       struct list_head                list;
-> > };
-> >
-> > I do not see how to do that with a bool. We could put the pointer into
-> > the match data, but that would mean we'd have to make them writable
-> > (currently static const data). We are talking about a linked list with
-> > two items in the worst case (EyeQ6H), accessed twice.
+You need mod_devicetable.h as well for of_device_id.
 
-Ah I missed that you were trying to stash the onecell data away. You can
-register a clk provider for the same node more than once. The first
-"early" one can return an error pointer for the clk indices that will be
-registered later. The second onecell data can be registered in the
-regular driver probe and return the clks that are registered later. See
-of_clk_get_hw_from_clkspec() and how it keeps trying to find a clk if
-the provider that matches the node didn't return a valid pointer.
+> +#include <linux/overflow.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/printk.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+> +
+> +#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
+> +
+> +#define EQC_MAX_DIV_COUNT              4
+> +
+> +/* In frac mode, it enables fractional noise canceling DAC. Else, no fun=
+ction. */
+> +#define PCSR0_DAC_EN                   BIT(0)
+> +/* Fractional or integer mode */
+[...]
+> +
+> +/* Required early for GIC timer (pll-cpu) and UARTs (pll-per). */
+> +static const struct eqc_pll eqc_eyeq5_early_plls[] =3D {
+> +       { .index =3D EQ5C_PLL_CPU, .name =3D "pll-cpu",  .reg64 =3D 0x02C=
+ },
+> +       { .index =3D EQ5C_PLL_PER, .name =3D "pll-per",  .reg64 =3D 0x05C=
+ },
+> +};
+> +
+> +static const struct eqc_early_match_data eqc_eyeq5_early_match_data __in=
+itconst =3D {
+> +       .early_pll_count        =3D ARRAY_SIZE(eqc_eyeq5_early_plls),
+> +       .early_plls             =3D eqc_eyeq5_early_plls,
+> +       .nb_late_clks =3D eqc_eyeq5_match_data.pll_count + eqc_eyeq5_matc=
+h_data.div_count,
+> +};
+> +
+> +/* Required early for GIC timer. */
+> +static const struct eqc_pll eqc_eyeq6h_central_early_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-cpu", .reg64 =3D 0x02C },
+> +};
+> +
+> +static const struct eqc_early_match_data eqc_eyeq6h_central_early_match_=
+data __initconst =3D {
+> +       .early_pll_count        =3D ARRAY_SIZE(eqc_eyeq6h_central_early_p=
+lls),
+> +       .early_plls             =3D eqc_eyeq6h_central_early_plls,
+> +       .nb_late_clks =3D 0,
+> +};
+> +
+> +/* Required early for UART. */
 
-> >
-> > The reason we store the whole of priv: simpler code and we avoid mapping
-> > registers twice (once at eqc_init() and once at eqc_probe()).
+I still don't get this. UART isn't an early device. It's only the
+interrupt controller and the timer that matter. Does MIPS do something
+special for UARTs?
 
-The IO mapping code handles duplicate mappings internally by returning
-the previous virtual address. It doesn't hurt to call it again.
-
-> >
-> > Can you confirm the current static linked list approach (without any
-> > spinlock) will be good for next revision?
->=20
-
-Getting rid of the list will make the code simpler and avoid the driver
-probe path from accessing the early data. Please do it!
+> +static const struct eqc_pll eqc_eyeq6h_west_early_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-west", .reg64 =3D 0x074 },
+> +};
