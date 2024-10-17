@@ -1,86 +1,104 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4581C1917C4;
-	Wed, 16 Oct 2024 22:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAD5182B4
+	for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2024 00:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729116233; cv=none; b=Ug1BGp9yrnltN2I4FMQbOfB7ZFRktC8kQkUwW5vqY/KobHQnHo0MWAod2ZKHtE4aN6XQZTiq1zgQg4veGE1OglUTf68yhKMx++tJowoX8k5y7ZQY1IY0EesiUTBsEI24jYy66H+CUMeQCOHcSFF6xNuy6UnudKBANUUe9FGbQYo=
+	t=1729126687; cv=none; b=a/GsUDE1jSHk+H5nmcuxkXgbYaS0p1ONtOMyjDsEoPLrU7SDlF3P5zp+sOB6FeAeekDEDh5+aGyIw3ma8kb59Q3We3ypdOo4s5CE7tdSmkaDfCcKIf07F78k3AwL6fDM7eD8XUkwvrhSUgG9NSOQf/xIyp15BZk7a9bn6E6noko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729116233; c=relaxed/simple;
-	bh=LphcLYpO7HdQpqaxPOCL6zrIGYzvBc5sdPj8LnbOWes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9iKoNJLZpjnG6GF489uAdIGaP5J6SagirnnFulIw25mWWhIvXoTmNBESOP34PCVRFns+jVxtfTVErEuk0WqcU0USq9BCYaypvDJMSlAC0ndN3McQeObdvH65b/HEW0fRKOr2FNMYJWwYb6t1GzjBWcoE6kqvkB8YTfG217aPH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Tz7CXQc7; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1729126687; c=relaxed/simple;
+	bh=o/hKjkpIXN5X9YEh3aqgzH3lbQ/mZRL25pDg6BvBfrw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ksPcuHipPoZUUgcf69qE/kBrtVWXZcmnyJoQk89FnybNIyLXomCbZ6Th6XJUWQaLP7AhWuSZb5cqu6Q20kEPMiFaM4ljOkULPUJY3KI0kMwp3w9LVkF1TpSImpY1wTddLbFomBMSO2yrSaEeLKjL7l0PttYH1HGo90y9GZlOOLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wdAMqi4N; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Tz7CXQc7"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 415081C0003;
-	Wed, 16 Oct 2024 22:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729116228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W649ciFRM8rbVAGw5XNBosXQcXGpXdRG+9QrhIYNObU=;
-	b=Tz7CXQc7iVINk4/iYg6zXg1Xx669sH2r9t5RJWIqVYo3Nnr9W19lh7b0enuDCtajEtTlFv
-	dh0hibF53mm97MDz+dOFX9tLpWvQhXkITOGMx9BEZy2m11kaIEa/g5VLX17IFDG2dpqI8n
-	jx3pD3T2eeP6WswiQAFLX61WQSa7uge9iQ2AtrAUosvZVbVZ6jH/zjNupWlLgH42HZZV7C
-	4MJLIDN3s0O8z6+oowJPgcaJLCGkmSXSh8UlzaBjXwDlp3/FySheLG81bCM8+H+RlwNMlO
-	jsC50H95GM33spkAhj1ps6f1tbxQGMIlD4tvH2OhrYi507O62AXpOprCrD/mpQ==
-Date: Thu, 17 Oct 2024 00:03:46 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 08/12] arm64: dts: renesas: r9a08g045: Add RTC node
-Message-ID: <2024101622034648032b39@mail.local>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-9-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVqno3vO9T0FtHnNL2afWP4abSE4vmf8vkLRRndg=ws7A@mail.gmail.com>
- <4ff318b0-cd7c-4857-888c-a07c8985fce9@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wdAMqi4N"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-431286f50e1so5706095e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Oct 2024 17:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729126683; x=1729731483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k1maisugeZXRPQVK8E0aCsP5z+6Oqs6IPuJ8CXduzX8=;
+        b=wdAMqi4NpIkv3+wQQddefEBlIA+ca6dfI8RW/OIoZ6poMb8K/uIZHYfFnPE6ZcbTee
+         L+5gReaS/9nY49ZoGJQrC+bkZr2BEHTPTLzWfmlsoYFZ8wOWdvVBS5hxkRWPyGJ1iuhD
+         Ffz3tGKC9R4vLPhq/CmJHtY/RMK1lgC+qd10SCbP3CBPwFvHVc8cEKDF7CVL7Bjs+AmR
+         RMsPGAaq3xs4/Eo1daCQGTiqDgd4KSm7C+drjU1Mktje0BWM91aSWJ4hwRphtphNO2MD
+         8XRx64SwP8m99wtAOAwE1mqBMjeJvI5C/3NENuTvlOsavx99Sw1T/gZtz+yZv7vNA1ch
+         /ajg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729126683; x=1729731483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k1maisugeZXRPQVK8E0aCsP5z+6Oqs6IPuJ8CXduzX8=;
+        b=XYbcgSPrtenwJ9UA9IhOxQJEN+7r6S2U2GtgTiIwqEPYp7umAfC7nEh3iZb1g5rp2w
+         zkCNEwm19jRmTnq7XaYeILjLm3ncdC0vreM/aEGeuPR37g9S4FhrNlmUFxPc0W0e453y
+         UItQJUnGGjGIe/P1Jb0DQDlkiqktK0r7BAo/YH8GINShfWc7hfqJzphJkyEvIDYZjry1
+         hR6c2WFY9u8CyxJxOFgZId/TfNWMzYDQ/VjqpUJZWepKh/iYJ16o/qS1JuGRZk12yNeQ
+         jgaiXaTGylRgkdgC6WpQdLqQ3zEPX/KqEQNwjfX0doDDJmaSHBEQBsW4sds/vdKyEooG
+         tV1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+5qgFBx0nzFfrqRLs48mQ+gR8ZUFtVKJzNbvmYS4oodYF7aHaZ1Z2tV7sQZT/9qzBU9hYS1gQNUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybCRFuQrrr86vRJGWJeN3zcp4H0RSQz3xGNc+CPV5XZXD7DLww
+	WC/s1bG4loasRo9esv93yTwsCPrVhy0sI9JA3iksEpYSaBdkf7q2JDuxuJhG/0k=
+X-Google-Smtp-Source: AGHT+IHQOZdoVHwdDnPmYo0BPHF99KOUTkgQrhJaQe7J8+H2TN4TWG6rm3GApCnqm8iB7/Op/pBa0Q==
+X-Received: by 2002:a05:600c:1c9e:b0:42c:b508:750e with SMTP id 5b1f17b1804b1-431255dae1bmr185559755e9.11.1729126683234;
+        Wed, 16 Oct 2024 17:58:03 -0700 (PDT)
+Received: from localhost.localdomain ([2.125.184.148])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa9053csm5657259f8f.59.2024.10.16.17.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 17:58:02 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: konradybcio@kernel.org,
+	konrad.dybcio@oss.qualcomm.com,
+	andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	conor+dt@kernel.org,
+	srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Qualcomm sm6115 LPASS clock controller
+Date: Thu, 17 Oct 2024 01:57:58 +0100
+Message-ID: <20241017005800.1175419-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ff318b0-cd7c-4857-888c-a07c8985fce9@tuxon.dev>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 11/10/2024 13:28:55+0300, claudiu beznea wrote:
-> >> +                       compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
-> >> +                       reg = <0 0x1004ec00 0 0x400>;
-> >> +                       interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-> >> +                                    <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-> >> +                                    <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
-> >> +                       interrupt-names = "alarm", "period", "carry";
-> >> +                       clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb VBATTB_VBATTCLK>;
-> >> +                       clock-names = "bus", "counter";
-> >> +                       assigned-clocks = <&vbattb VBATTB_MUX>;
-> >> +                       assigned-clock-parents = <&vbattb VBATTB_XC>;
-> > 
-> > Don't the assigned-clock* properties belong in the board DTS?
-> 
-> It makes sense to be in the board DTS, indeed.
-> 
-> > In addition, I think they should be documented in the DT bindings,
-> > and be made required, so board developers don't forget about them.
-> 
-> It would be better, indeed.
+This is one of the required dependencies for audio support on sm6115 and
+its derivatives SoCs. This was written by Konrad Dybcio, however his linaro
+email is already invalid. Konrad suggested sending it as-is and keeping
+him in c/c. Some updates may be still required, for instance the
+maintainers line in DT bindings file.
 
-There were multiple recent emails from Rob saying that assigned-clocks
-should not be part of the bindings.
+This was tested on QRB4210 (Qualcomm RB2 board). The only changes from my
+side were fixing compilation errors and small changes in commit messages.
+
+Konrad Dybcio (2):
+  dt-bindings: clock: Add Qualcomm SM6115 LPASS clock controller
+  clk: qcom: Add SM6115 LPASSCC
+
+ .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 ++++++++++++
+ drivers/clk/qcom/Kconfig                      |  9 ++
+ drivers/clk/qcom/Makefile                     |  1 +
+ drivers/clk/qcom/lpasscc-sm6115.c             | 85 +++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++
+ 5 files changed, 163 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+ create mode 100644 drivers/clk/qcom/lpasscc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.45.2
+
