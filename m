@@ -1,135 +1,118 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BBC18EFCD
-	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 09:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3C6188A18;
+	Fri, 18 Oct 2024 10:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245415; cv=none; b=a7IHKUjraBrkYOwS/IbvORUV4dS3pW69UKwH+zHIPlR201aY76fiYcr0rJD4XJPdVHz7VpMR5eoNaV+UNEG72CgadfoBuDczlfHP18vegR91qhmFibdZ7PieohheQmvcXYd1+C3UCCeINRYZxriaQcIGjhnVa436lD2jwNCOEB0=
+	t=1729246085; cv=none; b=ckI2p/FCH8OYN8F7CFtbMgWYdX5/o7CR2V+fh2UsiOv4faMIR8cu5KOYOBIgiw6ym0whbt+7r/ob94T715qrHwSU1r3s1tsOMSlOMIStrWIrfMgQNTmqxgg8c3igHtLtFw9TzDgDCSVY7BRhY+gnHWPiAf9y8ALvoQGpkNwFoPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245415; c=relaxed/simple;
-	bh=7F02LSuaYG6QJFBmCRDKkgg4PK0fEcpJQMSscDg7UlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ft9gZ/zYkqPfWvqv88dzzIgJDwjgCamVngaaGTvoofJ3ynbog7Oa7vmVKQ19dq0RNreom7uk81koV7w9/yJQY7o2rE9dxAbwzD6q93NXSmWQDT/Y+RYCDxhowuJaN9yRZ8VTtc9bNtlo2fiVH040x7r/qXHVsLq4Trcv83jtA98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIM3AfgM; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIM3AfgM"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb587d0436so20201351fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 02:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729245412; x=1729850212; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
-        b=BIM3AfgMvpJS9rTaYmiGjRV26sQbxtxXSenjIjGpWs9EsiCbI64jdLUP3cuNkjK+Ag
-         6kuEi3GZg8X87YyOGjBwJkUSP4ISP4nye58NfH8GU0Kmg9T1BsRJqG87qwg5Rx8EP9c2
-         qkLOQvVdopL+v4k7lvXnuu3D+AdZN8YpHv818PYI+yqw5r/UUe+bSmNldKvqFOiPkUS7
-         7yEKf8MLDn+yG6mp9bQmpH9e8waoXstOUK6EnAT18eUAiFxpqORiEuRq4zYgTDSu952B
-         DW2AWmlJLL5pCzeUiaxgncBGZ9iQH6sQ1kbVZcK1AcnpzuMjXCoiHV3Wv7ZUL/tMKCX3
-         oEtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729245412; x=1729850212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
-        b=JtHdFJp8U65MJYGf8PC0ookUDvg1u2g9nYoOiV8FTYpmi1LwnUcA1jFFm1cqWcD8b3
-         vjqpJiHstFvFXATh0xw3L5+G7UHuvcdLNqp33zzEcDFSmdCdPgjVHPb0jdZAPpyZKlbo
-         xhT5INiKtgmHtW9XL43h7i27lwbqqSGmXwOvJt9bMam+pDpDwTjqo6q83vRmIeyTmLpI
-         Uyir7/7//oAWB9YpI5nFlgDEpW4gmnMSxchq2JuiJ4V60obNED5mZo8oYDz+E6IQe2XX
-         fu7OD0uBfRVTwwfmsQ29yEUvcmiIP0wxn88QMoMSQYUz5svrl3R7qQJuCDmsWmQliRVH
-         aXQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzvGL7D32wJum+Q7tWtnayi72BgfhUy+ZDeqYo+xwmLeChvkqKlTzZHmic3jffVCnTWkNDvcoDUiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySDk8Ocz6xttXGZf7sbWrxutMnqtiyfnkcC5Gw4LAcsHM3JxdD
-	lKyE0two7eSf2FqpGdfTMXYfjoEtnkZVrpZXDzueMEr2IoV2iL0csNWLl/B43CM=
-X-Google-Smtp-Source: AGHT+IGeK8KzMr9lXPmuFDOy4a4IgVl3STdpDnUlPNvFi3vc36Dx0SsuLqG1dmfqX8sdyi9pbmxBAg==
-X-Received: by 2002:a05:651c:211d:b0:2fa:cc12:67de with SMTP id 38308e7fff4ca-2fb83208e04mr9201491fa.32.1729245411950;
-        Fri, 18 Oct 2024 02:56:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a6a7dsm1776881fa.10.2024.10.18.02.56.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:56:50 -0700 (PDT)
-Date: Fri, 18 Oct 2024 12:56:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
- ops
-Message-ID: <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
- <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
- <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
- <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
+	s=arc-20240116; t=1729246085; c=relaxed/simple;
+	bh=BBgExb/0LqYBvdk3X8OnmkSL96FhQLCnVNqHEHQTNzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A57UtZj2tQr8IMdAwUXGpyV5EvhtDXc0SADvk7GqHBOg1X2bks4a5P+l+DqJoo1w9vke4XiP9rcOBmCIGhkCm4PHopPi95AW9oGuP1zKNwKOnLsgj/xDQAQC4Q9bkkUshMgNB8E3zgPa9qUJIssuGr6qYn7JMiPOjw/qZWyfe+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AE2DFEC;
+	Fri, 18 Oct 2024 03:08:31 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D22E3F58B;
+	Fri, 18 Oct 2024 03:07:59 -0700 (PDT)
+Date: Fri, 18 Oct 2024 11:07:56 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu
+ Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, linux-sound@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 6/6] arm64: dts: allwinner: h616: Add audio codec node
+Message-ID: <20241018110756.3eeb5df2@donnerap.manchester.arm.com>
+In-Reply-To: <20241008133718.3ed32cb8@donnerap.manchester.arm.com>
+References: <20240929100750.860329-1-ryan@testtoast.com>
+	<20240929100750.860329-7-ryan@testtoast.com>
+	<20241008133718.3ed32cb8@donnerap.manchester.arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 03:28:13PM -0700, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-10-17 15:00:03)
-> > On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
-> > > Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
-> > > > From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-> > > > 
-> > > > Add support for SREG branch ops. This is for the clocks which require
-> > > 
-> > > What is SREG? Can you spell it out?
-> > 
-> > Unfortunately, no idea. This is the only register name I know.
-> > 
+On Tue, 8 Oct 2024 13:37:18 +0100
+Andre Przywara <andre.przywara@arm.com> wrote:
+
+Hi,
+
+> On Sun, 29 Sep 2024 23:06:07 +1300
+> Ryan Walklin <ryan@testtoast.com> wrote:
 > 
-> Can someone inside qcom tell us?
-
-Taniya, could you possibly help us? This is for gcc_video_axi0_sreg /
-gcc_video_axi1_sreg / gcc_iris_ss_hf_axi1_sreg /
-gcc_iris_ss_spd_axi1_sreg clocks on the SAR2130P platform.
-
+> Hi Ryan,
 > 
-> > 
-> > > 
-> > > >         u8      halt_check;
-> > > 
-> > > Instead of adding these new members can you wrap the struct in another
-> > > struct? There are usually a lot of branches in the system and this
-> > > bloats those structures when the members are never used.
-> > > 
-> > >       struct clk_sreg_branch {
-> > >               u32 sreg_enable_reg;
-> > >               u32 sreg_core_ack_bit;
-> > >               u32 sreg_periph_ack_bit;
-> > >               struct clk_branch branch;
-> > >       };
-> > > 
-> > > But I'm not even sure that is needed vs. just putting a clk_regmap
-> > > inside because the clk_ops don't seem to use any of these other members?
-> > 
-> > Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
-> > rename it dropping the _branch (and move to another source file while we
-> > are at it)?
-> > 
+> > Now that the sun4i codec driver supports the H616, add a node in the
+> > device tree for it.  
 > 
-> I don't really care. Inside qcom they called things branches in the
-> hardware and that name was carried into the code. If sreg is a branch
-> then that would make sense. From the 'core_ack' and 'periph_ack' it
-> actually looks like some sort of power switch masquerading as a clk.
+> Can you please add another patch that actually enables the codec for at
+> least one board? Is that really just status = "okay";? Or do we need
+> simple-soundcard nodes still?
 
-Ack.
+For the records: We don't need simple-soundcard, but we seem to need an
+audio routing entry. So I tested this successfully on the X96 Mate with:
 
+&codec {
+	allwinner,audio-routing = "Line Out", "LINEOUT";
+	status = "okay";
+};
 
--- 
-With best wishes
-Dmitry
+So can you add a patch adding those properties to the boards with a 3.5mm
+jack? The OrangePi Zero2 and Zero3 do not have such a jack, but route the
+LINEOUT signals to dedicated pins on the 13-pin header. Not sure that counts?
+
+Cheers,
+Andre
+
+> I will try to give it a test on the H61* boards I have, and would then
+> like those boards to be enabled as well, as part of this series. Otherwise
+> it's somewhat of a dead feature, isn't it?
+> 
+> Cheers,
+> Andre
+> 
+> > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> > ---
+> >  arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
+> > index e88c1fbac6acc..006fdb7e7e0ae 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
+> > @@ -645,6 +645,21 @@ spdif: spdif@5093000 {
+> >  			status = "disabled";
+> >  		};
+> >  
+> > +		codec: codec@05096000 {
+> > +			#sound-dai-cells = <0>;
+> > +			compatible = "allwinner,sun50i-h616-codec";
+> > +			reg = <0x05096000 0x31c>;
+> > +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&ccu CLK_BUS_AUDIO_CODEC>,
+> > +				 <&ccu CLK_AUDIO_CODEC_1X>,
+> > +				 <&ccu CLK_AUDIO_CODEC_4X>;
+> > +			clock-names = "apb", "codec", "audio-codec-4x";
+> > +			resets = <&ccu RST_BUS_AUDIO_CODEC>;
+> > +			dmas = <&dma 6>;
+> > +			dma-names = "tx";
+> > +			status = "disabled";
+> > +		};
+> > +
+> >  		gpadc: adc@5070000 {
+> >  			compatible = "allwinner,sun50i-h616-gpadc",
+> >  				     "allwinner,sun20i-d1-gpadc";  
+> 
+
