@@ -1,167 +1,101 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7761918EFFB
-	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 08:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C58118E025;
+	Fri, 18 Oct 2024 08:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241437; cv=none; b=mKHFhqBuYOQAscMdCdnCssJTDHM2XUltUE+hplCluplP3/00ewN9AUoIGIEQuclFCprDadoDs6wjCohcdgGqvVu+SQg6Uzy3Jhr3UYaYMnuQM5PC63oQvb1tdDdMOqKlGWkKmQOCg6718/VPAOnFdrMn1bPw+3QvHAq1DkrwqFA=
+	t=1729241639; cv=none; b=uaObqEIBq8+sKNA0QlEPMnTgAc1ZsT90UWpr0ov/KV1kkr1+Co7BLHESOuUOwxFnfrhXoZog/qF6lOhajOJSRKDuJqd6ViuJFhEu05FVBF9hmN6HLjHG7Is0wzjKXR14/8jvX6ACdWHWo2zidgk00+jVRtsGUdccb0whKtVdSH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241437; c=relaxed/simple;
-	bh=q6UaaBG1S1+qACQ6YRhwicu8VBEuLQLOH0LNHXVY9yc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uLwfUfDowaIHk6uC8p+XkMsiOv+BtoLCF1bwdLPbi8uBYCUX2O80INXvFaZQPxLOZ1BasPiTgYwZcCvUhmarEraAGUM7iajKD5fHtJ5SOR+9yzFGQghp2xmE+VGLZPJBdaATybf46D924FBTn2VNArljbeiEPyHBoWlGYycKEhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cGvX/ymO; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729241639; c=relaxed/simple;
+	bh=gr4U4FR4wkY2logh188gOxCC238FaP96WXZwHvzj8FM=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Qs6507Y7YMMqjOWxnG51RZjgbFKZ78DQLwrV340Jo3hkN4x/P5HU5xQrAsAj3zlAg2QwfOvpg4Vb6DRheUhoFl/sDBOsmJgqJb1dHhKoH3m/AM05Aw/U0osd0/sac8TAXfkaMZwbw5QqD18io07nrsnb6r+iCY60LrX1qKZ9FcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=io1WQ6BM; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cGvX/ymO"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e396a69062so17935707b3.0
-        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 01:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729241434; x=1729846234; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/RSforFp+VQNtLc4ofIvEcTd/s/JTnlqhsY7WVRH24=;
-        b=cGvX/ymOsRiCUhCtm6gKWeuZv7bEICcUSiqlkEPEsnKr/DjCPCeM5szJA6HiqIMEJJ
-         7GBU7tluoAZ/Lc/wJZF4Dp0fflq8F72YmkdRI7OQTp6n8DQfwyLtOGwFr79mM4LDVKpW
-         z2e1o2Qq7rnQ+MM6bWbLXn4LLxzwTssXZhGeZ/QCQRRYqGVNzAHfePrMMmlKjRI0x9NN
-         H59W4nbjDXpBXrFw101KgpBc3IIaORYMIlHKzenIVrAXJK77QRvbdS85C30cZiZM40Ql
-         Yr2J4dEKBnCjbQk4qON2gBvMLCi0Eto8dhwgnNmguO9ApD8m3r33VPrR4mmz7UGDTqvB
-         m3BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729241434; x=1729846234;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/RSforFp+VQNtLc4ofIvEcTd/s/JTnlqhsY7WVRH24=;
-        b=uz0RcsEQzo+/czqq738yb57FF670lfccV7iWwy9aSdQwgtGrVddV8kJtMTaHG39SYE
-         /oGYET21kHRn/wf4MHRrOGhJAgtNo8dbrul0ZBeY0Y4WnVD5Nk9tA8drQHaBbi+i/Eiq
-         XrohkIg0wXDQRouVDV9zZmJBI39m2nYsLTtv4NKtOhukN24roTO8GgGJwkHBJQUqhzXt
-         +/hKdcOPcLZDFwf5euje+DmS87p11VDUJx6MqwyWpWczxlxsuc9VYqVK3ZT2IkIb1Irw
-         xaKdNqNXrjO96CHDkASQg9nmDBeOqD96AK+32aVw3e01jpWHPWs//KlPMQqVV08mhgju
-         vtrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWephbuICxIUGR9fQAbbT5zzIMMf+ym4jjbn6Rw1hq3W1ncohG9H8ZCtH4o90cvMV4Ig5BWxCbvIA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytWp6SDfu+9RXI8pv//Nw+IaWElmv2DOdyU76BcbIJwAqK3EhU
-	z74wwlGgbZuN9pahfkabzewpehuU0HAL2K38sYV74281QCEnfKR5fmo7lwhLRqLyr+5Nm2aH03i
-	pjUvkEm+/ab21eG0j16P2IsRv37fs05GFYXXZHw==
-X-Google-Smtp-Source: AGHT+IEfhw8dTGOqtMUmLixgGGVRqyf2gSqNzfjdP2OonSOoTDcrjLgzvPuP0+fWji/QpUGei3fuavAC7iK/8ckB4NI=
-X-Received: by 2002:a05:690c:fc2:b0:6e2:1090:af31 with SMTP id
- 00721157ae682-6e5bfbe7c76mr17174717b3.3.1729241434462; Fri, 18 Oct 2024
- 01:50:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="io1WQ6BM"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=lmIYE7z4RuGhJ36QE482hSQEIKsxx2xUyL9F6iQ0AgQ=; b=io1WQ6BMMsW7iYFReW6Gly4bN7
+	YZCt/CT1FGAsqBFHn1cX/NL8sjMFIfdRyNYnTppZd8OwMCIdjXcd6A98mn18G3++bVBJNeN2QJ/kp
+	HpNM3FfA1UpH38UsVPwn7zZ6xBWUBXovHF6GrWqaAS6z/uJURVo7DxRCc8bwWhMUgr8Qw1BVmrtsW
+	Dk0y96ZvyXkoIJPYh56v0CH962HqKfkY2+WzUJkcf4LGrM8XJAc2JCe0mCUJKJWCA4sf5tMb17YKY
+	O7cRIvUeyzIkmFXQwJh5maoeKgqaUNUacNoQawyjW4Fzxa5vsgHf3pTeYJbWqoY7k/luMT4MIqxxi
+	TzS2WA0A==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-omap@vger.kernel.org,
+	Tony Lindgren <tony@atomide.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 0/2] dt-bindings: clock: ti: convert to yaml
+Date: Fri, 18 Oct 2024 10:53:45 +0200
+Message-Id: <20241018085347.95071-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 18 Oct 2024 10:49:58 +0200
-Message-ID: <CAPDyKFq1-fW=d5QiEcYNkErpMuBo0aZzB1pos1CHcPZmAWGTRw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] watchdog: rzg2l_wdt: Enable properly the watchdog
- clocks and power domain
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 15 Oct 2024 at 18:47, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Hi,
->
-> Watchdog device available on RZ/G3S SoC is part of a software-controlled
-> power domain. The watchdog driver implements struct
-> watchdog_ops::restart() handler which is called in atomic context via
-> this call chain:
->
-> kernel_restart() ->
->   machine_restart() ->
->     do_kernel_restart() ->
->       atomic_notifier_call_chain() ->
->         watchdog_restart_notifier()
->           rzg2l_wdt_restart()
->
-> When the rzg2l_wdt_restart() is called it may happen that the watchdog
-> clocks to be disabled and the associated power domain to be off.
-> Accessing watchdog registers in this state leads to aborts and system
-> blocks.
->
-> To solve this issue the watchdog power domain was marked as IRQ safe
-> as well as watchdog device (as proposed by Ulf Hansson). Along with
-> it the clk_prepare_enable() calls from the watchdog restart() handler
-> were removed and all is based now on pm_runtime_resume_and_get()
-> as explained in patch 03/03.
->
-> Series contains also power domain driver changes to be able to
-> register the watchdog PM domain as an IRQ safe one.
->
-> Initial RFC series for solving this issue was posted at [1].
->
-> It is safe to merge watchdog and PM domain driver changes though
-> different trees.
->
-> Thank you,
-> Claudiu Beznea
->
-> [1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
->
-> Changes in v4:
-> - in patch 1/1, function rzg2l_cpg_pd_setup():
-> -- call rzg2l_cpg_power_on() unconditionally of governor
-> -- drop governor's parameter and decide what governor to use based on
->    always_on
-> - collected tags
->
-> Changes in v3:
-> - added patch "clk: renesas: rzg2l-cpg: Move PM domain power on in
->   rzg2l_cpg_pd_setup()"
-> - addressed review comments
-> - collected tags
-> - per-patch changes are listed in individual patches
->
-> Changes in v2:
-> - adjusted patch title for patch 02/03
-> - adjusted description for patch 03/03 along with comment
->   from code
->
-> Changes since RFC:
-> - dropped patches 01/03, 02/03 from RFC
-> - adjusted power domain driver to be able to register the
->   watchdog PM domain as an IRQ safe one
-> - drop clock prepare approach from watchdog driver presented in RFC
->   and rely only on pm_runtime_resume_and_get()
-> - mark the watchdog device as IRQ safe
->
->
-> Claudiu Beznea (4):
->   clk: renesas: rzg2l-cpg: Move PM domain power on in
->     rzg2l_cpg_pd_setup()
->   clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
->   clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as
->     IRQ safe
->   watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
->     handler
->
->  drivers/clk/renesas/r9a08g045-cpg.c | 52 +++++++++++------------------
->  drivers/clk/renesas/rzg2l-cpg.c     | 41 ++++++++++++-----------
->  drivers/clk/renesas/rzg2l-cpg.h     | 10 ++----
->  drivers/watchdog/rzg2l_wdt.c        | 20 +++++++++--
->  4 files changed, 63 insertions(+), 60 deletions(-)
->
-> --
-> 2.39.2
->
+Convert some clock schemas to yaml. These are one of the most used non-yaml
+compatibles.
 
-For the series, feel free to add:
+All can appear under a ti,clksel or without a ti,clksel.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+I plan to convert the clock things from time to time.
+So enforcing certain compatibles below ti,clksel is not there yet.
 
-Kind regards
-Uffe
+Open question: I set license to GPL-2 only because the .txt bindings the
+yaml binding was derived from were
+GPL-2. I personally have no problem with dual-licensing the binding.
+No idea about the legal side wether that is possible or who must agree.
+
+Changes in v3:
+- adding more constraints and types
+- strip labels from example
+- fix references to divider.txt
+
+Changes in v2:
+- added conversion of divider
+- require reg now, makes sense after
+  https://lore.kernel.org/linux-omap/20240213105730.5287-1-tony@atomide.com/
+- clean up of examples
+- improvement of documentation
+
+v1 is at https://lore.kernel.org/linux-omap/20231127202359.145778-1-andreas@kemnade.info/
+
+Andreas Kemnade (2):
+  dt-bindings: clock: ti: Convert interface.txt to json-schema
+  dt-bindings: clock: ti: Convert divider.txt to json-schema
+
+ .../bindings/clock/ti/composite.txt           |   2 +-
+ .../devicetree/bindings/clock/ti/divider.txt  | 115 -----------
+ .../bindings/clock/ti/interface.txt           |  55 -----
+ .../bindings/clock/ti/ti,divider-clock.yaml   | 193 ++++++++++++++++++
+ .../bindings/clock/ti/ti,interface-clock.yaml |  71 +++++++
+ 5 files changed, 265 insertions(+), 171 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/interface.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+
+-- 
+2.39.5
+
