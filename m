@@ -1,150 +1,170 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2C22010FC
-	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150F0204091;
+	Fri, 18 Oct 2024 10:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248506; cv=none; b=eqcWXFIgWuWjR27nFIMPjQrOQi6oKhL9efz8Ct6NCNu6ANbQqUz+c+4nnbyk7QqtbT8AJYhKFbr6J9feUcMHj8Ul+p2H699SO3iCpiFSv2yQUMFqVIVb+SGfmpRJkEYsbLdOvFR6SRD4AFIyS+7hzH4mwMkxgvBdFzEKtM0XDx8=
+	t=1729248664; cv=none; b=XSK5DVbCPxwScVK8m57Wd4WXB9WNbFl8wdqetlW3L2iCSd8sJzCKUaz7jea+BFGa90MQPYXGOu79Oj06X+3twvwGCf/cuZGmCW66RNKr03PQ1YQ5Eml8fhage0LwcW+fNo+WIRimMU6xnQ6J6adOtAlMl9na/Y2YyuJ/Kfdx3Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248506; c=relaxed/simple;
-	bh=1T1BGRS5Vz79v84HHgL6pcpdS6pbbZyBgFM1lFbHUOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ik7lH5gVPg9u66wMOlFeXPlu3EEJc5BdO6MX7Cj5Hmg9Ihz8vPcOatKDMU2KXW7gDpjX44R+Nwf1t2/bTbnJUY+uLcn4wDcDdvP1NlZ9BYuRzQDWc2l0S2HCxochEy7vehA0k0dt+U9rp/p4f1EZCDAY55zRhFftq8U7eHsDB0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DMh3IQfy; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729248664; c=relaxed/simple;
+	bh=tBFnHSDdOhzLjrQwe0jISzdmTRPCueB4BcNOtgLI+3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Gt+Jg4WbrNKq2l+h5G0PtwbngaBbbPo6Ujda2saUCzttxDQ0xNbK0k7EsbFyuwr2NW534Mu90/1qz9feSGBsSpW0n975XovFUGbvNr5YPG7xglE4fYArgyNgS3tazb2PRwn8DDboL/Od9D+XU3X8AiuPxwARagQNG4FwXlEuxWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AfFlT7H2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DMh3IQfy"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso20376381fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 03:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729248502; x=1729853302; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8sxXCljtIQuydtM9ViLyziZ/bYp6+Wl0FampyNPwdU=;
-        b=DMh3IQfy4YVqpFbDumEzTz+WL6SbF9LLUI0Out7fCFhbMyWGKm2OgBRzcStchPgsNH
-         NI3dJG3NnnhPmPsXH58DH48h4IeRGaZTVfeeP89QDcbqXT72NJ4BgpMlwwc8A6yZy93J
-         rgE5oDvaJxAQ34gsCiuYOdF42leaMYBbDI11Bh9iQpdqvXMJPH92KAb8fG0eXZCBKdF+
-         KhGufMdTY5WfLltR8SBoSseHdnxfhV8b97ojjEBp5A99b77xqG0RP/faMANfall0q938
-         8/maXZcLkBMJoOTBmB7zvEkNb3WBmTV86xijqgDyy6pQnwqSgB66wPQdk4vDer5FrECr
-         6bHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729248502; x=1729853302;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m8sxXCljtIQuydtM9ViLyziZ/bYp6+Wl0FampyNPwdU=;
-        b=CKgPCxT7zjwIXrTyc/Mr/7FsLjmXxoxX3TGug0B64ufBFIsooLcr2rfGQ6Mzp8PS/A
-         t765uRwOF6e24zcm5tNZ2VpDOvgwHTiI8/FMnDryNUBDjfo23/B9J2zf2WznHcngsn6K
-         7I1WlA7yC5LduM2Ft0WmynCBrtCyFI7KRhC6voxBau5M25mIrEFEWT6Sg9fsBgG0EI7a
-         iVDUXnQlC1BYqA09uVq7Dc+OdWlSkrcmpHru++PKHDqEb6iL/icSWXixii6QUoNaG4m8
-         LUHOEWdGdcjd6G+XVDtjq6TaP43h4Owbp1jqnVF8vyRRiTqL09pPbPCa0Hu2ZQLVVY15
-         1E7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJawTo36J7ZVXLD3oQeZqHGRN7/RhyxxrQjDBNdNLbg5UnY96tYB4YnlxIH05VT1fzqK9yz8SO/vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRY9I2uWtOXsEeDvwxzpNpRLwDtzWUv05w0UJF6SP1UTOKEGyB
-	9/WmDo6kTlMy1YHy+BDBnM+l1uHpI497iwedCIYE7PvnA6msmwfgjspLYpSfWcA=
-X-Google-Smtp-Source: AGHT+IFQ2otjy4qAD+i03PKAirPQATrkG1xVWRDUw9wPUTnTEmvgr4qWJUra5BrVhvKILJqNGviRQQ==
-X-Received: by 2002:a05:651c:b13:b0:2fb:569a:553d with SMTP id 38308e7fff4ca-2fb8323b1fdmr9748111fa.42.1729248500707;
-        Fri, 18 Oct 2024 03:48:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809bb125sm1737061fa.69.2024.10.18.03.48.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:48:19 -0700 (PDT)
-Date: Fri, 18 Oct 2024 13:48:16 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/14] clk: qcom: gdsc: add separate sleep state collapse
- vote support
-Message-ID: <oaew374744vimlyxtd7mulejo7t2ezoy2uwfedqhinibtwir7m@7cap5kzj5p3p>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-9-f75e740f0a8d@linaro.org>
- <1d74b699-8463-4885-b30a-d4f1eeb7b3db@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AfFlT7H2"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I0NOQF006343;
+	Fri, 18 Oct 2024 10:50:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	izzVpy94D2rcOVSHLBZnR3I6g+orYHLyLlH0uKEqglw=; b=AfFlT7H2jpEJj3TY
+	mS5Z0zh+Bn+swokUTVq/Z1SWxp9fa1YTJNcxiK4Aw31asxaushpkPKAg7RdDJoff
+	Xz70XsNuNfnHKvWOLlSzzfnekX0A8VT/UP6/fMtMAdEm3Xa6N37EaNYRt66HGNGW
+	93t//EQ7OedMk4n7D2XV+twgQRuYMBEQ748jfxKpIHlX0mEURaDnNK1+AyDk5htX
+	3dJQyzQ+iaTN0+0o820smHPoI1rugXx1vWOU2iqD7MtBx0SdFPF/2eDWbBobsJVS
+	G10KFGXovuZjRcIJYdhehQzduFLFW7eGwj5uDMoHoMs3yupx/BnMkW1yZV1EIxPl
+	cNF1zw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bd3asjfm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 10:50:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IAoqkC006177
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 10:50:52 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
+ 2024 03:50:48 -0700
+Message-ID: <67795327-74d5-4b5d-b778-bd0f90c58e97@quicinc.com>
+Date: Fri, 18 Oct 2024 16:20:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d74b699-8463-4885-b30a-d4f1eeb7b3db@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
+ ops
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephen Boyd
+	<sboyd@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kalpak Kawadkar
+	<quic_kkawadka@quicinc.com>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
+ <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
+ <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
+ <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
+ <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
+ <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: etGaqT_EFU2sNd1-erJG_mizPIeoWCZz
+X-Proofpoint-ORIG-GUID: etGaqT_EFU2sNd1-erJG_mizPIeoWCZz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxlogscore=860
+ malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180069
 
-On Fri, Oct 18, 2024 at 03:58:25PM +0530, Taniya Das wrote:
-> 
-> 
-> On 10/17/2024 10:26 PM, Dmitry Baryshkov wrote:
-> > Some platforms use separate collapse vote registers for the active and
-> > sleep states. Extend gdsc_update_collapse_bit() to support separate
-> > collapse_sleep_ctrl register.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/clk/qcom/gdsc.c | 8 ++++++++
-> >   drivers/clk/qcom/gdsc.h | 2 ++
-> >   2 files changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> > index fa5fe4c2a2ee7786c2e8858f3e41301f639e5d59..95f8e90a8d25673c8a97a03f92cbdad25c3259db 100644
-> > --- a/drivers/clk/qcom/gdsc.c
-> > +++ b/drivers/clk/qcom/gdsc.c
-> > @@ -133,6 +133,14 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
-> >   	if (ret)
-> >   		return ret;
-> > +	if (sc->collapse_sleep_ctrl) {
-> > +		ret = regmap_update_bits(sc->regmap, sc->collapse_sleep_ctrl, mask, val ? mask : 0);
-> > +		if (ret) {
-> > +			regmap_update_bits(sc->regmap, reg, mask, val ? 0 : mask);
-> > +			return ret;
-> > +		}
-> > +	}
-> > +
-> 
-> Dimtry, based on our discussions with design, we understand that this is a
-> one time setting and can be done from the Global clock controller probe.
-> Thus, this patch can be dropped.
 
-Ack, thanks. I'll drop it from the next iteration.
 
+On 10/18/2024 3:26 PM, Dmitry Baryshkov wrote:
+> On Thu, Oct 17, 2024 at 03:28:13PM -0700, Stephen Boyd wrote:
+>> Quoting Dmitry Baryshkov (2024-10-17 15:00:03)
+>>> On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
+>>>> Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
+>>>>> From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+>>>>>
+>>>>> Add support for SREG branch ops. This is for the clocks which require
+>>>>
+>>>> What is SREG? Can you spell it out?
+>>>
+>>> Unfortunately, no idea. This is the only register name I know.
+>>>
+>>
+>> Can someone inside qcom tell us?
 > 
->     /* Clear GDSC_SLEEP_ENA_VOTE to stop votes being auto-removed in sleep.
-> */
->         regmap_write(regmap, 0x62204, 0x0);
+> Taniya, could you possibly help us? This is for gcc_video_axi0_sreg /
+> gcc_video_axi1_sreg / gcc_iris_ss_hf_axi1_sreg /
+> gcc_iris_ss_spd_axi1_sreg clocks on the SAR2130P platform.
 > 
-> >   	return 0;
-> >   }
-> > diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> > index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..dab2e31be8f65408d6d29df42ad5105830760d3e 100644
-> > --- a/drivers/clk/qcom/gdsc.h
-> > +++ b/drivers/clk/qcom/gdsc.h
-> > @@ -19,6 +19,7 @@ struct reset_controller_dev;
-> >    * @regmap: regmap for MMIO accesses
-> >    * @gdscr: gsdc control register
-> >    * @collapse_ctrl: APCS collapse-vote register
-> > + * @collapse_sleep_ctrl: APCS collapse-vote register for the sleep state
-> >    * @collapse_mask: APCS collapse-vote mask
-> >    * @gds_hw_ctrl: gds_hw_ctrl register
-> >    * @cxcs: offsets of branch registers to toggle mem/periph bits in
-> > @@ -37,6 +38,7 @@ struct gdsc {
-> >   	struct regmap			*regmap;
-> >   	unsigned int			gdscr;
-> >   	unsigned int			collapse_ctrl;
-> > +	unsigned int			collapse_sleep_ctrl;
-> >   	unsigned int			collapse_mask;
-> >   	unsigned int			gds_hw_ctrl;
-> >   	unsigned int			clamp_io_ctrl;
-> > 
+
+SREG(Shift Register) are the register interface for clock branches which 
+can control memories connected to them.
+
+In principle these SREGs are not required to be controlled via SW 
+interface, but on SAR2130P, we had to control them to flush out the 
+pipeline for users of Video.
+
+We are looking into the feasibility of extending the current 
+'clk_branch2_mem_ops' and can share the patch.
+
+You could also drop these clock interfaces for now to move ahead, as I 
+do not see VideoCC support and bring them as part of those Clock 
+controller support.
+
+>>
+>>>
+>>>>
+>>>>>          u8      halt_check;
+>>>>
+>>>> Instead of adding these new members can you wrap the struct in another
+>>>> struct? There are usually a lot of branches in the system and this
+>>>> bloats those structures when the members are never used.
+>>>>
+>>>>        struct clk_sreg_branch {
+>>>>                u32 sreg_enable_reg;
+>>>>                u32 sreg_core_ack_bit;
+>>>>                u32 sreg_periph_ack_bit;
+>>>>                struct clk_branch branch;
+>>>>        };
+>>>>
+>>>> But I'm not even sure that is needed vs. just putting a clk_regmap
+>>>> inside because the clk_ops don't seem to use any of these other members?
+>>>
+>>> Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
+>>> rename it dropping the _branch (and move to another source file while we
+>>> are at it)?
+>>>
+>>
+>> I don't really care. Inside qcom they called things branches in the
+>> hardware and that name was carried into the code. If sreg is a branch
+>> then that would make sense. From the 'core_ack' and 'periph_ack' it
+>> actually looks like some sort of power switch masquerading as a clk.
 > 
-> -- 
-> Thanks & Regards,
-> Taniya Das.
+> Ack.
+> 
+> 
 
 -- 
-With best wishes
-Dmitry
+Thanks & Regards,
+Taniya Das.
