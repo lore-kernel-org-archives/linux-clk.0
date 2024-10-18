@@ -1,124 +1,94 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B4F20127B;
-	Fri, 18 Oct 2024 11:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D6717578
+	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 12:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250003; cv=none; b=cw2odtgjPTFSWx2JoOQNe2fU5+BQHwUxSH87pizQu3yrRAcPaY1gfawunHAY/hKTLnkUavBBXkDphtf5s54NRT87ecbmaTPsyiIoiT/QLULShXGmUCJTJkv4Iy9wftsqZGmOz/UdTaKmKe2vaIDlQ+vify4u8ukabqM5UtaDUVA=
+	t=1729253047; cv=none; b=p0uqRXcCVj8vVOuXvFiUPDBftGiCOFLl+rG/N21iRxdi+Wc0u77882Xy4juYYAEq9P7U5n8CNJZxVJb4QCKLQFhcGMF8qxxKoYuKETqkY1KdqsmrBKTjap9oQI/w/5Xp1sfUMKwr83Y2NWa70E/dZMsr7CYpuSDXHUAIvNt8KRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250003; c=relaxed/simple;
-	bh=k4rZ40imsAEygLBTe5J0QmS/xB9+x4t22Hk+dbVRrCk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=RTGtxOC58jn3Cr3pvMepvThFm1CbPev69NONbvx4ybSHswlsf+G/D9+yfH0bpboXU8CVN43gn8jmM67LFsoDBQz2gy0kvHQOFAowVAhgkgFQ5tQ+USe4oUvYsyyvor/VFSJsne37YisiYJye7LUdo0L0bh1WBlVbKq27Rmtml38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LKDXb9ul; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729253047; c=relaxed/simple;
+	bh=G16VMFkYo1lJYiUjqoV5uhRSbc4X8d7pUahQxY3PU5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAoR+fKQlHpAX/f7Sh9fjo7dEVHiKLgNRivsdCQGjqscSgZ/32/k1Gibnf63V1ajnFdbTHduCmjPICLGlidkpb8covRJwMYTUTzdlCCo2DHrSZ87f3tjdaiNIheBF5/om0MqnylSlH3HYSWZCuFe4EYYrN/THyJzVhIWHIi9NQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P863KZue; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LKDXb9ul"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I4v78d016585;
-	Fri, 18 Oct 2024 11:13:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	73JEBDCxLZfc/Av2g444hWOmVABNunvuaxBMCo63u3s=; b=LKDXb9ulTFHwd/ez
-	iSc28SjPrCkpCqASa6GwSsQghqCsRp2cqY9C7WiuCLI1pHjV1Sf0WZOblex+mC2s
-	T5p3WGHn7HG8eQRfep0imlLurXJmgelMyr3miepBpEDDa6+92bW7Px+JL0BiTHSS
-	8ZrKstpkgGaoh9Ox7kHw384lhxQOpw8D1SDKCu0tbiy7G5hBVoKdiQlFB7K2UCDL
-	FSj/4TVpWk8AtWqezsw/YmfCYp8MihhKxdlIhjxdzESnjqK5/s6asjcq26z0vSIG
-	Sel6zp0pPYd52scIErBt4X/jOa3YXYIJUtY7SeoEjPp1OlWt4Rowf0sqxZdb6Aj4
-	qtwfgw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bh3p95gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:13:18 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IBDHom014060
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:13:17 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 18 Oct 2024 04:13:13 -0700
-From: Imran Shaik <quic_imrashai@quicinc.com>
-Date: Fri, 18 Oct 2024 16:42:34 +0530
-Subject: [PATCH 6/6] clk: qcom: Add support for Video Clock Controller on
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P863KZue"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so2300201e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 05:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729253044; x=1729857844; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfCb0bhd7A40KUaBz9hRRbX867xrYglHoInu7Xbi7mI=;
+        b=P863KZuerXkZdbLl5rJ/cHc3/qW1KoLQ/hNwp1zw22XA0Rqu26VhMQNshyHfcSvAO4
+         WydpmmSZgTuAmoFauANM6hZ9/NfDXWp4tYmmF89zijPUfDcDabBaMkhqPpQ73HAUDskW
+         AWMOI/TmCK192E/8P5XJ5qK5A2KzcTqPmAdLAhFQyRQrcJRSnvc+qjMDWgP/NVUcdhPz
+         bZ8/fFZr5xwK8MdwUG6FY+24GNyalMs1Qod3C9QFpe1+v5MpMDrlCJoTmO4l/SV9LU90
+         9kUWhYltEOfip8qPvfRvF7G3kLRoW4tPJvypVR6bPtjFHPprCMUqq+vDyeOF3KgFDh6J
+         uxoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729253044; x=1729857844;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfCb0bhd7A40KUaBz9hRRbX867xrYglHoInu7Xbi7mI=;
+        b=VgPijZ8HHE/lG6n3FLQEGcrXD/9n0VxQLVsGp9acSt5w2hXVt0xz0Wt1Z81zfcMfIM
+         Z3yxxgwqVMM8UfIxe8jT16ioYETmKUKNCtCnI0Pv/QFzqmpZmekOOtajgCxMrjlW1lp2
+         fF+TEPwfgfCCKNlZ7o1TVAkWcqSQS/QkMctguCqPZnlub5VEoQjYMU/U9chtVHHHGdqf
+         OBM+3aEq+aXWXYIbFAsYs5v2vWXoy0LmKfbZG9y/1dVOlNpKCo9lnlJyp1Sw5vIeo3vi
+         OlUT64k/OP1fbq0eqLXKkMS+kf/MVpdl6dZvGkEF/ZQwYQbpqk8EKCug2Mpmz4OpZYG9
+         jj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWGK9eK1NQJM7HUGzF+/AtOp3KPe8xdaXAtpKQDIMTd1g1Gu5qknMZu0oMFuzXL1BatY0JdSzCGQsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZxsamCS4mXM5leeYXzfBJiHPSCOnxrhXedQ+WNlqIF/N4Ce+4
+	Ifdp6aCFzAVskxck+JG+hsprL3wCNJAtVw/hsR2UvmqP5cfowSCOGMEmS1qpwb0=
+X-Google-Smtp-Source: AGHT+IF0p+EHb3y6Bb15TCfxTx2WBchcnW+np0ZaXW6dvAlcadVgamxMd0Nd/+bgKh+CYw0YxRaxNQ==
+X-Received: by 2002:a05:6512:39cd:b0:535:699b:b076 with SMTP id 2adb3069b0e04-53a15467b88mr1514958e87.16.1729253044002;
+        Fri, 18 Oct 2024 05:04:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b00fbsm203981e87.31.2024.10.18.05.04.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:04:03 -0700 (PDT)
+Date: Fri, 18 Oct 2024 15:04:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: qcom: Add support for GPU Clock Controller on
  QCS8300
+Message-ID: <l53g7hbjxg2fe2rezghearuf4bllem5ubn2pn6f4qf2nd3wthg@v2a7pd5zquns>
+References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
+ <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
-In-Reply-To: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7Y7TQFIXw3gcoQqYhrAgM78wKi3vHRGY
-X-Proofpoint-ORIG-GUID: 7Y7TQFIXw3gcoQqYhrAgM78wKi3vHRGY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
- clxscore=1015 phishscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180071
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
 
-Add support to the QCS8300 Video clock controller by extending
-the SA8775P Video clock controller, which is mostly identical
-but QCS8300 has minor difference.
+On Fri, Oct 18, 2024 at 04:42:30PM +0530, Imran Shaik wrote:
+> Add support to the QCS8300 GPU clock controller by extending
+> the SA8775P GPU clock controller, which is mostly identical
+> but QCS8300 has few additional clocks and minor differences.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>  drivers/clk/qcom/gpucc-sa8775p.c | 47 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
 
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
----
- drivers/clk/qcom/videocc-sa8775p.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-index bf5de411fd5d..d0494ba81f5f 100644
---- a/drivers/clk/qcom/videocc-sa8775p.c
-+++ b/drivers/clk/qcom/videocc-sa8775p.c
-@@ -524,6 +524,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
- 
- static const struct of_device_id video_cc_sa8775p_match_table[] = {
- 	{ .compatible = "qcom,sa8775p-videocc" },
-+	{ .compatible = "qcom,qcs8300-videocc" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, video_cc_sa8775p_match_table);
-@@ -550,6 +551,9 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
- 	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
- 
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-+		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
-+
- 	/* Keep some clocks always enabled */
- 	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-2.25.1
-
+With best wishes
+Dmitry
