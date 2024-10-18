@@ -1,95 +1,167 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57EF18E752
-	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 08:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7761918EFFB
+	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 08:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729240475; cv=none; b=YAoqtOcSxNfFD8z14yOi6+im7J5hgFjM4/30O1EAWEIMZiLwI3f+f0zDzr6vhoVcFPDAdnJ/lJxOCXue20RA/QKSmO9MVbTdzmDCBcUJMcf0nM/Zm/AY7Q/S8w8JznifVSbBWoU1XHsv5KmGQPU69T7MCsAlvgMWsM0OwL/DOD0=
+	t=1729241437; cv=none; b=mKHFhqBuYOQAscMdCdnCssJTDHM2XUltUE+hplCluplP3/00ewN9AUoIGIEQuclFCprDadoDs6wjCohcdgGqvVu+SQg6Uzy3Jhr3UYaYMnuQM5PC63oQvb1tdDdMOqKlGWkKmQOCg6718/VPAOnFdrMn1bPw+3QvHAq1DkrwqFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729240475; c=relaxed/simple;
-	bh=0srgTgPU6O9DCPzxjmpwh7gb3TW5F7IfkOw+rxbUXwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPKtMHx1QT/GeIhOqDQ+hwkGI2n3DA0yOQq/b9Ta4oebGsu8TmGfmvfoAMBBdqoybuxBM9mZsestALxqqa8cIaIS34PLuQvefn6cmJLjuX0FU6pMqHt3HVqT96ckNiXZv8f4bRS2gIO1zpfjT/gY8xno56vRXppRGLKwHOV7apY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JZM/cWlC; arc=none smtp.client-ip=209.85.208.176
+	s=arc-20240116; t=1729241437; c=relaxed/simple;
+	bh=q6UaaBG1S1+qACQ6YRhwicu8VBEuLQLOH0LNHXVY9yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uLwfUfDowaIHk6uC8p+XkMsiOv+BtoLCF1bwdLPbi8uBYCUX2O80INXvFaZQPxLOZ1BasPiTgYwZcCvUhmarEraAGUM7iajKD5fHtJ5SOR+9yzFGQghp2xmE+VGLZPJBdaATybf46D924FBTn2VNArljbeiEPyHBoWlGYycKEhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cGvX/ymO; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JZM/cWlC"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso19043881fa.0
-        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 01:34:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cGvX/ymO"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e396a69062so17935707b3.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 01:50:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729240472; x=1729845272; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/E40pYu5N6UUzSC0ykjphENAzLlvZgAB3ZhtJJTml4=;
-        b=JZM/cWlCcAUH9pSCDzA0xH7JaMu/ReqEq7VT57BZ35XgrFz8fesaWfzprIvX/7c2vh
-         Z3H1UTp/8PPnJ/VE/c3qGaMSe77Ge8LRENGFwzGrtjtwSAQEg1FD0iJjfuyjhJW99/zA
-         1BjvhKuwtwsfWmADaIrphkMCuOI+jw5rcNL0RkZx9uHCVTC9jouLA9tr2UEBsAj2L1Mp
-         tmmFWw32pl80Xa928eQ5CNE282NlY1hsQP5wYC+LBW2oEXpLNzkB5nFH5YoQ+iZZcSNz
-         CWU+Rb7PIdzoGE2mcgfNzklj5gVhFUPebKZ7OExQHpj9gpc4+5WgDwBcg5L6DMZdTesl
-         haEQ==
+        d=linaro.org; s=google; t=1729241434; x=1729846234; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4/RSforFp+VQNtLc4ofIvEcTd/s/JTnlqhsY7WVRH24=;
+        b=cGvX/ymOsRiCUhCtm6gKWeuZv7bEICcUSiqlkEPEsnKr/DjCPCeM5szJA6HiqIMEJJ
+         7GBU7tluoAZ/Lc/wJZF4Dp0fflq8F72YmkdRI7OQTp6n8DQfwyLtOGwFr79mM4LDVKpW
+         z2e1o2Qq7rnQ+MM6bWbLXn4LLxzwTssXZhGeZ/QCQRRYqGVNzAHfePrMMmlKjRI0x9NN
+         H59W4nbjDXpBXrFw101KgpBc3IIaORYMIlHKzenIVrAXJK77QRvbdS85C30cZiZM40Ql
+         Yr2J4dEKBnCjbQk4qON2gBvMLCi0Eto8dhwgnNmguO9ApD8m3r33VPrR4mmz7UGDTqvB
+         m3BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729240472; x=1729845272;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/E40pYu5N6UUzSC0ykjphENAzLlvZgAB3ZhtJJTml4=;
-        b=qx4ZvmVpiT/4ZaQiAfOOMRiGMjUK49gQbnSiTF2y7OXj93qCfJXBtbWUP+eo7DPbpt
-         2tbUKz7J8lZ5EptTXtfNbSP4hLoIUzORkBJEV2A0bnAxRc5jv4xWILGZDKx3ugg2sJLc
-         cxOtS0xn0LcqFPtlwxl9ObtSee/8zRQBHI6AyGS95oOwx/NY5x1GCYFnjrs+BrNtwgL3
-         2KtNNz0eOgahrroF3Qo2Zx38LHy+On6aHcVjgFzZpMCdF6qwtsYrkf+6Yvj606mGx2b1
-         Xb+t+ZkKVua0o03SsIu6rx2w0fCiUc/B3lMwmA4G5QKnGmyu6dhXy2d2BWYGVNbQ8TdZ
-         5c+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUf3Mr4I2yUMVKmd65SmeGvaf6wQ7H9sdQHv/CfSD+inM+32GfiVX5ZgVhTVejJmFUGOpzCaTWt12s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEP6261E8CVn9Ik68EwdeZPAcxDQaZfsZeSd8b1HR73ccUYGMK
-	YRs/QluqutexRh94bfiKyiDKbdKQx/kRZ17WmVo7eKeaBexioosS8YfuBQyqGoc=
-X-Google-Smtp-Source: AGHT+IEf+JsGSXNlJJL9bn/WcW3dIRijvATttGbycYUvhiOsrdM/RAWzfsgY8sOtZaLsmrksi0/6hQ==
-X-Received: by 2002:a2e:e1a:0:b0:2fb:58d1:d9a3 with SMTP id 38308e7fff4ca-2fb82eaadc2mr4804001fa.18.1729240471694;
-        Fri, 18 Oct 2024 01:34:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809f99besm1649401fa.83.2024.10.18.01.34.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 01:34:30 -0700 (PDT)
-Date: Fri, 18 Oct 2024 11:34:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/14] dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P
- compatibles
-Message-ID: <xlpj3oyk7cyteyfsbfz5uccf7qe3icjcgkpyxmrwmlsibadydi@jyrhah5j3nq4>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-5-f75e740f0a8d@linaro.org>
- <lue5xeab77eqnghpnxrhsezymf3e26ii7kccqlcm4fig57f4ug@sauhknjyrqbn>
+        d=1e100.net; s=20230601; t=1729241434; x=1729846234;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4/RSforFp+VQNtLc4ofIvEcTd/s/JTnlqhsY7WVRH24=;
+        b=uz0RcsEQzo+/czqq738yb57FF670lfccV7iWwy9aSdQwgtGrVddV8kJtMTaHG39SYE
+         /oGYET21kHRn/wf4MHRrOGhJAgtNo8dbrul0ZBeY0Y4WnVD5Nk9tA8drQHaBbi+i/Eiq
+         XrohkIg0wXDQRouVDV9zZmJBI39m2nYsLTtv4NKtOhukN24roTO8GgGJwkHBJQUqhzXt
+         +/hKdcOPcLZDFwf5euje+DmS87p11VDUJx6MqwyWpWczxlxsuc9VYqVK3ZT2IkIb1Irw
+         xaKdNqNXrjO96CHDkASQg9nmDBeOqD96AK+32aVw3e01jpWHPWs//KlPMQqVV08mhgju
+         vtrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWephbuICxIUGR9fQAbbT5zzIMMf+ym4jjbn6Rw1hq3W1ncohG9H8ZCtH4o90cvMV4Ig5BWxCbvIA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytWp6SDfu+9RXI8pv//Nw+IaWElmv2DOdyU76BcbIJwAqK3EhU
+	z74wwlGgbZuN9pahfkabzewpehuU0HAL2K38sYV74281QCEnfKR5fmo7lwhLRqLyr+5Nm2aH03i
+	pjUvkEm+/ab21eG0j16P2IsRv37fs05GFYXXZHw==
+X-Google-Smtp-Source: AGHT+IEfhw8dTGOqtMUmLixgGGVRqyf2gSqNzfjdP2OonSOoTDcrjLgzvPuP0+fWji/QpUGei3fuavAC7iK/8ckB4NI=
+X-Received: by 2002:a05:690c:fc2:b0:6e2:1090:af31 with SMTP id
+ 00721157ae682-6e5bfbe7c76mr17174717b3.3.1729241434462; Fri, 18 Oct 2024
+ 01:50:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lue5xeab77eqnghpnxrhsezymf3e26ii7kccqlcm4fig57f4ug@sauhknjyrqbn>
+References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 18 Oct 2024 10:49:58 +0200
+Message-ID: <CAPDyKFq1-fW=d5QiEcYNkErpMuBo0aZzB1pos1CHcPZmAWGTRw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] watchdog: rzg2l_wdt: Enable properly the watchdog
+ clocks and power domain
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 18, 2024 at 09:10:07AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Oct 17, 2024 at 07:56:55PM +0300, Dmitry Baryshkov wrote:
-> > From: Konrad Dybcio <konradybcio@kernel.org>
-> > 
-> > Expand qcom,sm8450-gpucc bindings to include SAR2130P.
-> > 
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Mismatched SoB and from.
+On Tue, 15 Oct 2024 at 18:47, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Hi,
+>
+> Watchdog device available on RZ/G3S SoC is part of a software-controlled
+> power domain. The watchdog driver implements struct
+> watchdog_ops::restart() handler which is called in atomic context via
+> this call chain:
+>
+> kernel_restart() ->
+>   machine_restart() ->
+>     do_kernel_restart() ->
+>       atomic_notifier_call_chain() ->
+>         watchdog_restart_notifier()
+>           rzg2l_wdt_restart()
+>
+> When the rzg2l_wdt_restart() is called it may happen that the watchdog
+> clocks to be disabled and the associated power domain to be off.
+> Accessing watchdog registers in this state leads to aborts and system
+> blocks.
+>
+> To solve this issue the watchdog power domain was marked as IRQ safe
+> as well as watchdog device (as proposed by Ulf Hansson). Along with
+> it the clk_prepare_enable() calls from the watchdog restart() handler
+> were removed and all is based now on pm_runtime_resume_and_get()
+> as explained in patch 03/03.
+>
+> Series contains also power domain driver changes to be able to
+> register the watchdog PM domain as an IRQ safe one.
+>
+> Initial RFC series for solving this issue was posted at [1].
+>
+> It is safe to merge watchdog and PM domain driver changes though
+> different trees.
+>
+> Thank you,
+> Claudiu Beznea
+>
+> [1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
+>
+> Changes in v4:
+> - in patch 1/1, function rzg2l_cpg_pd_setup():
+> -- call rzg2l_cpg_power_on() unconditionally of governor
+> -- drop governor's parameter and decide what governor to use based on
+>    always_on
+> - collected tags
+>
+> Changes in v3:
+> - added patch "clk: renesas: rzg2l-cpg: Move PM domain power on in
+>   rzg2l_cpg_pd_setup()"
+> - addressed review comments
+> - collected tags
+> - per-patch changes are listed in individual patches
+>
+> Changes in v2:
+> - adjusted patch title for patch 02/03
+> - adjusted description for patch 03/03 along with comment
+>   from code
+>
+> Changes since RFC:
+> - dropped patches 01/03, 02/03 from RFC
+> - adjusted power domain driver to be able to register the
+>   watchdog PM domain as an IRQ safe one
+> - drop clock prepare approach from watchdog driver presented in RFC
+>   and rely only on pm_runtime_resume_and_get()
+> - mark the watchdog device as IRQ safe
+>
+>
+> Claudiu Beznea (4):
+>   clk: renesas: rzg2l-cpg: Move PM domain power on in
+>     rzg2l_cpg_pd_setup()
+>   clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+>   clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as
+>     IRQ safe
+>   watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
+>     handler
+>
+>  drivers/clk/renesas/r9a08g045-cpg.c | 52 +++++++++++------------------
+>  drivers/clk/renesas/rzg2l-cpg.c     | 41 ++++++++++++-----------
+>  drivers/clk/renesas/rzg2l-cpg.h     | 10 ++----
+>  drivers/watchdog/rzg2l_wdt.c        | 20 +++++++++--
+>  4 files changed, 63 insertions(+), 60 deletions(-)
+>
+> --
+> 2.39.2
+>
 
-Interesting enough, Git history contains correct From, which is then
-being manipulated by the .mailmap. SoB isn't. How should I proceed?
+For the series, feel free to add:
 
--- 
-With best wishes
-Dmitry
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
