@@ -1,100 +1,63 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDCA1FF5F5;
-	Thu, 17 Oct 2024 23:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C613D881;
+	Fri, 18 Oct 2024 02:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729207444; cv=none; b=HWHjKLNgNbpo9Gknxqj8u5JG7B1um8Y5pJ3dOltRFUWbTDrgLbENugWRmsr8XralseW2VVXmrefXIE3mAki1wDvasZ0CDPjs02TDPa9mz+RtMKiPy0TCML7oc5XsW3zWbM5HTOV17dCceCTlY6pPG532oWvhwb7go6+HJZ3XUCw=
+	t=1729216849; cv=none; b=YYLrUqIOHlMNNwEDX7QG+CA3fnMqbTO9QreNHStU/OGXo+kqsMUWCg03VWW4iobcoqeL2wdWDjIRX/pQ8JNtru/2g3p0HdhKlQk+FPVQssd9OD/Z5EUlQ8KymTBTdsad1fVaFKkrHV2wfPYLYTt2UMoXu/d+jKrCw2xe3p4mW7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729207444; c=relaxed/simple;
-	bh=stynPAKb67QZa/lU7ZIP8zDcPVSvZM4VE/kuZgRvW68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=be5cl8euHWNeV+qq4quHN+6ny3hep+ym5EUWwu8O0O7RLbGtRLgG9PFXBBp2P7ERM4FsOGFxJY27KHTW50y9Ts1uWFfM2u+44HghYkAinE6YnOvv7XCf2KX+6kmBfcaECi6qpbfTtviMqixL3NMvb6lkKzd4FBE7Y2dIzcFDnSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a8ExjZa7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1729216849; c=relaxed/simple;
+	bh=tmeUkOO2+OmDRv6US/Q2MchwJVW2LA5kTuhdFwbQ2+0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Mv9bGDlHjalQ5OiWk4/D/Uqi0HDe4zTqshIdCgoJm8B/+sU4mL6ohf9ryCJ3b3pcnvtEF0EAy+fLPXiwoWVovXWcTYKe2B8YTDApbi8mS8bbd9WIiz9ZkHX6e1LxQXO6DCPLYXD9aswcv1X0bi3EK2VwRWo4BKG1qn3p1u4VzTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+pjq6nM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a8ExjZa7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729207441;
-	bh=stynPAKb67QZa/lU7ZIP8zDcPVSvZM4VE/kuZgRvW68=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a8ExjZa7BXve8hN7bF41EjrnBaIRjB1DZGyLFYJFg5m3YcIb8+01SRWT4XOuSnd1g
-	 951q26phmb2PPL+3JnRQbyvLhpoHdGOKwtJIFiIAj0UaCR1uSIVU4LMo/RKPMlC16b
-	 zoYykMa8grW3NO3hvmHH3U/PIa6K3YRAhsKQntX4yAnXJr24bMMyBx29558glxL2uZ
-	 kdky/hm5Tr3xB3CThNHTnDJtDvSu3MkYd1powH5Xrhaw4tEWzh5QSo8+JJAjuJED7P
-	 67Ykrw+4TGTsg9Vh41NW9DjkPofMi25k8i7cDnvFWZ/gKCFbIQMyjQxIjvlTLidC7Y
-	 6N1rL2y+qSwTw==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7079317E0ED2;
-	Fri, 18 Oct 2024 01:24:00 +0200 (CEST)
-Message-ID: <6acaeefe-54f1-4a7f-9e07-bc8b1bfbab08@collabora.com>
-Date: Fri, 18 Oct 2024 02:23:59 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+pjq6nM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E6FDC4CED2;
+	Fri, 18 Oct 2024 02:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729216849;
+	bh=tmeUkOO2+OmDRv6US/Q2MchwJVW2LA5kTuhdFwbQ2+0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=E+pjq6nM4ExE0tXd85fxR3+iF29d1Onh5HHP2sdYpxVuLGpWlETm0uJxcgUZ8Sjwq
+	 ac/SVljYwFfaofnTkwRsCK1gsoJgQgVYRXxJ4ELPe3bTTm2jHnLPu5W4Zrw01rykNP
+	 7ha9o5NOWb2rAR0lOAqb4T5/GMEN0YLiLB86uyph1Rl8ZvtvWTkcfP66KyQgjR3tAd
+	 Z69T7k7DCg6ftcSqqvsznIoQ+ZZUO1COIok0fTGG340ijP13Tvbfp/flxSvJxlg+jS
+	 a8YLWPGRJOQ2ri5MHbl5YKZGG8Q8v1C96YGav0nzuQMr6kGzfbjGKSFcSQWR6GTjiN
+	 alrJ6p+3fLJHw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D343809A8A;
+	Fri, 18 Oct 2024 02:00:56 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v6.12-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241017224858.2175159-1-sboyd@kernel.org>
+References: <20241017224858.2175159-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241017224858.2175159-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 6b5cca7868fdd2499384e21279fdab86bfa04997
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d4b82e5808241239cb3ae2bff5a6c6767ea976cb
+Message-Id: <172921685505.2658289.12782555293704302481.pr-tracker-bot@kernel.org>
+Date: Fri, 18 Oct 2024 02:00:55 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] clk: Provide devm_clk_bulk_get_all_enabled()
- helper
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Russell King <linux@armlinux.org.uk>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
- <20240926-clk_bulk_ena_fix-v2-1-9c767510fbb5@collabora.com>
- <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 10/17/24 10:45 PM, Stephen Boyd wrote:
-> Quoting Cristian Ciocaltea (2024-09-26 03:43:20)
->> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
->> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
->> return the number of clocks stored in the clk_bulk_data table referenced
->> by the clks argument.  Without knowing the number, it's not possible to
->> iterate these clocks when needed, hence the argument is useless and
->> could have been simply removed.
->>
->> Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
->> with devm_clk_bulk_get_all() in terms of the returned value:
->>
->>  > 0 if one or more clocks have been stored
->>  = 0 if there are no clocks
->>  < 0 if an error occurred
->>
->> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
->> the past form of 'enable'.
+The pull request you sent on Thu, 17 Oct 2024 15:48:58 -0700:
 
-[...]
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-> Instead of duplicating can you make devm_clk_bulk_get_all_enable() use
-> the devm_clk_bulk_get_all_enabled() function but not return the number
-> of clks all in this patch? It will make the diff much more readable that
-> way.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d4b82e5808241239cb3ae2bff5a6c6767ea976cb
 
-Done in v3 [1].
+Thank you!
 
-Thanks for reviewing,
-Cristian
-
-[1] https://lore.kernel.org/all/20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com/
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
