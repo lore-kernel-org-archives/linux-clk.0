@@ -1,71 +1,92 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D46218C0C
-	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 12:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6676D26AFA
+	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 12:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253324; cv=none; b=kNlzWifbs86QS2y6AVC58qIbBJShQs8e93/Q/IcEFYab7m6o+FnDh58dVbq7fFUw+NiGlMKnS+irrTczitQYmgFX0YIbPqf2F1TZtYNaAhTRsqSCSufeQgpEwpXXNXx0tJTS2kUD6AZrNtwN7YfW9JwxR7J5rgJCwx0fUMZ2b+8=
+	t=1729255255; cv=none; b=Qd9pNz3/a+WQUjN7iK9EVZK8rx/56dcQdilzHgZl1P8WxP+33JF0DWZmXF9c1KiXD0myOgTrZVrWtSi7zxzgCqLTsnp4GuF6M3Ju41BML0++1hQduAV5cFcY3ffeMVvswMAQisc5RMdAUSwSLBHe5N8BAEno/PeCDLZWj0vFJrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253324; c=relaxed/simple;
-	bh=YbqulcNrKaoe+EnMEt2XGpFtZJZT2rx1KICvibHOoq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e18GeKA27J2nfp5cnbKFfWeK8vUkwAsnlbDMHzD/OoME45WMITuSrFV61XGpD0kx6A3jP+r274gxt/iJnMmJa71t5MZklAyR3KD8fZRvVXdNGuxdcI9oGsIRnMSRL8sxqm8G48jp2eTmoPDfyueprstWJOf1AlC6hSOKtZp3Vd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YdNaA7ZC; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729255255; c=relaxed/simple;
+	bh=NepPP9+EUJkQE6AAFekh9hvZnrPeDE2ASN5F2g/sxaQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IjovcqlgmnuOFr27zXD1Rj364H5gQ+VFPhBW4Y99uzvnEOCudQmcsjWW09DzsTKPG/uQYWeauf0k0cOpuIFsYjYVUwjRI3q/DQjVVaTwx7YMpls0Q1q8DsM6ALm0NMdcyuTUO9QweY4MPH6BabxwHLFU6EML2QZyfPr4KMBYwas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UBsdd+Ac; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdNaA7ZC"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso33891981fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 05:08:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UBsdd+Ac"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a5b2f2026so204711266b.2
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 05:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729253321; x=1729858121; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1729255252; x=1729860052; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9CEyOXycZo0GAH066lZHL9x0GBdHQ/RJtrNNbuW8wM=;
-        b=YdNaA7ZCIEZR3ou61LZ977hIvA4kyqmvPiSfRQdP4O7HaX7NpAb/w71/cxW5h9aXqS
-         BlRmYaetMo4kZAMxEIjXAMqako16dweZGSP3bwKQRSUeJQgsRBZDSGL/pAl3BU+vKjzl
-         M1nfDnehd4c/dovJoVJZ9L8DnbWsLP9Ai5X3inKJVHTLa0hqb2bTF2c9H8B7y1G6faWS
-         o3P1bste1DUfNH7yafDPKswBifMZC3ZaiFrsjQebHfEVGVeLw9nYjaUjMW0UeAwe3MHM
-         GrNcxNBHjrV0i15sxi445WEY3Bi5PULruBPuqkh2SmAQ5yr148Tu+TrJu9n6e20aw937
-         7MvQ==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9DykL4kRhQMn7Cbt8yrjSApwATRDvV4AIHohgrmqOh0=;
+        b=UBsdd+AcJeTPSj7VbDDbVayFFlXZEceFq+/3BzPSGVEd/vqIQ1Xo7f24O8TX9JYYJX
+         2uKOpn2wggd9+3uwrDa1FdqY+j/MdsZjlY4KKebecfW2xuNJnp5NjaaFczFrBFKmpXA2
+         5V/L0TI4GwuDTbdpHutCyoSnArESUECp8EBEYEx5FdUYa/OpdlfTi5UaWYAzURH22Toj
+         glP0mVzYNvaDNBTOuVqKcQmd/JluRvWygUycKTa+wvCFrqCUsbNq9ImkRQmK+iFXZwKP
+         snrH8Lho4I7A5slljx30zdGrTO+4JnlRHtI1/7ZukalCy6atc5M+U3943fiUh9M1hMP/
+         QhhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729253321; x=1729858121;
+        d=1e100.net; s=20230601; t=1729255252; x=1729860052;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w9CEyOXycZo0GAH066lZHL9x0GBdHQ/RJtrNNbuW8wM=;
-        b=V35mkC5Dbi8DRrSVI3wQ6k7tzelbwijydyJT24smQ0Cvz2D/SPJEg3eKYyjJHXf75I
-         kWEaZkmdjFkmPZqW8SJOXjTBJENSGb75lLv0R47s9paW66+bRYjk1JsCb+wh4fJucThk
-         +dpSDdn/Io92v5+NOgt902cXEOEg/yf/eNN7dM+6FlbUXH8C9jjhNPucVc/xh2abGc4w
-         4RsgxtdzNwrmUJZnGjNdoBfsvO/aBc6QW6UILMwIuZcFifM9da4/zBq8JdEgzEtYVqtL
-         6GPT+XOhD8JmCDQDgRnGanQ0xlA0nEIrgDnVkPPWSJKYsi0t73A3cYs6UDGEQIM+asRc
-         dssg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbKggdIRC3khcaOBDeHXQGeihAk1Lz8z4XTbZxZoBxoAHsp6NVb+tux9hfOOzcZFEkZkj1HO9uom8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx890QHs0baCP2kcg6LSTo0RSX9A45kA1Htr+4mxrGi8MQQzGhu
-	kegVQhdTT7Fi38X8e30OwAwFiLAel5mcBrPUQmM3BSryfsWhZaE2ON2yj/liwwE=
-X-Google-Smtp-Source: AGHT+IET87521GR+Ncypj8kYlpZXAqXop//a42wje36HMmpSaJ1UQJi3Vj3+Hvduz4mk5BgZRtxPyg==
-X-Received: by 2002:a05:651c:1547:b0:2fa:d84a:bda5 with SMTP id 38308e7fff4ca-2fb82e90e03mr16854441fa.7.1729253321351;
-        Fri, 18 Oct 2024 05:08:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a6a88sm1997451fa.7.2024.10.18.05.08.39
+        bh=9DykL4kRhQMn7Cbt8yrjSApwATRDvV4AIHohgrmqOh0=;
+        b=rUdSP4HKG3/CLDpUt6lgrx4tCMEp3k45y/xaVZzYobFp5kUO62owD8RS5w+Z0URagD
+         L1em2xG9WFcqdMjWyjNMGlsCy1Aws0G3VQF0RFQf8AbBwYhqE3eL6n3JGVwXdoBetzYK
+         SgacPyl7+j4HXZeXzFhHDHY6dyIuksSEvKQwNMAwpRZPEBFJAwvGmleZ64aMNtw+1RdQ
+         xTRvH3EcJ1kjnnqv4SbRK/owNVnTBuZ+UHj1T/dJKIwI6mlZkqvayVm7TWmR1AvFBXMR
+         EW8W3Ilx8Cs984waiVBSr5hA6AwUMJQf2EgehykX11a0qtrn3vbh5iMXChzYBhPKCjbG
+         Q8hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgAgug+JMiipwIIGo26S8FzIe4CB85K7c79Ul0iw6QNxzSzmeav9TNTo7FbIad4/SuLco/6oJPIdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ACHcTibUdc/rSF/JtUXhpNHYjXifzSv3Av9nDzXtGgmBS1TW
+	8JAX01zrEWx/CTtSJkTChFqnSEf5d/DNO7Nj6Z3gfquc/fGhQeM3EieKccXDQN8=
+X-Google-Smtp-Source: AGHT+IGKGlI5U6acm0UPw/vtEqZLZZNRs4tL7ATU0Wt6GltRPSfjPzSBXo/n0wxDoTzpCi5atrc0Sw==
+X-Received: by 2002:a17:907:94d2:b0:a99:ec3c:15cd with SMTP id a640c23a62f3a-a9a69ccf8a4mr209343466b.54.1729255251547;
+        Fri, 18 Oct 2024 05:40:51 -0700 (PDT)
+Received: from localhost (host-95-234-228-50.retail.telecomitalia.it. [95.234.228.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bf5f4asm91053466b.157.2024.10.18.05.40.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:08:40 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:08:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] clk: qcom: Add support for Video Clock Controller on
- QCS8300
-Message-ID: <2wahtcgpz7juse325f6vp5od75pwrwyl5v3c2ln2xa64qzpvid@f43c7uxx34r6>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
+        Fri, 18 Oct 2024 05:40:51 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 18 Oct 2024 14:41:11 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <ZxJXZ9R-Qp9CNmJk@apocalypse>
+References: <ZwJyk9XouLfd24VG@apocalypse>
+ <20241008010808.GA455773@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,51 +95,159 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
+In-Reply-To: <20241008010808.GA455773@bhelgaas>
 
-On Fri, Oct 18, 2024 at 04:42:34PM +0530, Imran Shaik wrote:
-> Add support to the QCS8300 Video clock controller by extending
-> the SA8775P Video clock controller, which is mostly identical
-> but QCS8300 has minor difference.
+Hi Bjorn,
+
+On 20:08 Mon 07 Oct     , Bjorn Helgaas wrote:
+... 
+> It's common that PCI bus addresses are identical to CPU physical
+> addresses, but by no means universal.  More details in
+> Documentation/core-api/dma-api-howto.rst
 > 
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
->  drivers/clk/qcom/videocc-sa8775p.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> > [2] I still think that the of_pci_set_address() function should be amended
+> > to avoid generating invalid 64 address when 32 bit flag is set.
+> > 
+> > As you noted, fixing [2] will incidentally also let [1] work: I think
+> > we can try to solve [1] the proper way and maybe defer [2] for a separate
+> > patch.
+> > To solve [1] I've dropped this patch and tried to solve it from devicetree,
+> > modifying the following mapping:
+> > 
+> > pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> > 
+> > so we now have a 1:1 64 bit mapping from 0x1f_00000000 to 0x1f_00000000.
 > 
-> diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-> index bf5de411fd5d..d0494ba81f5f 100644
-> --- a/drivers/clk/qcom/videocc-sa8775p.c
-> +++ b/drivers/clk/qcom/videocc-sa8775p.c
-> @@ -524,6 +524,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
->  
->  static const struct of_device_id video_cc_sa8775p_match_table[] = {
->  	{ .compatible = "qcom,sa8775p-videocc" },
-> +	{ .compatible = "qcom,qcs8300-videocc" },
-
-Sorted, please.
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, video_cc_sa8775p_match_table);
-> @@ -550,6 +551,9 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
->  	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
->  	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
->  
-
-Comment?
-
-> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-> +		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
-> +
->  	/* Keep some clocks always enabled */
->  	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
->  	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
+> That's the wrong thing to change.  pcie@120000 is fine; it's pci@0
+> that's incorrect.
 > 
-> -- 
-> 2.25.1
+> pcie@120000 is the host bridge, and its "ranges" must describe the
+> address translation it performs between the primary (CPU) side and the
+> secondary (PCI) side.  Either this offset is built into the hardware
+> and can't be changed, or the offset is configured by firmware and the
+> DT has to match.
 > 
+> So I think this description is correct:
+> 
+>   pcie@120000: <0x2000000 0x0 0x00000000 0x1f 0x00000000 0x0 0xfffffffc>;
+> 
+> which means we have an aperture from CPU physical addresses to PCI bus
+> addresses like this:
+> 
+>   Host bridge: [mem 0x1f_00000000-0x1f_fffffffb window] (bus address 0x00000000-0xfffffffb)
+> 
+> > I thought it would result in something like this:
+> > 
+> > pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> > pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
+> > dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
+> > rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+> > 
+> > but it fails instead (err: "can't assign; no space") in pci_assign_resource()
+> > function trying to match the size using pci_clip_resource_to_region(). It turned
+> > out that the clipping is done against 32 bit memory region 'pci_32_bit',and
+> > this is failing because the original region addresses to be clipped wxxiereas 64
+> > bit wide. The 'culprit' seems to be the function devm_of_pci_get_host_bridge_resources()
+> > dropping IORESOURCE_MEM_64 on any memory resource, which seems to be a change
+> > somewhat specific to a RK3399 case (see commit 3bd6b8271ee66), but I'm not sure
+> > whether it can be considered generic.
+> 
+> I think the problem is that we're building the pci@0 (Root Port)
+> "ranges" incorrectly.  pci@0 is a PCI-PCI bridge, which cannot do any
+> address translation, so its parent and child address spaces must both
+> be inside the pcie@120000 *child* address space.
+> 
+> > Also, while taking a look at the resulting devicetree, I'm a bit confused by the
+> > fact that the parent address generated by of_pci_prop_ranges() for the pci@0,0
+> > bridge seems to be taken from the parent address of the pcie@120000 node. Shouldn't
+> > it be taken from the child address of pcie@120000, instead?
+> 
+> Yes, this is exactly the problem.  The pci@0 parent and child
+> addresses in "ranges" are both in the PCI address space.  But we
+> start with pdev->resource[N], which is a CPU address.  To get the PCI
+> address, we need to apply pci_bus_address().  If the host bridge
+> windows are set up correctly, the window->offset used in
+> pcibios_resource_to_bus() should yield the PCI bus address.
 
--- 
-With best wishes
-Dmitry
+You mean something like this, I think:
+
+@@ -129,7 +129,7 @@ static int of_pci_prop_ranges(struct pci_dev *pdev, struct of_changeset *ocs,
+                if (of_pci_get_addr_flags(&res[j], &flags))
+                        continue;
+ 
+-               val64 = res[j].start;
++               val64 = pci_bus_address(pdev, &res[j] - pdev->resource);
+                of_pci_set_address(pdev, rp[i].parent_addr, val64, 0, flags,
+                                   false);
+                if (pci_is_bridge(pdev)) {
+
+> 
+> I think it should look like this:
+> 
+>   pci@0: <0x82000000 0x0 0x00000000 0x82000000 0x0 0x00000000 0x0 0x600000>;
+
+indeed, with the above patch applied, the result is exactly as you expected.
+
+> 
+> By default lspci shows you the CPU addresses for BARs, so you should
+> see something like this:
+> 
+>   00:02.0 PCI bridge
+>     Memory behind bridge: 1f00000000-1ffffffffb
+>     Capabilities: [40] Express Root Port
+> 
+> If you run "lspci -b", it will show you PCI bus addresses instead,
+> which should look like this:
+> 
+>   00:02.0 PCI bridge
+>     Memory behind bridge: 00000000-fffffffb
+>     Capabilities: [40] Express Root Port
+> 
+> > > But I don't think it works in general because there's no requirement
+> > > that the host bridge address translation be that simple.  For example,
+> > > if we have two host bridges, and we want each to have 2GB of 32-bit
+> > > PCI address space starting at 0x0, it might look like this:
+> > > 
+> > >   0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
+> > >   0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
+> > > 
+> > > In this case simply ignoring the high 32 bits of the CPU address isn't
+> > > the correct translation for the second host bridge.  I think we should
+> > > look at each host bridge's "ranges", find the difference between its
+> > > parent and child addresses, and apply the same difference to
+> > > everything below that bridge.
+> > 
+> > Not sure I've got this scenario straight: can you please provide the topology
+> > and the bit setting (32/64 bit) for those ranges? Also, is this scenario coming
+> > from a real use case or is it hypothetical?
+> 
+> This scenario is purely hypothetical, but it's a legal topology that
+> we should handle correctly.  It's two host bridges, with independent
+> PCI hierarchies below them:
+> 
+>   Host bridge A: [mem 0x2_00000000-0x2_7fffffff window] (bus address 0x00000000-0x7fffffff)
+>   Host bridge B: [mem 0x2_80000000-0x2_ffffffff window] (bus address 0x00000000-0x7fffffff)
+> 
+> Bridge A has an MMIO aperture at CPU addresses
+> 0x2_00000000-0x2_7fffffff, and when it initiates PCI transactions on
+> its secondary side, the PCI address is CPU_addr - 0x2_00000000.
+> 
+> Similarly, bridge B has an MMIO aperture at CPU addresses 
+> 0x2_80000000-0x2_ffffffff, and when it initiates PCI transactions on 
+> its secondary side, the PCI address is CPU_addr - 0x2_80000000.
+> 
+> Both hierarchies use PCI bus addresses in the 0x00000000-0x7fffffff
+> range.  In a topology like this, you can't convert a bus address back
+> to a CPU address unless you know which hierarchy it's in.
+> pcibios_bus_to_resource() takes a pci_bus pointer, which tells you
+> which hierarchy (and which host bridge address translation) to use.
+
+Agreed. While I think about how to adjust that specific patch,i let's drop it from
+this patchset since the aforementioned change is properly fixing the translation
+issue.
+
+> 
+> Bjora
+
+Many thanks,
+Andrea
