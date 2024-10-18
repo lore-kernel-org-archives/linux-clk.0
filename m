@@ -1,122 +1,96 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A505E210C1C;
-	Fri, 18 Oct 2024 19:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7E51EE00E
+	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 20:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729279045; cv=none; b=a7W+u0LfkdCN2VjhaiEhWsMxOitriEzyQ4Sw6IryPzBiTxl4/YdmHX/GYmw0hi1tb1qFm54Z8pwAVX492cFOfQHHP4O9GqSjHaRF1n57waxsVTcstg0SOrXvbVoqvdoGginXEs2ZfFcJ5IFAY34yQqFrQNE+arLIY3rID/AbS+4=
+	t=1729281994; cv=none; b=H4JTzTF1B6oNNunI7jhu9gOI/ZjjEGVPE5B5D9LqeL/trT2U+6HVDN8SMZg8g55z7bLwhKEhFBTektC/ddiuIN8YBzsvgeotqMHm+q0SHtochPN2WL+RM7Su4pOoa6iYq6iCxlEPRb8ATL/hsW6A3aZl+4NU+J/LJLqq6CvF0Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729279045; c=relaxed/simple;
-	bh=MpiCw0/jvMUoJ8LD9yTVl5Hp8qYftQGS75uTGKu4TkQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=EexZpuIq6HKLImoebYdYgmdAt9UFnPwvDHpQws/jrmaOQlmoqwbDjgw6cxsuJpucKDTzd0e6N8eze6XXCu9eLbFGlcJ7vEBf7FsR7uja3QvUnlm0XP993r8LERZrOdUOv39k35CvNmkGeHC/oicSw7tSD1C7TnaYSzqOsOr/uEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FafvJAkT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729281994; c=relaxed/simple;
+	bh=/51xfUSYsUDnsKHUISmuqpPXDOu6WONAfwM4tgenvn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPJNegyxvWYjQ41K711lOHUm6lB+Xk4WvOKJFCi8Q5R1ALG8csd8GRZT/Ap8ubNZCM3I7qIvDRl5FdVeLQdghrnJIWJUxAoCNiY1wwnneE8WFnJaIGILO79CmFYqNcbEMwidZxUrPKabemmKC8Rr7P+ffP6AS6a7kkpM9uCYPmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nywpOx8e; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FafvJAkT"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEXx7t029273;
-	Fri, 18 Oct 2024 19:16:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SV6FW2QlAdSrJig6Hqm+GbTm8KyG8syat6oY3nfYD1k=; b=FafvJAkThFmCtRY4
-	P/MQruo3SF77VEVHCFPYe3hWr1uCxTwILJusCVTlkh0+qsbLzrvP5SrFhokrUBEI
-	38jKY4xw5Npd2DbsnUoq4GTe/hLW52iHdgfMPX2Ie1AQoEUjaOjYKPEDRgt8pmdg
-	/now5zR5BLwWcW9L5oRDwiOA1vtHpSssUnTLA+goZkFBr5Q2b8f3Y8H27TI5er23
-	8bXvHw9Hq+V9SjczdGIEQeSM5wPcc8BK2KQIej0Uk26f7yGtwfTn+EYrOqr+itcM
-	bB8eYYyNsi3Hpg8Lw9Vr4rZrXWcToPpLuHL9v44eJ5ccNAaV/tl1oaz7/h13gQ5V
-	CgeZzw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bhbqab0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 19:16:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IJGoQ9029976
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 19:16:50 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 18 Oct 2024 12:16:45 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Sat, 19 Oct 2024 00:45:47 +0530
-Subject: [PATCH 11/11] arm64: defconfig: Enable QCS615 clock controllers
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nywpOx8e"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so30116401fa.3
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 13:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729281990; x=1729886790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qqeaSgLM4urcEuCSV+5q6Je9Wo3+AKbBRfKiBnVfLY=;
+        b=nywpOx8e4pbIc417fKxkCToqytuZdvTH4Qpg2rhfsdXfZ81/dgLdX256X3TZHNKQyA
+         Nc6d2ElJAzjDUT42B1HEJnRtQPYTLPaNnse0wW1EpzKh6FdYeNZu0JLbQePN5pEsIt/c
+         XZZpVi3eZzufQjGeoH9pkQTBiiO+zxnWGInIXWVa805r+9L27RMqNBxwtozMepc9UPCi
+         y7zUjJ/En96L+nYNnnEntdoGdVgIJAkNVMOq3U7KwdULaz6jOyQmdwamv/kA88eWVTee
+         GY/uEylxhOlym6G2urH3xVv3eqHhuFiPC4vPVO0AGg08NxaG/NzIzQDw4Hej8WN9cQdS
+         eBmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729281990; x=1729886790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3qqeaSgLM4urcEuCSV+5q6Je9Wo3+AKbBRfKiBnVfLY=;
+        b=NFGGLGvnmOrxajSxUei/jNx1/wRPivPntIP9KHSd4Uok35e9kD0DH+XhpSt/R22H8R
+         l6guDc5yNKtEMpLPCaWMlRqxmARdKdkZarsNx9Y+qzRC2t4TSun6Fxza9mgnG5E1qZfh
+         1yw3KJfr7ip7IxlW8klezgdqFbQ5NSRg6odT8jF4oFQpPQlpjio+JkeImb/SQe78iQpK
+         gCZvNjoiJMxRcbXP4fHkeow+nlx8PktBCH3SpPA5jlU1NP3wzdP/Rp7xpgpyGLX5HIBY
+         mll01ULrHe+PSFEyEdNdOQi7Uhlo0IhaEBNG5mhSjl/J4a4wFwgcBFW4nTyrW1Gp2YCL
+         c/4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUoUfnFFj3t6x1Mp9swct2NY/Wc+BE3F+Y6Ks4YYEGj0/OcV6KAflHRhnTBu4NzSRKstXquq3vhIp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJrYv2yatCVUEbATu7F/GoalbAvLWU7h0u14DWDq/3mIGagBs0
+	ItPpb8fZtb3PhRQfF1DsjM5+Mazk7moJ0kcvLqHEnlRnbIuujpcxiFVfyYn3u/g=
+X-Google-Smtp-Source: AGHT+IEYyQy2Sr1B6koAkEX9lbp8dGLEG2De1kXaGvAZ20tI3Rvf2hBstWggqiGwZuP1BLYC4EzDUw==
+X-Received: by 2002:a2e:be84:0:b0:2fa:bb65:801f with SMTP id 38308e7fff4ca-2fb82ea2494mr22593721fa.10.1729281990154;
+        Fri, 18 Oct 2024 13:06:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb80a08906sm2878401fa.106.2024.10.18.13.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 13:06:28 -0700 (PDT)
+Date: Fri, 18 Oct 2024 23:06:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/11] clk: qcom: Update the support for alpha mode
+ configuration
+Message-ID: <nzzijnfy4wy4ts46c55rokvgwsxc4kytro743xqoecyjpjosyu@hajjkkdw2xmg>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-1-4cfb96d779ae@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241019-qcs615-mm-clockcontroller-v1-11-4cfb96d779ae@quicinc.com>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
-In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Stephen Boyd" <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        "Taniya
- Das" <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yXp7Ef-1RrjQZK9xGXV7l_rGh9dWuM-x
-X-Proofpoint-GUID: yXp7Ef-1RrjQZK9xGXV7l_rGh9dWuM-x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 mlxscore=0 bulkscore=0
- clxscore=1015 suspectscore=0 mlxlogscore=628 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180123
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-1-4cfb96d779ae@quicinc.com>
 
-Enable the QCS615 display, video, camera and graphics clock
-controller for their respective functionalities on Qualcomm QCS615.
+On Sat, Oct 19, 2024 at 12:45:37AM +0530, Taniya Das wrote:
+> The alpha_en_mask and alpha_mode_mask must be applied within the
+> clk_alpha_pll_configure() function to ensure proper configuration of
+> the alpha mode of the PLL.
+> 
+> Fixes: c45ae598fc16 ("clk: qcom: support for alpha mode configuration")
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 730f303350c36a75661dc267fdd0f8f3088153fc..2fa666156b88b44a8298651e276c196cded9a7f8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1322,7 +1322,11 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
-
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 -- 
-2.45.2
-
+With best wishes
+Dmitry
