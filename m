@@ -1,344 +1,135 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63889168C3F;
-	Fri, 18 Oct 2024 09:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BBC18EFCD
+	for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 09:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245365; cv=none; b=b6hJkRX790b1KAXbYjbu+NvfIsmcRH8hKPuv5b+GnErJ9vRAmKK+nnBeTXeACRFQTEb36UNeNjamViuP7h3fDdbDPupW5h+IgX81GPSzCzBQPNqpRKW8HXYjcwaTnpVulT3silxPRTLmWgoK2VQd4t3zRuZeBEUlbBS7hKMULuM=
+	t=1729245415; cv=none; b=a7IHKUjraBrkYOwS/IbvORUV4dS3pW69UKwH+zHIPlR201aY76fiYcr0rJD4XJPdVHz7VpMR5eoNaV+UNEG72CgadfoBuDczlfHP18vegR91qhmFibdZ7PieohheQmvcXYd1+C3UCCeINRYZxriaQcIGjhnVa436lD2jwNCOEB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245365; c=relaxed/simple;
-	bh=FCfKFbgtJMTym6x5hfGzM48GU25gdJXbwjdqbk4LBv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MbgpFN/7pqqlYe/gYnXwVlxnMi70Lv0uObZNduKFGmbeBh1o/Z7MhfTvKptVPU+FVhhzHCZCP0gV8SmbnxkAhe20QwGZu6dU8jUxyz543yfqhaIEUTlE26A3hFqoyqQa4IhrgdePyKzgtL0ld0ByefpTV5uPgg/Y0pH1WdytXZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E29CFEC;
-	Fri, 18 Oct 2024 02:56:32 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEDF73F58B;
-	Fri, 18 Oct 2024 02:56:00 -0700 (PDT)
-Date: Fri, 18 Oct 2024 10:55:57 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu
- Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, linux-sound@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 5/6] ASoC: sun4i-codec: support allwinner H616 codec
-Message-ID: <20241018105557.516779bd@donnerap.manchester.arm.com>
-In-Reply-To: <20240929100750.860329-6-ryan@testtoast.com>
-References: <20240929100750.860329-1-ryan@testtoast.com>
-	<20240929100750.860329-6-ryan@testtoast.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1729245415; c=relaxed/simple;
+	bh=7F02LSuaYG6QJFBmCRDKkgg4PK0fEcpJQMSscDg7UlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ft9gZ/zYkqPfWvqv88dzzIgJDwjgCamVngaaGTvoofJ3ynbog7Oa7vmVKQ19dq0RNreom7uk81koV7w9/yJQY7o2rE9dxAbwzD6q93NXSmWQDT/Y+RYCDxhowuJaN9yRZ8VTtc9bNtlo2fiVH040x7r/qXHVsLq4Trcv83jtA98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIM3AfgM; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIM3AfgM"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb587d0436so20201351fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 02:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729245412; x=1729850212; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
+        b=BIM3AfgMvpJS9rTaYmiGjRV26sQbxtxXSenjIjGpWs9EsiCbI64jdLUP3cuNkjK+Ag
+         6kuEi3GZg8X87YyOGjBwJkUSP4ISP4nye58NfH8GU0Kmg9T1BsRJqG87qwg5Rx8EP9c2
+         qkLOQvVdopL+v4k7lvXnuu3D+AdZN8YpHv818PYI+yqw5r/UUe+bSmNldKvqFOiPkUS7
+         7yEKf8MLDn+yG6mp9bQmpH9e8waoXstOUK6EnAT18eUAiFxpqORiEuRq4zYgTDSu952B
+         DW2AWmlJLL5pCzeUiaxgncBGZ9iQH6sQ1kbVZcK1AcnpzuMjXCoiHV3Wv7ZUL/tMKCX3
+         oEtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729245412; x=1729850212;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
+        b=JtHdFJp8U65MJYGf8PC0ookUDvg1u2g9nYoOiV8FTYpmi1LwnUcA1jFFm1cqWcD8b3
+         vjqpJiHstFvFXATh0xw3L5+G7UHuvcdLNqp33zzEcDFSmdCdPgjVHPb0jdZAPpyZKlbo
+         xhT5INiKtgmHtW9XL43h7i27lwbqqSGmXwOvJt9bMam+pDpDwTjqo6q83vRmIeyTmLpI
+         Uyir7/7//oAWB9YpI5nFlgDEpW4gmnMSxchq2JuiJ4V60obNED5mZo8oYDz+E6IQe2XX
+         fu7OD0uBfRVTwwfmsQ29yEUvcmiIP0wxn88QMoMSQYUz5svrl3R7qQJuCDmsWmQliRVH
+         aXQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzvGL7D32wJum+Q7tWtnayi72BgfhUy+ZDeqYo+xwmLeChvkqKlTzZHmic3jffVCnTWkNDvcoDUiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySDk8Ocz6xttXGZf7sbWrxutMnqtiyfnkcC5Gw4LAcsHM3JxdD
+	lKyE0two7eSf2FqpGdfTMXYfjoEtnkZVrpZXDzueMEr2IoV2iL0csNWLl/B43CM=
+X-Google-Smtp-Source: AGHT+IGeK8KzMr9lXPmuFDOy4a4IgVl3STdpDnUlPNvFi3vc36Dx0SsuLqG1dmfqX8sdyi9pbmxBAg==
+X-Received: by 2002:a05:651c:211d:b0:2fa:cc12:67de with SMTP id 38308e7fff4ca-2fb83208e04mr9201491fa.32.1729245411950;
+        Fri, 18 Oct 2024 02:56:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a6a7dsm1776881fa.10.2024.10.18.02.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 02:56:50 -0700 (PDT)
+Date: Fri, 18 Oct 2024 12:56:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
+ ops
+Message-ID: <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
+ <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
+ <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
+ <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
+ <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
 
-On Sun, 29 Sep 2024 23:06:06 +1300
-Ryan Walklin <ryan@testtoast.com> wrote:
+On Thu, Oct 17, 2024 at 03:28:13PM -0700, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2024-10-17 15:00:03)
+> > On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
+> > > Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
+> > > > From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> > > > 
+> > > > Add support for SREG branch ops. This is for the clocks which require
+> > > 
+> > > What is SREG? Can you spell it out?
+> > 
+> > Unfortunately, no idea. This is the only register name I know.
+> > 
+> 
+> Can someone inside qcom tell us?
 
-Hi,
+Taniya, could you possibly help us? This is for gcc_video_axi0_sreg /
+gcc_video_axi1_sreg / gcc_iris_ss_hf_axi1_sreg /
+gcc_iris_ss_spd_axi1_sreg clocks on the SAR2130P platform.
 
-so I have no clue about Linux' audio subsystem or ASoC, so don't dare to
-review this patch. I had a look through the register list in the manual,
-though, and compared the bits and offsets against the constants defined:
-they match. And I can confirm that it works (TM). One small thing, though:
+> 
+> > 
+> > > 
+> > > >         u8      halt_check;
+> > > 
+> > > Instead of adding these new members can you wrap the struct in another
+> > > struct? There are usually a lot of branches in the system and this
+> > > bloats those structures when the members are never used.
+> > > 
+> > >       struct clk_sreg_branch {
+> > >               u32 sreg_enable_reg;
+> > >               u32 sreg_core_ack_bit;
+> > >               u32 sreg_periph_ack_bit;
+> > >               struct clk_branch branch;
+> > >       };
+> > > 
+> > > But I'm not even sure that is needed vs. just putting a clk_regmap
+> > > inside because the clk_ops don't seem to use any of these other members?
+> > 
+> > Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
+> > rename it dropping the _branch (and move to another source file while we
+> > are at it)?
+> > 
+> 
+> I don't really care. Inside qcom they called things branches in the
+> hardware and that name was carried into the code. If sreg is a branch
+> then that would make sense. From the 'core_ack' and 'periph_ack' it
+> actually looks like some sort of power switch masquerading as a clk.
 
-> The H616 SoC codec is playback-only with a single line-out route, and
-> has some register differences from prior codecs.
->=20
-> Add the required compatible string, registers, quirks, DAPM widgets,
-> codec controls and routes, based on existing devices and the H616
-> datasheet.
->=20
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
-> ---
->  sound/soc/sunxi/sun4i-codec.c | 202 ++++++++++++++++++++++++++++++++++
->  1 file changed, 202 insertions(+)
->=20
-> diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-> index 312d2655c3f4e..1cdda20e8ed59 100644
-> --- a/sound/soc/sunxi/sun4i-codec.c
-> +++ b/sound/soc/sunxi/sun4i-codec.c
-> @@ -226,6 +226,43 @@
->  #define SUN8I_H3_CODEC_DAC_DBG			(0x48)
->  #define SUN8I_H3_CODEC_ADC_DBG			(0x4c)
-> =20
-> +/* H616 specific registers */
-> +#define SUN50I_H616_CODEC_DAC_FIFOC		(0x10)
-> +
-> +#define SUN50I_DAC_FIFO_STA			(0x14)
-> +#define SUN50I_DAC_TXE_INT			(3)
-> +#define SUN50I_DAC_TXU_INT			(2)
-> +#define SUN50I_DAC_TXO_INT			(1)
-> +
-> +#define SUN50I_DAC_CNT				(0x24)
-> +#define SUN50I_DAC_DG_REG			(0x28)
-> +#define SUN50I_DAC_DAP_CTL			(0xf0)
-> +
-> +#define SUN50I_H616_DAC_AC_DAC_REG		(0x310)
-> +#define SUN50I_H616_DAC_LEN			(15)
-> +#define SUN50I_H616_DAC_REN			(14)
-> +#define SUN50I_H616_LINEOUTL_EN			(13)
-> +#define SUN50I_H616_LMUTE			(12)
-> +#define SUN50I_H616_LINEOUTR_EN			(11)
-> +#define SUN50I_H616_RMUTE			(10)
-> +#define SUN50I_H616_RSWITCH			(9)
-> +#define SUN50I_H616_RAMPEN			(8)
-> +#define SUN50I_H616_LINEOUTL_SEL		(6)
-> +#define SUN50I_H616_LINEOUTR_SEL		(5)
-> +#define SUN50I_H616_LINEOUT_VOL			(0)
-> +
-> +#define SUN50I_H616_DAC_AC_MIXER_REG		(0x314)
-> +#define SUN50I_H616_LMIX_LDAC			(21)
-> +#define SUN50I_H616_LMIX_RDAC			(20)
-> +#define SUN50I_H616_RMIX_RDAC			(17)
-> +#define SUN50I_H616_RMIX_LDAC			(16)
-> +#define SUN50I_H616_LMIXEN			(11)
-> +#define SUN50I_H616_RMIXEN			(10)
-> +
-> +#define SUN50I_H616_DAC_AC_RAMP_REG		(0x31c)
-> +#define SUN50I_H616_RAMP_STEP			(4)
-> +#define SUN50I_H616_RDEN			(0)
-> +
->  /* TODO H3 DAP (Digital Audio Processing) bits */
-> =20
->  struct sun4i_codec {
-> @@ -1520,6 +1557,149 @@ static struct snd_soc_card *sun8i_v3s_codec_creat=
-e_card(struct device *dev)
->  	return card;
->  };
-> =20
-> +static const struct snd_kcontrol_new sun50i_h616_codec_codec_controls[] =
-=3D {
-> +	SOC_SINGLE_TLV("DAC Playback Volume", SUN4I_CODEC_DAC_DPC,
-> +		       SUN4I_CODEC_DAC_DPC_DVOL, 0x3f, 1,
-> +		       sun6i_codec_dvol_scale),
-> +	SOC_SINGLE_TLV("Line Out Playback Volume",
-> +		       SUN50I_H616_DAC_AC_DAC_REG,
-> +		       SUN50I_H616_LINEOUT_VOL, 0x1f, 0,
-> +		       sun6i_codec_lineout_vol_scale),
-> +	SOC_DOUBLE("Line Out Playback Switch",
-> +		   SUN50I_H616_DAC_AC_DAC_REG,
-> +		   SUN50I_H616_LINEOUTL_EN,
-> +		   SUN50I_H616_LINEOUTR_EN, 1, 0),
-> +};
-> +
-> +static const struct snd_kcontrol_new sun50i_h616_codec_mixer_controls[] =
-=3D {
-> +	SOC_DAPM_DOUBLE("DAC Playback Switch",
-> +			SUN50I_H616_DAC_AC_MIXER_REG,
-> +			SUN50I_H616_LMIX_LDAC,
-> +			SUN50I_H616_RMIX_RDAC, 1, 0),
-> +	SOC_DAPM_DOUBLE("DAC Reversed Playback Switch",
-> +			SUN50I_H616_DAC_AC_MIXER_REG,
-> +			SUN50I_H616_LMIX_RDAC,
-> +			SUN50I_H616_RMIX_LDAC, 1, 0),
-> +};
-> +
-> +static SOC_ENUM_DOUBLE_DECL(sun50i_h616_codec_lineout_src_enum,
-> +			    SUN50I_H616_DAC_AC_DAC_REG,
-> +			    SUN50I_H616_LINEOUTL_SEL,
-> +			    SUN50I_H616_LINEOUTR_SEL,
-> +			    sun6i_codec_lineout_src_enum_text);
-> +
-> +static const struct snd_kcontrol_new sun50i_h616_codec_lineout_src[] =3D=
- {
-> +		SOC_DAPM_ENUM("Line Out Source Playback Route",
-> +			      sun50i_h616_codec_lineout_src_enum),
-> +};
-> +
-> +static const struct snd_soc_dapm_widget sun50i_h616_codec_codec_widgets[=
-] =3D {
-> +	/* Digital parts of the DACs */
-> +	SND_SOC_DAPM_SUPPLY("DAC Enable", SUN4I_CODEC_DAC_DPC,
-> +			    SUN4I_CODEC_DAC_DPC_EN_DA, 0,
-> +			    NULL, 0),
-> +
-> +	/* Analog parts of the DACs */
-> +	SND_SOC_DAPM_DAC("Left DAC", "Codec Playback",
-> +			 SUN50I_H616_DAC_AC_DAC_REG,
-> +			 SUN50I_H616_DAC_LEN, 0),
-> +	SND_SOC_DAPM_DAC("Right DAC", "Codec Playback",
-> +			 SUN50I_H616_DAC_AC_DAC_REG,
-> +			 SUN50I_H616_DAC_REN, 0),
-> +
-> +	/* Mixers */
-> +	SOC_MIXER_ARRAY("Left Mixer", SUN50I_H616_DAC_AC_MIXER_REG,
-> +			SUN50I_H616_LMIXEN, 0,
-> +			sun50i_h616_codec_mixer_controls),
-> +	SOC_MIXER_ARRAY("Right Mixer", SUN50I_H616_DAC_AC_MIXER_REG,
-> +			SUN50I_H616_RMIXEN, 0,
-> +			sun50i_h616_codec_mixer_controls),
-> +
-> +	/* Line Out path */
-> +	SND_SOC_DAPM_MUX("Line Out Source Playback Route",
-> +			 SND_SOC_NOPM, 0, 0, sun50i_h616_codec_lineout_src),
-> +	SND_SOC_DAPM_OUT_DRV("Line Out Ramp Controller",
-> +			     SUN50I_H616_DAC_AC_RAMP_REG,
-> +			     SUN50I_H616_RDEN, 0, NULL, 0),
-> +	SND_SOC_DAPM_OUTPUT("LINEOUT"),
-> +};
-> +
-> +static const struct snd_soc_component_driver sun50i_h616_codec_codec =3D=
- {
-> +	.controls   =3D sun50i_h616_codec_codec_controls,
-> +	.num_controls   =3D ARRAY_SIZE(sun50i_h616_codec_codec_controls),
-> +	.dapm_widgets   =3D sun50i_h616_codec_codec_widgets,
-> +	.num_dapm_widgets =3D ARRAY_SIZE(sun50i_h616_codec_codec_widgets),
-> +	.idle_bias_on   =3D 1,
-> +	.use_pmdown_time  =3D 1,
-> +	.endianness   =3D 1,
-> +};
-> +
-> +static const struct snd_kcontrol_new sun50i_h616_card_controls[] =3D {
-> +	SOC_DAPM_PIN_SWITCH("LINEOUT"),
-> +};
-> +
-> +static const struct snd_soc_dapm_widget sun50i_h616_codec_card_dapm_widg=
-ets[] =3D {
-> +	SND_SOC_DAPM_LINE("Line Out", NULL),
-> +	SND_SOC_DAPM_SPK("Speaker", sun4i_codec_spk_event),
-> +};
-> +
-> +/* Connect digital side enables to analog side widgets */
-> +static const struct snd_soc_dapm_route sun50i_h616_codec_card_routes[] =
-=3D {
-> +	/* DAC Routes */
-> +	{ "Left DAC", NULL, "DAC Enable" },
-> +	{ "Right DAC", NULL, "DAC Enable" },
-> +
-> +	/* Left Mixer Routes */
-> +	{ "Left Mixer", "DAC Playback Switch", "Left DAC" },
-> +	{ "Left Mixer", "DAC Reversed Playback Switch", "Right DAC" },
-> +
-> +	/* Right Mixer Routes */
-> +	{ "Right Mixer", "DAC Playback Switch", "Right DAC" },
-> +	{ "Right Mixer", "DAC Reversed Playback Switch", "Left DAC" },
-> +
-> +	/* Line Out Routes */
-> +	{ "Line Out Source Playback Route", "Stereo", "Left Mixer" },
-> +	{ "Line Out Source Playback Route", "Stereo", "Right Mixer" },
-> +	{ "Line Out Source Playback Route", "Mono Differential", "Left Mixer" },
-> +	{ "Line Out Source Playback Route", "Mono Differential", "Right Mixer" =
-},
-> +	{ "Line Out Ramp Controller", NULL, "Line Out Source Playback Route" },
-> +	{ "LINEOUT", NULL, "Line Out Ramp Controller" },
-> +};
-> +
-> +static struct snd_soc_card *sun50i_h616_codec_create_card(struct device =
-*dev)
-> +{
-> +	struct snd_soc_card *card;
-> +	int ret;
-> +
-> +	card =3D devm_kzalloc(dev, sizeof(*card), GFP_KERNEL);
-> +	if (!card)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	card->dai_link =3D sun4i_codec_create_link(dev, &card->num_links);
-> +	if (!card->dai_link)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	card->dai_link->playback_only =3D true;
-> +	card->dai_link->capture_only =3D false;
-> +
-> +	card->dev		=3D dev;
-> +	card->owner		=3D THIS_MODULE;
-> +	card->name		=3D "H616 Audio Codec";
+Ack.
 
-I get an error message, complaining about this name being too long:
 
-[    3.343325] ASoC: driver name too long 'H616 Audio Codec' -> 'H616_Audio=
-_Code'
-
-This happens when "name" is used as a fallback for a missing "driver_name"
-member. But its storage is limited to 16 characters, so we are short by
-one (for the NUL byte). I could fix that by adding:
-
-	card->driver_name	=3D "sun4i-codec";
-
-Cheers,
-Andre
-
-> +	card->controls		=3D sun50i_h616_card_controls;
-> +	card->num_controls	=3D ARRAY_SIZE(sun50i_h616_card_controls);
-> +	card->dapm_widgets	=3D sun50i_h616_codec_card_dapm_widgets;
-> +	card->num_dapm_widgets	=3D ARRAY_SIZE(sun50i_h616_codec_card_dapm_widge=
-ts);
-> +	card->dapm_routes	=3D sun50i_h616_codec_card_routes;
-> +	card->num_dapm_routes	=3D ARRAY_SIZE(sun50i_h616_codec_card_routes);
-> +	card->fully_routed	=3D true;
-> +
-> +	ret =3D snd_soc_of_parse_audio_routing(card, "allwinner,audio-routing");
-> +	if (ret)
-> +		dev_warn(dev, "failed to parse audio-routing: %d\n", ret);
-> +
-> +	return card;
-> +};
-> +
->  static const struct regmap_config sun4i_codec_regmap_config =3D {
->  	.reg_bits	=3D 32,
->  	.reg_stride	=3D 4,
-> @@ -1562,6 +1742,14 @@ static const struct regmap_config sun8i_v3s_codec_=
-regmap_config =3D {
->  	.max_register	=3D SUN8I_H3_CODEC_ADC_DBG,
->  };
-> =20
-> +static const struct regmap_config sun50i_h616_codec_regmap_config =3D {
-> +	.reg_bits	=3D 32,
-> +	.reg_stride	=3D 4,
-> +	.val_bits	=3D 32,
-> +	.max_register	=3D SUN50I_H616_DAC_AC_RAMP_REG,
-> +	.cache_type	=3D REGCACHE_NONE,
-> +};
-> +
->  struct sun4i_codec_quirks {
->  	const struct regmap_config *regmap_config;
->  	const struct snd_soc_component_driver *codec;
-> @@ -1647,6 +1835,15 @@ static const struct sun4i_codec_quirks sun8i_v3s_c=
-odec_quirks =3D {
->  	.has_reset	=3D true,
->  };
-> =20
-> +static const struct sun4i_codec_quirks sun50i_h616_codec_quirks =3D {
-> +	.regmap_config	=3D &sun50i_h616_codec_regmap_config,
-> +	.codec		=3D &sun50i_h616_codec_codec,
-> +	.create_card	=3D sun50i_h616_codec_create_card,
-> +	.reg_dac_fifoc	=3D REG_FIELD(SUN50I_H616_CODEC_DAC_FIFOC, 0, 31),
-> +	.reg_dac_txdata	=3D SUN8I_H3_CODEC_DAC_TXDATA,
-> +	.has_reset	=3D true,
-> +};
-> +
->  static const struct of_device_id sun4i_codec_of_match[] =3D {
->  	{
->  		.compatible =3D "allwinner,sun4i-a10-codec",
-> @@ -1672,6 +1869,10 @@ static const struct of_device_id sun4i_codec_of_ma=
-tch[] =3D {
->  		.compatible =3D "allwinner,sun8i-v3s-codec",
->  		.data =3D &sun8i_v3s_codec_quirks,
->  	},
-> +	{
-> +		.compatible =3D "allwinner,sun50i-h616-codec",
-> +		.data =3D &sun50i_h616_codec_quirks,
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, sun4i_codec_of_match);
-> @@ -1860,4 +2061,5 @@ MODULE_AUTHOR("Emilio L=C3=B3pez <emilio@elopez.com=
-.ar>");
->  MODULE_AUTHOR("Jon Smirl <jonsmirl@gmail.com>");
->  MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
->  MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-> +MODULE_AUTHOR("Ryan Walklin <ryan@testtoast.com");
->  MODULE_LICENSE("GPL");
-
+-- 
+With best wishes
+Dmitry
