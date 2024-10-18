@@ -1,50 +1,50 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6844204953;
-	Fri, 18 Oct 2024 19:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0EA204953;
+	Fri, 18 Oct 2024 19:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729278999; cv=none; b=p2yF2WmRlXAKvYYArownaYI6AOyE8VYInZhMKVhScdTAAbRTqBYNXM6/RnTmLX/VcMxo47BhTEX8bsURl/8BZ29ExezaYlteS+y3K+gSbWE2jtbHzbAiHpvI0gasUc+E5Lq0P0JjEPg4KI8JsQcijiW2lPpIBzmy+BQs/NkwyuI=
+	t=1729279010; cv=none; b=MHw7bQyG2LE2iblhkMnS7+pogajtIgZFLihVF2kO+Ne+/g0qTwBhb8IO1zgxL0Z/x4Gyvej6nLnUwA9ztz0K7uFT0gCqWVQ5WJt6hPnpiMJCrVl5ijgW8Guc+KFtaaGNpx55/qEr0KLWoUQ5XW3c1wFYDzcD5EkdH3p1z9LPz+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729278999; c=relaxed/simple;
-	bh=e923kI+Jv5/AzOAjBliLt1iUDkWvCbrwp4pFWNdW9J0=;
+	s=arc-20240116; t=1729279010; c=relaxed/simple;
+	bh=thKqWoCBgDOebG4M2yhTeOzHhDBYz3ChrWIrTcCkZxA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=HTx17r9+d73UVk7rDhcDbhhBFxmUfzsxL3EXylcLI8fSmpbkrkEIGN1w7PK70B8V20pv1XNb8f0VHxAID+w2zrAChBQoriEroHErF4S06VRyIfWXOo8mq6NqBZTioDXzcwl+G8+R/Od5n392U9mla1xLl/8OJr3Fuw4dnIXxJe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U4wAp0fB; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:CC; b=O7kpI9KGbWl/rLVd787uVDnmPAhWpTOEQ5JiaqEYO1iDqqolX/Rzt4ic5b6lLGWAWsXOEA1kiDJzq2fc+0Tg9Ue32RHoItr2MAp0JDF4N7R80feDRxMPLA9gLP++ER+Vum7cHfbrlJPc2EtFXa4NeD9TD6lLS5fAHBMqGR96xdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e5f700Ka; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U4wAp0fB"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I9Lj9X005377;
-	Fri, 18 Oct 2024 19:16:08 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e5f700Ka"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEogMh007916;
+	Fri, 18 Oct 2024 19:16:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	neQfViZ2X7x6tLhM9ij/8VDjlDIlc4P5Q7rzCGzSFWU=; b=U4wAp0fB68pGMWfu
-	ForoXFbTvdiGltVos1t7OsvSyC7wJst+mQFgjecCU0Ns6V7/wncoBxUdTyvYv21v
-	KeQy7npGXF22xIONPnRrMyhSE4ttiAIJg1u4cImTTomxNJxMhYLQvYTIiSARETi3
-	OhQilFq9LnhWmH10j6yL1hVV9GN495q6ZrAYDrgktabQ8nPn4RKQmxRicWVjVmgR
-	s6wGSkLglRAI05O3dxmF7m5qLY6GghfWeV3pLpLlceEtZW+paNBMKcoK72kmAzdK
-	7EkwNOJ79U1iX8Axr8aVDhbmcL7TFMICq2uVD9lB1fykPPH2qpNJ6/EAHZYb2o2m
-	uv6TaA==
+	McqW9h1wHCvezW+fNwgixUoznF00M2YN36oj9gyjg5k=; b=e5f700Ka/mqrAAF4
+	WJAVEWd5iqaEuNEzW/BA4mthQXWksm2i63XYLhCKl9ZBXZJZdTUMnEokVtPOKEuf
+	Zdx0zumvXh0IXMSLp/YA7QuMeURFubnv+9/qRG8hKBXfdZsX6gP9S7pAshCPF/Dq
+	BSgWS4R3ML8QNHTDjH9pCL0D7t/RbLjDtcIvd325J+z/5+el1MeZL75VK4jy9Xah
+	EFfnbCG7+OiG56XpeBKs8HG3Ic+4RbRc4gqGZ57FqRuks8cmxAHRXcuzypWwKIAP
+	A7U+lhyvfkLZQe/xPZL/n0Il9tDpoql0m9hNMCGlhi8B4qX0dvT5x0CqUJaYpzjB
+	rNXiQw==
 Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bmys9qt8-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42b5hsv9pn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 19:16:08 +0000 (GMT)
+	Fri, 18 Oct 2024 19:16:19 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IJG64Z005339
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IJGHTG005428
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 19:16:06 GMT
+	Fri, 18 Oct 2024 19:16:17 GMT
 Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 18 Oct 2024 12:16:01 -0700
+ 15.2.1544.9; Fri, 18 Oct 2024 12:16:12 -0700
 From: Taniya Das <quic_tdas@quicinc.com>
-Date: Sat, 19 Oct 2024 00:45:39 +0530
-Subject: [PATCH 03/11] dt-bindings: clock: Add Qualcomm QCS615 Camera clock
- controller
+Date: Sat, 19 Oct 2024 00:45:41 +0530
+Subject: [PATCH 05/11] dt-bindings: clock: Add Qualcomm QCS615 Display
+ clock controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241019-qcs615-mm-clockcontroller-v1-3-4cfb96d779ae@quicinc.com>
+Message-ID: <20241019-qcs615-mm-clockcontroller-v1-5-4cfb96d779ae@quicinc.com>
 References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
 In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -82,52 +82,53 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: w_6mr95Q0XdHHjAGXVsGmdCRlb-AlKHr
-X-Proofpoint-ORIG-GUID: w_6mr95Q0XdHHjAGXVsGmdCRlb-AlKHr
+X-Proofpoint-GUID: -YNXrUTw6s5FsTR8tKPZuYrbs6wj1U3e
+X-Proofpoint-ORIG-GUID: -YNXrUTw6s5FsTR8tKPZuYrbs6wj1U3e
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410180123
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180123
 
-Add DT bindings for the Camera clock on QCS615 platforms. Add the
+Add DT bindings for the Display clock on QCS615 platforms. Add the
 relevant DT include definitions as well.
 
 Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 ---
- .../bindings/clock/qcom,qcs615-camcc.yaml          |  60 +++++++++++
- include/dt-bindings/clock/qcom,qcs615-camcc.h      | 110 +++++++++++++++++++++
- 2 files changed, 170 insertions(+)
+ .../bindings/clock/qcom,qcs615-dispcc.yaml         | 73 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,qcs615-dispcc.h     | 52 +++++++++++++++
+ 2 files changed, 125 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..0abd277aa3ddd2e1384d0af59699dc1deda5575b
+index 0000000000000000000000000000000000000000..43346ae7e56ef88bc57e450f6f6fe428c649215e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml
-@@ -0,0 +1,60 @@
++++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.yaml
+@@ -0,0 +1,73 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/qcom,qcs615-camcc.yaml#
++$id: http://devicetree.org/schemas/clock/qcom,qcs615-dispcc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Qualcomm Camera Clock & Reset Controller on QCS615
++title: Qualcomm Display Clock & Reset Controller on QCS615
 +
 +maintainers:
++  - Ajit Pandey <quic_ajipan@quicinc.com>
 +  - Taniya Das <quic_tdas@quicinc.com>
 +
 +description: |
-+  Qualcomm camera clock control module provides the clocks, resets and power
++  Qualcomm display clock control module provides the clocks, resets and power
 +  domains on QCS615
 +
-+  See also: include/dt-bindings/clock/qcom,qcs615-camcc.h
++  See also: include/dt-bindings/clock/qcom,qcs615-dispcc.h
 +
 +properties:
 +  compatible:
-+    const: qcom,qcs615-camcc
++    const: qcom,qcs615-dispcc
 +
 +  reg:
 +    maxItems: 1
@@ -135,6 +136,12 @@ index 0000000000000000000000000000000000000000..0abd277aa3ddd2e1384d0af59699dc1d
 +  clocks:
 +    items:
 +      - description: Board XO source
++      - description: GPLL0 clock source from GCC
++      - description: Byte clock from DSI PHY0
++      - description: Pixel clock from DSI PHY0
++      - description: Pixel clock from DSI PHY1
++      - description: Display port PLL link clock
++      - description: Display port PLL VCO DIV clock
 +
 +  '#clock-cells':
 +    const: 1
@@ -158,130 +165,78 @@ index 0000000000000000000000000000000000000000..0abd277aa3ddd2e1384d0af59699dc1d
 +examples:
 +  - |
 +    #include <dt-bindings/clock/qcom,rpmh.h>
-+    clock-controller@ad00000 {
-+      compatible = "qcom,qcs615-camcc";
-+      reg = <0xad00000 0x10000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>;
-+
++    #include <dt-bindings/clock/qcom,qcs615-gcc.h>
++    clock-controller@af00000 {
++      compatible = "qcom,qcs615-dispcc";
++      reg = <0x0af00000 0x20000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
++               <&mdss_dsi0_phy 0>,
++               <&mdss_dsi0_phy 1>,
++               <&mdss_dsi1_phy 0>,
++               <&mdss_dp_phy   0>,
++               <&mdss_dp_vco   0>;
 +      #clock-cells = <1>;
 +      #reset-cells = <1>;
 +      #power-domain-cells = <1>;
 +    };
 +...
-diff --git a/include/dt-bindings/clock/qcom,qcs615-camcc.h b/include/dt-bindings/clock/qcom,qcs615-camcc.h
+diff --git a/include/dt-bindings/clock/qcom,qcs615-dispcc.h b/include/dt-bindings/clock/qcom,qcs615-dispcc.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..aec57dddc06735a5c6c48a1e93a8c498bdb8726a
+index 0000000000000000000000000000000000000000..9a29945c5762ce06285a2f4e6a55c13bfaadc5c2
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,qcs615-camcc.h
-@@ -0,0 +1,110 @@
++++ b/include/dt-bindings/clock/qcom,qcs615-dispcc.h
+@@ -0,0 +1,52 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
 + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_QCS615_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_QCS615_H
++#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_QCS615_H
++#define _DT_BINDINGS_CLK_QCOM_DISP_CC_QCS615_H
 +
-+/* CAM_CC clocks */
-+#define CAM_CC_BPS_AHB_CLK					0
-+#define CAM_CC_BPS_AREG_CLK					1
-+#define CAM_CC_BPS_AXI_CLK					2
-+#define CAM_CC_BPS_CLK						3
-+#define CAM_CC_BPS_CLK_SRC					4
-+#define CAM_CC_CAMNOC_ATB_CLK					5
-+#define CAM_CC_CAMNOC_AXI_CLK					6
-+#define CAM_CC_CCI_CLK						7
-+#define CAM_CC_CCI_CLK_SRC					8
-+#define CAM_CC_CORE_AHB_CLK					9
-+#define CAM_CC_CPAS_AHB_CLK					10
-+#define CAM_CC_CPHY_RX_CLK_SRC					11
-+#define CAM_CC_CSI0PHYTIMER_CLK					12
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC				13
-+#define CAM_CC_CSI1PHYTIMER_CLK					14
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC				15
-+#define CAM_CC_CSI2PHYTIMER_CLK					16
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC				17
-+#define CAM_CC_CSIPHY0_CLK					18
-+#define CAM_CC_CSIPHY1_CLK					19
-+#define CAM_CC_CSIPHY2_CLK					20
-+#define CAM_CC_FAST_AHB_CLK_SRC					21
-+#define CAM_CC_ICP_ATB_CLK					22
-+#define CAM_CC_ICP_CLK						23
-+#define CAM_CC_ICP_CLK_SRC					24
-+#define CAM_CC_ICP_CTI_CLK					25
-+#define CAM_CC_ICP_TS_CLK					26
-+#define CAM_CC_IFE_0_AXI_CLK					27
-+#define CAM_CC_IFE_0_CLK					28
-+#define CAM_CC_IFE_0_CLK_SRC					29
-+#define CAM_CC_IFE_0_CPHY_RX_CLK				30
-+#define CAM_CC_IFE_0_CSID_CLK					31
-+#define CAM_CC_IFE_0_CSID_CLK_SRC				32
-+#define CAM_CC_IFE_0_DSP_CLK					33
-+#define CAM_CC_IFE_1_AXI_CLK					34
-+#define CAM_CC_IFE_1_CLK					35
-+#define CAM_CC_IFE_1_CLK_SRC					36
-+#define CAM_CC_IFE_1_CPHY_RX_CLK				37
-+#define CAM_CC_IFE_1_CSID_CLK					38
-+#define CAM_CC_IFE_1_CSID_CLK_SRC				39
-+#define CAM_CC_IFE_1_DSP_CLK					40
-+#define CAM_CC_IFE_LITE_CLK					41
-+#define CAM_CC_IFE_LITE_CLK_SRC					42
-+#define CAM_CC_IFE_LITE_CPHY_RX_CLK				43
-+#define CAM_CC_IFE_LITE_CSID_CLK				44
-+#define CAM_CC_IFE_LITE_CSID_CLK_SRC				45
-+#define CAM_CC_IPE_0_AHB_CLK					46
-+#define CAM_CC_IPE_0_AREG_CLK					47
-+#define CAM_CC_IPE_0_AXI_CLK					48
-+#define CAM_CC_IPE_0_CLK					49
-+#define CAM_CC_IPE_0_CLK_SRC					50
-+#define CAM_CC_JPEG_CLK						51
-+#define CAM_CC_JPEG_CLK_SRC					52
-+#define CAM_CC_LRME_CLK						53
-+#define CAM_CC_LRME_CLK_SRC					54
-+#define CAM_CC_MCLK0_CLK					55
-+#define CAM_CC_MCLK0_CLK_SRC					56
-+#define CAM_CC_MCLK1_CLK					57
-+#define CAM_CC_MCLK1_CLK_SRC					58
-+#define CAM_CC_MCLK2_CLK					59
-+#define CAM_CC_MCLK2_CLK_SRC					60
-+#define CAM_CC_MCLK3_CLK					61
-+#define CAM_CC_MCLK3_CLK_SRC					62
-+#define CAM_CC_PLL0						63
-+#define CAM_CC_PLL1						64
-+#define CAM_CC_PLL2						65
-+#define CAM_CC_PLL2_OUT_AUX2					66
-+#define CAM_CC_PLL3						67
-+#define CAM_CC_SLOW_AHB_CLK_SRC					68
-+#define CAM_CC_SOC_AHB_CLK					69
-+#define CAM_CC_SYS_TMR_CLK					70
++/* DISP_CC clocks */
++#define DISP_CC_MDSS_AHB_CLK					0
++#define DISP_CC_MDSS_AHB_CLK_SRC				1
++#define DISP_CC_MDSS_BYTE0_CLK					2
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				3
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				4
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				5
++#define DISP_CC_MDSS_DP_AUX_CLK					6
++#define DISP_CC_MDSS_DP_AUX_CLK_SRC				7
++#define DISP_CC_MDSS_DP_CRYPTO_CLK				8
++#define DISP_CC_MDSS_DP_CRYPTO_CLK_SRC				9
++#define DISP_CC_MDSS_DP_LINK_CLK				10
++#define DISP_CC_MDSS_DP_LINK_CLK_SRC				11
++#define DISP_CC_MDSS_DP_LINK_DIV_CLK_SRC			12
++#define DISP_CC_MDSS_DP_LINK_INTF_CLK				13
++#define DISP_CC_MDSS_DP_PIXEL1_CLK				14
++#define DISP_CC_MDSS_DP_PIXEL1_CLK_SRC				15
++#define DISP_CC_MDSS_DP_PIXEL_CLK				16
++#define DISP_CC_MDSS_DP_PIXEL_CLK_SRC				17
++#define DISP_CC_MDSS_ESC0_CLK					18
++#define DISP_CC_MDSS_ESC0_CLK_SRC				19
++#define DISP_CC_MDSS_MDP_CLK					20
++#define DISP_CC_MDSS_MDP_CLK_SRC				21
++#define DISP_CC_MDSS_MDP_LUT_CLK				22
++#define DISP_CC_MDSS_NON_GDSC_AHB_CLK				23
++#define DISP_CC_MDSS_PCLK0_CLK					24
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				25
++#define DISP_CC_MDSS_ROT_CLK					26
++#define DISP_CC_MDSS_ROT_CLK_SRC				27
++#define DISP_CC_MDSS_RSCC_AHB_CLK				28
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				29
++#define DISP_CC_MDSS_VSYNC_CLK					30
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				31
++#define DISP_CC_PLL0						32
++#define DISP_CC_XO_CLK						33
 +
-+/* CAM_CC power domains */
-+#define BPS_GDSC						0
-+#define IFE_0_GDSC						1
-+#define IFE_1_GDSC						2
-+#define IPE_0_GDSC						3
-+#define TITAN_TOP_GDSC						4
++/* DISP_CC power domains */
++#define MDSS_CORE_GDSC						0
 +
-+/* CAM_CC resets */
-+#define CAM_CC_BPS_BCR						0
-+#define CAM_CC_CAMNOC_BCR					1
-+#define CAM_CC_CCI_BCR						2
-+#define CAM_CC_CPAS_BCR						3
-+#define CAM_CC_CSI0PHY_BCR					4
-+#define CAM_CC_CSI1PHY_BCR					5
-+#define CAM_CC_CSI2PHY_BCR					6
-+#define CAM_CC_ICP_BCR						7
-+#define CAM_CC_IFE_0_BCR					8
-+#define CAM_CC_IFE_1_BCR					9
-+#define CAM_CC_IFE_LITE_BCR					10
-+#define CAM_CC_IPE_0_BCR					11
-+#define CAM_CC_JPEG_BCR						12
-+#define CAM_CC_LRME_BCR						13
-+#define CAM_CC_MCLK0_BCR					14
-+#define CAM_CC_MCLK1_BCR					15
-+#define CAM_CC_MCLK2_BCR					16
-+#define CAM_CC_MCLK3_BCR					17
-+#define CAM_CC_TITAN_TOP_BCR					18
++/* DISP_CC resets */
++#define DISP_CC_MDSS_CORE_BCR					0
++#define DISP_CC_MDSS_RSCC_BCR					1
 +
 +#endif
 
