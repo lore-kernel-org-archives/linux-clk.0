@@ -1,153 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B1218CBF5;
-	Fri, 18 Oct 2024 22:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3CB1922E4
+	for <linux-clk@vger.kernel.org>; Sat, 19 Oct 2024 00:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729290533; cv=none; b=XbVA/gzCiXgedhg0uV8PkR0WG2Y+5fYGb/k674ud9qpG6K9RPJLUQnG47F59tDKR8n9ZRDrOqV/yezC99bGfgoeGA0sLQX99xCVLVyBoZ1ge7qGNQvbdrvETjTJdDnmwSqAS7mram8+EGUnkBwe06V86TQiWHHsOsdcN6zN9Yc4=
+	t=1729298337; cv=none; b=CoC/TuKrAg2Veel/KX/nxUSyDUcc7sufWoNToES2YVX8+bQ2hgb6uLCQSsqulSWZe+nq+rCKjv5TPiPIcKdM3WcBtMf8lBov5P8bSymkkT1wP9xQH+Jf9gSl3wQ+w4gFb9GiXakMiAUg3vzPsyax4MpEi3NRMduof6bF6Kmly3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729290533; c=relaxed/simple;
-	bh=G7Ash0PGoqdQ1AiafmIA65zN/S2zqb3jjZ3jwkABAmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=J/h+5MnbWEJ2cEmbXFbc3MLoVuAJGfvQaja0GbOUfVHWmChsxkTb6lBwQeg9g9URq6yLOliakZKlllA2ivEY1IecO7MZjWa06ylCPhkwVfxv7yM8WpIAJY54uaga++uU+JVotcw1FyN2snqnmrXNnW6CspTGOI8qvKfthIavcFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgTGP/U7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729298337; c=relaxed/simple;
+	bh=Mewcl59dRlGPPCpRuSRwPywr6ycIDIWaUH/SfdWIQ8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=omID6e3kTkr+bblO+UgKsTNORUg0/vVl8Ssnl/CLC+lP+056xBHkNOc9fZ+eh3k37EEQIUKo6bAoXeMRwpMClIaOSKczho5AyatQ23BNVrSzSzTYsxDHMkWn408Icz1Y/iRXUqBNKUBF4wuVPISjB9Svyb/zGbfT962dpiZPG48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u2Se86gg; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgTGP/U7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83466C4CEC3;
-	Fri, 18 Oct 2024 22:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729290532;
-	bh=G7Ash0PGoqdQ1AiafmIA65zN/S2zqb3jjZ3jwkABAmI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TgTGP/U7RKKcvPPDH/bduN4P+U9gnrm0Owu3NhDvqbrFzpKYGJofveh67iMhF47gx
-	 DxVHWjcKgwrn0iaN76NwGiQWk7/xxcY4rQ+L7pp1Nd2Kkk8TtzJo0YFYXbvIMxdEF0
-	 J98vlhBXDMn0lJZ7WllGBfhRVDNosEI0FDeDXB/ThdbS9hWCIKjA2foUu2K9he0EGJ
-	 S+NQxiL+7x4VLYidgjOMEj9kW0pDFYr1mO2ilHgqV71iwnLywxOWjlcAupEJSfjrS9
-	 2j1cm0fzRHFBQBJ78vHz0A0bjwC5hD5OBpJSPRFaKgLnRJcC4ltNXYLLZf1cuA+LuL
-	 BJ2cjkBNl6jwg==
-Date: Fri, 18 Oct 2024 17:28:50 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
- parsed from DT
-Message-ID: <20241018222850.GA766393@bhelgaas>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u2Se86gg"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so3095849e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2024 17:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729298333; x=1729903133; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0M41lobMzDtVDXSER1bmN9AsQKoidShYGX+Z+FE6IRg=;
+        b=u2Se86ggxXhSy3+mSEOGZxWNPamUQzT3i6si7Xi+iBE6XsK1OlkAoS8qvkiBybH5fg
+         rB/wEn+Q1KalHsEHGQPAJX+LcR38Wqcp8jor1kRV4/8ZhzIa7n5Bdae6mKFeVblPD7zL
+         6fs2jb98Rcjnyxmgwz4eMK0I4gPvILYgD9U0eW81HDkVzIB7P9PHAAWX7l6adRATkaOf
+         c/cjJ2VCZlU2VYEAKiunx/Taf8g62Kgod9fME1P92PuyTiCmh2Ftk3Y0iKrV/6DKsn9U
+         OCM4Q2Qgw/gVkIwwyqQXi0NEmpW9zSLgAMuL7qH39bWwCjHNjvrSjYxPKetTd2TLh7Iy
+         VHpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729298333; x=1729903133;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0M41lobMzDtVDXSER1bmN9AsQKoidShYGX+Z+FE6IRg=;
+        b=tzHdNtjUxRslnhU9dpyJ0trTrkr6WqcoVwzJxDz9cz7b5jW8hyshPLFtZdUuZ2hSbL
+         jwvwkryGVvZ8eX7rHMuVFYxA99LcfXDRZ5ZS1mPYnJqU34PXtS4Z11kqB9rWUbej1jGX
+         o9ybWnxCwmHMqZEhaq7kcZruSd+g/ZpAiOH7f1aqnc2BdHbKRpbH3rznrWbi1ViqSKP2
+         6pqJxtpi3NYkEvaERJjTyZrrulsp/8At6aCi/WsUniuMWJxWPmMafR4bHV8WM5N14YQG
+         4NJiBq9uMt5G0kdo+ewUuNYzDtP4Kjkkr6e1UE7d9EfiNEU3+6Ky4nuwicejFl5RX6yQ
+         347w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCbNEM6S+4fzc1t63xKfQqkaoqEvRm/5lPyk6crd6jWv5xNhmsSjvCRb4E4tpChv5tO6Cjf1y+t3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYEKRxBNxGbh+XTYfLVi4vN4GjQHOiSdIA656v5FfZ3OdtHxp9
+	VygOGF8M111Nzp8FJ/kG3Wc+m3RkXZ0kzvqHA2FXdcPkrqtFz3BsEd/cyrnTMVc=
+X-Google-Smtp-Source: AGHT+IF7fBEeWmNkccNzd31LUcjDvOyf3yMzraYUGO6AugKRPwkcFosfUe4YdEuEFjihSL5BW7Y+2g==
+X-Received: by 2002:a05:6512:4009:b0:52c:fd46:bf07 with SMTP id 2adb3069b0e04-53a154ce86amr3097967e87.49.1729298333228;
+        Fri, 18 Oct 2024 17:38:53 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b076d0asm1272577a12.16.2024.10.18.17.38.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 17:38:52 -0700 (PDT)
+Message-ID: <d3658f34-c24a-47c4-a8fc-989de009b4fb@linaro.org>
+Date: Sat, 19 Oct 2024 01:38:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxJXZ9R-Qp9CNmJk@apocalypse>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] clk: qcom: camcc-qcs615: Add QCS615 camera clock
+ controller driver
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-4-4cfb96d779ae@quicinc.com>
+ <f5exjvacw4gz7s7byxz6aux7jt3kczn5waio3f3dukpdvzmkvi@c65xjssv4aqy>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <f5exjvacw4gz7s7byxz6aux7jt3kczn5waio3f3dukpdvzmkvi@c65xjssv4aqy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 02:41:11PM +0200, Andrea della Porta wrote:
-> On 20:08 Mon 07 Oct     , Bjorn Helgaas wrote:
-> ... 
+On 18/10/2024 21:22, Dmitry Baryshkov wrote:
+>> +static struct gdsc ife_1_gdsc = {
+>> +	.gdscr = 0xa004,
+>> +	.en_rest_wait_val = 0x2,
+>> +	.en_few_wait_val = 0x2,
+>> +	.clk_dis_wait_val = 0xf,
+>> +	.pd = {
+>> +		.name = "ife_1_gdsc",
+>> +	},
+>> +	.pwrsts = PWRSTS_OFF_ON,
+>> +	.flags = POLL_CFG_GDSCR,
+>> +};
+> Shouldn't IFE GDSCs have titan_top as a parent?
 
-> > Yes, this is exactly the problem.  The pci@0 parent and child
-> > addresses in "ranges" are both in the PCI address space.  But we
-> > start with pdev->resource[N], which is a CPU address.  To get the PCI
-> > address, we need to apply pci_bus_address().  If the host bridge
-> > windows are set up correctly, the window->offset used in
-> > pcibios_resource_to_bus() should yield the PCI bus address.
-> 
-> You mean something like this, I think:
-> 
-> @@ -129,7 +129,7 @@ static int of_pci_prop_ranges(struct pci_dev *pdev, struct of_changeset *ocs,
->                 if (of_pci_get_addr_flags(&res[j], &flags))
->                         continue;
->  
-> -               val64 = res[j].start;
-> +               val64 = pci_bus_address(pdev, &res[j] - pdev->resource);
->                 of_pci_set_address(pdev, rp[i].parent_addr, val64, 0, flags,
->                                    false);
->                 if (pci_is_bridge(pdev)) {
+Ack, usually, this looks wrong.
 
-Yes.
-
-> > I think it should look like this:
-> > 
-> >   pci@0: <0x82000000 0x0 0x00000000 0x82000000 0x0 0x00000000 0x0 0x600000>;
-> 
-> indeed, with the above patch applied, the result is exactly as you expected.
-> ...
-
-> > > > But I don't think it works in general because there's no
-> > > > requirement that the host bridge address translation be that
-> > > > simple.  For example, if we have two host bridges, and we want
-> > > > each to have 2GB of 32-bit PCI address space starting at 0x0,
-> > > > it might look like this:
-> > > > 
-> > > >   0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
-> > > >   0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
-> > > > 
-> > > > In this case simply ignoring the high 32 bits of the CPU
-> > > > address isn't the correct translation for the second host
-> > > > bridge.  I think we should look at each host bridge's
-> > > > "ranges", find the difference between its parent and child
-> > > > addresses, and apply the same difference to everything below
-> > > > that bridge.
-> > > 
-> > > Not sure I've got this scenario straight: can you please provide
-> > > the topology and the bit setting (32/64 bit) for those ranges?
-> > > Also, is this scenario coming from a real use case or is it
-> > > hypothetical?
-> > 
-> > This scenario is purely hypothetical, but it's a legal topology
-> > that we should handle correctly.  It's two host bridges, with
-> > independent PCI hierarchies below them:
-> > 
-> >   Host bridge A: [mem 0x2_00000000-0x2_7fffffff window] (bus address 0x00000000-0x7fffffff)
-> >   Host bridge B: [mem 0x2_80000000-0x2_ffffffff window] (bus address 0x00000000-0x7fffffff)
-> > 
-> > Bridge A has an MMIO aperture at CPU addresses
-> > 0x2_00000000-0x2_7fffffff, and when it initiates PCI transactions on
-> > its secondary side, the PCI address is CPU_addr - 0x2_00000000.
-> > 
-> > Similarly, bridge B has an MMIO aperture at CPU addresses 
-> > 0x2_80000000-0x2_ffffffff, and when it initiates PCI transactions on 
-> > its secondary side, the PCI address is CPU_addr - 0x2_80000000.
-> > 
-> > Both hierarchies use PCI bus addresses in the 0x00000000-0x7fffffff
-> > range.  In a topology like this, you can't convert a bus address back
-> > to a CPU address unless you know which hierarchy it's in.
-> > pcibios_bus_to_resource() takes a pci_bus pointer, which tells you
-> > which hierarchy (and which host bridge address translation) to use.
-> 
-> Agreed. While I think about how to adjust that specific patch,i
-> let's drop it from this patchset since the aforementioned change is
-> properly fixing the translation issue.
-
-OK.  I assume you mean to drop the "PCI: of_property: Sanitize 32 bit
-PCI address parsed from DT" patch?  Or replace it with the
-pci_bus_address() addition above?
-
-Bjorn
+---
+bod
