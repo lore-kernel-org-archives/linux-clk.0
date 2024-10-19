@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067F11CCB38;
-	Sat, 19 Oct 2024 05:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBB728EF;
+	Sat, 19 Oct 2024 06:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729317391; cv=none; b=nmy2ezZscbL5AYZwbjqCXezDI8sgGi+yd9UGkhsFebwL798ZjMnYkddf7R4qEDWpO9z4CL4vzfcU/iGu0J9bpU3psTptfo5tN+BYeyDUNes71kJj3p1jZNuzjF12dBlPmwRVl/K94z21uj/46Ru/B2IsvVwTvKNn2PkxDlwDl4Q=
+	t=1729317695; cv=none; b=RDyk7ggpj2lbQVKX2HemrmYII0NU52ROZUPRXpqVJfsHqbYEN0p9cKo0JUyW3BTLlJsXPhawGu96uTIgljp3NWNiWqH5K/iiVTHEpgvnsxm5bK4bmF8BedgQJkuUEmQJzj2bgjnBBo/NV85YxJo+Coh4Pie0Q874MEvpE+NBS7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729317391; c=relaxed/simple;
-	bh=b5b4LY3dZKio27Rh7DTB+kLmPwIAeyavRYt/eXrOWjs=;
+	s=arc-20240116; t=1729317695; c=relaxed/simple;
+	bh=+Fnqmn6BOqKAZ8dtvHzU7eGaxF36LgiOVums7PQkoCk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=u3PsEnFn88kME1oO+g6JJ2oUI5p+f287Rd4o4tfKe2PqTchwW1IU/bcRQZnh0hdNQhWxb0ceRsxbKIScvAS5OFynKCiM6SdnjYT3fNgVTRd1ait6aGOovh9phIPPphtuOKD0V41etdyOwF+pN17KxKT6eioNBhdXrSC063MkVA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8zSQrzX; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=NPkJYl7c1pQMKZ7lQgHoFhPNx3gtjphqwBX8kfdatu1xy/XBYUujRPCbned7Mw55YZT1DNz75cJbt+YcX1r2UlBZXSiCMdhEUvhXdtDsTX/07zXrlFTjBX5PPu4p9+R1LfZi7Ae3aUPHw2R/Cpk71fPZfYJqeuS1Tmsg8evQoAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WU8mA0dy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8zSQrzX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5E9C4CEC5;
-	Sat, 19 Oct 2024 05:56:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WU8mA0dy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24962C4CEC5;
+	Sat, 19 Oct 2024 06:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729317390;
-	bh=b5b4LY3dZKio27Rh7DTB+kLmPwIAeyavRYt/eXrOWjs=;
+	s=k20201202; t=1729317695;
+	bh=+Fnqmn6BOqKAZ8dtvHzU7eGaxF36LgiOVums7PQkoCk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=b8zSQrzX3j48lS9xgwwlNdaleIZeuC9FGNWAcOS6yg+fNeAWgvJzxkV4/QKGYLVMZ
-	 CRFG9QebUF496vvbdOddO2quSYDrBm7WzENbPXE6irTqtdmmZl4HRZzKwc/uAKwns8
-	 udFBU55QVuEaej6ppKTDg+JFsopQEwx0fbeIV0mwDcpu7PyYi0IVwJMWB4Oel9QWdh
-	 If/tuEqkD34A1FRXVSR7HkPd7Qu+lvo0fWrJYPVGr0cdnNxJntaiROfxlYd72Rd9ec
-	 AtQ2LliDUlRBQj07tO6CxcHwXr8IGRX1J4J4dpjyrVbNLT9IZzIROzccSnFi0oSbM3
-	 E4SKGvsMCy7Dw==
-Message-ID: <c0afdf9f8c9773ef83274cb119d14c90.sboyd@kernel.org>
+	b=WU8mA0dycis5BqRUdQ++nWW3OcFmBpMlJR+DaH+tEC4SviJ0LEFw/QWKtTxKjXAdd
+	 q24nSw7hPOkFL6IEHtpFRk1+ucVc93Hum5KvJ3BzN/ri4emOhVeksvaQU/DUdcPDpQ
+	 YZye4SHzCfvd/C5d1o2RHXxLY7VL+FQCYOzyw8WB+1VvqxtRMk3STd6SxG8PMXmEDH
+	 n/2ZDeG9h/71xFAfXWWPHoJJ4qeybNmk2SsaKlhYU+DhOZ1PlWfvBgkAiIanPuqy33
+	 R9az8D0Tmm29OhCmmArNlJaRuqgwyOLbHQ/5uP5hNU85RR5N4I92IYaKFm8Ls/LNRK
+	 SfnmM+3CD9mFA==
+Message-ID: <26a9c9278d66511238e11eac619db9fa.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,49 +35,42 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241018-clk_bulk_ena_fix-v3-1-57e8bb82460c@collabora.com>
-References: <20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com> <20241018-clk_bulk_ena_fix-v3-1-57e8bb82460c@collabora.com>
-Subject: Re: [PATCH v3 1/4] clk: Provide devm_clk_bulk_get_all_enabled() helper
+In-Reply-To: <ab1fa4c9-6b4d-41a4-b337-ce9d7f5052ec@tuxon.dev>
+References: <20240916-lan969x-clock-v1-0-0e150336074d@microchip.com> <a20e6927d38aed4e5b1cb1f49346ca29.sboyd@kernel.org> <ab1fa4c9-6b4d-41a4-b337-ce9d7f5052ec@tuxon.dev>
+Subject: Re: [PATCH 0/4] clk: lan966x: add support for lan969x SoC clock driver
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Helgaas <bhelgaas@google.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
-Date: Fri, 18 Oct 2024 22:56:28 -0700
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor+dt@kernel.org>, Daniel Machon <daniel.machon@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, claudiu beznea <claudiu.beznea@tuxon.dev>
+Date: Fri, 18 Oct 2024 23:01:32 -0700
 User-Agent: alot/0.10
 
-Quoting Cristian Ciocaltea (2024-10-17 16:17:29)
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 82ae1f26e634572b943d18b8d86267f0a69911a6..0d0fe364b66a8590d5e7c63dc=
-6c1e70c59d53e89 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -230,25 +239,27 @@ int __must_check devm_clk_bulk_get_all_enable(struc=
-t device *dev,
->                 return -ENOMEM;
-> =20
->         ret =3D clk_bulk_get_all(dev, &devres->clks);
-> -       if (ret > 0) {
-> -               *clks =3D devres->clks;
-> -               devres->num_clks =3D ret;
-> -       } else {
-> -               devres_free(devres);
-> -               return ret;
-> -       }
-> +       if (ret <=3D 0)
-> +               goto err_free_devres;
+Quoting claudiu beznea (2024-10-18 01:34:16)
+>=20
+>=20
+> On 18.10.2024 01:59, Stephen Boyd wrote:
+> > Quoting Daniel Machon (2024-09-16 02:49:18)
+> >> Add support for the lan969x SoC clock driver in the existing lan966x
+> >> driver. The lan969x clock controller contains 3 PLLs - cpu_clk, ddr_clk
+> >> and sys_clk which generates and supplies the clock to various
+> >> peripherals within the SoC.
+> >>
+> >> Patch #1 adds compatible strings for lan969x SKU's in the dt-bindings
+> >>
+> >> Patch #2 makes the clk_names var const char * const
+> >>
+> >> Patch #3 prepares the lan966x driver for lan969x, by adding private
+> >>          match data.
+> >>
+> >> Patch #4 adds support for lan969x
+> >>
+> >> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> >>
+> >> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> >=20
+> > Am I supposed to pick up microchip clk patches myself this time?
+>=20
+> It's on my track. I already have it on my local queue for a while. Sorry
+> for not mentioning it yet. I need to run some tests.
+>=20
 
-Please don't use goto so that the diff is minimized.
-
-> +
-> +       *clks =3D devres->clks;
-> +       devres->num_clks =3D ret;
-> =20
->         ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
-> -       if (!ret) {
-> -               devres_add(dev, devres);
-> -       } else {
-> +       if (ret) {
->                 clk_bulk_put_all(devres->num_clks, devres->clks);
-> -               devres_free(devres);
-> +               goto err_free_devres;
-
-		return ret;
+Cool. Thanks for taking care of it!
