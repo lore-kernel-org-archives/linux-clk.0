@@ -1,131 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B084818E022;
-	Sat, 19 Oct 2024 10:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A483818FC67;
+	Sat, 19 Oct 2024 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729333973; cv=none; b=dIdAe/fdc12kxs4XLt5glneEGuWiySI8Miah828fZ15URj/193IdwAFoJTGqAiRaoUq65y1wqR5cIeCdzJ9nfCghHLx9kz7blm/4yHuhq3Fnwweqzx13eH1XmVHGKk0qdqIbs+UGMFxZdgV/kVxQd85m8RWcaGZ8bJoozN9uUhc=
+	t=1729336575; cv=none; b=M+G0Pk0qfLJe8x1abj3fSqK56UuhsVuHBq3XP8S7to13bR4F9z46eurYvZmLr7h+OfPhHiXUjwHLfU42hFtGQ/suLgvayJnWQaSls8cO3Q4iH1SBaHFjHESapMaXTB9M3cVYl0i9Zq1TCDTKJPId6aPhZn68E07a69QH3667OEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729333973; c=relaxed/simple;
-	bh=vCdvQlxKqra+X74MargcJiMMmT07oNyB3P22eXEaw+Y=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=NPq8Ad+8Gc13fJor+MXJvcqpN7uMLKMmL23U3+s6qp3MsD2HsVlWbH8zZyVtL7mMs3LBH9U9646Op/S5zmPm2NPLq1aFiVjRrcXB7hE1nl+3bTMvB5LykBoTdis61yfIa8jwDDniBegpilng2gWvv48brZpXoWGD4g+a+NNg0yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qX4injw6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729336575; c=relaxed/simple;
+	bh=zy6eBkC6mTD47sGFuSu/kE6O5nq6hr0S/KoQYOZztNY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SPkwe222esR3OHcfLhefl+uno4tWjCyZfmoQ7/SgnNYn6IxGCV+gfMZttxCfdfZtzcS8J/FR1ICDX66xkonHMPPEoE1hnYIbBlSz2seD8Jd7GO40zOpagTs6a3z12H+EKI4aYJTjKO/Nb3S2uCBsMXQWfS/xp0iyLOb4rCHLCUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CMniy5LP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qX4injw6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B4FC4CEC7;
-	Sat, 19 Oct 2024 10:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729333973;
-	bh=vCdvQlxKqra+X74MargcJiMMmT07oNyB3P22eXEaw+Y=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=qX4injw6jVjLbfg6w4i5WKZlROHelEl0wJhIMv9ryhsWNIY4ui79gkeDIUBkRzzwv
-	 TBjlmZGi0StUB/KYR0EnKwqhrQ+eVBXZtOt6csrGbgfdDvKwEg/c48qF0yBvpdp5oS
-	 TrxdbAWpYzVv4I2k6TRHYq3BS4o9WEQMfApxACeCP/aouNW3KTk6Q0d3LYSOLEcxWm
-	 iAhcd7E+7gF4WgMqgEELscymAbD7W676a2PMH3npLIX70BYZ5Y7w7t0kfYC0syZTfi
-	 sfVO+4b0ZMDjLX72zn62pdKq2KJYowFEbgiPb1VZOPcJZEhccJppZ6DTgHav3T9XcF
-	 +aprXx2aJMHmg==
-Date: Sat, 19 Oct 2024 05:32:52 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CMniy5LP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729336571;
+	bh=zy6eBkC6mTD47sGFuSu/kE6O5nq6hr0S/KoQYOZztNY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CMniy5LPAE6Nbv0OawIzhTrrk1jWeUuKok05gfHqs0dlVLRnXnvjL7ULDSbVN85a2
+	 xHY748AECrXlSiAVNigckaZ65BnGbRWKrseZk8niPdtXa5fn2m7mpZLZGvta8V0pDN
+	 JCASHZ4p/D2QQYE6amkBGYjnH2NQqBNSt3g05P/jbmUg2rI7Iq5B+4caCZlSaCQLbt
+	 crQ3TZ8Sk7XWlcxWy7bWniVXeOjXaavy6/dyqHa0Jxvipz23Cm4HdqTguHu1EjnGqS
+	 4aFK+STqx4Z1GF4HQM5yVePXAm0D9l+sCTuQefSSxWC8GOuuCw5+gmHx+f6HH/OgdF
+	 rhRJ4jgiIyXXg==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9058217E1574;
+	Sat, 19 Oct 2024 13:16:11 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v4 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Date: Sat, 19 Oct 2024 14:15:59 +0300
+Message-Id: <20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: magnus.damm@gmail.com, linux-kernel@vger.kernel.org, 
- p.zabel@pengutronix.de, mturquette@baylibre.com, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, alexandre.belloni@bootlin.com, 
- linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, sboyd@kernel.org, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
- linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be, 
- krzk+dt@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20241019084738.3370489-7-claudiu.beznea.uj@bp.renesas.com>
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
- <20241019084738.3370489-7-claudiu.beznea.uj@bp.renesas.com>
-Message-Id: <172933397224.3030070.17299337634844003264.robh@kernel.org>
-Subject: Re: [PATCH v4 06/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document
- the Renesas RTCA-3 IP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO+UE2cC/23NSwrCMBQF0K2UjI3k03zqyH2IlCRNbbA2kmhQS
+ vduWlBEO3lwL9zzRhBtcDaCXTGCYJOLzg85lJsCmE4NJwtdkzMgiJSowgSa/lzrez52UHXrHhB
+ zrYSgTDZNC/LsGmyuF/JwzLlz8ebDc/mQ8Ny+sfIfSxgiaCxlVDDJDOJ74/teaR/U1vgLmMFEv
+ hDCVxCSkcoILhhGrdZsDaEfBCMsVxCaESas1FqSkiPzi0zT9AI46PHGPgEAAA==
+X-Change-ID: 20240912-clk_bulk_ena_fix-16ba77358ddf
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+return the number of clocks stored in the clk_bulk_data table referenced
+by the clks argument.
 
-On Sat, 19 Oct 2024 11:47:32 +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
-> The RTC IP available on Renesas RZ/V2H is almost identical with the
-> one found on Renesas RZ/G3S (it misses the time capture functionality
-> which is not yet implemented on proposed driver). For this, added also a
-> generic compatible that will be used at the moment as fallback for both
-> RZ/G3S and RZ/V2H.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
-> Changes in v4:
-> - collected tags
-> - dropped the assigned-clocks, assigned-clock-parents properties from the
->   example, along with r9a08g045-vbattb.h inclusion; these were moved
->   to the VBATTB example as it fits better in there since these are
->   related to the VBATTB but not to the RTC;
-> 
->   Rob, I haven't dropped your Rb tag for this; please let me know if you
->   consider it otherwise.
-> 
-> Changes in v3:
-> - added RTC bus clock, reset and power-domain; it has been detected
->   by reverse engineering that RTC and VBATTB clock, reset and power
->   domain are shared; HW manual doesn't mention it
-> - updated example with these and with assigned-clock properties
->   needed to configure the VBATTCLK MUX with proper parent
-> - updated example section with dt-bindings/clock/r9a08g045-cpg.h
->   and dt-bindings/clock/r9a08g045-vbattb.h includes
-> - for all these, dropped Conor's Rb tag
-> 
-> Changes in v2:
-> - updated patch description and title
-> - included reference to rtc.yaml
-> - updated compatible list with a generic compatible as explained in
->   patch description; with this the node in examples section has also been
->   updated
-> - used items to describe interrupts, interrupt-names, clock, clock-names
-> - updated title section
-> 
->  .../bindings/rtc/renesas,rz-rtca3.yaml        | 83 +++++++++++++++++++
->  1 file changed, 83 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
-> 
+That is required in case there is a need to iterate these clocks later,
+therefore I couldn't see any use case of this parameter and should have
+been simply removed from the function declaration.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The first patch in the series provides devm_clk_bulk_get_all_enabled()
+variant, which is consistent with devm_clk_bulk_get_all() in terms of
+the returned value:
 
-yamllint warnings/errors:
+ > 0 if one or more clocks have been stored
+ = 0 if there are no clocks
+ < 0 if an error occurred
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.example.dts:35.47-48 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+the past form of 'enable'.
 
-doc reference errors (make refcheckdocs):
+The next two patches switch existing users of devm_clk_get_enable() to
+the new helper - there were only two, as of next-20240913.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241019084738.3370489-7-claudiu.beznea.uj@bp.renesas.com
+The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+helper.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v4:
+- Dropped usage of gotos in the new helper implementation to further
+  minimize the diff (Stephen)
+- Link to v3: https://lore.kernel.org/r/20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Changes in v3:
+- Made devm_clk_bulk_get_all_enable() use the new helper, as suggested
+  by Stephen to improve diff readability
+- Rebased series onto next-20241017
+- Link to v2: https://lore.kernel.org/r/20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com
 
-pip3 install dtschema --upgrade
+Changes in v2:
+- Dropped references to 'broken' API in commit descriptions, per Mani's
+  suggestion
+- Added R-b tags from Angelo and Mani
+- Link to v1: https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+---
+Cristian Ciocaltea (4):
+      clk: Provide devm_clk_bulk_get_all_enabled() helper
+      soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
+      PCI: exynos: Switch to devm_clk_bulk_get_all_enabled()
+      clk: Drop obsolete devm_clk_bulk_get_all_enable() helper
+
+ drivers/clk/clk-devres.c                | 23 ++++++++++++-----------
+ drivers/pci/controller/dwc/pci-exynos.c |  2 +-
+ drivers/soc/mediatek/mtk-pmic-wrap.c    |  4 ++--
+ include/linux/clk.h                     | 12 +++++++-----
+ 4 files changed, 22 insertions(+), 19 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20240912-clk_bulk_ena_fix-16ba77358ddf
 
