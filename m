@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00D91CF2AC;
-	Sat, 19 Oct 2024 05:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BA95478E;
+	Sat, 19 Oct 2024 05:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729316696; cv=none; b=HPkhIKQuROaO3wo5n/Mo4KYh286G7iT+apQa2IRDuQdOa7Vbon3iyo4KNn9NpJ5U2xSPfXFTlJ8CfGerYe9hoEffS/rNUYZ3CJB/j23PKE2fsandr1YMirGwNYFBu/z1KbFuwJIRYW8PcCZx7VjcWLTGz8tNWt8O07FUk/9Gx0o=
+	t=1729316779; cv=none; b=ZPAmM5mUSa+uAhQ0vYbi4aIOMZFq8l1rE+iQVMwBIyy5Y7hmcjWwX6/AVruyfb8p0PJ/c5yhtI30N9KdV1eUMxYuQsOmmdccRCPKGeplWBdHKGp/hZubAihl1/SCDMs6ublwlk9+dPfoY4TrEMInPfc/LybgCbRtbFqiYUAV1dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729316696; c=relaxed/simple;
-	bh=H30yMisKp1RiBtqU9YcdWjeFN7quqSeJt4EWLEGi6O4=;
+	s=arc-20240116; t=1729316779; c=relaxed/simple;
+	bh=RRK0d5O3+eFc8tOfdqBi70X6wmeZkUievoZshWFIsz0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=QJzUf2eUQgpXAb0dydY45L4dSRvbVGUdLVedkTy+VMHBJS+Jyw3BOKP8s+zxa4amDysNnNJlfeUbei5jutmyEjZjsQZMuvXXHmRUPcFpkxPlZEXNJqdZHCVOkDIYpiw+bOneCZIPC7YbWlWcTb5sn9fe8PURj04ebD8sBQLCwQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSqPd4Dc; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:To:Date; b=ppvnJ4RUsfPOBFE9XonVL5KBSE2ekbmb162aWrSfWkJhJf671RN+VSTix2vGjmeUs8kzbG9TrWMe1Q5wgUYCCfTOg/3LkRxTt0f905r7Smq6jEHXVfcYHT+FH+hWsnN4aKtm53WgPc9kQ/hyDKZUJyZb9yjA8GL/BpolUO+w4HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvA7dBgH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSqPd4Dc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552EEC4CEC7;
-	Sat, 19 Oct 2024 05:44:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvA7dBgH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5AEC4CEC7;
+	Sat, 19 Oct 2024 05:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729316696;
-	bh=H30yMisKp1RiBtqU9YcdWjeFN7quqSeJt4EWLEGi6O4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cSqPd4Dc3ktU1eZ7LeQH+0nlceu6f+GeiMNH23s1AGXuxt10IMbHmHgG3kCGujKSP
-	 F8Rbz4mJeXO3euDMM/WnYaIUp7f6J6mKfMxspl8bkNLZ4t5E1OAkPPggNTL8VieK+U
-	 Vot+RGWoG17eV2238eWXU1JtW7U1UUj0ypNmNZJ3jkmsRjbLyGKqRwfvfbb9j8ZY6R
-	 Bc/zOatm3c0aluQtoKesXZhcFicM9nFyhAc5nP7B38XwNTwA+VtW//QkJ3iEVGVzpn
-	 51XRn7shp0qT3odEEw+3G6i+nPam9iJSHWrFMatFhxKqxcIgtmhJvqUh3nySlGLFbJ
-	 lmxPRHmj3+A8Q==
-Message-ID: <1ca4985e2a29582d0f003037e6aeb7d3.sboyd@kernel.org>
+	s=k20201202; t=1729316776;
+	bh=RRK0d5O3+eFc8tOfdqBi70X6wmeZkUievoZshWFIsz0=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=JvA7dBgHQXXwHKkAmxjm2hI7zVmGj7NF/WXklQFlLem1ZpxLN8XrhVY3MCk157rI7
+	 buBVlyxJ+uqfmANt9I7JffsQoJfjInZKVeNdS5n3cwpmBxDR041WGMOh6myR1prs7y
+	 wszn52FoE0oghaMDeM7S05H7cXlh6WgMWIhEQ9xJSbwWfMg/kClZyS73FOj8xPyohF
+	 6ncA1/1H4KaPCWOtVMHCPJ6V//XyFwJXRZcCh22eOLS4oG3ieOI98XT/O1LT2DZY4F
+	 vowXJy8+2BWNVf3Bt661N/0YBeOnwYZjsX/MStXGMZhng5NOm/877xThHbCUb3DMAW
+	 ffIMKZd3RJtvg==
+Message-ID: <5529f20ba6488c3eb94cec1e26b52068.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,33 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1729252443.git.geert+renesas@glider.be>
-References: <cover.1729252443.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.13
+In-Reply-To: <20241018085347.95071-2-andreas@kemnade.info>
+References: <20241018085347.95071-1-andreas@kemnade.info> <20241018085347.95071-2-andreas@kemnade.info>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: ti: Convert interface.txt to json-schema
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Fri, 18 Oct 2024 22:44:54 -0700
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Date: Fri, 18 Oct 2024 22:46:14 -0700
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-10-18 05:05:26)
->         Hi Mike, Stephen,
+Quoting Andreas Kemnade (2024-10-18 01:53:46)
+> Convert the OMAP interface clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
 >=20
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.13-tag1
->=20
-> for you to fetch changes up to 92850bed9d4d334ee502a035ed5750285faccbea:
->=20
->   clk: renesas: r8a779h0: Drop CLK_PLL2_DIV2 to clarify ZCn clocks (2024-=
-10-14 10:04:31 +0200)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
