@@ -1,113 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638C31A89;
-	Sun, 20 Oct 2024 09:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76747485;
+	Sun, 20 Oct 2024 10:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729415782; cv=none; b=FBFd2RQtPLwilhwUJzfFafwqShVefYh+igxx3wpSB8amiNBsefF2IQak1B8SLNZTPkR6EpLkpO5CxcoSiGd8tseNOFQqd+4tFqcM5ZSBDVCIoZV3V4WSLNT0a0S6wwjCuouqKcEUtn0WzTwilc7tmp7E4K9nYXEQH05cljl87EA=
+	t=1729419621; cv=none; b=HIZhehHzBxA5/C+hOwpEGU6FNPtBQWtCUj+R8l9HzKYmO01T3pee0qloPBWB4/uYYUOanBNoiB+irlpUP2SCocNGP5xgpQcY5ehT71SuiymLw2zV9ex4u+e69F4h5HI1DEqO8RkVqVfHYJlVoQBmrdOkUEgMd18Ca09y82itorQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729415782; c=relaxed/simple;
-	bh=Da3OOila33unrzdWnfYpRoVlyzpPJyYMwvvY2vJCLV0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=e7DNjTpIcMfYPSJjyCUH/5q+mw952NShy6GntWKk40PfU8BSFNeqODnH2pWGiF4hGQzD9ox7g3x+W8qlT4cmtyF03/AgVvZgYB75RA6YFel9pu85H36j2fRHY4RdUcIa0aeq1WZRYh0gtA20JBFpiRH65cw39YzFJOjiwmIeS+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHj6idcE; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHj6idcE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF2CC4CEC6;
-	Sun, 20 Oct 2024 09:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729415781;
-	bh=Da3OOila33unrzdWnfYpRoVlyzpPJyYMwvvY2vJCLV0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GHj6idcEZV//lfCJnz4p65zbbGiyOtSMt3dDTYsJPe/je1zh22NvFeqMaqPwkK/76
-	 VEK68PXK6w5OKWaVUgSYZjZIP+jfFZjGllPNPx8WkUURDOmxNybR47HgTH7qcJEXKP
-	 BuehGQiNdMIhBRWJabRVCBsbrn5s0QxyXUt0DiWp2ee3YPSX8H4Pg1zahruTH8Vog8
-	 PR1pINS00e63mBlXLCqCvDL2e4RgDxNb2OG4c6PPwARtPr1C8+BBDT1m7AUFqlkHKc
-	 mgoeJk2Qa8GcsccLH2zrND6NJqYbjmWv1tld/G7XoteGKR+ifUHsiWZZ+a77ZifYAO
-	 zaTwGlcxm3NKA==
-Date: Sun, 20 Oct 2024 04:16:19 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1729419621; c=relaxed/simple;
+	bh=5Kpkc+xkCTbzMZ/owuFbnwzrYpqhxtJpLH3RYIqT70c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bJ9mLiX+mvg7TIQLG5AjkfslcCBj0KbQejp4yvmrKPWBVH61WV7r7/v2JZpLI4XBpxAFIBqYEs0gQv3/8aoBYVPI4SfRLz+K8Ezfjc1To/e3iuycUb7mOFWlPjbdvO58zC4HNAljF8E8JpIvAr9x8tNKmL3ECZrv85f8haSXEbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EE1ADA7;
+	Sun, 20 Oct 2024 03:20:43 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD5623F58B;
+	Sun, 20 Oct 2024 03:20:11 -0700 (PDT)
+Date: Sun, 20 Oct 2024 11:19:11 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: "Ryan Walklin" <ryan@testtoast.com>
+Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown"
+ <broonie@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai"
+ <tiwai@suse.com>, "Chen-Yu Tsai" <wens@csie.org>, "Jernej Skrabec"
+ <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, "Code Kipper" <codekipper@gmail.com>
+Subject: Re: [PATCH 2/6] ASoC: sun4i-codec: Add playback only flag to quirks
+Message-ID: <20241020111911.61c9a758@minigeek.lan>
+In-Reply-To: <87d9e653-a7d1-4611-9e9a-724bfd1be029@app.fastmail.com>
+References: <20240929100750.860329-1-ryan@testtoast.com>
+	<20240929100750.860329-3-ryan@testtoast.com>
+	<20241008133204.3ea38338@donnerap.manchester.arm.com>
+	<87d9e653-a7d1-4611-9e9a-724bfd1be029@app.fastmail.com>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: linux-sound@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Philippe Simons <simons.philippe@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-clk@vger.kernel.org, Chris Morgan <macroalpha82@gmail.com>, 
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Mark Brown <broonie@kernel.org>, 
- Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org
-In-Reply-To: <20241020083124.174724-3-ryan@testtoast.com>
-References: <20241020083124.174724-1-ryan@testtoast.com>
- <20241020083124.174724-3-ryan@testtoast.com>
-Message-Id: <172941577928.1287094.1057140935389285555.robh@kernel.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: allwinner: add H616 sun4i audio
- codec binding
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 20 Oct 2024 19:04:24 +1300
+"Ryan Walklin" <ryan@testtoast.com> wrote:
 
-On Sun, 20 Oct 2024 21:30:52 +1300, Ryan Walklin wrote:
-> The H616 has an audio codec compatible with the sun4i-a10 driver.
+Hi Ryan,
+
+> On Wed, 9 Oct 2024, at 1:32 AM, Andre Przywara wrote:
 > 
-> The codec is relatively cut down compared to some of the other Allwinner
-> SoCs and only has a single line-out route (relying on a separate digital
-> microphone IP block for input). HDMI and SPDIF audio are handled
-> separately by an audio hub IP block, which is not currently implemented
-> in mainline kernels. This requires some additional flexibility in the
-> DMA bindings.
+> Hi Andre, thanks for reviewing! 
 > 
-> Add compatible string and routing for the H616 audio codec, and update
-> the required DMA descriptions.
+> > On Sun, 29 Sep 2024 23:06:03 +1300
+> > Ryan Walklin <ryan@testtoast.com> wrote:
+> >  
+> >> From: Marcus Cooper <codekipper@gmail.com>
+> >> 
+> >> Some devices only have the playback side of the codec implemented
+> >> so add a quirk to check for this.  
+> >
+> > That's odd, is this really the only place where we need to 
+> > consider the lack of sampling functionality? I mean it just prevents the
+> > fields to be populated in our internal struct, how does the rest of the
+> > kernel know that there is no capture? Is that magically achieved by those
+> > fields being zero now?  
 > 
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> Yes this is only used internally by the codec driver. The playback only nature of an individual codec is communicated to the DAI when the machine driver is created, for example in sun50i_h616_codec_create_card():
 > 
-> ---
-> Changelog v1..v2:
-> - Remove PLL_AUDIO_4X clock from definition (defined internally but
->   not used by driver and so not required in DTSI)
-> - Restrict TX-only DMA definition to H616
-> ---
->  .../sound/allwinner,sun4i-a10-codec.yaml      | 53 ++++++++++++++++---
->  1 file changed, 47 insertions(+), 6 deletions(-)
-> 
+> 	card->dai_link->playback_only = true;
+> 	card->dai_link->capture_only = false;
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Ah, that makes sense indeed, I now see those lines.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml:239:5: [error] duplication of key "if" in mapping (key-duplicates)
-./Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml:245:5: [error] duplication of key "then" in mapping (key-duplicates)
+Many thanks for the explanation!
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml:239:5: found duplicate key "if" with value "{}" (original value: "{}")
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.example.dts'
-Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml:239:5: found duplicate key "if" with value "{}" (original value: "{}")
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241020083124.174724-3-ryan@testtoast.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Cheers,
+Andre
