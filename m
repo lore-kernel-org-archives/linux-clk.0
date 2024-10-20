@@ -1,140 +1,130 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FD83A1BF
-	for <linux-clk@vger.kernel.org>; Sat, 19 Oct 2024 16:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830493D6D;
+	Sun, 20 Oct 2024 06:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729354582; cv=none; b=Twp/ApmjILLdl56sUAXU4+FcyJx0GDO0dvogQZZvzcEEUtqYs6BAwvr/aOT4GYBd6Fgi6HRoOlGdN8hDbcE6Ie1hI+o+hZr5OT6GJMYuAv2WCkf1+F1PKFEXb0lf3sdHMDuuw5K81fVa7GAgL8w2xww0m+BgVAc4E+t00tolLPg=
+	t=1729404315; cv=none; b=G7chdZTJ9QvbySg4zgLObd/3e45fwsGp76ocZZbtvVRQRUrGpy0iD0iXneelJBCTYlGQ7ubG5g4xNobAuMev3i8E7iQ2bYHLV6n/AU8WdvQnbmAhbR3CQcswNpkU5Y7+ZBNvoYplKAvDBrfytXXx3djt25E9cgMlZknC1XhujYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729354582; c=relaxed/simple;
-	bh=StuBSN/GRyNQc/pG0x5/xQFTvBZGWqHm+6Jr33Ss7V8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFUgBnDciNxvIsBm8e06tizk4Mr4FBn7TXNbx+X+pfK7SCElOkUGgwVoMPqfN6hDnjKuIeBPcUpgZximt74Woxq8cHlBWDUAJAn5vDV6bg2GdtLJRvYm00IsaNX/7PWDnUGj7S/aZiQaHtlmMyPHfmq/Ato+aTGLSFf6xnzz81U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tnvDm/Br; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1729404315; c=relaxed/simple;
+	bh=edoSP7vgcWmHXm/JA9hZrNjLEbY+Vr4KbOd5G7BoYNU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Et4CEBDGuZpDjZjWmgtBOgYIl9JpyMiLn0v4b9FylrH2JmtGEFfMBW0aXaDeoheadtUseH5HpogXOBAkTxmDXxUEo3l219e3STXjZKOB4uQ6l3oPlxg37wqhGcKl12P20jo8GP4ZVStehFOTE45caNoG57vYECBVYjPUUIAlU2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=2QlMLBjk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bwIL8t6n; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tnvDm/Br"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0c40849cso463256566b.3
-        for <linux-clk@vger.kernel.org>; Sat, 19 Oct 2024 09:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729354578; x=1729959378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMKGahwoszcg3v581bmcW1DmO8H5y+Y8QgEXy/B2rl8=;
-        b=tnvDm/Bruu8Oh/3mm3eZA4UdtC5HLDYaxMTt0ube4IRwM3mIsXBWdNoDIY1TUy/1Rj
-         DhDhqCPBHxeOsSnMbFyLhk9jW776dZJMpU5QaUeqLO8m9NIwos6TpuIaikBFoZF5Nc5u
-         Eb1l81T0tkb2TJppiQCKV8IaQxhdGzwdYmaDMfl0wbm3lltLpp65vJuek8Vku38a0dgt
-         NEPGRqM+DEYJ/2Na0K4NtASaCtfIsE1oGb/2CQbgRYBAr43GkKoaEueG8/cejd2DmzGP
-         PcLy5Uey7LfVdodhRLJrDA5xQ7yjWH+3bD8cAdQVglw41aFQ4O8WUGCpVQOedFTAeUuK
-         smEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729354578; x=1729959378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wMKGahwoszcg3v581bmcW1DmO8H5y+Y8QgEXy/B2rl8=;
-        b=WqUExD9vyKNAhd3eE0bERWARJtqEPQG6hYNJ01xUkqHpnan7Upo7eLpiDQkMHk8J4E
-         fEXRl15u8KbqBUtqSmbqEltO3RFsUJtaGhb7EQM5Xy1E7PcbdjRpljT4X6Aqa3CMjF2Y
-         7qUjPSPlcx8wdbdTOzFxlmgamo3rjLfUGA4v4EDzFJJmAmaX1wB40UYjDNHk3dF/Jc4o
-         r187B5d3WFPFYaiKm9D7bTNTy70kM37Ewtioe2QShGMQhPRpvl0FmrUHKlGG3Ia1/1cU
-         JFN96pGM58mixVlaR+rNFveWQvuJLIq+h0VVT3VRP4ehMdl2vNbYE13AemcpZmpACZEi
-         0twg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYiQO5juGE7xqW7nm5jCeWN4rzyhgOgicKFIGQ+fdR8ve5lf76d2S0rNuRguaF3vU5/nWM6MeeKxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdB9F+OtVU6an9LqHgqVmvy5F4uoDHuM1ZUG0BPXveWrUSerfB
-	64IvliHZ3HyajnKCK2V3L591KayxcBY4MF5VR0EnFJGnS5QTf5NBohA6aVF/KMk=
-X-Google-Smtp-Source: AGHT+IGmvPoyNXRtNONcUztTuPoBpcDMSxWfpc8rl3an9FxYAtZFBmtHaZx/ixcLWiSk9mG9RLLQzg==
-X-Received: by 2002:a17:907:1c1e:b0:a99:4162:4e42 with SMTP id a640c23a62f3a-a9a69baad40mr460125866b.37.1729354578283;
-        Sat, 19 Oct 2024 09:16:18 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:677d:cc5a:24af:d1a1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68a8e758sm226723966b.31.2024.10.19.09.16.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 09:16:17 -0700 (PDT)
-Date: Sat, 19 Oct 2024 18:16:15 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v4 07/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <c5r5yfiujywad4g37lrnqqhojroxcite3uavy7fbytxpdeskio@istcpft4v4z6>
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
- <20241019084738.3370489-8-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="2QlMLBjk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bwIL8t6n"
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9C538138013E;
+	Sun, 20 Oct 2024 02:05:12 -0400 (EDT)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-04.internal (MEProxy); Sun, 20 Oct 2024 02:05:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1729404312; x=1729490712; bh=hDZkJFrkEBlfJZm2OsTapntCfy+Z6v+O
+	bKUtrPGKF7c=; b=2QlMLBjkUaU9jH4nnrSNeTn0XhSNDcQyl1UwbewTIi/EW9ov
+	uItZcej3T3Eukg8GCgj+xdOcd2wUsNF/wM/6j3H82FjLA1llWE2MUZb1M9VbDQUI
+	DcPB2mtSJNxH0FsfKc1X9vwtJrj+TpKd2Al+G7MD7Ax+mqVeoC61OibbmoNHhf33
+	c6coVAByY+6+gOH7HbjCkiP5hiHh8xNsOAKnGCsZ3aPgAiBjVbHZWWVWaxezA2BO
+	naj2KAb+myto0hTFRNGrlEbbFmQ9GWQ3T/V1JPC/fvGrJJnGlN2gohLUY9RsoiWG
+	PfEWQD2q7VJYyYhG7Qgv/veAAj/HwfHSujA5dg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729404312; x=
+	1729490712; bh=hDZkJFrkEBlfJZm2OsTapntCfy+Z6v+ObKUtrPGKF7c=; b=b
+	wIL8t6nwd8pygFMFAitBTL5Jcbg/WgHJT9P5Zjvo2vLu4ds57YfM/g3UOlGoNLqf
+	Y+KEEorxGSen/xyntI4IjvRf/W3BbzAwUJ95j/ZoisWZykqjbc/aaLgcRLA0uAgv
+	5B9GXPTBu1AgvJnihYpAdLK5wYBDBGP85fxV3kta98uerzBA+KvJdNol8V5K4dKa
+	/d8IopEMv/YfnHaXbDOYdtydgK7+siDW0TOhuaQlceoV16sYY424gHKUQtAwip0H
+	KeYrmLmgdfC9PnEiM6V2OJjwiu2BwzJOy4yl4YeRWddsFIYFlBscpDhH947kICh2
+	jU16E1WC2mbS9J2yvseeA==
+X-ME-Sender: <xms:lp0UZ0vCgCVS1Jx1Rwt6SpAroc1cEsXzMYM3G98zEeLwwyoSNt6GaQ>
+    <xme:lp0UZxc4fBX-tZcYOYLelqUphkSGJAvlH9DnBRo8Hsn4zVjML_WGxzguNDyDlIbGz
+    jKyVfxEzMAkbDBEyA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehiedguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfthigrnhcuhggrlhhklhhinhdfuceorhihrghnsehtvghsthhtoh
+    grshhtrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfeukeejjefguddvffehveevjefh
+    tddutdfhudduvdevfeejfffgvdelfeeugfenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgs
+    pghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurh
+    gvrdhprhiihiifrghrrgesrghrmhdrtghomhdprhgtphhtthhopeifvghnshestghsihgv
+    rdhorhhgpdhrtghpthhtoheptghouggvkhhiphhpvghrsehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthht
+    oheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnih
+    gvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgv
+    lheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hsuhhngihisehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgvrhgvgies
+    phgvrhgvgidrtgii
+X-ME-Proxy: <xmx:lp0UZ_zj3F4fDNCSz8sfEmtDznqvauG6ua7ow9Qv_xJBBYrHAe0KxQ>
+    <xmx:lp0UZ3PmFNKy0OWfqANg4nMdTszzl72GTJD-SYnP3Eew8Fsqpqdo8w>
+    <xmx:lp0UZ081OaLAVEKxRJYELQ-zwWFg8ZzG9OIOh9yzndJ2xdE1Wxtqlg>
+    <xmx:lp0UZ_VI-58_TY_FZpapvHLTFDQ7j_g8kDXHqjwxvT1miUbffKw2Eg>
+    <xmx:mJ0UZ-coZSVmiNShlHCGO76zGAq0gKPhb5XefdHDQXosLg_ithLfJ_aV>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CEE74BA006F; Sun, 20 Oct 2024 02:05:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zus3as7bpkuwpgmb"
-Content-Disposition: inline
-In-Reply-To: <20241019084738.3370489-8-claudiu.beznea.uj@bp.renesas.com>
+Date: Sun, 20 Oct 2024 19:04:24 +1300
+From: "Ryan Walklin" <ryan@testtoast.com>
+To: "Andre Przywara" <andre.przywara@arm.com>
+Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ "Chen-Yu Tsai" <wens@csie.org>, "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Samuel Holland" <samuel@sholland.org>, linux-sound@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Code Kipper" <codekipper@gmail.com>
+Message-Id: <87d9e653-a7d1-4611-9e9a-724bfd1be029@app.fastmail.com>
+In-Reply-To: <20241008133204.3ea38338@donnerap.manchester.arm.com>
+References: <20240929100750.860329-1-ryan@testtoast.com>
+ <20240929100750.860329-3-ryan@testtoast.com>
+ <20241008133204.3ea38338@donnerap.manchester.arm.com>
+Subject: Re: [PATCH 2/6] ASoC: sun4i-codec: Add playback only flag to quirks
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
---zus3as7bpkuwpgmb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 07/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-MIME-Version: 1.0
 
-Hello,
+On Wed, 9 Oct 2024, at 1:32 AM, Andre Przywara wrote:
 
-On Sat, Oct 19, 2024 at 11:47:33AM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC has calendar count
-> mode and binary count mode (selectable though RCR2.CNTMD) capabilities,
-> alarm capabilities, clock error correction capabilities. It can generate
-> alarm, period, carry interrupts.
->=20
-> Add a driver for RTCA-3 IP. The driver implements calendar count mode (as
-> the conversion b/w RTC and system time is simpler, done with bcd2bin(),
-> bin2bcd()), read and set time, read and set alarm, read and set
-> an offset.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Andre, thanks for reviewing! 
 
-I don't know how picky Alexandre is, but there is no S-o-b line for the
-patch sender.
+> On Sun, 29 Sep 2024 23:06:03 +1300
+> Ryan Walklin <ryan@testtoast.com> wrote:
+>
+>> From: Marcus Cooper <codekipper@gmail.com>
+>> 
+>> Some devices only have the playback side of the codec implemented
+>> so add a quirk to check for this.
+>
+> That's odd, is this really the only place where we need to 
+> consider the lack of sampling functionality? I mean it just prevents the
+> fields to be populated in our internal struct, how does the rest of the
+> kernel know that there is no capture? Is that magically achieved by those
+> fields being zero now?
 
-> +static struct platform_driver rtca3_platform_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "rtc-rtca3",
-> +		.pm =3D pm_ptr(&rtca3_pm_ops),
-> +		.of_match_table =3D rtca3_of_match,
-> +	},
-> +	.probe =3D rtca3_probe,
-> +	.remove_new =3D rtca3_remove,
-> +};
+Yes this is only used internally by the codec driver. The playback only nature of an individual codec is communicated to the DAI when the machine driver is created, for example in sun50i_h616_codec_create_card():
 
-Please use .remove here. You just need to drop "_new". See
-https://lore.kernel.org/linux-rtc/20241007205803.444994-6-u.kleine-koenig@b=
-aylibre.com/=20
+	card->dai_link->playback_only = true;
+	card->dai_link->capture_only = false;
 
-Best regards
-Uwe
+Regards,
 
---zus3as7bpkuwpgmb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcT20wACgkQj4D7WH0S
-/k5sigf/WQisuypfB38zNIkAPJJO+gsAp1o4h/CXa8Bp4Iqsyn0kSttNjSqE1cCL
-jpuyFgQYDDBS3xR8uy5+odIWCuOPtQUyFly3rXmcHRM0O5a7/owHYNI+cjUwvtDu
-u9mgP061ri2zKSrKvhLPrmyfbRmMH4QL6Ny2UDflVWM8eC8wGAi6Qs4d1hqFNqT9
-Rhb6CVu9m7GKTJi663dDZMvg4FovYzZ7t391xeP7N/G7bqrp0PPRotSoXYPn9ahr
-xFRTolIhA46CJDKzS5FjLcdUOcfMYNXdfHqkMnIH18fV0WBR0KfpNFjHe//M/+FR
-puerjp/PPQ8x3IJwlbuwb28tmEq/Tw==
-=0EYG
------END PGP SIGNATURE-----
-
---zus3as7bpkuwpgmb--
+Ryan
