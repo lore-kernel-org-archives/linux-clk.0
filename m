@@ -1,148 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006471E376F;
-	Mon, 21 Oct 2024 09:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E987A3A1CD
+	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 10:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504264; cv=none; b=s8ZNaGun2Y8Dzc49THjXVqwdDVoO04+KyaU/MuIVDYaMnmHyVaNuetTDLUbaGLy2kqTi3Sc6RtLnSpzgkqjSVQ5+r+FlAl+AXwnKF9iMNqTlnaniAHVPv+5gQGsbhMrmlzz3SDulNijwV3srx0ec3BaJKjGzRudBu+j1McqWTkg=
+	t=1729506645; cv=none; b=T2Nwd5SXRFB5GzBJrNsATSuhEZq/gPPBhhTBb83QLMTxMmVbe/gd8aRIfp/kYOoi3ETZDUfkrCheQZoKszTCK9+QIEysp3ervu7lw1uO9Os8UaHTkzLq04oQPNQ1fnHCUbdmZpSAJAqmV7K7h41gMg1pg716cYsjACRjK1CruIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504264; c=relaxed/simple;
-	bh=X09WrzGaODsmNxi4MZUA10RHzluSaOG9VjS7+1qrpMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CcJI0gbk8jGbo/MKpTlPq4dTJ+rc16zwL/S+HLMhn8qSjplacpusdJ+Cw4cyjkWx5tAVQfF8kcX1fnmLY3XR8Soo4jvTWsSbqfqQfR+gEoBbg7q4haoVifjk3gkCiJeykj6rQLfyeG7DXGkPswTsiudo7o1Chyh0SJYD+JjVe9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHYEo0d5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729506645; c=relaxed/simple;
+	bh=+FD8i4VW6GLQ+8kCcEhzI155Je7Z5QpsCm7eSObmh04=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GN+UgaWK/PMjHIU3gxYHEzCEt2EGuYykzZ0TmSUbmPwifJEzH+oLgUyfSlX5x1iloWdexKVP79/m2sedv+ikEVHe/6WIQZ8M2VWA2H//caThRwhcvofHEj6AYvRn+EnELxr6NHTYYhVuSSMLnZpj8AiX5fmy02ON298SZVzCx8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M/KfdiH3; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHYEo0d5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCEAC4CEE5;
-	Mon, 21 Oct 2024 09:51:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729504263;
-	bh=X09WrzGaODsmNxi4MZUA10RHzluSaOG9VjS7+1qrpMQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JHYEo0d5RBJSQzYVDBixw1G5aM9qjoSrsn+EAPW2Od38FXWsFyTagP97ArwK4nehI
-	 wgpMjlXN1ztJxTkKSnLEsC4WQfNwWktvtQI3ON7BE+wobvejo3eMFR8YQMFGAXWqCg
-	 SW9dpNY3eCNWCny7SAJ3Iic/3yk1UPy6a9elw3hUTf/G0yYyt0G8VtRD8CRT/Jmo/k
-	 6Pq/9IXcNWBVL751DRM8wqgEmol0bBgYClQpyCPuAzAXWOGbHRVg7m9FocnmeCPjog
-	 v/d3kgdGPRi7OfdG7uAR8/3f7cNDbleZqiXdVkG+Gf0DRK30vR8fiSixakfP+mXbnd
-	 o2umvzuUfVvBg==
-Message-ID: <6f090ce4-fa29-40c5-8959-b57d135b3a31@kernel.org>
-Date: Mon, 21 Oct 2024 11:50:57 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M/KfdiH3"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5111747cso47308441fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 03:30:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729506641; x=1730111441; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6U/cj5+Bf3pC9ihPSOxe6Ah/nkqDR4wfALNHrVs82Ms=;
+        b=M/KfdiH3ceFvgMHaSMOvZGzI62cxNA+hLE4ZRrHg65R7lVMM4Gy3GZ3F3/+F9NHp+g
+         zKZen61tCgVsq1WfZZAULHtUqyHp3F0RuKvlC431Hrpuki3oiO/IEobzxyYiitBL49o7
+         IDJXOVulZ4MdoKaWEDGca1MAqZH5w06tlScP32pMOGdUW2OinkxxsMTYc7Tc67wtf3eB
+         HbqcVsXS4c+cHt69JIenpPKNZbm0S7HnpxFFmu3BbYEfjXDDOD8zhuzLatPf0hyoUsrt
+         oUZpmKREyVBRoC8RA9KbpyCvWNtgGH7biqPGqsKhOfMUzOzj2HPr17YoiEWii/OsLVNM
+         MvWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729506641; x=1730111441;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6U/cj5+Bf3pC9ihPSOxe6Ah/nkqDR4wfALNHrVs82Ms=;
+        b=pyfo3E9HMWGJ2HqpJD8rayXOgl1Mpt1MMCVB2Waq4dZ2PGqQq1Bx6Ywu4b+np8pqu/
+         JLmzrMwSj3GMIXRBz+a170XT9+RDhLO9jsZUkbYDsXk4eHktgVtDu6v4xs/OdWY/Lqtq
+         yV3phGz6UsftBp9FzmgIpYc6BMKb+OEOrWV2pOMuL2fv9YMp9tOhbBjd3pJaPChWq1gL
+         ciRx9TeZJWxN17Y7Osi5267lVbzKs+9nBjHSB89visP2WggyARigRk0xRwdSXIv8qLEE
+         w4Cl/Y2UIPCi2pn5pbp5U7S0/HhfMsozMzpbSl0lRC8sVzrLU/l6DBkNoQ6Qm2QtapMZ
+         Vncg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjX1ldqGs9U8aUALUD2HY7FNE2N23uIRms/tNRURNJj+nSh6NymiPJMXLT76yC/vESzCAHgyI3bmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3fmdjte31dG/abpuLTLxjvC+PvtFplgBNJmyAzGOonxPh1MQZ
+	XnlAUTkCnwSYqaaCR3wNiXUyX2f6SwrhVxriTMmf/nG1E5O4NxSillWEqbirgbo=
+X-Google-Smtp-Source: AGHT+IEOUI6TyliDkZqKChjvPQgoy+tW/qcExcRxKb7OqhjZs2iXvFBlW4eOBmOYvUo9Fk+bjSCzog==
+X-Received: by 2002:a05:651c:547:b0:2fa:cd7e:3b40 with SMTP id 38308e7fff4ca-2fb82ea19damr39216021fa.11.1729506640878;
+        Mon, 21 Oct 2024 03:30:40 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ae1217bsm4522711fa.112.2024.10.21.03.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 03:30:39 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+Date: Mon, 21 Oct 2024 13:30:28 +0300
+Message-Id: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-To: Inbaraj E <inbaraj.e@samsung.com>, 'Stephen Boyd' <sboyd@kernel.org>,
- alim.akhtar@samsung.com, cw00.choi@samsung.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- mturquette@baylibre.com, s.nawrocki@samsung.com
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
- <20240917101016.23238-1-inbaraj.e@samsung.com>
- <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
- <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
- <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
- <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
- <1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
- <03ca01db13e3$bc12e360$3438aa20$@samsung.com>
- <2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
- <08d001db1b01$94a9b9f0$bdfd2dd0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <08d001db1b01$94a9b9f0$bdfd2dd0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEQtFmcC/3WNQQ6CMBBFr0Jmbc20lqCuuIdhUegUJhJKpoZoS
+ O9uZe/yveS/v0MiYUpwr3YQ2jhxXAqYUwXD5JaRFPvCYNBYjbpRyYnRF1zVMMfhmVQdeu9vfUB
+ LBGW1CgV+H8VHV3ji9IryOQ42/bP/W5tWqEJTU2MxoLv6dubFSTxHGaHLOX8B7Z0lC68AAAA=
+X-Change-ID: 20241017-sar2130p-clocks-5fbdd9bf04ee
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Kalpak Kawadkar <quic_kkawadka@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2872;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=+FD8i4VW6GLQ+8kCcEhzI155Je7Z5QpsCm7eSObmh04=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnFi1J3sbNoJuEo0OyMEAqxEbEG6iENQLiJFesL
+ D4hZ4Y0AkGJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxYtSQAKCRAU23LtvoBl
+ uGqDD/9N1rXjF5247C2hgwlQi0Ed8/wDtJ9N8HygswjvjGX2Dpw7g4NR9OAVySkJ6HqGuqyiEWu
+ j0n9T/IQ4fDvTyhK7jD4pwTti/B/QoT79NvTWFAMbO5GaP4oeOFLcL5HU7PkqePvQ08E8XhyZua
+ WSDN+e/zj0md3AIcfYenaM6/buq9rqM1jst+cv3rNVQAl2yhCmNqBq9C+deqIEBTqq5mz0eSky6
+ nOuBUI/IivMRyJtFOtm60U3NXS/x1L21SAMGh3TpaJYy2gte+Z/OEWEDF71weJWJUhebuQ0uhqg
+ 2MSyF0RlFDT/9YH4cbOyGih1Ycht9RJL7yYwV+CDYOPlKYGzrupxRFMLXB/iM33ELLMYBB+bbfI
+ PgoayuHMi6ScIi37JpJvBpg0MWUnCu/mW2npl59UlkraQX1KqFyxiyFhQJ9X97zawpex1nx/Ibw
+ vW+Pi5WER4GlTvWIZIFY3DrJ8zqMujyGE67vJUncuQpoELAQZ7M17kPri+0gw0tkNLxMS0fFIaY
+ k3GutUIdJfxdNHn69jE2lcOk0N1Xma6+Bc12Bc+czRYeWzapRvhf6aHrtVORaQnyaoLYnpkCLN0
+ cLA3N8m7rRwRgza0Wn5Co75ksAhKqIfDw3Vj3a+UinqccDqJbPjVYfkxNKx97ND397gxrXWikVO
+ q2c6YT+Cvw5+xJA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 10/10/2024 12:45, Inbaraj E wrote:
->>> Now if we look into CSI driver perspective it needs only ACLK and PCLK
->>> clocks for it's operations. But to access CMU SFRs (including
->>> ACLK/PCLK or any other CMU SFR of BLK_CSI) we need parent clock keep
->>> supplying clocks. While we try to gate ACLK clock, due to propagation
->>> logic of clock gating the CCF scans all the clocks from leaf level to
->>> the parent clock and tries to gate clocks if enable/disable ops is
->>> valid for any such clock.
->>>
->>> Issue here is that we are trying to gate PLL_CAM_CSI which itself is
->>> accessible only when this clock is enabled. In fact none of CMU_SFR
->>> will be accessible as soon as PLL_CAM_CSI is gated. CSI driver is not
->>> intended
->>
->> Obviously, but your CMU is taking the necessary clock and enabled it so what
->> is the problem?
->>
->>> to gate this PLL clock but only the leaf level clock which is
->>> supplying to CSI IP. So in absence of any alternate source of clock
->>> hierarchy which can supply clock for CMU_CSI we can't gate PLL_CAM_CSI.
->>>
->>> Please let us know if you have any other queries why we are insisting
->>> on marking PLL_CAM_CSI as CRITICAL clock.
->>
->> This is so far quite obvious - just like in all other cases, you need the top clock
->> taken by proper driver. I don't think you are looking at right drivers and right
->> problem here.
->>
-> 
-> Hi Krzysztof,
-> 
-> In this case, platform driver need to get this PLL clock and keep it
-> enabled always. As PLL_CAM_CSI is source clock for accessing CMU
-> registers of CSI block, and PLL_CAM_CSI itself lies in CSI_CMU,
-> driver need to prepare and keep it enabled always. This way other PCLK
-> and ACLK clocks can be gated. But the PLL_CAM_CSI which is parent of the
-> PCLK and ACLK gate clock won't be disabled. Hope this should not be a
-> concern. 
-> 
+Add support for the RPMh, TCSR, Global, Display and GPU clock
+controllers as present on the Qualcomm SAR2130P platform.
 
-Yes, that's expected. It properly models the hierarchy and consumers of
-clocks, while keeping something as critical does not model the consumers.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+  gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+  gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+  gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+  subsytems bringup (Taniya)
+- Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+- Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+  (Taniya)
+- Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+  gcc_parent_map_5 (LKP)
+- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+
+---
+Dmitry Baryshkov (9):
+      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
+      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
+      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
+      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
+      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+      clk: qcom: rpmh: add support for SAR2130P
+      clk: qcom: add support for GCC on SAR2130P
+      clk: qcom: tcsrcc-sm8550: add SAR2130P support
+      clk: qcom: dispcc-sm8550: enable support for SAR2130P
+
+Konrad Dybcio (2):
+      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
+      clk: qcom: add SAR2130P GPU Clock Controller support
+
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
+ drivers/clk/qcom/Kconfig                           |   22 +-
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   48 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   11 +
+ drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
+ drivers/clk/qcom/gcc-sar2130p.c                    | 2326 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sar2130p.c                  |  507 +++++
+ drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
+ include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  181 ++
+ include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
+ include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
+ 17 files changed, 3240 insertions(+), 11 deletions(-)
+---
+base-commit: 27e373c583871ca992837ab918709b67e27d1e3d
+change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee
 
 Best regards,
-Krzysztof
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
