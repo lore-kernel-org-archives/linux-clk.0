@@ -1,139 +1,107 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E883E1F76D0
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 12:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDB61F4285
+	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514798; cv=none; b=XsLi/02GEcsjSuR0Qxa7YQ4iZLxCbHjnCuSf9PXLz8r5P4nKSZ8/SBb+JaHiYM9RXrrtYUJX8Hk2EfGFuh8u8Hkl00pcj/TcVQWlcFlzSacMzK3oBf05/wBgraTnKWrBhlqMv/GBg7Zl34GYoyh1B1BAjBD4/Fx7UJ1iNRpuXoU=
+	t=1729516477; cv=none; b=gE7mfqYkJGfGaiL6UAh+xkLOnhEo3S+0G69Lm5k51rt4gHraozXPiOyv6FnGdTcgPE3ffu0wdqE8LpxC4YQDB4jAEbrDwdEo9grHIijfdi8a4RVKv3iEv0dQtd0SjMxTOcPQlKB9F+NeZxvnm0yCvh4CcTRDociCsd5HsqfHJKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514798; c=relaxed/simple;
-	bh=y77wJFpZ3UjOC8+X1TAadIhkOYe0xdFWOmEEz46fJdI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d96wkNUub0cfQdPS6G5YyHmp2ewZLHheoDdxqdRTtxJll3i9/OZRFmeU5WdO7iIpdU3rHCEXg9gmwVYzmgoZU4L4sIxTVrvwcgonoZeyO+2URHtiYFzwsJ25li0cQ8QuouPyPiteydWVLhjebZqF7o1tBwUIRHSAASidGXkVdU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tmeg9EGP; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1729516477; c=relaxed/simple;
+	bh=ZNT6dErQm5dUkUtKaX2wR+uSRQ/CgST7uPEYAR7/AZ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KCRkaIca9Bg0mxOHE1ykXpB0V0cwKVSuhe6AVq53RW+Ib7fmGGdGFJcQmi5PNy5wbAhpyQkDBXZl/eEB/ABh8KuZlwfLJQLL8XmS/OJ0gTArZLQRvhm1aZ/YV9/+YEjRWocuzh4hVggklcyb3AJjzlDK9v5Y5OJQ154tSIcV0Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LGOxoxxa; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tmeg9EGP"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431688d5127so21007585e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 05:46:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGOxoxxa"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e38fc62b9fso43907767b3.2
+        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 06:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729514793; x=1730119593; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMhK5URMSsZtw7ULiqbMgHL6EoB6FZYPqPuipW9HKjM=;
-        b=tmeg9EGPo137ECL1CquHxNrSQDTA4h1rdk0tiFQjCU470kjdG4ny/BiNKxb8AnPZ8S
-         gfo5giBBlc5FouoS+nFnktqSfsv6YV0YDVXQYTYumpsZuDImGSa4glP1o7KO5TnazhSz
-         VHNv8P2B5YVXG6LqXxx17Z8gbDZi9K5hY+VRyF2/7qvtpT0Ilco14gsGdvFaRtDDeAiw
-         2sLy2N/8lCqlPetbB/ZeXKv7r9laZnNBaM79ZuYToS9SKiehZyp7qY+77NDwe5XoFLbp
-         tCg0s3saOR5gRYbwsFYAyj++94vJFdRjVOvV1EtFyPVfe28n/FMQDdMYc+qW2n7PY4J0
-         QDuw==
+        d=linaro.org; s=google; t=1729516474; x=1730121274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+SABp5bMa8b+ka5LQY2m+GgmsBuAwrypkhPoy4YrVo=;
+        b=LGOxoxxaFzzKIn06jykezQME8nrYyqY0n0yC830hJDL4t9z9iM+tKuxi8eSLLI8mxZ
+         NydxU67nrR3DPCmMTPqwV5Xnhy94P0d0gEhk0wOheNqvGkQL6smAR0hQXPe+Bp6AuDk5
+         KOp03GN1Nu+TZl38uzkdO7ko+kyjdCQc28zlMcnaEePX1/LJE4KaUvXYvKj7mLG+NErE
+         wC30VzMnGGrKquEeK/KPPLCioZiUbb7llPX3yRwTdECF6gDi2EEH/8OH0YJ2pmoqyBrq
+         HAFX1n0aYcC5bj/LfRuDYa9Ac8rH/wzX5c7FCLkz2rkazK0cIn4JJadY8Kg7iqsVT36s
+         WxwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729514793; x=1730119593;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1729516474; x=1730121274;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EMhK5URMSsZtw7ULiqbMgHL6EoB6FZYPqPuipW9HKjM=;
-        b=omn7ZPgXS3vBiHwzz13F6sbMYkbA7VOdy6anOMlqLE1rJ30mT9WqbkrdORheiTCB5a
-         2HvcWpN6H9WWBrvrZ6oDtikpEskydSD0VCS+XKuPWS60SHS+gh4IPqAUk8LV1QBMqk6C
-         hUzbtuRVXFqfkROpAS24/sOPDOQQosZl6z2SXKeu6x2IQalVUWuMeq9TCzS7MKunr2qB
-         qX5hXFeD2J29VSbcwFXTq8SBjVCzyJtk3G1oLnZSW+SubDXzjnW2Jfd7B7uuxH85I8z1
-         /g936+249QOhQepVEuRCbTj49VPRDckklUD0vQLT4ouiW8pRPO6MBHt7pFcLKcaERuZX
-         7bYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJqPzbGrLahe9E+4Xe0naA18x4boKEtZOqp9Apd8/QZKPuf/3Shi2azvi5LpUGqINYq6tZv2Fo6SQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8STj4UBlxWjJLePSLHLfhmlTMFEWiMbeXTcgGogOljYuMjX99
-	ecOqOwZXwLXN2iQOy7k1OSOHwoXYleNMp2/u7B6lDlcdidHoIbT8w96YmqJKcCY=
-X-Google-Smtp-Source: AGHT+IH1sAjyo/WBTOjqBNER0j6loIWwhXiHBU4iLvjepISdYC0429yBvUc6Du/En+qHsgGmIjXDuw==
-X-Received: by 2002:a05:600c:1c0b:b0:431:52c4:1069 with SMTP id 5b1f17b1804b1-431616314c5mr83997275e9.8.1729514793206;
-        Mon, 21 Oct 2024 05:46:33 -0700 (PDT)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570f89sm56459945e9.7.2024.10.21.05.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:46:32 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 21 Oct 2024 15:46:25 +0300
-Subject: [PATCH v2] clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts
- flags
+        bh=Z+SABp5bMa8b+ka5LQY2m+GgmsBuAwrypkhPoy4YrVo=;
+        b=ax13edPw+CdHKVAPR1bTGVD+ZQ8PG4GUFjfOmIcC6zm9ukeM7sPWwErqVyJnWuMI1s
+         8s5N7MXe9csXboUf02IYq6ieHbYkHTi/bIEZbovKU4aWdqKJvTVV48y0hQ2/FgpEhPGy
+         I+0kVBFRJGVOadyuqdrWJ9gXEaQh9rFjIqRy9SFWpuAUqfBLSMK4HhGDHBWAhNYNeCp7
+         A9bZcfo2W1IkI6BfHetNTtEtBbsANWE33K1XK5vqD7bOYyzDu50HpGcYRaTfIvSf56Ds
+         jEDlo/OhmrHGJqYYYFiD2fU9+hciLy1Vdhr7Wm0gC26AnICPz6LVvn8E9hUAS96ML7OH
+         jXbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHdKPjKbY+BO6ysKgqyrE7cbAOVHm3S94ILvN1GTdPUW27B61YXcXZiow9GcaOvctOuOK4ymzqTlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTIxqt1y261B3kVi/6JZ11q7C25t/EVRrn/gb8Xp8TyjfsukYl
+	UX4HnSfzgWy2yqPscJ2aDd2kCE5GO9/EVbbC0WQezmvKWRSUPzbWDU4b/NYPupYzRStcsc3knJt
+	u4ICrsNOg5clNa2xgiV39IuPkR5Bs8S2gc4zKVQ==
+X-Google-Smtp-Source: AGHT+IGS44A0LdF6F2vfatWoI0HEnmQZmlrki8Eve3Hnu3YdtW2VBHa3nNHJLmWNeIOMMpmk2ozUlE0zwWWxt/VJwcI=
+X-Received: by 2002:a05:690c:d81:b0:6e2:d2a:e998 with SMTP id
+ 00721157ae682-6e5bf73cc21mr98859307b3.2.1729516474442; Mon, 21 Oct 2024
+ 06:14:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v2-1-0bfd64556238@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACBNFmcC/6WOQQ6CMBBFr0K6dkynIhJX3MOwKGUojUibDiKEc
- HcrV3D5fvL/+5tgio5Y3LNNRJodOz8mUKdMmF6PlsC1iYWSKkeJOSxIpUQpwQxPsMZA5xZ4cwO
- vAKFfwbZsIHwiTwzdoC3Dha7YNVoVWuci7YZIqXM4H3Xi3vHk43pcmPGX/mObERBSWxelkaqhW
- zW4UUd/9tGKet/3L+wKR0DzAAAA
-X-Change-ID: 20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-3e51fba26aa4
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1634; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=y77wJFpZ3UjOC8+X1TAadIhkOYe0xdFWOmEEz46fJdI=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnFk0iL5wBinBQ3wCgTm3kdJrM8ETzHTztd0Jn8
- /7lElTLYr6JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZxZNIgAKCRAbX0TJAJUV
- Vt7vEACtYOnPdfP2BDOdRNP5faNd/B4jjhK0A+fQO1ZG29f0nY8Z49b68npfRvVSPhWVcsvF0y/
- NGjHuMQ1wQV5eF4wH2Tfpqf2+XSHVKegToeMmHwOopn+Z3CoJMvrSS4hoB3drVpKoo/7oI8cptI
- JDnB0550opiqqRbk8erokFDtb4GPKV/C6zwUB0TC3dVjktnE7BlBcvmHJWoZP7fJO1aqjHsZzZA
- biDLowe0mN2/QSfIMVYuc+JegvHHD/zDRQLvsxcPOm7TgEJFWTrI4UU1CcgGP/t8hQvmMoPZDlg
- rr82wd94u6BxEuDEgSaxpSakQLNln3s7Px8RQ2UwUyRk7aDUBLlxMkyCs401Hsvja+30ohhah86
- oJDA7BSyaglJGZDQKo67t4qiqBbBDoLfo1tnSNlNdj7PGiOl1ma/4deesYBPIykWHKNUZfcmYo7
- zx6BBgoYacAmMr35j0CGwAnrLYWXw11b0/5juMdanJTKmyqgnLglT7qEzZgk1fYtYZRHN9ZlcH2
- LWcBMzO7JZ/LWwWzt5mCC7MI/3m8Ad82YzD6Cw0SXCBVUVlCuWbuVlcDfF+6qd3fDS99EUMnoXn
- T7gyhIZrL9rntjKr2RBeByV9EYRpGfJzVnkroXb4cpE3bzDO/nZyg3K+sPBBbQkSNwHqfr/iry2
- 8k/f+ukxMyuoJ+g==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org> <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
+In-Reply-To: <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 21 Oct 2024 16:14:23 +0300
+Message-ID: <CAA8EJprQ2538TKhA1NTzH5JVP5QH7qLNeFOWsbNoYz6QXd257A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
-configuration on machine suspend. Currently, the QMP combo PHY driver
-doesn't reinitialise the HW on resume. Under such conditions, the USB
-SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
-RET_ON. This has been already done for USB 0 and 1 SS PHY GDSCs,
-Do this also for the USB MP SS1 PHY GDSC config. The USB MP SS0 PHY GDSC
-already has it.
+On Mon, 21 Oct 2024 at 14:07, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 21.10.2024 12:30 PM, Dmitry Baryshkov wrote:
+> > Add support for the RPMh, TCSR, Global, Display and GPU clock
+> > controllers as present on the Qualcomm SAR2130P platform.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> > Changes in v2:
+> > - Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+> >   gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+> >   gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+> >   gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+> >   subsytems bringup (Taniya)
+> > - Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+> > - Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+> >   (Taniya)
+> > - Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+> >   gcc_parent_map_5 (LKP)
+> > - Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+>
+> Please address the remaining comments from me too
 
-Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- Fixed commit message according to Johan's suggestion
-- Link to v1: https://lore.kernel.org/r/20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v1-1-241a68c02be7@linaro.org
----
- drivers/clk/qcom/gcc-x1e80100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oops. Excuse me.
 
-diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-index 0f578771071fadb0ea7f610f04c5510a85a8485a..33afad9c878d30f487f63b311bcea6296d0653fd 100644
---- a/drivers/clk/qcom/gcc-x1e80100.c
-+++ b/drivers/clk/qcom/gcc-x1e80100.c
-@@ -6155,7 +6155,7 @@ static struct gdsc gcc_usb3_mp_ss1_phy_gdsc = {
- 	.pd = {
- 		.name = "gcc_usb3_mp_ss1_phy_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
-+	.pwrsts = PWRSTS_RET_ON,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
 
----
-base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
-change-id: 20241014-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-3e51fba26aa4
 
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
-
+With best wishes
+Dmitry
