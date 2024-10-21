@@ -1,189 +1,116 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED65634;
-	Mon, 21 Oct 2024 05:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E93C1D07A3;
+	Mon, 21 Oct 2024 07:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729489302; cv=none; b=tv92V0n5sbe0h30GXeR1jpnfvJVpCzuY8SAsD6DQD3X/yYE8w5cYaqxLhJYD8H1HV3l+JPxmHQG9IkBIoqf4/wH56sSQm5QgP1O/vgVWvEBJreK+LKDtP0BZpozEV6UdWH/0l++0CAjIEwaCVO4jNQDSm2n5/ngOMgxKdB1x3pM=
+	t=1729494909; cv=none; b=KC4PtqQEfLzECQWnIIqowJuGOJ8d3l4AKs9WzJMwgaUjR8faQew2E/4p2zXNCzQpUZ15lm1Wf/DCuB+NpLMCk5PGKvt0PTG8Yr1T8+SMbwNKQOwO867cu3Cal8VnnRgTdN7W1hZxL/fHizKwsYfnmyt1i9bcNqfPZmpKjVCPwe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729489302; c=relaxed/simple;
-	bh=x15yRLhgy42+yizJ86mU28DoOslmxHJB5vdr0m9Jm+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CdicnGy1g3R3rY/OdSzLqCR4nvGIUsVoq7KbICP+rc/xh1+v9bI858hVUXrj8RLwb9htfRirzlH+5R3WAAn8QpdBEWjlYm+TdVMasKyDa33AQXpOjnGOhKpsQlw5xUXvqq74Kd7DIeZufAMYYVqtmWxGv/Vy6+w9vOq5DIvlJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b7Ovei4D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729494909; c=relaxed/simple;
+	bh=nKPzNF057pxm0ao76emLKlBxzsL74QCEn259038azO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xv0sGyDKr52g7kH15JsvyoFj444etcyPxqGDvMgniVVAa5HjJqhGhTBpDeVTwBd3KK+Hq6YhK35+Fb0xH9DKCNi4bWb7GPyYM9lLXyY8XW+IRjw/f1m3EC50ujGOMG9cUfLhJW53/LZacqO0kOTnpgpltfpzaK29OfkxdsHVpfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKuWxwT+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b7Ovei4D"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49KNHeBB014302;
-	Mon, 21 Oct 2024 05:41:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OI+g/PDRqVZ95UWxsvAz05m79blc6jc1PXoXbNyQswA=; b=b7Ovei4DFeFWBJ0Z
-	wC+yHk5XzuTgof4wrQkk7Mwnyh3mc0DLyZEDo0rvIex9U90w7eqSyqbCpf0VVhF9
-	O+UaWCU17fV8k69zKZhE3eSo/cu3+dszW1lHxqJu1/jCZo9fv4L/PeWJcyJFTwn4
-	zxWw2wrKLHAaRxkxsknJUHOAUSIOdLhxiCKOpzGjC5eBRLE2UaQwBcEBu4GSJ1Vr
-	Rv7bJhKcbho2QrvIgZez5UYNnz93WZ6vW1WE0aGOObN3MzhDYN4DbD79SmwVRWBD
-	nsvp2+BYnQX4H6vUDH3A39g/zf8NA2bjUdjGAVf11xiOEjXAZxqrdQMbD8W7cG4l
-	m3p0lQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vuua0v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 05:41:22 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49L5fLt2005526
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Oct 2024 05:41:21 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 20 Oct
- 2024 22:41:14 -0700
-Message-ID: <01cbb389-1966-4501-a22d-7227765d1eb9@quicinc.com>
-Date: Mon, 21 Oct 2024 11:11:13 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKuWxwT+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AF4C4CEC3;
+	Mon, 21 Oct 2024 07:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729494909;
+	bh=nKPzNF057pxm0ao76emLKlBxzsL74QCEn259038azO0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vKuWxwT+PirXJWAVCFhlrq4PmDauVrCIPG9OhbpDA4vaW6SURV8ySGsvCCkT7NKHD
+	 PLYnw/oeETVXSAVGAN7IqgEZkDR7OGwRf90qnGbIMqrwAhnRKYf+PP/7zvzGK5sJvB
+	 802kYFeA036TvrdzXz14zMLYvHpKJI7fGdHKX4mSiHjLFS+tSIUgJzBJAfNloixmFd
+	 Wi9tbJ41XptxVqI7KK06g07bs4qhybsbQymNswWCbfOIFwTbPziGl/ElZ1M3SRgOFQ
+	 g6MykEe4VTzzW+8LFVR/qYZBG9jwxI2aaW1+fuIOg8pespcp5nDUmpHiBLpISw1QKz
+	 fJrOfbDn93kQw==
+Date: Mon, 21 Oct 2024 09:15:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/12] dt-bindings: clock: qcom: Add QCS615 GCC clocks
+Message-ID: <bqnqc3sxnh5afs6nb7hrc45scfk6amcj2d3hbeuyriydowmmam@jvma7o4mg65m>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-9f1ca2048287@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-5-9f1ca2048287@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/6] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
- binding
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
-        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>
-References: <20241017123626.204421-1-quic_srichara@quicinc.com>
- <20241017123626.204421-3-quic_srichara@quicinc.com>
- <nznisr4aqpe65fovvk3q3r6capmqj4jm4xsqufjib2b7vax4xx@6r3tzaar2w3p>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <nznisr4aqpe65fovvk3q3r6capmqj4jm4xsqufjib2b7vax4xx@6r3tzaar2w3p>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BvccQ3eEA3DBohRrCELpz3wod20lmi_E
-X-Proofpoint-GUID: BvccQ3eEA3DBohRrCELpz3wod20lmi_E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 mlxscore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410210038
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-5-9f1ca2048287@quicinc.com>
 
-
-
-On 10/18/2024 11:43 AM, Krzysztof Kozlowski wrote:
-> On Thu, Oct 17, 2024 at 06:06:22PM +0530, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Add binding for the Qualcomm IPQ5424 Global Clock Controller
->>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>   [V4] Added 2 new PCIE clks to end of the list, preserving default order
->>
->>   .../bindings/clock/qcom,ipq5332-gcc.yaml      |  40 ++-
->>   include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
->>   include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
->>   3 files changed, 499 insertions(+), 7 deletions(-)
->>   create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
->>   create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->> index 9193de681de2..ef1fd9d9f8da 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
->> @@ -4,31 +4,35 @@
->>   $id: http://devicetree.org/schemas/clock/qcom,ipq5332-gcc.yaml#
->>   $schema: http://devicetree.org/meta-schemas/core.yaml#
->>   
->> -title: Qualcomm Global Clock & Reset Controller on IPQ5332
->> +title: Qualcomm Global Clock & Reset Controller on IPQ5332 and IPQ5424
->>   
->>   maintainers:
->>     - Bjorn Andersson <andersson@kernel.org>
->>   
->>   description: |
->>     Qualcomm global clock control module provides the clocks, resets and power
->> -  domains on IPQ5332.
->> +  domains on IPQ5332 and IPQ5424.
->>   
->> -  See also:: include/dt-bindings/clock/qcom,gcc-ipq5332.h
->> -
->> -allOf:
->> -  - $ref: qcom,gcc.yaml#
->> +  See also:
->> +    include/dt-bindings/clock/qcom,gcc-ipq5332.h
->> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
->>   
->>   properties:
->>     compatible:
->> -    const: qcom,ipq5332-gcc
->> +    enum:
->> +      - qcom,ipq5332-gcc
->> +      - qcom,ipq5424-gcc
->>   
->>     clocks:
->> +    minItems: 5
->>       items:
->>         - description: Board XO clock source
->>         - description: Sleep clock source
->>         - description: PCIE 2lane PHY pipe clock source
->>         - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
->>         - description: USB PCIE wrapper pipe clock source
->> +      - description: PCIE 2-lane PHY2 pipe clock source
->> +      - description: PCIE 2-lane PHY3 pipe clock source
->>   
->>     '#power-domain-cells': false
->>     '#interconnect-cells':
->> @@ -38,6 +42,28 @@ required:
->>     - compatible
->>     - clocks
->>   
->> +allOf:
->> +  - $ref: qcom,gcc.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: qcom,ipq5332-gcc
->> +    then:
->> +      properties:
->> +        clocks:
->> +          maxItems: 5
->> +
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: qcom,ipq5424-gcc
->> +    then:
->> +      properties:
->> +        clocks:
+On Sat, Oct 19, 2024 at 12:42:35AM +0530, Taniya Das wrote:
+> Add device tree bindings for global clock controller on QCS615 SoCs.
 > 
-> This needs minItems: 7, unless clocks are really optional (but they
-> shouldn't be optional). I think I missed this part last time.
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
-ok, got it, will update and send V5.
+That's 5/12 but rest is missing. Are you sure you used sent it
+correctly?
 
-Regards,
-  Sricharan
+>  .../devicetree/bindings/clock/qcom,qcs615-gcc.yaml |  59 ++++++
+>  include/dt-bindings/clock/qcom,qcs615-gcc.h        | 211 +++++++++++++++++++++
+>  2 files changed, 270 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..fecc694cd71b8aeb3d420ccea5f5ffba04c8ff9c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller on QCS615
+> +
+> +maintainers:
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm global clock control module provides the clocks, resets and power
+> +  domains on QCS615.
+> +
+> +  See also:: include/dt-bindings/clock/qcom,qcs615-gcc.h
 
+s/::/:/
 
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,qcs615-gcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Board active XO source
+> +      - description: Sleep clock source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: bi_tcxo_ao
+> +      - const: sleep_clk
+
+That's just "sleep".
+
+Why do you need clock-names in the first place?
+
+Best regards,
+Krzysztof
 
