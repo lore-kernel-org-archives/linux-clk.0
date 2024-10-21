@@ -1,86 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C3F79CF;
-	Mon, 21 Oct 2024 18:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B3F1FB3F6;
+	Mon, 21 Oct 2024 19:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729534602; cv=none; b=emOqsCmWJJXC1XzIlUXz3KW1HYR/Q1MJzGPw8nVa31hef/PVY/r3ZD+vfsS1KN11Oz+fsOfccMebCtY9ayeNG2klnvwMLF3FQtf4Ry6BIkjNDrS0bFZzngMQjYhHVKN3VFXQsDfTicLTtxo614BRZEfLP5mRGFOOKnbjaEIJwXo=
+	t=1729537387; cv=none; b=OzuS7q/lkYWj/J8UPcKMvdR/rDZhFUocn9N9TSoUVagNrfiTP8QX3/YeerztMcaAUn/pIyu2B6zT/xOKkQOQbCSg33upLb1ykk9TUcAii/CAlvMFKvpB5pvLsRAsEFQJyfZNVgu3z5BhFwRJcNklCYB3lJXQbCbri0dD08I6ys8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729534602; c=relaxed/simple;
-	bh=535weqGthcOSSyLKIbRyjS0M8aM1BuA4DQbzV12il9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZoEJpFsqtSys1SIUChxzfAtfPcWiPndrdRYSMpC1oIDmdEQFTGKaGL5qp9X5Y3PRr48Lgj2peqJzZhz4rnShNs4IUWcuUncoC0JXSQa44Q3kiR5NwAxpVnSaaA5SldP7U2WN3K9qntEpC5SrDsq8X9OHDiN/oOI7oTkKzGeghI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdEuE9l7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729537387; c=relaxed/simple;
+	bh=vHC3/UHe8JImpp2npCqoOg9PwX18eDeQiBuWYyIulso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c1hKQTFokdouk6juro2Oq6T7DcavWF6/CX+CiGv7a0Z0B09tnNp1agqJtHFF9OE/nPxK/xi/vhchTVyQFGla22lXmJBRHESLE5+ehmk87lpi+6JjztCf0pmcKOd9Al/+oj1Avn6x1Jus8Zs7sdHg6df2JKJOhGynA9giY4nj1rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+0liDSW; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdEuE9l7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59079C4CEC7;
-	Mon, 21 Oct 2024 18:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729534602;
-	bh=535weqGthcOSSyLKIbRyjS0M8aM1BuA4DQbzV12il9I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HdEuE9l7w4kvRQh74utaeulNFvw7nn+FImK0ByIqLqsnkIrC+XOTNUsBjFkqpGhE6
-	 HZJBPw8orsxmPx4hE7MXM5zBaUsRcb6R6Hqmj2/tki0dDi6ILPyLC6d0+0RzxXektw
-	 hYk7bY5rCTtA7rNUjJ1FZ4VzURgQ1LetB6Msn9yVJBiQWzmeEY5suWCCndt49FLpz/
-	 2feM0JT1aweEHZbFqk4tFZ7UEJwyhw+zlxEY3A84t1+nNMRagAqap82nIpZfL57JBB
-	 0hOr7w2/eqosTr4XTxAgaTEgQMiAhBjUTGSFcRNrRhigotTilgHvp9pJT+Y1n2HC9L
-	 FZOE9P2nwF4wA==
-Date: Mon, 21 Oct 2024 13:16:41 -0500
-From: Rob Herring <robh@kernel.org>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] dt-bindings: clock: qcom: Add QCS8300 video clock
- controller
-Message-ID: <20241021181641.GA874673-robh@kernel.org>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-5-859095e0776c@quicinc.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+0liDSW"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43169902057so24102805e9.0;
+        Mon, 21 Oct 2024 12:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729537383; x=1730142183; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5AYyZebDpWob+iueDyC8gkIB3IrofLZfNi1uSmxyuEo=;
+        b=P+0liDSW5IL7twFPv6SU6MPj98p8g5mLk14MfX70hA0fAYby6W6RRGB4wgOCBXHaqQ
+         cstb6XzX1onuiAWeOedtcbix71vpWJz9ksOAY58tnhpZI0NlGO76UkooYKWktdHwoAj3
+         qb+BqI2PCVy13zMY1/F4lT4nzpDnPylX8fFyofsV8EFlJdBpIC8qTX9kkerq7KuLnHPM
+         z1eBq5BSuD3u6KvLc2HL5/LxOd0wfehlAvyijx+TI1qJiJ3BhYA1kgLsUIkpluHIrsGa
+         irdAVGtVauezEjuHpDldP49eRheAwZuOzv44F9JLwAOzsMGKIZBLc4Q84jjKk/UqvE4t
+         Ibqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729537383; x=1730142183;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5AYyZebDpWob+iueDyC8gkIB3IrofLZfNi1uSmxyuEo=;
+        b=kWcqiaAOob/a0dYkSQ0IjyUcdwSxHNCFggAMzvYQAQZMLijTsBFEdJ3S4M1LTVuoms
+         WayAuqocjp1qxU6GuLu7Jmhslc/ylLrzy+lsd0bX0HtJBsHMpZdzjXGqO15dJf2diPa5
+         L8Fxd5gf+j+pp395xo+5esPGq8XxZ5QAuk1mZXPfDaxDN7EKeocLIVFB5qOfJNjmT3eh
+         pvb/P2QQc8NV98hsWb6/fPLh1/uZm4sSALTvUr/7QWNWvZiNqBmKraLYrqiV7tqWwaVY
+         oEHc+BCKLU7NyTtk1/TTqsiPq+YUVVbBf5MC9T+DWxMTD3x5DsmfGr0EAjoZEX8a85+l
+         YmDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8+zgFg8ZvS1q4zKXLbpKSomRpIrTLrECeIWlLhdoLjFQtlxPYW4Z0NBgFi5WIhk7H7m1tRvUS@vger.kernel.org, AJvYcCWdyfkdn10X5WVpgHFgbNWYte3cQFsUbX1TqqvWoso3Bd5ZTjL1aqJGeJ7e895KnZ3m5iU0681ZwtY=@vger.kernel.org, AJvYcCXLih6C1TKFZ4CY7Hl1qlVTX+w9zOj1kRGl3cVBm0s0dTrqRHALzgg7xclZUobKFqnuzSL+GshJkXlXgqAf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI8yHWGsG//VNPiC8+5nztmSrFjY/FHrx1iMEba8yVno5mZmrr
+	dOj4GHH0lni7k9rnJ4L3uVVBtK/0TFYpMX6OFupHorJtBFKcADZj
+X-Google-Smtp-Source: AGHT+IE3/fafT4prxw4+ifxyAxu4ITdxOWe2+Dq5H3IEiDPYdexl4Xh54tOtnbEABx0gzDIqWoXDQQ==
+X-Received: by 2002:a05:600c:500d:b0:431:5f1c:8352 with SMTP id 5b1f17b1804b1-4317b8d6613mr9601815e9.5.1729537382804;
+        Mon, 21 Oct 2024 12:03:02 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A6C7.catv.pool.telekom.hu. [93.89.166.199])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fc17sm64788785e9.15.2024.10.21.12.03.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 12:03:02 -0700 (PDT)
+Message-ID: <f2a1dcc6-247b-44fd-97ae-977f8b3c4d41@gmail.com>
+Date: Mon, 21 Oct 2024 21:03:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018-qcs8300-mm-patches-v1-5-859095e0776c@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: fix alpha mode configuration
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com>
+ <5f39a93197f02fa7ec0de897a7ce646d.sboyd@kernel.org>
+Content-Language: hu
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <5f39a93197f02fa7ec0de897a7ce646d.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 04:42:33PM +0530, Imran Shaik wrote:
-> Add device tree bindings for the video clock controller on Qualcomm
-> QCS8300 platform.
+2024. 10. 21. 20:14 keltezéssel, Stephen Boyd írta:
+> Quoting Gabor Juhos (2024-10-21 10:32:48)
+>> Commit c45ae598fc16 ("clk: qcom: support for alpha mode configuration")
+>> added support for configuring alpha mode, but it seems that the feature
+>> was never working in practice.
+>>
+> [...]
+>>
+>> Applying the 'alpha_en_mask' fixes the initial rate of the PLLs showed
+>> in the table above. Since the 'alpha_mode_mask' is not used by any driver
+>> currently, that part of the change causes no functional changes.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: c45ae598fc16 ("clk: qcom: support for alpha mode configuration")
+>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+>> ---
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index f9105443d7dbb104e3cb091e59f43df25999f8b3..03cc7aa092480bfdd9eaa986d44f0545944b3b89 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -421,6 +421,8 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>         mask |= config->pre_div_mask;
+>>         mask |= config->post_div_mask;
+>>         mask |= config->vco_mask;
+>> +       mask |= config->alpha_en_mask;
+>> +       mask |= config->alpha_mode_mask;
+>>  
+> 
+> This is https://lore.kernel.org/all/20241019-qcs615-mm-clockcontroller-v1-1-4cfb96d779ae@quicinc.com/
 
-That's obvious reading the diff. How is it different from the sa8775p 
-version? It must be different or you should have a fallback compatible.
+Oops, indeed. Sorry, I should have noticed that.
 
-> 
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
-> index 928131bff4c1..07e5d811d816 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
-> @@ -18,6 +18,7 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - qcom,qcs8300-videocc
->        - qcom,sa8775p-videocc
->  
->    clocks:
-> 
-> -- 
-> 2.25.1
-> 
+-Gabor
