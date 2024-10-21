@@ -1,348 +1,158 @@
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FF01EF93C
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 17:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7DB1FA271;
+	Mon, 21 Oct 2024 17:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532487; cv=none; b=Ob0hor3vRHPkUjJj79wQAOzl5qfDGl+jpt0j4V1nuc6lnzMikJKZjvDzZV4xdJsg1gJ/jfYq6F93RfnU3r3w93QFhoaGImIm4ydsX+fWOTpnkxqO4yBVoPeHBr13kzBvcpHab186WlnNYhTwv/+0dtELbheXCJETnufm2Z4NOjo=
+	t=1729533516; cv=none; b=C/lKp1JJngQAOMHRC2WqOblvA0kcbxSodkUTXg0g9uaDXdLQZwdb7N+W/hWaWxK7uq/XRWmun3ZNEIc6r/dCoaDk4fto8/55sTzOKkzF4RuzcxpWVt62qSrW1TOsJ+XsQDWhLbdEUC9havfV/HDbBZEkkscaOyWBHgUm82X2T3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532487; c=relaxed/simple;
-	bh=TuvrQ85T3vVtYJA6Cx1RVkvTS+wxjyvClzrMpwlzDho=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqpiqAgec3eilMAlsy1yZTqVVthSDL+cpdwYIRkfa59pUJOvSon5qIYyViik5waV0fjlEp688uR9zIB32UXRcJLZqmq+FOLP/ZJOiyWg1FvnzGwJ7SV4F8l3OQdGZ0yY9UDTOC2wTq2zvrE37UBq9Yzk9+tu0K4O54w9wtOZyLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NAwCfqhH; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1729533516; c=relaxed/simple;
+	bh=diX1bSWoYN/CNDGT27MeXMFVqGpzL6nJoe9VWrYDQc0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=QEHm6TrT251yH5k9VvGb1+R9hWVJiVidG0NC4KXLmX99DKF29rjnYuwf5GM3otm22PtJaztK80ItvXqlcWcj0TSyAthebXVHtL2WESHtOa05Mz/vWFK82zsf/kEZTnxqzF0qVQuDYw6OY9WTsG1vvn2H5aloZcpNDSvRP03KoJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQfSuUOA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NAwCfqhH"
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9a0f198d38so660064266b.1
-        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 10:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729532482; x=1730137282; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=63cpWyi1JIA2H2wekOls4P53PLW9lkUzTohEq41jf5s=;
-        b=NAwCfqhHElFT4FbQCyfqrD2O0Wpb+RQAGKirWpRkBALABHxzfUDmk+hdOjOEqdjBhQ
-         HOzBWa5cWqj5chxMRnAI24RbYZX9wl6i35DwpAGTb/7mUup46wXtUcx/sbk8uhZkA4pV
-         FxW8m150mrF7XrxhTCJUNFWZv3uik9hZ8MpbIvOE/aKM0CTQZnWTi7jOw+wciNgM8TUd
-         4NTi7EZdWKP/blLObrIwnipk4sJhPCSrtDR3md9kSsY6gdbPStMoFphNC480fE9aKDKU
-         S4y224ohW8d+7HirIkIVuI82K7Weo/cbrs0uKM4vNmFLqO7bUNkZXj2wOt5KSfYAxupZ
-         i29g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729532482; x=1730137282;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63cpWyi1JIA2H2wekOls4P53PLW9lkUzTohEq41jf5s=;
-        b=jMSmcv3GkKL1VivDei/RBfT+g5mwuIxEeMsh0UXJiJbkbx4LUBEHJ/TWSrTq+ZaOoQ
-         NamwNHIYj2BetaHcn6rzja0Gn+8qgrovdU1/gFE6uohxwpH6nDqJHSiH0StrcBRrO3E2
-         J/dO6AiUusBmZJCJjz0hEJYEMxts0ShcD57HhXQO0U5W0cpVbYy+2/W+JEjYyp65ybFD
-         J6SmLQyRE54oYf6wPe1UVRldGBpduWYRei14MNE0aU+AgxzJe28yE5ftXFpomocNOgbo
-         Ex/jWJrGc1WYaSbOQ52G/5Nk+C1FWU4loHEdwju3WhPNO771sLKK7GSwGsZSCr/DA+qQ
-         +edg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu9a46XPAJc9XmmQp1wI3hM0vzDIJj4yDaiCs32lUshyMlZdUp+dcQBXEB+TA8Asdyp5yva6a99kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE0/3KIMEgqEQE0YhUTNqJRpVcIfKhIWOSEKX6M6KYHlYe4Kw1
-	0v9KAMzJ66Z656njKm+dTqElTUFja904gr9crdN2YMZunDAOW3AjATpTY7qNruk=
-X-Google-Smtp-Source: AGHT+IFwv4AD5sxlbdXAZB4TXDNLjUkfEFeFMzWPzU0NZL2Sw8oAxvsJavg9+Gy7Z9Bftm2TVA1zKw==
-X-Received: by 2002:a17:907:7d8f:b0:a99:35eb:1301 with SMTP id a640c23a62f3a-a9a69a66fb0mr1297305266b.18.1729532482486;
-        Mon, 21 Oct 2024 10:41:22 -0700 (PDT)
-Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a913707edsm232308566b.127.2024.10.21.10.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 10:41:22 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 21 Oct 2024 19:41:43 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 02/14] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-Message-ID: <ZxaSV2sj9-EpaSsh@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <0589448fa41bf7f3e951a75b70226a9873db554f.1728300189.git.andrea.porta@suse.com>
- <csj452uzkug7nz6yygers6curpo2toj3pwmsa5ka2222hlfspf@jqumtwecvrdq>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQfSuUOA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C34A3C4CEF0;
+	Mon, 21 Oct 2024 17:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729533515;
+	bh=diX1bSWoYN/CNDGT27MeXMFVqGpzL6nJoe9VWrYDQc0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=MQfSuUOA1CiaiUMfWu93gemho9ByrdMMIcdYzfss5nv5KMCzhqM2CSmHQ0+srrBu/
+	 fTVRO4FnrGLPUlW+yHPGGTmkPSiDhqiAd+BmOT4En2xYOudCVyIzT8u2C7xRL4TZTT
+	 HfvPc5lirCar7PE/mWSRS5JAA8LSkZTTtagat07ZTh8UV3Slh2jsm0W4nBkQ+LVk4v
+	 RVbRIlQ7gxHTuw471nIjR8F87/WJskOSQ/y0NJfCqQfZC3+lMBwt39lOgBaeQukhw6
+	 d0tq7jbEpsBOMKAvHQDdFYa9+SOxDrEURkYu+O2BksK/4WiVk3PFQSGW803XLiJ5Vt
+	 S7mstuUNSMZUQ==
+Date: Mon, 21 Oct 2024 12:58:34 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <csj452uzkug7nz6yygers6curpo2toj3pwmsa5ka2222hlfspf@jqumtwecvrdq>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ Liam Girdwood <lgirdwood@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+ Jaroslav Kysela <perex@perex.cz>, 
+ Philippe Simons <simons.philippe@gmail.com>, linux-sunxi@lists.linux.dev, 
+ devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, 
+ Chris Morgan <macroalpha82@gmail.com>, Mark Brown <broonie@kernel.org>
+In-Reply-To: <20241020083124.174724-1-ryan@testtoast.com>
+References: <20241020083124.174724-1-ryan@testtoast.com>
+Message-Id: <172953337677.748365.5628550544800550601.robh@kernel.org>
+Subject: Re: [PATCH v2 0/7] ASoC: add Allwinner H616 audio codec support
 
-Hi Krzysztof,
 
-On 08:29 Tue 08 Oct     , Krzysztof Kozlowski wrote:
-> On Mon, Oct 07, 2024 at 02:39:45PM +0200, Andrea della Porta wrote:
-> > Add device tree bindings for the gpio/pin/mux controller that is part of
-> > the RP1 multi function device, and relative entries in MAINTAINERS file.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../pinctrl/raspberrypi,rp1-gpio.yaml         | 169 ++++++++++++++++++
-> >  MAINTAINERS                                   |   2 +
-> >  2 files changed, 171 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > new file mode 100644
-> > index 000000000000..46e071ec6251
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > @@ -0,0 +1,169 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RP1 chipset is a Multi Function Device containing, among other sub-peripherals,
-> > +  a gpio/pinconf/mux controller whose 54 pins are grouped into 3 banks. It works also
-> > +  as an interrupt controller for those gpios.
-> > +
-> > +  Each pin configuration node lists the pin(s) to which it applies, and one or
-> > +  more of the mux function to select on those pin(s), and their configuration.
-> > +  The pin configuration and multiplexing supports the generic bindings.
-> > +  For details on each properties (including the meaning of "pin configuration node"),
-> > +  you can refer to ./pinctrl-bindings.txt.
+On Sun, 20 Oct 2024 21:30:50 +1300, Ryan Walklin wrote:
+> Hi,
 > 
-> Drop the sentence. pinctrl.yaml defines this already.
-
-Just to be sure, by 'sentence' I assume you mean the entire paragraph from
-"Each pin configuration..." to "...refer to ./pinctrl-bindings.txt.", right?
- 
+> V2 of this patch adding support for the Allwinner H616 (and variants) audio codec. Some rework to improve clock correctness, and DTS changes to enable the codec on boards added.
 > 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: raspberrypi,rp1-gpio
-> > +
-> > +  reg:
-> > +    maxItems: 3
-> > +    description: One reg specifier for each one of the 3 pin banks.
-> > +
-> > +  '#gpio-cells':
-> > +    description: The first cell is the pin number and the second cell is used
-> > +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
-> > +    const: 2
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  gpio-ranges:
-> > +    maxItems: 1
-> > +
-> > +  gpio-line-names:
-> > +    maxItems: 54
-> > +
-> > +  interrupts:
-> > +    maxItems: 3
-> > +    description: One interrupt specifier for each one of the 3 pin banks.
-> > +
-> > +  '#interrupt-cells':
-> > +    description:
-> > +      Specifies the Bank number [0, 1, 2] and Flags as defined in
-> > +      include/dt-bindings/interrupt-controller/irq.h.
-> > +    const: 2
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +additionalProperties:
-> > +  anyOf:
+> Changelog v1..v2:
+> - Reordered patches to group ASoC changes
+> - Corrected PLL_AUDIO clock dividers to match values from manual and vendor SDK.
+> - Remove PLL_AUDIO_4X clock from the device tree binding (not used in the driver).
+> - Restrict TX-only DMA changes to the H616.
+> - Change the codec name to fit into the 16 char limit.
+> - Move the codec (and spdif) blocks in the H616 DTSI to restore address-order.
+> - Add board enablement (and power/GPIO changes for RG35XX to support speaker amp).
 > 
-> Uh, no, I think you got comments on this. You should be specific which
-> nodes you expect, e.g. pins or groups. See other recent bindings for
-> example.
-
-Please see below.
-
 > 
-> > +    - type: object
-> > +      additionalProperties: false
-> > +      allOf:
-> > +        - $ref: pincfg-node.yaml#
-> > +        - $ref: pinmux-node.yaml#
-> > +
-> > +      description:
-> > +        Pin controller client devices use pin configuration subnodes (children
-> > +        and grandchildren) for desired pin configuration.
-> > +        Client device subnodes use below standard properties.
-> > +
-> > +      properties:
-> > +        pins:
-> > +          description:
-> > +            A string (or list of strings) adhering to the pattern "gpio[0-5][0-9]"
-> > +        function: true
-> > +        bias-disable: true
-> > +        bias-pull-down: true
-> > +        bias-pull-up: true
-> > +        slew-rate:
-> > +          description: 0 is slow slew rate, 1 is fast slew rate
-> > +          enum: [ 0, 1 ]
-> > +        drive-strength:
-> > +          enum: [ 2, 4, 8, 12 ]
-> > +
-> > +    - type: object
-> > +      additionalProperties:
-> > +        $ref: "#/additionalProperties/anyOf/0"
+> Original blurb below:
 > 
-> I don't quite get what you wanted to achieve here.
-
-This should be a compact way to describe a schema that allows declarations like
-the following:
-
-rp1_gpio {
-  ...
-
-  /* grouped gpios */
-  rp1_uart0_14_15: rp1_uart0_14_15 {
-    pin_txd {
-      function = "uart0";
-      pins = "gpio14";
-      bias-disable;
-    };
-
-    pin_rxd {
-      function = "uart0";
-      pins = "gpio15";
-      bias-pull-up;
-    };
-  };
-
-  /* standalone pins */
-  rp1_i2s0_18_21: rp1_i2s0_18_21 {
-      function = "i2s0";
-      pins = "gpio18", "gpio19", "gpio20", "gpio21";
-      bias-disable;
-  };
-
-  ...
-};
-
-that is, both standalone and group pinctrl/pinmux node.
-
+> Hi,
 > 
-> > +
-> > +allOf:
-> > +  - $ref: pinctrl.yaml#
-> > +
-> > +required:
-> > +  - reg
-> > +  - compatible
-> > +  - "#gpio-cells"
-> > +  - gpio-controller
-> > +  - interrupts
-> > +  - "#interrupt-cells"
-> > +  - interrupt-controller
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +    rp1 {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1_gpio: pinctrl@c0400d0000 {
-> > +            reg = <0xc0 0x400d0000  0x0 0xc000>,
-> > +                  <0xc0 0x400e0000  0x0 0xc000>,
-> > +                  <0xc0 0x400f0000  0x0 0xc000>;
-> > +            compatible = "raspberrypi,rp1-gpio";
-> > +            gpio-controller;
-> > +            #gpio-cells = <2>;
-> > +            interrupt-controller;
-> > +            #interrupt-cells = <2>;
-> > +            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <1 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <2 IRQ_TYPE_LEVEL_HIGH>;
-> > +            gpio-line-names =
-> > +                   "ID_SDA", // GPIO0
-> > +                   "ID_SCL", // GPIO1
-> > +                   "GPIO2", "GPIO3", "GPIO4", "GPIO5", "GPIO6",
-> > +                   "GPIO7", "GPIO8", "GPIO9", "GPIO10", "GPIO11",
-> > +                   "GPIO12", "GPIO13", "GPIO14", "GPIO15", "GPIO16",
-> > +                   "GPIO17", "GPIO18", "GPIO19", "GPIO20", "GPIO21",
-> > +                   "GPIO22", "GPIO23", "GPIO24", "GPIO25", "GPIO26",
-> > +                   "GPIO27",
-> > +                   "PCIE_RP1_WAKE", // GPIO28
-> > +                   "FAN_TACH", // GPIO29
-> > +                   "HOST_SDA", // GPIO30
-> > +                   "HOST_SCL", // GPIO31
-> > +                   "ETH_RST_N", // GPIO32
-> > +                   "", // GPIO33
-> > +                   "CD0_IO0_MICCLK", // GPIO34
-> > +                   "CD0_IO0_MICDAT0", // GPIO35
-> > +                   "RP1_PCIE_CLKREQ_N", // GPIO36
-> > +                   "", // GPIO37
-> > +                   "CD0_SDA", // GPIO38
-> > +                   "CD0_SCL", // GPIO39
-> > +                   "CD1_SDA", // GPIO40
-> > +                   "CD1_SCL", // GPIO41
-> > +                   "USB_VBUS_EN", // GPIO42
-> > +                   "USB_OC_N", // GPIO43
-> > +                   "RP1_STAT_LED", // GPIO44
-> > +                   "FAN_PWM", // GPIO45
-> > +                   "CD1_IO0_MICCLK", // GPIO46
-> > +                   "2712_WAKE", // GPIO47
-> > +                   "CD1_IO1_MICDAT1", // GPIO48
-> > +                   "EN_MAX_USB_CUR", // GPIO49
-> > +                   "", // GPIO50
-> > +                   "", // GPIO51
-> > +                   "", // GPIO52
-> > +                   ""; // GPIO53
-> > +
-> > +            rp1_uart0_14_15: rp1_uart0_14_15 {
+> The Allwinner H616 has a playback-only audio codec, with a single stereo or differential-mono line output.
 > 
-> Underscores are not allowed in node names. Please read DTS coding style.
+> This patch adds support for the H616 (and H313/H618/H700/T507) SoC. Based on the  Allwinner kernel SDK driver, and tested on the H700.
 > 
-> Drop unused labels.
+> Regards,
+> 
+> Ryan
+> 
+> Marcus Cooper (2):
+>   ASoC: sun4i-codec: Add support for different DAC FIFOC addresses to
+>     quirks
+>   ASoC: sun4i-codec: Add playback only flag to quirks
+> 
+> Ryan Walklin (5):
+>   clk: sunxi-ng: h616: Add sigma-delta modulation settings for audio PLL
+>   dt-bindings: allwinner: add H616 sun4i audio codec binding
+>   ASoC: sun4i-codec: support allwinner H616 codec
+>   arm64: dts: allwinner: h616: Add audio codec node
+>   arm64: dts: allwinner: h313/h616/h618/h700: Enable audio codec for all
+>     supported boards
+> 
+>  .../sound/allwinner,sun4i-a10-codec.yaml      |  53 +++-
+>  .../dts/allwinner/sun50i-h313-tanix-tx1.dts   |   5 +
+>  .../allwinner/sun50i-h616-orangepi-zero.dtsi  |   5 +
+>  .../dts/allwinner/sun50i-h616-x96-mate.dts    |   5 +
+>  .../arm64/boot/dts/allwinner/sun50i-h616.dtsi |  44 ++-
+>  .../allwinner/sun50i-h618-orangepi-zero2w.dts |   5 +
+>  .../sun50i-h618-transpeed-8k618-t.dts         |   5 +
+>  .../sun50i-h700-anbernic-rg35xx-2024.dts      |  13 +-
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c        |  44 ++-
+>  sound/soc/sunxi/sun4i-codec.c                 | 297 +++++++++++++++---
+>  10 files changed, 401 insertions(+), 75 deletions(-)
+> 
+> --
+> 2.47.0
+> 
+> 
+> 
 
-Ack.
 
-Many thanks,
-Andrea
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> 
-> > +                pin_txd {
-> > +                    function = "uart0";
-> > +                    pins = "gpio14";
-> > +                    bias-disable;
-> > +                };
-> 
-> Best regards,
-> Krzysztof
-> 
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y allwinner/sun50i-h313-tanix-tx1.dtb allwinner/sun50i-h616-x96-mate.dtb allwinner/sun50i-h618-orangepi-zero2w.dtb allwinner/sun50i-h618-transpeed-8k618-t.dtb allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb' for 20241020083124.174724-1-ryan@testtoast.com:
+
+arch/arm64/boot/dts/allwinner/sun50i-h618-transpeed-8k618-t.dtb: soc: codec@05096000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h313-tanix-tx1.dtb: soc: codec@05096000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb: soc: codec@05096000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h616-x96-mate.dtb: soc: codec@05096000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h618-orangepi-zero2w.dtb: soc: codec@05096000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h618-orangepi-zero2w.dtb: codec@05096000: allwinner,audio-routing: b'Line Out\x00LINEOUT\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h618-orangepi-zero2w.dtb: /soc/codec@05096000: failed to match any schema with compatible: ['allwinner,sun50i-h616-codec']
+arch/arm64/boot/dts/allwinner/sun50i-h313-tanix-tx1.dtb: codec@05096000: allwinner,audio-routing: b'Line Out\x00LINEOUT\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h313-tanix-tx1.dtb: /soc/codec@05096000: failed to match any schema with compatible: ['allwinner,sun50i-h616-codec']
+arch/arm64/boot/dts/allwinner/sun50i-h618-transpeed-8k618-t.dtb: codec@05096000: allwinner,audio-routing: b'Line Out\x00LINEOUT\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h618-transpeed-8k618-t.dtb: /soc/codec@05096000: failed to match any schema with compatible: ['allwinner,sun50i-h616-codec']
+arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb: codec@05096000: allwinner,audio-routing: b'Line Out\x00LINEOUT\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb: /soc/codec@05096000: failed to match any schema with compatible: ['allwinner,sun50i-h616-codec']
+arch/arm64/boot/dts/allwinner/sun50i-h616-x96-mate.dtb: codec@05096000: allwinner,audio-routing: b'Line Out\x00LINEOUT\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/allwinner/sun50i-h616-x96-mate.dtb: /soc/codec@05096000: failed to match any schema with compatible: ['allwinner,sun50i-h616-codec']
+
+
+
+
+
