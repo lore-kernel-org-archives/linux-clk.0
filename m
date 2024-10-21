@@ -1,192 +1,130 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D1F1E411D
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 10:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C131E47B2
+	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 11:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508227; cv=none; b=TAKLW0dBkwR6lFP8DJRUzMc5IoHMc5v7HKoMkc9i4IhfF4cS+KhhE/VUDFK4iZI1z/LMmhJ554YVDMvrZZo4vCrKDGFIqP1uaqA5yWwdONyuRauVKIjHfAxlVQ16geHZrHPxGYEHDcPvX9A0o/qxjFVMdon6NpVtNAB15hHRaWw=
+	t=1729508846; cv=none; b=Aq1Mw+PiXF/tHm0iyg9VqrZxqRNj06BnQL03Hhr+jznd3d7OZF2evwZvEPLW7YjPsZCVwSet9rNpsQYp3TEGgpy8w4OqBXrqnP4soz/CXto/w2/r8RbCs50pDgzQDfzxAXn4DvuPnSV/AjWqY0VUDl4Bg/NiQVg7Ckuovkc1TkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508227; c=relaxed/simple;
-	bh=CDBHa4HhpZ93hMV4Cyf19fbWiPeaQcK01LUJDJBdBEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9IrxuRF8GatXfndrBvb0WLiuu/SG5wb1FD6cJ5EmTo2vaudrp2fnLzD3rB5/6I541Iev47193mFGiFgGRl3z12KsBjR10ZvKdEzRgB/Azn/NFQWeWZoZvIV0W0uGsILOmHST1PoOIJM011HkxPYFi/iSrfQ6yFdElQxjneEnpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xTwTo4Uo; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729508846; c=relaxed/simple;
+	bh=N5eBhN7l4N5g+CiruVAT/S8z5Q24aiDr5bqSg9fD31s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VBfhqRJmvgpiNYrWcz4BP/81XANVlJUGXJdLAHFMwluiUFda0yPJ+i1j512JA2zCGT3RBbT/kOWA4CRYkiyy9ZOYL2n+RQDUs1CaYmycq1Qetqq19qvR+V+H3PEYqxOBWTTbN7sp7LbEcHZwe+ul0TNK2UehrrxsMQD8l6S0kXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ki9BSR26; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xTwTo4Uo"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53a007743e7so5035767e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 03:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729508223; x=1730113023; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sJa6EKXXiP19VVbfMZOnJkIoAIvDNdNKcWXx8p9So8=;
-        b=xTwTo4UoyjZNuBrKGscAWHLLhPYoltif0Gu2BKm7BJZHRwZQh7Zq1b4gCF5CeuKVVt
-         YXqOa4Dkz0eDH5ba1lUvbNKCQp3H3dGzwmlPvXMfM+f4v5hTo34oG8OXKdDBqv7Mhrcx
-         dHJ0Iec/nYD+tEkcvhynBLpNlio3qXxcfZtK7RDjcH6lzzfOlWY+u2I+XPJeXGMIh4zT
-         gBRDLARVfCzoppTuUpCp0/N2gFzxLlIF7SM6QFWErQewNhVlR6B+qWo1juqaJHIK1X4U
-         TZaaO6WbZ6xzi5AzGkXbgQFBGZPjozZa+26JKaUAFkO132tudd0+bki3Eb9K5tvf78+2
-         GV2g==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ki9BSR26"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9w83q026029
+	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 11:07:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dRRpJ/UZTMidDbDrDpmrUhrP7JPG8Yqq8PSOPA/Y8Oc=; b=ki9BSR262NGyMhzA
+	2zSFlWm3dUanejTogjEqd4hmTcZbY1nUWaGLmcv/Jdgsu3vgMieE4YBPAvepQQIi
+	39aJ+3mfSg8wQo8RLCEFOLMiELituh79azI9983+TiEPVX5nvqJEz+ufizgytxdS
+	Yluo7TgKWPMu7FaO9zC/FihyJE6JS3NRnCJ9HjDR4/WtdYx/sD2YwmApY1IoT6+v
+	2D3tuGkr2dY77+aIO4u+92RcLQmxcqYMBBdyDB85FJDw9muGmpbdmwi2Y3nofg1G
+	0wb7zTl51GIPJtcZLiPcWPtSJFBT38bCRUxPOs7yEFjsrTewf1Vbk6PbKuhwuAcF
+	d0jx2A==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj4bg6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 11:07:23 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbf2a4afcfso14388716d6.2
+        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 04:07:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729508223; x=1730113023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0sJa6EKXXiP19VVbfMZOnJkIoAIvDNdNKcWXx8p9So8=;
-        b=k+SqSwkukKwz6wzH/F4avl3DunMCVE9oYfyqmEIoSboi/g6JwLk9UlG7VU7lV9iHKb
-         y8DoMv/dG+RIkS4N7zMHlfFyPMbBlhcqZOnNNMzsMjQzLok3ephcHRJFbD04kEd6rg4U
-         PnBXsPpoOjbQ8uHYuW0yjFPvOIL2PzEjhGDvDtP0TZb64O3VImsmmHm9Q4HCez+chTjo
-         mDqQ8N69uLTPIz1Q8wo9rVKdNRGHTThQwL4MNcf9hM39T6dtBxsYEynmoEs5i3aOev/2
-         3UN7yiRVO1NPJO9F2FinZuY7fpBPb2wGUpgSnAu93P1s6tkkCFwVXuSDv3u+vr9OJkmf
-         bggg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFW1YazdGjP9FiMR/IPQ4cTm4ESjpoahzsGBHIl/e2CBs75wxClB3+0Nmxeb/zxTybrPL8uucRf9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwSHnhVEOAGzya9z0WMmDD4knt0fXSmLh+1h78B+16vXtguf5I
-	Bv3ZVE/kNTRir57df396ApvSLchtWTRmRNiaTaWqHKqLxdG/f+Z+wfgoYPdvSjc=
-X-Google-Smtp-Source: AGHT+IHMXgWU4v7Fzqllu7BsHwkTqs7vhzF+ABH7oaEiwqvEmG1ej27+CESFkjwyqXjFWNy4DYBV1g==
-X-Received: by 2002:a05:6512:33d3:b0:533:4689:973c with SMTP id 2adb3069b0e04-53a15497022mr4270762e87.23.1729508222934;
-        Mon, 21 Oct 2024 03:57:02 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a223e5903sm454768e87.11.2024.10.21.03.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 03:57:01 -0700 (PDT)
-Date: Mon, 21 Oct 2024 13:56:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Imran Shaik <quic_imrashai@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: qcom: Add support for GPU Clock Controller on
- QCS8300
-Message-ID: <o5v3fch5oxol4t7j4xlqswk6m6uo4tleck2cnfk6whpfqsrvjc@s2yrjumgvw6j>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
- <puhpztfn6ga5rxv4mwu7wyvk63hqme2nzffcvzwv7t4oo5hlvc@4ugxncmu3wwk>
+        d=1e100.net; s=20230601; t=1729508830; x=1730113630;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dRRpJ/UZTMidDbDrDpmrUhrP7JPG8Yqq8PSOPA/Y8Oc=;
+        b=GU9uWf6eKT9Q3VPY/iEp47VP1ftsji3fOwHb63JFwL2XujIBm1y9/bmVBo/u1LT07a
+         z0qNRrj61FF6BOBkdF0SYuwJpiCC+K5IEHi0h0Br4zxJtjQhL4sgI2W38jJi5qE2mzAJ
+         hYyevCs1OQ1/AayC817OK12WGLK1RqpfzG1henH9KdCu3IK/CGu6Krk+pTtGATmKWGh8
+         XHmeZkfZSuZkrgq1Wg0Fg+odnmYDO23eLiXePu0WFpeAdM+lgcgky9oIva/6CiV4mmYD
+         y+V2wEGdrNgWtuQyE6RC5qC+s48Y0yyYfoO+1Lpu3eSUhhb8+3iJYdY8JsJXErNOx3mD
+         rqnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPpxr1Y4vx9xMRYfdWN1oUUOpd0H4BCUM3Wo3okUjUJ6Zg9PJdrA7QoXR/ZTV4i/5r1gBJDwkHfr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV/rEIZBpNOP9z5j5dWd/kT/GedoM0rKWaIoeqnBshF0lsnPXq
+	yV82Bro9IFnA83w6keVoXt1gI/L2BwOjh619YIorlfQSJm9b/2wO+q/vm5WxVQcJdec9jEXgu2/
+	oCH3B0pfar4taWAi6uEz9KbKvWk3lRL7eVkY1joqpAqmGBFVosT1RgAjzzLA=
+X-Received: by 2002:a05:6214:1948:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6cde15c6223mr78561586d6.7.1729508830612;
+        Mon, 21 Oct 2024 04:07:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBfNHni3oaxFZqhR6T1qV3nO2g8kHzH2/s0gjy45NEB89jUIXw2wfgW2KkCIfZEbRx6DzJ0A==
+X-Received: by 2002:a05:6214:1948:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6cde15c6223mr78561296d6.7.1729508830330;
+        Mon, 21 Oct 2024 04:07:10 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b553sm1824101a12.3.2024.10.21.04.07.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 04:07:09 -0700 (PDT)
+Message-ID: <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
+Date: Mon, 21 Oct 2024 13:07:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <puhpztfn6ga5rxv4mwu7wyvk63hqme2nzffcvzwv7t4oo5hlvc@4ugxncmu3wwk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Kalpak Kawadkar <quic_kkawadka@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 0FucDBk2O7aMq1q1AJenFAkKXkFYUoPY
+X-Proofpoint-ORIG-GUID: 0FucDBk2O7aMq1q1AJenFAkKXkFYUoPY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410210080
 
-On Mon, Oct 21, 2024 at 09:56:08AM +0200, Krzysztof Kozlowski wrote:
-> On Fri, Oct 18, 2024 at 04:42:30PM +0530, Imran Shaik wrote:
-> > Add support to the QCS8300 GPU clock controller by extending
-> > the SA8775P GPU clock controller, which is mostly identical
-> > but QCS8300 has few additional clocks and minor differences.
-> > 
-> > Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> > ---
-> >  drivers/clk/qcom/gpucc-sa8775p.c | 47 ++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
-> > index f8a8ac343d70..99a8344b00db 100644
-> > --- a/drivers/clk/qcom/gpucc-sa8775p.c
-> > +++ b/drivers/clk/qcom/gpucc-sa8775p.c
-> > @@ -317,6 +317,24 @@ static struct clk_branch gpu_cc_crc_ahb_clk = {
-> >  	},
-> >  };
-> >  
-> > +static struct clk_branch gpu_cc_cx_accu_shift_clk = {
-> > +	.halt_reg = 0x95e8,
-> > +	.halt_check = BRANCH_HALT,
-> > +	.clkr = {
-> > +		.enable_reg = 0x95e8,
-> > +		.enable_mask = BIT(0),
-> > +		.hw.init = &(const struct clk_init_data){
-> > +			.name = "gpu_cc_cx_accu_shift_clk",
-> > +			.parent_hws = (const struct clk_hw*[]){
-> > +				&gpu_cc_xo_clk_src.clkr.hw,
-> > +			},
-> > +			.num_parents = 1,
-> > +			.flags = CLK_SET_RATE_PARENT,
-> > +			.ops = &clk_branch2_ops,
-> > +		},
-> > +	},
-> > +};
-> > +
-> >  static struct clk_branch gpu_cc_cx_ff_clk = {
-> >  	.halt_reg = 0x914c,
-> >  	.halt_check = BRANCH_HALT,
-> > @@ -420,6 +438,24 @@ static struct clk_branch gpu_cc_demet_clk = {
-> >  	},
-> >  };
-> >  
-> > +static struct clk_branch gpu_cc_gx_accu_shift_clk = {
-> > +	.halt_reg = 0x95e4,
-> > +	.halt_check = BRANCH_HALT,
-> > +	.clkr = {
-> > +		.enable_reg = 0x95e4,
-> > +		.enable_mask = BIT(0),
-> > +		.hw.init = &(const struct clk_init_data){
-> > +			.name = "gpu_cc_gx_accu_shift_clk",
-> > +			.parent_hws = (const struct clk_hw*[]){
-> > +				&gpu_cc_xo_clk_src.clkr.hw,
-> > +			},
-> > +			.num_parents = 1,
-> > +			.flags = CLK_SET_RATE_PARENT,
-> > +			.ops = &clk_branch2_ops,
-> > +		},
-> > +	},
-> > +};
-> > +
-> >  static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
-> >  	.halt_reg = 0x7000,
-> >  	.halt_check = BRANCH_HALT_VOTED,
-> > @@ -499,6 +535,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
-> >  	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
-> >  	[GPU_CC_CB_CLK] = &gpu_cc_cb_clk.clkr,
-> >  	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
-> > +	[GPU_CC_CX_ACCU_SHIFT_CLK] = NULL,
-> >  	[GPU_CC_CX_FF_CLK] = &gpu_cc_cx_ff_clk.clkr,
-> >  	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
-> >  	[GPU_CC_CX_SNOC_DVM_CLK] = &gpu_cc_cx_snoc_dvm_clk.clkr,
-> > @@ -508,6 +545,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
-> >  	[GPU_CC_DEMET_DIV_CLK_SRC] = &gpu_cc_demet_div_clk_src.clkr,
-> >  	[GPU_CC_FF_CLK_SRC] = &gpu_cc_ff_clk_src.clkr,
-> >  	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
-> > +	[GPU_CC_GX_ACCU_SHIFT_CLK] = NULL,
-> >  	[GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK] = &gpu_cc_hlos1_vote_gpu_smmu_clk.clkr,
-> >  	[GPU_CC_HUB_AHB_DIV_CLK_SRC] = &gpu_cc_hub_ahb_div_clk_src.clkr,
-> >  	[GPU_CC_HUB_AON_CLK] = &gpu_cc_hub_aon_clk.clkr,
-> > @@ -583,6 +621,7 @@ static const struct qcom_cc_desc gpu_cc_sa8775p_desc = {
-> >  };
-> >  
-> >  static const struct of_device_id gpu_cc_sa8775p_match_table[] = {
-> > +	{ .compatible = "qcom,qcs8300-gpucc" },
-> >  	{ .compatible = "qcom,sa8775p-gpucc" },
+On 21.10.2024 12:30 PM, Dmitry Baryshkov wrote:
+> Add support for the RPMh, TCSR, Global, Display and GPU clock
+> controllers as present on the Qualcomm SAR2130P platform.
 > 
-> I just wanted to comment on your binding that devices should be made
-> compatible...
-> 
-> >  	{ }
-> >  };
-> > @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
-> >  	if (IS_ERR(regmap))
-> >  		return PTR_ERR(regmap);
-> >  
-> > +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
-> 
-> Why we cannot use match data? Seeing compatibles in the code is
-> unexpected and does not scale.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> Changes in v2:
+> - Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+>   gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+>   gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+>   gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+>   subsytems bringup (Taniya)
+> - Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+> - Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+>   (Taniya)
+> - Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+>   gcc_parent_map_5 (LKP)
+> - Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
 
-Because using match data doesn't scale in such cases. We have been using
-compatibles to patch clock trees for the platforms for quite a while.
-You can see that each of the "tunings" is slightly different. From my
-point of view, this approach provides a nice balance between having a
-completely duplicate driver and having a driver which self-patches the
-tree.
+Please address the remaining comments from me too
 
--- 
-With best wishes
-Dmitry
+Konrad
