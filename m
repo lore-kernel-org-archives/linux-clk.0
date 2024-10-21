@@ -1,47 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E93C1D07A3;
-	Mon, 21 Oct 2024 07:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208BD1D26F3;
+	Mon, 21 Oct 2024 07:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494909; cv=none; b=KC4PtqQEfLzECQWnIIqowJuGOJ8d3l4AKs9WzJMwgaUjR8faQew2E/4p2zXNCzQpUZ15lm1Wf/DCuB+NpLMCk5PGKvt0PTG8Yr1T8+SMbwNKQOwO867cu3Cal8VnnRgTdN7W1hZxL/fHizKwsYfnmyt1i9bcNqfPZmpKjVCPwe4=
+	t=1729495715; cv=none; b=RpeCq1O9ExS2cRtyweOpk7BuVTEuCCAtDiv6N6fgR9/uJrsCkCcOSYwc+Q0/EOn01k5tSB/T2jRcWgQ6IIlc2/cFypYOh5vbWnlE9ir5V+Dfu/x58OfCnn5kkgofy3nqrkEGuyrKZk3T19JDaZFGxZfu9daOfUgntw7OAmVgJdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494909; c=relaxed/simple;
-	bh=nKPzNF057pxm0ao76emLKlBxzsL74QCEn259038azO0=;
+	s=arc-20240116; t=1729495715; c=relaxed/simple;
+	bh=52mchW7sM2a516X8vgAywVVAVAlcmPu5ayeardsvgp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xv0sGyDKr52g7kH15JsvyoFj444etcyPxqGDvMgniVVAa5HjJqhGhTBpDeVTwBd3KK+Hq6YhK35+Fb0xH9DKCNi4bWb7GPyYM9lLXyY8XW+IRjw/f1m3EC50ujGOMG9cUfLhJW53/LZacqO0kOTnpgpltfpzaK29OfkxdsHVpfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKuWxwT+; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+xvOeEfnjZRgf4B4B9dWSfjn8UQZXNqpDb2/roSG7cUgE4MraVfixCVFkGWknrMUd81PscGDb6nLpA6xd0BTZybPJPguqy5YsE/QyRvuevjqiSQoXfFgb3tD5oFfzE4xM5KkEw3FCXZ6p0M8IFxuRJ/C0H1mZ+eIXLxsnmxFDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITsJ7Xe8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKuWxwT+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AF4C4CEC3;
-	Mon, 21 Oct 2024 07:15:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITsJ7Xe8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65D0C4CEE6;
+	Mon, 21 Oct 2024 07:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729494909;
-	bh=nKPzNF057pxm0ao76emLKlBxzsL74QCEn259038azO0=;
+	s=k20201202; t=1729495714;
+	bh=52mchW7sM2a516X8vgAywVVAVAlcmPu5ayeardsvgp0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKuWxwT+PirXJWAVCFhlrq4PmDauVrCIPG9OhbpDA4vaW6SURV8ySGsvCCkT7NKHD
-	 PLYnw/oeETVXSAVGAN7IqgEZkDR7OGwRf90qnGbIMqrwAhnRKYf+PP/7zvzGK5sJvB
-	 802kYFeA036TvrdzXz14zMLYvHpKJI7fGdHKX4mSiHjLFS+tSIUgJzBJAfNloixmFd
-	 Wi9tbJ41XptxVqI7KK06g07bs4qhybsbQymNswWCbfOIFwTbPziGl/ElZ1M3SRgOFQ
-	 g6MykEe4VTzzW+8LFVR/qYZBG9jwxI2aaW1+fuIOg8pespcp5nDUmpHiBLpISw1QKz
-	 fJrOfbDn93kQw==
-Date: Mon, 21 Oct 2024 09:15:05 +0200
+	b=ITsJ7Xe85N+no/+tqrFcdBinkSVKKH2V9QTo0CSTEeExLhjXm7YmaOEOU1zPRn5ly
+	 SREuvPkJhAcMWUIYqupSUTZNZ2OW3KOGBw/YmWUYb01lrH059NrQbgfItwdqQZNA47
+	 6vWPpOJXTUzZls1+ljTM8kGkldiTNuJQejPpDl0cl58NBiESvH1yIUlx5qzQseH4rK
+	 i2f4L+nHV7rS22BtB0q4uZHk/zRDKqztZaQBK77+v6g18mpdsWSX9Hzyvhb+fiGGJh
+	 1HqCnM+EYrK6NdXemhCXqAiAGsdKeVpdHnDXHUanlDG0J/KoutCcWUsMwrCkDjDNEF
+	 +NND7aRorvx9w==
+Date: Mon, 21 Oct 2024 09:28:31 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/12] dt-bindings: clock: qcom: Add QCS615 GCC clocks
-Message-ID: <bqnqc3sxnh5afs6nb7hrc45scfk6amcj2d3hbeuyriydowmmam@jvma7o4mg65m>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-9f1ca2048287@quicinc.com>
- <20241019-qcs615-mm-clockcontroller-v1-5-9f1ca2048287@quicinc.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 01/12] dt-bindings: clock: r9a08g045-cpg: Add power
+ domain ID for RTC
+Message-ID: <mjr7toy62usxxza4e4dgmpfu24kcjtmm6ldkd63ixnh5icvrmw@76tzy36muhty>
+References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241019084738.3370489-2-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,66 +48,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-5-9f1ca2048287@quicinc.com>
+In-Reply-To: <20241019084738.3370489-2-claudiu.beznea.uj@bp.renesas.com>
 
-On Sat, Oct 19, 2024 at 12:42:35AM +0530, Taniya Das wrote:
-> Add device tree bindings for global clock controller on QCS615 SoCs.
+On Sat, Oct 19, 2024 at 11:47:27AM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> The RTC and VBATTB don't share the MSTOP control bit (but only the bus
+> clock and the reset signal). As the MSTOP control is modeled though power
+> domains add power domain ID for the RTC device available on the
+> Renesas RZ/G3S SoC.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
 
-That's 5/12 but rest is missing. Are you sure you used sent it
-correctly?
-
->  .../devicetree/bindings/clock/qcom,qcs615-gcc.yaml |  59 ++++++
->  include/dt-bindings/clock/qcom,qcs615-gcc.h        | 211 +++++++++++++++++++++
->  2 files changed, 270 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fecc694cd71b8aeb3d420ccea5f5ffba04c8ff9c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller on QCS615
-> +
-> +maintainers:
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module provides the clocks, resets and power
-> +  domains on QCS615.
-> +
-> +  See also:: include/dt-bindings/clock/qcom,qcs615-gcc.h
-
-s/::/:/
-
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,qcs615-gcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board active XO source
-> +      - description: Sleep clock source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: bi_tcxo_ao
-> +      - const: sleep_clk
-
-That's just "sleep".
-
-Why do you need clock-names in the first place?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
