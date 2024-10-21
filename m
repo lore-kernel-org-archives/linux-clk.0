@@ -1,130 +1,66 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FD11E0DF3
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 07:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8F11D1308;
+	Mon, 21 Oct 2024 07:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496947; cv=none; b=fNmhCGlUzRp9ppjMqanFSlUdIdXyGPA3r7GjCE6V0F9iqAZxV726PRVi7l0d1b2sSfFa2J2zInasT4h+wWMhxyEHO1WbIDarFkQIVx5QOFrPJBmpowi6QcgdQKie7Ay5vtESsahgciwQB9fEVWBlQD4A94V3PCIE6GYqfOSAmDM=
+	t=1729497108; cv=none; b=F98Ofb3o2p8GfwYLMvg4BR5QNc7PysqDeFMOnxlRD0s7t7yUHanFfXH8vacIxPGbe6tEgWa40S+A1DhUaZDQnUAiugD7rdbbzN6cOCDABkl9U3wobDW0KMsAtFbAgRCir8NxTaRP0R2wsld/8xDssCLVr4Tg/LUV0fwjZhE8sXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496947; c=relaxed/simple;
-	bh=rffjgAP5ZW88uPUrtaJRFYw7UB1XrEHtwZdvD7+yIv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eWOokqX5idmZLNkzxFzkd02MJCKgiVswqfAEdCws2XcDdgPFuaLZszK0+P4g6hMVBK1zok84R5aSNqWUz9Ac/FOkmTZik99SloXerCR5ZjPYY7Glpel35rt9fCjtpFRm1EHdgysYNTFfVzmnK+VLo1cilOUbGNdZDJkl3qiQAs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rMZ/x6z0; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1729497108; c=relaxed/simple;
+	bh=0QLxqnjn8QRtF8jlI6qVFrOxGUDCPam5Dm3ZOm4573g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XEifoRQ9j3XXOzQ45DuOHEt3+9vkV2iK6riV27DR6OrYZqbP5NenlcnLrtByuBz1nW8BtzZZgZJ0oKDVEAo0sY6m9tWNgN8fTRui3j7I2eLGjXsjGuWITYbZaMDkMQUgHaydjKW9ll9UYJMi560FC6FZH7jNYQ13k9AkPBk6vNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEJHQM/u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rMZ/x6z0"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315abed18aso37852465e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 00:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1729496944; x=1730101744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=58kG6E9taHK6TTsZfdidB/P2/Hcxp/vWM653t/Aj+tg=;
-        b=rMZ/x6z0IHP1GC/SL4MpNjxOJUV4hJ9+9U1c6iA8pmJFsTVjhsxiM5DBzWJwvykaU0
-         05GABRaIudHCFZ81wDK4zInJ7hGJ8l8DXmlrPyD/za6YLufEYtTypMS39M09KfE9/9ch
-         u65GYXAPs58zK3RmT9TT7Jblbz921ViSyh7BuqtylYHtPUeFneJwq1OYUU2EDi/41rX2
-         dC5Uu//X0b7EyX8YjfVvn/fJLVcM5nOg03D5vmmhNe1OksDouIsEitzrZuEGxS0cxsNJ
-         SBB5BTU+Fso0ZdUppH4RNDc0yi87J5w2LLbXH/vUhEE6xRJwkV0wUU/zF503I3hxT80p
-         8dkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729496944; x=1730101744;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=58kG6E9taHK6TTsZfdidB/P2/Hcxp/vWM653t/Aj+tg=;
-        b=Ke4R4Kis0g+jLSWNURFGI26qNr40aXmmKzWq/yLQboswZDjhguO6RpD/7z06nGSsIz
-         ighaD13VQIgoPvDatrVyW/e28N/6/W+K6+GKA4nhtxkB6zLuuY9B0LnztjmBxEOOUDjz
-         T2xmEg50BFwnosEXkNmluXWaRrY7QDvnZxLB/duCr7fAGbHY6o4KTj7MWioVIyCzjoZq
-         c1kNOEOEY3o1Pt46OkNRF+GVvjFOEcYhR9K3LqYKkSM/leV5lausvuM7MLjbMtg57qv8
-         TA4K3POz+DNECIFFTgrRllalR9HHJLsEiZK5Mygtf4LRaYvUVjkyOunh+0Z2DbMLiMnb
-         01MA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7LFm4hd71nUgytJeHMqctT+cNi8hy7td7MVHXrQNL9UJoBFxf+ljK2PGMOyRIyAAA54Z24il/cvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZbhzNxCu8TrMUZIl5Eeefq1LzrBFU/o8EKirq335njeiWmAcq
-	1OhB0rTRJ2Cy4mZfdgZ/XPRlZlVU5ok7dsOHYH7v6xMO5oHqMhj/Nvq+NY56qGA=
-X-Google-Smtp-Source: AGHT+IFvgo6qt2vB4D+5CxWmwBneFTMm7VvkmB3DADmGjcvJnOJUVQG58Cd4uUg0J+6QI23+xFjXxA==
-X-Received: by 2002:a05:600c:4595:b0:431:3b53:105e with SMTP id 5b1f17b1804b1-4316163bccfmr91296875e9.9.1729496943898;
-        Mon, 21 Oct 2024 00:49:03 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc921sm47137075e9.46.2024.10.21.00.49.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 00:49:02 -0700 (PDT)
-Message-ID: <ac5a6f77-cd71-4e79-973e-8ee00cd762ff@tuxon.dev>
-Date: Mon, 21 Oct 2024 10:49:01 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEJHQM/u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC918C4CEC3;
+	Mon, 21 Oct 2024 07:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729497108;
+	bh=0QLxqnjn8QRtF8jlI6qVFrOxGUDCPam5Dm3ZOm4573g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fEJHQM/u9C1Sv871kfBcgOtCtQthB6PqCj9hWq+bTjr4TmEBQEUDz7S2ea2X/+VZT
+	 A5c2z6haIbOsSUZOblq4wfDDPCzhZJ8ty5abzpQv2MVIgtjik1GlaGOMywPvNDwv7A
+	 tDBMqqow7OGgCc9YlnkJemwO2jEMtC4AxGhuvbPa3EUvO/aUUupP+DGwKfK3oqm7tg
+	 RAukYs8RGdaUfE/1A1STY6CyH4CkXWO7vIfWflyfFL5ScqlC5hVdddrvIq76HA4FnL
+	 McsbcGGlrw4oZfWZ7dHrAlopnj9qDv3gy5EPT5N8kxzoVSRLNL+SLYHO+qhlLEoUJD
+	 b5Y5d3kE0SDcQ==
+Date: Mon, 21 Oct 2024 09:51:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] dt-bindings: clock: qcom,rpmhcc: Add SAR2130P
+ compatible
+Message-ID: <tlr32nu5azfpcendtgk7d6awxycij7yczsg5q37c2mykrt2unf@676fcwgmmjxr>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
+ <20241017-sar2130p-clocks-v1-1-f75e740f0a8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
- Document VBATTB
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
- p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
- <20241019084738.3370489-4-claudiu.beznea.uj@bp.renesas.com>
- <m4kxv7cba6qd67ahhh4cal6sgieohgow6f3tdvqoxvheemtp4j@gpxbkxd3tvat>
- <5fddjnvzu2e74rtmqw6o2w5upxn6dpih3hmdbgiky75qyuvyum@ilch2rahnmih>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <5fddjnvzu2e74rtmqw6o2w5upxn6dpih3hmdbgiky75qyuvyum@ilch2rahnmih>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017-sar2130p-clocks-v1-1-f75e740f0a8d@linaro.org>
 
-
-
-On 21.10.2024 10:34, Krzysztof Kozlowski wrote:
-> On Mon, Oct 21, 2024 at 09:32:37AM +0200, Krzysztof Kozlowski wrote:
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
->>> +    #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
->>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>> +
->>> +    clock-controller@1005c000 {
->>> +        compatible = "renesas,r9a08g045-vbattb";
->>> +        reg = <0x1005c000 0x1000>;
->>> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->>> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
->>> +        clock-names = "bclk", "rtx";
->>> +        assigned-clocks = <&vbattb VBATTB_MUX>;
->>> +        assigned-clock-parents = <&vbattb VBATTB_XC>;
->>
->> Why are you configuring internal clocks to internal parents? That's part
->> internal to this device, not DTS... or at least some explanation would
->> be useful.
+On Thu, Oct 17, 2024 at 07:56:51PM +0300, Dmitry Baryshkov wrote:
+> Document compatible for RPMh clock controller on SAR2130P platform.
 > 
-> From DTS I see this belongs to the board, not SoC, so makes sense.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-That's true. This configuration depends on the type of the input clock
-connected to the RTXIN, RTXOUT pins which is board specific (see below
-diagram):
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-           +----------+ XC   `\
-RTXIN  --->|          |----->| \       +----+  VBATTCLK
-           | 32K clock|      |  |----->|gate|----------->
-	   | osc      | XBYP |  |      +----+
-RTXOUT --->|          |----->| /
-           +----------+      ,/
+Best regards,
+Krzysztof
 
-Thank you,
-Claudiu Beznea
-
-> 
-> Best regards,
-> Krzysztof
-> 
