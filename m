@@ -1,130 +1,132 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C131E47B2
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 11:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EDB1E49B;
+	Mon, 21 Oct 2024 12:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508846; cv=none; b=Aq1Mw+PiXF/tHm0iyg9VqrZxqRNj06BnQL03Hhr+jznd3d7OZF2evwZvEPLW7YjPsZCVwSet9rNpsQYp3TEGgpy8w4OqBXrqnP4soz/CXto/w2/r8RbCs50pDgzQDfzxAXn4DvuPnSV/AjWqY0VUDl4Bg/NiQVg7Ckuovkc1TkQ=
+	t=1729512994; cv=none; b=ToertbUyVtYEiOutqPFJmzwvtH64vDZDT/4XUItIlRGWlB3E8NzEB48HXv9usQQX/rCptUH+LmUMS96tSnnjinS16g6ab6IuGcdCiyUWYtziy4y+wkdHMW07X5oLYvta/wOMZ9aC/sF+xUWPxbGJB6zceYsqT3MnrFSeJC4tiUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508846; c=relaxed/simple;
-	bh=N5eBhN7l4N5g+CiruVAT/S8z5Q24aiDr5bqSg9fD31s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VBfhqRJmvgpiNYrWcz4BP/81XANVlJUGXJdLAHFMwluiUFda0yPJ+i1j512JA2zCGT3RBbT/kOWA4CRYkiyy9ZOYL2n+RQDUs1CaYmycq1Qetqq19qvR+V+H3PEYqxOBWTTbN7sp7LbEcHZwe+ul0TNK2UehrrxsMQD8l6S0kXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ki9BSR26; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1729512994; c=relaxed/simple;
+	bh=fsZPms+Xu6Pn4MLCPPidLYbUkDqNto6t1mxmBXbRzp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CtruzLTTf98B6XwlcM3pEhReTkJJDt4O1X7yCOZ/KiCPI5Lp6kg6i0dYkw8J5yqES5Omjw0sftVEzBYO8WeiHP96+qvd8QY58omaMebR6bfQUBz9C97A9gRS1EaMtGovp8FzpYZODDzvJGmYLa48JhbdbdUhZKyObw/6yd99Pvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYKG4fR2; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ki9BSR26"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L9w83q026029
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 11:07:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dRRpJ/UZTMidDbDrDpmrUhrP7JPG8Yqq8PSOPA/Y8Oc=; b=ki9BSR262NGyMhzA
-	2zSFlWm3dUanejTogjEqd4hmTcZbY1nUWaGLmcv/Jdgsu3vgMieE4YBPAvepQQIi
-	39aJ+3mfSg8wQo8RLCEFOLMiELituh79azI9983+TiEPVX5nvqJEz+ufizgytxdS
-	Yluo7TgKWPMu7FaO9zC/FihyJE6JS3NRnCJ9HjDR4/WtdYx/sD2YwmApY1IoT6+v
-	2D3tuGkr2dY77+aIO4u+92RcLQmxcqYMBBdyDB85FJDw9muGmpbdmwi2Y3nofg1G
-	0wb7zTl51GIPJtcZLiPcWPtSJFBT38bCRUxPOs7yEFjsrTewf1Vbk6PbKuhwuAcF
-	d0jx2A==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj4bg6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 11:07:23 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbf2a4afcfso14388716d6.2
-        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2024 04:07:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYKG4fR2"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so5881975e87.1;
+        Mon, 21 Oct 2024 05:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729512990; x=1730117790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/1MCTmxbUO44rwyL5iC5PLrKibwoBMeTpyT0L8eV+g=;
+        b=KYKG4fR2w99r3q+lOzh3Xtz/+GkjX7A7Bqo2S0PJ0DC7TLq4eBleQEJKzzwK1YbRBb
+         2Qr86g8HN+mzzbSS+tEP7dEcKWRtW4Zmry6UHpQUWJyPyM/qtrPWhRmkGsfedrWbvC1A
+         eG2DA6NHvdvUFcmI6d4Bz++zS7cKz2/pMi4pZyyg3a+fr1bA28vAhsH9yicUKjQdWptF
+         ytKWMEJebMvxDiwbwMvEKKGVSBZuFY93sPzugiltkGLXOgh7QEqhhdxfahwfjDcT2hIQ
+         fWTM5t6nJypyDTAvNe/iWnQdBV8oV9M0HKKzSnAnO5cFI37Mj3T84LbYrcXh56v5LUQY
+         qPpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729508830; x=1730113630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dRRpJ/UZTMidDbDrDpmrUhrP7JPG8Yqq8PSOPA/Y8Oc=;
-        b=GU9uWf6eKT9Q3VPY/iEp47VP1ftsji3fOwHb63JFwL2XujIBm1y9/bmVBo/u1LT07a
-         z0qNRrj61FF6BOBkdF0SYuwJpiCC+K5IEHi0h0Br4zxJtjQhL4sgI2W38jJi5qE2mzAJ
-         hYyevCs1OQ1/AayC817OK12WGLK1RqpfzG1henH9KdCu3IK/CGu6Krk+pTtGATmKWGh8
-         XHmeZkfZSuZkrgq1Wg0Fg+odnmYDO23eLiXePu0WFpeAdM+lgcgky9oIva/6CiV4mmYD
-         y+V2wEGdrNgWtuQyE6RC5qC+s48Y0yyYfoO+1Lpu3eSUhhb8+3iJYdY8JsJXErNOx3mD
-         rqnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPpxr1Y4vx9xMRYfdWN1oUUOpd0H4BCUM3Wo3okUjUJ6Zg9PJdrA7QoXR/ZTV4i/5r1gBJDwkHfr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV/rEIZBpNOP9z5j5dWd/kT/GedoM0rKWaIoeqnBshF0lsnPXq
-	yV82Bro9IFnA83w6keVoXt1gI/L2BwOjh619YIorlfQSJm9b/2wO+q/vm5WxVQcJdec9jEXgu2/
-	oCH3B0pfar4taWAi6uEz9KbKvWk3lRL7eVkY1joqpAqmGBFVosT1RgAjzzLA=
-X-Received: by 2002:a05:6214:1948:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6cde15c6223mr78561586d6.7.1729508830612;
-        Mon, 21 Oct 2024 04:07:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBfNHni3oaxFZqhR6T1qV3nO2g8kHzH2/s0gjy45NEB89jUIXw2wfgW2KkCIfZEbRx6DzJ0A==
-X-Received: by 2002:a05:6214:1948:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6cde15c6223mr78561296d6.7.1729508830330;
-        Mon, 21 Oct 2024 04:07:10 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b553sm1824101a12.3.2024.10.21.04.07.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 04:07:09 -0700 (PDT)
-Message-ID: <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
-Date: Mon, 21 Oct 2024 13:07:05 +0200
+        d=1e100.net; s=20230601; t=1729512990; x=1730117790;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H/1MCTmxbUO44rwyL5iC5PLrKibwoBMeTpyT0L8eV+g=;
+        b=IJPnw0rtZ5CpYsS3NFdIw1ssIMcLulBm1AxlNznerqkBImZvyZha+88Pfg+/IAWH1P
+         fLA94nws75KwGhqf5BRf2c8zFodkhW+90PsoRbf6CAQnokrhERfZJIIEM5158KrQ3uBb
+         IfhFxkbJPGys6Ku2qTeM04OFEfv6ReMwOyLxL1+01f+VsYpsehtuHBkj8/njqB1pz6lJ
+         U0N7Ny+UzDfsShTArBhYQOCMjridoHNxn7CNGjwMKhaNUJfHNAxkmZo96T/aMFBKYme1
+         zfNrNAgdxtPuo98Sto+sxy4cASMGBrEreC4zoFEofB6ZrKg4iiakBV30uW/b1aIHzGLh
+         dyLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEJE7pSTCmwKgvuMO6IMALeJrQbvTQ9VDe9U7htnUGROB+wN6GhSFPtsHoK/0nTOp6fop8qTHwuGieTW0a@vger.kernel.org, AJvYcCWjfKkdIXdBYun4h7P1z/mJKrhWC70Vi4hVXNQUkLJ5tqKyrL7GFKWaLs+x5SpIPsS9/XE6J81Dq1ov@vger.kernel.org, AJvYcCXalVnIqB33xprjCLTQbYjmJanD8tDuwNMt60rLDwXbbJ1oHGwrDtUjah+Nxa1epp61+jFiVUvVwS0y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAilq1QdYiBI3Vzr++ipbFZsvVJ+COszkpW0EELs9RLhnomWBM
+	MrsrlR1N4xlnQZ0kq1ZQs4QUqTdc1OtIQXYZtwxabADgXVS9nh9W
+X-Google-Smtp-Source: AGHT+IHR6MsGMRBzU5JPSi1HY55LtpEFaaIUqbCyIY5gOO8fE50iJxRU2yRt/DZvTwuMoUyyjo0iyg==
+X-Received: by 2002:a05:6512:1304:b0:539:f760:6031 with SMTP id 2adb3069b0e04-53a1520bd73mr5457779e87.4.1729512989592;
+        Mon, 21 Oct 2024 05:16:29 -0700 (PDT)
+Received: from zenbook.agu.edu.tr ([95.183.227.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6ee6sm197068966b.4.2024.10.21.05.16.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 05:16:28 -0700 (PDT)
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Sam Shih <sam.shih@mediatek.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+	Yassine Oudjana <yassine.oudjana@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] MediaTek MT6735 syscon clock/reset controller support
+Date: Mon, 21 Oct 2024 15:16:14 +0300
+Message-ID: <20241021121618.151079-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] clk: qcom: add support for clock controllers on
- the SAR2130P platform
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kalpak Kawadkar <quic_kkawadka@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 0FucDBk2O7aMq1q1AJenFAkKXkFYUoPY
-X-Proofpoint-ORIG-GUID: 0FucDBk2O7aMq1q1AJenFAkKXkFYUoPY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410210080
+Content-Transfer-Encoding: 8bit
 
-On 21.10.2024 12:30 PM, Dmitry Baryshkov wrote:
-> Add support for the RPMh, TCSR, Global, Display and GPU clock
-> controllers as present on the Qualcomm SAR2130P platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Changes in v2:
-> - Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
->   gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
->   gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
->   gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
->   subsytems bringup (Taniya)
-> - Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
-> - Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
->   (Taniya)
-> - Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
->   gcc_parent_map_5 (LKP)
-> - Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Please address the remaining comments from me too
+These patches are part of a larger effort to support the MT6735 SoC family
+in mainline Linux. More patches can found here[1].
 
-Konrad
+This series adds support for clocks and resets of the following blocks:
+- IMGSYS (Camera)
+- MFGCFG (GPU)
+- VDECSYS (Video decoder)
+- VENCSYS (Video encoder, also has JPEG codec clocks)
+
+[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
+
+Yassine Oudjana (2):
+  dt-bindings: clock: mediatek: Add bindings for MT6735 syscon clock and
+    reset controllers
+  clk: mediatek: Add drivers for MT6735 syscon clock and reset
+    controllers
+
+ .../bindings/clock/mediatek,syscon.yaml       |  4 +
+ MAINTAINERS                                   | 10 +++
+ drivers/clk/mediatek/Kconfig                  | 32 ++++++++
+ drivers/clk/mediatek/Makefile                 |  4 +
+ drivers/clk/mediatek/clk-mt6735-imgsys.c      | 57 +++++++++++++
+ drivers/clk/mediatek/clk-mt6735-mfgcfg.c      | 61 ++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vdecsys.c     | 81 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vencsys.c     | 53 ++++++++++++
+ .../clock/mediatek,mt6735-imgsys.h            | 15 ++++
+ .../clock/mediatek,mt6735-mfgcfg.h            |  8 ++
+ .../clock/mediatek,mt6735-vdecsys.h           |  9 +++
+ .../clock/mediatek,mt6735-vencsys.h           | 11 +++
+ .../reset/mediatek,mt6735-mfgcfg.h            |  9 +++
+ .../reset/mediatek,mt6735-vdecsys.h           | 10 +++
+ 14 files changed, 364 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+
+-- 
+2.47.0
+
