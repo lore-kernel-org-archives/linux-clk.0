@@ -1,113 +1,195 @@
-Received: from mail-oo1-f65.google.com (mail-oo1-f65.google.com [209.85.161.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9431A0BE0
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 20:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B63F1A3028;
+	Tue, 22 Oct 2024 21:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729627987; cv=none; b=Oz0ymlEf8uqb9YnnpDXAOivXb5Du6K7qyJHrOF608pHz8lxZXkHJ0dBGD9Z+p4fI2to+TGWYB3DwMnx7hHfanprMfdwoNgndBSv31aiNkleAusXTTSp3Mn6GfC1NPjxIOa/7VjNt2777NhOR7uUsFbiJwASXdw0ILDrrjSyEcKU=
+	t=1729631121; cv=none; b=swS6c3MXGxXusW2JsevKPjUjXUzzHxU+wj8LlRDUFFkQ53AckLJL4i4Y7NKjH0pOuJR6+S9oixMR/0T4TNcRljz+AVCLBtTae7wIAOy8wrJjj1C8dTk/HS5tVmDr979RlubyzpBkAzi13EFkYUJeYN/9RGtr7IXF1oMNfQIHqZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729627987; c=relaxed/simple;
-	bh=/wgC+NHq/nzzkDPHhueUE/N+3sAmW007Yfol1bJTxLA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PaRj1W1nLIUzHZxqaqg45dvLumzI4JG0JPWkvxz+WK6xmglhHBpnyzjjpB5py/xdQh4TDGk6QzSQH3+snWtm0qpfIImaOUheyVjEEBWGZueDNbMHA+kT8ogAQ02pHHVR3uG1AW+AQ5RQdxq9rI79ugKxIehS2i0zyIn3lH1KBHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQvQCBIv; arc=none smtp.client-ip=209.85.161.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729631121; c=relaxed/simple;
+	bh=bJvQz9MiC/VgurH813d2V4r5Zs0ZMaCBNkCiF5+fGYo=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=POyWjXQnsQitF35r0JMgQA3PXKH+f8/wDcX65ELt9+tBG32FJ3tSq1lE4E0VXeZrMAy8/aO0Qo662iokCXZTSXKfaJoidAJaQK3kjEqRc2ESRE+7UbBYB3Bdi6eGIsYR62rogyGqsmyqy7arjzfL7nP+pBgwo+fbXEMaidO9GTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwm6Wyj3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQvQCBIv"
-Received: by mail-oo1-f65.google.com with SMTP id 006d021491bc7-5ebc5b4190eso1253877eaf.3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 13:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729627985; x=1730232785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WdVJP38G7wy7hsX+2NW983eNZ4SNnV1CA3+wjd6jOEc=;
-        b=FQvQCBIv7E9oBiFrZ1JnPK9k2fjN73wrWS3uUGnFvOWJ7tMOZz9YBY4E8aSz2EWfAb
-         n7uFgfHU5tfyMqM0saw/SYBTmiaFopDerzZipUF3fm9b6E9mDZ3zsx/xpAsLpvA0uetq
-         VwDktkgLVRyQD8m2W8Yh4kYkWxRTOjQTDsYHDNFWkLJ6yXuClTBingJNkjKZbBHRY3Lq
-         i7IPgO0qSPKr51UekYLL8hujLxvWlW5sxmv6LQk8WgMMlAU9FkH52SSko94wooybkK7F
-         ftaaTSvJsGVMM8NzVP6O7C++4LJYzQw7WFqjuF3/+gOaAwbTWRqqdrbFxEevcBy2aw6F
-         7QeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729627985; x=1730232785;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WdVJP38G7wy7hsX+2NW983eNZ4SNnV1CA3+wjd6jOEc=;
-        b=kc+Ey71Ss1mDykbPF++BeJuew1sgcz1G9TlGuXXW6Ahrr3wYa2WSfAPmk2oR2fjG+G
-         iYG89hWeI26pSPXEunuRfLEDGdRjnRCNaJrEZ5U28VWefbkSG8yRX/7R0vUr7GktJ2r8
-         m4iXamOk7H3Omfc8+p2Wdf6SYVtsEzNF15KA502w9ctsqT9gLcXQcC+/5issmw57sigQ
-         x/gs09mXqUsWwn1hm8Y7q11YVr1s0EuBvu6YuwzxYXctC5BB40g2S8aYSEpQCPV5pA6y
-         XVT++3Y6RZ5V0VN4LGl1d6NZ6ejE9eph6/ud+uAbAkDTsspc8ldRbc9IOG6SAi0AwKyP
-         qO1Q==
-X-Gm-Message-State: AOJu0YyumwmkJJ7I/kac1VGNZ4yRo6tSbgEc/4hZYiYtIPnrva4WXWdO
-	K95YFBKH+0qCl0ggNNSU0mGagnYBju6jieXCxe+ZWe4T7s3srlcU
-X-Google-Smtp-Source: AGHT+IGlO8CMmzK60nGOo1wMFsZh5jKFMrOsWgcRMekkYnmNI4GZjOb72ZhhWa320P6A81PmOUa9GA==
-X-Received: by 2002:a05:6358:7184:b0:1ba:4d06:34ca with SMTP id e5c5f4694b2df-1c3d81b2ceamr8466155d.27.1729627984885;
-        Tue, 22 Oct 2024 13:13:04 -0700 (PDT)
-Received: from localhost.localdomain (mobile-130-126-255-54.near.illinois.edu. [130.126.255.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1659dff41sm316229285a.30.2024.10.22.13.13.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 13:13:04 -0700 (PDT)
-From: Gax-c <zichenxie0106@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	nathan@kernel.org,
-	dan.carpenter@linaro.org
-Cc: linux-clk@vger.kernel.org,
-	zzjas98@gmail.com,
-	chenyuan0y@gmail.com,
-	Zichen Xie <zichenxie0106@gmail.com>
-Subject: [PATCH v3] clk: sophgo: Cast an operand to u64 to prevent potential unsigned long overflow on 32-bit machine in sg2042_pll_recalc_rate()
-Date: Tue, 22 Oct 2024 15:12:45 -0500
-Message-Id: <20241022201244.8992-1-zichenxie0106@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwm6Wyj3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEF3C4CEC7;
+	Tue, 22 Oct 2024 21:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729631120;
+	bh=bJvQz9MiC/VgurH813d2V4r5Zs0ZMaCBNkCiF5+fGYo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=bwm6Wyj3RPaPraAlcmvAbRAZqObSQRJe2bWoon+CeM3CxXWDRXTGMM/adJVqCa0Jl
+	 lYOZYOo9QA4oYRAIDvt9eSuiLR6oeCeth/W24QCnX4q9U3SObA3PVnK5y9L/o8ZOcd
+	 TtIIjLuI7T05fQsjo8nePYCkRynbGv3mFRcZlZpH1XQhV38CruVJfmyCVB9i2d15nY
+	 4Br4LOO/1E5IYAoXfDaaFN9Uu5GOFBk7lHrpE3ur3LHw0CAlp7g2lAnUcxxFHD1D1h
+	 QcDTWsIqNg6qGKH1hzvxHv4H+nLUvoI1K3yDnyLl25RIFUWB5BxaaIeT1wuBTmVS0O
+	 w32DLwpJeaYCw==
+Message-ID: <df9044e1f49f4b6567708693f41dbf9c.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241019-clk_bulk_ena_fix-v4-1-57f108f64e70@collabora.com>
+References: <20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com> <20241019-clk_bulk_ena_fix-v4-1-57f108f64e70@collabora.com>
+Subject: Re: [PATCH v4 1/4] clk: Provide devm_clk_bulk_get_all_enabled() helper
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Helgaas <bhelgaas@google.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
+Date: Tue, 22 Oct 2024 14:05:18 -0700
+User-Agent: alot/0.10
 
-From: Zichen Xie <zichenxie0106@gmail.com>
+Quoting Cristian Ciocaltea (2024-10-19 04:16:00)
+> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> return the number of clocks stored in the clk_bulk_data table referenced
+> by the clks argument.  Without knowing the number, it's not possible to
+> iterate these clocks when needed, hence the argument is useless and
+> could have been simply removed.
+>=20
+> Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
+> with devm_clk_bulk_get_all() in terms of the returned value:
+>=20
+>  > 0 if one or more clocks have been stored
+>  =3D 0 if there are no clocks
+>  < 0 if an error occurred
+>=20
+> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+> the past form of 'enable'.
+>=20
+> To reduce code duplication and improve patch readability, make
+> devm_clk_bulk_get_all_enable() use the new helper, as suggested by
+> Stephen Boyd.
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
 
-This was found by a static analyzer.
-There may be a potential integer overflow issue in
-sg2042_pll_recalc_rate(). numerator is defined as u64 while
-parent_rate is defined as unsigned long and ctrl_table.fbdiv
-is defined as unsigned int. On 32-bit machine, the result of
-the calculation will be limited to "u32" without correct casting.
-Integer overflow may occur on high-performance systems.
-We recommended that we cast the denominator as well but
-Dan Carpenter said that it was a max of 3087 and was not even
-vaguely close to the 4 billion mark needed to overflow a u32.
-So, we only cast the numerator here.
+I have minimized the diff further. Applied to clk-next (clk-devm). If
+the other patches can be merged through clk tree I'll need the PCI
+maintainers to ack, likely Bjorn?
 
-Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
-Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
----
-v2: modified patch to numerator casting only.
-v3: modified wrapping to make it clear.
----
- drivers/clk/sophgo/clk-sg2042-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
-index ff9deeef509b..1537f4f05860 100644
---- a/drivers/clk/sophgo/clk-sg2042-pll.c
-+++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-@@ -153,7 +153,7 @@ static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
- 
- 	sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
- 
--	numerator = parent_rate * ctrl_table.fbdiv;
-+	numerator = (u64)parent_rate * ctrl_table.fbdiv;
- 	denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
- 	do_div(numerator, denominator);
- 	return numerator;
--- 
-2.34.1
-
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 975fac29b27f..5368d92d9b39 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -218,15 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct de=
+vice *dev, void *res)
+ 	clk_bulk_put_all(devres->num_clks, devres->clks);
+ }
+=20
+-int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+-					      struct clk_bulk_data **clks)
+-{
+-	int ret =3D devm_clk_bulk_get_all_enabled(dev, clks);
+-
+-	return ret > 0 ? 0 : ret;
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+-
+ int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+ 					       struct clk_bulk_data **clks)
+ {
+@@ -239,23 +230,23 @@ int __must_check devm_clk_bulk_get_all_enabled(struct=
+ device *dev,
+ 		return -ENOMEM;
+=20
+ 	ret =3D clk_bulk_get_all(dev, &devres->clks);
+-	if (ret <=3D 0) {
++	if (ret > 0) {
++		*clks =3D devres->clks;
++		devres->num_clks =3D ret;
++	} else {
+ 		devres_free(devres);
+ 		return ret;
+ 	}
+=20
+-	*clks =3D devres->clks;
+-	devres->num_clks =3D ret;
+-
+ 	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
+-	if (ret) {
++	if (!ret) {
++		devres_add(dev, devres);
++	} else {
+ 		clk_bulk_put_all(devres->num_clks, devres->clks);
+ 		devres_free(devres);
+ 		return ret;
+ 	}
+=20
+-	devres_add(dev, devres);
+-
+ 	return devres->num_clks;
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enabled);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 158c5072852e..1dcee6d701e4 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct dev=
+ice *dev, int num_clks,
+ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ 				       struct clk_bulk_data **clks);
+=20
+-/**
+- * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consume=
+r (managed)
+- * @dev: device for clock "consumer"
+- * @clks: pointer to the clk_bulk_data table of consumer
+- *
+- * Returns success (0) or negative errno.
+- *
+- * This helper function allows drivers to get all clocks of the
+- * consumer and enables them in one operation with management.
+- * The clks will automatically be disabled and freed when the device
+- * is unbound.
+- */
+-
+-int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+-					      struct clk_bulk_data **clks);
+-
+ /**
+  * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consum=
+er (managed)
+  * @dev: device for clock "consumer"
+@@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all=
+(struct device *dev,
+ 	return 0;
+ }
+=20
+-static inline int __must_check devm_clk_bulk_get_all_enable(struct device =
+*dev,
+-						struct clk_bulk_data **clks)
+-{
+-	return 0;
+-}
+-
+ static inline int __must_check devm_clk_bulk_get_all_enabled(struct device=
+ *dev,
+ 						struct clk_bulk_data **clks)
+ {
+@@ -1160,6 +1138,15 @@ static inline void clk_restore_context(void) {}
+=20
+ #endif
+=20
++/* Deprecated. Use devm_clk_bulk_get_all_enabled() */
++static inline int __must_check
++devm_clk_bulk_get_all_enable(struct device *dev, struct clk_bulk_data **cl=
+ks)
++{
++	int ret =3D devm_clk_bulk_get_all_enabled(dev, clks);
++
++	return ret > 0 ? 0 : ret;
++}
++
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. =
+*/
+ static inline int clk_prepare_enable(struct clk *clk)
+ {
