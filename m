@@ -1,47 +1,72 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57B1547E7;
-	Tue, 22 Oct 2024 08:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC1716C444
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 08:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729584425; cv=none; b=kRvok6Hc+OhHI4+NyWDtSdqGoV48Ol9bzHdqUFjGbMv2QMQkYqV+UsGSakhYh0LkuM4usnlGnCMf0PjOAM2+lTBtMDGESOutK1Iy408lxmGAfhagbiCRuamGuHNTjur/qdOOb7WmER2FTro3jeYMXZLp3lirt7cldg+m4o/Aa88=
+	t=1729585182; cv=none; b=W821uQjHuLPVrfjTpWJgpzIQ+b0ZirzIa/jQACe38QLfTtUF5WATC2DCKhuXgT3sck++aj22gQccZHc2GPAQDNDNvLsICbnwHemKX69VJivsPkgSASCyPBmXgRN30616tM6AMwTbRwa59XGlJZHx0VB/nMhoyOSo4JT8GkBsp6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729584425; c=relaxed/simple;
-	bh=F7MLePvL1qCw6f4g3rS+6F1gSdyESvdPdiRG/LKhQhI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=h5z+nRNhjJ0nUia+tgB3UMY9Sm3vNkZYoWNXPohSlo3m4xWhz65OCko/uaUxMmL94WypnkcZaI9sZ6cp9A1o280G775EPGckJZhVPWzuOJuzqcwVCpEuDt0OgVmY+4dptkrt+So7XEBJLZjsYSE3u71uB+9MsB1Wl6hd/elPHX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LhxOZEGm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729585182; c=relaxed/simple;
+	bh=nDEq6xflV38Oys6mIGHJEcOdSrdQnYTmfgJUgN3pu2c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=D6Hgm0i7E6nFPL++qJugCnwhCppg7JB/Nf0Z20y50VcFP8xuN0+L4622F4aF8RRoqLY2Bh0f6CBGeiHc/3Sud1Jdnek5Xfa9YLjLUg+PLfi9DZE1CF2Cg58wEdJqg3jveJmJpui+NRCUSqYn+Z6fd85Stdv3VxMmZRTjcydDrQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nYfqMRqc; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LhxOZEGm"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LJbVUO015286;
-	Tue, 22 Oct 2024 08:06:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=uMMy1pnrV0xuPaULdnVUoy
-	t7vzFFnB9WKOXItomSSRo=; b=LhxOZEGmj0RS3ObSPoyKLxlL0mvg5IBap5c2vp
-	Wjnsuey37iRe4w4QDMSrNHYfN3GKVr0jfdPt7Yfa/QolkegBC+FqR6FRGwV3O7Qy
-	fTMT2Rko9OME4NzB4XjolMSC7VUOV1GH5r9xt8golpRMTDoJAomoBh9OBLoYPWg0
-	NCDGlnGXEZCzsstbg1ZwXAARUI8T2SPYXsIGCikM2K5q19DH1cfa2X3SXchJCffB
-	3zMGONTXDB824WmGqy2RVItn8OJu5br9pc0EN1nfEw2QpyfBi6eRxWHAroYnzmAc
-	TqZlQK56D9sRdyqMjahmAy+hws0ZjYsS6TVcuDyXyWVXpiug==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vuyg5p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 08:06:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M86qNU011728
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 08:06:52 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 22 Oct 2024 01:06:48 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Tue, 22 Oct 2024 13:36:38 +0530
-Subject: [PATCH] arm64: defconfig: Enable sa8775p clock controllers
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nYfqMRqc"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso26092235e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 01:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729585178; x=1730189978; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FL7mVxMp+9R/aCr51mmHchZz4EvxpV8Oo1TSu+Ak7HI=;
+        b=nYfqMRqcr8Yskxe8DXd8sKjQ/POixyZja21U/M3/b0/FNN4Bc63PoJjLwY9xs4v+EE
+         UjhGwwiVlSLgNugY28fsLsYjy64+bU95FjhsgSk9P6SdOQQM1v3DlMYG/sraL2M+vUgb
+         2b5mUJS6CVEhW14zZH96PLfh8kOzjGAaLb/SyF69S7E8CG0jHSRr9e9wXGdesX8B3Sna
+         1wYPD81GI+lCNE83oaNmHOYW0yCZ5c2gv42qUJU2sBgV0/GhltyVpXPccggEBPaji+8v
+         jN1JEPVbv96wfJO67N+P4TKioK4ruW+UHUWIg5pwi7UIU4sJpahUVZqQkGtqizHpPgos
+         7VWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729585178; x=1730189978;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FL7mVxMp+9R/aCr51mmHchZz4EvxpV8Oo1TSu+Ak7HI=;
+        b=o/0d8iwI6/Be315TFuorlVznv0U1Ht1AgRmM84Y0j5bK0/tsYkiXtXal273WoZScl0
+         BsWl3Daph3Z3sf09yXPY+Fcx9YsGKSVLnjWkswKAb/fDZufx9VuZLQbMHtWCSqzgFd78
+         4nWgEdQVcSkCSDZp3gj//JDwoZz/NXFbRcewbWLYp2s4gUPYrk/ay72zqaTStU3KPXA2
+         Lw86vdD3F1mXy2SkJJGVjkiKt+viMzW0rk9/3Y5PLT5Z/TYI6gGN5G6DkFaHadz7bUFP
+         mrQiB/fg3P+kj8JBa7rB/FjwdNN1E6MFVYqBIXzRmlx2LQKLQeTtMIik+WrKjFcTNu8R
+         t10w==
+X-Forwarded-Encrypted: i=1; AJvYcCXN/484OiuoghWhcVzwifWyjjr0AMBp3jCPMj0DcWgTeSQsB7tAB0tPpj0dEIGVTMWP5lgXyO7Q4qI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSHgEFbj5BWiZ78BDCU7q5ti0gGpwip0nOokBvTRqhxBaAfoe+
+	iQHrT/8ggKqLGz0Bi7Q9jUL39lBa9nDvKOgoovn1sKpk05R+Lnyz3082SZ161VQ=
+X-Google-Smtp-Source: AGHT+IE5vRD2Vte+CM4kdc57GSfq9BMFWtI/WIUONZMXx/Kfa0SAtSqvVmqF0g9m0UTtA9qWK+DO7w==
+X-Received: by 2002:a05:600c:4fcd:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-4317cb09538mr14288875e9.30.1729585178324;
+        Tue, 22 Oct 2024 01:19:38 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:ef1c:ae40:1300:20c6])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37ee0a4b26dsm6074261f8f.45.2024.10.22.01.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 01:19:37 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241008-meson-clk-rst-aux-v2-1-682ab9151f4f@baylibre.com>
+References: <20241008-meson-clk-rst-aux-v2-1-682ab9151f4f@baylibre.com>
+Subject: Re: [PATCH v2] clk: amlogic: axg-audio: use the auxiliary reset
+ driver
+Message-Id: <172958517664.9195.129752834617236997.b4-ty@baylibre.com>
+Date: Tue, 22 Oct 2024 10:19:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,87 +75,14 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241022-defconfig_sa8775p_clock_controllers-v1-1-cb399b0342c8@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAA1dF2cC/y2OQW7DIBBFr2Kx7lSAwRCrqnqPKrLwMCQoxnbBt
- SpFuXtp3OX7i//enRXKkQrrmzvLtMcSl7mCeGkYXt18IYi+MpNcKsGlBE8BlznEy1CcNUavA04
- L3oY6bnmZJsoFWs45acV1x0dWn9ZMIf48LZ/ngzN9fVfZdoxsdIUAl5Ti1jddO7Yh8NafhCMbr
- NGBrFEGjRVOSxGMRU/C/F0nKsU9K/vm7YgUAv7TICXYFWQqNHtY3YZXKrBr4KDcKQjjsbOt+6g
- pGGd8rQHv7Px4/AKJ0/aJFgEAAA==
-X-Change-ID: 20241022-defconfig_sa8775p_clock_controllers-3000e540560b
-To: Bjorn Andersson <andersson@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jBjUGHgfJsercJBLofCR3wWw0z7yHuQ6
-X-Proofpoint-GUID: jBjUGHgfJsercJBLofCR3wWw0z7yHuQ6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxlogscore=594 bulkscore=0 spamscore=0 mlxscore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410220051
+X-Mailer: b4 0.14.1
 
-Enable the SA8775P video, camera and display clock controllers to enable
-the video, camera and display functionalities on Qualcomm QCS9100.
+Applied to clk-meson (clk-meson-next), thanks!
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 36b33b9f17042128f5bef96f58667b5807b712c2..6197934b38e08b7294ec897e451af6e96fd63cda 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1324,10 +1324,12 @@ CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
- CONFIG_QCS_GCC_404=y
- CONFIG_SC_CAMCC_7280=m
-+CONFIG_SA_CAMCC_8775P=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
- CONFIG_SC_DISPCC_8280XP=m
-+CONFIG_SA_DISPCC_8775P=m
- CONFIG_SA_GCC_8775P=y
- CONFIG_SA_GPUCC_8775P=m
- CONFIG_SC_GCC_7180=y
-@@ -1366,6 +1368,7 @@ CONFIG_SM_GPUCC_8550=m
- CONFIG_SM_GPUCC_8650=m
- CONFIG_SM_TCSRCC_8550=y
- CONFIG_SM_TCSRCC_8650=y
-+CONFIG_SA_VIDEOCC_8775P=m
- CONFIG_SM_VIDEOCC_8250=y
- CONFIG_QCOM_HFPLL=y
- CONFIG_CLK_GFM_LPASS_SM8250=m
-
----
-base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
-change-id: 20241022-defconfig_sa8775p_clock_controllers-3000e540560b
-prerequisite-message-id: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
-prerequisite-patch-id: c405247d3558175ea16e723e36ccba87b51da3e6
-prerequisite-patch-id: 2f421e48713add52f17b6e0a95a1e4cb410322e0
-prerequisite-patch-id: 037cc7f8c1c9f690bea1976550616e661f48c53a
-prerequisite-patch-id: 930db8201718c0a66286d85418c7bac1719a76d1
-prerequisite-patch-id: 79dc8594844768685144c302eaf404b0d6cb7ebd
-prerequisite-patch-id: 836d46d2d006bdaae12b8a8aaed2eb786fd636ce
-prerequisite-patch-id: 096e89f063b35a70bbd8f92c4eb5a32c850bd927
-prerequisite-patch-id: 5a49926d1dfada78038f963d5de23a558d9dd19b
+[1/1] clk: amlogic: axg-audio: use the auxiliary reset driver
+      (no commit info)
 
 Best regards,
--- 
-Taniya Das <quic_tdas@quicinc.com>
+--
+Jerome
 
