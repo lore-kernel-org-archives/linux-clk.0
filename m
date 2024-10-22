@@ -1,289 +1,283 @@
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5403C175D35
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8521494CA
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729589440; cv=none; b=kqjUuq4qhABJgC5aCGlLa6Nv0AVdcqDMRIjXu1sPvgg6brWXwwCJfV5m21kipPgKQnGdst07wwsyVFvinb2VCo8msDKJSeBzioP8szFJE/5xYuBmRu6oaz7u2eJfUVZGZtPshQ05b6EAATA71uSJnfTR3lOOI8Y3Prx1vI4+BsU=
+	t=1729589649; cv=none; b=jcGy6OO3N2rMftafXTplFOPi4weT3YnPaZAkesc5aRabLqTpLtwuXm9MhBkZzAXx4ngv9vco7SO2oHawPt/9UkUBtimB9jBYUK5Voxgx81bInB1eATOsxFXQHit7OT7ysWXNGt63vZseLauOfvxXrGpX0NROTp9fBu5C5tr8U6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729589440; c=relaxed/simple;
-	bh=04uqPll08TndRHT1JewWFv7oA5E7wVeGMCcmQpsjSaA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubQ8xbv35Z+2aosU/5eY4mIVDOoKcoFX1Rz6ldejeT2CFCL5FiQExv9mkeAapRPx0U84GVUq6NiM1ZOlQfAuyzVRE4qD0pMpryVbPpDAr90G/IznaXZ4O7P2Q91BrY5TiX8heo0/XjN75rEPxOXsRS6SqCGCmShIJYyoexCdiew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UMWL9zCo; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1729589649; c=relaxed/simple;
+	bh=h6CKw/om6QYoivgiT9OJHWyBVfiX9oyq6x1FY2Omj8A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=N2Bz+wCpJa62NN/lHGn70lUZ4v9xuGA9Bs5TEeRljeiB5QTq0LM/USp2RbjBCpL6eNL1as4Bdw/T4TjRvEV6BRiEFEev9HKFfXI9Q1Eorh/R7gKo+kFIOuGUdktnvrE91Q4SnNt+iiyXp4W8nreRsul91kuy8ogWkhNqA97jaNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yETrigxZ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UMWL9zCo"
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso797154666b.3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:30:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yETrigxZ"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so3558586f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729589437; x=1730194237; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwMxl0HS+/hroXw7dMiyhKlhruRtZ/PIjrJLLm0t+HQ=;
-        b=UMWL9zCo2RnoxbQaGuZgieJtcicQqNNVkam3LR42AZF8gGGtkkrhBRMsSjw/t6QkvJ
-         ICn4rfdzfpJX5Drn7FIdmPGX4eubadJxQyMPGR+yHR9tqr9ieGr6kuZZPdpiZYftrlqf
-         /w9gWEUx+sqewVS6yn032zRa3CL0+hH/TtsWWPnP5ljW/durjEP4ZTVckLTyOCji6ym/
-         K7yCRbMYo9f5xn/2Jc0kWvJHRo+/bMRbEJBuJoY7JPvgkGD4dXStxoMLjux7zwePZcHu
-         yofUo5cjjvDKpA990224yMXWO2mc9KSUPMD1fvDtQnuoWifoCJelQCNtbfoK2j7k2LY2
-         vHng==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729589644; x=1730194444; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gZycHHif1XK15/J1/2rimbGE/T++GDZJvNYQ0hrutG4=;
+        b=yETrigxZYw2fqeGCCAXH79Jrk1N7NUtCfsY5gcmX4v6Kk41rBMMXBp97OUMF29MdVQ
+         AFRLxxrnrmL74uOSp1Mzz1BtSTNCUjZ9fIJ1CTXrT9nLUCku1gt9EyW4p11ae90JzmX1
+         HoD85xtgzeCOfXiH6uOjKkchlyb9N1Q4fqQiyFPHHPQROlqdCKQf5QK6vwJk974QQtef
+         7+G9iGHe7c7/YeZ1l4zJE2Lw7qzVoZp/ESGf3Cdk38UA1d/PWZ5NMDC4LPFGn4+ss3z+
+         EX+LeeOXkp+t6KUSHt+y4wi2zeFrNs9LK3apdOh2zGse7nJ6LZA9B80veyBwFSzGsJar
+         UfyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729589437; x=1730194237;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hwMxl0HS+/hroXw7dMiyhKlhruRtZ/PIjrJLLm0t+HQ=;
-        b=MyAAsHQ2O39gFzWeK8Z7fkCWG9ing7QvqIiNkIQRZbIFE6c+HDNNHbPUuePDk1sPlQ
-         CdkvOdXQgu9Pl7+Q8lB6NYsvnvZGrnpepfhi+LAkSLjnRoNjBSHm3Mm5ZYp6TlgpW8le
-         3Ojr/hKMgKsm7g6HtWH0DgpF3AxCTCLA02kjs2QnAI06s3L4avCB20Y27nqhEBI+YAKr
-         UK3eRPjc7+ivW4ntSaiU4Duh8fIMLjtEc2J32dGpKT1LXNAOFwyANXWvUr8pzYeye4L9
-         XLO8a6G5qIQ2ystRrUYLglkPhfycUv1JixOyvYwzut8VA2umXKyda7PtuzJB5dsA9jUY
-         SOng==
-X-Forwarded-Encrypted: i=1; AJvYcCWTQSMmlm5PKOAvGA5PlL17kD/1kQ22sixEhbLC4o9Pvbwy/5QPW/W4JXlcwN7XpH/vwNXaaVEFlz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy05WTL7ibBl98JKzUhPRoQaM3PbGwKO3eO3pClGLmcp5F4XyNp
-	uVkN4y94n7Gtiv0ppixQhsZLhPkvYZufu9V7sCf0BIXx30ug6KQys5tgCAHrrcU=
-X-Google-Smtp-Source: AGHT+IEGyEQRCYQDtCFWizlbuy0GBX1uROrJVtmMFsgIeXcmwJ6NJZHdXYYpYRzJfgP5yt6o3uI6gA==
-X-Received: by 2002:a17:907:2d8c:b0:a80:f840:9004 with SMTP id a640c23a62f3a-a9a69a63c0fmr1587260866b.12.1729589436425;
-        Tue, 22 Oct 2024 02:30:36 -0700 (PDT)
-Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6234sm312304466b.24.2024.10.22.02.30.35
+        d=1e100.net; s=20230601; t=1729589644; x=1730194444;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gZycHHif1XK15/J1/2rimbGE/T++GDZJvNYQ0hrutG4=;
+        b=lG852MH9EMqqPqGxj39x+L4yR3wzcYbvwzTKOu+ndcdHV96mA211VHaPCuNGOPT1bA
+         tTB7HOC5tl5ur7RemAfuf1/C5O4zbRI50PdYYIPQUstjGrPhMsMdN2KXf5soz3fmtJ6h
+         GfyT9euCwgytuUwafOO/y8YdsEa2/WiGfBHP1Kj0Ws0NKWBkWvykcCv+rw2CJOOCYsvu
+         cw3oeWBe99DUHXJ99CFebvGYBEPr7Vre8hbOy8WuZzV83dCuu+owTqF6ZeZlUmeEar+U
+         YD5VtI33/AVBLSqV2Tz2OsmPGD50xzMSfhni4TE9CEMlFuPrXm0EYk1ehUiPpNlwe8eF
+         hyyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpZ7g69Unr3YhnhLYhFuIQ62i5Xohz9G9XGJ0SANSsNlzCbydYIAtPjppG3OLZlmPDKOzZd5VoG+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2AirNUUhoXDm3jJY3XSuWzBqvoVfMQbCRxEraRjQ5HdKKXpvD
+	s9pxvQB5KoaKbCj0yVvNgkpKSbkhagNE2XO8A867aORZ2eS8omFU63Pu8oyCvzw=
+X-Google-Smtp-Source: AGHT+IF2AI9bQIr0tGScY7Bv5vlVywZpblspYP/H+5e4xTqZiXyoU9NwrHtaw3F1qCz0C5DcMMgfnA==
+X-Received: by 2002:adf:f744:0:b0:37d:5103:8896 with SMTP id ffacd0b85a97d-37eab4ed1ddmr8572359f8f.41.1729589643781;
+        Tue, 22 Oct 2024 02:34:03 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ef1c:ae40:1300:20c6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37d25sm6220808f8f.23.2024.10.22.02.34.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:30:36 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 22 Oct 2024 11:30:57 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 04/14] dt-bindings: misc: Add device specific bindings
- for RaspberryPi RP1
-Message-ID: <Zxdw0X2S1-4ciBMc@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
- <20241010025244.GB978628-robh@kernel.org>
+        Tue, 22 Oct 2024 02:34:03 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,  <devicetree@vger.kernel.org>,
+  Kevin Hilman <khilman@baylibre.com>,  "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>,  <linux-amlogic@lists.infradead.org>,
+  <linux-arm-kernel@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  Philipp Zabel <p.zabel@pengutronix.de>,  Rob Herring <robh@kernel.org>,
+  Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH v4 3/5] dt-bindings: clock: axg-audio: document A1
+ SoC audio clock controller driver
+In-Reply-To: <20240913121152.817575-4-jan.dakinevich@salutedevices.com> (Jan
+	Dakinevich's message of "Fri, 13 Sep 2024 15:11:50 +0300")
+References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
+	<20240913121152.817575-4-jan.dakinevich@salutedevices.com>
+Date: Tue, 22 Oct 2024 11:34:02 +0200
+Message-ID: <1jzfmwjxbp.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010025244.GB978628-robh@kernel.org>
+Content-Type: text/plain
 
-Hi Rob,
+On Fri 13 Sep 2024 at 15:11, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
 
-On 21:52 Wed 09 Oct     , Rob Herring wrote:
-> On Mon, Oct 07, 2024 at 02:39:47PM +0200, Andrea della Porta wrote:
-> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
-> > schema is intended as minimal support for the clock generator and
-> > gpio controller peripherals which are accessible through BAR1.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 110 ++++++++++++++++++
-> >  MAINTAINERS                                   |   1 +
-> >  2 files changed, 111 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > new file mode 100644
-> > index 000000000000..3f099b16e672
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > @@ -0,0 +1,110 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 MFD PCI device
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RaspberryPi RP1 is a PCI multi function device containing
-> > +  peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > +  and others.
-> > +  The peripherals are accessed by addressing the PCI BAR1 region.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/pci-ep-bus.yaml
-> > +
-> > +properties:
-> > +  compatible:
-> > +    additionalItems: true
-> > +    maxItems: 3
-> > +    items:
-> > +      - const: pci1de4,1
-> > +
-> > +patternProperties:
-> > +  "^pci-ep-bus@[0-2]$":
-> > +    $ref: '#/$defs/bar-bus'
-> > +    description:
-> > +      The bus on which the peripherals are attached, which is addressable
-> > +      through the BAR.
-> 
-> No need for this because pci-ep-bus.yaml already has a schema for the 
-> child nodes.
-
-Hmmm... my intention here was to constrain the BARs from 0 to 2, since there are
-only 3 BARs on RP1 (of which only 1 is currently interesting for peripherals).
-Also, that bus should have the peripherals on it, hence I've added the clock,
-ethernet and pinctrl nodes. Do you think it's not reasonable to define
-all the peripherals on it, or if it's reasonable, is there any other way to
-accomplish this in a more elegant way than what I proposed in this patch? See also
-below.
-
-> 
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +$defs:
-> > +  bar-bus:
-> > +    $ref: /schemas/pci/pci-ep-bus.yaml#/$defs/pci-ep-bus
-> > +    unevaluatedProperties: false
-> > +
-> > +    properties:
-> > +      "#interrupt-cells":
-> > +        const: 2
-> > +        description:
-> > +          Specifies respectively the interrupt number and flags as defined
-> > +          in include/dt-bindings/interrupt-controller/irq.h.
-> > +
-> > +      interrupt-controller: true
-> > +
-> > +      interrupt-parent:
-> > +        description:
-> > +          Must be the phandle of this 'pci-ep-bus' node. It will trigger
-> > +          PCI interrupts on behalf of peripheral generated interrupts.
-> 
-> 
-> Do you have an interrupt controller per bus? These should be in the 
-> parent node I think.
-
-Ack.
-
-> 
-> 
-> > +
-> > +    patternProperties:
-> > +      "^clocks(@[0-9a-f]+)?$":
-> > +        type: object
-> > +        $ref: /schemas/clock/raspberrypi,rp1-clocks.yaml
-> > +
-> > +      "^ethernet(@[0-9a-f]+)?$":
-> > +        type: object
-> > +        $ref: /schemas/net/cdns,macb.yaml
-> > +
-> > +      "^pinctrl(@[0-9a-f]+)?$":
-> > +        type: object
-> > +        $ref: /schemas/pinctrl/raspberrypi,rp1-gpio.yaml
-> 
-> IMO, these child nodes can be omitted. We generally don't define all the 
-> child nodes in an SoC.
-> 
-> If you do want to define them, then just do:
-> 
-> additionalProperties: true
-> properties:
->   compatible:
->     contains: the-child-compatible
+> Add device tree bindings for A1 SoC audio clock and reset controllers.
 >
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> ---
+>  .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
+>  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++++++++++++++
+>  .../reset/amlogic,meson-a1-audio-reset.h      |  29 +++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> index fd7982dd4cea..df9eb8ce28dc 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> @@ -18,6 +18,8 @@ description:
+>  properties:
+>    compatible:
+>      enum:
+> +      - amlogic,a1-audio-clkc
 
-Right, but since you proposed above to get rid of the pci-ep-bus redeclaration
-(being it alredy defined in pci-ep-bus.yaml) I'm not sure where to place this.
-Should I just get rid af it all as you suggest?
+This controller is missing aud_top clock input coming from the vad
+controller, AFAICT.
 
+> +      - amlogic,a1-audio-vad-clkc
+>        - amlogic,axg-audio-clkc
+>        - amlogic,g12a-audio-clkc
+>        - amlogic,sm1-audio-clkc
+> @@ -114,6 +116,7 @@ allOf:
+>          compatible:
+>            contains:
+>              enum:
+> +              - amlogic,a1-audio-clkc
+>                - amlogic,g12a-audio-clkc
+>                - amlogic,sm1-audio-clkc
+>      then:
+> diff --git a/include/dt-bindings/clock/amlogic,a1-audio-clkc.h b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+> new file mode 100644
+> index 000000000000..6534d1878816
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+> @@ -0,0 +1,122 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+> + *
+> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> + */
+> +
+> +#ifndef __A1_AUDIO_CLKC_BINDINGS_H
+> +#define __A1_AUDIO_CLKC_BINDINGS_H
+> +
+> +#define AUD_CLKID_DDR_ARB		1
+> +#define AUD_CLKID_TDMIN_A		2
+> +#define AUD_CLKID_TDMIN_B		3
+> +#define AUD_CLKID_TDMIN_LB		4
+> +#define AUD_CLKID_LOOPBACK		5
+> +#define AUD_CLKID_TDMOUT_A		6
+> +#define AUD_CLKID_TDMOUT_B		7
+> +#define AUD_CLKID_FRDDR_A		8
+> +#define AUD_CLKID_FRDDR_B		9
+> +#define AUD_CLKID_TODDR_A		10
+> +#define AUD_CLKID_TODDR_B		11
+> +#define AUD_CLKID_SPDIFIN		12
+> +#define AUD_CLKID_RESAMPLE		13
+> +#define AUD_CLKID_EQDRC			14
+> +#define AUD_CLKID_LOCKER		15
+> +#define AUD_CLKID_MST_A_MCLK_SEL	16
+> +#define AUD_CLKID_MST_A_MCLK_DIV	17
+> +#define AUD_CLKID_MST_A_MCLK		18
+> +#define AUD_CLKID_MST_B_MCLK_SEL	19
+> +#define AUD_CLKID_MST_B_MCLK_DIV	20
+> +#define AUD_CLKID_MST_B_MCLK		21
+> +#define AUD_CLKID_MST_C_MCLK_SEL	22
+> +#define AUD_CLKID_MST_C_MCLK_DIV	23
+> +#define AUD_CLKID_MST_C_MCLK		24
+> +#define AUD_CLKID_MST_D_MCLK_SEL	25
+> +#define AUD_CLKID_MST_D_MCLK_DIV	26
+> +#define AUD_CLKID_MST_D_MCLK		27
+> +#define AUD_CLKID_SPDIFIN_CLK_SEL	28
+> +#define AUD_CLKID_SPDIFIN_CLK_DIV	29
+> +#define AUD_CLKID_SPDIFIN_CLK		30
+> +#define AUD_CLKID_RESAMPLE_CLK_SEL	31
+> +#define AUD_CLKID_RESAMPLE_CLK_DIV	32
+> +#define AUD_CLKID_RESAMPLE_CLK		33
+> +#define AUD_CLKID_LOCKER_IN_CLK_SEL	34
+> +#define AUD_CLKID_LOCKER_IN_CLK_DIV	35
+> +#define AUD_CLKID_LOCKER_IN_CLK		36
+> +#define AUD_CLKID_LOCKER_OUT_CLK_SEL	37
+> +#define AUD_CLKID_LOCKER_OUT_CLK_DIV	38
+> +#define AUD_CLKID_LOCKER_OUT_CLK	39
+> +#define AUD_CLKID_EQDRC_CLK_SEL		40
+> +#define AUD_CLKID_EQDRC_CLK_DIV		41
+> +#define AUD_CLKID_EQDRC_CLK		42
+> +#define AUD_CLKID_MST_A_SCLK_PRE_EN	43
+> +#define AUD_CLKID_MST_A_SCLK_DIV	44
+> +#define AUD_CLKID_MST_A_SCLK_POST_EN	45
+> +#define AUD_CLKID_MST_A_SCLK		46
+> +#define AUD_CLKID_MST_B_SCLK_PRE_EN	47
+> +#define AUD_CLKID_MST_B_SCLK_DIV	48
+> +#define AUD_CLKID_MST_B_SCLK_POST_EN	49
+> +#define AUD_CLKID_MST_B_SCLK		50
+> +#define AUD_CLKID_MST_C_SCLK_PRE_EN	51
+> +#define AUD_CLKID_MST_C_SCLK_DIV	52
+> +#define AUD_CLKID_MST_C_SCLK_POST_EN	53
+> +#define AUD_CLKID_MST_C_SCLK		54
+> +#define AUD_CLKID_MST_D_SCLK_PRE_EN	55
+> +#define AUD_CLKID_MST_D_SCLK_DIV	56
+> +#define AUD_CLKID_MST_D_SCLK_POST_EN	57
+> +#define AUD_CLKID_MST_D_SCLK		58
+> +#define AUD_CLKID_MST_A_LRCLK_DIV	59
+> +#define AUD_CLKID_MST_A_LRCLK		60
+> +#define AUD_CLKID_MST_B_LRCLK_DIV	61
+> +#define AUD_CLKID_MST_B_LRCLK		62
+> +#define AUD_CLKID_MST_C_LRCLK_DIV	63
+> +#define AUD_CLKID_MST_C_LRCLK		64
+> +#define AUD_CLKID_MST_D_LRCLK_DIV	65
+> +#define AUD_CLKID_MST_D_LRCLK		66
+> +#define AUD_CLKID_TDMIN_A_SCLK_SEL	67
+> +#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	68
+> +#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	69
+> +#define AUD_CLKID_TDMIN_A_SCLK		70
+> +#define AUD_CLKID_TDMIN_A_LRCLK		71
+> +#define AUD_CLKID_TDMIN_B_SCLK_SEL	72
+> +#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	73
+> +#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	74
+> +#define AUD_CLKID_TDMIN_B_SCLK		75
+> +#define AUD_CLKID_TDMIN_B_LRCLK		76
+> +#define AUD_CLKID_TDMIN_LB_SCLK_SEL	77
+> +#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	78
+> +#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	79
+> +#define AUD_CLKID_TDMIN_LB_SCLK		80
+> +#define AUD_CLKID_TDMIN_LB_LRCLK	81
+> +#define AUD_CLKID_TDMOUT_A_SCLK_SEL	82
+> +#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	83
+> +#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	84
+> +#define AUD_CLKID_TDMOUT_A_SCLK		85
+> +#define AUD_CLKID_TDMOUT_A_LRCLK	86
+> +#define AUD_CLKID_TDMOUT_B_SCLK_SEL	87
+> +#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	88
+> +#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	89
+> +#define AUD_CLKID_TDMOUT_B_SCLK		90
+> +#define AUD_CLKID_TDMOUT_B_LRCLK	91
+> +
+> +#define AUD_CLKID_VAD_DDR_ARB		1
+> +#define AUD_CLKID_VAD_PDM		2
+> +#define AUD_CLKID_VAD_TDMIN		3
+> +#define AUD_CLKID_VAD_TODDR		4
+> +#define AUD_CLKID_VAD			5
+> +#define AUD_CLKID_VAD_AUDIOTOP		6
+> +#define AUD_CLKID_VAD_MCLK_SEL		7
+> +#define AUD_CLKID_VAD_MCLK_DIV		8
+> +#define AUD_CLKID_VAD_MCLK		9
+> +#define AUD_CLKID_VAD_CLK_SEL		10
+> +#define AUD_CLKID_VAD_CLK_DIV		11
+> +#define AUD_CLKID_VAD_CLK		12
+> +#define AUD_CLKID_VAD_PDM_DCLK_SEL	13
+> +#define AUD_CLKID_VAD_PDM_DCLK_DIV	14
+> +#define AUD_CLKID_VAD_PDM_DCLK		15
+> +#define AUD_CLKID_VAD_PDM_SYSCLK_SEL	16
+> +#define AUD_CLKID_VAD_PDM_SYSCLK_DIV	17
+> +#define AUD_CLKID_VAD_PDM_SYSCLK	18
+> +
+> +#endif /* __A1_AUDIO_CLKC_BINDINGS_H */
+> diff --git a/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> new file mode 100644
+> index 000000000000..653fddba1d8f
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+> + *
+> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
+> +#define _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
+> +
+> +#define AUD_RESET_DDRARB	0
+> +#define AUD_RESET_TDMIN_A	1
+> +#define AUD_RESET_TDMIN_B	2
+> +#define AUD_RESET_TDMIN_LB	3
+> +#define AUD_RESET_LOOPBACK	4
+> +#define AUD_RESET_TDMOUT_A	5
+> +#define AUD_RESET_TDMOUT_B	6
+> +#define AUD_RESET_FRDDR_A	7
+> +#define AUD_RESET_FRDDR_B	8
+> +#define AUD_RESET_TODDR_A	9
+> +#define AUD_RESET_TODDR_B	10
+> +#define AUD_RESET_SPDIFIN	11
+> +#define AUD_RESET_RESAMPLE	12
+> +#define AUD_RESET_EQDRC		13
+> +#define AUD_RESET_LOCKER	14
+> +#define AUD_RESET_TOACODEC	30
+> +#define AUD_RESET_CLKTREE	31
+> +
+> +#endif /* _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H */
 
-Many thanks,
-Andrea
- 
-> > +
-> > +    required:
-> > +      - interrupt-parent
-> > +      - interrupt-controller
-> > +
-> > +examples:
-> > +  - |
-> > +    pci {
-> > +        #address-cells = <3>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1@0,0 {
-> > +            compatible = "pci1de4,1";
-> > +            ranges = <0x01 0x00 0x00000000
-> > +                      0x82010000 0x00 0x00
-> > +                      0x00 0x400000>;
-> > +            #address-cells = <3>;
-> > +            #size-cells = <2>;
-> > +
-> > +            pci_ep_bus: pci-ep-bus@1 {
-> > +                compatible = "simple-bus";
-> > +                ranges = <0xc0 0x40000000
-> > +                          0x01 0x00 0x00000000
-> > +                          0x00 0x00400000>;
-> > +                dma-ranges = <0x10 0x00000000
-> > +                              0x43000000 0x10 0x00000000
-> > +                              0x10 0x00000000>;
-> > +                #address-cells = <2>;
-> > +                #size-cells = <2>;
-> > +                interrupt-controller;
-> > +                interrupt-parent = <&pci_ep_bus>;
-> > +                #interrupt-cells = <2>;
-> > +
-> > +                rp1_clocks: clocks@c040018000 {
-> > +                    compatible = "raspberrypi,rp1-clocks";
-> > +                    reg = <0xc0 0x40018000 0x0 0x10038>;
-> > +                    #clock-cells = <1>;
-> > +                    clocks = <&clk_rp1_xosc>;
-> > +                    clock-names =  "rp1-xosc";
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ccf123b805c8..2aea5a6166bd 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19384,6 +19384,7 @@ RASPBERRY PI RP1 PCI DRIVER
-> >  M:	Andrea della Porta <andrea.porta@suse.com>
-> >  S:	Maintained
-> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > +F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> >  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >  F:	include/dt-bindings/clock/rp1.h
-> > -- 
-> > 2.35.3
-> > 
+-- 
+Jerome
