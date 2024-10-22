@@ -1,55 +1,55 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCFA176AA9
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700912BB09
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 08:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729586577; cv=none; b=Mvpf/WtUSHKAVJ5iVYqOARYuveIMXHaRs1S4wV68L7CAjZGJfhTEKRyHF28ldPrlgjuwj8stu1xeVP5TPCjMKTpsNtwujZZ9aWB2MYhV/C6eVfa1dzonA2sWqkV40lJ2dAQDM8XeUb8iT8Itl/2ThqWkoczXUPBY8SQX8R68WbE=
+	t=1729586721; cv=none; b=Zk7+DsYR2KqXwQBv0LhcMd8tgL9Th8W6ZFRjEzg3pdKO1fUJ5Og8jW0txWwZTA596B/0sChzVbgPU7JrWeXBMf6tf6uLUUehE8OjDnnqpWB6fWdpxJPkOHUR73zPSOzIYndODvJGDKshbWdesWZssGSLd48soz+EhYNCZQ70dOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729586577; c=relaxed/simple;
-	bh=Eb5cq6rhpvrVx58PTZz7HAj5RGu1n0Lf/stla6XXmuI=;
+	s=arc-20240116; t=1729586721; c=relaxed/simple;
+	bh=KAHfxfB+fvUq7GAo333gUiBoXcFflEpR+dUzMGrv+Ts=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qPMOQNm/O2x7Q1kTrZ5XPGZCuDHZqvIUEgeb+aUe8cqXqoM9l+Az++ZTJyLC4jwGYVcr/Fk9VyuojzjcYQ+3kAfxpetyws4Zl/+Lh3tE9e02cjOFkTDlfDT0L/MP299dBd9mDiCeKq0CJd5eU/jQvLFn6JN3Sb5u4dr0N/iatfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F6++lCn9; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version:Content-Type; b=gnccjLjKfI5hrV3eU6nnYLgvtaJUuqobRAGnYBE0AY1KxELYcrEwHXJUSLKsorwGo6Ay3FdD9vpdI7+Jvt6Nm3xu8PIuxoBMVD1nsPdXuvvN9fVtDhFl8y+7+imXmMvQdv1/4qfTeuXWkzq65AN/bzngQz2wy4nwzanq/Ie/WFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OL0cVJ+9; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F6++lCn9"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43163667f0eso38047165e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 01:42:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OL0cVJ+9"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314b316495so51829985e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 01:45:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729586573; x=1730191373; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729586718; x=1730191518; darn=vger.kernel.org;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1jpnHnQ3gPJsZV3rud6D7V0PkG3eWvAEvUguSu5qf1I=;
-        b=F6++lCn9BxSckRtsBnnNu3SVH90ucKKDu1CKtEBCql7EeVGT+IKfwziUMEVYIdSQGU
-         anyAisyiuEMZGFOMB0obu+iZJVGMB9C65ebpvoFLBCkcoSVdktpT6QQm4p/kQA/5M7XV
-         /AE17pk9aPG+w92rdNQ7hUhOcBOtZ1Lxs1KDATQ3cStiazRAQAalCQ9xYWscBhk8kEdu
-         q/p+dTQ3gGgKKQPu/OPv4K6Xo4RpZzy70NoY1wx1sXJtFlN7ZPmec7VhC325d5XSKwUR
-         yJvJrmMBc3miL63olEES3W8h+I8UXzcIRkD76zyQTBBz4GjL0QTLEEpaIVyiVKy48zil
-         fBdA==
+        bh=0Acw2yEf0B8QWtsSk4Q4U7jM/pzwUxcjLN/d69G1/bQ=;
+        b=OL0cVJ+9QDEwSa1b7RpGm++VfFKivtzRGAn2R48hWgx75o/wjuNjl7X+B6DPR9TP5W
+         07G3DLyOO9rgefJio+KqeniybDyZSbdU4y0KOJoMJHLaNG+4p/3TWIepzv0qb1zQ+IxR
+         lOf2ATHij/nQJltpK5KwK4DkU3eQ8p159f4q90qeOiXUVxZsZxF1Xw024Oy+xArd+a8z
+         D9NlnG9sFTI/8MlWWbAUGdsRGrGlHBTQgElHO3myfdwaURiJ4pt7KN0CC8SM7Ny/qAoW
+         8+dDBhpRji8b/t3MmfasWkQ+3h9j9wL1IvnoxFa3RUf9yJ4D9lQT++7kx0rptEPS3L34
+         FUHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729586573; x=1730191373;
+        d=1e100.net; s=20230601; t=1729586718; x=1730191518;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1jpnHnQ3gPJsZV3rud6D7V0PkG3eWvAEvUguSu5qf1I=;
-        b=SWDWfoxw3MMeui7KlFqyJBeWJI3trLHPZKIEdUM2RFysU5x0a7IzBx34qeERh06lVV
-         8T4hWwCc9R45KxOfW3kl3sgIz2YZeqJBUNHm+1OjCImPvIHgdqZK6bWzO5KbXmEIWoFD
-         E9IcloXJUDV4LEpL3dVzigVh8cIYBGhoqWwza7RAU2q44eR7xNs/9qPr9uVn/clRQwBe
-         88AReUU/cPVy7BlyBKd7l6AznHcREOj9r9fgfe3zoCx7Mto+muAgER3e4v6FmfPIqOzv
-         jTqnDqw7BmLIQQ/98qkzDau0/a27eTPYLuq0ddZlRg1OoGRiXnLLTKvbEa0RhHjiJVKI
-         pHig==
-X-Forwarded-Encrypted: i=1; AJvYcCWk+BEEu8NW2/0lU/c70NF+3DnmEGG50rqBa4WMvuvmD/e0rLDlpIIVGnMtYVqeJ1ERnuTv87o2v14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNICoxqVTpVV8FSEjyTRKouakeHC+u6vZuw676Hfc2TESe00w6
-	2gVhFT8Ko2WlfBf7qsxJwWJQRtBK23No6ubuiyKKpVsuZwkSaiJL5XPLBpG7Ens=
-X-Google-Smtp-Source: AGHT+IHRQTZKw+rsQ6rr0wLIuGP9VOmB5Go8obeenaZUn2sWIynPYNrej4PW0IGYCYtMiZC4z5Keng==
-X-Received: by 2002:adf:f452:0:b0:37c:d569:97b with SMTP id ffacd0b85a97d-37ea2174eb6mr8577418f8f.19.1729586573251;
-        Tue, 22 Oct 2024 01:42:53 -0700 (PDT)
+        bh=0Acw2yEf0B8QWtsSk4Q4U7jM/pzwUxcjLN/d69G1/bQ=;
+        b=PUB5uFdgO2jMC09V7hhLXNusrbdyZD1jnvL6ly9QlQjLvWc0gSeLAIyOHCcEbHg4Zi
+         t7hY/NwS5PJDIGmvkvpkQSGWHNRgByhNd6x2iS5ibXO6I3plPgwAL7Ne3zhOesUmD9gb
+         B7QIUulWKtN3/tbx1f6IohLuUL5pLJ8V/rBMEQYW0ALbaHzmqsc02W9F0O+Q4K2ABHUE
+         Xpm5Nnykc/45ch6FiOftDVCi3e4B3fUmY8XcD1vuw/RGqiSWi0/mJZZiAyi9q6KW8Ktq
+         f8wexLvgeyvbCgtzvWgBRXTaKV4TwbYkPvQyB6Q6QvEb8bx8NZFxljLzXFpfs6nxvQU/
+         aMyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8ijaB8/Hcp5lMh8OJRscnWsWRc4JyONjutqzWWzE1Z4VoL4VldaIL7G+gAKz0AnWw0l5R7l2mH1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD5cgHs9vqcRdvj6dG0vzgwvpDZUdsm5AVYE5caJXaNewff319
+	Wt4r5hwo+GHjgcYobJzP0XPetReDbsk2RTCF0kzIRDffubJrKok8Ll0xcWW1vG4=
+X-Google-Smtp-Source: AGHT+IGlODZ2Z52H3OR+XFpSdf+vvptcBZKHvdo5Z1My0fNGTccq1f3jHtb6ywkRxw+u6rwhTHBfjQ==
+X-Received: by 2002:a05:600c:4446:b0:431:52b7:a47e with SMTP id 5b1f17b1804b1-4317cb0ad3dmr11144395e9.35.1729586717834;
+        Tue, 22 Oct 2024 01:45:17 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:ef1c:ae40:1300:20c6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bb15sm6114405f8f.99.2024.10.22.01.42.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570c79sm82765835e9.3.2024.10.22.01.45.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 01:42:52 -0700 (PDT)
+        Tue, 22 Oct 2024 01:45:17 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 Cc: Conor Dooley <conor+dt@kernel.org>,  <devicetree@vger.kernel.org>,
@@ -61,14 +61,14 @@ Cc: Conor Dooley <conor+dt@kernel.org>,  <devicetree@vger.kernel.org>,
  <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
   Philipp Zabel <p.zabel@pengutronix.de>,  Rob Herring <robh@kernel.org>,
   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] reset: amlogic: add support for A1 SoC in
- auxiliary reset driver
-In-Reply-To: <20240913121152.817575-2-jan.dakinevich@salutedevices.com> (Jan
-	Dakinevich's message of "Fri, 13 Sep 2024 15:11:48 +0300")
+Subject: Re: [RFC PATCH v4 3/5] dt-bindings: clock: axg-audio: document A1
+ SoC audio clock controller driver
+In-Reply-To: <20240913121152.817575-4-jan.dakinevich@salutedevices.com> (Jan
+	Dakinevich's message of "Fri, 13 Sep 2024 15:11:50 +0300")
 References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
-	<20240913121152.817575-2-jan.dakinevich@salutedevices.com>
-Date: Tue, 22 Oct 2024 10:42:52 +0200
-Message-ID: <1jbjzcle9f.fsf@starbuckisacylon.baylibre.com>
+	<20240913121152.817575-4-jan.dakinevich@salutedevices.com>
+Date: Tue, 22 Oct 2024 10:45:16 +0200
+Message-ID: <1j7ca0le5f.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,44 +79,207 @@ Content-Type: text/plain
 
 On Fri 13 Sep 2024 at 15:11, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
 
-> Add support for the reset controller present in the audio clock
-> controller of A1 SoC families, using the auxiliary bus.
+> Add device tree bindings for A1 SoC audio clock and reset controllers.
 >
 > Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 
-Independent of clock controller. Should be sent separately
+Reset and clock are now independent.
+
+Please split the patch and send the changes in the related series,
+bindings before the driver change.
 
 > ---
->  drivers/reset/amlogic/reset-meson-aux.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
+>  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++++++++++++++
+>  .../reset/amlogic,meson-a1-audio-reset.h      |  29 +++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
 >
-> diff --git a/drivers/reset/amlogic/reset-meson-aux.c b/drivers/reset/amlogic/reset-meson-aux.c
-> index dd8453001db9..a385c0125836 100644
-> --- a/drivers/reset/amlogic/reset-meson-aux.c
-> +++ b/drivers/reset/amlogic/reset-meson-aux.c
-> @@ -26,6 +26,12 @@ struct meson_reset_adev {
->  #define to_meson_reset_adev(_adev) \
->  	container_of((_adev), struct meson_reset_adev, adev)
->  
-> +static const struct meson_reset_param meson_a1_audio_param = {
-> +	.reset_ops	= &meson_reset_toggle_ops,
-> +	.reset_num	= 32,
-> +	.level_offset	= 0x28,
-> +};
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> index fd7982dd4cea..df9eb8ce28dc 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> @@ -18,6 +18,8 @@ description:
+>  properties:
+>    compatible:
+>      enum:
+> +      - amlogic,a1-audio-clkc
+> +      - amlogic,a1-audio-vad-clkc
+>        - amlogic,axg-audio-clkc
+>        - amlogic,g12a-audio-clkc
+>        - amlogic,sm1-audio-clkc
+> @@ -114,6 +116,7 @@ allOf:
+>          compatible:
+>            contains:
+>              enum:
+> +              - amlogic,a1-audio-clkc
+>                - amlogic,g12a-audio-clkc
+>                - amlogic,sm1-audio-clkc
+>      then:
+> diff --git a/include/dt-bindings/clock/amlogic,a1-audio-clkc.h b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+> new file mode 100644
+> index 000000000000..6534d1878816
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+> @@ -0,0 +1,122 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+> + *
+> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> + */
 > +
->  static const struct meson_reset_param meson_g12a_audio_param = {
->  	.reset_ops	= &meson_reset_toggle_ops,
->  	.reset_num	= 26,
-> @@ -40,6 +46,9 @@ static const struct meson_reset_param meson_sm1_audio_param = {
->  
->  static const struct auxiliary_device_id meson_reset_aux_ids[] = {
->  	{
-> +		.name = "a1-audio-clkc.rst-a1",
-> +		.driver_data = (kernel_ulong_t)&meson_a1_audio_param,
-> +	}, {
->  		.name = "axg-audio-clkc.rst-g12a",
->  		.driver_data = (kernel_ulong_t)&meson_g12a_audio_param,
->  	}, {
+> +#ifndef __A1_AUDIO_CLKC_BINDINGS_H
+> +#define __A1_AUDIO_CLKC_BINDINGS_H
+> +
+> +#define AUD_CLKID_DDR_ARB		1
+> +#define AUD_CLKID_TDMIN_A		2
+> +#define AUD_CLKID_TDMIN_B		3
+> +#define AUD_CLKID_TDMIN_LB		4
+> +#define AUD_CLKID_LOOPBACK		5
+> +#define AUD_CLKID_TDMOUT_A		6
+> +#define AUD_CLKID_TDMOUT_B		7
+> +#define AUD_CLKID_FRDDR_A		8
+> +#define AUD_CLKID_FRDDR_B		9
+> +#define AUD_CLKID_TODDR_A		10
+> +#define AUD_CLKID_TODDR_B		11
+> +#define AUD_CLKID_SPDIFIN		12
+> +#define AUD_CLKID_RESAMPLE		13
+> +#define AUD_CLKID_EQDRC			14
+> +#define AUD_CLKID_LOCKER		15
+> +#define AUD_CLKID_MST_A_MCLK_SEL	16
+> +#define AUD_CLKID_MST_A_MCLK_DIV	17
+> +#define AUD_CLKID_MST_A_MCLK		18
+> +#define AUD_CLKID_MST_B_MCLK_SEL	19
+> +#define AUD_CLKID_MST_B_MCLK_DIV	20
+> +#define AUD_CLKID_MST_B_MCLK		21
+> +#define AUD_CLKID_MST_C_MCLK_SEL	22
+> +#define AUD_CLKID_MST_C_MCLK_DIV	23
+> +#define AUD_CLKID_MST_C_MCLK		24
+> +#define AUD_CLKID_MST_D_MCLK_SEL	25
+> +#define AUD_CLKID_MST_D_MCLK_DIV	26
+> +#define AUD_CLKID_MST_D_MCLK		27
+> +#define AUD_CLKID_SPDIFIN_CLK_SEL	28
+> +#define AUD_CLKID_SPDIFIN_CLK_DIV	29
+> +#define AUD_CLKID_SPDIFIN_CLK		30
+> +#define AUD_CLKID_RESAMPLE_CLK_SEL	31
+> +#define AUD_CLKID_RESAMPLE_CLK_DIV	32
+> +#define AUD_CLKID_RESAMPLE_CLK		33
+> +#define AUD_CLKID_LOCKER_IN_CLK_SEL	34
+> +#define AUD_CLKID_LOCKER_IN_CLK_DIV	35
+> +#define AUD_CLKID_LOCKER_IN_CLK		36
+> +#define AUD_CLKID_LOCKER_OUT_CLK_SEL	37
+> +#define AUD_CLKID_LOCKER_OUT_CLK_DIV	38
+> +#define AUD_CLKID_LOCKER_OUT_CLK	39
+> +#define AUD_CLKID_EQDRC_CLK_SEL		40
+> +#define AUD_CLKID_EQDRC_CLK_DIV		41
+> +#define AUD_CLKID_EQDRC_CLK		42
+> +#define AUD_CLKID_MST_A_SCLK_PRE_EN	43
+> +#define AUD_CLKID_MST_A_SCLK_DIV	44
+> +#define AUD_CLKID_MST_A_SCLK_POST_EN	45
+> +#define AUD_CLKID_MST_A_SCLK		46
+> +#define AUD_CLKID_MST_B_SCLK_PRE_EN	47
+> +#define AUD_CLKID_MST_B_SCLK_DIV	48
+> +#define AUD_CLKID_MST_B_SCLK_POST_EN	49
+> +#define AUD_CLKID_MST_B_SCLK		50
+> +#define AUD_CLKID_MST_C_SCLK_PRE_EN	51
+> +#define AUD_CLKID_MST_C_SCLK_DIV	52
+> +#define AUD_CLKID_MST_C_SCLK_POST_EN	53
+> +#define AUD_CLKID_MST_C_SCLK		54
+> +#define AUD_CLKID_MST_D_SCLK_PRE_EN	55
+> +#define AUD_CLKID_MST_D_SCLK_DIV	56
+> +#define AUD_CLKID_MST_D_SCLK_POST_EN	57
+> +#define AUD_CLKID_MST_D_SCLK		58
+> +#define AUD_CLKID_MST_A_LRCLK_DIV	59
+> +#define AUD_CLKID_MST_A_LRCLK		60
+> +#define AUD_CLKID_MST_B_LRCLK_DIV	61
+> +#define AUD_CLKID_MST_B_LRCLK		62
+> +#define AUD_CLKID_MST_C_LRCLK_DIV	63
+> +#define AUD_CLKID_MST_C_LRCLK		64
+> +#define AUD_CLKID_MST_D_LRCLK_DIV	65
+> +#define AUD_CLKID_MST_D_LRCLK		66
+> +#define AUD_CLKID_TDMIN_A_SCLK_SEL	67
+> +#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	68
+> +#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	69
+> +#define AUD_CLKID_TDMIN_A_SCLK		70
+> +#define AUD_CLKID_TDMIN_A_LRCLK		71
+> +#define AUD_CLKID_TDMIN_B_SCLK_SEL	72
+> +#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	73
+> +#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	74
+> +#define AUD_CLKID_TDMIN_B_SCLK		75
+> +#define AUD_CLKID_TDMIN_B_LRCLK		76
+> +#define AUD_CLKID_TDMIN_LB_SCLK_SEL	77
+> +#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	78
+> +#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	79
+> +#define AUD_CLKID_TDMIN_LB_SCLK		80
+> +#define AUD_CLKID_TDMIN_LB_LRCLK	81
+> +#define AUD_CLKID_TDMOUT_A_SCLK_SEL	82
+> +#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	83
+> +#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	84
+> +#define AUD_CLKID_TDMOUT_A_SCLK		85
+> +#define AUD_CLKID_TDMOUT_A_LRCLK	86
+> +#define AUD_CLKID_TDMOUT_B_SCLK_SEL	87
+> +#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	88
+> +#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	89
+> +#define AUD_CLKID_TDMOUT_B_SCLK		90
+> +#define AUD_CLKID_TDMOUT_B_LRCLK	91
+> +
+> +#define AUD_CLKID_VAD_DDR_ARB		1
+> +#define AUD_CLKID_VAD_PDM		2
+> +#define AUD_CLKID_VAD_TDMIN		3
+> +#define AUD_CLKID_VAD_TODDR		4
+> +#define AUD_CLKID_VAD			5
+> +#define AUD_CLKID_VAD_AUDIOTOP		6
+> +#define AUD_CLKID_VAD_MCLK_SEL		7
+> +#define AUD_CLKID_VAD_MCLK_DIV		8
+> +#define AUD_CLKID_VAD_MCLK		9
+> +#define AUD_CLKID_VAD_CLK_SEL		10
+> +#define AUD_CLKID_VAD_CLK_DIV		11
+> +#define AUD_CLKID_VAD_CLK		12
+> +#define AUD_CLKID_VAD_PDM_DCLK_SEL	13
+> +#define AUD_CLKID_VAD_PDM_DCLK_DIV	14
+> +#define AUD_CLKID_VAD_PDM_DCLK		15
+> +#define AUD_CLKID_VAD_PDM_SYSCLK_SEL	16
+> +#define AUD_CLKID_VAD_PDM_SYSCLK_DIV	17
+> +#define AUD_CLKID_VAD_PDM_SYSCLK	18
+> +
+> +#endif /* __A1_AUDIO_CLKC_BINDINGS_H */
+> diff --git a/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> new file mode 100644
+> index 000000000000..653fddba1d8f
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+> + *
+> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
+> +#define _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
+> +
+> +#define AUD_RESET_DDRARB	0
+> +#define AUD_RESET_TDMIN_A	1
+> +#define AUD_RESET_TDMIN_B	2
+> +#define AUD_RESET_TDMIN_LB	3
+> +#define AUD_RESET_LOOPBACK	4
+> +#define AUD_RESET_TDMOUT_A	5
+> +#define AUD_RESET_TDMOUT_B	6
+> +#define AUD_RESET_FRDDR_A	7
+> +#define AUD_RESET_FRDDR_B	8
+> +#define AUD_RESET_TODDR_A	9
+> +#define AUD_RESET_TODDR_B	10
+> +#define AUD_RESET_SPDIFIN	11
+> +#define AUD_RESET_RESAMPLE	12
+> +#define AUD_RESET_EQDRC		13
+> +#define AUD_RESET_LOCKER	14
+> +#define AUD_RESET_TOACODEC	30
+> +#define AUD_RESET_CLKTREE	31
+> +
+> +#endif /* _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H */
 
 -- 
 Jerome
