@@ -1,112 +1,208 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51641993B9
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A886619923F
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590828; cv=none; b=kGL0ByqhVgEJHasN4Pkt5P4BfWSIU8DttryXKUDvEUsTrykbFokX4NpRTKY9WZuAccO981fWnboNAvBXxIG+P6b5uS0Xbmjp1HOxBGfTee69KBtBUavMdlFhdl8C5UBsXBEc3rfn2mrKwU0ZhO2SNs3RWQAQWcPX84GV/Ocz2TI=
+	t=1729591194; cv=none; b=EjZmbUcdDAkYT3mcArWkHkBJudINcVd6GvwnL/KbzraKvMqL/da93ahgN7KtOwGEPVpTOMXTN80pxiMU2IJnPyLohDIaclDFGO711u/n76v1nTsk8tA1SSFtaQonksSU5Gg0lykKrM9uFf5Gdm95c3FBmajRQKJLc8eSFd73OX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590828; c=relaxed/simple;
-	bh=Y46DtbVTP0E38ObjD6CzbJEhXZgRp0JJH6MXGub6VHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qTafKmgGOLPj21xIsY31XyPJdk38XyE5r4sf5iw1G54oQohMKupx1ZrCDsIuAvklk9a+I5xq2ZnfmlZf2JIcZpIEZvHO0g63pyIFzVD8z7mYCtJvKMGk8StphphZIrRSTjvcEDl8KlPb8zt4Np84vHtkPF3Du3mEBiV2J4W+/wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=NZ4YvN2P; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+	s=arc-20240116; t=1729591194; c=relaxed/simple;
+	bh=WyTNn9Kvl5r4cjirWMedKm36u/M6pfnFsku29HKXjTc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCkl5uBkr+iKlVc/FApL0xSvzBEcgSNbqoH2tNondsyLhKZwk2EJjCIlOwFKJyhI8XJCfW5AJrAYXnHjzK8ylrvdhiB0iK1LVCHWZ1UpAUS3HPmeFwkkYL6jmovuAfCyXJnNrDX77r2qXWjKzukJeU7nvaxYAJ0vXkcCaL0NVNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VqzZr0qs; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="NZ4YvN2P"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c99be0a4bbso7267398a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:53:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VqzZr0qs"
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso5931060a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1729590825; x=1730195625; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=op1FRSJCS1vPXD/9QYtg2XAEFEXZ1E8zhO4zRpuc9J0=;
-        b=NZ4YvN2PeZshISEcqNa3Nlg645xxyP+W9AWrRdUOsNeaoGle4GtDXukfoXNh0070xR
-         zQMr9ms7/Zqtvdyrb0uTTgmVHfaKUWi4g9z10P97X0S5XozstAZEwNEQUgXqsjB2O739
-         52hiy824yC2Z5CDXH3UJO7t8xtA++8YSYkYIOOSUqur5smrdeRyRfBTBsGreOpcSecd2
-         ahiL6K4KM7ii8d6Oj7bjaO5AbvUXs7lIrbCFpFMSTyonVYYCLE6kQ/pPu7/oYZOJUXi7
-         N+HS2hpyCZTYgEpGjwnSwCLgFNzVw/djOusmZJk3+rpoEuGN/2LXSuG3dju0VDpAb6mQ
-         Dr+w==
+        d=suse.com; s=google; t=1729591191; x=1730195991; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tse3WFb+Cqy4NQjY2x57/IK1kjaHJljLdncZwV39uDw=;
+        b=VqzZr0qsUcJgB4DeGo2/5JVsn/HLozrOMVl+HBvFOqQyFN0tvM9e72o6ADyPHp5Tb9
+         ND5T3aR5EFGXRCS5Z62AC11A7V7RxybVCPMAqVa/ea1YzLd7qwhDb9kUZ/Znn3xiUWDc
+         AAvPCH3Banj3kxwUgiBIQ7w+e6qi+VUpeSpY3nXZTw6LNe+ArHaUtbBSuzU5jvBvte1e
+         ju9MwbhcNea1x6nJwPsrqiqf0Fml4vwwCyo0it1J5/sM/88yTTMLmXbbNIL3naUCZJmZ
+         +AfcMxG/1RkINMDijbOBPy8kLHqVgMIfHYgWjKvq/h2fBJxHA/83BUHIYHWBglNHbh/U
+         mOaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729590825; x=1730195625;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=op1FRSJCS1vPXD/9QYtg2XAEFEXZ1E8zhO4zRpuc9J0=;
-        b=HlU/gWDsOuoLLkcD8vfod+czE6NtULCPtt4gsod/z6JGz/TRJFXChFUtLqA/8h/cXg
-         M3h9gVsGFy4xb1pEQacnPKgGO8NEVgZILx7DGd2kQqvzZpO64pH+YXURzeJ0IEi35kdp
-         zaoNjj/zNDwyQUIPo3aVzNW4SyoMjW6T8+bh48/V1urRIlre/+bMMcR76LZwjzVIJGPV
-         orxuKSf4n0x4Dc1HAzxZpHEq2cfmTGWTP2cP4aNsmh4QQl5+1e0M1gI6HjvqcNvPBVIk
-         3hS/5Qp3YV8MnYI1hk/9w8EWBbgL6hrYjhzvyt2IryVxo9UMCDxBZk8neoXDLPbkdQA6
-         62lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWURm1cuwZ6WWnXiNMQhIe9K02QNMXG5qPhAbpp1X3JYy29J9WLXQMgW6ubfdSXXlGoiq0OdhBMm+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHtMeFZ8HoxOfFdzqKpJt6OTZjXo0y98XQFo99n92ebmNavT1R
-	YR0qjc4sFRFxJwStMFHtR3c4ZOBKVSOEZJrGon9r97WdalgP/ncbMgJ/f/AXZ0J/co80dD++sSC
-	I
-X-Google-Smtp-Source: AGHT+IEcLQwkHk5o2k7sioZOXKjv6teIn45f2gmoiG+SvQugsEWBRSFoR1zkrhOzSxxQycfl1GyexQ==
-X-Received: by 2002:a17:907:72d2:b0:a9a:c82:d76e with SMTP id a640c23a62f3a-a9aa88cb1a7mr251886366b.12.1729590824875;
-        Tue, 22 Oct 2024 02:53:44 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f6644sm313292666b.81.2024.10.22.02.53.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 02:53:44 -0700 (PDT)
-Message-ID: <8ec5512b-a8ea-432c-84aa-f920470c056d@nexus-software.ie>
-Date: Tue, 22 Oct 2024 10:53:43 +0100
+        d=1e100.net; s=20230601; t=1729591191; x=1730195991;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tse3WFb+Cqy4NQjY2x57/IK1kjaHJljLdncZwV39uDw=;
+        b=ORqkU1PyjvxN29cSjqzK9bumMCwnW38nMnc+z/ooLxXv/JLGnx4HjW96OWh8xy7F1h
+         DGVlpJpxFBYZ5AQjNDHyujNKYSR5dxnDojNBpneGWJrmNleskG+NSavv/YYPRuZaBlAJ
+         Zep9ah0TtoDT5ezxH4AYbd8X7Fwb7TsnVmQRJrE17lAbrm78v8a5byqyCgW9aFeN9X7x
+         +IVEyi3tVpOs0kWtFchBYzbZzS4kR6H93rGR8fc/vkajeLtkVyY+liOk/+GdthyQX73f
+         j02J8fd6Pe1QYIEPqMn2OgikBttNjQtGWf5rpMu7CAKgsjsxzxVxXAhQpGJ8NTdPJlJ/
+         QmJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeW9vgkEqwOHet2SKQKtNQqFWb+UYw2S7xQFdLhzgHfIYrOg1umdLhwvHMg6GY+f9GH4h8KNI3tbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOc7FHli9xkqjxpvw5Oi8yeNI5fPd1k31xrMToRcuhdg7cRaab
+	CFzIfw2RL4A0eKCUbZVbvMskQ0wh1dwUw/muRAnec5+iHTWJ+hLO8nJ4wE4nI4Y=
+X-Google-Smtp-Source: AGHT+IGsNax4L/Gs6SdwZlVryK8Odsx0A/4SKDkH5jIR6gUFIIm5jqy15/Lspkq6C28pNgM1cfZgyA==
+X-Received: by 2002:a17:907:7b92:b0:a9a:420:8472 with SMTP id a640c23a62f3a-a9a69ca04e3mr1598636166b.42.1729591190900;
+        Tue, 22 Oct 2024 02:59:50 -0700 (PDT)
+Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d8381sm313843166b.45.2024.10.22.02.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 02:59:50 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 22 Oct 2024 12:00:12 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 04/14] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <Zxd3rAspFDglujkM@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
+ <zequ4ps7h6ynr2y5yrcqm3tpvvmmrgc6auupfy435rpysiyypf@7cd2zbwhk3ya>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: fix initial rate of GPLL3
-To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <zequ4ps7h6ynr2y5yrcqm3tpvvmmrgc6auupfy435rpysiyypf@7cd2zbwhk3ya>
 
-On 22/10/2024 10:45, Gabor Juhos wrote:
-> The comment before the config of the GPLL3 PLL says that the
-> PLL should run at 930 MHz. In contrary to this, calculating
-> the frequency from the current configuration values by using
-> 19.2 MHz as input frequency defined in 'qcs404.dtsi', it gives
-> 921.6 MHz:
-> 
->    $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x0
->    $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
->    921600000.00000000000000000000
-> 
-> Set 'alpha_hi' in the configuration to a value used in downstream
-> kernels [1][2] in order to get the correct output rate:
-> 
->    $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x70
->    $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
->    930000000.00000000000000000000
-> 
-> The change is based on static code analysis, compile tested only.
-> 
-> [1] https://git.codelinaro.org/clo/la/kernel/msm-5.4/-/blob/kernel.lnx.5.4.r56-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L335
-> [2} https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/blob/kernel.lnx.5.15.r49-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L127
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-It should be possible to test / verify this change with debugcc on qcs404
+Hi Krzysztof,
 
-https://github.com/linux-msm/debugcc/blob/master/qcs404.c
+On 08:26 Tue 08 Oct     , Krzysztof Kozlowski wrote:
+> On Mon, Oct 07, 2024 at 02:39:47PM +0200, Andrea della Porta wrote:
+> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> > schema is intended as minimal support for the clock generator and
+> > gpio controller peripherals which are accessible through BAR1.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 110 ++++++++++++++++++
+> >  MAINTAINERS                                   |   1 +
+> >  2 files changed, 111 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > new file mode 100644
+> > index 000000000000..3f099b16e672
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > @@ -0,0 +1,110 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: RaspberryPi RP1 MFD PCI device
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta <andrea.porta@suse.com>
+> > +
+> > +description:
+> > +  The RaspberryPi RP1 is a PCI multi function device containing
+> > +  peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > +  and others.
+> > +  The peripherals are accessed by addressing the PCI BAR1 region.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/pci-ep-bus.yaml
+> > +
+> > +properties:
+> > +  compatible:
+> > +    additionalItems: true
+> 
+> Why is this true? This is final schema, not a "common" part.
 
----
-bod
+The 'compatible' property I've specified in rp1.dtso is not strictly
+necessary since it will be added automatically during the dynamic device
+node creation by the OF subsystem, and will be something like this:
+
+"pci1de4,1", "pciclass,0200000", "pciclass,0200"
+
+I've redefined simply as "pci1de4,1" in the dtso so it can be validated
+against the relative binding schema, and I opted for a shorter name since
+the RP1 is not really a simple ethernet controller as advertised by the 
+config space (pciclass=2). The schema definition allows for the "relaxed"
+extended version, shoudl someone want to use it for resemblance with the
+dynamically create compatibel string.
+
+> 
+> > +    maxItems: 3
+> > +    items:
+> > +      - const: pci1de4,1
+> > +
+> > +patternProperties:
+> > +  "^pci-ep-bus@[0-2]$":
+> > +    $ref: '#/$defs/bar-bus'
+> > +    description:
+> > +      The bus on which the peripherals are attached, which is addressable
+> > +      through the BAR.
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +$defs:
+> > +  bar-bus:
+> > +    $ref: /schemas/pci/pci-ep-bus.yaml#/$defs/pci-ep-bus
+> > +    unevaluatedProperties: false
+> > +
+> > +    properties:
+> > +      "#interrupt-cells":
+> > +        const: 2
+> > +        description:
+> > +          Specifies respectively the interrupt number and flags as defined
+> > +          in include/dt-bindings/interrupt-controller/irq.h.
+> > +
+> > +      interrupt-controller: true
+> > +
+> > +      interrupt-parent:
+> > +        description:
+> > +          Must be the phandle of this 'pci-ep-bus' node. It will trigger
+> > +          PCI interrupts on behalf of peripheral generated interrupts.
+> > +
+> > +    patternProperties:
+> > +      "^clocks(@[0-9a-f]+)?$":
+> 
+> Why @ is optional? Your device is fixed, not flexible.
+
+Right.
+
+Many thanks,
+Andrea
+
+> 
+> Best regards,
+> Krzysztof
+> 
