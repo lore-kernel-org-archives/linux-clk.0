@@ -1,100 +1,140 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-oo1-f68.google.com (mail-oo1-f68.google.com [209.85.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E29D1A0BE1
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 14:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D161A0BC5
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 15:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729607785; cv=none; b=tweNWYB7ra6jxsGWiAWpVB9YLuF80z12v7yekkvQCi+6TZfB1kUQUwB8NbV1XA/xw3OcFzO5/U1SkCL9kP7lDlp3uYjK1Qa+sKOkZH0LuXidMlZ7mruoMR1xtUwcUd9lWfBzonfn/vrgLKbUjPX4XaaeNIt1zDXwcpkEMaEFCTc=
+	t=1729611586; cv=none; b=H19jj54AXpMCiz55ZIc5Y5kB07+Sv9ZSlm6y3eYh7TTM6C8AoNze4QNoJ1UBc7StRRt+PQFixHbT1qzpIWOWEp2UxBXpC7gv6IbOQRiaNhdU0vuxsAA7eVkwCpZKQG8vWK3jlRlualBDMQdV7jpryR/N+XyRUDMCDSvkOhgxr64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729607785; c=relaxed/simple;
-	bh=XPTt/DRcxaXM3jq+HjKo66FdsyRj2Gi2+pHUZZljpsY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Pt+jKg5VfIV5VCNYq1bxUbEt24E66kzHqmjiSHJWrU8VMMCd5Bz7CEgzOXVe/j6IuExwAf4EKjX6CSF90wuI2Pa9KfbDFF0gi9QWyK39G2wIkB62g/vKVxHnsPxmseR/iil9aTMrFyIaoddZFSGbcFq77phsuLRxiEpD+oTLgDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cb/mlrbN; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729611586; c=relaxed/simple;
+	bh=TjQHd7gdWQn9dW3awOpBSa9KYhVltunDk3eXTMUV2O0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CWNnevxM0Ra6RVrYAqvDmcFWaDN4lIh6HL9ocL9TVmxLAtzHYg6pEOvlUGA22DZkz16XZuFxgKWjQWv4tUr4KZjyuZs24aaxsbDGRvYuEGwD1R54nIYZxUWJjiKtp5it/6SBTvrDG+NLLsHzQpf0sjcobcHtSq0rChogSMXgET4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WeqTUm8l; arc=none smtp.client-ip=209.85.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cb/mlrbN"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so4140330f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 07:36:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeqTUm8l"
+Received: by mail-oo1-f68.google.com with SMTP id 006d021491bc7-5ebc0dbc566so1303363eaf.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 08:39:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729607782; x=1730212582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GrUWXWfzIj5zJMMGxBfqh3qOh40//ZAdcEGnfXtiphw=;
-        b=Cb/mlrbND1Pa/nKp8ElOnPSNjq1przHnZgJHUbzUL2QqqyLNm6PXZSa/1QMPFPA1jM
-         ivYSTZGdhtHAxl6sZ4QyWv6L3krWAjSaVVQMvwOlaRdXZ49dHt81tSoETuzbq2KQsIkC
-         Gj9IeiIiRn987DiE1/BU4z7PzH1xXIzpVA92Dq0mJtHftEsZ6UFrmQqEYRK+9dKbkZzQ
-         WLniMhNEr1jVwLrdUSJ8rCFMHVo6OSdG0S42y5HK5Xfgx23RpCXOYOPGDIJBv1Q0UMZ0
-         QBpl+6NsTkmVIr6d/XIpBpxDg13TTFeLWo5JzG2ZjUHupeoPX/kC8Z/i3+Pt3gZOwy0L
-         zT7Q==
+        d=gmail.com; s=20230601; t=1729611584; x=1730216384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HBX82Rs6SpVYKCSSHPC/+yDJpXZhvbEvpqAv8nG+f+k=;
+        b=WeqTUm8l8leATXXkcdfupDob8jnoQa9BIvTk0SNmMrfJ8YuZEdmmHt78PhlLixy9Iz
+         ShBIPcrv65pe9RiIId71DUVK9jAm3jVsxlOK8mE9gAqysJ3czTQgGfr5lZtS1hSFSStZ
+         xwyZj9YZgB/S7P+ie+3hfDjx+2EFuQkEv5dlmyWZCdhIrPF13Rw5z/ZfR4rPsH4O81eW
+         +uYsFpOfKtCGQylPgQNPFRHRBMEkd948Uy9vZX6QU+5DjYJtZL41Eeyz4m2tjphaHuOG
+         iyrxKvynzIzUJGbt7cRbS+dNkNXKC6OsFPeiZSO8oaOlDU7N+JnoBSjIXFMHo+vrg9Yq
+         YUnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729607782; x=1730212582;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GrUWXWfzIj5zJMMGxBfqh3qOh40//ZAdcEGnfXtiphw=;
-        b=PQE9Yq0h0+OJ9lT92BpoFZSvC0Y13mfcIFae8ij6MK5AFrk8x+41Ku8rpBhrpiifS5
-         6uSg3eu5Wy92RfUOucLLEIvueLtZEmyBXS4+udBeRjkjrO2NwERgieaSRa3J7fsiR5gF
-         bORhHBnHUmzfbv0I9fMe8mwaIcPkWG+AHC6jCf6AFRWnbtC6UjN2khBEB8+0s3ae8sPg
-         Jlsi+nPnQKifseyJi2Y1+PEm2HrbrJwKfBBmIbgy+QDiNW2rv27SxffaV1F9CaZ9Tmx1
-         B4PB/cGdaJ1kVSgdCgQ/lBB3mqHUVKXLX1k1gW4dfZ+92uE78VTBZCkClEOoyWySVVTp
-         f1HA==
-X-Forwarded-Encrypted: i=1; AJvYcCWu9ybLj2zAa4lUs3ffcMwi7EPsxAENKsWPBfxGEE98z3wKka8apMDho6GR20Rx+BvONX62uua3QPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQx4rswMmBtV0gkluj2fTryd0K9AKBwsSjuwJ5UgRPuMIXvw7G
-	Bf8DvuaTMavWM3FYcebIGLCz/O988XortddNYo70+Z97LnLVZz8gNmgNVXxrYWI=
-X-Google-Smtp-Source: AGHT+IH1gDK1/uDRHCxw8RYMyjPcimj1r1WhkfVOpVJ9j0PYqU0pkA6VBIa7LJdkDoJQNlhbE2+Oig==
-X-Received: by 2002:a05:6000:c85:b0:37d:4e74:68a with SMTP id ffacd0b85a97d-37eb5a59780mr8701399f8f.46.1729607781629;
-        Tue, 22 Oct 2024 07:36:21 -0700 (PDT)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a47caesm6723587f8f.28.2024.10.22.07.36.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 07:36:20 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
- sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
- festevam@gmail.com, Richard Zhu <hongxing.zhu@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- imx@lists.linux.dev, kernel@pengutronix.de
-In-Reply-To: <1728977644-8207-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1728977644-8207-1-git-send-email-hongxing.zhu@nxp.com>
-Subject: Re: [PATCH v5 0/2] Add one clock gate for i.MX95 HSIO block
-Message-Id: <172960777824.2281007.10515356955760469298.b4-ty@linaro.org>
-Date: Tue, 22 Oct 2024 17:36:18 +0300
+        d=1e100.net; s=20230601; t=1729611584; x=1730216384;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HBX82Rs6SpVYKCSSHPC/+yDJpXZhvbEvpqAv8nG+f+k=;
+        b=nytygxGkPiQ8Kz0HSByphWhjdy2ENScu0FZA8mIp7Tro/BHSj7oxeqs4vz0qTU79Pj
+         ivwtgCb/btEfQpMdzvMem+hR+g7txPIFQAHkK45F+Q8ir2og8Ir0R/9mJLr4hYqT3Y5x
+         /I0aBTFPAsOMEO4WG41cYoCuyWKggJgYXTkAhLbDsPCf265kzdsex97OWfC/oKZy+wYF
+         /THSkS6AZnS3TkwTiDAB3W/HFFy44W9Ot6+5Ty5s1Z5UxJHg4WHs/qU1ZYlUFji4Czzj
+         mKX+y8a7rA6DHz6maeK24vYXVooBAGWGEFCLZMGLjWpFt92ORSBdYo7+z9mB+yww0dRN
+         LuKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRkvLuW0G0S+mkCU3LwSibrqwi01fkO7H+m3zO+sd6Rt8/oAcE90lV45b3aE7izcDSps18nPC1s9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+1CB4iIObvkaVOvldDZQgZZnLR3zSpvH/2W++h5lqSQCzElO/
+	mvKvr2Jjth6aR8iYO6KR3GqC+4BhlTyQNlcAcN8ZSlPj7JSF7g60
+X-Google-Smtp-Source: AGHT+IFD6YmMI7+iW0zOuXRwZYj5L8TB6v0qFMf8N5Gby/vbyzuUxRukHIVWjuVy9f83MKKwYrWxTg==
+X-Received: by 2002:a05:6358:80a7:b0:1b8:5e16:1a11 with SMTP id e5c5f4694b2df-1c39df4c38fmr640755955d.8.1729611583593;
+        Tue, 22 Oct 2024 08:39:43 -0700 (PDT)
+Received: from [10.192.166.46] (host-36-27.ilcul54.champaign.il.us.clients.pavlovmedia.net. [68.180.36.27])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c95aafsm30577011cf.40.2024.10.22.08.39.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 08:39:43 -0700 (PDT)
+Message-ID: <58e8cfd2-55f4-48f0-a9d5-60fff76d7abe@gmail.com>
+Date: Tue, 22 Oct 2024 10:39:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: sophgo: Cast an operand to u64 to prevent potential
+ unsigned long overflow on 32-bit machine in sg2042_pll_recalc_rate()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, unicorn_wang@outlook.com,
+ inochiama@outlook.com, nathan@kernel.org, linux-clk@vger.kernel.org,
+ zzjas98@gmail.com, chenyuan0y@gmail.com
+References: <20241021205101.13416-1-zichenxie0106@gmail.com>
+ <e88d7bf3-fd7c-4944-92dc-f2224f45bda4@stanley.mountain>
+Content-Language: en-US
+From: Zichen Xie <zichenxie0106@gmail.com>
+In-Reply-To: <e88d7bf3-fd7c-4944-92dc-f2224f45bda4@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-dedf8
 
 
-On Tue, 15 Oct 2024 15:34:02 +0800, Richard Zhu wrote:
-> REF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
-> enable/disable.
-> Add one clock gate for i.MX95 HSIO block to support PCIe REF clock
-> out gate.
-> 
-> v5 changes:
-> - Rebase to v6.12-rc3.
-> 
-> [...]
+On 2024/10/22 2:58, Dan Carpenter wrote:
+> On Mon, Oct 21, 2024 at 03:51:02PM -0500, Gax-c wrote:
+>> From: Zichen Xie <zichenxie0106@gmail.com>
+>>
+>> This was found by a static analyzer.
+>> There may be a potential integer overflow issue in
+>> sg2042_pll_recalc_rate(). numerator is defined as u64 while
+>> parent_rate is defined as unsigned long and ctrl_table.fbdiv
+>> is defined as unsigned int. On 32-bit machine, the result of
+>> the calculation will be limited to "u32" without correct casting.
+>> Integer overflow may occur on high-performance systems.
+>> For the same reason, adding a cast to denominator could be better.
+>> So, we recommend adding an extra cast to prevent potential
+>> integer overflow.
+>>
+>> Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
+>> Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+>> ---
+>>   drivers/clk/sophgo/clk-sg2042-pll.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
+>> index ff9deeef509b..e0f92f7a21bd 100644
+>> --- a/drivers/clk/sophgo/clk-sg2042-pll.c
+>> +++ b/drivers/clk/sophgo/clk-sg2042-pll.c
+>> @@ -153,8 +153,8 @@ static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
+>>   
+>>   	sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
+>                                            ^^^^^^^^^^^
+>>   
+>> -	numerator = parent_rate * ctrl_table.fbdiv;
+>> -	denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
+>> +	numerator = (u64)parent_rate * ctrl_table.fbdiv;
+> This seems reasonable.
+>
+>> +	denominator = (u64)ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
+> These values from sg2042_pll_ctrl_decode() and there is no way they can
+> overflow.  The highest they can be is 63 * 7 * 7 = 3087.
 
-Applied, thanks!
+You are right. But I think it could be better to add this cast to 
+demonstrate that
+developers have realized the potential of integer overflow.
 
-[1/2] dt-bindings: clock: nxp,imx95-blk-ctl: Add compatible string for i.MX95 HSIO BLK CTRL
-      commit: 731237359d83bfb4f27eea5b7a8935af5c72a5ac
-[2/2] clk: imx95-blk-ctl: Add one clock gate for HSIO block
-      commit: cf295252f0d88410d5793fa6db56a7192a65d66f
+And it can also prevent some static analyzers from reporting such bugs.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+Anyway, I can still provide a patch with "numerator" cast only if it's 
+better.
 
+
+Best,
+
+Zichen
+
+>
+> regards,
+> dan carpenter
+>
+>>   	do_div(numerator, denominator);
+>>   	return numerator;
+>>   }
+>> -- 
+>> 2.34.1
