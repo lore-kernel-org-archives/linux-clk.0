@@ -1,150 +1,112 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5C72209B
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51641993B9
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729590689; cv=none; b=DfB84L/2JsrBjynRf5yYk8VpxJdH4z0ncqbv6yNXMir6lW0ox8tUtRQyqm3kJZIk36u7vOYrVjAwbeziRw3x6tgSwN7dY4erdw/tCiS2f6OiMpoiosjbLDy8mGQQWMv/utR5fg92au7I3/kQEWtjwliA9LjkXXYl5V9064rn/vc=
+	t=1729590828; cv=none; b=kGL0ByqhVgEJHasN4Pkt5P4BfWSIU8DttryXKUDvEUsTrykbFokX4NpRTKY9WZuAccO981fWnboNAvBXxIG+P6b5uS0Xbmjp1HOxBGfTee69KBtBUavMdlFhdl8C5UBsXBEc3rfn2mrKwU0ZhO2SNs3RWQAQWcPX84GV/Ocz2TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729590689; c=relaxed/simple;
-	bh=JsWWmLr80OvZZgtqzSLI+3NO59wkVjAXXzhBndm6rPs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YdHo+S7Vm2WvSH8mBQfVN5je8OCTH5QFeBWATsprFoGwLdYhbD/0xg3yVY7kiikXcQzkBAcSowhFVemdXj9XkQI8x1iqxmOcfx1RT2p0N4Ka079St0gUAmDSz/3a7MBT4H1Y2GThgxjPZ7yxffmZ/KAl4/gEBPhsOBya+aF/+rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fJbPglXI; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1729590828; c=relaxed/simple;
+	bh=Y46DtbVTP0E38ObjD6CzbJEhXZgRp0JJH6MXGub6VHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qTafKmgGOLPj21xIsY31XyPJdk38XyE5r4sf5iw1G54oQohMKupx1ZrCDsIuAvklk9a+I5xq2ZnfmlZf2JIcZpIEZvHO0g63pyIFzVD8z7mYCtJvKMGk8StphphZIrRSTjvcEDl8KlPb8zt4Np84vHtkPF3Du3mEBiV2J4W+/wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=NZ4YvN2P; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fJbPglXI"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so28054115e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:51:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="NZ4YvN2P"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c99be0a4bbso7267398a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:53:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729590685; x=1730195485; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9uhSsPjuLDUWqYOIT4n8318oMtxdXxpij17XIrTsXE=;
-        b=fJbPglXIIS2dknfgtbeunLcmjIXpFQlBmw2BrAwiOAVZu/rdZj3Y1BtqdRg7g9kyZ2
-         KhbNffz+hPm0J7WJIASZ6gyLBudGKgRGmBEHYcw0DaMlPYhGucp/SLET0JPqenbhLtQX
-         qmU0f5Hh6tMoJFEY12pF2sTMa5ybFiiffOmCsMzR12mB6dvVSQVym8q8QjYFK6HjiB9R
-         ZIi+pjGd6feUpyy9J15oOzryXiIffbLE+d+3Hh96C8UbUtykTGCBM3nw9gyOqW4BLk8l
-         nm9zZzkdAus6FSw6wJHglp9sjPmrGF46cd2GugZ+7niwhSsjuFuc2Ya4Z6JMxorbjwnm
-         +vyw==
+        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1729590825; x=1730195625; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=op1FRSJCS1vPXD/9QYtg2XAEFEXZ1E8zhO4zRpuc9J0=;
+        b=NZ4YvN2PeZshISEcqNa3Nlg645xxyP+W9AWrRdUOsNeaoGle4GtDXukfoXNh0070xR
+         zQMr9ms7/Zqtvdyrb0uTTgmVHfaKUWi4g9z10P97X0S5XozstAZEwNEQUgXqsjB2O739
+         52hiy824yC2Z5CDXH3UJO7t8xtA++8YSYkYIOOSUqur5smrdeRyRfBTBsGreOpcSecd2
+         ahiL6K4KM7ii8d6Oj7bjaO5AbvUXs7lIrbCFpFMSTyonVYYCLE6kQ/pPu7/oYZOJUXi7
+         N+HS2hpyCZTYgEpGjwnSwCLgFNzVw/djOusmZJk3+rpoEuGN/2LXSuG3dju0VDpAb6mQ
+         Dr+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729590685; x=1730195485;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9uhSsPjuLDUWqYOIT4n8318oMtxdXxpij17XIrTsXE=;
-        b=BjLldqmnu61GnBHj/CvoA8CQirfMH7uoTkoXrGYClnKDTVOdmbYSGOYTeXxA9DGkiq
-         oSlS8yRWBz9H7e8xf2qVBDLGI8CkdtrQnUlWV+xUwVzuzvev/KdldUr9+I0MPJXLC49G
-         MPfqGK6MdxqDMzjVy1H6wQfm9HqJkz2OJDOQPp0fNjzqbTPajePsUUwheUlnf/XFy8hZ
-         Q6cC8BUUhv51EV4Xt6NheKEcXXwukCLyGtNGrrGdS//PPynGWvzeCHdLNu7BfS3mn5Le
-         2JZYDV2/AS02Vc3W7SpHCqpmJ74yC/3kfzpD6IJdNYb3OVB4LW0eePNIxJavgxD7ZkAc
-         aeog==
-X-Forwarded-Encrypted: i=1; AJvYcCXPF0dGo04QeMpJW16m+jf3NVIgekMrXusM0ybeR0IMDx6i4WNFYsTF+Q+N9JEF5XwFNj6M+HFjlWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH9AerJLniX0+3OWG1oxF/Z+raASfupfISxSNPL4oM8bcxCDfg
-	u3rBQbwIKYR9O30ij4OcADj1/z50QPgj4LkRLnwdTLDLP4/GObfHeG3cVyggRaw=
-X-Google-Smtp-Source: AGHT+IG4BjZjQ2Z2dqGHg8e13po3OOXPlOkZEZh2gmQz0kEl9ezHR/+UkwbK17+DbKxR73ieabZKcw==
-X-Received: by 2002:a05:600c:6747:b0:430:5356:ac92 with SMTP id 5b1f17b1804b1-4316161fb1dmr109088635e9.7.1729590685185;
-        Tue, 22 Oct 2024 02:51:25 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:ef1c:ae40:1300:20c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570de0sm83095085e9.6.2024.10.22.02.51.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 02:51:24 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,  <devicetree@vger.kernel.org>,
-  Kevin Hilman <khilman@baylibre.com>,  "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>,  <linux-amlogic@lists.infradead.org>,
-  <linux-arm-kernel@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Philipp Zabel <p.zabel@pengutronix.de>,  Rob Herring <robh@kernel.org>,
-  Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH v4 0/5] Add A1 Soc audio clock controller driver
-In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com> (Jan
-	Dakinevich's message of "Fri, 13 Sep 2024 15:11:47 +0300")
-References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
-Date: Tue, 22 Oct 2024 11:51:24 +0200
-Message-ID: <1jplnsjwir.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1729590825; x=1730195625;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=op1FRSJCS1vPXD/9QYtg2XAEFEXZ1E8zhO4zRpuc9J0=;
+        b=HlU/gWDsOuoLLkcD8vfod+czE6NtULCPtt4gsod/z6JGz/TRJFXChFUtLqA/8h/cXg
+         M3h9gVsGFy4xb1pEQacnPKgGO8NEVgZILx7DGd2kQqvzZpO64pH+YXURzeJ0IEi35kdp
+         zaoNjj/zNDwyQUIPo3aVzNW4SyoMjW6T8+bh48/V1urRIlre/+bMMcR76LZwjzVIJGPV
+         orxuKSf4n0x4Dc1HAzxZpHEq2cfmTGWTP2cP4aNsmh4QQl5+1e0M1gI6HjvqcNvPBVIk
+         3hS/5Qp3YV8MnYI1hk/9w8EWBbgL6hrYjhzvyt2IryVxo9UMCDxBZk8neoXDLPbkdQA6
+         62lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWURm1cuwZ6WWnXiNMQhIe9K02QNMXG5qPhAbpp1X3JYy29J9WLXQMgW6ubfdSXXlGoiq0OdhBMm+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHtMeFZ8HoxOfFdzqKpJt6OTZjXo0y98XQFo99n92ebmNavT1R
+	YR0qjc4sFRFxJwStMFHtR3c4ZOBKVSOEZJrGon9r97WdalgP/ncbMgJ/f/AXZ0J/co80dD++sSC
+	I
+X-Google-Smtp-Source: AGHT+IEcLQwkHk5o2k7sioZOXKjv6teIn45f2gmoiG+SvQugsEWBRSFoR1zkrhOzSxxQycfl1GyexQ==
+X-Received: by 2002:a17:907:72d2:b0:a9a:c82:d76e with SMTP id a640c23a62f3a-a9aa88cb1a7mr251886366b.12.1729590824875;
+        Tue, 22 Oct 2024 02:53:44 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f6644sm313292666b.81.2024.10.22.02.53.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 02:53:44 -0700 (PDT)
+Message-ID: <8ec5512b-a8ea-432c-84aa-f920470c056d@nexus-software.ie>
+Date: Tue, 22 Oct 2024 10:53:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-qcs404: fix initial rate of GPLL3
+To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+In-Reply-To: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri 13 Sep 2024 at 15:11, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+On 22/10/2024 10:45, Gabor Juhos wrote:
+> The comment before the config of the GPLL3 PLL says that the
+> PLL should run at 930 MHz. In contrary to this, calculating
+> the frequency from the current configuration values by using
+> 19.2 MHz as input frequency defined in 'qcs404.dtsi', it gives
+> 921.6 MHz:
+> 
+>    $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x0
+>    $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
+>    921600000.00000000000000000000
+> 
+> Set 'alpha_hi' in the configuration to a value used in downstream
+> kernels [1][2] in order to get the correct output rate:
+> 
+>    $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x70
+>    $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
+>    930000000.00000000000000000000
+> 
+> The change is based on static code analysis, compile tested only.
+> 
+> [1] https://git.codelinaro.org/clo/la/kernel/msm-5.4/-/blob/kernel.lnx.5.4.r56-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L335
+> [2} https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/blob/kernel.lnx.5.15.r49-rel/drivers/clk/qcom/gcc-qcs404.c?ref_type=heads#L127
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+It should be possible to test / verify this change with debugcc on qcs404
 
-> This series adds support for audio clock and reset controllers on A1 SoC family.
->
+https://github.com/linux-msm/debugcc/blob/master/qcs404.c
 
-Split the reset part out of the series (I'd suggest adding VAD reset
-support while at it). Also remove the DT patch, since it will depends on
-both patchset.
-
-Drop the RFC tag, at v4 I think that phase is over.
-
-> Dependency: [4]
->
-> Changes v3 [3] -> v4
->  - Use auxiliary reset device implemented in [4]
->  - Split the driver into files
->  - Use common with axg-audio yaml schema
->  - Unify clock-names with axg-audio
->
-> Changes v2 [2] -> v3
->  - reset:
->    * added auxiliary device
->  - yaml:
->    * added declaration of optional clocks
->    * fixed names in example and another cosmetics
->  - clocks:
->    * reworked naming
->    * stop using of "core" clock name
->    * fixed wrong parenting
->
-> Changes v1 [1] -> v2:
->  - Detached from v1's series (patch 2, 3, 4, 25).
->  - Reuse some of defines from axg-audio;
->  - Split the controller into two memory regions.
->
-> Links:
->  [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
->  [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
->  [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
->  [4] https://lore.kernel.org/lkml/9a4377fe27d8eb940399e452b68fb5a6d678929f.camel@pengutronix.de/
->
-> Jan Dakinevich (5):
->   reset: amlogic: add support for A1 SoC in auxiliary reset driver
->   clk: meson: axg: share the set of audio helper macro
->   dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
->     driver
->   clk: meson: a1: add the audio clock controller driver
->   arm64: dts: meson: a1: add the audio clock controller
->
->  .../clock/amlogic,axg-audio-clkc.yaml         |   3 +
->  arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  48 +++
->  drivers/clk/meson/Kconfig                     |  14 +
->  drivers/clk/meson/Makefile                    |   3 +
->  drivers/clk/meson/a1-audio-clkc.c             | 359 ++++++++++++++++++
->  drivers/clk/meson/a1-audio-drv.c              | 104 +++++
->  drivers/clk/meson/a1-audio-vad-clkc.c         |  85 +++++
->  drivers/clk/meson/a1-audio.h                  | 131 +++++++
->  drivers/clk/meson/axg-audio.c                 | 138 +------
->  drivers/clk/meson/meson-audio.h               | 143 +++++++
->  drivers/reset/amlogic/reset-meson-aux.c       |   9 +
->  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++++
->  .../reset/amlogic,meson-a1-audio-reset.h      |  29 ++
->  13 files changed, 1051 insertions(+), 137 deletions(-)
->  create mode 100644 drivers/clk/meson/a1-audio-clkc.c
->  create mode 100644 drivers/clk/meson/a1-audio-drv.c
->  create mode 100644 drivers/clk/meson/a1-audio-vad-clkc.c
->  create mode 100644 drivers/clk/meson/a1-audio.h
->  create mode 100644 drivers/clk/meson/meson-audio.h
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
->  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
-
--- 
-Jerome
+---
+bod
