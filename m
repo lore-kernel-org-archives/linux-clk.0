@@ -1,113 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E20433B0;
-	Tue, 22 Oct 2024 06:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C05126C02;
+	Tue, 22 Oct 2024 06:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729577938; cv=none; b=bQm9Dbdxg8+e1b81/R9HE3XqHsyCWTGm69KVMHmoKfC74hl/VxIfh1CPq5K5IhyU5YVI8DEWTZs5XPMIj98ylnd8fEGxoURa4n622vh5l7NUjVjTKTWQ/o507DaHWNrpX7cQhgCEYP9JNBs26d41UBJUlhuR5IpJd+qWQmTq44U=
+	t=1729578856; cv=none; b=JN44h0/yNEuXwLguiF5++5ocvFRgBw6Rl7wASTdzNDjqX6pxksCDZzCTy2CS7Vhkvxv57dvx6y9cwH/5Pv3KKATAR1sQXjfLF8+U0EMJoSQeZYGSn+pB0AVUJkCnBAzTcQat6CMSH1oMTjX1QWu7OrJF6I+MwEvwwqw4Jmdo97o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729577938; c=relaxed/simple;
-	bh=9Zz4m5o8MjVThAJP+7kBq+bAHkWCNX6LN7doLoE52j0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPEHJuxq/SxRLeK9XcLOQEdemsWr3j8V/U9nK0iU2Fkj9VRKSsfwMcO4DaieUwTL+1z1yP3DC4CLFRZCguDxlttWRy+a0WYNkUS+VDLmGvI0belotwESRTo697CzLC5G6I+SS6GzC8+XyEhwH4/ytkpms0g0m57Tv/cbekeM0P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE0GrhsN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729578856; c=relaxed/simple;
+	bh=X12O0VsD6wdBi+ISK5uttPjglQWVRYXH3QoyJQLENYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GfFSdphpQqik7OIBQs0i9LXhpYd45EZbeAjlVHgeINznSLKsu7pyNqT02WTjIw7ZXQTfkeb9L6GzeIoOtYH+1bSmL//q+U5qThV1i68c+OFrWMyNiSylyGjiwlTe0G5rssW3qqkr3L1vNf4onNrdx3StG0TBMPFQPsAmH/WBn3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G4a3uFyk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE0GrhsN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FB4C4CEC3;
-	Tue, 22 Oct 2024 06:18:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729577937;
-	bh=9Zz4m5o8MjVThAJP+7kBq+bAHkWCNX6LN7doLoE52j0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NE0GrhsNu9+OD/21xf45YTba0c9g/tSsqz5+RMkmsg71a+3V79YEcQxT51VmKB5my
-	 NSEWcKklAjXaQ/ybvrFmWEtipJpExtl9hrbITGP4H5/5WBECWVlG3mrIfXOjMLy8tH
-	 /NYXbEFs3tqadF6Csw8WyHj+C/bv6xcJkG1/UEf6tmGxIsHi8FI0ZYAiDXjVfOdk9+
-	 uq0h4+9KtA+NT7hXKd7etFiq9GXEULl+H+ghEiLQNlubS4nxViR6l76Q38uT36EWL1
-	 zE3PWsler7LJPKZpSzEf0U+e7AEBNM7pcwGYMhITU4WrJE7nctjZnPWVKprMAgI2L3
-	 2NVNBjB6BNf7Q==
-Date: Tue, 22 Oct 2024 08:18:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	"Satya Durga Srinivasu Prabhala --cc=linux-arm-msm @ vger . kernel . org" <quic_satyap@quicinc.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: clock: qcom: Add SM8750 GCC clock
- controller
-Message-ID: <qxhsw4sg4feiaee7npio2e7gxi5d2gwsupdculzyhc7xxg6ci2@di532b2jmonc>
-References: <20241021230359.2632414-1-quic_molvera@quicinc.com>
- <20241021230359.2632414-5-quic_molvera@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G4a3uFyk"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LFXCo3014299;
+	Tue, 22 Oct 2024 06:34:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WY+FjqtZ1Q4id5zyi0t1qJcsu23Q4wWl/wKvbMwcsds=; b=G4a3uFykPBkM52fm
+	A4oqsoxgRnQMrXr6WOP7FNq4vEZOSGI5IZQvE8ZGsP9DKWSCslxR+2ODYqXlKMaf
+	RJHPwKc5wys5ufX/+FO+CCciWAEA69B96F3rVSqbUJcqRPp7vrE6QI4Omci5zebG
+	xwT7dMDiKnkY3S92vUACsAMJYKe/tPv2VZ1Yr5iNvrpwtMZaYrlbMdRmXWSMPpxk
+	sC0hJ1P7ggXnmdxDLjSPK46Cq22XjnqQ3iwY4IXWLGpWXCJLM2lLfAGhqHhCXLl0
+	LKt1HyZNGq0IHJJ+jgrD9DXDJwCN5Vx5H5dDDm4VVdNolaqzZDqBJ00beti32pBb
+	E6uNGA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dkhd3bu0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 06:34:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M6Y4Gb016111
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Oct 2024 06:34:04 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
+ 2024 23:34:00 -0700
+Message-ID: <73abe2b9-ad72-449f-b3e3-a96128cf75a4@quicinc.com>
+Date: Tue, 22 Oct 2024 12:03:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241021230359.2632414-5-quic_molvera@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/11] clk: qcom: rpmh: add support for SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
+ <20241021-sar2130p-clocks-v2-7-383e5eb123a2@linaro.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20241021-sar2130p-clocks-v2-7-383e5eb123a2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VO-xy0SQ6-ZNRM_uGFxNSFPLcrNlx5EK
+X-Proofpoint-GUID: VO-xy0SQ6-ZNRM_uGFxNSFPLcrNlx5EK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ mlxscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410220041
 
-On Mon, Oct 21, 2024 at 04:03:56PM -0700, Melody Olvera wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
+
+
+On 10/21/2024 4:00 PM, Dmitry Baryshkov wrote:
+> Define clocks as supported by the RPMh on the SAR2130P platform. It
+> seems that on this platform RPMh models only CXO clock.
 > 
-> Add device tree bindings for the video clock controller on Qualcomm
-> SM8750 platform.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../bindings/clock/qcom,sm8750-gcc.yaml       |  65 +++++
->  include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
->  2 files changed, 291 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+>   drivers/clk/qcom/clk-rpmh.c | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
-> new file mode 100644
-> index 000000000000..5e46cccd6e6c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 4acde937114af3d7fdc15f3d125a72d42d0fde21..8cb15430d0171a8ed6b05e51d1901af63a4564c4 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -389,6 +389,16 @@ DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+>   DEFINE_CLK_RPMH_BCM(pka, "PKA0");
+>   DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
+>   
+> +static struct clk_hw *sar2130p_rpmh_clocks[] = {
+> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div1.hw,
+> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div1_ao.hw,
+> +};
 > +
-> +title: Qualcomm Global Clock & Reset Controller on SM8750
+
+Dimtry, could you please add these clocks as well?
+
+DEFINE_CLK_RPMH_VRM-- > rf_clk1, rf_clk1_ao, "clka1", 1
+DEFINE_CLK_RPMH_VRM --> ln_bb_clk7, ln_bb_clk7_ao, "clka7", 2
+DEFINE_CLK_RPMH_VRM --> ln_bb_clk8, ln_bb_clk8_ao, "clka8", 4
+DEFINE_CLK_RPMH_VRM --> ln_bb_clk9, ln_bb_clk9_ao, "clka9", 2
+
+> +static const struct clk_rpmh_desc clk_rpmh_sar2130p = {
+> +	.clks = sar2130p_rpmh_clocks,
+> +	.num_clks = ARRAY_SIZE(sar2130p_rpmh_clocks),
+> +};
 > +
-> +maintainers:
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module provides the clocks, resets and power
-> +  domains on SM8750
-> +
-> +  See also:: include/dt-bindings/clock/qcom,sm8750-gcc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8750-gcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board Always On XO source
-> +      - description: Sleep clock source
-> +      - description: PCIE 0 Pipe clock source
-> +      - description: PCIE 1 Pipe clock source
-> +      - description: PCIE 1 Phy Auxiliary clock source
-> +      - description: UFS Phy Rx symbol 0 clock source
-> +      - description: UFS Phy Rx symbol 1 clock source
-> +      - description: UFS Phy Tx symbol 0 clock source
-> +      - description: USB3 Phy wrapper pipe clock source
 
 
-It's the same as sm8650, so it should be there. No need for new file.
-
-Best regards,
-Krzysztof
-
+-- 
+Thanks & Regards,
+Taniya Das.
