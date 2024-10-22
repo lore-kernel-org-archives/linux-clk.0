@@ -1,140 +1,119 @@
-Received: from mail-oo1-f68.google.com (mail-oo1-f68.google.com [209.85.161.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D161A0BC5
-	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 15:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E531BD4E0;
+	Tue, 22 Oct 2024 17:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611586; cv=none; b=H19jj54AXpMCiz55ZIc5Y5kB07+Sv9ZSlm6y3eYh7TTM6C8AoNze4QNoJ1UBc7StRRt+PQFixHbT1qzpIWOWEp2UxBXpC7gv6IbOQRiaNhdU0vuxsAA7eVkwCpZKQG8vWK3jlRlualBDMQdV7jpryR/N+XyRUDMCDSvkOhgxr64=
+	t=1729617838; cv=none; b=V5hVmgKPsCa78fTDrPsMNrwKvYCjJpRaj1XablQCEyhyQr6k35nN4hig9IvjljTqL+k0uDviYhGFrQo8eGqvQ3b9cnIUfTKaC8+xxIXvlMbZ2+/LQBp4O9cu3Uk++hfF9whOcC287Hb5AoktRBr9RKuIuwLQTe/wgyjPRlHUES4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611586; c=relaxed/simple;
-	bh=TjQHd7gdWQn9dW3awOpBSa9KYhVltunDk3eXTMUV2O0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CWNnevxM0Ra6RVrYAqvDmcFWaDN4lIh6HL9ocL9TVmxLAtzHYg6pEOvlUGA22DZkz16XZuFxgKWjQWv4tUr4KZjyuZs24aaxsbDGRvYuEGwD1R54nIYZxUWJjiKtp5it/6SBTvrDG+NLLsHzQpf0sjcobcHtSq0rChogSMXgET4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WeqTUm8l; arc=none smtp.client-ip=209.85.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729617838; c=relaxed/simple;
+	bh=u774XJNJoKaoO7NkJoZ6UrZ6tUzrujqv0gRuGOzw/hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shaBt0LF9hSIPgqeqLwWTehV8OP6L6LOf/NuFeYofUO4dMjFgI1u6bMA6Ule8tmZwafSZxpVm3+Huhtffc0qByL09kvaLEOItxvOjv4TbFwaVpmvL3e45YL+rHk3uTGgEsiBsW2X3c++0yJ12tVWK8xay1Fn9J9SFK6ucT76Jtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fODqioL5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeqTUm8l"
-Received: by mail-oo1-f68.google.com with SMTP id 006d021491bc7-5ebc0dbc566so1303363eaf.3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 08:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729611584; x=1730216384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HBX82Rs6SpVYKCSSHPC/+yDJpXZhvbEvpqAv8nG+f+k=;
-        b=WeqTUm8l8leATXXkcdfupDob8jnoQa9BIvTk0SNmMrfJ8YuZEdmmHt78PhlLixy9Iz
-         ShBIPcrv65pe9RiIId71DUVK9jAm3jVsxlOK8mE9gAqysJ3czTQgGfr5lZtS1hSFSStZ
-         xwyZj9YZgB/S7P+ie+3hfDjx+2EFuQkEv5dlmyWZCdhIrPF13Rw5z/ZfR4rPsH4O81eW
-         +uYsFpOfKtCGQylPgQNPFRHRBMEkd948Uy9vZX6QU+5DjYJtZL41Eeyz4m2tjphaHuOG
-         iyrxKvynzIzUJGbt7cRbS+dNkNXKC6OsFPeiZSO8oaOlDU7N+JnoBSjIXFMHo+vrg9Yq
-         YUnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729611584; x=1730216384;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HBX82Rs6SpVYKCSSHPC/+yDJpXZhvbEvpqAv8nG+f+k=;
-        b=nytygxGkPiQ8Kz0HSByphWhjdy2ENScu0FZA8mIp7Tro/BHSj7oxeqs4vz0qTU79Pj
-         ivwtgCb/btEfQpMdzvMem+hR+g7txPIFQAHkK45F+Q8ir2og8Ir0R/9mJLr4hYqT3Y5x
-         /I0aBTFPAsOMEO4WG41cYoCuyWKggJgYXTkAhLbDsPCf265kzdsex97OWfC/oKZy+wYF
-         /THSkS6AZnS3TkwTiDAB3W/HFFy44W9Ot6+5Ty5s1Z5UxJHg4WHs/qU1ZYlUFji4Czzj
-         mKX+y8a7rA6DHz6maeK24vYXVooBAGWGEFCLZMGLjWpFt92ORSBdYo7+z9mB+yww0dRN
-         LuKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRkvLuW0G0S+mkCU3LwSibrqwi01fkO7H+m3zO+sd6Rt8/oAcE90lV45b3aE7izcDSps18nPC1s9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+1CB4iIObvkaVOvldDZQgZZnLR3zSpvH/2W++h5lqSQCzElO/
-	mvKvr2Jjth6aR8iYO6KR3GqC+4BhlTyQNlcAcN8ZSlPj7JSF7g60
-X-Google-Smtp-Source: AGHT+IFD6YmMI7+iW0zOuXRwZYj5L8TB6v0qFMf8N5Gby/vbyzuUxRukHIVWjuVy9f83MKKwYrWxTg==
-X-Received: by 2002:a05:6358:80a7:b0:1b8:5e16:1a11 with SMTP id e5c5f4694b2df-1c39df4c38fmr640755955d.8.1729611583593;
-        Tue, 22 Oct 2024 08:39:43 -0700 (PDT)
-Received: from [10.192.166.46] (host-36-27.ilcul54.champaign.il.us.clients.pavlovmedia.net. [68.180.36.27])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c95aafsm30577011cf.40.2024.10.22.08.39.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 08:39:43 -0700 (PDT)
-Message-ID: <58e8cfd2-55f4-48f0-a9d5-60fff76d7abe@gmail.com>
-Date: Tue, 22 Oct 2024 10:39:42 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fODqioL5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96122C4CEC3;
+	Tue, 22 Oct 2024 17:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729617838;
+	bh=u774XJNJoKaoO7NkJoZ6UrZ6tUzrujqv0gRuGOzw/hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fODqioL5YDB0GPyFq7GnX4U/RJwKQTIXdfMCHOpPXB8lT0AmCmjbsHBbvb+c33QCD
+	 zxieNmT+ESorvyOEpKL6pHuvEKnZ3MXFamJiEA99iS3xUsBwKPOhAqL97AUNyLwosV
+	 EJ9Pjg/d9ZmscmCFEqq+PdWyeJyReFUQViKwtf94yzzotdDwEzHu3ogziBN91mIpZQ
+	 IDtkhHjrq2vFCLANnec6WtTzXUnky4VckPLJvJHzEs4QmiCTEMmbZXkQTVtTFL9RXT
+	 Z8aEjr0NgfHNaHGjv1OeCuQOERkN3fSiSBL8eV3QJTAT2QCbATu2S8Udq07jlMPrwq
+	 yxjxt6l6BLw2g==
+Date: Tue, 22 Oct 2024 18:23:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Yassine Oudjana <yassine.oudjana@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: mediatek: Add bindings for
+ MT6735 syscon clock and reset controllers
+Message-ID: <20241022-map-unsightly-fafb554b8f9b@spud>
+References: <20241021121618.151079-1-y.oudjana@protonmail.com>
+ <20241021121618.151079-2-y.oudjana@protonmail.com>
+ <20241021-goatskin-wafer-7582dbcfe1d1@spud>
+ <78f4da13-cbff-415b-a8eb-ec16108b5c00@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: sophgo: Cast an operand to u64 to prevent potential
- unsigned long overflow on 32-bit machine in sg2042_pll_recalc_rate()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, unicorn_wang@outlook.com,
- inochiama@outlook.com, nathan@kernel.org, linux-clk@vger.kernel.org,
- zzjas98@gmail.com, chenyuan0y@gmail.com
-References: <20241021205101.13416-1-zichenxie0106@gmail.com>
- <e88d7bf3-fd7c-4944-92dc-f2224f45bda4@stanley.mountain>
-Content-Language: en-US
-From: Zichen Xie <zichenxie0106@gmail.com>
-In-Reply-To: <e88d7bf3-fd7c-4944-92dc-f2224f45bda4@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MGdtz8fU63TqFAKQ"
+Content-Disposition: inline
+In-Reply-To: <78f4da13-cbff-415b-a8eb-ec16108b5c00@collabora.com>
 
 
-On 2024/10/22 2:58, Dan Carpenter wrote:
-> On Mon, Oct 21, 2024 at 03:51:02PM -0500, Gax-c wrote:
->> From: Zichen Xie <zichenxie0106@gmail.com>
->>
->> This was found by a static analyzer.
->> There may be a potential integer overflow issue in
->> sg2042_pll_recalc_rate(). numerator is defined as u64 while
->> parent_rate is defined as unsigned long and ctrl_table.fbdiv
->> is defined as unsigned int. On 32-bit machine, the result of
->> the calculation will be limited to "u32" without correct casting.
->> Integer overflow may occur on high-performance systems.
->> For the same reason, adding a cast to denominator could be better.
->> So, we recommend adding an extra cast to prevent potential
->> integer overflow.
->>
->> Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
->> Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
->> ---
->>   drivers/clk/sophgo/clk-sg2042-pll.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
->> index ff9deeef509b..e0f92f7a21bd 100644
->> --- a/drivers/clk/sophgo/clk-sg2042-pll.c
->> +++ b/drivers/clk/sophgo/clk-sg2042-pll.c
->> @@ -153,8 +153,8 @@ static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
->>   
->>   	sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
->                                            ^^^^^^^^^^^
->>   
->> -	numerator = parent_rate * ctrl_table.fbdiv;
->> -	denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
->> +	numerator = (u64)parent_rate * ctrl_table.fbdiv;
-> This seems reasonable.
->
->> +	denominator = (u64)ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
-> These values from sg2042_pll_ctrl_decode() and there is no way they can
-> overflow.  The highest they can be is 63 * 7 * 7 = 3087.
+--MGdtz8fU63TqFAKQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You are right. But I think it could be better to add this cast to 
-demonstrate that
-developers have realized the potential of integer overflow.
+On Tue, Oct 22, 2024 at 11:36:20AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 21/10/24 18:56, Conor Dooley ha scritto:
+> > On Mon, Oct 21, 2024 at 03:16:15PM +0300, Yassine Oudjana wrote:
+> > > From: Yassine Oudjana <y.oudjana@protonmail.com>
+> > >=20
+> > > Add device tree bindings for syscon clock and reset controllers (IMGS=
+YS,
+> > > MFGCFG, VDECSYS and VENCSYS).
+> > >=20
+> > > Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> > > ---
+> > >   .../bindings/clock/mediatek,syscon.yaml           |  4 ++++
+> > >   MAINTAINERS                                       |  6 ++++++
+> > >   .../dt-bindings/clock/mediatek,mt6735-imgsys.h    | 15 ++++++++++++=
++++
+> > >   .../dt-bindings/clock/mediatek,mt6735-mfgcfg.h    |  8 ++++++++
+> > >   .../dt-bindings/clock/mediatek,mt6735-vdecsys.h   |  9 +++++++++
+> > >   .../dt-bindings/clock/mediatek,mt6735-vencsys.h   | 11 +++++++++++
+> > >   .../dt-bindings/reset/mediatek,mt6735-mfgcfg.h    |  9 +++++++++
+> > >   .../dt-bindings/reset/mediatek,mt6735-vdecsys.h   | 10 ++++++++++
+> >=20
+> > Is it really necessary to have individual files foe each of these? Seems
+> > a bit extra, no?
+> >=20
+>=20
+> It's only good for including smaller headers in each driver (and/or DT, b=
+ut
+> then the SoC DT will anyway include them all).
+>=20
+> I'm fine with that, but I'm also fine with one header for clock and one f=
+or reset.
+>=20
+> So.. Conor, it's however you prefer :-)
 
-And it can also prevent some static analyzers from reporting such bugs.
+It's not worth respinning for, IMO, but I think having 8 and 9 line
+header files for 2 definitions is silly.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Anyway, I can still provide a patch with "numerator" cast only if it's 
-better.
+--MGdtz8fU63TqFAKQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Best,
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxffqAAKCRB4tDGHoIJi
+0jppAQC3jp73TDDQ8ceo7QUcuVoccM5RURc39pRsxAGOCXGfdwEA/dA9MNvMdUWv
+jSwY6hOKcpjb/PE5XD01uo3g0gxiBwE=
+=3GWk
+-----END PGP SIGNATURE-----
 
-Zichen
-
->
-> regards,
-> dan carpenter
->
->>   	do_div(numerator, denominator);
->>   	return numerator;
->>   }
->> -- 
->> 2.34.1
+--MGdtz8fU63TqFAKQ--
