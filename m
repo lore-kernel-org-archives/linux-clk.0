@@ -1,196 +1,308 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A6813AD0;
-	Tue, 22 Oct 2024 07:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D1513AD2A;
+	Tue, 22 Oct 2024 07:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729581072; cv=none; b=WCmQOhlY2ArxZjyk0jy0mIww4/02ZAkpqNkXruAzCfxDgpxp4nxBl96KNTXCXDa7EqVq8DACt/g14g+ywmO0KqRpEqzBGdPX+QgmJwk13dhch7uVK5A+iEDWBdKowOohaVoowL149sV0AuyNQd9FxZ4jXM4aqlUVx8hC3TE3Wus=
+	t=1729583428; cv=none; b=MtGcKkjO5uotlJHZHSDgRtiJkHzbzoSJWMszrM9msz3YV6/ASZb0bYMaM2ntHjfMCke50GZuyAh7KHRZ84bv8eSoocMvYtzn4sQuB0cIwDyyraOZva1JqiRBn2OYmimucwswbYWaGVQrdvloq5o6w7xFbY3fJZWFjfszIuhsZmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729581072; c=relaxed/simple;
-	bh=sPEuwBSR3z9y3MTbe3FDoGxkTkpW0+fBxiQSKk03EzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JIrU5bGa3pmswjlem+xJjx/ftx8RZq1rwODhW0prEUV9WDKQSPm0NIRJhWS5An61AbW/UUUifToO2IrfCV9+uwp+azF7Gm6WC2B/iBAsWp6vf/4UsObZa5hWRuiuYCtoV2scRwPE69OlmzRAEoNpz+Udt1oDW/vHgLA9jTndJzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MYDx15WK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729583428; c=relaxed/simple;
+	bh=gbeWCIO9Ao198j49EzWUIGHbVOEQyu22n3aIfHPCsQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XL7JBJ61sYCh4W5aAPxD0079bmo7tMOcC+Ezo5xqD3pythzYf7r8cB/CE/TYYAtcVIbdCZBuX5Y4ubb886jIgSaY6rrjhD7NpqcOxNsjG45DyIu4d+2hjaafAR+6eWJlPOo2cTmRde3wH8fgozX4pjeNUrtdwJzqfCaaY6QZF0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZEo4z6c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MYDx15WK"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LK9ROB016636;
-	Tue, 22 Oct 2024 07:10:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	f0IQoKdBA/MRiSCfEKMiX51wDhemHJ0XLpoojL22auE=; b=MYDx15WKF/XqGUal
-	djfUY4kqzj+flN4lrqv05YuQV24D9uymttQIS1wuJaLlYvpV6ByAg10xwzTB1TZN
-	8ulaYraPnI/R0whHMbeDJYdj0I0719u+Or6kcaW5joc7PsPSB4SL8QgV+voYxppP
-	9jENBv4X6TGQbvQOK/GML38c5AQZ3qjFY9V1Bkn5zqoGB22M9R58JA+rK9SAxDAN
-	RirgTKDb8sFH6asuZKrk7/jfHBbM3fjMVy7WLDQspF3okGn/GShpXFIJQVRzRqA5
-	JbtaMUDQ5YgFTfvAybOwItbuyUQko/ssflKnVUJbooRkAXQvdOaYReupka+2ol7c
-	eY17SA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmdqb7k1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 07:10:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M7AvfS002562
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 07:10:57 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
- 2024 00:10:53 -0700
-Message-ID: <ec0f2cb4-1461-4eef-a441-d61cbe02804d@quicinc.com>
-Date: Tue, 22 Oct 2024 12:40:50 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZEo4z6c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C7FC4CEC3;
+	Tue, 22 Oct 2024 07:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729583427;
+	bh=gbeWCIO9Ao198j49EzWUIGHbVOEQyu22n3aIfHPCsQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oZEo4z6cPLgawcEkuwfQqtUX8Yw7wJqlDNry2YOo3Ve27Ri+WGu2mShxYq6OrqYgZ
+	 TgU44b6g/SWDktQQIWdqAZ692VAk8MhTXVmV5a3O+O/v2m0Dd9wtd76GsrEsLy5lrx
+	 wzfeoRgn+c+3naavRyp91CKr3+pMfIAEK9gv1kK2fhCPf8Bmi+WHBxztg9IYBsbOcZ
+	 NHu4nZoMc34g0tj5pjYu5oiackr/COvmjfp8Wjltrdi3X7su8pzxvA6Zy6oEIJ0jBn
+	 Jnb8vedP/DK8Jt2pHDLj5p/PnsvPUjT2eJvUzrnc2x5n+9vsFlwp4INqjF0wyclekS
+	 tmzTDCjmW5m2w==
+Date: Tue, 22 Oct 2024 09:50:24 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Marek Vasut <marex@denx.de>, dri-devel@lists.freedesktop.org, 
+	Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
+	Isaac Scott <isaac.scott@ideasonboard.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Robert Foss <rfoss@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, imx@lists.linux.dev, 
+	kernel@dh-electronics.com, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+Message-ID: <20241022-quirky-ubiquitous-hamster-11dca5@houat>
+References: <20241008223846.337162-1-marex@denx.de>
+ <dbede671-c97b-4ad7-8a54-f1b381fea082@nxp.com>
+ <00ffd38c-b01a-40cd-9130-19c35a387ca0@denx.de>
+ <819380c3-d13f-4989-b305-388fc60d30e4@nxp.com>
+ <d99e0021-3253-4312-9b50-6031ae0f8d8e@denx.de>
+ <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/11] clk: qcom: add support for GCC on SAR2130P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kalpak Kawadkar
-	<quic_kkawadka@quicinc.com>
-References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
- <20241021-sar2130p-clocks-v2-8-383e5eb123a2@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20241021-sar2130p-clocks-v2-8-383e5eb123a2@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Ne6XEp-d1zFEcTtnSyCMasdCf3VIvZeF
-X-Proofpoint-GUID: Ne6XEp-d1zFEcTtnSyCMasdCf3VIvZeF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 spamscore=0 mlxscore=0 phishscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- adultscore=0 mlxlogscore=796 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410220045
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="5ljitx3vl2u5lehv"
+Content-Disposition: inline
+In-Reply-To: <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
 
 
+--5ljitx3vl2u5lehv
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+MIME-Version: 1.0
 
-On 10/21/2024 4:00 PM, Dmitry Baryshkov wrote:
-> Add driver for the Global Clock Controller as present on the Qualcomm
-> SAR2130P platform. This is based on the msm-5.10 tree, tag
-> KERNEL.PLATFORM.1.0.r4-00400-NEO.0.
-> 
-> Co-developed-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-> Signed-off-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/clk/qcom/Kconfig        |    9 +
->   drivers/clk/qcom/Makefile       |    1 +
->   drivers/clk/qcom/gcc-sar2130p.c | 2326 +++++++++++++++++++++++++++++++++++++++
->   3 files changed, 2336 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index e5d7c89b0dab6b4fc7133d8e348ae61d38f91770..5f7bf9db76cfcef1ab18a6ba09fb4dc506695f9d 100644
-> --- a/drivers/clk/qcom/Kconfig
+On Tue, Oct 22, 2024 at 02:13:57PM +0800, Liu Ying wrote:
+> On 10/13/2024, Marek Vasut wrote:
+> > On 10/11/24 8:18 AM, Liu Ying wrote:
+> >> On 10/11/2024, Marek Vasut wrote:
+> >>> On 10/10/24 7:22 AM, Liu Ying wrote:
+> >>>> On 10/09/2024, Marek Vasut wrote:
+> >>>>> The media_ldb_root_clk supply LDB serializer. These clock are usual=
+ly
+> >>>>> shared with the LCDIFv3 pixel clock and supplied by the Video PLL on
+> >>>>> i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LCDI=
+Fv3
+> >>>>> pixel clock. Allow the LDB to reconfigure Video PLL as needed, as t=
+hat
+> >>>>> results in accurate serializer clock.
+> >>>>>
+> >>>>> Signed-off-by: Marek Vasut <marex@denx.de>
+> >>>>> ---
+> >>>>> Cc: Abel Vesa <abelvesa@kernel.org>
+> >>>>> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> >>>>> Cc: David Airlie <airlied@gmail.com>
+> >>>>> Cc: Fabio Estevam <festevam@gmail.com>
+> >>>>> Cc: Isaac Scott <isaac.scott@ideasonboard.com>
+> >>>>> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> >>>>> Cc: Jonas Karlman <jonas@kwiboo.se>
+> >>>>> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> >>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> >>>>> Cc: Maxime Ripard <mripard@kernel.org>
+> >>>>> Cc: Michael Turquette <mturquette@baylibre.com>
+> >>>>> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> >>>>> Cc: Peng Fan <peng.fan@nxp.com>
+> >>>>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> >>>>> Cc: Robert Foss <rfoss@kernel.org>
+> >>>>> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> >>>>> Cc: Shawn Guo <shawnguo@kernel.org>
+> >>>>> Cc: Simona Vetter <simona@ffwll.ch>
+> >>>>> Cc: Stephen Boyd <sboyd@kernel.org>
+> >>>>> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> >>>>> Cc: dri-devel@lists.freedesktop.org
+> >>>>> Cc: imx@lists.linux.dev
+> >>>>> Cc: kernel@dh-electronics.com
+> >>>>> Cc: linux-arm-kernel@lists.infradead.org
+> >>>>> Cc: linux-clk@vger.kernel.org
+> >>>>> ---
+> >>>>> =A0=A0 drivers/clk/imx/clk-imx8mp.c | 2 +-
+> >>>>> =A0=A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx=
+8mp.c
+> >>>>> index 516dbd170c8a3..2e61d340b8ab7 100644
+> >>>>> --- a/drivers/clk/imx/clk-imx8mp.c
+> >>>>> +++ b/drivers/clk/imx/clk-imx8mp.c
+> >>>>> @@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platform_=
+device *pdev)
+> >>>>> =A0=A0=A0=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] =3D imx8m_cl=
+k_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_=
+base + 0xbd80);
+> >>>>> =A0=A0=A0=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw=
+_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_bas=
+e + 0xbe00, CLK_SET_RATE_PARENT);
+> >>>>> =A0=A0=A0=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_CAM2_PIX] =3D imx8m_clk_hw_=
+composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+> >>>>> -=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite("me=
+dia_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+> >>>>> +=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite_bus=
+_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_=
+PARENT);
+> >>>>
+> >>>> This patch would cause the below in-flight LDB bridge driver
+> >>>> patch[1] fail to do display mode validation upon display modes
+> >>>> read from LVDS to HDMI converter IT6263's DDC I2C bus.
+> >>>
+> >>> Why ?
+> >>
+> >> Mode validation is affected only for dual LVDS link mode.
+> >> For single LVDS link mode, this patch does open more display
+> >> modes read from the DDC I2C bus.=A0 The reason behind is that
+> >> LVDS serial clock rate/pixel clock rate =3D 3.5 for dual LVDS
+> >> link mode, while it's 7 for single LVDS link mode.
+> >>
+> >> In my system, "video_pll1" clock rate is assigned to 1.0395GHz
+> >> in imx8mp.dtsi.=A0 For 1920x1080-60.00Hz with 148.5MHz pixel
+> >> clock rate, "media_ldb" clock rate is 519.75MHz and
+> >> "media_disp2_pix" clock rate is 148.5MHz, which is fine for
+> >> dual LVDS link mode(x3.5).=A0 For newly opened up 1920x1080-59.94Hz
+> >> with 148.352MHz pixel clock rate, "video_pll1" clock rate will
+> >> be changed to 519.232MHz, "media_ldb" clock rate is 519.232MHz
+> >> and "media_disp2_pix" clock rate is wrongly set to 519.232MHz
+> >> too because "media_disp2_pix" clock cannot handle the 3.5
+> >> division ratio from "video_pll1_out" clock running at
+> >> 519.232MHz.=A0 See the below clk_summary.
+> >=20
+> > Shouldn't this patch help exactly with that ?
+>=20
+> No, it doesn't help but only makes clk_round_rate() called in
+> LDB driver's .mode_valid() against 148.352MHz return 148.352MHz
+> which allows the unexpected 1920x1080-59.94Hz display mode.
+>=20
+> >=20
+> > It should allow you to set video_pll1_out to whatever is necessary by L=
+DB first, fixate that frequency, and the LCDIFv3 would then be forced to us=
+e /7 divider from faster Video PLL1 , right ?
+>=20
+> Yes, it allows that for single-link LVDS use cases.
+> And, __no__, for dual-link LVDS use cases because the
+> video_pll1_out clock rate needs to be 2x the LVDS serial clock
+> rate.=20
+>=20
+> >=20
+> >> =A0=A0=A0=A0 video_pll1_ref_sel=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 24000=
+000=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=A0=
+=A0 Y=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >> =A0=A0=A0=A0=A0=A0=A0 video_pll1=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=
+=A0=A0=A0=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 500=
+00=A0=A0=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 video_pll1_bypass=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 51=
+9232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=A0=
+=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 video_pll1_out=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0 2=A0=A0=A0=A0=A0=A0 2=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=
+=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=
+=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_ldb=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=
+=A0=A0=A0=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 500=
+00=A0=A0=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 devi=
+celess=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_co=
+nnection_id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_ldb_ro=
+ot_clk 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 51=
+9232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=A0=
+=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 32ec0000.=
+blk-ctrl:bridge@5c=A0=A0=A0=A0 ldb
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 no_connection_id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp1_pix=A0=A0=
+=A0=A0=A0 0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=
+ 129808000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=
+=A0=A0 N=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_=
+id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp1_=
+pix_root_clk 0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=
+=A0 129808000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=
+=A0=A0=A0 N=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 32e=
+80000.display-controller=A0=A0=A0=A0 pix
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 32ec0000.blk-ctrl=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 disp1
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 no_connection_id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp2_pix=A0=A0=
+=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=
+ 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=
+=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_=
+id
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp2_=
+pix_root_clk 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=
+=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=
+=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 32e=
+90000.display-controller=A0=A0=A0=A0 pix
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 32ec0000.blk-ctrl=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 disp2
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 no_connection_id
+> >>
+> >> Single LVDS link mode is not affected because "media_disp2_pix"
+> >> clock can handle the 7 division ratio.
+> >>
+> >> To support the dual LVDS link mode, "video_pll1" clock rate needs
+> >> to be x2 "media_ldb" clock rate so that "media_disp2_pix" clock
+> >> can use 7 division ratio to achieve the /3.5 clock rate comparing
+> >> to "media_ldb" clock rate.=A0 However, "video_pll1" is not seen by
+> >> LDB driver thus not directly controlled by it.=A0 This is another
+> >> reason why assigning a reasonable "video_pll1" clock rate in DT
+> >> makes sense.
+> >=20
+> > I agree that _right_now_, the DT clock assignment is the only option.
+> > I would like to see that DT part disappear and instead would prefer if =
+the LDB/LCDIF could figure out the clock tree configuration themselves.
+>=20
+> I think we'll live with the assigned clock rate in DT, because the
+> i.MX8MP LDB and Samsung MIPI DSI display pipelines need to share a
+> video PLL, like I mentioned in comments for patch 2.
 
-> +
-> +static struct gdsc pcie_0_gdsc = {
-> +	.gdscr = 0x7b004,
-> +	.collapse_ctrl = 0x62200,
-> +	.collapse_mask = BIT(0),
-> +	.pd = {
-> +		.name = "pcie_0_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc pcie_0_phy_gdsc = {
-> +	.gdscr = 0x7c000,
-> +	.collapse_ctrl = 0x62200,
-> +	.collapse_mask = BIT(3),
-> +	.pd = {
-> +		.name = "pcie_0_phy_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc pcie_1_gdsc = {
-> +	.gdscr = 0x9d004,
-> +	.collapse_ctrl = 0x62200,
-> +	.collapse_mask = BIT(1),
-> +	.pd = {
-> +		.name = "pcie_1_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc pcie_1_phy_gdsc = {
-> +	.gdscr = 0x9e000,
-> +	.collapse_ctrl = 0x62200,
-> +	.collapse_mask = BIT(4),
-> +	.pd = {
-> +		.name = "pcie_1_phy_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc usb30_prim_gdsc = {
-> +	.gdscr = 0x49004,
-> +	.pd = {
-> +		.name = "usb30_prim_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc usb3_phy_gdsc = {
-> +	.gdscr = 0x60018,
-> +	.pd = {
-> +		.name = "usb3_phy_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = RETAIN_FF_ENABLE,
-> +};
-> +
-Dimtry, could you also add,
-"hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc"
-static struct gdsc hlos1_vote_mm_snoc_mmu_tbu_hf0_gdsc = {
-         .gdscr = 0x8d204,
-         .pd = {
-                 .name = "hlos1_vote_mm_snoc_mmu_tbu_hf0_gdsc",
-         },
-         .pwrsts = PWRSTS_OFF_ON,
-         .flags = VOTABLE,
-};
+Guys. There's 4 different discussions that look to be on the same topic,
+and doing workarounds in the DT, DRM driver and clock driver for
+something that looks like a broken clock.
 
-"hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc"   --> 0x8d054
-"hlos1_vote_turing_mmu_tbu0_gdsc"   --> 0x8d05c	
-"hlos1_vote_turing_mmu_tbu1_gdsc"   --> 0x8d060	
+Could we have *somewhere* a proper description of what the problem is
+exactly, so we can review it? Because at the moment, it's certainly not
+helping.
 
+Maxime
 
+--5ljitx3vl2u5lehv
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Thanks & Regards,
-Taniya Das.
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxdZNwAKCRAnX84Zoj2+
+do5AAYD9Cvhd9aqpnBOy5WzwqBPOkxSDwk7s4YVwlvjsU4LO9OXrAFitX8qW8dCA
+yF4+UCEBgOkuykrO2NWU3AO6aoUlJKlKGLDsPZFS7OLTIppco01TwDhTsxQNM0Qu
+2py5EVywJg==
+=Pvc4
+-----END PGP SIGNATURE-----
+
+--5ljitx3vl2u5lehv--
