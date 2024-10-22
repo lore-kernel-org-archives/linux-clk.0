@@ -1,228 +1,170 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E741940B9;
-	Tue, 22 Oct 2024 09:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCA4161302
+	for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 09:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729587905; cv=none; b=jlfg1fSmL/3B9cdzv40Q1YSDFPkMTk5Z0Fkc7Mx06O7i5DELTwN0729YL+f7At9y0DRkLgG1QfYJnvWzx3W5Ka81j5J3NFa5Wr5HJ2dh4JA2b3yXESrnMrZ0Q4ZHT2jjn5GMdW1KJCyt0a0+j0L5A4NA0sqmCRbVfhkC+sKfPvM=
+	t=1729588545; cv=none; b=SnNdoBolrTAwxMP3ehz44nrvGCfS3ZrNlrUtRgl64jUf+BPVN4NS4bBBWPOb2pFyDtdMBfM5zqPu8rD/p1OUmnimyGvl+E+b6DWHZIz4EFJqTT1IP7ZXIvsAPU2ZzLOlu/8BESYqoF7+7ycgvHu9tfpfE7jWDDyNQ5reF71L6Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729587905; c=relaxed/simple;
-	bh=RpHFkVfZw0AbIR3xtzIa38SQHNStexiY4qowugrrTZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T1hC1LTOYuVEwtse464LEPVplXp+z/8/mc4VIjNvuhgkvHCv279xgvQHv4CaLoXWRCAdXbuVfiEtr3tXFwZZkFLy8D0Xs9XTMclT4ZNcdBH41c+OB6cKgM0vwWBNCzbJBZespRYENFRSdtj6RYrJXoVmA8JcXnNvLtzpi72XwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ihfKcFvA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1729588545; c=relaxed/simple;
+	bh=Uk8Pa45s/KheSrUEOKOicHeanGteTnbgslk7ul9tBQs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbFh+tfixr2LNoPyLExDntC/88KkG9HaSs4juyEj9on1Rs68GHiFkL70W1vG3TxZWEx9aKH2A1mYh8fYNj65KzySBwF+FN5zoJy0dFIlRPuuL3CWaw+qgLkmnYE1BMsEHbJ2Ms61VuWXuo+AilPxc9In5q3bzgpBbeExdfUFRfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y6cUtWkI; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ihfKcFvA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729587902;
-	bh=RpHFkVfZw0AbIR3xtzIa38SQHNStexiY4qowugrrTZg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ihfKcFvAPzJ1jjddRGqWXAVCFvDyRfurcwcEXlbwFn9KeEPqedlIWFkHa8EAeaioY
-	 z5g2rVf2iXJE3ewnoD2QU72shFBMmANKa/KHZhdMQzNnhZeE7KRzWKpcgVuy4QqK8r
-	 31c/w2PPM8fGdaetfB8cPs5zXYDhAKfLnZVHshMxMOXlmTr/xi+N12nkHDxiO2x5Y0
-	 anTOhQEYQpA58ZvKZov+vDpsFDU5XOqXmWh8n2fTyHOUbRwA9L/SQUT0cKzuKD9Wka
-	 QYy1hRalt7HgpWuyhOiNWtsJYUhOBV4DkkY9WtpGuC5L9bWr7XS9wB620ncP2/IGLN
-	 Qgskb2Cub8Juw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9769A17E12AC;
-	Tue, 22 Oct 2024 11:05:01 +0200 (CEST)
-Message-ID: <cb070d12-7e6d-4b0b-9dad-af4b9d6c51bc@collabora.com>
-Date: Tue, 22 Oct 2024 11:05:01 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y6cUtWkI"
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso5890228a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Oct 2024 02:15:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729588542; x=1730193342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsPzi2IAagO7nqzLDsgxybyAdjpi8ZWkxbmu+EWhc0o=;
+        b=Y6cUtWkIgaRVKYVYdl2h1UzqB19s2QfcONrnlSfVLZQZImtmS0Yck8MI9MLImZpIA7
+         v2bmHG2UcW8G/u7HTtFtuuGyXeF/V2jNevD9rJH5ftn0DPvYiDc427c/ooUQDsJog2TV
+         xBB75xu/PxyYqYd3PoxXHVZ+6AFDvc/vwQBI3OSiqIzduh3jc+xMKyLA7vlXjjrgBZjO
+         CecWDRBdvdfyzxd0etVZSyBxG7Se0E3EU/j+bCOjrUycAV7bDboxdLZ1wKeHwA2E9Nen
+         E4scyprJZv82bMxmnofMxR/UpuZQ6YNI8Xmc7sIYqzZtv+gppIeRlCHTRo18+1EFHm01
+         s0ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729588542; x=1730193342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IsPzi2IAagO7nqzLDsgxybyAdjpi8ZWkxbmu+EWhc0o=;
+        b=dSFjXd0U1AitP9wA/ctQD08hJFCZHIxZB7BWK1cKQ75NuIMJ2RO0eKKlgcmxy38gGG
+         QgOg2OtYexvFpOI7YQaULos0FEwbUrpQoKlVVr8BXlvR0O3K0h4/LewM1Pw91YkxR6OK
+         K89mzgOjK7Krsj36l/I+Uzjpv1OhWMJvkmmDnf3GzRBNaeqTB2FKGc+/G+TOeCluj812
+         Q3GYzJjorBbp27BzzQGUe71LDBJk1SjtCP+sC7ID56MsF7zHn/0Qvu4gd7AiXF2Vefvr
+         V7zbBljJIQLQe8fIZEig1wIxIyWEB5d4RJueanjU/lS5ezseHhowcdcZHVCkfxQcPwLP
+         Cz2w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4lNMcU8MkYvZWiWgDzBJ4rJNMSzFQnsx1JHUn/dtxH+thLc4hsavKjM3GcIXUrVKXUqw4wdTlKu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWg9bDxXMebnipCm3z9eHmZSv2g0nz08sldNc9AGVmZ5bC3dlY
+	JPK7J3qm8cQQh5Y/DWDUbBZ2Cl8+KvvgoHoY4vm3CPzxdzmmFaRfBQsvabqueN0=
+X-Google-Smtp-Source: AGHT+IG0UbTdshGjhe1cBG9B7a7reFtp9fnVda6ehg+mYut3t/cw34W4iDARXx7x4hjoKD2s8wnmcA==
+X-Received: by 2002:a17:906:6a29:b0:a99:e504:40c5 with SMTP id a640c23a62f3a-a9a69bb4776mr1542963966b.39.1729588542016;
+        Tue, 22 Oct 2024 02:15:42 -0700 (PDT)
+Received: from localhost (host-95-239-0-46.retail.telecomitalia.it. [95.239.0.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d8381sm308924466b.45.2024.10.22.02.15.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 02:15:41 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 22 Oct 2024 11:16:02 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for devices
+ accessible through PCI BARs
+Message-ID: <ZxdtUm_uoFvvKtVl@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
+ <flxm3zap4opsjf2s4wfjwdj6idf7p6errgtiru4xgbgkfx4ves@xxiz42cghgvr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: mediatek: Add drivers for MT6735 syscon clock
- and reset controllers
-To: Yassine Oudjana <yassine.oudjana@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- Daniel Golle <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20241021121618.151079-1-y.oudjana@protonmail.com>
- <20241021121618.151079-3-y.oudjana@protonmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241021121618.151079-3-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <flxm3zap4opsjf2s4wfjwdj6idf7p6errgtiru4xgbgkfx4ves@xxiz42cghgvr>
 
-Il 21/10/24 14:16, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+Hi Krzysztof,
+
+On 08:24 Tue 08 Oct     , Krzysztof Kozlowski wrote:
+> On Mon, Oct 07, 2024 at 02:39:46PM +0200, Andrea della Porta wrote:
+> > Common YAML schema for devices that exports internal peripherals through
+> > PCI BARs. The BARs are exposed as simple-buses through which the
+> > peripherals can be accessed.
+> > 
+> > This is not intended to be used as a standalone binding, but should be
+> > included by device specific bindings.
 > 
-> Add drivers for IMGSYS, MFGCFG, VDECSYS and VENCSYS clocks and resets
-> on MT6735.
+> It still has to be tested before posting... Mailing list is not a
+> testing service. My and Rob's machines are not a testing service.
+
+Sorry about that, I must have missed that file when rechecking all the schemas
+after rebasing on 6.12-rc1.
+
 > 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->   MAINTAINERS                               |  4 ++
->   drivers/clk/mediatek/Kconfig              | 32 +++++++++
->   drivers/clk/mediatek/Makefile             |  4 ++
->   drivers/clk/mediatek/clk-mt6735-imgsys.c  | 57 ++++++++++++++++
->   drivers/clk/mediatek/clk-mt6735-mfgcfg.c  | 61 +++++++++++++++++
->   drivers/clk/mediatek/clk-mt6735-vdecsys.c | 81 +++++++++++++++++++++++
->   drivers/clk/mediatek/clk-mt6735-vencsys.c | 53 +++++++++++++++
->   7 files changed, 292 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 70 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > new file mode 100644
+> > index 000000000000..9d7a784b866a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > @@ -0,0 +1,69 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Common properties for PCI MFD endpoints with peripherals addressable from BARs.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 25484783f6a0b..939f9d29fc9bf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14533,9 +14533,13 @@ L:	linux-clk@vger.kernel.org
->   L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
->   S:	Maintained
->   F:	drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-> +F:	drivers/clk/mediatek/clk-mt6735-imgsys.c
->   F:	drivers/clk/mediatek/clk-mt6735-infracfg.c
-> +F:	drivers/clk/mediatek/clk-mt6735-mfgcfg.c
->   F:	drivers/clk/mediatek/clk-mt6735-pericfg.c
->   F:	drivers/clk/mediatek/clk-mt6735-topckgen.c
-> +F:	drivers/clk/mediatek/clk-mt6735-vdecsys.c
-> +F:	drivers/clk/mediatek/clk-mt6735-vencsys.c
->   F:	include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
->   F:	include/dt-bindings/clock/mediatek,mt6735-imgsys.h
->   F:	include/dt-bindings/clock/mediatek,mt6735-infracfg.h
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 7a33f9e92d963..4dd6d2d6263fd 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -133,6 +133,38 @@ config COMMON_CLK_MT6735
->   	  by apmixedsys, topckgen, infracfg and pericfg on the
->   	  MediaTek MT6735 SoC.
->   
-> +config COMMON_CLK_MT6735_IMGSYS
-> +	tristate "Clock driver for MediaTek MT6735 imgsys"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
+> Drop full stop and capitalize it.
 
-If this depends on COMMON_CLK_MT6735, it automatically also depends on
-ARCH_MEDIATEK, because the former cannot be selected without satisfying
-the dependency on the latter.
+Ack.
 
-Also, with those being really dependant on COMMON_CLK_MT6735, it does
-not make any sense to COMPILE_TEST those alone anyway...
+> 
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta  <andrea.porta@suse.com>
+> > +
+> > +description:
+> > +  Define a generic node representing a PCI endpoint which contains several sub-
+> > +  peripherals. The peripherals can be accessed through one or more BARs.
+> > +  This common schema is intended to be referenced from device tree bindings, and
+> > +  does not represent a device tree binding by itself.
+> > +
+> > +properties:
+> > +  "#address-cells":
+> 
+> Use consistent quotes, either ' or ".
 
-> +	select COMMON_CLK_MEDIATEK
+Ack.
 
-The same goes for this select statement: it's already done when selecting
-COMMON_CLK_MT6735.
+Many thanks,
+Andrea
 
-Finally:
-
-config COMMON_CLK_MT6735_IMGSYS
-      tristate "Clock driver for MediaTek MT6735 imgsys"
-      depends on COMMON_CLK_MT6735
-      help
-        blah blah blah
-
-is just fine - and shorter too :-)
-
-> +	help
-> +	  This enables a driver for clocks provided by imgsys
-> +	  on the MediaTek MT6735 SoC.
-> +
-> +config COMMON_CLK_MT6735_MFGCFG
-> +	tristate "Clock driver for MediaTek MT6735 mfgcfg"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	help
-> +	  This enables a driver for clocks and resets provided
-> +	  by mfgcfg on the MediaTek MT6735 SoC.
-> +
-> +config COMMON_CLK_MT6735_VDECSYS
-> +	tristate "Clock driver for MediaTek MT6735 vdecsys"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	help
-> +	  This enables a driver for clocks and resets provided
-> +	  by vdecsys on the MediaTek MT6735 SoC.
-> +
-> +config COMMON_CLK_MT6735_VENCSYS
-> +	tristate "Clock driver for MediaTek MT6735 vencsys"
-> +	depends on (ARCH_MEDIATEK && COMMON_CLK_MT6735) || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	help
-> +	  This enables a driver for clocks provided by vencsys
-> +	  on the MediaTek MT6735 SoC.
-> +
->   config COMMON_CLK_MT6765
->          bool "Clock driver for MediaTek MT6765"
->          depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
-
-..snip..
-
-> diff --git a/drivers/clk/mediatek/clk-mt6735-vdecsys.c b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-> new file mode 100644
-> index 0000000000000..f59b481aaa6da
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +
-> +#include <dt-bindings/clock/mediatek,mt6735-vdecsys.h>
-> +#include <dt-bindings/reset/mediatek,mt6735-vdecsys.h>
-> +
-
-..snip..
-
-> +static u16 vdecsys_rst_bank_ofs[] = { VDEC_RESETB_CON, SMI_LARB1_RESETB_CON };
-> +
-> +static u16 vdecsys_rst_idx_map[] = {
-> +	[MT6735_VDEC_RST0_VDEC]		= 0 * RST_NR_PER_BANK + 0,
-> +
-
-Please remove this extra blank line, it's not needed.
-
-> +	[MT6735_VDEC_RST1_SMI_LARB1]	= 1 * RST_NR_PER_BANK + 0,
-> +};
-> +
-> +static const struct mtk_clk_rst_desc vdecsys_resets = {
-> +	.version = MTK_RST_SIMPLE,
-> +	.rst_bank_ofs = vdecsys_rst_bank_ofs,
-> +	.rst_bank_nr = ARRAY_SIZE(vdecsys_rst_bank_ofs),
-> +	.rst_idx_map = vdecsys_rst_idx_map,
-> +	.rst_idx_map_nr = ARRAY_SIZE(vdecsys_rst_idx_map)
-> +};
-> +
-> +static const struct mtk_clk_desc vdecsys_clks = {
-> +	.clks = vdecsys_gates,
-> +	.num_clks = ARRAY_SIZE(vdecsys_gates),
-> +
-
-same here.
-
-> +	.rst_desc = &vdecsys_resets
-> +};
-> +
-The rest looks good, and I'm confident that you're getting my R-b on v2.
-
-Cheers,
-Angelo
+> 
+> Best regards,
+> Krzysztof
+> 
