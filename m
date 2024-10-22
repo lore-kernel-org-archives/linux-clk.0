@@ -1,62 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B245159B71;
-	Tue, 22 Oct 2024 21:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0EC19E810;
+	Tue, 22 Oct 2024 22:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729631367; cv=none; b=pBpP9U3UYKS3sv6dPhSn0qLqse/DfBgzV8usOxJd0qLb7u4gHR67ywwhXroKkrPOD5xfOgG+6giyZnvMNMEw9FTfvhtd+QF1zOE0C5q2g/xJ1dT0RHBqeQqTJltfNB8+FZ6hlzwZK5OGyV8diE9ylo2YclOSp5GkJePdTOjOxu0=
+	t=1729636296; cv=none; b=ewmyxMUQxjYyxWcheYhs5ffukrP7G5Fp9LADHF8ZOmSYVdBsEkuWaK0NM14o0AGoUSU0s+CQnc/HpOa14YWG92WD2xJWZJOp0gsDNPf0s4NDT1Pz+PA2w7jRNdCbFCZrauT8QchiWK60YXTQYxWCh8OlAS+pVmUdSJf1fD981Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729631367; c=relaxed/simple;
-	bh=Sls1pC3x7RnvpCJwxp94bwSPKYDFgvZiA7txDD5bPqY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=E4icZ7eRLwQ8BWv2wAaPZGfTZn9i6wdnTtor5n04yjdLWomFDWgNFSsbEpOADcbmQsfIF38ISiqXDBQ5llTyzXbjRGu6St+Hs5ED2a/Sy5uMEz4/gy/KWCfa8W0E0m9ag+j/y87dF/DndK8ekw1ZRsZqXwNodWz5nqBGASSV78k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSJAMfGh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729636296; c=relaxed/simple;
+	bh=jb6n/Hf6W94zrY5Vg/sXsWIEdSYA1Ugqf2Bk4yWaXq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqm8lFmDEe0mn/0MU/O3Q+ZQzyCobVjpaHHJxWKo4+ncvSAG0SX8K7+3u6KhJy9qlr8LaeXoAvyhZXOpmYDjfHpkhZamh/Panmp1R19J0mckBbO3XcCnA7O0Qxv7JGvh+qoWo4y1/NtirvQ5Cy2pkPN/aIVGDsrwcs/DDyqaICA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgSt4Lny; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSJAMfGh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3101FC4CEC3;
-	Tue, 22 Oct 2024 21:09:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgSt4Lny"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE82DC4CEC3;
+	Tue, 22 Oct 2024 22:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729631367;
-	bh=Sls1pC3x7RnvpCJwxp94bwSPKYDFgvZiA7txDD5bPqY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=RSJAMfGhQrKDPT45L8i5kDgaULY/+o2Nqeiaha4MSQYd65jS+YZJMioOtE0iyZ3N3
-	 BpwOPho81mMqIhou/O6F5XFec2S5kEHEzODmjjcTSdYfQDhjZ8/+En8iWyVcCBpLbE
-	 HjtxXrBQRzRVunjG9uDb6J/7DWrKvq9zJloYnri36yqUbNe2WRo4GBbMw9HPvvP8YY
-	 7MDZWKbNvjH+7Y+SVWhySMb1RTNdTHnUYclYrUElA0FAV9MOokbNjATIQMFRCmxZkA
-	 vvlIWTDVvSJABNjDVVaiUbX/tzYQSuTzV5Jb76Eb1Z6DzqIPQAPg3EJ8R2JwY3C9id
-	 MhaS0jQUNdSrg==
-Message-ID: <8b284963604b070970e37a438b137146.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1729636295;
+	bh=jb6n/Hf6W94zrY5Vg/sXsWIEdSYA1Ugqf2Bk4yWaXq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RgSt4LnyX6ZooatLF4ZAEURWQWgCQf0R+SvHp2Rkcqk4a0j68XMOUjAvaUu3YrxyN
+	 LqyGtQL+njuQpS//gqf3UUF2f+CTcECRgrqb4TB+WQK35ctE1yYEp+9MJnwp3Ro0pI
+	 mpwSRdNrCRWsm2DXxBGRaHZ1KiNI4JNxvTxil+FprUMEqL3ftZYkj7jZJaRVIYQzMA
+	 8QSkoJIvulcFR06R3AZIbDfVzQs5Mdwgd0/kVbRMyvL48GokmUmG0qllP6WTkMk/hN
+	 Ib3i1a7YJGsIucYVM1J4KHP2SJ8+VCA+gPPGoph8YbLh9jOwoYtZWZxkTSb8MwwUii
+	 1FIN1+sBvU/ag==
+Date: Tue, 22 Oct 2024 17:31:32 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: Update sleep_clk frequency to
+ 32000 on SA8775P
+Message-ID: <amnapm4ig6ivhmle4tgywi2n7ah54cha3gpl5sowvf2rqvhg6s@7xg2afpus4ej>
+References: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
+ <20241011-sa8775p-mm-v4-resend-patches-v5-7-4a9f17dc683a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241016212738.897691-1-sboyd@kernel.org>
-References: <20241016212738.897691-1-sboyd@kernel.org>
-Subject: Re: [PATCH] clk: Allow kunit tests to run without OF_OVERLAY enabled
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 22 Oct 2024 14:09:25 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011-sa8775p-mm-v4-resend-patches-v5-7-4a9f17dc683a@quicinc.com>
 
-Quoting Stephen Boyd (2024-10-16 14:27:37)
-> Some configurations want to enable CONFIG_KUNIT without enabling
-> CONFIG_OF_OVERLAY. The kunit overlay code already skips if
-> CONFIG_OF_OVERLAY isn't enabled, so these selects here aren't really
-> doing anything besides making it easier to run the tests without them
-> skipping. Remove the select and move the config setting to the
-> drivers/clk/.kunitconfig file so that the clk tests can be run with or
-> without CONFIG_OF_OVERLAY set to test either behavior.
->=20
-> Fixes: 5776526beb95 ("clk: Add KUnit tests for clk fixed rate basic type")
-> Fixes: 274aff8711b2 ("clk: Add KUnit tests for clks registered with struc=
-t clk_parent_data")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+On Fri, Oct 11, 2024 at 12:28:37AM GMT, Taniya Das wrote:
+> The HW supported sleep_clk frequency on SA8775P is 32000, hence
+> update the sleep_clk frequency with the correct value on SA8775P.
+> 
+> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+
+It's generally expected that bug fixes are sent first in patch series,
+but perhaps it's fine as this is the first DT-patch in the series.
+
+That said, the only relationship between this patch and the rest of this
+series is...you. There's no reason for sending this together with the
+multimedia clock drivers.
+
+
+Further, the patch subject doesn't match the expected format. It's too
+long (not a summary) and it doesn't have the expected subject prefix for
+changes to this file.
+
+Please correct this.
+
+Regards,
+Bjorn
+
 > ---
-
-Applied to clk-next
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> index 0c1b21def4b62cc65a693552983ec0bc7eec697d..adb71aeff339b564eb3acc42a38bba2f03507508 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> @@ -517,7 +517,7 @@ &serdes1 {
+>  };
+>  
+>  &sleep_clk {
+> -	clock-frequency = <32764>;
+> +	clock-frequency = <32000>;
+>  };
+>  
+>  &spi16 {
+> 
+> -- 
+> 2.45.2
+> 
