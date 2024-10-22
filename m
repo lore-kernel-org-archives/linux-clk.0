@@ -1,48 +1,48 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A7D145B1D;
-	Tue, 22 Oct 2024 06:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A6813AD0;
+	Tue, 22 Oct 2024 07:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729578863; cv=none; b=e+r7/ab8fz6hr01ykJqiXC05upGTf4FBXYV3ft9/Ups0OXExNFHKMSyAMGA97dL/siHwYy2FMzEGAO6OwDok9nmxNxFG/+hg0ZZ/x31Yksz8NorvVQXuzYHGTbJuyUN8EKGNDM2G1+03B8dkXWYiWRdsGVmc8RZOfSURW4nUQD8=
+	t=1729581072; cv=none; b=WCmQOhlY2ArxZjyk0jy0mIww4/02ZAkpqNkXruAzCfxDgpxp4nxBl96KNTXCXDa7EqVq8DACt/g14g+ywmO0KqRpEqzBGdPX+QgmJwk13dhch7uVK5A+iEDWBdKowOohaVoowL149sV0AuyNQd9FxZ4jXM4aqlUVx8hC3TE3Wus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729578863; c=relaxed/simple;
-	bh=EblcvRA9qNW60RSbDiXV1fyDYUFjayvBzrexf5KCGk8=;
+	s=arc-20240116; t=1729581072; c=relaxed/simple;
+	bh=sPEuwBSR3z9y3MTbe3FDoGxkTkpW0+fBxiQSKk03EzI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gHiXWb4Y5Bl5NN6RDaGu/NaJNVhCS2MjuQ/G+t6iswbC17fImLbx4zAMjVNDjviuKe1IgxA31NLlpPFpuS1mW3GDNQ5aEChAHIE0N8zsWEWOqIFdZ59ju5eMwrHiCb780DgOw40y3h/J2KXOSL5yv7t4YxJYtt78Y8pxQ9AoKyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oGG0J35W; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=JIrU5bGa3pmswjlem+xJjx/ftx8RZq1rwODhW0prEUV9WDKQSPm0NIRJhWS5An61AbW/UUUifToO2IrfCV9+uwp+azF7Gm6WC2B/iBAsWp6vf/4UsObZa5hWRuiuYCtoV2scRwPE69OlmzRAEoNpz+Udt1oDW/vHgLA9jTndJzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MYDx15WK; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oGG0J35W"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MYDx15WK"
 Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LIaaES017132;
-	Tue, 22 Oct 2024 06:34:18 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LK9ROB016636;
+	Tue, 22 Oct 2024 07:10:59 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4MawGpLa/NNaYxXFZcETJ52viwjLZbX91KKAa29KKAU=; b=oGG0J35W6LgbfjBE
-	qF6krQUF/QFCHFeXpw6Td3MsFiC4Nuk2439bGQC7n7e6ZWFyfK2Crhj9QvnFAAke
-	mm15F5WDups82lWbIUCafGYksTc34RkEP7lpJzyaf134AgOCFK+J8L7RX7vCWUhH
-	XzmL472Kg/qB1/20LuANccmpC8QcP6UDqeV3E/euZPf1HHgOsukVglZpPog1ke6N
-	rwqpbnFrwVKXr4eL2faDW3GOiSzUB845pNCaYWfqtj10himkE9iK41DXbfl8Dx7S
-	dG2lsgDRQMmqIJmAe2IXYe7WGh3bSasOtLJ2X71oIvINNJUB60498gnv0DXh6b2K
-	Mc2o1g==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmdqb33w-1
+	f0IQoKdBA/MRiSCfEKMiX51wDhemHJ0XLpoojL22auE=; b=MYDx15WKF/XqGUal
+	djfUY4kqzj+flN4lrqv05YuQV24D9uymttQIS1wuJaLlYvpV6ByAg10xwzTB1TZN
+	8ulaYraPnI/R0whHMbeDJYdj0I0719u+Or6kcaW5joc7PsPSB4SL8QgV+voYxppP
+	9jENBv4X6TGQbvQOK/GML38c5AQZ3qjFY9V1Bkn5zqoGB22M9R58JA+rK9SAxDAN
+	RirgTKDb8sFH6asuZKrk7/jfHBbM3fjMVy7WLDQspF3okGn/GShpXFIJQVRzRqA5
+	JbtaMUDQ5YgFTfvAybOwItbuyUQko/ssflKnVUJbooRkAXQvdOaYReupka+2ol7c
+	eY17SA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dmdqb7k1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 06:34:17 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M6YGsx027941
+	Tue, 22 Oct 2024 07:10:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49M7AvfS002562
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 06:34:16 GMT
-Received: from [10.216.44.181] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
- 2024 23:34:11 -0700
-Message-ID: <36bfe493-8a85-4add-93e3-650b002636df@quicinc.com>
-Date: Tue, 22 Oct 2024 12:04:09 +0530
+	Tue, 22 Oct 2024 07:10:57 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 00:10:53 -0700
+Message-ID: <ec0f2cb4-1461-4eef-a441-d61cbe02804d@quicinc.com>
+Date: Tue, 22 Oct 2024 12:40:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,98 +50,147 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] clk: qcom: Add support for GPU Clock Controller on
- QCS8300
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
- <puhpztfn6ga5rxv4mwu7wyvk63hqme2nzffcvzwv7t4oo5hlvc@4ugxncmu3wwk>
- <o5v3fch5oxol4t7j4xlqswk6m6uo4tleck2cnfk6whpfqsrvjc@s2yrjumgvw6j>
- <34216857-170c-45d4-8f6d-987573269215@kernel.org>
+Subject: Re: [PATCH v2 08/11] clk: qcom: add support for GCC on SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kalpak Kawadkar
+	<quic_kkawadka@quicinc.com>
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
+ <20241021-sar2130p-clocks-v2-8-383e5eb123a2@linaro.org>
 Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <34216857-170c-45d4-8f6d-987573269215@kernel.org>
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20241021-sar2130p-clocks-v2-8-383e5eb123a2@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _Z9cHtAk172C_5x6AprBo93FeR1XZQOR
-X-Proofpoint-GUID: _Z9cHtAk172C_5x6AprBo93FeR1XZQOR
+X-Proofpoint-ORIG-GUID: Ne6XEp-d1zFEcTtnSyCMasdCf3VIvZeF
+X-Proofpoint-GUID: Ne6XEp-d1zFEcTtnSyCMasdCf3VIvZeF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
  priorityscore=1501 spamscore=0 mlxscore=0 phishscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1011 malwarescore=0 impostorscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410220041
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ adultscore=0 mlxlogscore=796 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410220045
 
 
 
-On 10/21/2024 8:41 PM, Krzysztof Kozlowski wrote:
-> On 21/10/2024 12:56, Dmitry Baryshkov wrote:
->>>>   	{ }
->>>>   };
->>>> @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
->>>>   	if (IS_ERR(regmap))
->>>>   		return PTR_ERR(regmap);
->>>>   
->>>> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
->>>
->>> Why we cannot use match data? Seeing compatibles in the code is
->>> unexpected and does not scale.
->>
->> Because using match data doesn't scale in such cases. We have been using
+On 10/21/2024 4:00 PM, Dmitry Baryshkov wrote:
+> Add driver for the Global Clock Controller as present on the Qualcomm
+> SAR2130P platform. This is based on the msm-5.10 tree, tag
+> KERNEL.PLATFORM.1.0.r4-00400-NEO.0.
 > 
-> I don't understand how it could not scale. That's the entire point of
-> match data - scaling.
+> Co-developed-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> Signed-off-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/clk/qcom/Kconfig        |    9 +
+>   drivers/clk/qcom/Makefile       |    1 +
+>   drivers/clk/qcom/gcc-sar2130p.c | 2326 +++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 2336 insertions(+)
 > 
->> compatibles to patch clock trees for the platforms for quite a while.
->> You can see that each of the "tunings" is slightly different. From my
-> 
-> 
-> You have one driver, where are these tunings which are supposed to be
-> different? You need here only enum or define, in the simplest choice.
-> 
->> point of view, this approach provides a nice balance between having a
->> completely duplicate driver and having a driver which self-patches the
->> tree.
-> 
-> How duplicate driver got into this? I don't think we talk about the
-> same. I meant ID table match data.
->>
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index e5d7c89b0dab6b4fc7133d8e348ae61d38f91770..5f7bf9db76cfcef1ab18a6ba09fb4dc506695f9d 100644
+> --- a/drivers/clk/qcom/Kconfig
 
-I agree with Dmitry. If I understand correctly, to add match data 
-support, we need to define the gpu_cc_qcs8300_clocks struct by 
-duplicating the entries from gpu_cc_sa8775p_clocks and then adding the 
-additional qcs8300 clocks. The compatible approach is simpler and used 
-across most existing platforms.
+> +
+> +static struct gdsc pcie_0_gdsc = {
+> +	.gdscr = 0x7b004,
+> +	.collapse_ctrl = 0x62200,
+> +	.collapse_mask = BIT(0),
+> +	.pd = {
+> +		.name = "pcie_0_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
+> +};
+> +
+> +static struct gdsc pcie_0_phy_gdsc = {
+> +	.gdscr = 0x7c000,
+> +	.collapse_ctrl = 0x62200,
+> +	.collapse_mask = BIT(3),
+> +	.pd = {
+> +		.name = "pcie_0_phy_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
+> +};
+> +
+> +static struct gdsc pcie_1_gdsc = {
+> +	.gdscr = 0x9d004,
+> +	.collapse_ctrl = 0x62200,
+> +	.collapse_mask = BIT(1),
+> +	.pd = {
+> +		.name = "pcie_1_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
+> +};
+> +
+> +static struct gdsc pcie_1_phy_gdsc = {
+> +	.gdscr = 0x9e000,
+> +	.collapse_ctrl = 0x62200,
+> +	.collapse_mask = BIT(4),
+> +	.pd = {
+> +		.name = "pcie_1_phy_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = VOTABLE | RETAIN_FF_ENABLE,
+> +};
+> +
+> +static struct gdsc usb30_prim_gdsc = {
+> +	.gdscr = 0x49004,
+> +	.pd = {
+> +		.name = "usb30_prim_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = RETAIN_FF_ENABLE,
+> +};
+> +
+> +static struct gdsc usb3_phy_gdsc = {
+> +	.gdscr = 0x60018,
+> +	.pd = {
+> +		.name = "usb3_phy_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = RETAIN_FF_ENABLE,
+> +};
+> +
+Dimtry, could you also add,
+"hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc"
+static struct gdsc hlos1_vote_mm_snoc_mmu_tbu_hf0_gdsc = {
+         .gdscr = 0x8d204,
+         .pd = {
+                 .name = "hlos1_vote_mm_snoc_mmu_tbu_hf0_gdsc",
+         },
+         .pwrsts = PWRSTS_OFF_ON,
+         .flags = VOTABLE,
+};
 
-Thanks,
-Imran
+"hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc"   --> 0x8d054
+"hlos1_vote_turing_mmu_tbu0_gdsc"   --> 0x8d05c	
+"hlos1_vote_turing_mmu_tbu1_gdsc"   --> 0x8d060	
 
-> 
-> Best regards,
-> Krzysztof
-> 
 
+
+-- 
+Thanks & Regards,
+Taniya Das.
