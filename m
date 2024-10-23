@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7959622615;
-	Wed, 23 Oct 2024 21:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F7E1D041B;
+	Wed, 23 Oct 2024 22:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729720361; cv=none; b=uXNtI9685F89hmXtrkGxBmo8WpTAgf5oAg1c7Fwd7pPM6HfdMrofRMXnfZeyNYVjKxSWXeXerxaW/FBP0uRDCD1JOEDnq7OEILXYOuk10VNK4PDuG3Wg9sFiwkbK4wt3mqqVmKsKBcnzVCCKvnIu3TWVTklktx9qNS3f5Ur6WYQ=
+	t=1729721557; cv=none; b=riYdOZYr9fuKskPq5FSOGNrx1sox4qWE0xVIfx5wM2SDVteA3ilCLa0CbPW20Slgjiar0GG+xuSCUwsnab4naPKxuQD29FWnc+/8rI+yGHwha2M/LEgwdRXG/nt8TD/8IGMC7OXXo5wwaySFWsNN5gv3YS3CHE7heQ4ZdxaiVB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729720361; c=relaxed/simple;
-	bh=9bVyAQpQFt/Z58ZQ5nW+bBDA1LTmojglQ5M0fRlRTUw=;
+	s=arc-20240116; t=1729721557; c=relaxed/simple;
+	bh=ya9ok5nW1iUWsJB9i5ZUGJbOtt75/dc/ZmVQACOslIY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=DkoSPjQvvPet3Rif+luFZx0G1rUq80jDkVPcBokrwp7ypYwQxDA0LQMmvk+Mqn8Bjxm12zR5XVdRT0k0nKnXNzpMeLhVBqF9EfKesOad3v3NwZwyNPVq3NI/eKo+0LqUTBKfsf84NwKosSidQDjn6jOVL3UymFRJoE8hXJSQIKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzU0hZh6; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=PzKBtjQAGu8gcGYlalnTeHOPpFa/XYKjS/O7R21y3hdsmoXnTGLnRbfdnT0VBwunIoTLO42/iSEFa2u+FSaOc/FClMWcX5SVMGjWqVTlLqhrnFFqzEMIsgFqeUpCIbxYYNzZgKKfQ8AQQOST66Qm1+t6jkl+uE5ru9xVjkn95eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ple3/eFh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzU0hZh6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D7BC4CEC6;
-	Wed, 23 Oct 2024 21:52:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ple3/eFh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B02C4CEC6;
+	Wed, 23 Oct 2024 22:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729720361;
-	bh=9bVyAQpQFt/Z58ZQ5nW+bBDA1LTmojglQ5M0fRlRTUw=;
+	s=k20201202; t=1729721557;
+	bh=ya9ok5nW1iUWsJB9i5ZUGJbOtt75/dc/ZmVQACOslIY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GzU0hZh6NYm598rTpJ5Dh1ikSZ+Utkx8zujjS8pRtxDERtuIXop5M206OgofFX2Rt
-	 HwHahYElDKTG1ymAyvDvBKztLnH3Zf3i3HXfEYcj04JmZwWJz0J4eRMJs0Q2DHseEQ
-	 xWAy1vUFOLcHRTjeMMkfeC/S9HvTAjJBShtHq1ijLxHQewlUSTIFAhfq2BA3W4U9BX
-	 DXdhujrsCmjlL2w6gzbEakj6H1ILJJLPsqXTXTVJHOHdBSFhE5n3zXlDUnmS5kFkEB
-	 vj56Vv1Ki92EetFKmG2t5b6YH3k84L8OnfCHHhL28752UOAL+cRBA894BtIm6O2d5P
-	 Y6vtqsY2ccBfQ==
-Message-ID: <21fe104262989f04fadf9ec57dcac6df.sboyd@kernel.org>
+	b=ple3/eFhwg5tdx7JHtQI9sxTZ/nAW5KzfBySbtozhZ0TeF2FnyfNpBc+/7ZbrNYcI
+	 X+lpjXhi4UB0yCjyW3lVQIPz2syoMvTc+7JHDLJpFh9jfm8MAgZWaRRWx2lN/QLMtc
+	 0R+9TaICpycm+2MvfLsQd9DnT3baMnH9FICrOXNByieQQ8df6B5k+a5IbITKP2owCd
+	 eQZeh4ReGgWOWQcAzGT6YYhL2ueVNaon47lv/G3GPjq83Hd69fjVZohurqvdKisvc+
+	 P4vRA0LTfcknDRbi68pfLlBmm9qZ50vYZwDw8TUEtChG1MmtvzA4x9nlzRaLYgn55j
+	 df6xgGkF4z/FA==
+Message-ID: <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,194 +35,43 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZxkX5gnDkWrTynRv@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com> <022cf4920f8147cc720eaf02fd52c0fa56f565c5.1728300189.git.andrea.porta@suse.com> <611de50b5f083ea4c260f920ccc0e300.sboyd@kernel.org> <ZxkX5gnDkWrTynRv@apocalypse>
-Subject: Re: [PATCH v2 08/14] clk: rp1: Add support for clocks provided by RP1
+In-Reply-To: <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
+References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com> <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com> <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org> <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
+Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herve Codina <herve.codina@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Linus Walleij <linus.walleij@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, St efan Wahren <wahrenst@gmx.net>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com, jonathan@raspberrypi.com
-To: Andrea della Porta <andrea.porta@suse.com>
-Date: Wed, 23 Oct 2024 14:52:38 -0700
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Wed, 23 Oct 2024 15:12:35 -0700
 User-Agent: alot/0.10
 
-Quoting Andrea della Porta (2024-10-23 08:36:06)
-> Hi Stephen,
+Quoting Th=C3=A9o Lebrun (2024-10-23 04:08:31)
+> On Thu Oct 17, 2024 at 8:48 PM CEST, Stephen Boyd wrote:
+> > Quoting Th=C3=A9o Lebrun (2024-10-07 06:49:19)
+> > > +/* Required early for UART. */
+> >
+> > I still don't get this. UART isn't an early device. It's only the
+> > interrupt controller and the timer that matter. Does MIPS do something
+> > special for UARTs?
 >=20
-> On 15:08 Wed 09 Oct     , Stephen Boyd wrote:
-> > Quoting Andrea della Porta (2024-10-07 05:39:51)
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > index 299bc678ed1b..537019987f0c 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
-> > >           These multi-function devices have two fixed-rate oscillator=
-s, clocked at 32KHz each.
-> > >           Clkout1 is always on, Clkout2 can off by control register.
-> > > =20
-> > > +config COMMON_CLK_RP1
-> > > +       tristate "Raspberry Pi RP1-based clock support"
-> > > +       depends on PCI || COMPILE_TEST
-> >=20
-> > A better limit would be some ARCH_* config.
+> Our hardware has a PL011. That is AMBA stuff; they get probed before
+> platform devices by of_platform_bus_create(). "pll-per" on EyeQ5 must
+> be available at that time.
 >=20
-> I've avoided ARCH_BCM2835 since the original intention is for this driver
-> to work (in the future) also for custom PCI cards with RP1 on-board, and =
-not
-> only for Rpi5.
-
-How will that custom PCI card work? It will need this driver to probe?
-Is the iomem going to be exposed through some PCI config space?
-
-It's not great to depend on CONFIG_PCI because then the driver is forced
-to be =3Dm if PCI ever becomes tristate (unlikely, but still makes for bad
-copy/pasta). I understand this line is trying to limit the availability
-of the config symbol. Maybe it should simply depend on ARM or ARM64? Or
-on nothing at all.
-
->=20
-> > > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > > new file mode 100644
-> > > index 000000000000..9016666fb27d
-> > > --- /dev/null
-> > > +++ b/drivers/clk/clk-rp1.c
-> >=20
-> > > +#include <linux/clk.h>
-> >=20
-> > Preferably this include isn't included.
->=20
-> This include is currently needed by devm_clk_get_enabled() to retrieve
-> the xosc. Since that clock is based on a crystal (so it's fixed and
-> always enabled), I'm planning to hardcode it in the driver. This will
-> not only get rid of the devm_clk_get_enabled() call (and hence of the
-> clk.h include), but it'll also simplify the top devicetree. No promise
-> though, I need to check a couple of things first.
-
-A clk provider (clk-provider.h) should ideally not be a clk consumer
-(clk.h).
-
->=20
->=20
-> > > +
-> > > +static int rp1_pll_ph_set_rate(struct clk_hw *hw,
-> > > +                              unsigned long rate, unsigned long pare=
-nt_rate)
-> > > +{
-> > > +       struct rp1_pll_ph *pll_ph =3D container_of(hw, struct rp1_pll=
-_ph, hw);
-> > > +       const struct rp1_pll_ph_data *data =3D pll_ph->data;
-> > > +
-> > > +       /* Nothing really to do here! */
-> >=20
-> > Is it read-only? Don't define a set_rate function then and make the rate
-> > determination function return the same value all the time.
->=20
-> Not 100% sure about it, maybe Raspberry Pi colleagues can explain.
-> By 'rate determination function' you're referring (in this case) to
-> rp1_pll_ph_recalc_rate(), right?
-
-Yes.
-
-> If so, that clock type seems to have
-> a fixed divider but teh resulting clock depends on the parent rate, so
-> it has to be calculated.
-
-Sure, it has to be calculated, but it will return the rate that causes
-no change to the hardware. When that happens, the set_rate() op should
-be skipped, and you can see that with clk_divider_ro_ops not having a
-set_rate() function pointer.
-
->=20
-> > > +static int rp1_clock_determine_rate(struct clk_hw *hw,
-> > > +                                   struct clk_rate_request *req)
-> > > +{
-> > > +       struct clk_hw *parent, *best_parent =3D NULL;
-> > > +       unsigned long best_rate =3D 0;
-> > > +       unsigned long best_prate =3D 0;
-> > > +       unsigned long best_rate_diff =3D ULONG_MAX;
-> > > +       unsigned long prate, calc_rate;
-> > > +       size_t i;
-> > > +
-> > > +       /*
-> > > +        * If the NO_REPARENT flag is set, try to use existing parent.
-> > > +        */
-> > > +       if ((clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT)) {
-> >=20
-> > Is this flag ever set?
->=20
-> Not right now, but it will be used as soon as I'll add the video clocks,
-> so I thought to leave it be to avoid adding it back in the future.
-> For this minimal support is not needed though, so let me know if you
-> want it removed.
+> In concrete terms, if we don't register pll-per on EyeQ5 at
+> of_clk_init(), we stare at void because the serial fails probing.
+> I haven't digged into why EPROBE_DEFER doesn't do its job. Anyway we
+> don't want our serial to stall for some time during our boot process.
 >=20
 
-Ok sure.
+Ok thanks for the details. It sounds like there's a bug in there
+somewhere. Eventually this should be removed.
 
->=20
-> > > +
-> > > +       [RP1_CLK_ETH_TSU] =3D REGISTER_CLK(.name =3D "clk_eth_tsu",
-> > > +                               .parents =3D {"rp1-xosc"},
-> > > +                               .num_std_parents =3D 0,
-> > > +                               .num_aux_parents =3D 1,
-> > > +                               .ctrl_reg =3D CLK_ETH_TSU_CTRL,
-> > > +                               .div_int_reg =3D CLK_ETH_TSU_DIV_INT,
-> > > +                               .sel_reg =3D CLK_ETH_TSU_SEL,
-> > > +                               .div_int_max =3D DIV_INT_8BIT_MAX,
-> > > +                               .max_freq =3D 50 * MHz,
-> > > +                               .fc0_src =3D FC_NUM(5, 7),
-> > > +                               ),
-> > > +
-> > > +       [RP1_CLK_SYS] =3D REGISTER_CLK(.name =3D "clk_sys",
-> > > +                               .parents =3D {"rp1-xosc", "-", "pll_s=
-ys"},
-> >=20
-> > Please use struct clk_parent_data or clk_hw directly. Don't use strings
-> > to describe parents.
->=20
-> Describing parents as as strings allows to directly assign it to struct
-> clk_init_data, as in rp1_register_clock():
->=20
-> const struct rp1_clock_data *clock_data =3D data;
-> struct clk_init_data init =3D { };
-> ...
-> init.parent_names =3D clock_data->parents;
->=20
-> otherwise we should create an array and populate from clk_parent_data::na=
-me,
-> which is of course feasible but a bit less compact. Are you sure you want
-> to change it?
->=20
+Can you dump_stack() in clk_get() when the "pll-per" clk is claimed?
 
-Do not use strings to describe parents. That's the guiding principle
-here. I agree using strings certainly makes it easy to describe things
-but that doesn't mean it is acceptable.
-
-> > > +       struct clk *clk_xosc;
-> > > +       struct clk_hw **hws;
-> > > +       unsigned int i;
-> > > +
-> > > +       clockman =3D devm_kzalloc(dev, struct_size(clockman, onecell.=
-hws, asize),
-> > > +                               GFP_KERNEL);
-> > > +       if (!clockman)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       spin_lock_init(&clockman->regs_lock);
-> > > +       clockman->dev =3D dev;
-> > > +
-> > > +       clockman->regs =3D devm_platform_ioremap_resource(pdev, 0);
-> > > +       if (IS_ERR(clockman->regs))
-> > > +               return PTR_ERR(clockman->regs);
-> > > +
-> > > +       clk_xosc =3D devm_clk_get_enabled(dev, NULL);
-> > > +       if (IS_ERR(clk_xosc))
-> > > +               return PTR_ERR(clk_xosc);
-> > > +
-> > > +       clockman->hw_xosc =3D __clk_get_hw(clk_xosc);
-> >=20
-> > Please use struct clk_parent_data::index instead.
->=20
-> Sorry, I didn't catch what you mean here. Can you please elaborate?
->=20
-
-Don't use __clk_get_hw() at all. Also, don't use clk_get() and friends
-in clk provider drivers. Use struct clk_parent_data so that the
-framework can do the work for you at the right time.
+I suspect of_clk_get_hw_from_clkspec() is seeing NULL if
+of_clk_hw_onecell_get() is being used and the clk_hw pointer isn't set
+yet. NULL is a valid clk and it will be returned to the consumer. You'll
+want to write a custom 'get' function for of_clk_add_hw_provider() that
+returns -EPROBE_DEFER for any clk that isn't registered early. Then the
+AMBA stuff should defer probe until the "full" clk provider is
+registered.
