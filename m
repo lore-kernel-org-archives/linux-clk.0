@@ -1,51 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D3B610B;
-	Wed, 23 Oct 2024 04:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F300883CDA;
+	Wed, 23 Oct 2024 04:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729656970; cv=none; b=KKF3A4VcNs59VCQa0HuP5pzAd7U/Y9hShWri+9I3KVM/5lVbpZuhUP6m7JnPZJbdXtifTVH/A7FmLgA8ijnbB0VDxn2g5oyl5+LLbPVEbcuggpxjQ9qSyxH4Imf542X7SLkdf1JOhvXnAO8AnfzlFIFlnnboZMdZ8gD2luRLCw8=
+	t=1729656976; cv=none; b=HzsOvriiezKIHJfUy4ySiy4f5Ggik25mvyx9lVzrzJxc50fDigI1Oqb79245eaq2TN+DmnWDWkmutBXqZ2o7+snNb4J6IGEXawooJIa0UJoclckmZQFa0xNtssLgZQkreCHjNgO5z4NUxtbAXFJidSNDotwajk+MDxyRBiUQA9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729656970; c=relaxed/simple;
-	bh=h6NhKOQ6eEXS1Vi0lkLhGlJe67YDw+ij0cq5jGWAVnI=;
+	s=arc-20240116; t=1729656976; c=relaxed/simple;
+	bh=fAznswwC8vg0ZKULJ80WB9lOPTcXF9zCKaZwE+DqUWA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T/ag+zwpIBEKv5PGlYULkpOBC1/yb1HNc0OZ8nNlLpRcjKCzAypPkjQNEU5HuEg8S2UB8S4CeeaMyIZCwRPqVdRtlAM2i/WeoR04rrLg2LVq9ca5sM4vvWKq1yiXhmsS7HyIGFS6aimbSTPXfAK1pJqLt42uqnEHSe8KV0w5n4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKLMiyo2; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=GSjLEZEa7v0U5G8RZDGcQ05p2cmmyD1SQU2V/sNQbkEqfYOURuTtV/Iy2Rc+Cy1S78/LzFD9079gHOc6ifVtiPesXO6Y0OhRAYxMU+Olet3qpWrtNP71+VEEqnKX2Be/UDFiMlLyvlpLB2dPhC2hXG+f6bXSywfOf4DmzRPFjV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+LH6nYa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKLMiyo2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6FBAC4CEC6;
-	Wed, 23 Oct 2024 04:16:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+LH6nYa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01098C4CEEF;
+	Wed, 23 Oct 2024 04:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729656969;
-	bh=h6NhKOQ6eEXS1Vi0lkLhGlJe67YDw+ij0cq5jGWAVnI=;
+	s=k20201202; t=1729656975;
+	bh=fAznswwC8vg0ZKULJ80WB9lOPTcXF9zCKaZwE+DqUWA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DKLMiyo2fSnxEqY1KbNPu/yXy2QXFQcxYrSvvN8xDrzb1sBCM9/hYhUUXr5J2yEJn
-	 L8+5BS5/AWBdLwqeLAHnnTVYTbbbg5whiYSElhq2USDD4dJtROEYY4JXnGSJaCx2mw
-	 nu/03PXuvQAXrDgWtT6bRXudj+6/+vs7CoDBKDEm/XCcov3htMpGdvjRyHySZeKx1/
-	 d3Bfww7ZQiWbkbz0rmK76DSYRSAhrAzzdivrzjjm7Vl2llJLLbpIi2t+JRc6KY5qiB
-	 NLF5iUNY5kH49+4Ln2rPFOgMKFVd+/JCj4uMs8af4GnVL3JmOySBglEMSUAFGmG11d
-	 koLdB0tg/tSBQ==
+	b=i+LH6nYaZLeJ8HOpV9laxW3JdfU+L14nJxkN+3fq+qsylGYsXdxJxgnl7JNMlxaKv
+	 K+ZJ6lRY9FqMtQjEtXGpJkEzo4pKGbd8XrsQT7sj8gtPvQ8of5aRneoXwdvu05f5HM
+	 2Vwwhga4P7yoQ2dhS+vfS/3ev+l/NeHCBrRvR96QZM6bVRUd5cJPRWJSKK2U9ZkjE+
+	 bj73LtSdShbameDR3pHJxTWozXO1SYOk1orLazZmXcZAcZF8tcKbyBhrqQ4o+0ytDZ
+	 iBqzEbEQoIknvSBI97sK1uA8PdtPVIN3gfg0qCi85nJbeirEswH68lwZU6By31rwQX
+	 4lP3uhtze1DMQ==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Gabor Juhos <j4g8y7@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH v2] clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts flags
-Date: Tue, 22 Oct 2024 23:15:47 -0500
-Message-ID: <172965696388.224417.10571960256822836381.b4-ty@kernel.org>
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcs404: fix initial rate of GPLL3
+Date: Tue, 22 Oct 2024 23:15:52 -0500
+Message-ID: <172965696410.224417.417251056134093970.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241021-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v2-1-0bfd64556238@linaro.org>
-References: <20241021-x1e80100-clk-gcc-fix-usb-mp-phy-gdsc-pwrsts-flags-v2-1-0bfd64556238@linaro.org>
+In-Reply-To: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
+References: <20241022-fix-gcc-qcs404-gpll3-v1-1-c4d30d634d19@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,21 +54,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 21 Oct 2024 15:46:25 +0300, Abel Vesa wrote:
-> Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
-> configuration on machine suspend. Currently, the QMP combo PHY driver
-> doesn't reinitialise the HW on resume. Under such conditions, the USB
-> SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
-> RET_ON. This has been already done for USB 0 and 1 SS PHY GDSCs,
-> Do this also for the USB MP SS1 PHY GDSC config. The USB MP SS0 PHY GDSC
-> already has it.
+On Tue, 22 Oct 2024 11:45:56 +0200, Gabor Juhos wrote:
+> The comment before the config of the GPLL3 PLL says that the
+> PLL should run at 930 MHz. In contrary to this, calculating
+> the frequency from the current configuration values by using
+> 19.2 MHz as input frequency defined in 'qcs404.dtsi', it gives
+> 921.6 MHz:
+> 
+>   $ xo=19200000; l=48; alpha=0x0; alpha_hi=0x0
+>   $ echo "$xo * ($((l)) + $(((alpha_hi << 32 | alpha) >> 8)) / 2^32)" | bc -l
+>   921600000.00000000000000000000
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts flags
-      commit: e7f37a7d16310d3c9474825de26a67f00983ebea
+[1/1] clk: qcom: gcc-qcs404: fix initial rate of GPLL3
+      commit: 36d202241d234fa4ac50743510d098ad52bd193a
 
 Best regards,
 -- 
