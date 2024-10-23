@@ -1,48 +1,59 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB3156C72;
-	Wed, 23 Oct 2024 13:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718A1154439
+	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 13:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729688736; cv=none; b=jkLaf4/RVaM0m8s/kU4aNEmBh60c7TowlU2jhPYsKPi5xDaZGo5dmM6c31J2L1G3mYDTTDMyJl0tbEkhEhSRRx6tOEVeCDChgG3RlZj7O0YLityc8GL0akprFnMwF0pGPhZVWuvSsSNlOq8rUq/H4x+Ldm1F/42d6NvbZpZ2Adg=
+	t=1729691944; cv=none; b=gYheM+U4zGvB8YE75ksXabFU/niOYEfhJ05rajc7A2wOfY69YRMg1dsP4e13PTNilAFu4pft7d1nzmu2L3ZjqB2MgSUi/dGGd8OoVb9Co/0Q1Khfx8yaRI7qGWYqYWI/P44fYk6R7H2LY1NlUiXup0I4Y8BulpqnMoCOJ3x6xhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729688736; c=relaxed/simple;
-	bh=UBCLs1CT6lS89hLMeBBrgYkW5FO4QlEYT3JDYAYWdPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iHgG2gcqTRt/Skttxl7RpP8Nq23ZSrxuXnoHJeFsrftQQumU/fARK9DaFNJqJrK089LPiNymcIt14Cplz4vVO5TR3QiMfMPwyiA4Htj+VfMtVD4aounFF39+02vLdJ7c8YMb4iWiSGinMqrCB6gLcGZ9C4upi0bgzAqiygJMBnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A1Kg3w74; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729691944; c=relaxed/simple;
+	bh=Slk8kQY0Q+dK5QAm8fsYranSKEWAQVxmt0hy2Es3S24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TisN+c+x2UVlt9sNeplfXbCfMvs2stvCTAPGXq1C2O6rUBdbm0fIxzt35SfP/U1pqf/d7UNlfeq0MXr7z+njCA/0ko1UNJbVT22YD6L/SOKn37FNzY8pqx19TxHA02zl1e28SPcWMNbiZ3Uo6MaLVwK92JYSVO4EbNL1NQcy6oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ez+Hv8/T; arc=none smtp.client-ip=209.85.219.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A1Kg3w74"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9uKAa020008;
-	Wed, 23 Oct 2024 13:05:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4403SM6nc/S9kArf7Hq5R7eFffWVXEua9Stbp6iDzSo=; b=A1Kg3w74+xsRbx0L
-	Dek8a/wPSE7yAezN3U4vxBhqh7ke86c10Utm9PqaBW228uO+BNyCfnJyb+MHbI1M
-	iyDSo8/hl0xs7EZx3rHO4yYni4UP4gFxJHqSYRz/Dr34GPps4gPDYaW7tey2aDOG
-	pKprSCBBqhBhys56Vb4C0+rE4ZlLA1vhbE0pwFCxl+J/MFoKtpMrlN0z/U5OaTun
-	GkTl36AnNXq51Ao5oziOvdTivxaYFdQ6N0zYA/fTIUYJccEwiD4xsaFvUqmmjkaf
-	rEXqtpJsuxd7knsS18nfoM8QI62tW2br9yLXMWe6Qx/xqwKnXSomQYQg/18PVnG3
-	XtzzCg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em66a8vx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:05:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ND5GIx005127
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:05:16 GMT
-Received: from [10.253.39.49] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 06:05:11 -0700
-Message-ID: <a2448df9-9b8b-4b7e-ada5-6f26d7e7da97@quicinc.com>
-Date: Wed, 23 Oct 2024 21:05:09 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ez+Hv8/T"
+Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e2e2d013f2dso1870537276.1
+        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 06:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729691942; x=1730296742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XqVsuRr75qpCi8/jFppUej7xH930LWk3HaDFMlaWCAs=;
+        b=ez+Hv8/TuAYLcBkkReIEJS9+vqIOwe8sfbyvVwNTAJQ/V+OXXF+pIt22WHsxPrvlmg
+         inc1TCtKCiYCS3xYcpE48UQBX4LF9p3IuM3jye6hRbujJDK5wxHAcoYQScNiSFAGB6Z7
+         IW9K95ggtnO/PKuT+6+aOrZ15eRMK6hpUzrRXoRSgtLKB184mWMd+XfwGkWAns9bo0Bs
+         24TR09x+kW2EidAllVuxMUuLNF72n4VQztUzuwMNY5k0cFNBmw/b/mYvZUZyLhqHBaqJ
+         yeU58saqC3JxhIN23c0nO6QDAx53B1a+pgv8baeBArqxCKNQotyJuNLqg1NK58qIrS9D
+         zoIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729691942; x=1730296742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XqVsuRr75qpCi8/jFppUej7xH930LWk3HaDFMlaWCAs=;
+        b=hxqeA9EgZ70j+buJv/9Nio8wHQ55BIRfT/CccZ17Rirtcsy0sBio+w+148ZAuzlRjb
+         RgirLJTbL60ihrikEcoKMHpA/vRU1HOxcSwnaeQBrGpHs1TIqQEl37q86O656DRpRlyl
+         Rhlw8A2H4CynLtgZF/LdVSWnXVGJDkoGwpMsTs1Aw4rpCZh0rgm7axKrJBcgWItBpMaJ
+         otFVFbIXSaTl0qHWeoe8n5dhjTcjFsByM6CWAdaEy1zP05jVJBZc5DRpBS8p651LD/Xo
+         thERtjVImDhC6UwuY2z95JyUoyvV0BsrR+9/D/gzA+lLKAo5K+uKczPHK3SMz92aiMMZ
+         FhJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxxrUCRLT8uF2R4v7FsO+HFdEe73JA2VPSDwhI9j5AGc1GhsXirLRwgPMKUWHvAZdmZZqEnPEULAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9vSJbVLjDJ6aVG+VQjV/65jEuJCo3yFmg7DYIzN26L1QwZaSE
+	8wjdsK0pI5ouGuL+K3bfuBc/osvjCSfDFlUmncZq19tbwrKamktn
+X-Google-Smtp-Source: AGHT+IFNEL9FmPxALvobgQSuAIYCGYgKxsxBlEt+k15dHVJixsKIZjrj8H+rd69TBSaXNzztBVEU3Q==
+X-Received: by 2002:a05:6902:1384:b0:e29:bef:4931 with SMTP id 3f1490d57ef6-e2e3a6dc6bamr2105042276.55.1729691942377;
+        Wed, 23 Oct 2024 06:59:02 -0700 (PDT)
+Received: from [10.192.166.111] (host-36-28.ilcul54.champaign.il.us.clients.pavlovmedia.net. [68.180.36.28])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2bdc9b61b4sm1473725276.37.2024.10.23.06.59.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 06:59:01 -0700 (PDT)
+Message-ID: <e40ee870-fbd4-445f-b1f3-d6f7806f6159@gmail.com>
+Date: Wed, 23 Oct 2024 08:59:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,215 +61,49 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
- <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
- <abro3enahzbugcwokcyyhwybbokestbigvzhywxhnfrdjihni3@7ej2hkgbgtf6>
- <b336724c-1fea-4e1e-9477-66f53d746f09@quicinc.com>
- <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
- <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
- <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
+Subject: Re: [PATCH v3] clk: sophgo: Cast an operand to u64 to prevent
+ potential unsigned long overflow on 32-bit machine in
+ sg2042_pll_recalc_rate()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, unicorn_wang@outlook.com,
+ inochiama@outlook.com, nathan@kernel.org, linux-clk@vger.kernel.org,
+ zzjas98@gmail.com, chenyuan0y@gmail.com
+References: <20241022201244.8992-1-zichenxie0106@gmail.com>
+ <13b95ab6-bb38-4b05-9c3f-f567c32cc902@stanley.mountain>
 Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Zichen Xie <zichenxie0106@gmail.com>
+In-Reply-To: <13b95ab6-bb38-4b05-9c3f-f567c32cc902@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1CO6k--mz-lrf1Qh_Mly3NrWvlL3yEAP
-X-Proofpoint-GUID: 1CO6k--mz-lrf1Qh_Mly3NrWvlL3yEAP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 clxscore=1011 mlxscore=0 bulkscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230078
 
 
-
-On 10/18/2024 11:38 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 18, 2024 at 10:03:08PM +0800, Jie Luo wrote:
+On 2024/10/23 2:41, Dan Carpenter wrote:
+> I'm sorry, I have let you down in some ways.  This subject line is too long.
+> It's 126 characters long.  Please change it so something like:
+>
+> clk: sophgo: avoid integer overflow in sg2042_pll_recalc_rate()
+>
+> On Tue, Oct 22, 2024 at 03:12:45PM -0500, Gax-c wrote:
+>> From: Zichen Xie <zichenxie0106@gmail.com>
 >>
->>
->> On 10/18/2024 4:11 PM, Dmitry Baryshkov wrote:
->>> On Fri, 18 Oct 2024 at 09:55, Jie Luo <quic_luoj@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 10/18/2024 6:32 AM, Dmitry Baryshkov wrote:
->>>>> On Tue, Oct 15, 2024 at 10:16:54PM +0800, Luo Jie wrote:
->>>>>> The CMN PLL clock controller allows selection of an input
->>>>>> clock rate from a defined set of input clock rates. It in-turn
->>>>>> supplies fixed rate output clocks to the hardware blocks that
->>>>>> provide ethernet functions such as PPE (Packet Process Engine)
->>>>>> and connected switch or PHY, and to GCC.
->>>>>>
->>>>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>>>> ---
->>>>>>     arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
->>>>>>     arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
->>>>>>     2 files changed, 24 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>>> index 91e104b0f865..77e1e42083f3 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>>> @@ -3,7 +3,7 @@
->>>>>>      * IPQ9574 RDP board common device tree source
->>>>>>      *
->>>>>>      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>>      */
->>>>>>
->>>>>>     /dts-v1/;
->>>>>> @@ -164,6 +164,10 @@ &usb3 {
->>>>>>        status = "okay";
->>>>>>     };
->>>>>>
->>>>>> +&cmn_pll_ref_clk {
->>>>>> +    clock-frequency = <48000000>;
->>>>>> +};
->>>>>> +
->>>>>>     &xo_board_clk {
->>>>>>        clock-frequency = <24000000>;
->>>>>>     };
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>>> index 14c7b3a78442..93f66bb83c5a 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>>> @@ -3,10 +3,11 @@
->>>>>>      * IPQ9574 SoC device tree source
->>>>>>      *
->>>>>>      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>>      */
->>>>>>
->>>>>>     #include <dt-bindings/clock/qcom,apss-ipq.h>
->>>>>> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
->>>>>>     #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->>>>>>     #include <dt-bindings/interconnect/qcom,ipq9574.h>
->>>>>>     #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>>>> @@ -19,6 +20,11 @@ / {
->>>>>>        #size-cells = <2>;
->>>>>>
->>>>>>        clocks {
->>>>>> +            cmn_pll_ref_clk: cmn-pll-ref-clk {
->>>>>> +                    compatible = "fixed-clock";
->>>>>> +                    #clock-cells = <0>;
->>>>>> +            };
->>>>>
->>>>> Which block provides this clock? If it is provided by the external XO
->>>>> then it should not be a part of the SoC dtsi.
->>>>
->>>> The on-chip WiFi block supplies this reference clock. So keeping it in
->>>> the SoC DTSI is perhaps appropriate.
->>>
->>> Then maybe it should be provided by the WiFi device node? At least you
->>> should document your design decisions in the commit message.
->>
->> This CMN PLL reference clock is fixed rate and is automatically
->> generated by the SoC's internal Wi-Fi hardware block with no software
->> configuration required from the Wi-Fi side.
->>
->> Sure, I will enhance the commit message to add the information on the
->> fixed reference clock from Wi-Fi block. Hope this is ok.
-> 
-> We have other fixed clocks which are provided by hardware blocks.
-> Without additional details it is impossible to answer whether it is fine
-> or not.
+>> This was found by a static analyzer.
+>> There may be a potential integer overflow issue in
+>> sg2042_pll_recalc_rate(). numerator is defined as u64 while
+>> parent_rate is defined as unsigned long and ctrl_table.fbdiv
+>> is defined as unsigned int. On 32-bit machine, the result of
+>> the calculation will be limited to "u32" without correct casting.
+>> Integer overflow may occur on high-performance systems.
+>> We recommended that we cast the denominator as well but
+>> Dan Carpenter said that it was a max of 3087 and was not even
+>> vaguely close to the 4 billion mark needed to overflow a u32.
+>> So, we only cast the numerator here.
+> On second though, could we just leave this out.  Let's only mention the
+> numerator.
 
-There is an XO on the board which supplies reference clock (48Mhz or
-96Mhz) to the Wi-Fi block on the SoC. There is a multiplier/divider in
-the Wi-Fi block, which ensures the output reference clock of 48Mhz is
-supplied to CMN PLL block.
+Fine. I'll do it later.
 
-In summary, below is the path to receive the reference clock at CMN PLL:
-The clock path is .XO (48 MHZ/96 MHZ) --> WiFi (multiplier/divider) 
--->(48 MHZ) --> CMN PLL.
 
-There is no software configuration required for the entire path, as it
-is fully controlled by bootstrap pins on the board. There are bootstrap
-pins for selecting the selecting the XO frequency (48Mhz or 96Mhz) and
-based on this, the divider is automatically selected by HW (1 for 48Mhz,
-2 for 96Mhz), to ensure output clock to CMN PLL is 48Mhz.
-
-> 
->>
->>>
->>> Also, I don't think this node passes DT schema validation. Did you check it?
->>
->> Yes, the DT is validated against the schema, I have shared the logs
->> below. Could you please let me know If anything needs rectification?
-> 
-> I see, you are setting the cmn_pll_ref_clk frequency in the
-> ipq9574-rdp-common.dtsi file. If the PLL is internal to the SoC, why is
-> the frequency set outside of it? Is it generated by multiplying the XO
-> clk? Should you be using fixed-factor clock instead?
-> 
-
-Since the reference clock is controlled by bootstrap pins on the board,
-it may be appropriate to define the frequency for this reference clock
-in the board DTS. Given the clock tree described above, I will update
-the cmn_pll_ref_clk to define it as a fixed-factor clock as per your
-suggestion, with its frequency and factors configured in board DTSI.
-These values defined in rdp-common.dtsi will be default values that can
-be overridden if necessary by different boards. Hope this approach is
-fine.
-
-In ipq9574.dtsi:
-cmn_pll_ref_clk: cmn-pll-ref-clk { 
-  
-  
-
-         compatible = "fixed-factor-clock"; 
-  
-  
-
-         clocks = <&xo_clk>; 
-  
-  
-  
-  
-  
-
-	#clock-cells = <0>;
-};
-
-xo_clk: xo {
-	compatible = "fixed-clock";
-	#clock-cells = <0>;
-};
-
-In ipq9574-rdp-common.dtsi.
-&cmn_pll_ref_clk {
-	clock-div = <1>;
-	clock-mult = <1>;
-};
-
-&xo_clk {
-	clock-frequency = <48000000>;
-}
+>
+> regards,
+> dan carpenter
+>
