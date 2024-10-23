@@ -1,160 +1,149 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBB2209699
-	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 16:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A2183CDA;
+	Wed, 23 Oct 2024 17:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702261; cv=none; b=VL8g5YeObAYMLCdne04yB8TK2VWbfm+NhOcm+xIiTXJ9Vwo+t+te/+wvLcXc/DspX+4qn4lG6OHmVgDNXbESyu7X7PO0GkcHUmBTf5Yoh0BrO6wgU51xS9Qgs1cO/Vl91+ex/IPT1YQ03nU1MA0Axn+ZOiUFFnQ5ODWW1PmaHLA=
+	t=1729705782; cv=none; b=hdbsXBPCmY86tE6RNcDhcpCESE+XBv4lP/UF/r/jH8PV09KSD8hvLJMM5qCvR8tosJ8L/1W1DMsMmyQ+ZF0k40QnkqQlpRstvrE0v4HHjgCuHLFTPrHdWWbrlCeIRoxk5ElfBBK1hziRPbEM4kKEtusXaObe4yl9mn4Z1u2+lBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702261; c=relaxed/simple;
-	bh=YzyDLNl8va/xJl47EHT+vId7czfsGNnbHYHobDKQTlg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AQZ5BLE0ZaEc9nK/mHH+sKJfsbj6vUr5XHPzfZjRaFVhYrzz9FhDIh+MwZq1b+F33UG6K0xy+aJaL3AersJrgX0RXwYrtU6JGst9PAPl/y/igwos/gqqFTM3fsm1CRW1Ev9dRwWTvJcFk3BpjZ/DUfGSyvdk4Z/ERIr+1tBbZMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=rkfrkLKq; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1729705782; c=relaxed/simple;
+	bh=Y9TCwZlSJtdxla0/yzCRKiEB7fpt1K0qsHjdub3FmmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GM1hw9PZc0Fh7PSUtacEM0GSmt8fAbgrvqQxnYBPecal3BaroR36gD9I+kgcHIZjAhgfD5VtaNbd2932nk5fEIlssFSSbLBZU2AcZzF9q9Vjk2dlIgZ6FVZb/ZPitWIYxOIAUyBcAJR/caQJzTDYOG0M2BdI/axTEtM2wKB5gEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmaUHOyj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="rkfrkLKq"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ec4e349f4so4185969f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 09:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729702258; x=1730307058; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SOV7jAWhbFwwjw/OJ7O7LtE/DWvJ9qhDH2QMAsU+FWw=;
-        b=rkfrkLKqLgRsplrsZqRWvZZGQof9auNQasLNinujzsbNsRUpqLanza6XyxYrrZNj8L
-         nBNTJ69ZD46c/m1vwbP8V86QIw75LDiVr0O47Kav84XfVx6KSrFMge0yWP2FkWkiEAgx
-         gT99G6im9kVqCogG2d34n8ArG2y0ZM82u00fKmG6+ftwcicErE30c3kPehmkUIPJ9fc8
-         OcphUnIO3jaIfgP/mojARb63OqMW+uy9qwsfU1XIVK2BlkMzRKoFEMt2s5eDQHsYVOD9
-         9/qtuUqopdPkNWEc1rsEWJgZJpo9YHLF9G+HEbNlt546icKw/7fG4kkHvKU6m7ewLmMk
-         FoHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729702258; x=1730307058;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SOV7jAWhbFwwjw/OJ7O7LtE/DWvJ9qhDH2QMAsU+FWw=;
-        b=UP5MwrySs3r+Btrh6qeqhpq+RUnPBY97KSR0DUnslTLEaDJ8hqUdAfi748MBp9rUqQ
-         JFBYIlORjmOqLKt8368V1q3G9i1tnmPg/+J/HIzIuBHH3i6ijy4tu3xsZyv9wJ9Zlasr
-         nUQqg9jy51c2ed4gAD6BqipiuKIjIf+KK8IDgDcBb5HQyZ9zOuHeBqPuBPbQhTOAPd8z
-         U5i6g0wpacGQk9HWi+dZaBXjut3sQa7fthM1V+UED9qi7h6Li6SVtxa4NxaHYgIf7S74
-         /Hz32XTfmZDbDF914rkbn8AATD2lf1OLgM5KHQY7qDs3c50/jDS97KEe09u2s/hBNsmd
-         83yA==
-X-Forwarded-Encrypted: i=1; AJvYcCXngnqSBYP1aW+4oYBstEJgSVZNNJc3n2iS1CI1oF1O9Rv851l4lnsxNUN1d/H438veIm2SMbeDGdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy/iWCH8JYoXdDo7Qi573+f8B+1Bc9hkA2jiUKvr2SSV8bzHnb
-	Z3iUbkc42D0SNygrrNMVpSOXYJXXzcOtEk0ymxcpFRJ36stqcHbaRePXiNwO3gw=
-X-Google-Smtp-Source: AGHT+IHyDo7gKJ/IShXkUH9eaVP+PbzXws85gi+26NgIg+img0yXRqlCHCujQCnuXRFKsSClohiLPQ==
-X-Received: by 2002:a5d:6102:0:b0:37d:509e:8742 with SMTP id ffacd0b85a97d-37efceee7d5mr2193265f8f.1.1729702257644;
-        Wed, 23 Oct 2024 09:50:57 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 09:50:56 -0700 (PDT)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 23 Oct 2024 17:50:34 +0100
-Subject: [PATCH 37/37] arm64: dts: broadcom: Add DT for D-step version of
- BCM2712
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmaUHOyj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F927C4CEC6;
+	Wed, 23 Oct 2024 17:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729705782;
+	bh=Y9TCwZlSJtdxla0/yzCRKiEB7fpt1K0qsHjdub3FmmI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PmaUHOyjsIF/s2la1gyF32OheLEFYO2AI4QhNAUdsnfJrj49zonUU4cw6ibqLFGP5
+	 BK2sMy2qBRhymGxX8A+qajT7n8bfs4XgPN+GP9qcq7pzt+dnPbn4r81WGWuliUXoSo
+	 sR47EOws80W1N1+icMf6x2b1H9Hj9f6nvc5ReYmk94otaSJDMLyg8sPsVRoUag3kyh
+	 hLRT0cQpCjGyeOYDAw1DQNJfqx24+0/Azn+Pv1fS0mCyhsxz1NiED1uVgiRKOU9T3A
+	 fVtbWSb3fqxIsHcvnIcsUGRKPEeGmGHI8TUsrMxSOftwDKuLnaAp428dQ4kz588HVF
+	 m46JExIV5UVxg==
+Message-ID: <fdb76466-3258-4c71-bca3-50fd3cc94a0e@kernel.org>
+Date: Wed, 23 Oct 2024 19:49:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
+ spectrum clocking
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+ <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+ <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
+ <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
+ <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org>
+ <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
+ <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org>
+ <CABGWkvqXZ+YAvo-AtUy+Ftdu0xxXKuhOwcSTwO5Fv6D3yzttNg@mail.gmail.com>
+ <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org>
+ <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
+ <7bce31c0-8c74-4d65-812f-01951a0d75d1@kernel.org>
+ <CABGWkvqFi_y8OzKbi=K7ucW4RuY_zh6Z4a=uO2oqQRoVE8LaCQ@mail.gmail.com>
+ <CABGWkvrR-vVTpNSBD_etjn4SteO8cpUed+dTvYguHR67UUSsYA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABGWkvrR-vVTpNSBD_etjn4SteO8cpUed+dTvYguHR67UUSsYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241023-drm-vc4-2712-support-v1-37-1cc2d5594907@raspberrypi.com>
-References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
-To: Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>
-X-Mailer: b4 0.14.1
 
-The D-Step has some minor variations in the hardware, so needs
-matching changes to DT.
+On 23/10/2024 16:58, Dario Binacchi wrote:
+>>>>
+>>>> This is another commit [1] on enabling spread spectrum that I
+>>>> implemented some time ago for
+>>>> the am335x. The most evident difference is that in that case the node
+>>>> was a clock node and not
+>>>> a clock controller, as in the case of anatop. The parameters are also
+>>>> not exactly the same, but
+>>>> that depends on the platform.
+>>>>
+>>>> [1] 4a8bc2644ef0cbf8e ("dt-bindings: ti: dpll: add spread spectrum support")
+>>>
+>>>
+>>> OK, I still do not know what "0" was, but the items are fixed, so you
+>>> know exactly which clock you are configuring here.
+>>
+>> So, after delving deeper into the topic, is it now acceptable to use
+>> the property
+>> "fsl,ssc-clocks" instead of "clocks"?  As in the patch I applied locally?
+> 
+> A gentle ping.
+> Sorry, but I haven't yet received your response to the previous email,
+> and I'm not sure how to proceed.
+> 
 
-Add a new DTS file that modifies the existing (C-step) devicetree.
+Yeah, the property is fine, but I don't think you need the clock index.
+The lists - like clocks and your spread property - have strictly defined
+items, so it is enough if schema lists items and says which spread
+points to which clock.
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- arch/arm64/boot/dts/broadcom/Makefile              |  1 +
- arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts | 37 ++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 92565e9781ad..3d0efb93b06d 100644
---- a/arch/arm64/boot/dts/broadcom/Makefile
-+++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
- 			      bcm2711-rpi-4-b.dtb \
- 			      bcm2711-rpi-cm4-io.dtb \
- 			      bcm2712-rpi-5-b.dtb \
-+			      bcm2712-d-rpi-5-b.dtb \
- 			      bcm2837-rpi-3-a-plus.dtb \
- 			      bcm2837-rpi-3-b.dtb \
- 			      bcm2837-rpi-3-b-plus.dtb \
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts
-new file mode 100644
-index 000000000000..7de24d60bcd1
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/dts-v1/;
-+
-+#include "bcm2712-rpi-5-b.dts"
-+
-+&gio_aon {
-+	brcm,gpio-bank-widths = <15 6>;
-+
-+	gpio-line-names =
-+		"RP1_SDA", // AON_GPIO_00
-+		"RP1_SCL", // AON_GPIO_01
-+		"RP1_RUN", // AON_GPIO_02
-+		"SD_IOVDD_SEL", // AON_GPIO_03
-+		"SD_PWR_ON", // AON_GPIO_04
-+		"SD_CDET_N", // AON_GPIO_05
-+		"SD_FLG_N", // AON_GPIO_06
-+		"", // AON_GPIO_07
-+		"2712_WAKE", // AON_GPIO_08
-+		"2712_STAT_LED", // AON_GPIO_09
-+		"", // AON_GPIO_10
-+		"", // AON_GPIO_11
-+		"PMIC_INT", // AON_GPIO_12
-+		"UART_TX_FS", // AON_GPIO_13
-+		"UART_RX_FS", // AON_GPIO_14
-+		"", // AON_GPIO_15
-+		"", // AON_GPIO_16
-+
-+		// Pad bank0 out to 32 entries
-+		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-+
-+		"HDMI0_SCL", // AON_SGPIO_00
-+		"HDMI0_SDA", // AON_SGPIO_01
-+		"HDMI1_SCL", // AON_SGPIO_02
-+		"HDMI1_SDA", // AON_SGPIO_03
-+		"PMIC_SCL", // AON_SGPIO_04
-+		"PMIC_SDA"; // AON_SGPIO_05
-+};
+P.S. I think you might pinged me on IRC, but you know,
+https://nohello.net/en/
 
--- 
-2.34.1
+
+Best regards,
+Krzysztof
 
