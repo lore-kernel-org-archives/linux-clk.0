@@ -1,60 +1,60 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5075C1E2304
-	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 16:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F741EF08A
+	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 16:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702229; cv=none; b=oPCZhIa29cJpkjP6ddSwmzLfTISNe/b0g0Wq2V3EcIC9ofx5+lyDjBm9If11ogJBoD5Mz/irVujOm31GjBPe2VRwvT+hwSwzVimnaIxTrEQQqcu41AACNK7Icg4lbDzdyD3uyVh17QL7yq/MlE7pLw0teiMHr2/4nZQ0lsCSkGY=
+	t=1729702230; cv=none; b=aMDB4v6pFG8chcE3vxizdvqenff2eYBnteHWMtafNW6arfOcm6ZrWwi2pvB/DO9tOlAQWFzkKnhrLAFFEnKXMwVeVExYjcRmEDqrIBFiMO9ljg06Jas6Hj4NuzRtZ74+b7e5/3TWdEZXjXraRJUdcix1TLrLwK8cb1UMBvRR0Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702229; c=relaxed/simple;
-	bh=HzQCBtQCnxLWR4MqnTAho9PePXTWdc9dHx/+VUH7KOw=;
+	s=arc-20240116; t=1729702230; c=relaxed/simple;
+	bh=6/0MGSFMLpItvDKAiuH9HB3iIfeafKjYJItOtt2uxf4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PfZ6WbfuKFwB9JvA5VeKPcYjbRFgfVDWfIrp7xYcZ85ofVT1TXtONsxBsJulKK4CoVV3F+0BlXuz/OtFuW6Uk07unC7H1eEoqqEJyUENVe28l3r/8StNYFpQB/G1dC9YTYa3iVOVW23sQ/ZY9y4zQg0nBSmIBYabuCII8qNpm8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=fM8h8mvf; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=RiVFbbtxfmbMwI5rSI76yb4qXjYOKeW6nTY5UdY0XH2FKGd7SpkDIYEAnPlQrh9qv/7cQhAHqceo+t1oMtvQMJAIBYhaKvLOEFbYpWI/PGpzWI6rEyjpM8K6jLeoMAPfVu+d2JB7L9fswQf+BM5XduQOWajOn9kGP/35zWqYqpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=VXForXIL; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="fM8h8mvf"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so61815415e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 09:50:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="VXForXIL"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431616c23b5so516025e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 09:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729702222; x=1730307022; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1729702226; x=1730307026; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7dnZzxFDSzNZ2XOSUDTFMzhrUG7dVfBzR4nm1WX8rOk=;
-        b=fM8h8mvfBJZ4oIuFYDsNRLufvReN2CL95yJ/pGXcr+kHnuDq5DnpyHzOwT7Bf/hJKp
-         NDG9/WjCwxPf3LUKE108J/nkCAzYkpGVTU95CqIgZkkTxgpZMxOamakMGNbzSUsAquMG
-         rOh3W+VYLReS+3MfhNZ4W75pquKnpZykOivbaOz8uSocIx/T/TV3Y3/y6MKzGmDWbB63
-         klKOIJI1UdLzelOaa1st9Snvb+BlthGUbEk8irm5dcOkrEtpHrWDuA6Mv5nGUU7PjzlP
-         SENsD94r2L58GO6BMQkFiPjQEi+Sc6vBAkhFfwibaoRX0pjTX9ARF+qcJklrRJhE09KW
-         I90Q==
+        bh=HAmGnbsXlsT4wTydGcek4ZEoMBRAPW62Dt7gooaokpo=;
+        b=VXForXIL+L0Yxw5Xa3XkrHUozggT0qXgvseXOGWMxc9HrdbiQVio2LKXozBHMJUT9Y
+         hKJVcRaCzSRX3Sku1tskS7gOb+hKRlT9IFKvVQkCBwz9OLIqOq1AG3Oq0Uy0C1ItT2Mf
+         TBZ3Bd9zO1YO1qqI7ejyzM2Jnb8GsC3IX1PafLfWDDFxI4Fdrpx/KT55+NLmkRpo9n8M
+         JOIzuEI4BcuSXn95suxgPVdbTVKux21VYDcziqsPT19vDinErCvLLmp9dPpRGhzkJo7y
+         CqzedaFsakVqKsFzRXgEZ8+9FXCCLl4yzh6Z8Arr7MOGVDouwGN5Yq+IYygL+QpSnGh4
+         HBLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729702222; x=1730307022;
+        d=1e100.net; s=20230601; t=1729702226; x=1730307026;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7dnZzxFDSzNZ2XOSUDTFMzhrUG7dVfBzR4nm1WX8rOk=;
-        b=MoOUIJ3FbyyolmW80LQDwSpdH4KAcSaNdkDeUH+OG6MrUTM0Nlyd2DzZmho+xFo34g
-         dBjFjokX2C1NHYLTcC+eXQY53ND2gPV3GJEAO0FNVyQ2h3yBB7mQ0vMic7CaoHKjlxw7
-         hj/6zZMU3etRHExs9pW9bAfjp/dXJ3gwaqdzKZrRilAWltmuC8m7DQsNK1Q2PXRGMkxw
-         4ZGfD8RCn9m7154DEpnKXQskbYNT8ai76iP2J8tQrM+SXGZrYNH0/7BvdQb21UZ/1Byy
-         D8qMz4xISMreM8NAwT9Goe2zDjW2Ld9LUfJKAMLFbWgmbGu8NtqDEdH2nGx6ixiiYL5c
-         d2Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXibnuTaW5JvI17g5yGbd6HSoh4/P0QdRHkTesvZND7BU/ikiJbkyL9Agpphh244Di+91K1nC8Z68g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoqSeth8HOnUS/Mnxd0IMP+aLVOJPaGNIFD1pJbEFtCZSUqA28
-	dJAuUBTp0+hAmJrSxrNWzE/H0p1dHuya4C8+a0cb9rDlJMmV4nJxgvHmhnIQOtw=
-X-Google-Smtp-Source: AGHT+IFI36WmNXTRV4DxPlE9LTtOwItl4jqcDI9buc5n49Q8WtFQEB6vJFj2nzepFaAVYzIFdCfs7w==
-X-Received: by 2002:a05:600c:3b9b:b0:42c:bd27:4c12 with SMTP id 5b1f17b1804b1-4318413e4d1mr30434035e9.10.1729702222575;
-        Wed, 23 Oct 2024 09:50:22 -0700 (PDT)
+        bh=HAmGnbsXlsT4wTydGcek4ZEoMBRAPW62Dt7gooaokpo=;
+        b=OM9j/9zH9nDzhDhHvEk2XfLkkkrV8brWUjkgvdz/XzyieigVhyhz6P+4Xt3Rw+1ZsM
+         Oja8j9d1cX9NRR0l1MDuSigADwlPARcJzxukR9nzxj+UlbqRK40OHxvVBdXRqb8Zjn8C
+         KALpBu0qWwRlx189RsM61u7/jPmPKXdv7JZ3uO/ImgU2rkyY1W+em7GOEu8eDRtPbQ1t
+         MkdKVyRZGzM/WEa661GbUofPkrjub46Qc/hABoHotHRUXxjyUL1Dy7bH4vsZc+lXpIpI
+         NsFlWpHTnH3CRP9ewGCrzW7tcIVdefMREpYQGf+PDhD/gtxwYMGo9DTGjhMMrrW5Tsfe
+         nrRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaCZ/XTlkJy5YXQZezkj67L4lR6Cg1FxxoOexvnPh8Xyf4lhfb7tJax2pb/SQsVKdCm6hAUbNF4VI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1Jx7cnlDVbOzi3ajaA8aDwv0L6zxIdS4as+EekVUaWJypWCKg
+	ljnYdrP/5+oWVpur7aRK5m3Ot4N3UEFL9gcZ+W1mvekqGKEPYvGij5UTnk78jIA=
+X-Google-Smtp-Source: AGHT+IHL2wgt75iB2bh0ZhjUQkAbPcOQbonRHG1SD5jdc74+CwqD//SyS484BHiLP8yrR7PCt0OkEA==
+X-Received: by 2002:a05:600c:354f:b0:431:57cf:f13d with SMTP id 5b1f17b1804b1-43184337402mr22456585e9.3.1729702226319;
+        Wed, 23 Oct 2024 09:50:26 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.21
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 09:50:22 -0700 (PDT)
+        Wed, 23 Oct 2024 09:50:25 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 23 Oct 2024 17:50:12 +0100
-Subject: [PATCH 15/37] drm/vc4: txp: Rename TXP data structure
+Date: Wed, 23 Oct 2024 17:50:15 +0100
+Subject: [PATCH 18/37] drm/vc4: txp: Handle 40-bits DMA Addresses
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241023-drm-vc4-2712-support-v1-15-1cc2d5594907@raspberrypi.com>
+Message-Id: <20241023-drm-vc4-2712-support-v1-18-1cc2d5594907@raspberrypi.com>
 References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
 In-Reply-To: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -89,74 +89,70 @@ X-Mailer: b4 0.14.1
 
 From: Maxime Ripard <mripard@kernel.org>
 
-The TXP data structure has a name too generic for the multiple variants
-we'll have to support. Let's rename it to mention the SoC it applies to.
+The BCM2712 MOP and MOPLET can handle addresses larger than 32bits
+through an extra register. We can easily support it and make it
+conditional based on the compatible through a boolean in our variant
+structure.
 
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/gpu/drm/vc4/tests/vc4_mock.c | 4 ++--
- drivers/gpu/drm/vc4/vc4_drv.h        | 2 +-
- drivers/gpu/drm/vc4/vc4_txp.c        | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/vc4/vc4_drv.h |  2 ++
+ drivers/gpu/drm/vc4/vc4_txp.c | 12 +++++++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vc4/tests/vc4_mock.c b/drivers/gpu/drm/vc4/tests/vc4_mock.c
-index c7b91c87f1bc..372482fcd6c7 100644
---- a/drivers/gpu/drm/vc4/tests/vc4_mock.c
-+++ b/drivers/gpu/drm/vc4/tests/vc4_mock.c
-@@ -51,7 +51,7 @@ struct vc4_mock_desc {
- 
- static const struct vc4_mock_desc vc4_mock =
- 	VC4_MOCK_DESC(
--		VC4_MOCK_CRTC_DESC(&vc4_txp_data.base,
-+		VC4_MOCK_CRTC_DESC(&bcm2835_txp_data.base,
- 				   VC4_MOCK_OUTPUT_DESC(VC4_ENCODER_TYPE_TXP,
- 							DRM_MODE_ENCODER_VIRTUAL,
- 							DRM_MODE_CONNECTOR_WRITEBACK)),
-@@ -77,7 +77,7 @@ static const struct vc4_mock_desc vc4_mock =
- 
- static const struct vc4_mock_desc vc5_mock =
- 	VC4_MOCK_DESC(
--		VC4_MOCK_CRTC_DESC(&vc4_txp_data.base,
-+		VC4_MOCK_CRTC_DESC(&bcm2835_txp_data.base,
- 				   VC4_MOCK_OUTPUT_DESC(VC4_ENCODER_TYPE_TXP,
- 							DRM_MODE_ENCODER_VIRTUAL,
- 							DRM_MODE_CONNECTOR_WRITEBACK)),
 diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-index 1ed1fb5aa7e8..e08c90245f94 100644
+index 984fddae0048..34e72e711a17 100644
 --- a/drivers/gpu/drm/vc4/vc4_drv.h
 +++ b/drivers/gpu/drm/vc4/vc4_drv.h
-@@ -540,7 +540,7 @@ struct vc4_txp_data {
+@@ -538,8 +538,10 @@ struct vc4_crtc_data {
+ 
+ struct vc4_txp_data {
  	struct vc4_crtc_data	base;
++	unsigned int high_addr_ptr_reg;
+ 	unsigned int has_byte_enable:1;
+ 	unsigned int size_minus_one:1;
++	unsigned int supports_40bit_addresses:1;
  };
  
--extern const struct vc4_txp_data vc4_txp_data;
-+extern const struct vc4_txp_data bcm2835_txp_data;
- 
- struct vc4_pv_data {
- 	struct vc4_crtc_data	base;
+ extern const struct vc4_txp_data bcm2835_txp_data;
 diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
-index dcb1b3fd37de..6fe378b454ca 100644
+index d2ee872e9c0b..c2726ccde1cf 100644
 --- a/drivers/gpu/drm/vc4/vc4_txp.c
 +++ b/drivers/gpu/drm/vc4/vc4_txp.c
-@@ -485,7 +485,7 @@ static irqreturn_t vc4_txp_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
- }
+@@ -145,6 +145,9 @@
+ /* Number of lines received and committed to memory. */
+ #define TXP_PROGRESS		0x10
  
--const struct vc4_txp_data vc4_txp_data = {
-+const struct vc4_txp_data bcm2835_txp_data = {
- 	.base = {
- 		.name = "txp",
- 		.debugfs_name = "txp_regs",
-@@ -588,7 +588,7 @@ static void vc4_txp_remove(struct platform_device *pdev)
- }
++#define TXP_DST_PTR_HIGH_MOPLET	0x1c
++#define TXP_DST_PTR_HIGH_MOP	0x24
++
+ #define TXP_READ(offset)								\
+ 	({										\
+ 		kunit_fail_current_test("Accessing a register in a unit test!\n");	\
+@@ -293,6 +296,7 @@ static void vc4_txp_connector_atomic_commit(struct drm_connector *conn,
+ 	struct drm_framebuffer *fb;
+ 	unsigned int hdisplay;
+ 	unsigned int vdisplay;
++	dma_addr_t addr;
+ 	u32 ctrl;
+ 	int idx;
+ 	int i;
+@@ -330,7 +334,13 @@ static void vc4_txp_connector_atomic_commit(struct drm_connector *conn,
+ 		return;
  
- static const struct of_device_id vc4_txp_dt_match[] = {
--	{ .compatible = "brcm,bcm2835-txp", .data = &vc4_txp_data },
-+	{ .compatible = "brcm,bcm2835-txp", .data = &bcm2835_txp_data },
- 	{ /* sentinel */ },
- };
+ 	gem = drm_fb_dma_get_gem_obj(fb, 0);
+-	TXP_WRITE(TXP_DST_PTR, gem->dma_addr + fb->offsets[0]);
++	addr = gem->dma_addr + fb->offsets[0];
++
++	TXP_WRITE(TXP_DST_PTR, lower_32_bits(addr));
++
++	if (txp_data->supports_40bit_addresses)
++		TXP_WRITE(txp_data->high_addr_ptr_reg, upper_32_bits(addr) & 0xff);
++
+ 	TXP_WRITE(TXP_DST_PITCH, fb->pitches[0]);
  
+ 	hdisplay = mode->hdisplay ?: 1;
 
 -- 
 2.34.1
