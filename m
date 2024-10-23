@@ -1,110 +1,116 @@
-Received: from mail-qk1-f196.google.com (mail-qk1-f196.google.com [209.85.222.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3271B4F17
-	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 14:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC4B1C727F;
+	Wed, 23 Oct 2024 14:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695136; cv=none; b=cv2kkSplJ8bGiVb3hIAhemNIHU1wDhkSW4kdyQmcY4ykmPNP71sEYOYeo5k+VFXiuWhgXpFCXXQNEP5RcfbRXL/8QsuKNm3ZdZBhRFgsQFtHq42rwv6tU/dO4aPyGadqcPMH+tW6a2+5hDI+g6M38hTNU9DKgczubsefSNTAzgo=
+	t=1729695197; cv=none; b=X/U7KrBT27505jw+B1ldU75hrSA7YcIT6e3b78DCHer5ECdgGM47X2jEO/tI0pZ2YPXXlbfymzYClBNPH4r8v3CzIthd63SoOVj8Imc2joOde1aCEV5AaKdO9iw5QkjlbGicZeqORYkW73AF3Bbjv4awO6mMZJ3+nCatFY+yWh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695136; c=relaxed/simple;
-	bh=abZaX61WbfQeB4km945tCwxunPgKcCHdxbHDBPHQxqU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ns+xd6lKdmZov/WS/K88EgAcvf594V9cnsUKZUrMuaiOJIMPc7WKBLbhMHVLg+oMOFWRo28dlOxFJqUPwPn80oAwgNLSHpPm4esTGebKfNy5+ILP113jnUqb0kyEDfxniqj7CRboPaKniAFBNFHAD6lxnHkMeqayuqpx3EeeDfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/X/+Rd4; arc=none smtp.client-ip=209.85.222.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729695197; c=relaxed/simple;
+	bh=8wT9D25QJ1yv6sYGUjWqC5VHGbdqfKlgnLpVnMzRCeA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=A3e2xFFHPbA9m4ZlpRuvtmqHO6WqSchJfDkB2HyotO0xLgDxCFNeUNZIyD/itKV9G+jwvnk3Ptr7kwvCgot/Ox0HEO4DNRi/BMeZsvHIa/Zv5kYS8u77mylTz+7gTeR5L4qSdmdwLCR1X46tkGRqDM0SoNHXtrLqKjEXs6ldHXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=wyvLctWb; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/X/+Rd4"
-Received: by mail-qk1-f196.google.com with SMTP id af79cd13be357-7b14443a71eso584916985a.1
-        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 07:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729695133; x=1730299933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LIRd3PXpSz5BDOFcaAZ/hm9Mqu1PKuZYOGtrGMhALLE=;
-        b=Y/X/+Rd4Dep70fCyLfFMuObrmK1fZDGRvClJ8t3BiP0QjUOLTB/t4O47mKKEPnEoRb
-         DARQeDVR0WMRrN5jFhcy7zISbpAvhq3IKvYKSmU1L6mpqzLPVVqdEyggKLBvBQxadoR0
-         p5m/46iUIuTt30Lluolwzk0tT7zgTQVh4Jpd/w4JbswI6Zw8DxhcpiTRX74GeZ9xGuL5
-         oulbj+sOkNVomkex/Ij5hi0RdZ/TeDmuyu5RBjyGaOJhjtJOC33Ju/mb/yf2la+kHdOM
-         qgVSlyuKtwsuNjmsZ+9FTKJBxkdQPaRTJ8d9cwuY14OHllzLLuUjlCcfdPWhUdDJ+sXY
-         //ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729695133; x=1730299933;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LIRd3PXpSz5BDOFcaAZ/hm9Mqu1PKuZYOGtrGMhALLE=;
-        b=vySocJQx5D+dOwAKKtem338IRJATA2xiKe1W/MRhKOVAaBsWjscmb8umsOIsajJbJN
-         nmQIUxUawmnOGPjPDa0OTIiLcVhFLx7po9MTjPFXZ+2wMtiyF2LCaJxqotvcj3qz12Fa
-         Tu8seysXlwZcJ4iGDdLP6dRaLj8voPdC2YJDOLkc3QrRebWAJgoGLRgcu1LEXFcmZz3h
-         yjNMuYBBKo6DkFyMdUhkOW1RlVwiWT7TpdLAzgyhzJS2z0YDBnYh1F4GruIqfY5Wsjhj
-         oKgQnEi2mY5oy+O3FdLnxUD2NPT14VagxtwpsNFbPo3G6KosqdqAXrSwLIZAhqj+ZFlY
-         ++eA==
-X-Gm-Message-State: AOJu0YwWtW6Q6RAgbHK8l6AfUujwAWXf8Yqfx0pIVqNidS0vV+oihN88
-	9muKZ9aa+84uw0B1XHnzpM9ScKgh1emEr0/JC9oqCbMik5o7XIKc
-X-Google-Smtp-Source: AGHT+IGAdu1qFFy2ijEDUlLPby4/KXVLfkVJQVFxtVYw0rTj6wgYiJMk7SHTy5GWm1yUC+mhQplPRw==
-X-Received: by 2002:a05:6214:3d0f:b0:6cc:1f0:d38a with SMTP id 6a1803df08f44-6ce3416d4c8mr43531846d6.14.1729695133556;
-        Wed, 23 Oct 2024 07:52:13 -0700 (PDT)
-Received: from localhost.localdomain (host-36-28.ilcul54.champaign.il.us.clients.pavlovmedia.net. [68.180.36.28])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce00999c52sm40141756d6.95.2024.10.23.07.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 07:52:12 -0700 (PDT)
-From: Gax-c <zichenxie0106@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	nathan@kernel.org,
-	dan.carpenter@linaro.org
-Cc: linux-clk@vger.kernel.org,
-	zzjas98@gmail.com,
-	chenyuan0y@gmail.com,
-	Zichen Xie <zichenxie0106@gmail.com>
-Subject: [PATCH v3] clk: sophgo: avoid integer overflow in sg2042_pll_recalc_rate()
-Date: Wed, 23 Oct 2024 09:51:47 -0500
-Message-Id: <20241023145146.13130-1-zichenxie0106@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="wyvLctWb"
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NDrTjQ015015;
+	Wed, 23 Oct 2024 10:52:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=0nfH7bLly1nDLmzv7jSarI9lMXj
+	hfAjcsFjjt5bQMac=; b=wyvLctWb0ZXGgjQpv1yFzqjgmfOwS3hKtPUZl0HnDWh
+	bQTopSsUcGx+Owzk4MBu3Pt7g37uQERaX0xzuQEFL405LnUe/IX7b0IL46EWXVpK
+	G2Mbscc/C7aRcadTKqWK32vwrrgd+UCM0vVrE8JugbygA1ojjiT3F1DHIEzZEkpJ
+	G+qnccOL7THZlDcQNMEnzP0t6xZHt8wcmyKMDbpbsWuY2yjvEp0XMMey/q62TqVk
+	1wrl6ulY7WVg8YiMlaaiuamRJ+0EdIkobYIaILs93nmg02V88F36yW1b1WgjLiku
+	GE4QU7IUCvhybod4l7QKlnRBfZCQVD9U4E+CAQGzR7A==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42em30veap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 10:52:53 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49NEqqmg034025
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 23 Oct 2024 10:52:52 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Wed, 23 Oct
+ 2024 10:52:52 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 23 Oct 2024 10:52:52 -0400
+Received: from [127.0.0.1] ([10.44.3.54])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49NEqewW002884;
+	Wed, 23 Oct 2024 10:52:43 -0400
+From: Nuno Sa <nuno.sa@analog.com>
+Subject: [PATCH 0/2] clk: clk-axi-clkgen: make sure to enable the AXI bus
+ clock
+Date: Wed, 23 Oct 2024 16:56:53 +0200
+Message-ID: <20241023-axi-clkgen-fix-axiclk-v1-0-980a42ba51c3@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALUOGWcC/x3MQQqAMAxE0atI1gaa4kK9iriobaxBqdKCCOLdj
+ S4fn5kbCmfhAn11Q+ZTiuxJQXUFfnEpMkpQgzW2IWMJ3SXotzVywlmujyoMFFoz+aljJtDtkVn
+ r/zuMz/MCDObCEGcAAAA=
+X-Change-ID: 20241021-axi-clkgen-fix-axiclk-d1d80bcb9ee1
+To: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lars-Peter Clausen
+	<lars@metafoo.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729695419; l=800;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=8wT9D25QJ1yv6sYGUjWqC5VHGbdqfKlgnLpVnMzRCeA=;
+ b=t2aucuPOkASlB9VMReo4lrVlbIqN2hNpzJmuLFM2DbLLvcl5JudgA1+fQyhCob5t78MIHh5Zn
+ uRsCRyZr0YqDhqyRjnO8NHgsA2d2prgqb7WvXJQmGaPtbLN9Cl1z/Gi
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: 0tGcTahSFpeW5V7lppmJeGo3umP-lSKM
+X-Proofpoint-ORIG-GUID: 0tGcTahSFpeW5V7lppmJeGo3umP-lSKM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=789 bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 clxscore=1011 spamscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230090
 
-From: Zichen Xie <zichenxie0106@gmail.com>
+In order to access the registers of the HW, we need to make sure that
+the AXI bus clock is enabled.
 
-This was found by a static analyzer.
-There may be a potential integer overflow issue in
-sg2042_pll_recalc_rate(). numerator is defined as u64 while
-parent_rate is defined as unsigned long and ctrl_table.fbdiv
-is defined as unsigned int. On 32-bit machine, the result of
-the calculation will be limited to "u32" without correct casting.
-Integer overflow may occur on high-performance systems.
+In order to keep backward compatibility, the new axi clock must be the
+last phandle in clocks. On top of that, it's not an actual parent of
+the axi-clkgen that needs to be set on struct clk_init_data.
 
-Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
-Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
 ---
-v2: Modified patch to numerator casting only.
-v3: Shorted subject and wrapping.
----
- drivers/clk/sophgo/clk-sg2042-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nuno Sa (2):
+      dt-bindings: clock: axi-clkgen: include AXI clk
+      clk: clk-axi-clkgen: make sure to enable the AXI bus clock
 
-diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
-index ff9deeef509b..1537f4f05860 100644
---- a/drivers/clk/sophgo/clk-sg2042-pll.c
-+++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-@@ -153,7 +153,7 @@ static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
- 
- 	sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
- 
--	numerator = parent_rate * ctrl_table.fbdiv;
-+	numerator = (u64)parent_rate * ctrl_table.fbdiv;
- 	denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
- 	do_div(numerator, denominator);
- 	return numerator;
--- 
-2.34.1
+ .../devicetree/bindings/clock/adi,axi-clkgen.yaml  | 21 ++++++++++---
+ drivers/clk/clk-axi-clkgen.c                       | 35 +++++++++++++++++++++-
+ 2 files changed, 51 insertions(+), 5 deletions(-)
+---
+base-commit: 94be1620fb60ea542170779915917443cda9bba7
+change-id: 20241021-axi-clkgen-fix-axiclk-d1d80bcb9ee1
+--
+
+Thanks!
+- Nuno Sá
 
