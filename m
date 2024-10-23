@@ -1,138 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E483D1C9EAF;
-	Wed, 23 Oct 2024 16:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A20DDAB;
+	Wed, 23 Oct 2024 16:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729701011; cv=none; b=Snt/G6KOak4eSXx3YBEz0oKCKe9GtZ8UbZI8Z+3EY9tbCcgpD+mPtN+xrQ6Tn2MfYGJJUNMvGeR59YQZ+oSvuANmCBHtAGzZHT4D3DaBe3Y8dmyMzFd3Bs7aKfSjZQofsMkY2DWDTHSVMWOjhjXcZ/jdjkGjg4tsM8cMmpCcYqU=
+	t=1729701174; cv=none; b=PIXOEAQ/y3jUWdRW4wHtywIRDpv1qdW1g77MPVmJTGtWUWCAEWBXiKqy0WFP0msfA5nNb7jBCSSRVrJ5FmQe1o6DpuFup1t+ms93oiBuVjvlNAkHPd5Lcltunl0rTVN585jN33NE2oJ4vImCY8f0mAaBXtgK08uwKa5tf8Nu27g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729701011; c=relaxed/simple;
-	bh=tR6ZRhyK7Sm/Rzy9KYSP2XfAzgT15xqzfaZCffXrm7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2FOKNdOuB4j3ygBH4FMeBsdFStMxK315PM3AL+9zcoXu3GUChoZuj4XjDw1nhueyYART4jtJgTGxb0Kwq1MVLGq8IcGqC8PNcn6lXdc/JXy+ATlnyIFyvPqysn0nON8B/8XCiG7YWX3dtAljOxrCpMwGB1GbymX9EnqCFrjjBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6q/VM7X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729701174; c=relaxed/simple;
+	bh=TyywN/+wAMLWJRgELJOMExlGZYjMTxNyuaEfnm0ujeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jQlWGyHtQH3+OV6rwnvd+1ebRPjybpRVEswNcPrP418I3bKDKQbFy14ILGTPrgG4FDACiMMHk6VPl90X/Zf0k2uo44Xy7P9UMQkHK1xHwrAiMxTix7brtJ+BslvSm3vJFOq1Ho85HUcdNbFxK+/ZammV5T8XZOd8sPVV5r+zirI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iAf/g0I2; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6q/VM7X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B586AC4CEC6;
-	Wed, 23 Oct 2024 16:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729701010;
-	bh=tR6ZRhyK7Sm/Rzy9KYSP2XfAzgT15xqzfaZCffXrm7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A6q/VM7XIfbEKQm2NomojnFSCUf82U8kcnsKtepLUhD4Vda3YJ+hRQ8cPRGNanCIR
-	 xMKlpmJNvu+jo9ZTZ3Z7qXsHX3/SMGC54zv8OD+WVGttauqeBnUJBVkRy/EQn3cpnz
-	 KMIOp3MZFV1vbqSZRAvFQl7VkhoGaAUoKB7+NOSTZbgdivgGkMxHfyPyQUyCieQvjw
-	 36aYXD0FwAoOzXNNQ6318NohcrIt0JnkKRm8fygACoOS/AeIusiA7NLE1oFVDpVoDa
-	 IV4UeskjwME5f3rXU4nkASAI6hhoPYdz0NX6IwfV6/4ttayqxpv5IP9+owrGMMJJbb
-	 qshDEqkEXZA8g==
-Date: Wed, 23 Oct 2024 17:30:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno Sa <nuno.sa@analog.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: axi-clkgen: include AXI clk
-Message-ID: <20241023-tucking-pacific-7360480bcb61@spud>
-References: <20241023-axi-clkgen-fix-axiclk-v1-0-980a42ba51c3@analog.com>
- <20241023-axi-clkgen-fix-axiclk-v1-1-980a42ba51c3@analog.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iAf/g0I2"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 60BC940002;
+	Wed, 23 Oct 2024 16:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729701164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2mo5TXq2lM94AOYob7sigSv7lm1UH6+vMtcH4MaKVCI=;
+	b=iAf/g0I2OwQO00ReC6C88G//21aTCm8VlXqLUz0rDUOWS1CRki4N+V3xFVghUaJQNvn72n
+	Qpk5JQCZK/Sbi2XAyf4zsqDNUyew8tVwAhxmYx+ezK0zr5DZgZK5VWfAyA5fzY2IEgyWV7
+	DiH+k8QuSrgZsPY3p0v4k+Fws/eYodmishgCNQXEueUEzM3ZuN3oDY4gGT3ncZGbYTZzWP
+	rFabYPUeE2ili/emKROsPngRGFeG1VimgOrtiIRQrsXqDtagozfdquWUHB5T4aARxllfNU
+	6BsL05hnF4PrqEu0/dx/92y5hfmem7fy6oL2bPaBSJqrQEOsJjSzZonTu+JZGQ==
+Date: Wed, 23 Oct 2024 18:32:40 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Arnd
+ Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn
+ Helgaas <bhelgaas@google.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Luca
+ Ceresoli <luca.ceresoli@bootlin.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, St efan Wahren <wahrenst@gmx.net>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Will Deacon
+ <will@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ phil@raspberrypi.com, jonathan@raspberrypi.com
+Subject: Re: [PATCH v2 08/14] clk: rp1: Add support for clocks provided by
+ RP1
+Message-ID: <20241023183240.0dffae03@bootlin.com>
+In-Reply-To: <ZxkX5gnDkWrTynRv@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+	<022cf4920f8147cc720eaf02fd52c0fa56f565c5.1728300189.git.andrea.porta@suse.com>
+	<611de50b5f083ea4c260f920ccc0e300.sboyd@kernel.org>
+	<ZxkX5gnDkWrTynRv@apocalypse>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="J5M4fBmjclbyCSI/"
-Content-Disposition: inline
-In-Reply-To: <20241023-axi-clkgen-fix-axiclk-v1-1-980a42ba51c3@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
+
+Hi Andrea,
 
 
---J5M4fBmjclbyCSI/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 23 Oct 2024 17:36:06 +0200
+Andrea della Porta <andrea.porta@suse.com> wrote:
 
-On Wed, Oct 23, 2024 at 04:56:54PM +0200, Nuno Sa wrote:
-> In order to access the registers of the HW, we need to make sure that
-> the AXI bus clock is enabled. Hence let's increase the number of clocks
-> by one.
->=20
-> In order to keep backward compatibility, the new axi clock must be the
-> last phandle in the array. To make the intent clear, a non mandatory
-> clock-names property is also being added.
+> Hi Stephen,
+> 
+> On 15:08 Wed 09 Oct     , Stephen Boyd wrote:
+> > Quoting Andrea della Porta (2024-10-07 05:39:51)  
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index 299bc678ed1b..537019987f0c 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
+> > >           These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
+> > >           Clkout1 is always on, Clkout2 can off by control register.
+> > >  
+> > > +config COMMON_CLK_RP1
+> > > +       tristate "Raspberry Pi RP1-based clock support"
+> > > +       depends on PCI || COMPILE_TEST  
+> > 
+> > A better limit would be some ARCH_* config.  
+> 
+> I've avoided ARCH_BCM2835 since the original intention is for this driver
+> to work (in the future) also for custom PCI cards with RP1 on-board, and not
+> only for Rpi5.
 
-Hmm, I'm not sure. I think clock-names actually may need to be mandatory
-here, as otherwise you'll not what the second clock is. The driver would
-have to interpret no clock-names meaning clock 2 was clkin2.
+Maybe depends on CONFIG_MISC_RP1 ?
+CONFIG_MISC_RP1 enables the RP1 PCI driver
 
->=20
-> Fixes: 0e646c52cf0e ("clk: Add axi-clkgen driver")
-> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
-> ---
->  .../devicetree/bindings/clock/adi,axi-clkgen.yaml   | 21 +++++++++++++++=
-++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml =
-b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> index 5e942bccf27787d7029f76fc1a284232fb7f279d..f5f80e61c119b8a68cb6e7a26=
-ed275764f8d200f 100644
-> --- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> +++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> @@ -26,9 +26,21 @@ properties:
->      description:
->        Specifies the reference clock(s) from which the output frequency is
->        derived. This must either reference one clock if only the first cl=
-ock
-> -      input is connected or two if both clock inputs are connected.
-> -    minItems: 1
-> -    maxItems: 2
-> +      input is connected or two if both clock inputs are connected. The =
-last
-> +      clock is the AXI bus clock that needs to be enabled so we can acce=
-ss the
-> +      core registers.
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    oneOf:
-> +      - items:
-> +          - const: clkin1
-> +          - const: s_axi_aclk
-> +      - items:
-> +          - const: clkin1
-> +          - const: clkin2
-> +          - const: s_axi_aclk
-> =20
->    '#clock-cells':
->      const: 0
-> @@ -50,5 +62,6 @@ examples:
->        compatible =3D "adi,axi-clkgen-2.00.a";
->        #clock-cells =3D <0>;
->        reg =3D <0xff000000 0x1000>;
-> -      clocks =3D <&osc 1>;
-> +      clocks =3D <&osc 1>, <&clkc 15>;
-> +      clock-names =3D "clkin1", "s_axi_aclk";
->      };
->=20
-> --=20
-> 2.47.0
->=20
-
---J5M4fBmjclbyCSI/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxkkjQAKCRB4tDGHoIJi
-0lv4AP0RLHKgJM4qGckMySO5E44cUyoCdkik/JQzRmGPjbXniAD0DynVB6iVJaT3
-y2JDIZNNDWhoPX1F+Mz9mmNc2UVOAg==
-=vfgp
------END PGP SIGNATURE-----
-
---J5M4fBmjclbyCSI/--
+Best regards,
+Hervé
