@@ -1,161 +1,163 @@
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2057.outbound.protection.outlook.com [40.92.102.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789ED10F4
-	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 00:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729642955; cv=fail; b=KWi1YZfjvUs7QqTQBPPm2OPYN99WPx3r01adDBKBT1e15WpQW6qMpZfzFvZ4NEOL7O0P5AedNROsABy9jEK0scs2cae0Ix6CWY2WlUvwfvqZdGIUk2/PuGpd/EsqFFSZQV7EHzQ5h3DWbPIX8JuET6AEngvH9qIfHu+kNO0gHqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729642955; c=relaxed/simple;
-	bh=6KKQG8qWPDW8rMaaKOb82EugeeOUs+VvLM/Z+847jwg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S/cwy8Ho8J7c3UZeCmhkkxKw7d3fS+ypZ5hWk2st0A08zo1wjiGsDvxhFk2JBvWgmywtkp3QZNtxeRx6YkyPtD2vkhN2rnTD6VfYx5PCIvnFU2gGGOtPvSAQwppzz3/yMNI8BDG6ElcCJ4PVTCBEkpgtAes3b9zcIe0llG7i4io=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cXs0N+iJ; arc=fail smtp.client-ip=40.92.102.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA11AAC4
+	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 00:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729645178; cv=none; b=FChbomHdnZHNKgZNYcFodhmDPgk3jyHGffKWns6/0dD2xmlEFqPHiaCfoit19j7FyO2O6L1o8BSVWlpQlhczXPrKUqV30OtTOBuvGOKK04f/Em8Zas6F5WUAt/8DjitVsNgylLGaYXGoexNPqjGyXSL1OvLIE5GIc5rbfpJ6fCI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729645178; c=relaxed/simple;
+	bh=484AuxtE1p/OGto+/TaqIitx7dC6Z3Vn96AWc5AQ0fs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLyIS93q7meVX5wBIdPl59VrAQgjBhO1g4MT12qAL00xUpPWm4oqGvyVakKIaRAI8KwZdwmr3dEIj/srT8+uUdtWFLiJZYFeRJEqUtexPwpykbIun+Zi13HFHeyyC21ydhe9c7CgQ9maUJer1cPjLP6jts0hPFULuZNTB+Rfvic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=l8PhXhSB; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cXs0N+iJ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pY9KhS4OmjwwFMxwbYEhp7FfNVovOsksp9p7phNOiGe+iR/5fdMSdo+jxv91e/ZHTtQZf5FN/H7/yfNOZbZP2uTkn4l37LciqjcvNCwfK68j0+jpwgdwS5roA9TObtiUPoCg2jyzvcpfxhcjKb93qSscRSpLkIPpVlJDwyrjODy3WeIZfnpYedtrRUlqx2RusDtf8Ixqn8v28tzWScwGCCySrHNlGO91yQrn7x78wGQYMtTD1HDjYbuyVhlNq5jZ8QJu7elDLgimrJT+E0KXArAO6osKmTQ4pSBICembsqD8mc9glMBdNrCS/yczAPou2Rmw03pLk69pX6HmPK6Csw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sH3Ix16MY3at2oyNIwsFaU+LAWhkGrJz3AySxySrVj0=;
- b=lJYp0P8MQaCimsv0/fQzDJXGGHDOyXvHhWDPCoPAy/74aOm9J1oLlYDCvsHUN5m6bRQlxdS9UP1+fj8mXLbzolhydnISrdmAcWwh9Hwi/WNIiaWAmp1vEwgYz7C6HStA6w+S4Rjo750KySAvTqv5IVCF+AuLabChG7gof6+A+zkYDCUTZVL3GvyHJnOhGtdHisT77qYdU/BnLHwEUT11qMTfulD/WXAEqTk1hWVLHcZ9PTnwqFnCGnZpyhjf7tVIU9KKWJxLND2GjiTWynmjoT4Fp3r4oRwjT4tLeibn6LBXuQdsSW5Dm8Q749uJRpiaM8hbhPb9z92x9PQjbJU5kA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sH3Ix16MY3at2oyNIwsFaU+LAWhkGrJz3AySxySrVj0=;
- b=cXs0N+iJf0V8uFpQqlO6mxmKV9uF1IUoqHuBbTGkWQDLKTGaenNkcFiLS2J2KQvR4vkByoUdNa6gbWolCxRfqtePXvG/EOhX3qYmQelgPjgfbEhbmSOZR+//8YeX5HAT0egp8Qe5H3cKVCdT2E6Pifo5h5ofSLysdga9Fu2kmRBYll3U0uF7kSxmaEpHDrK2Qk3j9LsmXqj62OWdYy+DNK8Kh/ndQZttxvdVdwrvwILce+Dvjgvop6yZUL0OxA3FfzMuWQN/A/pvAnnOFfG6pCyJoZvaAcqKIaC92t2aJe4hkrBjlbGGS6d1aiXhT/bbZoHksu+Wy1BjlGGPeTNIuQ==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN2P287MB0253.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:ec::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Wed, 23 Oct
- 2024 00:22:28 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.8069.027; Wed, 23 Oct 2024
- 00:22:28 +0000
-Message-ID:
- <MA0P287MB2822688A0BA02538A7272121FE4D2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 23 Oct 2024 08:22:24 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: sophgo: Cast an operand to u64 to prevent
- potential unsigned long overflow on 32-bit machine in
- sg2042_pll_recalc_rate()
-To: Gax-c <zichenxie0106@gmail.com>, mturquette@baylibre.com,
- sboyd@kernel.org, inochiama@outlook.com, nathan@kernel.org,
- dan.carpenter@linaro.org
-Cc: linux-clk@vger.kernel.org, zzjas98@gmail.com, chenyuan0y@gmail.com
-References: <20241022201244.8992-1-zichenxie0106@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20241022201244.8992-1-zichenxie0106@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGAP274CA0022.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::34)
- To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <aea42829-8d9b-49e7-ac96-3eb19d63bbd8@outlook.com>
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="l8PhXhSB"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id AC1FF892AA;
+	Wed, 23 Oct 2024 02:59:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1729645174;
+	bh=ECHHQ56CDB7f7hscf7vZFKjxE3wM97b9Tgz1zhQLshU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l8PhXhSBtuVdvk/jcLiL4dixQulDnPaUq2fuCkwb4Bj7jzWR/XFOM/ItHUfQOMBA/
+	 ZdwgkF6iAu4pMMOj3NCg/YJeUBc8dBg1mQv6tVLaTrA5Bv/5BJH3B11RUfSv3VVJWH
+	 SmTvkVu6MpTgliDohLBlS+uMm9YJD1w3FrVbOepOCVqoQPAkbFU8LSNAa0zDVuJs51
+	 HgSc7LOOtni52tPR1OpjjZk2jkC//yt5c8BXn6RlK/mx5PXafKnu3lz63e8OxuCk1m
+	 xwJwKqs/1fdq3bHXIZnhkCumNMa+/6kTpNZFeICTBU2AAaCPDieY9mIFMSWLBQ3ypR
+	 Yit392nciguPg==
+Message-ID: <1f5e9559-59f8-490b-9cb2-2f8d4a8823e6@denx.de>
+Date: Wed, 23 Oct 2024 02:50:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB0253:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0680046f-4861-4324-e69d-08dcf2f8c6b8
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|6090799003|5072599009|8060799006|15080799006|7092599003|461199028|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	ZOLxSGGP3caQzsKNHEy3WWXR11KhCQr6E66eAUYiN6FBEb9Vy7TSBrRsoTehaOFK3Bp3r8rf4eAt6X5BiYue7cWk9jSXInXaBRTbtu8YcK4Q+ER2M3IAOqxYWgHbiuFOgZUu6O2gT3r3bRsc4Zct2K7EjHpU8qJAf4jhmJpyeXqcMRn2IwugsMM3RT0gwkZfucdhKZ6Zh8vO1iLSVrxmNdtm/WHiZWLwDLe35975beXUgww9u8Xrtj/3skbJLis92E7Lryf+MoMCKWPQM8/BJ6qXsnPwRtB6JG+1ySA/EY+3TYqFqxexeKxZxc8IcRBZ//5RBVL0sK9ixmU+xrY1w3btLa6NqQ9cucoYZM7jWLkV5GLBCWkAaXTsshb4/kEMZl4iw+MI/g9rZZ11O/82Oalv+uLeQ6Q72wRj6+HU0w9S/In1NH66dXXXFvMA7JZm/3wSqaP2+NLSCKP1ypsQty1lsleb4fE5EvA2ovhfxWrjS1olxGTGCLgPq4EkA5XsnT3t6s10aYefh8TQE6+3p+ljbCS3+7nS1wOw7qNy/wJym8pXF/SZJ/7Le4rqVefSVOSGrbK2S249v/K5JXjW+22Ig/r+ac3ubeoGT4vFUwJ68bEhM/qQo4ZZjsCAtO8B72ofh5xAbIrHGJao1ls2e897ZfVPxP2tquqjzji8IrmnXtG93UCTzGNw/hIwtYa9tBW3XWdhs1Hqfl7i2jxubkD76J6k9HHUny2ANYL/+GoMsVVagN8SO6V6dXVM2tSb0pATUtLzxRAO+wsl5EmZww==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QzBQRG12ZGIzVVhyVmdsK0ZTN0VkUFA4VUJzM3ZINUs3R1M3YVZURHFtdk1N?=
- =?utf-8?B?M3AxSVVPQzVtSVhoTVo1cEMvT2RzRjRSZVhWeWthbHh3T1prZFduOGtvdytu?=
- =?utf-8?B?cDBXTjduelRTZGhrWkZPak1JbFMwMHhuUkdMWGVTWi9VSnhZVTd3ZitXL2tZ?=
- =?utf-8?B?Y2kzR2tGRlpiK0xLVDR1ZHcyTWtUNVRlSGZlKzh2NnBrV3RiS0FYSXpya082?=
- =?utf-8?B?TlZVOGlnK3N5RW9saW5XNjRBZXpMQW8yblUrellpTVJXdkpKUzhSdVNNU2JN?=
- =?utf-8?B?QyszTHJncDBLVlIrUTM5aEZqTkpCVTRwVlV5VlcwVjIvb05RU1QwV3ptaEpJ?=
- =?utf-8?B?dVFmQXJpRllJdlVFZDZLWjlobEhyd1RISjZlSXlIVWo3U1l4Y3l1cTNvZmtT?=
- =?utf-8?B?WVIrZjVMM2szYmtuTzhKaVV5OWlOdmxTNDI0SnJ4QVZqRzlIQUJkNkszTEhV?=
- =?utf-8?B?TWdyTVZSSUMvZ2ltc0czcVAxWUh1OG92aDgyM1hibFF0VHBKR3hOTXRIaFlo?=
- =?utf-8?B?UUhEdWkvT1pqNjVhZnZ5djZiSGZLNGpZbmlxWkVMK1Q0KzBjcStzYjJBbXZG?=
- =?utf-8?B?MllWOHJQUkxkWS9QWjNCcE9yenhVdTgzb0NHdUVkNG03dGZHaXdyLzJXd0pQ?=
- =?utf-8?B?TytCcjRIM3FqN0lZWnJZRmQrL0orRTlRaVlENThDeDZtT1BWa1FvUWc1NjNV?=
- =?utf-8?B?Q09zazMvWE16VlRLUndJeDBSVmQyTklpR0wzbVE4L1Q2VW1vc3cyUlNIMENW?=
- =?utf-8?B?ZURHU3B3N1BmcTBBUnJ2RVlmbndGME0vbm1XUzdBVXN0aTFZTHJmQ1l4ZlRi?=
- =?utf-8?B?aHl2dU9neWs5WWVRVndMTDQ4TklHamdhcnBJU1dodndqZjRvUXdmTmxQMEI0?=
- =?utf-8?B?eDFqbUhJZDlHMU9pWll2cTUvRklwOE1ERWhtOXBsOWpjLzU4YU5LajdHeE5r?=
- =?utf-8?B?ZjAyc0tiSDBPSDBFaGlCWUZzUnBuYnVUYlNIV1JQa1gxKzZBbFA4QmNIKytV?=
- =?utf-8?B?V0tTdjJjTUU3Z1RaMmV3S1dhU1FwM2w1YWFRYUl5TFNLdXJVNlpIaklCVkVF?=
- =?utf-8?B?NkFIU2FINjRFYTNEaTdDM0VjUEVXSnV5ZEkwcldLdWNnZklETnZKSkM3dnB0?=
- =?utf-8?B?aFJraEZUWERXd0dhSHM2N3BYYjk0WERjOHJndWZxbkw1RVRJVlF1akdZbUNo?=
- =?utf-8?B?SWFJT292a0pMaXhWR1JNa0pXQkdlcGVRL0M0WmJGNVpadnlMRkUzNktMYW01?=
- =?utf-8?B?eFg1WmVIMGRqbUxxY1V5T2dMemd2dmp1aEt3MDZ2d1pZVmp0Q2R5dmZrdnlB?=
- =?utf-8?B?ak53dGFkOVA2K2ZoQ3BFMXFzMGIzaDlVRUxPSUdNK3VUSXVpMWFtRy9xaDln?=
- =?utf-8?B?V0l2N2hxejVHYk53d2xZN1F1MjRMTGh2NkRDWTlReEJ2RHl4UTNsWjRQRWtL?=
- =?utf-8?B?cU1CS0wvWGlqSlF5MzJlRXF4d09xWU9majlqY3hZT3ZwSWQ1S3VoM1cxSXR0?=
- =?utf-8?B?WjIweElWSGcwNm4zNGp0YndXT3VRQUdVWVlmKzRNcFUzdm1kTm1xQ0NNbnY4?=
- =?utf-8?B?R29PaTBMNGJwOU9sbnYwazBuV3cvbzZEYkxRN01IbG5TZjBYM3dnS0NGNWJY?=
- =?utf-8?B?bzFEZWc4M2tEZEVkUkJ5dHFKTEZnV2tLMUtQTnh1OHJwMDN2VVVLR3paTE91?=
- =?utf-8?Q?t0GqjiK5hkSaK54lDB3T?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0680046f-4861-4324-e69d-08dcf2f8c6b8
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 00:22:28.1862
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0253
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+ Isaac Scott <isaac.scott@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Robert Foss <rfoss@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ imx@lists.linux.dev, kernel@dh-electronics.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20241008223846.337162-1-marex@denx.de>
+ <dbede671-c97b-4ad7-8a54-f1b381fea082@nxp.com>
+ <00ffd38c-b01a-40cd-9130-19c35a387ca0@denx.de>
+ <819380c3-d13f-4989-b305-388fc60d30e4@nxp.com>
+ <d99e0021-3253-4312-9b50-6031ae0f8d8e@denx.de>
+ <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
+On 10/22/24 8:13 AM, Liu Ying wrote:
 
-On 2024/10/23 4:12, Gax-c wrote:
-> From: Zichen Xie <zichenxie0106@gmail.com>
->
-> This was found by a static analyzer.
-> There may be a potential integer overflow issue in
-> sg2042_pll_recalc_rate(). numerator is defined as u64 while
-> parent_rate is defined as unsigned long and ctrl_table.fbdiv
-> is defined as unsigned int. On 32-bit machine, the result of
-> the calculation will be limited to "u32" without correct casting.
-> Integer overflow may occur on high-performance systems.
-> We recommended that we cast the denominator as well but
-> Dan Carpenter said that it was a max of 3087 and was not even
-> vaguely close to the 4 billion mark needed to overflow a u32.
-> So, we only cast the numerator here.
->
-> Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
-> Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+[...]
 
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+>>>>> This patch would cause the below in-flight LDB bridge driver
+>>>>> patch[1] fail to do display mode validation upon display modes
+>>>>> read from LVDS to HDMI converter IT6263's DDC I2C bus.
+>>>>
+>>>> Why ?
+>>>
+>>> Mode validation is affected only for dual LVDS link mode.
+>>> For single LVDS link mode, this patch does open more display
+>>> modes read from the DDC I2C bus.  The reason behind is that
+>>> LVDS serial clock rate/pixel clock rate = 3.5 for dual LVDS
+>>> link mode, while it's 7 for single LVDS link mode.
+>>>
+>>> In my system, "video_pll1" clock rate is assigned to 1.0395GHz
+>>> in imx8mp.dtsi.  For 1920x1080-60.00Hz with 148.5MHz pixel
+>>> clock rate, "media_ldb" clock rate is 519.75MHz and
+>>> "media_disp2_pix" clock rate is 148.5MHz, which is fine for
+>>> dual LVDS link mode(x3.5).  For newly opened up 1920x1080-59.94Hz
+>>> with 148.352MHz pixel clock rate, "video_pll1" clock rate will
+>>> be changed to 519.232MHz, "media_ldb" clock rate is 519.232MHz
+>>> and "media_disp2_pix" clock rate is wrongly set to 519.232MHz
+>>> too because "media_disp2_pix" clock cannot handle the 3.5
+>>> division ratio from "video_pll1_out" clock running at
+>>> 519.232MHz.  See the below clk_summary.
+>>
+>> Shouldn't this patch help exactly with that ?
+> 
+> No, it doesn't help but only makes clk_round_rate() called in
+> LDB driver's .mode_valid() against 148.352MHz return 148.352MHz
+> which allows the unexpected 1920x1080-59.94Hz display mode.
 
-Thanks.
+Why is 1920x1080-59.94Hz mode unexpected in the first place ?
+I assume your display device reports that it supports this mode, and now 
+the scanout engine and LDB can generate this mode too ? Or does the 
+display device NOT support this mode ?
 
-> ---
-> v2: modified patch to numerator casting only.
-> v3: modified wrapping to make it clear.
-> ---
->   drivers/clk/sophgo/clk-sg2042-pll.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
-> index ff9deeef509b..1537f4f05860 100644
-> --- a/drivers/clk/sophgo/clk-sg2042-pll.c
-> +++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-> @@ -153,7 +153,7 @@ static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
->   
->   	sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
->   
-> -	numerator = parent_rate * ctrl_table.fbdiv;
-> +	numerator = (u64)parent_rate * ctrl_table.fbdiv;
->   	denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
->   	do_div(numerator, denominator);
->   	return numerator;
+>> It should allow you to set video_pll1_out to whatever is necessary by LDB first, fixate that frequency, and the LCDIFv3 would then be forced to use /7 divider from faster Video PLL1 , right ?
+> 
+> Yes, it allows that for single-link LVDS use cases.
+> And, __no__, for dual-link LVDS use cases because the
+> video_pll1_out clock rate needs to be 2x the LVDS serial clock
+> rate.
+
+Can't the LDB still set the Video PLL frequency to whatever it needs 
+first, fixate it, and only then let the LCDIFv3 divide the frequency 
+down ? (sorry, I am a bit tired today, maybe I am missing the obvious)
+
+>>>       video_pll1_ref_sel               1       1        0        24000000    0          0     50000      Y      deviceless                      no_connection_id
+>>>          video_pll1                    1       1        0        519232000   0          0     50000      Y         deviceless                      no_connection_id
+>>>             video_pll1_bypass          1       1        0        519232000   0          0     50000      Y            deviceless                      no_connection_id
+>>>                video_pll1_out          2       2        0        519232000   0          0     50000      Y               deviceless                      no_connection_id
+>>>                   media_ldb            1       1        0        519232000   0          0     50000      Y                  deviceless                      no_connection_id
+>>>                      media_ldb_root_clk 1       1        0        519232000   0          0     50000      Y                     32ec0000.blk-ctrl:bridge@5c     ldb
+>>>                                                                                                                                deviceless                      no_connection_id
+>>>                   media_disp1_pix      0       0        0        129808000   0          0     50000      N                  deviceless                      no_connection_id
+>>>                      media_disp1_pix_root_clk 0       0        0        129808000   0          0     50000      N                     32e80000.display-controller     pix
+>>>                                                                                                                                32ec0000.blk-ctrl               disp1
+>>>                                                                                                                                deviceless                      no_connection_id
+>>>                   media_disp2_pix      1       1        0        519232000   0          0     50000      Y                  deviceless                      no_connection_id
+>>>                      media_disp2_pix_root_clk 1       1        0        519232000   0          0     50000      Y                     32e90000.display-controller     pix
+>>>                                                                                                                                32ec0000.blk-ctrl               disp2
+>>>                                                                                                                                deviceless                      no_connection_id
+>>>
+>>> Single LVDS link mode is not affected because "media_disp2_pix"
+>>> clock can handle the 7 division ratio.
+>>>
+>>> To support the dual LVDS link mode, "video_pll1" clock rate needs
+>>> to be x2 "media_ldb" clock rate so that "media_disp2_pix" clock
+>>> can use 7 division ratio to achieve the /3.5 clock rate comparing
+>>> to "media_ldb" clock rate.  However, "video_pll1" is not seen by
+>>> LDB driver thus not directly controlled by it.  This is another
+>>> reason why assigning a reasonable "video_pll1" clock rate in DT
+>>> makes sense.
+>>
+>> I agree that _right_now_, the DT clock assignment is the only option.
+>> I would like to see that DT part disappear and instead would prefer if the LDB/LCDIF could figure out the clock tree configuration themselves.
+> 
+> I think we'll live with the assigned clock rate in DT, because the
+> i.MX8MP LDB and Samsung MIPI DSI display pipelines need to share a
+> video PLL, like I mentioned in comments for patch 2.
+
+They do NOT need to share a PLL, you can use e.g. PLL3 for one and Video 
+PLL for the other if the requirement is accurate pixel clock .
+
+[...]
