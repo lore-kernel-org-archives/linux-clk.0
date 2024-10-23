@@ -1,76 +1,79 @@
 Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2AE155CBD;
-	Wed, 23 Oct 2024 07:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F738155CBD;
+	Wed, 23 Oct 2024 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729670375; cv=none; b=gzU0/tIVPhrtkyzw3JbpObS4dwO5oqq+CYbt/EGF621csbF+Xegu+o6qIarvieegUQ1s+/Ink1IO+n9F9JJgwcEe7/zel7gnvZlJM9vOo7kwZP54ABAWIEfV+glIf/uDubMD8Mu23o9yT9LZmvkpJ8qY3KiYH9aFFCJ8H0riyFg=
+	t=1729670378; cv=none; b=gzdSSXNp8iHU37m6AkZ7iO1r9rcteA0xml8qx0li01kSC9QUPu0TwiGaFe4mSjUC8FC0FaxBVSOpotdez5ftvJWl8VVb/Is8VZMaKoqmsGBXzaGDhze0U7kMKVJ+Ve130YC5HeqcheoSDQBZZx9YptUQWjjsxRM0BloMnYN/bxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729670375; c=relaxed/simple;
-	bh=swoHZitnUxOyrKtp9TmaKWwF40O6gGMp/5+Codl//04=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4g7oJ/r6eCBPfEQEEkzrhbPbGcW2drsdHXnqqzdJWw7OijRTdgItsrzoTG1NBeAjEQ6ffXGboHSyCPaNpaxG+YfQejcEhkXqSZQFfiFn3q+Fp8hiRy2KNqWt3ejKcZ0GXzjuR4xUswKRpd4vUp2AZCFw0VdeSKgrs6cU+plWFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=H7xCsreu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q2tKGxnV; arc=none smtp.client-ip=103.168.172.153
+	s=arc-20240116; t=1729670378; c=relaxed/simple;
+	bh=jMmK+38U32jzjncPKbEGTxHASJ0VvdfgLc7A0BMTXzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hQdh/XBl6RzjezkkoyL3GZU/18wbfPbiJ3hmQfLTjvz8ZFUQvlK6YP3+N0KDyeYVE4gLvzWR+k7oXaRU2VLiN5l6jqU7FWkN/Gq0lQIAWcSpO/ajLxav3xoqKIi3O/+l0ANynAuACtf6HorIJIuzEB770MeoKluj2ryirNIEvJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=Ot0ETmZ1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G3tU+5u1; arc=none smtp.client-ip=103.168.172.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="H7xCsreu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q2tKGxnV"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 33E51114018D;
-	Wed, 23 Oct 2024 03:59:31 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="Ot0ETmZ1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G3tU+5u1"
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CF5841140190;
+	Wed, 23 Oct 2024 03:59:35 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 23 Oct 2024 03:59:31 -0400
+  by phl-compute-11.internal (MEProxy); Wed, 23 Oct 2024 03:59:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm3; t=1729670371; x=1729756771; bh=elHpuajvwi
-	yNA9OK8x4fvj9BtjIaAO6sLsdUEmQFU98=; b=H7xCsreudOiEYguWOLp1R2Sj/D
-	WyWe2YygznB/gn24le3RjwDCwf7EHrIrGo+E9bJgmQsjGOSERfMvyD0yhMbUcZDA
-	HVhQYabxYBrMXk0eV3Auvo3WfiNVMzEwVxWUHU+ApIpD2xPH8R9iZ1uM3xd7SdPN
-	wlYYHE8O2TeItYGaf+8wLjBKN6RjYO9zCKxqtoxYil00oeumFNuq8AjDAFrtnIIX
-	o6fb7jlw6Fj+qtku3M+/F2DR4jN71796FjTn75VD72WPz/4WpLGWqGEAx66hExgs
-	WNLTzIzqH+QvFu8Uy+BRfh40Jm9dQnOXHmJVI+Q+/Po4ZTrJsz3isy/ZSocw==
+	:from:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1729670375; x=
+	1729756775; bh=v4SwrnOxpLJyRmiekqgcMSf7zZRoIoNhko/QGoWLF9E=; b=O
+	t0ETmZ1hYdft0kILEflTwZoZR/sHAfn5mgb41MNdr/BPppRzsx7eh1IEwcDwp3qP
+	ihsixg3MAprk9u5qB4Q+F3hS16EiCqI78Pd6Pl3s0osH+GEJksGWJuLO4qocmoU6
+	+GrPKfcMP9x1wIT6QDYt6WRBsUKvtK3XA3ieHtdTUwUI+V270zDAw03Znrgq9Emn
+	w6HL+R37Bhf3yYqx8h/hK32EPPABKPjTRBA51RvHwWJIkZP+Yngkt9QPUZjsSeWV
+	pdnHOZ6JW7FIdcXva/vezYA9czdAKo7O7MH5E9e/0+Di6r32bMRtdnamsfqkiHHq
+	hmgaBXZGhR0ydEmA3qs4w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729670371; x=1729756771; bh=elHpuajvwiyNA9OK8x4fvj9BtjIa
-	AO6sLsdUEmQFU98=; b=Q2tKGxnVMxIQa65c+wFeGTQX6ITSsvo+JF/WYL+A4TWV
-	piraClaqQ2kL28TWtzfvNGGCgRpwmBp0puNKPOpkFFA6Wrj7Gh+C5IRiI4EFfShE
-	sOKuhiCHmMDmtApH+t7nuPB48vNQXeJ+6M3qjOzwkkt/SM5NrB/zVgAzRmV0mMy/
-	ttU2sr8jBs6X8C+QKtbStAh6e56A5RehJ6Mk3XOuME5kMRLtCze8jmFKreenGWa7
-	bq9Zj+hAQGS6WJlWoMyrzAWmJTgYt9u8L9SDAqR58U4HGbAIrjFtqYJkGgsu31Sv
-	yRwJINBz1hlD7QN+3Nf74OJ9OQu/HSeyPQbY6Hu+BQ==
-X-ME-Sender: <xms:4qwYZwDk2SV1wvgH2mbnVpZs475ySYiUTvk5pIiyq849nde6IrbkHw>
-    <xme:4qwYZygwlFgO73vhkR-CwSBcJHV_RzYpa8BGWmcwfFSX5SRcNPdI5aQD0_sNSE_oc
-    NyO0PDtzDfM932PpA>
-X-ME-Received: <xmr:4qwYZznJnOZIaJolnFyUKfbyXFJ3fAp5Dy8uaVYZq_yxAB2xX7S7cTSkH4Lv1oQCH54JynFduJq1Cc_pxOuk9AWQS7g1bYeH1-s_eSoA3Ri1XJBJ>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729670375; x=
+	1729756775; bh=v4SwrnOxpLJyRmiekqgcMSf7zZRoIoNhko/QGoWLF9E=; b=G
+	3tU+5u1B/uLYTdqNIEWkKBZqbey17ws2cCBIbJ7T8IEVPMo7VlDLVkcWdmxtKvl2
+	0HhodN/FSDvaAIgQCGmZybTRP8xbfdp4RNKB8Wl4TtvatrcRbKEJf2eE8yYHodBd
+	/6Eks5b/8LP4R5jcqKZrJgCyRb94a9SG3o68hthjHQKbscxB2bDpN1tSsCEzSVyh
+	lXiNwOs9DGULT+xPO9NWQYGgZ/z4J3VoMERgV0TOXGXfgcMRdM7HKVmZQ3XKiZrw
+	gxcPKCKIcWjKhfqwknO2r05bE8xGnvkvRg+Upgq9kZZODrok1seu6v6zAZwKWsPx
+	sYu6BVOCbXTE5/jEQ5a1g==
+X-ME-Sender: <xms:56wYZ7uO8Wl3u2zpeNCts-rmfINvJSg03fQgFaJXsFvi2PwWV4h0FA>
+    <xme:56wYZ8fjbygVEqFW_Q3o6KphPT0SU-i0_4ZFC7iCEYvycGtArF6lCv1GUEcOEJS9k
+    ERjRADybiLMYy9YSA>
+X-ME-Received: <xmr:56wYZ-wdHUOn6pEwuXl9tHZEqw91k-d7KwkwMcPmopOyc1lrC_3F2Cc8hVkAYPYFVvSHeWhgxpy7-v3GhSFiteA5lwywm8DML46fvJG_mGdhMVCR>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeiiedguddvhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
-    hfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsthdrtg
-    homheqnecuggftrfgrthhtvghrnhepuddvueduueegtdeuffetveevgeehhedvhfefuddu
-    veekgffgfedtheegtefhhfffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgtphht
-    thhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhgihhrugifohhoug
-    esghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtphhtthhopehtihifrg
-    hisehsuhhsvgdrtghomhdprhgtphhtthhopeifvghnshestghsihgvrdhorhhgpdhrtghp
-    thhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprhgtphhtthhopehmrggtrhhorghl
-    phhhrgekvdesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnshdrphhhihhlih
-    hpphgvsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:4qwYZ2xP-kAcrAhI2aATOxRvbzHFbJceIaQxRUz-r-8mEWDTy1MeEQ>
-    <xmx:4qwYZ1SdwqndmNEZfjSud9FwtGJvxiGzvab-RJNB9mSkwtovextclA>
-    <xmx:4qwYZxYRjYNYakZsZZz9T5rL9gs7WKrh4EO1s4fdfUuvJZaJ_7pkYg>
-    <xmx:4qwYZ-SbTwfFe4CGkGkFHJOK0PetXn3Y5lngiyDeZ-TzoVQ6az5lqA>
-    <xmx:46wYZ-jIyJQxzc9SqZWKEWc4LRrwhyyJCm-9MpkmEj2N4j4Pqexf26ZJ>
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
+    necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
+    drtghomheqnecuggftrfgrthhtvghrnhepffehieffgedtgfffjeetveegfeekleeileek
+    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
+    phhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhgihhrugifoh
+    hougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtphhtthhopehtih
+    ifrghisehsuhhsvgdrtghomhdprhgtphhtthhopeifvghnshestghsihgvrdhorhhgpdhr
+    tghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpth
+    htohepshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprhgtphhtthhopehmrggtrhho
+    rghlphhhrgekvdesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnshdrphhhih
+    hlihhpphgvsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:56wYZ6Mxuz6XV5vHO_aQYrKnnPaROisFQ0-Wpnw4shGMfu-2vuACoA>
+    <xmx:56wYZ79Y1Dx7R64tv7IDRm633khRsMHUxLpg0G47mbHuXYpbHcFJug>
+    <xmx:56wYZ6X_H6GEh2xRDsGNuGoKLKkB_M-YNtf3HI_DHC5n2_9mqfA4eQ>
+    <xmx:56wYZ8eoB49AH8daeY6Fb8fxSEzI1nbnEIMo-qbdwoviCKPqyWhhew>
+    <xmx:56wYZyfPPPYAWcrIJDo__KZez34b8jMokYqcJQwQA0d95TU-wh4kPGTZ>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Oct 2024 03:59:26 -0400 (EDT)
+ 23 Oct 2024 03:59:31 -0400 (EDT)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -87,10 +90,12 @@ Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH v3 0/7] ASoC: add Allwinner H616 audio codec support
-Date: Wed, 23 Oct 2024 20:56:56 +1300
-Message-ID: <20241023075917.186835-1-ryan@testtoast.com>
+Subject: [PATCH v3 1/7] clk: sunxi-ng: h616: Add sigma-delta modulation settings for audio PLL
+Date: Wed, 23 Oct 2024 20:56:57 +1300
+Message-ID: <20241023075917.186835-2-ryan@testtoast.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241023075917.186835-1-ryan@testtoast.com>
+References: <20241023075917.186835-1-ryan@testtoast.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -99,63 +104,123 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi All,
+Allwinner has previously released a H616 audio driver which also
+provides sigma-delta modulation for the audio PLL clocks. This approach
+is used in other Allwinner SoCs, including the H3 and A64.
 
-V3 of this patch adding support for the Allwinner H616 (and variant)'s audio codec. Some clarification of comments, particularly regarding the clock driver changes, and a small fix for the device tree binding (apologies I forgot to re-run dt_binding_check on V2). Review comments otherwise addressed and reviews noted.
+The manual-provided clock values are:
+PLL_AUDIO(hs) = 24 MHz*N/M1
+PLL_AUDIO(4X) = 24 MHz*N/M0/M1/P
+PLL_AUDIO(2X) = 24 MHz*N/M0/M1/P/2
+PLL_AUDIO(1X) = 24 MHz*N/M0/M1/P/4
 
+A fixed post-divider of 2 is used to account for a M0 divider of
+2, which cannot be modelled by the existing macros and ccu_nm struct.
+
+Add SDM to the H616 clock control unit driver.
+
+Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+
+---
 Changelog v1..v2:
-- Reordered patches to group ASoC changes
-- Corrected PLL_AUDIO clock dividers to match values from manual and vendor SDK.
-- Remove PLL_AUDIO_4X clock from the device tree binding (not used in the driver).
-- Restrict TX-only DMA changes to the H616.
-- Change the codec name to fit into the 16 char limit.
-- Move the codec (and spdif) blocks in the H616 DTSI to restore address-order.
-- Add board enablement (and power/GPIO changes for RG35XX to support speaker amp).
+- Add fixed_post_div to high-speed audio clock to correct M0 value to 1 (ie divide by 2) based on manual
+- Correct PLL_AUDIO_(4/2/1)X clocks to manual-provided values
+- Add/correct inline comments for the above.
+- add CCU_FEATURE_FIXED_POSTDIV to pll_audio_hs_clk.common.features
 
 Changelog v2..v3:
-- Update clock driver patch commit message and inline comments to more accurately describe SDM changes.
-- Fix missing "-" in H616 conditional binding as reported by dt_binding_check
-- Add additional clarification of internal playback_only quirk in sun4i-codec driver
-- Add short driver_name to H616 codec driver and restore descriptive name.
-- Remove leading 0 from codec node's address in H616 device tree to match other blocks.
+- Update comments and commit message to more accurately reflect SDM changes and rationale
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 46 +++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
-Original blurb below:
-
-Hi,
-
-The Allwinner H616 has a playback-only audio codec, with a single stereo or differential-mono line output.
-
-This patch adds support for the H616 (and H313/H618/H700/T507) SoC. Based on the  Allwinner kernel SDK driver, and tested on the H700.
-
-Regards,
-
-Ryan
-
-Marcus Cooper (2):
-  ASoC: sun4i-codec: Add support for different DAC FIFOC addresses to
-    quirks
-  ASoC: sun4i-codec: Add playback only flag to quirks
-
-Ryan Walklin (5):
-  clk: sunxi-ng: h616: Add sigma-delta modulation settings for audio PLL
-  dt-bindings: allwinner: add H616 sun4i audio codec binding
-  ASoC: sun4i-codec: support allwinner H616 codec
-  arm64: dts: allwinner: h616: Add audio codec node
-  arm64: dts: allwinner: h313/h616/h618/h700: Enable audio codec for all
-    supported boards
-
- .../sound/allwinner,sun4i-a10-codec.yaml      |  53 +++-
- .../dts/allwinner/sun50i-h313-tanix-tx1.dts   |   5 +
- .../allwinner/sun50i-h616-orangepi-zero.dtsi  |   5 +
- .../dts/allwinner/sun50i-h616-x96-mate.dts    |   5 +
- .../arm64/boot/dts/allwinner/sun50i-h616.dtsi |  44 ++-
- .../allwinner/sun50i-h618-orangepi-zero2w.dts |   5 +
- .../sun50i-h618-transpeed-8k618-t.dts         |   5 +
- .../sun50i-h700-anbernic-rg35xx-2024.dts      |  13 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c        |  46 ++-
- sound/soc/sunxi/sun4i-codec.c                 | 298 +++++++++++++++---
- 10 files changed, 404 insertions(+), 75 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+index 6c7623d4c59ea..05727fa1ee46e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+@@ -215,20 +215,30 @@ static struct ccu_nkmp pll_de_clk = {
+ 	},
+ };
+ 
+-/*
+- * TODO: Determine SDM settings for the audio PLL. The manual suggests
+- * PLL_FACTOR_N=16, PLL_POST_DIV_P=2, OUTPUT_DIV=2, pattern=0xe000c49b
+- * for 24.576 MHz, and PLL_FACTOR_N=22, PLL_POST_DIV_P=3, OUTPUT_DIV=2,
+- * pattern=0xe001288c for 22.5792 MHz.
+- * This clashes with our fixed PLL_POST_DIV_P.
++/* 
++ * Sigma-delta modulation settings table obtained from the vendor SDK driver.
++ * There are additional M0 and M1 divider bits not modelled here, so forced to
++ * fixed values in the probe routine. Sigma-delta modulation allows providing a
++ * fractional-N divider in the PLL, to help reaching those specific
++ * frequencies with less error.
+  */
++static struct ccu_sdm_setting pll_audio_sdm_table[] = {
++	{ .rate = 90316800, .pattern = 0xc001288d, .m = 3, .n = 22 },
++	{ .rate = 98304000, .pattern = 0xc001eb85, .m = 5, .n = 40 },
++};
++
+ #define SUN50I_H616_PLL_AUDIO_REG	0x078
+ static struct ccu_nm pll_audio_hs_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+-	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.m		= _SUNXI_CCU_DIV(16, 6),
++	.sdm		= _SUNXI_CCU_SDM(pll_audio_sdm_table,
++					 BIT(24), 0x178, BIT(31)),
++	.fixed_post_div = 2,
+ 	.common		= {
++		.features	= CCU_FEATURE_FIXED_POSTDIV | 
++				  CCU_FEATURE_SIGMA_DELTA_MOD,
+ 		.reg		= 0x078,
+ 		.hw.init	= CLK_HW_INIT("pll-audio-hs", "osc24M",
+ 					      &ccu_nm_ops,
+@@ -701,18 +711,20 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
+ };
+ 
+ /*
+- * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
+- * rates can be set exactly in conjunction with sigma-delta modulation.
++ * The PLL_AUDIO_4X clock defaults to 24.5714 MHz according to the manual, with 
++ * a final divider of 1. The 2X and 1X clocks use 2 and 4 respectively. The 1x 
++ * clock is set to either 24576000 or 22579200 for 48Khz and 44.1Khz (and 
++ * multiples).
+  */
+ static CLK_FIXED_FACTOR_HWS(pll_audio_1x_clk, "pll-audio-1x",
+ 			    clk_parent_pll_audio,
+-			    96, 1, CLK_SET_RATE_PARENT);
++			    4, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+ 			    clk_parent_pll_audio,
+-			    48, 1, CLK_SET_RATE_PARENT);
++			    2, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
+ 			    clk_parent_pll_audio,
+-			    24, 1, CLK_SET_RATE_PARENT);
++			    1, 1, CLK_SET_RATE_PARENT);
+ 
+ static const struct clk_hw *pll_periph0_parents[] = {
+ 	&pll_periph0_clk.common.hw
+@@ -1162,12 +1174,14 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/*
+-	 * Force the post-divider of pll-audio to 12 and the output divider
+-	 * of it to 2, so 24576000 and 22579200 rates can be set exactly.
++	 * Set the output-divider for the pll-audio clocks (M0) to 2 and the
++	 * input divider (M1) to 1 as recommended by the manual when using 
++	 * SDM. 
+ 	 */
+ 	val = readl(reg + SUN50I_H616_PLL_AUDIO_REG);
+-	val &= ~(GENMASK(21, 16) | BIT(0));
+-	writel(val | (11 << 16) | BIT(0), reg + SUN50I_H616_PLL_AUDIO_REG);
++	val &= ~BIT(1);
++	val |= BIT(0);
++	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
+ 
+ 	/*
+ 	 * First clock parent (osc32K) is unusable for CEC. But since there
 -- 
 2.47.0
 
