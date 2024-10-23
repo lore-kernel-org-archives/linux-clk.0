@@ -1,62 +1,62 @@
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA4E156237;
-	Wed, 23 Oct 2024 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79010156C5E;
+	Wed, 23 Oct 2024 07:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729670388; cv=none; b=rUIPGgOVJk4BIPDDekQ9h6I8IMuxryDf+2OHYaLUZNLNTw9+BSuHv/lr/zR76DUpxhvEa1Q+4JB+tQmoYdUypG38yyAYpgSKFFaH9NdInmpDjJ+hR4CtgAjhVTZMiSZm7sMRyi/ZfaODv/vLI1GSnYcUsMbQ2rXRCeMBz6RLb50=
+	t=1729670393; cv=none; b=Z52xiU0fKRE32JJFZbbBJA854krIMV9kyj3+1qQ8TGPgyFh3tmm9ijRakDEpaaLGT1vp1XtiIz9NYT6apGjsSkbZv9Psncth8HcYd9pjV37E3jVrEuaTLHDGGB1yJUy50Q2mEogSMsOrMyE78qFHH64x6RVaA7VIxac8aMZU/yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729670388; c=relaxed/simple;
-	bh=PxyUKfqZfElaYII/3CJXtslrWYSdl6tsKomMpk8BkeA=;
+	s=arc-20240116; t=1729670393; c=relaxed/simple;
+	bh=OTvXuTVccNcEwDAwpJatJlduxjYK7C29ee8Ke8YpJhA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eiXLQQTqQVUKSeSYGJxdFuzMvBiiB+eTVvJEhKbOSvbbqnPO3NK4rZndtB/eMTSShiXD4AWGnyt2TTKi5LMmlQklDQBAaJv+B2RvL0R/ZjRd/gAtU/ixtZvVSZBWpA9Wlx/fNCsz0rOmJHIlhQwVhcdDKRdzrjUC97jgIA9+mBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=NDkk/Q0Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=f73BOLA6; arc=none smtp.client-ip=103.168.172.149
+	 MIME-Version; b=gIAqqX5dUTmxPFAT7RSI8+jQaWXcnORKO71pYyF7FJ3Lk/LSBkiHQNEryFuMs1IFJEJEqzFdmxBAJoQsC/DSUgndoNu+rXIKUrrwmH/j+ST5w+ZGHCj6oLmh0L47h3zwepYSsrHA3GMbr8zscs2wesw+Y7B6y0nT93JNJeSzt+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=nXlPyz1e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZD8Hn5J0; arc=none smtp.client-ip=103.168.172.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="NDkk/Q0Z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f73BOLA6"
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="nXlPyz1e";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZD8Hn5J0"
 Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id BB0FA1380499;
-	Wed, 23 Oct 2024 03:59:45 -0400 (EDT)
+	by mailfhigh.phl.internal (Postfix) with ESMTP id B9A7A1140166;
+	Wed, 23 Oct 2024 03:59:50 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Wed, 23 Oct 2024 03:59:45 -0400
+  by phl-compute-07.internal (MEProxy); Wed, 23 Oct 2024 03:59:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1729670385; x=
-	1729756785; bh=Z2bi4VV4tB+2C35KiLjZn51cDIttz6219Ig2nhnskLc=; b=N
-	Dkk/Q0ZxorhJqsWjmRSr+5cg6Z+Uh38lq4p9dltE992ZHP7c48F321/o+kfGwQTn
-	TxZBhyUzHIaWJdHycQEti6J9Uc58p6g3MyO80ruu5/MJ4pYis2vOuXV/Tgt+3LX4
-	9grSttL/6Y0e/utXN1UStv+8mYx1LiAzvWIxgpzsyAcHNZqRK7WMgetPZO9FGGoB
-	vpgF7rMcti53X+FZDBF2Feu6LzL9Fjh9X283SlNuWBwFsDpJ2UH5xsaDs7v+dw/w
-	ztmUaK0y/E+Mq/m/C/merg5VTUClrcOP+x07uZzNUQhbWETvAUv9iLEZf0texXvn
-	UxrM6/cPAkC6b6yMaSx6w==
+	:reply-to:subject:subject:to:to; s=fm3; t=1729670390; x=
+	1729756790; bh=a/v5cCrZeaL9FPFlnXB7oZQvMZPCQJrZbGhxMStyvGI=; b=n
+	XlPyz1emlfEJr65II1A9/n8bd4Zd0beR/l5ltGiUe572r85aH9IzpYJaKDfcqYfs
+	3frzQQUc8DMhjXH9EUWgyyVby/Y5OFu6PO+TH4XTXK0lp3n+s6YdE/ojdhquHIYK
+	pLFQ9EVVx1GsI3t8z1/sQiWosafaXSMOr21uVGXVzd5wfUk+7eikenQzTR8UosIl
+	UyDqKu5PaR0jKIXujc2YYe6bNq+iSKqjGjZjlQKSAQQj1n52qAhPtNak+gv4f92A
+	5AuOb5qzXU/zuCHTpXpyOCZIJrhofUcBjaRrPN0KPgCIrYOnvFtZEikyitDwiRTI
+	CFhOpXr42MIWipXLAZcMA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729670385; x=
-	1729756785; bh=Z2bi4VV4tB+2C35KiLjZn51cDIttz6219Ig2nhnskLc=; b=f
-	73BOLA6eyVMSC3ZaNV9cF/Hw0sHNADBqAPdGCn/qQzGJa2XN1buFYydrT9gpOYzz
-	zsMgH8X5j0OoCMgLeLokxKBIeljBJCC3qplDrP8+lf+5s4+uFDE5P27Krq+DLs1Z
-	MHhbxaAQ7RI6LDvXV8Qe2myq2C52cC077taVmcEvlItq5xDZczA8woLVfuaMBHjf
-	jBQORo6b/bWqOiiU/clM+g2WWNxYAsGVBoHgrVYPqdEH85j6r0YLKzSbVH1J680d
-	OvV51HZpomnqwaFo+wt6pIX9uvfCVu3r23x6zxUuFxNbKbKde0YTZ5jgzCsssVIC
-	pmy+nXwBjtg04TUTBiRlQ==
-X-ME-Sender: <xms:8awYZwLH0RTOG0PLNk57mSdRvYpQM3mBzU3SvqWTv5NX_FVOIYedoQ>
-    <xme:8awYZwKk68-CCEqZh15CT920QinmE0dqKk0Zr1ga_kp_YPr_W29Ixr4ER2qkMlFff
-    vj3B-dmW-km3XniLg>
-X-ME-Received: <xmr:8awYZwv55iEswiqx27jlE7XFrCUDprbW6Jyyk5U4g6-NN4uMaGaVsCd7CJ7LxEEDKE7ZgOaHPfjUFg9uOTpMIN4WNSXPdAncrwM5ykX3-gO_bn8p>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729670390; x=
+	1729756790; bh=a/v5cCrZeaL9FPFlnXB7oZQvMZPCQJrZbGhxMStyvGI=; b=Z
+	D8Hn5J039uZ8apyvzNl2U4kB7BJyBZuKmbZd5M6XYsdksHarkjlBSAXv9Sv7PnGR
+	ta+vBiAziwF4g0jGRsBbX8Q9qaCPvh6DPkFp6si4cAlC/ji2kI/CQjEzzLT1rk0J
+	3q3FSHjLAO2AEnuUbu7LI8aygy/Q2U0e7VTBoPdMEl/tvVlgbNR2sKDNY6tN8Rjx
+	BzaMk4EN3jn5Zw4m0zZ2HnDPiQ/+5rA7qaRsQ2hz7xObHk2wpRTKNtkonDjpYcAb
+	JHVJMBMUkACjuDdQpensjBKVHGQmml+Zr+OoxalxCIcBxaLnZaDfJIRknZP2Ovgq
+	uCkr6Nh86TCedaEfz6y+g==
+X-ME-Sender: <xms:9qwYZ7ph7wYXA3oIvFm6zNUMOmYq-ICxmQGrOJb2CYoUQSVSiJ3Rww>
+    <xme:9qwYZ1rUJ7GUrwnf25b0GJRd5Puz5u4iIOiA-khVAgK41TM1SBOe0EQWPO6Wjb7Y2
+    NnT_FzeODeMjrwubg>
+X-ME-Received: <xmr:9qwYZ4OeFv1RyY4GyuvKwaRlEJnk66pqw0AfGWR-f8PHN3uEIyXClQx7wM8_EwmRKIQgHsHC4ReB1qXSH8zALLk5R-RDfdCbd_pIgbgofVW8ASkY>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeiiedguddviecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
     hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
     necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
     drtghomheqnecuggftrfgrthhtvghrnhepffehieffgedtgfffjeetveegfeekleeileek
-    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrg
     hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
     phhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhgihhrugifoh
     hougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdr
@@ -66,14 +66,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeiiedguddviecutefuodetgg
     htohepshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprhgtphhtthhopehmrggtrhho
     rghlphhhrgekvdesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnshdrphhhih
     hlihhpphgvsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:8awYZ9ZXH1iBC21aiC-uxvMSKSsF_ytAOE6uEsoKAITCpVQFgu5SOQ>
-    <xmx:8awYZ3ZuzncNgOq9ujmhSrK4RhlMRP251aShsMIiETypNgdFN-9UrQ>
-    <xmx:8awYZ5Co0SOErtS_17Kg4eNIFP4PTRfsssJdZGcy1ZJNE09LrusGsA>
-    <xmx:8awYZ9a2E1UeaOc8oNeGo5gO0MKLFEmOQZUR_p5EkQ9lpaGUKPXD7A>
-    <xmx:8awYZ9s_2uVgWN-_mHZRnqIvRLLrs2jd1Gr_je_hdgmsq1bUEgv1616e>
+X-ME-Proxy: <xmx:9qwYZ-6bshTzZi1drhauCH5lh4cyAPp3Nk17XTZiD1wgCD8vHLWDLw>
+    <xmx:9qwYZ678z6fkoZ2VMKlrrjt29V8sHwxyycWywPhqiieEivPq2qtQIQ>
+    <xmx:9qwYZ2iG4aWEL6YD_mgJweqnwULjTSx2ozqqtnODurKCdlbNM7QMQA>
+    <xmx:9qwYZ847RcrnzX4pLEnXkV1NFwPJ_RzTb5f2NJF3G4f-QixY_mZrGA>
+    <xmx:9qwYZ_Pkgq9N0Az_OJreYuis8yCWBojsOzSUaHX8fbTIMLiUfT4nKy0y>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Oct 2024 03:59:40 -0400 (EDT)
+ 23 Oct 2024 03:59:46 -0400 (EDT)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -92,9 +92,9 @@ Cc: linux-sound@vger.kernel.org,
 	Marcus Cooper <codekipper@gmail.com>,
 	Ryan Walklin <ryan@testtoast.com>,
 	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 3/7] ASoC: sun4i-codec: Add support for different DAC FIFOC addresses to quirks
-Date: Wed, 23 Oct 2024 20:56:59 +1300
-Message-ID: <20241023075917.186835-4-ryan@testtoast.com>
+Subject: [PATCH v3 4/7] ASoC: sun4i-codec: Add playback only flag to quirks
+Date: Wed, 23 Oct 2024 20:57:00 +1300
+Message-ID: <20241023075917.186835-5-ryan@testtoast.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241023075917.186835-1-ryan@testtoast.com>
 References: <20241023075917.186835-1-ryan@testtoast.com>
@@ -108,232 +108,53 @@ Content-Transfer-Encoding: 8bit
 
 From: Marcus Cooper <codekipper@gmail.com>
 
-The Allwinner H616 SoC  uses a different register address to control the
-output FIFO.
-
-Allow this to be specified separately from the ADC FIFO control
-register.
+Some devices only have the playback side of the codec implemented
+so add a quirk to check for this. This flag is only required internally
+within the codec driver, as the DAI is configured for playback only
+(capture disabled) separately in the create_card() function for these
+devices.
 
 Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
 ---
- sound/soc/sunxi/sun4i-codec.c | 83 +++++++++++++++++++++--------------
- 1 file changed, 51 insertions(+), 32 deletions(-)
+Changelog v2..v3:
+- Add a note regarding internal usage of the playback_only quirk.
+---
+ sound/soc/sunxi/sun4i-codec.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 330bc0c09f56b..37f5678b55291 100644
+index 37f5678b55291..312d2655c3f4e 100644
 --- a/sound/soc/sunxi/sun4i-codec.c
 +++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -238,6 +238,8 @@ struct sun4i_codec {
- 
- 	/* ADC_FIFOC register is at different offset on different SoCs */
- 	struct regmap_field *reg_adc_fifoc;
-+	/* DAC_FIFOC register is at different offset on different SoCs */
-+	struct regmap_field *reg_dac_fifoc;
- 
- 	struct snd_dmaengine_dai_dma_data	capture_dma_data;
- 	struct snd_dmaengine_dai_dma_data	playback_dma_data;
-@@ -246,19 +248,19 @@ struct sun4i_codec {
- static void sun4i_codec_start_playback(struct sun4i_codec *scodec)
- {
- 	/* Flush TX FIFO */
--	regmap_set_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			BIT(SUN4I_CODEC_DAC_FIFOC_FIFO_FLUSH));
-+	regmap_field_set_bits(scodec->reg_dac_fifoc,
-+			      BIT(SUN4I_CODEC_DAC_FIFOC_FIFO_FLUSH));
- 
- 	/* Enable DAC DRQ */
--	regmap_set_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			BIT(SUN4I_CODEC_DAC_FIFOC_DAC_DRQ_EN));
-+	regmap_field_set_bits(scodec->reg_dac_fifoc,
-+			      BIT(SUN4I_CODEC_DAC_FIFOC_DAC_DRQ_EN));
- }
- 
- static void sun4i_codec_stop_playback(struct sun4i_codec *scodec)
- {
- 	/* Disable DAC DRQ */
--	regmap_clear_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			  BIT(SUN4I_CODEC_DAC_FIFOC_DAC_DRQ_EN));
-+	regmap_field_clear_bits(scodec->reg_dac_fifoc,
-+				BIT(SUN4I_CODEC_DAC_FIFOC_DAC_DRQ_EN));
- }
- 
- static void sun4i_codec_start_capture(struct sun4i_codec *scodec)
-@@ -356,13 +358,13 @@ static int sun4i_codec_prepare_playback(struct snd_pcm_substream *substream,
- 	u32 val;
- 
- 	/* Flush the TX FIFO */
--	regmap_set_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   BIT(SUN4I_CODEC_DAC_FIFOC_FIFO_FLUSH));
-+	regmap_field_set_bits(scodec->reg_dac_fifoc,
-+			      BIT(SUN4I_CODEC_DAC_FIFOC_FIFO_FLUSH));
- 
- 	/* Set TX FIFO Empty Trigger Level */
--	regmap_update_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   0x3f << SUN4I_CODEC_DAC_FIFOC_TX_TRIG_LEVEL,
--			   0xf << SUN4I_CODEC_DAC_FIFOC_TX_TRIG_LEVEL);
-+	regmap_field_update_bits(scodec->reg_dac_fifoc,
-+				 0x3f << SUN4I_CODEC_DAC_FIFOC_TX_TRIG_LEVEL,
-+				 0xf << SUN4I_CODEC_DAC_FIFOC_TX_TRIG_LEVEL);
- 
- 	if (substream->runtime->rate > 32000)
- 		/* Use 64 bits FIR filter */
-@@ -371,13 +373,13 @@ static int sun4i_codec_prepare_playback(struct snd_pcm_substream *substream,
- 		/* Use 32 bits FIR filter */
- 		val = BIT(SUN4I_CODEC_DAC_FIFOC_FIR_VERSION);
- 
--	regmap_update_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   BIT(SUN4I_CODEC_DAC_FIFOC_FIR_VERSION),
--			   val);
-+	regmap_field_update_bits(scodec->reg_dac_fifoc,
-+				 BIT(SUN4I_CODEC_DAC_FIFOC_FIR_VERSION),
-+				 val);
- 
- 	/* Send zeros when we have an underrun */
--	regmap_clear_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   BIT(SUN4I_CODEC_DAC_FIFOC_SEND_LASAT));
-+	regmap_field_clear_bits(scodec->reg_dac_fifoc,
-+				BIT(SUN4I_CODEC_DAC_FIFOC_SEND_LASAT));
- 
- 	return 0;
- };
-@@ -510,9 +512,9 @@ static int sun4i_codec_hw_params_playback(struct sun4i_codec *scodec,
- 	u32 val;
- 
- 	/* Set DAC sample rate */
--	regmap_update_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   7 << SUN4I_CODEC_DAC_FIFOC_DAC_FS,
--			   hwrate << SUN4I_CODEC_DAC_FIFOC_DAC_FS);
-+	regmap_field_update_bits(scodec->reg_dac_fifoc,
-+				 7 << SUN4I_CODEC_DAC_FIFOC_DAC_FS,
-+				 hwrate << SUN4I_CODEC_DAC_FIFOC_DAC_FS);
- 
- 	/* Set the number of channels we want to use */
- 	if (params_channels(params) == 1)
-@@ -520,27 +522,27 @@ static int sun4i_codec_hw_params_playback(struct sun4i_codec *scodec,
- 	else
- 		val = 0;
- 
--	regmap_update_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   BIT(SUN4I_CODEC_DAC_FIFOC_MONO_EN),
--			   val);
-+	regmap_field_update_bits(scodec->reg_dac_fifoc,
-+				 BIT(SUN4I_CODEC_DAC_FIFOC_MONO_EN),
-+				 val);
- 
- 	/* Set the number of sample bits to either 16 or 24 bits */
- 	if (hw_param_interval(params, SNDRV_PCM_HW_PARAM_SAMPLE_BITS)->min == 32) {
--		regmap_set_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--				   BIT(SUN4I_CODEC_DAC_FIFOC_TX_SAMPLE_BITS));
-+		regmap_field_set_bits(scodec->reg_dac_fifoc,
-+				      BIT(SUN4I_CODEC_DAC_FIFOC_TX_SAMPLE_BITS));
- 
- 		/* Set TX FIFO mode to padding the LSBs with 0 */
--		regmap_clear_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--				   BIT(SUN4I_CODEC_DAC_FIFOC_TX_FIFO_MODE));
-+		regmap_field_clear_bits(scodec->reg_dac_fifoc,
-+					BIT(SUN4I_CODEC_DAC_FIFOC_TX_FIFO_MODE));
- 
- 		scodec->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	} else {
--		regmap_clear_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--				   BIT(SUN4I_CODEC_DAC_FIFOC_TX_SAMPLE_BITS));
-+		regmap_field_clear_bits(scodec->reg_dac_fifoc,
-+					BIT(SUN4I_CODEC_DAC_FIFOC_TX_SAMPLE_BITS));
- 
- 		/* Set TX FIFO mode to repeat the MSB */
--		regmap_set_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--				   BIT(SUN4I_CODEC_DAC_FIFOC_TX_FIFO_MODE));
-+		regmap_field_set_bits(scodec->reg_dac_fifoc,
-+				      BIT(SUN4I_CODEC_DAC_FIFOC_TX_FIFO_MODE));
- 
- 		scodec->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
- 	}
-@@ -587,8 +589,8 @@ static int sun4i_codec_startup(struct snd_pcm_substream *substream,
- 	 * Stop issuing DRQ when we have room for less than 16 samples
- 	 * in our TX FIFO
- 	 */
--	regmap_set_bits(scodec->regmap, SUN4I_CODEC_DAC_FIFOC,
--			   3 << SUN4I_CODEC_DAC_FIFOC_DRQ_CLR_CNT);
-+	regmap_field_set_bits(scodec->reg_dac_fifoc,
-+			      3 << SUN4I_CODEC_DAC_FIFOC_DRQ_CLR_CNT);
- 
- 	return clk_prepare_enable(scodec->clk_module);
- }
-@@ -1565,6 +1567,7 @@ struct sun4i_codec_quirks {
- 	const struct snd_soc_component_driver *codec;
- 	struct snd_soc_card * (*create_card)(struct device *dev);
- 	struct reg_field reg_adc_fifoc;	/* used for regmap_field */
-+	struct reg_field reg_dac_fifoc;	/* used for regmap_field */
+@@ -1571,6 +1571,7 @@ struct sun4i_codec_quirks {
  	unsigned int reg_dac_txdata;	/* TX FIFO offset for DMA config */
  	unsigned int reg_adc_rxdata;	/* RX FIFO offset for DMA config */
  	bool has_reset;
-@@ -1575,6 +1578,7 @@ static const struct sun4i_codec_quirks sun4i_codec_quirks = {
- 	.codec		= &sun4i_codec_codec,
- 	.create_card	= sun4i_codec_create_card,
- 	.reg_adc_fifoc	= REG_FIELD(SUN4I_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_fifoc	= REG_FIELD(SUN4I_CODEC_DAC_FIFOC, 0, 31),
- 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
- 	.reg_adc_rxdata	= SUN4I_CODEC_ADC_RXDATA,
++	bool playback_only;
  };
-@@ -1584,6 +1588,7 @@ static const struct sun4i_codec_quirks sun6i_a31_codec_quirks = {
- 	.codec		= &sun6i_codec_codec,
- 	.create_card	= sun6i_codec_create_card,
- 	.reg_adc_fifoc	= REG_FIELD(SUN6I_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_fifoc	= REG_FIELD(SUN4I_CODEC_DAC_FIFOC, 0, 31),
- 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
- 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
- 	.has_reset	= true,
-@@ -1594,6 +1599,7 @@ static const struct sun4i_codec_quirks sun7i_codec_quirks = {
- 	.codec		= &sun7i_codec_codec,
- 	.create_card	= sun4i_codec_create_card,
- 	.reg_adc_fifoc	= REG_FIELD(SUN4I_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_fifoc	= REG_FIELD(SUN4I_CODEC_DAC_FIFOC, 0, 31),
- 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
- 	.reg_adc_rxdata	= SUN4I_CODEC_ADC_RXDATA,
- };
-@@ -1603,6 +1609,7 @@ static const struct sun4i_codec_quirks sun8i_a23_codec_quirks = {
- 	.codec		= &sun8i_a23_codec_codec,
- 	.create_card	= sun8i_a23_codec_create_card,
- 	.reg_adc_fifoc	= REG_FIELD(SUN6I_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_fifoc	= REG_FIELD(SUN4I_CODEC_DAC_FIFOC, 0, 31),
- 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
- 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
- 	.has_reset	= true,
-@@ -1618,6 +1625,7 @@ static const struct sun4i_codec_quirks sun8i_h3_codec_quirks = {
- 	.codec		= &sun8i_a23_codec_codec,
- 	.create_card	= sun8i_h3_codec_create_card,
- 	.reg_adc_fifoc	= REG_FIELD(SUN6I_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_fifoc	= REG_FIELD(SUN4I_CODEC_DAC_FIFOC, 0, 31),
- 	.reg_dac_txdata	= SUN8I_H3_CODEC_DAC_TXDATA,
- 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
- 	.has_reset	= true,
-@@ -1632,6 +1640,7 @@ static const struct sun4i_codec_quirks sun8i_v3s_codec_quirks = {
- 	.codec		= &sun8i_a23_codec_codec,
- 	.create_card	= sun8i_v3s_codec_create_card,
- 	.reg_adc_fifoc	= REG_FIELD(SUN6I_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_fifoc	= REG_FIELD(SUN4I_CODEC_DAC_FIFOC, 0, 31),
- 	.reg_dac_txdata	= SUN8I_H3_CODEC_DAC_TXDATA,
- 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
- 	.has_reset	= true,
-@@ -1739,6 +1748,16 @@ static int sun4i_codec_probe(struct platform_device *pdev)
- 		return ret;
- 	}
  
-+	scodec->reg_dac_fifoc = devm_regmap_field_alloc(&pdev->dev,
-+							scodec->regmap,
-+							quirks->reg_dac_fifoc);
-+	if (IS_ERR(scodec->reg_dac_fifoc)) {
-+		ret = PTR_ERR(scodec->reg_dac_fifoc);
-+		dev_err(&pdev->dev, "Failed to create regmap fields: %d\n",
-+			ret);
-+		return ret;
+ static const struct sun4i_codec_quirks sun4i_codec_quirks = {
+@@ -1779,10 +1780,13 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 	scodec->playback_dma_data.maxburst = 8;
+ 	scodec->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+ 
+-	/* DMA configuration for RX FIFO */
+-	scodec->capture_dma_data.addr = res->start + quirks->reg_adc_rxdata;
+-	scodec->capture_dma_data.maxburst = 8;
+-	scodec->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++	if (!quirks->playback_only) {
++		/* DMA configuration for RX FIFO */
++		scodec->capture_dma_data.addr = res->start +
++						quirks->reg_adc_rxdata;
++		scodec->capture_dma_data.maxburst = 8;
++		scodec->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
 +	}
-+
- 	/* Enable the bus clock */
- 	if (clk_prepare_enable(scodec->clk_apb)) {
- 		dev_err(&pdev->dev, "Failed to enable the APB clock\n");
+ 
+ 	ret = devm_snd_soc_register_component(&pdev->dev, quirks->codec,
+ 				     &sun4i_codec_dai, 1);
 -- 
 2.47.0
 
