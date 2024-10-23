@@ -1,48 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74A0149013;
-	Wed, 23 Oct 2024 04:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFCF13D2B8;
+	Wed, 23 Oct 2024 04:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729656978; cv=none; b=ktsCkCuX8qfRc1g0C6hzX6cU99iDm74a8SbiLKa1NV+9u6A/T/WcqrTWtUq7Ow3Z7dPK/XKCZZ35ixAt4mbRryvjL6zi9GYbwOpFvb+yhogc4m+8WriiIY6k21ZFkfXWQDD0tvpge/twaiuXcorFrqvLjHng8nR5Uw+Zp1NyGAg=
+	t=1729656989; cv=none; b=eU7O+3mT9dnifGLiiUCJvrHYIixMT2a+Gn1OnGNoMrKqEyTpi+67Gx0vIhXs2eM6ipQxx2murqCyHvkoAwc67IGD69h9tj9xdwF7iiFd8tvK4Pe/LtMNFBXrasWYq3Sf6Do2Ex+P623wSfsYbIDT1IZ3Zx9ZcvkWCcP22Ra+9+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729656978; c=relaxed/simple;
-	bh=HtUrsFF9E3/9eRwQQLMlTmBHV1nknflCTbqN35M+p4I=;
+	s=arc-20240116; t=1729656989; c=relaxed/simple;
+	bh=DBCxr4AMOxIAmdx/NsysO9kOwO1VZZNaAI64HHpxqqs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e4E6ve/pdwNaU+iwZ6wwQUM64NHlWwaBd7wJbErf2hVvPxFgtJcs+eQYoRldNbG2jmwdaPwWF/rgd8zL4eejV57WdU9Pvj83uzy3RugtvXYkvzN8mJNIhELaAttW+C7/i4VaI3zpiP7cPZzjwYSUY3BVT3N/BQbK0iXoaTQHdW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTvbo6Ex; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=AU2aWmwed271KsUwaaA2MLm2mVGHSAd0Shk/vKnpg14asmMaDbxPMDIvDQGfdOAlAWX4kiXy+sBUoJE6wzjVuvwuNGNu2NWICJK+qceZ91v5Amzf/KLIHuUKp5DRLVnR3nBV+1A5OQi0xVeqOqN9Y+ix6ldVeWSuIfSebRCcsY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJcsc+lw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTvbo6Ex"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175D8C4CEE7;
-	Wed, 23 Oct 2024 04:16:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJcsc+lw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F1E6C4CEE7;
+	Wed, 23 Oct 2024 04:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729656976;
-	bh=HtUrsFF9E3/9eRwQQLMlTmBHV1nknflCTbqN35M+p4I=;
+	s=k20201202; t=1729656988;
+	bh=DBCxr4AMOxIAmdx/NsysO9kOwO1VZZNaAI64HHpxqqs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rTvbo6Ex3AlMVUVE3iTCPhIEm0C4kKZlzlB8M7GSZRkXXtliOtQA0UeS+ZKzr7HVA
-	 dPy0bkAAeK+HZYzomxRgkCLSCbyiVZ4RlCp/Es1DpPuKRDfH/BCBPpY3nCmxrD/K1a
-	 ocDpW2z2YtFvNB5fYYOZKTOxKNs9Wwwx+a+nTT88kfWSSexicnx6ZCfGlnzyunzBm6
-	 vK577ItszGp3fByu9SfhmDIVvaRhn/e6WKc1HOmudsBdGGicjPt37b6w79+bb/Kv9i
-	 qZvH5/LepiNelhZeitiNdkQev2yX2cRjMGrCe/tFoe70hEWpJpIalRyN/HFyCqDey+
-	 VubhFgREPzAhQ==
+	b=IJcsc+lwMgt1OmrlrTQ/Ph6duM0iAclgNAicgCN+aqsTBRJIUBQKZK2LZPAIh1Mup
+	 /3MDTXll0OkR79LNUSbCe+4h87DnZ9ysVvc3qMbkXAumUrT9YGA6jYWzsfHhg9i89Q
+	 KQ5vupNbHBIhVTao2LCW1qHSb4D8cnIxYTMSdVdqEEYKnwW9PJO58vJOioT7euStk+
+	 MkVOpZKZnSgMyWLWvu1If37624nx01WhEEo6823CBZipfMieF+OcDc/iBmz4vA4xYm
+	 w2xuCDtSAp1kn5tzEDmAP0FsqDEXa+ec88ndhq1TEvV6ybzEmV8dU2YUiKlPxJCz2f
+	 mCHcmPJoYavTQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
-	Vivek Aknurwar <quic_viveka@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Jeevan Shriram <quic_jshriram@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	quic_imrashai@quicinc.com,
+	quic_jkona@quicinc.com,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: qcom: clk-alpha-pll: drop lucid-evo pll enabled warning
-Date: Tue, 22 Oct 2024 23:15:53 -0500
-Message-ID: <172965696415.224417.2449883638734713639.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v5 0/8] Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P platform.
+Date: Tue, 22 Oct 2024 23:16:04 -0500
+Message-ID: <172965696399.224417.2176069731135434872.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241022080521.359-1-johan+linaro@kernel.org>
-References: <20241022080521.359-1-johan+linaro@kernel.org>
+In-Reply-To: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
+References: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,23 +59,27 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 22 Oct 2024 10:05:19 +0200, Johan Hovold wrote:
-> Boot firmware may have left the display enabled and this should not
-> generate a warning on boot:
+On Fri, 11 Oct 2024 00:28:30 +0530, Taniya Das wrote:
+> [v5]
+>   Rebased the device tree patch to add clock controller nodes.
 > 
-> 	disp_cc_pll0 PLL is already enabled
-> 
-> Also fix up the lucid 5lpe pll enable() implementation which did not
-> return early as intended in case the PLL is already enabled.
+> [v4]
+>   Changes in [v4] compared to [v3]
+>   Videocc: Update the mvs0/mvs1 gdsc to use HW_CTRL_TRIGGER [Konrad and Qualcomm
+>   internal discussions]
+>   Camcc:   Add new clock to the clock tree.
+>   Change the patch order for 'Update sleep_clk frequency to 32000 on SA8775P' [Krzysztof]
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: qcom: clk-alpha-pll: drop lucid-evo pll enabled warning
-      commit: f9b493de63eccf0fb6dc1549863590b9749f6f26
-[2/2] clk: qcom: clk-alpha-pll: fix lucid 5lpe pll enabled check
-      commit: 05b2363b1359195f3c86c98abc133907f8769a69
+[2/8] clk: qcom: Add support for Video clock controller on SA8775P
+      commit: 9c28d1b9ec6038ba654e28599532251a691c2ed0
+[4/8] clk: qcom: Add support for Camera Clock Controller on SA8775P
+      commit: 84c74dfbecc5f809e6e536c2ec74fd0a582399ec
+[6/8] clk: qcom: Add support for Display clock Controllers on SA8775P
+      commit: e700bfd2f976903428df422f78c6b725ea142564
 
 Best regards,
 -- 
