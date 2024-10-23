@@ -1,39 +1,39 @@
 Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA11AAC4
-	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 00:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80691AAC4
+	for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2024 00:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729645178; cv=none; b=FChbomHdnZHNKgZNYcFodhmDPgk3jyHGffKWns6/0dD2xmlEFqPHiaCfoit19j7FyO2O6L1o8BSVWlpQlhczXPrKUqV30OtTOBuvGOKK04f/Em8Zas6F5WUAt/8DjitVsNgylLGaYXGoexNPqjGyXSL1OvLIE5GIc5rbfpJ6fCI=
+	t=1729645184; cv=none; b=DDyyUpJrMll6UbWw1B1Rn5sSoGLdMswdCsrzvqGachSAPNLPY6elWc9SV0o1Gbs+MmVfKZ4jGIi9O5d657Lng/dBHqrq0EZS/FD+mgJNIb1NDlknQnvly2cTGu3CYNfegbTqIh9x2bKEDlJTMOENMR72LfceGWke9d+6n0oiXxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729645178; c=relaxed/simple;
-	bh=484AuxtE1p/OGto+/TaqIitx7dC6Z3Vn96AWc5AQ0fs=;
+	s=arc-20240116; t=1729645184; c=relaxed/simple;
+	bh=idR+Fwjjg7zWYvGKOdSzRwmcxlHdUIelU8ITMoQ6PLk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XLyIS93q7meVX5wBIdPl59VrAQgjBhO1g4MT12qAL00xUpPWm4oqGvyVakKIaRAI8KwZdwmr3dEIj/srT8+uUdtWFLiJZYFeRJEqUtexPwpykbIun+Zi13HFHeyyC21ydhe9c7CgQ9maUJer1cPjLP6jts0hPFULuZNTB+Rfvic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=l8PhXhSB; arc=none smtp.client-ip=85.214.62.61
+	 In-Reply-To:Content-Type; b=Q9B6g3bPq1bWEVVsKCnk+0kLSZBtiHKdZ6QYDWU0Y1/gclB7Yu0+Rpjf5iq2pYZMQEgZ+XlxEl0bFx9cdHzMjXwdxTdBQzyQDZm1r7Bgid8NqNG7xo3/P1tFnRAmmap23NvXefAHEqXVLx0evG3JFFqltHFF+vYWk6a8M6qGMuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=hqZUj3ss; arc=none smtp.client-ip=85.214.62.61
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="l8PhXhSB"
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="hqZUj3ss"
 Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
 	(No client certificate requested)
 	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id AC1FF892AA;
-	Wed, 23 Oct 2024 02:59:27 +0200 (CEST)
+	by phobos.denx.de (Postfix) with ESMTPSA id A86C3892B8;
+	Wed, 23 Oct 2024 02:59:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729645174;
-	bh=ECHHQ56CDB7f7hscf7vZFKjxE3wM97b9Tgz1zhQLshU=;
+	s=phobos-20191101; t=1729645181;
+	bh=eUdWWm3QvzO53KX32iFo1AxrLYZlLD5bgsQ9SGmEUns=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l8PhXhSBtuVdvk/jcLiL4dixQulDnPaUq2fuCkwb4Bj7jzWR/XFOM/ItHUfQOMBA/
-	 ZdwgkF6iAu4pMMOj3NCg/YJeUBc8dBg1mQv6tVLaTrA5Bv/5BJH3B11RUfSv3VVJWH
-	 SmTvkVu6MpTgliDohLBlS+uMm9YJD1w3FrVbOepOCVqoQPAkbFU8LSNAa0zDVuJs51
-	 HgSc7LOOtni52tPR1OpjjZk2jkC//yt5c8BXn6RlK/mx5PXafKnu3lz63e8OxuCk1m
-	 xwJwKqs/1fdq3bHXIZnhkCumNMa+/6kTpNZFeICTBU2AAaCPDieY9mIFMSWLBQ3ypR
-	 Yit392nciguPg==
-Message-ID: <1f5e9559-59f8-490b-9cb2-2f8d4a8823e6@denx.de>
-Date: Wed, 23 Oct 2024 02:50:06 +0200
+	b=hqZUj3ssLkX4a5FSJAjDaeuQ1kUZv4tpenMM/2f2FOVJkp34gIrIjyb2mBSLS4w0J
+	 ODfrT2jfhSxBWEf9u2yxRsizdQbY58ZP+0BWe191TsQUn+5oQGlEVpY4JqRO6rtyA/
+	 ll/DLEQIlQGxww9+D4Um+TkPETHnd8G+Z+jghfi3BHS6Z87cczpOzeCPFjrVLR8BvS
+	 FkbfjwzhjGs8oIEq7gofuxpx7M4aSDmpAetXc8YvDBrRb0xC+JFIrzC8dT2qlCjzTo
+	 WKRESBHacHx45U8hlPQJK3UywsPemNE1l8nrQ2MmE3VhqXYEFJagvVJXXSkBsp1JsF
+	 ZVJOkJTHjcJww==
+Message-ID: <e8f54ebf-9693-4cec-bbdd-ea2e6d9e85f8@denx.de>
+Date: Wed, 23 Oct 2024 02:55:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,8 +41,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
- reconfigure parent rate
+Subject: Re: [PATCH 2/2] drm: bridge: ldb: Configure LDB clock in .mode_set
 To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
 Cc: Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
  David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>,
@@ -60,104 +59,82 @@ Cc: Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
  imx@lists.linux.dev, kernel@dh-electronics.com,
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 References: <20241008223846.337162-1-marex@denx.de>
- <dbede671-c97b-4ad7-8a54-f1b381fea082@nxp.com>
- <00ffd38c-b01a-40cd-9130-19c35a387ca0@denx.de>
- <819380c3-d13f-4989-b305-388fc60d30e4@nxp.com>
- <d99e0021-3253-4312-9b50-6031ae0f8d8e@denx.de>
- <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
+ <20241008223846.337162-2-marex@denx.de>
+ <d6a34efa-47ad-439b-8b0c-a427cf087cb3@nxp.com>
+ <0e47b529-59f2-4d25-8c5d-30ca1dc4e964@denx.de>
+ <3341a6a7-ac0e-4594-a670-b3a6d583b344@nxp.com>
+ <207b20ff-cc7b-40aa-8dde-bc5aabdfb414@denx.de>
+ <6d7ec7de-4d48-4273-a707-c70e34996787@nxp.com>
 Content-Language: en-US
 From: Marek Vasut <marex@denx.de>
-In-Reply-To: <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
+In-Reply-To: <6d7ec7de-4d48-4273-a707-c70e34996787@nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
 X-Virus-Status: Clean
 
-On 10/22/24 8:13 AM, Liu Ying wrote:
+On 10/22/24 7:59 AM, Liu Ying wrote:
 
 [...]
 
->>>>> This patch would cause the below in-flight LDB bridge driver
->>>>> patch[1] fail to do display mode validation upon display modes
->>>>> read from LVDS to HDMI converter IT6263's DDC I2C bus.
->>>>
->>>> Why ?
->>>
->>> Mode validation is affected only for dual LVDS link mode.
->>> For single LVDS link mode, this patch does open more display
->>> modes read from the DDC I2C bus.  The reason behind is that
->>> LVDS serial clock rate/pixel clock rate = 3.5 for dual LVDS
->>> link mode, while it's 7 for single LVDS link mode.
->>>
->>> In my system, "video_pll1" clock rate is assigned to 1.0395GHz
->>> in imx8mp.dtsi.  For 1920x1080-60.00Hz with 148.5MHz pixel
->>> clock rate, "media_ldb" clock rate is 519.75MHz and
->>> "media_disp2_pix" clock rate is 148.5MHz, which is fine for
->>> dual LVDS link mode(x3.5).  For newly opened up 1920x1080-59.94Hz
->>> with 148.352MHz pixel clock rate, "video_pll1" clock rate will
->>> be changed to 519.232MHz, "media_ldb" clock rate is 519.232MHz
->>> and "media_disp2_pix" clock rate is wrongly set to 519.232MHz
->>> too because "media_disp2_pix" clock cannot handle the 3.5
->>> division ratio from "video_pll1_out" clock running at
->>> 519.232MHz.  See the below clk_summary.
+>>> Anyway, I don't think it is necessary to manage the clk_set_rate()
+>>> function calls between this driver and mxsfb_kms or lcdif_kms
+>>> because "video_pll1" clock rate is supposed to be assigned in DT...
 >>
->> Shouldn't this patch help exactly with that ?
+>> I disagree with this part. I believe the assignment of clock in DT is only a temporary workaround which should be removed. The drivers should be able to figure out and set the clock tree configuration.
 > 
-> No, it doesn't help but only makes clk_round_rate() called in
-> LDB driver's .mode_valid() against 148.352MHz return 148.352MHz
-> which allows the unexpected 1920x1080-59.94Hz display mode.
+> I think the clock rate assignment in DT is still needed.
+> A good reason is that again we need to share one video PLL
+> between MIPI DSI and LDB display pipelines for i.MX8MP.
 
-Why is 1920x1080-59.94Hz mode unexpected in the first place ?
-I assume your display device reports that it supports this mode, and now 
-the scanout engine and LDB can generate this mode too ? Or does the 
-display device NOT support this mode ?
+You don't really need to share the Video PLL , you can free up e.g. PLL3 
+and use it for one video output pipeline, and use the Video PLL for the 
+other video pipeline, and then you get accurate pixel clock in both 
+pipelines.
 
->> It should allow you to set video_pll1_out to whatever is necessary by LDB first, fixate that frequency, and the LCDIFv3 would then be forced to use /7 divider from faster Video PLL1 , right ?
-> 
-> Yes, it allows that for single-link LVDS use cases.
-> And, __no__, for dual-link LVDS use cases because the
-> video_pll1_out clock rate needs to be 2x the LVDS serial clock
-> rate.
-
-Can't the LDB still set the Video PLL frequency to whatever it needs 
-first, fixate it, and only then let the LCDIFv3 divide the frequency 
-down ? (sorry, I am a bit tired today, maybe I am missing the obvious)
-
->>>       video_pll1_ref_sel               1       1        0        24000000    0          0     50000      Y      deviceless                      no_connection_id
->>>          video_pll1                    1       1        0        519232000   0          0     50000      Y         deviceless                      no_connection_id
->>>             video_pll1_bypass          1       1        0        519232000   0          0     50000      Y            deviceless                      no_connection_id
->>>                video_pll1_out          2       2        0        519232000   0          0     50000      Y               deviceless                      no_connection_id
->>>                   media_ldb            1       1        0        519232000   0          0     50000      Y                  deviceless                      no_connection_id
->>>                      media_ldb_root_clk 1       1        0        519232000   0          0     50000      Y                     32ec0000.blk-ctrl:bridge@5c     ldb
->>>                                                                                                                                deviceless                      no_connection_id
->>>                   media_disp1_pix      0       0        0        129808000   0          0     50000      N                  deviceless                      no_connection_id
->>>                      media_disp1_pix_root_clk 0       0        0        129808000   0          0     50000      N                     32e80000.display-controller     pix
->>>                                                                                                                                32ec0000.blk-ctrl               disp1
->>>                                                                                                                                deviceless                      no_connection_id
->>>                   media_disp2_pix      1       1        0        519232000   0          0     50000      Y                  deviceless                      no_connection_id
->>>                      media_disp2_pix_root_clk 1       1        0        519232000   0          0     50000      Y                     32e90000.display-controller     pix
->>>                                                                                                                                32ec0000.blk-ctrl               disp2
->>>                                                                                                                                deviceless                      no_connection_id
+>>>>> The idea is to assign a reasonable PLL clock rate in DT to make
+>>>>> display drivers' life easier, especially for i.MX8MP where LDB,
+>>>>> Samsung MIPI DSI may use a single PLL at the same time.
+>>>> I would really like to avoid setting arbitrary clock in DT, esp. if it can be avoided. And it surely can be avoided for this simple use case.
 >>>
->>> Single LVDS link mode is not affected because "media_disp2_pix"
->>> clock can handle the 7 division ratio.
->>>
->>> To support the dual LVDS link mode, "video_pll1" clock rate needs
->>> to be x2 "media_ldb" clock rate so that "media_disp2_pix" clock
->>> can use 7 division ratio to achieve the /3.5 clock rate comparing
->>> to "media_ldb" clock rate.  However, "video_pll1" is not seen by
->>> LDB driver thus not directly controlled by it.  This is another
->>> reason why assigning a reasonable "video_pll1" clock rate in DT
->>> makes sense.
+>>> ... just like I said in patch 1/2, "video_pll1" clock rate needs
+>>> to be x2 "media_ldb" clock rate for dual LVDS link mode. Without
+>>> an assigned "video_pll1" clock rate in DT, this driver cannot
+>>> achieve that.
 >>
->> I agree that _right_now_, the DT clock assignment is the only option.
->> I would like to see that DT part disappear and instead would prefer if the LDB/LCDIF could figure out the clock tree configuration themselves.
+>> This is something the LDB driver can infer from DT and configure the clock tree accordingly.
 > 
-> I think we'll live with the assigned clock rate in DT, because the
-> i.MX8MP LDB and Samsung MIPI DSI display pipelines need to share a
-> video PLL, like I mentioned in comments for patch 2.
+> Well, the LDB driver only controls the "ldb" clock rate. It doesn't
+> magically set the parent "video_pll1" clock's rate to 2x it's rate,
+> unless the driver gets "video_pll1_out" clock by calling
+> clk_get_parent() and directly controls the PLL clock rate which
+> doesn't look neat.
 
-They do NOT need to share a PLL, you can use e.g. PLL3 for one and Video 
-PLL for the other if the requirement is accurate pixel clock .
+It isn't nice, but it actually may solve this problem, no ?
+
+>>> And, the i.MX8MP LDB + Samsung MIPI DSI case is
+>>> not simple considering using one single PLL and display modes
+>>> read from EDID.
+>> You could use separate PLLs for each LCDIF scanout engine in such a deployment, I already ran into that, so I am aware of it. That is probably the best way out of such a problem, esp. if accurate pixel clock are the requirement.
+> 
+> I cannot use separate PLLs for the i.MX8MP LDB and Samsung MIPI
+> DSI display pipelines on i.MX8MP EVK, because the PLLs are limited
+> resources and we are running out of it.  Because LDB needs the pixel
+> clock and LVDS serial clock to be derived from a same PLL, the only
+> valid PLLs(see imx8mp_media_disp_pix_sels[] and
+> imx8mp_media_ldb_sels[]) are "video_pll1_out", "audio_pll2_out",
+> "sys_pll2_1000m" and "sys_pll1_800m".  All are used as either audio
+> clock or system clocks on i.MX8MP EVK, except "video_pll1_out".
+
+Could you use Video PLL for LDB and PLL3 for DSI then ?
+
+I think this could still be configurable per board, it shouldn't be such 
+that one board which attempts to showcase everything would prevent other 
+boards with specific requirements from achieving those.
+
+> You probably may use separate PLLs for a particular i.MX8MP platform
+> with limited features, but not for i.MX8MP EVK which is supposed to
+> evaluate all SoC features.
+Right, that, exactly.
 
 [...]
