@@ -1,61 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9F02010E5;
-	Thu, 24 Oct 2024 20:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A54216A1D;
+	Thu, 24 Oct 2024 20:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729802595; cv=none; b=JCTYT9rV2HBv1t+q1uI8qihYtqnbvSqnildNn5M5IYFdFCN7OEaHnQsn90qMPK7tlRCmqbuG44+npx3gw+YnjPKHQwBbit6XAwMY+hLI2QPlZ7RFTVSqfZGiT8qaOk+ch6upntzGqk4sER2kWjnka+PeaQm/wcHg8Odm/GhbvcI=
+	t=1729802729; cv=none; b=qwfE+TA2NDxpq8sscj9mM00gZHiAgWQ6mWXMiCPiWvXzRvQqeao6WBCaVpRw4glRa+ACCfC03GHJHHu8DRAHZwTtgZ537gvczMafA+5orXCXZztuZL98QpUTI+zwdI+6PGh6+X83eipCqx4shqL11eFOqPHaHcCMAliIMx8z2Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729802595; c=relaxed/simple;
-	bh=orvEes6Fv2Qup0AW3+pyjYH5D4wzwY5+810rtsKY0lQ=;
+	s=arc-20240116; t=1729802729; c=relaxed/simple;
+	bh=ucJbwvBiLsWRpla8htTc6H7ChqcVCWNJxbQadeAGzmY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGaz9/KO2ih6dX0PIuGfZ9XoJsGdF6LOuyaXEzcOOdTuEinPSY+cBrr26JZ5imkhJpVz4hLxia+SfUt2Xg6w2+c99xHOshBn58jx6uk0CSV21DlP1TEXolk7PcCbI7TnSMr/bG0RAayK9caeI93y63JPw8+DkpkR5Xy9H6m6ipY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srTVQ5aB; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=C/ssx7V3Sab8KNzFC+D1ZKvqGKV1lVpwObQfKqalfwSe9bnjB7j95QZ1zY5IjnyjkZx+NaDUEV3hYYMZSfqHM9UbG2XW8hEyhZ9KYf7SLljhpfxb5K4A18c7OYxQQMh350YCqrAN/Ezxd8JxGKXySUtFYuPEU1m6utyk1X0nGKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVinYR4s; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srTVQ5aB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD185C4CEC7;
-	Thu, 24 Oct 2024 20:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729802593;
-	bh=orvEes6Fv2Qup0AW3+pyjYH5D4wzwY5+810rtsKY0lQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=srTVQ5aBOX2/rqg6m0A1ll5HXJrBk3zGKvOExnScO3mg/lp8MD3Uu/7GNare+rNI0
-	 YFnATtetlZYcpBy9MUZVvBl9IJ6nDNsJo6QIEsDQeYA6CGJSNZHTWVNIVrnYOVQsSQ
-	 s7vzczcpA6yXFsDYEMniUspOToVG5awASk+VHhr7JnqfwvuNqNITnC0TjdMZnRz3Bf
-	 Bvu/lxuJ4etfUbCGAXsNSRI0f8dXKCSgVw52q4H3Ld9vglwLJ64RUalRfyTreeWugp
-	 FiV16pcUS86F5I17ZVZZKIMGIt/WyykY89ouwtncDZ63QO/WqoQptPsAiXJLHAMv4+
-	 EEUFKp110vS/A==
-Date: Thu, 24 Oct 2024 15:43:13 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	dri-devel@lists.freedesktop.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-clk@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-rpi-kernel@lists.infradead.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Subject: Re: [PATCH 09/37] dt-bindings: display: Add BCM2712 KMS driver
- bindings
-Message-ID: <172980259231.1015965.14524192141045927759.robh@kernel.org>
-References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
- <20241023-drm-vc4-2712-support-v1-9-1cc2d5594907@raspberrypi.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVinYR4s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729802727; x=1761338727;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ucJbwvBiLsWRpla8htTc6H7ChqcVCWNJxbQadeAGzmY=;
+  b=TVinYR4s/DVqyj1gfF8k2dw3Td54e+NUZx7QsmcMSxdp2tpbq98qYFZH
+   BZMbB/6yWEkB4f+Jqt1MYd6o76dbhvm5Vz43LxQp9G5B2HdDzNEovTmFB
+   KPepVEv8DpXYE7l0ryRvHRIweSuQYVgLJ33wLhTqkn7ZPNZHweIyGdUlC
+   5OkrQDk1dqbEJgRjndQ6nOKzoWyUxTGwvdBGsRs2nPklmME922/cmz8Kj
+   Y78VmkT6La0yhiIzzx/8OxQ4ddKmhtib+eqv0ct4/cULeid5lCeqeKvj0
+   TaSZ8xBrKHuGV+VyL2VXtV1fNHFeb++kmCWjB7ZzY8iLub2gPwEfWDtIe
+   Q==;
+X-CSE-ConnectionGUID: dfzQuyv3RcGEEEZvSCYqlA==
+X-CSE-MsgGUID: 3UCrxSycTTOWINBUkdwiwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="40076652"
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="40076652"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 13:45:26 -0700
+X-CSE-ConnectionGUID: a80PQk+CTeWoZxyfSaCU0Q==
+X-CSE-MsgGUID: A2lUjMM7QYCvJ0mjQUtLcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="84668190"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Oct 2024 13:45:22 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t44hr-000X8a-2u;
+	Thu, 24 Oct 2024 20:45:19 +0000
+Date: Fri, 25 Oct 2024 04:44:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+Message-ID: <202410250433.GvMiJrDV-lkp@intel.com>
+References: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,21 +68,55 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-9-1cc2d5594907@raspberrypi.com>
+In-Reply-To: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
+
+Hi Ryan,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc4 next-20241024]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241023-170434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241023090153.1395220-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+config: loongarch-randconfig-r054-20241024 (https://download.01.org/0day-ci/archive/20241025/202410250433.GvMiJrDV-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410250433.GvMiJrDV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410250433.GvMiJrDV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/clk/clk-ast2700.c:17:
+>> include/soc/aspeed/reset-aspeed.h:14:5: warning: no previous prototype for 'aspeed_reset_controller_register' [-Wmissing-prototypes]
+      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-On Wed, 23 Oct 2024 17:50:06 +0100, Dave Stevenson wrote:
-> From: Maxime Ripard <mripard@kernel.org>
-> 
-> The BCM2712 SoC comes with a new variation of the videocore display
-> pipeline. Let's create a new compatible for it.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+vim +/aspeed_reset_controller_register +14 include/soc/aspeed/reset-aspeed.h
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+1476d29e4461f6 Ryan Chen 2024-10-23   9  
+1476d29e4461f6 Ryan Chen 2024-10-23  10  #if IS_ENABLED(CONFIG_RESET_ASPEED)
+1476d29e4461f6 Ryan Chen 2024-10-23  11  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+1476d29e4461f6 Ryan Chen 2024-10-23  12  				     const char *adev_name);
+1476d29e4461f6 Ryan Chen 2024-10-23  13  #else
+1476d29e4461f6 Ryan Chen 2024-10-23 @14  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+1476d29e4461f6 Ryan Chen 2024-10-23  15  				     const char *adev_name)
+1476d29e4461f6 Ryan Chen 2024-10-23  16  {
+1476d29e4461f6 Ryan Chen 2024-10-23  17  	return -ENODEV;
+1476d29e4461f6 Ryan Chen 2024-10-23  18  }
+1476d29e4461f6 Ryan Chen 2024-10-23  19  #endif /* if IS_ENABLED(CONFIG_RESET_ASPEED) */
+1476d29e4461f6 Ryan Chen 2024-10-23  20  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
