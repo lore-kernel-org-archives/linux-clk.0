@@ -1,128 +1,93 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFC01F667E;
-	Thu, 24 Oct 2024 13:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD951714B0;
+	Thu, 24 Oct 2024 13:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776730; cv=none; b=QRlxPmfX6wE1goEfTo9WUegGU/b+gLmXqA99MvXnz6z8l4T7vIHoo/8RIZV5XKfGbMoKW1M8ST17zWPwLzXjyKUa0/jWxHNAGU0f6bUVL1r299/9fkNY6KP+K+XfTk6y5fGmfmHIBz6KvUj55ofNrsNKygTZ/ZEfcjLjjlp4Egc=
+	t=1729777370; cv=none; b=O//eQQEo0F54MhAtEVrKiWgZ6g/DO6CaGN3+ZIeDkTnalASGX9mOXq8UoEvzZVQzSiaZFsBT6MXu7grc281jq5ZnoGLkellwaDO3p/CbsIHQTZC/OnpgavuCcLatZ6z2FxRMIl0+N8STpEBhfJfHcXXUSdPoYEYmrTF9KpTMgDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776730; c=relaxed/simple;
-	bh=Mn2pmr6wwJiDzx8Q+vyNXKeaGJlP9Z5kxfsmkd+Ur1Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nPpM/dhUWIcXZgWK8GbWOftBwVWUZymlEykEBbYdT9959V93tCcSl2mP+plcEWKduaFWW0tlqyIaTJMLjW1NfwKOcAV6hJfBGTULyZ8i0suahhQJ1iRoDuFleoVhP8pKJu4ecP+4WioD6ON0HPXB0T6/jtwfcPJYiWc7/PGk7EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H6lZmS94; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H6lZmS94"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9aJeJ028304;
-	Thu, 24 Oct 2024 13:32:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZtMlp4gGjKBW6FEZSa2ElwA4XN8uyE3U9LyxPPYzKiI=; b=H6lZmS947vbQ2sgJ
-	2lCXgGmmBn6VUVLj1ozFz/C2WU1woQ4entH57AwUx2yjPzaVNq+Av886d0Umv0KU
-	Gu/QQCPJycPVRsYe6Vo+v/NM454CK4afZjXx6ELQW1Lzz36wXmXQZmGhbBEskjYB
-	S/mbbG+RNSnYQkhrkt2T4oWhbmw//S00mBVLJRPg47fSNiXVa7gfMZsH683pGcMO
-	EDrujaTwioW8Rxshwy2fsTp9QryDLUl0CDfLJ4t1u22KM4mHH2o/rmZbzzL3QEEG
-	Ei215/+CWO2Uzr7OGAdktecujm59Wqy5HQENhOpV8hK1cLgCoc6ZWa4cGVHMMBUg
-	f0pVog==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41wr25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 13:32:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ODW4K3011643
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 13:32:04 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 24 Oct 2024 06:32:00 -0700
-From: Imran Shaik <quic_imrashai@quicinc.com>
-Date: Thu, 24 Oct 2024 19:01:19 +0530
-Subject: [PATCH v2 6/6] clk: qcom: Add support for Video Clock Controller
- on QCS8300
+	s=arc-20240116; t=1729777370; c=relaxed/simple;
+	bh=2HE1Ms4Rud6qYaGCX+cfuONzSinXCG7h+SEUF34yNdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L+2ppmVihSyD1X1MvfCBsONUwiNnmfP5iB77v1vwz7iM3cq1x4ZRnYEdnlnryl7aOw1HsBIUjtN3uLuyEP7G3GxKKv8rPagW1MVOI+iAs/PvdX0TZT41jQ1z1cMlIpHfp0yn00S20+X62lEpDONr0U+fpKQAqOVBF1Fi8WeeOTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.11,229,1725289200"; 
+   d="scan'208";a="226883107"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 24 Oct 2024 22:42:41 +0900
+Received: from localhost.localdomain (unknown [10.226.92.3])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5F7CB4006DFE;
+	Thu, 24 Oct 2024 22:42:38 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	Hien Huynh <hien.huynh.px@renesas.com>
+Subject: [PATCH v4] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
+Date: Thu, 24 Oct 2024 14:42:11 +0100
+Message-ID: <20241024134236.315289-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241024-qcs8300-mm-patches-v2-6-76c905060d0a@quicinc.com>
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
-In-Reply-To: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ceIQ2rEd0lUguhqMY5t8TUoA8Qz6iBE5
-X-Proofpoint-ORIG-GUID: ceIQ2rEd0lUguhqMY5t8TUoA8Qz6iBE5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240110
+Content-Transfer-Encoding: 8bit
 
-Add support to the QCS8300 Video clock controller by extending
-the SA8775P Video clock controller, which is mostly identical
-but QCS8300 has minor difference.
+While computing foutpostdiv_rate, the value of params->pl5_fracin
+is discarded, which results in the wrong refresh rate. Fix the formula
+for computing foutpostdiv_rate.
 
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
+Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/qcom/videocc-sa8775p.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v4:
+ * Used div_u64() helper as the division is a 64-by-32 division.
+Changes in v3:
+ * Used mul_u32_u32() for 32-bit multiplication.
+Changes in v2:
+ * Improved the precision by division of params->pl5_refdiv
+   done after all multiplication.
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-index bf5de411fd5d..db492984fd7d 100644
---- a/drivers/clk/qcom/videocc-sa8775p.c
-+++ b/drivers/clk/qcom/videocc-sa8775p.c
-@@ -523,6 +523,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
- };
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 88bf39e8c79c..b43b763dfe18 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -548,7 +548,7 @@ static unsigned long
+ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
+ 			       unsigned long rate)
+ {
+-	unsigned long foutpostdiv_rate;
++	unsigned long foutpostdiv_rate, foutvco_rate;
  
- static const struct of_device_id video_cc_sa8775p_match_table[] = {
-+	{ .compatible = "qcom,qcs8300-videocc" },
- 	{ .compatible = "qcom,sa8775p-videocc" },
- 	{ }
- };
-@@ -550,6 +551,13 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
- 	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
+ 	params->pl5_intin = rate / MEGA;
+ 	params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
+@@ -557,10 +557,11 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
+ 	params->pl5_postdiv2 = 1;
+ 	params->pl5_spread = 0x16;
  
-+	/*
-+	 * Set mvs0c clock divider to div-3 to make the mvs0 and
-+	 * mvs0c clocks to run at the same frequency on QCS8300
-+	 */
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-+		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
-+
- 	/* Keep some clocks always enabled */
- 	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
-
+-	foutpostdiv_rate =
+-		EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv *
+-		((((params->pl5_intin << 24) + params->pl5_fracin)) >> 24) /
+-		(params->pl5_postdiv1 * params->pl5_postdiv2);
++	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
++					   (params->pl5_intin << 24) + params->pl5_fracin),
++			       params->pl5_refdiv) >> 24;
++	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
++						 params->pl5_postdiv1 * params->pl5_postdiv2);
+ 
+ 	return foutpostdiv_rate;
+ }
 -- 
-2.25.1
+2.43.0
 
