@@ -1,82 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB54D1EF0A3;
-	Thu, 24 Oct 2024 14:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0A18A957;
+	Thu, 24 Oct 2024 15:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781983; cv=none; b=YW7nZUUOdHK8uajE0cigMWRWLhhm8s+cqHSxM9o8YxR2FRudOM/8pY0AwwEj/Nku1btI9HSw49PYtqM0e1poDvjYnBvd3l/ZnSoL/I5/fxv46LnscwxROlb3a9XTXfyAo1kjCxGZfiI2IBL4TfQpGIrYWwjtzo2xFwyFE4QVoVM=
+	t=1729782362; cv=none; b=At+Y4aNlIGHYljlgeI6DLpMmitts3vdJY9GmSoRtN9YBEw6g4npVYkxqRk0ehogi9swExDXV696Ef7NHkqPv7ZTZpWN6ALxtcgbtao+CvVu5+SbpzQui62rQX9LhzmI3eskIZR3BMg2KnnWdC2RbIFVh6w4dQkncF6QO/scKsHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781983; c=relaxed/simple;
-	bh=0Hv/7Co6R2EZ8AvfgB6ZSzRb5pHaAEBRjh3gNKx0QuI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QKnPkfjao+TVmTFV5aereMPA2y5Je0awFIz+jckQtxrJwcdCRqneHGmQUa2CVwoTQrJMJyANipVTFOet+hNU7ovZCGBXb71V5uCS2VhuSwzQkTSr/S443NukqVkNRdCtHUB7zaatYAfnI8QwHiygO8D7zwbhZh49PL4tzE7voOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CK3VlL7m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729782362; c=relaxed/simple;
+	bh=Ih493C7FW7huTj70GvMdQCxCv0/8gBvIIgko/BVBESQ=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=JiomKdS3b9uaK9HIoqM39fgAPn08jpwddtBtdNbaV2cRYDMpcSrF1wWZwQlHxiN6F4Hf43Gzgm5UDkPKY+j9uqRjBnwGlGeNBFOQNv7soTG1N7Flt1Ya2iS+k+VIn56hkSUtbvbm6TnnqQuOrQKqwSPfe54dLEKew8Yc9+nM0ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2B8GiT0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CK3VlL7m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEACC4CEC7;
-	Thu, 24 Oct 2024 14:59:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2B8GiT0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4830FC4CEC7;
+	Thu, 24 Oct 2024 15:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729781983;
-	bh=0Hv/7Co6R2EZ8AvfgB6ZSzRb5pHaAEBRjh3gNKx0QuI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CK3VlL7mM/Al2glV243oNxz00GSGYOSjyNcHWVdsrLM5gE7mGRjlfNjeKsaX2D/Bj
-	 WIGhvzrPQHnHhEV3nU5N7I0+xzpiJ9revWz5FLYsrn2PZQT1UlhxIZNwUr7l7XOYNK
-	 iJY0Oyb5hppMOeIV5t909Wt0+VRfVmm/aLS8pUl06iybO0f8LbfszBRcCXptfYASTo
-	 +S7y0HgTIPI/yWnaM/tgGeUNp3dFe9eYHm0Jvvc00LVi1WRvJbq9rjpvA9aa3VCexL
-	 pa1Z0oMYCg/zm+ZflpHn9pQ2pjSsjS3OF9TS7EhcraLlswTyhlIdcp5byZJhrD5CqX
-	 x0gYeEsuePfqA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: sboyd@kernel.org,
-	konradybcio@kernel.org,
-	krzk+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-Cc: quic_varada@quicinc.com,
-	quic_srichara@quicinc.com
-Subject: Re: (subset) [PATCH V7 0/5] remove unnecessary q6 clocks
-Date: Thu, 24 Oct 2024 09:59:31 -0500
-Message-ID: <172978197052.296432.13730841752162916405.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
-References: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
+	s=k20201202; t=1729782361;
+	bh=Ih493C7FW7huTj70GvMdQCxCv0/8gBvIIgko/BVBESQ=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=G2B8GiT06sGhvAw8upxtM0+4xoxyH2VU5Fs2aV8Al5mf91nP+UD9BCyr8wxtcM8wq
+	 VCmJN7wdKuj8FdYcDhTFEDpfx1uK0I+897Y5r1LBrarAwoUlKOQB3lAFScFx7ZstWn
+	 xU2HUvAs/GrFlF1cSAweX7XZ59QcWpNVQfXYA4oXTgzef1RaSzz6mDI/hD52/ki9wj
+	 Xdi7WTeDIG39ORLQJRsHowGLTWUbFsECRnBcbU91mbvXGGVWvbHiRTKwaDpeYqYr6y
+	 wAgdjvcRVdhrByzczYohXrfkDIrIv/Yp6HRW+4LMMc3xc1gc8PJCyMYY9kS1Dfnox8
+	 qH0T0lJDW9jTw==
+Message-ID: <35fc492aa7d6298eba531d08e9fccfa4@kernel.org>
+Date: Thu, 24 Oct 2024 15:05:59 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dave Stevenson" <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 23/37] drm/vc4: drv: Add support for 2712 D-step
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-23-1cc2d5594907@raspberrypi.com>
+References: <20241023-drm-vc4-2712-support-v1-23-1cc2d5594907@raspberrypi.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, "Broadcom
+ internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, "Conor Dooley" <conor+dt@kernel.org>, "David
+ Airlie" <airlied@gmail.com>, "Florian Fainelli" <florian.fainelli@broadcom.com>, "Javier
+ Martinez Canillas" <javierm@redhat.com>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Michael Turquette" <mturquette@baylibre.com>, "Raspberry
+ Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Ray Jui" <rjui@broadcom.com>, "Rob
+ Herring" <robh@kernel.org>, "Scott Branden" <sbranden@broadcom.com>, "Simona
+ Vetter" <simona@ffwll.ch>, "Stephen Boyd" <sboyd@kernel.org>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>, "Will Deacon" <will@kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-
-On Tue, 20 Aug 2024 11:26:13 +0530, Gokul Sriram Palanisamy wrote:
-> This series is a revision from V6 of MultiPD series [1] minus the
-> multiPD driver related patches. REnamed this series to keep the title
-> relevant. Will post a new series for remoteproc secure PIL driver as a
-> dependant series which will rely on these clock removal.
+On Wed, 23 Oct 2024 17:50:20 +0100, Dave Stevenson wrote:
+> Add in the compatible string and VC4_GEN_ enum for the D-step
 > 
-> - Since the new rproc driver will use the secure APIs (scm) to bringup/down
->   the rproc and secure OS (TZ) takecare of handling the clks, those clks
->   needs to be removed from the kernel. since thes patches were already
->   posted as a part of the MultiPD support [1] and some of them were
->   reviewed. So picked up those patches and review tags as well.
-> 
-> [...]
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-Applied, thanks!
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-[1/5] clk: qcom: ipq5332: remove q6 bring up clocks
-      commit: bef2902ffef85959cd3d80b62c7e5db73e2b5815
-[2/5] clk: qcom: ipq9574: remove q6 bring up clocks
-      commit: fa1d525404b6e78d97b17749af72a314060c2934
-[3/5] dt-bindings: clock: qcom: gcc-ipq5332: remove q6 bring up clock macros
-      commit: b3aba04883de872488e5dabda199427b2bfa0395
-[4/5] dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring up clock macros
-      commit: da040d56031976144740bddba942485999f6a16f
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Thanks!
+Maxime
