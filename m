@@ -1,134 +1,87 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AD21C07F8;
-	Thu, 24 Oct 2024 12:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7047C14B08E;
+	Thu, 24 Oct 2024 12:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729771230; cv=none; b=GQakFI7+TPrmrl+QSjUqPVEpbF2GH5QiRiTX0Rtm9UTEAfCTioxaV+xEVXljDfHqtedCY0vy4JQKY1bX3cqF1lZ7+52MtFYUvZPmd9HT3NX7P4umo3ZPUwddgNxBtdP5ZcKH8ac4PfRgYdhH5XXSCOx1grfmXFGagOdDdwt96FY=
+	t=1729772086; cv=none; b=IwSJrocKSB7Ip3KmQ3XpmuZ54UiJmuKxjUdiupRFDepqx9HBTvJbVnQz/z1T1fw2EFR9LXMXljbZKWHcMla29oTRLkoc4DUJd5/q1istEbDG0St/oGgqMgJx/qYG/2+K5gxGYN9BhYZyjbbjd/Dn80vJt1dlDyKe6l1Qp1gxqQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729771230; c=relaxed/simple;
-	bh=MNbFjLl4TCDql8wmSNEqa4NDfQghSh41C3L9T/e2F6o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s3vFkrXsq7YrxzXCX7yO11BseQRPq2BTP39TGNsC1otd/2gC5HFremKK5oiNRBTNoHPEGjQ8wIEpEBTp+x+kznQFO4FOYsSMar4CpdjhuecdeEM+2nMnStA38/v/wlE1zGm20/cY71GFYClNtXKYQoTyScoZb1TsxRIIdT6btgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e3c3da5bcdso8808747b3.2;
-        Thu, 24 Oct 2024 05:00:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729771227; x=1730376027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QenuV6rOuGSY28Q2Jle6OVOQgLijNQWzQ+6F4jb61lk=;
-        b=nflHHNtekEIMkTUdDTvy11BAsSfJiOlFIVLkUF/5uNFWrT4gPbksofTTGHIsKyOhVt
-         imJARimq9qztMaFciAVwinHxr5Q5JlL7odXeJKOCkJcI0hy1bO0hzgtUV+1UVnVPA2T0
-         6gBnBb54zS//e8e8oPgTLts/5bVUfOOpdSUf0jGOHvGQi+4iOdQD17LCADu2bgtnYK+1
-         NimQglTnR0MkUgzNkj1G0JRt6WG1YIcNRXMBXy92RFx50MukpgcnOWk1okWGES19rVty
-         hA/bKWE+msPpJK8pkkI/iZADwdd9tYkCgIclR6DKOvDDYHsQfjkupBFeWF5erJKh1VTS
-         nIdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuOQ8Z180ZtX+PzYoKUlavg+dX84mJhHrCXE8/YcMYTyZH4oWxrmX7TbktvXtKJXLVrM2ifLb1ptk=@vger.kernel.org, AJvYcCXakRQtenkoqPbZrjPtu0vshfmfr63Pubj39zwLYrBx2mYIYfrC1ujDJ9zGfwJXowNqj3U3Vh0+oPfCIiI65eDJrCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuQZiuR8JEWr5Dokg7YVh/FrL2D4DtBPJxS0suo4iGXD7UzMkH
-	OrRdoAVBu5mPW/DOYGaC+JTJxQXQFgQdn8ZRyoo0J2J2DtV/S6XscdwtFqFm
-X-Google-Smtp-Source: AGHT+IHpjwzIaZRb1HuldY63oKoBzZgrZN3zrsqakZg5lI2Q24gdPsjocP0M1FCSEQ/oONHMIeXq8g==
-X-Received: by 2002:a05:690c:660c:b0:6e7:e92d:6c0c with SMTP id 00721157ae682-6e7f0e3398emr64355887b3.10.1729771226659;
-        Thu, 24 Oct 2024 05:00:26 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5a4d30esm19606997b3.54.2024.10.24.05.00.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 05:00:26 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e3c3da5bcdso8808307b3.2;
-        Thu, 24 Oct 2024 05:00:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbFDMOtNEQmJyIHfBLfpeJErrBKszM2LL5XjKzVKhQW9AkcKHKV3PWwJNQ3joYgvgIZf44KG0rnkG+WadoQ4M6OhY=@vger.kernel.org, AJvYcCWch12OwcE4xIJcUNxHvd19uWWK74QlOWB3Dik28ffUauNijXH1K6gzFRnPR1SQrSna1dvVK9DnNMU=@vger.kernel.org
-X-Received: by 2002:a05:690c:6c87:b0:6e5:bb93:4322 with SMTP id
- 00721157ae682-6e7f0fd850emr68015687b3.38.1729771226021; Thu, 24 Oct 2024
- 05:00:26 -0700 (PDT)
+	s=arc-20240116; t=1729772086; c=relaxed/simple;
+	bh=RwvrfTv5gy55jcjI6bin8pxUAiAuiFQWvOFHXr8Y7Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HB1oAOluZ4IwaTykK//T32brEa2ubNj3JciiZgYILv3oYhotYyAuACvUQDqYZEfuHrNk7YuX993U7qGFbqb5jxfRyNSh2+7k6H2djx1HbKR7aEInIrS+0xkqoS/cNgzW4WGxUCekX9WALrDhw60wGVI2ii9o4sCmyntjOO8GYEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lj2WbXBJ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lj2WbXBJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554E8C4CEC7;
+	Thu, 24 Oct 2024 12:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729772086;
+	bh=RwvrfTv5gy55jcjI6bin8pxUAiAuiFQWvOFHXr8Y7Q4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lj2WbXBJG8ht/k1YpD0VwMgNrwJ2KCjua6xaK8o6D5JOtrD7zh1mKBCcH2SgolDXX
+	 +4eOPGye1SYhax6qrs2QStyUecKNqKV+mtE3MKeBcclXhvNWMav+gm3vsUogOaveUT
+	 2pjvoh+80OOKNH0qbprOJ4byFsZ6WwWc5YwlZ5VFhFwL2oCcX2yAYk88xebmFj7Usk
+	 1QfZBxZDfQBF6szmuQadR1IQv+z8cDgJD9rmDHksZYvARwE+ANyOIJdvFWZpJiSWHC
+	 RhW/b8WNbRc9zkAOimh9eYE5y5Ze8P/1zW4GV1cnqQAvSMXcaiiXFFhayq98Z6OeX8
+	 qOM9d5RIpflKQ==
+Date: Thu, 24 Oct 2024 13:14:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Chris Morgan <macroalpha82@gmail.com>,
+	Philippe Simons <simons.philippe@gmail.com>,
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] dt-bindings: allwinner: add H616 sun4i audio
+ codec binding
+Message-ID: <313c922f-9967-4958-a438-11528b811baa@sirena.org.uk>
+References: <20241023075917.186835-1-ryan@testtoast.com>
+ <20241023075917.186835-3-ryan@testtoast.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016101513.39984-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdXwxWAm=XiGFw_j+L8ebmAvJx7r8oQ_Bhon6tsWX47yXA@mail.gmail.com> <TY3PR01MB11346AD911CC2A33E02538EC1864E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346AD911CC2A33E02538EC1864E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 14:00:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX6-1ptM4nN=rAs58S4Oa-bao6PQ8sLndT5uPAB7na_0Q@mail.gmail.com>
-Message-ID: <CAMuHMdX6-1ptM4nN=rAs58S4Oa-bao6PQ8sLndT5uPAB7na_0Q@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"biju.das.au" <biju.das.au@gmail.com>, Hien Huynh <hien.huynh.px@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wE+qwdJsGOAxZKMP"
+Content-Disposition: inline
+In-Reply-To: <20241023075917.186835-3-ryan@testtoast.com>
+X-Cookie: Real programs don't eat cache.
 
-Hi Biju,
 
-On Thu, Oct 24, 2024 at 1:51=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Wed, Oct 16, 2024 at 12:15=E2=80=AFPM Biju Das <biju.das.jz@bp.renes=
-as.com> wrote:
-> > > While computing foutpostdiv_rate, the value of params->pl5_fracin is
-> > > discarded, which results in the wrong refresh rate. Fix the formula
-> > > for computing foutpostdiv_rate.
-> > >
-> > > Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk
-> > > support")
-> > > Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > ---
-> > > v2->v3:
-> > >  * Used mul_u32_u32() for 32-bit multiplication.
-> >
-> > Thanks for the update!
-> >
-> > > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > > @@ -557,10 +557,10 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll=
-5_param *params,
-> > >         params->pl5_postdiv2 =3D 1;
-> > >         params->pl5_spread =3D 0x16;
-> > >
-> > > -       foutpostdiv_rate =3D
-> > > -               EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv *
-> > > -               ((((params->pl5_intin << 24) + params->pl5_fracin)) >=
-> 24) /
-> > > -               (params->pl5_postdiv1 * params->pl5_postdiv2);
-> > > +       foutvco_rate =3D mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA, (p=
-arams->pl5_intin << 24) +
-> > > +                                  params->pl5_fracin) /
-> > > + params->pl5_refdiv >> 24;
->
-> >
-> > The division is a 64-by-32 division, so it should use the div_u64() hel=
-per.
->
-> You mean,
->
-> foutvco_rate =3D div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA, (param=
-s->pl5_intin << 24) +
->                                 params->pl5_fracin) , params->pl5_refdiv)=
- >> 24; ??
+--wE+qwdJsGOAxZKMP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Exactly.
+On Wed, Oct 23, 2024 at 08:56:58PM +1300, Ryan Walklin wrote:
+> The H616 has an audio codec compatible with the sun4i-a10 driver.
 
-Gr{oetje,eeting}s,
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-                        Geert
+--wE+qwdJsGOAxZKMP
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcaOi8ACgkQJNaLcl1U
+h9ACCQf/Vm/4V34RBhEzAfgM1hSjkQLktpGxHbr9DlKWSpqCJMx+c+s46N3znXmQ
+gVT1WSZB4W3AbU4Qa0wKDG1JKOuaa0bAKxoDAvqFbOBfrlC8R74mDrqPt2Fp3oxn
+8hBkr1i+z23WsViKXF4D74+UBctx2NqwSfyj0+OOuouSW33YBCdcyVof8QyzEqWn
+kDDJG6GEQFDt+TSCdAOMr+NzeGiuxUVFgpPN9Eg1NxMr5Z4XpongwEo46u/SoA/Y
+2+y6+3G+0dOI7oW6ehXC5Tx4RImmtmJUBYFfLnxzC081W/cMkKEgSbcRr8ffzfXJ
+OIRUuO+CKBuwnkBKIYOsaa6+7G4Zeg==
+=YLIf
+-----END PGP SIGNATURE-----
+
+--wE+qwdJsGOAxZKMP--
