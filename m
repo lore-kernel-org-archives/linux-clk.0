@@ -1,143 +1,127 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561331B6CEE;
-	Thu, 24 Oct 2024 12:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC81B1D319B;
+	Thu, 24 Oct 2024 12:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774222; cv=none; b=Y62pCEVFP9O+Ohrwc7C+6RMICClcE6sN6+DXJjTXxX2Crfnpg/+ZAXz7K5Hpq5BFFaNLPqTe+cEh8hXUiT08aZ1p77lH6ALj5ApkM74FuOVg23r/t8tExVpeMnAo7ajapnfCcYHm9CTeuE0As0mPH/uYTEdg3MLpwxBbQ9sKW4E=
+	t=1729774441; cv=none; b=ixYcbDfxi2FGJIZi1C4Duw1VBmcyzR69gT+JrEoM8n0J6609AYAKm2n6ITxNr4hLzffVXgACGq4nozpWHptk77+8V9DaGGlyy+CYu4dzj5vwYwI9EdYrjD09/Obt8mBqnAefDZicdoGHaOROwCq3zMlmLt14weno7dZZo9S1Gxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774222; c=relaxed/simple;
-	bh=avnNeoeIT8JpECkgYOeBGQu4w8Q/PrPpQiEZobjRdnI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=FylnHlisGEog6F50/rEarAryvH9hdG8fC7PixZmKRpazpHOMFkaL8RY4htx7w3nBBCJ1fMpmpE1wTj2FoC2Ljn0NZJab589pX0UQLGS4wmPZig6hLG5Z4zSsm2BHyUbwwyyJvQerFeF9G29PpwyhLx86ZTwppA6Ayb7tPaMVi5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LqIszyJS; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1729774441; c=relaxed/simple;
+	bh=HUuhAWk3dXLnQPMq/6w0jxdCVg118X9Z6g0zogfDEU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFyC3qiOh49w/G8MfbFg1YoCaSN0YZttz3pJJjfePXhlbNiEK3LVOyWKNMlRvtCWu6aFkQB5RXUtk0CQCKyre+DqJ3tetFgF1DqH4hte5F/AJaHBQEO/zHxV78Dk4SYmQiU2kBHwBRpFyWFpti7sZOcINfJLU/+jgzn2QdUPGq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/twMj9i; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LqIszyJS"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D67A7C0004;
-	Thu, 24 Oct 2024 12:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729774217;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FGC5TIDFWHTEOzBsSk81jwrMpqimrnfQMOZKCKiznX0=;
-	b=LqIszyJSBO0jIhBCI8z1vLKfO+/lMMshwNPPNXhRONN45/G5H9xvtR/B8g8RFBQ01zLu/j
-	XyqkSlioPkpu0jqMvw2vncogxZuvL3tgN9W8oL1hCak3H7sSjfWm7tWZfU+vuUS8wVIYRL
-	ZrzkDyJmpqDWRP7CaGHBPmeNolcFgWTm4GrnEmlnk+hp4blXYsIKI34SANbb5gcoP+zrD9
-	7cwZfg5cPsGCgv9jA1dSEvBXZ66jqAYrv1otALE/hK813AWOgqtCpLYTl4bYqcHONfF2mu
-	NQgTP124boEQO+9N6iN3dUjtOhmWnhXvT7Jzsz2k/UpynNxrPIsGzzeXIkNUww==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/twMj9i"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729774439; x=1761310439;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HUuhAWk3dXLnQPMq/6w0jxdCVg118X9Z6g0zogfDEU8=;
+  b=h/twMj9iyxDgIK1xNShcTxbYu34r8LmGLfm78Ks2T3pYSuMebxGYtMut
+   r4YtSw4giXhKLSOnDnoihWQ3nYgMT5QYkKJ6CBmajl36rEzOSK/GUkqgn
+   R80HQtXBoI0/XBP7sw6ZHwKbWDO1UUUjExtwnSRr1PCebc+iL7ko2n3Uc
+   BhcvOev7c7HJsul3W9/4rlvU96o5Eh2QJOHxpbKMOhisBagPLYxibqL63
+   HIAZYWOEprFpgrzdGbzgM9pictpkfYIbHoiBJsW8TwK1ijuEzjkLlUHMJ
+   ZYp/kpfE+Z0sWadNVBgKldd1RVciw8QpBSgvKPUU86j8+hXHn/PM6xsp/
+   Q==;
+X-CSE-ConnectionGUID: Pt/EvxJ4RZGStFXH5FByHA==
+X-CSE-MsgGUID: 696ex9sdQemjfC2gTK0fWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="33305510"
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="33305510"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 05:53:58 -0700
+X-CSE-ConnectionGUID: CYQhb0LyQ/O314nR33NJFw==
+X-CSE-MsgGUID: T60QwaPzQhGgKJLZPt2oiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="84560553"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Oct 2024 05:53:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3xLc-000WRA-04;
+	Thu, 24 Oct 2024 12:53:52 +0000
+Date: Thu, 24 Oct 2024 20:53:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+Message-ID: <202410242017.1valHJUC-lkp@intel.com>
+References: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 24 Oct 2024 14:50:16 +0200
-Message-Id: <D541S8TMBS94.3AKP8ET4TID6Y@bootlin.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
-Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
- <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com>
- <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org>
- <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
- <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
-In-Reply-To: <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 
-Hello Stephen, Conor, Krzysztof, Michael, Rob,
+Hi Ryan,
 
-On Thu Oct 24, 2024 at 12:12 AM CEST, Stephen Boyd wrote:
-> Quoting Th=C3=A9o Lebrun (2024-10-23 04:08:31)
-> > On Thu Oct 17, 2024 at 8:48 PM CEST, Stephen Boyd wrote:
-> > > Quoting Th=C3=A9o Lebrun (2024-10-07 06:49:19)
-> > > > +/* Required early for UART. */
-> > >
-> > > I still don't get this. UART isn't an early device. It's only the
-> > > interrupt controller and the timer that matter. Does MIPS do somethin=
-g
-> > > special for UARTs?
-> >=20
-> > Our hardware has a PL011. That is AMBA stuff; they get probed before
-> > platform devices by of_platform_bus_create(). "pll-per" on EyeQ5 must
-> > be available at that time.
-> >=20
-> > In concrete terms, if we don't register pll-per on EyeQ5 at
-> > of_clk_init(), we stare at void because the serial fails probing.
-> > I haven't digged into why EPROBE_DEFER doesn't do its job. Anyway we
-> > don't want our serial to stall for some time during our boot process.
-> >=20
->
-> Ok thanks for the details. It sounds like there's a bug in there
-> somewhere. Eventually this should be removed.
->
-> Can you dump_stack() in clk_get() when the "pll-per" clk is claimed?
->
-> I suspect of_clk_get_hw_from_clkspec() is seeing NULL if
-> of_clk_hw_onecell_get() is being used and the clk_hw pointer isn't set
-> yet. NULL is a valid clk and it will be returned to the consumer. You'll
-> want to write a custom 'get' function for of_clk_add_hw_provider() that
-> returns -EPROBE_DEFER for any clk that isn't registered early. Then the
-> AMBA stuff should defer probe until the "full" clk provider is
-> registered.
+kernel test robot noticed the following build warnings:
 
-You encouraged me to keep digging.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc4 next-20241024]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The bug is elsewhere: we do get valid clocks from PL011. Both clk_get()
-calls give proper pointers.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241023-170434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241023090153.1395220-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+config: arm64-randconfig-r133-20241024 (https://download.01.org/0day-ci/archive/20241024/202410242017.1valHJUC-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+reproduce: (https://download.01.org/0day-ci/archive/20241024/202410242017.1valHJUC-lkp@intel.com/reproduce)
 
-The issue is that we are using `compatible =3D "fixed-factor-clock"`
-clocks in the middle, and those don't wait for their parents to be
-active.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410242017.1valHJUC-lkp@intel.com/
 
-Simplified clock graph is: pll-per -> occ-periph.
-pll-per is register by our driver. occ-periph looks like:
+All warnings (new ones prefixed by >>):
 
-	occ_periph: occ-periph {
-		compatible =3D "fixed-factor-clock";
-		clocks =3D <&olb EQ5C_PLL_PER>;
-		#clock-cells =3D <0>;
-		clock-div =3D <16>;
-		clock-mult =3D <1>;
-	};
+   In file included from drivers/clk/clk-ast2700.c:17:
+>> include/soc/aspeed/reset-aspeed.h:14:5: warning: no previous prototype for function 'aspeed_reset_controller_register' [-Wmissing-prototypes]
+      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+         |     ^
+   include/soc/aspeed/reset-aspeed.h:14:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+         | ^
+         | static 
+   1 warning generated.
 
-Sequence is:
- - eqc_early_init(): it registers a clock provider that will return
-   EPROBE_DEFER for our pll-per.
- - _of_fixed_factor_clk_setup(): it registers occ-periph, even though
-   its parent is EPROBE_DEFER. clk_core_populate_parent_map() runs all
-   fine without complaining; logical as it doesn't query the clk_hw for
-   its parent, it only stores indexes.
- - amba_get_enable_pclk(): it does a clk_get() which works because
-   occ-periph exists.
 
-Maybe __clk_register() should check the clk_hw for each parent: if any
-is an EPROBE_DEFER then it should EPROBE_DEFER itself? That looks like
-a rather big behavioral change.
+vim +/aspeed_reset_controller_register +14 include/soc/aspeed/reset-aspeed.h
 
-The other solution is to keep as-is: provide all clocks consumed by
-fixed-factor-clocks at of_clk_init() stage.
+1476d29e4461f6 Ryan Chen 2024-10-23   9  
+1476d29e4461f6 Ryan Chen 2024-10-23  10  #if IS_ENABLED(CONFIG_RESET_ASPEED)
+1476d29e4461f6 Ryan Chen 2024-10-23  11  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+1476d29e4461f6 Ryan Chen 2024-10-23  12  				     const char *adev_name);
+1476d29e4461f6 Ryan Chen 2024-10-23  13  #else
+1476d29e4461f6 Ryan Chen 2024-10-23 @14  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+1476d29e4461f6 Ryan Chen 2024-10-23  15  				     const char *adev_name)
+1476d29e4461f6 Ryan Chen 2024-10-23  16  {
+1476d29e4461f6 Ryan Chen 2024-10-23  17  	return -ENODEV;
+1476d29e4461f6 Ryan Chen 2024-10-23  18  }
+1476d29e4461f6 Ryan Chen 2024-10-23  19  #endif /* if IS_ENABLED(CONFIG_RESET_ASPEED) */
+1476d29e4461f6 Ryan Chen 2024-10-23  20  
 
-Hoping I provided enough info,
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
