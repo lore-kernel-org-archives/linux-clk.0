@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521BF1D5176;
-	Thu, 24 Oct 2024 15:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A73833C9;
+	Thu, 24 Oct 2024 15:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782887; cv=none; b=PQpoi3qpFQ0FyB/z0SLxLKKi+X+3WWwJo2bF+pAPZcSO4j0aMFEbB0ilJJrf2dMq6oUxnvxn66SsQyhAa8s1Pxqhtl+X5BNVdeHT6tduVU1GliDbI9QwpOflsscI2ct9mxJvM/5sObwglJWtDMbrhyEJKgELXTiAzqzk4iw6/KQ=
+	t=1729782963; cv=none; b=nnzQqpnmPVvGnY0xcSDPcVQIzp+hc7KZhBuCROIGFtus9YBl197DoW/Dmau84AavoNwbWfjbStz5kN+kKnHWxiMJX5+M5DeitLkBU8z1RPq0TjP9AGDysGyyRJ+ItIBeUGPKZB13W9wxG9NZshkiXQHCcYEviLC2ZoKHfyJS1Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782887; c=relaxed/simple;
-	bh=Fhhtx0SKw8R7fwmiWBICVYOc8q6+cAez3j0Ek1hM190=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=dq8ZQAhQdvQRo/R9mai1qEXF9Pcv8edK7L/MROa2k/9qNa5GJHw82X6G40QMiWkflWUBFkpVVcZJz/g9mo+lN33Tx7TyluRtaBPoTGu8QY72zacB1AdJdRWnbN/LpjuK59eTC3MUQ4E8y0BBdsAvuTdoZ0NwaidqRSTgTUHIIkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UV0Y7R/6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729782963; c=relaxed/simple;
+	bh=/gnpu4B8t4IL7ynEXrUUxsgwtBS+XtHTbgdzxW9txJc=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=hVEcAENYubLS2oKICyjr4wfImmbrcXsC3FY+BogfOsq84VZWTQNUA4Kj8cuIcjUJvjV5fMEx7Jr3BHo5qz/xWuG8C2Cf7RjTQSnsIA7i524SO1FPBMg6Bv/zSPuNxgB5yvUuLVhaUJkByW+xdjueNBOuQVB0bO5vxTXqgIkEOZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWjQjEyl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UV0Y7R/6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B0DC4CEE4;
-	Thu, 24 Oct 2024 15:14:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWjQjEyl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC13C4CEC7;
+	Thu, 24 Oct 2024 15:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729782886;
-	bh=Fhhtx0SKw8R7fwmiWBICVYOc8q6+cAez3j0Ek1hM190=;
+	s=k20201202; t=1729782962;
+	bh=/gnpu4B8t4IL7ynEXrUUxsgwtBS+XtHTbgdzxW9txJc=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=UV0Y7R/6YQiFBOZvJUQydU4Yxt+U9SxMjlRxZMea1owRTDM7Fti6imYGZVsIfWN41
-	 oDctMYnTbJkbl3KGUJT+O1oXccwmPXnsC/EhPzxPzT/Lle/JOhuEXOXAKocPRREOom
-	 pTNzMTAIv3X/bQqAFV5AaPLK7Zc5DyqeJeVz0+nyoasRrT5zawOKBSgfqyI+m3RHVg
-	 3mYcbqSAiNv+U5FoLoYpHzXS3BCnWzINmPdSbeXL41n/j6FBSHLIdYaHnatCaxhwMR
-	 igF5ds7OCBby6INyeeOz0c9DLocUYF1KlKyHVDOlzuu+hvA8E5RVkxbLwbENIzdlIE
-	 YbwEs/93bZDJw==
-Message-ID: <baa171fd4e0cd7ddf2d4ce593b690ed3@kernel.org>
-Date: Thu, 24 Oct 2024 15:14:44 +0000
+	b=EWjQjEylN9jN2AYF2Z+Buio7/U4Het2kbl4zvp7VcNMpe6uoxAQnKKAheRPTROr1y
+	 4KXRC7fWnDWpF3EOlNWbZhf7g5pYMZrH/GOJ7zGGnEop5veigljsQuodcz56osmzJ5
+	 myqrlmGwY+71MRipkTD0WB6g4wWycrRyhrgFd2ChRzAia1fuC8CZR3SvriCiaElllI
+	 rBTRXObrnyhUHOEXb32JT8kEDLsDSaMEqCHVStep7+CGKa6NSuVeXQvSlqKDW1EdXV
+	 puab9WgqJpvvQXLLnMUHWE05nGDShEetrFoMi9HspQhyDJfo+j8dBPImpNV5++Wcsr
+	 DMxmwgT9KrjOA==
+Message-ID: <499656b677fc13544f5e0e46e5e887ec@kernel.org>
+Date: Thu, 24 Oct 2024 15:16:00 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Dave Stevenson" <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 02/37] drm/vc4: Use of_device_get_match_data to set
- generation
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
-References: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
+Subject: Re: [PATCH 03/37] drm/vc4: Fix reading of frame count on GEN5 / Pi4
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-3-1cc2d5594907@raspberrypi.com>
+References: <20241023-drm-vc4-2712-support-v1-3-1cc2d5594907@raspberrypi.com>
 Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, "Broadcom
  internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, "Catalin
  Marinas" <catalin.marinas@arm.com>, "Conor Dooley" <conor+dt@kernel.org>, "David
@@ -51,12 +50,12 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-On Wed, 23 Oct 2024 17:49:59 +0100, Dave Stevenson wrote:
-> Use of_device_get_match_data to retrieve the generation value
-> as set in the struct of_device_id, rather than manually comparing
-> compatible strings.
+On Wed, 23 Oct 2024 17:50:00 +0100, Dave Stevenson wrote:
+> The frame count values moved within registers DISPSTAT1 and
+> DISPSTAT2 with GEN5, so update the accessor function to
+> accommodate that.
 > 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Fixes: b51cd7ad143d ("drm/vc4: hvs: Fix frame count register readout")
 > 
 > [ ... ]
 
