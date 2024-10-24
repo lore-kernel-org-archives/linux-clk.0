@@ -1,77 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F7E1D041B;
-	Wed, 23 Oct 2024 22:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F880136E21
+	for <linux-clk@vger.kernel.org>; Thu, 24 Oct 2024 03:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729721557; cv=none; b=riYdOZYr9fuKskPq5FSOGNrx1sox4qWE0xVIfx5wM2SDVteA3ilCLa0CbPW20Slgjiar0GG+xuSCUwsnab4naPKxuQD29FWnc+/8rI+yGHwha2M/LEgwdRXG/nt8TD/8IGMC7OXXo5wwaySFWsNN5gv3YS3CHE7heQ4ZdxaiVB4=
+	t=1729741157; cv=none; b=rioAC2A0UIbHfJPQhmZSpjvIvP4R4V9WIu/oi8Jj1u4TcEjOrC4jwjcrxPPWiodnRVjbRlASbUPtBLwx8kXqmyDGWyf+PcDSCcLWalqXEkSycfmO7XgaIsOBuLhvufSQNLWKDYKWoDZLxzkBiZgTkz0xzvtPNZdDBdmgdbK9mjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729721557; c=relaxed/simple;
-	bh=ya9ok5nW1iUWsJB9i5ZUGJbOtt75/dc/ZmVQACOslIY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=PzKBtjQAGu8gcGYlalnTeHOPpFa/XYKjS/O7R21y3hdsmoXnTGLnRbfdnT0VBwunIoTLO42/iSEFa2u+FSaOc/FClMWcX5SVMGjWqVTlLqhrnFFqzEMIsgFqeUpCIbxYYNzZgKKfQ8AQQOST66Qm1+t6jkl+uE5ru9xVjkn95eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ple3/eFh; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ple3/eFh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B02C4CEC6;
-	Wed, 23 Oct 2024 22:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729721557;
-	bh=ya9ok5nW1iUWsJB9i5ZUGJbOtt75/dc/ZmVQACOslIY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ple3/eFhwg5tdx7JHtQI9sxTZ/nAW5KzfBySbtozhZ0TeF2FnyfNpBc+/7ZbrNYcI
-	 X+lpjXhi4UB0yCjyW3lVQIPz2syoMvTc+7JHDLJpFh9jfm8MAgZWaRRWx2lN/QLMtc
-	 0R+9TaICpycm+2MvfLsQd9DnT3baMnH9FICrOXNByieQQ8df6B5k+a5IbITKP2owCd
-	 eQZeh4ReGgWOWQcAzGT6YYhL2ueVNaon47lv/G3GPjq83Hd69fjVZohurqvdKisvc+
-	 P4vRA0LTfcknDRbi68pfLlBmm9qZ50vYZwDw8TUEtChG1MmtvzA4x9nlzRaLYgn55j
-	 df6xgGkF4z/FA==
-Message-ID: <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729741157; c=relaxed/simple;
+	bh=iawy8aghmpBk0Y4P7Ip/nT8FoXgARIE66AkUCePgtbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KQPLT32HyTcrzwg+mFo9EPoPFT6c7FjgVT9wJEVGnq1F8l4Z7qTf7ZPhR+3jKTu/cfZZhBrRopgb1lsCtOXMbbTM/LxiTGA67/W5oThK6jCFvTbREEYC44Eo2ClZ+G8Aa06xaaH2BCToPcQ3vA0JQe8Rcf6DGtbFJhZMcwML8Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XYs780N0ZzyTkN;
+	Thu, 24 Oct 2024 11:37:40 +0800 (CST)
+Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5068E1401E9;
+	Thu, 24 Oct 2024 11:39:12 +0800 (CST)
+Received: from huawei.com (10.175.112.208) by kwepemf500003.china.huawei.com
+ (7.202.181.241) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Oct
+ 2024 11:39:11 +0800
+From: Zhang Zekun <zhangzekun11@huawei.com>
+To: <abelvesa@kernel.org>, <peng.fan@nxp.com>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>, <dinguyen@kernel.org>,
+	<s.trumtrar@pengutronix.de>, <linux-clk@vger.kernel.org>
+CC: <chenjun102@huawei.com>, <zhangzekun11@huawei.com>
+Subject: [RESEND PATCH 0/4] clk: Fix the use of uninitialized variable
+Date: Thu, 24 Oct 2024 11:34:20 +0800
+Message-ID: <20241024033424.115417-1-zhangzekun11@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
-References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com> <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com> <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org> <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
-Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Wed, 23 Oct 2024 15:12:35 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf500003.china.huawei.com (7.202.181.241)
 
-Quoting Th=C3=A9o Lebrun (2024-10-23 04:08:31)
-> On Thu Oct 17, 2024 at 8:48 PM CEST, Stephen Boyd wrote:
-> > Quoting Th=C3=A9o Lebrun (2024-10-07 06:49:19)
-> > > +/* Required early for UART. */
-> >
-> > I still don't get this. UART isn't an early device. It's only the
-> > interrupt controller and the timer that matter. Does MIPS do something
-> > special for UARTs?
->=20
-> Our hardware has a PL011. That is AMBA stuff; they get probed before
-> platform devices by of_platform_bus_create(). "pll-per" on EyeQ5 must
-> be available at that time.
->=20
-> In concrete terms, if we don't register pll-per on EyeQ5 at
-> of_clk_init(), we stare at void because the serial fails probing.
-> I haven't digged into why EPROBE_DEFER doesn't do its job. Anyway we
-> don't want our serial to stall for some time during our boot process.
->=20
+of_property_read_u32() could failed and remain the variable
+uninitialized. Add check or initialize the variable to fix
+these problems.
 
-Ok thanks for the details. It sounds like there's a bug in there
-somewhere. Eventually this should be removed.
+Zhang Zekun (4):
+  clk: imx: scu: Fix the return of uninitialized variable
+  clk: socfpga: Fix the use of uninitialized variable
+  clk: socfpga: arria10: Fix the use of uninitialized variable
+  clk: socfpga: clk-pll: Fix the use of uninitialized variable
 
-Can you dump_stack() in clk_get() when the "pll-per" clk is claimed?
+ drivers/clk/imx/clk-scu.c         | 2 +-
+ drivers/clk/socfpga/clk-periph.c  | 3 ++-
+ drivers/clk/socfpga/clk-pll-a10.c | 3 ++-
+ drivers/clk/socfpga/clk-pll.c     | 3 ++-
+ 4 files changed, 7 insertions(+), 4 deletions(-)
 
-I suspect of_clk_get_hw_from_clkspec() is seeing NULL if
-of_clk_hw_onecell_get() is being used and the clk_hw pointer isn't set
-yet. NULL is a valid clk and it will be returned to the consumer. You'll
-want to write a custom 'get' function for of_clk_add_hw_provider() that
-returns -EPROBE_DEFER for any clk that isn't registered early. Then the
-AMBA stuff should defer probe until the "full" clk provider is
-registered.
+-- 
+2.17.1
+
