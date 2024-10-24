@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7047C14B08E;
-	Thu, 24 Oct 2024 12:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CED158858;
+	Thu, 24 Oct 2024 12:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729772086; cv=none; b=IwSJrocKSB7Ip3KmQ3XpmuZ54UiJmuKxjUdiupRFDepqx9HBTvJbVnQz/z1T1fw2EFR9LXMXljbZKWHcMla29oTRLkoc4DUJd5/q1istEbDG0St/oGgqMgJx/qYG/2+K5gxGYN9BhYZyjbbjd/Dn80vJt1dlDyKe6l1Qp1gxqQA=
+	t=1729772148; cv=none; b=e0wydcMGwodoNT09VvoHHGUnX4ap/k2hItYuBJ+8Qie0EV7Tm7xhHP+wkCd2oh3ci+xeU89rZ5+IqfVB6HF5FeJm0t4bXRD/BDvNt7b3rA5Qr7IOvxrmMDzmEvsDUcr6EaTvTPuEaquFh2AcuZC85qWIAbO+/CEv89eQathI5LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729772086; c=relaxed/simple;
-	bh=RwvrfTv5gy55jcjI6bin8pxUAiAuiFQWvOFHXr8Y7Q4=;
+	s=arc-20240116; t=1729772148; c=relaxed/simple;
+	bh=RfdjdiQYotlIUhZ8rHFChi1FV177D7ZDIqtYjtsWyw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HB1oAOluZ4IwaTykK//T32brEa2ubNj3JciiZgYILv3oYhotYyAuACvUQDqYZEfuHrNk7YuX993U7qGFbqb5jxfRyNSh2+7k6H2djx1HbKR7aEInIrS+0xkqoS/cNgzW4WGxUCekX9WALrDhw60wGVI2ii9o4sCmyntjOO8GYEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lj2WbXBJ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UTwDDs4TQzeWByT35qE8ZrP4kBij0ar6qe5DQl6e6cIToFBu3JIUNU2l/ERL0evYht4AwB/V/9LzCdeFx8QzgQtxkcIbnDAYwGlnlB9LYLKRwe5FgXOU+WTzDsfXqAhVfbLV0MPa5yBfPhZJjuywSItSahHD/aeo9BBLBHrmVJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGI5GtDd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lj2WbXBJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554E8C4CEC7;
-	Thu, 24 Oct 2024 12:14:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGI5GtDd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07DF1C4CEC7;
+	Thu, 24 Oct 2024 12:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729772086;
-	bh=RwvrfTv5gy55jcjI6bin8pxUAiAuiFQWvOFHXr8Y7Q4=;
+	s=k20201202; t=1729772147;
+	bh=RfdjdiQYotlIUhZ8rHFChi1FV177D7ZDIqtYjtsWyw4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lj2WbXBJG8ht/k1YpD0VwMgNrwJ2KCjua6xaK8o6D5JOtrD7zh1mKBCcH2SgolDXX
-	 +4eOPGye1SYhax6qrs2QStyUecKNqKV+mtE3MKeBcclXhvNWMav+gm3vsUogOaveUT
-	 2pjvoh+80OOKNH0qbprOJ4byFsZ6WwWc5YwlZ5VFhFwL2oCcX2yAYk88xebmFj7Usk
-	 1QfZBxZDfQBF6szmuQadR1IQv+z8cDgJD9rmDHksZYvARwE+ANyOIJdvFWZpJiSWHC
-	 RhW/b8WNbRc9zkAOimh9eYE5y5Ze8P/1zW4GV1cnqQAvSMXcaiiXFFhayq98Z6OeX8
-	 qOM9d5RIpflKQ==
-Date: Thu, 24 Oct 2024 13:14:40 +0100
+	b=jGI5GtDdhYHB3Ie0tMKjkC4qM1M44gkbtu2iUam3ftfeLWXQIsYAlAyEbfhezwBGF
+	 oSwEqq/kgAJjMioRW7ExqT0BwR7Gy3adP82hdl/AnXDyq9yY1sg2DEVJeLdx//O1Ja
+	 KNYFxsJsP2KYEOloEXiDXvludUaXRLMoPwSDn4gA20cNJNL8e6QIlwDvT0yEfouvIQ
+	 v0LDvwQdT0GXkus6JbiJAj/VOpu2LgK/06iPsl9gcEDiQpDOVep8omBKNmqfVHWc5O
+	 w8xrkfr1wg0VTJQOLomnFfQCEpCRmrKQF78OoBErm19ekPUrADWpGOHon/AP0YBQjm
+	 kO9RK3898aY3w==
+Date: Thu, 24 Oct 2024 13:15:42 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
@@ -38,11 +38,9 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
 	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] dt-bindings: allwinner: add H616 sun4i audio
- codec binding
-Message-ID: <313c922f-9967-4958-a438-11528b811baa@sirena.org.uk>
+Subject: Re: [PATCH v3 0/7] ASoC: add Allwinner H616 audio codec support
+Message-ID: <8b902b84-6199-4149-ae40-725fdbc33a5b@sirena.org.uk>
 References: <20241023075917.186835-1-ryan@testtoast.com>
- <20241023075917.186835-3-ryan@testtoast.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,38 +48,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wE+qwdJsGOAxZKMP"
+	protocol="application/pgp-signature"; boundary="/yr4JFcgoKNigDoS"
 Content-Disposition: inline
-In-Reply-To: <20241023075917.186835-3-ryan@testtoast.com>
+In-Reply-To: <20241023075917.186835-1-ryan@testtoast.com>
 X-Cookie: Real programs don't eat cache.
 
 
---wE+qwdJsGOAxZKMP
+--/yr4JFcgoKNigDoS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Oct 23, 2024 at 08:56:58PM +1300, Ryan Walklin wrote:
-> The H616 has an audio codec compatible with the sun4i-a10 driver.
+On Wed, Oct 23, 2024 at 08:56:56PM +1300, Ryan Walklin wrote:
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+> V3 of this patch adding support for the Allwinner H616 (and variant)'s audio codec. Some clarification of comments, particularly regarding the clock driver changes, and a small fix for the device tree binding (apologies I forgot to re-run dt_binding_check on V2). Review comments otherwise addressed and reviews noted.
 
---wE+qwdJsGOAxZKMP
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
+
+--/yr4JFcgoKNigDoS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcaOi8ACgkQJNaLcl1U
-h9ACCQf/Vm/4V34RBhEzAfgM1hSjkQLktpGxHbr9DlKWSpqCJMx+c+s46N3znXmQ
-gVT1WSZB4W3AbU4Qa0wKDG1JKOuaa0bAKxoDAvqFbOBfrlC8R74mDrqPt2Fp3oxn
-8hBkr1i+z23WsViKXF4D74+UBctx2NqwSfyj0+OOuouSW33YBCdcyVof8QyzEqWn
-kDDJG6GEQFDt+TSCdAOMr+NzeGiuxUVFgpPN9Eg1NxMr5Z4XpongwEo46u/SoA/Y
-2+y6+3G+0dOI7oW6ehXC5Tx4RImmtmJUBYFfLnxzC081W/cMkKEgSbcRr8ffzfXJ
-OIRUuO+CKBuwnkBKIYOsaa6+7G4Zeg==
-=YLIf
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcaOm0ACgkQJNaLcl1U
+h9CjYAf+NQxORVWrFlO5dvxx0/C3SPj6ZxsrXWYL8XAnrgib9VRazo1qHMG58PP4
+rqogcBGonb3iWkcRL1Nlnlme2Acw6sSYJDW3bnHtMbDT46qs+AjZlem5hOrts1RU
+lLx3mRCwgYDYOaBKCKB/Rmis8Uxc3jNyC9jlz+dd9wgDSDEkdBPafRi/29hlnAYN
+MnqOYuSIovdCbLSFtaTlY/O+aLeU0rA1vWkIrXiTU++hN2Z1SMtMCXSfXR20Ihem
+noJVhgWBwai4QZ3tEjd+0cFHrO+OHfsvq7yw/etcOGog/1CRFQUvWeVGJ47JKTOe
+DrBkGHNVC0VSG5p5PHxuzl6T565c6Q==
+=ZTjS
 -----END PGP SIGNATURE-----
 
---wE+qwdJsGOAxZKMP--
+--/yr4JFcgoKNigDoS--
