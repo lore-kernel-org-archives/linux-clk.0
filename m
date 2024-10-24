@@ -1,127 +1,133 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC81B1D319B;
-	Thu, 24 Oct 2024 12:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CCF1DD0E3;
+	Thu, 24 Oct 2024 13:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774441; cv=none; b=ixYcbDfxi2FGJIZi1C4Duw1VBmcyzR69gT+JrEoM8n0J6609AYAKm2n6ITxNr4hLzffVXgACGq4nozpWHptk77+8V9DaGGlyy+CYu4dzj5vwYwI9EdYrjD09/Obt8mBqnAefDZicdoGHaOROwCq3zMlmLt14weno7dZZo9S1Gxo=
+	t=1729776706; cv=none; b=L1LBV0y6KlSh7gAWDg1MRn2jIlt+5zMfgp77bI8PGPNNNUv1n3bXDww2SwxNuamI05FrvDx5BcEWzJ4f5SZgz1HAu9lWEPRka4977Bekd+cbilI/Nc5z9IpKO0ifJXcDSsfVefn3kujTVQO3ZWXudFXAqWg9UTEOM00vDu2566E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774441; c=relaxed/simple;
-	bh=HUuhAWk3dXLnQPMq/6w0jxdCVg118X9Z6g0zogfDEU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFyC3qiOh49w/G8MfbFg1YoCaSN0YZttz3pJJjfePXhlbNiEK3LVOyWKNMlRvtCWu6aFkQB5RXUtk0CQCKyre+DqJ3tetFgF1DqH4hte5F/AJaHBQEO/zHxV78Dk4SYmQiU2kBHwBRpFyWFpti7sZOcINfJLU/+jgzn2QdUPGq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/twMj9i; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1729776706; c=relaxed/simple;
+	bh=UGT6Z5g6AX7X1dVxk4wpD9q9u8GexpH1M4bkiXVmJu8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QjchomUbGHkpGGUCCfob+HeVN7DiWEYQ51kzWOLeRAlvWg/YLglmAvNqkH1/qx5vJ/wb+IbsBqRyycwpY8YSj3L1tygKjP7g2yqmd7EKBCUR+DmTAI3q6EMruEU4w4MMpTs18S6yLt6nyUEUJPzJ1fK4XE6vugCn7n/LG0rhaUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BnMxmkjw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/twMj9i"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729774439; x=1761310439;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HUuhAWk3dXLnQPMq/6w0jxdCVg118X9Z6g0zogfDEU8=;
-  b=h/twMj9iyxDgIK1xNShcTxbYu34r8LmGLfm78Ks2T3pYSuMebxGYtMut
-   r4YtSw4giXhKLSOnDnoihWQ3nYgMT5QYkKJ6CBmajl36rEzOSK/GUkqgn
-   R80HQtXBoI0/XBP7sw6ZHwKbWDO1UUUjExtwnSRr1PCebc+iL7ko2n3Uc
-   BhcvOev7c7HJsul3W9/4rlvU96o5Eh2QJOHxpbKMOhisBagPLYxibqL63
-   HIAZYWOEprFpgrzdGbzgM9pictpkfYIbHoiBJsW8TwK1ijuEzjkLlUHMJ
-   ZYp/kpfE+Z0sWadNVBgKldd1RVciw8QpBSgvKPUU86j8+hXHn/PM6xsp/
-   Q==;
-X-CSE-ConnectionGUID: Pt/EvxJ4RZGStFXH5FByHA==
-X-CSE-MsgGUID: 696ex9sdQemjfC2gTK0fWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="33305510"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="33305510"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 05:53:58 -0700
-X-CSE-ConnectionGUID: CYQhb0LyQ/O314nR33NJFw==
-X-CSE-MsgGUID: T60QwaPzQhGgKJLZPt2oiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="84560553"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 24 Oct 2024 05:53:54 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3xLc-000WRA-04;
-	Thu, 24 Oct 2024 12:53:52 +0000
-Date: Thu, 24 Oct 2024 20:53:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
-Message-ID: <202410242017.1valHJUC-lkp@intel.com>
-References: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BnMxmkjw"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9KZMS029454;
+	Thu, 24 Oct 2024 13:31:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9feCkEyNUk0ij74zv0Gakc
+	g56A4ZFUuZ2E3HJhxDFto=; b=BnMxmkjwuw5Cff9z0RjAAOVHQyJliTRDSR4x7V
+	X56M3t9Op0hzSJnBt/5DTcMi4fOWHAbENnz4OQ0ZoAkxXI4wr0wm7WpzHut6TjTk
+	YcnYRwHiR4VMnG9eYNQjt+QYv/3Y43t3laPtLPHEyteqAxhDgpzAnUqlNjXIZpjF
+	aF6nCtdLj1YNEEvw0pjFUeWIbqygSyAZYHXd4STV+rY1TZYFzc3ZjoMoMeJk4zT8
+	E1w2dpompKk+9IIWJXCIAR0MLmNQ2FEg5TlaXohXTCuebQqn4xV4MvchR/fu8jNv
+	tn9AHbE/0+FxKx3WvLkesFlDt5KL9dvvQnq+F13z0J1x6lqQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w5tkt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:31:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ODVcFG023390
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:31:38 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 24 Oct 2024 06:31:34 -0700
+From: Imran Shaik <quic_imrashai@quicinc.com>
+Subject: [PATCH v2 0/6] Add support for GPUCC, CAMCC and VIDEOCC on
+ Qualcomm QCS8300 platform
+Date: Thu, 24 Oct 2024 19:01:13 +0530
+Message-ID: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACFMGmcC/22NSw6CQBAFr0J6bZse5DO48h6GBWka6QW/GSQaw
+ t0dMcaNy3rJq1rBi1PxcI5WcLKo16EPEB8i4Lbqb4JaB4aY4sSQyXBib09E2HU4VjO34rFhMmI
+ 5T6VOIBxHJ40+dum1/LCT6R7c829s1c+De+7hxbzXb8P+aywGCW1aUJEK5XnGlyBk7fnIQwflt
+ m0vTmqHqMsAAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9K3QUJIWt7aF8AM_liUT-HATXONQdGYi
+X-Proofpoint-GUID: 9K3QUJIWt7aF8AM_liUT-HATXONQdGYi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=888
+ priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240110
 
-Hi Ryan,
+This patch series add support for GPUCC, CAMCC and VIDEOCC on Qualcomm
+QCS8300 platform.
 
-kernel test robot noticed the following build warnings:
+Please note that this series is dependent on [1] and [2], which adds support
+for QCS8300 GCC and SA8775P multi media clock controllers respectively.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc4 next-20241024]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1] https://lore.kernel.org/all/20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com/
+[2] https://lore.kernel.org/all/20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241023-170434
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20241023090153.1395220-4-ryan_chen%40aspeedtech.com
-patch subject: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
-config: arm64-randconfig-r133-20241024 (https://download.01.org/0day-ci/archive/20241024/202410242017.1valHJUC-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
-reproduce: (https://download.01.org/0day-ci/archive/20241024/202410242017.1valHJUC-lkp@intel.com/reproduce)
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+---
+Changes in v2:
+- Updated commit text details in bindings patches as per the review comments.
+- Sorted the compatible order and updated comment in VideoCC driver patch as per the review comments.
+- Added the R-By tags received in V1.
+- Link to v1: https://lore.kernel.org/r/20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410242017.1valHJUC-lkp@intel.com/
+---
+Imran Shaik (6):
+      dt-bindings: clock: qcom: Add GPU clocks for QCS8300
+      clk: qcom: Add support for GPU Clock Controller on QCS8300
+      dt-bindings: clock: qcom: Add CAMCC clocks for QCS8300
+      clk: qcom: Add support for Camera Clock Controller on QCS8300
+      dt-bindings: clock: qcom: Add QCS8300 video clock controller
+      clk: qcom: Add support for Video Clock Controller on QCS8300
 
-All warnings (new ones prefixed by >>):
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |  1 +
+ .../bindings/clock/qcom,sa8775p-camcc.yaml         |  1 +
+ .../bindings/clock/qcom,sa8775p-videocc.yaml       |  1 +
+ drivers/clk/qcom/camcc-sa8775p.c                   | 99 +++++++++++++++++++++-
+ drivers/clk/qcom/gpucc-sa8775p.c                   | 47 ++++++++++
+ drivers/clk/qcom/videocc-sa8775p.c                 |  8 ++
+ include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  1 +
+ include/dt-bindings/clock/qcom,sa8775p-gpucc.h     |  4 +-
+ 8 files changed, 157 insertions(+), 5 deletions(-)
+---
+base-commit: 891a4dc5705df4de9a258accef31786b46700394
+change-id: 20241016-qcs8300-mm-patches-fc01e8c75ed4
 
-   In file included from drivers/clk/clk-ast2700.c:17:
->> include/soc/aspeed/reset-aspeed.h:14:5: warning: no previous prototype for function 'aspeed_reset_controller_register' [-Wmissing-prototypes]
-      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
-         |     ^
-   include/soc/aspeed/reset-aspeed.h:14:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/aspeed_reset_controller_register +14 include/soc/aspeed/reset-aspeed.h
-
-1476d29e4461f6 Ryan Chen 2024-10-23   9  
-1476d29e4461f6 Ryan Chen 2024-10-23  10  #if IS_ENABLED(CONFIG_RESET_ASPEED)
-1476d29e4461f6 Ryan Chen 2024-10-23  11  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
-1476d29e4461f6 Ryan Chen 2024-10-23  12  				     const char *adev_name);
-1476d29e4461f6 Ryan Chen 2024-10-23  13  #else
-1476d29e4461f6 Ryan Chen 2024-10-23 @14  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
-1476d29e4461f6 Ryan Chen 2024-10-23  15  				     const char *adev_name)
-1476d29e4461f6 Ryan Chen 2024-10-23  16  {
-1476d29e4461f6 Ryan Chen 2024-10-23  17  	return -ENODEV;
-1476d29e4461f6 Ryan Chen 2024-10-23  18  }
-1476d29e4461f6 Ryan Chen 2024-10-23  19  #endif /* if IS_ENABLED(CONFIG_RESET_ASPEED) */
-1476d29e4461f6 Ryan Chen 2024-10-23  20  
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Imran Shaik <quic_imrashai@quicinc.com>
+
