@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7310A1EF08D;
-	Thu, 24 Oct 2024 15:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE74A83A14;
+	Thu, 24 Oct 2024 15:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782579; cv=none; b=MKZnwfQ6OtqTVPYGp0Zr4v8TEvr8pm0TfLUWihfYNHaYg/SVykV7Snh5NhHTzvw9Pnx1yoJXG/UapfXs0+hVtmLdGkpbn/po9O6xZMkj16oeBjJc9meEqavDKH6bj3dCAhorcITixzu0j1d3ZR0kUlxElTk6u5bfWOIhBlV6VYI=
+	t=1729782604; cv=none; b=hasWzCWN2JChSmnXw/jwVehmQ2YdGj7g7GbDkU/Khbpvisqkt4p2OFnjSM1tuXqyOuhJ35OeddCE63D1ZHLwMOk3NqynlLZJD+13C9ONbJRbuSzLDPjXbZtjZ3AIaTE9rIU2xdu96tVt/BG69r5lCs3wBSCbq0Xlxhzd8u2h3eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782579; c=relaxed/simple;
-	bh=GIiZShzCqbp99Okh9K2VfkZMwriJp7KN0xaKA+283IY=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=Mk2TGM8aiheVuJwDq4crAQtvMPCpxkpD1o55xEEmBmCICc+BPn3DUK8U2B55tIw4H0XbEf4zyTiEl1UVmVPeFaA/0vaVYANfek/h/sD6ss/dUf+xPzma8PGBRSznHRX+BNbvIH8AmTKtiiMeOko/VRTWrhzT0O/ECDqJHOM3vcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvPDyC2U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729782604; c=relaxed/simple;
+	bh=VMFs9dmln36rULHELZnrUMSHBuywGkITllI3k0F8SzM=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=QMxxKCGcRqs2qPTTVEAd4Es4zeUMp6PY1Bu2rsnPOrZyFQDEZVXiIRt37USjE5GGXFKAnByH6rii6xAlfwkh6v6BqvVWivLw7z5Iy1ROLA+at+83NF/xi5+jTKjAfWJh8uGJN0vhtVTLr6iA9lZpbohyFt8dZPnvgeaJdomrWNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9EC93Ux; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvPDyC2U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB4EC4CEE4;
-	Thu, 24 Oct 2024 15:09:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9EC93Ux"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FE0C4CEC7;
+	Thu, 24 Oct 2024 15:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729782578;
-	bh=GIiZShzCqbp99Okh9K2VfkZMwriJp7KN0xaKA+283IY=;
+	s=k20201202; t=1729782604;
+	bh=VMFs9dmln36rULHELZnrUMSHBuywGkITllI3k0F8SzM=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=ZvPDyC2Un38oYBtXvX62d7ZiTOxbZfyC6ow/5abzyjUw3l5wdjqrX+maMLCxsR4Hd
-	 sRNWXU9EdpeaIeGxfMMwYLRbm6VNHAJRUeD2vf5/cGiA2Y8ZpvTLygF1N71EpJJ2CY
-	 5W84akyxhzpMGZY0Eulx8m+WnlIKA8CZUqE3GBza5Pi9rhTYPkJjG55F7QSngHM5NI
-	 mfuVjIqjRpjLYkSR11vOuiePNEjHfHfr2GW6ABT8jDV0nb+Vu0pzBiOYA6aukTXLVo
-	 9hcGC22txWIX0M1ttV5FEfeQjBKTvB/aE4IhyePcahWN12A1RaQarZy/1z65AQNd81
-	 tTLlgpCR2iyuQ==
-Message-ID: <66e7319a4805b42af2b2a4a20dc8faa9@kernel.org>
-Date: Thu, 24 Oct 2024 15:09:36 +0000
+	b=Z9EC93UxAcJyaTtDojfNt/Fu3i3015IzTXL6vRFRwso6gj8phUyldJ7Ekf5kjNDVT
+	 4N/K+qPmyTw5fFrBwxp3kO/DPWYf3HwhLRsY4Npr7VA/UacwXiNt3QDnAxHE+vk18x
+	 6KT5LkITQb5Qdgy9o8vQfU0iWMsPJ99kHFbAP5lKaAZwW7Af4GRdW6hShEjy/k0J8Q
+	 yJybhfMppI7PMbJiYREK5ZOQsy0qCVzxRSLnExvemUjkVWmv0Q/Hrq3buRE7NdpGxx
+	 BMIAlMUmtHwn/xfV+Ci85xYy07nFTmncxUt6RTL1Q1OxR+by2JNsJDcdp2WqzPOim1
+	 jevI+VjrTD1UQ==
+Message-ID: <76a344eb23149909d13ea46c25b97684@kernel.org>
+Date: Thu, 24 Oct 2024 15:10:01 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Dave Stevenson" <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 26/37] drm/vc4: hdmi: Support 2712 D-step register map
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-26-1cc2d5594907@raspberrypi.com>
-References: <20241023-drm-vc4-2712-support-v1-26-1cc2d5594907@raspberrypi.com>
+Subject: Re: [PATCH 28/37] drm/vc4: Enable bg_fill if there are no planes
+ enabled
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-28-1cc2d5594907@raspberrypi.com>
+References: <20241023-drm-vc4-2712-support-v1-28-1cc2d5594907@raspberrypi.com>
 Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, "Broadcom
  internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, "Catalin
  Marinas" <catalin.marinas@arm.com>, "Conor Dooley" <conor+dt@kernel.org>, "David
@@ -50,12 +51,12 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-On Wed, 23 Oct 2024 17:50:23 +0100, Dave Stevenson wrote:
-> The D-step has increased FIFO sizes of the MAI_THR blocks,
-> resulting in changes to the register masking. Add support for
-> it.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+On Wed, 23 Oct 2024 17:50:25 +0100, Dave Stevenson wrote:
+> The default was to have enable_bg_fill disabled and the first
+> plane set it if it wasn't opaque and covering the whole screen.
+> However that meant that if no planes were enabled, then the
+> background fill wasn't enabled, and would give a striped
+> output from the uninitialised output buffer.
 > 
 > [ ... ]
 
