@@ -1,124 +1,146 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6E11AF0DA;
-	Thu, 24 Oct 2024 10:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923AC1AF0DA;
+	Thu, 24 Oct 2024 10:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764764; cv=none; b=ml2Kk6lHHZ8EqTHjJKKdvSfGOcKHiMTcK2zLDBDpWAR/8Kl4V8Ev13v1adwBhS2qfuwS4T4EQ4QwGqmIUl5yFP2D44Is4kuT9vrkMgwWdDGASntm64EQBwj7jEOZ0z56jUfZPUwS3r0RD5Tbk38X5LVXV/DuheaNHEqYYjDXq4E=
+	t=1729764806; cv=none; b=XByaQb+p+g99LOHtrKiRxoTWGcZTLK67QwofpQx2WlDffFw6Sel7YP3dzT31IZyeib7t2qwbRCS5fQUAKSbsZAkzZxRZosiK4zfv465Pra5wrT8TgRecXeqFTuRnzVDyXMQW3Vyyn8KzRfynNl6zgFS0Ka76rGJthLSi9yxeEXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764764; c=relaxed/simple;
-	bh=MGOf7ZMyi95QFP31KZrV4c/ynaQc4Pken5UbVPfGmeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fe9OMWDnygTRHMyckcijfOuEri8DSVo5axIHzhiMt3+57YNrtdSjvSl8Qm2hT8FwbdwL0LrW2rs/mW7rMsJe+vsce8VE7uI5k/rARvaPt2erw2D92DyHubBnEcKeohXmiMlb3HLhzAZSwAWHnDHOtYI5kZq+BrsYY1U0RdyH0vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1729764806; c=relaxed/simple;
+	bh=CGrZ/mOqfUvaaEXclhzc78HhW8pylQ1jTyrtnVRCGSQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IIIFhuo8+4TICv1AvaFatSUk6LIspnwYGBNvEaCLH81mhDF3Y+VvSBSbOUJuYVL5fNauoVmg8C5xapv3LVFfrJ2Cd2mL+e2jA5f9FFUK86f0YW2VrRzde+Mc0FgZ25yCnWVAtI2xeUfSJQ8i0dunUVpTgFcUN7p3PmH8OhO5hEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBqdDnZu; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e29047bec8fso1522680276.0;
-        Thu, 24 Oct 2024 03:12:42 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBqdDnZu"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c94c4ad9d8so871817a12.2;
+        Thu, 24 Oct 2024 03:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729764802; x=1730369602; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sgKXmP4VMT0PuxK/GViUnVa7464Cl8DA0lQZldxMB2E=;
+        b=JBqdDnZuGNNrIArS6noeQPiFkJHEFahgWoyUg7A6ksl0bpUrR4DmaoMxDlpyduykv3
+         ZtA5SW7eGb5xPXw3vOCEGmm/J/73D2mK+IZ9PSwPeUfKRoV3v6sKe3n7tvt2AKnYLgLH
+         QN/Ti82ZaUB8DJxTzRknmYQVyXSrAb+VlSyUfdsxDInkXn9p4chptLYjTtjlhWbAuyn/
+         5Mvag1Nt6aaGoR6PEIRnBr/KjSyDdKi79C7AqZoxgh027uHnZQMYWWAmKMMa3UM9quIE
+         3oDXnolG/wcjIOimMeOIDD7EwHbMKiB0vbXuJueW7EQe1/L7tYuoxMRzFYDMM0pcwxQ/
+         rKWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729764761; x=1730369561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNrlohlRDru7xpuT59x3QjydCvV40I8c/+c4YvwuOb0=;
-        b=q2BWr7sEYwEnrU4U8SR2Cg7t6DI6K1lIdi6pqHayWHX8Lv5wuXDIbgOXaIJPXXYe/b
-         BnEmQlyCE1jS937b0R5QWxm/WpTcyxRN26WrWScSe0EpRk2ilS1NYm1bfnucZX6XEBdQ
-         yAtdAgd3485h2I96HIY0FQpJ7Ji2SdlRqVvle5tTEgxUml3bYNKZ5Qwq7phtmHTNPsim
-         BrJHLXIuJSdF6tpcrMqPJlRJ7RnJ6ds1Gt6/0WQaJhE1ceApqAZRB7/DcGqvOkCXdB80
-         RThp18wexnMNirQGMQIglTapA3lFYlS4ajkXs/Cl+awuK5gBjPqVI4DZsEdcZ5VQr0NT
-         V27Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXIpAbYJ89KCG4/yS1teqrYoEjOfBDYmW09cfbw5UWyYQBJmJ8Dp+WG+uMFR4IoJX1SZLALeMF74jXwQY1/E8S2Jpk=@vger.kernel.org, AJvYcCXP6fHOof6dtaSgs7jqsC7pVChy6TXmx1FWl0cf9i5ty1PhQByE/9k/ZVLXyI3ytlR2HHwRZ69tSpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX1t1lvCKM2pGR3NjsPBy+ilQyZf4Apy38y4ZQcU8Ikdnrdbx9
-	hQYqNQCq+an+sjll5Ecg/zMk9R6nM83fnUO+QjycQo2+7Pq3y1XEUXpu0irz
-X-Google-Smtp-Source: AGHT+IEEQRkA08o4IQAySlmaX1A2lXWd2j1v9lAyUvvLh8Pqkntbve61SKt7GwyWFXBo84Nldcd1Hw==
-X-Received: by 2002:a05:690c:74c5:b0:6e2:1eaa:1c90 with SMTP id 00721157ae682-6e857fe6e2cmr10052157b3.18.1729764760660;
-        Thu, 24 Oct 2024 03:12:40 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f59f592asm19343467b3.9.2024.10.24.03.12.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 03:12:39 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e314136467so7154087b3.0;
-        Thu, 24 Oct 2024 03:12:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUI8Dat6nrAV5qv+icLwUfswfAN/LSdOTvZg0A5dnV6lQQXlLbMPd2cy0n+kTWsb0q01WmyFtX8B9o=@vger.kernel.org, AJvYcCVU2z5qfBnJguMxXl28PJdwwOF/EkqlNPcGeCXSW8iIDvIahwgq9oNXTmZ4JXRLu1SHHGDEqFYCwnAEgT9lklqv2wc=@vger.kernel.org
-X-Received: by 2002:a05:690c:6e05:b0:64b:1eb2:3dd4 with SMTP id
- 00721157ae682-6e84dec1a66mr10607027b3.8.1729764759423; Thu, 24 Oct 2024
- 03:12:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729764802; x=1730369602;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sgKXmP4VMT0PuxK/GViUnVa7464Cl8DA0lQZldxMB2E=;
+        b=v9apHx1SfaVts4oK4C2zIIb9QKr6La6DEH6m7mJWtHJeW/TaaFZx3aLDqp/B/E6Cfr
+         zsQMwuaqGj81PDisEu3eMEboPAnxV+ywhYD1YeNldq8qGsrIVgZwF7vgLBL8hMGlUksS
+         yxaYT1w0Ea5L4Vce9qLwoGURr0C5ERxP7Y7gz7hLdahEIzbj3FQ1VZK6DcD4kr02FS8d
+         dAYeUWAQEKUmzXgP1+FGcd2YNrSeTg2iGIGa4OKNd429U8tDX3Tg2+okzkIDsR6tdFp6
+         8bXEuHWKl6/RFI4wpWi1oKxqFQaH9IEV6UFMlflRH0g8CJCEy3kKe2d+ckEG9Ids/IRi
+         xUnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgV5uI50gd03K4dyLSVJxtLYzVXhcQnXKURRPpIHeoNY/Q0LMrfi2Eh9ns+lH/bi8gnIr7YgNopftkdm59@vger.kernel.org, AJvYcCX2BbbEpmzUcUo0xHi57JztArQCSR3Qn4rkCHHGDaLBM7UzbeciD+nH13w4i1fbewJBf9Ai6yGYZ6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE9MJunI+QgZ4vBqAPnSi8d5H9kVjImBvuzMuUf73UWSpNdl+e
+	1+eLGTEj/dRz44pYtDG80UaKzdibg92s1mU2I1rCSoI04GWeN9ox62Hvxg==
+X-Google-Smtp-Source: AGHT+IFBnPSBl+y4pDQ2dcHlvHJ9r3XPQEKWtuWRcmBM4xdsMaKkDCHyo9MYY9RgzF3xLb+mienbsQ==
+X-Received: by 2002:a05:6402:3483:b0:5c9:5c40:6d9a with SMTP id 4fb4d7f45d1cf-5cb8b193477mr4129938a12.34.1729764802210;
+        Thu, 24 Oct 2024 03:13:22 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.244.166])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6a6efsm5519757a12.53.2024.10.24.03.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 03:13:21 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v7 0/3] Add divisor computation feature for sdm845 gp
+ clocks
+Date: Thu, 24 Oct 2024 13:13:08 +0300
+Message-Id: <20241024-starqltechn_integration_upstream-v7-0-78eaf21ecee9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016101513.39984-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20241016101513.39984-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 12:12:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXwxWAm=XiGFw_j+L8ebmAvJx7r8oQ_Bhon6tsWX47yXA@mail.gmail.com>
-Message-ID: <CAMuHMdXwxWAm=XiGFw_j+L8ebmAvJx7r8oQ_Bhon6tsWX47yXA@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
-	Hien Huynh <hien.huynh.px@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALQdGmcC/43QTW7DIBAF4KtErEuFwfykq96jiiIMYxvJxikQl
+ Cry3TuJ1DbKpl6+EXxvNFeSIQXI5G13JQlqyGGJGPTLjrjRxgFo8JgJZ7xlqtE0F5s+pwJujMc
+ QCwzJFvxzPJ9ySWBn2jmjjGQd70EQZDqbgXbJRjciFM/ThMNTgj5c7r0fB8xjyGVJX/c1qrhNf
+ xrN/41VUEZB9Eopzhpt3fsw2zC9umUmN7y2f+C+ERvAFkHuOfReOmm0fgbl44YbblIlghqf7iV
+ YyUz7DKpfsGFsC6gQ9F5Lx5TTzPhHcF3Xb2JfzcXYAQAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729764800; l=2701;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=CGrZ/mOqfUvaaEXclhzc78HhW8pylQ1jTyrtnVRCGSQ=;
+ b=BbbibVAaHFop+D7PoxA5FE6WoD7/S5yY6PXwbnvmHsINmQD1TOvuflUdCg3DO9X3Zc0HJ+Pg/
+ H5QeZTpWumWDbDk4CPdY2oUrRLReT198D971P3tppj36LwgwTYBhGWr
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi Biju,
+SDM845 has "General Purpose" clocks that can be muxed to
+SoC pins to clock various external devices.
+Those clocks may be used as e.g. PWM sources for external peripherals.
+    
+GPCLK can in theory have arbitrary value depending on the use case, so
+the concept of frequency tables, used in rcg2 clock driver, is not
+efficient, because it allows only defined frequencies.
+    
+Introduce clk_rcg2_gp_ops, which automatically calculate clock
+mnd values for arbitrary clock rate. The calculation done as follows:
+- upon determine rate request, we calculate m/n/pre_div as follows:
+  - find parent(from our client's assigned-clock-parent) rate
+  - find scaled rates by dividing rates on its greatest common divisor
+  - assign requested scaled rate to m
+  - factorize scaled parent rate, put multipliers to n till max value
+    (determined by mnd_width)
+- validate calculated values with *_width:
+  - if doesn't fit, delete divisor and multiplier by 2 until fit
+- return determined rate
+    
+Limitations:
+- The driver doesn't select a parent clock (it may be selected by client
+  in device tree with assigned-clocks, assigned-clock-parents properties)
 
-On Wed, Oct 16, 2024 at 12:15=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> While computing foutpostdiv_rate, the value of params->pl5_fracin
-> is discarded, which results in the wrong refresh rate. Fix the formula
-> for computing foutpostdiv_rate.
->
-> Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-> Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v2->v3:
->  * Used mul_u32_u32() for 32-bit multiplication.
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v7:
+- split gp and non gp changes
+- Link to v6: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com
 
-Thanks for the update!
+Changes in v6:
+- fix kernel robot issues
+- run sparse and smatch
+- Link to v5: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-761795ea5084@gmail.com
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -557,10 +557,10 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_pa=
-ram *params,
->         params->pl5_postdiv2 =3D 1;
->         params->pl5_spread =3D 0x16;
->
-> -       foutpostdiv_rate =3D
-> -               EXTAL_FREQ_IN_MEGA_HZ * MEGA / params->pl5_refdiv *
-> -               ((((params->pl5_intin << 24) + params->pl5_fracin)) >> 24=
-) /
-> -               (params->pl5_postdiv1 * params->pl5_postdiv2);
-> +       foutvco_rate =3D mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA, (param=
-s->pl5_intin << 24) +
-> +                                  params->pl5_fracin) / params->pl5_refd=
-iv >> 24;
+Changes in v5:
+- Split patchset per subsystem
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
 
-The division is a 64-by-32 division, so it should use the div_u64() helper.
+Changes in v4:
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-> +       foutpostdiv_rate =3D DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-> +                                                params->pl5_postdiv1 * p=
-arams->pl5_postdiv2);
->
->         return foutpostdiv_rate;
->  }
+---
+Dzmitry Sankouski (3):
+      clk: qcom: clk-rcg2: document calc_rate function
+      clk: qcom: clk-rcg2: split __clk_rcg2_configure function
+      gcc-sdm845: Add general purpose clock ops
 
-Gr{oetje,eeting}s,
+ drivers/clk/qcom/clk-rcg.h    |   1 +
+ drivers/clk/qcom/clk-rcg2.c   | 192 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ drivers/clk/qcom/gcc-sdm845.c |  11 +++------
+ 3 files changed, 189 insertions(+), 15 deletions(-)
+---
+base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
 
-                        Geert
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
