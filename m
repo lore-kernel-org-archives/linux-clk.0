@@ -1,119 +1,143 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096AE1D049D;
-	Thu, 24 Oct 2024 12:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561331B6CEE;
+	Thu, 24 Oct 2024 12:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729773343; cv=none; b=BQPCm78NLgaXk1aUVD2s66zOtT2eGcZj2oY3679F6/Y8HQkdaYveuJgbyVtcE6YeOcCYJjlSPLO4cDhiDJsorOWEziPs/jQA2LGD85wghySA3PHtnEwT73BUaUp0HZZMrvtCQ1suwEfXYlO8zj4lXXJzbnZD9ZkP3zWnHZpkb5s=
+	t=1729774222; cv=none; b=Y62pCEVFP9O+Ohrwc7C+6RMICClcE6sN6+DXJjTXxX2Crfnpg/+ZAXz7K5Hpq5BFFaNLPqTe+cEh8hXUiT08aZ1p77lH6ALj5ApkM74FuOVg23r/t8tExVpeMnAo7ajapnfCcYHm9CTeuE0As0mPH/uYTEdg3MLpwxBbQ9sKW4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729773343; c=relaxed/simple;
-	bh=E3E92tat9CbOX0TNJBER6hBNO6vwI1J+Y8AONn6yclE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WwfVPbQ/G4yn4IWRvsoDGGwfRazjKA44GBmfZIxxlmP4iYRWQEq7XdcViJTyJ315UqHR8a7ERq6y/whyIoX5Onu9EBLTqHsWBWsqwOWc9EmfDxLs4YmjiUByB5NoudQrcmWOgMiUBnoJ4G5hvWNaCoIAiPuUrIjIBdVt9pT0U0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecOVga9l; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729774222; c=relaxed/simple;
+	bh=avnNeoeIT8JpECkgYOeBGQu4w8Q/PrPpQiEZobjRdnI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=FylnHlisGEog6F50/rEarAryvH9hdG8fC7PixZmKRpazpHOMFkaL8RY4htx7w3nBBCJ1fMpmpE1wTj2FoC2Ljn0NZJab589pX0UQLGS4wmPZig6hLG5Z4zSsm2BHyUbwwyyJvQerFeF9G29PpwyhLx86ZTwppA6Ayb7tPaMVi5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LqIszyJS; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecOVga9l"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a5f555cfbso52796366b.1;
-        Thu, 24 Oct 2024 05:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729773339; x=1730378139; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=E3E92tat9CbOX0TNJBER6hBNO6vwI1J+Y8AONn6yclE=;
-        b=ecOVga9l+yahZun+3uEJSQlcfOcTIdkcL9x+jiCDJ44cgG6HSUGa69+F/hdMKxUiv6
-         dtRPM82t72K+b5kBpO0ALDhBFy37tv5Nz0zKrrvoC80uzAg+Gvocents11IARK70dKkt
-         VHG85Nih4rT5eE8lmwsl6OHisor6FiELwoGo8N/zquhduAjcC5ldVfFtO7VguJvE6RfM
-         HfHAY+BiSgnXN3Nkz337Al2iXueQTBaebcX0ZiQmO+v/TgWs/eYAfyjVAOkUw1uDar6q
-         eP9772OgczmqZaMxHK7MEewVWpmLJLG/OAf4WbO23EuGxrqvbJX20xlJK/Teq7f98r4K
-         7CGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729773339; x=1730378139;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E3E92tat9CbOX0TNJBER6hBNO6vwI1J+Y8AONn6yclE=;
-        b=p13dW+xH8MWHjdxoJq+JDxute0azdWPhrsgm6KIjyXFIldkYK2dVLPcnNWcmVPypR4
-         p8HxJ1AErWkR6oU/Y82djqjycSU5L0cyvt8q7lykmR62n6tgqsBZlAXfAhLJKrxUMdoD
-         2yvbgSQtIg+Y+VHuU7EcV+4h3o1CKneLzej1T+ss7jt0C+VP+Q/mU6/GMOKhnBZ/NfnH
-         oy0whAuswMycU/cgb0RCXPZwjmce7D23tzmlq6EdbGdoFMc+GY+i8yi3P93fcZIfOXhw
-         dM7GT56fxLv4sKZ38OHvMx+BQK/ZJUmK2U0xLM+RhSdjSpFC0P+KusyeP5HHng53afMY
-         jE4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpJE3qGeV5uUjks7yLFGYgbwnZfRKtkI77I28aBlcQHtN43Zpdq4Tnl0Rjxu6K7lTIdSHmJd38BIZN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybefz6lz3/q6lu0iWnXu4fLZvgeVFGLdgCR5/TfgkqVTJLCzUk
-	gYvX5XkAdpohiQZ4sGZJS0zi9vRXRWZTN1A/u2Suu8pTOys6DEux
-X-Google-Smtp-Source: AGHT+IHGLARm2ozMgjg9BY+ey1UHdsbN/1bmDmuDiducGLzYACM8tFv5Mr6VRCk4hXqTOA7PA2BCxg==
-X-Received: by 2002:a05:6402:2685:b0:5cb:6841:ede5 with SMTP id 4fb4d7f45d1cf-5cb8b267f63mr7481636a12.28.1729773338716;
-        Thu, 24 Oct 2024 05:35:38 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6d0besm5680417a12.57.2024.10.24.05.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 05:35:38 -0700 (PDT)
-Message-ID: <1e0097f6a15f47c173cb207e369909c1cb5943f9.camel@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: axi-clkgen: include AXI clk
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Nuno Sa <nuno.sa@analog.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Date: Thu, 24 Oct 2024 14:35:37 +0200
-In-Reply-To: <20241023-tucking-pacific-7360480bcb61@spud>
-References: <20241023-axi-clkgen-fix-axiclk-v1-0-980a42ba51c3@analog.com>
-	 <20241023-axi-clkgen-fix-axiclk-v1-1-980a42ba51c3@analog.com>
-	 <20241023-tucking-pacific-7360480bcb61@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LqIszyJS"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D67A7C0004;
+	Thu, 24 Oct 2024 12:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729774217;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FGC5TIDFWHTEOzBsSk81jwrMpqimrnfQMOZKCKiznX0=;
+	b=LqIszyJSBO0jIhBCI8z1vLKfO+/lMMshwNPPNXhRONN45/G5H9xvtR/B8g8RFBQ01zLu/j
+	XyqkSlioPkpu0jqMvw2vncogxZuvL3tgN9W8oL1hCak3H7sSjfWm7tWZfU+vuUS8wVIYRL
+	ZrzkDyJmpqDWRP7CaGHBPmeNolcFgWTm4GrnEmlnk+hp4blXYsIKI34SANbb5gcoP+zrD9
+	7cwZfg5cPsGCgv9jA1dSEvBXZ66jqAYrv1otALE/hK813AWOgqtCpLYTl4bYqcHONfF2mu
+	NQgTP124boEQO+9N6iN3dUjtOhmWnhXvT7Jzsz2k/UpynNxrPIsGzzeXIkNUww==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Oct 2024 14:50:16 +0200
+Message-Id: <D541S8TMBS94.3AKP8ET4TID6Y@bootlin.com>
+To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
+Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
+ <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com>
+ <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org>
+ <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
+ <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
+In-Reply-To: <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Wed, 2024-10-23 at 17:30 +0100, Conor Dooley wrote:
-> On Wed, Oct 23, 2024 at 04:56:54PM +0200, Nuno Sa wrote:
-> > In order to access the registers of the HW, we need to make sure that
-> > the AXI bus clock is enabled. Hence let's increase the number of clocks
-> > by one.
+Hello Stephen, Conor, Krzysztof, Michael, Rob,
+
+On Thu Oct 24, 2024 at 12:12 AM CEST, Stephen Boyd wrote:
+> Quoting Th=C3=A9o Lebrun (2024-10-23 04:08:31)
+> > On Thu Oct 17, 2024 at 8:48 PM CEST, Stephen Boyd wrote:
+> > > Quoting Th=C3=A9o Lebrun (2024-10-07 06:49:19)
+> > > > +/* Required early for UART. */
+> > >
+> > > I still don't get this. UART isn't an early device. It's only the
+> > > interrupt controller and the timer that matter. Does MIPS do somethin=
+g
+> > > special for UARTs?
 > >=20
-> > In order to keep backward compatibility, the new axi clock must be the
-> > last phandle in the array. To make the intent clear, a non mandatory
-> > clock-names property is also being added.
->=20
-> Hmm, I'm not sure. I think clock-names actually may need to be mandatory
-> here, as otherwise you'll not what the second clock is. The driver would
-> have to interpret no clock-names meaning clock 2 was clkin2.
->=20
->=20
+> > Our hardware has a PL011. That is AMBA stuff; they get probed before
+> > platform devices by of_platform_bus_create(). "pll-per" on EyeQ5 must
+> > be available at that time.
+> >=20
+> > In concrete terms, if we don't register pll-per on EyeQ5 at
+> > of_clk_init(), we stare at void because the serial fails probing.
+> > I haven't digged into why EPROBE_DEFER doesn't do its job. Anyway we
+> > don't want our serial to stall for some time during our boot process.
+> >=20
+>
+> Ok thanks for the details. It sounds like there's a bug in there
+> somewhere. Eventually this should be removed.
+>
+> Can you dump_stack() in clk_get() when the "pll-per" clk is claimed?
+>
+> I suspect of_clk_get_hw_from_clkspec() is seeing NULL if
+> of_clk_hw_onecell_get() is being used and the clk_hw pointer isn't set
+> yet. NULL is a valid clk and it will be returned to the consumer. You'll
+> want to write a custom 'get' function for of_clk_add_hw_provider() that
+> returns -EPROBE_DEFER for any clk that isn't registered early. Then the
+> AMBA stuff should defer probe until the "full" clk provider is
+> registered.
 
-So the way things are now is that we just get the parents count with
-of_clk_get_parent_count() and then get the names with of_clk_get_parent_nam=
-e() and
-this is given into 'struct clk_init_data'. So they are effectively clk_pare=
-nts of the
-clock we're registering and as you can see clock-names does not really matt=
-er. What
-I'm trying to do is to keep this and still allow to get the AXI bus clock w=
-hich is
-something we should get and enable and not rely on others to do it. The ide=
-a is then
-to add the axi bus clock as the last one in the clocks property and I will =
-get it by
-index with of_clk_get(). The rest pretty much remains the same and we just =
-need to
-decrement by one the number of parent clocks as the axi clock is not really=
- a parent
-of our output clock.
+You encouraged me to keep digging.
 
-All that said, and FWIW, clock-names are not even being used in the driver.=
- I just
-added it to the bindings to make the intent clear. I could have it in the d=
-river but
-I'm not sure the extra complexity would be worth it...
+The bug is elsewhere: we do get valid clocks from PL011. Both clk_get()
+calls give proper pointers.
 
-- Nuno S=C3=A1
+The issue is that we are using `compatible =3D "fixed-factor-clock"`
+clocks in the middle, and those don't wait for their parents to be
+active.
+
+Simplified clock graph is: pll-per -> occ-periph.
+pll-per is register by our driver. occ-periph looks like:
+
+	occ_periph: occ-periph {
+		compatible =3D "fixed-factor-clock";
+		clocks =3D <&olb EQ5C_PLL_PER>;
+		#clock-cells =3D <0>;
+		clock-div =3D <16>;
+		clock-mult =3D <1>;
+	};
+
+Sequence is:
+ - eqc_early_init(): it registers a clock provider that will return
+   EPROBE_DEFER for our pll-per.
+ - _of_fixed_factor_clk_setup(): it registers occ-periph, even though
+   its parent is EPROBE_DEFER. clk_core_populate_parent_map() runs all
+   fine without complaining; logical as it doesn't query the clk_hw for
+   its parent, it only stores indexes.
+ - amba_get_enable_pclk(): it does a clk_get() which works because
+   occ-periph exists.
+
+Maybe __clk_register() should check the clk_hw for each parent: if any
+is an EPROBE_DEFER then it should EPROBE_DEFER itself? That looks like
+a rather big behavioral change.
+
+The other solution is to keep as-is: provide all clocks consumed by
+fixed-factor-clocks at of_clk_init() stage.
+
+Hoping I provided enough info,
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
