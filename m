@@ -1,128 +1,111 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581641E282B;
-	Thu, 24 Oct 2024 14:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF0C1E5735;
+	Thu, 24 Oct 2024 14:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779796; cv=none; b=ELy5X01i43kwqT48J4prE9rgZNGgG60zWd4GcxrCGaQLRZaWfC58IGhwtJVi22uqpmtf0Y43QIE0WUPK/MoScHovRDTEebmDCwmGc1quxXEW9NEnJaw2nt8pP5S0cEWUjMmsW+bEl78YJQk4c53wxN5ddSCu5X2xfQaxtsYXVPM=
+	t=1729780831; cv=none; b=rOBoJBnudzbYPNhHQJGh3cgiTfiOrHkIa+Cmr23p5BfLFO3C10eGpv8pYvnMCFTSTEKImBXVVzw2nMbVn1Q5Z1nwetBi+8/aP1Bh5/E3Lb4Yb/JGlZROofdb4kzKECBi+xKo0oS+pT+YI1n9e3pSHdB4DK/G73NWU1XZksfP64w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779796; c=relaxed/simple;
-	bh=qYiNGztgFFsssAwXYWSYhYJgVgBfIlkOx04KiaexJrA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FS7ilSTk/FKeVkl5fqXIJYK0vMX+xKIu8iMZQ9f8AgwX6xcEHBMlVzFVXOuHmwywGgRvoQLqe+jkAFaCzCJFvwUKjmD0Pt02zjK0T0XM3DbIex7bKAnUV9KpSY7laS4ZGnImcugx6oxfCCOQ3PaYOGTaz49hKNOykFxnGAM+QSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e2e32bc454fso1074273276.2;
-        Thu, 24 Oct 2024 07:23:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729779793; x=1730384593;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S+Mz6xZlUTUGeIwHcP14gw58OClKa4+sO2EvtfsAcwI=;
-        b=i0b8Nv2JlMgbmfmY4M2vKcfqgfeq2xT9E7oyvp+biln9gaioAGjfRskJZzgn7H5GDP
-         lzkqdkEKpN0W9x9YaMF/NFyASAvNzgP+TG50p7DvogPRKrP6jqjAjhuHhLE6wTpRALQA
-         1260fQmTyKWC9gs3BihnlkqR9Qrc169yyvQperhariDGQzOb0/X9W/gKbCcsdy+z+1+w
-         YGBhZAIGd+zxkq3+QZmo9lKpH12U3tAC/G9gRc77fRVC/wvGoyQNdt4GQ910U5cROeLw
-         cKo2hj+fPTr/7NHzD4AEtI9a6uWnGn+PYC9rTUAt3eR7dGbGGsUBrdNWnaBP4UuF943V
-         aCHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG8+IYeu+BJPs8huodvmJ+2GbU55exncmudIp8aiLbE2Dicwjg+i0sXExeEtkPcsECX5OeIcQEjucF@vger.kernel.org, AJvYcCUJ1Zv9QGKoD3dg0eudOq3QLi4lvGULNFV/R+CielT8rmJgGi8TlF4i2ifVOvJ9QINAcibV9ZcvxHkT@vger.kernel.org, AJvYcCWB3448swfVc3lipDifsgeG5trr+s/KZpD2o4NR3euPDE5vOMyL0KwKL9dbPFjFUxaONEDKstcDNf8I@vger.kernel.org, AJvYcCWdkqoei8gUkqdrMpqzljGztbUDqHarTjZrr4e+TCZ/I7mTAfmUCuSkinfswE6+TB7IkAmNa1PtdldwUvqHlULE1CI=@vger.kernel.org, AJvYcCWkO+pJKvvaHdaZwY/NPnvsexKl/VyK3rOH4CY+hzNKXrpXhBnQV7qggid4IP4e6CviYvuJJnbfjlwfoBAv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+N2CNKqRJxfq3s3/XxzIOYM2eAk3O+AnZaRrlQXslZ3ofh3Wt
-	z5a0YxCHBiQ181ZMvgKGRs+sAGSVjRnyHH2+yQAiLNW/ZXni9Naw8CjgpUXY
-X-Google-Smtp-Source: AGHT+IG6ev6ibywOB2+BJqiyCZ4h3+Xz3GX1m2cvW3lHNbumgijqObTiVNJaknmHPSXwoJJNrd0phA==
-X-Received: by 2002:a05:6902:2688:b0:e2e:3701:7824 with SMTP id 3f1490d57ef6-e2f22f1c60bmr2293830276.2.1729779792840;
-        Thu, 24 Oct 2024 07:23:12 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2bdcaec280sm1982197276.43.2024.10.24.07.23.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:23:12 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e38fa1f82fso9247537b3.1;
-        Thu, 24 Oct 2024 07:23:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfTp1qUUkdQDHWm0SOSsOuWXceEvqsYWjpKc04hDh8l1lLNmGjqzzXljPf4FcUQ+qhDykoCXspkPFceiejBnewgjc=@vger.kernel.org, AJvYcCX8QlKrtSbADPMquyLAIseaLKG/9v59Tdclg7tPc7PknqliT/bwHeFJka6cAeAkN51CCBGVNa9Awh2d@vger.kernel.org, AJvYcCXNn5dB4+Nk4uJtuNIfYBE9XF0kEUYFeyJILGHT1kTL38hnVqYVnx8DNajlZ4M18iDz/+Y8vxmeSkTcpIx3@vger.kernel.org, AJvYcCXR8c/+fxLEcEvL2AME7d7Kpe1zExD60z2fmp1sGedeutC8doSoYrFAXrTNx5SW0Pjm2XWuXPwo8Q6J@vger.kernel.org, AJvYcCXidy05ku5+4j9M9Tl0L8RwweR0X0ozlHTVh9O0yeA18gkSNNhSJYW/tqKdA27SK3JHKDCheoHuM7RW@vger.kernel.org
-X-Received: by 2002:a05:690c:6f8c:b0:672:e1f2:feef with SMTP id
- 00721157ae682-6e866332642mr27085757b3.43.1729779791878; Thu, 24 Oct 2024
- 07:23:11 -0700 (PDT)
+	s=arc-20240116; t=1729780831; c=relaxed/simple;
+	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPVLeUHFPykKVtn2+AYQNkJXe8RnUS18vc/hEuMluTy8KOF40UIFmzigHK5MGTLS/EqHefRrQLdqsWzjYgeQ/z1XHPQgxQTAbo0R5llWnV7zKLhFy5QB2ms1o70Pm7z9J+8C5n5iy2HPjjqVc11dr4P+4R52uQOn/4d4edEXOkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTa5I9R+; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTa5I9R+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80094C4CEC7;
+	Thu, 24 Oct 2024 14:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729780831;
+	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oTa5I9R+zDvC61UZ/jQMxvUG/O2HJqLMjvYPNxvWoWZRvvUWKA+82QBebsQE4uVWI
+	 cPQIsEMF2VEIUjP6vYa6m8QRoSxuqSBBv2zbcYgnKtouSQoHvYzTpJ05nF1lUt/Rr4
+	 3oucgT721Ii9Q7Q/C2N7aUFOC7OsXN0MT9uGr9r2HzSYq62Y6ZTdoKQ4BznXZzJzQL
+	 4/OgXqYKXftwcyU3F68cLHDuUmaCJgulC0slRXttv88DVD35DHA1rjQTUupm/zeZPW
+	 rxVjJJ3R+Rh1IZtk08zn6WYA/gzf4cOfeivuNFzTPr06y9nd1a3LUNt+GO5XRMzZpl
+	 kMy+7rETutDsw==
+Date: Thu, 24 Oct 2024 16:40:28 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
+Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
+ gpu clocks
+Message-ID: <20241024-intelligent-proficient-python-720a0c@houat>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+ <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com> <20241019084738.3370489-11-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241019084738.3370489-11-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 16:22:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXWuwNx9u_VSQ3R2TbkrX=c_QLdQrk+=Ve81PFAsF9b9A@mail.gmail.com>
-Message-ID: <CAMuHMdXWuwNx9u_VSQ3R2TbkrX=c_QLdQrk+=Ve81PFAsF9b9A@mail.gmail.com>
-Subject: Re: [PATCH v4 10/12] arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
-	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="osg67ubcsv3cmq32"
+Content-Disposition: inline
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
+
+
+--osg67ubcsv3cmq32
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
+ gpu clocks
+MIME-Version: 1.0
 
-Hi Claudiu,
-
-On Sat, Oct 19, 2024 at 10:48=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable the VBATTB controller. It provides the clock for RTC.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Oct 23, 2024 at 05:50:28PM +0100, Dave Stevenson wrote:
+> From: Dom Cobley <popcornmix@gmail.com>
+>=20
+> For performance/power it is beneficial to adjust gpu clocks with arm cloc=
+k.
+> This is how the downstream cpufreq driver works
+>=20
+> Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 > ---
->
-> Changes in v4:
-> - added assigned-clocks, assigned-clock-parents properties
-> - set vbattb_xtal status =3D "okay"
-> - collected tags
+>  drivers/clk/bcm/clk-raspberrypi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
+berrypi.c
+> index 6d5ee1cddded..274176a938c6 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -156,7 +156,7 @@ static int raspberrypi_clock_property(struct rpi_firm=
+ware *firmware,
+>  	struct raspberrypi_firmware_prop msg =3D {
+>  		.id =3D cpu_to_le32(data->id),
+>  		.val =3D cpu_to_le32(*val),
+> -		.disable_turbo =3D cpu_to_le32(1),
+> +		.disable_turbo =3D cpu_to_le32(0),
 
-Thanks for the update!
+I guess we can simply remove that line?
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> @@ -346,6 +347,18 @@ mux {
->         };
->  };
->
-> +&vbattb {
-> +       assigned-clocks =3D <&vbattb VBATTB_MUX>;
-> +       assigned-clock-parents =3D <&vbattb VBATTB_XC>;
-> +       quartz-load-femtofarads =3D <12500>;
-> +       status =3D "okay";
-> +};
-> +
-> +&vbattb_xtal {
-> +       clock-frequency =3D <32768>;
-> +       status =3D "okay";
+Maxime
 
-With status not disabled in r9a08g045.dtsi, this line should not be needed.
+--osg67ubcsv3cmq32
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +};
-> +
->  &wdt0 {
->         timeout-sec =3D <60>;
->         status =3D "okay";
+-----BEGIN PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxpcVwAKCRAnX84Zoj2+
+dhWuAYD5PMJD9prMYHyBdObDqF92o81SwNrQ04NtnD5jG5jYeEpmA3MzmyqCAh/o
+7YBXa68BgIzZ4yp54frmW6KMod1/8J/vZSTgQD/IZkrDqafE7+wZ06WmivkbUo6B
+zfJw7nahEg==
+=mmzK
+-----END PGP SIGNATURE-----
 
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--osg67ubcsv3cmq32--
