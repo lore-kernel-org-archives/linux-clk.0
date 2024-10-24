@@ -1,111 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF0C1E5735;
-	Thu, 24 Oct 2024 14:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB54D1EF0A3;
+	Thu, 24 Oct 2024 14:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780831; cv=none; b=rOBoJBnudzbYPNhHQJGh3cgiTfiOrHkIa+Cmr23p5BfLFO3C10eGpv8pYvnMCFTSTEKImBXVVzw2nMbVn1Q5Z1nwetBi+8/aP1Bh5/E3Lb4Yb/JGlZROofdb4kzKECBi+xKo0oS+pT+YI1n9e3pSHdB4DK/G73NWU1XZksfP64w=
+	t=1729781983; cv=none; b=YW7nZUUOdHK8uajE0cigMWRWLhhm8s+cqHSxM9o8YxR2FRudOM/8pY0AwwEj/Nku1btI9HSw49PYtqM0e1poDvjYnBvd3l/ZnSoL/I5/fxv46LnscwxROlb3a9XTXfyAo1kjCxGZfiI2IBL4TfQpGIrYWwjtzo2xFwyFE4QVoVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780831; c=relaxed/simple;
-	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPVLeUHFPykKVtn2+AYQNkJXe8RnUS18vc/hEuMluTy8KOF40UIFmzigHK5MGTLS/EqHefRrQLdqsWzjYgeQ/z1XHPQgxQTAbo0R5llWnV7zKLhFy5QB2ms1o70Pm7z9J+8C5n5iy2HPjjqVc11dr4P+4R52uQOn/4d4edEXOkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTa5I9R+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729781983; c=relaxed/simple;
+	bh=0Hv/7Co6R2EZ8AvfgB6ZSzRb5pHaAEBRjh3gNKx0QuI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QKnPkfjao+TVmTFV5aereMPA2y5Je0awFIz+jckQtxrJwcdCRqneHGmQUa2CVwoTQrJMJyANipVTFOet+hNU7ovZCGBXb71V5uCS2VhuSwzQkTSr/S443NukqVkNRdCtHUB7zaatYAfnI8QwHiygO8D7zwbhZh49PL4tzE7voOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CK3VlL7m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTa5I9R+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80094C4CEC7;
-	Thu, 24 Oct 2024 14:40:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CK3VlL7m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEACC4CEC7;
+	Thu, 24 Oct 2024 14:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729780831;
-	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oTa5I9R+zDvC61UZ/jQMxvUG/O2HJqLMjvYPNxvWoWZRvvUWKA+82QBebsQE4uVWI
-	 cPQIsEMF2VEIUjP6vYa6m8QRoSxuqSBBv2zbcYgnKtouSQoHvYzTpJ05nF1lUt/Rr4
-	 3oucgT721Ii9Q7Q/C2N7aUFOC7OsXN0MT9uGr9r2HzSYq62Y6ZTdoKQ4BznXZzJzQL
-	 4/OgXqYKXftwcyU3F68cLHDuUmaCJgulC0slRXttv88DVD35DHA1rjQTUupm/zeZPW
-	 rxVjJJ3R+Rh1IZtk08zn6WYA/gzf4cOfeivuNFzTPr06y9nd1a3LUNt+GO5XRMzZpl
-	 kMy+7rETutDsw==
-Date: Thu, 24 Oct 2024 16:40:28 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
-Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
- gpu clocks
-Message-ID: <20241024-intelligent-proficient-python-720a0c@houat>
-References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
- <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
+	s=k20201202; t=1729781983;
+	bh=0Hv/7Co6R2EZ8AvfgB6ZSzRb5pHaAEBRjh3gNKx0QuI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CK3VlL7mM/Al2glV243oNxz00GSGYOSjyNcHWVdsrLM5gE7mGRjlfNjeKsaX2D/Bj
+	 WIGhvzrPQHnHhEV3nU5N7I0+xzpiJ9revWz5FLYsrn2PZQT1UlhxIZNwUr7l7XOYNK
+	 iJY0Oyb5hppMOeIV5t909Wt0+VRfVmm/aLS8pUl06iybO0f8LbfszBRcCXptfYASTo
+	 +S7y0HgTIPI/yWnaM/tgGeUNp3dFe9eYHm0Jvvc00LVi1WRvJbq9rjpvA9aa3VCexL
+	 pa1Z0oMYCg/zm+ZflpHn9pQ2pjSsjS3OF9TS7EhcraLlswTyhlIdcp5byZJhrD5CqX
+	 x0gYeEsuePfqA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: sboyd@kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: quic_varada@quicinc.com,
+	quic_srichara@quicinc.com
+Subject: Re: (subset) [PATCH V7 0/5] remove unnecessary q6 clocks
+Date: Thu, 24 Oct 2024 09:59:31 -0500
+Message-ID: <172978197052.296432.13730841752162916405.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
+References: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="osg67ubcsv3cmq32"
-Content-Disposition: inline
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---osg67ubcsv3cmq32
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
- gpu clocks
-MIME-Version: 1.0
+On Tue, 20 Aug 2024 11:26:13 +0530, Gokul Sriram Palanisamy wrote:
+> This series is a revision from V6 of MultiPD series [1] minus the
+> multiPD driver related patches. REnamed this series to keep the title
+> relevant. Will post a new series for remoteproc secure PIL driver as a
+> dependant series which will rely on these clock removal.
+> 
+> - Since the new rproc driver will use the secure APIs (scm) to bringup/down
+>   the rproc and secure OS (TZ) takecare of handling the clks, those clks
+>   needs to be removed from the kernel. since thes patches were already
+>   posted as a part of the MultiPD support [1] and some of them were
+>   reviewed. So picked up those patches and review tags as well.
+> 
+> [...]
 
-On Wed, Oct 23, 2024 at 05:50:28PM +0100, Dave Stevenson wrote:
-> From: Dom Cobley <popcornmix@gmail.com>
->=20
-> For performance/power it is beneficial to adjust gpu clocks with arm cloc=
-k.
-> This is how the downstream cpufreq driver works
->=20
-> Signed-off-by: Dom Cobley <popcornmix@gmail.com>
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  drivers/clk/bcm/clk-raspberrypi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
-berrypi.c
-> index 6d5ee1cddded..274176a938c6 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -156,7 +156,7 @@ static int raspberrypi_clock_property(struct rpi_firm=
-ware *firmware,
->  	struct raspberrypi_firmware_prop msg =3D {
->  		.id =3D cpu_to_le32(data->id),
->  		.val =3D cpu_to_le32(*val),
-> -		.disable_turbo =3D cpu_to_le32(1),
-> +		.disable_turbo =3D cpu_to_le32(0),
+Applied, thanks!
 
-I guess we can simply remove that line?
+[1/5] clk: qcom: ipq5332: remove q6 bring up clocks
+      commit: bef2902ffef85959cd3d80b62c7e5db73e2b5815
+[2/5] clk: qcom: ipq9574: remove q6 bring up clocks
+      commit: fa1d525404b6e78d97b17749af72a314060c2934
+[3/5] dt-bindings: clock: qcom: gcc-ipq5332: remove q6 bring up clock macros
+      commit: b3aba04883de872488e5dabda199427b2bfa0395
+[4/5] dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring up clock macros
+      commit: da040d56031976144740bddba942485999f6a16f
 
-Maxime
-
---osg67ubcsv3cmq32
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxpcVwAKCRAnX84Zoj2+
-dhWuAYD5PMJD9prMYHyBdObDqF92o81SwNrQ04NtnD5jG5jYeEpmA3MzmyqCAh/o
-7YBXa68BgIzZ4yp54frmW6KMod1/8J/vZSTgQD/IZkrDqafE7+wZ06WmivkbUo6B
-zfJw7nahEg==
-=mmzK
------END PGP SIGNATURE-----
-
---osg67ubcsv3cmq32--
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
