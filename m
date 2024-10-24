@@ -1,102 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2332622B650;
-	Thu, 24 Oct 2024 20:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A93147C91;
+	Thu, 24 Oct 2024 20:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729801012; cv=none; b=TPgcxwXZUmZ59jO7K9xdNDyeqVXZokxBe5o5aoQ2CsHb5Uk7djpWMV3Z8myAUYWxZnY10/wNcwCxnBpmtBd8FIfOSlB6Ex2kngXRmC5jZMEaAEJAvs5cvdPUPYcaYoTc1JT7Z1LCCnZzpgYx3IMd5zQlhnKt12lsJmsm3nGFtd0=
+	t=1729802386; cv=none; b=AkDS5XnlV9EbZ4AU7ke5YFkFJFKTcIpZsKnqiULuPpRzIU4KqnnZlZkDoozum6XvF7sRBMdZHj853p//xMUyQNNAoaqgUm57FhsnAF4QKvcQPjll9cdPWOnsCHAevOCSsp9tw8Uyi5pESV/PnD6/hbGutMcTYBJtP6Va/78OIeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729801012; c=relaxed/simple;
-	bh=M8Hou7W+/slEq6beBx1BMbstELY0N17vo5D8dtjCwaw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CYNw+Wc2UFnzVBQPBSzFSPLQd2+E/lMt7nQ3f6tThI2k0F6DyU1hECFUGeK1g0+bH4zTnKaOFVdecVQ4AQ0RRYbPiNlyQkZbLMrsXx9X30bZp2fwfiGRtlud6zEHdSqrs5y0fCh5KzrCS9NXcXN4vwsdsBAayddnUA1OGx8nlmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVlghJjt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729802386; c=relaxed/simple;
+	bh=fu1NI55gqVY8lwDobFa1EKGS2z61s5XU7//5aqHBG3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMaBWv47IT/aGBXlVCoWkr6HKGeWg3tRxwTHW4vYluYrQEPsJeF4/goaCezeHAS5jCKTmyOIeNX3bo0cBTUPZuTL1iJDjgBbfgGKpdgh0zky27Ew7+3IUe9CfMwa2pzmVLTf0PS4OA/NZTTrB41PUQJeQz03dTbt/5tHlKTIbHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xzgqw8iV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVlghJjt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010B0C4CEC7;
-	Thu, 24 Oct 2024 20:16:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xzgqw8iV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D80C4CEC7;
+	Thu, 24 Oct 2024 20:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729801011;
-	bh=M8Hou7W+/slEq6beBx1BMbstELY0N17vo5D8dtjCwaw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uVlghJjtlBAM8RBB0TFYRfF2upDQF6o0IDI3jnzZNQn3qsSu62i4WiMSA0gSD/s0l
-	 2/up8sX6KJ6JidEdblO8bvf8drryM0sB78IeFAJz+BPvwXHTGYVav67Pzh6O53PSek
-	 l/6dbyNegQAks2AHKlKqRjZuOFZ1gVawYJCHGkwtOvbRfnzVAfdCioXOZxExqIpWp3
-	 L7bTdeOYqKrSOcZvW0nEDjRrA6l55aSdbJHzP8syxRBhLHd8ArbcAwaRniUA5iNr2s
-	 pVtS5q/mruJa6l6x4Fdsl1xWn5nlmCb0Dz+IXh7JIVoy9YUwvavlL68+N96RQsW0Ou
-	 CjOayo9B8dv5g==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Chris Morgan <macroalpha82@gmail.com>, 
- Philippe Simons <simons.philippe@gmail.com>, 
- Ryan Walklin <ryan@testtoast.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-clk@vger.kernel.org
-In-Reply-To: <20241023075917.186835-1-ryan@testtoast.com>
-References: <20241023075917.186835-1-ryan@testtoast.com>
-Subject: Re: (subset) [PATCH v3 0/7] ASoC: add Allwinner H616 audio codec
- support
-Message-Id: <172980100873.554299.14641282051254983661.b4-ty@kernel.org>
-Date: Thu, 24 Oct 2024 21:16:48 +0100
+	s=k20201202; t=1729802386;
+	bh=fu1NI55gqVY8lwDobFa1EKGS2z61s5XU7//5aqHBG3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xzgqw8iVGQU0dI3OeuHLmVLmbJ/SEFjLNv6oxbdrHizj2AZDaCc3n9Vn4SxbyTUrs
+	 T/qy1UKhHCnIdwOhjTrPnsCybxcQq7KfQ3XRLHHgCqjParoNauu523K51H21HrnyfN
+	 HqJWMrzazZJfXjP4kM65OpfLBnBh9G8Do+HPWQ8qvqwsaxwqQXRjajFWwJIVj25PJf
+	 S0duQysEtoqfpsCtOVRENsl9UybhyIS7YTliJcp6o81yrtGbcmiGMQwiAyDU0VywTY
+	 QB4HlPDkRK68GrQc+X5pk5MZEzX0UTvfHpKSBfFDzZuq1+QJkGZuHBbI9ST696kQQJ
+	 YPksUDIai5H6w==
+Date: Thu, 24 Oct 2024 15:39:45 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: =?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org, Ray Jui <rjui@broadcom.com>,
+	Stephen Boyd <sboyd@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 04/37] dt-bindings: display: Add BCM2712 HDMI bindings
+Message-ID: <172980238460.1011654.10730669025533473709.robh@kernel.org>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+ <20241023-drm-vc4-2712-support-v1-4-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-4-1cc2d5594907@raspberrypi.com>
 
-On Wed, 23 Oct 2024 20:56:56 +1300, Ryan Walklin wrote:
-> V3 of this patch adding support for the Allwinner H616 (and variant)'s audio codec. Some clarification of comments, particularly regarding the clock driver changes, and a small fix for the device tree binding (apologies I forgot to re-run dt_binding_check on V2). Review comments otherwise addressed and reviews noted.
+
+On Wed, 23 Oct 2024 17:50:01 +0100, Dave Stevenson wrote:
+> From: Maxime Ripard <mripard@kernel.org>
 > 
-> Changelog v1..v2:
-> - Reordered patches to group ASoC changes
-> - Corrected PLL_AUDIO clock dividers to match values from manual and vendor SDK.
-> - Remove PLL_AUDIO_4X clock from the device tree binding (not used in the driver).
-> - Restrict TX-only DMA changes to the H616.
-> - Change the codec name to fit into the 16 char limit.
-> - Move the codec (and spdif) blocks in the H616 DTSI to restore address-order.
-> - Add board enablement (and power/GPIO changes for RG35XX to support speaker amp).
+> The BCM2712 HDMI controller uses a slightly different HDMI controller
+> than the BCM2711, and a completely different PHY.
 > 
-> [...]
+> Let's introduce a new compatible for it.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+>  Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[2/7] dt-bindings: allwinner: add H616 sun4i audio codec binding
-      commit: 542e19c20506953c03eec57b1cb65355164dfb64
-[3/7] ASoC: sun4i-codec: Add support for different DAC FIFOC addresses to quirks
-      commit: 5836a9d2ca48bb7473bb10d061c03525d8f4f163
-[4/7] ASoC: sun4i-codec: Add playback only flag to quirks
-      commit: 9fde21d6c5d1f75c2651442e5aae463545136aad
-[5/7] ASoC: sun4i-codec: support allwinner H616 codec
-      commit: 9155c321a1d0220a60878f2c99bc79b5a7e34d95
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
