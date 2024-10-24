@@ -1,47 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD4E139578;
-	Thu, 24 Oct 2024 16:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69A721364;
+	Thu, 24 Oct 2024 17:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786416; cv=none; b=YKmWCQeNaeCoDmjh15nD17tScpUhBBpWlTZwHByqtO+dbCxjZbcQ4mtSMdaVM7EXFWx5QyLatofmw0ePYlJVpBOrmlLk62piJwprmlhuHlnheRCiFXDxFyEWfJgztkmCYWXMOcflX103GB/FOSwiuQWkgxp+EPc0Ew/iuEwCQTw=
+	t=1729790155; cv=none; b=XOIiOIxozUcJ7wVbwM+45MDj/b+uyC4GzUaCXZ37F8Ai8bUBw5fkSlQiAp4LLLXLVmCdV2GltIxUf5EoXlCYsfY0NYf8PjgHlu/SclLcAbUmkM4eGSZG5+1XfBWS5TgLRkB4KmOoHm57FEkq8RQ4csnBlFCDxT2wfMkDaZNW+mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786416; c=relaxed/simple;
-	bh=A1QQF2KKSKuGF3OFLqE2euaN7kkuNR0b1HOIO/uLn0w=;
+	s=arc-20240116; t=1729790155; c=relaxed/simple;
+	bh=miuUK+C9UqcII5LUzgz3TqjO7CFqfs1uxTPfIwmAqrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzpbHOznWECrArbqqPF7Nu9M1+KaarBkRN9QsUZZvjfwgVslx7qOr29n3oDN+XTDqOTWWx/Z765yZZ4ZCWS7z3jXqiGx1lozAWzv50UeMbCXd/kAouMURqT9bMn//S6WCSaWpLm0VeQ2dIs0pDv+yUaqFXK9Urow+uLyoxCJQVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW7Xe38c; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pN25ykXzHujl/wKc4czH20gUfrerNwQEvt0k8udiEy0dt62mjkPIv0wyiuVIHIrWRStG0Fzy2IfsN/03/9KP69l3yGMrRZXjZsdRc7iLiP6qMGuHHTw/LBUoPaPW/L3W9Q/EkxqaFRzpC21ZIxhkF+suFO5atC9LRyPlXQFoWDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klI7fn4g; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW7Xe38c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DA0C4CEC7;
-	Thu, 24 Oct 2024 16:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729786416;
-	bh=A1QQF2KKSKuGF3OFLqE2euaN7kkuNR0b1HOIO/uLn0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HW7Xe38cxD+8AmaZH51in6btZDwfYtKC6/QuS2EE17V0Ke91NZxcrLMdvuZ/joy5A
-	 8DdtK5VnITWDCjOEvxP5y9jLRvbD1e5526uCTvtx951uq1liesWNXDEvZQip5FUUbf
-	 iL8iG27YLs722t5uwsT43QtxcHn7GcEamsk8nWvtWq5DI6rf/+WuPMDwByMdO1Qjri
-	 a5j4vfQfFKt5wgxiWlAy06ocKOhNPdpO/6bh/S8nYNN3e/wx4QM+q9WjVirGq6QfUX
-	 sDBaXZUbamZ7AfTvpXFLtbMG4R7rucE+to62ShP4JPhTLL2O/YuUSNg76jnm3xMUNS
-	 uoSyNGdVCXl2w==
-Date: Thu, 24 Oct 2024 17:13:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: axi-clkgen: include AXI clk
-Message-ID: <20241024-wildfowl-pushiness-d5f46c9c538a@spud>
-References: <20241023-axi-clkgen-fix-axiclk-v1-0-980a42ba51c3@analog.com>
- <20241023-axi-clkgen-fix-axiclk-v1-1-980a42ba51c3@analog.com>
- <20241023-tucking-pacific-7360480bcb61@spud>
- <1e0097f6a15f47c173cb207e369909c1cb5943f9.camel@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klI7fn4g"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99ebb390a5so425083666b.1;
+        Thu, 24 Oct 2024 10:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729790152; x=1730394952; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d9GUQ7w8N3r9gVuJfhRZTtK9B+5W12JGKG4NDazj9No=;
+        b=klI7fn4gtjn+pHtvJao1mPN7Hld0gJjtL1TphSEEF8xuE5lrwQ9x81cLvVXXEM2Heq
+         zh0MF8CflZG+d1dxswwA9T5XNzjF2gcckVuQr+xgGyjrCO/hBw3gPu2xZF1PPfhs/6ou
+         KbQ9ANYYvgeXmYibQZkt8m+/xlni9+ge/SGiQnRAtEpPwR1Uw54wQ2KzGN73GJ5dWvCr
+         3qmrgGooA+9xDaL+EeE9oy1i5+IaCxlSq9aWxXpfK5Ll9s+dvo8YSq8DKrcvJW73Vnc5
+         xxA9sam6P1vqAx9vjfQhGPZ2th9dQgWqGR/Ue+EyTNjubsvfLKdtg/+vkJSU/vdqqxeE
+         BR2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729790152; x=1730394952;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d9GUQ7w8N3r9gVuJfhRZTtK9B+5W12JGKG4NDazj9No=;
+        b=jcZUs289Qvm85vY7ckoGHVrBtyDmdpFYBd1zUrSH59Z2WOAcK6Rpnv+kY/xrdVoHBz
+         thgwYNE7WzVjYzJ4Wj+0LAFcInVfFklBR5CjhaN3IqHkfPeKPLc7y2f9rTBzYGYsHw1l
+         JurjQNGhpoD/pVWTzc/gHfm4CRiga0d4nruf/5FdY0dbdWVrczPRiucof1IU/vxtrAq5
+         ddtFnbXdwVfPYp4b7vJ2qee2EuGtghzLsHwbPKizTSJy3WOpF400dPlrlZ0wmoFoZZPL
+         phOUSLO0vXpjPVuFFBze4h9ARTYnNBAKkZRVrb5WJOivstsDLwpv8DMMs4gxKkOeeNrl
+         rXkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ5ExzOv49mhjcZ1NGi6GddqKrtLPU9J3t/PryZNfNhKiOsF2Be93BDGuKMy7xEkZZFz/xmjzVgfw=@vger.kernel.org, AJvYcCVY1fAuYIQc7gI2tAi6FacxTZ5MmLSU7S7GS3tUN7XD89mxqdxy5TwX9MEuz4zDXBTVU9jsefiWPRTxFis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHncQVayO+EX/6atlAk3OBJs9hd63vlOPulZLdT2QPD3R7Uyq1
+	4raSo9bkYs5Mql8AZT3s2tZ8C8WfPzBJ2w+FK+r/RXINhp5AHjVH
+X-Google-Smtp-Source: AGHT+IFHC2qTy/jZuWOCk1sR1eH7dE/yu5C9mjDMZyMYAvfJpmUHzcxTr/zYswBWdTGJHnoU36QymQ==
+X-Received: by 2002:a17:907:94cd:b0:a99:5587:2a1f with SMTP id a640c23a62f3a-a9ad19c145emr342150966b.15.1729790151920;
+        Thu, 24 Oct 2024 10:15:51 -0700 (PDT)
+Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91559929sm640165366b.105.2024.10.24.10.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 10:15:51 -0700 (PDT)
+Date: Thu, 24 Oct 2024 19:15:50 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Li Zetao <lizetao1@huawei.com>, mturquette@baylibre.com, 
+	sboyd@kernel.org
+Cc: pgaikwad@nvidia.com, jonathanh@nvidia.com, linux-clk@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH -next] clk: tegra: use clamp() in
+ tegra_bpmp_clk_determine_rate()
+Message-ID: <ymehmrggfpuuen4f7st43qijfvvgap5pdipev6iyw4nar2stes@f6oau2c5f4ma>
+References: <20240830012344.603704-1-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,66 +68,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pJZ6Eu/AhPrcPOYK"
+	protocol="application/pgp-signature"; boundary="jvgzug45ctbz76id"
 Content-Disposition: inline
-In-Reply-To: <1e0097f6a15f47c173cb207e369909c1cb5943f9.camel@gmail.com>
+In-Reply-To: <20240830012344.603704-1-lizetao1@huawei.com>
 
 
---pJZ6Eu/AhPrcPOYK
-Content-Type: text/plain; charset=iso-8859-1
+--jvgzug45ctbz76id
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH -next] clk: tegra: use clamp() in
+ tegra_bpmp_clk_determine_rate()
+MIME-Version: 1.0
 
-On Thu, Oct 24, 2024 at 02:35:37PM +0200, Nuno S=E1 wrote:
-> On Wed, 2024-10-23 at 17:30 +0100, Conor Dooley wrote:
-> > On Wed, Oct 23, 2024 at 04:56:54PM +0200, Nuno Sa wrote:
-> > > In order to access the registers of the HW, we need to make sure that
-> > > the AXI bus clock is enabled. Hence let's increase the number of cloc=
-ks
-> > > by one.
-> > >=20
-> > > In order to keep backward compatibility, the new axi clock must be the
-> > > last phandle in the array. To make the intent clear, a non mandatory
-> > > clock-names property is also being added.
-> >=20
-> > Hmm, I'm not sure. I think clock-names actually may need to be mandatory
-> > here, as otherwise you'll not what the second clock is. The driver would
-> > have to interpret no clock-names meaning clock 2 was clkin2.
-> >=20
-> >=20
+On Fri, Aug 30, 2024 at 09:23:44AM +0800, Li Zetao wrote:
+> When it needs to get a value within a certain interval, using clamp()
+> makes the code easier to understand than min(max()).
 >=20
-> So the way things are now is that we just get the parents count with
-> of_clk_get_parent_count() and then get the names with of_clk_get_parent_n=
-ame() and
-> this is given into 'struct clk_init_data'. So they are effectively clk_pa=
-rents of the
-> clock we're registering and as you can see clock-names does not really ma=
-tter. What
-> I'm trying to do is to keep this and still allow to get the AXI bus clock=
- which is
-> something we should get and enable and not rely on others to do it. The i=
-dea is then
-> to add the axi bus clock as the last one in the clocks property and I wil=
-l get it by
-> index with of_clk_get(). The rest pretty much remains the same and we jus=
-t need to
-> decrement by one the number of parent clocks as the axi clock is not real=
-ly a parent
-> of our output clock.
+> Signed-off-by: Li Zetao <lizetao1@huawei.com>
+> ---
+>  drivers/clk/tegra/clk-bpmp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I mean, if it works, and you can always disambiguate between whether or
-not someone has two clkins or one clkin and the axi clock, then
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Mike, Stephen,
 
---pJZ6Eu/AhPrcPOYK
+can you pick this up directly? I haven't had any other clock patches in
+a while. If so:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+If you'd like me to send a pull request, let me know.
+
+Thanks,
+Thierry
+
+--jvgzug45ctbz76id
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxpyKwAKCRB4tDGHoIJi
-0gAYAQDpBACiB2z0Z00EB300D/5eHN04qFai/dmCyJx+diqzWAEAhm5ADaRzdZWm
-S7tI2Mbdjv0UrExvOCfe9sD9iCW4GQc=
-=6sSx
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcagMYACgkQ3SOs138+
+s6EYqg/8DpVH4dAlTnDRDURt1B+zh9+XXaqTJOr2Q6OdHrZEI1TwA77o2R48MgCd
+uTgA/10wQ+VkQE6uoVYb0B/LcmzTh7tE7DzpyL8iXmbsL4Zvb6eKgZGNJ4zHfiRV
++jFRUv6Ld2yBIqmam+270WD3iS3XftoVWcGdc4ihrsM/2RN6HCsqcYBqQencJtUt
+ps9OrTe0TyDwo3X0PxJLMQpJ879eIZaG99fAdbdFN66QbL93ebe3HjCSo9JMM7Kt
+bkUXvXM0BCaaHrZYjyqR86jbOOSSUkIQhSW9DuPo3WpTcxALMteqMKPHvZj+hS6R
+Ap6zDHGcGeerOFE3XYulpY8mlw5P1OLoCWrfWwl5axsNFCcuwk/zHKCSFzU/T7yt
+qdyVOoHt76w9KamEV4/Oh1OpWB6DwXNWDl2xoBe1IA6jQsh1D8ZG0y+C4z45BnzQ
+wvNiOWMoGcxEc2F6WIzcUWv62ZVTLkBPMwlPMskceSnGSEl9IKltc7TG7iFjEkiU
+wuItDscc8HBn/kuyx5ngX/aKmDive597D9apBn+NIhChfvqRDZn/gZ0utEvTZQeO
+0cWSWZ3M6t/RDZMQ8WQT0nRIgu7l79TWLn/0VSKyxWSR8AgvhmAn4IZ/WQw9dFPZ
+bj9VHiEibLChd4uVqxIM9CPDBZVvxtBjKKyN0B4qbVTagFUFEWk=
+=42yy
 -----END PGP SIGNATURE-----
 
---pJZ6Eu/AhPrcPOYK--
+--jvgzug45ctbz76id--
