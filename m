@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0A18A957;
-	Thu, 24 Oct 2024 15:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5695918A957;
+	Thu, 24 Oct 2024 15:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782362; cv=none; b=At+Y4aNlIGHYljlgeI6DLpMmitts3vdJY9GmSoRtN9YBEw6g4npVYkxqRk0ehogi9swExDXV696Ef7NHkqPv7ZTZpWN6ALxtcgbtao+CvVu5+SbpzQui62rQX9LhzmI3eskIZR3BMg2KnnWdC2RbIFVh6w4dQkncF6QO/scKsHc=
+	t=1729782472; cv=none; b=KR6FA7DVJ3logPHkjLjlycCbuRWMhXjc1SdmEBNpGwd5pcnc1cPiDC35KH8NkFgfKsjHhXqn00W79zCHIFFkN3Rbl0twEK4h0m0tWoB+JphDinkvR6EFXE/R6kKTi4z9TkaBK8B5343/h7LZRTO8SdybsPF137f10R0dZbaNiHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782362; c=relaxed/simple;
-	bh=Ih493C7FW7huTj70GvMdQCxCv0/8gBvIIgko/BVBESQ=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=JiomKdS3b9uaK9HIoqM39fgAPn08jpwddtBtdNbaV2cRYDMpcSrF1wWZwQlHxiN6F4Hf43Gzgm5UDkPKY+j9uqRjBnwGlGeNBFOQNv7soTG1N7Flt1Ya2iS+k+VIn56hkSUtbvbm6TnnqQuOrQKqwSPfe54dLEKew8Yc9+nM0ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2B8GiT0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729782472; c=relaxed/simple;
+	bh=gsSRaxF5qMUcw8w2aFZFzRk8Uw2PuZFPXxc0eD5vXhw=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=eMOhHxfJZGWaxmVwK0aL1WPWJkUG6Tg7KbeIoPPVKIepYRd7hveU/VvC3w+WqPcrK9Ac5JLyPkAKoceR2NKIAvThlUpb02uiAsxWf/tALKF8eHTTOkB7khAQa+LFW/maqBcvKL/OoFK1HR9DWadOanzDSJefd3aH6c8qssXJpWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyklSNg+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2B8GiT0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4830FC4CEC7;
-	Thu, 24 Oct 2024 15:06:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyklSNg+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E471C4CEC7;
+	Thu, 24 Oct 2024 15:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729782361;
-	bh=Ih493C7FW7huTj70GvMdQCxCv0/8gBvIIgko/BVBESQ=;
+	s=k20201202; t=1729782471;
+	bh=gsSRaxF5qMUcw8w2aFZFzRk8Uw2PuZFPXxc0eD5vXhw=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=G2B8GiT06sGhvAw8upxtM0+4xoxyH2VU5Fs2aV8Al5mf91nP+UD9BCyr8wxtcM8wq
-	 VCmJN7wdKuj8FdYcDhTFEDpfx1uK0I+897Y5r1LBrarAwoUlKOQB3lAFScFx7ZstWn
-	 xU2HUvAs/GrFlF1cSAweX7XZ59QcWpNVQfXYA4oXTgzef1RaSzz6mDI/hD52/ki9wj
-	 Xdi7WTeDIG39ORLQJRsHowGLTWUbFsECRnBcbU91mbvXGGVWvbHiRTKwaDpeYqYr6y
-	 wAgdjvcRVdhrByzczYohXrfkDIrIv/Yp6HRW+4LMMc3xc1gc8PJCyMYY9kS1Dfnox8
-	 qH0T0lJDW9jTw==
-Message-ID: <35fc492aa7d6298eba531d08e9fccfa4@kernel.org>
-Date: Thu, 24 Oct 2024 15:05:59 +0000
+	b=HyklSNg+3Iov4TU9gqtKiQUm2hzQu0aZHkrNMPUa6dIsZbb4gGoBaapCT1JtLqTbb
+	 CzvBJyu86RqlIErqmui2/Tieibxb12WjJkPOKUeAjKQ5/Bandf78Es5DC/QbL7vaJR
+	 W/6CTpsmJD1A39S/EeI62TsB3jj+kMyiPkmWDiWwQ3mUswQc+JuRVzvKu3gBQh3QWF
+	 wSWrRJMd/DXp5TIVdyGIqCJYSHRz66TYuazHO9YQaFytFGkAaMECjMYa7ykMH1gxbo
+	 kBNeIiFnHilQSeU9bJSuledTFYxrC5piIIjt7t7uF4gQE+iLPGFVkx0ECw1MPavgp0
+	 sW3E7vG58mAew==
+Message-ID: <a308178ba289f0df76fbf031b3cb103b@kernel.org>
+Date: Thu, 24 Oct 2024 15:07:49 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Dave Stevenson" <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 23/37] drm/vc4: drv: Add support for 2712 D-step
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-23-1cc2d5594907@raspberrypi.com>
-References: <20241023-drm-vc4-2712-support-v1-23-1cc2d5594907@raspberrypi.com>
+Subject: Re: [PATCH 24/37] drm/vc4: hvs: Add in support for 2712 D-step.
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-24-1cc2d5594907@raspberrypi.com>
+References: <20241023-drm-vc4-2712-support-v1-24-1cc2d5594907@raspberrypi.com>
 Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, "Broadcom
  internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, "Catalin
  Marinas" <catalin.marinas@arm.com>, "Conor Dooley" <conor+dt@kernel.org>, "David
@@ -50,8 +50,9 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-On Wed, 23 Oct 2024 17:50:20 +0100, Dave Stevenson wrote:
-> Add in the compatible string and VC4_GEN_ enum for the D-step
+On Wed, 23 Oct 2024 17:50:21 +0100, Dave Stevenson wrote:
+> THe registers have been moved around, and a couple of minor changes
+> made, so adapt for this.
 > 
 > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
