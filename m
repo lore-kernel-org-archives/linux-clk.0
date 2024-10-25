@@ -1,253 +1,166 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0147613B787
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 14:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D60F212198
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 14:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865140; cv=none; b=ZJpbCTUuPMliuRCuZtNLHlv7hNZqtS/xbLMX5P6bAUnYSP0j8iJMKbOQHr1HP1tyUSx0tnkKjzMo9xY7PAZWcWdPiaO8hyTmCHCKEZz3kQveASyoyXkMfGhoCTeqqzuGYbJhQZyoO3e0g54rCadp75EaBkwqEdcahMo9MITv7as=
+	t=1729867786; cv=none; b=ocOd2g3kYz/Tdl42hvdjiP/wZNOKa4/xOb+QiG8zDXVizeSt+hlinuPCgnMjTL0kbuSZQh6E7efbY7JqbEsP0THlxqmeWC6071ptsVlzoyqFetPtHDYWO31Gz/fChyvLObszUlxnuW7lpxqpL9YkAp+BEUkD4nsKdouopXitQJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865140; c=relaxed/simple;
-	bh=mhPDdtyt330mcdM63wrN5tqVH3NzsiWGOIKFvHowOnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glR+6OadoWzlyweMDoWPmFX1WtdFq1p6EidDgCY8y2NGQNDg6wTXQayXzu114ZrMpnEu/Eoj5CyhJoxpZZ+iN5KvMWrjFfmcaT1kNFDkcBWf6H6SL9LwBpSTy/HWhYNmknbahMF7T7Z8Ty+v73Na4WGmy8XfVVSVqKqxqjD6wgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lf17I1vr; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lf17I1vr"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso21855091fa.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 07:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729865136; x=1730469936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rn9Pt5hyYOkst6E9UWfygPgyliex/XcNrU8hJHBnOOM=;
-        b=lf17I1vrXdqO6F0j2qoezG9jbFtdOSQvx3DnPG1uk0O45aIUYqEhOK4Hp6Q7PYZ/vt
-         foXS0PvU/7Uytt1n2bMCCRQhHlNf8upT0k9CmFIyeS1LgFhLSRCO//LmuQS8iJx7DKrq
-         1rWJWFP10mNffvj6Nzgnh4wh4qUYfTlncRUh/ispnOH10L+kWYjIqAMusH8HlaV9C7gD
-         ovRbN5HRAylRnM2f3IUzKur8R2q86g2uRg4BrWT3SINT5aZeoWMYAt3Kz4YsBPEnf4Hq
-         CahBEL++Hgtg21qjtCj1V88F20HPlzqhRWg1oZKchJyxZvNF6yrM7AteTalotjg6u5dZ
-         2W8w==
+	s=arc-20240116; t=1729867786; c=relaxed/simple;
+	bh=DGrP+X7ynEJ80b1Ksbh7faaeQXhaDe50vFOPjYI2u30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DRkTFOHjq7buohkYqsh2Ky0YIMnjv6aX3Z3+ZhSnVgBsLPJ/j3diwTSY48DFS9BDBbLvqgzyzwQ0WfeJZpg/SD/EeHOefhvWbWwlJg5rvvgAJoDsBvyXAWeRi8j+npIKlW7SgAD6So0XbHdM+PQJ5PUOoKZYWSXKnlzVtNdgZks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so2294158e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 07:49:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729865136; x=1730469936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rn9Pt5hyYOkst6E9UWfygPgyliex/XcNrU8hJHBnOOM=;
-        b=eXV/u8ryqR7LeetNTWh7ZJ/1i5UcehFgFsBfFqSOX3N3SB9v9Yee6+Di+2QxmefDd9
-         EIN9zkEG3STt69XIsodi3cdAn0/oDjpxUynx2ESrnXwsZze6Kr6o+CZjiBNTkboZJ6RC
-         ZHk10AW6aE9ziSsvBG0Ab7TjJyFAlpDGgKYX7fJ/JR5eJ7lltyBUQuksIHDBdru4HWcl
-         8D8KwfaMtXlVJ8yKcbE0qr4tnh5MCbiQ+BENRAfpC+w0osopEZOVZe1+XHO1cGxNd9qG
-         cUVlkBYx2btvRQfm4i53sp6nS8JP6zX52x30rmNMx+Uhq79fF9qYVOCMRKVmr+00B7AQ
-         94ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWJouzap4s3pWRbQHH0OkUhNXUI5PMCr/0M9VPOI1JN4hlByg9uFqKU19YJkVBxwC0MLatdiNKIhPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIwwgmscc7j2syBxhFNHxGMpWY7r01zY0WFXl2fEkQIMPgfgt1
-	3uTTgIDXgLuoDOZSObslgj+BpW3MnzQ5+JRJ+EKU8A+SwcGRG+EBJ6McW/OFGkg=
-X-Google-Smtp-Source: AGHT+IGPO2N8dVilguOrd+D3mg0S1fdvTrVMbg1ZQKzSI2X+KHFMOXe6V+CSQpm6d8eAH4CXe6TVWw==
-X-Received: by 2002:a2e:4c0a:0:b0:2f6:4f17:aeaf with SMTP id 38308e7fff4ca-2fc9d586fc6mr34505861fa.45.1729865135784;
-        Fri, 25 Oct 2024 07:05:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4612a5asm1984121fa.122.2024.10.25.07.05.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:05:34 -0700 (PDT)
-Date: Fri, 25 Oct 2024 17:05:31 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jie Luo <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
-Message-ID: <g3wh3yjkzgdfwbj4hnabtmziwsmqn3cloffblhshrkgj3tx4h7@2w2ho2mvs5c6>
-References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
- <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
- <abro3enahzbugcwokcyyhwybbokestbigvzhywxhnfrdjihni3@7ej2hkgbgtf6>
- <b336724c-1fea-4e1e-9477-66f53d746f09@quicinc.com>
- <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
- <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
- <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
- <a2448df9-9b8b-4b7e-ada5-6f26d7e7da97@quicinc.com>
+        d=1e100.net; s=20230601; t=1729867781; x=1730472581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e/svTJLUuZsHOgIxMPFLO/yUUNAOW9dJ4W1In0LnFdY=;
+        b=vtbSZsrjLbMUSvsjursnQCExiXbIyz2HCDB5FBmFdilskSNEYHb1MgD9ygPD+Lkhax
+         w6EWyQILWffK2DYFILezw6RfYYnWiDyvtHYz0my4uLR7HIdk+gYW1fiLddSg+ocdnkRL
+         Sm2BfxjXJvqCAh0hOXljFdvEkDuOctJo5ext7mcFF7PT5KJZkYgBOj6HUElSqabUwjj1
+         LCiMLWWmCxiqVk1G8smrKjv42KnscQ+auq+PK+l63lKnBFSdcJ1MvLartwmJmL+T9XWP
+         yhoTP6WYeG/6ssHSzhXQM2ec6xnMmBfulbSBiEktjl5rvBMjr+/FYEzvmJQGvUjh2/C9
+         FAjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaml8zuh9/wDb4olywU4EEXmswNt/eeKkWOgE7duIxvUlw6qolnXV04A22xecH+5ntUm9NNirK0ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA/EKlQYyBHfDo9W1UNiV/w3MXnOC0/4MGlq1bHbq4BBv2m1fB
+	WcYwGEi84DA0XdzHm6tiSCnhW5WPJIvqbXXf+5XHUE8HeknBuClrkWpJhf/94ZE=
+X-Google-Smtp-Source: AGHT+IEtlsgLjnqhrRI9qjDnaabpZ55WwH4aL6hl6aJNoJKmHZa0zeVxJAsBNZ6VPloBAickBRzIlg==
+X-Received: by 2002:a05:6512:689:b0:539:fbfe:418f with SMTP id 2adb3069b0e04-53b23e1fee7mr3385585e87.32.1729867780826;
+        Fri, 25 Oct 2024 07:49:40 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c9439sm208300e87.200.2024.10.25.07.49.40
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 07:49:40 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so19018961fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 07:49:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXIXVB97HFNjY88mzLNRhVYzoEaAb0GUjwpwBI9MM7prBQHFPoifC1unOR4Xs5BkSdhsdcIMnWGEu4=@vger.kernel.org
+X-Received: by 2002:a05:651c:1504:b0:2fb:4c08:be08 with SMTP id
+ 38308e7fff4ca-2fca81d81c0mr28886391fa.11.1729867780288; Fri, 25 Oct 2024
+ 07:49:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2448df9-9b8b-4b7e-ada5-6f26d7e7da97@quicinc.com>
+References: <20241025105620.1891596-1-andre.przywara@arm.com>
+In-Reply-To: <20241025105620.1891596-1-andre.przywara@arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 25 Oct 2024 22:49:27 +0800
+X-Gmail-Original-Message-ID: <CAGb2v676pzN6TX8xDHuESkGDLinCB9_3FLgKSmEBtxK2GSWxHQ@mail.gmail.com>
+Message-ID: <CAGb2v676pzN6TX8xDHuESkGDLinCB9_3FLgKSmEBtxK2GSWxHQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: h616: Reparent CPU clock during
+ frequency changes
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Philippe Simons <simons.philippe@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 09:05:09PM +0800, Jie Luo wrote:
-> 
-> 
-> On 10/18/2024 11:38 PM, Dmitry Baryshkov wrote:
-> > On Fri, Oct 18, 2024 at 10:03:08PM +0800, Jie Luo wrote:
-> > > 
-> > > 
-> > > On 10/18/2024 4:11 PM, Dmitry Baryshkov wrote:
-> > > > On Fri, 18 Oct 2024 at 09:55, Jie Luo <quic_luoj@quicinc.com> wrote:
-> > > > > 
-> > > > > 
-> > > > > 
-> > > > > On 10/18/2024 6:32 AM, Dmitry Baryshkov wrote:
-> > > > > > On Tue, Oct 15, 2024 at 10:16:54PM +0800, Luo Jie wrote:
-> > > > > > > The CMN PLL clock controller allows selection of an input
-> > > > > > > clock rate from a defined set of input clock rates. It in-turn
-> > > > > > > supplies fixed rate output clocks to the hardware blocks that
-> > > > > > > provide ethernet functions such as PPE (Packet Process Engine)
-> > > > > > > and connected switch or PHY, and to GCC.
-> > > > > > > 
-> > > > > > > Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> > > > > > > ---
-> > > > > > >     arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
-> > > > > > >     arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
-> > > > > > >     2 files changed, 24 insertions(+), 2 deletions(-)
-> > > > > > > 
-> > > > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > > > > > > index 91e104b0f865..77e1e42083f3 100644
-> > > > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > > > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > > > > > > @@ -3,7 +3,7 @@
-> > > > > > >      * IPQ9574 RDP board common device tree source
-> > > > > > >      *
-> > > > > > >      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> > > > > > > - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > > > > + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > > > >      */
-> > > > > > > 
-> > > > > > >     /dts-v1/;
-> > > > > > > @@ -164,6 +164,10 @@ &usb3 {
-> > > > > > >        status = "okay";
-> > > > > > >     };
-> > > > > > > 
-> > > > > > > +&cmn_pll_ref_clk {
-> > > > > > > +    clock-frequency = <48000000>;
-> > > > > > > +};
-> > > > > > > +
-> > > > > > >     &xo_board_clk {
-> > > > > > >        clock-frequency = <24000000>;
-> > > > > > >     };
-> > > > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > > > > > > index 14c7b3a78442..93f66bb83c5a 100644
-> > > > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > > > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > > > > > > @@ -3,10 +3,11 @@
-> > > > > > >      * IPQ9574 SoC device tree source
-> > > > > > >      *
-> > > > > > >      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> > > > > > > - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > > > > + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > > > >      */
-> > > > > > > 
-> > > > > > >     #include <dt-bindings/clock/qcom,apss-ipq.h>
-> > > > > > > +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
-> > > > > > >     #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
-> > > > > > >     #include <dt-bindings/interconnect/qcom,ipq9574.h>
-> > > > > > >     #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > > > > > @@ -19,6 +20,11 @@ / {
-> > > > > > >        #size-cells = <2>;
-> > > > > > > 
-> > > > > > >        clocks {
-> > > > > > > +            cmn_pll_ref_clk: cmn-pll-ref-clk {
-> > > > > > > +                    compatible = "fixed-clock";
-> > > > > > > +                    #clock-cells = <0>;
-> > > > > > > +            };
-> > > > > > 
-> > > > > > Which block provides this clock? If it is provided by the external XO
-> > > > > > then it should not be a part of the SoC dtsi.
-> > > > > 
-> > > > > The on-chip WiFi block supplies this reference clock. So keeping it in
-> > > > > the SoC DTSI is perhaps appropriate.
-> > > > 
-> > > > Then maybe it should be provided by the WiFi device node? At least you
-> > > > should document your design decisions in the commit message.
-> > > 
-> > > This CMN PLL reference clock is fixed rate and is automatically
-> > > generated by the SoC's internal Wi-Fi hardware block with no software
-> > > configuration required from the Wi-Fi side.
-> > > 
-> > > Sure, I will enhance the commit message to add the information on the
-> > > fixed reference clock from Wi-Fi block. Hope this is ok.
-> > 
-> > We have other fixed clocks which are provided by hardware blocks.
-> > Without additional details it is impossible to answer whether it is fine
-> > or not.
-> 
-> There is an XO on the board which supplies reference clock (48Mhz or
-> 96Mhz) to the Wi-Fi block on the SoC. There is a multiplier/divider in
-> the Wi-Fi block, which ensures the output reference clock of 48Mhz is
-> supplied to CMN PLL block.
-> 
-> In summary, below is the path to receive the reference clock at CMN PLL:
-> The clock path is .XO (48 MHZ/96 MHZ) --> WiFi (multiplier/divider) -->(48
-> MHZ) --> CMN PLL.
-> 
-> There is no software configuration required for the entire path, as it
-> is fully controlled by bootstrap pins on the board. There are bootstrap
-> pins for selecting the selecting the XO frequency (48Mhz or 96Mhz) and
-> based on this, the divider is automatically selected by HW (1 for 48Mhz,
-> 2 for 96Mhz), to ensure output clock to CMN PLL is 48Mhz.
+On Fri, Oct 25, 2024 at 6:56=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> The H616 user manual recommends to re-parent the CPU clock during
+> frequency changes of the PLL, and recommends PLL_PERI0(1X), which runs
+> at 600 MHz. Also it asks to disable and then re-enable the PLL lock bit,
+> after the factor changes have been applied.
+>
+> Add clock notifiers for the PLL and the CPU mux clock, using the existing
+> notifier callbacks, and tell them to use mux 4 (the PLL_PERI0(1X) source)=
+,
+> and bit 29 (the LOCK_ENABLE) bit. The existing code already follows the
+> correct algorithms.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+> Hi,
+>
+> the manual states that those changes would be needed to safely change
+> the CPU_PLL frequency during DVFS operation. On my H618 boards it works
+> fine without them, but Philippe reported problems on his H700 board.
+> Posting this for reference at this point, to see if it helps people.
+> I am not sure we should change this without it fixing any real issues.
 
-If the clock is always fixed to this frequency, then it's ok, thank you.
+IIRC we do this for all the other SoCs. But if you want to be cautious,
+we can wait for Philippe to give a Tested-by?
 
-> 
-> > 
-> > > 
-> > > > 
-> > > > Also, I don't think this node passes DT schema validation. Did you check it?
-> > > 
-> > > Yes, the DT is validated against the schema, I have shared the logs
-> > > below. Could you please let me know If anything needs rectification?
-> > 
-> > I see, you are setting the cmn_pll_ref_clk frequency in the
-> > ipq9574-rdp-common.dtsi file. If the PLL is internal to the SoC, why is
-> > the frequency set outside of it? Is it generated by multiplying the XO
-> > clk? Should you be using fixed-factor clock instead?
-> > 
-> 
-> Since the reference clock is controlled by bootstrap pins on the board,
-> it may be appropriate to define the frequency for this reference clock
-> in the board DTS. Given the clock tree described above, I will update
-> the cmn_pll_ref_clk to define it as a fixed-factor clock as per your
-> suggestion, with its frequency and factors configured in board DTSI.
-> These values defined in rdp-common.dtsi will be default values that can
-> be overridden if necessary by different boards. Hope this approach is
-> fine.
-> 
-> In ipq9574.dtsi:
-> cmn_pll_ref_clk: cmn-pll-ref-clk {
-> 
->         compatible = "fixed-factor-clock";
-> 
->         clocks = <&xo_clk>;
-> 
-> 	#clock-cells = <0>;
-> };
-> 
-> xo_clk: xo {
-> 	compatible = "fixed-clock";
-> 	#clock-cells = <0>;
-> };
-> 
-> In ipq9574-rdp-common.dtsi.
-> &cmn_pll_ref_clk {
-> 	clock-div = <1>;
-> 	clock-mult = <1>;
-> };
-> 
-> &xo_clk {
-> 	clock-frequency = <48000000>;
-> }
+ChenYu
 
-Sounds perfect, thank you!
-
-
--- 
-With best wishes
-Dmitry
+> The same algorithm would apply to the A100/A133 (and the upcoming A523)
+> as well.
+>
+> Cheers,
+> Andre
+>
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 28 ++++++++++++++++++++++++--
+>  1 file changed, 26 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h616.c
+> index 84e406ddf9d12..85eea196f25e3 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> @@ -1095,11 +1095,24 @@ static const u32 usb2_clk_regs[] =3D {
+>         SUN50I_H616_USB3_CLK_REG,
+>  };
+>
+> +static struct ccu_mux_nb sun50i_h616_cpu_nb =3D {
+> +       .common         =3D &cpux_clk.common,
+> +       .cm             =3D &cpux_clk.mux,
+> +       .delay_us       =3D 1, /* manual doesn't really say */
+> +       .bypass_index   =3D 4, /* PLL_PERI0@600MHz, as recommended by man=
+ual */
+> +};
+> +
+> +static struct ccu_pll_nb sun50i_h616_pll_cpu_nb =3D {
+> +       .common         =3D &pll_cpux_clk.common,
+> +       .enable         =3D BIT(29),      /* LOCK_ENABLE */
+> +       .lock           =3D BIT(28),
+> +};
+> +
+>  static int sun50i_h616_ccu_probe(struct platform_device *pdev)
+>  {
+>         void __iomem *reg;
+>         u32 val;
+> -       int i;
+> +       int ret, i;
+>
+>         reg =3D devm_platform_ioremap_resource(pdev, 0);
+>         if (IS_ERR(reg))
+> @@ -1152,7 +1165,18 @@ static int sun50i_h616_ccu_probe(struct platform_d=
+evice *pdev)
+>         val |=3D BIT(24);
+>         writel(val, reg + SUN50I_H616_HDMI_CEC_CLK_REG);
+>
+> -       return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h616_ccu_des=
+c);
+> +       ret =3D devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h616_ccu_de=
+sc);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Reparent CPU during CPU PLL rate changes */
+> +       ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+> +                                 &sun50i_h616_cpu_nb);
+> +
+> +       /* Re-lock the CPU PLL after any rate changes */
+> +       ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
+> +
+> +       return 0;
+>  }
+>
+>  static const struct of_device_id sun50i_h616_ccu_ids[] =3D {
+> --
+> 2.25.1
+>
