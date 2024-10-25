@@ -1,139 +1,108 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EAC20D4FC;
-	Fri, 25 Oct 2024 20:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F8C1957F9;
+	Fri, 25 Oct 2024 23:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729886819; cv=none; b=l4DN1K9l5w0zq54tweqOiGCTxFpuz2HCeeXu+wAoxaikE19xEwAkbP2R8mCifysht0IeV7VYUVlPD7NzZf6Dg84TFqlgkgf8Pnwp/F5ahs189xdGOtcBd1xvkYa2tBQ7MjHolRNv0R/lZsJOV1q9SD4QM0fkdKO7pArNrRBCYv8=
+	t=1729899105; cv=none; b=N0i8e5d8WbF323rP/RXmOWA1I3QBz3UT4obBQAz3RwLHDEeeEjJymlaz24QdeJ9mNNcdlPeU4Gaf46qhzMPo4On6t5YddNbNv9FQsa1ulvoTdk165F5XSzGXWG803RLCJDQKKDiBBLOomih4sFgLdVzWkMIu72/E3jsa7DbfCms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729886819; c=relaxed/simple;
-	bh=020P98dsc4N0tP7zu2S4G3mBijoNQpr/6n/G2OA2H3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0Xm3rq5YZLdZHHeg8GqQuI7HIflesrzCxZbv1WGQHCoKHO5X/0TLFMQklOSxXGsrhsOmoivm3j6cI3yZtAGc1eg5TKejW0ALtFieFGUNZ8HmKJbEVW8/N78zSf48k4ZseCXzvKu77mgMmVFxPuvKNDgzfP//xzvXgtLk/D89S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkzqdeS3; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729899105; c=relaxed/simple;
+	bh=WdGE8rRJ8ooRbPNbKNU3Hoy1T8K2+Fph3zMZRkda4SE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYevjqHjotrykcDMRkYgyBeS7xE+Uc86s+r55gE1ChPfHgX5IaWr8KwyX5hr05DvMxanSlM9mWrw9dbGltYCAfEXy06tGEaJxMelIgmdF+/K8ywm+hX3MAwTY96v6SzXTEZa7voac5os48ckfOWIJ5ZCenWU5QjAPXcVKkxXSYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hfJVPIs9; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkzqdeS3"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so24284395e9.1;
-        Fri, 25 Oct 2024 13:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729886816; x=1730491616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8tYpjMCXr6pntg9hBGj3x7qZDtIrYXjEyugrTIEiVRk=;
-        b=LkzqdeS3VLhJKD0NxYAIJjygyydFKAg9R0nT+sjj2KbKNWqeSZqaQcekEtiBuBhiIr
-         89lW89LjG2/ClpqUoCI77Ud1oGvRsvKtp/xgzyNK5ri19jlNPlWJHKTvO6o4KXX4D6gI
-         anQhHo/OSv+8vBjjM/8awfcmvTMoovrpq6qwGUYlMKxcf82akJdLYFsfBouAK9CYlefv
-         rAcWld2aXQRENELyeuSmVsQLyXip1LvtE5nN6mENRdpmpEZMuu0SrJUAfmqRIODZGFxa
-         5sTp6u2rdECswbEj3y9RS7S2jbMebhkZJGtC8ol/lCTJnM9ZY7l3v42WBUSmLyx1gs/V
-         A0uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729886816; x=1730491616;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tYpjMCXr6pntg9hBGj3x7qZDtIrYXjEyugrTIEiVRk=;
-        b=j2H1d+fYrrKA0J2CxREsGxGOfPc0W6Pew0EUyg9TGENisrwnlf824oto5xlqNYg8Sq
-         4Cknx9By8rP/eqyy1yhay0/HSyfmnFci/fFDtkRIW/gvEFQ32B2q//hgaxKM+ZLONgF/
-         8r/96b4UQ8kpzXNI3zritEIl/LUbPiWoZgdU8ADeWOps0FH2VCE1WSeUEzMknfF4OJ8E
-         N9U027xigNbI7f/3+DCPEeSOXzO3e+lfjWtdR0gR+Z1W3IW8pAKUvW7xhQ7QyE+9vxXF
-         muurg8VH7FDlxO4RpAvhyBtD+Ig7PYzYG1hVY/n4q0o5o6oA7XkF5yhF69bXRhqdeLHh
-         cTig==
-X-Forwarded-Encrypted: i=1; AJvYcCVUyq8IAPH7fwfDoG5h6gJTGTXGyIFSHcwn2KZRGJ5+8+34aYgF50eGFSF1cPhQQ8Ci9g0xSb8DquXiC9z+@vger.kernel.org, AJvYcCWILg8m8bOuZ2mO9SieF2jgbFIQMuKfzrGgvYKU9xvj50FX5uUI9RtXT3DIMeic/8l3Ja34ThtMDNBC@vger.kernel.org, AJvYcCWsuv3VPpU5MFvmpM3ompdGkN3QLkjadifWgdmkdTxoAupqP6qbODRDeh63kSTcQUdix2lN45aB2tF7dDId@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3UFxmcQWl5jEYFgfMSgS00SJEewHrBm1yAZ/Yktw43T060esr
-	YrRqn1LVQ1/9xb1wBmxoUePiCMfiO5W8jSZUMQMbJ3XN7m00/+cs
-X-Google-Smtp-Source: AGHT+IFiGzqBxksD/82z+OJPVV83zg02xnOjqqtBwYsGstCXjU2vNZ+Nxk+/KmqLrn5tNdVHl0926w==
-X-Received: by 2002:a05:600c:5112:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-4319acc2befmr3153275e9.21.1729886815881;
-        Fri, 25 Oct 2024 13:06:55 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03b8b4sm105081105e9.0.2024.10.25.13.06.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 13:06:55 -0700 (PDT)
-Message-ID: <23d59aa6-ef46-46bd-94c9-a298b4870e09@gmail.com>
-Date: Fri, 25 Oct 2024 22:06:55 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hfJVPIs9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729899103; x=1761435103;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WdGE8rRJ8ooRbPNbKNU3Hoy1T8K2+Fph3zMZRkda4SE=;
+  b=hfJVPIs96p7IUIseZYg2eZy1RtTNZNHqSiZ0gr25ZzpA/sKoVlOT7vNi
+   4u21wytblR6l0Egl6tLQr2MKHXVwW4Jr7dzsEE7zmvOuV7G/07EoStwRC
+   kq+mgQZNOWRRgt/ZVBvM7CNeqtwvSBbTlaNoHoncNrvGggsZuTCCdaK4W
+   MkCt392LLoeXw9S6ZXUn6ZkRbeUI52wq2oNfU6bE0rNp1LEEJWfCLz0Fc
+   MdhLce8sv5IvbYw5Cf6lX49jU3+bDApS1/vy80PrjFq+wLN2ETlrDIHmi
+   /WMVREJAMiN1iNjfRlQpOpw/gJGnFVceFsGfNL9eCieh9pZ4bN1jGBHwo
+   w==;
+X-CSE-ConnectionGUID: /GFpBrLmR3Wd3Vz+3/G9LA==
+X-CSE-MsgGUID: W02pxr38RGyRmXG3XgZhhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33278337"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33278337"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 16:31:43 -0700
+X-CSE-ConnectionGUID: OLMACmv+TaOtuhdFaVR3Rw==
+X-CSE-MsgGUID: v4s9Hx64SkGsJKoNY5ASbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
+   d="scan'208";a="111871703"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 25 Oct 2024 16:31:36 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4TmI-000Z1g-0k;
+	Fri, 25 Oct 2024 23:31:34 +0000
+Date: Sat, 26 Oct 2024 07:31:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+	richardcochran@gmail.com, geert+renesas@glider.be,
+	dmitry.baryshkov@linaro.org,
+	angelogioacchino.delregno@collabora.com, neil.armstrong@linaro.org,
+	arnd@arndb.de, nfraprado@collabora.com, quic_anusha@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v8 6/7] arm64: dts: qcom: ipq9574: Add nsscc node
+Message-ID: <202410260742.a9vvkaEz-lkp@intel.com>
+References: <20241025035520.1841792-7-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: qcom: gcc-ipq6018: remove alpha values from NSS
- Crypto PLL's config
-Content-Language: hu
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com>
- <20241021-alpha-mode-cleanup-v1-3-55df8ed73645@gmail.com>
- <f4ip6jde5ffs6nvpllqhjleeb4s3j6hok5decxrof3inexh7ut@esgcsblz7wcj>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <f4ip6jde5ffs6nvpllqhjleeb4s3j6hok5decxrof3inexh7ut@esgcsblz7wcj>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025035520.1841792-7-quic_mmanikan@quicinc.com>
 
-2024. 10. 25. 8:18 keltezéssel, Dmitry Baryshkov írta:
-> On Mon, Oct 21, 2024 at 10:21:59PM +0200, Gabor Juhos wrote:
->> Since both the 'alpha' and 'alpha_hi' members of the configuration is
->> initialized with zero values, the output rate of the PLL will be the
->> same whether alpha mode is enabled or not.
->>
->> Remove the initialization of the alpha* members to make it clear that
->> alpha mode is not required to get the desired output rate.
->>
->> While at it, also add a comment to indicate the frequency the PLL runs
->> at with the current configuration.
->>
->> No functional changes, the PLL runs at 1.2 GHz both before and after
->> the change.
->>
->> Tested on Xiaomi Mi Router AX1800 (IPQ6018, out-of-tree board).
->>
->> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
->> ---
->>  drivers/clk/qcom/gcc-ipq6018.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
->> index ab0f7fc665a9790dd8edba0cf4b86c5c672a337d..d861191b0c85ccc105ac0e62d7a68210c621fc13 100644
->> --- a/drivers/clk/qcom/gcc-ipq6018.c
->> +++ b/drivers/clk/qcom/gcc-ipq6018.c
->> @@ -4194,10 +4194,9 @@ static const struct alpha_pll_config ubi32_pll_config = {
->>  	.test_ctl_hi_val = 0x4000,
->>  };
->>  
->> +/* 1200 MHz configuration */
->>  static const struct alpha_pll_config nss_crypto_pll_config = {
->>  	.l = 0x32,
->> -	.alpha = 0x0,
->> -	.alpha_hi = 0x0,
-> 
-> I'd say this serves documentation purposes: zero alpha value
+Hi Manikanta,
 
-For me, setting 'alpha_en_mask' means that the alpha values will be used. If it
-is not set, then it means that the alpha values are getting ignored. If those
-will be ignored eventually, specifying even zero alpha values explicitly is
-pointless in my opinion.
+kernel test robot noticed the following build errors:
 
-If we really need that for documentation purposes, the comment before the
-configuration can be changed to indicate that alpha values are not needed.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next arm64/for-next/core linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
->>  	.config_ctl_val = 0x4001055b,
->>  	.main_output_mask = BIT(0),
->>  	.pre_div_val = 0x0,
->> @@ -4206,7 +4205,6 @@ static const struct alpha_pll_config nss_crypto_pll_config = {
->>  	.post_div_mask = GENMASK(11, 8),
->>  	.vco_mask = GENMASK(21, 20),
->>  	.vco_val = 0x0,
->> -	.alpha_en_mask = BIT(24),
-> 
-> This is okay
+url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Mylavarapu/clk-qcom-clk-alpha-pll-Add-NSS-HUAYRA-ALPHA-PLL-support-for-ipq9574/20241025-121244
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241025035520.1841792-7-quic_mmanikan%40quicinc.com
+patch subject: [PATCH v8 6/7] arm64: dts: qcom: ipq9574: Add nsscc node
+config: arm64-randconfig-001-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260742.a9vvkaEz-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260742.a9vvkaEz-lkp@intel.com/reproduce)
 
-Regards,
-Gabor
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410260742.a9vvkaEz-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> Error: arch/arm64/boot/dts/qcom/ipq9574.dtsi:766.16-17 syntax error
+   FATAL ERROR: Unable to parse input tree
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
