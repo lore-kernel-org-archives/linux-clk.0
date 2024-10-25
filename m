@@ -1,185 +1,130 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591391D26E7;
-	Fri, 25 Oct 2024 09:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B826512FB1B;
+	Fri, 25 Oct 2024 09:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729849134; cv=none; b=fW1hmOCY10RJQjshdbpUzSp6wB1H0o4JMBDYcYhXaUwOvY+L6Y7bRGrBB/A7cwdU1hdIbhKCvdfGYHQi1Ecm0M4gwpSVVpsW/ETuyIq64ThGCGDhFex9njNDVM3GLOIO2nExOfFdX1DBYOJW7UlX+AmjlChcDihzlq1vseHIc7M=
+	t=1729849564; cv=none; b=dO2Y8+AQ/Pi0sg3IaH0N00VVHsGD/AbaHE6G2r5YUXhgOuFJueHNpTNIqa5Q0jSkFEXfQrqWq67fl5kh/x/CfxyxKZfZFMUorlskzLDNCR3ioM7zMWI4Tdu2vr9cSxHrfQvw3t2w86S07MoQfJg6kVhnB2A3FbaiauZ15Gln9QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729849134; c=relaxed/simple;
-	bh=+Q5754NxjzIaGCjBE8cr3K9Tgne9Hh3xvSdv5A40ttE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sYKJi11Wv/FmSpTLji5O6E81uIU53+J6s4d1f+G3JbS1YzMWh6wdJuOIcc/qq3YMZyJ9sQKq/ndI5Dr4c6BUcAQcHi1Lc3Kj8u2f+5PE7e9sxP4ag1/YacLjT3qAtOZUk0gf/7zyadM7W/ew/Rtq99no/Gvg89HZ/BHbsWxlS+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A1BF339;
-	Fri, 25 Oct 2024 02:39:20 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4FA13F528;
-	Fri, 25 Oct 2024 02:38:47 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:38:41 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu
- Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Chris Morgan <macroalpha82@gmail.com>,
- Philippe Simons <simons.philippe@gmail.com>, linux-sound@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] clk: sunxi-ng: h616: Add sigma-delta modulation
- settings for audio PLL
-Message-ID: <20241025103828.41f459b5@donnerap.manchester.arm.com>
-In-Reply-To: <20241023075917.186835-2-ryan@testtoast.com>
-References: <20241023075917.186835-1-ryan@testtoast.com>
-	<20241023075917.186835-2-ryan@testtoast.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1729849564; c=relaxed/simple;
+	bh=ZARvpj+4y2gmcRwYkJIUqXAw6D/BozzudJM0om84MZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8pM4TWDFc0kO5FcvJzCvzZp8Qtrtpi9nl6HCB89dsk6BaIDbwiaSFq+gR2Lov/fofNpkpD6O3UMTndr+2+MPN4dzrKTHigugoPSq5uoum2jnOeCBZBSsCNXnhYUldxKJiohr/5ZnnVVzyQCgzVBrBWynK+NyM7r7UQtL5zCvu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXvFZZ1s; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXvFZZ1s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729849561; x=1761385561;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZARvpj+4y2gmcRwYkJIUqXAw6D/BozzudJM0om84MZw=;
+  b=SXvFZZ1sroJ6Jrx3eNYhf96jwj2GSDiJiAZJSQNpY+fyIvH3A379nHx4
+   IXdNQs7AHT3KmVc2mD0MkBzF4W5Pnhqzk2oKcZT1MpiW9ebb6q5ATRvqe
+   FZXZoMEmUxU1dO9Twx4wGPcZOe3k7AekMwnsOJRfFc3qI/LeK+B+lyL8/
+   5K7tzCIxBjKobvJ3zah4LOCsN0Aqc3WQ55u7EmN/A4JxfH+ySzIAWdFfB
+   IKEeSnS1U9bjUus4ct2DbyRGIvmw+q1XzzHJZVSnZp9yMzzDV+vBloPLE
+   o+LaOOao4kJ8fNNyuVCWdVQvGT6eVBiXvChcco328e+w5VZ7mZhTyXqOZ
+   g==;
+X-CSE-ConnectionGUID: jLuc7QDBQcyCPTY7JWE7Eg==
+X-CSE-MsgGUID: 0SHniX3rTFGYvTyDbt9s8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="40129328"
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="40129328"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 02:46:00 -0700
+X-CSE-ConnectionGUID: 5UHDvqAZSEqUUNxuUDqGnQ==
+X-CSE-MsgGUID: kC3HEjRVT0SmaAYZ8zBJ+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="81188264"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Oct 2024 02:45:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4GtE-000Y0T-1q;
+	Fri, 25 Oct 2024 09:45:52 +0000
+Date: Fri, 25 Oct 2024 17:45:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 21/37] drm/vc4: txp: Add support for BCM2712 MOP
+Message-ID: <202410251725.ZQplKjRl-lkp@intel.com>
+References: <20241023-drm-vc4-2712-support-v1-21-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-21-1cc2d5594907@raspberrypi.com>
 
-On Wed, 23 Oct 2024 20:56:57 +1300
-Ryan Walklin <ryan@testtoast.com> wrote:
+Hi Dave,
 
-Hi Ryan,
+kernel test robot noticed the following build warnings:
 
-> Allwinner has previously released a H616 audio driver which also
-> provides sigma-delta modulation for the audio PLL clocks. This approach
-> is used in other Allwinner SoCs, including the H3 and A64.
-> 
-> The manual-provided clock values are:
-> PLL_AUDIO(hs) = 24 MHz*N/M1
-> PLL_AUDIO(4X) = 24 MHz*N/M0/M1/P
-> PLL_AUDIO(2X) = 24 MHz*N/M0/M1/P/2
-> PLL_AUDIO(1X) = 24 MHz*N/M0/M1/P/4
-> 
-> A fixed post-divider of 2 is used to account for a M0 divider of
-> 2, which cannot be modelled by the existing macros and ccu_nm struct.
-> 
-> Add SDM to the H616 clock control unit driver.
+[auto build test WARNING on 91e21479c81dd4e9e22a78d7446f92f6b96a7284]
 
-Thanks for the changes in the comments, that looks all good to me. I am
-still scratching my head on why Allwinner promotes odd dividers, when
-they somewhat warn about them in the manual, but I trust the wisdom of the
-BSP here, and it certainly works. If any issues arise, we can always fix
-that later.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Stevenson/drm-vc4-Limit-max_bpc-to-8-on-Pi0-3/20241024-005239
+base:   91e21479c81dd4e9e22a78d7446f92f6b96a7284
+patch link:    https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-21-1cc2d5594907%40raspberrypi.com
+patch subject: [PATCH 21/37] drm/vc4: txp: Add support for BCM2712 MOP
+config: arc-randconfig-r111-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251725.ZQplKjRl-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241025/202410251725.ZQplKjRl-lkp@intel.com/reproduce)
 
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251725.ZQplKjRl-lkp@intel.com/
 
-Confirmed that the registers and bits match the manual, and the SDM values
-also add up to reach those frequencies:
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/vc4/vc4_txp.c:513:27: sparse: sparse: symbol 'bcm2712_mop_data' was not declared. Should it be static?
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+vim +/bcm2712_mop_data +513 drivers/gpu/drm/vc4/vc4_txp.c
 
-Cheers,
-Andre
+   512	
+ > 513	const struct vc4_txp_data bcm2712_mop_data = {
+   514		.base = {
+   515			.name = "mop",
+   516			.debugfs_name = "mop_regs",
+   517			.hvs_available_channels = BIT(2),
+   518			.hvs_output = 2,
+   519		},
+   520		.encoder_type = VC4_ENCODER_TYPE_TXP0,
+   521		.high_addr_ptr_reg = TXP_DST_PTR_HIGH_MOP,
+   522		.has_byte_enable = true,
+   523		.size_minus_one = true,
+   524		.supports_40bit_addresses = true,
+   525	};
+   526	
 
-> 
-> ---
-> Changelog v1..v2:
-> - Add fixed_post_div to high-speed audio clock to correct M0 value to 1 (ie divide by 2) based on manual
-> - Correct PLL_AUDIO_(4/2/1)X clocks to manual-provided values
-> - Add/correct inline comments for the above.
-> - add CCU_FEATURE_FIXED_POSTDIV to pll_audio_hs_clk.common.features
-> 
-> Changelog v2..v3:
-> - Update comments and commit message to more accurately reflect SDM changes and rationale
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 46 +++++++++++++++++---------
->  1 file changed, 30 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> index 6c7623d4c59ea..05727fa1ee46e 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> @@ -215,20 +215,30 @@ static struct ccu_nkmp pll_de_clk = {
->  	},
->  };
->  
-> -/*
-> - * TODO: Determine SDM settings for the audio PLL. The manual suggests
-> - * PLL_FACTOR_N=16, PLL_POST_DIV_P=2, OUTPUT_DIV=2, pattern=0xe000c49b
-> - * for 24.576 MHz, and PLL_FACTOR_N=22, PLL_POST_DIV_P=3, OUTPUT_DIV=2,
-> - * pattern=0xe001288c for 22.5792 MHz.
-> - * This clashes with our fixed PLL_POST_DIV_P.
-> +/* 
-> + * Sigma-delta modulation settings table obtained from the vendor SDK driver.
-> + * There are additional M0 and M1 divider bits not modelled here, so forced to
-> + * fixed values in the probe routine. Sigma-delta modulation allows providing a
-> + * fractional-N divider in the PLL, to help reaching those specific
-> + * frequencies with less error.
->   */
-> +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-> +	{ .rate = 90316800, .pattern = 0xc001288d, .m = 3, .n = 22 },
-> +	{ .rate = 98304000, .pattern = 0xc001eb85, .m = 5, .n = 40 },
-> +};
-> +
->  #define SUN50I_H616_PLL_AUDIO_REG	0x078
->  static struct ccu_nm pll_audio_hs_clk = {
->  	.enable		= BIT(31),
->  	.lock		= BIT(28),
->  	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
-> -	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-> +	.m		= _SUNXI_CCU_DIV(16, 6),
-> +	.sdm		= _SUNXI_CCU_SDM(pll_audio_sdm_table,
-> +					 BIT(24), 0x178, BIT(31)),
-> +	.fixed_post_div = 2,
->  	.common		= {
-> +		.features	= CCU_FEATURE_FIXED_POSTDIV | 
-> +				  CCU_FEATURE_SIGMA_DELTA_MOD,
->  		.reg		= 0x078,
->  		.hw.init	= CLK_HW_INIT("pll-audio-hs", "osc24M",
->  					      &ccu_nm_ops,
-> @@ -701,18 +711,20 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
->  };
->  
->  /*
-> - * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
-> - * rates can be set exactly in conjunction with sigma-delta modulation.
-> + * The PLL_AUDIO_4X clock defaults to 24.5714 MHz according to the manual, with 
-> + * a final divider of 1. The 2X and 1X clocks use 2 and 4 respectively. The 1x 
-> + * clock is set to either 24576000 or 22579200 for 48Khz and 44.1Khz (and 
-> + * multiples).
->   */
->  static CLK_FIXED_FACTOR_HWS(pll_audio_1x_clk, "pll-audio-1x",
->  			    clk_parent_pll_audio,
-> -			    96, 1, CLK_SET_RATE_PARENT);
-> +			    4, 1, CLK_SET_RATE_PARENT);
->  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
->  			    clk_parent_pll_audio,
-> -			    48, 1, CLK_SET_RATE_PARENT);
-> +			    2, 1, CLK_SET_RATE_PARENT);
->  static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
->  			    clk_parent_pll_audio,
-> -			    24, 1, CLK_SET_RATE_PARENT);
-> +			    1, 1, CLK_SET_RATE_PARENT);
->  
->  static const struct clk_hw *pll_periph0_parents[] = {
->  	&pll_periph0_clk.common.hw
-> @@ -1162,12 +1174,14 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  	}
->  
->  	/*
-> -	 * Force the post-divider of pll-audio to 12 and the output divider
-> -	 * of it to 2, so 24576000 and 22579200 rates can be set exactly.
-> +	 * Set the output-divider for the pll-audio clocks (M0) to 2 and the
-> +	 * input divider (M1) to 1 as recommended by the manual when using 
-> +	 * SDM. 
->  	 */
->  	val = readl(reg + SUN50I_H616_PLL_AUDIO_REG);
-> -	val &= ~(GENMASK(21, 16) | BIT(0));
-> -	writel(val | (11 << 16) | BIT(0), reg + SUN50I_H616_PLL_AUDIO_REG);
-> +	val &= ~BIT(1);
-> +	val |= BIT(0);
-> +	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
->  
->  	/*
->  	 * First clock parent (osc32K) is unusable for CEC. But since there
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
