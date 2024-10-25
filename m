@@ -1,123 +1,82 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA7A22B65A
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA218B48F;
+	Fri, 25 Oct 2024 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729853796; cv=none; b=W8RGHwbJ7rWz8m3nHuM7G+rN4TCFzLNngIF3fEsTkul9uKYpJG10TJimLJFIWvD2dsGZxW7J/MO+jBSEQDdktbKoYxkFOx6AQdQ8DNfPY4E3mNYt1ACJu/DkcXzFjLmnwKlyPKNnquJUB0BY9Nk505ZvO1zvGqsZOpss+l5edis=
+	t=1729857629; cv=none; b=B/niz5O/NQih93t4AA6GVRaFmJ9mzMVpdJ1jEplu/HyilYgklvz+tyccjSEgIDl+8bkC4/sky0gGpOckwF4ZVIXoJpHDawMOAu4SLXkDjsq2vIJpffv29nO9myHSMh7RA+TAmn2ETEt2OXMbTZR+c2VvT5eYvNgbx8+ag5mKrrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729853796; c=relaxed/simple;
-	bh=5pRNV6rdcmQHE6v7/2eWZywn6ZacDgDKdX75ovzo2GQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hhtu2MMhiElrdDEYIfP85naWcYT5PKEnCu3NIKkwMxbLPnRoHSvkVv9dLkvKD57ILRXE8kYcn41f1+kWm8eW2wlTr1f1iOVFFMt7Mrcd90Ab6hISJ0I50IOMK5XiCCegYMTpoU1ebqP5YXSK4rybmPAWY26sreQOMO8w2n1VjEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B65E4339;
-	Fri, 25 Oct 2024 03:57:03 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.101.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 347AA3F73B;
-	Fri, 25 Oct 2024 03:56:32 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	Philippe Simons <simons.philippe@gmail.com>
-Subject: [RFC PATCH] clk: sunxi-ng: h616: Reparent CPU clock during frequency changes
-Date: Fri, 25 Oct 2024 11:56:20 +0100
-Message-Id: <20241025105620.1891596-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729857629; c=relaxed/simple;
+	bh=JQwR/chXzlq/cfm1F9FSdwlz8BaZGJQ7hxLBy6o2r70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkCdjYQ1HXkoTO+evj9Hj0UDIseJ3RCVbuk50UWYvB/o6UIwiByZ/iDlB1YAUcvwRNh5zHQYFQEtq5CDa/bJBRA85lCMJft57f73O2K6+st3tDpqhrSgmnmt4guYOuobobGwnfcRcVjEdBVIwdi/6Cvf1+URurxHbvt8TO/PvEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFMr3E5a; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFMr3E5a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B975C4CECD;
+	Fri, 25 Oct 2024 12:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729857629;
+	bh=JQwR/chXzlq/cfm1F9FSdwlz8BaZGJQ7hxLBy6o2r70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eFMr3E5atngJrrfXomJ8sggk5kYc52xPUiMWbJG8e9REsB8qS6m5oKahLDsOrS6ej
+	 XcP97XsIAB1fTjdXj9bfR97BlvQ9Pt1HobJFz1wC0+MfYfzIelt6KlgTKEt7Zbdv7w
+	 KN+NYfE3+8MBy1yt070yeslEuOv/Au6GoVwWRzVZHKJYrNsbAvRITn7o2alDGDknXT
+	 J/yQqpcO+Dr8HDZqc1RmYzTjuoF/VEO5SumcAyHBEIIVXRS3/RZF4eTONinhHQg3ih
+	 r3NWn/NChPENa3ZolwDaxUi7Gfgl48YKM+wPyFfEqoaPhyGbOGq8NXn/cofUnp/MC/
+	 TTXjAC25znh5A==
+Date: Fri, 25 Oct 2024 14:00:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	angelogioacchino.delregno@collabora.com, neil.armstrong@linaro.org, arnd@arndb.de, 
+	nfraprado@collabora.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v8 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
+ reset definitions
+Message-ID: <lyafg7jwbwoe3j7voecgd5tnhrb65utc3vkc5qqxoqug3qd47m@iudkp4w2mrso>
+References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
+ <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
 
-The H616 user manual recommends to re-parent the CPU clock during
-frequency changes of the PLL, and recommends PLL_PERI0(1X), which runs
-at 600 MHz. Also it asks to disable and then re-enable the PLL lock bit,
-after the factor changes have been applied.
+On Fri, Oct 25, 2024 at 09:25:17AM +0530, Manikanta Mylavarapu wrote:
+> From: Devi Priya <quic_devipriy@quicinc.com>
+> 
+> Add NSSCC clock and reset definitions for ipq9574.
+> 
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+> Changes in V8:
+> 	- Replace bias_pll_cc_clk, bias_pll_ubi_nc_clk with CMN_PLL
+> 	  NSS_1200MHZ_CLK and PPE_353MHZ_CLK
+> 	- Remove bias_pll_nss_noc_clk because it's not required.
+> 	- Drop R-b tag
 
-Add clock notifiers for the PLL and the CPU mux clock, using the existing
-notifier callbacks, and tell them to use mux 4 (the PLL_PERI0(1X) source),
-and bit 29 (the LOCK_ENABLE) bit. The existing code already follows the
-correct algorithms.
+That's not really a change waranting re-review.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
-Hi,
+I wished you did not create here dependency, skipped the header and just
+use some number for the clock. Having dependencies does not help anyone:
+neither you to get this merged, nor us to see that it was tested.
 
-the manual states that those changes would be needed to safely change
-the CPU_PLL frequency during DVFS operation. On my H618 boards it works
-fine without them, but Philippe reported problems on his H700 board.
-Posting this for reference at this point, to see if it helps people.
-I am not sure we should change this without it fixing any real issues.
+Please confirm that this patch was fully tested.
 
-The same algorithm would apply to the A100/A133 (and the upcoming A523)
-as well.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Cheers,
-Andre
-
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 28 ++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-index 84e406ddf9d12..85eea196f25e3 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-@@ -1095,11 +1095,24 @@ static const u32 usb2_clk_regs[] = {
- 	SUN50I_H616_USB3_CLK_REG,
- };
- 
-+static struct ccu_mux_nb sun50i_h616_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* manual doesn't really say */
-+	.bypass_index	= 4, /* PLL_PERI0@600MHz, as recommended by manual */
-+};
-+
-+static struct ccu_pll_nb sun50i_h616_pll_cpu_nb = {
-+	.common		= &pll_cpux_clk.common,
-+	.enable		= BIT(29),	/* LOCK_ENABLE */
-+	.lock		= BIT(28),
-+};
-+
- static int sun50i_h616_ccu_probe(struct platform_device *pdev)
- {
- 	void __iomem *reg;
- 	u32 val;
--	int i;
-+	int ret, i;
- 
- 	reg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(reg))
-@@ -1152,7 +1165,18 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
- 	val |= BIT(24);
- 	writel(val, reg + SUN50I_H616_HDMI_CEC_CLK_REG);
- 
--	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h616_ccu_desc);
-+	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h616_ccu_desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Reparent CPU during CPU PLL rate changes */
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun50i_h616_cpu_nb);
-+
-+	/* Re-lock the CPU PLL after any rate changes */
-+	ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
-+
-+	return 0;
- }
- 
- static const struct of_device_id sun50i_h616_ccu_ids[] = {
--- 
-2.25.1
+Best regards,
+Krzysztof
 
