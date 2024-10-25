@@ -1,70 +1,65 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF0F7083B
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 14:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250C21632F9;
+	Fri, 25 Oct 2024 14:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729867999; cv=none; b=eupsdKMuMaXM+Uets5f7SkyQb+4nkcKwntshi4d4KazruJSDKOSwhRfOL24AqbZTnQg2UwP0a9uiPVuk7yeMMR2O7z/h1PZy7Aqnq5kMQW1qTaFxTgCdOZwLZtwv1JMRDoLKyNiGPbDDJEUTRan/RStuZ43xAtFY0ZXM9gC/PVk=
+	t=1729868238; cv=none; b=bbQxZS5TG+nQwlOg8XZDHMgrQvBNE2HbhL+ismJDxM2ttmnM3ZZoVgQwOx4/jYI7JewtjS8GOKOpI8tTnjsyU5EMXxOXd/D8Ue7LEFV4DBev7Rh82A2wWNyWH1oGQi2o/qYzr34zPFv/FD19tn31tbenFWrlpOAkHDW7PeOtszQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729867999; c=relaxed/simple;
-	bh=RkxaRv1gHOBT5sh/vvRuNysi24qX6kjeWyH6s3MjGn0=;
+	s=arc-20240116; t=1729868238; c=relaxed/simple;
+	bh=slQFkpvsOAihEgvv9wUjUeRexTrOCI2advJJoQkRFNw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BytdgrurFqI96ACSjByQvl1h5FGy+I/Y9yWG3rOLocqpgTO/Qam131+/wHkxEJ7woR18US1ABJ0crLDfPcTj00sVQ5HkGD/+JA/kcpNFiFGD1Wg/1OPDRJLzH1ECkmglaAmToBwt/iute1e1m1Yxj8iGsJa280Cr2Yteqf44l18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oCWnncXf; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnHSsgHINiRkARYf2IdW8xoKcXyfdwXNQuZQDTxZmLJO2mbCriW0l5XQVLV7M77Ue1f9WKyI9ELf4+grHONneWwnpoflH4U0qgUW4gbqlSiybxblCAThEMwDOiW7qyMZCW+m1mv+FhTqWhHb9DLDDDlMUoD/FDU7I7rajKjjXPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f+e7jg41; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oCWnncXf"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53a0c160b94so2568048e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 07:53:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729867994; x=1730472794; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TlD/UX/UlEtCuduPsSkXnCNtF99PZp3JNh+pZLqHh0U=;
-        b=oCWnncXfiu5uT5bc5lDFE3Z0rcAr0v3+EpE2fytXfG5HI9U7VhV2aZ5C3em6GCtyOO
-         jGloDYv0pe8Dz0W7wFa3sfIVN2ZtFNbLHsFO8SPXBTxGtjiYtkPr4XJDR9mnbOCofF/9
-         5ooEsgraIevam5zHluy7Y6DjruMJRsd9nhaPynsVcbc9aqFRfrfulnUoYIdHQ9oAOkNW
-         4IFAvOAIUfSNZyoqD+M+ROWNgIoI7f9eFjiIKMFUAOTqprwYbjxRlchLrGcWvQyLUjOW
-         lmCSaX9+duYuY/MiqN5hrDjWEh6yhGCCktsGQD9H3hmJqFHt1DfqGTD7jN/F7LO15vOK
-         6RMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729867994; x=1730472794;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TlD/UX/UlEtCuduPsSkXnCNtF99PZp3JNh+pZLqHh0U=;
-        b=q8eZsRQCGpMF/CQgOsHTj4sy9MnYU8ikNreYicYS8LmLW/q4GHp/hFtNKojLhXZgIA
-         u9WzBvsJDCt1vR/XenAZRFWP84cNYbBVVhg3lfHB/ixDhEM8kMJbzpU3dJhXlEze441/
-         wHplljfZ7MMonhYOQrrtD5KJyQLr/qKTQQABAws/vHSvRnxB8RWHvZ+3TRyKsBpQtH+E
-         gOFR0AFtQkLEqkZOVtYu4CBdiTnJu/VWYlKHQRQAz9dwnsv45BLiia7DNYL1yrg9cEBB
-         PSN2xmiACZGdwxTk9p1QTdg1wwHOwwk/fMvIgjd4ca13sI6JkZ0CuLzk3lRBHX8dJdG/
-         8nww==
-X-Forwarded-Encrypted: i=1; AJvYcCXApS2l30HJgP/Mu3+L78cKe2DS03CShVfL0Jnp1IRcGe8elHaT21w/Y9hT7H0kk2qwr6TlzJOAtl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEDz+h0+yAQAQi+7IMdXFO6sJksymKmyakFpfH8TzFtQ/TtPBI
-	EaLYiq+nTZA2LkLWdQD1H+8/JNOvsHBkmkQ2sSHTWmA45Qsjslfu7y/3HFa3lrY=
-X-Google-Smtp-Source: AGHT+IGYL7YFASRGtXttT1u3S3dz3+QkWO94FgOJfA6qslUxvxu3N5rdwJmVrNF6PekjkBHAAKd4gw==
-X-Received: by 2002:a05:6512:31c1:b0:52b:de5b:1b30 with SMTP id 2adb3069b0e04-53b1a36196amr5948206e87.44.1729867994390;
-        Fri, 25 Oct 2024 07:53:14 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1dcbbdsm208100e87.236.2024.10.25.07.53.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:53:13 -0700 (PDT)
-Date: Fri, 25 Oct 2024 17:53:11 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/11] clk: qcom: rpmh: add support for SAR2130P
-Message-ID: <as72zsmycangcy7yyivavpwb2p5wptvbnvyfycrdoaz3kqrcle@luj3hgoqffri>
-References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
- <20241021-sar2130p-clocks-v2-7-383e5eb123a2@linaro.org>
- <73abe2b9-ad72-449f-b3e3-a96128cf75a4@quicinc.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f+e7jg41"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729868233; x=1761404233;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=slQFkpvsOAihEgvv9wUjUeRexTrOCI2advJJoQkRFNw=;
+  b=f+e7jg41V2cfZkh7VpXXXfpsq/5W1NA2NIj/6Ye5uvR1vr1YVUav1Yl4
+   8qdgbT8kJlNJXCwctNoNdzcR4QZO9EbdxFkSkC4abLzEi+4MTMZ88blRP
+   GKMmgzlMV53XzlnIPjWNgqXNQIVMyUxnbQK6Aso4EiBzE07Hn1QY2B4et
+   OknzEE2csqeKVjBohVUcgjj8PpGWaiSudbE1VF0wJFQLRUUieDM+puG1b
+   c/olI/qxHOyIgifv/S9SRM2kQF6ELRm6N/dq2Hv3SR6Zd3fObJ+XFMdO9
+   pPfK5I12xGgnLKNGFIV28UWB4ku/Ppr1kX6plukgWkFGxuZbb3XyaRtmo
+   w==;
+X-CSE-ConnectionGUID: OdIkrPOVTqGtWXyiXsbKUw==
+X-CSE-MsgGUID: sro77rrnT2i+BfeySQgTqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="47023391"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="47023391"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:57:12 -0700
+X-CSE-ConnectionGUID: kFs+VMZSS8yTo5wXD3UPKA==
+X-CSE-MsgGUID: CqzqTi+lQnmMt48hJypgFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="81239477"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Oct 2024 07:57:09 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4LkQ-000YNi-1v;
+	Fri, 25 Oct 2024 14:57:06 +0000
+Date: Fri, 25 Oct 2024 22:56:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+Message-ID: <202410252216.a0X0bOLS-lkp@intel.com>
+References: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,58 +68,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <73abe2b9-ad72-449f-b3e3-a96128cf75a4@quicinc.com>
+In-Reply-To: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 
-On Tue, Oct 22, 2024 at 12:03:57PM +0530, Taniya Das wrote:
-> 
-> 
-> On 10/21/2024 4:00 PM, Dmitry Baryshkov wrote:
-> > Define clocks as supported by the RPMh on the SAR2130P platform. It
-> > seems that on this platform RPMh models only CXO clock.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/clk/qcom/clk-rpmh.c | 11 +++++++++++
-> >   1 file changed, 11 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> > index 4acde937114af3d7fdc15f3d125a72d42d0fde21..8cb15430d0171a8ed6b05e51d1901af63a4564c4 100644
-> > --- a/drivers/clk/qcom/clk-rpmh.c
-> > +++ b/drivers/clk/qcom/clk-rpmh.c
-> > @@ -389,6 +389,16 @@ DEFINE_CLK_RPMH_BCM(ipa, "IP0");
-> >   DEFINE_CLK_RPMH_BCM(pka, "PKA0");
-> >   DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
-> > +static struct clk_hw *sar2130p_rpmh_clocks[] = {
-> > +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div1.hw,
-> > +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div1_ao.hw,
-> > +};
-> > +
-> 
-> Dimtry, could you please add these clocks as well?
-> 
-> DEFINE_CLK_RPMH_VRM-- > rf_clk1, rf_clk1_ao, "clka1", 1
-> DEFINE_CLK_RPMH_VRM --> ln_bb_clk7, ln_bb_clk7_ao, "clka7", 2
-> DEFINE_CLK_RPMH_VRM --> ln_bb_clk8, ln_bb_clk8_ao, "clka8", 4
-> DEFINE_CLK_RPMH_VRM --> ln_bb_clk9, ln_bb_clk9_ao, "clka9", 2
+Hi Ryan,
 
-After checking the CMD-DB, I can see "rfclka1", which I can add, but I
-don't see clka7/clka8/clka9. Are you sure they are present on the
-platform?
+kernel test robot noticed the following build errors:
 
-I'll add rfclka1 only for now and skip the rest.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc4 next-20241025]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> > +static const struct clk_rpmh_desc clk_rpmh_sar2130p = {
-> > +	.clks = sar2130p_rpmh_clocks,
-> > +	.num_clks = ARRAY_SIZE(sar2130p_rpmh_clocks),
-> > +};
-> > +
-> 
-> 
-> -- 
-> Thanks & Regards,
-> Taniya Das.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241023-170434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241023090153.1395220-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410252216.a0X0bOLS-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410252216.a0X0bOLS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410252216.a0X0bOLS-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: aspeed_reset_controller_register
+   >>> referenced by clk-ast2700.c
+   >>>               drivers/clk/clk-ast2700.o:(ast2700_soc_clk_probe) in archive vmlinux.a
+   >>> referenced by clk-ast2700.c
+   >>>               drivers/clk/clk-ast2700.o:(ast2700_soc_clk_probe) in archive vmlinux.a
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
