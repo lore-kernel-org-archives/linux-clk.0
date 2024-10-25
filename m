@@ -1,67 +1,67 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9731B219F
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 06:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D09818BC1C
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 06:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729837248; cv=none; b=Dnc4ERDCDzGYcVavs2OGCH/ZkGRrq265ulHwsLz+pQaLH8jnGhd6BfQ1SErC+O2XsMys/6RvggIEBQF0NmTplfqG1v1MC7CSOD4j91AHBbUYCrz50vDDQ8Jvo9WwlbgmXHCQvKEnUvdqSNCciObHoqFotTV2laWJHEj5LMkd+MA=
+	t=1729837453; cv=none; b=lRqCAxc5eKFtpE3YxCtAELM0PYZOsAEwv84a0w0Wrg0qhrP8ItgLScxtcHXAyVlHOmJxvaH+0+at/wqBK0cn9+XPzMccRTUmqR3gVAq8Rsn2XGMCVCqKm+4sAUiFP+LU+6I213DkFP3VlLbk9GCsuxvwPVGfaUlDAKehe2FqQrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729837248; c=relaxed/simple;
-	bh=HZlBWj0FWjc4K+GXSSqYDUZAfTlababGxYa7GsHTQEg=;
+	s=arc-20240116; t=1729837453; c=relaxed/simple;
+	bh=Dtmo5K08HFoyzCzvaJqKJiI2IxYH1seEW36tML8Cc4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UjOwh95RdHCJ9w82NrnL1HORhjp8DgMR7P/Rgck68SHc1bIApDRyG9Q5PobJ2VxQ5Y6vDDC+1LFTjNeO9rEc9/26pLQr/cPRECeTGZHsdu52m/ui0Ly0yDUrmnOJ4J5ihuVBGT9hEuc+bWobVeSDBvbOJc/jl1/i27EJQUNMe9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RErVLxD6; arc=none smtp.client-ip=209.85.208.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXhlhjMBCvAx6fjbV0NfGwIRrJ76qSCc1DHHe18aL5TND1YTgKJq8mBwnOH+MnWFlL4lMPq+LlobXf0HCAzx1SjM8DKEeYd8JIwy//AAryKIVYSzYeHpJo7HZSkIo7x7q0KZL5E7mezEUGUiZ5RPuX5S+NhEsiZ9K+SFABfX2wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FDCQzeaj; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RErVLxD6"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb5743074bso13469811fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 24 Oct 2024 23:20:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FDCQzeaj"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e4b7409fso1792834e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 24 Oct 2024 23:24:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729837243; x=1730442043; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729837449; x=1730442249; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fa4hzQ+Rm2Sfi2hblWN0d77o7Rww3knGJAgco2JSSQc=;
-        b=RErVLxD61Dagmrr/LPdS4rlhxPRBELMeJs/C0kSR67BL9DIi7aNdgq1tp4yNFRLj9r
-         ameUVTSSZF8sGngV8wMbR1QDySiWvu1GB8FhQQMiwlZjvdg0XW7D/aeN8Oi8EU1bI5pe
-         zkv4F1Thw6/vciGsx0zOz6P12MQ9KvqsOtWFnsG0wWDgzASbc/fwLXQpRt75Oi6XMjA8
-         yKpoLn7a1xqX/OgSa5ZmQeNh9rRs3/AyKXGm78W1gRBAEpM9fWI9mxKoSD66viiq8pTs
-         SL/m/Dzit6tSYrguCEeZihCMwii4CzCYf+G9o3tq4T5jPDk1rFFsQCkVNPe1xHQX7vpA
-         qapw==
+        bh=mmOluMnBeTWFpiyoaltYb/0n6IB+lT/bvEqrIoKWjjI=;
+        b=FDCQzeajJvascincXMeENQdH7HeEg7McLDBc+xk6MMrWwJwnguZT035tiKxKNPryoz
+         RjT/6YECaSJ4FEoaJkvVDECZLu19KIbQNrSRxY6Yjr041+blabwNxVRyQhG/QSy5Fg2X
+         s4Y92krrYn9lH7OfpXYmk9D0AFTF5QeoewOEvO9YnlB/WeLHdH9LP5j3FGrMg5TkFs4Y
+         m5CA3tKDERBCFsYKqNhstR6IJe7PkdOCoVd80aa6ADYyL9YqC6R4O+xCVNLU6oLIy8hb
+         J1SD9Ah9eeFGT1KeRgr9G8HBjQH+0fS4qVa0tFHcha05IpUchH5wvKVsMGkWBA4n7SVY
+         gwzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729837243; x=1730442043;
+        d=1e100.net; s=20230601; t=1729837449; x=1730442249;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fa4hzQ+Rm2Sfi2hblWN0d77o7Rww3knGJAgco2JSSQc=;
-        b=E9aKarIq94UINqp95RCoKevEKdbcENFWp35IMdWanIR1sRKFrHprqhAX0mSDMS4dtk
-         hBCt75Q6Cu0RS14uSizfvRGG4jeNN/d5flawUp74dJwTwGpmkVFJD4JjbQevl3Wbe3vV
-         FDByTL2YSfSyn8YqvGE2TNjE/KwzYVCggYh0F25crg3IIVzO9Kp2TN5/nRGdHnRKfgDi
-         7NTO7ytqKLnVvKT0VtFbd4DUKFy68UBmboz8ADf7SvC9PhqlcGqOeOx2hoFE/NfV5DJp
-         VyhtuCAEqEv8XQBcAskr00rTVbrFoNlta5tDzH+O4nXL3YwEb4Hzo30pE+fERXZsml74
-         PRUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxOqXoP7Qgq9B/DV5J8QtDMdVibbL0uCbDfV5kxRwAQTI40UlKroA7/YIGQ8uk6kqO0ZhFqnNmr2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt3bxRTzCRChz9QVlZIsDfTe83Uq6uBmbSDz8qa/cyT/L3AmTv
-	r2q/AnSkPigeunpDBmZ8KcQotIQasDK97N/PRK9ItlBsgKHlLy7OoCKha6TQ9Hc=
-X-Google-Smtp-Source: AGHT+IFNRNNvwVBh0hKoiNOnVytmC+6XoCQ1BxvBzNlf2gAayZD+u4XyCH7hmjht01xOxLd+tVcIvw==
-X-Received: by 2002:a2e:6101:0:b0:2fb:382e:4105 with SMTP id 38308e7fff4ca-2fca833e4a3mr12799821fa.11.1729837242835;
-        Thu, 24 Oct 2024 23:20:42 -0700 (PDT)
+        bh=mmOluMnBeTWFpiyoaltYb/0n6IB+lT/bvEqrIoKWjjI=;
+        b=Wv6pUAAR3Z7tb3GZ+uFa9roDQSPW99jke0x1kIG6GruJA/pWHh9BfgbY8u/ccUWjsy
+         JeZ04sm+owz+O6oXwTmEzn3TBjQFjFRdiBfdFEBcOw128xnsnD/d7SPp4YTNyVV1T2mZ
+         19nrO4oa4Tfz2Kdsn/oeRTQUdSO162hyKGbZV8hi9Cv32o88gjsaV/Tlvs0Lc8YEG00s
+         BVXrYr5m+mJvmfmSBeVtfAxK/dC9ahkn3pfMERBwnB8oraxEHxDtbvJsxD88UbD1hOwp
+         Gl13TVwJcPSufcr7Kh4JMLR5iaMdHL0F++oqYVKhcma9NX3febsAUMbEFx2yqz1vvX9W
+         TYUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrcSNzapRRtH3XHTAChy77fZj2UCpktn8bj3MPoxf/+kuLu0XZ6dChmHKWgr36rqf/X+pFantn77Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHtfui4Os6Db5Q05c00d0hLgBf4HlHe21Vjbf/QedgTFr3ML4/
+	JW39MqCEJS4LT2f/nVR0ikinrWnDh256JOq+JOIM8HHfV0tv5m2MZM1eYTdtyN0=
+X-Google-Smtp-Source: AGHT+IElCN9Fu+YyZ052tJMBnTOU1DDpjvH/+g33kxgxMsa+Vi3RsCc+XeJ62OlpLC+YdFrC9YW6PA==
+X-Received: by 2002:a05:6512:b10:b0:53a:1b6:4624 with SMTP id 2adb3069b0e04-53b236a6986mr1605752e87.5.1729837449397;
+        Thu, 24 Oct 2024 23:24:09 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb451a2adsm686561fa.49.2024.10.24.23.20.39
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1f42e9sm67236e87.301.2024.10.24.23.24.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:20:40 -0700 (PDT)
-Date: Fri, 25 Oct 2024 09:20:37 +0300
+        Thu, 24 Oct 2024 23:24:07 -0700 (PDT)
+Date: Fri, 25 Oct 2024 09:24:05 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Gabor Juhos <j4g8y7@gmail.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] clk: qcom: dispcc-sm6115: remove alpha values from
- disp_cc_pll0_config
-Message-ID: <ifbybdn7nhsw2skgshjtskijrnyfn3r3fsg4znmf2olc2esbmn@gkurcqjlddj7>
+Subject: Re: [PATCH 1/5] clk: qcom: apss-ipq-pll: drop 'alpha_en_mask' from
+ IPQ5018 PLL config
+Message-ID: <yplfg55afv4vucpcxbkqsxmn44mzwr3tepbuvgtswhupx7fzfi@mwofp7v3uarm>
 References: <20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com>
- <20241021-alpha-mode-cleanup-v1-5-55df8ed73645@gmail.com>
+ <20241021-alpha-mode-cleanup-v1-1-55df8ed73645@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,39 +70,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021-alpha-mode-cleanup-v1-5-55df8ed73645@gmail.com>
+In-Reply-To: <20241021-alpha-mode-cleanup-v1-1-55df8ed73645@gmail.com>
 
-On Mon, Oct 21, 2024 at 10:22:01PM +0200, Gabor Juhos wrote:
-> Since both the 'alpha' and 'alpha_hi' members of the configuration is
-> initialized (the latter is implicitly) with zero values, the output
-> rate of the PLL will be the same whether alpha mode is enabled or not.
+On Mon, Oct 21, 2024 at 10:21:57PM +0200, Gabor Juhos wrote:
+> Since neither 'alpha' nor 'alpha_hi' is defined in the configuration,
+> those will be initialized with zero values  implicitly. By using zero
+> alpha values, the output rate of the PLL will be the same whether
+> alpha mode is enabled or not.
 > 
-> Remove the initialization of the alpha* members to make it clear that
-> the alpha mode is not required to get the desired output rate.
+> Remove the superfluous initialization of the 'alpha_en_mask' member
+> to make it clear that enabling alpha mode is not required to get the
+> desired output rate.
 > 
-> No functional changes intended, compile tested only.
+> No functional changes, the initial rate of the PLL is the same both
+> before and after the patch.
+
+After going through DISPCC changes, I think the whole series is
+incorrect: these PLL can change the rate (e.g. to facilitate CPU
+frequency changes). Normally PLL ops do not check the alpha_en bit when
+changing the rate, so the driver might try to set the PLL to the rate
+which requires alpha value, while the alpha_en bit isn't set.
+
+> 
+> Tested on TP-Link Archer AX55 v1 (IPQ5018).
 > 
 > Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 > ---
->  drivers/clk/qcom/dispcc-sm6115.c | 2 --
->  1 file changed, 2 deletions(-)
+>  drivers/clk/qcom/apss-ipq-pll.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
-> index 939887f82ecc3da21a5f26168c3161aa8cfeb3cb..2b236d52b29fe72b8979da85c8bd4bfd1db54c0b 100644
-> --- a/drivers/clk/qcom/dispcc-sm6115.c
-> +++ b/drivers/clk/qcom/dispcc-sm6115.c
-> @@ -48,8 +48,6 @@ static const struct pll_vco spark_vco[] = {
->  /* 768MHz configuration */
->  static const struct alpha_pll_config disp_cc_pll0_config = {
->  	.l = 0x28,
-> -	.alpha = 0x0,
-> -	.alpha_en_mask = BIT(24),
-
-NAK, this isn't a fixed rate PLL.
-
->  	.vco_val = 0x2 << 20,
->  	.vco_mask = GENMASK(21, 20),
+> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+> index e8632db2c542806e9527a22b54fe169e3e398a7a..dec2a5019cc77bf60142a86453883e336afc860f 100644
+> --- a/drivers/clk/qcom/apss-ipq-pll.c
+> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+> @@ -73,7 +73,6 @@ static const struct alpha_pll_config ipq5018_pll_config = {
 >  	.main_output_mask = BIT(0),
+>  	.aux_output_mask = BIT(1),
+>  	.early_output_mask = BIT(3),
+> -	.alpha_en_mask = BIT(24),
+>  	.status_val = 0x3,
+>  	.status_mask = GENMASK(10, 8),
+>  	.lock_det = BIT(2),
 > 
 > -- 
 > 2.47.0
