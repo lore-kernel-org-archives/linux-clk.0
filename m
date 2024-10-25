@@ -1,72 +1,67 @@
 Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CF413C9B3
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 05:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EC41B0F22
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 06:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729835484; cv=none; b=a6lDzoe3XtRMWpCNI9xwXaxWOxVs6y8iOXDeehEXbNW4PCPbo5+g4vH6LR2M39iJjofdGkB7rxXuGDOkqXHdSd/ccgCor3AIEcHOMxvb7ShoGHc8UwVICpX3WuYjC0aR4V5siFXgqvjtTk6g7IyGvbItWzkxrp03lhPe5POtMrs=
+	t=1729837128; cv=none; b=PFxjFHU1ndftap4Qyb7xu5SoNrJ2KpPxIkSb2uLlv7V/yJMXKNo5KbHZe5PDFpX5Bfy/4baIkaDqNmK64iCqRH1k2GGXzRg3WUuFvrCRM3RJSRJLS8/9fB2fmhscKktLQJDYFssvYmwzZG9l6gQ/6zTiC5w5hgcRvsf2xnN+Ikk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729835484; c=relaxed/simple;
-	bh=mzeWPkYZvbrYZZyygIkwlVdONmZi77eqy+7dxIb1gvw=;
+	s=arc-20240116; t=1729837128; c=relaxed/simple;
+	bh=c2KPK3CxC4TfOLHxj+gQZEwoZT96vKaAp869u+dLzeU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LA9iSrD4hUU3QGM119ARWJ910VtYuYNevHGsbdCuw1NZJfUGovZ/tlnZJiK51ag1UtazdOEq13xmdzkzQq6YCW6qRbIC1bgNC29wYhbDukzv8GptfgNsJ0ZrwT+yJl2+rRbg62yAR4yhUxoyYU1uywTEjjQ+SZDOL9f3vaPRjFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PuRYNcxb; arc=none smtp.client-ip=209.85.167.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=arK6tjLhFQBDzuWya4zvVYLgxSPC1rYA+qBWFSDrG+dGp8MdYS+cybtfx39KK/t8OIqLBRDU+SZFyQbVQhDb62UZSzzhHob5CWrA1atcZwPWQ3geocoGvyK/EjV6yNtCQx4Ce68WKW6fw++Ymwi8+J4yazD5pXgBUYJpTcj8bD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N5cEVsCv; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PuRYNcxb"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f1292a9bso2101032e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 24 Oct 2024 22:51:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N5cEVsCv"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso1703800e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 24 Oct 2024 23:18:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729835480; x=1730440280; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729837124; x=1730441924; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LENYqwcqgnLHnXVBhDyfSMRgdbqUwUn0CP6hPe43hIE=;
-        b=PuRYNcxbH4bEoEve9PwIpB0ChjXofqchmlL2i+VAA56VKwddh1Hk2S6xa3fTmkdKYK
-         ekVJDiETHVGF2QXH6wdfbRYjHRJUJapzI3318jbLOjgYYK45epEIwuzBiqJK1DeInJYp
-         E16ax5WsFDR5Y6ExDfU/4PL6xN8qG163x7kllZ5UcZb5OhBh2cP7neVBwyMLUqzQyKP8
-         ZZYGY/VjesSO774l3FPUxatBF4BOHKqsTJx6HTa8D/9cZZkOULVxSNOoMiFn+am/SU7b
-         QgPFNihDN18KintgPgZx8hL5wzV8KUmpU+95JgCC1R889yYRtMgUtsK7gNFdjQw/9NQr
-         DEHA==
+        bh=IhU/eN0lFYsjR1UQXQri+IBAPcpdVh86Anbk1TYigfo=;
+        b=N5cEVsCvQfFrzpzB6C3yZDsUsig1JX83EVKmRWwpwQ4av1+q/EE7+r65SQ1rKFe3eO
+         blQ2CA3A+x1lIuev2JmYO9s3XlwUyiz/YIr0mkh8d8Vbjz/QwbNBrNOEvoy9+CwiQseL
+         ukn59As+8n8lhZP59fhKdbheRShm6Xsghh5NXwrsoOIoE6gwzawmt1Aa3zXOzZkbjKBG
+         mUg5vKUKXG1ZeKrWek4yTBtmVTGQFtFT8ZwO461WQgc5er4fNviyWjtUDyQunMwHiSsw
+         y4R/EkpOopLHHQz9UZGyQxBxCuLXuJXgFoNP5yiXQkPw7twNYUDo1ot5tzgFiYh2Yx8B
+         srCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729835480; x=1730440280;
+        d=1e100.net; s=20230601; t=1729837124; x=1730441924;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LENYqwcqgnLHnXVBhDyfSMRgdbqUwUn0CP6hPe43hIE=;
-        b=tQNBUhtYG8Z06NTQ64rlHp2991BLrl1eA9rQr4y4p42boBXObQ5aMDwkxyqwVjZPlh
-         MgL6ZM4/2WWJNdHv84yZ6ND7zK5GtaahPfMnjl1euh3AYxTqRqJhMtLoHelhmU5d2ILR
-         okwSPidupHpufvHMY5suKt94Hf+KJqH/ilBhhhG7CkWOFjldk9j2IHqnL/j+15x99XR0
-         SsOudtG6A1hEDbqEXhm2soGQisrc8MnjOLYQB6N9Xlgp3jGTIiBLz8VjYkd3nUERRcgk
-         FTiEHLiWGV8PX+/ajd8iTbzUc7muQI8mUtVlkSluuc6hMFO/7++cynZDCFxQgA1qDyu+
-         ktZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgW0DvgZw+KpJ7r1oXd8s0TewxUlzw4ENdH5Inhc4azigNcDR3PTv1jbXAS1lEZIfVatluCIWX+mg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwOcmhR3famkFdIKiIQ+gVT3/KFhe5pGPI9fdAaJOrcpdvAnMU
-	ILicHIeUsLM3su+rrk0zwKM74If3LVrQRhFWqGW4+NNrSC/Qw5t8DpvOl/AO+YA=
-X-Google-Smtp-Source: AGHT+IFFazcNX159kK7SKOq3ShS1WRwWJWRp6OZkagarAkcqWS51wR1mfV0IdI+S6h5u6ZnObCUCUQ==
-X-Received: by 2002:a05:6512:6ca:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-53b23e1913amr2312323e87.29.1729835479883;
-        Thu, 24 Oct 2024 22:51:19 -0700 (PDT)
+        bh=IhU/eN0lFYsjR1UQXQri+IBAPcpdVh86Anbk1TYigfo=;
+        b=dA8FTz1nzrZYuM27sFfhgKuFZNWtW2XHjHJjmGCYBuXF1g/yxfzke3T6tTk+VpbcBs
+         0L3Wc55e0yG6Lvkt3HwDDU4ia2TcbgMeLn1XJBWmDYNDy7MiSf2S8XqweoWPTYkWKhzE
+         kjWs0PHtipqD0DFGZ0mrYDg379zkHUrPl/PobTcwBoxwddxIzF6y802Y/RSiGXpS9jLV
+         z9EIuY1a8fprqmY/qelVn4e9m5zWyHrSUoBat8jr0e2GJWFD08w5K2YhaIDI9HLFsrnW
+         b96WtoGNGSRs4nr3zZ4+K4/ITcN0w6yFN8ejfAtFa9rY4kVyE8Ew0ERXuU8MDQg27tRB
+         iLPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVu+oVWBCCaKLliy0/aoZiaSx49gPUxuiKkUtAHg7haiu3pkMMb0fOfJDiDD9MXqqzynCL5OJYAkzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzldQLukrBWDbBUWf0fgA6TA/oeEN5tn7I/P4r4txFgGuU7gbdQ
+	/SUiXCazRjF5SLIWPyHBslKatqjPl9YEQTp2Fh3mu7db/7uJ+85CxhwzNHql57c=
+X-Google-Smtp-Source: AGHT+IFxbZs0GM1bNkFMVSLEhah7LVmy7Y0F+Jb6terXMd8dieTVMbKbPMXMtSTtQeHE3dS5jZDU1Q==
+X-Received: by 2002:a05:6512:131e:b0:539:e214:20e5 with SMTP id 2adb3069b0e04-53b1a394af9mr4812974e87.59.1729837123651;
+        Thu, 24 Oct 2024 23:18:43 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c7aa8sm60541e87.187.2024.10.24.22.51.18
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1af331sm68514e87.152.2024.10.24.23.18.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 22:51:19 -0700 (PDT)
-Date: Fri, 25 Oct 2024 08:51:16 +0300
+        Thu, 24 Oct 2024 23:18:42 -0700 (PDT)
+Date: Fri, 25 Oct 2024 09:18:40 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, geert+renesas@glider.be, angelogioacchino.delregno@collabora.com, 
-	neil.armstrong@linaro.org, arnd@arndb.de, nfraprado@collabora.com, quic_anusha@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
-	quic_srichara@quicinc.com, quic_varada@quicinc.com
-Subject: Re: [PATCH v8 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-Message-ID: <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
-References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
- <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: qcom: gcc-ipq6018: remove alpha values from NSS
+ Crypto PLL's config
+Message-ID: <f4ip6jde5ffs6nvpllqhjleeb4s3j6hok5decxrof3inexh7ut@esgcsblz7wcj>
+References: <20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com>
+ <20241021-alpha-mode-cleanup-v1-3-55df8ed73645@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,36 +70,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
+In-Reply-To: <20241021-alpha-mode-cleanup-v1-3-55df8ed73645@gmail.com>
 
-On Fri, Oct 25, 2024 at 09:25:18AM +0530, Manikanta Mylavarapu wrote:
-> From: Devi Priya <quic_devipriy@quicinc.com>
+On Mon, Oct 21, 2024 at 10:21:59PM +0200, Gabor Juhos wrote:
+> Since both the 'alpha' and 'alpha_hi' members of the configuration is
+> initialized with zero values, the output rate of the PLL will be the
+> same whether alpha mode is enabled or not.
 > 
-> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
-> devices.
+> Remove the initialization of the alpha* members to make it clear that
+> alpha mode is not required to get the desired output rate.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410101431.tjpSRNTY-lkp@intel.com/
-
-These tags are incorrect. Please read the text of the email that you've
-got.
-
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> While at it, also add a comment to indicate the frequency the PLL runs
+> at with the current configuration.
+> 
+> No functional changes, the PLL runs at 1.2 GHz both before and after
+> the change.
+> 
+> Tested on Xiaomi Mi Router AX1800 (IPQ6018, out-of-tree board).
+> 
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 > ---
-> Changes in V8:
-> 	- Remove DT_BIAS_PLL_NSS_NOC_CLK and P_BIAS_PLL_NSS_NOC_CLK
-> 	  because these are not required
-
-What was changed to overcome the LKP error?
-
+>  drivers/clk/qcom/gcc-ipq6018.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
->  drivers/clk/qcom/Kconfig         |    7 +
->  drivers/clk/qcom/Makefile        |    1 +
->  drivers/clk/qcom/nsscc-ipq9574.c | 3080 ++++++++++++++++++++++++++++++
->  3 files changed, 3088 insertions(+)
->  create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+> index ab0f7fc665a9790dd8edba0cf4b86c5c672a337d..d861191b0c85ccc105ac0e62d7a68210c621fc13 100644
+> --- a/drivers/clk/qcom/gcc-ipq6018.c
+> +++ b/drivers/clk/qcom/gcc-ipq6018.c
+> @@ -4194,10 +4194,9 @@ static const struct alpha_pll_config ubi32_pll_config = {
+>  	.test_ctl_hi_val = 0x4000,
+>  };
+>  
+> +/* 1200 MHz configuration */
+>  static const struct alpha_pll_config nss_crypto_pll_config = {
+>  	.l = 0x32,
+> -	.alpha = 0x0,
+> -	.alpha_hi = 0x0,
+
+I'd say this serves documentation purposes: zero alpha value
+
+>  	.config_ctl_val = 0x4001055b,
+>  	.main_output_mask = BIT(0),
+>  	.pre_div_val = 0x0,
+> @@ -4206,7 +4205,6 @@ static const struct alpha_pll_config nss_crypto_pll_config = {
+>  	.post_div_mask = GENMASK(11, 8),
+>  	.vco_mask = GENMASK(21, 20),
+>  	.vco_val = 0x0,
+> -	.alpha_en_mask = BIT(24),
+
+This is okay
+
+>  };
+>  
+>  static struct clk_hw *gcc_ipq6018_hws[] = {
 > 
+> -- 
+> 2.47.0
+> 
+
 -- 
 With best wishes
 Dmitry
