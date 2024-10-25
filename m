@@ -1,60 +1,60 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5FA20F3D6
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 17:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906F720F3EB
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 17:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876565; cv=none; b=liqKiQouteopJe/Zc+rZjPBpxHmQ+w2hvhDXnu0H/7hfb0xVprKDDWbtEVyVQf96VtU9/cqWIaQ6yEnaNVVzA9wm09AaPfTn0sE48APR6k8xtdUHXRnAHrXVEelHJ1U7IN2d6mTaTt+ay+YfEECVEkc67hmkk4F763Phz/wrAUA=
+	t=1729876567; cv=none; b=evi0SBRYvfPf16JeRex12NaprhVDPunw4vWHE91vb/1O8ti+5D5A99l0KqfbXwuJ2acKVYDFZYQ6eZsfHuvahNvQtxLMn1v6YWGn5/EClFM7bbepmc09qLhoUWi23cP+S6JTpUSTaaBONwjGfu+xSMOzesK1kTLFpPjfPrxu1UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876565; c=relaxed/simple;
-	bh=MgkkUcMYNnVDxl5Ht92rDmj1JTcqFQYUlxNOYOSYbIQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YyeQZUXgvjOEKhpzSRMX1+TpgatwSidT+T7nkSvZzx44eDAdh183lFIVSufI96DxGGoiISOH2P6s7zjdLp3t7gXnV4tOkKJ3KOuHOgAbH20tjEFC4R22hrxij/qcy3UF477NUwQhr5y5XRO+sd/ycEaFYpsmcVfitSJkMkFJnss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=W8hyX7q0; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1729876567; c=relaxed/simple;
+	bh=MuA1+gA2LA+0RarF591IDfJ3YMiX2FefV1latoO+A60=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ox5YBB/72N2gRN7UD1e8SVKmh/zMHyJZJ+Iw7+m0tIkJ+qiiTQuYwnFD4UL0THF2602u4UKcyvyxQVlf9LTMUYd8UkeR3FSVv01tFOBil2Mg4ZA6og9sJt+WkbeYXUmN5BfE2Q23R2o6zEkEZQGZlva0VYnB/GgUPcyZHop0QmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=C7l/kThH; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="W8hyX7q0"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so22812945e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:16:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="C7l/kThH"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4314f38d274so29261435e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729876561; x=1730481361; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D8BkQHxl/jl98jZceXhfQCyyW7/L0TBeWdJpzjggPMw=;
-        b=W8hyX7q0+Wx9tp8hYLL7dtfDN2miUkap7mH4vzTbdblaG5+rO6oIzyA4zOZ9iRmlqA
-         RkB8ueRzGgqG20FdVeQkF1YjKSfaDbbcaxxaA9zgcZ0X0F4EI0AWoCf9ihapEMs9L3uX
-         bXINBmUNjuq4u3UFOlSuTfQwQiGMAnt0iA81m1wTj1kxuEnINMBoryE3ZVrTW2+oJvgN
-         l1csIDpePNKtE9LXg/w+ZBA1zvei/vJnC5WjcHFwB89XGYRDIlIRptaGGLZ02Q50g5IT
-         p72+Da4JoaAVmsz3ircPYxlhrb+j2bw/t6r4ZOpizEJBd1VD63W+zmGS52rX/fvKxu0V
-         yoxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729876561; x=1730481361;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=raspberrypi.com; s=google; t=1729876563; x=1730481363; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=D8BkQHxl/jl98jZceXhfQCyyW7/L0TBeWdJpzjggPMw=;
-        b=FRG4wzmEpl7sg2gJPYL9PstjL5P2Q9jPAG2sj73UA6Q7jrlUbrjV4qYH4FORdKVzmt
-         zgROsf3Q/80MgRg+Wp58ino74/wYq8YEgmNlYXFcXSCtZAkDMIQZAW9DlTU2ihWtEwCy
-         pPSBN8yWCWAj0svIT/H+T7cEsBxys50yu08T9nEBtQ8yEwsmc5H/c9WdeLK2xmxflCS3
-         q7BKaiDtKKfEhL1b4bwDk7nN4i1KKUDDeq44SwtsFLhZCEgbP9ZHm49RPHwaMPMRoo+g
-         /8KE9/Aq7MlM/BK5dLcHayIfZ6tuXnvPAREXqRShnyW39tnQvuckGrlMfb0a4rEk3wXU
-         Jfdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKRq9Sd+f1/E8cI+glAxJJC/O+Ing0fE7Y73fMRpX6FemS91YqwPKnvni+MLOaNu04Nh/Qk4rnM4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/7GoieFM9odJwpEw6MFawn/b05oStOECUEdMdXsrNq1gLUs3L
-	rNpVPV0H87TfMNVcyVzvVhkC9WKGwTJ2DCY1Sw1uf4CoxCAmpnwG4CNM6MfdmKE=
-X-Google-Smtp-Source: AGHT+IFmFpJPOGOxqboe3FSCJG1p90kkm0iTmlWq/Ni/uCdlNc+9cgBNSEFM0DbQDQceCqmCnrSi6Q==
-X-Received: by 2002:a05:6000:11cc:b0:37d:3650:fae5 with SMTP id ffacd0b85a97d-380611f5202mr113855f8f.52.1729876560748;
-        Fri, 25 Oct 2024 10:16:00 -0700 (PDT)
+        bh=x2GjkUl3p/O3LyFYgokUMRNrG9yDODmMulXK3H2wmqc=;
+        b=C7l/kThHiq5oCkdSq6sFBcBb/2dTOnmqxnqv0jUNWcces94sjUeY43oRGZn8D7iybt
+         r24KGkqiAJseIsi747612l9rLGoOM1E7TXYUMSb36+7MsmO5U1JiSfwLERruBr8VW6yy
+         TDPtsJ3eSb2U+6M1CroJgWNSA5CS9VLUB2l0nabiWdf/Kudh/nkJm7EX6ZJ18mcNmARU
+         UyOCpx5Uvf6zhmjNSkT5ViQ4iuP4xOEIAqoYpvEdGNpUf2vTc/gHX8cyuWPuqGSWKkRI
+         NSS0yEGENiZHu6G71eZ/UMyLf3iQN7VwrY0Vb0Wc0acKcWx98K3N0PXQeDuRusH/nK8A
+         wG0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729876563; x=1730481363;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x2GjkUl3p/O3LyFYgokUMRNrG9yDODmMulXK3H2wmqc=;
+        b=APTgqS3FMsMRmIaGbE+RBPqgB4DKbtGE+qDGhiMuGacHnf0rSgoVU2iO3MHfJUAaZP
+         dZ7Os74ZCp90K4wxO6Pzv8ZUhd0vszYoYnfsc+iPDQ56F+SQK4vf/bI3IkPLeU1F9j9o
+         iei71PZLBLdfweSbDNTE1nfpt0TKKI2c8XYuU4daCsrd9N32o2G/fb2FjKWh/RZjRU7j
+         LRIBX1a1An6pIKV4Fj5GELepOmhNNCxNcKCm4llQ0XRKfwLQhPRJhaX+Hprkhh2Npwj0
+         2eNpx1WBVvPDDCAQ3E2W4CBvMT/6FsAhPzjXr3ECyWy5XJUwSzEo7WAWrma0HLg8VFyP
+         Zxtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuDNJHwakEvfgPCU5xLy/Trq3yDRRlmS16jXJHzJBiOk+2E9fr9IzdNW+1LXrvpVucfU2WomNYpwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVNijtQPmnhg/OsS4rHCe9wvYsvZ1fvvU2zNS8G5ilnZxfTO8e
+	T5+fjRg+5Glx1Io0/i5tq5TEB6VR8t00HEDWK0Mu+PgHBPapcPgtH3YUGDrhcPY=
+X-Google-Smtp-Source: AGHT+IHS33FJ99QvsSnwlHEO0RVmS3g3mQFRGvOhUZla0C49szl9I45Vo/iib3shrh2XvYSiEjJZJQ==
+X-Received: by 2002:a05:600c:314a:b0:431:4847:47c0 with SMTP id 5b1f17b1804b1-431841eb704mr109059015e9.7.1729876562817;
+        Fri, 25 Oct 2024 10:16:02 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.15.59
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:16:00 -0700 (PDT)
+        Fri, 25 Oct 2024 10:16:02 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH v2 00/36] drm/vc4: Add support for BCM2712 / Pi5 display
- hardware
-Date: Fri, 25 Oct 2024 18:15:31 +0100
-Message-Id: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
+Date: Fri, 25 Oct 2024 18:15:33 +0100
+Subject: [PATCH v2 02/36] drm/vc4: Fix reading of frame count on GEN5 / Pi4
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,10 +63,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADTSG2cC/22NQQ6CMBBFr0Jm7Zh2ChJceQ/DorZFuoA2U2wkh
- LtbiUuX7yX//Q2SY+8SXKsN2GWffJgL0KkCM+r56dDbwkCCaikEoeUJs6mRWkmYXjEGXrDTVpG
- 6OGX0AGUa2Q3+fWTvfeHRpyXwerxk+bW/IKn/wSxRoDSGbNN0dSfaG+sUH455jf5swgT9vu8fY
- xbB6b4AAAA=
+Message-Id: <20241025-drm-vc4-2712-support-v2-2-35efa83c8fc0@raspberrypi.com>
+References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
+In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
  =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
  Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
@@ -85,120 +84,104 @@ To: Maxime Ripard <mripard@kernel.org>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Dom Cobley <popcornmix@gmail.com>
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-This series adds the required DRM, clock, and DT changes
-required to support the display hardware on Pi5.
-There are a couple of minor fixes first before the main patches.
+The frame count values moved within registers DISPSTAT1 and
+DISPSTAT2 with GEN5, so update the accessor function to
+accommodate that.
 
-Many of the patches were authored by Maxime whilst working
-for us, however there have been a number of fixes squashed
-into his original patches as issues have been found. I also
-reworked the way UBM allocations are done to avoid double
-buffering of the handles as they are quite a limited resource.
-
-There are 2 variants of the IP. Most Pi5's released to date
-have used the C1 step of the SoC, whilst the 2GB Pi5 released
-in August is using the D0 step, as will other boards in future.
-
-Due to various reasons the register map got reworked between
-the steps, so there is extra code to handle the differences.
-Which step is in use is read out of the hardware, so they
-share a compatible string.
-
-Thanks!
-
+Fixes: b51cd7ad143d ("drm/vc4: hvs: Fix frame count register readout")
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 ---
-Changes in v2:
-- Collected Acks and R-b tags
-- Dropped patch 1 "drm/vc4: Limit max_bpc to 8 on Pi0-3". Already fixed as
-  noted by Maxime.
-- Fix unintialised var "mux" in vc6_hvs_pv_muxing_commit.
-- Fixed uninitialised var "reg" in vc4_hvs_cob_init.
-- Make bcm2712_mop_data and bcm2712_moplet_data static.
-- Removed the "disable_turbo" line from the struct in
-  raspberrypi_clock_property
-- I'm confused by the CI error "performing pointer arithmetic on a null
-  pointer has undefined behavior" for PCI_IOBASE as I'm not using it.
-- Link to v1: https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com
+ drivers/gpu/drm/vc4/vc4_hvs.c  | 45 +++++++++++++++++++++++++++++++-----------
+ drivers/gpu/drm/vc4/vc4_regs.h |  6 ++++++
+ 2 files changed, 40 insertions(+), 11 deletions(-)
 
----
-Dave Stevenson (11):
-      drm/vc4: Use of_device_get_match_data to set generation
-      drm/vc4: Fix reading of frame count on GEN5 / Pi4
-      drm/vc4: drv: Add support for 2712 D-step
-      drm/vc4: hvs: Add in support for 2712 D-step.
-      drm/vc4: plane: Add support for 2712 D-step.
-      drm/vc4: hdmi: Support 2712 D-step register map
-      drm/vc4: Enable bg_fill if there are no planes enabled
-      drm/vc4: Drop planes that are completely off-screen or 0 crtc size
-      arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
-      arm64: dts: broadcom: Add display pipeline support to BCM2712
-      arm64: dts: broadcom: Add DT for D-step version of BCM2712
+diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+index 1edf6e3fa7e6..f8edb0791091 100644
+--- a/drivers/gpu/drm/vc4/vc4_hvs.c
++++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+@@ -272,19 +272,42 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return 0;
+ 
+-	switch (fifo) {
+-	case 0:
+-		field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT1),
+-				      SCALER_DISPSTAT1_FRCNT0);
+-		break;
+-	case 1:
+-		field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT1),
+-				      SCALER_DISPSTAT1_FRCNT1);
++	switch (vc4->gen) {
++	case VC4_GEN_5:
++		switch (fifo) {
++		case 0:
++			field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT1),
++					      SCALER5_DISPSTAT1_FRCNT0);
++			break;
++		case 1:
++			field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT1),
++					      SCALER5_DISPSTAT1_FRCNT1);
++			break;
++		case 2:
++			field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT2),
++					      SCALER5_DISPSTAT2_FRCNT2);
++			break;
++		}
+ 		break;
+-	case 2:
+-		field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT2),
+-				      SCALER_DISPSTAT2_FRCNT2);
++	case VC4_GEN_4:
++		switch (fifo) {
++		case 0:
++			field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT1),
++					      SCALER_DISPSTAT1_FRCNT0);
++			break;
++		case 1:
++			field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT1),
++					      SCALER_DISPSTAT1_FRCNT1);
++			break;
++		case 2:
++			field = VC4_GET_FIELD(HVS_READ(SCALER_DISPSTAT2),
++					      SCALER_DISPSTAT2_FRCNT2);
++			break;
++		}
+ 		break;
++	default:
++		drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
++		return 0;
+ 	}
+ 
+ 	drm_dev_exit(idx);
+diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+index c55dec383929..341a75cf92e5 100644
+--- a/drivers/gpu/drm/vc4/vc4_regs.h
++++ b/drivers/gpu/drm/vc4/vc4_regs.h
+@@ -418,6 +418,10 @@
+ # define SCALER_DISPSTAT1_FRCNT0_SHIFT		18
+ # define SCALER_DISPSTAT1_FRCNT1_MASK		VC4_MASK(17, 12)
+ # define SCALER_DISPSTAT1_FRCNT1_SHIFT		12
++# define SCALER5_DISPSTAT1_FRCNT0_MASK		VC4_MASK(25, 20)
++# define SCALER5_DISPSTAT1_FRCNT0_SHIFT		20
++# define SCALER5_DISPSTAT1_FRCNT1_MASK		VC4_MASK(19, 14)
++# define SCALER5_DISPSTAT1_FRCNT1_SHIFT		14
+ 
+ #define SCALER_DISPSTATX(x)			(SCALER_DISPSTAT0 +        \
+ 						 (x) * (SCALER_DISPSTAT1 - \
+@@ -436,6 +440,8 @@
+ #define SCALER_DISPSTAT2                        0x00000068
+ # define SCALER_DISPSTAT2_FRCNT2_MASK		VC4_MASK(17, 12)
+ # define SCALER_DISPSTAT2_FRCNT2_SHIFT		12
++# define SCALER5_DISPSTAT2_FRCNT2_MASK		VC4_MASK(19, 14)
++# define SCALER5_DISPSTAT2_FRCNT2_SHIFT		14
+ 
+ #define SCALER_DISPBASE2                        0x0000006c
+ #define SCALER_DISPALPHA2                       0x00000070
 
-Dom Cobley (3):
-      clk: bcm: rpi: Add ISP to exported clocks
-      clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
-      clk: bcm: rpi: Enable minimize for all firmware clocks
-
-Maxime Ripard (22):
-      dt-bindings: display: Add BCM2712 HDMI bindings
-      dt-bindings: display: Add BCM2712 HVS bindings
-      dt-bindings: display: Add BCM2712 PixelValve bindings
-      dt-bindings: display: Add BCM2712 MOP bindings
-      dt-bindings: display: Add BCM2712 MOPLET bindings
-      dt-bindings: display: Add BCM2712 KMS driver bindings
-      drm/vc4: drv: Support BCM2712
-      drm/vc4: hvs: Add support for BCM2712 HVS
-      drm/vc4: crtc: Add support for BCM2712 PixelValves
-      drm/vc4: hdmi: Add support for BCM2712 HDMI controllers
-      drm/vc4: txp: Introduce structure to deal with revision differences
-      drm/vc4: txp: Rename TXP data structure
-      drm/vc4: txp: Add byte enable toggle bit
-      drm/vc4: txp: Add horizontal and vertical size offset toggle bit
-      drm/vc4: txp: Handle 40-bits DMA Addresses
-      drm/vc4: txp: Move the encoder type in the variant structure
-      drm/vc4: txp: Add a new TXP encoder type
-      drm/vc4: txp: Add support for BCM2712 MOP
-      drm/vc4: txp: Add BCM2712 MOPLET support
-      drm/vc4: Add additional warn_on for incorrect revisions
-      clk: bcm: rpi: Create helper to retrieve private data
-      clk: bcm: rpi: Add disp clock
-
- .../bindings/display/brcm,bcm2711-hdmi.yaml        |   2 +
- .../bindings/display/brcm,bcm2835-hvs.yaml         |   5 +-
- .../bindings/display/brcm,bcm2835-pixelvalve0.yaml |   3 +
- .../bindings/display/brcm,bcm2835-txp.yaml         |   5 +-
- .../bindings/display/brcm,bcm2835-vc4.yaml         |   1 +
- arch/arm64/boot/dts/broadcom/Makefile              |   1 +
- arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts |  37 +
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  42 +
- arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 188 +++++
- drivers/clk/bcm/clk-raspberrypi.c                  |  33 +-
- drivers/gpu/drm/vc4/tests/vc4_mock.c               |   8 +-
- drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c     | 106 +--
- drivers/gpu/drm/vc4/vc4_crtc.c                     |  96 ++-
- drivers/gpu/drm/vc4/vc4_drv.c                      |  19 +-
- drivers/gpu/drm/vc4/vc4_drv.h                      |  54 +-
- drivers/gpu/drm/vc4/vc4_hdmi.c                     | 107 ++-
- drivers/gpu/drm/vc4/vc4_hdmi.h                     |   4 +
- drivers/gpu/drm/vc4/vc4_hdmi_phy.c                 | 640 +++++++++++++++
- drivers/gpu/drm/vc4/vc4_hdmi_regs.h                | 217 ++++++
- drivers/gpu/drm/vc4/vc4_hvs.c                      | 737 ++++++++++++++++--
- drivers/gpu/drm/vc4/vc4_kms.c                      | 105 ++-
- drivers/gpu/drm/vc4/vc4_plane.c                    | 866 ++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_regs.h                     | 297 +++++++
- drivers/gpu/drm/vc4/vc4_txp.c                      |  91 ++-
- include/soc/bcm2835/raspberrypi-firmware.h         |   1 +
- 25 files changed, 3461 insertions(+), 204 deletions(-)
----
-base-commit: 3ae80b375739495e36fc6143ff27716fe390a13e
-change-id: 20241002-drm-vc4-2712-support-9ad3236e3caf
-
-Best regards,
 -- 
-Dave Stevenson <dave.stevenson@raspberrypi.com>
+2.34.1
 
