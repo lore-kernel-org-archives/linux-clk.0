@@ -1,245 +1,253 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E4E212170;
-	Fri, 25 Oct 2024 13:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0147613B787
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 14:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862435; cv=none; b=VaCpIMLxTqWFiW9v6rDzpcq3FUphttRReaZKTyMsYiOlxJDQcY9ieYF8hFINbYVOw5x5A/UKNsR/rZBu+w9GUeSR1I85pakqHO1/LZauyuhBBJ5jACtx0njUiXVnFWb40TCGwycWzzd85upSvLmZGwSx4Jg6Nx6C0Bn0903ny2U=
+	t=1729865140; cv=none; b=ZJpbCTUuPMliuRCuZtNLHlv7hNZqtS/xbLMX5P6bAUnYSP0j8iJMKbOQHr1HP1tyUSx0tnkKjzMo9xY7PAZWcWdPiaO8hyTmCHCKEZz3kQveASyoyXkMfGhoCTeqqzuGYbJhQZyoO3e0g54rCadp75EaBkwqEdcahMo9MITv7as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862435; c=relaxed/simple;
-	bh=Iv+dDQawJeTjfcaOHDOnBzb79d7/eAt8zBP/Pf9XIPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSd6JF4swwOS19ejtN72huVCQNAoGtvNxpDkA//0Kwuvk8k36FX908yay6wihi9mt51XPdtMPIG2zIPeQDQwBE7vhO7GqFVhpF0mWgiUvoq14Qq1Qv0+B4+ImlPyVL9B787dLjCLv4i4e+VqRA6VPvbpx44BOrKprM9lrTHLm4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjyOi0nA; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729865140; c=relaxed/simple;
+	bh=mhPDdtyt330mcdM63wrN5tqVH3NzsiWGOIKFvHowOnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=glR+6OadoWzlyweMDoWPmFX1WtdFq1p6EidDgCY8y2NGQNDg6wTXQayXzu114ZrMpnEu/Eoj5CyhJoxpZZ+iN5KvMWrjFfmcaT1kNFDkcBWf6H6SL9LwBpSTy/HWhYNmknbahMF7T7Z8Ty+v73Na4WGmy8XfVVSVqKqxqjD6wgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lf17I1vr; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjyOi0nA"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso291941766b.1;
-        Fri, 25 Oct 2024 06:20:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lf17I1vr"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso21855091fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 07:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729862431; x=1730467231; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uulKs7R9OvjriBWT/CC8Pnu+w5NlV4zIkkgOTtPu4c0=;
-        b=FjyOi0nAPdqL2xeppONkUNguD0J67JCHsviLFH3Hx69IptZrHFNHX50nX06V9Az8hX
-         6RP96Yq5gLCaiIhFm+Y/Rhq3o34IVWYujWuNVaFYfRPZUnstMfLkZ/QX2WFNfs/K8x4k
-         i/uqDnyCygHnH8C7JUQ4T8CwBCe7z1hfJVUfpOG4uVE3w8Fjg/G/Lc3G0f4CWNM77JhU
-         eYvu8yClM4ZGj7fIKc2ej3cXq0R7ltuXnoKAfVzo32epPRpvHqfhgwEWKmCOJV1ynWa2
-         Pu/CrBaiVakECozTDO7ghzu9bddaqn/XqaXpMLx5sLYvaWrbifF6O4wWDUMrzx16iyOT
-         SCkQ==
+        d=linaro.org; s=google; t=1729865136; x=1730469936; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rn9Pt5hyYOkst6E9UWfygPgyliex/XcNrU8hJHBnOOM=;
+        b=lf17I1vrXdqO6F0j2qoezG9jbFtdOSQvx3DnPG1uk0O45aIUYqEhOK4Hp6Q7PYZ/vt
+         foXS0PvU/7Uytt1n2bMCCRQhHlNf8upT0k9CmFIyeS1LgFhLSRCO//LmuQS8iJx7DKrq
+         1rWJWFP10mNffvj6Nzgnh4wh4qUYfTlncRUh/ispnOH10L+kWYjIqAMusH8HlaV9C7gD
+         ovRbN5HRAylRnM2f3IUzKur8R2q86g2uRg4BrWT3SINT5aZeoWMYAt3Kz4YsBPEnf4Hq
+         CahBEL++Hgtg21qjtCj1V88F20HPlzqhRWg1oZKchJyxZvNF6yrM7AteTalotjg6u5dZ
+         2W8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729862431; x=1730467231;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uulKs7R9OvjriBWT/CC8Pnu+w5NlV4zIkkgOTtPu4c0=;
-        b=ZTZMCMRn+qoqV55YB5IvGMb1cOkDXLMuVUaM6BKh08UiiU9aZNjma1541VaEiJtFkV
-         pqpqu/ei+XxHhf3ZcqkrCr7GOtVvhORaPCSbQ+y/ve/Mj1DCoaEytqSq/O8BOjyhZne/
-         /QRVQomIwiIdiQxAUSSAW+tb3igaf6Ch4+IZOy/9Ft9knIwJHQBhgFs6TZ+djfLAPbjH
-         10fhvhym7/Sr4Wx/IDrfqYO8fpTFnOsz9hdJ+pl0DsvAKJciylgmUMFlb78U1PVn9kYj
-         1/NvPAyO9RZSUSHveP19P2AashWwhKJ6Np7U9L9ZnEcJelfy9gndsYEWB3laEYyKALJB
-         h3mw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2DQYSMh88T8+y7zwb6ziBcZoPCnPvItKmomiqaxt7S3lOlPw5hT/7ZVrFkLtK/QOQuxie/0E5ow/c4Ng=@vger.kernel.org, AJvYcCVLSRS5UiQm8ya63N90pr8u+pITusWJdVlvjNUX8Tb+FQRyfhj/MgBuZLhli9YW35PUxAc0ORMCRWBF@vger.kernel.org, AJvYcCVjitsh+/YYs4vHJbap/m2LUTVrKuGcn+9FUucCiPe5BdSJ3HpwY5+LMxdV2UBATL3svNQkXBLAV/bu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn+4dU61EAGGkUTYzDU0CWCQwFmDHaNAtODj22ki8gpHG4LS5A
-	DRP6onqyfdUt3n7YqNwtyOE3kuSKR8vWDvhg4QCJ5Aa0lnMbZERv/VUdUOSUx3FIcvDnnSRZShS
-	evdR7MWUH/xEiwyOIcZs5QwsURFk=
-X-Google-Smtp-Source: AGHT+IEb35gUbGtP4InZ6WMm5/IyT/Soo1Ihl70JzBa200ZUM9m1Q+qFTBBqDBODI/YSTqvPEhe969TFOoc5ILzCzQI=
-X-Received: by 2002:a17:907:980c:b0:a99:a9b6:2eb6 with SMTP id
- a640c23a62f3a-a9abf53587cmr924971066b.0.1729862430611; Fri, 25 Oct 2024
- 06:20:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729865136; x=1730469936;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rn9Pt5hyYOkst6E9UWfygPgyliex/XcNrU8hJHBnOOM=;
+        b=eXV/u8ryqR7LeetNTWh7ZJ/1i5UcehFgFsBfFqSOX3N3SB9v9Yee6+Di+2QxmefDd9
+         EIN9zkEG3STt69XIsodi3cdAn0/oDjpxUynx2ESrnXwsZze6Kr6o+CZjiBNTkboZJ6RC
+         ZHk10AW6aE9ziSsvBG0Ab7TjJyFAlpDGgKYX7fJ/JR5eJ7lltyBUQuksIHDBdru4HWcl
+         8D8KwfaMtXlVJ8yKcbE0qr4tnh5MCbiQ+BENRAfpC+w0osopEZOVZe1+XHO1cGxNd9qG
+         cUVlkBYx2btvRQfm4i53sp6nS8JP6zX52x30rmNMx+Uhq79fF9qYVOCMRKVmr+00B7AQ
+         94ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWJouzap4s3pWRbQHH0OkUhNXUI5PMCr/0M9VPOI1JN4hlByg9uFqKU19YJkVBxwC0MLatdiNKIhPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIwwgmscc7j2syBxhFNHxGMpWY7r01zY0WFXl2fEkQIMPgfgt1
+	3uTTgIDXgLuoDOZSObslgj+BpW3MnzQ5+JRJ+EKU8A+SwcGRG+EBJ6McW/OFGkg=
+X-Google-Smtp-Source: AGHT+IGPO2N8dVilguOrd+D3mg0S1fdvTrVMbg1ZQKzSI2X+KHFMOXe6V+CSQpm6d8eAH4CXe6TVWw==
+X-Received: by 2002:a2e:4c0a:0:b0:2f6:4f17:aeaf with SMTP id 38308e7fff4ca-2fc9d586fc6mr34505861fa.45.1729865135784;
+        Fri, 25 Oct 2024 07:05:35 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4612a5asm1984121fa.122.2024.10.25.07.05.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 07:05:34 -0700 (PDT)
+Date: Fri, 25 Oct 2024 17:05:31 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jie Luo <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
+	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+Message-ID: <g3wh3yjkzgdfwbj4hnabtmziwsmqn3cloffblhshrkgj3tx4h7@2w2ho2mvs5c6>
+References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
+ <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
+ <abro3enahzbugcwokcyyhwybbokestbigvzhywxhnfrdjihni3@7ej2hkgbgtf6>
+ <b336724c-1fea-4e1e-9477-66f53d746f09@quicinc.com>
+ <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
+ <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
+ <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
+ <a2448df9-9b8b-4b7e-ada5-6f26d7e7da97@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023075917.186835-1-ryan@testtoast.com> <20241023075917.186835-2-ryan@testtoast.com>
-In-Reply-To: <20241023075917.186835-2-ryan@testtoast.com>
-From: Code Kipper <codekipper@gmail.com>
-Date: Fri, 25 Oct 2024 15:20:18 +0200
-Message-ID: <CAEKpxB=BQ1GvzdVCYKyr_Q1eCfcYYEz1L_RqzEVBBgNu8jDfwA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/7] clk: sunxi-ng: h616: Add sigma-delta modulation
- settings for audio PLL
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Chris Morgan <macroalpha82@gmail.com>, Philippe Simons <simons.philippe@gmail.com>, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2448df9-9b8b-4b7e-ada5-6f26d7e7da97@quicinc.com>
 
-On Wed, 23 Oct 2024 at 09:59, Ryan Walklin <ryan@testtoast.com> wrote:
->
-> Allwinner has previously released a H616 audio driver which also
-> provides sigma-delta modulation for the audio PLL clocks. This approach
-> is used in other Allwinner SoCs, including the H3 and A64.
->
-> The manual-provided clock values are:
-> PLL_AUDIO(hs) = 24 MHz*N/M1
-> PLL_AUDIO(4X) = 24 MHz*N/M0/M1/P
-> PLL_AUDIO(2X) = 24 MHz*N/M0/M1/P/2
-> PLL_AUDIO(1X) = 24 MHz*N/M0/M1/P/4
->
-> A fixed post-divider of 2 is used to account for a M0 divider of
-> 2, which cannot be modelled by the existing macros and ccu_nm struct.
->
-> Add SDM to the H616 clock control unit driver.
->
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
->
-> ---
-> Changelog v1..v2:
-> - Add fixed_post_div to high-speed audio clock to correct M0 value to 1 (ie divide by 2) based on manual
-> - Correct PLL_AUDIO_(4/2/1)X clocks to manual-provided values
-> - Add/correct inline comments for the above.
-> - add CCU_FEATURE_FIXED_POSTDIV to pll_audio_hs_clk.common.features
->
-> Changelog v2..v3:
-> - Update comments and commit message to more accurately reflect SDM changes and rationale
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 46 +++++++++++++++++---------
->  1 file changed, 30 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> index 6c7623d4c59ea..05727fa1ee46e 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> @@ -215,20 +215,30 @@ static struct ccu_nkmp pll_de_clk = {
->         },
->  };
->
-> -/*
-> - * TODO: Determine SDM settings for the audio PLL. The manual suggests
-> - * PLL_FACTOR_N=16, PLL_POST_DIV_P=2, OUTPUT_DIV=2, pattern=0xe000c49b
-> - * for 24.576 MHz, and PLL_FACTOR_N=22, PLL_POST_DIV_P=3, OUTPUT_DIV=2,
-> - * pattern=0xe001288c for 22.5792 MHz.
-> - * This clashes with our fixed PLL_POST_DIV_P.
-> +/*
-> + * Sigma-delta modulation settings table obtained from the vendor SDK driver.
-> + * There are additional M0 and M1 divider bits not modelled here, so forced to
-> + * fixed values in the probe routine. Sigma-delta modulation allows providing a
-> + * fractional-N divider in the PLL, to help reaching those specific
-> + * frequencies with less error.
->   */
-> +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-> +       { .rate = 90316800, .pattern = 0xc001288d, .m = 3, .n = 22 },
-> +       { .rate = 98304000, .pattern = 0xc001eb85, .m = 5, .n = 40 },
-> +};
-> +
->  #define SUN50I_H616_PLL_AUDIO_REG      0x078
->  static struct ccu_nm pll_audio_hs_clk = {
->         .enable         = BIT(31),
->         .lock           = BIT(28),
->         .n              = _SUNXI_CCU_MULT_MIN(8, 8, 12),
-> -       .m              = _SUNXI_CCU_DIV(1, 1), /* input divider */
-> +       .m              = _SUNXI_CCU_DIV(16, 6),
-> +       .sdm            = _SUNXI_CCU_SDM(pll_audio_sdm_table,
-> +                                        BIT(24), 0x178, BIT(31)),
-> +       .fixed_post_div = 2,
->         .common         = {
-> +               .features       = CCU_FEATURE_FIXED_POSTDIV |
-> +                                 CCU_FEATURE_SIGMA_DELTA_MOD,
->                 .reg            = 0x078,
->                 .hw.init        = CLK_HW_INIT("pll-audio-hs", "osc24M",
->                                               &ccu_nm_ops,
-> @@ -701,18 +711,20 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
->  };
->
->  /*
-> - * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
-> - * rates can be set exactly in conjunction with sigma-delta modulation.
-> + * The PLL_AUDIO_4X clock defaults to 24.5714 MHz according to the manual, with
-> + * a final divider of 1. The 2X and 1X clocks use 2 and 4 respectively. The 1x
-> + * clock is set to either 24576000 or 22579200 for 48Khz and 44.1Khz (and
-> + * multiples).
->   */
->  static CLK_FIXED_FACTOR_HWS(pll_audio_1x_clk, "pll-audio-1x",
->                             clk_parent_pll_audio,
-> -                           96, 1, CLK_SET_RATE_PARENT);
-> +                           4, 1, CLK_SET_RATE_PARENT);
->  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
->                             clk_parent_pll_audio,
-> -                           48, 1, CLK_SET_RATE_PARENT);
-> +                           2, 1, CLK_SET_RATE_PARENT);
->  static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
->                             clk_parent_pll_audio,
-> -                           24, 1, CLK_SET_RATE_PARENT);
-> +                           1, 1, CLK_SET_RATE_PARENT);
->
->  static const struct clk_hw *pll_periph0_parents[] = {
->         &pll_periph0_clk.common.hw
-> @@ -1162,12 +1174,14 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->         }
->
->         /*
-> -        * Force the post-divider of pll-audio to 12 and the output divider
-> -        * of it to 2, so 24576000 and 22579200 rates can be set exactly.
-> +        * Set the output-divider for the pll-audio clocks (M0) to 2 and the
-> +        * input divider (M1) to 1 as recommended by the manual when using
-> +        * SDM.
->          */
->         val = readl(reg + SUN50I_H616_PLL_AUDIO_REG);
-> -       val &= ~(GENMASK(21, 16) | BIT(0));
-> -       writel(val | (11 << 16) | BIT(0), reg + SUN50I_H616_PLL_AUDIO_REG);
-> +       val &= ~BIT(1);
-> +       val |= BIT(0);
-> +       writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
->
->         /*
->          * First clock parent (osc32K) is unusable for CEC. But since there
-Hi Ryan,
-I noticed some white-space issues when cherry-picking this change from
-your repo.
-scripts/checkpatch.pl
-0001-clk-sunxi-ng-h616-Add-sigma-delta-modulation-setting.patch
-ERROR: trailing whitespace
-#51: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:218:
-+/* $
+On Wed, Oct 23, 2024 at 09:05:09PM +0800, Jie Luo wrote:
+> 
+> 
+> On 10/18/2024 11:38 PM, Dmitry Baryshkov wrote:
+> > On Fri, Oct 18, 2024 at 10:03:08PM +0800, Jie Luo wrote:
+> > > 
+> > > 
+> > > On 10/18/2024 4:11 PM, Dmitry Baryshkov wrote:
+> > > > On Fri, 18 Oct 2024 at 09:55, Jie Luo <quic_luoj@quicinc.com> wrote:
+> > > > > 
+> > > > > 
+> > > > > 
+> > > > > On 10/18/2024 6:32 AM, Dmitry Baryshkov wrote:
+> > > > > > On Tue, Oct 15, 2024 at 10:16:54PM +0800, Luo Jie wrote:
+> > > > > > > The CMN PLL clock controller allows selection of an input
+> > > > > > > clock rate from a defined set of input clock rates. It in-turn
+> > > > > > > supplies fixed rate output clocks to the hardware blocks that
+> > > > > > > provide ethernet functions such as PPE (Packet Process Engine)
+> > > > > > > and connected switch or PHY, and to GCC.
+> > > > > > > 
+> > > > > > > Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> > > > > > > ---
+> > > > > > >     arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
+> > > > > > >     arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
+> > > > > > >     2 files changed, 24 insertions(+), 2 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+> > > > > > > index 91e104b0f865..77e1e42083f3 100644
+> > > > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+> > > > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+> > > > > > > @@ -3,7 +3,7 @@
+> > > > > > >      * IPQ9574 RDP board common device tree source
+> > > > > > >      *
+> > > > > > >      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> > > > > > > - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> > > > > > > + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > > > > > >      */
+> > > > > > > 
+> > > > > > >     /dts-v1/;
+> > > > > > > @@ -164,6 +164,10 @@ &usb3 {
+> > > > > > >        status = "okay";
+> > > > > > >     };
+> > > > > > > 
+> > > > > > > +&cmn_pll_ref_clk {
+> > > > > > > +    clock-frequency = <48000000>;
+> > > > > > > +};
+> > > > > > > +
+> > > > > > >     &xo_board_clk {
+> > > > > > >        clock-frequency = <24000000>;
+> > > > > > >     };
+> > > > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> > > > > > > index 14c7b3a78442..93f66bb83c5a 100644
+> > > > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> > > > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> > > > > > > @@ -3,10 +3,11 @@
+> > > > > > >      * IPQ9574 SoC device tree source
+> > > > > > >      *
+> > > > > > >      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> > > > > > > - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> > > > > > > + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > > > > > >      */
+> > > > > > > 
+> > > > > > >     #include <dt-bindings/clock/qcom,apss-ipq.h>
+> > > > > > > +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
+> > > > > > >     #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+> > > > > > >     #include <dt-bindings/interconnect/qcom,ipq9574.h>
+> > > > > > >     #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > > > > > @@ -19,6 +20,11 @@ / {
+> > > > > > >        #size-cells = <2>;
+> > > > > > > 
+> > > > > > >        clocks {
+> > > > > > > +            cmn_pll_ref_clk: cmn-pll-ref-clk {
+> > > > > > > +                    compatible = "fixed-clock";
+> > > > > > > +                    #clock-cells = <0>;
+> > > > > > > +            };
+> > > > > > 
+> > > > > > Which block provides this clock? If it is provided by the external XO
+> > > > > > then it should not be a part of the SoC dtsi.
+> > > > > 
+> > > > > The on-chip WiFi block supplies this reference clock. So keeping it in
+> > > > > the SoC DTSI is perhaps appropriate.
+> > > > 
+> > > > Then maybe it should be provided by the WiFi device node? At least you
+> > > > should document your design decisions in the commit message.
+> > > 
+> > > This CMN PLL reference clock is fixed rate and is automatically
+> > > generated by the SoC's internal Wi-Fi hardware block with no software
+> > > configuration required from the Wi-Fi side.
+> > > 
+> > > Sure, I will enhance the commit message to add the information on the
+> > > fixed reference clock from Wi-Fi block. Hope this is ok.
+> > 
+> > We have other fixed clocks which are provided by hardware blocks.
+> > Without additional details it is impossible to answer whether it is fine
+> > or not.
+> 
+> There is an XO on the board which supplies reference clock (48Mhz or
+> 96Mhz) to the Wi-Fi block on the SoC. There is a multiplier/divider in
+> the Wi-Fi block, which ensures the output reference clock of 48Mhz is
+> supplied to CMN PLL block.
+> 
+> In summary, below is the path to receive the reference clock at CMN PLL:
+> The clock path is .XO (48 MHZ/96 MHZ) --> WiFi (multiplier/divider) -->(48
+> MHZ) --> CMN PLL.
+> 
+> There is no software configuration required for the entire path, as it
+> is fully controlled by bootstrap pins on the board. There are bootstrap
+> pins for selecting the selecting the XO frequency (48Mhz or 96Mhz) and
+> based on this, the divider is automatically selected by HW (1 for 48Mhz,
+> 2 for 96Mhz), to ensure output clock to CMN PLL is 48Mhz.
 
-ERROR: trailing whitespace
-#74: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:240:
-+^I^I.features^I= CCU_FEATURE_FIXED_POSTDIV | $
+If the clock is always fixed to this frequency, then it's ok, thank you.
 
-ERROR: trailing whitespace
-#85: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:698:
-+ * The PLL_AUDIO_4X clock defaults to 24.5714 MHz according to the
-manual, with $
+> 
+> > 
+> > > 
+> > > > 
+> > > > Also, I don't think this node passes DT schema validation. Did you check it?
+> > > 
+> > > Yes, the DT is validated against the schema, I have shared the logs
+> > > below. Could you please let me know If anything needs rectification?
+> > 
+> > I see, you are setting the cmn_pll_ref_clk frequency in the
+> > ipq9574-rdp-common.dtsi file. If the PLL is internal to the SoC, why is
+> > the frequency set outside of it? Is it generated by multiplying the XO
+> > clk? Should you be using fixed-factor clock instead?
+> > 
+> 
+> Since the reference clock is controlled by bootstrap pins on the board,
+> it may be appropriate to define the frequency for this reference clock
+> in the board DTS. Given the clock tree described above, I will update
+> the cmn_pll_ref_clk to define it as a fixed-factor clock as per your
+> suggestion, with its frequency and factors configured in board DTSI.
+> These values defined in rdp-common.dtsi will be default values that can
+> be overridden if necessary by different boards. Hope this approach is
+> fine.
+> 
+> In ipq9574.dtsi:
+> cmn_pll_ref_clk: cmn-pll-ref-clk {
+> 
+>         compatible = "fixed-factor-clock";
+> 
+>         clocks = <&xo_clk>;
+> 
+> 	#clock-cells = <0>;
+> };
+> 
+> xo_clk: xo {
+> 	compatible = "fixed-clock";
+> 	#clock-cells = <0>;
+> };
+> 
+> In ipq9574-rdp-common.dtsi.
+> &cmn_pll_ref_clk {
+> 	clock-div = <1>;
+> 	clock-mult = <1>;
+> };
+> 
+> &xo_clk {
+> 	clock-frequency = <48000000>;
+> }
 
-ERROR: trailing whitespace
-#86: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:699:
-+ * a final divider of 1. The 2X and 1X clocks use 2 and 4
-respectively. The 1x $
+Sounds perfect, thank you!
 
-ERROR: trailing whitespace
-#87: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:700:
-+ * clock is set to either 24576000 or 22579200 for 48Khz and 44.1Khz (and $
 
-ERROR: trailing whitespace
-#112: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:1152:
-+^I * input divider (M1) to 1 as recommended by the manual when using $
-
-ERROR: trailing whitespace
-#113: FILE: drivers/clk/sunxi-ng/ccu-sun50i-h616.c:1153:
-+^I * SDM. $
-
-total: 7 errors, 0 warnings, 80 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
-
-NOTE: Whitespace errors detected.
-      You may wish to use scripts/cleanpatch or scripts/cleanfile
-
-but that didn't stop it from singing beautifully!,
-
-Tested-by: Marcus Cooper <codekipper@gmail.com>
-BR,
-CK
-> --
-> 2.47.0
->
->
+-- 
+With best wishes
+Dmitry
