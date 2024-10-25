@@ -1,132 +1,147 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACDC146588
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 08:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49A1D2B13;
+	Fri, 25 Oct 2024 08:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844929; cv=none; b=KbhrscmBLuEO3Sd+V1yNuwtHIjPPIFSt6yFE5WkZeAbvlPfWtpOixlwOtVlHtCz6r4jWqsWXczTxlJhZlgcjkMo7L/zQavxK8Lw7qFkpIfRF1sv7xitqFU5knJyJNglltlN+bPRkT2BsOa/DU7j1x+9QiEF/5P9QwROpUi5Zyqk=
+	t=1729846171; cv=none; b=p3X4Q7J4ktT/TwNWex/pvfb1DMOlO80IPZTWpz2ljYco3m6sn6Icn/kNcR1SyTTcqfcxtHUA5w8c7CbHIZz/PvgzfJIodLxWAaA+K6/5343eKjsIH66uhhKfBKWRVN1WFcd9eKpOO/Mdjw4l7tFCUYxM0rtZREdzSh7dl+mcRIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844929; c=relaxed/simple;
-	bh=jc+y/m1J5iDLVGvo7GE1rUcCJ9JarTubgikr5ubFVBU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/aHde0V+TBh6c0s0Kmhenf9ZWuEIsZksspX0NqONbNmlAv0MhOI5XM5e0/eMIGegiKBYyrYJz2/xwO/L67yuOBPo4uoZbo8TBvUdBozWEpsrNayXSltSjiF+X1AYG9ERGrmEIrf/l2/+CkXxtNrvXzMY/WQ8D2G8SW34FG6eVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MVrd6H/2; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1729846171; c=relaxed/simple;
+	bh=A5x7JbW8OzPHcJUDztnr4ni7vd+G7hChdtbwOnoDrDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fUDCqfL/fsb8LUkU6p0lUEKDgUQPr1eYnLMu1p/KtbFRs5LrxoXnr5u2Sq96cHrJUwgZf/k3MYqDQh7QLoSj3oZX6Zl6zBFz8V4e3NI8LR7zlojBlTVPv3675NCjS2WqfcAFpsVrg88Kg6DOmCaErgq670Uprzc0lbs+u3P7ON8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AUlhk/AF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MVrd6H/2"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a16b310f5so262451966b.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 01:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729844926; x=1730449726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GKQtKEQ691WB5aL1CY9xzFRryNO/YNcfGDP3okJsWkk=;
-        b=MVrd6H/2/vvwaAm9jZwHrv28+0/70CDDnOI3/SpFsy7l6BsTae8knAuq3Aohm0OOjQ
-         vng/RZGsX8VFvWWE1SDPfkxh72rbksDgB9WpibfFFk9/9M1UAFbPQqywBuq3LUe0UV4B
-         bx/Wp2aUFll0h0VDGkf3v5O0JXkviNBrwGhnqpvWzJQYlaHgPd3Q5ELF50WXZjDQNJND
-         ZdPXD5EiQ8EFeTCKoe+LmoD7eS6WoxZzbsVaUg4d3VdPQAdi5xLTNR0lr559JNzMd5Gi
-         RdO7UAnLa3Ewr8JmgT3AjNh5UBGLuCqajsHYfp5PYO96Bqen4wuaSOnfyL5ik/9ykxkb
-         TA1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729844926; x=1730449726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GKQtKEQ691WB5aL1CY9xzFRryNO/YNcfGDP3okJsWkk=;
-        b=o+usOLblRJenctBt+6Rq7vXrv+Bw8A8vQNnMJxIbhILNpjntnwLBiA5cWLSzNs2GY5
-         u2o/oG/eAFcShdLXqV7Nn9KjdB8Qvd29kHAOm3RfiYyWJcp/TLi1hnjEryYTaC5cNmY8
-         GsASaPBeFn4WqMaeZkh1nEjUh+A00TXh1vF876nqdVHaVNOyOgfP9LXmGIWhhqXnhaKB
-         5lYbI+Ba5fkdrAjo9h9HWf3K0znstDmhbCMQ2Hi0pWyt6Q64DAAObtsurzBjtkr4/8FO
-         WgAlKCer4jOfqsDhfeBsz44AnwjyJ2pmbZ0H/aGYy4jB2RO3EmfR/nIJAmhW9ai8JjYP
-         ICBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhambuofkRJ2KumfaMuThdcLgCJC44mvwVdVt2kvcVcxC1YbpCEFKegj+0wfn/gGTRgW/PRc1izSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlFLl36kZCcCjc2lGPMXS9bZYTMRjHrOIYij2viUi/sgIdbmC0
-	Vao/lJim2Fjrxp1zpKCjUXJNNVoIzraKmpa6A8aDftia7QloRfg7sFOvh9NxpBE=
-X-Google-Smtp-Source: AGHT+IEKAsvpP2dybXSJ7Ofjl3bCLXFPuuy1eHgZQTXd9CLcGnC5HYUafi69GsS8vo706m6wGKRfWw==
-X-Received: by 2002:a17:907:9406:b0:a99:e850:deb3 with SMTP id a640c23a62f3a-a9abf890eaamr841444666b.18.1729844925999;
-        Fri, 25 Oct 2024 01:28:45 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c803asm391336a12.56.2024.10.25.01.28.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 01:28:45 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 25 Oct 2024 10:29:07 +0200
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZxtW0z7-JaK3dWdQ@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
- <CAPY8ntC0B0RdNmvGMaDcp-p9gZOcWBbeC6BjbcihrijRXjRVkA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AUlhk/AF"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OJWZpQ007404;
+	Fri, 25 Oct 2024 08:49:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RPNnpS0SrtTCNXFGOO26V132+UHssTnX0jhPMVaoVm4=; b=AUlhk/AFWF+lihbJ
+	QicO06tT89rWLlLFwOlCCZUoSCvavOlK5MUMEnwH11ITl/p9lebZQc29xNzHvjuq
+	IchKX0MgEB3mXlWug04bMZVCOipCVrcbL+aaI87ieD8h/klEO2ISnBrkWAiX3OVI
+	LY71E2qvSunI4Efjn0f1DRH7ViH3pcqIf++0GvoQrmjSAPDPWH1Exth2Qr6vdZog
+	3RlwfHso81goa1a5v6Ze0T/As19oHp7B4elwdWLll/le7s4eTTWJmmyBB/7miQV7
+	8POVfUGe3gQwwIUx/8yrRNoxsMZ2QukVG4/HHxXRAl5nujSvEZGe3TtNEAInp+oD
+	+9Qa8Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52k7ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 08:49:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P8nNsK012368
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 08:49:23 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 01:49:19 -0700
+Message-ID: <c5743db2-36b3-423e-a1a4-174c17689e9b@quicinc.com>
+Date: Fri, 25 Oct 2024 14:19:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntC0B0RdNmvGMaDcp-p9gZOcWBbeC6BjbcihrijRXjRVkA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: Update sleep_clk frequency to
+ 32000 on SA8775P
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <quic_imrashai@quicinc.com>,
+        <quic_jkona@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
+ <20241011-sa8775p-mm-v4-resend-patches-v5-7-4a9f17dc683a@quicinc.com>
+ <amnapm4ig6ivhmle4tgywi2n7ah54cha3gpl5sowvf2rqvhg6s@7xg2afpus4ej>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <amnapm4ig6ivhmle4tgywi2n7ah54cha3gpl5sowvf2rqvhg6s@7xg2afpus4ej>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0JCPa7W6cHqzjB6bLuSNMMndBeks0FT2
+X-Proofpoint-ORIG-GUID: 0JCPa7W6cHqzjB6bLuSNMMndBeks0FT2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250067
 
-Hi Dave,
 
-On 16:21 Thu 24 Oct     , Dave Stevenson wrote:
-> Hi Andrea
+
+On 10/23/2024 4:01 AM, Bjorn Andersson wrote:
+> On Fri, Oct 11, 2024 at 12:28:37AM GMT, Taniya Das wrote:
+>> The HW supported sleep_clk frequency on SA8775P is 32000, hence
+>> update the sleep_clk frequency with the correct value on SA8775P.
+>>
+>> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > 
-> On Mon, 7 Oct 2024 at 14:07, Andrea della Porta <andrea.porta@suse.com> wrote:
-> >
-
-...
-
-> > +static const struct pci_device_id dev_id_table[] = {
-> > +       { PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RPI_RP1_C0), },
-> > +       { 0, }
-> > +};
+> It's generally expected that bug fixes are sent first in patch series,
+> but perhaps it's fine as this is the first DT-patch in the series.
 > 
-> You need a
+> That said, the only relationship between this patch and the rest of this
+> series is...you. There's no reason for sending this together with the
+> multimedia clock drivers.
 > 
-> MODULE_DEVICE_TABLE(pci, dev_id_table);
 > 
-> here in order to load the module for the cases where it isn't
-> built-in. Otherwise you have to manually modprobe the module.
-
-Sure, thanks for the heads up!
-
-Regards,
-Andrea
-
+> Further, the patch subject doesn't match the expected format. It's too
+> long (not a summary) and it doesn't have the expected subject prefix for
+> changes to this file.
 > 
-> Cheers.
->   Dave
+> Please correct this.
+> 
 
-...
+Sure, Bjorn, will update in the next series of the patch.
+
+> Regards,
+> Bjorn
+> 
+>> ---
+>>   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> index 0c1b21def4b62cc65a693552983ec0bc7eec697d..adb71aeff339b564eb3acc42a38bba2f03507508 100644
+>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> @@ -517,7 +517,7 @@ &serdes1 {
+>>   };
+>>   
+>>   &sleep_clk {
+>> -	clock-frequency = <32764>;
+>> +	clock-frequency = <32000>;
+>>   };
+>>   
+>>   &spi16 {
+>>
+>> -- 
+>> 2.45.2
+>>
+
+-- 
+Thanks & Regards,
+Taniya Das.
