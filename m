@@ -1,61 +1,60 @@
 Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D00620F3E6
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 17:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619CD20F3F0
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 17:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876568; cv=none; b=IpLFE/ZnW3wpoms5hkyc4OFepTFxaCTA9KV2zo0ilKpNzuhZ/ZxgRoq+5b4MnKt83oORgWDz/FmnjITqVrCsXCDrYYZwyGEEU4fIeh1cSUdMc0wMo3Eev7lWbqdeG3L5bGJcluNQItKifZ90zHXaDzUyOpR98WOfPCKl8yu3eZU=
+	t=1729876568; cv=none; b=n3/6vv5NBuOz2xVqniz7Fms9GYR4NjQdD83qh0FZvnx6yFpCBoN0649u6FL3TxOLllExKFhCvK4tsHg/46SHVjUYAGbxantkox2jRxLzunjPJoUiRcdrJvFDCQY5sgnAbCV+itGTr+TL/I6div7Dxt49U7U4PCTLOhrgKfg9nDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729876568; c=relaxed/simple;
-	bh=ivKc1N4Mmh0vuWkC2a0EqN95MvZ1q0W3nPRNkGt3VSI=;
+	bh=dv8rXfxqR9AoaKXMEWoKx/PzHL9rfreE/NSbe58pUjA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EzBVfbHtRzji8Nba3N+xudROdY1eCj373MtI/hIdhq/BIlBf5NJDW7Q6+aeP1jSGGhjGswgYGvYXDonW3nrynFLOAKmFNoom7zoENP1m1O38pChEqVACLyHn/3lqeyEgeSjsdc3/1c1Zl1Udn2CUIVXjStKIeKtjYmfzYdMBA24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ezsNy5JI; arc=none smtp.client-ip=209.85.221.53
+	 In-Reply-To:To:Cc; b=d9uRMY1DeeXUVeL0jpe/CiIDvMV+eOMIgx2LAoXhuf8BlzmVufBinDGF0TTSReGSLiQJQrGtCDdlah7KEL9x4s9l5D/ujHeeT5oXljNdeHN6tOhw9M1PiHWnRehPzb6SVwBk9TNZa0WCezIs4fJcawd7YOIXbMWeDL/IV79Y0jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=HJjVLcs+; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ezsNy5JI"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d50fad249so1614982f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:16:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="HJjVLcs+"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so1934572f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:16:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729876562; x=1730481362; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1729876565; x=1730481365; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mE1J+qWE3+MY5OdGTFndB6Yv1OgEwWzvu24HL6ntl3Y=;
-        b=ezsNy5JIiUAp5606R9ZC8NRkX4ZOAJp5V8k+NWoc0p3DeiEx5rrvxDJ+ibMaLbrzUw
-         B1N4nW8zydTdgZrtDR5j4A//Lg1hPovVJGFHLErAh7OgTUL/qyQZZAMobj8uOu7l5CGs
-         z6q+HeAKpdd2d3z6QutOdsmBrueGupoqx95Q9oaBZrmx/KVdRx6Dr7y3vcUVaPy8C/xW
-         BYWBerUt2pJPsi1LB/LcS7ufnz8L5dx+m1qaQPeA3BQcRhsfn0FzPXCeeMQLfWTv2IPN
-         xiMFsVLVDscunNVdXEqLXHxkqcX9ql5/buwRyRuPFBDcmoM6ix4iSsqSv20kKpND/KuC
-         y9Fg==
+        bh=F7a7/HziehwTjKT233D/IuQwrsCio9lv2e2bEhcrly0=;
+        b=HJjVLcs+IYrKCIAFPllcMjTqWsTYUGTjnYy8bsc11ErFpesqL0/OfFmeURCOlAFw6N
+         cA0VjAtf1XA1GuvY5lXk/fVmvP/u7Aq+cxbHNhfXQpTBRKWL0Oi/wyR9G377wnJX9Y7W
+         Vc2+5ZUaSNkPnewVwHMN1iiRa7mZsOfH8AzWdM2nni4G7y4b7ZYD0XCxa8dSdV34sTWP
+         b3PRvEsh719ni0A6bOp5+UXVAEYns3UzmHzwLixQAWoaTnjck0c+taIXv6rnyR0au+36
+         5KaT5YltUO8riZGBSh7PoWJtUeN8nynuPauzN+31PIQ1j1gZZZX9cXzSQn02dIMfLVgq
+         W9Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729876562; x=1730481362;
+        d=1e100.net; s=20230601; t=1729876565; x=1730481365;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mE1J+qWE3+MY5OdGTFndB6Yv1OgEwWzvu24HL6ntl3Y=;
-        b=vQpTLZX4M200wyvv5A6N7N2SthQOOjT3LxwvD1NxCfdXaDrQeVCj4rbeCL6Ik/1HLJ
-         u7a90hDoDMO0wi4Crgm+Bl+VhxkQIBbNeSOTFH58LtE8H/rz3omFR1RQGCbjapun8RO1
-         UfmG04JatzbqnIU1mIFMGT1VHIjrYMxnqZkVohR6ydL5f0oNIrBD+yQ5Ys6LOZqSlzts
-         1iD7vt+gwfZYf9MQCLRdXzv0wl8CG1+U4Y4rmm+idOhFzr3cV/qx9GASHoRL+lpPDmUb
-         hP9mXW/t/qI+ANRf4ZwMrjGkzs09emAXVhUQVKrZ68Z69hl+Jdrolru0ToZBGK8ZWB+x
-         xSRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRFqSyAl+tCz07Wn+DGjD8sH5dW/KtUz+g0FuxY2uTbLdXsCJVdqgE06iWMAd1n3FUMM52dudbmJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4OwAsE021r/ddUHEd85zX6iqXC/0hd+lb12xntkTZQiAw1P68
-	OHYC3ujdX0uJlQ3w9gCKdb2xAhVl6zkx+bGOPanOxCdVhfQzNc5TkKWxraE4h+M=
-X-Google-Smtp-Source: AGHT+IEHBMyfg8LeLTWXyBsyEhO7uNb2SflsZSQOS0RHT+/8zxN2LWxj0WgsnINVEDyefqmgv9Nkcw==
-X-Received: by 2002:adf:a29b:0:b0:37d:3f5c:5a83 with SMTP id ffacd0b85a97d-38061128754mr107580f8f.19.1729876561858;
-        Fri, 25 Oct 2024 10:16:01 -0700 (PDT)
+        bh=F7a7/HziehwTjKT233D/IuQwrsCio9lv2e2bEhcrly0=;
+        b=wdMzO2CPEtVoSSWgR4JPPCFhikfCqHccnSg7uA7CWmw3VSKDa6W8yjMeccZLVw7986
+         ZQfPVRnIDxihvOZu7Hulo7/hwzETG6d1JZ9lyWOjnnurKZP3/H1mBY5ur4QLoqcOTfyH
+         5RS4FFqpP7Aw2bVxTyH/FSgsFjq3KjyO89sohwGL6ncJmFxZ3AB37zCK1LJXqv7m69h/
+         XHufrb6UQ8BBhL65PHsU7MddwmTP5aoRgDmxYVULC7KaZvkVu+2NJYTAsr8VNGrpUSOF
+         7NonXm1sBSwx50ArQTWhleu3MRhV5JW/nLAxsbkXF3LIpxkrA+/Owa0rHUhYsA4B5ukB
+         OyIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnrwKPTggoPl66nx7fqH3+1QOhFpOYgXd9Xs++HGI8HgS/26WM0HGj+ppDg6FZPLnZ/8Ol4D7V418=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxoqj8BReBL6qXBNReo26naypdmA2O90HGi6f4dn6YeuZFgEJkw
+	PHlP4GMkVkG2RBOJ8ChAhBB/wWgjENsfbUD+W8UOjOeuYhAfaiGLVhtIwfv3fYE=
+X-Google-Smtp-Source: AGHT+IEFF/mt9prwLkoO/wBDShJYk4RCDN1nX+/N8QkdDrkFHXlIdTeqdVrZSLG6RmWbSoiHWDwtlg==
+X-Received: by 2002:a5d:4106:0:b0:37d:612c:5e43 with SMTP id ffacd0b85a97d-3806101335amr193017f8f.0.1729876564669;
+        Fri, 25 Oct 2024 10:16:04 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.00
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:16:01 -0700 (PDT)
+        Fri, 25 Oct 2024 10:16:04 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Fri, 25 Oct 2024 18:15:32 +0100
-Subject: [PATCH v2 01/36] drm/vc4: Use of_device_get_match_data to set
- generation
+Date: Fri, 25 Oct 2024 18:15:35 +0100
+Subject: [PATCH v2 04/36] dt-bindings: display: Add BCM2712 HVS bindings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-drm-vc4-2712-support-v2-1-35efa83c8fc0@raspberrypi.com>
+Message-Id: <20241025-drm-vc4-2712-support-v2-4-35efa83c8fc0@raspberrypi.com>
 References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -88,45 +87,41 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-Use of_device_get_match_data to retrieve the generation value
-as set in the struct of_device_id, rather than manually comparing
-compatible strings.
+From: Maxime Ripard <mripard@kernel.org>
 
+The BCM2712 has a completely different HVS than the previous
+generations, so let's add a new compatible for it.
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/gpu/drm/vc4/vc4_drv.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index d47e5967592f..3099292f22a5 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -300,10 +300,7 @@ static int vc4_drm_bind(struct device *dev)
+diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+index 2e8566f47e63..f91c9dce2a44 100644
+--- a/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
++++ b/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+@@ -13,6 +13,7 @@ properties:
+   compatible:
+     enum:
+       - brcm,bcm2711-hvs
++      - brcm,bcm2712-hvs
+       - brcm,bcm2835-hvs
  
- 	dev->coherent_dma_mask = DMA_BIT_MASK(32);
+   reg:
+@@ -36,7 +37,9 @@ if:
+   properties:
+     compatible:
+       contains:
+-        const: brcm,bcm2711-hvs
++        enum:
++          - brcm,bcm2711-hvs
++          - brcm,bcm2712-hvs
  
--	if (of_device_is_compatible(dev->of_node, "brcm,bcm2711-vc5"))
--		gen = VC4_GEN_5;
--	else
--		gen = VC4_GEN_4;
-+	gen = (enum vc4_gen)of_device_get_match_data(dev);
- 
- 	if (gen > VC4_GEN_4)
- 		driver = &vc5_drm_driver;
-@@ -462,9 +459,9 @@ static void vc4_platform_drm_shutdown(struct platform_device *pdev)
- }
- 
- static const struct of_device_id vc4_of_match[] = {
--	{ .compatible = "brcm,bcm2711-vc5", },
--	{ .compatible = "brcm,bcm2835-vc4", },
--	{ .compatible = "brcm,cygnus-vc4", },
-+	{ .compatible = "brcm,bcm2711-vc5", .data = (void *)VC4_GEN_5 },
-+	{ .compatible = "brcm,bcm2835-vc4", .data = (void *)VC4_GEN_4 },
-+	{ .compatible = "brcm,cygnus-vc4", .data = (void *)VC4_GEN_4 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, vc4_of_match);
+ then:
+   required:
 
 -- 
 2.34.1
