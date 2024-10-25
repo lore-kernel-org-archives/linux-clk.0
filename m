@@ -1,61 +1,61 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41F921765C
-	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 17:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE1E217679
+	for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 17:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876600; cv=none; b=BEjudc7EDZF8X8QZy1e7z5MWMIpAde5M7GRUrzSjJ2yBlAobmRg3ev39f+77LbcfCBS68J9uZwcTRWWfWZiO4WzHJ2OdtiUxZm7fhuwGWEFeJ73UVwFHKl45NKa/Mnkf/t5jT3qkZyy9gG6DXid0Y8XUPAB6BRJCoFbuOFvnZDI=
+	t=1729876601; cv=none; b=WZzW8m+TX803aeMtwrSLyQvyYYtNhSkfsG6Iba+JpOlNVBinD6VdxRPMDaKKrzGIt52KqZYX9iAm3Tqw4HpoGUSM2wTDAls1fLvqZVsfDJkRDJv8fM2huhiVkeQV0a0vS4P1trlwUp78m1AaGtntoDk0qVDnUq2mOnRP40EVaF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876600; c=relaxed/simple;
-	bh=6GIQGcktZBfb3EW9sCT/3N7/H28SyLep9RyAXNQs71k=;
+	s=arc-20240116; t=1729876601; c=relaxed/simple;
+	bh=YzyDLNl8va/xJl47EHT+vId7czfsGNnbHYHobDKQTlg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Km3ykioCGPLLmEzq8wt3RGS2LU/GtxGV/fLYBJ33iMNknmSLvMdZEcLJ+aVXGfdQtpBaSUCdiB7Z2P50oggtjsAbchZXT1CNeWfjvlkAHmr987XSMULSe/g7/wGLV8u4WrMmDJTk6U35llnrDLeBrFbOM+WODchrV/Ah4x1V4Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=FT+Y3A8V; arc=none smtp.client-ip=209.85.167.41
+	 In-Reply-To:To:Cc; b=GhlPe9icOhKKs6xR8gUpN6X8oO6b3LZ4rBEzIZ2R9zS+Z2HxP1FXSB6gqtpwuwPUV2XXZRWE1JNCH+Mza7KJRyfsKc643NODjSGjyoH1+U4PfHhunNOh4TNTV8xuNY07RG7gFRhSL8Y1Hkjp2tZZ7tgrAl7aSnkWQNF+MdZVGe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Gx05/4Ot; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="FT+Y3A8V"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f7606199so2897936e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:16:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Gx05/4Ot"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so1429763f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2024 10:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729876594; x=1730481394; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1729876596; x=1730481396; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=n6ynqPw+aFyVqyQgEAy8+ChgZ/7ftlVoUYbZGJVl5Fw=;
-        b=FT+Y3A8V/+YGlObiLixX4Rziq0wpuA9Q0vDpxFpaNSNq63BBHs0rMZ8gINxTHCd19J
-         IA+D/5jVhSip9X/QBrwJCuYOuQa3CB/xfgypAspMJ8hegbSHoy/ZX7bV++OTi3Wd8/va
-         gK0gzA74gjwJIRxcHUxlfzol7KJKUXqGuNsmZx/8IfGg1rbVrCqdGf3xHjgowpcApjAD
-         o4upqzf5nAQWEJtLiQGmSAI3sALU+1kD8NX35I3HJa3rW4VW5xrdVNWUZlejlg5R26bw
-         MhABhqPprno/lpTtNhADc5Mr6Gna93XcRpRUao76OUlRYcJKQmo0wsnd001niVNcSSC6
-         dkfg==
+        bh=SOV7jAWhbFwwjw/OJ7O7LtE/DWvJ9qhDH2QMAsU+FWw=;
+        b=Gx05/4OtPlxFfZSmKt5wry6KA1iBI3l2cM58HJsFS0sukwTmrSbjdiR6BRbnpnuM2Y
+         VjLk5MbiZ/ITHNJDC2ezGMsCqCHORpMAiUGUx7bOQhTY7Oa+/7UGZpJQ7lbXUH2JOfvF
+         ycTW+8iwckQCqtTbdCLp7P4ogreh1MH7IcFTqA/wQLMmNDgbU3r29A2dq1RuPZ1CCqzj
+         qxe9jAlSU2JNraQPIh5aQ1CUOGWtGxqZr1KyjEtvTeRKN4d/ThyTkjypysckrC+SnZ2E
+         cW/YNjThFtZnFftpG1D5DnftzxJP5RJFDAeh12k9CEVd+V3LsolACACs3O4xIqIMSIa/
+         bbVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729876594; x=1730481394;
+        d=1e100.net; s=20230601; t=1729876596; x=1730481396;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n6ynqPw+aFyVqyQgEAy8+ChgZ/7ftlVoUYbZGJVl5Fw=;
-        b=q3/zmobH8QbrNw2PxgVoYlW0HhcbhrwwkTPKteIfHkV/O+WQM7eUvZu0UtMuKIDeTs
-         xiG2YbmKlx4dZJFmP4C1GkhICbEA8NRXoCIm3a7cKyFVr8PIimq2Uxw3ehh/krGYMEMx
-         EVnP3D2+WZv/3k5xtq+vwW1hQH0FZzKtNgw8/m9PS7dqfk10fUReV/Xx7KMLX8Bt26MW
-         BBfIpfaRy/jV1lIhl4JQVf9zzGhwzTXRXrtk3ifwmwuC1dCTYI3Up6GS6HcampeKHNtn
-         gIl+xXdhaSRwLixId2EEj3ebG1UumO0QHr8HLcucjrAimEJLRBq1VD7/K3XCGixuPxuj
-         gyEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVS1KYiUpUA1O8iEGyqQoreQSmlzb0CgnL7IBCaDCDF95lN+EdZOdqs35v49mrb2QR/g9mlQxRBe0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXvUIPQL+vhyBc0lrGrdezkCGuBNuwzz363MisIXlCoCnhRyvN
-	NHNGg2a0eJ1Hx1frF9trLdxL4V3Pb7Rr/ahs98EivTlbWj3thkZlvmiC2971lkM=
-X-Google-Smtp-Source: AGHT+IHK/c1INay68uUhSO5TRsMi7vzJxRxlcdjPaei9dfk9EKPm8CK9FYYjgLp5rLJi/EGzMMN1vQ==
-X-Received: by 2002:a05:6512:398a:b0:539:f2f6:c70f with SMTP id 2adb3069b0e04-53b1a2fed80mr5844694e87.8.1729876594028;
-        Fri, 25 Oct 2024 10:16:34 -0700 (PDT)
+        bh=SOV7jAWhbFwwjw/OJ7O7LtE/DWvJ9qhDH2QMAsU+FWw=;
+        b=td9mraZhkU5RirIYXJNwKWsepZAOEjgpdrqRINc25ZU+JeswZ3jMtIVUCTRuIagzPa
+         vq2747wXfx2FK49AeuW6nee4S1SEqUnvK49nOiL77ME01vwrFi3cs03Uy5ko1rNZD4U1
+         gmTQ5SEjkayJKQXay+UGeYGHPtJeCn7WKbb0Bo4QL6tlAH+mgJzz2HLASM75f56OtppV
+         obEGYToGlSCmLLFMr8f6dsRS0/olTM+OGAGKx6ykf+nc1IJoJppnlqq83klXBbaVAqqq
+         wWCPzWtYcuMsvE+Z02F4ow+4kcx68dQ2b2X9UqJ1vYvVMZh8Q+/bOogrA2n9vo1o1E17
+         x3qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJOcphXMjtNb+fAZNC1LURcL/U/IeUNFr58eGldZCkuL5hK/E34gvEaZyDI2XDgHy8rsl43avrYrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQPtDcx5sKqVH3+KlJfpqZ0TaodAQmcyyYwCcdzZCwOLJ1/ifa
+	3/v4g3MI40kTFh8c9DAaIxuQzLIdwYOi21bJ5McYqCbLC3U7fayqqoQJWRMQGuA=
+X-Google-Smtp-Source: AGHT+IHM4SY0KfVAQSpJ1+ccDJ+C4lsK7yh/l9hYanouQQltriHwErlFPV65caR05fmBTRpW7n50vQ==
+X-Received: by 2002:a05:6000:e42:b0:37c:cec2:23c6 with SMTP id ffacd0b85a97d-38061208e5dmr101866f8f.57.1729876596081;
+        Fri, 25 Oct 2024 10:16:36 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.33
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:16:33 -0700 (PDT)
+        Fri, 25 Oct 2024 10:16:35 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Fri, 25 Oct 2024 18:16:05 +0100
-Subject: [PATCH v2 34/36] arm64: dts: broadcom: Add firmware clocks and
- power nodes to Pi5 DT
+Date: Fri, 25 Oct 2024 18:16:07 +0100
+Subject: [PATCH v2 36/36] arm64: dts: broadcom: Add DT for D-step version
+ of BCM2712
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-drm-vc4-2712-support-v2-34-35efa83c8fc0@raspberrypi.com>
+Message-Id: <20241025-drm-vc4-2712-support-v2-36-35efa83c8fc0@raspberrypi.com>
 References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -88,49 +88,71 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-BCM2712 still uses the firmware clocks and power drivers, so add
-them to the base device tree.
+The D-Step has some minor variations in the hardware, so needs
+matching changes to DT.
+
+Add a new DTS file that modifies the existing (C-step) devicetree.
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 28 ++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm64/boot/dts/broadcom/Makefile              |  1 +
+ arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts | 37 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index 2bdbb6780242..92a2ada037f3 100644
---- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -62,3 +62,31 @@ &sdio1 {
- 	sd-uhs-ddr50;
- 	sd-uhs-sdr104;
- };
+diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
+index 92565e9781ad..3d0efb93b06d 100644
+--- a/arch/arm64/boot/dts/broadcom/Makefile
++++ b/arch/arm64/boot/dts/broadcom/Makefile
+@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
+ 			      bcm2711-rpi-4-b.dtb \
+ 			      bcm2711-rpi-cm4-io.dtb \
+ 			      bcm2712-rpi-5-b.dtb \
++			      bcm2712-d-rpi-5-b.dtb \
+ 			      bcm2837-rpi-3-a-plus.dtb \
+ 			      bcm2837-rpi-3-b.dtb \
+ 			      bcm2837-rpi-3-b-plus.dtb \
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts
+new file mode 100644
+index 000000000000..7de24d60bcd1
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/dts-v1/;
 +
-+&soc {
-+	firmware: firmware {
-+		compatible = "raspberrypi,bcm2835-firmware", "simple-mfd";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
++#include "bcm2712-rpi-5-b.dts"
 +
-+		mboxes = <&mailbox>;
-+		dma-ranges;
++&gio_aon {
++	brcm,gpio-bank-widths = <15 6>;
 +
-+		firmware_clocks: clocks {
-+			compatible = "raspberrypi,firmware-clocks";
-+			#clock-cells = <1>;
-+		};
++	gpio-line-names =
++		"RP1_SDA", // AON_GPIO_00
++		"RP1_SCL", // AON_GPIO_01
++		"RP1_RUN", // AON_GPIO_02
++		"SD_IOVDD_SEL", // AON_GPIO_03
++		"SD_PWR_ON", // AON_GPIO_04
++		"SD_CDET_N", // AON_GPIO_05
++		"SD_FLG_N", // AON_GPIO_06
++		"", // AON_GPIO_07
++		"2712_WAKE", // AON_GPIO_08
++		"2712_STAT_LED", // AON_GPIO_09
++		"", // AON_GPIO_10
++		"", // AON_GPIO_11
++		"PMIC_INT", // AON_GPIO_12
++		"UART_TX_FS", // AON_GPIO_13
++		"UART_RX_FS", // AON_GPIO_14
++		"", // AON_GPIO_15
++		"", // AON_GPIO_16
 +
-+		reset: reset {
-+			compatible = "raspberrypi,firmware-reset";
-+			#reset-cells = <1>;
-+		};
-+	};
++		// Pad bank0 out to 32 entries
++		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
 +
-+	power: power {
-+		compatible = "raspberrypi,bcm2835-power";
-+		firmware = <&firmware>;
-+		#power-domain-cells = <1>;
-+	};
-+
++		"HDMI0_SCL", // AON_SGPIO_00
++		"HDMI0_SDA", // AON_SGPIO_01
++		"HDMI1_SCL", // AON_SGPIO_02
++		"HDMI1_SDA", // AON_SGPIO_03
++		"PMIC_SCL", // AON_SGPIO_04
++		"PMIC_SDA"; // AON_SGPIO_05
 +};
 
 -- 
