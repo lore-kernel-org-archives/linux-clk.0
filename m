@@ -1,82 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA218B48F;
-	Fri, 25 Oct 2024 12:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB5A2022DA;
+	Fri, 25 Oct 2024 12:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729857629; cv=none; b=B/niz5O/NQih93t4AA6GVRaFmJ9mzMVpdJ1jEplu/HyilYgklvz+tyccjSEgIDl+8bkC4/sky0gGpOckwF4ZVIXoJpHDawMOAu4SLXkDjsq2vIJpffv29nO9myHSMh7RA+TAmn2ETEt2OXMbTZR+c2VvT5eYvNgbx8+ag5mKrrU=
+	t=1729858212; cv=none; b=sIrREFiWmpSRV/uu2CFJD+998MOMCF+D3Pp3KDD0nMLYlGuTmmz+f2vdHCKi9YC+Oh8Yu2EhErHwGYa9u+7TcqkZjjv12uoSawuYSxlESn7+ahjhz+wZlDTkLB2UNTmidxSU4dG2nvL71sfwJJBmCgGDWAOmygjPWXyYS0/JwZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729857629; c=relaxed/simple;
-	bh=JQwR/chXzlq/cfm1F9FSdwlz8BaZGJQ7hxLBy6o2r70=;
+	s=arc-20240116; t=1729858212; c=relaxed/simple;
+	bh=a0NkGOWfPXvuC0pRrY2V1xNhHthWDgHcKYifaYQcMuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YkCdjYQ1HXkoTO+evj9Hj0UDIseJ3RCVbuk50UWYvB/o6UIwiByZ/iDlB1YAUcvwRNh5zHQYFQEtq5CDa/bJBRA85lCMJft57f73O2K6+st3tDpqhrSgmnmt4guYOuobobGwnfcRcVjEdBVIwdi/6Cvf1+URurxHbvt8TO/PvEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFMr3E5a; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAISP3deAT0U/QTgCCf2vlkC+dZKe47kf68+hCAc253VYT54fakcpDuGvb8BZigPNPAsoOGUCk2y4H97eomWTmwg+4xFGmMbWmc7S70AZChJEiOecAtqA3HT+lBFHcIipCY+MRjz9PhYcFsIpM+SebCwHyPig8/ZmFD4QkEAaK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=grndIlir; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFMr3E5a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B975C4CECD;
-	Fri, 25 Oct 2024 12:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729857629;
-	bh=JQwR/chXzlq/cfm1F9FSdwlz8BaZGJQ7hxLBy6o2r70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eFMr3E5atngJrrfXomJ8sggk5kYc52xPUiMWbJG8e9REsB8qS6m5oKahLDsOrS6ej
-	 XcP97XsIAB1fTjdXj9bfR97BlvQ9Pt1HobJFz1wC0+MfYfzIelt6KlgTKEt7Zbdv7w
-	 KN+NYfE3+8MBy1yt070yeslEuOv/Au6GoVwWRzVZHKJYrNsbAvRITn7o2alDGDknXT
-	 J/yQqpcO+Dr8HDZqc1RmYzTjuoF/VEO5SumcAyHBEIIVXRS3/RZF4eTONinhHQg3ih
-	 r3NWn/NChPENa3ZolwDaxUi7Gfgl48YKM+wPyFfEqoaPhyGbOGq8NXn/cofUnp/MC/
-	 TTXjAC25znh5A==
-Date: Fri, 25 Oct 2024 14:00:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
-	angelogioacchino.delregno@collabora.com, neil.armstrong@linaro.org, arnd@arndb.de, 
-	nfraprado@collabora.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com
-Subject: Re: [PATCH v8 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
- reset definitions
-Message-ID: <lyafg7jwbwoe3j7voecgd5tnhrb65utc3vkc5qqxoqug3qd47m@iudkp4w2mrso>
-References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
- <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="grndIlir"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729858211; x=1761394211;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a0NkGOWfPXvuC0pRrY2V1xNhHthWDgHcKYifaYQcMuI=;
+  b=grndIlirvwmJWQAfbj0CBCEvDKEt2cRMzFOmud3jEV+/q3q6JNn3tedq
+   YAUT+KvT4A80W6gqhuJ1+sPOj4u44TKBL8eMV1QrjUq7ipz4IKzEiJzFK
+   2Xbp9miwo1fprcOd8tllz0202o+r6DBoy5jcNERIs3yXOYo2W50y1eXGM
+   1hM5RwysnEzDj99nt/gw40PhO7JLp2zHuRy2jFowL5LQo6NamvtXr2C1G
+   JsZ/a32s4nERx/6npfu3lUBW9lEmSBHelAeit0YKvBnihrQphf0sYNVyl
+   wIH3xXHdMLQLnyQq3fHc/FluqnzI9CRj/zAuuRAMiI4yWtHrMAWL9Nprm
+   g==;
+X-CSE-ConnectionGUID: sTIWyVf7TqmmY6G6KXSezQ==
+X-CSE-MsgGUID: m+DIviJpTi+/nLhudoIzHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29692403"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29692403"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 05:10:10 -0700
+X-CSE-ConnectionGUID: UO8b6M5ER5iqox+HpdnRPg==
+X-CSE-MsgGUID: g74Ybz18R9a361uG3aHnZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="111711060"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 25 Oct 2024 05:10:03 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4J8j-000YD2-0w;
+	Fri, 25 Oct 2024 12:10:01 +0000
+Date: Fri, 25 Oct 2024 20:09:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 22/37] drm/vc4: txp: Add BCM2712 MOPLET support
+Message-ID: <202410251938.rnvcIesU-lkp@intel.com>
+References: <20241023-drm-vc4-2712-support-v1-22-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-22-1cc2d5594907@raspberrypi.com>
 
-On Fri, Oct 25, 2024 at 09:25:17AM +0530, Manikanta Mylavarapu wrote:
-> From: Devi Priya <quic_devipriy@quicinc.com>
-> 
-> Add NSSCC clock and reset definitions for ipq9574.
-> 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
-> Changes in V8:
-> 	- Replace bias_pll_cc_clk, bias_pll_ubi_nc_clk with CMN_PLL
-> 	  NSS_1200MHZ_CLK and PPE_353MHZ_CLK
-> 	- Remove bias_pll_nss_noc_clk because it's not required.
-> 	- Drop R-b tag
+Hi Dave,
 
-That's not really a change waranting re-review.
+kernel test robot noticed the following build warnings:
 
-I wished you did not create here dependency, skipped the header and just
-use some number for the clock. Having dependencies does not help anyone:
-neither you to get this merged, nor us to see that it was tested.
+[auto build test WARNING on 91e21479c81dd4e9e22a78d7446f92f6b96a7284]
 
-Please confirm that this patch was fully tested.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Stevenson/drm-vc4-Limit-max_bpc-to-8-on-Pi0-3/20241024-005239
+base:   91e21479c81dd4e9e22a78d7446f92f6b96a7284
+patch link:    https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-22-1cc2d5594907%40raspberrypi.com
+patch subject: [PATCH 22/37] drm/vc4: txp: Add BCM2712 MOPLET support
+config: arc-randconfig-r111-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251938.rnvcIesU-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241025/202410251938.rnvcIesU-lkp@intel.com/reproduce)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251938.rnvcIesU-lkp@intel.com/
 
-Best regards,
-Krzysztof
+sparse warnings: (new ones prefixed by >>)
+   drivers/gpu/drm/vc4/vc4_txp.c:513:27: sparse: sparse: symbol 'bcm2712_mop_data' was not declared. Should it be static?
+>> drivers/gpu/drm/vc4/vc4_txp.c:527:27: sparse: sparse: symbol 'bcm2712_moplet_data' was not declared. Should it be static?
 
+vim +/bcm2712_moplet_data +527 drivers/gpu/drm/vc4/vc4_txp.c
+
+   526	
+ > 527	const struct vc4_txp_data bcm2712_moplet_data = {
+   528		.base = {
+   529			.name = "moplet",
+   530			.debugfs_name = "moplet_regs",
+   531			.hvs_available_channels = BIT(1),
+   532			.hvs_output = 4,
+   533		},
+   534		.encoder_type = VC4_ENCODER_TYPE_TXP1,
+   535		.high_addr_ptr_reg = TXP_DST_PTR_HIGH_MOPLET,
+   536		.size_minus_one = true,
+   537		.supports_40bit_addresses = true,
+   538	};
+   539	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
