@@ -1,95 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053FC1FC3;
-	Sat, 26 Oct 2024 10:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346851D31A8
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 11:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729940299; cv=none; b=F3DRGTfBvmdNe241Y37Ut1W84XHWu48FM7vh/l3J6/s5CKzpAeOA1HFQSChKcVi8UXIUAFRhzmcW2Xrz15bFV+kFgqy+0g7NNWxMaogq3BYRiC8oz0O+KRWkIEUCnocY8HigQeOXOXos2bR7/Wv6maYM3O4CsdcB4o+oUucmr9Y=
+	t=1729941903; cv=none; b=HYRo8UEFccJYzyNZF6z78h92Y+fbtRypKZVQrFhLWSlX9v30fhJ+EaUC149zhXu4Pof1yR72OMKJLM0QLPyKiFgwMD4XCKfgb0EZRsgDbMZ3eooWz8qZ9eTAZbkAe/3Klt1aIgQkBtZNmxRXnNLoeRcMJS+MdIVThWSP209cDFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729940299; c=relaxed/simple;
-	bh=zM0zIS1n7ivHL4hMIirrIZWtrO3KkzIwHIO2bjUDAXw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dfS8gdpIwIy0IEBb3Q9gXNTjJww9Hse4pDdeo+E6QHpqFnt4CcJH9xus0+7HjmkqhsMHf3xSczMQGapficqhNiz8LHQ5GRVH1g9TT+UUL0R68C2N9lzQ43cLuceOfM2aCGbETAty5VWMsL9Vmsokelx4oIr/EgmJu8RgMT6E/UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNbFgHVj; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNbFgHVj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8BCC4CEC6;
-	Sat, 26 Oct 2024 10:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729940298;
-	bh=zM0zIS1n7ivHL4hMIirrIZWtrO3KkzIwHIO2bjUDAXw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=dNbFgHVjOqcCA1wlj9Rsj/DtRZjODzTmAi9rgQaO64Ibx2oeX2a9QHnN1NbSFVJY+
-	 UCgMgQiBWwpxlLfmO7plzklyuI0JyVumOZtA4GtLQbEU7ejVL47tJdW30yrEx6+bve
-	 pilaw9BBJ0sA+4mrX+vBSL5yVwb0MB67cHDGfvulFl74ZeTpo6rAlcpKSI/sBbPPNF
-	 ICbUpMbeXY4QyGrB1ILkLZA0+K2/pTvIxL/DmRfG8leVkwjEjomLSYC35j+dGRInAJ
-	 5n948QdgK/j3JTRwIE1wQ0bzG9foKYfagkX2sG7FZNJXp4QU6FNUnbcbXRYQaAZhJ/
-	 oI3/LaWCl8caQ==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 26 Oct 2024 12:58:13 +0200
-Subject: [PATCH] clk: qcom: Make GCC_8150 depend on QCOM_GDSC
+	s=arc-20240116; t=1729941903; c=relaxed/simple;
+	bh=FBEwKyXQ1EIVJcM05ojaC9yXUFYk3hwgD8fHBQFGoXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XVq8/w9yX1TkMHl5tScB9UFuGZ/oLfuGl9NbLjcTOAgfx3C1r96ZeRmhWwszrx34zgYrGFayUbb8DWVuiI1jOe/BpvUPbOzxfy82WhGyDZQgN7eSmc1JLSrJ1YKM0awVfNTV+SKVQ6hj20C6eycYEY7KG7jVAG+1EHDwc8vIKdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XbHP92XM8z4f3jtw
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 19:24:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C77201A0359
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 19:24:57 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.84.78.15])
+	by APP4 (Coremail) with SMTP id gCh0CgCXysaF0RxnzRWxFA--.6494S4;
+	Sat, 26 Oct 2024 19:24:57 +0800 (CST)
+From: Yang Yingliang <yangyingliang@huaweicloud.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	shengjiu.wang@nxp.com
+Cc: linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	yangyingliang@huawei.com,
+	bobo.shaobowang@huawei.com
+Subject: [PATCH] clk: imx: imx8-acm: Fix return value check in clk_imx_acm_attach_pm_domains()
+Date: Sat, 26 Oct 2024 19:24:52 +0800
+Message-ID: <20241026112452.1523-1-yangyingliang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241026-topic-8150gcc_kconfig-v1-1-3772013d8804@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAETLHGcC/x3MQQqAIBBA0avErBNUKqqrRIRNow2BhkYE0t2Tl
- m/xf4ZEkSnBWGWIdHPi4AtUXQHuxjsSvBWDlrpRUnfiCiej6FUrHeJyYPCWnZBmRWU7gwP1UNo
- zkuXn/07z+37Vuv0bZwAAAA==
-X-Change-ID: 20241026-topic-8150gcc_kconfig-0abc1f6ac9e8
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729940295; l=1181;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=9dYjLFN7eZxVyGQmmovqSnUbTRrh6XTiwULvyPaGuPA=;
- b=gMiCAzr5IJtaDbKIZ5UDCVzTj28raPuXHgCA+FbCqVKjAwbOUgLArITUUMea1aX745T1xsk+p
- /kYtTW8u+KIC3BQsJMOObVztZURc0dxGoYq0J/6SpFTmoY1kk2SkVzl
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXysaF0RxnzRWxFA--.6494S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrW7Aw1fJFy7Wr1xtryxXwb_yoWDWwc_GF
+	y8urn8Xr95JFsxAr1UuF1fXryDZrnruan7XayS934fJasxur1fJrs0qF4rXr47WrWUGFW7
+	Xrn3ursY9r98CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: 51dqw5xlqjzxhdqjqx5xdzvxpfor3voofrz/
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-Like all other non-ancient Qualcomm clock drivers, QCOM_GDSC is
-required, as the GCC driver defines and instantiates a bunch of GDSCs.
+If device_link_add() fails, it returns NULL pointer not ERR_PTR(),
+replace IS_ERR() with NULL pointer check, and return -EINVAL.
 
-Add the missing dependency.
-
-Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Closes: https://lore.kernel.org/linux-arm-msm/ab85f2ae-6c97-4fbb-a15b-31cc9e1f77fc@linaro.org/
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- drivers/clk/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/imx/clk-imx8-acm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 953589e07c593fd49fab21c7cfcf466d33f99a27..c298d8e6700f6293f62269e5cc4ef518afc97a7a 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1042,6 +1042,7 @@ config SM_GCC_7150
- config SM_GCC_8150
- 	tristate "SM8150 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-+	select QCOM_GDSC
- 	help
- 	  Support for the global clock controller on SM8150 devices.
- 	  Say Y if you want to use peripheral devices such as UART,
-
----
-base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
-change-id: 20241026-topic-8150gcc_kconfig-0abc1f6ac9e8
-
-Best regards,
+diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+index 6c351050b82a..c169fe53a35f 100644
+--- a/drivers/clk/imx/clk-imx8-acm.c
++++ b/drivers/clk/imx/clk-imx8-acm.c
+@@ -294,9 +294,9 @@ static int clk_imx_acm_attach_pm_domains(struct device *dev,
+ 							 DL_FLAG_STATELESS |
+ 							 DL_FLAG_PM_RUNTIME |
+ 							 DL_FLAG_RPM_ACTIVE);
+-		if (IS_ERR(dev_pm->pd_dev_link[i])) {
++		if (!dev_pm->pd_dev_link[i]) {
+ 			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+-			ret = PTR_ERR(dev_pm->pd_dev_link[i]);
++			ret = -EINVAL;
+ 			goto detach_pm;
+ 		}
+ 	}
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+2.33.0
 
