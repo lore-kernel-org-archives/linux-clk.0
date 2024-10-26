@@ -1,61 +1,61 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9491D5ADE
-	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 15:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3660370826
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729957637; cv=none; b=i8D+mOYNteiIrdFi2MRxGf10yVN6NNADfSHedr/QpnPKc2TYqTK2zLOFO2WyE35sYtyumOEGOm18QX7bKJmzSzTjCz96cPDrEe3vLhfOetlgPxPPq9aE0eq6amFwGrkIIYor/1/dma7Ylo93fJtwjZFXI3vUF8qqz+HYuRn0v0U=
+	t=1729957638; cv=none; b=FXKEJkrnumNGPPaNYEvENVqaW+XuWt8LJss2ynwxEB72Ooz1x4C4B0mvqqZuKddAMWVzdUvj545zlU/p10c4cw1KdR67mMYdb4wEhTI+qzG0w2qZsjXeoA4Hrz6gPC65U5mb6oUIXls++7OxW57PMmzUHpaiucGvJJ/yF7v6SmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729957637; c=relaxed/simple;
-	bh=1S0e8INDTJp4RQZO2xifYyW0FBrz3v2kT78lT89hhEk=;
+	s=arc-20240116; t=1729957638; c=relaxed/simple;
+	bh=doO/a916moGA8DWgcEw9MEXPijwB7ll6ZA8YQOQZTOA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PJ0w98AAgC2qiTVhOQhXkABEaXeTOQLdskf2m0pBdXMD+/oIlzeLrYBwM5nmUFVCfatv4E6IgxFDkBNyRUPIClvAbK+s1M3Gr84beFVX9c5GJLxmsBC6YPLOXCHCh2/WD8m0YZbacxOB0Y3Zos6g74V2yEXRN5PvKnjQ42oSiUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AuOLzs60; arc=none smtp.client-ip=209.85.208.180
+	 In-Reply-To:To:Cc; b=grvVl826MZiJkMMlha2Osvu0O72BI6zxrSFq2l9ZSU1B+OJmEVmcdBKoi01hRgBNa5Tww6drkPRePZ2Q4JoMMMqgHUIEr8SRTKcn34GZdjRrx0idlVg2/UNVOXh1U9lCvjWdZc5yqr4Bn7kAQv/x+opOASl49KW7B1kkGhiRBnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/nks01r; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AuOLzs60"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so25966911fa.2
-        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 08:47:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/nks01r"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so2731897e87.3
+        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 08:47:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729957633; x=1730562433; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729957634; x=1730562434; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dQiTcshw9Ox4It49mqmwWy0sWX4h7q2ja8AFVlIbjLQ=;
-        b=AuOLzs60EHC0XeFsuL0O6CVgX14Lq3aswegxNzAsB2kwnXOR5/xz7oe37Rn9WmXoNk
-         9XB+4XVcuSwULNJMFeZlFyVG4vQacdC0gRSr5MAk8VqpfAEfP0vy1IHIYToPdvlZPkYS
-         UGbEUR8OAEEAE5Plp41rvVvecx6ny2/DrkpqGLk8XPZA0mv/FFsK4OVu5ujsqP64V4Ye
-         K4jbKPYKdh1655m6DYIvVH91HrKyS002XozPMrvYaHtMa8PlwwOA0SRyxnGaEjwmXBy5
-         5yyYPle6fvko/0UFqpnH5OdicF+UCWvGwz0y3GVVYYD0hNjqHaLGGqvzbLSQyGl73YHe
-         Vjhg==
+        bh=Et/ChhQ8OUXatHb7KnUo7g0jzZYAGHhogo25hpK7iKY=;
+        b=I/nks01rt4uKqm9ujGRN7tIVYMXJFHT0fihzBj3aawH58WwcXkZC9o5wy6lqEXrQ47
+         BJ+00zEJVlXBhR42BlsxPtcsGrbEF89hcIXBBZdv55OPm2BV25iCTjEmOHnMpZrARZHl
+         m7InZ9rHCILYBYQ1aRmv81OP9Lyi0QRBgy3NAH4L16h5h4DIrHpJ5K4K5xgzbChaz2ip
+         cR8RTdicwdpUBy5m18qBxFhFHVIiBbJvmTnBc6q0yNMoW4OIBhWrcKIFMJbLLdDWndEU
+         ZskZQJhfJQjfR1+GiZJ9z3D/dLzy4iOhakeZRPC/ig3jPLUaGXGI6ickmOZFdRoXN1aH
+         7y7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729957633; x=1730562433;
+        d=1e100.net; s=20230601; t=1729957634; x=1730562434;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dQiTcshw9Ox4It49mqmwWy0sWX4h7q2ja8AFVlIbjLQ=;
-        b=c49phXaVBJYt9K9/4ColtYN8rZCXXXfokZe3bYDJ80lF3yS81v9W9oTD3APr3AFFbf
-         m4ieAc65oiMt/nieV+Lsih6ZtHb6sLkR18Ht3vXjpSj+tQpSSekqe3XtiNP7eJyO9hlj
-         LOa/ptiFC1dMtvUuc4Ak1uGADZ2CF2GedexznP8bEFugiBk7aYP2JwfZ70UeLjR3+ZMl
-         MnlM3xADLdNAmvEovb++JRvTbfuPVuB3I3MevWjgioGJ+yYcS/iGeRna7zouP6R+t+rD
-         Ik8NhfesLlKTtPQrJJiL6cjTI8ltU0bqN9tRVA3XTd76U5ypPJ/5+ThAPWNJTx2iXniC
-         s//g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5IU4iwPTV9d4wTxmj9rwg7A1U8Cfvv0qlq4bYCzZz48++Se03/X2khU7ENCtOCqOSGFZrFyM+Dew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGh8hL2q66cYi0XEOYGErBoVgu/B5lsfnFkY4VHrJ18wLDALtx
-	1biVeQYKdt6QZbjl8nQwyaaBZY0yGJoJ/bZzRwJbFgzkvnvsUR9Y9FvoNkrPQCQ=
-X-Google-Smtp-Source: AGHT+IFM9o0y1CBVkiF5YjA2WA9nxw8S+6/mMEOtW2WbUFfcrAzGlP04lnVmJhLodAPMHBl4ebHu3A==
-X-Received: by 2002:a05:6512:39c4:b0:539:ebb6:7b36 with SMTP id 2adb3069b0e04-53b348d893fmr954679e87.25.1729957633490;
-        Sat, 26 Oct 2024 08:47:13 -0700 (PDT)
+        bh=Et/ChhQ8OUXatHb7KnUo7g0jzZYAGHhogo25hpK7iKY=;
+        b=s35xBniulcCIVSCZ/AjxiCC4Q9hYFspTErLlA+Bb4SOcCYehyo9lX5s7k+7IKWsPbT
+         M4LYO1jY4jZoESTBhy6jVoAZDX4LqK42hXCO3WRNhWtWEBgxYJck1Njpgzseml57vScZ
+         3KXzGJ1SLMbMwgiYr+c6zliUuDQwOig4abIwkMKJmzzIs6dmko/pyICvUp5virGwFkeP
+         zbQ1EqK9mOzXDJx4hMRq2uzZ4KWSdSAyVa+rdWwE6sOnLKvN5Hi1yXcl2NaFc9cLro6a
+         +zjTtCmc7gJvRepsddTeBJSUvukJD2BPFKbl7raPtji3GQXxfVzLmZF6vk5ANAwYh+5Q
+         htdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXz7pmBz4Mengkily1SE+vCFk/90OHR7SaGN6POuORE6X9EJHQsygBWK/9+L3Nt3buhXC89vOHdczg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8fjQfDjk6yN/RMAuRcC4d74fhfj8QBcoVBHHlIlmMERm+2Sxk
+	bWHs26GnkXtzK8iIftal6CmRyOhk12LcBtLI6uun7T0fJPyjDYf3c1bNL7bFjLs=
+X-Google-Smtp-Source: AGHT+IExMTwc2jTz/5yXV/5dGn+or8rSg/sckS6KeLN5yxU3nkuHgmWDOmFPRL84ysfpl81AyMn87A==
+X-Received: by 2002:a05:6512:318d:b0:539:f65b:401 with SMTP id 2adb3069b0e04-53b34c463d9mr903885e87.57.1729957634384;
+        Sat, 26 Oct 2024 08:47:14 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c7cf4sm532188e87.184.2024.10.26.08.47.12
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c7cf4sm532188e87.184.2024.10.26.08.47.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 08:47:12 -0700 (PDT)
+        Sat, 26 Oct 2024 08:47:13 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 26 Oct 2024 18:47:02 +0300
-Subject: [PATCH v4 04/11] dt-bindings: clock: qcom,sm8550-dispcc: Add
- SAR2130P compatible
+Date: Sat, 26 Oct 2024 18:47:03 +0300
+Subject: [PATCH v4 05/11] dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P
+ compatibles
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241026-sar2130p-clocks-v4-4-37100d40fadc@linaro.org>
+Message-Id: <20241026-sar2130p-clocks-v4-5-37100d40fadc@linaro.org>
 References: <20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org>
 In-Reply-To: <20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -77,47 +77,119 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=912;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3379;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=1S0e8INDTJp4RQZO2xifYyW0FBrz3v2kT78lT89hhEk=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHQ72ToQpDJBXu4jZeiQUts+xrvJeVcM6Vwxpr
- +5GQzSbHm+JAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx0O9gAKCRAU23LtvoBl
- uHyGEACigZfBTkSpyzvogAr3GEUjpHulYnkQ2oXwYQ5XzAEuOFDtaeIILyllT7cC46/plKGzL8Y
- n/o8nxlfU3BLnccTWjRoR2doQMTN60g6mSxcELvvHQ2bM7j+0kn+y+9jLS3zS40mG5xCB++gT9q
- 4Mh01P2lYXc5Z4JZTWD5amIsVLJZh/63iESX+ak/0++il815BWuAy4M47+KXOSv8GQsu4zkVxyH
- Foqi9IqmtO+CD8tmsJ1Qm2qtNTi5K8twanR5wfWPDjVDJWDAx1BDY2mDn8baLHfRAHb7ge42DHE
- l7DaeQdqgdWl6wcjWjp6fCa72FQHxA4wB3x7HZw2XP+C/dC4Mpuck8DcMeJVEu+4vPq+GcE2AKh
- DzFibhS1l4cTnV/1LMV7lD+r6HOZcOl/4Rxa5Uh5GxJR1Nk4PCN5tTRV/EeknsgLP2bKQcJqM4M
- dc/J5wqisoLcI+TN1x2TO/rqCYCyuYhig15duUfCeqVAsnudvRgN44psjGe7UCUxzDyo3tv3swu
- OZ7s5lQm0iU9G6Mm5aTsBxvGk+b/PjVZq0KYEp6Vx+ASBoU7mjN8emtDo7GhtXSeLx2+sy4pJ9D
- APGH3CyL87fG/mjp1dClgW5N/SdBAe/XQBz7RIqt13H2QVNQuRd/y9vV96Hq22H47R3Qq654qQb
- hDIlBljWLJTJmTQ==
+ bh=U8SwElc6O/aMG3Pi0A0hWuxY5S0AlYAxeI/Vjj5b5Qw=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHQ73wf+2XaraKbcpddGfJTvt+qMC231yarFzI
+ MOKrPI+1oCJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx0O9wAKCRAU23LtvoBl
+ uKnEEAC2FgG1oWLGXVi5s+pt9FVUYcleKOsm7F+xtrqocWbj4FnYfR08EYdKb40qiXEE2g+Hw0u
+ SPJIrbXeiojLv4/oXe9DA8ZWk2IQF4wkqLgx8cU2etwNNBS077/Pie2sLMhYjdpU5TEX7CLj9d0
+ ByTX2VwR/h/rVXOivo6k3JrksbQAhVhkwG8s+OLG9D3A3VtIt2wnFlso2D6yY8rog/5IwrlHjy/
+ rOnos48D+1wes3UtyEn84ZBmI+yi2XgE92V+RiX84J78J5qXqRddQM47qKJTywhYBfnvBdMaMX+
+ mT5VEb94oepTmCA97Sp6lfS8MaVr42YzqLJH4IktPLyiuUySWd5vXYyUdBRFvytnhtmmpYu1sGu
+ U++A2MSAkHLr5ACC8Jhlu0JOxVHjG//tnq+cOXMw1dtq8nUuBxX5MV9lqx/njKZZB/KWQJ97y/U
+ 4L/n62q5ds9Ucxg6INZ1zmnZg9DpeJD3A5P+Kry9PdGjmi9SlYZbYwHBSeScV/DgD4+p6cfiJ9T
+ dG8akoV678RgJOWvV1xi2JS4JMf6R0Gri+I7SlLC3A3Djjqmx4LBh9hettJOYxUVCFgbjPnLofu
+ 5oNIfXARMKGDO7xGymPKRwgrtUu0DiC0EfXgAx0saWYfBZNvQOakmoE5rKaWmTWKcUmqj4fzAh7
+ 0h5cxoJgL4hdgQQ==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Document compatible for the Display Clock Controller on SAR2130P
-platform.
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Expand qcom,sm8450-gpucc bindings to include SAR2130P.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |  2 ++
+ include/dt-bindings/clock/qcom,sar2130p-gpucc.h    | 33 ++++++++++++++++++++++
+ include/dt-bindings/reset/qcom,sar2130p-gpucc.h    | 14 +++++++++
+ 3 files changed, 49 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
-index c17035a180dbf3dde715a281bc54165122739618..c57d55a9293c214c4c101902cdd9603074e2243d 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
-@@ -22,6 +22,7 @@ description: |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
+index b9d29e4f65ded538c0ac8caae5acb541c9f01f41..5c65f5ecf0f387f30ae70a8f2b25d292f6092133 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
+@@ -14,6 +14,7 @@ description: |
+   domains on Qualcomm SoCs.
+ 
+   See also::
++    include/dt-bindings/clock/qcom,sar2130p-gpucc.h
+     include/dt-bindings/clock/qcom,sm4450-gpucc.h
+     include/dt-bindings/clock/qcom,sm8450-gpucc.h
+     include/dt-bindings/clock/qcom,sm8550-gpucc.h
+@@ -24,6 +25,7 @@ description: |
  properties:
    compatible:
      enum:
-+      - qcom,sar2130p-dispcc
-       - qcom,sm8550-dispcc
-       - qcom,sm8650-dispcc
-       - qcom,x1e80100-dispcc
++      - qcom,sar2130p-gpucc
+       - qcom,sm4450-gpucc
+       - qcom,sm8450-gpucc
+       - qcom,sm8475-gpucc
+diff --git a/include/dt-bindings/clock/qcom,sar2130p-gpucc.h b/include/dt-bindings/clock/qcom,sar2130p-gpucc.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..a2204369110a585394d175193dce8bf9f63439d2
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sar2130p-gpucc.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved
++ * Copyright (c) 2024, Linaro Limited
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SAR2130P_H
++#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SAR2130P_H
++
++/* GPU_CC clocks */
++#define GPU_CC_AHB_CLK				0
++#define GPU_CC_CRC_AHB_CLK			1
++#define GPU_CC_CX_FF_CLK			2
++#define GPU_CC_CX_GMU_CLK			3
++#define GPU_CC_CXO_AON_CLK			4
++#define GPU_CC_CXO_CLK				5
++#define GPU_CC_FF_CLK_SRC			6
++#define GPU_CC_GMU_CLK_SRC			7
++#define GPU_CC_GX_GMU_CLK			8
++#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK		9
++#define GPU_CC_HUB_AON_CLK			10
++#define GPU_CC_HUB_CLK_SRC			11
++#define GPU_CC_HUB_CX_INT_CLK			12
++#define GPU_CC_MEMNOC_GFX_CLK			13
++#define GPU_CC_PLL0				14
++#define GPU_CC_PLL1				15
++#define GPU_CC_SLEEP_CLK			16
++
++/* GDSCs */
++#define GPU_GX_GDSC				0
++#define GPU_CX_GDSC				1
++
++#endif
+diff --git a/include/dt-bindings/reset/qcom,sar2130p-gpucc.h b/include/dt-bindings/reset/qcom,sar2130p-gpucc.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..99ba5f092e2a43fb7b7b2a9f78d9ac4ae0bfea18
+--- /dev/null
++++ b/include/dt-bindings/reset/qcom,sar2130p-gpucc.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2024, Linaro Limited
++ */
++
++#ifndef _DT_BINDINGS_RESET_QCOM_GPU_CC_SAR2130P_H
++#define _DT_BINDINGS_RESET_QCOM_GPU_CC_SAR2130P_H
++
++#define GPUCC_GPU_CC_GX_BCR			0
++#define GPUCC_GPU_CC_ACD_BCR			1
++#define GPUCC_GPU_CC_GX_ACD_IROOT_BCR		2
++
++#endif
 
 -- 
 2.39.5
