@@ -1,99 +1,136 @@
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D584436A;
-	Sat, 26 Oct 2024 07:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9D91C1ABC
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 10:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729928236; cv=none; b=ux9HKPyPdPWBTkNCCWol02TOGHLLP+4OuD1VX40ASADq0J65HalIDxmthY72lZ0hzJP9/UBso38GkHaJmvo2K4XMZAK1kcm6rBeASdGFsYz6JhX5v8PmdwxyrC5TaYuYqNpF5kjU7jyM+wLGjX24f1p52g8GngJ5DE35W1JEDeI=
+	t=1729937135; cv=none; b=WlR+ypW+KpBiaxGeou9oSptwKuyXptT7i9wQiiv6a0juvA70od4oIV8pfAgLlezU1ZSYmf5DpQdUUmjy7f7rft/CUTjtEo/QTBJzmW3A01UBzjJC+3GYoijSRcYEosfpIAChgfrrhm/hciCoKzBhQ2MWz5sDKaW0Jkc6BrusK+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729928236; c=relaxed/simple;
-	bh=9Q6OHLQVWUxEYfZdLlXsJ7dE+jpqdCiOCJQztAaehP0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uM5XhCXQCs2VfFyHEZnyw1FczJRAVvuta0wWu9O9mPWU9qwoceibDVK0i713wbLd0toQaK8/SHk1sLj57qSNOh/ARlNDLxtbpeW+GwVVgjKx+rTLrrPEYxwBxyS67pBQnxzaJzFanIG4LBfi9vtYcMKY4YTTjtrX2pyqLQf5p/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XbBLl18RYz1ynNn;
-	Sat, 26 Oct 2024 15:37:19 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 49B241400D3;
-	Sat, 26 Oct 2024 15:37:11 +0800 (CST)
-Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
- (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 26 Oct
- 2024 15:37:10 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH] clk: meson clk-phase: fix division by zero in meson_clk_degrees_to_val()
-Date: Sat, 26 Oct 2024 07:26:24 +0000
-Message-ID: <20241026072624.976199-1-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729937135; c=relaxed/simple;
+	bh=JRDq1eouqRQ6dVU3EFp5yS+KoReTI1aJZRgZao2+yYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VBPlHAirf5pP8M++2MnsA5ZKeOKHZVOPl8kseCq94/Slj8WHoi3hznR0JKkLjWeKGUJ6cxFaFSZSDkmE/LpweNBi8q58TN9KGvIh7Rc+EK1MXkOqsmiF2/FUkisVBJ+XqAWPyNjFcqOtshogn9NcvY3Uo3RSZAeYVsvG3pzqHok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iRvFE9Sy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iRvFE9Sy"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q57rPU007816
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 10:05:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HmnLmB7Z58PVjAcP88scYZXyrOOFTxtAMnjFZSQFAfc=; b=iRvFE9Syyhxp53Jb
+	uovXq/qGC49O65tQ43cSVpkm/EfgNtQ0tfzcLevyK9sngwYGzi6oh8x1R+ze27eD
+	ADUSEq893IjDyMM3u5q6zd340pDoBU6pYzTvvC9wesEj/DYVpe/0QITVDf/6tt84
+	aqFU95EQiTPdYem566SoGf/YZyqY7MvTZ0GeOZl0eBOazQKemKcOO6OYYL68io6S
+	z3x5ZcwqE2nVHglNlMCssFQ8TOqaOh/Uszl4qrtDZlzv4MxwX2VheSVBEtAT8m3f
+	Zs2uc1B6/+NqNBTF8P1uyFfLA9L6+XHYhuFUSBGsirAbuDaE/gCuVEKFw62gja8L
+	96h+4A==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4drvxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 10:05:26 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbe149b1cfso8504286d6.0
+        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 03:05:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729937125; x=1730541925;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HmnLmB7Z58PVjAcP88scYZXyrOOFTxtAMnjFZSQFAfc=;
+        b=u+M1vURIPgzvFmBA+1fGx+hHBskePmpBUuP0N7+ZJK3Ti9ov7ma59BbJZchRKlp21n
+         oiyR4w46wv1EB7BuKORDHyjrT1St5mopzWmssDI/W8yS2fw8NBV5CH/lpbo32IPG3QXe
+         XLJ2SEqjEm1QLUhDYHrSxCstj2Y4xYJVfoLaHlTeOjL8kGtkmBesJULopzJ0IgbI7V9Q
+         GcgRTh2DyVKkX2t2IO0CwvdMExLEJKizmChemAFjvMm+aN9fN3qMVKK4wopMkGmD2c/J
+         z3U9r+4cP4xdWpcl/A0gjYonlEON/meI1MkM0zBa1OKd4Z5QEtCATTp5pC20HJXuGNtv
+         5tow==
+X-Forwarded-Encrypted: i=1; AJvYcCU7lg6Bd9SK100Mpy5T5A4XOqS4IHRkfS221D/9hfQp797HmFONniz4RfgqLNCe5yJwz1nx/1uRS0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqgm3L+kb3k3Al+DOf52juTQOBGVwfP7HIk8UBj1NnUGMTTQ6e
+	OJneH04r9BDMbnvp91TSfD1jCGvde+BT2jm4PXKSxAaB/F1I0iDIb0SjF0VD0uVB5UrBu8HRZG+
+	6Q4INTgN0YI55jQ9Orc3g0oB2A5U2siN2/WZHt39A4xNWxesFjA3s6faXlvgiUiXit2Y=
+X-Received: by 2002:a05:6214:19c1:b0:6cb:e7e8:9e88 with SMTP id 6a1803df08f44-6d185885e9fmr16414476d6.10.1729937124662;
+        Sat, 26 Oct 2024 03:05:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEapbGj3Sfdlc6h7mBBc6DRy9QbRrJtdmLohS8bgyDq5d6FfQeVz9TdD9OYLquQ7Ttuo89WlA==
+X-Received: by 2002:a05:6214:19c1:b0:6cb:e7e8:9e88 with SMTP id 6a1803df08f44-6d185885e9fmr16414176d6.10.1729937124194;
+        Sat, 26 Oct 2024 03:05:24 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b307b5375sm158967966b.155.2024.10.26.03.05.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Oct 2024 03:05:23 -0700 (PDT)
+Message-ID: <ca0137a6-3ffa-46ad-a970-7420520f09ae@oss.qualcomm.com>
+Date: Sat, 26 Oct 2024 12:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 6/7] arm64: dts: qcom: ipq9574: Add nsscc node
+To: kernel test robot <lkp@intel.com>,
+        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        richardcochran@gmail.com, geert+renesas@glider.be,
+        dmitry.baryshkov@linaro.org, angelogioacchino.delregno@collabora.com,
+        neil.armstrong@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
+        quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
+        quic_varada@quicinc.com
+References: <20241025035520.1841792-7-quic_mmanikan@quicinc.com>
+ <202410260742.a9vvkaEz-lkp@intel.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <202410260742.a9vvkaEz-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: aOZ-jjHaVW48ckOncTU8Jm9B2Frrhe7j
+X-Proofpoint-GUID: aOZ-jjHaVW48ckOncTU8Jm9B2Frrhe7j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=999 clxscore=1015 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410260084
 
-In the meson_clk_phase_set_phase() function, the variable phase->ph.width
-is of type u8, with a range of 0 to 255. When calling
-meson_clk_degrees_to_val with width as an argument, if width > 8,
-phase_step(width) will return 0. Lead to a division by zero error in
-DIV_ROUND_CLOSEST(). The same issue exists in the
-meson_clk_triphase_set_phase() and meson_sclk_ws_inv_set_phase().
+On 26.10.2024 1:31 AM, kernel test robot wrote:
+> Hi Manikanta,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on clk/clk-next]
+> [also build test ERROR on robh/for-next arm64/for-next/core linus/master v6.12-rc4 next-20241025]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Mylavarapu/clk-qcom-clk-alpha-pll-Add-NSS-HUAYRA-ALPHA-PLL-support-for-ipq9574/20241025-121244
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> patch link:    https://lore.kernel.org/r/20241025035520.1841792-7-quic_mmanikan%40quicinc.com
+> patch subject: [PATCH v8 6/7] arm64: dts: qcom: ipq9574: Add nsscc node
+> config: arm64-randconfig-001-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260742.a9vvkaEz-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260742.a9vvkaEz-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410260742.a9vvkaEz-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> Error: arch/arm64/boot/dts/qcom/ipq9574.dtsi:766.16-17 syntax error
+>    FATAL ERROR: Unable to parse input tree
 
-Fixes: 7b70689b07c1 ("clk: meson: add sclk-ws driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
- drivers/clk/meson/clk-phase.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I believe you also need to include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
 
-diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
-index c1526fbfb6c4..b88d59b7a90d 100644
---- a/drivers/clk/meson/clk-phase.c
-+++ b/drivers/clk/meson/clk-phase.c
-@@ -51,6 +51,9 @@ static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
- 	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
- 	unsigned int val;
- 
-+	if (phase->ph.width > 8)
-+		return -EINVAL;
-+
- 	val = meson_clk_degrees_to_val(degrees, phase->ph.width);
- 	meson_parm_write(clk->map, &phase->ph, val);
- 
-@@ -110,6 +113,9 @@ static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
- 	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
- 	unsigned int val;
- 
-+	if (tph->ph0.width > 8)
-+		return -EINVAL;
-+
- 	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
- 	meson_parm_write(clk->map, &tph->ph0, val);
- 	meson_parm_write(clk->map, &tph->ph1, val);
-@@ -167,6 +173,9 @@ static int meson_sclk_ws_inv_set_phase(struct clk_hw *hw, int degrees)
- 	struct meson_sclk_ws_inv_data *tph = meson_sclk_ws_inv_data(clk);
- 	unsigned int val;
- 
-+	if (tph->ph.width > 8)
-+		return -EINVAL;
-+
- 	val = meson_clk_degrees_to_val(degrees, tph->ph.width);
- 	meson_parm_write(clk->map, &tph->ph, val);
- 	meson_parm_write(clk->map, &tph->ws, val ? 0 : 1);
--- 
-2.34.1
-
+Konrad
