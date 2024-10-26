@@ -1,60 +1,61 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DFDDF71
-	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 15:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C5243172
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 15:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729957631; cv=none; b=agCHm8A9fenqIwFPw7DC4iQFzH6MXzHat9PfCQlVSmsCN0hE4SMR4UOc+kQjPb+WzorzTCy1xQWqWr9VFjbREQZLUT1Fh+59KtqPL2lU+1VbcEePU9RnSzj0jySkzkfJ3g9izKZoxx5zeBUUYbaFLj+lu14Uj74apaLDIUsQiok=
+	t=1729957634; cv=none; b=PRM9nrqeSd2GBOS8ho93wKlZWbbsbxxTS36PCxa+EJiI1tB/ijUTjDblVSEjj1Ezn9bSslQJzaLIWFocPzcHP1sxptT6qfyvp4jDQ3oIYf0th8b4PVZmo0teQzn1k2STX4hQsgsQoXvStefBWibVSwT09rHupgMB20PDpU63GOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729957631; c=relaxed/simple;
-	bh=DnphJ809DpBOTKhoHJ/6RAFXBFta/89tt+gIiuZqKRk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J6I+qQbImQiNAwEHD4vSTez+77rTWuZmX7rJQ/mCen9Htgezvx4JY0owdmHSZK3dp8H1BeQwrSqZI4qjh1AKproIZGng6AzL5Q0paj3ZUDd9o4houHS4Dgqk0N6fq0bt2WjCySTbeyp09bMcpZWU+0/zR46Ta90T0Yt13kw22LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t9PcxNVV; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1729957634; c=relaxed/simple;
+	bh=K6SFWYrpwEdGXfbTRxIp+bUuYSEnFHhS7eK1DCdiKpQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bsZQpLzdGlgkM+Pjvir2NK9YvVDZvW4/7AOV7fgPZA7w8hFXtuIYijs4EIKcLa1o0u+PIbH4AEA2wgkfq6VwsqgUH7wet1pTO8Ts/TEwSlruYDCKe+QXkgVDsKr+ycNovxDHzL3gEfRwObi5ubUmCDIbg+K6NLz2/kulBWyOAAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sa7W0gLp; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t9PcxNVV"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f58c68c5so5179684e87.3
-        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 08:47:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sa7W0gLp"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e690479cso2965714e87.3
+        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 08:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729957626; x=1730562426; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjV6CfzX2jM9xUG6emWvgOVQJLaaFkz/QoSwxwLl3Z8=;
-        b=t9PcxNVVI8SEu7+RCaaJjo+GmCeAz7IdcrWMiUwZSX99/njRT/0Rmc9oXprmjepll4
-         KbY7yVfQx1Oc8I0sZldeUeBfR60vSjccTW5mKzMuXalVnHBWmmztjrP9DdygmKhX4YBu
-         BwbPQjgrFHl6jpyNC5TGHTvJxhQq28GLkZGpCSoZu7O7dJ4cYmVakEyQFvmiSYclgQbv
-         0Fv0rnIcp6PX5RwUnCNXmUNlEi+DWoI+RHzUvtJ13R8WH0s7PIK1bDVqaAnHWgKgCk6A
-         tc2nIurrkhNWp0pTZR7hdx9VGdMAtfJIFhZ/4DB3qz+XYujD+5Czf7r0Z7rmfWi3K8UP
-         wMNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729957626; x=1730562426;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1729957630; x=1730562430; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MjV6CfzX2jM9xUG6emWvgOVQJLaaFkz/QoSwxwLl3Z8=;
-        b=lEtyQorVSfhnzQTRTQyiDuaNxy1pFYdSFlTKyVdAk7k1R78WGR+xE2a8VP2lXsPlCt
-         FG2zzwJkLooR0dT+wzMWYAU0zqug2X0bNhAFgc/Ubh/2rIEmQAzylJikjIeuB1hhQSBZ
-         fUhGTXi9uCY4kqjAig13HuyMiVgEzif4ZTXIyMmpfCNKKpO6vyQ9q3hkcs/VSB0qYkhR
-         M4PbWm75KtfbODM3Oli8cNAmeCfaI26m+59x2PCOiUxwVrHDTTrrkXPOe6VgNRiMPq6D
-         jPUzAnPkZMsBthZvcO0OfWu/Zz84dOR0GyS9aGZ3Z9h3Yyb9dv+7rkje0es84Rpn6KzK
-         z6uA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGFmtrS2TSxlP1BHlsWFvKljJMMGQK/E36vBXhYtiR27Yj8cWV9NwayFPVgp9uWPn5ZqmdKgq0dkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtD5Ptvc9nLwNUQk14e/IwASp2UoSPvmRzO5PnSmaLIUfCAHBC
-	kHDn6Qj2taekQbglyqhsLIAP9JAEBJAEsfMI63fg2Rwj1iTvZR6XeitCn2qI0ZA=
-X-Google-Smtp-Source: AGHT+IEskGeyha9uVTXF9WeI+84tQtI8f8VG/ItzXZqZ/l7V9H5h4ddLIskKAcU6s9IaqAJU2CFHtg==
-X-Received: by 2002:a05:6512:1252:b0:536:a4f1:d214 with SMTP id 2adb3069b0e04-53b348cc55cmr2029159e87.19.1729957626453;
-        Sat, 26 Oct 2024 08:47:06 -0700 (PDT)
+        bh=C/ubzKFzAkEIzZOSQ0IepYs8ZlZr4pPSGALUzhJEXK0=;
+        b=sa7W0gLpDPF7rpo9/gjpq8/Mrvxqb7DJsu1kANlrtiEq9B9r+We9U1dTb8B4m0uw09
+         sH5M+ycyUQQ/YKN4vFuwWWDy8CX7Dl7+vWTz0EPa73XseoJiDv+BTL5HSEaJvrRD9rm8
+         U+CCunl7oKr2wVwuiPDDwAgGpdpMsh8N59NJBpdJsYHw485s3gSmWVs60BufWohUd+9H
+         /byCF4x6SP7B95HJS0a4wHAxBLwu71jkYSOfxcoqqohENush4Uiq2Cw3wh/RTDMeNmsI
+         ijiP37IiQWvhFd9Vnrv47GX8fuilml0DSCCHos8tyERmUPAz6Ndjh1wOoYndUB5tFQDC
+         FZSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729957630; x=1730562430;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C/ubzKFzAkEIzZOSQ0IepYs8ZlZr4pPSGALUzhJEXK0=;
+        b=sgTpjloFHg7vFf/cFFstC7ECG3IQDol1HOg3Nr66Ho6Tgdv7mRYzdDCNlLLFOcDw6W
+         73mow3VvNQpYS5vAPBZ1c+3vxrdXFChs9JAqaKs+4TP/lXNXgWwDBMWx1PSQKaMboR5H
+         cx8ynvjdFx+zVDp4zlGPQYqOagUyO7TeuVjh0cMmgTV8TZpDCawfwquxRHjXzFRl9MW2
+         dzr0r+G1UUKWhQ619/1AQlJwPa02M/hh75megJUwvFyGWQFxl6KR+4DThql5oGhjOPYr
+         1s2CDKfaqwSvo3R8QHBbMYLOH1AvGxdooTN7+bTQBkRpGw3aK9/PwoMjTqCVNuNLaCLz
+         MEwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpjIkziLaLh2k+ceUQ8RqQn/UV7UUteQBbWFyc39L1srn/KsU3NXYE8xLZACSzn5hEawAtfjNk6a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzktn6RBPVDLoHgdiaTsz3gEDuPUV0VtkOEWpdTlkCxAW5uinVa
+	WRrGZcTTza0XpMm9jFtyi/rPOx/QWHOIykeJsTO1VIweCfJN10hA1ax0NGrjSkU=
+X-Google-Smtp-Source: AGHT+IEn4NsaoqlpmOwfM1lEegb2eq+ks6d3VVnTRlzXCfk5cvlQnHKmxchTY9JbWgllkgkTutZoDg==
+X-Received: by 2002:a05:6512:10d1:b0:53b:1f7a:9bfd with SMTP id 2adb3069b0e04-53b34a343d5mr1233292e87.52.1729957629742;
+        Sat, 26 Oct 2024 08:47:09 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c7cf4sm532188e87.184.2024.10.26.08.47.05
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c7cf4sm532188e87.184.2024.10.26.08.47.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 08:47:06 -0700 (PDT)
+        Sat, 26 Oct 2024 08:47:08 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v4 00/11] clk: qcom: add support for clock controllers on
- the SAR2130P platform
-Date: Sat, 26 Oct 2024 18:46:58 +0300
-Message-Id: <20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org>
+Date: Sat, 26 Oct 2024 18:47:00 +0300
+Subject: [PATCH v4 02/11] dt-bindings: clock: qcom: document SAR2130P
+ Global Clock Controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,11 +64,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPIOHWcC/3XNQQ6CMBCF4auQrq3pTFtBV97DuCh0Co2GktYQD
- eHuFlYY4vJ/yXwzsUTRU2KXYmKRRp986HOoQ8GazvQtcW9zMxSoQEDJk4kIUgy8eYbmkbh2tbX
- n2glFxPLVEMn59yre7rk7n14hftYHIyzrf2sELrgrNZVKOGEqe3363sRwDLFlCzbiBkDYA5gBW
- UnSVANKgztAbgG9B2QGVOWgUugs6NMPMM/zF6PmOrkxAQAA
-X-Change-ID: 20241017-sar2130p-clocks-5fbdd9bf04ee
+Message-Id: <20241026-sar2130p-clocks-v4-2-37100d40fadc@linaro.org>
+References: <20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org>
+In-Reply-To: <20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -78,101 +77,299 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Kalpak Kawadkar <quic_kkawadka@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3457;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9806;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=DnphJ809DpBOTKhoHJ/6RAFXBFta/89tt+gIiuZqKRk=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHQ7170tw4vV13ywWM0BQprAuGf/i5GISxNYdK
- QRXq7us1UyJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx0O9QAKCRAU23LtvoBl
- uCViD/48fIW1ysYTMtRjkwuqrNc8xSHfH1Palf1lEh3mq076pVTTudgeTM+KL/896SqXGGizrS5
- ExIA7aApdwtpkEfWfub3YqPAcmoodnEKyrqBek/1ivYyaoeiMIChYrPvJ2EPdWC/KPFcXExjRFq
- RbdOgCRcZodsZxH4O0XHoEqcIxnZf3SCLY6oVrXMzH086TDoUVSocUp1vv7fyFf66XQBk2GF5qD
- +ZMC07P/yDmLwsmzQMZOxhnD7V2Hrl5Lyo3tza1LYQL9c3iF2l1XS1U3RBAYQfSpFK0p5JPqv66
- Ylt/iygkwtUZ6JRKN3N9zrPzVLLxJ+SYEKCypeq6opi+N5FMtdN/fvdrS1t+Zvgju3s6tx4z18f
- 3dWcB/x8KMhEgJ4QCXbdf97bl2me/CY8k9NMf333ekARZG7C0HVx0sXndWdACQdBNvHaL1as5lV
- 9ymXjVPzOoXiYKqLCjaoMSMgO9dkWYp4ak/j7hsJ6TzWHbLsUTwiXKPb0KrrS51yNSqcmQO2wKg
- KBM5b9swBGe0+jm10F6iLqjDM5IoQxwjOLlcfNHFNZFxw9+csZK/WEIAib28bFfiD1gX67Fp7jw
- 7h/A2CnhoCMhp2uR+ifQR1+PxiD0ONIF9QDYSwEruIV9H3jPORVRo86b6qNH0N5M6rxmHzHg+eB
- rvg4yjrXUoiCHLA==
+ bh=K6SFWYrpwEdGXfbTRxIp+bUuYSEnFHhS7eK1DCdiKpQ=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHQ71JL9ZLTzojYNK2hpK+pWTPVmAJai8AVLAk
+ 74PGkk5EpmJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx0O9QAKCRAU23LtvoBl
+ uN/ZD/4rmaCI6Ry4mz6dGax53mo6UJIVYtNgrUVFdq22xu1eYBy1dR2rgWphDXvZLlVz1VgLu8H
+ o9UqyzYL4AXzxqRFWjgW6zOXDdWzE1BTNugtoNsztlgOJ2DMJo4NvRwrnDDmUAkOuLmD3lzFUCs
+ 3JCgbDLkRid++t0NLrapTD3/9S2At4K6DGtoeNZcdwd9Lrzc3oftFdcZSVrwTXv3oFwOVSYTMQe
+ skdjdX/XbNohkP437Hf41riCZCXJz3LX8XEKgRi7I4kwG9Q6+LEziq5bl0o/yUCxv03YbjYRWgq
+ Acv+0cgGzK0/yGiBTaUBGeLt0c3AOcnocQwcdqefsZisFf48QewtyWbxHUHfk8/VcaMg93rfrej
+ 02xtPAb7ndN/HhV2ScW7Vsag4da/XELnfCpvQ11O21uc03jvGEougI5i3HL4eV1Xus7UUVfwzAs
+ G8XC7F9Dbm7hGqSX7KT/feQmzGH8MKEd9G7HD1JLstb1SgOvpEPTQQMoM0eqBOSQpH+m+Ec8fjk
+ uNmTCAPVbJjw8W8axiOj2RMzKez2apwG99INyNTeexQedMDhQJ3pZhwJyTjLpBCiC8PfPKvRiCx
+ CJqP/qhcCJNUJ1id0wCMQbVv2K/s6JajKgJA++VpYOrc73wSvam9ClIT2yQungWWvC77Ip5yALh
+ s0EKfA8OLLoTl5Q==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add support for the RPMh, TCSR, Global, Display and GPU clock
-controllers as present on the Qualcomm SAR2130P platform.
+Add bindings for the Global Clock Controller (GCC) present on the
+Qualcomm SAR2130P platform.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Changes in v4:
-- Fixed commit message for the RPMh clocks patch to mention RF_CLK1
-  clock (Konrad)
-- Link to v3: https://lore.kernel.org/r/20241025-sar2130p-clocks-v3-0-48f1842fd156@linaro.org
+ .../bindings/clock/qcom,sar2130p-gcc.yaml          |  65 ++++++++
+ include/dt-bindings/clock/qcom,sar2130p-gcc.h      | 185 +++++++++++++++++++++
+ 2 files changed, 250 insertions(+)
 
-Changes in v3:
-- Added rfclka1 to RPMh clocks for SAR2140P (Taniya)
-- Added HLOS1_VOTE_MM_SNOC_MMU_TBU_HF0_GDSC,
-	HLOS1_VOTE_MM_SNOC_MMU_TBU_SF0_GDSC,
-	HLOS1_VOTE_TURING_MMU_TBU0_GDSC,
-	HLOS1_VOTE_TURING_MMU_TBU1_GDSC
- (Taniya)
-- Removed extra debug print in gpucc probe (Konrad)
-- Link to v2: https://lore.kernel.org/r/20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sar2130p-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sar2130p-gcc.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9a430bbd872aebf765a6a0f36c09fdc2301ffefb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sar2130p-gcc.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sar2130p-gcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller on sar2130p
++
++maintainers:
++  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
++
++description: |
++  Qualcomm global clock control module provides the clocks, resets and
++  power domains on sar2130p.
++
++  See also: include/dt-bindings/clock/qcom,sar2130p-gcc.h
++
++properties:
++  compatible:
++    const: qcom,sar2130p-gcc
++
++  clocks:
++    items:
++      - description: XO reference clock
++      - description: Sleep clock
++      - description: PCIe 0 pipe clock
++      - description: PCIe 1 pipe clock
++      - description: Primary USB3 PHY wrapper pipe clock
++
++  protected-clocks:
++    maxItems: 240
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - '#power-domain-cells'
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++
++    gcc: clock-controller@100000 {
++        compatible = "qcom,sar2130p-gcc";
++        reg = <0x100000 0x1f4200>;
++        clocks = <&rpmhcc RPMH_CXO_CLK>,
++                 <&sleep_clk>,
++                 <&pcie_0_pipe_clk>,
++                 <&pcie_1_pipe_clk>,
++                 <&usb_0_ssphy>;
++        power-domains = <&rpmhpd RPMHPD_CX>;
++
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++        #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,sar2130p-gcc.h b/include/dt-bindings/clock/qcom,sar2130p-gcc.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..69d2dd2538a64148ca05027f8b615527c3b966cc
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sar2130p-gcc.h
+@@ -0,0 +1,185 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SAR2130P_H
++#define _DT_BINDINGS_CLK_QCOM_GCC_SAR2130P_H
++
++/* GCC clocks */
++#define GCC_GPLL0						0
++#define GCC_GPLL0_OUT_EVEN					1
++#define GCC_GPLL1						2
++#define GCC_GPLL9						3
++#define GCC_GPLL9_OUT_EVEN					4
++#define GCC_AGGRE_NOC_PCIE_1_AXI_CLK				5
++#define GCC_AGGRE_USB3_PRIM_AXI_CLK				6
++#define GCC_BOOT_ROM_AHB_CLK					7
++#define GCC_CAMERA_AHB_CLK					8
++#define GCC_CAMERA_HF_AXI_CLK					9
++#define GCC_CAMERA_SF_AXI_CLK					10
++#define GCC_CAMERA_XO_CLK					11
++#define GCC_CFG_NOC_PCIE_ANOC_AHB_CLK				12
++#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				13
++#define GCC_DDRSS_GPU_AXI_CLK					14
++#define GCC_DDRSS_PCIE_SF_CLK					15
++#define GCC_DISP_AHB_CLK					16
++#define GCC_DISP_HF_AXI_CLK					17
++#define GCC_GP1_CLK						18
++#define GCC_GP1_CLK_SRC						19
++#define GCC_GP2_CLK						20
++#define GCC_GP2_CLK_SRC						21
++#define GCC_GP3_CLK						22
++#define GCC_GP3_CLK_SRC						23
++#define GCC_GPU_CFG_AHB_CLK					24
++#define GCC_GPU_GPLL0_CLK_SRC					25
++#define GCC_GPU_GPLL0_DIV_CLK_SRC				26
++#define GCC_GPU_MEMNOC_GFX_CLK					27
++#define GCC_GPU_SNOC_DVM_GFX_CLK				28
++#define GCC_IRIS_SS_HF_AXI1_CLK					29
++#define GCC_IRIS_SS_SPD_AXI1_CLK				30
++#define GCC_PCIE_0_AUX_CLK					31
++#define GCC_PCIE_0_AUX_CLK_SRC					32
++#define GCC_PCIE_0_CFG_AHB_CLK					33
++#define GCC_PCIE_0_MSTR_AXI_CLK					34
++#define GCC_PCIE_0_PHY_RCHNG_CLK				35
++#define GCC_PCIE_0_PHY_RCHNG_CLK_SRC				36
++#define GCC_PCIE_0_PIPE_CLK					37
++#define GCC_PCIE_0_PIPE_CLK_SRC					38
++#define GCC_PCIE_0_SLV_AXI_CLK					39
++#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				40
++#define GCC_PCIE_1_AUX_CLK					41
++#define GCC_PCIE_1_AUX_CLK_SRC					42
++#define GCC_PCIE_1_CFG_AHB_CLK					43
++#define GCC_PCIE_1_MSTR_AXI_CLK					44
++#define GCC_PCIE_1_PHY_RCHNG_CLK				45
++#define GCC_PCIE_1_PHY_RCHNG_CLK_SRC				46
++#define GCC_PCIE_1_PIPE_CLK					47
++#define GCC_PCIE_1_PIPE_CLK_SRC					48
++#define GCC_PCIE_1_SLV_AXI_CLK					49
++#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				50
++#define GCC_PDM2_CLK						51
++#define GCC_PDM2_CLK_SRC					52
++#define GCC_PDM_AHB_CLK						53
++#define GCC_PDM_XO4_CLK						54
++#define GCC_QMIP_CAMERA_NRT_AHB_CLK				55
++#define GCC_QMIP_CAMERA_RT_AHB_CLK				56
++#define GCC_QMIP_GPU_AHB_CLK					57
++#define GCC_QMIP_PCIE_AHB_CLK					58
++#define GCC_QMIP_VIDEO_CV_CPU_AHB_CLK				59
++#define GCC_QMIP_VIDEO_CVP_AHB_CLK				60
++#define GCC_QMIP_VIDEO_LSR_AHB_CLK				61
++#define GCC_QMIP_VIDEO_V_CPU_AHB_CLK				62
++#define GCC_QMIP_VIDEO_VCODEC_AHB_CLK				63
++#define GCC_QUPV3_WRAP0_CORE_2X_CLK				64
++#define GCC_QUPV3_WRAP0_CORE_CLK				65
++#define GCC_QUPV3_WRAP0_S0_CLK					66
++#define GCC_QUPV3_WRAP0_S0_CLK_SRC				67
++#define GCC_QUPV3_WRAP0_S1_CLK					68
++#define GCC_QUPV3_WRAP0_S1_CLK_SRC				69
++#define GCC_QUPV3_WRAP0_S2_CLK					70
++#define GCC_QUPV3_WRAP0_S2_CLK_SRC				71
++#define GCC_QUPV3_WRAP0_S3_CLK					72
++#define GCC_QUPV3_WRAP0_S3_CLK_SRC				73
++#define GCC_QUPV3_WRAP0_S4_CLK					74
++#define GCC_QUPV3_WRAP0_S4_CLK_SRC				75
++#define GCC_QUPV3_WRAP0_S5_CLK					76
++#define GCC_QUPV3_WRAP0_S5_CLK_SRC				77
++#define GCC_QUPV3_WRAP1_CORE_2X_CLK				78
++#define GCC_QUPV3_WRAP1_CORE_CLK				79
++#define GCC_QUPV3_WRAP1_S0_CLK					80
++#define GCC_QUPV3_WRAP1_S0_CLK_SRC				81
++#define GCC_QUPV3_WRAP1_S1_CLK					82
++#define GCC_QUPV3_WRAP1_S1_CLK_SRC				83
++#define GCC_QUPV3_WRAP1_S2_CLK					84
++#define GCC_QUPV3_WRAP1_S2_CLK_SRC				85
++#define GCC_QUPV3_WRAP1_S3_CLK					86
++#define GCC_QUPV3_WRAP1_S3_CLK_SRC				87
++#define GCC_QUPV3_WRAP1_S4_CLK					88
++#define GCC_QUPV3_WRAP1_S4_CLK_SRC				89
++#define GCC_QUPV3_WRAP1_S5_CLK					90
++#define GCC_QUPV3_WRAP1_S5_CLK_SRC				91
++#define GCC_QUPV3_WRAP_0_M_AHB_CLK				92
++#define GCC_QUPV3_WRAP_0_S_AHB_CLK				93
++#define GCC_QUPV3_WRAP_1_M_AHB_CLK				94
++#define GCC_QUPV3_WRAP_1_S_AHB_CLK				95
++#define GCC_SDCC1_AHB_CLK					96
++#define GCC_SDCC1_APPS_CLK					97
++#define GCC_SDCC1_APPS_CLK_SRC					98
++#define GCC_SDCC1_ICE_CORE_CLK					99
++#define GCC_SDCC1_ICE_CORE_CLK_SRC				100
++#define GCC_USB30_PRIM_MASTER_CLK				101
++#define GCC_USB30_PRIM_MASTER_CLK_SRC				102
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK				103
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			104
++#define GCC_USB30_PRIM_MOCK_UTMI_POSTDIV_CLK_SRC		105
++#define GCC_USB30_PRIM_SLEEP_CLK				106
++#define GCC_USB3_PRIM_PHY_AUX_CLK				107
++#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				108
++#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				109
++#define GCC_USB3_PRIM_PHY_PIPE_CLK				110
++#define GCC_USB3_PRIM_PHY_PIPE_CLK_SRC				111
++#define GCC_VIDEO_AHB_CLK					112
++#define GCC_VIDEO_AXI0_CLK					113
++#define GCC_VIDEO_AXI1_CLK					114
++#define GCC_VIDEO_XO_CLK					115
++#define GCC_GPLL4						116
++#define GCC_GPLL5						117
++#define GCC_GPLL7						118
++#define GCC_DDRSS_SPAD_CLK					119
++#define GCC_DDRSS_SPAD_CLK_SRC					120
++#define GCC_VIDEO_AXI0_SREG					121
++#define GCC_VIDEO_AXI1_SREG					122
++#define GCC_IRIS_SS_HF_AXI1_SREG				123
++#define GCC_IRIS_SS_SPD_AXI1_SREG				124
++
++/* GCC resets */
++#define GCC_CAMERA_BCR						0
++#define GCC_DISPLAY_BCR						1
++#define GCC_GPU_BCR						2
++#define GCC_PCIE_0_BCR						3
++#define GCC_PCIE_0_LINK_DOWN_BCR				4
++#define GCC_PCIE_0_NOCSR_COM_PHY_BCR				5
++#define GCC_PCIE_0_PHY_BCR					6
++#define GCC_PCIE_0_PHY_NOCSR_COM_PHY_BCR			7
++#define GCC_PCIE_1_BCR						8
++#define GCC_PCIE_1_LINK_DOWN_BCR				9
++#define GCC_PCIE_1_NOCSR_COM_PHY_BCR				10
++#define GCC_PCIE_1_PHY_BCR					11
++#define GCC_PCIE_1_PHY_NOCSR_COM_PHY_BCR			12
++#define GCC_PCIE_PHY_BCR					13
++#define GCC_PCIE_PHY_CFG_AHB_BCR				14
++#define GCC_PCIE_PHY_COM_BCR					15
++#define GCC_PDM_BCR						16
++#define GCC_QUPV3_WRAPPER_0_BCR					17
++#define GCC_QUPV3_WRAPPER_1_BCR					18
++#define GCC_QUSB2PHY_PRIM_BCR					19
++#define GCC_QUSB2PHY_SEC_BCR					20
++#define GCC_SDCC1_BCR						21
++#define GCC_USB30_PRIM_BCR					22
++#define GCC_USB3_DP_PHY_PRIM_BCR				23
++#define GCC_USB3_DP_PHY_SEC_BCR					24
++#define GCC_USB3_PHY_PRIM_BCR					25
++#define GCC_USB3_PHY_SEC_BCR					26
++#define GCC_USB3PHY_PHY_PRIM_BCR				27
++#define GCC_USB3PHY_PHY_SEC_BCR					28
++#define GCC_VIDEO_AXI0_CLK_ARES					29
++#define GCC_VIDEO_AXI1_CLK_ARES					30
++#define GCC_VIDEO_BCR						31
++#define GCC_IRIS_SS_HF_AXI_CLK_ARES				32
++#define GCC_IRIS_SS_SPD_AXI_CLK_ARES				33
++#define GCC_DDRSS_SPAD_CLK_ARES					34
++
++/* GCC power domains */
++#define PCIE_0_GDSC						0
++#define PCIE_0_PHY_GDSC						1
++#define PCIE_1_GDSC						2
++#define PCIE_1_PHY_GDSC						3
++#define USB30_PRIM_GDSC						4
++#define USB3_PHY_GDSC						5
++#define HLOS1_VOTE_MM_SNOC_MMU_TBU_HF0_GDSC			6
++#define HLOS1_VOTE_MM_SNOC_MMU_TBU_SF0_GDSC			7
++#define HLOS1_VOTE_TURING_MMU_TBU0_GDSC				8
++#define HLOS1_VOTE_TURING_MMU_TBU1_GDSC				9
++
++#endif
 
-Changes in v2:
-- Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
-  gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
-  gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
-  gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
-  subsytems bringup (Taniya)
-- Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
-- Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
-  (Taniya)
-- Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
-  gcc_parent_map_5 (LKP)
-- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
-
----
-Dmitry Baryshkov (9):
-      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
-      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
-      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
-      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
-      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
-      clk: qcom: rpmh: add support for SAR2130P
-      clk: qcom: add support for GCC on SAR2130P
-      clk: qcom: tcsrcc-sm8550: add SAR2130P support
-      clk: qcom: dispcc-sm8550: enable support for SAR2130P
-
-Konrad Dybcio (2):
-      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
-      clk: qcom: add SAR2130P GPU Clock Controller support
-
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
- .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
- .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
- drivers/clk/qcom/Kconfig                           |   22 +-
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-rcg.h                         |    1 +
- drivers/clk/qcom/clk-rcg2.c                        |   48 +-
- drivers/clk/qcom/clk-rpmh.c                        |   13 +
- drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
- drivers/clk/qcom/gcc-sar2130p.c                    | 2366 ++++++++++++++++++++
- drivers/clk/qcom/gpucc-sar2130p.c                  |  503 +++++
- drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
- include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  185 ++
- include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
- include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
- 17 files changed, 3282 insertions(+), 11 deletions(-)
----
-base-commit: f6202e7cb4762be30b01ca4e1666512171c16d2a
-change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee
-
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.39.5
 
