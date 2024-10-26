@@ -1,113 +1,108 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFAD1D3565
-	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 11:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49A610E5
+	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 12:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729942726; cv=none; b=YN2jgpGtIZfbi8pV2Y9OBltIAFflhWpsPIqcG9eu0AhI3B0ymSNHBclpbNsPXI6NGveb/2FcDGJq4ANXvnqvmCMg8UuNP4TwwipL/EPvj49A6tEQ9GInRUZIjCmbTZJIF1SLLA1aNG22NMO6gOkY8wgs/3Gzp/nLjuQXR33BZlg=
+	t=1729944116; cv=none; b=tiTOQ7u8Be1eaupEIxBZsNYFqwiYd1JhDuVWHSU4BmNSvf6jPg35swyyz47ZQN4aCZYMN1/JQtxmgXx+yZdCfn5vRSRjL46NGHMCv8JI0DA7R8bYMjQTaUVf/9HB2w5ug5r9MZrZ56n23/2uKD9+RJxgKhqcDANdl9z3TUtGog0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729942726; c=relaxed/simple;
-	bh=wxc+dIWaFDqYXJ2UOmZG5MwkG5ZYvvsWMsSRYr4sCqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ni1XnuUQAkYlL4KMaJgWjEQEyC8dYHHNdritPFAzJQEMrxdbMQEP74UfcHyyzzQ4VnMtIjkegmoPY3366rjSVVtVWDUbp3hJy/x0KMfBeTZid5Ap4Mek470I/1MCYT7/2oYxx1wFaf49leHaaX8l1tYHWd42Yaog8nKkrZF/gj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MDz3mP/Z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1729944116; c=relaxed/simple;
+	bh=9GS99lzhdnNMT9LpV6PpxwW6BOkQ02qXLQl9hTQY1YU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LEcl5CulLotWD4Hh2CPUUU/v63Il3JN9dOfOt3sBhtpgOspEwa7QyAksxE1g/9o5nfy/0oCEj7iX5LNwG1SD2psDYiQlRYSsxEvid4JhtJOavsfUKeOkG+QZmRWyzYvrY2YuERCMELjOy+17L9E41/sxbYc+nAmkJR6jAQ4fboc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AJ7fCEUB; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MDz3mP/Z"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q4kG7a030406
-	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 11:38:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wxc+dIWaFDqYXJ2UOmZG5MwkG5ZYvvsWMsSRYr4sCqo=; b=MDz3mP/ZMt8WB/wA
-	IcAO7pwBza5WgovDX3dJprlxB1WBXOdlPTAQL+bugHUXQHO1DzJOx3plmqFgF2/Q
-	s4nN4CF6YY8HZIB60+OXGDQ11A+MGYSt/PWsAmJpye2ZZ2tS85KWDsda2TxRuBiZ
-	J6zLWeF9baxcRvmA8kMnn7BbcgxG1lL9vHH5zlQ6L+9SpExDDt4R4EwFg08JcEJu
-	oe0jv4nXQFZ3i1JGYJEDBbp+sBXu9r/eS8L03Pj7u4q/txn/yX+IPtKowVUnbAtK
-	Lx59EVD2BQykqmceCas40qwhdXfaalHByj5wjrcea1NCz8jR+whdjXkIfMHTcQJv
-	WRYixg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gnsmh1b1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 11:38:43 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6cbe6e6bcf2so8517916d6.2
-        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 04:38:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AJ7fCEUB"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c9589ba577so467828a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 05:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729944113; x=1730548913; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ivIAohcESshAYpEPq++t9hJfCpjXuscXbD6Im/FDokQ=;
+        b=AJ7fCEUBY+Myvx40AIhxqe91LgbTR4xX1blA+VWJ3i3d76HHN8si2lfQA9xeWMWPzE
+         JQcVIhDUCLqH2Tm/xTrmIxAbuY2bn2ccO6JzJdpjp/RJ+qDIt4UlX3wveWSLC0dYEyMD
+         npQrjVpPy+HpUwVbg4bH3zc17oRzEZXHqgvmoEjMeLHn0ImmiQtAXv/k2rZHRUoCarJf
+         LmBtzSh+aYkaThp+ZuR/EdTSJ9udJeagbcznlvfZRyt/cwXa2O8+FVQ5Yg866N6vmV0w
+         y02UDKz2p1NGvt/9IhmjymwDzC5rAYZ5j5OUt0WPEpW8AMEo0/t2b56VPrqgBk4/+BWj
+         ecQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729942722; x=1730547522;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxc+dIWaFDqYXJ2UOmZG5MwkG5ZYvvsWMsSRYr4sCqo=;
-        b=RNsO03gUTI87ktmRKal27qnIr8pYQuYGipMANKIwekK7XawYnqZFu4HlnjDIeniOL0
-         ofw62aYeASROBpyWzLMqKI5pjIPsEuVqVVq622BmszaPIZ2G/tnPnExjvqhyLPkxR95c
-         44/yvCxp1okn8LWHxl9E71rEJ5RuEJ0bk5VfBg5IP/DU0dFeuPBgpEJdfha7Q+s9qzNj
-         opnyN707/srSL/By6LSEDDdQhCOYv5/0tOAP5iCmxS4Mki1L7sshDb+8LSBaapYGlYw3
-         IbwOA8mnsJXjFgDuKf3wIIMI61BbtAqDzSh56ghUcgoU+eW0TqsCwtkW4+tt7PZwNaJO
-         HFTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOXXMIcaoDKsNM5njCojgHphyD7TJSYkBp3zU9oul/1T3WPPXYRjXOv7h6BxfsPyL1/IKiiDZwCVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynhyc+2+nMf3MAiTaCV9rbOiGFS78pIShIVOpW9L193KXyLdlt
-	INBz0KkD/EXnEB99k7W4Jq36wQULRgJT+VFJ9mSbTgsQnHoPPQMHdIr0Ny4+m1omDje25wjlusc
-	Zbl0GcVR6mRKX4GvRfQ92uyxIErq0ogUfKNTBXbtpus6Vvi4IQndXhD6unhw=
-X-Received: by 2002:a05:6214:492:b0:6cb:1fad:82b2 with SMTP id 6a1803df08f44-6d18566505bmr16966006d6.3.1729942722380;
-        Sat, 26 Oct 2024 04:38:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjV61HARupu7W70JLeA+UqwYOAVuXyIFMiS4jRVtOulAOXFcqwYl1WNINTuzhv44XyFwqZCg==
-X-Received: by 2002:a05:6214:492:b0:6cb:1fad:82b2 with SMTP id 6a1803df08f44-6d18566505bmr16965886d6.3.1729942721904;
-        Sat, 26 Oct 2024 04:38:41 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f2994ddsm164820666b.110.2024.10.26.04.38.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 04:38:41 -0700 (PDT)
-Message-ID: <768a1c92-6e1d-4d6c-90f6-efe66f68dd0e@oss.qualcomm.com>
-Date: Sat, 26 Oct 2024 13:38:38 +0200
+        d=1e100.net; s=20230601; t=1729944113; x=1730548913;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ivIAohcESshAYpEPq++t9hJfCpjXuscXbD6Im/FDokQ=;
+        b=iW6yjyHxfGRxy3JC3hx0exIJmJ/eKxQtEc8R723p+MLYTC6Z8lxcZ3TvtKEzHiKoLw
+         ydWOXwMxdTI3IotO9bPy7iTQaWzMsLrK05LC0Ixh8htSS36Q7/Lp3+0Pxxx6+sMFTG4F
+         cq69feFTPWUWzmkTEmzD7cg3V7yEogA8kUxNlXHuXgKlitcaUaKRMFEEI1hw64mW/PsQ
+         jcHth46neZk1R52I1nW/dHbaXBlfH9FfRLf+m3mCrqbWCmHVR0EOC38bwUff0cyb7seO
+         CBn+qd+neArVpEnYwU5MxhhjdB3yZR1PrGpj9ynd78Onw8zAMhGL/HWcCCnSDxLYNwWl
+         iZPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhAqlOrQtOA1jmF87hzuy3M7mhXq9zzPVtIUhh6zVGvfwdS+xZjCTTRRVr5sJegnuT2AmuJMV4tas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU4UBevYPbwUnYWTdpku6IsVnaFTRXV2zaivGynDKc8LYQvxL3
+	vCCQmyGLQxf0QllQ/oea9mW9qkNHxsDzHMTGeQH53h9Sb7fP3x9veDLiCoNNOFE=
+X-Google-Smtp-Source: AGHT+IH1dsULDIYCbXnhWrr2hutsWuzTM/gAfeo0yzwyxxJYFFg4QA218/5byXKAvC9+SNM44aVSrA==
+X-Received: by 2002:a05:6402:13d5:b0:5c9:7f8b:4fcf with SMTP id 4fb4d7f45d1cf-5cbbfa58bf5mr660881a12.6.1729944113136;
+        Sat, 26 Oct 2024 05:01:53 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6319711sm1490421a12.66.2024.10.26.05.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 05:01:52 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/3] clk: samsung: Introduce Exynos8895 clock driver
+Date: Sat, 26 Oct 2024 14:01:48 +0200
+Message-ID: <172994382528.22240.15972019701074354702.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241023090136.537395-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20241023090136.537395-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
- dts from arm64
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Karl Chan <exxxxkc@getgoogleoff.me>,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Sricharan R <quic_srichara@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
- <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
- <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: rTO0gS-3oeqGRfrM1HBPg_kEPsKNA1qU
-X-Proofpoint-GUID: rTO0gS-3oeqGRfrM1HBPg_kEPsKNA1qU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0
- mlxlogscore=682 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410260097
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 6.10.2024 10:14 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 03, 2024 at 07:28:04AM GMT, Karl Chan wrote:
->> Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
 
-+ Kathiravan, Sricharan
+On Wed, 23 Oct 2024 12:01:33 +0300, Ivaylo Ivanov wrote:
+> Hey folks,
+> 
+> This patchset adds initial clock driver support for Exynos8895 SoC,
+> which allows clocking peripherals like MCT, serial buses, MMC, UFS and
+> PCIE. As platform support grows in the future, other blocks like APM
+> will be added.
+> 
+> [...]
 
-Would you folks know anything about it? Do we have an open source
-U-Boot release that could be sideloaded as a secondary bootloader to
-kick it into 64-bit mode?
+Applied, thanks!
 
-Konrad
+[1/3] as well
+
+[2/3] clk: samsung: clk-pll: Add support for pll_{1051x,1052x}
+      https://git.kernel.org/krzk/linux/c/49fefe602d8fa7323b51ffc4891acf4a91dac193
+[3/3] clk: samsung: Introduce Exynos8895 clock driver
+      https://git.kernel.org/krzk/linux/c/c6e45979204d092770c55c0b2d1fce6cff8dedd6
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
