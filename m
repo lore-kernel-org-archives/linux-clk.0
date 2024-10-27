@@ -1,61 +1,60 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B66127E18
-	for <linux-clk@vger.kernel.org>; Sun, 27 Oct 2024 01:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED601514C9
+	for <linux-clk@vger.kernel.org>; Sun, 27 Oct 2024 01:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729992307; cv=none; b=AX3a0dmSAdI8Dkuh6eorF/DhTHRLZaE0ib6SosCpnodcaQMVyf2jU27c0cMFNVgy5GDEMEl5PmebRIc55djBu4+CqaVYEbsBF8wLcwtoYivD/362ZArTk5XAoA9L4Ykg0f2nhVqAHsJkxQ8uDcJKbsthEBBiFMMOYu/HHcw5bD4=
+	t=1729992312; cv=none; b=J/vgM02e51L7C1tDsfzpZbMlbQK6wC+1Hr1A9cxSHWekau4DB6Jv7JyKI8PMQaJUGyMUDjl2YmPLSSAsKNVOQUF4dNEm3RFZpaKcfcNT/wLdIKZwGH+sf/2bsD4zsWGf5qPefdqCbxtj1+T0R6STXQKeIHdGDuFmKtwSHl4CMqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729992307; c=relaxed/simple;
-	bh=cusbsCXcCRICgVtoFfcST5RUPxhuJU5/xKi/V+i68TA=;
+	s=arc-20240116; t=1729992312; c=relaxed/simple;
+	bh=J01aZfvomEsVQEi/Nl/mHvq41KMRorLHAPm15NwwtBA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NwoQbfP5up+UeNjzm5Z2FVopCcJ5Wd9uLWUityx4Wlzlt0ybd4hcTadKmJX7bQ4l6RfLXgDwH67yN6y3cbDbCKtjMKIemLnGS1xAm5WVzSZ5XxHlsZAkhxHf1gxNQI3J4yOj1vNp8SzLjpa9XmuQJZusKvedvqigqkHPPW6Sth4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LN5mAk3J; arc=none smtp.client-ip=209.85.167.54
+	 In-Reply-To:To:Cc; b=Zc5du0a5LBYHzDCaDmN9y6A86eZsPtQXR6PqCuKVlxkwUiF7thPgWCkx5f2FDjgjlr1P5/eqvOzXuzurzhFTde2XFI8f9dKhJg+lUU8n1577L9glOYTkpKQnjZuKLBbME5rnXCjg1pvqpFJTPm1HezfgRGk8+lJ0fvomW0ZSvrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cwuOSruj; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LN5mAk3J"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53a007743e7so3796534e87.1
-        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 18:25:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cwuOSruj"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53b34ed38easo718158e87.0
+        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 18:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729992303; x=1730597103; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729992307; x=1730597107; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t3AXSQsePizUA8LIscchHebVQbgFWw+Kxco+4DEcCkc=;
-        b=LN5mAk3JmTjVt1JVRnDC1RIpqP8lWBXcNR61jnsjeJJjrXkRYy3SDCyhfJtDWotzMm
-         srd1opvMPOfBwG7ESDWYXEt9hAD85NOW6urGW9p6IW0LWG3DCXRQG2fC3BVCD/OiDKct
-         E/VmUDB96OgCGTcd5p1b1uCTsO5fvoo0LH5fP9nh4mxLCs6JHaiwQiKoiJQ19I59ynii
-         IhwzQZFViP8n4HHpRYiCqMMjPtqyq0Ojpo+gEJOXY1J6wawVPodIpsha86lG0HvAcq9v
-         bJCx3d6POiBGqUfeD+apeECk/yXdbYz2zoyy3Q/LhqAtpBFpqna3TKdRd1HTGBCeJhYp
-         8s2Q==
+        bh=V6AxpS4d6FLuJHatjryaGw2iYlZcDdEsHoMG8xCl8x8=;
+        b=cwuOSrujxgRxH+Auh0SjDB6EhkeHsEhD16hP8suU74xFu59z2CyXFFw4kFHq8N3V/V
+         xJub0Al3m5g1H4hQ8YF6QelsPNBhbweDipXHzEVZehWUqFiNX90CfDuTbehP2gyW2rqe
+         FXp7B8fVTuXV6NJM7BoWn48vWjwIdh1ZBvI+MLgvpIEskWBUr+8PikU01uPoQe+1SgLh
+         cknFU9PYgD93YMf1rh63OGodMlCdA/mnhcPWe/zcauN6qQvV4erJLVXFT/kB2alDfKXv
+         IO43t5twgrW/sZh5eQAZ2/ecPuDDTVSVsh7TX61JKO0WFrZzGMYBuU2Yw6/qZj0BRDyR
+         YvVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729992303; x=1730597103;
+        d=1e100.net; s=20230601; t=1729992307; x=1730597107;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t3AXSQsePizUA8LIscchHebVQbgFWw+Kxco+4DEcCkc=;
-        b=Zd+TEmSMNvQEUxjXd+VYOd+pzrOjSZNw8yr90fV+rF/aRL04lxc3+zREFY9Um8bGdj
-         3mqmxGM6RZVomk+n+w4KObHuzWAK5dvsgP4MNb3tB83Yrbfn1EuSufhoVgBs39csEB2P
-         VNAcaMWt5XtZORV4Q/KMOBnVDsVIUK/BuPs9ks9VFKt9Kgo8vdUdO2L6oFuUtxtfUAX9
-         sGsSQhmvPvD7NnKI39JNR9hw93TUGlC9a2upAU91OLp4erC3A4FrITi/aNPtKxb8/BcC
-         fcgqB8O4J4I+xpajB3SNRtmso4j3vmVyeb4/VNVVM/A9z2vI1kP+asxkF04Fb0CASNpX
-         0Zow==
-X-Forwarded-Encrypted: i=1; AJvYcCU7w1uLMtfN5dYQVHMHdb/Z2W6gW2J60Ewy3Y5SGqFRbgJRbKhWtkY+vcLcq2xP5J3G2D1w0CEPbgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7W1KvhWhIc1lCdBqCeD2PTenduu2+tBsxUurtQpt/SgxrV9+f
-	nYbmTZpDfXdXaqlzXyan1ui2ijLGFOumAUFHsNrqlVxzegQZu5yVy71481CbS3zF+8nDPB8aJuH
-	G
-X-Google-Smtp-Source: AGHT+IElBSD4I3dXEGlc1jmOwlFmw33CuIPXif06ZQcCejXnCg1fZ/yvrX7RJUuVmCvtMgBETlfLUA==
-X-Received: by 2002:a05:6512:3409:b0:53a:7e:bcc6 with SMTP id 2adb3069b0e04-53b34b3730fmr1358657e87.53.1729992302696;
-        Sat, 26 Oct 2024 18:25:02 -0700 (PDT)
+        bh=V6AxpS4d6FLuJHatjryaGw2iYlZcDdEsHoMG8xCl8x8=;
+        b=L8w9M6wviqoEp6GkHKo14pq/7Swo2+uy1eRVFS6vSo3qauxnwm17cxqGhnrOPqaqtF
+         NMRHmwzV/awiqgfx6jn5V4Hiy2AyM7TSUzGUGmyJGFQYZQ0zojiOPaWJ+1tSW6AF2eBh
+         gpVmAXxT71E+FFCQB87qeuyOGVaHQvKR/VBZ8X9h2Zpj2Kq3HJy6sUUMH/r3Y069ckCx
+         lBMwwU5V9958EIuTYyJ6kYLI7ltfCil5thYYvdd5+wy/jwXCV0bLpzJZOEd+pp3gycdo
+         F8BhptJNKEUWa6xSKMvceaRHLUJT+uF6s9m/xr1hVGRJ3y6TTKN848xoV3hk0ixQYpt5
+         9cCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaJn9NNoXs7Qz2qRz78un0pzX9m7X0TVXJWJxQbtwaBeB1yCOI1b4iFlW3qN7MH25meNf6cmpZ9yM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoxD7A7zrchPh3oI9I1bAG0h7DeFnbbNy8kAK47AVUhFQ7MFek
+	Y0Og1f0eUpZLBv6BQ2U0iyhBSTrY2eqHh+QtvhKnMq1IaJ/rEcOe+VDbhnuopd4=
+X-Google-Smtp-Source: AGHT+IEd+dqma3RL5aXu4AzcArNcNZnZ0SeEHd3lozPEw5mXracHCdtFMAc0tuN/P4VLDmEaSHySIA==
+X-Received: by 2002:a05:6512:12c5:b0:539:e88f:23a1 with SMTP id 2adb3069b0e04-53b3491c80emr1233026e87.44.1729992307146;
+        Sat, 26 Oct 2024 18:25:07 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c901esm642356e87.219.2024.10.26.18.25.01
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c901esm642356e87.219.2024.10.26.18.25.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 18:25:02 -0700 (PDT)
+        Sat, 26 Oct 2024 18:25:05 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 27 Oct 2024 03:24:46 +0200
-Subject: [PATCH v5 07/11] clk: qcom: rpmh: add support for SAR2130P
+Date: Sun, 27 Oct 2024 03:24:48 +0200
+Subject: [PATCH v5 09/11] clk: qcom: tcsrcc-sm8550: add SAR2130P support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241027-sar2130p-clocks-v5-7-ecad2a1432ba@linaro.org>
+Message-Id: <20241027-sar2130p-clocks-v5-9-ecad2a1432ba@linaro.org>
 References: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 In-Reply-To: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -76,66 +75,87 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Philipp Zabel <p.zabel@pengutronix.de>, 
  Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1854;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2386;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=cusbsCXcCRICgVtoFfcST5RUPxhuJU5/xKi/V+i68TA=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZZhKZngsB6N7Ls+WS90KYp16lLGCsoZISuMu
- JXdDKdotp2JAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WYQAKCRAU23LtvoBl
- uJYYD/49rt7ADfwCMeugWzpK5Ns3NMaOJ2X5IbxP7FniagYkyOinMK3OULzSGcG1B7DFbDTkKjR
- lTfEMhnIfb3ufmSLMOAK+h0TIT2TjfHVWLLdEtYtAHxcZHcAtHY5iSbcFJU+iUnRlyXmoUbYuH8
- pOwXGtvk3PHDE7YYvpBXtqBUwaRERf06TNk9biiYAzvnHjD5OzrcktakUzXfEUe5HgyZla0fxuC
- K9UpChDP3wk2h4IjnaAeMDIbrWmKQXISloGBVuP95yEs3+UFYSPmJ3Pjza7zTDzm5YflFvKiKIM
- pfspQspBPuA8V/W/JoZqxFlYtTxIIEhNfhybnsHM2NYpTvbuVHcdjxw3DFn6LQKeibGo/r0Dnr0
- jnhtEhQ7juuq1eUb0HZY4SKyw781JuHnWNOWPO2tfN6JNPpXeV8J+TAonmreRrPO9i2D4xMH8cI
- dTSVFYp+zJjs1bK7FKCcxtVFGJB6NjbSOillMxpeentDk75mdRRwhwC5fluZd1FWsghlXFIAke5
- WRkR+pTKj9uHx7/ZXYVtdxm4pmFSbg3squ/qxdflYd9y1EHOYUz8BCA/cKhOWp/Ada6GjS0dQiK
- eKYCms267FlOirX+wtHp4FaX6IDq6/8eOmK0uyWxJ8hVXECLPzlnxS6QvFO1qws+/v1yCHOI6bT
- oku7+L4y9zaghqA==
+ bh=J01aZfvomEsVQEi/Nl/mHvq41KMRorLHAPm15NwwtBA=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZZisfbXZLOXg78S3sjIC7QNVHzfgBdu7wd8m
+ QU4vZ5oqoyJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WYgAKCRAU23LtvoBl
+ uIx0D/wOpl9ftdfXZRoFor+5fHeRGD3FvlsCf1u5T1NeAuTyle5QcQubTlqqZZJGkJ0WyE5hbf0
+ l0qcZ45qipB2W5oviniT9XgxqUw1qimQt+UTh9OLB64wDbfeZCcPLErgNcbmQzK3K6l8crS2Gyh
+ suh97VUbHWl6t3NzFiZS86/KQWyPLyxKqU31IC3CEKtblLbqcevY0uBw1N4imNcivjQVLAFErJL
+ SBkGEM7UqZOn0uRrfQt7egPYS7NPazs0b2he3IUj42N+AjVXjNp23giRm0h8BBV06fo4m6sAjeI
+ TwWyYspCU/kBHVnuzEL3R3LmwenJkvpT5CG13g1B3tiiv7oZZoES/AipdyPuJIVAPiiEB2w0e5L
+ itTIwHy7WiiozoRG9MOlLfOQ9rlCB56FYQrqK45AjveetWr5DxEb8V4bJqcK8y0UNyKNM7o/fru
+ vCs7jXkdpgSZdAm/JLKEd6TGPk7pKbclFf1S1hXpyNkzXQmDcT94CWO/DftHvbDNZuTSzyA7n4u
+ KD2kp8Zc9BMOxD5V9HYBPN7krx6nDenFcCVWx9Uu+d1Mt3TP3vNsDJtv1fYE9Bg+MurBt9uR8x1
+ 69b88hWtgKTum9iUqvW9J2ZNzjGzqLFa4c5hul8ZWEGSlp+e/DHvTkbCFXYFYoyBJ9w/KL/mYYD
+ xhm7/EZuPhXXU6w==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Define clocks as supported by the RPMh on the SAR2130P platform. The
-msm-5.10 kernel declares just the CXO clock, the RF_CLK1 clock was added
-following recommendation from Taniya Das.
+The SAR2130P platform has the same TCSR Clock Controller as the SM8550,
+except for the lack of the UFS clocks. Extend the SM8550 TCSRCC driver
+to support SAR2130P.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/clk-rpmh.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/qcom/tcsrcc-sm8550.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 4acde937114af3d7fdc15f3d125a72d42d0fde21..eefc322ce367989f625f1285dcccddbdd8341a12 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -389,6 +389,18 @@ DEFINE_CLK_RPMH_BCM(ipa, "IP0");
- DEFINE_CLK_RPMH_BCM(pka, "PKA0");
- DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
+diff --git a/drivers/clk/qcom/tcsrcc-sm8550.c b/drivers/clk/qcom/tcsrcc-sm8550.c
+index e5e8f2e82b949dae592ec3dda585138bf89cab37..41d73f92a000ab924560a0c2c9d8e85a9aaeb1b0 100644
+--- a/drivers/clk/qcom/tcsrcc-sm8550.c
++++ b/drivers/clk/qcom/tcsrcc-sm8550.c
+@@ -129,6 +129,13 @@ static struct clk_branch tcsr_usb3_clkref_en = {
+ 	},
+ };
  
-+static struct clk_hw *sar2130p_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div1.hw,
-+	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div1_ao.hw,
-+	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
-+	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
++static struct clk_regmap *tcsr_cc_sar2130p_clocks[] = {
++	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
++	[TCSR_PCIE_1_CLKREF_EN] = &tcsr_pcie_1_clkref_en.clkr,
++	[TCSR_USB2_CLKREF_EN] = &tcsr_usb2_clkref_en.clkr,
++	[TCSR_USB3_CLKREF_EN] = &tcsr_usb3_clkref_en.clkr,
 +};
 +
-+static const struct clk_rpmh_desc clk_rpmh_sar2130p = {
-+	.clks = sar2130p_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sar2130p_rpmh_clocks),
+ static struct clk_regmap *tcsr_cc_sm8550_clocks[] = {
+ 	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
+ 	[TCSR_PCIE_1_CLKREF_EN] = &tcsr_pcie_1_clkref_en.clkr,
+@@ -146,6 +153,12 @@ static const struct regmap_config tcsr_cc_sm8550_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
++static const struct qcom_cc_desc tcsr_cc_sar2130p_desc = {
++	.config = &tcsr_cc_sm8550_regmap_config,
++	.clks = tcsr_cc_sar2130p_clocks,
++	.num_clks = ARRAY_SIZE(tcsr_cc_sar2130p_clocks),
 +};
 +
- static struct clk_hw *sdm845_rpmh_clocks[] = {
- 	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
- 	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-@@ -880,6 +892,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
- 	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
-+	{ .compatible = "qcom,sar2130p-rpmh-clk", .data = &clk_rpmh_sar2130p},
- 	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
- 	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
- 	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
+ static const struct qcom_cc_desc tcsr_cc_sm8550_desc = {
+ 	.config = &tcsr_cc_sm8550_regmap_config,
+ 	.clks = tcsr_cc_sm8550_clocks,
+@@ -153,7 +166,8 @@ static const struct qcom_cc_desc tcsr_cc_sm8550_desc = {
+ };
+ 
+ static const struct of_device_id tcsr_cc_sm8550_match_table[] = {
+-	{ .compatible = "qcom,sm8550-tcsr" },
++	{ .compatible = "qcom,sar2130p-tcsr", .data = &tcsr_cc_sar2130p_desc },
++	{ .compatible = "qcom,sm8550-tcsr", .data = &tcsr_cc_sm8550_desc },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, tcsr_cc_sm8550_match_table);
+@@ -162,7 +176,7 @@ static int tcsr_cc_sm8550_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
+ 
+-	regmap = qcom_cc_map(pdev, &tcsr_cc_sm8550_desc);
++	regmap = qcom_cc_map(pdev, of_device_get_match_data(&pdev->dev));
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
 
 -- 
 2.39.5
