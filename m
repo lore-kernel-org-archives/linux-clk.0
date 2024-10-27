@@ -1,165 +1,280 @@
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E661566A
-	for <linux-clk@vger.kernel.org>; Sun, 27 Oct 2024 13:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F5D17D355;
+	Sun, 27 Oct 2024 21:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730035602; cv=none; b=pLLs2d3oupw9nI9qyBBQzwcKNE/Mz082wlphmcNzBCsLzahO1guqZxYs0dN3EYU8VNt8oLtVVct7UXc0sO4Y3TyinGX1wClotkkqQtB2WrHKDsrYyTr38mXLgk7q3RvvL3kW6hwxy3epj54WhTk1UPs9ZFyA5Or194kJvkaXDnw=
+	t=1730063828; cv=none; b=CyFW5qw462T8pkwHH3smySHAZn99zdDuv/M2caHtclnqtl1YvMkg/8f3RsjSIObQNUnDHMCcY8wgw1/r4F3cQeizhRmFSyCb2YkDJPs5KoLlwtaOzmCfxqxlmrzgv5qvZ/2QFp6kCZHqvfPKw1g5Np7IowA/bFvJRBIdrLPOj8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730035602; c=relaxed/simple;
-	bh=wvx2ME6bKjTIAPbcU/DAQDlfa8UXrdBQj2biPzzxyl4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nGcpoz2538tpRk4m1rWdCK6a/gbiPbo1HW20gcvY9pRIkb114Pk8IvAwNS0gg+wccnA+8/vY9SAF7Jw0kUeyyBd3GgJdFb34gKzSoeVye9Sp96mOQ3EJzYZV74n99Inm9mcIs0k+a+XHG9BNskOKK6HRn8a4lrKZFwPAnkd8UtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aOaB/FGV; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1730063828; c=relaxed/simple;
+	bh=8BxbqsTR+nwXPOEVNWoXKCAhMQb8yohDYa2UCOM1Qls=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=YAVHOP9FfvoRJncogxoaaQdmTJoOOeHIfK+0ldgrADYzMu2uAH/sSxAXdMJwUZOYCacEPKaguIBiK133anD5fFnXBF0avBKMqy+XvIiulzilmzhI2TDiP/JWDq4MD0lb6FCclFkWUzikRgP4BqYSpX9kZICf0xZ0+eieKKx8xR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCpffMJX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aOaB/FGV"
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a9aa8895facso557135266b.2
-        for <linux-clk@vger.kernel.org>; Sun, 27 Oct 2024 06:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730035597; x=1730640397; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hkayB6WnSxJs4BKoPWSzkYu8BfwRMxQ9y2LaJgKG6IY=;
-        b=aOaB/FGVmkeQ3akQyb4N6EOp9dm4Tzj74BHV+5/08ZTKaimYPxNCgSjO44YOh7H0P3
-         UVmLL1BVzbRjYFBqgqqsKAPma4mBh2DLDYBgy1bmgTyN1XCBJhh1RXURqlVmv4fbdkNv
-         2RygW9l1+JISERGMtDMoIOOVeMrx/4dKIcZcC3GxxC9V2Uot9FQfly3YLJNapwLThYzY
-         m3inBww0G7HSHyCO8x4VuvYTv8/42H1vSM4FhVi4Clwx4rxtnF2XKQXto245kl2HyfKG
-         FYqjAMyWzbajNhj6RIlQiqTnPhSZl1kfnEQaHqm9b2/YtI4m+G8C1LIpjbqX9s6h2EWc
-         eoDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730035597; x=1730640397;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkayB6WnSxJs4BKoPWSzkYu8BfwRMxQ9y2LaJgKG6IY=;
-        b=NuisV82Vmrco+17FtF6I1BmXI/sEPnK9DGdPrzl32QeJKYLfmLDWpGBjUohZ849NN6
-         +HbmcyLP1ONgMklyeoJMVxvyX8tXW0I42T2vwyQvnLukaJVdsLKaSrm5g22qSx+rJYul
-         66WVJF/ggwuqVdxpc3UfGxCSmFqJ/6i+NuT8nE+fs40QqReYIBoDFvaLaghFmgZKW1wa
-         FrPce/Yf6FXzpJBeoyKsjePPWcgmQgBqevVgthE8Gzp/FfhLwKyWsOaZca+7dV04NGqf
-         uljy0U+jt6W6M+m6SSLxMMm/5diyjHJgWQHsrHlTK7rvt914sWO1jemdEbQFXYBrw1fS
-         8Jgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO0Fm/DgcmdNsIbRlqnIqyA7r5l+ItLi5Dyl+v6NVZ9cq0K4+BGU8uF4Gy7RCDMNiiDkeWJjynqjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI8eleythX+KumH2DskyzWkpv6+/1MY19brJwyROLlFpNEM1eK
-	3HhvwLSYax+BLqy1ogsM8XBM0ndoZKTgR69AhvHycY+u4WbzO33nLKUFc8vl29I=
-X-Google-Smtp-Source: AGHT+IGODKCkNnm13dGswFX5M8oMKsn4zXbFtPFHoQf1TvOwmbqjg60TYzbmHIVU8ekajFjlSp52dQ==
-X-Received: by 2002:a17:907:94d0:b0:a9a:634:dd2 with SMTP id a640c23a62f3a-a9de61ceb81mr470840366b.43.1730035597406;
-        Sun, 27 Oct 2024 06:26:37 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c3646sm2364100a12.47.2024.10.27.06.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:26:36 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sun, 27 Oct 2024 14:26:59 +0100
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 10/14] arm64: dts: rp1: Add support for RaspberryPi's
- RP1 device
-Message-ID: <Zx4_o34Iyqb5mh_l@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <3f6f38c06b065f5f6034ad4ed3a24902ee59f378.1728300190.git.andrea.porta@suse.com>
- <20241007165740.14d372f5@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCpffMJX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59915C4CEE4;
+	Sun, 27 Oct 2024 21:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730063827;
+	bh=8BxbqsTR+nwXPOEVNWoXKCAhMQb8yohDYa2UCOM1Qls=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=hCpffMJXPBcfUUZ0udfUTLotwnU7Z2vHpYusSHQ/Z5KOvtA1mc/fhKWi8Xl7CD+Le
+	 jg0Wg87iQUb4nEm3fm1Gmb5wMNq2dJXHQG6NadLOjdngppie8HjKzmaxKLqc6zUrx9
+	 zg9MV1nbbvyO7fKilUFBY6o09XJOGXSqiLcd6DhjS0HBIUSeeAJWBnDaworcxvGezl
+	 O936Ynf0don4FAxSewNxIps3BCFdkQeDd5elZ7Fs37b6xHpsP+8kGEg+SbhaVsXKWW
+	 Ohw/gyIIQcegltpZedhM0Rrcj8u+37jQa4BDuZb2mCe8kg3cMfsU4r1LPyPeS8L92t
+	 8ngVdrD7Ma0Qw==
+Date: Sun, 27 Oct 2024 16:17:06 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241007165740.14d372f5@bootlin.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: linux-clk@vger.kernel.org, Scott Branden <sbranden@broadcom.com>, 
+ Michael Turquette <mturquette@baylibre.com>, Will Deacon <will@kernel.org>, 
+ devicetree@vger.kernel.org, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ linux-rpi-kernel@lists.infradead.org, David Airlie <airlied@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ dri-devel@lists.freedesktop.org, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Dom Cobley <popcornmix@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Maxime Ripard <mripard@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
+References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
+Message-Id: <173006367767.91262.6590539622480558932.robh@kernel.org>
+Subject: Re: [PATCH v2 00/36] drm/vc4: Add support for BCM2712 / Pi5
+ display hardware
 
-Hi Herve,
 
-On 16:57 Mon 07 Oct     , Herve Codina wrote:
-> Hi Andrea,
+On Fri, 25 Oct 2024 18:15:31 +0100, Dave Stevenson wrote:
+> This series adds the required DRM, clock, and DT changes
+> required to support the display hardware on Pi5.
+> There are a couple of minor fixes first before the main patches.
 > 
-> On Mon,  7 Oct 2024 14:39:53 +0200
-> Andrea della Porta <andrea.porta@suse.com> wrote:
+> Many of the patches were authored by Maxime whilst working
+> for us, however there have been a number of fixes squashed
+> into his original patches as issues have been found. I also
+> reworked the way UBM allocations are done to avoid double
+> buffering of the handles as they are quite a limited resource.
 > 
-> > RaspberryPi RP1 is a multi function PCI endpoint device that
-> > exposes several subperipherals via PCI BAR.
-> > Add a dtb overlay that will be compiled into a binary blob
-> > and linked in the RP1 driver.
-> > This overlay offers just minimal support to represent the
-> > RP1 device itself, the sub-peripherals will be added by
-> > future patches.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
+> There are 2 variants of the IP. Most Pi5's released to date
+> have used the C1 step of the SoC, whilst the 2GB Pi5 released
+> in August is using the D0 step, as will other boards in future.
 > 
-> ...
-> > +/ {
-> > +	fragment@0 {
-> > +		target-path="";
-> > +		__overlay__ {
-> > +			compatible = "pci1de4,1";
+> Due to various reasons the register map got reworked between
+> the steps, so there is extra code to handle the differences.
+> Which step is in use is read out of the hardware, so they
+> share a compatible string.
 > 
-> The compatible is not needed here. Indeed, it will be added by the PCI core
-> when it scans the bus and adds the missing nodes.
->   https://elixir.bootlin.com/linux/v6.12-rc2/source/drivers/pci/of_property.c#L383
-
-Sure, but I've added it so that the dts could be validated.
-
+> Thanks!
 > 
-> > +			#address-cells = <3>;
-> > +			#size-cells = <2>;
-> > +
-> > +			pci_ep_bus: pci-ep-bus@1 {
-> > +				compatible = "simple-bus";
-> > +				ranges = <0xc0 0x40000000
-> > +					  0x01 0x00 0x00000000
-> > +					  0x00 0x00400000>;
-> > +				dma-ranges = <0x10 0x00000000
-> > +					      0x43000000 0x10 0x00000000
-> > +					      0x10 0x00000000>;
-> > +				#address-cells = <2>;
-> > +				#size-cells = <2>;
-> > +				interrupt-controller;
-> > +				interrupt-parent = <&pci_ep_bus>;
-> > +				#interrupt-cells = <2>;
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+> Changes in v2:
+> - Collected Acks and R-b tags
+> - Dropped patch 1 "drm/vc4: Limit max_bpc to 8 on Pi0-3". Already fixed as
+>   noted by Maxime.
+> - Fix unintialised var "mux" in vc6_hvs_pv_muxing_commit.
+> - Fixed uninitialised var "reg" in vc4_hvs_cob_init.
+> - Make bcm2712_mop_data and bcm2712_moplet_data static.
+> - Removed the "disable_turbo" line from the struct in
+>   raspberrypi_clock_property
+> - I'm confused by the CI error "performing pointer arithmetic on a null
+>   pointer has undefined behavior" for PCI_IOBASE as I'm not using it.
+> - Link to v1: https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com
 > 
-> Not sure this node should be an interrupt controller.
-> The interrupt controller is the PCI device itself (i.e.the node
-> where the overlay is applied).
-
-Right.
-
-Many thanks,
-Andrea
-
+> ---
+> Dave Stevenson (11):
+>       drm/vc4: Use of_device_get_match_data to set generation
+>       drm/vc4: Fix reading of frame count on GEN5 / Pi4
+>       drm/vc4: drv: Add support for 2712 D-step
+>       drm/vc4: hvs: Add in support for 2712 D-step.
+>       drm/vc4: plane: Add support for 2712 D-step.
+>       drm/vc4: hdmi: Support 2712 D-step register map
+>       drm/vc4: Enable bg_fill if there are no planes enabled
+>       drm/vc4: Drop planes that are completely off-screen or 0 crtc size
+>       arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
+>       arm64: dts: broadcom: Add display pipeline support to BCM2712
+>       arm64: dts: broadcom: Add DT for D-step version of BCM2712
+> 
+> Dom Cobley (3):
+>       clk: bcm: rpi: Add ISP to exported clocks
+>       clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
+>       clk: bcm: rpi: Enable minimize for all firmware clocks
+> 
+> Maxime Ripard (22):
+>       dt-bindings: display: Add BCM2712 HDMI bindings
+>       dt-bindings: display: Add BCM2712 HVS bindings
+>       dt-bindings: display: Add BCM2712 PixelValve bindings
+>       dt-bindings: display: Add BCM2712 MOP bindings
+>       dt-bindings: display: Add BCM2712 MOPLET bindings
+>       dt-bindings: display: Add BCM2712 KMS driver bindings
+>       drm/vc4: drv: Support BCM2712
+>       drm/vc4: hvs: Add support for BCM2712 HVS
+>       drm/vc4: crtc: Add support for BCM2712 PixelValves
+>       drm/vc4: hdmi: Add support for BCM2712 HDMI controllers
+>       drm/vc4: txp: Introduce structure to deal with revision differences
+>       drm/vc4: txp: Rename TXP data structure
+>       drm/vc4: txp: Add byte enable toggle bit
+>       drm/vc4: txp: Add horizontal and vertical size offset toggle bit
+>       drm/vc4: txp: Handle 40-bits DMA Addresses
+>       drm/vc4: txp: Move the encoder type in the variant structure
+>       drm/vc4: txp: Add a new TXP encoder type
+>       drm/vc4: txp: Add support for BCM2712 MOP
+>       drm/vc4: txp: Add BCM2712 MOPLET support
+>       drm/vc4: Add additional warn_on for incorrect revisions
+>       clk: bcm: rpi: Create helper to retrieve private data
+>       clk: bcm: rpi: Add disp clock
+> 
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml        |   2 +
+>  .../bindings/display/brcm,bcm2835-hvs.yaml         |   5 +-
+>  .../bindings/display/brcm,bcm2835-pixelvalve0.yaml |   3 +
+>  .../bindings/display/brcm,bcm2835-txp.yaml         |   5 +-
+>  .../bindings/display/brcm,bcm2835-vc4.yaml         |   1 +
+>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+>  arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts |  37 +
+>  arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  42 +
+>  arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 188 +++++
+>  drivers/clk/bcm/clk-raspberrypi.c                  |  33 +-
+>  drivers/gpu/drm/vc4/tests/vc4_mock.c               |   8 +-
+>  drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c     | 106 +--
+>  drivers/gpu/drm/vc4/vc4_crtc.c                     |  96 ++-
+>  drivers/gpu/drm/vc4/vc4_drv.c                      |  19 +-
+>  drivers/gpu/drm/vc4/vc4_drv.h                      |  54 +-
+>  drivers/gpu/drm/vc4/vc4_hdmi.c                     | 107 ++-
+>  drivers/gpu/drm/vc4/vc4_hdmi.h                     |   4 +
+>  drivers/gpu/drm/vc4/vc4_hdmi_phy.c                 | 640 +++++++++++++++
+>  drivers/gpu/drm/vc4/vc4_hdmi_regs.h                | 217 ++++++
+>  drivers/gpu/drm/vc4/vc4_hvs.c                      | 737 ++++++++++++++++--
+>  drivers/gpu/drm/vc4/vc4_kms.c                      | 105 ++-
+>  drivers/gpu/drm/vc4/vc4_plane.c                    | 866 ++++++++++++++++++++-
+>  drivers/gpu/drm/vc4/vc4_regs.h                     | 297 +++++++
+>  drivers/gpu/drm/vc4/vc4_txp.c                      |  91 ++-
+>  include/soc/bcm2835/raspberrypi-firmware.h         |   1 +
+>  25 files changed, 3461 insertions(+), 204 deletions(-)
+> ---
+> base-commit: 3ae80b375739495e36fc6143ff27716fe390a13e
+> change-id: 20241002-drm-vc4-2712-support-9ad3236e3caf
 > 
 > Best regards,
-> Hervé
+> --
+> Dave Stevenson <dave.stevenson@raspberrypi.com>
 > 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y broadcom/bcm2712-d-rpi-5-b.dtb broadcom/bcm2712-rpi-5-b.dtb' for 20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com:
+
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: soc@107c000000: firmware: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: soc@107c000000: power: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: soc@107c000000: power: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: soc@107c000000: firmware: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: interrupt-controller@7cd00000: 'interrupt-controller' is a required property
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2836-l1-intc.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: interrupt-controller@7cd00000: '#interrupt-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2836-l1-intc.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: gpio@7d517c00: 'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/gpio/brcm,brcmstb-gpio.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: intc@7d508380: $nodename:0: 'intc@7d508380' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: intc@7d508380: $nodename:0: 'intc@7d508380' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: intc@7d508400: $nodename:0: 'intc@7d508400' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: intc@7d508400: $nodename:0: 'intc@7d508400' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupts: [[1], [2], [3], [7], [8]] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:3: 'wakeup' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:4: 'hpd-connected' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupts: [[1], [2], [3], [7], [8]] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:3: 'wakeup' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:4: 'hpd-connected' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupts: [[11], [12], [13], [14], [15]] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:3: 'wakeup' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:4: 'hpd-connected' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupts: [[11], [12], [13], [14], [15]] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:3: 'wakeup' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:4: 'hpd-connected' was expected
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: firmware: '#address-cells', '#size-cells', 'dma-ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: firmware: '#address-cells', '#size-cells', 'dma-ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: /soc@107c000000/power: failed to match any schema with compatible: ['raspberrypi,bcm2835-power']
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: axi: gpu: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/power: failed to match any schema with compatible: ['raspberrypi,bcm2835-power']
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: axi: gpu: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hvs@107c580000: interrupts: [[2], [9], [16]] is too long
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hvs@107c580000: clocks: [[18, 4], [18, 16]] is too long
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hvs@107c580000: 'clock-names', 'interrupt-names' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hvs@107c580000: interrupts: [[2], [9], [16]] is too long
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hvs@107c580000: clocks: [[18, 4], [18, 16]] is too long
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hvs@107c580000: 'clock-names', 'interrupt-names' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
+
+
+
+
+
