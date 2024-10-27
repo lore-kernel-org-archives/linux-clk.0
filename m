@@ -1,113 +1,184 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6871362
-	for <linux-clk@vger.kernel.org>; Sun, 27 Oct 2024 00:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6BDF9C0
+	for <linux-clk@vger.kernel.org>; Sun, 27 Oct 2024 01:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729988588; cv=none; b=dt8cv4YEpvhrhGdj4vXD3gsuCG8hkcO3Nz2HWpCgZasJdkm5VvYrBEON3yPWgBCGdc3GLeEOgR3r2rFHcSK3hHDNXfD3Mg/HpNHFf9pmYee6beSolr/n3ndFZ8UX+h0dCgbIlU8YwH+wYX+GtUw85u6RsfvoGUipT3awGQzNCyk=
+	t=1729992296; cv=none; b=t0PnuWLoRwGRH0vP9VZNPdMB/EfN+sOEpyX7bhLZRT9hIULrCfbnL267/CA1uBRnc91WLG93X+kPD4IMLWDNJLt+OsYCGSx1RUAxKecJVHo8G4QcBa3f9X0eLajvEMHWL5VqgGehx3TB5XNp2ZDA9ARV1JOchcz9t5j8cOTI5Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729988588; c=relaxed/simple;
-	bh=5Pqui25DPlwIWMLdGTLyIk3J0Uf993iIacmKnnuy3Mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZywuPRw7WYtf8iOHdrXcvKj5jxUNpkQmIzvf+r6vNGMpcg0EVAcfmfFwxGu0wEbkCP9MOevMzJrkzhRBP8dVl7lPE/Hb4Tu3nwKAuhVm1wwgU711u6M3bYwhaQANkAyFEteRIt4p6J+KcUhPCSmq0719f8WOBfIIha3Z1B3FRr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDJgdSQT; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1729992296; c=relaxed/simple;
+	bh=7tM/N1XH2DuKOmOBVNe95VBzXFxfDobIX6AJnVgmH/0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S1D3vIEsC1NC6supAFEo3ZhKe+TKc1+7lS5QSGXmU4nldV4y/f+clLgKO6mnmLvV0hnklhzoVT0piKxfU/rGXO//hapKBtpqybMEbo1/nWgx36Pw5J34i+1NhIFX0V+/JcVA0mjU5iTDMwXgETrH8yPhGCzJhET3JW6kOvuU5o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TBd8IJpd; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDJgdSQT"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb60277fc6so793081fa.3
-        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 17:23:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TBd8IJpd"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3195078e87.0
+        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2024 18:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729988584; x=1730593384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lFbW2IR5f5096oBox+ScFmNcX3VP41oZ+AfH+USsxkg=;
-        b=WDJgdSQTVgI9WqkJS4dNotgaakbY4G/r/cKN4Gzsn8dYqqi1H4gc3p0QaahEX3vRxy
-         Aynxt7k97yK2CCZFsA7STlz/BpV+HWwfIW1ZYtWTVAhiX6/7Bdby95pSB1NKnhVaQo6I
-         91RWYsPnp42GJz3vo+CtXFuH8eADg8laJz2SJlk7SK9lYhQlOE3N5kGStPzfrxJgFWWn
-         GmZhjjinUXl2kVSBURYlRAv/YNO7ENFGAT7Y835esjUWDxRvrzsdB5QUAyAwmes8Xd/M
-         phZGgHbjMiY5nsE0R6WNqMO7E00Fq0S/AKQqU5XyIqwtUO15voqwSlJQ775xXlQxs5m9
-         gm2A==
+        d=linaro.org; s=google; t=1729992292; x=1730597092; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=68AeqYijcL7oecvXqcrDIqXV8PPNtXZ3Z0x7Bk8ng0Y=;
+        b=TBd8IJpdBr2UfyKCkiMAUOcSv4K9S/vWmuhM9+7QmV+kaCRA+WYg2XuaGFWrhHBy7C
+         OPEH7ezq/kAQ/oUtmYOSTw1Ytf/5FKjDanbeO+mQ29ypJOWQSoyNXX3JVqdkRdxa7ezH
+         EpCCHHXUv8iC30Vkhfq1JmPVgy9AS8u/psWXeeHvZ0JFOynZlckTsdulbmkiLA30TpFi
+         DIk61N5qRUOcXuIrD2AQIpg5hE6oIl8cVDFxaIxXyCzozJH4Mj/zo06tuKjmlq7wtzAj
+         QsFgd+qWAQI55avephaB60EcAfTurUNHu6hQ8QYgR4R4QdAMC8oy6qgwsAhg74AXxSOy
+         BNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729988584; x=1730593384;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lFbW2IR5f5096oBox+ScFmNcX3VP41oZ+AfH+USsxkg=;
-        b=ZhRyn3+p/K/QCxGJKZ35RVne9rMH4DF7lz+TzKMGOoFebE4wwmuEQGKfz9Zqq4Kdjp
-         9fTZQTCJnJ8YlKZcTJEOeyDgrrYh9frox9LVMzjwRBNg1VT7arXjWiQ8ZjKS0I06w6XO
-         Cxdvq52rh5hZy5jO3zmBeIMd342/xaMiOoGdce10tYOR+OJqOH/VKUoTv082fMEkkzKX
-         KwHJJZkEeCStgA0PTiq93dpVTo3cN1V4vJ1FaIv+u++inUF9rU5dpG92jFUklzN/7NJE
-         uaBpwO2idGlYdvEOhVRZV2dUr8h0bx4QQvVgP2W6GKqEJCDURX5QbicthCavU3NxQgwK
-         J08A==
-X-Forwarded-Encrypted: i=1; AJvYcCX1vF0//3WvoCoY18l5IDhwtoRIPV+/0H0la26VGG8UXcLSlVepU22P43oHP3bqR7I+lXwqFFbqtwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpKeZch5NPR1WfKLhaXORB+waOQ07FYhEvbEoX16Ggbzld/vPi
-	33ao8e5mqVXs+Uc4LbEFHTFihHhjaB9CgEkwOejcYJZfOS7ftMu89np9EirG0qU=
-X-Google-Smtp-Source: AGHT+IHdy29xwLOA70AzPMwplw9gzzYMMz/eIfCANOvEjDMYS3JoalrmNdgzM+1ItaoaGQam7GjFHw==
-X-Received: by 2002:a2e:b8c9:0:b0:2fb:48f6:27af with SMTP id 38308e7fff4ca-2fcbe0676c2mr5270641fa.7.1729988584175;
-        Sat, 26 Oct 2024 17:23:04 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4618b4asm6893501fa.131.2024.10.26.17.23.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 17:23:02 -0700 (PDT)
-Message-ID: <1039ff2d-a6ff-47b3-bace-7f2ba291f94a@linaro.org>
-Date: Sun, 27 Oct 2024 03:22:51 +0300
+        d=1e100.net; s=20230601; t=1729992292; x=1730597092;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=68AeqYijcL7oecvXqcrDIqXV8PPNtXZ3Z0x7Bk8ng0Y=;
+        b=wJ9Kd3W98jcAOW7zmPCl2KId/ZXmjwU00lKQedVOeBIl7sxEnL1Q+Pzt8NK72i8GlN
+         DWcnLC+6d+zs2uDVypMn4vB5OUbeB3OO8vj+IrowaaQ1qOIt4HhzKTDyl/X+aZ4X2ZEr
+         GAOX8DkAqu3FQxR/UR5/0RJdvSLI82j6LGJQq4nlsdl8cTat+6mTOH19FduEbQF2fBti
+         q2LKzw0AzLGlgu8J1PNgu8i9oD8X/n2qEhFBz2nPh0PS9+rfdTkpl7KLrvlH53S2DREH
+         Au+dID3gP0IU5OB+Yb+7A/VFQ5dIOukZ0hJKgyHDOBwBRt9lQHYjobPbYcmsepga9TTb
+         rTIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHsd2exFaSBEKEejS8E9gfDQS1q1ALA95PkHd9zdgN4Bm+Cc8r8BHJUTQUaIjZmxtqQBTM+q0BBug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwzzyzJQbIG7LK83ec6WsXzzaoSvPDMf57g9Z0Hf+txtE58NpZ
+	paSjE/2fR/5x6hlMJ+yBSyPWKD2qMpsShBQorNq9S+gDQ/5dxmDFtVkDPbed56Jt/Ebk1hS+22z
+	k
+X-Google-Smtp-Source: AGHT+IGNFnfvQwIz3yLv6F260HUn98pzMeiIWO1/m5aRrYXNlOj/wOWz3oQEixnqG9n7ICb+rpU1Aw==
+X-Received: by 2002:a05:6512:6ce:b0:539:fcf0:268e with SMTP id 2adb3069b0e04-53b237094admr3368579e87.14.1729992292227;
+        Sat, 26 Oct 2024 18:24:52 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c901esm642356e87.219.2024.10.26.18.24.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 18:24:51 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+Date: Sun, 27 Oct 2024 03:24:39 +0200
+Message-Id: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: Make GCC_8150 depend on QCOM_GDSC
-Content-Language: en-US
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20241026-topic-8150gcc_kconfig-v1-1-3772013d8804@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241026-topic-8150gcc_kconfig-v1-1-3772013d8804@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFiWHWcC/3XPwQrCMAwG4FeRnq0kaeumJ99DPHRrqkVZpZWhy
+ N7dztOkePwD+f7kLTKnwFnsV2+ReAw5xKEEs16J/mKHM8vgShYEpBGwkdkmQgV32d9if83S+M6
+ 5XedBM4uydU/sw/MrHk8lX0J+xPT6Fow4T/9bI0qQvjHcaPBgW3e4hcGmuInpLGZspAVAWANUA
+ NUqNtwhKUsVoJaAqQFVAN16bDV5h2ZbAXoJbGtAzxc0CODKD9b1P8A0TR9seqSKcgEAAA==
+X-Change-ID: 20241017-sar2130p-clocks-5fbdd9bf04ee
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Kalpak Kawadkar <quic_kkawadka@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3650;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=7tM/N1XH2DuKOmOBVNe95VBzXFxfDobIX6AJnVgmH/0=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZZeEhUulsjctkQk+MwpZ4ZDh+dALftQ3exsW
+ Ir+jth7k3CJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WXgAKCRAU23LtvoBl
+ uLu7D/oCMrWp8UQmOcTjas/Va59LwsbBlENgFF0VC3gth+la6dNy2e00d9zkQ+weAPEyoiMan8V
+ L/rINmzYyyrs5W7JCi3pjKbUHvWB+undEWu/cYhwVP36S4gUZdpPqaL4/+GPc5pyj/InT/3aj2f
+ JWFVeL8VyWczM8U0//V8W+NOGvILGYg9huSljEduQha4suDqRMXHBViQi1i8SEh4tdB9R0aKXTK
+ 3TqgOMH7gewVlz9avOAyWkvw2uzpNhmDc6WZ8Ia55SisPwURU0RLmY3m7uqCR0psPK+rLa+P8Nm
+ hlnTFgW6rBE+v371Ha+8wNQ3H4t+/6I/3otZJ5lP2jeh2x+J5+gUJJQg5ZKrHWmZhKbpHp8NxGj
+ eabflV9HzP70TNmg8PdOEbtVkFfN3XvPu+ZWGyQ+1yLs6mc9pBtrVgZi93yrNISKeT9Uzf1gPHs
+ w5Fn3xcqBNC7sOyVJ+Vx5v0kiWCzbiT9qrKa6XVWg9AhmQmzZHwi1ZaNVwI97IvXfKlVqNSfrLk
+ Au3ZYXDpujx3m8cQxjCHLXou8YC5JmXqktphT0yqeNZHD6T86yw0FlS+f3VzGeI+HIGFF9Q1gO5
+ 4ckWdQfJUxmfuwX4K24atZKa/lcxZBjhRy4/G1CzP6OtFvmwfJZqxRBBWVuyfIuPi2OfxAZiCY+
+ bcSZ7x9Mf8WG2aA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 10/26/24 13:58, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Like all other non-ancient Qualcomm clock drivers, QCOM_GDSC is
-> required, as the GCC driver defines and instantiates a bunch of GDSCs.
-> 
-> Add the missing dependency.
-> 
-> Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Closes: https://lore.kernel.org/linux-arm-msm/ab85f2ae-6c97-4fbb-a15b-31cc9e1f77fc@linaro.org/
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->   drivers/clk/qcom/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 953589e07c593fd49fab21c7cfcf466d33f99a27..c298d8e6700f6293f62269e5cc4ef518afc97a7a 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -1042,6 +1042,7 @@ config SM_GCC_7150
->   config SM_GCC_8150
->   	tristate "SM8150 Global Clock Controller"
->   	depends on ARM64 || COMPILE_TEST
-> +	select QCOM_GDSC
->   	help
->   	  Support for the global clock controller on SM8150 devices.
->   	  Say Y if you want to use peripheral devices such as UART,
-> 
+Add support for the RPMh, TCSR, Global, Display and GPU clock
+controllers as present on the Qualcomm SAR2130P platform.
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v5:
+- Dropped the stray 'int ret' variable, leftover from the previous
+  cleanup.
+- Link to v4: https://lore.kernel.org/r/20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org
 
---
-Best wishes,
-Vladimir
+Changes in v4:
+- Fixed commit message for the RPMh clocks patch to mention RF_CLK1
+  clock (Konrad)
+- Link to v3: https://lore.kernel.org/r/20241025-sar2130p-clocks-v3-0-48f1842fd156@linaro.org
+
+Changes in v3:
+- Added rfclka1 to RPMh clocks for SAR2140P (Taniya)
+- Added HLOS1_VOTE_MM_SNOC_MMU_TBU_HF0_GDSC,
+	HLOS1_VOTE_MM_SNOC_MMU_TBU_SF0_GDSC,
+	HLOS1_VOTE_TURING_MMU_TBU0_GDSC,
+	HLOS1_VOTE_TURING_MMU_TBU1_GDSC
+ (Taniya)
+- Removed extra debug print in gpucc probe (Konrad)
+- Link to v2: https://lore.kernel.org/r/20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org
+
+Changes in v2:
+- Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+  gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+  gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+  gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+  subsytems bringup (Taniya)
+- Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+- Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+  (Taniya)
+- Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+  gcc_parent_map_5 (LKP)
+- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+
+---
+Dmitry Baryshkov (9):
+      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
+      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
+      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
+      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
+      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+      clk: qcom: rpmh: add support for SAR2130P
+      clk: qcom: add support for GCC on SAR2130P
+      clk: qcom: tcsrcc-sm8550: add SAR2130P support
+      clk: qcom: dispcc-sm8550: enable support for SAR2130P
+
+Konrad Dybcio (2):
+      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
+      clk: qcom: add SAR2130P GPU Clock Controller support
+
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
+ drivers/clk/qcom/Kconfig                           |   22 +-
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   48 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   13 +
+ drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
+ drivers/clk/qcom/gcc-sar2130p.c                    | 2366 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sar2130p.c                  |  502 +++++
+ drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
+ include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  185 ++
+ include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
+ include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
+ 17 files changed, 3281 insertions(+), 11 deletions(-)
+---
+base-commit: f6202e7cb4762be30b01ca4e1666512171c16d2a
+change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
