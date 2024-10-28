@@ -1,184 +1,59 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C8C1DF989
-	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 20:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA881DEFC6;
+	Mon, 28 Oct 2024 20:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730146228; cv=none; b=BLtB7SEQZQ0YDQv8o8XNFF/TKRAO8jo0cfdZrFlTHzH6VZuHtQYqWe6K+mMcTfUBsah/eroyaEJf7JLIS0U6bR4b9rvN134yZPPNkvfGDDE9CybLEXuf3fEmmFa2sob8TisMYuOUmffOi5+qdSEN7tmtVvVpxYjIM3+a/BQNPw8=
+	t=1730148567; cv=none; b=XDcLe8nacOpdgyx5qhblxKd1fzX+yxfRKoMv583gxvKMjjuVBPy8dnEy0fCPCl0DTqs5J0KRSKE7Ojju2jRB7FvpgqV3jOFwZnfXweXVl0j17s2jmkc64ZRiyWmPJAPF8VdT6PWbasq8TpjMqTv6nYc7XdzQGrtUEIPh28wYbYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730146228; c=relaxed/simple;
-	bh=uIc83Yj70HCk2vgshffko5JRuPLiQcXiG/9qAs3cmzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AoCEAEijdkPQgs3eUH129/ZHA0oXTGsNbCqCNr+E3FM6i0Hx2Ky6JjuUJW71AffRis6AM0EMsP+560uF/18n4lYCuQ3UxxFYt8HnFdzdpGbQEi4dAdMn4/J6Qsr+Lv8S5m1EvcdTeTCMB5TcHulNEOH87ebBJqyJNoawfXOl9uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yx6UUCfO; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730148567; c=relaxed/simple;
+	bh=TI+qLJoq5HDIk3wJkvog9/wWZXEwMxh7IdG7SqWr62g=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=RrEWeu8FLMyLWn2pM3enEoazp1vl1DsZ9pdTm5fgJK57CFlFlqLoRlx/VoGZYBQxZB9dK7UM3qWnW4exh+Ee4r/o4GGjDQuEQLKNDUj6CM6YYjwhPpuXSMTPB8yBjI6axemom6RIRmjrN2HymDXELxSfRcIU9RTYhyv9J+tLkNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InLWI0wz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yx6UUCfO"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so43322601fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 13:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730146224; x=1730751024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9OakXUHW4ekUbkk4194qmDiDkD1ec89ns71VYRu02+Y=;
-        b=Yx6UUCfOHNu7nndkkpPBqkWL2oqJoWv13ypHxKKweDl2lS4rTIwRr9FdkwzIpY6nkD
-         PH5+efIC/Ne7XSiZyLFllzDF4lu9DBuwYaQxTa5kkhMTjI9aeGgH7PJHcpn2hRh0gKnT
-         LEr9dkAf10M2OC6/OVEgdub4Y5Dx1IneWi7u/TfmEpUCPyOXOIeATNUqrPars8sP/zs0
-         gQ+qzhe2dwSkxiaxCm1vuuhsWjIiqNlARzH0VHdu7ht+A3zIulJLlLoPABXbtVuAmXxD
-         dm45Hhka5rbsQtXiPfiWyAVxO6YdZQ/B42+jlzbFQQYLMA2pnVb+MI9OPxybFqLad+sb
-         s2Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730146224; x=1730751024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OakXUHW4ekUbkk4194qmDiDkD1ec89ns71VYRu02+Y=;
-        b=MSNXiwttqDAraTApjRol7c/mMduethtoSI5RAlNIhYvTJVWCgEVVgrx+prk67By1zz
-         1M/IZpHVD20v4Atd77kNCTnc+bwItoi9uucJN8MMXBHuq+DsJPqZ3DEag9If73pJWj7P
-         Lg/0CvoxaJKdbDO/g9d/vSTgdQK3DyQ5Bdz2HiosZwpnFK3GvvTfcMOmBP1Ml8jYvtBE
-         02xwEl8FTJgV5CS/iukqxTFPaRxw67kiO/qprgTd7Gle0vACXo1NorTokHovXHX4WD7T
-         dxOsmWWL8MXr61TE1sV1wytrZao3W/3KR32XO1boJFWF5KYPgNSW8VwqdfpOKLSg0Hbl
-         ZGGg==
-X-Gm-Message-State: AOJu0YwDtUnei8Me4Vkkj2ZWSZpa5RG0zyZ2tzDv7/OiW31zZPBA3SmF
-	3HRxF0h7vpCla9qf62RRAYlRdTNhk262ZShmaHBliF56q8Oouh52zGs4bNUU
-X-Google-Smtp-Source: AGHT+IEhRHymYCU+tCOEvbZ8QNMhh5sgOJMiW/Owt/4gwHI7TUaTxsRkZjuhBGPWWmqjENgxq52sag==
-X-Received: by 2002:a05:651c:1994:b0:2fb:4f0c:e40c with SMTP id 38308e7fff4ca-2fcbe0674f0mr39846821fa.34.1730146223350;
-        Mon, 28 Oct 2024 13:10:23 -0700 (PDT)
-Received: from [192.168.1.17] (229.140-242-81.adsl-dyn.isp.belgacom.be. [81.242.140.229])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6349675sm3362990a12.94.2024.10.28.13.10.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 13:10:22 -0700 (PDT)
-Message-ID: <de178df0-9c88-421b-a02f-f5b25d18249b@gmail.com>
-Date: Mon, 28 Oct 2024 21:10:22 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InLWI0wz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69CC0C4CEC3;
+	Mon, 28 Oct 2024 20:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730148566;
+	bh=TI+qLJoq5HDIk3wJkvog9/wWZXEwMxh7IdG7SqWr62g=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=InLWI0wzus/bF7/bgWeZzdLCKp+hvAerz0S1tOiJxeNFPOkE+vUVTw0SZnqOFy59K
+	 aYC6RD3b8OeWSbffRvHLH3v8PBO6ZgD2rW29Nz5J1PdT4oKfrvw23VuopUmdnHKHFq
+	 b9K6ptyqtq1CDW/mrtRT2s3psaNSCp2e+jB4uIeJFdxTocKxhO42GZXG3HVn6TYPwE
+	 6eJWAIzZmMqd4ConcJyDYwEqrVcqMHEgn20qs7Fv8FrCmt02GCVwRgrwUJ0WmxT5Rt
+	 bhOYokhHM6x6SkzwQ0dI0A5vaCQyC5/nfGZRb0ufQLJUOsjfpu1+etCkVmAcKJL5DS
+	 d0n2nPvTt4YGw==
+Message-ID: <eb1b630a7ee8222322d213f72ceb1c23.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] clk: sunxi-ng: h616: Reparent CPU clock during
- frequency changes
-To: Andre Przywara <andre.przywara@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <20241025105620.1891596-1-andre.przywara@arm.com>
-Content-Language: en-US
-From: Philippe Simons <simons.philippe@gmail.com>
-In-Reply-To: <20241025105620.1891596-1-andre.przywara@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <13ad41f172cc8605cb9b324ea0f22296c4c97033.1730123575.git.andrea.porta@suse.com>
+References: <cover.1730123575.git.andrea.porta@suse.com> <13ad41f172cc8605cb9b324ea0f22296c4c97033.1730123575.git.andrea.porta@suse.com>
+Subject: Re: [PATCH v3 11/12] arm64: dts: bcm2712: Add external clock for RP1 chipset on Rpi5
+From: Stephen Boyd <sboyd@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herve Codina <herve.codina@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, Linus Walleij <linus.walleij@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Stefan Wahren <wahrenst@gmx.net>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Date: Mon, 28 Oct 2024 13:49:24 -0700
+User-Agent: alot/0.10
 
-Hi,
-
-I made various tests with this patch, and it doesn't resolve the issue 
-on H700.
-
-It doesn't hurt either, so it's up to you to keep it or not.
-
-
-For the H700, I'm wondering if DVFS is the issue. I mean that's how I 
-trigger the crash,
-
-but the crash maybe just a side effect, I've ran tests across the 
-transition matrix, and they all seems to works... until it crash.
-
-
-Crashes are random in their occurrence and their manifestation...
-
-
-I'm clueless at what could it be.
-
-
-I've stressed the DRAM at various CPU speeds, and this seems to be 
-stable, but again we have detection issues with u-boot... so...
-
-Philippe
-
-On 25/10/2024 12:56, Andre Przywara wrote:
-> The H616 user manual recommends to re-parent the CPU clock during
-> frequency changes of the PLL, and recommends PLL_PERI0(1X), which runs
-> at 600 MHz. Also it asks to disable and then re-enable the PLL lock bit,
-> after the factor changes have been applied.
->
-> Add clock notifiers for the PLL and the CPU mux clock, using the existing
-> notifier callbacks, and tell them to use mux 4 (the PLL_PERI0(1X) source),
-> and bit 29 (the LOCK_ENABLE) bit. The existing code already follows the
-> correct algorithms.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
-> Hi,
->
-> the manual states that those changes would be needed to safely change
-> the CPU_PLL frequency during DVFS operation. On my H618 boards it works
-> fine without them, but Philippe reported problems on his H700 board.
-> Posting this for reference at this point, to see if it helps people.
-> I am not sure we should change this without it fixing any real issues.
->
-> The same algorithm would apply to the A100/A133 (and the upcoming A523)
-> as well.
->
-> Cheers,
-> Andre
->
->   drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 28 ++++++++++++++++++++++++--
->   1 file changed, 26 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> index 84e406ddf9d12..85eea196f25e3 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> @@ -1095,11 +1095,24 @@ static const u32 usb2_clk_regs[] = {
->   	SUN50I_H616_USB3_CLK_REG,
->   };
->   
-> +static struct ccu_mux_nb sun50i_h616_cpu_nb = {
-> +	.common		= &cpux_clk.common,
-> +	.cm		= &cpux_clk.mux,
-> +	.delay_us	= 1, /* manual doesn't really say */
-> +	.bypass_index	= 4, /* PLL_PERI0@600MHz, as recommended by manual */
-> +};
+Quoting Andrea della Porta (2024-10-28 07:07:28)
+> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/=
+dts/broadcom/bcm2712.dtsi
+> index 6e5a984c1d4e..efdf9abf04c4 100644
+> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> @@ -38,6 +38,13 @@ clk_emmc2: clk-emmc2 {
+>                         clock-frequency =3D <200000000>;
+>                         clock-output-names =3D "emmc2-clock";
+>                 };
 > +
-> +static struct ccu_pll_nb sun50i_h616_pll_cpu_nb = {
-> +	.common		= &pll_cpux_clk.common,
-> +	.enable		= BIT(29),	/* LOCK_ENABLE */
-> +	.lock		= BIT(28),
-> +};
-> +
->   static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->   {
->   	void __iomem *reg;
->   	u32 val;
-> -	int i;
-> +	int ret, i;
->   
->   	reg = devm_platform_ioremap_resource(pdev, 0);
->   	if (IS_ERR(reg))
-> @@ -1152,7 +1165,18 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->   	val |= BIT(24);
->   	writel(val, reg + SUN50I_H616_HDMI_CEC_CLK_REG);
->   
-> -	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h616_ccu_desc);
-> +	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h616_ccu_desc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Reparent CPU during CPU PLL rate changes */
-> +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-> +				  &sun50i_h616_cpu_nb);
-> +
-> +	/* Re-lock the CPU PLL after any rate changes */
-> +	ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
-> +
-> +	return 0;
->   }
->   
->   static const struct of_device_id sun50i_h616_ccu_ids[] = {
+> +               clk_rp1_xosc: clock-rp1-xosc {
+
+The node name is preferred to be clock-50000000 now.
