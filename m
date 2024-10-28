@@ -1,129 +1,186 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5331DD0C9;
-	Mon, 28 Oct 2024 14:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CCF1DE3B5
+	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 15:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730125316; cv=none; b=H9fdk0fg9hW80zpSy33xMP8xwTxaKS+PCSiSS2fc3/goyQKJIIiO9EHPLNwzZGdCgFt+cMHkF3Gy9hJp/+zOQSaFUY1rjxBQBpkbaukKeCEkL/B4Fd/p8Xiu7jDrpEwmD0zSprL2RrR9aIhiEcjQmuLSUwAxbPKmkYufjSlhj78=
+	t=1730129978; cv=none; b=LHQawnaPjC0t6hvYb51uF7hGVAoA7prLMV1SHTQXSKTugi+P2w7STXplfP8NMkA/9JoyLIKepUSeuDsVV0oN++npOOW0r4ptNpufCMktke6mt/nuSFVMLVDdIS5bq2j+yCT8Z4EZxgNhdF7YW6zXH84GTB0Qilg4v4vR71qnimc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730125316; c=relaxed/simple;
-	bh=4W6dh8e7x/YeKppPVhtsgkLSqr2AXYe+TtfKUf77AS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OQ5ljm8Pq3+Ad+Ct6uWv5jxc9prm1c6wLr1AS2ug/M28nZ2afxXJgsqa+o20HfXeDsBbJmGJeXlOSb9twJmTUpAimpdxDR4sH9Ed/FWA5Ao1smhG+MuI9f2rAmuPGHVC6kiFRa7MVLHNFah5SbkiSkAUwAmIbygiFklMAxedIRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZBVIPnK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730129978; c=relaxed/simple;
+	bh=5Zl9G4AszNflo7us4pbB6lyR2ecBGbMh9TGpu/QHrCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nq5mSXtmIM06fE/Oa2NloFSa0c/Z0+xsmf4htSKofU4wueO8429SxLkDRmO4YMoEgIwcBnZ01WUdG3zFDW8AMCo/MLOVah5KpJi64qYiQ+YFqRonOngV/a88TNirc/5fVUmJwq5f52JJugLHXiEg/MAw17IED6n/HgSDGV48qxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X+mzZXHc; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZBVIPnK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B32AC4CEC3;
-	Mon, 28 Oct 2024 14:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730125315;
-	bh=4W6dh8e7x/YeKppPVhtsgkLSqr2AXYe+TtfKUf77AS8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=HZBVIPnKkbtgwofyduapSoFsJ79igIqXEooSEARRekdndPhe5VmVE0MT1YCo6E7AR
-	 QH96dEufH/AYdFI6Iq7NBY4ha7iioo5qWa4sGQPsnuY8qBzgtN9IdaA0GncH3JQjU3
-	 L33+0hQVqpbjP0xXoLBIZmSBpI/LRaojThzUZDE5JBA0zl2NSkr/0Q0iejSGCCwVAH
-	 Uf/Y2kxA281a6AHyJiz9+g1QHU+BlYSLFIrjzHHPo8D489ReUHoram+K2sQKrcsEsz
-	 ykiruhKPf/26/eQeXq6Xzgo9BPJdEOhA+hjrvDW+Rt2UJ4tDDYoeUu3Y6ZaOD44snJ
-	 P49sCsPFNeNrA==
-Message-ID: <5911e238-345a-4403-b023-585a17aa76f6@kernel.org>
-Date: Mon, 28 Oct 2024 15:21:42 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X+mzZXHc"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f2b95775so5166021e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 08:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730129973; x=1730734773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W1txbax2anf/FU/2wUye/OvBFVJa+xv11X9TALtaA18=;
+        b=X+mzZXHc8QcgLWRuP8j6ouMCxaCeIPPwqbAjsBCj4XxuWqRClRHXJZW7F8MSp6Drxa
+         w8OFdxnrEhL3uWtug/n1cyVhQ/8QB+r5476UkLd9np2wyThqdS/7eAP06mA/FFZrqNEl
+         Fp6XRnOYYT7vhBsUmp8U9j1/uB5pXenhRy9bN9pnALgRy6z3/YCxdqC7upg0odVQT6NZ
+         FMGDeU+Y+Q/h29Tn7qoA4RorltpbKOiXDU+rzlYqmCXr7PV8jipKrCPXX24bi5n681uB
+         xL3luonI1LDbCTX0UotQZrC07HHo0pGIwqyMB2cW5KXsqo8bhvSojuNvaonQ8xEh/pwE
+         B+yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730129973; x=1730734773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W1txbax2anf/FU/2wUye/OvBFVJa+xv11X9TALtaA18=;
+        b=ZBj8ZSep8Srg8Cujtthk2WGWYeZkxh7vLK3rYd2pSG3KiiQNHZCNLdhGmJr3/Y5MW5
+         dP1YsUITKyAdASS0pmPl+gfmAezWptN2dalgqbN/hEiBCk8mYvp16vApI37gy10fZ+ly
+         cLUf2Gh/4/K5kHFGyNGrG4FmuOJXCaQflC/YoBTpBB3qCZaZEQhy50c64BG0FvstQEII
+         qB0D7hVQDbm1Qa4HL8+HSHtHrifFywIZiWqNSzotjuxBV4Ie4aUL7rLAoUlQjxG+6uue
+         levPMmJ65DvAEA6OiNVICq/s1BJ8x1zo8SH5y0XL+l0PfVfDWCg6EPORbFfk8XlM7vas
+         krXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXexnJP36YAAwgkA1x14FQWKC2EaB8vYn5NEYMvkm/mGDwO26njnvTutUXNXNJDlyJfn/ly5ysPZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQeTlUwWGFYtls1Mr/3cuKjMnU+TBYn3uj5vkav6YZRkD/5+0f
+	8v7uQ0f47pvNR70hKUR5I7ZB8eBRj45DbEYYtb6/wPKtU2o5N3SC0QXqgM0YEvk=
+X-Google-Smtp-Source: AGHT+IHyyRIHr8OLjFlezCBWy1i7uaYCwcnuB6xG6+YWBdjYuluL2KW9ciORdLVKXl6EVMW5IHAxGA==
+X-Received: by 2002:a05:6512:3049:b0:53b:1fc6:3d18 with SMTP id 2adb3069b0e04-53b348da845mr5494533e87.26.1730129972972;
+        Mon, 28 Oct 2024 08:39:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a52fsm1092723e87.27.2024.10.28.08.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 08:39:31 -0700 (PDT)
+Date: Mon, 28 Oct 2024 17:39:29 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
+	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+Message-ID: <crcbzpxjnbceilqccbwr7uyak6z6zdwr7mhfcyaw6vvpcce6ko@zrojbtqi4st4>
+References: <20241028-qcom_ipq_cmnpll-v5-0-339994b0388d@quicinc.com>
+ <20241028-qcom_ipq_cmnpll-v5-4-339994b0388d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: Add RaspberryPi RP1 clock
- bindings
-To: Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
- <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
- Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
- Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <914978925d34cfb5bee10fe92603f98763af48b0.1730123575.git.andrea.porta@suse.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <914978925d34cfb5bee10fe92603f98763af48b0.1730123575.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028-qcom_ipq_cmnpll-v5-4-339994b0388d@quicinc.com>
 
-On 28/10/2024 15:07, Andrea della Porta wrote:
-> Add device tree bindings for the clock generator found in RP1 multi
-> function device, and relative entries in MAINTAINERS file.
+On Mon, Oct 28, 2024 at 10:04:11PM +0800, Luo Jie wrote:
+> The CMN PLL clock controller allows selection of an input clock rate
+> from a defined set of input clock rates. It in-turn supplies fixed
+> rate output clocks to the hardware blocks that provide the ethernet
+> functions such as PPE (Packet Process Engine) and connected switch or
+> PHY, and to GCC.
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> The reference clock of CMN PLL is routed from XO to the CMN PLL through
+> the internal WiFi block.
+> .XO (48 MHZ or 96 MHZ)-->WiFi (multiplier/divider)-->48 MHZ to CMN PLL.
+> 
+> The reference input clock from WiFi to CMN PLL is fully controlled by
+> the bootstrap pins which select the XO frequency (48 MHZ or 96 MHZ).
+> Based on this frequency, the divider in the internal Wi-Fi block is
+> automatically configured by hardware (1 for 48 MHZ, 2 for 96 MHZ), to
+> ensure output clock to CMN PLL is 48 MHZ.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 > ---
+>  arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 16 ++++++++++++++-
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 26 +++++++++++++++++++++++-
+>  2 files changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+> index 91e104b0f865..f026c2a9d0c0 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+> @@ -3,7 +3,7 @@
+>   * IPQ9574 RDP board common device tree source
+>   *
+>   * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  /dts-v1/;
+> @@ -164,6 +164,20 @@ &usb3 {
+>  	status = "okay";
+>  };
+>  
+> +/*
+> + * The bootstrap pins for the board select the XO clock frequency,
+> + * which automatically enables the right dividers to ensure the
+> + * reference clock output to CMNPLL is 48 MHZ.
+> + */
+> +&cmn_pll_ref_clk {
+> +	clock-div = <1>;
+> +	clock-mult = <1>;
+> +};
+> +
+>  &xo_board_clk {
+>  	clock-frequency = <24000000>;
+>  };
+> +
+> +&xo_clk {
+> +	clock-frequency = <48000000>;
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 14c7b3a78442..ad9cdb1f76db 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -3,10 +3,11 @@
+>   * IPQ9574 SoC device tree source
+>   *
+>   * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #include <dt-bindings/clock/qcom,apss-ipq.h>
+> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
+>  #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+>  #include <dt-bindings/interconnect/qcom,ipq9574.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> @@ -19,6 +20,12 @@ / {
+>  	#size-cells = <2>;
+>  
+>  	clocks {
+> +		cmn_pll_ref_clk: cmn-pll-ref-clk {
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&xo_clk>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+>  		sleep_clk: sleep-clk {
+>  			compatible = "fixed-clock";
+>  			#clock-cells = <0>;
+> @@ -28,6 +35,11 @@ xo_board_clk: xo-board-clk {
+>  			compatible = "fixed-clock";
+>  			#clock-cells = <0>;
+>  		};
+> +
+> +		xo_clk: xo-clk {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +		};
 
-Please do not send new versions of patchsets while discussion is still
-going. I responded to you on v2, pretty next day I think. It took you
-two weeks to respond to my comments. That was on 21st of October, a week
-ago, so I still have some time to respond to you.
+What is the difference between xo_clk and xo_board_clk? Are there two
+different crystals?
 
-Best regards,
-Krzysztof
+>  	};
+>  
+>  	cpus {
 
+-- 
+With best wishes
+Dmitry
