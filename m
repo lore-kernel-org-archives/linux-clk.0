@@ -1,117 +1,128 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E249F646;
-	Mon, 28 Oct 2024 05:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155F1DA5A;
+	Mon, 28 Oct 2024 05:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730092570; cv=none; b=MyYt8pi6PL0WhA91DjAJit4psGs8sYb9bt5JpoOy8lgLCwHz/p6her+uATl7WeYu393NJKI0zSrksRWFfY5Vu7IlvP0R28maKh+vKv2K8WCAok3I0gpRmWeF73MoFC7O1T92ctMUWOhJJPm/QUZJ8R1WrFSOL5qEn9PTtE0iDYk=
+	t=1730093424; cv=none; b=lBI+jnIzlCGVp9Nw82Wyq4HjX+ax+PYtstIQosbSYZxmuOrEVS8Bn0asSdbenmwWCrvkR1ceWgOhFayEFs4MUtNG+1QuIgDqj72B5FISSKnwMNReeUtQSHc+czYutnnROLrHT8ILOLksCiOgDA4P+fuX86KPC2pQwM6yWVxaKoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730092570; c=relaxed/simple;
-	bh=NeiDnxW6+CaN8HTntKouJjciT9/fHViKi/g7Ol6iO08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MEqf/a+kkpfIkuLKRV9hFttYwf/uWJwvoG3capSR/IuFg+yco6H6+up09buK27SvgEk2jIy7VRYQ5KcoEfWntPO4glAotWiqAkrNi+qmCzTib83hObPxtYCyRnZYax0KwmrJsxfOp40bELD7+zRl1BHZnGDASz3nwtRUboOyzQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fiA5OUsI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fiA5OUsI"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNxiwH017467;
-	Mon, 28 Oct 2024 05:16:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pNfJ+VE0McHs+D6MN/SQa8ixaw3qRmSdWP5mkFmCyeI=; b=fiA5OUsIH/n2lCec
-	Bd6rfnTjWiaauQSMvmybZvZk8EggUX5cjQJP5MFOMemOlxHgKmI0iwAD5d3E5RaA
-	24aAKjNuvjTb/Jhx5ZPBBZGvUz+7Y8JGjNk6sffw2FqFxJ/rwbEhpXsA7f3iuZ8N
-	CwxKydS/zpC0/CWN/PW3pB5th6g/Qr5citr3PvkbuZHpt+piETweoYfrux4uqRJ+
-	IC+/QNXI0+CLv3SvcQTu/KsfDjXXPhFHB9RGGvmua7FKu+CtskK+L4TJ0vRkn3cJ
-	QgBau2d/NlMdGdluoJO2A2lDSw6+2PY7EqRW355sOzYfPcEGFgF+vnEXRDGAlJ+a
-	KlgOZA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqrgkq3n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:16:00 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S5FxfZ004596
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:15:59 GMT
-Received: from [10.216.48.13] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 22:15:55 -0700
-Message-ID: <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
-Date: Mon, 28 Oct 2024 10:45:47 +0530
+	s=arc-20240116; t=1730093424; c=relaxed/simple;
+	bh=IuqaJS20ADLLL8bkYgM9FMwE/0P4qnRb0lZTXLaOQ2s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OrClrkdVuaXSSdhoAX0gN/WOQ90DctLTO42ffYCAHijGdnRZcaMW7YrVXtATUBaZNJN34WaI5ILziHoEDZasAIvlpeG+rmBFbxOdpVVQ3QcqGnRY6KYdaZRj+nxl42GG8TWiJ3tJ1gG9ZbN6EoNhyGYICIgAaRbDmwcbtRrdVbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 28 Oct
+ 2024 13:30:18 +0800
+Received: from twmbx02.aspeed.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 28 Oct 2024 13:30:18 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: <ryan_chen@aspeedtech.com>, <lee@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<dmitry.baryshkov@linaro.org>
+Subject: [PATCH v7 0/3] [PATCH v6 0/3] Add support for AST2700 clk driver
+Date: Mon, 28 Oct 2024 13:30:15 +0800
+Message-ID: <20241028053018.2579200-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
- QCS8300
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
- <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
- <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: P4B_djelzvsaKjiCRpCbZzRvWnFhno0C
-X-Proofpoint-GUID: P4B_djelzvsaKjiCRpCbZzRvWnFhno0C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
- adultscore=0 priorityscore=1501 mlxlogscore=776 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280043
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+This patch series is add clk driver for AST2700.
 
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
-> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
->> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
->> QCS8300 has few additional clocks and minor differences. Hence, reuse
->> SA8775P gpucc bindings and add additional clocks required for QCS8300.
-> 
-> IIUC, these clocks are not valid for SA8775p. How do we deal with such
-> cases for other Qualcomm SoCs?
-> 
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
 
-These newly added clocks are not applicable to SA8755P. In the 
-gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P, 
-ensuring they are not registered to the CCF.
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
 
-Thanks,
-Imran
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
 
-> Best regards,
-> Krzysztof
-> 
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: mfd: aspeed: support for AST2700
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver.
+
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    8 +-
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1513 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  302 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |  163 ++
+ .../dt-bindings/reset/aspeed,ast2700-scu.h    |  124 ++
+ include/soc/aspeed/reset-aspeed.h             |   21 +
+ 10 files changed, 2147 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed,ast2700-scu.h
+ create mode 100644 include/dt-bindings/reset/aspeed,ast2700-scu.h
+ create mode 100644 include/soc/aspeed/reset-aspeed.h
+
+-- 
+2.34.1
 
