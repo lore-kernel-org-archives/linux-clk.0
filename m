@@ -1,167 +1,104 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC2D18785D
-	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 16:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9B5155A52;
+	Mon, 28 Oct 2024 16:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133268; cv=none; b=ADVwZPiHlz+nCYWyRJdSZFgLrcncx4U3T4TRBt1ZlHyxelfCtyulE+Ok3gILdwR2xWUrFkMPu8ZGwbBIWPnN/HH8tWUBTv8vTpieY8R7ZblrNvYxvqag88JLpnx6Gx8QgtGm8J1U8Dm3UOokSMfSj4z0KIuyQrt8XXbkA9zHOpU=
+	t=1730134649; cv=none; b=kyv4APEPOGGnlKqhxbNsJ1s6XYxKfu3ENBWaBfVwd4b8KMqsphbPKy6pay3Dd9q8m3mad85QVkMExF/jp7JPqvG27g8qmwQeeBAhJlFKYcS09ZPRuhX4skOYQZEh3oEqEeXgqaRZRR4a/xq0QRR7jvFQpcVx+XYSoKNFzdARLQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133268; c=relaxed/simple;
-	bh=RoDbH8hhDR7FVvuNh9vHX1jh1XZGfsb2QPHmuvLlXZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TAyajOlJCMlnjyqfmhQBS2USplAuHF4CM4t2p2Q3cgqgT+GEFkC1F1T14P/HzEpPaAbFKUtMDumh1N0gFDdSI77i/IqQ2DYAAL/4uEJ5X66to1EKasrEbY9bd2qBx0E0/LxaY3fo3lAd2LMlArhWtT/hS69Nf0diiZZEn8Sq4vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELaI4UXe; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730134649; c=relaxed/simple;
+	bh=2KecpOx0TISZK4hZM9Euk6MQyQdvrq36DoUE8N/sBa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=A0FdLtj2k9c/FujUgWx+cdZ74RgO5IxXvK+DL4Z4X+ehgRSgwA2hmvFHGqRwBniyyrapqofX/t7WMMBgol+Ufh4fNqB4SuwArQ+wvfSK5VwAC1VU5AmjGjLPVVMTbyaIqEJ/gYF+qHVpdDml9nn+Pvu9VluT/KXeUDdQoONKXnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h32sXUpa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELaI4UXe"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43155afca99so37996495e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 09:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730133264; x=1730738064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=js81SeQpn9xUgzINLi31wUaurNTSsIvVF8Ge8x3mQNo=;
-        b=ELaI4UXePNplr+7iBtL4zncHmuhkzIPn3/BFkOSdrc5fgTYIdCPveBgDA3zEjzKC23
-         6qZzeIDXOio68pfFE2ixhsHl2IPmtnmlvVIaSn2fTANkUFO9d1MReBIgdznuEDrLs6Hm
-         fvkIuV/h+jNMwqTQ0yvZXjtUEYkL8W1NslsXIR2oKkCmW71bp0aPDlsO0gHQFemiHPua
-         yhNY/N2MevmEikY9rfZgEtYbjG4+QOYwQZiPf4JIh6DzAX6stz+Vl0huL2SZE9diYlZ5
-         HjW3Sq3AMtF7LXAFOv8CWLfCTSXTrqStYrf3j1oTI1VJNRbOPz6ZqSnHvCYfWftprXv3
-         5CSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730133264; x=1730738064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=js81SeQpn9xUgzINLi31wUaurNTSsIvVF8Ge8x3mQNo=;
-        b=syC10wZ2seDI4T+9QxfKza4plWaT8mgNYvw0aDvgO1WUIonntW8H/BmHcI+ABTd/CU
-         HnrXtByaXf6zgD+lMVJ/zeqAbTpPx+FmpII43Iva/FG/W8U7L5dp46BCrsDnZElJNjf5
-         UXYcWRnj9FPWR/X2ITKKC16ZIXCWqRpbZRB+qdddrLs0wTnx6Pi1synEWXcHCK33xSCM
-         Lyd/xpO47Gb1WEeyPYYsegBlVjv+DiAzvWoVKG+EIdU/cBHdfw9nTgy99QSFy4/G89Md
-         CGj6+jYZHikkLIM9xYKt1dzHThzycf4zktCed2OLwHvIMprbfs7NGgo7VnOwdSB0tm4o
-         3yDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWplgGSCh/WT5+km9NLUzR7fEu8xiucw60K10UYVmB3Cb+Kd6fg3wvG8Oen31yaJxrw6Dxn6UeamDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOnoQbittlvWWVb+oVb/qDzgx24I16e3i5+QuPwU770fOvtvLb
-	CnNR+ftMWINXB6P7cf/zivJZwntgMnYzHHQ/wFEryHaE2S27yMb91dyCEajH4YE=
-X-Google-Smtp-Source: AGHT+IHGS7TezSWXTQnx/EjfY1u1lEUaZd6nAutN8M7vFaejhP8Nake+9DeRhSOrd8BaunXKDH5yrw==
-X-Received: by 2002:adf:ec8a:0:b0:37d:3baa:9f34 with SMTP id ffacd0b85a97d-380813bc996mr199477f8f.1.1730133264161;
-        Mon, 28 Oct 2024 09:34:24 -0700 (PDT)
-Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47f6fsm9944608f8f.50.2024.10.28.09.34.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 09:34:23 -0700 (PDT)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	djakov@kernel.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
-Date: Mon, 28 Oct 2024 18:34:03 +0200
-Message-ID: <20241028163403.522001-1-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h32sXUpa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13830C4CEC3;
+	Mon, 28 Oct 2024 16:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730134648;
+	bh=2KecpOx0TISZK4hZM9Euk6MQyQdvrq36DoUE8N/sBa0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=h32sXUpaAnVumDOyku8/9Z8DVogCkQPwAm2biBrs1JAmpJvbPnG+3JG00FuOLC9qf
+	 K2+Wb6dI8G5kHI9GLzJCjIWgGXO/rP3y++vElJlzSjwS/awLaBvhmuHYe3ZGl6lZj6
+	 3YR0psC9Aih1eFll7R/64Qjq0X23cxSr7/jtdjS3Jq9qddATKWZrWaNA8CzwNRrgB7
+	 qv9/PEXHzFs7uRvlOYv7cnbu9OSfwKtyei6r+FQnoYvUhFhzqQU4MpnzTtROZtwBQP
+	 xwUjRM89PN2ZlqEJg8LMH3MRy2Zw36WGt8KpXzEx3UoLCtV6Ye4TlfkFoSWZuqJEfO
+	 4+3uMVhYdbpTg==
+Date: Mon, 28 Oct 2024 11:57:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
+ address to dynamic bridge nodes
+Message-ID: <20241028165725.GA1106415@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6b445b764312fd8ab96745fe4e97fb22f91ae4c.1730123575.git.andrea.porta@suse.com>
 
-Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
+On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
+> When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
+> incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
+> bridge, the window should instead be in PCI address space. Call
+> pci_bus_address() on the resource in order to obtain the PCI bus
+> address.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-While at it, used le32_encode_bits which made the code easier to
-follow and removed unnecessary shift definitions.
+Thanks for working through this!
 
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
----
- drivers/clk/qcom/clk-rpmh.c           |  2 +-
- drivers/interconnect/qcom/bcm-voter.c |  2 +-
- include/soc/qcom/tcs.h                | 28 +++++++++++++--------------
- 3 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 4acde937114a..4929893b09c2 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -267,7 +267,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
- 
- 	if (c->last_sent_aggr_state != cmd_state) {
- 		cmd.addr = c->res_addr;
--		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
-+		cmd.data = (__force u32)BCM_TCS_CMD(1, enable, 0, cmd_state);
- 
- 		/*
- 		 * Send only an active only state request. RPMh continues to
-diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
-index a2d437a05a11..ce9091cf122b 100644
---- a/drivers/interconnect/qcom/bcm-voter.c
-+++ b/drivers/interconnect/qcom/bcm-voter.c
-@@ -144,7 +144,7 @@ static inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
- 		vote_y = BCM_TCS_CMD_VOTE_MASK;
- 
- 	cmd->addr = addr;
--	cmd->data = BCM_TCS_CMD(commit, valid, vote_x, vote_y);
-+	cmd->data = (__force u32)BCM_TCS_CMD(commit, valid, vote_x, vote_y);
- 
- 	/*
- 	 * Set the wait for completion flag on command that need to be completed
-diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-index 3acca067c72b..152947a922c0 100644
---- a/include/soc/qcom/tcs.h
-+++ b/include/soc/qcom/tcs.h
-@@ -6,6 +6,9 @@
- #ifndef __SOC_QCOM_TCS_H__
- #define __SOC_QCOM_TCS_H__
- 
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+
- #define MAX_RPMH_PAYLOAD	16
- 
- /**
-@@ -60,22 +63,19 @@ struct tcs_request {
- 	struct tcs_cmd *cmds;
- };
- 
--#define BCM_TCS_CMD_COMMIT_SHFT		30
--#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
--#define BCM_TCS_CMD_VALID_SHFT		29
--#define BCM_TCS_CMD_VALID_MASK		0x20000000
--#define BCM_TCS_CMD_VOTE_X_SHFT		14
--#define BCM_TCS_CMD_VOTE_MASK		0x3fff
--#define BCM_TCS_CMD_VOTE_Y_SHFT		0
--#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-+#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
-+#define BCM_TCS_CMD_VALID_MASK		BIT(29)
-+#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
- 
- /* Construct a Bus Clock Manager (BCM) specific TCS command */
- #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
--	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
--	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
--	((cpu_to_le32(vote_x) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
--	((cpu_to_le32(vote_y) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-+	(le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
-+	le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
-+	le32_encode_bits(vote_x,	\
-+			BCM_TCS_CMD_VOTE_X_MASK) |		\
-+	le32_encode_bits(vote_y,	\
-+			BCM_TCS_CMD_VOTE_Y_MASK))
- 
- #endif /* __SOC_QCOM_TCS_H__ */
--- 
-2.43.0
-
+> ---
+>  drivers/pci/of_property.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
+> index 5a0b98e69795..886c236e5de6 100644
+> --- a/drivers/pci/of_property.c
+> +++ b/drivers/pci/of_property.c
+> @@ -126,7 +126,7 @@ static int of_pci_prop_ranges(struct pci_dev *pdev, struct of_changeset *ocs,
+>  		if (of_pci_get_addr_flags(&res[j], &flags))
+>  			continue;
+>  
+> -		val64 = res[j].start;
+> +		val64 = pci_bus_address(pdev, &res[j] - pdev->resource);
+>  		of_pci_set_address(pdev, rp[i].parent_addr, val64, 0, flags,
+>  				   false);
+>  		if (pci_is_bridge(pdev)) {
+> -- 
+> 2.35.3
+> 
