@@ -1,48 +1,48 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333991885BE;
-	Mon, 28 Oct 2024 06:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F04818E34F;
+	Mon, 28 Oct 2024 06:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730096784; cv=none; b=bdc9Rn1UFvOTrUeLIEq1OWz8tebwMDWUn8YEjFhNx+bZJrl1al+JauZx/u4+9XL+OBV0x3fxeF9BenvYU2GSlJ8JnLZg+GkyP4OetHbvfFbhiE5h/yZlDv4et/Yo0Vw/SQfW8sNZWEz6M0b/nVZgSgqPO2FjChAaZZAdcKBTheU=
+	t=1730097207; cv=none; b=ItEISrokSZpTdGYj0wm5tRdAmxiZJKHazZlalHSk+EGR8uPEFHxTggq0TbqlFF31PKeCZXJOpuH15pxObUxH79C5lHgN5Mv8bCDk5OeD470h4l2+dQpOWHWC916K6gsnlh+OVyIEOvYQ2wNQpzzG9Oeg7lYH2o+3WBPVVyFg7No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730096784; c=relaxed/simple;
-	bh=1InsdEhVvlUlq9Xpg7bElsz6OR8ydGLFjk8W/ghjfV0=;
+	s=arc-20240116; t=1730097207; c=relaxed/simple;
+	bh=NwhG7COTWtXYFL1JDnaUPdJejW/YZbqi7o9Jeu9Ngl0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QuwhXxRwHaBmJFXB6ejsdJ7Xjq7DlpiYsJIMav2pdnq0rH42dCOIE82WEwZmRS2znwyIxlrnE7FIR31vMuXZiPJpoboAfsea28I/UQnvxn7QR3NFI3xCEcQcUEbV8pv5siTPLIuHLlSWvhaMQGabxIR0+uWqLvbEB5b2CYBzHss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AYhsybgE; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=cF/VZOIsqqUBNEWERIphiGpYyx2Mhzuxbbzz1K/N1cJQCupj4OKRYnhYi/Moa4i2bt5yoncHeDh4+gSA8pXgQgFWoFEIuY7kTjF8wx6Xi/Z2VZQAVczECE0VCRJS3W5epLi3bMV+O7UKqVK8XWGq2AqXm5GyhRi6O4rygFN3DVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BD0MS4gY; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AYhsybgE"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNafas024838;
-	Mon, 28 Oct 2024 06:26:04 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BD0MS4gY"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNe8LI019075;
+	Mon, 28 Oct 2024 06:33:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D1xOgtuO0S3fe5QauXOXwWuKHL0NjkPFZoFxUlUTjso=; b=AYhsybgE7yU3+LS3
-	FTwJC5gjJStCBriAGbnCs7YGz3HwZ0tsPgtaGZIFiUiKp6bOgmD+wni41S0loytc
-	WP3xRZIZUdBr89oojp1zqY2klvsOZd50mEtwkIq8IGYLDfZfOVc+aqZlA8AXCVU4
-	Rf8d9hFX/PodAoj6gVtPdnZHC67PRaQu29EVcM29t4tVbjKAQA3uDs588Ku8YJrf
-	n3f+77hm79ogDPUA9BRCsHUb4E2vzcKL+P9Mf5nvGbQ5gK7wwyBN5tkWISsdHIym
-	GB0+AQGFCKj6YF6KqAgdSDOONUybWV9A1MJuAGBV3mzAcp52M/viT7MGzub55/uT
-	bgCasg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgubumb-1
+	i4OXs07TOYzSsBw6m8GOECx0EoEbnKVP5KaQ7zD8mSk=; b=BD0MS4gY22cly5ki
+	6bjWRHeKeRoEI374XDq6U3fwyj5uzgyYAIPMMB9kaDn/nQQAhPlWaWRRFgjQHV4f
+	WWuzSEj1XH56umybN8Z6ts/fSqkctO3JtHhfhvnblBDFvqdtv7zRFW8LjX1EIRee
+	r3TYnzfyd31BIbeaJZ5KeExTZGN7053mdv0i8h0oNKNYYeYZEGrj/2x2FphDX3Kt
+	VHB2TrF9Dd5d4+sYXmLyuY8RE8f2IwHGWaJ4G4mYo7zA5e08ceqw10yz38Zf5gpd
+	KxFPuzOcHq5foNw0NY52Prowp6Cay5B1ZFFpd9SEpRO8daeq1foEog1hiX3ta2TO
+	CCNM/Q==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4dv2xe-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 06:26:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S6Q3ae005840
+	Mon, 28 Oct 2024 06:33:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S6XHX6026124
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 06:26:03 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 28 Oct 2024 06:33:17 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 23:25:55 -0700
-Message-ID: <21365836-aa06-4269-885c-591f43e2e5fc@quicinc.com>
-Date: Mon, 28 Oct 2024 11:55:45 +0530
+ 2024 23:33:12 -0700
+Message-ID: <c154d164-57c8-4407-8b07-543676d21206@quicinc.com>
+Date: Mon, 28 Oct 2024 12:03:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,75 +50,55 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <angelogioacchino.delregno@collabora.com>,
-        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
- <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
- <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
+Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
+ dts from arm64
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Karl Chan <exxxxkc@getgoogleoff.me>,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linus.walleij@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
+ <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+ <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
+ <768a1c92-6e1d-4d6c-90f6-efe66f68dd0e@oss.qualcomm.com>
 Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
-Content-Type: text/plain; charset="UTF-8"
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <768a1c92-6e1d-4d6c-90f6-efe66f68dd0e@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bnY34kVo7iP_b84pRXnPvvGaTbPl5pPa
-X-Proofpoint-GUID: bnY34kVo7iP_b84pRXnPvvGaTbPl5pPa
+X-Proofpoint-ORIG-GUID: 9XPW6bRbAV07BdK_t25d7GMW1B_hPfzx
+X-Proofpoint-GUID: 9XPW6bRbAV07BdK_t25d7GMW1B_hPfzx
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=536 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410280052
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=626 clxscore=1011 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280053
 
 
 
-On 10/25/2024 11:21 AM, Dmitry Baryshkov wrote:
-> On Fri, Oct 25, 2024 at 09:25:18AM +0530, Manikanta Mylavarapu wrote:
->> From: Devi Priya <quic_devipriy@quicinc.com>
->>
->> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
->> devices.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202410101431.tjpSRNTY-lkp@intel.com/
-> 
-> These tags are incorrect. Please read the text of the email that you've
-> got.
+On 10/26/2024 5:08 PM, Konrad Dybcio wrote:
+> Would you folks know anything about it? Do we have an open source
+> U-Boot release that could be sideloaded as a secondary bootloader to
+> kick it into 64-bit mode
 
-Added these tags since the dependent patch [1] was included in v8.
-Please let me know if this should be removed.
- 
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->> Changes in V8:
->> 	- Remove DT_BIAS_PLL_NSS_NOC_CLK and P_BIAS_PLL_NSS_NOC_CLK
->> 	  because these are not required
-> 
-> What was changed to overcome the LKP error?
+Yes slightly older u-boot release [1] supports booting both 32/64 bit
+kernels.
 
-The dependent patch was not included and hence got the error.
-In v8 included the dependent patch [1] also and added this info in cover letter as well.
+[1] 
+https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot-2016/-/tree/win.coretech.1.0?ref_type=heads
 
-[1] https://lore.kernel.org/linux-arm-msm/20241025035520.1841792-2-quic_mmanikan@quicinc.com/
-
-
-Thanks & Regards,
-Manikanta.
+Regards,
+  Sricharan
