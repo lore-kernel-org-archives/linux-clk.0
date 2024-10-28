@@ -1,121 +1,155 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF453189F5C
-	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 10:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D85F17A58F
+	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 10:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111099; cv=none; b=sjKfhNllpPSvHyuv1EIoj3ykcsmasDXyzyD4E6nbcHveJfoViez72bEWc5VQRdrlKnqfaBOrEieAFZ3D6zt8KkKxXAdM643sDP4HNk7toQjAZM6/sUA7gPctnFOsERaIy5fLh0AKm8IofL81lDSjREnghVIjjwMGczlPJWSnm14=
+	t=1730111553; cv=none; b=UXlWHVL4i4bHNSf/pQHAFonxd38c/6SnkjSnsiZpFqFbUvRheIiIx4uE0B0yEuIY/KxqAqkko1yDutIrgegtB+V3nx0kkRndKqzDrbzaNTXCzaUJmTg0X6Fedd7czVINsfpTSRVWtSxPjywB8qCumNSuLdFPk19jxaHH8jt8UKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111099; c=relaxed/simple;
-	bh=fbtunhKLM67bLa2qu23S88glusv6bfpysmOgMaktmbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rcS+A9EaVt1TybdlvogdQjB5vW15hrreuG+780c2IDN90JOw5/PGmD6fAbHYJBChe8ACco/UfemsQYnJgu0Ew8dnkf4eRBcLbGZ0eUWS6RwmZw+LttGKDonzo4mwLu00Zs4iVQ8VG+70WBwZHI12L3+4hrMzy2k2o3M/u+q2TYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GmShF6Px; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1730111553; c=relaxed/simple;
+	bh=DniOfXgTLSa71MQcWVYJDh48rOCPLZsPLOazK/gFzhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gT2sG/W7cj7354L21e/Ih3aB/e4CEoR/0pt2lCLfQXVBx1LXaAUbjjl2rygdVjX+eNEabC3ooI1rvxn2dMtLjGxZ30WMMjXTU+RwelZXF3Rz0MwcuaQjWbb4Mlf6IyE3ce6+6rH9LJ4kBq0+HjsJtkxwDGSm7TFSghwBmnbzvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=QK7KUgAz; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GmShF6Px"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNdLYC010250
-	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 10:24:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fg9jSsM2x5+eCKxffj8Vjk5A547zvvC9R2DqGq/9wok=; b=GmShF6Pxdex6D+XI
-	Q7uD8E9NN8lBbja18R1/MeSvfBWP7oK5FjzhaKc8l/isGDj439YMBrBzaOuQtG9B
-	9LFRXsWIZys/bcI9idwyiElDDL0ED92m5J7g+c73BNrBI+g7zTK+68+U3t8Aiepu
-	Dnuy7Y88czX3pZ/+6Eu+CGKpCFeoVmiDP7aDUKEc7D41fZNA8VMYQpOYatRuCfaL
-	O1R+xdsNFNEJa17TBVwZmgTxTBSdd5Y7Uys2v00hUnNQXmZgGAd5W2Khzn5ZF2Jd
-	HGVaBFtiZ3LIoHN3m9a2HdEYjhqKMMJvbmWGUiirnv55XtTrd1X/X5Cnww7Pwl4S
-	q/i3yg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn4vhr9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 10:24:57 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbe91571easo15222876d6.0
-        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 03:24:56 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QK7KUgAz"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e290d48d3f7so4167827276.3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 03:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1730111550; x=1730716350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sifr2jJTKHUjzilORSWtcX+eJYT6NU0RJzPCM1a85Qs=;
+        b=QK7KUgAzThEOc+ejjef4xQSe+iSM9rqt0jklHfwcpKzTCOPyun4Rx6wZ5eWyPWgBr4
+         4Cn/n2PsdirqQ0Z7G2pjZpZMxA5He4cq899WnUhVG2LzefGdZDon6qM0WVDvcfOAj4G9
+         BAt2sFSorLPuoH7LhsC9xyqviTrKpJtAcgnSg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730111096; x=1730715896;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fg9jSsM2x5+eCKxffj8Vjk5A547zvvC9R2DqGq/9wok=;
-        b=qkrTJToH+7PBPxgOfycGcyjEJ0xOOFUYFpj3WBQR6eJEcW6U4T90Y0Fg5upskyCmLd
-         hiu5wqR1YkyrGAJQlKfI+nvuVTO6n6Y18t+AcD5TLrGwMRYmpVo9nvNc93Yafx2JN5+h
-         DgzMZY5e+mN1K+e659NODLxNzhF+4Ijum/7MT5VoXvsPFAaN3X3Qz/dsoR5AsL+Z9n59
-         Z7l/H2GLCmyPbD+9NaFwl7ofNNnuyMLvv+RG8pcuO0V9QrNofAV7nR6wthlxkiMEZ2r1
-         6O1RJN1HMbQL99MC2L/oXQFJmLVIOXeNS19wDAvslgMIZ0HTZzcjBdD2cu1FGRrjlLnv
-         k2rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZGCjvnf7miXS0HDUtz/Qs6DPQU8rSB05OxkW7thDtZK8NGb+O4VLb6GYgrwNqeyNf3ZUfXiJy+2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaB7nhWA4p/nTw5RXeZT0V+TkQGUpv1oU2jHGXzP72glH4Y8Ck
-	A383BU6E/gXMiJB4m850DExWZeNOTOIq4OwV+s72uPLPqdwMRmsESEFGHoYSSRka43PbeGDaD1h
-	qX2vXt5tlTckxZ7H0+/ZLRQMzB9jQb5mWh6qqsGb43xXz+n8gC/Aq8JgFkRY=
-X-Received: by 2002:ad4:5bc1:0:b0:6c3:6d25:2578 with SMTP id 6a1803df08f44-6d185816bf1mr54129786d6.8.1730111095784;
-        Mon, 28 Oct 2024 03:24:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1LCyhTsx+s4J7iCqfSqv0uRemX/kPrSPNh3ahugTm/b+6Nqx8Iut8S7BU/6LdyG6nwn7IXA==
-X-Received: by 2002:ad4:5bc1:0:b0:6c3:6d25:2578 with SMTP id 6a1803df08f44-6d185816bf1mr54129576d6.8.1730111095455;
-        Mon, 28 Oct 2024 03:24:55 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f298ef6sm363536566b.136.2024.10.28.03.24.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 03:24:54 -0700 (PDT)
-Message-ID: <465ee5c1-2fca-4099-b618-f80484445dac@oss.qualcomm.com>
-Date: Mon, 28 Oct 2024 11:24:51 +0100
+        d=1e100.net; s=20230601; t=1730111550; x=1730716350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sifr2jJTKHUjzilORSWtcX+eJYT6NU0RJzPCM1a85Qs=;
+        b=FXkwcVLIkD1CsEcYV7BUguOcl0sZL4n8nrf4o1ZijPUbRjLXYcjBPA2V2hGq8s6/yS
+         uyO+JzytlKvrFwuL+FC1cVfhIArWPz0nOaIjd2wDmUCWYR/fiExvtIIGkmq7mTQe6hhu
+         QGKTisRQmG+actYVfFwgrVJQJedKt/cLlBzGddvtjK9ch3izIHSWniuo2fh+LeRAwG1G
+         /8Rnxj7gvTXe6mI40T/YjPPjYAuqReLo7sBBffcgyoia9FRS/8w6fPEo6P7V6SiB3WjM
+         5mYwRR0iZrd5c4vcXG5ZAskR6mp5fnFcGAnL4efUNt+SJgsUEjKQ8MM5bRUE25aDfMwz
+         4HFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE+OioA7rBmVISA6yuFk8l192FNLCWpQqGHCJsgrkWPABnkKobQh0PlpuQZUXY5Vl7CkPLF1dc9cU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFUz3USz2xEVDBfNixgFD05TgyvLq0+VX5m+Ry6HOZkvLfZk/6
+	JG/1emCE72nI9+aEKCo9TLDWet1r4WIlQi1w6lKxfYey5xdXE2a6NWbwaszMyAiJUWG49ahh7AH
+	QwxhCZixVU6DKKkpJKcjniRzOjwcAbjnGGl8+xw==
+X-Google-Smtp-Source: AGHT+IF9ddqHdtij3qzgutlZYqDdqye4Y0X7im5D9JxYtJ3EWaxqlKOCIp8dtlSZCbbCN0feWNn58wnCJ9/AjxCbxos=
+X-Received: by 2002:a05:6902:18d6:b0:e1d:194a:51ee with SMTP id
+ 3f1490d57ef6-e3087a4cabcmr6741526276.12.1730111550644; Mon, 28 Oct 2024
+ 03:32:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
- dts from arm64
-To: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Karl Chan <exxxxkc@getgoogleoff.me>,
-        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
- <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
- <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
- <768a1c92-6e1d-4d6c-90f6-efe66f68dd0e@oss.qualcomm.com>
- <c154d164-57c8-4407-8b07-543676d21206@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <c154d164-57c8-4407-8b07-543676d21206@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: akvV5ka2cDwituF-CugpI7J7XnI4padQ
-X-Proofpoint-ORIG-GUID: akvV5ka2cDwituF-CugpI7J7XnI4padQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=747
- malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280085
+References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+ <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
+ <566859c1-a397-4465-987e-0682b07a703e@kernel.org> <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
+ <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org> <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
+ <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org> <CABGWkvqXZ+YAvo-AtUy+Ftdu0xxXKuhOwcSTwO5Fv6D3yzttNg@mail.gmail.com>
+ <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org> <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
+ <7bce31c0-8c74-4d65-812f-01951a0d75d1@kernel.org> <CABGWkvqFi_y8OzKbi=K7ucW4RuY_zh6Z4a=uO2oqQRoVE8LaCQ@mail.gmail.com>
+ <CABGWkvrR-vVTpNSBD_etjn4SteO8cpUed+dTvYguHR67UUSsYA@mail.gmail.com> <fdb76466-3258-4c71-bca3-50fd3cc94a0e@kernel.org>
+In-Reply-To: <fdb76466-3258-4c71-bca3-50fd3cc94a0e@kernel.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Mon, 28 Oct 2024 11:32:19 +0100
+Message-ID: <CABGWkvpTospGbdPtEz-Fn5OL52+Fp6tQxdoAVFZUP_HeG=a7aA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
+ spectrum clocking
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28.10.2024 7:33 AM, Sricharan Ramabadhran wrote:
-> 
-> 
-> On 10/26/2024 5:08 PM, Konrad Dybcio wrote:
->> Would you folks know anything about it? Do we have an open source
->> U-Boot release that could be sideloaded as a secondary bootloader to
->> kick it into 64-bit mode
-> 
-> Yes slightly older u-boot release [1] supports booting both 32/64 bit
-> kernels.
-> 
-> [1] https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot-2016/-/tree/win.coretech.1.0?ref_type=heads
+On Wed, Oct 23, 2024 at 7:49=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 23/10/2024 16:58, Dario Binacchi wrote:
+> >>>>
+> >>>> This is another commit [1] on enabling spread spectrum that I
+> >>>> implemented some time ago for
+> >>>> the am335x. The most evident difference is that in that case the nod=
+e
+> >>>> was a clock node and not
+> >>>> a clock controller, as in the case of anatop. The parameters are als=
+o
+> >>>> not exactly the same, but
+> >>>> that depends on the platform.
+> >>>>
+> >>>> [1] 4a8bc2644ef0cbf8e ("dt-bindings: ti: dpll: add spread spectrum s=
+upport")
+> >>>
+> >>>
+> >>> OK, I still do not know what "0" was, but the items are fixed, so you
+> >>> know exactly which clock you are configuring here.
+> >>
+> >> So, after delving deeper into the topic, is it now acceptable to use
+> >> the property
+> >> "fsl,ssc-clocks" instead of "clocks"?  As in the patch I applied local=
+ly?
+> >
+> > A gentle ping.
+> > Sorry, but I haven't yet received your response to the previous email,
+> > and I'm not sure how to proceed.
+> >
+>
+> Yeah, the property is fine, but I don't think you need the clock index.
 
-Thank you!
+So it then becomes reviewable v2, which I had already sent some time ago?
 
-Konrad
+https://patchwork.kernel.org/project/linux-clk/patch/20240929172743.1758292=
+-2-dario.binacchi@amarulasolutions.com/
+
+Thanks and regards,
+Dario
+
+> The lists - like clocks and your spread property - have strictly defined
+> items, so it is enough if schema lists items and says which spread
+> points to which clock.
+>
+>
+> P.S. I think you might pinged me on IRC, but you know,
+> https://nohello.net/en/
+>
+>
+> Best regards,
+> Krzysztof
+>
+
+
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
