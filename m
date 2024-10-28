@@ -1,59 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA881DEFC6;
-	Mon, 28 Oct 2024 20:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CC01E1325;
+	Mon, 28 Oct 2024 21:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730148567; cv=none; b=XDcLe8nacOpdgyx5qhblxKd1fzX+yxfRKoMv583gxvKMjjuVBPy8dnEy0fCPCl0DTqs5J0KRSKE7Ojju2jRB7FvpgqV3jOFwZnfXweXVl0j17s2jmkc64ZRiyWmPJAPF8VdT6PWbasq8TpjMqTv6nYc7XdzQGrtUEIPh28wYbYY=
+	t=1730150963; cv=none; b=Q7UI2qFBf1hbE/4cDLCgY//qRNn9TVCte+hiop91SwwFpUXfjmhKibLih5OYGO5bjJTk06Xq2ceiqpL1e0obL75fcb+KBPvL0ElnUytbjYo13/BLNFsDdNN1gZ+BOcjVsJBVfDnYKh5mPU62LdTB2SLTwhO2wL+vtvSNmo/Nuhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730148567; c=relaxed/simple;
-	bh=TI+qLJoq5HDIk3wJkvog9/wWZXEwMxh7IdG7SqWr62g=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=RrEWeu8FLMyLWn2pM3enEoazp1vl1DsZ9pdTm5fgJK57CFlFlqLoRlx/VoGZYBQxZB9dK7UM3qWnW4exh+Ee4r/o4GGjDQuEQLKNDUj6CM6YYjwhPpuXSMTPB8yBjI6axemom6RIRmjrN2HymDXELxSfRcIU9RTYhyv9J+tLkNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InLWI0wz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730150963; c=relaxed/simple;
+	bh=KezIDZ9i66O1meSze2SMz72nMUYzJDcX1903Z6S3nNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pyZunsk7/aoHKkzQjbrMJYYxONCw0DndUT15OPqBYfhQ7YkkitBwbjfKJvp5JmzowagP+L4ZJLh88yUTXTlTHAypqk14m5FrEolm14+pEpUKFOZvz99/g0PUTMwRjsrE+vR//X0LQ5bUyDgv5ruvnvQ0jQPx0TykwYNQnOXH+mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HRuY81L4; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InLWI0wz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69CC0C4CEC3;
-	Mon, 28 Oct 2024 20:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730148566;
-	bh=TI+qLJoq5HDIk3wJkvog9/wWZXEwMxh7IdG7SqWr62g=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=InLWI0wzus/bF7/bgWeZzdLCKp+hvAerz0S1tOiJxeNFPOkE+vUVTw0SZnqOFy59K
-	 aYC6RD3b8OeWSbffRvHLH3v8PBO6ZgD2rW29Nz5J1PdT4oKfrvw23VuopUmdnHKHFq
-	 b9K6ptyqtq1CDW/mrtRT2s3psaNSCp2e+jB4uIeJFdxTocKxhO42GZXG3HVn6TYPwE
-	 6eJWAIzZmMqd4ConcJyDYwEqrVcqMHEgn20qs7Fv8FrCmt02GCVwRgrwUJ0WmxT5Rt
-	 bhOYokhHM6x6SkzwQ0dI0A5vaCQyC5/nfGZRb0ufQLJUOsjfpu1+etCkVmAcKJL5DS
-	 d0n2nPvTt4YGw==
-Message-ID: <eb1b630a7ee8222322d213f72ceb1c23.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRuY81L4"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so3237562f8f.1;
+        Mon, 28 Oct 2024 14:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730150959; x=1730755759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+22KUD/WDhl94ZsUNKpRglL2tk6jvU5AyElWfNP5+f8=;
+        b=HRuY81L4lw4Zi9ZZNmvzAEjpEQc6O8nZhz72NXK6ehZEgzsOuU9f3KAkPyB3mE53fz
+         1ftb7UFtXowDs23gTU/YODGYs44Y2yey5A/rtFNLSBm6SSUkv2cC3U6viQlwatziy+Mo
+         D5AA7Psmg53EgD6MRXKbPhNFuFu3WXZ1Zs+lLBCETQHcsmzs2I8FH5mWtneXt4uaWjf4
+         EmK+Buyd9ioNXBwbqOFqQJsdrBMvUbePI6ND8jlGxjsrC4mWKw4e5OgpHbj6CMpI7exo
+         lVw28I6zNTcINpU1lBtyZdNDgTFy0OPcMSV0bRHPgxCDwfJacIrDDbWP0qMOmtxu3sZF
+         ESOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730150959; x=1730755759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+22KUD/WDhl94ZsUNKpRglL2tk6jvU5AyElWfNP5+f8=;
+        b=Ak+urfKtPDc23WMEWynf84pXjt3uW12myaWa1OPBLrN/Gt7ziBq6sdQzN+J/kAeYF0
+         OBO2flhLjHmEPPoTYBUedoJhvUhptJCwuUDW2rjz45y+XkgFsE4Vwr370+zHNoL3ctrz
+         QblgAdv6ilSm/jWefGTYlXuHYyW6xnUicK1/nOv859Uwnc6KYwrOm/KPCeN9+TLV8OVf
+         4QI+QTs1LV+VPOKO5escbTsEkXTe2yJK2KtbMjX5F4LOsQhrjGT53EccaqXZdmOM2hpS
+         aVvOoXwaBlob27MBxXRnO7TJYUwdz5NGmnrrFej35bw14qJcXXyMKOVYcLDyAlzIowPE
+         a5bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA+HYOpz0qqIwoKgmrdiENpT1I3iC4D4QOJz6OA6c3Hi2C3tsZdzi0Gh4hfr313tf0vVy3NEd5D8k=@vger.kernel.org, AJvYcCX4FjCKLs8Tg7TIRv7kitNMMzdDy0F6hwmu0gOXITnR8WSLiclTbJ7nWYukm4DRLI/3ddEZhoyUpy5J2zNT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCgnqlsJW+db3uBHY9Ri6KBl8Xt/7mY8IqzhV5BxZr0YfoKJkO
+	XC3PWi31NjQh50iZjlhAJAGnPxwzmoHRh+ytFKU2CnHLe7QQ05eu
+X-Google-Smtp-Source: AGHT+IFp4WngF6IoigUjlDv+USPVsSl4O1Zt8HaMsq65XejiEmJpUgKxtw6k18mPFR+QNrJabzVxPw==
+X-Received: by 2002:a5d:52c1:0:b0:37d:529f:ac1e with SMTP id ffacd0b85a97d-3806120087bmr7289244f8f.53.1730150959143;
+        Mon, 28 Oct 2024 14:29:19 -0700 (PDT)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:495c:4d71:e99d:a7d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935a3edasm124360725e9.22.2024.10.28.14.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 14:29:18 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] clk: renesas: rzv2h-cpg: Add CRU and CSI clocks
+Date: Mon, 28 Oct 2024 21:29:12 +0000
+Message-ID: <20241028212914.1057715-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <13ad41f172cc8605cb9b324ea0f22296c4c97033.1730123575.git.andrea.porta@suse.com>
-References: <cover.1730123575.git.andrea.porta@suse.com> <13ad41f172cc8605cb9b324ea0f22296c4c97033.1730123575.git.andrea.porta@suse.com>
-Subject: Re: [PATCH v3 11/12] arm64: dts: bcm2712: Add external clock for RP1 chipset on Rpi5
-From: Stephen Boyd <sboyd@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herve Codina <herve.codina@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, Linus Walleij <linus.walleij@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Stefan Wahren <wahrenst@gmx.net>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-Date: Mon, 28 Oct 2024 13:49:24 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Andrea della Porta (2024-10-28 07:07:28)
-> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/=
-dts/broadcom/bcm2712.dtsi
-> index 6e5a984c1d4e..efdf9abf04c4 100644
-> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> @@ -38,6 +38,13 @@ clk_emmc2: clk-emmc2 {
->                         clock-frequency =3D <200000000>;
->                         clock-output-names =3D "emmc2-clock";
->                 };
-> +
-> +               clk_rp1_xosc: clock-rp1-xosc {
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The node name is preferred to be clock-50000000 now.
+Hi All,
+
+This patch series aims to add CRU/CSI clock and reset entries to the
+RZ/V2H(P) clock driver.
+
+1] patch#1:
+ Allows exclusion of specific RZ/V2H(P) clocks, such as those in the CRU
+ block, from Runtime PM using a new no_pm flag and helper function.
+2] patch#2
+  Extends the r9a09g057 driver to include PLLVDO, its related CRU clocks
+  (CRU0-CRU3), and corresponding reset entries.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: renesas: rzv2h-cpg: Add support for clocks without PM
+  clk: renesas: r9a09g057-cpg: Add support for PLLVDO, CRU clocks, and
+    resets
+
+ drivers/clk/renesas/r9a09g057-cpg.c | 45 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 37 ++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     | 18 ++++++++++--
+ 3 files changed, 97 insertions(+), 3 deletions(-)
+
+-- 
+2.43.0
+
