@@ -1,89 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D2B188917;
-	Mon, 28 Oct 2024 17:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADDD3A268;
+	Mon, 28 Oct 2024 18:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730138204; cv=none; b=SRDFYPHNG7h6l2yF3S97SN9X+qIAeKwB7OSO/rd7gT3kHQK3W+Iv8g6m2F68+dAe2SsIGKJb2sY3ZTpAuGx103CA9kOTKk0sAGN95+Mnr3aKMvS9J60lxrYEghFXkIcvl/RGBla0MifwXSNIFHnyMtoKM5Zn4xC+NbZW4RYa2Qw=
+	t=1730141306; cv=none; b=qbbf7OTiojD6bc+QofsbnZBPPQglNF6wzmTP6juv+BLIZhe3Kp+qwJg3U7sFwkT4kmZ0qNHNwExs5skg3syPE4ZISQdet+XqALbeghreu2Axx7T5TEyiBjocco9nwDpigOGcbz88Yu0DF3o3bMNPd90d/uSyv1A1sCcRo+kbs5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730138204; c=relaxed/simple;
-	bh=ZcIOdBBX9x9S4mccfN00QP50E2GrhzZTTHwWiGiLi9c=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rTaWdxH0+b2Zd5PYe52F4vO6+0qaaDEbPXTXMGyGhwDBVc3x2N62lgAV0mxSC53pngNiNn8nZNmox8hdVRNWTLT4VFZj/kJkUveqdZqLvLsnBHA83mjRt5Oc5kU2v0fOUGA/0Zgik6bOeV7Ni3l3FKHUvcsEsnlyfQZ6zfgp4bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2K5myif; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730141306; c=relaxed/simple;
+	bh=MLcOld+2red3dwWoB2u8Q1GcxpkrVirConXSUl2iIxo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Dhdd5FRWP+RQlyagEkdj1qPngTYG1Ku4jDgHwqrWwRQIW70gsj+2yFlAtLajzW9pWIo5oQo2cFM13METwGz8ceeyIrR5tBOfk5mW3w72U7P/WZotR6ooNS6pnZvfeiWbbGSDQl0pCa/2HG+3PRa8hEZp6n1+PjkzTDv7FdWQp2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AyOr5kOV; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2K5myif"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67D5C4CEC3;
-	Mon, 28 Oct 2024 17:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730138203;
-	bh=ZcIOdBBX9x9S4mccfN00QP50E2GrhzZTTHwWiGiLi9c=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=q2K5myifszZpveps8gx27XMOnT2U1YZffqsvHUS5IFNf4nEQ7fRd9bHS1XjPRGVZO
-	 KFpTeeiqdejQAS/xZlcl433menOvBPr9pnIFEj5feTysVsO64XStek2hnsNwIHh+Ws
-	 g/0BbGIYHDdgr9GyB2KBNCC6C/Q99N+Fz+jFO9fQzcbex+4mxmpu5jfAEZGwIFY44v
-	 TuHM+TectHEqKNEATQM52fCJlsskYy3rDPV8nA56mWPnjJvTcstWitzpoZ0C3ATKJN
-	 MYmeseQDth9uFQCH9gItWXXXZX4uItoxQTrrKg2RFrW3WbqEmicuQUDtU0+D6FzmpJ
-	 y3qBqUCtB9ofQ==
-Message-ID: <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AyOr5kOV"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso571498466b.3;
+        Mon, 28 Oct 2024 11:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730141302; x=1730746102; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1L3PyT3DI7fVJTT6/gm8DMK/bwP+0mVSlGhALirvWfw=;
+        b=AyOr5kOV1s7mjf9nXhCalE/72T9PzdAvAAkxUele3ZoQRaj6gbuV1H7nK7A/o5WA1f
+         qEhZYqwgYgyMCOO8+zsORiYjkpXxV9NuNNRcjS8MCdUWHhYvAkPPnTtF50+p1dvJE7rc
+         bNVJ5ssp0R8dGyUnDryZtCMKNMiQw/egkdc2wgv7e7m2ObjbTDqKsidRHVR/UfKR6zHa
+         9Qlp0VCQMMEcrV7xXcNYiKKG2Hye29PzNm93jdGbqbz+5aDodlWKUXNbrPMQgxP/SHeB
+         PDRIFdzN/jX5IM6FiNmOSoOFtPVLW8FAjNj34fvQo/dn93caTJd5IaQWo0tf2aZZIQ8D
+         MBQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730141302; x=1730746102;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1L3PyT3DI7fVJTT6/gm8DMK/bwP+0mVSlGhALirvWfw=;
+        b=kfcwLsFu5zvSIlk4IVbNZRkBPIMkue68qtdJGd15ESPw8XvpcRtbLU8uRyF+w4vHoG
+         rNeuo1ru7VNLmPmdmi9kE+QylknG7m9p2wYmaqoH0I7AYg1/OLpu39n6NTR8QxaEnA+S
+         HWGakiPukBb8bA6vx49d30Qr8cLEnH0/xfA+ZU+pLJ8aLDWGiAGCBW64mpjOMBL3YCqm
+         kk80YgOnCBA6yeYUiUkoitR5CDXMe+Jw2OLow2ils2pSavHWDsSeiPq0l8G6Q5MNvpbv
+         gi8F4vcv9jPJneV96WZ5Fvbu3NVSVVwHLmV0RtF/oMAYRPdGUvFuNxxTEF+HBWGrErRG
+         u8xw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ch42Cx90xMsNGUHm7otD1pwIgWyMyodxVKuQIWzyPi3ZzOanUMpyEPZ4T2Exr1KKZPoCUZLZMqI=@vger.kernel.org, AJvYcCX/AD7a3dM4ZBW8NSuRx3b010qFc7MMLYoL0QqLM5jIbdJ+DWyNLtzueazrC1dCnk2dNs0tlg0W5NiKx7xX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBJ/z5vTzB0pqWy9q9WEsV77sNbuOhNgONzGwCfL3udx5PfwnX
+	tfZwVFJnIevRLii6Yh+t+OCmQTSfe7F6KemhJv19HOaH+3ix+2w5KQ1Mzg==
+X-Google-Smtp-Source: AGHT+IETdkvSMOyudPTGJQzsHU7JlneDAZE8RdDq1tyzPR/PZps3mH0FOxDsyAC+Vfor9vo15EgPQg==
+X-Received: by 2002:a17:907:7e91:b0:a9a:20f9:a402 with SMTP id a640c23a62f3a-a9de5c91a85mr984710866b.13.1730141302240;
+        Mon, 28 Oct 2024 11:48:22 -0700 (PDT)
+Received: from [192.168.0.2] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9b1f029617sm397585166b.81.2024.10.28.11.48.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 11:48:21 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: [PATCH v2 0/5] clk: qcom: remove superfluous alpha settings from
+ PLL configs
+Date: Mon, 28 Oct 2024 19:48:14 +0100
+Message-Id: <20241028-alpha-mode-cleanup-v2-0-9bc6d712bd76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241028163403.522001-1-eugen.hristev@linaro.org>
-References: <20241028163403.522001-1-eugen.hristev@linaro.org>
-Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: andersson@kernel.org, konradybcio@kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com, Eugen Hristev <eugen.hristev@linaro.org>
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org
-Date: Mon, 28 Oct 2024 10:56:41 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG7cH2cC/32NQQ6CMBBFr0Jm7Zi2tsW44h6GRaUDnQQoaZVoC
+ He3cgCX7yX//Q0yJaYMt2qDRCtnjnMBdaqgC24eCNkXBiWUlkJJdOMSHE7RE3Yjufm1oLXyYbS
+ 2WvsaynBJ1PP7iN7bwoHzM6bP8bHKn/2bWyUKNMb3V/L1xWrTDJPj8dzFCdp93798fg84tAAAA
+ A==
+X-Change-ID: 20241021-alpha-mode-cleanup-661b544644d7
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-Quoting Eugen Hristev (2024-10-28 09:34:03)
-> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-> index 3acca067c72b..152947a922c0 100644
-> --- a/include/soc/qcom/tcs.h
-> +++ b/include/soc/qcom/tcs.h
-> @@ -60,22 +63,19 @@ struct tcs_request {
->         struct tcs_cmd *cmds;
->  };
-> =20
-> -#define BCM_TCS_CMD_COMMIT_SHFT                30
-> -#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
-> -#define BCM_TCS_CMD_VALID_SHFT         29
-> -#define BCM_TCS_CMD_VALID_MASK         0x20000000
-> -#define BCM_TCS_CMD_VOTE_X_SHFT                14
-> -#define BCM_TCS_CMD_VOTE_MASK          0x3fff
-> -#define BCM_TCS_CMD_VOTE_Y_SHFT                0
-> -#define BCM_TCS_CMD_VOTE_Y_MASK                0xfffc000
-> +#define BCM_TCS_CMD_COMMIT_MASK                BIT(30)
-> +#define BCM_TCS_CMD_VALID_MASK         BIT(29)
-> +#define BCM_TCS_CMD_VOTE_MASK          GENMASK(13, 0)
-> +#define BCM_TCS_CMD_VOTE_Y_MASK                GENMASK(13, 0)
-> +#define BCM_TCS_CMD_VOTE_X_MASK                GENMASK(27, 14)
-> =20
->  /* Construct a Bus Clock Manager (BCM) specific TCS command */
->  #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
-> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
-> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
-> -       ((cpu_to_le32(vote_x) &                                 \
-> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
-> -       ((cpu_to_le32(vote_y) &                                 \
-> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
-> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
-> +       le32_encode_bits(vote_x,        \
-> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
-> +       le32_encode_bits(vote_y,        \
-> +                       BCM_TCS_CMD_VOTE_Y_MASK))
+There are several alpha PLL  configurations, where the alpha mode
+is enabled even if it is not strictly required in order to get the
+desired output rate of the PLL. This small series removes those
+superfluous settings.
 
-Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
-supposed to be marked as __le32?
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Changes in v2:
+  - extend the commit messages in the patches to indicate that dropping
+    'alpha_en_mask' is safe
+  - collect RB tags
+  - Link to v1: https://lore.kernel.org/r/20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com
 
-Can the whole u32 be constructed and turned into an __le32 after setting
-all the bit fields instead of using le32_encode_bits() multiple times?
+---
+Gabor Juhos (5):
+      clk: qcom: apss-ipq-pll: drop 'alpha_en_mask' from IPQ5018 PLL config
+      clk: qcom: apps-ipq-pll: drop 'alpha_en_mask' from IPQ5332 PLL config
+      clk: qcom: gcc-ipq6018: remove alpha values from NSS Crypto PLL's config
+      clk: qcom: dispcc-qcm2290: remove alpha values from disp_cc_pll0_config
+      clk: qcom: dispcc-sm6115: remove alpha values from disp_cc_pll0_config
+
+ drivers/clk/qcom/apss-ipq-pll.c   | 3 +--
+ drivers/clk/qcom/dispcc-qcm2290.c | 2 --
+ drivers/clk/qcom/dispcc-sm6115.c  | 2 --
+ drivers/clk/qcom/gcc-ipq6018.c    | 4 +---
+ 4 files changed, 2 insertions(+), 9 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241021-alpha-mode-cleanup-661b544644d7
+
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
+
