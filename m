@@ -1,280 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F5D17D355;
-	Sun, 27 Oct 2024 21:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BB2A59;
+	Mon, 28 Oct 2024 04:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063828; cv=none; b=CyFW5qw462T8pkwHH3smySHAZn99zdDuv/M2caHtclnqtl1YvMkg/8f3RsjSIObQNUnDHMCcY8wgw1/r4F3cQeizhRmFSyCb2YkDJPs5KoLlwtaOzmCfxqxlmrzgv5qvZ/2QFp6kCZHqvfPKw1g5Np7IowA/bFvJRBIdrLPOj8M=
+	t=1730089322; cv=none; b=gR2HgkvcwqzVsX2S/lKApcgkren9cXgOWEEnANM49tWXzVrz9aRIvLsIKVaKtztDknQsgdZ8Kv3wxrxAHYiGaWxNw8MZ6pp+5TNUek6joBTUBclvUGrC75E6EnroTvCzWz+B3+aYDS7VDQatqJGjvUwYR48BzLc/fYUAvmDlMFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063828; c=relaxed/simple;
-	bh=8BxbqsTR+nwXPOEVNWoXKCAhMQb8yohDYa2UCOM1Qls=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=YAVHOP9FfvoRJncogxoaaQdmTJoOOeHIfK+0ldgrADYzMu2uAH/sSxAXdMJwUZOYCacEPKaguIBiK133anD5fFnXBF0avBKMqy+XvIiulzilmzhI2TDiP/JWDq4MD0lb6FCclFkWUzikRgP4BqYSpX9kZICf0xZ0+eieKKx8xR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCpffMJX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730089322; c=relaxed/simple;
+	bh=Gb9VxBwE2IQzYmezxiBoZEB5EkgE2GtJJeAYtvdrkO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H1SCKw6kyu1vK5OvjwSUp0cEZf37CQ3wD+kKjsIADw/oWT/nL2vpeqOuB6N32XR9Tql9X/L3OTqw8gRTPgYBHfUNVRi9mMPipaqi8R7Qpq+MjU2dt3sy32WLdKIx4MADwKSpSepeFiQXJT2eOnap/vW+wlXiQ9AxYIp0QJwtCME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o70QrjYu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCpffMJX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59915C4CEE4;
-	Sun, 27 Oct 2024 21:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730063827;
-	bh=8BxbqsTR+nwXPOEVNWoXKCAhMQb8yohDYa2UCOM1Qls=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=hCpffMJXPBcfUUZ0udfUTLotwnU7Z2vHpYusSHQ/Z5KOvtA1mc/fhKWi8Xl7CD+Le
-	 jg0Wg87iQUb4nEm3fm1Gmb5wMNq2dJXHQG6NadLOjdngppie8HjKzmaxKLqc6zUrx9
-	 zg9MV1nbbvyO7fKilUFBY6o09XJOGXSqiLcd6DhjS0HBIUSeeAJWBnDaworcxvGezl
-	 O936Ynf0don4FAxSewNxIps3BCFdkQeDd5elZ7Fs37b6xHpsP+8kGEg+SbhaVsXKWW
-	 Ohw/gyIIQcegltpZedhM0Rrcj8u+37jQa4BDuZb2mCe8kg3cMfsU4r1LPyPeS8L92t
-	 8ngVdrD7Ma0Qw==
-Date: Sun, 27 Oct 2024 16:17:06 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o70QrjYu"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNqfC1005093;
+	Mon, 28 Oct 2024 04:21:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TwY9iJqYfL+Mr37Hf6tM9bnOvWU/aejxGVM4SDJh3Pg=; b=o70QrjYuwayksnvq
+	yiFAhxdG1mGxYZ7ZdxtvDIgoODdzMSEeHx5xiMxwwkT2yTnSqY9ga78VU8BeTBQ5
+	3wZC2BHeqCo58+ShEBRNdjvLTye6RIWYXHwzsOsvZ05I0BHl4cKlDEKgDZW4YUh3
+	UZ0HpmUDQf9XuQwEYNqa/H0IxxTuMJ9CFIQl/gZcLNS5yuUpK0W4rvam8htI3cuL
+	PwpNj/nLY+EojUDW4ZPV2ToS7cbv+qiHEtdZW6sq/rkEGNmXlNaK4Bb216l0KZ3w
+	p/pQ91Hdn2yujBn/kTXqnv8gxngeSuQceXCdo18WKPoLXNKvKUBQdqgZqx4o3mWE
+	d4JH3g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8bj77-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 04:21:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S4LoUO007326
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 04:21:50 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 21:21:46 -0700
+Message-ID: <3a2bc8c8-86d0-41e5-99f9-d111666661fc@quicinc.com>
+Date: Mon, 28 Oct 2024 09:51:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: linux-clk@vger.kernel.org, Scott Branden <sbranden@broadcom.com>, 
- Michael Turquette <mturquette@baylibre.com>, Will Deacon <will@kernel.org>, 
- devicetree@vger.kernel.org, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- linux-rpi-kernel@lists.infradead.org, David Airlie <airlied@gmail.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- dri-devel@lists.freedesktop.org, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Dom Cobley <popcornmix@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
-References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
-Message-Id: <173006367767.91262.6590539622480558932.robh@kernel.org>
-Subject: Re: [PATCH v2 00/36] drm/vc4: Add support for BCM2712 / Pi5
- display hardware
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/11] clk: qcom: rpmh: add support for SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
+ <20241027-sar2130p-clocks-v5-7-ecad2a1432ba@linaro.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20241027-sar2130p-clocks-v5-7-ecad2a1432ba@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: X7ZcugReZNSVC0IH5smYe3cSrzMIuKoO
+X-Proofpoint-ORIG-GUID: X7ZcugReZNSVC0IH5smYe3cSrzMIuKoO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410280035
 
 
-On Fri, 25 Oct 2024 18:15:31 +0100, Dave Stevenson wrote:
-> This series adds the required DRM, clock, and DT changes
-> required to support the display hardware on Pi5.
-> There are a couple of minor fixes first before the main patches.
+
+On 10/27/2024 6:54 AM, Dmitry Baryshkov wrote:
+>   drivers/clk/qcom/clk-rpmh.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
 > 
-> Many of the patches were authored by Maxime whilst working
-> for us, however there have been a number of fixes squashed
-> into his original patches as issues have been found. I also
-> reworked the way UBM allocations are done to avoid double
-> buffering of the handles as they are quite a limited resource.
-> 
-> There are 2 variants of the IP. Most Pi5's released to date
-> have used the C1 step of the SoC, whilst the 2GB Pi5 released
-> in August is using the D0 step, as will other boards in future.
-> 
-> Due to various reasons the register map got reworked between
-> the steps, so there is extra code to handle the differences.
-> Which step is in use is read out of the hardware, so they
-> share a compatible string.
-> 
-> Thanks!
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
-> Changes in v2:
-> - Collected Acks and R-b tags
-> - Dropped patch 1 "drm/vc4: Limit max_bpc to 8 on Pi0-3". Already fixed as
->   noted by Maxime.
-> - Fix unintialised var "mux" in vc6_hvs_pv_muxing_commit.
-> - Fixed uninitialised var "reg" in vc4_hvs_cob_init.
-> - Make bcm2712_mop_data and bcm2712_moplet_data static.
-> - Removed the "disable_turbo" line from the struct in
->   raspberrypi_clock_property
-> - I'm confused by the CI error "performing pointer arithmetic on a null
->   pointer has undefined behavior" for PCI_IOBASE as I'm not using it.
-> - Link to v1: https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com
-> 
-> ---
-> Dave Stevenson (11):
->       drm/vc4: Use of_device_get_match_data to set generation
->       drm/vc4: Fix reading of frame count on GEN5 / Pi4
->       drm/vc4: drv: Add support for 2712 D-step
->       drm/vc4: hvs: Add in support for 2712 D-step.
->       drm/vc4: plane: Add support for 2712 D-step.
->       drm/vc4: hdmi: Support 2712 D-step register map
->       drm/vc4: Enable bg_fill if there are no planes enabled
->       drm/vc4: Drop planes that are completely off-screen or 0 crtc size
->       arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
->       arm64: dts: broadcom: Add display pipeline support to BCM2712
->       arm64: dts: broadcom: Add DT for D-step version of BCM2712
-> 
-> Dom Cobley (3):
->       clk: bcm: rpi: Add ISP to exported clocks
->       clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
->       clk: bcm: rpi: Enable minimize for all firmware clocks
-> 
-> Maxime Ripard (22):
->       dt-bindings: display: Add BCM2712 HDMI bindings
->       dt-bindings: display: Add BCM2712 HVS bindings
->       dt-bindings: display: Add BCM2712 PixelValve bindings
->       dt-bindings: display: Add BCM2712 MOP bindings
->       dt-bindings: display: Add BCM2712 MOPLET bindings
->       dt-bindings: display: Add BCM2712 KMS driver bindings
->       drm/vc4: drv: Support BCM2712
->       drm/vc4: hvs: Add support for BCM2712 HVS
->       drm/vc4: crtc: Add support for BCM2712 PixelValves
->       drm/vc4: hdmi: Add support for BCM2712 HDMI controllers
->       drm/vc4: txp: Introduce structure to deal with revision differences
->       drm/vc4: txp: Rename TXP data structure
->       drm/vc4: txp: Add byte enable toggle bit
->       drm/vc4: txp: Add horizontal and vertical size offset toggle bit
->       drm/vc4: txp: Handle 40-bits DMA Addresses
->       drm/vc4: txp: Move the encoder type in the variant structure
->       drm/vc4: txp: Add a new TXP encoder type
->       drm/vc4: txp: Add support for BCM2712 MOP
->       drm/vc4: txp: Add BCM2712 MOPLET support
->       drm/vc4: Add additional warn_on for incorrect revisions
->       clk: bcm: rpi: Create helper to retrieve private data
->       clk: bcm: rpi: Add disp clock
-> 
->  .../bindings/display/brcm,bcm2711-hdmi.yaml        |   2 +
->  .../bindings/display/brcm,bcm2835-hvs.yaml         |   5 +-
->  .../bindings/display/brcm,bcm2835-pixelvalve0.yaml |   3 +
->  .../bindings/display/brcm,bcm2835-txp.yaml         |   5 +-
->  .../bindings/display/brcm,bcm2835-vc4.yaml         |   1 +
->  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
->  arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts |  37 +
->  arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  42 +
->  arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 188 +++++
->  drivers/clk/bcm/clk-raspberrypi.c                  |  33 +-
->  drivers/gpu/drm/vc4/tests/vc4_mock.c               |   8 +-
->  drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c     | 106 +--
->  drivers/gpu/drm/vc4/vc4_crtc.c                     |  96 ++-
->  drivers/gpu/drm/vc4/vc4_drv.c                      |  19 +-
->  drivers/gpu/drm/vc4/vc4_drv.h                      |  54 +-
->  drivers/gpu/drm/vc4/vc4_hdmi.c                     | 107 ++-
->  drivers/gpu/drm/vc4/vc4_hdmi.h                     |   4 +
->  drivers/gpu/drm/vc4/vc4_hdmi_phy.c                 | 640 +++++++++++++++
->  drivers/gpu/drm/vc4/vc4_hdmi_regs.h                | 217 ++++++
->  drivers/gpu/drm/vc4/vc4_hvs.c                      | 737 ++++++++++++++++--
->  drivers/gpu/drm/vc4/vc4_kms.c                      | 105 ++-
->  drivers/gpu/drm/vc4/vc4_plane.c                    | 866 ++++++++++++++++++++-
->  drivers/gpu/drm/vc4/vc4_regs.h                     | 297 +++++++
->  drivers/gpu/drm/vc4/vc4_txp.c                      |  91 ++-
->  include/soc/bcm2835/raspberrypi-firmware.h         |   1 +
->  25 files changed, 3461 insertions(+), 204 deletions(-)
-> ---
-> base-commit: 3ae80b375739495e36fc6143ff27716fe390a13e
-> change-id: 20241002-drm-vc4-2712-support-9ad3236e3caf
-> 
-> Best regards,
-> --
-> Dave Stevenson <dave.stevenson@raspberrypi.com>
-> 
-> 
-> 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 4acde937114af3d7fdc15f3d125a72d42d0fde21..eefc322ce367989f625f1285dcccddbdd8341a12 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -389,6 +389,18 @@ DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+>   DEFINE_CLK_RPMH_BCM(pka, "PKA0");
+>   DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
+>   
+> +static struct clk_hw *sar2130p_rpmh_clocks[] = {
+> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div1.hw,
+> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div1_ao.hw,
+> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
+> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
+> +};
 
+Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y broadcom/bcm2712-d-rpi-5-b.dtb broadcom/bcm2712-rpi-5-b.dtb' for 20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com:
-
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: soc@107c000000: firmware: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: soc@107c000000: power: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: soc@107c000000: power: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: soc@107c000000: firmware: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: interrupt-controller@7cd00000: 'interrupt-controller' is a required property
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2836-l1-intc.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: interrupt-controller@7cd00000: '#interrupt-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2836-l1-intc.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: gpio@7d517c00: 'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/gpio/brcm,brcmstb-gpio.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: intc@7d508380: $nodename:0: 'intc@7d508380' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: intc@7d508380: $nodename:0: 'intc@7d508380' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: intc@7d508400: $nodename:0: 'intc@7d508400' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: intc@7d508400: $nodename:0: 'intc@7d508400' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/brcm,l2-intc.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupts: [[1], [2], [3], [7], [8]] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:3: 'wakeup' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:4: 'hpd-connected' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupts: [[1], [2], [3], [7], [8]] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:3: 'wakeup' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names:4: 'hpd-connected' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef00700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupts: [[11], [12], [13], [14], [15]] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:3: 'wakeup' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:4: 'hpd-connected' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupts: [[11], [12], [13], [14], [15]] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:3: 'wakeup' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names:4: 'hpd-connected' was expected
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hdmi@7ef05700: interrupt-names: ['cec-tx', 'cec-rx', 'cec-low', 'hpd-connected', 'hpd-removed'] is too short
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2711-hdmi.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: firmware: '#address-cells', '#size-cells', 'dma-ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: firmware: '#address-cells', '#size-cells', 'dma-ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: /soc@107c000000/power: failed to match any schema with compatible: ['raspberrypi,bcm2835-power']
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: axi: gpu: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/power: failed to match any schema with compatible: ['raspberrypi,bcm2835-power']
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: axi: gpu: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hvs@107c580000: interrupts: [[2], [9], [16]] is too long
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hvs@107c580000: clocks: [[18, 4], [18, 16]] is too long
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dtb: hvs@107c580000: 'clock-names', 'interrupt-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hvs@107c580000: interrupts: [[2], [9], [16]] is too long
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hvs@107c580000: clocks: [[18, 4], [18, 16]] is too long
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: hvs@107c580000: 'clock-names', 'interrupt-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/display/brcm,bcm2835-hvs.yaml#
-
-
-
-
-
+-- 
+Thanks & Regards,
+Taniya Das.
