@@ -1,189 +1,181 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2873F1885A1;
-	Mon, 28 Oct 2024 14:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231F61DC734;
+	Mon, 28 Oct 2024 14:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124110; cv=none; b=KUwodJUWYVe61hpQwejrDrRgR2uEJXNEySK0cY0hWwy1+vDjqS/66iKFIL8/ctCkaMPP5iXZj6+KF89c1SOwkY1xuXsKQUWQWwlJgHFYpScGih+KRn3rt0Xh5kfHzzWrf4+wKq53xRVAddx4ILBT0EdrC7z8dYcvB7oGCeX/gTg=
+	t=1730124282; cv=none; b=uxILt3eMa9PQxSS5FjDVv9gtBNROEkX3U9pR6j2d6jJ7GxlcJ3P0flvGG23E/Mb2gX/x9QhkkXr6L7RBUVwSAqjeSZK2PD2Mk1zsRv/WLU6W/pnmkqARyPDLIrx5JtHEOyYBVsOwypGIBS5LeQ93aa0HAWTT1L2gCSEjb+gXIIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124110; c=relaxed/simple;
-	bh=1jSCsu2weQBgfTv3fn5ZHcqI4pF3bAJl/W4HqSM9Ntg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Msf8OP1DRl9MbGlg0hbk3pTplNSlVc+u1PBvB1bCv5c328qDfG6vtgyGeD1wJhrBXGhI+7eZteC6KEj9apMHsKifc3NK0te3Cz+oRYm2v1LvLJBD7xuFDAkfXWHzFzns5l3mN/ITfSIZ43ytbALIJU8XJiDt7j4xouEfyl34Ngo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=htHkiTm8; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730124282; c=relaxed/simple;
+	bh=SOIvPyJRmfJFGhYZ/LtCwoJ8ea6QC7C8lqnI5ohpZWU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=SKXTKm7vlb8bLEBLgSUrQBR5CsJqw4O33nlnOGlF6qegt3+aO0OetvteQqnEXVLkOQf7Y0PwgQh/vwZc1v+WO8HKfQFqIMhYQhY4Nq0CdRcMQJQ1CADisxWuDdjftmRGOyADF/SXQ6jAZ1sn5wE4mNjObFiHJxQKa5u7XAZsxGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dEMivi0j; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htHkiTm8"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314b316495so40558605e9.2;
-        Mon, 28 Oct 2024 07:01:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730124106; x=1730728906; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1jSCsu2weQBgfTv3fn5ZHcqI4pF3bAJl/W4HqSM9Ntg=;
-        b=htHkiTm8BpEidzThw/6HoBD37Mf4zLR/tJH5QJ1Ge1MuuXh6VNZ0pcC1duNHXkJPHA
-         7kBakacJZTOuipy0bREF7+ePQTwGKdAaTcWSFNnoZI9jHvF6HnbpY7ulUM1ZdpUsxBN6
-         QPRXpylpcdVRbFQUpjjXYjAZ+6xh3BeU8GtaJIXVhJWgW5IUHqGtOSwVOkJlEKxHo6pe
-         iLnuVDHpJYDQBtgKpBOzRIkUYyx5o6LcPCcsZbeTFulVbXHt931DooQI8s5TunsLVTvh
-         nc65DONcRl+CnExwVL8rIt2AsWQTG4nUQzrzBAzEjRZfawOcF/A/7wFGwwZuItuXu5xc
-         m0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730124106; x=1730728906;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1jSCsu2weQBgfTv3fn5ZHcqI4pF3bAJl/W4HqSM9Ntg=;
-        b=A6tSkbkkqIp9n0P4u8uYSUcQK5W73xDN+DwV6y6JogqNbFd5AosVgNrXVllu/tuUEU
-         qzPQ/S3LOI3Nq3DPm8ddfxGnY5EBgg9vMkIq1hNpCQNZCNoZCKy3S9ThhNEKeIMrcf2j
-         oLeOxBJv+jfs63wDRIT8NEQWdkOQMYmRXcCNbSySmxRqusOlqx2h3a+e0w/h5WDNFN4o
-         sZnqvAkVcwO8lVrpdkxFmrz17SuTNkJKtdEilJae4pyFRY08GR05nH+Cxg+lYyZsAUC3
-         jvmR3DpJLu40zR88uDeowwTi+PC/oVKCssFffYPs0KL7iIIcFRwGy/qJirbsnlH32sR6
-         EeNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUii3xcQLG6P5b9huv8oTyJiXYhEFENkSEfKJYNmfjwDUNaDtFrWm8imF/rYyNQj7I+kfrVrJB91/X+@vger.kernel.org, AJvYcCVMG6RYxEWlkXnxZnYqjlN0+H7d6XGJs6IMNfaZgLavCsoccyhwhez1/MJIf7dW6YQWXOzMaiY6MaJc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsWVPRN/SHmJ96OUsfUKt4YjKjjIm/n66gqnv1w8XL3lMg1atD
-	uFGrBdmemK1J/dy8hhSVU7g3PtSylN5V/mtVCLODTGH5k/5EwTjR
-X-Google-Smtp-Source: AGHT+IG98H6XQsSi6UCbPESJyNYHeDDdte5llmMFEdTxYMFJQGzhao80sSTgetBySqJGdCZDl4ugtA==
-X-Received: by 2002:a05:600c:1e8f:b0:431:60ec:7a96 with SMTP id 5b1f17b1804b1-4319ad0fbcemr71472455e9.25.1730124105632;
-        Mon, 28 Oct 2024 07:01:45 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f689sm140833345e9.16.2024.10.28.07.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 07:01:45 -0700 (PDT)
-Message-ID: <113e98edbff4501556e35698431080364e134233.camel@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: axi-clkgen: include AXI clk
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Nuno Sa <nuno.sa@analog.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>
-Date: Mon, 28 Oct 2024 15:01:44 +0100
-In-Reply-To: <20241025-numerate-quirk-b622c5acdacc@spud>
-References: <20241023-axi-clkgen-fix-axiclk-v1-0-980a42ba51c3@analog.com>
-	 <20241023-axi-clkgen-fix-axiclk-v1-1-980a42ba51c3@analog.com>
-	 <20241023-tucking-pacific-7360480bcb61@spud>
-	 <1e0097f6a15f47c173cb207e369909c1cb5943f9.camel@gmail.com>
-	 <20241024-wildfowl-pushiness-d5f46c9c538a@spud>
-	 <8b853ad3964cd2b7dafc225d4037ddbf11ebb2d3.camel@gmail.com>
-	 <20241025-numerate-quirk-b622c5acdacc@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dEMivi0j"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SAVqHE027014;
+	Mon, 28 Oct 2024 14:04:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fT/8CN3uQM667asE4FC0BJ
+	2VmDl+BTDbxH6qSb3j5Z8=; b=dEMivi0jn1DGZLGVHbcVPNt+azsZ6V0zLJj4yW
+	xImooj4pC67Zt/+znx+szQtEaiHA0CIkdlniz0VMim4WNubLwnFFIG7dEteTI7yu
+	zj3HTByer2ymH9JwFfk0xLCUHMuUmOmDuc50zJwFLOE4bTF0UHuWcSdkUPU+2wa0
+	uWEi6aIBDHRt6f2rYCMg4iGREJ975dRb4hyz1qGVW/qJwlK/HyKZR8NEduDSBu2p
+	gV5JmSzc1OGh85Tt2Xo6Szs/MXl/oWYJDQQOWzoKOKYjMmpDKxwyf0ETU7ggjeud
+	EIZ05/o0hanovngYlrB+kBx/XZDxEik4KwyaX42IhDzedLGA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqrgn6hm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 14:04:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SE4NTL009681
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 14:04:23 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 28 Oct 2024 07:04:18 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v5 0/4] Add CMN PLL clock controller driver for IPQ9574
+Date: Mon, 28 Oct 2024 22:04:07 +0800
+Message-ID: <20241028-qcom_ipq_cmnpll-v5-0-339994b0388d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANeZH2cC/2XOTQ6CMBAF4KuQrq3pL1RX3sMYImWQSaBAq42Gc
+ HcLCxPD8k3mfTMzCeARAjlnM/EQMeDgUtCHjNj27h5AsU6ZCCYUZ1zRyQ59ieNU2t6NXUerGlg
+ uTaM4z0lqjR4afG/i9ZZyi+E5+M92IMp1ulnMiGJnRUkZNcDYyYIFU4nL9EKLzh7TIlm1qH5C+
+ kbvBZUEURheNBVIzfS/sCzLF1ou0X7yAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730124258; l=3680;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=SOIvPyJRmfJFGhYZ/LtCwoJ8ea6QC7C8lqnI5ohpZWU=;
+ b=Q8ogq98h7xQnI1EwFgrxsiytJ6hwx2Fa+PSz1A+TvIrhXe4q7BKMsvKnee2EvHG+6+QF+5Uuh
+ g9v/6br40RhCxsASFJLuUM/JLP14rokvxXw9va/c39P7GFIvTXhYvP3
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: htoyhtuBrr-Vrd1PcZnwdTSInhPjOI-S
+X-Proofpoint-GUID: htoyhtuBrr-Vrd1PcZnwdTSInhPjOI-S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280113
 
-On Fri, 2024-10-25 at 17:47 +0100, Conor Dooley wrote:
-> On Fri, Oct 25, 2024 at 08:56:34AM +0200, Nuno S=C3=A1 wrote:
-> > On Thu, 2024-10-24 at 17:13 +0100, Conor Dooley wrote:
-> > > On Thu, Oct 24, 2024 at 02:35:37PM +0200, Nuno S=C3=A1 wrote:
-> > > > On Wed, 2024-10-23 at 17:30 +0100, Conor Dooley wrote:
-> > > > > On Wed, Oct 23, 2024 at 04:56:54PM +0200, Nuno Sa wrote:
-> > > > > > In order to access the registers of the HW, we need to make sur=
-e that
-> > > > > > the AXI bus clock is enabled. Hence let's increase the number o=
-f clocks
-> > > > > > by one.
-> > > > > >=20
-> > > > > > In order to keep backward compatibility, the new axi clock must=
- be the
-> > > > > > last phandle in the array. To make the intent clear, a non mand=
-atory
-> > > > > > clock-names property is also being added.
-> > > > >=20
-> > > > > Hmm, I'm not sure. I think clock-names actually may need to be ma=
-ndatory
-> > > > > here, as otherwise you'll not what the second clock is. The drive=
-r would
-> > > > > have to interpret no clock-names meaning clock 2 was clkin2.
-> > > > >=20
-> > > > >=20
-> > > >=20
-> > > > So the way things are now is that we just get the parents count wit=
-h
-> > > > of_clk_get_parent_count() and then get the names with
-> > > > of_clk_get_parent_name()
-> > > > and
-> > > > this is given into 'struct clk_init_data'. So they are effectively
-> > > > clk_parents of
-> > > > the
-> > > > clock we're registering and as you can see clock-names does not rea=
-lly
-> > > > matter.
-> > > > What
-> > > > I'm trying to do is to keep this and still allow to get the AXI bus=
- clock
-> > > > which
-> > > > is
-> > > > something we should get and enable and not rely on others to do it.=
- The idea
-> > > > is
-> > > > then
-> > > > to add the axi bus clock as the last one in the clocks property and=
- I will
-> > > > get it
-> > > > by
-> > > > index with of_clk_get(). The rest pretty much remains the same and =
-we just
-> > > > need
-> > > > to
-> > > > decrement by one the number of parent clocks as the axi clock is no=
-t really a
-> > > > parent
-> > > > of our output clock.
-> > >=20
-> > > I mean, if it works, and you can always disambiguate between whether =
-or
-> > > not someone has two clkins or one clkin and the axi clock, then
-> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > The assumption is that the axi clock is the last one in the phandle arr=
-ay. But
-> > your
-> > comment made me think a bit more about this and I do see a possible pro=
-blem if we
-> > run
-> > old DTs against a kernel with this patch. We have two possibilities:
-> >=20
-> > 1) DT only with one parent clock;
-> > 2) DT with two parent clocks;
-> >=20
-> > 1) is "fine" as it would now fail to probe. 2) is more problematic as w=
-e would
-> > assume
-> > the second parent to be the axi_bus clock so effectively not fixing any=
-thing and
-> > silently probing with a broken setup.
-> >=20
-> > So yeah, I think I overthinked the backward compatibility thing. I mean=
-, in
-> > theory,
-> > all old DTs are not correct and should be fixed by including the axi_cl=
-k. And if
-> > we
-> > now enforce clock-names we at least get probe errors right away making =
-it clear
-> > (which is far better from silently breaking after probe).
-> >=20
-> > Given the above, it should be fine to just enforce clock-names now, rig=
-ht?
->=20
-> I think you need to enforce clock-names in the binding and take
-> !clock-names and 2 clocks to mean that the second one is a clkin. I
-> think that's a better solution than failing to probe for all extant
-> devicestrees.
+The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+the clocks to the networking hardware blocks that are internal
+or external to the SoC, and to the GCC. This driver configures
+the CMN PLL clock controller to enable the output clocks. The
+networking blocks include the internal blocks such as PPE
+(Packet Process Engine) and PCS blocks, and external hardware
+such as Ethernet PHY or switch. The CMN PLL block also outputs
+fixed rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ
+as sleep clock supplied to GCC.
 
-Ok, so IIUC, you mean leaving old DTs as of today and relying on someone el=
-se to
-enable the axi clock (if it was not enabled they would have noticed by now)=
-. And only
-take care of the bus clock when clock-names is provided?
+The controller expects the input reference clock from the internal
+Wi-Fi block acting as the clock source. The output clocks supplied
+by the controller are fixed rate clocks.
 
-- Nuno S=C3=A1
+The CMN PLL hardware block does not include any other function
+other than enabling the clocks to the networking hardware blocks
+and GCC.
+
+The driver is being enabled to support IPQ9574 SoC initially, and
+will be extended for other SoCs.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v5:
+- Move the hardware configurations into set_rate() from determine_rate().
+- Remove the dependency on IPQ_GCC_9574.
+- Correct the header files included.
+- Update reference clock of CMN PLL to use fixed factor clock.
+- Link to v4: https://lore.kernel.org/r/20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com
+
+Changes in v4:
+- Rename driver file to ipq-cmn-pll.c
+- Register CMN PLL as a 12 GHZ clock.
+- Configure CMN PLL input ref clock using clk_ops::determine_rate().
+  Add the additional output clocks to GCC and PCS.
+- Update the same information in dtbindings.
+- Use PM clock APIs for input clock enablement.
+- Link to v3: https://lore.kernel.org/r/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com
+
+Changes in v3:
+- Update description of dt-binding to explain scope of 'CMN' in CMN PLL.
+- Collect Reviewed-by tags for dtbindings and defconfig patches.
+- Enable PLL_LOCKED check for the stability of output clocks.
+- Link to v2: https://lore.kernel.org/r/20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com
+
+Changes in v2:
+- Rename the dt-binding file with the compatible.
+- Remove property 'clock-output-names' from dt-bindings and define
+  names in the driver. Add qcom,ipq-cmn-pll.h to export the output
+  clock specifier.
+- Alphanumeric ordering of 'cmn_pll_ref_clk' node in DTS.
+- Fix allmodconfig error reported by test robot.
+- Replace usage of "common" to "CMN" to match the name with the
+  hardware specification.
+- Clarify in commit message on scope of CMN PLL function.
+- Link to v1: https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com
+
+---
+Luo Jie (4):
+      dt-bindings: clock: qcom: Add CMN PLL clock controller for IPQ SoC
+      clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+      arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+      arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  85 ++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi   |  16 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  26 +-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 436 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       |  22 ++
+ 8 files changed, 594 insertions(+), 2 deletions(-)
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-qcom_ipq_cmnpll-bde0638f4116
+
+Best regards,
+-- 
+Luo Jie <quic_luoj@quicinc.com>
+
