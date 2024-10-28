@@ -1,186 +1,167 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CCF1DE3B5
-	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 15:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC2D18785D
+	for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 16:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730129978; cv=none; b=LHQawnaPjC0t6hvYb51uF7hGVAoA7prLMV1SHTQXSKTugi+P2w7STXplfP8NMkA/9JoyLIKepUSeuDsVV0oN++npOOW0r4ptNpufCMktke6mt/nuSFVMLVDdIS5bq2j+yCT8Z4EZxgNhdF7YW6zXH84GTB0Qilg4v4vR71qnimc=
+	t=1730133268; cv=none; b=ADVwZPiHlz+nCYWyRJdSZFgLrcncx4U3T4TRBt1ZlHyxelfCtyulE+Ok3gILdwR2xWUrFkMPu8ZGwbBIWPnN/HH8tWUBTv8vTpieY8R7ZblrNvYxvqag88JLpnx6Gx8QgtGm8J1U8Dm3UOokSMfSj4z0KIuyQrt8XXbkA9zHOpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730129978; c=relaxed/simple;
-	bh=5Zl9G4AszNflo7us4pbB6lyR2ecBGbMh9TGpu/QHrCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nq5mSXtmIM06fE/Oa2NloFSa0c/Z0+xsmf4htSKofU4wueO8429SxLkDRmO4YMoEgIwcBnZ01WUdG3zFDW8AMCo/MLOVah5KpJi64qYiQ+YFqRonOngV/a88TNirc/5fVUmJwq5f52JJugLHXiEg/MAw17IED6n/HgSDGV48qxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X+mzZXHc; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1730133268; c=relaxed/simple;
+	bh=RoDbH8hhDR7FVvuNh9vHX1jh1XZGfsb2QPHmuvLlXZU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TAyajOlJCMlnjyqfmhQBS2USplAuHF4CM4t2p2Q3cgqgT+GEFkC1F1T14P/HzEpPaAbFKUtMDumh1N0gFDdSI77i/IqQ2DYAAL/4uEJ5X66to1EKasrEbY9bd2qBx0E0/LxaY3fo3lAd2LMlArhWtT/hS69Nf0diiZZEn8Sq4vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELaI4UXe; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X+mzZXHc"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f2b95775so5166021e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 08:39:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELaI4UXe"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43155afca99so37996495e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2024 09:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730129973; x=1730734773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W1txbax2anf/FU/2wUye/OvBFVJa+xv11X9TALtaA18=;
-        b=X+mzZXHc8QcgLWRuP8j6ouMCxaCeIPPwqbAjsBCj4XxuWqRClRHXJZW7F8MSp6Drxa
-         w8OFdxnrEhL3uWtug/n1cyVhQ/8QB+r5476UkLd9np2wyThqdS/7eAP06mA/FFZrqNEl
-         Fp6XRnOYYT7vhBsUmp8U9j1/uB5pXenhRy9bN9pnALgRy6z3/YCxdqC7upg0odVQT6NZ
-         FMGDeU+Y+Q/h29Tn7qoA4RorltpbKOiXDU+rzlYqmCXr7PV8jipKrCPXX24bi5n681uB
-         xL3luonI1LDbCTX0UotQZrC07HHo0pGIwqyMB2cW5KXsqo8bhvSojuNvaonQ8xEh/pwE
-         B+yw==
+        d=linaro.org; s=google; t=1730133264; x=1730738064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=js81SeQpn9xUgzINLi31wUaurNTSsIvVF8Ge8x3mQNo=;
+        b=ELaI4UXePNplr+7iBtL4zncHmuhkzIPn3/BFkOSdrc5fgTYIdCPveBgDA3zEjzKC23
+         6qZzeIDXOio68pfFE2ixhsHl2IPmtnmlvVIaSn2fTANkUFO9d1MReBIgdznuEDrLs6Hm
+         fvkIuV/h+jNMwqTQ0yvZXjtUEYkL8W1NslsXIR2oKkCmW71bp0aPDlsO0gHQFemiHPua
+         yhNY/N2MevmEikY9rfZgEtYbjG4+QOYwQZiPf4JIh6DzAX6stz+Vl0huL2SZE9diYlZ5
+         HjW3Sq3AMtF7LXAFOv8CWLfCTSXTrqStYrf3j1oTI1VJNRbOPz6ZqSnHvCYfWftprXv3
+         5CSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730129973; x=1730734773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1txbax2anf/FU/2wUye/OvBFVJa+xv11X9TALtaA18=;
-        b=ZBj8ZSep8Srg8Cujtthk2WGWYeZkxh7vLK3rYd2pSG3KiiQNHZCNLdhGmJr3/Y5MW5
-         dP1YsUITKyAdASS0pmPl+gfmAezWptN2dalgqbN/hEiBCk8mYvp16vApI37gy10fZ+ly
-         cLUf2Gh/4/K5kHFGyNGrG4FmuOJXCaQflC/YoBTpBB3qCZaZEQhy50c64BG0FvstQEII
-         qB0D7hVQDbm1Qa4HL8+HSHtHrifFywIZiWqNSzotjuxBV4Ie4aUL7rLAoUlQjxG+6uue
-         levPMmJ65DvAEA6OiNVICq/s1BJ8x1zo8SH5y0XL+l0PfVfDWCg6EPORbFfk8XlM7vas
-         krXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXexnJP36YAAwgkA1x14FQWKC2EaB8vYn5NEYMvkm/mGDwO26njnvTutUXNXNJDlyJfn/ly5ysPZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQeTlUwWGFYtls1Mr/3cuKjMnU+TBYn3uj5vkav6YZRkD/5+0f
-	8v7uQ0f47pvNR70hKUR5I7ZB8eBRj45DbEYYtb6/wPKtU2o5N3SC0QXqgM0YEvk=
-X-Google-Smtp-Source: AGHT+IHyyRIHr8OLjFlezCBWy1i7uaYCwcnuB6xG6+YWBdjYuluL2KW9ciORdLVKXl6EVMW5IHAxGA==
-X-Received: by 2002:a05:6512:3049:b0:53b:1fc6:3d18 with SMTP id 2adb3069b0e04-53b348da845mr5494533e87.26.1730129972972;
-        Mon, 28 Oct 2024 08:39:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a52fsm1092723e87.27.2024.10.28.08.39.31
+        d=1e100.net; s=20230601; t=1730133264; x=1730738064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=js81SeQpn9xUgzINLi31wUaurNTSsIvVF8Ge8x3mQNo=;
+        b=syC10wZ2seDI4T+9QxfKza4plWaT8mgNYvw0aDvgO1WUIonntW8H/BmHcI+ABTd/CU
+         HnrXtByaXf6zgD+lMVJ/zeqAbTpPx+FmpII43Iva/FG/W8U7L5dp46BCrsDnZElJNjf5
+         UXYcWRnj9FPWR/X2ITKKC16ZIXCWqRpbZRB+qdddrLs0wTnx6Pi1synEWXcHCK33xSCM
+         Lyd/xpO47Gb1WEeyPYYsegBlVjv+DiAzvWoVKG+EIdU/cBHdfw9nTgy99QSFy4/G89Md
+         CGj6+jYZHikkLIM9xYKt1dzHThzycf4zktCed2OLwHvIMprbfs7NGgo7VnOwdSB0tm4o
+         3yDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWplgGSCh/WT5+km9NLUzR7fEu8xiucw60K10UYVmB3Cb+Kd6fg3wvG8Oen31yaJxrw6Dxn6UeamDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOnoQbittlvWWVb+oVb/qDzgx24I16e3i5+QuPwU770fOvtvLb
+	CnNR+ftMWINXB6P7cf/zivJZwntgMnYzHHQ/wFEryHaE2S27yMb91dyCEajH4YE=
+X-Google-Smtp-Source: AGHT+IHGS7TezSWXTQnx/EjfY1u1lEUaZd6nAutN8M7vFaejhP8Nake+9DeRhSOrd8BaunXKDH5yrw==
+X-Received: by 2002:adf:ec8a:0:b0:37d:3baa:9f34 with SMTP id ffacd0b85a97d-380813bc996mr199477f8f.1.1730133264161;
+        Mon, 28 Oct 2024 09:34:24 -0700 (PDT)
+Received: from eugen-station.. ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47f6fsm9944608f8f.50.2024.10.28.09.34.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 08:39:31 -0700 (PDT)
-Date: Mon, 28 Oct 2024 17:39:29 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
-Message-ID: <crcbzpxjnbceilqccbwr7uyak6z6zdwr7mhfcyaw6vvpcce6ko@zrojbtqi4st4>
-References: <20241028-qcom_ipq_cmnpll-v5-0-339994b0388d@quicinc.com>
- <20241028-qcom_ipq_cmnpll-v5-4-339994b0388d@quicinc.com>
+        Mon, 28 Oct 2024 09:34:23 -0700 (PDT)
+From: Eugen Hristev <eugen.hristev@linaro.org>
+To: linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org,
+	konradybcio@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	djakov@kernel.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	Eugen Hristev <eugen.hristev@linaro.org>
+Subject: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
+Date: Mon, 28 Oct 2024 18:34:03 +0200
+Message-ID: <20241028163403.522001-1-eugen.hristev@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028-qcom_ipq_cmnpll-v5-4-339994b0388d@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 10:04:11PM +0800, Luo Jie wrote:
-> The CMN PLL clock controller allows selection of an input clock rate
-> from a defined set of input clock rates. It in-turn supplies fixed
-> rate output clocks to the hardware blocks that provide the ethernet
-> functions such as PPE (Packet Process Engine) and connected switch or
-> PHY, and to GCC.
-> 
-> The reference clock of CMN PLL is routed from XO to the CMN PLL through
-> the internal WiFi block.
-> .XO (48 MHZ or 96 MHZ)-->WiFi (multiplier/divider)-->48 MHZ to CMN PLL.
-> 
-> The reference input clock from WiFi to CMN PLL is fully controlled by
-> the bootstrap pins which select the XO frequency (48 MHZ or 96 MHZ).
-> Based on this frequency, the divider in the internal Wi-Fi block is
-> automatically configured by hardware (1 for 48 MHZ, 2 for 96 MHZ), to
-> ensure output clock to CMN PLL is 48 MHZ.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 16 ++++++++++++++-
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 26 +++++++++++++++++++++++-
->  2 files changed, 40 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> index 91e104b0f865..f026c2a9d0c0 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> @@ -3,7 +3,7 @@
->   * IPQ9574 RDP board common device tree source
->   *
->   * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
->  /dts-v1/;
-> @@ -164,6 +164,20 @@ &usb3 {
->  	status = "okay";
->  };
->  
-> +/*
-> + * The bootstrap pins for the board select the XO clock frequency,
-> + * which automatically enables the right dividers to ensure the
-> + * reference clock output to CMNPLL is 48 MHZ.
-> + */
-> +&cmn_pll_ref_clk {
-> +	clock-div = <1>;
-> +	clock-mult = <1>;
-> +};
-> +
->  &xo_board_clk {
->  	clock-frequency = <24000000>;
->  };
-> +
-> +&xo_clk {
-> +	clock-frequency = <48000000>;
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index 14c7b3a78442..ad9cdb1f76db 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -3,10 +3,11 @@
->   * IPQ9574 SoC device tree source
->   *
->   * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
->  #include <dt-bindings/clock/qcom,apss-ipq.h>
-> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
->  #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->  #include <dt-bindings/interconnect/qcom,ipq9574.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> @@ -19,6 +20,12 @@ / {
->  	#size-cells = <2>;
->  
->  	clocks {
-> +		cmn_pll_ref_clk: cmn-pll-ref-clk {
-> +			compatible = "fixed-factor-clock";
-> +			clocks = <&xo_clk>;
-> +			#clock-cells = <0>;
-> +		};
-> +
->  		sleep_clk: sleep-clk {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
-> @@ -28,6 +35,11 @@ xo_board_clk: xo-board-clk {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
->  		};
-> +
-> +		xo_clk: xo-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +		};
+Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
 
-What is the difference between xo_clk and xo_board_clk? Are there two
-different crystals?
+drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
 
->  	};
->  
->  	cpus {
+While at it, used le32_encode_bits which made the code easier to
+follow and removed unnecessary shift definitions.
 
+Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+---
+ drivers/clk/qcom/clk-rpmh.c           |  2 +-
+ drivers/interconnect/qcom/bcm-voter.c |  2 +-
+ include/soc/qcom/tcs.h                | 28 +++++++++++++--------------
+ 3 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 4acde937114a..4929893b09c2 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -267,7 +267,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 
+ 	if (c->last_sent_aggr_state != cmd_state) {
+ 		cmd.addr = c->res_addr;
+-		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
++		cmd.data = (__force u32)BCM_TCS_CMD(1, enable, 0, cmd_state);
+ 
+ 		/*
+ 		 * Send only an active only state request. RPMh continues to
+diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
+index a2d437a05a11..ce9091cf122b 100644
+--- a/drivers/interconnect/qcom/bcm-voter.c
++++ b/drivers/interconnect/qcom/bcm-voter.c
+@@ -144,7 +144,7 @@ static inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
+ 		vote_y = BCM_TCS_CMD_VOTE_MASK;
+ 
+ 	cmd->addr = addr;
+-	cmd->data = BCM_TCS_CMD(commit, valid, vote_x, vote_y);
++	cmd->data = (__force u32)BCM_TCS_CMD(commit, valid, vote_x, vote_y);
+ 
+ 	/*
+ 	 * Set the wait for completion flag on command that need to be completed
+diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+index 3acca067c72b..152947a922c0 100644
+--- a/include/soc/qcom/tcs.h
++++ b/include/soc/qcom/tcs.h
+@@ -6,6 +6,9 @@
+ #ifndef __SOC_QCOM_TCS_H__
+ #define __SOC_QCOM_TCS_H__
+ 
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++
+ #define MAX_RPMH_PAYLOAD	16
+ 
+ /**
+@@ -60,22 +63,19 @@ struct tcs_request {
+ 	struct tcs_cmd *cmds;
+ };
+ 
+-#define BCM_TCS_CMD_COMMIT_SHFT		30
+-#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
+-#define BCM_TCS_CMD_VALID_SHFT		29
+-#define BCM_TCS_CMD_VALID_MASK		0x20000000
+-#define BCM_TCS_CMD_VOTE_X_SHFT		14
+-#define BCM_TCS_CMD_VOTE_MASK		0x3fff
+-#define BCM_TCS_CMD_VOTE_Y_SHFT		0
+-#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
++#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
++#define BCM_TCS_CMD_VALID_MASK		BIT(29)
++#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
++#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
++#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
+ 
+ /* Construct a Bus Clock Manager (BCM) specific TCS command */
+ #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
+-	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
+-	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
+-	((cpu_to_le32(vote_x) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
+-	((cpu_to_le32(vote_y) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
++	(le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
++	le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
++	le32_encode_bits(vote_x,	\
++			BCM_TCS_CMD_VOTE_X_MASK) |		\
++	le32_encode_bits(vote_y,	\
++			BCM_TCS_CMD_VOTE_Y_MASK))
+ 
+ #endif /* __SOC_QCOM_TCS_H__ */
 -- 
-With best wishes
-Dmitry
+2.43.0
+
