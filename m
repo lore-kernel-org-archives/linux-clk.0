@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE3418C02D;
-	Mon, 28 Oct 2024 22:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5171925B3;
+	Mon, 28 Oct 2024 23:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730155964; cv=none; b=en6PhBy2NUrB4TZqlO6NStuDDTUBmxwE6ELzwoJCIIA30P56yq4BvdYbv9zZji82lmUbPckawy4RTdXnFHX2GZSgU/7ef3o093PH+zjIQ4vhifvETzHjtOUixrUlaZy81bztVhUg4XWPTLW7U5EzHGoS46NWBoveH9D6NmKQMqQ=
+	t=1730158683; cv=none; b=DiD4H/oxOYl4B0TUEfL7nQu3SHibeJcqHoDeGvNNXuL6pfL5h+51W2cqY9a7Orh3Y4/hd2RTSlCoPTdHqb9YmqG5uWqthtVqZ4GhoPW3OkyFFlZLGbqnXmHUALqwExte2fBq3KD8qbO8Am1UZAeN5/BZY+AQreardH3iwGh4MWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730155964; c=relaxed/simple;
-	bh=gKFMj3KX2UlE+Cgln5pGvRLJNvEuq2h0wTRF7c/U6bQ=;
+	s=arc-20240116; t=1730158683; c=relaxed/simple;
+	bh=ZGY1bK+sHnLUkH88C1pwQz0YVPZ7fB5D5JiY1sN7onk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kLqF4YK5fMwJqX8jGZrHzxaUXbhGCkXYibBizenZWVi9OIGSHE28P1vhrcQ15vJiJKGWZpyg/iAawXklBagzCbU3BiTQTieS/fvCoLTd7ZiFfGtMPoz3JjXBggr2rm6MOPAQ0RkTDMGO2NH8AIIWiOFLu7YQJ8PR+GhQnvn0R1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ga38WuB1; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=GzZvgjqC8HZqmzdKXWX7l67j1MwiEXXHjOXcX04AxRyU1+qv8QGrGT+WsVJHIVMPcgGYjz1jaKRraV4ue3zMZSUfOs44JnOlhK42vE4y3SB3Gu46L/Vil4zHwcrWWZEF8dOnRGOQHYSI16XiQG+o1jrpME90Utleq1JZnElYBtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1ujTSIo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ga38WuB1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872F9C4CEC3;
-	Mon, 28 Oct 2024 22:52:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1ujTSIo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1727C4CEC3;
+	Mon, 28 Oct 2024 23:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730155963;
-	bh=gKFMj3KX2UlE+Cgln5pGvRLJNvEuq2h0wTRF7c/U6bQ=;
+	s=k20201202; t=1730158682;
+	bh=ZGY1bK+sHnLUkH88C1pwQz0YVPZ7fB5D5JiY1sN7onk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ga38WuB1tGWrTc1iRNIDtC59eunPY3eh40a37hKV0SJ1jo0RB7+SLKwQSVUZcOC9d
-	 QGtol2JSEmdCfxia9ud9/GXxwE3iW6gnwLQVqZuVMZ9vNMiqrfFl10455sTJEnbPkP
-	 FaCJs0Ht53W6IUdPe1E3sfUG2L1jwDn6F3ukKyvrtNvyc6wxunVstxyf4xPpNRgS9d
-	 HR3COKfkIa4knAdslfyOSqx3iYDop1UE4HcDK76Ear/r1sGWNuSAZdEYsO7o1LgJye
-	 oiUOG62YXmVtz+Dy1HgME8Eu1iudZMTwtblHTeLnzRlGM5X6KA099xD8Y/VD0Zmt+i
-	 QVhfePpnaHYHw==
-Message-ID: <39b99c310a307d97955ec6f9335c0439.sboyd@kernel.org>
+	b=V1ujTSIob5uW9cDHujdRroOfNOniLOotz92izX4K8tlhoo7+sT37Gy3U1zrpZ6sGA
+	 cbbg8TXfJlUBW0tocfmsacMZHx7yb3jC1mgVyKr06wnBJrJfimqiQu31z9kTBHv6HK
+	 cEm/l6Fk8qXm+RBg6m/rVV0T8AMlJJEwyNEBOolO36o8Hh6BDUSmkgydPIlSiKzQ9d
+	 zmrHbgEjVi5P4rsc5Pevi29ybB6gwqAhksHF0OkVaA6QL4yVhlS61KIKWrrbPdLJYx
+	 hBT03MW7Ahlsr01yYkMfTwYBaNwnpbmciLjYWvih2sHmDb2iBMguhLSoktZn4zDN+8
+	 OVPVcsuwiKJew==
+Message-ID: <1be883e74445353163ed94f273aa4a0d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,60 +35,35 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <D541S8TMBS94.3AKP8ET4TID6Y@bootlin.com>
-References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com> <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com> <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org> <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com> <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org> <D541S8TMBS94.3AKP8ET4TID6Y@bootlin.com>
-Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
+In-Reply-To: <20241023-mbly-clk-v6-1-ca83e43daf93@bootlin.com>
+References: <20241023-mbly-clk-v6-1-ca83e43daf93@bootlin.com>
+Subject: Re: [PATCH v6] clk: eyeq: add driver
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Mon, 28 Oct 2024 15:52:41 -0700
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+To: Michael Turquette <mturquette@baylibre.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Mon, 28 Oct 2024 16:38:00 -0700
 User-Agent: alot/0.10
 
-Quoting Th=C3=A9o Lebrun (2024-10-24 05:50:16)
-> The bug is elsewhere: we do get valid clocks from PL011. Both clk_get()
-> calls give proper pointers.
+Quoting Th=C3=A9o Lebrun (2024-10-23 03:58:40)
+> Add Mobileye EyeQ5, EyeQ6L and EyeQ6H clock controller driver. It is
+> both a platform driver and a hook onto of_clk_init() used for clocks
+> required early (GIC timer, UARTs).
 >=20
-> The issue is that we are using `compatible =3D "fixed-factor-clock"`
-> clocks in the middle, and those don't wait for their parents to be
-> active.
+> For some compatible, it is both at the same time. eqc_early_init()
+> initialises early PLLs and exposes its own clock provider. It marks
+> other clocks as deferred. eqc_probe() adds all remaining clocks using
+> another clock provider.
 >=20
-> Simplified clock graph is: pll-per -> occ-periph.
-> pll-per is register by our driver. occ-periph looks like:
+> It exposes read-only PLLs derived from the main crystal on board.
+> It also exposes another type of clocks: divider clocks.
+> They always have even divisors and have one PLL as parent.
 >=20
->         occ_periph: occ-periph {
->                 compatible =3D "fixed-factor-clock";
->                 clocks =3D <&olb EQ5C_PLL_PER>;
->                 #clock-cells =3D <0>;
->                 clock-div =3D <16>;
->                 clock-mult =3D <1>;
->         };
+> This driver also bears the responsability for optional reset and pinctrl
+> auxiliary devices. The match data attached to the devicetree node
+> compatible indicate if such devices should be created. They all get
+> passed a pointer to the start of the OLB region.
+>=20
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
 
-Why is this fixed factor clk registered from DT vs. from the driver that
-registers pll-per? Is it useful to describe it in DT because the factor
-can change? Where does it physically exist? In the SoC?
-
->=20
-> Sequence is:
->  - eqc_early_init(): it registers a clock provider that will return
->    EPROBE_DEFER for our pll-per.
->  - _of_fixed_factor_clk_setup(): it registers occ-periph, even though
->    its parent is EPROBE_DEFER. clk_core_populate_parent_map() runs all
->    fine without complaining; logical as it doesn't query the clk_hw for
->    its parent, it only stores indexes.
->  - amba_get_enable_pclk(): it does a clk_get() which works because
->    occ-periph exists.
->=20
-> Maybe __clk_register() should check the clk_hw for each parent: if any
-> is an EPROBE_DEFER then it should EPROBE_DEFER itself? That looks like
-> a rather big behavioral change.
->=20
-> The other solution is to keep as-is: provide all clocks consumed by
-> fixed-factor-clocks at of_clk_init() stage.
-
-Another solution is to register the fixed factor clk from the pll-per
-clk provider.
-
-And yet another solution is to return EPROBE_DEFER for orphaned clks. We
-have everything in place for that but we ran into trouble with consumers
-wanting to get orphaned clks in their probe or during assigned-clocks
-handling.
+Applied to clk-next
