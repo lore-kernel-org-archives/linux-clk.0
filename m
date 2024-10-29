@@ -1,126 +1,132 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40390201013;
-	Tue, 29 Oct 2024 09:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC7A18FDBC;
+	Tue, 29 Oct 2024 09:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730192699; cv=none; b=sU4uX2XZUn66W2wU7kBUfvFXXgk6rv5OMPcVwv5WgmHWwX+wbwtcny8VzpQLXxiRGkZMsXTCDsDKduJISsrWmtbAgoyxYMNZVmu993LSquWxbl0n4V+KIUmhVBUEj0DiS58zQajOP2HJQZrKDKMlO9bC8yiCbR+m+aVRQLGkyOk=
+	t=1730193846; cv=none; b=e5sJBQnJAxIBnTBPI6QifVaFtWWZZFVkXeVh+h3B0dkh0K7iJreELWk9CZysKVbTolNkqd29B+p2bxxcPl9aUNtYpVU27j9dcjRS409IG6Od3XtniaFTqaPlDMwBuRdST9/P1tlh0T2Z84RXR7bG00QOfTBRX3txW8bA3Al/OJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730192699; c=relaxed/simple;
-	bh=6jaDgZ3DNkahwBNCukCudBZoY/QkHxpPgLi5XLIbEOM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=Ym2j2VxYFQEBuIYEHOHogDBviSjFdxjJscy4AfpmvYpunTrDbSKcsbW9I6ir3E9WrPbd843wHfaqR5krenKPNAjHqqqs91l4WOjimXoCb4mOcImgwKUoxv0BuGx++n5LhgtMmdcpwGM47Q3XUvF4lhmy6zKMt3wxQ43A5nGSkBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VjmnSwTT; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1730193846; c=relaxed/simple;
+	bh=t8IaEQ9rRW1L3QPfhWtAigM2TUBdX+/OVhC9Y29POQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UrSGQJsz7A1YAiN7affuKVqZZ4AeV5AXHl1nmmL6bUUGyPvCFHrH+Y+woIhuSNtwhroxNOvwKaTvgAdgj+TBrYrwKcS29rzrrMXY9Hh3YSAg/HQRM4g+T3p9g55IYxD17LsQrAF66weKuJPAzPHvEAy4vJqL25iWRKkYHVUDOUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bkBqZCHs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VjmnSwTT"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6981D40008;
-	Tue, 29 Oct 2024 09:04:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730192688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KD2jpCw1JGfugQWWsRB3ODTkIZm9Svp5uxhwbyJ8ms=;
-	b=VjmnSwTTunC2i2wYT8UKn9bcnk4dlPuLlhpNpvBLsmwYcnCYgha5P/sjjkbWxhSIDnov7t
-	2Udy/oCcPYGTcS9p6OVTmMnmISnnzwR7f1OZWPc5B+he78GvIEBldjMG1A9EYMVnrA0PEp
-	IDorzjxPSGEdPZxuuAqlo9BIhhk3qWyPAPvnvDpeu7hLtt4sUwnrQAdD9M2Mq46PlTTSVg
-	h2Z/YveGJtigEm3JbdF9BAL500LJFQaJRmCdu5Twh4HptF7Kx/Q4LkR7zcuI2D5AMA90Ys
-	QqJ5XcjY/xaJN0XR0OHFKCpNiq7W6vdC+ZyxHBKXnrXOHLyW1+dUby/P7mWXTA==
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bkBqZCHs"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T99bsl001875;
+	Tue, 29 Oct 2024 09:24:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lpGsjXu2/4/vriKZ7eshVzhDsf71wfnrZMqCKy/qUEs=; b=bkBqZCHs+IOEbrA6
+	vf15a9RGAIZRgwt/y4ykeg71A9le/a3RPdVJdgKS9zXAtRGhv/7mviF5MYi/0T1y
+	Y9uRKczYkARua+YVxYbvP9yWvX5aDXKWiVoyQ3ljWPA5D8sWK/OOOf6rRB6O1qRy
+	HI+qzIsfslHKvqqYE3D284w10NKUEUbEo4DrrRg46tQZisWCoKDqbmElrayBh495
+	nnC+DrlKM1hqe187hVPrBMzt3hwVxiwHQUmvLNE2xQQLZHS+NzoXdM0yG14Zwzh0
+	rUahUC28PrA5JJU9a9wuj/8NFmw3HoyGkibP6YCTT0QobVMNO71UQVY05xVHz/7K
+	wObpVw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn4yy3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:23:59 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T9NxIe005850
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:23:59 GMT
+Received: from [10.216.48.13] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 02:23:54 -0700
+Message-ID: <fff416f9-4ea7-4117-87b0-986087f8e142@quicinc.com>
+Date: Tue, 29 Oct 2024 14:53:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Oct 2024 10:04:48 +0100
-Message-Id: <D5864C0GXLOD.2R2G7Y8CA3T6B@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
-Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
- <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com>
- <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org>
- <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
- <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
- <D541S8TMBS94.3AKP8ET4TID6Y@bootlin.com>
- <39b99c310a307d97955ec6f9335c0439.sboyd@kernel.org>
-In-Reply-To: <39b99c310a307d97955ec6f9335c0439.sboyd@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
+ QCS8300
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
+ <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
+ <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
+ <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+ <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OCZVljbNCuwwsXfBjMgcmsL59k424CC6
+X-Proofpoint-ORIG-GUID: OCZVljbNCuwwsXfBjMgcmsL59k424CC6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=634
+ malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290072
 
-On Mon Oct 28, 2024 at 11:52 PM CET, Stephen Boyd wrote:
-> Quoting Th=C3=A9o Lebrun (2024-10-24 05:50:16)
-> > The bug is elsewhere: we do get valid clocks from PL011. Both clk_get()
-> > calls give proper pointers.
-> >=20
-> > The issue is that we are using `compatible =3D "fixed-factor-clock"`
-> > clocks in the middle, and those don't wait for their parents to be
-> > active.
-> >=20
-> > Simplified clock graph is: pll-per -> occ-periph.
-> > pll-per is register by our driver. occ-periph looks like:
-> >=20
-> >         occ_periph: occ-periph {
-> >                 compatible =3D "fixed-factor-clock";
-> >                 clocks =3D <&olb EQ5C_PLL_PER>;
-> >                 #clock-cells =3D <0>;
-> >                 clock-div =3D <16>;
-> >                 clock-mult =3D <1>;
-> >         };
->
-> Why is this fixed factor clk registered from DT vs. from the driver that
-> registers pll-per? Is it useful to describe it in DT because the factor
-> can change? Where does it physically exist? In the SoC?
 
-Those are internal SoC clocks, yes. No reason for them to change from
-one board to another. Adding them from the driver makes the most sense,
-I'll patch that up.
 
-> > Sequence is:
-> >  - eqc_early_init(): it registers a clock provider that will return
-> >    EPROBE_DEFER for our pll-per.
-> >  - _of_fixed_factor_clk_setup(): it registers occ-periph, even though
-> >    its parent is EPROBE_DEFER. clk_core_populate_parent_map() runs all
-> >    fine without complaining; logical as it doesn't query the clk_hw for
-> >    its parent, it only stores indexes.
-> >  - amba_get_enable_pclk(): it does a clk_get() which works because
-> >    occ-periph exists.
-> >=20
-> > Maybe __clk_register() should check the clk_hw for each parent: if any
-> > is an EPROBE_DEFER then it should EPROBE_DEFER itself? That looks like
-> > a rather big behavioral change.
-> >=20
-> > The other solution is to keep as-is: provide all clocks consumed by
-> > fixed-factor-clocks at of_clk_init() stage.
->
-> Another solution is to register the fixed factor clk from the pll-per
-> clk provider.
->
-> And yet another solution is to return EPROBE_DEFER for orphaned clks. We
-> have everything in place for that but we ran into trouble with consumers
-> wanting to get orphaned clks in their probe or during assigned-clocks
-> handling.
+On 10/28/2024 12:35 PM, Krzysztof Kozlowski wrote:
+> On 28/10/2024 06:15, Imran Shaik wrote:
+>>
+>>
+>> On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
+>>> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
+>>>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
+>>>> QCS8300 has few additional clocks and minor differences. Hence, reuse
+>>>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
+>>>
+>>> IIUC, these clocks are not valid for SA8775p. How do we deal with such
+>>> cases for other Qualcomm SoCs?
+>>>
+>>
+>> These newly added clocks are not applicable to SA8755P. In the
+>> gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P,
+>> ensuring they are not registered to the CCF.
+> 
+> I meant bindings. And existing practice.
+> 
 
-No suprise this kind of edge-case behavior can cause trouble.
+In the bindings, the same approach is followed in other Qualcomm SoCs as 
+well, where additional clocks are added to the existing identical SoC’s 
+bindings.
+
+https://lore.kernel.org/r/20240818204348.197788-2-danila@jiaxyga.com
 
 Thanks,
+Imran
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Best regards,
+> Krzysztof
+> 
 
