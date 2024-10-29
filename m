@@ -1,145 +1,112 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E99191F8E
-	for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2024 10:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D209204F86
+	for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2024 11:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730196167; cv=none; b=ibWMZ8xEvACoHTU6SLv8fQ5857vLWXXns/kL6229QxJub8O5Wsi9GqR8vpKhm3t6fymgkZBjpKP0B4TETDQdFARUE0W8aIQjhp+ZEnmdk62yFogqbVZoxnVdYjmBHRo4E7lW1mv1QAoUk1Qcr7ytPymQJdeRutNbTvwZtUciyYQ=
+	t=1730200238; cv=none; b=nuyuEOJn8l11MYj39nVB3Cp+etohc/sv3shiOQd2qdS9iQZ3UYNCl/NLdO7MA5we2VhKN2LkHhjGrGgtqg+Aeqde2z7upN3JAmreInzCFtAaP3ysLc67uyycrMpPpPaRDGpgZb8BO5HGjkfdkMAv/xRvDHvkcDvcezhywchVr/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730196167; c=relaxed/simple;
-	bh=GIHMHqxOvtpPeTqllzyrsniuNmng8Fl6C1CaUKUvGYM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BqFzal5wzbEKgOXLtUrxI2GnUW8DrhR2FLDU+rquQv0UCZK8y/R8lJhDKqC8TURCzDtIZVfcZ3Wd4CyvVAp+bubUpXOf7S8zD79RGnf7y4opmOUBb6384GVT6LXImi7S1J+QYbDhxvo07RhvYQ3n33jmfjxWeGS/gaq3EWFcMAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P/hTYegG; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1730200238; c=relaxed/simple;
+	bh=tFMKTNPmYqJnBHp7LbWdTDUq9SozK9sVsXxDQzNVaBA=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cJlmeSyfDNd3HVng+S4TIxZ8bI9aZCeh0Bwb3jiWOtz3zOLAiSDeFmGOpHyFN4B1D62sAUvEwIRK2SRKr3pSfony327Gof/Y+0W5phvz8PDUxkNubSYvYAIeMd5smfiqHXu0R+vQOTMBQoQjvbwsxonE5eBJuBrAt7Rye963Em8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=q4ew1JJr; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P/hTYegG"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53a097aa3daso4578425e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2024 03:02:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730196163; x=1730800963; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MtRHRHZJbxkUHwLfJyAruL0+r7u3eJytHHCH6YWzdlk=;
-        b=P/hTYegGINBXOE3sTmQF73WhwqEKQoLRxQoxp2z5k30pgJrIQOOv91U5upBhI4ZXSH
-         nPFL6J42UvB8GWddEE/pSONRrYNEC80xhdmEtPcyDJF2PSsnwC10ISkZ/nRnw44ylBkk
-         LUjAkYh+YZOtigig7cqjzyy/KLTiMZ6L32MNyMgStWQ+RyfAgUdj4xc/vrn6f5s9NrA8
-         Et727hEE6fTNtzX3yZ/W5h7rbn4xrq7uWnQel0V61J+7NXHupAHyE6YAjZtwx9qMRKq3
-         af8rAv1YpDVF0E4zLNI1IgE31Rq2gHRL1vAOgfvKwWH7M4xYerVU2pBg/MuvcMRSupr6
-         rMJQ==
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="q4ew1JJr"
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9D7A33F129
+	for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2024 11:10:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1730200227;
+	bh=OCvTHmHIsSTPPIZoUzRjyZ2bC+ZqfM/bLPYsIiMxcJE=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=q4ew1JJrAO0uRuq340Dxk2HTOnMS0zsf42msOpvWiJp0TxqPW+GTZSnO0HJukV43C
+	 mpUnb6Xx5jEYWAozj2JU3OPKAZN+e/QSLXBM55fnObPdeNXfMNIX7cvGuxloeahuBB
+	 MiDSHBLlnMdNd6YKLq6qoQEBuAJGv3jUEcKwTHmDuSqdg8niIpp3kIVsIHNLw4IR2x
+	 42tAkyOVcMRDYQAq3Xee1v/rL6AswFoIfPH53lqkzHWyZCgIBjBihgMq/g0uQwIBtM
+	 TA+kRKGhX+xzJGAtI+B1AIGcixAeKFmd6I9TvGf8gR5kDb35hW0llxwVmpUc2ucdaH
+	 6NbZaQaa2Q2hQ==
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3e5f2dab4f0so6200105b6e.1
+        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2024 04:10:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730196163; x=1730800963;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+        d=1e100.net; s=20230601; t=1730200226; x=1730805026;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MtRHRHZJbxkUHwLfJyAruL0+r7u3eJytHHCH6YWzdlk=;
-        b=IqwllLYM5gNXiQdRVTOoScdn7am2GT7UiDNzvbKMPa43zSmfD0WXRfx2iOxwrgFx+a
-         dt02+8c6exiD1BAbGd3pQ84FBvYM76lJCw+wsW/IcTbC/VcPo9YmBSkXvJwiJXlyMFUw
-         0a5JqbBOx2/RkLzzrCDbLz8H/1NVg4K+28TMn75Y0+uVZQavroKWypHxjRf7p7FD7BA6
-         HaypHJbf2Z9t+Gl76wW9O5HLBMnwFbST2TwbY3JiwQN9qKiUKgTEQzLnUcEBRR8vy/+a
-         Zs4UnGPu4Ussm6MRRz/Pu4R6+BtbusWLPVLLmyV6Tb3xcn3PEqWHkscYxKal1ttGSRkA
-         M3Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzoYaTtTPi3KVZQGxQXgBTCkxpt56NF2KRZKbonIEwCQCE/n3NWkaTGwGmP/tSJmLDRfXC3xvnyLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoX7GhpXKbZbGkgaC9xt1yrSTQfriXYvMv5M9PWVN2hvFoD1X8
-	fkOopGZie2iRJT16okwLayNoCUGSIVsJ47pA3b3oebDmS4SVCraurkXYXTQNQwc=
-X-Google-Smtp-Source: AGHT+IGEwILz2Lx4Ssp9GAJRdhmg/Oj6nSmHRAC4gShR5qbr4sklCtvT1n0f4SFTSdo1a1GofvMf/A==
-X-Received: by 2002:a05:6512:b22:b0:539:a2f5:2f1d with SMTP id 2adb3069b0e04-53b34c364fdmr4152665e87.61.1730196162581;
-        Tue, 29 Oct 2024 03:02:42 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:f65b:b446:12e7:273])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b712d6sm12023826f8f.78.2024.10.29.03.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 03:02:41 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Zicheng Qu <quzicheng@huawei.com>
-Cc: <neil.armstrong@linaro.org>,  <mturquette@baylibre.com>,
-  <sboyd@kernel.org>,  <khilman@baylibre.com>,
-  <martin.blumenstingl@googlemail.com>,
-  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
-  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
-  <tanghui20@huawei.com>,  <zhangqiao22@huawei.com>,
-  <judy.chenhui@huawei.com>
-Subject: Re: [PATCH] clk: meson clk-phase: fix division by zero in
- meson_clk_degrees_to_val()
-In-Reply-To: <20241026072624.976199-1-quzicheng@huawei.com> (Zicheng Qu's
-	message of "Sat, 26 Oct 2024 07:26:24 +0000")
-References: <20241026072624.976199-1-quzicheng@huawei.com>
-Date: Tue, 29 Oct 2024 11:02:41 +0100
-Message-ID: <1j34kfuszi.fsf@starbuckisacylon.baylibre.com>
+        bh=OCvTHmHIsSTPPIZoUzRjyZ2bC+ZqfM/bLPYsIiMxcJE=;
+        b=krlb9gRhTSn8hcHlnS/84b6aO5ZyFePnUkl9WNbvj9dncBSjerm03zNijgZOYaY1HP
+         kYUWa8HXscJ3iM63bhigvlImLJ0nfs+7yMxZc5QMuyscmAdY+ggK4NQ9HvbRjitsq1VW
+         117CPYv5yn9s3Dw/wRm7GjRwUMhCQ7xU26loBeNqdkawpvmOnRxB+lZo3Y1XH9wf1In5
+         KeboPz4clLoUyoT/soia0ODaHiZ4PkNzdEHiY7TiwdwuZROKSAMsnzHWwlizNSYH2RAJ
+         5nLF+namk/2p91PsPf4Jp84xpmjjO9euXksDle81zppQsGiHf3qNG3hg0qDEbyCxQ09o
+         DmkQ==
+X-Gm-Message-State: AOJu0YwPGyjmPVXkJzNoEKwa/oav4pChJ04fy9VPeR+BDSjfiT7To3NK
+	TWAa3SsVvr6I4LGE9chy69xk6U5XEULQltZ0tV8N/8CDaAf9U3mm6OM1TrPeJEHtZvdsHEb7wsZ
+	gwfgRTbDOw1Q28CfSyKMzt/oSI1ukCS/vZwweWYYpgeE76HlzhyDtzpTTAfSGnmc3VMQybQzaVs
+	DBCRdAhXN3023B/Rg/lp/yeWtV8tzKkp8MX/hD29TImUhJSTYP
+X-Received: by 2002:a05:6870:180b:b0:288:8bdc:1ec5 with SMTP id 586e51a60fabf-29051ba4840mr10052134fac.19.1730200226508;
+        Tue, 29 Oct 2024 04:10:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3/FOqZQ6Obh7FQh8oUZ/M2AMCPjS/Rwuilx2dDjehZ6+vagRyskdpKOXihVmzkbLu0/SzaBchfmjWxpYmNl8=
+X-Received: by 2002:a05:6870:180b:b0:288:8bdc:1ec5 with SMTP id
+ 586e51a60fabf-29051ba4840mr10052124fac.19.1730200226197; Tue, 29 Oct 2024
+ 04:10:26 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 29 Oct 2024 07:10:25 -0400
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20241029032828.238706-1-changhuang.liang@starfivetech.com>
+References: <20241029032828.238706-1-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Date: Tue, 29 Oct 2024 07:10:25 -0400
+Message-ID: <CAJM55Z9-xrKuH3eS3hUjDMv8JEabBZRR48oQmhv7yghtiG0cFg@mail.gmail.com>
+Subject: Re: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as __init
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, 
+	Xingyu Wu <xingyu.wu@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat 26 Oct 2024 at 07:26, Zicheng Qu <quzicheng@huawei.com> wrote:
-
-> In the meson_clk_phase_set_phase() function, the variable phase->ph.width
-> is of type u8, with a range of 0 to 255. When calling
-
-Thanks for noticing this. Some remarks though ...
-
-> meson_clk_degrees_to_val with width as an argument, if width > 8,
-> phase_step(width) will return 0. Lead to a division by zero error in
-> DIV_ROUND_CLOSEST(). The same issue exists in the
-> meson_clk_triphase_set_phase() and meson_sclk_ws_inv_set_phase().
-
-It would have been worth noting that the issue is hypothetical given
-that all existing instance of the mentioned drivers have a phase width of 1.
-
+Changhuang Liang wrote:
+> Mark the jh7110_pll_probe function as __init.
 >
-> Fixes: 7b70689b07c1 ("clk: meson: add sclk-ws driver")
+> There's no need to support hotplugging in the jh7110-pll driver. We use
+> builtin_platform_driver_probe, the probe function will only be called at
+> startup.
+>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-The "problem" did not appear with this commit.
+Makse sense to me, thanks.
 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
 > ---
->  drivers/clk/meson/clk-phase.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/clk/starfive/clk-starfive-jh7110-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
-> index c1526fbfb6c4..b88d59b7a90d 100644
-> --- a/drivers/clk/meson/clk-phase.c
-> +++ b/drivers/clk/meson/clk-phase.c
-> @@ -51,6 +51,9 @@ static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
->  	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
->  	unsigned int val;
->  
-> +	if (phase->ph.width > 8)
-> +		return -EINVAL;
-> +
-
-I don't think erroring out on this condition is correct.
-A phase encoded on more than 8 bit is valid.
-
-I think casting width to 'unsigned int' in phase_step() would be better.
-
->  	val = meson_clk_degrees_to_val(degrees, phase->ph.width);
->  	meson_parm_write(clk->map, &phase->ph, val);
->  
-> @@ -110,6 +113,9 @@ static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
->  	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
->  	unsigned int val;
->  
-> +	if (tph->ph0.width > 8)
-> +		return -EINVAL;
-> +
->  	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
->  	meson_parm_write(clk->map, &tph->ph0, val);
->  	meson_parm_write(clk->map, &tph->ph1, val);
-> @@ -167,6 +173,9 @@ static int meson_sclk_ws_inv_set_phase(struct clk_hw *hw, int degrees)
->  	struct meson_sclk_ws_inv_data *tph = meson_sclk_ws_inv_data(clk);
->  	unsigned int val;
->  
-> +	if (tph->ph.width > 8)
-> +		return -EINVAL;
-> +
->  	val = meson_clk_degrees_to_val(degrees, tph->ph.width);
->  	meson_parm_write(clk->map, &tph->ph, val);
->  	meson_parm_write(clk->map, &tph->ws, val ? 0 : 1);
-
--- 
-Jerome
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-pll.c b/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> index 3598390e8fd0..56dc58a04f8a 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> @@ -453,7 +453,7 @@ static struct clk_hw *jh7110_pll_get(struct of_phandle_args *clkspec, void *data
+>  	return ERR_PTR(-EINVAL);
+>  }
+>
+> -static int jh7110_pll_probe(struct platform_device *pdev)
+> +static int __init jh7110_pll_probe(struct platform_device *pdev)
+>  {
+>  	struct jh7110_pll_priv *priv;
+>  	unsigned int idx;
+> --
+> 2.25.1
+>
