@@ -1,106 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2098.outbound.protection.partner.outlook.cn [139.219.146.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE711AAD7;
-	Wed, 30 Oct 2024 00:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730248860; cv=none; b=W1d1zMwLkbKlLIRBJPiA05bUXYZHx5ehx/pqZGElkb49MyiEom7O1B6PQaiSkbR7hF1ZEzDNlV5eMs6OjlmSI5/00z2cjX5MGeog/qARPvZRzmC9JxWqtab5RjICyIJk869PDRSkxRcSDCIdN84lw6zAJh846F/ulj6X3kunDJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730248860; c=relaxed/simple;
-	bh=VDQMFPrKxlMhz1aUAMz83CqSyTiE8wcdm2ljHR+1PUk=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ovdZ5ZwleG81R2E9TcHDJd3a4rQbAlXBZym2lQcl2qcYxtebMpoE2Lmxc8FZZHJ03VNBFVMCmLoQSKofzE01ZvH/JB6adv7QL4FxKZei7eCbQb6lC7/tNYpb56cBv0+6bEkyM/9vmtFcU5/dV1MgVWtwgwvRtXtTFgHV0IYYW1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBVHil7P; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBVHil7P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D47C4CECD;
-	Wed, 30 Oct 2024 00:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730248859;
-	bh=VDQMFPrKxlMhz1aUAMz83CqSyTiE8wcdm2ljHR+1PUk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YBVHil7Pq3+59Lt49I5fTeu51WIHalVOcjBN/o2fLzr+kmN5B8SatNl/VlzZROn8A
-	 9J5w5eUElC2q/bQ1ATCZkw8L7SXy/+upXU1WtNuwLlnzTENT1/wzJBLIcA+uBfITcR
-	 zdIHDnpeQRLRLSQs0L9lnRvfwB6hsapDgLJ8aS6XR3kQRRFVB8N6BgQ3MeGkwbPuFy
-	 Opkn3TpcKzpq6rNDOgSrbTASoHODWeQMimjF+HoWzPUK+uh74qNgGiLwbpbBCDvcsA
-	 3AqCsBfG2kCX4lNGQNjgLZBtCo0EckfAVnibVvgkTPX78oVgG8lB9J1jvWtPsLNyuo
-	 J2dgu1uN/mVSg==
-Message-ID: <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E60BE46;
+	Wed, 30 Oct 2024 01:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730251988; cv=fail; b=Q+MHNVPp6wwhue0autxgWzQGWw3mmpQ7uTs438z+ediXgSuaN2KdrzVYU1HMU1BvWGWbUns/z2xK3WlSXHE2nBpancm63HOajoEei8eP/v2OeYcC8/3ydrI5Qcox0PHSxpdPK/X28WBLTBnXEDXoFYPzndmh8ujw/nEaj9CWxZM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730251988; c=relaxed/simple;
+	bh=NzVwo9ich7e2JfkjwxcY5k3BVihEi8+LZl9jjEMaNUg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tRRKMUkBH3AN8UpV36dbfT6peFP3R1CMtaIfVJR+Vz2yZ9ga6i4DyhphegngRyCFG8WmfHoC3SglyjvPYAgb8AI9vnf5Zv6uXx956D5Q16f+cqXyO9AAyfppT5Tt0kRLGBJNVmWIQAfitO1oR2ryqB4goa8W7kw6ashIWLCLcxw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cDyiTBUr0FQCfBRNQqW8nSVe81lmP1gGXRfdf8GZgX+aQSMngFhqLUktE69dPMbXBU6rTeJKs0f9XuMmkNv5UxgX7EBY2NeRiX5jenoJXMTXxujy2R+D/QB2DGIIj/1T23dWdcWDxQ6Jq616FdW9hqvCQ2LQ0fOHYOY6OqorZpQKeSt95sZ4uT1LKR7euRZa+vHGLnchs8BPuNvKwFVMy+k73D7fvxE2Sy6tl99cPl3RFOSWgqVnLH1nh+z+WGc6ItBL09SO0BOFjN6/lu8rQmERBML9nVls3LTf223THjdG2O4uFJQcUfip2GyfZq8aF47ddS3IPx4YJG2D0OBT8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8FGKjUCS/RSuA2vw1ZxKnx/bw5X5XYua+H3ZuKWeieE=;
+ b=JVYopqRzqZ++U1yBNva+BIhFnyIqAFLQvwlt6lVc/yKENGNT0q9cqRAhav7J0uxISCFi6hw2apojLDMwsdQYQfXAOFVB7KRvAQ+xr6sPUq/qOEfdYIv4a8XE+dGh+AESm3yx9ZBQSza+dzC6VVo1B4rfwilC8rIQ96izQzCtLX8fcAXMJKPTFdLQ5gb8sDsRczEfhcvTmM6cy7k/R1fVdSIUR5WOomO36v+duziw7zMUq66AWj+5HQjHy2ynSNF9EzcnB09BPMXtJhfTT16DKIDrAeBUIYAjN7bHBLNxj6ndur5URXSt2wquBJqyEOLlho2oNZ16nfayQycyAsrt9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1052.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:9::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Wed, 30 Oct
+ 2024 01:33:03 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::40dc:d70a:7a0b:3f92]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::40dc:d70a:7a0b:3f92%4])
+ with mapi id 15.20.8069.024; Wed, 30 Oct 2024 01:33:03 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, Emil Renner Berthing
+	<kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as
+ __init
+Thread-Index: AQHbKbKrTkkKQNBM8Ea0IUaIPXt50LKegdSw
+Date: Wed, 30 Oct 2024 01:33:02 +0000
+Message-ID:
+ <NTZPR01MB095605A72E938ECBE381F4E69F542@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1052:EE_
+x-ms-office365-filtering-correlation-id: a2d9e37d-4c49-4c0c-4e43-08dcf882cbe2
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ OPowV4+ep4ikb3+rzAKv46O+JnSDeWGuGTcx6pcAnkgAQjEe+u+p1hp4+o2b9F2luOg36jec3y4NKLd9yT9qUkC4nwXTRDG+Rpu5jwM0DKApDVMROTaULF2THeqUxW31FcMnB1XwnpHpEsaXmxOAzRf62wYveFKz1LV4bLjXRUhYdGKjttm7sNN9GPdhwAKiIjjCTqZ02Kk2RounQdPsKkvNknryCQyyQa4Pb+bOuBLBeb5ffxzsF3AR1U01zP4u+WI/d+cX+Nw1A2AEn66Wvsclia4Q0sXabrA8OeWC1g/r1QgoCn1461gcdCu2pQA7h1ek0xwewozttapuITe8PJrz21kWyscscyqQ0VqpxKcp673+ll4WzDYjfUcnSAsthItg8wAB1Yz3MWYvp8PJ21BBi95AvSuTEQK9DariKbJ6ar5zThXqFfP5Q1cVQSfG2/AJgalWBCsSlZDlXhFCK46xjuUupx7dzcCjSeCl68+mHPqgrGmfBsk9a8jc/rmI4nibhU9ZT6/m5xVVvSjFjND9pvCaSHH4bn57/7G6+52/bZcMWU3YQBlyv3BcWdl5D+UmlWBfcKJzpL+3IYk9swQ/kgoQSvX300XYdnp+5nYKrG8OQlqUQvaPyR1d/fdt
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?CLjPoldroc+XyqN7dNnceHRjtepcfhx16auAKnA9MM77uWXtw0JtHK4Xu7rM?=
+ =?us-ascii?Q?JixgHoIEzqE8dTIhLnfHrnmWOtVb5fS2UwyJCbT3vvfqNtc295zxnMARj50c?=
+ =?us-ascii?Q?fobmEuhKp/rUAsUeU47ufOAh6QHys9xenrhkub/93mA30pr823ol8W1gv4At?=
+ =?us-ascii?Q?AnyAubPKLW/1ZGnoxVsFu9bjhu7eXUFj2tsu475d6oVhRfGi9eSekyePk0KZ?=
+ =?us-ascii?Q?4sNm452RC6ZZ4+7U3m9sJXXYc5BTjIXvYNbG820sYMpLdpHKIiOMhgyrVc34?=
+ =?us-ascii?Q?K0A/F3TMTn9VZkb2jV14iUYn8eci/415i+WD5FVacyRSt8czgu9slLHwmSIR?=
+ =?us-ascii?Q?90674ih3XgNxGU/MZQQkKtDFgkv2zb5bY8bmVNyxcCzr6jJvaitLZ4dyTKsP?=
+ =?us-ascii?Q?hCAVnDq2t3cpm6S6ZeoSly1DS9y20bEfta5O7fd04eFHlo6PPEgTMc/gb8zl?=
+ =?us-ascii?Q?mRKBDJ25lOJz9vSxQ6KmFhsLHomwj3G+V2B2y5Whf0A196brSgWviCWeZrrK?=
+ =?us-ascii?Q?6RlhLe2DJTw2w0HHn9GGhbUVFqeAup+thpj8rcFqld7EzTRLJ6bZRfNJawb2?=
+ =?us-ascii?Q?2Iier4L0V3t6UP5usc3a2OnOy0m1e7Ofz/yXhq31yT11IrG1tYr2Jf7A5BJs?=
+ =?us-ascii?Q?q05A4FH1+fNGTRrBudWHtObstqUQenMr/fVJj7uwvzCmTaN6lzPcwBpsk4AG?=
+ =?us-ascii?Q?MNHcwudT8lSCMOAz05xkDTEqU8PF2rDfzLa1L+Jy/Ogh4HbZ7OHlhyAqeLRI?=
+ =?us-ascii?Q?b95C73/D5V9sbhtJmxgsEsGZ7EgMqMEuKgDIQmRlow85ApPYLJHhRVA+QXQJ?=
+ =?us-ascii?Q?kVKoquEj2Qq1Rkv6Y61zXrKTA2sYQ00K63wBUV6jsSurvr5fO4gDw8M66V02?=
+ =?us-ascii?Q?JN8r54wladaKMBLw14MNeJm50Ggj4ySOGY7bWfCeeCP30VIsnT5Naiune1Xn?=
+ =?us-ascii?Q?DXKtoa4HxltbYvHAt2OAITFeutQO7pRlHCIftVQUyYv4N52VLrukvZ4EoUKF?=
+ =?us-ascii?Q?/yRyrMJHEj1OW15ixgGAPed26NpHrqMKVLjeLg7Aq4cfPk2+9cmoF385xylR?=
+ =?us-ascii?Q?+QjDwXfHV6tdAiTxKjp+gK89++3aUFh026avPeiyxdG4KW5Br8bgc0/yDotc?=
+ =?us-ascii?Q?iT8kEEVXFWtcou5C9YamTHQnm/7gUvmG9Q6zLte6s1D38gtuPbd8p38Vh6tj?=
+ =?us-ascii?Q?9vE1Oz/toG8yUyXavXhfFlLvCqxANv8cS7xlD3NVjtmVLOJCmdYSP8qYZH4b?=
+ =?us-ascii?Q?fzNPuInO53NXNo2FRSdWAmdP0YIoD1+x6qe69PQ2uXaT34xYNh2AYRQP+eGM?=
+ =?us-ascii?Q?DzH9NqrFsaMaG8o75WygQ8NaMAmDISqQfAIp6/Pt8dl2J93PLHZTG3Tu0DRo?=
+ =?us-ascii?Q?5tXgWfuwLclOqaPN5AL/d2/dhmUIM3DTLnamK+4T+N/0D3835sQbC6pmwxUJ?=
+ =?us-ascii?Q?g1VZBNMz/bqqhTIqFvLMnBPQ2G5n6LHkYmyKsELN/Mfl+R+MWSE6NBweOzza?=
+ =?us-ascii?Q?Gv0cp2GwQbZlw0ngJnPx20A6M+S+mnu1run8FZOazi/POIi4d4lL+BUMxwP+?=
+ =?us-ascii?Q?THCnivErca4XCvxbOdMcetTY0Lxlli60Hmoxypyx?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
-References: <20241028163403.522001-1-eugen.hristev@linaro.org> <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org> <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
-Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: andersson@kernel.org, konradybcio@kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org
-Date: Tue, 29 Oct 2024 17:40:57 -0700
-User-Agent: alot/0.10
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2d9e37d-4c49-4c0c-4e43-08dcf882cbe2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2024 01:33:02.9404
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wapdls8ah+RvpNMgSqpTzgLYg+JXP/RVNecOyBkYXoIB3SpAZBN5YIHUENNSZLkJ98w5sBmXUkBnoEURFVSj2W4CoFeJcVFilSI3YM9PIDM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1052
 
-Quoting Eugen Hristev (2024-10-29 06:12:12)
-> On 10/28/24 19:56, Stephen Boyd wrote:
-> > Quoting Eugen Hristev (2024-10-28 09:34:03)
-> >> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-> >> index 3acca067c72b..152947a922c0 100644
-> >> --- a/include/soc/qcom/tcs.h
-> >> +++ b/include/soc/qcom/tcs.h
-[....]
-> >>   /* Construct a Bus Clock Manager (BCM) specific TCS command */
-> >>   #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
-> >> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
-> >> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
-> >> -       ((cpu_to_le32(vote_x) &                                 \
-> >> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
-> >> -       ((cpu_to_le32(vote_y) &                                 \
-> >> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-> >> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
-> >> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
-> >> +       le32_encode_bits(vote_x,        \
-> >> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
-> >> +       le32_encode_bits(vote_y,        \
-> >> +                       BCM_TCS_CMD_VOTE_Y_MASK))
-> >=20
-> > Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
-> > supposed to be marked as __le32?
-> >=20
-> > Can the whole u32 be constructed and turned into an __le32 after setting
-> > all the bit fields instead of using le32_encode_bits() multiple times?
+On 29/10/2024 11:28, Changhuang Liang wrote:
+> Subject: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as __=
+init
 >=20
-> I believe no. The fields inside the constructed TCS command should be=20
-> little endian. If we construct the whole u32 and then convert it from=20
-> cpu endinaness to little endian, this might prove to be incorrect as it=20
-> would swap the bytes at the u32 level, while originally, the bytes for=20
-> each field that was longer than 1 byte were swapped before being added=20
-> to the constructed u32.
-> So I would say that the fields inside the constructed item are indeed=20
-> le32, but the result as a whole is an u32 which would be sent to the=20
-> hardware using an u32 container , and no byte swapping should be done=20
-> there, as the masks already place the fields at the required offsets.
-> So the tcs_cmd.data is not really a le32, at least my acception of it.
-> Does this make sense ?
+> Mark the jh7110_pll_probe function as __init.
 >=20
+> There's no need to support hotplugging in the jh7110-pll driver. We use
+> builtin_platform_driver_probe, the probe function will only be called at =
+startup.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  drivers/clk/starfive/clk-starfive-jh7110-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-pll.c b/drivers/clk=
+/starfive/clk-
+> starfive-jh7110-pll.c
+> index 3598390e8fd0..56dc58a04f8a 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> @@ -453,7 +453,7 @@ static struct clk_hw *jh7110_pll_get(struct
+> of_phandle_args *clkspec, void *data
+>  	return ERR_PTR(-EINVAL);
+>  }
+>=20
+> -static int jh7110_pll_probe(struct platform_device *pdev)
+> +static int __init jh7110_pll_probe(struct platform_device *pdev)
+>  {
+>  	struct jh7110_pll_priv *priv;
+>  	unsigned int idx;
+> --
 
-Sort of? But I thought that the RPMh hardware was basically 32-bit
-little-endian registers. That's why write_tcs_*() APIs in
-drivers/soc/qcom/rpmh-rsc.c use writel() and readl(), right? The
-cpu_to_le32() code that's there today is doing nothing, because the CPU
-is little-endian 99% of the time. It's likely doing the wrong thing on
-big-endian machines. Looking at commit 6311b6521bcc ("drivers: qcom: Add
-BCM vote macro to header") it seems to have picked the macro version
-from interconnect vs. clk subsystem. And commit b5d2f741077a
-("interconnect: qcom: Add sdm845 interconnect provider driver") used
-cpu_to_le32() but I can't figure out why.
-
-If the rpmh-rsc code didn't use writel() or readl() I'd believe that the
-data member is simply a u32 container. But those writel() and readl()
-functions are doing a byte swap, which seems to imply that the data
-member is a native CPU endian u32 that needs to be converted to
-little-endian. Sounds like BCM_TCS_CMD() should just pack things into a
-u32 and we can simply remove the cpu_to_l32() stuff in the macro?
+Reviewed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
