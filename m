@@ -1,150 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1EF22ADFD;
-	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100491BD9DD;
+	Wed, 30 Oct 2024 17:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307891; cv=none; b=kdFoMWMWXUXMgZQMp1vAytyuUk8tLeAzzYed6lAl5bH/kAFQeGM+7k8rGa02pn5TMCuSTymeiJVq5iOtuCrS5wDscj6l4zuzCvjlEFoYolQKsWCTjxG/AUjeHMN9kWvodxOJ0d3+xu05P9EBi2Cqk4HkRwdKXEZ3mjJzaHhEWTA=
+	t=1730310779; cv=none; b=aj8eaOputKQtxwZeHB0GgIUnBf3cxG66DCJX5G7dTu3OO8zha7L0t1xLM4Ax29QLJfE2JDdJM0rjbV4Ltesx8kkj7Sbf575MSnAEnp7O68CV6qbaEmxWwBfJJ8UqVqgNIVvgl9AkC6OyTDA3U6u2QTkStP43m0vBPu+ugKw72/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307891; c=relaxed/simple;
-	bh=F9Pr/Oo+xoM6rBNWj4TUXotKSeXlLKjDZ0TcVUnAkZk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=I8/cSLdYqcjl+4JlxQi/mSglEOuYIfSF3UG+o3a2M4tO+AnwDXG1USCNaRmD6TyfQxtIigTE/xECMAdSPq8QH1cKEldsvZfmLYnrhkJI8NNGDu4WBi/TxoYqGOB2/dTHp/X52RpGfvOjtJMT8jsCQxqHmrLrRrA+I84R64am3mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPnvIuuT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730310779; c=relaxed/simple;
+	bh=wpy2zs+vyKoPzcsJP8EV44v4Vm34XzUjqdBgP7ZPjvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DlveRMwfkErZ/xREsdsgyaKt39PmjgnyrJITI+R+khsba+FL3nonUcif+gUN+gtvRJmuTubcsAqk2HqPE4m1ZFyJz5OsNQF3bSMWmFN4HvEb2/43QRaHdUJ+xdzQxRjyR3rSSXwvAoNiD80NiHM0NMEe2pd7SX70stbxzMqdfbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IvOfUXPN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPnvIuuT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2707BC4CED2;
-	Wed, 30 Oct 2024 17:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730307891;
-	bh=F9Pr/Oo+xoM6rBNWj4TUXotKSeXlLKjDZ0TcVUnAkZk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=QPnvIuuTQIPej4r3eeYpF52cq2e7H1rX9pCQNfZl+LOKTAqY2dqepCh0c22gWfmdf
-	 8aDUkUZEwVMevTt2G2hab/ftEIBTN2XHMHprfXXgkQIEIrpy0DPUKNJK16QKNDdRCt
-	 Zm0i0zCW4jCPBF8fwSdYFGDmS6xLPXLlzVhvsSdCcp0TpbM8C4X+pdAPIGKWI3mAff
-	 RXdam7q2IsjC/YnOItE7WJJar9/4GRhdptKsqi0NxU8IcPVjkDwyL/7JoHIesy6lnm
-	 w8nXiNTJ8QHhAFlMRhiW2s6ZNPrVPHLTJwcf5TE64yTp0rUVCEPDKMqFuQd6O742kR
-	 OFEjZNKihxaiA==
-Date: Wed, 30 Oct 2024 12:04:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IvOfUXPN"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UCHO4Y020417;
+	Wed, 30 Oct 2024 17:52:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k7vaGGF0ZQrdZ7T28DJe6eUEwES7PAilGNP9n7e2Pvk=; b=IvOfUXPNyWHiHEmk
+	F0hhAOVfy3G2/LgOBHDctw0mdpH/FNyr57DmUrHHTD+6NaHJadBy8cUNjgs44lKi
+	h4UdXa4LYRggh9khKx+tWRkLzsL2nA/b8an7AsrqNraHr724gU0mpdIkT6UB87JR
+	ECaMGRdnAHcd4v2g8sTJX9sTn4CZNLPCXrp1dTQuFfpKbEndLMq7KdpHgsflMQ/S
+	4QaS4PmU0xiIsHqJQsXodV9dxR8i4i5HMevXh5tOzSAN++iDzP1CJktKxvHzrQ88
+	PCPJNaEP2ArTV3ukGGetEkYN3bz6MUqJm8q7F7gNoXJGyv3cLgqgle07CoMPo9IH
+	zHO+Dw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmp0gxta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 17:52:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UHqGi1015906
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 17:52:16 GMT
+Received: from [10.216.35.255] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 10:52:11 -0700
+Message-ID: <b1e9f8ce-b8cb-40a8-a69f-9433073922f3@quicinc.com>
+Date: Wed, 30 Oct 2024 23:22:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, 
- devicetree@vger.kernel.org
-In-Reply-To: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
-References: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
-Message-Id: <173030775265.1269185.10225063190371444924.robh@kernel.org>
-Subject: Re: [PATCH 0/4] ARM64: dts: intel: agilex5: add nodes and new
- board
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] clk: qcom: clk-alpha-pll: Add support for dynamic
+ update for slewing PLLs
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Stephen Boyd" <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-2-4cfb96d779ae@quicinc.com>
+ <f78c5fce-4d7e-429b-945a-8e62cb9a2350@wanadoo.fr>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <f78c5fce-4d7e-429b-945a-8e62cb9a2350@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2NVBuc5c9uwG282KIp6GcXxW4_gTJ8KA
+X-Proofpoint-ORIG-GUID: 2NVBuc5c9uwG282KIp6GcXxW4_gTJ8KA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 clxscore=1011 phishscore=0 spamscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300140
 
 
-On Wed, 30 Oct 2024 13:10:11 +0100, Steffen Trumtrar wrote:
-> This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
+
+On 10/19/2024 1:50 AM, Christophe JAILLET wrote:
+>> +
+>> +static int clk_alpha_pll_slew_update(struct clk_alpha_pll *pll)
+>> +{
+>> +    int ret = 0;
 > 
-> An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
-> Currently only QSPI and network are functional as all other hardware
-> currently lacks mainline support.
-> 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> ---
-> Steffen Trumtrar (4):
->       arm64: dts: agilex5: add gpio0
->       arm64: dts: agilex5: add gmac nodes
->       dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
->       arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
-> 
->  .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
->  arch/arm64/boot/dts/intel/Makefile                 |   1 +
->  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 341 +++++++++++++++++++++
->  .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++
->  4 files changed, 489 insertions(+)
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
-> 
-> Best regards,
-> --
-> Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> 
-> 
+> Nitpick: unneeded initialisation
 > 
 
+Will fix in the next patch.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+>> +    u32 val;
+>> +
+>> +    regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE, 
+>> PLL_UPDATE);
+>> +    regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+>> +
+>> +    ret = wait_for_pll_update(pll);
+>> +    if (ret)
+>> +        return ret;
+>> +    /*
+>> +     * Hardware programming mandates a wait of at least 570ns before 
+>> polling the LOCK
+>> +     * detect bit. Have a delay of 1us just to be safe.
+>> +     */
+>> +    mb();
+>> +    udelay(1);
+>> +
+>> +    return wait_for_pll_enable_lock(pll);
+>> +}
+> 
+> ...
+> 
+>> +static int clk_alpha_pll_slew_enable(struct clk_hw *hw)
+>> +{
+>> +    int rc;
+>> +
+>> +    rc = clk_alpha_pll_calibrate(hw);
+>> +    if (rc)
+>> +        return rc;
+>> +
+>> +    rc = clk_alpha_pll_enable(hw);
+>> +
+>> +    return rc;
+> 
+> Nitpick: return clk_alpha_pll_enable(hw);
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Will fix in the next patch.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y intel/socfpga_agilex5_axe5_eagle.dtb' for 20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de:
-
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
-	'arrow,socfpga-agilex5-axe5-eagle' is not one of ['intel,n5x-socdk', 'intel,socfpga-agilex-n6000', 'intel,socfpga-agilex-socdk']
-	'intel,socfpga-agilex5' was expected
-	from schema $id: http://devicetree.org/schemas/arm/intel,socfpga.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: reset-names: 'oneOf' conditional failed, one must be fixed:
-	['stmmaceth', 'stmmaceth-ocp'] is too long
-	'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10810000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10810000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: reset-names: 'oneOf' conditional failed, one must be fixed:
-	['stmmaceth', 'stmmaceth-ocp'] is too long
-	'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10820000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10820000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: reset-names: 'oneOf' conditional failed, one must be fixed:
-	['stmmaceth', 'stmmaceth-ocp'] is too long
-	'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: tx-queues-config:queue6: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: ethernet@10830000: tx-queues-config:queue7: 'snps,tbs-enable' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/ethernet@10830000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwxgmac-2.10', 'snps,dwxgmac']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: tca9544@70: $nodename:0: 'tca9544@70' does not match '^(i2c-?)?mux'
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: tca9544@70: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/nand-controller@10b80000: failed to match any schema with compatible: ['cdns,hp-nfc']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/sysmgr@10d12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: /soc@0/sysmgr@10d12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: flash@0: Unevaluated properties are not allowed ('cdns,block-size', 'cdns,page-size' were unexpected)
-	from schema $id: http://devicetree.org/schemas/mtd/jedec,spi-nor.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: leds: 'hps0', 'hps1' do not match any of the regexes: '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dtb: gpio-keys: 'hps_pb0', 'hps_pb1', 'hps_sw0', 'hps_sw1' do not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)-[a-z0-9-]+|[a-z0-9-]+-(button|event|key|switch))$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-
-
-
-
-
+-- 
+Thanks & Regards,
+Taniya Das.
