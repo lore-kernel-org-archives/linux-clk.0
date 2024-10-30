@@ -1,26 +1,26 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772C81E7C07
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00D91EBFF2
 	for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 12:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730290233; cv=none; b=d72aO+/kRW1AE19+oG26H7kRYDsVubcf5bU/19viTRIIwBEHJGZZUnbZOY40US58yFtJU8ffQrMDtp8i8wiYaGNX8L9yOspYLvX6CW9LNReZNbbcLm7f4pzTsjsHMMnNllUcnR7b0EllZDP7jsV2mgYcu53UOCO8w/cD3A6axC0=
+	t=1730290233; cv=none; b=R/I9xbUpUmHNsBp7xTTj2mw5DR3Ly8cTIgvHe9fKGA0dTOEHjTJgFAH0ur/VGkoRloFk0gt7CO6IbMiJVng8q0+VdyAQHMXGoyH7Pw1/5NO3rcdYxb04VqUKbnuSzJEqoKPU7050NRQTXN9c6+DOqDeGJ796WwGL5lq2nHHDwvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730290233; c=relaxed/simple;
-	bh=FFXiiQhXhWNlPYV60DTxKdZyGuqHKlEKBnrLXPUxdvQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EUCzERu3/+olwJFDaSnCCkQ4Urgjg3wBHql/nqCz9bO8Ze2BWoRNo/rLvXamn5RYTUgaMRnFK/OFtGylj0uvzaFcznP7w4TTR6g3GkyTiXfTz5QXop+CQMnu0/2I8eAhD8kE+WgDuGt8paqmonlrIDdq8uNsfb/L27CIrPuPi3k=
+	bh=sTHiBH+Yilopa5ilTtrrbjZhI0tq5ofg9yx8ZvvsIZQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nA4L17N7LGL/BUI2gmugiIk5Bn+bo+3Y8DMc2aJnm6MyWml42m4lQHdH2HbhRe2ch2Tr7UlExxExP3tTVpufFbqFyrBcpfYzhaG07ekFgLyIW+9n6vnBW6pAtkk0ll0NPsEXN6EWjXPLCbeMsxZzsQeUcFGOo8WZm9h32AXHIQQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1t67Wm-0006os-88; Wed, 30 Oct 2024 13:10:20 +0100
+	id 1t67Wl-0006os-Id; Wed, 30 Oct 2024 13:10:19 +0100
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Wed, 30 Oct 2024 13:10:12 +0100
-Subject: [PATCH 1/4] arm64: dts: agilex5: add gpio0
+Subject: [PATCH 0/4] ARM64: dts: intel: agilex5: add nodes and new board
+Date: Wed, 30 Oct 2024 13:10:11 +0100
+Message-Id: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -29,9 +29,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-v6-12-topic-socfpga-agilex5-v1-1-b2b67780e60e@pengutronix.de>
-References: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
-In-Reply-To: <20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIACMiImcC/x3MQQrDIBAAwK+EPXdh1bTEfKX0ILrahaKiIQRC/
+ l7JcS5zQucm3GGdTmi8S5eSB9RjAv91OTFKGAZNelZkCPcXKo1bqeKxFx9rcuiS/Ph4oqUYTFi
+ iXcjDGGrjKMe9vz/X9QcyI29kbQAAAA==
+X-Change-ID: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
 To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -47,45 +48,30 @@ X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-gpio0 is the same as gpio1 with a different base address.
+This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
+
+An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
+Currently only QSPI and network are functional as all other hardware
+currently lacks mainline support.
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 ---
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Steffen Trumtrar (4):
+      arm64: dts: agilex5: add gpio0
+      arm64: dts: agilex5: add gmac nodes
+      dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
+      arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
 
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index 1162978329c1637aa0fd9a4adef16a9ae5017ac3..57c28e284cccdb99ede6cea2bc0e8dd8aaf47fe9 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -222,6 +222,26 @@ i3c1: i3c@10da1000 {
- 			status = "disabled";
- 		};
- 
-+		gpio0: gpio@10c03200 {
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x10c03200 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&rst GPIO0_RESET>;
-+			status = "disabled";
-+
-+			porta: gpio-controller@0 {
-+				compatible = "snps,dw-apb-gpio-port";
-+				reg = <0>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <24>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
- 		gpio1: gpio@10c03300 {
- 			compatible = "snps,dw-apb-gpio";
- 			reg = <0x10c03300 0x100>;
+ .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
+ arch/arm64/boot/dts/intel/Makefile                 |   1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 341 +++++++++++++++++++++
+ .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++
+ 4 files changed, 489 insertions(+)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
 
+Best regards,
 -- 
-2.46.0
+Steffen Trumtrar <s.trumtrar@pengutronix.de>
 
