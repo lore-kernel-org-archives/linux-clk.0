@@ -1,48 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AD91A2631;
-	Wed, 30 Oct 2024 18:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F9B1C4609;
+	Wed, 30 Oct 2024 18:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730311548; cv=none; b=WhYfF85abS0c0lMl3b7oH+1fmuSnNaye+gu9m9+OnpG24ga32AKNSt642lHGYGhh9nqoyQllc/f5NBHAmN4Zt9cAIXFoKJr2SVaaHn0UPWRWFLA7R+82IBJwTEJ1YX2k9RRaVKaqH8O/dEiHpDa5/yWzVpzjIgggDTjC+zy2GFs=
+	t=1730313219; cv=none; b=kAr2PD6AyRg7fmaB68CD//SEhyieZW+lMlZ/F36gkeI2yOTa1MKypfsHTesF4KNywJvEJq49IES9grdQEbyidUdVFlHtUB1bbLNt0d6f3RAKqLHUhr+aJFmLqHn8sTAFYIu+lQhdW3S9cMqCACuMPhCYovRsTUd2cb9oB5qc9IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730311548; c=relaxed/simple;
-	bh=YOZPTsTF7TsVm2VGEg9PWV8F8hJruDTWv/J4qiqqY0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=blbtZ6gdGmNqyd5RCQ9M8/9BnFlQxFuhPF2Tg6SgP7IAz3QHjSwAPJeUkXusS/02rcjKqnw2sVzeSWIuqKuRJiUY0rx2zOQFofkWaQ2X437gi4ESS74y0by6MW6QvdcmxEkkiOdcR7Z1xd2yy9EmmwZ21rhrg3eUh+8iGxTBjVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pB+JALZh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730313219; c=relaxed/simple;
+	bh=i1Vs+7snV2Whc8f6U4PmBh6VsCX0+I5O+FA19QQQ8Zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gRqytQCv8rhM1/IxTexbUF4dqYvFxhvhHi2FigLJ4XD5/BlOybGJwGTZ46b3xAqBW6HcZsthn4ODx+S6T0vmewUPU/Prf7/EkwRYPxt86OIRFOSYS6U3vMf0rNgZG8a1rb8pbdGygJ456OTZ9LKFtL3gGAEtaAhNRA8QblqeXh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssZpHRT+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pB+JALZh"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDq4VF032007;
-	Wed, 30 Oct 2024 18:05:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Wg6iW5B0te6AyYNCFKTR1rnb/HaJc1WsC2nIBBwB0SM=; b=pB+JALZhrwSkqHax
-	S39AqV3HAxugV1AxBaHwcPkKuIFO1X/HvW1/WsPyOeNm8Ql5ODDEquRM4PGe31T6
-	/SzkaglJN7yG0M2i9+tEQAcwEPraimV4w9uu6DIrfb1wJ7dPgcXxMha3Aih8XAc/
-	pOgI8D+e6c9LbWuR+s1o5yPXNvlhI6HwpZZwnuClbYpLc0UqLV9xkt0SjrPZjB9x
-	KygOlXm67/6Fm2/GnsdrLspkdRwhKYZ4SefLDtWqvX0at+KwdiKgOsO1Ee1teOAN
-	Akip3DutP7Y/WkSYsfBdXCIwdtMQkrpDnU62jpiuJCmEW8A6auRaKz1oeCZQ0EJg
-	ZgMtng==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kp2g8q4n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 18:05:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UI5EsC024501
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 18:05:14 GMT
-Received: from [10.216.35.255] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 11:05:08 -0700
-Message-ID: <91d0089f-93b3-4d1d-a6da-8af2cf47046a@quicinc.com>
-Date: Wed, 30 Oct 2024 23:35:05 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssZpHRT+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E615C4CECE;
+	Wed, 30 Oct 2024 18:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730313218;
+	bh=i1Vs+7snV2Whc8f6U4PmBh6VsCX0+I5O+FA19QQQ8Zc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ssZpHRT+81QCH4z3lYknBPqPUmXyY2aCZXWUFdWHT64I0J58DNulHJbkD86LdukAQ
+	 3HpxZsV9DNKw952+G+SlBuMPZAwL/+0XvFvLsckdyPQCgP6WTLklxm0n0RMggf5BUI
+	 lybXjFuPuF/sxTA5mDTiI5BUTevioWDFUQZV9gjO/fmzlbyHcdT2begfreTLvuk7QU
+	 9cPrZn+FRQLMtvN/bFBGoiH2F9Ee1AIDFHStGcsgP4W9mCLXv6USo4R8z5bIg7uopw
+	 CODbkBitPcS8QAEEl94T9+j4dGhxd/g8oAhEtOaGicg7v48Zh5N5Yb5vLNCyKxh/bd
+	 WhwSeVN9C24aw==
+Message-ID: <e1e92a42-eb56-46e9-b26f-eb44ec9e6692@kernel.org>
+Date: Wed, 30 Oct 2024 19:33:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,62 +35,143 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] arm64: defconfig: Enable QCS615 clock controllers
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
- <20241019-qcs615-mm-clockcontroller-v1-11-4cfb96d779ae@quicinc.com>
- <zbkqqweb6e6sw6cic3klg4pauxoi5wkcq5js5g4axp64ghpank@7q7jowwrwp5x>
+Subject: Re: [PATCH v6 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Richard Acayan <mailingradian@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20241011023724.614584-7-mailingradian@gmail.com>
+ <20241011023724.614584-9-mailingradian@gmail.com>
+ <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
+ <jcqgsgp4ivbokn545sy2rvfllm3vnygfpbufxagotuicacfmgd@v2hlnohlwzdf>
+ <955ea816-5394-4dbf-ba46-441634a97685@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <zbkqqweb6e6sw6cic3klg4pauxoi5wkcq5js5g4axp64ghpank@7q7jowwrwp5x>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <955ea816-5394-4dbf-ba46-441634a97685@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 96QpCYqI2PhHPJViIWw3Of681fkBhEdn
-X-Proofpoint-GUID: 96QpCYqI2PhHPJViIWw3Of681fkBhEdn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 priorityscore=1501 clxscore=1015 suspectscore=0 impostorscore=0
- mlxlogscore=629 adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410300143
 
+On 30/10/2024 15:06, Vladimir Zapolskiy wrote:
+> Hi Krzysztof,
+> 
+> On 10/11/24 17:29, Krzysztof Kozlowski wrote:
+>> On Fri, Oct 11, 2024 at 10:14:49AM +0300, Vladimir Zapolskiy wrote:
+>>>> +    soc {
+>>>> +        #address-cells = <2>;
+>>>> +        #size-cells = <2>;
+>>>> +
+>>>> +        camss@ac65000 {
+>>>> +            compatible = "qcom,sdm670-camss";
+>>>> +
+>>>> +            reg = <0 0x0acb3000 0 0x1000>,
+>>>
+>>> This is immediately wrong, unit address shall be the same as the address of the
+>>> first value of reg property.
+>>>
+>>> I still object to the sorting order of reg values dictated by reg-names property.
+>>>
+>>> There are a few recently added CAMSS device tree binding descriptions, where
+>>> reg values are sorted by address values without a connection to another property
+>>> values, and I believe this is the correct way to go.
+>>>
+>>> Two most recently added CAMSS IP descriptions (qcom,sm8250-camss.yaml and
+>>> qcom,sc8280xp-camss.yaml) do implement sorting by reg values, I believe from now on
+>>> it should be assumed that all subsequently added CAMSS IP descriptions to follow
+>>> the same established policy.
+>>
+>> Heh, sc8280xp introduced entirely different sorting also in interrupt-names.
+>>
+>> Just look at interrupts of sm8250 and sc8280xp. Luckily clocks are still
+>> keeping style.
+>>
+>> Can you start keeping consistency? All bindings from the same family of
+>> devices, especially if they share something, should have similar order
+>> in lists.
+>>
+>> How do you imagine writing drivers and request items by order (not by
+>> name) if the order is different in each flavor?
+> 
+> I don't see a problem here, and I don't remember any reports about this
+> kind of problem while adding CAMSS support in the driver to new platforms.
 
-
-On 10/19/2024 2:02 AM, Dmitry Baryshkov wrote:
->> Enable the QCS615 display, video, camera and graphics clock
->> controller for their respective functionalities on Qualcomm QCS615.
-> .... used on Qualcomm ABCDEF board, please.
-
-Yes, I missed that, will fix it in the next patch.
+And I see problem, would create enormous probe code to handle different
+variants for clock[0] and then clock[1], etc.
 
 > 
+> While the problem of improper CAMSS unit address appears again and again,
+> the focus shall be on removing a chance to make a commin mistake here.
 
+This is not a problem. Tools already point it out. Order of reg-names
+also does not affect that, you can put fake unit address regardless of
+the order of reg-names items.
 
--- 
-Thanks & Regards,
-Taniya Das.
+> 
+> As I've already said above, device tree bindings of CAMSS in two most
+> recently added platforms sm8250 and sc8280xp follow the numerical order
+> of addresses from reg value. This becomes the policy.
+> 
+> Sorting lists of interrupts or clocks by numerical values makes no sense,
+> thus the argument of *-names sorting becomes valid here. For clarity, reg
+
+There is no such argument, no such coding style.
+
+> property is very special, also a snippet of its value goes as a unit
+> address.
+
+And order of items does not matter for above "specialness of reg".
+
+Best regards,
+Krzysztof
+
