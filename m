@@ -1,48 +1,59 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02E21D9595;
-	Wed, 30 Oct 2024 07:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8580D1E0E12
+	for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 08:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730275022; cv=none; b=EeTnxfRNu67MJ6ShrbZgbabMS1+3so2lHT2puvQIkBcav52wLOxAG29Fcxx07hphYYXc+bfQrE47iwVgEqpA6MW8VJQlOA3k0c5qh0RoTlXN8XJpgvYm5nYkKL2Hi6MguqRCCWTEtOf2Ola1gLJzOnQGFJNljI5bKQ9cLkTGxJc=
+	t=1730276899; cv=none; b=rGdF7v0hE8KZ6NzUeVvjm2fMF/S+0mFCE13HUl/tdY6DkynGaWIBqbx1shHE0kLeSknonn9EvMvMr/Z2G+FMXBddiOSIzEnx9qD/O0HpTUhaxTJToLUHRcitbt3TVpfKsmWBzfgo1+1O07ABhocQPud4DhFbkRR+POEzvhKWuJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730275022; c=relaxed/simple;
-	bh=jzy6NjUhpqgplvP6dO3x/nvFG3N0AVPu8SNofLcz4Hc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RkoYf+UCgVyzFELalgMI0S0ufJgvhyF4SbiJ41osFH++1cZFJKNQdapxg6f30KP25ieoGjFf9Y9CDWYLMUQE7yBL8Sw7vWlW/mHdGsprJ+kTKxlgYEnMIsKmKj34ZeTKBozB7+aH9jlcHlo9djVlIVOP9JIG3hn/2EZYd3o2ncE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NBKYc8AK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730276899; c=relaxed/simple;
+	bh=intKQltl8qe04sX6ih8WJjx4/6q7A5aJSvz7oVoo5PQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQEitHKuuwIjkfAg29Ox4xj4/HHNsj51wMJt4cwjDj+3bkek5sOz1Elbpxj/pFcRlWTwVQMgdrgO4OGNqMHBtn7A8FT0Up6GBWA7QDHv7Wshe/gQh1MR8sEkcXQegyLhrk2Pcgt7AnhgucDYrCVreqhNshFHBCcKzQzrjEs8sAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wJOpCx1G; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NBKYc8AK"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TLJk7B009006;
-	Wed, 30 Oct 2024 07:56:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jzy6NjUhpqgplvP6dO3x/nvFG3N0AVPu8SNofLcz4Hc=; b=NBKYc8AKdAoc6cQb
-	m26okJRdHgGm2oHFADZdq1KTIfSvotELmMf4DftVqdtVGndYkbVMsz/6X3TMG/vL
-	Vy78aC8Or01vYeBUtK0B1TDbnrJxMGjpeBmFD68++PtYAc0wYUi5QeK2bLIHKhxo
-	McXw4coCS5p8Gt6GYWzhRd+iSc/k6TlQAlt1Bvg0K35klquE5ot/OLR5HvvttZ6r
-	CA0YdDuNfdrV2s247C1lkk7ZxsWVAmD+1htVqfauvyJP8s+LdE5YJ/IuH99gk6ha
-	D+lUTfjwA9XrODer/4WFCJgyn2DzzlAJrEqpuw8rtfS4tI5S7ADK2wnBm62nEAg1
-	o/G68A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8k41w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 07:56:52 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U7upce020939
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 07:56:51 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 00:56:45 -0700
-Message-ID: <58e5dbbf-7c35-49ae-b2ff-954fc0e3fe48@quicinc.com>
-Date: Wed, 30 Oct 2024 15:56:42 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wJOpCx1G"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431695fa98bso59574515e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 01:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730276896; x=1730881696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UL2HqkuSmHQ7OPeQE/93gQ+LDrEwS9SDaauaieTM4CQ=;
+        b=wJOpCx1Gaf8LTArqtp2fT6X+gmETexc+s9V98CpqALLzROINVQ7PV9/CjxJt6h9rFZ
+         ipiJi4zQ0FsCZv3jfXY+SjUfDzS6g+I/SgFF8jwTBJlmYl5XHBUGiasLTLdOFeMlkm2R
+         HFBRPfbzPOh1eVRnaq+wfJiei4iPe5KPMfFAnb5+/OjQ8j/58rDX5G6k+J+5wLqpPruE
+         bj3qyVa/00LWMvgi3lBA4vpFKMVDNQO0q5+RcrEca+0GmBlacnqewODf7OG6jXHCHHRs
+         spYq1/Ldcqd5fT6U9lQrgdKUdSdLilUplA+1yRVTyrvghVJXm+QT/BXhDVfHVo9PBZfo
+         H6+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730276896; x=1730881696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UL2HqkuSmHQ7OPeQE/93gQ+LDrEwS9SDaauaieTM4CQ=;
+        b=Ilqp0K14Uq+jdS4TvMK/G2oScorhastPazdTzzPzUNxN4zmB5RlYTpg+LHKvztnPJ+
+         4bP2pP7oAUPY+JApLoY26DBGeWPAGgJ+xKKItfTseLIPlG+BjYG20igLFXDdKWdRo/MG
+         BPSgGN3SfN02BRMCKOGiVRi3pJ1eolrkGjhKVXKeB+YSTbqewvrouvu5hwxWC0lYjpXT
+         qe42f9xi4TT2/6SgzFN3Tu2ymvHPw6kBtr+1JZcLxjwFKbkbogZhNEbKP/J82FvkPMEM
+         Z1Gd//XkEkH/mlMB6gcHjkPPffnKWCL9ckXUy5xY3IUTX+0PdXASgg2BWyh2dwkhX4yD
+         nwVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Vc4M+OEB/zpny5/FBgNdfb7mOE4JpDGukNQvxVo2ddYgpG7yJ6kyeTia10aSwitco6SgRrPOMSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT8yvQieyUackIWVx4OHIatjPf8r+o6UkJnmVGJqtATlq16Hy9
+	RVxQyKRcdh2dRfZ7z3F1XxD5b64WAR+dsv3m1MPOKKZiOYzXlYu6sysm0lArDzo=
+X-Google-Smtp-Source: AGHT+IF2VwBune3eYE6REO5H1xO9vZLSDRXCcz1HESbflFaHLwuvzmPQ13IVdJ+0j1WTo7gHVfIs0g==
+X-Received: by 2002:a05:600c:524c:b0:426:5e91:3920 with SMTP id 5b1f17b1804b1-4319ad24a7fmr142258435e9.29.1730276895897;
+        Wed, 30 Oct 2024 01:28:15 -0700 (PDT)
+Received: from [192.168.0.140] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8549sm13853315e9.10.2024.10.30.01.28.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 01:28:15 -0700 (PDT)
+Message-ID: <7b57ccc2-7060-4adf-b896-8992ec05125c@linaro.org>
+Date: Wed, 30 Oct 2024 10:28:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,63 +61,92 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/7] PCI: qcom: Disable ASPM L0s and remove BDF2SID
- mapping config for X1E80100 SoC
-To: Johan Hovold <johan@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <johan+linaro@kernel.org>, <stable@vger.kernel.org>
-References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
- <20241017030412.265000-7-quic_qianyu@quicinc.com>
- <ZxJrUQDGMDw3wI3Q@hovoldconsulting.com>
- <91395c5e-22a0-4117-a4b5-4985284289ab@quicinc.com>
- <250bce05-a095-4eb3-a445-70bbf4366526@quicinc.com>
- <ZyHc-TkRtKxLU5-p@hovoldconsulting.com>
- <20241030071851.sdm3fu6ecaddoiit@thinkpad>
- <ZyHjSCWGYLDu27ys@hovoldconsulting.com>
+Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
+To: Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com,
+ evgreen@chromium.org
+References: <20241028163403.522001-1-eugen.hristev@linaro.org>
+ <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org>
+ <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
+ <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
 Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <ZyHjSCWGYLDu27ys@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Eugen Hristev <eugen.hristev@linaro.org>
+In-Reply-To: <b587012e868f8936463c46915b8588c3.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: D5Cb7mxE4A_JpgHN_bxxcjll1VkaFGrq
-X-Proofpoint-ORIG-GUID: D5Cb7mxE4A_JpgHN_bxxcjll1VkaFGrq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=865 impostorscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410300061
 
 
-On 10/30/2024 3:42 PM, Johan Hovold wrote:
-> On Wed, Oct 30, 2024 at 12:48:51PM +0530, Manivannan Sadhasivam wrote:
->> On Wed, Oct 30, 2024 at 08:15:05AM +0100, Johan Hovold wrote:
->>> Also, are there any Qualcomm platforms that actually support L0s?
->>> Perhaps we should just disable it everywhere?
->> Most of the mobile chipsets from Qcom support L0s. It is not supported only on
->> the compute ones. So we cannot disable it everywhere.
+
+On 10/30/24 02:40, Stephen Boyd wrote:
+> Quoting Eugen Hristev (2024-10-29 06:12:12)
+>> On 10/28/24 19:56, Stephen Boyd wrote:
+>>> Quoting Eugen Hristev (2024-10-28 09:34:03)
+>>>> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+>>>> index 3acca067c72b..152947a922c0 100644
+>>>> --- a/include/soc/qcom/tcs.h
+>>>> +++ b/include/soc/qcom/tcs.h
+> [....]
+>>>>    /* Construct a Bus Clock Manager (BCM) specific TCS command */
+>>>>    #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
+>>>> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
+>>>> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
+>>>> -       ((cpu_to_le32(vote_x) &                                 \
+>>>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
+>>>> -       ((cpu_to_le32(vote_y) &                                 \
+>>>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
+>>>> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
+>>>> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
+>>>> +       le32_encode_bits(vote_x,        \
+>>>> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
+>>>> +       le32_encode_bits(vote_y,        \
+>>>> +                       BCM_TCS_CMD_VOTE_Y_MASK))
+>>>
+>>> Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
+>>> supposed to be marked as __le32?
+>>>
+>>> Can the whole u32 be constructed and turned into an __le32 after setting
+>>> all the bit fields instead of using le32_encode_bits() multiple times?
 >>
->> Again, it is not the hw issue but the PHY init sequence not tuned support L0s.
-> Right, this should be mentioned in the commit message.
-OK, I got it. Will write this into commit message.
+>> I believe no. The fields inside the constructed TCS command should be
+>> little endian. If we construct the whole u32 and then convert it from
+>> cpu endinaness to little endian, this might prove to be incorrect as it
+>> would swap the bytes at the u32 level, while originally, the bytes for
+>> each field that was longer than 1 byte were swapped before being added
+>> to the constructed u32.
+>> So I would say that the fields inside the constructed item are indeed
+>> le32, but the result as a whole is an u32 which would be sent to the
+>> hardware using an u32 container , and no byte swapping should be done
+>> there, as the masks already place the fields at the required offsets.
+>> So the tcs_cmd.data is not really a le32, at least my acception of it.
+>> Does this make sense ?
+>>
+> 
+> Sort of? But I thought that the RPMh hardware was basically 32-bit
+> little-endian registers. That's why write_tcs_*() APIs in
+> drivers/soc/qcom/rpmh-rsc.c use writel() and readl(), right? The
+> cpu_to_le32() code that's there today is doing nothing, because the CPU
+> is little-endian 99% of the time. It's likely doing the wrong thing on
+> big-endian machines. Looking at commit 6311b6521bcc ("drivers: qcom: Add
+> BCM vote macro to header") it seems to have picked the macro version
+> from interconnect vs. clk subsystem. And commit b5d2f741077a
+> ("interconnect: qcom: Add sdm845 interconnect provider driver") used
+> cpu_to_le32() but I can't figure out why.
+> 
+> If the rpmh-rsc code didn't use writel() or readl() I'd believe that the
+> data member is simply a u32 container. But those writel() and readl()
+> functions are doing a byte swap, which seems to imply that the data
+> member is a native CPU endian u32 that needs to be converted to
+> little-endian. Sounds like BCM_TCS_CMD() should just pack things into a
+> u32 and we can simply remove the cpu_to_l32() stuff in the macro?
 
-Thanks,
-Qiang Yu
->
-> Johan
+This review [1] from Evan Green on the original patch submission 
+requested the use of cpu_to_le32
+
+So that's how it ended up there.
+
+
+[1] 
+https://lore.kernel.org/linux-kernel//20180806225252.GQ30024@minitux/T/#mab6b799b3f9b51725c804a65f3580ef8894205f2
+
