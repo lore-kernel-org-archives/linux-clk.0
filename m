@@ -1,139 +1,132 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779181E9080
-	for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 11:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05BA1E764A
+	for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 11:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286117; cv=none; b=Rl5DR4ADIXHb140/91Ltto245rZsP/YHd23B4HX7UfSVoIucFuH7sO8rwYDWGXb4t/nLLAFEW/M2IQGAaeWLgDoAaBYcqlXSfV7kKjjF5EnkXp/nPWTPVyXLCIk4AA/YhVVILqRcSViYTU9BoX/1tg6WQUJMck98GrEsOat4xG4=
+	t=1730286204; cv=none; b=NTZTJCR3681V0vS6rLQzTZCj2QtnlJwGzcttYQcJzh5ggZ+F8dpjwMNEJ04ZOHu2pHkUVmwqNQ3bbheYbswBhoqgQfCSZRNxCKKi+zgQGi6o5jhQO4QPGb5MML3WnmTTCjysiRkjDP0hU9X5iUbhJ5HnLPD6w9CSivigmsmQem0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286117; c=relaxed/simple;
-	bh=ITkAAPBuQN7qt/2aNfaGc9Z5M3Kkbo9w1OZJ+C50G0I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CGYo+uDHrYn78TzKOZ1lQMo7p5YSTSSqnYpI1z0OYGL+viCklP2c4pvWjKHbAtFS7MTbBCLNIxoQXMYx38rgtlQOKtuaxwwg0SI5janOieOS5juGlpdRuVmsA3IuWQ89l0kQHCw76GpK1N6T3k05gJNkmWROMa6lnLiKgyWP3Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=P9uLa7ec; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1730286204; c=relaxed/simple;
+	bh=i/sTm2W58aqNc0bvwKrCduULaEOcP81xZKszHJgcu5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LzwL4x+JbaFB9A37w4M8gzt/RucpmyBFOquOjfcxS41YnBBt6IrTfO7MqDOP1VJ9dzi6lQl87dKVjJZNdrai9cosk/8yaXkFNsxNiTec23dprFriL1Dtf+FelJk8RCFeDuZ83VLlevA/FNbk/uNarTQdHQYrVDlMFEkvrdHOWKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFNKpYhv; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="P9uLa7ec"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315eac969aso4811895e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 04:01:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFNKpYhv"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f0802bf1so760963e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 04:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730286114; x=1730890914; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+rgH4N0XoiBaBn2DnREg2ur7KL1nWjEyXhZb98mz/Ng=;
-        b=P9uLa7ecQkPsoGz3RFrnra7DW5aBagtOIpPsbpt53gnQ9vVcGKyYW7z7M1bF8R93UH
-         e4+2dsOfUzaSBt6iZp9QqEtBzS5uX5o+CQ59fvcW3py37oE40wb19nbCcLhB5hCnPhCG
-         G+knFDa5uWzy5P0Pj7h/SVEXAg0N9/4BBk4WkYTImh+CsYwC/y2eZDqejaVziy5+AB1F
-         NtCn0vkwnKT7D6LUCa7g68/t+UIPjGsub0X+Tq4JG/kpfiZnzatJH7QVWtKh9MbhdEnQ
-         kjrzuk4eCAewgTEICLU0gLjv/3kBckHfxAnhDbeXEf4U/80vHbHf+liLAyLXQ3w0HyDQ
-         TcoQ==
+        d=linaro.org; s=google; t=1730286201; x=1730891001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dyDd73LhSa+Aowk0j+nzrmpWsgvv8frt2OywSF7Wle8=;
+        b=rFNKpYhvKs8wsIjVxz4uk/o/WdX67f8OTLp38bpJaYEEUt7nPB5M57lNPTEThZUWc+
+         EgVGUP2sCJ9ktPD+XKW/CmHueooons9gmMELbSdvhc9N9Z1h2k8H3r5nnDCzQsK3gJUe
+         6zE2TgNRplJzSRW9OgSCk19CArglkmrQ0/v8e+b8yxrv3nWPQ6iw43CjiU4L9TEwnz9/
+         jmmx0Rw4Fbo5tiFwVL/EWYG6Hr48qXye9XC3Dy9V7J/wX/5YSe+qQA/mBH1w6RN+gmZF
+         WtoLP6yFZBKm+YWIQd4uTPUpF/0JlqPlPy3vUsUxrF9KNsZwQMOchUQ+h6IPIpJsKvJM
+         W/6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730286114; x=1730890914;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+rgH4N0XoiBaBn2DnREg2ur7KL1nWjEyXhZb98mz/Ng=;
-        b=Ogcoqw5iNQtWwrPh76jwEtRMRKS7qHLFLjenySK2mZ+GM8zhEjurHrDHsaexyWOF3t
-         fMjF3vAqQt9DYSBT7R8sbHLUKtQBJvx2R5Go1tdxOcMLS7ZabBirNpGDUGOnkTcLNkXt
-         NMvobDffTQjVSXRmqk05cjFzhD07+97jpv1fAlvgpqgQsNcQGG5UaGfwGK3cWs4PXi0C
-         etPhmhsFLAl+qg1dGsNDx+FJmRzEgxlpaaFQGgMuswhNeTadWBres6zavKHYCRJUF/+O
-         cmKH3AmhvFAXjFt+P14QrXsJzW2OD+XQxxOGKafStVsjvkvi2yYSnjZdb6XFAWvOgXNT
-         Zxsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmhhy46X3dlaK2KHHJFYIcwQUh0un1qLiaIfMqt4h62ui2/7FlQS1KeGWOCMPt1UOV58/p7N82rFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Fzw0TUpN5NnAGAjkriMRwKUjNBDas4mG/xz+YG4o5bv6FmcY
-	+LQFQZiKqla3wBUEAKXo5E0DutT6/ES431izxWTkHhxC8w3ji3YHAYdK1QniVic=
-X-Google-Smtp-Source: AGHT+IGfKyeSaef4KGaUGWI/IsN7D3+8OWnPlyJSqw8C74dZyJJbZrKCWAh3Eh0KnB9ZpF56LKeAYw==
-X-Received: by 2002:a05:600c:1c96:b0:431:55af:a220 with SMTP id 5b1f17b1804b1-431b5729f16mr45142475e9.12.1730286113827;
-        Wed, 30 Oct 2024 04:01:53 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.190])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd99edebsm17956935e9.45.2024.10.30.04.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 04:01:53 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v5 10/10] arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3 flags
-Date: Wed, 30 Oct 2024 13:01:20 +0200
-Message-Id: <20241030110120.332802-11-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1730286201; x=1730891001;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dyDd73LhSa+Aowk0j+nzrmpWsgvv8frt2OywSF7Wle8=;
+        b=XW6JAuO++9S4NlS00a+Ra2wI87AsXYHB7qjFsaCu0UWlZTI44WOFF21oGPZVp9sl48
+         ZvhV5yvMS48/uLswnmwRvYT/t5BeoqxnfuMcp241PTnUtsv9rUImR8JUTm/E5uMNONJo
+         8vPeh8FYrq/YIKJmomwkRdRYGD/7sUJtQQLZL1ns2fkT7ND9ObtZRWsTfc+qmZJIcGnJ
+         V5LcUwI22DxqbZMEZImdCT3xVkj0BeZx6U/BI0RXjpcVd90GQqkwrplm/CpkyVUWjMJk
+         QIlQFXyQRj9F7ASZsYPsc6iBnkUC262qxMFxgyv3ud6kyQKVewPVOWNEaGuH8koGOxqo
+         BB9A==
+X-Forwarded-Encrypted: i=1; AJvYcCULcLVuvX7pFRBnDcF6hRbIpbnMSgybULfu3nCcZ64ATpb1DlDIADpYb/Os0HsHLfI9lD5EBKknWT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVT2+Ju3YHS6TLKCN/yZ72yp/nR+4vKqQ4MaEkR7p0TJG0jFlz
+	2QG2w8VP0e50zD+WoDZHhU5oVOy7Xn5MqCTFGEDAmajeh9omH0ZzHmtDA7S6CVU=
+X-Google-Smtp-Source: AGHT+IFhZJoljikBYl7EYG3OcLL8xTDXcY1FxwXB5w8ypUTn/Fu7ouw0JZgiUeSHRe8KwIvx45FKJg==
+X-Received: by 2002:a05:6512:350c:b0:53c:761c:2a07 with SMTP id 2adb3069b0e04-53c761c2d71mr163553e87.6.1730286200692;
+        Wed, 30 Oct 2024 04:03:20 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bc0d52d87sm218049e87.164.2024.10.30.04.03.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 04:03:19 -0700 (PDT)
+Message-ID: <dfb7e2ad-5262-4e4a-a49a-584012ef0e57@linaro.org>
+Date: Wed, 30 Oct 2024 13:03:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] dt-bindings: clock: qcom: Add CAMCC clocks for
+ QCS8300
+Content-Language: en-US
+To: Imran Shaik <quic_imrashai@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das
+ <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
+ <20241024-qcs8300-mm-patches-v2-3-76c905060d0a@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241024-qcs8300-mm-patches-v2-3-76c905060d0a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Imran, Krzysztof,
 
-Enable the Renesas VBATTB clock and RTCA-3 RTC drivers. These are
-available on the Renesas RZ/G3S SoC. VBATTB is the clock provider for
-the RTC counter.
+On 10/24/24 16:31, Imran Shaik wrote:
+> The QCS8300 camera clock controller is mostly identical to SA8775P, but
+> QCS8300 has one additional clock and minor differences. Hence, reuse the
+> SA8775P camera bindings and add additional clock required for QCS8300.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>   Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml | 1 +
+>   include/dt-bindings/clock/qcom,sa8775p-camcc.h                  | 1 +
+>   2 files changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> index 36a60d8f5ae3..18cbc23b9a07 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> @@ -18,6 +18,7 @@ description: |
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,qcs8300-camcc
+>         - qcom,sa8775p-camcc
+>   
+>     clocks:
+> diff --git a/include/dt-bindings/clock/qcom,sa8775p-camcc.h b/include/dt-bindings/clock/qcom,sa8775p-camcc.h
+> index 38531acd699f..36ac587a981a 100644
+> --- a/include/dt-bindings/clock/qcom,sa8775p-camcc.h
+> +++ b/include/dt-bindings/clock/qcom,sa8775p-camcc.h
+> @@ -93,6 +93,7 @@
+>   #define CAM_CC_SM_OBS_CLK					83
+>   #define CAM_CC_XO_CLK_SRC					84
+>   #define CAM_CC_QDSS_DEBUG_XO_CLK				85
+> +#define CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK				86
+>   
+>   /* CAM_CC power domains */
+>   #define CAM_CC_TITAN_TOP_GDSC					0
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+I greately dislike this change, and the reasons are the same as already
+given by Krzysztof.
 
-Changes in v5:
-- none
+If you find it possible, please follow an approach by adding a new
+header file and include a platform ancestor headder file from it, like
+it's done in commit a6a61b9701d1.
 
-Changes in v4:
-- squashed w/ patch "arm64: defconfig: Enable Renesas RTCA-3 flag" from v3
-- updated patch description
-- collected tags
-
-Changes in v3:
-- update patch title and description
-- dropped CONFIG_MFD_RENESAS_VBATTB
-
-Changes in v2:
-- added CONFIG_MFD_RENESAS_VBATTB
-- added vendor name in the VBATTB clock flag
-
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0fad83642034..4f4fe8d9125c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1222,6 +1222,7 @@ CONFIG_RTC_DRV_IMX_SC=m
- CONFIG_RTC_DRV_MT6397=m
- CONFIG_RTC_DRV_XGENE=y
- CONFIG_RTC_DRV_TI_K3=m
-+CONFIG_RTC_DRV_RENESAS_RTCA3=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_BCM2835=y
- CONFIG_DMA_SUN6I=m
-@@ -1371,6 +1372,7 @@ CONFIG_SM_VIDEOCC_8250=y
- CONFIG_QCOM_HFPLL=y
- CONFIG_CLK_GFM_LPASS_SM8250=m
- CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
-+CONFIG_CLK_RENESAS_VBATTB=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
--- 
-2.39.2
-
+--
+Best wishes,
+Vladimir
