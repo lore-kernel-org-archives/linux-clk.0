@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6631BD9F0;
-	Wed, 30 Oct 2024 19:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43F71BD9D4;
+	Wed, 30 Oct 2024 20:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730317680; cv=none; b=ou34TCOsvOWFYQMrzMzwf5wCJPSUnwFx1WdxK1INHR4n+r/DroH1h+6uYSl7DoNg5t1xpIHebEM8wp/4sej4ur9NPbCeQbVyFmbFi0xufhplFcaYXlHB+8IDfS2+WloHt0pXFRAHqH25pXP4WqSe+PVgONDdEj7ZNkxSRp5qgz8=
+	t=1730319839; cv=none; b=mykqttRGIzoCb0TPZp60bFYLbeFMLPgB5bsg7NfNQmIJgWQmJStpyGy2EzyuYsBk5zSfl0aijy5epynhTMenvUZEvvQQznhXAFTEUV57ammwBjVhTE+p4kMRxqxs2YfqlYcnMA+4VvoeRJZ9Xcqu9x08xxiLsZSpCReBlRgBu7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730317680; c=relaxed/simple;
-	bh=or2KvqJqW9neTrGs27NJV1Mi505S8IEzYJIDkgKZoEc=;
+	s=arc-20240116; t=1730319839; c=relaxed/simple;
+	bh=Q9syJ6R0wjduA4DUlaRWARzhz7ENcnTrcqvXhyZe1WU=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=okuBjsTmx8QFUJyTPcABns0rkIrjsxnQF6SR+wGj1StQ2D3b12CD6HHrPS1gVZxJLO9V1Gu8/nY6vkgfJh59oiTFbtgbChtvrFpGxwgCuoOWTd7X2n/H0BNIHzyjPnX5pY2jTSogmBSi+uGBOQnh5PuPwKOL4i39YCZiTdQwMrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnmoJZMR; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=YKfOiaA8Cqqqq2rataU1WFJGbh3v2bfvEM+0dd9bSEkyH06w8VtkQ02IgRkiH2Nne0BfK9X+6PK/9+rf9B2T1uRg7SE+5ELo2+MCj938Pbzf271fYN2bgpXIuqENwujWPREBN4ZFFKzUCaquDkQepldIBF6Sk2eBRqt51IANOas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCPw7GXI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnmoJZMR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC520C4CED1;
-	Wed, 30 Oct 2024 19:47:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCPw7GXI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A37C4CECE;
+	Wed, 30 Oct 2024 20:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730317679;
-	bh=or2KvqJqW9neTrGs27NJV1Mi505S8IEzYJIDkgKZoEc=;
+	s=k20201202; t=1730319838;
+	bh=Q9syJ6R0wjduA4DUlaRWARzhz7ENcnTrcqvXhyZe1WU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GnmoJZMRD/rtg+jn7BGx08wKVT8M6G63TvnrrDXecde7e1/4BVYddIh9qHTKiKD+d
-	 Juy6Iuemeemw0Q6wZS6kRnwYXm2AFn/eNIyiUrTUTDJqukFaX7E/ue1FeYZVp85f9M
-	 yV4jet/k5v3Lbo4Bm7cDpi1Fyaa0OK6yawAYkjNyIA1jiDjmfJl43dZqFJyV0QCsr5
-	 fGTL98dbU6d/bS/kMrUYBs2jZSrk2TmF3SZcmHak5e9hydEJTkhUNhBWY5Op42El/E
-	 69wT7rXGtucgP3jDqHAF1Ry03kQrI3y1NpsuvaG6XRuIBhfiyV6fUhGpM6ftoWvyIr
-	 cNAPyHTuNTcKw==
-Message-ID: <d9d5ef74df0564cbec46c093bd611ab8.sboyd@kernel.org>
+	b=rCPw7GXIVbrF9q+Cuhn+tg9C/7zY6VEBfGdfCPSKksS65sgxzVXTjPMSkloUwzxDP
+	 BThQQrBYNBfopz1nVyl8iP26wF4gjxRc+922Bdc1TiYP5C5YXL753xiAOaOxSGxzfz
+	 MLXBvj6cn8D2KTyp22UKvEbQ+b+PzNvP4Fbtdve4lycKgv+47WEgI0ovFmQ6gTjaT2
+	 SUN5/KsGcQGQOk7k9lAiJnxMLlxi/bAgwW+oJ1xov4yoGkp88hGNIPW2keg5QMXX7Z
+	 pbxTU+/0olBONELb657oQyKL/kPZ2hyMh/db8FKuikCZ//gZjacCbhQL4dxAEiMIAa
+	 8V850AOgHLNqQ==
+Message-ID: <72f5d3bd9e8a6aec59ef547bfd0d7bce.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241030110120.332802-3-claudiu.beznea.uj@bp.renesas.com>
-References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com> <20241030110120.332802-3-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v5 02/10] clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+In-Reply-To: <20241029032828.238706-1-changhuang.liang@starfivetech.com>
+References: <20241029032828.238706-1-changhuang.liang@starfivetech.com>
+Subject: Re: [PATCH] clk: starfive: jh7110-pll: Mark the probe function as __init
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Wed, 30 Oct 2024 12:47:57 -0700
+Cc: Changhuang Liang <changhuang.liang@starfivetech.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+Date: Wed, 30 Oct 2024 13:23:56 -0700
 User-Agent: alot/0.10
 
-Subject can just be "clk: Add devm_clk_hw_register_gate_parent_hw()"
-
-Quoting Claudiu (2024-10-30 04:01:12)
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Quoting Changhuang Liang (2024-10-28 20:28:28)
+> Mark the jh7110_pll_probe function as __init.
 >=20
-> Add devm_clk_hw_register_gate_parent_hw() macro to allow registering
-> devres managed gate clocks providing struct clk_hw object as parent.
+> There's no need to support hotplugging in the jh7110-pll driver. We use
+> builtin_platform_driver_probe, the probe function will only be called at
+> startup.
 >=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
