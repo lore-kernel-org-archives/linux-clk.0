@@ -1,167 +1,111 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8181C1EB9FD
-	for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 22:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDDD1BD9E5;
+	Wed, 30 Oct 2024 23:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326418; cv=none; b=ITkKYGQePQ0xL9ylS6pIN4PMurO/CdgzRRIbGKSS9Mkpe/XoqYjrjetS6VhZNIXVfedFNeZqupWWRw3is/1fVg9ZH4WKrfEvvve5XksVtpwOdm2ErP4ZjvfQaJzHyvpvYClhhH1On4tzcgfS779qO5x+p3EG7gLp9qL3ztNkxKg=
+	t=1730330765; cv=none; b=rggOkzjDAxebcWfGbNh3lofviW1iaDkDwPj8RhH0ylEjixGFuqbTYz0fE4sPmH5XygP2/QRn6lpc1xQQdmTJPIhC1t3BnwteqAJ7UEtWGt3Zb8aRwXLInFtO+A4Xs+m0sPJ4MFnpmhNYmiA6Wxal1T/t72JoBQjcn2/psC0spMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326418; c=relaxed/simple;
-	bh=fgwT0gHbh6JwWE2o92EklteS0EY8RyEo/1yUmC9seSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JzLJl2Puid57nV6ttJyQiIF48r5Tk2GLWuDjH9P+SLhWPr0cI/4FJIArdTCsnSRlOGrbOSTR0YQ+FiLJyPWiMJQIjd8vAmYgsr3u/qbIn6UjvIE9xDlhAm4hWU/P+XOLe4uPtvvIkP5dyiRm558NHfd2RDK4Pj5udjGq4Dl4Z34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CP14lJEz; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730330765; c=relaxed/simple;
+	bh=ZJS3c9CIuIH5R8ZNBpllfZrelj8hlM7EAnSyODfN+Xs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D485iSidTrahtgZ+6thWJ/OhTPmqPgjXF8qPjJsLidfJnHTsV3gpmafmCaE2zSb4rAOZlVpX9QiKQtCI8gYg8/oP22SWJhnCXLgOuu7ls53Te8EMx0SdVvhewGdecbZunq/Jo7KZD1B2A/3U/8x0rAIF9QGITgEZZK3DSZAZYgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6lXw5AF; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CP14lJEz"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e4908837so44896e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2024 15:13:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6lXw5AF"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso2951895e9.0;
+        Wed, 30 Oct 2024 16:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730326415; x=1730931215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rIOWGLPyHAbnmQC+s1hOIONGH2xKi9gafSnREwwOXk0=;
-        b=CP14lJEzZtHwrzQP1eWoWKeb6427e9BJYb3L4qb2Dv9bTtdmK5xehry+ckShi3J5to
-         E1e8BFjPq+bjlw8e5hXxlpRI0xBCjLWHf2NOdPBDy4SqIBuYBUec5c9kWLlr7XY7pXVK
-         zAeqkgFkNt48S9YQ4evdIX0Sm0NGOj2GyeeHLrzoZ/7YL0M2ByxB0GEM6g2+bO4JuzQ7
-         XDnw8suxR4Ftq5GMLu6RaRYGgegqhjXKwubWQCiULhRbN4FyStqdf+R0LQgM6Y0F/CK2
-         Ssrl0VB/NATistxYEhs5QynssZoHvbfiwMofgKeJZNVC1xqucqqZkuzsR8QXMJ0uzOsI
-         MHgA==
+        d=gmail.com; s=20230601; t=1730330761; x=1730935561; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ayf5CxyN8YABWU2vthcA1IIkJNbI0/ggxmpxkX56+Fo=;
+        b=e6lXw5AFzCpjCPcd+e8pz22vVt5XRatnWgpyMN2ct9FQGdLN1uOJP+fcFOGDvPYw+G
+         fDrOZ4BbOKBn63FOVtM2HO0WSRDumwLMP3pnxs5DbqL6/oFVwk+qMX8VT44Ng5Fy2BWs
+         O43qXBonK31zDe1p+3p4Ik/dPUacRUm3/DtC1hS9ZU9GozmxUHYpW6MsfPo3GJpO/6g0
+         A3BOl/tHimHA9Q2w8Z+9Yshcmnf09vtxr6bTwdckAoMXKXyHfgKJmjJxyS2w96LRmKaK
+         sLFWgY2jHYosmjnKt/KidxntqGSfKxuILWbcfRgGDC2YtJRu3m9uZD87va08/t19AumM
+         Wq9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730326415; x=1730931215;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rIOWGLPyHAbnmQC+s1hOIONGH2xKi9gafSnREwwOXk0=;
-        b=cBKWJHiaQfsELLca8mPMYVScrt5Ad/iC9IYyDs44SxiYORVJPzD2rpktpQ99lDhFOn
-         epdwSwOTk2BhREvsY2KBPw9EQX5+0NtqZP74kJXU2FtgEGrfaGU9slNipSaizJ8IxTH7
-         SyHt8g24NHWpilYmmRlqkVZr++DNy9GtJOZq8w3Xt9LZBkJM9zhxdb5Af+fWAdJzgymE
-         7ISnHybxd4UhH0S3BbwTyLw2hRofXmc/NGLQzcc/tKS0EoGuRuCVACbKvTBhWG9mrs1j
-         4X8WNv+wziDa231gGRpTtAwB+LdMinaELSey7Y3++faJEp+BZyRzCDjRCbY4amqIeWdr
-         H/0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFielxAs29jGuYER8oMDCzO+uKZpEpn6XjOdAkHLwaqbPUbud2qR0MjSfzsJlR6M8IiHrTpRDqriY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpPpxNzY3Z4fuuvFhJRtUUy3LukKaIo/C9pflO2ULktpZ7EX1Y
-	dAeTTJ7YQkZ1QO6ap4zpucebBB5SC39caUG6Qzzwa+n1POqO916svUTmWsOf2V0=
-X-Google-Smtp-Source: AGHT+IE6WL5Y9y4VUvgC3PerluD3HeORJgxPkd3sHB908ZvUW+AUqyE/4Nteboj+F28dC19tVwr78A==
-X-Received: by 2002:a05:6512:b1c:b0:52f:413:30de with SMTP id 2adb3069b0e04-53b3491ccefmr2686948e87.7.1730326414540;
-        Wed, 30 Oct 2024 15:13:34 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcc1cbsm16753e87.229.2024.10.30.15.13.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 15:13:34 -0700 (PDT)
-Message-ID: <b9a467bd-ad2f-4b6b-a0c3-0d60960023c6@linaro.org>
-Date: Thu, 31 Oct 2024 00:13:33 +0200
+        d=1e100.net; s=20230601; t=1730330761; x=1730935561;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ayf5CxyN8YABWU2vthcA1IIkJNbI0/ggxmpxkX56+Fo=;
+        b=O1Tt0dXm8z1vzL4mXXTpohWHyAmDGGRTdwYKJxM0YXzO6ZVhkOWb3ecCbnIarGv69e
+         BnLlh5Zu87IxDWdeUhiNUuOvloXJYMavCbrdXrOHDFmhwBgeNfdli1xMNzTTCXNNuMvw
+         Tw8RsIAtdI/mFBDeI+HEep2oj3GtgP5kDFA/zG7Y+mdpQmR6i7wAQUia0C0byNRaMQ7J
+         r8NFTqpSpfOQvyX3bTzOAJgsFUPEqQBOM5N2f+766kbm1LeOFzxWYvWpvZMCahJvHj3R
+         hBeW9RtaygTnHYxmGipKw9eQ2k4Wr+yVmm0atVtmIn4g+jDQBKTTV8xW9Vl+Yo5RK+Un
+         ko3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/iqhWs2kyKJupVkTNrBEdAj0mKa7Vi/ioLjKSE5vzBl7+XqdVceRZBiw+2Fw/0UPaGmTHutk0@vger.kernel.org, AJvYcCVmv9ZIgydNwPk58VNlAZ7epHrYNNr5HwEJq/K/AxIBit4O8ZU/3iEtqnujVSl0SrOo7fm+nL5Mgj0=@vger.kernel.org, AJvYcCXtXyzeiG9jm6nnw9G3HrdE/U99xhL6K4BHPHr3foDDjSB5F41GXnSy19nGJ38dBMe6D3uXG5zpzf9UEwEk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB7ULEMdO3qu7ZerTui6wuRqm3Zlh0X5J3eYYQR0Q9NJST9Wfj
+	TuSfamIznlcvAGusGCLKCeMiwsgFd8y6rrsj1+4rsvgHMgbsNJGJB/LDcMDx
+X-Google-Smtp-Source: AGHT+IEz/U5uiaiXWQrWeP5TcNccKKF8dYFpWwG65GCrbRFPu/TD7aOJCsyOctmhAHuLNpJ4UY4Yeg==
+X-Received: by 2002:a05:600c:3c9a:b0:431:518a:683b with SMTP id 5b1f17b1804b1-4319acacb3cmr128581105e9.18.1730330761129;
+        Wed, 30 Oct 2024 16:26:01 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947b2bsm35338395e9.25.2024.10.30.16.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 16:25:59 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] clk: renesas: cpg-mssr: fix 'soc' node handling and
+ automate cleanup
+Date: Thu, 31 Oct 2024 00:25:55 +0100
+Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Richard Acayan <mailingradian@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-media@vger.kernel.org
-References: <20241011023724.614584-7-mailingradian@gmail.com>
- <20241011023724.614584-9-mailingradian@gmail.com>
- <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
- <a230de8f-a11d-41c1-9bc6-7e06e850b51d@linaro.org>
- <20241011144129.GA2295617-robh@kernel.org>
- <ca89bbae-193b-4636-b1a6-ff0c9cecae58@linaro.org>
- <CAL_JsqKwaT4q-VHqfLXAabdGtKvRtnh7SFiELpyXDGVRRpOoYQ@mail.gmail.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <CAL_JsqKwaT4q-VHqfLXAabdGtKvRtnh7SFiELpyXDGVRRpOoYQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIPAImcC/x3MwQqDMAyA4VcpOS9gWxm4V5EdaowubKslQRHEd
+ 7d4/P7Df4CxChu83AHKm5gsucI/HNAn5ZlRxmoITWh9Ez3S74vKmS0ZUpnxb6Y1csprQd/FOE7
+ POFBHUBdFeZL93vfv87wA60C6sW4AAAA=
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730330758; l=1109;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=ZJS3c9CIuIH5R8ZNBpllfZrelj8hlM7EAnSyODfN+Xs=;
+ b=zbkW5IPndQg0IHbcwHCUulMZ8RjIO+7ZYUMR690sPby0fruKkFlwMpjo/PZdrLS5iF42tOc+h
+ 5m8s/x5H5moDp1DuMix1oXJU2LVNq2q+AVR+DoEiSNdKOG7W7YMFxN2
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On 10/30/24 23:06, Rob Herring wrote:
-> On Wed, Oct 30, 2024 at 9:20 AM Vladimir Zapolskiy
-> <vladimir.zapolskiy@linaro.org> wrote:
->>
->> Hi Rob.
->>
->> On 10/11/24 17:41, Rob Herring wrote:
->>> On Fri, Oct 11, 2024 at 09:31:06AM +0100, Bryan O'Donoghue wrote:
->>>> On 11/10/2024 08:14, Vladimir Zapolskiy wrote:
->>>>>
->>>>> Two most recently added CAMSS IP descriptions (qcom,sm8250-camss.yaml and
->>>>> qcom,sc8280xp-camss.yaml) do implement sorting by reg values, I believe
->>>>> from now on
->>>>> it should be assumed that all subsequently added CAMSS IP descriptions
->>>>> to follow
->>>>> the same established policy.
->>>>
->>>> My preference is sort by address not sort by name => we sort the device
->>>> nodes themselves by address so it seems more consistent to sort by address
->>>> inside of the devices too.
->>>
->>> Strictly speaking, the values of addresses are unknown to the binding,
->>> so you can't sort by address. However, if something is truly a single
->>> block, then the offsets are probably fixed in order by offset makes
->>> sense. But when a block is changed, any rule on sorting may go out
->>> the window since we add new regions on the end.
->>
->> Exactly, and this is an argument why the sorting is a subject to a device
->> driver policy, kind of any sorting order is equally bad. Sorting 'reg'
->> values by addresses helps to avoid a notorious problem with unit addresses.
-> 
-> What notorious problem?
-> 
+This series releases the 'soc' device_node when it is no longer required
+by adding the missing calls to of_node_put() to make the fix compatible
+with all affected stable kernels. Then, the more robust approach via
+cleanup attribute is used to simplify the handling and prevent issues if
+the loop gets new execution paths.
 
-Here the problem I reference to is the problem of an incorrespondence between
-device tree node unit address and the address of the first value of 'reg'
-values.
+These issues were found while analyzing the code, and the patches have
+been successfully compiled, but not tested on real hardware as I don't
+have access to it. Any volunteering for testing is always more than
+welcome.
 
-Having a sorting by addresses allows to grasp IO ranges easily, and setting
-device tree node unit addresses to some almost arbitrary chosen value from
-the middle of IP's IO range is suspicious and confusing in my opinion.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      clk: renesas: cpg-mssr: fix 'soc' node handling in cpg_mssr_reserved_init()
+      clk: renesas: cpg-mssr: automate 'soc' node release in cpg_mssr_reserved_init()
 
->>
->>> This one in particular I have to wonder why csiphy is not a separate
->>> node.
->>
->> There were dicussions about it in the past, and kind of enforced outcome of
->> the discussions is to keep all CAMSS IP components together under one huge
->> plain device tree node. I personally dislike this approach, but obedience
->> is the way to get things merged.
-> 
-> Who are you saying would be in the way to get things merged? DT
-> maintainers? I feel certain I would have pushed for separate blocks,
-> but I'll defer to people that know the h/w. I can't learn the details
-> of everyone's h/w. If they get it wrong, it's their problem not mine.
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
+change-id: 20241031-clk-renesas-cpg-mssr-cleanup-1933df63bc9c
 
-I had this discussion with Qualcomm/CAMSS maintainers long time ago, it
-may be restarted, if there is a necessity.
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
->>>> Which means sorting reg by address and irq too.
->>>
->>> IRQs make little sense to sort IMO.
->>
->> For all non-reg properties with a present *-names property the sorting
->> order should be done by *-names property. Only 'reg' is very special.
-> 
-> No. If you had 'main' and 'error', I'd put 'main' first. If they are
-> somewhat equal (e.g. rx, tx), then sure, sort them however you like
-> (assuming no existing binding). The only real rules here are how new
-> entries should be added (on the end). Otherwise, there is no policy.
-> 
-
-Here in the proposed terms the start of an IO region is 'main', while
-some value in the middle of it (the first one in alphabetical sorting)
-is too secondary to dictate the device tree node unit address, I believe.
-
---
-Best wishes,
-Vladimir
