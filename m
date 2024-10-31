@@ -1,122 +1,105 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85951A262D
-	for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 14:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C611B0105
+	for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 15:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730385990; cv=none; b=PJHYTOQ2f8bQPLmretmOf9oaGP31ybZbNMpvwKBNTSx7Gr1KeQDMstVPQkK1pX+7CvsikkY/CKeAusH/o6ADhGssZve7rI8njudBrfsbXsZKvNAnF3dBa+zIHP2mCqvIAl/n60WZjHezhJTsKDKkEQWUYH/NMEHDG6dciuO7aBc=
+	t=1730387581; cv=none; b=PH1FRMZ4kikVStGR80w3pYNOwVRRFizJzQOCSAim1hygPa7O/X/FUwu4+Wsz9+79Wrj/kxQx7eBtyDGmbuxtF8Yr4VGHLYqY2krS82AGOI1jNvqvVOZ1vw6pU0kEAK14ga5F/vOX9SBUnBWKfjB+UNeNTFYuLHHFqvR8VWn2sEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730385990; c=relaxed/simple;
-	bh=ehYS0/ZZQ0XEcholrijqQu2XW7HUON0Q4qS6E3K47wo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kgzOurHySh6em8//CKIT0q2nmMSrJUufsc9hbS2mf4dud75Pi2pLG+jV2/KPSvCs0OWgOkgWYUAEfB+OEPxwEp5R0IYB/CjEFCOrvprembYtLNq1vP7pvCITq7X5dmTC5NhuqE+btwkScHIw4lNSx4RmYStp7VUzPCbctqjMpsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JigHa9wD; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1730387581; c=relaxed/simple;
+	bh=kr02wbYSWNCkbF9WCD3f3jrehlBz4QKbygRTAdCmEHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J1his6SQ4CqRLG2Nmn/7kBdFp6jRwm6h8HPPsLty18Igifbg3fsgR197LAcf6NYvC0SP4eRXmZwgyLFhh0cnVLNnj4rub7OtqK8f89sOcnnVZsjWInmdOlDW+cc9SZ68xtEWql78E0krsM49L2JaloC/H+oIB5GcGZp7vtVZMLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KirEsZq+; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JigHa9wD"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a16b310f5so142639566b.0
-        for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 07:46:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KirEsZq+"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea051d04caso8177107b3.0
+        for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 08:12:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730385987; x=1730990787; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypveLFvkaXf1wJtqmx/51pwj85CYlxVe18qe346szto=;
-        b=JigHa9wDDYMdmPHgr+8ya+yp+Sb4oZUzO6K/SrPVfOarpc7h6ZnnXzh04hS3JYiLey
-         WQipQVDhew6IXjHPKfP9K8hRJU1DxsKYPEbb/0PXRo+Bi/JzUMf0jpVF6Xw2T5CKmW1+
-         5+8PZGu98bTTkO87Ksrnj5zTxQjd3EAbHvHIdCA5BUuH80md2o3GkOmga1Vo9SWx06KO
-         OVjykr+ciPOjC0lFGbGqEoyCbVkBCUZeTc/o6SrO5DZKaJBkyG8RNPB3msZ5cFo1adG1
-         KGubmZY1DF45W5i6yjL2m67KitUXsr+CToHq8mLHSlp+d60hbdbo7uB3gzN0GfseAWfx
-         I2gw==
+        d=linaro.org; s=google; t=1730387578; x=1730992378; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kq/ZfQo178WpGnp7avIFwOb49kRFsd7BrjOS/dXjIo=;
+        b=KirEsZq+exLGPoyML4/+40BDpyFtnLYUgF7jco3Fe1XYI/0jgKqasZapXuRrWGVnmA
+         KJ5fL0x6RzbYwNUhd+bXV0a7IfNYnYd+p7M5iz0p4fzPVCdf0zdB1hZIvXbIRNPktaFm
+         sxgoKbelcctcSVYKGiXMJE0Mzm3Wa413MqdepmZK0BmhKYd3IsvvuDIuJLXNugYfen6x
+         3rJhwSztP3HEpKLMdSKfucGYwDDynmj2VAoGJI7y3eTywcWvtJzKKdi6RY/OxZ4nxBd+
+         /tYiVel0cV9Su+jLvN3iyyPQQjIZ0+mzeZ35EJe8psIQLCocH2msX/gpeMz3Cwoet5is
+         ChCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730385987; x=1730990787;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ypveLFvkaXf1wJtqmx/51pwj85CYlxVe18qe346szto=;
-        b=WlqhdrmYtlDVqVc/0e9XPriyWp9gxsHaTgSUWIStZZuKgk09HvlZFtPNe5bl75fjRj
-         yQDlurJCW00f8NE3lm/RzfpTaKrLKfivhtF8BhDG3kUTh0OX3+d2wosepbb5Xj+FMaPE
-         EG276+hrascl/0oxKRjf7O7ywPZvPcyuSvY3YVaDoymOZtmojLsvP3HfZlo5+FPo34Gm
-         nIRBNY7QdlD5HKSFUOO8GsbjbCGEpOZJSt9IEY5m6NBVN7c2tJdHwnXgHKUBXxghuP8M
-         Nj0CDEP2y3dX6lJe6nYJPk4C/AZojK6cYD2YcfxevNsTp9va9k2CllToyQ6M7PmqUiYQ
-         AFhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfuqKW9JWwtETzUAX/fS7KVs5d59UQKuzKiX9rdgVsPvedtAg9KXmvH6xruyZRwBZNtCdQEybm6CU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC9Wge+5LDWYZhndFBrZ/8PMcZeWMy0XfPR5jLNMriaI+VsPki
-	lhy6stggo/rWCffdiO5g4S8a790uhuNXgaxGEzdE9+MFarbC3AH7/CjIbIAN7k4=
-X-Google-Smtp-Source: AGHT+IHO0u8NI+kPpq4+Wzny8mwJitAvu47tgJQ19gV0TI9gjpe3yY4DuzAFhy8aDC6EsCh5Rx123g==
-X-Received: by 2002:a17:907:3f9f:b0:a9a:2afc:e4d7 with SMTP id a640c23a62f3a-a9e50b948d0mr315152266b.44.1730385987116;
-        Thu, 31 Oct 2024 07:46:27 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c6150sm74717766b.81.2024.10.31.07.46.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 07:46:26 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 31 Oct 2024 15:46:51 +0100
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 11/12] arm64: dts: bcm2712: Add external clock for RP1
- chipset on Rpi5
-Message-ID: <ZyOYWxZZWkGnGknI@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <13ad41f172cc8605cb9b324ea0f22296c4c97033.1730123575.git.andrea.porta@suse.com>
- <eb1b630a7ee8222322d213f72ceb1c23.sboyd@kernel.org>
+        d=1e100.net; s=20230601; t=1730387578; x=1730992378;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3kq/ZfQo178WpGnp7avIFwOb49kRFsd7BrjOS/dXjIo=;
+        b=lopJMa92cH02RMVII/jmXOg6wQgCY1hbczWmPV3sGTdrr4nfmDGosS25iIlcCR/0bT
+         5nTlxWV6RQBLrY78JTe8sYlm+beaT2ZddXehYn4Plx9joXWIMsKGCK7iIa52fyCGj3tk
+         y7JMQcgmky+3n7b5WgZtFSIUSRMgab+xdKOzeaAELaDZqQ7W6c0wFBwSUn0GBoJcO4WD
+         MJdePTR7Zt/vgKMiLI7T5VwFqzDYCUJl3PHSSNVCtmwKag/w9iwUu1qlrn1qS68VwE0C
+         x+b0edo32TA7+aB7tJ52znI0cK3+bzGgw2h0NSjKELF0QmeqAnEGey6vei5wKBDA+m+r
+         TF2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnUMro4YOEu/a8vbvi6QThz0tQRazUWq4Yeegcx4APevq/2gfndrLDoOf0aZALf/8PjeRvmwdjiyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrN6z/m/M+ifKPlNoJ94YvMM/7mBRLAnKQIphdd237vODQr5LV
+	3k3TM82G8S3NR3gdBsA3hPX7KEFgN+Mgqqxew9XZLTZY1EFiAyQu5v7J8I603AtcxOzp9hAvqu9
+	xZ3FRlkpxk4cuWFpVBjWGTDRidSVLhILiPrf49g==
+X-Google-Smtp-Source: AGHT+IGlMNJu4DDdD/Y1Axdwvh3uw+1T8q9MjgGCDRsqTJLHxT7tV2PbJ7zg2vq/LGfZxClDt4ZTbCxoj+EvkACSNbE=
+X-Received: by 2002:a05:690c:380a:b0:6ea:4d3f:df9d with SMTP id
+ 00721157ae682-6ea64a8d45bmr3072217b3.4.1730387577820; Thu, 31 Oct 2024
+ 08:12:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb1b630a7ee8222322d213f72ceb1c23.sboyd@kernel.org>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-6-4cfb96d779ae@quicinc.com>
+ <zsgdwc6klccdbytdysgl342zllgmb7ttatjh4tnug3unyl7vl3@tlptei23yozn> <1eaa1fc6-721c-46fd-bcc8-9b575d083dea@quicinc.com>
+In-Reply-To: <1eaa1fc6-721c-46fd-bcc8-9b575d083dea@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 31 Oct 2024 17:12:53 +0200
+Message-ID: <CAA8EJprhyBpEyQYjCPopgEUVGF3ztGZ_6zo-QUPJ6=4VffEzZQ@mail.gmail.com>
+Subject: Re: [PATCH 06/11] clk: qcom: dispcc-qcs615: Add QCS615 display clock
+ controller driver
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Stephen,
+On Wed, 30 Oct 2024 at 19:59, Taniya Das <quic_tdas@quicinc.com> wrote:
+>
+>
+>
+> On 10/19/2024 1:55 AM, Dmitry Baryshkov wrote:
+> >> #include "common.h"
+> >> +#include "gdsc.h"
+> >> +#include "reset.h"
+> >> +
+> >> +enum {
+> >> +    DT_BI_TCXO,
+> >> +    DT_GPLL0,
+> >> +    DT_DSI0_PHY_PLL_OUT_BYTECLK,
+> >> +    DT_DSI0_PHY_PLL_OUT_DSICLK,
+> >> +    DT_DSI1_PHY_PLL_OUT_DSICLK,
+> > Is there a DSI 1 PLL on this platform?
+>
+> As per the design of the clock controller it has a DSI1 port.
 
-On 13:49 Mon 28 Oct     , Stephen Boyd wrote:
-> Quoting Andrea della Porta (2024-10-28 07:07:28)
-> > diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> > index 6e5a984c1d4e..efdf9abf04c4 100644
-> > --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> > +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> > @@ -38,6 +38,13 @@ clk_emmc2: clk-emmc2 {
-> >                         clock-frequency = <200000000>;
-> >                         clock-output-names = "emmc2-clock";
-> >                 };
-> > +
-> > +               clk_rp1_xosc: clock-rp1-xosc {
-> 
-> The node name is preferred to be clock-50000000 now.
+It's just surprising to have the DSI1 DSICLK and not the BYTECLK. But
+if you say so, it's fine.
 
-Ack.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Many thanks,
-Andrea
+-- 
+With best wishes
+Dmitry
