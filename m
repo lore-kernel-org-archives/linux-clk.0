@@ -1,438 +1,122 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FC81BBBF8;
-	Thu, 31 Oct 2024 15:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58526AD0
+	for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 17:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389992; cv=none; b=XAYWHLDXOIKnecoKzQkGYE1og+GlsWT+wef5pErwn5o9p5bfC32Bmbk6siZDZPJVCj7XuKvt7HDRetXIhw+KlJtg3haISVb9lnzv0zQXGdBOvB+byGGbOvAnT33FvVfRv+2W2gCET7B/QLd1Zhx8F/Mtjjkt51zluq89OmTbsrI=
+	t=1730394033; cv=none; b=Z8QFCzNjRqSI2fItr6m059nQlXJIHEYCFPvzjnY5vggu37pUJ+yZ59pwl1hZpxwmzvs9uERwKQzJ1QdjJRKueryaEXQj15Jq/GHDAPFr5885modfN2XZF3vzHOiS3wNKrJ7/52kJr5HDwJkXfrsCzfBL9ydBu9hh73vu5msA568=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389992; c=relaxed/simple;
-	bh=dpx86UKWHmQob1x1Y9dZoFYGDcYgFQTexwF3Pl4RVJg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H/IHYPXW0HUld6vq10Kf6013vn2oMYpLoQo6zpfT93G/14iKjLlCJmDqk4A+Bd2ayxiH8AtWXHdKZWNxGk8kg83eV0iOwtSpNfpCN30n8K2+29BW9Ps6JS+f8lmRLRW2I4+lF9rtP7pWprVIBQXYnEr/rGZwKssKmY7y2QPLEOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AfwfZfKV; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1730394033; c=relaxed/simple;
+	bh=+PAOFwsgnSghgLjjAyebEJJRF/OgGK6zoG47VW+z0IQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T1LSI/Py+BZq37BBWMXg1s6QSrYVNdU12kAe4SCrkYH47RdRQ5OG+ol5BDKG+DBKHh2QRRtIv4Ui4CIWtNcGDNK3Ff2wnnFz5Ejg17WzqaszXCtyEPr1jN+frJbvirhQRrcd9czI6Rvqb9J03bWkBPjSvHcr9ighwb3fCzM0eZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=rn8W7ok+; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AfwfZfKV"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CEAAE1C0015;
-	Thu, 31 Oct 2024 15:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730389984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vBvALQBz6nzlJoEhBr0vnmX8yOjbMQW6G7cmJmWOtDo=;
-	b=AfwfZfKV+IE3wQL2HZvOVFbJNo8j3ZNamNUpRWTmIXZNvsFNDfG06H6x4gbSOPKq9nJrLi
-	roNGgwJegeryDpY82DprD9sJc2jYYQs6ONSVdRCuj58qQwHJlLaI15fo3x+32bymftoQgP
-	pY/kqaAooFobedTDO2LVm9aHwUMZRmfB0HBy8tTOCqfgXpkaaaDoSDfJKUGKHh+u9qCcWQ
-	oo3dZXfA37XDBjB42Vp1YNW/SWqWjML3qAoJqmZBRlcQxpk5IsFUu4nPDV3Mx3Ct16vdmT
-	zJ4sCAwYcBEo9RIDb4lq783+Ghz04Aw1VeusISASxIKkncGCsEJD7cF8KCoKdg==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Thu, 31 Oct 2024 16:53:02 +0100
-Subject: [PATCH 12/13] MIPS: mobileye: eyeq5: use OLB as provider for fixed
- factor clocks
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="rn8W7ok+"
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id F077C892B4;
+	Thu, 31 Oct 2024 18:00:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730394029;
+	bh=92Sy6UDwL/ps4AVz4KDD4tlQVW8dKGo+enny9ATdi/Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rn8W7ok+xoK/3atYWX260xLtWpY/OFjHeu/yW3HPUiFltXynjdWPNf/Rg9h+vsvav
+	 xfc2acyIVryKtFo1x5VRFubzNzIyhS5WvDcu39HMjJbHd66Ml0vEZs4aGYB/tknE8P
+	 kOrZ/deOA6DZcwNOW/haFyf+0JjGCnvMJdEYvKBUEu1KDl6VLYAQXXp266dweOZlcx
+	 1wNbiFp6NP2RJZSfL6pfFcT8SoAEppYFMytU3O1UzZLq1PN4Yv1Dr8wF1Gf4ji9V5C
+	 ks3SjAyULhhP++L3DvYeTC60xGfn0T2OLlnBK35kKJdOepu1vTGmkWfQqa+N76JDfq
+	 lZdkMjKp8B+sw==
+From: Marek Vasut <marex@denx.de>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marex@denx.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: zynqmp: Work around broken DT GPU node
+Date: Thu, 31 Oct 2024 17:59:33 +0100
+Message-ID: <20241031170015.55243-1-marex@denx.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241031-mbly-clk-v1-12-89d8b28e3006@bootlin.com>
-References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
-In-Reply-To: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: theo.lebrun@bootlin.com
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Change the structure of the clock tree: rather than individual
-devicetree nodes registering each fixed factor clock derived from OLB
-PLLs, have the OLB node provide the necessary clocks.
+The ZynqMP DT GPU node clock description is wrong and does not represent
+the hardware correctly, it only describes BUS and PP0 clock, while it is
+missing PP1 clock. That means PP1 clock can never be enabled when the GPU
+should be used, which leads to expected GPU hang even with simple basic
+tests like kmscube.
 
-Remove eyeq5-clocks.dtsi and move the three remaining "fixed-clock"s to
-the main eyeq5.dtsi file.
+Since Xilinx does use generated DTs on ZynqMP, the current broken DT
+implementation has to be supported. Add a workaround for this breakage
+into the clock driver, in case of PP0 enablement attempt, enable PP1
+as well and vice versa. This way, the GPU does work and does not hang
+because one of its pixel pipeline clock are not enabled.
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
 ---
- arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi | 270 --------------------------
- arch/mips/boot/dts/mobileye/eyeq5.dtsi        |  30 ++-
- 2 files changed, 24 insertions(+), 276 deletions(-)
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Michal Simek <michal.simek@amd.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/zynqmp/clk-gate-zynqmp.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi b/arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi
-deleted file mode 100644
-index 17a342cc744e57dc1f21262abdbfa97d4e4d58f3..0000000000000000000000000000000000000000
---- a/arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi
-+++ /dev/null
-@@ -1,270 +0,0 @@
--// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--/*
-- * Copyright 2023 Mobileye Vision Technologies Ltd.
-- */
--
--#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
--
--/ {
--	/* Fixed clock */
--	xtal: xtal {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <30000000>;
--	};
--
--/* PLL_CPU derivatives */
--	occ_cpu: occ-cpu {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_CPU>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	si_css0_ref_clk: si-css0-ref-clk { /* gate ClkRstGen_si_css0_ref */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_cpu>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	cpc_clk: cpc-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	core0_clk: core0-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	core1_clk: core1-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	core2_clk: core2-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	core3_clk: core3-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	cm_clk: cm-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	mem_clk: mem-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&si_css0_ref_clk>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	occ_isram: occ-isram {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_CPU>;
--		#clock-cells = <0>;
--		clock-div = <2>;
--		clock-mult = <1>;
--	};
--	isram_clk: isram-clk { /* gate ClkRstGen_isram */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_isram>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	occ_dbu: occ-dbu {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_CPU>;
--		#clock-cells = <0>;
--		clock-div = <10>;
--		clock-mult = <1>;
--	};
--	si_dbu_tp_pclk: si-dbu-tp-pclk { /* gate ClkRstGen_dbu */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_dbu>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--/* PLL_VDI derivatives */
--	occ_vdi: occ-vdi {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_VDI>;
--		#clock-cells = <0>;
--		clock-div = <2>;
--		clock-mult = <1>;
--	};
--	vdi_clk: vdi-clk { /* gate ClkRstGen_vdi */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_vdi>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	occ_can_ser: occ-can-ser {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_VDI>;
--		#clock-cells = <0>;
--		clock-div = <16>;
--		clock-mult = <1>;
--	};
--	can_ser_clk: can-ser-clk { /* gate ClkRstGen_can_ser */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_can_ser>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	i2c_ser_clk: i2c-ser-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_VDI>;
--		#clock-cells = <0>;
--		clock-div = <20>;
--		clock-mult = <1>;
--	};
--/* PLL_PER derivatives */
--	occ_periph: occ-periph {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_PER>;
--		#clock-cells = <0>;
--		clock-div = <16>;
--		clock-mult = <1>;
--	};
--	periph_clk: periph-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	can_clk: can-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	spi_clk: spi-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	uart_clk: uart-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--	i2c_clk: i2c-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--		clock-output-names = "i2c_clk";
--	};
--	timer_clk: timer-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--		clock-output-names = "timer_clk";
--	};
--	gpio_clk: gpio-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--		clock-output-names = "gpio_clk";
--	};
--	emmc_sys_clk: emmc-sys-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_PER>;
--		#clock-cells = <0>;
--		clock-div = <10>;
--		clock-mult = <1>;
--		clock-output-names = "emmc_sys_clk";
--	};
--	ccf_ctrl_clk: ccf-ctrl-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_PER>;
--		#clock-cells = <0>;
--		clock-div = <4>;
--		clock-mult = <1>;
--		clock-output-names = "ccf_ctrl_clk";
--	};
--	occ_mjpeg_core: occ-mjpeg-core {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_PER>;
--		#clock-cells = <0>;
--		clock-div = <2>;
--		clock-mult = <1>;
--		clock-output-names = "occ_mjpeg_core";
--	};
--	hsm_clk: hsm-clk { /* gate ClkRstGen_hsm */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_mjpeg_core>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--		clock-output-names = "hsm_clk";
--	};
--	mjpeg_core_clk: mjpeg-core-clk { /* gate ClkRstGen_mjpeg_gen */
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_mjpeg_core>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--		clock-output-names = "mjpeg_core_clk";
--	};
--	fcmu_a_clk: fcmu-a-clk {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_PER>;
--		#clock-cells = <0>;
--		clock-div = <20>;
--		clock-mult = <1>;
--		clock-output-names = "fcmu_a_clk";
--	};
--	occ_pci_sys: occ-pci-sys {
--		compatible = "fixed-factor-clock";
--		clocks = <&olb EQ5C_PLL_PER>;
--		#clock-cells = <0>;
--		clock-div = <8>;
--		clock-mult = <1>;
--		clock-output-names = "occ_pci_sys";
--	};
--	pclk: pclk {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <250000000>;  /* 250MHz */
--	};
--	tsu_clk: tsu-clk {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <125000000>;  /* 125MHz */
--	};
--};
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-index 0708771c193d064fa56be2c7f6115672b5c24d8d..5d73e8320b8efc1b4f68923482bf188c4345f1cb 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-@@ -5,7 +5,7 @@
+diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+index b89e557371984..b013aa33e7abb 100644
+--- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+@@ -7,6 +7,7 @@
+  * Gated clock implementation
+  */
  
- #include <dt-bindings/interrupt-controller/mips-gic.h>
++#include <dt-bindings/clock/xlnx-zynqmp-clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/slab.h>
+ #include "clk-zynqmp.h"
+@@ -38,7 +39,13 @@ static int zynqmp_clk_gate_enable(struct clk_hw *hw)
+ 	u32 clk_id = gate->clk_id;
+ 	int ret;
  
--#include "eyeq5-clocks.dtsi"
-+#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
+-	ret = zynqmp_pm_clock_enable(clk_id);
++	if (clk_id == GPU_PP0_REF || clk_id == GPU_PP1_REF) {
++		ret = zynqmp_pm_clock_enable(GPU_PP0_REF);
++		if (!ret)
++			ret = zynqmp_pm_clock_enable(GPU_PP1_REF);
++	} else {
++		ret = zynqmp_pm_clock_enable(clk_id);
++	}
  
- / {
- 	#address-cells = <2>;
-@@ -17,7 +17,7 @@ cpu@0 {
- 			device_type = "cpu";
- 			compatible = "img,i6500";
- 			reg = <0>;
--			clocks = <&core0_clk>;
-+			clocks = <&olb EQ5C_CPU_CORE0>;
- 		};
- 	};
+ 	if (ret)
+ 		pr_debug("%s() clock enable failed for %s (id %d), ret = %d\n",
+@@ -58,7 +65,13 @@ static void zynqmp_clk_gate_disable(struct clk_hw *hw)
+ 	u32 clk_id = gate->clk_id;
+ 	int ret;
  
-@@ -64,6 +64,24 @@ cpu_intc: interrupt-controller {
- 		#interrupt-cells = <1>;
- 	};
+-	ret = zynqmp_pm_clock_disable(clk_id);
++	if (clk_id == GPU_PP0_REF || clk_id == GPU_PP1_REF) {
++		ret = zynqmp_pm_clock_disable(GPU_PP1_REF);
++		if (!ret)
++			ret = zynqmp_pm_clock_disable(GPU_PP0_REF);
++	} else {
++		ret = zynqmp_pm_clock_disable(clk_id);
++	}
  
-+	xtal: xtal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <30000000>;
-+	};
-+
-+	pclk: pclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <250000000>;  /* 250MHz */
-+	};
-+
-+	tsu_clk: tsu-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;  /* 125MHz */
-+	};
-+
- 	soc: soc {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -76,7 +94,7 @@ uart0: serial@800000 {
- 			reg-io-width = <4>;
- 			interrupt-parent = <&gic>;
- 			interrupts = <GIC_SHARED 6 IRQ_TYPE_LEVEL_HIGH>;
--			clocks  = <&uart_clk>, <&occ_periph>;
-+			clocks  = <&olb EQ5C_PER_UART>, <&olb EQ5C_PER_OCC>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&olb 0 10>;
- 			pinctrl-names = "default";
-@@ -89,7 +107,7 @@ uart1: serial@900000 {
- 			reg-io-width = <4>;
- 			interrupt-parent = <&gic>;
- 			interrupts = <GIC_SHARED 6 IRQ_TYPE_LEVEL_HIGH>;
--			clocks  = <&uart_clk>, <&occ_periph>;
-+			clocks  = <&olb EQ5C_PER_UART>, <&olb EQ5C_PER_OCC>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&olb 0 11>;
- 			pinctrl-names = "default";
-@@ -102,7 +120,7 @@ uart2: serial@a00000 {
- 			reg-io-width = <4>;
- 			interrupt-parent = <&gic>;
- 			interrupts = <GIC_SHARED 6 IRQ_TYPE_LEVEL_HIGH>;
--			clocks  = <&uart_clk>, <&occ_periph>;
-+			clocks  = <&olb EQ5C_PER_UART>, <&olb EQ5C_PER_OCC>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&olb 0 12>;
- 			pinctrl-names = "default";
-@@ -135,7 +153,7 @@ gic: interrupt-controller@140000 {
- 			timer {
- 				compatible = "mti,gic-timer";
- 				interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
--				clocks = <&core0_clk>;
-+				clocks = <&olb EQ5C_CPU_CORE0>;
- 			};
- 		};
- 	};
-
+ 	if (ret)
+ 		pr_debug("%s() clock disable failed for %s (id %d), ret = %d\n",
 -- 
-2.47.0
+2.45.2
 
