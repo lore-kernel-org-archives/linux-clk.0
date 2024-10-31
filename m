@@ -1,52 +1,251 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51F118858A;
-	Thu, 31 Oct 2024 13:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB7719C54C
+	for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 14:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730382641; cv=none; b=eYRp3yNNrgfCQvZwRPtQC32YIgZOrKzqPlCmu7FXja8KPRllbR8gw4DiJSr811s1e1npS+7GX7DA32WDqnL2oKW7S2rRbQe3UQJ6jusYvM6SHlLPioR4F1hfIFkkKOnKwn5y0gpujQBvb4uX1ztztntl7vQpI3+mfS3Tu1gWShY=
+	t=1730383628; cv=none; b=CkZGvpqdPa9h27ZahIcuAawogsEkZuA/Jmk49QTlA0HbdkW9xnPR9D9sjrVuatQb9X6o7hYKEouv4hkz48eI6H99WJWmHsxBxvA/3Eqxfg5QmfEqbCh1O/J9dKIXPp+mKWms9r3uEoQTVGiLkVA7C2WDd+b9qhG20rsAe8xbvo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730382641; c=relaxed/simple;
-	bh=hJhqOrb9icJdn9+eoAEG23GR1NmmQfebcODBfmoq4AU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=md6EUXqriE+7lB5BmkE0jHgUxCnCjQf9zPjyN9jHtGrE2PjLc9wOyVF4yrlrzJu7K5i+lcAOVYgZ3mdyuCSLod3qP8vEHWp6VlZxHygJQnZxYGzO4czROmvNiZoahyL+9/yvCPitf6lOf2v2V9rOvHfDt+DXfc3dw4GIAl+mOlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfQMt0zcPz20qwQ;
-	Thu, 31 Oct 2024 21:49:30 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 981581A016C;
-	Thu, 31 Oct 2024 21:50:30 +0800 (CST)
-Received: from [10.67.109.114] (10.67.109.114) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 31 Oct 2024 21:50:29 +0800
-Message-ID: <d38c2b1a-3527-421b-a122-fcec0e48b4c4@huawei.com>
-Date: Thu, 31 Oct 2024 21:50:21 +0800
+	s=arc-20240116; t=1730383628; c=relaxed/simple;
+	bh=4n8iR94+PGBpitBvSOEgevPVeC9olrRr+D45j2D0gEM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOSG/X+O+AUJ3k39DUXQk8jIwK8n9rDSELd97ph69lNItoXa8LZR+zPvRNNdj/nQ9fU3ifyjz7AqKMxtUbFK0yMMToMXO5ndlU9UPLj96JZh89XE+rowtzTWWyC8S5O19wn6cV13jsVD45OTyqg1xI5Ygjlv7qPt9Cu5A2c3VBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vb536Sc/; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vb536Sc/"
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a9acafdb745so170456466b.0
+        for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 07:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730383623; x=1730988423; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JEGfHgtlfX7KJ8goCZZIWVQ2MO0hMqzb+0kc1/rtAds=;
+        b=Vb536Sc/cKV4Pc5/qQpCClxva7sRvAf8sDg1z773wAgi+SSt+/H8yKFiuwcNog1D7Z
+         5tphw5KQKUfwPdgjsoIJUTlaQh4IagUc+unjpqrhkBDXcPU4QzVadscwnY88VHPZrhXE
+         aYspjCeL0Ck6cnIzWPX58aRzduBt7wrZqvpKwZ55rJ8CtdsqoLAe0xltrKTq12DvzgDN
+         7bKX4KPzDPLqJCO47xaiNZzQwt+Cc58gaax7s/wpcB+r8/jUCOUSRHCp2C6+kk5v70Es
+         7qeKtJHf4vHfjEYGEDfIdd5MWpuEHEu5Oh3ewzmBaSqUNkanrwAKWs1bi/pB2R1JTUnj
+         Btmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730383623; x=1730988423;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JEGfHgtlfX7KJ8goCZZIWVQ2MO0hMqzb+0kc1/rtAds=;
+        b=cdR8am0wY+IgPX/lYWQ5xR3WK+dQMpuNBzstkYp9GV8P0cijc8PBhSC24NDMggD7xR
+         romGDEg547e3h5UcKaB1MqH3SXgCQ3BjKuYKMzpjhnBQDZIATdvSpltGtJFhwUfjml+t
+         z4TcBM3QneemCmdWUchDyz97p6R8Y8WoLV5MKMhk+xjOMCtNu+SrcZpgkfd/wKTQW9Op
+         +80G6G32dHDuY2DZ5U2oP96sZkoA5B37vNTdG1Z/uoK1XVzcSGKHzl5CgtkfNekb528m
+         XkF1X03MNZTAmbqQQjYP2w9TMHUItQ0tRJSpiLstwSU43i/PzvjUSlOSBePzmsnGYP0w
+         80bg==
+X-Forwarded-Encrypted: i=1; AJvYcCW67Y6AHt+TJwj96WCyd3yu8IlQ/aoJjFhaFofvJ9HqyUA9d3Px7DHEvkKALbZH65FYdwfXORTtENc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6vVLbHOJlMq2P/ZbyPmzhfWqdJnyySjw26FXejFjy2nQiLslH
+	aASlYOJIil3MZ/jiXUpcxrD/5+HvIP06UgmMgAaSrtth+G8RLbuiD3TX0uKXD0k=
+X-Google-Smtp-Source: AGHT+IHIQ0tbBiD4S9T+SeWA7RT+bD93Ja4MEmDsZzDyFDQ+3MuTwIXh7kQIQRv4IgnjZ0byYOCkag==
+X-Received: by 2002:a17:907:3f87:b0:a9a:cea7:1294 with SMTP id a640c23a62f3a-a9e65436316mr9805566b.21.1730383622809;
+        Thu, 31 Oct 2024 07:07:02 -0700 (PDT)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c5327sm72556866b.56.2024.10.31.07.07.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 07:07:02 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 31 Oct 2024 15:07:26 +0100
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 02/12] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+Message-ID: <ZyOPHm7fl_vW7mAJ@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <9a02498e0fbc135dcbe94adc7fc2d743cf190fac.1730123575.git.andrea.porta@suse.com>
+ <mjhopgkrjahaxydn3ckianqnvjn55kxrldulvjkpqivlz72uyi@57l5vhydpzc2>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: clk-axi-clkgen: fix division by zero in
- axi_clkgen_calc_params()
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <lars@metafoo.de>,
-	<mturquette@linaro.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>
-References: <20241026072344.976154-1-quzicheng@huawei.com>
-From: Zicheng Qu <quzicheng@huawei.com>
-In-Reply-To: <20241026072344.976154-1-quzicheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500009.china.huawei.com (7.185.36.209) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mjhopgkrjahaxydn3ckianqnvjn55kxrldulvjkpqivlz72uyi@57l5vhydpzc2>
 
-Gentle ping.
+Hi Krzysztof,
 
+On 08:26 Tue 29 Oct     , Krzysztof Kozlowski wrote:
+> On Mon, Oct 28, 2024 at 03:07:19PM +0100, Andrea della Porta wrote:
+> > Add device tree bindings for the gpio/pin/mux controller that is part of
+> > the RP1 multi function device, and relative entries in MAINTAINERS file.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  .../pinctrl/raspberrypi,rp1-gpio.yaml         | 163 ++++++++++++++++++
+> >  MAINTAINERS                                   |   2 +
+> >  2 files changed, 165 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> > new file mode 100644
+> > index 000000000000..465a53a6d84f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> > @@ -0,0 +1,163 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta <andrea.porta@suse.com>
+> > +
+> > +description:
+> > +  The RP1 chipset is a Multi Function Device containing, among other sub-peripherals,
+> > +  a gpio/pinconf/mux controller whose 54 pins are grouped into 3 banks. It works also
+> 
+> Please wrap code according to coding style (checkpatch is not a coding
+> style description but only a tool).
+
+Ack.
+
+> 
+> > +  as an interrupt controller for those gpios.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: raspberrypi,rp1-gpio
+> > +
+> > +  reg:
+> > +    maxItems: 3
+> > +    description: One reg specifier for each one of the 3 pin banks.
+> > +
+> > +  '#gpio-cells':
+> > +    description: The first cell is the pin number and the second cell is used
+> > +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
+> > +    const: 2
+> > +
+> > +  gpio-controller: true
+> > +
+> > +  gpio-ranges:
+> > +    maxItems: 1
+> > +
+> > +  gpio-line-names:
+> > +    maxItems: 54
+> > +
+> > +  interrupts:
+> > +    maxItems: 3
+> > +    description: One interrupt specifier for each one of the 3 pin banks.
+> > +
+> > +  '#interrupt-cells':
+> > +    description:
+> > +      Specifies the Bank number [0, 1, 2] and Flags as defined in
+> > +      include/dt-bindings/interrupt-controller/irq.h.
+> > +    const: 2
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +additionalProperties:
+> 
+> Not much improved. You are supposed to have here pattern, just like
+> other bindings. I asked for this last time.
+> 
+> And there are examples using it - almost all or most of pinctrl
+> bindings, including bindings having subnodes (but you do not use such
+> case here).
+
+This is the same approach used in [1], which seems quite recent. I did't
+use pattern because I wouldn't really want to enforce a particular naming
+scheme. Subnodes are used, please see below. Since pinctrl.yaml explicitly
+says that there is no common binding but each device has its own, I
+thought that was reasonable choice. Should I enforce some common pattern,
+then?
+
+> 
+> > +  anyOf:
+> > +    - type: object
+> > +      additionalProperties: false
+> > +      allOf:
+> > +        - $ref: pincfg-node.yaml#
+> > +        - $ref: pinmux-node.yaml#
+> > +
+> > +      description:
+> > +        Pin controller client devices use pin configuration subnodes (children
+> > +        and grandchildren) for desired pin configuration.
+> > +        Client device subnodes use below standard properties.
+> > +
+> > +      properties:
+> > +        pins:
+> > +          description:
+> > +            A string (or list of strings) adhering to the pattern 'gpio[0-5][0-9]'
+> > +        function: true
+> > +        bias-disable: true
+> > +        bias-pull-down: true
+> > +        bias-pull-up: true
+> > +        slew-rate:
+> > +          description: 0 is slow slew rate, 1 is fast slew rate
+> > +          enum: [ 0, 1 ]
+> > +        drive-strength:
+> > +          enum: [ 2, 4, 8, 12 ]
+> > +
+> > +    - type: object
+> > +      additionalProperties:
+> > +        $ref: "#/additionalProperties/anyOf/0"
+> 
+> Your example does not use any subnodes, so this looks not needed.
+
+The example has subnodes, as in the following excerpt from the example:
+
+            rp1-uart0-14-15 {
+                pin_txd {
+                    function = "uart0";
+                    pins = "gpio14";
+                    bias-disable;
+                };
+
+                pin_rxd {
+                    function = "uart0";
+                    pins = "gpio15";
+                    bias-pull-up;
+                };
+            };
+
+Many thanks,
+Andrea
+
+[1] - Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+
+> 
+> Best regards,
+> Krzysztof
+> 
