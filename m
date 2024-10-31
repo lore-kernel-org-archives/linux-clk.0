@@ -1,172 +1,97 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32F3192B89
-	for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 09:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C0D17B436;
+	Thu, 31 Oct 2024 09:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730366791; cv=none; b=DRzMQyqUQyTF/86GVXclijULWwVRHQmhVy8F/pSvoWLD9fazaYj/QiVvtg+JWrCBRmjvQN/cZXNVbV3cETXyaL3igYgP7NY68FuSVXIoyBKVG1BTNRoskTY13qW7qZb25tlczZuv8v5RYKBtm8iV3B8C16MQqRUR0ZM+kQ2Bxls=
+	t=1730367770; cv=none; b=uiqSdiFeTEsPVPJBzjzTKxMqF4EAH8/OfXwgZXTYQIBFbyHELx0zQN+qPCPKqRXKnRjyLXZc8WppIdynjQmjmEnMTYFDk0XzwPQR4sb0JyljHKA0y7mSy/Ih99Wy9UrgtuWeEshADwPpNZ/avcLrMjUNscV/7XlgDuHtdvVu8rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730366791; c=relaxed/simple;
-	bh=W+7WITvQz2ZgCwS9oNFaKkBroXYi4X6KRO4xqfT+YUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eoeSmFrprAS4Tjx4kncUaVPVvNaQHfhlGfBJLL02jGIYeMtzQDnYzI8R+U2+q8QGjt91J+YY58AYRJP3kMlhfl5y4OYL9PmLx7Y/jIHGEkFbs3CSbf9u8CBFKbcSaqvGLCvT2uEqBSJ6N6sNHaWkt31+ehPmaLs9BIaPKI5ER6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=q+uQKR6p; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1730367770; c=relaxed/simple;
+	bh=gvIolUj3GPlr1v9Qqq8NCLwsd+Y00rCxC2cPy5H86zE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OlAZ2BCvV1qdaCXloVrIh4GqCMa0Dt6keIlAU9XVZLTpsUICEc9Y5WvdSjRYkIcp0mYanRfX1ZixkVt81TWx8ZyiyRAA9JAU6kIE9XyVV7Zefwb8yplFouv328HU1dUhMprjgMzfoP39VI9AMrXKfeH2AkzLcuFDIkL3HkLkAjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s83G6sty; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oyyTImzd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="q+uQKR6p"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so902059e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 02:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730366786; x=1730971586; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WPySU9GG1bDdptaowyq3VjxeujL5zBs3sjWS8sIYgHw=;
-        b=q+uQKR6pkACB75xQMn3++eVBRS7sJIf7dk+y3++vj9EYnyBUzJVi1HvR+OL9uJRzIf
-         mqKetllPpd8T/2jYbu5bh2G/v1lkywjkCeZQiXD5DyDRpnww3Q14AfK5fmsjYpblaWnf
-         o/sgTrFl3hfU6wLKcvBXlNdhrfCBbKX0BPV2fqlROpJGvXOJ3yOnBJpuxBevp94k5pvO
-         wZI8K1LU9c/oooBTQyHVgVI7DH3FRRewgf2P5TCfvVTK7uNnuJ+Q/u8F0cV42/8NLZAX
-         Q5WYtwok1dOGng+OTpqsZbSuhCBSyLI4NrUMurGqpLVU/IingGWFAPeFU7hiuKTayMn7
-         5svw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730366786; x=1730971586;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WPySU9GG1bDdptaowyq3VjxeujL5zBs3sjWS8sIYgHw=;
-        b=YaGYzn+Bx23Wwso2NwPGjHnFb6mADCKqAb4p0v92d0hc1Hg9uN346fhlhPvTvGr3GH
-         a/fND2Ai7fSYn0Ru0X3PN2z5Jdrz6Yvk3pay+i+sXy/+/LSoQiAdx6Vye16SOqVLSN1o
-         DtjVeotk1KSLdZQlbBkARpO8H3NRKhxve8rAqjgNol8M7o2EcZTPIbzkhPn+65p1vJj3
-         ID9auhtzl7gDS2SdUjWa7UycH5Cl/BA4C7M5jQt/6IvRJysnQHfli1UsTyr7E3CtPHkS
-         msUUDIRp9bOQ8WsGE5l0whJ07ahIo9uX1u7G92TF/F2blL+wcXQ+cWi7eSLA+8GHMdVo
-         lX/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1uzv44CjmBLhv7zCzPXoufLulBZ4NxnwyMDqrM4EU8OMXvTL+EO1lGPG6VZ50Gzeah9wgavYFFO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUypvuTv+ik3fQn9rEBrsuMrVjv5C7eK2NXUx9Z0dWu9Pez+lv
-	M3StTuMROqBj1qBW2nknuyyi/Up2ts1Pf1NFuhPTaEBHZUEnbOAxi9N2FOqOeQ8=
-X-Google-Smtp-Source: AGHT+IFx8MLTqlbYOXV70FjxcgUiPu/8my35yVrkTf/0/c/FdNoy8F04GpO/K6glzhe+yo4QhhnwIg==
-X-Received: by 2002:a05:6512:b94:b0:539:f7ab:e161 with SMTP id 2adb3069b0e04-53c79e8ec22mr1531829e87.45.1730366785959;
-        Thu, 31 Oct 2024 02:26:25 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.190])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd917fefsm48372175e9.16.2024.10.31.02.26.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 02:26:25 -0700 (PDT)
-Message-ID: <ee94a802-97ec-4a9b-9ca4-5c14e0eba116@tuxon.dev>
-Date: Thu, 31 Oct 2024 11:26:23 +0200
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s83G6sty";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oyyTImzd"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730367766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hnGraNEP/rz5O8q33kitqbhHCgnpJ/YmvKLNCF0vYpQ=;
+	b=s83G6styN8bgmTOKXbhnhzTwe1neMnP/IpGepXQT7lX+qFFWLfa1JAALy/5s/UDFw+e9Is
+	bWN4An2XBNJf//s8S3rU7M4QZ9tW/s8n+d7qe0IPa0PFV8uXRDQ8jpz4smkRquwI9563H0
+	BWZUZC50qQ/7deg/5m9O7B7x+bsRXd2dJT6dhYvot1HbXtcdOglrUjODmchKNiWY88aERW
+	B7S8QXHIXqKfzHg5PRrTnoSWpxONFzCX2ZxU7STM06NHPwu2lFHbE1Rp031323f8dF81Dz
+	n3nE+LRcrLXQI8Yx/DHg0s/otWtPbd4IJbK4+YnBKMtk4IFTCSpO3tFOm+TjeA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730367766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hnGraNEP/rz5O8q33kitqbhHCgnpJ/YmvKLNCF0vYpQ=;
+	b=oyyTImzdRYppbqXbvspmSJ48xaqRz2JgQX5pq2j23MXY1W3SVMnYhCx5MHCGxCTDOE6EGH
+	cn8sejRYV+V+e6CA==
+To: Naresh Kamboju <naresh.kamboju@linaro.org>, Linux ARM
+ <linux-arm-kernel@lists.infradead.org>, open list
+ <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Linux
+ Regressions <regressions@lists.linux.dev>, rcu <rcu@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Mark Brown <broonie@kernel.org>, Alex =?utf-8?Q?Be?=
+ =?utf-8?Q?nn=C3=A9e?=
+ <alex.bennee@linaro.org>, Peter Maydell <peter.maydell@linaro.org>, "Paul
+ E. McKenney" <paulmck@kernel.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Anders Roxell <anders.roxell@linaro.org>,
+ Aishwarya TCV <aishwarya.tcv@arm.com>
+Subject: Re: next-20241031: kernel/time/clockevents.c:455
+ clockevents_register_device
+In-Reply-To: <CA+G9fYtb5vAnEiHupwsnaeZ7uzdko_WAcjw9ZAFkHNXBVhi1EA@mail.gmail.com>
+References: <CA+G9fYtb5vAnEiHupwsnaeZ7uzdko_WAcjw9ZAFkHNXBVhi1EA@mail.gmail.com>
+Date: Thu, 31 Oct 2024 10:42:45 +0100
+Message-ID: <87zfmkwqui.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/10] clk: renesas: clk-vbattb: Add VBATTB clock
- driver
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
- <20241030110120.332802-4-claudiu.beznea.uj@bp.renesas.com>
- <mg2ugyg65ke3tngzqyyixfkawf4iop4o373dc6fosy7bfydbe5@pm43dhkd7asu>
- <CAMuHMdUcw_UHAZRVGt=Tr0jv3NOPDibtPy1E-46Pq74YKFZxWg@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUcw_UHAZRVGt=Tr0jv3NOPDibtPy1E-46Pq74YKFZxWg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi, Geert, Krzysztof,
+On Thu, Oct 31 2024 at 14:10, Naresh Kamboju wrote:
+> The QEMU-ARM64 boot has failed with the Linux next-20241031 tag.
+> The boot log shows warnings at clockevents_register_device and followed
+> by rcu_preempt detected stalls.
+>
+> However, the system did not proceed far enough to reach the login prompt.
+> The fvp-aemva, Qemu-arm64, Qemu-armv7 and Qemu-riscv64 boot failed.
+>
+> Please find the incomplete boot log links below for your reference.
+> The Qemu version is 9.0.2.
+> <4>[ 0.220657] WARNING: CPU: 1 PID: 0 at kernel/time/clockevents.c:455
+> clockevents_register_device (kernel/time/clockevents.c:455
+> <4>[ 0.225218] clockevents_register_device+0x170/0x188 P
+> <4>[ 0.225367] clockevents_config_and_register+0x34/0x50 L
+> <4>[ 0.225487] clockevents_config_and_register (kernel/time/clockevents.c:523)
+> <4>[ 0.225553] arch_timer_starting_cpu
+> (drivers/clocksource/arm_arch_timer.c:1034)
+> <4>[ 0.225602] cpuhp_invoke_callback (kernel/cpu.c:194)
+> <4>[ 0.225649] __cpuhp_invoke_callback_range (kernel/cpu.c:965)
+> <4>[ 0.225691] notify_cpu_starting (kernel/cpu.c:1604)
 
-On 31.10.2024 10:43, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
-> 
-> On Thu, Oct 31, 2024 at 8:48 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Wed, Oct 30, 2024 at 01:01:13PM +0200, Claudiu wrote:
->>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that is used
->>> by the RTC. The input to the VBATTB could be a 32KHz crystal
->>> or an external clock device.
->>>
->>> The HW block diagram for the clock generator is as follows:
->>>
->>>            +----------+ XC   `\
->>> RTXIN  --->|          |----->| \       +----+  VBATTCLK
->>>            | 32K clock|      |  |----->|gate|----------->
->>>            | osc      | XBYP |  |      +----+
->>> RTXOUT --->|          |----->| /
->>>            +----------+      ,
->>>
->>> After discussions w/ Stephen Boyd the clock tree associated with this
->>> hardware block was exported in Linux as:
->>>
->>> vbattb-xtal
->>>    xbyp
->>>    xc
->>>       mux
->>>          vbattbclk
->>>
->>> where:
->>> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
->>> - xc, xbyp are mux inputs
->>> - mux is the internal mux
->>> - vbattclk is the gate clock that feeds in the end the RTC
->>>
->>> to allow selecting the input of the MUX though assigned-clock DT
->>> properties, using the already existing clock drivers and avoid adding
->>> other DT properties. If the crystal is connected on RTXIN,
->>> RTXOUT pins the XC will be selected as mux input. If an external clock
->>> device is connected on RTXIN, RTXOUT pins the XBYP will be selected as
->>> mux input.
->>>
->>> The load capacitance of the internal crystal can be configured
->>> with renesas,vbattb-load-nanofarads DT property.
->>>
->>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
->>> --- a/drivers/clk/renesas/Kconfig
->>> +++ b/drivers/clk/renesas/Kconfig
->>> @@ -237,6 +237,10 @@ config CLK_RZV2H
->>>       bool "RZ/V2H(P) family clock support" if COMPILE_TEST
->>>       select RESET_CONTROLLER
->>>
->>> +config CLK_RENESAS_VBATTB
->>> +     bool "Renesas VBATTB clock controller"
->>
->> tristate
-> 
-> Good point.
-> However, does it work as a module, or would that break the RTC?
+That's obvious what happens here. notify_cpu_starting() is invoked
+before the CPU is marked online, which triggers the new check in
+clockevents_register_device().
 
-On RZ/G3S the RTC counter needs the clock provided by VBATTB.
+I removed the warning and force pushed the fixed up branch, so that
+should be gone by tomorrow.
 
-I'll try with this as a module.
+Thanks,
 
-> 
-> And this is missing
-> 
->         depends on ARCH_RENESAS || COMPILE_TEST
-> 
-> which I can add while applying.
-
-Thank you!
-
-Claudiu
-
-> 
->>
->>> +     select RESET_CONTROLLER
->>> +
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+        tglx
