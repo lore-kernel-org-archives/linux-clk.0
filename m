@@ -1,126 +1,131 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D51E871;
-	Thu, 31 Oct 2024 12:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB20113A869;
+	Thu, 31 Oct 2024 13:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378609; cv=none; b=mwy+fWI9z2thCXNIwhoI3R0Zjb+jnsZrPQBTXNZdtDB9pMv35qyahsSvv3yVPrgErxdXuyrY9XGdO3Wrp49DdC6H5E8A8f5GhHCGvMDupUqGOZGocm3N61S/oG0m6loGUl4ecTfJ+3uGzbGPEaz0NZEhFqeuYCnDsEN6Z5PiKRE=
+	t=1730379728; cv=none; b=VIt8oycvDKJh7vhQeUq1OI0HSkY0Q3NhUs7pRflqQslCtpUNCVgU/1VIHnfDnPMVdvDEU4kvCXcz1qIwlfVg/7w3igkZQn9KkeHPaNuHuppLCmbZiFPLSJnydYpC/zka45ccj8eHP/p8tW/EgQT3FBYboihJvAgNaG+4oakTPvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378609; c=relaxed/simple;
-	bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z2CPP8Fe8n3HgNRerhhODjALshm8wlwlvk1E1jM231A67vkIvOpUAvupFSMH7Gw9x8r2EJ3TuXknoBQp58uxPghDSW1KYB8Jks3VolgT32viVH/uOnhiswEgLop/8XqwXU3mtiM5blHIZR0TzWKa+MSXZobWIRpUQwZ7pIpTJa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M97F/5F3; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730379728; c=relaxed/simple;
+	bh=xdDOP8XDMU0WMjtRp5geiK1WaH7I1H742Dq0rUfn6kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qcd/DhQZT42WqhIPmZaWvfAX6CxcpPbInC/EOrvJI1zneWALr5fi442Yjk5rvLRmYNQnaBHGPXgRNWKwuyKrraAeqX9J1wzg2cMxYbcJazh9cW+zjmsJH3V6I1wu6JuaeZ9rSOXu17uRbf/aXZVMS/pWUE8xpvZ/goUW5clQy4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/3AdS8O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M97F/5F3"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so626865f8f.0;
-        Thu, 31 Oct 2024 05:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730378605; x=1730983405; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
-        b=M97F/5F3N+UC6jyrvEqN5JZOpkwa0m3w99GPE8xGV7N/V0aLhIBBFFBFKtklE9S84n
-         D0fUw+fzZeXyNzdC1goPBESkO30G/5p6ExgG7WLCD9Q+6Wc3HZ5nmNYo6nkQvXM2utAX
-         DvWo3CZ5MolavU4pTfFzmbL8pVxxdjRGTfprVqae+dgd6l+x2j51TE8wWYSWhKGHj/a4
-         7Pb4VigNZ3sE5jmURDMkE0VVW0ed28Qf0Ddt6uxfiP7ffPetAj8KCjVwJVnYNa1ONksA
-         V0XhSYMDHxZEOQfArsuu7S0EbYhsGLOwBaYJkbAJvtNbt3NT4bvYck1BUZM9BkvotUWi
-         XNlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730378605; x=1730983405;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
-        b=DyHAyIQd3MwUaDTrDR0f0TY6NdG/ydDJmOR09wKPK8FdiBA5R+PXNKuwxXRS3ryQAs
-         7AQqJQ3lU9RDkpPE+twmCXj5nehMIw1LRmQ/stoGhPJbuW/v3wuwqFBCuB2PPS1Gi3ZA
-         uLhELry5YB5H9Zz880abGTU6CMb7yLLUZ1MAQMgKpOToDms11a9v5B9wuyuAX34NDhbP
-         gCtqex6UJXK18jHXZMLGJVqcJ0WPHWcV+ZuRx4i5PK6p1AFJsZOH3gjwrn90JCOKFyIu
-         xezUC4LmkyZO70MpS3GNkZ2y39Gq1C+vd9Ywy5MJQD2tXzXtlf+X79qvBWsCt1TExlcA
-         G6EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc7MPuIAFDoU2gUCh+nAzxRmrd+USZYgiFXsGQGt4oRj7ViEEoekmFdojyD3+PTkYopV5XnqGcJpc=@vger.kernel.org, AJvYcCXBUXd25F8wJbFvgvRwfyyxEe9t425RKW/MpKlYo1vRmqklKVwup1z1RcetzCL7D0PWoMczpqemzhagoNNy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/uN08U8w+XsUTecWm6z6C1Hm40twuHvlyl0YhQ/EBYpY4U/Ls
-	MwGp2/7dJDDw3xEm0ChyvSZ5jupzDe1JAszRiK5pwuBtz+4lPLkz
-X-Google-Smtp-Source: AGHT+IFEIVQ6pPS463YcejXrPDyaSA/UtTd61XxgHxKzbLgWYHBucBJA9TZFt3elDzGAGWQm/OFVzA==
-X-Received: by 2002:adf:fdd2:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-381b707641bmr5307715f8f.17.1730378604792;
-        Thu, 31 Oct 2024 05:43:24 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abdasm2021810f8f.97.2024.10.31.05.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 05:43:23 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 13:43:16 +0100
-Subject: [PATCH v2] clk: renesas: cpg-mssr: fix 'soc' node handling in
- cpg_mssr_reserved_init()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/3AdS8O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F36BC4FF6B;
+	Thu, 31 Oct 2024 13:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730379728;
+	bh=xdDOP8XDMU0WMjtRp5geiK1WaH7I1H742Dq0rUfn6kw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B/3AdS8OoQv+xdoHidG1bZWd+VE3k+D6zFsafKnX9cRmM/QQJtNQ5gEtBInEcIyLl
+	 p7G3GHWwaswNp/wYvDFnq5xE7TDpMqVaPhwsxFKg0vXO0nqaykDTw3uEJTwXnt+Ifp
+	 ClUSCI+naGTIAbEqQmTdlk214CAVYi9rruZKh9DpO3XHdaGAQ0sD245+uD+9s2CoI5
+	 vpKaFEN4Jv8dJx9EKJzjiqo2F/9dyjgacOkUCUNAQL30xO0mz+HIX1QJms0zJFZeyU
+	 sPSdy07yMacNzJkPjSoNNerkHetxbOY+WDxCD9A0M2QlBOXUi1eaDnp3ZoJy3HdXWU
+	 iZDdU+l3kJfPA==
+Date: Thu, 31 Oct 2024 13:02:04 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: axi-clkgen: include AXI clk
+Message-ID: <20241031-saga-earache-2179dc30adaa@spud>
+References: <20241023-axi-clkgen-fix-axiclk-v1-0-980a42ba51c3@analog.com>
+ <20241023-axi-clkgen-fix-axiclk-v1-1-980a42ba51c3@analog.com>
+ <20241023-tucking-pacific-7360480bcb61@spud>
+ <1e0097f6a15f47c173cb207e369909c1cb5943f9.camel@gmail.com>
+ <20241024-wildfowl-pushiness-d5f46c9c538a@spud>
+ <8b853ad3964cd2b7dafc225d4037ddbf11ebb2d3.camel@gmail.com>
+ <20241025-numerate-quirk-b622c5acdacc@spud>
+ <113e98edbff4501556e35698431080364e134233.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v2-1-0010936d1154@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGN7I2cC/42NQQ6CMBAAv2L27BraEhRP/sNwKMsCG6GQrhIN4
- e9WXuBx5jCzgnIUVrgeVoi8iMoUEtjjAaj3oWOUJjHYzOYmcwZpeGDkwOoVae5wVI1Jsg+vGU3
- pXNMWrqaSICXmyK289/y9StyLPqf42W+L+dk/w4vBDAt7seecqW6pvnWjl+FE0wjVtm1f95hVV
- sgAAAA=
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730378603; l=1720;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
- b=nmTqZwyudmz5MVr0qhXTgTM6WrccGhKYgvQPFOc06zJIc77Np2zcshJVVb7+oFt+kYmHvXAz4
- to57HC7fXWXAcYSj+HjgVn17U31E7DgDCAlrHsrOwSm/SAFrMJ7qptw
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="C3qVovVDD5k1QD0u"
+Content-Disposition: inline
+In-Reply-To: <113e98edbff4501556e35698431080364e134233.camel@gmail.com>
 
-A device_node reference obtained via of_find_node_by_path() requires
-explicit calls to of_node_put() after it is no longer required to avoid
-leaking the resource.
 
-Instead of adding the missing calls to of_node_put() in all execution
-paths, use the cleanup attribute for 'soc' by means of the __free()
-macro, which automatically calls of_node_put() when the variable goes
-out of scope.
+--C3qVovVDD5k1QD0u
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Changes in v2:
-- Squash patches for mainline solution without intermediate steps.
-- Link to v1: https://lore.kernel.org/r/20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Oct 28, 2024 at 03:01:44PM +0100, Nuno S=E1 wrote:
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 79e7a90c3b1b..bf85501709f0 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
- static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 					 const struct cpg_mssr_info *info)
- {
--	struct device_node *soc = of_find_node_by_path("/soc");
-+	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
- 	struct device_node *node;
- 	uint32_t args[MAX_PHANDLE_ARGS];
- 	unsigned int *ids = NULL;
+> > > The assumption is that the axi clock is the last one in the phandle a=
+rray. But
+> > > your
+> > > comment made me think a bit more about this and I do see a possible p=
+roblem if we
+> > > run
+> > > old DTs against a kernel with this patch. We have two possibilities:
+> > >=20
+> > > 1) DT only with one parent clock;
+> > > 2) DT with two parent clocks;
+> > >=20
+> > > 1) is "fine" as it would now fail to probe. 2) is more problematic as=
+ we would
+> > > assume
+> > > the second parent to be the axi_bus clock so effectively not fixing a=
+nything and
+> > > silently probing with a broken setup.
+> > >=20
+> > > So yeah, I think I overthinked the backward compatibility thing. I me=
+an, in
+> > > theory,
+> > > all old DTs are not correct and should be fixed by including the axi_=
+clk. And if
+> > > we
+> > > now enforce clock-names we at least get probe errors right away makin=
+g it clear
+> > > (which is far better from silently breaking after probe).
+> > >=20
+> > > Given the above, it should be fine to just enforce clock-names now, r=
+ight?
+> >=20
+> > I think you need to enforce clock-names in the binding and take
+> > !clock-names and 2 clocks to mean that the second one is a clkin. I
+> > think that's a better solution than failing to probe for all extant
+> > devicestrees.
+>=20
+> Ok, so IIUC, you mean leaving old DTs as of today and relying on someone =
+else to
+> enable the axi clock (if it was not enabled they would have noticed by no=
+w).
 
----
-base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
-change-id: 20241031-clk-renesas-cpg-mssr-cleanup-1933df63bc9c
+Yea. Obviously any old dts within reach (so those in-tree) should be
+updated to have the missing third clock, but as we can't be sure we have
+changed all users, so the driver must retain its current functionality
+with the old devicetrees.
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> And only
+> take care of the bus clock when clock-names is provided?
 
+Yup.
+
+
+--C3qVovVDD5k1QD0u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyN/zAAKCRB4tDGHoIJi
+0gS2AP9KFusL2IYEvY+70gKNTizKWIsY+058Z+CwTI5kgDfYPAD+N9js+eOfwmAc
+qkbffCHLfqHrpTiCkF2H2eHEdH0J0wM=
+=WBhq
+-----END PGP SIGNATURE-----
+
+--C3qVovVDD5k1QD0u--
