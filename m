@@ -1,70 +1,48 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F7C80BF8
-	for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 19:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41CC1CC8B7;
+	Thu, 31 Oct 2024 23:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730401324; cv=none; b=hwpouMqkEFVuF1U8L84ildTAVBiBmjizG+unpGq0P593Otw0X/9+Pvs0Wx0GkLb79i+uJoR3ySJmKO13jnsvsdq85zYDvoTMeq5UjLXgVJaS6Sv1dJ66VdrEwiYYZCf9MYIVuMUFIc2dzVcA63ZnYrcTWfb2+Yftpqxcw7f7pjs=
+	t=1730416658; cv=none; b=DR/A2L1EedYNlL/eei+LkJuN/ifjJuLnbgphEvyfuikPuO13BI8/VOXK7dqxZlK2rgMqWFAWam0o9O5CIp0gwQyJLp/ytRhhfnsIM4kBMuqEhJ6y3FJs/s8dDzz4JGoMP3LL653XirTiIJYLRbGLv9uzGBoNPKwa/WndlMr1diI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730401324; c=relaxed/simple;
-	bh=gbJYUdfgCKw/rRKOhbMx2szkGQp2Ixn9Fkw/N9wbhGo=;
+	s=arc-20240116; t=1730416658; c=relaxed/simple;
+	bh=guKQZ269YoJkWNOHN8n+zpW1sLw/rcZPJRVDIFG7ssQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JipkdGgmPQswqHkStHX8cMExHg01rmNpZayVmKYNLu6371UbcSc/+8ixWqzcawIAQxRlJTCwgCCGHRIirsvpqKzH7ar5GdRC6fCk6N+Ej9URNfcfw5VC1H/oMy6cjHmadt/Zu5wt99SML4KAVBFDPa38RCjxa8048FJSLZKubmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsU8tOaO; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=IcRUiFMJJrI9Onyh7j/raIVjbloR6cdzrFBSwhFT34ri8UarMq1XOSP45o9BuMjh9HlXPdH/iH5FyJ6f5QGCBD5ouBYb3eNbFIOKEtPQ0v3ykaMKgtX8HH8QED3sZXVYemQ2B+4LvYMhNebuuNgSVm6mgLF6fNFaaSdAp/b0eXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bn2fG+8+; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsU8tOaO"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so12774511fa.3
-        for <linux-clk@vger.kernel.org>; Thu, 31 Oct 2024 12:02:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730401321; x=1731006121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8wAnENA8ogJfTOc3zoMO7WnZA1QX8UI1GpRKP5HXdqQ=;
-        b=xsU8tOaOw5LczELN0EGTbxWFjBI+wXmYQrzTvEJZ5bOki5BdoreNP3xNSj0/fZ/oJ+
-         NRoJvDg/5nuFSaBHqDkfY2VbBakg9ZKs9seWYqxIp9rXJGlcSI8dtH68h21ODGyCDU9n
-         bEsx6dfFj1tkgRSXVj6mnzyHD6kE/QyDX0cFSNh492PLxWXZiOXI1wPDn8AwiV/dfB+P
-         Ww/vHWVxjnnisaUuGnlhev4kKKC8EqtxVbCQlByB1/pnY0UPknh2zSxpAzBLze6bmb1H
-         VhWZ1eEESnEQU82h2txp5MiO7u6aPJwm+rfrBCbcLGcfTnzTgphuhl7zf2pZD14KbMW/
-         zttA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730401321; x=1731006121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8wAnENA8ogJfTOc3zoMO7WnZA1QX8UI1GpRKP5HXdqQ=;
-        b=RvUOktx2IZk0EDq22bL961OhldxdIakRSfhY7OcLHN9129m4YuUWX+qwmA85pCMY9f
-         hboqQr8hDY5e8mzBYP3c8nVr9bskeJw+54VII2FtQzs/YLdbuHEKkv6dAiXGU4luRnau
-         Ew8xU1nmWo69I0n6mLC07oYo1DSmtZP1wzsYPRS539/RMyWJP5KAwwgGmK0Dd3yVKl4G
-         9DOSkiNa+9VjLY1bxjXkGl/w2ExNHoCZICiPmc4Rl6Jlq4Q7TLdboankDFz7UIJe/EbC
-         v5snwAYz35J+Q+XQvXLAfszY6wYaGkiXa0XUTZn/AGdBtUB/zar4qwrQqKU3bvf/fJZx
-         JQXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbx8TMXw80XYYbN4+4oqUyZ+iWhzLKKKSONFu7xbkz2qQWqVvFUZ1NIB0RmJU06+QwQdU54sSj8II=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3h8AUOGz9OgNmDpEFMHtK8jbpCJW/wkuke4egRqlbYwktdgfc
-	ZX8x17bcgfPGoF+uRKxAkJ3r2ulduNa8dJsvHn4YJ3Z+rKUa2rAuvXKnEPbOyI0=
-X-Google-Smtp-Source: AGHT+IFi5F4lkwKY82nrXE+8A/PgvuukB0g3gFwNfuoaN/1U/pVNyOoFpOy9Uuyr9977lLV6rh20zQ==
-X-Received: by 2002:a2e:bc13:0:b0:2fb:6277:71d0 with SMTP id 38308e7fff4ca-2fdec8586b9mr24132641fa.22.1730401320540;
-        Thu, 31 Oct 2024 12:02:00 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef8a6410sm3035011fa.97.2024.10.31.12.01.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 12:01:59 -0700 (PDT)
-Date: Thu, 31 Oct 2024 21:01:56 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] clk: qcom: gcc: Add support for QCS615 GCC clocks
-Message-ID: <gg2khw4ekb76uikyp2jlvl2bitfovr4grjfqw3wj33jnv5qkwr@p5ulhtixc6b6>
-References: <20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com>
- <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bn2fG+8+"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 038AE20002;
+	Thu, 31 Oct 2024 23:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730416650;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q2N3NKmH49hjRiqnrVgcxvKSV4bVv8lUQzTG26S2d3Y=;
+	b=bn2fG+8+pXP2OIG5T46ZntHVHumfx4xU2hVMnhQuJ0sX3uPBQlHbiUl8Tr+WHUjbwvYqPP
+	sx+mKsfBDuoCjVzFeyumLm7B+ttWP5/ZzPeTO9f1D3KWdkJ1RehsIGLwytozpfoGFnZZ8j
+	atWicNRrYbfkVY+jje2eoTo3oSby7g4dOgJnU6LBHvhPIm5awdpcj0Gl9c4erLIIj4VrK1
+	gQMvCk0NZ3DZ4+aE98JcxX5+5ws5Pju+ox4zxRNI62UNW/chM/4iKZPCBV+rjfO3M5UVAd
+	4qaWLxpxrLJY/c+Cx95/wPVuJbFtPjnCbrlpcCJwCS1k05muZTYVjEiST3utQg==
+Date: Fri, 1 Nov 2024 00:17:28 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: (subset) [PATCH v5 00/10] Add RTC support for the Renesas RZ/G3S
+ SoC
+Message-ID: <173041660392.2394403.11154347678487291985.b4-ty@bootlin.com>
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,20 +51,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
+In-Reply-To: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Oct 22, 2024 at 05:22:53PM +0530, Taniya Das wrote:
-> Add the global clock controller support for QCS615 SoC.
+On Wed, 30 Oct 2024 13:01:10 +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig      |    9 +
->  drivers/clk/qcom/Makefile     |    1 +
->  drivers/clk/qcom/gcc-qcs615.c | 3034 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 3044 insertions(+)
+> Hi,
+> 
+> On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
+> IP. A 32 KHz crystall oscillator could be connected to the VBATTB
+> input pins. The logic to control this clock (and pass it to RTC)
+> is inside the VBATTB IP. For this, the clk-vbattb driver was added
+> (patches 01-03/12).
+> 
+> [...]
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Applied, thanks!
+
+[04/10] dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
+        https://git.kernel.org/abelloni/c/71c61a45c951
+[05/10] rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S SoC
+        https://git.kernel.org/abelloni/c/d4488377609e
+
+Best regards,
 
 -- 
-With best wishes
-Dmitry
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
