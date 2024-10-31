@@ -1,105 +1,108 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A288C2FD;
-	Thu, 31 Oct 2024 00:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221D186A;
+	Thu, 31 Oct 2024 01:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730335550; cv=none; b=axfkpejWxDlxF3LynBByCS0rlsInuh/tF9FNEkL7AfyiKEwPMxFZlgKQ9Dy/Qj+sZb7MvHNDbf/TpvFmXKjeNkBJSkWzVUw87EGOuFqJEluIZPXZjkLdF0s93/3S/mfXQrch705RC4bPjprmubAoUNof2pDPuFA0bUiW9p+jMkM=
+	t=1730337001; cv=none; b=hTwG7CpIafAz2WVWBkylT0oUzRZhVNypodP3I06JbF1La1qjEp0wLZTWrvN11626euHE9QwZRaOw7qb9QG1FkGPqhscZk8cohM6JtSA5SO6VxDIDx3MU+KIYA5Jv3Fqgpt/HCWml3zVq2EVhMM/nY2+EsCP6ObtacTn1Kg7N/0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730335550; c=relaxed/simple;
-	bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MH3XKgoXTRAaGL4+Hp8MG5sKnA4nNviJzK+SeWAFEZD5mq+X8hTqgz+fOreSwcrrLj7xzRG0HO/AYdte/d94Q6E3OPwotgLfVZIghaW5eRuNl5HPjiQz6EhcROQOgxLputjOrb9Lh0EVbW8x8B+2iPZa3apmzjkmH24xpbRUoiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrV3EIYK; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1730337001; c=relaxed/simple;
+	bh=yYhWaamNjlqFFpqW425S0NndidrwKuVwYYQUsXnnGNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FhRPNoqwBBoX1gatW6PhyfWL/nBEw1kKT14u8ydPoAzK+eDNZDkxqGK3U3Z+DoUzPIynkZmf12p0HLhOKIZoIdHF2Bt87YLB0sTk359tQ1p8UBFy3cctZRLF9h5tubOdulQ6iCi7FESOVdyisgQfaD0xKJMwP+26PlT3ty1sd+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EpvHI4EF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrV3EIYK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730335548; x=1761871548;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
-  b=TrV3EIYKA05jJUu3v56RFE41aWGRuc8AZK9WjXOc0LgVijBropSuoGYh
-   mEoZzccSFGb5SFvqVPhfevntmY+TZo5PEusSpjDhDwOWk8NM3nbwEwugl
-   h0NxEXQAaVQc8Y5tfpYBusAyn9D9fV6+96B5CMJEuI8P/kclCV5yEjonh
-   HLB1zTP7qt/gkWUpikt+ktfvkaoHLzHRuspIJkXUtaj6UZ1Xx3o4ErlGL
-   aBDIrvP9vB3rV3JS9mDC73MvPapNoU7qV8Z4moz3RwWgjMZhg65dG00Gl
-   B/zCuCpi6XJ+PdNlN0ZaUzEzY2qy55wwwCKWwkXEVeV7KoL4Lu9sYnN7o
-   g==;
-X-CSE-ConnectionGUID: pBbrpmWVTxy5luXuIjeOpA==
-X-CSE-MsgGUID: HOhj0uCgSF2aE7SRWOyvxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40637955"
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="40637955"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 17:45:47 -0700
-X-CSE-ConnectionGUID: X4k+Gr8wTfSo4COVZJWTZg==
-X-CSE-MsgGUID: bS1Vd3qcQn2WxqGo5GafTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
-   d="scan'208";a="82790697"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Oct 2024 17:45:43 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6JJk-000fSq-2D;
-	Thu, 31 Oct 2024 00:45:40 +0000
-Date: Thu, 31 Oct 2024 08:44:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
-Message-ID: <202410310827.OOitgPg0-lkp@intel.com>
-References: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EpvHI4EF"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDqCSK032239;
+	Thu, 31 Oct 2024 01:09:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ikH4uFBlJjlet4b79cIIFpIAty3aXL85MXeU+eUJ9DI=; b=EpvHI4EFQjtGOEMi
+	dUdajScTt7ttuYYMQbUO6NltnaoW0Wb7SFeM4oTdr66aHcW2LujJErOJ29cCFrMn
+	BgLakobwN8d/rETQhB9fgU0UPx8GrLrOX20HRAw+hfT7VCN0VIoVkF+7wBK5Hfaw
+	2AN17wJiZ844oJX+u8wQAwBRc6p6eftvytF6vcCypPU7qVfVsxVl4M1TmEwl4f2J
+	I/FJ3TJrSIa/KbGbPJnZ+YlA+HTV+VvuBsEuSw3KrkQLgaSYIQNbj2Ed4k8Buxr4
+	bWQyZLZkX/AoBAYVFH+UO5gjXY+XhpPMn25T8WbGh/WdkJxnJ2JVI5YMCzAdRjGQ
+	qY5vTw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kp2g9jwd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 01:09:54 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49V19rlp029422
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 01:09:53 GMT
+Received: from [10.216.12.123] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 18:09:48 -0700
+Message-ID: <d25ee628-7a05-4d53-ad4a-e4feddfe6591@quicinc.com>
+Date: Thu, 31 Oct 2024 06:39:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] clk: qcom: gcc: Add support for QCS615 GCC clocks
+To: Taniya Das <quic_tdas@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com>
+ <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: v6NDmE9WzrAc2MEA6LAr8yETYietvM_Z
+X-Proofpoint-GUID: v6NDmE9WzrAc2MEA6LAr8yETYietvM_Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 priorityscore=1501 clxscore=1011 suspectscore=0 impostorscore=0
+ mlxlogscore=939 adultscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410310008
 
-Hi Ryan,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc5 next-20241030]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 10/22/2024 5:22 PM, Taniya Das wrote:
+> Add the global clock controller support for QCS615 SoC.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>   drivers/clk/qcom/Kconfig      |    9 +
+>   drivers/clk/qcom/Makefile     |    1 +
+>   drivers/clk/qcom/gcc-qcs615.c | 3034 +++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 3044 insertions(+)
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241028-133255
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20241028053018.2579200-4-ryan_chen%40aspeedtech.com
-patch subject: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
-config: csky-randconfig-001-20241031 (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/reproduce)
+Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410310827.OOitgPg0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   csky-linux-ld: drivers/clk/clk-ast2700.o: in function `ast2700_soc_clk_probe':
-   clk-ast2700.c:(.text+0x530): undefined reference to `aspeed_reset_controller_register'
->> csky-linux-ld: clk-ast2700.c:(.text+0x558): undefined reference to `aspeed_reset_controller_register'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Imran
