@@ -1,38 +1,39 @@
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680631BBBFC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0D1BC061;
 	Thu, 31 Oct 2024 15:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389991; cv=none; b=YK2T0gybnWPv0H1mIe68rlypAyp/hPJ1/mlHYuyP5s72WphbuVFEUt+OwhnhY/M/KsLSvQxaFuXUvS1k+T2X6FEWu5ri4ImMxtXMVLIz+RN8uqPtpBr9dKeeaOn7IuuhyQZKTt9wISFYpJX3dOdOlEf3rSpZP5MQp+qL4NThn/0=
+	t=1730389991; cv=none; b=gccVxH2UHfPjRmtxV4vbGGyJoU1h4uDW2+PBgscEvmHwScW5VIf5knag87U+qSN+GQd5Fk3bz358I/bTgUEIVB2J4iBKEXDQskB2Um+Yqc8QcpQkIRUBUFyoSNggfnCJW4MT1byA5yKCWNHTwhNd0mLX5WY/CTBdwrj3lJpg0jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730389991; c=relaxed/simple;
-	bh=mubpwWm3QFkqioFijcDhodrfP3j1pOhKigFEYlLfcmw=;
+	bh=D2fFO3TvW8pWiiQQhC6srobO+d+pk4Jn1x6UDZRgHZw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EXaJMB+FrIV2fRrYW3SXFLtHH/VwpqihC+P3+Ex/QjT90Z3tpxi30crlD1Ka7pWf49rHXosxiEEb9KX7Fb8ikVlBPGLRcbJbt4Q7/RbLyzucLnMeSks6OIEFuoXqT5e5V9SDJB/Gi379V/LbrvKHk+sXQToWuf0uYd+9Jlc/RTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QIZNWRjB; arc=none smtp.client-ip=217.70.183.197
+	 In-Reply-To:To:Cc; b=CV+OzgCUfUR6+cCyPgFgOEk3zNUigmCmxH3WJO0HgpOP/qC0XytIFf8X0qqpmbbNb0CCm1ji2QxnRrbN88ka0euif6vWzx4kR39vslJKZi8DvTkyvtRp9UxU7KDP50Bi2RC6gVL9GAAOZObhDPedap3g4N8WP75YFa6bvWfQ8DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kRAQeOcI; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QIZNWRjB"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 74AA91C0014;
-	Thu, 31 Oct 2024 15:53:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kRAQeOcI"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C35B1C0009;
+	Thu, 31 Oct 2024 15:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730389983;
+	t=1730389981;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J19GmzKLXmjkbRnHLjyLOvsgcp8S/EXdBpiEt0g1I0w=;
-	b=QIZNWRjBWV78EFHS+GkZbyLEb5bmOc92ZgheQim7616vvhlmi3g+tfe4YZy1JwMIwwt8Mm
-	G7BMNS5RXRWSyjuEQdxOmcR8SbXar9fdttJCKzO0e85FOT4BZDf7V3W6DbIJwz0g6oD+uP
-	V74oxsVa0MVQ/2hZyQLOKil4wEhZgaVhrc76HsnbRhNoSjWtSpcx9aBriIsFrJ6iZyksKs
-	e968ERt09gJfn3XOAUc6Nz9+H2sQrLbUaClUypKtRyjVPVxGHEh1ZmfXsokcGJjZZoram6
-	H4MU1z2a3jsLx4uZmU/635fv8ysnN7UVhrspq3IyQXMa/hinDxK2BJ1Uu/Mffg==
+	bh=iKhRzgiEUNdm1NA9uvOtWIMNNDJizhjx+IFpddS8/Og=;
+	b=kRAQeOcIWRGHq5nIUyXifU4JrfAHkrgWUGMJ/NaGezTX03Mhpz1LYmY8CLcrfSJncnppUF
+	H/LtCjQQ5nmtMtcFHkiuZf3FNbP4q96Vdm5GSSQc2ejUBbFvyQn5T0oRZhmABVIfPPACFs
+	nCmYP+o0UDdTT4BDpIfBKrXJ6A8UwMwDDlwkk+GN6+WUV/LrIrKeN1znvefaRKyFKa5TMg
+	2sY4sHql5u+lkH+yeM2uP3jazwMRvnc8teW7e/8+Achk1KrWYZuxAlGzthFjjKpYz5P27e
+	ClPVwrg27SVaa0P56GWCmDuj01MK/3OYT/lCccQbtVNq7NdGRpYfzS5v/sqyWA==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Thu, 31 Oct 2024 16:53:00 +0100
-Subject: [PATCH 10/13] clk: eyeq: add EyeQ6H central fixed factor clocks
+Date: Thu, 31 Oct 2024 16:52:57 +0100
+Subject: [PATCH 07/13] clk: eyeq: require clock index with phandle in all
+ cases
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +42,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241031-mbly-clk-v1-10-89d8b28e3006@bootlin.com>
+Message-Id: <20241031-mbly-clk-v1-7-89d8b28e3006@bootlin.com>
 References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
 In-Reply-To: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -59,49 +60,49 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.14.2
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Previous setup was:
- - pll-cpu clock registered from driver at of_clk_init();
- - occ-cpu clock registered from DT using fixed-factor-clock compatible.
+We used to let compatibles with a single clock exposed to not have
+a cell. Switch away from that and enforce a cell in all cases.
 
-Now that drivers/clk/clk-eyeq.c supports registering fixed factors, use
-that capability to register occ-cpu.
-
-Also switch from hard-coded index 0 for pll-cpu to using the
-EQ6HC_CENTRAL_PLL_CPU constant by exposed dt-bindings headers.
-
-occ-cpu is exposed at of_clk_init() because it gets used by both the DT
-CPU nodes and the GIC timer.
+This is done at the same time as some compatibles
+(mobileye,eyeq6h-{central,west}-olb) go from one to more clocks
+exposed. Let's do the same switch and avoid future devicetree
+work if/when others follow.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/clk/clk-eyeq.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/clk/clk-eyeq.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
-index 6337736ef0ccb963fc16f66b1c78c33fdff0f99f..4f6aa852038cfc4db0fc4473cf5e50c6c254b9ee 100644
+index 77f1afb020a0247b9d73b59a88845b21a0d83b5e..ed4dab303d9121cd8bf453448b4c86547ea9244c 100644
 --- a/drivers/clk/clk-eyeq.c
 +++ b/drivers/clk/clk-eyeq.c
-@@ -691,12 +691,19 @@ builtin_platform_driver(eqc_driver);
+@@ -367,11 +367,7 @@ static int eqc_probe(struct platform_device *pdev)
  
- /* Required early for GIC timer. */
- static const struct eqc_pll eqc_eyeq6h_central_early_plls[] = {
--	{ .index = 0, .name = "pll-cpu", .reg64 = 0x02C },
-+	{ .index = EQ6HC_CENTRAL_PLL_CPU, .name = "pll-cpu", .reg64 = 0x02C },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq6h_central_early_fixed_factors[] = {
-+	{ EQ6HC_CENTRAL_CPU_OCC, "occ-cpu", 1, 1, EQ6HC_CENTRAL_PLL_CPU },
- };
+ 	eqc_probe_init_divs(dev, data, base, cells);
  
- static const struct eqc_early_match_data eqc_eyeq6h_central_early_match_data __initconst = {
- 	.early_pll_count	= ARRAY_SIZE(eqc_eyeq6h_central_early_plls),
- 	.early_plls		= eqc_eyeq6h_central_early_plls,
-+
-+	.early_fixed_factor_count = ARRAY_SIZE(eqc_eyeq6h_central_early_fixed_factors),
-+	.early_fixed_factors = eqc_eyeq6h_central_early_fixed_factors,
- };
+-	/* When providing a single clock, require no cell. */
+-	if (clk_count == 1)
+-		return of_clk_add_hw_provider(np, of_clk_hw_simple_get, cells->hws[0]);
+-	else
+-		return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, cells);
++	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, cells);
+ }
  
- /* Required early for UART. */
+ /* Required early for GIC timer (pll-cpu) and UARTs (pll-per). */
+@@ -637,11 +633,7 @@ static void __init eqc_early_init(struct device_node *np,
+ 		}
+ 	}
+ 
+-	/* When providing a single clock, require no cell. */
+-	if (clk_count == 1)
+-		ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, cells->hws[0]);
+-	else
+-		ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, cells);
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, cells);
+ 	if (ret) {
+ 		pr_err("failed registering clk provider: %d\n", ret);
+ 		goto err;
 
 -- 
 2.47.0
