@@ -1,126 +1,105 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C921745E;
-	Wed, 30 Oct 2024 23:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A288C2FD;
+	Thu, 31 Oct 2024 00:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730330768; cv=none; b=hiDZ7jrVyHiDK3NPfdwVDuGlojJG+F3R76K7/VN1UUNk2fPG540l2NRYwge18pD8bzZket49n2vGGpc3dLJneCq7dp408dI76VsWJseZYema5Dnaf8z+UODz9eoczavdQFXK9mCnVuT+xIpxsHIw/0aiTCqVCt9XkcXJ1YCy9yk=
+	t=1730335550; cv=none; b=axfkpejWxDlxF3LynBByCS0rlsInuh/tF9FNEkL7AfyiKEwPMxFZlgKQ9Dy/Qj+sZb7MvHNDbf/TpvFmXKjeNkBJSkWzVUw87EGOuFqJEluIZPXZjkLdF0s93/3S/mfXQrch705RC4bPjprmubAoUNof2pDPuFA0bUiW9p+jMkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730330768; c=relaxed/simple;
-	bh=qG6IB3tD6+yPM/lumoXSZZ9FRa0pFVxRt2KJfcdlqPM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LZwgXjaOOv3e1t2isZOrQ5kxDzehFK5pTjm/1UMYO8colBDTZLMBbS/73wlgqY1cjFKrgei7UmBoWnU1tH9dIOYrqQsmXHmKKN0rtb7Iafpied7Up/7DmycKA91HrB2Cxf9vA/1LC81a2yIKAG+aSgPkfOlcq6rfdllqm6G2n0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP+yqwF/; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730335550; c=relaxed/simple;
+	bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MH3XKgoXTRAaGL4+Hp8MG5sKnA4nNviJzK+SeWAFEZD5mq+X8hTqgz+fOreSwcrrLj7xzRG0HO/AYdte/d94Q6E3OPwotgLfVZIghaW5eRuNl5HPjiQz6EhcROQOgxLputjOrb9Lh0EVbW8x8B+2iPZa3apmzjkmH24xpbRUoiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrV3EIYK; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP+yqwF/"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eac969aso2069495e9.1;
-        Wed, 30 Oct 2024 16:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730330764; x=1730935564; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=etFHZ0EqGWLVKcZ/IRxxgETEj6o4J8B9iZYvV9e7Iv8=;
-        b=RP+yqwF/4kICNBlmxSDI31PsnAN/TNgg7iPaVRLoA6TlMDh1SYwE2MWvny7P3IpqEj
-         OOR9s4B3ztEPXRlpsxRE4KztJtPnCsk+ZYwFQQpoBe+LgKwCfZw8A89LpsN43DZIjpYs
-         lR55LI527jzRs4ebd7pqDbM3PTC5EFaFxgXE6B+ZljPOrS7rgcYK+QZTiQRzMscRTKLL
-         zMnZwU/m/tc5ZL1pGyjgwiknVpE3tGsVd98Df+wZAfXRHO8xLMuuUADz10QkEA/Q3xFu
-         4+Evn/uin7cNPGcfHOGdKjpWVt7ZscOmEi0Qvbsgj8aMBNf3VdkSLToeEYtrQ88O/SC5
-         T/yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730330764; x=1730935564;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=etFHZ0EqGWLVKcZ/IRxxgETEj6o4J8B9iZYvV9e7Iv8=;
-        b=TJf+ivEzdf6mHndiqM8v75Khfwf6KsTOHBy8Bh/lAd+x8WFb2Xsz1CKjctapsBQqBI
-         fcm5qpGRwwTCPFGJV1IjYpGpBpeLU/ekQM2azoeFPV5Nnv9qxTElO72848gTJkWiTsFN
-         lyhNGEWj4ZZfiHDug5UL2uxbggjio5aqw/IGof+y3cncgUlxQkIz/Q1HMnGdKnVoZhSJ
-         yMh5J79oqhnRMWbgHacAPd+mIQDcahC1V6I0iMO96NqgEknk7ynJ5fC71Os8s6xAD6Vd
-         ELXIbU2n0DsoP83F8UiSBdMLdRFWyInj2uXnGhhovw8RZmATa//2Gxb9htgC6cTh10ID
-         lZFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUg9yYlPxGWRNj9U8tEYpQUIQfm299rS8dBrbaxilF21n6gA75B+TJuIhyxD2o+gzn2QakICSenuGQ=@vger.kernel.org, AJvYcCXvDWBscI/umiId/GOhjNSHXj1MfaTY/sOrJnQc35/DNBHetBFZw5oabSpN5YPWpMAGuT0g6ZI7sSUZJYjm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUPPXlTt2evNCpXQHvLAHJiDhXU00IkMvqgR6aJCnrTQOqb/b0
-	duAzo6N76CM45MompVq7raYZfvbx9Ry62hXQYsE7kKEmR1uOecmB/h1oehiX
-X-Google-Smtp-Source: AGHT+IHkWyosrXnzVUyRsA+eYkVHkUHdz/o5cdlWAuNhG2zBqgplMrWgOLtyxRKXBztlD+ybaW8eOQ==
-X-Received: by 2002:a05:600c:45cf:b0:42c:b54c:a6d7 with SMTP id 5b1f17b1804b1-4327dbcb535mr2530365e9.14.1730330764290;
-        Wed, 30 Oct 2024 16:26:04 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-fbf3-0656-23c1-5ba1.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:fbf3:656:23c1:5ba1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947b2bsm35338395e9.25.2024.10.30.16.26.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 16:26:03 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 31 Oct 2024 00:25:57 +0100
-Subject: [PATCH 2/2] clk: renesas: cpg-mssr: automate 'soc' node release in
- cpg_mssr_reserved_init()
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrV3EIYK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730335548; x=1761871548;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oAA+9OSWf2l09wWMiiddhw7UfO+O2McyY//3wWYPwBo=;
+  b=TrV3EIYKA05jJUu3v56RFE41aWGRuc8AZK9WjXOc0LgVijBropSuoGYh
+   mEoZzccSFGb5SFvqVPhfevntmY+TZo5PEusSpjDhDwOWk8NM3nbwEwugl
+   h0NxEXQAaVQc8Y5tfpYBusAyn9D9fV6+96B5CMJEuI8P/kclCV5yEjonh
+   HLB1zTP7qt/gkWUpikt+ktfvkaoHLzHRuspIJkXUtaj6UZ1Xx3o4ErlGL
+   aBDIrvP9vB3rV3JS9mDC73MvPapNoU7qV8Z4moz3RwWgjMZhg65dG00Gl
+   B/zCuCpi6XJ+PdNlN0ZaUzEzY2qy55wwwCKWwkXEVeV7KoL4Lu9sYnN7o
+   g==;
+X-CSE-ConnectionGUID: pBbrpmWVTxy5luXuIjeOpA==
+X-CSE-MsgGUID: HOhj0uCgSF2aE7SRWOyvxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="40637955"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="40637955"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 17:45:47 -0700
+X-CSE-ConnectionGUID: X4k+Gr8wTfSo4COVZJWTZg==
+X-CSE-MsgGUID: bS1Vd3qcQn2WxqGo5GafTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="82790697"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 30 Oct 2024 17:45:43 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6JJk-000fSq-2D;
+	Thu, 31 Oct 2024 00:45:40 +0000
+Date: Thu, 31 Oct 2024 08:44:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
+Message-ID: <202410310827.OOitgPg0-lkp@intel.com>
+References: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v1-2-628274ecbfcb@gmail.com>
-References: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
-In-Reply-To: <20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730330758; l=1461;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=qG6IB3tD6+yPM/lumoXSZZ9FRa0pFVxRt2KJfcdlqPM=;
- b=iiREKCHRI7wAcjIwWXi2Ozabkvpi9cjg2JuT0ONzaOGUI3UjRxWWL2+aAvmaJ6YSzts7+ZrsX
- Mz1KQA67g81BWG0ZJoYYaiZxncbA/NgZ4UsOn5OVkwgz4MHVr4ntqOv
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028053018.2579200-4-ryan_chen@aspeedtech.com>
 
-Switch to a more robust approach by means of the cleanup attribute,
-which automates the calls to of_node_put() when 'soc' goes out of scope.
+Hi Ryan,
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 5dc89b1009fe..bf85501709f0 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
- static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 					 const struct cpg_mssr_info *info)
- {
--	struct device_node *soc = of_find_node_by_path("/soc");
-+	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
- 	struct device_node *node;
- 	uint32_t args[MAX_PHANDLE_ARGS];
- 	unsigned int *ids = NULL;
-@@ -1022,7 +1022,6 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 
- 			ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
- 			if (!ids) {
--				of_node_put(soc);
- 				of_node_put(it.node);
- 				return -ENOMEM;
- 			}
-@@ -1037,7 +1036,6 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 			num++;
- 		}
- 	}
--	of_node_put(soc);
- 
- 	priv->num_reserved_ids	= num;
- 	priv->reserved_ids	= ids;
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc5 next-20241030]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241028-133255
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241028053018.2579200-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
+config: csky-randconfig-001-20241031 (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241031/202410310827.OOitgPg0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410310827.OOitgPg0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   csky-linux-ld: drivers/clk/clk-ast2700.o: in function `ast2700_soc_clk_probe':
+   clk-ast2700.c:(.text+0x530): undefined reference to `aspeed_reset_controller_register'
+>> csky-linux-ld: clk-ast2700.c:(.text+0x558): undefined reference to `aspeed_reset_controller_register'
 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
