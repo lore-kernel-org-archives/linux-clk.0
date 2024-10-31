@@ -1,119 +1,126 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E0719C543;
-	Thu, 31 Oct 2024 12:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D51E871;
+	Thu, 31 Oct 2024 12:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376547; cv=none; b=cbc6pPFIeGkxH0V4ZQI3D2Mgw47tK2tnPF4pdDsMnX+I76KodYGxeT766fI64tA4jnSGRfC4vnw4krsbDL6NGwR9RIVClN7Fj8PwywTSOukAGAb2nWU79Z29bUIodVZvDGq9xMWznwBu84qj4kHw7AI4E6lUz/2eir0hi1WBQNQ=
+	t=1730378609; cv=none; b=mwy+fWI9z2thCXNIwhoI3R0Zjb+jnsZrPQBTXNZdtDB9pMv35qyahsSvv3yVPrgErxdXuyrY9XGdO3Wrp49DdC6H5E8A8f5GhHCGvMDupUqGOZGocm3N61S/oG0m6loGUl4ecTfJ+3uGzbGPEaz0NZEhFqeuYCnDsEN6Z5PiKRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376547; c=relaxed/simple;
-	bh=Wv5hadH+e1F/HEWDsAPYpkLC0cTt41LyjpDp1vYyvMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TgIOHdjOts0odt2W1bEBkoGqxtPDpFLepdHGbEN2MWcdh5+VQMlQzgXZLotjW17po/8rtkEoaFd1HNrP6eRyDWvwvHMle+LxU1seFlb4OD8xat7nBRex8kzOnIHRBTsTyEh5p6iSP0qmSUIlwPh6aqP5Xwv0shSZUnKE9vdmDC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3A821063;
-	Thu, 31 Oct 2024 05:09:33 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8228B3F66E;
-	Thu, 31 Oct 2024 05:09:00 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:08:57 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Conor
- Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Ripard
- <mripard@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>, Parthiban
- <parthiban@linumiz.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] clk: sunxi-ng: a100: enable MMC clock
- reparenting
-Message-ID: <20241031120857.60bc0d94@donnerap.manchester.arm.com>
-In-Reply-To: <20241031070232.1793078-9-masterr3c0rd@epochal.quest>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-	<20241031070232.1793078-9-masterr3c0rd@epochal.quest>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1730378609; c=relaxed/simple;
+	bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z2CPP8Fe8n3HgNRerhhODjALshm8wlwlvk1E1jM231A67vkIvOpUAvupFSMH7Gw9x8r2EJ3TuXknoBQp58uxPghDSW1KYB8Jks3VolgT32viVH/uOnhiswEgLop/8XqwXU3mtiM5blHIZR0TzWKa+MSXZobWIRpUQwZ7pIpTJa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M97F/5F3; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M97F/5F3"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so626865f8f.0;
+        Thu, 31 Oct 2024 05:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730378605; x=1730983405; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
+        b=M97F/5F3N+UC6jyrvEqN5JZOpkwa0m3w99GPE8xGV7N/V0aLhIBBFFBFKtklE9S84n
+         D0fUw+fzZeXyNzdC1goPBESkO30G/5p6ExgG7WLCD9Q+6Wc3HZ5nmNYo6nkQvXM2utAX
+         DvWo3CZ5MolavU4pTfFzmbL8pVxxdjRGTfprVqae+dgd6l+x2j51TE8wWYSWhKGHj/a4
+         7Pb4VigNZ3sE5jmURDMkE0VVW0ed28Qf0Ddt6uxfiP7ffPetAj8KCjVwJVnYNa1ONksA
+         V0XhSYMDHxZEOQfArsuu7S0EbYhsGLOwBaYJkbAJvtNbt3NT4bvYck1BUZM9BkvotUWi
+         XNlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730378605; x=1730983405;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sGTb/DXB9jyYc8OeK66BIDZaMKcbgVQrCpPcNzMKXo4=;
+        b=DyHAyIQd3MwUaDTrDR0f0TY6NdG/ydDJmOR09wKPK8FdiBA5R+PXNKuwxXRS3ryQAs
+         7AQqJQ3lU9RDkpPE+twmCXj5nehMIw1LRmQ/stoGhPJbuW/v3wuwqFBCuB2PPS1Gi3ZA
+         uLhELry5YB5H9Zz880abGTU6CMb7yLLUZ1MAQMgKpOToDms11a9v5B9wuyuAX34NDhbP
+         gCtqex6UJXK18jHXZMLGJVqcJ0WPHWcV+ZuRx4i5PK6p1AFJsZOH3gjwrn90JCOKFyIu
+         xezUC4LmkyZO70MpS3GNkZ2y39Gq1C+vd9Ywy5MJQD2tXzXtlf+X79qvBWsCt1TExlcA
+         G6EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVc7MPuIAFDoU2gUCh+nAzxRmrd+USZYgiFXsGQGt4oRj7ViEEoekmFdojyD3+PTkYopV5XnqGcJpc=@vger.kernel.org, AJvYcCXBUXd25F8wJbFvgvRwfyyxEe9t425RKW/MpKlYo1vRmqklKVwup1z1RcetzCL7D0PWoMczpqemzhagoNNy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/uN08U8w+XsUTecWm6z6C1Hm40twuHvlyl0YhQ/EBYpY4U/Ls
+	MwGp2/7dJDDw3xEm0ChyvSZ5jupzDe1JAszRiK5pwuBtz+4lPLkz
+X-Google-Smtp-Source: AGHT+IFEIVQ6pPS463YcejXrPDyaSA/UtTd61XxgHxKzbLgWYHBucBJA9TZFt3elDzGAGWQm/OFVzA==
+X-Received: by 2002:adf:fdd2:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-381b707641bmr5307715f8f.17.1730378604792;
+        Thu, 31 Oct 2024 05:43:24 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abdasm2021810f8f.97.2024.10.31.05.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 05:43:23 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Thu, 31 Oct 2024 13:43:16 +0100
+Subject: [PATCH v2] clk: renesas: cpg-mssr: fix 'soc' node handling in
+ cpg_mssr_reserved_init()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241031-clk-renesas-cpg-mssr-cleanup-v2-1-0010936d1154@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGN7I2cC/42NQQ6CMBAAv2L27BraEhRP/sNwKMsCG6GQrhIN4
+ e9WXuBx5jCzgnIUVrgeVoi8iMoUEtjjAaj3oWOUJjHYzOYmcwZpeGDkwOoVae5wVI1Jsg+vGU3
+ pXNMWrqaSICXmyK289/y9StyLPqf42W+L+dk/w4vBDAt7seecqW6pvnWjl+FE0wjVtm1f95hVV
+ sgAAAA=
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730378603; l=1720;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=AkKHx5eD3JOEHbGvtlRRQxoBiW2Ng0/M36tPib01V9w=;
+ b=nmTqZwyudmz5MVr0qhXTgTM6WrccGhKYgvQPFOc06zJIc77Np2zcshJVVb7+oFt+kYmHvXAz4
+ to57HC7fXWXAcYSj+HjgVn17U31E7DgDCAlrHsrOwSm/SAFrMJ7qptw
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, 31 Oct 2024 04:02:21 -0300
-Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+A device_node reference obtained via of_find_node_by_path() requires
+explicit calls to of_node_put() after it is no longer required to avoid
+leaking the resource.
 
-> During testing, it was noted that MMC would fail to initialize, with
-> "mmc: fatal err update clk timeout" being printed in the log. It was
-> found that CLK_SET_RATE_NO_REPARENT was set on the MMC controllers, and
-> that removing this allows MMC to initialize. Therefore, remove
-> CLK_SET_RATE_NO_REPARENT from mmc0/1/2.
+Instead of adding the missing calls to of_node_put() in all execution
+paths, use the cleanup attribute for 'soc' by means of the __free()
+macro, which automatically calls of_node_put() when the variable goes
+out of scope.
 
-Well, while this change indeed prevented that error message you mentioned,
-but the SD card still doesn't work for me: it probes and I can mount a
-filesystem on it, but then it hangs, for instance when running an "ls" on
-it. It could be my setup (lacking DT or device issue or missing kernel
-config), though, and the eMMC works for me this way, but it would be good
-to have that sorted. 
+Fixes: 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Squash patches for mainline solution without intermediate steps.
+- Link to v1: https://lore.kernel.org/r/20241031-clk-renesas-cpg-mssr-cleanup-v1-0-628274ecbfcb@gmail.com
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also it would be good to know why CLK_SET_RATE_NO_REPARENT was put there
-in the first place: I don't see it in any other MMC clocks in sunxi-ng, so
-it wasn't just copied&pasted.
-So was there a problem that this flag was supposed to fix? Is that
-something that only applied to older kernels (back when the MMC patches
-were first posted), and which has now been fixed/changed elsewhere?
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 79e7a90c3b1b..bf85501709f0 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -979,7 +979,7 @@ static void __init cpg_mssr_reserved_exit(struct cpg_mssr_priv *priv)
+ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
+ 					 const struct cpg_mssr_info *info)
+ {
+-	struct device_node *soc = of_find_node_by_path("/soc");
++	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
+ 	struct device_node *node;
+ 	uint32_t args[MAX_PHANDLE_ARGS];
+ 	unsigned int *ids = NULL;
 
-I feel a bit uneasy of just removing this just because it works(TM),
-especially if it doesn't really (SD card for me, for instance).
+---
+base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
+change-id: 20241031-clk-renesas-cpg-mssr-cleanup-1933df63bc9c
 
-Cheers,
-Andre
-
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-a100.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-> index bbaa82978716..a59e420b195d 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-> @@ -436,7 +436,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
->  					  24, 2,	/* mux */
->  					  BIT(31),	/* gate */
->  					  2,		/* post-div */
-> -					  CLK_SET_RATE_NO_REPARENT);
-> +					  0);
->  
->  static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
->  					  0, 4,		/* M */
-> @@ -444,7 +444,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
->  					  24, 2,	/* mux */
->  					  BIT(31),	/* gate */
->  					  2,		/* post-div */
-> -					  CLK_SET_RATE_NO_REPARENT);
-> +					  0);
->  
->  static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
->  					  0, 4,		/* M */
-> @@ -452,7 +452,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
->  					  24, 2,	/* mux */
->  					  BIT(31),	/* gate */
->  					  2,		/* post-div */
-> -					  CLK_SET_RATE_NO_REPARENT);
-> +					  0);
->  
->  static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
->  static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
