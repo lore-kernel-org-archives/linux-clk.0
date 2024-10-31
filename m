@@ -1,39 +1,38 @@
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573B41B0105;
-	Thu, 31 Oct 2024 15:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3545A1BBBDA;
+	Thu, 31 Oct 2024 15:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389990; cv=none; b=a3OrDP4lqUgiqF8q8XJppJSR+iAWf1fYFBDR1/kep0xZuw5vR/NxzYSajdHPNmlZA+VOsixLHffpr7HaGqqrfEvU0tvkYhnCLfoRMU6uQXW1t0y3cnXiZh33ELJAmGPF7AQcvNYRWO7lKv3I170zfH1GxdYuzKTWZvh75bByvmk=
+	t=1730389991; cv=none; b=oWVaw7AhD0/O4/u8ZIGxpvee39JjP+8/hZ+6oxFuFaw9TqK66ll7ZbMSfgorCtfZWY8Bz50BeZiplBbgIo+KKzFKr7ESSRR7jdBI3eZoj0xUiyq9mKmpM4Uw7+F0nAMNcBStxPHMfOgttesIC75pb79X2JYtKiiRadHoxVuIQ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389990; c=relaxed/simple;
-	bh=IbL1dIsMDKSWk+juOOze/+/g65R93/+X2wY8wHACvmo=;
+	s=arc-20240116; t=1730389991; c=relaxed/simple;
+	bh=VamhRTqa9DTI1GQti9bpMRr8+2GVZTOuU6CSWkQMOc8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gOSa/0QKdPy93Ievttk5DnTYwJVuaF9oLD778vbDgwYlM9h3R7VMgDKqpfZeINIIUsJbP76XhhJrYpx0nMBCQiIcAL+GSqTU/RaRhNiVqyWy7hZeWlye/gIAbK5dIkLzpBiIIBw5ISYtI7Fco/k9Tp8Z8zeR92VYBIMvz7yKQNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CJxvlrt8; arc=none smtp.client-ip=217.70.183.197
+	 In-Reply-To:To:Cc; b=a5nG6hWDjhRZiIt6kvd4uq1t+/d4J4JSnPV6GbLF2b2KYuC/jIz/XoN0SZZ9Mp2aSSfjwSq4eCzQZE51tTNUDE7IiueA/aNTtPqMvHecOBG55/tL+e16GvL+rvgaaVA2zht6VwgQCyzuo1jA6LZz4MPXCKFvTrcrBc5beY8LrxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cn6HwxMR; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CJxvlrt8"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 87FA41C0010;
-	Thu, 31 Oct 2024 15:52:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cn6HwxMR"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2603C1C000D;
+	Thu, 31 Oct 2024 15:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730389980;
+	t=1730389983;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8kmyA2fOJCwI24a+4je8+bVYsLftxYiEpbBDgDU16Vo=;
-	b=CJxvlrt8Z654I7Xpw0/3qx96DIpeL9MEhmDRSu3L8fvWl+8ABaBPZu4NnCZbeO39RmILVD
-	tvff+1uHmpuRWW+8LF0YTnoNeWYnakcNSIEZJaTZ+wfbkvE1Pt54t8+oU3x7vmSFSgYfA5
-	zGyXw+2miiUu8Ah8cN5+yZuka3b4PKBhaJ9ZF0v88vYYncBYBThePQlKAPAATIZXHFmNiw
-	Qe8WUjl0RPn3rbMzTKXZzXI3IjWFmb0UM9mhdH0ZzNKceCHpVLGsN4krJtogA44+6Sl5JP
-	sF/mL5ViuTk43f2aJlOffF49LaC4iWwbcXk+t7LhOebcn1ocxqEMgqxXkbU7ig==
+	bh=AGl0zvxVHy/3JEMiH4QJrzF7cj+Sn8CkYpJlMAQBR0Y=;
+	b=cn6HwxMRMhUXxavs/EVhhPbeC3Xc7mfmkKA+GUF6ub5q3ux8iZDYDBgQDUelLZycopPtXw
+	kLAo7nvdhANGCfH5Z1OvctbhqUVjAHnJPBtub/hb33vPkBidedg0BkN0h5IqFMcOGR8ocf
+	cPdi6ZNisLmM/RPFcgSqrMWjrYWWc+rzFSRuslVsxW24PCeMplSjCPlbHEaZk2uBKR9h6G
+	LFV9kAylwd5WpCQgYjH/THURyttTdXwaBD02kVALUqJFYc4jXDPl/lEWdvirTBIs4QR8VR
+	uOF6shtiOQ6Rte9Ph4kpxWtOp5pAYYPFpkjhM1/y1auX3LdXwbV4+WObB2qVCw==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Thu, 31 Oct 2024 16:52:56 +0100
-Subject: [PATCH 06/13] clk: fixed-factor: add
- clk_hw_register_fixed_factor_index() function
+Date: Thu, 31 Oct 2024 16:53:01 +0100
+Subject: [PATCH 11/13] clk: eyeq: add EyeQ6H west fixed factor clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241031-mbly-clk-v1-6-89d8b28e3006@bootlin.com>
+Message-Id: <20241031-mbly-clk-v1-11-89d8b28e3006@bootlin.com>
 References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
 In-Reply-To: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -60,51 +59,52 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.14.2
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Add non-devres version of clk_hw_register_fixed_factor(), with parent
-targeted using its index.
+Previous setup was:
+ - pll-west clock registered from driver at of_clk_init();
+ - Both OCC and UART clocks registered from DT using fixed-factor-clock
+   compatible.
+
+Now that drivers/clk/clk-eyeq.c supports registering fixed factors, use
+that capability to register west-per-occ and west-per-uart (giving them
+proper names at the same time).
+
+Also switch from hard-coded index 0 for pll-west to using the
+EQ6HC_WEST_PLL_PER constant by exposed dt-bindings headers.
+
+All get exposed at of_clk_init() because they get used by the AMBA PL011
+serial ports. Those are instantiated before platform bus infrastructure.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/clk/clk-fixed-factor.c | 11 +++++++++++
- include/linux/clk-provider.h   |  3 +++
- 2 files changed, 14 insertions(+)
+ drivers/clk/clk-eyeq.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 8fba63fc70c554df0d646dba75c5d70d0b184319..e62ae8794d445f685156276d5135448f340fca3f 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -241,6 +241,17 @@ struct clk_hw *clk_hw_register_fixed_factor_with_accuracy_fwname(struct device *
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_with_accuracy_fwname);
+diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
+index 4f6aa852038cfc4db0fc4473cf5e50c6c254b9ee..f3ef4293b97bd553fbfd74b8dac4811772729458 100644
+--- a/drivers/clk/clk-eyeq.c
++++ b/drivers/clk/clk-eyeq.c
+@@ -708,12 +708,20 @@ static const struct eqc_early_match_data eqc_eyeq6h_central_early_match_data __i
  
-+struct clk_hw *clk_hw_register_fixed_factor_index(struct device *dev,
-+		const char *name, unsigned int index, unsigned long flags,
-+		unsigned int mult, unsigned int div)
-+{
-+	const struct clk_parent_data pdata = { .index = index };
+ /* Required early for UART. */
+ static const struct eqc_pll eqc_eyeq6h_west_early_plls[] = {
+-	{ .index = 0, .name = "pll-west", .reg64 = 0x074 },
++	{ .index = EQ6HC_WEST_PLL_PER, .name = "pll-west", .reg64 = 0x074 },
++};
 +
-+	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, NULL, &pdata,
-+					      flags, mult, div, 0, 0, false);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_index);
++static const struct eqc_fixed_factor eqc_eyeq6h_west_early_fixed_factors[] = {
++	{ EQ6HC_WEST_PER_OCC,  "west-per-occ",  1, 10, EQ6HC_WEST_PLL_PER },
++	{ EQ6HC_WEST_PER_UART, "west-per-uart", 1, 1,  EQ6HC_WEST_PER_OCC },
+ };
+ 
+ static const struct eqc_early_match_data eqc_eyeq6h_west_early_match_data __initconst = {
+ 	.early_pll_count	= ARRAY_SIZE(eqc_eyeq6h_west_early_plls),
+ 	.early_plls		= eqc_eyeq6h_west_early_plls,
 +
- struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 75444e250a7875a4fa90c9dea7a90b198f6be2b8..99ae3ffb94bc5ce2b8493509cf3548b03209852b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1142,6 +1142,9 @@ struct clk_hw *clk_hw_register_fixed_factor_with_accuracy_fwname(struct device *
- 		struct device_node *np, const char *name, const char *fw_name,
- 		unsigned long flags, unsigned int mult, unsigned int div,
- 		unsigned long acc);
-+struct clk_hw *clk_hw_register_fixed_factor_index(struct device *dev,
-+		const char *name, unsigned int index, unsigned long flags,
-+		unsigned int mult, unsigned int div);
- void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
- struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
++	.early_fixed_factor_count = ARRAY_SIZE(eqc_eyeq6h_west_early_fixed_factors),
++	.early_fixed_factors = eqc_eyeq6h_west_early_fixed_factors,
+ };
+ 
+ static void __init eqc_early_init(struct device_node *np,
 
 -- 
 2.47.0
