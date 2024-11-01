@@ -1,102 +1,131 @@
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479103FF1;
-	Fri,  1 Nov 2024 09:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E380F3FF1;
+	Fri,  1 Nov 2024 09:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730451708; cv=none; b=TkEmxad+dfp00e9aReFf4aKcR1Je0gdFBoOyiWAgVuUnZ+pjdBqHqPlU/OSYAhgK/OLJVDLIHjfSJwNL0Y+vuvbpOvy4RzXquWxCvxpWraw5hfoUtUCKtoatGfzJvI38TDFz6RM2rwvM+TVhgVo1u1xtxTp2UinOSETqE7/tPMc=
+	t=1730452665; cv=none; b=ldwoGFX5Z1OtMSCLWX2E9p6w9kgjqX1gIhsG+mV/lTTG6vgsbKcFMtgo7D8oDCESoNfjI77Uexq9ylCnMIe64kzy4Jlm89XbpsesY+qQPcWi/QkvsOn4fE79NnMt2anXzuTN/2QOX9rBnt7US188Q9DcGJmhgtT0uzpkUKHDyiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730451708; c=relaxed/simple;
-	bh=J5++sjtFZWeNI50vrtuCNlQDzXvi1836X4y4WE7UGPE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rVDguX3LmPEotLca6jgpTtUgVcbeOL4APrUmVxGM4vMSYlnRDPUS3nkU91TdcfFGvCnuZUGG85xzQ0KMKUlGMtlO/cpXfKhBgA+HSq9sfMzRYW9WW53tc8zTqKyFWjDIVLjw2YnI6GJnx40pCq2L4MUL70NoJSLcO4Ync2Q5CL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=xIoTN7oF; arc=none smtp.client-ip=185.70.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1730452665; c=relaxed/simple;
+	bh=I/S1uhkh08rAgU3JZhYipI9jeIqmi5/WNFqTNKk8w6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=noz5b+/QtvGmFTY/GW6X9ZWrRHTM2R7N/okezheqyFwWfCCt1yPA0hkroygACRJ3WO1mf72k/QKI7LEai4gzqLeGMhi0zzO1wpOHrsdyNI3Q1P2AY9hYojj70qniaTq/ovUAPgbB51qrRGTnkWjcVAPqy5G5r1h5xQnfbVQcZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwQLbJUw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="xIoTN7oF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1730451697; x=1730710897;
-	bh=Go4mtHQykmlWp4vclsuDHc2ni+VMGXx/GypLE6dY+gs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=xIoTN7oF6JOMzCKFMU0XKqfiac9rzToMym+yjvSYUQM75UiJgCZqKOqE4QzMtePz5
-	 70Hu4RB4RuOxuFtLZ70VJsMXPuEqQ4miNSXevbpwS3INa5kdj3UTLlhBVD1WwNCMZL
-	 o2OTU5OgrjZOSnFPj1YHGrkhNzecnRlmtIXoqPRVvVZgUTZR/RJE8Lyyhj7Ur7AJ3l
-	 ogN0G87pGd/XuZhplZJmQiT3pAV2Ye7+3ZzlyrVyezj4p2nys5brfeB13eLWnBd+Hg
-	 Hz1ZnINuN16H0aNF95dQX8sc8LpfG+zMuy/rbdscl4hoTjcDL3sxgUOmAmerQZu/+1
-	 0TgF839GXHZBQ==
-Date: Fri, 01 Nov 2024 09:01:32 +0000
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-From: Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: mt6735-apmixedsys: Fix an error handling path in clk_mt6735_apmixed_probe()
-Message-ID: <882779be-6d8f-441d-89ea-f8be79ffd3ba@protonmail.com>
-In-Reply-To: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
-References: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
-Feedback-ID: 6882736:user:proton
-X-Pm-Message-ID: e77f34d9023207e3b609739a38960c2a439f5ca0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwQLbJUw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3830DC4CECD;
+	Fri,  1 Nov 2024 09:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730452664;
+	bh=I/S1uhkh08rAgU3JZhYipI9jeIqmi5/WNFqTNKk8w6g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UwQLbJUwn7kT0eOK7VYLAXxXLw8wwWectUG7f2NEAKO9p7lBasB9oZ1bgXFmtmG96
+	 vkdWOw5JKWdv7btbIQZGTiNlDyFrxi+ACTIK86kzyKN9GaYUy3aRBGbDqydMYmfJej
+	 N1RZfNc2HHaFG1wKcjSR8jq8qpP3FYShnIV3swuqP/ZSZ7CnpLFB6NZe18PqtUoZtU
+	 StJv0J9T8Uqx8OtI8wBQkS9wekIZfisUlom6JuKzHviTEd8aIxeQFb2gDk4ZUtSgWE
+	 cHke0eNSryaB1DhTm4MhE1SWMWxk3eBJOeEiB9DPfzqvV9o5mhR6Tkbs4foerZkNEk
+	 V9fbwPpkGbP5w==
+Message-ID: <6ce1f20b-1efb-408f-ac28-e8c35162643a@kernel.org>
+Date: Fri, 1 Nov 2024 10:17:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Richard Acayan <mailingradian@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-media@vger.kernel.org
+References: <20241011023724.614584-7-mailingradian@gmail.com>
+ <20241011023724.614584-9-mailingradian@gmail.com>
+ <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
+ <jcqgsgp4ivbokn545sy2rvfllm3vnygfpbufxagotuicacfmgd@v2hlnohlwzdf>
+ <b054116e-c6a4-48c3-8162-571d653788a4@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b054116e-c6a4-48c3-8162-571d653788a4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25/10/2024 6:46 pm, Christophe JAILLET wrote:
-> If an error occurs after a successful mtk_alloc_clk_data(),
-> mtk_free_clk_data() should be called, as already done in the .remove()
-> function.
->=20
-> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in th=
-e
-> probe function, and simplify the remove function.
->=20
-> Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main=
- clock and reset drivers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt6735-apmixedsys.c
-> index 104722a61dfd..e0949911e8f7 100644
-> --- a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-> @@ -88,7 +88,7 @@ static int clk_mt6735_apmixed_probe(struct platform_dev=
-ice *pdev)
->   =09if (IS_ERR(base))
->   =09=09return PTR_ERR(base);
->=20
-> -=09clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(apmixedsys_plls));
-> +=09clk_data =3D mtk_devm_alloc_clk_data(&pdev->dev, ARRAY_SIZE(apmixedsy=
-s_plls));
->   =09if (!clk_data)
->   =09=09return -ENOMEM;
->   =09platform_set_drvdata(pdev, clk_data);
-> @@ -114,7 +114,6 @@ static void clk_mt6735_apmixed_remove(struct platform=
-_device *pdev)
->   =09struct clk_hw_onecell_data *clk_data =3D platform_get_drvdata(pdev);
->=20
->   =09mtk_clk_unregister_plls(apmixedsys_plls, ARRAY_SIZE(apmixedsys_plls)=
-, clk_data);
-> -=09mtk_free_clk_data(clk_data);
->   }
->=20
->   static const struct of_device_id of_match_mt6735_apmixedsys[] =3D {
-> --
-> 2.47.0
->=20
+On 31/10/2024 16:42, Bryan O'Donoghue wrote:
+> On 11/10/2024 15:29, Krzysztof Kozlowski wrote:
+>> How do you imagine writing drivers and request items by order (not by
+>> name) if the order is different in each flavor?
+> 
+> I don't think I'd be much in favour of relying on declaration order in 
+> the dts, favouring names to find resources instead, tbh.
+> 
+> The 8250 has regs that sort by address and name in the same order. For 
+> 8280xp we preferred sort by address and you're right the interrupt 
+> sorting isn't consistent.
+> 
+> However the latest applied dts for CAMSS is sort by address/irq not sort 
+> by reg-name irq-name.
+> 
+> Unless its a NAK from yourself and Rob, that would certainly be my 
+> preference for any _new_ additions subsequent.
 
-Thanks for the fix!
+It's not a NAK as long you keep the same order in new bindings, which I
+think it is not possible. I repeat myself: there is no rule/style that
+list should be ordered by values, but there is a rule that all devices
+from the same family should have the same order of items in the list. I
+don't think it is achievable with your approach - sorting by value.
 
-Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
-
+Best regards,
+Krzysztof
 
