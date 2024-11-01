@@ -1,122 +1,79 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93813144304;
-	Fri,  1 Nov 2024 03:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065D313C9A4;
+	Fri,  1 Nov 2024 03:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730430564; cv=none; b=oR3dhOpazZh4zKuoZnLBx/M0jlkNG70IlNoNmbnFz16q9l/Kjza2UI52W4XVkdrmRHPUTrfHrELPcvQoxsWGqR6srBzxzGnANZ2opXw/lYEZcq0cDqKq0CPWM2kjjCvmIbdrAz+YpVMCyGHtEKEzyY5o9lghPvjDMa8awOBJoBY=
+	t=1730431206; cv=none; b=lKVkc/Ynm9+V12wEn6QdMhKToeG3cS0cZmrVCFzoFtk/NvsytLt2tJemffM1RkNsL49rmFFA/L3QIXw4tf7JcvlEAxOnWDQPB3MDIK3Kk89nA1Z4Q9/RyCOL5P4/ZkDdz9fQMQr3rldLx5q1MzB1GUkrDR1lTThjZGsEXRRiHSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730430564; c=relaxed/simple;
-	bh=I2K+Hv4rIjqzGpRZrRub+7WGFaaUzZg4R3gB/+ppUoI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fwJ530PMWR8dkDhxPfoLfRv9PrqNv1qLTQZKRwyZPhp6PqAx748N19jieQdo6qJPxWcuoikDrNp2ciTaR07/mnFiEkVcV9G2JhoJtgVK1X7vjt5T9lujG2YoZ5Hhg0vBRXn4i5U1NznzFJW0rLtr6GVAnropuD5U8XD2+mOc7x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A5aL0ckF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A5aL0ckF"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VJmblg004938;
-	Fri, 1 Nov 2024 03:09:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ZyocTeYHvqr
-	igpvnoV97o41Bqk9TKKnlgnlh6q22uRA=; b=A5aL0ckF+uiwp97yLikpwTIQKIB
-	bBLVPCIvbiz2lxFvb852h9ui3N8rlYX6IuArRYbgTJlmSNIFu4j0TncRwBns6Z/O
-	o15iYn/7FODArVLQbLwzx0h/7od0rZ+Odc4LsTS1TwIfRAlYy+1mkLhkqSn4GU8b
-	240pUOXuPTcYGYgPMpCv8sudwaRNeCudzPZ+7Hbg0YwPS0VzwKAL6aAejSajxbs+
-	U6brG0dEjSiNmojWpsnZxo4hYwtbi67iztkDMKnvoIFLnxnhTQ1C+VzqL91Vlqcp
-	56RuX5y2hRpy15SH+070bEu0ZRvf8UVFBn5w4aY5nGuoBUq855CfUU14K5Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ku65cf5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 03:09:10 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1340f9005682;
-	Fri, 1 Nov 2024 03:09:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 42kw9eaba7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 03:09:08 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A1398vw011703;
-	Fri, 1 Nov 2024 03:09:08 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 4A1398fQ011699
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 03:09:08 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id 786BE65D; Thu, 31 Oct 2024 20:09:08 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, johan+linaro@kernel.org,
-        Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH v8 4/5] PCI: qcom: Disable ASPM L0s for X1E80100
-Date: Thu, 31 Oct 2024 20:09:01 -0700
-Message-Id: <20241101030902.579789-5-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241101030902.579789-1-quic_qianyu@quicinc.com>
-References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1730431206; c=relaxed/simple;
+	bh=vijiu73JL6D+88+Bhdsv/dQtGF+EY3iYKq6k3StPqyM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=glnK2I0el3bSNk5sKa6uGejXWx95JMOzTzyLA7D2YfmN22sQfSfKC84gnTmJJoXMFehRFjEWf7Njvuj7d1NhXmgOqY9bL/HDT3OoHzu9Q2S0ZkivW97n5TailvZiEy7tozE1hSGG1mA+k63QoXa+V5DerRGB2VZ+wSlIfkd4IOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1t6iCU-00000000478-2NIb;
+	Fri, 01 Nov 2024 03:19:50 +0000
+Date: Fri, 1 Nov 2024 03:19:39 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH] clk: mediatek: mt7988-infracfg: SPI0 clocks are not critical
+Message-ID: <ZyRIy22aS_Yjoavg@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CXZWWhR80ejP3fYbGKSpkaVSRB9dyU4-
-X-Proofpoint-ORIG-GUID: CXZWWhR80ejP3fYbGKSpkaVSRB9dyU4-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 clxscore=1015
- malwarescore=0 spamscore=0 adultscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411010021
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Currently, the cfg_1_9_0 which is being used for X1E80100 doesn't disable
-ASPM L0s. However, hardware team recommends to disable L0s as the PHY init
-sequence is not tuned support L0s. Hence reuse cfg_sc8280xp for X1E80100.
+SPI0 clocks have wrongly been marked as critical while, probably due
+to the SPI driver not requesting them. This can (and should) be addressed
+in device tree instead.
+Remove CLK_IS_CRITICAL flag from clocks related to SPI0.
 
-Note that the config_sid() callback is not present in cfg_sc8280xp, don't
-concern about this because config_sid() callback is originally a no-op
-for X1E80100.
-
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt7988-infracfg.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 52e3d71028d8..16af237663ec 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1853,7 +1853,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
- 	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
- 	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
--	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
-+	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_sc8280xp },
- 	{ }
- };
- 
+diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+index ef8267319d91..c40e18c27f12 100644
+--- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+@@ -196,12 +196,10 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA2(CLK_INFRA_SPINFI, "infra_f_fspinfi", "spinfi_sel", 10),
+ 	GATE_INFRA2_FLAGS(CLK_INFRA_66M_NFI_HCK, "infra_hf_66m_nfi_hck", "sysaxi_sel", 11,
+ 			  CLK_IS_CRITICAL),
+-	GATE_INFRA2_FLAGS(CLK_INFRA_104M_SPI0, "infra_hf_104m_spi0", "infra_mux_spi0_sel", 12,
+-			  CLK_IS_CRITICAL),
++	GATE_INFRA2(CLK_INFRA_104M_SPI0, "infra_hf_104m_spi0", "infra_mux_spi0_sel", 12),
+ 	GATE_INFRA2(CLK_INFRA_104M_SPI1, "infra_hf_104m_spi1", "infra_mux_spi1_sel", 13),
+ 	GATE_INFRA2(CLK_INFRA_104M_SPI2_BCK, "infra_hf_104m_spi2_bck", "infra_mux_spi2_sel", 14),
+-	GATE_INFRA2_FLAGS(CLK_INFRA_66M_SPI0_HCK, "infra_hf_66m_spi0_hck", "sysaxi_sel", 15,
+-			  CLK_IS_CRITICAL),
++	GATE_INFRA2(CLK_INFRA_66M_SPI0_HCK, "infra_hf_66m_spi0_hck", "sysaxi_sel", 15),
+ 	GATE_INFRA2(CLK_INFRA_66M_SPI1_HCK, "infra_hf_66m_spi1_hck", "sysaxi_sel", 16),
+ 	GATE_INFRA2(CLK_INFRA_66M_SPI2_HCK, "infra_hf_66m_spi2_hck", "sysaxi_sel", 17),
+ 	GATE_INFRA2(CLK_INFRA_66M_FLASHIF_AXI, "infra_hf_66m_flashif_axi", "sysaxi_sel", 18),
 -- 
-2.34.1
+2.47.0
 
