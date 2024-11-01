@@ -1,148 +1,205 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A779B42C0B;
-	Fri,  1 Nov 2024 09:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4EF14D70F
+	for <linux-clk@vger.kernel.org>; Fri,  1 Nov 2024 09:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730454595; cv=none; b=DBokZghq4QuFOSSNBJjtgK08tlHoRaKi40s95dwfRe1ZSWw4pWoyTy2njveQ1IIugmy8dpcfkL488uPybOp19rgxHWYatPmUee9deu6Vu9tmTKv1pbmkmNZql8PamSmgc2d6/FFI37+2vHi18nvAdXkeLQgkCJ2AuPRzC5RvExo=
+	t=1730455060; cv=none; b=ojhxnOMs2/wj3V+LU++NBQ5MMi4YWLzl+lHwF7kzWIVaS3EaxvFcmF1Sm8trsyNoEjGKtZLmtyOnqUAtNVZBFUvjAzGqLpeZdSJl+LVjYcEYPdnHORg4Ed5AKrC2ck3SQ0X+2/8Q93b6dJkrdg1B2ql0X5F3dRk8rhg3rnNHvEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730454595; c=relaxed/simple;
-	bh=8mybr+g573QLB8vi326Tn05dtythG0Dyy/nIGzAho5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pXei0YlwnC9LUZXDDn34XomXTtjcPshAYmj99cKojN5KNCVbAPN7G2Z6ApSR0EljZVcSkUnEjjzOhJ+QhsW3CRT5T6Nb+P2ZA48n4F251HsOrk/rb1Z4tA/TgeDyttg1o89ChSjuqg6L/cN9C2ptkAP4OCl7FdOlL2rMsFkwuKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lI29fNDX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730455060; c=relaxed/simple;
+	bh=u7QY7saT7lh9qMQzC1aqvcwYfJEWmT4Ojyxuu/AyZos=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j9a7MQ7//v4SKKm2Zt90LzQKSwfWrx71Gtw+myQLdd/69jBtxyzRv6xB3sdWaN0YgUdLOg1xmnkx2KLiNUwBHpvHEpCHAhwzbwld6XKKcemSC76Q1DSqIP3coTPA+hPYgrTRkvssbjCqS5s+3jFmM1hrERAqdwAyKd9cQWtl7Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TuNZ8Bpt; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lI29fNDX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B279C4CECD;
-	Fri,  1 Nov 2024 09:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730454595;
-	bh=8mybr+g573QLB8vi326Tn05dtythG0Dyy/nIGzAho5k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lI29fNDXU+HohwL3YUi0vas036YAZZxwp5EWkCZqjC5fwXGVV6YbGq4sX3+OZlVdX
-	 TXFFg3+lMsGlWc8r5UhwnLVsSl87OTKQlzvzuBpA/V6Fdf1eqyjfYsBXrPGwQLXI26
-	 QGRFlF2ScHHmJSdVbDjSEOUGkLjFu4A9wWX5NnP9/ApMLKx1dg+mu7kCAJmAHAosmK
-	 btJHVjKapexzYM7noaFru/4zg+GMDAzn99+LU2o0cc6vyFtwo/3QU1bp/5SoT2F1Pe
-	 111tZ+ShHSHSmyKHJwuVxjGuy2mjf+NZYGhg+hiyjvIIuRpqR3c2jfa/S3P1mozc6n
-	 8aB2IZq4Y4O2g==
-Message-ID: <a7809641-c92f-4d03-aa59-a6714f19dc48@kernel.org>
-Date: Fri, 1 Nov 2024 10:49:47 +0100
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TuNZ8Bpt"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c9850ae22eso2369487a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 01 Nov 2024 02:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1730455056; x=1731059856; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkWLa1FF6BzDGEOlRo45xTi9HEweUx52IMDZUJC3W3A=;
+        b=TuNZ8Bpt7/OlYTuWd5HNjRnF/9W/IIE1IZocT5+dcpO4m/ob9w9LfDlYAvLncvpx6Y
+         xIaJyTRYPbRY/DNaggkD2xvEOoRu2ZIKIxXmRu3/kHxf+HKu+0xKFJ4y9SSTHxB0v52X
+         vo4Xt3c3i4NgPmk3DmU+9V9gf5mZjF+lNNrvOdhrvileNj8DQ8y7HfGEZxjoumfeqn6B
+         cDZOR/Fh0sBNZyKssFkSxRK123aQzXxmXigmywenrtQAxC+vu/I/4Ai2Ruxv2PXYcuPR
+         GsxDZg+TuQdyjAWwgNFW9vXkkRdFN4HZVx8C29GcDUFGo59mfPClj7QqPYIbGtfz+8lR
+         PV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730455056; x=1731059856;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VkWLa1FF6BzDGEOlRo45xTi9HEweUx52IMDZUJC3W3A=;
+        b=AFE+HXcGoGlbx8Zc897oX3ihWeOk0OHNxnrxroA/QMSaeOWeNtN1sO9NN9ZVVmD8mT
+         L8/ey7udopE6jZCpz+vXQ1PaVYboVci4iuzGvzcz287AnDjsGyQ10eaunttCVt7siSRZ
+         sbirWkdtXRoLIPCQ7gHfRB4+s1pNWmmkae68efhDP0FTKhn6pzmh/UeRfVCJp6cu9242
+         J8JWTSyyGyhvtXk8Xb++SUcJ40tFUEJAovdCRnAUDxLqvgaXiRgvM5vrdXkxqgtdWMdP
+         lPb4k2C+T4hupvhyy10WoPFoGRMdv4Ij1S9ftkkKJb31NRKyyUxaV7/S3L2fbHyqTLUd
+         lKFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwseEi4i1f3AmHQU35KF20QRO+Nx2gRcxvsrAD8FUw8GVeRzb76IbJ0f+pDxaUTj8fyNKbhWyllK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1pl9SfKNWlMVn5oEzGlk74POU+L4yCUlJ5rCAY3pu4MiQgV5h
+	1u2DpyoW9BS0CHsYB1ZI/NucbjeiGLgaANgh8kLDjIzFTtrois444Ll0vOfvJ+c=
+X-Google-Smtp-Source: AGHT+IGRtBYD1dOUvQuIQlQLj2pdPegx5k8lcdT/lJDx4obsDzdA8gaMq9JOwdMxgv+GTXcS3XRj5g==
+X-Received: by 2002:a05:6402:40cf:b0:5cb:acb4:8f2b with SMTP id 4fb4d7f45d1cf-5cbbf876412mr14451734a12.4.1730455056199;
+        Fri, 01 Nov 2024 02:57:36 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.190])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7c8d87sm1364136a12.76.2024.11.01.02.57.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 02:57:35 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com,
+	magnus.damm@gmail.com,
+	p.zabel@pengutronix.de
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v6 0/9] Add RTC support for the Renesas RZ/G3S SoC
+Date: Fri,  1 Nov 2024 11:57:11 +0200
+Message-Id: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Richard Acayan <mailingradian@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-media@vger.kernel.org
-References: <20241011023724.614584-7-mailingradian@gmail.com>
- <20241011023724.614584-9-mailingradian@gmail.com>
- <785c82d5-549d-454b-86bf-a00a39e6f521@linaro.org>
- <jcqgsgp4ivbokn545sy2rvfllm3vnygfpbufxagotuicacfmgd@v2hlnohlwzdf>
- <b054116e-c6a4-48c3-8162-571d653788a4@linaro.org>
- <6ce1f20b-1efb-408f-ac28-e8c35162643a@kernel.org>
- <fde8fd81-f9f5-4885-8dc1-5ccb115b856b@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <fde8fd81-f9f5-4885-8dc1-5ccb115b856b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/11/2024 10:36, Bryan O'Donoghue wrote:
-> On 01/11/2024 09:17, Krzysztof Kozlowski wrote:
->> On 31/10/2024 16:42, Bryan O'Donoghue wrote:
->>> On 11/10/2024 15:29, Krzysztof Kozlowski wrote:
->>>> How do you imagine writing drivers and request items by order (not by
->>>> name) if the order is different in each flavor?
->>>
->>> I don't think I'd be much in favour of relying on declaration order in
->>> the dts, favouring names to find resources instead, tbh.
->>>
->>> The 8250 has regs that sort by address and name in the same order. For
->>> 8280xp we preferred sort by address and you're right the interrupt
->>> sorting isn't consistent.
->>>
->>> However the latest applied dts for CAMSS is sort by address/irq not sort
->>> by reg-name irq-name.
->>>
->>> Unless its a NAK from yourself and Rob, that would certainly be my
->>> preference for any _new_ additions subsequent.
->>
->> It's not a NAK as long you keep the same order in new bindings, which I
->> think it is not possible. I repeat myself: there is no rule/style that
->> list should be ordered by values, but there is a rule that all devices
->> from the same family should have the same order of items in the list. I
->> don't think it is achievable with your approach - sorting by value.
-> 
-> Grand.
-> 
-> I'm happy enough to sort by IP alpha TBH.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I actually missed that Rob responded here clarifying his point of view.
-Two of DT maintainers expressed their dislike for such coding style of
-sorting by value.
+Hi,
 
-Regardless whether it is helping or not, it is not even possible to
-implement. Binding does not know the addresses and one could add a
-binding without DTS and drivers for some other user or future
-implementation. It's not even possible to implement that coding style.
+On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
+IP. A 32 KHz crystall oscillator could be connected to the VBATTB
+input pins. The logic to control this clock (and pass it to RTC)
+is inside the VBATTB IP. For this, the clk-vbattb driver was added
+(patches 01-03/09).
 
-Best regards,
-Krzysztof
+Patches:
+- 01-03/09: add VBATTB support that provides the RTC clock
+-    04/09: fixes compilation error for RTCA3 when building for RISC-V
+- 05-08/09: update the device trees with proper nodes to enable RTC
+-    09/09: enable proper config flags for RTC to work on RZ/G3S SoC
+
+Merge strategy, if any:
+- clock patches (01-03/09) need to go though the same tree because of
+  patch 03/09 using the devm_clk_hw_register_gate_parent_hw() introduced
+  in patch 02/09
+- RTC patch can go though RTC tree
+- DTS and defconfig patches can go though Renesas tree
+
+Thank you,
+Claudiu Beznea
+
+Changes in v4:
+- select VBATTB and RTCA3 as module and adjusted the VBATTB Kconfig
+- fixed compilation error for RTCA3 when building for RISC-V
+- collected tags
+- dropped patches already applied
+
+Changes in v5:
+- dropped patches already applied
+- fixed build on rtc yaml file
+- fixed indentation in patch 01/10 description
+- collected tags
+- per patch changes are listed in individual patches
+
+Changes in v4:
+- added patches
+  "dt-bindings: clock: r9a08g045-cpg: Add power domain ID for RTC"
+  "clk: renesas: r9a08g045: Add power domain for RTC"
+- squashed the following patches from v3:
+  "Add clock IDs for the VBATTB controller"
+  "dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB"
+- fixed typos in commit description
+- moved assigned-clocks, assigned-clock-parents from the RTC
+  documentation to the VBATTB documentation; same adjustment has been
+  done on the device tree patches
+- renamed include/dt-bindings/clock/r9a08g045-vbattb.h to
+  include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
+- used quartz-load-femtofarads
+- used RTC_TIMESTAMP_BEGIN_2000 and RTC_TIMESTAMP_BEGIN_2099 in the RTC
+  driver and added a comment in remove API to mention RTC cannot power
+  on the system
+- squashed defconfig patches
+- collected tags
+- per patch changes are listed in individual patches
+
+Changes in v3:
+- dropped patches "mfd: renesas-vbattb: Add a MFD driver for the Renesas
+  VBATTB IP"
+- added patches:
+-- dt-bindings: clock: r9a08g045-vbattb: Add clock IDs for
+   the VBATTB controller
+-- clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+- moved Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
+  to Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+- addressed review comments
+- per patch changes are listed in individual patches
+
+Changes in v2:
+- dropped patch "clk: renesas: r9a08g045: Add clock, reset and power domain
+  support for the VBATTB IP" as it was already integrated
+- kept only a documentation file for both VBATT MFD and clock drivers as
+  suggested
+- addressed review comments
+- used cleanup.h lock helpers
+- update startup sequence for the RTC driver
+- switch to 24 hours mode on the RTC driver
+- fixed range for the RTC driver
+- added a generic compatible for the RTC driver as this will also be
+  used by RZ/V2H
+- used clkin/xin clock names for the VBATTB clock driver to determine
+  if bypass should be configured on registers instead of having
+  dedicated DT property
+- added mfd driver for VBATTB
+- updated Kconfig flag names to include vendor name
+- removed DT node labels from Documentation files
+- used items to describe the interrupts and clocks
+
+
+Claudiu Beznea (9):
+  dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
+  clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+  clk: renesas: clk-vbattb: Add VBATTB clock driver
+  rtc: renesas-rtca3: Fix compilation error on RISC-V
+  arm64: dts: renesas: r9a08g045: Add VBATTB node
+  arm64: dts: renesas: r9a08g045: Add RTC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB
+  arm64: dts: renesas: rzg3s-smarc-som: Enable RTC
+  arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3 flags
+
+ .../clock/renesas,r9a08g045-vbattb.yaml       |  84 +++++++
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  34 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  16 ++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/clk-vbattb.c              | 205 ++++++++++++++++++
+ drivers/rtc/rtc-renesas-rtca3.c               |   1 +
+ .../clock/renesas,r9a08g045-vbattb.h          |  13 ++
+ include/linux/clk-provider.h                  |  18 ++
+ 10 files changed, 379 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+ create mode 100644 drivers/clk/renesas/clk-vbattb.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
+
+-- 
+2.39.2
 
