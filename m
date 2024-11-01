@@ -1,122 +1,100 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A939170A15;
-	Fri,  1 Nov 2024 10:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FE615820C;
+	Fri,  1 Nov 2024 11:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730457603; cv=none; b=AHHcC0Ls32WzafAazGqAhcDmN2AYz1I7VXKzVt+VgtTbqUE0ysiJAnkhMaoWhKqD/k6NpGAi0wWK0T5MH2V9OoXnwrKzciaDJ3m6kvyUqUOXBoBsi74eprHaGoj3rw30lnJfA/3of8slW3lN0mzvXZaxpUHgeRaPyEZh44ff6g0=
+	t=1730461339; cv=none; b=HcgpYhDDUUGy2ez8MMwtrM52lg9lqXubWYrRrSGxvQTtVkbYfQGlS4UtBo59B9832mN9wSkeOA3kxf3ILuDeFlnF7sDDpZzos34JQbbZNQJf6Gnw+AbtHoAp5mbzY5yLBojsyVSy15A/ybi4DoMkj9wsa3tpnRsFAGqLs3y5Sq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730457603; c=relaxed/simple;
-	bh=LB0ERSXQL/Llu9CsxiUVYqiS/OzFA+1sg2d30cc2eNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=KL/G6I32+eCDyPpKyJQCAjXHb9De+/WfimUm+mGndiFmTupnDdy3VwK8SzcXUstk0rLhUxcQ41350kkbGX427EiEIyaG8rIqw0RsAjs6KHuMUIFYzu44g74C4jKDB6eO3uC+bU3NJOxRrmS3zE2HkfZ1BsXyvdxab5MPzHV16Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y0WQ5hTo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730461339; c=relaxed/simple;
+	bh=6xrGD7oKWlZ6XOU+8wWyQpg+NtkqgDu0wWDFBNCgLS4=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=ApjjGRdjYBtjncWhRjScpgV7coxUffLL8437tn5C7L0JYEktdeTRbk7B81JBHwkpPSwxYsQG2QpiK9++hfE9ZXnbSkklJZEnp5vMs1FDlqkfZx38DtKzYs9g27CpXdHQXWu4O0ishJQDxrxREMyTElp6Y5OrqtNsEx/ni1wic+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eMFJ9PM7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y0WQ5hTo"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A19LBnJ004630;
-	Fri, 1 Nov 2024 10:39:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t1cA9NDwFLH5+vfmPGgF5z/CRZpfWRBSGlRVBz5PXQE=; b=Y0WQ5hToLd0VhKE8
-	8Im6pWtW047ydpfFEmazd8L383TrGBHsso0IKhznXhRQZf1QSueAIzQMDc23maEs
-	bLwjJHAIar/5WKxcdwmj8PmIa58Qf5g15UpN0jTZNuwkWpXUp5CHafH1k8jpixit
-	BHnqyvYY25MaoJtXFKj2jt8k482rjE5gHmyOMcwlPSASey4weIdD5S5nbq8RemZN
-	eSIsnOz28sKWcTtQ4bsMOvFhFQwPeH1XZc3bRtxI+0FL4A7vspTvnNrv5GJQvNVc
-	qDmSnd9QFWqTQMiqiJVHXiZp75F8HmpMg3Ef1QP9WUWlke+Uts0ryNOt3r6aAjLZ
-	IxA+CA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42m65pby9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 10:39:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1AdTQL027105
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 10:39:29 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 1 Nov 2024 03:39:24 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Fri, 1 Nov 2024 16:08:23 +0530
-Subject: [PATCH v2 11/11] arm64: defconfig: Enable QCS615 clock controllers
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMFJ9PM7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FE8C4CECD;
+	Fri,  1 Nov 2024 11:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730461339;
+	bh=6xrGD7oKWlZ6XOU+8wWyQpg+NtkqgDu0wWDFBNCgLS4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=eMFJ9PM7hZnTN7+y6+MUNOnYAo9owzrlKfKHsVzt5++CJ4kCCAl3RRIBpSvwlPPQs
+	 ill/6w/7zibQCyPz/in3wgbgH9Twni9Eydc7LrPUOp93ebcCQe3Z78Sl0qsJy+FJQX
+	 db2eWi95HC5rIdDU8IFaNp9L/QRqWsQdaafUZCA4pjFzQ5O4PzaAXoVea1yfpy/xoe
+	 MDeQVNeRotYoVc8IkXfht5kCz/STxKxSGMKuhfmhNqFXLjFKxKs4OceiUn20dxoaEh
+	 5fBCMd9p6xUhDTtlq8NaxvepKM0Y/eyWFyXtgXVtZk5ydBRzBzAa0MjNu8Gx4oTy0t
+	 WMzWMoUIOjmVw==
+Date: Fri, 01 Nov 2024 06:42:17 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241101-qcs615-mm-clockcontroller-v2-11-d1a4870a4aed@quicinc.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Abhishek Sahu <absahu@codeaurora.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Will Deacon <will@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Imran Shaik <quic_imrashai@quicinc.com>, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Ajit Pandey <quic_ajipan@quicinc.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20241101-qcs615-mm-clockcontroller-v2-5-d1a4870a4aed@quicinc.com>
 References: <20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com>
-In-Reply-To: <20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bOO5f36N5ZfUWi0Dlhoq045WA244N6zj
-X-Proofpoint-GUID: bOO5f36N5ZfUWi0Dlhoq045WA244N6zj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- phishscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=696 suspectscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010076
+ <20241101-qcs615-mm-clockcontroller-v2-5-d1a4870a4aed@quicinc.com>
+Message-Id: <173046133538.2741746.9760905670245295955.robh@kernel.org>
+Subject: Re: [PATCH v2 05/11] dt-bindings: clock: Add Qualcomm QCS615
+ Display clock controller
 
-Enable the QCS615 display, video, camera and graphics clock controller
-for their respective functionalities on the Qualcomm QCS615 ride
-platform.
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+On Fri, 01 Nov 2024 16:08:17 +0530, Taniya Das wrote:
+> Add DT bindings for the Display clock on QCS615 platforms. Add the
+> relevant DT include definitions as well.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,qcs615-dispcc.yaml         | 73 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,qcs615-dispcc.h     | 52 +++++++++++++++
+>  2 files changed, 125 insertions(+)
+> 
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 730f303350c36a75661dc267fdd0f8f3088153fc..2fa666156b88b44a8298651e276c196cded9a7f8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1322,7 +1322,11 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-2.45.2
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.example.dts:19:18: fatal error: dt-bindings/clock/qcom,qcs615-gcc.h: No such file or directory
+   19 |         #include <dt-bindings/clock/qcom,qcs615-gcc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241101-qcs615-mm-clockcontroller-v2-5-d1a4870a4aed@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
