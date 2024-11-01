@@ -1,142 +1,82 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4731514FB;
-	Fri,  1 Nov 2024 07:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D04154BFC;
+	Fri,  1 Nov 2024 07:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730445359; cv=none; b=oyIjsKW2rG3ydjZkNbSgsqLChT7X2WlTaWkvKpyk0A82oBRXWV2xift2fv1n2vovPFipm9GRw9u88yk6Yp6q4t0Ke7EA1aDCEe80deLPd88qg57TnF+1rJRDCvAT6eegmVt4nZWafJnm+ggWRoZAo+Xq17kfEU+xapHYbFgCl+I=
+	t=1730447312; cv=none; b=ldSsTrJezFhiwW1pqYIverJ8BGEzY5AopPnTqd1Fb6YmwzXgRciIVUKwtVCm1QZYdD+WOsQwyE5x9Nk5IxOVlHyZSXPpGcDIDJa0J6FDfpayznw0q8KkEb9RXDCLU9bysQ6QCVHDaLRA1rmgwbhZC2s/okJUqGurlfGRRTJFEiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730445359; c=relaxed/simple;
-	bh=3VOGJbXx4MAegdFQC/Y6Vr+EmoSscZ1ALddVseDSaGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mzl8gpwi6P8kFJp1+t6xJbZEhhMRRhnBsB0dfzzp5asmHSHrUG2fbtVjiC0RMIIqbYSF6XQaXJUoGyaorkTgmS3EhvRGb+HyEhcDt9sYguCdHoIzr3/uq3xZ0ZUH77ZKCx2X5d4gXxWzeC9w1YlRiLk9bIEAiiF71hRMi/K5Nxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PN8b1S1t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730447312; c=relaxed/simple;
+	bh=5jNVtG3JW/KSaOAqjuS3XSz5N1+uStY9EFxXMYELOys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QK2ACqabXSpzBPUg6aGMMn/tEm8ehnHsOCIXbnnRHVe22FulalUM1Ifl0sr1y5Wlxy4otKjVWLj4cLDdso7ZQCPIyBsanytXrJxan9/lDk9aAyaMyZBRm9Jmrd5u0SrafhrYy9QvZIkEu0I591rndADIcx++LY3hHx5wDr7rGwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YudTDlOz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PN8b1S1t"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A175Jje026701;
-	Fri, 1 Nov 2024 07:15:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ovhgDWrMf5z56w1aAHROlrv9Fuapjcb0MG42724dH+s=; b=PN8b1S1tVqhFnKeU
-	KIuRzfWScZJjnAh0bArxZ3mqiVKpaNV500tJVd94regqI982al7cdJFwFj4swQBA
-	aH65gCeaXITANmJRmxFSmB8G3Fa4fBYKNeWQOi98KoSZC2+cHHjsSytMXCFPzH9h
-	aIG2F8cy8HZhfrR8k7Lhd+nbk+8BZfE48++0nrVZAxK2q0VOm+g9RaxoC/stEiBX
-	sDdOcEy9xjyiYMIUztHfLEhA3yCpOQv4H+r5xziGew5WaNIh0Ci4urS+uCDQu+t8
-	W/88b+MdDOVNTYQ3khmTJl/tgWJqoSD7ZUQ4CAxWJvLOBIisMSsmN7x8W1OqH+Hw
-	7EV9sw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p39gfs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 07:15:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A17FGXl012862
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 07:15:16 GMT
-Received: from [10.216.44.28] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
- 00:15:10 -0700
-Message-ID: <2ea32f2b-a765-420d-9cc7-f0d04d27ed6e@quicinc.com>
-Date: Fri, 1 Nov 2024 12:45:07 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YudTDlOz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C952C4CECD;
+	Fri,  1 Nov 2024 07:48:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730447312;
+	bh=5jNVtG3JW/KSaOAqjuS3XSz5N1+uStY9EFxXMYELOys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YudTDlOz/BMDnK0H+xF/qFDf4Lms5PF9isCm4p009P/ZcmPxz75fV2zn5G9IYdYfZ
+	 I7vQghRNUN2aQjqVs9cKhGeCH0zt0JU40wXzvlfM4gW2vpfhXG0q7Ep6/Rnwenhuwi
+	 lBjBRDK7pchpmasj3PexSs1+6mHt/ut1Hioy8vPJaadubQp6v/d8jV2BfUnDx0hBZH
+	 kL71C/Kz2pmrl49ursph/OoegtUvnLFVBywhOtuw6vGFgT82I/cytlOXtXUgEx5Xoc
+	 krMLFh/I86q+X91+KA5aYo34+iyUFMtGwfuVmoodrCsbAzB3gU/VrWFjLP0uut9VDA
+	 F+uQmYcgLamow==
+Date: Fri, 1 Nov 2024 08:48:28 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH 04/13] dt-bindings: clock: eyeq: add Mobileye EyeQ6H
+ central clocks
+Message-ID: <7ebcdarioght4u2bai4l42pckitcw5iz4rky4ncgp7aqmtrlen@zl7k7pgijloq>
+References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
+ <20241031-mbly-clk-v1-4-89d8b28e3006@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/11] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock
- controller driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
- <20241019-qcs615-mm-clockcontroller-v1-8-4cfb96d779ae@quicinc.com>
- <omn34rwurlxrjckb5d6xb2brg6zwcizonmqyfckvngk5msrfav@b3i2bdjk5vw7>
- <2aa768a4-b0e9-4b2f-8d74-736a88cf81cd@quicinc.com>
- <CAA8EJppZyJt_MWrafSKReuCXy0RtEAQ6VE-kt_Fp41eFpsW2SA@mail.gmail.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <CAA8EJppZyJt_MWrafSKReuCXy0RtEAQ6VE-kt_Fp41eFpsW2SA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uc-jdeAzzNGQkuQbTjeYeVb1f9QNB-N4
-X-Proofpoint-ORIG-GUID: uc-jdeAzzNGQkuQbTjeYeVb1f9QNB-N4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
- phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=670 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010050
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241031-mbly-clk-v1-4-89d8b28e3006@bootlin.com>
 
+On Thu, Oct 31, 2024 at 04:52:54PM +0100, Th=C3=A9o Lebrun wrote:
+> Add clock indexes for EyeQ6H central OLB.
+>=20
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  include/dt-bindings/clock/mobileye,eyeq5-clk.h | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/include/dt-bindings/clock/mobileye,eyeq5-clk.h b/include/dt-=
+bindings/clock/mobileye,eyeq5-clk.h
+> index 7d9e700b5e59573c45919865d9c68a9e8cf6a9eb..2356bc52646df9cfeb93df812=
+0eb8f0bf80d97e9 100644
+> --- a/include/dt-bindings/clock/mobileye,eyeq5-clk.h
+> +++ b/include/dt-bindings/clock/mobileye,eyeq5-clk.h
+> @@ -34,6 +34,9 @@
+>  #define EQ6LC_PLL_PER		2
+>  #define EQ6LC_PLL_VDI		3
+> =20
+> +#define EQ6HC_CENTRAL_PLL_CPU	0
+> +#define EQ6HC_CENTRAL_CPU_OCC	1
+> +
 
+Don't add define after define in separate patches. Logical change is to
+add all defines at once, so multiple patches here should be squashed.
 
-On 10/31/2024 8:44 PM, Dmitry Baryshkov wrote:
-> On Wed, 30 Oct 2024 at 20:04, Taniya Das <quic_tdas@quicinc.com> wrote:
->>
->>
->>
->> On 10/19/2024 1:58 AM, Dmitry Baryshkov wrote:
->>>> +static struct gdsc gx_gdsc = {
->>>> +    .gdscr = 0x100c,
->>>> +    .en_rest_wait_val = 0x2,
->>>> +    .en_few_wait_val = 0x2,
->>>> +    .clk_dis_wait_val = 0x2,
->>>> +    .pd = {
->>>> +            .name = "gx_gdsc",
->>> .power_on = gdsc_gx_do_nothing_enable ? Or is it controlled directly on
->>> this platform?
->>>
->>
->> On QCS615 the GPU clocks are directly controlled by high level OS.
-> 
-> Is it one of the gmu-wrapper platforms?
-> 
+Best regards,
+Krzysztof
 
-Not, sure of the gmu-wrapper, but this platform does not have GMU.
-
->>
->>>> +    },
->>>> +    .pwrsts = PWRSTS_OFF_ON,
->>>> +    .flags = POLL_CFG_GDSCR,
->>>> +};
->>>> +
->>
->> --
->> Thanks & Regards,
->> Taniya Das.
-> 
-> 
-> 
-
--- 
-Thanks & Regards,
-Taniya Das.
