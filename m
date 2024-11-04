@@ -1,87 +1,123 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBCD155392;
-	Sun,  3 Nov 2024 21:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FB62CA8;
+	Mon,  4 Nov 2024 06:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667855; cv=none; b=dGoQGr+TzTlIahZYUriAnzJn6Mhmn3+LE/axXE8GTB5HN91u3ZCnpX0g6f1JRs6YlVF9DjRR90T4kSeXz3+dM+twBDf+Vl5jAJpCtwD2LFeRMwFaEDs0SXSfH5Vp3gvt4TTI0vhE6krRKI/FZZdA2RGbi8P/IN6X1cit5kiRnxI=
+	t=1730702900; cv=none; b=RpOsZhk/gb3AnZaP2ex/CngJc4ax6ECQrVk9uAzFRrPqQJYTsN0ezaxqmuu8/xMX+5Zkq1pvELRwgCJGkvMc+qQjtOWVdGPpLddprzHwX/sDGEKsLyRoS+2gvzn7GLGMmowEWSGqvFY5sF4w2fN7HtoF95FUk6td9XmGf0wbiKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667855; c=relaxed/simple;
-	bh=q6OOaED5zvRfnbaltrJMmwCUXdYdGlzn7Gzj+ZaEkNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0p8Ic9h08Uys+rYuEKYou3djqtmPLNfwK01RDqHxe0nTPV0lx1RiBdLJsq14fx9JXWWwtqDifuqLDDPruvaTO/+XzzYMxj56CaXIKBqMwGSPVvJvDTRkpsWhf0uvvYYehJv/7GuQApXetU/vf0lWUivOeBSDIv5g/xQSwDbdFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1730702900; c=relaxed/simple;
+	bh=jlfO/UikiZs9hQJpMwu5V3TVRejUWA79MBHRzI7bCh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nc/baZ0iX37Yhd3iN7HfYJNPkCyX5i4If8TwD+ZTrC3IhObJXlsK+Drsv46VxOcdKm0mz47jO4qMMpeWQpqvZXIuDlAMsmxO8E2s0QY7nm3YYY59GhvU7r7s6t1hoeDag+zRzmfRxqXEYO6solB8VhVS9MoAaYjNkggWUJDzZdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3WyJhmn; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdda5cfb6so34052435ad.3;
-        Sun, 03 Nov 2024 13:04:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730667852; x=1731272652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3WyJhmn"
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ebc04d4777so1885573eaf.2;
+        Sun, 03 Nov 2024 22:48:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730702898; x=1731307698; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iyk/tHp3wM7ZJ+kBBA3UsNzDpyC6CZHEFHkxEbaxlrA=;
-        b=H9j1XcXSwtZ66Z3tLk9YtGscTM6+NG3100Yn09QKhZqhEkckPwDksp5GlIn+Pwa7JZ
-         qIb7z0O5wFHz6oVaZHDfOFr2fMWzuwec2MZ2EBPjicVsdf7xzdTvD28Dlbjycu8XXrei
-         /WNfDvmTEPwcMtlAv0z7IexXUCWkR3qxbk7uBh2T4A+Gxf/4qeuhORjYqdZ4X1W+dMsw
-         XsBUG9R2c1BQkQM2WQf2uvmqBZj5717hM/rLX3Z2K4Dsim/uy+nJzGqwqhk6O9EL4kph
-         eFXwX1jvH02lLeO2cTHD89mOQlBz3XaFSduRw97+BLZzCPqFjzSZcmP4xCAP1ojh3gu3
-         9BhA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6+Y3nid3NA+vWeaM9yzn+Rlb9+nBp6ijaNiRGUD804zf3EWIifgdXsUNopTvtRshhj9zz8dPejjK2z2IC@vger.kernel.org, AJvYcCWHdr5br+Cmof3/m5s4lnWUat3QVkeuYLuyIGSt+B6xMAH0vwmFGCfq7X406ETRiMn7OR1iEJeqd1Ua@vger.kernel.org, AJvYcCWbMjucPk9/jIKIt7E3BeY+v4DDc/d8yQhEhTiE2VIwxwRzNaE5KjPpIWztM1176XgloRcVF/6zPLa2@vger.kernel.org, AJvYcCXgJ7oJyHFPqcVelUsoYhiYyMqHYpxJNfR2p2G85u1vRqOrfxcGsm9mprkztthnPNRrUFoGoFwlbPJDXKZqCg==@vger.kernel.org, AJvYcCXjN6eEbNNV/pByuOpUWICW56toFjJXe3iWv08ganLgSR0cDuEcIeMIuEc7NqVfW+EjB64xkY6+DEbT@vger.kernel.org
-X-Gm-Message-State: AOJu0YywrAtUW37WkxmIhLV8x60x+W0mge50OfHkgrLl39z1UMzvk+qi
-	VMEVdUq32OEmHNmz5Ai87UY2Xu+oIWT/NpXTdbpSaInl/9Aw82ZW
-X-Google-Smtp-Source: AGHT+IEuBWJcoxFyodqaLltsAgGc1DHq3aBd4Exho6fhd7kC5UnQpnx06MfS33ABD5bBS6JPZdF+Yw==
-X-Received: by 2002:a17:902:e850:b0:20b:6d8c:463 with SMTP id d9443c01a7336-21103b34f6dmr193025595ad.35.1730667852188;
-        Sun, 03 Nov 2024 13:04:12 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2ec3sm49960975ad.140.2024.11.03.13.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 13:04:11 -0800 (PST)
-Date: Mon, 4 Nov 2024 06:04:09 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v8 0/5] Add support for PCIe3 on x1e80100
-Message-ID: <20241103210409.GK237624@rocinante>
-References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+        bh=AoFFRDhx7P8Vjncyt+RKO34ZfvsUqWh2Ai+071gCkzA=;
+        b=V3WyJhmnjSoE6Evhj7QNRWQ7TCFjpraSyOVs8A+7afPqVbSuyYoGvJBdH6BTkU41uA
+         Pnek7GHdohXODgT7oI2ftre7YH2F8F5NepBe9FqcSCG+RBKRxaFDCc9nWBtGtZ7ACN1X
+         nOkFog/R87ospyGStzsli4pNOJLK1M6UF+SA2n7fA1KLv6n5dUiRK+WerJ1q16Qp1S5i
+         ItN5BWqv8l0A2YvctGIKOMUU+RGKUasxR+zsWHkrdNF8SckyiSPdbYTo3eUO2BMWqNmp
+         OPwJhYNZC2hWxJO5OYJjs+O+/8nzpxXRvk4TnWBY+jYgzTPWfkmg5NdiffvjZeNA71LX
+         1xUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730702898; x=1731307698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AoFFRDhx7P8Vjncyt+RKO34ZfvsUqWh2Ai+071gCkzA=;
+        b=aRVTT4LeKD1AM8F3GvpgJTVgwjXjgYkBk+a87J897CeZ23C4e2SmuwoTQ5LLuulbDZ
+         24kpWzr1RxinrhCpvHIy+XLCtEp29a0X/eLGa5ey2JbH1Is1hp/hM5XdgnZp7nlO7gbO
+         JUv8gRtPi3MwHDpukvP7/rF1VHgdZRYXJgQ7v5rbPSY4Fg8hf4H9uFijvGdoj9iMm1Cl
+         acf9LvoKLVXJBFKO4HUvWZJ7PryF0E9W/eFhWip+g5teD0/l7LkIZ4owILAFVOaPDsht
+         8xg8dSI4mNDLIm+0ymr2e8HiVgLso6fuD8eTQj/Y3pB27lddfqrQ2za2qeOSAoYrs4CC
+         WSgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPn8SyiCOT0jBO42eTUNrPUgOrP6efnTVisAHcgQRYWy+4xD4aaVbBgTNy3ZudN1y2RQbSyeeySjCHaMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmIk8ZR2phoNmkaVkVJ5Vj2g+TvvyM9aeKBRZvgy0/FMPgwOnU
+	Tohp+O0kCk0X/mNQmaTpSQ/PlezMR/pq5MuqjEWD9m9c7X6JsOX43BLxrY3dSitxlWz1uenaExk
+	CeudFS9pSRVTSE6hPTT0kfQ/wZPyIvw==
+X-Google-Smtp-Source: AGHT+IFAu7cciozCRJztsew2CmEuJHN5eOvT64Hy1mT2HOzMA7Jtg0n6/YzNVPREoGGGjsknmB3pBOk5A19eeHHV6GE=
+X-Received: by 2002:a05:6820:1ca6:b0:5e5:c073:9ea5 with SMTP id
+ 006d021491bc7-5ec5ec942e3mr10980119eaf.6.1730702898198; Sun, 03 Nov 2024
+ 22:48:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+References: <20240910044024.120009-1-sergio.paracuellos@gmail.com> <CAMhs-H9M+ZW1c7Wrdc0ff_hD=hrbq_S-KqzzjH7ux97sZO4mHA@mail.gmail.com>
+In-Reply-To: <CAMhs-H9M+ZW1c7Wrdc0ff_hD=hrbq_S-KqzzjH7ux97sZO4mHA@mail.gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Mon, 4 Nov 2024 07:48:06 +0100
+Message-ID: <CAMhs-H-Fy6d4q6dQzG9Gik4jj10tXUHcE8BXZW5iRpbYDW638w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] clk: ralink: mtmips: some fixes and sdhc clock support
+To: linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org, mturquette@baylibre.com, tsbogend@alpha.franken.de, 
+	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This series add support for PCIe3 on x1e80100.
-> 
-> PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
-> PHY configuration compare other PCIe instances on x1e80100. Hence add
-> required resource configuration and usage for PCIe3.
+On Thu, Oct 17, 2024 at 8:41=E2=80=AFAM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+>
+> On Tue, Sep 10, 2024 at 6:40=E2=80=AFAM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+> >
+> > Hi Stephen,
+> >
+> > The following first two patches contains several fixes for having a cor=
+rect
+> > clock plan from the beggining in old ralink SoCs that could not be test=
+ed
+> > when the driver was mainlained due to the lack of users. Now some issue=
+s
+> > have been reported regarding RT3883 in openWRT[0] so I am addressing an=
+d
+> > fixing them here.
+> >
+> > The last patch adds new clocks to properly support sdhc 48 MHz clock fo=
+r
+> > Mt7620, Mt7628 and Mt7688 SoCs. OpenWRT people updated to use SDHC upst=
+ream
+> > driver so they were forced to add a not desired fixed dts node[1] to ma=
+ke it
+> > works. The correct thing to do is just support it in mtmips driver. Hen=
+ce
+> > we have add it here.
+> >
+> > Thanks in advance for your time.
+> >
+> > Best regards,
+> >     Sergio Paracuellos
+> >
+> > [0]: https://github.com/openwrt/openwrt/issues/16054
+> > [1]: https://github.com/openwrt/openwrt/pull/15896/files
+> >
+> > Sergio Paracuellos (3):
+> >   clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
+> >   clk: ralink: mtmips: fix clocks probe order in oldest ralink SoCs
+> >   clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628
+> >     and MT7688
+> >
+> >  drivers/clk/ralink/clk-mtmips.c | 56 ++++++++++++++++++++++++---------
+> >  1 file changed, 41 insertions(+), 15 deletions(-)
+>
+> Gentle ping on this series :-)
 
-Applied to controller/qcom, thank you!
+Another gentle ping on this series :-)
 
-[01/04] dt-bindings: PCI: qcom: Move OPP table to qcom,pcie-common.yaml
-        https://git.kernel.org/pci/pci/c/39a06b55df6c
+Thanks in advance for your time.
 
-[02/04] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global' interrupt
-        https://git.kernel.org/pci/pci/c/66dc205962c5
-
-[03/04] PCI: qcom: Remove BDF2SID mapping config for SC8280X family SoC
-        https://git.kernel.org/pci/pci/c/66cc06169fcf
-
-[04/04] PCI: qcom: Disable ASPM L0s for X1E80100
-        https://git.kernel.org/pci/pci/c/fc69fb202beb
-
-	Krzysztof
+Best regards,
+     Sergio Paracuellos
