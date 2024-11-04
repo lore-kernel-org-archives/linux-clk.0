@@ -1,78 +1,298 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC3E1ABECD
-	for <linux-clk@vger.kernel.org>; Mon,  4 Nov 2024 09:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70CF1D31A9
+	for <linux-clk@vger.kernel.org>; Mon,  4 Nov 2024 11:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712560; cv=none; b=Zg+9mWx6/xI/Om9JrLb/E50/EtAkDXiGe6Txu19mNb8MtTwMyzphlsQTDk+pzdNWF2kpxquCJmwD5Cl6l74dEPBVf+4cBKZ17xos/benLesy4aueE7B8Ri3gEBJJms1+HyglqLIoCyE8FUBzGAUO+ruWRemOOAPi3tfJNuyYBjk=
+	t=1730718683; cv=none; b=YYYIAigoEr2BhKxXMCymUlAyw2YS2GbSvG86We7l2KLsvm9MWejfKd27vCo6N1GYjeDKcfMfhMAzJ+voGR/CoKOGRy2P4BJuut1ZrUDj+WESgZ7YbRtmpszDPzO3BPgwYOFCrc8jZsQElOcU13M7orr1yewT3xuUFn9CSz9mpec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712560; c=relaxed/simple;
-	bh=NQdTQuUXttSeZskJgvBHkm84TGVBusiWG1zoAQ102s4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AbtR42IoiwQNWq+S+POKDCDKvs/c01fU6X2KqCjL/mNpLkTO4wfpDwFDIEn1djZbYoOmaROvm1Uq0Tqfd/9EhDODaGY6yr4cJJpUX5lOhSO8FdRZkZOj39CLRZQ4XJwasTYi3WfP0f4om3JdAUvl5vTV4WPCF1vGByzY7J0tQ+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1t7tOR-0008L6-4O; Mon, 04 Nov 2024 10:29:03 +0100
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+	s=arc-20240116; t=1730718683; c=relaxed/simple;
+	bh=VYra1vd3ZI3DNsV6QlM4eJ9XfY/djVw8e2jACzdfLOA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eiFS0yDKIJltt55ILMXodIq+u+rCWy8gIeoYO0y3cTVLg69s6bTql6LA9bil990cVyh7C2dox1wydIg1nP2crVawO6As/e0d73cUfmdVUMovRWBHg9u9AieyPsdV2DmGgDGkzsVM+IlV0kMs93jf7USDj2X3Y32gRble7XTgrBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VFK3C1wl; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VFK3C1wl"
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9a0f198d38so705717166b.1
+        for <linux-clk@vger.kernel.org>; Mon, 04 Nov 2024 03:11:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730718679; x=1731323479; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iR/eLuJ7hqRBDR8qMgEyoLrx9OmW3jzB7EgHhAaqCPM=;
+        b=VFK3C1wlQS9YEinmoSKLaIgWH8mnwCB1+9tp7wyC0kP0xMo1GJiJy++adFkf0XuBU6
+         gRtNyhuzK+NDY1bpIoI0h5CqwyHEglxR+M/X69GFkxT6AB5SRxJniq3NKksC1PuP0oEE
+         MDFEkCj9rlXjqsyxiDtWkU8a00Sehy/eY3X966U+YTNVQyQzwKWWqTjCViHhMeZSOJO+
+         0z0B5Td6BaE17HX5HH1z/37/TpCRZwPaQc0jlfaPPS7tDHkgASciJ5kTpaLPHFOE5opU
+         mBOVjT2PpWVJdvNsRujqFlrgTGKwJ/S6+4vvDqwOTVQfXo9Zva86D/T9/9x9lvRnbF3g
+         flYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730718679; x=1731323479;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iR/eLuJ7hqRBDR8qMgEyoLrx9OmW3jzB7EgHhAaqCPM=;
+        b=kVrvho5GW0R94mRm7AErrIod7jqd2v3od+J23ZSkSl08A+Jn6TcyCykaxEnU7ybYDD
+         Ey/D4LEn40WKbCQKhd6l4e7jM45PwmjSWaQ4DqmKWLJJLMjzaPAizYDoZe4m1MvqMsru
+         cgv5Kjl3cr6JwMY8mqIpXpAWT8GSZ+NZHdmstfPDG2yap8qFC0EXMLlYo1go935HnVBn
+         xUIguzBOoLzynXTs9to7ZibmVyNw7L1NK6dlPrisoXRtT/QtfmrbUtWtodnhIJacto0E
+         C/YcaBOAuxSeFz76lJ8zmXIFliFkgE5oj7lskDkSh9axkc7qe+OzvwZ6Y+bMButefe06
+         LN0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMpESUuwIcT6OlkwkLIflThaGhn5TyxqvvAhgDStaigCcPdrC9bmbhsHkiefKjt5w0VNMpXRrQeGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIunOYUr7kCE/HW4YAaxeTQZ42NHqwP0u19g5S9ACF92toewDP
+	gl+l8MLFjRNuu48BXEQErd5OY/vyIZvB3aV8T5QYMEPyw90D3HIT2NfkCeYEAwQ=
+X-Google-Smtp-Source: AGHT+IG5tnzS154o2gsQZG2Mb2tToZi0pE7ZGdMnxoVRw4hvBg/+92C8iupvzX1HwjwL9uMQzQiObQ==
+X-Received: by 2002:a17:907:9446:b0:a99:88ab:c7cb with SMTP id a640c23a62f3a-a9e654fd997mr1068397466b.33.1730718677440;
+        Mon, 04 Nov 2024 03:11:17 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56645dcbsm549642066b.177.2024.11.04.03.11.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 03:11:16 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 4 Nov 2024 12:11:42 +0100
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Dinh Nguyen
- <dinguyen@kernel.org>,  Richard Cochran <richardcochran@gmail.com>,
-  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,
-  devicetree@vger.kernel.org,  netdev@vger.kernel.org,  Teh Wen Ping
- <wen.ping.teh@intel.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clk: agilex5: Add Agilex5 clock bindings
-In-Reply-To: <5168bb64-f5cf-4cf4-81c9-3bbf0662a334@kernel.org> (Krzysztof
-	Kozlowski's message of "Wed, 30 Oct 2024 15:36:09 +0100")
-References: <20241030-v6-12-topic-socfpga-agilex5-clk-v1-0-e29e57980398@pengutronix.de>
-	<20241030-v6-12-topic-socfpga-agilex5-clk-v1-1-e29e57980398@pengutronix.de>
-	<299bd27b-b5bd-492a-9873-447329e60b67@kernel.org>
-	<5168bb64-f5cf-4cf4-81c9-3bbf0662a334@kernel.org>
-Date: Mon, 04 Nov 2024 10:29:00 +0100
-Message-ID: <87v7x38i03.fsf@pengutronix.de>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 02/12] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+Message-ID: <Zyir7pu8T-fjUIA4@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <9a02498e0fbc135dcbe94adc7fc2d743cf190fac.1730123575.git.andrea.porta@suse.com>
+ <mjhopgkrjahaxydn3ckianqnvjn55kxrldulvjkpqivlz72uyi@57l5vhydpzc2>
+ <ZyOPHm7fl_vW7mAJ@apocalypse>
+ <cc2e1a17-c5b1-4608-8e32-a6dea23a7efb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc2e1a17-c5b1-4608-8e32-a6dea23a7efb@kernel.org>
 
-On 2024-10-30 at 15:36 +01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Hi Krzysztof,
 
-> On 30/10/2024 15:34, Krzysztof Kozlowski wrote:
-> > On 30/10/2024 13:02, Steffen Trumtrar wrote:
-> >> From: Teh Wen Ping <wen.ping.teh@intel.com>
+On 19:10 Thu 31 Oct     , Krzysztof Kozlowski wrote:
+> On 31/10/2024 15:07, Andrea della Porta wrote:
+> > Hi Krzysztof,
+> > 
+> > On 08:26 Tue 29 Oct     , Krzysztof Kozlowski wrote:
+> >> On Mon, Oct 28, 2024 at 03:07:19PM +0100, Andrea della Porta wrote:
+> >>> Add device tree bindings for the gpio/pin/mux controller that is part of
+> >>> the RP1 multi function device, and relative entries in MAINTAINERS file.
+> >>>
+> >>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> >>> ---
+> >>>  .../pinctrl/raspberrypi,rp1-gpio.yaml         | 163 ++++++++++++++++++
+> >>>  MAINTAINERS                                   |   2 +
+> >>>  2 files changed, 165 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..465a53a6d84f
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >>> @@ -0,0 +1,163 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
+> >>> +
+> >>> +maintainers:
+> >>> +  - Andrea della Porta <andrea.porta@suse.com>
+> >>> +
+> >>> +description:
+> >>> +  The RP1 chipset is a Multi Function Device containing, among other sub-peripherals,
+> >>> +  a gpio/pinconf/mux controller whose 54 pins are grouped into 3 banks. It works also
 > >>
-> >> Add Intel SoCFPGA Agilex5 clock definition.
+> >> Please wrap code according to coding style (checkpatch is not a coding
+> >> style description but only a tool).
 > > 
-> > Where is the binding? I see only clock IDs. Your commit msg should
-> > explain such unusual cases.
+> > Ack.
 > > 
+> >>
+> >>> +  as an interrupt controller for those gpios.
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    const: raspberrypi,rp1-gpio
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 3
+> >>> +    description: One reg specifier for each one of the 3 pin banks.
+> >>> +
+> >>> +  '#gpio-cells':
+> >>> +    description: The first cell is the pin number and the second cell is used
+> >>> +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
+> >>> +    const: 2
+> >>> +
+> >>> +  gpio-controller: true
+> >>> +
+> >>> +  gpio-ranges:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  gpio-line-names:
+> >>> +    maxItems: 54
+> >>> +
+> >>> +  interrupts:
+> >>> +    maxItems: 3
+> >>> +    description: One interrupt specifier for each one of the 3 pin banks.
+> >>> +
+> >>> +  '#interrupt-cells':
+> >>> +    description:
+> >>> +      Specifies the Bank number [0, 1, 2] and Flags as defined in
+> >>> +      include/dt-bindings/interrupt-controller/irq.h.
+> >>> +    const: 2
+> >>> +
+> >>> +  interrupt-controller: true
+> >>> +
+> >>> +additionalProperties:
+> >>
+> >> Not much improved. You are supposed to have here pattern, just like
+> >> other bindings. I asked for this last time.
+> >>
+> >> And there are examples using it - almost all or most of pinctrl
+> >> bindings, including bindings having subnodes (but you do not use such
+> >> case here).
+> > 
+> > This is the same approach used in [1], which seems quite recent. I did't
 > 
-> Eh, I just found it in the kernel. Please, do not work on some ancient
-> kernels. You are duplicating existing code, already accepted or reviewed.
+> 2021, so not that recent, but you are right that it's not the example I
+> would recommend. See rather:
+> git grep pins -- Documentation/devicetree/bindings/pinctrl/ | grep '\$'
+> 
+> 
+> pins, groups, states, etc.
 
-Meh, yes, you are right. clock != clk...
-So only the clock driver itself is missing and I will remove the binding patch. Even better.
+Perfect. Thanks for the example suggestion.
 
+> 
+> > use pattern because I wouldn't really want to enforce a particular naming
+> > scheme. Subnodes are used, please see below. Since pinctrl.yaml explicitly
+> 
+> But we want to enforce, because it brings uniformity and matches
+> partially generic naming patterns.
 
-Best regards,
-Steffen
+Ack.
 
--- 
-Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
-Steuerwalder Str. 21            | https://www.pengutronix.de/    |
-31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
-Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
+> 
+> > says that there is no common binding but each device has its own, I
+> > thought that was reasonable choice. Should I enforce some common pattern,
+> > then?
+> 
+> Yes, you should. Again, look at other bindings, e.g. qcom tlmm or lpass lpi.
+
+Ok.
+
+> 
+> > 
+> >>
+> >>> +  anyOf:
+> >>> +    - type: object
+> >>> +      additionalProperties: false
+> >>> +      allOf:
+> >>> +        - $ref: pincfg-node.yaml#
+> >>> +        - $ref: pinmux-node.yaml#
+> >>> +
+> >>> +      description:
+> >>> +        Pin controller client devices use pin configuration subnodes (children
+> >>> +        and grandchildren) for desired pin configuration.
+> >>> +        Client device subnodes use below standard properties.
+> >>> +
+> >>> +      properties:
+> >>> +        pins:
+> >>> +          description:
+> >>> +            A string (or list of strings) adhering to the pattern 'gpio[0-5][0-9]'
+> >>> +        function: true
+> >>> +        bias-disable: true
+> >>> +        bias-pull-down: true
+> >>> +        bias-pull-up: true
+> >>> +        slew-rate:
+> >>> +          description: 0 is slow slew rate, 1 is fast slew rate
+> >>> +          enum: [ 0, 1 ]
+> >>> +        drive-strength:
+> >>> +          enum: [ 2, 4, 8, 12 ]
+> >>> +
+> >>> +    - type: object
+> >>> +      additionalProperties:
+> >>> +        $ref: "#/additionalProperties/anyOf/0"
+> >>
+> >> Your example does not use any subnodes, so this looks not needed.
+> > 
+> > The example has subnodes, as in the following excerpt from the example:
+> 
+> I meant, you do not need properties in subnodes (1st level). You only
+> want properties in subnodes of subnodes, so 2nd level. What is the point
+> of allowing them in 1st level?
+
+I will add those two sub-nodes to the example:
+
+            rp1-i2s0-default-state {
+                function = "i2s0";
+                pins = "gpio18", "gpio19", "gpio20", "gpio21";
+                bias-disable;
+            };
+
+            rp1-uart0-default-state {
+                txd-pins {
+                    function = "uart0";
+                    pins = "gpio14";
+                    bias-disable;
+                };
+
+                rxd-pins {
+                    function = "uart0";
+                    pins = "gpio15";
+                    bias-pull-up;
+                };
+            };
+
+The first is just a group of pins with the same settings, the second is 
+a pin group with different settings per pin. This is basically the same
+usage as in qcom,sm4250-lpass-lpi-pinctrl.yaml.
+
+Many thanks,
+Andrea
+
+ 
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
