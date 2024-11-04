@@ -1,90 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517A7E552;
-	Mon,  4 Nov 2024 19:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01AF1B5EBC;
+	Mon,  4 Nov 2024 19:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730746997; cv=none; b=qMXtUYNfQpuJg8bDQWG/A6C9qeoNzt+WzFsK20RnmX3nd2RbtjuuwItdUpg68YmThenIGIPm0aw9zc3snLYLKFZgclB5ErZTgbKLLCrcDyAVe4e23oNpZSrZj8+M8q4oPEszRh3HgFaVdQm0m0yZJCuBom/JGbaN8jB8zVOehDk=
+	t=1730747102; cv=none; b=gbpe0ekQPLUIsCQR9pAn3t4oAVQfZ9S6Lz3KZjamStMiywqxzl7Isf3KDNk0cPGLDXgtlbqEISI/j8paGhb6fZE8RzMOH0N+HP2PPdHuYRYuJ3IX14jhfRyXUPSk+6uT7qMLqPIelDMOTY/h7SjyDxeH3Cawk7DEo+PGpsh2ARA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730746997; c=relaxed/simple;
-	bh=3r1E4jlJB4SLcbXZTrwJvyUumCnga/Bf9P2eoxkAa1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kp0HhCEMWAXOJn9H7sYHbIJN+NB3Q+QQPROyHQ0vkWNgfbz5l2+a5sjWStrDud3J1fGRmIoELwFbf8bMf6keExS36IejaITKkmfxKivI+mmZhUafsTDrMSVgCPSYlnL72LhCcXaMYbv+/219fzbBBKsy/i54v46WI5GPFGApWoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mr4xnJjN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730747102; c=relaxed/simple;
+	bh=IpevLm9zmMO/WRd+BeiK2wsuMbU3lla0NcYACvtD4YE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GjTVfb40nJBsphVDfX/pNsdQb9DdeUFU4B/b/T56t0skbUSVk2HKEkytdwpZ/dIY+wzDcri+d0djoaQnQftuxCgvBO0+PvoR8SK4wiknE9vwn3laTH8EUFGp2HJfYF56duIPIW5NW30YPqwhsWm+lj6Z1001eCdHjDf7QN4pXeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAxJk0gP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mr4xnJjN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D69DC4CED0;
-	Mon,  4 Nov 2024 19:03:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAxJk0gP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA04C4CECE;
+	Mon,  4 Nov 2024 19:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730746996;
-	bh=3r1E4jlJB4SLcbXZTrwJvyUumCnga/Bf9P2eoxkAa1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mr4xnJjNlzjgQEcOHb/8xwXRzqZFAhsVuBIKZ2Clp6ZbOR6fkLm/drcc0ImyQ4ObG
-	 N78GCyjslMDBjxJhwyZ28Oqwzp6SGzU+J1TiTkBHbt+Dx4AWUR+wwwDlDuwlAz6o/M
-	 nL2u6pT20zkxEejTkM6OWVJfRen0JOHSdrzIgiZ3DqsJlPGLUIBXmrVCNgnF17UYQR
-	 IrEpfpclIOPlWZNMEO3NAuYD7ZU8mnGcjPNQFwbQ5EUeqzJZV4CGkNBUHRrtL/wTeD
-	 YLirdsTapUiet/BNrNvkuq9J1pzE6qykIXQb8BKL23dQnd5Y0s7PdN0zKnVUYnWv3B
-	 qtYPoFpqDn4Ew==
-Date: Mon, 4 Nov 2024 19:03:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	s=k20201202; t=1730747102;
+	bh=IpevLm9zmMO/WRd+BeiK2wsuMbU3lla0NcYACvtD4YE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kAxJk0gPb0VUSWzcApxGGx8coNbK8gpwrnfLw3vl+JvRMGYNEwiAGt0MfbM+3mmoY
+	 yE+zMLacNqVwyflLLp6H75oT2XZ39qeeUom0hFKO28o3YXe3r/60x/2eCMW5DAQZWm
+	 1iwYew0JnXYxbZtBOX2c1skDFvEWcmbloQbKjitZhFWynICawctLz0LeFB//0Y5TSc
+	 7f4oAufA3fxs8MOhuKC979iztCKooqZeQ7CAaFG8bvhECOAeco3Kg//Hx3meUhsJr6
+	 aZQoIw9Autc9B4IPl8YsBq4DvLtHYKdhG/qY8i9hPDQ2lFoO0Qb0RqNdMFLPTe5ZAO
+	 1Rlu1GTu0gsIA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: clock: actions,owl-cmu: convert to YAML
-Message-ID: <20241104-lend-lark-ab46a268213a@spud>
-References: <20241104153108.3053932-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: Use of_property_present() for non-boolean properties
+Date: Mon,  4 Nov 2024 13:04:55 -0600
+Message-ID: <20241104190455.272527-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XOrBdxecZKGerwZn"
-Content-Disposition: inline
-In-Reply-To: <20241104153108.3053932-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+The use of of_property_read_bool() for non-boolean properties is
+deprecated in favor of of_property_present() when testing for property
+presence.
 
---XOrBdxecZKGerwZn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Nov 04, 2024 at 05:31:08PM +0200, Ivaylo Ivanov wrote:
-> +    soc {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+index 87e23d16ed0f..724b202863a8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+@@ -356,7 +356,7 @@ int sun6i_rtc_ccu_probe(struct device *dev, void __iomem *reg)
+ 		const char *fw_name;
+ 
+ 		/* ext-osc32k was the only input clock in the old binding. */
+-		fw_name = of_property_read_bool(dev->of_node, "clock-names")
++		fw_name = of_property_present(dev->of_node, "clock-names")
+ 			? "ext-osc32k" : NULL;
+ 		ext_osc32k_clk = devm_clk_get_optional(dev, fw_name);
+ 		if (IS_ERR(ext_osc32k_clk))
+-- 
+2.45.2
 
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-
-FWIW, you could drop these two if...
-
-> +        cmu: clock-controller@e0160000 {
-> +          compatible = "actions,s900-cmu";
-> +          reg = <0x0 0xe0160000 0x0 0x1000>;
-
-...you dropped the 0x0s from here.
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
---XOrBdxecZKGerwZn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykacAAKCRB4tDGHoIJi
-0n0GAPkBL2R9XB/l1IMWxiCtryHJhv5Az3c5Ns/wRAlZQqj2eQEA9fvaT5wEeqmS
-HYIA2tKZf7xhQTbA+sdSQZ6HO3Qfzws=
-=xDDY
------END PGP SIGNATURE-----
-
---XOrBdxecZKGerwZn--
