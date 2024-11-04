@@ -1,118 +1,115 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D675F1B0F2B;
-	Mon,  4 Nov 2024 12:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FA2AD24
+	for <linux-clk@vger.kernel.org>; Mon,  4 Nov 2024 13:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730723083; cv=none; b=FLk97VA1BZgipqpvLHdLcXcsDB5dGph6fsMYOc/xBJ4MY2/UnDkaAUEmFZzeXbVyRTqMZMJ20y97xh3ze1z1eCaVNrm0zmsm9cut8fp2saOVrjE8DeEBz3E75dHEETfED8x35kKXZrnVrGPWYX3n5nH04enh+Y/RXqpwF2ZUI3A=
+	t=1730726826; cv=none; b=uh+yeNHy07VKB3rdTs9vKp6ygTHOPisL1wUPwSVa4bmMnktvRoVwS8sOvDfy8dbwkuJfLSSKD3TPJDL1tWmR2PfZT8O76uEQ5YdvHlbUmjYw5SDmHGCnfcYDL1lxQ03PyQWlcXBhlCqBSgC1RaCGGd62cxcqwg2jts/RyyI/5Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730723083; c=relaxed/simple;
-	bh=CuX881Htq2G9MyF7JVoCeQrvUEVRmKlh4ut54sjNC7E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OSa0IYUmd/87+ovbiqwDbwvCu860ZlTyUAGsInaFcX5rSi+M17hSSZVtpi86PRjHpZW/lJVD9/HJLBEz+1Sn6FI4SM8pzMZo1y/E2GR5qbuzfClaQEe65s7pdGlSlzjo9sKI6dFCYHVy7IpoOwZKYUJ4biAL00SX0Mj47BQR7k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAsqbXoj; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAsqbXoj"
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-50d3d4d2ad2so1718337e0c.0;
-        Mon, 04 Nov 2024 04:24:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730723081; x=1731327881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wo274/Jfmrl9jyJf2hcMW3bSE/BVnJ64CRAlMkPhKUg=;
-        b=MAsqbXojs8dcmW9JDcI6yEuoXZigeVdAXQvSY9DQNw4ER9Qh+zm/LR1nck2Ji1fIgk
-         hLAQ7rbwXda0OYkj3jA15ac44gBwZ/6urifB0K1TBmY7szqj4hS9BPMuTUtpQ516ByvV
-         qalFN+07NCzUHuO5sDV4EDUwt328vetD9dmwdM2uLlnwwHEMCC2Ue1GIRnqgEgS0Jn7y
-         5XekwCgBifHvAedldBmr+fpUJegFePdo0v5iDrv1kLiIYCIOOZYJ2RvYntCXEQr1EryY
-         owdN+Anbz6AZ93wjOtbAd8onDseXgDuMtvjTQlqKdzcmSdV98x8o+7hQNPsjLSOyHlNe
-         uKrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730723081; x=1731327881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wo274/Jfmrl9jyJf2hcMW3bSE/BVnJ64CRAlMkPhKUg=;
-        b=C4oRi/Yg+DGhbIejgWcEy2Mg6l1odG3H+F3/Ycyd7vqUma5grUHB7BK2rm9JJkqGkL
-         qR6wZH1+3yTaQMrqwmjRl8S4rOcmQOQaDWxi87fpLjsoNMQ87Ix6oMqiEoLJwrE86/U3
-         RozmGUjsMMfseVBnCrRS6nlMY8A4hdJXfJ7In9KlhwwucwGIXep3/xByLdMQ2aVrET4W
-         rXz3a+fxmiI98Lr2LJPH9SlHA5OFcwXmK1bisMGvhbtGdxaLuCgmgW45JVq/mEYrav/R
-         NA2EOmNefZSVLkICLALnphAQytH3GHpgk+rE1+SgPNWNR55FEsY31o/75jGyE9JLbatx
-         9sbA==
-X-Forwarded-Encrypted: i=1; AJvYcCURlSg1Bd1nI654lM1m9p7PXNe0VUptA4mpDWnk9AucH8XpgCs4qpuxdRSssAb6tlAFBnXgsHAOx/pdct8pXMliIak=@vger.kernel.org, AJvYcCVjWwgBpjZ3mun2t3E4L+kCE/gz7PGRGWZ+WHpEaHbMSMhCUmGVscNlqlqJMaq6853C/JVzC/L+bZY=@vger.kernel.org, AJvYcCWlmo7Bg398KP834A9vBNBIjBJTih+eW2nXlWzpJvEgHQtF8GfDuaS+eT2OLMm11MjgwC5/2pEcIyEPW+cF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT4H7mZbOr+/Qnaqejj8+ieQUbYCDrcXT/ENcbiIAtutMVX3F2
-	DM8Jmgytdnkinw3soMySHVsEHd4yF2aTns8yq88jFF83hN8615aAXv7Rl3Y61xsm1UMdZl3R0PC
-	OCIhnBsy00k1fguwsYD8PdNj/teo=
-X-Google-Smtp-Source: AGHT+IEFuIKEHUz2N0Td4TW4ap5UwUm7A4CtQG+0lfgO1HBunFwE3KhNTWiSxDOdOn6hE6z2q/i8kfbKH1pNha9OOME=
-X-Received: by 2002:a05:6122:2a01:b0:508:4997:18c6 with SMTP id
- 71dfb90a1353d-51226f993c1mr10034054e0c.0.1730723080698; Mon, 04 Nov 2024
- 04:24:40 -0800 (PST)
+	s=arc-20240116; t=1730726826; c=relaxed/simple;
+	bh=DDkxjMZFE6+6sIC6I+6+uLPBbfdCRk4DyjDRJpgWxgg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vBbyeaW0YGNDJQdfYczbHp/14mtbQ8Q1BU5gW9NjC9pzCieu1vQg47aQEegjiH/eJg0ZEsuoPLPO5tmGDzyOCJcdoypK91EAoa1/ZycwjY75h/XJnzazrQiqAxJxBAtYi/UHyy8H4MocyR3P1R0YTK1RQQEG1hE5I5qjKVtt1Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ae0d:26ef:36dd:9be1])
+	by michel.telenet-ops.be with cmsmtp
+	id YdSv2D00V31l0Qj06dSvXN; Mon, 04 Nov 2024 14:26:55 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t7x6J-006FvZ-PY;
+	Mon, 04 Nov 2024 14:26:55 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t7x6d-000BKp-G7;
+	Mon, 04 Nov 2024 14:26:55 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.13 (take two)
+Date: Mon,  4 Nov 2024 14:26:54 +0100
+Message-Id: <cover.1730726251.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028212914.1057715-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241028212914.1057715-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX5z5APK7JWtnqBBmtPpFYx_G1d_k9yxbv8vnvyuTsEWA@mail.gmail.com>
-In-Reply-To: <CAMuHMdX5z5APK7JWtnqBBmtPpFYx_G1d_k9yxbv8vnvyuTsEWA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 4 Nov 2024 12:24:14 +0000
-Message-ID: <CA+V-a8t6b6cbn+q7y9eUgoEx=y0uVrZytp88+dRmepipnwyyUA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r9a09g057-cpg: Add support for PLLVDO,
- CRU clocks, and resets
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+	Hi Mike, Stephen,
 
-Thank you for the review.
+The following changes since commit 92850bed9d4d334ee502a035ed5750285faccbea:
 
-On Wed, Oct 30, 2024 at 4:57=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> s/r9a09g057-cpg/r9a09g057/
->
-I will fix this as part of v2.
+  clk: renesas: r8a779h0: Drop CLK_PLL2_DIV2 to clarify ZCn clocks (2024-10-14 10:04:31 +0200)
 
-Cheers,
-Prabhakar
+are available in the Git repository at:
 
-> On Mon, Oct 28, 2024 at 10:29=E2=80=AFPM Prabhakar <prabhakar.csengg@gmai=
-l.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for the PLLVDO clock and its related CRU clocks and reset
-> > entries in the r9a09g057 CPG driver. Introduce `CLK_PLLVDO` and associa=
-ted
-> > clocks like `CLK_PLLVDO_CRU0`, `CLK_PLLVDO_CRU1`, `CLK_PLLVDO_CRU2`, an=
-d
-> > `CLK_PLLVDO_CRU3`, along with their corresponding dividers.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.13-tag2
+
+for you to fetch changes up to be20a73e03e19005cfa5c1c4d6158af1ba02f056:
+
+  clk: renesas: vbattb: Add VBATTB clock driver (2024-11-03 12:25:16 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.13 (take two)
+
+  - Add RTC power domain and Battery Backup Function (VBATTB) clock
+    support for the RZ/G3S SoC,
+  - Add the devm_clk_hw_register_gate_parent_hw() helper,
+  - Miscellaneous fixes and improvements.
+
+Note that this includes DT binding updates for the RZ/G3S SoC, which are
+shared by the clock driver and DT source files.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (1):
+      clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
+
+Claudiu Beznea (8):
+      dt-bindings: clock: r9a08g045-cpg: Add power domain ID for RTC
+      clk: renesas: rzg2l-cpg: Move PM domain power on in rzg2l_cpg_pd_setup()
+      clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+      clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as IRQ safe
+      clk: renesas: r9a08g045: Add power domain for RTC
+      dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
+      clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+      clk: renesas: vbattb: Add VBATTB clock driver
+
+Geert Uytterhoeven (2):
+      Merge tag 'renesas-r9a08g045-dt-binding-defs-tag2' into renesas-clk-for-v6.13
+      Merge tag 'renesas-r9a08g045-dt-binding-defs-tag3' into renesas-clk-for-v6.13
+
+ .../bindings/clock/renesas,r9a08g045-vbattb.yaml   |  84 +++++++++
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/clk-vbattb.c                   | 205 +++++++++++++++++++++
+ drivers/clk/renesas/r9a08g045-cpg.c                |  54 +++---
+ drivers/clk/renesas/rzg2l-cpg.c                    |  52 +++---
+ drivers/clk/renesas/rzg2l-cpg.h                    |  10 +-
+ include/dt-bindings/clock/r9a08g045-cpg.h          |   1 +
+ .../dt-bindings/clock/renesas,r9a08g045-vbattb.h   |  13 ++
+ include/linux/clk-provider.h                       |  18 ++
+ 10 files changed, 380 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+ create mode 100644 drivers/clk/renesas/clk-vbattb.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
