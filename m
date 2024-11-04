@@ -1,112 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D7D1C729E;
-	Mon,  4 Nov 2024 16:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517A7E552;
+	Mon,  4 Nov 2024 19:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739545; cv=none; b=BngfyOtMD+06dcF0Aw0Wvl1bg5j3PG4rtPaVX8bV0wyX5S6WY3h0ZeBKkxRg079gPBe7cH2n4MjRe4afdXgi4SrlVe1w9bn8Yj5tXi9Fg+QxqTf4eYoQAYxt7c0pdJ65M8ZZo+ErMRYb0uxAWDMXeLWMXAst0q1YbC6GCkxiHsg=
+	t=1730746997; cv=none; b=qMXtUYNfQpuJg8bDQWG/A6C9qeoNzt+WzFsK20RnmX3nd2RbtjuuwItdUpg68YmThenIGIPm0aw9zc3snLYLKFZgclB5ErZTgbKLLCrcDyAVe4e23oNpZSrZj8+M8q4oPEszRh3HgFaVdQm0m0yZJCuBom/JGbaN8jB8zVOehDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739545; c=relaxed/simple;
-	bh=4D8XOtjbC8UY5TysZkndfhmFBX5acb3YFTXYUgMYqgY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z6Hwu32c+vW7mRbfagqqMaSSBuUugLLmpDikaLZYTrC+LmjoALA9wp0D0hxRaPCJaYF1JKtN2DDebcNtEDACa6qIugo6ZlBt75GPfeqYkaYSed6ob3eFYXdh/joDGWuZVybDXr1AVnb87bTplKwwrYz2fNtsnVnuocJy/9otBFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPLK9zER; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730746997; c=relaxed/simple;
+	bh=3r1E4jlJB4SLcbXZTrwJvyUumCnga/Bf9P2eoxkAa1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kp0HhCEMWAXOJn9H7sYHbIJN+NB3Q+QQPROyHQ0vkWNgfbz5l2+a5sjWStrDud3J1fGRmIoELwFbf8bMf6keExS36IejaITKkmfxKivI+mmZhUafsTDrMSVgCPSYlnL72LhCcXaMYbv+/219fzbBBKsy/i54v46WI5GPFGApWoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mr4xnJjN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPLK9zER"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 611F4C4CEEA;
-	Mon,  4 Nov 2024 16:59:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mr4xnJjN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D69DC4CED0;
+	Mon,  4 Nov 2024 19:03:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730739544;
-	bh=4D8XOtjbC8UY5TysZkndfhmFBX5acb3YFTXYUgMYqgY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IPLK9zERO09znRa4QzZ44/eMpgIcXm667HQQxVqcxTgvWk2MfTEJDKPNv7TYYw4lR
-	 lVOJznEUuqbRhMuxHNL+rY3ZXn0aCZn0KfDc3xPgWPp0rzhOOhiNgflta0O+s84wVI
-	 6ONg7+EGd/g9BCV3RrPfBt8xCvnMyze78OO/dMpDF0sBQReaNKFYNu8D8OB9hqsf7U
-	 wHou6M0FRCGcJhCnQxjm66Ybg62RQ6Otg0XnnVLzDQnBwstLMgUbHtUveWLpmd2Wcd
-	 VvI2R46TfYBocuCpLgif1G9yigL3LjXki11sqp822Ps6BgU3NDrYw9pCwLdj9PQ6in
-	 OB8vZUbYg9pKg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55471D1BDCF;
-	Mon,  4 Nov 2024 16:59:04 +0000 (UTC)
-From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Date: Mon, 04 Nov 2024 17:37:11 +0100
-Subject: [PATCH RESEND v13 09/12] dt-bindings: marvell: Document PXA1908
- SoC and samsung,coreprimevelte
+	s=k20201202; t=1730746996;
+	bh=3r1E4jlJB4SLcbXZTrwJvyUumCnga/Bf9P2eoxkAa1g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mr4xnJjNlzjgQEcOHb/8xwXRzqZFAhsVuBIKZ2Clp6ZbOR6fkLm/drcc0ImyQ4ObG
+	 N78GCyjslMDBjxJhwyZ28Oqwzp6SGzU+J1TiTkBHbt+Dx4AWUR+wwwDlDuwlAz6o/M
+	 nL2u6pT20zkxEejTkM6OWVJfRen0JOHSdrzIgiZ3DqsJlPGLUIBXmrVCNgnF17UYQR
+	 IrEpfpclIOPlWZNMEO3NAuYD7ZU8mnGcjPNQFwbQ5EUeqzJZV4CGkNBUHRrtL/wTeD
+	 YLirdsTapUiet/BNrNvkuq9J1pzE6qykIXQb8BKL23dQnd5Y0s7PdN0zKnVUYnWv3B
+	 qtYPoFpqDn4Ew==
+Date: Mon, 4 Nov 2024 19:03:12 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: clock: actions,owl-cmu: convert to YAML
+Message-ID: <20241104-lend-lark-ab46a268213a@spud>
+References: <20241104153108.3053932-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241104-pxa1908-lkml-v13-9-e050609b8d6c@skole.hr>
-References: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr>
-In-Reply-To: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Tony Lindgren <tony@atomide.com>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
- Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1205;
- i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
- bh=15/cjXcDaPcYZAg2O4CmYNIfoTNEYP0hlzt3MbHnBig=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDOkaf0NZpj6s7Q25skhCY+qbRc+FeZjllY07j/y+rCWza
- 55P99H0jlIWBjEuBlkxRZbc/47XeD+LbN2evcwAZg4rE8gQBi5OAZjIlWJGhsddXT2bXPSX+UrL
- /N0UoH3n5zTjV1+ZTmw5dLDs4IssXTmG/7nsH1f/3MC3ZeOq/wH3HnlVSC2UvnksqMNnLXP6vBQ
- 2ax4A
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
-X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
- auth_id=191
-X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Reply-To: duje.mihanovic@skole.hr
-
-From: Duje Mihanović <duje.mihanovic@skole.hr>
-
-Add dt bindings for the Marvell PXA1908 SoC and the Samsung Galaxy Core
-Prime VE LTE phone (model number SM-G361F) using the SoC.
-
-The SoC comes with 4 Cortex-A53 cores clocked up to ~1.2GHz and a
-Vivante GC7000UL GPU. The phone also has a 4.5" 480x800 touchscreen, 8GB
-eMMC and 1GB of LPDDR3 RAM.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-index 4c43eaf3632e4ec8e7d9aeac62f7204e2af4405a..f73bb8ec3a1a1b9594eb059b72d95dcbf8c87c6b 100644
---- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-+++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-@@ -35,6 +35,11 @@ properties:
-           - enum:
-               - dell,wyse-ariel
-           - const: marvell,mmp3
-+      - description: PXA1908 based boards
-+        items:
-+          - enum:
-+              - samsung,coreprimevelte
-+          - const: marvell,pxa1908
- 
- additionalProperties: true
- 
-
--- 
-2.47.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XOrBdxecZKGerwZn"
+Content-Disposition: inline
+In-Reply-To: <20241104153108.3053932-1-ivo.ivanov.ivanov1@gmail.com>
 
 
+--XOrBdxecZKGerwZn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Nov 04, 2024 at 05:31:08PM +0200, Ivaylo Ivanov wrote:
+> +    soc {
+
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+
+FWIW, you could drop these two if...
+
+> +        cmu: clock-controller@e0160000 {
+> +          compatible = "actions,s900-cmu";
+> +          reg = <0x0 0xe0160000 0x0 0x1000>;
+
+...you dropped the 0x0s from here.
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--XOrBdxecZKGerwZn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykacAAKCRB4tDGHoIJi
+0n0GAPkBL2R9XB/l1IMWxiCtryHJhv5Az3c5Ns/wRAlZQqj2eQEA9fvaT5wEeqmS
+HYIA2tKZf7xhQTbA+sdSQZ6HO3Qfzws=
+=xDDY
+-----END PGP SIGNATURE-----
+
+--XOrBdxecZKGerwZn--
