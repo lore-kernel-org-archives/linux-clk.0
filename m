@@ -1,233 +1,125 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1515D1B6D17;
-	Mon,  4 Nov 2024 15:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28D713C827;
+	Mon,  4 Nov 2024 15:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730734282; cv=none; b=aPQTYlji//Ejp7gCHPp252l3+pf7e+g82N7N6+J9Wi5FcIX8BfTKn1iG+pLcno/rb8smFOYnC+BBs0GDiAzpEV0usxuR+rEcCh2rFDa62cfoOQx1ITYEiOdD1lIULGVxqyhR+6O4HjcUpLgPDC5L64mBiVk+jL/ZEbTzoEpPz3k=
+	t=1730734650; cv=none; b=c3dExMSlIfKso9VOwj4O17rwvdQkw0uY2YcePwEjWG+HPjSOFsU7Leks20esFA3kiL2eJpk75TQMTXYnJDvAx/KkETtUz2wZmJ+vq4Sa3+oQCOUhVuO9KLYV4IDcKog4vDtuZcYpybvMOF/OtEXe+I2Zsy3ZymLqBTDA4FhBZFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730734282; c=relaxed/simple;
-	bh=6YLYmM6YYR9/20z0JtAHvj/9/J+v4uEkl4GdcVwy8DU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aIqo58bHF95lTrJKmdH2oS+07bpZapRFMwFHdwokGy0+BxTdIiySsnfFTSDERfbwhEudwKgS/I1k3nmtDDQYZoMDDt/lfagnBONiq05df5aMANYYmDqkxYhySEB6PrrGSXcO8qQ/4WQI4TW+Zg2kHiLbQDswTxihx9BAWnNSN+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btTYNtSh; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730734650; c=relaxed/simple;
+	bh=YkxEabm7OdGb4+okNBootBI0IcP4SC2irg6j0pQZV/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9gHUbWgXR5UVGrPIiKgOZcGyXl5gj83wOy07bmxlaJR9i+pT+cIX/zWe2vtFE7C+fa7CTTUvHd1NrQ/0Ef2/KhzUUtc+/r1U8kLy66/rwNdblv2ahmTgYi4rh+zF/NdM72RMgZCkyXr2zbEBJuUaWGV767BbSGxHKpTggG8Eo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvpjwTGw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btTYNtSh"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9abe139088so677019666b.1;
-        Mon, 04 Nov 2024 07:31:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730734279; x=1731339079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/3LogGj4xkkr4o1UTB8qXkiTCCsI8G7HemaQt+AbGo=;
-        b=btTYNtShz5nTtpJ6ktW8kymgv2XGyGBgfF8CLUydnZTSMVUg3fmZL5ls49RGmn6qzX
-         YOfQvFrpfN6xttpRAq0hV/U0HO2h1VDRjuRUT0YMV3EamLUogFTQtCNoAkFftT3po+8s
-         LfVHhjBl2DY2sb7ki9HzF2jpOf9t28lpb0WJZVZVEuACF/6EBbyZJVXzfHzrKnNzzwV7
-         jZAwaCJLZJNsdsFXezjLXj2seRvF4idd0BLLOZBY7UY0h1X4e+ZyXJqcll+IRhNtiY2/
-         BymW2af0EGAa791SWbNffd5uI89WSfvKWPqX2ie7c+IUnrnvgSCwFHvTjD0UgErvrShK
-         HbOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730734279; x=1731339079;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d/3LogGj4xkkr4o1UTB8qXkiTCCsI8G7HemaQt+AbGo=;
-        b=eb+hkApSyOoDCiMBCDHfHAH6VhZ0jdR6F5ofM1d4Gz/dur6PvRPye6MCnQ3I5u6IHs
-         vMCiTyzrUP99v7QWnLezhb933meIfg0tNsDj/jDiNy3YGJEvYJ8Y9fn34+oksA4lRVgt
-         EOA48ev0u280lP1Me7jRHjy6DsJUeHyzmy7MzXn3akq1N9opThjTNkDLjV6QfLK/2ujz
-         Z5OIYdO9gYIX06Dgf5pcO2OrC30R3xJRMt81ZJvmn267hsD35xUKYvFmeN8ZmwhpAf06
-         V8pim/z736xjBWpJbDQ3MXrCoJJQYSNpK2YfsyQ3jnoc2rWZJ6ISh2J9j8/ORIeTEpBd
-         DXRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8BD1ENW9z3/LvvodkxZJeqC/knL9ClH+TGuSEzd0PsQPpuWIFojWpruDnMUWue994x5kDntD8wtZs@vger.kernel.org, AJvYcCWJfSiCMT9TuqgbE4lywcNTAF15bzSv5yFGXs44addXl0NxjoHcxWPtNrBqfUGDdADc9ln5ICTLzeV7@vger.kernel.org, AJvYcCWi0Fyg4oDp32bVEBq+5TXJpMdpJTEvZN7SqPVnvK8i+ZDrBC1GiKSCwoxv/KCs3dMSHnyu/b7CYM0jdlUT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjgIUlWPvpjXP154wgcrobDSbviDBhyDDboBat6m6BrlI6bDNY
-	ZTgIL1ykVJ5GXKGHPDb9JLr6HV8P4qm+FmsyTGeq9jPwDo2cclhW
-X-Google-Smtp-Source: AGHT+IGRcKbIwGQbBQLPAesO3IxNhJ0Y1eyNVqxLs9jLYjV9pVflKzinTtL7MsseoMNKn2MXv+3bkA==
-X-Received: by 2002:a17:907:7f0e:b0:a9a:9df:5580 with SMTP id a640c23a62f3a-a9de5ce6778mr3147777866b.19.1730734279190;
-        Mon, 04 Nov 2024 07:31:19 -0800 (PST)
-Received: from ivaylo-T580.. (miroral.stz.ddns.bulsat.com. [91.139.249.115])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56649363sm559817166b.184.2024.11.04.07.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 07:31:18 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvpjwTGw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC00C4CECE;
+	Mon,  4 Nov 2024 15:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730734649;
+	bh=YkxEabm7OdGb4+okNBootBI0IcP4SC2irg6j0pQZV/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cvpjwTGwjDlYpjTj5Rh0Y/lITq3PRZ1aju2/5Tgzpyn/7xPw6J+o5Ym/LRnRUBI2l
+	 UTQx90Kuhio9Gl+GQFBZly9IkuCcxXunb9r1xWbh9YCenAJhz34l9nnq0ffak4fmvY
+	 KN5pLt8bIBHThwuW0HJ9sByvFOlVybYebuWPPFL/cCPHL9L8/SQh+4v1pKo8MdziXK
+	 SrrFpB8a+FYFk5/mrr92BiOWQPxciNvGgUgTf6B9IPCgukjV91nU9+y6rg0jil5gKK
+	 ERSxUvD+HYSgwZkaq6DDLdyZ4Nio3WxgsWYNshu+KCo/NLRDACgLfI0MjNYBmbnw03
+	 ZC1MJwSILJCzQ==
+Date: Mon, 4 Nov 2024 09:37:27 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-actions@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: clock: actions,owl-cmu: convert to YAML
-Date: Mon,  4 Nov 2024 17:31:08 +0200
-Message-ID: <20241104153108.3053932-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells =
+ <1>` for all compatibles
+Message-ID: <20241104153727.GA192461-robh@kernel.org>
+References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
+ <20241031-mbly-clk-v1-1-89d8b28e3006@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241031-mbly-clk-v1-1-89d8b28e3006@bootlin.com>
 
-Convert the Actions Semi Owl CMU bindings to DT schema.
+On Thu, Oct 31, 2024 at 04:52:51PM +0100, Théo Lebrun wrote:
+> Some compatibles expose a single clock. For those, we used to let them
+> using `#clock-cells = <0>` (ie <&olb> reference rather than <&olb 0>).
+> 
+> Switch away from that: enforce a cell for all compatibles. This is more
+> straight forward, and avoids devicetree changes whenever a compatible
+> goes from exposing a single clock to multiple ones.
 
-Changes during conversion:
- - Since all Actions Semi Owl SoCs utilize the internal low frequency
-   oscillator as a parent for some clocks, require it.
+Your reasoning is flawed. Changing #clock-cells is an ABI break. So you 
+should only be changing this if it was just wrong. And if it's not wrong 
+in some cases, you shouldn't be changing those. The h/w either has 1 
+clock or multiple and #clocks-cells should match.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- .../bindings/clock/actions,owl-cmu.txt        | 52 ----------------
- .../bindings/clock/actions,owl-cmu.yaml       | 61 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 62 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-deleted file mode 100644
-index d19885b7c..000000000
---- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+++ /dev/null
-@@ -1,52 +0,0 @@
--* Actions Semi Owl Clock Management Unit (CMU)
--
--The Actions Semi Owl Clock Management Unit generates and supplies clock
--to various controllers within the SoC. The clock binding described here is
--applicable to S900, S700 and S500 SoC's.
--
--Required Properties:
--
--- compatible: should be one of the following,
--	"actions,s900-cmu"
--	"actions,s700-cmu"
--	"actions,s500-cmu"
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- clocks: Reference to the parent clocks ("hosc", "losc")
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Each clock is assigned an identifier, and client nodes can use this identifier
--to specify the clock which they consume.
--
--All available clocks are defined as preprocessor macros in corresponding
--dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
--actions,s500-cmu.h header and can be used in device tree sources.
--
--External clocks:
--
--The hosc clock used as input for the plls is generated outside the SoC. It is
--expected that it is defined using standard clock bindings as "hosc".
--
--Actions Semi S900 CMU also requires one more clock:
-- - "losc" - internal low frequency oscillator
--
--Example: Clock Management Unit node:
--
--        cmu: clock-controller@e0160000 {
--                compatible = "actions,s900-cmu";
--                reg = <0x0 0xe0160000 0x0 0x1000>;
--                clocks = <&hosc>, <&losc>;
--                #clock-cells = <1>;
--                #reset-cells = <1>;
--        };
--
--Example: UART controller node that consumes clock generated by the clock
--management unit:
--
--        uart: serial@e012a000 {
--                compatible = "actions,s900-uart", "actions,owl-uart";
--                reg = <0x0 0xe012a000 0x0 0x2000>;
--                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
--                clocks = <&cmu CLK_UART5>;
--        };
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-new file mode 100644
-index 000000000..e9c0dfb94
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/actions,owl-cmu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Actions Semi Owl Clock Management Unit (CMU)
-+
-+maintainers:
-+  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+description: |
-+  The Actions Semi Owl Clock Management Unit generates and supplies clock
-+  to various controllers within the SoC.
-+
-+  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/ headers.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - actions,s500-cmu
-+      - actions,s700-cmu
-+      - actions,s900-cmu
-+
-+  clocks:
-+    items:
-+      - description: Host oscillator source
-+      - description: Internal low frequency oscillator source
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+        cmu: clock-controller@e0160000 {
-+          compatible = "actions,s900-cmu";
-+          reg = <0x0 0xe0160000 0x0 0x1000>;
-+          clocks = <&hosc>, <&losc>;
-+          #clock-cells = <1>;
-+          #reset-cells = <1>;
-+        };
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 420d06d37..652c9822a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2016,7 +2016,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/actions.yaml
--F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
- F:	Documentation/devicetree/bindings/dma/owl-dma.yaml
- F:	Documentation/devicetree/bindings/i2c/i2c-owl.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.yaml
--- 
-2.43.0
-
+> 
+> Side benefit: dt-bindings is simpler.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 24 +---------------------
+>  1 file changed, 1 insertion(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> index f7e606d45ebcfc46ffe076e23a2ed514bfff9b8f..6d11472ba5a704d5d20f43776e5867f507a39242 100644
+> --- a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> +++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> @@ -41,9 +41,7 @@ properties:
+>      enum: [ 1, 2 ]
+>  
+>    '#clock-cells':
+> -    description:
+> -      Cell is clock index. Optional if compatible has a single clock.
+> -    enum: [ 0, 1 ]
+> +    const: 1
+>  
+>    clocks:
+>      maxItems: 1
+> @@ -312,26 +310,6 @@ allOf:
+>        properties:
+>          '#reset-cells': false
+>  
+> -    # Compatibles exposing a single clock.
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            enum:
+> -              - mobileye,eyeq6h-central-olb
+> -              - mobileye,eyeq6h-east-olb
+> -              - mobileye,eyeq6h-west-olb
+> -              - mobileye,eyeq6h-ddr0-olb
+> -              - mobileye,eyeq6h-ddr1-olb
+> -    then:
+> -      properties:
+> -        '#clock-cells':
+> -          const: 0
+> -    else:
+> -      properties:
+> -        '#clock-cells':
+> -          const: 1
+> -
+>      # Only EyeQ5 has pinctrl in OLB.
+>    - if:
+>        not:
+> 
+> -- 
+> 2.47.0
+> 
