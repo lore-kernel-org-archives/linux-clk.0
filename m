@@ -1,44 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17521D63CC;
-	Tue,  5 Nov 2024 13:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CAE1D5AD7
+	for <linux-clk@vger.kernel.org>; Tue,  5 Nov 2024 14:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730814756; cv=none; b=nzAn9YD1N/zpmAUlM26G5kXTI2ppwCVzB5jFWm7n0mAhWebZ4C79Y7iHKocHfyHFX1+3k7B9A6lNd/cor3jhZVCMlnjJceMW9s5luFwA5k6LFItHqdp2+cg60knfQXuGWrKcO0nh2Db4RTZmBmutezT3oihgrgoDD3riWh79Yzc=
+	t=1730817077; cv=none; b=dDUcIH1PbZDXdGfyrovHFZQ/dvezCdxXF5be9q07UFOyGDhdZA70qY9o+tYids1PBBtzI/SrOSq8E/mYSytl7VqywEGWOT1AbyeRaKvNOELBGveNNxCEhbHKB4SqcXVb00pCpAov3IrcMO47PsSbfISfeC/PG84Ws7aDBMkuT0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730814756; c=relaxed/simple;
-	bh=9RmemElWczQmjSbmF+yQD5UD6vSvu+VPFLQ/xqDnlok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hjsh/ehSZTXbB8APnjTeN18J52y1M5U/q3hxt4ohl6qzA7k/fzdhlngH07xAIz1lojr7XfJ0PoyA3e3i4tT8VY3c29YVbxDLZWqGdP/i0qMyfR6QxYivtRh4q6RykNy7ypA2NVuRge67u4ei0MMBJ4kPXdl/19Kzz4e8qW2h9M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZ4kn9Bl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730817077; c=relaxed/simple;
+	bh=XN8QvmjRYeFWUTEFIpNV8i5a0X+dKopOVH8Kub55aIU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTK/NyoefJpFZmN9G78k/vnxEToryI9RqlZcW249FLobBAS4E73smBu/gPxM7Pm0YzMZbp4pxopczsEqE1pO4Ci04KqDZxUUKirQeK18gIdaoK8ANhua5ATprLM/YPXqGtCE4DSLo8/hrMhw1ZEMtEXxZifLrPUR9BKv1GZfiJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A/L5QOZ3; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZ4kn9Bl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137CEC4CED0;
-	Tue,  5 Nov 2024 13:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730814756;
-	bh=9RmemElWczQmjSbmF+yQD5UD6vSvu+VPFLQ/xqDnlok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sZ4kn9BlsfgtIwNVWgGErbE7ubGbKK+kvIlYvXbEYFIRoofLd14ERw/p6jFF6iXA7
-	 EpZyVlMmlhxHd3R3bO3g//6moUX4gDZFS7Ncr3EDhJQkgMPuZ/k3pR1nyXI6zrPWO4
-	 ecveh4Trj0UyYWbSa5TtUj5za1puos93SA7PZzM5L8IY1SLyXUFQDqumYNw62wUgnE
-	 OSAggZ+ZISz1E5FwsdJCJXvxaYOSP+ZLpI83m9Uu1sNyzi/d+BVlge12An1a5IaGz+
-	 lY2Q4PmeLia3mvQjGJJ/I6LG+gZos+6w6L1Smu2fUk8A2Z9eLxQXX+oHqCbpU+qmwG
-	 Y/S09ir6gbV3A==
-Date: Tue, 5 Nov 2024 07:52:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A/L5QOZ3"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso754860466b.3
+        for <linux-clk@vger.kernel.org>; Tue, 05 Nov 2024 06:31:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730817073; x=1731421873; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ta4J6k5jVAMZKZSpLijGX731ZlTwallmszrkrr+XXw=;
+        b=A/L5QOZ3FSpiHDXbZMSm2ijbcoVoXzXe47BZ9yCDwi8Chh3/inu1cZz4j1apI+mLFf
+         +ldKcFDRxhcM5U1APtwjtvVlQ4MemvkjLV5xwkTjivxpueHC9GQxLKUo+ipmAvaxippx
+         rvef1HLhWwmcpPtrG5w6w65LOLWx+kZebs7Ppg1ladFgfm5My80N3NOPMAqLBkM84fOH
+         0dwiOUeGgEXiW0niK/60jrWWxbjWbztW62yTZWpCsd0k4AZ4J9zeT5457vwJewwIJ2Lp
+         uaf181cqCfERC9Jw5PF1JgCEWEvxXKLIQ1qC2oRV6+3tiPyt5OdjBEcQ6wvUDhXD59BZ
+         MGuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730817073; x=1731421873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Ta4J6k5jVAMZKZSpLijGX731ZlTwallmszrkrr+XXw=;
+        b=UZI3JEUguzbpTrtU78YzeS38zLFQ4hDnoBxEeKZwGxc/hihkBfAA6mvVW/8jGHD1gl
+         iocSDfc0B0UnZPAcii6X170W5fXSF0QAkdIipXo29bpALLHaPMmH66r2rpHjwWwBAY/v
+         YkGzy0bXvHAw5joiR+emRStDWjztmguIjfLSOuTcYVQSPqluysZ4fTzb0eJv/YlgFuii
+         7xVi81I3AylzpmpFiTnTMv7Mvr2RWDuh5pkOf/FQKBmypkrE3yM0kbfj75815oqJHACg
+         uekXeSLft81w8hDV+CPE3OhCSOirc4CxFeQfpRiw9BIXGxnCgzMopGhobMmkNBYsufzp
+         vCCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZPfWD3JbxarvWdngmFan7wd50xwHy5pB6p3Umsr0BfCncVpBWvQUjfbmbqCtEmYmct/CEDRBzJSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvuZCD4pyOSMahRWxP8y3HSroONQIklrLzR1/TTc1X02cWXMSb
+	4YNPfEfxv8tFsO9rPQHMcLVZ2esr33H3Ks6xnDmjipYNVGs50E1BiAjzTknMF98=
+X-Google-Smtp-Source: AGHT+IGfFIA7pHiw/bQC/D2ASD/c0vYvs4DJcTYAQN6+XwmdDdmF15vw/BW0JRu8bqizSc9PGJFmeA==
+X-Received: by 2002:a17:906:a84a:b0:a9e:8522:19e1 with SMTP id a640c23a62f3a-a9e85221c0cmr968110466b.62.1730817073143;
+        Tue, 05 Nov 2024 06:31:13 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb169fc18sm140394466b.10.2024.11.05.06.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 06:31:12 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 5 Nov 2024 15:31:38 +0100
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: ti: Convert mux.txt to json-schema
-Message-ID: <20241105135234.GA3100411-robh@kernel.org>
-References: <20241104135549.38486-1-andreas@kemnade.info>
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 09/12] arm64: dts: rp1: Add support for RaspberryPi's
+ RP1 device
+Message-ID: <ZyosSv4ecKxohSrM@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <1f4cec50493ec5d3168735c0a005771787e5cd59.1730123575.git.andrea.porta@suse.com>
+ <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,272 +97,138 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241104135549.38486-1-andreas@kemnade.info>
+In-Reply-To: <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
 
-On Mon, Nov 04, 2024 at 02:55:49PM +0100, Andreas Kemnade wrote:
-> Convert the OMAP mux clock device tree binding to json-schema.
-> Specify the creator of the original binding as a maintainer.
-> Choose GPL-only license because original binding was also GPL.
+Hi Stan,
+
+On 15:29 Mon 04 Nov     , Stanimir Varbanov wrote:
+> Hi Andrea,
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  .../bindings/clock/ti/composite.txt           |   2 +-
->  .../devicetree/bindings/clock/ti/mux.txt      |  78 -----------
->  .../bindings/clock/ti/ti,mux-clock.yaml       | 123 ++++++++++++++++++
->  3 files changed, 124 insertions(+), 79 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/ti/mux.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> On 10/28/24 16:07, Andrea della Porta wrote:
+> > RaspberryPi RP1 is a multi function PCI endpoint device that
+> > exposes several subperipherals via PCI BAR.
+> > Add a dtb overlay that will be compiled into a binary blob
+> > and linked in the RP1 driver.
+> > This overlay offers just minimal support to represent the
+> > RP1 device itself, the sub-peripherals will be added by
+> > future patches.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> > NOTE: this patch should be taken by the same maintainer that will take
+> > "[PATCH v3 10/12] misc: rp1: RaspberryPi RP1 misc driver", since they
+> > are closely related in terms of compiling.
+> > 
+> >  MAINTAINERS                           |  1 +
+> >  arch/arm64/boot/dts/broadcom/rp1.dtso | 61 +++++++++++++++++++++++++++
+> >  2 files changed, 62 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 06277969a522..510a071ede78 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19383,6 +19383,7 @@ F:	include/uapi/linux/media/raspberrypi/
+> >  RASPBERRY PI RP1 PCI DRIVER
+> >  M:	Andrea della Porta <andrea.porta@suse.com>
+> >  S:	Maintained
+> > +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
+> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> >  F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> > new file mode 100644
+> > index 000000000000..8d1bbf207a30
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> > @@ -0,0 +1,61 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/clock/raspberrypi,rp1-clocks.h>
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +
+> > +/ {
+> > +	fragment@0 {
+> > +		target-path="";
+> > +		__overlay__ {
+> > +			compatible = "pci1de4,1";
+> > +			#address-cells = <3>;
+> > +			#size-cells = <2>;
+> > +			interrupt-controller;
+> > +			#interrupt-cells = <2>;
+> > +
+> > +			pci_ep_bus: pci-ep-bus@1 {
+> > +				compatible = "simple-bus";
+> > +				ranges = <0xc0 0x40000000
+> > +					  0x01 0x00 0x00000000
+> > +					  0x00 0x00400000>;
+> > +				dma-ranges = <0x10 0x00000000
+> > +					      0x43000000 0x10 0x00000000
+> > +					      0x10 0x00000000>;
+> > +				#address-cells = <2>;
+> > +				#size-cells = <2>;
+> > +
+> > +				rp1_clocks: clocks@c040018000 {
+> > +					compatible = "raspberrypi,rp1-clocks";
+> > +					reg = <0xc0 0x40018000 0x0 0x10038>;
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
-> index b02f22490dcb..238e6f7d74f8 100644
-> --- a/Documentation/devicetree/bindings/clock/ti/composite.txt
-> +++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
-> @@ -16,7 +16,7 @@ merged to this clock. The component clocks shall be of one of the
->  "ti,*composite*-clock" types.
->  
->  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -[2] Documentation/devicetree/bindings/clock/ti/mux.txt
-> +[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
->  [3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
->  [4] Documentation/devicetree/bindings/clock/ti/gate.txt
->  
-> diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
-> deleted file mode 100644
-> index cd56d3c1c09f..000000000000
-> --- a/Documentation/devicetree/bindings/clock/ti/mux.txt
-> +++ /dev/null
-> @@ -1,78 +0,0 @@
-> -Binding for TI mux clock.
-> -
-> -This binding uses the common clock binding[1].  It assumes a
-> -register-mapped multiplexer with multiple input clock signals or
-> -parents, one of which can be selected as output.  This clock does not
-> -gate or adjust the parent rate via a divider or multiplier.
-> -
-> -By default the "clocks" property lists the parents in the same order
-> -as they are programmed into the register.  E.g:
-> -
-> -	clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
-> -
-> -results in programming the register as follows:
-> -
-> -register value		selected parent clock
-> -0			foo_clock
-> -1			bar_clock
-> -2			baz_clock
-> -
-> -Some clock controller IPs do not allow a value of zero to be programmed
-> -into the register, instead indexing begins at 1.  The optional property
-> -"index-starts-at-one" modified the scheme as follows:
-> -
-> -register value		selected clock parent
-> -1			foo_clock
-> -2			bar_clock
-> -3			baz_clock
-> -
-> -The binding must provide the register to control the mux. Optionally
-> -the number of bits to shift the control field in the register can be
-> -supplied. If the shift value is missing it is the same as supplying
-> -a zero shift.
-> -
-> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -
-> -Required properties:
-> -- compatible : shall be "ti,mux-clock" or "ti,composite-mux-clock".
-> -- #clock-cells : from common clock binding; shall be set to 0.
-> -- clocks : link phandles of parent clocks
-> -- reg : register offset for register controlling adjustable mux
-> -
-> -Optional properties:
-> -- clock-output-names : from common clock binding.
-> -- ti,bit-shift : number of bits to shift the bit-mask, defaults to
-> -  0 if not present
-> -- ti,index-starts-at-one : valid input select programming starts at 1, not
-> -  zero
-> -- ti,set-rate-parent : clk_set_rate is propagated to parent clock,
-> -  not supported by the composite-mux-clock subtype
-> -- ti,latch-bit : latch the mux value to HW, only needed if the register
-> -  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
-> -  implements such behavior.
-> -
-> -Examples:
-> -
-> -sys_clkin_ck: sys_clkin_ck@4a306110 {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,mux-clock";
-> -	clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>, <&virt_19200000_ck>, <&virt_26000000_ck>, <&virt_27000000_ck>, <&virt_38400000_ck>;
-> -	reg = <0x0110>;
-> -	ti,index-starts-at-one;
-> -};
-> -
-> -abe_dpll_bypass_clk_mux_ck: abe_dpll_bypass_clk_mux_ck@4a306108 {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,mux-clock";
-> -	clocks = <&sys_clkin_ck>, <&sys_32k_ck>;
-> -	ti,bit-shift = <24>;
-> -	reg = <0x0108>;
-> -};
-> -
-> -mcbsp5_mux_fck: mcbsp5_mux_fck {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,composite-mux-clock";
-> -	clocks = <&core_96m_fck>, <&mcbsp_clks>;
-> -	ti,bit-shift = <4>;
-> -	reg = <0x02d8>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> new file mode 100644
-> index 000000000000..b271ab86dde1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
+> shouldn't this be:
+> 
+> 	rp1_clocks: clocks@18000 {
+> 		reg = <0x00 0x00018000 0x0 0x10038>;
+> 		...
+> 	}
+> 
+> ?
+> 
+> And for other nodes too...
 
-Surely TI as the only author of the original binding would agree to
-dual-license this?
+For that to be @18000 instead of @c040018000, you should also change
+the "ranges" entry in pci-ep-bus node, as follows:
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments mux clock
-> +
-> +maintainers:
-> +  - Tero Kristo <kristo@kernel.org>
-> +
-> +description: |
-> +  This clock assumes a register-mapped multiplexer with multiple inpt clock
-> +  signals or parents, one of which can be selected as output. This clock does
-> +  not gate or adjust the parent rate via a divider or multiplier.
-> +
-> +  By default the "clocks" property lists the parents in the same order
-> +  as they are programmed into the register.  E.g:
-> +
-> +    clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
-> +
-> +  results in programming the register as follows:
+ranges = <0x00 0x00018000	//This was: 0xc0 0x40000000
+          0x01 0x00 0x00000000
+          0x00 0x00400000>;
 
-Results
+which is of course feasible, but I prefer to use addresses that 
+resemble (at least to some extent) the ones in RP1 docs.
 
-> +
-> +  register value   selected parent clock
-> +  0                foo_clock
-> +  1                bar_clock
-> +  2                baz_clock
-> +
-> +  Some clock controller IPs do not allow a value of zero to be programmed
-> +  into the register, instead indexing begins at 1.  The optional property
-> +  "index-starts-at-one" modified the scheme as follows:
-> +
-> +  register value   selected clock parent
-> +  1                foo_clock
-> +  2                bar_clock
-> +  3                baz_clock
-> +
-> +  The binding must provide the register to control the mux. Optionally
-> +  the number of bits to shift the control field in the register can be
-> +  supplied. If the shift value is missing it is the same as supplying
-> +  a zero shift.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,mux-clock
-> +      - ti,composite-mux-clock
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clocks: true
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ti,bit-shift:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      number of bits to shift the bit-mask, defaults to 0 if not present
+Many thanks,
+Andrea
 
-Number
-
-And on all the other descriptions...
-
-No need to say in prose what the constraints say. So drop "defaults to 0 
-if not present".
-
-> +    maximum: 31
-> +    default: 0
-> +
-> +  ti,index-starts-at-one:
-> +    type: boolean
-> +    description:
-> +      valid input select programming starts at 1, not zero
-> +
-> +  ti,set-rate-parent:
-> +    type: boolean
-> +    description:
-> +      clk_set_rate is propagated to parent clock,
-> +      not supported by the composite-mux-clock subtype.
-
-blank line.
-
-> +  ti,latch-bit:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      latch the mux value to HW, only needed if the register
-> +      access requires this. As an example, dra7x DPLL_GMAC H14 muxing
-> +      implements such behavior.
-
-Constraints?
-
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: ti,composite-mux-clock
-> +then:
-> +  properties:
-> +    ti,set-rate-parent: false
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    bus {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      clock-controller@110 {
-> +        #clock-cells = <0>;
-> +        compatible = "ti,mux-clock";
-> +        clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>;
-> +        reg = <0x0110>;
-> +        ti,index-starts-at-one;
-> +        ti,set-rate-parent;
-> +      };
-> +
-> +      clock-controller@120 {
-
-Wrong unit-address.
-
-> +        #clock-cells = <0>;
-> +        compatible = "ti,composite-mux-clock";
-> +        clocks = <&core_96m_fck>, <&mcbsp_clks>;
-> +        ti,bit-shift = <4>;
-> +        reg = <0x02d8>;
-> +      };
-> +    };
-> -- 
-> 2.39.5
+> 
+> ~Stan
+> 
+> > +					#clock-cells = <1>;
+> > +					clocks = <&clk_rp1_xosc>;
+> > +					clock-names = "xosc";
+> > +					assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
+> > +							  <&rp1_clocks RP1_PLL_SYS>,
+> > +							  <&rp1_clocks RP1_CLK_SYS>;
+> > +					assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
+> > +							       <200000000>,  // RP1_PLL_SYS
+> > +							       <200000000>;  // RP1_CLK_SYS
+> > +				};
+> > +
+> > +				rp1_gpio: pinctrl@c0400d0000 {
+> > +					compatible = "raspberrypi,rp1-gpio";
+> > +					reg = <0xc0 0x400d0000  0x0 0xc000>,
+> > +					      <0xc0 0x400e0000  0x0 0xc000>,
+> > +					      <0xc0 0x400f0000  0x0 0xc000>;
+> > +					gpio-controller;
+> > +					#gpio-cells = <2>;
+> > +					interrupt-controller;
+> > +					#interrupt-cells = <2>;
+> > +					interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
+> > +						     <1 IRQ_TYPE_LEVEL_HIGH>,
+> > +						     <2 IRQ_TYPE_LEVEL_HIGH>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +};
 > 
