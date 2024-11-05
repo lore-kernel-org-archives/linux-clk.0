@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CED1D415B;
-	Tue,  5 Nov 2024 23:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2F0149C53;
+	Tue,  5 Nov 2024 23:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730849183; cv=none; b=L2vlF8RARqJcyBlRSPCTDQS3yv3shCEbzfkve5KiVva88rWmraajukYrYcw8ujxnIiy6D2wMVdiLueUPGJG1bbufw83icpcp/lPVZ3qQEhkncVAGLbBgi+ny22nhJgXZbxnPbGDgQz97qnoP0VDZEiIweMCmOScxipYhQ+g3ggE=
+	t=1730850736; cv=none; b=rFqx2EenYRaxsDhxpDxd6U+dg0v/dj85ElZKTDJEal6QdnNKbJ30KytwGvY+vvcuISrcI30ELVtHDYRu9v8FIjZcK36WjQ1mAlfljyaWU74IeUDFUedk5dRe1+mPgpC5qOtJ2mFNTIl3y/t0dsYLJ2bi1UGFbBynXsC+g1lGLCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730849183; c=relaxed/simple;
-	bh=meCr4j+EzatS1vCyUkDdGxdMMQLjghCYqVBTaPkg8AM=;
+	s=arc-20240116; t=1730850736; c=relaxed/simple;
+	bh=9wnJ/RDSeWoiJUdNP0Uow5AMHKmQWu2URfnoiruZous=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=riLGQhMF2XadDBUGEwYjokrxpPjY8TeGA93+spSXPb5LgAOgLMLRGKbnbn3nSrMszX33QS5TaFM+ekXkD4fdIx5iA0mYnRnQzoQbVKs+yaKdHCfTT56KrbNtD6fBoLaja4jI8AgnxTOv1Rf6+PA1/5qUWCpsId+Sd0podg91Efk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ssu9d7EZ; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=XSQtCP6HT3nf3CE6QlRVCUbNN9PbYhgnysQe+4UgXWtIaCWVudb5cBl21Ilnp791B4ocZkF8dfrWd7dXk40Lbr8uRQ2GX2fID5LwkwwPWVevVIcd3S7prHmR60tb4RwmDimpd0eaXitTRkNhRJTtpPYHhpmGYxKeMOH173ClU4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HII0ydHk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ssu9d7EZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA7AC4CECF;
-	Tue,  5 Nov 2024 23:26:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HII0ydHk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D414C4CECF;
+	Tue,  5 Nov 2024 23:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730849183;
-	bh=meCr4j+EzatS1vCyUkDdGxdMMQLjghCYqVBTaPkg8AM=;
+	s=k20201202; t=1730850735;
+	bh=9wnJ/RDSeWoiJUdNP0Uow5AMHKmQWu2URfnoiruZous=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Ssu9d7EZToG1O1srfhcyBcwecClH1aKzUwDOVuWr6Ye03ALTFrmNdoHz7xbosSNMy
-	 19XjZ8Al9IlLd+ywnJEnnESGLfegPqZyQMqVOK/E0UgWoBbQ3uPAppULCaw71VMP6C
-	 tlHfJeNqKYNAcHuUYqM5ibZKDFGRnR2jkWTwVVKQVsJMAgdL7NCYZkAeLPVXAOr+Fn
-	 NNnUbxwKJq8IhxMQLjloNnqkKpBdj9QEZkPwLdXbuKRZ7F7xU96gMISyKAyWljWNPO
-	 fmK6Naut0NXtGpRqoXYf/KCPrKGA4FGYEDtZfitESLvC/qYwbuDAHFJdFLsjMxFR8d
-	 FrJV/I2WBUFHA==
-Message-ID: <8aa04e346f65bc4fcb0efc47a4f0550a.sboyd@kernel.org>
+	b=HII0ydHkTOJjKyLQD+5PEHXMwKiTCmGDEzUyDIVmIcY8L3F47Els3NVgs9fKonfqM
+	 N8IOZYmH3+fz+SpLRFljKaWy+/VpMf5dOu3ttqtSqWT+gTd9/tRhDtS+cHINKLMSZ0
+	 CEKhy/RKXfw2tUzWN/Ldlu7gY3FB5rGdzmH6JNxfKr8OpM2y4JDpbrGGiychrTNgZp
+	 hJWMitPckffcqu9U1ZXs0UOXhppfvtZnWaYcYPfPxFms5Gj9NbylHrr15Zp0FM7mW8
+	 jNhrlkDdVW7L76/lqyyhm1GOMCwfYAnPEKNTgQDdh7KeedJsGIF+U5vxkI7ueEQt+U
+	 sTdxfyagDBE3Q==
+Message-ID: <b312fadeefe5b77b8189f11570e0e109.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241101095720.2247815-3-claudiu.beznea.uj@bp.renesas.com>
-References: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com> <20241101095720.2247815-3-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v6 2/9] clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+In-Reply-To: <20241102223956.868257-1-andersson@kernel.org>
+References: <20241102223956.868257-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock fixes for v6.12
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Tue, 05 Nov 2024 15:26:20 -0800
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@linaro.org>, =?utf-8?b?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Johan Hovold <johan+linaro@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Tue, 05 Nov 2024 15:52:13 -0800
 User-Agent: alot/0.10
 
-Quoting Claudiu (2024-11-01 02:57:13)
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Quoting Bjorn Andersson (2024-11-02 15:39:54)
 >=20
-> Add devm_clk_hw_register_gate_parent_hw() macro to allow registering
-> devres managed gate clocks providing struct clk_hw object as parent.
+> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
+dc:
 >=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+>   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-fixes-for-6.12
+>=20
+> for you to fetch changes up to e7f37a7d16310d3c9474825de26a67f00983ebea:
+>=20
+>   clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts flags (2024-10-=
+22 15:35:15 -0500)
+>=20
+> ----------------------------------------------------------------
 
-Please fix the subject line to not have linux/clk-provider.h because
-it's redundant.
+Thanks. Pulled into clk-fixes
