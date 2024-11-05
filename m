@@ -1,57 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA401741D1;
-	Tue,  5 Nov 2024 16:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CED1D415B;
+	Tue,  5 Nov 2024 23:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822659; cv=none; b=pqnD2LvFVoI1x4OJQOV+H9dOfpAjRldrMR0QuGOOrquaXx+mQY0ZficLQjMYwd0yEor9MM8f6A+fhKm2t0O7rIKitYE/RWYSU0PbOtRonMomPFWCAbQvgVk83vf0JCIDvn5jUNWOTyNZFAmLfSgSUL5WoveHKlgKveaZxheR3gU=
+	t=1730849183; cv=none; b=L2vlF8RARqJcyBlRSPCTDQS3yv3shCEbzfkve5KiVva88rWmraajukYrYcw8ujxnIiy6D2wMVdiLueUPGJG1bbufw83icpcp/lPVZ3qQEhkncVAGLbBgi+ny22nhJgXZbxnPbGDgQz97qnoP0VDZEiIweMCmOScxipYhQ+g3ggE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822659; c=relaxed/simple;
-	bh=nkpLc2+tgh8TLyuv3Bxv9vtQzb9Lvj5rJGmLawi36ts=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TqCI6dhkHvQ1n41W4RfYE9rwjYTPQCTje7UR8xXR+EC4UUZkaXHmnEb/HuW2YMUMO59LPMDx/yVd5seKgZyeiDNoiE5yDUBvn4O2/85SITtx28UL6WUOkUrc2kmZDR2QKRrp2pLnYCrOa3lUeRvqemRQ0653vx0Zz+uiJmFKydA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6C4CC4CECF;
-	Tue,  5 Nov 2024 16:04:17 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 41F205FB0F;
-	Wed,  6 Nov 2024 00:04:15 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20241104190455.272527-1-robh@kernel.org>
-References: <20241104190455.272527-1-robh@kernel.org>
-Subject: Re: [PATCH] clk: sunxi-ng: Use of_property_present() for
- non-boolean properties
-Message-Id: <173082265523.1488411.1920561535591784588.b4-ty@csie.org>
-Date: Wed, 06 Nov 2024 00:04:15 +0800
+	s=arc-20240116; t=1730849183; c=relaxed/simple;
+	bh=meCr4j+EzatS1vCyUkDdGxdMMQLjghCYqVBTaPkg8AM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=riLGQhMF2XadDBUGEwYjokrxpPjY8TeGA93+spSXPb5LgAOgLMLRGKbnbn3nSrMszX33QS5TaFM+ekXkD4fdIx5iA0mYnRnQzoQbVKs+yaKdHCfTT56KrbNtD6fBoLaja4jI8AgnxTOv1Rf6+PA1/5qUWCpsId+Sd0podg91Efk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ssu9d7EZ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ssu9d7EZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA7AC4CECF;
+	Tue,  5 Nov 2024 23:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730849183;
+	bh=meCr4j+EzatS1vCyUkDdGxdMMQLjghCYqVBTaPkg8AM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Ssu9d7EZToG1O1srfhcyBcwecClH1aKzUwDOVuWr6Ye03ALTFrmNdoHz7xbosSNMy
+	 19XjZ8Al9IlLd+ywnJEnnESGLfegPqZyQMqVOK/E0UgWoBbQ3uPAppULCaw71VMP6C
+	 tlHfJeNqKYNAcHuUYqM5ibZKDFGRnR2jkWTwVVKQVsJMAgdL7NCYZkAeLPVXAOr+Fn
+	 NNnUbxwKJq8IhxMQLjloNnqkKpBdj9QEZkPwLdXbuKRZ7F7xU96gMISyKAyWljWNPO
+	 fmK6Naut0NXtGpRqoXYf/KCPrKGA4FGYEDtZfitESLvC/qYwbuDAHFJdFLsjMxFR8d
+	 FrJV/I2WBUFHA==
+Message-ID: <8aa04e346f65bc4fcb0efc47a4f0550a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241101095720.2247815-3-claudiu.beznea.uj@bp.renesas.com>
+References: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com> <20241101095720.2247815-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v6 2/9] clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Tue, 05 Nov 2024 15:26:20 -0800
+User-Agent: alot/0.10
 
-On Mon, 04 Nov 2024 13:04:55 -0600, Rob Herring (Arm) wrote:
-> The use of of_property_read_bool() for non-boolean properties is
-> deprecated in favor of of_property_present() when testing for property
-> presence.
-> 
-> 
+Quoting Claudiu (2024-11-01 02:57:13)
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Add devm_clk_hw_register_gate_parent_hw() macro to allow registering
+> devres managed gate clocks providing struct clk_hw object as parent.
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
 
-Applied to clk-for-6.13 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
-
-[1/1] clk: sunxi-ng: Use of_property_present() for non-boolean properties
-      commit: 1054861bc258fb5798b7132453593cc3eb0639ba
-
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
-
+Please fix the subject line to not have linux/clk-provider.h because
+it's redundant.
