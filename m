@@ -1,130 +1,97 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail-40132.protonmail.ch (mail-40132.protonmail.ch [185.70.40.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359921DACAF;
-	Wed,  6 Nov 2024 09:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7397C1D9341;
+	Wed,  6 Nov 2024 11:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886772; cv=none; b=VahqSpbLkSoo8p36zg6d2SiV8s6ASJ5V1RW0w6tk23RNMRKRHWt3g4pNYs7pOd6yDclNFP9cfrNUwHbUIJ70+9Bq8issIzcBQYU+KgHZdAOvcWuZs7olKAMxSgoIu90upKIym0wSQaAfzuOMc3UXOrz9XBx0SwdAjgq2cU/cFro=
+	t=1730891671; cv=none; b=HuAXF+tyynXwyZTKEaqPYrBAEvG6EjtFtEMvkiHHdkeG7jto4ckfS0aLlPVqc6O6o0ZYpRr2M5DnfL814z5AIr+kN36qSYsiGL+odoKHNtl/bDi+LcNuFjVbByupd2cn6mbxQ/S82c16QafOA3/WF7h6PN0uO6DBnPUor20JVYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886772; c=relaxed/simple;
-	bh=U0CCeQzWfP1iBZWhKO83TTCNxQEf04HnQEfAu361c0A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=YKp761GvTjuJZwpD52ylHxKpKxWHd/z8+RjVuxkZFYPz8cnZY/xHd740AAFLPjje/t1+dQdxOhwBkraGkrOCooxLTGkzDpMu9yw0H1wTpAGNAyjmALz/lvM+i1aeZPV2rjtzB5ViFxtny/g+HDzGlpaDEK2jOCuMEZDOmz5Y75U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MdaCudAZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730891671; c=relaxed/simple;
+	bh=BxquhkBW532I4hD3BajrntKsboORTcgVhG73iCFJjO8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SnqAK8s5emphV8N/wIJmcwHZmU1VKp9wHLyB8iPvHH12pGb9gbf37BgZfpA2NvLxGc9yVWEzEJ/74QmCo+oqOMK+1ZCi0dByX45zPsAkI3+Zt2Bky7JScDwrlafCdXj9yc7wBXhWA/OMCQJQeMdcrPfFTEx5Z2V8LvMAqBCOj8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=w11ufpAu; arc=none smtp.client-ip=185.70.40.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MdaCudAZ"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A633lx4023352;
-	Wed, 6 Nov 2024 09:52:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UGetzr5ci6idx8lzYmmDjNdud4UxgLMutcO1FDQc4Ak=; b=MdaCudAZoRAN6sMI
-	JHpeBqKOYz8yyxlO/zyShy9eVw6vrK9jhPgKC+hk14kZGjHrCEV6sAX47x+JxaNU
-	AVe02/OxLiZxUS8AzVqVAHjjQQ7P5FA7Ldjb3P2KLHXKO8jQK3fJLGcF7neQEYkN
-	T8N/D7Y7K//jf5j/6zkfu0QvIB8V0ehcwNYQ0BXWQ0XjSF5LkjXXWCwpCjQXR7fm
-	T4/OxCkS+Loqsuempc49/1Ub+/S1o9sCG+9PghAJX/uwdvI7jYCVDVtXq7SM2oKV
-	AFqL1OMjTvPTLocMKxKyUMHQEqlbqbm2Qqqq9V6iTSWq6Izob8JC0YgF1tMl5gBw
-	+agEug==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r07hgy06-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 09:52:47 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A69qkwJ003221
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 09:52:46 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 6 Nov 2024 01:52:41 -0800
-From: Imran Shaik <quic_imrashai@quicinc.com>
-Date: Wed, 6 Nov 2024 15:22:01 +0530
-Subject: [PATCH v3 6/6] clk: qcom: Add support for Video Clock Controller
- on QCS8300
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="w11ufpAu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1730891666; x=1731150866;
+	bh=44Jj4Axf6VhdEIAU0ENXCGhb1JV9u+U+0Mxi10i0Jj4=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=w11ufpAuhZXSVRhO+3yN3KUxWb3+xqn+03qFy60Uh2a4PZ3L2c5gnRhKpCuIOTshI
+	 5qUnWNb8MrKU+4DJx/N4Of6Lz+b7RFD/5fFZBFzT7/xvC1wAOfAu2xyilaaeuSMvhn
+	 GDvCNJha3KWg0z12meCJ4lm8BNjeR3IZEu3cleJy5Ns0nef33P1tqE+Bw0QVS1Ieoi
+	 KnZZNJzcEMTwnrNZyavS3N4skMCnAcwWTA9CUnbqwkv8UmPUTkeYSjQqfyDBaEsXXh
+	 oGXDbc4hXpB1hCrgfEkNjyVIqio5cGhOCzqjmY6n253Qw4LC6i2X32RRJA2YF4EyU/
+	 oOAP4gbxEwyGg==
+Date: Wed, 06 Nov 2024 11:14:21 +0000
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sam Shih <sam.shih@mediatek.com>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, Daniel Golle <daniel@makrotopia.org>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/2] MediaTek MT6735 syscon clock/reset controller support
+Message-ID: <20241106111402.200940-1-y.oudjana@protonmail.com>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: 0dd6bd5ca0773cfa6c0df23af5f595a7210c9feb
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241106-qcs8300-mm-patches-v3-6-f611a8f87f15@quicinc.com>
-References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
-In-Reply-To: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ee0COV6AJonHxJDJqcVEnzs3GwwQyNH_
-X-Proofpoint-ORIG-GUID: ee0COV6AJonHxJDJqcVEnzs3GwwQyNH_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 adultscore=0 mlxscore=0
- spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060080
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add support to the QCS8300 Video clock controller by extending
-the SA8775P Video clock controller, which is mostly identical
-but QCS8300 has minor difference.
+These patches are part of a larger effort to support the MT6735 SoC family
+in mainline Linux. More patches can found here[1].
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
----
- drivers/clk/qcom/videocc-sa8775p.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This series adds support for clocks and resets of the following blocks:
+- IMGSYS (Camera)
+- MFGCFG (GPU)
+- VDECSYS (Video decoder)
+- VENCSYS (Video encoder, also has JPEG codec clocks)
 
-diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-index bf5de411fd5d..db492984fd7d 100644
---- a/drivers/clk/qcom/videocc-sa8775p.c
-+++ b/drivers/clk/qcom/videocc-sa8775p.c
-@@ -523,6 +523,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
- };
- 
- static const struct of_device_id video_cc_sa8775p_match_table[] = {
-+	{ .compatible = "qcom,qcs8300-videocc" },
- 	{ .compatible = "qcom,sa8775p-videocc" },
- 	{ }
- };
-@@ -550,6 +551,13 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
- 	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
- 
-+	/*
-+	 * Set mvs0c clock divider to div-3 to make the mvs0 and
-+	 * mvs0c clocks to run at the same frequency on QCS8300
-+	 */
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-+		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
-+
- 	/* Keep some clocks always enabled */
- 	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
+[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
 
--- 
-2.25.1
+Changes since v1:
+- Simplify Kconfig dependencies.
+- Remove some extra newlines.
+
+Yassine Oudjana (2):
+  dt-bindings: clock: mediatek: Add bindings for MT6735 syscon clock and
+    reset controllers
+  clk: mediatek: Add drivers for MT6735 syscon clock and reset
+    controllers
+
+ .../bindings/clock/mediatek,syscon.yaml       |  4 +
+ MAINTAINERS                                   | 10 +++
+ drivers/clk/mediatek/Kconfig                  | 28 +++++++
+ drivers/clk/mediatek/Makefile                 |  4 +
+ drivers/clk/mediatek/clk-mt6735-imgsys.c      | 57 +++++++++++++
+ drivers/clk/mediatek/clk-mt6735-mfgcfg.c      | 61 ++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vdecsys.c     | 79 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt6735-vencsys.c     | 53 +++++++++++++
+ .../clock/mediatek,mt6735-imgsys.h            | 15 ++++
+ .../clock/mediatek,mt6735-mfgcfg.h            |  8 ++
+ .../clock/mediatek,mt6735-vdecsys.h           |  9 +++
+ .../clock/mediatek,mt6735-vencsys.h           | 11 +++
+ .../reset/mediatek,mt6735-mfgcfg.h            |  9 +++
+ .../reset/mediatek,mt6735-vdecsys.h           |  9 +++
+ 14 files changed, 357 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+
+--=20
+2.47.0
+
 
