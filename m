@@ -1,57 +1,57 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7ED1E04B2
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 12:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9EE1E0B99
+	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 12:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894504; cv=none; b=Y+CRV9ccxog2UQw/w/+z94yFKfuyo6HFiPojMB749e4tinnR9H954hgn6+Bu0bwNRP75Acd70LcDF7LhBgVTLGJswG1jteVE3JwFS5lv7mE8muEEQMsQvDcX8uJyrYOtqn3o5D9zGl/ljNrepDP/YurZNRrzOcwHxiHLVW7Zt18=
+	t=1730894505; cv=none; b=RmKNoy1mOcddhNWkTKkXaiAGvwnbHQMnadzMcuAfPHqeIAKv2rlF2VRxHP+T6Keh1Y0JpLl8T/94MJC/0mimcpsHZXNxHw9v6k+rDuBCZxlVjLJYUx2kyidd4spOVVQwLNf+vO5zFJtGnWUl9wHuHHMdgA1QUoIF1zCLqJ3/rCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894504; c=relaxed/simple;
-	bh=0jeuRPiyyg5MoDwyj3mqnXFmNpzYM4erd+w9ZG5JZZc=;
+	s=arc-20240116; t=1730894505; c=relaxed/simple;
+	bh=gkZYPsH/vb3WY/1lIzQ8Dj4FgRmceTUwrzbmFMLCPH8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vD8KjAjvxfz1fx5/YINLLAXAF25eZ6B2E3n5I5AO947tUCospb+hGzJNJjil+byX0sz+czK2N966HfMiXZQMEQDjitqTlTlvj8ufPAj28QH06HosKfKOOe8MiuMZ7pR2wXiVXXrTmhS4J0lOfbrkrcasdghwROJAoAc5H3WHn3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qpWnTctF; arc=none smtp.client-ip=209.85.208.51
+	 MIME-Version; b=mcixDfLkl5IQRIxmI/65u/RRpE952Szs3ceE/h0NVaU79EI8oE1Ul4GjC+AkPR+S5cxhzUCsYhdDH/gSXW4ZhFHKbwAfMCG/0Nwa9Fgxg2t3UHnhZ9pOJIhlJ3vsNkIvuPAiu8gO/JoNevbA8kjfGHIiiSW6UvnyeFVizHrn4hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=i6EBt7lA; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qpWnTctF"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso4714605a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 04:01:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="i6EBt7lA"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso1445269a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 04:01:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730894499; x=1731499299; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1730894502; x=1731499302; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8dfLgZ6EMGgbdpUoSorvdjE4ZEjo6VB1d0vruAXMU0w=;
-        b=qpWnTctF5wvCzT0722KLgyuUhc6TdFZu5dl6nzs6yx4xxd8xwjz9erxqPA/YahdoR8
-         JglWxmnv4ZOqP811cWjY1Kn/N7a/TP4Iw6HoeG1wxYhZJd2Axn6t0gvww1GJg6MZ8P4L
-         xNxnM/K5vsdjGNxgAzNqRt74mZv2KzMK5hqZKWA3ACih9pnJ0lGcm8diY3RhG9FtLvI/
-         y/SyjpuJX56ygtcZ+ke/wMRN1JP+NDmrz5MiJ8BNq1vNpdqDBVlcjaNacOHqOu5D++sg
-         mVmbTrmwqQviA2HPJvXJgAPBfNbuRIGU+BQcvkIj+HyhRKGRdkS+CGKoN5ZwUY8Lvk+0
-         3+GA==
+        bh=DTk49kg3sxHgDomjJGsue14cSnQ2z3PLgvI6znyFaQc=;
+        b=i6EBt7lACXMMBbi5Okt4M1bwae2aWgrwLVTy06xOgSmOUy9IPLmAnBayrwEkDz7ti+
+         m6Fn8OOb3z+s/WlLSscFh7J+MTBG/WMmKA6DfzbxLJWXEO0l/wz9WgYTPEMt/WKvLkAp
+         FTQGlkI5czhRl1iOb79WgJOkfxBifDQrpou8T9A6ZzSP/BXEz+iDrUxW9kwfdl2CV9Pt
+         z5bRSYOAmfW65k55uRi1E69Ynv7lTyNioLIEkV8qq2IW4l8alEwuJ6a9dKRi566NwcB5
+         pvgFikqFs81bbqezshEylIXnbDOkJotcTCSyaIuhZ8EMMRheyhxYLdA08Bo15wA5v7BD
+         axbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730894499; x=1731499299;
+        d=1e100.net; s=20230601; t=1730894502; x=1731499302;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8dfLgZ6EMGgbdpUoSorvdjE4ZEjo6VB1d0vruAXMU0w=;
-        b=Y3TCo8J0Z7N2qcDwBokjoXeaEHJUUqrkagmxv3E5jPOosO9qsOrPv4vOFPUOg6HMem
-         N4uv+RwBKH5SpznJhi7uqArIjnM5KYv5mEwKhaPwMCUWWS98wAZlMQsJc2AKriBO312k
-         klNwJnRuFK5YslWWdIkP2RUJVmZM9MmC1OAi0NWRlq9hMsNC42Fi2snjLLpeEzTZEdO0
-         aa0Jg67F1f2FdyBl5xnUPUPAcJeoP0KIbTAHjA31VRujM3OBxAGi8hEZbHCr2f1SrjO4
-         h3EFOi2F9kxP0VegtZydtbwDQz4lf1ujktBjTcyi53xavnZmY2qpy+doBuBqW5tEoNkT
-         W7SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWftC1JslXXhvZDkLu19pNZ5TDAWOQaFqtyZl78e7y1JlLCYufD6yHzM/vJlOVCNRMlmv0NDXSA/rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH4Yu23jAHfwuYEuoxRMZ49iQnTwLRWNJ03LwH2/aAATy5Xn3H
-	SsadrTuc6fBwOhYMegtizbSritwCsrUCamu65v+IE4lTEesMg6NNUrP2jdqNB3c=
-X-Google-Smtp-Source: AGHT+IEj8QQdYUS9iAJlLLKfU0ogFglwclPszCya71IFXAUQsoN0hO3T3mJeIbY3qcMSrfrfaYLezg==
-X-Received: by 2002:a05:6402:50cb:b0:5ce:d1b2:efc2 with SMTP id 4fb4d7f45d1cf-5ced1b2f1bcmr9628388a12.3.1730894499493;
-        Wed, 06 Nov 2024 04:01:39 -0800 (PST)
+        bh=DTk49kg3sxHgDomjJGsue14cSnQ2z3PLgvI6znyFaQc=;
+        b=UKE6JjQ5rNU35gYJFhr7mvOoKFfibep1EI4Q/fr1nD5J3lDT1BJhHYKPk/aM7DXQ4d
+         OaUcoRCOIEK0w0Na7a653hKqFtc8zCunKwKC7YO8PxOx8Z7to0bc51wJi2YRXtmtbYJ+
+         FAaLNxvzrf+NCWHJlRo1WBEn+y+/r07rQXhhmR6DZkd4tvPBethr8LAXoNabo6gMjVzN
+         P8zvWl00W32DhUMOAWs06V2h34Jp1+hbpXAc7Js0tCQytjSImhtIHy6yfS732DelbyRg
+         IE4WDpyCGD/xFVFpe79OO7q5jG4GsJsszTiX6SL50lX4ICbtOVt6ZTMD1GIsKD8f3cI7
+         x1vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNtuvloaba3Esyx1UBdLWNUocZDyexF2WneOFCvsOIlhtcmmnLyyLlT8gbhYGgIumsXNcALMuVCAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Lwng6g9Sf1Hsx/+5yTot8Pb4q3q8qLoWfu8sETh/TkXACmyC
+	0aWVkJITgsrHWQb6N6R4T2/eHovz//kuCK2ooHdxwwLRQUmJPR4eqv1e6YY1aWU=
+X-Google-Smtp-Source: AGHT+IGsGf47lgcF/WyQLx8YrH90sARYpGTUy3Y4l7vmameX6vDncBFwbLkpZsYyaEeHNlLQDhUJbQ==
+X-Received: by 2002:a05:6402:5383:b0:5ce:c940:5182 with SMTP id 4fb4d7f45d1cf-5cef54d1a82mr2310638a12.11.1730894501685;
+        Wed, 06 Nov 2024 04:01:41 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe528sm2697984a12.55.2024.11.06.04.01.37
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe528sm2697984a12.55.2024.11.06.04.01.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 04:01:39 -0800 (PST)
+        Wed, 06 Nov 2024 04:01:41 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -75,9 +75,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5/9] arm64: dts: renesas: r9a08g045: Add the remaining SCIF interfaces
-Date: Wed,  6 Nov 2024 14:01:14 +0200
-Message-Id: <20241106120118.1719888-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6/9] arm64: dts: renesas: rzg3s-smarc: Fix the debug serial alias
+Date: Wed,  6 Nov 2024 14:01:15 +0200
+Message-Id: <20241106120118.1719888-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
@@ -91,115 +91,56 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S SoC has 6 SCIF interfaces. SCIF0 is used as debug
-console. Add the remaining ones.
+The debug serial of the RZ/G3S is SCIF0 which is routed on the Renesas
+RZ SMARC Carrier II board on the SER3_UART. Use serial3 alias for it for
+better hardware description. Along with it, the chosen properties were
+moved to the device tree corresponding to the RZ SMARC Carrier II board.
 
+Fixes: adb4f0c5699c ("arm64: dts: renesas: Add initial support for RZ/G3S SMARC SoM")
+Fixes: d1ae4200bb26 ("arm64: dts: renesas: Add initial device tree for RZ SMARC Carrier-II Board")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 -----
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi     | 7 ++++++-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index be8a0a768c65..5b15ff2482ab 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -73,6 +73,96 @@ scif0: serial@1004b800 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 2ed01d391554..55c72c8a0735 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -43,11 +43,6 @@ aliases {
+ #endif
+ 	};
  
-+		scif1: serial@1004bc00 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004bc00 0 0x400>;
-+			interrupts = <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF1_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF1_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
+-	chosen {
+-		bootargs = "ignore_loglevel";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* First 128MB is reserved for secure area. */
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+index 4509151344c4..33b9873b225a 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -12,10 +12,15 @@
+ / {
+ 	aliases {
+ 		i2c0 = &i2c0;
+-		serial0 = &scif0;
++		serial3 = &scif0;
+ 		mmc1 = &sdhi1;
+ 	};
+ 
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial3:115200n8";
++	};
 +
-+		scif2: serial@1004c000 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004c000 0 0x400>;
-+			interrupts = <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF2_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF2_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@1004c400 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004c400 0 0x400>;
-+			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF3_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF3_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@1004c800 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004c800 0 0x400>;
-+			interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF4_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF4_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif5: serial@1004e000 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004e000 0 0x400>;
-+			interrupts = <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF5_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF5_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
- 		rtc: rtc@1004ec00 {
- 			compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
- 			reg = <0 0x1004ec00 0 0x400>;
+ 	keys {
+ 		compatible = "gpio-keys";
+ 
 -- 
 2.39.2
 
