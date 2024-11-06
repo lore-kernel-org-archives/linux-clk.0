@@ -1,73 +1,92 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A9E1E04B2
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 14:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83B52036E1
+	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 14:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730902927; cv=none; b=Umy2o5mCBsE/aKfp2DEcMUraRL15uHASN8mkhCew8UcY5wWCeuPsMzqzooE7CX8C8TDgjjjHRbtdNcG++MO+UIdEVOMKuoRuxNCiP9AZkTAI89rQL6+1udeYik+HwnUuNiIxb+04uzWf9ZuK+ItX5HOfISZ8RQta3r4P1ecZNUQ=
+	t=1730903345; cv=none; b=SqVqTo9O2CfYwzQEF6bwkhOYXok0R7MZaQ0kybPVfgqpOel5RLqRcfW+keQ6eYSCwgZ2sVVm9qOTXYwzCixwfVXIac8wM4mEvT7H8X2i7CW0N6qBHZPaA6ogWXS1AlW/Ib+MsVmE3FPbPSOTh1k7lLt5Xq/EzJBSJ73PfW4atV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730902927; c=relaxed/simple;
-	bh=Jai6l51tfQXx2f20hBESY7dASlBrE5N2eyk6W7quo9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gZ2XH2mHRsHNUQ0V/WcuIhI0scHoG4qmGf8Mpb8feY/YcRHsiW/Wbgnt+uZAi0VUjarf7ZFGqB1MyykGgBobx87SliI1JnoO8aAYAwuMwi344+wqK05K1indpWx/79/ksRSxpO6P8AnOoQb1tMHCsDXT63ibRjjSX2IxHIc7Oag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gag/AhQe; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730903345; c=relaxed/simple;
+	bh=K94SiCVSkFaIN2s7YzYdWlAONyn4+MCAn3Pt17OpqgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CN0acyr0Eg4xa+0GxpU8TduMOTSo8TDAqy0UNTtEMRJuRmEyuztjeFEpjdaDumyQLwwaFOrC3PBGU83O2L7t12JcOrnNJsEsoBggeV2/kFUaVYHE7OBcgq4rcPV0l3ie6/KS0wZ/7miXjelz8vPkEkg4E6jT56Ah3FPf2/ODh7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PJ9wynX8; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gag/AhQe"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4319399a411so57481385e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 06:22:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PJ9wynX8"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4316cce103dso79190605e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 06:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730902924; x=1731507724; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAlPwdfUhMPwlTJAbroDL64kzgDUSQREYrAUHpV4lWk=;
-        b=gag/AhQeCuqv8iNcB2kOd4M2pJ/TCbPO/Z3LPC5OLq1DAH8YOuNgAqEO4sPCqNrRPL
-         SARzsWojRXNADdv8QNXRXuoVODV5ojbvRrbhq1EsU9y16CNUpyRCMyH3j44ZJm8lkn3X
-         G1YWC70ZLf1fP9c9BJ89hsIc9XLe49aNvi4xsLgsTow/GSmrRxH/TseJaaz5ATS16AfV
-         B8v9Kcv5jHJyluLQwJrGFz36/gu/1c21/6vX1kvqkAzsIlgArnKDkyXRwcbkhJzhXHx9
-         aCrl+1sBZbDE3M/3ImW6M/AYS3Sz2uvrGQ4Y8BP+BqKLahu69HXYvmjU6If+kGJmvnoQ
-         PSyQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730903340; x=1731508140; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fR07OvAKZCcn4c5fWCDFwwdic4q9vTVULluh2TSx4BY=;
+        b=PJ9wynX8ogDVrmdrXubrI5bHeNhuRAUksAflhqK4d79qFeQChgYuTDqeO/rgwz9tkg
+         41waWuKLlESywqTKEcMaKCpNo35+fGgDUxBSbRc2JxcVHX9fqic0QQiRgSvlke4qosc+
+         0OqVLezcHQQg66/s+EtMCvUEFZdcanQ9vJixcn8TOOlaUptXm7JIyRSzR7Y0Q+5k/71Z
+         f5q6nMz0oHRFX58ibGqxljJK7J/JGIB9Zr2JGenrsjs5310Ybgkan6OdOK990ym6lTnP
+         vtuZ5INw0iuxvCTspQIvSl3/nnp4B5mPW6+nEG99fJBOCRTOe46psIBhkguBvzYKoJAK
+         /mWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730902924; x=1731507724;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rAlPwdfUhMPwlTJAbroDL64kzgDUSQREYrAUHpV4lWk=;
-        b=ExOfd6uydH3A40eSaRoDLoEovAU4xa/MZIq0J5H8KbMLGuTvyGS34G79k5jE6aN+ur
-         DAa1usZCAY9GADFxqOBnRr1BRP7doqOqD4FXKAutwV30QSziMLHxgy4DFSoIHPT1FeTs
-         rdjsA03MXMixTH3VVprTuJbqIwm9/MAR/W6dJdWuY+bhCtor3dGet/gyIfGaq7uHLPqy
-         nCaadJn78pYWhihUstZ65ws6DSRMHpy7oUluM08PNwOq3M8o2lVDF+/yZodVGgPbtiH+
-         0hZrTpDiFT0acLwcV6oJrOIx6MeutugorMWYYfjySkcbUsOqfB9NEfGdy9BJZT0iwBp+
-         Y6yA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Gx4xw6H5VD1wfEvgPR3tkaz6jJmcp53TWY9BSXyMH+wz+M3qUxNO9uuasRr4hMBkuJb0AXPaQuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8osusIiL/V0vnsnRauNt1/v8+xYxr+jtElzZ4sXwriZhpah9Q
-	8NJKnOQp/5mQapHzuIFdlBsuVPhd78sAerT6tQeiPB9RKU9+ub+ZGqT+4N5zPb0=
-X-Google-Smtp-Source: AGHT+IHIfw5QJbKJej7wCYRgrtaZek0f7PoBsxUGko/YPocysw1rxvIGEWPP3OMvd9OmYtIElvTfWA==
-X-Received: by 2002:a05:600c:a085:b0:431:5187:28ef with SMTP id 5b1f17b1804b1-4319ad2f3b4mr328657115e9.33.1730902923745;
-        Wed, 06 Nov 2024 06:22:03 -0800 (PST)
-Received: from hackbox.lan ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e6aasm19289952f8f.67.2024.11.06.06.22.02
+        d=1e100.net; s=20230601; t=1730903340; x=1731508140;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fR07OvAKZCcn4c5fWCDFwwdic4q9vTVULluh2TSx4BY=;
+        b=BMqhmD2ySMlFBk1TykYOp+YRm1tuYWbH9ajnnuKuQEXGnvhK1F8iVTyt/E9Bo0YPXK
+         LNmLBTi+zCYV3Ba+8y5nZnWKgRJ5JNByrvxRw8I0WSUOQEGHmTctZVxlRJQ1ibQT6U3N
+         Xso9RSw+n6Pj9ZNiR5gFqUKK88NXfyY8z+fx39s86d1PhH4zb2awnzhflU8XZSZqqmDk
+         i0xptdc4LAk+CmYtppbpU75MGOVp39+huYeAgy2sVmaNH8cKUHJIN51zkoQFjxHGrSiF
+         xPQ2H7p5goizjBSjDSc+bdyswJFIauWkYYLBdk3uchVFa5ZVpG4B1zdU7IPHkxS7kZeE
+         2d6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtplXc5xCRAfsje5surnYhZMtW7ItJYs3JCQg48KGBb/tn7jTHQwsLO0F8ZGByFftjQx7BAAc/qYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPsCQnkHkCXBkSB58c5p0/cfi14NtrOG2nfYRxnHZZQzHZ4SO4
+	ZwVYvKFdYR+apEaPvMdHGuWY0DADn6v0PuiqlL27uYaou2zWRA+EbvSN42ITZk0=
+X-Google-Smtp-Source: AGHT+IGstdQ9A4MrGynIfGTZqv+ah9OkeHbjRp/dz/mM+KY45mCPilbar4JgbcfnSu8Wz5uGPgy1Uw==
+X-Received: by 2002:a05:600c:444d:b0:42f:75e0:780e with SMTP id 5b1f17b1804b1-4328324ad00mr207455705e9.10.1730903339920;
+        Wed, 06 Nov 2024 06:28:59 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:aefe:7cf1:a25f:8f85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7a9esm19251468f8f.21.2024.11.06.06.28.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 06:22:03 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.13
-Date: Wed,  6 Nov 2024 16:21:54 +0200
-Message-Id: <20241106142154.622141-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 06 Nov 2024 06:28:58 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-amlogic@lists.infradead.org"
+ <linux-amlogic@lists.infradead.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>
+Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.13
+Date: Wed, 06 Nov 2024 15:28:57 +0100
+Message-ID: <1jy11w307q.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+
+Hi Stephen,
+
+Here is the Amlogic clock update for v6.13.
+
+This is one is a bit out of the ordinary. You'll notice a fair amount
+change in drivers/reset. We completed the rework to take the resets of
+the axg controller out of drivers/clk/meson. This code will now be
+maintained where it belongs. This will also allow to not duplicate reset
+driver with the new audio clock controllers coming up.
+
+The reset change present in this PR come from the following tag provided
+by Philipp:
+
+https://git.pengutronix.de/cgit/pza/linux/tag/?h=reset-amlogic-aux
+
+One of the change present in this PR depends on these reset changes
+which is why I pulled it.
+
+The rest of the PR is business as usual.
 
 The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
@@ -75,55 +94,85 @@ The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.13
+  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.13-1
 
-for you to fetch changes up to 81a206d736c19139d3863b79e7174f9e98b45499:
+for you to fetch changes up to 664988eb47dd2d6ae1d9e4188ec91832562f8f26:
 
-  clk: imx: imx8-acm: Fix return value check in clk_imx_acm_attach_pm_domains() (2024-11-05 12:07:59 +0200)
-
-----------------------------------------------------------------
-i.MX clocks changes for 6.13
-
-- Document the compatible for i.MX95 HSIO BLK CTRL
-- Add the HSIO BLK CTRL provider to the i.MX95 driver
-- Moved the CLK_END macro from bindings to driver for i.MX93
-- Add support for i.MX91 CCM to the i.MX93 driver
-- Add workaround as a fix for errata e10858 to the lpcg-scu driver
-- Fix PLL initialization and power up for i.MX93 in fracn-gppll clock type
-- Fix clock enable state save/restore in clk-scu clock implementation
-- Skip HDMI LPCG clocks save/restore in lpcg-scu clock implementation
-- Fix return value check on PM domains attach in imx8-acm driver
+  clk: amlogic: axg-audio: use the auxiliary reset driver (2024-10-14 10:11:05 +0200)
 
 ----------------------------------------------------------------
-Dong Aisheng (1):
-      clk: imx: clk-scu: fix clk enable state save and restore
+Amlogic clock updates for v6.13
 
-Peng Fan (4):
-      clk: imx: lpcg-scu: SW workaround for errata (e10858)
-      clk: imx: fracn-gppll: correct PLL initialization flow
-      clk: imx: fracn-gppll: fix pll power up
-      clk: imx: lpcg-scu: Skip HDMI LPCG clock save/restore
+* Fix hifi_pll rate calculation on s4 and c3
+* Move audio reset implementation from the axg-audio clock controller
+  driver to the reset directory, using the auxiliary device bus.
+* Remove the unnecessary spinlock in the mpll driver
+* Fix meson8 clock controller DT bindings
 
-Pengfei Li (4):
-      clk: imx93: Move IMX93_CLK_END macro to clk driver
-      dt-bindings: clock: imx93: Drop IMX93_CLK_END macro definition
-      dt-bindings: clock: Add i.MX91 clock support
-      clk: imx: add i.MX91 clk
+----------------------------------------------------------------
+Chuan Liu (5):
+      clk: meson: s4: pll: hifi_pll support fractional multiplier
+      clk: meson: Support PLL with fixed fractional denominators
+      clk: meson: c3: pll: fix frac maximum value for hifi_pll
+      clk: meson: s4: pll: fix frac maximum value for hifi_pll
+      clk: meson: mpll: Delete a useless spinlock from the MPLL
 
-Richard Zhu (2):
-      dt-bindings: clock: nxp,imx95-blk-ctl: Add compatible string for i.MX95 HSIO BLK CTRL
-      clk: imx95-blk-ctl: Add one clock gate for HSIO block
+Jerome Brunet (14):
+      clk: meson: meson8b: remove spinlock
+      Merge tag 'v6.12-rc1' into clk-meson-next
+      Merge branch 'v6.13/bindings' into clk-meson-next
+      reset: amlogic: convert driver to regmap
+      reset: amlogic: use generic data matching function
+      reset: amlogic: make parameters unsigned
+      reset: amlogic: add driver parameters
+      reset: amlogic: use reset number instead of register count
+      reset: amlogic: add reset status support
+      reset: amlogic: move drivers to a dedicated directory
+      reset: amlogic: split the device core and platform probe
+      reset: amlogic: add auxiliary reset driver support
+      Merge tag 'reset-amlogic-aux' into clk-meson-next
+      clk: amlogic: axg-audio: use the auxiliary reset driver
 
-Yang Yingliang (1):
-      clk: imx: imx8-acm: Fix return value check in clk_imx_acm_attach_pm_domains()
+Neil Armstrong (1):
+      dt-bindings: clock: convert amlogic,meson8b-clkc.txt to dtschema
 
- .../devicetree/bindings/clock/imx93-clock.yaml     |  1 +
- .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  5 +-
- drivers/clk/imx/clk-fracn-gppll.c                  | 10 ++--
- drivers/clk/imx/clk-imx8-acm.c                     |  4 +-
- drivers/clk/imx/clk-imx93.c                        | 63 ++++++++++++++--------
- drivers/clk/imx/clk-imx95-blk-ctl.c                | 20 +++++++
- drivers/clk/imx/clk-lpcg-scu.c                     | 41 +++++++++++---
- drivers/clk/imx/clk-scu.c                          |  2 +-
- include/dt-bindings/clock/imx93-clock.h            |  6 ++-
- 9 files changed, 113 insertions(+), 39 deletions(-)
+Philipp Zabel (1):
+      reset: amlogic: Fix small whitespace issue
+
+ .../bindings/clock/amlogic,meson8-clkc.yaml        |  45 ++++++
+ .../bindings/clock/amlogic,meson8b-clkc.txt        |  51 -------
+ drivers/clk/meson/Kconfig                          |   1 +
+ drivers/clk/meson/axg-audio.c                      | 109 ++------------
+ drivers/clk/meson/axg.c                            |   6 -
+ drivers/clk/meson/c3-pll.c                         |   1 +
+ drivers/clk/meson/clk-mpll.c                       |  11 --
+ drivers/clk/meson/clk-mpll.h                       |   1 -
+ drivers/clk/meson/clk-pll.c                        |   8 +-
+ drivers/clk/meson/clk-pll.h                        |   1 +
+ drivers/clk/meson/g12a.c                           |   6 -
+ drivers/clk/meson/gxbb.c                           |   6 -
+ drivers/clk/meson/meson8b.c                        |  10 --
+ drivers/clk/meson/s4-pll.c                         |  13 +-
+ drivers/reset/Kconfig                              |  15 +-
+ drivers/reset/Makefile                             |   3 +-
+ drivers/reset/amlogic/Kconfig                      |  27 ++++
+ drivers/reset/amlogic/Makefile                     |   4 +
+ .../reset/{ => amlogic}/reset-meson-audio-arb.c    |   0
+ drivers/reset/amlogic/reset-meson-aux.c            | 136 ++++++++++++++++++
+ drivers/reset/amlogic/reset-meson-common.c         | 142 ++++++++++++++++++
+ drivers/reset/amlogic/reset-meson.c                | 105 ++++++++++++++
+ drivers/reset/amlogic/reset-meson.h                |  28 ++++
+ drivers/reset/reset-meson.c                        | 159 ---------------------
+ include/soc/amlogic/reset-meson-aux.h              |  23 +++
+ 25 files changed, 535 insertions(+), 376 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,meson8-clkc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+ create mode 100644 drivers/reset/amlogic/Kconfig
+ create mode 100644 drivers/reset/amlogic/Makefile
+ rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
+ create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
+ create mode 100644 drivers/reset/amlogic/reset-meson-common.c
+ create mode 100644 drivers/reset/amlogic/reset-meson.c
+ create mode 100644 drivers/reset/amlogic/reset-meson.h
+ delete mode 100644 drivers/reset/reset-meson.c
+ create mode 100644 include/soc/amlogic/reset-meson-aux.h
