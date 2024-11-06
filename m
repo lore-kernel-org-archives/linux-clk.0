@@ -1,89 +1,79 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A561E0E1F
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 08:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B5D1DDA3A
+	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 09:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730881226; cv=none; b=ZjrYF6GK/UKnbaYBp84WXAzR7pLLW5tt995uloYFbUxN/ZpfU6E1OkuXAm3MEopebPEYxcY87aSVKeKOyvjQ6o4tfSqzoB9EmcEXo4k0E+H5Vd/Vtg6LYv9PFmTOQso912DWJoN/aItcyw/n8RkW133TTm6v3DWh4WHnffU3Di4=
+	t=1730883973; cv=none; b=P86+oCICsixWburRAbFMh37hgQ7zg0QspSAZsqkEWoHYxSM/IBsTtBieLEhh66d+hRqU8VDJCpmZ+MXLd2PkNmyb8hYX+obOzleZjDtY7Y/oacZvBUTU5FFHoJXFP2jnhsYgP3lKGnUtIaoPXjPBihf4VGJEDN4kDvpDRfLemC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730881226; c=relaxed/simple;
-	bh=6ZBS8yoSl8e7ZPTGMg2UyhR7znZ3Gc2T8qHVSpD0i8U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=METlwPlhB2VC/7TKSyxWBTX3wdrOi3RByg4r3PBeXgOC8FlHtHrUC2PYdrCzsSE9Spzrq9TxkFLOza+9VfDZ7SuKsjrit506CnyrizlPXZtNutBW8R0pavTfUJQ9GWFIswpuzv74aKf+eRBtuxBKcJNlTvqHl1HTaKApplrucOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GlHz16Qw; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1730883973; c=relaxed/simple;
+	bh=zSVT1VPPzMwphatbGwv5SHnw+nnYzwL4oiYG0Aw/df8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PiReJBQLpnvm7iCsy/z2AtsD1d9hcpB8JExYyQgj3jcspi4+cHPKxVS8zew43k1CFMPOCeKUzokJaxpslVEzGt7n8sp7ck72DHMpZ9KtKvvfZtXX24xEnQRsp1E5uXVRhBgl+HdEj7k5fzEHw+zcrob+ZWEnrzHbmw+WTSu4Ei8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=C7KL3aUV; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GlHz16Qw"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9e8522445dso662095166b.1
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 00:20:24 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="C7KL3aUV"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9eaaab29bcso425216566b.2
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 01:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730881223; x=1731486023; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1730883970; x=1731488770; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MBiWX6XkkMqXMqcrSsPCTgbOs43GqvRK4CKUfvJFsTU=;
-        b=GlHz16Qw2aO92U/o5c8JeSPUcTCOib6PKq+0gmKujjQ5auyDXFm6cIpL6V3Juad9n4
-         0XGTGGTaHWsX1eJRig5ZGzpUFV8qwYS4EJiEqgEIqKn8SvkA3pJoyy+j8PnD8+SF9bz9
-         gXM6FocTS3PUt3yXH6DQdFIYsi5+itTBnJgebjDb3IQWRVgu3iWkiifXSFa6pP/dzvDO
-         dAD9X/iHzVRKxZZ4Uvz7inxrstjClygriM4Fd7FRgxQReFFrdlO0Q+J+9F3VawEnB0Jh
-         EDrQ9l9FBAb4r++RnPxBzncex6oRD9Iyio9D/EZk265mDp53brX1NMcpuKP/pUzaydtc
-         QIwg==
+        bh=QrNsJPPKHO5Lk6rFyymH1MtDjL//mpL7mQleFPtlyis=;
+        b=C7KL3aUVanbJnZ6jZMV/2blywshqT8OscQIzN5c4yCiDVTP4FULpMU6mHXJLf9q+t6
+         CV+07NXh7NUViKoiEZ5eh06YiYr+mPKEHoZVKo7VwvjuukK2g3FWbbAjROpEhlyxV6pF
+         4BokP7Pkztjtey7BQoDKJUyy7ZuuQF91eLmyA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730881223; x=1731486023;
+        d=1e100.net; s=20230601; t=1730883970; x=1731488770;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MBiWX6XkkMqXMqcrSsPCTgbOs43GqvRK4CKUfvJFsTU=;
-        b=J24oz/q79fAFdQgK/2VktYyrugUshmFlYyczhOElqrkizNez6ftK5wyuJ88WNPUNee
-         3MhIQ/Lch3BvV0H9cYEyYublI79ec1OFLTJRWbdWGyPJlXOaBXQYKLZXi+AvnUZaBT4C
-         WMApXpBVocfsIlXoOwW1/N76vzw2JTt86DI6h+p5bOI6UGFDYrHhZpzwP4jJQn3qtvms
-         1wMfxQ6PL1zqsz9xf5PWH9nT2THwK+648gcfvPartrhFtM4unSvr8aVElM518uwriLDX
-         W1D/cxLJiV/vr106Neb+Epiq25hFEADKu4A7J2RQMGUWQbOS3HrDEGz/o3V9EsDpWBsP
-         bzmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWm/ZfSAVg2tt2WNJ7iFUpM9BK/SSKu3BB9R8eQVRZe8VPWStVW0PJRjqZSvowYP1TLtGiA9pDNew0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv9Zrk8FPg5ad75Kd37oMMX9d5emraMkVpZQDyuV/CAtUJTozw
-	OMvYpd8865dX0oF3yppU1uQYj7Bs8boyFL4iT0a0uGiYwEgi85m6ZiUORhAv6QQ=
-X-Google-Smtp-Source: AGHT+IG7wiJJ9E52zFHeR6gwhEEB0zfvQGumHjoKijM/1DIeDaxswQrTqJ71Q4hjn7DJ8sgHmyJ14A==
-X-Received: by 2002:a17:907:3f05:b0:a99:375f:4523 with SMTP id a640c23a62f3a-a9e6587e27dmr1931943266b.44.1730881222848;
-        Wed, 06 Nov 2024 00:20:22 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16a2dbcsm241369766b.40.2024.11.06.00.20.20
+        bh=QrNsJPPKHO5Lk6rFyymH1MtDjL//mpL7mQleFPtlyis=;
+        b=C16f34NgbGg8t7wry8q1YVU5tWBGp0DpVMqZ5sLWR/Wayu6KRKpXbvK9dkM2PDhKwI
+         p0QyvYOJycgSHQMLfZAuVQ96WlzRDZCzM1Xapj3vXWw6dVjRswbvvs4QoDRpsFSeJMXu
+         Xdys4ICd6Xftwdnskj0xa5OMG4KTvR8XJc8rl/qmShRUnx/IUlwF1Ql6X2TgSI/dfZk0
+         8r+hORA2W94HuhVIz+OxQ6w4LILE4aAl/CstxrdlK82FWtSnbfYBQryIwaQDQTGClvCQ
+         Yinfx3G0Bvcae+QNP/C2D3oJVdf56I9Lyn5qsRaYD+sZmo/MqFSlZWl8b+pRv7rpd6eY
+         zr/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWgxLIXWD/Zdn1uEI7WcJuNEG2OKaBCC7R8YqCztFh6FkbtODN5MoIfG2G1BvXfeOLMuk8ijmb2VB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Lssm3TIMSGvPs+vyvAbRjVR7+ed7n5LWw+YF3cVh14lFmL+Y
+	DgycJK1bErXh5x+LGGCUtM/Hqm1K/2j+Ka4ZmuVEOenVo1+Wmko3joJyvxanj30=
+X-Google-Smtp-Source: AGHT+IEsxqy1QIMoDY4Ou1LJy4yOq+pq9/YaekGJg8fDbyA6VV3xENMscgOLE+Qbj+VEcc4PHGIAOQ==
+X-Received: by 2002:a17:907:3f9f:b0:a9a:2afc:e4d7 with SMTP id a640c23a62f3a-a9e50b948d0mr2311624866b.44.1730883969647;
+        Wed, 06 Nov 2024 01:06:09 -0800 (PST)
+Received: from localhost.localdomain ([2001:b07:6474:ebbf:afb5:f524:6416:8e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17f9422sm247781366b.139.2024.11.06.01.06.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 00:20:22 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	magnus.damm@gmail.com,
-	linus.walleij@linaro.org,
-	support.opensource@diasemi.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	p.zabel@pengutronix.de,
-	Adam.Thomson.Opensource@diasemi.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+        Wed, 06 Nov 2024 01:06:09 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 31/31] arm64: dts: renesas: rzg3s-smarc: Add sound card
-Date: Wed,  6 Nov 2024 10:18:26 +0200
-Message-Id: <20241106081826.1211088-32-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread spectrum clocking
+Date: Wed,  6 Nov 2024 09:57:57 +0100
+Message-ID: <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,43 +82,101 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+The patch adds the DT bindings for enabling and tuning spread spectrum
+clocking generation.
 
-Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 6dd439e68bd4..89673bbaee6d 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -44,6 +44,23 @@ key-3 {
- 		};
- 	};
+Changes in v3:
+- Added in v3
+- The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
+  imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
+  indeed more or less a syscon, so it represents a memory area
+  accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
+
+ .../bindings/clock/imx8m-clock.yaml           | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+index c643d4a81478..7920393e518e 100644
+--- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+@@ -43,6 +43,40 @@ properties:
+       ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
+       for the full list of i.MX8M clock IDs.
  
-+	snd_rzg3s: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&cpu_dai>;
-+		simple-audio-card,frame-master = <&cpu_dai>;
-+		simple-audio-card,mclk-fs = <256>;
++  fsl,ssc-clocks:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      Phandles of the PLL with spread spectrum generation hardware capability.
++    minItems: 1
++    maxItems: 4
 +
-+		cpu_dai: simple-audio-card,cpu {
-+			sound-dai = <&ssi3>;
-+		};
++  fsl,ssc-modfreq-hz:
++    description:
++      The values of modulation frequency (Hz unit) of spread spectrum
++      clocking for each PLL.
++    minItems: 1
++    maxItems: 4
 +
-+		codec_dai: simple-audio-card,codec {
-+			sound-dai = <&da7212>;
-+			clocks = <&versa3 1>;
-+		};
-+	};
++  fsl,ssc-modrate-percent:
++    description:
++      The percentage values of modulation rate of spread spectrum
++      clocking for each PLL.
++    minItems: 1
++    maxItems: 4
 +
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI1 Vcc";
++  fsl,ssc-modmethod:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    description:
++      The modulation techniques of spread spectrum clocking for
++      each PLL.
++    minItems: 1
++    maxItems: 4
++    items:
++      enum:
++        - down-spread
++        - up-spread
++        - center-spread
++
+ required:
+   - compatible
+   - reg
+@@ -76,6 +110,11 @@ allOf:
+             - const: clk_ext2
+             - const: clk_ext3
+             - const: clk_ext4
++        fsl,ssc-clocks: false
++        fsl,ssc-modfreq-hz: false
++        fsl,ssc-modrate-percent: false
++        fsl,ssc-modmethod: false
++
+     else:
+       properties:
+         clocks:
+@@ -101,6 +140,8 @@ additionalProperties: false
+ examples:
+   # Clock Control Module node:
+   - |
++    #include <dt-bindings/clock/imx8mm-clock.h>
++
+     clock-controller@30380000 {
+         compatible = "fsl,imx8mm-ccm";
+         reg = <0x30380000 0x10000>;
+@@ -109,6 +150,11 @@ examples:
+                  <&clk_ext3>, <&clk_ext4>;
+         clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+                       "clk_ext3", "clk_ext4";
++        fsl,ssc-clocks = <&clk IMX8MM_AUDIO_PLL1>,
++                         <&clk IMX8MM_VIDEO_PLL1>;
++        fsl,ssc-modfreq-hz = <6818>, <2419>;
++        fsl,ssc-modrate-percent = <3>, <7>;
++        fsl,ssc-modmethod = "down-spread", "center-spread";
+     };
+ 
+   - |
 -- 
-2.39.2
+2.43.0
 
