@@ -1,65 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A864F8A0;
-	Wed,  6 Nov 2024 00:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699CA13D297;
+	Wed,  6 Nov 2024 00:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730853873; cv=none; b=ka8OQSA3kkFy818V1kD/mYmZ++K3aWWqNPk8hGANm9ftYstpSPCufhcZ4rjNuMzRQj0jbjt/lBcBFLIS3eyKZDM2cJEt5Dzks8NDRVY17PzNBcrl9eIx1iCyCQj2tvwOxPmrBgnSOtNLGbC3cYR4chvV8wlcceQubESzM9Hke74=
+	t=1730854433; cv=none; b=WQgzDSGCWDY0wkkwvUnAavZ5saksAPlecszvR1oJsINgbCqRElv2yt+PXYIUKz3uAMzryk/+dAfg2ai2MyA0UZ2prdkvduuBuc8JjgPUMXGCcyKbilw+MAiMeVMXaBoJsnw5C++AHvIhEgJgpqi/ydx6xOoII6wjBNsRIxhHz64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730853873; c=relaxed/simple;
-	bh=0IQzgFC4tYrsOmjeRzELhBNSRrs0Hh0neabXRQN73iQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=CcwtXmLRlb62E9bb7cdlSuzMNVMGVm1vdDRKQU9nHjl2NoWFNcXm1JADwUpBuQQnk5ZVgEByWm8s8vCucVyqfmd/SBKq/DBrbm+u4Ak7y75wgkb99lFYq6XLLk78FlM0KsHeHAp+BEC0i5zueGMX0YV+N+bsCy/k2lAXMOCRA8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgO4amoc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730854433; c=relaxed/simple;
+	bh=kidsRbo0VwV+FwezBK703pCp4QHEkoxa89vKbQfNk1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EE7V0tahDEtuUOvd0QZ6EYHX6CMDrtaCFKM1yqUQsPzAzmK4Sd6c5P0Lxgt5PHwnRBMKQeBjvxvceseHfk0NwJBEpYKQTsM9sR6jncR8x7N6JBat5QmlLUIgO/VAMMkXzafod3FL3dXEel1Qappk4Ra21GNtapZtprH92AT3k8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwomORwx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgO4amoc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A5DC4CECF;
-	Wed,  6 Nov 2024 00:44:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwomORwx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D63C4CED2;
+	Wed,  6 Nov 2024 00:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730853872;
-	bh=0IQzgFC4tYrsOmjeRzELhBNSRrs0Hh0neabXRQN73iQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=EgO4amoc8V59tRojC1uZBTXkNJJFTGrZ71vwpRv4+8O3kVGiEml9X3tqOjoN4xNBt
-	 CQIxSyduB1K3W9M8WNuzQxDejDS5zPjNdAraYy/1dR0Ia5jVBECwoEKeYH7KGWP+6J
-	 qhjuhy5kotKJQuW8eYHw6D6WT4GKVWVrQGW8iMgtyLL30rvn2VA/TrUlOUOHeYD8/k
-	 rqkh03yJD4lfU1SgqzNyVrQF0gDNiOCOF2jKcLDmzU92KXlfiKIjNr8YqLb12oqQK1
-	 r1rRtXNuDWkpiHi7YTCaPCXx4XQmTKp6LOJ2KX+xo7JJNr/0u9IymGQq98qU/CE91R
-	 np43H2J0k83Lg==
-Message-ID: <b5e47bf3229f3145cb705cfe83951d99.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1730854432;
+	bh=kidsRbo0VwV+FwezBK703pCp4QHEkoxa89vKbQfNk1A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KwomORwxe20ujy9GyNnKmb1HCBBXQd2o46Wbp2wsP+Wsnxl/pOanbrBo+FclIiGVu
+	 siVM09B2J+PiOkXOtAVI0O4YHiAHQ/OgYX8uZdlPr4+7aBOLUaXdaAmJsZ51QH1Za3
+	 poMRjunPWTBkx3Wq0ibUfxDsLhd6SaIvurPRaLM8chTPUYb8Vm1doYqM6VpzBUkuPz
+	 oZ3r493Apo+6D3L3lczp3gVNFnY3QtBz9acx2gOgqn2RbuhIpBfvJ3Kk2h+Rtot1Jr
+	 VlsSdwiE5LYZYcmrtz93+eya4u/+QjEmNXe/WK51Vz5POLNnRO8//KX1CvCfjuUt3v
+	 /qdIm+qb770sw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Kalpak Kawadkar <quic_kkawadka@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 00/11] clk: qcom: add support for clock controllers on the SAR2130P platform
+Date: Tue,  5 Nov 2024 16:53:42 -0800
+Message-ID: <173085441668.26510.36612615286324988.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
+References: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241104075037.13323-1-krzysztof.kozlowski@linaro.org>
-References: <20241104075037.13323-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.13
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 05 Nov 2024 16:44:30 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Krzysztof Kozlowski (2024-11-03 23:50:36)
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.13
->=20
-> for you to fetch changes up to 9174fac3b302a853b78c78f2f5ad11462b0c54b0:
->=20
->   clk: samsung: Introduce Exynos8895 clock driver (2024-10-26 14:00:12 +0=
-200)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+On Sun, 27 Oct 2024 03:24:39 +0200, Dmitry Baryshkov wrote:
+> Add support for the RPMh, TCSR, Global, Display and GPU clock
+> controllers as present on the Qualcomm SAR2130P platform.
+> 
+> 
+
+Applied, thanks!
+
+[06/11] clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+        commit: aec8c0e28ce4a1f89fd82fcc06a5cc73147e9817
+[07/11] clk: qcom: rpmh: add support for SAR2130P
+        commit: 2cc88de6261f01ebd4e2a3b4e29681fe87d0c089
+[08/11] clk: qcom: add support for GCC on SAR2130P
+        commit: 13e677de1a7b0f389a8a46d2d148c8b5b55afcdc
+[09/11] clk: qcom: tcsrcc-sm8550: add SAR2130P support
+        commit: d2e0a043530b9d6f37a8de8f05e0725667aba0a6
+[10/11] clk: qcom: dispcc-sm8550: enable support for SAR2130P
+        commit: 1335c7eb7012f23dc073b8ae4ffcfc1f6e69cfb3
+[11/11] clk: qcom: add SAR2130P GPU Clock Controller support
+        commit: 30eb0e76d7b4b7dd1e6e8ace010ac24391dd9263
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
