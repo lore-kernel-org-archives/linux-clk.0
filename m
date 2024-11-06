@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D339720C47E;
-	Wed,  6 Nov 2024 21:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B5D204958;
+	Wed,  6 Nov 2024 21:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730928987; cv=none; b=sbAH5EnCb7UxrybK5DM5njN4Aa9yxmydHhjEvVPedjO3fSsMlABDY2m0i9Uk/1QFj85l2/Z7mOi+Mwrko/JTwrUBfYq/382RI8IOUd9k5ZdpG/vidGYHMmCFYssou4W6K6X+2bYlvEmxXr2GSDhL2InPIE740koPDE4NqGXE130=
+	t=1730929173; cv=none; b=aqZta/AWg7v+chbxdrYbt6XHoq7iNUmuKL0mrDFxw3oq3QokcvE0ype8eNkU4Z61M3QcXgODqYCyaEx9gO7LA6YVGkCVB1yiBFyy+gxkvfzLaF3N/Zg1maXUvmw1zvTDh3mBamsLKn2m3/MfzTZ6KKmNTKzWa+RxlHvPnLQkmb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730928987; c=relaxed/simple;
-	bh=UhYC0o0g+74GhDBmiunUWVD3mp/0fkTpmdCaxEgCT/E=;
+	s=arc-20240116; t=1730929173; c=relaxed/simple;
+	bh=NGW1ecxSoS73bY+vq9NmlmEgNYsxyuIfOZmQbR/lG4s=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=WrMjfYoVvl8D8PnZeQkiOJPwZlyNuqv9tL7rwPqexNZpMMptwABL13Z2BQ6jtiY4cL0WQU8L8N7DTDq3hFgdrk6Lrq3nJ5GoXa//XP14GSbGhAPGJzyTlXEoSTmhPMcWYDQzpk/CqLJIsEHoOu4nuueDc1QOqO5A1BnLsj6yIoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HtNBm92Y; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=tOS4YkUnCUroNLtewqEp5HDUASCnp9hkKu+bY2v1boS/XBfYiU4pzICm+ws5RjgwrZKPtk2Rl82h1UpmVPCht+fBpBS86Z2xDQdUHXWp2JDc5JNNycO1e9qJAy+15dgNOkl02p+fErNSCzrF/toDIlhLPnHFbDV619wAsDoO3xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBV/XQBK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HtNBm92Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC4AC4CEC6;
-	Wed,  6 Nov 2024 21:36:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBV/XQBK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8407DC4CEC6;
+	Wed,  6 Nov 2024 21:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730928987;
-	bh=UhYC0o0g+74GhDBmiunUWVD3mp/0fkTpmdCaxEgCT/E=;
+	s=k20201202; t=1730929172;
+	bh=NGW1ecxSoS73bY+vq9NmlmEgNYsxyuIfOZmQbR/lG4s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=HtNBm92YHzwsHpo1VX7B/rwBq5Vqu0zLsUB6DPWeEO2ezxfGHq6/ZyH84T3CkDpPD
-	 hqgb9VW12Luc+9erCYm4PYLwQpI1QCBA1MS+ltfq1jEtLi3hdAKQ2AFgf1r9J1tAVz
-	 +hn9JwSksr7j2WaujXkVey/yUfEm3rcEU9lflfgUN3F2RcLbI3q3Rj08UJr/vDGM6G
-	 OtN/WEJx82p13eiMFncr9XCSqA7Gvj92zHq+AQQsb9q4tro5ikUHaD7ylQxZaNTOXQ
-	 Y1T/UeiPVx4c3A+RdoUcRGnD/qnpjubc0JLc3lpJNFjI1e5JPUH/ggsNnpUvKVIXrT
-	 Llofm6K3VSiFA==
-Message-ID: <f29493e30f535f7130f263113d00719d.sboyd@kernel.org>
+	b=WBV/XQBKHqPkLcfHSdFncPwLoCaoOEyqs1P9R1yWL1KMc2mQfYLxOXIuZ3WxNDA+o
+	 sCFlEytnsfGrFL5X4nqK7830q85JYk1DebjwMvCkmwPLpvpqJUJCKMrWbvTMtgtOub
+	 tHvKU3ktYksUXh/sASBHQU2TUlumR5M1u7J9gvWWslu6nXajYD3uNVgBaG7jCULwWD
+	 WPfbIlEuzeVDlbsrkZ5USTbw9ZRWexlVsO9P96RKTmfW2k5cIizWSOzrpmWGUfObaB
+	 CFo5BKemji1YZ5cyZiOar5lZL+yf8UrpI1lpJKFvIEOIhky2CKTALwkbYx+GX000FH
+	 MWcfNFR78MOFw==
+Message-ID: <d2d2bac3e583872ef80f86621a1e44cc.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,33 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1730879827.git.geert+renesas@glider.be>
-References: <cover.1730879827.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL v2] clk: renesas: Updates for v6.13 (take two)
+In-Reply-To: <20241106142154.622141-1-abel.vesa@linaro.org>
+References: <20241106142154.622141-1-abel.vesa@linaro.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.13
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 06 Nov 2024 13:36:25 -0800
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
+Date: Wed, 06 Nov 2024 13:39:30 -0800
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-11-06 00:00:12)
->         Hi Mike, Stephen,
+Quoting Abel Vesa (2024-11-06 06:21:54)
+> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
+dc:
 >=20
-> The following changes since commit 92850bed9d4d334ee502a035ed5750285faccb=
-ea:
->=20
->   clk: renesas: r8a779h0: Drop CLK_PLL2_DIV2 to clarify ZCn clocks (2024-=
-10-14 10:04:31 +0200)
+>   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.13-tag2
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-6.13
 >=20
-> for you to fetch changes up to 3b42450ce1771c7b11d8f3563f4bbfe9b8d26611:
+> for you to fetch changes up to 81a206d736c19139d3863b79e7174f9e98b45499:
 >=20
->   clk: renesas: vbattb: Add VBATTB clock driver (2024-11-06 08:52:45 +010=
-0)
+>   clk: imx: imx8-acm: Fix return value check in clk_imx_acm_attach_pm_dom=
+ains() (2024-11-05 12:07:59 +0200)
 >=20
 > ----------------------------------------------------------------
 
