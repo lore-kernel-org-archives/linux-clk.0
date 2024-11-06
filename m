@@ -1,231 +1,181 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191F12036ED;
-	Wed,  6 Nov 2024 15:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9501DCB06;
+	Wed,  6 Nov 2024 16:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730907108; cv=none; b=alv4ppm+SC54iCpILZoZ+RKlBtB3SuAmgl69zXpnu8Whi8VGWlmraWzdhn8ayNiOhYZcAk6FghFW88J0+E7myIh6wqgGK6B1VLFwA5tAz7LyRtV31dSZmsP0hHAUYvkCLohHQ12YNyy+OIXm/4PLvTqnT848tabwlLDSVezO/vo=
+	t=1730909042; cv=none; b=FOW73s0DxHW3sNhfN+Aak7HIrUqPskvWAiE5uSjM4N4rvG/S9tc23czoF9LDmXA9LicxtpZE479LWuCfjyuBFSEOi0B/bisA4jEYOistRdn8BgCKmCuLcGYCHlHnyCOf0vHRKIMGsDlR7OMsyLYFwBmVEm7cX0vZr/8ph063G6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730907108; c=relaxed/simple;
-	bh=YinUtlhN21UTDpWy65DE0bx73dRSBrI4axGpunJIP4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bjFlRn2b9DPnyk/ox02nJ/p2YSJFqoA4drumyHzSH9YMmgaI9p+stAWqoaJ4ph0fbwh1CDeNNtu1tQbd+En/GtaPd2WF7O5lk1O5mUeXs/UEyWubH6sL+yR/lZvwJqFqDCCdxbz8tzGYlAj/jXZvEcnggBNqj1J592yE3qPMEQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gV98/D8s; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730909042; c=relaxed/simple;
+	bh=kNMZOxloojlVgJYl446sTR/0XhQacwriWl73D/alcGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=to2YRudjtfQIxBB4L0IVGCiAiAu6+KxIUtR6LMYvGs/TIZctOEwEo6po4KO9BKHnJHs13vVWyDf57OrOGuqUnazp6pJ7z1/x3Uy4r77mRKzoP4XGHTlM7+tmF9nyElK7FiP2/VId29hDRFSgpw/A4NXL9fuP4Rj4hwWF3KJbP2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OZzsrRRC; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV98/D8s"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e8522445dso731477966b.1;
-        Wed, 06 Nov 2024 07:31:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730907105; x=1731511905; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TxZUEYefO8cHk0O3pZ6pSrkyLEtM/cjRFYGqJjEkBSc=;
-        b=gV98/D8swQiWj1GoQ9w88zv+fydMA7X3Mgs8EVBU5fLTmogPtXm0EQgHPTTLnDgBEZ
-         xnQFgHYLoz8pbqT7VcErljDMrMk6cv3DKZiCH+QkJCnMWZYm2P16Yh+OAe/lRglPXuhH
-         uuTaZp4gqhcNnm+hJqSaPqID1eK5N3y7dfx9sT53HeF29uO3spXm+VupvtKt3nf6Hj5V
-         iT+dzSPe6L+PObDbskzDCMNglkJq431h53MbBvDuTFRgZbvq6Nvc5XapYifu0J3d6GVp
-         P7fIfgYbBog/FVfhRHZFXqYwFPfgsMrVyb/jXkZbyLWXTDzm7YMJqbE+y2vTkT7dJvNS
-         FhtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730907105; x=1731511905;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TxZUEYefO8cHk0O3pZ6pSrkyLEtM/cjRFYGqJjEkBSc=;
-        b=ubcaOgHqXEXSekHpJt4pS9QdVwbBOXAiMX8GA6iedZs+bb9swDSf2A1q1DOV5AOw9H
-         JthjY6MLRZNtfioD9493WiFxiL68qYE/ToVjj2szrMavPLXb7mK1j+RtSlKqZ3kq5K0k
-         n/RzO/be3sRKW3RA/1g5C6WlFjU0D5LreDXGyUUp3uKjFoafR60+/2Ob6Zex0Q+eGMwF
-         u2SZnjkO7wDlIdOSROil5044zm4Xp1mhMeiALepXogtEMnOC1aUjmOldr70gBMw65MsC
-         RrSmbSMmgzvg0/iJ7FoBi1QW+XxRK8jH/ydwNTuRfRRLNOJ2JOKYqDf1rCbUimTL7kd4
-         5JFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmhzs+D+z1RTKAx5sv3jsB/ap6j0YOc3XUHC+UI3sUFttpSAcFkfQqvOhcdKRensZJLIz4fRoEPOWd@vger.kernel.org, AJvYcCVqMGiszqMgt5WUMdyOicUX3gGHCn86zb0ahta8udEbFhtj14T/euHrlb9qGk5jKtN6B7xjPiOoVIWY9KTz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiUzzFE0P9NSY4iMXEyMvzQk7EeRuPYpu/y74E//67dITbZ9i4
-	c7LeA350opm7MT9/qFonEirrsrihzfP4gc/BWWd3mCxHEQYrEb91
-X-Google-Smtp-Source: AGHT+IF0ZzyBdcVslRwOSTjEHqwVoJnmjkaO24ZdQOt67CgbkGTe+T3MfKCDKsQIMoe5M16dlGZRtg==
-X-Received: by 2002:a17:906:6a12:b0:a9a:1778:7024 with SMTP id a640c23a62f3a-a9e65576989mr2245715566b.20.1730907105078;
-        Wed, 06 Nov 2024 07:31:45 -0800 (PST)
-Received: from ivaylo-T580.. (miroral.stz.ddns.bulsat.com. [91.139.249.115])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17cecd7sm302227066b.100.2024.11.06.07.31.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 07:31:44 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: clock: actions,owl-cmu: convert to YAML
-Date: Wed,  6 Nov 2024 17:31:41 +0200
-Message-ID: <20241106153141.375389-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OZzsrRRC"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1248340002;
+	Wed,  6 Nov 2024 16:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730909037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xQ0f6eUzwBnvZvNbGKfAEFJ1fg/LcmINDrTkR6LRI70=;
+	b=OZzsrRRC8J1Q47Ti6s+Mcp8knmymb+jObk1EQxnQXsnZDYKpAUbJgpDVdXx+yi8rSrwOWt
+	v4BflQJxfdodQbBG9wjWUrs3fgKn07vc/OXbaREi47M1qQaBwzDECjSFfXwSuPsSctFiGU
+	t9FIXYuPQylUhGs5QELQsIYtydKXRbaEp+9hgQF5D64okTh6D/CQw3PGTDqdxWDzCkqdSp
+	vCpfipYE8YEyMZWS7XxBly50EE33AIPB27oVmRHOY5lfTdmKX952P0gkvE0c0XJ6ATIn8m
+	xHVCJikKGQjg36MNOwW24Rp3uwig/IoWF5cAdiYAXP04VER9kAhBwcpkCEI6uw==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 00/10] Usable clocks on Mobileye EyeQ5 & EyeQ6H
+Date: Wed, 06 Nov 2024 17:03:51 +0100
+Message-Id: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGeTK2cC/0XMSwqDMBSF4a3IHTclj9LEjrqP4sDEa71UjSQSK
+ pK9NxVKh//h8O0QMRBGuFU7BEwUyc8l5KkCN7TzExl1pUFyeRFccTbZcWNufLHWaN0rXSu0Esp
+ 9CdjT+6AeTemB4urDdshJfNcfIv5IEowzU3fGSoOK8+vder+ONJ+dn6DJOX8AaYGCf6IAAAA=
+X-Change-ID: 20241030-mbly-clk-a877f3793eb2
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Convert the Actions Semi Owl CMU bindings to DT schema.
+Now that clk-eyeq is in the clk-next tree, we can add the small(-ish)
+details required to make the platform work fully. The work is mostly
+about updating devicetrees to rely on the system-controller nodes as
+clock providers.
 
-Changes during conversion:
- - Since all Actions Semi Owl SoCs utilize the internal low frequency
-   oscillator as a parent for some clocks, require it.
+--
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Things we do:
+
+ - In EyeQ5 devicetrees, remove all fixed-factor clocks that are derived
+   from clk-eyeq PLLs. We expose those directly from clk-eyeq (using
+   match data info). This is simpler to reason about.
+
+   [PATCH v2 02/10] dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+   [PATCH v2 03/10] clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+   [PATCH v2 05/10] clk: eyeq: add fixed factor clocks infrastructure
+   [PATCH v2 06/10] clk: eyeq: add EyeQ5 fixed factor clocks
+   [PATCH v2 09/10] MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+
+ - EyeQ6H devicetrees used fixed-clocks and didn't have
+   system-controllers defined. Remove all that and define our syscons.
+
+   [PATCH v2 07/10] clk: eyeq: add EyeQ6H central fixed factor clocks
+   [PATCH v2 08/10] clk: eyeq: add EyeQ6H west fixed factor clocks
+   [PATCH v2 10/10] MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+ - Our bindings used to say that some compatibles require a clock cell
+   (those that expose multiple clocks) and others do not. Remove that
+   subtlety and enforce a clock cell for everyone.
+
+   The goal is to make it easier to add clocks to compatibles that
+   previously exposed a single one. It happens for two compatibles in
+   this patch series (EyeQ6H central and west).
+
+   This is a "revert". I had been advised in the initial patch that the
+   behavior was a bad idea. I 100% agree with those comments.
+
+   [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+   [PATCH v2 04/10] clk: eyeq: require clock index with phandle in all cases
+
+--
+
+In which tree patches should go:
+
+ - clk:
+   [PATCH v2 02/10] dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+   [PATCH v2 03/10] clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+   [PATCH v2 04/10] clk: eyeq: require clock index with phandle in all cases
+   [PATCH v2 05/10] clk: eyeq: add fixed factor clocks infrastructure
+   [PATCH v2 06/10] clk: eyeq: add EyeQ5 fixed factor clocks
+   [PATCH v2 07/10] clk: eyeq: add EyeQ6H central fixed factor clocks
+   [PATCH v2 08/10] clk: eyeq: add EyeQ6H west fixed factor clocks
+
+ - MIPS:
+   [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+   [PATCH v2 09/10] MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+   [PATCH v2 10/10] MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+Reasoning: we need the clock indexes from dt-bindings headers to avoid
+breaking the driver build, so patch 2 must go in clk-next.
+
+Note about devicetree patches 9-10: other patches on the same
+devicetrees are in the mailing-lists, with which I expect conflicts.
+All should be straight-forward to resolve.
+
+Thanks,
+Have a nice day,
+Théo
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
-v2: drop address and size cells from example
----
- .../bindings/clock/actions,owl-cmu.txt        | 52 -----------------
- .../bindings/clock/actions,owl-cmu.yaml       | 57 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 58 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+Changes in v2:
+- Patch "dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all
+         compatibles":
+  - Mention that we break ABI (#clock-cells) in commit message, and
+    explain why. [0]
+- Patches "dt-bindings: clock: eyeq: add * clocks":
+  - Squash all four patches into a single one. [1]
+  - Improve the commit message, describing the clock tree structure.
+  - Expose more EyeQ5 peripheral clocks: SPI, I2C, GPIO, EMMC, PCI.
+    We already know those will be used later down the road.
+- Patch "clk: eyeq: add EyeQ5 fixed factor clocks":
+  - Use enum to auto-number non-exposed EyeQ5 clock indexes.
+    Start from the last dt-bindings exposed index plus one.
+- Link to v1: https://lore.kernel.org/r/20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com
 
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-deleted file mode 100644
-index d19885b7c..000000000
---- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+++ /dev/null
-@@ -1,52 +0,0 @@
--* Actions Semi Owl Clock Management Unit (CMU)
--
--The Actions Semi Owl Clock Management Unit generates and supplies clock
--to various controllers within the SoC. The clock binding described here is
--applicable to S900, S700 and S500 SoC's.
--
--Required Properties:
--
--- compatible: should be one of the following,
--	"actions,s900-cmu"
--	"actions,s700-cmu"
--	"actions,s500-cmu"
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- clocks: Reference to the parent clocks ("hosc", "losc")
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Each clock is assigned an identifier, and client nodes can use this identifier
--to specify the clock which they consume.
--
--All available clocks are defined as preprocessor macros in corresponding
--dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
--actions,s500-cmu.h header and can be used in device tree sources.
--
--External clocks:
--
--The hosc clock used as input for the plls is generated outside the SoC. It is
--expected that it is defined using standard clock bindings as "hosc".
--
--Actions Semi S900 CMU also requires one more clock:
-- - "losc" - internal low frequency oscillator
--
--Example: Clock Management Unit node:
--
--        cmu: clock-controller@e0160000 {
--                compatible = "actions,s900-cmu";
--                reg = <0x0 0xe0160000 0x0 0x1000>;
--                clocks = <&hosc>, <&losc>;
--                #clock-cells = <1>;
--                #reset-cells = <1>;
--        };
--
--Example: UART controller node that consumes clock generated by the clock
--management unit:
--
--        uart: serial@e012a000 {
--                compatible = "actions,s900-uart", "actions,owl-uart";
--                reg = <0x0 0xe012a000 0x0 0x2000>;
--                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
--                clocks = <&cmu CLK_UART5>;
--        };
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-new file mode 100644
-index 000000000..3504f70eb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/actions,owl-cmu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Actions Semi Owl Clock Management Unit (CMU)
-+
-+maintainers:
-+  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+description: |
-+  The Actions Semi Owl Clock Management Unit generates and supplies clock
-+  to various controllers within the SoC.
-+
-+  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/ headers.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - actions,s500-cmu
-+      - actions,s700-cmu
-+      - actions,s900-cmu
-+
-+  clocks:
-+    items:
-+      - description: Host oscillator source
-+      - description: Internal low frequency oscillator source
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cmu: clock-controller@e0160000 {
-+       compatible = "actions,s900-cmu";
-+       reg = <0xe0160000 0x1000>;
-+       clocks = <&hosc>, <&losc>;
-+       #clock-cells = <1>;
-+       #reset-cells = <1>;
-+     };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 420d06d37..652c9822a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2016,7 +2016,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/actions.yaml
--F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
- F:	Documentation/devicetree/bindings/dma/owl-dma.yaml
- F:	Documentation/devicetree/bindings/i2c/i2c-owl.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.yaml
+[0]: https://lore.kernel.org/lkml/20241105133323.GA3064907-robh@kernel.org/
+[1]: https://lore.kernel.org/lkml/7ebcdarioght4u2bai4l42pckitcw5iz4rky4ncgp7aqmtrlen@zl7k7pgijloq/
+
+---
+Théo Lebrun (10):
+      dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+      dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+      clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+      clk: eyeq: require clock index with phandle in all cases
+      clk: eyeq: add fixed factor clocks infrastructure
+      clk: eyeq: add EyeQ5 fixed factor clocks
+      clk: eyeq: add EyeQ6H central fixed factor clocks
+      clk: eyeq: add EyeQ6H west fixed factor clocks
+      MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+      MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |  24 +-
+ arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi      | 270 ---------------------
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  30 ++-
+ .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     |  52 ----
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  73 +++++-
+ drivers/clk/clk-eyeq.c                             | 208 ++++++++++++++--
+ drivers/clk/clk-fixed-factor.c                     |  11 +
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  44 +++-
+ include/linux/clk-provider.h                       |   3 +
+ 9 files changed, 327 insertions(+), 388 deletions(-)
+---
+base-commit: 11713909beb7debd3d466a6dc302a33d91298be0
+change-id: 20241030-mbly-clk-a877f3793eb2
+
+Best regards,
 -- 
-2.43.0
+Théo Lebrun <theo.lebrun@bootlin.com>
 
