@@ -1,209 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D391F4FCF;
-	Wed,  6 Nov 2024 12:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D991F9EAB;
+	Wed,  6 Nov 2024 13:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730897791; cv=none; b=btk9dH/uZgVqQUCmJVrYQ3X6fZZMszJUsiKwymXGGWEV7bjTQ1B9vkwKZc6HaZ1SD/s8rnAB7FzbmrjtxHqw/GWw+Au7hXbDCr4hqL8KULCS9OSHjBNjoZOpLJtIk8rzWBe2kV8cmVNDqp+hGHmS9/VHSMmwOuXG+qZAujudVFU=
+	t=1730900621; cv=none; b=Ba8EaKXXmZ21ZuZz100zAMfnCptiIGeW0/BfV8Qt0xKuUxNr9h5JPdr/JIFjYNPzd64MJR+Sytziyt8nhBn7LAYhvMKIsxLqGT5qJMDTk9sdtE3UfzT8XaJjKuVRMRjeO1C5PRLN50tfIesTxt+SjTnqAMRnDfZp6QSjKh7j9IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730897791; c=relaxed/simple;
-	bh=9ijZ17+hfv173zIRsOLUz+ONcBtjK1noi4xIUL4UXiM=;
+	s=arc-20240116; t=1730900621; c=relaxed/simple;
+	bh=AvHJghciWDhD/x8KUXSpLz7qHkc2aFQiPOOMs5V1Fv0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTTaP8WnioaoXBd/cysAYJaTAET0Oj0cFtz6wonK7ZsRPhoTdO1qKvucphwXa13K/1F5c5bIQCnLLHUnM8KwgqhDlm9NMlGI6bLQQs+Uap0Es2Ce8MAcBP0Up7QvYJFSad7TMVeTmUE+eKLr2feEFhJS3EIx+EK8olYUlysQylk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLuSR5vl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4dcQivjX19G5DWDcUjkdb8fqqx7RE9J0/tq1kHBzu18VGS4rwEJlHbUjyGsrTRBcUYq7v489Gwgh0OEz8BhUulzg3GA92Kl08em1JTTkFjOOYui2oEe8s1Fg9JZLNJvKbo9krA51SHgVRtYgy8AK3iGwB02UCc0NzSbkpNSwaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfRrOfXm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLuSR5vl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427F6C4CECD;
-	Wed,  6 Nov 2024 12:56:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfRrOfXm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69956C4CECD;
+	Wed,  6 Nov 2024 13:43:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730897791;
-	bh=9ijZ17+hfv173zIRsOLUz+ONcBtjK1noi4xIUL4UXiM=;
+	s=k20201202; t=1730900621;
+	bh=AvHJghciWDhD/x8KUXSpLz7qHkc2aFQiPOOMs5V1Fv0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CLuSR5vlRZejmXGOTr2xkmuiFaAbNeB2RYqCYYSTohQYjkwLSSH40Ya4qJTuEZJZ/
-	 29Fz2lpnp3KTKwlbiVUCC4tzQBpHkT83M6tVoE1B9oBaE1ipSczWXKFY1+4ZYtDVTh
-	 tfgew3c/kbSscfwGdCDX2RMCOR2hvowbao+ebxr//l7iV5fYz8wm14jD8hlwTSX1n0
-	 g9LXyt+W0CWru9jjM6aIxwBt1L1Q0Pa7V7GXfM2BzFIW+NMNZJhHBwRRjxzqR7+0Jd
-	 b9k0n0NHwxSh46nojWFF01+TLtxAZNz/cCol3HBd+D7kNrGPtOMa9s/qhtVaYQF2Kq
-	 Sl6SCUCUXJi2g==
-Date: Wed, 6 Nov 2024 12:56:25 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to
- common code
-Message-ID: <20241106-freefall-slider-db379b05821e@spud>
-References: <20241002-private-unequal-33cfa6101338@spud>
- <20241002-hula-unwashed-1c4ddbadbec2@spud>
- <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org>
- <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
- <20241003-tacking-ladylike-dfe2b633e647@spud>
+	b=qfRrOfXmESwZyDQhPNkDJgGi8YWbap+zQSnnKTjNRq0K9d9rKEeLHS6ISBOc0j2kr
+	 T0QHzq7K9ZnLcN6d6mrBJQs6WBeU6BUvOvI/eGFXtWd9TAftn+cVheqed+TaW5m+CV
+	 +4GOrYK3gQL5KFhzalL9L/zI3KX4CE9yoQE/PygkdsjA1rOozplLuj2atjLsNY74RU
+	 BymKoASK8FGh9ttmyKOwg/REy7cughmQAKD0hJ1tXZl19CBJPWndXjjJ9UDHX3Ogy2
+	 GIxlLPsQIpKQyIWgT71PrAPTYYG03xd8zkC8uFT4SjN9JjkOjnwZVM8KoDdGea14Ou
+	 9k0LUcU284nkw==
+Date: Wed, 6 Nov 2024 13:43:33 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	lgirdwood@gmail.com, magnus.damm@gmail.com,
+	linus.walleij@linaro.org, support.opensource@diasemi.com,
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de,
+	Adam.Thomson.Opensource@diasemi.com,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 22/31] ASoC: da7213: Populate max_register to
+ regmap_config
+Message-ID: <d3c28a8b-878c-4894-aa23-5b360153b85d@sirena.org.uk>
+References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+TLJ5hylperMRXZ0"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qgBjwTwv0FsyKsIO"
 Content-Disposition: inline
-In-Reply-To: <20241003-tacking-ladylike-dfe2b633e647@spud>
+In-Reply-To: <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
+X-Cookie: Include me out.
 
 
---+TLJ5hylperMRXZ0
+--qgBjwTwv0FsyKsIO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Stephen,
-
-On Thu, Oct 03, 2024 at 12:33:40PM +0100, Conor Dooley wrote:
-> On Wed, Oct 02, 2024 at 03:21:16PM +0200, Jerome Brunet wrote:
-> > On Wed 02 Oct 2024 at 13:20, Neil Armstrong <neil.armstrong@linaro.org>=
- wrote:
-> >=20
-> > > On 02/10/2024 12:48, Conor Dooley wrote:
-> > >> From: Conor Dooley <conor.dooley@microchip.com>
-> > >> I like this one better than qualcomms and wish to use it for the
-> > >> PolarFire SoC clock drivers.
-> > >> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > >> ---
-> > >>   drivers/clk/Kconfig                           |  4 ++
-> > >>   drivers/clk/Makefile                          |  1 +
-> > >>   drivers/clk/{meson =3D> }/clk-regmap.c          |  2 +-
-> > >>   drivers/clk/meson/Kconfig                     | 46 +++++++++------=
-----
-> > >>   drivers/clk/meson/Makefile                    |  1 -
-> > >>   drivers/clk/meson/a1-peripherals.c            |  2 +-
-> > >>   drivers/clk/meson/a1-pll.c                    |  2 +-
-> > >>   drivers/clk/meson/axg-aoclk.c                 |  2 +-
-> > >>   drivers/clk/meson/axg-audio.c                 |  2 +-
-> > >>   drivers/clk/meson/axg.c                       |  2 +-
-> > >>   drivers/clk/meson/c3-peripherals.c            |  2 +-
-> > >>   drivers/clk/meson/c3-pll.c                    |  2 +-
-> > >>   drivers/clk/meson/clk-cpu-dyndiv.c            |  2 +-
-> > >>   drivers/clk/meson/clk-dualdiv.c               |  2 +-
-> > >>   drivers/clk/meson/clk-mpll.c                  |  2 +-
-> > >>   drivers/clk/meson/clk-phase.c                 |  2 +-
-> > >>   drivers/clk/meson/clk-pll.c                   |  2 +-
-> > >>   drivers/clk/meson/g12a-aoclk.c                |  2 +-
-> > >>   drivers/clk/meson/g12a.c                      |  2 +-
-> > >>   drivers/clk/meson/gxbb-aoclk.c                |  2 +-
-> > >>   drivers/clk/meson/gxbb.c                      |  2 +-
-> > >>   drivers/clk/meson/meson-aoclk.h               |  2 +-
-> > >>   drivers/clk/meson/meson-eeclk.c               |  2 +-
-> > >>   drivers/clk/meson/meson-eeclk.h               |  2 +-
-> > >>   drivers/clk/meson/meson8-ddr.c                |  2 +-
-> > >>   drivers/clk/meson/meson8b.c                   |  2 +-
-> > >>   drivers/clk/meson/s4-peripherals.c            |  2 +-
-> > >>   drivers/clk/meson/s4-pll.c                    |  2 +-
-> > >>   drivers/clk/meson/sclk-div.c                  |  2 +-
-> > >>   drivers/clk/meson/vclk.h                      |  2 +-
-> > >>   drivers/clk/meson/vid-pll-div.c               |  2 +-
-> > >>   .../meson =3D> include/linux/clk}/clk-regmap.h  |  0
-> > >>   32 files changed, 53 insertions(+), 53 deletions(-)
-> > >>   rename drivers/clk/{meson =3D> }/clk-regmap.c (99%)
-> > >>   rename {drivers/clk/meson =3D> include/linux/clk}/clk-regmap.h (10=
-0%)
-> > >>=20
-> > > <snip>
-> > >
-> > > I don't have objections, but I think Stephen didn't like the idea
-> > > a few years ago, but perhaps it has changed...
-> > >
-> > > Anyway, take my:
-> > > Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
-> >=20
-> > We had a similar discussion 3y ago indeed:
-> > https://lore.kernel.org/linux-clk/162734682512.2368309.1201587301077708=
-3014@swboyd.mtv.corp.google.com/
-> >=20
-> > There are needs for a common regmap backed clocks indeed, but allowing
-> > meson flavored regmap clocks to spread in the kernel was not really the
-> > prefered way to do it.=20
+On Wed, Nov 06, 2024 at 10:18:17AM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >=20
-> Cool, thanks for that link.
+> On the Renesas RZ/G3S SMARC Carrier II board having a DA7212 codec (using
+> da7213 driver) connected to one SSIF-2 available on the Renesas RZ/G3S SoC
+> it has been discovered that using the runtime PM API for suspend/resume
+> (as will be proposed in the following commits) leads to the codec not
+> being propertly initialized after resume. This is because w/o
+> max_register populated to regmap_config the regcache_rbtree_sync()
+> breaks on base_reg > max condition and the regcache_sync_block() call is
+> skipped.
 >=20
-> > IIRC, Stephen's idea was more the bring regmap support in clk-gate.c,
-> > clk-mux, etc ... I'm not quite sure how make iomem and regmap co-exist
-> > in a manageable/maintainable way within those drivers (without adding y=
-et
-> > another level of abstraction I mean) ? Silently creating a regmap maybe
-> > ? but that's probably a bit heavy. I did not really had time to dig more
-> > on this, I guess no one did.
->=20
-> I guess I have some motivation to looking into it at the moment. I had
-> my reservations about the Meson approach too, liking it more than
-> Qualcomm's didn't mean I completely liked it.
-> It was already my intention to implement point b of your mail, had the
-> general idea here been acceptable, cos that's a divergence from how the
-> generic clock types (that the driver in question currently uses) work.
-> And on that note, I just noticed I left the mild-annoyance variable name
-> "sigh" in the submitted driver changes, which I had used for the
-> clk_regmap struct that your point b in the link relates to.
->=20
-> > I don't really have a preference one way or the other but if it is going
-> > to be exposed in 'include/linux', we need to be sure that's how we want
-> > to do it. With clocks poping in many driver subsystems, it will
-> > difficult to change afterward.=20
->=20
-> Yeah, I agree. I didn't expect this to go in right away, and I also
-> didn't want to surge ahead on some rework of the clock types, were
-> people to hate even the reuse.
+> Fixes: ef5c2eba2412 ("ASoC: codecs: Add da7213 codec")
+> Cc: stable@vger.kernel.org
 
-Hmm, so how (in-)complete of a regmap implementation can I get away
-with? I only need clk-gate and clk-divider for this patchset...
+Why is this a stable fix when it only enables further work?
 
-Shoving the regmap into the clk structs makes things pretty trivial as I
-don't need to do anything special in any function other than
-clk_*_readl()/clk_*_writel() and the registration code. A flag isn't
-even needed to determine if a clock is a regmap one I don't think, since
-you can just check if the regmap pointer is non-NULL. My use case doesn't
-actually need the registration code changes either as, currently, only reg
-gets set at runtime, but leaving that out is a level of incomplete I'd not
-let myself away with.
-Obviously shoving the extra members into the clk structs has the downside
-of taking up a pointer and a offset worth of memory for each clock of
-that type registered, but it is substantially easier to support devices
-with multiple regmaps that way. Probably moot though since the approach you
-suggested in the thread linked above that implements a clk_hw_get_regmap()
-has to store a pointer to the regmap's identifier which would take up an
-identical amount of memory.
-
-I don't really care which way you want it done, both are pretty easy to
-implement if I can get away with just doing so for the two standard
-clock types that I am using - is it okay to just do those two?
-
-Cheers,
-Conor.
-
---+TLJ5hylperMRXZ0
+--qgBjwTwv0FsyKsIO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZytneQAKCRB4tDGHoIJi
-0hKAAQCFpDV3E/AK8dWA7TkIPrTKd116nVNbF4DDHJKcPS36cAEAtymt/KGIdIPF
-koqYyHxopwgZYIbz0xbdA1kU80glwQo=
-=DxRh
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcrcoQACgkQJNaLcl1U
+h9B+uAf/T9UHiIXHURIt+YX7P9zWTkwxOYzQrVtIxV9Uz16GFNImxUT3T7ZkDJPm
+Erxp7p9mSMTejwQKY8qPBDBgFh00UE8ZNhdcb1PmRZTJ4DeK1mOmjl2SulAB/EM9
+v5g+3Cv95GmCpE0FfpsEwuhtz+wPWdJU3lqpG1rVtjMyXzuPqH5Ie4viG/I2pGO5
+RNoUFDOHu2pc7f3i3WzmmywjEDJIhOHXv/rQRy8ZG8TZyvNDDX0sP/+y0ElBUBsB
+81GcYxUjx+0h5uiE0XlXcfdemDG3L73XccwdWEJZ0xh+XKmrVLm1jFoJqLAiY7gM
+jGFGeURWY9VEnaDqJCf33O0nhkmAGQ==
+=RpAB
 -----END PGP SIGNATURE-----
 
---+TLJ5hylperMRXZ0--
+--qgBjwTwv0FsyKsIO--
