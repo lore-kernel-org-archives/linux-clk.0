@@ -1,274 +1,136 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CC220651D;
-	Wed,  6 Nov 2024 16:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F7C202F6C;
+	Wed,  6 Nov 2024 16:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909048; cv=none; b=j9sEwPFJY44pNF6dakR6Yoj0PK3R0Wdyw/hjTgxEKHUqjxwhzRVk+k79F9KrAYJyUrKvU/AeGTm0p0TQdWJ17EjDeqUToRNZpKhOsLvcLKqoBKK1s11Cx0FZjeVHiV5cffooYz0Yha3u9vJT9QIZnqTYZRPr7oT6FuWG7VC+3vQ=
+	t=1730910330; cv=none; b=NDOYtOo99Ocj3MWkc+YnQx0SMs7ujFxiBXT6Iyl9uKtI0neSSPg/cyiqdJcYK+4oxlWq52+UFLcg2I1joWYdOyFa8jiOfw9ipEl7sUjL48GKhhsDIxr4UXn3vP6aY+yht5hzFBXzCdxeZ4cZLxncH2zh6UzqJPciqcVxtIiP6jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909048; c=relaxed/simple;
-	bh=164AvxpBW24lmZ5bza1gILy+9Z0x/iue+c4IgUxIOFc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GTiG05eLdZugerkCOFYQnKcX1MWd9YE+X8uufP36a5y1kSFv6KFfRTyKdwCfPGA4Dpg1i3YP9rdMiSgCzS3+AcbpgoIx2mKrPSdXg6LGwR7hdm/RXqNdv2jJ7vpGimVFwlPcI/ezqmVQQ5BL5BzLo03yiGV1PcKRQugSwx76fEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Cb2ut640; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1730910330; c=relaxed/simple;
+	bh=l7lI9uf8YtLy8s8JVEpDW1Pvr02x/Yi6IFy9QOC60b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=B2uLEJcVkyMmSmbOpZHEKI46dgL2+k1PD/YM6INEVB5VYe6eOUMO1IzT8EghE0XLVvI7qG9kFAiSQs34qg2ruAX9OrFMN5AcUydNn7juq/ZsX1qIkq/Uuu/Y7yWwRdb2E6iPicYNKzWLk3LIMBBgaMtswteX4ZQWO1m4HQzJTbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzvwjgR7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Cb2ut640"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C4EA4000F;
-	Wed,  6 Nov 2024 16:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730909044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dNYxA9PoraKNMZJ+/mQFXcEzKQ9APotFg7LB3yegiRc=;
-	b=Cb2ut640R43SAZ7IA+B+ILhnfx6FHLLV3spFTdsf59KYpm7TJcJaQHEjFvwbEUXK0lLSOy
-	+GCR1Zakp/kxeJKjhi9LCydVtuw2YMnlSznxqU0nfZRgvNwZxBcWLF5/5dLfJKGEV+J/0z
-	zueL8POuCLf50dlxER5BBirr2mkIWSUxHqfoNNYplNm3Ceu+EzTL6KZvrhZFEBYOTTgg7P
-	6uPB8j1G/rOLXsNRFeNby3J/hnhPcqN1afBnAWM2hjKOmwadBV9UHFmzoefSUKWTNK5GQe
-	x502sFojlYfTa7cdhjaEdng60gU9fJk7JjR4QUlMZgRutq4Juc/uwavVN2YuBQ==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 06 Nov 2024 17:04:01 +0100
-Subject: [PATCH v2 10/10] MIPS: mobileye: eyeq6h: add OLB nodes OLB and
- remove fixed clocks
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzvwjgR7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6B0C4CEC6;
+	Wed,  6 Nov 2024 16:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730910330;
+	bh=l7lI9uf8YtLy8s8JVEpDW1Pvr02x/Yi6IFy9QOC60b0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GzvwjgR7LLP3+VmH/1iSxImKaqcJy/MmB8iLj1zrbbScaXtOt58J/2lp0JDGTCSpE
+	 LqThJ0J0UmgNfDZIG0uQybjWkIkrWHieZe58KYPDpVOXHjRs0Li4F3MRxhR6/nXkkI
+	 3MJnEJ4Uuc0OXgUBu1pk8gxTZdWHMq8tNm95Bn/L4u3PbwgLvkz82u9x18IjetQvF8
+	 ABSjYsbB/01KQE29kJtaLsE/Q82tJThjpiDNJ2FdG5312FC9S896WIvKDQLVLDSAjB
+	 t3atv+jxTeh65l5Bvg+bwuUOwjZyIxqrDlrlBRzKzHnuDnUkxUPQx+Denpbz9x4siJ
+	 R3EDKt/YlFWRA==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 95C0B5F836; Thu,  7 Nov 2024 00:25:27 +0800 (CST)
+Date: Thu, 7 Nov 2024 00:25:27 +0800
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
+	linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock changes for 6.13
+Message-ID: <ZyuYd50i-oPSDXZ4@wens.tw>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241106-mbly-clk-v2-10-84cfefb3f485@bootlin.com>
-References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
-In-Reply-To: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HysiOhwiQ3DGnZwG"
+Content-Disposition: inline
 
-Change the declaration of clocks: remove all fixed clocks and declare
-system-controllers (OLB) as clock providers.
 
-Remove eyeq6h-fixed-clocks.dtsi and move the crystal clock to the main
-eyeq6h.dtsi file.
+--HysiOhwiQ3DGnZwG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     | 52 ---------------
- arch/mips/boot/dts/mobileye/eyeq6h.dtsi            | 73 ++++++++++++++++++++--
- 2 files changed, 69 insertions(+), 56 deletions(-)
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi b/arch/mips/boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi
-deleted file mode 100644
-index 5fa99e06fde7e8f4942aafe5f6064e2c6f7d83fd..0000000000000000000000000000000000000000
---- a/arch/mips/boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi
-+++ /dev/null
-@@ -1,52 +0,0 @@
--// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--/*
-- * Copyright 2023 Mobileye Vision Technologies Ltd.
-- */
--
--#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
--
--/ {
--	xtal: clock-30000000 {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <30000000>;
--	};
--
--	pll_west: clock-2000000000-west {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <2000000000>;
--	};
--
--	pll_cpu: clock-2000000000-cpu {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <2000000000>;
--	};
--
--	/* pll-cpu derivatives */
--	occ_cpu: clock-2000000000-occ-cpu {
--		compatible = "fixed-factor-clock";
--		clocks = <&pll_cpu>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--
--	/* pll-west derivatives */
--	occ_periph_w: clock-200000000 {
--		compatible = "fixed-factor-clock";
--		clocks = <&pll_west>;
--		#clock-cells = <0>;
--		clock-div = <10>;
--		clock-mult = <1>;
--	};
--	uart_clk: clock-200000000-uart {
--		compatible = "fixed-factor-clock";
--		clocks = <&occ_periph_w>;
--		#clock-cells = <0>;
--		clock-div = <1>;
--		clock-mult = <1>;
--	};
--
--};
-diff --git a/arch/mips/boot/dts/mobileye/eyeq6h.dtsi b/arch/mips/boot/dts/mobileye/eyeq6h.dtsi
-index 1db3c3cda2e395025075387bcb66ea0737fd37f6..4a1a43f351d39625b520a16d035cacd2e29d157c 100644
---- a/arch/mips/boot/dts/mobileye/eyeq6h.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq6h.dtsi
-@@ -5,7 +5,7 @@
- 
- #include <dt-bindings/interrupt-controller/mips-gic.h>
- 
--#include "eyeq6h-fixed-clocks.dtsi"
-+#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
- 
- / {
- 	#address-cells = <2>;
-@@ -17,7 +17,7 @@ cpu@0 {
- 			device_type = "cpu";
- 			compatible = "img,i6500";
- 			reg = <0>;
--			clocks = <&occ_cpu>;
-+			clocks = <&olb_central EQ6HC_CENTRAL_CPU_OCC>;
- 		};
- 	};
- 
-@@ -32,19 +32,42 @@ cpu_intc: interrupt-controller {
- 		#interrupt-cells = <1>;
- 	};
- 
-+	xtal: clock-30000000 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <30000000>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
- 
-+		olb_acc: system-controller@d2003000 {
-+			compatible = "mobileye,eyeq6h-acc-olb", "syscon";
-+			reg = <0x0 0xd2003000 0x0 0x1000>;
-+			#reset-cells = <1>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
-+		olb_central: system-controller@d3100000 {
-+			compatible = "mobileye,eyeq6h-central-olb", "syscon";
-+			reg = <0x0 0xd3100000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
- 		uart0: serial@d3331000 {
- 			compatible = "arm,pl011", "arm,primecell";
- 			reg = <0 0xd3331000 0x0 0x1000>;
- 			reg-io-width = <4>;
- 			interrupt-parent = <&gic>;
- 			interrupts = <GIC_SHARED 43 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&occ_periph_w>, <&occ_periph_w>;
-+			clocks = <&olb_west EQ6HC_WEST_PER_UART>, <&olb_west EQ6HC_WEST_PER_OCC>;
- 			clock-names = "uartclk", "apb_pclk";
- 		};
- 
-@@ -56,6 +79,15 @@ pinctrl_west: pinctrl@d3337000 {
- 			pinctrl-single,function-mask = <0xffff>;
- 		};
- 
-+		olb_west: system-controller@d3338000 {
-+			compatible = "mobileye,eyeq6h-west-olb", "syscon";
-+			reg = <0x0 0xd3338000 0x0 0x1000>;
-+			#reset-cells = <1>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
- 		pinctrl_east: pinctrl@d3357000 {
- 			compatible = "pinctrl-single";
- 			reg = <0x0 0xd3357000 0x0 0xb0>;
-@@ -64,6 +96,23 @@ pinctrl_east: pinctrl@d3357000 {
- 			pinctrl-single,function-mask = <0xffff>;
- 		};
- 
-+		olb_east: system-controller@d3358000 {
-+			compatible = "mobileye,eyeq6h-east-olb", "syscon";
-+			reg = <0x0 0xd3358000 0x0 0x1000>;
-+			#reset-cells = <1>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
-+		olb_south: system-controller@d8013000 {
-+			compatible = "mobileye,eyeq6h-south-olb", "syscon";
-+			reg = <0x0 0xd8013000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
- 		pinctrl_south: pinctrl@d8014000 {
- 			compatible = "pinctrl-single";
- 			reg = <0x0 0xd8014000 0x0 0xf8>;
-@@ -72,6 +121,22 @@ pinctrl_south: pinctrl@d8014000 {
- 			pinctrl-single,function-mask = <0xffff>;
- 		};
- 
-+		olb_ddr0: system-controller@e4080000 {
-+			compatible = "mobileye,eyeq6h-ddr0-olb", "syscon";
-+			reg = <0x0 0xe4080000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
-+		olb_ddr1: system-controller@e4081000 {
-+			compatible = "mobileye,eyeq6h-ddr1-olb", "syscon";
-+			reg = <0x0 0xe4081000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
- 		gic: interrupt-controller@f0920000 {
- 			compatible = "mti,gic";
- 			reg = <0x0 0xf0920000 0x0 0x20000>;
-@@ -89,7 +154,7 @@ gic: interrupt-controller@f0920000 {
- 			timer {
- 				compatible = "mti,gic-timer";
- 				interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
--				clocks = <&occ_cpu>;
-+				clocks = <&olb_central EQ6HC_CENTRAL_CPU_OCC>;
- 			};
- 		};
- 	};
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
--- 
-2.47.0
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-6.13
+
+for you to fetch changes up to 1054861bc258fb5798b7132453593cc3eb0639ba:
+
+  clk: sunxi-ng: Use of_property_present() for non-boolean properties (2024-11-05 23:40:49 +0800)
+
+----------------------------------------------------------------
+Allwinner clock changes for 6.13
+
+- Added sigma-delta modulation settings for audio PLL on the H616 SoC,
+  crucial for accurate audio reproduction
+- Constified |struct ccu_reset_map| throughout the sunxi-ng clk drivers
+- Fixed the audio PLL divider preset on the D1 SoC
+- Switched to of_property_present() for checking DT property presence
+
+----------------------------------------------------------------
+Andre Przywara (1):
+      clk: sunxi-ng: d1: Fix PLL_AUDIO0 preset
+
+Christophe JAILLET (1):
+      clk: sunxi-ng: Constify struct ccu_reset_map
+
+Rob Herring (Arm) (1):
+      clk: sunxi-ng: Use of_property_present() for non-boolean properties
+
+Ryan Walklin (1):
+      clk: sunxi-ng: h616: Add sigma-delta modulation settings for audio PLL
+
+ drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c   |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun20i-d1.c     |  4 +--
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a100.c   |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c    |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   |  4 +--
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 46 +++++++++++++++++++++-----------
+ drivers/clk/sunxi-ng/ccu-sun5i.c         |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c     |  8 +++---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c      |  4 +--
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c       |  6 ++---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  4 +--
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  2 +-
+ drivers/clk/sunxi-ng/ccu_common.h        |  2 +-
+ drivers/clk/sunxi-ng/ccu_reset.h         |  2 +-
+ 26 files changed, 64 insertions(+), 50 deletions(-)
+
+--HysiOhwiQ3DGnZwG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAmcrmHUACgkQOJpUIZwP
+JDAjERAA6cgwmJ7lSce7cybeGxt9SNITp6x0jv2NfP2J2VkG1kUmtSBh9Go2O1PI
+ZidM1DxNvTeiWKulje08/PGI9j4sZ6OJIQiloU6Wn0Kk+e0opWrnDDwOwP3ydXCs
+wZVRSCxRbYNUzlkhKssasCbDHW2Dr+Tksmmf7wennK3rYBR9C38HE1kNBonLT2EG
+Q5AI8/KUmFUcSFOBB6JeD8XXbruw2Bvx2YzB2S6cGLwOxkaPcotgD570JzV1tEKE
+YvvGJgn7lNsYzojPguiQpExVm8YptVAanQfuYqhgrr8ozDV05wBBMYxsUq8OclHS
+B5IN0b3NgBEBhQr1cKRtBbcnJYntBTlMtOT+aWtTp965RauK6iJEauBBDwuatGDz
+5/+kY9LrbRiw7S4piTJc+ISdIYZuxfzvvzx3hA3JP6UsM+k8r0T/RlQHY8yGod8A
+iDqdPp8aeHgI+4TvpOAYg93otlUtqmScEQfUzbVH3f0L2xsJ3kutDA5O+vCsgTNB
+SNvJdJ6oRSbeb4RTrlz6XM2CPQPoAJJqgM4DhyBbV9r+muOXv68Jr06aUV/P9Gek
+h4V+P9qt7uEOdAEuuVcUcswH9T6a0dXGIFwYtFH5b5Yf0DEHZcuxxuYRxHM6D5gx
+sUNkuHGWaUdFQUlA/wudMCoVcFD/wK5CbA1zoQ3YDk9T9wy6UHQ=
+=phcN
+-----END PGP SIGNATURE-----
+
+--HysiOhwiQ3DGnZwG--
