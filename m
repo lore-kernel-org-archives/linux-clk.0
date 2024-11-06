@@ -1,47 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AC5142E86;
-	Wed,  6 Nov 2024 00:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7171885B8;
+	Wed,  6 Nov 2024 00:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730854433; cv=none; b=FkMnjQ51eEyfPlIhilkghR9ExlZcRyUI/ulcy3E37+uZLyr/MOMVgCUYfF5DcrpcWHDD2SuiRWecYuF3oOVpoxbhDgBrBliMwoyBRhR58r2imNIOT2/pMYrC7iGO7FEAxjlqE1NlrRchkYLn82HCc0DofTIYX1XuWPf3feFYu5Q=
+	t=1730854438; cv=none; b=A2d7+KtIDha2ZDrfkuNAVKDoRVrv+61Ob21mrbGPyzLxpLSspeOwevyyMBtzU9EPnLSazzFjMfejtijCEYyHLzBlqnu0HyREAWIUAyRAWpYt31tENTmGeH3m4+hPRRkbbVrWM7+YOEJZCuoMwK7xcP+ywUK9aMDmvT20/xR0DXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730854433; c=relaxed/simple;
-	bh=5+9PnptEWAUvLGJXI05VuDF7HPRuhwgo8QQsff/68SI=;
+	s=arc-20240116; t=1730854438; c=relaxed/simple;
+	bh=HPTg6F0AYPQEIKZS8GnAFmra5qXWz8AKMhVZCHGPW+I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p1dCiWHoRbNL2HgErKhWvIgRour951KXK5DnZY0ez3Q/7oktcBfTuUVnleAXjf+03wavOjiYvPFWIcK+MVRhX2ChIHZraijm4DziXqQ9kk7TY2ifPyiQRycg0jV/euFE9P0yjDA0/zOutNWK8SrhYA3GHDHk0VvnHUmzohbjl9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sG+n9WYy; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=VaRfEN3TDA3N4Lr4XSTl/Cuzf77yFGdEi2DWQtF2jOV/FPVkZWn51uz/vfMdm/AbbmUGnW2WK25HxcR+R3kf2jy2q5oSyRcAJExnxUGk/G75FxbIkf8bcwJaflcGfRBWkzBTxm67bdjbMxZichO+J0sGuh+SPr7FosuINV29scA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9v0zHsQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sG+n9WYy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C50BC4CEDD;
-	Wed,  6 Nov 2024 00:53:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9v0zHsQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2EFC4CEDD;
+	Wed,  6 Nov 2024 00:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730854433;
-	bh=5+9PnptEWAUvLGJXI05VuDF7HPRuhwgo8QQsff/68SI=;
+	s=k20201202; t=1730854437;
+	bh=HPTg6F0AYPQEIKZS8GnAFmra5qXWz8AKMhVZCHGPW+I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sG+n9WYyfglBCA6kZPg5XGRlbCQZohvIU/S/UbhmNn0N8JUBYZmOPnlczS6ArLCW7
-	 MECvn62VdbBjzfGHTRmmaBimUg8Eg/bfkoCPByCEzJoo93nUI1+qgOP8qjSij+POXJ
-	 9ve2a57xwl3m0Dv4ma7RSQCIIQPOqyl7jiEzNkCe6iUqNbK9HeObb5vqq2gEvrHn7k
-	 IXn8W5pSl9cKWdBXJBZ16doTefPGHoLSa5RU/+FK73ObUiCpSnpCZjxmqplo2Ebve7
-	 0+F4NUDNHLlp2wH4SqvTr0bHily7MoW24nL/A7yRrYBh3Nzfl3R58I+vcoTHksW/Bt
-	 k9CIuiDezZx/Q==
+	b=b9v0zHsQjN2hTRx2yrCy/4HS7d/jSxBpi8f/++f2qyq8D2UDYx3LrwDutMiLlTqlO
+	 q64b/Waq2CuLIhuHRS0m5eBc8UKnn0scn7a+5owraAIWwHPgRR3dsiY82q3NNdcyI4
+	 +rozCJzGgdOWevZGIWt+1PKNCCYlUbl5G/4yi74sxmJ93CEkhOr87SxDSP1CDgv1wZ
+	 sMByjejW+ec0YjFUG2x3U0HQrzPJOfThz0ApvJCtZ1wx4jO65RpkSZFwHL4xD+LeAc
+	 Zl7nth9qpixByJW306xgur9vTAyScFsNPQDSuHdK8Ytdbks2UdgkwVbbz3D/ZY3Vxo
+	 tO1roa2FTWnZw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+To: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ulf.hansson@linaro.org,
+	linus.walleij@linaro.org,
+	catalin.marinas@arm.com,
+	p.zabel@pengutronix.de,
+	geert+renesas@glider.be,
+	dmitry.baryshkov@linaro.org,
+	neil.armstrong@linaro.org,
 	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	=?UTF-8?q?Kamil=20Go=C5=82da?= <kamil.golda@protonmail.com>
-Subject: Re: [PATCH] clk: qcom: Make GCC_6125 depend on QCOM_GDSC
-Date: Tue,  5 Nov 2024 16:53:43 -0800
-Message-ID: <173085441659.26510.9677618815365313460.b4-ty@kernel.org>
+	linux-clk@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sricharan R <quic_srichara@quicinc.com>
+Cc: quic_varada@quicinc.com
+Subject: Re: (subset) [PATCH V5 0/6] Add minimal boot support for IPQ5424
+Date: Tue,  5 Nov 2024 16:53:49 -0800
+Message-ID: <173085441672.26510.12002868497417768812.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241003-topic-6125kconfig-v1-1-f5e1efbff07c@quicinc.com>
-References: <20241003-topic-6125kconfig-v1-1-f5e1efbff07c@quicinc.com>
+In-Reply-To: <20241028060506.246606-1-quic_srichara@quicinc.com>
+References: <20241028060506.246606-1-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,18 +65,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 03 Oct 2024 01:16:27 +0200, Konrad Dybcio wrote:
-> Like all other non-ancient Qualcomm clock drivers, QCOM_GDSC is
-> required, as the GCC driver defines and instantiates a bunch of GDSCs.
+On Mon, 28 Oct 2024 11:35:00 +0530, Sricharan R wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 > 
-> Add the missing dependency.
+> The IPQ5424 is Qualcomm's 802.11be SoC for Routers, Gateways and
+> Access Points.
 > 
+> This series adds minimal board boot support for ipq5424-rdp466 board.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: Make GCC_6125 depend on QCOM_GDSC
-      commit: 04bad0c91743c8f3753c35750ffe4ddb1bf22489
+[6/6] arm64: defconfig: Enable IPQ5424 RDP466 base configs
+      commit: fd516bb4f48fc527744cae42d8e156fb09bce157
 
 Best regards,
 -- 
