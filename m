@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2F0149C53;
-	Tue,  5 Nov 2024 23:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A864F8A0;
+	Wed,  6 Nov 2024 00:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730850736; cv=none; b=rFqx2EenYRaxsDhxpDxd6U+dg0v/dj85ElZKTDJEal6QdnNKbJ30KytwGvY+vvcuISrcI30ELVtHDYRu9v8FIjZcK36WjQ1mAlfljyaWU74IeUDFUedk5dRe1+mPgpC5qOtJ2mFNTIl3y/t0dsYLJ2bi1UGFbBynXsC+g1lGLCA=
+	t=1730853873; cv=none; b=ka8OQSA3kkFy818V1kD/mYmZ++K3aWWqNPk8hGANm9ftYstpSPCufhcZ4rjNuMzRQj0jbjt/lBcBFLIS3eyKZDM2cJEt5Dzks8NDRVY17PzNBcrl9eIx1iCyCQj2tvwOxPmrBgnSOtNLGbC3cYR4chvV8wlcceQubESzM9Hke74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730850736; c=relaxed/simple;
-	bh=9wnJ/RDSeWoiJUdNP0Uow5AMHKmQWu2URfnoiruZous=;
+	s=arc-20240116; t=1730853873; c=relaxed/simple;
+	bh=0IQzgFC4tYrsOmjeRzELhBNSRrs0Hh0neabXRQN73iQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=XSQtCP6HT3nf3CE6QlRVCUbNN9PbYhgnysQe+4UgXWtIaCWVudb5cBl21Ilnp791B4ocZkF8dfrWd7dXk40Lbr8uRQ2GX2fID5LwkwwPWVevVIcd3S7prHmR60tb4RwmDimpd0eaXitTRkNhRJTtpPYHhpmGYxKeMOH173ClU4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HII0ydHk; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=CcwtXmLRlb62E9bb7cdlSuzMNVMGVm1vdDRKQU9nHjl2NoWFNcXm1JADwUpBuQQnk5ZVgEByWm8s8vCucVyqfmd/SBKq/DBrbm+u4Ak7y75wgkb99lFYq6XLLk78FlM0KsHeHAp+BEC0i5zueGMX0YV+N+bsCy/k2lAXMOCRA8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgO4amoc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HII0ydHk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D414C4CECF;
-	Tue,  5 Nov 2024 23:52:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgO4amoc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A5DC4CECF;
+	Wed,  6 Nov 2024 00:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730850735;
-	bh=9wnJ/RDSeWoiJUdNP0Uow5AMHKmQWu2URfnoiruZous=;
+	s=k20201202; t=1730853872;
+	bh=0IQzgFC4tYrsOmjeRzELhBNSRrs0Hh0neabXRQN73iQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=HII0ydHkTOJjKyLQD+5PEHXMwKiTCmGDEzUyDIVmIcY8L3F47Els3NVgs9fKonfqM
-	 N8IOZYmH3+fz+SpLRFljKaWy+/VpMf5dOu3ttqtSqWT+gTd9/tRhDtS+cHINKLMSZ0
-	 CEKhy/RKXfw2tUzWN/Ldlu7gY3FB5rGdzmH6JNxfKr8OpM2y4JDpbrGGiychrTNgZp
-	 hJWMitPckffcqu9U1ZXs0UOXhppfvtZnWaYcYPfPxFms5Gj9NbylHrr15Zp0FM7mW8
-	 jNhrlkDdVW7L76/lqyyhm1GOMCwfYAnPEKNTgQDdh7KeedJsGIF+U5vxkI7ueEQt+U
-	 sTdxfyagDBE3Q==
-Message-ID: <b312fadeefe5b77b8189f11570e0e109.sboyd@kernel.org>
+	b=EgO4amoc8V59tRojC1uZBTXkNJJFTGrZ71vwpRv4+8O3kVGiEml9X3tqOjoN4xNBt
+	 CQIxSyduB1K3W9M8WNuzQxDejDS5zPjNdAraYy/1dR0Ia5jVBECwoEKeYH7KGWP+6J
+	 qhjuhy5kotKJQuW8eYHw6D6WT4GKVWVrQGW8iMgtyLL30rvn2VA/TrUlOUOHeYD8/k
+	 rqkh03yJD4lfU1SgqzNyVrQF0gDNiOCOF2jKcLDmzU92KXlfiKIjNr8YqLb12oqQK1
+	 r1rRtXNuDWkpiHi7YTCaPCXx4XQmTKp6LOJ2KX+xo7JJNr/0u9IymGQq98qU/CE91R
+	 np43H2J0k83Lg==
+Message-ID: <b5e47bf3229f3145cb705cfe83951d99.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,17 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241102223956.868257-1-andersson@kernel.org>
-References: <20241102223956.868257-1-andersson@kernel.org>
-Subject: Re: [GIT PULL] Qualcomm clock fixes for v6.12
+In-Reply-To: <20241104075037.13323-1-krzysztof.kozlowski@linaro.org>
+References: <20241104075037.13323-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.13
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@linaro.org>, =?utf-8?b?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Johan Hovold <johan+linaro@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
-Date: Tue, 05 Nov 2024 15:52:13 -0800
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Tue, 05 Nov 2024 16:44:30 -0800
 User-Agent: alot/0.10
 
-Quoting Bjorn Andersson (2024-11-02 15:39:54)
->=20
+Quoting Krzysztof Kozlowski (2024-11-03 23:50:36)
 > The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
 dc:
 >=20
@@ -53,14 +52,14 @@ dc:
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-fixes-for-6.12
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-6.13
 >=20
-> for you to fetch changes up to e7f37a7d16310d3c9474825de26a67f00983ebea:
+> for you to fetch changes up to 9174fac3b302a853b78c78f2f5ad11462b0c54b0:
 >=20
->   clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts flags (2024-10-=
-22 15:35:15 -0500)
+>   clk: samsung: Introduce Exynos8895 clock driver (2024-10-26 14:00:12 +0=
+200)
 >=20
 > ----------------------------------------------------------------
 
-Thanks. Pulled into clk-fixes
+Thanks. Pulled into clk-next
