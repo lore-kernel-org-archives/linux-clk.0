@@ -1,117 +1,104 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D4E1DEFD7
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 13:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2554A17DFF2;
+	Wed,  6 Nov 2024 14:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730901396; cv=none; b=P/+IZtKXlu0OY7B+w/p899UlgCiPJxvqc5oGkQ/JOZCbjyJOdVvagzg4ExZycm4SK8GodRRUkYMXCPZ0bbC4ceUz+KUJ6mcXEls/ia0Cd18+VpREbBFJ5zvrhalSmtU5lt58FNi+py3ca4NuLfYSa8s2728JwkGyuEhMI0TsbiM=
+	t=1730902242; cv=none; b=MfLIqMAKFeR22t0J/U/8xEHCtM0n6iLxVL+R009dOBUyRukJItNQBXLngVus+ThvhV+JL9mOP9nAWiNX/0JYmGBljRfhhiK/71RYvzJ1ozUzDpVLxlEo23Po79bAriq/y3rfBhcdTLlO9b0wKp28e0me0w5nHnSBYqwv+K45g/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730901396; c=relaxed/simple;
-	bh=LDBL0kkMZtib5PEfH1gjZQJCnJISQdKjevP7+A6MsOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MKW+tSypJAHiYArc5R1lelKoxuyCKpc1bEw7wvEIvPapsWHIDESl5Xv4XBCBKBE6PaBennbdVJSO029jDE/aPDzhCi0sYZu1h/Y9lwnKq+rJ+t/ykGl2fFGkVOYddpZSBbJxI2mNs0E881HcII0dbLAAO4wgHnRlfJ0NrzEyrfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QJtJ0QYC; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1730902242; c=relaxed/simple;
+	bh=hR+M/12mz686XDw6qw79yyMcaey3EbYKRvazPCDOwQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JioNShFreW5TRsjSGnxYBvAbVYKH6RDwhLUsdqy/vAtQ/brygcO12CxiSkeveJ5Ez3i8OEhPsFdlc3fvWZyscaNoNEoU8F0LWTgdXxGFZA7umLvIFPebBzd6zHhzXQm/2HaDw0/kT6UqIidBaYnPWOoQQKywKpzBpwudexb6wzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxK/9pf0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QJtJ0QYC"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99eb8b607aso881168966b.2
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 05:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730901392; x=1731506192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dnVWSw+KJhETAVasGJrIAvyKjF38C4m7Mqa7Ozg4wBM=;
-        b=QJtJ0QYCTKpEhaHTwkjuDI+CjQJ8lSZcMOUmKbKX83mQpOvlYyItL/GaNQWi5D71Rs
-         5e0IngXpcErtXMlER5/y5PLVHuAMrjOBJWW/dxE4+q4KeZTdAAWed2mE+rw5xERqwjHk
-         n8r4/iyk2w6uuewRpZGAiNyL85vA7cr4TR3vvT5VWFdV+srw7bnC1RF7S8rnLcc2qy77
-         2kKk0yP45enW2tNp3/AvJi0UrLi15dRGEz+RkH8F6iP1+U+l1xi/kz5WMTnKbqji8MLX
-         YiBQGUTUm0JipJ2CSn84nTkPP7Cy5heoGotzHzeJsy1CM6rdGJDlS+TuWUpk+NJZtHRg
-         6Crw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730901392; x=1731506192;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dnVWSw+KJhETAVasGJrIAvyKjF38C4m7Mqa7Ozg4wBM=;
-        b=lMmEdt4qy70WYvo+N4Ev0eVsrXpAuAtzVV07AtU+QwBlDz4CtNfgIA1mN6U75Y/QUw
-         IJ8srxKp76hG37u+IRwlpdjAorwEW+AiIRET9GZDW3Jgy3/LUm3g09v4V91maNEkmke+
-         adudHcLVnTmaXopCIxhC4xRdwFubdP0jotau9jEyxSKF7aaAxDYhGC+gDt3yIENH8xu5
-         +hY9Xuzfowq1jkx5MRIaYk2iduotGxZoYQXDTlK5zlQRHF8cBcdY8OpllJQF6Yp6YG4x
-         WK/PpagI+STaamcdciaw1A8tHM6z9mbcpwDubRI7hCnev7/j+P/dTPUtgg5oYFHlIpLL
-         zerQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWN2Io/HUR38OmqE8YBDn7cykmzrg76BUkuXdu5ozchySn8PPq5kb9UhVcFM9ViytTkbx8UhGfido=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzePT+Zz5+wjw09nLQUnQ+odyMtzEQaA+ptVSMYf8thJ6z4zfLv
-	dZodPM2tqt6tnI9uEuPdOPFo2gXkA8YDdds4o0eVuraVNHV9qORKiTi/EWD3fOg=
-X-Google-Smtp-Source: AGHT+IF9scKQ8e7/Ni57o63cOTx1M2FE154987xaiGVVDPZ0ZG5nyAs/OZYi2hcL/6qm28yhXA9oEA==
-X-Received: by 2002:a17:907:948c:b0:a99:f8db:68b2 with SMTP id a640c23a62f3a-a9de5ecca55mr4251763866b.18.1730901392595;
-        Wed, 06 Nov 2024 05:56:32 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16a1012sm283324366b.38.2024.11.06.05.56.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 05:56:32 -0800 (PST)
-Message-ID: <bfe67d69-66ad-4121-8c54-a874c7727002@tuxon.dev>
-Date: Wed, 6 Nov 2024 15:56:28 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxK/9pf0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C0AC4CEC6;
+	Wed,  6 Nov 2024 14:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730902241;
+	bh=hR+M/12mz686XDw6qw79yyMcaey3EbYKRvazPCDOwQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oxK/9pf0bxWdLwkJ0XFrOHc/8z9aGFghLqiMYid+PmJ4KUJHrrf9hchG0UZuKR5sS
+	 JTk4Vhwpmmz2AcIrmkWeogxx/hS1lMNYA5JUMklzJnjthm016pojlcdRNdL66S9W4C
+	 WI0+4LoX0k54++97cUt9QpSVWeHEVHV4EsxZ4Cxr8iikxOv326+hzoeNoX8VsJl+nK
+	 uI4Ex2g18XPIbmhCvqt+R7VmC9DB3+Ms07DkgrDg7lIqG3k2bgaY8VLMDWj3/d4S4s
+	 36j9fSScrodXntyF7oIqtADJOkp26IMc2WYrgHaPQKNvbYgA3Z7spI2wV0j0abOVe/
+	 yKJ9lMPNwvqaA==
+Date: Wed, 6 Nov 2024 15:10:38 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+Message-ID: <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/31] ASoC: da7213: Populate max_register to
- regmap_config
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- lgirdwood@gmail.com, magnus.damm@gmail.com, linus.walleij@linaro.org,
- support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com,
- p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
- <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
- <d3c28a8b-878c-4894-aa23-5b360153b85d@sirena.org.uk>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <d3c28a8b-878c-4894-aa23-5b360153b85d@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
 
-Hi, Mark,
+On Wed, Nov 06, 2024 at 09:57:57AM +0100, Dario Binacchi wrote:
+> The patch adds the DT bindings for enabling and tuning spread spectrum
+> clocking generation.
 
-On 06.11.2024 15:43, Mark Brown wrote:
-> On Wed, Nov 06, 2024 at 10:18:17AM +0200, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> On the Renesas RZ/G3S SMARC Carrier II board having a DA7212 codec (using
->> da7213 driver) connected to one SSIF-2 available on the Renesas RZ/G3S SoC
->> it has been discovered that using the runtime PM API for suspend/resume
->> (as will be proposed in the following commits) leads to the codec not
->> being propertly initialized after resume. This is because w/o
->> max_register populated to regmap_config the regcache_rbtree_sync()
->> breaks on base_reg > max condition and the regcache_sync_block() call is
->> skipped.
->>
->> Fixes: ef5c2eba2412 ("ASoC: codecs: Add da7213 codec")
->> Cc: stable@vger.kernel.org
+We had long talks about this but nothing of it got reflected in commit
+msg. Sorry, I don't remember what I was talking in some particular patch
+month ago, so you will get the same questions over and over...
+
 > 
-> Why is this a stable fix when it only enables further work?
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> 
+> ---
+> 
+> Changes in v3:
+> - Added in v3
+> - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
+>   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
+>   indeed more or less a syscon, so it represents a memory area
+>   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
+> 
+>  .../bindings/clock/imx8m-clock.yaml           | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> index c643d4a81478..7920393e518e 100644
+> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> @@ -43,6 +43,40 @@ properties:
+>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
+>        for the full list of i.MX8M clock IDs.
+>  
+> +  fsl,ssc-clocks:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Phandles of the PLL with spread spectrum generation hardware capability.
+> +    minItems: 1
+> +    maxItems: 4
 
-I thought that not syncing the cached registers might impact other setups
-as well.
+1. How is it possible that you change spread spectrum of some clocks from
+main Clock Controller, while this device is not a consumer of them?
+Basically this means that this device does not have these clocks but yet
+you claim that it needs to configure spread for them! It's contradictory
+to me and nohing got explained in commit msg about it. I am pretty sure
+I asked about this alrady.
 
-Also, Renesas is contributing to CIP (Civil Infrastructure Project) which
-is based on stable releases. The audio support in this series will be
-backported to CIP kernels. Marking it for stable ease the work to backport
-the RZ/G3S audio support to CIP.
+2. Why is this array flexible in size?
 
-With this, would you prefer to drop the "Cc: stable@vger.kernel.org"?
+Best regards,
+Krzysztof
 
-Thank you,
-Claudiu Beznea
