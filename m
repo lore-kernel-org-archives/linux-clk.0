@@ -1,178 +1,142 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83B52036E1
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 14:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4D4201244
+	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 14:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903345; cv=none; b=SqVqTo9O2CfYwzQEF6bwkhOYXok0R7MZaQ0kybPVfgqpOel5RLqRcfW+keQ6eYSCwgZ2sVVm9qOTXYwzCixwfVXIac8wM4mEvT7H8X2i7CW0N6qBHZPaA6ogWXS1AlW/Ib+MsVmE3FPbPSOTh1k7lLt5Xq/EzJBSJ73PfW4atV4=
+	t=1730903717; cv=none; b=GOvSc9wFFMgAeZlASqDbwZ/O5Qh5LNC7l9EXm0JiNumrOR5ASI1evJuHeLxYcDmGGQHuiTc2i1oVDRz1djv+h6YxZI1ZKCnsCLbgHrTxgDBsRJ5jpjc8IK7l6raK5ctSMEoFCRuYlGq/Db14sBIWMav2rLR+alu7mAEbQEs1rzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903345; c=relaxed/simple;
-	bh=K94SiCVSkFaIN2s7YzYdWlAONyn4+MCAn3Pt17OpqgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CN0acyr0Eg4xa+0GxpU8TduMOTSo8TDAqy0UNTtEMRJuRmEyuztjeFEpjdaDumyQLwwaFOrC3PBGU83O2L7t12JcOrnNJsEsoBggeV2/kFUaVYHE7OBcgq4rcPV0l3ie6/KS0wZ/7miXjelz8vPkEkg4E6jT56Ah3FPf2/ODh7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PJ9wynX8; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1730903717; c=relaxed/simple;
+	bh=pQjjbYSj4ZS6KPiNFYIWrrPq6MbXf9GGUul0EVfRfJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOAeI4wSPdckfzO42iR2/4ObE9mgcWxwEB5cwGVgKGPA/lR2zEeU4TO+CDY5m3LS5ZtM/3YWtglSi33Px8SaZxSw7CW/VsLRx5VTt4pYT5axuYXrqVbynocml7iUQMihwRlPJdl0Ln8gCpdFN11bNPMAPnWuBtvRXQsUqQU9yj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kwhu1hMd; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PJ9wynX8"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4316cce103dso79190605e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 06:29:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kwhu1hMd"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53b34ed38easo6576187e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 06:35:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730903340; x=1731508140; darn=vger.kernel.org;
-        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fR07OvAKZCcn4c5fWCDFwwdic4q9vTVULluh2TSx4BY=;
-        b=PJ9wynX8ogDVrmdrXubrI5bHeNhuRAUksAflhqK4d79qFeQChgYuTDqeO/rgwz9tkg
-         41waWuKLlESywqTKEcMaKCpNo35+fGgDUxBSbRc2JxcVHX9fqic0QQiRgSvlke4qosc+
-         0OqVLezcHQQg66/s+EtMCvUEFZdcanQ9vJixcn8TOOlaUptXm7JIyRSzR7Y0Q+5k/71Z
-         f5q6nMz0oHRFX58ibGqxljJK7J/JGIB9Zr2JGenrsjs5310Ybgkan6OdOK990ym6lTnP
-         vtuZ5INw0iuxvCTspQIvSl3/nnp4B5mPW6+nEG99fJBOCRTOe46psIBhkguBvzYKoJAK
-         /mWQ==
+        d=linaro.org; s=google; t=1730903714; x=1731508514; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bnXDazCQ0RtTKBnn8REjgqiFnugp5BLQz0FcP1jAvLs=;
+        b=kwhu1hMdYaqiDRrEWOEtqnnrD6fpYEThus7x6Rqi81/29HRpJPnDRjkE31H3Xoei5F
+         n8DZKxZ1L2kIgxv2Gv10StnMIpAlsTyKg6UyveFt1hJ/BIdm/tlYpDicN4REVZnxZsYK
+         jT3dAX4rsC+Rc+s3l0/3/aSWEsR0k3MvPQLCzxUc3VWCihlIk22HBdudHDMxxjCL9TXN
+         6w8AQys05SJ3UXZcgsZaFJJtKGLibYlLz5GFr1+sMUxLcCpJhcJZwSYLGbUwuMIz6S5T
+         F+/j7YLRMZ+SGhsUMZoakXD9gPAbVKPL/WNvF3/EkcTWr8sibqImD8Q+klOpx7I0bvsk
+         Yx5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730903340; x=1731508140;
-        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fR07OvAKZCcn4c5fWCDFwwdic4q9vTVULluh2TSx4BY=;
-        b=BMqhmD2ySMlFBk1TykYOp+YRm1tuYWbH9ajnnuKuQEXGnvhK1F8iVTyt/E9Bo0YPXK
-         LNmLBTi+zCYV3Ba+8y5nZnWKgRJ5JNByrvxRw8I0WSUOQEGHmTctZVxlRJQ1ibQT6U3N
-         Xso9RSw+n6Pj9ZNiR5gFqUKK88NXfyY8z+fx39s86d1PhH4zb2awnzhflU8XZSZqqmDk
-         i0xptdc4LAk+CmYtppbpU75MGOVp39+huYeAgy2sVmaNH8cKUHJIN51zkoQFjxHGrSiF
-         xPQ2H7p5goizjBSjDSc+bdyswJFIauWkYYLBdk3uchVFa5ZVpG4B1zdU7IPHkxS7kZeE
-         2d6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtplXc5xCRAfsje5surnYhZMtW7ItJYs3JCQg48KGBb/tn7jTHQwsLO0F8ZGByFftjQx7BAAc/qYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPsCQnkHkCXBkSB58c5p0/cfi14NtrOG2nfYRxnHZZQzHZ4SO4
-	ZwVYvKFdYR+apEaPvMdHGuWY0DADn6v0PuiqlL27uYaou2zWRA+EbvSN42ITZk0=
-X-Google-Smtp-Source: AGHT+IGstdQ9A4MrGynIfGTZqv+ah9OkeHbjRp/dz/mM+KY45mCPilbar4JgbcfnSu8Wz5uGPgy1Uw==
-X-Received: by 2002:a05:600c:444d:b0:42f:75e0:780e with SMTP id 5b1f17b1804b1-4328324ad00mr207455705e9.10.1730903339920;
-        Wed, 06 Nov 2024 06:28:59 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:aefe:7cf1:a25f:8f85])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7a9esm19251468f8f.21.2024.11.06.06.28.58
+        d=1e100.net; s=20230601; t=1730903714; x=1731508514;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bnXDazCQ0RtTKBnn8REjgqiFnugp5BLQz0FcP1jAvLs=;
+        b=SQ5MPSRiTJybAVdN7JdykyrOl05BVV3ozwYNe/EsW894oopRsJP1Me+pKOp0allgXK
+         BKYu5YglCtbHlOqU9O41zVSXjEkholbY5fN3L6h86Bu/XYXJhKwSn9DDjQBlH2y580pi
+         vn3U6rR8zMTqNFPj9owv9M/hb9yLVFuqXxhs8mCJBEG+XhnVsH88TNQe7E593Kzo1evM
+         4/hsuTOu8yOPLSKlCPO2AYzAwOo4B68C8drgsQlExk05geF6e7rj18yQTuTtPeS9KYHM
+         noCsOFn+qtmd4V9s8KpKxA5X3xufJA5fH7Xx4Gz/vY1vuckEBpPVcuzAqeLx/Htyveim
+         95Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDLeOV5ZHTp7xZKwrwGC7+2gAdWe9VJzjH7qdgjauLHQHAu/T202aqKcXeqPzazgPQSzt5Bho8QnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3wgk423VoyBeQF16+2e0mhXoCD66BRMp8KPQ/qTDnbCds0ZkQ
+	herTpCHa2G954PD0BiKSLtd23ltvEpg8+T+JLg1YCqQe0Jhv+4IOCP1guJPgFQ==
+X-Google-Smtp-Source: AGHT+IFY7xsniFJYwZTMCPs0XA34VZgv3LQnQ0nmsY4lMKbdJP685p4rmkNLWAvlojUA7tIwGlZepw==
+X-Received: by 2002:a05:6512:1324:b0:539:8980:2009 with SMTP id 2adb3069b0e04-53b348e76femr20895757e87.36.1730903714190;
+        Wed, 06 Nov 2024 06:35:14 -0800 (PST)
+Received: from thinkpad ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa7378e9sm26380495e9.37.2024.11.06.06.35.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 06:28:58 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
- <khilman@baylibre.com>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-amlogic@lists.infradead.org"
- <linux-amlogic@lists.infradead.org>, Philipp Zabel
- <p.zabel@pengutronix.de>
-Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.13
-Date: Wed, 06 Nov 2024 15:28:57 +0100
-Message-ID: <1jy11w307q.fsf@starbuckisacylon.baylibre.com>
+        Wed, 06 Nov 2024 06:35:13 -0800 (PST)
+Date: Wed, 6 Nov 2024 14:35:11 +0000
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
+ address to dynamic bridge nodes
+Message-ID: <20241106143511.2ao7nwjrxi3tiatt@thinkpad>
+References: <20241104150521.r4hbsurw4dbzlxpg@thinkpad>
+ <20241104234937.GA1446920@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241104234937.GA1446920@bhelgaas>
 
+On Mon, Nov 04, 2024 at 05:49:37PM -0600, Bjorn Helgaas wrote:
+> On Mon, Nov 04, 2024 at 08:35:21PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Nov 04, 2024 at 09:54:57AM +0100, Andrea della Porta wrote:
+> > > On 22:39 Sat 02 Nov     , Manivannan Sadhasivam wrote:
+> > > > On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
+> > > > > When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
+> > > > > incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
+> > > > > bridge, the window should instead be in PCI address space. Call
+> > > > > pci_bus_address() on the resource in order to obtain the PCI bus
+> > > > > address.
+> > > > 
+> > > > of_pci_prop_ranges() could be called for PCI devices also (not just PCI
+> > > > bridges), right?
+> > > 
+> > > Correct. Please note however that while the PCI-PCI bridge has the parent
+> > > address in CPU space, an endpoint device has it in PCI space: here we're
+> > > focusing on the bridge part. It probably used to work before since in many
+> > > cases the CPU and PCI address are the same, but it breaks down when they
+> > > differ.
+> > 
+> > When you say 'focusing', you are specifically referring to the
+> > bridge part of this API I believe. But I don't see a check for the
+> > bridge in your change, which is what concerning me. Am I missing
+> > something?
+> 
+> I think we want this change for all devices in the PCI address
+> domain, including PCI-PCI bridges and endpoints, don't we?  All those
+> "ranges" addresses should be in the PCI domain.
+> 
 
-Hi Stephen,
+Yeah, right. I was slightly confused by the commit message. Maybe including a
+sentence about how the change will work fine for endpoint devices would help.
+Also, why it went unnoticed till now (ie., both CPU and PCI addresses are same
+in many SoCs).
 
-Here is the Amlogic clock update for v6.13.
+Also there should be a fixes tag (also CC stable) since this is a potential bug
+fix.
 
-This is one is a bit out of the ordinary. You'll notice a fair amount
-change in drivers/reset. We completed the rework to take the resets of
-the axg controller out of drivers/clk/meson. This code will now be
-maintained where it belongs. This will also allow to not duplicate reset
-driver with the new audio clock controllers coming up.
+- Mani
 
-The reset change present in this PR come from the following tag provided
-by Philipp:
-
-https://git.pengutronix.de/cgit/pza/linux/tag/?h=reset-amlogic-aux
-
-One of the change present in this PR depends on these reset changes
-which is why I pulled it.
-
-The rest of the PR is business as usual.
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.13-1
-
-for you to fetch changes up to 664988eb47dd2d6ae1d9e4188ec91832562f8f26:
-
-  clk: amlogic: axg-audio: use the auxiliary reset driver (2024-10-14 10:11:05 +0200)
-
-----------------------------------------------------------------
-Amlogic clock updates for v6.13
-
-* Fix hifi_pll rate calculation on s4 and c3
-* Move audio reset implementation from the axg-audio clock controller
-  driver to the reset directory, using the auxiliary device bus.
-* Remove the unnecessary spinlock in the mpll driver
-* Fix meson8 clock controller DT bindings
-
-----------------------------------------------------------------
-Chuan Liu (5):
-      clk: meson: s4: pll: hifi_pll support fractional multiplier
-      clk: meson: Support PLL with fixed fractional denominators
-      clk: meson: c3: pll: fix frac maximum value for hifi_pll
-      clk: meson: s4: pll: fix frac maximum value for hifi_pll
-      clk: meson: mpll: Delete a useless spinlock from the MPLL
-
-Jerome Brunet (14):
-      clk: meson: meson8b: remove spinlock
-      Merge tag 'v6.12-rc1' into clk-meson-next
-      Merge branch 'v6.13/bindings' into clk-meson-next
-      reset: amlogic: convert driver to regmap
-      reset: amlogic: use generic data matching function
-      reset: amlogic: make parameters unsigned
-      reset: amlogic: add driver parameters
-      reset: amlogic: use reset number instead of register count
-      reset: amlogic: add reset status support
-      reset: amlogic: move drivers to a dedicated directory
-      reset: amlogic: split the device core and platform probe
-      reset: amlogic: add auxiliary reset driver support
-      Merge tag 'reset-amlogic-aux' into clk-meson-next
-      clk: amlogic: axg-audio: use the auxiliary reset driver
-
-Neil Armstrong (1):
-      dt-bindings: clock: convert amlogic,meson8b-clkc.txt to dtschema
-
-Philipp Zabel (1):
-      reset: amlogic: Fix small whitespace issue
-
- .../bindings/clock/amlogic,meson8-clkc.yaml        |  45 ++++++
- .../bindings/clock/amlogic,meson8b-clkc.txt        |  51 -------
- drivers/clk/meson/Kconfig                          |   1 +
- drivers/clk/meson/axg-audio.c                      | 109 ++------------
- drivers/clk/meson/axg.c                            |   6 -
- drivers/clk/meson/c3-pll.c                         |   1 +
- drivers/clk/meson/clk-mpll.c                       |  11 --
- drivers/clk/meson/clk-mpll.h                       |   1 -
- drivers/clk/meson/clk-pll.c                        |   8 +-
- drivers/clk/meson/clk-pll.h                        |   1 +
- drivers/clk/meson/g12a.c                           |   6 -
- drivers/clk/meson/gxbb.c                           |   6 -
- drivers/clk/meson/meson8b.c                        |  10 --
- drivers/clk/meson/s4-pll.c                         |  13 +-
- drivers/reset/Kconfig                              |  15 +-
- drivers/reset/Makefile                             |   3 +-
- drivers/reset/amlogic/Kconfig                      |  27 ++++
- drivers/reset/amlogic/Makefile                     |   4 +
- .../reset/{ => amlogic}/reset-meson-audio-arb.c    |   0
- drivers/reset/amlogic/reset-meson-aux.c            | 136 ++++++++++++++++++
- drivers/reset/amlogic/reset-meson-common.c         | 142 ++++++++++++++++++
- drivers/reset/amlogic/reset-meson.c                | 105 ++++++++++++++
- drivers/reset/amlogic/reset-meson.h                |  28 ++++
- drivers/reset/reset-meson.c                        | 159 ---------------------
- include/soc/amlogic/reset-meson-aux.h              |  23 +++
- 25 files changed, 535 insertions(+), 376 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,meson8-clkc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
- create mode 100644 drivers/reset/amlogic/Kconfig
- create mode 100644 drivers/reset/amlogic/Makefile
- rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
- create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
- create mode 100644 drivers/reset/amlogic/reset-meson-common.c
- create mode 100644 drivers/reset/amlogic/reset-meson.c
- create mode 100644 drivers/reset/amlogic/reset-meson.h
- delete mode 100644 drivers/reset/reset-meson.c
- create mode 100644 include/soc/amlogic/reset-meson-aux.h
+-- 
+மணிவண்ணன் சதாசிவம்
