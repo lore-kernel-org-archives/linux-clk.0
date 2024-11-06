@@ -1,40 +1,85 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1E113D24C
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 08:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274341D271D
+	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 08:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730880031; cv=none; b=IeJtKQHDPmgraiDAp7EfCBQQK64t1Mg63SIZIRNB3ZUZb4Bd9j58ReHTiQSB/H0ROi8tEfU11gwNHkrN6CCOBLyxu0VH64q4bTSo5AmOpBgjltKfZco4/WpSLT8DBC3q4b+Oi1gHGiv3+q7h8ABqHsq8a4CSPuPUdUF9jmOk4XM=
+	t=1730881160; cv=none; b=kxz7CRdmfq0Y8rjq1fQCGxC/4hM8zl1dxV5SNErJCxZOHgRqycgYg9D1yACcG8pouPKVCRHHwRgF9RBbMh5o8fk3DoE/G19UBZhYs/d3kZ7r8IcETskuDrnTSWoq1DRs/BEm3fUuLNNsTpk+Qu9Jr5MobfEKC5WOiAlihUXKjOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730880031; c=relaxed/simple;
-	bh=ZIc9yg3Xu2fol2W0chfqUTKp2WjB2DX6CLZVH4UCj98=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e/ciXpaURybsRwED6RE/riXeF2fSHNGdZXRvgjrxJBDB8yEAQ8uMe/1VpUAKcvlYXMwH/qX/jhAloY1MGDL0U2xELVhwB9K+VN4HeYygnRvSDYv7wJS33g1NH3VxfZmNHW0xbFP5nc1+WOyH6mqwHsG+lAKb6oC2Y2+DLT2CTnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:aed7:437f:20a9:d72d])
-	by andre.telenet-ops.be with cmsmtp
-	id ZL0H2D00S3NwldE01L0Hjt; Wed, 06 Nov 2024 09:00:18 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t8axJ-006M8G-SQ;
-	Wed, 06 Nov 2024 09:00:17 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t8axd-005gpa-Bb;
-	Wed, 06 Nov 2024 09:00:17 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL v2] clk: renesas: Updates for v6.13 (take two)
-Date: Wed,  6 Nov 2024 09:00:12 +0100
-Message-Id: <cover.1730879827.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730881160; c=relaxed/simple;
+	bh=GpBDUTZ3YVREfgsYBDreS3OjzBVkAgTgUgBjQMMYioM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QG/7Xd+4NOPeef9XCMWdEmpwiaCp3kYZtmOT0gh1PgIveijQbV3tOkR0VhFgnxiQdPNdyiL2bPby8W1orX631tfko6UqtEv3IpkraSdzy39l3TTATXB2MLlE8BUO0LKpwaI3Lg16fnsSiJeGV43pNAuV7UU75Pyetz2nVYzUObQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pb7+cJhV; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pb7+cJhV"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f58c68c5so11489917e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 00:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1730881155; x=1731485955; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O0EwWiHqZRcRNhtKVqfQIo8EgL8Jkkj2R1J1tOzysMA=;
+        b=pb7+cJhVpqTVTT7LXw0aeKym4KcDoYFZ4QHE2Iig+DmndeE5U5UgPjcTd00LcB7mEO
+         2Mpo4hTM6NYtLr02F9fdnDukYc3KLB6LPIU/zvk0dG6k5C4e3FXUBMUFuYMfq3yOSaD8
+         aO5Cvd05+6QYPUpi9Fx3zOPonve4Twa92kwLxlbiCAS1VnyR63Tt5v88DZ+Ijalj9/jh
+         NHytgoiVCjwYifjclA2E17TJ9wW6yXp+OvMAOcO6rLhwHuHt+okfvw06DjG3aqk+8QyT
+         jaoDTVKr24YYZ8zvx92H/Tj2YfHRI25z1H32NClp38I2PDCQJGvOA3c8X0P7IM+MBXkm
+         W0Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730881155; x=1731485955;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O0EwWiHqZRcRNhtKVqfQIo8EgL8Jkkj2R1J1tOzysMA=;
+        b=qbUlOtI8lU587jg8AsLDOXAZzW+sWSFCa2oveD2jfXzrN6Vb1ur0qLLJaYeGf7a0cH
+         UkV3s42tz+0F8R19+PDNPD4BhwJrtqQnPYGozFjD8onI7jY9XWMsOaEiccUdFesiUegF
+         DzDY09PLbiSPY+cUBEui8bxYyH8iAK9BTG6sdTvUDpckQ1O73eKFwudPdi6yq9WUFewU
+         plFthBton1IgOJ5zrpBnAJ/t7gMALQmEfdIYLZtFKh5lUuzcfPqYJUeVoVUDxpDR9iLY
+         H7BI3j6dgQ19Xu4kf48szXCQ1W08qQLtYp+48ngAKH4fFmcWeC8PWbhq+zucENbp/iHa
+         YFNg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6APSUMWedCCoE61DrZEaLhZZbBvUnhzWeJJQHefywjWbi6df+JxrPVXUMVDNN89+OCwBVnUGQ2Us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdkdFPN+pG0JAuQQwdGbC2dj3j+cdK/0yANOjJ26mhezhabBoJ
+	soUgEHI8c0gFMagP21mryxyswL4e6UVpJRmtD+0lxKPo+hrK4lkxntqr/vLOkEA=
+X-Google-Smtp-Source: AGHT+IFtafBLis7fezHXs17e2MYW4DBcU7xNwUH27d76x7GwpqPEQILU3OH71SRjhwJ/jvCHwWZnIw==
+X-Received: by 2002:a05:6512:3d0e:b0:53c:74ed:9de with SMTP id 2adb3069b0e04-53d65dc9860mr15311533e87.6.1730881155098;
+        Wed, 06 Nov 2024 00:19:15 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16a2dbcsm241369766b.40.2024.11.06.00.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 00:19:14 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	magnus.damm@gmail.com,
+	linus.walleij@linaro.org,
+	support.opensource@diasemi.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	p.zabel@pengutronix.de,
+	Adam.Thomson.Opensource@diasemi.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/31] Add audio support for the Renesas RZ/G3S SoC
+Date: Wed,  6 Nov 2024 10:17:55 +0200
+Message-Id: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,76 +88,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi Mike, Stephen,
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The following changes since commit 92850bed9d4d334ee502a035ed5750285faccbea:
+Hi,
 
-  clk: renesas: r8a779h0: Drop CLK_PLL2_DIV2 to clarify ZCn clocks (2024-10-14 10:04:31 +0200)
+Series enables the audio support for the Renesas RZ/G3S
+SoC along with runtime PM and suspend to RAM.
 
-are available in the Git repository at:
+Patches:
+-    01/31 - add clock, reset and power domain support
+- 02-04/31 - update versaclock3 clock generator driver to support the
+             5L35023 hardware variant; versaclock3 provides clocks for
+             the audio devices (SSIF, DA7212 codec)
+-    05/31 - add pin control support for audio
+- 06-21/31 - add SSIF support for the RZ/G3S SoC; fixes and cleanups
+             were also included
+- 22-26/31 - updates the da7213 codec driver to support the DA7212
+             hardware variant; suspend to RAM code was adjusted
+             to cope with the RZ/G3S power saving modes
+- 27-31/31 - add device tree support
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.13-tag2
+Merge strategy, if any:
+- clock patches (01-04/31) can go through the Renesas tree
+- pinctrl patch (05/31) can go though the Renesas tree
+- audio patches (06-26/31) can go through audio tree
+- device tree patches (27-31/31) can go through Renesas tree
 
-for you to fetch changes up to 3b42450ce1771c7b11d8f3563f4bbfe9b8d26611:
+Thank you,
+Claudiu Beznea
 
-  clk: renesas: vbattb: Add VBATTB clock driver (2024-11-06 08:52:45 +0100)
+Claudiu Beznea (29):
+  clk: renesas: r9a08g045-cpg: Add clocks, resets and power domains
+    support for SSI
+  clk: versaclock3: Prepare for the addition of 5L35023 device
+  dt-bindings: clock: versaclock3: Document 5L35023 Versa3 clock
+    generator
+  clk: versaclock3: Add support for the 5L35023 variant
+  pinctrl: renesas: rzg2l: Add audio clock pins
+  ASoC: sh: rz-ssi: Terminate all the DMA transactions
+  ASoC: sh: rz-ssi: Use only the proper amount of dividers
+  ASoC: sh: rz-ssi: Fix typo on SSI_RATES macro comment
+  ASoC: sh: rz-ssi: Remove pdev member of struct rz_ssi_priv
+  ASoC: sh: rz-ssi: Remove the rz_ssi_get_dai() function
+  ASoC: sh: rz-ssi: Remove the 2nd argument of rz_ssi_stream_is_play()
+  ASoC: sh: rz-ssi: Use a proper bitmask for clear bits
+  ASoC: sh: rz-ssi: Use readl_poll_timeout_atomic()
+  ASoC: sh: rz-ssi: Use temporary variable for struct device
+  ASoC: sh: rz-ssi: Use goto label names that specify their actions
+  ASoC: sh: rz-ssi: Rely on the ASoC subsystem to runtime resume/suspend
+    the SSI
+  ASoC: sh: rz-ssi: Enable runtime PM autosuspend support
+  ASoC: sh: rz-ssi: Add runtime PM support
+  ASoC: sh: rz-ssi: Issue software reset in hw_params API
+  ASoC: sh: rz-ssi: Add suspend to RAM support
+  ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
+  ASoC: da7213: Populate max_register to regmap_config
+  ASoC: da7213: Return directly the value of regcache_sync()
+  ASoC: da7213: Add suspend to RAM support
+  arm64: dts: renesas: r9a08g045: Add SSI nodes
+  arm64: dts: renesas: rzg3s-smarc-som: Add versa3 clock generator node
+  arm64: dts: renesas: Add da7212 audio codec node
+  arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+  arm64: dts: renesas: rzg3s-smarc: Add sound card
 
-----------------------------------------------------------------
-clk: renesas: Updates for v6.13 (take two)
+Hao Bui (2):
+  ASoC: da7213: Avoid setting PLL when closing audio stream
+  ASoC: da7213: Extend support for the MCK in range [2, 50] MHz
 
-  - Add RTC power domain and Battery Backup Function (VBATTB) clock
-    support for the RZ/G3S SoC,
-  - Add the devm_clk_hw_register_gate_parent_hw() helper,
-  - Miscellaneous fixes and improvements.
+ .../bindings/clock/renesas,5p35023.yaml       |   1 +
+ .../bindings/sound/renesas,rz-ssi.yaml        |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  96 ++++++++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  47 +++-
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  66 +++++
+ drivers/clk/clk-versaclock3.c                 |  67 +++--
+ drivers/clk/renesas/r9a08g045-cpg.c           |  20 ++
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |   2 +
+ sound/soc/codecs/da7213.c                     |  27 ++-
+ sound/soc/codecs/da7213.h                     |   1 +
+ sound/soc/renesas/rz-ssi.c                    | 228 +++++++++++-------
+ 11 files changed, 437 insertions(+), 119 deletions(-)
 
-Note that this includes DT binding updates for the RZ/G3S SoC, which are
-shared by the clock driver and DT source files.
+-- 
+2.39.2
 
-Changes compared to v1:
-  - Drop "linux/clk-provider.h" from one-line description.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (1):
-      clk: renesas: rzg2l: Fix FOUTPOSTDIV clk
-
-Claudiu Beznea (8):
-      dt-bindings: clock: r9a08g045-cpg: Add power domain ID for RTC
-      clk: renesas: rzg2l-cpg: Move PM domain power on in rzg2l_cpg_pd_setup()
-      clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
-      clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as IRQ safe
-      clk: renesas: r9a08g045: Add power domain for RTC
-      dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
-      clk: Add devm_clk_hw_register_gate_parent_hw()
-      clk: renesas: vbattb: Add VBATTB clock driver
-
-Geert Uytterhoeven (2):
-      Merge tag 'renesas-r9a08g045-dt-binding-defs-tag2' into renesas-clk-for-v6.13
-      Merge tag 'renesas-r9a08g045-dt-binding-defs-tag3' into renesas-clk-for-v6.13
-
- .../bindings/clock/renesas,r9a08g045-vbattb.yaml   |  84 +++++++++
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/clk-vbattb.c                   | 205 +++++++++++++++++++++
- drivers/clk/renesas/r9a08g045-cpg.c                |  54 +++---
- drivers/clk/renesas/rzg2l-cpg.c                    |  52 +++---
- drivers/clk/renesas/rzg2l-cpg.h                    |  10 +-
- include/dt-bindings/clock/r9a08g045-cpg.h          |   1 +
- .../dt-bindings/clock/renesas,r9a08g045-vbattb.h   |  13 ++
- include/linux/clk-provider.h                       |  18 ++
- 10 files changed, 380 insertions(+), 63 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
- create mode 100644 drivers/clk/renesas/clk-vbattb.c
- create mode 100644 include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
