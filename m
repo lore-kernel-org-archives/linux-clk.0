@@ -1,140 +1,231 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388AD1DF738
-	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 15:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191F12036ED;
+	Wed,  6 Nov 2024 15:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906716; cv=none; b=OzUl2MLbsdjb2VaAL/+6grB3gvb3szH9dt8BJo7xKlu6yc6wGAtYqbQSeTPwaUIT5EYmYrkX8IYsJDQo39gyBPSaMhoBt8J4tblIT7heQqY8MPhkZNFERqZRz/CzjppdQF9afjMLjtj9m8JSJ8uycWTptVzyVLLQeDA9aIGLwiM=
+	t=1730907108; cv=none; b=alv4ppm+SC54iCpILZoZ+RKlBtB3SuAmgl69zXpnu8Whi8VGWlmraWzdhn8ayNiOhYZcAk6FghFW88J0+E7myIh6wqgGK6B1VLFwA5tAz7LyRtV31dSZmsP0hHAUYvkCLohHQ12YNyy+OIXm/4PLvTqnT848tabwlLDSVezO/vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906716; c=relaxed/simple;
-	bh=825fFcUQnPqu974K62Cc6TOzabToD2+pOzemxF4MwRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kt+f4MMSb9BRkUlPL7vrN/4w3KLujy3c82wkbpVoEsrndo21ocjap+w04CEoDCgdP8lPg8BpFblJwCFRlLKmc/dqrQKCAFolnLmhtEpqXMXKdTuF9sSY2MaekL5y8FL1/sUsh9d0H2ReLUNm9I7bdeCo1w4tkemR30E6yk1XJlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=eAvksleF; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1730907108; c=relaxed/simple;
+	bh=YinUtlhN21UTDpWy65DE0bx73dRSBrI4axGpunJIP4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bjFlRn2b9DPnyk/ox02nJ/p2YSJFqoA4drumyHzSH9YMmgaI9p+stAWqoaJ4ph0fbwh1CDeNNtu1tQbd+En/GtaPd2WF7O5lk1O5mUeXs/UEyWubH6sL+yR/lZvwJqFqDCCdxbz8tzGYlAj/jXZvEcnggBNqj1J592yE3qPMEQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gV98/D8s; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="eAvksleF"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9ec86a67feso144544666b.1
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 07:25:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV98/D8s"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e8522445dso731477966b.1;
+        Wed, 06 Nov 2024 07:31:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730906714; x=1731511514; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dpz0KPFgwBV81mrLK+Jjg94JN4iKvNSkamb0eOPZLK4=;
-        b=eAvksleF7W+C+ALDEBsiL1juBKu4OBb8yTa1Uos7IDPpjRzWA0CZkV4wDVvq2ubycU
-         Ft1338HVt9x6/xBsWOh11mGoRQcs4Q3Humzxpd321W1ydp6fNVCBzXNlpEl7wMCHqJ3v
-         M15fNINekBH6k/t+HanQpJNZVzIp18KAnAx0A0se/8nx5S1PrDd1cBWaIWSyn6JoAH6+
-         2x2vii6jgBe1SbVnAFVbI8SsHMtqm8Tz1RV8oa/4Akr/n0hp0RUF80+nXI+uHREaCZsK
-         8DFEWbUeyS60OtSybjOw2o11rgdamI52QSDgm31ETdpHr+4R5TL3TAdQ9YNjgUzllLRd
-         yUWw==
+        d=gmail.com; s=20230601; t=1730907105; x=1731511905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxZUEYefO8cHk0O3pZ6pSrkyLEtM/cjRFYGqJjEkBSc=;
+        b=gV98/D8swQiWj1GoQ9w88zv+fydMA7X3Mgs8EVBU5fLTmogPtXm0EQgHPTTLnDgBEZ
+         xnQFgHYLoz8pbqT7VcErljDMrMk6cv3DKZiCH+QkJCnMWZYm2P16Yh+OAe/lRglPXuhH
+         uuTaZp4gqhcNnm+hJqSaPqID1eK5N3y7dfx9sT53HeF29uO3spXm+VupvtKt3nf6Hj5V
+         iT+dzSPe6L+PObDbskzDCMNglkJq431h53MbBvDuTFRgZbvq6Nvc5XapYifu0J3d6GVp
+         P7fIfgYbBog/FVfhRHZFXqYwFPfgsMrVyb/jXkZbyLWXTDzm7YMJqbE+y2vTkT7dJvNS
+         FhtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730906714; x=1731511514;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dpz0KPFgwBV81mrLK+Jjg94JN4iKvNSkamb0eOPZLK4=;
-        b=PLBYP5PLuEDaffwmCHiCyk7Y1uDcgH1ks0yM/5kHgh4BiwwF3+lAOpoHtHDq7m4Z20
-         PokSoDtyrOYdgwy0kcBz+ufxLn+Mq/bTorZXfvQ4V/g639lc0s0x1Fjox8A4nr5aSIp+
-         /DAVEO69TlObp4unh4GaDMQDAiDlUZE2Bxui8kqAt9qE1lRfNJ3KX5hPmICucXb/aRYL
-         vCWGmJnCBdBi+7biDp16+bKxb9eEVwJczqJNNIUFadcfc6kptTVgxaMuaCK4cvOLWP26
-         93MTEYw3E/QV+Q4VXBjZP4h6rcTeHppm9l9ZOURZLJXywrOje0fc5HLhNmEcgd+OFQwX
-         eBgA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+I6RaDL9Fo0bA5ZVWyqwQYyTDsMxmDGinyElZpkwoor0W21TOCAySIHohBVJfMg+eSPrL0GfbF7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKqSZ9g2sUTU2MfiFnskVYeUaQ9X/HGM1fx7nFO/NseHjODCj7
-	HMNYefSJZ3MyYzbOlxZAg5v6ZomRMyW7vK83w6FJKVKApnfRDzI39yt/PgARWQ8=
-X-Google-Smtp-Source: AGHT+IGCsBt4YImQ9v/cxMm8F2bd0t7nztI/dFwfKLybyOThX/4Zc2NTUaw9MVXNyjcZDUzvlEvVaQ==
-X-Received: by 2002:a17:907:1a4e:b0:a9a:2523:b4ce with SMTP id a640c23a62f3a-a9de5c91985mr2353019666b.6.1730906713378;
-        Wed, 06 Nov 2024 07:25:13 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb1814086sm294320366b.193.2024.11.06.07.25.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 07:25:12 -0800 (PST)
-Message-ID: <5f524886-7479-44d7-b94f-21207c5a9ff9@tuxon.dev>
-Date: Wed, 6 Nov 2024 17:25:09 +0200
+        d=1e100.net; s=20230601; t=1730907105; x=1731511905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TxZUEYefO8cHk0O3pZ6pSrkyLEtM/cjRFYGqJjEkBSc=;
+        b=ubcaOgHqXEXSekHpJt4pS9QdVwbBOXAiMX8GA6iedZs+bb9swDSf2A1q1DOV5AOw9H
+         JthjY6MLRZNtfioD9493WiFxiL68qYE/ToVjj2szrMavPLXb7mK1j+RtSlKqZ3kq5K0k
+         n/RzO/be3sRKW3RA/1g5C6WlFjU0D5LreDXGyUUp3uKjFoafR60+/2Ob6Zex0Q+eGMwF
+         u2SZnjkO7wDlIdOSROil5044zm4Xp1mhMeiALepXogtEMnOC1aUjmOldr70gBMw65MsC
+         RrSmbSMmgzvg0/iJ7FoBi1QW+XxRK8jH/ydwNTuRfRRLNOJ2JOKYqDf1rCbUimTL7kd4
+         5JFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmhzs+D+z1RTKAx5sv3jsB/ap6j0YOc3XUHC+UI3sUFttpSAcFkfQqvOhcdKRensZJLIz4fRoEPOWd@vger.kernel.org, AJvYcCVqMGiszqMgt5WUMdyOicUX3gGHCn86zb0ahta8udEbFhtj14T/euHrlb9qGk5jKtN6B7xjPiOoVIWY9KTz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiUzzFE0P9NSY4iMXEyMvzQk7EeRuPYpu/y74E//67dITbZ9i4
+	c7LeA350opm7MT9/qFonEirrsrihzfP4gc/BWWd3mCxHEQYrEb91
+X-Google-Smtp-Source: AGHT+IF0ZzyBdcVslRwOSTjEHqwVoJnmjkaO24ZdQOt67CgbkGTe+T3MfKCDKsQIMoe5M16dlGZRtg==
+X-Received: by 2002:a17:906:6a12:b0:a9a:1778:7024 with SMTP id a640c23a62f3a-a9e65576989mr2245715566b.20.1730907105078;
+        Wed, 06 Nov 2024 07:31:45 -0800 (PST)
+Received: from ivaylo-T580.. (miroral.stz.ddns.bulsat.com. [91.139.249.115])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17cecd7sm302227066b.100.2024.11.06.07.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 07:31:44 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-actions@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clock: actions,owl-cmu: convert to YAML
+Date: Wed,  6 Nov 2024 17:31:41 +0200
+Message-ID: <20241106153141.375389-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/31] ASoC: sh: rz-ssi: Use a proper bitmask for clear
- bits
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com,
- broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org,
- support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com,
- p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
- <20241106081826.1211088-13-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com>
- <4e233ebe-b0e1-4b37-9063-bdbeb5980b13@tuxon.dev>
- <CAMuHMdVrKoyRuaa=jtZ5SJ3OX8ytGyN_jwv2uKX2ohGpg6yiuA@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVrKoyRuaa=jtZ5SJ3OX8ytGyN_jwv2uKX2ohGpg6yiuA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Convert the Actions Semi Owl CMU bindings to DT schema.
 
+Changes during conversion:
+ - Since all Actions Semi Owl SoCs utilize the internal low frequency
+   oscillator as a parent for some clocks, require it.
 
-On 06.11.2024 17:21, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Wed, Nov 6, 2024 at 4:17 PM Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->> On 06.11.2024 16:56, Geert Uytterhoeven wrote:
->>> On Wed, Nov 6, 2024 at 9:19 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> While it is still correct to pass zero as the bit-clear mask it may be
->>>> confusing. For this, use a proper bitmask for clear bits.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> Thanks for your patch!
->>>
->>>> --- a/sound/soc/renesas/rz-ssi.c
->>>> +++ b/sound/soc/renesas/rz-ssi.c
->>>> @@ -331,7 +331,7 @@ static void rz_ssi_set_idle(struct rz_ssi_priv *ssi)
->>>>                 dev_info(ssi->dev, "timeout waiting for SSI idle\n");
->>>>
->>>>         /* Hold FIFOs in reset */
->>>> -       rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_FIFO_RST);
->>>> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_FIFO_RST, SSIFCR_FIFO_RST);
->>>
->>> But you're not clearing SSIFCR_FIFO_RST, you're setting it?
->>
->> The bits should be set to reset the FIFOs.
->>
->> By "Use a proper bitmask for clear bits" phrase in the patch title or
->> description I was referring at the 3rd argument of the
->> rz_ssi_reg_mask_setl() function, which has the following prototype:
->>
->> static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
->>
->>                                  u32 bclr, u32 bset)
->>
->>
->> Would you prefer to rephrase it in the next version?
-> 
-> The idea behind such functions is to pass a bitmask representing the
-> bits to be cleared to "bclr", and a bitmask representing the bits
-> to be set to "bset".  In this case, you do not want to clear any bits,
-> so the "bclr" parameter should be zero, and the original code is fine.
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+---
+v2: drop address and size cells from example
+---
+ .../bindings/clock/actions,owl-cmu.txt        | 52 -----------------
+ .../bindings/clock/actions,owl-cmu.yaml       | 57 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 58 insertions(+), 53 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
 
-OK, I'll will drop this patch.
+diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+deleted file mode 100644
+index d19885b7c..000000000
+--- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
++++ /dev/null
+@@ -1,52 +0,0 @@
+-* Actions Semi Owl Clock Management Unit (CMU)
+-
+-The Actions Semi Owl Clock Management Unit generates and supplies clock
+-to various controllers within the SoC. The clock binding described here is
+-applicable to S900, S700 and S500 SoC's.
+-
+-Required Properties:
+-
+-- compatible: should be one of the following,
+-	"actions,s900-cmu"
+-	"actions,s700-cmu"
+-	"actions,s500-cmu"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- clocks: Reference to the parent clocks ("hosc", "losc")
+-- #clock-cells: should be 1.
+-- #reset-cells: should be 1.
+-
+-Each clock is assigned an identifier, and client nodes can use this identifier
+-to specify the clock which they consume.
+-
+-All available clocks are defined as preprocessor macros in corresponding
+-dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
+-actions,s500-cmu.h header and can be used in device tree sources.
+-
+-External clocks:
+-
+-The hosc clock used as input for the plls is generated outside the SoC. It is
+-expected that it is defined using standard clock bindings as "hosc".
+-
+-Actions Semi S900 CMU also requires one more clock:
+- - "losc" - internal low frequency oscillator
+-
+-Example: Clock Management Unit node:
+-
+-        cmu: clock-controller@e0160000 {
+-                compatible = "actions,s900-cmu";
+-                reg = <0x0 0xe0160000 0x0 0x1000>;
+-                clocks = <&hosc>, <&losc>;
+-                #clock-cells = <1>;
+-                #reset-cells = <1>;
+-        };
+-
+-Example: UART controller node that consumes clock generated by the clock
+-management unit:
+-
+-        uart: serial@e012a000 {
+-                compatible = "actions,s900-uart", "actions,owl-uart";
+-                reg = <0x0 0xe012a000 0x0 0x2000>;
+-                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+-                clocks = <&cmu CLK_UART5>;
+-        };
+diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+new file mode 100644
+index 000000000..3504f70eb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+@@ -0,0 +1,57 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/actions,owl-cmu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Actions Semi Owl Clock Management Unit (CMU)
++
++maintainers:
++  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++description: |
++  The Actions Semi Owl Clock Management Unit generates and supplies clock
++  to various controllers within the SoC.
++
++  All available clocks are defined as preprocessor macros in
++  include/dt-bindings/clock/ headers.
++
++properties:
++  compatible:
++    enum:
++      - actions,s500-cmu
++      - actions,s700-cmu
++      - actions,s900-cmu
++
++  clocks:
++    items:
++      - description: Host oscillator source
++      - description: Internal low frequency oscillator source
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  "#reset-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    cmu: clock-controller@e0160000 {
++       compatible = "actions,s900-cmu";
++       reg = <0xe0160000 0x1000>;
++       clocks = <&hosc>, <&losc>;
++       #clock-cells = <1>;
++       #reset-cells = <1>;
++     };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 420d06d37..652c9822a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2016,7 +2016,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/actions.yaml
+-F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
++F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+ F:	Documentation/devicetree/bindings/dma/owl-dma.yaml
+ F:	Documentation/devicetree/bindings/i2c/i2c-owl.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.yaml
+-- 
+2.43.0
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
