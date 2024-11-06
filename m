@@ -1,169 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E14F17DFF2;
-	Wed,  6 Nov 2024 14:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A9E1E04B2
+	for <linux-clk@vger.kernel.org>; Wed,  6 Nov 2024 14:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730902424; cv=none; b=TIqzY+xGal8edyA+yzKe3oL0Ou9lbH5Qlf+aekPVfHY7532eqoYYMAwbmMXr2nI1Sv3jNyaJDL/er2jTTGVkgFlp3AH6X1JPrGdvufEmaKepX93dQaJVhgFxM6kCa7Zd3HUK67gdk7XhBUQgvcwbvT2PML2ivNWKiCOdIHMM+Nk=
+	t=1730902927; cv=none; b=Umy2o5mCBsE/aKfp2DEcMUraRL15uHASN8mkhCew8UcY5wWCeuPsMzqzooE7CX8C8TDgjjjHRbtdNcG++MO+UIdEVOMKuoRuxNCiP9AZkTAI89rQL6+1udeYik+HwnUuNiIxb+04uzWf9ZuK+ItX5HOfISZ8RQta3r4P1ecZNUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730902424; c=relaxed/simple;
-	bh=+pLThVS1L/IAbP/3NgRHcs2F5PUAiuFpNCtGhSyvvF8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RBPOYgUWOxERDV3E9+rmZtsCOocgFfyd26Ns8OBaWW1xlS0kqTN9C51KzpPaSkXtMAdOMaJGV1GLuddQ4Vl9fse5jlFvb/s+JCtS5gLphQ1nuKO4ORmtq3wS+zxqAyQLLM64teArALvumb246FeMltRdZJFrUI1dmpWCeMKCQCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRA45zPB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730902927; c=relaxed/simple;
+	bh=Jai6l51tfQXx2f20hBESY7dASlBrE5N2eyk6W7quo9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gZ2XH2mHRsHNUQ0V/WcuIhI0scHoG4qmGf8Mpb8feY/YcRHsiW/Wbgnt+uZAi0VUjarf7ZFGqB1MyykGgBobx87SliI1JnoO8aAYAwuMwi344+wqK05K1indpWx/79/ksRSxpO6P8AnOoQb1tMHCsDXT63ibRjjSX2IxHIc7Oag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gag/AhQe; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRA45zPB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 535A7C4CEC6;
-	Wed,  6 Nov 2024 14:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730902423;
-	bh=+pLThVS1L/IAbP/3NgRHcs2F5PUAiuFpNCtGhSyvvF8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=vRA45zPBaLdOc77fWsdIuvUEiqfe3+G8GIwHpl0Uek4hP1DTnRDRwMeU8IoVhjPnU
-	 DZB41e+XVNvEvRgEVJ4xgEEyIPLoZ6ZKKyH57Q5mJe8Yu/q3KzInppbwZUSzCXlSM7
-	 XRC2JCYAaz9Oe/tb1jXj2UAR/C7uRvjneHgJE/SCtm7ks5LNmaUlNhFg2yFV87IfzF
-	 2VF/Vu5y/Y7MDnkR8nudRqPsd0OpR1/6p9OXUA9WaIuiPO1CT031tpnppWGblCZv5e
-	 Hii6KRqNFVaNkwbSYGw/PT1F77BxhgDPpF156ch7BDDjGY68Q/C3PSg9ZpVNAehE/Y
-	 Hi2h07/JnFoxQ==
-Message-ID: <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
-Date: Wed, 6 Nov 2024 15:13:37 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gag/AhQe"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4319399a411so57481385e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 06:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730902924; x=1731507724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAlPwdfUhMPwlTJAbroDL64kzgDUSQREYrAUHpV4lWk=;
+        b=gag/AhQeCuqv8iNcB2kOd4M2pJ/TCbPO/Z3LPC5OLq1DAH8YOuNgAqEO4sPCqNrRPL
+         SARzsWojRXNADdv8QNXRXuoVODV5ojbvRrbhq1EsU9y16CNUpyRCMyH3j44ZJm8lkn3X
+         G1YWC70ZLf1fP9c9BJ89hsIc9XLe49aNvi4xsLgsTow/GSmrRxH/TseJaaz5ATS16AfV
+         B8v9Kcv5jHJyluLQwJrGFz36/gu/1c21/6vX1kvqkAzsIlgArnKDkyXRwcbkhJzhXHx9
+         aCrl+1sBZbDE3M/3ImW6M/AYS3Sz2uvrGQ4Y8BP+BqKLahu69HXYvmjU6If+kGJmvnoQ
+         PSyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730902924; x=1731507724;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rAlPwdfUhMPwlTJAbroDL64kzgDUSQREYrAUHpV4lWk=;
+        b=ExOfd6uydH3A40eSaRoDLoEovAU4xa/MZIq0J5H8KbMLGuTvyGS34G79k5jE6aN+ur
+         DAa1usZCAY9GADFxqOBnRr1BRP7doqOqD4FXKAutwV30QSziMLHxgy4DFSoIHPT1FeTs
+         rdjsA03MXMixTH3VVprTuJbqIwm9/MAR/W6dJdWuY+bhCtor3dGet/gyIfGaq7uHLPqy
+         nCaadJn78pYWhihUstZ65ws6DSRMHpy7oUluM08PNwOq3M8o2lVDF+/yZodVGgPbtiH+
+         0hZrTpDiFT0acLwcV6oJrOIx6MeutugorMWYYfjySkcbUsOqfB9NEfGdy9BJZT0iwBp+
+         Y6yA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Gx4xw6H5VD1wfEvgPR3tkaz6jJmcp53TWY9BSXyMH+wz+M3qUxNO9uuasRr4hMBkuJb0AXPaQuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8osusIiL/V0vnsnRauNt1/v8+xYxr+jtElzZ4sXwriZhpah9Q
+	8NJKnOQp/5mQapHzuIFdlBsuVPhd78sAerT6tQeiPB9RKU9+ub+ZGqT+4N5zPb0=
+X-Google-Smtp-Source: AGHT+IHIfw5QJbKJej7wCYRgrtaZek0f7PoBsxUGko/YPocysw1rxvIGEWPP3OMvd9OmYtIElvTfWA==
+X-Received: by 2002:a05:600c:a085:b0:431:5187:28ef with SMTP id 5b1f17b1804b1-4319ad2f3b4mr328657115e9.33.1730902923745;
+        Wed, 06 Nov 2024 06:22:03 -0800 (PST)
+Received: from hackbox.lan ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e6aasm19289952f8f.67.2024.11.06.06.22.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 06:22:03 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.13
+Date: Wed,  6 Nov 2024 16:21:54 +0200
+Message-Id: <20241106142154.622141-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
- spectrum clocking
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
- Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
- <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
- <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/11/2024 15:10, Krzysztof Kozlowski wrote:
-> On Wed, Nov 06, 2024 at 09:57:57AM +0100, Dario Binacchi wrote:
->> The patch adds the DT bindings for enabling and tuning spread spectrum
->> clocking generation.
-> 
-> We had long talks about this but nothing of it got reflected in commit
-> msg. Sorry, I don't remember what I was talking in some particular patch
-> month ago, so you will get the same questions over and over...
-> 
->>
->> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
->>
->> ---
->>
->> Changes in v3:
->> - Added in v3
->> - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
->>   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
->>   indeed more or less a syscon, so it represents a memory area
->>   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
->>
->>  .../bindings/clock/imx8m-clock.yaml           | 46 +++++++++++++++++++
->>  1 file changed, 46 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
->> index c643d4a81478..7920393e518e 100644
->> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
->> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
->> @@ -43,6 +43,40 @@ properties:
->>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
->>        for the full list of i.MX8M clock IDs.
->>  
->> +  fsl,ssc-clocks:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description:
->> +      Phandles of the PLL with spread spectrum generation hardware capability.
->> +    minItems: 1
->> +    maxItems: 4
-> 
-> 1. How is it possible that you change spread spectrum of some clocks from
-> main Clock Controller, while this device is not a consumer of them?
-> Basically this means that this device does not have these clocks but yet
-> you claim that it needs to configure spread for them! It's contradictory
-> to me and nohing got explained in commit msg about it. I am pretty sure
-> I asked about this alrady.
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-I digged my previous answer and it was pretty clear here:
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-18:44 <krzk> You can, but I still have the same concerns. How this
-device - which does not take any clock input, has no clocks at all - can
-depend on spread spectrum of some PLLs? Thsi device does not have clocks.
-18:50 <krzk> device has no clocks, I checked now third time
-18:50 <krzk> If device has clocks, it must have clocks property
+are available in the Git repository at:
 
-So again, you do not need this property at all. I repeated it multiple
-times - you are supposed to use clocks property.
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.13
 
-> 
-> 2. Why is this array flexible in size?
-> 
-> Best regards,
-> Krzysztof
-> 
+for you to fetch changes up to 81a206d736c19139d3863b79e7174f9e98b45499:
 
-Best regards,
-Krzysztof
+  clk: imx: imx8-acm: Fix return value check in clk_imx_acm_attach_pm_domains() (2024-11-05 12:07:59 +0200)
 
+----------------------------------------------------------------
+i.MX clocks changes for 6.13
+
+- Document the compatible for i.MX95 HSIO BLK CTRL
+- Add the HSIO BLK CTRL provider to the i.MX95 driver
+- Moved the CLK_END macro from bindings to driver for i.MX93
+- Add support for i.MX91 CCM to the i.MX93 driver
+- Add workaround as a fix for errata e10858 to the lpcg-scu driver
+- Fix PLL initialization and power up for i.MX93 in fracn-gppll clock type
+- Fix clock enable state save/restore in clk-scu clock implementation
+- Skip HDMI LPCG clocks save/restore in lpcg-scu clock implementation
+- Fix return value check on PM domains attach in imx8-acm driver
+
+----------------------------------------------------------------
+Dong Aisheng (1):
+      clk: imx: clk-scu: fix clk enable state save and restore
+
+Peng Fan (4):
+      clk: imx: lpcg-scu: SW workaround for errata (e10858)
+      clk: imx: fracn-gppll: correct PLL initialization flow
+      clk: imx: fracn-gppll: fix pll power up
+      clk: imx: lpcg-scu: Skip HDMI LPCG clock save/restore
+
+Pengfei Li (4):
+      clk: imx93: Move IMX93_CLK_END macro to clk driver
+      dt-bindings: clock: imx93: Drop IMX93_CLK_END macro definition
+      dt-bindings: clock: Add i.MX91 clock support
+      clk: imx: add i.MX91 clk
+
+Richard Zhu (2):
+      dt-bindings: clock: nxp,imx95-blk-ctl: Add compatible string for i.MX95 HSIO BLK CTRL
+      clk: imx95-blk-ctl: Add one clock gate for HSIO block
+
+Yang Yingliang (1):
+      clk: imx: imx8-acm: Fix return value check in clk_imx_acm_attach_pm_domains()
+
+ .../devicetree/bindings/clock/imx93-clock.yaml     |  1 +
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  5 +-
+ drivers/clk/imx/clk-fracn-gppll.c                  | 10 ++--
+ drivers/clk/imx/clk-imx8-acm.c                     |  4 +-
+ drivers/clk/imx/clk-imx93.c                        | 63 ++++++++++++++--------
+ drivers/clk/imx/clk-imx95-blk-ctl.c                | 20 +++++++
+ drivers/clk/imx/clk-lpcg-scu.c                     | 41 +++++++++++---
+ drivers/clk/imx/clk-scu.c                          |  2 +-
+ include/dt-bindings/clock/imx93-clock.h            |  6 ++-
+ 9 files changed, 113 insertions(+), 39 deletions(-)
