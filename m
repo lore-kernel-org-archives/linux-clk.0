@@ -1,165 +1,241 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9751DF967
-	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 09:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8A31D7E42;
+	Thu,  7 Nov 2024 09:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970390; cv=none; b=c7M/K9pciPNgnN3kCfucItoYX3Rpd5kig/eadKXHRJzFpplX4x51fz2P3o1ujD5u/Faa3NBZ19bPqsycyuCm/720ObT/xBoMXe+q9XvvCYms0AV92pLt9tc53LVoTNAXNFIt8wSgmf8/eq3QDmY8uofa3n3z785sB5YrA5XR4RU=
+	t=1730973065; cv=none; b=G/Eg5wp+9awcZ6fJB5O8p6h44NVppmMaahUSSVzSu67ML/oSV1QZ2uxHGIM2jZ1smvOIWFFfTni++8Jh3B5Du9CobyuJqqkC/4UdFCHy5lD4w/ivAtq/NrbqQOFnPcrU+E9+bH1+LPGLsVorjXiLmYRf3Ccx/OY21T99zhSXyaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970390; c=relaxed/simple;
-	bh=itIxTccP1xTFO0inuTIAI+RJnFggZSY/uZsDkw9QLY0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5wu7yPnL4Gd371v5CbwCIeDa4DuRpNoBZrvZDk0P5fa/hAMh7ubuwZzpQrbmboC8soumwzOt2U3wuDOwX/o4yihMcSGssm/2Lj0J7iHPzG9SMBQEoiB1K050bqodOnhHBEgtNCLB/VTGnb7rBpjK7f0yv2dwY44+UqyC5F+wV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VFb274S8; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1730973065; c=relaxed/simple;
+	bh=hjNN+PqFdSkSj/o6TRXfxOXwvZoIzTjelI3Jk9bcBOU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=BwHTGLm1Flw1nBRSZh3Ksf+OTZBizV06lq4n65WIyPFMgsBddyTYvyg+j51o5PfyM5JHDDUulG7OP25UhYwp3EQH1+mdcPBdYBNxm+rZ/lgpoYl+CeW1PqFXhDPlwNS/HUC1ZL/WaAKT96aEzccVW+Ct6TuO1PpJnPwclegn2hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=icE8Z3rM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VFb274S8"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99ebb390a5so334307666b.1
-        for <linux-clk@vger.kernel.org>; Thu, 07 Nov 2024 01:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730970387; x=1731575187; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LDS79c1EbW77w8pj3qSP6QnMmTuMvK8jjpykFUSlOEE=;
-        b=VFb274S8b7C0+FttbgbYKHMQPTf/hv449FgXGcyFaN6oYkT7K7dPV5LDvGgvThZ1KC
-         2Gt7c6kqnTBOO6XcrpwzUo9ayIY2leQ+8+dnlB77/MXy79wOPRsqkAbQIsqJRJDCmGCy
-         KmOfIBnhj/7fR1FOo2zQlFC8zIrBkg+NQps9GEpkAn6xYTw7Gm4voVPaB40xeWPaBiWi
-         FO2MZZ9Vwoyh4sEfWAmioNSR5IpoKwJ8PVlLIiFZtDLh2Rwa3uz45q27NcQu3KoJ+oKj
-         rdkO7l9O4vy+o0V7cEsllJ/YBqvDLf2n0QH14uMTXmouUfTW4ZnJmuFEaP/bPImVnQFT
-         RjLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730970387; x=1731575187;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LDS79c1EbW77w8pj3qSP6QnMmTuMvK8jjpykFUSlOEE=;
-        b=sHH7ysHmOgNzCGXMKhUdIIXqR6/ol6xA8ggQZawsQRStNdKSSuOCovIqDmq23ivm3n
-         8o9z6ZsTfOYqJBZGbWGWwl/HO5//xXU1Tt64ugSk20QcDeD2s7lRtQLqBuiYPrUwejNJ
-         IojyUqSd48dQ19qjGEPeyatUBF5tmOgR3jdcJxCj9Q4+Bab8ikbqs/z4bFSFlsvop7gC
-         7wmlYfgcLGWWgEo43N7RlApeX4g+B8YKTtzHyopZxXg6/DcMMUP6L0YDhNQ8YoCBCUqi
-         +VCN9Npe7au/IdMfu6uyn4k3uVKZKhsHEUruU4l1870TNpGSWlMoJk0CxFoSBgMyqykB
-         e5Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnAYssLUsA9JhhImy2Rejil7QQlXZCo2IlACkGBHgGz9oQTOUBjR3GMkkVPHO18HPrZVLnb4fp//g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs8lFuulHzrnmzWliVRMnwmVvYrpRN05xDQ/5ol84x6DNEdxOS
-	1Xzx2bRg5U6wPTMoGC+rJFQWNq+801T3R11fYsTVYVhrAELw1Mb48qh5zrJf4Tc=
-X-Google-Smtp-Source: AGHT+IFON3UoYGa4dZUjWhusmO+MQQIyUIBnD4omw89HENTEvvSMRWoF17W5/XTmfi7sq10ML4ePGw==
-X-Received: by 2002:a17:907:930d:b0:a9a:ca:4436 with SMTP id a640c23a62f3a-a9ed4cb3071mr214594766b.13.1730970387092;
-        Thu, 07 Nov 2024 01:06:27 -0800 (PST)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0defba9sm63637066b.165.2024.11.07.01.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 01:06:26 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 7 Nov 2024 10:06:53 +0100
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
- address to dynamic bridge nodes
-Message-ID: <ZyyDLaWsikcNw4wT@apocalypse>
-References: <20241104150521.r4hbsurw4dbzlxpg@thinkpad>
- <20241104234937.GA1446920@bhelgaas>
- <20241106143511.2ao7nwjrxi3tiatt@thinkpad>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="icE8Z3rM"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A76ojWc013219;
+	Thu, 7 Nov 2024 09:50:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	J19nT1QL83AH9WO+0awWFJgS43oQQOHcCslTZEH/0Mo=; b=icE8Z3rMwJZ/DTmt
+	bOqdG3bCqCggcPD2Vv0VPX4k7tpR1H1FELSkHESnYPxpZaqY5eZ167C8SDFNHJpd
+	xzV6p54MtOpZm3HSWtRlq0DboC+akrW9Q83HH0Shytjt7PgVQxxrBcWj2SY5GjAf
+	DGYSkGeFYFjezGRwRGEQ09U/3MWxw7HZBAIu4kIMQjH7ZPz+IBaPWwYR1yRzsLBH
+	8LFw5LH/BqIHQ/gXnQhC8psDshBTzqO3037Tbxz3rEvUJkIRQTkR+qSBQw0JVCca
+	TXaVVI0M4id+TnqOu8lk9OOHXhcQVE3miVMFvr085NjTzfx+Aeh1aDh2O353GYQV
+	EEt5NQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qp2rwu59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 09:50:40 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A79odTk016599
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 09:50:39 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 7 Nov 2024 01:50:34 -0800
+From: Luo Jie <quic_luoj@quicinc.com>
+Date: Thu, 7 Nov 2024 17:50:22 +0800
+Subject: [PATCH v6 1/5] dt-bindings: clock: qcom: Add CMN PLL clock
+ controller for IPQ SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106143511.2ao7nwjrxi3tiatt@thinkpad>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241107-qcom_ipq_cmnpll-v6-1-a5cfe09de485@quicinc.com>
+References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
+In-Reply-To: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730973028; l=4608;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=hjNN+PqFdSkSj/o6TRXfxOXwvZoIzTjelI3Jk9bcBOU=;
+ b=wvN6lz3BOqkQiDqRxh4kxfVqt/tzHeQhAidj+PKijDSfTWz32IBpNlehg8LPYa/Cqk2SqJiJ0
+ vs1x95rywoGBn3GxKCOG5rDTMw83aoB+mn95RC3/Ch2ADfBHfXLt5ve
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sdOVjHvPGv14dtuwZy8W7ih9-v0Ip9XL
+X-Proofpoint-ORIG-GUID: sdOVjHvPGv14dtuwZy8W7ih9-v0Ip9XL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ bulkscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070074
 
-Hi Manivannan,
+The CMN PLL controller provides clocks to networking hardware blocks
+and to GCC on Qualcomm IPQ9574 SoC. It receives input clock from the
+on-chip Wi-Fi, and produces output clocks at fixed rates. These output
+rates are predetermined, and are unrelated to the input clock rate.
+The primary purpose of CMN PLL is to supply clocks to the networking
+hardware such as PPE (packet process engine), PCS and the externally
+connected switch or PHY device. The CMN PLL block also outputs fixed
+rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ as sleep
+clock supplied to GCC.
 
-On 14:35 Wed 06 Nov     , Manivannan Sadhasivam wrote:
-> On Mon, Nov 04, 2024 at 05:49:37PM -0600, Bjorn Helgaas wrote:
-> > On Mon, Nov 04, 2024 at 08:35:21PM +0530, Manivannan Sadhasivam wrote:
-> > > On Mon, Nov 04, 2024 at 09:54:57AM +0100, Andrea della Porta wrote:
-> > > > On 22:39 Sat 02 Nov     , Manivannan Sadhasivam wrote:
-> > > > > On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
-> > > > > > When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
-> > > > > > incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
-> > > > > > bridge, the window should instead be in PCI address space. Call
-> > > > > > pci_bus_address() on the resource in order to obtain the PCI bus
-> > > > > > address.
-> > > > > 
-> > > > > of_pci_prop_ranges() could be called for PCI devices also (not just PCI
-> > > > > bridges), right?
-> > > > 
-> > > > Correct. Please note however that while the PCI-PCI bridge has the parent
-> > > > address in CPU space, an endpoint device has it in PCI space: here we're
-> > > > focusing on the bridge part. It probably used to work before since in many
-> > > > cases the CPU and PCI address are the same, but it breaks down when they
-> > > > differ.
-> > > 
-> > > When you say 'focusing', you are specifically referring to the
-> > > bridge part of this API I believe. But I don't see a check for the
-> > > bridge in your change, which is what concerning me. Am I missing
-> > > something?
-> > 
-> > I think we want this change for all devices in the PCI address
-> > domain, including PCI-PCI bridges and endpoints, don't we?  All those
-> > "ranges" addresses should be in the PCI domain.
-> > 
-> 
-> Yeah, right. I was slightly confused by the commit message. Maybe including a
-> sentence about how the change will work fine for endpoint devices would help.
-> Also, why it went unnoticed till now (ie., both CPU and PCI addresses are same
-> in many SoCs).
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 85 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 22 ++++++
+ 2 files changed, 107 insertions(+)
 
-Sorry for the (admittedly) confusing explanation from my side. What I would
-have really liked to convey is that although the root complex (that is itself
-a bridge) is the ultimate 'translator' between CPU and PCI addresses, all the
-other entities are of course under PCI address space. In fact, any resource
-submitted to of_pci_set_address() is intended to be a PCI bus address,
-and this is valid for both sub-bridges and EPs.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+new file mode 100644
+index 000000000000..db8a3ee56067
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+@@ -0,0 +1,85 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm CMN PLL Clock Controller on IPQ SoC
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++  - Luo Jie <quic_luoj@quicinc.com>
++
++description:
++  The CMN (or common) PLL clock controller expects a reference
++  input clock. This reference clock is from the on-board Wi-Fi.
++  The CMN PLL supplies a number of fixed rate output clocks to
++  the devices providing networking functions and to GCC. These
++  networking hardware include PPE (packet process engine), PCS
++  and the externally connected switch or PHY devices. The CMN
++  PLL block also outputs fixed rate clocks to GCC. The PLL's
++  primary function is to enable fixed rate output clocks for
++  networking hardware functions used with the IPQ SoC.
++
++properties:
++  compatible:
++    enum:
++      - qcom,ipq9574-cmn-pll
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: The reference clock. The supported clock rates include
++          25000000, 31250000, 40000000, 48000000, 50000000 and 96000000 HZ.
++      - description: The AHB clock
++      - description: The SYS clock
++    description:
++      The reference clock is the source clock of CMN PLL, which is from the
++      Wi-Fi. The AHB and SYS clocks must be enabled to access CMN PLL
++      clock registers.
++
++  clock-names:
++    items:
++      - const: ref
++      - const: ahb
++      - const: sys
++
++  "#clock-cells":
++    const: 1
++
++  assigned-clocks:
++    maxItems: 1
++
++  assigned-clock-rates-u64:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++  - assigned-clocks
++  - assigned-clock-rates-u64
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
++    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
++
++    cmn_pll: clock-controller@9b000 {
++        compatible = "qcom,ipq9574-cmn-pll";
++        reg = <0x0009b000 0x800>;
++        clocks = <&cmn_pll_ref_clk>,
++                 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
++                 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
++        clock-names = "ref", "ahb", "sys";
++        #clock-cells = <1>;
++        assigned-clocks = <&cmn_pll CMN_PLL_CLK>;
++        assigned-clock-rates-u64 = /bits/ 64 <12000000000>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+new file mode 100644
+index 000000000000..936e92b3b62c
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
++#define _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
++
++/* CMN PLL core clock. */
++#define CMN_PLL_CLK			0
++
++/* The output clocks from CMN PLL of IPQ9574. */
++#define XO_24MHZ_CLK			1
++#define SLEEP_32KHZ_CLK			2
++#define PCS_31P25MHZ_CLK		3
++#define NSS_1200MHZ_CLK			4
++#define PPE_353MHZ_CLK			5
++#define ETH0_50MHZ_CLK			6
++#define ETH1_50MHZ_CLK			7
++#define ETH2_50MHZ_CLK			8
++#define ETH_25MHZ_CLK			9
++#endif
 
-> 
-> Also there should be a fixes tag (also CC stable) since this is a potential bug
-> fix.
+-- 
+2.34.1
 
-Sure. I think it could be better to resend this specific patch (and maybe also the 
-patch "of: address: Preserve the flags portion on 1:1 dma-ranges mapping", which
-is also a kind of bugfix) as standalone ones instead of prerequisites for the RP1
-patchset, if it's not a concern to anyone...
-
-Regards,
-Andrea
-
-> 
-> - Mani
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
