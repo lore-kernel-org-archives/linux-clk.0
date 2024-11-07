@@ -1,111 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2614B161;
-	Thu,  7 Nov 2024 00:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138EA748F;
+	Thu,  7 Nov 2024 01:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730938915; cv=none; b=IddyKXujnt7SLmPl8XelVfUgGGHJ8bNmQA53/Y/xA4VXdfFZn64YpB5sAtyt8Gt0Ks13i4FdhgYdGtdU4d6XYxxeyLtlZ8AuLWJjiJkWok6X8xPJRIQUKsQLsV07hoJzYaHwXU11kip4dC4bELvRD98j4yjC53LKIZESDJpi3Uo=
+	t=1730943998; cv=none; b=GVvz6UPwiTN05QNmKRMYmttai3UfUzSW6Cid+vJ/D1VrfJoyx7Eme0mefIPVo92r29LNFbpd6Owa8zepOmBv5riv3VRVpszUccwnEP3MKVR7MBxdTyKZXd9lTKAQiJ87sF0GPyhLVZU3X4nzM/lFlvm1snqBas/EKzWJTlHfk4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730938915; c=relaxed/simple;
-	bh=+CNWzMeB071PME8CXmstzWM4w5EMF9AzDs7sv42HsIc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uaeu5qZXrqc5c6q8WvkFvS0YIWRwAw3dTEgHRwjwCKFY7r3EF6B7yZGvhP27D45BBEUHhoJQN1YyEUkwzByZ5/0wr00MDXb5G/g7XOfu4kjlEDGwNn90YR8yJCZ7Pku1tf5BLTVlmtNB7GIp8n7LswrKGiAKh+ReA6wql/MVsZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSi6Nn+f; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSi6Nn+f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DB9C4CEC6;
-	Thu,  7 Nov 2024 00:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730938914;
-	bh=+CNWzMeB071PME8CXmstzWM4w5EMF9AzDs7sv42HsIc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FSi6Nn+fZyQj7dKxHIZK7DT+LTkZfbwqFASaTgkoGMlINncNpG1lbmos3IUyB+kWR
-	 CtVJfQv5WBnN0qiss3L6VkLe8dn7SmaHZlDGrW4HfGyufCid71CoiZkmEmXkwmjYe3
-	 NQq+FodDM5h773Dq2XtMGw7fGqRi8oJWlrDrUCPvSPFHPq2zXRhGXgcjdeXw3QNpoU
-	 +M21tQeGCmbJmcrDe7i0Scvrk88eWdN8o+LtiYkBkD7+c/uHZORrEkkU9FdlkYnArr
-	 gB3iNcLbiQsfRCDVuBtG2XgkQn1ae9A7c3q6fbxkR0zPBQsrMXj5mJzGA5Xvrrkbiu
-	 NbmmDAP3XPMew==
-From: Mark Brown <broonie@kernel.org>
-To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
- lgirdwood@gmail.com, magnus.damm@gmail.com, linus.walleij@linaro.org, 
- support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com, 
- p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com, 
- Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: (subset) [PATCH 00/31] Add audio support for the Renesas
- RZ/G3S SoC
-Message-Id: <173093891006.248820.1343956081297583948.b4-ty@kernel.org>
-Date: Thu, 07 Nov 2024 00:21:50 +0000
+	s=arc-20240116; t=1730943998; c=relaxed/simple;
+	bh=FPys9W0Cs1vLNX6SPasi1XihbVH3pJbnC+cqw91U8n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=srMp6UUlD7ZaRdseGlhkrPK1dX9FCQDmxtWN9lOTVvWr9SH+xll1dsgOsFrwJMcw3Exojswyyc6DEwBKm1OsHzcU0Aj2cWP1k2/x760VEFq1sQVjYj9bZ7IXkXylpDHJNegCGD+bk/PepvTW4r69VtUV3Tujx5xPDRUdJouj0Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DBB4497;
+	Wed,  6 Nov 2024 17:47:06 -0800 (PST)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F79D3F66E;
+	Wed,  6 Nov 2024 17:46:33 -0800 (PST)
+Date: Thu, 7 Nov 2024 01:46:10 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Yangtao Li <tiny.windzz@gmail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime
+ Ripard <mripard@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, Parthiban <parthiban@linumiz.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] clk: sunxi-ng: a100: enable MMC clock
+ reparenting
+Message-ID: <20241107014610.23a1666d@minigeek.lan>
+In-Reply-To: <20241103020929.2298633f@minigeek.lan>
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
+	<20241031070232.1793078-9-masterr3c0rd@epochal.quest>
+	<20241031120857.60bc0d94@donnerap.manchester.arm.com>
+	<885047f813d0c55eae13f26b0bfe041d@epochal.quest>
+	<20241103020929.2298633f@minigeek.lan>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
 
-On Wed, 06 Nov 2024 10:17:55 +0200, Claudiu wrote:
-> Series enables the audio support for the Renesas RZ/G3S
-> SoC along with runtime PM and suspend to RAM.
+On Sun, 3 Nov 2024 02:09:29 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
+
+Hi,
+
+> On Sat, 02 Nov 2024 18:44:41 -0300
+> Cody Eksal <masterr3c0rd@epochal.quest> wrote:
 > 
-> Patches:
-> -    01/31 - add clock, reset and power domain support
-> - 02-04/31 - update versaclock3 clock generator driver to support the
->              5L35023 hardware variant; versaclock3 provides clocks for
->              the audio devices (SSIF, DA7212 codec)
-> -    05/31 - add pin control support for audio
-> - 06-21/31 - add SSIF support for the RZ/G3S SoC; fixes and cleanups
->              were also included
-> - 22-26/31 - updates the da7213 codec driver to support the DA7212
->              hardware variant; suspend to RAM code was adjusted
->              to cope with the RZ/G3S power saving modes
-> - 27-31/31 - add device tree support
+> Hi Cody,
 > 
-> [...]
+> thanks for staying on this issue!
+> 
+> > On 2024/10/31 9:08 am, Andre Przywara wrote:  
+> > > Well, while this change indeed prevented that error message you mentioned,
+> > > but the SD card still doesn't work for me: it probes and I can mount a
+> > > filesystem on it, but then it hangs, for instance when running an "ls" on
+> > > it. It could be my setup (lacking DT or device issue or missing kernel
+> > > config), though, and the eMMC works for me this way, but it would be good
+> > > to have that sorted.     
+> > I'm investigating this now; it appears mmc2/eMMC is more consistent when
+> > CLK_NO_REPARENT is set  
+> 
+> What do you mean with "more consistent", exactly?
+> I still don't get why NO_REPARENT would help here in the first place:
+> we have three clocks as potential parents: OSC24MHz, PLL_PERIPH0,
+> PLL_PERIPH1. The first one is too slow for typical MMC rates, and
+> PERIPH1 is typically disabled (it's the same rates as PERIPH0, so
+> there is little need for it). So PERIPH0 is to clock to go, and I don't
+> see what NO_REPARENT would change here.
+> 
+> So those are my observations:
+> With NO_REPARENT (current mainline):
+> - SD card fails to probe:
+>   sunxi-mmc 4020000.mmc: fatal err update clk timeout
+> - SD card is still parented to PERIPH0-2x (probably because U-Boot set
+>   that up), but uses a divider of 256 for a clock rate of 4687500 Hz.
+>   This probably leads to the failures.
+> - eMMC works, but is parented to the 24MHz OSC, probably because U-Boot
+>   did not touch it. The clock rate is 12MHz, the read speed is 10MB/s.
+> With removing NO_REPARENT, so with this patch:
+> - SD cards probes, I can mount a VFAT fs on it, and sometimes "ls"
+>   that, but it hangs soon afterwards, for instance when trying to
+>   benchmark it.
 
-Applied to
+It turns out that this it due to a wrong DMA block size description in
+the MMC driver: the A100/A133 only supports 8K blocks, not 64K as
+currently advertised there. Patch for that here: [1]
+With that patch I see the SD card fully working, and at the correct
+speed, so this patch here is:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-Thanks!
+Please add a Fixes tag and Cc: stable to the tags, like this:
 
-[22/31] ASoC: da7213: Populate max_register to regmap_config
-        commit: 9d4f9f6a7bb1afbde57d08c98f2db4ff019ee19d
-[23/31] ASoC: da7213: Return directly the value of regcache_sync()
-        commit: 841256954037ad80a57b8fa17a794ae9a01b2e23
-[24/31] ASoC: da7213: Add suspend to RAM support
-        commit: 431e040065c814448ffcc2fac493f7dbbfb2e796
-[25/31] ASoC: da7213: Avoid setting PLL when closing audio stream
-        commit: 1e1a2ef95b571825ca9c0113f6bef51e9cec98b0
-[26/31] ASoC: da7213: Extend support for the MCK in range [2, 50] MHz
-        commit: b3296f9095d6ad24723e5ad89c28acc317d0c3cf
+Fixes: fb038ce4db55 ("clk: sunxi-ng: add support for the Allwinner A100 CCU")
+Cc: stable@vger.kernel.org
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+And make sure to also Cc: that address when sending that out. Or
+Chen-Yu adds the tags while committing, and we send this separately to stable?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+And maybe we can change the commit message to be a bit less vague, and
+just say while it's unknown why the flag was there in the first place,
+it doesn't make any sense and severely limits MMC transfer speeds.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Cheers,
+Andre
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
 
-Thanks,
-Mark
+[1] https://lore.kernel.org/linux-sunxi/20241107014240.24669-1-andre.przywara@arm.com/T/#u
+
+> - SD clock is set up correctly: parent is PLL_PERIPH0-2x, rate is 50
+>   MHz, correct for High Speed@4bit and its 25MB/s bus speed.
+> - eMMC works fine, clock parent is PLL-PERIPH0-2x, rate is 100 MHz,
+>   correct for HS-200 (100 MHz * 8 bit * 2(DDR)). The read speed is
+>   72MB/s, which sounds alright, and might be a limitation of the flash
+>   chip.
+> 
+> So NO_REPARENT is always worse for me.
+> 
+> > > Also it would be good to know why CLK_SET_RATE_NO_REPARENT was put there
+> > > in the first place: I don't see it in any other MMC clocks in sunxi-ng, so
+> > > it wasn't just copied&pasted.    
+> > Seeing that mmc2 acts better with the flag, perhaps it was copy + pasted
+> > from that config. Or perhaps the issues we're running into comes from
+> > elsewhere in the chain. At the moment, that's only speculation, though;
+> > I'm waiting on a device that has an SD card slot so I can perform more
+> > testing myself and debug these issues.
+> >   
+> > > So was there a problem that this flag was supposed to fix? Is that
+> > > something that only applied to older kernels (back when the MMC patches
+> > > were first posted), and which has now been fixed/changed elsewhere?    
+> > Yangtao Li/Frank Lee assumably no longer works at Allwinner, as the email
+> > he used to submit this originally no longer exists, but I believe the same
+> > Yangtao is now a maintainer of the Allwinner cpufreq subsystem, and is
+> > CC'd on these patches. I'm sending this reply to him as well; perhaps he
+> > may have some additional insight.
+> >   
+> > > I feel a bit uneasy of just removing this just because it works(TM),
+> > > especially if it doesn't really (SD card for me, for instance).    
+> > I agree; I was quickly preparing V2 to hopefully get this in before the
+> > 6.13 window for the sunxi tree closed, and added this in last minute after
+> > verifying it worked on my current device, which lacks an SD card slot.
+> > 
+> > This patch can be skipped for now, as it's apparent MMC0/1 require a little
+> > more love before we can merge it in. I'll submit new patches in the future
+> > once this is figured out.  
+> 
+> This patch would be a fix anyway (with a Fixes: tag), so we can push it
+> still into 6.13, after -rc1, and it would be backported. So it's not as
+> critical, timing-wise.
+> 
+> Cheers,
+> Andre
+> 
+> > 
+> > Thanks!
+> > - Cody
+> >   
+> > > Cheers,
+> > > Andre
+> > >     
+> > >> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> > >> ---
+> > >>  drivers/clk/sunxi-ng/ccu-sun50i-a100.c | 6 +++---
+> > >>  1 file changed, 3 insertions(+), 3 deletions(-)    
+> >   
+> 
+> 
 
