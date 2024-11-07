@@ -1,161 +1,122 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911801D95B0;
-	Thu,  7 Nov 2024 11:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE9F20C48C;
+	Thu,  7 Nov 2024 11:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730980662; cv=none; b=CSN/5mZVNV+pBHB/38iYw1WiJUPJAYStUFloansXRsQsQ3Rd0kzYKX2YIAgM6GLe5fgaXQUmPeT7nv8w4s4LMk2u0Aggl/AjLorwpxT6qc/+ELn8doUEOiISEc3r8pgrGva9fK6ESpRoZMNmIPZquaj2ngqJEjfy52zaByUhqBY=
+	t=1730980696; cv=none; b=EWeYmUGyK1eGip54tqEsmM9DwalGybEmZrcDG8lvMbelWTvPm6BZyeP/Dd6XqGdmdiWBOcLCf8FuUTH75tRrTL//OLW1X8x47znTUtbBD7vyaMlPPI7+MeIZ85Oe9oPEAnyRHhn6Wu36vyJPApWElZe064zM8AwiTimUA0QoolI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730980662; c=relaxed/simple;
-	bh=eZfarOsXhTWz3FdloJPyAIlYQTAmmc6IqpUxyEXV9sA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dWbs0noui7ntqo1nJUI2lUJbTGJ3zqW23WRKTyzITM4yGDvcZaFRZkNS4Hw5JJZCuS/CY/tNNo/K1YcmK6i/KNEnQlp1WNmCR6CfNJ8boz+G2vXv/NUAQxO0fewTY6L3EXslo4s7OHqD+pcWTFq8OZAnIs3/XKpQbutCtd3xGMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ed3yIMs4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730980696; c=relaxed/simple;
+	bh=WCUKuX4maFHRyx+sxrpXCTzsud3pXHBXfStxFHvUR00=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pApJXM/LFaxWZmO3UJIqFlNWbP+HHfC+P6xDoqtlk3+nzfIuutM1zdDzs+MPJJhNNM0/LuFBVg6yK9ix3bKI4eJ/E8mfO5kRv3QUvipBx370tTnibYrepoFJIZJz5ZOYc7haBCW0f3onJFq1kK8oGEBEs7w8HwXsznkA/+v7Sr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLOu15BO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ed3yIMs4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E491C4CECC;
-	Thu,  7 Nov 2024 11:57:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLOu15BO"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CC0E9C4CED2;
+	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730980662;
-	bh=eZfarOsXhTWz3FdloJPyAIlYQTAmmc6IqpUxyEXV9sA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ed3yIMs4ETe/Y+vEEefSsXttU7eM4T6VADKWGiEcxLmh+fYIWkwGCGiJ51Y91Ej0Q
-	 wlPj82G3wn8+CeVvoFTuNV1HPyGCHb0ungAs5Ch1zkpzyOlfIQw0TfUjshHH9AOx2H
-	 on+s+479ZnSgXpVyWm8OUYhNYcQ6JfmeDuAlorKPqmBTEPLResk9htJH9Me300tR6+
-	 Hi9tvgf8HymIJAJ7edmnjqFrLjX/g+jrVYiYDh6qppCgE0bOATi+hO7G9FnrVcOrWA
-	 S7rQ6ljulBobFC8kLCHNi53JFTnQxt02UsZZPEdMjyjw7mnvS7zE8Ih2hxs8gUWV1C
-	 2aZBE+ROlb7LQ==
-Message-ID: <6866a4d4-3ef1-4e87-a69e-bb9efce1a071@kernel.org>
-Date: Thu, 7 Nov 2024 12:57:29 +0100
+	s=k20201202; t=1730980695;
+	bh=WCUKuX4maFHRyx+sxrpXCTzsud3pXHBXfStxFHvUR00=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=fLOu15BOdKdDE+BugZVoj4tH5bz4KDWLw+rwo0bqf0yg3ehgpdh0MHNsbfiaKvMkG
+	 SmObaaihyRO4ZiGA3fey2Hw/v++lxeEzJKbGlmTgUKGOGqsXoarPW+9U7zQEowQ2Tt
+	 urhBLlC5YzYZrdu2ObYXecOBuougo4nLsgUBdNPid4DOsYS3zrRTPrTxUq5I1H1t0k
+	 7UDAEmo1hr9A8qOr2ZfRcwEiek7kV2WLMPdEPJ7dms6npvddR+VNvhM6bYgcoAeW9f
+	 4gU5cf9EfyF8eq9XUX7SnNF+l2h6Tece2ftSA+tGDJ9msPo8TzFFzHXa+b7E63W0aR
+	 JDHgCyxUoGxlA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD2CD43350;
+	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Date: Thu, 07 Nov 2024 11:58:09 +0000
+Subject: [PATCH 1/2] clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/12] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
- <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
- Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
- Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <9a02498e0fbc135dcbe94adc7fc2d743cf190fac.1730123575.git.andrea.porta@suse.com>
- <mjhopgkrjahaxydn3ckianqnvjn55kxrldulvjkpqivlz72uyi@57l5vhydpzc2>
- <ZyOPHm7fl_vW7mAJ@apocalypse>
- <cc2e1a17-c5b1-4608-8e32-a6dea23a7efb@kernel.org>
- <Zyir7pu8T-fjUIA4@apocalypse>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zyir7pu8T-fjUIA4@apocalypse>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
+References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
+In-Reply-To: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, 
+ Nitin Rawat <quic_nitirawa@quicinc.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1811;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=HLNXhxeA0d1kaDOGx2ZDq/GyczbnxDOYCBJsf8padcs=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnLKtWlMyTFtfeKixW/Ry1GRcw0Wc5ZeIShmfST
+ ljUoOuh8CCJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZyyrVgAKCRBVnxHm/pHO
+ 9dUECACmLYKmlwTa3vNIOh8c2A9iQNTlvtbUop9MU+loAitzIM7cVs4ieKxbIdbNIV2OKoJpeDZ
+ VaBcbVCrOjtKb0OcshplAXBbO+ev5HC1Vk/SRBf6SfZMF2JT0m1I6MpPP4g0HHnRaSuaJZFkGGa
+ zNlEJZQyx/E1b03Tu0EOqnpdC4vLyN8YTB4YKukAtWBiEdHN/5mY4OreyvRzb/EBG3IfPB4DKJm
+ LQ9VDOBMNRG7Y7Hr1M0le04AlUaiz+MD8r+ReV3GyCu0NYhbV2p7qnSEq1lf66BDZ9kop5lDJzR
+ oNv6e5rrm5Tyz6/9DuQpTxNmYITg+BOTcM6QDTVvdu8cjqkh
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-On 04/11/2024 12:11, Andrea della Porta wrote:
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
->>>>
->>>> Your example does not use any subnodes, so this looks not needed.
->>>
->>> The example has subnodes, as in the following excerpt from the example:
->>
->> I meant, you do not need properties in subnodes (1st level). You only
->> want properties in subnodes of subnodes, so 2nd level. What is the point
->> of allowing them in 1st level?
-> 
-> I will add those two sub-nodes to the example:
-> 
->             rp1-i2s0-default-state {
->                 function = "i2s0";
->                 pins = "gpio18", "gpio19", "gpio20", "gpio21";
->                 bias-disable;
->             };
-> 
->             rp1-uart0-default-state {
->                 txd-pins {
->                     function = "uart0";
->                     pins = "gpio14";
->                     bias-disable;
->                 };
-> 
->                 rxd-pins {
->                     function = "uart0";
->                     pins = "gpio15";
->                     bias-pull-up;
->                 };
->             };
-> 
-> The first is just a group of pins with the same settings, the second is 
-> a pin group with different settings per pin. This is basically the same
-> usage as in qcom,sm4250-lpass-lpi-pinctrl.yaml.
-> 
+Starting from SM8550, UFS PHY GDSCs doesn't support hardware retention. So
+using RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs
+will get powered down during suspend, causing the UFS PHY to loose its
+state. And this will lead to below UFS error during resume as observed on
+SM8550-QRD:
 
-Ack, that's ok then.
+ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
+ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
+ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
+ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
+ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
 
-Best regards,
-Krzysztof
+Cc: stable@vger.kernel.org # 6.8
+Fixes: 1fe8273c8d40 ("clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag")
+Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/qcom/gcc-sm8550.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
+index 5abaeddd6afc..7dd08e175820 100644
+--- a/drivers/clk/qcom/gcc-sm8550.c
++++ b/drivers/clk/qcom/gcc-sm8550.c
+@@ -3046,7 +3046,7 @@ static struct gdsc ufs_phy_gdsc = {
+ 		.name = "ufs_phy_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
++	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
+ };
+ 
+ static struct gdsc ufs_mem_phy_gdsc = {
+@@ -3055,7 +3055,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
+ 		.name = "ufs_mem_phy_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
++	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
+ };
+ 
+ static struct gdsc usb30_prim_gdsc = {
+
+-- 
+2.25.1
+
 
