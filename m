@@ -1,182 +1,232 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75DA192590;
-	Thu,  7 Nov 2024 06:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146FB1CC17A
+	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 07:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730962690; cv=none; b=sOYxvrZTcrukZ+tKpuPBE8MMU0KNcJ6KLl6inFvPObEiXGu9bZB7SNfb7hKjQP2kAs+2YnElgxl/OMSdxH7OARIvGCSeefgi10WAGGI9nzZs9A4wiYmRNVRSwi2Na+/qUAESIvLy7jGlatm2iJfMrrocCWscdtx5pasEkxptwgY=
+	t=1730963857; cv=none; b=WyEqEdi4UREK0T2GaQqdW+r7oi5APLRMVa+NoUOQM7moMrEHbp8POxLk/YwT49bB7RXCM7EksUevrAaOt8anuJeqg8okur2l92OnqVSWU/1CvKQF3p8hpit/t4OvHwoNsX8ahjRhBPFOeEXTUnhbdYiSGWtm88fOY55MYseVPqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730962690; c=relaxed/simple;
-	bh=keiYDqsfxuTmEyZ3nOD1/zbM2Gk/uctKZhrJHUkxTtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0DMU0AYequ3wCjQvkCLPImBvEGzBxd0se0jx+FZtTxvQpNg9Ad7JcposV9NncnQkSN6+rRhB+zN6qRS63zaKLD5e6oI35dcqUH8zD6BgSLM98a7QyWWZu57DEIN6ivozKKFBtNz0scGVgkFU0O/AyHV4rxOEZhXcMKqAfLEmfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=IGxcMCrA; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1730963857; c=relaxed/simple;
+	bh=pMTFpGhlQtDtxK49IKvVF6FBBM3QiommfkMVhzAskMg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOjIu0Aj7Y9lsfVbRkCWhE2dTQ38NXD8k1JRHfrJ0qB/Deo4G6VTW8aJp2d9LOz50lBvQ+5Nz8WllHlBcDJXrvZaHUlvI2YJ6FJACOfRKuDq3TFJk9SSFIyUIEKeieENv30IISFp8+4ganLFifnBF+bJXCAR+L/4U7J0SDtyqe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OPoUaR2Q; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="IGxcMCrA"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=ozu4lJq1INd+BvR07joZAIc5IzJSrpGXfnC3IH2pifE=; b=IGxcMCrAdxnFpoqyEPDcuhhVp5
-	oNAn5D/YB9twq3WH6XLdnXXhgf66yYkizxuqvABEfnGZlXuCMz8N13vExIkmFur9oyUOKEBp3vbad
-	WL7SLH2DTEUtdTEDbfrmrG82xDt6CMfUxCts/OToztcoS2oL6iqGYo1UJErVRimwXFERIrDxRnLE9
-	3SqPQxVZZcEMyzFxXUxkKNFp7+yv3IdKAC2wSYR7U+uKYAv1zh/YLplMuKaF829mRSwH2W19sRA6g
-	rIjdQLIJomvKP4jB2v99d9qaYx9eegQ7kE6/ciw/kIcO/pJIkLZ9+nLdeD8acosseDDZf9ZAF5wia
-	9K7TEnFQ==;
-Date: Thu, 7 Nov 2024 07:58:03 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Rob Herring <robh@kernel.org>, Tero Kristo <kristo@kernel.org>,
- rogerq@kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, Tony Lindgren
- <tony@atomide.com>, Conor Dooley <conor+dt@kernel.org>, Stephen Boyd
- <sboyd@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: ti: Convert mux.txt to json-schema
-Message-ID: <20241107075803.2cf33ab4@akair>
-In-Reply-To: <20241105135234.GA3100411-robh@kernel.org>
-References: <20241104135549.38486-1-andreas@kemnade.info>
-	<20241105135234.GA3100411-robh@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OPoUaR2Q"
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso75643466b.3
+        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 23:17:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730963852; x=1731568652; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nbOrRriYh6w4F8LVkNHZr22RHexrNFjFKA4icR8e7Vs=;
+        b=OPoUaR2QjF/le64kDXff1pVReBcS1YW6YvjDmyunb1UOtQW+EN9WzLUBHANyjsgFom
+         8NSGwY3gxsvP0ZsFeW8YSwxJrh3B/1aS3lSr8PsAhngMvO2Z6MWfj0vg/Pgn4ngm+M37
+         /rs+lXIxfqAEJ9GWeR/RPzKJ9tFv++ow4cyFoIMBDTfqG/iAT4j9MOOCFugGzEcEV3sS
+         CRrL+1MVrmyGw0fBrEf+DwDg+FkTIQvzqfXKR/sTxpVUpx+38p3jah3sMOX9V9SffHWc
+         NVWH0S5H4qQ7yWgx/3LC3nzVzf13nCsvsu4do1TSZr5N9EuhZ2VfkfpZEdn/tS5c7IZs
+         YIxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730963852; x=1731568652;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nbOrRriYh6w4F8LVkNHZr22RHexrNFjFKA4icR8e7Vs=;
+        b=UHGGoz6z0lKIZguuM3rKzdsit+BBuXFUZDsO1FTmY/gvPF3d2Q7JoSxM1PBIyHCxM7
+         nWapytOgGoCosC6U3MkKq+wrRSEEHk9KZCeNa7ECwXvosFy9ljJHMBg5WBr8S43aB3Ja
+         3T8mKy8NaTkRuAs4SWxXv51msGfH9DEI5ZU3qJcz8f+KsC6H2KC24rE/BPBihFLGbqbd
+         3Q5xf1EYOvW5iCiKnLTW06ETBkpl0CmFn/xWNbJOPq9+vOyG/I1FJaBeIR6T5URINrqN
+         5/KdFcJe8GngqGWcV7ZNHs+/cKAOjn7mcBVvcOh5qms7WEN3pZcMEhApjtqylhlfrwt1
+         pJfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBjBEwLaSvUyZNgxFDZD6VM1VGPE4vvTV39fIieK998UqwolkmHCtqNUe1clv+DohqC5MMu1y1EXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7EFzpPfPq6gFb0MWcQM2jdutdFY5yDrwiauOz7V0aZLHYM61o
+	xn5fBlNHSc9QgRvc8Jd41XNsRumoYCVGDqsmqs6E+uVU1zWE9NZ4gF1jmsFVna8=
+X-Google-Smtp-Source: AGHT+IFPT6mzuetQvJyLFc7e08zxC/5UPQxA/Xio6fkK4wjMcfEmL06ep3a65TdFRwza/k5rV5x/ew==
+X-Received: by 2002:a17:907:70d4:b0:a9e:b5d0:de6 with SMTP id a640c23a62f3a-a9eb5d00edemr628074966b.50.1730963852370;
+        Wed, 06 Nov 2024 23:17:32 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0defaefsm49539066b.164.2024.11.06.23.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 23:17:32 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 7 Nov 2024 08:17:58 +0100
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 04/12] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <ZyxppoSeZhOQ8h2L@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <768d2307342e1054c58324a9d51957456dc82cbf.1730123575.git.andrea.porta@suse.com>
+ <20241106145022.t7w2762t7zxpefc3@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106145022.t7w2762t7zxpefc3@thinkpad>
 
-Am Tue, 5 Nov 2024 07:52:34 -0600
-schrieb Rob Herring <robh@kernel.org>:
+Hi Manivannan,
 
-> On Mon, Nov 04, 2024 at 02:55:49PM +0100, Andreas Kemnade wrote:
-> > Convert the OMAP mux clock device tree binding to json-schema.
-> > Specify the creator of the original binding as a maintainer.
-> > Choose GPL-only license because original binding was also GPL.
+On 14:50 Wed 06 Nov     , Manivannan Sadhasivam wrote:
+> On Mon, Oct 28, 2024 at 03:07:21PM +0100, Andrea della Porta wrote:
+> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> > schema is intended as minimal support for the clock generator and
+> > gpio controller peripherals which are accessible through BAR1.
 > > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 > > ---
-> >  .../bindings/clock/ti/composite.txt           |   2 +-
-> >  .../devicetree/bindings/clock/ti/mux.txt      |  78 -----------
-> >  .../bindings/clock/ti/ti,mux-clock.yaml       | 123 ++++++++++++++++++
-> >  3 files changed, 124 insertions(+), 79 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/clock/ti/mux.txt
-> >  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 80 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 81 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
 > > 
-> > diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
-> > index b02f22490dcb..238e6f7d74f8 100644
-> > --- a/Documentation/devicetree/bindings/clock/ti/composite.txt
-> > +++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
-> > @@ -16,7 +16,7 @@ merged to this clock. The component clocks shall be of one of the
-> >  "ti,*composite*-clock" types.
-> >  
-> >  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > -[2] Documentation/devicetree/bindings/clock/ti/mux.txt
-> > +[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> >  [3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> >  [4] Documentation/devicetree/bindings/clock/ti/gate.txt
-> >  
-> > diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
-> > deleted file mode 100644
-> > index cd56d3c1c09f..000000000000
-> > --- a/Documentation/devicetree/bindings/clock/ti/mux.txt
-> > +++ /dev/null
-> > @@ -1,78 +0,0 @@
-> > -Binding for TI mux clock.
-> > -
-> > -This binding uses the common clock binding[1].  It assumes a
-> > -register-mapped multiplexer with multiple input clock signals or
-> > -parents, one of which can be selected as output.  This clock does not
-> > -gate or adjust the parent rate via a divider or multiplier.
-> > -
-> > -By default the "clocks" property lists the parents in the same order
-> > -as they are programmed into the register.  E.g:
-> > -
-> > -	clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
-> > -
-> > -results in programming the register as follows:
-> > -
-> > -register value		selected parent clock
-> > -0			foo_clock
-> > -1			bar_clock
-> > -2			baz_clock
-> > -
-> > -Some clock controller IPs do not allow a value of zero to be programmed
-> > -into the register, instead indexing begins at 1.  The optional property
-> > -"index-starts-at-one" modified the scheme as follows:
-> > -
-> > -register value		selected clock parent
-> > -1			foo_clock
-> > -2			bar_clock
-> > -3			baz_clock
-> > -
-> > -The binding must provide the register to control the mux. Optionally
-> > -the number of bits to shift the control field in the register can be
-> > -supplied. If the shift value is missing it is the same as supplying
-> > -a zero shift.
-> > -
-> > -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > -
-> > -Required properties:
-> > -- compatible : shall be "ti,mux-clock" or "ti,composite-mux-clock".
-> > -- #clock-cells : from common clock binding; shall be set to 0.
-> > -- clocks : link phandles of parent clocks
-> > -- reg : register offset for register controlling adjustable mux
-> > -
-> > -Optional properties:
-> > -- clock-output-names : from common clock binding.
-> > -- ti,bit-shift : number of bits to shift the bit-mask, defaults to
-> > -  0 if not present
-> > -- ti,index-starts-at-one : valid input select programming starts at 1, not
-> > -  zero
-> > -- ti,set-rate-parent : clk_set_rate is propagated to parent clock,
-> > -  not supported by the composite-mux-clock subtype
-> > -- ti,latch-bit : latch the mux value to HW, only needed if the register
-> > -  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
-> > -  implements such behavior.
-> > -
-> > -Examples:
-> > -
-> > -sys_clkin_ck: sys_clkin_ck@4a306110 {
-> > -	#clock-cells = <0>;
-> > -	compatible = "ti,mux-clock";
-> > -	clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>, <&virt_19200000_ck>, <&virt_26000000_ck>, <&virt_27000000_ck>, <&virt_38400000_ck>;
-> > -	reg = <0x0110>;
-> > -	ti,index-starts-at-one;
-> > -};
-> > -
-> > -abe_dpll_bypass_clk_mux_ck: abe_dpll_bypass_clk_mux_ck@4a306108 {
-> > -	#clock-cells = <0>;
-> > -	compatible = "ti,mux-clock";
-> > -	clocks = <&sys_clkin_ck>, <&sys_32k_ck>;
-> > -	ti,bit-shift = <24>;
-> > -	reg = <0x0108>;
-> > -};
-> > -
-> > -mcbsp5_mux_fck: mcbsp5_mux_fck {
-> > -	#clock-cells = <0>;
-> > -	compatible = "ti,composite-mux-clock";
-> > -	clocks = <&core_96m_fck>, <&mcbsp_clks>;
-> > -	ti,bit-shift = <4>;
-> > -	reg = <0x02d8>;
-> > -};
-> > diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> > diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
 > > new file mode 100644
-> > index 000000000000..b271ab86dde1
+> > index 000000000000..d66b2fc130d1
 > > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> > @@ -0,0 +1,123 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only  
+> > +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > @@ -0,0 +1,80 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: RaspberryPi RP1 MFD PCI device
+> > +
+> > +maintainers:
+> > +  - Andrea della Porta <andrea.porta@suse.com>
+> > +
+> > +description:
+> > +  The RaspberryPi RP1 is a PCI multi function device containing
+> > +  peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > +  and others.
+> > +  The peripherals are accessed by addressing the PCI BAR1 region.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/pci-ep-bus.yaml
+> > +
+> > +properties:
+> > +  compatible:
+> > +    additionalItems: true
+> > +    maxItems: 3
+> > +    items:
+> > +      - const: pci1de4,1
+> > +
+> > +  '#interrupt-cells':
+> > +    const: 2
+> > +    description:
+> > +      Specifies respectively the interrupt number and flags as defined
+> > +      in include/dt-bindings/interrupt-controller/irq.h.
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - '#interrupt-cells'
+> > +  - interrupt-controller
+> > +  - pci-ep-bus@1
+> > +
+> > +examples:
+> > +  - |
+> > +    pci {
+> > +        #address-cells = <3>;
+> > +        #size-cells = <2>;
+> > +
+> > +        rp1@0,0 {
+> > +            compatible = "pci1de4,1";
+> > +            ranges = <0x01 0x00 0x00000000
+> > +                      0x82010000 0x00 0x00
+> > +                      0x00 0x400000>;
 > 
-> Surely TI as the only author of the original binding would agree to
-> dual-license this?
+> Could you please have the 'ranges' in a single line as used everywhere?
 > 
-So there is a question mark. So you are waiting for some confirmation
-form TI?
+> - Mani
 
-Regards,
-Andreas
+Sure.
+
+Many thanks,
+Andrea
+
+> 
+> > +            #address-cells = <3>;
+> > +            #size-cells = <2>;
+> > +            interrupt-controller;
+> > +            #interrupt-cells = <2>;
+> > +
+> > +            pci_ep_bus: pci-ep-bus@1 {
+> > +                compatible = "simple-bus";
+> > +                ranges = <0xc0 0x40000000
+> > +                          0x01 0x00 0x00000000
+> > +                          0x00 0x00400000>;
+> > +                dma-ranges = <0x10 0x00000000
+> > +                              0x43000000 0x10 0x00000000
+> > +                              0x10 0x00000000>;
+> > +                #address-cells = <2>;
+> > +                #size-cells = <2>;
+> > +
+> > +                rp1_clocks: clocks@c040018000 {
+> > +                    compatible = "raspberrypi,rp1-clocks";
+> > +                    reg = <0xc0 0x40018000 0x0 0x10038>;
+> > +                    #clock-cells = <1>;
+> > +                    clocks = <&clk_rp1_xosc>;
+> > +                    clock-names =  "xosc";
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index ccf123b805c8..2aea5a6166bd 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19384,6 +19384,7 @@ RASPBERRY PI RP1 PCI DRIVER
+> >  M:	Andrea della Porta <andrea.porta@suse.com>
+> >  S:	Maintained
+> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> > +F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> >  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >  F:	include/dt-bindings/clock/rp1.h
+> > -- 
+> > 2.35.3
+> > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
