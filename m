@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF3D20C48E;
-	Thu,  7 Nov 2024 11:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF9020CCD1;
+	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730980696; cv=none; b=VJvXhCw5FBo23X+270Joodj2LKiLyECdaSRm6NOEvPJDV9qU/njr33ylp9Ml+rdUiFsR25RxXrNdumfmvHiRy/EUIIm8/IZl9U2SFXJxNNPiGJCn2Q2dOd6pVo8RNfgtpFCRDgqFlrLOe5T5k0vpf0LzaW2VQK4LDypnIxHQihc=
+	t=1730980696; cv=none; b=QA/WhC+S+JqRgst3v4tZxJdrE0ai21su36qXn76gBLXQQ3aJdsrX+7O/Ddinoi7vQubyy3zV5gghdr9RpH3WjEU4Pb3QdZd2EdkCa6KSaoqY5c+2sFgcTTf/XyUvR1I7dIiKzsDxPtHy/Zyv0uzZQW9E6F0BExVtnNrEgRygLjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730980696; c=relaxed/simple;
-	bh=a0ycLHX32lthYYvuPhQaJWZI+SHyq+QSK7Hxoq+vmgI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TzPbLt5vHqSByFtdexOaIegBq8n6KzALrCmODf85VYkx+038yman/f56ANepeu9GFwy5qYF5nR3nA43QJM5JKvTfRJXUBSVXc9ZSbf1nWhUi9+w+RgvUOQ+X3D+kepXxkvXKVLbFEDIJmUdSi81yCtY5SAS/b9+5ifc+jDGR5Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndTVSh5K; arc=none smtp.client-ip=10.30.226.201
+	bh=Gh/ompZkwURn0PwOkifty4Ajs5DMdgzLZxjoSuHPK3g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=m8/vRrql6I2Yys3Jum57cgiaexR/V44b510tsRzGtlK1WsdEJAZMx9GdOV94efwVYYR9YYOlRrR0gVQlDbweZ27qX0r7lHG0MDw8JsG+AVSqeAn759o9RbTDOlH8Gb0pyFdUk0Ty9e2Sm7AjLIVCQiwiAOwKFU6FDFjs2LBrQIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd3VY7Aj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndTVSh5K"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D0E08C4CED6;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd3VY7Aj"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A9452C4CECE;
 	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1730980695;
-	bh=a0ycLHX32lthYYvuPhQaJWZI+SHyq+QSK7Hxoq+vmgI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ndTVSh5KOfkTxmzKvSiQVxTkasb6+J8blBs+UQsy1Z+XspZOBD0U3nBTkmsvDnkHD
-	 /zFAjV8notv5v8+xHE4frXFbFPaQpFDRVR9QebS3jGlTKJbgPHDO8qy/TqR3B1/IGQ
-	 k6icSAW7A93+limCQN8LdqzK5N3DZoQ+hfHpmIMq8DE6DTfMulb0700I9O7hfMV222
-	 WDKJ+ACFLtH9gYJ2cCR73eqU1qmGcsX2Jolsy5KQ5mGY98XPY4anv9GoW0pjbjykNj
-	 aDWof5NamV2vBbIVvmhfYirIRD2pUSaTqQZi78/VOfaqb0p/Mod7o0/RCa5h+vX6Ry
-	 VcYCQ0ZQxwrpg==
+	bh=Gh/ompZkwURn0PwOkifty4Ajs5DMdgzLZxjoSuHPK3g=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=nd3VY7Aja2UhjCkdssEGJAn8WYU0/vn8jv5UgOSkD/HjAXbTssVVPy0hqXs87VwlG
+	 AHu52Cx1kMuLMZZ4Y0V6JKnVGHprvgINzuR9/qtUrVDjQD1GNp7alw+KpJ50pWNKK9
+	 SuA0Bja2bNSGiZ9/aLDECTDabmpxVwX6Q/dabRyQEVk43O9nxQceU6ql89BmN1MrCG
+	 X3RUF4+enipJe8GLixJrj/jaksQ/OAtYKEbRhK2Z1XVk7e2DXvFtRQrpCD0lbzWb/+
+	 tYZYjPG1o6dY3Pzqwo6sMbhKRd/W6RXq+Orfzb4OIk2nczJcYeFnKuANMkPrtUB1A8
+	 JFZvoYfr/SJng==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E62D43354;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97515D43352;
 	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
 From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Thu, 07 Nov 2024 11:58:10 +0000
-Subject: [PATCH 2/2] clk: qcom: gcc-sm8650: Keep UFS PHY GDSCs ALWAYS_ON
+Subject: [PATCH 0/2] clk: qcom: gcc-{sm8550/sm8650}: Fix UFS resume from
+ suspend issue
+Date: Thu, 07 Nov 2024 11:58:08 +0000
+Message-Id: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,9 +41,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-ufs-clk-fix-v1-2-6032ff22a052@linaro.org>
-References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
-In-Reply-To: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAFCrLGcC/x2MQQqAIBAAvyJ7bkHFEPtKdAhbaykslCIQ/550n
+ IGZApkSU4ZBFEj0cOYzNlCdAL/NcSXkpTFoqY1S0uIdMvpjx8AvknFEWjrbOwOtuBI1/d/GqdY
+ PcoxysV0AAAA=
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
@@ -53,16 +54,16 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
  stable@vger.kernel.org
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1726;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=806;
  i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=FYMKCEEuacXk+42R8P6zQhXoxh2cvI/j+fmsSrjKCbU=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnLKtWTSaVN7myne/t1gzjS1A1koyo4Svt/P6RF
- qn/vo26NbCJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZyyrVgAKCRBVnxHm/pHO
- 9YJhCACEM11P1PgwtQ5SOpPd5K0j4R0YiML/G5exG9X1Il6TFhcWi1gOKtfe4Qxa7PV18rq871H
- Xxt4v9fyAZrR/sO4kIzKE9UE4VjUOx7uEQLx0mfHjYVhSfmFOA1+IwvNz0QSJZxSmJbMA4Ngl+N
- 3fytbwtVJfLD+L9+Sj0jrezK4xc9JdTSEETyRcPXhKIcQxEY98Y8uUuzpsR8SOWuu7mtyAYUgcz
- pFh8mQwrmT+8zHpPb5PYhmHc91rJjy1c99aflBgmCL2X66hc7UuL4LMwBK5XTtuf48lKjxEMcVC
- jdv+PWToC5RWqj30LLEY2qpW8fWoRw4isIOtSEm2Si7KmCfi
+ bh=Gh/ompZkwURn0PwOkifty4Ajs5DMdgzLZxjoSuHPK3g=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnLKtReLRazqpEK4DZPuTzY71FdYMrbx2WEhOnt
+ pZm60uhuSqJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZyyrUQAKCRBVnxHm/pHO
+ 9VgjB/4iieean0IziLGHHrJI59WIFDmy9utZzqMMwJ049ru36KmxBmdBfCp/UH9YzV1W8wEZal3
+ AdKLjERvX+l+N16/j05L32RWjxq3y9usqz12ulTYMA4k9qi07uZEq4CRaYBNz505MdzGdxosVJq
+ LcZZfRQMYTylWvl9rwXw5FcyDcmQ5Y//uRQLutgxRznjTOMEwAybvCLjt/qSDs8zUrEZ9aC2Nc+
+ P87+TBbDA4mw/Y/90cJpPBEXoVLa2MgjzhUboLaQaMMZzXA448r8Fp+DL60/m4/U1dKveuK1NUN
+ 8UTh6pljk9YPKANcqyUalQkye156zFnanrZkGNU5VCYEfm65
 X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
  fpr=C668AEC3C3188E4C611465E7488550E901166008
 X-Endpoint-Received: by B4 Relay for
@@ -70,51 +71,28 @@ X-Endpoint-Received: by B4 Relay for
 X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Reply-To: manivannan.sadhasivam@linaro.org
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hi,
 
-In SM8650, UFS PHY GDSCs doesn't support hardware retention. So using
-RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs will get
-powered down during suspend, causing the UFS PHY to loose its state. And
-this will lead to UFS error similar to below during resume:
+This series fixes the UFS resume from suspend issue by marking the UFS PHY GDSCs
+as ALWAYS_ON. Starting from SM8550, UFS PHY GDSCs doesn't support retention
+state. So we should keep them always on so that they don't loose the state
+during suspend.
 
-ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
-ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
-ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
-ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
-ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
-
-Cc: stable@vger.kernel.org # 6.8
-Fixes: c58225b7e3d7 ("clk: qcom: add the SM8650 Global Clock Controller driver, part 1")
-Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
+Manivannan Sadhasivam (2):
+      clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
+      clk: qcom: gcc-sm8650: Keep UFS PHY GDSCs ALWAYS_ON
+
+ drivers/clk/qcom/gcc-sm8550.c | 4 ++--
  drivers/clk/qcom/gcc-sm8650.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241107-ufs-clk-fix-e49ee2097594
 
-diff --git a/drivers/clk/qcom/gcc-sm8650.c b/drivers/clk/qcom/gcc-sm8650.c
-index fd9d6544bdd5..ddc38caf7160 100644
---- a/drivers/clk/qcom/gcc-sm8650.c
-+++ b/drivers/clk/qcom/gcc-sm8650.c
-@@ -3480,7 +3480,7 @@ static struct gdsc ufs_phy_gdsc = {
- 		.name = "ufs_phy_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-+	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
- };
- 
- static struct gdsc ufs_mem_phy_gdsc = {
-@@ -3489,7 +3489,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
- 		.name = "ufs_mem_phy_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-+	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
- };
- 
- static struct gdsc usb30_prim_gdsc = {
-
+Best regards,
 -- 
-2.25.1
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
 
