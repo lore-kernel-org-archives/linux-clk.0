@@ -1,232 +1,158 @@
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146FB1CC17A
-	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 07:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FA4FBF0;
+	Thu,  7 Nov 2024 08:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730963857; cv=none; b=WyEqEdi4UREK0T2GaQqdW+r7oi5APLRMVa+NoUOQM7moMrEHbp8POxLk/YwT49bB7RXCM7EksUevrAaOt8anuJeqg8okur2l92OnqVSWU/1CvKQF3p8hpit/t4OvHwoNsX8ahjRhBPFOeEXTUnhbdYiSGWtm88fOY55MYseVPqw=
+	t=1730969245; cv=none; b=QbWcDJYkeqVNyb1VSNJGyrlDYkDjKiwc2HpLIh6lWqxwOea3kROo+rUS7lbNv/PM6XPzA2exaAyKxFNTX7gmXL+o9OBgEa48P7slPSan+GL+ZGWoeprGHnd9U+GZbyrRytC1cpjHLF48t0lhXFyxj+0D2DSjuGoWcqy5wRuaDK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730963857; c=relaxed/simple;
-	bh=pMTFpGhlQtDtxK49IKvVF6FBBM3QiommfkMVhzAskMg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOjIu0Aj7Y9lsfVbRkCWhE2dTQ38NXD8k1JRHfrJ0qB/Deo4G6VTW8aJp2d9LOz50lBvQ+5Nz8WllHlBcDJXrvZaHUlvI2YJ6FJACOfRKuDq3TFJk9SSFIyUIEKeieENv30IISFp8+4ganLFifnBF+bJXCAR+L/4U7J0SDtyqe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OPoUaR2Q; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1730969245; c=relaxed/simple;
+	bh=9/KGz9Eqf8L6AckABuzu+EnLUD9DwMieaH9zCgdF3uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOflHzBPrHCpSpaivq6D4nBwfIh8CHiJf8eSNJdZ1XayXyLQI8vGlYnQI67xd+vnOX6xNYBy3ZxJbtVf/Wc+QVTkpvtQe07yCu8xTNOrfg/jjyYplOy9BY/zLE77ZQ+m58t9K0xBF7sqPU321LWg5l6vKNITKbu1ZT93AzEz0mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iEyYs2Nz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OPoUaR2Q"
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso75643466b.3
-        for <linux-clk@vger.kernel.org>; Wed, 06 Nov 2024 23:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730963852; x=1731568652; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nbOrRriYh6w4F8LVkNHZr22RHexrNFjFKA4icR8e7Vs=;
-        b=OPoUaR2QjF/le64kDXff1pVReBcS1YW6YvjDmyunb1UOtQW+EN9WzLUBHANyjsgFom
-         8NSGwY3gxsvP0ZsFeW8YSwxJrh3B/1aS3lSr8PsAhngMvO2Z6MWfj0vg/Pgn4ngm+M37
-         /rs+lXIxfqAEJ9GWeR/RPzKJ9tFv++ow4cyFoIMBDTfqG/iAT4j9MOOCFugGzEcEV3sS
-         CRrL+1MVrmyGw0fBrEf+DwDg+FkTIQvzqfXKR/sTxpVUpx+38p3jah3sMOX9V9SffHWc
-         NVWH0S5H4qQ7yWgx/3LC3nzVzf13nCsvsu4do1TSZr5N9EuhZ2VfkfpZEdn/tS5c7IZs
-         YIxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730963852; x=1731568652;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nbOrRriYh6w4F8LVkNHZr22RHexrNFjFKA4icR8e7Vs=;
-        b=UHGGoz6z0lKIZguuM3rKzdsit+BBuXFUZDsO1FTmY/gvPF3d2Q7JoSxM1PBIyHCxM7
-         nWapytOgGoCosC6U3MkKq+wrRSEEHk9KZCeNa7ECwXvosFy9ljJHMBg5WBr8S43aB3Ja
-         3T8mKy8NaTkRuAs4SWxXv51msGfH9DEI5ZU3qJcz8f+KsC6H2KC24rE/BPBihFLGbqbd
-         3Q5xf1EYOvW5iCiKnLTW06ETBkpl0CmFn/xWNbJOPq9+vOyG/I1FJaBeIR6T5URINrqN
-         5/KdFcJe8GngqGWcV7ZNHs+/cKAOjn7mcBVvcOh5qms7WEN3pZcMEhApjtqylhlfrwt1
-         pJfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBjBEwLaSvUyZNgxFDZD6VM1VGPE4vvTV39fIieK998UqwolkmHCtqNUe1clv+DohqC5MMu1y1EXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7EFzpPfPq6gFb0MWcQM2jdutdFY5yDrwiauOz7V0aZLHYM61o
-	xn5fBlNHSc9QgRvc8Jd41XNsRumoYCVGDqsmqs6E+uVU1zWE9NZ4gF1jmsFVna8=
-X-Google-Smtp-Source: AGHT+IFPT6mzuetQvJyLFc7e08zxC/5UPQxA/Xio6fkK4wjMcfEmL06ep3a65TdFRwza/k5rV5x/ew==
-X-Received: by 2002:a17:907:70d4:b0:a9e:b5d0:de6 with SMTP id a640c23a62f3a-a9eb5d00edemr628074966b.50.1730963852370;
-        Wed, 06 Nov 2024 23:17:32 -0800 (PST)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0defaefsm49539066b.164.2024.11.06.23.17.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 23:17:32 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 7 Nov 2024 08:17:58 +0100
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 04/12] dt-bindings: misc: Add device specific bindings
- for RaspberryPi RP1
-Message-ID: <ZyxppoSeZhOQ8h2L@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <768d2307342e1054c58324a9d51957456dc82cbf.1730123575.git.andrea.porta@suse.com>
- <20241106145022.t7w2762t7zxpefc3@thinkpad>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iEyYs2Nz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5117C4CECC;
+	Thu,  7 Nov 2024 08:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730969245;
+	bh=9/KGz9Eqf8L6AckABuzu+EnLUD9DwMieaH9zCgdF3uY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iEyYs2NzyAXwOllRBBtt61ypuqxImxlWvXnXclkI+SY0H11AsXGNwgA4M28QqrGx1
+	 cTP6PdDqgbXb/ad96I9TiWi4/nFjzo245/xxRb1HYzvT8a20x0obqGnSVnu4vgrPdT
+	 WUqBeuazkGU+kk8ysYcvbheWdPOl/e7uyTJxviJg=
+Date: Thu, 7 Nov 2024 09:47:05 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+	lethal@linux-sh.org, g.liakhovetski@gmx.de,
+	ysato@users.sourceforge.jp, ulrich.hecht+renesas@gmail.com,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/9] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
+Message-ID: <2024110747-kite-pacemaker-6216@gregkh>
+References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106120118.1719888-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106145022.t7w2762t7zxpefc3@thinkpad>
+In-Reply-To: <20241106120118.1719888-3-claudiu.beznea.uj@bp.renesas.com>
 
-Hi Manivannan,
-
-On 14:50 Wed 06 Nov     , Manivannan Sadhasivam wrote:
-> On Mon, Oct 28, 2024 at 03:07:21PM +0100, Andrea della Porta wrote:
-> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
-> > schema is intended as minimal support for the clock generator and
-> > gpio controller peripherals which are accessible through BAR1.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 80 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 81 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > new file mode 100644
-> > index 000000000000..d66b2fc130d1
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > @@ -0,0 +1,80 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 MFD PCI device
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RaspberryPi RP1 is a PCI multi function device containing
-> > +  peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > +  and others.
-> > +  The peripherals are accessed by addressing the PCI BAR1 region.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/pci-ep-bus.yaml
-> > +
-> > +properties:
-> > +  compatible:
-> > +    additionalItems: true
-> > +    maxItems: 3
-> > +    items:
-> > +      - const: pci1de4,1
-> > +
-> > +  '#interrupt-cells':
-> > +    const: 2
-> > +    description:
-> > +      Specifies respectively the interrupt number and flags as defined
-> > +      in include/dt-bindings/interrupt-controller/irq.h.
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - '#interrupt-cells'
-> > +  - interrupt-controller
-> > +  - pci-ep-bus@1
-> > +
-> > +examples:
-> > +  - |
-> > +    pci {
-> > +        #address-cells = <3>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1@0,0 {
-> > +            compatible = "pci1de4,1";
-> > +            ranges = <0x01 0x00 0x00000000
-> > +                      0x82010000 0x00 0x00
-> > +                      0x00 0x400000>;
+On Wed, Nov 06, 2024 at 02:01:11PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Could you please have the 'ranges' in a single line as used everywhere?
+> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
+> is called. The uart_suspend_port() calls 3 times the
+> struct uart_port::ops::tx_empty() before shutting down the port.
 > 
-> - Mani
-
-Sure.
-
-Many thanks,
-Andrea
-
+> According to the documentation, the struct uart_port::ops::tx_empty()
+> API tests whether the transmitter FIFO and shifter for the port is
+> empty.
 > 
-> > +            #address-cells = <3>;
-> > +            #size-cells = <2>;
-> > +            interrupt-controller;
-> > +            #interrupt-cells = <2>;
-> > +
-> > +            pci_ep_bus: pci-ep-bus@1 {
-> > +                compatible = "simple-bus";
-> > +                ranges = <0xc0 0x40000000
-> > +                          0x01 0x00 0x00000000
-> > +                          0x00 0x00400000>;
-> > +                dma-ranges = <0x10 0x00000000
-> > +                              0x43000000 0x10 0x00000000
-> > +                              0x10 0x00000000>;
-> > +                #address-cells = <2>;
-> > +                #size-cells = <2>;
-> > +
-> > +                rp1_clocks: clocks@c040018000 {
-> > +                    compatible = "raspberrypi,rp1-clocks";
-> > +                    reg = <0xc0 0x40018000 0x0 0x10038>;
-> > +                    #clock-cells = <1>;
-> > +                    clocks = <&clk_rp1_xosc>;
-> > +                    clock-names =  "xosc";
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ccf123b805c8..2aea5a6166bd 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19384,6 +19384,7 @@ RASPBERRY PI RP1 PCI DRIVER
-> >  M:	Andrea della Porta <andrea.porta@suse.com>
-> >  S:	Maintained
-> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > +F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> >  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >  F:	include/dt-bindings/clock/rp1.h
-> > -- 
-> > 2.35.3
-> > 
+> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
+> transmit FIFO through the FDR (FIFO Data Count Register). The data units
+> in the FIFOs are written in the shift register and transmitted from there.
+> The TEND bit in the Serial Status Register reports if the data was
+> transmitted from the shift register.
 > 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+> In the previous code, in the tx_empty() API implemented by the sh-sci
+> driver, it is considered that the TX is empty if the hardware reports the
+> TEND bit set and the number of data units in the FIFO is zero.
+> 
+> According to the HW manual, the TEND bit has the following meaning:
+> 
+> 0: Transmission is in the waiting state or in progress.
+> 1: Transmission is completed.
+> 
+> It has been noticed that when opening the serial device w/o using it and
+> then switch to a power saving mode, the tx_empty() call in the
+> uart_port_suspend() function fails, leading to the "Unable to drain
+> transmitter" message being printed on the console. This is because the
+> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
+> TEND=0 has double meaning (waiting state, in progress) we can't
+> determined the scenario described above.
+> 
+> Add a software workaround for this. This sets a variable if any data has
+> been sent on the serial console (when using PIO) or if the DMA callback has
+> been called (meaning something has been transmitted).
+> 
+> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  drivers/tty/serial/sh-sci.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index df523c744423..8e2d534401fa 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -153,6 +153,7 @@ struct sci_port {
+>  	int				rx_trigger;
+>  	struct timer_list		rx_fifo_timer;
+>  	int				rx_fifo_timeout;
+> +	atomic_t			first_time_tx;
+
+Don't use an atomic variable for an informational thing like this, it is
+racy and doesn't work properly.  Either use a real lock (because you
+care about the locking stuff here), or just use a boolean and live with
+any potential races.
+
+
+
+>  	u16				hscif_tot;
+>  
+>  	bool has_rtscts;
+> @@ -850,6 +851,7 @@ static void sci_transmit_chars(struct uart_port *port)
+>  {
+>  	struct tty_port *tport = &port->state->port;
+>  	unsigned int stopped = uart_tx_stopped(port);
+> +	struct sci_port *s = to_sci_port(port);
+>  	unsigned short status;
+>  	unsigned short ctrl;
+>  	int count;
+> @@ -885,6 +887,7 @@ static void sci_transmit_chars(struct uart_port *port)
+>  		}
+>  
+>  		sci_serial_out(port, SCxTDR, c);
+> +		atomic_set(&s->first_time_tx, 1);
+>  
+>  		port->icount.tx++;
+>  	} while (--count > 0);
+> @@ -1241,6 +1244,8 @@ static void sci_dma_tx_complete(void *arg)
+>  	if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
+>  		uart_write_wakeup(port);
+>  
+> +	atomic_set(&s->first_time_tx, 1);
+> +
+>  	if (!kfifo_is_empty(&tport->xmit_fifo)) {
+>  		s->cookie_tx = 0;
+>  		schedule_work(&s->work_tx);
+> @@ -2076,6 +2081,10 @@ static unsigned int sci_tx_empty(struct uart_port *port)
+>  {
+>  	unsigned short status = sci_serial_in(port, SCxSR);
+>  	unsigned short in_tx_fifo = sci_txfill(port);
+> +	struct sci_port *s = to_sci_port(port);
+> +
+> +	if (!atomic_read(&s->first_time_tx))
+> +		return TIOCSER_TEMT;
+
+See, what happens here if the value changes right after you check it?
+Being an atomic doesn't mean anything :(
+
+thanks,
+
+greg k-h
