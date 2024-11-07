@@ -1,226 +1,79 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159DD212EE1
-	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 14:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C7C2144A5;
+	Thu,  7 Nov 2024 15:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991454; cv=none; b=bQfPn4aM8yO9xXwQSoTcj9XuwOSYMhBX7JAImikcMsP/SQ6Tfy1ORahsB0R5l1oAqZBdQAAQetK6GqWJgylvYo+4SgKZfkytHkRfoSvxY9SJf0vpGWJmX573JkpqbxNxQDycU8TvzdeWaPHFrOza4LczU0+CJMMiJctHwXexXUQ=
+	t=1730994721; cv=none; b=UGIPSem/Clrbe/lXf9EWuPE3HTZRHEflmUnMJwHp5yy7Cl5rnvQ/f0gI18l0KDtc2XwbWF7k5505hOLeRp9AlomYbwDKqnxVgqQxwpTkkUdGGpOmcHGzXdaBN0ZDtMxrb+VxN/GwgsofJ/hHiUsdsOYKazFyeG06d0Nj5rH3VT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991454; c=relaxed/simple;
-	bh=qZ8izUSaHahLbAO7uWeGh/Gz8E/GX1hkiRPzbJN9tMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dMBiO3ycjow/YJKIjuWNqSKt7oHlrg6tq8yEjAJqs0PHZu76Kl/qa9XmnCJkdljgMqDeaKZTexpXw+FuSiyPaP2DAWrj/jd4z62F2QeKdyDpNHRigfYmI3eYKfmTEIo4gAxZHd8Ar0iOfayCpDi+Y9DT9gpu9GU9uedaU0JLRIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=fxTJo6Mq; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1730994721; c=relaxed/simple;
+	bh=f+KXBENsmoNNMukSkOnmzKaUFO1dC8kFhS5KRSuuJHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qvqq8KPco4dv2HsYjvlkoZkMrNg6vdBsclshBuDZiB6TgCIfegGt9+EjO9Owmjk1AzFGkU1qEi8B1lpt+qdeKAb7+jxPip8DxHckoSeQ/lCTlvazSO0WMJKE2ZNFXNdIywH4SulLURYRkx+ozK5OERoUMneorrurKRgD3u9gLUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cu9+qsIu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fxTJo6Mq"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea5f68e17aso11139027b3.3
-        for <linux-clk@vger.kernel.org>; Thu, 07 Nov 2024 06:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1730991452; x=1731596252; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aiuuQGCaJR6L9rbp4LJqZfhMxwW+RQ/d7RNS/+rBXDw=;
-        b=fxTJo6MqgGoAfhP31zROnAQv2iNF3dLcyRvO3hNcsz1HIeKD6T/E1eZAwAejVhK6iL
-         iN1uYUkLFrW84u2SD4lJ5fco7UUu7XbWZTBiFwuLTn3WH+MDNDaEQ5RLoZR1HcMJnqOz
-         IATQBn0zm+Iw/VQmLu9ee7VHOwGjfdDJD1Zu4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730991452; x=1731596252;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aiuuQGCaJR6L9rbp4LJqZfhMxwW+RQ/d7RNS/+rBXDw=;
-        b=WvmxH/iVpuFGuelQOuvb0Xchg7OB4l5bcGPkeuoNVJCTaTrt/c3IeOKIl2Mjw7DRxA
-         NdGXNKb4qJ0NqIsyFpSBv5FlXvViITMRaJUCccRKAZyJ/IWy+yu8OSFNxm8kahxJOLyD
-         w1uIEHhI73pfdeKRHe2GCYTfQSO5y1zOyde+ZVD8bX3svA/pY3Trvw1fcsksHFX6Z4UW
-         t6w2Viff5KC50llK6CS88FKr5Xvr7Oktf2maSzvrPBaMQFJJC3Plf9K527BaTZE9ANZe
-         Fl4S1dB/AeGvdCS/uB/nweJvI+lMPwgrHVFeispaco9oA+1XmNnrhT7OHBiSE3RJz4sb
-         P8jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWou4heZ245jDbm8U63xwpAPGf9vB0RfLMMEG0uMk7I76oghayvYAzh3K72vM44nPdo1woV3HwSDLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbaWI6M+15NdKt8Mze4c+XA5MYFI7PHnUxFQW0dM+lN3CZzaOa
-	pIa2jqkGUxa26777iKmGMSgkM8U3xNLths/gj+FiVrjbeDzw0wVK1/qIhAC6Io9V12jJIMxWoFO
-	zgFOe65G3p5WorXOEFU6QkqGFe6mOkXLvggGYCQ==
-X-Google-Smtp-Source: AGHT+IF8agBg7laXxANgHAvwKG8a08ww2rsq+nqLU8LlqFlymOUM9EIrlz0DftKlezAxcI5XDK1DcyZtsOZ0bmNH4oE=
-X-Received: by 2002:a05:690c:4b09:b0:6e3:b6c:d114 with SMTP id
- 00721157ae682-6e9d8ad309bmr466023927b3.38.1730991452024; Thu, 07 Nov 2024
- 06:57:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cu9+qsIu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD88C4CECC;
+	Thu,  7 Nov 2024 15:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730994721;
+	bh=f+KXBENsmoNNMukSkOnmzKaUFO1dC8kFhS5KRSuuJHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cu9+qsIuGgslK6gaMJvw+dFv1QvgkBuNJ4Jr3P+99lqd6liN9qLEgm/tfg/C2rm42
+	 icW5Ciw2mhgSJzfX5/dpieDZTsKuBEArYy89skFRpbo09M8i0OE4auiBr9GRLO+cV3
+	 QBkhVmgdIZZwl91Sp2vbDGEAWaJT5yTMuKIdzA68Y0ljvQOFZlY/N39GOC/kKKy3gH
+	 bdgpln+rWvgLKttCeGheEb8FBZAt0jdOGLIrSeA00GYWlKudCrwYZJ/qtXaygeVNn8
+	 C+wDfnkeqaXOHfEZwn/xwdzEgQKVOvOwRFsXr27/0hCNiJ139lKDyKvp2sqxnw26q7
+	 bXyMPEMGx56YQ==
+Date: Thu, 7 Nov 2024 09:51:59 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells =
+ <1>` for all compatibles
+Message-ID: <173099471894.2769888.8233833580662075395.robh@kernel.org>
+References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
+ <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
- <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
- <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u> <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
-In-Reply-To: <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Thu, 7 Nov 2024 15:57:21 +0100
-Message-ID: <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
- spectrum clocking
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hello Krzysztof,
-
-On Wed, Nov 6, 2024 at 3:13=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 06/11/2024 15:10, Krzysztof Kozlowski wrote:
-> > On Wed, Nov 06, 2024 at 09:57:57AM +0100, Dario Binacchi wrote:
-> >> The patch adds the DT bindings for enabling and tuning spread spectrum
-> >> clocking generation.
-> >
-> > We had long talks about this but nothing of it got reflected in commit
-> > msg. Sorry, I don't remember what I was talking in some particular patc=
-h
-> > month ago, so you will get the same questions over and over...
-> >
-> >>
-> >> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> >>
-> >> ---
-> >>
-> >> Changes in v3:
-> >> - Added in v3
-> >> - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
-> >>   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
-> >>   indeed more or less a syscon, so it represents a memory area
-> >>   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
-> >>
-> >>  .../bindings/clock/imx8m-clock.yaml           | 46 ++++++++++++++++++=
-+
-> >>  1 file changed, 46 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml =
-b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> >> index c643d4a81478..7920393e518e 100644
-> >> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> >> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> >> @@ -43,6 +43,40 @@ properties:
-> >>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/=
-imx8m-clock.h
-> >>        for the full list of i.MX8M clock IDs.
-> >>
-> >> +  fsl,ssc-clocks:
-> >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> >> +    description:
-> >> +      Phandles of the PLL with spread spectrum generation hardware ca=
-pability.
-> >> +    minItems: 1
-> >> +    maxItems: 4
-> >
-> > 1. How is it possible that you change spread spectrum of some clocks fr=
-om
-> > main Clock Controller, while this device is not a consumer of them?
-> > Basically this means that this device does not have these clocks but ye=
-t
-> > you claim that it needs to configure spread for them! It's contradictor=
-y
-> > to me and nohing got explained in commit msg about it. I am pretty sure
-> > I asked about this alrady.
->
-> I digged my previous answer and it was pretty clear here:
->
-> 18:44 <krzk> You can, but I still have the same concerns. How this
-> device - which does not take any clock input, has no clocks at all - can
-> depend on spread spectrum of some PLLs? Thsi device does not have clocks.
-> 18:50 <krzk> device has no clocks, I checked now third time
-> 18:50 <krzk> If device has clocks, it must have clocks property
->
-
-The device where the spread spectrum properties are to be set already
-contains "clocks" properties:
-
-clk: clock-controller@30380000 {
-    compatible =3D "fsl,imx8mn-ccm";
-    reg =3D <0x30380000 0x10000>;
-    interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-                       <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-    #clock-cells =3D <1>;
-    clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
-                  <&clk_ext3>, <&clk_ext4>;
-    clock-names =3D "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
-                             "clk_ext3", "clk_ext4";
-    assigned-clocks =3D <&clk IMX8MN_CLK_A53_SRC>,
-                                  <&clk IMX8MN_CLK_A53_CORE>,
-                                  <&clk IMX8MN_CLK_NOC>,
-                                  <&clk IMX8MN_CLK_AUDIO_AHB>,
-                                  <&clk IMX8MN_CLK_IPG_AUDIO_ROOT>,
-                                  <&clk IMX8MN_SYS_PLL3>,
-                                  <&clk IMX8MN_AUDIO_PLL1>,
-                                  <&clk IMX8MN_AUDIO_PLL2>;
-    assigned-clock-parents =3D <&clk IMX8MN_SYS_PLL1_800M>,
-                                             <&clk IMX8MN_ARM_PLL_OUT>,
-                                             <&clk IMX8MN_SYS_PLL3_OUT>,
-                                             <&clk IMX8MN_SYS_PLL1_800M>;
-    assigned-clock-rates =3D <0>, <0>, <0>,
-                                         <400000000>,
-                                         <400000000>,
-                                         <600000000>,
-                                         <393216000>,
-                                         <361267200>;
-};
-
-The spread spectrum is not configurable on these clocks or, more
-generally, may not be
-configurable (only 4 PLLs have this capability). Therefore, I need the
-"fsl,ssc-clocks"
-property to list the PLLs on which I want to enable and configure
-spread spectrum.
-
-Furthermore, spread spectrum cannot be considered a new device but
-rather a property
-available only for some of the clocks managed by the clock controller
-manager (CCM).
-
-Thanks and regards,
-Dario
-
-> So again, you do not need this property at all. I repeated it multiple
-> times - you are supposed to use clocks property.
->
-> >
-> > 2. Why is this array flexible in size?
-> >
-> > Best regards,
-> > Krzysztof
-> >
->
-> Best regards,
-> Krzysztof
->
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
 
 
---
+On Wed, 06 Nov 2024 17:03:52 +0100, Théo Lebrun wrote:
+> Some compatibles expose a single clock. For those, we used to let them
+> using `#clock-cells = <0>` (ie <&olb> reference rather than <&olb 0>).
+> 
+> Switch away from that: enforce a cell for all compatibles. This is more
+> straight forward, and avoids devicetree changes whenever a compatible
+> goes from exposing a single clock to multiple ones. Also, dt-bindings
+> get simpler.
+> 
+> *This is an ABI break*. Change it while EyeQ5 platform support is at its
+> infancy, without any user. More clocks might hide in each OLB as some
+> registers are still unknown.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 24 +---------------------
+>  1 file changed, 1 insertion(+), 23 deletions(-)
+> 
 
-Dario Binacchi
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
