@@ -1,65 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB43F18FDD0;
-	Wed,  6 Nov 2024 22:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2614B161;
+	Thu,  7 Nov 2024 00:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730932959; cv=none; b=tVkPHy4jqhmvix6Ei5Xb3srPDXE+nTorlN+njNLHGIxvnglg5p22HuR06T5YqLaYC55LsfTZ4i8dlXWxdC006l2HgZ0kGXb46fzKv5HOaBEPlAHRlC4C7AxuPWx0bQOoUGOdweN4mMeLw4CGLMzIOXtifAzwDbzhF7n1qE80A8o=
+	t=1730938915; cv=none; b=IddyKXujnt7SLmPl8XelVfUgGGHJ8bNmQA53/Y/xA4VXdfFZn64YpB5sAtyt8Gt0Ks13i4FdhgYdGtdU4d6XYxxeyLtlZ8AuLWJjiJkWok6X8xPJRIQUKsQLsV07hoJzYaHwXU11kip4dC4bELvRD98j4yjC53LKIZESDJpi3Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730932959; c=relaxed/simple;
-	bh=hqvWk93sjdi7wdA88WOGQyv1JrcwbIAC9eGmz7dOPsM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=cI84jZm+Nk3T7fkC5wySnBcnh//SA7si5ZZjdFTbViTOxn8oFx4sV0eOdKmocpEUwxS3tJDR6aSbyXaa6j6kjXu/WJdomJ12aSts3Z542YrvSXpEqom2sn1lLj4f79haDrdPrjCATnwyCL8YYrrlNVw+6AYwYQvmzLKzPJEhDcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+rtjS3g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730938915; c=relaxed/simple;
+	bh=+CNWzMeB071PME8CXmstzWM4w5EMF9AzDs7sv42HsIc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uaeu5qZXrqc5c6q8WvkFvS0YIWRwAw3dTEgHRwjwCKFY7r3EF6B7yZGvhP27D45BBEUHhoJQN1YyEUkwzByZ5/0wr00MDXb5G/g7XOfu4kjlEDGwNn90YR8yJCZ7Pku1tf5BLTVlmtNB7GIp8n7LswrKGiAKh+ReA6wql/MVsZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSi6Nn+f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+rtjS3g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 468D8C4CEC6;
-	Wed,  6 Nov 2024 22:42:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSi6Nn+f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DB9C4CEC6;
+	Thu,  7 Nov 2024 00:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730932958;
-	bh=hqvWk93sjdi7wdA88WOGQyv1JrcwbIAC9eGmz7dOPsM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=k+rtjS3gVjKBkkyTbmxnk8hA4hp+FzUw0IoT9h656hS35pS/fzvErrSH9WoqMvpef
-	 /3Nv6LZaOIwvOYfAi4X4qohmwlh1nqDHBjqFcONNim2wejk//zO9u9INiHGSL928xs
-	 AjX8Khn2Hhhiphu8NB9XISQYrSbGyVaA5JLQKqnONCLsWpYTDYrAntf+mRmylZkTs4
-	 hIO3VzRAc6O6bffa8Ir5hcuwyVmBVgtEWkSzrodZ5vvOue8VmbP6em9lpe5XtwTgKv
-	 AZizoSM1TbQPd79Zu/2o1yzjWjfu4nHSYfKjLGLofQqjvdc7pfuf8RPFcAowcBGh62
-	 D8yQEFNj8WCgw==
-Message-ID: <5bda9461067e8d42dbea17310123c0d4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1730938914;
+	bh=+CNWzMeB071PME8CXmstzWM4w5EMF9AzDs7sv42HsIc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FSi6Nn+fZyQj7dKxHIZK7DT+LTkZfbwqFASaTgkoGMlINncNpG1lbmos3IUyB+kWR
+	 CtVJfQv5WBnN0qiss3L6VkLe8dn7SmaHZlDGrW4HfGyufCid71CoiZkmEmXkwmjYe3
+	 NQq+FodDM5h773Dq2XtMGw7fGqRi8oJWlrDrUCPvSPFHPq2zXRhGXgcjdeXw3QNpoU
+	 +M21tQeGCmbJmcrDe7i0Scvrk88eWdN8o+LtiYkBkD7+c/uHZORrEkkU9FdlkYnArr
+	 gB3iNcLbiQsfRCDVuBtG2XgkQn1ae9A7c3q6fbxkR0zPBQsrMXj5mJzGA5Xvrrkbiu
+	 NbmmDAP3XPMew==
+From: Mark Brown <broonie@kernel.org>
+To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+ lgirdwood@gmail.com, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+ support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com, 
+ p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com, 
+ Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: (subset) [PATCH 00/31] Add audio support for the Renesas
+ RZ/G3S SoC
+Message-Id: <173093891006.248820.1343956081297583948.b4-ty@kernel.org>
+Date: Thu, 07 Nov 2024 00:21:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZyuYd50i-oPSDXZ4@wens.tw>
-References: <ZyuYd50i-oPSDXZ4@wens.tw>
-Subject: Re: [GIT PULL] Allwinner clock changes for 6.13
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
-To: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 06 Nov 2024 14:42:36 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-Quoting Chen-Yu Tsai (2024-11-06 08:25:27)
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-6.13
->=20
-> for you to fetch changes up to 1054861bc258fb5798b7132453593cc3eb0639ba:
->=20
->   clk: sunxi-ng: Use of_property_present() for non-boolean properties (20=
-24-11-05 23:40:49 +0800)
->=20
-> ----------------------------------------------------------------
+On Wed, 06 Nov 2024 10:17:55 +0200, Claudiu wrote:
+> Series enables the audio support for the Renesas RZ/G3S
+> SoC along with runtime PM and suspend to RAM.
+> 
+> Patches:
+> -    01/31 - add clock, reset and power domain support
+> - 02-04/31 - update versaclock3 clock generator driver to support the
+>              5L35023 hardware variant; versaclock3 provides clocks for
+>              the audio devices (SSIF, DA7212 codec)
+> -    05/31 - add pin control support for audio
+> - 06-21/31 - add SSIF support for the RZ/G3S SoC; fixes and cleanups
+>              were also included
+> - 22-26/31 - updates the da7213 codec driver to support the DA7212
+>              hardware variant; suspend to RAM code was adjusted
+>              to cope with the RZ/G3S power saving modes
+> - 27-31/31 - add device tree support
+> 
+> [...]
 
-Thanks. Pulled into clk-next
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[22/31] ASoC: da7213: Populate max_register to regmap_config
+        commit: 9d4f9f6a7bb1afbde57d08c98f2db4ff019ee19d
+[23/31] ASoC: da7213: Return directly the value of regcache_sync()
+        commit: 841256954037ad80a57b8fa17a794ae9a01b2e23
+[24/31] ASoC: da7213: Add suspend to RAM support
+        commit: 431e040065c814448ffcc2fac493f7dbbfb2e796
+[25/31] ASoC: da7213: Avoid setting PLL when closing audio stream
+        commit: 1e1a2ef95b571825ca9c0113f6bef51e9cec98b0
+[26/31] ASoC: da7213: Extend support for the MCK in range [2, 50] MHz
+        commit: b3296f9095d6ad24723e5ad89c28acc317d0c3cf
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
