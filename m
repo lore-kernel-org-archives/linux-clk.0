@@ -1,240 +1,226 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4876212EF4;
-	Thu,  7 Nov 2024 14:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159DD212EE1
+	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 14:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990081; cv=none; b=egk6dPg4dauq0HpFhdkk1JhmGHDIIUKXjzIz7ze0/WJSweIx3+Y+TUn0FAgSg2P6jMcIDdPNzr09SEKmCivQj1Vn8i0jr9NXqaMZZlup4YSG8ZO6oMuV0QC2QgsIf52YyXYFofAWHcu9qV5fW8sT4CDjJefnYaPHq1+mDMTRPMc=
+	t=1730991454; cv=none; b=bQfPn4aM8yO9xXwQSoTcj9XuwOSYMhBX7JAImikcMsP/SQ6Tfy1ORahsB0R5l1oAqZBdQAAQetK6GqWJgylvYo+4SgKZfkytHkRfoSvxY9SJf0vpGWJmX573JkpqbxNxQDycU8TvzdeWaPHFrOza4LczU0+CJMMiJctHwXexXUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990081; c=relaxed/simple;
-	bh=+VXnf4L4+EUCWLwDDfo++V6wLUGKACpR+5t67b887/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUjvuOD7DGDMO3WQ7l5BTslTfsYgp4NaWDQclKckdxk8z1fRXe2r7uaxAAX74ATS5xw7lK3R1gS9/cJRyJZFxmHxfWHXovCPee1L+JnHyf3VIDR3k7v/Sy2jp1STlzTGQ2tevUD2lEn5jC4B9NCqwZGSDWypKV9pTtsajZodHrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgEAApSE; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730991454; c=relaxed/simple;
+	bh=qZ8izUSaHahLbAO7uWeGh/Gz8E/GX1hkiRPzbJN9tMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dMBiO3ycjow/YJKIjuWNqSKt7oHlrg6tq8yEjAJqs0PHZu76Kl/qa9XmnCJkdljgMqDeaKZTexpXw+FuSiyPaP2DAWrj/jd4z62F2QeKdyDpNHRigfYmI3eYKfmTEIo4gAxZHd8Ar0iOfayCpDi+Y9DT9gpu9GU9uedaU0JLRIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=fxTJo6Mq; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgEAApSE"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso1305620a12.0;
-        Thu, 07 Nov 2024 06:34:39 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fxTJo6Mq"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea5f68e17aso11139027b3.3
+        for <linux-clk@vger.kernel.org>; Thu, 07 Nov 2024 06:57:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730990078; x=1731594878; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F75piWahFu3xEvjEvyJygjFoe6Wvi89gUM0KanR4MpI=;
-        b=UgEAApSEtFKXlkZE1aCTy+Y6B8ZzSxcPSCtfvDVhaZ39Iwx180Cth7QESwVCduOT6l
-         lYRpsU133msEZqjtdQacBaRilM59Wv5ulMZtzTq3Oj9m+GRU5gdFvbqJwM4IGrcdNVT6
-         R05JvKbef3yh+bZEyrsOohcBiFhAzrYSXbTV07wPaiOTNGZOk610eFdhgN6Fbl4+vNz2
-         /odtplgVzEPe1Nw0Vyik7rOadcvUnTR65TyGx5YT63Jhir4ToVBwUoWsmjRHB3D4IN94
-         M1Oc8m9nXCy6jD8Lt7/WYlJMtbprL5Y32Q4zLOqBXVOjkGKrgC3Myq0IbFNBaCLU8IQv
-         9COg==
+        d=amarulasolutions.com; s=google; t=1730991452; x=1731596252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiuuQGCaJR6L9rbp4LJqZfhMxwW+RQ/d7RNS/+rBXDw=;
+        b=fxTJo6MqgGoAfhP31zROnAQv2iNF3dLcyRvO3hNcsz1HIeKD6T/E1eZAwAejVhK6iL
+         iN1uYUkLFrW84u2SD4lJ5fco7UUu7XbWZTBiFwuLTn3WH+MDNDaEQ5RLoZR1HcMJnqOz
+         IATQBn0zm+Iw/VQmLu9ee7VHOwGjfdDJD1Zu4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730990078; x=1731594878;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F75piWahFu3xEvjEvyJygjFoe6Wvi89gUM0KanR4MpI=;
-        b=BgL3UGp974SOuobeGZNSqBDtsxul+BDEsbt8QE7NawDXfJBxXbrS61XpuFZY4vOZmS
-         OH0IqwdCDH8wL6Ncv9uLL9kQgcC+9OfY4u6/UFt89P4btHRis+gUQjXurRVLatUD4V9O
-         X8fOA3WWuzoK5t9uI0SiHi/qBqDtoJuwiVRWb9Sd2mnodgewMLhK5di4DpDdzx9379DG
-         XPwYga3A93yg/OLPE4R6KMw7A0bbY06Mrk1WqLWUbqu1jo54jPmBuXPgUi5ib4Olxm8B
-         P7dBu4+PN0GIKBZ6xS5CnZ9GwhectjuYdECaWvn8WEphk+MEDbJH82Ornj176ynUL0+s
-         y+JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWd9T7VfcyFsosenOAbMvmJTEnVnLtje5KqlqokubZkHUG2N3e1QigTinXm3jrWr8bXmfUEZyT84CP0aYdM@vger.kernel.org, AJvYcCXj3ZDLYoyJZXeIMuCCKGc4/EnZbc+lAdBJzKnlafJy7L+Kt2ztA40Mb4x1qiQNTE6xJFruDAW+E12f@vger.kernel.org
-X-Gm-Message-State: AOJu0YyECZmnakiNOmQXiMrScbxY17F0O7oYd1jY+QeBklZVnSCD0LtA
-	1yasaofP3qv4wgSbPZjJCSyL0PN/1AeuOIxMbySL2aa92+sydqPM
-X-Google-Smtp-Source: AGHT+IGd4G0KS5uDfvxPoW9U4SNRhx7uhG/Wy5chDr4KEWTlLa8sOsBZ4tHb3V9I4IDAQQJgFfqRmg==
-X-Received: by 2002:a05:6402:50cc:b0:5cb:7780:f1f6 with SMTP id 4fb4d7f45d1cf-5cbbf94ebeamr31344872a12.33.1730990077700;
-        Thu, 07 Nov 2024 06:34:37 -0800 (PST)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03bb7fcasm880381a12.52.2024.11.07.06.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 06:34:37 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: clock: actions,owl-cmu: convert to YAML
-Date: Thu,  7 Nov 2024 16:34:31 +0200
-Message-ID: <20241107143431.728669-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1730991452; x=1731596252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aiuuQGCaJR6L9rbp4LJqZfhMxwW+RQ/d7RNS/+rBXDw=;
+        b=WvmxH/iVpuFGuelQOuvb0Xchg7OB4l5bcGPkeuoNVJCTaTrt/c3IeOKIl2Mjw7DRxA
+         NdGXNKb4qJ0NqIsyFpSBv5FlXvViITMRaJUCccRKAZyJ/IWy+yu8OSFNxm8kahxJOLyD
+         w1uIEHhI73pfdeKRHe2GCYTfQSO5y1zOyde+ZVD8bX3svA/pY3Trvw1fcsksHFX6Z4UW
+         t6w2Viff5KC50llK6CS88FKr5Xvr7Oktf2maSzvrPBaMQFJJC3Plf9K527BaTZE9ANZe
+         Fl4S1dB/AeGvdCS/uB/nweJvI+lMPwgrHVFeispaco9oA+1XmNnrhT7OHBiSE3RJz4sb
+         P8jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWou4heZ245jDbm8U63xwpAPGf9vB0RfLMMEG0uMk7I76oghayvYAzh3K72vM44nPdo1woV3HwSDLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbaWI6M+15NdKt8Mze4c+XA5MYFI7PHnUxFQW0dM+lN3CZzaOa
+	pIa2jqkGUxa26777iKmGMSgkM8U3xNLths/gj+FiVrjbeDzw0wVK1/qIhAC6Io9V12jJIMxWoFO
+	zgFOe65G3p5WorXOEFU6QkqGFe6mOkXLvggGYCQ==
+X-Google-Smtp-Source: AGHT+IF8agBg7laXxANgHAvwKG8a08ww2rsq+nqLU8LlqFlymOUM9EIrlz0DftKlezAxcI5XDK1DcyZtsOZ0bmNH4oE=
+X-Received: by 2002:a05:690c:4b09:b0:6e3:b6c:d114 with SMTP id
+ 00721157ae682-6e9d8ad309bmr466023927b3.38.1730991452024; Thu, 07 Nov 2024
+ 06:57:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+ <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u> <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
+In-Reply-To: <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 7 Nov 2024 15:57:21 +0100
+Message-ID: <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the Actions Semi Owl CMU bindings to DT schema.
+Hello Krzysztof,
 
-Changes during conversion:
- - Since all Actions Semi Owl SoCs utilize the internal low frequency
-   oscillator as a parent for some clocks, require it.
+On Wed, Nov 6, 2024 at 3:13=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 06/11/2024 15:10, Krzysztof Kozlowski wrote:
+> > On Wed, Nov 06, 2024 at 09:57:57AM +0100, Dario Binacchi wrote:
+> >> The patch adds the DT bindings for enabling and tuning spread spectrum
+> >> clocking generation.
+> >
+> > We had long talks about this but nothing of it got reflected in commit
+> > msg. Sorry, I don't remember what I was talking in some particular patc=
+h
+> > month ago, so you will get the same questions over and over...
+> >
+> >>
+> >> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> >>
+> >> ---
+> >>
+> >> Changes in v3:
+> >> - Added in v3
+> >> - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
+> >>   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
+> >>   indeed more or less a syscon, so it represents a memory area
+> >>   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
+> >>
+> >>  .../bindings/clock/imx8m-clock.yaml           | 46 ++++++++++++++++++=
++
+> >>  1 file changed, 46 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml =
+b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> >> index c643d4a81478..7920393e518e 100644
+> >> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> >> @@ -43,6 +43,40 @@ properties:
+> >>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/=
+imx8m-clock.h
+> >>        for the full list of i.MX8M clock IDs.
+> >>
+> >> +  fsl,ssc-clocks:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> >> +    description:
+> >> +      Phandles of the PLL with spread spectrum generation hardware ca=
+pability.
+> >> +    minItems: 1
+> >> +    maxItems: 4
+> >
+> > 1. How is it possible that you change spread spectrum of some clocks fr=
+om
+> > main Clock Controller, while this device is not a consumer of them?
+> > Basically this means that this device does not have these clocks but ye=
+t
+> > you claim that it needs to configure spread for them! It's contradictor=
+y
+> > to me and nohing got explained in commit msg about it. I am pretty sure
+> > I asked about this alrady.
+>
+> I digged my previous answer and it was pretty clear here:
+>
+> 18:44 <krzk> You can, but I still have the same concerns. How this
+> device - which does not take any clock input, has no clocks at all - can
+> depend on spread spectrum of some PLLs? Thsi device does not have clocks.
+> 18:50 <krzk> device has no clocks, I checked now third time
+> 18:50 <krzk> If device has clocks, it must have clocks property
+>
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
-v3: list the headers in the description
-v3: match properties: order with required:
-v3: add clocks as a required property
-v3: drop unused example node label
-v3: use the preferred four-space indentation for dts example
+The device where the spread spectrum properties are to be set already
+contains "clocks" properties:
 
-v2: drop address and size cells from example
----
- .../bindings/clock/actions,owl-cmu.txt        | 52 ----------------
- .../bindings/clock/actions,owl-cmu.yaml       | 60 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 61 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+clk: clock-controller@30380000 {
+    compatible =3D "fsl,imx8mn-ccm";
+    reg =3D <0x30380000 0x10000>;
+    interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
+                       <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+    #clock-cells =3D <1>;
+    clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+                  <&clk_ext3>, <&clk_ext4>;
+    clock-names =3D "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+                             "clk_ext3", "clk_ext4";
+    assigned-clocks =3D <&clk IMX8MN_CLK_A53_SRC>,
+                                  <&clk IMX8MN_CLK_A53_CORE>,
+                                  <&clk IMX8MN_CLK_NOC>,
+                                  <&clk IMX8MN_CLK_AUDIO_AHB>,
+                                  <&clk IMX8MN_CLK_IPG_AUDIO_ROOT>,
+                                  <&clk IMX8MN_SYS_PLL3>,
+                                  <&clk IMX8MN_AUDIO_PLL1>,
+                                  <&clk IMX8MN_AUDIO_PLL2>;
+    assigned-clock-parents =3D <&clk IMX8MN_SYS_PLL1_800M>,
+                                             <&clk IMX8MN_ARM_PLL_OUT>,
+                                             <&clk IMX8MN_SYS_PLL3_OUT>,
+                                             <&clk IMX8MN_SYS_PLL1_800M>;
+    assigned-clock-rates =3D <0>, <0>, <0>,
+                                         <400000000>,
+                                         <400000000>,
+                                         <600000000>,
+                                         <393216000>,
+                                         <361267200>;
+};
 
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-deleted file mode 100644
-index d19885b7c..000000000
---- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+++ /dev/null
-@@ -1,52 +0,0 @@
--* Actions Semi Owl Clock Management Unit (CMU)
--
--The Actions Semi Owl Clock Management Unit generates and supplies clock
--to various controllers within the SoC. The clock binding described here is
--applicable to S900, S700 and S500 SoC's.
--
--Required Properties:
--
--- compatible: should be one of the following,
--	"actions,s900-cmu"
--	"actions,s700-cmu"
--	"actions,s500-cmu"
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- clocks: Reference to the parent clocks ("hosc", "losc")
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Each clock is assigned an identifier, and client nodes can use this identifier
--to specify the clock which they consume.
--
--All available clocks are defined as preprocessor macros in corresponding
--dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
--actions,s500-cmu.h header and can be used in device tree sources.
--
--External clocks:
--
--The hosc clock used as input for the plls is generated outside the SoC. It is
--expected that it is defined using standard clock bindings as "hosc".
--
--Actions Semi S900 CMU also requires one more clock:
-- - "losc" - internal low frequency oscillator
--
--Example: Clock Management Unit node:
--
--        cmu: clock-controller@e0160000 {
--                compatible = "actions,s900-cmu";
--                reg = <0x0 0xe0160000 0x0 0x1000>;
--                clocks = <&hosc>, <&losc>;
--                #clock-cells = <1>;
--                #reset-cells = <1>;
--        };
--
--Example: UART controller node that consumes clock generated by the clock
--management unit:
--
--        uart: serial@e012a000 {
--                compatible = "actions,s900-uart", "actions,owl-uart";
--                reg = <0x0 0xe012a000 0x0 0x2000>;
--                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
--                clocks = <&cmu CLK_UART5>;
--        };
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-new file mode 100644
-index 000000000..1717099b7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/actions,owl-cmu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Actions Semi Owl Clock Management Unit (CMU)
-+
-+maintainers:
-+  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+description: |
-+  The Actions Semi Owl Clock Management Unit generates and supplies clock
-+  to various controllers within the SoC.
-+
-+  See also::
-+    include/dt-bindings/clock/actions,s500-cmu.h
-+    include/dt-bindings/clock/actions,s700-cmu.h
-+    include/dt-bindings/clock/actions,s900-cmu.h
-+
-+properties:
-+  compatible:
-+    enum:
-+      - actions,s500-cmu
-+      - actions,s700-cmu
-+      - actions,s900-cmu
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Host oscillator source
-+      - description: Internal low frequency oscillator source
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@e0160000 {
-+        compatible = "actions,s900-cmu";
-+        reg = <0xe0160000 0x1000>;
-+        clocks = <&hosc>, <&losc>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 420d06d37..652c9822a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2016,7 +2016,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/actions.yaml
--F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
- F:	Documentation/devicetree/bindings/dma/owl-dma.yaml
- F:	Documentation/devicetree/bindings/i2c/i2c-owl.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.yaml
--- 
-2.43.0
+The spread spectrum is not configurable on these clocks or, more
+generally, may not be
+configurable (only 4 PLLs have this capability). Therefore, I need the
+"fsl,ssc-clocks"
+property to list the PLLs on which I want to enable and configure
+spread spectrum.
 
+Furthermore, spread spectrum cannot be considered a new device but
+rather a property
+available only for some of the clocks managed by the clock controller
+manager (CCM).
+
+Thanks and regards,
+Dario
+
+> So again, you do not need this property at all. I repeated it multiple
+> times - you are supposed to use clocks property.
+>
+> >
+> > 2. Why is this array flexible in size?
+> >
+> > Best regards,
+> > Krzysztof
+> >
+>
+> Best regards,
+> Krzysztof
+>
+
+
+--
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
