@@ -1,98 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF9020CCD1;
-	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5172D1F4FD2
+	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 12:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730980696; cv=none; b=QA/WhC+S+JqRgst3v4tZxJdrE0ai21su36qXn76gBLXQQ3aJdsrX+7O/Ddinoi7vQubyy3zV5gghdr9RpH3WjEU4Pb3QdZd2EdkCa6KSaoqY5c+2sFgcTTf/XyUvR1I7dIiKzsDxPtHy/Zyv0uzZQW9E6F0BExVtnNrEgRygLjI=
+	t=1730982320; cv=none; b=K8t7X0oz7Le1ezM+80ZUqPqBCfV18JZ7qJQJmK3LgoMUOcrbaI/PQ7RCJ0jRZmJ7VNc6sKTnfaOPT4dQUwIz+pReNS/6A/+nCNesqDwym06kTBarv5oe1O59Q32iksqLLQ55nzQ8qJHzgEO9/VcUY7M87aRdef15gZ4OTj6tajE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730980696; c=relaxed/simple;
-	bh=Gh/ompZkwURn0PwOkifty4Ajs5DMdgzLZxjoSuHPK3g=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=m8/vRrql6I2Yys3Jum57cgiaexR/V44b510tsRzGtlK1WsdEJAZMx9GdOV94efwVYYR9YYOlRrR0gVQlDbweZ27qX0r7lHG0MDw8JsG+AVSqeAn759o9RbTDOlH8Gb0pyFdUk0Ty9e2Sm7AjLIVCQiwiAOwKFU6FDFjs2LBrQIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd3VY7Aj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730982320; c=relaxed/simple;
+	bh=uOHtoOGSDgDkow1wLA2awmZ3A8Qe3ptAdpnofZDjgqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BuLBItW0mFQr/X+//XWgYwuSeFUYOyRhfq5axhAD0bvbvnCCgj2nZDpUZ3PHpW4ojD09KNivy7RmddlWdfYSE3o1mM885/Xz5wGe4z4pOBnPyu0O5F7mSSFbKNWrvjimf4yLIJGEJ3GRQObQ724B5LjPgg0i8Qxjvb1hnYGKdEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gsW5RuK/; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd3VY7Aj"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A9452C4CECE;
-	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730980695;
-	bh=Gh/ompZkwURn0PwOkifty4Ajs5DMdgzLZxjoSuHPK3g=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=nd3VY7Aja2UhjCkdssEGJAn8WYU0/vn8jv5UgOSkD/HjAXbTssVVPy0hqXs87VwlG
-	 AHu52Cx1kMuLMZZ4Y0V6JKnVGHprvgINzuR9/qtUrVDjQD1GNp7alw+KpJ50pWNKK9
-	 SuA0Bja2bNSGiZ9/aLDECTDabmpxVwX6Q/dabRyQEVk43O9nxQceU6ql89BmN1MrCG
-	 X3RUF4+enipJe8GLixJrj/jaksQ/OAtYKEbRhK2Z1XVk7e2DXvFtRQrpCD0lbzWb/+
-	 tYZYjPG1o6dY3Pzqwo6sMbhKRd/W6RXq+Orfzb4OIk2nczJcYeFnKuANMkPrtUB1A8
-	 JFZvoYfr/SJng==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97515D43352;
-	Thu,  7 Nov 2024 11:58:15 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Subject: [PATCH 0/2] clk: qcom: gcc-{sm8550/sm8650}: Fix UFS resume from
- suspend issue
-Date: Thu, 07 Nov 2024 11:58:08 +0000
-Message-Id: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gsW5RuK/"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d43a34a0cso124802f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 Nov 2024 04:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730982317; x=1731587117; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lzbdXmjU7p6o20uBK8Vs/ZUnlHfeyC3jV0YTi+RLdZs=;
+        b=gsW5RuK/QVDvjg+NYAX3GtP5VTunCSDJIGe0M5t3ED9PufbRLLGCEYp7BKtAoIoKwg
+         k1ziHzQxjJWkq1QgynrKATcUyjVCu1Go/r2KFM6XGhaLgvojxIIQf0p4SjpMfUQe6OaZ
+         wcQ9AaE6to2Q20J8bZ1KwaH0UF2SvBRTS98XRch6vxmxABwXhwQ6FfB5kBPVnBiRgN5t
+         mrrh3HOoDTBkDfOXi9aMAsXe/LlfUZsYsm8KWLbNHlTlwkLlQhtT03MtZcw3VqGRHl4N
+         1GqjAi7hrdDOsFWtq0So6qjnNZWVHBO8fGAcInoOtr6wvsptaQ1VQZpFBOQg8ZJn9NRt
+         TDWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730982317; x=1731587117;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lzbdXmjU7p6o20uBK8Vs/ZUnlHfeyC3jV0YTi+RLdZs=;
+        b=ZXAlrC80CCBj2aqIYLlAgEv77+E77OLkC7N83Xhe3DzttK5hdtv1F4Ot9zKEqLX+eV
+         BvQ6hTTkpO9CuZpxbTSAy6FGhglQXk+0BDcjOPSQG59L/xxzuJ/odJ5zCIgZsXaNJwa6
+         mzHI90arZyE0qqxsGCHsjbK5pvfMiv6B1GdX7uo0OhiFHUPp8rbPWhZBSdCYyMQMZQSo
+         1yQ7hdsy3cQW460DN3aykpU0MEP3Eb7yL32jskcwnQkM6tyTwhq1RO+6rIeqq9ESf1+C
+         hnR2j11rVLbLdLfqKQyccz/EbSYzAnP9VoJoe/DCw7Snye/gbFJD+i0Cs4EXn3CrqHdl
+         Rwrg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3D45t6qyMR8Z4i74PZ8ZAEkoJ40IoSIeqjVzX80zfJnRG2wFV/P3dlmtIXq6nS8+wsA6SP3Q/1gU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0XfG5EGDzs4AqrsARpqR1YoNWuylzpwGB8jcvCvDrACRfpOh
+	M1LMIEPucItBCb5wUScLviiIxeD6zf3KfzNEVdvHLF6LFZyJ6hIhBTC/DKgSKVI=
+X-Google-Smtp-Source: AGHT+IFOgPssWZsDH1j5T86iLoVp1PjuAQf1YJ308gU5MuuoGMyMeA0iydRzzX36J0FJAIprsNb+6w==
+X-Received: by 2002:a05:6000:400b:b0:37e:d940:a9fe with SMTP id ffacd0b85a97d-381ef746475mr362301f8f.13.1730982316616;
+        Thu, 07 Nov 2024 04:25:16 -0800 (PST)
+Received: from [172.20.144.41] ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea5c1sm1625361f8f.81.2024.11.07.04.25.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 04:25:16 -0800 (PST)
+Message-ID: <0ce2df56-85be-44da-af23-cc5bee98e14d@linaro.org>
+Date: Thu, 7 Nov 2024 12:25:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: qcom: Add CAMCC clocks for
+ QCS8300
+To: Imran Shaik <quic_imrashai@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das
+ <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
+ <20241106-qcs8300-mm-patches-v3-3-f611a8f87f15@quicinc.com>
+Content-Language: en-US
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241106-qcs8300-mm-patches-v3-3-f611a8f87f15@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFCrLGcC/x2MQQqAIBAAvyJ7bkHFEPtKdAhbaykslCIQ/550n
- IGZApkSU4ZBFEj0cOYzNlCdAL/NcSXkpTFoqY1S0uIdMvpjx8AvknFEWjrbOwOtuBI1/d/GqdY
- PcoxysV0AAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, 
- Nitin Rawat <quic_nitirawa@quicinc.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=806;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=Gh/ompZkwURn0PwOkifty4Ajs5DMdgzLZxjoSuHPK3g=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnLKtReLRazqpEK4DZPuTzY71FdYMrbx2WEhOnt
- pZm60uhuSqJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZyyrUQAKCRBVnxHm/pHO
- 9VgjB/4iieean0IziLGHHrJI59WIFDmy9utZzqMMwJ049ru36KmxBmdBfCp/UH9YzV1W8wEZal3
- AdKLjERvX+l+N16/j05L32RWjxq3y9usqz12ulTYMA4k9qi07uZEq4CRaYBNz505MdzGdxosVJq
- LcZZfRQMYTylWvl9rwXw5FcyDcmQ5Y//uRQLutgxRznjTOMEwAybvCLjt/qSDs8zUrEZ9aC2Nc+
- P87+TBbDA4mw/Y/90cJpPBEXoVLa2MgjzhUboLaQaMMZzXA448r8Fp+DL60/m4/U1dKveuK1NUN
- 8UTh6pljk9YPKANcqyUalQkye156zFnanrZkGNU5VCYEfm65
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
 
-Hi,
+On 11/6/24 11:51, Imran Shaik wrote:
+> The QCS8300 camera clock controller is mostly identical to SA8775P, but
+> QCS8300 has one additional clock and minor differences. Hence, reuse the
+> SA8775P camera bindings and add additional clock required for QCS8300.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>   .../devicetree/bindings/clock/qcom,sa8775p-camcc.yaml    |  6 +++++-
+>   include/dt-bindings/clock/qcom,qcs8300-camcc.h           | 16 ++++++++++++++++
+>   2 files changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> index 36a60d8f5ae3..81623f59d11d 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> @@ -8,16 +8,20 @@ title: Qualcomm Camera Clock & Reset Controller on SA8775P
+>   
+>   maintainers:
+>     - Taniya Das <quic_tdas@quicinc.com>
+> +  - Imran Shaik <quic_imrashai@quicinc.com>
+>   
+>   description: |
+>     Qualcomm camera clock control module provides the clocks, resets and power
+>     domains on SA8775p.
+>   
+> -  See also: include/dt-bindings/clock/qcom,sa8775p-camcc.h
+> +  See also:
+> +    include/dt-bindings/clock/qcom,qcs8300-camcc.h
+> +    include/dt-bindings/clock/qcom,sa8775p-camcc.h
+>   
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,qcs8300-camcc
+>         - qcom,sa8775p-camcc
+>   
+>     clocks:
+> diff --git a/include/dt-bindings/clock/qcom,qcs8300-camcc.h b/include/dt-bindings/clock/qcom,qcs8300-camcc.h
+> new file mode 100644
+> index 000000000000..fc535c847859
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,qcs8300-camcc.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_QCS8300_CAM_CC_H
+> +#define _DT_BINDINGS_CLK_QCOM_QCS8300_CAM_CC_H
+> +
+> +#include "qcom,sa8775p-camcc.h"
+> +
+> +/* QCS8300 introduces below new clocks compared to SA8775P */
+> +
+> +/* CAM_CC clocks */
+> +#define CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK				86
+> +
+> +#endif
+> 
 
-This series fixes the UFS resume from suspend issue by marking the UFS PHY GDSCs
-as ALWAYS_ON. Starting from SM8550, UFS PHY GDSCs doesn't support retention
-state. So we should keep them always on so that they don't loose the state
-during suspend.
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
-Manivannan Sadhasivam (2):
-      clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
-      clk: qcom: gcc-sm8650: Keep UFS PHY GDSCs ALWAYS_ON
-
- drivers/clk/qcom/gcc-sm8550.c | 4 ++--
- drivers/clk/qcom/gcc-sm8650.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241107-ufs-clk-fix-e49ee2097594
-
-Best regards,
--- 
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-
+--
+Best wishes,
+Vladimir
