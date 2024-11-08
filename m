@@ -1,151 +1,143 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2C91E1C19
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 09:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965111E1022
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731059957; cv=none; b=aNDJK5k6KfsjZdyw4k3/v4BqHeiCyaZMXVgJlXZx61Vp/gQb2pfWC9c1eJvdflGF63uuNBrHmevowPdHTQ43TtmI3rFBlxDTj/96NZZhZ0ADOPjrClMofpZjaq8juEQ38UuykTglga+ywYh5vGp5p35sJg27V72m5Arn+l0GsrU=
+	t=1731060327; cv=none; b=Zeqb8V9lURbSpBAiQVo383JTgfAMb5nCzMGdW7iq9irE9hgv4487BEdk4r/n1btxgBSVsSdZqD+gLyhwZk3m0FOwHJsmMXBlcxTsdNd8h+HcchvujRjr7Q3iWymHJMd/e2D4j2GfKhnKM0JdgPUK6s6KT5PERcH9kVlscQDRtBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731059957; c=relaxed/simple;
-	bh=favIJ0RU0Z1kVo0+cj+p8TtzOVJuzqN1053K+zk2H3E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QXJEYqwqqEed/ZwO9O+LAQXCFeEJFmTCRzQitTPjnS6w1OdexCluBd7lyLAZPiaGj2iPOkF2bvDv9+sEMSxdLOQil/DwZryokrrqRqZj6mqxf8aVRi3O/2vLeKmroL4O/2yhQ/Scdj8csqmBsp80Y3AXG5mi//1jHTlpKX0qDkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DX1HwiBR; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1731060327; c=relaxed/simple;
+	bh=MoiEayfj/UT4sKXcIMbQM1ehNea+yL0fmJc/mIJizOM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ss9wJ69WgCyMG/3p/+uXEe9qK7/+Zrw8QzYfPZTWmEY240t4ogvNNCH8mTYV3YQYbajEj95hj/9c+aMAEaO3Iube1+OE9FFhbNock4UfCnMLuIBb/3WjIOXkTlA9aA92RftMtjDT1TzYo5jHwYhiiM0G+f4cUUS3HBF7m6zB97Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=V2JzjlHe; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DX1HwiBR"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so15881125e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 01:59:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="V2JzjlHe"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso1408223a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:05:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731059953; x=1731664753; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eTIHfF+UH1Xa7DK8o/xh7XL9H7nZTNldWgZ8nJ8rQE0=;
-        b=DX1HwiBRwhGXitdHvqQR2GUb0yuMG/hW9E7sDsDJVkq3IAvNfBcNnBSonDnMckfvp9
-         iQLsC5m0tzIgXMKscNxxSL5AJ1yFVz9k1wllbwVMg0yRzYPvh801Xv/f7OIGVJEltItM
-         fUj7cOCqZ+q/X7wp1ansYdELaBTjzNMFmL41fbIZR5dPbgo9rJKZn+qSBS7En1ozX/WV
-         avczIqxECniiFbpCuFgBJrXURyEu7HB/lpQIJLPoW6p4WqaaMHvQOoWVR0+M/UGwOrxA
-         zRk8mGkhHr0e/HXZ3fxU0R6UxTPMLcHcrmTlCFqwvDGnkVqwpxqLArI9nt7NJyvCs4fO
-         n9EQ==
+        d=tuxon.dev; s=google; t=1731060324; x=1731665124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YAL+kPG7hjMLlYG3CXYUDbVL7KyCjm02rxkbC7MtBh8=;
+        b=V2JzjlHeXAIkJraCy7xNnDKYVdjf4omzERSJmJ4rHqk977pqA26q8NKNnnEGKGdoKy
+         Vzarlfb8qTfR0Q7557n9xRQbIwxm+tRQTkgrN1ZEwHxS7hW/n+F6OLtPZkEp49VY6FZS
+         JMr+/Cd/EziTGyubF90TOHv1olVLokRjO3Wp9QvCFMz6ZC8lf3YRozSw8DYYn8N6ePVv
+         3gjBMkJ3pLwyAVLE3Da4grqJ2oxxuG/AEyOyYPdQNApPVY0kUtENOtg23ghB7EhenqCQ
+         gPA1x3ITy6KowQA9qFwqkg95K2pU5FHgJHSjC0EtWr+EG9a0W+SI0KWbvj+XA/SezW56
+         v12A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731059953; x=1731664753;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eTIHfF+UH1Xa7DK8o/xh7XL9H7nZTNldWgZ8nJ8rQE0=;
-        b=ao9FRv8LCUwVdtpr3diRlNkn79drP3SzTD3R0L9wZIUQcqQe746fCSDMfi/4YMq6iZ
-         ssPnXkRK4koetq0GxADGnRxvdXTpZ6wkcAeMtKHj9MmYFjGqHnnt2UAIIAHzO+QJTIOH
-         2JdiFh8Ta28iMVAQCZ+U+XYIuQZj0U61ELyggCTNzN8t2guya9DD4ow4bTQFKDxG3HPF
-         63kDlLkVuoJ/r0aH4Rr0xLf+rGc945YQkzvZ7CJeikKEJq6euFrHsYaQ5Q11CIeJfb/C
-         98teyyUKanyba3s8QOQgXcWRJdl3G55ebHAr2Sj8R4eo9ZjIbmma7+WZX99Gu4UXOQac
-         apdg==
-X-Forwarded-Encrypted: i=1; AJvYcCURQVnTDLG2bjjf0G1KZViGXzk7PZSDH0Xpym5DVncsIM18bnzNsQV4LQ6XHp5jGIFUhmwuIZtRbAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxud+A6zuDAM5tiAICga+mT/bf8ZcF2CKIroRBQnkUKuKLpvaRD
-	wdkq1tM7CS+VBgC8uzDqY+Yy/X5JLefnpJFu+Gdrf9gAX74LOyK1jy3UCfoLc9A=
-X-Google-Smtp-Source: AGHT+IE52uNEd1M4kmQsGgrrxZ5e+HBgRbQ6hYCN5h70Y/Y7u6ZLc+ouQ9mgPck15oFzZ/AUamay2Q==
-X-Received: by 2002:a05:600c:4f87:b0:431:5ed4:7e7d with SMTP id 5b1f17b1804b1-432b7508053mr18099615e9.18.1731059953350;
-        Fri, 08 Nov 2024 01:59:13 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:ecfd:9f8d:62a3:6ba8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0530599sm58205685e9.1.2024.11.08.01.59.12
+        d=1e100.net; s=20230601; t=1731060324; x=1731665124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YAL+kPG7hjMLlYG3CXYUDbVL7KyCjm02rxkbC7MtBh8=;
+        b=to6B0uhMbJ91UMgR2/0DQtjU4bdSJ5y3Pu7f+Nd1acrG6+bEdh4WrdUiGjiha3JDGM
+         QpXA3PuJRuS9hc+Q+lwe5DNCF7oEEdFgiDDicZMu+pF6pul/tYqMqDt3n1jmM9U1ikHp
+         mid96y6eBaxXSzNeSrIGhNE1YP1w9s3lNLz5m6+3M1DUIdoJAZVRtqZBeYuQAchRJdqp
+         T7vxOaMGK28DVzdZmiRqgsfiKhsoF+9kVhOYUh76c/zVEPSSmyDZ01BNZH0LZaDvgN12
+         6xcIKGF1B4ZfucKe/PZh236W+pmBaiC5iag9FrLI9vasrtk2cx8hdAqyLekFfC1j6Uma
+         XB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUTN0iSn+KU6goXvF8+QXFSzQ0wmWDf8a89bA2KG3+Ogmiu67diizmPVBX7qJo4gFRBi88r6g3Foyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpfvHDd4hIAlvJuJKLIjCpnTbvv3Ihzyh+TuMgLD3PmgJvH3qs
+	EyKg2jkzaeySjAHm4v+vbxF/j/AwvYolfQzeOeUgFgW+3dh21mP4lV60NSpp9pM=
+X-Google-Smtp-Source: AGHT+IG2NrO+sM70OPw1AksJyK2vMcksl4JvBsYJxXbdWHnFOrPxekQAQy53PSFcnZw9polXCbL+5A==
+X-Received: by 2002:a05:6402:274b:b0:5ce:dd82:1b15 with SMTP id 4fb4d7f45d1cf-5cf097371f0mr2586609a12.14.1731060323636;
+        Fri, 08 Nov 2024 02:05:23 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c4f0bdsm1775959a12.56.2024.11.08.02.05.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 01:59:12 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
-In-Reply-To: <85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com> (Chuan Liu's
-	message of "Fri, 8 Nov 2024 17:23:53 +0800")
-References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
-	<20241004133953.494445-1-jbrunet@baylibre.com>
-	<07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
-	<1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
-	<85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
-Date: Fri, 08 Nov 2024 10:59:12 +0100
-Message-ID: <1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
+        Fri, 08 Nov 2024 02:05:23 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	p.zabel@pengutronix.de,
+	g.liakhovetski@gmx.de,
+	lethal@linux-sh.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 0/8] Add support for the rest of Renesas RZ/G3S serial interfaces
+Date: Fri,  8 Nov 2024 12:05:05 +0200
+Message-Id: <20241108100513.2814957-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
->>>> -       if (core->flags & CLK_IGNORE_UNUSED)
->>>> +       /*
->>>> +        * If the parent is disabled but the gate is open, we should sanitize
->>>> +        * the situation. This will avoid an unexpected enable of the clock as
->>>> +        * soon as the parent is enabled, without control of CCF.
->>>> +        *
->>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
->>>> +        * forcefully enabling a whole part of the subtree.  Just let the
->>>> +        * situation resolve it self on the first enable of the clock
->>>> +        */
->>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
->
-> At first, I couldn't grasp the logic behind the 'return' here. Now it's
-> clear. This approach is equivalent to completely giving up on
-> handling clocks with CLK_OPS_PARENT_ENABLE feature in
-> clk_disable_unused_subtree().
->
+Hi,
 
-No. It's handled correctly as long as the tree is in coherent state.
+The Renesas RZ/G3S SoC has 6 serial interfaces. One of them is used
+as debug console (and it is already enabled in the current code base).
+Series adds support for the remaining ones.
 
-What is not done anymore is fixing up an inconsistent tree, by this I
-mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
-own registers but has its parent disabled.
+Patches:
+-    01/08 - adds clock, reset and power domain support for the serial
+             interfaces
+-    02/08 - serial driver fix patch identified while adding RZ/G3S
+             support
+-    03/08 - extends suspend to RAM support on the serial driver for
+             the RZ/G3S SoC
+- 04-08/08 - add device tree support
 
-In that particular case, clk_disable_unused_subtree() won't be turning on
-everything to properly disable that one clock. That is the root cause of
-the problem you reported initially. The clock is disabled anyway.
+Merge strategy, if any:
+- patch 01/08 can go through Renesas tree
+- patches 02-03/08 can go through serial tree
+- patches 04-08/08 can go through Renesas tree
 
-Every other case are properly handled (at least I think).
+Thank you,
+Claudiu Beznea
 
->>>>                   goto unlock_out;
->>>>
->>>>           /*
->>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
->>>>
->>>>    unlock_out:
->>>>           clk_enable_unlock(flags);
->>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
->>>> -               clk_core_disable_unprepare(core->parent);
->>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
->>>>    }
->>>>
->>>>    static bool clk_ignore_unused __initdata;
->>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
->>>>           clk_prepare_lock();
->>>>
->>>>           hlist_for_each_entry(core, &clk_root_list, child_node)
->>>> -               clk_disable_unused_subtree(core);
->>>> +               clk_disable_unused_subtree(core, true);
->>>>
->>>>           hlist_for_each_entry(core, &clk_orphan_list, child_node)
->>>> -               clk_disable_unused_subtree(core);
->>>> +               clk_disable_unused_subtree(core, true);
->>>>
->>>>           hlist_for_each_entry(core, &clk_root_list, child_node)
->>>> -               clk_unprepare_unused_subtree(core);
->>>> +               clk_unprepare_unused_subtree(core, true);
->>>>
->>>>           hlist_for_each_entry(core, &clk_orphan_list, child_node)
->>>> -               clk_unprepare_unused_subtree(core);
->>>> +               clk_unprepare_unused_subtree(core, true);
->>>>
->>>>           clk_prepare_unlock();
->>>>
->>>> --
->>>> 2.45.2
->>>>
->> --
->> Jerome
+Changes in v2:
+- drop patch "serial: sh-sci: Clean sci_ports[0] after at earlycon exit"
+  from v1 as it was already applied
+- used bool instead of atomic_t in patch
+  "serial: sh-sci: Check if TX data was written to device in .tx_empty()"
+
+Claudiu Beznea (8):
+  clk: renesas: r9a08g045: Add clock, reset and power domain for the
+    remaining SCIFs
+  serial: sh-sci: Check if TX data was written to device in .tx_empty()
+  serial: sh-sci: Update the suspend/resume support
+  arm64: dts: renesas: r9a08g045: Add the remaining SCIF interfaces
+  arm64: dts: renesas: rzg3s-smarc: Fix the debug serial alias
+  arm64: dts: renesas: rzg3s-smarc-switches: Add a header to describe
+    different switches
+  arm64: dts: renesas: rzg3s-smarc: Enable SCIF3
+  arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for SCIF1
+
+ arch/arm64/boot/dts/renesas/Makefile          |  3 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 90 +++++++++++++++++++
+ .../dts/renesas/r9a08g045s33-smarc-pmod.dtso  | 48 ++++++++++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 25 +-----
+ .../boot/dts/renesas/rzg3s-smarc-switches.h   | 32 +++++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  | 25 +++++-
+ drivers/clk/renesas/r9a08g045-cpg.c           | 20 +++++
+ drivers/tty/serial/sh-sci.c                   | 64 +++++++++++--
+ 8 files changed, 273 insertions(+), 34 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
 
 -- 
-Jerome
+2.39.2
+
