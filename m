@@ -1,57 +1,57 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366F61EB9E6
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240231EBFEB
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063033; cv=none; b=WRRWDKHZWkfHTkk5UIiFnmVG0V8hSsmVEpVxfJQ/MdR2f/j624w7++m0YaaW0HFXNf4kTLputTaSAxho+30yjHO3iBgLLBd/fIaJaYMvdrCJZvWNCi/Cc/3BPDTxOp/gPOwnJte3+/MPV4NkhmsDzmyHsfTE8sdFFXN3Et3BhII=
+	t=1731063037; cv=none; b=jjedN6uGlh8iso4cgSjE4y3zC09Na2nniSYfWUg5yRK+nyKjE+tgfNLJQkK8u0cmE+JccQHXTP4YL37YBLleit3Z4xaU48OZmwosI7RYe3jhSJtg6KoNyma7ofzlNNWGKOwlFULXnc0N5IS7jZ+fl9+UmQzKdslTSsrmKhF/9PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063033; c=relaxed/simple;
-	bh=uQfKkEoR32N0d989ZespVXFD+EYoWvBvpUMB8tvOdrg=;
+	s=arc-20240116; t=1731063037; c=relaxed/simple;
+	bh=JjIahQr6A0j7MFD+w6mZNB6iEn2WX+1Wm4FASvWAtvU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lhbnQjZZk9GXfFHa+E3dEIRtyIPSwh8W8Q3/AFvNd8q4mwtDJ+VNSzSsA3CiLx8duf77rP4tS2GtyE5ZY2dFsVNeCPeVq53kTHIShBy5wERuFktFrOblDv8YqWK1CnN13j8l0dH3Vfu+W0jHi6RZARBP5MxCEaXlrv0uFhapJK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=iebG5QP+; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=a84Z+Hhem53XlTJbf1I5EQyPx3KTsYpLbI9+BvRKoFNcZqmPJl6QhahXOYB49+wWF9HLCyaiL6v+HAzG5olO0s1LuP76D7j5PB2MeG2JbHbk+NxMTAnO32EtzoNFEYSI3fz2QRHQ3cQo1sJwOSUQ/AhLj3vLgyTRIa2QDmnONEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MCezlR8B; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="iebG5QP+"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9eb68e0bd1so273289466b.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:50:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MCezlR8B"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso310461966b.2
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:50:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731063031; x=1731667831; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731063033; x=1731667833; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RVWcqtL2/z6hHqWPVR/NbA1tV+dgOCVHn7AuI7jqeJ4=;
-        b=iebG5QP+iP6Inr3RzPjO2Qc4Mlyw9fr0dqb3vxbEk6xx1YTG7nVwApjBp1mYrppw0s
-         rzQis8MO+CHhIWaZw0J25uvRxk2DcbHUNjdqrvX3lC3zTh4VUhk9E/FktQH8sxsALkgs
-         ABTKObYNuq4zEnOMi35/rP7Gje6Ad6dK5CduxQ7w9SAhQyWQcA6igVqOnG21riZXE+CO
-         bFr6Vm7EzB/sva6webN6ueneeGDS+ySJ3A/VQqNc7dGAaqA+mvSPW0IFpe88RpFs/g8H
-         ouyIWQZhN0y/WK+pOBFj0OhWMgx/9uliiY2/qlQ7zu1WC1rYWevGYybR/OkPpNH7SqKO
-         +ruw==
+        bh=l8RwfIDsdAPmonZ2TVWnj8OzE+nZU+M7zjNrbRKY8/4=;
+        b=MCezlR8BYV7NJ7y1eHnLvPoXVcOHurcSRg5/doI7sph4NSWJKwT5Gbic4XuxFkjKj/
+         qa7zS1Kr7YjRaDb8v9Yu2EbO77BGyoxtdpOl5lvagAA6VKcgC5uwQAJ7Bvk1MVhavbEg
+         dfjY1CKsjkA4VKrNFoIY6SH1zHEDp+/jPm2FpuplxfeisxwnvSsIkJ3OvGbfqhVznI7p
+         liEoUNMZ8T+a1JPPS/UPmE1Do5o5GV4myKflWwqipS98UoV6Q7ev9bYwy9BTyxs6Nl17
+         SvP9S5iU1kZh8yc751wLctE1fhiU+3ffUcu2AHqeFd5Rp+CjxDzg60mwcLEKl2V+dNgL
+         4RQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731063031; x=1731667831;
+        d=1e100.net; s=20230601; t=1731063033; x=1731667833;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RVWcqtL2/z6hHqWPVR/NbA1tV+dgOCVHn7AuI7jqeJ4=;
-        b=tRZIxTu+wboq/g6U1lYV5IGrlCK8wouIJrzkVGe2qzV1BNpSZ077BvCdxIKKiJpA4U
-         qV3IbshXW0TicH/58/QSJk+FbT3z7Y1ug3zk27AGVB3wnfBJVHjRQUesJMXvVjWoOsIe
-         Cq/RvA95KwJmCUwGzR+xqZ3JkkrtmrhpXbOKStRH5bnbEC7TW2akwWrAnAA8dcCPVUe3
-         vhfO7qHEAj0icSLTE7pK4PRc5rPiEJl1O5gBCdqf/Omj99M+KxVgmXzh1Dt8Ts2n7Hud
-         Sojtny2rzu7tI3cbrZ4oCpNxGkbfgRqiK+hPmYKGuzpMCNWnH5FNa5yDsK5IIIHFmR1S
-         uxTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyxY8Dz4o0gROVtbSUOAjQBTHvNHAQIxXJVG/lXCYvDcR0RImtu8RicvpSdTICPIHc42iPNinSeXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZaM3varOxxemzbB4CE/KOJ7ZGK2lVr2bu0b+2mCG6UqDdigI2
-	hGvo1gHcsQDC3nu/Nt57wWkagR54jmKs1aAXDVDrgEQLysYJ62X9rZkdGdka+yQ=
-X-Google-Smtp-Source: AGHT+IFft6CwH3EePxmvnwbJFYSPRDnYeOJGj9yj1dd1M3Hdcr69b4JKtRaHUgCl0R3MhySJFo0PIQ==
-X-Received: by 2002:a17:906:848:b0:a9e:f28c:3749 with SMTP id a640c23a62f3a-a9ef28c3ac0mr107670166b.32.1731063030575;
-        Fri, 08 Nov 2024 02:50:30 -0800 (PST)
+        bh=l8RwfIDsdAPmonZ2TVWnj8OzE+nZU+M7zjNrbRKY8/4=;
+        b=GGLrrXhOq0Dw7tpt+HNBTUfZCJ50RO3ps4LqPe0qJmMyQmhBhPi6JlISDBEY2dvFzB
+         v+AERGwRA/eqeeTLNNsF8JC+4OvET7lPiwqCESbTEZOjniIaKJhlzwRZjUTq16Ze4Rp2
+         PP1dbLOnuiXQPJx4UBfvbRU1OsHqrAyq/rh+7CNM1MgMbMjKkVJ5R3xFzd83q0EvH/ID
+         fYEq4li4b5c3ljXGY6hybahGyfyxlOB4vUlrhOIQVw7dLPMkCv1UGN3hsvKms9UxGkmR
+         3BZ2FYvdGZo0poWsOAq5vNqQFBubtzKK8SPHrgD23CiK2S2XmgHCNNgcx0lXuez2iaRJ
+         ZvTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUue9J6lEPmuMlkzpRcxYxYXFFqbXs1v6ZBpH/IEn5RwWv0QT+oFzFVvwCZ5MERjwS6Bjg9lXPtPXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHxoWB7fHgO/aI8QDJvrDEMVdzj6/k+vVj+rDyhxbWVTedIGUO
+	P3nublgEhm3gWeJZTnacEQ/EoextCMf2fL3tk2+VG1w0OYVQWPMZZMnFBuXJ2h4=
+X-Google-Smtp-Source: AGHT+IFPnrgFfPbNd3TP73wQjFYRKTrU9RrXTJRvMfUQhEiSnGU8niQr6Ks7xN8nlYRGUMQMvIJMJg==
+X-Received: by 2002:a17:907:84a:b0:a9a:be:37f8 with SMTP id a640c23a62f3a-a9ef0018b3bmr208920566b.43.1731063033457;
+        Fri, 08 Nov 2024 02:50:33 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.50.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.50.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 02:50:29 -0800 (PST)
+        Fri, 08 Nov 2024 02:50:32 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -77,9 +77,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 08/25] ASoC: sh: rz-ssi: Fix typo on SSI_RATES macro comment
-Date: Fri,  8 Nov 2024 12:49:41 +0200
-Message-Id: <20241108104958.2931943-9-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 09/25] ASoC: sh: rz-ssi: Remove pdev member of struct rz_ssi_priv
+Date: Fri,  8 Nov 2024 12:49:42 +0200
+Message-Id: <20241108104958.2931943-10-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
@@ -93,8 +93,7 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The SSI_RATES macro covers 8KHz-48KHz audio frequencies. Update macro
-comment to reflect it.
+Remove the pdev member of struct rz_ssi_priv as it is not used.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
@@ -102,22 +101,29 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Changes in v2:
 - none
 
- sound/soc/renesas/rz-ssi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/renesas/rz-ssi.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index b4439505929f..a4d65be17eb1 100644
+index a4d65be17eb1..a359235b55af 100644
 --- a/sound/soc/renesas/rz-ssi.c
 +++ b/sound/soc/renesas/rz-ssi.c
-@@ -71,7 +71,7 @@
- #define PREALLOC_BUFFER		(SZ_32K)
- #define PREALLOC_BUFFER_MAX	(SZ_32K)
+@@ -99,7 +99,6 @@ struct rz_ssi_stream {
  
--#define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-44.1kHz */
-+#define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-48kHz */
- #define SSI_FMTS		SNDRV_PCM_FMTBIT_S16_LE
- #define SSI_CHAN_MIN		2
- #define SSI_CHAN_MAX		2
+ struct rz_ssi_priv {
+ 	void __iomem *base;
+-	struct platform_device *pdev;
+ 	struct reset_control *rstc;
+ 	struct device *dev;
+ 	struct clk *sfr_clk;
+@@ -1043,7 +1042,6 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 	if (!ssi)
+ 		return -ENOMEM;
+ 
+-	ssi->pdev = pdev;
+ 	ssi->dev = &pdev->dev;
+ 	ssi->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(ssi->base))
 -- 
 2.39.2
 
