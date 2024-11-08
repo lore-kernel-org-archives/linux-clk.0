@@ -1,138 +1,119 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098F0217463
-	for <linux-clk@vger.kernel.org>; Thu,  7 Nov 2024 19:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED46C1BD9E5;
+	Fri,  8 Nov 2024 02:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731007933; cv=none; b=MDhpkYIbIPXwdHlo9bAcZEx0Vonizd9/Gzwj6Sh+btbjR3UgilYP1s8lmLljZxKwyxi/6SvUJGT3VOwjWQkbee325ZliETmqRVr0E3yh9I2zagwpeDW0IXFxXZsgv4Vfu4Cn1e7y6Z7ui1Elu24gQCQn/qWARKbTaFGdLW/LAVM=
+	t=1731032582; cv=none; b=h5KS6pvtcwDgphSDMKId1ooT2zpd5QzWFs4yLgqpFmiuFa5e7jIDaakj/ySy3EMYbgWaHW6Aw5O6Cg4+6/PTLePLv8+JrvPCQqLOp9h3Fx28MTzDnfT35i/UmIEt14KgH/RW/3CryU/u6mVJp7Xk9s0YkQYeR3nYr9XC/+FfZds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731007933; c=relaxed/simple;
-	bh=OintD9rFSVvs2q5JufWD72f6dtsaNkW+4o5Hy5URNmc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tJ1FXaSFFq+fIxxodCB4YzM8APeg9lv/21H3jSPVbXNDFLizSZ8Swa8CJKcb+z0KK4hf0O3IlN+9lHKinarc3Rt+/2/dormfOVHZ4diR/dhPXOXrHOxWS6XOsGvTdNt4pWupJkIy4/+Q1aoURex4tEag0MH+XA/YqQpeQq2QhBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=i5nLyb+v; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1731032582; c=relaxed/simple;
+	bh=APyRPtDpOSsz2jYrIwghzGR2bt5juoTmWmJTI3E01SI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XyQemkoivcKqktlQJpiaCT2HtO+oic1QrKhQbFgmEbff4FuLkB0xycSeKXVTHU2WqGjpsXw+Cl984mvo+cUo/VO+5Qrjx28gumGuxUxNDs8MvIojb6F/h+XPBpVU9+D0yVMuz323AJdis60jHt3qrViegIoa0ObzEz1kxvIxAhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH0+7OV7; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="i5nLyb+v"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=wLnmGFI2D6XzO1
-	y7AoltGnzpl8EYzD12WYCHMPYPqDc=; b=i5nLyb+vZrdPi++9dkKKFRpJQ8daNZ
-	x8271k93VjXLhKz/d/Yp1QU4eztl68ZZK/rtRVLhMyZ9pbS0KmOgQuLoVorgJ4lT
-	N4FvTIT9EyNQquUGDfleJ3OLHepqbSL9wwHPdtZozN9Z+sqB2IxzFKJmRGXK68KJ
-	c/87DTQ3cXFnfpd7t7Mr7dI9D+QynCcfCOV1+RYhjQwi8erF4YiV1N0a1VQ6vVil
-	Vskha4dY1vP7SQ8ojZjuDOxRC2eBet9pCCpgxKQUGrx8SV1Qo6wsp8tfj7f130hu
-	nTFOLr0nAhbvAFUfhW4oVHKD66uXpAVAk9Maihz91MbU3Hj3zmBW6InQ==
-Received: (qmail 1046223 invoked from network); 7 Nov 2024 20:32:00 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Nov 2024 20:32:00 +0100
-X-UD-Smtp-Session: l3s3148p1@PKEqsFcm0rhehhrW
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: renesas: r9a06g032: add restart handler
-Date: Thu,  7 Nov 2024 20:31:44 +0100
-Message-Id: <20241107193145.20175-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH0+7OV7"
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83b430a4cfdso65229139f.2;
+        Thu, 07 Nov 2024 18:23:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731032580; x=1731637380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eR7AyViXmeWGMVONEZ/pRYURocoexzHBT2dgSZdiLJc=;
+        b=PH0+7OV78FktjzbAzGnpQ+abNnFE4Q9THdTtcSovQIzPO4uzUEFCtdtiCmXRVoHnoG
+         HO0GsJznOb9j1xPEJlrB7oTgyBjzLX51iU6TxIRcT/Nw0u75pfIL1LabasSHdzO5F/Nl
+         7GSdLKPFTdXaybUyJR03UkRxgJOC5uLY4gYA65dVCBNnsi5OYSbzcWd3GQMZkpCELQ5Y
+         WigTW1c+euGe/hViR61wMyp7+khn6iZcABWS7++KY2YQiX9Dsk0LS7H3DRlaSS55vbV/
+         XWAgAWprzzgKu+dCWDZ4G352lX49+OWifT+CB6sO/mOgqOxvucXqrIPQx151SSwKbQaL
+         UWyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731032580; x=1731637380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eR7AyViXmeWGMVONEZ/pRYURocoexzHBT2dgSZdiLJc=;
+        b=fN8pmBgFr3M1NzGHZqbNlyefC6myQuALLRHRgOrZnNycQrnK+hOqlD8HOSWgBCYNT3
+         /YGFWZvS3AZxxNPsZid+e9OwMn5aE39WK/XRk3Atg5607d0vPURZVIki69jOZq1dQkAo
+         jz3EJwhJpC70zOxWnCJo5RFNb23n7OVaSuoT7iEyxUdTaQssIf+1QciITuywDo4K06tP
+         veGIFO0KvfguCrdH0PoElfAxhdDHsUMFIxQe9v+pOEhTDyqaD5XcWkzpinZhmsGz3uqf
+         KJsf5JdbLl6q2RTqDBEDbFQaTq2LhHPn4QOMm3NOWf0oMgRMN2r3zFOLklV21R3zXAon
+         j0Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVy26YY/00d3ondo02iVpsP+KJlvae05CeQ8Xv5RewqrAvxYED69ACvsMyRFN82K4hKGwyKzx1kQLDMbnnd@vger.kernel.org, AJvYcCWA4CwNS61iKAIXVihxt5wQKNMoEf3I40S95KegSzZxCo9P5u37iXSg2Bf2ZfCL+4sMjYtr/foE//P0@vger.kernel.org, AJvYcCWIpgnnfaLtiysNK+Aurv0lhWEMaYQ/iqZSirDPGbWTSO0CI/p3EyZ6PkuJEJVjzkfOWj/xtfnTEg+R@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpUfWymNObWIQQE8HVfWD8MNfhxB4cQRKZibb/sqS2K1fSfUZK
+	r0RTyDLNtrSf2/pFXGMwErrXnkQqic11ubFKpZDvImcTShLOWEYMVXxJFBkwT7SB5TxoBqZOngV
+	vuwtAHRUxwBWR/GruKhmkUA9DbXg=
+X-Google-Smtp-Source: AGHT+IGQ7gpv66XfauvZZ5t0zmt5b2BZyWV862s4RrmNacvxmqQJFFeOQYZ68mwOrld/NXiqMMkWEyD3aFFzolHNfM0=
+X-Received: by 2002:a05:6e02:1350:b0:3a6:da79:12bc with SMTP id
+ e9e14a558f8ab-3a6f199ff96mr15159245ab.7.1731032579956; Thu, 07 Nov 2024
+ 18:22:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241107102008.3626023-1-shengjiu.wang@nxp.com>
+ <20241107102008.3626023-4-shengjiu.wang@nxp.com> <Zyzod4k+LNkpJdMA@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zyzod4k+LNkpJdMA@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 8 Nov 2024 10:22:44 +0800
+Message-ID: <CAA+D8ANhznTNCt5RqaF17GMYHqYdggMpR_LOWuP4GX5ECApHzw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: imx93: Use IMX93_CLK_SPDIF_IPG as SPDIF
+ IPG clock
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	imx@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The SYSCTRL module also does reset handling. Start supporting that by
-allowing software resets which can then be utilized by a restart
-handler. Finally 'reboot' will do something useful on RZ/N1D. Watchdog
-support to be added later. Use BIT() macro consistently while here.
+On Fri, Nov 8, 2024 at 12:19=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Thu, Nov 07, 2024 at 06:20:08PM +0800, Shengjiu Wang wrote:
+> > IMX93_CLK_BUS_WAKEUP is not accurate IPG clock, which missed
+> > the clock gate. IMX93_CLK_SPDIF_IPG is the correct clock.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+>
+> This should be fixup. Add fixes tags.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+I will update them. Thanks.
 
-I got a RZ/N1D now. Before I start the real work, I need working
-'reboot' for fluent hacking :)
+Best regards
+Shengjiu Wang
 
- drivers/clk/renesas/r9a06g032-clocks.c | 33 +++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index c1348e2d450c..8451567579c2 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -20,15 +20,24 @@
- #include <linux/platform_device.h>
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
-+#include <linux/reboot.h>
- #include <linux/slab.h>
- #include <linux/soc/renesas/r9a06g032-sysctrl.h>
- #include <linux/spinlock.h>
- #include <dt-bindings/clock/r9a06g032-sysctrl.h>
- 
- #define R9A06G032_SYSCTRL_USB    0x00
--#define R9A06G032_SYSCTRL_USB_H2MODE  (1<<1)
-+#define R9A06G032_SYSCTRL_USB_H2MODE BIT(1)
- #define R9A06G032_SYSCTRL_DMAMUX 0xA0
- 
-+#define R9A06G032_SYSCTRL_RSTEN 0x120
-+#define R9A06G032_SYSCTRL_RSTEN_MRESET_EN BIT(0)
-+#define R9A06G032_SYSCTRL_RSTCTRL 0x198
-+/* These work for both reset registers */
-+#define R9A06G032_SYSCTRL_SWRST BIT(6)
-+#define R9A06G032_SYSCTRL_WDA7RST_1 BIT(2)
-+#define R9A06G032_SYSCTRL_WDA7RST_0 BIT(1)
-+
- /**
-  * struct regbit - describe one bit in a register
-  * @reg: offset of register relative to base address,
-@@ -670,6 +679,7 @@ struct r9a06g032_priv {
- 	struct clk_onecell_data data;
- 	spinlock_t lock; /* protects concurrent access to gates */
- 	void __iomem *reg;
-+	struct notifier_block restart_nb;
- };
- 
- static struct r9a06g032_priv *sysctrl_priv;
-@@ -1270,6 +1280,13 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
- 	of_clk_del_provider(data);
- }
- 
-+static int r9a06g032_restart_notifier(struct notifier_block *nb,
-+				      unsigned long action, void *data)
-+{
-+	writel(R9A06G032_SYSCTRL_SWRST, sysctrl_priv->reg + R9A06G032_SYSCTRL_RSTCTRL);
-+	return NOTIFY_DONE;
-+}
-+
- static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
- {
- 	struct device_node *usbf_np;
-@@ -1324,6 +1341,20 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 
- 	r9a06g032_init_h2mode(clocks);
- 
-+	/* Clear potentially pending resets */
-+	writel(R9A06G032_SYSCTRL_WDA7RST_0 | R9A06G032_SYSCTRL_WDA7RST_1,
-+	       clocks->reg + R9A06G032_SYSCTRL_RSTCTRL);
-+	/* Allow software reset */
-+	writel(R9A06G032_SYSCTRL_SWRST | R9A06G032_SYSCTRL_RSTEN_MRESET_EN,
-+	       clocks->reg + R9A06G032_SYSCTRL_RSTEN);
-+
-+	clocks->restart_nb.notifier_call = r9a06g032_restart_notifier;
-+	clocks->restart_nb.priority = 192;
-+
-+	error = register_restart_handler(&clocks->restart_nb);
-+	if (error)
-+		dev_warn(dev, "couldn't register restart handler (%d)\n", error);
-+
- 	for (i = 0; i < ARRAY_SIZE(r9a06g032_clocks); ++i) {
- 		const struct r9a06g032_clkdesc *d = &r9a06g032_clocks[i];
- 		const char *parent_name = d->source ?
--- 
-2.39.2
-
+>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>
+> >  arch/arm64/boot/dts/freescale/imx93.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot=
+/dts/freescale/imx93.dtsi
+> > index 688488de8cd2..56766fdb0b1e 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> > @@ -925,7 +925,7 @@ xcvr: xcvr@42680000 {
+> >                               reg-names =3D "ram", "regs", "rxfifo", "t=
+xfifo";
+> >                               interrupts =3D <GIC_SPI 203 IRQ_TYPE_LEVE=
+L_HIGH>,
+> >                                            <GIC_SPI 204 IRQ_TYPE_LEVEL_=
+HIGH>;
+> > -                             clocks =3D <&clk IMX93_CLK_BUS_WAKEUP>,
+> > +                             clocks =3D <&clk IMX93_CLK_SPDIF_IPG>,
+> >                                        <&clk IMX93_CLK_SPDIF_GATE>,
+> >                                        <&clk IMX93_CLK_DUMMY>,
+> >                                        <&clk IMX93_CLK_AUD_XCVR_GATE>;
+> > --
+> > 2.34.1
+> >
