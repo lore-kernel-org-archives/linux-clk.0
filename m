@@ -1,253 +1,160 @@
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2092.outbound.protection.outlook.com [40.107.117.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9B1946CD;
-	Fri,  8 Nov 2024 11:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066659; cv=fail; b=bunqe83x2IbpMcmnHJkUfQP5tUYS/6w4ObXf6WqiQXbPj1BMWAlsxu8Krzj8Rvt5XF7r0Q0WLr1HkAK1Uz15iykRI6tyCo8Nx0jbyatNArDFkEoupFPZpAzWAmyWm4As5YLdzdGnc+ejy86lZAUVVMXotqwp8omP2JU0f3QoHvU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066659; c=relaxed/simple;
-	bh=BSmue2N4/hnMagVPhTyMWggjuR0/pyU44e/z4DImFGI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oFnIanDghFPMJbg56y0EMtnAKkSwngbiUWAsCHwQBT598E74RRK608YauLHoZS62+d/X195xocIpdXCDSax+evguSfyCfwrL3+F8hTtHVp7uCnACzBrKvKpwqwY4QspqAC9v5tBWzkuN7HESOHxAeIfOSPutXd5G6GRUmnKpmiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=LWKk6VU7; arc=fail smtp.client-ip=40.107.117.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF79A1D2B05;
+	Fri,  8 Nov 2024 12:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731067962; cv=none; b=Cca814VVTzfQJ8Qb7T7b+/R/MiWzLLqlQm5TW4CCsXCa6v7epMgRAUmKwhbBupEwntgIDCcWRfUibZ0PskPm+KOD3QLCxIT8S++weDIo2TsSadu9rL8Y9cdo4psuHwW5yOD4KzaBSGmRVTKT3I0t6M60Zk6M0b3E7D+os0BGrMc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731067962; c=relaxed/simple;
+	bh=cK8xFRnGlMnoguSnAHELwh/X2hSfv4FZcBJxGPPrDx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8d31t0eSxCqMpnKAKpj3vR5jQMLKU3vCc6RzQh2SCunl/4dZxJKpas+0YZ9uvrxgWORLud33oIdN8N/+19sSQQqZMD+V0LTUtWeV9kJvYoqeNgWHvKjV7XsaIlmAngcR7rzEDH3qkCo/ie7W92XYanI8CvK2YX/digSotSycZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ex/rNDSQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="LWKk6VU7"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YgE7HQTLml7Cw4bK3mF4HNwWG9d77JZ7jtrr3I7zjIUw3zaeMTd+xtZpjlyMmMt8Lk0SW1S3C9NuJwwqIgO+GsuLThuRCqxXY8ba8eSW0NR/e/t5PJpWqtex/G8TEukwV0zNJwmvEwuhvuNfu5Nov2bct+Mpx9MlUddtLL39tRV8OndjxEoXr1+SoAFWXD3swXoNY4NhXXoM5zAD+Rpvj7WBI5SvOsT8Azc1LDd4eeEpopcLCutj1xeVb15Kswc7i0QqKQyaBL6VgODfwOraJt9U+Jaublp22SrY/K74Cr4gniR5OK57mQRdGwwt6nPPin5eYa3gAW3LoclellPDnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kP2AsQrGN+eBlb6gZUjqVMcYfRmybTJaV3vton59lL4=;
- b=K6RCAyNiaY5cE2RTkeFwKIAxfbTPBmqlBGyh2Voex/wKhCVY38ewSnvhpRg7xOCOjMUrA4pxcZW3q/VkFMmShOWK/3ZEuJByPSMcFJkMOa0H/TnBSG1KE7DtCXXM6ADPKUL9s4XIuFVbbb9p+qKAyaMzCv2iIbX6WgopaNlPTE5vIm8kpl8x58zQQMXDLy8cHpNsKpJksQZwbutDE7mYDR3pHx8GwLaGi12eKnhLKf1UjMtgi1FbnIJAmbkoZOwrrlFKSYyc6+dS/GHmFaqA6Dkx0vZyFQQngTb3uXtw9lxe+Kzw9p2NvGbZ/cW+DE3YSWGQdmjZ1XDUu4oDKesVzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kP2AsQrGN+eBlb6gZUjqVMcYfRmybTJaV3vton59lL4=;
- b=LWKk6VU7Rn+8tBgDx7yog3oiIr8AT29jhPoRLNOMG6IjokU1V+Kyn0M53Dg8K1QSs/MzRd52P+SQKCNfVnn/UEkvMHcLrJ/nHWjk7y7xc9LgrpQ98zhEPuryYVSbzmWHxhYQHXdPtjh50cRUTasOSiePPGf5zChgnF8uD9W5Kp5kvwfkl9ayJn0xg9EUguKLeeDCD7oqKxMIu2tUBwWmGsaKv+piynmPjaFPBcHUwSB16B1jwdsf1in2hi+xM7waaak6vJsAzZcpf4AgJzvH0FZ8hyfWDfpZjXN95xJynzz36VtPXji7qfwjo3335xUDXzFbJ3F8jnb4R/zlbskaXQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEZPR03MB7051.apcprd03.prod.outlook.com (2603:1096:101:e9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Fri, 8 Nov
- 2024 11:50:40 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%7]) with mapi id 15.20.8137.019; Fri, 8 Nov 2024
- 11:50:39 +0000
-Message-ID: <5eb12197-330c-4f55-82f7-d13ea458ba43@amlogic.com>
-Date: Fri, 8 Nov 2024 19:49:59 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
- <20241004133953.494445-1-jbrunet@baylibre.com>
- <07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
- <1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
- <85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
- <1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYAPR01CA0107.jpnprd01.prod.outlook.com
- (2603:1096:404:2a::23) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ex/rNDSQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90B2C4CECD;
+	Fri,  8 Nov 2024 12:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731067961;
+	bh=cK8xFRnGlMnoguSnAHELwh/X2hSfv4FZcBJxGPPrDx4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ex/rNDSQeT20fYIkjQJpsLYv4tjEA9YSllOzlvGS/NCqKc9aJUYQHAhskeTKRLiYO
+	 F6DQT0WXwIShtI/V5UEV7CTbJd9mnHyK+7JbOjpKrRGd3qaTzktbwkGKhCr+DwePF9
+	 MniLuA8wRGKJIh2Ad39g8vR5yYEedE6dd/ciavrtOSM1KI6W0KkJfogh3m2qHXpE1L
+	 CP0L6jQ10gBi4RMJgZtgpEwpusmD0k2BaDWuq7qAvIYLWwex+hEl6KxaiEgGCKN2pQ
+	 thsMvWUANmnvvBucIMnajW99pVOgnJrucKAWeAxhx6acVuF1pDH5ZqSnkBuQN4scmu
+	 9+TJN9a5Kh60A==
+Message-ID: <54dd6ae6-b992-451e-b1c6-8a1968955f4a@kernel.org>
+Date: Fri, 8 Nov 2024 13:12:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEZPR03MB7051:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6ab5cf6-0a82-4457-107b-08dcffeb9107
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K1NLcjhSc1FZdWoyZGJjd1gwNm15SmRiWU9jWXNOZ0ZLQTNZamp0cGtTS3BN?=
- =?utf-8?B?UW1IQXIxdkhuRlFOVkxZOUtacWI2OW5XY1VSUHFiRjNXaFA4YUxteEJNNFZX?=
- =?utf-8?B?YjhPZnR5Wk9Vd2ViWlBSZHhleXM4SVU5cllpdlJ1NHRzYmFRaDNPb1U5YWpq?=
- =?utf-8?B?bVZtc1hOV3ZVMHg4VzlDYk5kUWRoQkQzRy9XRXYveGNhZHJyblkzY2psKzlz?=
- =?utf-8?B?aURtS0JNN0ZNbmNSdE1pTU54cmwrRXFPSzEzbUFJRkVRa3NoLzZpdUFkdUtR?=
- =?utf-8?B?OWpOTTA4UTBjRWFUcStmTFRoSXA5SHBxbEMvZ1JFTDJPK1hpQzB2emhKL1Bw?=
- =?utf-8?B?OExLYUMwUVpsbXl6WWFodnZCcGcwdVZmN1VXVWQ5L2lGSDQ5ejl4Wk1YK3JM?=
- =?utf-8?B?aVpWMFhBVHZadnNGd3Z0OXZhUXdJOC84WWRUTHA1OWZmbjh5endLcXgxdUpu?=
- =?utf-8?B?N1Z3dWp2YTZwanVHazcrcUk2Q1hVMDRxeHZMRHRoUi9yaEkrTTVyVnloRXU1?=
- =?utf-8?B?ck0xMXVuWjdmZnFOYlQ3N1dONEZyem8xSTJMZk12cm5xSnRNTFhkQkx1eWtr?=
- =?utf-8?B?eEFkWHMrdVBKSXZsalRsRU5uMEFHbnJQc2dLc05yL0lqRW1ZQkl3TkJXenZu?=
- =?utf-8?B?NEtMQit4MC9HV3RYdVJ6NlhHR1ltV3hLWHNTOEJIUno3THczQU9RbWZGcHJm?=
- =?utf-8?B?cktDbWg3U3N2VTVkVm5WQ25aVVdnU3RpZzg1NFBWZnZrS1VNZkxMZTBabGRW?=
- =?utf-8?B?RHNRa3ZlNkJLYS9UN1BZWUFxK1JjUTVVdjRZTWVJVi9hZE5SanRoSmdkVXNn?=
- =?utf-8?B?SFJBaDhHaVRDRDJkMlZUL09OMkNGZDJtaVpqVDdPc2p2TUFsMm9QdWVVSVRL?=
- =?utf-8?B?MGR2UTdIa1ordnRDQitpd3UyaVUvUUVuQ3h1QWVpNEUrMjdFQmFiYitHTzA3?=
- =?utf-8?B?cjlXdTFpc0xkOXpWSUtVdVZ2VXdXMm9vYzh5YVNtU25lNzA5clNuVGczL0xN?=
- =?utf-8?B?ay8yZlE3UGxEY1B1UHhQVUZ2WW5vTmRhZ250NGtQcE5tb014K1lNZjd1c3Nx?=
- =?utf-8?B?TzlXNTRUSFVTUWVIV01ONVN4MUdnSnlIM0NLa2YyUDdoMW5EaVBaNGU2SGRO?=
- =?utf-8?B?WlhNemIwbmQrRlpIU1MrbkR4WTZIRjFQYXAxL2xnb3hXT3VlaXhoNGprRndG?=
- =?utf-8?B?d0N0S1VjSlR4MFd5cHVlYlVlVndzZkU4a2hnbHUvcmFvdittdFpxUVg5YXgw?=
- =?utf-8?B?OTYydWVzMkZHa0l4YnVjS2pNODlnNlplMEdiU1hNK05TWkdXT2lzZFBLbW9Y?=
- =?utf-8?B?MUxYOFE4MXBqblhhT3VRUXgrN29adzVPcWF0M0U0d3dOTTZsbVlXL1NKaXRG?=
- =?utf-8?B?TnZuOHVGWmcvU2UyWlRST25PWUt6aWtzTXlvVFBTdStWeUlLSVlzN1h5TVla?=
- =?utf-8?B?ZkIvQmo3Y0JNTXNBcnJPeG1CUFRZdFJqTzE5VDZKeWkzMHptdmxPeWFCY1RN?=
- =?utf-8?B?azFkemVvb0ZFNXpZcmFIc09qdjhHYWRsRGhQczdJU3BVS096cDJadGxiaHp2?=
- =?utf-8?B?OTNZSU5DcUlGZzVKQWlKempsQklHc3Q1NnF3TktXNU11ZC9DUFdZRnkzYXlt?=
- =?utf-8?B?SDZzUVN0WHdGSE1EVFZpVVU3Vzk4a3hJOUtTekFjWTNWdUo4VU9OR2NKc0E4?=
- =?utf-8?B?WXpGMnRSWXZyV3VXUCtwdG5OSi83dXNvVnFNWVN0dUZtcDB3VktBbFZ3eG15?=
- =?utf-8?Q?lsn1YangX6xE+W5uoL3ELbbeBLS9KhpNkgPdiDe?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OFBQSzh0SCt4a3NBLzQ4UmZhdk5PbnA0NnpyaU5aTVp3VEdYTDMxV3VObm9l?=
- =?utf-8?B?V29WQzc4K2tHVkJTTXZjN2Q3c1Y0ZjQzZmtyZnI3YWZFK0xNSE9qeGlZZTRZ?=
- =?utf-8?B?S2cvSVhFL2M2VUFTanRWS1ZKbjVpVVZwVTQ4UmU5ZlJ4MGFucTY5QXNoLzFi?=
- =?utf-8?B?emFYL1RINTlDb1RCOWFsZERMbk16dXlhOXIwc2x0d1R5aVAvN1ovUDZCeUJD?=
- =?utf-8?B?ZExzZkUwTHlNRzlkUHo0N2tmUEIxR1RQZVZTWkJtSVd5TFFGcHpGdU8wV2x0?=
- =?utf-8?B?OUpiY01TZXd1MzBOb0ZjcXh1OVFLTmtWVi9SVXVJZWcvS3hkelVPc2F1L1BZ?=
- =?utf-8?B?RDJkdjY0cE53MVFHeWVMVTlzOVRTZGJPRS8zQTNtZElpKzMxUUhCYzVXRFBa?=
- =?utf-8?B?UlorZmVQOHdVQWpwTzc0Zlo5S2VBbUZlOTFaUExjblBHOHpudHlZZG5DZkZ1?=
- =?utf-8?B?UWp4SGxvdWxkbHBEOWs0OEY3VlpnNUIvL1o5bFBMb25mc2xmazdQMVZhWnM5?=
- =?utf-8?B?cER3OW9YWC9Kd2FtNk9Pd1NHbVhXRmNUU1E1SVpvZWFoUVdrR2FDR2hUY1du?=
- =?utf-8?B?UHRnUW9rWWRMVGxZeW1MN3ZxT3huMHNlL1BqN0ozZjRFRFI4Q1BadW5ZT0da?=
- =?utf-8?B?MW1TdVl4MlpvdzAxbTdJZkJSd1cxUFJZVUF5bmwvTU9NcGNFdDZDZFFQWmxF?=
- =?utf-8?B?NTZreWMzdDFZOVZ6bWsvclhFeHp4RGlDYXBuS3FDVVlRMEp3eE1VUVV6enVH?=
- =?utf-8?B?c3c5MGFVeVVJRVFabldYVjlTWHczemxkcGJCS3lrc0VxRHg3S2x3aVNMZE04?=
- =?utf-8?B?NlhRWFdFQjJhNjRJSHZXYko3a2JKcWh1eHhaUDNuVTRRNHg0TWpId3d0ekNU?=
- =?utf-8?B?RXN5WEdhY3pUZmI3OGw0d2tIR2Y1YkZualVycnJYYTlQTWE1a0xPNzdNTjdk?=
- =?utf-8?B?eDhhLy9MUk1DV0kyTDVuT3VMei84TFhUTHRNMzVsVFJjaHdLWlQ5ZHJ6dFFL?=
- =?utf-8?B?eE1TeEZPc2pYWlUrcElQM0NRMHJXckczaGdzQ3hiVGdyMzRQSzI3Q0E5VHE3?=
- =?utf-8?B?dzVEaDRWRlE4YjVRa1NCcCt1c3QvMnFHWllycVJSSE83bVJEOGZheFZNTzNq?=
- =?utf-8?B?Z2VGRFprMkcvRXpsRGhIeWRGOVJOcjV0emlsYXdkNFNqaDNRTHZma2Mra3hQ?=
- =?utf-8?B?cS9vS3pjb3dqdUM5bUdramJYV0hsOHUyKzFNQ2hCaGc5UHUyM0FlNW1kYXNN?=
- =?utf-8?B?YUR1dmJrNGwvZkFRbWxpVkg4NmljdVNhaVhEUTQ4QVRTK253NTcyZTBackd0?=
- =?utf-8?B?TXh6NXUxVjBOUnhPWnhRcGpLaW43SllZV3N1bXlIOGJMQ2FKVlovQzJKZSs4?=
- =?utf-8?B?WFdoSXNnRlk1MEJiQWVTaUxLNFdGOVNTR3lHVFhXRCtCNXQ0ZkI5YTAzQ1lI?=
- =?utf-8?B?TS9sWGlobjBqQTlRWUIzcTFGM1FWMUd2cWEyZjA3LzgvSnpzNzlrcnZrbmpq?=
- =?utf-8?B?Qkk2WlpWMDR6OGR3aXIrVnhnZnhnS0pFZytxQ3RTVG80MldlSTJVdFhCRHF2?=
- =?utf-8?B?ZXIvQnJEQ01LZnJmcSsvM0dLLzR3UjFtWDBHMXFNNktZWEUyaEM4RXdRSkl6?=
- =?utf-8?B?SkhLZzVxeVlRWEtUeUt3YmxYQTF4WG5sVEllUTFiMm5jS3pROXVoVm9ORHFC?=
- =?utf-8?B?czFXcDArTjRycTJ1RzZHR0xPOGV6WnBjdlJBandEWGs1TDJaYVowSThhSXZ3?=
- =?utf-8?B?bGNsQjNMV1lvQnZIZUIyazZhMWFVaW9Nbm9ETXdaTjJicnliS3FVUlRWK1Zz?=
- =?utf-8?B?U21RUFJ0REtIR29jc3hBbGcvMVArMThrdUxTVnV4Syt5b3U2dkU2TzBrMFpJ?=
- =?utf-8?B?c3lUWG9uT1kvYTMrNDZzdmp5YWdmLzNzenFMVitDNVpEcEZtYTA4amh1cSt3?=
- =?utf-8?B?NXpvVkJiTTdaRHdGNG13VlFlLyt2bmVrTEZtcWE4clNDa2ZxMmRCMlhsSHZ1?=
- =?utf-8?B?RHBGUFYvdndzRVhvUHNzT1lQd0dOSVN0VzJKaEZLNk4wZkYrWkRPWHV5RThs?=
- =?utf-8?B?NDgvajROVG85Nll0dzdtUUlSL0hTbzFablpDRE1xMXIyQTRZdUViNnZ2K0RC?=
- =?utf-8?Q?rdqrbMfZzDGA6iVroDG6WX8NY?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6ab5cf6-0a82-4457-107b-08dcffeb9107
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 11:50:39.8258
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jy0bXr/jwcfKgge6dYIpMxJZjUxNUVQZZC6CieLBrDI7QLYOtXpOP8RyIXjtTKnWB+tdHlNVJ/iJypL/iCD9mQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7051
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+ <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
+ <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
+ <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 07/11/2024 15:57, Dario Binacchi wrote:
+>     clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+>                   <&clk_ext3>, <&clk_ext4>;
+>     clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+>                              "clk_ext3", "clk_ext4";
+>     assigned-clocks = <&clk IMX8MN_CLK_A53_SRC>,
+>                                   <&clk IMX8MN_CLK_A53_CORE>,
+>                                   <&clk IMX8MN_CLK_NOC>,
+>                                   <&clk IMX8MN_CLK_AUDIO_AHB>,
+>                                   <&clk IMX8MN_CLK_IPG_AUDIO_ROOT>,
+>                                   <&clk IMX8MN_SYS_PLL3>,
+>                                   <&clk IMX8MN_AUDIO_PLL1>,
+>                                   <&clk IMX8MN_AUDIO_PLL2>;
+>     assigned-clock-parents = <&clk IMX8MN_SYS_PLL1_800M>,
+>                                              <&clk IMX8MN_ARM_PLL_OUT>,
+>                                              <&clk IMX8MN_SYS_PLL3_OUT>,
+>                                              <&clk IMX8MN_SYS_PLL1_800M>;
+>     assigned-clock-rates = <0>, <0>, <0>,
+>                                          <400000000>,
+>                                          <400000000>,
+>                                          <600000000>,
+>                                          <393216000>,
+>                                          <361267200>;
+> };
+> 
+> The spread spectrum is not configurable on these clocks or, more
+> generally, may not be
+> configurable (only 4 PLLs have this capability). Therefore, I need the
+> "fsl,ssc-clocks"
 
-On 11/8/2024 5:59 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
-> On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
->
->>>>> -       if (core->flags & CLK_IGNORE_UNUSED)
->>>>> +       /*
->>>>> +        * If the parent is disabled but the gate is open, we should sanitize
->>>>> +        * the situation. This will avoid an unexpected enable of the clock as
->>>>> +        * soon as the parent is enabled, without control of CCF.
->>>>> +        *
->>>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
->>>>> +        * forcefully enabling a whole part of the subtree.  Just let the
->>>>> +        * situation resolve it self on the first enable of the clock
->>>>> +        */
->>>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
->> At first, I couldn't grasp the logic behind the 'return' here. Now it's
->> clear. This approach is equivalent to completely giving up on
->> handling clocks with CLK_OPS_PARENT_ENABLE feature in
->> clk_disable_unused_subtree().
->>
-> No. It's handled correctly as long as the tree is in coherent state.
->
-> What is not done anymore is fixing up an inconsistent tree, by this I
-> mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
-> own registers but has its parent disabled.
->
-> In that particular case, clk_disable_unused_subtree() won't be turning on
-> everything to properly disable that one clock. That is the root cause of
-> the problem you reported initially. The clock is disabled anyway.
->
-> Every other case are properly handled (at least I think).
+No. That's not true. You do not need it.
 
-name              en_sts            flags
-clk_a                1          CLK_IGNORE_UNUSED
-     clk_b            0                0
-         clk_c        1         CLK_OPS_PARENT_ENABLE
+First, the clock inputs for this device are listed in clocks *only*.
+What is no there, is not an input to the device. Including also Linux
+aspect (missing devlinks etc). Therefore how can you configure spread
+spectrum on clocks which are not connected to this device?
 
-Based on the above case:
-1. When 'clk_c' is configured with CLK_OPS_PARENT_ENABLE, disabling
-'clk_c' requires enabling 'clk_b' first (disabling 'clk_c' before
-disabling 'clk_b'). How can to ensure that during the period of
-disabling 'clk_c', 'clk_b' remains enabled?
+Second, I do no ask you to configure spread spectrum on other clocks,
+only on the ones you intent to. List is fixed and ordered, so no problem
+with that.
 
-2. 'clk_c' is not configured with CLK_IGNORE_UNUSED, it should be
-disabled later. However, here it goes to a 'goto' statement and then
-return 'false', ultimately resulting in 'clk_c' not being disabled?
+> property to list the PLLs on which I want to enable and configure
+> spread spectrum.
+> 
+> Furthermore, spread spectrum cannot be considered a new device but
+> rather a property
+> available only for some of the clocks managed by the clock controller
+> manager (CCM).
+> 
 
->>>>>                    goto unlock_out;
->>>>>
->>>>>            /*
->>>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
->>>>>
->>>>>     unlock_out:
->>>>>            clk_enable_unlock(flags);
->>>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
->>>>> -               clk_core_disable_unprepare(core->parent);
->>>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
->>>>>     }
->>>>>
->>>>>     static bool clk_ignore_unused __initdata;
->>>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
->>>>>            clk_prepare_lock();
->>>>>
->>>>>            hlist_for_each_entry(core, &clk_root_list, child_node)
->>>>> -               clk_disable_unused_subtree(core);
->>>>> +               clk_disable_unused_subtree(core, true);
->>>>>
->>>>>            hlist_for_each_entry(core, &clk_orphan_list, child_node)
->>>>> -               clk_disable_unused_subtree(core);
->>>>> +               clk_disable_unused_subtree(core, true);
->>>>>
->>>>>            hlist_for_each_entry(core, &clk_root_list, child_node)
->>>>> -               clk_unprepare_unused_subtree(core);
->>>>> +               clk_unprepare_unused_subtree(core, true);
->>>>>
->>>>>            hlist_for_each_entry(core, &clk_orphan_list, child_node)
->>>>> -               clk_unprepare_unused_subtree(core);
->>>>> +               clk_unprepare_unused_subtree(core, true);
->>>>>
->>>>>            clk_prepare_unlock();
->>>>>
->>>>> --
->>>>> 2.45.2
->>>>>
->>> --
->>> Jerome
-> --
-> Jerome
+My comment stands and that's a disagreement from me. Feel free to get
+second DT maintainer opinion, though.
+
+Best regards,
+Krzysztof
+
