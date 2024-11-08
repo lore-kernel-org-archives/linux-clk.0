@@ -1,33 +1,50 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96B3C8CE;
-	Fri,  8 Nov 2024 13:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B45C8CE;
+	Fri,  8 Nov 2024 13:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731071729; cv=none; b=IFEEkgyGfJ3IjqCnxRxM4su9vEqKdeyFreRM3wjdmnu6ZWcbFRkAqPdc0rO/UkHhpLfrsaKVSZFIc+CsAQbJwFJjD9rGeZU/82cL5L0lrc/IipTtfJm1pozJAYHuM6JcL/16v49w0YRbmevHuwL9FZwhfva5NUMGKlzDF75NJ3M=
+	t=1731072041; cv=none; b=kcpAjMnX/87sKxEnSLB0WLWVFcKuYbi63g3Ge3HfksxPa5rlAqQke3Q2eeO0OJION+Uf4b2YX2HktH+Q0+vIeLSMibROEAuR1yiAX/xx9wx1w8bdCRSMdoU67gBVO27A7/ourzarkCtU5iGUePTXz/CvPsJmfhq3/t5KdCupKvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731071729; c=relaxed/simple;
-	bh=mSeGncNFKtK9hy+rJgXDlS6AGgK9Ibz8GvNuTiYk7TI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMvAkl2CbqZy2OUsYXNY4Vjsxmz2n8/8mqhLYzxGeWqZfiVneHI3GMe4VF/IUp2av/W/lct2lvzF524wLjzwdlGhQGXP+yRXZslyUVkUo2eXCaPurTrZe1donjZWAKZOjIKQ4WrmmyHy1PdbV3NhZZ7efN+vV+WaGf5f/YcyTvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIVivLnF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731072041; c=relaxed/simple;
+	bh=q+UMqKv74gpz3voF8S2P7kWDpsQDIqMFOF8q2PGUw10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JIXxr+G9eMwysV2pG1OPOtWucJK8j+QhavdRId9ZdREHPQ6osm3rXVjn7SzS82UW9mVSGyf8b8JKYIxEx03CHVQheSdw5rq/V2moGERG59YSeRZ8CWXzemazJ1RWRnBcwyolk1wARKJ/YO46/s0mCUIckwWWEePIg6VBgiBNrWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PdcYG0J7; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIVivLnF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDFA0C4CECD;
-	Fri,  8 Nov 2024 13:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731071727;
-	bh=mSeGncNFKtK9hy+rJgXDlS6AGgK9Ibz8GvNuTiYk7TI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nIVivLnFFsFMeNsY5Rpgo291/7sQLhmov713rmRKVwfOIKSx/CSVPoRGIsoh3Tg9e
-	 FLukWyZA64TZ/iCW5imXYsoYN50uoyQ9k/b7MX7WjqIgMytUrmJK7emSZJ9YvdIM8I
-	 e8eHmDI8UBiY/NCCHmxE6XHFYo3DYLLsq58UXEPNfRaGCCXtEpEHI0N/sEEEJhfQ7E
-	 Rs4H1Ff85FvJITFNslXzJyPWfxsMGTkIMck1PIvDquOkO8LUGoScz/4n4/q1+MfdBg
-	 CMae7pQYaUchHPUD1OMjiP+qsQ7l4lRQvhTZkvdKi7ZxNP6E49vzK2YQ/sf/x11Msn
-	 yXZI29sL8yYZA==
-Message-ID: <aba3bcb7-3144-49c7-8acd-added30bbfdd@kernel.org>
-Date: Fri, 8 Nov 2024 07:15:25 -0600
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PdcYG0J7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731072040; x=1762608040;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=q+UMqKv74gpz3voF8S2P7kWDpsQDIqMFOF8q2PGUw10=;
+  b=PdcYG0J7iMVKyXKo6Dl4KA0xZ1u3Z+pdspTzNACwh7QmsDTdbp5sHhFU
+   pA6viOopVBWPfAbmemfFoOn974iddSg0lgvzmNNcIhZ8wZM8VmKAgaRZR
+   pTnbgI0y7a23gKrSVU5jD/IQQynbnouPVMYSLP9rvrbeqQtCCYW6eKjdV
+   KffOhWHHOOt/aEWoBMbv3xCGGIpTWJLSIq7kBocEUGaCVh3PV2KvGDAJ3
+   yur9QjeRHjtxgTwLqbljtqarZRTvQfHZeUZXXGfb5h6gCNUJcFQTgk9Pm
+   5QYZI9XMgG3wqf611ufFXdF63eGmlSYMKPhzm/+f6FYpla/EG+Llzo8GW
+   w==;
+X-CSE-ConnectionGUID: PvurtoTEQ2WlLblVte8kjQ==
+X-CSE-MsgGUID: 2BBk/xFWRYWcMYKhM1xQig==
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="34056474"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Nov 2024 06:20:33 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 8 Nov 2024 06:20:21 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 8 Nov 2024 06:20:19 -0700
+Message-ID: <743af86d-e7ad-4698-b7a4-d75cf46f00d7@microchip.com>
+Date: Fri, 8 Nov 2024 14:20:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,39 +52,48 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] clk: socfpga: arria10: Optimize local variables in
- clk_pll_recalc_rate()
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241026155304.159716-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20241026155304.159716-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 2/3] mfd: at91-usart: make it selectable for ARCH_LAN969X
+Content-Language: en-US, fr-FR
+To: Robert Marko <robert.marko@sartura.hr>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <lee@kernel.org>, <gregkh@linuxfoundation.org>,
+	<jirislaby@kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <luka.perkov@sartura.hr>
+References: <20241108112355.20251-1-robert.marko@sartura.hr>
+ <20241108112355.20251-2-robert.marko@sartura.hr>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20241108112355.20251-2-robert.marko@sartura.hr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 08/11/2024 at 12:22, Robert Marko wrote:
+> LAN969x uses the AT91 USART IP so make it selectable for ARCH_LAN969X.
+> 
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-On 10/26/24 10:53, Thorsten Blum wrote:
-> Since readl() returns a u32, the local variable reg can also have the
-> data type u32. Furthermore, divf and divq are derived from reg and can
-> also be a u32.
-> 
-> Since do_div() casts the divisor to u32 anyway, changing the data type
-> of divq to u32 also removes the following Coccinelle/coccicheck warning
-> reported by do_div.cocci:
-> 
->    WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
-> 
-> Compile-tested only.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > ---
->   drivers/clk/socfpga/clk-pll-a10.c | 2 +-
+>   drivers/mfd/Kconfig | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index ae23b317a64e..f280ba28d618 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -138,7 +138,7 @@ config MFD_AAT2870_CORE
+>   config MFD_AT91_USART
+>          tristate "AT91 USART Driver"
+>          select MFD_CORE
+> -       depends on ARCH_AT91 || COMPILE_TEST
+> +       depends on ARCH_AT91 || ARCH_LAN969X ||COMPILE_TEST
+>          help
+>            Select this to get support for AT91 USART IP. This is a wrapper
+>            over at91-usart-serial driver and usart-spi-driver. Only one function
+> --
+> 2.47.0
+> 
+> 
 
-Applied, thanks!
-
-Dinh
