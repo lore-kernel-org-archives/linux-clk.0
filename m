@@ -1,68 +1,68 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC781DF739
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 08:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EF81D27A5
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 08:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731054723; cv=none; b=rMuoZ8Pcm57dhv0mXVgpqK2LqVlFNU4FXMZiIJgDXbfdl5IfKtEqG51ps3BAwlQAUMMkycuSxVyaIC7ZyPL6R0DYzELylQvlCN7tI8rjTwLBkQO94DXkms4yZR4uQyQckROWTBkqQfH9qynWpPkY+0XO1L8+fxp7owwPiI4dw+M=
+	t=1731054784; cv=none; b=CQ1BYkBk0m3TQqk7QkQ1BdTLYG3ESGVu1cFFrz4gyUmVbywJThQvLh/KN4A/pms+YmFiYNdpUzcrsr5gYj8BFnois6Qxg5zeqFxCPQSsRK2P1mkUHOug0LIilgTnVXjYBo6iRlahkDkdZ3+k9E8B6lUOaEQ3dQWW1CFA39Hh2Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731054723; c=relaxed/simple;
-	bh=1ND9bgK3KQWy+3cq/h1wKxgWNdJ1WBFhWBNSE25A4wo=;
+	s=arc-20240116; t=1731054784; c=relaxed/simple;
+	bh=752Q04PLM4ySoJBMNJIIwMx5SEQI9bfYRIbNwO7mz1o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IW3KBXWGH8CN833HegAr74R+LQldAMResLoGSwjBzrfaV6qqEB4HuVtfwsjzzB88v9im5fc8iTLEaFErfbt/BLWOSbnDdaWjJ+nJlI43eHvPnB9cl3ofKsh/IAoMS85wmJu1pk07WGWvS0eVyvOccISfvpiVyb8ItznWobNgkCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FVWctg8Z; arc=none smtp.client-ip=209.85.167.46
+	 To:Cc:Content-Type; b=s7/SIm+n7RWsB7Z1pdAYFhObcMq/KY8ubHWu2Wo/haaWILG83E/4DFDp4r2ankNJuY81rBWfZwrXjP4dCA+ofvrYCWkQEkIMWXEtScFSRnuozyiw8qZo3FHCwkMfH/518MN4YW6nsRIswddL/2fn1q+VAJJR+69aFFYVsBY+hV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QIKg0YyR; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FVWctg8Z"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e63c8678so2020202e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 00:32:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QIKg0YyR"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso20565041fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 00:33:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731054720; x=1731659520; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731054781; x=1731659581; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1ND9bgK3KQWy+3cq/h1wKxgWNdJ1WBFhWBNSE25A4wo=;
-        b=FVWctg8ZuaBYLWY61+0XodgtTtsSTBZLH+xKE5gTk6i5131Bf2h9l9VFvy8GxWGquE
-         mYdH5VzV5eJafavG4oB83FZyBl5/wo2vy9HQZdt6uVd6BsCpqjmqbfaFAEZAaWJJ4ZWi
-         V5b7Bdb4uNO8i170+yYvbv8CU0UiJVGdEf+ZcfOT8I5rC7xpvHPMB84HVrmBpyBNba9q
-         /WNaeYv96bOJQGJW+2W0BKcpqYU3nNDZPfOKB/xwZFw7gHUYB2XHRMwf8FnPo+okd4sh
-         Na4YdIxyp+IPiHinMKEA54aFJpTl0cn6VzdHiKbMApAXG0xNFp60yoEJR0aUSQ/X2+/w
-         7AqQ==
+        bh=752Q04PLM4ySoJBMNJIIwMx5SEQI9bfYRIbNwO7mz1o=;
+        b=QIKg0YyRMjapErGJRsUl2RKKHb3FOLVeOGlnw2yofiZqrzcA05fXLf+XHi/L0sG0+c
+         IOazjqX5iV8XwiHIKx6VLllJCog6mAQFvNSDRN8mfyRVO0ud7SyY9/JFGtSNMOnB2gkE
+         FqYgB4vJaoXYuXQFzRLhuHa6hoaBuYFTWYrdIUzwoMOHQOQmMmJt4YVPIeLtPONpfx29
+         cg78zbnEpwwjqjN+WuGrZqneYoOUMLQ14/e1h1I8dUdPWB96lVMR691F79U0TDlzsX9D
+         GNZHWhFG7TI1C0OptIyosR//HOri3fogxjgFjNF9OkYBeuga1nGl2cZXTL0w/h0HGJx+
+         swEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731054720; x=1731659520;
+        d=1e100.net; s=20230601; t=1731054781; x=1731659581;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1ND9bgK3KQWy+3cq/h1wKxgWNdJ1WBFhWBNSE25A4wo=;
-        b=uhiV5WI38r/yU4o5y+RZp+imL7r17a1VY3zttbu+9pokTEJfReOXVS88R6LY8TR5tj
-         wP4HM8BQtYFCcUEUw/Q0IhzPZMozyuSs0CQJP8l4mUI4OpnQVn3s9rQdfwPXtmxEDVoO
-         4sqOF7z9i3wPrd0+1ORA8H4WDoe25Ti67SwgPhL0zMjyoifH6Zfus2/rX8Nsgin+RJjA
-         HtuzIOrqQ+cSpERpRd9QmO5jAC3hj6S1I3TQZg7IukjMjdf59nh71FySkTqMROOzHUhs
-         NJCbuJ487VqXZq1VpIN+NAlaqadN5qwUEZqr2RyRjExYGzxMvelrQmnrsdtMuXXGd405
-         7A3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUz3ARvwEsZkPMdI5nw3k3cDNR3tGdRl+0rnlWeavnXUrVALrTW82Twzn0HeyS9CNHT9RF8DS1m3aU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcUQZrbayACDHoJEKQSmOGzSso9ihtrzYQUHH6j+bAwh0JuMqX
-	wLo+If33sHgRAEaC/Je44ohigxXvR+/24r5QoNr37X5KPotQgc381h6yTzQE1cpnJKh8dyGmTWR
-	2rCqUWQkC+HDS/eUvrDP1Iclg3dGX/xp2C9i5qQ==
-X-Google-Smtp-Source: AGHT+IHWAsQqG+y15H2WGwWZPQvCIg2GrPsoE8du8PoiicmJWn/4qgCjO61EIsCAk2BM4YFh3XSjkJBItIutIXE+if4=
-X-Received: by 2002:a2e:ab08:0:b0:2fb:597e:28d9 with SMTP id
- 38308e7fff4ca-2ff20188093mr8640431fa.14.1731054719602; Fri, 08 Nov 2024
- 00:31:59 -0800 (PST)
+        bh=752Q04PLM4ySoJBMNJIIwMx5SEQI9bfYRIbNwO7mz1o=;
+        b=seBQ6fPTFrWFivWixsiSpA2iFl6qA1J5O2cq9E2mX4aeVIo3XXwxUEfcRhMKP6tDia
+         asPYS9yCszbTk0lwj5QHVZIvRFMF/0FOt4JGH61mwue+OgFPz8yKds8pwiu0d2rYA8e4
+         VmsA2MUGBpOB7rMKN8FJ61HlNX7nMn8G3zu30fszceC3udWRDCg7YwjARiNaxFjv9Fbn
+         2Kt/0m+4ptFwkIczohQth3eWPDluYmAvXAuzyfBkTFwwMhA4Bf/oBSqm3mVVROSTguqD
+         gfbDWGqtY6dffgzCNDaDMj2aq1WJ78hmwnFCA9r/JqxtN2x1qi0uMYji+2Sskv8QUIbA
+         jZ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCW5my8Ka7rNM/WhsStyi7UD1xgugf+zbBUjpmd550g07zLVmCLelvsy9EtC9E92bHvwnWvbd1igITw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsyEyc9nv56GugZ7lQijYSyYUux4BgumHP7AwqinqFkuLEr+g9
+	IOTD3eZh12ndb/MCSnKB+kPFaWKYbL0DJkgU5VsDEpLfynqnnQInmPPEUMkTZ+EboWu0cyHqTLY
+	2IN7onLCMH82uvBJaal8+7PbihNEycG/QyLRZMA==
+X-Google-Smtp-Source: AGHT+IGUskTynAw9BMroXZo5yveDcNBcLD4Xp+P+d+67e9FvxhQBmFNOU9SytRx952Jl6I+6VFOyzo/vbqJDUlA53Wc=
+X-Received: by 2002:a2e:a808:0:b0:2f7:6371:6c5a with SMTP id
+ 38308e7fff4ca-2ff209de8b7mr5901521fa.16.1731054780928; Fri, 08 Nov 2024
+ 00:33:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr> <20241104-pxa1908-lkml-v13-2-e050609b8d6c@skole.hr>
-In-Reply-To: <20241104-pxa1908-lkml-v13-2-e050609b8d6c@skole.hr>
+References: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr> <20241104-pxa1908-lkml-v13-3-e050609b8d6c@skole.hr>
+In-Reply-To: <20241104-pxa1908-lkml-v13-3-e050609b8d6c@skole.hr>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 8 Nov 2024 09:31:48 +0100
-Message-ID: <CACRpkdZCF5o=1bc=tj7VM=ie-iakmBC_oeJh-LWqtsASw4eRFA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v13 02/12] dt-bindings: pinctrl: pinctrl-single:
- add marvell,pxa1908-padconf compatible
+Date: Fri, 8 Nov 2024 09:32:48 +0100
+Message-ID: <CACRpkdamE0dGDQ5hY_WRTUFaiJKGEkOZpNLZ-SoXH1u=6YKrxA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v13 03/12] pinctrl: single: add marvell,pxa1908-padconf
+ compatible
 To: duje.mihanovic@skole.hr
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -84,12 +84,10 @@ On Mon, Nov 4, 2024 at 5:59=E2=80=AFPM Duje Mihanovi=C4=87 via B4 Relay
 > Add the "marvell,pxa1908-padconf" compatible to allow migrating to a
 > separate pinctrl driver later.
 >
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
 
-This patch applied for v6.13 so you don't have to reiterate it
-after rebasing on v6.13-rc1.
+Patch applied for v6.13.
 
 Yours,
 Linus Walleij
