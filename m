@@ -1,302 +1,142 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE2B206E98;
-	Fri,  8 Nov 2024 23:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194DA1E32A6
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 23:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731107705; cv=none; b=Y9V/+Z5thG3YNe4herZotg4VSxlxR4JGhAyAf+M4cf17TV+2LvuMAflbSWhijYtvcT5p+Y/d1NdexET3sqCHETXd2puxIqbnVmpyhdcxLp/Z5+ULK12dzb/ejYAwOD6EeWTkcEK8+5bMVmnfyXsZoLN6HKWp7rjngOv2ptBbl+E=
+	t=1731107706; cv=none; b=aUgxQdeVdq1dODQGZn/fma5wSnTzP1ozMCzTzcdgxWnt2Gu/vITYZukHDzpMNS9tsZczNdn8YBselmMPr8rBbPs+fkd1fhBigHPxoo1L3zhbZFz2rOz+3attnLxdg0qJh6rOhCrHpLJoJOXzYVC9MkPC/IU44zS9AaBZjvqbZ+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731107705; c=relaxed/simple;
-	bh=wlyTTPORybbicCpr69x5bfrmf1XYOj7Mmn5DvMXtk4E=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=UFIXliTterezR+wnmsUe89xLUA34aKxmEoZPeY050ja510VOSoFffrYCVx/gNxnpzDDHzq3fk/BGZrSwRziuxzibcBMKDNFSI/QyHGkGIqYg4yRCGo8cImBtE0k3Ufr8kQ2CTIuqXrYffknW8B7d6S49Pfyl6D964bLSqNftVUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=UE0VzJsJ; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1731107706; c=relaxed/simple;
+	bh=NE6pg3wRdGXtaaI09FPxI7W/E9jCi25YgqePb0Juy4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FG3bQQCnyhsg7gc4fUE5qygWWZ/vER9VNz5o94Ag8va+H3KCFozl12DWdc9rfKQSndReHnvTCyFKm4o+NvJ+eWYvPADSpu4t+eiaA/XI0xlTxvJavOK3+xmbfXdaudaQA4vX+Po+abwjQrL1gJQ/4nuQ1cQNscjj7n8EMEpp9Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wirenboard.com; spf=pass smtp.mailfrom=wirenboard.com; dkim=pass (2048-bit key) header.d=wirenboard.com header.i=@wirenboard.com header.b=CQfTROcG; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wirenboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wirenboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="UE0VzJsJ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=wplBxjlGm3yRsOh0Lh/JZT69hLOASFhoN7GX1UmOd/U=; b=UE0VzJsJ7vT74mlg9gBDhIdTju
-	MbC0GzJbBKnu84tIg3PxPFoWm+EI7t18RQHSUOFRDmuqOb5s/GXBXZrzHwsBKTNqMPmjRrAdCPUh+
-	adR6z1ZfKPmsrnUT27oo2PhnknnjNSZErEYDn9Tmu3iBDkVdw7uV+0+Ire2yVjtBR6WnJ2gZhr+Or
-	wlTalKIyfEX67bYpz5yeV+zkIzZh5Xsmf5jQCy5MDi0J/eEFVF22SeleJLd4ymKF/kNicZJx1WswH
-	RvhTO99w6xMJVGog+TaUSKe7vMmb5nPfNKN9B/ZcQnLLs5PphSJH03yqoouCWQSyIKEE5sHET1TKH
-	klcoTavg==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	devicetree@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-omap@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v2] dt-bindings: clock: ti: Convert mux.txt to json-schema
-Date: Sat,  9 Nov 2024 00:14:53 +0100
-Message-Id: <20241108231453.247660-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=wirenboard.com header.i=@wirenboard.com header.b="CQfTROcG"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so1634722f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 15:15:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wirenboard.com; s=google; t=1731107702; x=1731712502; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0oSoie1qIRXgWGFb6cKb7mnY6LaDSDkqhi5T4II1in0=;
+        b=CQfTROcGAAEpquuyZ5UcbUB4ev3BpF2MAuofqNaVeu3xvmySmWoD/FKzmdqNMirpj3
+         EnB8d3yGjsr+cfo6yUGThVb3xbrfNzyG01y/mp15z4WmNjFQp/BOEZNgDAzvYSNQZ69g
+         4hWSNbQpYwk0MVHkle4MuKHI/zwmyqkf7nMqYtvGFkjau6TSoi53xEiHefiH7M5qR5GY
+         RSjWMC1FkkSglhphMCkMr3WqtI7l7mBAmVjA9JUE6kxyjan92HZoxgZ6SRYK6QowfJ16
+         2o9MXS7tZd8S4bxGc+bXuRwTrJ2jKWsv/pmpLdXAjTDAiV7BqQVi9fnLW4sA7z1nEuw5
+         gGtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731107702; x=1731712502;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0oSoie1qIRXgWGFb6cKb7mnY6LaDSDkqhi5T4II1in0=;
+        b=FGBFJ0r5op87n46ao6PxMUqDbjKRaZaXPomFI9oI08dZCPFvIR2qXV0S52uFPoEogX
+         06Zd+eASDRhSqiJ7zp9EVBzu90oMn54ViN759IkqwRG9hjxdGdNAX3Gw4ld234u1Apii
+         4EvUaCHoIJNbaYKr61jkdcYmCYae/IA1A5chkvvfqyuQJt/nkVJMdKyWUOh7SKeSi9jW
+         5lKumoHnYtNzPnoa8n+Lj5dv/ey/r0ee5Pp4mV3tZZr5DOS4WS0tH1R1wPToP4UIOOBv
+         5U9LBCfDz/LKEjJm5qoav18qDBNzuP/+QHVr1+e26hOQuFcWNI9mKfOZlYNgiqkqBow4
+         ilFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHlsSA7NqsAQKbL6gi9KOC0pvn1MnW7gEU+3JVpOms2+lAqWiPGPzmlcDl5rGJiIb4Sgmc5S04BA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlTOpnLWRAUjwGNAAORlkBn+Pykd7DRwhXDH67LrQqLBBNRg3B
+	ZLmX6H0agv7IFlGEPZYzl/08L7MvAkOQTT7qj85Hlq6cx+mi8LLc4jHSGqTvnUw=
+X-Google-Smtp-Source: AGHT+IEkXE8e6btQk8tjWEgg1I5q8fB3JHMfs8pcIcYIogpdbfL+NQYAjuHnUilwSeLh4eJW9S2S/w==
+X-Received: by 2002:a5d:5f93:0:b0:37d:493c:f7b8 with SMTP id ffacd0b85a97d-381f1867129mr4149308f8f.2.1731107702379;
+        Fri, 08 Nov 2024 15:15:02 -0800 (PST)
+Received: from ?IPV6:2001:4c4e:24e5:bb00:6639:286e:9ea6:bb49? (20014C4E24E5BB006639286E9EA6BB49.dsl.pool.telekom.hu. [2001:4c4e:24e5:bb00:6639:286e:9ea6:bb49])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed970775sm6137066f8f.13.2024.11.08.15.15.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 15:15:01 -0800 (PST)
+Message-ID: <a4fada26-7ef8-4618-9ddd-0962b7dc6efb@wirenboard.com>
+Date: Sat, 9 Nov 2024 02:14:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] clk: sunxi-ng: h616: Reparent CPU clock during
+ frequency changes
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: jernej.skrabec@gmail.com, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ mturquette@baylibre.com, samuel@sholland.org, sboyd@kernel.org,
+ simons.philippe@gmail.com, wens@csie.org
+References: <20241025105620.1891596-1-andre.przywara@arm.com>
+ <7b63b316-4cd7-48ee-ae32-3750d25e2307@wirenboard.com>
+ <20241108223400.460982d6@minigeek.lan>
+Content-Language: en-GB
+From: Evgeny Boger <boger@wirenboard.com>
+Organization: Wiren Board
+In-Reply-To: <20241108223400.460982d6@minigeek.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Convert the OMAP mux clock device tree binding to json-schema.
-Specify the creator of the original binding as a maintainer.
-Choose GPL-only license because original binding was also GPL.
+On 11/9/24 01:34, Andre Przywara wrote:
+> On Fri, 8 Nov 2024 23:14:51 +0300
+> Evgeny Boger <boger@wirenboard.com> wrote:
+>
+> Hi Evgeny,
+>
+>> Tested-by: Evgeny Boger <boger@wirenboard.com>
+>>
+>> We had stability issues with some of our T507-based boards. T507 is the
+>> same die as H616, to my knowledge.
+>> They were fixed by essentially the same patch, which we unfortunately
+>> didn't submitted to mainline:
+>> https://github.com/wirenboard/linux/commit/dc06e377108c935b2d1f5ce3d54ca1a1756458af
+>>
+>> It's worth noticing that not only the reparenting is mandated by T5 User
+>> Manual (section 3.3.3.1), it's also is implemented in vendor BSP in the
+>> same way.
+>>
+>> We tested the patch extensively on dozens of custom T507 boards (Wiren
+>> Board 8 PLC). In our test it significantly improved the stability,
+>> especially at low core voltages.
+> many thanks for this reply, I was hoping for such a kind of report!
+> I typically don't test those things in anger, and only have a few
+> boards, so having those reports from the real world is very helpful!
+>
+> Can you maybe give some hint on how you tested this? Does "at low core
+> voltages" mean you forced transitions between the lower OPPs only, or
+> were the chips undervolted?
+Both, in a way. Some boards (about 1 in 20 or so) would hang after a few 
+days of operation.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Changes in V2:
-- some orthography fixes
-- fix addresses in example
-- no prose for defaults
-- constraints for latch-bit
+During our investigation, we found they would never hang under stress 
+testing, so we started examining cpufreq-related factors.
 
- .../bindings/clock/ti/composite.txt           |   2 +-
- .../devicetree/bindings/clock/ti/mux.txt      |  78 -----------
- .../bindings/clock/ti/ti,mux-clock.yaml       | 125 ++++++++++++++++++
- 3 files changed, 126 insertions(+), 79 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/ti/mux.txt
- create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+Disabling lower OPPs also prevented hanging. If we artificially lowered 
+the OPP voltages (undervolting the chip), the boards would hang much 
+faster without the patch, and even the previously stable ones would 
+start to hang.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
-index b02f22490dcb..238e6f7d74f8 100644
---- a/Documentation/devicetree/bindings/clock/ti/composite.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
-@@ -16,7 +16,7 @@ merged to this clock. The component clocks shall be of one of the
- "ti,*composite*-clock" types.
- 
- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] Documentation/devicetree/bindings/clock/ti/mux.txt
-+[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
- [3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
- [4] Documentation/devicetree/bindings/clock/ti/gate.txt
- 
-diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
-deleted file mode 100644
-index cd56d3c1c09f..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/mux.txt
-+++ /dev/null
-@@ -1,78 +0,0 @@
--Binding for TI mux clock.
--
--This binding uses the common clock binding[1].  It assumes a
--register-mapped multiplexer with multiple input clock signals or
--parents, one of which can be selected as output.  This clock does not
--gate or adjust the parent rate via a divider or multiplier.
--
--By default the "clocks" property lists the parents in the same order
--as they are programmed into the register.  E.g:
--
--	clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
--
--results in programming the register as follows:
--
--register value		selected parent clock
--0			foo_clock
--1			bar_clock
--2			baz_clock
--
--Some clock controller IPs do not allow a value of zero to be programmed
--into the register, instead indexing begins at 1.  The optional property
--"index-starts-at-one" modified the scheme as follows:
--
--register value		selected clock parent
--1			foo_clock
--2			bar_clock
--3			baz_clock
--
--The binding must provide the register to control the mux. Optionally
--the number of bits to shift the control field in the register can be
--supplied. If the shift value is missing it is the same as supplying
--a zero shift.
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : shall be "ti,mux-clock" or "ti,composite-mux-clock".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : link phandles of parent clocks
--- reg : register offset for register controlling adjustable mux
--
--Optional properties:
--- clock-output-names : from common clock binding.
--- ti,bit-shift : number of bits to shift the bit-mask, defaults to
--  0 if not present
--- ti,index-starts-at-one : valid input select programming starts at 1, not
--  zero
--- ti,set-rate-parent : clk_set_rate is propagated to parent clock,
--  not supported by the composite-mux-clock subtype
--- ti,latch-bit : latch the mux value to HW, only needed if the register
--  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
--  implements such behavior.
--
--Examples:
--
--sys_clkin_ck: sys_clkin_ck@4a306110 {
--	#clock-cells = <0>;
--	compatible = "ti,mux-clock";
--	clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>, <&virt_19200000_ck>, <&virt_26000000_ck>, <&virt_27000000_ck>, <&virt_38400000_ck>;
--	reg = <0x0110>;
--	ti,index-starts-at-one;
--};
--
--abe_dpll_bypass_clk_mux_ck: abe_dpll_bypass_clk_mux_ck@4a306108 {
--	#clock-cells = <0>;
--	compatible = "ti,mux-clock";
--	clocks = <&sys_clkin_ck>, <&sys_32k_ck>;
--	ti,bit-shift = <24>;
--	reg = <0x0108>;
--};
--
--mcbsp5_mux_fck: mcbsp5_mux_fck {
--	#clock-cells = <0>;
--	compatible = "ti,composite-mux-clock";
--	clocks = <&core_96m_fck>, <&mcbsp_clks>;
--	ti,bit-shift = <4>;
--	reg = <0x02d8>;
--};
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-new file mode 100644
-index 000000000000..4a6f349ba2b0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-@@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments mux clock
-+
-+maintainers:
-+  - Tero Kristo <kristo@kernel.org>
-+
-+description: |
-+  This clock assumes a register-mapped multiplexer with multiple inpt clock
-+  signals or parents, one of which can be selected as output. This clock does
-+  not gate or adjust the parent rate via a divider or multiplier.
-+
-+  By default the "clocks" property lists the parents in the same order
-+  as they are programmed into the register.  E.g:
-+
-+    clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
-+
-+  Results in programming the register as follows:
-+
-+  register value   selected parent clock
-+  0                foo_clock
-+  1                bar_clock
-+  2                baz_clock
-+
-+  Some clock controller IPs do not allow a value of zero to be programmed
-+  into the register, instead indexing begins at 1.  The optional property
-+  "index-starts-at-one" modified the scheme as follows:
-+
-+  register value   selected clock parent
-+  1                foo_clock
-+  2                bar_clock
-+  3                baz_clock
-+
-+  The binding must provide the register to control the mux. Optionally
-+  the number of bits to shift the control field in the register can be
-+  supplied. If the shift value is missing it is the same as supplying
-+  a zero shift.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,mux-clock
-+      - ti,composite-mux-clock
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clocks: true
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  ti,bit-shift:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Number of bits to shift the bit-mask
-+    maximum: 31
-+    default: 0
-+
-+  ti,index-starts-at-one:
-+    type: boolean
-+    description:
-+      Valid input select programming starts at 1, not zero
-+
-+  ti,set-rate-parent:
-+    type: boolean
-+    description:
-+      clk_set_rate is propagated to parent clock,
-+      not supported by the composite-mux-clock subtype.
-+
-+  ti,latch-bit:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Latch the mux value to HW, only needed if the register
-+      access requires this. As an example, dra7x DPLL_GMAC H14 muxing
-+      implements such behavior.
-+    maximum: 31
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: ti,composite-mux-clock
-+then:
-+  properties:
-+    ti,set-rate-parent: false
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clocks
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      clock-controller@110 {
-+        #clock-cells = <0>;
-+        compatible = "ti,mux-clock";
-+        clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>;
-+        reg = <0x0110>;
-+        ti,index-starts-at-one;
-+        ti,set-rate-parent;
-+      };
-+
-+      clock-controller@120 {
-+        #clock-cells = <0>;
-+        compatible = "ti,composite-mux-clock";
-+        clocks = <&core_96m_fck>, <&mcbsp_clks>;
-+        ti,bit-shift = <4>;
-+        reg = <0x0120>;
-+      };
-+    };
+>
+>>   From my understanding, all Allwinner SoCs need to follow this kind of
+>> procedure, however it's only implemented in mainline for a handful of chips.
+> Yes, I saw, I have added this to my A523 code already, and prepared a
+> patch for the H6.
+> Do you have boards with any other Allwinner SoCs you could test on, or
+> even already have experience with?
+Unfortunately, no, not really. We only use the T507 and A40i at the moment.
+We’ve never had these kinds of issues with the A40i, though. By the way, 
+the A40i is among the few Allwinner chips with reparenting implemented 
+in the mainline.
+
+The A523/T527 is really nice; it's a pity it's limited to 4GB RAM.
+
+>
+> Cheers,
+> Andre
+
 -- 
-2.39.5
+Kind regards,
+Evgeny Boger
 
