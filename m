@@ -1,57 +1,57 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28F51F7573
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF7F1E5713
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063066; cv=none; b=eFKH3YPRfBj3uBzSEHpZu/fz2BVNkJNuVC0xk7ft/MpTfdpsClCrv5JhGycdTXpelXUEF14IKaXK9Ci8S5P55PAV0MOtu84tL4EKw5gpyc2zebMQZky9P8rdrt4bh4sR8G6TnN6liQv09fQEXNeCjPnuyLCpB8IHv9/A5n91GD0=
+	t=1731063070; cv=none; b=imfXujuu+P6fdMv5F+CVymKe6CN9KA+R/GmI+AET2b5QRGfBAqJh3grKeeibdLjwIiIjLa7yUJP0SfNWu0B+mwYuv4miLQvIfVY0qEN2G+VNP4fpYisEAcnp1D2eWeF6SoXGBzTdMCrWDTwwd1ruGX50sR8/fHcWU/1dgVCd8AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063066; c=relaxed/simple;
-	bh=SyEoER49TgbOw8koZErfyUVPRsJyjMMAI7/EzV/zhUw=;
+	s=arc-20240116; t=1731063070; c=relaxed/simple;
+	bh=5R/kbi91DW/+YOWu/nBiwMSuOtCvIhihiX7sqnIwlYE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BDU2LteuaQtB+nHtv4KwwjT6/qAuVaStHQZ8nGu3DntI/AOKlMHSG3IHJ8+1hdYLFPShOwDwZvIXmU1jfRrxZ4GfztAbTOOlOzeKBKBl9GedcLU6LlApMg2byYunsQSMNsOVoiloKDH3k2OvZhCkdFuPVo7JgpAHk39Rjzq6dw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GsElz7ay; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version; b=Xntw/r1PtFzPW1eD7o2Q0cqobk8r3Skqq/JpCu+9/D4CnNlaCoMeFe9Wg0fslznzkbiyP63q0zUB1fr7L6ViYwoA3z0OYt0bkpUn5wJr/2CtKQjchItFV36XP9nXhrAH87xSVUZQngJg3PDnBrRNZsPu1yRjDJW4qe/ttgFQiIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YnuNyk3m; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GsElz7ay"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so1738808f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:51:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YnuNyk3m"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso324128666b.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:51:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731063063; x=1731667863; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731063066; x=1731667866; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N2LUcK8XuSXr1QJcg6d30scYHZwVtB8a9hiw+Z/icFQ=;
-        b=GsElz7ays0ECMk/ayx2Wst8VGX/Uvgve9qxcD5cAeBqwubUcGYwVpS/aKx/GXoAMOW
-         UvGC3bh7jz8OFwxr7wavcWXpoZsAMNKG6Hg6Cg08wZJD/fsaSYVjDuwbaMLdmSps0Qal
-         Z09LbfAvKnPjrDK6zHdzTzGohDXVqksQWW3baOyoVeWzm8w1Q4xFcw16qUeH2FdcxsHD
-         mmo7Ofw+vH0lgt769ygHc5OuN1Cf4y7E+tSZNMenEULy1Mg5x9xaJrVT8vdtO3kJH8MF
-         XvDMzQNP6TMZZUvYQAGXWtIL+jX44TsiHAqh8/ka623I2uP62VHueq86wJVCkFD5nppW
-         eRAg==
+        bh=t/e38PQFjeFG209Rga4nKvvbj7y/1sdDyJVGbXYbeis=;
+        b=YnuNyk3mSQywjwo9HIHwQsz4lyBRZM57OOvX136IGl1zgia4rjTQ3rqFhIwykL3Rtu
+         An3Lv/5/GrigxGt222Z3qCPlq7zr4ONYIUNk5HxDtfv4lmzDgdYmnSptIACjBlbtFWMK
+         176+nRktwL+zZBZz7gfcfm67iQY5Ew/dUvpQhgfJRGjAEoMXG1T13eWOAuo5231QSH+/
+         SHn+/ZGz/k+dcKfX6vnEDoVf+BD1eMFrwZiVGS3BGylLpzpluPwOgvaMx9/gMi4LC+b8
+         uCEJYZMnSoY6u0Yeq0vcXpSMaHWBox4nUhKzYMBAUSA5fUPIs+4eGBy6aiYNdXxkwGl0
+         FXvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731063063; x=1731667863;
+        d=1e100.net; s=20230601; t=1731063066; x=1731667866;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N2LUcK8XuSXr1QJcg6d30scYHZwVtB8a9hiw+Z/icFQ=;
-        b=TwuKrKGMziNwK3vImPcjb09mekl+BxYtUiimtMOobjhoR+3fSJVdnAvCAL9hzt/COT
-         QDCwGqILTURABnKuLyNTc8e97eBUIeP/ZxpzR0YcdEyjpY67l+2tXRZYW14sSqNvmM80
-         pghCmRJJfwuHeod6zZhIn2EKv/Pad2Q4N2lZPbsBJB90B+hWZHJWUQbWDH46MKSwDu9G
-         NPTY/3lji0kfj+FPg/oCbBSa8xpDb5wFU3DdPV0MT2lftllr0WAXDTODPcOBSvd6qT/0
-         PZCwf1EjyXVHg0XdIEeFDA4r48JDogKNCF6oIsDkRxfztTIFch1/UgXBXRavpSDn5eFF
-         3ytg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmKKjMJQFiLjcu9t23gbjxTnME0oGwI9zfrMOVQ7FywWtvh34mCIPVq7TRYpFIxGLD6KxDHYfQ9ro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTc7K2s/HC5RqNP4NH9fx6v6gjpdvqO4eYAm+LhXGaeWPFOG1Y
-	D8JrvotzKuNgT8vZ0Z3XcfehT1FEPGd7iSymBCaa33I8wel3efn5lhfgD2tKuQQ=
-X-Google-Smtp-Source: AGHT+IH6ZeLrSNR+Q2akPh8YjeK/N2E/SJkNwBkiadlJZfpyopK+oUuuSM/gz5YCrmaT7nw9pdyYRA==
-X-Received: by 2002:a05:6000:4022:b0:37d:4f69:c9b with SMTP id ffacd0b85a97d-381f18726a8mr2396102f8f.35.1731063063174;
-        Fri, 08 Nov 2024 02:51:03 -0800 (PST)
+        bh=t/e38PQFjeFG209Rga4nKvvbj7y/1sdDyJVGbXYbeis=;
+        b=kIDIs58VsuUBNZpsap/Ud5D6ThBu2MjPZA9nylk6ffdG1yEz83J0v2Zfcu2QStQcjA
+         mAEzfiJ8G8Ta0DwknmgPJTh2kVHJxzTdoWwUG6xby7ByKJJAZ1GPm2h4flPbamTsWvSc
+         3IQvoidEftrHMvLGPk+TONuwtZH67KGisqC+DKF4ABudlaLjobT+1ZLKEuaFvYCPpsTa
+         S5nMradmjR6DZ8YZ2GAsNEdNEzhcPUD5h2MyRy49RPaD+cSzc8U3GGGqo5i+j0zMY5VJ
+         iOjeAQKtRLYytzdKoHLOBQTEOcBfg+609okQvHaMauIf++Nr2lpWbvFMbQtzazv9fpa5
+         +c7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ0C2FTonRiYxm8+9L42MRnUEVA5HfBXpviajirYMtfzHK3KYRpZOvhU2sbbx4vqPn4KQU48Vgpg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1cj7bPN1NwStjS43eLe537dPEstAQqeGxebvLwxppsWmmCXQW
+	ZhFFH/ZAOofqMCAsKjVgi0bHsmdR0oXicuLGtMXf0ibasFDHhQL1alcctOYkCig=
+X-Google-Smtp-Source: AGHT+IEROX9KaO6d/u0xO2QIjRrzXqnBo50+cssH572zzI8DNVKAplSUbSI9A0zYuxHxBmSPI6CWtA==
+X-Received: by 2002:a17:907:3e1d:b0:a99:4aa7:4d6f with SMTP id a640c23a62f3a-a9eefebc409mr218811466b.12.1731063065775;
+        Fri, 08 Nov 2024 02:51:05 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.51.00
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 02:51:02 -0800 (PST)
+        Fri, 08 Nov 2024 02:51:05 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -76,11 +76,10 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 20/25] ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
-Date: Fri,  8 Nov 2024 12:49:53 +0200
-Message-Id: <20241108104958.2931943-21-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 21/25] arm64: dts: renesas: r9a08g045: Add SSI nodes
+Date: Fri,  8 Nov 2024 12:49:54 +0200
+Message-Id: <20241108104958.2931943-22-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
@@ -94,32 +93,133 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The SSI IP variant present on the Renesas RZ/G3S SoC is similar to the
-one found on the Renesas RZ/G2{UL, L, LC} SoCs. Add documentation for
-it.
+Add DT nodes for the SSI IPs available on the Renesas RZ/G3S SoC. Along
+with it external audio clocks were added. Board device tree could use it
+and update the frequencies.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- collected tags
+- none
 
- Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 96 ++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-index f4610eaed1e1..cab615f79ee4 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-+++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-@@ -19,6 +19,7 @@ properties:
-           - renesas,r9a07g043-ssi  # RZ/G2UL and RZ/Five
-           - renesas,r9a07g044-ssi  # RZ/G2{L,LC}
-           - renesas,r9a07g054-ssi  # RZ/V2L
-+          - renesas,r9a08g045-ssi  # RZ/G3S
-       - const: renesas,rz-ssi
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index be8a0a768c65..24c6388cd0d5 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -14,6 +14,22 @@ / {
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
-   reg:
++	audio_clk1: audio-clk1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by boards that provide it. */
++		clock-frequency = <0>;
++		status = "disabled";
++	};
++
++	audio_clk2: audio-clk2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by boards that provide it. */
++		clock-frequency = <0>;
++		status = "disabled";
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -187,6 +203,86 @@ i2c3: i2c@10090c00 {
+ 			status = "disabled";
+ 		};
+ 
++		ssi0: ssi@100a8000 {
++			compatible = "renesas,r9a08g045-ssi",
++				     "renesas,rz-ssi";
++			reg = <0 0x100a8000 0 0x400>;
++			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 241 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 242 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
++			clocks = <&cpg CPG_MOD R9A08G045_SSI0_PCLK2>,
++				 <&cpg CPG_MOD R9A08G045_SSI0_PCLK_SFR>,
++				 <&audio_clk1>, <&audio_clk2>;
++			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
++			resets = <&cpg R9A08G045_SSI0_RST_M2_REG>;
++			dmas = <&dmac 0x2665>, <&dmac 0x2666>;
++			dma-names = "tx", "rx";
++			power-domains = <&cpg>;
++			#sound-dai-cells = <0>;
++			status = "disabled";
++		};
++
++		ssi1: ssi@100a8400 {
++			compatible = "renesas,r9a08g045-ssi",
++				     "renesas,rz-ssi";
++			reg = <0 0x100a8400 0 0x400>;
++			interrupts = <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 244 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 245 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
++			clocks = <&cpg CPG_MOD R9A08G045_SSI1_PCLK2>,
++				 <&cpg CPG_MOD R9A08G045_SSI1_PCLK_SFR>,
++				 <&audio_clk1>, <&audio_clk2>;
++			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
++			resets = <&cpg R9A08G045_SSI1_RST_M2_REG>;
++			dmas = <&dmac 0x2669>, <&dmac 0x266a>;
++			dma-names = "tx", "rx";
++			power-domains = <&cpg>;
++			#sound-dai-cells = <0>;
++			status = "disabled";
++		};
++
++		ssi2: ssi@100a8800 {
++			compatible = "renesas,r9a08g045-ssi",
++				     "renesas,rz-ssi";
++			reg = <0 0x100a8800 0 0x400>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
++			clocks = <&cpg CPG_MOD R9A08G045_SSI2_PCLK2>,
++				 <&cpg CPG_MOD R9A08G045_SSI2_PCLK_SFR>,
++				 <&audio_clk1>, <&audio_clk2>;
++			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
++			resets = <&cpg R9A08G045_SSI2_RST_M2_REG>;
++			dmas = <&dmac 0x266d>, <&dmac 0x266e>;
++			dma-names = "tx", "rx";
++			power-domains = <&cpg>;
++			#sound-dai-cells = <0>;
++			status = "disabled";
++		};
++
++		ssi3: ssi@100a8c00 {
++			compatible = "renesas,r9a08g045-ssi",
++				     "renesas,rz-ssi";
++			reg = <0 0x100a8c00 0 0x400>;
++			interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 251 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
++			clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
++				 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
++				 <&audio_clk1>, <&audio_clk2>;
++			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
++			resets = <&cpg R9A08G045_SSI3_RST_M2_REG>;
++			dmas = <&dmac 0x2671>, <&dmac 0x2672>;
++			dma-names = "tx", "rx";
++			power-domains = <&cpg>;
++			#sound-dai-cells = <0>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@11010000 {
+ 			compatible = "renesas,r9a08g045-cpg";
+ 			reg = <0 0x11010000 0 0x10000>;
 -- 
 2.39.2
 
