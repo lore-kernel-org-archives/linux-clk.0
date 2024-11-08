@@ -1,64 +1,59 @@
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FE51E22F8
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33421E25E3
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 10:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731060878; cv=none; b=qna3DN+b90RraeTHU8yGYgMUna9JGUNDpHNXQK/yLr6gH29yy7f0UosZhQlKvES4NQv9sc5hIsw6HafE8Qd+5hiqM24wFIDuWU/hqgJZtVINPlH+saunJ70ejiiOZaBOPC/i3IIZmj+9y2UEL9gn7wVGz8WChdGd2iT8WE8OHMc=
+	t=1731062339; cv=none; b=iWtlkZoY9jgml8qJWBvXhMDFXI5jyOs4mLnGTWCJJMwdS/Xlh8BMWEzfQzmtOgawzw1boGuEA7flCPOCynAm8UFFY0ojxTRQCS20aMa8zAkNeL3J3hH5ZPSCmKYPQZOYG4MCBnkQmmwxIXVz2MmwoJonk3tVaDjzh3dYXeGBaHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731060878; c=relaxed/simple;
-	bh=XkGgv5eX9hGP/+6vsdILQJodcuwb2z/IVmUjUdqJ/2g=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDo2hTLtPOTVTF7jQxCkA4Re0d3N9WS5zZrBOTp6SQyFVAL9lGrqxz0QbTDf0cJLv25dLiJPUGpsSNAvQQ0GlrlR//gFDLJ/QtWNl/CiXUE/FYpIa6FynoUSCIEj54h0EHAcBF9pY80N80I4Ik0lHM9OR+Oj8R/F6a6RRQkGATE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y44aBSah; arc=none smtp.client-ip=209.85.208.65
+	s=arc-20240116; t=1731062339; c=relaxed/simple;
+	bh=mcaJwPbIfL1eOaJCBeghMP/S25nTA8NCJStg51856fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DrXEUo/OFgsORk5PbwE/MTvNv3HlpHlwnS0T7UfYVkanjG8KZsfsPYNJ9HdAF1LAQuDjWQrlGqSqM+mp58mh50udBskTcOXUXbA74ZfKv2bTaImh7se4cPJsmY+KcEzQmT/GiUjxNxDgyh35YAsM52SJ4VKjl8+fgQiQFZ2gtJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OGuntJKV; arc=none smtp.client-ip=209.85.208.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y44aBSah"
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso5292200a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:14:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OGuntJKV"
+Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so29607081fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 02:38:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731060873; x=1731665673; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SnVZ0emV6bVkYUAc532QwJ4he0bCKDKGP+zZEkPy81k=;
-        b=Y44aBSahMuLEW64kUDU8e5oWPxHX1p3+jAw2IQ+FDwJah7gKRz1KHXo5GAwFdlxy38
-         ejBhlWG2pwG3x/RFPbF+gHpv3heebEVwAG1jqgJzUP7Vi3IDeP+zqc1xwtn3jO/+WkNG
-         5lfE9hyQUoAwSgaCY/Eq5oB0FD5uDyCARVECCzN/zovWJAVed5P8cQ9/07gZxrqfmt7y
-         HbRTXNZNfbPg9BzfuqxCkuFFEYP85FJbRTe9g1xblZnEQ8ZMv5U7CsLRLYKyWdZZzPUw
-         QZYjNdeGhnBTwsgxJjs6FM879C+80DX6VT8jDLS1rxnZgdjLgGqF/kBB/hkEUzJ0t2j1
-         nRkA==
+        d=suse.com; s=google; t=1731062336; x=1731667136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SaISgbIGwpAO1EVVDtgSTHmyzi3HxAQHzUJmlDOmvT8=;
+        b=OGuntJKVk38iqi8zoKos9l2LLHr7leql72l3DBj/4YfFli3Lir/RLq0wQMlFWdFd0N
+         OTMUd8r56RvZG3ZzgLlWs5x3bVdjR8h9OTaCxTQneYA63JQiPsfzPhQNduL9SQtXRbNA
+         iqjdvoiULVb97tRDN5Po6P4hF6x8z14GE1DdSqPplXprXYgWAsrkpHvQBCN+l4ptLRgr
+         kiduGQv4MpbPhaD47wTul/OZBOE3hbDu3G32Ug3IDzMs1EVX3ew0OyJkjliwfdsos0OM
+         bP6BSOLDpuQBEzvEa7Ohwerf/MEWLjdodx6JiIqiq9ADOgcWvE1FQC29WEwlLjC+/NHO
+         E7mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731060873; x=1731665673;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SnVZ0emV6bVkYUAc532QwJ4he0bCKDKGP+zZEkPy81k=;
-        b=deQ3izLMC/4Nhg5muuk3SAX30fLrhNccZH/Hbs9E3GiSF2Dqbwk7+OMGNiz1HuZx8s
-         b2UNg6FJLfPRclSj+XYdsRHeR+rXM9bUrOWRGkkkjh3WzQ6uIO3L2jm8LHnp9TE9Dd1t
-         jF/eSrRyLKzcKgS1QQG9321aituI7D7SIJXKh2Sn5XMigOaq2+dqf0tFUaYZepMNPkcT
-         eLSlIBhPh+A2nyq2QIUN6cMn+wbvIzeyaVdumLtVPGioEzGMDm4hfUoiayvPyHL6DSPO
-         NmF1DB+JyrdpxzqkGdB1FFthII/FWtGGZJ2lRc2jC1wXSoN4IkP5HwTVTwjDF4kDoG/L
-         9A5g==
-X-Forwarded-Encrypted: i=1; AJvYcCX3YpsxnxxgYRtz8eMGG3wnwxPae+dfRmPRt7qohzkq/MVO19e/9zFXU2TQ4h/8z2ySnZBlqt846Ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhjhvVXKqtrSxOYFGplKmmO95KkpE5fNFHI3jd2Nz7+2cfrYWN
-	aEEiNpkNveven0krewKaZSoeF8gUij3Z2+psljnWlxakHM0V4V89151MkWUIwVE=
-X-Google-Smtp-Source: AGHT+IGMkZNj149mgtvYpa+dcdi+Hv2GUHkHisgCOmyCoj4UxPuG3y0YVKFRG6NnyfhzAQT2cBQMhA==
-X-Received: by 2002:a17:907:9455:b0:a9a:b818:521d with SMTP id a640c23a62f3a-a9eec9cf03dmr279872866b.18.1731060872701;
-        Fri, 08 Nov 2024 02:14:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731062336; x=1731667136;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SaISgbIGwpAO1EVVDtgSTHmyzi3HxAQHzUJmlDOmvT8=;
+        b=fZQdx8e9JGB7RsIFcUsFJr7yVLrUTRcuGqFSc4DA8+saONALycO9zsi/jGn4yFhMee
+         nxY8NcHDVeUCEcLGZZPAel7fEh5CxBxsRiOc4+g44pTMPzrLL9h9F0dpMTCI6NE7OMbK
+         Ps4OBM3wcGQ1NbWhEp+UvTL9o2ejJOScp7obpje8dO8EMp3YzTKp4mjyI4WLbn38llre
+         71lT7LEuua/C4VoVZPKtdavBvtCMz8181rCpjH2gghoyF+HZIIPFuZtryh+k0ZrGvNjK
+         g5o1VBki1iCJ3xD4Sh3+S9EElXYhN6zir96I25Bu9nW5cUhdd5FwAONaUKqx+O874HIh
+         79ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVHbLQfPPoMUTel4AStzTSVbvTwXW6oxnbYJ6aWQA6qO1FbNkBCIHTGXHf8Fg6COGdhv89Zy1CPvj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1w2ENXFWin4lXOAJavYNu4I5sqPJz7xac4ebTocBRitF43+uU
+	jAZhatLorBjAvIiji/kn3bcSIt7OpS6bfHFlwyGJvFe6egrFJ/LlvGAvHwtfebQ=
+X-Google-Smtp-Source: AGHT+IH5UNmzHaes0cojtKWppdmffN914U6rvrc+ZzaB03JePe9nRLbAK00wuir/DGJiOezZXD0K2Q==
+X-Received: by 2002:a2e:be89:0:b0:2fb:51a:d2a with SMTP id 38308e7fff4ca-2ff20188132mr19417491fa.12.1731062336127;
+        Fri, 08 Nov 2024 02:38:56 -0800 (PST)
 Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc4c7asm210184166b.96.2024.11.08.02.14.32
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abe6e3sm213730366b.84.2024.11.08.02.38.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 02:14:32 -0800 (PST)
+        Fri, 08 Nov 2024 02:38:55 -0800 (PST)
 From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 8 Nov 2024 11:14:59 +0100
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -69,74 +64,64 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Derek Kiernan <derek.kiernan@amd.com>,
 	Dragan Cvetic <dragan.cvetic@amd.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: of_property: Assign PCI instead of CPU bus address
- to dynamic PCI nodes
-Message-ID: <Zy3koxz4KnV39__V@apocalypse>
-References: <20241108094256.28933-1-andrea.porta@suse.com>
- <20241108110938.622014f5@bootlin.com>
+	Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>
+Subject: [PATCH 0/2] Preserve the flags portion on 1:1 dma-ranges mapping
+Date: Fri,  8 Nov 2024 11:39:19 +0100
+Message-ID: <cover.1731060031.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241108110938.622014f5@bootlin.com>
 
-Hi herve,
+Empty dma-ranges in DT nodes using 3-cell address spcifier cause the
+flag portion to be dropped by of_translate_one(), failing the translation
+chain. This patch aims at fixing this issue.
 
-On 11:09 Fri 08 Nov     , Herve Codina wrote:
-> Hi Andrea,
-> 
-> On Fri,  8 Nov 2024 10:42:56 +0100
-> Andrea della Porta <andrea.porta@suse.com> wrote:
-> 
-> > When populating "ranges" property for a PCI bridge or endpoint,
-> > of_pci_prop_ranges() incorrectly use the CPU bus address of the resource.
-> > In such PCI nodes, the window should instead be in PCI address space. Call
-> > pci_bus_address() on the resource in order to obtain the PCI bus
-> > address.
-> > 
-> > Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Tested-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> > This patch, originally preparatory for a bigger patchset (see [1]), has
-> > been splitted in a standalone one for better management and because it
-> > contains a bugfix which is probably of interest to stable branch.
-> 
-> Nothing to say for the patch itself.
-> 
-> Just here, you mentioned "see [1]" but you didn't provide the link.
-> 
-> IMHO, this is not blocking for applying the patch but, just for other people
-> looking at this email in the mailing list, can you reply providing the link?
-
-Thanks for pointing that out, sorry about that. Here it is:
-
-[1] - https://lore.kernel.org/all/f6b445b764312fd8ab96745fe4e97fb22f91ae4c.1730123575.git.andrea.porta@suse.com/
+Part of this patchset was originally preparatory for a bigger patchset
+(see [1]). It has been split in a standalone one for better management
+and because it contains a bugfix which is probably of interest to stable
+branch.
+I've also added new tests to unittest to prove it.
 
 Many thanks,
 Andrea
 
-> 
-> Best regards,
-> Hervé
+References:
+[1] - https://lore.kernel.org/all/3029857353c9499659369c1540ba887d7860670f.1730123575.git.andrea.porta@suse.com/
+
+Andrea della Porta (2):
+  of/unittest: Add empty dma-ranges address translation tests
+  of: address: Preserve the flags portion on 1:1 dma-ranges mapping
+
+ drivers/of/address.c                        |  3 +-
+ drivers/of/unittest-data/tests-address.dtsi |  2 ++
+ drivers/of/unittest.c                       | 39 +++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 1 deletion(-)
+
+-- 
+2.35.3
+
