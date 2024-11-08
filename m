@@ -1,93 +1,64 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70180231CA6
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 17:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26281AA1CB;
+	Fri,  8 Nov 2024 19:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087376; cv=none; b=UyzHZspiPCuycMSGMxFb4AWxKY7UDd+pGjVXG3N6Q0x0rDnX9ValaVJiDdE3QR8XcyTSCIb8uKxF4Sz22V8dVrNpwEoWPecCs65GjDJYcBkwC89bD3+H8ac54HcO9esc+CRL4Tochhob8Mw2B2CZ4KUetniL/d4FhJBQog5FMWg=
+	t=1731092416; cv=none; b=Q0VnmnxakRVPt13T0vMQyk6Tpv068pWEmP5O9b9DTi6invza/LkXw5RliektykykFnnb2/gMd+5iodSB4pDLhzA5kXCbaCJoMv9WcXsJAhUMQoWT0zELI7p7vrSpP8qopyf6OZ0hJzPezSi+CabCX9saPjyU/20cTVfK0tUfr18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087376; c=relaxed/simple;
-	bh=UBSwk2uyPAnNAEqDMvDOCQ3Cpd7emo8eshhstWEooXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gFKf5CHheniZzVP5aFu7TR1haUOo8KTy1CTVYivoY4I+zrI/E74H2U3YH0tOYa7HTFolFBOMxnDRgmOju9umestkquaRm2aTKozbeV3UNEW59WsCKtLClSs2YunhXi7nIYpW7LAmu/vyChRQaDSMUSuK7YE8fArBtBjKY3d5u4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IT942eBZ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1731092416; c=relaxed/simple;
+	bh=OtggIF0KRqr7r/wH0OZd5RllsjUVk+wOmDWHHI2hwOY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=BZcYv6oemnEzXv227FHWV0wVtu+S+7EnUx/8EGbHt17eQchrSbZNGLwK9wIKkSvgKgeDVhEBroiHzSvBETjtM1HWrpENSkyrspVZj9eJASEDkjxnOwbt9IV+0M7q6ifVg9cDFcPQmz/gCb6nP7vVhA72vywF2qCVcD30dYqJ2H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qd2lWuSK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IT942eBZ"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d518f9abcso1585124f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 09:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731087373; x=1731692173; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=24rUIfwiGyBziK1kSY2+b5Nvpi1meTWCMZaQMdMFtck=;
-        b=IT942eBZUyAp9jQJTzBlfn6GqNP4Y97xDyHuWe7L5T2oEqM4U2ZIo274CEGZ+aagkf
-         oyrSrnJ7b9ehFsPtGvPpP4Fzm7P6At/B6XUTHZba80JFT8ITOKXMTaHq4KpgZwhGdGWy
-         TcYF52pKH4ds19C6GX7JRJz5uTJUDavXKPxgWHX3v5K1Et230oAG8t3YvVOIOCSmjKXR
-         KBRfgy97ybgdu2yFx2XoO+7NKNdT8kKl4sT5NFA7m/lCBMeBSJuxdVUarptPcjYpjDfI
-         u6WXFk72YbAT1odpHrnwPl2kY5Y4pef2WX5RolGcXCPD9zVEhtjmTKW8AFJ5qPvRvS9q
-         yxVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731087373; x=1731692173;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=24rUIfwiGyBziK1kSY2+b5Nvpi1meTWCMZaQMdMFtck=;
-        b=Em6POCOPmrTdEh13oGo8J8V+NfLV+adruOXLel9aeGb3WXvlJOQ3+UfnM981SsLmTD
-         r0L8UAYl5mBtoRJA2nroV5zSISf1EhyAQdTdH3FVhS2Jcz6qIaAuMNxE+wRKeqOLItOH
-         wvONZOazK7inmm+XmH5QI2Z4su3WGmp9wsI1tZfAMj92xEhW3xOuZypZhw3M6Sd4Ywjn
-         L2tqPhF48qXH5yqpZfjBbaPqDIwwDaV6qURoF8oJ0GWbbrHjYI/90aHp70Ebre2biyrB
-         5A7+d2bOLpxxhIQg0VJjPZaW/+NiJhzIBc15wcZKokkkMT7u88AW47p5ZgMCCaXBmbo6
-         d2yw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6DyN8bOVr0awV8FIF4Dpl/5JNaSCNeLSK4Xa3bAJ1RrOP53VSgzwI/8v4/lgDANvQ6YLgT+73P4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT7/lYyKNzOpomX9SDVJx8KtP/xESqXr6eTDwb4oPNB80B2dmF
-	VioS9/6VPNidGuaIbIXVyYQsgiBSBXD0B1zcq7THxR/PoLDUIcN3qOezfpJ43Q4=
-X-Google-Smtp-Source: AGHT+IFB4cQNv5E0di1VK1U5QifG33FuDYlnKtO6ciqXhye/GnzodGjwkiWo7tPy7OZ37dGOU9CmJQ==
-X-Received: by 2002:a5d:59a6:0:b0:37d:4d3f:51e6 with SMTP id ffacd0b85a97d-381f186bf72mr3099046f8f.14.1731087372779;
-        Fri, 08 Nov 2024 09:36:12 -0800 (PST)
-Received: from [192.168.0.48] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97cfaesm5482406f8f.38.2024.11.08.09.36.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 09:36:12 -0800 (PST)
-Message-ID: <f6c2aea7-3363-4c29-bdd8-ee3f6dd1a642@linaro.org>
-Date: Fri, 8 Nov 2024 17:36:18 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qd2lWuSK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D09C4CED7;
+	Fri,  8 Nov 2024 19:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731092415;
+	bh=OtggIF0KRqr7r/wH0OZd5RllsjUVk+wOmDWHHI2hwOY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Qd2lWuSKjB662/4MHlN9ZzDVESuRWPC1tDEoQioaBActtNgImJm1mx6R2aN3ZVkSQ
+	 wZrsteEOBTYmayH4SCClPM6S8ZUqnuDZqK/L45klMUFvwqoFNoM59rpYTb3zwmLmS0
+	 S5k3S/Kd34sPZ/GNjJbWpePCLosGWBzYuZ+pq92JZ19NWCGLbusae2RsEL0b/w+yQE
+	 LKuAgQGeE1fIoFrCLBWrALq/q+NK6wpM7zRUp69OBCpFrOAIU77rs159lndC3/GXp4
+	 IKc7T7mRGZA3sKofR4Ib1tDg8qZoY2jMwd1Rfu9chaykv8CuGf3LkqBiHuqZFAh+yG
+	 aKeIat7LwXw1A==
+Message-ID: <e6637dcc85ca23efaf72af906f364328.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] clk: qcom: camcc-qcs615: Add QCS615 camera clock
- controller driver
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
- <20241108-qcs615-mm-clockcontroller-v3-4-7d3b2d235fdf@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241108-qcs615-mm-clockcontroller-v3-4-7d3b2d235fdf@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7b57ccc2-7060-4adf-b896-8992ec05125c@linaro.org>
+References: <20241028163403.522001-1-eugen.hristev@linaro.org> <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org> <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org> <b587012e868f8936463c46915b8588c3.sboyd@kernel.org> <7b57ccc2-7060-4adf-b896-8992ec05125c@linaro.org>
+Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: andersson@kernel.org, konradybcio@kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com, evgreen@chromium.org
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org
+Date: Fri, 08 Nov 2024 11:00:13 -0800
+User-Agent: alot/0.10
 
-On 08/11/2024 04:09, Taniya Das wrote:
-> +	.alpha_en_mask = BIT(24),
-> +	.vco_val = BIT(21),
-> +	.vco_mask = GENMASK(21, 20),
+Quoting Eugen Hristev (2024-10-30 01:28:14)
+> On 10/30/24 02:40, Stephen Boyd wrote:
+> >=20
+> > If the rpmh-rsc code didn't use writel() or readl() I'd believe that the
+> > data member is simply a u32 container. But those writel() and readl()
+> > functions are doing a byte swap, which seems to imply that the data
+> > member is a native CPU endian u32 that needs to be converted to
+> > little-endian. Sounds like BCM_TCS_CMD() should just pack things into a
+> > u32 and we can simply remove the cpu_to_l32() stuff in the macro?
+>=20
+> This review [1] from Evan Green on the original patch submission=20
+> requested the use of cpu_to_le32
+>=20
+> So that's how it ended up there.
+>=20
 
-Thanks for following up on this.
-
----
-bod
+Thanks. I still don't see why this can't just be treated as a u32 and
+then we have writel() take care of it for us.
