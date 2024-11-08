@@ -1,165 +1,93 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D663199385
-	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 17:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70180231CA6
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 17:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086568; cv=none; b=HemU64TpK2Dtw45DylYUbEMbyaBsZviBIhK/Mi7uASF277nruPftt3EPNEfmbxok+f7Wj+GwztH5G7oPxVKz8Fn3WsXuu4j47J2Oval4YH8rw3s7L+4kjPGmTcPcb0BHioskiSdoqEjK5q3RLJy3fQcYFzLYIwUN7y29m++T3rk=
+	t=1731087376; cv=none; b=UyzHZspiPCuycMSGMxFb4AWxKY7UDd+pGjVXG3N6Q0x0rDnX9ValaVJiDdE3QR8XcyTSCIb8uKxF4Sz22V8dVrNpwEoWPecCs65GjDJYcBkwC89bD3+H8ac54HcO9esc+CRL4Tochhob8Mw2B2CZ4KUetniL/d4FhJBQog5FMWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086568; c=relaxed/simple;
-	bh=AZeXblRqUA+athYMQ8PexgeQYbRAQdfZV5DIZ5kLB0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/x3EfgnZLoPVrV01pmvGsIABOe4L12R09rPT1o8eOH39xjYHdNgo3PEV8Q9STCm7m0xAaJ91r7dKTKcqeehoD8DMvfHtXvSsJJGi2cavQK9EDvvNX+AyBNmfFfit/FOh6jDpjXpNOe+byol+OF2kfvXzSHWvFCEzSV6JPquVFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UtUCnpyT; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1731087376; c=relaxed/simple;
+	bh=UBSwk2uyPAnNAEqDMvDOCQ3Cpd7emo8eshhstWEooXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gFKf5CHheniZzVP5aFu7TR1haUOo8KTy1CTVYivoY4I+zrI/E74H2U3YH0tOYa7HTFolFBOMxnDRgmOju9umestkquaRm2aTKozbeV3UNEW59WsCKtLClSs2YunhXi7nIYpW7LAmu/vyChRQaDSMUSuK7YE8fArBtBjKY3d5u4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IT942eBZ; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UtUCnpyT"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f2b95775so3308864e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 09:22:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IT942eBZ"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d518f9abcso1585124f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 09:36:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731086564; x=1731691364; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IuMsjEWNzhW+6P3eECc9hh/03bxywxtcZPQ/jBAhyYE=;
-        b=UtUCnpyT695O8bCaSLpXzcTn/y5tE0pJTdVXgzqtSmLS2ObyJeehT2+dvL/hZ6gkus
-         zgkwqquYU1mPfPuSaQ3SecgJwvX0hhyhgzifwDP/tn7btgr6/Nn5DoOdsDGJnKHSSFea
-         uvCTDHHc1XGFB6RQjUibVFRaD/AoMRw4O81+44wtCzqsgO0lNscHejAOwT8HarTSza+z
-         pxcdzqhHGb9E062meeMjbIOtbFY3RkPtDzY+vryXyMPChKgSv6tjF5JAC4GIhwRNPTSH
-         usNPFi0FsxhMsrgRSh8EtFhW5x5Z7axNpbRUVzds0mRihtrWFudG1ChC0CN7QdSOwln2
-         jtGg==
+        d=linaro.org; s=google; t=1731087373; x=1731692173; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=24rUIfwiGyBziK1kSY2+b5Nvpi1meTWCMZaQMdMFtck=;
+        b=IT942eBZUyAp9jQJTzBlfn6GqNP4Y97xDyHuWe7L5T2oEqM4U2ZIo274CEGZ+aagkf
+         oyrSrnJ7b9ehFsPtGvPpP4Fzm7P6At/B6XUTHZba80JFT8ITOKXMTaHq4KpgZwhGdGWy
+         TcYF52pKH4ds19C6GX7JRJz5uTJUDavXKPxgWHX3v5K1Et230oAG8t3YvVOIOCSmjKXR
+         KBRfgy97ybgdu2yFx2XoO+7NKNdT8kKl4sT5NFA7m/lCBMeBSJuxdVUarptPcjYpjDfI
+         u6WXFk72YbAT1odpHrnwPl2kY5Y4pef2WX5RolGcXCPD9zVEhtjmTKW8AFJ5qPvRvS9q
+         yxVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731086564; x=1731691364;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IuMsjEWNzhW+6P3eECc9hh/03bxywxtcZPQ/jBAhyYE=;
-        b=Lu6+1T9MW4IYqJGsU1xR3q5+JASkvFWZ6R9jZkc0458z3bmfLzO3al1UIX6faipFUt
-         VAcVqzvfftaQVl2MBz5FFrf8F1rFSwCn3Ei/kQUrd1/+N9Bb/oDCAAHLZ3aEmjf+QnIu
-         3zCD0HwVaroEN5d1yh2j+jXuJOUtHgvea3ckj0Yn6bsEFy9xSz8d2gkBM9Wz9UQCjayZ
-         T6T3cegB2n6mLEMONQQqCxca91KzaHE6frmtJj59j8GLlt4nkDEHZvgjhs0b8r8jIxbv
-         ewl20fsn+gZze6vHzIOGQo54Ug1d81njcRB64n6cPX0nouBDP+6ryLOHcu6kiMpRE23g
-         YB2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVu25j6DxcLC+Ew9tgPxv0cIH0SV7IQVqMxAhoJZWqksLQCX8kRirLwDVLGPQhA5uQLOaNvC43SF94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLyLd9GbaEDUl+tNIyYIJeOhk8crz/1ST/Nedz2FSK2i6oeeN3
-	6HHCg1U0yW289xxIPoxdaQ0p8HY1kcJqZaMzG4LVmM/FmSdsROtWGzVsY/uxCHk=
-X-Google-Smtp-Source: AGHT+IG/kHT7uoJA9pS6MJzi5G/TAbHC1g+M286p5WIMFKq0cH1FOM6xU7xjhvQPNXqOerM7diDKNA==
-X-Received: by 2002:a05:651c:1551:b0:2fc:9674:60b5 with SMTP id 38308e7fff4ca-2ff2028afd3mr36644341fa.25.1731086563412;
-        Fri, 08 Nov 2024 09:22:43 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff179ff9f7sm7271371fa.119.2024.11.08.09.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 09:22:42 -0800 (PST)
-Date: Fri, 8 Nov 2024 19:22:39 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 03/11] dt-bindings: clock: Add Qualcomm QCS615 Camera
- clock controller
-Message-ID: <be4blr2wvnc7b4iubexxnzqevjpgnfhdt7azcuwdtqgp6xbdvh@c3txmpuo5lot>
-References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
- <20241108-qcs615-mm-clockcontroller-v3-3-7d3b2d235fdf@quicinc.com>
+        d=1e100.net; s=20230601; t=1731087373; x=1731692173;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=24rUIfwiGyBziK1kSY2+b5Nvpi1meTWCMZaQMdMFtck=;
+        b=Em6POCOPmrTdEh13oGo8J8V+NfLV+adruOXLel9aeGb3WXvlJOQ3+UfnM981SsLmTD
+         r0L8UAYl5mBtoRJA2nroV5zSISf1EhyAQdTdH3FVhS2Jcz6qIaAuMNxE+wRKeqOLItOH
+         wvONZOazK7inmm+XmH5QI2Z4su3WGmp9wsI1tZfAMj92xEhW3xOuZypZhw3M6Sd4Ywjn
+         L2tqPhF48qXH5yqpZfjBbaPqDIwwDaV6qURoF8oJ0GWbbrHjYI/90aHp70Ebre2biyrB
+         5A7+d2bOLpxxhIQg0VJjPZaW/+NiJhzIBc15wcZKokkkMT7u88AW47p5ZgMCCaXBmbo6
+         d2yw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6DyN8bOVr0awV8FIF4Dpl/5JNaSCNeLSK4Xa3bAJ1RrOP53VSgzwI/8v4/lgDANvQ6YLgT+73P4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT7/lYyKNzOpomX9SDVJx8KtP/xESqXr6eTDwb4oPNB80B2dmF
+	VioS9/6VPNidGuaIbIXVyYQsgiBSBXD0B1zcq7THxR/PoLDUIcN3qOezfpJ43Q4=
+X-Google-Smtp-Source: AGHT+IFB4cQNv5E0di1VK1U5QifG33FuDYlnKtO6ciqXhye/GnzodGjwkiWo7tPy7OZ37dGOU9CmJQ==
+X-Received: by 2002:a5d:59a6:0:b0:37d:4d3f:51e6 with SMTP id ffacd0b85a97d-381f186bf72mr3099046f8f.14.1731087372779;
+        Fri, 08 Nov 2024 09:36:12 -0800 (PST)
+Received: from [192.168.0.48] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97cfaesm5482406f8f.38.2024.11.08.09.36.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 09:36:12 -0800 (PST)
+Message-ID: <f6c2aea7-3363-4c29-bdd8-ee3f6dd1a642@linaro.org>
+Date: Fri, 8 Nov 2024 17:36:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-qcs615-mm-clockcontroller-v3-3-7d3b2d235fdf@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] clk: qcom: camcc-qcs615: Add QCS615 camera clock
+ controller driver
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
+ <20241108-qcs615-mm-clockcontroller-v3-4-7d3b2d235fdf@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241108-qcs615-mm-clockcontroller-v3-4-7d3b2d235fdf@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 09:39:20AM +0530, Taniya Das wrote:
-> Add DT bindings for the Camera clock on QCS615 platforms. Add the
-> relevant DT include definitions as well.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  .../bindings/clock/qcom,qcs615-camcc.yaml          |  60 +++++++++++
->  include/dt-bindings/clock/qcom,qcs615-camcc.h      | 110 +++++++++++++++++++++
->  2 files changed, 170 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..0abd277aa3ddd2e1384d0af59699dc1deda5575b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,qcs615-camcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Camera Clock & Reset Controller on QCS615
-> +
-> +maintainers:
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm camera clock control module provides the clocks, resets and power
-> +  domains on QCS615
-> +
-> +  See also: include/dt-bindings/clock/qcom,qcs615-camcc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,qcs615-camcc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
+On 08/11/2024 04:09, Taniya Das wrote:
+> +	.alpha_en_mask = BIT(24),
+> +	.vco_val = BIT(21),
+> +	.vco_mask = GENMASK(21, 20),
 
-Please use qcom,gcc.yaml instead of copying the same set of properties
-over and over.
+Thanks for following up on this.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clock-controller@ad00000 {
-> +      compatible = "qcom,qcs615-camcc";
-> +      reg = <0xad00000 0x10000>;
-> +      clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
-> +...
-
--- 
-With best wishes
-Dmitry
+---
+bod
