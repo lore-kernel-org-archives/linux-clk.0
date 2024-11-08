@@ -1,64 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6635D1922EE;
-	Fri,  8 Nov 2024 16:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D663199385
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 17:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731085016; cv=none; b=imLxfQ1+HOYxUtu9IfraIcYKbVVG74gvBLlWj1HpZcQ4zenTaYWBYzM+EZrNa7x28gmzPVETqOtGSID9jWxPB/9NetoiyVvH+Mi8B4X1Ro+GdqNMh9HBqa6GiV7pz6o6h2PxGRg+02rb/bw7VCCj2ksbKPqCU5EmqutQBfZD97Y=
+	t=1731086568; cv=none; b=HemU64TpK2Dtw45DylYUbEMbyaBsZviBIhK/Mi7uASF277nruPftt3EPNEfmbxok+f7Wj+GwztH5G7oPxVKz8Fn3WsXuu4j47J2Oval4YH8rw3s7L+4kjPGmTcPcb0BHioskiSdoqEjK5q3RLJy3fQcYFzLYIwUN7y29m++T3rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731085016; c=relaxed/simple;
-	bh=hjfkk2bPDC/830gBiHBjzD5EFmbHgFIcXBwd1zE5kGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PSuFQGsReuJU487kkeEwXUn5d7AVdNROzTo0CVJmeakp1vbo5euRmiXG7hpq4jpkBGImnHaCv8GXf6ldocOvI21bu/lzXpyx2wBh6BdXVwiEskQDH01Lkkk/5kWNH2DUiCZjPZxbff4kn8MXbo2vlpCB7Lq1qrJISrE5uZbGZ0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSDYkbbK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731086568; c=relaxed/simple;
+	bh=AZeXblRqUA+athYMQ8PexgeQYbRAQdfZV5DIZ5kLB0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/x3EfgnZLoPVrV01pmvGsIABOe4L12R09rPT1o8eOH39xjYHdNgo3PEV8Q9STCm7m0xAaJ91r7dKTKcqeehoD8DMvfHtXvSsJJGi2cavQK9EDvvNX+AyBNmfFfit/FOh6jDpjXpNOe+byol+OF2kfvXzSHWvFCEzSV6JPquVFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UtUCnpyT; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSDYkbbK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03DBC4CECD;
-	Fri,  8 Nov 2024 16:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731085015;
-	bh=hjfkk2bPDC/830gBiHBjzD5EFmbHgFIcXBwd1zE5kGE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OSDYkbbKRO+AYZUWz7Sdh/5jZPwcxOt6K+qQ3Bi8Tdh8RvaGqMn+BBlP8VKDZbEKj
-	 EZCdJJWpK4DpLf1qJFLIayaGJB3IVYHCc6E1uS/Qk0fNt67ztPzeNQhorC/DU6eSXq
-	 woOQYbuy2hStYkSYEoNT8CAvNYWBnDAGfzOgSRWvUtNkUo+ZHI4SOOCY7hRw26qJEb
-	 2eljXEp+AX/ADkBhMPlBSmj6Gywab+LA1oJMnbnvx/vBwIyruKOJ6iZLPZxbA+Kd2x
-	 TVFKsr3mXTty3CPtV3FBdLmJcgfGatPWDOgYQXJvSnHY8UqMMOLyxkbxH2berrJLve
-	 bgNfVoMNKS3ew==
-Date: Fri, 8 Nov 2024 10:56:54 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <20241108165654.GA1665761@bhelgaas>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UtUCnpyT"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f2b95775so3308864e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 09:22:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731086564; x=1731691364; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IuMsjEWNzhW+6P3eECc9hh/03bxywxtcZPQ/jBAhyYE=;
+        b=UtUCnpyT695O8bCaSLpXzcTn/y5tE0pJTdVXgzqtSmLS2ObyJeehT2+dvL/hZ6gkus
+         zgkwqquYU1mPfPuSaQ3SecgJwvX0hhyhgzifwDP/tn7btgr6/Nn5DoOdsDGJnKHSSFea
+         uvCTDHHc1XGFB6RQjUibVFRaD/AoMRw4O81+44wtCzqsgO0lNscHejAOwT8HarTSza+z
+         pxcdzqhHGb9E062meeMjbIOtbFY3RkPtDzY+vryXyMPChKgSv6tjF5JAC4GIhwRNPTSH
+         usNPFi0FsxhMsrgRSh8EtFhW5x5Z7axNpbRUVzds0mRihtrWFudG1ChC0CN7QdSOwln2
+         jtGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731086564; x=1731691364;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IuMsjEWNzhW+6P3eECc9hh/03bxywxtcZPQ/jBAhyYE=;
+        b=Lu6+1T9MW4IYqJGsU1xR3q5+JASkvFWZ6R9jZkc0458z3bmfLzO3al1UIX6faipFUt
+         VAcVqzvfftaQVl2MBz5FFrf8F1rFSwCn3Ei/kQUrd1/+N9Bb/oDCAAHLZ3aEmjf+QnIu
+         3zCD0HwVaroEN5d1yh2j+jXuJOUtHgvea3ckj0Yn6bsEFy9xSz8d2gkBM9Wz9UQCjayZ
+         T6T3cegB2n6mLEMONQQqCxca91KzaHE6frmtJj59j8GLlt4nkDEHZvgjhs0b8r8jIxbv
+         ewl20fsn+gZze6vHzIOGQo54Ug1d81njcRB64n6cPX0nouBDP+6ryLOHcu6kiMpRE23g
+         YB2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVu25j6DxcLC+Ew9tgPxv0cIH0SV7IQVqMxAhoJZWqksLQCX8kRirLwDVLGPQhA5uQLOaNvC43SF94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLyLd9GbaEDUl+tNIyYIJeOhk8crz/1ST/Nedz2FSK2i6oeeN3
+	6HHCg1U0yW289xxIPoxdaQ0p8HY1kcJqZaMzG4LVmM/FmSdsROtWGzVsY/uxCHk=
+X-Google-Smtp-Source: AGHT+IG/kHT7uoJA9pS6MJzi5G/TAbHC1g+M286p5WIMFKq0cH1FOM6xU7xjhvQPNXqOerM7diDKNA==
+X-Received: by 2002:a05:651c:1551:b0:2fc:9674:60b5 with SMTP id 38308e7fff4ca-2ff2028afd3mr36644341fa.25.1731086563412;
+        Fri, 08 Nov 2024 09:22:43 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff179ff9f7sm7271371fa.119.2024.11.08.09.22.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 09:22:42 -0800 (PST)
+Date: Fri, 8 Nov 2024 19:22:39 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 03/11] dt-bindings: clock: Add Qualcomm QCS615 Camera
+ clock controller
+Message-ID: <be4blr2wvnc7b4iubexxnzqevjpgnfhdt7azcuwdtqgp6xbdvh@c3txmpuo5lot>
+References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
+ <20241108-qcs615-mm-clockcontroller-v3-3-7d3b2d235fdf@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,51 +76,90 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae3363eb212b356d526e9cfa7775c6dfea33e372.1731060031.git.andrea.porta@suse.com>
+In-Reply-To: <20241108-qcs615-mm-clockcontroller-v3-3-7d3b2d235fdf@quicinc.com>
 
-On Fri, Nov 08, 2024 at 11:39:21AM +0100, Andrea della Porta wrote:
-> A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
-> translations. In this specific case, the current behaviour is to zero out
-> the entire specifier so that the translation could be carried on as an
-> offset from zero.  This includes address specifier that has flags (e.g.
-> PCI ranges).
-> Once the flags portion has been zeroed, the translation chain is broken
-> since the mapping functions will check the upcoming address specifier
-> against mismatching flags, always failing the 1:1 mapping and its entire
-> purpose of always succeeding.
-> Set to zero only the address portion while passing the flags through.
-
-Add blank lines between paragraphs.
-
-> Fixes: dbbdee94734b ("of/address: Merge all of the bus translation code")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> Tested-by: Herve Codina <herve.codina@bootlin.com>
+On Fri, Nov 08, 2024 at 09:39:20AM +0530, Taniya Das wrote:
+> Add DT bindings for the Camera clock on QCS615 platforms. Add the
+> relevant DT include definitions as well.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  drivers/of/address.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  .../bindings/clock/qcom,qcs615-camcc.yaml          |  60 +++++++++++
+>  include/dt-bindings/clock/qcom,qcs615-camcc.h      | 110 +++++++++++++++++++++
+>  2 files changed, 170 insertions(+)
 > 
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index 286f0c161e33..72b6accff21c 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -455,7 +455,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
->  	}
->  	if (ranges == NULL || rlen == 0) {
->  		offset = of_read_number(addr, na);
-> -		memset(addr, 0, pna * 4);
-> +		/* copy the address while preserving the flags */
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0abd277aa3ddd2e1384d0af59699dc1deda5575b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-camcc.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,qcs615-camcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Camera Clock & Reset Controller on QCS615
+> +
+> +maintainers:
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm camera clock control module provides the clocks, resets and power
+> +  domains on QCS615
+> +
+> +  See also: include/dt-bindings/clock/qcom,qcs615-camcc.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,qcs615-camcc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
 
-Not knowing the surrounding code, it seems strange to say "copy the
-address" when the memset() fills with zero and does no copying.
+Please use qcom,gcc.yaml instead of copying the same set of properties
+over and over.
 
-The commit log says "set address to zero, pass flags through," and I
-could believe *that* matches the memset().
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    clock-controller@ad00000 {
+> +      compatible = "qcom,qcs615-camcc";
+> +      reg = <0xad00000 0x10000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
 
-> +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
->  		pr_debug("empty ranges; 1:1 translation\n");
->  		goto finish;
->  	}
-> -- 
-> 2.35.3
-> 
+-- 
+With best wishes
+Dmitry
