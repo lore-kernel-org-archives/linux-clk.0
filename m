@@ -1,181 +1,151 @@
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2046.outbound.protection.outlook.com [40.107.103.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2451E32CA;
-	Fri,  8 Nov 2024 09:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731059910; cv=fail; b=f+yLsaVXJw/SEs9HMfG5g5VGu9aeOWosVIxOFqVpnoNAeb1juIlXFPWobQpuGCx6qHjIBAsghvBgohXWhtwich987OWhzxDLTjN5yJRdyxLu73vQgceQxnJlqZgoiSgJ8F5QWsp9XTUWF2M8oTAyvwDIRHXmnbwUuRSk9p15178=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731059910; c=relaxed/simple;
-	bh=+1Ha5+s4AZ3kImPmZQesI7QEmTlK1D8zFZri4gsDALg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dmbldY4CI1HdYl7phlopJAMtNzTezDbzQcFMh2n4hvi0tidt8qK1/2G+f9kbAFMxmnLlCcLloyNoso8BSmLOk8BJLvcUnj/oPUvHo/S4FpgoEkQ3aIKJZf5usNK/slZYpbs4Uenv7hQW4yP71w60IgfdCpFujsgA1XV+arF6TpA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Cmdbe6vD; arc=fail smtp.client-ip=40.107.103.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2C91E1C19
+	for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2024 09:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731059957; cv=none; b=aNDJK5k6KfsjZdyw4k3/v4BqHeiCyaZMXVgJlXZx61Vp/gQb2pfWC9c1eJvdflGF63uuNBrHmevowPdHTQ43TtmI3rFBlxDTj/96NZZhZ0ADOPjrClMofpZjaq8juEQ38UuykTglga+ywYh5vGp5p35sJg27V72m5Arn+l0GsrU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731059957; c=relaxed/simple;
+	bh=favIJ0RU0Z1kVo0+cj+p8TtzOVJuzqN1053K+zk2H3E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QXJEYqwqqEed/ZwO9O+LAQXCFeEJFmTCRzQitTPjnS6w1OdexCluBd7lyLAZPiaGj2iPOkF2bvDv9+sEMSxdLOQil/DwZryokrrqRqZj6mqxf8aVRi3O/2vLeKmroL4O/2yhQ/Scdj8csqmBsp80Y3AXG5mi//1jHTlpKX0qDkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DX1HwiBR; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cmdbe6vD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YCK6PHF32PL/elARPqTKBeyrbd1v65BEUZkgfJ9CW788f5vqSFIwluEYT9Js8JE/IeaIxDdvlQhwLu8HNw6Wdj+7/WqH20RSpjkmwWHURE1DSXNkoM/Gdr0XJnQT9NpuIRp1k/crBaJuAJpddUYvAG5O83HrjZrgM3PylcUc4FRheDKlcLykY0I3NX16W37OW+7s5OBirPjRMuc/GNv4niTZMkvEzL6rPeWrORDAbOLlIZQUP+9b9Ms2W7kdiDRiVV/B5o4AUDtF82E/kfOxuasZJcCnRJJpGD9a+QRPPUkx5d/A9lLYQ08tfTUmcCl4Sl6NwWDa9tNG3TmDJBK4wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bgxAIMaybu/ZK2DPePBvHp1WB19g4SJ/g36gX8KkyKM=;
- b=To0aA8IT+pgmjJaVDet8HGoQQEfwFTCUrtXV4aRwm2KeBe88H968gDUo2gxF1b0gkgkYx1DAKAyNar4Frc3xWb2bKa8sqvneBghor2cqUdIoVBuyj5Wv2dth5z57ywwuCzDriqTMvBkrUfbf6jZBYHmG/h7ZLYaJE3lUlsLGrzVkvK+5CAjhH6fzp3ZxZKUV+5F1jQMCl9sqOXvVT7vsBm5VHnPYD0ECI8DQ2JCInHQWw71wkLQnW8yh6qUQWCHBmsBsYYcGw+kIdz9Ez/Vov0ApQasFeeK0edU/+T0m8C2PLAF3IbxLpGdaWq6BjEyEWzCBmIZLGOOiEmxLXJxMFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bgxAIMaybu/ZK2DPePBvHp1WB19g4SJ/g36gX8KkyKM=;
- b=Cmdbe6vDrX4Yk45tdzKhFL6Jq4tL2RJu7ZLJ6TI/Ri46ckQGeXNqXHVM7ugy2BWAqr9qTky8y5wJ1GS9Mb7NiT8mvrYCO6GAwRE0cmEGKrGKdjyYLXRCJL6Tvn9WRvoTGz5wMXB92dYyHgri9DRuhf9N9TubABRqTt/FxtzEnyCiSuh4QyBdUaIR2BIcpQiEqexSvdgcbI6OY9zwnF/tNFPMeD0ywCDCJmJhgitc8UeqmkgOgcf1LYjD5CnY+wOWhT313YjdEgzLNMW1P2VRLIXB8NyE/Q9T/uYExHKggs2TcFcFlPOp/1uMmF0QYatqBrzeS6XGUlSjTL6g7zM54A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by GV1PR04MB9216.eurprd04.prod.outlook.com (2603:10a6:150:2b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Fri, 8 Nov
- 2024 09:58:24 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%6]) with mapi id 15.20.8137.019; Fri, 8 Nov 2024
- 09:58:24 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	shengjiu.wang@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: imx93: Use IMX93_CLK_SPDIF_IPG as SPDIF IPG clock
-Date: Fri,  8 Nov 2024 18:07:59 +0800
-Message-Id: <20241108100759.682260-4-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20241108100759.682260-1-shengjiu.wang@nxp.com>
-References: <20241108100759.682260-1-shengjiu.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0213.apcprd06.prod.outlook.com
- (2603:1096:4:68::21) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DX1HwiBR"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so15881125e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 08 Nov 2024 01:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731059953; x=1731664753; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTIHfF+UH1Xa7DK8o/xh7XL9H7nZTNldWgZ8nJ8rQE0=;
+        b=DX1HwiBRwhGXitdHvqQR2GUb0yuMG/hW9E7sDsDJVkq3IAvNfBcNnBSonDnMckfvp9
+         iQLsC5m0tzIgXMKscNxxSL5AJ1yFVz9k1wllbwVMg0yRzYPvh801Xv/f7OIGVJEltItM
+         fUj7cOCqZ+q/X7wp1ansYdELaBTjzNMFmL41fbIZR5dPbgo9rJKZn+qSBS7En1ozX/WV
+         avczIqxECniiFbpCuFgBJrXURyEu7HB/lpQIJLPoW6p4WqaaMHvQOoWVR0+M/UGwOrxA
+         zRk8mGkhHr0e/HXZ3fxU0R6UxTPMLcHcrmTlCFqwvDGnkVqwpxqLArI9nt7NJyvCs4fO
+         n9EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731059953; x=1731664753;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTIHfF+UH1Xa7DK8o/xh7XL9H7nZTNldWgZ8nJ8rQE0=;
+        b=ao9FRv8LCUwVdtpr3diRlNkn79drP3SzTD3R0L9wZIUQcqQe746fCSDMfi/4YMq6iZ
+         ssPnXkRK4koetq0GxADGnRxvdXTpZ6wkcAeMtKHj9MmYFjGqHnnt2UAIIAHzO+QJTIOH
+         2JdiFh8Ta28iMVAQCZ+U+XYIuQZj0U61ELyggCTNzN8t2guya9DD4ow4bTQFKDxG3HPF
+         63kDlLkVuoJ/r0aH4Rr0xLf+rGc945YQkzvZ7CJeikKEJq6euFrHsYaQ5Q11CIeJfb/C
+         98teyyUKanyba3s8QOQgXcWRJdl3G55ebHAr2Sj8R4eo9ZjIbmma7+WZX99Gu4UXOQac
+         apdg==
+X-Forwarded-Encrypted: i=1; AJvYcCURQVnTDLG2bjjf0G1KZViGXzk7PZSDH0Xpym5DVncsIM18bnzNsQV4LQ6XHp5jGIFUhmwuIZtRbAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxud+A6zuDAM5tiAICga+mT/bf8ZcF2CKIroRBQnkUKuKLpvaRD
+	wdkq1tM7CS+VBgC8uzDqY+Yy/X5JLefnpJFu+Gdrf9gAX74LOyK1jy3UCfoLc9A=
+X-Google-Smtp-Source: AGHT+IE52uNEd1M4kmQsGgrrxZ5e+HBgRbQ6hYCN5h70Y/Y7u6ZLc+ouQ9mgPck15oFzZ/AUamay2Q==
+X-Received: by 2002:a05:600c:4f87:b0:431:5ed4:7e7d with SMTP id 5b1f17b1804b1-432b7508053mr18099615e9.18.1731059953350;
+        Fri, 08 Nov 2024 01:59:13 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ecfd:9f8d:62a3:6ba8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0530599sm58205685e9.1.2024.11.08.01.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 01:59:12 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
+In-Reply-To: <85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com> (Chuan Liu's
+	message of "Fri, 8 Nov 2024 17:23:53 +0800")
+References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
+	<20241004133953.494445-1-jbrunet@baylibre.com>
+	<07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
+	<1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
+	<85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
+Date: Fri, 08 Nov 2024 10:59:12 +0100
+Message-ID: <1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|GV1PR04MB9216:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66b1bd4b-e17d-49c4-1fb2-08dcffdbe277
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|52116014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?drVr88eE8g8+qFpkE3Hf1D586B5u4Sl/emJn5Cn1nbkAGgG7DB7L2KEBoO10?=
- =?us-ascii?Q?PW1CB0CmwncTTnOnJTeZcaKOW+rpQRx1PmNPemmIdrchPCi4Y+lIXkDn0d/N?=
- =?us-ascii?Q?TCD7O/O+yE/pEs90AOrpnH6f1Gc/2FHEadOihWZirYMJ4p5dRX78/NYiwqOU?=
- =?us-ascii?Q?1HHoEJwLphVZztGqPONQ4Nt/Em3GiV71gCm/GjFUqOeOP3nDk8ettA9eX02M?=
- =?us-ascii?Q?dbsEgvEdUPg5HVNkwXg3xc16qbAcO+Z3zzL3d9p1I2+2yGFudq23bxEd1/MM?=
- =?us-ascii?Q?1cgiBgXND3wpMgNYA3H4vFuUGoaLB3Ai83B7DeIwBoAqYdoHN36rhej8aysh?=
- =?us-ascii?Q?pDfHfj6BjS4ZjbMK4V038NOl98Ta8WkIYijecTEkO9CsxvmtrNA6d9sp6d+8?=
- =?us-ascii?Q?LuEHtG3p2QK8+6FwxraIzCmtUc0kt/YElE8911CpgPw41y+fbMZ16T9UNhIt?=
- =?us-ascii?Q?uv5VCz5YBG1wtZLnP+zIRLKKAgDlGhC54BmdtrE2Viug02hFBT/03au4z4sy?=
- =?us-ascii?Q?URttHSKaScf0vrSMKisEjUCcv7+m+wIbRmzAfVK2fS0da347tgbyoqgp6bgX?=
- =?us-ascii?Q?1mLC/ICyA8vS9fQ3caLs//M/jsmvbYIOFoRw8LV7PYcjYajPejX/R4Kh7ar2?=
- =?us-ascii?Q?dO2Rp/ZYZdQIg5kzoVZNaU/gD+uVuym96fNSJulGXfkMJO8aB604d3vaYP4K?=
- =?us-ascii?Q?JBY8wWSjMmtgSOIpsQEnT+BgMPDSuD5sMd3EH7XTwS8e3p2/E0O3pvvfF6jH?=
- =?us-ascii?Q?mUaIPGqoJPohLP98OeRA+ltGfdJHIaiS4rg18pTsvlGLA4+ufUtTrLVJDaJU?=
- =?us-ascii?Q?AaNqLzKRHJIJ4/cWML+pli5SK3Lb78Y5PTsbUVlHiEK2FP6Sr7BTJI+0YFvX?=
- =?us-ascii?Q?Xhi7n+zuV0hWD/CUmZa+E3Fs4mnMvZM+iSZi0jHmL7jWDHXI7yCw64M2PKAa?=
- =?us-ascii?Q?7CKgXS4WJj+adz3s1RRuVX6164V3tcUDSJzOegjV8BQ7xTTHZwy2XLejSFbg?=
- =?us-ascii?Q?khGY+XW9M/x1xgU5geXkN78x7dYdCyBGPo6/mVDYmLqLSoNBXOazmenYmVhE?=
- =?us-ascii?Q?O9H7Ab7V4NLiKeTbUr7ggcyg2ZmRBYfSXQuAFzvfb6tpaWZ6L4kt1HqTF1hO?=
- =?us-ascii?Q?BRKmJqiMn989OECDTHBY2ahS2AcMw75KC4egTxPBRb+Y+3Jc7Q+D1t2iQbZ/?=
- =?us-ascii?Q?zMjY9cT68zdnP+2U0eKnrTAhInoDXWCrLhyVDI6PG+gKVx2BSrubCL6a70jr?=
- =?us-ascii?Q?TXURuFuonGKAbGaCl1/kObKhr/Lw5D6WWGN/jVHylQu8BCzdg0LBA4bdYgQ2?=
- =?us-ascii?Q?Nk/SeXZvS/qb/LYU37b9ve9Jha3/zPigihY+xLfki9+q+cxbEbvhz4IIj6jk?=
- =?us-ascii?Q?TPz6A1cVzoGOZ9niKznA7FqleeAC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xzYVqbPPRswiKFm3wAOZ/YZDEPUdAbS139p38R4ln+aZmy1Yc+GW4vijIfR9?=
- =?us-ascii?Q?zPJyClmXR7+pzJu+7w/5mkdIToxAaB36KfV6+4irIBmZ6GreteuF3n+LBPyB?=
- =?us-ascii?Q?KIutk064Q9uo5QhuIVyAPkT3AoxO7+hBJrteihAe7QFUQUvk4+vIFo/FLyjW?=
- =?us-ascii?Q?TKS4m+//ricc813enn0YnCJDAkzacGAJ0GtuIEOp19fZH9KJByDsy+WvrSAQ?=
- =?us-ascii?Q?yFdkWgHfB2lEtOMSSC5cyYwOMpBxYjoM1rVlWXjnFSA51ZjnMBjWRreVWUQm?=
- =?us-ascii?Q?DiKum0PzidO6Op9XI2nxpN/dGdFSo+P7MbDgX1z9za3WHtxGLHRmOOVA2QF+?=
- =?us-ascii?Q?MeFVp6P5In19dHhwcqKK2n3YayD/vkJo/MnTUWHksZOGomx8uAEbjsEzKFK2?=
- =?us-ascii?Q?xiBiuySQxU07ssmdMAuXLKCInKA8XbVnJmatm66aqZlJvolCrSuLqTKGbrcX?=
- =?us-ascii?Q?0pLmfQ24RqnfYw52UJUZanwrZ64DklnC7yHS0OI4GC+Iv9cdTCRZAQL3zVP0?=
- =?us-ascii?Q?D5/aLYd94azB0UtiwwHUTJooBX7cUbmKvWZFZ49BUYLeMtPV/QcL/MstscQ4?=
- =?us-ascii?Q?yjlwh3+lelBbTJoZOL5MHv4d7qUuSpkQ2b+Axy5DgYiR9LHA0apPYXR7iLuE?=
- =?us-ascii?Q?IL0PDNvnnd2fBP+zdR1PKGGrsNsppurBsonNS6wcCMBq87zNu0SpJQHe1mBv?=
- =?us-ascii?Q?q9ae46dTiF02VXVI5MU+OVMgoW/SbaRXLE2WVLJfRU350CwiBXZ5LF0Uox3g?=
- =?us-ascii?Q?wzcGZiKBDuPFHYzGtvgNeTL9ZiO2oZyqK3ihzM2EeKj1w+ISQXqfWBJkl1g9?=
- =?us-ascii?Q?DEtHYHp82LHkUn6X1M/J7y2zaGxKjwuXmKJVLPByEz22hHtkpoesn//iRjhh?=
- =?us-ascii?Q?U69SQNOxTRrkh+aXp8JB9xj7T1Gw1wz3yk3cdNaxqDARlGWjHBtTs077msyj?=
- =?us-ascii?Q?Z7TEnCfKxzxW05VxELh4paVEF8mHtJQT+/aqPmTQ/RMU5p6RHEYspvVjoo6w?=
- =?us-ascii?Q?cVHwYOK/tPqXdm8Yno623tQPo/IF6SGhvvoD92+pgjW7IFhMKnlHFroJG2m7?=
- =?us-ascii?Q?Q0iU6hLppRU8xQEJg7DbZHxHs+Y6VLRozXqcc9RV12ucHLAhZAbETnvKwOm4?=
- =?us-ascii?Q?pszh1D0zH1RYagvhEcru/D+4KbZkpPd8ndKKh9WrPjM88+hqPsyFaX6S0Pah?=
- =?us-ascii?Q?wK9KQHPDjOTDyn2cE2r/YdsPqmtLXb5RrDQK+ZPNjtx1OtHmw3bnGGIRO3SX?=
- =?us-ascii?Q?u32sG87sQYJI7I1OboX48+eiuFJQPpJRDpjqE4cRs2Fa75L7ppSZcaALC0ro?=
- =?us-ascii?Q?2Za8W1f+dOWCJcfL0mphgalDz0/hcwegr9itFp5Ojpdu9DzUTllng/VprnfU?=
- =?us-ascii?Q?PqRt9pLCx/yfrBddkOEiIRJy7+d0lk94Uh83pNro3iM1ARfU4nqK15cM6Vcm?=
- =?us-ascii?Q?c5C5ra7l2SRLlWGwez28ANr+ZNBJMMOJ/MFlTP/sDIuKikx2iVfyt/OTJR41?=
- =?us-ascii?Q?QVk3N2EvOBz4Umd/IkD4DiutWbyec7wgmU/xHeSsV+A5Nom/hNt+r9shyU35?=
- =?us-ascii?Q?d0x7qG9Jw/NmafJGVOq4L+IREGIw85L8G+dLEMPb?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66b1bd4b-e17d-49c4-1fb2-08dcffdbe277
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 09:58:24.5797
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Bo9aX/0HTQSA9RWe5jtNpMg/R03QiiIm1n9BXaOHQP/ZKGXERbTbvSGlNhZ4C0feT6/cEDqc/Q0eb+DYFAnzlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9216
+Content-Type: text/plain
 
-IMX93_CLK_BUS_WAKEUP is not accurate IPG clock, which
-missed the clock gate part.
+On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-IMX93_CLK_SPDIF_IPG is the correct clock.
+>>>> -       if (core->flags & CLK_IGNORE_UNUSED)
+>>>> +       /*
+>>>> +        * If the parent is disabled but the gate is open, we should sanitize
+>>>> +        * the situation. This will avoid an unexpected enable of the clock as
+>>>> +        * soon as the parent is enabled, without control of CCF.
+>>>> +        *
+>>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
+>>>> +        * forcefully enabling a whole part of the subtree.  Just let the
+>>>> +        * situation resolve it self on the first enable of the clock
+>>>> +        */
+>>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
+>
+> At first, I couldn't grasp the logic behind the 'return' here. Now it's
+> clear. This approach is equivalent to completely giving up on
+> handling clocks with CLK_OPS_PARENT_ENABLE feature in
+> clk_disable_unused_subtree().
+>
 
-Fixes: 1c4a4f7362fd ("arm64: dts: imx93: Add audio device nodes")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx93.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No. It's handled correctly as long as the tree is in coherent state.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/dts/freescale/imx93.dtsi
-index 688488de8cd2..56766fdb0b1e 100644
---- a/arch/arm64/boot/dts/freescale/imx93.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
-@@ -925,7 +925,7 @@ xcvr: xcvr@42680000 {
- 				reg-names = "ram", "regs", "rxfifo", "txfifo";
- 				interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clk IMX93_CLK_BUS_WAKEUP>,
-+				clocks = <&clk IMX93_CLK_SPDIF_IPG>,
- 					 <&clk IMX93_CLK_SPDIF_GATE>,
- 					 <&clk IMX93_CLK_DUMMY>,
- 					 <&clk IMX93_CLK_AUD_XCVR_GATE>;
+What is not done anymore is fixing up an inconsistent tree, by this I
+mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
+own registers but has its parent disabled.
+
+In that particular case, clk_disable_unused_subtree() won't be turning on
+everything to properly disable that one clock. That is the root cause of
+the problem you reported initially. The clock is disabled anyway.
+
+Every other case are properly handled (at least I think).
+
+>>>>                   goto unlock_out;
+>>>>
+>>>>           /*
+>>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>>>>
+>>>>    unlock_out:
+>>>>           clk_enable_unlock(flags);
+>>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+>>>> -               clk_core_disable_unprepare(core->parent);
+>>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
+>>>>    }
+>>>>
+>>>>    static bool clk_ignore_unused __initdata;
+>>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
+>>>>           clk_prepare_lock();
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>> -               clk_disable_unused_subtree(core);
+>>>> +               clk_disable_unused_subtree(core, true);
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>> -               clk_disable_unused_subtree(core);
+>>>> +               clk_disable_unused_subtree(core, true);
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>> -               clk_unprepare_unused_subtree(core);
+>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>> -               clk_unprepare_unused_subtree(core);
+>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>
+>>>>           clk_prepare_unlock();
+>>>>
+>>>> --
+>>>> 2.45.2
+>>>>
+>> --
+>> Jerome
+
 -- 
-2.34.1
-
+Jerome
