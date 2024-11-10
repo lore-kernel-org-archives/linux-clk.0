@@ -1,89 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8515814B075;
-	Sun, 10 Nov 2024 21:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7451C28E;
+	Sun, 10 Nov 2024 22:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731275517; cv=none; b=YSvhkeEsvRkkmYhK8SWzAsvo57z2zMdQltoGDuNzyS7YF+xFj/Z5YWYYNPYCdwupfd8rI70KMhpBdK822W86cDtoM1/CIKniLtscD9Z6JZ39834fYeesbr19ptKENxL/5oAtDsFWOkm3qSSbVl6xbeMnxgwBQVACiofNeJqEddA=
+	t=1731276213; cv=none; b=qqkvVbFpWxhM9blFq/Oq++uDaneagLHBhtcWDfAwUxoJngTmjGMuCQyT0hbh79S7u6K+y4RJCbaUAGP5GxQOkke3x+8pGgxHK4WgYxhsJOb8SoEK7RK8FgRldznNBM91eeK1yYBCCyG5fgdIC01KN5XJy6SwOrH3LMvlIF3Q/Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731275517; c=relaxed/simple;
-	bh=NAUNrPUxX5H90AZKzKdY4k0TnPede6p8yPkOjrkiGH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=umKBAhvDDyc6LWUO0k2qck7q8t9cvU4OV8XEtIqmQgsLtYVw0r8BDvGPQXazH2jI4kpoWZP5wHoot1rAD8hGGuy5Qv9SY1s95xQ8k45W1hD4ZpcvVyqnO+dto8HuybWcmeDpMNY6TOhFaLG/ct5cG/LfLNK92Jtlm7LA+fjbMFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dd5R/p2r; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731276213; c=relaxed/simple;
+	bh=pqRqI2jmd4AdLey0jMIMasD26E9RLTsTefIdt/wcjcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sztv+PjMvrOLmiYjai+x21UfeIEJSRmdvTGdqyZN7i3VeOd6fE0tGVU6qD2hblgNh5Hl1JW0tAE8Kt664XA0WHyAnO2kEkDDDEiDt74ez5IczyoLnquFzcxlk1kF4hVZOKuO8J8ncJPZQibqeUn5poYZhIF+Rs4t+Truyv0YOVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rns4DMup; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dd5R/p2r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F8FC4CECD;
-	Sun, 10 Nov 2024 21:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731275517;
-	bh=NAUNrPUxX5H90AZKzKdY4k0TnPede6p8yPkOjrkiGH4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dd5R/p2rW5NrmIORuNreqCJYsgpm79AmgomrGj7RCR17cIOi7NhmCyjoLHKkZYhrJ
-	 55Mq/df+yzSVmYrDpDfNfUgyPGUJeLvcB6R0b3QhuqO43xa2uPGIYVT7lgM77XNzLk
-	 37VB9PwL0ASW9d/UGfbXzU415UbQpbDiSIH/7+aJxmg2Mt3Yi9HLfHKy1O0Fb27vWR
-	 h8RXv5dapFmPwZvI5qCMsrCLr+Y0sYXZsHWk3eVJVTmuAkS4d6ge9Mi83HhxZDQjSF
-	 Y/0XJHMOdSpefqh7EN3ACop0Soe1tlPkCM2KG/ah6+LXJU+55fTO/RtRjsShUZkz6b
-	 8xSWetfdgaGiQ==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.12-rc6
-Date: Sun, 10 Nov 2024 13:51:55 -0800
-Message-ID: <20241110215155.505460-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rns4DMup"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9A4CD1BF203;
+	Sun, 10 Nov 2024 22:03:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731276202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tWhowCiinxkZBttCctlBPj85PTRboz8ciP7T5QcNJGg=;
+	b=Rns4DMup/Zg21qWpZWnrWdvk/k/iS1yuTfyx8O6WuFMftNitR70TSv0nRHj6tNs1fFFWhC
+	/sGF/1oGoxN3wpuaLDfgF09JP2jVeGZdEsNzQe3rzGi1EMtUFKLfEHNRWhPREMmRLhllnB
+	d/dZEML6MBGCgf5AIL6xnW6vsMuKZ98vunLD/YqDn2Xlve649nLQckxAR1TblmaC4ELHf9
+	/d518Q8nYmR26zqqe+PGcjD0u75eiQl88Wve8BytkaQqEbtDUx4VwFqiHsYNjZTJegizlo
+	LnyPdwLYtEhbgLSRNwiYqHu4x1tbc/0hx0l9KunlyhNHr5JwtfCCR4rdAlw/AA==
+Date: Sun, 10 Nov 2024 23:03:20 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: (subset) [PATCH v6 4/9] rtc: renesas-rtca3: Fix compilation
+ error on RISC-V
+Message-ID: <173127618341.3020900.11768591767157204558.b4-ty@bootlin.com>
+References: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241101095720.2247815-5-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101095720.2247815-5-claudiu.beznea.uj@bp.renesas.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-The following changes since commit 6b5cca7868fdd2499384e21279fdab86bfa04997:
+On Fri, 01 Nov 2024 11:57:15 +0200, Claudiu wrote:
+> Fix the following compilation errors when building the RTCA3 for RISCV:
+> 
+> ../drivers/rtc/rtc-renesas-rtca3.c:270:23: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>   270 |         tm->tm_sec = bcd2bin(FIELD_GET(RTCA3_RSECCNT_SEC, sec));
+>       |                              ^
+> ../drivers/rtc/rtc-renesas-rtca3.c:369:23: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>   369 |         tm->tm_sec = bcd2bin(FIELD_GET(RTCA3_RSECAR_SEC, sec));
+>       |                              ^
+> ../drivers/rtc/rtc-renesas-rtca3.c:476:11: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>   476 |         cycles = FIELD_GET(RTCA3_RADJ_ADJ, radj);
+>       |                  ^
+> ../drivers/rtc/rtc-renesas-rtca3.c:523:9: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>   523 |         radj = FIELD_PREP(RTCA3_RADJ_ADJ, abs(cycles));
+>       |                ^
+> ../drivers/rtc/rtc-renesas-rtca3.c:658:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>   658 |         val = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
+>       |               ^
+> 
+> [...]
 
-  clk: test: Fix some memory leaks (2024-10-16 14:39:18 -0700)
+Applied, thanks!
 
-are available in the Git repository at:
+[4/9] rtc: renesas-rtca3: Fix compilation error on RISC-V
+      https://git.kernel.org/abelloni/c/8f315a5c7376
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 714398d8742d5e019a8e5512de2abb8db69ba0a3:
-
-  Merge tag 'qcom-clk-fixes-for-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-fixes (2024-11-05 15:32:08 -0800)
-
-----------------------------------------------------------------
-A handful of Qualcomm clk driver fixes:
-
- - Correct flags for X Elite USB MP GDSC and pcie pipediv2 clocks
- - Fix alpha PLL post_div mask for the cases where width is not
-   specified
- - Avoid hangs in the SM8350 video driver (venus) by setting HW_CTRL
-   trigger feature on the video clocks
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: qcom: gcc-x1e80100: Fix USB MP SS1 PHY GDSC pwrsts flags
-
-Barnabás Czémán (1):
-      clk: qcom: clk-alpha-pll: Fix pll post div mask when width is not set
-
-Johan Hovold (1):
-      clk: qcom: videocc-sm8350: use HW_CTRL_TRIGGER for vcodec GDSCs
-
-Qiang Yu (1):
-      clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
-
-Stephen Boyd (1):
-      Merge tag 'qcom-clk-fixes-for-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-fixes
-
- drivers/clk/qcom/clk-alpha-pll.c  |  2 +-
- drivers/clk/qcom/gcc-x1e80100.c   | 12 ++++++------
- drivers/clk/qcom/videocc-sm8350.c |  4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
+Best regards,
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
