@@ -1,89 +1,63 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7451C28E;
-	Sun, 10 Nov 2024 22:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA232B9A9;
+	Sun, 10 Nov 2024 22:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731276213; cv=none; b=qqkvVbFpWxhM9blFq/Oq++uDaneagLHBhtcWDfAwUxoJngTmjGMuCQyT0hbh79S7u6K+y4RJCbaUAGP5GxQOkke3x+8pGgxHK4WgYxhsJOb8SoEK7RK8FgRldznNBM91eeK1yYBCCyG5fgdIC01KN5XJy6SwOrH3LMvlIF3Q/Ys=
+	t=1731277134; cv=none; b=Iavi7m4ltqoK2spyWU8l//xWSKU3la+7oxGzrzmT2tQU1zYhgl4ZbCrj14aP8wQ7EnL+J4UmCLnnZLcAeVESDr56xt16CdarQOqu+GcGaEen0DtLnIxL0N8KXe01WSEPgntUUjggxXc1H41+c9Aq7GBpVyS2GPXAsKp8CAwy/sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731276213; c=relaxed/simple;
-	bh=pqRqI2jmd4AdLey0jMIMasD26E9RLTsTefIdt/wcjcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sztv+PjMvrOLmiYjai+x21UfeIEJSRmdvTGdqyZN7i3VeOd6fE0tGVU6qD2hblgNh5Hl1JW0tAE8Kt664XA0WHyAnO2kEkDDDEiDt74ez5IczyoLnquFzcxlk1kF4hVZOKuO8J8ncJPZQibqeUn5poYZhIF+Rs4t+Truyv0YOVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rns4DMup; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1731277134; c=relaxed/simple;
+	bh=jsHCxWX6oQIvxzlHDE0ckXWm2X+T5B1cqk45fi6Ogmg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=AahOvsSaDgq7fPfi3rRGutZfXLM0WueIDWKz6UZshPzfUd0Hzxym1ZJxhjao3f7lTYE93rDZHakgE0H2Mwgv7U+y/kGRxB38RQ/QbZXpsc89WuCSySA8iaM/Wa1L9wsXnY9stCKfy5am+ZknDEFWsl+MNyfUsqEba7cUBKcmXoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzhY4X1y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rns4DMup"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9A4CD1BF203;
-	Sun, 10 Nov 2024 22:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731276202;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tWhowCiinxkZBttCctlBPj85PTRboz8ciP7T5QcNJGg=;
-	b=Rns4DMup/Zg21qWpZWnrWdvk/k/iS1yuTfyx8O6WuFMftNitR70TSv0nRHj6tNs1fFFWhC
-	/sGF/1oGoxN3wpuaLDfgF09JP2jVeGZdEsNzQe3rzGi1EMtUFKLfEHNRWhPREMmRLhllnB
-	d/dZEML6MBGCgf5AIL6xnW6vsMuKZ98vunLD/YqDn2Xlve649nLQckxAR1TblmaC4ELHf9
-	/d518Q8nYmR26zqqe+PGcjD0u75eiQl88Wve8BytkaQqEbtDUx4VwFqiHsYNjZTJegizlo
-	LnyPdwLYtEhbgLSRNwiYqHu4x1tbc/0hx0l9KunlyhNHr5JwtfCCR4rdAlw/AA==
-Date: Sun, 10 Nov 2024 23:03:20 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: (subset) [PATCH v6 4/9] rtc: renesas-rtca3: Fix compilation
- error on RISC-V
-Message-ID: <173127618341.3020900.11768591767157204558.b4-ty@bootlin.com>
-References: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
- <20241101095720.2247815-5-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzhY4X1y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2392AC4CECD;
+	Sun, 10 Nov 2024 22:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731277134;
+	bh=jsHCxWX6oQIvxzlHDE0ckXWm2X+T5B1cqk45fi6Ogmg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=dzhY4X1y1EuZCxEl7sMbQhOQRpQNd/lT0aVlB2GL+PnLY3eX4nPraZNOl3uVFSlF+
+	 mIBrruxQmYOp0S++Fs10Z7teZuql7236UTLqID7gXsXA+J70gmDPEcwoUnM0o9D3DJ
+	 SitjgDKFD9HXd2LDd4pjpQsrHStWzRuJmBq2Vc9e9oGQc1aQ4W2EAlxBY+z/6IM7fP
+	 ff+0rV38RUwxfkbx+SbxNBA6aPvivhTWvO/GLbpcTJHs+kZFH5XHhmX90WC03jp6gK
+	 sVCc74+BjoHQ31amxzSUMIbBB0h7m2sCX8uY0VxMWb3TH97SCZVXxeR0GQd0cTkuV/
+	 FhfiBDfhkRDjA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EDE3809A80;
+	Sun, 10 Nov 2024 22:19:05 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v6.12-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241110215155.505460-1-sboyd@kernel.org>
+References: <20241110215155.505460-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241110215155.505460-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 714398d8742d5e019a8e5512de2abb8db69ba0a3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 541f3d87b6b7eb97073d0e5a46beae5ebcc0ba96
+Message-Id: <173127714377.3230522.1466925452959246830.pr-tracker-bot@kernel.org>
+Date: Sun, 10 Nov 2024 22:19:03 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101095720.2247815-5-claudiu.beznea.uj@bp.renesas.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Fri, 01 Nov 2024 11:57:15 +0200, Claudiu wrote:
-> Fix the following compilation errors when building the RTCA3 for RISCV:
-> 
-> ../drivers/rtc/rtc-renesas-rtca3.c:270:23: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   270 |         tm->tm_sec = bcd2bin(FIELD_GET(RTCA3_RSECCNT_SEC, sec));
->       |                              ^
-> ../drivers/rtc/rtc-renesas-rtca3.c:369:23: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   369 |         tm->tm_sec = bcd2bin(FIELD_GET(RTCA3_RSECAR_SEC, sec));
->       |                              ^
-> ../drivers/rtc/rtc-renesas-rtca3.c:476:11: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   476 |         cycles = FIELD_GET(RTCA3_RADJ_ADJ, radj);
->       |                  ^
-> ../drivers/rtc/rtc-renesas-rtca3.c:523:9: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   523 |         radj = FIELD_PREP(RTCA3_RADJ_ADJ, abs(cycles));
->       |                ^
-> ../drivers/rtc/rtc-renesas-rtca3.c:658:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->   658 |         val = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
->       |               ^
-> 
-> [...]
+The pull request you sent on Sun, 10 Nov 2024 13:51:55 -0800:
 
-Applied, thanks!
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-[4/9] rtc: renesas-rtca3: Fix compilation error on RISC-V
-      https://git.kernel.org/abelloni/c/8f315a5c7376
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/541f3d87b6b7eb97073d0e5a46beae5ebcc0ba96
 
-Best regards,
+Thank you!
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
