@@ -1,122 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D00156676;
-	Mon, 11 Nov 2024 10:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912E3156F44
+	for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 11:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731321184; cv=none; b=OO1PXQgeKLiGdbmhHvocpzwpmPNQ71QAr4Dn+oqiR4UXX7amNYwA3/V+0MaK59QkvW5h98k2P07JpbcJdt/3MBIlQQ9TjWLq7qC/xaSyol/JukLmWSFMeOVnXF7y9/4tflXcfiqTgkXQCA7zLACQUy7fhVLjILIaolI8InvuovQ=
+	t=1731323741; cv=none; b=s6Lofv/duia9yhnyqYEndM9k0eFmkYT20PoMKPzUeZPrNCs5RaO5ejDxHdqnP3r5rxh1iYinj7qMvXZRSwRMAiOwzK6Dh3LKLm9OeVyO/jLBrBnVuptE/n6T58vtdbU2iDeN0mq+upMybqO6WOTQtlv181AuESPMIckJ33MsEyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731321184; c=relaxed/simple;
-	bh=NjPJn+zfrKu3tcRhst3xGKHkantZhJOFnxnhWOpcfh0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oMJIXxiHJMP/9+vJjSTg/qtptGboeez5aXpB6j43YDi/zierFqqUgug1DdDLqosgFL4KPGz7i34fLJj0bYPrjkg0ovbd1c/IF6+5QWN/+bYZzZ9KvjDiRYyH6KSV3kpWUj91jgiLQz8ept7Z50mVmbK9ubPWhO4Klxw5ZhDiQWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVmw5MMb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731323741; c=relaxed/simple;
+	bh=UVMY3jncP8KlbJgHSOQbnrh0HSPCD2duUy36Ssl4JeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EcGiUP/ehUr6nN6EabNxPhtoLSvysP6DmTEBddseZB8YHSVesu4Z1O6RmM6EEQReCwIiVccJ0pBeBKEtPWnmNTclhxahRsO5Ywz4+EktB01HQT4uuMpYUQHbpGsIiTVLiC7ijisozCG9hX+xRzmGzrGI4w8fX+h7gZD3pxVbH3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OnwcAa7i; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVmw5MMb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56530C4CECF;
-	Mon, 11 Nov 2024 10:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731321183;
-	bh=NjPJn+zfrKu3tcRhst3xGKHkantZhJOFnxnhWOpcfh0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tVmw5MMb3lf8EdeG/sOBDMHo/5P9xNH+eGqTG1Zia20nuVYLIP+kV/snNWmeA80nz
-	 LbRkQmJe0BfUsXbIk9vxCyHuxwOtBhC10X1Y9ZWeZZJSKhlVdt6lRV20swIG3GJnCZ
-	 4+D9CBMGyHc4iwOdLvNOX5NugJLal/ZER2HhJCLLv5JOHvlqVE/CAJwHxj7Y0iEWZJ
-	 S0EWrMOzmB898vY0oVouYB8WwWDl5o09vzY+/4S+tR9Lu32ZmJgd0/oBZb0OyTmHBC
-	 uuxxUA2iGi25V2RTXOm63AyIJqXPOvgEHAtsQFWhH6Rhu7dqRXVhbkjSsBkJx+cwBm
-	 9ZFnkiGdGCXpg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: remove unused data from gcc-ipq5424.c
-Date: Mon, 11 Nov 2024 11:32:51 +0100
-Message-Id: <20241111103258.3336183-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OnwcAa7i"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99f646ff1bso676184466b.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 03:15:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1731323737; x=1731928537; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bhZZuPjatSrdZhX9k+zXeie/9aFPE96IB3h2Z1yS2Hc=;
+        b=OnwcAa7iFccdMPXmNNfuo+XSwSVwwhr08r0lXMAp/OEFWu00qv7wHWnONDdCu/5q7C
+         W+/EI+WP3Z4aGv/Ppvei6+w6/cbz/ivJ1SatoGSfcVKgMOCcmzaLKkwV1G11XNH6ap7P
+         4csA/TfJeSCCpI9ss7PEYectSu1/wz3ulgSj62rdCy3uN3X/rG3ip6lo302p20aszzWf
+         J7j5szIPJqSllJjvLBWecWqsy9XqeDSJLTBldqwznATzvsQT9vUSJGUcbQ6+bY4if8Y4
+         HOBtESNHHgYU2Ok3fGARnCPQDliwu771U7Z11sWnW0I+BBPQ1Gd6PZSkb3JN8n72IqO/
+         AXCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731323737; x=1731928537;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bhZZuPjatSrdZhX9k+zXeie/9aFPE96IB3h2Z1yS2Hc=;
+        b=D6cwz7Ygd9mbqd34s/rNbwQ2qpXEwzgiT7Xbsvn/Hvcce9Yhj/bkYz7uqtZJ6tbSXa
+         i63fwfOgMYY56DfDXGGnOqWiRNk6dA10qYCxyWnCP8OrAbKdHLL8cR8qWhwbIXURxGGI
+         an6I5KWWHN7lDL6jlLaM1UGrNXiAWDVHxa6qZpZrggKyMNXwoPcTqBMBhPJKu2kMKYg+
+         D19ZvDYhmllIY46OAaJ7BeWnBeuSMliHPfGUQ6bVrCWfgRteQ5JARfSk+oQcnTriEhvv
+         EjLI3QhvVB3n9UptaURDgjzW+dP6iQ2+Zw8Na3Q2IUvYQyGBHmi59AIbZJx4tUNtJyh3
+         n8tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjHF7MpsPLiU90RZnqnQSJCaU4ivvSMQ0WlfQWVwZW+6Em4QqChK3Ht2xeYGmfvTvbzKC+xK4UqGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJj0XM5ZvEccFhkA2tXAMaTvD+Cl0hwt5RXi555sxhTEB4aq6Q
+	45RMgzg8Shtpzdqt468w2Ld3UAm+iJaGEpSEDaTMRSxn4GHS+VR2qGjVLv7EdA8=
+X-Google-Smtp-Source: AGHT+IFbp4VgcqWBYLe3U0yCi4vd7nmqSuzbqzRywA4zlYZMwP+tOs/p2A4kYUW8+VEuOgG9xmufbQ==
+X-Received: by 2002:a17:907:6d02:b0:a9a:60c1:136d with SMTP id a640c23a62f3a-a9eeff0e570mr1147950966b.22.1731323736778;
+        Mon, 11 Nov 2024 03:15:36 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a176cbsm593593066b.23.2024.11.11.03.15.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 03:15:36 -0800 (PST)
+Message-ID: <9ef0d9df-3d6c-470a-913c-55698148d00e@tuxon.dev>
+Date: Mon, 11 Nov 2024 13:15:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/25] ASoC: sh: rz-ssi: Terminate all the DMA
+ transactions
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108104958.2931943-7-claudiu.beznea.uj@bp.renesas.com>
+ <TYCPR01MB1133233B458F3AC5F7C3602B3865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TYCPR01MB1133233B458F3AC5F7C3602B3865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi, Biju,
 
-The newly added driver causes a warnings when enabling -Wunused-const-variables:
+On 10.11.2024 10:37, Biju Das wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: 08 November 2024 10:50
+>> To: geert+renesas@glider.be; mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+>> krzk+dt@kernel.org; conor+dt@kernel.org; Biju Das <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad
+>> <prabhakar.mahadev-lad.rj@bp.renesas.com>; lgirdwood@gmail.com; broonie@kernel.org;
+>> magnus.damm@gmail.com; linus.walleij@linaro.org; perex@perex.cz; tiwai@suse.com;
+>> p.zabel@pengutronix.de
+>> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-sound@vger.kernel.org; linux-gpio@vger.kernel.org; Claudiu.Beznea
+>> <claudiu.beznea@tuxon.dev>; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>; stable@vger.kernel.org
+>> Subject: [PATCH v2 06/25] ASoC: sh: rz-ssi: Terminate all the DMA transactions
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> In case of full duplex the 1st closed stream doesn't benefit from the dmaengine_terminate_async().
+>> Call it after the companion stream is closed.
+>>
+>> Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
+> 
+> Maybe add fixes tag for full duplex case as the separation of 
+> Playback/ Capture is introduced in that patch.
 
-drivers/clk/qcom/gcc-ipq5424.c:1064:30: error: 'ftbl_gcc_q6_axi_clk_src' defined but not used [-Werror=unused-const-variable=]
- 1064 | static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
-      |                              ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/clk/qcom/gcc-ipq5424.c:957:30: error: 'ftbl_gcc_qpic_clk_src' defined but not used [-Werror=unused-const-variable=]
-  957 | static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
-      |                              ^~~~~~~~~~~~~~~~~~~~~
-drivers/clk/qcom/gcc-ipq5424.c:497:30: error: 'ftbl_gcc_qupv3_2x_core_clk_src' defined but not used [-Werror=unused-const-variable=]
-  497 | static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
-      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+OK
 
-In order to hopefully enable this warning by default in the future,
-remove the data for now. If it gets used in the future, it can
-trivially get added back.
-
-Fixes: 21b5d5a4a311 ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/qcom/gcc-ipq5424.c | 18 ------------------
- 1 file changed, 18 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
-index 3458c1c98bb7..88a7d5b2e751 100644
---- a/drivers/clk/qcom/gcc-ipq5424.c
-+++ b/drivers/clk/qcom/gcc-ipq5424.c
-@@ -494,11 +494,6 @@ static struct clk_rcg2 gcc_pcie_aux_clk_src = {
- 	},
- };
- 
--static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
--	F(200000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
--	{ }
--};
--
- static const struct freq_tbl ftbl_gcc_qupv3_i2c0_clk_src[] = {
- 	F(4800000, P_XO, 5, 0, 0),
- 	F(9600000, P_XO, 2.5, 0, 0),
-@@ -954,13 +949,6 @@ static struct clk_rcg2 gcc_qpic_io_macro_clk_src = {
- 	},
- };
- 
--static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
--	F(24000000, P_XO, 1, 0, 0),
--	F(100000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
--	F(200000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
--	{ }
--};
--
- static struct clk_rcg2 gcc_qpic_clk_src = {
- 	.cmd_rcgr = 0x32020,
- 	.mnd_width = 0,
-@@ -1061,12 +1049,6 @@ static struct clk_regmap_div gcc_qupv3_i2c1_div_clk_src = {
- 	},
- };
- 
--static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
--	F(480000000, P_GPLL4_OUT_AUX, 2.5, 0, 0),
--	F(533333333, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
--	{ }
--};
--
- static struct clk_regmap_div gcc_usb0_mock_utmi_div_clk_src = {
- 	.reg = 0x2c040,
- 	.shift = 0,
--- 
-2.39.5
-
+> 
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Cheers,
+> Biju
+> 
+>> ---
+>>
+>> Changes in v2:
+>> - none
+>>
+>>  sound/soc/renesas/rz-ssi.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c index 6efd017aaa7f..2d8721156099
+>> 100644
+>> --- a/sound/soc/renesas/rz-ssi.c
+>> +++ b/sound/soc/renesas/rz-ssi.c
+>> @@ -415,8 +415,12 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+>>  	rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
+>>
+>>  	/* Cancel all remaining DMA transactions */
+>> -	if (rz_ssi_is_dma_enabled(ssi))
+>> -		dmaengine_terminate_async(strm->dma_ch);
+>> +	if (rz_ssi_is_dma_enabled(ssi)) {
+>> +		if (ssi->playback.dma_ch)
+>> +			dmaengine_terminate_async(ssi->playback.dma_ch);
+>> +		if (ssi->capture.dma_ch)
+>> +			dmaengine_terminate_async(ssi->capture.dma_ch);
+>> +	}
+>>
+>>  	rz_ssi_set_idle(ssi);
+>>
+>> --
+>> 2.39.2
+> 
