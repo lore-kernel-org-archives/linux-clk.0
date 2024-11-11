@@ -1,81 +1,163 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ECF1A0AF1
-	for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 17:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496F2145346;
+	Mon, 11 Nov 2024 20:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731346328; cv=none; b=ASW0FzUGKbgpTE/GGwfJBlHZ3k3H7xNTAiC/7bnMwYwzCLPD/AoR7poDD3wXOGmO1IHHml5MplrNKEh7+t1lTqGp0CkmDUwdvZyfuFLjECnoIXBD2bbibznNUD47YPg4Up+Wc2KBUnpJ4t+tZf3YafMwhRWgJ28ub27rWe/a1Ow=
+	t=1731357051; cv=none; b=ZtqySZ+RFj08XKvoXcVOQ+hds8OVTg4CHYg8AoMMVi0y8aTNS5/DshO06yHlKctnxKDWbCupDI008O1bQHUjj5RLUdhonzPL2kA7W2UMYcx4nPYJqZ1RBxZcghi7Z1q5Ltd6soeEDEF7cX6jchfy0QA1qv8JHJ70LLT91R/wQmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731346328; c=relaxed/simple;
-	bh=tUrlKqmrYQCyGY7WLDONsGKgWWhSlS7S5SKygFkIWN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Je54lzJFsuOXL6JHnBIlSXwYEnZNPwss+NBc4Tu84Le+m7GjxopKNe+HP4wxOWetna/hNeUcweSw7cJk+pl+tihaCPsBoYk48jwP42Ud9V0daCa4umdRCXO6Mq5WdrhxFSuv5SZROiSjsRuak17k7/PR/0fDZNEKTAAt3WDZsLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=mKvMEGC2; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1731357051; c=relaxed/simple;
+	bh=WGz13CZe+VKZX/rdxUUf7kIQc8SZ1agbogHAyM7xm4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BblTsEpmKrYNrZ5GycK/MVrRkJfCckvKtcgq49aygWCt2fxm/GAFZVXGXQMrpOrBwXW3FkfFpz5Z8Umb66cXdH6XO3tY7y6WbsqVPFp+n5XRxvMHnU4rluAYYGRThPw13J3Jmd2uZHG0wZQaNpuYpusLLupGDifj6GrHMf9SmM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtqK3ele; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="mKvMEGC2"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id B751B8932C;
-	Mon, 11 Nov 2024 18:32:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1731346325;
-	bh=9VnPq+DeI1kfAletOjyV/VL2RBE0BCGOhdueSpkA9mQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mKvMEGC2qXTRIpDTI8ZHQv1sRC9QW0QW+FNMcUhBHlD7/+avXgQ9GidYw6UGa5MDL
-	 IFyetyBGfJq9hJPA8MdQGFAmYXbmEAR77/gQtcMdKeI2GAYaY421s6HSnL8jEupURL
-	 E3W/1x/aN4TxzUoBbAdAzlMLNiYhxLNoU5/00iI8fPjEd4QH5SskGWkfuoLIjOA+Zh
-	 ks+NYv7ikOcoN6H642x6ZXh5gmj1prIhzuKOzfpW6+YWXff+IcdEV7gUATNacWCIn0
-	 TDbTIJ3fgxlxWti5jY3ey634KPkZoeLhLoCWcEt7jj/4Ak/HTTSl4l5EJ5B4DBty3T
-	 uEYH7wS19/vrg==
-Message-ID: <4ee8d8a5-ec00-4b11-a7bc-4137e1982218@denx.de>
-Date: Mon, 11 Nov 2024 17:25:27 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtqK3ele"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94885C4CECF;
+	Mon, 11 Nov 2024 20:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731357050;
+	bh=WGz13CZe+VKZX/rdxUUf7kIQc8SZ1agbogHAyM7xm4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UtqK3eleeS+IR8r9f119Olaf76MrcX6pSyrNXS7x+FZjRQrGBdI9soR3JUiY492+H
+	 P7PYLvi7POUG9LdFzYb3TBpgKGyPm6feJKnsuld5v1aZ89ZMVsx+5fw0TymPW7ojP1
+	 KtkiN+ug3ki++x4OGIFscQ/WI5iHxEGZix81xjcONdhPCK/tPyp4nvXs1aUFu/hKGD
+	 5dA+cWHj1XgIVX37ia1dg4SqKD0v2DLnKzlw4HumnZkPI8j/hpFlmXeQ9lD1PX6JlA
+	 tIOE/o5nkkjNb3WyFZPnNqid9q1puKehdZooPyh9dNKPZOaWvr3yP1WFsFzGqRlfLi
+	 MXXHt21tRZetg==
+Date: Mon, 11 Nov 2024 20:30:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: clock: ti: Convert mux.txt to json-schema
+Message-ID: <20241111-finished-jinx-e810458a3381@spud>
+References: <20241108231453.247660-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: zynqmp: Work around broken DT GPU node
-To: "Sagar, Vishal" <vishal.sagar@amd.com>, linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Michal Simek <michal.simek@amd.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-arm-kernel@lists.infradead.org, parth.gajjar@amd.com,
- "Allagadapa, Varunkumar" <varunkumar.allagadapa@amd.com>
-References: <20241031170015.55243-1-marex@denx.de>
- <dd4cb501-5fc7-4430-9ffc-9c8c910df425@amd.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <dd4cb501-5fc7-4430-9ffc-9c8c910df425@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Trh0whuzKXWjCbWM"
+Content-Disposition: inline
+In-Reply-To: <20241108231453.247660-1-andreas@kemnade.info>
 
-On 11/11/24 3:33 PM, Sagar, Vishal wrote:
-> Hi Marek,
-> 
-> Thanks for sharing this patch.
-> 
-> On 10/31/2024 5:59 PM, Marek Vasut wrote:
->> The ZynqMP DT GPU node clock description is wrong and does not represent
->> the hardware correctly, it only describes BUS and PP0 clock, while it is
->> missing PP1 clock. That means PP1 clock can never be enabled when the GPU
->> should be used, which leads to expected GPU hang even with simple basic
->> tests like kmscube.
-> 
-> Could you please share how you tested this?
 
-I tested this by running kmscube, see one line above.
+--Trh0whuzKXWjCbWM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Please share the dt node too.
+On Sat, Nov 09, 2024 at 12:14:53AM +0100, Andreas Kemnade wrote:
+> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml=
+ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> new file mode 100644
+> index 000000000000..4a6f349ba2b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments mux clock
+> +
+> +maintainers:
+> +  - Tero Kristo <kristo@kernel.org>
+> +
+> +description: |
+> +  This clock assumes a register-mapped multiplexer with multiple inpt cl=
+ock
+> +  signals or parents, one of which can be selected as output. This clock=
+ does
+> +  not gate or adjust the parent rate via a divider or multiplier.
+> +
+> +  By default the "clocks" property lists the parents in the same order
+> +  as they are programmed into the register.  E.g:
+> +
+> +    clocks =3D <&foo_clock>, <&bar_clock>, <&baz_clock>;
+> +
+> +  Results in programming the register as follows:
+> +
+> +  register value   selected parent clock
+> +  0                foo_clock
+> +  1                bar_clock
+> +  2                baz_clock
+> +
+> +  Some clock controller IPs do not allow a value of zero to be programmed
+> +  into the register, instead indexing begins at 1.  The optional property
+> +  "index-starts-at-one" modified the scheme as follows:
 
-The GPU DT node is already in arch/arm64/boot/dts/xilinx/zynqmp.dtsi .
+Not your doing, but this is a crock. How is someone meant to know when
+to use the property or not? Par for the course for ancient bindings I
+guess..
 
-> We will also check at our end and revert for this.
-I do not understand this statement . Revert what ?
+> +
+> +  register value   selected clock parent
+> +  1                foo_clock
+> +  2                bar_clock
+> +  3                baz_clock
+> +
+> +  The binding must provide the register to control the mux. Optionally
+> +  the number of bits to shift the control field in the register can be
+> +  supplied. If the shift value is missing it is the same as supplying
+> +  a zero shift.
+> +  - |
+> +    bus {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      clock-controller@110 {
+> +        #clock-cells =3D <0>;
+> +        compatible =3D "ti,mux-clock";
+> +        clocks =3D <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_1680=
+0000_ck>;
+> +        reg =3D <0x0110>;
+> +        ti,index-starts-at-one;
+> +        ti,set-rate-parent;
+> +      };
+> +
+> +      clock-controller@120 {
+> +        #clock-cells =3D <0>;
+> +        compatible =3D "ti,composite-mux-clock";
+> +        clocks =3D <&core_96m_fck>, <&mcbsp_clks>;
+> +        ti,bit-shift =3D <4>;
+> +        reg =3D <0x0120>;
+
+Ordering here should be compatible, reg, clock properties, vendor
+properties.
+
+With that,=20
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+> +      };
+> +    };
+> --=20
+> 2.39.5
+>=20
+
+--Trh0whuzKXWjCbWM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJpdgAKCRB4tDGHoIJi
+0pRrAP9IAMMC4QQ1XmcaRQcIxjloiEmGeCoz/KUhen7MTd7ZcQD+O8dU04TD/eW1
+EzJCZAsNA+kwHG4eR4aM+L8k5NoJzAo=
+=VTPP
+-----END PGP SIGNATURE-----
+
+--Trh0whuzKXWjCbWM--
