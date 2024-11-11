@@ -1,410 +1,236 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2058.outbound.protection.outlook.com [40.107.93.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37881DA53
-	for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 13:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332749; cv=none; b=ddkgOox/e7vVGu1lMT149poTQegMeVlCPwHvqM4x9kHNHq13eBq9or3TYNldB9R8UHPmzjVG9xY1pgvB2LXxWhWW9c3zGd9/SynVCyC6mvDAj8HADWStXPznuykg8rDipVPQpJm6TkfbMvDfj6qH7Ds51kbCdfIhG+xCtVwuxJg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332749; c=relaxed/simple;
-	bh=nLzzCWa4B2Tkzxt8us3X6UMIA/lIl9nYeJK2LXv5yL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAUqxTqakyrkMTQxv+5ucYM2G9LCbrMEwo1K5I6uHhvOab1P7HvBE7Z0qgGNZ8wzS4sixDCkfnY5S1kQhfP9eJFVTcw9ei3M0pv3WYLbsw49+mngDCtMv490vHqgjKnBefxPK8oHGDi7/vC7o3sSyY6V1BHhKF6VfwbnKzzV87Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=dw06XvjN; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E8819F10A
+	for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731335645; cv=fail; b=onCUbOOZaCfdEbDbJOZTrlNGtGsEsQC0AfTfQCs6n/Oq+/NFcAD3ZQhTkOUWA4EPGYjSFRc6E7hJ4BZ7acBtHJGNFe8D8oWM8itmJ3y4GuRiK0I/ezxrn+oazWB2g6vpb2OAb8Xv8W3jhiYSFQR9p2AFeY9jz4SQEA7L4WQoazw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731335645; c=relaxed/simple;
+	bh=/EtoA/akdW2Tec2ADfwaKu1tim6rOisos+pgaECCZus=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nPJqRBDEUwb/dRjFAtQSQqw9NsOgTx8U2Jt88oY3lfpZq5fGYpW/nfKqXucGPqP5kTFhF62zaOcIyp0192BFImApZxDuwituNor9U+yoUZqfay9JgKFI35r46buXzhyc6+pTP5Pake+5j9S2upG5+5Z1+DUSkefMOYd6nD87/2Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4v5mRdvF; arc=fail smtp.client-ip=40.107.93.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dw06XvjN"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e9ed5e57a7so35969737b3.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 05:45:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1731332747; x=1731937547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rm3BImctwtqWjbORyBrsavb1u/lJM8uC19lQxWeLcEc=;
-        b=dw06XvjNvVzvM1aW52yQ1m8JEoYlyliTA9H7mwbTsb3Sl0ZQmb7eaWZeWfz5mxrV7Q
-         e/MhUNd70Y0AhBnxrwSzI/xP5Ano1gGk1B36uAlIgpbHztblhtSFKjhCpuBvmUY/uIzU
-         hsRC7ykqA4swzC8kv9iKOlS/jdgKnzSvryx4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731332747; x=1731937547;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rm3BImctwtqWjbORyBrsavb1u/lJM8uC19lQxWeLcEc=;
-        b=V/hcmk2R4zrLbxexF2BAhIDMLFNuEVuU4x/tDg2bJWpMg6DoQYznhyfUBok/4NjpoG
-         X4LzbOFGflzpncg2vfXbSdgDo2vJgFGcsdDZRIDIybIAjr3mLgJOh7oP3VNXEbxKUmEM
-         2Yj49nW/spUeEzY1DMsCcQ5ELN+5Sb7O+JU2VUlOrWO2bmyDpGKaTR0oR8+TIF/BpFUe
-         VpPcs0W2vU71cCXRxy/40mUwl3gJFCR6giduWSH9y2+x8rjI1gkYbWBRmNGxONBEW/Yo
-         x9YCCaBIwsM2LHN79WZDe1KMmUtJjlAeXS46/zv6NqfPbCNLk4vD7CsJYjQ7eEaAzvBl
-         fQjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUryDU1Vm9AkeN5IADyot9Rs8rvFWGyV5p7eUbMZB+7whPqORcZ0IppfA5OgLOfjuIJIcdiJr6ImQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqQUR/LjpcgdTw+jPbDM+pTvwwkkTqqmaHOXNMIzFlxNooPq01
-	S6BKKXZQR0GGuQgfjSf2oMPxFPmG1oS6tjsQSJ0ZgptnBlrTEH3uQS53z5aNEkQExUZNl5tlE7l
-	49KtN4RgptSRZq2aYN2OMgN1twHIifC0Hn02vgw==
-X-Google-Smtp-Source: AGHT+IFfas91t+lW7XnXNqsTwzeayIn+Qyj/NGlB149wN0USrAE3ytPby0ys5kySfPd9nSoYixCu9Zu87WuCEygU7Rs=
-X-Received: by 2002:a05:690c:710a:b0:6e5:e714:3be0 with SMTP id
- 00721157ae682-6eaddd725f0mr112372177b3.1.1731332746787; Mon, 11 Nov 2024
- 05:45:46 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4v5mRdvF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lFsG/6G5N9dZOm2OAH7ovVfNzD5SX1oO3ru7Wfn2ChrRHf2dJKyPAK5UTgVpX96phaNlhXnRyEM3xhnUlPV7UY0d5pgjDKoolomsxA84aftZtGut8g5QM9p6H5AOPNZHQcCIjhi1qzxV74XpdpbgOCFCWdhxfhUQkrRJZX84Uwi24xNqzT778jTfLXF+xzODwntE+Egpz9XuibTZlNlbIMAOmVyT3D3UH5sFSfr7ZUtZV0UHBretrNckw9IyRVpK4TD+ZBdrFbch2e/6I6BKBEcDDav5u+IZABsG01YMDSRnCc4DebpCJE0axjjBlpyXCOQ/ZJ5vDHl8QqQL2xGHEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SUp/S9XgZDQ8uiej0BqMrmz+T4itIlhnCA9UGusEku0=;
+ b=WsOl3FYwyxawZJqk7w0/a+PANOKbtr+T6qbVuj0H7jz5A3LJNDYwOR3uFisiVjrXzYM0QTwmeNIvbC1ZAxOBq/7AqXoyP5+96O3GcWXx7xEqBOCbsig0Ka0kRk19Kkh1lZJmWnEkha2WfhIPLJWqq5U3hYTNDyQuiXvlNLXrdibNXhuNcO+psAmMMrOUHsXsOnHJrrM2LwH+0Ct1bCA7X0s0OjkYhgcetNx6mEb1nYJ9nD6/NsW8S6d+XJtL2pVS5XeDTKloBiE6iCGtvyksEis54zLmKj0G4BZnaH/IQTCFowmk3QvkC964FGEjaMO3yPUmiQvEgVm2eFllGVm8Dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SUp/S9XgZDQ8uiej0BqMrmz+T4itIlhnCA9UGusEku0=;
+ b=4v5mRdvFIizMew3rxMFRAs6Yr2K2Dq9lrDcLizSeqdUXJS6JbPY98BlZ/h7e7yQquKZnCvBmoWZj9h3HqnlxKEcleCYBUtypy6/Q2FkPAvzT1mh38GgR9WaGqvVKWQj3tRMIRVtZszbJsjVx9NVRxM0eBgDg53QRTMA1n4btPlc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5969.namprd12.prod.outlook.com (2603:10b6:208:398::7)
+ by PH7PR12MB6693.namprd12.prod.outlook.com (2603:10b6:510:1b0::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Mon, 11 Nov
+ 2024 14:34:00 +0000
+Received: from BL1PR12MB5969.namprd12.prod.outlook.com
+ ([fe80::fe76:56e0:4c10:9a3c]) by BL1PR12MB5969.namprd12.prod.outlook.com
+ ([fe80::fe76:56e0:4c10:9a3c%4]) with mapi id 15.20.8137.022; Mon, 11 Nov 2024
+ 14:34:00 +0000
+Message-ID: <dd4cb501-5fc7-4430-9ffc-9c8c910df425@amd.com>
+Date: Mon, 11 Nov 2024 15:33:41 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: zynqmp: Work around broken DT GPU node
+To: Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Michal Simek <michal.simek@amd.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, parth.gajjar@amd.com,
+ "Allagadapa, Varunkumar" <varunkumar.allagadapa@amd.com>
+References: <20241031170015.55243-1-marex@denx.de>
+Content-Language: en-US
+From: "Sagar, Vishal" <vishal.sagar@amd.com>
+In-Reply-To: <20241031170015.55243-1-marex@denx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0133.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:97::11) To BL1PR12MB5969.namprd12.prod.outlook.com
+ (2603:10b6:208:398::7)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
- <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
- <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
- <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org> <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
- <54dd6ae6-b992-451e-b1c6-8a1968955f4a@kernel.org> <PAXPR04MB8459BE3474EFD4FCC28E0E82885D2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <8c310eca-d695-418c-82cb-a89351d83887@kernel.org> <PAXPR04MB8459B6F8D5C623D19CCF6B39885E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <bc02327b-dea8-48c9-b036-4a0eda0c4cb9@kernel.org> <9f6b243b-0642-41db-85ed-d020bfa3e6e2@kernel.org>
- <PAXPR04MB845978F4D3C6E887E0DE8D5488582@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <CABGWkvqXOg=Y7K+oc6Q-3UWGC-WLEK_tmQzyRBW6x0fvQTsqvw@mail.gmail.com>
-In-Reply-To: <CABGWkvqXOg=Y7K+oc6Q-3UWGC-WLEK_tmQzyRBW6x0fvQTsqvw@mail.gmail.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Mon, 11 Nov 2024 14:45:35 +0100
-Message-ID: <CABGWkvqPFq0gnCVEKY6SV_K71F30TFGXa-xHjvG5BikeHQNyCQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
- spectrum clocking
-To: Peng Fan <peng.fan@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-amarula@amarulasolutions.com" <linux-amarula@amarulasolutions.com>, Abel Vesa <abelvesa@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5969:EE_|PH7PR12MB6693:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5919a81-bd98-44f1-c94a-08dd025de212
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VU14TDljWWZyNzFsNEM1YmRDeUdQZ1hvQnkyYmdWUUw5OEF6cEtVVWN4bzBF?=
+ =?utf-8?B?QzB5RUNpa2htbHlPTlVKWm1FUWRTd2t4YnB6dVl2RFhRaE8wd2xzTzlqb2Rn?=
+ =?utf-8?B?YiszRnFmcUNoWkNLejYxZTdGT3NuN1JabW96RXBwNEorQm1PaStIUTZCd3R3?=
+ =?utf-8?B?WXk0TGF5M0dhSDV4YzhkY21KYUVKQ21QZVQ1NEtueSt1VGdQNmFva0ZqUlR2?=
+ =?utf-8?B?aGNiamlSdHhKWUdFU2VNa2V3dDBjMjZWUC95dk5IYlA4N2pTNjZ3Rll6dWVW?=
+ =?utf-8?B?ZXFvTURuaXcrSmJLWHdpbU01RE5GSnVmZ1E5dnEwQzc1VmRjTTBEOXRrQ3NC?=
+ =?utf-8?B?M0UxcVI5WGZ6SlFhdURiY0RGKytWb1ZlVzd5K1R5bjBQZ294d2dxRzFJWnpm?=
+ =?utf-8?B?Uko2bTk5NzhkNnlIT3hlUlVSenh2Y3M3L0pQZUN1WkNKSlhUbExhdjJlLzBu?=
+ =?utf-8?B?N00ycFVmK29xb3UyRThDeU8vZ2kvMjEwUkwzK2M4Sk9MaG51Y3lMMEVBYUtE?=
+ =?utf-8?B?RVNXaUdXemZwOHZnVFR1Nk1NTXpsdEwwS25FVkF3NSt0WVVzWWxMbUFNeXlK?=
+ =?utf-8?B?bGo1VzdzWW85YVU2ckpqVHhycGRQd29oVU8rSWM4VEloZk1LVHJmOHZxLy95?=
+ =?utf-8?B?MzRscVc4S29EQnNSSVhDV2dBSzhYa1JXdnQ3RTlNeGhHRWhZRll5RCt0RVp3?=
+ =?utf-8?B?aSszdS85L2w3aTNWYmtmbHBTSHR4WTl1bTloUFVHV2Y2YUxUb2pBUDJoaG10?=
+ =?utf-8?B?MGZZWkpWUGxzQ3pELy90QTZFUDZhS1pJNlBXUk01R0JpUzBoUlZJa05Gakdn?=
+ =?utf-8?B?anNxWlJPTVBhb2FXckxNdkE2OHBWV1pHMWxyZFlaUlRReUJwUEI0SXpJSHRG?=
+ =?utf-8?B?MkRXRkl4a3l2OWdxU2twWDQzRzBTOTRrWFhnZGxBcnZVWWJ0cklLVVNRK2t3?=
+ =?utf-8?B?OWdtQjVCQS92Yk1FdTMrUTVENnZOZ1NrMEhZOG4xbzViUkFnSklZMVFJMEM2?=
+ =?utf-8?B?Wk9Sblc1WFV2NFM4R28yMGJwNkpXRWRxSHpZWS80K1ZjUzl3TXFLOFN1WktF?=
+ =?utf-8?B?aWU4UTg3eVVKR3RwVHhrZHZweGFVQUdxTmV1cG5EQXJBeHE2T0grV3FIenNy?=
+ =?utf-8?B?Zys4NkJUelhYYmdHNDhCa1ptaElSeUU0QldwM3JHUnRCdUQzUUlJT3FMTjN0?=
+ =?utf-8?B?ZFRYbnkycTVoYTk5Skg4T2Z2SDZIUGJqdFlOeE5pQlE5eDltL0ZOT05abXdS?=
+ =?utf-8?B?VFJpQkJEZSs1TElyZXJWTUsrNzJVUzFyblhVTmRVRmZwMUdVaTFIcitqREdy?=
+ =?utf-8?B?SWZsQlQyY1ZFbzVjb2thYVFwME40M3lDekR2TFZKQWhBNktQL0hhdnZhSVVm?=
+ =?utf-8?B?bjlwZHJVdlEyV0hwVUpKNy9BOFJFWURiM1M0UG5nY0xUWlFNMGFsSXZXM2VK?=
+ =?utf-8?B?ZktMQkxkSDUvWjhnM0NLWnhjcS9POGUweDFmYWNyWEcrSC9uVndYby9nRjBm?=
+ =?utf-8?B?Smk0UjB6MVFTS1o3U3FQNUNZaFFXU3NZaDFmNytwT2RhNHR6enNvTnpJdlBV?=
+ =?utf-8?B?OXB3RFBFTDBKYzREOXhHcVc2WG5haXZnRXBCaDdha2VxdUw3V3Bra29QK0JW?=
+ =?utf-8?B?MzJxekpKd1VnWTNQamhZaXBLK3FodmN4MDZ6ZTRaNTdVdjNiSzNnSXFmYWVk?=
+ =?utf-8?B?WkwyWVBneFJjQkJrUnRJZVUycVZiTlJsSTlVSXEzVW8vTkhCLzJjeE9sZWxE?=
+ =?utf-8?Q?zaVsUGSSHUK2cKOoUPUjdjxp0/khXKSoKf5GFjk?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5969.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bGtYY2dhMzJqL2VUaEV3Rk5Nb0ZORGV5bnVmYWlzTVE3OUl0WG5ZcFVYbDd2?=
+ =?utf-8?B?ZStiS2RMTWtqd2JpZE9MZlVQZTJVbCtQSS9NTkE0dVhHVHpiWmp2L2ViRmxu?=
+ =?utf-8?B?cHpLMFF3ZXVTeVRUVUhLTUtYUEFQaVh5YUhlZ1BkcXhGTUxwVG1mYUFTdEpK?=
+ =?utf-8?B?TXowczc2czJvbnl1aXgzQXljWkp5SitFQW9Od2hhZDMvU1dTaDQ5M2RBWERL?=
+ =?utf-8?B?WDJqbXVwelRUYzF1YzZSZGV0ajBzeW54UjduRGNaN2o1R1FjRGhIVXU0N1Za?=
+ =?utf-8?B?a0Z5UlRraDdSV21oRWpJOXFBd1VvSjdXTUR5Y2Z5Rlk4TkE5SlEvUnZZckdO?=
+ =?utf-8?B?cDRUUm1ldFBHODZmTkJvR01EVVhpTXpxVlNLWU5wKzlqQTI1V2ZDNXo5Sk1N?=
+ =?utf-8?B?MEJxVlkvWEI0aWF5TGF3cXc2WFVxbUttVWZ1RUJFS2xKblRoaHpGTFdsaHcz?=
+ =?utf-8?B?enNYb0x3cmlqT1B0WGVpcXNEck9mcy9pWUY5SEtjVXh3aDYyMTZZRzdCMFc4?=
+ =?utf-8?B?TW13d3JDdFhCc1JyTmJ6UEhSQXFEUHZCempUQU5BYitNZkhwdWRoQnZNUkxy?=
+ =?utf-8?B?bUtsQStORnFCUllCeVIvQUozYXBjRlNiZlR3SytvOWlqL3RiTGlJRUFQUkRD?=
+ =?utf-8?B?VU9RRTB6YXRITjQyOGwrdVY1eUFrd3NuWmlCQ3pFRGdzeHBDYThOeFl6YXI0?=
+ =?utf-8?B?WUdKTFdxOGtYSTNHdEN3bzRiWWtXNzhieTZSS1o5SitTUWxVKzlyWVlCUllo?=
+ =?utf-8?B?MFlhc0c1N09OQTlkQjNHTEpsNUFFOGlkeDY1clBGSVhPaUhCUlFHSnAzZGZz?=
+ =?utf-8?B?ZjJRdlBFM2wxOEIxMWVodDN5TThKa2NyQk9EVDdKQ25jK3JoV1BjODQvdXho?=
+ =?utf-8?B?OTdBbnpKK0toK3hUTHNkNDUwbDMvZFRvRnF2c3ZMYWhoWmNta0VVb1JTMjgv?=
+ =?utf-8?B?cHZ4T0dBY3NSVk1KcnhwNUcvNGpZQWM1U204Y2dCcVVRaTZPZ0dQU0VWb2dR?=
+ =?utf-8?B?c2tOcldEdDhHMHJNaWs3SHdGTzhJSkZ2ZmZNNTZ1MlI0U01jeVNUSVRleGRj?=
+ =?utf-8?B?bE8zZ1prZGdtZC9FUXNCMFlGbkRDTXNlQzlhWmlnL1NrV0hiYjd0Zmo2VGxW?=
+ =?utf-8?B?VjJEZTNuUkFkRG8yRHV4UEJOeEc0R1N3cVM3R0lLblpGcG9ncmlXeVdMc0Rn?=
+ =?utf-8?B?VEczc0JWRWU1T2c2cGloa0hpQnVZMHdNdHF2ZDF0NDl2TEowR1RIU0UxcXVt?=
+ =?utf-8?B?U0I4ZDM1bDRaemJkL01hR3JiTXcvNlhXSkhwT3kraHoxSFpXZDRkV0YvVXk2?=
+ =?utf-8?B?Z2lSNXJON1pZU1JoaVQ4RnNOeFYzalF1VVJYczhrcGMvVTMwNXpRTzhka1Q2?=
+ =?utf-8?B?MlZPNk0wQkR1RjZzU2luUzZ4T2JTZnZuV0lmNDduejQzekViMFBRUWpPd3NM?=
+ =?utf-8?B?d0phTnRiWGJiRkRuOFBUR1pORGZTNElZSDErTlgwWHJCWTQ1RitqM1U5RTNj?=
+ =?utf-8?B?NWdhZnhremI2a3NKM3JXMXFiNWRCT3NEV0hUM2FWb3B2d3E4dk5XNUcxak10?=
+ =?utf-8?B?c1dSWHlLaTFKcU01Q1BMNUozSW1GVVhQWGZWdkFsRkFaekNqNmtrRWNOTHVH?=
+ =?utf-8?B?cmlpajVFamlXVDRQb05VYlBSZjJBUklhb2hzOUExK2t0YVdQQldkeTZINkNa?=
+ =?utf-8?B?UGQ4Vkh0ZXlwOFlDVW8yZ1haZCtoZWxHUytYeEY3NU5wTCtzVW9lLy9NeGRj?=
+ =?utf-8?B?MVNTc0ZrZnlxMjBVQnZadDQ5Y3BaNHFKVHlUek9QU2k3UW9LemVTcnd1VWpO?=
+ =?utf-8?B?bHNRVlNSVUhCaHhaNTZvSSsyVFZtL0E5aStDSTlGNEU5WmRGQkRldnZmc0Jn?=
+ =?utf-8?B?OTIvZFFWcUZjMUV1NitsRHRZeHhKUEhxOEs0S01uNHlCU2ZMeCtEVlFVejhP?=
+ =?utf-8?B?Nnh3bVJrVjBHR2FmOE0zcTMvTmdidmxDU3JLMjIzNXVBWFpEN2ZVR1ViSSts?=
+ =?utf-8?B?c3BXK2tmYlpHR0t3ekd2MjNRZnY0NVJiMVNwMGx2dUwyZS9QeCtFZi9yRUhk?=
+ =?utf-8?B?TlZDSHJPM3dOdk56Ui8wMlpQVVNLeTN1L29TdEdTSlR4ekd6eFlDNVV6Qjgy?=
+ =?utf-8?Q?pBQA=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5919a81-bd98-44f1-c94a-08dd025de212
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5969.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 14:34:00.7495
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XanB1Ffy6WVjP2/v/peouEk+BuzeGNr+dMw/qC3LwEvQWMyUdQ3kGGf2J3dKwst7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6693
 
-On Mon, Nov 11, 2024 at 12:57=E2=80=AFPM Dario Binacchi
-<dario.binacchi@amarulasolutions.com> wrote:
->
-> On Mon, Nov 11, 2024 at 2:49=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote=
-:
-> >
-> > > Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support
-> > > spread spectrum clocking
-> > >
-> > > On 09/11/2024 11:05, Krzysztof Kozlowski wrote:
-> > > > On 09/11/2024 01:37, Peng Fan wrote:
-> > > >>> Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock:
-> > > support
-> > > >>> spread spectrum clocking
-> > > >>>
-> > > >>> On 08/11/2024 13:50, Peng Fan wrote:
-> > > >>>>> Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock:
-> > > >>> support
-> > > >>>>> spread spectrum clocking
-> > > >>>>>
-> > > >>>>> On 07/11/2024 15:57, Dario Binacchi wrote:
-> > > >>>>>>     clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>,
-> > > <&clk_ext2>,
-> > > >>>>>>                   <&clk_ext3>, <&clk_ext4>;
-> > > >>>>>>     clock-names =3D "osc_32k", "osc_24m", "clk_ext1", "clk_ext=
-2",
-> > > >>>>>>                              "clk_ext3", "clk_ext4";
-> > > >>>>>>     assigned-clocks =3D <&clk IMX8MN_CLK_A53_SRC>,
-> > > >>>>>>                                   <&clk IMX8MN_CLK_A53_CORE>,
-> > > >>>>>>                                   <&clk IMX8MN_CLK_NOC>,
-> > > >>>>>>                                   <&clk IMX8MN_CLK_AUDIO_AHB>,
-> > > >>>>>>                                   <&clk IMX8MN_CLK_IPG_AUDIO_R=
-OOT>,
-> > > >>>>>>                                   <&clk IMX8MN_SYS_PLL3>,
-> > > >>>>>>                                   <&clk IMX8MN_AUDIO_PLL1>,
-> > > >>>>>>                                   <&clk IMX8MN_AUDIO_PLL2>;
-> > > >>>>>>     assigned-clock-parents =3D <&clk IMX8MN_SYS_PLL1_800M>,
-> > > >>>>>>                                              <&clk IMX8MN_ARM_=
-PLL_OUT>,
-> > > >>>>>>                                              <&clk IMX8MN_SYS_=
-PLL3_OUT>,
-> > > >>>>>>                                              <&clk IMX8MN_SYS_=
-PLL1_800M>;
-> > > >>>>>>     assigned-clock-rates =3D <0>, <0>, <0>,
-> > > >>>>>>                                          <400000000>,
-> > > >>>>>>                                          <400000000>,
-> > > >>>>>>                                          <600000000>,
-> > > >>>>>>                                          <393216000>,
-> > > >>>>>>                                          <361267200>; };
-> > > >>>>>>
-> > > >>>>>> The spread spectrum is not configurable on these clocks or,
-> > > more
-> > > >>>>>> generally, may not be configurable (only 4 PLLs have this
-> > > >>> capability).
-> > > >>>>>> Therefore, I need the "fsl,ssc-clocks"
-> > > >>>>>
-> > > >>>>> No. That's not true. You do not need it.
-> > > >>>>>
-> > > >>>>
-> > > >>>> i.MX8M clock hardware is similar as:
-> > > >>>>
-> > > >>>> OSC->ANATOP->CCM
-> > > >>>>
-> > > >>>> ANATOP will produce PLLs.
-> > > >>>> CCM use PLLs as input source.
-> > > >>>>
-> > > >>>> Currently there is no dedicated ANATOP driver in linux.
-> > > >>>> The CCM linux driver will parse the ANATOP node and register
-> > > clk_hw
-> > > >>>> for the PLLs.
-> > > >>>
-> > > >>> I do not know what is CCM and how does it fit here. What's more, =
-I
-> > > >>> don't get driver context here. We talk about bindings.
-> > > >>
-> > > >>
-> > > >> CCM: Clock Control Module, it accepts PLL from anatop as inputs,
-> > > and
-> > > >> outputs clocks to various modules, I2C, CAN, NET, SAI and ...
-> > > >>
-> > > >>>
-> > > >>>
-> > > >>>>
-> > > >>>>
-> > > >>>>> First, the clock inputs for this device are listed in clocks *o=
-nly*.
-> > > >>>>> What is no there, is not an input to the device. Including also
-> > > >>>>> Linux aspect (missing devlinks etc). Therefore how can you
-> > > >>>>> configure
-> > > >>> spread
-> > > >>>>> spectrum on clocks which are not connected to this device?
-> > > >>>>
-> > > >>>> I not understand this well, you mean add clocks =3D <xx
-> > > >>>> CLK_IMX8MM_VIDEO_PLL> in the ccm dtb node?
-> > > >>>
-> > > >>> Yes. Let me re-iterate and please respond to this exactly comment
-> > > >>> instead of ignoring it.
-> > > >>>
-> > > >>> How a device can care about spread spectrum of a clock which is
-> > > not
-> > > >>> supplied to this device?
-> > > >>
-> > > >> I hope we are on same page of what spread spectrum means.
-> > > >> spread spectrum of a clock is the clock could produce freq in a
-> > > >> range, saying [500MHz - 100KHz, 500MHz + 100KHz]. software only
-> > > need
-> > > >> to configure the middle frequency and choose the up/down border
-> > > >> range(100KHz here) and enable spread spectrum.
-> > > >>
-> > > >> device: I suppose you mean the Clock Control Module(CCM) here.
-> > > >
-> > > > I mean the device we discuss here, in this binding. Whatever this
-> > > > device is. CCM or CCX
-> > > >
-> > > >> CCM does not care, it just accepts the PLL as input, and output
-> > > >
-> > > > Takes PLL as input but you refuse to add it as clocks? Are you real=
-ly
-> > > > responding to my question?
-> > > >
-> > > > I asked how can you set spread spectrum on clock which you do not
-> > > > receive. Why you do not receive? Because you refuse to add it to
-> > > > clocks even though I speak about this since months.
-> > > >
-> > > >> divided clock to various IPs(Video here). The video IPs care about
-> > > >> the spread spectrum of the clock.
-> > > >
-> > > > So which device do we talk about? I am not a NXP clock developer
-> > > and I
-> > > > care zero about NXP, so keep it simple. We discuss this one specifi=
-c
-> > > > binding for specific device which is called "imx8m-clock" - see
-> > > > subject prefix.
-> > > >
-> > > >>
-> > > >> The clock hardware path is as below:
-> > > >>
-> > > >> OSC(24M) --> Anatop(produce PLL with spread spectrum) -> Clock
-> > > >> Control Module(output clock to modules) -> Video IP
-> > > >>
-> > > >> From hardware perspective, Clock Control Module does not care
-> > > spread
-> > > >> spectrum. Video IP cares spread spectrum.
-> > > >>
-> > > >>
-> > > >>>
-> > > >>> Why would you care about spread spectrum of some clock which is
-> > > not
-> > > >>> coming to this device?
-> > > >>
-> > > >> device, I suppose you mean clock control module(CCM).
-> > > >>
-> > > >> There is no 'clocks =3D <&ccm CLK_IMX8M_VIDEO_PLL>' under ccm
-> > > node.
-> > > >> Because in current design, ccm is taken as producer of
-> > > >> CLK_IMX8M_VIDEO_PLL, not consumer.
-> > > >
-> > > > I don't understand now even more. Or I understand even less now.
-> > > Why
-> > > > binding references its own clocks via phandle? This makes no sense
-> > > at
-> > > > all, except of course assigned clocks, but that's because we have o=
-ne
-> > > > property for multiple cases.
-> > >
-> > > And BTW if that was the point then the example is confusing because
-> > > the &clk phandle is not the device node in the example but it should.
-> > > Neither description says which device's clocks are these.
-> > >
-> > > This is expressed very poorly in the binding, look:
-> > > "Phandles of the PLL" - it clearly suggests some other clocks, not it=
-s
-> > > own, that's so obvious I did not even think of asking. Patchset goes
-> > > slow also because of poor explanation, lack of diagrams and expecting
-> > > me to remember your clock hierarchy.
-> >
-> >
-> > Dario may improve the patchset in new version. But let me just try
-> > to explain a bit more about the hardware logic, I hope this could
-> > give you some knowledge on i.MX clock and we could get some
-> > suggestions on next:
-> >
-> >
-> > OSC will generate 24MHz clock to Anatop module.
-> > Anatop module takes 24MHz as input and produces various PLLs.
-> > Clock Control Module(CCM) takes PLLs as input, and outputs the final
-> > clocks to various IPs, saying video IPs.
-> >
-> > The Anatop module could produce PLLs with spread spectrum enabled.
-> > The Clock Control module just divides the freq and output the end IPs.
-> > The end IPs cares about spread spectrum for high quality clock, the
-> > Clock Control modules does not care. Now back to binding,
-> >
-> > There is a imx8m-anatop binding fsl,imx8m-anatop.yaml for anatop
-> > and a imx8m-clock.yaml binding for clock control module.
-> >
-> > I think the patchset is to enable spread spectrum of a PLL globally,
-> > not for a specific device saying video IP here. So the patchset put
-> > the properties under the clock control module.
-> >
-> > For example, there are VPU_JPEG, VPU_DECODE, both will use
-> > video PLL with high quality. So the clock producer just produce
-> > PLLs with Spread Spectrum(SS) enabled, and put the SS properties
-> > under CCM or anatop node, not video IP nodes.
->
-> Thank you Peng, for the information.
->
-> Do you think it would make sense to add the PLL nodes with SSCG to the
-> anatop node?
->
-> anatop: clock-controller@30360000 {
->     compatible =3D "fsl,imx8mn-anatop", "fsl,imx8mm-anatop";
->     reg =3D <0x30360000 0x10000>;
->     #clock-cells =3D <1>;
->
->     clk_video_pll1_ref_sel: clock-video-pll1-ref-sel@28 {
->         compatible =3D "fsl,imx8mn-mux-clock";
->         #clock-cells =3D <0>;
->         clocks =3D <&osc_24m>, <&clk_dummy>, <&clk_dummy>, <&clk_dummy>;
->         fsl,anatop =3D <&anatop 0x28>;
->         fsl,bit-shift =3D <0>;
->         clock-output-names =3D "video_pll1_ref_sel";
->     };
->
->     clk_video_pll1: clock-video-pll1@28 {
->         compatible =3D "fsl,pll14xx-clock";
->         #clock-cells =3D <0>;
->         clocks =3D <&clk_video_pll1_ref_sel>;
->         ...
->         fsl,ssc-modfreq-hz =3D <6000>;
->         fsl,ssc-modrate-percent =3D <3>;
->         fsl,ssc-modmethod =3D "down-spread";
->     };
-> };
->
-> This example only considers the video PLL, so to be complete, it
-> should also add the clk_audio_pll1,
-> clk_audio_pll2 and clk_dram_pll nodes. It is based on an RFC series
-> that I sent about a year ago,
-> which was not accepted. In this way, the SSCG properties (i.e.,
-> "fsl,ssc-modfreq-hz", "fsl,ssc-modrate-percent"
-> and "fsl,ssc-modmethod") would be added to the relevant nodes, and I
-> would take only the essential parts
-> from that series. This would still mean implementing the PLL driver
-> ("fsl,pll14xx-clock") and its mux ("fsl,imx8mn-mux-clock").
->
-> These clocks can then be added to the "clocks" list of the "ccm" node:
->
-> clk: clock-controller@30380000 {
->     compatible =3D "fsl,imx8mn-ccm";
->     ...
->     clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
->                   <&clk_ext3>, <&clk_ext4>, <&clk_video_pll1>,
->                   <&clk_audio_pll1>, <&clk_audio_pll2>, <&clk_dram_pll>;
->     ...
-> }
->
-> >
-> >
+Hi Marek,
 
-Next the series I forgot to reference in the previous email:
-https://lore.kernel.org/lkml/20230101175740.1010258-1-dario.binacchi@amarul=
-asolutions.com/
+Thanks for sharing this patch.
 
-Thanks and regards,
-Dario
+On 10/31/2024 5:59 PM, Marek Vasut wrote:
+> The ZynqMP DT GPU node clock description is wrong and does not represent
+> the hardware correctly, it only describes BUS and PP0 clock, while it is
+> missing PP1 clock. That means PP1 clock can never be enabled when the GPU
+> should be used, which leads to expected GPU hang even with simple basic
+> tests like kmscube.
 
-> > We could have a talk on IRC if Dario, Abel and you are available to
-> > discuss on this topic.
->
-> Yes, I am available.
->
-> Thanks and regards,
-> Dario
->
-> >
-> > Thanks,
-> > Peng.
-> >
-> > >
-> > > Best regards,
-> > > Krzysztof
-> >
->
->
-> --
->
-> Dario Binacchi
->
-> Senior Embedded Linux Developer
->
-> dario.binacchi@amarulasolutions.com
->
-> __________________________________
->
->
-> Amarula Solutions SRL
->
-> Via Le Canevare 30, 31100 Treviso, Veneto, IT
->
-> T. +39 042 243 5310
-> info@amarulasolutions.com
->
-> www.amarulasolutions.com
+Could you please share how you tested this?
+Please share the dt node too.
+We will also check at our end and revert for this.
+
+> 
+> Since Xilinx does use generated DTs on ZynqMP, the current broken DT
+> implementation has to be supported. Add a workaround for this breakage
+> into the clock driver, in case of PP0 enablement attempt, enable PP1
+> as well and vice versa. This way, the GPU does work and does not hang
+> because one of its pixel pipeline clock are not enabled.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Michal Simek <michal.simek@amd.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>   drivers/clk/zynqmp/clk-gate-zynqmp.c | 17 +++++++++++++++--
+>   1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+> index b89e557371984..b013aa33e7abb 100644
+> --- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
+> +++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+> @@ -7,6 +7,7 @@
+>    * Gated clock implementation
+>    */
+>   
+> +#include <dt-bindings/clock/xlnx-zynqmp-clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/slab.h>
+>   #include "clk-zynqmp.h"
+> @@ -38,7 +39,13 @@ static int zynqmp_clk_gate_enable(struct clk_hw *hw)
+>   	u32 clk_id = gate->clk_id;
+>   	int ret;
+>   
+> -	ret = zynqmp_pm_clock_enable(clk_id);
+> +	if (clk_id == GPU_PP0_REF || clk_id == GPU_PP1_REF) {
+> +		ret = zynqmp_pm_clock_enable(GPU_PP0_REF);
+> +		if (!ret)
+> +			ret = zynqmp_pm_clock_enable(GPU_PP1_REF);
+> +	} else {
+> +		ret = zynqmp_pm_clock_enable(clk_id);
+> +	}
+>   
+>   	if (ret)
+>   		pr_debug("%s() clock enable failed for %s (id %d), ret = %d\n",
+> @@ -58,7 +65,13 @@ static void zynqmp_clk_gate_disable(struct clk_hw *hw)
+>   	u32 clk_id = gate->clk_id;
+>   	int ret;
+>   
+> -	ret = zynqmp_pm_clock_disable(clk_id);
+> +	if (clk_id == GPU_PP0_REF || clk_id == GPU_PP1_REF) {
+> +		ret = zynqmp_pm_clock_disable(GPU_PP1_REF);
+> +		if (!ret)
+> +			ret = zynqmp_pm_clock_disable(GPU_PP0_REF);
+> +	} else {
+> +		ret = zynqmp_pm_clock_disable(clk_id);
+> +	}
+>   
+>   	if (ret)
+>   		pr_debug("%s() clock disable failed for %s (id %d), ret = %d\n",
 
 
 
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Regards
+Vishal Sagar
