@@ -1,59 +1,59 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912E3156F44
-	for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 11:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA5215665C
+	for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731323741; cv=none; b=s6Lofv/duia9yhnyqYEndM9k0eFmkYT20PoMKPzUeZPrNCs5RaO5ejDxHdqnP3r5rxh1iYinj7qMvXZRSwRMAiOwzK6Dh3LKLm9OeVyO/jLBrBnVuptE/n6T58vtdbU2iDeN0mq+upMybqO6WOTQtlv181AuESPMIckJ33MsEyQ=
+	t=1731323775; cv=none; b=TcHFzalDv1L3PZPJcGSKqh4Cn4wnZx1KAC8w4cDql6efOWLKhNQnJl38KsbL3GQ0lECVeI3SAFn6s7sFcZnAgj0f5E1RzId9Yopc2LUQdvfCtKzbhgyDAqX0GXkhkFafWNWV00UgPbYiIwn/AaHFwGGZZUpLEXJ9f4vGd7jfBcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731323741; c=relaxed/simple;
-	bh=UVMY3jncP8KlbJgHSOQbnrh0HSPCD2duUy36Ssl4JeY=;
+	s=arc-20240116; t=1731323775; c=relaxed/simple;
+	bh=driMdGrMh2CQU3EhaccQrwFYyIsDDb/uDW3/8Wb/CZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EcGiUP/ehUr6nN6EabNxPhtoLSvysP6DmTEBddseZB8YHSVesu4Z1O6RmM6EEQReCwIiVccJ0pBeBKEtPWnmNTclhxahRsO5Ywz4+EktB01HQT4uuMpYUQHbpGsIiTVLiC7ijisozCG9hX+xRzmGzrGI4w8fX+h7gZD3pxVbH3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OnwcAa7i; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:Content-Type; b=mG3aIqxLiAe1jSKOkQCgftGm9hg1IkSSiL3d4uZIk5RxbkDJKF45RZ9l/myhmQepmNwZtOVEHiS0b2pJx68VYqK36WC/yFEFkdxFnlCvhmnsiUD9h43iiIpN90zvitfc6ZXwGjFlMhdIA01F1idh8zbRDg1j+bU3BIkUOOEUF1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RFe5ho+3; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OnwcAa7i"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99f646ff1bso676184466b.2
-        for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 03:15:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RFe5ho+3"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a628b68a7so804493166b.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 03:16:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731323737; x=1731928537; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731323772; x=1731928572; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bhZZuPjatSrdZhX9k+zXeie/9aFPE96IB3h2Z1yS2Hc=;
-        b=OnwcAa7iFccdMPXmNNfuo+XSwSVwwhr08r0lXMAp/OEFWu00qv7wHWnONDdCu/5q7C
-         W+/EI+WP3Z4aGv/Ppvei6+w6/cbz/ivJ1SatoGSfcVKgMOCcmzaLKkwV1G11XNH6ap7P
-         4csA/TfJeSCCpI9ss7PEYectSu1/wz3ulgSj62rdCy3uN3X/rG3ip6lo302p20aszzWf
-         J7j5szIPJqSllJjvLBWecWqsy9XqeDSJLTBldqwznATzvsQT9vUSJGUcbQ6+bY4if8Y4
-         HOBtESNHHgYU2Ok3fGARnCPQDliwu771U7Z11sWnW0I+BBPQ1Gd6PZSkb3JN8n72IqO/
-         AXCw==
+        bh=ymcL/BmbTqU8qfDUCoVyraAtY6xWOZahvC7lOWoyBMo=;
+        b=RFe5ho+3CKXVrNqbTNxvWa0N7t7htxFN003LZo5VhmJnf/rpIjbJlwJSuSDMCk34HT
+         ym6NvcChK8jlHp1xmwcUF/sollyFfXuyI2aJhHO5vgEBTZi+hyUNwOdcer02RyNG95rQ
+         zkrnQfHhVFxjO2M50eMNe5imd6UR62YiAbwRBK0XrQgv8cB6LEs+MmUel1rsjcmzVkcQ
+         Y6B0DI9cIhuakDYR329jKK8rLZOf3kIZScynlsYNig1wh5C+L5G8WjOoeoRtdiwjhaQt
+         MLp9Grht7RMNPitkE3Bf8PUAG2IsbGWZdRu3iNcEPZJTKWGdAM8Jp31KdqX/mrg6mkLi
+         2hew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731323737; x=1731928537;
+        d=1e100.net; s=20230601; t=1731323772; x=1731928572;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bhZZuPjatSrdZhX9k+zXeie/9aFPE96IB3h2Z1yS2Hc=;
-        b=D6cwz7Ygd9mbqd34s/rNbwQ2qpXEwzgiT7Xbsvn/Hvcce9Yhj/bkYz7uqtZJ6tbSXa
-         i63fwfOgMYY56DfDXGGnOqWiRNk6dA10qYCxyWnCP8OrAbKdHLL8cR8qWhwbIXURxGGI
-         an6I5KWWHN7lDL6jlLaM1UGrNXiAWDVHxa6qZpZrggKyMNXwoPcTqBMBhPJKu2kMKYg+
-         D19ZvDYhmllIY46OAaJ7BeWnBeuSMliHPfGUQ6bVrCWfgRteQ5JARfSk+oQcnTriEhvv
-         EjLI3QhvVB3n9UptaURDgjzW+dP6iQ2+Zw8Na3Q2IUvYQyGBHmi59AIbZJx4tUNtJyh3
-         n8tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjHF7MpsPLiU90RZnqnQSJCaU4ivvSMQ0WlfQWVwZW+6Em4QqChK3Ht2xeYGmfvTvbzKC+xK4UqGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJj0XM5ZvEccFhkA2tXAMaTvD+Cl0hwt5RXi555sxhTEB4aq6Q
-	45RMgzg8Shtpzdqt468w2Ld3UAm+iJaGEpSEDaTMRSxn4GHS+VR2qGjVLv7EdA8=
-X-Google-Smtp-Source: AGHT+IFbp4VgcqWBYLe3U0yCi4vd7nmqSuzbqzRywA4zlYZMwP+tOs/p2A4kYUW8+VEuOgG9xmufbQ==
-X-Received: by 2002:a17:907:6d02:b0:a9a:60c1:136d with SMTP id a640c23a62f3a-a9eeff0e570mr1147950966b.22.1731323736778;
-        Mon, 11 Nov 2024 03:15:36 -0800 (PST)
+        bh=ymcL/BmbTqU8qfDUCoVyraAtY6xWOZahvC7lOWoyBMo=;
+        b=a7p21RMyM2XDDdI8CrXzrSXbAGPqkzb9zovj3WucZzo4+0uFgQFEKpF+ou2KBAWwZs
+         gfOWdDulQ28pW5FexKufz1HN6aH3qBolMg/4T/6A8c9pmVVdGLmlU0U9xnP5UdK2vTfd
+         1OHDflnf0GueyDCFM+ZCXifUdzLdzPPGeGl4V1agV0CtVkzbwT4svJKMrEMXml7ucewi
+         bMYwvALAslG+2r8xkVWdt4GH+WHUn4C8MM60prC+nC0stxZUaPv5JBFMs8zu3U2QapER
+         XfLCkADq17V5NVoHbJOegTFEK1CF8Z5DpwpMVzi0FKi82n7c866Rqcq4DyXXLQ/JSxqB
+         T6qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaKACj7qHpjyUtAwI7V0lpr4Vy8EC1fYORtZtpK/Tb0pm6JD4qh9ncoiN5KRZbkINCy7rgsBhTsmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuJswsLNLZHtMYlnva8zWJa91aea+hBLOWtkmVUHPZV7stQfRN
+	xdJj+uPA8/iwcyPeOH0iZShr51SxpBZWJfDpgB/MqokiY+6NfwioelRZabwcsr4=
+X-Google-Smtp-Source: AGHT+IEIXXKEeW8AK/XEUpMILAea87VIswegaWQL9LSGa2DctrGMApRhmo53B5f76Sl4Kpl0fHqtKw==
+X-Received: by 2002:a17:907:94ca:b0:a99:2ab0:d973 with SMTP id a640c23a62f3a-a9ef001b427mr1296793366b.55.1731323771938;
+        Mon, 11 Nov 2024 03:16:11 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a176cbsm593593066b.23.2024.11.11.03.15.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a176cbsm593593066b.23.2024.11.11.03.16.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 03:15:36 -0800 (PST)
-Message-ID: <9ef0d9df-3d6c-470a-913c-55698148d00e@tuxon.dev>
-Date: Mon, 11 Nov 2024 13:15:32 +0200
+        Mon, 11 Nov 2024 03:16:11 -0800 (PST)
+Message-ID: <42c5da73-466e-4238-8862-dbe727d3bf3f@tuxon.dev>
+Date: Mon, 11 Nov 2024 13:16:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,101 +64,56 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 06/25] ASoC: sh: rz-ssi: Terminate all the DMA
  transactions
 Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com,
+ linus.walleij@linaro.org, perex@perex.cz, tiwai@suse.com,
+ p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
 References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
  <20241108104958.2931943-7-claudiu.beznea.uj@bp.renesas.com>
- <TYCPR01MB1133233B458F3AC5F7C3602B3865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <87ldxqmwdc.wl-kuninori.morimoto.gx@renesas.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TYCPR01MB1133233B458F3AC5F7C3602B3865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+In-Reply-To: <87ldxqmwdc.wl-kuninori.morimoto.gx@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Biju,
+Hi, Kuninori,
 
-On 10.11.2024 10:37, Biju Das wrote:
+On 11.11.2024 02:45, Kuninori Morimoto wrote:
 > 
+> Hi Claudiu
 > 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: 08 November 2024 10:50
->> To: geert+renesas@glider.be; mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; Biju Das <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad
->> <prabhakar.mahadev-lad.rj@bp.renesas.com>; lgirdwood@gmail.com; broonie@kernel.org;
->> magnus.damm@gmail.com; linus.walleij@linaro.org; perex@perex.cz; tiwai@suse.com;
->> p.zabel@pengutronix.de
->> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-sound@vger.kernel.org; linux-gpio@vger.kernel.org; Claudiu.Beznea
->> <claudiu.beznea@tuxon.dev>; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>; stable@vger.kernel.org
->> Subject: [PATCH v2 06/25] ASoC: sh: rz-ssi: Terminate all the DMA transactions
->>
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> In case of full duplex the 1st closed stream doesn't benefit from the dmaengine_terminate_async().
->> Call it after the companion stream is closed.
+>> In case of full duplex the 1st closed stream doesn't benefit from the
+>> dmaengine_terminate_async(). Call it after the companion stream is
+>> closed.
 >>
 >> Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
-> 
-> Maybe add fixes tag for full duplex case as the separation of 
-> Playback/ Capture is introduced in that patch.
-
-OK
-
-> 
 >> Cc: stable@vger.kernel.org
 >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> Cheers,
-> Biju
-> 
->> ---
->>
->> Changes in v2:
->> - none
->>
+> (snip)
 >>  sound/soc/renesas/rz-ssi.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c index 6efd017aaa7f..2d8721156099
->> 100644
->> --- a/sound/soc/renesas/rz-ssi.c
->> +++ b/sound/soc/renesas/rz-ssi.c
->> @@ -415,8 +415,12 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
->>  	rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
->>
->>  	/* Cancel all remaining DMA transactions */
->> -	if (rz_ssi_is_dma_enabled(ssi))
->> -		dmaengine_terminate_async(strm->dma_ch);
->> +	if (rz_ssi_is_dma_enabled(ssi)) {
->> +		if (ssi->playback.dma_ch)
->> +			dmaengine_terminate_async(ssi->playback.dma_ch);
->> +		if (ssi->capture.dma_ch)
->> +			dmaengine_terminate_async(ssi->capture.dma_ch);
->> +	}
->>
->>  	rz_ssi_set_idle(ssi);
->>
->> --
->> 2.39.2
 > 
+> We are now using "renesas" dir, so, you want to use "ASoC: renesas:"
+> instead of "ASoC: sh:" in Subject ?
+
+You're right! I'll update it.
+
+Thank you,
+Claudiu Beznea
+
+
+> 
+> 
+> Thank you for your help !!
+> 
+> Best regards
+> ---
+> Kuninori Morimoto
