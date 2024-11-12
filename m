@@ -1,94 +1,73 @@
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2073.outbound.protection.outlook.com [40.107.20.73])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2119.outbound.protection.outlook.com [40.107.255.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE80C2123DE;
-	Tue, 12 Nov 2024 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935812101AF;
+	Tue, 12 Nov 2024 10:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.119
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406006; cv=fail; b=sdFVBofwZPc5Ih12k256v+bWsUKxUe8L/UyGShzWeOIKB2P1XfRFP/7PL22aR1MjWcek0+CBEC6NTL4H29XJL7jvvXLESpndtphW9fKaVPamoduBuqX1Qc97ai5OmJJPHSis8jDIeExHwpiheVrW7KsGKFt6jsbUrskGnvX7snU=
+	t=1731406008; cv=fail; b=OOOyyUFbOgiyxLKjaF8uSq1B4MIrVJHEDRhjY9CPZzd4QV23o4f9tPPyUpzmvnLR8UypNqZSJiKNJMPWYqSt0XessaHD0cbgFsoJ12Q3AeSFexpq+8Tnp1ZrOpRHmqhWhigTuNGepV6gwDewEiOfD/aV4+SZEePEdhO3LeSDmDY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406006; c=relaxed/simple;
-	bh=vNs/49Tat3O91V+2DJRMxh++oRMAule717WA26sdDYE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M5ZW9O7FTeXGXx7wA1cgu/uRhWkMVTa16eJl1XJ5BxkMmwnpx5G7SM/x4LIrlPDwF7KZa3LgGsp3OAgSbNZZ6MHUS+3f/hGr4b/wcisxxpt7zB0CVCVU9EktI0h6pDMqttB/yoeVXcoAhRC2aeqrv9IrYxPLjm8BVdDk59uaDk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZdTfqyBJ; arc=fail smtp.client-ip=40.107.20.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1731406008; c=relaxed/simple;
+	bh=xIPCWtbROZERStWbY1B7faFG+QJDJe975PCmQUZowx4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Fzt4cmFgZy6tZmRnq8n3jvcB3C7n0ZCpRUAy6ci6g9y4CFi+q3Z1RJw0w7UHx6GRwZB0w+uj2aAZwwEiGH0fSYnBtuZuNH0iKzVCVenIck1R1sidd2VTM5oNlNC44TTOIkgufn6bHpQIdWbriAGBTwZ5HxKsVwziR5BMqD51wOo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=OmWAJm/i; arc=fail smtp.client-ip=40.107.255.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZdTfqyBJ"
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="OmWAJm/i"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=glynZ8WSDM3JbpSdG+2QaU0tnfhw9owzMdOfehxPWh93unk9iJzWdnU166FlXzt7QS3XmhmkvuNDNt67eb3R0Dwd7qW8zvbM5gw6CbzWSecRuidKT35j4JGlvwBSO1iAwIOCjZ2d26IQCFZsXtKKOs60WzywOWtzc3PSOOquDn0sPOcw456TlivopoMcR36k6d2JrvB8njIQyeu5R9jWZ3H46LoHg8+XQ0+kETTwQpyTTLZhxcVB/hctQY+zA7TBk/rxcDJbhg7NaABOpfVTL5Hw48AR0M2NOS1QP8miFwSZyit7moG+oIqo/jJsZjIVcHuf3fmxo2trDY8wFVRhxw==
+ b=EN8noqVtqRz2Am9asJco8QKcHHHKVPnN3SZ4yHx6AyF0itGGWiNqnZK52citPWgOVHbjQY7ztzc/3i4S1OwHzo2M9lQFyEtX5uXtQs9P7CTcKIfJIjvHGU1d91ditb/ZNq62eMaUQEUOscGIcevDagBAW4jSOCCWJC7iXQHsRMHCkr+9P4WllEI2z/ttRUZ5OowPH0WKT375/JOJRuoHhJF4EC8tUa7Mx2SIDRacHo7YWFzGESNkhtUUNFrb7QJBFt9Pm3X3D9zJn0CRE2WqG/swTiudviJ/YmTSyeayK5EQI/rTww9xzV099WA/XbR1eEKVspKXQVcwIZCiJKXONw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wz76/czXOIyAUXsPpq8BGSSQVqXZUrTtitXNwj+2qq0=;
- b=UPiuHXCp2ssEmcJQtXfvbg6Lps1LqbjJJnWVdTQwP8D+tPHfvrh8EIarotg7ntHKPerowfvXqFeCfC0T142KT26/mLbdXWL1cuTDme8l38KUTXR+Dt+ROpoYFEdEFm7mdzkpfZU09+gQir/mMeQcglAKdDQip26PIagCrpmaLXNmIONnjF9NrYOEl1Ek0vXvhVzbPZic9KJ5D2k19lig/eBdRd8EZEMzKhfM6sdRSRwWSGG8omw1LqDGYt5BQggeTeWnnL6duGKhC9DftdoD7ppwW2OV6EOxYUTtWs3OhhgLMVk/ECxoX+oWF8XGpyp3LChwlxoibnW5Fbgz9yTpsw==
+ bh=ElOw7rmGWaS5t8u48irYFRYWBGV9o3J3e6tEOyR9Xdk=;
+ b=tvrSBw9gL9pVvpZNjL4efOgbQ1lW3T0lPXpytl8myY+Ld6KNYindHXnccZpoRCpgF5MLILHW264ZL9ze/TApLafj/Y0zV3HZdiJ4nuPB6n/kn85mhGto4CrXTG07egh0o0aLoJmAxKMyT13gcb+JZofqy4WoWnUu2pNcK89fElf09XOsiBF6rRLEr8SxIPrO/XBw8rWPjkT6oS29w8/tc1XU3bf/OZOvGJTk7JBqDXo8PE6qBuI40a27aXWLCRJKQhKWlUJZq1hnRQ7NP7UTaC3ghW6h4su+c8GeIbGt1FqB/zUBzW9jYfokBh9sWY8pTIYu+LQOmQx1/hapMqHNvg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wz76/czXOIyAUXsPpq8BGSSQVqXZUrTtitXNwj+2qq0=;
- b=ZdTfqyBJp668sD+Nac1yCTDvotiTumkWxmAJne+0UEyxdE6W2y/mu/dPBMpz8A25VjDAKJgGEdaet3c+G7t/3L/r9aNdEX5hiuAp5/CFv80OwhU6EFsX6wyg56IdlbutyH2/y1Vl5xQrMyOmhYS4phqZHb3d1g8I9ABYHCo7upA4x0UDxF1oGn0jhEnFmdXPynAQB4MaLy3+z5je3T9d5iVJOoDSOhOkF551K7MPBcVe99zl85vDhdWK3K7sXXAYK6fdgEHdq5GKNPbXE2vBOOayoltm7g6xfK66LZQ3TxbXkK9dD6uRlRJ+1TijqYynJUFj8YRA8FaNs8Wz8sjKjw==
+ bh=ElOw7rmGWaS5t8u48irYFRYWBGV9o3J3e6tEOyR9Xdk=;
+ b=OmWAJm/iXEPSeFkWhEYsjDE/ONbZpj1jgIenbUeJd7jPUimiu7RBGwwMCvSs+zNCKpYCd/1pZuVAghGN2JmTAOU971/HojzscwQ1mBo+AxF8K2H2eQun/gQPPyj5CgtraFIJT0/IFCXlmjCPUO4PbzWIAWZ7h8MPezGneTfYRMtKF2snzKmz3IXxHg0ilj2i8DEz64p2op44kPWtPe9J2qHiR01STYEEE1lSHELzbdoN20SSlgCZgErDZTZATwXMFWtmu7kt2qZxdiLkoH41uuYObYi3k15zGY2UvMvrdA6J8DG242gmgDidkZXccfgPCBvyyQBgqYozKLmQGpho1w==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AS8PR04MB7879.eurprd04.prod.outlook.com (2603:10a6:20b:2a4::19) with
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from SI2PR03MB5786.apcprd03.prod.outlook.com (2603:1096:4:150::10)
+ by SEYPR03MB7892.apcprd03.prod.outlook.com (2603:1096:101:166::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
- 2024 10:06:40 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 10:06:40 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Cc: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	quic_bjorande@quicinc.com,
-	geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org,
-	arnd@arndb.de,
-	nfraprado@collabora.com,
-	marex@denx.de
-Subject: [PATCH v6 6/7] arm64: dts: imx8mp-evk: Add NXP LVDS to HDMI adapter cards
-Date: Tue, 12 Nov 2024 18:05:46 +0800
-Message-Id: <20241112100547.2908497-7-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112100547.2908497-1-victor.liu@nxp.com>
-References: <20241112100547.2908497-1-victor.liu@nxp.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.25; Tue, 12 Nov
+ 2024 10:06:38 +0000
+Received: from SI2PR03MB5786.apcprd03.prod.outlook.com
+ ([fe80::3f37:cacc:420b:9b86]) by SI2PR03MB5786.apcprd03.prod.outlook.com
+ ([fe80::3f37:cacc:420b:9b86%3]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 10:06:38 +0000
+Message-ID: <f8c3b6e7-2f5d-493e-8254-2a27623f0d2e@amlogic.com>
+Date: Tue, 12 Nov 2024 18:05:58 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
+ <20241004133953.494445-1-jbrunet@baylibre.com>
+ <07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
+ <1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
+ <85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
+ <1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
+ <5eb12197-330c-4f55-82f7-d13ea458ba43@amlogic.com>
+ <1j4j4c3l2n.fsf@starbuckisacylon.baylibre.com>
+From: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <1j4j4c3l2n.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0025.apcprd02.prod.outlook.com
- (2603:1096:3:18::13) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+X-ClientProxiedBy: SI2PR01CA0002.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::21) To SI2PR03MB5786.apcprd03.prod.outlook.com
+ (2603:1096:4:150::10)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,483 +75,206 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB7879:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89a6e98b-9895-4b90-9ae1-08dd0301b3ee
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: SI2PR03MB5786:EE_|SEYPR03MB7892:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66480c75-284c-4ca5-5189-08dd0301b267
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?k/Q6DPlNLfcfh0LSancEgO5zDncCxFWNyGdhpiZ2/zQiPGQMJARW0l0d21oi?=
- =?us-ascii?Q?6NC6lvtsVNHoMk/mbSEPN3nQ1fXgM19eu7BPdl0XgkshaPP48Mg9zHV+Nsu/?=
- =?us-ascii?Q?Va7TcTP0KASQmGmmr9bz+8TJyZaSx2T3b/57pIWSgtORghoRazuaIVFC/glT?=
- =?us-ascii?Q?G5+ws4bgmQatVAQwSpX1u/c7KraTweum6syqqNwFbj5mgVFGBm5RuiTl8Z0p?=
- =?us-ascii?Q?YKIxR2E5O3x8lbSUtcgHtD095uUzO1Q5r7amky/1uEUgFxoK4aK3IXzJW68N?=
- =?us-ascii?Q?pRHi3EulpTnlplEFUCSq1go8Py2AX2WSpLqWMKqPpSI90hdUm+J+63Q+FvjY?=
- =?us-ascii?Q?VAXEFijQF41huQ4Sa7bjTvjzMTQ/2sIKilKxGTVv7yXL//hfC9C6z4upVUft?=
- =?us-ascii?Q?cI7TqfEwBbRiqtoUu3yL5KZLT84uxd0hQrveSFzRbgYk0+T7jKBYyJW8ER2X?=
- =?us-ascii?Q?f+FNwoa4zPt7Cwl2mL5eFW3OQkbmMPN9OGB3yQ3354AhZfZSDKpHTX8PbLQf?=
- =?us-ascii?Q?TRgVmOy5tP88tJhLimqndHYSR/l3EbViFq9gPGuLNJ52uMjH2tPvTUPN5AUC?=
- =?us-ascii?Q?EJXIXFzQ07YEtJuwXVhtTixtoNbbJBk3dxWD39DJmx0wgJue9LwqPin+IevO?=
- =?us-ascii?Q?JDrbPxXhMAx8YBaiu8C/xMf3CrGQLruJrEtf8qDj51RTepwTOYl3DV2ve9HP?=
- =?us-ascii?Q?LUMURcEyOvxtcESjHnIbkm4SK1H4DIXgDlhpeVJHFISwccE8VK6wxR3e3WKV?=
- =?us-ascii?Q?DwP9vhr6FVr8Sl4o/ON3hBWZPOT4vEWB8IqPAdLXKXWLI6rtd/A8dfFUA/TX?=
- =?us-ascii?Q?TqIsf4xucf7P/NOivPp+gn1k41jNUwBukWNSUy0ByrQBLs+Sy3qvHDfPtReQ?=
- =?us-ascii?Q?2Tb7oQo/vfxXu62ukZFXMj/1XnQZAvPhumOSCZG4DWYyUjz41GNP6pNyjGt2?=
- =?us-ascii?Q?HPtU74wF1VRTnCiIdUDb292L8XOTxQAXjaKoccjJNroUAZEiPE8FzPUXdEmf?=
- =?us-ascii?Q?mPjbJXkAb0rlMvmka1rU4MSQ25h9Qrvkc0St6s28BJofL6sW/XyuQZitQgqj?=
- =?us-ascii?Q?vOhJ9Gy1COurAo2ali3KOaBSTChuiqsPQrTN8yzOLnNt4IchHScvE3XX4Z8z?=
- =?us-ascii?Q?qrDL7NCbVWJfkFA++1IcwwgTIvxMYXs4NzJGhkPumlqNIGWhjQEkDkw8azFh?=
- =?us-ascii?Q?6/i3Xf0MRr5JeFO0IWjLGcOn/5U5BWvMkBhXTQiEgSKDmMImCCjItV0GJjeM?=
- =?us-ascii?Q?/qWrK4YYXfv2sF1Il1T7MFWgadUxDQ84/WFyAIXeBCFd0xXqF2k5dt4vKK8Q?=
- =?us-ascii?Q?ndywsxwqWtfBHZ/nizfLyDnB3E7PnZt+KPWlw57RbY0UX5eXpuRpU2P2uB8F?=
- =?us-ascii?Q?9EH+q2scZy5/3qaj+5z6QQHrUhXX?=
+	=?utf-8?B?UjhwRGRqbjdXeXJvUDJlVEM2MjdVNVVoRStUVml6eVcybWJKWWdFWWZmaTdF?=
+ =?utf-8?B?YzNxQXBUeFBsOXlXdGVUUkZQS2g2eDN5NWZoSkM1MXBkZERUaVhhNjY1M1hS?=
+ =?utf-8?B?SVg0cE42OHVpQ1NDSjhEQXVkdHcxUWY5ZnFYdzdxMWhLM2hvSkVKT1FIUTNi?=
+ =?utf-8?B?cklVL01xVm1jN0xCWWJJU2dsYzNxU0ZYeG4xYlowVzRzR2xOcmZoRndReXow?=
+ =?utf-8?B?cEwvZjJ3ZHpuc1dJamRmb1RwMGJVWTYwOWQ5REd6RVhYN3ByVk9JSDYwcTVk?=
+ =?utf-8?B?bWJ3YWUyYU9QdXVKZWY3ODJpRDBxZjlYVlI0U1J2M0lxeVpyVStGT3VDbEk2?=
+ =?utf-8?B?QW9NK01Nd2lhbm5ZdnIvS1dFaUNqZjdDZGk5My9jZTVPZFZ3VmJSdXJMUU41?=
+ =?utf-8?B?b3I2d2czNHpQeFFudmluQXZJSG8rMUw5ZXVNaDUzWEpNZmhIYnBKM1dhcllY?=
+ =?utf-8?B?cTM4UnRyVGpubjkvV0dsZGV5SjlHQnRrZ0NQdDdhSGdoT3c3MVdITERXSXht?=
+ =?utf-8?B?TFNuZTRiMUpMbmprY1pGd1lqalVIbWs1RUhHeXRrOTZsTFJTWFR6bWNrMGRs?=
+ =?utf-8?B?ZXFiVDlVSEdJRStkRVAveStiaWZiczNUL1c2SW9HRllzcGVqKzJqaWdUMHFy?=
+ =?utf-8?B?U1A5YmZDQVpxbEp3U092UkJjV2tRY251WENCd0F2ai94aWFndDRPVzZOL0pU?=
+ =?utf-8?B?NFI3MlpaWXNNMUQvNm1qYW5XV2hqVGFxNnZmUXFiakdCVTR1eGlEbkszTk1i?=
+ =?utf-8?B?U1hwQ05SZys2bVlPTlhaZW5XcFdOWnNQK010WU14bUJSZjBTOFhPa0pabUF3?=
+ =?utf-8?B?bmJweHNOenhMMnY0V1Yvdld3ekx3TjFIRzArSVE5MVZHS2RnTkdhemt3aU83?=
+ =?utf-8?B?UU9iZlIvM21pK0lBaVVkWUFxUGgzd1lqNFBEYm1aMGYzZnV6NFJHZHNVS3Q1?=
+ =?utf-8?B?Nnc3TUk3cDN3YzZINGdkRmJ3cjNTRlBncWFLT0RoZ2hpdjc3QlRpL1ovZWRT?=
+ =?utf-8?B?dVc3TXVUWUJVc3NFTTgrTHkrbHJVUTNwallJa1IwaWZoNSthWGhqZGxKTFg4?=
+ =?utf-8?B?dVY3SGp4dGFWWGdIaGlNL3ZPZ0FYdnR0UnN3U0tERm5LMElKTVUvc3R5N0pX?=
+ =?utf-8?B?S0J4VzFwS2pNQmdRL1pBb1oxcGRaekFyRmdTdTVlUU9GNkc5MjExQitRN09M?=
+ =?utf-8?B?aWpad3pMK1ZPNDZlVzhNbTd5VTljWDd2Um5rcUxpR044VjVUc0dFOXBEQWFx?=
+ =?utf-8?B?ZWNCVGQ3MXIwTERTUUJ1YkhXRkZxaHV5NzFURjA5djhuN2x6QnMreHg3aHBD?=
+ =?utf-8?B?bHRjMEtMcFQwRVFSR2NFdUJoZHJncjdtQ29weTNmUllVU1ZsWGQ1UytoeVky?=
+ =?utf-8?B?QzJaejRnbFZIWjJpSUtuRENNbksybEJNRzA1TmRHNEZFYUp4TzNYM1NRK3BJ?=
+ =?utf-8?B?eWRIMDVSMkpJNjlqMEhPY1BSeDVLMWlHa0M0bEpUQ2VXMmJ2akwvb2xTLzFw?=
+ =?utf-8?B?K0FnQzNlQ09FazNRellsNjBBdE1TMnhMZ0FOeTRKeDlTUGZHaGFvY0ROVW1h?=
+ =?utf-8?B?UDJvblAxTUdYV2NJcjdsYUVpZWJTamJOYjVOcTBmM0lyWnZQZ3lycnJXV2dN?=
+ =?utf-8?B?OHQ0cWgxU05RK3hXTmw2b3FUZ1ZzdFpaOXE3YTRZckxMYnp3Y0hBS0k5OVBs?=
+ =?utf-8?B?K0UxdjZzendVSFBKSUkzaGdSbE4xaWNPR2Z5RWluUklCeVRuaGZYbEl5WGNU?=
+ =?utf-8?Q?cciV+gvX4FOPcJjLchrv1ARMP4myCtjZtvG/dL2?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR03MB5786.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?L4vdBXWNNOzs2t3TPhOI3imrIYTVYrDJDKrFLf9W0k3/9w7Aq8Q51GxOjQKp?=
- =?us-ascii?Q?EXHGkp9uZZHt+YEVMx9i04I2iyJJ66BWxOcmuNnKYytAQd6V7LzcRAI85Jb9?=
- =?us-ascii?Q?rlysOKH6DquUtXYi3vGQHxoFogf3uSujltUl5VGmUl5fZLGzSaHj7Lvuzkqy?=
- =?us-ascii?Q?CgUYuZjlwEOz0CfA1KHH5x9r7g2wWKNCNoj1AES2VMyQ/7qYA7TRdTekSfk9?=
- =?us-ascii?Q?7wCFdPw3BH3mb57Tkxqlb0P8cGMmKOHbuJjWYpdWiPB7PV6NMj8ieJt4xC2i?=
- =?us-ascii?Q?oRLiER7s7+FCLrrVTUDmWdyz4tHynCkHbZOYsCeSiJF/l6j8m11QRGnc15n6?=
- =?us-ascii?Q?01fI9NRXo1Fr+qQVAg9HXM4gYOUBTEkqj8SJY24b+7x6Jl2cHGEufshk5fB2?=
- =?us-ascii?Q?5rnGA86ppmRTMutPaQvBALq+F65oPcqWd63bhF9fOXoQWMEkqxkvvGoNJpCG?=
- =?us-ascii?Q?BTfn4ipyqfG4rX5BhiMbI9AOiaXC9qDpkyT3lJS3hIklEAiNWW8/fFLieijd?=
- =?us-ascii?Q?gV5a3KArRPq1xajWMx6n+MLzUZ0OPnJuIdvkUPzVesy3ApkTl3L2qi2VFvPz?=
- =?us-ascii?Q?Miw0KWhXc0nP6YtkeBfPTb8+8vBQCNgLGfKbRaQBhbfz6Zn1HuKsfBbH3rQc?=
- =?us-ascii?Q?LrYGbzLfv/cfxp3Eg5GmoKuBNt5sQJSoEZW/IPbNjAc9+YJOByOWn1dKgXNQ?=
- =?us-ascii?Q?JYXd9zLBkW01biQJGqdqfOKucqosEDbCBfOyWE/OhMJ9FEG1mcIppenhjyCj?=
- =?us-ascii?Q?OuOPO743yppCdGtnLpwC33eYLtzqmqqrzDkwqBPwJ1UZVwpVKiN7vTw6T6MN?=
- =?us-ascii?Q?uq8p30ER/kXk4gcFe3nAPsbyQ6tHksAy32/ioUybCW9AKYyl99MTEzevUuqy?=
- =?us-ascii?Q?KfCErAdIFqsTbTLhvK2XsNW2Afe47ksqgPdFc+c3HoRWSSkGimfrF3c1lv6o?=
- =?us-ascii?Q?Riv5yElktXenYMtQ/Z20pitTUt19GPDroqGr+kMJ2E1IZThuWCUMZaRzwuyu?=
- =?us-ascii?Q?Kra/n9uEiYKtd96BxAEgJ8x/M8x3L2MnWAwlERS6bCiowJ25yoFwn5xMss9j?=
- =?us-ascii?Q?q0JBXezaK0X8Pucu6c5EviSB0CMzybx2Hj2Cp0I5WOGg7w9yilWBPxJWbvIz?=
- =?us-ascii?Q?tOSJkR18Hu7r+qjX4PT38CbYrxZyNsysGhYL8DDzfk0OXEeGbrtENkY1FRmK?=
- =?us-ascii?Q?MPPvQnie8zjPu9sdaAUWWYOuSk2aAoLpP7RSMsqza8JV25cVnd2CKlI+TtGL?=
- =?us-ascii?Q?83K39qJUg2q3kZBnT/DkaIOE1tVzXcfkzvvrJ04URs8+/jOFGzpDCv9N2/GG?=
- =?us-ascii?Q?cgfCKTyB4lFg0J2/VP0tYqQeAH1Y53bpGyPjhNindqKVRYAE5Ja3HXTzIr74?=
- =?us-ascii?Q?+8pRc0iqi8qYlUAjMZ7lEYo9nKeS+1JanDRPPwFoBBBdDeTR4dsYvHalWhrU?=
- =?us-ascii?Q?Xbe30VLC/sDja5ejpfxzbPRCzEX59hdS+Hk74hHp6CWGDISxtzxmdxM4Mh2N?=
- =?us-ascii?Q?rZFi/EGxl+IbfaCdemCxVJgWl5iEbWg3yb14J386IPALE1oTQ4C9weSdLA66?=
- =?us-ascii?Q?AAjiYj06i/0u0sYV/JL6y4+mZ5ARFOVYkZ5j7TKf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89a6e98b-9895-4b90-9ae1-08dd0301b3ee
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+	=?utf-8?B?YmZ3OTZlMW5uSVFrNjF0eEdtdkZxakRWRmU1SEowcmp5ZkhJT2x3N05obXd4?=
+ =?utf-8?B?YzlPLzdaYnB1UW1ybkhqUUpHbzJtWXIxUnNXZDZKR3A5N0Jham1LNXZpemVO?=
+ =?utf-8?B?cnpsR053dzJYVlBFQW5SQVVSTnNCOGxURkpaYlcySURRRHJncEZ1cUpVVXY0?=
+ =?utf-8?B?WXg1ZzcyQ294ZFdsM016ZENSbEh6T2ZRblArRk5WRytZVHBTNjVpaFpVNXk0?=
+ =?utf-8?B?TDB1RzNBdVovTW03K3BabS8xY0tIRFhFcjJWWG9relp1K0d5OE5BZCtFaWVm?=
+ =?utf-8?B?dUpydVlzdFBZVWtOb1IrbDdLeXFWNEpMV01JZG9GdHdqTlZJWG5xS1dRMEE0?=
+ =?utf-8?B?bFc0U1c3aVczUzRrNk9DdXhZRmFEemw2NndLSTY1NXp6RTMzVWM0b0c2eVd4?=
+ =?utf-8?B?L3pkMTFWMXBkSWowNUZxT2FncTU2d2Izd3Z4cnJYM1hucVpGN3N0UjBNM2li?=
+ =?utf-8?B?T25jeWQrNkxDTmRTTUpSYUpxaVZpOG94RHdnVUdtYVp6WEo3V3N3YVBIOW44?=
+ =?utf-8?B?RW83SWJ3aFRWa1lPUWQ3R2g4Z1pZWWFvbUkyR1VFajRtV0hHRXZlV2pIcnd3?=
+ =?utf-8?B?T1VzbjhzdExnRVNlT3FKRWFnaTZ2NTc4emUwRDdOdHR4c1BYYUV1Q21rbEtu?=
+ =?utf-8?B?SUFFODQ4aml1WGxDNVp1alpzL1N5UmJhUTZOWDdvMzBsSXViNkR5eGN2WnZK?=
+ =?utf-8?B?UmFMQit1RUdwRzVaVlNYd094YTk5SzlmUGcvNDZUeDFRdWtLVHVXUVllMkdt?=
+ =?utf-8?B?dk96UVdBMkx0RXZORVZ1Szl0TFFFakpWRlh2MlNpaXhHaDZGUC85Mk9sYzY4?=
+ =?utf-8?B?UHRjNG82Tlk0WG1wbnNEd2ErS3lCN1NUZDZiSDJIenBxbUNEbmxLRytMYktq?=
+ =?utf-8?B?WTRqL2x3YzFyQ1N0Uk5mZkJlNStTQWVFeVg1WmJRZmp0TDZtMUxwa2dpWVRV?=
+ =?utf-8?B?ZHdLcFoza09ldVhvRUQ2MGVTUUUyd2twNllSUWtRdnRhQUZSRmwxcjdyODF1?=
+ =?utf-8?B?V2NVVCt6aHowSnBqZkg1cG56SzkyRFNKZ0pqQ05RMXpHQnY0ZW5rNjN3V1Qx?=
+ =?utf-8?B?NG02K0N2U3ZSY3U4cGNBK3M0VFJrL1NMVkM3Z05WcTJVZndhSmZFazlYL1gy?=
+ =?utf-8?B?RXRkQ3FlRlJMM2w1SnBYWVdacG1saDlkQ1pVbGZwME5jbFZJNWd3bmFZalZ3?=
+ =?utf-8?B?QlM5aldNa2YwamdFNFFVMWVxMklUKzNJakxWdVo2a01hWURhbEdjZWNhQ3Bw?=
+ =?utf-8?B?TU92Vy82cU1mSzFJRll3Q1lNTTh0Zjl0KytHbXlKL3I3dmJva0VqdXlRSE9v?=
+ =?utf-8?B?N0JaWStBNTFJTXpHbk9FVTUvN2t4MlV0S2ZPd3BJZ0NXRlYyczZJUG9xb0xU?=
+ =?utf-8?B?YmE5TUw2NXlja3ZjUkoybjVseS9lK3NWSXVHbGpTb3F2aEp5eHQwUVFWRHdS?=
+ =?utf-8?B?eEs0b2ZFZ1Z2UzE3eGRKUUpOOWlrRVpBZUF4WXRwZ3dnMFQrSlVpQVNuQ1Ix?=
+ =?utf-8?B?bndVZ1g4YzRnOHpjU3ROMmUrRmx5d2xwQUc5eFJtRHRmaVllV0NtbUdnRURQ?=
+ =?utf-8?B?bFVsNW1ybjg1RDFKMXdaTkR4eVcxQm0vdUpCZ25zb1QrdzlOOVNWcC80aWds?=
+ =?utf-8?B?UFhZY2pxZnBNZnBkNlZoeUpFRVJyK2pZT1VkUDNzUWpCRmZob0N0UzV3R2FG?=
+ =?utf-8?B?b1NLdUFFQ042S01PV25rSldrSlUvT1VjVGlia0EyMjE5dldENUVFT29kaEc0?=
+ =?utf-8?B?SmZ0SUNMeElETE9CVUd4K1YxSmQ0NFpDeXpESzVoMldWTkh5ak1oaENjTU0v?=
+ =?utf-8?B?ZTk5djhLUDRNb01jemR2K3NWTTRPTk1QaXBTcjRUMWlTV0pqdHhVNXBjUFl6?=
+ =?utf-8?B?TVpGT0p6Q0ZyVGZFWnJxeEhvMnJkU0xrV1d3cEQ2U2xmdzBES3JGQTFxekVX?=
+ =?utf-8?B?NkpjTDJwT211aTk3UmtpUXRpdms5ZjdycCsyM2w2Rm8rc2ExYjJhL3RDNmpy?=
+ =?utf-8?B?amtrQ1U1N3Z2RENJRERXRjBFQi9iS1NzUjNhZzZWK3RFUGw4cjM3SGN5dFZQ?=
+ =?utf-8?B?ZnZEL1MvSDlxWldOQWd0QS9KK1YzWUpHVzhZSnhJUXJ3alZaYmJGalkyRmFK?=
+ =?utf-8?Q?K2n0angc3NXoDi7P+9iHBQM9L?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66480c75-284c-4ca5-5189-08dd0301b267
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR03MB5786.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 10:06:40.7493
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 10:06:38.0999
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fmchHrMDVGUfepJ3hziRa35MbUgPYbMmuaL75hFWOn19aHnbDeg+Lo1YSqPMHdOc0f1U8VKS9yeIxfffx0P+sA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7879
+X-MS-Exchange-CrossTenant-UserPrincipalName: iwXPwkSUxe7PQTjsdkP+jwNWs+E8nW7MMxQZz3Iu4FePoCYdoReAAjEHhxiTWQHFL4wLuMjClxIeHKxV2Cf7Ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7892
 
-One ITE IT6263 LVDS to HDMI converter is populated on NXP IMX-LVDS-HDMI
-and IMX-DLVDS-HDMI adapter cards.
 
-Card IMX-LVDS-HDMI supports single LVDS link(IT6263 link1).
-Card IMX-DLVDS-HDMI supports dual LVDS links(IT6263 link1 and link2).
+On 11/12/2024 4:36 PM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+>
+> On Fri 08 Nov 2024 at 19:49, Chuan Liu <chuan.liu@amlogic.com> wrote:
+>
+>> On 11/8/2024 5:59 PM, Jerome Brunet wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
+>>>
+>>>>>>> -       if (core->flags & CLK_IGNORE_UNUSED)
+>>>>>>> +       /*
+>>>>>>> +        * If the parent is disabled but the gate is open, we should sanitize
+>>>>>>> +        * the situation. This will avoid an unexpected enable of the clock as
+>>>>>>> +        * soon as the parent is enabled, without control of CCF.
+>>>>>>> +        *
+>>>>>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
+>>>>>>> +        * forcefully enabling a whole part of the subtree.  Just let the
+>>>>>>> +        * situation resolve it self on the first enable of the clock
+>>>>>>> +        */
+>>>>>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
+>>>> At first, I couldn't grasp the logic behind the 'return' here. Now it's
+>>>> clear. This approach is equivalent to completely giving up on
+>>>> handling clocks with CLK_OPS_PARENT_ENABLE feature in
+>>>> clk_disable_unused_subtree().
 
-Only one card can be enabled with one i.MX8MP EVK.
+Referring to the situation of 'clk_c' below, combined with your
+previous explanation:
 
-Add dedicated overlays to support the below four connections:
-1) imx8mp-evk-lvds0-imx-lvds-hdmi.dtso:
-   i.MX8MP EVK LVDS0 connector <=> LVDS adapter card J6(IT6263 link1)
+* Knowing the parent status allows to safely disable clocks with
+   CLK_OPS_PARENT_ENABLE when the parent is enabled. Otherwise it means
+   that, while the clock is not gated it is effectively disabled. Turning on
+   the parents to sanitize the sitation would bring back our initial
+   problem, so just let it sanitize itself when the clock gets used.
 
-2) imx8mp-evk-lvds1-imx-lvds-hdmi.dtso:
-   i.MX8MP EVK LVDS1 connector <=> LVDS adapter card J6(IT6263 link1)
+Do you mean 'clk_c' cases should be sanitized before clk_disable_unused()
+(such as during driver probe(), etc.)? Dropped in clk_disable_unused_subtree()?
+This is actually my biggest confusion.🙁
 
-3) imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso:
-   i.MX8MP EVK LVDS0 connector <=> DLVDS adapter card channel0(IT6263 link1)
-   i.MX8MP EVK LVDS1 connector <=> DLVDS adapter card channel1(IT6263 link2)
-
-4) imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtso:
-   i.MX8MP EVK LVDS1 connector <=> DLVDS adapter card channel0(IT6263 link1)
-   i.MX8MP EVK LVDS0 connector <=> DLVDS adapter card channel1(IT6263 link2)
-
-Part links:
-https://www.nxp.com/part/IMX-LVDS-HDMI
-https://www.nxp.com/part/IMX-DLVDS-HDMI
-
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
-v6:
-* No change.
-
-v5:
-* No change.
-
-v4:
-* Rebase this patch upon next-20241025 to resolve conflicts when apply.
-
-v3:
-* Use data-mapping DT property instead of ite,lvds-link-num-data-lanes.
-  (Dmitry, Biju)
-
-v2:
-* Add ite,lvds-link-num-data-lanes properties.
-
- arch/arm64/boot/dts/freescale/Makefile        |  8 ++++
- .../imx8mp-evk-imx-lvds-hdmi-common.dtsi      | 29 ++++++++++++
- ...8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso | 44 +++++++++++++++++++
- ...imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi | 43 ++++++++++++++++++
- .../imx8mp-evk-lvds0-imx-lvds-hdmi.dtso       | 28 ++++++++++++
- ...8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtso | 44 +++++++++++++++++++
- ...imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi | 43 ++++++++++++++++++
- .../imx8mp-evk-lvds1-imx-lvds-hdmi.dtso       | 28 ++++++++++++
- arch/arm64/boot/dts/freescale/imx8mp-evk.dts  |  6 +++
- 9 files changed, 273 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-imx-lvds-hdmi-common.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi.dtso
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 42e6482a31cb..e2e828b352e7 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -211,8 +211,16 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-ivy.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-mallow.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-yavia.dtb
- 
-+imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0-dtbs += imx8mp-evk.dtb imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtbo
-+imx8mp-evk-lvds0-imx-lvds-hdmi-dtbs += imx8mp-evk.dtb imx8mp-evk-lvds0-imx-lvds-hdmi.dtbo
-+imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0-dtbs += imx8mp-evk.dtb imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtbo
-+imx8mp-evk-lvds1-imx-lvds-hdmi-dtbs += imx8mp-evk.dtb imx8mp-evk-lvds1-imx-lvds-hdmi.dtbo
- imx8mp-evk-mx8-dlvds-lcd1-dtbs += imx8mp-evk.dtb imx8mp-evk-mx8-dlvds-lcd1.dtbo
- imx8mp-evk-pcie-ep-dtbs += imx8mp-evk.dtb imx8mp-evk-pcie-ep.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-lvds0-imx-lvds-hdmi.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-lvds1-imx-lvds-hdmi.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-mx8-dlvds-lcd1.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-pcie-ep.dtb
- 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-imx-lvds-hdmi-common.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-evk-imx-lvds-hdmi-common.dtsi
-new file mode 100644
-index 000000000000..44b30e9b3fde
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-imx-lvds-hdmi-common.dtsi
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&{/} {
-+	lvds-hdmi-connector {
-+		compatible = "hdmi-connector";
-+		label = "J2";
-+		type = "a";
-+
-+		port {
-+			lvds2hdmi_connector_in: endpoint {
-+				remote-endpoint = <&it6263_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&lcdif2 {
-+	status = "okay";
-+};
-+
-+&lvds_bridge {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
-new file mode 100644
-index 000000000000..4008d2fd36d6
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include "imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi"
-+
-+&it6263 {
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+			dual-lvds-odd-pixels;
-+
-+			it6263_lvds_link1: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch0>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dual-lvds-even-pixels;
-+
-+			it6263_lvds_link2: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch1>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds_bridge {
-+	ports {
-+		port@1 {
-+			ldb_lvds_ch0: endpoint {
-+				remote-endpoint = <&it6263_lvds_link1>;
-+			};
-+		};
-+
-+		port@2 {
-+			ldb_lvds_ch1: endpoint {
-+				remote-endpoint = <&it6263_lvds_link2>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi
-new file mode 100644
-index 000000000000..6eae7477abf8
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "imx8mp-evk-imx-lvds-hdmi-common.dtsi"
-+
-+&i2c2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	it6263: hdmi@4c {
-+		compatible = "ite,it6263";
-+		reg = <0x4c>;
-+		data-mapping = "jeida-24";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lvds_en>;
-+		reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-+		ivdd-supply = <&reg_buck5>;
-+		ovdd-supply = <&reg_vext_3v3>;
-+		txavcc18-supply = <&reg_buck5>;
-+		txavcc33-supply = <&reg_vext_3v3>;
-+		pvcc1-supply = <&reg_buck5>;
-+		pvcc2-supply = <&reg_buck5>;
-+		avcc-supply = <&reg_vext_3v3>;
-+		anvdd-supply = <&reg_buck5>;
-+		apvdd-supply = <&reg_buck5>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				it6263_out: endpoint {
-+					remote-endpoint = <&lvds2hdmi_connector_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi.dtso b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi.dtso
-new file mode 100644
-index 000000000000..9e11f261ad13
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-lvds-hdmi.dtso
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include "imx8mp-evk-lvds0-imx-lvds-hdmi-common.dtsi"
-+
-+&it6263 {
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			it6263_lvds_link1: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch0>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds_bridge {
-+	ports {
-+		port@1 {
-+			ldb_lvds_ch0: endpoint {
-+				remote-endpoint = <&it6263_lvds_link1>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtso b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtso
-new file mode 100644
-index 000000000000..af2e73e36a1b
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-dlvds-hdmi-channel0.dtso
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include "imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi"
-+
-+&it6263 {
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+			dual-lvds-even-pixels;
-+
-+			it6263_lvds_link1: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch1>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dual-lvds-odd-pixels;
-+
-+			it6263_lvds_link2: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch0>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds_bridge {
-+	ports {
-+		port@1 {
-+			ldb_lvds_ch0: endpoint {
-+				remote-endpoint = <&it6263_lvds_link2>;
-+			};
-+		};
-+
-+		port@2 {
-+			ldb_lvds_ch1: endpoint {
-+				remote-endpoint = <&it6263_lvds_link1>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi
-new file mode 100644
-index 000000000000..8cc9d361c2a4
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "imx8mp-evk-imx-lvds-hdmi-common.dtsi"
-+
-+&i2c3 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	it6263: hdmi@4c {
-+		compatible = "ite,it6263";
-+		reg = <0x4c>;
-+		data-mapping = "jeida-24";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lvds_en>;
-+		reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-+		ivdd-supply = <&reg_buck5>;
-+		ovdd-supply = <&reg_vext_3v3>;
-+		txavcc18-supply = <&reg_buck5>;
-+		txavcc33-supply = <&reg_vext_3v3>;
-+		pvcc1-supply = <&reg_buck5>;
-+		pvcc2-supply = <&reg_buck5>;
-+		avcc-supply = <&reg_vext_3v3>;
-+		anvdd-supply = <&reg_buck5>;
-+		apvdd-supply = <&reg_buck5>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				it6263_out: endpoint {
-+					remote-endpoint = <&lvds2hdmi_connector_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi.dtso b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi.dtso
-new file mode 100644
-index 000000000000..527a893a71b2
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds1-imx-lvds-hdmi.dtso
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include "imx8mp-evk-lvds1-imx-lvds-hdmi-common.dtsi"
-+
-+&it6263 {
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			it6263_lvds_link1: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch1>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds_bridge {
-+	ports {
-+		port@2 {
-+			ldb_lvds_ch1: endpoint {
-+				remote-endpoint = <&it6263_lvds_link1>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index d26930f1a9e9..68e12a752edd 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-@@ -938,6 +938,12 @@ MX8MP_IOMUXC_SPDIF_TX__I2C5_SCL         0x400001c2
- 		>;
- 	};
- 
-+	pinctrl_lvds_en: lvdsengrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10	0x1c0
-+		>;
-+	};
-+
- 	pinctrl_pcie0: pcie0grp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_I2C4_SCL__PCIE_CLKREQ_B	0x60 /* open drain, pull up */
--- 
-2.34.1
-
+>>>>
+>>> No. It's handled correctly as long as the tree is in coherent state.
+>>>
+>>> What is not done anymore is fixing up an inconsistent tree, by this I
+>>> mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
+>>> own registers but has its parent disabled.
+>>>
+>>> In that particular case, clk_disable_unused_subtree() won't be turning on
+>>> everything to properly disable that one clock. That is the root cause of
+>>> the problem you reported initially. The clock is disabled anyway.
+>>>
+>>> Every other case are properly handled (at least I think).
+>> name              en_sts            flags
+>> clk_a                1          CLK_IGNORE_UNUSED
+>>      clk_b            0                0
+>>          clk_c        1         CLK_OPS_PARENT_ENABLE
+>>
+>> Based on the above case:
+>> 1. When 'clk_c' is configured with CLK_OPS_PARENT_ENABLE, disabling
+>> 'clk_c' requires enabling 'clk_b' first (disabling 'clk_c' before
+>> disabling 'clk_b'). How can to ensure that during the period of
+>> disabling 'clk_c', 'clk_b' remains enabled?
+> That's perfect example of incoherent state.
+> How can 'clk_c' be enabled if its parent is disable. That makes no
+> sense, so there is no point enabling a whole subtree for this IMO.
+>
+>> 2. 'clk_c' is not configured with CLK_IGNORE_UNUSED, it should be
+>> disabled later. However, here it goes to a 'goto' statement and then
+>> return 'false', ultimately resulting in 'clk_c' not being disabled?
+> We've discussed that 2 times already. This discussion is going in
+> circles now.
+>
+>>>>>>>                     goto unlock_out;
+>>>>>>>
+>>>>>>>             /*
+>>>>>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>>>>>>>
+>>>>>>>      unlock_out:
+>>>>>>>             clk_enable_unlock(flags);
+>>>>>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+>>>>>>> -               clk_core_disable_unprepare(core->parent);
+>>>>>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
+>>>>>>>      }
+>>>>>>>
+>>>>>>>      static bool clk_ignore_unused __initdata;
+>>>>>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
+>>>>>>>             clk_prepare_lock();
+>>>>>>>
+>>>>>>>             hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>>>>> -               clk_disable_unused_subtree(core);
+>>>>>>> +               clk_disable_unused_subtree(core, true);
+>>>>>>>
+>>>>>>>             hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>>>>> -               clk_disable_unused_subtree(core);
+>>>>>>> +               clk_disable_unused_subtree(core, true);
+>>>>>>>
+>>>>>>>             hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>>>>> -               clk_unprepare_unused_subtree(core);
+>>>>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>>>>
+>>>>>>>             hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>>>>> -               clk_unprepare_unused_subtree(core);
+>>>>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>>>>
+>>>>>>>             clk_prepare_unlock();
+>>>>>>>
+>>>>>>> --
+>>>>>>> 2.45.2
+>>>>>>>
+>>>>> --
+>>>>> Jerome
+>>> --
+>>> Jerome
+> --
+> Jerome
