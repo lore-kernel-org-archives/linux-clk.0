@@ -1,98 +1,80 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D698219E31
-	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 21:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B969C21A6E0;
+	Tue, 12 Nov 2024 22:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731448437; cv=none; b=DkxL+bb/MxNrQ8EzuKi+I1Ov5MzMskOBJKSB08nOqG8ktB19qreCIiElu95SpmXkPGGN2c0O+g+Ic5EX8YSNVXMoVTsT0d+x5/ItQe1ZWX8z+yp3RazqSpKZIl4cIUvJk9KaLLKBhjKboUVn411VRLoPNZEVC4710dZ+lVxWE+s=
+	t=1731449012; cv=none; b=pl+d4nllM0H5gAYa84NB2AC95PrJHK1pe2aDCJCiABhDdRMiOz5jJYTLJV+ghL+7/S/s4+M9+0TeN5XMDjomiZrqOx0KYPxxR3z1rz+y2GTW9wv36ALLc1O6SlNqAUSw18ogHupMsf6UYPL+DyaNMWn6RlFGRI8qc3rkJDc3C6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731448437; c=relaxed/simple;
-	bh=/zzi+Sm3IfKmepVKvgtCUfNCm1ncLHSViZHXYjpxNjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DM33xm1hKVOcwVDbJPz8GJuonGVJL3p9vB/c25hu8lAJ0KqfsEqRNwoX+IlJwZmA7Dz6N1eIY45a3W7kMbAzVxdDJCNFBez9nyfqHfUrrqCvAuus386ZzlrtNf3FuaGTsArLL/p/iwQAig/Z1XflYx6dVT2+wZXDanbRvoqljxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=quIs6HjE; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1731449012; c=relaxed/simple;
+	bh=LbSbP0PRiua8I5A7NUpgiKh8EyVozbYXD8yG9qaleYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JqKfU/6axXluI+0EAHK3p7bgv4eBRlMKT0hxO3MXkaLJ01a0IIqpQMlUuFrP9o6ggV1aR2tfXbl4/lRRXm9g6jdaLZwMOxR8HxSQQsIcC9EFC9AQQlXei4VjqeFtz7VQf4/UmScylQYlWYgz2dzZ7UhwMq5yNoZO6R5YJPJqpB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQrr8D9/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="quIs6HjE"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 248EB894B2;
-	Tue, 12 Nov 2024 22:53:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1731448427;
-	bh=pNcgNPQUS5w0e2xKLQNX2Q32FCLJRV3b3KQ0eTd0R5k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=quIs6HjEPhWbHZZO5Fd0JVWw1y6YB8bAEzDt8tGe+NJuQNCS6lFXVGmzSTlGie/dD
-	 Aw7u6x7DNAO2JMpLJU3hMsYz3SGP5KJUW5QTjPTKScP4e6WSpw7pgopn1rtihPiR2a
-	 sqSCcVNR+REIoEsFApgikIteur/9Phrc7SwC2p5Tiv8kIS8a3cdla6WFlkC14TP9LX
-	 EcaupzPEX71WNKHgHBILE/4leawvI+jYM8gOb1b6vd7+MZiAGlEsvEYwZz9Npv+sL7
-	 Q5T2t5tksanbPr6RCIEaUoqewzJu79OtjKRoBA/hX+L1WR+YH8Ohvm5VBf7f0g4Lr0
-	 m028EPCXj75eA==
-Message-ID: <0a62d3b7-b435-40cf-9795-2fb4ea80a693@denx.de>
-Date: Tue, 12 Nov 2024 22:27:09 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQrr8D9/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616F0C4CED7;
+	Tue, 12 Nov 2024 22:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731449012;
+	bh=LbSbP0PRiua8I5A7NUpgiKh8EyVozbYXD8yG9qaleYc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TQrr8D9/ccepWOov6APxDpo8MxmxPr/DRrJz6vzNhh0BP4mBp909G6uABj/M3xpi3
+	 JCNbHn1V3wJaLt73fldERN7xNf4/0KIJUJlTIfe0rovLLT6NQofCRpp1QEV5RB8axv
+	 puy2Z7Nl078qmxAVVIqghlgOthIB6HrtZs0+gavGgyF9Ju0+3hg2gacWE4HWZ0adG4
+	 rikBxTNlLITPYbnHYJ11viqSYutnlLOvVOzclnedYU7ZDDcrTZ94zmZ1mKGRWlYQZr
+	 /t2PclcUqnX7/D/a1uYjrf+NqGHlP9ns+rGnXDAfad8BnfymFBJi5U4n6mF3aaoYKq
+	 xWRSvVeBpIVhg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Varadarajan Narayanan <quic_varada@quicinc.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: remove unused data from gcc-ipq5424.c
+Date: Tue, 12 Nov 2024 16:03:25 -0600
+Message-ID: <173144900024.331728.6908534437712999754.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241111103258.3336183-1-arnd@kernel.org>
+References: <20241111103258.3336183-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: imx: pll14xx: Extend dynamic rates support to
- PLL1416x
-To: Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20241111214516.208820-1-marex@denx.de>
- <e58af9fa-f1b2-4d1b-8ca3-d256a7dee4ec@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <e58af9fa-f1b2-4d1b-8ca3-d256a7dee4ec@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 11/12/24 4:26 AM, Liu Ying wrote:
-> On 11/12/2024, Marek Vasut wrote:
->> The pll1416x PLL so far only supports rates from a rate table passed
->> during initialization. Calculating PLL settings dynamically helps in
->> case e.g. multiple video outputs are used and they each need their own
->> separate source of accurate pixel clock on i.MX8MP. In that case, e.g.
->> PLL1416x PLL3 can be used as another Video PLL for another output.
+
+On Mon, 11 Nov 2024 11:32:51 +0100, Arnd Bergmann wrote:
+> The newly added driver causes a warnings when enabling -Wunused-const-variables:
 > 
-> Just want to point out that i.MX8MP audio AXI clock is supposed to be
-> derived from PLL3 to run at 600MHz in nominal mode(i.MX8MP data sheet
-> specifies that rate).  So, if a particular i.MX8MP system doesn't use
-> audio, PLL3 can be a free clock source to be used by an i.MX8MP display
-> pipeline, otherwise, video_pll1_out is supposed to be shared by i.MX8MP
-> MIPI DSI and LVDS display pipelines.
+> drivers/clk/qcom/gcc-ipq5424.c:1064:30: error: 'ftbl_gcc_q6_axi_clk_src' defined but not used [-Werror=unused-const-variable=]
+>  1064 | static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
+>       |                              ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/qcom/gcc-ipq5424.c:957:30: error: 'ftbl_gcc_qpic_clk_src' defined but not used [-Werror=unused-const-variable=]
+>   957 | static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
+>       |                              ^~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/qcom/gcc-ipq5424.c:497:30: error: 'ftbl_gcc_qupv3_2x_core_clk_src' defined but not used [-Werror=unused-const-variable=]
+>   497 | static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
+>       |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> [...]
 
-In the end, I started using Audio PLL and Video PLL PLL1443x for 
-accurate pixel clock generation and PLL3 to feed CLKOUTn where the less 
-accurate PLL3 PLL1416x is just fine.
+Applied, thanks!
 
-With the disparate display requirements, sharing one Video PLL for 
-multiple outputs like DSI and LVDS is unrealistic. (maybe the next SoC 
-should have some nice PLL per display output)
+[1/1] clk: qcom: remove unused data from gcc-ipq5424.c
+      commit: f1f49cc505bc998d7c13e5a518d027419a21fbae
 
-> Currently, IMX8MP_CLK_AUDIO_AXI_SRC's parent is assigned to
-> IMX8MP_SYS_PLL1_800M in imx8mp.dtsi.  Although it's rate is assigned
-> to 600MHz, the actual rate is 400MHz according to clk_summary because
-> the divider cannot find a ratio to reach 600MHz from the clock source
-> running at 800MHz.  Looking at imx8mp_audio_axi_sels[], sys_pll3_out
-> is the only free/appropriate clock source that can derive 600MHz audio
-> AXI clock from.  Maybe, someone will change IMX8MP_CLK_AUDIO_AXI_SRC's
-> parent to IMX8MP_SYS_PLL3_OUT ?
-Is the 400 MHz sufficient for audio-axi or does it have some negative 
-performance impact ? If the later, better send a patch to use PLL3 for 
-audio-axi .
-
-Thanks !
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
