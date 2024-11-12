@@ -1,136 +1,95 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FE3217451
-	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 22:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22553219C8A;
+	Tue, 12 Nov 2024 23:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731451334; cv=none; b=F8QH7YjD7YbPqtyXnZw7sw3niwUFc13y5fGeh/NBnwQfcKxCHiBTb1KjLTfAHurEXzj0oZYBSIPQjul7Bshp31i7u5Rgiv7rPFxEIOKlGo2V3lF+ynuyvkJd4lZ8+qcOEeA2ejBN84YWOoCPEZTSgimYS/6Zn0TCcSoSLOQfeJI=
+	t=1731452404; cv=none; b=ACwbtbq3m71GJ1CkQ0zLZb3ey/BHehp5JTEBRV8r1sZniqIBfndBKYmx0MU4tKHodA9ICVQzHHNrKzMdyxvbviB+NfyQx+1rDCFL1KAJA6PxpUAOFuLe24+bgvyGyibH9oD7UEUGOjLljys/mJXzpt58GFZC46fSPTE7YcMQelU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731451334; c=relaxed/simple;
-	bh=p4bNIOCWxann+dITwn0U5cyWEoibozwMHdKvNT5h2Xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fG+V3BhC1tLNSSDL0+Qavxs0G/9IF6yQA5+MjoRsOpvAhXOsgO6MLLoGmS7Rv6p2WzygCzpOS0NfEyIQIji+FrdkWL2f7Srt3a3wuHoJyPMKzDB8+AXa/2QnoU9T0ERV82uvp2EnSp6LAYQDgfgzGLe8Y22kDRF0c1ZSEsuZJvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g1Yf5QN7; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1731452404; c=relaxed/simple;
+	bh=bu+NuDLqu8Tt0GAr7mWfQkamqMac6Nu0S59nZNhC4yg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t/DYiS+naDWYhBin6IIKpvgbbBPgOdeZZfHzBWqk/rMBjhLUhk9sxPTHO2/Pko1bKfSJKGT/A99WdyyGMLnpFdniPI6qjdOpgCN+vK9aQoq98dC6JN0v5Tyykx60VVqB5bJLkYmlW2T7XhdJ081p3ZZjBVpsDpxhdXkzVJAucBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cyo2CS+1; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g1Yf5QN7"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 74B4D1BF203;
-	Tue, 12 Nov 2024 22:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731451329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmaF3NlubL54V5+IH9CvKXoD4K1OzTYmIrjW7EvYFc4=;
-	b=g1Yf5QN7KzgUfBDkeE+lIR43of5g55rveEuBu5jG3b72qHRRuUgy56D7vqigFMz3WYgoSg
-	DTA9HvjfHzSFlqGF+5LF8LIOSX4F0pWK/bZU/nBLBX1KEKo71mo7mQNkVdsopehW4K3BeV
-	WkBpBVTAXTWKXT1ZUyKStlFoDhanRWNXSkaYbVD5S8GOnxOJktSpcODI0almPAz22CSpam
-	uAyiydzOB5ZWokmaUFkclZ5OUAdMdl7kNeaPeREh84Xa3Do3XJa31gu3ehX6gILtBkt+tN
-	WiIgeLW8E0xuMEIJzl4PtEPSOQ0VKITwBKo+sp/yUO0z7jocdyLx3jjZfYblJg==
-Date: Tue, 12 Nov 2024 23:42:06 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Marek Vasut <marex@denx.de>, Abel Vesa <abelvesa@kernel.org>
-Cc: linux-clk@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, "Lukas F
- . Hartmann" <lukas@mntmn.com>, Michael Turquette <mturquette@baylibre.com>,
- Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo
- <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- imx@lists.linux.dev, kernel@dh-electronics.com,
- linux-arm-kernel@lists.infradead.org, Miquel Raynal
- <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
- reconfigure parent rate
-Message-ID: <20241112234206.558d5d5e@booty>
-In-Reply-To: <20240531202648.277078-1-marex@denx.de>
-References: <20240531202648.277078-1-marex@denx.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cyo2CS+1"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso4743793a12.3;
+        Tue, 12 Nov 2024 15:00:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731452402; x=1732057202; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nxGJtOVUJmjNsQkVksMPVX9avuA5j35JW80Om/0yQ/g=;
+        b=cyo2CS+1fUrmgUp6SnfnnsUpNsBLoXVYDw3Xl/0jWiI8neIvzvXSg/TxTUtSb+B00A
+         0l37xxuy6WibWEM+VfLtjQbsCwDAer4a+XonWjxsdSwSfehw8CKnB1xHRqWyJw/Q8SPb
+         OUjEVrw9T4Mw3f2eogDuv2ZgYc3CKwfm26504be87zqctl4Rh6tINPfOCPiaqyTPP/ib
+         1YGc7V0Tjgf4rOFxLFfg5qQ/Xuitxq017TnXRsPeayhVHc/Nv1EJ96D/qA9XBFXWKWfN
+         Mu0PagYRIC5IuBh3N28aIrGnojB1ohxuTw4XLcKhHSZQyihc8OX2EKtrSzAVBnRP14yp
+         lu3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731452402; x=1732057202;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nxGJtOVUJmjNsQkVksMPVX9avuA5j35JW80Om/0yQ/g=;
+        b=iIXPvdbGx5BfNy1ubZprlBN0FyeoBsYh+hUarKFrSQ+mYbLDHf9JttURpDF+SE5StF
+         ghWV+gdcfmhRzETNgzXf77k7xrPQeXeIOguYthoGR2UO9w270wYbx2qMbqTLNISoVuVN
+         q/V8x2pcrgpOVAsr+fWd42DqaIzDVbIsaSyqMIWgLv1e+qn7QUi1Dzv7nQ8rRWeYx950
+         t2RsWyAEUTZ/tdCPB+fCcMD86oYVUEvBOJzybaAqTNVLDDbvpmpUnNyBj46omy4M2nvn
+         nj33J4HWfRtGGh/gyz9rHl35dkk/xEL5oT2klHUuUzUffIjMNe0S5tLmaC3zTtOMbo+g
+         as8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhvy8ob5W+zyLc/yyT5mUPnhiPwsF67YzEb1mHkYSEXi/FWuUjckEpq42pu6V1uAx6W+BOPvi1SPV8KHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeBI8MCGib+Apz2fq0CyH4CfSVUhJLqIBKnaZv73cdBOeUTCc5
+	Vb9pqekCCTxWyrXS4ZNmq82IcHBFcPEv6dATtbErLO/aVF0q/tv3
+X-Google-Smtp-Source: AGHT+IGlM/Q+IQEStypGsVSlg3I78WcVmnJA9w1qxDsSZpR0/YSwvVax8dEdRzV6/Pbqi/o7IFm0HQ==
+X-Received: by 2002:a05:6a20:9188:b0:1db:ee36:8fb4 with SMTP id adf61e73a8af0-1dc228961dcmr28335661637.3.1731452402310;
+        Tue, 12 Nov 2024 15:00:02 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f67f079sm11129563a12.85.2024.11.12.15.00.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 15:00:01 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH] clk:sophgo:clk-cv18xx-pll
+Date: Tue, 12 Nov 2024 14:58:32 -0800
+Message-ID: <20241112225832.3518658-1-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Marek, Abel,
+Initializing the val variable of type u32 as it was not initialized.
 
-+Cc: Miqu=C3=A8l
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+---
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, 31 May 2024 22:26:26 +0200
-Marek Vasut <marex@denx.de> wrote:
+diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
+index 29e24098bf5f..04a0419cab4e 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
++++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
+@@ -87,7 +87,7 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 
+ static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	u32 val;
++	u32 val = 0;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+ 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+-- 
+2.46.1
 
-> The media_disp[12]_pix clock supply LCDIFv3 pixel clock output. These
-> clocks are usually the only downstream clock from Video PLL on i.MX8MP.
-> Allow these clocks to reconfigure the Video PLL, as that results in
-> accurate pixel clock. If the Video PLL is not reconfigured, the pixel
-> clock accuracy is low.
->=20
-> Signed-off-by: Marek Vasut <marex@denx.de>
-
-I'm afraid I just found this patch broke my previously working setup
-with a panel connected on the LDB. As we are at 6.12-rc7, and this
-patch got merged at 6.12-rc1, I'm reporting it immediately after a
-quick preliminary analysis in order to hopefully find an appropriate
-solution before 6.12.
-
-Problem: with this patch, my LDB picture is horizontally shrunk by a
-factor of about 7, measured empirically.
-
-Configuration:
- - lcdif1 and lcdif3 disabled
- - a single-channel LVDS panel on lcdif2/ldb channel 2
-
-So this problem looks like different from the one reported by Adam as
-there a single panel and still it stops working.
-
-The relevant rates in my case are as follows:
-
-                            video_pll1   media_disp2_pix    media_ldb
-                          ~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~
-at boot, panel still off: 1.039.500.000    1.039.500.000  1.039.500.000
-requested LDB clock:                                        503.300.000
-before this patch:        1.039.500.000       74.250.000    519.750.000
-after this patch:            71.900.000       71.900.000     71.900.000
-
-Previously, the resulting media_ldb clock was not precise, but close
-enough. Now the value is clearly too wrong to work. Also (but my memory
-might be wrong here) there must be a ratio of 7 between media_ldb and
-media_disp2_pix, which has become 1 after this patch, and this perhaps
-explains the shrink factor of about 7.
-
-I double checked the rate that fsl_ldb_atomic_enable() is requesting at
-[0] and it is 503.3 MHz with and without the patch. This is proved by
-the logged line, before and after the patch:
-
-fsl-ldb 32ec0000.blk-ctrl:bridge@5c: Configured LDB clock (519750000 Hz) do=
-es not match requested LVDS clock: 503300000 Hz
-fsl-ldb 32ec0000.blk-ctrl:bridge@5c: Configured LDB clock (71900000 Hz) doe=
-s not match requested LVDS clock: 503300000 Hz
-
-My preliminary conclusions:
-
- * it looks like a bug leading to an incorrect computation of the
-   video_pll1 rate when media_ldb is requesting its rate
- * the bug does not look like due to this patch, but exposed by it
-
-I still have no idea how the video_pll1 gets configured to such a low
-value when its child needs a 500+ MHz clock.
-
-Any clues or ideas would be welcome.
-
-Best regards,
-Luca
-
-[0] https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/gpu/drm/bridg=
-e/fsl-ldb.c#L180
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
