@@ -1,93 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5B22123FD;
-	Tue, 12 Nov 2024 17:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C8218594
+	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 21:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432593; cv=none; b=LdGQGyall74LLRFYQEN/szqSZFiyNESzW0rIlMUDqN+NNJdVBYs9bDecVmmBn/XS8dpEMu8iaXr+z/8y6ZCJvEqoOd1agt+bSdXatSVeNf3sf9P89AXOdG537PrqbaTl6ujWB7Q9uQhby99qEGn4bLeT0I/RraV4xWZjWB5uX6A=
+	t=1731448436; cv=none; b=erRnzMeC3e61YH04qLDmJifLI+lREGolV08gDNUBxvP7D9JhlqP6NUX/aO2xaQJlRKYz+yF9DpFkvQKg5m9ANaiFbieJ26El7Qcs3E0morj+Xkx5AUY3sZomwK+k8mF/thUhjSLlXvKlcrXcpzW5SrtDgwDbVc6ThXjUkboHiuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432593; c=relaxed/simple;
-	bh=KtuHsvBkXKyb4/BS1eV+SQXhdNFVGLr8frMmDpXLEes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XSNbQctPUkKTLb1bzguXJUj9OvAqcxQLNNds3SlNyeKwK/f7PciGblSODvgntkF099VwcCYIr6q+yAXYwd+1OTXO3JZMR3xT5/+Qu7OmU1CJeZcWiewpz/WW9OXvJLSVdfR98GIIY7qxBlKzuXOKLVeYFMIixdBo9qSMJD1yAbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIwU9wI/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731448436; c=relaxed/simple;
+	bh=KY6UvDC+rHCkI1qvwSukESBYdVYYpDOETX7ZNHTNL0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d78sFQOv7h6dmC1yPIB9XCtiajuP3beVE3hBq0GjrNTkQZOOZL7kwxqfpf+QgFK9/XKFfYaIlY7vJ5a1Gw+ITJoFm2zFSKj340J22Ks78ZG7nvSUJxRr2TpQmnPQ/W5phLLYnG7BqYopJwVEbyyFWchZWWVBlafMvXnMfu0HNTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=DYhbbW9b; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIwU9wI/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09109C4CECD;
-	Tue, 12 Nov 2024 17:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731432593;
-	bh=KtuHsvBkXKyb4/BS1eV+SQXhdNFVGLr8frMmDpXLEes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIwU9wI/63KEVgKlLB5MPJHrTlsfAgH2RsYY7yKRUbcanp83jQjDd0ro1ZLLICxyo
-	 I2ZoEO6Lll2jXNrlfxCh5MpkCD+hc8uHdRULw5dvtAF2N73qY/Dq7jBFk0quc6ghh8
-	 JovS+ZBSKjIyvJdM1e1rKhlv+gtw4kNZV3s7Cp7IrUvIr5+eOvXRltASoAWm5dnV8+
-	 MMyxs9ZjjF2PputR56oBSXNxOAwRoBjB2yGtmQ5mbXLc4GMDRXwjeo9sOKzgq1Vw7n
-	 z6d8EhY8rcpKGQ9g9iWEacB1krNiB3CI/Q7/bqgYHpHb9+GWR2YHr9KaLrCKr4e1n9
-	 k9Va/SiGaZxyw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tAui3-000000007ti-2RDk;
-	Tue, 12 Nov 2024 18:29:48 +0100
-Date: Tue, 12 Nov 2024 18:29:47 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v8 5/5] arm64: dts: qcom: x1e80100: Add support for PCIe3
- on x1e80100
-Message-ID: <ZzOQi0PpRZYts-B0@hovoldconsulting.com>
-References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
- <20241101030902.579789-6-quic_qianyu@quicinc.com>
- <ZyjbrLEn8oSJjaZN@hovoldconsulting.com>
- <de5f40ab-90b7-4c75-b981-dd5824650660@quicinc.com>
- <c558f9eb-d190-4b77-b5a3-7af6b7de68d8@quicinc.com>
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="DYhbbW9b"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 5C666894AF;
+	Tue, 12 Nov 2024 22:53:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1731448426;
+	bh=vSWFFVrhqf/uEWA5kxeVnqIffQKLBFsrKHLm4H10upk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DYhbbW9bP3SG0q5TSaVFXxoc66aesxy6lKisoicD889CMEzntYV2HAJwBtkqIxBu5
+	 GdrsmlQQTI8X2SlErW6lR4Ne3nfl/fsSWSgNVP2lZiXS19pEKSGTC823RD6Eqvd7SP
+	 tHnDpEBr6+2H1UTQygKxVTPUUszq+DY+xpUfO++9iHX0Ltsht8CAqwIZ/gCw82unXv
+	 l6E/+am0zNZrPct3vBEUtHiG1U2KjGOnlxubjt1rL0/3dcREOpiljBmBz0AKRjF8qe
+	 lWfmJLdYCiFSeXHUHN3XrR9wpA/R+ulZ+d9YoViewlWeM3/8ZVKdfk6qy9V/yU/6wB
+	 HxzxIK40mq8RQ==
+Message-ID: <638cdca0-05ba-4b2b-8a92-3041247c2c7f@denx.de>
+Date: Tue, 12 Nov 2024 21:00:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: zynqmp: Work around broken DT GPU node
+To: "Gajjar, Parth" <parth.gajjar@amd.com>,
+ "Sagar, Vishal" <vishal.sagar@amd.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ "Simek, Michal" <michal.simek@amd.com>, Stephen Boyd <sboyd@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "Allagadapa, Varunkumar" <varunkumar.allagadapa@amd.com>
+References: <20241031170015.55243-1-marex@denx.de>
+ <dd4cb501-5fc7-4430-9ffc-9c8c910df425@amd.com>
+ <4ee8d8a5-ec00-4b11-a7bc-4137e1982218@denx.de>
+ <SJ0PR12MB69656066F70FC40E4A5A93B499592@SJ0PR12MB6965.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <SJ0PR12MB69656066F70FC40E4A5A93B499592@SJ0PR12MB6965.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c558f9eb-d190-4b77-b5a3-7af6b7de68d8@quicinc.com>
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Mon, Nov 11, 2024 at 11:44:17AM +0800, Qiang Yu wrote:
-> On 11/5/2024 1:28 PM, Qiang Yu wrote:
-> > On 11/4/2024 10:35 PM, Johan Hovold wrote:
-> >> On Thu, Oct 31, 2024 at 08:09:02PM -0700, Qiang Yu wrote:
+On 11/12/24 2:17 PM, Gajjar, Parth wrote:
+> Hi Marek,
 
-> >>> +            ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 
-> >>> 0x100000>,
-> >>> +                 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 
-> >>> 0x3d00000>,
+Hello everyone,
 
-> >> Can you double check the size here so that it is indeed correct and not
-> >> just copied from the other nodes which initially got it wrong:
-> >>
-> >>     https://lore.kernel.org/lkml/20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org/
+> We tried running glmark2-es2-wayland application with mali and lima driver and didn’t observed any hang. We will also check with kmscube application.
+> 
+> Attaching logs for clock summary.
+> 
+> Did you try with mali or lima driver?
 
-> BTW, regions of PCIe6a, PCIe4, PCIe5 are 64MB, 32MB, 32MB, respectively.
-> Why range size is set to 0x1d00000 for PCIe6a, any issue is reported on 
-> PCIe6a?
+I only use lima driver.
 
-Thanks for checking. It seems the patch linked to above was broken for
-PCIe6a then.
+Can you share full boot log of this machine , including the firmware 
+blob versions ? Is it maybe possible some newer blob(s) enable both PP0 
+and PP1 internally to work around this clocking issue in Linux ?
 
-We did see PCIe5 probe breaking due to the overlap with PCIe4 but the
-patch predates PCIe5 support being posted and merged so it was probably
-just based on inspection.
-
-Could you send a fix for PCIe6a?
-
-Johan
+-- 
+Best regards,
+Marek Vasut
