@@ -1,129 +1,483 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8E820DD46;
-	Tue, 12 Nov 2024 08:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84B920B1FD
+	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 09:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731401151; cv=none; b=cRBaijq4B0wsj8Fv+k7J97/ukZmsKjH+uWjTLloX1N8vyFFdIOxltVxrrhqpyl6fedFYhtRHWiupD9BFxSnUBd0zILtqgKod5xD2YUReyUeiyY89VaQWs3uO3N3GCflc6GUaoVDN2hpTFEA8jdUq1Kzg5cSs1ssEWwxpwnrK/n4=
+	t=1731402070; cv=none; b=ajJGR3AYdLZNlWcXOqoeQC2reApI7/jSCn4lFHIJAh76GByYo/IRlzCEYPjVTZupLm63ey3aB9FDIoLuVeG2m3iVLtmDuMIsPR613Yy+lNO6LjEsg/6Pi+wDcIuvBP2eNGcyffcTgubH9WNo64NOPLbwXNE0ONr/OcHsQwUFOX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731401151; c=relaxed/simple;
-	bh=uDAGSQXAl4RyThWZstFF+HdLRWA2cofSdWvYJ4UhEHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Vn2zU/1VyHEt3EZGhLAwuCBaM6HdLy/aPnu/a5tfdiLeqDwAmYgredqG+1Zj8W0ydgyGWuTSmXqxR7ZlUR0rHyUnFoMf2MvVr8sjBf90BU/TBJsxL/LPJk0vSLaAkfGmdp6OFQ/Mm2YWjhv4xZcvju6myGZOpH/DvbwAj0X6K80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MnZSFvts; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1731402070; c=relaxed/simple;
+	bh=lPyhS75oIC9NDM7hUCht3GA6I6tW3RmI5uxpOYRU3/s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rmTwQsaT/IlxV8ElEabJH2GM/S+8XqQrD4UMyeiDrVRs3zrvKNvC6e2eplHUylJaX70nr8CTruQiu4m1dL+ryOafeaRK1S2L7Ynw18aAl3NRtBEpH+XZ/RDoXGBmeb1GKV8HflKM52K3mEkUi+0g4yMUIqs+obCuU6IeVK4JKhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tlVvixYM; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MnZSFvts"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AC7imq2022161;
-	Tue, 12 Nov 2024 08:45:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d3Kx6A+HxO0PSsyRbb6sZh4Cj7WhwVYvP1jvwzlaQPo=; b=MnZSFvtsrDSXZ7km
-	4Aa7TFCUupI/zlza8UxquoA3drr0ZKqL/vHvtLJwLKS1y7rr5KySAqAU3MUWKNtu
-	b6xa+GSPxCVYkO3jLrlRuSFNBKcQUuE+sSRLlgNKoZSCEbwAWxBE9JsmZaJzOosX
-	71GT+d1aiWyP2opmqoEVY8owRXqtdFd6A8TVAXDvONPIPTa3FtvAi2vKKyfgLqef
-	uM+mZL1WC3InQV0IG5PfdNhuhI+ajCPNgCkJpfFFeHtU/pOpW8ySWCSuwcYkCHjM
-	/Me7IyjzZFZtYJtJ8KxvU8KrOMoO5RtVdUWwAm+KtxCUjyzCXEHCUtUmlRSrFU5o
-	FQmnhw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60b9yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 08:45:43 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC8jglg015679
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 08:45:42 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 00:45:38 -0800
-Message-ID: <9297bd0e-f972-41fb-82ab-a4428a64135b@quicinc.com>
-Date: Tue, 12 Nov 2024 14:15:35 +0530
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tlVvixYM"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431695fa98bso42409165e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 01:01:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731402066; x=1732006866; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3+TtAQsVgXDwctL5sBfUVcDPzwKUnoyfz2xxI/nsWjs=;
+        b=tlVvixYMnsacY/YhoGH8hURulz8/TWruSXsjHEAfgmY/BPefXpz7kOkCDcs7fKkzO7
+         a+eYifKQ5dXKr8byqyqPIVOo0GXsIBp0nCKaC41tdhpuXZrs5oigZ4O+M7ZKpSPGnsNu
+         23sbwWjVq20i3zAiQ1bwUobCjStBKrFNFxlSdxKuKXobgiOAw1Xg3CCSloPLOXFLonOc
+         jeI5WoOTXxJIvevJC/zraQOWAyTpnodMmq9dOwR36Slx7n8NQj4zd57NhBY4YiDt6jpq
+         cHwQj+XsVfIyFiz9VkFOiUKVOXpp21eeCM0TKu3an/VKxzeRMmSOS9LfGgkPGYxU5L2m
+         b7Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731402066; x=1732006866;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3+TtAQsVgXDwctL5sBfUVcDPzwKUnoyfz2xxI/nsWjs=;
+        b=TlM2FPUlE+TVWF598QNf4d4aKgoi7/XDST807u8iT9qRDbEEs7+SSVhUmIYc7hpoEu
+         S6PUJNzV3EUGPhQf3SFRLtASqFjym6cVQpdz5vFTN3ihtz2mnAc/7rBAtUXPx7D81QGB
+         yvMf4zXtaQ2l9j9xNnR/OXlesiMT6TJNOj6sPclRDw6iOVlY8+LazaQRsVY/KHURZ9eo
+         Va45OeLeMEV5SchLXPvJTLgulKbI+zKomA8NmFu3DsvFOM/xziFi1sOjh1u17waz5nUb
+         gdELbuo0cH/qsYr+Tj05G6W4y1xi+XiSJlUETRu3ZL6wn0wKUolf1a+w92kJwLSbUvzu
+         66Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdTMSdlSPQWEasrIRlVV6syJet5shHkyDzNJInXMenOpoY3xuAt8HXaCBMlPlAWSw6FbxNmPtF2Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM2S0a30cNK7Ms1VMCC6a8k5JnGNlt0/+JYgTI0mfXfleWIBoe
+	kSyJOslJkz/xFcSxL8l3DzjWSmEz0bMP+kso6yb2V257b3fx+nSbxYKUFCWB98c=
+X-Google-Smtp-Source: AGHT+IEA5cfAoCh5Q8+PAz96uymNYJ6xunb785oDm9AKsMKAvU0zwCKrZWHgfv7ZSJ9ItrqqJvbouA==
+X-Received: by 2002:a05:600c:1f94:b0:431:5ab3:d28d with SMTP id 5b1f17b1804b1-432b75036eemr135759245e9.9.1731402066108;
+        Tue, 12 Nov 2024 01:01:06 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:50f9:1df6:c2b9:a468])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b054bab8sm199950805e9.16.2024.11.12.01.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 01:01:05 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  Jian Hu <jian.hu@amlogic.com>,
+  Dmitry Rokosov <ddrokosov@sberdevices.ru>,  Yu Tu <yu.tu@amlogic.com>,
+  chuan.liu@amlogic.com,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: Fix children of ro_clk may be tampered with
+In-Reply-To: <20241111-fix_childclk_of_roclk_has_been_tampered_with-v1-1-f8c1b6ffdcb0@amlogic.com>
+	(Chuan Liu via's message of "Mon, 11 Nov 2024 17:37:28 +0800")
+References: <20241111-fix_childclk_of_roclk_has_been_tampered_with-v1-1-f8c1b6ffdcb0@amlogic.com>
+Date: Tue, 12 Nov 2024 10:01:05 +0100
+Message-ID: <1jr07g25da.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: remove unused data from gcc-ipq5424.c
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Arnd Bergmann
-	<arnd@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Varadarajan
- Narayanan" <quic_varada@quicinc.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        Manikanta Mylavarapu
-	<quic_mmanikan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241111103258.3336183-1-arnd@kernel.org>
- <r2se3v53h7pnx527bgsswpkjhkqx2csrwlxpzai7l6lanbjjty@e4nljcvgors3>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <r2se3v53h7pnx527bgsswpkjhkqx2csrwlxpzai7l6lanbjjty@e4nljcvgors3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RGwt30XiaRFeSePHvkwoFPjpyTH2omO0
-X-Proofpoint-ORIG-GUID: RGwt30XiaRFeSePHvkwoFPjpyTH2omO0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=926 adultscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1011 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411120070
+Content-Type: text/plain
 
-Hi Arnd,
+On Mon 11 Nov 2024 at 17:37, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-On 11/11/2024 6:11 PM, Dmitry Baryshkov wrote:
-> On Mon, Nov 11, 2024 at 11:32:51AM +0100, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> The newly added driver causes a warnings when enabling -Wunused-const-variables:
->>
->> drivers/clk/qcom/gcc-ipq5424.c:1064:30: error: 'ftbl_gcc_q6_axi_clk_src' defined but not used [-Werror=unused-const-variable=]
->>   1064 | static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
->>        |                              ^~~~~~~~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-ipq5424.c:957:30: error: 'ftbl_gcc_qpic_clk_src' defined but not used [-Werror=unused-const-variable=]
->>    957 | static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
->>        |                              ^~~~~~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-ipq5424.c:497:30: error: 'ftbl_gcc_qupv3_2x_core_clk_src' defined but not used [-Werror=unused-const-variable=]
->>    497 | static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
->>        |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>
->> In order to hopefully enable this warning by default in the future,
->> remove the data for now. If it gets used in the future, it can
->> trivially get added back.
->>
->> Fixes: 21b5d5a4a311 ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>   drivers/clk/qcom/gcc-ipq5424.c | 18 ------------------
->>   1 file changed, 18 deletions(-)
->>
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> When setting the rate of a clock using clk_regmap_divider_ro_ops, the
+> rate of its children may be tampered with.
+>
+> Fixes: 84af914404db ("clk: meson: a1: add Amlogic A1 Peripherals clock controller driver")
+> Fixes: 87173557d2f6 ("clk: meson: clk-pll: remove od parameters")
+> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> Fixes: 64aa7008e957 ("clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller")
+> Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
+> Fixes: e787c9c55eda ("clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver")
 
-I already posted a patch here for fixing this [1]
+Think about stable trying to pick up this ... 
 
-[1] 
-https://lore.kernel.org/lkml/xvkvhu3qvlsjnlkiinbm6wguttpozyvlyy5mbbjcpg7vnhrp7w@trjvrm2zpylk/
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+> Background: During the execution of clk_set_rate(), the function 
+> clk_core_round_rate_nolock() is called to calculate the matching rate
+> and save it to 'core->new_rate'. At the same time, it recalculates and
+> updates its 'child->newrate'. Finally, clk_change_rate() is called to
+> set all 'new_rates'.
+>
+> In clk_regmap_divider_ro_ops, there is an implementation of
+> 'determine_rate'. If a clock (name as 'ro_divider') that references
+> clk_regmap_divider_ro_ops is not configured with CLK_DIVIDER_READ_ONLY,
+> it will result in the calculation of an incorrect core->new_rate and
+> potentially tamper with child->newrate, ultimately leading to the
+> corruption of the rate for 'ro_divider's' children.
 
-Regards,
-  Sricharan
+A slitghtly more simple way to put it, is that ro_ops have the regular
+determine_rate function, so it can actually alter the rate.
+
+That should be in the commit description, not where it will be dropped.
+
+Requiring the flag in addition to ro_ops in redundant.
+Plus, it is not the platform that should be fixed but the divider
+driver.
+
+Just put the content of the CLK_DIVIDER_READ_ONLY if clause into a
+function, clk_regmap_div_ro_determine_rate(), and use it
+- directly for ro_ops
+- under if clause for regular ops.
+
+> ---
+>  drivers/clk/meson/a1-peripherals.c |  2 ++
+>  drivers/clk/meson/axg.c            |  5 +++--
+>  drivers/clk/meson/g12a.c           | 23 ++++++++++++++---------
+>  drivers/clk/meson/gxbb.c           | 18 ++++++++++--------
+>  drivers/clk/meson/meson8-ddr.c     |  2 +-
+>  drivers/clk/meson/meson8b.c        |  4 +++-
+>  drivers/clk/meson/s4-peripherals.c |  2 ++
+>  drivers/clk/meson/s4-pll.c         |  2 +-
+>  8 files changed, 36 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 7aa6abb2eb1f..eedf7c2bf970 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -266,6 +266,7 @@ static struct clk_regmap sys_b_div = {
+>  		.offset = SYS_CLK_CTRL0,
+>  		.shift = 16,
+>  		.width = 10,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sys_b_div",
+> @@ -314,6 +315,7 @@ static struct clk_regmap sys_a_div = {
+>  		.offset = SYS_CLK_CTRL0,
+>  		.shift = 0,
+>  		.width = 10,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sys_a_div",
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 1b08daf579b2..eb86c4d10046 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -71,7 +71,7 @@ static struct clk_regmap axg_fixed_pll = {
+>  		.offset = HHI_MPLL_CNTL,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "fixed_pll",
+> @@ -130,7 +130,7 @@ static struct clk_regmap axg_sys_pll = {
+>  		.offset = HHI_SYS_PLL_CNTL,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sys_pll",
+> @@ -471,6 +471,7 @@ static struct clk_regmap axg_mpll_prediv = {
+>  		.offset = HHI_MPLL_CNTL5,
+>  		.shift = 12,
+>  		.width = 1,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mpll_prediv",
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index d3539fe9f7af..c7c9fdfd021f 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -76,7 +76,7 @@ static struct clk_regmap g12a_fixed_pll = {
+>  		.offset = HHI_FIX_PLL_CNTL0,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "fixed_pll",
+> @@ -443,6 +443,7 @@ static struct clk_regmap g12a_cpu_clk_mux1_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL0,
+>  		.shift = 20,
+>  		.width = 6,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_clk_dyn1_div",
+> @@ -627,6 +628,7 @@ static struct clk_regmap g12b_cpub_clk_mux1_div = {
+>  		.offset = HHI_SYS_CPUB_CLK_CNTL,
+>  		.shift = 20,
+>  		.width = 6,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpub_clk_dyn1_div",
+> @@ -746,6 +748,7 @@ static struct clk_regmap sm1_dsu_clk_mux0_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL5,
+>  		.shift = 4,
+>  		.width = 6,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "dsu_clk_dyn0_div",
+> @@ -781,6 +784,7 @@ static struct clk_regmap sm1_dsu_clk_mux1_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL5,
+>  		.shift = 20,
+>  		.width = 6,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "dsu_clk_dyn1_div",
+> @@ -1198,7 +1202,7 @@ static struct clk_regmap g12a_cpu_clk_apb_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL1,
+>  		.shift = 3,
+>  		.width = 3,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_clk_apb_div",
+> @@ -1232,7 +1236,7 @@ static struct clk_regmap g12a_cpu_clk_atb_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL1,
+>  		.shift = 6,
+>  		.width = 3,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_clk_atb_div",
+> @@ -1266,7 +1270,7 @@ static struct clk_regmap g12a_cpu_clk_axi_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL1,
+>  		.shift = 9,
+>  		.width = 3,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_clk_axi_div",
+> @@ -1300,7 +1304,7 @@ static struct clk_regmap g12a_cpu_clk_trace_div = {
+>  		.offset = HHI_SYS_CPU_CLK_CNTL1,
+>  		.shift = 20,
+>  		.width = 3,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_clk_trace_div",
+> @@ -1736,7 +1740,7 @@ static struct clk_regmap sm1_gp1_pll = {
+>  		.shift = 16,
+>  		.width = 3,
+>  		.flags = (CLK_DIVIDER_POWER_OF_TWO |
+> -			  CLK_DIVIDER_ROUND_CLOSEST),
+> +			  CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_READ_ONLY),
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "gp1_pll",
+> @@ -1999,7 +2003,7 @@ static struct clk_regmap g12a_hdmi_pll_od = {
+>  		.offset = HHI_HDMI_PLL_CNTL0,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll_od",
+> @@ -2017,7 +2021,7 @@ static struct clk_regmap g12a_hdmi_pll_od2 = {
+>  		.offset = HHI_HDMI_PLL_CNTL0,
+>  		.shift = 18,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll_od2",
+> @@ -2035,7 +2039,7 @@ static struct clk_regmap g12a_hdmi_pll = {
+>  		.offset = HHI_HDMI_PLL_CNTL0,
+>  		.shift = 20,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll",
+> @@ -4048,6 +4052,7 @@ static struct clk_regmap g12a_ts_div = {
+>  		.offset = HHI_TS_CLK_CNTL,
+>  		.shift = 0,
+>  		.width = 8,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "ts_div",
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 262c318edbd5..e2b419100e0c 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -131,7 +131,7 @@ static struct clk_regmap gxbb_fixed_pll = {
+>  		.offset = HHI_MPLL_CNTL,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "fixed_pll",
+> @@ -267,7 +267,7 @@ static struct clk_regmap gxbb_hdmi_pll_od = {
+>  		.offset = HHI_HDMI_PLL_CNTL2,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll_od",
+> @@ -285,7 +285,7 @@ static struct clk_regmap gxbb_hdmi_pll_od2 = {
+>  		.offset = HHI_HDMI_PLL_CNTL2,
+>  		.shift = 22,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll_od2",
+> @@ -303,7 +303,7 @@ static struct clk_regmap gxbb_hdmi_pll = {
+>  		.offset = HHI_HDMI_PLL_CNTL2,
+>  		.shift = 18,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll",
+> @@ -321,7 +321,7 @@ static struct clk_regmap gxl_hdmi_pll_od = {
+>  		.offset = HHI_HDMI_PLL_CNTL + 8,
+>  		.shift = 21,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll_od",
+> @@ -339,7 +339,7 @@ static struct clk_regmap gxl_hdmi_pll_od2 = {
+>  		.offset = HHI_HDMI_PLL_CNTL + 8,
+>  		.shift = 23,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll_od2",
+> @@ -357,7 +357,7 @@ static struct clk_regmap gxl_hdmi_pll = {
+>  		.offset = HHI_HDMI_PLL_CNTL + 8,
+>  		.shift = 19,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "hdmi_pll",
+> @@ -413,7 +413,7 @@ static struct clk_regmap gxbb_sys_pll = {
+>  		.offset = HHI_SYS_PLL_CNTL,
+>  		.shift = 10,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sys_pll",
+> @@ -703,6 +703,7 @@ static struct clk_regmap gxbb_mpll_prediv = {
+>  		.offset = HHI_MPLL_CNTL5,
+>  		.shift = 12,
+>  		.width = 1,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mpll_prediv",
+> @@ -911,6 +912,7 @@ static struct clk_regmap gxbb_mpeg_clk_div = {
+>  		.offset = HHI_MPEG_CLK_CNTL,
+>  		.shift = 0,
+>  		.width = 7,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mpeg_clk_div",
+> diff --git a/drivers/clk/meson/meson8-ddr.c b/drivers/clk/meson/meson8-ddr.c
+> index 4b73ea244b63..950f323072fb 100644
+> --- a/drivers/clk/meson/meson8-ddr.c
+> +++ b/drivers/clk/meson/meson8-ddr.c
+> @@ -65,7 +65,7 @@ static struct clk_regmap meson8_ddr_pll = {
+>  		.offset = AM_DDR_PLL_CNTL,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "ddr_pll",
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index e4b474c5f86c..4dba11c0ab7e 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -104,7 +104,7 @@ static struct clk_regmap meson8b_fixed_pll = {
+>  		.offset = HHI_MPLL_CNTL,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "fixed_pll",
+> @@ -457,6 +457,7 @@ static struct clk_regmap meson8b_mpll_prediv = {
+>  		.offset = HHI_MPLL_CNTL5,
+>  		.shift = 12,
+>  		.width = 1,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mpll_prediv",
+> @@ -635,6 +636,7 @@ static struct clk_regmap meson8b_mpeg_clk_div = {
+>  		.offset = HHI_MPEG_CLK_CNTL,
+>  		.shift = 0,
+>  		.width = 7,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mpeg_clk_div",
+> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+> index c930cf0614a0..470431355e25 100644
+> --- a/drivers/clk/meson/s4-peripherals.c
+> +++ b/drivers/clk/meson/s4-peripherals.c
+> @@ -175,6 +175,7 @@ static struct clk_regmap s4_sysclk_b_div = {
+>  		.offset = CLKCTRL_SYS_CLK_CTRL0,
+>  		.shift = 16,
+>  		.width = 10,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sysclk_b_div",
+> @@ -221,6 +222,7 @@ static struct clk_regmap s4_sysclk_a_div = {
+>  		.offset = CLKCTRL_SYS_CLK_CTRL0,
+>  		.shift = 0,
+>  		.width = 10,
+> +		.flags = CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sysclk_a_div",
+> diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+> index d8e621e79428..5dc051afc06a 100644
+> --- a/drivers/clk/meson/s4-pll.c
+> +++ b/drivers/clk/meson/s4-pll.c
+> @@ -72,7 +72,7 @@ static struct clk_regmap s4_fixed_pll = {
+>  		.offset = ANACTRL_FIXPLL_CTRL0,
+>  		.shift = 16,
+>  		.width = 2,
+> -		.flags = CLK_DIVIDER_POWER_OF_TWO,
+> +		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "fixed_pll",
+>
+> ---
+> base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
+> change-id: 20241111-fix_childclk_of_roclk_has_been_tampered_with-61dbcc623746
+>
+> Best regards,
+
+-- 
+Jerome
