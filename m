@@ -1,254 +1,139 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048EA20A5D0
-	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 06:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5181A08CB;
+	Tue, 12 Nov 2024 08:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731394073; cv=none; b=jzDG74z5d20FAhcY2WRO5qK4iXP6IazeRuc0KXwvMYXj5CYLPTlDDiliccugtAxTIFRy+Q+jKOE6A4bk+WmasUeuM2rHbXLNrWsWSA2y2UrL/RybUTkPGB658yBfsUzjPTAyXmmFxJZIUyzcg+ilomVIbvqD8f1+sfYI5B8iDRQ=
+	t=1731398822; cv=none; b=Yf4K29NqrpYUUc5dt/CInIWdFgg2ULMxJQ9GoapWTsvYWSpy0twtU1lSX1Ds8+nsPu3OyZinfzKO0aiUr+W3EVYqTuCG6x01//CvLDVDxd5NObeq1lVnPv8Judc7XNg9L0ToxeVR+tF7mEH4ma2Jjk6gQZ3lQhDKXkBsN7YiT6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731394073; c=relaxed/simple;
-	bh=n8Fee0nsjbkzME/fbtTT9j7oZnKfX6kUwbiBJ27qOlY=;
+	s=arc-20240116; t=1731398822; c=relaxed/simple;
+	bh=HMpBG0EWkER/d5wAElJA7CpBW4T/KzQkjen8t8ghJ0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYqkMy+vwP+HKXqUaCBzxft2XwvTfYRnar/RBrj51i2aPltz1bGyynFnuE6YtZJNTObb9wLZaeJukdQyqL3rza1M7kiAChz98WbOAMfxbBFh1OU/nwY+pSshUUxR/El4RaC1AlIVSo23ZrYjS/tq0wfB41pzsfy4KkdjFauAW9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PfTv+hNY; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gfs45FMVFzyQVrBaOuG2j9IyuXzPbnBDs/yqnw2T9/WwrluPvSsEmYO/m8WqUnwmx5lCBDXE7bepZLflFMQvqStHrOlC1NKiIu720lNXvBvkgji1CJQ/VZ6ZcjNAcwPxBK/YC4OjsNLWS2T3Ys00Jf6zKKaNSjMj4EzgNemHRMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Ikf7y/m9; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PfTv+hNY"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso4846211b3a.3
-        for <linux-clk@vger.kernel.org>; Mon, 11 Nov 2024 22:47:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731394071; x=1731998871; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=joM3NYmnrdckWAtqAAeMbz3+XvM8HAXjuHhuPldrIhQ=;
-        b=PfTv+hNYjQGvg+ATnJz1SPbUqFVdxQNTsHPJa+1JGLeiN7iFkdLho2eHk6iHO7LF4+
-         pnBHUdsTbLmMM+S/Fo6Bzhrerf9YQQsefgvq4VFENH1ZUslefGpr38GiuxeOkcOeoL4W
-         NmGk1AHPXGpP05ScSig8M74s4ogo8A8f2WwIJfCSm5LG8Qo+IVBUkg/ahjvJmxwIsqQf
-         oTqADbhkw/+Bht/NoygdCf6VqOJXCsoJ9o9OjOxgbtZgGtexOg+aTp2JO4ovgPppbb78
-         rR/3aMpqkO+IvzTok0WWRXosVyMnw2BRVV0L4NVyHpZb7nqewzDCziuQQOq2M1spSCgC
-         Y6BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731394071; x=1731998871;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=joM3NYmnrdckWAtqAAeMbz3+XvM8HAXjuHhuPldrIhQ=;
-        b=wq5aNTrKx+EyQq07mc4S3CmixbjOZG0XWUjPOdJYsEXGa76AmyrlfELejUzTStXvbi
-         rqXXWCnIa5wEumxZSJRbjp+BoZ5ccEo20QjEBcNMCwVAvTN0eQOLjojVF6HlBlkxVI5K
-         XS0ejVOA37YSn2XFUcrnfvljVWErZa4SW23IWfhPwaoxqHTYB2oCZBNEiyblRN5QMMaK
-         QWwnQHN6qN23VghH13UswricdIOXYu62ntFFhk9qPk8gmXJHfrIpBXkaByrX8liAJILI
-         CxHsUXTYNpkFtZa3XLEsRKH7k1EXlNrCUapJL/RH8r+PFHdlbWo/Fi9sMRlTaF5DdKnl
-         SBZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4CL1isZT4T5prmk+3WEP/YEuzm+7xml6BoWmivpJMStx5m5AeTi2o+evg2A0LJhKZ+r247VHIw2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZrEDyXRiZzolMor3YWiFfd7ex0seyrLcPUmZcylZj+vq64zOP
-	5jW1scZsEYZH+5cj14kKY6Bnn75ztKO5eMY2JWw0s+GUcm17x/baUpQJ4iUsKGZlQNGkMMLVGvQ
-	=
-X-Google-Smtp-Source: AGHT+IGmt6jecpj8o1YtItnfhiloe15JbFW/GZxGthEiDM/nykWYtzusHMMBkQlC4Te2n8f4030aRA==
-X-Received: by 2002:a05:6a20:3d88:b0:1d4:e68c:2eb9 with SMTP id adf61e73a8af0-1dc229afb71mr23328487637.20.1731394071234;
-        Mon, 11 Nov 2024 22:47:51 -0800 (PST)
-Received: from thinkpad ([117.213.103.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078cd28asm10382819b3a.85.2024.11.11.22.47.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 22:47:50 -0800 (PST)
-Date: Tue, 12 Nov 2024 12:17:43 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: clock: actions,owl-cmu: convert to YAML
-Message-ID: <20241112064743.7qriuo2f26yq4jev@thinkpad>
-References: <20241107143431.728669-1-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Ikf7y/m9"
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 62FB51F938;
+	Tue, 12 Nov 2024 09:00:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1731398403;
+	bh=t5k/krFv3SJskBWxwcoai7yAAgARXgJ1EMbSOEQ6Gtw=; h=From:To:Subject;
+	b=Ikf7y/m91kOTnf4LmPXRRgzvIDRlybe/D1cXKnQO6tnTLD5NR7XsIuJpcAGId4Q+m
+	 dnOCdUbg9YtL1ScBIE+CjMrtfh4dN67NoNwxHmaFwHF8XlY+259s6wkKyV0K20yfAb
+	 L+dQoNGP2a+vToO+BDBXYnpDsLq11fKc6RgtiAvEBNxY9GtJK5s7vjxvogUmgyhJMh
+	 4Bk8c89SYaG/2QKAvJKfRa/nT5GOU6pQpooVVvMF6eh+31iJUgNj06CilEY1et26Ac
+	 38c5SQlemJ9gRLcNH9ck0HbGp97TdheEpEhw4X4E1VZwlF10W1hSdfaFIPtlrM/l5h
+	 bZxozBSzXZwRg==
+Date: Tue, 12 Nov 2024 08:59:58 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: regressions@lists.linux.dev, Adam Ford <aford173@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
+Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on
+ v6.12
+Message-ID: <20241112075958.GA8092@francesco-nb>
+References: <20241007132555.GA53279@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107143431.728669-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20241007132555.GA53279@francesco-nb>
 
-On Thu, Nov 07, 2024 at 04:34:31PM +0200, Ivaylo Ivanov wrote:
-> Convert the Actions Semi Owl CMU bindings to DT schema.
+Hello,
+
+On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
+> Hello,
+> it seems that an old regression is back on v6.12, reproduced on -rc2
+> (not sure about rc1).
 > 
-> Changes during conversion:
->  - Since all Actions Semi Owl SoCs utilize the internal low frequency
->    oscillator as a parent for some clocks, require it.
+> The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
+> and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> Is it now back?
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+I was able to reproduce this issue once more, this time with 6.11.7.
+As I wrote in another email the issue is not systematic as it used to
+be.
 
-Thanks!
+Any idea?
 
-- Mani
+[    4.287586] SError Interrupt on CPU1, code 0x00000000bf000002 -- SError
+[    4.287594] CPU: 1 UID: 0 PID: 195 Comm: (udev-worker) Not tainted 6.11.7-7.1.0-devel-00010-g5374bda92db5 #1
+[    4.287601] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
+[    4.287604] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    4.287609] pc : clk_imx8mp_audiomix_runtime_resume+0x18/0x40
+[    4.287623] lr : pm_generic_runtime_resume+0x2c/0x44
+[    4.287631] sp : ffff80008216b740
+[    4.287633] x29: ffff80008216b740 x28: ffff800080e85010 x27: ffff8000794758d8
+[    4.287642] x26: ffff0000c0a664f4 x25: 0000000000000000 x24: 0000000000000000
+[    4.287649] x23: 0000000000000000 x22: ffff0000c0d01120 x21: 0000000000000000
+[    4.287655] x20: ffff0000c1308800 x19: ffff0000c0a68c10 x18: 0000000000047820
+[    4.287662] x17: 0000000000000000 x16: ffff0000faf87820 x15: 0000000000000002
+[    4.287668] x14: 0000000000001400 x13: 00000000000003a0 x12: 0000000054a32c00
+[    4.287675] x11: 0000000000000000 x10: ffff8000817b9d36 x9 : 0000000000000008
+[    4.287682] x8 : 0000000000000008 x7 : 0000000000000000 x6 : 0000000000000000
+[    4.287688] x5 : ffff800081ec0000 x4 : ffff0000c1a0b488 x3 : ffff800080bd23f0
+[    4.287694] x2 : 0000000000000000 x1 : 0000000000000004 x0 : ffff800081ec0300
+[    4.287703] Kernel panic - not syncing: Asynchronous SError Interrupt
+[    4.287705] CPU: 1 UID: 0 PID: 195 Comm: (udev-worker) Not tainted 6.11.7-7.1.0-devel-00010-g5374bda92db5 #1
+[    4.287711] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
+[    4.287714] Call trace:
+[    4.287716]  dump_backtrace+0x94/0x114
+[    4.287725]  show_stack+0x18/0x24
+[    4.287732]  dump_stack_lvl+0x34/0x8c
+[    4.287740]  dump_stack+0x18/0x24
+[    4.287747]  panic+0x390/0x3a4
+[    4.287751]  nmi_panic+0x40/0x8c
+[    4.287755]  arm64_serror_panic+0x64/0x70
+[    4.287759]  do_serror+0x3c/0x70
+[    4.287763]  el1h_64_error_handler+0x30/0x48
+[    4.287771]  el1h_64_error+0x64/0x68
+[    4.287776]  clk_imx8mp_audiomix_runtime_resume+0x18/0x40
+[    4.287784]  __genpd_runtime_resume+0x30/0x80
+[    4.287791]  genpd_runtime_resume+0x114/0x29c
+[    4.287799]  __rpm_callback+0x48/0x1d8
+[    4.287806]  rpm_callback+0x68/0x74
+[    4.287813]  rpm_resume+0x46c/0x6bc
+[    4.287819]  __pm_runtime_resume+0x50/0x94
+[    4.287825]  pm_runtime_get_suppliers+0x60/0x8c
+[    4.287831]  __driver_probe_device+0x4c/0x15c
+[    4.287838]  driver_probe_device+0x3c/0x110
+[    4.287844]  __driver_attach+0xf0/0x1f8
+[    4.287850]  bus_for_each_dev+0x7c/0xdc
+[    4.287856]  driver_attach+0x24/0x30
+[    4.287862]  bus_add_driver+0x110/0x234
+[    4.287868]  driver_register+0x5c/0x124
+[    4.287874]  __platform_driver_register+0x28/0x34
+[    4.287882]  sdma_driver_init+0x20/0x1000 [imx_sdma]
+[    4.287895]  do_one_initcall+0x80/0x1c8
+[    4.287900]  do_init_module+0x60/0x218
+[    4.287907]  load_module+0x1fcc/0x2040
+[    4.287912]  init_module_from_file+0x88/0xcc
+[    4.287918]  __arm64_sys_finit_module+0x254/0x34c
+[    4.287924]  invoke_syscall.constprop.0+0x50/0xe4
+[    4.287932]  do_el0_svc+0xa8/0xc8
+[    4.287938]  el0_svc+0x3c/0x13c
+[    4.287945]  el0t_64_sync_handler+0x120/0x12c
+[    4.287952]  el0t_64_sync+0x190/0x194
+[    4.287958] SMP: stopping secondary CPUs
+[    4.287965] Kernel Offset: disabled
+[    4.287966] CPU features: 0x00,00000000,00100000,4200420b
+[    4.287970] Memory Limit: none
+[    4.590829] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
 
-> ---
-> v3: list the headers in the description
-> v3: match properties: order with required:
-> v3: add clocks as a required property
-> v3: drop unused example node label
-> v3: use the preferred four-space indentation for dts example
-> 
-> v2: drop address and size cells from example
-> ---
->  .../bindings/clock/actions,owl-cmu.txt        | 52 ----------------
->  .../bindings/clock/actions,owl-cmu.yaml       | 60 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 61 insertions(+), 53 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-> deleted file mode 100644
-> index d19885b7c..000000000
-> --- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-> +++ /dev/null
-> @@ -1,52 +0,0 @@
-> -* Actions Semi Owl Clock Management Unit (CMU)
-> -
-> -The Actions Semi Owl Clock Management Unit generates and supplies clock
-> -to various controllers within the SoC. The clock binding described here is
-> -applicable to S900, S700 and S500 SoC's.
-> -
-> -Required Properties:
-> -
-> -- compatible: should be one of the following,
-> -	"actions,s900-cmu"
-> -	"actions,s700-cmu"
-> -	"actions,s500-cmu"
-> -- reg: physical base address of the controller and length of memory mapped
-> -  region.
-> -- clocks: Reference to the parent clocks ("hosc", "losc")
-> -- #clock-cells: should be 1.
-> -- #reset-cells: should be 1.
-> -
-> -Each clock is assigned an identifier, and client nodes can use this identifier
-> -to specify the clock which they consume.
-> -
-> -All available clocks are defined as preprocessor macros in corresponding
-> -dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
-> -actions,s500-cmu.h header and can be used in device tree sources.
-> -
-> -External clocks:
-> -
-> -The hosc clock used as input for the plls is generated outside the SoC. It is
-> -expected that it is defined using standard clock bindings as "hosc".
-> -
-> -Actions Semi S900 CMU also requires one more clock:
-> - - "losc" - internal low frequency oscillator
-> -
-> -Example: Clock Management Unit node:
-> -
-> -        cmu: clock-controller@e0160000 {
-> -                compatible = "actions,s900-cmu";
-> -                reg = <0x0 0xe0160000 0x0 0x1000>;
-> -                clocks = <&hosc>, <&losc>;
-> -                #clock-cells = <1>;
-> -                #reset-cells = <1>;
-> -        };
-> -
-> -Example: UART controller node that consumes clock generated by the clock
-> -management unit:
-> -
-> -        uart: serial@e012a000 {
-> -                compatible = "actions,s900-uart", "actions,owl-uart";
-> -                reg = <0x0 0xe012a000 0x0 0x2000>;
-> -                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> -                clocks = <&cmu CLK_UART5>;
-> -        };
-> diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-> new file mode 100644
-> index 000000000..1717099b7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/actions,owl-cmu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Actions Semi Owl Clock Management Unit (CMU)
-> +
-> +maintainers:
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +description: |
-> +  The Actions Semi Owl Clock Management Unit generates and supplies clock
-> +  to various controllers within the SoC.
-> +
-> +  See also::
-> +    include/dt-bindings/clock/actions,s500-cmu.h
-> +    include/dt-bindings/clock/actions,s700-cmu.h
-> +    include/dt-bindings/clock/actions,s900-cmu.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - actions,s500-cmu
-> +      - actions,s700-cmu
-> +      - actions,s900-cmu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Host oscillator source
-> +      - description: Internal low frequency oscillator source
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@e0160000 {
-> +        compatible = "actions,s900-cmu";
-> +        reg = <0xe0160000 0x1000>;
-> +        clocks = <&hosc>, <&losc>;
-> +        #clock-cells = <1>;
-> +        #reset-cells = <1>;
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 420d06d37..652c9822a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2016,7 +2016,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/arm/actions.yaml
-> -F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-> +F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
->  F:	Documentation/devicetree/bindings/dma/owl-dma.yaml
->  F:	Documentation/devicetree/bindings/i2c/i2c-owl.yaml
->  F:	Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.yaml
-> -- 
-> 2.43.0
-> 
+Francesco
 
--- 
-மணிவண்ணன் சதாசிவம்
