@@ -1,74 +1,71 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6230B20BB21
-	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 08:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E53920D51B
+	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 08:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400597; cv=none; b=Cs0u0bCd4rfdQ5R0FcZen/PIbj1bxHFNgcc8hTp90YFjAF1aJbRoILwbcqV8FhQ1LVuIxHUlqjCIXsvvzPTUI/MrmUR6ak24mrdZtUgUevq4Q7ppHFhXueIw8JCFlULGeiPnVGdzs8jjujee8g9WmW2hEKaXVcbLKkYXzzab9Q4=
+	t=1731400633; cv=none; b=SNmAuWYvKCTF/X15u1D3hkUW+y62uXdvEnSnf3Pnwc6JeEe4l7iW566mkEsydNOzCxYLu7j0uBmyegOK1GZN2m2ixb97EQ4oZoQwend53vpk7tny/ILBeJr5qxQ5xeRCjcZIqxzdS4USOR4RmQ1YrrvYeEehedghK3PQwlYWyec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400597; c=relaxed/simple;
-	bh=YibmPKH9jsHGHFzmm33YvFzPr6+r9g9y7/8t4SPau5k=;
+	s=arc-20240116; t=1731400633; c=relaxed/simple;
+	bh=cygnrUq9k3e5dqDZepXwtHPhJI5XV7QYArniw2Y4IuY=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DD2NbafnYoCibRarwus/Ym72XGxTxO9T7TS/eNMPOYSQ9kRQeWq7k4nN+yPvvg5NpVeGjJPb66JQGQZvCX8/Kwo4FvN5lq4eyZx4Gj74JmfpUh+G2o9mSbC8Il6vGZEYj2+JV+mfShqZ4F5Z40TB92aJQnYe4oFs+NSelCIyfLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=C36otA0o; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version:Content-Type; b=SPZi79/VNELkAN08O32M/qYaJaFBF5RociNpY65rQBZ9A75y2TIbFI8nIsm3Fs6uiY4SpRieh759/cmcZZ7NquOKBOJqwYjTtLo0B/C01xGHncQyIGfMnY7zDGiBu5IL4+yGBGE8p+PsJDgYLBVJHO/T8SWCFJet5ndMGJjHSSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XMCBjQUU; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="C36otA0o"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so5012904f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 00:36:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XMCBjQUU"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431688d5127so42411225e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 00:37:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400594; x=1732005394; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400630; x=1732005430; darn=vger.kernel.org;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/MXKM1Sqb74I8ZQpKiaye137tCtqvkpww9vx9BtZ+wc=;
-        b=C36otA0oSv2AiMs7cexQKShfYbaTYtO6KImopOATYSCP7UyKluCfRBVb+kBbEx7mOL
-         U6jg/CbCo4HD9zy8ZqIqMr2gDOvEl1QfvzbI8kR2O9KPw0RMQhNEOjQCdJcFtWGmO5iu
-         dpQy5sCrg9q9T0X1Wu9vD1Yrgx5u+uNMqQIFDEw4facRL0C035Ebs2p2HZjxq0/+ZuXR
-         fWsVUiMSzEwmnAZZGRgbtjXG/DTqPqRagZKFNCw/7ALzMAYGD7ArikTjEBpN8doz4m2i
-         kD+p4DpTXCsiBqmZe+SztuO4stNOsRZmBC7bSAhywv6qhyT7Ysn6hhGGHkJ0M2SIDHww
-         Fx3w==
+        bh=QlQtebEgB86dVhqxQ00g8xwqSY7KjW1J9erC3DabT68=;
+        b=XMCBjQUUZrseYqt7P6vEKxQiXrcp/5SvHsvWzTBVBJIBUj8jDKZpCGic3DRdHC0nCv
+         GnDkhfHUUrnc1ymPPAcimYiSs8+pFnt47EmddkiKWffWXIPGIUSv9KReDbXad7g+iTO3
+         clN6JX10NgYCMsg13Qy1Doax5COvk2VSaYu6jMh7dtqDVy2h9RIhsx3YH+kUInt0jcBb
+         b1n43FcO2HJg48rBbO6YDYQPvU0ie+muSrG7DbHaGa2vp39JyuFJacr7ogKke9PP99RZ
+         DvV3jq75hAof1Dvwt+pEebPxSgiEohz20VxCi7wejCmhs+qDZun8VjxGX6r8GN2ugfiO
+         sTWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731400594; x=1732005394;
+        d=1e100.net; s=20230601; t=1731400630; x=1732005430;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/MXKM1Sqb74I8ZQpKiaye137tCtqvkpww9vx9BtZ+wc=;
-        b=H8wvgcrUo4tiEkqXqgV46KBwJe5nc5sLSdoP2RacmKo1naXKTJc53BFq0hH1B6wPyq
-         nMzwMFkFfNOInW2O/ZETlnk8njDueWyPm/YnaJbagbKkZxDFM4oQhUMI8GJpniuxuSMR
-         gijLlP4MSAe0qX3eqn2AfefB90vNaIKWJlctX3Amwv1rr/PS+PU0by/WJXeiumFIrjJX
-         nS66cfEANjQxrXaNwF46ceZZkltzBxuHAgRwlsiG2KyV3ZADWZFMN30LYV67KLQuWURS
-         C93EdLhUfXeUO35FVWwwwTzrNswQsdA/LFYbm7UHcJpl0/VcHJ8LQWWO/qiqN0cXFUon
-         RyuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXh5KLvZDuT3TNVCFc+4Ev46bLJK8fA59Ymy8qQw0Mle2h4cJPb/OX8rGLWYtcGJCUeI5eSnUjHvR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7FORejkvYqTM8cz8F/6Em29hzfGYW0Ed3+7cKscIZUWUgyTtx
-	ClEnGk5m+wItPOK2leuKW4UBPMhx2Lvw2jwEhvXkVsK8/QN9oEnJMzF4HRFMMFo=
-X-Google-Smtp-Source: AGHT+IH8yunZYqyZqpSqETzBCKEoRJ1QIodl+MOpYN4uXnicVv8QU+PV+QjD7NHinPY4E5kCPs85PQ==
-X-Received: by 2002:a05:6000:1fa1:b0:37d:3e6d:6a00 with SMTP id ffacd0b85a97d-381f1884805mr15336017f8f.47.1731400593801;
-        Tue, 12 Nov 2024 00:36:33 -0800 (PST)
+        bh=QlQtebEgB86dVhqxQ00g8xwqSY7KjW1J9erC3DabT68=;
+        b=IMsraVzcDxLWlSQTBH/LGZObKpgtzjcYMn+9oVKSpevW32IFmWc4xltcVanMJCT4+X
+         O4qv7R9aoUUErvtCkYKKQPv0SvNChfyZxUuFOjd15BX38LCwSr5zuV3KLG75Y4r+zhRP
+         WXMY1q2kg5cqwLjx/s1xDAE/jvalGFtQY1DjutFQfe97to6NjFHgPuJLrFRhwUW2Okbi
+         ptLKQ37WFnryyPUC8uR4DLKH56KIVdMT3YlWaRH9b/IvvQM9nbannfyiWssUP+VEFlVx
+         q235uEGkgMfI5hsXnpeX71i6UxKu4l9sWEvLnAAKkjywMgEpxCYW7qK8ncRC8ISYsTrl
+         I/3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuQ7DyTkZdpCtvUbWfbuxA0nosR1zoBkUCAvuoiCAKJauJ+ATx+S8d/raQMSFGOp9t0yhdmjfqjwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7bt67QbnctFF8nLyymDoC1RmSu1rzy+BQZBAqDpAwMmRQOMuj
+	tCTvlopbJw4oejqY2prcT7HzfDVZ5jVOzE8sJFr2h0P1yYmrGfe5AnC+idz+p2s=
+X-Google-Smtp-Source: AGHT+IFzDHkJMsiPY/G7pxE8S7GTZggldEzwx+YMOP/7/uY3NLuy5dZgZ2YEbvlJHaRdqr51oMUYZw==
+X-Received: by 2002:a05:600c:3b82:b0:431:50fa:89c4 with SMTP id 5b1f17b1804b1-432b74fdef5mr135892675e9.3.1731400629260;
+        Tue, 12 Nov 2024 00:37:09 -0800 (PST)
 Received: from localhost ([2a01:e0a:3c5:5fb1:50f9:1df6:c2b9:a468])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997320sm14968695f8f.47.2024.11.12.00.36.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa73a2d8sm232645355e9.41.2024.11.12.00.37.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 00:36:33 -0800 (PST)
+        Tue, 12 Nov 2024 00:37:08 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
   linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
   linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
-In-Reply-To: <5eb12197-330c-4f55-82f7-d13ea458ba43@amlogic.com> (Chuan Liu's
-	message of "Fri, 8 Nov 2024 19:49:59 +0800")
-References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
-	<20241004133953.494445-1-jbrunet@baylibre.com>
-	<07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
-	<1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
-	<85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
-	<1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
-	<5eb12197-330c-4f55-82f7-d13ea458ba43@amlogic.com>
-Date: Tue, 12 Nov 2024 09:36:32 +0100
-Message-ID: <1j4j4c3l2n.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH v2 3/3] clk: meson: Fix glitch occurs when setting up
+ glitch-free mux
+In-Reply-To: <20241111-fix_glitch_free-v2-3-0099fd9ad3e5@amlogic.com> (Chuan
+	Liu via's message of "Mon, 11 Nov 2024 11:37:03 +0800")
+References: <20241111-fix_glitch_free-v2-0-0099fd9ad3e5@amlogic.com>
+	<20241111-fix_glitch_free-v2-3-0099fd9ad3e5@amlogic.com>
+Date: Tue, 12 Nov 2024 09:37:08 +0100
+Message-ID: <1jzfm426h7.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,106 +74,326 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Fri 08 Nov 2024 at 19:49, Chuan Liu <chuan.liu@amlogic.com> wrote:
+On Mon 11 Nov 2024 at 11:37, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-> On 11/8/2024 5:59 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
->>
->>>>>> -       if (core->flags & CLK_IGNORE_UNUSED)
->>>>>> +       /*
->>>>>> +        * If the parent is disabled but the gate is open, we should sanitize
->>>>>> +        * the situation. This will avoid an unexpected enable of the clock as
->>>>>> +        * soon as the parent is enabled, without control of CCF.
->>>>>> +        *
->>>>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
->>>>>> +        * forcefully enabling a whole part of the subtree.  Just let the
->>>>>> +        * situation resolve it self on the first enable of the clock
->>>>>> +        */
->>>>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
->>> At first, I couldn't grasp the logic behind the 'return' here. Now it's
->>> clear. This approach is equivalent to completely giving up on
->>> handling clocks with CLK_OPS_PARENT_ENABLE feature in
->>> clk_disable_unused_subtree().
->>>
->> No. It's handled correctly as long as the tree is in coherent state.
->>
->> What is not done anymore is fixing up an inconsistent tree, by this I
->> mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
->> own registers but has its parent disabled.
->>
->> In that particular case, clk_disable_unused_subtree() won't be turning on
->> everything to properly disable that one clock. That is the root cause of
->> the problem you reported initially. The clock is disabled anyway.
->>
->> Every other case are properly handled (at least I think).
+> From: Chuan Liu <chuan.liu@amlogic.com>
 >
-> name              en_sts            flags
-> clk_a                1          CLK_IGNORE_UNUSED
->     clk_b            0                0
->         clk_c        1         CLK_OPS_PARENT_ENABLE
+> glitch-free mux has two clock channels (channel 0 and channel 1) with
+> the same configuration. When the frequency needs to be changed, the two
+> channels ping-pong to ensure clock continuity and suppress glitch.
 >
-> Based on the above case:
-> 1. When 'clk_c' is configured with CLK_OPS_PARENT_ENABLE, disabling
-> 'clk_c' requires enabling 'clk_b' first (disabling 'clk_c' before
-> disabling 'clk_b'). How can to ensure that during the period of
-> disabling 'clk_c', 'clk_b' remains enabled?
-
-That's perfect example of incoherent state.
-How can 'clk_c' be enabled if its parent is disable. That makes no
-sense, so there is no point enabling a whole subtree for this IMO.
-
+> The glitch-free mux configuration with CLK_SET_RATE_GATE enables the mux
+> to perform ping-pong switching to suppress glitches.
 >
-> 2. 'clk_c' is not configured with CLK_IGNORE_UNUSED, it should be
-> disabled later. However, here it goes to a 'goto' statement and then
-> return 'false', ultimately resulting in 'clk_c' not being disabled?
+> Fixes: 84af914404db ("clk: meson: a1: add Amlogic A1 Peripherals clock
+> controller driver")
+> Fixes: 14ebb3154b8f ("clk: meson: axg: add Video Clocks")
+> Fixes: f06ac3ed04e8 ("clk: meson: c3: add c3 clock peripherals controller
+> driver")
+> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> Fixes: fac9a55b66c9 ("clk: meson-gxbb: Add MALI clocks")
+> Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC
+> peripheral clock controller")
 
-We've discussed that 2 times already. This discussion is going in
-circles now.
+Same remarks.
 
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  drivers/clk/meson/a1-peripherals.c |  8 ++++----
+>  drivers/clk/meson/axg.c            | 12 ++++++++----
+>  drivers/clk/meson/c3-peripherals.c |  4 ++--
+>  drivers/clk/meson/g12a.c           | 12 ++++++++----
+>  drivers/clk/meson/gxbb.c           | 12 ++++++++----
+>  drivers/clk/meson/s4-peripherals.c | 20 ++++++++++----------
+>  6 files changed, 40 insertions(+), 28 deletions(-)
 >
->>>>>>                    goto unlock_out;
->>>>>>
->>>>>>            /*
->>>>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
->>>>>>
->>>>>>     unlock_out:
->>>>>>            clk_enable_unlock(flags);
->>>>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
->>>>>> -               clk_core_disable_unprepare(core->parent);
->>>>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
->>>>>>     }
->>>>>>
->>>>>>     static bool clk_ignore_unused __initdata;
->>>>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
->>>>>>            clk_prepare_lock();
->>>>>>
->>>>>>            hlist_for_each_entry(core, &clk_root_list, child_node)
->>>>>> -               clk_disable_unused_subtree(core);
->>>>>> +               clk_disable_unused_subtree(core, true);
->>>>>>
->>>>>>            hlist_for_each_entry(core, &clk_orphan_list, child_node)
->>>>>> -               clk_disable_unused_subtree(core);
->>>>>> +               clk_disable_unused_subtree(core, true);
->>>>>>
->>>>>>            hlist_for_each_entry(core, &clk_root_list, child_node)
->>>>>> -               clk_unprepare_unused_subtree(core);
->>>>>> +               clk_unprepare_unused_subtree(core, true);
->>>>>>
->>>>>>            hlist_for_each_entry(core, &clk_orphan_list, child_node)
->>>>>> -               clk_unprepare_unused_subtree(core);
->>>>>> +               clk_unprepare_unused_subtree(core, true);
->>>>>>
->>>>>>            clk_prepare_unlock();
->>>>>>
->>>>>> --
->>>>>> 2.45.2
->>>>>>
->>>> --
->>>> Jerome
->> --
->> Jerome
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 4b9686916b17..7f515e002adb 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -423,7 +423,7 @@ static struct clk_regmap dspa_a = {
+>  			&dspa_a_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -471,7 +471,7 @@ static struct clk_regmap dspa_b = {
+>  			&dspa_b_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -569,7 +569,7 @@ static struct clk_regmap dspb_a = {
+>  			&dspb_a_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -617,7 +617,7 @@ static struct clk_regmap dspb_b = {
+>  			&dspb_b_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index a1217dff40fa..e2d3266f4b45 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -1077,7 +1077,8 @@ static struct clk_regmap axg_vpu_0 = {
+>  		 * We want to avoid CCF to disable the VPU clock if
+>  		 * display has been set by Bootloader
+>  		 */
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1126,7 +1127,8 @@ static struct clk_regmap axg_vpu_1 = {
+>  		 * We want to avoid CCF to disable the VPU clock if
+>  		 * display has been set by Bootloader
+>  		 */
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1194,7 +1196,8 @@ static struct clk_regmap axg_vapb_0 = {
+>  			&axg_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1242,7 +1245,8 @@ static struct clk_regmap axg_vapb_1 = {
+>  			&axg_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+> index 4566c2aeeb19..27343a73a521 100644
+> --- a/drivers/clk/meson/c3-peripherals.c
+> +++ b/drivers/clk/meson/c3-peripherals.c
+> @@ -1364,7 +1364,7 @@ static struct clk_regmap hcodec_0 = {
+>  			&hcodec_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1411,7 +1411,7 @@ static struct clk_regmap hcodec_1 = {
+>  			&hcodec_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 4d3b064d09fc..21a25001e904 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -2746,7 +2746,8 @@ static struct clk_regmap g12a_vpu_0 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_0_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -2790,7 +2791,8 @@ static struct clk_regmap g12a_vpu_1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_1_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -3035,7 +3037,8 @@ static struct clk_regmap g12a_vapb_0 = {
+>  			&g12a_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -3083,7 +3086,8 @@ static struct clk_regmap g12a_vapb_1 = {
+>  			&g12a_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index dfa9ffc61b41..812b3e20c366 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1543,7 +1543,8 @@ static struct clk_regmap gxbb_vpu_0 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_0_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1591,7 +1592,8 @@ static struct clk_regmap gxbb_vpu_1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_1_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1674,7 +1676,8 @@ static struct clk_regmap gxbb_vapb_0 = {
+>  			&gxbb_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1726,7 +1729,8 @@ static struct clk_regmap gxbb_vapb_1 = {
+>  			&gxbb_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
+> +			 CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+> index 79e0240d58e6..cf10be40141d 100644
+> --- a/drivers/clk/meson/s4-peripherals.c
+> +++ b/drivers/clk/meson/s4-peripherals.c
+> @@ -1466,7 +1466,7 @@ static struct clk_regmap s4_vdec_p0 = {
+>  			&s4_vdec_p0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1516,7 +1516,7 @@ static struct clk_regmap s4_vdec_p1 = {
+>  			&s4_vdec_p1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1586,7 +1586,7 @@ static struct clk_regmap s4_hevcf_p0 = {
+>  			&s4_hevcf_p0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1636,7 +1636,7 @@ static struct clk_regmap s4_hevcf_p1 = {
+>  			&s4_hevcf_p1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1712,7 +1712,7 @@ static struct clk_regmap s4_vpu_0 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_0_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1756,7 +1756,7 @@ static struct clk_regmap s4_vpu_1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_1_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1921,7 +1921,7 @@ static struct clk_regmap s4_vpu_clkc_p0 = {
+>  			&s4_vpu_clkc_p0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -1969,7 +1969,7 @@ static struct clk_regmap s4_vpu_clkc_p1 = {
+>  			&s4_vpu_clkc_p1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -2049,7 +2049,7 @@ static struct clk_regmap s4_vapb_0 = {
+>  			&s4_vapb_0_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
+>  
+> @@ -2097,7 +2097,7 @@ static struct clk_regmap s4_vapb_1 = {
+>  			&s4_vapb_1_div.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	},
+>  };
 
 -- 
 Jerome
