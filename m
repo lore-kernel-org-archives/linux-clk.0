@@ -1,67 +1,53 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22553219C8A;
-	Tue, 12 Nov 2024 23:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361081531C4;
+	Tue, 12 Nov 2024 23:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731452404; cv=none; b=ACwbtbq3m71GJ1CkQ0zLZb3ey/BHehp5JTEBRV8r1sZniqIBfndBKYmx0MU4tKHodA9ICVQzHHNrKzMdyxvbviB+NfyQx+1rDCFL1KAJA6PxpUAOFuLe24+bgvyGyibH9oD7UEUGOjLljys/mJXzpt58GFZC46fSPTE7YcMQelU=
+	t=1731452692; cv=none; b=PmB/wYn3fwSRczWPch2QiwV6SaZd9FxbpULGbMl2Nus/58oUUqnJ8kdWyUDGEm13jYVgS2SFD8ymebdcTtbv2RTnUr5tFc3z+EhMwWyTF4RNf6ByFdTMNfJAnYt86YZvm90ovc9HK6UWgbwf/kric/8Sc3s4G0pGhq13vvLcNgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731452404; c=relaxed/simple;
-	bh=bu+NuDLqu8Tt0GAr7mWfQkamqMac6Nu0S59nZNhC4yg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t/DYiS+naDWYhBin6IIKpvgbbBPgOdeZZfHzBWqk/rMBjhLUhk9sxPTHO2/Pko1bKfSJKGT/A99WdyyGMLnpFdniPI6qjdOpgCN+vK9aQoq98dC6JN0v5Tyykx60VVqB5bJLkYmlW2T7XhdJ081p3ZZjBVpsDpxhdXkzVJAucBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cyo2CS+1; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731452692; c=relaxed/simple;
+	bh=uVca2jGYpWUvOxYC184KdSetOQQ3dXnnGdAzfG68pw4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WOsQlQuvNACRRexuD7KoMiLa2Eeup0pf56Edkk/SLE29AidGWGOw+iM5xd39URCtdKh6hbCgh9V7WdRcTK5gUM6i904eJQsLc32UrFLyOIP0t0LRtVT9NAkGYBV4rWi2xdAfMXlRVVD4XGOvrGtj76vvFuBLJjvoZRSTEDc3AoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=YNYl4oPT; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cyo2CS+1"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso4743793a12.3;
-        Tue, 12 Nov 2024 15:00:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731452402; x=1732057202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nxGJtOVUJmjNsQkVksMPVX9avuA5j35JW80Om/0yQ/g=;
-        b=cyo2CS+1fUrmgUp6SnfnnsUpNsBLoXVYDw3Xl/0jWiI8neIvzvXSg/TxTUtSb+B00A
-         0l37xxuy6WibWEM+VfLtjQbsCwDAer4a+XonWjxsdSwSfehw8CKnB1xHRqWyJw/Q8SPb
-         OUjEVrw9T4Mw3f2eogDuv2ZgYc3CKwfm26504be87zqctl4Rh6tINPfOCPiaqyTPP/ib
-         1YGc7V0Tjgf4rOFxLFfg5qQ/Xuitxq017TnXRsPeayhVHc/Nv1EJ96D/qA9XBFXWKWfN
-         Mu0PagYRIC5IuBh3N28aIrGnojB1ohxuTw4XLcKhHSZQyihc8OX2EKtrSzAVBnRP14yp
-         lu3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731452402; x=1732057202;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nxGJtOVUJmjNsQkVksMPVX9avuA5j35JW80Om/0yQ/g=;
-        b=iIXPvdbGx5BfNy1ubZprlBN0FyeoBsYh+hUarKFrSQ+mYbLDHf9JttURpDF+SE5StF
-         ghWV+gdcfmhRzETNgzXf77k7xrPQeXeIOguYthoGR2UO9w270wYbx2qMbqTLNISoVuVN
-         q/V8x2pcrgpOVAsr+fWd42DqaIzDVbIsaSyqMIWgLv1e+qn7QUi1Dzv7nQ8rRWeYx950
-         t2RsWyAEUTZ/tdCPB+fCcMD86oYVUEvBOJzybaAqTNVLDDbvpmpUnNyBj46omy4M2nvn
-         nj33J4HWfRtGGh/gyz9rHl35dkk/xEL5oT2klHUuUzUffIjMNe0S5tLmaC3zTtOMbo+g
-         as8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVhvy8ob5W+zyLc/yyT5mUPnhiPwsF67YzEb1mHkYSEXi/FWuUjckEpq42pu6V1uAx6W+BOPvi1SPV8KHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeBI8MCGib+Apz2fq0CyH4CfSVUhJLqIBKnaZv73cdBOeUTCc5
-	Vb9pqekCCTxWyrXS4ZNmq82IcHBFcPEv6dATtbErLO/aVF0q/tv3
-X-Google-Smtp-Source: AGHT+IGlM/Q+IQEStypGsVSlg3I78WcVmnJA9w1qxDsSZpR0/YSwvVax8dEdRzV6/Pbqi/o7IFm0HQ==
-X-Received: by 2002:a05:6a20:9188:b0:1db:ee36:8fb4 with SMTP id adf61e73a8af0-1dc228961dcmr28335661637.3.1731452402310;
-        Tue, 12 Nov 2024 15:00:02 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f67f079sm11129563a12.85.2024.11.12.15.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 15:00:01 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] clk:sophgo:clk-cv18xx-pll
-Date: Tue, 12 Nov 2024 14:58:32 -0800
-Message-ID: <20241112225832.3518658-1-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="YNYl4oPT"
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 61A3B100003;
+	Wed, 13 Nov 2024 02:04:49 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 61A3B100003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1731452689;
+	bh=GzpLeQmauji/V5ygVX6H57e5rXHsmuG1+VVjGr5bYFk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=YNYl4oPTELNlAq5DjPqmHHpKXGnnpzWVgTWF0UwXU233aYiC1djwvfJG1oIDSOtAi
+	 fFphLpYPW2NW+etIwNtrx5sA7j8jqZr41TfCYV7u/kI6z/iw4U5FhzcE3KFoYpUlx+
+	 EJufX9pSTO5snqQSf6z8kXIYsNqFPqDB8lJ+9sv9a/hxu2vaVWoooscLJHQJKySaZ6
+	 EAGGpeN2NKlokZS/na0akBegTRubqqiIJ3rt8luKbAtW5znYS0vQofM2AWhnTsSfre
+	 Yqd5v1CsRumzzpyCL2yJ4L63UKzP/pv6mXdPXErqU91jxMW7AbmNgj1Lt701jflieY
+	 n6ZaPXhBGq5Zg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 13 Nov 2024 02:04:49 +0300 (MSK)
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, "Rob
+ Herring" <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v5 0/3] Add A1 Soc audio clock controller driver
+Date: Wed, 13 Nov 2024 02:04:40 +0300
+Message-ID: <20241112230443.1406460-1-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,27 +55,84 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189131 [Nov 12 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;lore.kernel.org:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/11/12 21:28:00
+X-KSMG-LinksScanning: Clean, bases: 2024/11/12 22:50:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/12 21:10:00 #26864167
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Initializing the val variable of type u32 as it was not initialized.
+This series adds support for audio clock and reset controllers on A1 SoC family.
 
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
----
- drivers/clk/sophgo/clk-cv18xx-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes v4 [4] -> v5
+ - moved changes of aux reset driver to series [5]
+ - added reset controller on top of audio-vad
+ - merged into single file
+ - reworked variables/defines naming
+ - added clk81 clock hierarchy
+ - added TDMIN_VAD-related clocks
+ - excluded DT patch (it will submitted separately)
 
-diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-index 29e24098bf5f..04a0419cab4e 100644
---- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-+++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-@@ -87,7 +87,7 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
- 
- static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- {
--	u32 val;
-+	u32 val = 0;
- 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
- 
- 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+Changes v3 [3] -> v4
+ - Use auxiliary reset device implemented in [4]
+ - Split the driver into files
+ - Use common with axg-audio yaml schema
+ - Unify clock-names with axg-audio
+
+Changes v2 [2] -> v3
+ - reset:
+   * added auxiliary device
+ - yaml:
+   * added declaration of optional clocks
+   * fixed names in example and another cosmetics
+ - clocks:
+   * reworked naming
+   * stop using of "core" clock name
+   * fixed wrong parenting
+
+Changes v1 [1] -> v2:
+ - Detached from v1's series (patch 2, 3, 4, 25)
+ - Reuse some of defines from axg-audio
+ - Split the controller into two memory regions
+
+Links:
+ [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
+ [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
+ [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
+ [4] https://lore.kernel.org/all/20240913121152.817575-1-jan.dakinevich@salutedevices.com/
+ [5] https://lore.kernel.org/all/20241112230056.1406222-1-jan.dakinevich@salutedevices.com/
+
+Jan Dakinevich (3):
+  clk: meson: axg: share the set of audio helper macros
+  dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
+    driver
+  clk: meson: a1: add the audio clock controller driver
+
+ .../clock/amlogic,axg-audio-clkc.yaml         |   4 +
+ drivers/clk/meson/Kconfig                     |  14 +
+ drivers/clk/meson/Makefile                    |   1 +
+ drivers/clk/meson/a1-audio.c                  | 841 ++++++++++++++++++
+ drivers/clk/meson/axg-audio.c                 | 215 +----
+ drivers/clk/meson/meson-audio.h               | 156 ++++
+ .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 139 +++
+ 7 files changed, 1190 insertions(+), 180 deletions(-)
+ create mode 100644 drivers/clk/meson/a1-audio.c
+ create mode 100644 drivers/clk/meson/meson-audio.h
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+
 -- 
-2.46.1
+2.34.1
 
