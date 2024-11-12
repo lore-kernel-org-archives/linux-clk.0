@@ -1,136 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FC54A1D;
-	Tue, 12 Nov 2024 00:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA1E1EABB1;
+	Tue, 12 Nov 2024 00:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731370191; cv=none; b=YVOOL6p/gIgHEN85jo6HnbOaSyr5Z0trlYtFnY2jUXpmLRs5o1wpJ/wZiK/KQxlc0oXozWhuuTZ+mO4+L+u997bCuBv3FKaIzMOVrg+bOQGmmMBuCE+xPa6c5zXpQFREKCGWtl2L9M+QM43Fu+gsDTuXgJ+GwDZC/OxKE8crkBQ=
+	t=1731371304; cv=none; b=DucLBcKmK0Jw0H1xMKGFzIr2Sm9RW+DjCUY+xPpWeHqN04mYSK/RaJ1Bm//WNkeGc4c1cEY0qU4eBY3/OOM1kQWYZ9d7LHQj+hGYxkFN3Ewmn7OsqUb1XME5nt+r0Z/UI+iW3U8qC8rT76L0qRC1OpgDGYpl3iKJDPSbd+WNMOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731370191; c=relaxed/simple;
-	bh=jlZDDRZ80YrCEZP6PYAXZ69UYnlvobdXU8ley54UQpI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FFAuTcpXTkcVhD2N5aOh4KzYe7VLQqT3cJcQEWWTBzddq6sB6Kzjs6O/ZbnQ5hgVjXIKdQtKjOePbTNf1PsxLNziYP8Mg+yDW1hBzjw44lYFB5Sh3XfGUHqAsRn9w1o2so7/yWnGiTdpPVcxAWob2ekorWTfBgVFYthUbixQaEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVaPw2fv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731371304; c=relaxed/simple;
+	bh=IDMmvK/9Q5SFghxZ4+Iaqv2550Ibk9SuPeE+5eJnU6U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gNGnWXDn2MWmLKSX1f7y8hFGNoNV6+0MynRa3G62QYasGjBaQSmGRoGHNVnuLNowVzrIjKa1oGdJ0rHJxMLzWIvF6wKoAfuksxUtTPfGHvcIDRyQGDmt9hD/2D5oHN6WtpgAVskfBHMAnamduNVdzrmUYA9jXJuwEwXo2+M/fwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=plR2gcuu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVaPw2fv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E312C4CECF;
-	Tue, 12 Nov 2024 00:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731370191;
-	bh=jlZDDRZ80YrCEZP6PYAXZ69UYnlvobdXU8ley54UQpI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qVaPw2fvkRToBcVxLLIsxMuauCg2zome8OYWw76HP/s20Dl8eZGruInFOXZD5TNoP
-	 K9b15iy41vRBcb02RgKm7Xl4g7g0vMX1p/eF7bmImn9zsfGaHOhO6NzPFrsSYPNts0
-	 JukCIB6rzrxeRKuxeyFmZSV23Q5fV/Z9M9O2AOQds67dhNaVwwo33plhY9t6sftz14
-	 S0I9x0LPQwXdJf4Qst+hr9HgyjCt+F+xMf5/xA7hV6CHdXNS+xg7NN+EFRA8xwpJJS
-	 uCCYY1pnvQiPANxgqCmvOl/jIE98LfhRJlCw245OCrLlHunjLl9c8G7D+exYmQy1zk
-	 3ug2L1UVuqHYQ==
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-Date: Tue, 12 Nov 2024 01:08:54 +0100
-Subject: [PATCH RESEND v2 7/7] clk: en7523: map io region in a single block
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="plR2gcuu"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABBxgt9012798;
+	Tue, 12 Nov 2024 00:28:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	awL8YEJDLkmofytObKzPyNvZYr6gzTF42BCtu4jmYVk=; b=plR2gcuurxWnK79W
+	NdD5abN3V7B/l+oYoFfhNMGwGyzngPu9OW0m4I7Jz/QLWI5OL6H7P0l1FIgMd8y8
+	TfOKGeyKhu76g07mSYBU94lq/6chE8o6KqBD67Q6hjw2Oshv55BPR7jS5j8ujvNF
+	xcWWW5PC/9jFCqDA+D9k50NJj//v6vTDUF5UhfUvhRIcw0uL5C9Wba8I5s0z5Bup
+	oNI8pKAT2vtdkmLgsjmSFEVBHrbHQ5SeKz4qBEskQSKdUjcpzJ11DOO2rV8HhGli
+	UxHNTFn6vG7fociP0mqmdPgfAEQueZuOayAu5Aobz+hjzppFGNml6rS5AM7zAj0m
+	HSnP3w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sw3m5uds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 00:28:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0SINi032449
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 00:28:18 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 11 Nov 2024 16:28:17 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+Subject: [PATCH v2 1/7] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC for SM8750
+Date: Mon, 11 Nov 2024 16:28:01 -0800
+Message-ID: <20241112002807.2804021-2-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-clk-en7581-syscon-v2-7-8ada5e394ae4@kernel.org>
-References: <20241112-clk-en7581-syscon-v2-0-8ada5e394ae4@kernel.org>
-In-Reply-To: <20241112-clk-en7581-syscon-v2-0-8ada5e394ae4@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- upstream@airoha.com, angelogioacchino.delregno@collabora.com, 
- linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com, 
- ansuelsmth@gmail.com, Lorenzo Bianconi <lorenzo@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j-fHK9t8s1Fi_X7mnv_gVboODBxdcpnq
+X-Proofpoint-ORIG-GUID: j-fHK9t8s1Fi_X7mnv_gVboODBxdcpnq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=811 bulkscore=0 adultscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120002
 
-Map all clock-controller memory region in a single block.
-This patch does not introduce any backward incompatibility since the dts
-for EN7581 SoC is not upstream yet.
+From: Taniya Das <quic_tdas@quicinc.com>
 
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Update the documentation for clock rpmh driver on SM8750 SoCs.
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 ---
- drivers/clk/clk-en7523.c | 32 +++++++++++++-------------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 60dc938144d75b5fa21c9109ff05ed1083a16678..e52c5460e927f54c6df152c60560f438f89ec928 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -39,8 +39,8 @@
- #define REG_PCIE_XSI1_SEL_MASK		GENMASK(12, 11)
- #define REG_CRYPTO_CLKSRC2		0x20c
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index a561a306b947..f39c4e0922cf 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -37,6 +37,7 @@ properties:
+       - qcom,sm8450-rpmh-clk
+       - qcom,sm8550-rpmh-clk
+       - qcom,sm8650-rpmh-clk
++      - qcom,sm8750-rpmh-clk
+       - qcom,x1e80100-rpmh-clk
  
--#define REG_RST_CTRL2			0x00
--#define REG_RST_CTRL1			0x04
-+#define REG_RST_CTRL2			0x830
-+#define REG_RST_CTRL1			0x834
- 
- struct en_clk_desc {
- 	int id;
-@@ -645,15 +645,9 @@ static const struct reset_control_ops en7581_reset_ops = {
- 	.status = en7523_reset_status,
- };
- 
--static int en7581_reset_register(struct platform_device *pdev)
-+static int en7581_reset_register(struct device *dev, void __iomem *base)
- {
--	struct device *dev = &pdev->dev;
- 	struct en_rst_data *rst_data;
--	void __iomem *base;
--
--	base = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
- 
- 	rst_data = devm_kzalloc(dev, sizeof(*rst_data), GFP_KERNEL);
- 	if (!rst_data)
-@@ -677,27 +671,27 @@ static int en7581_reset_register(struct platform_device *pdev)
- static int en7581_clk_hw_init(struct platform_device *pdev,
- 			      struct clk_hw_onecell_data *clk_data)
- {
--	void __iomem *np_base;
- 	struct regmap *map;
-+	void __iomem *base;
- 	u32 val;
- 
- 	map = syscon_regmap_lookup_by_compatible("airoha,en7581-chip-scu");
- 	if (IS_ERR(map))
- 		return PTR_ERR(map);
- 
--	np_base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(np_base))
--		return PTR_ERR(np_base);
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
--	en7581_register_clocks(&pdev->dev, clk_data, map, np_base);
-+	en7581_register_clocks(&pdev->dev, clk_data, map, base);
- 
--	val = readl(np_base + REG_NP_SCU_SSTR);
-+	val = readl(base + REG_NP_SCU_SSTR);
- 	val &= ~(REG_PCIE_XSI0_SEL_MASK | REG_PCIE_XSI1_SEL_MASK);
--	writel(val, np_base + REG_NP_SCU_SSTR);
--	val = readl(np_base + REG_NP_SCU_PCIC);
--	writel(val | 3, np_base + REG_NP_SCU_PCIC);
-+	writel(val, base + REG_NP_SCU_SSTR);
-+	val = readl(base + REG_NP_SCU_PCIC);
-+	writel(val | 3, base + REG_NP_SCU_PCIC);
- 
--	return en7581_reset_register(pdev);
-+	return en7581_reset_register(&pdev->dev, base);
- }
- 
- static int en7523_clk_probe(struct platform_device *pdev)
-
+   clocks:
 -- 
-2.47.0
+2.46.1
 
