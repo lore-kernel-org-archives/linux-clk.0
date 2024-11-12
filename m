@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915E933F9;
-	Tue, 12 Nov 2024 00:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DEB4A02;
+	Tue, 12 Nov 2024 00:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731370175; cv=none; b=H/KY2DbgCZQO2cN4F8H/ViQ4E9ZPKYdoI/RB7d7Io+7moLqjODNmfKmKmoKMbo2udZ0WkVM53UV0piGsna/zTAo2SBtR0j2fJ0idbOTTaNGvdXdgS+TDoOm8p/QYJGcWy4WgEQPZAXO1pl/Vx1NTuiNJkbz10wy9fad/RGLxYJU=
+	t=1731370178; cv=none; b=AmCDavv/A7YkBZ3yGKQX4mZoBkD7y4jzRrppq5Btjn4dWMiUVrQk+Q90hmYxNARd0XV3VxKs9GANFH9OHTMrvVJysvLEzTsaOW2rt+HEUAY9Kr6bg7uuiYLL6QogStCaVlIWAo7tcFn1I+ys+10J5rptgU9H/VGaxLFwajLo2Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731370175; c=relaxed/simple;
-	bh=O4BlBK5ortkbTpACDTtrxOHXjUi4e/RFV4T0bXUuIpY=;
+	s=arc-20240116; t=1731370178; c=relaxed/simple;
+	bh=NWo4rO+TyBta1SraqvA5DELSDrzfk9jlax3FHu1ajLk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t6SQDD5/EJNquXH7xz0+opxozl5q5I01EMF8gXQ0E6v1kzqUvG3SOY/q1o8hA5nCxxDM8z4qDFHke63Zy1eGxs0WZUsAIgEeehGTnJJ7mH8lbaquPhVxuVA9eO9Pe2/bEUWA5rYFgYkMbQ4y73S+B5UrICgqLeNVyjWw2qWkl4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoZjLJJu; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=BSt38lr2bgTZw5sghOA1W5tMpk6gBb7PtGUwWYMYHGwR6MP0KPVFd8h2nKqJxy2GkUES4JnGCd3xkhs5dPFaoDW7RjAGKneAkBblUof3ucrCHMnTKTgSZ/1zLC5Jl0ThdIsaCgYtt6vTabpRVHETEnUa2st2QccbwrLTIhTuE0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOghkyq1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoZjLJJu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 986EBC4CECF;
-	Tue, 12 Nov 2024 00:09:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOghkyq1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1F2C4CECF;
+	Tue, 12 Nov 2024 00:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731370175;
-	bh=O4BlBK5ortkbTpACDTtrxOHXjUi4e/RFV4T0bXUuIpY=;
+	s=k20201202; t=1731370178;
+	bh=NWo4rO+TyBta1SraqvA5DELSDrzfk9jlax3FHu1ajLk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MoZjLJJun/eGaE9oEyAkvEzm/5Cj4D0DMOFPE1W/2UdludZBq6GD6QwIvM1qEmD2b
-	 LQWejKXq2dZ6HtreltGQlFltxfgh2CsOnTlV4VDG2hUmzoqFEkcrL+jcGHN/9tf9U0
-	 xYd/SVG3zPwQZSwvplb93S0VGrCXBcos90dju/kll+xm+0w9hQ+7rocaiVhDRxn0CP
-	 O+8yLmIdjAp38MsAGd/woBUBnKG7WimDsSX0/xN8RR8QAfRbCEzfcYIkohMrQJ+Lye
-	 /x296qf0gtjXVwPmrSpoNWSV5UTx6EH8y0q9udA7HyWurSg94o3eLOdzu8zy8Q07ZV
-	 /NXmvvWWxWLxg==
+	b=GOghkyq1fNCiFotB3vSqwvcFzoJlogT+2jcqI4UmgZMLN12o5B2LTfit/R3hj977x
+	 r+7jPTjKU1wr/rbOclu5GgU7R2UbXWr6HPzxdkonZCtDurlfSLrf8+pfDgOz8dXWhp
+	 uQTkpyyAl/qhCkod3+zorr2OeDOfjM8+7nD2xEOgpRSGWMjdIF0txFM920YmrdlN1J
+	 Owh0B+cx1gWciF0PNg0X0QLzjqiPcYKTwBYett7CUzBCJ3b78buklmdUIzOEYcnPSn
+	 6pSwfXsblmJxhHTxwmumOy7rOOW7fYBqXUrT2ytPPKGv8Cg/Mwm1TnEXs1M3IdVrFd
+	 bJs2vZjySBC2Q==
 From: Lorenzo Bianconi <lorenzo@kernel.org>
-Date: Tue, 12 Nov 2024 01:08:48 +0100
-Subject: [PATCH RESEND v2 1/7] dt-bindings: clock: airoha: Update reg
- mapping for EN7581 SoC.
+Date: Tue, 12 Nov 2024 01:08:49 +0100
+Subject: [PATCH RESEND v2 2/7] clk: en7523: remove REG_PCIE*_{MEM,MEM_MASK}
+ configuration
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,7 +38,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-clk-en7581-syscon-v2-1-8ada5e394ae4@kernel.org>
+Message-Id: <20241112-clk-en7581-syscon-v2-2-8ada5e394ae4@kernel.org>
 References: <20241112-clk-en7581-syscon-v2-0-8ada5e394ae4@kernel.org>
 In-Reply-To: <20241112-clk-en7581-syscon-v2-0-8ada5e394ae4@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -52,73 +52,62 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  ansuelsmth@gmail.com, Lorenzo Bianconi <lorenzo@kernel.org>
 X-Mailer: b4 0.14.2
 
-clk-en7523 driver for EN7581 SoC is mapping all the scu memory region
-while it is configuring the chip-scu one via a syscon. Update the reg
-mapping definition for this device. This patch does not introduce any
-backward incompatibility since the dts for EN7581 SoC is not upstream
-yet.
+REG_PCIE*_MEM and REG_PCIE*_MEM_MASK regs (PBUS_CSR memory region) are not
+part of the scu block on the EN7581 SoC and they are used to select the
+PCIE ports on the PBUS, so remove this configuration from the clock driver
+and set these registers in the PCIE host driver instead.
+This patch does not introduce any backward incompatibility since the dts
+for EN7581 SoC is not upstream yet.
 
 Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
- .../bindings/clock/airoha,en7523-scu.yaml          | 23 ++++++++--------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/clk/clk-en7523.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-index 84353fd09428f4c9af6a1e39c04b5abdee602a55..fe2c5c1baf4332984369fdf0271a95fce7ee5f85 100644
---- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-+++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-@@ -34,8 +34,10 @@ properties:
-           - airoha,en7581-scu
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 22fbea61c3dcc05e63f8fa37e203c62b2a6fe79e..ec6716844fdcf7fc25482c6e587d062279360675 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -31,12 +31,6 @@
+ #define   REG_RESET_CONTROL_PCIE1	BIT(27)
+ #define   REG_RESET_CONTROL_PCIE2	BIT(26)
+ /* EN7581 */
+-#define REG_PCIE0_MEM			0x00
+-#define REG_PCIE0_MEM_MASK		0x04
+-#define REG_PCIE1_MEM			0x08
+-#define REG_PCIE1_MEM_MASK		0x0c
+-#define REG_PCIE2_MEM			0x10
+-#define REG_PCIE2_MEM_MASK		0x14
+ #define REG_NP_SCU_PCIC			0x88
+ #define REG_NP_SCU_SSTR			0x9c
+ #define REG_PCIE_XSI0_SEL_MASK		GENMASK(14, 13)
+@@ -415,26 +409,14 @@ static void en7581_pci_disable(struct clk_hw *hw)
+ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 			      void __iomem *np_base)
+ {
+-	void __iomem *pb_base;
+ 	u32 val;
  
-   reg:
--    minItems: 2
--    maxItems: 4
-+    items:
-+      - description: scu base address
-+      - description: misc scu base address
-+    minItems: 1
+-	pb_base = devm_platform_ioremap_resource(pdev, 3);
+-	if (IS_ERR(pb_base))
+-		return PTR_ERR(pb_base);
+-
+ 	val = readl(np_base + REG_NP_SCU_SSTR);
+ 	val &= ~(REG_PCIE_XSI0_SEL_MASK | REG_PCIE_XSI1_SEL_MASK);
+ 	writel(val, np_base + REG_NP_SCU_SSTR);
+ 	val = readl(np_base + REG_NP_SCU_PCIC);
+ 	writel(val | 3, np_base + REG_NP_SCU_PCIC);
  
-   "#clock-cells":
-     description:
-@@ -60,9 +62,7 @@ allOf:
-     then:
-       properties:
-         reg:
--          items:
--            - description: scu base address
--            - description: misc scu base address
-+          minItems: 2
+-	writel(0x20000000, pb_base + REG_PCIE0_MEM);
+-	writel(0xfc000000, pb_base + REG_PCIE0_MEM_MASK);
+-	writel(0x24000000, pb_base + REG_PCIE1_MEM);
+-	writel(0xfc000000, pb_base + REG_PCIE1_MEM_MASK);
+-	writel(0x28000000, pb_base + REG_PCIE2_MEM);
+-	writel(0xfc000000, pb_base + REG_PCIE2_MEM_MASK);
+-
+ 	return 0;
+ }
  
-         '#reset-cells': false
- 
-@@ -73,11 +73,7 @@ allOf:
-     then:
-       properties:
-         reg:
--          items:
--            - description: scu base address
--            - description: misc scu base address
--            - description: reset base address
--            - description: pb scu base address
-+          maxItems: 1
- 
- additionalProperties: false
- 
-@@ -96,12 +92,9 @@ examples:
-       #address-cells = <2>;
-       #size-cells = <2>;
- 
--      scuclk: clock-controller@1fa20000 {
-+      scuclk: clock-controller@1fb00000 {
-         compatible = "airoha,en7581-scu";
--        reg = <0x0 0x1fa20000 0x0 0x400>,
--              <0x0 0x1fb00000 0x0 0x90>,
--              <0x0 0x1fb00830 0x0 0x8>,
--              <0x0 0x1fbe3400 0x0 0xfc>;
-+        reg = <0x0 0x1fb00000 0x0 0x970>;
-               #clock-cells = <1>;
-               #reset-cells = <1>;
-       };
 
 -- 
 2.47.0
