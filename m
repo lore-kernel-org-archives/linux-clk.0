@@ -1,46 +1,44 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200EB1EBFFD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADD51EE01E;
 	Tue, 12 Nov 2024 00:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731371305; cv=none; b=rLDqnHqsTBhwxcI9UZqzfo9w0lSgrYf3HUj4MZq99C2kIDRk7cW2GwgM91rqj7expKqHp5emELBhm4dxLMRO5GTjQ560qKYQBxLL0oLLgdTtu/SdFocJyPfesOur+BJ/kf51sx12LntBGxROfKLnG4j7mZ/n1s6HyEoZPbOzxgY=
+	t=1731371305; cv=none; b=Tnuu/BrdJ/VrOHuhFEhbOI8vMUnNoYrU0IFpUE912qROT70m2vl3PP+M4qNVEgMsoBpUyWhjGlUI1ms3fSWwGuEkkUB9v7vZjFCAy+Lo9VZNKeTg32GNA5uA0S4DPzk9YkT2WBfmXZobKOAJJ2CQqb+8jR1S56dqbsIk4rPKeBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731371305; c=relaxed/simple;
-	bh=LR6E+004aFeNsAuKpi91L3Bty+FVgv7XXuMhQgw2Qls=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDOFGvN84d3FuvAVlO9ZCVDQxC/vwW3v2pl5LLUYlIYQtPZgYYtEB1xjmX15u+bNoAjKAgvkK/aUbF+xSUUXH7AGSctaqT609C2csVdVEYKOBD40JpB57sk0Zk6aJEvQNpVcKZ4DQKGKANylSVBcgogGcDT4qrOsS5/1wyenfW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Jx0pvKZV; arc=none smtp.client-ip=205.220.180.131
+	bh=a5y5UQhDLZtQhfp0kyQsgcLSFYEFlXcbP9yOekeQoLQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eB8Up7E4TxlxfInFyCFh4TxIlJtVy/iojaBL7AafbgArQQk5tnviOF/DALWZmHkSGsXLvcTjcTnvfADTMaMAnIL2TVo+RgocE7mY/v65xGgw5pswkpDAwx0CBCdFDCX5PPwW7US61WmTuOI4eWhdrT411OTtBnw0b5j4IIh98/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DTUXqxZj; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Jx0pvKZV"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DTUXqxZj"
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABI6dZG022539;
-	Tue, 12 Nov 2024 00:28:20 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABGK4i7023176;
+	Tue, 12 Nov 2024 00:28:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SbSYseMj0ij5mouERzQC0nOm0AV724RMGH0FiM0Hq6g=; b=Jx0pvKZVZe4frcec
-	mPzdRl6yvAlvk0AZCTetEiz+wclPcAgz3wZEvZ2Vvs+BPfo/PVxVXw4LZNiWauzd
-	UMGKgik5dtzvktTxTILLfwmLzqLDfju3HhQLCeqf8Za4cVR5cKkU72VrVp/SwbI6
-	u2w5bLuXva+Y6o+xD4c5Rk6Jv8kuZ6C80+61Ra+mlsI40tDUawnEkXsNmK6aE7wz
-	YLMkYbBGvCI+5RM9BOJXXli0bJ/7Lso4wJDiT+62hjNawERMMbXT+O41g5VK2FPf
-	SYoaWs9yRFMmofahG5fP19LfgMwriEb8lWMlytU9lSoF9fqTNT7YiEdl+p7S545+
-	6fp9GA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60a9pd-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=z/POHtmN/E7HPK6fi+VLJh
+	/ax+5c754knTUKNMlshcQ=; b=DTUXqxZjnIACQLgeIsE/njXuckc24ciiYGqMhT
+	WYiOOah18U2a6tOetKW+TYaKBFRn9qFNrEqDPdzu67yLgVe2fw90fG6h+Ntt2mMg
+	goMxOOlJlcCxjfc9hjTud/jO7Bt4Dk2GsrYJmru5Bvlb+YTTkuz5XsRa8D86IZ/S
+	OeeNul3g7MhwNlmrNqqvHZD07bVqriN35ZshIMFsLc0et9WSgq/lgB2uU1HaDdWp
+	8SAzRit+CzFWPvuoW6w+kwBfx8A1BeDsr4AK6Cn91FZ/TauhZC1A529de3heOCxV
+	BJvt87eCCUIhJRFM0ya3leyuDyZAdXzaREwWhwk9dFhtWW7w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60a9pa-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 00:28:19 +0000 (GMT)
+	Tue, 12 Nov 2024 00:28:18 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0SIlV024783
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AC0SH5P032442
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 00:28:19 GMT
+	Tue, 12 Nov 2024 00:28:17 GMT
 Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 11 Nov 2024 16:28:18 -0800
+ 15.2.1544.9; Mon, 11 Nov 2024 16:28:17 -0800
 From: Melody Olvera <quic_molvera@quicinc.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette
@@ -59,12 +57,10 @@ CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Melody Olvera
 	<quic_molvera@quicinc.com>
-Subject: [PATCH v2 3/7] clk: qcom: clk-alpha-pll: Add support for controlling Taycan PLLs
-Date: Mon, 11 Nov 2024 16:28:03 -0800
-Message-ID: <20241112002807.2804021-4-quic_molvera@quicinc.com>
+Subject: [PATCH v2 0/7] clks: qcom: Introduce clks for SM8750
+Date: Mon, 11 Nov 2024 16:28:00 -0800
+Message-ID: <20241112002807.2804021-1-quic_molvera@quicinc.com>
 X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241112002807.2804021-1-quic_molvera@quicinc.com>
-References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,92 +73,60 @@ X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Gr093vwmze-oJjTSHYNPBmbDo1rcP0zs
-X-Proofpoint-ORIG-GUID: Gr093vwmze-oJjTSHYNPBmbDo1rcP0zs
+X-Proofpoint-GUID: OiXQ6Y5vHDZ1oe-hmxEeeBWNM7vi8PL2
+X-Proofpoint-ORIG-GUID: OiXQ6Y5vHDZ1oe-hmxEeeBWNM7vi8PL2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=593 adultscore=0
  lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
  definitions=main-2411120002
 
-From: Taniya Das <quic_tdas@quicinc.com>
+Add GCC, RPMH, and TCSR clocks for the SM8750 SoC.
 
-Add clock ops for Taycan PLL, add the register offsets for supporting
-the PLL.
+The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+consumer mobile device SoCs. See more at:
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 14 ++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  7 +++++++
- 2 files changed, 21 insertions(+)
+Changes in V2:
+- removed unneeded rpmh macros, bcm ops
+- renamed CXO_PAD to CXO
+- ordered rpmh compatibles in alpha order
+- reordered clk_alpha_pll regs
+- removed redundant bindings for sm8750
+- revised gcc driver for pcie 0
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b8351f8c0b84..5e9217ea3760 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -197,6 +197,20 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL_U1] = 0x34,
- 		[PLL_OFF_TEST_CTL_U2] = 0x38,
- 	},
-+	[CLK_ALPHA_PLL_TYPE_TAYCAN_ELU] = {
-+		[PLL_OFF_OPMODE] = 0x04,
-+		[PLL_OFF_STATE] = 0x08,
-+		[PLL_OFF_STATUS] = 0x0c,
-+		[PLL_OFF_L_VAL] = 0x10,
-+		[PLL_OFF_ALPHA_VAL] = 0x14,
-+		[PLL_OFF_USER_CTL] = 0x18,
-+		[PLL_OFF_USER_CTL_U] = 0x1c,
-+		[PLL_OFF_CONFIG_CTL] = 0x20,
-+		[PLL_OFF_CONFIG_CTL_U] = 0x24,
-+		[PLL_OFF_CONFIG_CTL_U1] = 0x28,
-+		[PLL_OFF_TEST_CTL] = 0x2c,
-+		[PLL_OFF_TEST_CTL_U] = 0x30,
-+	},
- 	[CLK_ALPHA_PLL_TYPE_RIVIAN_EVO] = {
- 		[PLL_OFF_OPMODE] = 0x04,
- 		[PLL_OFF_STATUS] = 0x0c,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index c6d1b8429f95..87bd469d9c2c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -27,6 +27,7 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_ZONDA_OLE,
- 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
- 	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
-+	CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
- 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
- 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
- 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
-@@ -185,12 +186,15 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
- #define clk_alpha_pll_zonda_ole_ops clk_alpha_pll_zonda_ops
- 
- extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
-+#define clk_alpha_pll_taycan_elu_ops clk_alpha_pll_lucid_evo_ops
- extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
- #define clk_alpha_pll_reset_lucid_ole_ops clk_alpha_pll_reset_lucid_evo_ops
- extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
- #define clk_alpha_pll_fixed_lucid_ole_ops clk_alpha_pll_fixed_lucid_evo_ops
-+#define clk_alpha_pll_fixed_taycan_elu_ops clk_alpha_pll_fixed_lucid_evo_ops
- extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
- #define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
-+#define clk_alpha_pll_postdiv_taycan_elu_ops clk_alpha_pll_postdiv_lucid_evo_ops
- 
- extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
- #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
-@@ -218,6 +222,9 @@ void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
- 				 const struct alpha_pll_config *config);
- void clk_lucid_ole_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 				 const struct alpha_pll_config *config);
-+#define clk_taycan_elu_pll_configure(pll, regmap, config) \
-+	clk_lucid_evo_pll_configure(pll, regmap, config)
-+
- void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 				  const struct alpha_pll_config *config);
- void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+Taniya Das (7):
+  dt-bindings: clock: qcom-rpmhcc: Add RPMHCC for SM8750
+  clk: qcom: rpmh: Add support for SM8750 rpmh clocks
+  clk: qcom: clk-alpha-pll: Add support for controlling Taycan PLLs
+  dt-bindings: clock: qcom: Add SM8750 GCC
+  clk: qcom: Add support for GCC clock controller on SM8750
+  dt-bindings: clock: qcom: Document the SM8750 TCSR Clock Controller
+  clk: qcom: Add TCSR clock driver for SM8750
+
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml      |    2 +
+ .../bindings/clock/qcom,sm8650-gcc.yaml       |    8 +-
+ drivers/clk/qcom/Kconfig                      |   17 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   14 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    7 +
+ drivers/clk/qcom/clk-rpmh.c                   |   28 +-
+ drivers/clk/qcom/gcc-sm8750.c                 | 3274 +++++++++++++++++
+ drivers/clk/qcom/tcsrcc-sm8750.c              |  147 +
+ include/dt-bindings/clock/qcom,sm8750-gcc.h   |  226 ++
+ include/dt-bindings/clock/qcom,sm8750-tcsr.h  |   15 +
+ 12 files changed, 3738 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sm8750.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-sm8750.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8750-tcsr.h
+
+
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
 -- 
 2.46.1
 
