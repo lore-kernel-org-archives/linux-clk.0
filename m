@@ -1,131 +1,182 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29020BB49
-	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 08:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6230B20BB21
+	for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 08:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400521; cv=none; b=jIZMnscSkoFGWW7mfYN8lzIkaqj9InVzmfJWKmmkkhr+W2Tl6kdGtX9d8QOfgRnMYEwp44zz63yGIGuu52ElT54OwTxX9PkMBc5XzsNENccq8FHnswGm0z9qWaoQMxrEMRIAocIolG+L5ITT27nafP/cg49Oa6XLsK7o/1KZimw=
+	t=1731400597; cv=none; b=Cs0u0bCd4rfdQ5R0FcZen/PIbj1bxHFNgcc8hTp90YFjAF1aJbRoILwbcqV8FhQ1LVuIxHUlqjCIXsvvzPTUI/MrmUR6ak24mrdZtUgUevq4Q7ppHFhXueIw8JCFlULGeiPnVGdzs8jjujee8g9WmW2hEKaXVcbLKkYXzzab9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400521; c=relaxed/simple;
-	bh=q1kY2sQYlq+hOddVsv3T5fQZjCOWNt9cci/DeyYLwq0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WijR/YCO0Zf3p2Cgr5GBlC1ZKGvSJaA2EoQziFBgArPnJFrgop0CLV5fEEHHdHF7zpOy3jIucrHGpQ+ncbc4MMnu25qB7ALdWJTfNjB8B4SY8owIjjoSxbI+YTLg5Tn5I+qOjG1rgPrABRiNRuhBsEifRRj93uQy3f9D94EpS8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kEn/K0Rj; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1731400597; c=relaxed/simple;
+	bh=YibmPKH9jsHGHFzmm33YvFzPr6+r9g9y7/8t4SPau5k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DD2NbafnYoCibRarwus/Ym72XGxTxO9T7TS/eNMPOYSQ9kRQeWq7k4nN+yPvvg5NpVeGjJPb66JQGQZvCX8/Kwo4FvN5lq4eyZx4Gj74JmfpUh+G2o9mSbC8Il6vGZEYj2+JV+mfShqZ4F5Z40TB92aJQnYe4oFs+NSelCIyfLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=C36otA0o; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kEn/K0Rj"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so4137253f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 00:35:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="C36otA0o"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so5012904f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Nov 2024 00:36:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731400517; x=1732005317; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PL5GeOh28TysV9Lqq7NP7GxRHBqQLXUN1hL7aKNKaMk=;
-        b=kEn/K0RjlE+vo2+wilIXoOGshXRTmUj5jJzpPKaziwXLy3w2vpPI9jRqIfliqu78wX
-         /lbqNpiWnJ29DWxcxBxMd2XNBmqipUIucxkPUhxHzvM58sSX2ytJefViUYzoJwiZknQl
-         d0wB8Oahp9BIlG/SG3uAe3JSf7fvhKlKlg4AHhFyXA/D4gKHztN0fTwoCpRsTDtr0nlN
-         HCBmTd40S6uF3I+kVj2DMtycdJ22GZwWuDDVDp43PGBmbfddimWTbaEvtWXL10jWaqAQ
-         6hJDTAAC49PPP8JNYV7rMZEtdVY8Amat8VbGKYCscxRW4sRVn7PKRQlv8mVAzeTutznf
-         QV2A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731400594; x=1732005394; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/MXKM1Sqb74I8ZQpKiaye137tCtqvkpww9vx9BtZ+wc=;
+        b=C36otA0oSv2AiMs7cexQKShfYbaTYtO6KImopOATYSCP7UyKluCfRBVb+kBbEx7mOL
+         U6jg/CbCo4HD9zy8ZqIqMr2gDOvEl1QfvzbI8kR2O9KPw0RMQhNEOjQCdJcFtWGmO5iu
+         dpQy5sCrg9q9T0X1Wu9vD1Yrgx5u+uNMqQIFDEw4facRL0C035Ebs2p2HZjxq0/+ZuXR
+         fWsVUiMSzEwmnAZZGRgbtjXG/DTqPqRagZKFNCw/7ALzMAYGD7ArikTjEBpN8doz4m2i
+         kD+p4DpTXCsiBqmZe+SztuO4stNOsRZmBC7bSAhywv6qhyT7Ysn6hhGGHkJ0M2SIDHww
+         Fx3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731400517; x=1732005317;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PL5GeOh28TysV9Lqq7NP7GxRHBqQLXUN1hL7aKNKaMk=;
-        b=B6QdTL1la3H7QrH+s6ynEp7DPYgLDmph+xt6TmE01BvGRDXU5mTU3BJdm1bu8QPkoM
-         XLEUGROf4x2IsTMyV4L1trq0WaPKUWyxrcYuryUVPimzFiEY4A+PTkcVvc80qqMIXrc0
-         bC0T2oe3pZPkn9cJma+auYgBPJMjhJDWzBicuG215xswtd0u6DyiITeX6g2Fw8c09i8T
-         PWIZgYFaNkVsCE68SBgPqHzS+kycxyVoGqA9sZM+QB0OQS3+bhhKwcF1IOoUXrwiI2w1
-         5MW8xtRmjVv94Uk+FJF7Q13vMyIbv8PAmo2k1De1BFppZ92E4po/ld4N7epffaubUuLv
-         PWTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLeUygF56xmKe0MOygXM0atLycGmq2MHZt6ogXsvJ+0i8XgsZixsp9ExCZuhRQ97UbpUWjQV+COqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcq2oHvwrWZ8IuczYBPpIXGHPR1fe6zLOK3j6x87B3N6eocilf
-	mepnOj/ldvfnhmG1+M1kybPl515SSQfGCGL1/lHE14kXjK8nnwacX4E7o65/qmA=
-X-Google-Smtp-Source: AGHT+IFa1LixkOeiL8eI5oMGEu2ThX65XIYTJoURm9f8rPbRKT4O56MDA08ZH8xosIwK+pODYwTchA==
-X-Received: by 2002:a05:6000:178d:b0:368:37ac:3f95 with SMTP id ffacd0b85a97d-381f17255b9mr12724481f8f.31.1731400516852;
-        Tue, 12 Nov 2024 00:35:16 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97f544sm14918813f8f.40.2024.11.12.00.35.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 00:35:16 -0800 (PST)
-Message-ID: <d19d12e7-aabb-460c-a37c-6cbd3fe4e459@tuxon.dev>
-Date: Tue, 12 Nov 2024 10:35:13 +0200
+        d=1e100.net; s=20230601; t=1731400594; x=1732005394;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/MXKM1Sqb74I8ZQpKiaye137tCtqvkpww9vx9BtZ+wc=;
+        b=H8wvgcrUo4tiEkqXqgV46KBwJe5nc5sLSdoP2RacmKo1naXKTJc53BFq0hH1B6wPyq
+         nMzwMFkFfNOInW2O/ZETlnk8njDueWyPm/YnaJbagbKkZxDFM4oQhUMI8GJpniuxuSMR
+         gijLlP4MSAe0qX3eqn2AfefB90vNaIKWJlctX3Amwv1rr/PS+PU0by/WJXeiumFIrjJX
+         nS66cfEANjQxrXaNwF46ceZZkltzBxuHAgRwlsiG2KyV3ZADWZFMN30LYV67KLQuWURS
+         C93EdLhUfXeUO35FVWwwwTzrNswQsdA/LFYbm7UHcJpl0/VcHJ8LQWWO/qiqN0cXFUon
+         RyuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXh5KLvZDuT3TNVCFc+4Ev46bLJK8fA59Ymy8qQw0Mle2h4cJPb/OX8rGLWYtcGJCUeI5eSnUjHvR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7FORejkvYqTM8cz8F/6Em29hzfGYW0Ed3+7cKscIZUWUgyTtx
+	ClEnGk5m+wItPOK2leuKW4UBPMhx2Lvw2jwEhvXkVsK8/QN9oEnJMzF4HRFMMFo=
+X-Google-Smtp-Source: AGHT+IH8yunZYqyZqpSqETzBCKEoRJ1QIodl+MOpYN4uXnicVv8QU+PV+QjD7NHinPY4E5kCPs85PQ==
+X-Received: by 2002:a05:6000:1fa1:b0:37d:3e6d:6a00 with SMTP id ffacd0b85a97d-381f1884805mr15336017f8f.47.1731400593801;
+        Tue, 12 Nov 2024 00:36:33 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:50f9:1df6:c2b9:a468])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997320sm14968695f8f.47.2024.11.12.00.36.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 00:36:33 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
+In-Reply-To: <5eb12197-330c-4f55-82f7-d13ea458ba43@amlogic.com> (Chuan Liu's
+	message of "Fri, 8 Nov 2024 19:49:59 +0800")
+References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
+	<20241004133953.494445-1-jbrunet@baylibre.com>
+	<07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
+	<1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
+	<85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
+	<1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
+	<5eb12197-330c-4f55-82f7-d13ea458ba43@amlogic.com>
+Date: Tue, 12 Nov 2024 09:36:32 +0100
+Message-ID: <1j4j4c3l2n.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] serial: sh-sci: Check if TX data was written to
- device in .tx_empty()
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Jiri Slaby <jirislaby@kernel.org>, geert+renesas@glider.be,
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, p.zabel@pengutronix.de, g.liakhovetski@gmx.de,
- lethal@linux-sh.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20241108100513.2814957-1-claudiu.beznea.uj@bp.renesas.com>
- <20241108100513.2814957-3-claudiu.beznea.uj@bp.renesas.com>
- <530f4a8e-b71a-4db1-a2cc-df1fcfa132ec@kernel.org>
- <3711546e-a551-4cc9-a378-17aab5b426ef@tuxon.dev>
-In-Reply-To: <3711546e-a551-4cc9-a378-17aab5b426ef@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi, Jiri,
+On Fri 08 Nov 2024 at 19:49, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-On 08.11.2024 14:19, Claudiu Beznea wrote:
->>> @@ -885,6 +887,7 @@ static void sci_transmit_chars(struct uart_port *port)
->>>           }
->>>             sci_serial_out(port, SCxTDR, c);
->>> +        s->first_time_tx = true;
->>>             port->icount.tx++;
->>>       } while (--count > 0);
->>> @@ -1241,6 +1244,8 @@ static void sci_dma_tx_complete(void *arg)
->>>       if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
->>>           uart_write_wakeup(port);
->>>   +    s->first_time_tx = true;
->> This is too late IMO. The first in-flight dma won't be accounted in
->> sci_tx_empty(). From DMA submit up to now.
-> If it's in-flight we can't determine it's status anyway with one variable.
-> We can set this variable later but it wouldn't tell the truth as the TX
-> might be in progress anyway or may have been finished?
-> 
-> The hardware might help with this though the TEND bit. According to the HW
-> manual, the TEND bit has the following meaning:
-> 
-> 0: Transmission is in the waiting state or in progress.
-> 1: Transmission is completed.
-> 
-> But the problem, from my point of view, is that the 0 has double meaning.
-> 
-> I noticed the tx_empty() is called in kernel multiple times before
-> declaring TX is empty or not. E.g., uart_suspend_port() call it 3 times,
-> uart_wait_until_sent() call it in a while () look with a timeout. There is
-> the uart_ioctl() which calls it though uart_get_lsr_info() only one time
-> but I presumed the user space might implement the same multiple trials
-> approach before declaring it empty.
-> 
-> Because of this I considered it wouldn't be harmful for the scenario you
-> described "The first in-flight dma won't be accounted in sci_tx_empty()"
-> as the user may try again later to check the status. For this reason I also
-> chose to have no extra locking around this variable.
-> 
-> Please let me know if you consider otherwise.
+> On 11/8/2024 5:59 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
+>>
+>>>>>> -       if (core->flags & CLK_IGNORE_UNUSED)
+>>>>>> +       /*
+>>>>>> +        * If the parent is disabled but the gate is open, we should sanitize
+>>>>>> +        * the situation. This will avoid an unexpected enable of the clock as
+>>>>>> +        * soon as the parent is enabled, without control of CCF.
+>>>>>> +        *
+>>>>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
+>>>>>> +        * forcefully enabling a whole part of the subtree.  Just let the
+>>>>>> +        * situation resolve it self on the first enable of the clock
+>>>>>> +        */
+>>>>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
+>>> At first, I couldn't grasp the logic behind the 'return' here. Now it's
+>>> clear. This approach is equivalent to completely giving up on
+>>> handling clocks with CLK_OPS_PARENT_ENABLE feature in
+>>> clk_disable_unused_subtree().
+>>>
+>> No. It's handled correctly as long as the tree is in coherent state.
+>>
+>> What is not done anymore is fixing up an inconsistent tree, by this I
+>> mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
+>> own registers but has its parent disabled.
+>>
+>> In that particular case, clk_disable_unused_subtree() won't be turning on
+>> everything to properly disable that one clock. That is the root cause of
+>> the problem you reported initially. The clock is disabled anyway.
+>>
+>> Every other case are properly handled (at least I think).
+>
+> name              en_sts            flags
+> clk_a                1          CLK_IGNORE_UNUSED
+>     clk_b            0                0
+>         clk_c        1         CLK_OPS_PARENT_ENABLE
+>
+> Based on the above case:
+> 1. When 'clk_c' is configured with CLK_OPS_PARENT_ENABLE, disabling
+> 'clk_c' requires enabling 'clk_b' first (disabling 'clk_c' before
+> disabling 'clk_b'). How can to ensure that during the period of
+> disabling 'clk_c', 'clk_b' remains enabled?
 
-With the above explanation, can you please let me know if you still
-consider I should change the approach for this patch?
+That's perfect example of incoherent state.
+How can 'clk_c' be enabled if its parent is disable. That makes no
+sense, so there is no point enabling a whole subtree for this IMO.
 
-Thank you,
-Claudiu Beznea
+>
+> 2. 'clk_c' is not configured with CLK_IGNORE_UNUSED, it should be
+> disabled later. However, here it goes to a 'goto' statement and then
+> return 'false', ultimately resulting in 'clk_c' not being disabled?
 
+We've discussed that 2 times already. This discussion is going in
+circles now.
+
+>
+>>>>>>                    goto unlock_out;
+>>>>>>
+>>>>>>            /*
+>>>>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>>>>>>
+>>>>>>     unlock_out:
+>>>>>>            clk_enable_unlock(flags);
+>>>>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+>>>>>> -               clk_core_disable_unprepare(core->parent);
+>>>>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
+>>>>>>     }
+>>>>>>
+>>>>>>     static bool clk_ignore_unused __initdata;
+>>>>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
+>>>>>>            clk_prepare_lock();
+>>>>>>
+>>>>>>            hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>>>> -               clk_disable_unused_subtree(core);
+>>>>>> +               clk_disable_unused_subtree(core, true);
+>>>>>>
+>>>>>>            hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>>>> -               clk_disable_unused_subtree(core);
+>>>>>> +               clk_disable_unused_subtree(core, true);
+>>>>>>
+>>>>>>            hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>>>> -               clk_unprepare_unused_subtree(core);
+>>>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>>>
+>>>>>>            hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>>>> -               clk_unprepare_unused_subtree(core);
+>>>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>>>
+>>>>>>            clk_prepare_unlock();
+>>>>>>
+>>>>>> --
+>>>>>> 2.45.2
+>>>>>>
+>>>> --
+>>>> Jerome
+>> --
+>> Jerome
+
+-- 
+Jerome
