@@ -1,55 +1,55 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C921E492;
-	Wed, 13 Nov 2024 02:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E1213CF9C;
+	Wed, 13 Nov 2024 02:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731463386; cv=none; b=eI4AAq5FXjYId5bRmxeihEle5qp+X6JpE1m2NaoaW84uwJY2eqPHR+NkxNbECjvsM66aVr6jYvfy7ZpkaHU3fYpSmnaUB/tb8KODQXfkxN1u5FzeyXfEji0JEWJ6itIhDh5dM8R6L2Rt0cYMD1Y3992Ll3edN2r6pkl6K5Aa5vo=
+	t=1731466414; cv=none; b=XXlBtTGhU/VjFavp80mONVNCiY0rJHmGzpRAs45PgIZRXiiQiXDGPP2MIduivIzjqeuPnu7M5eyJiax/nCNglL/TlNof0osdLDlsayRbziwMuoI3VV0rm4zzG9RPn7gb42y/tl63UVdOJq68bhu2KdBrfZl/vwWwUPWSzsmQ02o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731463386; c=relaxed/simple;
-	bh=+VIgjIJOirlo5MrVPcyFsmx8bky0o60JNc3JpzBhMwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iYWQ0r7ip2YIREK+dG3ASg7p7b6xblaGrFWK+6sYSZ53qOmZx+n/JcKoNRNn3Ae1Cgd6IenZD1BhcPwDgRjE81lgPoHxs3/eUSqZgY/uXLmw+MYRbg/1iIcirHAPjnMkB0aJUOQsowP8vzwyHeKsc0rraRJLrKewIis3VRn5JaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYJwWxKW; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1731466414; c=relaxed/simple;
+	bh=F8QP/nKQfxhnRj66m6QjaRraxkUxtoGI7tb5Z4gi2f8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rnw+2yxZ41Q4x4JxAsFFVRnZms8WNU4cugaIpSfOP71U9sJpVnIvOQNybHHC7swRPAv+3+/mnJLX2tytwzLoLWy2GlE5jKM16h4Z2Mwq4Ku030mPQCXvmyPrpjVQ+Fhtq1Mr+kYA7HZHqDHDOW8raq1e81TW5Q0OMmHgYjYREuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjiYJAZv; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYJwWxKW"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so5105720a91.1;
-        Tue, 12 Nov 2024 18:03:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjiYJAZv"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso5338087b3a.3;
+        Tue, 12 Nov 2024 18:53:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731463384; x=1732068184; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731466412; x=1732071212; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=svAueh5ZWoiZMcD0xRpT+XvBXqQWeB+3wuT5pYyYv+Y=;
-        b=ZYJwWxKWN4ZmmVzKCmBjpWm3oUS3v56RBs3/4zROUhesfw6jucusvWmn6+Hgfd7GXx
-         Y+WKDqlRgBLVmAv2ZTvPO4o4znUgvxm8jzerdHed1xXUQVTCyILNxW+4hHV9nRHGQuX4
-         p254ks64YIHZokwimfGplPse2zJ2lhKq6cWrdYqepuSCK6bdl4ep58wZxw4HWbV25Jyt
-         klWGFljXPiheGMNCGXs974U5kRWRdrFrw/2CfqreUWC7azQNgxPq79GSr6bVeHRr3tcT
-         uXWugjvyyaKYwF2LDYRh9Aiy4IxFBqjr53KV5uM8q0qnD1YTAD6y0pOcV2ejd9Ue6vZ0
-         AbyA==
+        bh=xewsKThZcrjPpi/GIkRDSebXbGvFDy87C/0XOp8UGec=;
+        b=IjiYJAZvW0U9x+FV78/jWVnUpds4K931cOl7bChf65ztOi+Ojyi/QQH9EDt9zLVNX+
+         hNtaA6o2zIik4053HzTkBE1QB+MF6spN1KvqOODOoc/0acl7K8DqA3cD8lGRqzIO0w5a
+         5Geo5sdW/x4e33S0rA7I1Gk9FHykpciP9Cmtj2VVLrRC5l6vT53/lkqpQCZON2yGDZFR
+         ES9Owuv9wBA3LzHtFMFM/bd39CGZsWIbqIXCq8NA9/X2sOc4RDc+AjdCLj7pvDqB7JQ+
+         sxAAwEZ86a/dOINEypAnGLBUORWInRQrM/frlPlMkc+POp0TKrhHTTf+cbZyB0qqQzgK
+         OeFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731463384; x=1732068184;
+        d=1e100.net; s=20230601; t=1731466412; x=1732071212;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=svAueh5ZWoiZMcD0xRpT+XvBXqQWeB+3wuT5pYyYv+Y=;
-        b=bO7NLkwLR3AN45VUC6bMzITqTOncKnPl2Jxff1E2VYiXkCiU2+Vv9uO4bkhlSjKLXW
-         nScUN+sU3tt9tNSmwrLe7B0ChI3nVWJRfM4Shw13FZukxGU32BklQAaFbPiqh0nC3ECT
-         LB9MUtOpmjuY6/Y2tMr+ZAORVKzeu7ax7xT/xCPSM63EWhduTHfocpFwPlk8VRB2bo+o
-         fs/VcIbrxgi1yt9II+GlT2N7ojbKZT5nI+BSt/EArOuLAYv1iDxdObPImjJ/xekRkNGD
-         790M3vM7VM9aNrBAcQO0dkMYoqrAdWto9JeeRbjYE7qGX6Jl2XHgYSodD9D9SZLCNISq
-         ESIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQSDlgqRgk9Ij9KKM+b0AKGS4jpYXQKcnmilB9YGFjtlAISvzx8jfCljyQ9LABHakUyzO8fozFk/RLjN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyDdg/y0jMcvJ57ZZu/b48Vkm5guKlvAmJkFhNjYCbXFqkOHpM
-	X7UAxwqJtV+nDymQIRa7ZaYAiQNcUl91o1hnwXBotTD1B73D8Q88
-X-Google-Smtp-Source: AGHT+IHC3Uk5Mw6fa8aAvfMN66RKnEDpnVe78zcdp2V3UKYV6391335t55cRjD8qkrbTVJ7UBo0aDA==
-X-Received: by 2002:a17:90b:1dd1:b0:2e2:ba35:3573 with SMTP id 98e67ed59e1d1-2e9f2c900b7mr1566916a91.20.1731463384264;
-        Tue, 12 Nov 2024 18:03:04 -0800 (PST)
+        bh=xewsKThZcrjPpi/GIkRDSebXbGvFDy87C/0XOp8UGec=;
+        b=OdITUmntmiswOQZpkgVnldDvO/vKggaqTiiQ4nbKtd3gS3fu+AwrRhJZ1WmGkn7rof
+         gKfX6wai19t2I9SvQGrvQ895HAL6DsWDVSdE8mZFJu/IY+oJ5g3iboSBUSme+QnCHDoN
+         V5dzDsmpac5w/nXvOlCtS6K9Jd4h3dIVz2RyxHjOrjgPpo+X8Lw7hl7Wd2kXvUHp0lZb
+         43xlAND+8Z+MRuwKHl4sUFoKldn/6W1+oNMyCtqwgVMnLPPrRUZXW8NS9vzL6B3lY+G2
+         9rewC6N1dZopv8kp0NNUyRygGRjahts1fqsKFUjIk7l1RMg7chkwsV2SO1YnS+qRuTeC
+         gt7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXSaPVL7YfqrDaQA1D+8whL+PVGoV6v+OKfhOsgkI62Ds1wNh+LXER0nirpKvWwhHAwjd286deMzJ+TZDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEPsZxQxgQWxLZ1FU6c+j4+H7XkOQbm6K9Nf3MJnmy3lzfc+GJ
+	3Kb0WYEWRYVWFClPOkFphG4i4ct4TFLBjdtuLhwdbxuKZtjtQMcq
+X-Google-Smtp-Source: AGHT+IGy9ah1otck2RobZiWb6M56TaBXd4DkoJC8PBSWlDZT03uCcic/l+WsvL3cza9CBzYwkmKlVQ==
+X-Received: by 2002:a05:6a00:2e1d:b0:71e:7c92:a192 with SMTP id d2e1a72fcca58-7241336afb8mr25943275b3a.24.1731466412340;
+        Tue, 12 Nov 2024 18:53:32 -0800 (PST)
 Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3eca101sm273582a91.14.2024.11.12.18.03.03
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f489186sm11237371a12.9.2024.11.12.18.53.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 18:03:03 -0800 (PST)
+        Tue, 12 Nov 2024 18:53:31 -0800 (PST)
 From: Ragavendra <ragavendra.bn@gmail.com>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -58,9 +58,9 @@ To: mturquette@baylibre.com,
 Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] clk:sophgo:clk-cv18xx-pll: fix unitialized u32 variable
-Date: Tue, 12 Nov 2024 18:02:33 -0800
-Message-ID: <20241113020233.3646527-1-ragavendra.bn@gmail.com>
+Subject: [PATCH] clk:sophgo:clk-cv18xx-pll: Remove uninitialized u32 parameter and variable
+Date: Tue, 12 Nov 2024 18:53:18 -0800
+Message-ID: <20241113025318.3667350-1-ragavendra.bn@gmail.com>
 X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -70,27 +70,59 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Initializing the val variable of type u32 as it was not initialized.
+Updating the detected value to 0 in the ipll_find_rate and removing it from the method parameters as it does not depend on external input. Updating the calls to ipll_find_rate as well and removing the u32 val variable from ipll_determine_rate.
 
 Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
 Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
 ---
- drivers/clk/sophgo/clk-cv18xx-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-index 29e24098bf5f..04a0419cab4e 100644
+index 29e24098bf5f..57981a08fd5f 100644
 --- a/drivers/clk/sophgo/clk-cv18xx-pll.c
 +++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-@@ -87,7 +87,7 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+@@ -44,15 +44,15 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
+ 			      PLL_GET_POST_DIV_SEL(value));
+ }
+ 
++
+ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+-			  unsigned long prate, unsigned long *rate,
+-			  u32 *value)
++			  unsigned long prate, unsigned long *rate)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long trate = *rate;
+ 	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
+ 	unsigned long pre, div, post;
+-	u32 detected = *value;
++	u32 detected = 0;
+ 	unsigned long tmp;
+ 
+ 	for_each_pll_limit_range(pre, &limit->pre_div) {
+@@ -87,11 +87,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
  
  static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
  {
 -	u32 val;
-+	u32 val = 0;
  	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
  
  	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+-			      &req->rate, &val);
++			      &req->rate);
+ }
+ 
+ static void pll_get_mode_ctrl(unsigned long div_sel,
+@@ -134,7 +133,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+-	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
++	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
+ 	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
+ 			  ipll_check_mode_ctrl_restrict,
+ 			  pll->pll_limit, &detected);
 -- 
 2.46.1
 
