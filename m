@@ -1,55 +1,57 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA561E04B3
-	for <linux-clk@vger.kernel.org>; Wed, 13 Nov 2024 13:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5751EF94C
+	for <linux-clk@vger.kernel.org>; Wed, 13 Nov 2024 13:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731504949; cv=none; b=tv/ll6umWDZ1ZaPqMD2+IvXLQs4A0nImFlhcJodrCWCh/kwpKvTsz5E+1DevuTB8h0eyxYUCfPoPL2pu9gEAfevRUOYNLcxkSECauB43cgPuHtks5AbwPeSE556zmYu7oiVENZ2WSrLXwf9E6brc17H1ZvlLX0GAoVNZpVhNVc8=
+	t=1731504950; cv=none; b=aPW740emNqDe+nNF4p/rc2ioVfAGV69XEI2rOElKNUQIxFbX7gbWA392Iq7dhwA460jgxv9IZIUJgJsQ2bR2maoUZJlT+AW2ta6Tugeb1wPRGd8lzvlW0gZQKnl+Ze9E57mfOZuxmlHfT+L6EQZlaRGhmydmOemHBAXCqH4Yyh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731504949; c=relaxed/simple;
-	bh=GSEp7+P2oIqPBwNKWA7wsOuoELp7wiwa4zBQQsvE8bk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qCOTAPDBfgwWMwKW8P/c5eYkZdFQeFRQvRWEvjsCtaQyhxSaPUMUrNvUHejI3ILYskG87tZK6SI2gT39aWHsCJveqVOryq/HwDwqNWx3ikqHWYTshrdsy1+HBk4UNjqovO0YyNCOnv9dr7PUuqO03hfvvuRPAgl6XI0HOAiVdeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IU5KkCUM; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1731504950; c=relaxed/simple;
+	bh=tRCvEtnmNEMPpYJQYZQqSgTO3s8UYztq2iLuGkoPOpY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sv+z/ibTVExaqAKCBjzNL6Cl6020k7fWEBZH/Wj2oGzpWAz7obBje520HO9suOkuXmoWVsWQI1h4r9UQNGifsfVuR5kqiHTAcrCOkNhfWzSzaFnMCCCJJnbgiD9YODj6G+Z3rxBMKFCx3XHQCNLnC0KBTbfT01tr7HKbQxR7eP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QOO0wjA5; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IU5KkCUM"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314b316495so57969375e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 13 Nov 2024 05:35:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QOO0wjA5"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431688d5127so55860385e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 13 Nov 2024 05:35:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731504945; x=1732109745; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=38RdVR6XfzT/acxg3Evn3RfNKko9KLfNmwUZPEhGtkk=;
-        b=IU5KkCUM3WqNbX7To4Q96Sp4+eJeVH2kQonJr+7fE+ooSNooBahYg9NfSafeVJd3fJ
-         Q9khrr8V2nNSAhthcXmPztX31iEQesx8qji9+fjGec9QLThZBeR1EfDRdtTWO3qr3vkC
-         iXrFZGziUDxIyqB8tsiKjHFNqi8NSxjCn/hdwc9MrNYsyYxMrehDTKV4H5Au7u/JepJ3
-         jLP0feYRaSHeAjXEuDT0/96xJiBsqYuj/f8EfSWLHeFY1n4NhJ2dHaSIslea0vwU0obY
-         FT2Uwj9MIacowyxM+kzXkQePJOECH2+mDzBwKDQZfBFH5ue1fSWyY+dXp7qRRXuWqz3W
-         wFtQ==
+        d=tuxon.dev; s=google; t=1731504947; x=1732109747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wIKrCTKqo0knpYzgqc5iDCSA2PYAxbi2sKJksW310Bo=;
+        b=QOO0wjA5dpONZKhyUX3ow0rznyCc6A9iV7V3tMfxpwbwrFLK9lBpD4e5xxLv4sABQL
+         938ov4IhJ+fi1BxqxsLgISP3cy1rMOTQr9c/mxUoX4ftUn3rCFsulT+VAt/2P/Zw/tQN
+         O7lm7ae1j7F4h5SivXgzzCCa0+3eSzHsFb1mDl2Gji9FFTn+dIlxt3hucdUIhfcvxCGW
+         6F9783SwCflzfGPbnjGs0UyS3GMuiuTPZdkS6KR5fS2tb0VfrG+GsgywuiPWmejC1pHF
+         M0rC8RW31V5sPGDBe6egH9Fl9yvueBYCVmwBzcMli8yPLGQ75VY8WVyN6xJGLoyogFiD
+         yNOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731504945; x=1732109745;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38RdVR6XfzT/acxg3Evn3RfNKko9KLfNmwUZPEhGtkk=;
-        b=qD2Yu5od2R+Ws6DXfvCr8aLjnA/e9tvjL/LRN+oOaOADZOorpNl+LbSRzkK78tMVCx
-         GUa4e0KWPmny8Asi4kan48IpoYln8REgCmt+YIyl0PApQBAepDGL8ACXu7749XxubrJZ
-         WNk0nuz7t09i40ddIQp2gcCs9roctWcpNBnA3ZPAYiWJ3ODGBUBtWTjc7cwRhWKYMZFh
-         Ta55u1WEs7tmVhOyHHZZyuScEkRdRFoDRiHMfuahEvVBD26NmIbq5zUZuMDCReQ8xk8D
-         QVhr6Cueet2YwEh3NqrRMcAYAAFD2dMRdekVRZVr3B+0Hr8ZuMAsIEMynCRIPsJA8trm
-         294w==
-X-Forwarded-Encrypted: i=1; AJvYcCX64uSpwOBNLdXraeDJF0/4ZSAoQiamVjBY3jMAeEzQGm6PNHVegE4cFmvr8tigkG3nJfWoDSeTz40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweGb+/n9ZsS7YtpP27n6dBB6xREN3d24qrAvnO01KIRW4R5vcN
-	FbYuWJUC9oRCR2x8yeW+OS8zpah3wrYaYGCrQCjveCAqbkofJ1o79F09KVpPssY=
-X-Google-Smtp-Source: AGHT+IH6BtO8t01xxiyIYhMvt7Hd4pkTdgZmTb7yTwf7/RBE8w+RkZLnSNs8EBeBk/+f7GQjKwBbng==
-X-Received: by 2002:a05:600c:1f1b:b0:431:60ac:9b0c with SMTP id 5b1f17b1804b1-432d4ad33demr24573945e9.20.1731504944871;
-        Wed, 13 Nov 2024 05:35:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731504947; x=1732109747;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIKrCTKqo0knpYzgqc5iDCSA2PYAxbi2sKJksW310Bo=;
+        b=TLKjejyKnDQH4CJiIG5WCj4CdHj6IoD1w0s3GEuiyJku5d/r3TBBa2h4oOzlfrzAOF
+         DiMOIxslMtLWeCzpHcXGsHeAt9GVnVGG3AYVzZjzds0Fp+0kAUUfgityEpb+mdFwnQtQ
+         wW7MnN03Af0GfB5qOoPK37ILsXq/nzpzxvvwS157n4GzjqCMn1mXROyAPrOr5XDSyte0
+         /NcXtuO9vtp9H67M49mW4oXaLGnxvbe9GwE4+O6tkxXkztdHWfMgze9JnwgRYUVJ/r8n
+         eZs61Pwgd6NVP1oMzr0L1s2/JeigRBN9jfU4oDeWcJoq49IrMnOXFJCCdm9Z1gwvHJyO
+         CUPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTzNLAZJ4a/EYThG0vy8PNmj7Yy6VTBnaQqz0y+9TAIOPEEdF7OLLTu+R+k1WJvQDdwaeZgk7ckMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhbmNb//B4+QIuRqSaiFFPFE7UiA3SkxA2dI5FPpMCBpej5eyu
+	70fRY4xkvL6amkTIT1ZVItoxmIrEB2CZ0+WpVJTMSbj9VdNyQ73FA3NxJbPxFkA=
+X-Google-Smtp-Source: AGHT+IFQreZFi8mnOtWCfd/MMXO2rPTH6077T8y5lvDdCLcFj2DGPY9RyFbfHD6Lh3FLLf+PiUBOcQ==
+X-Received: by 2002:a05:600c:a40a:b0:432:d866:f45e with SMTP id 5b1f17b1804b1-432d866f646mr7318525e9.33.1731504947270;
+        Wed, 13 Nov 2024 05:35:47 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e2f2esm25664165e9.1.2024.11.13.05.35.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d54e2f2esm25664165e9.1.2024.11.13.05.35.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 05:35:44 -0800 (PST)
+        Wed, 13 Nov 2024 05:35:46 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -75,10 +77,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 00/25] Add audio support for the Renesas RZ/G3S SoC
-Date: Wed, 13 Nov 2024 15:35:15 +0200
-Message-Id: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 01/25] clk: renesas: r9a08g045-cpg: Add clocks, resets and power domains support for SSI
+Date: Wed, 13 Nov 2024 15:35:16 +0200
+Message-Id: <20241113133540.2005850-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,85 +93,67 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+Add SSI clocks, resets and power domains support for the SSI blocks
+available on the Renesas RZ/G3S SoC.
 
-Series enables the audio support for the Renesas RZ/G3S
-SoC along with runtime PM and suspend to RAM.
-
-Patches:
--    01/25 - add clock, reset and power domain support
-- 02-04/25 - update versaclock3 clock generator driver to support the
-             5L35023 hardware variant; versaclock3 provides clocks for
-             the audio devices (SSIF, DA7212 codec)
--    05/25 - add pin control support for audio
-- 06-20/25 - add SSIF support for the RZ/G3S SoC; fixes and cleanups
-             were also included
-- 21-25/25 - add device tree support
-
-Merge strategy, if any:
-- clock patches (01-04/25) can go through the Renesas tree
-- pinctrl patch (05/25) can go though the Renesas tree
-- audio patches (06-20/25) can go through the audio tree
-- device tree patches (21-25/25) can go through the Renesas tree
-
-Thank you,
-Claudiu Beznea
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
 Changes in v3:
-- use renesas instead of sh in audio patches title
-- use proper fixes tag for patch
-  "ASoC: renesas: rz-ssi: Terminate all the DMA transactions"
 - collected tags
 
 Changes in v2:
-- fixed typos pointed out in the review process
-- dropped da7213 patches already applied
-- dropped patch "ASoC: sh: rz-ssi: Use a proper bitmask for clear bits"
-  as requested in the review process
+- none
 
+ drivers/clk/renesas/r9a08g045-cpg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Claudiu Beznea (25):
-  clk: renesas: r9a08g045-cpg: Add clocks, resets and power domains
-    support for SSI
-  clk: versaclock3: Prepare for the addition of 5L35023 device
-  dt-bindings: clock: versaclock3: Document 5L35023 Versa3 clock
-    generator
-  clk: versaclock3: Add support for the 5L35023 variant
-  pinctrl: renesas: rzg2l: Add audio clock pins
-  ASoC: renesas: rz-ssi: Terminate all the DMA transactions
-  ASoC: renesas: rz-ssi: Use only the proper amount of dividers
-  ASoC: renesas: rz-ssi: Fix typo on SSI_RATES macro comment
-  ASoC: renesas: rz-ssi: Remove pdev member of struct rz_ssi_priv
-  ASoC: renesas: rz-ssi: Remove the rz_ssi_get_dai() function
-  ASoC: renesas: rz-ssi: Remove the first argument of
-    rz_ssi_stream_is_play()
-  ASoC: renesas: rz-ssi: Use readl_poll_timeout_atomic()
-  ASoC: renesas: rz-ssi: Use temporary variable for struct device
-  ASoC: renesas: rz-ssi: Use goto label names that specify their actions
-  ASoC: renesas: rz-ssi: Rely on the ASoC subsystem to runtime
-    resume/suspend the SSI
-  ASoC: renesas: rz-ssi: Enable runtime PM autosuspend support
-  ASoC: renesas: rz-ssi: Add runtime PM support
-  ASoC: renesas: rz-ssi: Issue software reset in hw_params API
-  ASoC: renesas: rz-ssi: Add suspend to RAM support
-  ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
-  arm64: dts: renesas: r9a08g045: Add SSI nodes
-  arm64: dts: renesas: rzg3s-smarc-som: Add versa3 clock generator node
-  arm64: dts: renesas: Add da7212 audio codec node
-  arm64: dts: renesas: rzg3s-smarc: Enable SSI3
-  arm64: dts: renesas: rzg3s-smarc: Add sound card
-
- .../bindings/clock/renesas,5p35023.yaml       |   1 +
- .../bindings/sound/renesas,rz-ssi.yaml        |   1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  96 ++++++++
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  47 +++-
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  66 +++++
- drivers/clk/clk-versaclock3.c                 |  67 ++++--
- drivers/clk/renesas/r9a08g045-cpg.c           |  20 ++
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |   2 +
- sound/soc/renesas/rz-ssi.c                    | 226 +++++++++++-------
- 9 files changed, 415 insertions(+), 111 deletions(-)
-
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index b2ae8cdc4723..d71e77624fac 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -209,6 +209,14 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("sdhi2_imclk2",		R9A08G045_SDHI2_IMCLK2, CLK_SD2_DIV4, 0x554, 9),
+ 	DEF_MOD("sdhi2_clk_hs",		R9A08G045_SDHI2_CLK_HS, R9A08G045_CLK_SD2, 0x554, 10),
+ 	DEF_MOD("sdhi2_aclk",		R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11),
++	DEF_MOD("ssi0_pclk",		R9A08G045_SSI0_PCLK2, R9A08G045_CLK_P0, 0x570, 0),
++	DEF_MOD("ssi0_sfr",		R9A08G045_SSI0_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 1),
++	DEF_MOD("ssi1_pclk",		R9A08G045_SSI1_PCLK2, R9A08G045_CLK_P0, 0x570, 2),
++	DEF_MOD("ssi1_sfr",		R9A08G045_SSI1_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 3),
++	DEF_MOD("ssi2_pclk",		R9A08G045_SSI2_PCLK2, R9A08G045_CLK_P0, 0x570, 4),
++	DEF_MOD("ssi2_sfr",		R9A08G045_SSI2_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 5),
++	DEF_MOD("ssi3_pclk",		R9A08G045_SSI3_PCLK2, R9A08G045_CLK_P0, 0x570, 6),
++	DEF_MOD("ssi3_sfr",		R9A08G045_SSI3_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 7),
+ 	DEF_MOD("usb0_host",		R9A08G045_USB_U2H0_HCLK, R9A08G045_CLK_P1, 0x578, 0),
+ 	DEF_MOD("usb1_host",		R9A08G045_USB_U2H1_HCLK, R9A08G045_CLK_P1, 0x578, 1),
+ 	DEF_MOD("usb0_func",		R9A08G045_USB_U2P_EXR_CPUCLK, R9A08G045_CLK_P1, 0x578, 2),
+@@ -238,6 +246,10 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
+ 	DEF_RST(R9A08G045_SDHI2_IXRST, 0x854, 2),
++	DEF_RST(R9A08G045_SSI0_RST_M2_REG, 0x870, 0),
++	DEF_RST(R9A08G045_SSI1_RST_M2_REG, 0x870, 1),
++	DEF_RST(R9A08G045_SSI2_RST_M2_REG, 0x870, 2),
++	DEF_RST(R9A08G045_SSI3_RST_M2_REG, 0x870, 3),
+ 	DEF_RST(R9A08G045_USB_U2H0_HRESETN, 0x878, 0),
+ 	DEF_RST(R9A08G045_USB_U2H1_HRESETN, 0x878, 1),
+ 	DEF_RST(R9A08G045_USB_U2P_EXL_SYSRST, 0x878, 2),
+@@ -286,6 +298,14 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
+ 				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(1)), 0),
+ 	DEF_PD("sdhi2",		R9A08G045_PD_SDHI2,
+ 				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(11)), 0),
++	DEF_PD("ssi0",		R9A08G045_PD_SSI0,
++				DEF_REG_CONF(CPG_BUS_MCPU1_MSTOP, BIT(10)), 0),
++	DEF_PD("ssi1",		R9A08G045_PD_SSI1,
++				DEF_REG_CONF(CPG_BUS_MCPU1_MSTOP, BIT(11)), 0),
++	DEF_PD("ssi2",		R9A08G045_PD_SSI2,
++				DEF_REG_CONF(CPG_BUS_MCPU1_MSTOP, BIT(12)), 0),
++	DEF_PD("ssi3",		R9A08G045_PD_SSI3,
++				DEF_REG_CONF(CPG_BUS_MCPU1_MSTOP, BIT(13)), 0),
+ 	DEF_PD("usb0",		R9A08G045_PD_USB0,
+ 				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, GENMASK(6, 5)), 0),
+ 	DEF_PD("usb1",		R9A08G045_PD_USB1,
 -- 
 2.39.2
 
