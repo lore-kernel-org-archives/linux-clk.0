@@ -1,126 +1,96 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627192309AC;
-	Wed, 13 Nov 2024 01:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C921E492;
+	Wed, 13 Nov 2024 02:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731460599; cv=none; b=Dz5x58opWG0XXwh5b8CKY9QrkLJBUowaT0XcAREWiqz3RKREn0UsPKyHOQbsRhRH+TKfN548iYnTsJ1M4S0ayLPvpZ7D8G8Dgj9q2/01xXIAyNrG+aLpUKk73OVhGgiTKpmUVav/j6PAhbzLSDL7V7F/Q9iQeft+wdTFam5Kz+Q=
+	t=1731463386; cv=none; b=eI4AAq5FXjYId5bRmxeihEle5qp+X6JpE1m2NaoaW84uwJY2eqPHR+NkxNbECjvsM66aVr6jYvfy7ZpkaHU3fYpSmnaUB/tb8KODQXfkxN1u5FzeyXfEji0JEWJ6itIhDh5dM8R6L2Rt0cYMD1Y3992Ll3edN2r6pkl6K5Aa5vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731460599; c=relaxed/simple;
-	bh=FmZqa6woVTYIKFBuVqy+nvUShJWTq/0RdUO/NHkLOiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEfMTMVP9YWdIjfllaRdEYOOGC5Dl0+zOLxE2FtgV1k94w8Lb1oMABwKzkoM974rCds+foOl64I8xuXd++qzFG/3o9R37gtkl7SuVcx1QPKy8wC5VEGgd89fOVugOIY6LX4kmMNQ6R3YsXryXTqGv86c/IjaPzawNdV3EH4gGto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBDugLE0; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1731463386; c=relaxed/simple;
+	bh=+VIgjIJOirlo5MrVPcyFsmx8bky0o60JNc3JpzBhMwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iYWQ0r7ip2YIREK+dG3ASg7p7b6xblaGrFWK+6sYSZ53qOmZx+n/JcKoNRNn3Ae1Cgd6IenZD1BhcPwDgRjE81lgPoHxs3/eUSqZgY/uXLmw+MYRbg/1iIcirHAPjnMkB0aJUOQsowP8vzwyHeKsc0rraRJLrKewIis3VRn5JaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYJwWxKW; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBDugLE0"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b150dc7bc0so440692885a.1;
-        Tue, 12 Nov 2024 17:16:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYJwWxKW"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so5105720a91.1;
+        Tue, 12 Nov 2024 18:03:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731460597; x=1732065397; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7q3DDbKVAus+N5tvow0q5HKxDltItzretugBPQSfYX0=;
-        b=PBDugLE0OhZcG0NHfcPN1LFpmA5Wd+Dwg7g7QGqKwsWCoEWzn1U2ubCxcAMCp84UbE
-         QUsQfz8XzgA5eovr6GoMgU5LqjjohnXpbEbkhXrXy2xj1IGHYHCauuiQPuoII6q4jT7z
-         DZNpsGg+tNN9k8W5vIyXjg5oF6THMWS/jFycUWdlAiYwE/vD4N816LStRS3Zsp48/BKn
-         Y5SXPUqIwIJNcu6Z/kn84f8NBZJbwv6jMO0N+XNTcjNX0bSXiDUpHsgw6Cfq0yeAykxR
-         kgQoENhDpyPeAlEIfK4ksx1ddAmUj63A9nFeNMwGTA3/F9JsmjZo0hhFziG69s1HQopl
-         SEBg==
+        d=gmail.com; s=20230601; t=1731463384; x=1732068184; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=svAueh5ZWoiZMcD0xRpT+XvBXqQWeB+3wuT5pYyYv+Y=;
+        b=ZYJwWxKWN4ZmmVzKCmBjpWm3oUS3v56RBs3/4zROUhesfw6jucusvWmn6+Hgfd7GXx
+         Y+WKDqlRgBLVmAv2ZTvPO4o4znUgvxm8jzerdHed1xXUQVTCyILNxW+4hHV9nRHGQuX4
+         p254ks64YIHZokwimfGplPse2zJ2lhKq6cWrdYqepuSCK6bdl4ep58wZxw4HWbV25Jyt
+         klWGFljXPiheGMNCGXs974U5kRWRdrFrw/2CfqreUWC7azQNgxPq79GSr6bVeHRr3tcT
+         uXWugjvyyaKYwF2LDYRh9Aiy4IxFBqjr53KV5uM8q0qnD1YTAD6y0pOcV2ejd9Ue6vZ0
+         AbyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731460597; x=1732065397;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7q3DDbKVAus+N5tvow0q5HKxDltItzretugBPQSfYX0=;
-        b=KyjxVD6FFJoIOax++hOWtqaHq8tn1hJET+y+obNZCrvNLtOqgB3BEMgK/6emyKl6l0
-         RWUKMeo9q03BpVsiejFQKpoc2aAAhPKNyWhJjPc4UyIpLjd7UGxxWqKrz/2mkx7KLn2+
-         p4X4vI0nvFHVjFWWvypVqykG+SxIURKfoVAR0u+GbaOwhXbpcw0NoBMuxUWB6xD7ZFwG
-         XruMDOq6EwJxs7C1VsXXgKlOFB/L98RrF9yUJBQVjyfcbNRobKsy6Q9IV2XoDGFVoO7G
-         TXPFlqpccEZTtCYja3t0hLJoCdcWtGb9lFSmNQEwlfGcPM1Eoe8dsLZ5FrVBDHm5kPUg
-         hiWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMOmASs8zN75iuOscmtsBDRJz31z1ZnTQkN9PBuqn3WLv2LRfacj44GUdIKFIKwIp2sNnyo51YVQ2Yd/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtLS6rqOX2IPHRuFxwT1S4c5DF+ApG3y7ClliLd3x7W3DIiNVK
-	H8sHkOE0aslOThg+HccupliSRQbilBYf87Mj631CoTWY/QFgzJHt
-X-Google-Smtp-Source: AGHT+IGfCqVvMxi06pZSRAGM/3QLh9/cYOD5/M2YyJXgtBHpTLxiaopAKIWI4ZKx4cgHjMybthxWAw==
-X-Received: by 2002:a05:620a:2943:b0:7b1:4579:61fa with SMTP id af79cd13be357-7b331f30f83mr2388049585a.55.1731460597262;
-        Tue, 12 Nov 2024 17:16:37 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac427cfsm644337585a.30.2024.11.12.17.16.35
+        d=1e100.net; s=20230601; t=1731463384; x=1732068184;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=svAueh5ZWoiZMcD0xRpT+XvBXqQWeB+3wuT5pYyYv+Y=;
+        b=bO7NLkwLR3AN45VUC6bMzITqTOncKnPl2Jxff1E2VYiXkCiU2+Vv9uO4bkhlSjKLXW
+         nScUN+sU3tt9tNSmwrLe7B0ChI3nVWJRfM4Shw13FZukxGU32BklQAaFbPiqh0nC3ECT
+         LB9MUtOpmjuY6/Y2tMr+ZAORVKzeu7ax7xT/xCPSM63EWhduTHfocpFwPlk8VRB2bo+o
+         fs/VcIbrxgi1yt9II+GlT2N7ojbKZT5nI+BSt/EArOuLAYv1iDxdObPImjJ/xekRkNGD
+         790M3vM7VM9aNrBAcQO0dkMYoqrAdWto9JeeRbjYE7qGX6Jl2XHgYSodD9D9SZLCNISq
+         ESIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQSDlgqRgk9Ij9KKM+b0AKGS4jpYXQKcnmilB9YGFjtlAISvzx8jfCljyQ9LABHakUyzO8fozFk/RLjN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyDdg/y0jMcvJ57ZZu/b48Vkm5guKlvAmJkFhNjYCbXFqkOHpM
+	X7UAxwqJtV+nDymQIRa7ZaYAiQNcUl91o1hnwXBotTD1B73D8Q88
+X-Google-Smtp-Source: AGHT+IHC3Uk5Mw6fa8aAvfMN66RKnEDpnVe78zcdp2V3UKYV6391335t55cRjD8qkrbTVJ7UBo0aDA==
+X-Received: by 2002:a17:90b:1dd1:b0:2e2:ba35:3573 with SMTP id 98e67ed59e1d1-2e9f2c900b7mr1566916a91.20.1731463384264;
+        Tue, 12 Nov 2024 18:03:04 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f3eca101sm273582a91.14.2024.11.12.18.03.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 17:16:36 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:16:33 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, 
-	Ragavendra <ragavendra.bn@gmail.com>, mturquette@baylibre.com, sboyd@kernel.org, inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk:sophgo:clk-cv18xx-pll
-Message-ID: <ryzruhrgh4cygftrtoig4epyzkg3kgqg4ua5rmadvlylyh5oan@5fjaqecknce4>
-References: <20241112225832.3518658-1-ragavendra.bn@gmail.com>
- <MA0P287MB2822EBB6FE58EB4C3BFB7BC7FE5A2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+        Tue, 12 Nov 2024 18:03:03 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH] clk:sophgo:clk-cv18xx-pll: fix unitialized u32 variable
+Date: Tue, 12 Nov 2024 18:02:33 -0800
+Message-ID: <20241113020233.3646527-1-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <MA0P287MB2822EBB6FE58EB4C3BFB7BC7FE5A2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 
-On Wed, Nov 13, 2024 at 08:33:54AM +0800, Chen Wang wrote:
-> Pleas improve the patch title and just write "fix..." instead of listing the
-> file name changed.
-> 
-> On 2024/11/13 6:58, Ragavendra wrote:
-> > Initializing the val variable of type u32 as it was not initialized.
-> > 
-> Please add "Fixes" tag here, see
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html.
-> > Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
-> > ---
-> >   drivers/clk/sophgo/clk-cv18xx-pll.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-> > index 29e24098bf5f..04a0419cab4e 100644
-> > --- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-> > +++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-> > @@ -87,7 +87,7 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
-> >   static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-> >   {
-> > -	u32 val;
-> > +	u32 val = 0;
-> >   	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
-> >   	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
-> 
-> I looked at ipll_find_rate() and found that the parameters "rate"/"value"
-> are both input and output parameters, which is really a place that needs to
-> be treated with caution.
-> 
-> Seems this patch change is correct, otherwise the value of "detected" in the
-> function will be random after calling ipll_find_rate here.  Actually I
-> suggest adding some comments for ipll_find_rate() to emphasize it.
-> Otherwise, it is easy to think that "rate" and "value" are only output
-> parameters at first glance.
-> 
+Initializing the val variable of type u32 as it was not initialized.
 
-Since ipll_determine_rate does not use "val" in later,
-it is OK to not init it. 
+Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+---
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> But I raised a question here: In ipll_find_rate(), do we really need to make
-> "detected" depend on the value of external input? Inochi, can you please
-> comment on this, due to you are the author of this code.
-> 
+diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
+index 29e24098bf5f..04a0419cab4e 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
++++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
+@@ -87,7 +87,7 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 
+ static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	u32 val;
++	u32 val = 0;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+ 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+-- 
+2.46.1
 
-As using the detected value, an extra mask is used
-to emit unused field. See macro PLL_COPY_REG.
-A more suitable fix may init the "detected" to 0 in the 
-ipll/fpll_find_rate to make "value" is output only.
-
-Regards,
-Inochi
