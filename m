@@ -1,127 +1,122 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC9158DA3;
-	Wed, 13 Nov 2024 02:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350BF7083B;
+	Wed, 13 Nov 2024 03:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731466795; cv=none; b=T9G5u+X0YHLsW8NQPPxjQMyJVM7NlgPnq0e4CKNzb9ibMi5ZqLgn9eGhJbl0ZbqhUKwwBHuCPNiY+w90YJAwKjuKrmcPUVBmBeiyBHccesatpYSclvY7o2SfWnPstEOQNT8mVeTm2sazyUvnPPKKh2eI+7Cx6HL1wvcJE0F47eU=
+	t=1731467756; cv=none; b=iNnQtiPKQpYGxqlCc0M2QX+9nU5034PfDwZQmakIKj11ZsCb8limn5dNdvP5zI0d4wN1CcwKrkkN71fXbaOWKjN1VL/ISmHjYzcki1nm+7vxQId5z2Iwy+ySdBcxGmnZmWivNajEGPxxWwLvoet/Upqlv1mptPcm7ht40CoJ4/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731466795; c=relaxed/simple;
-	bh=xD8kKRq7+4k4HcfZdKsgkctTkJdiFEAHzKDnT0OXlXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dJ4N4KmbUE6nAqhHp3szRsZH0nkdPKOevtSgtAibrODBNwr3GNcdZlwj2js7yhKGXxO+u1QiePXJNE1HJLRXrrA9PjkRGQFvJkm3R/62IcNLNfvLm1EPEt3a2TgNrNoJs0cWXfYbfGsozzmsWpgZ+ARkArCI8gqoWsUb/LOrVZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xy/wcNLc; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731467756; c=relaxed/simple;
+	bh=Kvtqt9CB3FwQ88prvtB4P/v91yBTj+PcYS64KOGOY3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vm6LoZkIpMLoCNqOFtkzSwDOIlULDIBAKzhLiDdVki5tu89d4FMk+ujKK3h2e/xUOKkj6tuN4idOSjlhi9hi5b/VBT6+nhJvGoPX+jilximrYEweQkuEpOfBoz70VTX2lUHoIAAycZQjfW32XuoeqcncgF5ojYznL7EHK6cRP1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JX1qTyrT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xy/wcNLc"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c77459558so58309585ad.0;
-        Tue, 12 Nov 2024 18:59:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731466793; x=1732071593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W81fYZYWxGlJy8lfHEItgZUnAzKTdEV769e8W10GZXU=;
-        b=Xy/wcNLcibfuv2IwjCjCBUJ6AUvrrVd5ELmUnC7n7tmKupLJhYAKH79Fdk5M7DJHy/
-         R9VtCgEKlSsJr1G6CQeA4eTNagd+ZEk0MPaKgKLuJoebM/toVcgpX0vXWX8McPDYsOKt
-         LopbF3UF7nCdLpkBx67PniyvAEZsVj6+6P0Jn1hmTlWTlnwTSKhq0WLZAFt+rw6AjD0S
-         N+s4M6A48SG9IOKaOOnfoYSnH1ZGWRe9f3rBeuXb+W0AFDk/NJrZyDlRPDwlhexxTy+d
-         hAKwUfMg08XJ3hL7sBlcF/eHLRDWeO8f+B+95Bnr4hoJjXWQBdIdNCNQ6nEVEBR4QoEt
-         Qw/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731466793; x=1732071593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W81fYZYWxGlJy8lfHEItgZUnAzKTdEV769e8W10GZXU=;
-        b=M/4vKaMDz8ecQHHeLVo7Gy51YsM/fH6AWLASt0R+s6rh8PkLsYKKcN+jqyqZL5kJfh
-         IohofjXOyyuILJKQ+CTvzUiK4NlrMNMIjaLTljk/cfxotGauNHSCO0w4kdb3G2oDQFIt
-         vTLa0Juxp23w1VddlfNfBT19M7oXMvdnk82/CnsqE1TIq4z0U2XDXbSq1IOaYiOa9on9
-         26styv7wZaDEEBoUqYZsMF5MUu5zgShXxReJXAPZwN0/vK+LjULQvfb9r17cB9gsWH6C
-         q6xGMn+Gz90EWyVViTUPDjq1WzZ//bTX9O58+AFVZrxO5FsnkG6VlTO/b5Vv4qYKKOPD
-         5PJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWtYr5qv+LyRbWtWmjle+6KV2nP2BVkwiAMn17txQFcrrFhmB5Rt5zwCjDwSVGlv+hZVPdarHsXYCCvM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyyU3VWNga1SBpALDKDvwquot9vMZdGMmUJ+Bw+HSFAsOyorIY
-	Wo/urc5VDdUh7vmB9c9rYKTcyBa1es2LBTBwUhOJ9d8BQm+CLmkKYC/FXi9L
-X-Google-Smtp-Source: AGHT+IHcvWsJoBJW4kkoKkI7GiNlP/hw6qumB5qQm1g4Y9BYKZ+c16xjZzE5o9wwGcAOYVCZFfmdZw==
-X-Received: by 2002:a17:903:2347:b0:20b:8907:b597 with SMTP id d9443c01a7336-211ab96d0dbmr63365525ad.28.1731466792957;
-        Tue, 12 Nov 2024 18:59:52 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177df643csm101443755ad.112.2024.11.12.18.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 18:59:52 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] clk:sophgo:clk-cv18xx-pll: Remove uninitialized u32 parameter and variable
-Date: Tue, 12 Nov 2024 18:59:47 -0800
-Message-ID: <20241113025947.3670504-1-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JX1qTyrT"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMRgqn020160;
+	Wed, 13 Nov 2024 03:15:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+0nLDjWPpDSaIUWRpCkibPRwNwq3e9MLwoKzDakWg+w=; b=JX1qTyrT7zAKVhlY
+	RlEkMRqXDsI6mLayZ37Tij6MjkOAABzd7vU7rTN3cRkaAMtIL4s6WtUbLWD2PE41
+	7858slkiUsa/VNI9mseBJ/vZsM51j5zzOL6gRMbxLVFsSnC21GbHiBZA19pMypFi
+	wVibfE9gQv/f7vwkeB8EcGQLETrSTm5Swok5GJdOvMwOhPGg93B3w4FuJTvwrqoc
+	IJbFbvtEZmzwWxFzmzGisGc7nmkxAoaH8Y9SQRuR8ToH+uUtYRj+QDfgPGHU3mxC
+	DLa9HJP/7g5zqt3p00icl279ejEt7J914d7Z0eqJm0PfaA5NANgwcMRi/V44ioIu
+	Ppdidw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uc60e0te-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 03:15:45 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD3FiTU000592
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 03:15:44 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 19:15:38 -0800
+Message-ID: <ef37236d-8856-4981-82fa-c0194d7b3dfc@quicinc.com>
+Date: Wed, 13 Nov 2024 11:15:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/5] arm64: dts: qcom: x1e80100: Add support for PCIe3
+ on x1e80100
+To: Johan Hovold <johan@kernel.org>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <johan+linaro@kernel.org>
+References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+ <20241101030902.579789-6-quic_qianyu@quicinc.com>
+ <ZyjbrLEn8oSJjaZN@hovoldconsulting.com>
+ <de5f40ab-90b7-4c75-b981-dd5824650660@quicinc.com>
+ <c558f9eb-d190-4b77-b5a3-7af6b7de68d8@quicinc.com>
+ <ZzOQi0PpRZYts-B0@hovoldconsulting.com>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <ZzOQi0PpRZYts-B0@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GcnROkpzv1BlU-MSswyL8At-npoyDzuB
+X-Proofpoint-ORIG-GUID: GcnROkpzv1BlU-MSswyL8At-npoyDzuB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=812 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130027
 
-Updating the detected value to 0 in the ipll_find_rate and removing it from the method parameters as it does not depend on external input. Updating the calls to ipll_find_rate as well and removing the u32 val variable from ipll_determine_rate.
 
-Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
----
- drivers/clk/sophgo/clk-cv18xx-pll.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+On 11/13/2024 1:29 AM, Johan Hovold wrote:
+> On Mon, Nov 11, 2024 at 11:44:17AM +0800, Qiang Yu wrote:
+>> On 11/5/2024 1:28 PM, Qiang Yu wrote:
+>>> On 11/4/2024 10:35 PM, Johan Hovold wrote:
+>>>> On Thu, Oct 31, 2024 at 08:09:02PM -0700, Qiang Yu wrote:
+>>>>> +            ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0
+>>>>> 0x100000>,
+>>>>> +                 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0
+>>>>> 0x3d00000>,
+>>>> Can you double check the size here so that it is indeed correct and not
+>>>> just copied from the other nodes which initially got it wrong:
+>>>>
+>>>>      https://lore.kernel.org/lkml/20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org/
+>> BTW, regions of PCIe6a, PCIe4, PCIe5 are 64MB, 32MB, 32MB, respectively.
+>> Why range size is set to 0x1d00000 for PCIe6a, any issue is reported on
+>> PCIe6a?
+> Thanks for checking. It seems the patch linked to above was broken for
+> PCIe6a then.
+>
+> We did see PCIe5 probe breaking due to the overlap with PCIe4 but the
+> patch predates PCIe5 support being posted and merged so it was probably
+> just based on inspection.
+>
+> Could you send a fix for PCIe6a?
+Sure, will send the fix.
 
-diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-index 29e24098bf5f..57981a08fd5f 100644
---- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-+++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-@@ -44,15 +44,15 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
- 			      PLL_GET_POST_DIV_SEL(value));
- }
- 
- static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
--			  unsigned long prate, unsigned long *rate,
--			  u32 *value)
-+			  unsigned long prate, unsigned long *rate)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long trate = *rate;
- 	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
- 	unsigned long pre, div, post;
--	u32 detected = *value;
-+	u32 detected = 0;
- 	unsigned long tmp;
- 
- 	for_each_pll_limit_range(pre, &limit->pre_div) {
-@@ -87,11 +87,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
- 
- static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- {
--	u32 val;
- 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
- 
- 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
--			      &req->rate, &val);
-+			      &req->rate);
- }
- 
- static void pll_get_mode_ctrl(unsigned long div_sel,
-@@ -134,7 +133,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
- 
--	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
-+	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
- 	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
- 			  ipll_check_mode_ctrl_restrict,
- 			  pll->pll_limit, &detected);
--- 
-2.46.1
-
+Thanks,
+Qiang Yu
+>
+> Johan
