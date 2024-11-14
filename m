@@ -1,116 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BF618B464;
-	Thu, 14 Nov 2024 22:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946C81CABA;
+	Thu, 14 Nov 2024 22:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731624567; cv=none; b=AgtuL1xZy1flucbDvo+YRyH8FQ8XMjiJnbJoPDspqh6xpiiBUaxB2j5FWIhmJ/79PgCyTX87x+6K2El3VqU4hzG9HOSSd3ILq4iFFRz+L8P/vSrAGNo7wiyjVOvEmEm+mw4xgjuXwDCW9Zm4tuTmWsdTMK6OUZCq+J39igwGyDY=
+	t=1731625121; cv=none; b=DhX2NzstR86kdOCMQhdAWM7BBU7Gp41rnTxEHGecbxxT0NXQYPHwWGz8iMormGRYipGGtELfSgYy2UZg84LnKyvjFLbd5W38Kokq4BpBcHxo/CIF6q0E3rbaIvpgo/Q5+GoYzsH2bht9j8I17fl5k2B60eyJRxgxM735+u2G/qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731624567; c=relaxed/simple;
-	bh=lACSCrdzRLG5x1E+njLfHcgssYzowjsw+9YGqqUEk5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JlyYFZNZfFDE4LB2SE5ESVovnN5KApf49rP8ejE6eadN5Ox9OgvoqV/4TUy4RSXJ4NAPLe3X/sHDmt8Nh+ES9++zGB5CIBQsjULIX3qJl16cxDMI7lLRP/Ab3DluM+KUqibfpHS5nGDOskrLzDPZ0+3BkScXZ4Oc1HzYZu+63Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jo1cRGUN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731625121; c=relaxed/simple;
+	bh=MJ+1BvFKMFNSoWz2zyU2mFYG//9SlILo37w50AJhdIE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=aJIRD78lbHzc0GfGb8bMNmxj0zZQllYWdgiRPZIHsWTqEExtr442JrSfQNzLSgx32bJR0ziDNWhscVEK+1qVIOAQSeqA3uk0VGXyQmuBsZMZTIdYzYhsIt4QPmmL0WQzxcy5WhqHVNOXbEWTxr7aFnhT+fr/XJn88Ltkb+Dn/m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBtw74mj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jo1cRGUN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D9AC4CECD;
-	Thu, 14 Nov 2024 22:49:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBtw74mj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AD58C4CECD;
+	Thu, 14 Nov 2024 22:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731624565;
-	bh=lACSCrdzRLG5x1E+njLfHcgssYzowjsw+9YGqqUEk5I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jo1cRGUNxfABfeEOZv9PLK4KjN69C/Kdsq3mfouhwGEWZuVFooQhG7JYRAKWI4txE
-	 Yz9jO0fFHl8ey2nqakGiyjnD8ynEsjMrvyBRw3nfGXjhtw8wb0VK2ZzLLHaogEQHUk
-	 SGD5WvzhU0xhmTTYl6JJ1yk21eXZ86bkJzw4Hm+Ebecb+XRrdgFkarvxcKq49myWPU
-	 nTA1Gu4RyMYBSb4Yn0VeKugjBCD5LUk7adNx+bMsst5C9YYNAa9VO15wCLLSzPCb6d
-	 +ARAQxl1WudwwxmejfVwgxRDWh4cDJI94LJ8fVaMw6JfFdJOV6/PAYBg1D/lTbwX37
-	 kEGJHmcyZufqQ==
-Date: Thu, 14 Nov 2024 16:49:21 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] clk: clk-loongson2: Fix memory corruption bug in struct
- loongson2_clk_provider
-Message-ID: <ZzZ-cd_EFXs6qFaH@kspp>
+	s=k20201202; t=1731625121;
+	bh=MJ+1BvFKMFNSoWz2zyU2mFYG//9SlILo37w50AJhdIE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=rBtw74mj+P/1dYgj7a7BzJyKTks96lZQxkU5szH0vs2LVkXnnP1nyp0FsMksfZsy6
+	 8mIWbHSs2XO0881txtao26ptMf6RQJbiJoTm+5Qj0PVn5brUfaB2SBmrpOkabgBhz9
+	 63NojPpkyJPXd+fFav79C6vuABNXOz4lLFSULYWRjrEZzmLVH7JrKsUCY75Y0RmOO0
+	 /hCrw+eFZeNvdzBi5EpWI/Y3S0vI2Zv2bsVlbIhc4N0lA4TG8oaQPfREw6Nb+Q2b0B
+	 Z62KTTmbnQmjNWoRrNxu2neYRCTuBiE9aSbub/K4fe5xxk3CmRSIN5MxSZ/kEZPzLC
+	 Zz5AgWqG2/w/A==
+Message-ID: <8aad8ae601a7dc046b6db0eb08192278.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
+References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com> <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
+Subject: Re: [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+To: Conor Dooley <conor+dt@kernel.org>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Date: Thu, 14 Nov 2024 14:58:38 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Some heap space is allocated for the flexible structure `struct
-clk_hw_onecell_data` and its flexible-array member `hws` through
-the composite structure `struct loongson2_clk_provider` in function
-`loongson2_clk_probe()`, as shown below:
+Quoting Th=C3=A9o Lebrun (2024-11-06 08:03:52)
+> Some compatibles expose a single clock. For those, we used to let them
+> using `#clock-cells =3D <0>` (ie <&olb> reference rather than <&olb 0>).
+>=20
+> Switch away from that: enforce a cell for all compatibles. This is more
+> straight forward, and avoids devicetree changes whenever a compatible
+> goes from exposing a single clock to multiple ones. Also, dt-bindings
+> get simpler.
+>=20
+> *This is an ABI break*. Change it while EyeQ5 platform support is at its
+> infancy, without any user. More clocks might hide in each OLB as some
+> registers are still unknown.
+>=20
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
 
-289         struct loongson2_clk_provider *clp;
-	...
-296         for (p = data; p->name; p++)
-297                 clks_num++;
-298
-299         clp = devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num),
-300                            GFP_KERNEL);
-
-Then some data is written into the flexible array:
-
-350                 clp->clk_data.hws[p->id] = hw;
-
-This corrupts `clk_lock`, which is the spinlock variable immediately
-following the `clk_data` member in `struct loongson2_clk_provider`:
-
-struct loongson2_clk_provider {
-	void __iomem *base;
-	struct device *dev;
-	struct clk_hw_onecell_data clk_data;
-	spinlock_t clk_lock;	/* protect access to DIV registers */
-};
-
-The problem is that the flexible structure is currently placed in the
-middle of `struct loongson2_clk_provider` instead of at the end.
-
-Fix this by moving `struct clk_hw_onecell_data clk_data;` to the end of
-`struct loongson2_clk_provider`. Also, add a code comment to help
-prevent this from happening again in case new members are added to the
-structure in the future.
-
-This change also fixes the following -Wflex-array-member-not-at-end
-warning:
-
-drivers/clk/clk-loongson2.c:32:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new platforms")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/clk/clk-loongson2.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index 820bb1e9e3b7..e99ba79feec6 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -29,8 +29,10 @@ enum loongson2_clk_type {
- struct loongson2_clk_provider {
- 	void __iomem *base;
- 	struct device *dev;
--	struct clk_hw_onecell_data clk_data;
- 	spinlock_t clk_lock;	/* protect access to DIV registers */
-+
-+	/* Must be last --ends in a flexible-array member. */
-+	struct clk_hw_onecell_data clk_data;
- };
- 
- struct loongson2_clk_data {
--- 
-2.43.0
-
+Applied to clk-next
