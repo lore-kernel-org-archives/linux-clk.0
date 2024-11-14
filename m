@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D181AF0AA;
-	Thu, 14 Nov 2024 23:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37B618BC1D;
+	Thu, 14 Nov 2024 23:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731625402; cv=none; b=O+AqinCRDNwWfwJkMc2kIVKT2442K/Ob6tg8i1H+rhbUra8JN3xgNYVnvL2RTzEskohQsQtPJ7aAqidkJ/t2oVgl2blbRWsPkW+JT6p+BcRFmSJsDl++lddGwOmbASPYvrY+yr7f+yLFj2LjT8zH4f+6xbpixoR1yHl7CJWQ3l8=
+	t=1731626242; cv=none; b=iatFBLp2WhfdNVcqw+oqcKu9tNpwqQnbn1ZhBxgmAanF2vnvKvzvDVU0A6zBlGYlJ7HI/RRAXVO3HvJnz0elD+JonFg+9ETJksm/d6JSjbNjyLFLHjyqevDT6gOvoRO2298GXvfuaxOe3GJvg1XColhiFWd0yJOpJx+73HXacGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731625402; c=relaxed/simple;
-	bh=7YLDk7m+k1pCnW+7dbogxl5nQSG7CCASV+qPKMwwB4U=;
+	s=arc-20240116; t=1731626242; c=relaxed/simple;
+	bh=4+8a7cmDyZXmllSyoE0Q6DeOS813QuLGqC6l3uuoyrk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=YWWDg9SZeAckjBtVXiZFUwPANUvQw8wAqXU4ScWfH6KSb1EWw3VNYwmFLYwMdIn6Am/Q54LfkuK1J4L7Hj45tZQ9AMW4pj/ZSENEHrJuQsDPSowa1qhnZhniZnkMabIRjCEHOwCFOgT1oZI+99DZbQY83lERupbVjoP/uSj4C6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxmIQqjC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=QLWDQ2rOfKZ/w73mlWKSiYlBRS1ic55+tmVX9AxcmhWX8eV7vZWkfhi915SlAc1opdXSpVT3JV6bWuFQxNiqvlspHiD1xYJAN/I/gh7I4nJelhKAjUpucJkESC46bL5MX4B6jQwQSEqZ3WZD4vXCzhSQj6RvF9JrXiilAoaONwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERrQyPQ/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxmIQqjC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE9CC4CECD;
-	Thu, 14 Nov 2024 23:03:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERrQyPQ/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C949C4CECD;
+	Thu, 14 Nov 2024 23:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731625401;
-	bh=7YLDk7m+k1pCnW+7dbogxl5nQSG7CCASV+qPKMwwB4U=;
+	s=k20201202; t=1731626242;
+	bh=4+8a7cmDyZXmllSyoE0Q6DeOS813QuLGqC6l3uuoyrk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MxmIQqjCqTDZ+RH9+X3QNEqtbJt3rt9Pqc6/UQggVpuupsnLlaRnTW0IQxebwHgBZ
-	 90/Rf1J029WWTJqrpFuex/vsffTKmUyF5a89XVDABwHaBb03giNkOC2RZ7PRwpgku5
-	 z0EgxskgrP3+IcjoEapDRBDMefj/1+3AKohINAZBJ6Ah6sq9Juaghr4TGbFg+Shttl
-	 AomkmrR3g4wiLkID9n1n2UQctR6+KdhOZvVc/KapXFeQAH+vrOyO6N9V5zGqughctN
-	 G7KUI05YLwCRs6U3rK24PAr4oBCtXmCNFFWTclQYka+yahkdpZ7JESUJB6cekQ/C7J
-	 /k81+sBtqZzfw==
-Message-ID: <ddc333ad3a150b1d3cc360bd16cc3459.sboyd@kernel.org>
+	b=ERrQyPQ/Yz89FiHeIMiLKVQrWz2V7CmTi3DVk90pz2+fyrrf3VKT1zL7sY3tRO/JB
+	 mIC2HMWqrqlkCIKD0CR9m2xO+PcYjgFy4HYu8k171+8nklyFEsnJqwXr6fdpZXgIYS
+	 rqlcKu7+5PPEzxqNhbznqSNgwAEyGnZIlIfazW5HnfgFnp/VtV2XRQ8LaEny63X4o2
+	 lAG15aT6qXLMNKGyIvQqdF3QP0fZb5qFEDh0zze0FmFtAw3R8zA/wTYpZ6IYuPzqef
+	 tQSQNo0uZU2AxmqUdtFiWFIY2m+yRGNjZcySjOsDNl0drYv+QFv1q1F1bRDF5ehc0c
+	 PDBbp7kJC1Djg==
+Message-ID: <0ea59af3c891859681cac378eaface75.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,63 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZzZ-cd_EFXs6qFaH@kspp>
-References: <ZzZ-cd_EFXs6qFaH@kspp>
-Subject: Re: [PATCH] clk: clk-loongson2: Fix memory corruption bug in struct loongson2_clk_provider
+In-Reply-To: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+References: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+Subject: Re: [PATCH] clk: Fix invalid execution of clk_set_rate
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo A. R. Silva <gustavoars@kernel.org>, linux-hardening@vger.kernel.org
-To: Binbin Zhou <zhoubinbin@loongson.cn>, Gustavo A. R. Silva <gustavoars@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>
-Date: Thu, 14 Nov 2024 15:03:19 -0800
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>, Michael Turquette <mturquette@baylibre.com>, chuan.liu@amlogic.com
+Date: Thu, 14 Nov 2024 15:17:19 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Gustavo A. R. Silva (2024-11-14 14:49:21)
-> Some heap space is allocated for the flexible structure `struct
-> clk_hw_onecell_data` and its flexible-array member `hws` through
-> the composite structure `struct loongson2_clk_provider` in function
-> `loongson2_clk_probe()`, as shown below:
+Quoting Chuan Liu via B4 Relay (2024-09-09 22:53:44)
+> From: Chuan Liu <chuan.liu@amlogic.com>
 >=20
-> 289         struct loongson2_clk_provider *clp;
->         ...
-> 296         for (p =3D data; p->name; p++)
-> 297                 clks_num++;
-> 298
-> 299         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks=
-_num),
-> 300                            GFP_KERNEL);
+> Some clocks have rates that can be changed elsewhere, so add a flag
+> CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+> the real-time rate is obtained.
 >=20
-> Then some data is written into the flexible array:
+> When clk_set_rate is called, it is returned if the request to set rate
+> is consistent with the current rate. Getting the current rate in
+> clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+> does not take effect here.
 >=20
-> 350                 clp->clk_data.hws[p->id] =3D hw;
->=20
-> This corrupts `clk_lock`, which is the spinlock variable immediately
-> following the `clk_data` member in `struct loongson2_clk_provider`:
->=20
-> struct loongson2_clk_provider {
->         void __iomem *base;
->         struct device *dev;
->         struct clk_hw_onecell_data clk_data;
->         spinlock_t clk_lock;    /* protect access to DIV registers */
-> };
->=20
-> The problem is that the flexible structure is currently placed in the
-> middle of `struct loongson2_clk_provider` instead of at the end.
->=20
-> Fix this by moving `struct clk_hw_onecell_data clk_data;` to the end of
-> `struct loongson2_clk_provider`. Also, add a code comment to help
-> prevent this from happening again in case new members are added to the
-> structure in the future.
->=20
-> This change also fixes the following -Wflex-array-member-not-at-end
-> warning:
->=20
-> drivers/clk/clk-loongson2.c:32:36: warning: structure containing a flexib=
-le array member is not at the end of another structure [-Wflex-array-member=
--not-at-end]
->=20
-> Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new =
-platforms")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 
-Applied to clk-next
+This looks obviously correct but I'm worried that it will cause some
+problem somewhere. It would be nice if there were some kunit tests
+associated with this. The worst case situation is that we recalc rates
+if the CLK_GET_RATE_NOCACHE flag is set, right? I guess I'll just apply
+this as a cleanup for the next merge window and see if it causes
+problems for anyone.
