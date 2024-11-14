@@ -1,57 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504871B3949;
-	Thu, 14 Nov 2024 22:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B11D1B2196
+	for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2024 22:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731623852; cv=none; b=bJ/pR87YYBdi8UFaHUY457qjFuXlrZIwbJT1Vs9Vi0c66Whtk4f1pZxxkXBvd8Nqs6egASZITvAB9LHES44O/+9G1ugu5a2bYq3lC2vcf90639QMgT1Eh8DPmOfdQ4U2DHsEwPNxcYqRu4vfqkX3EHkYDjCWA1a4+PFNtY25ED8=
+	t=1731623932; cv=none; b=VT2bXdRifuBX3LmqnUcWv3muT7Noz29ATH0Ua4+HRzoT8W1cnsveGAAgiozMyz7AiX7T6K5TTgSgoK8eVwSMV/9i/HvURGhlPhT8//3vbUadoALk1tCMgFPUf7y7UL0yITn2KdnAV0rCsFu2uC9tqIu4pkcxB9ro5+ZSapiyuNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731623852; c=relaxed/simple;
-	bh=jgfv88l0pkkQROxiMEECHApj7OBPMmgs9Sc7Um3nOVo=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=RAPM7kKQO8lnjAP7xmeSyiL4YfQWmJm4Hw30npSz7DH8MGo44oJZtzU6yBVn1W5fWUmZ9hBP+pFUNrqvAsGPjA7i09i730h86k6KjsF8ujzVeXDx6eZi37iHK8kCEs9Mh8kIliYbGF/KgYdy1LtLauJ/xP+ssPdXr7nbNEBNu3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5E96mHB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731623932; c=relaxed/simple;
+	bh=jQWDXG3wMZIdSrsC7JDfk+oX20Ytl66lahMoDYosAS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lBBhqbgZtb5M6Kb4+7BWTHiAVOO5CMYhrtar613gNX+aynQ9h9Usrt1J0jfhZ7kONeM6ZmJddAflybaehRXNtgZ4jIlkW65w507V7tGjovSArzqEWIMcJJPoP72tnoY1fXIJU8bRtB0L5EgA5kox+rmljqJuPyHQfvlhH8E6yKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0IgtVFVT; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5E96mHB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF9EC4CECD;
-	Thu, 14 Nov 2024 22:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731623851;
-	bh=jgfv88l0pkkQROxiMEECHApj7OBPMmgs9Sc7Um3nOVo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=h5E96mHBaVfC3StuUkyOqE9mzUbLWkWLMZyTdbHbtrGxK0/wcoHjCwEXiSiicaahZ
-	 kpWMqdADtOj19PSiNZQIOi8kQ6jjnmoFhL3Em9KPORK4iJJqFdyVI6ctVAZ1DnZEXc
-	 KMFsyXh3QqaskukEsx7/PPxw3en/ud261+/uyE4YlxJU9zm2xgluVIDxK/dzYWHU+F
-	 mgss9jVW/Fpo101mfp4pWiVW76K3X66xn9tYlnejGGiit8yZS4lBzZITt/UTsFnExn
-	 sKpLGn/SWZg+c94Q+FOwptFahRLJazhUSYhgQJzI8zydPfVxGZpzwbjlebJBTZ7kvt
-	 2w2YnFEviGsgA==
-Message-ID: <9cdfdae176bf25831f0500abd2d0699e.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0IgtVFVT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=D1XsaCqkWwRR6XrSHEGg6TIaTIM6VeYXYn+FOkXw2fo=; b=0IgtVFVTHwai0AsNOcCKn+UeX+
+	sLf41k6IavnOXl6Wv4PLk/LOxR0K7BoFeJ1Fl1+rGmNJQoi6XmYEpiua3zNrNi+XDm6kqrjzpkuH5
+	rC3bzvyHrOXPx6EDJYeB8A1zOOCN2OlE3ml3DOIzkPROH8jwnWXATxiYZEc8Vt+xQCZykqOnnsqaI
+	BmkUHw7nDL8sWoSpEVG/NjruAZ3Jbkj2Fp0PMKPc0IVHTjIXB5aFfhG5B9kHoSGAJVIZ+dS+6ehG3
+	vimO7+9Ql8j1KCHsfuAvAC5s3i1lSsmnEqlNsewiWglcOmnH6BXaQgcwnB9dDIaDsrG+scOiAAtze
+	c+uYY/7Q==;
+Received: from i53875a30.versanet.de ([83.135.90.48] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tBiU0-0006Ij-KJ; Thu, 14 Nov 2024 23:38:36 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock changes for 6.13 #1
+Date: Thu, 14 Nov 2024 23:38:35 +0100
+Message-ID: <3061836.mvXUDI8C0e@phil>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241104-pxa1908-lkml-v13-8-e050609b8d6c@skole.hr>
-References: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr> <20241104-pxa1908-lkml-v13-8-e050609b8d6c@skole.hr>
-Subject: Re: [PATCH RESEND v13 08/12] clk: mmp: Add Marvell PXA1908 MPMU driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Duje =?utf-8?q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, Duje =?utf-8?q?Mihanovi=C4=87?= via B4 Relay <devnull+duje.mihanovic.skole.hr@kernel.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Tony Lindgren <tony@atomide.com>, Will Deacon <will@kernel.org>
-Date: Thu, 14 Nov 2024 14:37:30 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Quoting Duje Mihanovi=C4=87 via B4 Relay (2024-11-04 08:37:10)
-> From: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
->=20
-> Add driver for the MPMU controller block on Marvell's PXA1908 SoC. The
-> driver is incomplete, currently only supporting the fixed PLL1; dynamic
-> PLLs 2-4 and CPU/DDR/AXI clock support is missing.
->=20
-> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
-> ---
+Hi Mike, Stephen,
 
-Applied to clk-next
+please find below a pull-request with one Rockchip clock change for 6.13
+
+Please pull.
+
+Thanks
+Heiko
+
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.13-rockchip-clk1
+
+for you to fetch changes up to 5011cc7ad9aeea98029385f8a0e81a0ebfc45bed:
+
+  dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML (2024-10-08 21:11:29 +0200)
+
+----------------------------------------------------------------
+YAML conversion of the rk3328 clock controller binding.
+
+----------------------------------------------------------------
+Johan Jonker (1):
+      dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML
+
+ .../bindings/clock/rockchip,rk3328-cru.txt         | 58 -----------------
+ .../bindings/clock/rockchip,rk3328-cru.yaml        | 74 ++++++++++++++++++++++
+ 2 files changed, 74 insertions(+), 58 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
+
+
+
