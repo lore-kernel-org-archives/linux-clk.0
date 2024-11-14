@@ -1,132 +1,90 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151BB18FDBB;
-	Thu, 14 Nov 2024 15:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16CB185940;
+	Thu, 14 Nov 2024 16:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599160; cv=none; b=lIGEye0WFhEccOj9bkPSZ3og4l6UWuoRK1uJ/PqCPp1hGdR6XwWWddBlxWZoUsjfeQYUxwQKcmfx64MjVef4aZ1QBtnMC9E6WgdBQshPoS+5OcJVUeVs4vmilf1GDXjDinXj/6d3+nD5k6clAyeZ34qIefUna0Jc7GxAmWn9Q2M=
+	t=1731601777; cv=none; b=IMVGVcfgcmVDr0mGm3b/aZNIeStqk1D8nPMAhz5S2/aDNukgTZ0cfzrz5dD7D2An842Zcou1h6VUYUF+Vi43tBBZ9HSqVlUasiKlP3GmyMA++9WDhl0dWEi6FrS+c1BuM0Wfu9qadawPO60dCaMQbZojNW/Mj3W8HdBWlf2PW6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599160; c=relaxed/simple;
-	bh=5z0brDtQRBtx4SXaYJbzWU/yguAU4LV0GO74WH+JMqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KOVmXscUo0LlqbrQf+Vov8Ks/F0PNDAwflLplure3/sinECVk0HiDHu3AhnYZKGNG8tQjWkRSvd7lgreGSq84B+XJlTYencPn8oBQc1dUYrT7h9GHnZXrmjANlkq5RsfTPLiDqDVGTTHAyvOLEwiCgNOjIs9mJHpaqTDehzrnR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k86e9dLW; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1731601777; c=relaxed/simple;
+	bh=A+ccMDY3cNPgQ7q1UDOiqkxn0oNKvGAxbY4GDo1WMKw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X+n7yUNY2Aeah+8e2Lzt2wIMlFmq22NmnaKRHfvaoyRlRVhPWFW2PeInUcZ+pZb1bCcWnR+J4NiEmYgo3q3tyb9D6NrPokpgAJhErPKHZVu8UXjbEiqOpq8lt3EJ4UlByPJO1hA3Umj0f89BTuJ4k0IQjffpSniYJLO5GlMrESA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=DFxpS74M; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k86e9dLW"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AEE96240003;
-	Thu, 14 Nov 2024 15:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731599155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PVd4FspoJAAUQaVK/sgQzSkqs6EdCPL13NCZ5VJz7fw=;
-	b=k86e9dLWi4x6VwQGxiSQmmGbjdenEI5HBux7FE811k8PyybyCldwAMpyPuqWzwDU2Lbrho
-	UCNzU7O+/ZTUoNfquKTMmylkmIOHrPl26ZTsLBnKx+asr2x09Co4u5vNxgvNCQnRNhDnWG
-	rP4b1xH0xRIEr4RMwgM3W2c7Om/R0rRdfFnCbzYWzMXQMYE9KmayoQoqy6htuEteElsEaW
-	jzn2NLBRtT1oIoazJGbNRdNJnNn0yPJmkDlI+Koz96A73l89zgJ+8R9w4fJjDDU4cCpus+
-	zpwTzL7aNZvPKLHp/kCJfB0t/CVPqcvSFIssh2fwzvOdLJe0nt1igDDesUFfJA==
-Date: Thu, 14 Nov 2024 16:45:51 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, Dragan
- Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan
- <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, Masahiro Yamada
- <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: of_property: Assign PCI instead of CPU bus address
- to dynamic PCI nodes
-Message-ID: <20241114164551.46664f5d@bootlin.com>
-In-Reply-To: <ZzYWso5jLkUMehQ6@apocalypse>
-References: <20241108094256.28933-1-andrea.porta@suse.com>
-	<20241108110938.622014f5@bootlin.com>
-	<Zy3koxz4KnV39__V@apocalypse>
-	<ZzYWso5jLkUMehQ6@apocalypse>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="DFxpS74M"
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id BD56D10000A;
+	Thu, 14 Nov 2024 19:29:32 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BD56D10000A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1731601772;
+	bh=GZw1ocqAf3SESs6AoLOS/AjZZcQZhWXXwDvFKs9mIIs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=DFxpS74Mp8yAY2ARaUr4JLNfd8z1s1Oe/NEo5eaGrNRh7bxsfjCO62Sa6ZoiIFiDY
+	 QCOJGjDxVqfBIMwtMWyqI8a3QQT4wS6ns1KD0W0Ux4EuxJBYbxID2QhWSpZcrvf/cN
+	 qoQ+0S8YjgYwKNofiVW5WDKa1iDyFsgm6rNdfM6rpjv08IxSqWuwmWo+UmO/hwrD01
+	 m9D/8kXYjG0XLok7QgpykDGjGJ8vHoyLRX/aN2Rll2yL+IrEsvs3qjzgjp+ZZCGnva
+	 A7Lavhcy8gAMcJ5s42dqneHcc/zAh/w1SjO2CSkGbEZYBwefV+S6pSGUXzG+ug1oUt
+	 tUs9oieqjCalg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 14 Nov 2024 19:29:32 +0300 (MSK)
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [RFC PATCH 0/3] Make several simplification of axg-audio driver
+Date: Thu, 14 Nov 2024 19:29:23 +0300
+Message-ID: <20241114162926.3356551-1-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189183 [Nov 14 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_smtp_not_equal_from}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;sberdevices.ru:7.1.1,5.0.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/14 14:31:00 #26861614
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Andrea,
+The series introduces several changes to axg-audio for Meson SoCs which makes
+the driver little easier to read and allow to avoid possible errors.
 
-On Thu, 14 Nov 2024 16:26:42 +0100
-Andrea della Porta <andrea.porta@suse.com> wrote:
+Jan Dakinevich (3):
+  clk: amlogic: axg-audio: use dev_err_probe()
+  clk: amlogic: axg-audio: synchronize *_audio_hw_clks and *_clk_regmaps
+    arrays
+  clk: amlogic: axg-audio: get the rid of *_clk_regmaps
 
-> Hi,
-> 
-> On 11:14 Fri 08 Nov     , Andrea della Porta wrote:
-> > Hi herve,
-> > 
-> > On 11:09 Fri 08 Nov     , Herve Codina wrote:  
-> > > Hi Andrea,
-> > > 
-> > > On Fri,  8 Nov 2024 10:42:56 +0100
-> > > Andrea della Porta <andrea.porta@suse.com> wrote:
-> > >   
-> > > > When populating "ranges" property for a PCI bridge or endpoint,
-> > > > of_pci_prop_ranges() incorrectly use the CPU bus address of the resource.
-> > > > In such PCI nodes, the window should instead be in PCI address space. Call
-> > > > pci_bus_address() on the resource in order to obtain the PCI bus
-> > > > address.
-> > > > 
-> > > > Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > > > Tested-by: Herve Codina <herve.codina@bootlin.com>
-> > > > ---
-> > > > This patch, originally preparatory for a bigger patchset (see [1]), has
-> > > > been splitted in a standalone one for better management and because it
-> > > > contains a bugfix which is probably of interest to stable branch.  
-> > > 
-> > > Nothing to say for the patch itself.
-> > > 
-> > > Just here, you mentioned "see [1]" but you didn't provide the link.
-> > > 
-> > > IMHO, this is not blocking for applying the patch but, just for other people
-> > > looking at this email in the mailing list, can you reply providing the link?  
-> > 
-> > Thanks for pointing that out, sorry about that. Here it is:
-> > 
-> > [1] - https://lore.kernel.org/all/f6b445b764312fd8ab96745fe4e97fb22f91ae4c.1730123575.git.andrea.porta@suse.com/  
-> 
-> Do I have to resubmit the patch with the referenced url fixed or is it
-> ok as it is?
+ drivers/clk/meson/axg-audio.c | 472 ++--------------------------------
+ 1 file changed, 24 insertions(+), 448 deletions(-)
 
-This reference is after the '---' marker line and so will not be present in
-the changelog once the patch is applied.
+-- 
+2.34.1
 
-For this reason, I don't think you have to resubmit the patch.
-
-If you need to resubmit the patch for any other reasons (resent because
-the patch was applied, modification needed, ...) resubmit it with the
-referenced url fixed.
-
-Best regards,
-Hervé
