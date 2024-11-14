@@ -1,83 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16065EEDE;
-	Thu, 14 Nov 2024 20:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A608819A2B0;
+	Thu, 14 Nov 2024 20:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615196; cv=none; b=fEbj/HoKXbfdESkoEVjd6bUzNZxut2ln4ibv74JfIO6ExvryhH08J5xyZ52QuR2SNUCCnN8J94mKwtGdjNSnY687DHledmvcGaWwlRbNjeEZkncHzItrAzjJnPPqc1T1E6jX47JNcpiJsEixZAXAjJEuRF1wbAcPPtqEsoTMyBI=
+	t=1731616022; cv=none; b=N6Weo9K1ALwp9Ks528f+oXzw1Tgv68JramFu21g0RXDNx8ED+GidmusMRs5A2Sc2DI4s8jkaRJbBn0+dcgVspm4RfL08SR1/DQJ60Qju1OAODUV6ZHfHNYYKYEMEuw3y0yB23sGxVWm1TpTD0nx3XjpQxOE1SvuKXC9fZ0+w3TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615196; c=relaxed/simple;
-	bh=km/eEsWSrKWhwTGSdpfnPapg/ccwqeJd2W0uboQT3Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHtpV+UdK3VVVdm5lpRZFPFXGXLWgvK815Y0isyGQ+GeetpOnHQYDuVjMkHRYEi84eMc+q+u+uFjLCBG4cMAxoh+vQNCK1wTauy/thqnJcqXfu4WR1zUCzZ7/jfrP1yupRisHiiJzBfaqYSZ3wwb6p4PJOtpCQlQxGGZhMC/HKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luW8tAln; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731616022; c=relaxed/simple;
+	bh=T/MlsQCBxq63E2diTdRnMri4nZCowI5RDnWUyreZuk4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=gDkZTyThilzsKcJG5q4I/rQ0bjUpXjoYzH8Tprrmzqrs/DOcJRSUnVBQOgS6zLysIqlIvGZlB/R3tciQnU3Kx61X6vktBG2S+8bGpNZUp99HxuDmjgWtcUpRAL4xebliHOVWRkwevSLjy1in76dmEYRMOmtxcVyPLr6223pHKHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvDq6FKt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luW8tAln"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D6CC4CECD;
-	Thu, 14 Nov 2024 20:13:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvDq6FKt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 648F4C4CECD;
+	Thu, 14 Nov 2024 20:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731615195;
-	bh=km/eEsWSrKWhwTGSdpfnPapg/ccwqeJd2W0uboQT3Ik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=luW8tAlntLOADt4NhTwlSuS+DjwgJJmoxXUZCfmke7+Q689FsPQRF4tsc9GlmIIBZ
-	 WtmcM3EmH+VAj0pgkFW6iNb9NFFxMmBwh5ruJAerpH+iHiHEqRvlzcl8diAgoAALoh
-	 KW3Ae69yJU4xuB8HA7nfnR6ysXfTt27HCJy9pIAV+0ThuYsdu1DTLg92kcw/iFBBwA
-	 9FenclQfTbh6sq6ktWPGuxf/HOKYikd0zYzMhTbN7h7SwN785DCAx26SBp/cChzMSL
-	 QyJdlvaIyTBeOOfN2PaaVNoZq7vwHUsr/FG1C/rzARiyRZWDbkbegbIfZGQQY3g+7E
-	 F+ic/JacQ5yYA==
-Date: Thu, 14 Nov 2024 20:13:10 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 2/3] dt-bindings: clock: axg-audio: document A1 SoC
- audio clock controller driver
-Message-ID: <20241114-zoom-wanted-7dfda7d36f6b@spud>
-References: <20241112230443.1406460-1-jan.dakinevich@salutedevices.com>
- <20241112230443.1406460-3-jan.dakinevich@salutedevices.com>
+	s=k20201202; t=1731616022;
+	bh=T/MlsQCBxq63E2diTdRnMri4nZCowI5RDnWUyreZuk4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=nvDq6FKt8/7GufhdJ4iL+LFcEa1bE66cn9ugHFi0lckmXTq6IzZXpOezlc870UfC8
+	 YuOwGT878leOjwbRFJfeY0E41Byw/c+ec9ouljIzhXLb4Ij1aHT7x+ZVRON1rzd623
+	 kZ/3XcDFOtaJz1TEX0p9Gide7eubbtO2FsdhyU49+lM3vmka0TERlaCKjLFvTTk+e8
+	 wFSAaC0U6AomGVMSA/9K46nAekQGribMWjBuUwJS6ti/3lLG32UA/AuHIjTS3rdJQY
+	 aECx6kru5InPbxcRCi8A80+gbh1hb3y9caINnT8WHxQKa9KL9zCrwJ7mmMqBfeKDEz
+	 VIx3OpaVjxqtg==
+Message-ID: <63e705b505175f6ebd32ebc7d19384ff.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="K9ZM2+nYnJZ83qMp"
-Content-Disposition: inline
-In-Reply-To: <20241112230443.1406460-3-jan.dakinevich@salutedevices.com>
-
-
---K9ZM2+nYnJZ83qMp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241112162618.400194-1-andreas@kemnade.info>
+References: <20241112162618.400194-1-andreas@kemnade.info>
+Subject: Re: [PATCH v3] dt-bindings: clock: ti: Convert mux.txt to json-schema
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>
+To: Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Date: Thu, 14 Nov 2024 12:27:00 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Wed, Nov 13, 2024 at 02:04:42AM +0300, Jan Dakinevich wrote:
-> Add device tree bindings for A1 SoC audio clock and reset controllers.
+Quoting Andreas Kemnade (2024-11-12 08:26:18)
+> Convert the OMAP mux clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
+> Choose GPL-only license because original binding was also GPL.
 >=20
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---K9ZM2+nYnJZ83qMp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZZ1gAKCRB4tDGHoIJi
-0l/FAP432TheokBBb1mXfuGWT800uk2Ed6s9mOkVQncD9I71xQEAur/YW7sxvZL5
-me+5Anm5adO3g2uYoZ1Rsp/Lyny2Ags=
-=KugJ
------END PGP SIGNATURE-----
-
---K9ZM2+nYnJZ83qMp--
+Applied to clk-next
