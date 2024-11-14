@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689D21AC88A;
-	Thu, 14 Nov 2024 20:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9112905;
+	Thu, 14 Nov 2024 20:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731617413; cv=none; b=JuffaIS43twRfNotl4u0k+yA5/OwBgSBnMrjQFp5eS7Tl2azjyQ10c+6FQ0DMtLaJJMJnJI+GJp4+zwQu/6xwOEJUKz3rtGd6N8ldx0sMWVx7YR4bQwnxtPmp6l4ruGbPmWNR86RMdyB+eiPslGwmTeqQ7RI+cp2wjiXsDPc/98=
+	t=1731617513; cv=none; b=rWWXS8DOjEGibM9tBe+m57B4RWoVXoikRmyziqf80nR+3RAGhwBbRUUQqUuxtFeTY+cozgHP83NFoUxrfAm3SpuA13Fc17w9JAtXGm2hrBnCry3aPKWniJpsi01l6i9zOKM4ZRACdCSLhBJilJVxmhsSuJOh/KNCfuzW2UzkBwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731617413; c=relaxed/simple;
-	bh=A5XgBWIZdUdUtDB4kkyFj4T2ryKyI/10WgcggqqaaF0=;
+	s=arc-20240116; t=1731617513; c=relaxed/simple;
+	bh=hkKa0UC9NnJxDCNd5n0CnVfMEOJpPjjfOMw26wn6Vhw=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ax8i/FiBNGXumNFWPMsHZYGPZ1BSLkSHcsrYLpRUrdrQETrCi1GUQb8GxtKGO4cZi2Nkrrsf1GKyRLcuCW1kCBMR0EYBg2T6dDPYAfdmYao5N/iBavDY4qc6+hVEpwwq6CyCCMQEFX68DQg5GhbRgM2Tb/OIZ+katzxDm5FID/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZvkxbXq; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=b7Jnyq6Wab6PqMolZ/lw+o4rlmfIxRVwQyv1/JLgkgrXIEVy4tvsiOtb6qDL5HSnX6R3Ton8iEiC8UCpguxoS1DI3BvTgX8p06uYv94tfRQF5/4DAPaMtN5Zxg5bYtXZ9Hng3p/zR+j72848OrcTfMF7B8hrDk1twD1KApQA0Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDbQGtm0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZvkxbXq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E927AC4CECD;
-	Thu, 14 Nov 2024 20:50:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDbQGtm0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2D5C4CECD;
+	Thu, 14 Nov 2024 20:51:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731617413;
-	bh=A5XgBWIZdUdUtDB4kkyFj4T2ryKyI/10WgcggqqaaF0=;
+	s=k20201202; t=1731617513;
+	bh=hkKa0UC9NnJxDCNd5n0CnVfMEOJpPjjfOMw26wn6Vhw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=mZvkxbXqHD/kpGPPy9aB47JBRg8LzC7dWteM4XYQG8lmtGpfExwJHNJmtrk0nDBQJ
-	 zW0lfBpBz7spRsZvCoEo6ZwsJ6cw/ScD0DVPW0Iziury86tWaXrFIvIgTctdzIWviK
-	 nVxFcORjX9pjGrDSXSUreOuPVPEEAXGQUH0RU0cUO3HnbMx+YxKTHUbQFCxDewzirN
-	 Wu2XxQJp44VXpO8IKiBlS+A3stY7N9JybIgsS1D6o5P4dPWkZjfllMIGNJMiYzi9g1
-	 qa5wtFAP+vnxSkNyBnB20K2wcOt2DxymkpwZJZ97u9CU+y/r8IUvDKsIvQ1jQHdeng
-	 IKpFKXer7/hFQ==
-Message-ID: <41ef04f7ae003aad19c534839ca902ee.sboyd@kernel.org>
+	b=BDbQGtm0WeAvVnAzLRV1Ix+gPEb5jGN7UcnFuLOTK/bTYCxRTehoH08ARVilP9jb3
+	 ueOk7RtrmEcSd2zHCbFty/RfiGwC0+gsMsF6RykmSqLaniKWDsELecF3MuQUpgmdcJ
+	 DOnWSokngHLLHbYHjqWqlK2qi/0mv9Wip2q5BC7jz0vyGis9l1ofE6/uDSDKf5HNI8
+	 Uc7CSJhlihBuFpPkpOgvUbY64h+5d4KmE2dQPmm9xdb1H7J3g+RhQ8EJcsUyM1kHHX
+	 Zk3uQ8bXLJayhLNGQwB2kkpqlNRQpIGdmLAxRe+7BsPEdqzcGkA678KTarXvA9MnTU
+	 /aeDfKdaKFULw==
+Message-ID: <6c4bdf9e5a09aa8c2c49c69a6ccdac99.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,37 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240910044024.120009-4-sergio.paracuellos@gmail.com>
-References: <20240910044024.120009-1-sergio.paracuellos@gmail.com> <20240910044024.120009-4-sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH 3/3] clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628 and MT7688
+In-Reply-To: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
+References: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: mediatek: mt6735-apmixedsys: Fix an error handling path in clk_mt6735_apmixed_probe()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, tsbogend@alpha.franken.de, yangshiji66@outlook.com, linux-kernel@vger.kernel.org
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>, linux-clk@vger.kernel.org
-Date: Thu, 14 Nov 2024 12:50:10 -0800
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Yassine Oudjana <y.oudjana@protonmail.com>
+Date: Thu, 14 Nov 2024 12:51:51 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Sergio Paracuellos (2024-09-09 21:40:24)
-> Original architecture clock code from where this driver was derived did n=
-ot
-> include nothing related to mmc clocks. OpenWRT people started to use mtk-=
-sd
-> upstream driver recently and they were forced to use a dts 'fixed-clock'
-> node with 48 MHz clock:
-> - https://github.com/openwrt/openwrt/pull/15896
-> The proper thing to do to avoid that is to add the mmc related clocks to =
-the
-> driver to avoid a dts with fixed clocks nodes. The minimal documentation =
-in
-> the mt7620 programming guide says that there is a BBP_PLL clock of 480 MHz
-> derived from the 40 MHz XTAL and from there a clock divider by ten produc=
-es
-> the desired SDHC clock of 48 MHz for the mmc. Hence add a fixed clock 'bb=
-ppll'
-> and factor clock 'sdhc' ten divider child to properly set the 'mmc' perip=
-heral
-> clock with the desired 48 Mhz rate.
+Quoting Christophe JAILLET (2024-10-25 08:46:08)
+> If an error occurs after a successful mtk_alloc_clk_data(),
+> mtk_free_clk_data() should be called, as already done in the .remove()
+> function.
 >=20
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in the
+> probe function, and simplify the remove function.
+>=20
+> Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main=
+ clock and reset drivers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
 
 Applied to clk-next
