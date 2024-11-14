@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052E1B0F2C;
-	Thu, 14 Nov 2024 23:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D181AF0AA;
+	Thu, 14 Nov 2024 23:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731625228; cv=none; b=jLHMGDvvHPzMWRTCJ2r8CrVS9xn1pPbAxzuwgBX0HEbpekOdcTRjxlw1aQFhkKYgfOlsQa0B75MivsoF5vlL3V8nMbeLZUbs0QJarGHdUEA3Jo/gzvc/W5P4DTX8bzREm1TNVkSuDIcdTR8ZotmfMyvhw9Fon1hQWWiLzwkkijU=
+	t=1731625402; cv=none; b=O+AqinCRDNwWfwJkMc2kIVKT2442K/Ob6tg8i1H+rhbUra8JN3xgNYVnvL2RTzEskohQsQtPJ7aAqidkJ/t2oVgl2blbRWsPkW+JT6p+BcRFmSJsDl++lddGwOmbASPYvrY+yr7f+yLFj2LjT8zH4f+6xbpixoR1yHl7CJWQ3l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731625228; c=relaxed/simple;
-	bh=P3pGFrH3PlYITETbqoz7DkjsQU+gJZMsHg6JDBJfnDU=;
+	s=arc-20240116; t=1731625402; c=relaxed/simple;
+	bh=7YLDk7m+k1pCnW+7dbogxl5nQSG7CCASV+qPKMwwB4U=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NYapsEBNc5d+g8hGRwvenP9t8wM61caWeWVhDYS28Ta0jVOjcbSsc3FiQJMU388uVGz6JR67zjt5hnNow8SdTQSo6EVzqRwT0Dbbi0IBfkLUt5RgsoQqg8AfEEtiTr+lRPTDv0c3HNT7ZJpIy2Xl85aYrMkA4D0Z1KfB3ycyadU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFODirNe; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=YWWDg9SZeAckjBtVXiZFUwPANUvQw8wAqXU4ScWfH6KSb1EWw3VNYwmFLYwMdIn6Am/Q54LfkuK1J4L7Hj45tZQ9AMW4pj/ZSENEHrJuQsDPSowa1qhnZhniZnkMabIRjCEHOwCFOgT1oZI+99DZbQY83lERupbVjoP/uSj4C6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxmIQqjC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFODirNe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CECFC4CECD;
-	Thu, 14 Nov 2024 23:00:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxmIQqjC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE9CC4CECD;
+	Thu, 14 Nov 2024 23:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731625228;
-	bh=P3pGFrH3PlYITETbqoz7DkjsQU+gJZMsHg6JDBJfnDU=;
+	s=k20201202; t=1731625401;
+	bh=7YLDk7m+k1pCnW+7dbogxl5nQSG7CCASV+qPKMwwB4U=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qFODirNe3t4HDmp8XzsdFIhCtRwAEieRllrPXhyZajN4KzIl+yztLpqbjPw/f/3w2
-	 AcU8zsffEVHEZLFUow1CARcWYRz1uvrTwWh2L9LcyRnoGc5Tc9ehF+xeeOsr7j7DzZ
-	 dYqUVOEE5xVnC6e0fHKQlfB+Jld2GsnOgL62T57/VaBQ8/fKfswPpev4kwtB6zfEKk
-	 mw56X5uhoEl7kc9Y6AOk4CPphp1fFESO1+QMxwSNAkIuy+HpM3xSo5iFdUpVM6W973
-	 ixkP16ffU9oOfdep5U4JdF1a93003u/M7Ot/1CNfhOrhYcVmcrx7NrFdwPBTwyeywF
-	 Ybeoe5tLjchMw==
-Message-ID: <2e82fec5209d888f934af796bb9a7ceb.sboyd@kernel.org>
+	b=MxmIQqjCqTDZ+RH9+X3QNEqtbJt3rt9Pqc6/UQggVpuupsnLlaRnTW0IQxebwHgBZ
+	 90/Rf1J029WWTJqrpFuex/vsffTKmUyF5a89XVDABwHaBb03giNkOC2RZ7PRwpgku5
+	 z0EgxskgrP3+IcjoEapDRBDMefj/1+3AKohINAZBJ6Ah6sq9Juaghr4TGbFg+Shttl
+	 AomkmrR3g4wiLkID9n1n2UQctR6+KdhOZvVc/KapXFeQAH+vrOyO6N9V5zGqughctN
+	 G7KUI05YLwCRs6U3rK24PAr4oBCtXmCNFFWTclQYka+yahkdpZ7JESUJB6cekQ/C7J
+	 /k81+sBtqZzfw==
+Message-ID: <ddc333ad3a150b1d3cc360bd16cc3459.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,32 +35,63 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241106-mbly-clk-v2-8-84cfefb3f485@bootlin.com>
-References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com> <20241106-mbly-clk-v2-8-84cfefb3f485@bootlin.com>
-Subject: Re: [PATCH v2 08/10] clk: eyeq: add EyeQ6H west fixed factor clocks
+In-Reply-To: <ZzZ-cd_EFXs6qFaH@kspp>
+References: <ZzZ-cd_EFXs6qFaH@kspp>
+Subject: Re: [PATCH] clk: clk-loongson2: Fix memory corruption bug in struct loongson2_clk_provider
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-To: Conor Dooley <conor+dt@kernel.org>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Date: Thu, 14 Nov 2024 15:00:26 -0800
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo A. R. Silva <gustavoars@kernel.org>, linux-hardening@vger.kernel.org
+To: Binbin Zhou <zhoubinbin@loongson.cn>, Gustavo A. R. Silva <gustavoars@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>
+Date: Thu, 14 Nov 2024 15:03:19 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Th=C3=A9o Lebrun (2024-11-06 08:03:59)
-> Previous setup was:
->  - pll-west clock registered from driver at of_clk_init();
->  - Both OCC and UART clocks registered from DT using fixed-factor-clock
->    compatible.
+Quoting Gustavo A. R. Silva (2024-11-14 14:49:21)
+> Some heap space is allocated for the flexible structure `struct
+> clk_hw_onecell_data` and its flexible-array member `hws` through
+> the composite structure `struct loongson2_clk_provider` in function
+> `loongson2_clk_probe()`, as shown below:
 >=20
-> Now that drivers/clk/clk-eyeq.c supports registering fixed factors, use
-> that capability to register west-per-occ and west-per-uart (giving them
-> proper names at the same time).
+> 289         struct loongson2_clk_provider *clp;
+>         ...
+> 296         for (p =3D data; p->name; p++)
+> 297                 clks_num++;
+> 298
+> 299         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks=
+_num),
+> 300                            GFP_KERNEL);
 >=20
-> Also switch from hard-coded index 0 for pll-west to using the
-> EQ6HC_WEST_PLL_PER constant by exposed dt-bindings headers.
+> Then some data is written into the flexible array:
 >=20
-> All get exposed at of_clk_init() because they get used by the AMBA PL011
-> serial ports. Those are instantiated before platform bus infrastructure.
+> 350                 clp->clk_data.hws[p->id] =3D hw;
 >=20
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> This corrupts `clk_lock`, which is the spinlock variable immediately
+> following the `clk_data` member in `struct loongson2_clk_provider`:
+>=20
+> struct loongson2_clk_provider {
+>         void __iomem *base;
+>         struct device *dev;
+>         struct clk_hw_onecell_data clk_data;
+>         spinlock_t clk_lock;    /* protect access to DIV registers */
+> };
+>=20
+> The problem is that the flexible structure is currently placed in the
+> middle of `struct loongson2_clk_provider` instead of at the end.
+>=20
+> Fix this by moving `struct clk_hw_onecell_data clk_data;` to the end of
+> `struct loongson2_clk_provider`. Also, add a code comment to help
+> prevent this from happening again in case new members are added to the
+> structure in the future.
+>=20
+> This change also fixes the following -Wflex-array-member-not-at-end
+> warning:
+>=20
+> drivers/clk/clk-loongson2.c:32:36: warning: structure containing a flexib=
+le array member is not at the end of another structure [-Wflex-array-member=
+-not-at-end]
+>=20
+> Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new =
+platforms")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 > ---
 
 Applied to clk-next
