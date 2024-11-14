@@ -1,86 +1,65 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B11D1B2196
-	for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2024 22:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602E1990C4;
+	Thu, 14 Nov 2024 22:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731623932; cv=none; b=VT2bXdRifuBX3LmqnUcWv3muT7Noz29ATH0Ua4+HRzoT8W1cnsveGAAgiozMyz7AiX7T6K5TTgSgoK8eVwSMV/9i/HvURGhlPhT8//3vbUadoALk1tCMgFPUf7y7UL0yITn2KdnAV0rCsFu2uC9tqIu4pkcxB9ro5+ZSapiyuNw=
+	t=1731624028; cv=none; b=OVgB+Gso5ktBAM/7VkGlCuSgDVjysTD3fCJeM7OPY1X0QfOJ0a2cx+9eFX3AsDshE0b9YTO/AqT3Bcz+HCHPUCmv26ykHLlHw+hFeyZFpBEYgghgnLbK8muR361W5KEwWmTs+q/qzc+mDyMNGDEj2zgeFLuX9mKw8SGNoNgPYJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731623932; c=relaxed/simple;
-	bh=jQWDXG3wMZIdSrsC7JDfk+oX20Ytl66lahMoDYosAS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lBBhqbgZtb5M6Kb4+7BWTHiAVOO5CMYhrtar613gNX+aynQ9h9Usrt1J0jfhZ7kONeM6ZmJddAflybaehRXNtgZ4jIlkW65w507V7tGjovSArzqEWIMcJJPoP72tnoY1fXIJU8bRtB0L5EgA5kox+rmljqJuPyHQfvlhH8E6yKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0IgtVFVT; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1731624028; c=relaxed/simple;
+	bh=q+dgoQrtOgKVilV2nVsbgAYQbJrn9GgLDKGPgYV2pDc=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=mm6pYBMmrD9lntJqnJ34au2RBQ4fyFUHiD6uszbr5Y4QZTLFZeztX/vrHnFF1fI1YyfbDvCGqx0Uo7nRZ0OKBF9ngbrlruB5vUdrl9HAg6s0QgmQTtH1F4DXT/STzqWQTPMwsS7iGjUuzM4328tWv7St9fsUg/xbB93iWygB10E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtVWwzYF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0IgtVFVT"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=D1XsaCqkWwRR6XrSHEGg6TIaTIM6VeYXYn+FOkXw2fo=; b=0IgtVFVTHwai0AsNOcCKn+UeX+
-	sLf41k6IavnOXl6Wv4PLk/LOxR0K7BoFeJ1Fl1+rGmNJQoi6XmYEpiua3zNrNi+XDm6kqrjzpkuH5
-	rC3bzvyHrOXPx6EDJYeB8A1zOOCN2OlE3ml3DOIzkPROH8jwnWXATxiYZEc8Vt+xQCZykqOnnsqaI
-	BmkUHw7nDL8sWoSpEVG/NjruAZ3Jbkj2Fp0PMKPc0IVHTjIXB5aFfhG5B9kHoSGAJVIZ+dS+6ehG3
-	vimO7+9Ql8j1KCHsfuAvAC5s3i1lSsmnEqlNsewiWglcOmnH6BXaQgcwnB9dDIaDsrG+scOiAAtze
-	c+uYY/7Q==;
-Received: from i53875a30.versanet.de ([83.135.90.48] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tBiU0-0006Ij-KJ; Thu, 14 Nov 2024 23:38:36 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 6.13 #1
-Date: Thu, 14 Nov 2024 23:38:35 +0100
-Message-ID: <3061836.mvXUDI8C0e@phil>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtVWwzYF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A196AC4CECD;
+	Thu, 14 Nov 2024 22:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731624027;
+	bh=q+dgoQrtOgKVilV2nVsbgAYQbJrn9GgLDKGPgYV2pDc=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=jtVWwzYFOpJ/mB2Fa/mloq4oMS5Ir56qJWbEJZ9Twwar0LaFkh95AowpZF8iCrCQd
+	 F5pEAvNrhBpZmWIiS9ptJQYx5LjZq7iKb4UjO8kmCw6QIIqjaypemN3Rc6Rk7mlQ3K
+	 uFPAqZKNYEcdi7+rUvWEbkcDzA2wS9GN0tGhBzJ06RpzBBFug/XhkfcNfhbGTip3Re
+	 g7xzzMprUniwI5qruvRrKGr/+ZKV6JhwuQjQzv8l6tzyzgMZUl8luQwsEGt2wuMkcM
+	 NQ3MBC6axxq99EM16xbEjn4nDTWvX4pccd/uNsaznxIm9rF29zcN3fg0rmcJepAVo3
+	 anI0qsoPILy4A==
+Message-ID: <b473d92cc353b1cf58169410236e4c51.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241112230443.1406460-4-jan.dakinevich@salutedevices.com>
+References: <20241112230443.1406460-1-jan.dakinevich@salutedevices.com> <20241112230443.1406460-4-jan.dakinevich@salutedevices.com>
+Subject: Re: [PATCH v5 3/3] clk: meson: a1: add the audio clock controller driver
+From: Stephen Boyd <sboyd@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>, Jan Dakinevich <jan.dakinevich@salutedevices.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 14 Nov 2024 14:40:25 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Hi Mike, Stephen,
+Quoting Jan Dakinevich (2024-11-12 15:04:43)
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 7cb21fc223b0..49f2086bc773 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -133,6 +133,20 @@ config COMMON_CLK_A1_PERIPHERALS
+>           device, A1 SoC Family. Say Y if you want A1 Peripherals clock
+>           controller to work.
+> =20
+> +config COMMON_CLK_A1_AUDIO
+> +       tristate "Amlogic A1 SoC Audio clock controller support"
+> +       depends on ARM64
+> +       select COMMON_CLK_MESON_REGMAP
+> +       select COMMON_CLK_MESON_PHASE
+> +       select COMMON_CLK_MESON_SCLK_DIV
+> +       select COMMON_CLK_MESON_CLKC_UTILS
+> +       select REGMAP_MMIO
+> +       imply RESET_MESON_AUX
 
-please find below a pull-request with one Rockchip clock change for 6.13
-
-Please pull.
-
-Thanks
-Heiko
-
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.13-rockchip-clk1
-
-for you to fetch changes up to 5011cc7ad9aeea98029385f8a0e81a0ebfc45bed:
-
-  dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML (2024-10-08 21:11:29 +0200)
-
-----------------------------------------------------------------
-YAML conversion of the rk3328 clock controller binding.
-
-----------------------------------------------------------------
-Johan Jonker (1):
-      dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML
-
- .../bindings/clock/rockchip,rk3328-cru.txt         | 58 -----------------
- .../bindings/clock/rockchip,rk3328-cru.yaml        | 74 ++++++++++++++++++++++
- 2 files changed, 74 insertions(+), 58 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
-
-
-
+Should be 'depends on RESET_MESON_AUX'
