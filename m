@@ -1,151 +1,151 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1EA1AC428;
-	Thu, 14 Nov 2024 23:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB01B0F1D
+	for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2024 23:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731626987; cv=none; b=G+XHL46AZCXzZaQa8K8YoiwmrRi7wWYqMD1zBL+IadzHE4ZsyNwql/RD6iL4h981BA4iJeML2jwgqzX6pDO++WgLvbtoNa6kxVQRAxxEH3ZA92KmdyiyUoxAf4Rp2Ev2lSV+xph5Wd/ovMJ5eRUt/h/VEhZZgwlOdwpusUWwsnU=
+	t=1731627197; cv=none; b=jxs40mfuAXopMdcSyNmYBjwcxuWdYmb5pfoTqo7XiMTv9VzkAEbFZkbBCakHsVbX9DG9i1fjQX439+DUi3LxNxOAK4MPVcWW/UL1UW7/R5w5IjUfME+6Ltb3Uxs0SOwXn1+z2KXTtWqjRm+v6YYI7QBHk6ABL2RRh5EjojYFEKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731626987; c=relaxed/simple;
-	bh=pKLRaSxaONbmL45vOqmcxWRIA6nXfdyhWf14p2Tb+gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbr0PCZvPvfUVnapg368oNksBfkd8c3QBGZoH/C9VYs7EVmiwKIVDURGx9ki2pfvMznltWFJvF6oss2z0KwGsTEK3ZGRRtJ22ui7RZRb94JNXz3Gk9Qj1kORyFMvNLdZHJYLDaEfYRg9vu5GfSm4TuFNpf3kD0qnkeQjxyaf3R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ObqjKuxV; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731627197; c=relaxed/simple;
+	bh=UYWLHm7qfMw23PDHj1x/cvLxSnpl+KHifSvGS/dxR3I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Eneb7Lg3ZwWcCUZgOsGNy9YFDgI5DIbTeCkqlw7O9HiVsdwKY3jU8eIsC6ZbXoW2b9D9QuNRwOZvcOxmN9uV5Z+QZoHxjOD5N/C2UjZeDM0aXw9oZXlTN5LOYQEyU50Ofihu+HsStXRJ77QqcPIUgqjHi/1rAi0Q+ACMej70g1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knwweu2i; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObqjKuxV"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b154f71885so76133685a.0;
-        Thu, 14 Nov 2024 15:29:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knwweu2i"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso13307065e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2024 15:33:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731626985; x=1732231785; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aiQkiZgzW+58bngcliKx41njiz5MtLbQoXDSfwxNgiQ=;
-        b=ObqjKuxVwCfWBXdV3rpIyt8zK2kbDmevEhLFXFb4uPUSRQU3SLQCiArtbuv53m3lSd
-         9kpFoFieCWHzPgiHlSySSx9zavrir7otTnDPVW8Vve5fnYrqWnHFy4XYPLgurQUeGi46
-         L7vToyCEbn48hTyuCNm+IXU79h3ljiZcar9lCfgZp6aXIOxT0ynirP5LPstElwtp57Td
-         MhJm8HRnn7q1hu2ixPXabZ/Vw91OEXds8Xhp30DGTw2PyE1PDeaDXZOMDkA2+gr03HRy
-         rYFQnQZFkQf8a6yYjeiHd7PTmutNBo5P6bnMVvSIpczL60mIRVirTeZtcSdct29rIVFP
-         FlYw==
+        d=linaro.org; s=google; t=1731627194; x=1732231994; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVvwlAu+8zSpv+81YL0HNfwnIe4vXYe/t9Y2ZwRkEAk=;
+        b=knwweu2i6RwuZyu3uqCuLCgE2Kulu1D2F7jUscYz5++8v3/gZylbQzTNU+gXuV8mX+
+         h80X1oYoLKnxeRjQFQU/oSvfSlCwE16mwehI1RtKbK2lItPHOua4Dwsp8QIWigDMPyDu
+         TToyr1Enmia7IAYGKSHb6JojaZ22W4dTtTJaZolcz0g1+rCCmi4H5LmQ4r3uh69CRhNm
+         t6BxG4HTz7C1if0ailW2SFFzyNuObF37ESvkGUnP7zw9gXxQwA0HbJTQGZxkScIS637l
+         BuFDfuicBVva133fzMaomifXj6HPTArAS4IYwh7RrZKkhuxh1WAbpj7+jOOs9Mi1Vav2
+         JJBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731626985; x=1732231785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aiQkiZgzW+58bngcliKx41njiz5MtLbQoXDSfwxNgiQ=;
-        b=SHvn0ySL3pXgTDDxwDaNCrZKakyEEIfminqniY9tfSNcU/UtPIV2DU9Ah46ugKTw0Y
-         0uGXuhgJMqd2HyaD2edytzFInwmQkcsT1kETMGwZmNaJE7FPYJmF4XrI403v2TTymIWE
-         fOQtrj+FIqio/AdjGv4LrZB8MCfpyBI5z/PZm2LMo94KBOuVQNVQJKYdjQnEPToeclOB
-         Wsv3L37JUNE4dg5cu2okM9DKlPWfwUv8LNcq2Nkz36pl7b/H1yIRWj+IPDSMVGlt/vrM
-         oBlPCCKsr9U+w83xtC7QWmZLrDJQxuPqcx3BX1DyEtFDPHonvjFDzEiTSxJHh6TU1Emv
-         L6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy64wFLo69UMCSSZwMoc3roLHsYodrKXJKXZak7h+KfA95tnMzeFNMCcOECfMt3TyNpdWSHsivA1XCL9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJjO6lLz7Pp9gSNAzJgpYc+D/KcNxc3KGB1ODgKZ6o5g2kphn0
-	ZAuqLMVYxSCvk3eSJqYCXq0yOjtTzLWK3Moaq5bDwSTQM56J90KD
-X-Google-Smtp-Source: AGHT+IHzMx8vkvg7GvLTlNcx5cHgsCtjsbKTELbV6QeFLYkn2uWFGP9dCRaS6jDPuLkGCurEojIOYQ==
-X-Received: by 2002:a05:620a:1a91:b0:7b1:572a:cd27 with SMTP id af79cd13be357-7b3622cef0dmr93130685a.18.1731626984809;
-        Thu, 14 Nov 2024 15:29:44 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c984557sm100517185a.10.2024.11.14.15.29.43
+        d=1e100.net; s=20230601; t=1731627194; x=1732231994;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VVvwlAu+8zSpv+81YL0HNfwnIe4vXYe/t9Y2ZwRkEAk=;
+        b=TmDNVJnWeVE4R8Wv5FG5BBIFzLHx1Pi4CZW/1J4A6WyGoLzJJqxEWyRlQhwrkWIUR7
+         HWuBZy9uqdphQXV1GTrvconsgiT3tOtBPnAc4vbzEkdvucVYv9+LZhsKTBLrqDVXc8ih
+         yfEg82+4DaOGmUxckjK8EA/DZ8NVJlAfxfgd9PzAJD+VQoIIqlAruN1q3ha2QE3eqFND
+         DC5NMfMKzc/zLYjYv4PFJ2ry5p+cBOiFe21RJCRYs+LPfbOBcbEgL25cIsEyNfUC/x3J
+         NLVWyta4aeNNG22H6g2aTEJYKN4wzPGhhvO6NjcXMxlXJoTeYfseISCHQ4O7j4Q0HPI7
+         7QhA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3R9st3K4ktfAGhOly/R+lT6h6V5eNJmVLP8HsQYj6+Oon92A7toa6oVsyoCxsOyueCO4ivn6IIBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCBXxZpUTVlInoFRN6N6hetNfqk5VWiksDxsu3ER3Fzgtbp+Vq
+	yHed8x0f9mVfIguikcBAjW/D7tN9Nk+mQi8Yo3TnReFyBoqkG9TsWw+2bNGC8dg=
+X-Google-Smtp-Source: AGHT+IGKLPXfM66rPtUFkfPweOwpn1ja3LCHTx2W2I4nd96tds3LIExpBIYxelahGIXvBpARzXKnpA==
+X-Received: by 2002:a05:600c:5125:b0:42f:8229:a09e with SMTP id 5b1f17b1804b1-432df7937c9mr4239815e9.29.1731627194373;
+        Thu, 14 Nov 2024 15:33:14 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da28ba80sm39513565e9.29.2024.11.14.15.33.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 15:29:44 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:29:38 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Ragavendra <ragavendra.bn@gmail.com>, unicorn_wang@outlook.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk:sophgo: Remove uninitialized variable for CV1800
- PLL
-Message-ID: <shbsc7lxtn3fbiq4vixdjprbpxdsgwxgsd2bfziqlsunwvqj3z@tecit4ibpblk>
-References: <20241114210115.29766-1-ragavendra.bn@gmail.com>
+        Thu, 14 Nov 2024 15:33:13 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Thu, 14 Nov 2024 23:32:58 +0000
+Subject: [PATCH] clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the
+ parent GDSC of subordinate GDSCs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114210115.29766-1-ragavendra.bn@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241114-b4-linux-next-master-24-11-14-titan-gdsc-v1-1-ef2533d487dc@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKmINmcC/x2NwQoCMQwFf2XJ2QdNzclfEQ+1jWtAqzRVCsv+u
+ 8XjMDCzkWszdTotGzX9mturTuDDQvme6qqwMpliiMLMgqvgYfUzUHV0PJN3bYgCZkzbraeKtXi
+ GlCNnDlxCYpq5d9Objf/qfNn3H/mTBJR6AAAA
+X-Change-ID: 20241114-b4-linux-next-master-24-11-14-titan-gdsc-4d31c101d0a1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Thu, Nov 14, 2024 at 01:01:15PM -0800, Ragavendra wrote:
-> Updating the detected value to 0 in the ipll_find_rate and removing it
-> from the method parameters as it does not depend on external input.
-> Updating the calls to ipll_find_rate as well and removing the u32 val
-> variable from ipll_determine_rate.
-> 
-> Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-> Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
-> ---
-> V1 -> V2: Updated commit log, title and addressed review comments
-> ---
->  drivers/clk/sophgo/clk-cv18xx-pll.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-> index 29e24098bf5f..350195d4ac46 100644
-> --- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-> +++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-> @@ -45,14 +45,13 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
->  }
->  
->  static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
-> -			  unsigned long prate, unsigned long *rate,
-> -			  u32 *value)
-> +			  unsigned long prate, unsigned long *rate)
->  {
->  	unsigned long best_rate = 0;
->  	unsigned long trate = *rate;
->  	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
->  	unsigned long pre, div, post;
-> -	u32 detected = *value;
-> +	u32 detected = 0;
->  	unsigned long tmp;
->  
->  	for_each_pll_limit_range(pre, &limit->pre_div) {
-> @@ -77,7 +76,6 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
->  		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
->  		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
->  		detected = PLL_SET_DIV_SEL(detected, div_sel);
-> -		*value = detected;
->  		*rate = best_rate;
->  		return 0;
->  	}
-> @@ -87,11 +85,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
->  
->  static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
->  {
-> -	u32 val;
->  	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
->  
->  	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
-> -			      &req->rate, &val);
-> +			      &req->rate);
->  }
->  
->  static void pll_get_mode_ctrl(unsigned long div_sel,
-> @@ -134,7 +131,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	unsigned long flags;
->  	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
->  
-> -	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
-> +	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
+The Titan TOP GDSC is the parent GDSC for all other GDSCs in the CAMCC
+block. None of the subordinate blocks will switch on without the parent
+GDSC switched on.
 
-If you remove this, how can the function get the right configuration?
-And why you want to remove this? I suspend you did not take my advice
-and change nothing. You must check the code logic and do a meaningful
-change.
+Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/clk/qcom/camcc-x1e80100.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Regards,
-Inochi
+diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
+index 85e76c7712ad84c88decb62ccaed68533d8848de..b73524ae64b1b2b1ee94ceca88b5f3b46143f20b 100644
+--- a/drivers/clk/qcom/camcc-x1e80100.c
++++ b/drivers/clk/qcom/camcc-x1e80100.c
+@@ -2212,6 +2212,8 @@ static struct clk_branch cam_cc_sfe_0_fast_ahb_clk = {
+ 	},
+ };
+ 
++static struct gdsc cam_cc_titan_top_gdsc;
++
+ static struct gdsc cam_cc_bps_gdsc = {
+ 	.gdscr = 0x10004,
+ 	.en_rest_wait_val = 0x2,
+@@ -2221,6 +2223,7 @@ static struct gdsc cam_cc_bps_gdsc = {
+ 		.name = "cam_cc_bps_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2233,6 +2236,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
+ 		.name = "cam_cc_ife_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2245,6 +2249,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
+ 		.name = "cam_cc_ife_1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2257,6 +2262,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
+ 		.name = "cam_cc_ipe_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2269,6 +2275,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
+ 		.name = "cam_cc_sfe_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
 
->  	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
->  			  ipll_check_mode_ctrl_restrict,
->  			  pll->pll_limit, &detected);
-> 
-> base-commit: 2e1b3cc9d7f790145a80cb705b168f05dab65df2
-> -- 
-> 2.46.1
-> 
+---
+base-commit: 37c5695cb37a20403947062be8cb7e00f6bed353
+change-id: 20241114-b4-linux-next-master-24-11-14-titan-gdsc-4d31c101d0a1
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
