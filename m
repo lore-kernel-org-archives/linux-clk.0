@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776E4136327;
-	Thu, 14 Nov 2024 20:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9EABE4E;
+	Thu, 14 Nov 2024 20:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731616293; cv=none; b=Ut2UXZq7SLTfQByDDjX2ZrMLm9qWZ//y0n7oJj0CLv1wTxvoit6voKyGZGZyto7ajSvbmcnrXLws22R08a3zcFnMC5bdQ3UbMzXhxPmC98/vFq9r+ErvYyOVchwkYXnCEpxjKMmRajiX1+lf8i7FIMW9CJOEtVcHVC1cNZY9Le0=
+	t=1731616342; cv=none; b=AJd172RyD+yjzsMstRZgkF3r31lXNsB1Ne11we0KsdHCr6fMwSAdV4S6RhAI/OZ1EYmDJe+q3xZkis24tmsPODF6WUxkZ0p2dYxY2d3S0ysOIrF6NuVXSb0Jzg/GiobalBg++DU5JS1+U1D0f8ugc5f3CftT9ADWeNmVcouWqrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731616293; c=relaxed/simple;
-	bh=kcD7lpOvfok8iwoAEQ7O4TR/rmcLTmp0Xw+RedPXt7g=;
+	s=arc-20240116; t=1731616342; c=relaxed/simple;
+	bh=l0rtORJJ9abL/ePiJ7sVqGnSvdaSIacBHfsCGwvk2sk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mQqCvCZmXnAvTuColt5rSfIXJznJwHXbuwxlUAEb8rkVqKrdheYJnkfqbcCb5Rc5XGN6jw9kV87bss9eo27VoXHyK/IQdISgVa1ksB0A2f0TOpy/IEt2pOtMwh17ToTYQlXdy43SMsx/5pJXxFJgRpYy/c9HyuEPzrr6cTV0b3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNorJ7yE; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=YcSVmOTQb0yeh8LT0PVZAmEGCuQ1pvOJNo8rkwAb9FrDBjmSqoK8qhHTkFRoUzVGCX0Sn4YRS1J2lL3Qi088MgO6PjdL0PTzUzJP48PkZwgzjRX34GwwVpnX3aJU4deAfuOv//MRn2TgpVzNN0g/BDokEeFP8kT8diMyfoA4GWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQQz/1pr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNorJ7yE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6A2C4CECD;
-	Thu, 14 Nov 2024 20:31:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQQz/1pr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09E4C4CED9;
+	Thu, 14 Nov 2024 20:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731616293;
-	bh=kcD7lpOvfok8iwoAEQ7O4TR/rmcLTmp0Xw+RedPXt7g=;
+	s=k20201202; t=1731616340;
+	bh=l0rtORJJ9abL/ePiJ7sVqGnSvdaSIacBHfsCGwvk2sk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=WNorJ7yEDMNplHX5dphQlyW2bmGqbBL/yHqyMpEVOWl8vc+gXWYFFf9qImfUN3Ppe
-	 iT1gtyjYWUKT1F3D14m9rrxT5iwVmet+27+3hMrT2Se6u8fW+sP0/zFzsE33UsXXQN
-	 J+QmUbzuaaHZEa8f8inIbdFwWh7RA1sNNzlUi1+TRqW38WH5qWmV/2yiiIW/ZLCNjw
-	 zzs12lf3/ihZapP21fK+ZYZI0J3QQz6m9eQfp4KmVRuyG27MEljFs12181TswPg60A
-	 /akts2gMDE3j8xSsG8GT05HqyWHKTj9OtoaKB4/1Z3ASvBIHGGPQqCuPP6yTLbaYTE
-	 yzW2qWJFzL7CA==
-Message-ID: <c6d1d80e4e32439de589e241a596d3bb.sboyd@kernel.org>
+	b=jQQz/1prrlHzrNFH55gT+ZTWhO3fuynNtInRbDSb6D+n6uKwL5sCmPdYlh07UuJMt
+	 PqyI7cjm7HxbOI9JVwTtJIqljdxdp/zmOuANnkmve4I3UidR83xeGYL6HSmwlcz8Qi
+	 xnyREcnLYBP3Trc/15geWBhiLbo/SNr4s2AjekxJREtl3V/Pk4Aio0r/+tG+qTMMdW
+	 FNUG4iFxd44VLz+e6r+nQdBXIQ0AJX9uErPIt6sHpX+xQtp2ChlRPuWjLkFJEMd/gd
+	 /5ngM5IOkI6pSm9h23iPRUlbFgt1DnFqWWOEkUfLzHFxklwull+MlyS/DaIcpxcWUx
+	 8udeqnhuk5oOw==
+Message-ID: <d7cd72829cfd4ee9bd880d6d32e4dbc1.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241114072820.3071-1-hanchunchao@inspur.com>
-References: <20241114072820.3071-1-hanchunchao@inspur.com>
-Subject: Re: [PATCH] clk: clk-apple-nco: Add NULL check in applnco_probe
+In-Reply-To: <20241114091422.75412-1-hanchunchao@inspur.com>
+References: <20241114091422.75412-1-hanchunchao@inspur.com>
+Subject: Re: [PATCH] clk: davinci:  Add NULL check in davinci_lpsc_clk_register
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Charles Han <hanchunchao@inspur.com>
-To: Charles Han <hanchunchao@inspur.com>, alyssa@rosenzweig.io, marcan@marcan.st, povik+lin@cutebit.org, sven@svenpeter.dev
-Date: Thu, 14 Nov 2024 12:31:30 -0800
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Charles Han <hanchunchao@inspur.com>
+To: Charles Han <hanchunchao@inspur.com>, david@lechnology.com, mturquette@baylibre.com, sboyd@kernel.orgv
+Date: Thu, 14 Nov 2024 12:32:18 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Charles Han (2024-11-13 23:28:20)
-> Add NULL check in applnco_probe, to handle kernel NULL pointer
-> dereference error.
+Quoting Charles Han (2024-11-14 01:14:22)
+> devm_kasprintf() can return a NULL pointer on failure,but this
+> returned value in davinci_lpsc_clk_register() is not checked.
+> Add NULL check in davinci_lpsc_clk_register(), to handle kernel NULL
+> pointer dereference error.
 >=20
-> Fixes: 6641057d5dba ("clk: clk-apple-nco: Add driver for Apple NCO")
+> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
 > Signed-off-by: Charles Han <hanchunchao@inspur.com>
 > ---
 
