@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E844189F39;
-	Thu, 14 Nov 2024 21:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A9170A1B;
+	Thu, 14 Nov 2024 22:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618164; cv=none; b=iQZ9hF6MwsPMICiZUPJwlCfb0Ttwj+Z22qYMawegtgPqB/RonIwq2alF7BSi6zK7L76PSty1iE42CVmdJB1izE/G1oIZdl0IXPdWCetZlCz3Nr87NNbKWE23eybIBeUD0ydyLHI899XP2S8+57gRlSpdcrNDY7FFNwFPRQ987kk=
+	t=1731623807; cv=none; b=DLqOGxgzU8SS7iqnlFiq3j+iP+rf6nZd/WHBHTED+4Oexqs9Le1dSnXrC9yG80jvj2rxS8zdTryqNyWFcJChsBjEp4OmodbUmXBctu5yfElHvlBBH6ETavcoSp2Nn3yE+l5O7FKd/VprEZlOdUifMrrygbfDUNXV4A6lr044jIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618164; c=relaxed/simple;
-	bh=x9tlQ6UIV80cZmXaqxhISxlCRaJ5DdpbEU69bjf7t98=;
+	s=arc-20240116; t=1731623807; c=relaxed/simple;
+	bh=mfhhuvQxgsjolz/D6JiwLtLMDBKlJ4RlLk8azVUsYko=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tnzDYY24sNrjd6IwgLuxVZfvEFbQFCA9ccu2CdEROFLLL3dfNzmYTyWg7SpkKZWfLQ3RUdH0ZflMa1tGlZFSiCVa3w0PDfccIXjLT5J+FKEK1utds8vffjHit6EWEJacgW/clALArEA3ytKb5x87Knt1zrwm/qTm7r6BbeoYN/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNv3hNkl; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=dR08GlzcL65DVOVomJC6e2RAUNhntE67Ex9ic/QVomh9WPaeKaZF+c1qPHXI9AG30FGRekAbvkSRLm9l/qtezaiurIcO1HhYXGvKzibkTWxLzIkgqVxHhnRpn9riIISGkwJrOK7nQZAzlgJSdNtQqGBRvQFEn0i4skN+CoCzgyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vE1SNNJH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNv3hNkl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56ECC4CECD;
-	Thu, 14 Nov 2024 21:02:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vE1SNNJH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E9CC4CECD;
+	Thu, 14 Nov 2024 22:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731618164;
-	bh=x9tlQ6UIV80cZmXaqxhISxlCRaJ5DdpbEU69bjf7t98=;
+	s=k20201202; t=1731623807;
+	bh=mfhhuvQxgsjolz/D6JiwLtLMDBKlJ4RlLk8azVUsYko=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tNv3hNkleQ+UI2yJpVF7OzzSWX1l6tzUvXfSYXQrTj/lqBFiSCH6l44UQrSIqUPzz
-	 VJ52YNHQCD1QYZCINueM3Hj6YqUmTgvcia2TfZHpBF8SHfl2kOBU8FEPhRu5HDMyn8
-	 JIlcisH0iJMniZ+C2h3zd+9HQwMKmhlCCxshdeedLms635oxJR6marfHiSziz63Ikr
-	 dWp6tri+dH+YMfqmVDsp6ZQOrK2bBSKiWoEaGdxjoYJUHv6oH0BURysoTR9QhcMjEb
-	 pqFA4wcgf6MORFRUM/DtyXtt+gWWewoxVrMAbVXIxwdSj2gcZh/IOPDB8IS/IlrU0M
-	 BRBk1W/dPB44Q==
-Message-ID: <b59b3c8bd47e09a29da3b1f65eb949a2.sboyd@kernel.org>
+	b=vE1SNNJHxW0oSAzwxVA92cfDhEScdhXdsHcinHfXPL7o/u7U0zW4FzDiw8toVV3pt
+	 OP7T7gSTWPkc3tUtQ/9EnGRI9CLMfzhaydVVCpI1XGWqmo6MmtIscO8Z9bD1UyrL+X
+	 8DTJcj1um4nuHiRz9eYZ/j5CuJvPlQaifmRl4xG59xBYta8BvSFxxO/zcqvbUPNABq
+	 LXP1ZyryqCOmqVwCbqHmfWPZXoJTwTAVF7gpAv6ixHfjVqGW7eRsVdx30ek2fkEM/8
+	 99Kz0sWS8zfT1s1bvjhnG6rmImfyd+S0LnQIS2bnPCfdVW1mLSehflENQnlrruCtqb
+	 dHs7fQm2faDcQ==
+Message-ID: <0b49bddf8ac713f7d506661e081c946e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,21 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241112-clk-en7581-syscon-v2-7-8ada5e394ae4@kernel.org>
-References: <20241112-clk-en7581-syscon-v2-0-8ada5e394ae4@kernel.org> <20241112-clk-en7581-syscon-v2-7-8ada5e394ae4@kernel.org>
-Subject: Re: [PATCH RESEND v2 7/7] clk: en7523: map io region in a single block
+In-Reply-To: <20241104-pxa1908-lkml-v13-1-e050609b8d6c@skole.hr>
+References: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr> <20241104-pxa1908-lkml-v13-1-e050609b8d6c@skole.hr>
+Subject: Re: [PATCH RESEND v13 01/12] clk: mmp: Switch to use struct u32_fract instead of custom one
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com, angelogioacchino.delregno@collabora.com, linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com, ansuelsmth@gmail.com, Lorenzo Bianconi <lorenzo@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>
-Date: Thu, 14 Nov 2024 13:02:42 -0800
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Duje =?utf-8?q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, Duje =?utf-8?q?Mihanovi=C4=87?= via B4 Relay <devnull+duje.mihanovic.skole.hr@kernel.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Tony Lindgren <tony@atomide.com>, Will Deacon <will@kernel.org>
+Date: Thu, 14 Nov 2024 14:36:44 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Lorenzo Bianconi (2024-11-11 16:08:54)
-> Map all clock-controller memory region in a single block.
-> This patch does not introduce any backward incompatibility since the dts
-> for EN7581 SoC is not upstream yet.
+Quoting Duje Mihanovi=C4=87 via B4 Relay (2024-11-04 08:37:03)
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 >=20
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> The struct mmp_clk_factor_tbl repeats the generic struct u32_fract.
+> Kill the custom one and use the generic one instead.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Tested-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
 > ---
 
 Applied to clk-next
