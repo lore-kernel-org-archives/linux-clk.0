@@ -1,151 +1,99 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB01B0F1D
-	for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2024 23:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495FE1AAE33;
+	Thu, 14 Nov 2024 23:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731627197; cv=none; b=jxs40mfuAXopMdcSyNmYBjwcxuWdYmb5pfoTqo7XiMTv9VzkAEbFZkbBCakHsVbX9DG9i1fjQX439+DUi3LxNxOAK4MPVcWW/UL1UW7/R5w5IjUfME+6Ltb3Uxs0SOwXn1+z2KXTtWqjRm+v6YYI7QBHk6ABL2RRh5EjojYFEKc=
+	t=1731628521; cv=none; b=HvnepDiudbw67ZP7kQ9CFCjrR4psh/UUdUBteSoDMpDA5NBcq3yqcjbGkOO2sRK9m7R6wXNMeMqXKiskzCPPEy1yVdQit7MBzalG07EAfcj8x9QAeVfNUvnewoit1dC+OPGea0sMctKavrnXH/dJe+hW3ol2xIx/Vp2Yt62EZn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731627197; c=relaxed/simple;
-	bh=UYWLHm7qfMw23PDHj1x/cvLxSnpl+KHifSvGS/dxR3I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Eneb7Lg3ZwWcCUZgOsGNy9YFDgI5DIbTeCkqlw7O9HiVsdwKY3jU8eIsC6ZbXoW2b9D9QuNRwOZvcOxmN9uV5Z+QZoHxjOD5N/C2UjZeDM0aXw9oZXlTN5LOYQEyU50Ofihu+HsStXRJ77QqcPIUgqjHi/1rAi0Q+ACMej70g1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knwweu2i; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1731628521; c=relaxed/simple;
+	bh=zY7KhF5ZX6coU8ApPUSZ3x9v5eBGEmYIOjd4V8VjVMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uZ3q2fVWjFKh/x6c2g1B6K1QVWe1x/TJf5KaVueCi/TxkL3DibL4SKBi7gV42BSqIwRiUxhSSo2iRhCeRSvo1DPkriFDVm8ThBGXeK5y55D6yLjReiKVMfLB1KA6Mhxkr/Wq4Auhjx4OfUs4VYEc7ewKjNMevinHJ0VrFCY2BhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqrylpHT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knwweu2i"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso13307065e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2024 15:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731627194; x=1732231994; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VVvwlAu+8zSpv+81YL0HNfwnIe4vXYe/t9Y2ZwRkEAk=;
-        b=knwweu2i6RwuZyu3uqCuLCgE2Kulu1D2F7jUscYz5++8v3/gZylbQzTNU+gXuV8mX+
-         h80X1oYoLKnxeRjQFQU/oSvfSlCwE16mwehI1RtKbK2lItPHOua4Dwsp8QIWigDMPyDu
-         TToyr1Enmia7IAYGKSHb6JojaZ22W4dTtTJaZolcz0g1+rCCmi4H5LmQ4r3uh69CRhNm
-         t6BxG4HTz7C1if0ailW2SFFzyNuObF37ESvkGUnP7zw9gXxQwA0HbJTQGZxkScIS637l
-         BuFDfuicBVva133fzMaomifXj6HPTArAS4IYwh7RrZKkhuxh1WAbpj7+jOOs9Mi1Vav2
-         JJBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731627194; x=1732231994;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VVvwlAu+8zSpv+81YL0HNfwnIe4vXYe/t9Y2ZwRkEAk=;
-        b=TmDNVJnWeVE4R8Wv5FG5BBIFzLHx1Pi4CZW/1J4A6WyGoLzJJqxEWyRlQhwrkWIUR7
-         HWuBZy9uqdphQXV1GTrvconsgiT3tOtBPnAc4vbzEkdvucVYv9+LZhsKTBLrqDVXc8ih
-         yfEg82+4DaOGmUxckjK8EA/DZ8NVJlAfxfgd9PzAJD+VQoIIqlAruN1q3ha2QE3eqFND
-         DC5NMfMKzc/zLYjYv4PFJ2ry5p+cBOiFe21RJCRYs+LPfbOBcbEgL25cIsEyNfUC/x3J
-         NLVWyta4aeNNG22H6g2aTEJYKN4wzPGhhvO6NjcXMxlXJoTeYfseISCHQ4O7j4Q0HPI7
-         7QhA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3R9st3K4ktfAGhOly/R+lT6h6V5eNJmVLP8HsQYj6+Oon92A7toa6oVsyoCxsOyueCO4ivn6IIBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCBXxZpUTVlInoFRN6N6hetNfqk5VWiksDxsu3ER3Fzgtbp+Vq
-	yHed8x0f9mVfIguikcBAjW/D7tN9Nk+mQi8Yo3TnReFyBoqkG9TsWw+2bNGC8dg=
-X-Google-Smtp-Source: AGHT+IGKLPXfM66rPtUFkfPweOwpn1ja3LCHTx2W2I4nd96tds3LIExpBIYxelahGIXvBpARzXKnpA==
-X-Received: by 2002:a05:600c:5125:b0:42f:8229:a09e with SMTP id 5b1f17b1804b1-432df7937c9mr4239815e9.29.1731627194373;
-        Thu, 14 Nov 2024 15:33:14 -0800 (PST)
-Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da28ba80sm39513565e9.29.2024.11.14.15.33.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 15:33:13 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 14 Nov 2024 23:32:58 +0000
-Subject: [PATCH] clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the
- parent GDSC of subordinate GDSCs
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqrylpHT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F74EC4CECD;
+	Thu, 14 Nov 2024 23:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731628520;
+	bh=zY7KhF5ZX6coU8ApPUSZ3x9v5eBGEmYIOjd4V8VjVMQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lqrylpHTmcapjRxzWJzvgZOkZh7UczariR30ksY+iYDhhN24qABUl0bRslUOUj2MZ
+	 Y6ypVn3YkCl5Yhcc/Xu0/pjf+Z70iyyPXiri33nQNC35wIi+eubEuV9/CRvbh+9Bnk
+	 /g28Q8YTJVqzGiCWGvo3wipqJvQjrKxe+8nFuAW6Us2s8EVcdWyzMrCE+HboP5xB7J
+	 b2Qce2D1Q5IQm0p906Ot2tKqC+IAD1iOPRE7OEQPUmIykJDR59x1gouWe4nnwrKjxr
+	 xux7pc+o+xNbDRhGFf17mcRZLbBSrdDOmJi5LgLXsL+3dzJEtWMjwNgmQYGODr1gnX
+	 +aqK10fhU3hJg==
+Date: Thu, 14 Nov 2024 17:55:16 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] clk: clk-loongson2: Fix potential buffer overflow in
+ flexible-array member access
+Message-ID: <ZzaN5MpmMr0hwHw9@kspp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-b4-linux-next-master-24-11-14-titan-gdsc-v1-1-ef2533d487dc@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKmINmcC/x2NwQoCMQwFf2XJ2QdNzclfEQ+1jWtAqzRVCsv+u
- 8XjMDCzkWszdTotGzX9mturTuDDQvme6qqwMpliiMLMgqvgYfUzUHV0PJN3bYgCZkzbraeKtXi
- GlCNnDlxCYpq5d9Objf/qfNn3H/mTBJR6AAAA
-X-Change-ID: 20241114-b4-linux-next-master-24-11-14-titan-gdsc-4d31c101d0a1
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The Titan TOP GDSC is the parent GDSC for all other GDSCs in the CAMCC
-block. None of the subordinate blocks will switch on without the parent
-GDSC switched on.
+Flexible-array member `hws` in `struct clk_hw_onecell_data` is annotated
+with the `counted_by()` attribute. This means that when memory is
+allocated for this array, the _counter_, which in this case is member
+`num` in the flexible structure, should be set to the maximum number of
+elements the flexible array can contain, or fewer.
 
-Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
+In this case, the total number of elements for the flexible array is
+determined by variable `clks_num` when allocating heap space via
+`devm_kzalloc()`, as shown below:
+
+289         struct loongson2_clk_provider *clp;
+	...
+296         for (p = data; p->name; p++)
+297                 clks_num++;
+298
+299         clp = devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num),
+300                            GFP_KERNEL);
+
+So, `clp->clk_data.num` should be set to `clks_num` or less, and not
+exceed `clks_num`, as is currently the case. Otherwise, if data is
+written into `clp->clk_data.hws[clks_num]`, the instrumentation
+provided by the compiler won't detect the overflow, leading to a
+memory corruption bug at runtime.
+
+Fix this issue by setting `clp->clk_data.num` to `clks_num`.
+
+Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new platforms")
 Cc: stable@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- drivers/clk/qcom/camcc-x1e80100.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk-loongson2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
-index 85e76c7712ad84c88decb62ccaed68533d8848de..b73524ae64b1b2b1ee94ceca88b5f3b46143f20b 100644
---- a/drivers/clk/qcom/camcc-x1e80100.c
-+++ b/drivers/clk/qcom/camcc-x1e80100.c
-@@ -2212,6 +2212,8 @@ static struct clk_branch cam_cc_sfe_0_fast_ahb_clk = {
- 	},
- };
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+index e99ba79feec6..7082b4309c6f 100644
+--- a/drivers/clk/clk-loongson2.c
++++ b/drivers/clk/clk-loongson2.c
+@@ -306,7 +306,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(clp->base);
  
-+static struct gdsc cam_cc_titan_top_gdsc;
-+
- static struct gdsc cam_cc_bps_gdsc = {
- 	.gdscr = 0x10004,
- 	.en_rest_wait_val = 0x2,
-@@ -2221,6 +2223,7 @@ static struct gdsc cam_cc_bps_gdsc = {
- 		.name = "cam_cc_bps_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
+ 	spin_lock_init(&clp->clk_lock);
+-	clp->clk_data.num = clks_num + 1;
++	clp->clk_data.num = clks_num;
+ 	clp->dev = dev;
  
-@@ -2233,6 +2236,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
- 		.name = "cam_cc_ife_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2245,6 +2249,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
- 		.name = "cam_cc_ife_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2257,6 +2262,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
- 		.name = "cam_cc_ipe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2269,6 +2275,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
- 		.name = "cam_cc_sfe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-
----
-base-commit: 37c5695cb37a20403947062be8cb7e00f6bed353
-change-id: 20241114-b4-linux-next-master-24-11-14-titan-gdsc-4d31c101d0a1
-
-Best regards,
+ 	for (i = 0; i < clks_num; i++) {
 -- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+2.43.0
 
