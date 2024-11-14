@@ -1,58 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4F189F39;
-	Thu, 14 Nov 2024 21:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B81AB6F1;
+	Thu, 14 Nov 2024 21:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618080; cv=none; b=LuK+np2PRBGOODUsA1SnsWuehID4QpIuk9PYbzl2usiildOxCsWNWfPEE1xw+YEGJY4uEN0uup7BzNvLo4Ui11PPHeWrvUzqn5eW3B4fiyB25eeIqb79GplICpTJAspKr72DJoBeUOwJNtk2m9duHrAv4ARN0/k+WKmjcpQL7IQ=
+	t=1731618094; cv=none; b=F60Jk7a3iJS1Fqb1bbUNYJ7072PfaeMWTMC90G7NfQGFSrljjV3ExcOSWHYNpI+5VOeR4hF0JtfZzc73f+NLCUwsdyKcjneq0vFrH1SmkH3FvqtrJ7x3n2FRkpNePV4V6essHGtYB5BMrfvQmLL2/ZDlqPE++Jgkzr6PtAyM7Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618080; c=relaxed/simple;
-	bh=RG1GHuMKWcuonmjsC+qi8OfZV4+4HUh57bb4KUZX6QY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=nEKYQ2V8yyBodAI1zrDNgfQmPglOxGf6i0p3dtuCbpEvqIVsjWddEQu2GdrGJHOyvQKrR2zgjbEP8Zo8jGQuzVie6Zv+a7NtIHcHgzV+Plae80AWLP8mpQaERzQfNJ9QbHLHspVOYpytBEVBUwNmILXA2gDvO0AMPzvgmglLqiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nf1c8pyx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731618094; c=relaxed/simple;
+	bh=S7tRjuXaZpHsyBV91aZWFUrd0TldunNKHIzfBKQ6OdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q8ouG5UdZDLdXP5OuhtvIfVhuARbpE91cWVR1SeSVXbEdVHkgMJX8Uymjd6kpSzpFgFT2n5Q5d7G0gWWjxx1kLeMEivW+BH2tu2DYWDXeCPr3RXCdGCHcDd0pcEMtjMIljc7nSl2G9bZlEJw+VsSS1doI2QdmtD74EzcwwAUkCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eu+RVRc0; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nf1c8pyx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B0FC4CECD;
-	Thu, 14 Nov 2024 21:01:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731618080;
-	bh=RG1GHuMKWcuonmjsC+qi8OfZV4+4HUh57bb4KUZX6QY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nf1c8pyxATuPT4X46VFsO4vdktspzDfSWFvirSPUhMWto+qEi5J1JAF70zfiwd8RJ
-	 uW+1HASKf1GZXGaFJqUA/P5X3xjZKhCCzaMkj1ftqnkcItHE8nQ42GkMlxpXo4LeVp
-	 whUNqVmK0IbPUbiPkvPj/EMT+ogLR++XGPQ3PADSBduy2UsjNCYBvTcc9TV+TybiK9
-	 MQwMeq5lAxkEdjXKS16SWh4q8Jv1KMst9DCIbz1dxZHpjz9DkjKXEZuR5fkV8ocnLH
-	 EKOKYhG2sOM4+pLKpYJcRLSvqSF8sJNaH1NUMH8pmYX0gsqpzWMZr53Gc3DQC4YJTR
-	 FZRm8HN5UDZgg==
-Message-ID: <47b2b9acfc19f3d4801e5cdd0e1c040b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eu+RVRc0"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-211c1bd70f6so10007015ad.0;
+        Thu, 14 Nov 2024 13:01:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731618092; x=1732222892; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8if49p7SgY4GYN04lAfksTYRw6sC0UZKeThEbuX8Kw=;
+        b=Eu+RVRc0r4FQHLAJXuZePiQhJ4HklrVBcIreb3NcDACiUW7QFHh3yqj5/OUSa+KtY5
+         gMLhCH8rHgDXMRoNFCiO31MU1tZCncPp4EIY5VApw/LCNj9znFnNmzDBPggzI+h9QN4q
+         TSehWK2sWfV0YhlbqXK4Aw160tIhkG8XbX0jyZfRQ9vhut/f8x4wdK/znVnHL4vYE06F
+         h6i/N6K4/mnBV0w7B78RfzjVV/YJnw+b2OAIYlsgCaoZ8tt+SvgYdgJD9IQoCgbAxFed
+         iIlT1KFJiZC9Rhps3QvQ5OsWSyUNIsL0ysQjhK2WUxxFTK0V3s0uPhzLDlzNb2vbKB0m
+         0lWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731618092; x=1732222892;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B8if49p7SgY4GYN04lAfksTYRw6sC0UZKeThEbuX8Kw=;
+        b=HotnE4/yXow6dxmUYeUqU/rT0uis/EUsDG/77ANfz90ua6ccYRnDzQwd4KBxwrEJ+I
+         eNfgqvzn7y0ehUmh+7/d5aTVBYGSqLxA2bpvLOQQapOj7OvMesqr2gmtY8Zpx1Sfo4O1
+         H//4F63OG+UnqnO2CGyX7XZfB3L1IDRxfcQJdiTn7sNKUhaR34zQoKsDIz5XeNmRnaQx
+         eID4S+ETEQr+a2LtzJAcQkYmFfb7wNs94J0b/oHMo2WE8b77BD0BJStcWFYRUSdOh83J
+         SP/HwuVb5+PJgqfa3UXYqNP2X4OrlRjolBlWvc7RMs8c8nFdyJTZkCFVuAxSar7jtE5E
+         Yg/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdk4XctGmMS8bm9yolyaq8WsTk5ifa6MQznOGWsgZYEnK0S4dKpogHZ4ZDossbsspa4APgHjAHLlojJKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ9M8uFnzmk3KhtFaE+K/Tse/gupdwLbNBpHCffqv5N7/v2H7t
+	zuuZ5QgTbt/kgEjzNbnaAMxpjTB20IJTAADJbPhJ4O0VzQ8PswXL
+X-Google-Smtp-Source: AGHT+IHj4ZXgkfQxt90ivIXnn4Vke6xU9tFkg7w7hfd+e0TpPIOlSvx61B0tPtnj/U3hHjtCmfl8ug==
+X-Received: by 2002:a05:6a21:9983:b0:1d8:a322:6e with SMTP id adf61e73a8af0-1dc80691cd1mr7436048637.19.1731618091988;
+        Thu, 14 Nov 2024 13:01:31 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c3c39esm68973a12.33.2024.11.14.13.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 13:01:31 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: unicorn_wang@outlook.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	inochiama@outlook.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH v2] clk:sophgo: Remove uninitialized variable for CV1800 PLL
+Date: Thu, 14 Nov 2024 13:01:15 -0800
+Message-ID: <20241114210115.29766-1-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241112-clk-en7581-syscon-v2-2-8ada5e394ae4@kernel.org>
-References: <20241112-clk-en7581-syscon-v2-0-8ada5e394ae4@kernel.org> <20241112-clk-en7581-syscon-v2-2-8ada5e394ae4@kernel.org>
-Subject: Re: [PATCH RESEND v2 2/7] clk: en7523: remove REG_PCIE*_{MEM,MEM_MASK} configuration
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com, angelogioacchino.delregno@collabora.com, linux-arm-kernel@lists.infradead.org, lorenzo.bianconi83@gmail.com, ansuelsmth@gmail.com, Lorenzo Bianconi <lorenzo@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>
-Date: Thu, 14 Nov 2024 13:01:18 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Transfer-Encoding: 8bit
 
-Quoting Lorenzo Bianconi (2024-11-11 16:08:49)
-> REG_PCIE*_MEM and REG_PCIE*_MEM_MASK regs (PBUS_CSR memory region) are not
-> part of the scu block on the EN7581 SoC and they are used to select the
-> PCIE ports on the PBUS, so remove this configuration from the clock driver
-> and set these registers in the PCIE host driver instead.
-> This patch does not introduce any backward incompatibility since the dts
-> for EN7581 SoC is not upstream yet.
->=20
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> ---
+Updating the detected value to 0 in the ipll_find_rate and removing it
+from the method parameters as it does not depend on external input.
+Updating the calls to ipll_find_rate as well and removing the u32 val
+variable from ipll_determine_rate.
 
-Applied to clk-next
+Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+---
+V1 -> V2: Updated commit log, title and addressed review comments
+---
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
+index 29e24098bf5f..350195d4ac46 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
++++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
+@@ -45,14 +45,13 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+-			  unsigned long prate, unsigned long *rate,
+-			  u32 *value)
++			  unsigned long prate, unsigned long *rate)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long trate = *rate;
+ 	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
+ 	unsigned long pre, div, post;
+-	u32 detected = *value;
++	u32 detected = 0;
+ 	unsigned long tmp;
+ 
+ 	for_each_pll_limit_range(pre, &limit->pre_div) {
+@@ -77,7 +76,6 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
+ 		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
+ 		detected = PLL_SET_DIV_SEL(detected, div_sel);
+-		*value = detected;
+ 		*rate = best_rate;
+ 		return 0;
+ 	}
+@@ -87,11 +85,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 
+ static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	u32 val;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+ 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+-			      &req->rate, &val);
++			      &req->rate);
+ }
+ 
+ static void pll_get_mode_ctrl(unsigned long div_sel,
+@@ -134,7 +131,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+-	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
++	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
+ 	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
+ 			  ipll_check_mode_ctrl_restrict,
+ 			  pll->pll_limit, &detected);
+
+base-commit: 2e1b3cc9d7f790145a80cb705b168f05dab65df2
+-- 
+2.46.1
+
