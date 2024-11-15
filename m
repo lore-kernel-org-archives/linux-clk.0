@@ -1,221 +1,166 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A431D5146
-	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 15:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CFD17C7CB
+	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 17:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685274; cv=none; b=oT1CfA31BhzYNFz308CCinyDPyqe5r7dsHIB8NbVKcrA0y3YqmH9FH3OLGNPNQMNYgH0zgW+GAhceQmtFpEXfB2waWMblQjmB1/vgHNdfs5ku5sFN8rFxpzAXzC+Dp8RXL7O6zYjifIqLAaOc+gmEIKHaxa/L/HlLLR/huGq0G0=
+	t=1731690584; cv=none; b=HVk9Gtv3+5VvrpRUPO8Cq7tq9ObxEVnswMlSrtEHnmo0wCBmtc6AQtBQG3E3ZmQ1c44tQZC88R+Fr/WpkBSC7ENfGEhJ64bS74NUVEx+qdvUVNJNrw41hl6A5LsVjSobvbcnnHDYeYdW1Ddl7RrXW7BcUpREdwts/MC2DIdW9QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685274; c=relaxed/simple;
-	bh=IwcWL9noBhnrXNkKWPZEX0fe61sz3sYzX7u7aAfB4GU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P7zdUWCp9oa50vhHALkYxVaGL6IK9w7LBcqYI+eJmBSi8OPPdgfizMhIUVgdKt5lhXhfqw9WJFXoiMBT5sGwI1SekFa5UwZGIdNQO4lQsOnkC5p5pZ1DdpmLC26cpqeq1dSvQsg8sXYOVCSb82DzQHQYIyRRYeKpuX9QdX/w9XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tByR6-00052q-GD; Fri, 15 Nov 2024 16:40:40 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tByR5-000vi2-1A;
-	Fri, 15 Nov 2024 16:40:39 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tByR5-0008Oe-0r;
-	Fri, 15 Nov 2024 16:40:39 +0100
-Message-ID: <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org,  mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org,  jirislaby@kernel.org, lethal@linux-sh.org,
- g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-serial@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Date: Fri, 15 Nov 2024 16:40:39 +0100
-In-Reply-To: <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
-	 <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1731690584; c=relaxed/simple;
+	bh=pWPfvLeBGuX9cue0cHCm8fhQeuv5M3kL+xEL5g4KF68=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AnzL0MFMnh2a0xiLCew5e6pQnLClMQlJ8QlMhQMJgKUtcYoKvb7clX1U92HPsEbRoRF5vwtv57WURQqQbHjLzEZYzfRZLXBSP4OnVGUIRl5A/Ej0ETLaZxeWpktw7Z2+V70tqWUUB8Lf3cq53G+2k9g+ek8mYXQhiSDoBlzrygQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=omlKjeNt; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="omlKjeNt"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B0222C0006;
+	Fri, 15 Nov 2024 17:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731690579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xg68OIUwvNHiLxkLQIPJGYXs1ivUdnydtUmZWb6wdh8=;
+	b=omlKjeNtEA26iMZm6ybnk557wfNobMAHIp1Olo4/+eqG+Hq4u+pXOaizJS0+Q+4Zs+SpKs
+	uvNJouKmuOMPwSaVfBgyGVBAvJBhMOlNx0al+nZmhwpvVwMXvsa4wCmlI/KVh/zN70DMI7
+	ofOp6BZEQqjRhw9knpfP+PLNmKHT0hwN80mgHK4iM2SPrV900sGi3RaIzvb8l+rubXuFuo
+	+yJRuAbeNI81Fp0O5tDmZqfXQ1ziRt6eAZFuFN0Gx1TY+64yexXuBKnl28WohSdLu18Fo9
+	8rYTRKMP349BfQnxzvgxkG+ZGqLCObLUEipcVRMCSLFT0Im/8WIipXJ4p4pgOg==
+Date: Fri, 15 Nov 2024 18:09:36 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Marek Vasut <marex@denx.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, linux-clk@vger.kernel.org, Fabio
+ Estevam <festevam@gmail.com>, "Lukas F . Hartmann" <lukas@mntmn.com>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd
+ <sboyd@kernel.org>, imx@lists.linux.dev, kernel@dh-electronics.com,
+ linux-arm-kernel@lists.infradead.org, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Anson Huang <Anson.Huang@nxp.com>
+Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
+ reconfigure parent rate
+Message-ID: <20241115180936.4ab56be3@booty>
+In-Reply-To: <130fe140-e70d-4c45-aaab-e22762c58c88@denx.de>
+References: <20240531202648.277078-1-marex@denx.de>
+	<20241112234206.558d5d5e@booty>
+	<79f21303-b0ba-45ed-a842-7e5364fd4efc@denx.de>
+	<20241113120622.3501db73@booty>
+	<130fe140-e70d-4c45-aaab-e22762c58c88@denx.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The Renesas RZ/G3S supports a power saving mode where power to most of th=
-e
-> SoC components is turned off. When returning from this power saving mode,
-> SoC components need to be re-configured.
->=20
-> The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
-> returning from this power saving mode. The sh-sci code already configures
-> the SCIF clocks, power domain and registers by calling uart_resume_port()
-> in sci_resume(). On suspend path the SCIF UART ports are suspended
-> accordingly (by calling uart_suspend_port() in sci_suspend()). The only
-> missing setting is the reset signal. For this assert/de-assert the reset
-> signal on driver suspend/resume.
->=20
-> In case the no_console_suspend is specified by the user, the registers ne=
-ed
-> to be saved on suspend path and restore on resume path. To do this the
-> sci_console_setup() function was added. There is no need to cache/restore
-> the status or FIFO registers. Only the control registers. To differentiat=
-e
-> b/w these, the struct sci_port_params::regs was updated with a new member
-> that specifies if the register needs to be chached on suspend. Only the
-> RZ_SCIFA instances were updated with this new support as the hardware for
-> the rest of variants was missing for testing.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->=20
-> Changes in v3:
-> - none
->=20
-> Changes in v2:
-> - rebased on top of the update version of patch 2/8 from
->   this series
->=20
->  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-------
->  1 file changed, 44 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index ade151ff39d2..e53496d2708e 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -101,7 +101,7 @@ enum SCI_CLKS {
->  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
-> =20
->  struct plat_sci_reg {
-> -	u8 offset, size;
-> +	u8 offset, size, suspend_cacheable;
->  };
-> =20
->  struct sci_port_params {
-> @@ -134,6 +134,8 @@ struct sci_port {
->  	struct dma_chan			*chan_tx;
->  	struct dma_chan			*chan_rx;
-> =20
-> +	struct reset_control		*rstc;
-> +
->  #ifdef CONFIG_SERIAL_SH_SCI_DMA
->  	struct dma_chan			*chan_tx_saved;
->  	struct dma_chan			*chan_rx_saved;
-> @@ -153,6 +155,7 @@ struct sci_port {
->  	int				rx_trigger;
->  	struct timer_list		rx_fifo_timer;
->  	int				rx_fifo_timeout;
-> +	unsigned int			console_cached_regs[SCIx_NR_REGS];
->  	u16				hscif_tot;
-> =20
->  	bool has_rtscts;
-> @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_params=
-[SCIx_NR_REGTYPES] =3D {
->  	 */
->  	[SCIx_RZ_SCIFA_REGTYPE] =3D {
->  		.regs =3D {
-> -			[SCSMR]		=3D { 0x00, 16 },
-> -			[SCBRR]		=3D { 0x02,  8 },
-> -			[SCSCR]		=3D { 0x04, 16 },
-> +			[SCSMR]		=3D { 0x00, 16, 1 },
-> +			[SCBRR]		=3D { 0x02,  8, 1 },
-> +			[SCSCR]		=3D { 0x04, 16, 1 },
->  			[SCxTDR]	=3D { 0x06,  8 },
->  			[SCxSR]		=3D { 0x08, 16 },
->  			[SCxRDR]	=3D { 0x0A,  8 },
-> -			[SCFCR]		=3D { 0x0C, 16 },
-> +			[SCFCR]		=3D { 0x0C, 16, 1 },
->  			[SCFDR]		=3D { 0x0E, 16 },
-> -			[SCSPTR]	=3D { 0x10, 16 },
-> +			[SCSPTR]	=3D { 0x10, 16, 1 },
->  			[SCLSR]		=3D { 0x12, 16 },
-> -			[SEMR]		=3D { 0x14, 8 },
-> +			[SEMR]		=3D { 0x14, 8, 1 },
->  		},
->  		.fifosize =3D 16,
->  		.overrun_reg =3D SCLSR,
-> @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struct pl=
-atform_device *pdev,
->  	}
-> =20
->  	sp =3D &sci_ports[id];
-> +	sp->rstc =3D rstc;
->  	*dev_id =3D id;
-> =20
->  	p->type =3D SCI_OF_TYPE(data);
-> @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *dev)
->  	return 0;
->  }
-> =20
-> +static void sci_console_setup(struct sci_port *s, bool save)
-> +{
-> +	for (u16 i =3D 0; i < SCIx_NR_REGS; i++) {
-> +		struct uart_port *port =3D &s->port;
-> +
-> +		if (!s->params->regs[i].suspend_cacheable)
-> +			continue;
-> +
-> +		if (save)
-> +			s->console_cached_regs[i] =3D sci_serial_in(port, i);
-> +		else
-> +			sci_serial_out(port, i, s->console_cached_regs[i]);
-> +	}
-> +}
-> +
->  static __maybe_unused int sci_suspend(struct device *dev)
->  {
->  	struct sci_port *sport =3D dev_get_drvdata(dev);
-> =20
-> -	if (sport)
-> +	if (sport) {
->  		uart_suspend_port(&sci_uart_driver, &sport->port);
-> =20
-> +		if (!console_suspend_enabled && uart_console(&sport->port))
-> +			sci_console_setup(sport, true);
-> +		else
-> +			return reset_control_assert(sport->rstc);
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct device=
- *dev)
->  {
->  	struct sci_port *sport =3D dev_get_drvdata(dev);
-> =20
-> -	if (sport)
-> +	if (sport) {
-> +		if (!console_suspend_enabled && uart_console(&sport->port)) {
-> +			sci_console_setup(sport, false);
-> +		} else {
-> +			int ret =3D reset_control_deassert(sport->rstc);
+Hi Marek,
 
-With this, is the reset_control_deassert() in sci_parse_dt() still
-needed?
+just a quick feedback about my latest discoveries.
 
-Likewise, does the reset_control_assert() in sci_suspend() remove the
-need for the sci_reset_control_assert() devm action?
+On Wed, 13 Nov 2024 22:19:02 +0100
+Marek Vasut <marex@denx.de> wrote:
 
-regards
-Philipp
+> On 11/13/24 12:06 PM, Luca Ceresoli wrote:
+> > Hi Marek, =20
+>=20
+> Hi,
+>=20
+> >>>> The media_disp[12]_pix clock supply LCDIFv3 pixel clock output. These
+> >>>> clocks are usually the only downstream clock from Video PLL on i.MX8=
+MP.
+> >>>> Allow these clocks to reconfigure the Video PLL, as that results in
+> >>>> accurate pixel clock. If the Video PLL is not reconfigured, the pixel
+> >>>> clock accuracy is low.
+> >>>>
+> >>>> Signed-off-by: Marek Vasut <marex@denx.de> =20
+> >>>
+> >>> I'm afraid I just found this patch broke my previously working setup
+> >>> with a panel connected on the LDB. =20
+> >> Do you need a fix similar to this one?
+> >>
+> >> 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
+> >> frequency to 506.8 MHz") =20
+> >=20
+> > So, 4fbb73416b10 is adding an assigned-clock-rates to hardcode rates,
+> > especially the video_pll1 rate. =20
+>=20
+> Nope.
+>=20
+> See arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>=20
+> 1891                         media_blk_ctrl: blk-ctrl@32ec0000 {
+> ...
+> 1951                                 assigned-clock-rates =3D <500000000>=
+,=20
+> <200000000>,
+> 1952                                                        <0>, <0>,=20
+> <500000000>,
+> 1953                                                        <1039500000>;
+>=20
+> That imx8mp.dtsi preconfigures the Video PLL1 to some random clock=20
+> frequency.
+>=20
+> Commit 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1=
+=20
+> frequency to 506.8 MHz") configures the Video PLL1 to a frequency from=20
+> which both your panel pixel clock and LDB serializer clock can be=20
+> successfully divided down.
+>=20
+> Which panel do you use ?
+>=20
+> Try this -- Revert this patch, check /sys/kernel/debug/clk/clk_summary=20
+> and compare it with (I assume) panel-simple.c entry for the panel you=20
+> use, and notice the disp_pix clock are likely a bit off. That's because=20
+> the lcdif driver did its best to divide those pixel clock down from=20
+> 1039500000 set in imx8mp.dtsi .
+>=20
+> If you really want accurate pixel clock for your panel, you need similar=
+=20
+> change to 4fbb73416b10 and configure the Video PLL such that the=20
+> accurate pixel clock can be derived from it. The Video PLL cannot be set=
+=20
+> to pixel clock, because the LDB serializer clock are either 7x the pixel=
+=20
+> clock, or 3.5x the pixel clock (for dual link LVDS), so the Video PLL=20
+> has to be set to 7x or 3.5x pixel clock of the panel, then you should=20
+> get accurate pixel clock and a working panel again.
+
+I found that I'm having the same issue that has been discussed in some
+related threads: the lcdif2 configures the video_pll1 to ~72 MHz, and
+later LDB tries to set it to 7x that value, failing.
+
+I would have guessed your "[PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB
+serializer clock reconfigure parent rate" would have fixed it, and it
+actually allwos the LDB to set a proper (7x) rate for video_pll1, but
+then also the media_disp2 goes to the same rate. Apparently the
+video_pll1 is not propagated to media_disp2. I haven't dug into this.
+
+So this is not the bug I had suspected about video_pll1 rate
+computation.
+
+For now my workaround is to set the exact rate to video_pll1 via
+assigned-clock-rates.
+
+However this breaks the case of using both lcdif1 and lcdif2. For that
+I have added a reparenting of media_disp1 to sys_pll3 and it looks like
+working.
+
+Would you mind keeping Miqu=C3=A8l and me in Cc in following discussions
+about the imx8mp video clocks? We are also facing this topic and we are
+happy to contribute.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
