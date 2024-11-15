@@ -1,111 +1,109 @@
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB64126C10;
-	Fri, 15 Nov 2024 03:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C91E1B392C;
+	Fri, 15 Nov 2024 10:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731640453; cv=none; b=Q3QkhxlSL0GdKhkpv/Kyy4cFKh2dbBndUIMG13tNsmO9pP8LHE74HYwl88SXD8THr5BKOKYok8QzhDmpLhX2mT2ncC8o5IVKNZm/DiMMhgp4QzcuSTG+rEKuY7z+t4k59z+lsYrBy+mzC8r8wnjw/cUXHOWXop3DACxxvZ14/N8=
+	t=1731665078; cv=none; b=QhiSVUC7UGaWsDdvHecTsgutDuoJnopOEq+b1Uw90gBD+MaLMQmHjhwPxY4K701nfa1qc9IU8EhprWO/CaXtrfTyXprbQV4c4KT0pwQP0SGo3aDTwSww46hWTvzhJSEE2yqT1tUyfe6f67y/rB5FoDJ6r0hVtb5yk/0o4fxyhP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731640453; c=relaxed/simple;
-	bh=/l6IdxviicpZLYmAeqefRSiwgN5K0poQeDlPVgsCJis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YxNHxTp1Gi6C5MEcZrIOK7BmLl2IGNo0rT99X9foMiS9xhHzqbYjLZgecbx6DaD1ymNhbJonxBs7QmOeehW2IVX7NnM8ycbS6UCGFZcIJfVpSbULP4w5icwImrG6NfUgnvrnObkxVNkJUhVIk6MJT8AK1/6u7Z2GiGMAXZekFiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToduCgdN; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731665078; c=relaxed/simple;
+	bh=rOj7bOrixdZPTyqng5O9ucV5bQSQm4MFqsK0aFWgcWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rb/tYh694yRFVB3z09/JSFYQ12xahJUxSE7oSRDFYUv9+tukeYJRz4E10X63j/7J0DePE08aoeF7Wf9AROXA7EG6UVd5Ii5LcSTztip3CrX7+TEtKEyUY5KhTwuyc5ZvSNdWz3crqGNFsCYa+8cskT5dKyvCEOE6zGAXaKFObnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pbkLVcQW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToduCgdN"
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83ab21c269eso45459039f.2;
-        Thu, 14 Nov 2024 19:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731640450; x=1732245250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xCro3fmqeDuWdpLH9M0YZh3SiFmqpG56moMEi9XJsQM=;
-        b=ToduCgdNLGNHaIfNeRSeQs+j6klXTSzzFRRz+eUvspxWHjjVdVUp34H8EZSREUqtOK
-         awhvfqjWowRS7zEnqMSHoK+jx4t8Y102vz2bCAW08B+Wd/UTqxGgzzKD1ta6FOhMTyKQ
-         gj+75ptmfkEz4DVz/BdIYcXV6DRpBEqg39/2ZWqVzDckDWqs1Oi06b6IXvi2whItjbSG
-         kl2p2iXFndTtFYIr/rJvdv32EmzxB7a9tr/blSaNw1JPuv/PC9WCOw39vrhVLf9X1eU9
-         m0iYF+tQY7iFH3udUOrwx1yUfzE/nHZ2MgvK9awLSJWqP9MCPK+yg8gDXuKC5AhJxHu4
-         ahmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731640450; x=1732245250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xCro3fmqeDuWdpLH9M0YZh3SiFmqpG56moMEi9XJsQM=;
-        b=XNV8jwyIBjXH3rExOwGCMmbSMDjuW573lxO2ARNT201H15miSXiz177hoQP8DcQYtA
-         GUxP6Y8aSAhtzMQMO5M/CZpPkskMEGvDnwVBjKJp1zNz/miA166bKZxylv2BuKXvsysP
-         wwppUoQcTn5P3g6rPC1DOARVe28IrFBZeb8Af0wwPEJ96EwCEfZjM83OvTny+Q5hWcmO
-         uMnVT6Z8eDil+er+tmqW8epNuFAly7Bzn4EMnarGaLIye/DaJQIS/qRl+pZlZ8DUZwNp
-         f74h6z7ONIkI0Nzy41xu2GtHq6uU2qjou4UHn/M8JYmWQ86XO5GQDsGAK6nPGjNEZpIx
-         EE/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxwt5D8snOPqfjF5UUh9XiDFWCzV7w5MRjByNRBRWE+jHq3t7dqE3YfFPJi7tg62Op/GzN7rCYbphzqVZZ@vger.kernel.org, AJvYcCX+k3uS9x24wNk2DRXHv17H1OD0GtjvgYzWJKNEI3jRKk9s6OZcWTqwKj6XgsuQpAnWfXuffwrBDZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp9og0KhpwiArQwGAgCR/YMwp0c+DWOqaDwzboikZSvi4qH9SL
-	59SmGx/pS052B2p6vGKM54LVgeYW163lp2BwXtwdkYl0CBo/S0NjT23aDceWk7iF2Nfx7wb1Wqp
-	jJJs9VYXA7CC69L0hXkh3afBYgVk=
-X-Google-Smtp-Source: AGHT+IGakNHerU2OxullmdN7ZvD8921ch3v64i1UwmySjiuo3QMqELJFXW71OGYOz/AjpdHrTb2E49J9y4Mvui7ae/k=
-X-Received: by 2002:a05:6602:1686:b0:83a:b645:c902 with SMTP id
- ca18e2360f4ac-83e6c0c9d09mr170610539f.6.1731640450207; Thu, 14 Nov 2024
- 19:14:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pbkLVcQW"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF9E4pv005348;
+	Fri, 15 Nov 2024 10:04:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YBEDWQZtdymf1KBKctBQPowv3p8NG/u/Z9yDmTzan6k=; b=pbkLVcQWJP80ohAY
+	IxYePwVcLi8wpuzqNZDztu8jUIkR6izt2xNI+eh86n5Tdgx0NSZ50jAULSDSfmoD
+	gFTx0vKdlDuYzplZm2j4AvUicZHzIXh/jpgIatNkqWT2dOkde+6J6RhwywVrYI9w
+	mNoykMiih3xhE4Wp6TbomvMO0TV4QavMVcw1f6c6pYmb17bdCgqnbIBbW9Y5bqdU
+	X0oDrf96GDTpJX05Hd7w7j47p/t3aijkkOV/cKXyzYYoFrRuKQOg5ax4W408HI1H
+	yGaf1LTiSK5GejECn69Y1IdTTWphB1BxNtlizkB2+k2Ylomzx+3xAv8bWn44aXeD
+	ushMMw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3g0r5du-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:04:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFA4OPb014965
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:04:24 GMT
+Received: from [10.50.13.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
+ 2024 02:04:14 -0800
+Message-ID: <558364dc-d701-4996-83d7-56afab37eb08@quicinc.com>
+Date: Fri, 15 Nov 2024 15:34:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007132555.GA53279@francesco-nb> <20241112075958.GA8092@francesco-nb>
- <20241112092054.GA18139@francesco-nb>
-In-Reply-To: <20241112092054.GA18139@francesco-nb>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 15 Nov 2024 11:13:58 +0800
-Message-ID: <CAA+D8AO3a5WsZ4=V-9CDifDZYjJjwQmQQDDQM7ZKgZ6_-CNDPA@mail.gmail.com>
-Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on v6.12
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>, abelvesa@kernel.org, 
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	regressions@lists.linux.dev, Adam Ford <aford173@gmail.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Mark Brown <broonie@kernel.org>, 
-	ulf.hansson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] Add PCIe support for Qualcomm IPQ5332
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Praveenkumar I
+	<quic_ipkumar@quicinc.com>
+CC: <agross@kernel.org>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <vkoul@kernel.org>, <kishon@kernel.org>, <quic_nsekar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <quic_varada@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
+References: <20231214062847.2215542-1-quic_ipkumar@quicinc.com>
+ <20240310132915.GE3390@thinkpad>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <20240310132915.GE3390@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4wvOCydZtOm9zbwrUAVBPnncYQvO79Sa
+X-Proofpoint-GUID: 4wvOCydZtOm9zbwrUAVBPnncYQvO79Sa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 clxscore=1011 spamscore=0 mlxlogscore=704
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150085
 
-On Tue, Nov 12, 2024 at 5:20=E2=80=AFPM Francesco Dolcini <francesco@dolcin=
-i.it> wrote:
->
-> On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
-> > On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
-> > > it seems that an old regression is back on v6.12, reproduced on -rc2
-> > > (not sure about rc1).
-> > >
-> > > The original report is from https://lore.kernel.org/all/2024042416472=
-5.GA18760@francesco-nb/
-> > > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-g=
-it-send-email-shengjiu.wang@nxp.com/.
-> > >
-> > > Is it now back?
-> >
-> > I was able to reproduce this issue once more, this time with 6.11.7.
-> > As I wrote in another email the issue is not systematic as it used to
-> > be.
-> >
-> > Any idea?
->
-> Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
-> too short and therefore we have such non-systematic failures?
->
 
-Francesco,  it seems hard to reproduce it on my i.MX8MP-EVK board.
 
-If it is easy to reproduce on your side, you can try to enlarge the delay
-time to see if there is any improvement.
+On 3/10/2024 6:59 PM, Manivannan Sadhasivam wrote:
+> On Thu, Dec 14, 2023 at 11:58:37AM +0530, Praveenkumar I wrote:
+>> Patch series adds support for enabling the PCIe controller and
+>> UNIPHY found on Qualcomm IPQ5332 platform. PCIe0 is Gen3 X1 and
+>> PCIe1 is Gen3 X2 are added.
+>>
+>> UNIPHY changes depends on
+>> https://lore.kernel.org/all/20231003120846.28626-1-quic_nsekar@quicinc.com/
+>> PCIe driver change depends on
+>> https://lore.kernel.org/all/20230519090219.15925-1-quic_devipriy@quicinc.com/
+>>
+> 
+> Any plan on this series and the dependencies?
+> 
+Yeah, Sorry for the delay, will post in the coming week.
 
-Thanks.
+Regards,
+  Sricharan
 
-Best regards
-Shengjiu Wang
