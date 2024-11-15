@@ -1,289 +1,221 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6711D54D1
-	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 15:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A431D5146
+	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 15:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685058; cv=none; b=WgVdQLPuVZ34OEaTKkeSjtvvDq4Pe/fd/EZXsZD0yGTR66N8Dp0mbbL4EuaebEXBZT6BoXj4wkGUz2xqTJBh0hEuY67Fouj3SxyTK2eWP7KpISI3soVKnwnV0SrD4+3L0/QmNdiiOo3720rly1+9xsRgGdZnTtrpzaFhu7st0Rw=
+	t=1731685274; cv=none; b=oT1CfA31BhzYNFz308CCinyDPyqe5r7dsHIB8NbVKcrA0y3YqmH9FH3OLGNPNQMNYgH0zgW+GAhceQmtFpEXfB2waWMblQjmB1/vgHNdfs5ku5sFN8rFxpzAXzC+Dp8RXL7O6zYjifIqLAaOc+gmEIKHaxa/L/HlLLR/huGq0G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685058; c=relaxed/simple;
-	bh=vAcCgRkFrxCdPgoLCIe7Aiibmfy4IcmYIK30vhEsH4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlH7KhL/wwyf9HQ+bJJX1Bfa5qlULMewZb6suoKNqTxGGrFxlK+t15m79MlbElIppuYjGPa8ETPjKqu1+ZzNBB62KhRuMEM2BTjcIKl46dF6pUoMe/LRhbFA8jCGmJEDhu9XQsqkU9gDV33W2vU+/gbQp4qn21wIGOTh6d29Wvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m6OW/0kv; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m6OW/0kv"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f1292a9bso2295242e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 07:37:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731685054; x=1732289854; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8SH/3ZBolyZIXFEQSha0OERb31i/gcHA50/NnnJeYSI=;
-        b=m6OW/0kvrBp6eM6SNUoK3pfRSBKQhpgm/OF5DlAOFscvgiph/uceUVrfNXcUd31LBU
-         PsLHk6LLmJKQqmMXSPzPx1D0GXletCMCEn7nkYuNA6wwLpQGnNpWTEHdBLXkiGdrB77T
-         biJX+AFX3fNWQSSczAPmtIjAiCJkLD2fD3YHHxdECrkLxm5ru56zQvOZ2ZGhHRKYKxu9
-         uGfwHME9axXt9iNXtHnVUKccq1OcKCmC1Cez4lJKTTveEBdZIAV1X8CX65IqZGY1bgi2
-         qjMxyMqhGC/SdNmx2Jx2aCl2lAf6GrRX9mfloGijDqptS9RAB8hOE7HNa29blaRnkRKP
-         0hJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685054; x=1732289854;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8SH/3ZBolyZIXFEQSha0OERb31i/gcHA50/NnnJeYSI=;
-        b=D4l2b0h+zqYkMri1loRhXzcB9nevnCrLms/BXgwABcoIPxxqol7pHujhuQXBt+UIFx
-         8wZ//OE5eq0IN0UoQN3ZUzz15/UVXScc2ck6/qv6OGWDnlaexCFh2KCDdN8I0ErHUA4E
-         LqqkXmGzJ5P4DtP24/KMOUEm8KPZqQlxL9nVoSDh3Ssu2HkggzeK9ey/cCsVGY4MxRI7
-         NxAUZ8eNYXOAolg/E8XTbHN0Eu6iet6PhnafPulCj8ZfAYXnmb8I+r6fJpK7rrgn+6Az
-         XRI6rAZGTsr4xpq654Z8zMOPDuDNNgu1g6d0IasZcCsiVButXemSxIrHC482QYnOqPJN
-         Y31A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1O4nxfIQwx8pC6iKFoktaZqLUSSP2NNVpl7qswbErQlwDHSn9vAx81TeAzAI7t5atugZvKilQBdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzGviZ+4Hi5jI4DNo1UF/KqquPCdeNtVqgaeQIZSmZPcUBOD15
-	iDejXKhe+s6ko1mp6dT1C4epe0L4oB1gokG67lVa0t+1w7l4pxv6iyv/n/5Y8jo=
-X-Google-Smtp-Source: AGHT+IHNA+gg9ukmDFwb4kvQOmlZCyx6VHcFXF+GldlmS1V1Y+q5y7ieLpzqVmyXyN070y3b3DFxmw==
-X-Received: by 2002:a05:6512:1192:b0:539:f554:78ac with SMTP id 2adb3069b0e04-53dab298b03mr1407532e87.9.1731685054389;
-        Fri, 15 Nov 2024 07:37:34 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6530f6dsm603418e87.119.2024.11.15.07.37.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:37:32 -0800 (PST)
-Date: Fri, 15 Nov 2024 17:37:30 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] clk: qcom: Add TCSR clock driver for SM8750
-Message-ID: <2j5yfnpus2xvwds4caiwbqyotoey2b2kce4jqaai75ekkvabeq@w3my6sbhqk2q>
-References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
- <20241112002807.2804021-8-quic_molvera@quicinc.com>
+	s=arc-20240116; t=1731685274; c=relaxed/simple;
+	bh=IwcWL9noBhnrXNkKWPZEX0fe61sz3sYzX7u7aAfB4GU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P7zdUWCp9oa50vhHALkYxVaGL6IK9w7LBcqYI+eJmBSi8OPPdgfizMhIUVgdKt5lhXhfqw9WJFXoiMBT5sGwI1SekFa5UwZGIdNQO4lQsOnkC5p5pZ1DdpmLC26cpqeq1dSvQsg8sXYOVCSb82DzQHQYIyRRYeKpuX9QdX/w9XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tByR6-00052q-GD; Fri, 15 Nov 2024 16:40:40 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tByR5-000vi2-1A;
+	Fri, 15 Nov 2024 16:40:39 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tByR5-0008Oe-0r;
+	Fri, 15 Nov 2024 16:40:39 +0100
+Message-ID: <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
+Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
+ magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org,  mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org,  jirislaby@kernel.org, lethal@linux-sh.org,
+ g.liakhovetski@gmx.de
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-serial@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Date: Fri, 15 Nov 2024 16:40:39 +0100
+In-Reply-To: <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112002807.2804021-8-quic_molvera@quicinc.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Mon, Nov 11, 2024 at 04:28:07PM -0800, Melody Olvera wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
-> 
-> The TCSR clock controller found on SM8750 provides refclks
-> for PCIE, USB and UFS. Add clock driver for it.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The Renesas RZ/G3S supports a power saving mode where power to most of th=
+e
+> SoC components is turned off. When returning from this power saving mode,
+> SoC components need to be re-configured.
+>=20
+> The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
+> returning from this power saving mode. The sh-sci code already configures
+> the SCIF clocks, power domain and registers by calling uart_resume_port()
+> in sci_resume(). On suspend path the SCIF UART ports are suspended
+> accordingly (by calling uart_suspend_port() in sci_suspend()). The only
+> missing setting is the reset signal. For this assert/de-assert the reset
+> signal on driver suspend/resume.
+>=20
+> In case the no_console_suspend is specified by the user, the registers ne=
+ed
+> to be saved on suspend path and restore on resume path. To do this the
+> sci_console_setup() function was added. There is no need to cache/restore
+> the status or FIFO registers. Only the control registers. To differentiat=
+e
+> b/w these, the struct sci_port_params::regs was updated with a new member
+> that specifies if the register needs to be chached on suspend. Only the
+> RZ_SCIFA instances were updated with this new support as the hardware for
+> the rest of variants was missing for testing.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  drivers/clk/qcom/Kconfig         |   8 ++
->  drivers/clk/qcom/Makefile        |   1 +
->  drivers/clk/qcom/tcsrcc-sm8750.c | 147 +++++++++++++++++++++++++++++++
->  3 files changed, 156 insertions(+)
->  create mode 100644 drivers/clk/qcom/tcsrcc-sm8750.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 26bfb607235b..2ec9be21ff67 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -1255,6 +1255,14 @@ config SM_TCSRCC_8650
->  	  Support for the TCSR clock controller on SM8650 devices.
->  	  Say Y if you want to use peripheral devices such as SD/UFS.
->  
-> +config SM_TCSRCC_8750
-> +	tristate "SM8750 TCSR Clock Controller"
-> +	depends on ARM64 || COMPILE_TEST
-> +	select QCOM_GDSC
-> +	help
-> +	  Support for the TCSR clock controller on SM8750 devices.
-> +	  Say Y if you want to use peripheral devices such as UFS/USB/PCIe.
+>=20
+> Changes in v3:
+> - none
+>=20
+> Changes in v2:
+> - rebased on top of the update version of patch 2/8 from
+>   this series
+>=20
+>  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-------
+>  1 file changed, 44 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index ade151ff39d2..e53496d2708e 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -101,7 +101,7 @@ enum SCI_CLKS {
+>  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
+> =20
+>  struct plat_sci_reg {
+> -	u8 offset, size;
+> +	u8 offset, size, suspend_cacheable;
+>  };
+> =20
+>  struct sci_port_params {
+> @@ -134,6 +134,8 @@ struct sci_port {
+>  	struct dma_chan			*chan_tx;
+>  	struct dma_chan			*chan_rx;
+> =20
+> +	struct reset_control		*rstc;
 > +
->  config SA_VIDEOCC_8775P
->  	tristate "SA8775P Video Clock Controller"
->  	depends on ARM64 || COMPILE_TEST
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 1875018d1100..28e45316627a 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -157,6 +157,7 @@ obj-$(CONFIG_SM_GPUCC_8550) += gpucc-sm8550.o
->  obj-$(CONFIG_SM_GPUCC_8650) += gpucc-sm8650.o
->  obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
->  obj-$(CONFIG_SM_TCSRCC_8650) += tcsrcc-sm8650.o
-> +obj-$(CONFIG_SM_TCSRCC_8750) += tcsrcc-sm8750.o
->  obj-$(CONFIG_SM_VIDEOCC_7150) += videocc-sm7150.o
->  obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
->  obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-> diff --git a/drivers/clk/qcom/tcsrcc-sm8750.c b/drivers/clk/qcom/tcsrcc-sm8750.c
-> new file mode 100644
-> index 000000000000..23417b22e6c9
-> --- /dev/null
-> +++ b/drivers/clk/qcom/tcsrcc-sm8750.c
-> @@ -0,0 +1,147 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +/*
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,sm8750-tcsr.h>
-> +
-> +#include "clk-branch.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +#include "common.h"
-> +
-> +enum {
-> +	DT_BI_TCXO_PAD,
-> +};
-> +
-> +static struct clk_branch tcsr_pcie_0_clkref_en = {
-> +	.halt_reg = 0x0,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x0,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "tcsr_pcie_0_clkref_en",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_ufs_clkref_en = {
-> +	.halt_reg = 0x1000,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x1000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "tcsr_ufs_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO_PAD,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_usb2_clkref_en = {
-> +	.halt_reg = 0x2000,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x2000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "tcsr_usb2_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO_PAD,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch tcsr_usb3_clkref_en = {
-> +	.halt_reg = 0x3000,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x3000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "tcsr_usb3_clkref_en",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.index = DT_BI_TCXO_PAD,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap *tcsr_cc_sm8750_clocks[] = {
-> +	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
-> +	[TCSR_UFS_CLKREF_EN] = &tcsr_ufs_clkref_en.clkr,
-> +	[TCSR_USB2_CLKREF_EN] = &tcsr_usb2_clkref_en.clkr,
-> +	[TCSR_USB3_CLKREF_EN] = &tcsr_usb3_clkref_en.clkr,
-> +};
-> +
-> +static const struct regmap_config tcsr_cc_sm8750_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.max_register = 0x3000,
-> +	.fast_io = true,
-> +};
-> +
-> +static const struct qcom_cc_desc tcsr_cc_sm8750_desc = {
-> +	.config = &tcsr_cc_sm8750_regmap_config,
-> +	.clks = tcsr_cc_sm8750_clocks,
-> +	.num_clks = ARRAY_SIZE(tcsr_cc_sm8750_clocks),
-> +};
-> +
-> +static const struct of_device_id tcsr_cc_sm8750_match_table[] = {
-> +	{ .compatible = "qcom,sm8750-tcsr" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, tcsr_cc_sm8750_match_table);
-> +
-> +static int tcsr_cc_sm8750_probe(struct platform_device *pdev)
+>  #ifdef CONFIG_SERIAL_SH_SCI_DMA
+>  	struct dma_chan			*chan_tx_saved;
+>  	struct dma_chan			*chan_rx_saved;
+> @@ -153,6 +155,7 @@ struct sci_port {
+>  	int				rx_trigger;
+>  	struct timer_list		rx_fifo_timer;
+>  	int				rx_fifo_timeout;
+> +	unsigned int			console_cached_regs[SCIx_NR_REGS];
+>  	u16				hscif_tot;
+> =20
+>  	bool has_rtscts;
+> @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_params=
+[SCIx_NR_REGTYPES] =3D {
+>  	 */
+>  	[SCIx_RZ_SCIFA_REGTYPE] =3D {
+>  		.regs =3D {
+> -			[SCSMR]		=3D { 0x00, 16 },
+> -			[SCBRR]		=3D { 0x02,  8 },
+> -			[SCSCR]		=3D { 0x04, 16 },
+> +			[SCSMR]		=3D { 0x00, 16, 1 },
+> +			[SCBRR]		=3D { 0x02,  8, 1 },
+> +			[SCSCR]		=3D { 0x04, 16, 1 },
+>  			[SCxTDR]	=3D { 0x06,  8 },
+>  			[SCxSR]		=3D { 0x08, 16 },
+>  			[SCxRDR]	=3D { 0x0A,  8 },
+> -			[SCFCR]		=3D { 0x0C, 16 },
+> +			[SCFCR]		=3D { 0x0C, 16, 1 },
+>  			[SCFDR]		=3D { 0x0E, 16 },
+> -			[SCSPTR]	=3D { 0x10, 16 },
+> +			[SCSPTR]	=3D { 0x10, 16, 1 },
+>  			[SCLSR]		=3D { 0x12, 16 },
+> -			[SEMR]		=3D { 0x14, 8 },
+> +			[SEMR]		=3D { 0x14, 8, 1 },
+>  		},
+>  		.fifosize =3D 16,
+>  		.overrun_reg =3D SCLSR,
+> @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struct pl=
+atform_device *pdev,
+>  	}
+> =20
+>  	sp =3D &sci_ports[id];
+> +	sp->rstc =3D rstc;
+>  	*dev_id =3D id;
+> =20
+>  	p->type =3D SCI_OF_TYPE(data);
+> @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *dev)
+>  	return 0;
+>  }
+> =20
+> +static void sci_console_setup(struct sci_port *s, bool save)
 > +{
-> +	struct regmap *regmap;
+> +	for (u16 i =3D 0; i < SCIx_NR_REGS; i++) {
+> +		struct uart_port *port =3D &s->port;
 > +
-> +	regmap = qcom_cc_map(pdev, &tcsr_cc_sm8750_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
+> +		if (!s->params->regs[i].suspend_cacheable)
+> +			continue;
 > +
-> +	return qcom_cc_really_probe(&pdev->dev, &tcsr_cc_sm8750_desc, regmap);
-
-Nit: use qcom_cc_probe() instead.
-
-Other than that:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+> +		if (save)
+> +			s->console_cached_regs[i] =3D sci_serial_in(port, i);
+> +		else
+> +			sci_serial_out(port, i, s->console_cached_regs[i]);
+> +	}
 > +}
 > +
-> +static struct platform_driver tcsr_cc_sm8750_driver = {
-> +	.probe = tcsr_cc_sm8750_probe,
-> +	.driver = {
-> +		.name = "tcsr_cc-sm8750",
-> +		.of_match_table = tcsr_cc_sm8750_match_table,
-> +	},
-> +};
+>  static __maybe_unused int sci_suspend(struct device *dev)
+>  {
+>  	struct sci_port *sport =3D dev_get_drvdata(dev);
+> =20
+> -	if (sport)
+> +	if (sport) {
+>  		uart_suspend_port(&sci_uart_driver, &sport->port);
+> =20
+> +		if (!console_suspend_enabled && uart_console(&sport->port))
+> +			sci_console_setup(sport, true);
+> +		else
+> +			return reset_control_assert(sport->rstc);
+> +	}
 > +
-> +static int __init tcsr_cc_sm8750_init(void)
-> +{
-> +	return platform_driver_register(&tcsr_cc_sm8750_driver);
-> +}
-> +subsys_initcall(tcsr_cc_sm8750_init);
-> +
-> +static void __exit tcsr_cc_sm8750_exit(void)
-> +{
-> +	platform_driver_unregister(&tcsr_cc_sm8750_driver);
-> +}
-> +module_exit(tcsr_cc_sm8750_exit);
-> +
-> +MODULE_DESCRIPTION("QTI TCSR_CC SM8750 Driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.46.1
-> 
+>  	return 0;
+>  }
+> =20
+> @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct device=
+ *dev)
+>  {
+>  	struct sci_port *sport =3D dev_get_drvdata(dev);
+> =20
+> -	if (sport)
+> +	if (sport) {
+> +		if (!console_suspend_enabled && uart_console(&sport->port)) {
+> +			sci_console_setup(sport, false);
+> +		} else {
+> +			int ret =3D reset_control_deassert(sport->rstc);
 
--- 
-With best wishes
-Dmitry
+With this, is the reset_control_deassert() in sci_parse_dt() still
+needed?
+
+Likewise, does the reset_control_assert() in sci_suspend() remove the
+need for the sci_reset_control_assert() devm action?
+
+regards
+Philipp
