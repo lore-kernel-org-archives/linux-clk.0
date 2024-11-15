@@ -1,99 +1,183 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495FE1AAE33;
-	Thu, 14 Nov 2024 23:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D30CA5B;
+	Fri, 15 Nov 2024 01:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731628521; cv=none; b=HvnepDiudbw67ZP7kQ9CFCjrR4psh/UUdUBteSoDMpDA5NBcq3yqcjbGkOO2sRK9m7R6wXNMeMqXKiskzCPPEy1yVdQit7MBzalG07EAfcj8x9QAeVfNUvnewoit1dC+OPGea0sMctKavrnXH/dJe+hW3ol2xIx/Vp2Yt62EZn0=
+	t=1731634197; cv=none; b=NelqfL1VCGbmfvaN/R+7Oa8gdTxpoWLAR+akozE1ZJiGGEHnyZ0morzhGrzWHHoU/HgR0Gjw4WgUxlcsDrKMl0gHwPy6oeybU3fLHKfjI0GLYf1dpjUFh+xCQt9KuisPPHySK0Rkox0IvImn/hFSOT96u5+9opBXWHuIw4IAbRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731628521; c=relaxed/simple;
-	bh=zY7KhF5ZX6coU8ApPUSZ3x9v5eBGEmYIOjd4V8VjVMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uZ3q2fVWjFKh/x6c2g1B6K1QVWe1x/TJf5KaVueCi/TxkL3DibL4SKBi7gV42BSqIwRiUxhSSo2iRhCeRSvo1DPkriFDVm8ThBGXeK5y55D6yLjReiKVMfLB1KA6Mhxkr/Wq4Auhjx4OfUs4VYEc7ewKjNMevinHJ0VrFCY2BhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqrylpHT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731634197; c=relaxed/simple;
+	bh=F7vjyos0o0cMAhq/QgY+/gErSw+KDdiVVSrnj53mNpI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=B8FQdiYzplXsievVnVnX+KKaEjQw31bCMxTJT70KHgxnjp9uIAI64oIblsi0j8tsBLr3x6z7Bac1T5cQVwo1S5XsJOvB+K8DoBUtZNYSa+LMp21AdcBXfKmMFPuyMjbqcf46PKm14GkWBHpgq1UeFSeuCfIViRxp5kTvOYwKjKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3jc+NoY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqrylpHT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F74EC4CECD;
-	Thu, 14 Nov 2024 23:55:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3jc+NoY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946C1C4CECD;
+	Fri, 15 Nov 2024 01:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731628520;
-	bh=zY7KhF5ZX6coU8ApPUSZ3x9v5eBGEmYIOjd4V8VjVMQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lqrylpHTmcapjRxzWJzvgZOkZh7UczariR30ksY+iYDhhN24qABUl0bRslUOUj2MZ
-	 Y6ypVn3YkCl5Yhcc/Xu0/pjf+Z70iyyPXiri33nQNC35wIi+eubEuV9/CRvbh+9Bnk
-	 /g28Q8YTJVqzGiCWGvo3wipqJvQjrKxe+8nFuAW6Us2s8EVcdWyzMrCE+HboP5xB7J
-	 b2Qce2D1Q5IQm0p906Ot2tKqC+IAD1iOPRE7OEQPUmIykJDR59x1gouWe4nnwrKjxr
-	 xux7pc+o+xNbDRhGFf17mcRZLbBSrdDOmJi5LgLXsL+3dzJEtWMjwNgmQYGODr1gnX
-	 +aqK10fhU3hJg==
-Date: Thu, 14 Nov 2024 17:55:16 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] clk: clk-loongson2: Fix potential buffer overflow in
- flexible-array member access
-Message-ID: <ZzaN5MpmMr0hwHw9@kspp>
+	s=k20201202; t=1731634196;
+	bh=F7vjyos0o0cMAhq/QgY+/gErSw+KDdiVVSrnj53mNpI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=U3jc+NoYqih9t4XYPl8bBhd15QLfcgEeksTy//Rp2d2nGRctt9Dcp23AQ8BO4mQwM
+	 xNRvSiTJEENI7Ju7D5OuVF+l31xIJM1E5r29OiugiXvikQNAqDS7UUq+yPYcgfsx85
+	 sfwpG/xQ9zYmXw3vWRxe6AmxJZTgHS1j6kAbOhkkV6xVzWsyWNyCcDH4U78ZNXf3lN
+	 y8RjonQ9d0H14CuP2XgNuiRZWUcrcLPx9HlNl1fG4DbnjXx917CI3E3FJIN3PrvfVf
+	 V1JJGpMDtUg2Gs+F2KhYqNKwtm+VLet5xVzlMoyAmqXSvyX3g8pOLnVm1cYWz99pVo
+	 DOCosyyQ6rDag==
+Message-ID: <430bde3b35382e640843e32a9f351326.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241106-freefall-slider-db379b05821e@spud>
+References: <20241002-private-unequal-33cfa6101338@spud> <20241002-hula-unwashed-1c4ddbadbec2@spud> <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org> <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com> <20241003-tacking-ladylike-dfe2b633e647@spud> <20241106-freefall-slider-db379b05821e@spud>
+Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to common code
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Conor Dooley <conor@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 14 Nov 2024 17:29:54 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Flexible-array member `hws` in `struct clk_hw_onecell_data` is annotated
-with the `counted_by()` attribute. This means that when memory is
-allocated for this array, the _counter_, which in this case is member
-`num` in the flexible structure, should be set to the maximum number of
-elements the flexible array can contain, or fewer.
+Quoting Conor Dooley (2024-11-06 04:56:25)
+> On Thu, Oct 03, 2024 at 12:33:40PM +0100, Conor Dooley wrote:
+> > > IIRC, Stephen's idea was more the bring regmap support in clk-gate.c,
+> > > clk-mux, etc ... I'm not quite sure how make iomem and regmap co-exist
+> > > in a manageable/maintainable way within those drivers (without adding=
+ yet
+> > > another level of abstraction I mean) ? Silently creating a regmap may=
+be
+> > > ? but that's probably a bit heavy. I did not really had time to dig m=
+ore
+> > > on this, I guess no one did.
+> >=20
+> > I guess I have some motivation to looking into it at the moment. I had
+> > my reservations about the Meson approach too, liking it more than
+> > Qualcomm's didn't mean I completely liked it.
+> > It was already my intention to implement point b of your mail, had the
+> > general idea here been acceptable, cos that's a divergence from how the
+> > generic clock types (that the driver in question currently uses) work.
+> > And on that note, I just noticed I left the mild-annoyance variable name
+> > "sigh" in the submitted driver changes, which I had used for the
+> > clk_regmap struct that your point b in the link relates to.
+> >=20
+> > > I don't really have a preference one way or the other but if it is go=
+ing
+> > > to be exposed in 'include/linux', we need to be sure that's how we wa=
+nt
+> > > to do it. With clocks poping in many driver subsystems, it will
+> > > difficult to change afterward.=20
+> >=20
+> > Yeah, I agree. I didn't expect this to go in right away, and I also
+> > didn't want to surge ahead on some rework of the clock types, were
+> > people to hate even the reuse.
+>=20
+> Hmm, so how (in-)complete of a regmap implementation can I get away
+> with? I only need clk-gate and clk-divider for this patchset...
+>=20
+> Shoving the regmap into the clk structs makes things pretty trivial as I
+> don't need to do anything special in any function other than
+> clk_*_readl()/clk_*_writel() and the registration code. A flag isn't
+> even needed to determine if a clock is a regmap one I don't think, since
+> you can just check if the regmap pointer is non-NULL.
 
-In this case, the total number of elements for the flexible array is
-determined by variable `clks_num` when allocating heap space via
-`devm_kzalloc()`, as shown below:
+For the basic clk types I think it would be good to leave the old stuff
+alone. We have already split the logic out into helpers, so I wonder if
+we can do this better by making kernel modules for the different basic
+regmap clk types and exposing registration APIs. If we force drivers
+that use the basic regmap types to 'select' the module then we'll make
+it so that we don't include code that isn't used anywhere. That's one of
+the problems with the basic clk types, it's always built. It also lets
+us avoid making regmap a dependency for the clk framework at large.
 
-289         struct loongson2_clk_provider *clp;
+Doing that would also let us avoid the flag because it will be explicit
+in any registration API, clk_register_divider() vs.
+clk_register_regmap_divider(). Yes we duplicate some boiler plate logic
+around read-only and registration paths, but this is alright as long as
+we can share most of the code and gain the advantage of removing the
+code entirely when it isn't used.
+
+I wonder if we can even make a regmap on the fly for the iomem pointers
+so that clk_divider_readl() can always use the regmap API to access the
+hardware. Sounds wasteful but maybe it would work.
+
+> My use case doesn't
+> actually need the registration code changes either as, currently, only reg
+> gets set at runtime, but leaving that out is a level of incomplete I'd not
+> let myself away with.
+> Obviously shoving the extra members into the clk structs has the downside
+> of taking up a pointer and a offset worth of memory for each clock of
+> that type registered, but it is substantially easier to support devices
+> with multiple regmaps that way. Probably moot though since the approach y=
+ou
+> suggested in the thread linked above that implements a clk_hw_get_regmap()
+> has to store a pointer to the regmap's identifier which would take up an
+> identical amount of memory.
+
+We don't need to store the regmap identifier in the struct clk. We can
+store it in the 'struct clk_init_data' with some new field, and only do
+that when/if we actually need to. We would need to pass the init data to
+the clk_ops::init() callback though. We currently knock that out during
+registration so that clk_hw->init is NULL. Probably we can just set that
+to NULL after the init routine runs in __clk_core_init().
+
+Long story short, don't add something to 'struct clk_core', 'struct
+clk', or 'struct clk_hw' for these details. We can have a 'struct
+clk_regmap_hw' that everyone else can build upon:
+
+  struct clk_regmap_hw {
+        struct regmap *regmap;
+        struct clk_hw hw;
+  };
+
+and then set the regmap pointer during registration in
+clk_hw_init_regmap().
+
+int clk_hw_init_regmap(struct clk_hw *hw)
+{
+	struct device *dev;
+	struct regmap *regmap;
+	struct clk_regmap_hw *rhw;
+
+	rhw =3D clk_hw_to_clk_regmap_hw(hw);
+
+	dev =3D clk_hw_get_dev(hw);
+	if (!dev)
+		return -EINVAL;
+
+	regmap =3D dev_get_regmap(dev, hw->init->regmap_name);
+	if (!regmap)
+		return -EINVAL; // Print helpful message
+	rhw->regmap =3D regmap;
+
+	return 0;
+}
+
+or we can even make it so that there's clk_hw_init_regmap() and
+clk_hw_init_regmap_name() so that drivers can have multiple functions if
+the clks need different regmaps.
+
+int my_init_regmap(struct clk_hw *hw)
+{
+	int ret;
+
+	ret =3D clk_hw_init_regmap_name(hw, "my_name");
 	...
-296         for (p = data; p->name; p++)
-297                 clks_num++;
-298
-299         clp = devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num),
-300                            GFP_KERNEL);
+}
 
-So, `clp->clk_data.num` should be set to `clks_num` or less, and not
-exceed `clks_num`, as is currently the case. Otherwise, if data is
-written into `clp->clk_data.hws[clks_num]`, the instrumentation
-provided by the compiler won't detect the overflow, leading to a
-memory corruption bug at runtime.
+If you don't need the multiple regmap support then it's fine to punt
+here until later.
 
-Fix this issue by setting `clp->clk_data.num` to `clks_num`.
+>=20
+> I don't really care which way you want it done, both are pretty easy to
+> implement if I can get away with just doing so for the two standard
+> clock types that I am using - is it okay to just do those two?
+>=20
 
-Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new platforms")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/clk/clk-loongson2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index e99ba79feec6..7082b4309c6f 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -306,7 +306,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(clp->base);
- 
- 	spin_lock_init(&clp->clk_lock);
--	clp->clk_data.num = clks_num + 1;
-+	clp->clk_data.num = clks_num;
- 	clp->dev = dev;
- 
- 	for (i = 0; i < clks_num; i++) {
--- 
-2.43.0
-
+Of course, doing only what is minimally required is better than changing
+everything if you're not sure the approach is going to land.
