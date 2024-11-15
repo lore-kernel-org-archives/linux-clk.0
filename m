@@ -1,57 +1,57 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1A51D4342
-	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 13:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9DE1CDA1E
+	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 13:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678258; cv=none; b=NV6Ukj/Ko0kC44egIiOMf8cNG3qLp0vjR7DSGfOK4jTQlxOLrD3n8vrMSeIXIrp29cEFo//kfE/VJMW+sauSbQc1DC/Zn+EigtQTKPAp151nsfyb9e+eE9sAU1TAykNNq0x15KLP4F3WjD/8k8jHstDjFvuxphPZHyb6i8JOic0=
+	t=1731678259; cv=none; b=JSoTnnS0vwp/5KvEjMFgV6RIw9/SAgruVTB/UAOXY/wJfuV8gbtKCvZ2uhI1CO5m9rWSfn2kF2GhbeP6e3ZRmsIfTpvsnnUyqsvqYeJOAG005PKqQhnGGMakrdyAVjOQXfmoCRMa8OUPqfS8KFGzeWq1x3jslPgaYY5loykWpDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678258; c=relaxed/simple;
-	bh=+KsWKchUufpoPCqQG4uoP+gjV/+ev+Z95Zo8TDMS2kI=;
+	s=arc-20240116; t=1731678259; c=relaxed/simple;
+	bh=cvXLylORKw894oxYTuEZeViXynITomEuscveNdNCxgQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=auGiv6ngMXPR9g0Ii3kKANIzVtwm/rxePmUC7yYESo9FeQPI9iMP57yD8PrXkdpBFQeyXHZ4SDgKgpxyUXuJKddPMaNnUHfuSfIdEGtw4juiqa61eu9IW3p+y9iZb8dpcuPq2bjM3O8V7+BRQp5UW/xpoRWZxrvYul6L5jpe7F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qkQRBzjs; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=YB+ivn+CXmTUoAA9vRsZGYK2Q4v1TSDyDIvPbUFncwYaG89KbkIXMLPbU393yUfcgL/IEBP58WjvKHRUQ/R4RSCaMYafT/aB/QJr3funE68LRkh9lvZYdxFD0rL0tc76PGzRnYgppOPHhRxn+tS8HocjwRn3v+kjzCxq2W9Xfys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=keO9F3W+; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qkQRBzjs"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38221306992so922412f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 05:44:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="keO9F3W+"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3822429c615so807206f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 05:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731678254; x=1732283054; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731678256; x=1732283056; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8iEdUECHFmk4I0P8OuONHc3S4huRYfPCWKtdoNW9iyY=;
-        b=qkQRBzjsQDBZhPyKsArYJYMTPAyDHxJbIhqRXNhHDsQhqyXAtjG6B+rXXbIJ++um3O
-         8UoAiB0O8Y9SDfDK4lM0ArASN5/mB2K1AHAC8123LFSVXgGFCI6/iyhzVW2202vLc4b1
-         7XsY7KXJo6pq9MSb+3+NJxuUeqCrT71FmmIv3EfxB1jmLx1shumk6JSrNAwEi1qoXq23
-         g52HaR0KutETH1C5q39MfUJnLkR88YDMkQQEK1vz00SHWMxnsQ3FGqAoM3xUbHqe3pg9
-         HXg6mng0vBoQ1OPEf+gCuA0ZG0SGqG7e6FTpzz6lMQJVa5E3yFtQ3FuBe27kJFq5twn0
-         NocQ==
+        bh=QflYe9Uttnm4Ku+Zy3VUc0FNhJJkvv+YuMrekm3fOjY=;
+        b=keO9F3W+nVGZMNuY9V21Pj8J3bkho7f9utN5jPPVrY2g9srF3vAgjhXs7ZnLKVb7qN
+         GMGzYuClPBl+WGjPcqmSGTZDCghwYsV7P2U/9vbzEfv1vg6Yz4Sbl6oENNKszIlXKsnw
+         JJ+r9HVVBkQeMYDOHuQQMXiSxA1J8TOvqIJdEXsiHhYq7J13VVOda6RBiMPWnNC6GG90
+         fIrX3BGV3pWaSqpTv8dVt3ZY6EiDBVtBAc0fjNuEBe4G/aMnNrkQ2ef4lzagcmw8XZlZ
+         DcI2BcPdR4anOiJcVDEJCvH2qx88lXffgL3HPylpMjvRG4escJAWsW6IzUp/u0lJr3id
+         USBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731678254; x=1732283054;
+        d=1e100.net; s=20230601; t=1731678256; x=1732283056;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8iEdUECHFmk4I0P8OuONHc3S4huRYfPCWKtdoNW9iyY=;
-        b=KZ4qmEhARNgn5KCOOtNkNPneP9sluwu94H0jwb1F19225xCUMD77tE/N9FFW0u7Rv3
-         7CKhGFJlQUgOu2fxrHuOhn9zNpa6tFvASU4KXnVd4qW9j40WIQctSL1DOtBVQZSCuCrP
-         L6NLFxSEtYOG8/gSiiV+NMK1cGxRAumNH4gYAskCB+8CwNkRCCWydPq7N+KGLF9zzAQp
-         +2IWcOo93UdGkL1J5IOusgWoQ2h3XjI0n/KzQgY/FCTPtJKN+SZxUAvD+E3zSgP9dSrH
-         AkZw7rNdPQDIC8FDVzkoGRQfQMub1212moxRvIQitDaAxpuogV9JTipCNIT143zTSB83
-         nk1A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/BmSPHb7emfJFrb/tJGcN03zoUjgFNtuEvt7/VcFVlKiKp2TsUQQ9jM5USDIG1gMlzJj7iqOewvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOl17uSsPX5rg4eeicOJUr0WWeY33ae7GexmhkqWnSHO/t2dxG
-	iLfcgEWj47ygrxGKFOKCb0PBs6XzmCfK7wSSXJ+0OZTGivo/PG7dGaI7KFZgvL4=
-X-Google-Smtp-Source: AGHT+IHREok9BoAyXyx6cs96noJtJb7OY9pRSi5wp/pt8MiabvddgDJ+Peg3bta54bxlDckbF5XiWw==
-X-Received: by 2002:a05:6000:460b:b0:37c:cc77:3e72 with SMTP id ffacd0b85a97d-38225a86684mr2136074f8f.33.1731678254355;
-        Fri, 15 Nov 2024 05:44:14 -0800 (PST)
+        bh=QflYe9Uttnm4Ku+Zy3VUc0FNhJJkvv+YuMrekm3fOjY=;
+        b=LgbAPJMeYFp2dOIrV4Xaa7/C782i+X25J0/yh43OaFPHYQIyI9wpjDcDxqf08O2mX2
+         2uJHI7b47jPfdgTRa+nM650IgmBzxB8sPQLx7fe3zh2Xwq1Sq+0sqyTjZO23NUyTxrx9
+         fTfgsA3u+bSpOl5rjCA2JlOQSH55uYDYLLJNfCy8z8kO8/lEj6icNCDLFxcOle4GRvB0
+         A3YztzSDf7wgf7aJvmXohbkOxTBqU8ubVlIEhK9Bw67ipQPnXb3238wgG4cpOpw5006c
+         ed1cMod2f/vHp8zIuWJptvfEvi25lneIcnoELjbJJCbfRPztFdI207UruKUTkKba7ZbD
+         itiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcLzi5mt5ab/JMzwuWDlJM2bgPoZYBEGTznuAeqgX+9DSmev5Wigihu/6HKibkai+tXmNMBv91j/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwi1Z9kCtb52PlOjYcC69AUtrNzh2/YRApE1K2NxIbr/W74nq3
+	aqAltOtSKi1mDID/utl473ltZBL3pFf2fxO/XN40VJtfMA+8ZrrI/NprSbHz/+U=
+X-Google-Smtp-Source: AGHT+IEsR7G1hgK+fmAed/LYpCR8sEfBfQmvxReRtCLi1L0/hyDVglC8dL6z2/8gYOyTa/fuZVe4iw==
+X-Received: by 2002:a05:6000:18af:b0:37d:7e71:67a0 with SMTP id ffacd0b85a97d-38225a21d40mr2940930f8f.9.1731678256207;
+        Fri, 15 Nov 2024 05:44:16 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada3fc9sm4378016f8f.20.2024.11.15.05.44.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada3fc9sm4378016f8f.20.2024.11.15.05.44.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 05:44:13 -0800 (PST)
+        Fri, 15 Nov 2024 05:44:15 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -72,11 +72,10 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 2/8] serial: sh-sci: Check if TX data was written to device in .tx_empty()
-Date: Fri, 15 Nov 2024 15:43:55 +0200
-Message-Id: <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
+Date: Fri, 15 Nov 2024 15:43:56 +0200
+Message-Id: <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
@@ -90,150 +89,158 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
-is called. The uart_suspend_port() calls 3 times the
-struct uart_port::ops::tx_empty() before shutting down the port.
+The Renesas RZ/G3S supports a power saving mode where power to most of the
+SoC components is turned off. When returning from this power saving mode,
+SoC components need to be re-configured.
 
-According to the documentation, the struct uart_port::ops::tx_empty()
-API tests whether the transmitter FIFO and shifter for the port is
-empty.
+The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
+returning from this power saving mode. The sh-sci code already configures
+the SCIF clocks, power domain and registers by calling uart_resume_port()
+in sci_resume(). On suspend path the SCIF UART ports are suspended
+accordingly (by calling uart_suspend_port() in sci_suspend()). The only
+missing setting is the reset signal. For this assert/de-assert the reset
+signal on driver suspend/resume.
 
-The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
-transmit FIFO through the FDR (FIFO Data Count Register). The data units
-in the FIFOs are written in the shift register and transmitted from there.
-The TEND bit in the Serial Status Register reports if the data was
-transmitted from the shift register.
+In case the no_console_suspend is specified by the user, the registers need
+to be saved on suspend path and restore on resume path. To do this the
+sci_console_setup() function was added. There is no need to cache/restore
+the status or FIFO registers. Only the control registers. To differentiate
+b/w these, the struct sci_port_params::regs was updated with a new member
+that specifies if the register needs to be chached on suspend. Only the
+RZ_SCIFA instances were updated with this new support as the hardware for
+the rest of variants was missing for testing.
 
-In the previous code, in the tx_empty() API implemented by the sh-sci
-driver, it is considered that the TX is empty if the hardware reports the
-TEND bit set and the number of data units in the FIFO is zero.
-
-According to the HW manual, the TEND bit has the following meaning:
-
-0: Transmission is in the waiting state or in progress.
-1: Transmission is completed.
-
-It has been noticed that when opening the serial device w/o using it and
-then switch to a power saving mode, the tx_empty() call in the
-uart_port_suspend() function fails, leading to the "Unable to drain
-transmitter" message being printed on the console. This is because the
-TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
-TEND=0 has double meaning (waiting state, in progress) we can't
-determined the scenario described above.
-
-Add a software workaround for this. This sets a variable if any data has
-been sent on the serial console (when using PIO) or if the DMA callback has
-been called (meaning something has been transmitted). In the tx_empty()
-API the status of the DMA transaction is also checked and if it is
-completed or in progress the code falls back in checking the hardware
-registers instead of relying on the software variable.
-
-Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
-Cc: stable@vger.kernel.org
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v3:
-- s/first_time_tx/tx_occurred/g
-- checked the DMA status in sci_tx_empty() through sci_dma_check_tx_occurred()
-  function; added this new function as the DMA support is conditioned by
-  the CONFIG_SERIAL_SH_SCI_DMA flag
-- dropped the tx_occurred initialization in sci_shutdown() as it is already
-  initialized in sci_startup()
-- adjusted the commit message to reflect latest changes
+- none
 
 Changes in v2:
-- use bool type instead of atomic_t
+- rebased on top of the update version of patch 2/8 from
+  this series
 
- drivers/tty/serial/sh-sci.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 44 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 136e0c257af1..ade151ff39d2 100644
+index ade151ff39d2..e53496d2708e 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -157,6 +157,7 @@ struct sci_port {
+@@ -101,7 +101,7 @@ enum SCI_CLKS {
+ 		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
  
- 	bool has_rtscts;
- 	bool autorts;
-+	bool tx_occurred;
+ struct plat_sci_reg {
+-	u8 offset, size;
++	u8 offset, size, suspend_cacheable;
  };
  
- #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
-@@ -850,6 +851,7 @@ static void sci_transmit_chars(struct uart_port *port)
- {
- 	struct tty_port *tport = &port->state->port;
- 	unsigned int stopped = uart_tx_stopped(port);
-+	struct sci_port *s = to_sci_port(port);
- 	unsigned short status;
- 	unsigned short ctrl;
- 	int count;
-@@ -885,6 +887,7 @@ static void sci_transmit_chars(struct uart_port *port)
- 		}
+ struct sci_port_params {
+@@ -134,6 +134,8 @@ struct sci_port {
+ 	struct dma_chan			*chan_tx;
+ 	struct dma_chan			*chan_rx;
  
- 		sci_serial_out(port, SCxTDR, c);
-+		s->tx_occurred = true;
- 
- 		port->icount.tx++;
- 	} while (--count > 0);
-@@ -1241,6 +1244,8 @@ static void sci_dma_tx_complete(void *arg)
- 	if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
- 		uart_write_wakeup(port);
- 
-+	s->tx_occurred = true;
++	struct reset_control		*rstc;
 +
- 	if (!kfifo_is_empty(&tport->xmit_fifo)) {
- 		s->cookie_tx = 0;
- 		schedule_work(&s->work_tx);
-@@ -1731,6 +1736,16 @@ static void sci_flush_buffer(struct uart_port *port)
- 		s->cookie_tx = -EINVAL;
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ 	struct dma_chan			*chan_tx_saved;
+ 	struct dma_chan			*chan_rx_saved;
+@@ -153,6 +155,7 @@ struct sci_port {
+ 	int				rx_trigger;
+ 	struct timer_list		rx_fifo_timer;
+ 	int				rx_fifo_timeout;
++	unsigned int			console_cached_regs[SCIx_NR_REGS];
+ 	u16				hscif_tot;
+ 
+ 	bool has_rtscts;
+@@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+ 	 */
+ 	[SCIx_RZ_SCIFA_REGTYPE] = {
+ 		.regs = {
+-			[SCSMR]		= { 0x00, 16 },
+-			[SCBRR]		= { 0x02,  8 },
+-			[SCSCR]		= { 0x04, 16 },
++			[SCSMR]		= { 0x00, 16, 1 },
++			[SCBRR]		= { 0x02,  8, 1 },
++			[SCSCR]		= { 0x04, 16, 1 },
+ 			[SCxTDR]	= { 0x06,  8 },
+ 			[SCxSR]		= { 0x08, 16 },
+ 			[SCxRDR]	= { 0x0A,  8 },
+-			[SCFCR]		= { 0x0C, 16 },
++			[SCFCR]		= { 0x0C, 16, 1 },
+ 			[SCFDR]		= { 0x0E, 16 },
+-			[SCSPTR]	= { 0x10, 16 },
++			[SCSPTR]	= { 0x10, 16, 1 },
+ 			[SCLSR]		= { 0x12, 16 },
+-			[SEMR]		= { 0x14, 8 },
++			[SEMR]		= { 0x14, 8, 1 },
+ 		},
+ 		.fifosize = 16,
+ 		.overrun_reg = SCLSR,
+@@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
  	}
+ 
+ 	sp = &sci_ports[id];
++	sp->rstc = rstc;
+ 	*dev_id = id;
+ 
+ 	p->type = SCI_OF_TYPE(data);
+@@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *dev)
+ 	return 0;
  }
-+
-+static void sci_dma_check_tx_occurred(struct sci_port *s)
+ 
++static void sci_console_setup(struct sci_port *s, bool save)
 +{
-+	struct dma_tx_state state;
-+	enum dma_status status;
++	for (u16 i = 0; i < SCIx_NR_REGS; i++) {
++		struct uart_port *port = &s->port;
 +
-+	status = dmaengine_tx_status(s->chan_tx, s->cookie_tx, &state);
-+	if (status == DMA_COMPLETE || status == DMA_IN_PROGRESS)
-+		s->tx_occurred = true;
-+}
- #else /* !CONFIG_SERIAL_SH_SCI_DMA */
- static inline void sci_request_dma(struct uart_port *port)
- {
-@@ -1740,6 +1755,10 @@ static inline void sci_free_dma(struct uart_port *port)
- {
- }
- 
-+static void sci_dma_check_tx_occurred(struct sci_port *s)
-+{
++		if (!s->params->regs[i].suspend_cacheable)
++			continue;
++
++		if (save)
++			s->console_cached_regs[i] = sci_serial_in(port, i);
++		else
++			sci_serial_out(port, i, s->console_cached_regs[i]);
++	}
 +}
 +
- #define sci_flush_buffer	NULL
- #endif /* !CONFIG_SERIAL_SH_SCI_DMA */
- 
-@@ -2076,6 +2095,12 @@ static unsigned int sci_tx_empty(struct uart_port *port)
+ static __maybe_unused int sci_suspend(struct device *dev)
  {
- 	unsigned short status = sci_serial_in(port, SCxSR);
- 	unsigned short in_tx_fifo = sci_txfill(port);
-+	struct sci_port *s = to_sci_port(port);
-+
-+	sci_dma_check_tx_occurred(s);
-+
-+	if (!s->tx_occurred)
-+		return TIOCSER_TEMT;
+ 	struct sci_port *sport = dev_get_drvdata(dev);
  
- 	return (status & SCxSR_TEND(port)) && !in_tx_fifo ? TIOCSER_TEMT : 0;
+-	if (sport)
++	if (sport) {
+ 		uart_suspend_port(&sci_uart_driver, &sport->port);
+ 
++		if (!console_suspend_enabled && uart_console(&sport->port))
++			sci_console_setup(sport, true);
++		else
++			return reset_control_assert(sport->rstc);
++	}
++
+ 	return 0;
  }
-@@ -2247,6 +2272,7 @@ static int sci_startup(struct uart_port *port)
  
- 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
+@@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct device *dev)
+ {
+ 	struct sci_port *sport = dev_get_drvdata(dev);
  
-+	s->tx_occurred = false;
- 	sci_request_dma(port);
+-	if (sport)
++	if (sport) {
++		if (!console_suspend_enabled && uart_console(&sport->port)) {
++			sci_console_setup(sport, false);
++		} else {
++			int ret = reset_control_deassert(sport->rstc);
++
++			if (ret)
++				return ret;
++		}
++
+ 		uart_resume_port(&sci_uart_driver, &sport->port);
++	}
  
- 	ret = sci_request_irq(s);
+ 	return 0;
+ }
 -- 
 2.39.2
 
