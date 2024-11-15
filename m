@@ -1,179 +1,101 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86CF1D6190
-	for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 13:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205811BBBE4;
+	Fri, 15 Nov 2024 14:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678269; cv=none; b=KIDrbKwAw3arf11ssXAQAlly7dLfS3xwsM2bWCBDXJa2LSQMkR9OP22V+nWgjx3JRks0pQUkiLIdNhnX2TfHbpYSYPTaPqIl2RBoFLWbqnu85gJDIA1ayGExU/EceuXhayopmqknmtxl/wb364RhIPegftEEGi+oyUNtA6ZuqkA=
+	t=1731682051; cv=none; b=R9O5Xr0xI6p8y566zGEKvwL5YZc1uMzQhwBisvUkyIbeYGz1+tNJx4JDCLfYk7Y+MErTPHB5R1I1Mj9uYFGa4W8my3ZZF52BNUHFkey/zbKcT4nCHe94CXqDjzVirgz9MN/BBI1GRycNVeGMUMST8S9ORGNwMhSZ3F6vObh2rMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678269; c=relaxed/simple;
-	bh=oorGJmvA6xzxLnok/YZN4p2VL6lLlYylm2VtoiEqIdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ax6WuZ3y24h9WejyFQX2mQ2qrWEm5s//R4hwYa+fCWQ9p1T9J+tdIAO0j7by0fiPMZ35kes/e2REC4bqpv/MkjNsfy7lQWmkHsZoEox5/xn3S56A3/ZlY0nT9KoXsSQcXzITBxvFmqKQuDrSkOqqJz29B9Q2tnaEC5IwuFq+H1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Tt9M//b3; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1731682051; c=relaxed/simple;
+	bh=Qg8gnVAsmfCB/g7+xbU0TVaPP29VNMj1CAYSqDn76Lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YyBYNZqhQD/bluWtq/gu6jn1RTyZ/wt2R/ZHtkdMfyH8FPwxUOz2pwyFNM9oHMHX1DXyOeFyy85Bi/1oqzV1Tm2Q5i8Fre976l6Rl9pTPvjmVEJpxRwHfVoWU2Mz4svXpEb64LLuQvsNtUwRUZRSvWcOUjDy597gdI3Mqwr+vmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=qhmIrwRV; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Tt9M//b3"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso1144344f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2024 05:44:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731678266; x=1732283066; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cy6rRM40DC0Xnuy+hKTJ1gL87RxFIFWLdj3y1evJaag=;
-        b=Tt9M//b3hgiUITu4GtEnVIA00UnqaXtoE5ioJo3RRiRdI8ZkZUJwDWFGc90uDE9HY5
-         57GC6UX0A6dCNOoqhzx/JAz6hKPeE14DFzP6JBxFwqdKTJ11jYeQQ+hAtPYzjigIv6Y+
-         +D1gsYAb0+2Jn5kx76TEVtsPYjcEXnbYPzTC1BEmxEUqIJXULnAI7tSYJk67g0mzI32O
-         bbuuNSDIhYMKgn/D9SnoBbyybb+anNhWWEcLp5gC2GNMcKQRW7lV2CwryKL4ME4bK35s
-         sGkKAsR07qhWNya0gGwW8LTCB9BCUs9ICm8z6DLzhepypRIJcp8dslUm8794Hde2RNUf
-         pGOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731678266; x=1732283066;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cy6rRM40DC0Xnuy+hKTJ1gL87RxFIFWLdj3y1evJaag=;
-        b=bFkX1FCPHUQThvmK4OrubnAs6QLNUixIHgYt4CCIH9WbC3jdjhKNFuZE3uVnr6OfRM
-         UmdZwY3brUyp1T+hdezxHqzGMbfHxw7HFqMWqGsuBH5OWAH1b9NlGbS1P5l5nD+bf2X+
-         xBxQfr6QPht+c+dlYqfMv5YvbC1zWvIB6jEaHdGVk0E7xk98J2Coh7iTTZKUaUmUVdcJ
-         MZf+Z2oOAUL8FLq2Xwh9U1PyoaKoneo7XUqvNiXYL6eYRre+jkQeKcqdtZ78WkCWbjAJ
-         142sb/OlIx2Z5zwLJMUWymf6jncvVX8xcN7Gs4T01S9V2Wo7vUnQflAXwZpPuleKYnmg
-         58lA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8AYMLI1B7XBNThEXZmMlkZD6pt2Hc3XlA/kgsyFK0tOGGB1fmuOzfY1i2YSTzGYSe6f7CYxoVEAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuWS5jcBnlJee86RlE+5B6Y73rKg+YyegNhCmbc1pU1ZpxNGuS
-	xl1bMW9LXLFoSLM8LspIABVGkOTwBef79VenKzx9htHK/CDa1CB/ml7IVSjM7BU=
-X-Google-Smtp-Source: AGHT+IElpc/J6dLBHzyye+AXHa2deiO6rAp8errU88VFUq6AVzjbCez9Ff6hHaovJQpzUHSProQ5aA==
-X-Received: by 2002:a5d:588b:0:b0:382:1e06:fa3 with SMTP id ffacd0b85a97d-38225acf926mr2344326f8f.47.1731678266107;
-        Fri, 15 Nov 2024 05:44:26 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada3fc9sm4378016f8f.20.2024.11.15.05.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 05:44:25 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	p.zabel@pengutronix.de,
-	lethal@linux-sh.org,
-	g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 8/8] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for SCIF1
-Date: Fri, 15 Nov 2024 15:44:01 +0200
-Message-Id: <20241115134401.3893008-9-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="qhmIrwRV"
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 069631FABF;
+	Fri, 15 Nov 2024 15:47:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1731682040;
+	bh=dEafRjM9IWWfFCvBUry05pVj1A8yYFWrnbi6Fe6UClU=;
+	h=Received:From:To:Subject;
+	b=qhmIrwRVvBxbRBpDh+0Cndd7H7nsHSH1iQwB+RU1HjFWFGA/ccBxUuSpSLWYs4lX/
+	 GtRu+OmFXYLqXpsOG4rNgzvkA/EAa6NIlgK1qro/Gq/wAIvwjXJi1AomDpEtzrvX4W
+	 NlSpqSreFmjXDIm4wqKcY6OnJSmUlNL4Bk8Dvf5Q7L8bx9/D5qE8IgtNbrByFg75zq
+	 2qq8R8fa7Q49KMMFFdDL001NvzWZQafkiqV5bTLgYfP0eMBgJO14za7ofXy5RII266
+	 tXHayEA+eydm1jiFD35vxDy5eQ11sL/HwxHsFByit33wmpYpKDjJ9p4c9jH0j1sxLi
+	 K+rTZenRyeg/Q==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id A6EFC7F9AA; Fri, 15 Nov 2024 15:47:19 +0100 (CET)
+Date: Fri, 15 Nov 2024 15:47:19 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>,
+	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+	Adam Ford <aford173@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
+Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on
+ v6.12
+Message-ID: <Zzde9xS0zGJhcoUb@gaggiata.pivistrello.it>
+References: <20241007132555.GA53279@francesco-nb>
+ <20241112075958.GA8092@francesco-nb>
+ <20241112092054.GA18139@francesco-nb>
+ <CAA+D8AO3a5WsZ4=V-9CDifDZYjJjwQmQQDDQM7ZKgZ6_-CNDPA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AO3a5WsZ4=V-9CDifDZYjJjwQmQQDDQM7ZKgZ6_-CNDPA@mail.gmail.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, Nov 15, 2024 at 11:13:58AM +0800, Shengjiu Wang wrote:
+> On Tue, Nov 12, 2024 at 5:20 PM Francesco Dolcini <francesco@dolcini.it> wrote:
+> >
+> > On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
+> > > On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
+> > > > it seems that an old regression is back on v6.12, reproduced on -rc2
+> > > > (not sure about rc1).
+> > > >
+> > > > The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
+> > > > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
+> > > >
+> > > > Is it now back?
+> > >
+> > > I was able to reproduce this issue once more, this time with 6.11.7.
+> > > As I wrote in another email the issue is not systematic as it used to
+> > > be.
+> > >
+> > > Any idea?
+> >
+> > Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
+> > too short and therefore we have such non-systematic failures?
+> >
+> 
+> Francesco,  it seems hard to reproduce it on my i.MX8MP-EVK board.
+> 
+> If it is easy to reproduce on your side, you can try to enlarge the delay
+> time to see if there is any improvement.
 
-Add DT overlay for SCIF1 (of the Renesas RZ/G3S SoC) routed through the
-PMOD1_3A interface available on the Renesas RZ SMARC Carrier II board.
+It's hard also for me to reproduce, we just have a relatively extensive
+test farm and 2 times it happened while doing unrelated tests. I was hoping we
+could have some idea on what's going on, I'll see if I can put together some
+kind of stress test, being able to reproduce it more systematically would
+certainly help.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+Francesco
 
-Changes in v3:
-- none
-
-Changes in v2:
-- none
-
- arch/arm64/boot/dts/renesas/Makefile          |  3 ++
- .../dts/renesas/r9a08g045s33-smarc-pmod.dtso  | 48 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 97228a3cb99c..7ad52630d350 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -137,6 +137,9 @@ r9a07g054l2-smarc-cru-csi-ov5645-dtbs := r9a07g054l2-smarc.dtb r9a07g054l2-smarc
- dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtb
- 
- dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
-+dtb-$(CONFIG_ARCH_R9A07G043) += r9a08g045s33-smarc-pmod.dtbo
-+r9a08g045s33-smarc-pmod-dtbs := r9a08g045s33-smarc.dtb r9a08g045s33-smarc-pmod.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G043) += r9a08g045s33-smarc-pmod.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-new file mode 100644
-index 000000000000..7d637ab110e1
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G3S SMARC Carrier II EVK PMOD parts
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ *
-+ *
-+ * [Connection]
-+ *
-+ * SMARC Carrier II EVK
-+ * +--------------------------------------------+
-+ * |PMOD1_3A (PMOD1 PIN HEADER)			|
-+ * |	SCIF1_CTS# (pin1)  (pin7)  PMOD1_GPIO10	|
-+ * |	SCIF1_TXD  (pin2)  (pin8)  PMOD1_GPIO11	|
-+ * |	SCIF1_RXD  (pin3)  (pin9)  PMOD1_GPIO12	|
-+ * |	SCIF1_RTS# (pin4)  (pin10) PMOD1_GPIO13	|
-+ * |	GND	   (pin5)  (pin11) GND		|
-+ * |	PWR_PMOD1  (pin6)  (pin12) GND		|
-+ * +--------------------------------------------+
-+ *
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+
-+&{/} {
-+	aliases {
-+		serial0 = "/soc/serial@1004bc00";
-+	};
-+};
-+
-+&pinctrl {
-+	scif1_pins: scif1-pins {
-+		pinmux = <RZG2L_PORT_PINMUX(14, 0, 1)>, /* TXD */
-+			 <RZG2L_PORT_PINMUX(14, 1, 1)>, /* RXD */
-+			 <RZG2L_PORT_PINMUX(16, 0, 1)>, /* CTS */
-+			 <RZG2L_PORT_PINMUX(16, 1, 1)>; /* RTS */
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif1_pins>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
--- 
-2.39.2
 
