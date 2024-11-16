@@ -1,118 +1,119 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E9519343E;
-	Sat, 16 Nov 2024 10:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41377D53F;
+	Sat, 16 Nov 2024 14:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731754665; cv=none; b=kiCTURDsu6mteFP5l+foUo8/NYaiVQj2GvbEUKqKaM1RQK1C2ikc3u9LODbyaFj+W8r1PPoxs5VmDyGoPPPwEzA9ug7CEqU6tWwq8tUrTFlP+e16EtQg7qYAgfFlQ3Foik+jneZHFiQOknA/g4YwkxjQl3Y6Q1jNDuxVTqLF6LY=
+	t=1731768055; cv=none; b=a8laaFQMgfEO3dVZMHAFiN19UuJUCZA0KdvTspYlCxuU8VEFLmY4zwEQkPLI9QsCLRZosFD8UFEGbyZbZsh4xhSDmXIE9/nEIsJAPvtwpC9Y6E2W0XomlUN4aPn7jQPRAZPU9Y5EUIGkiX4xlB4uRZAwk1Qopm2l514bprycTVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731754665; c=relaxed/simple;
-	bh=eQb9wF7oznZn0WEVMLZdiD0aGrnPGx+MTcEP57njRgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BPeXtAurHiftEM2Sdqq5MAi52LGc3HF5Wz5qnswkTQOO4VXz/HFK6UJPn/517ZfpD89opfMLJX46CQ9J8N6QUoa9JucTOwLJH9edQ8NG6gLra+QCUFFA6gHpicx8ate17WJy5vPXvQX6m0maP+tTdzI8RpDFxam/fIVYpiukF00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYB7etzL; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731768055; c=relaxed/simple;
+	bh=Se0zsW/usXljJvHlpBaI9SHdckktBbemfrUJ82FXdzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFpruj1ijF1QgPB0VsXwwTKfwP/Qq0wcgUYPcS3TBkti8K3COZrdptfzLGAFE+0nNOHEbqp3Dxz+a0PzCFhBEmFkRsKxWYSsKfuGxjGkZGDhTMEeikYy2D0zFlUHeSqocoIFkVDD+rpHg2Z/cL6CHFzAK4tB7VQsIN9zoFdVco0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hq1A5km0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYB7etzL"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so21764245e9.3;
-        Sat, 16 Nov 2024 02:57:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731754662; x=1732359462; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=goImJceAXEwHpBa6B6ghd+sdLyfuey1E4bvkcllMT6A=;
-        b=eYB7etzLzLLa/jENfc8yI5/jtyvEIwjjVdhAaD2C6o4YaJLyVGEO/LcYTX9bTIb+Di
-         eyJ+csD/Dssk/q6pYo17rrjKO4SpoLIvAQqbfNmOeYHW1jrYHqcachuFtgLvjRyaPHdu
-         nCHrdphG35nTV4lzzIHOVsfCnxGrgimQVtm2wq9OaGE0kRWyOc/67tHG2YPIlQrfw6Dx
-         QjqHJJY42sD4OrO2N4H7sr0tqfw44R9/LXQOVqxv+6WnMtgSnXxzsVH4DeM2X8iHM5o2
-         Jv5sP4wUPxJpbCjNm/h8UEVj/OskEzeAb/f3/mSBCyv0VrGKBSqjBJCjPfi3jvBtLekT
-         aI4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731754662; x=1732359462;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=goImJceAXEwHpBa6B6ghd+sdLyfuey1E4bvkcllMT6A=;
-        b=hbn13q3YcBxgdNlMwc1B220KfU7bpH8HTnJKVSAUNy4shLewgmGIk7Cw/AhJU1KaEC
-         pDAEREdCDOz78xT1wFnjKey3ouPMZ9+yLwznLf5vfBDCgCIEVPK9rqbrMFupOEBzJyK9
-         qyAZL872tsS9X8N6FBxHDavAz0uDY7TZrGOBfE8FyE6cPJn5NQ/KKO9zmmj9Gz7AV1x0
-         sMwkrWJk1Y3+u1abG1LqI+bI5spzpg87OjuDZog7E4/MyffgYm7RIe0qxtvYt0k5PswE
-         YM5ctWZYxj5ejhNqN0I7SVQIpYtfVddehmXXuOQO8hf6B+sMDM7DJ47+oFir8JwJ7gHT
-         NqRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYlv72LyprBxxC9dZ38rEIz+cNI0PaAq4g0rGvyCt/WJihj7U7zPNaYW4XAgpUnPH1aZkY/vw6bkc=@vger.kernel.org, AJvYcCXMDaVNq/ywL3QZyOh9HSyg3eftZ61FHZnft1aGJ+JLtwgHoBoZTXdlUfcZegBSk9NdFxKuX6yw5NFORj+U@vger.kernel.org, AJvYcCXUEmIMTe7ylknwHYsMd3NNq90agC/Rw8rE9toy8uZdjpCFaKOH6dHShW+ZYFKIKrQcwlZWCtUe@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB0YEu1JSlUsut2Nu373eTaysz+MN11bvc0w5xfRp8Rd1H257u
-	UnBkF75HbScixiAUDooYXl6ZqO4OPMSBRm7MH1fT3VhPwmQiTlINa80EZQ==
-X-Google-Smtp-Source: AGHT+IEId6zSIFqCE8N53mVdYJ0fjpuVXnudlSr0iOmtwTmdqhLz3XGrAeBVhVV8RSj1oCQVzHEe2A==
-X-Received: by 2002:a05:6000:18ab:b0:37c:cc4b:d1ea with SMTP id ffacd0b85a97d-38225aa6573mr4908953f8f.53.1731754661934;
-        Sat, 16 Nov 2024 02:57:41 -0800 (PST)
-Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382377822ffsm1302814f8f.82.2024.11.16.02.57.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 02:57:41 -0800 (PST)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hq1A5km0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C8BBC4CEC3;
+	Sat, 16 Nov 2024 14:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731768054;
+	bh=Se0zsW/usXljJvHlpBaI9SHdckktBbemfrUJ82FXdzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hq1A5km0xLPZQO/PLflwYyOs9xWaaVX06PWRYmePV/49K09gQkGonmhk1tly8lUi/
+	 8vJ0VK078coD5o3Mp5wk/QLBkX4l0H6GWFX4RNZCKxt4Y03lIW7AabGDnJLEM381yX
+	 Ejcpl5aMeVrZ4YxNClwqa+C8mbc03LvgTf7nGmg0O824vtL2pgfjQi3dB9NIZmUo75
+	 4Mq8I4c6UUlX99ZVd7n5sWq/izaSgd+3YjQs/QAsiY2pF6aom/aqI8EsJUyxmue3ld
+	 7bESEilxw6PoltewOBIL8s2KkdZTszmAVnWB0JJTFijGq+W30UXjfXA162i/We2rGs
+	 lfxjXkvokWxBQ==
+Date: Sat, 16 Nov 2024 15:40:50 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@airoha.com,
 	stable@vger.kernel.org
-Subject: [PATCH] clk: en7523: Fix wrong BUS clock for EN7581
-Date: Sat, 16 Nov 2024 11:56:53 +0100
-Message-ID: <20241116105710.19748-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
+Subject: Re: [PATCH] clk: en7523: Fix wrong BUS clock for EN7581
+Message-ID: <Zziu8tMZfWpqAur9@lore-rh-laptop>
+References: <20241116105710.19748-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+v0muwa3YkHZap3q"
+Content-Disposition: inline
+In-Reply-To: <20241116105710.19748-1-ansuelsmth@gmail.com>
 
-The Documentation for EN7581 had a typo and still referenced the EN7523
-BUS base source frequency. This was in conflict with a different page in
-the Documentration that state that the BUS runs at 300MHz (600MHz source
-with divisor set to 2) and the actual watchdog that tick at half the BUS
-clock (150MHz). This was verified with the watchdog by timing the
-seconds that the system takes to reboot (due too watchdog) and by
-operating on different values of the BUS divisor.
 
-The correct values for source of BUS clock are 600MHz and 540MHz.
+--+v0muwa3YkHZap3q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This was also confirmed by Airoha.
+> The Documentation for EN7581 had a typo and still referenced the EN7523
+> BUS base source frequency. This was in conflict with a different page in
+> the Documentration that state that the BUS runs at 300MHz (600MHz source
+> with divisor set to 2) and the actual watchdog that tick at half the BUS
+> clock (150MHz). This was verified with the watchdog by timing the
+> seconds that the system takes to reboot (due too watchdog) and by
+> operating on different values of the BUS divisor.
+>=20
+> The correct values for source of BUS clock are 600MHz and 540MHz.
+>=20
+> This was also confirmed by Airoha.
 
-Cc: stable@vger.kernel.org
-Fixes: 66bc47326ce2 ("clk: en7523: Add EN7581 support")
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/clk-en7523.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index e52c5460e927..239cb04d9ae3 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -87,6 +87,7 @@ static const u32 slic_base[] = { 100000000, 3125000 };
- static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
- /* EN7581 */
- static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 };
-+static const u32 bus7581_base[] = { 600000000, 540000000 };
- static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
- static const u32 crypto_base[] = { 540000000, 480000000 };
- 
-@@ -222,8 +223,8 @@ static const struct en_clk_desc en7581_base_clks[] = {
- 		.base_reg = REG_BUS_CLK_DIV_SEL,
- 		.base_bits = 1,
- 		.base_shift = 8,
--		.base_values = bus_base,
--		.n_base_values = ARRAY_SIZE(bus_base),
-+		.base_values = bus7581_base,
-+		.n_base_values = ARRAY_SIZE(bus7581_base),
- 
- 		.div_bits = 3,
- 		.div_shift = 0,
--- 
-2.45.2
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 66bc47326ce2 ("clk: en7523: Add EN7581 support")
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/clk/clk-en7523.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> index e52c5460e927..239cb04d9ae3 100644
+> --- a/drivers/clk/clk-en7523.c
+> +++ b/drivers/clk/clk-en7523.c
+> @@ -87,6 +87,7 @@ static const u32 slic_base[] =3D { 100000000, 3125000 };
+>  static const u32 npu_base[] =3D { 333000000, 400000000, 500000000 };
+>  /* EN7581 */
+>  static const u32 emi7581_base[] =3D { 540000000, 480000000, 400000000, 3=
+00000000 };
+> +static const u32 bus7581_base[] =3D { 600000000, 540000000 };
+>  static const u32 npu7581_base[] =3D { 800000000, 750000000, 720000000, 6=
+00000000 };
+>  static const u32 crypto_base[] =3D { 540000000, 480000000 };
+> =20
+> @@ -222,8 +223,8 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+>  		.base_reg =3D REG_BUS_CLK_DIV_SEL,
+>  		.base_bits =3D 1,
+>  		.base_shift =3D 8,
+> -		.base_values =3D bus_base,
+> -		.n_base_values =3D ARRAY_SIZE(bus_base),
+> +		.base_values =3D bus7581_base,
+> +		.n_base_values =3D ARRAY_SIZE(bus7581_base),
+> =20
+>  		.div_bits =3D 3,
+>  		.div_shift =3D 0,
+> --=20
+> 2.45.2
+>=20
 
+--+v0muwa3YkHZap3q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZziu7wAKCRA6cBh0uS2t
+rKV1AQD0Q9RpHuuc7sc2j0MuAC1hRCBopXAnEBOJc/X5oEL5rQEA7g2TWZep/44C
+bbAj1Pe7IwRKXVCT56QAPBWW/fuwFws=
+=4Y3g
+-----END PGP SIGNATURE-----
+
+--+v0muwa3YkHZap3q--
