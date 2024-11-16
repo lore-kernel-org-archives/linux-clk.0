@@ -1,240 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49523F9CB;
-	Sat, 16 Nov 2024 16:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC765227
+	for <linux-clk@vger.kernel.org>; Sat, 16 Nov 2024 20:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731775137; cv=none; b=ryGM1wkvunWDeIVGPxVaOw6ColnfP7+4N/GjMFFuHwy9cdoXMPN+6qYg2k74ePcsPjj6VVTYbA7Ss465yTrKvSssB3ZX+aXO5fEAPdQ3twFjTVvAR9eZzGePA+k/29T2INHhYR9jSKPgruocSCr+JwH9big/wZlAP5Rh8D2wx2c=
+	t=1731787663; cv=none; b=uH/5DwIHA3SJx3hZZGwoyN5TNbbqiZtxSMqI3ccfbyXCWawlkqOnxfRfFLy6y+JaXiJRIX2HZjariUDjd23eV10hvKo8OquLQLByYOny30NLgzcFFfqsbTtqAlLBhzbil6hGPe5vmZkjfZV8i8liYPiVyDr7fvi5YHxWV/GMatY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731775137; c=relaxed/simple;
-	bh=THeciZJBPS3p0ay6yJsWVLTykpa/po6hSXdreEo/+d4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pHwMNCpxF4XGL3ffBX/o9vj9ozFOY7WZtAI7ObPYeQDgfzXH9DGGxxt9LkMzzBV7gLkVN2XFfXc2Y7O9OYZrK/n6HLkKA8iPcFTyVYKYGhdZCE8q8c0P3Pgr3+wD/vHgE6jwkmhqgYdHUqNnU/jjzxBi+TgHOBqqke5XCb6ZvH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mM0+yP7U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731787663; c=relaxed/simple;
+	bh=Eb7bakNuDMt536McYSWp7VRPHActWbHVTmLakZn4EVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OFITRgrEySuNbYJCjBShqaimYDdYSPxP6dI2KbOhixIDeNjJuVK+RhecIudHsoje/3Kqh7cbl8rMdz7upkq1qX/iI1Be/atFGCLm5eVSSd9116B5lASuUNotFiOESpirEHEM+c3kXjJLeTlcn4oKhsXfkknkekNhfEHj9O7Wmp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ejCltd7G; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mM0+yP7U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF6CC4CEC3;
-	Sat, 16 Nov 2024 16:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731775136;
-	bh=THeciZJBPS3p0ay6yJsWVLTykpa/po6hSXdreEo/+d4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mM0+yP7UAFMPixmn0bhdNjTbZ72Ik6A4c4XgMzShRiV/WxUsRoCyue6DyA1pzy5j9
-	 7qjwfnUM7MqjgfTM8g7wuJdCPqFfB16VvIeOWzlHHK99Y/7a39NNdCnsBOntvvzpxz
-	 SbbH7hX1q0LoAFrq1LEsj79K32hoKnXtcObu6GAmY38GkIeWaV59ljafd2ygvPEwI4
-	 YDRVO795pb2Da1VoZ6DLdS/FFFAABj/QK2tndRFg781MJABVWsjeFL6zHu4hcr+9Yj
-	 MjbByS6KPnK5kZdZbB2XpPNA8RXgCZTBC72L1RV2eoBOA0z7FH9VjoCACSXYsE7ePW
-	 ExfaZsdNfKm9A==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Devi Priya <quic_devipriy@quicinc.com>,
-	Gabor Juhos <j4g8y7@gmail.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL] Qualcomm clock updates for v6.13
-Date: Sat, 16 Nov 2024 10:38:53 -0600
-Message-ID: <20241116163854.122610-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ejCltd7G"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id C2DC389378;
+	Sat, 16 Nov 2024 21:07:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1731787653;
+	bh=xPbam/hqk2QR/wXTH/4/tBGNCnFHw4Qhbd8fGZD6CC4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ejCltd7GiaHHmcgRz64KB54p0NIqVHI/bz37T1H8yzSbZgpBOkY8pUdUXVQvZdpVV
+	 Z/3Mhsy+Q17DgxsZC3+gJY9OAyxSH/ETaQn1DpN/ZlY0UEu+FLk+qNBiGoxL8S8r3n
+	 cVFjpNYUJuHLMvVo3BK2M/C7Tu9SSPtKWP5WczyXnlsH54w4BXpBoj8dX7LhnbvUvX
+	 LRMv6xPTiZFzQEIQi9iyGwvQm1z1cecDVz2iKYE9bnFAkhBEp+IVB/8OyWT4hreqEy
+	 eeLPz/TfBIg6qkpEqAm9Ynj9iiYUEqFQEK1k84oT8gU7a814JVdH9+TfkBaE3tuuYm
+	 o2ayNt6C6pPkw==
+Message-ID: <6bc5b8d7-ff10-4860-ac46-1460a7d850da@denx.de>
+Date: Sat, 16 Nov 2024 20:47:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
+ reconfigure parent rate
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, linux-clk@vger.kernel.org,
+ Fabio Estevam <festevam@gmail.com>, "Lukas F . Hartmann" <lukas@mntmn.com>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev,
+ kernel@dh-electronics.com, linux-arm-kernel@lists.infradead.org,
+ Miquel Raynal <miquel.raynal@bootlin.com>, Anson Huang <Anson.Huang@nxp.com>
+References: <20240531202648.277078-1-marex@denx.de>
+ <20241112234206.558d5d5e@booty>
+ <79f21303-b0ba-45ed-a842-7e5364fd4efc@denx.de>
+ <20241113120622.3501db73@booty>
+ <130fe140-e70d-4c45-aaab-e22762c58c88@denx.de>
+ <20241115180936.4ab56be3@booty>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20241115180936.4ab56be3@booty>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
+On 11/15/24 6:09 PM, Luca Ceresoli wrote:
+> Hi Marek,
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+Hi,
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+>> Commit 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
+>> frequency to 506.8 MHz") configures the Video PLL1 to a frequency from
+>> which both your panel pixel clock and LDB serializer clock can be
+>> successfully divided down.
+>>
+>> Which panel do you use ?
+>>
+>> Try this -- Revert this patch, check /sys/kernel/debug/clk/clk_summary
+>> and compare it with (I assume) panel-simple.c entry for the panel you
+>> use, and notice the disp_pix clock are likely a bit off. That's because
+>> the lcdif driver did its best to divide those pixel clock down from
+>> 1039500000 set in imx8mp.dtsi .
+>>
+>> If you really want accurate pixel clock for your panel, you need similar
+>> change to 4fbb73416b10 and configure the Video PLL such that the
+>> accurate pixel clock can be derived from it. The Video PLL cannot be set
+>> to pixel clock, because the LDB serializer clock are either 7x the pixel
+>> clock, or 3.5x the pixel clock (for dual link LVDS), so the Video PLL
+>> has to be set to 7x or 3.5x pixel clock of the panel, then you should
+>> get accurate pixel clock and a working panel again.
+> 
+> I found that I'm having the same issue that has been discussed in some
+> related threads: the lcdif2 configures the video_pll1 to ~72 MHz, and
+> later LDB tries to set it to 7x that value, failing.
 
-are available in the Git repository at:
+Right, which is solved by configuring the Video PLL to the correct 
+frequency in DT up front ... unless you have more than one output 
+supplied by that Video PLL.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.13
+> I would have guessed your "[PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB
+> serializer clock reconfigure parent rate" would have fixed it, and it
+> actually allwos the LDB to set a proper (7x) rate for video_pll1, but
+> then also the media_disp2 goes to the same rate. Apparently the
+> video_pll1 is not propagated to media_disp2. I haven't dug into this.
+> 
+> So this is not the bug I had suspected about video_pll1 rate
+> computation.
+> 
+> For now my workaround is to set the exact rate to video_pll1 via
+> assigned-clock-rates.
+> 
+> However this breaks the case of using both lcdif1 and lcdif2. For that
+> I have added a reparenting of media_disp1 to sys_pll3 and it looks like
+> working.
 
-for you to fetch changes up to f1f49cc505bc998d7c13e5a518d027419a21fbae:
+See the patch link in the previous email, if you can use one Audio PLL 
+as PLL for the other DISP PIX, then you will be able to achieve accurate 
+pixel clock on both outputs. Can you do that ?
 
-  clk: qcom: remove unused data from gcc-ipq5424.c (2024-11-11 21:57:38 -0600)
-
-----------------------------------------------------------------
-Qualcomm clock updates for v6.13
-
-Add global clock controllers for QCS8300, and IPQ5424.
-Add camera, display and video clock controllers for SA8775P.
-Add global, display, gpu, tcsr, and rpmh clock controllers for SAR2130P.
-Add global, camera, display, gpu, and video clock controllers for
-SM8475.
-
-Support for IPQ9574 is added to the Alpha PLL clock driver, and the
-checks for already configured PLL at boot are cleaned up.
-
-QCS404 GPLL3 initial rate is corrected.
-
-A new ops for shared rcg2 floor_ops is introduced, for dealing with
-shared SDCC clocks.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      clk: qcom: remove unused data from gcc-ipq5424.c
-
-Bjorn Andersson (5):
-      Merge branch '20240818204348.197788-1-danila@jiaxyga.com' into clk-for-6.13
-      Merge branch '20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com' into clk-for-6.13
-      Merge branch '20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org' into clk-for-6.13
-      Merge branch '20241028060506.246606-3-quic_srichara@quicinc.com' into clk-for-6.13
-      Merge branch '20240822-qcs8300-gcc-v2-1-b310dfa70ad8@quicinc.com' into clk-for-6.13
-
-Danila Tikhonov (10):
-      dt-bindings: clock: qcom,gcc-sm8450: Add SM8475 GCC bindings
-      dt-bindings: clock: qcom,sm8450-dispcc: Add SM8475 DISPCC bindings
-      dt-bindings: clock: qcom,sm8450-gpucc: Add SM8475 GPUCC bindings
-      dt-bindings: clock: qcom,sm8450-videocc: Add SM8475 VIDEOCC bindings
-      dt-bindings: clock: qcom,sm8450-camcc: Add SM8475 CAMCC bindings
-      clk: qcom: gcc-sm8450: Add SM8475 support
-      clk: qcom: dispcc-sm8450: Add SM8475 support
-      clk: qcom: gpucc-sm8450: Add SM8475 support
-      clk: qcom: videocc-sm8450: Add SM8475 support
-      clk: qcom: camcc-sm8450: Add SM8475 support
-
-Devi Priya (1):
-      clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
-
-Dmitry Baryshkov (9):
-      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
-      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
-      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
-      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
-      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
-      clk: qcom: rpmh: add support for SAR2130P
-      clk: qcom: add support for GCC on SAR2130P
-      clk: qcom: tcsrcc-sm8550: add SAR2130P support
-      clk: qcom: dispcc-sm8550: enable support for SAR2130P
-
-Gabor Juhos (1):
-      clk: qcom: gcc-qcs404: fix initial rate of GPLL3
-
-Imran Shaik (2):
-      dt-bindings: clock: qcom: Add GCC clocks for QCS8300
-      clk: qcom: Add support for Global Clock Controller on QCS8300
-
-Johan Hovold (2):
-      clk: qcom: clk-alpha-pll: drop lucid-evo pll enabled warning
-      clk: qcom: clk-alpha-pll: fix lucid 5lpe pll enabled check
-
-Jonathan Marek (1):
-      clk: qcom: videocc-sm8550: depend on either gcc-sm8550 or gcc-sm8650
-
-Konrad Dybcio (3):
-      clk: qcom: Make GCC_6125 depend on QCOM_GDSC
-      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
-      clk: qcom: add SAR2130P GPU Clock Controller support
-
-Krzysztof Kozlowski (1):
-      clk: qcom: constify static 'struct qcom_icc_hws_data'
-
-Manikanta Mylavarapu (4):
-      clk: qcom: ipq5332: remove q6 bring up clocks
-      clk: qcom: ipq9574: remove q6 bring up clocks
-      dt-bindings: clock: qcom: gcc-ipq5332: remove q6 bring up clock macros
-      dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring up clock macros
-
-Sricharan Ramabadhran (2):
-      dt-bindings: clock: Add Qualcomm IPQ5424 GCC binding
-      clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC
-
-Taniya Das (6):
-      dt-bindings: clock: qcom: Add SA8775P video clock controller
-      dt-bindings: clock: qcom: Add SA8775P camera clock controller
-      dt-bindings: clock: qcom: Add SA8775P display clock controllers
-      clk: qcom: Add support for Video clock controller on SA8775P
-      clk: qcom: Add support for Camera Clock Controller on SA8775P
-      clk: qcom: Add support for Display clock Controllers on SA8775P
-
- .../devicetree/bindings/clock/qcom,gcc-sm8450.yaml |    4 +-
- .../bindings/clock/qcom,ipq5332-gcc.yaml           |   41 +-
- .../bindings/clock/qcom,qcs8300-gcc.yaml           |   66 +
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
- .../bindings/clock/qcom,sa8775p-camcc.yaml         |   62 +
- .../bindings/clock/qcom,sa8775p-dispcc.yaml        |   79 +
- .../bindings/clock/qcom,sa8775p-videocc.yaml       |   62 +
- .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
- .../bindings/clock/qcom,sm8450-camcc.yaml          |    1 +
- .../bindings/clock/qcom,sm8450-dispcc.yaml         |    1 +
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |    3 +
- .../bindings/clock/qcom,sm8450-videocc.yaml        |    1 +
- .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
- drivers/clk/qcom/Kconfig                           |   88 +-
- drivers/clk/qcom/Makefile                          |    7 +
- drivers/clk/qcom/camcc-sa8775p.c                   | 1868 ++++++++++
- drivers/clk/qcom/camcc-sm8450.c                    |  294 +-
- drivers/clk/qcom/clk-alpha-pll.c                   |   23 +-
- drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
- drivers/clk/qcom/clk-rcg.h                         |    1 +
- drivers/clk/qcom/clk-rcg2.c                        |   48 +-
- drivers/clk/qcom/clk-rpmh.c                        |   13 +
- drivers/clk/qcom/common.h                          |    2 +-
- drivers/clk/qcom/dispcc-sm8450.c                   |   66 +-
- drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
- drivers/clk/qcom/dispcc0-sa8775p.c                 | 1481 ++++++++
- drivers/clk/qcom/dispcc1-sa8775p.c                 | 1481 ++++++++
- drivers/clk/qcom/gcc-ipq5332.c                     |  382 +-
- drivers/clk/qcom/gcc-ipq5424.c                     | 3291 ++++++++++++++++++
- drivers/clk/qcom/gcc-ipq9574.c                     |  328 +-
- drivers/clk/qcom/gcc-qcs404.c                      |    1 +
- drivers/clk/qcom/gcc-qcs8300.c                     | 3640 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sar2130p.c                    | 2366 +++++++++++++
- drivers/clk/qcom/gcc-sm8450.c                      |  181 +-
- drivers/clk/qcom/gpucc-sar2130p.c                  |  502 +++
- drivers/clk/qcom/gpucc-sm8450.c                    |   50 +-
- drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
- drivers/clk/qcom/videocc-sa8775p.c                 |  576 ++++
- drivers/clk/qcom/videocc-sm8450.c                  |   48 +-
- include/dt-bindings/clock/qcom,gcc-sm8450.h        |    3 +
- include/dt-bindings/clock/qcom,ipq5332-gcc.h       |   20 -
- include/dt-bindings/clock/qcom,ipq5424-gcc.h       |  156 +
- include/dt-bindings/clock/qcom,ipq9574-gcc.h       |   18 -
- include/dt-bindings/clock/qcom,qcs8300-gcc.h       |  234 ++
- include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  108 +
- include/dt-bindings/clock/qcom,sa8775p-dispcc.h    |   87 +
- include/dt-bindings/clock/qcom,sa8775p-videocc.h   |   47 +
- include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  185 +
- include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
- include/dt-bindings/reset/qcom,ipq5424-gcc.h       |  310 ++
- include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
- 52 files changed, 17573 insertions(+), 804 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,qcs8300-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sar2130p-gcc.yaml
- create mode 100644 drivers/clk/qcom/camcc-sa8775p.c
- create mode 100644 drivers/clk/qcom/dispcc0-sa8775p.c
- create mode 100644 drivers/clk/qcom/dispcc1-sa8775p.c
- create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
- create mode 100644 drivers/clk/qcom/gcc-qcs8300.c
- create mode 100644 drivers/clk/qcom/gcc-sar2130p.c
- create mode 100644 drivers/clk/qcom/gpucc-sar2130p.c
- create mode 100644 drivers/clk/qcom/videocc-sa8775p.c
- create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,qcs8300-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sa8775p-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sa8775p-dispcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sa8775p-videocc.h
- create mode 100644 include/dt-bindings/clock/qcom,sar2130p-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sar2130p-gpucc.h
- create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
- create mode 100644 include/dt-bindings/reset/qcom,sar2130p-gpucc.h
+> Would you mind keeping Miquèl and me in Cc in following discussions
+> about the imx8mp video clocks? We are also facing this topic and we are
+> happy to contribute.
+Sure
