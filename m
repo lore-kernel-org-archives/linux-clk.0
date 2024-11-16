@@ -1,93 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD6020DF4;
-	Sat, 16 Nov 2024 08:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E9519343E;
+	Sat, 16 Nov 2024 10:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731745181; cv=none; b=ozZUCKmgcUrtaU1bbbK3/7v+/ogjxOaMx60V+EeRJazwoREEg2fjPJBbSs5JVzHjtce+xiSFzzTfUaMwAClZ9qZQpssIz+HkbVdOEMowsfPS+hJZDVdzATSYdWjGnWDof+qu28QhDxpw6oxVNbW/6E6Y6rdIrvK9Lap598WX1yQ=
+	t=1731754665; cv=none; b=kiCTURDsu6mteFP5l+foUo8/NYaiVQj2GvbEUKqKaM1RQK1C2ikc3u9LODbyaFj+W8r1PPoxs5VmDyGoPPPwEzA9ug7CEqU6tWwq8tUrTFlP+e16EtQg7qYAgfFlQ3Foik+jneZHFiQOknA/g4YwkxjQl3Y6Q1jNDuxVTqLF6LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731745181; c=relaxed/simple;
-	bh=5ckEAFt3DCXgUGzrfG8vGUMcL5UShRW6eE3OUEf8DWo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q6I4+I6EWstrsdMNVHid3xnmNdehyIwGgdjhRk7IeBgUdFgVsdeaVOlDW5pI7ntN2ktzk1+uMDipeFXxx1ja13bXyFOzE8yDhg2eAWvNRg6zh3y60Gm60avNaUSR2BJV4Mnpu3T10wd443chq6cesNpJ4sjBjugZrqmP/D9cSa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHDw2jUn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731754665; c=relaxed/simple;
+	bh=eQb9wF7oznZn0WEVMLZdiD0aGrnPGx+MTcEP57njRgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BPeXtAurHiftEM2Sdqq5MAi52LGc3HF5Wz5qnswkTQOO4VXz/HFK6UJPn/517ZfpD89opfMLJX46CQ9J8N6QUoa9JucTOwLJH9edQ8NG6gLra+QCUFFA6gHpicx8ate17WJy5vPXvQX6m0maP+tTdzI8RpDFxam/fIVYpiukF00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYB7etzL; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHDw2jUn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 711AAC4CEC3;
-	Sat, 16 Nov 2024 08:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731745180;
-	bh=5ckEAFt3DCXgUGzrfG8vGUMcL5UShRW6eE3OUEf8DWo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PHDw2jUn3ctkoH1Bf8Glb8QZo2OPAuZJaGTG7vPfibtyxjLOQiCuVCsGyzsPwbOX6
-	 XB6d99IK7HwSlgSHOwTylt7T+sI6dTABaHdgo19bW7Wq5kGcLGwBdSelmGHkxS6KkI
-	 WiDncig5kE5mXrxpaT+V2Cxbx3RQdgmWOVx0r5se2XMsqkrp9QODGvwQWtBPzqzrfM
-	 4GtSHbZ4XK2HY7qCBXCh17Bf57Uz53TMWL7zjiN9yCe3KKwzxZrroWjO8n6PmNfQdI
-	 xeZAg26j8FtuIB/x2xDJTXqa6h/vl4Fq0wLopnpw/Hh09kUiBFnjaXZ59daii1SJuk
-	 r8wLNAvQl1oWg==
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-Date: Sat, 16 Nov 2024 09:18:27 +0100
-Subject: [PATCH v3 6/6] PCI: mediatek-gen3: rely on msleep() in
- mtk_pcie_en7581_power_up()
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYB7etzL"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so21764245e9.3;
+        Sat, 16 Nov 2024 02:57:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731754662; x=1732359462; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=goImJceAXEwHpBa6B6ghd+sdLyfuey1E4bvkcllMT6A=;
+        b=eYB7etzLzLLa/jENfc8yI5/jtyvEIwjjVdhAaD2C6o4YaJLyVGEO/LcYTX9bTIb+Di
+         eyJ+csD/Dssk/q6pYo17rrjKO4SpoLIvAQqbfNmOeYHW1jrYHqcachuFtgLvjRyaPHdu
+         nCHrdphG35nTV4lzzIHOVsfCnxGrgimQVtm2wq9OaGE0kRWyOc/67tHG2YPIlQrfw6Dx
+         QjqHJJY42sD4OrO2N4H7sr0tqfw44R9/LXQOVqxv+6WnMtgSnXxzsVH4DeM2X8iHM5o2
+         Jv5sP4wUPxJpbCjNm/h8UEVj/OskEzeAb/f3/mSBCyv0VrGKBSqjBJCjPfi3jvBtLekT
+         aI4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731754662; x=1732359462;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=goImJceAXEwHpBa6B6ghd+sdLyfuey1E4bvkcllMT6A=;
+        b=hbn13q3YcBxgdNlMwc1B220KfU7bpH8HTnJKVSAUNy4shLewgmGIk7Cw/AhJU1KaEC
+         pDAEREdCDOz78xT1wFnjKey3ouPMZ9+yLwznLf5vfBDCgCIEVPK9rqbrMFupOEBzJyK9
+         qyAZL872tsS9X8N6FBxHDavAz0uDY7TZrGOBfE8FyE6cPJn5NQ/KKO9zmmj9Gz7AV1x0
+         sMwkrWJk1Y3+u1abG1LqI+bI5spzpg87OjuDZog7E4/MyffgYm7RIe0qxtvYt0k5PswE
+         YM5ctWZYxj5ejhNqN0I7SVQIpYtfVddehmXXuOQO8hf6B+sMDM7DJ47+oFir8JwJ7gHT
+         NqRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYlv72LyprBxxC9dZ38rEIz+cNI0PaAq4g0rGvyCt/WJihj7U7zPNaYW4XAgpUnPH1aZkY/vw6bkc=@vger.kernel.org, AJvYcCXMDaVNq/ywL3QZyOh9HSyg3eftZ61FHZnft1aGJ+JLtwgHoBoZTXdlUfcZegBSk9NdFxKuX6yw5NFORj+U@vger.kernel.org, AJvYcCXUEmIMTe7ylknwHYsMd3NNq90agC/Rw8rE9toy8uZdjpCFaKOH6dHShW+ZYFKIKrQcwlZWCtUe@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB0YEu1JSlUsut2Nu373eTaysz+MN11bvc0w5xfRp8Rd1H257u
+	UnBkF75HbScixiAUDooYXl6ZqO4OPMSBRm7MH1fT3VhPwmQiTlINa80EZQ==
+X-Google-Smtp-Source: AGHT+IEId6zSIFqCE8N53mVdYJ0fjpuVXnudlSr0iOmtwTmdqhLz3XGrAeBVhVV8RSj1oCQVzHEe2A==
+X-Received: by 2002:a05:6000:18ab:b0:37c:cc4b:d1ea with SMTP id ffacd0b85a97d-38225aa6573mr4908953f8f.53.1731754661934;
+        Sat, 16 Nov 2024 02:57:41 -0800 (PST)
+Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382377822ffsm1302814f8f.82.2024.11.16.02.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 02:57:41 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: en7523: Fix wrong BUS clock for EN7581
+Date: Sat, 16 Nov 2024 11:56:53 +0100
+Message-ID: <20241116105710.19748-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241116-pcie-en7581-fixes-v3-6-f7add3afc27e@kernel.org>
-References: <20241116-pcie-en7581-fixes-v3-0-f7add3afc27e@kernel.org>
-In-Reply-To: <20241116-pcie-en7581-fixes-v3-0-f7add3afc27e@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>, 
- Jianjun Wang <jianjun.wang@mediatek.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Lorenzo Bianconi <lorenzo@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Since mtk_pcie_en7581_power_up() runs in non-atomic context, rely on
-msleep() routine instead of mdelay().
+The Documentation for EN7581 had a typo and still referenced the EN7523
+BUS base source frequency. This was in conflict with a different page in
+the Documentration that state that the BUS runs at 300MHz (600MHz source
+with divisor set to 2) and the actual watchdog that tick at half the BUS
+clock (150MHz). This was verified with the watchdog by timing the
+seconds that the system takes to reboot (due too watchdog) and by
+operating on different values of the BUS divisor.
 
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+The correct values for source of BUS clock are 600MHz and 540MHz.
+
+This was also confirmed by Airoha.
+
+Cc: stable@vger.kernel.org
+Fixes: 66bc47326ce2 ("clk: en7523: Add EN7581 support")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/pci/controller/pcie-mediatek-gen3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-en7523.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index 795f134e1970c504e8d9588c09a9c3ff51e5397e..aaec0cb6cc1c016d049e8a88148870de560b9ce2 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -926,7 +926,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
- 	 * Wait for the time needed to complete the bulk assert in
- 	 * mtk_pcie_setup for EN7581 SoC.
- 	 */
--	mdelay(PCIE_EN7581_RESET_TIME_MS);
-+	msleep(PCIE_EN7581_RESET_TIME_MS);
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index e52c5460e927..239cb04d9ae3 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -87,6 +87,7 @@ static const u32 slic_base[] = { 100000000, 3125000 };
+ static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
+ /* EN7581 */
+ static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 };
++static const u32 bus7581_base[] = { 600000000, 540000000 };
+ static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
+ static const u32 crypto_base[] = { 540000000, 480000000 };
  
- 	/*
- 	 * Unlike the MediaTek controllers, the Airoha EN7581 requires PHY
-@@ -954,7 +954,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
- 	 * Wait for the time needed to complete the bulk de-assert above.
- 	 * This time is specific for EN7581 SoC.
- 	 */
--	mdelay(PCIE_EN7581_RESET_TIME_MS);
-+	msleep(PCIE_EN7581_RESET_TIME_MS);
+@@ -222,8 +223,8 @@ static const struct en_clk_desc en7581_base_clks[] = {
+ 		.base_reg = REG_BUS_CLK_DIV_SEL,
+ 		.base_bits = 1,
+ 		.base_shift = 8,
+-		.base_values = bus_base,
+-		.n_base_values = ARRAY_SIZE(bus_base),
++		.base_values = bus7581_base,
++		.n_base_values = ARRAY_SIZE(bus7581_base),
  
- 	/* MAC power on and enable transaction layer clocks */
- 	reset_control_deassert(pcie->mac_reset);
-
+ 		.div_bits = 3,
+ 		.div_shift = 0,
 -- 
-2.47.0
+2.45.2
 
