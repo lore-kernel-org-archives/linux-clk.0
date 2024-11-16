@@ -1,96 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47223190471;
-	Fri, 15 Nov 2024 23:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A942520DF4;
+	Sat, 16 Nov 2024 08:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731711639; cv=none; b=OoKRSOWikPzNQwgFPM5bUN0XJj1zI3MvEYD+jWc0MYHX4nT0vIgQ9THTrouEM8OA9jud6mykTIYeayjhoFBGeFdImQESS5TzBLuqOD49EGztWU93RatYDzfTyLmwKPU/tiSG9ah6G0uPqGp9UE2OF8rHCTfwxN4N7wkZyx/O+uA=
+	t=1731745153; cv=none; b=uG6Gh6+czUIytIGREvUKkXMJPnCFK42jwYAy0W8ue+c5aMup+sG29WkeSa0xppAQ5YVjZFFi6KK4K5EqCcn6YvNDkXjiZ5srvbDqxXVDzmCnij6ftGlHZHHhoc0pdk63hdnTrTDVCHFkowuhGwpMzQIUtPynxyrOR6QIUyPgTkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731711639; c=relaxed/simple;
-	bh=QjYUCesSzmPUEfzbC9zPe2WGXqZbFeekhkm5jj0rv0Q=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=s0F/6Mjbg3gwEyBBsPUNHDttQYPmFVFqa/40JwnoiRmo3mBc/NB97/dp9OljD4DymY0yuqUDCxAovfACjL3lRn8RrS5/a0fTZsEf7b32pFydejkZg+jhPo0fNsLGl0BMD3X9ff0z1WbME1dr82yFfEv5w4+gFyMB7TeOodm608o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfNIsmwB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731745153; c=relaxed/simple;
+	bh=ZPcVkadjDBIH9KyjVVtehzPEyudewRBoJZnsUiPtHcs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mg2TpPsmLB/S+iAIXBQugV2ogrT2jWDu7k+uDEjrtavBimiSO3PgWAEENqmkSc3Yf0V+8DDMcm1B0m0zCUoyJUfyNplsKkhy1cvV41WKCA0mC+XxGpkP6SIZvoKBIjA70KlMEBx88lkKIxxX1U14n0NkEveOhtpQiRzzee4Xoc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1ukALJL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfNIsmwB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA9D1C4CECF;
-	Fri, 15 Nov 2024 23:00:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1ukALJL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BBA0C4CEC3;
+	Sat, 16 Nov 2024 08:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731711637;
-	bh=QjYUCesSzmPUEfzbC9zPe2WGXqZbFeekhkm5jj0rv0Q=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=LfNIsmwBaETXBKpVfELWkaIeOXpsYlX4NcQGhoVkzjv9fPfycLfJ4QTq+dZnZyGI4
-	 XfEdOZEf6pOERnUloDpfZFewiiojUBVeaYjk4JdD9hcSHcp5NfJEiO8efkka4cshSP
-	 dAQ0EDDNG3DYfF2XqRfrmhKCJkFTk/q0otAZDR7phnkZHU/yIeZXI3/jwR4/uq7uxG
-	 Xp03oVKuJYLxUYvFyUbcjDjRxvU0nMCm4KYUbxKeC8gxT/npCd3SFsDpAFq1Uo9qGJ
-	 c4vg4T8KHpqCm2b/fzR+iYTZOGsVlY6Ec0pQQAwav8TFqFdceK3Q/fVE0bKC5RAMWi
-	 7WptndJJWugjQ==
-Message-ID: <8366cb0ba95b8b7d8608657e977614aa.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1731745153;
+	bh=ZPcVkadjDBIH9KyjVVtehzPEyudewRBoJZnsUiPtHcs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=l1ukALJLq9djPcjX4RZX6DMrZfpGgYA09IdhhK6+OGzRNAWhBAYxuUwR8TkLIWtFH
+	 WrcgAkmJjiUqu3r1inlGlPL3/7NlwBASO3o+yn/e2lsLIawTCLuwQKfXZvyj0e7WM5
+	 3K57zhPE7Q1ILvzovVtOpgja7vLQE09/xfq/cIzkk+MQ+q9DQCrgDswoCqOGfXTPp3
+	 MUkrXzCIUfJZXl6dQxjzNazcDuhZCe9lEGc0JN6vaMqx0r1MkXp8AL77GXJUchvN5s
+	 nFPnp2wwKEvo7BtDIASih/0/TdE9mtX4C+z1gaNT/iY4JHUjUnB/TE2/q2EN/LgCO2
+	 4Lzqrl6Ovd+4Q==
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: [PATCH v3 0/6] PCI: mediatek-gen3: mtk_pcie_en7581_power_up() code
+ refactoring
+Date: Sat, 16 Nov 2024 09:18:21 +0100
+Message-Id: <20241116-pcie-en7581-fixes-v3-0-f7add3afc27e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZzcxIYKcZ-z6ubrZ@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com> <914978925d34cfb5bee10fe92603f98763af48b0.1730123575.git.andrea.porta@suse.com> <cxwzmlzafgdu2uarcx7mdv4p32zig7efatcg4dzmctho6mvykl@dgwvf3ltcjmo> <ZyNK0RxJKdNCV11N@apocalypse> <ZzcxIYKcZ-z6ubrZ@apocalypse>
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: Add RaspberryPi RP1 clock bindings
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
-To: Andrea della Porta <andrea.porta@suse.com>
-Date: Fri, 15 Nov 2024 15:00:35 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE1VOGcC/33NQQ7CIBAF0KuYWYuBoUhx5T2MC0KHlmhoA4Zom
+ t5d2pUmxuX/k/9mhkwpUIbTboZEJeQwxhrkfgdusLEnFrqaATk2QnDNJheIUdSqFcyHJ2WG5qi
+ 48h1KJaHupkTboc4u15qHkB9jem0viljbf1oRjDPruWs1SpROn2+UIt0PY+ph5Qp+EuYXgZXgZ
+ KVtrDem8V/Esixv6F0A+PYAAAA=
+X-Change-ID: 20241107-pcie-en7581-fixes-296505fd2353
+To: Ryder Lee <ryder.lee@mediatek.com>, 
+ Jianjun Wang <jianjun.wang@mediatek.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ Lorenzo Bianconi <lorenzo@kernel.org>
+X-Mailer: b4 0.14.2
 
-Quoting Andrea della Porta (2024-11-15 03:31:45)
-> On 10:16 Thu 31 Oct     , Andrea della Porta wrote:
-> > On 08:23 Tue 29 Oct     , Krzysztof Kozlowski wrote:
-> > > > +  '#clock-cells':
-> > > > +    description:
-> > > > +      The index in the assigned-clocks is mapped to the output clo=
-ck as per
-> > > > +      definitions in include/dt-bindings/clock/raspberrypi,rp1-clo=
-cks.h.
-> > >=20
-> > > You still describe how current driver matches assigned-clocks to your
-> > > output clocks. That's not the property of clock-cells and that's not =
-how
-> > > assigned-clocks work.
-> >=20
-> > This description is taken by another upstream binding, please see
-> > Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-> >=20
-> > Its purpose is to let the user know how clock-cell number specified
-> > in assigned-clocks is mapped to the clock provided by this generator.
-> > Since some of these clocks are shared among peripherals, their frequency
-> > cannot be set by consumers, so it's the provider itself (i.e. the clock
-> > device described with this binding) that should take care of them.
-> > The renesas example has assigned-clocks specified though, please see be=
-low.
-> >=20
-> > >=20
-> > > There are no assigned clocks in your DTS, so this is really irrelevant
-> > > (or not correct, choose).
-> >=20
-> > In the first revision of this patchset (please see [1] and following me=
-ssages)
-> > I had the assigned-clocks setup in the example while trying to explain =
-their
-> > purpose, but Conor said those didn't seem to be relevant, hence I dropp=
-ed them.
-> > Maybe I had to be more incisive on that.
-> > So, I'd be inclined to retain the description as it is and reintroduce =
-some
-> > assigned-clocks in the example as in the renesas one, would it be ok fo=
-r you?
->=20
-> Since I'm on the verge of producing a new patchset revision, may I kindly=
- ask
-> some comments on this? Is it ok for you?
->=20
+Minor fixes and code refactoring in mtk_pcie_en7581_power_up() routine
 
-Everyone knows how #clock-cells works. It shouldn't need a description
-about how it works. It should just point at the header file with the
-numbers if anything.
+---
+Changes in v3:
+- add trivial patches 5/6 and 6/6 to the series
+- rename err_clk_init in err_clk_prepare_enable
+- fix commit log for patches 2/6 and 3/6
+- Link to v2: https://lore.kernel.org/r/20241109-pcie-en7581-fixes-v2-0-0ea3a4af994f@kernel.org
+
+Changes in v2:
+- added trivial patch 4/4
+- improved commit logs and comments
+- introduced PCIE_MTK_RESET_TIME_US macro
+- Link to v1: https://lore.kernel.org/r/20241107-pcie-en7581-fixes-v1-0-af0c872323c7@kernel.org
+
+---
+Lorenzo Bianconi (6):
+      PCI: mediatek-gen3: Add missing reset_control_deassert() for mac_rst in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: rely on clk_bulk_prepare_enable() in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: Move reset/assert callbacks in .power_up()
+      PCI: mediatek-gen3: Add comment about initialization order in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: Add reset delay in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: rely on msleep() in mtk_pcie_en7581_power_up()
+
+ drivers/clk/clk-en7523.c                    |  1 -
+ drivers/pci/controller/pcie-mediatek-gen3.c | 60 +++++++++++++++++++----------
+ 2 files changed, 39 insertions(+), 22 deletions(-)
+---
+base-commit: ac9626f643ea9cde795811d924388fa49f2c4c0c
+change-id: 20241107-pcie-en7581-fixes-296505fd2353
+
+Best regards,
+-- 
+Lorenzo Bianconi <lorenzo@kernel.org>
+
