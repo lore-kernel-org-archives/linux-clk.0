@@ -1,59 +1,41 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA8F192B79
-	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 13:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D5A1A08B5;
+	Mon, 18 Nov 2024 14:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937639; cv=none; b=Mi7E8zpNiMuLHCsvZbRQj4sKqUmOZ9uVsI1gngvMrOA35vOAhl4GgY6Fkv+qsQ5Dt6i1nZ/luF3OyX0Y8SGr7Tz5d0+jAawKAdCWAW9ittq4JK4EJBZU6LOVoIMtd/8k6rUFayU2Y1AiWv1i/F0eB32bUF1xRp5BmALqt5tYVzg=
+	t=1731940119; cv=none; b=a35A/l6Z/bq7AeVy9S6HpNZPDEhmBN0f/sAS4PjWH6nHOkB9KYu9PBgxGIIAsfVRiZzaqO5BASlEzYAtwrklFpK/bnZNuHuRgeiyDseLUZ0u1xdZCzVn86qe5WF22Z5ivlmR5/j6wgFNiBUl5p4nw0vEbQJzsXj/sVbt7bypRUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937639; c=relaxed/simple;
-	bh=pJxl4rQZejyfJm+QNm/dBeQozxmiMKPzYEx1qY12VVQ=;
+	s=arc-20240116; t=1731940119; c=relaxed/simple;
+	bh=eeRE83745VD8rPDBtoV0l/h7YftdStgBIrua0HDhRJY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vjt/aHJ2ia2+CVHX+eTmRn2IplSrtNz30FIZxKMWVtAMmj52VQy0ITVwYngo1/96tdIhSKp2jUTXkA9FSqZADv3LSUfN2yWoqRuhjlFjygapTI6VEk7VLYCK/gqZqx0hqHaHZZcfp63MjlMu3YSVG3Q7jD268slk5Rfaf4P1JOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDHEkSQq; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=SdDGnoA0SmGMm7J4+xUs7vK7y+RpDc7VpbcKzNjtx1yO4424dvaT7d18Ookn+UaqP8ftQL+dZO3uqaHuby5b2b1/05CD4HobbfMvUQXJF60vZkRiQsKuXS+WM4I2eU5NqhS/JL1zj1f9N0fUElSk1Atn6V2cnChoQBJm0KsHbYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=c6Az+eMu; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDHEkSQq"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431ac30d379so36859735e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 05:47:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731937636; x=1732542436; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s8NgQOCCqPqf7FHd7BM4LXvTtZURwEU3Cj8EytucMjA=;
-        b=fDHEkSQqen5NcYUF5LL0TKURcC/drB2TuJlKJg5wMhCqe/ETcTc4NSA+NC96J3h9xJ
-         A5y16q1MAnXTnGRGaDeDB+BdEWBrpvtZkrR/Il9WbJGOQXa/BrWL3obbRAraFlP1vrJ9
-         N03K5G2Cy+BgdVevNEfQY8oXGSj7w1/+0cFBvNuz5yVANwSIgr5Si1v872nD8pCojKFT
-         nPpFVzykUOmtIizIQUMee3+ODvQA36ADxpBtwU2/u9bSwkI8dMZXj+r499zIJccpjisN
-         MeriaipxNx+4ey20pXv6roAt+H7fogpb0pTEtOrXWY9Ay9zh7aCRkEE4jd169+zgFxNI
-         mO+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731937636; x=1732542436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s8NgQOCCqPqf7FHd7BM4LXvTtZURwEU3Cj8EytucMjA=;
-        b=VtbD/1RMhFJTQmW/vykfFMesCVARlZX5DE1hx09wA5c1UxK20XxD7EeHvQ6Rwn0YDC
-         IVPfoDCkDQI2q/zyU6K18TM/3hOeFiK3B6Sp+pX3ZgGpQNfVGnuRYls5enE1HgPjIhYd
-         GKUMAKPZ/V6oumxmcPOe25zYpkQQJri+9d684pDKX+Z9xqEe+5poZuHRVcSpGA/N6E1q
-         /Sr8LD0gM/Yqi0rt2YxNXPEgFcZJ3VWcyiw4+LsnVfr4RadFrznTBNOVj8dupbEu0e6+
-         eleUf+dfKnqS3Mk1WczYAgCepZRDTjfr0ja5z+AopzkYHkHOU1xHImbjfeNXCvig2o91
-         ugoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0l0QX6qh8pUKecOox4X96MNHgLz0+AeK8AbqtbX1BjONTkL0BkJj7NSPB7E79PQ3xvoUEx9N6IvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweJu9sKwlGm/i1rDlwrBrmbhmkE4FJ1v7Byr788+NcezMsAEM0
-	R+3xqx8+snrlWIQN5YhFp26xSruYLNkAX9Oh6JuZmPL64jMdv85jUi4YOucAeac=
-X-Google-Smtp-Source: AGHT+IGkNPMfEbTsWdumFk18TzboywRqef3yKH0bCK2BXh5ptB4CLaWCTXz64qGRHLnn74CknlpZng==
-X-Received: by 2002:a05:600c:1387:b0:42c:b45d:4a7b with SMTP id 5b1f17b1804b1-432df78a971mr103770975e9.25.1731937636216;
-        Mon, 18 Nov 2024 05:47:16 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80ad9sm154398355e9.25.2024.11.18.05.47.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 05:47:15 -0800 (PST)
-Message-ID: <d80e23bf-3e13-43af-9bc8-fa6bd4a86248@linaro.org>
-Date: Mon, 18 Nov 2024 13:47:15 +0000
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="c6Az+eMu"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XVCoynHZIH/9Waxkwf4j85iyaFmxEKNj6ZCvqwFYLbs=; b=c6Az+eMulVAWd9WxxEK7drmtW2
+	xzMfqvomC0zfJEVQPA6AeX4DQ+5ti4jgHsxa85bHd1KDRyjrfc67Pu1QBGwJIj03Y+3ujfYj+qN1w
+	If5wbvpgYlL2gd7cM4OAqio6co8L+pwwhEsxVq9U3MuXM4UPu/Fu1z/re/+ObgMmQKaMDgIZsZyHI
+	Dde/HlkQkieDAOx3KVBOF8IuV3CDb0Mxxm+Y8EtFz6m3e2+rAWrBeVplRplPl758tM/7Uyw3A6k3s
+	iPywKfSAaUcpbWgdg4qqC7UqhodhQRsdlnDZ/ScGce4ulIFMVc3QRq8y9uCkLhZNOUNOlqo0h6Dzi
+	1pcu7S7A==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:50026 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1tD2ke-0008AE-24;
+	Mon, 18 Nov 2024 09:28:26 -0500
+Message-ID: <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
+Date: Mon, 18 Nov 2024 08:28:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,43 +43,139 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
- <atg6yw64f4aojcbjyarljb57cejqk56g2qnddrloa3smmupm6d@fk3oyiycnuco>
- <45c0950a-0cde-4bb9-9e3d-7f25b8a3da31@linaro.org>
- <5lg7rsndxrcogrwywlciek4fdfejnpmvuibpwhh33whg2ebtlt@jli5g3qliota>
+Subject: Re: drivers/clk/davinci/psc.c:281:10: error: incompatible integer to
+ pointer conversion returning 'int' from a function with result type 'struct
+ davinci_lpsc_clk *' [-Wint-conversion]
+To: Stephen Boyd <sboyd@kernel.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ clang-built-linux <llvm@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ Linux Regressions <regressions@lists.linux.dev>
+Cc: hanchunchao@inspur.com, Michael Turquette <mturquette@baylibre.com>,
+ Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <5lg7rsndxrcogrwywlciek4fdfejnpmvuibpwhh33whg2ebtlt@jli5g3qliota>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 18/11/2024 13:39, Dmitry Baryshkov wrote:
->> It brings up every PM domain in the list
->>
->> clock_cc {
->>      power-domains = <somedomain0>, <another-domain>;
->> };
->>
->> No different to what the core code does for a single domain - except we can
->> actually turn the PDs off with the pm_runtime_put().
-> I see. I missed the device link part of the dev_pm_domain_attach_list().
+On 11/18/24 7:10 AM, Naresh Kamboju wrote:
+> The davinci_all_defconfig and multi_v5_defconfig builds failed with clang-19 and
+> clang-nightly on the Linux next-20241115 tag for the arm architectures.
+> Same build pass with gcc-13.
 > 
-> Just to check, have you checked that this provides no splats in
-> lockdep-enabled kernels?
+> First seen on Linux next-20241118 tag.
+>   Good: next-20241115
+>   Bad:  next-20241118
+> 
+> arm
+> * arm, build
+>   - clang-19-davinci_all_defconfig
+>   - clang-19-multi_v5_defconfig
+>   - clang-19-multi_v5_defconfig-65236a87
+>   - clang-nightly-davinci_all_defconfig
+>   - clang-nightly-multi_v5_defconfig
+>   - clang-nightly-multi_v5_defconfig-65236a87
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Build error:
+> ---------
+> drivers/clk/davinci/psc.c:281:10: error: incompatible integer to
+> pointer conversion returning 'int' from a function with result type
+> 'struct davinci_lpsc_clk *' [-Wint-conversion]
+>   281 |                 return -ENOMEM;
+>       |                        ^~~~~~~
+> 1 error generated.
+> make[6]: *** [scripts/Makefile.build:200: drivers/clk/davinci/psc.o] Error 1
+> 
+> Build image:
+> -----------
+> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/history/
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/details/
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/log
+> 
+> Steps to reproduce:
+> ------------
+> - # tuxmake --runtime podman --target-arch arm --toolchain clang-19
+> --kconfig davinci_all_defconfig LLVM=1 LLVM_IAS=1
+> 
+> metadata:
+> ----
+>   git describe: next-20241118
+>   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   git sha: ae58226b89ac0cffa05ba7357733776542e40216
+>   kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/config
+>   build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/
+>   toolchain: clang-19
+>   config: davinci_all_defconfig and multi_v5_defconfig
+>   arch: arm
+> 
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
-No, I haven't.
+Hi Stephen,
 
-I'll have a look at that now. I did test on sc8280xp though.
+This is caused by [1]. I looked at it again and the patch is wrong.
+Can you drop it from your tree or should we send another patch to
+fix the bad patch?
 
-I'll get back to you on lockdep.
-
----
-bod
+[1]: https://lore.kernel.org/linux-clk/20241114091422.75412-1-hanchunchao@inspur.com/
