@@ -1,124 +1,125 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E6519AA56
-	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 13:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18723192B79
+	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 13:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935453; cv=none; b=hXyAmn18wykWdpY222OxqOAjlf41X/qKh+wCsUZWsDROc8U2wsNB7A15DHDzAjK9zBgdJLAS0SsBQ5JGJVd5rhT+fwG7013SovUwOIuNpag1zcbhYcBH4Qpd5eDvTOzzcSpqMLIu30O5WoGtv/S1qIYL39ZJ09oEdD0i27jkoc8=
+	t=1731935766; cv=none; b=Vb29Z/ybAnnK8hxHjyp/6lfw2PWyeF3kSZ3db+LHJ9gxUdI21vD/QqGszP4N3sKG7L9YHC3IMYGU1veV5JNnaLpU1NM7RTPFTVH9YiO3goqgZQKKEPaIFEte5W06df/FOXxScd6LtmNUqFBynH/X9s4qRU5qJ5TDPpt+ymkVyVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935453; c=relaxed/simple;
-	bh=Op2I8dr35muBs/N0wwVSV8bMfv9/DBnetL23eBdhKSw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kqarYZuMtK1jp5eXx3XMgmn4kO8HBhVULK8aCDwDfYImmoYEXeiQE0anUPdlwRuCR74TTuMuJJZLifwn/6WznabxAYHKK0b03OszQ+eJ5XdiYADMtW+QfrJIVfpLkhmv2mbm1N9iQV71kn4u1bTpkRMUU4Zhi1dwDRRPcl27ayY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ATOqcKMv; arc=none smtp.client-ip=209.85.160.52
+	s=arc-20240116; t=1731935766; c=relaxed/simple;
+	bh=isQfHjNvPZ+RBZD4jB18sz7oOCaJdhHyXcKs6SzwfXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WA41yoXO1EPdWdsKzp+zfN3Z+nECjKE3/19ygJ6jYTpiOzXRyhCS4elvlAHg4LTOBy2/qUm8I/eyQzgpC31a3fzQHNyrNU2QitbYaTjLkjZJqPUGoOrlDkNb7BiTGPYcXirYd//SlnZ+phMZxVwcdUO1I0ksmlco3os9ZsYdDNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CsbhSK0A; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ATOqcKMv"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-29680f21217so532263fac.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 05:10:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CsbhSK0A"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53d9ff92ee9so4920808e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 05:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731935451; x=1732540251; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YTw7RWvWoc0SMzgWBayRA2wygazsMYV1x3KYiELVVeY=;
-        b=ATOqcKMvMqdBktepLN7IVlyJHmK7HwTYDyqMhtLBSYAcr31JW/WpKyJRR1OJ8d5Poy
-         /HwftnGY7yI0e1Akg8u5pUGxvUEf3z7Nt2cUVWCIWDHaP468FHb4HI1KemUpc+fEXlfQ
-         khM37E5dJqhFM7iBh1tD5wvD9xHV6pGjMVZlwjqajn/mBva9Ywgtg2zRnZI9hWNfgyZH
-         uuoG/A5b9LHbeovtz+ya2U0tZPXiyD0Aw9D5a/Iv2ADFFDof7TJr18XxQraawigKyhXX
-         u3GyE1TH9XtQpCmzYxlAMC1ZDDRUxcPG8wJgDAYYhijQU+8UXtG7yk3WJqHsoZrZpyHe
-         tjAA==
+        d=linaro.org; s=google; t=1731935761; x=1732540561; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kn730F60GJ62g7uE1IWf9DYK/RMYmF9XpOCF21XHVw=;
+        b=CsbhSK0A21Tt4hyctOM3kzhCPgq5GYEVI/h/lF0bDAbvTC04Dvy1aJXg5Xp+ktT5Et
+         Q9bpS7YRZ/hDruQ8iH9fhm/H9zBonCOJUG7+Dr810s+aXy80pJjMoiOecCwl/j7AiVL8
+         vqBQPG3q4lKeiVHJl9+2o2eTG8xdQLUDWLIFE4hI9uMvAa/CMBJ6v5WV0pLrO2+CYFdK
+         IgfnBCpYIajOQXhEYiVviXlUXikh7SK2Cao0sMe08hebcZEv/x+sSdvIFDCSyPTw5Maa
+         bxLmsZ/V0a9dSH4r3E11ptkcsIJaMP+PFpBGizclXtjCL551ht5Fr3X9ZfefXZQV4Uj9
+         pL1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731935451; x=1732540251;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YTw7RWvWoc0SMzgWBayRA2wygazsMYV1x3KYiELVVeY=;
-        b=qjEsRdItVyKYfpM0WEIl48jXShpBlrPeJ3jiUETVZIokA3MQ0E0C0WPnN9pq3mgwFa
-         /AB0p9Xu1dEo4alfylCMUpyCKqMjbhWfgNeyKkjqe+4mbdY6+qW1LjD4rXoQLCblh8kv
-         h+U6C8auRa9HxqShUYEgRF73rccEOpl/kMhVk5t/5EMaxO3aXJEbjDPqDCMhsG9oYJZn
-         P3W6qI31HjXoksdIm2K3/0n5E/bRgDm+4xNWUFBNbfsbby1QPn/1L3RHWr3ayXIVjqWE
-         nc1Fx+oxlRlzBfc/gZc9SSWRzQzGwRbNrTvtBg+jiUQmLTcPLqnsWd/a6ehY0GNhXmIb
-         Igow==
-X-Gm-Message-State: AOJu0YyM8jIV1CuyYG2e6n78o/Wwe51nzuzLWH2E7DPfdgdeOoQ6wf+3
-	AjY9mp6jZzVVsf1Iiw4AubEpR557h4bvfSSp/FMACeeeX69CW2Hek3muu6O273zS8aH8C5oD6ed
-	sebDpK97B+d+mOdzFT0CFWvD/V8FZMI68CEood7esUaXG1c5AxMw=
-X-Google-Smtp-Source: AGHT+IHGcZHpXIet+VQyE38gSaCHSlt7RMcXTgIjtwxRtsxmDxLBiM8FQSw90gh105xogQgSb+fpkFDsIdEuZz4rOJY=
-X-Received: by 2002:a05:6808:2017:b0:3e7:a284:9b13 with SMTP id
- 5614622812f47-3e7bc7d87a8mr10574272b6e.21.1731935450734; Mon, 18 Nov 2024
- 05:10:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731935761; x=1732540561;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5kn730F60GJ62g7uE1IWf9DYK/RMYmF9XpOCF21XHVw=;
+        b=a1IYUS+jHmWoR8DnZseOvMK3gWagdlMYbqtGXYkmQhztzZ2PLMsYGVmDpAOhi72Uva
+         xVJMsARR/AArT5/qz7U6UfwOjcJcoY/8+vtj8q97Xqo7dZ63NnvveSkJTDS+pQGvmC8s
+         GG3btLCDsOk9NRydqDy8Gl7xLOa2RsJMbUp6ER9spEruvRTFOQPPnHzyhOOdGIgtwIbT
+         p+9vcrFYDXDYuIP+iDWp5MWilVHbgbahUfJzyt8sGG05yl3VlTYDIGtoyR/eiNXX/N1R
+         TOa53rwlRRTXJtdlYuBWI+FUyYGaRJYcLj4EFU/P+gwsvJQ4R/y/SThaF2jS8yGHWoqt
+         6esg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZV33S/RNhxS8XNwwQix7bMr7nxViR3ty5a4QholJoepwAwORwsrhcmTRpxi1JYaif7DobuIMI8gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeX0YDgIst7JqCDXECIKJcOLnW2GHahMbFZMDoXczpj1p+ew9n
+	rMo48cGv+jV348ygMtTlFLN8oRszHb1sVl0IUXgqsIMn4gs6ZTrGwzzMycUOLGA=
+X-Google-Smtp-Source: AGHT+IFcO+4bXNWyrTDG1UHUoD/2vsE8HQkLwCjNKCdp11omfGZNuIumNW5L3zMzoTlTQbdUuyGd5g==
+X-Received: by 2002:a05:6512:2823:b0:539:fb49:c47a with SMTP id 2adb3069b0e04-53dab290683mr4631909e87.4.1731935761293;
+        Mon, 18 Nov 2024 05:16:01 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548ba4sm1605270e87.264.2024.11.18.05.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 05:16:00 -0800 (PST)
+Date: Mon, 18 Nov 2024 15:15:57 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: qcom: Add support for multiple power-domains
+ for a clock controller.
+Message-ID: <cl4u42hzdwaj4dt5bponhnadou3uecaodtr7iopfu4vhmvttif@bxxvmwmzu5u2>
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 18 Nov 2024 18:40:38 +0530
-Message-ID: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com>
-Subject: drivers/clk/davinci/psc.c:281:10: error: incompatible integer to
- pointer conversion returning 'int' from a function with result type 'struct
- davinci_lpsc_clk *' [-Wint-conversion]
-To: linux-clk <linux-clk@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: hanchunchao@inspur.com, Stephen Boyd <sboyd@kernel.org>, david@lechnology.com, 
-	Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
 
-The davinci_all_defconfig and multi_v5_defconfig builds failed with clang-19 and
-clang-nightly on the Linux next-20241115 tag for the arm architectures.
-Same build pass with gcc-13.
+On Mon, Nov 18, 2024 at 02:24:31AM +0000, Bryan O'Donoghue wrote:
+> On x1e80100 and it's SKUs the Camera Clock Controller - CAMCC has
+> multiple power-domains which power it. Usually with a single power-domain
+> the core platform code will automatically switch on the singleton
+> power-domain for you. If you have multiple power-domains for a device, in
+> this case the clock controller, you need to switch those power-domains
+> on/off yourself.
 
-First seen on Linux next-20241118 tag.
-  Good: next-20241115
-  Bad:  next-20241118
+I think the series misses the platform-specific part. It is hard to
+understand what kind of power relationship do you need to express. Is it
+actually the whole CC being powered by several domains? Or are some of
+those domains used to power up PLLs? Or as parents to some of GDSCs?
 
-arm
-* arm, build
-  - clang-19-davinci_all_defconfig
-  - clang-19-multi_v5_defconfig
-  - clang-19-multi_v5_defconfig-65236a87
-  - clang-nightly-davinci_all_defconfig
-  - clang-nightly-multi_v5_defconfig
-  - clang-nightly-multi_v5_defconfig-65236a87
+> 
+> The clock controllers can also contain Global Distributed
+> Switch Controllers - GDSCs which themselves can be referenced from dtsi
+> nodes ultimately triggering a gdsc_en() in drivers/clk/qcom/gdsc.c.
+> 
+> As an example:
+> 
+> cci0: cci@ac4a000 {
+> 	power-domains = <&camcc TITAN_TOP_GDSC>;
+> };
+> 
+> This series adds the support to attach a power-domain list to the
+> clock-controllers and the GDSCs those controllers provide so that in the
+> case of the above example gdsc_toggle_logic() will trigger the power-domain
+> list with pm_runtime_resume_and_get() and pm_runtime_put_sync()
+> respectively.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+> Bryan O'Donoghue (2):
+>       clk: qcom: common: Add support for power-domain attachment
+>       clk: qcom: gdsc: Add pm_runtime hooks
+> 
+>  drivers/clk/qcom/common.c | 24 ++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.c   | 26 ++++++++++++++++++--------
+>  drivers/clk/qcom/gdsc.h   |  2 ++
+>  3 files changed, 44 insertions(+), 8 deletions(-)
+> ---
+> base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+> change-id: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+> 
+> Best regards,
+> -- 
+> Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Build error:
----------
-drivers/clk/davinci/psc.c:281:10: error: incompatible integer to
-pointer conversion returning 'int' from a function with result type
-'struct davinci_lpsc_clk *' [-Wint-conversion]
-  281 |                 return -ENOMEM;
-      |                        ^~~~~~~
-1 error generated.
-make[6]: *** [scripts/Makefile.build:200: drivers/clk/davinci/psc.o] Error 1
-
-Build image:
------------
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/history/
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/details/
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/log
-
-Steps to reproduce:
-------------
-- # tuxmake --runtime podman --target-arch arm --toolchain clang-19
---kconfig davinci_all_defconfig LLVM=1 LLVM_IAS=1
-
-metadata:
-----
-  git describe: next-20241118
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git sha: ae58226b89ac0cffa05ba7357733776542e40216
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/
-  toolchain: clang-19
-  config: davinci_all_defconfig and multi_v5_defconfig
-  arch: arm
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+With best wishes
+Dmitry
