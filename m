@@ -1,181 +1,326 @@
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D5A1A08B5;
-	Mon, 18 Nov 2024 14:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C781DFFB;
+	Mon, 18 Nov 2024 15:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731940119; cv=none; b=a35A/l6Z/bq7AeVy9S6HpNZPDEhmBN0f/sAS4PjWH6nHOkB9KYu9PBgxGIIAsfVRiZzaqO5BASlEzYAtwrklFpK/bnZNuHuRgeiyDseLUZ0u1xdZCzVn86qe5WF22Z5ivlmR5/j6wgFNiBUl5p4nw0vEbQJzsXj/sVbt7bypRUA=
+	t=1731944816; cv=none; b=QM8N7GzwktYMGr4sZrZImLUDK4AcV1Dp4+aTPFVsgt8ZNr7pzmpw7GEBz5sA97hZaBVmYD4nYV//qCpAGgeYsuSrgP41cR5Ob061fknsskir7Uqf+gAtne31qOai+Rlmn4SmXADg3zwa6FIVLS+Q2qD+OzXh4AaJpLfXI2hf3z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731940119; c=relaxed/simple;
-	bh=eeRE83745VD8rPDBtoV0l/h7YftdStgBIrua0HDhRJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SdDGnoA0SmGMm7J4+xUs7vK7y+RpDc7VpbcKzNjtx1yO4424dvaT7d18Ookn+UaqP8ftQL+dZO3uqaHuby5b2b1/05CD4HobbfMvUQXJF60vZkRiQsKuXS+WM4I2eU5NqhS/JL1zj1f9N0fUElSk1Atn6V2cnChoQBJm0KsHbYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=c6Az+eMu; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+	s=arc-20240116; t=1731944816; c=relaxed/simple;
+	bh=WNrW3/tULqjb523vUE87ymlM/sk1V7Tb/5c1zihqYyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pvUjouTGW7b1o3vvAOUWvg1yigSq2LG+4z1ZWyaGeGDwParrpHqqbRSv4CTwlMCddOuwJ0NaS1js0VslyO1/jN2YbChbHyFQqPdtrn/OwvciGUcgRdHyZGR74/k8X4ewjosTLnoprUOX6FYBw8eB2yT2hGRTrEwaiGAP/wxD5rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSjNA0Cm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="c6Az+eMu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XVCoynHZIH/9Waxkwf4j85iyaFmxEKNj6ZCvqwFYLbs=; b=c6Az+eMulVAWd9WxxEK7drmtW2
-	xzMfqvomC0zfJEVQPA6AeX4DQ+5ti4jgHsxa85bHd1KDRyjrfc67Pu1QBGwJIj03Y+3ujfYj+qN1w
-	If5wbvpgYlL2gd7cM4OAqio6co8L+pwwhEsxVq9U3MuXM4UPu/Fu1z/re/+ObgMmQKaMDgIZsZyHI
-	Dde/HlkQkieDAOx3KVBOF8IuV3CDb0Mxxm+Y8EtFz6m3e2+rAWrBeVplRplPl758tM/7Uyw3A6k3s
-	iPywKfSAaUcpbWgdg4qqC7UqhodhQRsdlnDZ/ScGce4ulIFMVc3QRq8y9uCkLhZNOUNOlqo0h6Dzi
-	1pcu7S7A==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:50026 helo=[192.168.0.142])
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <david@lechnology.com>)
-	id 1tD2ke-0008AE-24;
-	Mon, 18 Nov 2024 09:28:26 -0500
-Message-ID: <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
-Date: Mon, 18 Nov 2024 08:28:21 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSjNA0Cm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DF6C4CECC;
+	Mon, 18 Nov 2024 15:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731944815;
+	bh=WNrW3/tULqjb523vUE87ymlM/sk1V7Tb/5c1zihqYyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MSjNA0CmOxIZoRtLJcZ5I7vUdO3vz2wIU4ysjd2XFfrR2YjNGsDwNpnbbj518aWgH
+	 gSL1rEJJOOj+AlnzV2DNLcykNbAochaKGB6OGrpUC5T7aXuynP7si7x4OIbj92Luvk
+	 Xc5eeu1YSZaMbnB4iuSPCHtXkOa/8sdokBKnGtuZLcI0avEzfuZGIxkrCZSTUEzhNU
+	 kLe5/lRuuQbNEHLj+mjjZy+Ja2jAkCRwPRC37ikTtz8uuBfX0bDvzsANSVTjg/r/tU
+	 eNTmLkpLX3CnZad2EebkuKSgYkAObZWRFKgyHuvejhLNhpa030KjM/Ph3nI1ApJxqp
+	 a6WCLedyKIPkw==
+Date: Mon, 18 Nov 2024 16:46:53 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Marek Vasut <marex@denx.de>, dri-devel@lists.freedesktop.org, 
+	Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
+	Isaac Scott <isaac.scott@ideasonboard.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Robert Foss <rfoss@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, imx@lists.linux.dev, 
+	kernel@dh-electronics.com, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+Message-ID: <20241118-sceptical-mastodon-of-pizza-df93de@houat>
+References: <20241008223846.337162-1-marex@denx.de>
+ <dbede671-c97b-4ad7-8a54-f1b381fea082@nxp.com>
+ <00ffd38c-b01a-40cd-9130-19c35a387ca0@denx.de>
+ <819380c3-d13f-4989-b305-388fc60d30e4@nxp.com>
+ <d99e0021-3253-4312-9b50-6031ae0f8d8e@denx.de>
+ <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
+ <20241022-quirky-ubiquitous-hamster-11dca5@houat>
+ <47d92ae0-c71a-4c18-9ad7-432c0f70a31f@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drivers/clk/davinci/psc.c:281:10: error: incompatible integer to
- pointer conversion returning 'int' from a function with result type 'struct
- davinci_lpsc_clk *' [-Wint-conversion]
-To: Stephen Boyd <sboyd@kernel.org>,
- Naresh Kamboju <naresh.kamboju@linaro.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- clang-built-linux <llvm@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux Regressions <regressions@lists.linux.dev>
-Cc: hanchunchao@inspur.com, Michael Turquette <mturquette@baylibre.com>,
- Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
- Anders Roxell <anders.roxell@linaro.org>
-References: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="daaqffk3kobrz3nx"
+Content-Disposition: inline
+In-Reply-To: <47d92ae0-c71a-4c18-9ad7-432c0f70a31f@nxp.com>
 
-On 11/18/24 7:10 AM, Naresh Kamboju wrote:
-> The davinci_all_defconfig and multi_v5_defconfig builds failed with clang-19 and
-> clang-nightly on the Linux next-20241115 tag for the arm architectures.
-> Same build pass with gcc-13.
-> 
-> First seen on Linux next-20241118 tag.
->   Good: next-20241115
->   Bad:  next-20241118
-> 
-> arm
-> * arm, build
->   - clang-19-davinci_all_defconfig
->   - clang-19-multi_v5_defconfig
->   - clang-19-multi_v5_defconfig-65236a87
->   - clang-nightly-davinci_all_defconfig
->   - clang-nightly-multi_v5_defconfig
->   - clang-nightly-multi_v5_defconfig-65236a87
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Build error:
-> ---------
-> drivers/clk/davinci/psc.c:281:10: error: incompatible integer to
-> pointer conversion returning 'int' from a function with result type
-> 'struct davinci_lpsc_clk *' [-Wint-conversion]
->   281 |                 return -ENOMEM;
->       |                        ^~~~~~~
-> 1 error generated.
-> make[6]: *** [scripts/Makefile.build:200: drivers/clk/davinci/psc.o] Error 1
-> 
-> Build image:
-> -----------
-> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/history/
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/details/
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241118/testrun/25881399/suite/build/test/clang-19-davinci_all_defconfig/log
-> 
-> Steps to reproduce:
-> ------------
-> - # tuxmake --runtime podman --target-arch arm --toolchain clang-19
-> --kconfig davinci_all_defconfig LLVM=1 LLVM_IAS=1
-> 
-> metadata:
-> ----
->   git describe: next-20241118
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   git sha: ae58226b89ac0cffa05ba7357733776542e40216
->   kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/config
->   build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2p15j4StPnjuuRXu3qgndSTbahH/
->   toolchain: clang-19
->   config: davinci_all_defconfig and multi_v5_defconfig
->   arch: arm
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
 
-Hi Stephen,
+--daaqffk3kobrz3nx
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+MIME-Version: 1.0
 
-This is caused by [1]. I looked at it again and the patch is wrong.
-Can you drop it from your tree or should we send another patch to
-fix the bad patch?
+On Thu, Oct 31, 2024 at 10:35:27AM +0800, Liu Ying wrote:
+> Hi Maxime,
+>=20
+> On 10/22/2024, Maxime Ripard wrote:
+> > On Tue, Oct 22, 2024 at 02:13:57PM +0800, Liu Ying wrote:
+> >> On 10/13/2024, Marek Vasut wrote:
+> >>> On 10/11/24 8:18 AM, Liu Ying wrote:
+> >>>> On 10/11/2024, Marek Vasut wrote:
+> >>>>> On 10/10/24 7:22 AM, Liu Ying wrote:
+> >>>>>> On 10/09/2024, Marek Vasut wrote:
+> >>>>>>> The media_ldb_root_clk supply LDB serializer. These clock are usu=
+ally
+> >>>>>>> shared with the LCDIFv3 pixel clock and supplied by the Video PLL=
+ on
+> >>>>>>> i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LC=
+DIFv3
+> >>>>>>> pixel clock. Allow the LDB to reconfigure Video PLL as needed, as=
+ that
+> >>>>>>> results in accurate serializer clock.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Marek Vasut <marex@denx.de>
+> >>>>>>> ---
+> >>>>>>> Cc: Abel Vesa <abelvesa@kernel.org>
+> >>>>>>> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> >>>>>>> Cc: David Airlie <airlied@gmail.com>
+> >>>>>>> Cc: Fabio Estevam <festevam@gmail.com>
+> >>>>>>> Cc: Isaac Scott <isaac.scott@ideasonboard.com>
+> >>>>>>> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> >>>>>>> Cc: Jonas Karlman <jonas@kwiboo.se>
+> >>>>>>> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> >>>>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> >>>>>>> Cc: Maxime Ripard <mripard@kernel.org>
+> >>>>>>> Cc: Michael Turquette <mturquette@baylibre.com>
+> >>>>>>> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> >>>>>>> Cc: Peng Fan <peng.fan@nxp.com>
+> >>>>>>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> >>>>>>> Cc: Robert Foss <rfoss@kernel.org>
+> >>>>>>> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> >>>>>>> Cc: Shawn Guo <shawnguo@kernel.org>
+> >>>>>>> Cc: Simona Vetter <simona@ffwll.ch>
+> >>>>>>> Cc: Stephen Boyd <sboyd@kernel.org>
+> >>>>>>> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> >>>>>>> Cc: dri-devel@lists.freedesktop.org
+> >>>>>>> Cc: imx@lists.linux.dev
+> >>>>>>> Cc: kernel@dh-electronics.com
+> >>>>>>> Cc: linux-arm-kernel@lists.infradead.org
+> >>>>>>> Cc: linux-clk@vger.kernel.org
+> >>>>>>> ---
+> >>>>>>> =A0=A0 drivers/clk/imx/clk-imx8mp.c | 2 +-
+> >>>>>>> =A0=A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-i=
+mx8mp.c
+> >>>>>>> index 516dbd170c8a3..2e61d340b8ab7 100644
+> >>>>>>> --- a/drivers/clk/imx/clk-imx8mp.c
+> >>>>>>> +++ b/drivers/clk/imx/clk-imx8mp.c
+> >>>>>>> @@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platfor=
+m_device *pdev)
+> >>>>>>> =A0=A0=A0=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] =3D imx8m_=
+clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, cc=
+m_base + 0xbd80);
+> >>>>>>> =A0=A0=A0=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_=
+hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_b=
+ase + 0xbe00, CLK_SET_RATE_PARENT);
+> >>>>>>> =A0=A0=A0=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_CAM2_PIX] =3D imx8m_clk_h=
+w_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80=
+);
+> >>>>>>> -=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite("=
+media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+> >>>>>>> +=A0=A0=A0 hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite_b=
+us_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RAT=
+E_PARENT);
+> >>>>>>
+> >>>>>> This patch would cause the below in-flight LDB bridge driver
+> >>>>>> patch[1] fail to do display mode validation upon display modes
+> >>>>>> read from LVDS to HDMI converter IT6263's DDC I2C bus.
+> >>>>>
+> >>>>> Why ?
+> >>>>
+> >>>> Mode validation is affected only for dual LVDS link mode.
+> >>>> For single LVDS link mode, this patch does open more display
+> >>>> modes read from the DDC I2C bus.=A0 The reason behind is that
+> >>>> LVDS serial clock rate/pixel clock rate =3D 3.5 for dual LVDS
+> >>>> link mode, while it's 7 for single LVDS link mode.
+> >>>>
+> >>>> In my system, "video_pll1" clock rate is assigned to 1.0395GHz
+> >>>> in imx8mp.dtsi.=A0 For 1920x1080-60.00Hz with 148.5MHz pixel
+> >>>> clock rate, "media_ldb" clock rate is 519.75MHz and
+> >>>> "media_disp2_pix" clock rate is 148.5MHz, which is fine for
+> >>>> dual LVDS link mode(x3.5).=A0 For newly opened up 1920x1080-59.94Hz
+> >>>> with 148.352MHz pixel clock rate, "video_pll1" clock rate will
+> >>>> be changed to 519.232MHz, "media_ldb" clock rate is 519.232MHz
+> >>>> and "media_disp2_pix" clock rate is wrongly set to 519.232MHz
+> >>>> too because "media_disp2_pix" clock cannot handle the 3.5
+> >>>> division ratio from "video_pll1_out" clock running at
+> >>>> 519.232MHz.=A0 See the below clk_summary.
+> >>>
+> >>> Shouldn't this patch help exactly with that ?
+> >>
+> >> No, it doesn't help but only makes clk_round_rate() called in
+> >> LDB driver's .mode_valid() against 148.352MHz return 148.352MHz
+> >> which allows the unexpected 1920x1080-59.94Hz display mode.
+> >>
+> >>>
+> >>> It should allow you to set video_pll1_out to whatever is necessary by=
+ LDB first, fixate that frequency, and the LCDIFv3 would then be forced to =
+use /7 divider from faster Video PLL1 , right ?
+> >>
+> >> Yes, it allows that for single-link LVDS use cases.
+> >> And, __no__, for dual-link LVDS use cases because the
+> >> video_pll1_out clock rate needs to be 2x the LVDS serial clock
+> >> rate.=20
+> >>
+> >>>
+> >>>> =A0=A0=A0=A0 video_pll1_ref_sel=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 24=
+000000=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=
+=A0=A0 Y=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0 video_pll1=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=
+=A0=A0=A0=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 500=
+00=A0=A0=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 video_pll1_bypass=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=
+ 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=
+=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 video_pll1_out=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0 2=A0=A0=A0=A0=A0=A0 2=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=
+=A0=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=
+=A0=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_ldb=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=
+=A0=A0=A0=A0=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 =
+50000=A0=A0=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 d=
+eviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no=
+_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_ldb_=
+root_clk 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 =
+519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=A0=
+=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 32ec00=
+00.blk-ctrl:bridge@5c=A0=A0=A0=A0 ldb
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 no_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp1_pix=A0=
+=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=
+=A0 129808000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=
+=A0=A0=A0 N=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connecti=
+on_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp=
+1_pix_root_clk 0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=
+=A0=A0 129808000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=
+=A0=A0=A0=A0 N=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
+32e80000.display-controller=A0=A0=A0=A0 pix
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 32ec0000.blk-ctrl=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 disp1
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 no_connection_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp2_pix=A0=
+=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=A0=
+=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=A0=
+=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 deviceless=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 no_connecti=
+on_id
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 media_disp=
+2_pix_root_clk 1=A0=A0=A0=A0=A0=A0 1=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0=A0=
+=A0=A0 519232000=A0=A0 0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0=A0=A0=A0=A0 50000=A0=
+=A0=A0=A0=A0 Y=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
+32e90000.display-controller=A0=A0=A0=A0 pix
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 32ec0000.blk-ctrl=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 disp2
+> >>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 deviceless=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 no_connection_id
+> >>>>
+> >>>> Single LVDS link mode is not affected because "media_disp2_pix"
+> >>>> clock can handle the 7 division ratio.
+> >>>>
+> >>>> To support the dual LVDS link mode, "video_pll1" clock rate needs
+> >>>> to be x2 "media_ldb" clock rate so that "media_disp2_pix" clock
+> >>>> can use 7 division ratio to achieve the /3.5 clock rate comparing
+> >>>> to "media_ldb" clock rate.=A0 However, "video_pll1" is not seen by
+> >>>> LDB driver thus not directly controlled by it.=A0 This is another
+> >>>> reason why assigning a reasonable "video_pll1" clock rate in DT
+> >>>> makes sense.
+> >>>
+> >>> I agree that _right_now_, the DT clock assignment is the only option.
+> >>> I would like to see that DT part disappear and instead would prefer i=
+f the LDB/LCDIF could figure out the clock tree configuration themselves.
+> >>
+> >> I think we'll live with the assigned clock rate in DT, because the
+> >> i.MX8MP LDB and Samsung MIPI DSI display pipelines need to share a
+> >> video PLL, like I mentioned in comments for patch 2.
+> >=20
+> > Guys. There's 4 different discussions that look to be on the same topic,
+> > and doing workarounds in the DT, DRM driver and clock driver for
+> > something that looks like a broken clock.
+>=20
+> This is a bit complicated, because it is related to i.MX8MP MIPI DSI/
+> LVDS/HDMI, i.MX93 MIPI DSI/LVDS/parallel display pipelines.  Even
+> i.MX6SX LVDS display pipeline is a bit related, since i.MX8MP/i.MX93/
+> i.MX6SX LDBs share the same fsl-ldb.c driver.
+>=20
+> >=20
+> > Could we have *somewhere* a proper description of what the problem is
+> > exactly, so we can review it? Because at the moment, it's certainly not
+> > helping.
+>=20
+> Can you please suggest a place where this could happen?
 
-[1]: https://lore.kernel.org/linux-clk/20241114091422.75412-1-hanchunchao@inspur.com/
+Here, by mail will be good. Worst case scenario using a ascii art.
+
+Maxime
+
+--daaqffk3kobrz3nx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZzthbAAKCRAnX84Zoj2+
+drubAYDnfOPHEbUtSBuKsSW0gwIdqyDhobohzo9e8ywlQGt8/ZdxHagqLzmAANjC
+lfvXD8YBfiUmQk9afkVIWM8Lk15XjzxrIrfcAhwZuqOrsIwH11sfRr3+lczF7pKs
+0ats6CZJoQ==
+=5w/N
+-----END PGP SIGNATURE-----
+
+--daaqffk3kobrz3nx--
