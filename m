@@ -1,262 +1,146 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F151218E1A
-	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 09:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28754194C90;
+	Mon, 18 Nov 2024 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731923267; cv=none; b=A1CneD1uaP16uugWOqwjoOW4aqvsSeNvTU7kfWQgiZ/rI8PQpyrpszm/lrhDGdSXwyUtfKY5CyycwFML9aTifo/6lwC/GJcQu25ER4BIkDCd8BAm5i0BxYblTTJFp1DjMSz600pY6ymLNk8o3soFG18oJwFHvzGXmBP0pdqzcOU=
+	t=1731924930; cv=none; b=e+88XJf+lHCTRQjvelymr9z6RaE241LDFn2J9L3V5nkT4APp5t7Zs65LmmzayV7QrMGNurqJS8R+OinbrwCgtrgEyYwCm1vlxhFcHXWQDrrwhh95NwbNHijkgd86H4KFYgcFVo886xMxeiu0e62ZEpilnpunMi0Y9UCPO8eYtlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731923267; c=relaxed/simple;
-	bh=DNhk+o/rPYJxkocGt/n6ACFP1HnvcJpLTbBzuk9IA/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P4y/5viFJX0caQjsfsnMLctTZbiKT53NE7cYj3fIMd9CIi9UI6WUGJWL4EYE9pRQzrtiw4PNeOPfkFOLJWNNwEZP/cEKVKig4CSij/sqaL111sQ9C8moigWnHYWvczuT/jsdkPnSJAZrYifX3+eeoh/+RZW0cZkQjOc6xDctIus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H8irSJVS; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1731924930; c=relaxed/simple;
+	bh=kh+U076QVsVp7Vb8Ettn3ktDD3XkKajC3VQy1Y5g75c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dhTuzIlXODUKXG7fQ7vjwhTktdsKp0nsyPQtkFor5hUwpIF2iDzCVNTwQV7cOH6o135Ryo7kg25AVZReHjLToriW/JteYiM4cXuYwPBxVq1GpHI62Jlp+Uc/phMOU6PMMqAVzb/zDwfbghmingwKsV65sZghI3+9Jz4vDCJXZq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbgT7ptF; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H8irSJVS"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315abed18aso14802605e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 01:47:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbgT7ptF"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso5680253a12.0;
+        Mon, 18 Nov 2024 02:15:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731923263; x=1732528063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h0y/xmc/WDEeuxy81I63/jKzT8uzD3EOhKMs9VT0kt0=;
-        b=H8irSJVSxYLHCE1RxAFfwURS9gknGgbmt2jamxiwpMiqlkN0jytyXr/Vm1Ttun5K3H
-         iQgs395GINIsI1qas2aueip+qmZHYqE0phciHf0LNrqeiM5ap+NitdngVcr7sJ2PB4P0
-         /NSjl5isFvrCXTib1/gvui9sBcOXVSim3ARaXR5YDZurA9Wik13TT0iyxSjZVoBCARHT
-         Gy/hLlily0LNBxLZmYp8h2G5r49dg+X24nPIfK5Qc78IevsEXO4NPV9tD/QJSB+RP/V0
-         cl4EnYx4KckcQwuYbpziANdpnEVsLEQPaxu7HWeZmKWJ7nmmWExR0qcgVlyL9ExjccAw
-         46CA==
+        d=gmail.com; s=20230601; t=1731924927; x=1732529727; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QC6v63zN/LS8xn8Q6J/qgxLNxqB0A6W28tutvITfh9I=;
+        b=dbgT7ptFXR9EjBzDs3nFlWf8UNEZkDi6al8QvG8kzREKTMGLLufBFM7N8Uxi1kcqxc
+         MdwmWwseB1KV8X7tIfeggxhIvL5U8GSENntGiPqsncl4AQYVpurEliPLASzni8wmRcAN
+         S2kD2jekBIHa5QxoYsKMInHl0Ie0hqcNSaGjdTJo6dnGUz8wbA1PXiWYLu4FkPbO6aOk
+         nyi9n57GGuenLIMv8UrRxsPxsTRI39jf6/38ghVeNjQh8FAr8GN32U2jFUaSmd8c4l4+
+         y1FPfZ/6kaVSQByqbD9NWWYgfSRlIJ9xrTQ/oeuYkh7q2oDPfwpUNr1z8Zq5mDrjxzkR
+         Vr8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731923263; x=1732528063;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0y/xmc/WDEeuxy81I63/jKzT8uzD3EOhKMs9VT0kt0=;
-        b=IZsoXkFUcqsg5elemfqbZo+VBG/8GYCnqKYJ5lQXUuv7iy2zfFakqdJTN9df2VQX5S
-         s74giOza8PXcCtmKHYYYyWSW9wZCg4/xOuOCwoRWfB7Zr1xaWIvo1eGIsQcYXo01GN/C
-         h+ednzkhxnBs6ai2dSfNcxEcUAg9YHmoX2pOYBK9my1qtjkOWDV6LuLJs93pMb/c7f7p
-         jZcue22I67Az941KNmF/AvkhvuhmadVcIvxBB75r3mOnrnxnMFhHYv1tJXmK7dcO3X60
-         oCGyhfwf56BoucUQlgCE5/9GH0dieg1E06aRYVmYhmu0dSScGEXAHQguNJpKs4SQ0UcO
-         +GyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVutX0NdxZtSfTODjF9rp5pMQCzfeggB9SiFsKMBGM7kmZyYooKN7ZuWrN9ro3gXrlTKyZ+9IRuYB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZzLwXtRuEeQPiV8XwAzPOPu+fjIlc246q5GkDmhXqhN1/jn9a
-	WcqwYOq4oGCqHz6F74Qs4eSmhzOGcIFaQ6kkmmk6T4lfJms5cctFRXewEtZCxS8=
-X-Google-Smtp-Source: AGHT+IHRh2LGPJzzI8E80ul0S2acJU4gG1JMOiN2l10QsdJHSWSuQORYzJfJwvAeRDzbGLi+P7fh6g==
-X-Received: by 2002:a05:600c:46c4:b0:431:251a:9dc9 with SMTP id 5b1f17b1804b1-432df77a985mr98478565e9.25.1731923263048;
-        Mon, 18 Nov 2024 01:47:43 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da244cabsm151425285e9.8.2024.11.18.01.47.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 01:47:42 -0800 (PST)
-Message-ID: <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
-Date: Mon, 18 Nov 2024 11:47:39 +0200
+        d=1e100.net; s=20230601; t=1731924927; x=1732529727;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QC6v63zN/LS8xn8Q6J/qgxLNxqB0A6W28tutvITfh9I=;
+        b=l1/oht3gbrimbneAE/402Swb5nBFaJGKBN3idMG4l2mKGHN4ulFHXXCvOiBSjhO7fn
+         M4nZVpJNUnAomf42oXEQxYQpTa3iAEc2gm9zZv/bMmbJEXHEV3Ve4W8h6jfXyk/rQ31+
+         b3L6enFAPz66Ry1efW2pMwB/sfVQcMkj4V6/59Zibk5E6E05rxh8pVtjqI+5UtPzZhdx
+         SnpZSBBIkDEJWuIpVSnmQ2+XajtuDY0B5DROyD16S5USN1VWbvitG0zOWRus4d5KkSpY
+         nOPGHm08YOBXKpGy0C+jlHj5YApn8ih3XwFgjy2AiGSm27is0fgQ0YgxocY14U6qwar6
+         8N6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCi1GqOOh+sc3EBETzCt3jVJ7UP1ttD/q4lryR4waIv7NDfveeMfb5+uN4bJjCmCLbz2idjah1BQqmbXKM@vger.kernel.org, AJvYcCVQ9CrmDgb7KFUk22A9VqCAxBNkEJm1qiwZ12S0OAtzzOeJqOPxrSSYLDLiTYmuTzX/IkR3SR7KwZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyvkGyeQtzfb6Bhb4jpGzsfmCEZgy4xo46eHr3ZbkQxbDctNTm
+	3F5RMWXtZwpQHboFSNBh+QtkYx+HkCP4xSrz6CP8yOaP1nP03bjNDig2aw==
+X-Google-Smtp-Source: AGHT+IE2e7PGLWsCc2fA0mi2kLOJGUpWgYCl7d8WdIrG4PiKA4JGvipv4j8gRm+XxPopHIGBH6++aQ==
+X-Received: by 2002:a05:6402:5245:b0:5cf:c18a:7787 with SMTP id 4fb4d7f45d1cf-5cfc18a7843mr2911816a12.11.1731924926792;
+        Mon, 18 Nov 2024 02:15:26 -0800 (PST)
+Received: from [127.0.1.1] ([46.53.242.72])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb329bsm4574455a12.38.2024.11.18.02.15.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 02:15:25 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH RESEND v8 0/3] Add divisor computation feature for sdm845
+ gp clocks
+Date: Mon, 18 Nov 2024 13:15:18 +0300
+Message-Id: <20241118-starqltechn_integration_upstream-v8-0-ac8e36a3aa65@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
-Content-Language: en-US
-To: Philipp Zabel <p.zabel@pengutronix.de>, geert+renesas@glider.be,
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, lethal@linux-sh.org,
- g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
- <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
- <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731924925; l=2871;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=kh+U076QVsVp7Vb8Ettn3ktDD3XkKajC3VQy1Y5g75c=;
+ b=tdAVl6S7hKEghqXNrsHN0xPEsqM9kyMuiIplxwlZeV5p8RLLJOOPPZIvAdWYHzucVvTWLIxG/
+ ekk8byvuId+AsHjZ5opz2JfO+ow622BEFZJ1N3EAGMtrQlZRmMaxTq/
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi, Philipp,
+SDM845 has "General Purpose" clocks that can be muxed to
+SoC pins to clock various external devices.
+Those clocks may be used as e.g. PWM sources for external peripherals.
 
-On 15.11.2024 17:40, Philipp Zabel wrote:
-> On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The Renesas RZ/G3S supports a power saving mode where power to most of the
->> SoC components is turned off. When returning from this power saving mode,
->> SoC components need to be re-configured.
->>
->> The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
->> returning from this power saving mode. The sh-sci code already configures
->> the SCIF clocks, power domain and registers by calling uart_resume_port()
->> in sci_resume(). On suspend path the SCIF UART ports are suspended
->> accordingly (by calling uart_suspend_port() in sci_suspend()). The only
->> missing setting is the reset signal. For this assert/de-assert the reset
->> signal on driver suspend/resume.
->>
->> In case the no_console_suspend is specified by the user, the registers need
->> to be saved on suspend path and restore on resume path. To do this the
->> sci_console_setup() function was added. There is no need to cache/restore
->> the status or FIFO registers. Only the control registers. To differentiate
->> b/w these, the struct sci_port_params::regs was updated with a new member
->> that specifies if the register needs to be chached on suspend. Only the
->> RZ_SCIFA instances were updated with this new support as the hardware for
->> the rest of variants was missing for testing.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - none
->>
->> Changes in v2:
->> - rebased on top of the update version of patch 2/8 from
->>   this series
->>
->>  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-------
->>  1 file changed, 44 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
->> index ade151ff39d2..e53496d2708e 100644
->> --- a/drivers/tty/serial/sh-sci.c
->> +++ b/drivers/tty/serial/sh-sci.c
->> @@ -101,7 +101,7 @@ enum SCI_CLKS {
->>  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
->>  
->>  struct plat_sci_reg {
->> -	u8 offset, size;
->> +	u8 offset, size, suspend_cacheable;
->>  };
->>  
->>  struct sci_port_params {
->> @@ -134,6 +134,8 @@ struct sci_port {
->>  	struct dma_chan			*chan_tx;
->>  	struct dma_chan			*chan_rx;
->>  
->> +	struct reset_control		*rstc;
->> +
->>  #ifdef CONFIG_SERIAL_SH_SCI_DMA
->>  	struct dma_chan			*chan_tx_saved;
->>  	struct dma_chan			*chan_rx_saved;
->> @@ -153,6 +155,7 @@ struct sci_port {
->>  	int				rx_trigger;
->>  	struct timer_list		rx_fifo_timer;
->>  	int				rx_fifo_timeout;
->> +	unsigned int			console_cached_regs[SCIx_NR_REGS];
->>  	u16				hscif_tot;
->>  
->>  	bool has_rtscts;
->> @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
->>  	 */
->>  	[SCIx_RZ_SCIFA_REGTYPE] = {
->>  		.regs = {
->> -			[SCSMR]		= { 0x00, 16 },
->> -			[SCBRR]		= { 0x02,  8 },
->> -			[SCSCR]		= { 0x04, 16 },
->> +			[SCSMR]		= { 0x00, 16, 1 },
->> +			[SCBRR]		= { 0x02,  8, 1 },
->> +			[SCSCR]		= { 0x04, 16, 1 },
->>  			[SCxTDR]	= { 0x06,  8 },
->>  			[SCxSR]		= { 0x08, 16 },
->>  			[SCxRDR]	= { 0x0A,  8 },
->> -			[SCFCR]		= { 0x0C, 16 },
->> +			[SCFCR]		= { 0x0C, 16, 1 },
->>  			[SCFDR]		= { 0x0E, 16 },
->> -			[SCSPTR]	= { 0x10, 16 },
->> +			[SCSPTR]	= { 0x10, 16, 1 },
->>  			[SCLSR]		= { 0x12, 16 },
->> -			[SEMR]		= { 0x14, 8 },
->> +			[SEMR]		= { 0x14, 8, 1 },
->>  		},
->>  		.fifosize = 16,
->>  		.overrun_reg = SCLSR,
->> @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
->>  	}
->>  
->>  	sp = &sci_ports[id];
->> +	sp->rstc = rstc;
->>  	*dev_id = id;
->>  
->>  	p->type = SCI_OF_TYPE(data);
->> @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *dev)
->>  	return 0;
->>  }
->>  
->> +static void sci_console_setup(struct sci_port *s, bool save)
->> +{
->> +	for (u16 i = 0; i < SCIx_NR_REGS; i++) {
->> +		struct uart_port *port = &s->port;
->> +
->> +		if (!s->params->regs[i].suspend_cacheable)
->> +			continue;
->> +
->> +		if (save)
->> +			s->console_cached_regs[i] = sci_serial_in(port, i);
->> +		else
->> +			sci_serial_out(port, i, s->console_cached_regs[i]);
->> +	}
->> +}
->> +
->>  static __maybe_unused int sci_suspend(struct device *dev)
->>  {
->>  	struct sci_port *sport = dev_get_drvdata(dev);
->>  
->> -	if (sport)
->> +	if (sport) {
->>  		uart_suspend_port(&sci_uart_driver, &sport->port);
->>  
->> +		if (!console_suspend_enabled && uart_console(&sport->port))
->> +			sci_console_setup(sport, true);
->> +		else
->> +			return reset_control_assert(sport->rstc);
->> +	}
->> +
->>  	return 0;
->>  }
->>  
->> @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct device *dev)
->>  {
->>  	struct sci_port *sport = dev_get_drvdata(dev);
->>  
->> -	if (sport)
->> +	if (sport) {
->> +		if (!console_suspend_enabled && uart_console(&sport->port)) {
->> +			sci_console_setup(sport, false);
->> +		} else {
->> +			int ret = reset_control_deassert(sport->rstc);
-> 
-> With this, is the reset_control_deassert() in sci_parse_dt() still
-> needed?
+GPCLK can in theory have arbitrary value depending on the use case, so
+the concept of frequency tables, used in rcg2 clock driver, is not
+efficient, because it allows only defined frequencies.
 
-If I'm not wrongly understanding your question, yes, the
-reset_control_deassert() is still needed in the sci_parse_dt() as the
-sci_parse_dt() is called on probe path. After resume the sci_parse_dt() is
-not called unless the driver is unbinded and then re-binded.
+Introduce clk_rcg2_gp_ops, which automatically calculate clock
+mnd values for arbitrary clock rate. The calculation done as follows:
+- upon determine rate request, we calculate m/n/pre_div as follows:
+  - find parent(from our client's assigned-clock-parent) rate
+  - find scaled rates by dividing rates on its greatest common divisor
+  - assign requested scaled rate to m
+  - factorize scaled parent rate, put multipliers to n till max value
+    (determined by mnd_width)
+- validate calculated values with *_width:
+  - if doesn't fit, delete divisor and multiplier by 2 until fit
+- return determined rate
 
-In case the reset_control_dessert() here fails (or not) and an
-unbind/re-bind will be requested, the unbind will call
-reset_control_assert() (though the devm action) and then the re-bind will
-call reset_control_deassert() though sci_parse_dt(). That should be safe,
-AFAICT.
+Limitations:
+- The driver doesn't select a parent clock (it may be selected by client
+  in device tree with assigned-clocks, assigned-clock-parents properties)
 
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v8:
+- format kernel-doc
+- test with scripts/kernel-doc
+- Link to v7: https://lore.kernel.org/r/20241024-starqltechn_integration_upstream-v7-0-78eaf21ecee9@gmail.com
 
-> 
-> Likewise, does the reset_control_assert() in sci_suspend() remove the
-> need for the sci_reset_control_assert() devm action?
+Changes in v7:
+- split gp and non gp changes
+- Link to v6: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com
 
-No, the sci_reset_control_assert() is still needed as explained above,
-unless I missed your point.
+Changes in v6:
+- fix kernel robot issues
+- run sparse and smatch
+- Link to v5: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-761795ea5084@gmail.com
 
-Please let me know if missed your point and/or answered your question?
+Changes in v5:
+- Split patchset per subsystem
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
 
+Changes in v4:
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-Thank you,
-Claudiu Beznea
+---
+Dzmitry Sankouski (3):
+      clk: qcom: clk-rcg2: document calc_rate function
+      clk: qcom: clk-rcg2: split __clk_rcg2_configure function
+      gcc-sdm845: Add general purpose clock ops
 
-> 
-> regards
-> Philipp
+ drivers/clk/qcom/clk-rcg.h    |   1 +
+ drivers/clk/qcom/clk-rcg2.c   | 198 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ drivers/clk/qcom/gcc-sdm845.c |  11 +++------
+ 3 files changed, 193 insertions(+), 17 deletions(-)
+---
+base-commit: 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
+
