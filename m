@@ -1,48 +1,48 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E5C3BBF2;
-	Mon, 18 Nov 2024 18:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FC917BBF;
+	Mon, 18 Nov 2024 19:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731956115; cv=none; b=LXeskcyfdoCk7lxV0G/dTDqKonrl6WGB3DxsrvwNF2xmGSkrYWrGe4fOoHusDf9J3NmVvIEl21CqJ5zDMWoueS1+i330PZu4cnP3fRtYYIWuxpCMKkgY16f14DQ66gHGcdA9Q/N8Q7xvutipdgFeLoeFQ0gk5r659Q2uAJ2Cld8=
+	t=1731958369; cv=none; b=UURKmKmxF9ke6fdzG8aWUylxYUqikmz4LESa94zvKYdrBCQQlJ7I5NGTraeBqp/60jJjqxCwyPmuYRG+IMHNpxK5GrQaPrQYxQ/HHKeqVp4UhgwtnCd26R974XXL5ZqWVoqc5uCAcPwDw6i3K+wVI+ijUL0K6on3IxFG2I6OU0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731956115; c=relaxed/simple;
-	bh=vkDwkubs4wI12O/WB7HNRk5g9Va10+lT4y1VsDgTgpk=;
+	s=arc-20240116; t=1731958369; c=relaxed/simple;
+	bh=bP1URl5nKrZExSKFJ41Ci/Pz7V0c2saZOgAFc/C90IU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HwIM5jBz1rjquvd7ZTJFEwU5zkuFAYs402iih+R9bCpDQKjfRdkC7U8we6wOjP7dXHYbkAzyG/iR+IYTfwC/rJ2NG8pSq95k/8G5vP1/6EEI4Ni1QdfRO162VOyNYEe/YTTZhJyvw1vHPIhj5TQh9tP6DfMBzjL/kPfXOLS4410=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XjusmFc2; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=WaBEYVwYsqfHtgY6gmdBgSZ47Jw385c5ibij8W80Z1G+YOTdSFKPEUe117D6wXi8WymzsQwsVrD46T3qON9MuG9pNvxDEZOHC53bawIfhL37IyiOa8v9EiG51nJ+yNYqyEt5dURw4fmHOMYs9aSZi9QMyBgSf9VyirFeOXEj0Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lL684pmW; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XjusmFc2"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGlrg031040;
-	Mon, 18 Nov 2024 18:55:08 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lL684pmW"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGppi030145;
+	Mon, 18 Nov 2024 19:32:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s2BUYrr5aczH1Jz/fKXz+KFmy2W0PTLebONE4a4Z1yk=; b=XjusmFc2lGjL8Hw0
-	lqcK421pMa6yjv3cITkSBS0vXUdCF1PrNpk6t60IFGcu58x7JTRQ+EfGOQK6Xn9m
-	PTsBgZmY816Rd5IPuy08+Sy4EUl6PArZhiF1OKcpnDdKNV142AqYE7XGnXBh8FyE
-	gveKYsrcKXQSIQ7o2Jbi+nEzgxa6VmVGcnRnOxGbx8Av0BpsgQKnipRUfqFBeKwj
-	g6UzdDExNctGHHr44DI4gzgsO82bfyO62RLuO5msQZl+feNlueqsfK3tuCy2C9/r
-	LoJiTdkZLniEGFkBJTyxGePWgDH0Mn4jxYjAjOdZINfNp4w4EO2bHhJV1mNH59YC
-	4Hx/Fg==
+	+HAJEdoM3MeaolcFlpfhJDfsb1O8wvRG1r5/khyoe0M=; b=lL684pmWq1NO0lB1
+	6GdUzBjy7afR686IXklleZVSnPS5J+wUhl+8ZrS9g4zmeA8jagoxBUNLaQI7x08w
+	G83rf51AjRB3WS183Ptv/QD5ENJfa1obNw1PpAQAIvHe3PWwNnm1/xYvRFXy1N+Q
+	8jRGPCizyPevKW/RpzMpJTDH8MuKpQwH4qsuVub8VXVZrCS44f/2UuK6DGiv8MuQ
+	gb2mLo85bP/dhCxLg/80SE2x5W3cs0p1vaUI5o7ELBUKeomJ3JXEJa+lYVS2SfR1
+	U94Kt8kD8r/Xx0qlQubcI+VzBM1rXLdzOiM0KBxIPn95dyklrfV/SWo93ZrIDMyC
+	c9BLLw==
 Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y90bvb-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y68f01-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 18:55:07 +0000 (GMT)
+	Mon, 18 Nov 2024 19:32:43 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIIt6nQ010089
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIJWgkB018501
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 18:55:06 GMT
+	Mon, 18 Nov 2024 19:32:42 GMT
 Received: from [10.71.108.63] (10.80.80.8) by nasanex01b.na.qualcomm.com
  (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
- 2024 10:53:23 -0800
-Message-ID: <8d3c2efd-b6c3-4b01-ae01-78460f4e9f26@quicinc.com>
-Date: Mon, 18 Nov 2024 10:53:16 -0800
+ 2024 11:30:58 -0800
+Message-ID: <f2bf7790-7387-4eb6-8e1e-e555a20a717b@quicinc.com>
+Date: Mon, 18 Nov 2024 11:30:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] clk: qcom: rpmh: Add support for SM8750 rpmh
- clocks
+Subject: Re: [PATCH v2 5/7] clk: qcom: Add support for GCC clock controller on
+ SM8750
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 CC: Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette
@@ -67,124 +67,144 @@ CC: Bjorn Andersson <andersson@kernel.org>,
         Satya Durga Srinivasu Prabhala
 	<quic_satyap@quicinc.com>,
         <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
- <20241112002807.2804021-3-quic_molvera@quicinc.com>
- <5pgwerxhqhyr2u47grqzgzvvng4rojzq4gozil7vy37bew5pqj@wt676vfjs7bg>
+ <20241112002807.2804021-6-quic_molvera@quicinc.com>
+ <n4h4jvxrsyahgmxedfsifhgmarw4rzn2cbg5pcvzo4ll3edziq@vgpvjco5hyb4>
 Content-Language: en-US
 From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <5pgwerxhqhyr2u47grqzgzvvng4rojzq4gozil7vy37bew5pqj@wt676vfjs7bg>
+In-Reply-To: <n4h4jvxrsyahgmxedfsifhgmarw4rzn2cbg5pcvzo4ll3edziq@vgpvjco5hyb4>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: x7H4gC5FBWbnjFVmrT1XC2jv_VGTmafe
-X-Proofpoint-ORIG-GUID: x7H4gC5FBWbnjFVmrT1XC2jv_VGTmafe
+X-Proofpoint-ORIG-GUID: 6YKrk9oTcMu71sE_CN3jL0DZZP4-7rMU
+X-Proofpoint-GUID: 6YKrk9oTcMu71sE_CN3jL0DZZP4-7rMU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0
- adultscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180155
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180161
 
 
 
-On 11/15/2024 7:31 AM, Dmitry Baryshkov wrote:
-> On Mon, Nov 11, 2024 at 04:28:02PM -0800, Melody Olvera wrote:
+On 11/15/2024 7:34 AM, Dmitry Baryshkov wrote:
+> On Mon, Nov 11, 2024 at 04:28:05PM -0800, Melody Olvera wrote:
 >> From: Taniya Das <quic_tdas@quicinc.com>
 >>
->> Add the RPMH clocks present in SM8750 SoC and fix the match table to
->> sort it alphabetically.
+>> Add support for GCC Clock Controller for SM8750 platform.
 >>
->> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 >> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 >> ---
->>   drivers/clk/qcom/clk-rpmh.c | 28 +++++++++++++++++++++++++++-
->>   1 file changed, 27 insertions(+), 1 deletion(-)
+>>   drivers/clk/qcom/Kconfig      |    9 +
+>>   drivers/clk/qcom/Makefile     |    1 +
+>>   drivers/clk/qcom/gcc-sm8750.c | 3274 +++++++++++++++++++++++++++++++++
+>>   3 files changed, 3284 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/gcc-sm8750.c
 >>
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> index eefc322ce367..a3b381e34e48 100644
->> --- a/drivers/clk/qcom/clk-rpmh.c
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -368,6 +368,10 @@ DEFINE_CLK_RPMH_VRM(rf_clk2, _d, "rfclkd2", 1);
->>   DEFINE_CLK_RPMH_VRM(rf_clk3, _d, "rfclkd3", 1);
->>   DEFINE_CLK_RPMH_VRM(rf_clk4, _d, "rfclkd4", 1);
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index ef89d686cbc4..26bfb607235b 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -1130,6 +1130,15 @@ config SM_GCC_8650
+>>   	  Say Y if you want to use peripheral devices such as UART,
+>>   	  SPI, I2C, USB, SD/UFS, PCIe etc.
 >>   
->> +DEFINE_CLK_RPMH_VRM(rf_clk3, _a2, "rfclka3", 2);
->> +DEFINE_CLK_RPMH_VRM(rf_clk4, _a2, "rfclka4", 2);
->> +DEFINE_CLK_RPMH_VRM(rf_clk5, _a2, "rfclka5", 2);
-> Are the two last clocks defined "for the future platforms"?
-
-I'm unsure; I'll let Taniya comment.
-
->
+>> +config SM_GCC_8750
+>> +	tristate "SM8750 Global Clock Controller"
+>> +	depends on ARM64 || COMPILE_TEST
+>> +	select QCOM_GDSC
+>> +	help
+>> +	  Support for the global clock controller on SM8750 devices.
+>> +	  Say Y if you want to use peripheral devices such as UART,
+>> +	  SPI, I2C, USB, SD/UFS, PCIe etc.
 >> +
->>   DEFINE_CLK_RPMH_VRM(clk1, _a1, "clka1", 1);
->>   DEFINE_CLK_RPMH_VRM(clk2, _a1, "clka2", 1);
->>   DEFINE_CLK_RPMH_VRM(clk3, _a1, "clka3", 1);
->> @@ -807,6 +811,27 @@ static const struct clk_rpmh_desc clk_rpmh_x1e80100 = {
->>   	.num_clks = ARRAY_SIZE(x1e80100_rpmh_clocks),
->>   };
->>   
->> +static struct clk_hw *sm8750_rpmh_clocks[] = {
->> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
->> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
->> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_clk6_a2.hw,
->> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_clk6_a2_ao.hw,
->> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_clk8_a2.hw,
->> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_clk8_a2_ao.hw,
->> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
->> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
->> +	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
->> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
->> +	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a2.hw,
->> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a2_ao.hw,
->> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->> +};
+>>   config SM_GPUCC_4450
+>>   	tristate "SM4450 Graphics Clock Controller"
+>>   	depends on ARM64 || COMPILE_TEST
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index b09dbdc210eb..1875018d1100 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -143,6 +143,7 @@ obj-$(CONFIG_SM_GCC_8350) += gcc-sm8350.o
+>>   obj-$(CONFIG_SM_GCC_8450) += gcc-sm8450.o
+>>   obj-$(CONFIG_SM_GCC_8550) += gcc-sm8550.o
+>>   obj-$(CONFIG_SM_GCC_8650) += gcc-sm8650.o
+>> +obj-$(CONFIG_SM_GCC_8750) += gcc-sm8750.o
+>>   obj-$(CONFIG_SM_GPUCC_4450) += gpucc-sm4450.o
+>>   obj-$(CONFIG_SM_GPUCC_6115) += gpucc-sm6115.o
+>>   obj-$(CONFIG_SM_GPUCC_6125) += gpucc-sm6125.o
+>> diff --git a/drivers/clk/qcom/gcc-sm8750.c b/drivers/clk/qcom/gcc-sm8750.c
+>> new file mode 100644
+>> index 000000000000..faaefa42a039
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-sm8750.c
+>> @@ -0,0 +1,3274 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +/*
+>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
 >> +
->> +static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
->> +	.clks = sm8750_rpmh_clocks,
->> +	.num_clks = ARRAY_SIZE(sm8750_rpmh_clocks),
->> +};
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
 >> +
->>   static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->>   					 void *data)
->>   {
->> @@ -894,6 +919,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
->>   	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
->>   	{ .compatible = "qcom,sar2130p-rpmh-clk", .data = &clk_rpmh_sar2130p},
->>   	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
->> +	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
->>   	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
->>   	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
->>   	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
->> @@ -909,7 +935,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
->>   	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
->>   	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
->>   	{ .compatible = "qcom,sm8650-rpmh-clk", .data = &clk_rpmh_sm8650},
->> -	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
-> Please don't mix fixes and actual code. I'd suggest splitting sc7280
-> move to the separate commit.
+>> +#include <dt-bindings/clock/qcom,sm8750-gcc.h>
+>> +
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-branch.h"
+>> +#include "clk-pll.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-regmap.h"
+>> +#include "clk-regmap-divider.h"
+>> +#include "clk-regmap-mux.h"
+>> +#include "clk-regmap-phy-mux.h"
+>> +#include "common.h"
+>> +#include "gdsc.h"
+>> +#include "reset.h"
+>> +
+>> +enum {
+>> +	DT_BI_TCXO,
+>> +	DT_BI_TCXO_AO,
+>> +	DT_PCIE_0_PIPE_CLK,
+>> +	DT_SLEEP_CLK,
+>> +	DT_UFS_PHY_RX_SYMBOL_0_CLK,
+>> +	DT_UFS_PHY_RX_SYMBOL_1_CLK,
+>> +	DT_UFS_PHY_TX_SYMBOL_0_CLK,
+>> +	DT_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
+> This doesn't match Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
 
-Bryan O'Donoghue requested we sort these as part of this patch. I don't 
-feel strongly either way,
-but clear guidance here would be appreciated.
+Hmmm I see what seems to have happened here. You're correct; this 
+doesn't match the bindings
+in sm8650-gcc. The v1 patchset had a new bindings file which matched the 
+sm8650 bindings, but also
+didn't match the driver; however we only seemed to catch that the two 
+bindings matched and not the
+fact that they didn't match the drivers.
+
+In terms of remedy I see two options. I'm fairly certain the driver here 
+is correct, so we can either
+add the sm8750 bindings file back and remove the two lines about the 
+PCIE 1 clocks or adjust the
+sm8650 binding to encompass both sm8650 and sm8750. It's unclear to me 
+how precedented the latter
+is; certainly having a single bindings file encompass both chips is 
+feasible, but I think I'm currently
+leaning towards bringing back the original bindings file as that seems 
+more precedented. Lmk
+your thoughts.
 
 Thanks,
 Melody
 
->
->> +	{ .compatible = "qcom,sm8750-rpmh-clk", .data = &clk_rpmh_sm8750},
->>   	{ .compatible = "qcom,x1e80100-rpmh-clk", .data = &clk_rpmh_x1e80100},
->>   	{ }
->>   };
->> -- 
->> 2.46.1
->>
+>> +};
+>> +
 
