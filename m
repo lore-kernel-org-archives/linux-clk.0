@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAA6148827
-	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 11:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B394192593
+	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 12:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930727; cv=none; b=EYIPZhhMtZDXYDTnf/Lft3usN+N9yzV2iEiMqiYm5je2W64hzxYAlJ00U3Qx3vRxsgqVgQAIhvvtCZirDBVQYiBqJU43MkCB5s+6HuWhvaeYw+kT7TdkHIIu8QyTAJSGTzAzi36pdZ7BzYyd5ANJBGivqGx6nXiRZo6SKR2M/eY=
+	t=1731931685; cv=none; b=BKx2jRrKflFSRvVTOxiM49UtJyhIBRBBXP5Mufom70Ca6f0cPv6i8jw36bM8tsXPeXEdWgfCSMxBwHeN3CpXY5rC/lqcwqB+ZuD4cH8JVR1J9UYBNXT48de9jwVC4lYx7PzeN8PFxVXUmaoqM+h8AA0dO/SbMuK21+8AcLJIwbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930727; c=relaxed/simple;
-	bh=AofMIkS1Rbbku1U0w4cTlE8XMy0c7VKc2nJfMNX57zk=;
+	s=arc-20240116; t=1731931685; c=relaxed/simple;
+	bh=9317DECpVOPSVH/eS7BM0cm9sa6APpK76JtHQx2ovX8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LQyGSFwAcJ8NzaPVzeLJvUuQ9PzM7TDgQhCM0l8awmoHRjltv24CycM6NSj+0AuqDEZO4ZbFiKo65TDOqqUrKQfoxidWDkRqGGV3OgWdNbJRBtyxsqSW1xfHDbWrD8p+/PtfpWTpElxXTWpaZQT/kckBA0KUC48kokhMoxmxLCw=
+	 Content-Type:MIME-Version; b=qAIU0pKgiPNq4YuREbPXqiFVneYUUsA/D38cQNR585sE+TVZRbgIgPNdcxX7oM7X+sy5oGqFkKNWVCoTqxiXoT7RIb0T4b15WBu+DQkk7M3jvEE9uG9XgE3mv4tDVTl9vY/MSLOx/1/yrIy87ZCZRleJGrJLFpuovWhgd29jgpg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,35 +18,40 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tD0ID-0005OW-Uj; Mon, 18 Nov 2024 12:51:45 +0100
+	id 1tD0Xf-00009K-9Z; Mon, 18 Nov 2024 13:07:43 +0100
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tD0IB-001O8W-2a;
-	Mon, 18 Nov 2024 12:51:43 +0100
+	id 1tD0Xb-001OQe-2s;
+	Mon, 18 Nov 2024 13:07:39 +0100
 Received: from pza by lupine with local (Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tD0IB-0006dT-2J;
-	Mon, 18 Nov 2024 12:51:43 +0100
-Message-ID: <73350e3c7b564ae64e3f120e414c45a86598eb91.camel@pengutronix.de>
-Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
+	id 1tD0Xb-0007J9-2a;
+	Mon, 18 Nov 2024 13:07:39 +0100
+Message-ID: <12ee035ae0ac88976a6521ee765c35c626494440.camel@pengutronix.de>
+Subject: Re: [PATCH v4 3/6] PCI: mediatek-gen3: Move reset/assert callbacks
+ in .power_up()
 From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org,  mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org,  jirislaby@kernel.org, lethal@linux-sh.org,
- g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-serial@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Date: Mon, 18 Nov 2024 12:51:43 +0100
-In-Reply-To: <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
-	 <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
-	 <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-	 <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>,  Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-pci@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org
+Date: Mon, 18 Nov 2024 13:07:39 +0100
+In-Reply-To: <ZzspgzXCyds04gTY@lore-desk>
+References: <20241118-pcie-en7581-fixes-v4-0-24bb61703ad7@kernel.org>
+	 <20241118-pcie-en7581-fixes-v4-3-24bb61703ad7@kernel.org>
+	 <2d7e1e5e09babb468199ac44520683fcb87d697c.camel@pengutronix.de>
+	 <ZzsC_hW-w6WSMYSO@lore-desk>
+	 <1fb3166c1f520a57c19bd3103b4585eee1e57fec.camel@pengutronix.de>
+	 <ZzspgzXCyds04gTY@lore-desk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -61,186 +66,93 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Mo, 2024-11-18 at 11:47 +0200, Claudiu Beznea wrote:
-> Hi, Philipp,
->=20
-> On 15.11.2024 17:40, Philipp Zabel wrote:
-> > On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
-> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mo, 2024-11-18 at 12:48 +0100, Lorenzo Bianconi wrote:
+> > On Mo, 2024-11-18 at 10:03 +0100, Lorenzo Bianconi wrote:
+> > > On Nov 18, Philipp Zabel wrote:
+> > > > On Mo, 2024-11-18 at 09:04 +0100, Lorenzo Bianconi wrote:
+> > > > > In order to make the code more readable, the
+> > > > > reset_control_bulk_assert()
+> > > > > for PHY reset lines is moved to make it pair with
+> > > > > reset_control_bulk_deassert() in mtk_pcie_power_up() and
+> > > > > mtk_pcie_en7581_power_up(). The same change is done for
+> > > > > reset_control_assert() used to assert MAC reset line.
+> > > > >=20
+> > > > > Introduce PCIE_MTK_RESET_TIME_US macro for the time needed to
+> > > > > complete PCIe reset on MediaTek controller.
+> > > > >=20
+> > > > > Reviewed-by: AngeloGioacchino Del Regno
+> > > > > <angelogioacchino.delregno@collabora.com>
+> > > > > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > > > > ---
+> > > > > =C2=A0drivers/pci/controller/pcie-mediatek-gen3.c | 27
+> > > > > +++++++++++++++++++--------
+> > > > > =C2=A01 file changed, 19 insertions(+), 8 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c
+> > > > > b/drivers/pci/controller/pcie-mediatek-gen3.c
+> > > > > index
+> > > > > 3cfcb45d31508142d28d338ff213f70de9b4e608..2b80edd4462ad4e9f2a
+> > > > > 5d192db7f99307113eb8a 100644
+> > > > > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
+> > > > > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+> > > > > @@ -125,6 +125,8 @@
+> > > > > =C2=A0
+> > > > > =C2=A0#define MAX_NUM_PHY_RESETS		3
+> > > > > =C2=A0
+> > > > > +#define PCIE_MTK_RESET_TIME_US		10
+> > > > > +
+> > > > > =C2=A0/* Time in ms needed to complete PCIe reset on EN7581 SoC *=
+/
+> > > > > =C2=A0#define PCIE_EN7581_RESET_TIME_MS	100
+> > > > > =C2=A0
+> > > > > @@ -912,6 +914,14 @@ static int
+> > > > > mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
+> > > > > =C2=A0	int err;
+> > > > > =C2=A0	u32 val;
+> > > > > =C2=A0
+> > > > > +	/*
+> > > > > +	 * The controller may have been left out of reset by
+> > > > > the bootloader
+> > > > > +	 * so make sure that we get a clean start by
+> > > > > asserting resets here.
+> > > > > +	 */
+> > > > > +	reset_control_bulk_assert(pcie->soc-
+> > > > > >phy_resets.num_resets,
+> > > > > +				  pcie->phy_resets);
+> > > > > +	reset_control_assert(pcie->mac_reset);
+> > > > > +
+> > > > > =C2=A0	/*
+> > > > > =C2=A0	 * Wait for the time needed to complete the bulk
+> > > > > assert in
+> > > > > =C2=A0	 * mtk_pcie_setup for EN7581 SoC.
+> > > >=20
+> > > > This comment is not correct anymore.
 > > >=20
-> > > The Renesas RZ/G3S supports a power saving mode where power to most o=
-f the
-> > > SoC components is turned off. When returning from this power saving m=
-ode,
-> > > SoC components need to be re-configured.
-> > >=20
-> > > The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
-> > > returning from this power saving mode. The sh-sci code already config=
-ures
-> > > the SCIF clocks, power domain and registers by calling uart_resume_po=
-rt()
-> > > in sci_resume(). On suspend path the SCIF UART ports are suspended
-> > > accordingly (by calling uart_suspend_port() in sci_suspend()). The on=
-ly
-> > > missing setting is the reset signal. For this assert/de-assert the re=
-set
-> > > signal on driver suspend/resume.
-> > >=20
-> > > In case the no_console_suspend is specified by the user, the register=
-s need
-> > > to be saved on suspend path and restore on resume path. To do this th=
-e
-> > > sci_console_setup() function was added. There is no need to cache/res=
-tore
-> > > the status or FIFO registers. Only the control registers. To differen=
-tiate
-> > > b/w these, the struct sci_port_params::regs was updated with a new me=
-mber
-> > > that specifies if the register needs to be chached on suspend. Only t=
-he
-> > > RZ_SCIFA instances were updated with this new support as the hardware=
- for
-> > > the rest of variants was missing for testing.
-> > >=20
-> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > ---
-> > >=20
-> > > Changes in v3:
-> > > - none
-> > >=20
-> > > Changes in v2:
-> > > - rebased on top of the update version of patch 2/8 from
-> > >   this series
-> > >=20
-> > >  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-----=
---
-> > >  1 file changed, 44 insertions(+), 9 deletions(-)
-> > >=20
-> > > diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.=
-c
-> > > index ade151ff39d2..e53496d2708e 100644
-> > > --- a/drivers/tty/serial/sh-sci.c
-> > > +++ b/drivers/tty/serial/sh-sci.c
-> > > @@ -101,7 +101,7 @@ enum SCI_CLKS {
-> > >  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
-> > > =20
-> > >  struct plat_sci_reg {
-> > > -	u8 offset, size;
-> > > +	u8 offset, size, suspend_cacheable;
-> > >  };
-> > > =20
-> > >  struct sci_port_params {
-> > > @@ -134,6 +134,8 @@ struct sci_port {
-> > >  	struct dma_chan			*chan_tx;
-> > >  	struct dma_chan			*chan_rx;
-> > > =20
-> > > +	struct reset_control		*rstc;
-> > > +
-> > >  #ifdef CONFIG_SERIAL_SH_SCI_DMA
-> > >  	struct dma_chan			*chan_tx_saved;
-> > >  	struct dma_chan			*chan_rx_saved;
-> > > @@ -153,6 +155,7 @@ struct sci_port {
-> > >  	int				rx_trigger;
-> > >  	struct timer_list		rx_fifo_timer;
-> > >  	int				rx_fifo_timeout;
-> > > +	unsigned int			console_cached_regs[SCIx_NR_REGS];
-> > >  	u16				hscif_tot;
-> > > =20
-> > >  	bool has_rtscts;
-> > > @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_pa=
-rams[SCIx_NR_REGTYPES] =3D {
-> > >  	 */
-> > >  	[SCIx_RZ_SCIFA_REGTYPE] =3D {
-> > >  		.regs =3D {
-> > > -			[SCSMR]		=3D { 0x00, 16 },
-> > > -			[SCBRR]		=3D { 0x02,  8 },
-> > > -			[SCSCR]		=3D { 0x04, 16 },
-> > > +			[SCSMR]		=3D { 0x00, 16, 1 },
-> > > +			[SCBRR]		=3D { 0x02,  8, 1 },
-> > > +			[SCSCR]		=3D { 0x04, 16, 1 },
-> > >  			[SCxTDR]	=3D { 0x06,  8 },
-> > >  			[SCxSR]		=3D { 0x08, 16 },
-> > >  			[SCxRDR]	=3D { 0x0A,  8 },
-> > > -			[SCFCR]		=3D { 0x0C, 16 },
-> > > +			[SCFCR]		=3D { 0x0C, 16, 1 },
-> > >  			[SCFDR]		=3D { 0x0E, 16 },
-> > > -			[SCSPTR]	=3D { 0x10, 16 },
-> > > +			[SCSPTR]	=3D { 0x10, 16, 1 },
-> > >  			[SCLSR]		=3D { 0x12, 16 },
-> > > -			[SEMR]		=3D { 0x14, 8 },
-> > > +			[SEMR]		=3D { 0x14, 8, 1 },
-> > >  		},
-> > >  		.fifosize =3D 16,
-> > >  		.overrun_reg =3D SCLSR,
-> > > @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struc=
-t platform_device *pdev,
-> > >  	}
-> > > =20
-> > >  	sp =3D &sci_ports[id];
-> > > +	sp->rstc =3D rstc;
-> > >  	*dev_id =3D id;
-> > > =20
-> > >  	p->type =3D SCI_OF_TYPE(data);
-> > > @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *=
-dev)
-> > >  	return 0;
-> > >  }
-> > > =20
-> > > +static void sci_console_setup(struct sci_port *s, bool save)
-> > > +{
-> > > +	for (u16 i =3D 0; i < SCIx_NR_REGS; i++) {
-> > > +		struct uart_port *port =3D &s->port;
-> > > +
-> > > +		if (!s->params->regs[i].suspend_cacheable)
-> > > +			continue;
-> > > +
-> > > +		if (save)
-> > > +			s->console_cached_regs[i] =3D sci_serial_in(port, i);
-> > > +		else
-> > > +			sci_serial_out(port, i, s->console_cached_regs[i]);
-> > > +	}
-> > > +}
-> > > +
-> > >  static __maybe_unused int sci_suspend(struct device *dev)
-> > >  {
-> > >  	struct sci_port *sport =3D dev_get_drvdata(dev);
-> > > =20
-> > > -	if (sport)
-> > > +	if (sport) {
-> > >  		uart_suspend_port(&sci_uart_driver, &sport->port);
-> > > =20
-> > > +		if (!console_suspend_enabled && uart_console(&sport->port))
-> > > +			sci_console_setup(sport, true);
-> > > +		else
-> > > +			return reset_control_assert(sport->rstc);
-> > > +	}
-> > > +
-> > >  	return 0;
-> > >  }
-> > > =20
-> > > @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct de=
-vice *dev)
-> > >  {
-> > >  	struct sci_port *sport =3D dev_get_drvdata(dev);
-> > > =20
-> > > -	if (sport)
-> > > +	if (sport) {
-> > > +		if (!console_suspend_enabled && uart_console(&sport->port)) {
-> > > +			sci_console_setup(sport, false);
-> > > +		} else {
-> > > +			int ret =3D reset_control_deassert(sport->rstc);
+> > > I agree naming is hard, but I guess we can assume with 'bulk' we
+> > > refer to both
+> > > phy and mac reset (similar to what we have in
+> > > mtk_pcie_power_up()),
+> > > what do you think?
 > >=20
-> > With this, is the reset_control_deassert() in sci_parse_dt() still
-> > needed?
+> > My point is that the referenced (bulk) assert isn't in
+> > mtk_pcie_setup()
+> > anymore - it was just moved right above this comment.
 >=20
-> If I'm not wrongly understanding your question, yes, the
-> reset_control_deassert() is still needed in the sci_parse_dt() as the
-> sci_parse_dt() is called on probe path. After resume the sci_parse_dt() i=
-s
-> not called unless the driver is unbinded and then re-binded.
+> ok, thx. I got what you mean now, I will fix it.
+>=20
+> >=20
+> > I wonder why that delay is required at all, though. Does the reset
+> > controller driver return from reset_control_ops::assert before the
+> > reset line to the PCI controller is asserted?
+>=20
+> We discussed it in a previous revision and Bjorn requested to have
+> the required delaies=20
+> in the PCIe driver.
+>=20
+> https://patchwork.kernel.org/project/linux-pci/patch/aca00bd672ee576ad96d=
+279414fc0835ff31f637.1720022580.git.lorenzo@kernel.org/#26110282
 
-Ah, I was thinking of runtime PM resume callbacks. Thank you for the
-answer, this cleared my confusion.
+Ok, thank you.
 
 regards
 Philipp
