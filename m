@@ -1,171 +1,117 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591D113AA5D
-	for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2024 18:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDC62907
+	for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2024 02:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731869064; cv=none; b=S//cZ/y9uLydI+hpEBOzMRu3zCe7GXa9EXnbotFlvrrtVyO4bS9VOxcR6mYwBXx7GYuIJVph7spZy++/Zryd71a+/M3xlh37tqm56ZHPEAhoU/icq0sL/PzyfObOGIqfn6h+eGQpNV985Sg8i+YrEn9ZSLeqv37KGtqpSezh4SI=
+	t=1731896678; cv=none; b=WB6kC0eKdATqQ0NFJfh2ElEVwcZ/++7gpRvTl/3kqM46hf9ve87KnYViw2zIhjUacSK3e3/nJhKdFSUFlBUdZYpTdq5Fxmtk3BQj/Kq+n39eOV1yug/d5K6W5Vf7H5PWZ6FhI1IkLoLLl1a7SN/eMV4vQfqZp0Ns3zqExEvGCHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731869064; c=relaxed/simple;
-	bh=BRVnz4//YdXvz1FMKrURytumMDf92OlVDuTwtndmp1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KoCz+M3MXA5hvg5s2AZwWg8FOdS+Qy3dNHZDD3ngwjAP983eY9m+qFHkOctOV+iduYDXc7DZHLxtULKWZ80iJ9y6LvhaQz0mIssaLiscC87t98Raa+vFKRZv77ZdTXI1cryDmdMEFT/OCR6l7HoXQXqr7GiRGTcQJCaGDwFKs/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edEoZQt2; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1731896678; c=relaxed/simple;
+	bh=k3eyVUgvTJkKbvoXpMka4VR0FOUVAWdTrp6FJEjjc0o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rtDtg4UHLj3X9cxc4fhfhCoG8p35wdjxZ9JWWsr+bRTgkiTvX4USl78vQ9isADX9S3HoA90LVUBEIWGor7/tbOdXrnNV4pZ3ZAqaWB2LD7IQ9Wi2OPfCDi43whGPo0E96mTTvTzRq3F+i2jQqT0K+gDmMJXp1Rv02mbNGR3mhxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tygw5ctg; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edEoZQt2"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3823eaad37aso470775f8f.0
-        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2024 10:44:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tygw5ctg"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-382423f4082so605244f8f.3
+        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2024 18:24:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731869060; x=1732473860; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWkh7WZG7vwBsGnxbhTtR+8ik+TAgauZ51w8oqK1WyQ=;
-        b=edEoZQt26f5BxB30gaQq7huHihGGgPtKaRxJ7WI+MmxNh5jyyx06GM9POk9TL0L5aR
-         sdUBRqpiiS+gaVr6qKVRc24JME7YWPT9yBd6fD+Z2r530Jzqffv+E1lNQQZtF5Vg+vwI
-         dI8apdMJQOyV24U/XpVjpvY2UY3Zmx0Rg4/g26kL1tat+wrVb5LA3gh7ezAC8Bojlh0w
-         bZ5OzzrGyJNAeQ13hLM1H8YVwqtPdRVX7jQvDff4jsmA+x/F2K7MSlq91qrqMZ8UBq+3
-         XBJfAPtB3cho9WSJ/JMauOdacse4eIzNZNu4pzKXXDjBTzBfGuaJXkN5qoUexKGl11xB
-         blKA==
+        d=linaro.org; s=google; t=1731896675; x=1732501475; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uPjgWhLQCkTakjfZhT/uUqtaJNKJd0vGZgcQQ4R7uyQ=;
+        b=Tygw5ctgnQNfwteytDhRTYSHu0qKkLqgi0PBBggtGC2Iil+B5aWtYIPBe8JFGiKDom
+         uR5DW3Wbs7oP8u0m5/M/ZTEybkB70ughhrMmsZgKuS7lazHEB0nSLV6C2LLnrXqa5fjK
+         sJa8uZSkgXnBftHDHscXeZKH38P6hZnn2rHTCXpgYv+AQqVGjSLRTwpK/lBlvwRIUvcv
+         jNOHN4YFdWt++JE/TmqgTgdTbBp8UJMSN+rax6J7wR4309QyITuZtyC4mkCFvBGk0jta
+         7Fa3Q/6cIgTeEuw6H1XYbqUsXU8qM3BriOyPcNKj+Z94YxcZmdrjhnkPs5pYYIG11fuQ
+         cgcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731869060; x=1732473860;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1731896675; x=1732501475;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eWkh7WZG7vwBsGnxbhTtR+8ik+TAgauZ51w8oqK1WyQ=;
-        b=wfWuelOmRn3md44hg0MLVaKX1UZHPpuN2oSWAgOpMyWfZTnLd3wKr0F0FaNvxbHtiz
-         9deP5XtaWHv5Y7KXy743TfFxEBR6H51aflTII3DjsPfW+TjAT2pDc9uOTvUVXF+8Jj/7
-         sn1c9MZ24os+hyvWvK8hfNeSWZ+Mik0r0YUoTueEratVcH9uBhMy5WvYQI0R5QF414Rm
-         3S7GeV7IOIlV//89ncji1RRqUjrj83VereRtVfxaoEjbwYymUcEsg/eaKiWDHgXMgieD
-         6LPpuY18elUhswc18EmSb+3Yt0/6GhzHKR8ImNIuwSFuZYu3txY+SmQxcYb5UFacNE7k
-         0QIA==
-X-Gm-Message-State: AOJu0YyugP9qCpP2PDNXyRkH1QiM0H0rXDIn2oVMt90iKQPOTS+y4a49
-	Eomfm+5zRc8SNc9Tm68+0HOvwDiQRBVAuoaSuSexW9APW7SuRJ+HrpjMDzvN48E=
-X-Google-Smtp-Source: AGHT+IGkeQweqYBW/8Hnl0hUU1V1jJ5EB7kiHg+dpWYM1ZyWbyKk+uGQSNgMw4bo7IDu+9OSpPIMdA==
-X-Received: by 2002:a05:6000:1a8e:b0:382:3c7b:9bd with SMTP id ffacd0b85a97d-3823c7b0b66mr3233529f8f.30.1731869059589;
-        Sun, 17 Nov 2024 10:44:19 -0800 (PST)
-Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38244220183sm1863714f8f.99.2024.11.17.10.44.18
+        bh=uPjgWhLQCkTakjfZhT/uUqtaJNKJd0vGZgcQQ4R7uyQ=;
+        b=NqDzETanl943FaX930EUJxoovmbsL0ARrN6qfYvuHh97w3FNYUWa45pCInma0n9fzb
+         FmDpgXzHrE5y93qwXm+PZ1jChFKDM/C2DDwDkja4Xtp6qQsMnPU9A4zAVCCHulzEuGlk
+         D/Q42agkGqUZyF9aqleIY+mihh0gztCpDB/USdtpVij6Mve9OLBJrZt47u6K1qQr0z/Q
+         SWmUpCE2f3tMo5XWIo9UJPTL4rk8NNRXwpkpPkl+Um+diyC8I09LRQAInwEFOIPZJwU6
+         kTXy7AWkQt77zQ5lQ6PWax7sGCzBXxvFdFuYPLlawhwv4ULCgzMrZ+qbensqBfw6EFyv
+         POZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTLtJdR2O64QXB7TXAti4NROFkFUih3rvi4LOmDX7arNv6m1/tzUUNKwenM3uiRYRus5t8Psj03WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqG4bMM01QUDNh5vbUo6lnOTAkoyGNentjY2b7vT7SPbF2hV1J
+	amT74ypgtFedqbXXc2McKyoJ0FG+8GhMXRWAgn4ehDFIMHx+pJ/B28g7vNRQD78=
+X-Google-Smtp-Source: AGHT+IHoVxhlL4UOF7WDoLOsycgCb1o74foUHlXwahjrJcecC+yRs/vAT7J/fQ/8T2Sm873bRa/fYQ==
+X-Received: by 2002:a05:6000:400c:b0:382:3afd:126a with SMTP id ffacd0b85a97d-3823afd1568mr4338493f8f.35.1731896674856;
+        Sun, 17 Nov 2024 18:24:34 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada2e35sm11387902f8f.5.2024.11.17.18.24.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 10:44:19 -0800 (PST)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: linux-arm-msm@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	konradybcio@kernel.org,
-	sboyd@kernel.org,
-	andersson@kernel.org,
-	evgreen@chromium.org,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [PATCH v3] soc: qcom: Rework BCM_TCS_CMD macro
-Date: Sun, 17 Nov 2024 20:43:52 +0200
-Message-ID: <20241117184352.187184-1-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        Sun, 17 Nov 2024 18:24:33 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/2] clk: qcom: Add support for multiple power-domains for
+ a clock controller.
+Date: Mon, 18 Nov 2024 02:24:31 +0000
+Message-Id: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF+lOmcC/x2NQQrCMBAAv1L27IIbUrB+RTzEZKuL6SYkrQZK/
+ 27wOHOY2aFyEa5wHXYo/JEqSTvQaQD/cvpklNAZzNlYIrrgw2IU3RoqtxWNRSLs2sfk37hscZU
+ cGXP6csGQFida0Y3zNNng7Wgc9HIuPEv7X2/34/gB8bMFNYUAAAA=
+X-Change-ID: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.15-dev-355e8
 
-Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
+On x1e80100 and it's SKUs the Camera Clock Controller - CAMCC has
+multiple power-domains which power it. Usually with a single power-domain
+the core platform code will automatically switch on the singleton
+power-domain for you. If you have multiple power-domains for a device, in
+this case the clock controller, you need to switch those power-domains
+on/off yourself.
 
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+The clock controllers can also contain Global Distributed
+Switch Controllers - GDSCs which themselves can be referenced from dtsi
+nodes ultimately triggering a gdsc_en() in drivers/clk/qcom/gdsc.c.
 
-While at it, used le32_encode_bits which made the code easier to
-follow and removed unnecessary shift definitions.
+As an example:
 
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+cci0: cci@ac4a000 {
+	power-domains = <&camcc TITAN_TOP_GDSC>;
+};
+
+This series adds the support to attach a power-domain list to the
+clock-controllers and the GDSCs those controllers provide so that in the
+case of the above example gdsc_toggle_logic() will trigger the power-domain
+list with pm_runtime_resume_and_get() and pm_runtime_put_sync()
+respectively.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
-Changes in v3:
-- align the macro lines better
+Bryan O'Donoghue (2):
+      clk: qcom: common: Add support for power-domain attachment
+      clk: qcom: gdsc: Add pm_runtime hooks
 
-Changes in v2:
-- use le32_encode_bits instead of u32_encode_bits with a cpu_to_le32 on
-the fields; this however ment we need to force cast the le32 to the
-u32 container.
+ drivers/clk/qcom/common.c | 24 ++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.c   | 26 ++++++++++++++++++--------
+ drivers/clk/qcom/gdsc.h   |  2 ++
+ 3 files changed, 44 insertions(+), 8 deletions(-)
+---
+base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+change-id: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
 
- drivers/clk/qcom/clk-rpmh.c           |  2 +-
- drivers/interconnect/qcom/bcm-voter.c |  2 +-
- include/soc/qcom/tcs.h                | 26 ++++++++++++--------------
- 3 files changed, 14 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 4acde937114a..4929893b09c2 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -267,7 +267,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
- 
- 	if (c->last_sent_aggr_state != cmd_state) {
- 		cmd.addr = c->res_addr;
--		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
-+		cmd.data = (__force u32)BCM_TCS_CMD(1, enable, 0, cmd_state);
- 
- 		/*
- 		 * Send only an active only state request. RPMh continues to
-diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
-index a2d437a05a11..ce9091cf122b 100644
---- a/drivers/interconnect/qcom/bcm-voter.c
-+++ b/drivers/interconnect/qcom/bcm-voter.c
-@@ -144,7 +144,7 @@ static inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
- 		vote_y = BCM_TCS_CMD_VOTE_MASK;
- 
- 	cmd->addr = addr;
--	cmd->data = BCM_TCS_CMD(commit, valid, vote_x, vote_y);
-+	cmd->data = (__force u32)BCM_TCS_CMD(commit, valid, vote_x, vote_y);
- 
- 	/*
- 	 * Set the wait for completion flag on command that need to be completed
-diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-index 3acca067c72b..d0dfcaa07337 100644
---- a/include/soc/qcom/tcs.h
-+++ b/include/soc/qcom/tcs.h
-@@ -6,6 +6,9 @@
- #ifndef __SOC_QCOM_TCS_H__
- #define __SOC_QCOM_TCS_H__
- 
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+
- #define MAX_RPMH_PAYLOAD	16
- 
- /**
-@@ -60,22 +63,17 @@ struct tcs_request {
- 	struct tcs_cmd *cmds;
- };
- 
--#define BCM_TCS_CMD_COMMIT_SHFT		30
--#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
--#define BCM_TCS_CMD_VALID_SHFT		29
--#define BCM_TCS_CMD_VALID_MASK		0x20000000
--#define BCM_TCS_CMD_VOTE_X_SHFT		14
--#define BCM_TCS_CMD_VOTE_MASK		0x3fff
--#define BCM_TCS_CMD_VOTE_Y_SHFT		0
--#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-+#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
-+#define BCM_TCS_CMD_VALID_MASK		BIT(29)
-+#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
- 
- /* Construct a Bus Clock Manager (BCM) specific TCS command */
- #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
--	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
--	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
--	((cpu_to_le32(vote_x) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
--	((cpu_to_le32(vote_y) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-+	(le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
-+	le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
-+	le32_encode_bits(vote_x, BCM_TCS_CMD_VOTE_X_MASK) |	\
-+	le32_encode_bits(vote_y, BCM_TCS_CMD_VOTE_Y_MASK))
- 
- #endif /* __SOC_QCOM_TCS_H__ */
+Best regards,
 -- 
-2.43.0
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
