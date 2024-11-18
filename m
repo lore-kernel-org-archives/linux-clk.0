@@ -1,94 +1,100 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914D754652;
-	Mon, 18 Nov 2024 06:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C413405FB;
+	Mon, 18 Nov 2024 08:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731912578; cv=none; b=kyE4yFbIHEIIyerw5BHtmZQzOANuNWUhXqH0wHDyBuQufEntm0ABhoCJxwtkx9jviK0pk/ljoq9081cs9o9GAD/ZZxgsy8XT+pWQRHcW85PDng29B4sl732Q0RB/sw8uzoTOkmFhrXa1ctrTY6vsRltWaKnmUeOl4ADTnkEVGnE=
+	t=1731917120; cv=none; b=cYkmUc2t6bwtdQOppXnhjWHUsasDTDThy/t67XwH+Qo1Gyz9phkqaovBZZQ77ieouLR4+VWYMpFEMMdu0ZkQMtTZ0PkTxovs00rGCytSnz2WhNIZc9gaVicJGby5ceaXuY53rtEs+rv7WAFpFLkHS3f7rVpbieCa1oski9qvfts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731912578; c=relaxed/simple;
-	bh=ULUv5k6/b6OAJTH3xB9QMwYTCfFWvEVCAfCK2tBQHLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n0dvLixy3t67ckqvrFLUsBdluLllk2P5Uv8IjC9/WCjPJ8TbDYN9EnJF5hipZGdHKqRNYgMZhEfCJe6iu1FvlzyAWg9YNYbRc59VxZeaBu+PbmVSUjhqIJwNdV7ha8nsBOa1qs0wVhm1rCfn8FOMEORbEm+4oE5NsGZy7zoJ+WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T2bONE88; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1731917120; c=relaxed/simple;
+	bh=spc3BCehefvXljejaMy5S4i/Hscl4iY4xnBC2Qdg15c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YtTQvgl5YC8PTIyT2MyvlVpx2vY5PqH16AyKVusxpncgJ9IB4J+BD4FqpfIHZ6SwQRhfcYRXBjkr390nEk1Ag7FbMMWPm5DMyDfKH1zhFu+xcAiwJ+66ZO0hL2rjm67h2jHweAlBQWgdF3sOJu5HgVNEElMRKbiq5lzi7xjospY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5Mcfxiw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T2bONE88"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731912574;
-	bh=ULUv5k6/b6OAJTH3xB9QMwYTCfFWvEVCAfCK2tBQHLQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T2bONE88Z4ULg6wAyJSoOW9n3ZS/rl9Ep6AT35B296kM3kG53AP5t9rtGf6M3WY4y
-	 9mOOuAiZqaVdG1R4kJBxdNnJXr43ju3/EtI6Kql/RS5whSt9/7enA+wfqXqkH3trij
-	 7zNCRqORxVIW3oECjzrBZjW3YQXcmvLJLHz3AsYUMTtZ5hnM1WSqliTfOW5H97QKzt
-	 sJ3BYj2ks2k06As8qWScwfooUiYDyXdoCrNApLs9qUn9YoNnFPDdgI5rYje72ev/5G
-	 FPC0/vr45+nDBeCsFnA67NOpNmNkXXY6Z7BxXP+BUKV7iabtH+B8AuSZtGyChwhzTF
-	 TN/xgiilT9jNw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5958817E1247;
-	Mon, 18 Nov 2024 07:49:34 +0100 (CET)
-Message-ID: <197fde88-f3eb-4c09-9d49-6450faa150cc@collabora.com>
-Date: Mon, 18 Nov 2024 07:49:34 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5Mcfxiw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C4FC4CECF;
+	Mon, 18 Nov 2024 08:05:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731917119;
+	bh=spc3BCehefvXljejaMy5S4i/Hscl4iY4xnBC2Qdg15c=;
+	h=From:Subject:Date:To:Cc:From;
+	b=R5McfxiwncmtwJFZJqpiAZSKCwY5xQdooOFsayfh93oAjStTekaQAnN8d/fTGN7I5
+	 droBPbTp9y4oQyKuOO3/7/HP3OaXF2Q/0fc9zm3p1ToRXR5AzKBjymxf6K0Fk4MVL4
+	 f9mb+uUbRS837jZ0SF5lc2F2EroFt/w0RQcFDwZOh1NRtCSOAPvAEKwQyqTmoaOrVF
+	 yYiLzIQbQ/8Wls+brL71qATyY/8lPjOOTNX4/FrXHa0vOgAs3mYVT8rceU/TADJCLd
+	 xFElGNNVJgGVYoU2zFHDrMrrEYNas/zo4cHA816IR9GmX0oegMaq9knSlNfRM6yPZo
+	 DNOkpves5rnjA==
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: [PATCH v4 0/6] PCI: mediatek-gen3: mtk_pcie_en7581_power_up() code
+ refactoring
+Date: Mon, 18 Nov 2024 09:04:52 +0100
+Message-Id: <20241118-pcie-en7581-fixes-v4-0-24bb61703ad7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] PCI: mediatek-gen3: Add comment about
- initialization order in mtk_pcie_en7581_power_up()
-To: Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee
- <ryder.lee@mediatek.com>, Jianjun Wang <jianjun.wang@mediatek.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20241116-pcie-en7581-fixes-v3-0-f7add3afc27e@kernel.org>
- <20241116-pcie-en7581-fixes-v3-4-f7add3afc27e@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241116-pcie-en7581-fixes-v3-4-f7add3afc27e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACT1OmcC/33NQQ7CIBAF0Ks0rMXAAKW48h7GBaFDSzS0AdNom
+ t5d2lWNxuX/k/9mJhlTwExO1UwSTiGHIZYgDxVxvY0d0tCWTICB5JxpOrqAFKNWDac+PDFTMLV
+ iyrcglCBlNybcDmV2uZbch/wY0mt7MfG1/adNnDJqPXONBgHC6fMNU8T7cUgdWbkJ9oT5RUAhG
+ FphpfXGSP9FiB3B61+EKITXtm2F9Q40fhDLsrwBzQUyGTkBAAA=
+X-Change-ID: 20241107-pcie-en7581-fixes-296505fd2353
+To: Ryder Lee <ryder.lee@mediatek.com>, 
+ Jianjun Wang <jianjun.wang@mediatek.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ Lorenzo Bianconi <lorenzo@kernel.org>
+X-Mailer: b4 0.14.2
 
-Il 16/11/24 09:18, Lorenzo Bianconi ha scritto:
-> Add a comment in mtk_pcie_en7581_power_up() to clarify, unlike MediaTek
-> PCIe controller, the Airoha EN7581 requires PHY initialization and
-> power-on before PHY reset deassert.
-> 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> ---
->   drivers/pci/controller/pcie-mediatek-gen3.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-> index 2b80edd4462ad4e9f2a5d192db7f99307113eb8a..dd30530a43b1097871acc9e76a7534f30819432d 100644
-> --- a/drivers/pci/controller/pcie-mediatek-gen3.c
-> +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> @@ -928,6 +928,10 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
->   	 */
->   	mdelay(PCIE_EN7581_RESET_TIME_MS);
->   
-> +	/*
-> +	 * Unlike the MediaTek controllers, the Airoha EN7581 requires PHY
+Minor fixes and code refactoring in mtk_pcie_en7581_power_up() routine
 
-Unlike the other MediaTek Gen3 controllers, Airoha EN5781 requires.....
+---
+Changes in v4:
+- fix comment in patch 4/6
+- Link to v3: https://lore.kernel.org/r/20241116-pcie-en7581-fixes-v3-0-f7add3afc27e@kernel.org
 
-(because Airoha *is* MediaTek anyway)
+Changes in v3:
+- add trivial patches 5/6 and 6/6 to the series
+- rename err_clk_init in err_clk_prepare_enable
+- fix commit log for patches 2/6 and 3/6
+- Link to v2: https://lore.kernel.org/r/20241109-pcie-en7581-fixes-v2-0-0ea3a4af994f@kernel.org
 
-After which,
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Changes in v2:
+- added trivial patch 4/4
+- improved commit logs and comments
+- introduced PCIE_MTK_RESET_TIME_US macro
+- Link to v1: https://lore.kernel.org/r/20241107-pcie-en7581-fixes-v1-0-af0c872323c7@kernel.org
+
+---
+Lorenzo Bianconi (6):
+      PCI: mediatek-gen3: Add missing reset_control_deassert() for mac_rst in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: rely on clk_bulk_prepare_enable() in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: Move reset/assert callbacks in .power_up()
+      PCI: mediatek-gen3: Add comment about initialization order in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: Add reset delay in mtk_pcie_en7581_power_up()
+      PCI: mediatek-gen3: rely on msleep() in mtk_pcie_en7581_power_up()
+
+ drivers/clk/clk-en7523.c                    |  1 -
+ drivers/pci/controller/pcie-mediatek-gen3.c | 60 +++++++++++++++++++----------
+ 2 files changed, 39 insertions(+), 22 deletions(-)
+---
+base-commit: ac9626f643ea9cde795811d924388fa49f2c4c0c
+change-id: 20241107-pcie-en7581-fixes-296505fd2353
+
+Best regards,
+-- 
+Lorenzo Bianconi <lorenzo@kernel.org>
 
