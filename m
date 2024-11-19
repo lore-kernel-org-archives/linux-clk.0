@@ -1,158 +1,165 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E791CEE8B
-	for <linux-clk@vger.kernel.org>; Tue, 19 Nov 2024 15:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37B1CF7AE;
+	Tue, 19 Nov 2024 16:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732030898; cv=none; b=Gz0AbIhNRe5lG7YeRU6H3Uf3L070eikxHf87kDE+YdqXoLgbxM6gWW11pJomdHcTFGCxoFCiMzVc6L0xLoazeZQiP9m5+J1qcpUOXbFUDG6Y+WMfqPhrSg27q3lZugxJb52+FVJABzcMkH9QvcDqmBUMOW+0NiqpuFl1FrwQBlg=
+	t=1732033436; cv=none; b=S1H7hiPdAHzzINIyklW+sjjFwul2w/dHXqp9FKwM3JzIUBC6m//aSsf0zDSx6kHs5j8qliyxTTDuK/GPKFZJU31PsZqDTrMqCWhBALex2l5tlcrwnxJK2fsotsmtUtaJbtjks3qfPV/B+2Knjojfoogt/8bUDvJaiZYFsb29aQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732030898; c=relaxed/simple;
-	bh=LMlnjlnlYyS1T8w8ya2+4ZjbQ/AtQ6bGHG760o+tXPY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fVDzrrH/RqIumoyk0aYEuNq5p6yVCgKrz83PZuBH3U5UDheO7veZpUUXDetwRehN2P907Dj6K29PNa9pK5TAAWxGrl/6jv+x0/cTVEUCXeyDJ/J2QO2Nf+Kcaer7RxOz8XDM+wvC2Kjq3Checfe05bD9zE8nYuU7f9mmCwJrins=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=io9RKrrl; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1732033436; c=relaxed/simple;
+	bh=LSRdOwWVhxFzk1KBx29WAMi60HC/Qo9FvfMm4nhpA9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cc08nKc37h2inneglRG64dAy9nHu/PF9jIkHaAiXm6WDR8tIlBnT6b+FJjlqA5wAazAzdjcH+Me86suVZcU28KfT0GKCw9n3AoJsrjMm/Oolez4OHXl4tcCnD2UmoSybpAtRwVtT9WmuymfHSM7622p/Hs6iuz9JRV3ihg23gmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6hmRTcs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="io9RKrrl"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DCE0B1BF20C;
-	Tue, 19 Nov 2024 15:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732030889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+KJPrpVSpjlMsljEONMGLhUb9kDFkewDTz7vO3IORSI=;
-	b=io9RKrrlUJ5LfS28I+zGTgdXazwkVChYn/JjjVqtb5QYNC9yIXDAhmkzunCCdpOx3BIUOX
-	0FhAT9sqGU1TAcPeslSlemLGuz4nik2+LXLN7Syk/AHbOpnn7v7qKEC5BGXk600IObMBUJ
-	k5tnn3K6hWPGJO+yM8BXvIE/TDFTToxotzYUcxhavwFJs+BT9FsI3Ea8sJOhRtTpL+rsnA
-	npx/M+CQj9Okjc85fwF1w20qH0V3N2uLAzbBzdL0KwjsgZzQHfpVjaMDCEo6lrUaktYqa0
-	PuqjD4weYeHzqovr/76QnUG6wc4hvn1b8VxXm8nGwZFrpSm7uBxu3FmF3d2tJA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Marek Vasut <marex@denx.de>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,  Abel Vesa
- <abelvesa@kernel.org>,  linux-clk@vger.kernel.org,  Fabio Estevam
- <festevam@gmail.com>,  "Lukas F . Hartmann" <lukas@mntmn.com>,  Michael
- Turquette <mturquette@baylibre.com>,  Peng Fan <peng.fan@nxp.com>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Sascha Hauer
- <s.hauer@pengutronix.de>,  Shawn Guo <shawnguo@kernel.org>,  Stephen Boyd
- <sboyd@kernel.org>,  imx@lists.linux.dev,  kernel@dh-electronics.com,
-  linux-arm-kernel@lists.infradead.org,  Anson Huang <Anson.Huang@nxp.com>
-Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
- reconfigure parent rate
-In-Reply-To: <c3da6311-1eb7-4a67-977e-32c28897f0e0@denx.de> (Marek Vasut's
-	message of "Mon, 18 Nov 2024 15:30:04 +0100")
-References: <20240531202648.277078-1-marex@denx.de>
-	<20241112234206.558d5d5e@booty>
-	<79f21303-b0ba-45ed-a842-7e5364fd4efc@denx.de>
-	<20241113120622.3501db73@booty>
-	<130fe140-e70d-4c45-aaab-e22762c58c88@denx.de>
-	<20241115180936.4ab56be3@booty>
-	<6bc5b8d7-ff10-4860-ac46-1460a7d850da@denx.de>
-	<871pz9c606.fsf@bootlin.com>
-	<c3da6311-1eb7-4a67-977e-32c28897f0e0@denx.de>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 19 Nov 2024 16:41:28 +0100
-Message-ID: <87cyirz0wn.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6hmRTcs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EF4C4CECF;
+	Tue, 19 Nov 2024 16:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732033436;
+	bh=LSRdOwWVhxFzk1KBx29WAMi60HC/Qo9FvfMm4nhpA9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g6hmRTcsFrfIB7D2y5/mfHljmWKST1y77Hb27hjUnK0eOp7MZaCumycTh8Pq7/he3
+	 wtmBk5pO8r79Mv5fNcMqxeZ0Hep+jjNQpNEjOHGvpc52JYPZvCm6eqcmGeKpiiVT76
+	 zjbIqXg+vB7AKZOX1XEPG6rrvR1cLqnJbcuEWNFYR5qfvG5mc7NgJYKFmUJBE3mGjK
+	 oJdE4daaBrrWceqAW2UHdgqow3ce09w5eAJYRI1lBMjBVBU1bo//zW1qrGh7BUltQQ
+	 de5ckQFQai0dicL73v+SUXnpaE1BItxVpaM6qVb54PxJ3g4K0DdT4/dokdh33HvTU4
+	 4cEXp2pkWkTXg==
+Date: Tue, 19 Nov 2024 10:23:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org,
+	p.zabel@pengutronix.de, lethal@linux-sh.org, g.liakhovetski@gmx.de,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 6/8] arm64: dts: renesas: rzg3s-smarc-switches: Add a
+ header to describe different switches
+Message-ID: <20241119162354.GA1761971-robh@kernel.org>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241115134401.3893008-7-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115134401.3893008-7-claudiu.beznea.uj@bp.renesas.com>
 
-Hi Marek,
+On Fri, Nov 15, 2024 at 03:43:59PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> There are different switches available on both the RZ/G3S SMARC Module and
+> RZ SMARC Carrier II boards. These switches are used to route different SoC
+> signals to different parts available on board.
+> 
+> These switches are described in device trees through macros. These macros
+> are set accordingly such that the resulted compiled dtb to describe the
+> on-board switches states.
+> 
+> Based on the SW_CONFIG3 switch state (populated on the module board), the
+> SCIF3 SoC interface is routed or not to an U(S)ART pin header available on
+> the carrier board. As the SCIF3 is accessible through the carrier board,
+> the device tree enables it in the carrier DTS. To be able to cope with
+> these type of configurations, add a header file where all the on-board
+> switches can be described and shared accordingly between module and carrier
+> board.
+> 
+> Commit prepares the code to enable SCIF3 on the RZ/G3S carrier device
+> tree.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v3:
+> - none
+> 
+> Changes in v2:
+> - none
+> 
+>  .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 20 +-----------
+>  .../boot/dts/renesas/rzg3s-smarc-switches.h   | 32 +++++++++++++++++++
+>  2 files changed, 33 insertions(+), 19 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> index 55c72c8a0735..5c88e130c89e 100644
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> @@ -9,25 +9,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+>  
+> -/*
+> - * On-board switches' states:
+> - * @SW_OFF: switch's state is OFF
+> - * @SW_ON:  switch's state is ON
+> - */
+> -#define SW_OFF		0
+> -#define SW_ON		1
+> -
+> -/*
+> - * SW_CONFIG[x] switches' states:
+> - * @SW_CONFIG2:
+> - *	SW_OFF - SD0 is connected to eMMC
+> - *	SW_ON  - SD0 is connected to uSD0 card
+> - * @SW_CONFIG3:
+> - *	SW_OFF - SD2 is connected to SoC
+> - *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
+> - */
+> -#define SW_CONFIG2	SW_OFF
+> -#define SW_CONFIG3	SW_ON
+> +#include "rzg3s-smarc-switches.h"
+>  
+>  / {
+>  	compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+> new file mode 100644
+> index 000000000000..e2d9b953f627
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-On 18/11/2024 at 15:30:04 +01, Marek Vasut <marex@denx.de> wrote:
+Use the same license as the .dtsi file.
 
-> On 11/18/24 9:15 AM, Miquel Raynal wrote:
->> Hi Marek,
->
-> Hello Miquel,
->
->>>>> If you really want accurate pixel clock for your panel, you need simi=
-lar
->>>>> change to 4fbb73416b10 and configure the Video PLL such that the
->>>>> accurate pixel clock can be derived from it. The Video PLL cannot be =
-set
->>>>> to pixel clock, because the LDB serializer clock are either 7x the pi=
-xel
->>>>> clock, or 3.5x the pixel clock (for dual link LVDS), so the Video PLL
->>>>> has to be set to 7x or 3.5x pixel clock of the panel, then you should
->>>>> get accurate pixel clock and a working panel again.
->>>> I found that I'm having the same issue that has been discussed in some
->>>> related threads: the lcdif2 configures the video_pll1 to ~72 MHz, and
->>>> later LDB tries to set it to 7x that value, failing.
->>>
->>> Right, which is solved by configuring the Video PLL to the correct
->>> frequency in DT up front ... unless you have more than one output
->>> supplied by that Video PLL.
->> No, this looks like a bug in the imx8 clock driver. I would expect the
->> core to handle such case without DT hack. It is not okay to fix clock
->> frequencies in DT because drivers are failing to do it properly. I
->> understand there are advanced/dual cases with very specific frequencies
->> where you don't expect it to magically work and giving hints with DT
->> assigned-clocks* properties makes sense, but here I don't think we
->> should consider it as a proper fix.
->
-> It is not a proper fix, it is the best we can do right now. I already
-
-I am sorry I probably misunderstood your previous reply then. I am fine
-with the assigned-clocks workaround.
-
-> replied to Luca with a bunch of patches where I tried to come up with a
-> way to negotiate the pixel clock in drivers ... I need to get back to
-> those.
-
-Indeed, thanks to your feedback we got it fixed locally, so short term
-is okay for us (but people not reading this thread might still suffer
-from the problem though).
-
->> If I may recap:
->> 1- a simple display pipeline works
->> 2- the pixel frequency could be more precise so the video_pll1 parent is
->>     used to dynamically compute a better frequency
->> 3- the video_pll1 parent is too low in some cases which breaks the
->>     pipeline
->> 4- we need to force video_pll1 to a value in DT
->> How possibly 4 could be a relevant answer to 2, seriously? May I
->> return
->> you the advice, if you want a better video_pll1 value in the first
->> place, why not assigning it up front in DT?
->
-> Because I have DSI-to-(e)DP bridge on the DSI bus and I do not know the
-> pixel clock needed by attached panel up front.
->
-> I already included a link to DTO which allowed me to operate both this
-> DSI-to-(e)DP bridge and LVDS panel with accurate pixel clock, I was
-> hoping that would also let you solve 3 and 4. 4fbb73416b10 ("arm64: dts:
-> imx8mp-phyboard-pollux: Set Video PLL1 frequency to 506.8 MHz") fixed
-> 3. for Isaac at least.
->
->> I understand your goal, and I agree with it, but please acknowledge that
->> even though the current patch looks fine per-se, it is exposing a real
->> bug that is now visible. Hiding it with DT properties feels really wrong.
-> I do fully agree the whole DT Video PLL1 clock frequency configuration
-> is not good and it should not be in the DT at all. That is my goal in
-> the very end.
->
-> The drivers (in this case, LCDIF1 + LCDIF2 + LDB) should negotiate the
-> Video PLL1 frequency that fits them all best and configure it
-> accordingly, without any DT assign-clock* workarounds.
-
-Ok, good to know we are aligned :-)
-
-> I just didn't figure out a way to do that ^ yet.
-
-Of course, getting rid of the DT workarounds is probably a long term
-goal, unlike the mid-term goal which is: "fixing" today's situation for
-"everyone with a simple setup". We are also looking into this and
-willing to find a proper solution.
-
-Cheers,
-Miqu=C3=A8l
+> +/*
+> + * On-board switches for the Renesas RZ/G3S SMARC Module and RZ SMARC Carrier II
+> + * boards.
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#ifndef __RZG3S_SMARC_SWITCHES__
+> +#define __RZG3S_SMARC_SWITCHES__
+> +
+> +/*
+> + * On-board switches' states:
+> + * @SW_OFF: switch's state is OFF
+> + * @SW_ON:  switch's state is ON
+> + */
+> +#define SW_OFF		0
+> +#define SW_ON		1
+> +
+> +/*
+> + * SW_CONFIG[x] switches' states:
+> + * @SW_CONFIG2:
+> + *	SW_OFF - SD0 is connected to eMMC
+> + *	SW_ON  - SD0 is connected to uSD0 card
+> + * @SW_CONFIG3:
+> + *	SW_OFF - SD2 is connected to SoC
+> + *	SW_ON  - SCIF3, SSI3, IRQ0, IRQ1 connected to SoC
+> + */
+> +#define SW_CONFIG2	SW_OFF
+> +#define SW_CONFIG3	SW_ON
+> +
+> +#endif /* __RZG3S_SMARC_SWITCHES__ */
+> -- 
+> 2.39.2
+> 
