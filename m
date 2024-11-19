@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6162A1863F;
-	Tue, 19 Nov 2024 03:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB06D1863F;
+	Tue, 19 Nov 2024 03:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731988003; cv=none; b=dNext894CsTBFGN5VfQXSjJq88e2eLHLpvuXZRyqQleZQWrmM0p64JSbyfMgP9fgDE7k0CgJTp+Dz3qW782z+sK6VMuZqMlomGsGIVsM2TCpxcJBuwPzx6hqxbq+8mCpRHLaw4Btl13LaQA25ig/CN1IkcuGkadwmOjOTZE/KUk=
+	t=1731988047; cv=none; b=di46RzJoaNaZ4i1REc3dIdH/AdkZOEeguDqwCtRQn24/WRpf4OVlD9mwIyMjLAoXRKVUIrKYe15uhC1xSIulIU+g3xyN7O9gsOXOvf5jQRWGWvJ3FTMyQYIFiB0lv6OHpJCjaLnJ69+HiowZTpKitSZyS1jh1Qpgt0lzW3x0Ht8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731988003; c=relaxed/simple;
-	bh=cLg56LdjG00AtMTGY+3z7xIAHqbtHAcB02s1qF9G0eY=;
+	s=arc-20240116; t=1731988047; c=relaxed/simple;
+	bh=RKLamRwBayIwDIcA2zlPwWfk0nYyiCevvGVdQc4QLko=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=CtN+W/DDD7DP3bdBGwB2dBWzxTbWiqYH6fFHuTzrhbKWCLVi4TSs7WL98izveTdsmFXbEReLpE7BswjzMvm3Wq5rC0MWDnIeNZ944rNglFRe0NRWPk/5C2MLfcXs7Tfo6KzNv5KRQLNZ+C2vnWXpDVSwS8SHPg0NdkiXeW9GKCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhV9Za8c; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Mu1I3Li8L6KQsWGCE/Pev+ouk5wvn1UluMSjp/yyaREBvzh0tlLgOOVn7UbzlijURGzbZlTiwP2iyAR+dEARt2Mn2IYMMmusn11O90WJxYFuBwVw/5B08Nwk7Ou9ffAsk4gQbC12dcV8Kb1tA81EGAVqSjW7kmth9iMqH/hdyFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mwj0WlTa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhV9Za8c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D04A8C4CECF;
-	Tue, 19 Nov 2024 03:46:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mwj0WlTa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E8FC4CECF;
+	Tue, 19 Nov 2024 03:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731988002;
-	bh=cLg56LdjG00AtMTGY+3z7xIAHqbtHAcB02s1qF9G0eY=;
+	s=k20201202; t=1731988046;
+	bh=RKLamRwBayIwDIcA2zlPwWfk0nYyiCevvGVdQc4QLko=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BhV9Za8cmwBje8VvseR7p6vgKJZULF+9gXVR009GGw6YkYUwFEjqFAePo7UyPPlCX
-	 bXhnTUj9u/F26RcbdyeWq2W2Jz4L3S9oJRP/sabKlSh/7bTRvI0aGvMlNgQTog7pSK
-	 33/vT7qpii+g9TGwJXkUCFRY7sqwacxR2WgQr7kfrEP5503xbhmciyJZ4+oZXPnuAP
-	 yRlDNpO7TP21iVFHgTndzfZTZ7Osn83BkbNBWmfby6reie1Eux4Kv0jrR0dD/NQnnM
-	 7y2030xHsESGFiuQPm7g72YA6yLoNjqF0BDsmIl6IvylybgDMrmgSEa2sNyFIYLep/
-	 FH7ISDqpv6qeA==
-Message-ID: <0c757a374f63ab6d47b9abd95261d348.sboyd@kernel.org>
+	b=Mwj0WlTaEgRMpDPDtyTSjZOeUQcjAwlai3euRxpBQC60iZWIwFkvZLfkkYog8Hinr
+	 8oSF/VuT3hVS5mc2pxiP/FhekFtNtkMZlcqBIAxXPGOB+l/kAAv36f98R+d3mw8MPD
+	 he6/XCTP65tMud2UizHNrSK4ngrQmwx275y1ErGrxCmo+JxefpVmYcqI0f+DmWCdZs
+	 +yGG1C8jYh0/+iDsVa/Lz3NiWQEfV6+yx1BdD5pEeFsori/W1/dYGSaREdbrwEHDcC
+	 LXfRDX9IuwWh+O/fWwp++CRXJWcy7JwAuVHQJomzOoydIYelUIuoguSbL5+cDdnofu
+	 4xmioD0tsxWDg==
+Message-ID: <943d74eeb9ef087832404a583f4f7d86.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
-References: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com> <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
-Subject: Re: drivers/clk/davinci/psc.c:281:10: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct davinci_lpsc_clk *' [-Wint-conversion]
+In-Reply-To: <20241116163854.122610-1-andersson@kernel.org>
+References: <20241116163854.122610-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.13
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: hanchunchao@inspur.com, Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-To: David Lechner <david@lechnology.com>, Linux Regressions <regressions@lists.linux.dev>, Naresh Kamboju <naresh.kamboju@linaro.org>, clang-built-linux <llvm@lists.linux.dev>, linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>
-Date: Mon, 18 Nov 2024 19:46:40 -0800
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Danila Tikhonov <danila@jiaxyga.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Johan Hovold <johan+linaro@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, Arnd Bergmann <arnd@arndb.de>, Devi Priya <quic_devipriy@quicinc.com>, Gabor Juhos <j4g8y7@gmail.com>, Jonathan Marek <jonathan@marek.ca>, Konrad Dybcio <quic_kdybcio@quicinc.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Mon, 18 Nov 2024 19:47:24 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting David Lechner (2024-11-18 06:28:21)
+Quoting Bjorn Andersson (2024-11-16 08:38:53)
 >=20
-> This is caused by [1]. I looked at it again and the patch is wrong.
-> Can you drop it from your tree or should we send another patch to
-> fix the bad patch?
+> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
+dc:
 >=20
+>   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.13
+>=20
+> for you to fetch changes up to f1f49cc505bc998d7c13e5a518d027419a21fbae:
+>=20
+>   clk: qcom: remove unused data from gcc-ipq5424.c (2024-11-11 21:57:38 -=
+0600)
+>=20
+> ----------------------------------------------------------------
 
-I can drop it from the tree.
+Thanks. Pulled into clk-next
