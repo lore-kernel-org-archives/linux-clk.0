@@ -1,116 +1,127 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FE41C242C;
-	Tue, 19 Nov 2024 11:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F61CCB49
+	for <linux-clk@vger.kernel.org>; Tue, 19 Nov 2024 13:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732015343; cv=none; b=ApRlhupiy8Iex+JjYZucAss5tmn2lb5JuGaOSVQXDrlzhyuVAwZRP1mZDJA/Vrrfo3noxJG8Tz7ZamubqVZxQ5rYIgj/ETgPtjoUW7HoM+7bcWuxfN4NBf7SW5YzTHeFiRH1FMSXEgCwWZRm1IGNkcrjBl0hvtETMwVVKOYxfcc=
+	t=1732021837; cv=none; b=NGUCTxLk9MO5EzRY6zVNJKIfqLMQbR23xTUM7Rm4NC49HsUNbErApN/weCpFkNj1NXxO6dDV/aLDxKjC1Jm3o7wzEaTYuspbHkZJYHAZzURTFDQFcUg4nx1MKlM2RTsEEjDIKJTPOUMoZro8aMsnYj0ngi3zZocDKbHH5V3is2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732015343; c=relaxed/simple;
-	bh=xwiBdxZwubWz7bqqNS+a9hP63RXvgwe+4qMxsd4awho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZS+AXQVIOlja6w0ZDkydbW5DVo8GfXRTILhf08dztYEB4G6XvOEsh51WDDQzTZai5mFA66hPmoRwDGm/vLIQM5i+iFhmZ83zvO5ejgizrrZtSg8QvDLR9EGMe7BbMnvVz9FJn8yC6Nnf40+Lfcqu6a/B0E3nqoyC4q2Ty6ho6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=ob7uqVwp; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+	s=arc-20240116; t=1732021837; c=relaxed/simple;
+	bh=4fXNyWptEUJ9NqiDYY4v5f2MA6FE8JIpt+fHVIuwt+U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kKKcGBke2NTdMPWnUTF6q+ujRh7A31hqGqaV8Pvbxy/68wHlyyGK6iDdtxhOX6mb8pSgmEs1Hc0QOWigXqCNDDHyvEmgF53OXKhyyzK9kpZ1fyK2MamxXDHtkz1zXkSRcU8MCVmyaP8XtZUjnzha9y2SJQuqQX7hy/Ey2QZ7qhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uRW/wFl/; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="ob7uqVwp"
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 9F36C1FCB5;
-	Tue, 19 Nov 2024 12:22:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1732015330;
-	bh=mvNs9jTFC+vvsWUY8Alhqtf1e8UARS1YpFbeMu7TsYc=; h=From:To:Subject;
-	b=ob7uqVwpl3w5QJgm2XonVBAtDi8g/P7wzlNRRlWJe8OQ8+X6mHMaq7p/C66JfdhAa
-	 oXkD76CvIqGPdLHHhQ2FTzZRTntGF8iojjTcD56jMl7MgkSTN5FtBwOId1dNQl/I/x
-	 Du8Ap2xftzojyF5N22CeDJRycbdWd/pqyJuGUZgMk/2lRCBkr7bPF5pHHzYSTuD1XX
-	 7uIlg0rJPJQSLHZcRux9IbbQnkARE/87HTtNmECe7Eljq+Ctb0t4f+R2wVFvL+YhCI
-	 X0DYb7ajtYeIw3TFa4UHJ76fXt/QAiuuvxRmRu+sgkTROyvjsMznSywwRonOVXe+vg
-	 7MdqR+3Mcon6Q==
-Date: Tue, 19 Nov 2024 12:22:01 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>,
-	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	Adam Ford <aford173@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
-Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on
- v6.12
-Message-ID: <20241119112201.GA17768@francesco-nb>
-References: <20241007132555.GA53279@francesco-nb>
- <20241112075958.GA8092@francesco-nb>
- <20241112092054.GA18139@francesco-nb>
- <CAA+D8AO3a5WsZ4=V-9CDifDZYjJjwQmQQDDQM7ZKgZ6_-CNDPA@mail.gmail.com>
- <Zzde9xS0zGJhcoUb@gaggiata.pivistrello.it>
- <CAA+D8AMx14hp51aH7Y=Sgu+X+_KxQ8zdJdrQHFY84nKtQsKKrw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uRW/wFl/"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so38332955e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 19 Nov 2024 05:10:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732021833; x=1732626633; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCd1XDFaDcI0eu/5aCsZjulpUPFQcIcFClGyDjhAXE4=;
+        b=uRW/wFl/vKGPh88hCVHGj8Kc5Lbj/5byEinOJs5rYAPJNT4tezCpD+SuiMW+GdSRDJ
+         TJw5+bMxIHSM6m0J8wQrE6obeYYTwNtaiLnnW5xpN4JdzDq+IZGLjbnrRERy7J+cGNtw
+         AZJ8WNOVgC20p9u/qqqX5jB1RJF9smcyhqkR+NV/Sqxq4uQVz3wJQs3YyXzFzZicrtwU
+         DhSnDzftLph7Pg7jkTGQY3MyspN1thpcBMSZbtg+oBGe+lCFyUDAcqlrfE+8X2gLwHC3
+         3lNbxn6gJ4zkneyTArda2MGHlRa44tqy6y5x1rTa4UoIsJd/rynvldHMtxjp4zoZwgn6
+         NrAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732021833; x=1732626633;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QCd1XDFaDcI0eu/5aCsZjulpUPFQcIcFClGyDjhAXE4=;
+        b=qdZMET2zd+SpYDNeNHeuBKGQ4ZkKCiLyfOSwLOJ0wQpXgXfYvvi07lJ1djoxs0LGvI
+         J8FhY0YzOph6didYjSX/piB7G/6rUNLHSixxyFR6k+fLy/Juct4ZuNsqEyleZkL7K2TE
+         iPRxw/hTLOOUfEfzysLhnkdTCj/+rg41XUuZ1+bKndKMUpGpzr37QC30IgaU+19mYitG
+         tzmOshvboW5WpDR108iSMC83prJX2KvDtBVXVWqMtcmh3MI8lEJxna19luXiuI4bQRty
+         ILm4Sm0/FOQ5/4Et0kCDtIssQRkwSOBAEtTEad43BIn0QSFgQ8JVoHdTlGmzX2foNxPX
+         w0NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVflgFbGduAH0ekrQOVPWjhEaIJoDDX45bujF3rk0+MRgEsUpiENr4YGJAClyyQgg3p6YZ4KLxowXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoodKjxCJpFBUuVWvgWqIIr7lBaEfZBp1G0v8LmCkoWMRXUMvI
+	LmgrXWtaQq8d5CrIO11vdvHzKoj8Sj3IlYddPjMd8EDIeuhuFYIRblhUvwMJy0U=
+X-Google-Smtp-Source: AGHT+IGusP/UzmZ0+YghK5T/t6qFJwR3QEG3Zd6a+CKh0Jg8Puhh2L5Y6iTO7QAmcU06sOzzeyBDEw==
+X-Received: by 2002:a05:600c:3584:b0:430:5887:c238 with SMTP id 5b1f17b1804b1-432df725532mr135846905e9.11.1732021833272;
+        Tue, 19 Nov 2024 05:10:33 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab76dafsm192016185e9.10.2024.11.19.05.10.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 05:10:32 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/6] Add dt-bindings and dtsi changes for CAMSS on x1e80100
+ silicon
+Date: Tue, 19 Nov 2024 13:10:29 +0000
+Message-Id: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AMx14hp51aH7Y=Sgu+X+_KxQ8zdJdrQHFY84nKtQsKKrw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEWOPGcC/x3NQQrCMBBG4auUWftDJg1t9CrSRWxGHdAomSqB0
+ rtbXH6b91YyqSpGp26lKl81fZUdfOhovqdyE2jeTd75wMxHXAIeWj4NRdoCH8AMjsiLKRpLdOw
+ c5vQ0Q/Rp6Md+yG70tAffVa7a/rPztG0/dNJJzHwAAAA=
+X-Change-ID: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+To: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.15-dev-355e8
 
-Hello Shengjiu,
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
 
-On Tue, Nov 19, 2024 at 05:35:36PM +0800, Shengjiu Wang wrote:
-> On Fri, Nov 15, 2024 at 10:47 PM Francesco Dolcini <francesco@dolcini.it> wrote:
-> >
-> > On Fri, Nov 15, 2024 at 11:13:58AM +0800, Shengjiu Wang wrote:
-> > > On Tue, Nov 12, 2024 at 5:20 PM Francesco Dolcini <francesco@dolcini.it> wrote:
-> > > >
-> > > > On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
-> > > > > On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
-> > > > > > it seems that an old regression is back on v6.12, reproduced on -rc2
-> > > > > > (not sure about rc1).
-> > > > > >
-> > > > > > The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
-> > > > > > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
-> > > > > >
-> > > > > > Is it now back?
-> > > > >
-> > > > > I was able to reproduce this issue once more, this time with 6.11.7.
-> > > > > As I wrote in another email the issue is not systematic as it used to
-> > > > > be.
-> > > > >
-> > > > > Any idea?
-> > > >
-> > > > Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
-> > > > too short and therefore we have such non-systematic failures?
-> > > >
-> > >
-> > > Francesco,  it seems hard to reproduce it on my i.MX8MP-EVK board.
-> > >
-> > > If it is easy to reproduce on your side, you can try to enlarge the delay
-> > > time to see if there is any improvement.
-> >
-> > It's hard also for me to reproduce, we just have a relatively extensive
-> > test farm and 2 times it happened while doing unrelated tests. I was hoping we
-> > could have some idea on what's going on, I'll see if I can put together some
-> > kind of stress test, being able to reproduce it more systematically would
-> > certainly help.
-> >
-> 
-> With my test,  the issue reproduced with delay 5us/6us. but hard reproduced
-> with 7us.
-> I think we may need to use a delay of 10us for safety.
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
 
-Great that you were able to narrow this down and confirm the issue.
-I wonder if you would have any information on what is the actual delay
-that the HW would need, instead of guessing numbers. If not, well, let's
-go with 15usec, or 10usec, your call in the end.
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
 
-Will you send a patch?
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
 
-Francesco
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (6):
+      dt-bindings: i2c: qcom-cci: Document x1e80100 compatible
+      dt-bindings: media: Add qcom,x1e80100-camss binding
+      dt-bindings: clock: qcom: Add second power-domain to CAMCC
+      arm64: dts: qcom: x1e80100: Add CAMCC block definition
+      arm64: dts: qcom: x1e80100: Add CCI definitions
+      arm64: dts: qcom: x1e80100: Add CAMSS block definition
+
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |   5 +-
+ .../devicetree/bindings/i2c/qcom,i2c-cci.yaml      |   2 +
+ .../bindings/media/qcom,x1e80100-camss.yaml        | 354 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 359 +++++++++++++++++++++
+ 4 files changed, 718 insertions(+), 2 deletions(-)
+---
+base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+change-id: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
