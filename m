@@ -1,103 +1,92 @@
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD1D1CC156
-	for <linux-clk@vger.kernel.org>; Tue, 19 Nov 2024 13:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C016E1CEAB6;
+	Tue, 19 Nov 2024 13:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732023968; cv=none; b=U6GiHVfAbWdSlIyQkJvN3/dSWZvkHQRMNWYMdVCcXNDsWbLwgFROVH9UO1hf5d5v26sb44A2Q1/SV0XbwvmhoiftNEsRPja2TzubREwJnzH0fqcWmquRRyIr0PJ6ayWk92gyagLpBo4RDhEI2PEDMMMbdMgQV0WAjuASruhvYc4=
+	t=1732024329; cv=none; b=HS6HHjnV8nTmnJBMPP0vgvnX5TazYunNWpQmET18NmvFUkvuVufFA9Okd5NUSHySDmCd/3Pnfg/ap8p7w95ZXPg6WTmcgWVVPP33KvNH1oKKcaGTP+PNitMEjl3xChKLXKEmxLAWJTo6LDFhAnKUSKSUOOKxTBJ3kI4peudXRX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732023968; c=relaxed/simple;
-	bh=ZCTkqrkfjT0tCxtMd7n0BWeKeUKQr3zuUDfYHPwEMFM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=jrMmEtC+tI0Pih8mK70V5iL3LvAQcCH1d0fg9RcmByxqmRh2A4482xi8rIwpuJsGPsG3/HXtDqGS0zFo8D7/5QlE4UPRW83Qz4PTZrS0ZqiXvAwmR61ZLZvGWHVAIXBRmdSwpq28dHJlvUgNzreYgl37qXI8qhOUaEoBN01BdTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=mvPt7nOJ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1732024329; c=relaxed/simple;
+	bh=LlQiMmQN7UbYtRfxa1QiatqRrYWSPu3wGYqKNrXoHQ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m9L/SoeH5z0slJNluG54mbJwY5S0lUdRQ8UZ/1XP8LtL/6KYWG1Od6GgHZX1neza2O6DH+odhMko5ckKx91rZ8cWuwLhQj+QFcx4KVDkZ4IW9+Mn8FqYmrC72zY2U/JQgpKLyuSgG8zp2bRL/S4mIQvTGgcxIeEH+KYGFERYC7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2de1Jntw; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="mvPt7nOJ"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2de1Jntw"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wdskGiAKE5aPLX+jUFdMvBaqDF22aG0Vy96NCz1MBtg=; b=2de1Jntw/tTC85BNE2GliQMS+D
+	BAWUVmGyNsHpfjl7okrvpe3K8Qfvxom16AzCvMLt/j/UYV1eUD+7ivtW3wjDxoLLVDlcyl8QJGNA/
+	U8B8zjQVky155gqqSn0+LHA5j3H38O6j3jf3TU8jHKWwIa5LQrZJXYbBf/xV7V8bt9cV+yIZVIXJr
+	V2SKemyBJqfmIAPsf1xhhSlHi/kpKg7Z5U9SjD2Mjw8TeOu4IiHWdB9E9t6GjuWZw5a7bRFx0jwh8
+	6npMIu0a8DXTOrsz9E+KgXdRrsFRsbMZDvYFy7HEzUtBeE10tRZB9MCeIiEY9FYM6pCfWIRmDJ3bj
+	1du4/OWw==;
+Received: from i53875a30.versanet.de ([83.135.90.48] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tDOe7-00079C-QT; Tue, 19 Nov 2024 14:51:59 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: srinivas.kandagatla@linaro.org, Diederik de Haas <didi.debian@cknow.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ detlev.casanova@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ sebastian.reichel@collabora.com
+Subject: Re: [PATCH 1/5] clk: rockchip: rk3576: define clk_otp_phy_g
+Date: Tue, 19 Nov 2024 14:51:58 +0100
+Message-ID: <2989559.o0KrE1Onz3@diego>
+In-Reply-To: <D5Q78ZOX5SE0.2SCB8FEGY7EFA@cknow.org>
+References:
+ <20241119132916.1057797-1-heiko@sntech.de>
+ <20241119132916.1057797-2-heiko@sntech.de>
+ <D5Q78ZOX5SE0.2SCB8FEGY7EFA@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1732023962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TgHwPslSk2PRB/eadtEYqufFZbDdiWqg5iGoDx9N5MM=;
-	b=mvPt7nOJuK3tOZcE4Bh2ETmJE+u3r9PIbXv2ZOOtdFtnCHgF1fXJGMedBs/rdegph8oNS7
-	qajfOuU28XVbYTVDoR3zvtqvORg+vLN/A7k3IJdo60Uapz5BM3aFwP1eM0byxfsr7hMw+I
-	LkrB9h+q14nLcv7qsdMCWadW5YOpqLe8T27HMggN5+Nrh4HaUMDL8YP5ju/RXDtBLHD/gx
-	ZqDSBBovznuJWLtwi/A0egtShz4lTdIXGgIqrmH/ycppiOtecpsuqy+IVB56vpFUPRXyZX
-	+KpzxQE45YzQKj4KNgB9A8e2muSN02xkN2griSTwhvYy23k/3G2wEZn6TrnXLw==
-Content-Type: multipart/signed;
- boundary=79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Tue, 19 Nov 2024 14:45:53 +0100
-Message-Id: <D5Q78ZOX5SE0.2SCB8FEGY7EFA@cknow.org>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <detlev.casanova@collabora.com>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH 1/5] clk: rockchip: rk3576: define clk_otp_phy_g
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Heiko Stuebner" <heiko@sntech.de>, <srinivas.kandagatla@linaro.org>
-References: <20241119132916.1057797-1-heiko@sntech.de>
- <20241119132916.1057797-2-heiko@sntech.de>
-In-Reply-To: <20241119132916.1057797-2-heiko@sntech.de>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
---79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Am Dienstag, 19. November 2024, 14:45:53 CET schrieb Diederik de Haas:
+> On Tue Nov 19, 2024 at 2:29 PM CET, Heiko Stuebner wrote:
+> > The phy clock of the OTP block is also present, but was not defined
+> > so far. Though its clk-id already existed, so just define its location.
+> >
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  drivers/clk/rockchip/clk-rk3576.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/clk/rockchip/clk-rk3576.c b/drivers/clk/rockchip/clk-rk3576.c
+> > index 595e010341f7..029939a98416 100644
+> > --- a/drivers/clk/rockchip/clk-rk3576.c
+> > +++ b/drivers/clk/rockchip/clk-rk3576.c
+> > @@ -541,6 +541,8 @@ static struct rockchip_clk_branch rk3576_clk_branches[] __initdata = {
+> >  			RK3576_CLKGATE_CON(5), 14, GFLAGS),
+> >  	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
+> >  			RK3576_CLKGATE_CON(5), 15, GFLAGS),
+> > +	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
+> > +			RK3588_CLKGATE_CON(6), 0, GFLAGS),
+> 
+> RK3588? 
 
-On Tue Nov 19, 2024 at 2:29 PM CET, Heiko Stuebner wrote:
-> The phy clock of the OTP block is also present, but was not defined
-> so far. Though its clk-id already existed, so just define its location.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/clk/rockchip/clk-rk3576.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3576.c b/drivers/clk/rockchip/clk=
--rk3576.c
-> index 595e010341f7..029939a98416 100644
-> --- a/drivers/clk/rockchip/clk-rk3576.c
-> +++ b/drivers/clk/rockchip/clk-rk3576.c
-> @@ -541,6 +541,8 @@ static struct rockchip_clk_branch rk3576_clk_branches=
-[] __initdata =3D {
->  			RK3576_CLKGATE_CON(5), 14, GFLAGS),
->  	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
->  			RK3576_CLKGATE_CON(5), 15, GFLAGS),
-> +	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
-> +			RK3588_CLKGATE_CON(6), 0, GFLAGS),
+darn copy-paste, thanks for noticing ;-)
 
-RK3588?=20
-
-Cheers,
-  Diederik
-
->  	COMPOSITE(CLK_MIPI_CAMERAOUT_M0, "clk_mipi_cameraout_m0", mux_24m_spll_=
-gpll_cpll_p, 0,
->  			RK3576_CLKSEL_CON(38), 8, 2, MFLAGS, 0, 8, DFLAGS,
->  			RK3576_CLKGATE_CON(6), 3, GFLAGS),
+At least the register and bit number is correct though ... according to the TRM.
+So I messed up only the constant and did not notice due to the gate being
+ungated by default of course.
 
 
---79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e
-Content-Type: application/pgp-signature; name="signature.asc"
+Heiko
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZzyWlAAKCRDXblvOeH7b
-bgO3AQCaEVGABu4FsN0146ULiB2lKOrKXkI8R3DKOrAFLEGfMwD/TJpSfxGr5g9P
-Ytl5DRMSV+Y12kJDJHBNFt8sVM5NpAo=
-=Z0zZ
------END PGP SIGNATURE-----
-
---79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e--
