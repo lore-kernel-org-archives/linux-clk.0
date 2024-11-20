@@ -1,113 +1,99 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C911607AC
-	for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 17:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B071ADFE8
+	for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 17:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732122553; cv=none; b=OPrmQA3n4xg3iAv3ep1OHXbj0kKL3zqjNDqFdydzO5QQuWkQefvZwr3joAnTK2MPAdltGxpIAt8UZfOHMY19SXZbLzbJe0/uLGMdlXiEZCkpyCVRns9p9j8fJbAQhw4YicOf7SCYeRXZpCQUpe8NKfJYx/Xgm5+/OILqJOObNiw=
+	t=1732123130; cv=none; b=jqrt9hwW5MEcPnjDP1tV5I72odyQY58ztDKdTwBdbXW1OB8eXXqd7jl6JhXnakh2F8MtCUU6F0+u2KnpFpT5KLsEy2yKweVUZpE+m3A/Ba6ps4Gluy/O3QHW3jkqVuVuhtlTPGgffRXDm60MyogLP7Cbrlcu571wAHN33O8mE6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732122553; c=relaxed/simple;
-	bh=GxGYBTBzNgOeIfq/QdI2OaIkEKakJlVruSDheSbNFFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZG49AaIMX/K8kuMlBrP1+NkiG0j36nnrWqGLVJCK6L4cwbgoHJ/kgM/3SR4SvEi+rjwtQiQ9JaTwZ1i/lqVWnSrjqTSnhwzKqld3CWu6bzKcfET1V6d4z/kkHQ6mGRNzNA+Y7ki1N7BEOIornuw6gen2gmQ3w/EdxdYMRGKIaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BQ890Sme; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1732123130; c=relaxed/simple;
+	bh=S7sVTT+BQCDyJvL+YQlxm6ADZ+j/s89qtEt93n6e5G8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EM+FZS8YAL7w43Cz0zvP1MbDprCzPaDP68Wmjop6afMjKs1RgEjT+5tOTVqCgZd80zhrTKQ08gOX+MemFcRNKsUemapOHvvUFwlkcRD7QNjBJ2l5OWpWVnUHk9SrPfCXL0NJxlQHEh7yu/Jyxwdl2pOvmS48eX+8cqcvrNLC3G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BjWA2Fl4; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQ890Sme"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4316cce103dso61788875e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 09:09:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BjWA2Fl4"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so59089885e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 09:18:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732122550; x=1732727350; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1732123127; x=1732727927; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1lBaWVIKUDm8mK0qFWu7ZMD66HrRVg+A8qSokIpCLr0=;
-        b=BQ890SmeFYdur6wFjXEHO7s5gpo3VUjwH1KfoUuCzRrDxF6USOgLfi1KvtlMX48NSJ
-         m8r+yEcEAUGMWSASciaAe+LZZRLIb7Wj5FZQ9ajG0PYlopMG4nO7cxTXtCrQ6Y6ULaSV
-         MjlDNHR+iABTSPetyJVowR7FLYBufsdLYSEldM/p69njeUw+VzsJbuSIek6lgT7I26B7
-         AAjxWOnSU4BC2rW8l/MMHjzoNB9Rb8h/YwF5DS9rpkW/NyCccIZMpiNkMOcboppJchGX
-         BJyUVVMwfOAxz59qHeK9ZlbFUR6yrOOAT/90sYSk/030U5l0J82BWG/Lkq1Xfzk4eMY5
-         Apgw==
+        bh=vkJOMjQUTSactWFyt220pM1QP+p6v/Z5uBayhWP4whA=;
+        b=BjWA2Fl40fEmh4/KQIHP4u20JnhjSeEACz6EVQpRt1ins34DMVSngHMvfjIeQavn4O
+         dcf2ksQPi5rGmB5g/WOS1YTHsPvm4mtxlANKBAsxAAVH1YA9cTlsHrHr0QEJ1pgPw83Q
+         p3YQnfsbtf50zc7JVq7fSZzrdKfrii1GhDrwLVRLj1jcicH62NlOa+06osbYj/LST0k1
+         22/BXRLSgwjNbrkWzZoYRnV932YSyJBPAKtjCa7XONmOpqaNKpNOgYhYFSqxsVOLj7hW
+         5PwkEmMPucrbnFvEglBuWMnlxUYciokQHr9SQ6ceP7F0SbRANQ6tNxFDPvUIzwNO/o3H
+         gNsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732122550; x=1732727350;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732123127; x=1732727927;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lBaWVIKUDm8mK0qFWu7ZMD66HrRVg+A8qSokIpCLr0=;
-        b=OLd8vbUfPk6TIYcBWtV8Ux6JrF43gHexUOJyoMtUo7s2+kL6omBIiHlF0R811RN4aP
-         Z5hGW1B56j0cJ+NCMTqPfZGteMbB+5u1OeMYjPmryDgClFsVftPpywBwotw8tKXOeEVh
-         3oG0zoShHy6hROdWN8cWT7jZ5LeKZrB8gfdEOpqzp0Wa3yYWi+nDOSgrTLLfWn3SWpNh
-         FVvtfwBeTRbQfokr2YLCdcL1mgEksmL4TKaqsmosAFRpNiQMZld34YypPmlXIjJBrPW/
-         CMmlW9lW00f0nAuF7/iDYJ2SHR/f6TEfMgMsXgeNodjlj38QgKHK94CBz4MtxX8uwcH8
-         7E6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXKOKwD08aHOqqGawKlF137pNRicenJZdKjm2KlqN0uieTvrEAtX6cwxtFoX+B+VQxXqXa2y7S7t7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8V9Jd6wnAk37TY/bEh7UO2CJrnmcGebTdj/nCFs5iIHeZJmR2
-	wQ4AP0Cu/xkLpU8nZoji0XWXb2/yAf7pwUV6Fb0nB3YotlBrbgJS4DArIzQYbwo=
-X-Google-Smtp-Source: AGHT+IGiaYIxKh7fbsrmK6tgUUwDYtTaqJ5Wpge3WBivCuMq4wZZiH8eGrvzsvlRCSKNGG+wDtIT/w==
-X-Received: by 2002:a05:600c:3b12:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-433489819c0mr37456805e9.5.1732122550515;
-        Wed, 20 Nov 2024 09:09:10 -0800 (PST)
-Received: from [192.168.0.200] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b46359b9sm25029685e9.36.2024.11.20.09.09.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 09:09:09 -0800 (PST)
-Message-ID: <7a52ca1f-303e-44ae-b750-6aaa521516c3@linaro.org>
-Date: Wed, 20 Nov 2024 17:09:08 +0000
+        bh=vkJOMjQUTSactWFyt220pM1QP+p6v/Z5uBayhWP4whA=;
+        b=Q869iH+p82YFwwGTxg0YADP8Y39we/Oi3HGWH34B2oOaYjVMjP2EScHiqk8B/3j8Mt
+         uWEg54o40xn8lESInt+b5wRdisZoTpsgsTEbfbSR0qRCsJZr/xGJz/Pb7EGexgfGXeU3
+         OKEvbJ8UXp8OAiFWpp5H5x5YmFq7RbzpTYCD9w1T1ARPMTdVYwxNloxqROUFJNDqBSim
+         J8UJukI90r6Jvk/cF0q4GYMF2/cDy2Bv5fJRnO0QzJjeTQ2BYbb0zN2xdBk8ovYvBrQz
+         muBh0XifpukKM7RJRqnwEgZZjwl+l7i4NifNsr8cIrZlsZKpZk1i66mvJrrwXxSJKFv5
+         TISg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZYV2nJ0NDMQSdUvvsDEP4Odj37XlYpiqbJFWX5qtHPDucb1ex2LTKp9hwntz91L4IKOqzIndO0uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGKTHzixfkl703eru9946dIOb0A4xBJgnMGcd6gqMTjBxte1v8
+	1+NXRyvL7DEEdXRwkpmMfaaYXXrYHGSrwL77Vg+Ey2YfC9C1Oqe644SKcHL4bqTcr1PeSZsv9XS
+	s
+X-Google-Smtp-Source: AGHT+IFij8ZHbrHGnZwpofbTbq17XmUYoHM7wwOZwc2/mHQ70jtcHcBKktTC3s8tkz8+09L/SeJAig==
+X-Received: by 2002:a05:600c:1d0f:b0:431:5187:28dd with SMTP id 5b1f17b1804b1-4334f021032mr27206045e9.28.1732123127205;
+        Wed, 20 Nov 2024 09:18:47 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b4642b8dsm25797235e9.41.2024.11.20.09.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 09:18:46 -0800 (PST)
+Date: Wed, 20 Nov 2024 20:18:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] clk: mmp: pxa1908-apbc: Fix NULL vs IS_ERR() check in
+ probe
+Message-ID: <d7078eb7-a7d6-4753-b453-8fce15245c34@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
- <zhhna2wni4yqhnc2tqfc2ugril3h4kzbyr3ix6vpwrgghwytfa@kjfpff5zdl4z>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <zhhna2wni4yqhnc2tqfc2ugril3h4kzbyr3ix6vpwrgghwytfa@kjfpff5zdl4z>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 19/11/2024 15:34, Bjorn Andersson wrote:
-> What I think you want is two things:
-> 1) When you're accessing the registers, you want the clock controller's
-> power-domain to be on.
-> 2) When the client vote for a GDSC, you want to have the PM framework
-> also ensure that parent power-domains are kept on.
-> For the single case, this is handled by the pm_genpd_add_subdomain()
-> call below. This, or something along those lines, seems like the
-> appropriate solution.
+The devm_kzalloc() function returns NULL on error, not error pointers.
+Fix the check.
 
-Yes.
-
-I'm finding with this patch reverted but, keeping the first patch that 
-it pretty much works as you'd want with the caveat that gdsc_register -> 
-gdsc_en -> gdsc_toggle fails the first time.
-
-After that I see the GDSCs on/off as excpected
-
-cat /sys/kernel/debug/pm_genpd/cam_cc_titan_top_gdsc/current_state
-off-0
-
-cat /sys/kernel/debug/pm_genpd/cam_cc_ife_0_gdsc/current_state
-off-0
-
-cam -c 1 --capture=10 --file
-
-cat /sys/kernel/debug/pm_genpd/cam_cc_titan_top_gdsc/current_state
-off-0
-
-cat /sys/kernel/debug/pm_genpd/cam_cc_ife_0_gdsc/current_state
-off-0
-
-Perhaps we just need to fix the probe path @ gdsc_register()
-
+Fixes: 51ce55919273 ("clk: mmp: Add Marvell PXA1908 APBC driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-bod
+ drivers/clk/mmp/clk-pxa1908-apbc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mmp/clk-pxa1908-apbc.c b/drivers/clk/mmp/clk-pxa1908-apbc.c
+index b93d08466198..3fd7b5e644f3 100644
+--- a/drivers/clk/mmp/clk-pxa1908-apbc.c
++++ b/drivers/clk/mmp/clk-pxa1908-apbc.c
+@@ -96,8 +96,8 @@ static int pxa1908_apbc_probe(struct platform_device *pdev)
+ 	struct pxa1908_clk_unit *pxa_unit;
+ 
+ 	pxa_unit = devm_kzalloc(&pdev->dev, sizeof(*pxa_unit), GFP_KERNEL);
+-	if (IS_ERR(pxa_unit))
+-		return PTR_ERR(pxa_unit);
++	if (!pxa_unit)
++		return -ENOMEM;
+ 
+ 	pxa_unit->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pxa_unit->base))
+-- 
+2.45.2
+
