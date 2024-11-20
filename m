@@ -1,157 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66BF19F424;
-	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F19B14A4DF
+	for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 16:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118573; cv=none; b=rlUk+3+qHtKNJ38RFPw9QInGLwkui3nIgSoFT4xECuxybcwkvfe6RujL6tW6MfsG/XUEg3fVLL/NKTZKXz8BSxGncsnbmu7rmS9VxsImdC4RyvuNcDBhTK7zwxTKUOVtcmuu5uj6RBvt2Q1kJupCTi9kFAdTH8+YjyuGHsC60yQ=
+	t=1732121348; cv=none; b=ixWL/TvHuuj+OLAHCTIrjYJsatFRP+eKNtkXrePBrsSFpEiwEB8x3f20LLeuEdeKMTosnOgtOgFa7N7+a9xZh7Z42iryrh3cFNul7r9YaIdRAYwMH6eZlVqMYE8T2LSKbXDiKqL8/plKVlIf8yrmv/fJzc0XavnLjSx0YEYpSx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118573; c=relaxed/simple;
-	bh=JgLWOHmUTemObVeIGpwUPte2754GI41s/ZUZDvGmHiY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LSrW18yIB0eVDdFFC2rdYZ5gpA8oszwnwxKVtHwi7Mx1wC+Qewx5x/JPtA8MoKVwBFX3EA1KNFZfMKDfgaFBxvuJBSPjvM4Ng2e5CZYNSkuu1WvhUkGb0byl28+LpOTC9TkIEcP+01bzgYXGUWskC+yQiNTIttjgFBbbDnSgsh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzZq/XnK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732121348; c=relaxed/simple;
+	bh=srZ9SCWdJyh8yNz8se0UPXWlQVN0xpkVWoSbiXEFNo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M9ybEj/+UMhAWwFDytMA9HqBh3aYAiQ+YdhTO/HMefgl+REi+GbA5+HFlSJ7L46iD/sIZosJ0OhLcW49f8mQUHMd/j+7cBbP7rwGDZqOk+bINhqohXUAJ2U099dhpLuSnMYr5+dlsoJx9EyVL9wDTzKD1KH+K6XBdstZY3zZ5oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qP7zuNWt; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzZq/XnK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B5AC4CED3;
-	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732118573;
-	bh=JgLWOHmUTemObVeIGpwUPte2754GI41s/ZUZDvGmHiY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EzZq/XnKvOEpmQceuz8jMQBGH5pVIq3kKZdMG4KalP4y7FTZI/yJN3F4PK5Vng818
-	 3iMYCfcfl3WqQ9+5Ws3rnE5efRknAkNqdUPFVq6HQIen8Z8phCIQPdEIQDzt+wl65i
-	 GxnPr47skISDZjmpBVuLTLnTdMNlGA+SAJ7BLYWD9LpKsXqjh7KvS28/M9rOEM1KDI
-	 zTfV/gsu/REEUuH1Pz5E7uVIxsCH+JkrhbI9WC/LQC+AtaW1cy+MjcTJohYRHm2Mke
-	 zHgrEJabJJLC1gyC+gdckFMVWiojkOzhc8/A7k0oP5MuS4SZSpyAZnIm5vq/WZLYA0
-	 MFbVcbyjxh4kA==
-Date: Wed, 20 Nov 2024 10:02:52 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qP7zuNWt"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43193678216so21751375e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 08:49:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732121345; x=1732726145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n8UgD457K+Hay4DWV5Dre9+UIqq+Qp9AxidcbC+nUoA=;
+        b=qP7zuNWtmbmNY6/Qi2gVNSUNaF+3no5dhPMr9qonH+113/6pPyfnzepN+6zjFO2hnj
+         CwANPHr8q/AuAgGrOri2Bx/SAVQV5uXSaQdJr90wt1IZhb1iHOXu9qRLY9hi7H2jvywI
+         7+kOI2BsZP1zv1C0v22/0bGgv7coNp4yOkvAE8jJuR5lpuUSS5X/jey1wnniTGcWxcr3
+         ObgJ+47x7wmhVu+SB5ZCHPNHDAv1QoDWL/dZCAzn1XTSNwybEHafDL3QdP1Vo0v4nVOx
+         sX77QbLDBp/TeyOV9PfGgS5sD5Skei8HSIhibL5eF7xgLv5wmAE9cdiOc61nTEdlZnGh
+         nTKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732121345; x=1732726145;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n8UgD457K+Hay4DWV5Dre9+UIqq+Qp9AxidcbC+nUoA=;
+        b=Ovto/JDPfkZKitntBfscBTs8xcHSilxPP5AYvHrcsUIqWcGREIdH6wJ0sJvnoaPEuC
+         M5tuLK6R7jgZkyGdBJ47ch1XwLYH6oA2w/la8cQIZ47SxjNwPaNc6B7zS9vJQefMWsZp
+         XA2hqB6uGRa10RpE/+gtQKCVZToaH/ftN3tJTadYLP/axNOxLQwubXNa1/Tj627GorLu
+         3kst+SaRDpQKEUGrLmWZYK/TnkXaFcqJPJRg1v4fmQouiWK0L5XjQ3UCy/34rVx7LPoX
+         S+0cCtU8ribTsuzyKngIArmSYXXcnu9elOo+xb4a4ax/iA0pabFVZu1nBLI3Lg6hh1OK
+         OBCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHUcDIHbeIQ/Cbr/PlxusBaTX0bn+F5aCl0djIPWGyTZyLHnvXbygERTy602SdOvfdIjfOzINsw9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH6JeqJ/5Dvn6D40wkznpwOt/zW0V3hAyJb8mS00RhagwXkTLl
+	GjEit3X3RCwecY0wMmnJZqwjEF+e2yMi4m8g/n7WBajo0HGHTsjebqREBmYCKHTxyPs7DjI822K
+	ewuM=
+X-Google-Smtp-Source: AGHT+IHo9WhI3mbF3lCYmgsOy4+wAwOTVXhU5u9vhGfivrKQbhnhnyedHmi0kYrH9tI43DWFsRMBOQ==
+X-Received: by 2002:a05:600c:3ca9:b0:42e:75a6:bb60 with SMTP id 5b1f17b1804b1-433489d6886mr28109325e9.19.1732121345508;
+        Wed, 20 Nov 2024 08:49:05 -0800 (PST)
+Received: from [192.168.0.200] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463aba6sm24821125e9.34.2024.11.20.08.49.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 08:49:05 -0800 (PST)
+Message-ID: <587de15d-06c8-4f12-8986-f60a80fe5ad8@linaro.org>
+Date: Wed, 20 Nov 2024 16:49:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: sboyd@kernel.org, linux-serial@vger.kernel.org, krzk+dt@kernel.org, 
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, conor+dt@kernel.org, romain.sioen@microchip.com, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- alexandre.belloni@bootlin.com, arnd@arndb.de, nicolas.ferre@microchip.com, 
- mihai.sain@microchip.com, mturquette@baylibre.com, claudiu.beznea@tuxon.dev, 
- dharma.b@microchip.com, varshini.rajendran@microchip.com
-To: Ryan.Wanner@microchip.com
-In-Reply-To: <cover.1732030972.git.Ryan.Wanner@microchip.com>
-References: <cover.1732030972.git.Ryan.Wanner@microchip.com>
-Message-Id: <173211841742.1124520.7475940959733704423.robh@kernel.org>
-Subject: Re: [PATCH 00/15] Add support for SAMA7D65
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: qcom: common: Add support for power-domain
+ attachment
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
+ <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
+ <u6azgqlmncadcwiz42pk36q7rehwajnftvwfjh4aoawskdwkof@ao2imoy34k4y>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <u6azgqlmncadcwiz42pk36q7rehwajnftvwfjh4aoawskdwkof@ao2imoy34k4y>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Tue, 19 Nov 2024 09:40:06 -0700, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On 19/11/2024 15:41, Bjorn Andersson wrote:
+audience what exactly you mean with "singleton" and "core logic".
 > 
-> This series adds support for the SAMA7D65 SoC.
-> 
-> There have been patches in this series that have been tagged as
-> Reviewed-by or Acked-by, I will link these threads below.
-> 
-> 1) https://lore.kernel.org/lkml/20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com/
-> 2) https://lore.kernel.org/lkml/20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com/
-> 3) https://lore.kernel.org/lkml/20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com/
-> 4) https://lore.kernel.org/lkml/1da0abbb-94e5-42fd-a2d2-71d5d7d253fb@microchip.com/
-> 
-> The clock system patches have been sent before and are added to this set
-> to follow the correct practice of submitting patches. I will list that
-> thread below.
-> 
-> 1) https://lore.kernel.org/linux-arm-kernel/d970e158-db74-4ffe-9fb4-57026ac0a947@tuxon.dev/
-> 
-> Dharma Balasubiramani (7):
->   dt-bindings: mfd: atmel,sama5d2-flexcom: add
->     microchip,sama7d65-flexcom
->   dt-bindings: atmel-sysreg: add sama7d65 RAM and PIT
->   dt-bindings: mmc: atmel,sama5d2-sdhci: add microchip,sama7d65-sdhci
->   dt-bindings: serial: atmel,at91-usart: add microchip,sama7d65-usart
->   dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
->   dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
->   dt-bindings: clock: Add SAMA7D65 PMC compatible string
-> 
-> Romain Sioen (2):
->   dt-bindings: ARM: at91: Document Microchip SAMA7D65 Curiosity
->   ARM: dts: microchip: add support for sama7d65_curiosity board
-> 
-> Ryan Wanner (5):
->   ARM: configs: at91: sama7: add new SoC config
->   ARM: dts: microchip: add sama7d65 SoC DT
->   clk: at91: clk-master: increase maximum number of clocks
->   clk: at91: clk-sam9x60-pll: increase maximum amount of plls
->   clk: at91: sama7d65: add sama7d65 pmc driver
-> 
-> Varshini Rajendran (1):
->   dt-bindings: clock: at91: Allow MCKs to be exported and referenced in
->     DT
-> 
->  .../devicetree/bindings/arm/atmel-at91.yaml   |    7 +
->  .../devicetree/bindings/arm/atmel-sysregs.txt |   14 +-
->  .../bindings/clock/atmel,at91rm9200-pmc.yaml  |    2 +
->  .../bindings/clock/atmel,at91sam9x5-sckc.yaml |    1 +
->  .../bindings/mfd/atmel,sama5d2-flexcom.yaml   |    9 +-
->  .../bindings/mmc/atmel,sama5d2-sdhci.yaml     |    1 +
->  .../pinctrl/atmel,at91-pio4-pinctrl.txt       |    1 +
->  .../bindings/serial/atmel,at91-usart.yaml     |    1 +
->  arch/arm/boot/dts/microchip/Makefile          |    3 +
->  .../dts/microchip/at91-sama7d65_curiosity.dts |   89 ++
->  .../arm/boot/dts/microchip/sama7d65-pinfunc.h |  947 ++++++++++++
->  arch/arm/boot/dts/microchip/sama7d65.dtsi     |  155 ++
->  arch/arm/configs/multi_v7_defconfig           |    1 +
->  arch/arm/configs/sama7_defconfig              |    1 +
->  arch/arm/mach-at91/Kconfig                    |   12 +
->  drivers/clk/at91/Makefile                     |    1 +
->  drivers/clk/at91/clk-master.c                 |    2 +-
->  drivers/clk/at91/clk-sam9x60-pll.c            |    2 +-
->  drivers/clk/at91/pmc.c                        |    1 +
->  drivers/clk/at91/sama7d65.c                   | 1373 +++++++++++++++++
->  include/dt-bindings/clock/at91.h              |    4 +
->  21 files changed, 2614 insertions(+), 13 deletions(-)
->  create mode 100644 arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
->  create mode 100644 arch/arm/boot/dts/microchip/sama7d65-pinfunc.h
->  create mode 100644 arch/arm/boot/dts/microchip/sama7d65.dtsi
->  create mode 100644 drivers/clk/at91/sama7d65.c
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+>> Use dev_pm_domain_attach_list() to automatically hook the list of given
+>> power-domains in the dtsi for the clock being registered in
+>> qcom_cc_really_probe().
+>>
+> Do we need to power on/off all the associated power-domains every time
+> we access registers in the clock controller etc, or only in relation to
+> operating these GDSCs?
 
+Its a good question.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+No I don't believe these PDs are required for the regs themselves i.e. 
+we can write and read - I checked the regs in the clock's probe with the 
+GDSCs off
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+         /* Keep clocks always enabled */
+         qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
+         qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+only inside the probe where we actually try to switch the clock on, do 
+we need the PD.
 
-  pip3 install dtschema --upgrade
+         ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc, 
+regmap);
 
+Which means the registers themselves don't need the PD. The clock 
+remains "stuck" unless the GDSC is on which to me means that the PLL 
+isn't powered until the GDSC is switched on.
 
-New warnings running 'make CHECK_DTBS=y microchip/at91-sama7d65_curiosity.dtb' for cover.1732030972.git.Ryan.Wanner@microchip.com:
+So no, the regs are fine but the PLL won't budge without juice from the PD.
 
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/pinctrl@e0014000: failed to match any schema with compatible: ['microchip,sama7d65-pinctrl']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1800000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1800000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1804000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1804000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-
-
-
-
-
+---
+bod
