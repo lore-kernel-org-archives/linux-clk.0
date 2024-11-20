@@ -1,43 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F4D1487C5;
-	Wed, 20 Nov 2024 08:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698F1176FB6;
+	Wed, 20 Nov 2024 08:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732093038; cv=none; b=hEl382VOC2qUKRw9GZKn5MCSIRzAUD4uk8t1Hp5HefUQL5++XfhQTr8RJxIdykEC7ViLWglZPxFSp6cAmXrr0IpK3a+fzNWk4yPqrtk8chUJ63xhiBfigG2JMD8Edj1W7qr0EWp757aMmL0nel1OuCQDwXdgFqVBaNrDDdK8bIM=
+	t=1732093120; cv=none; b=hW+NLnE7sFw109bglEyYhwwVqEQ9tidXynwBHOGMTYrM3SxcJbzIFBTaR5/G7oxkga/hzPUjVmWxOFLtweJCvjLfMQZ/bdLolpo7OtcL+oYDtKKlW+fEt3lYCs4umN+rqvsZ8op4Z5qc7Xh9zlDS7VltfTwGjsuLs6M2RLY2Eg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732093038; c=relaxed/simple;
-	bh=NZWLHSmz7z/5yxwdahzySA58S6IipEOZgQkNj1QBZoE=;
+	s=arc-20240116; t=1732093120; c=relaxed/simple;
+	bh=LkbTewK9y9FgQpIpn6FxzD8GeeGKuw9teOC1wFZlEIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WllkXqW3X0DcttocUFk/YD+yomZRoh2Vk2dOkTwASl8X0FJ8sJSEPhtyDLamrhuzbfAPopafcpY/xlwZGJyJGUeXqr0SgkSje9QwUnEadVfZ7FjcktasyZupqcnhFX3WuyxkN/mF3/ea6+6DJ0cJA1QUhjXjt0wxrcXhkKFLJPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoeKGvDa; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8m5JppQ6RF4BSTePVxDINBavwJFWpJ55ax9HqnOKXuipSO3FEaI1oEC6QNzGowIDR6kDHVYq0i/caFvAZdpu5XPz4vub38E0oXdHt1taPondrNKBi0yekuEq41ewND/q+CE9W6Ikv7bF5peMAcLktGi9MQtEFgb81uDD9Cat3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8G/IvZS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoeKGvDa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7FBC4CED0;
-	Wed, 20 Nov 2024 08:57:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8G/IvZS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17523C4CECD;
+	Wed, 20 Nov 2024 08:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732093038;
-	bh=NZWLHSmz7z/5yxwdahzySA58S6IipEOZgQkNj1QBZoE=;
+	s=k20201202; t=1732093120;
+	bh=LkbTewK9y9FgQpIpn6FxzD8GeeGKuw9teOC1wFZlEIk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OoeKGvDaprjf76dmMdBAlNpU2M7hSfpNcB5GHqeXIhiwgROPYsijW1r9yn1ZsskmX
-	 Dp9fDygOYV+8xnJjV4FeWiYbxU7msG4gezmHvRp0lNnO+0KGOgi0GPiARxcjImLFeD
-	 xzIhOxZAodkRSgmNRd96bh6ohyUJhFp5A2o+P++4uWN1lfwU7ea7yRQ1vkta2/xWXp
-	 oCFEvEDmhzykOLJr/hg7erK2Gll0nlHkDrDPPEUI52IU9YhhtNaT/XVLZIIRqfFhJr
-	 uZgo8HFuJ9rVup/zWjbBi9f34Gd+BxHk769dtF98lzFaaLWQ5HuyBvxXRAOGXKRIMs
-	 7tpgsjKfUwhlw==
-Date: Wed, 20 Nov 2024 09:57:14 +0100
+	b=I8G/IvZSeEN6SRunWHKDMW0hs6cXQs1BWbXrI6z3OftWVjB/fmT6KMeQatQrvhR3+
+	 5p0VDfymfaotgM+ypHVfHhUKyORadIPW5MES6y4K//6PO87Hep9K5pqWyW7sbX68gU
+	 SevZLn1H59aSuRygcWwm2YK8xy553fkK7QsVWUAItHh+ICdx6klIpFUEStqGWofVrl
+	 9TGw1BTm8Q3e/VetHaXsdghZ32sLv5J5LkgD5yh+LD7gWyb4mRwyBuENYs95TCsTK1
+	 ThbOkJU3EDMJgM+IcEWAAkkfAZZf2cj/G+uVIbnUXLsqbmxbVlrniLpTWx+n8g/m8D
+	 AAL2G0GcI8ltA==
+Date: Wed, 20 Nov 2024 09:58:36 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, detlev.casanova@collabora.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, sebastian.reichel@collabora.com
-Subject: Re: [PATCH 3/5] dt-bindings: nvmem: rockchip,otp: Add compatible for
- RK3576
-Message-ID: <uzqdch4xiesvc3wq6fcpv7ulw3g7olvyxed7s5payhlddgubiq@apnlq7xgzrjo>
-References: <20241119132916.1057797-1-heiko@sntech.de>
- <20241119132916.1057797-4-heiko@sntech.de>
+To: Ryan.Wanner@microchip.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de, dharma.b@microchip.com, 
+	mihai.sain@microchip.com, romain.sioen@microchip.com, varshini.rajendran@microchip.com, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 02/15] dt-bindings: mfd: atmel,sama5d2-flexcom: add
+ microchip,sama7d65-flexcom
+Message-ID: <ce4rq6gefqrsaubpab573qi2r6ozagxvgjcdpslo32gvnxjapa@tbvdzcrsbmme>
+References: <cover.1732030972.git.Ryan.Wanner@microchip.com>
+ <46928aa2d15d05fa3046c270a51a10cd56c2e919.1732030972.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,61 +49,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119132916.1057797-4-heiko@sntech.de>
+In-Reply-To: <46928aa2d15d05fa3046c270a51a10cd56c2e919.1732030972.git.Ryan.Wanner@microchip.com>
 
-On Tue, Nov 19, 2024 at 02:29:14PM +0100, Heiko Stuebner wrote:
-> Document the OTP memory found on Rockchip RK3576 SoC.
+On Tue, Nov 19, 2024 at 09:40:08AM -0700, Ryan.Wanner@microchip.com wrote:
+> From: Dharma Balasubiramani <dharma.b@microchip.com>
 > 
-> The RK3576 uses the same set of clocks as the px30/rk3308
-> but has one reset more, so adapt the binding to handle this
-> variant as well.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../bindings/nvmem/rockchip,otp.yaml           | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
-> index a44d44b32809..dae7543a0179 100644
-> --- a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
-> +++ b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
-> @@ -14,6 +14,7 @@ properties:
->      enum:
->        - rockchip,px30-otp
->        - rockchip,rk3308-otp
-> +      - rockchip,rk3576-otp
->        - rockchip,rk3588-otp
->  
->    reg:
-> @@ -68,6 +69,23 @@ allOf:
->            items:
->              - const: phy
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - rockchip,rk3576-otp
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
+> Add flexcom binding documentation for sama7d65.
 
-That's redundant. 3 is there already. You wanted maxItems?
+You also consolidate entries into one enum as preferred coding style, so
+this should be mentioned here.
 
-Missing constraint on clock-names (existing binding should be fixed as
-well, separate patch).
-
-> +        resets:
-> +          minItems: 2
-
-missing maxItems
-
-> +        reset-names:
-> +          items:
-> +            - const: otp
-> +            - const: apb
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
