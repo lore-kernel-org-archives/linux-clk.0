@@ -1,47 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA787219ED;
-	Wed, 20 Nov 2024 08:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F4D1487C5;
+	Wed, 20 Nov 2024 08:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092918; cv=none; b=Wv5zeqtt1kMhJO6Tvi0+klZmyG9aGNF95s6iaVcX2n/vtQ4uzPrerdXihyNVEmlMiBAUASA58JqArUaftnEMydRAfQloK2RicoDjK5iUPbiss7Wr83GPWPgA4DD8WmV64tUm9VgNAFr6Spzbs5Kprqx/ttsShcotZJ+1xZMuX2w=
+	t=1732093038; cv=none; b=hEl382VOC2qUKRw9GZKn5MCSIRzAUD4uk8t1Hp5HefUQL5++XfhQTr8RJxIdykEC7ViLWglZPxFSp6cAmXrr0IpK3a+fzNWk4yPqrtk8chUJ63xhiBfigG2JMD8Edj1W7qr0EWp757aMmL0nel1OuCQDwXdgFqVBaNrDDdK8bIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092918; c=relaxed/simple;
-	bh=neLM4rD8TKmmOJUcOz3f6gA1PSXpvQ8J4X8n8gHpHfY=;
+	s=arc-20240116; t=1732093038; c=relaxed/simple;
+	bh=NZWLHSmz7z/5yxwdahzySA58S6IipEOZgQkNj1QBZoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4LKBINL3HtUcg53Tr4IiZyMt4TVrmtzjBJE0KEBoHfFiq4VZXr8lycPXTvQzkaI95nbl6D5I1w+AlZmj6l/W5dhoKEo77ztCJSc9TkFD8wfRxJqpZYEhbXP5bNd96hnr8BM4mfdwhbo5JbXKje9xetCvOVVGLMnhpOZPrEqQi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5i0EB64; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=WllkXqW3X0DcttocUFk/YD+yomZRoh2Vk2dOkTwASl8X0FJ8sJSEPhtyDLamrhuzbfAPopafcpY/xlwZGJyJGUeXqr0SgkSje9QwUnEadVfZ7FjcktasyZupqcnhFX3WuyxkN/mF3/ea6+6DJ0cJA1QUhjXjt0wxrcXhkKFLJPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoeKGvDa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5i0EB64"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F50C4CECD;
-	Wed, 20 Nov 2024 08:55:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoeKGvDa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7FBC4CED0;
+	Wed, 20 Nov 2024 08:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732092916;
-	bh=neLM4rD8TKmmOJUcOz3f6gA1PSXpvQ8J4X8n8gHpHfY=;
+	s=k20201202; t=1732093038;
+	bh=NZWLHSmz7z/5yxwdahzySA58S6IipEOZgQkNj1QBZoE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e5i0EB646RoVWoyfbIAFGc7c7Nw8VyfJAhTXdvXTuul095Nc8Wj6mTLDpf+Ga+Y8N
-	 16/tEOX4UklgARs1JuyLOZsjaDMCtkHctONUccu62IdATO4S5kCUIGhY+QT12uIoIy
-	 gZlKKhWi6BmYioY3y2X2gODAS5e0/ocpgdGHsvE5rEixtqY61ywdq7G793goQs6hU0
-	 Pj+eNATpqAEv+rYgd4vQMLL2eqXV3tWtDLqkFNfHGSrd5tr3xNJwsVlkPn8xVlymfj
-	 Tz6QnOKbBVhkvRJQui0bqjEI/L07Ydp6wdGWjUWEu3VLu8RbJx/nB8494bO+VeEjio
-	 Rerimjg1fFOXg==
-Date: Wed, 20 Nov 2024 09:55:12 +0100
+	b=OoeKGvDaprjf76dmMdBAlNpU2M7hSfpNcB5GHqeXIhiwgROPYsijW1r9yn1ZsskmX
+	 Dp9fDygOYV+8xnJjV4FeWiYbxU7msG4gezmHvRp0lNnO+0KGOgi0GPiARxcjImLFeD
+	 xzIhOxZAodkRSgmNRd96bh6ohyUJhFp5A2o+P++4uWN1lfwU7ea7yRQ1vkta2/xWXp
+	 oCFEvEDmhzykOLJr/hg7erK2Gll0nlHkDrDPPEUI52IU9YhhtNaT/XVLZIIRqfFhJr
+	 uZgo8HFuJ9rVup/zWjbBi9f34Gd+BxHk769dtF98lzFaaLWQ5HuyBvxXRAOGXKRIMs
+	 7tpgsjKfUwhlw==
+Date: Wed, 20 Nov 2024 09:57:14 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/6] dt-bindings: media: Add qcom,x1e80100-camss binding
-Message-ID: <6fcishrguciy5d5auihnx4c43dle7ceusaahhg56jbwpmat5il@2f2wjunitjxn>
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-2-54075d75f654@linaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, detlev.casanova@collabora.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, sebastian.reichel@collabora.com
+Subject: Re: [PATCH 3/5] dt-bindings: nvmem: rockchip,otp: Add compatible for
+ RK3576
+Message-ID: <uzqdch4xiesvc3wq6fcpv7ulw3g7olvyxed7s5payhlddgubiq@apnlq7xgzrjo>
+References: <20241119132916.1057797-1-heiko@sntech.de>
+ <20241119132916.1057797-4-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,96 +46,62 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-2-54075d75f654@linaro.org>
+In-Reply-To: <20241119132916.1057797-4-heiko@sntech.de>
 
-On Tue, Nov 19, 2024 at 01:10:31PM +0000, Bryan O'Donoghue wrote:
-
-A nit, subject: drop second/last, redundant "binding". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-> +  power-domains:
-> +    items:
-> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: Titan Top GDSC - Titan ISP Block, Global Distributed Switch Controller.
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: ife0
-> +      - const: ife1
-> +      - const: top
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    description:
-> +      CSI input ports.
-> +
-> +    patternProperties:
-> +      "^port@[03]+$":
-
-[0-3], no?
-
-
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +
-> +        description:
-> +          Input port for receiving CSI data from a CSIPHY.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              clock-lanes:
-> +                maxItems: 1
-> +
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - clock-lanes
-> +              - data-lanes
-> +
-
-...
-
-> +            interconnects = <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_CAMERA_CFG 0>,
-> +                            <&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt SLAVE_EBI1 0>,
-> +                            <&mmss_noc MASTER_CAMNOC_SF 0 &mc_virt SLAVE_EBI1 0>,
-> +                            <&mmss_noc MASTER_CAMNOC_ICP 0 &mc_virt SLAVE_EBI1 0>;
-> +            interconnect-names = "cam_ahb",
-> +                                 "cam_hf_mnoc",
-> +                                 "cam_sf_mnoc",
-> +                                 "cam_sf_icp_mnoc";
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    #address-cells = <1>;
-> +                    #size-cells = <0>;
-
-These are not needed, I think. Not sure if even correct...
-
-> +
-> +                    csiphy_ep0: endpoint {
-> +                        clock-lanes = <7>;
-> +                        data-lanes = <0 1>;
-> +                        remote-endpoint = <&sensor_ep>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
+On Tue, Nov 19, 2024 at 02:29:14PM +0100, Heiko Stuebner wrote:
+> Document the OTP memory found on Rockchip RK3576 SoC.
 > 
-> -- 
-> 2.45.2
+> The RK3576 uses the same set of clocks as the px30/rk3308
+> but has one reset more, so adapt the binding to handle this
+> variant as well.
 > 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  .../bindings/nvmem/rockchip,otp.yaml           | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+> index a44d44b32809..dae7543a0179 100644
+> --- a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+> +++ b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+> @@ -14,6 +14,7 @@ properties:
+>      enum:
+>        - rockchip,px30-otp
+>        - rockchip,rk3308-otp
+> +      - rockchip,rk3576-otp
+>        - rockchip,rk3588-otp
+>  
+>    reg:
+> @@ -68,6 +69,23 @@ allOf:
+>            items:
+>              - const: phy
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - rockchip,rk3576-otp
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+
+That's redundant. 3 is there already. You wanted maxItems?
+
+Missing constraint on clock-names (existing binding should be fixed as
+well, separate patch).
+
+> +        resets:
+> +          minItems: 2
+
+missing maxItems
+
+> +        reset-names:
+> +          items:
+> +            - const: otp
+> +            - const: apb
+
+Best regards,
+Krzysztof
+
