@@ -1,117 +1,106 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423541C232B;
-	Thu, 21 Nov 2024 17:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BAB4502F;
+	Thu, 21 Nov 2024 21:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210911; cv=none; b=I9jFv/41LIodkRSiMhUncYOIxj+9LgP2Vf67Nj2osIWt7yxJpXXo1h6s3PXOjD8IKXwchbihFir3GKJ1J+OTG5u0OIyeP8UA6fzY9R3Tybz8g39vqQlluxYio6wmMp0aSdBLMy0q/HjM+vx4O9a85gaslVoENV9FvYNWQoRjwaI=
+	t=1732224766; cv=none; b=RJ6EeP+oU80iOGrehP9K2bZGIx6NtjQWp+44Z5914RgNtTHSSzolitVBiqQPvclUh0OUOtMlP3jI7xKJnsJV+lL5vtfz5WboTA4wqc4yDfMr8ViQUk4arErrxDGB1Oiy5ZI5ixl8EIq9Rg4Doqrj+OOvI5GgnYZTcuHeVS1dTaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210911; c=relaxed/simple;
-	bh=IcrPSViR+yiWs8qrdfWw39zhusSDcUZoFPdhy7zFaA0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qNLTSKRJzV1MNaspJpYgPxbnJzg2ILmOqaBBhOWcr7OVzFhOKHeO7QD9qO+M+xsWWkQ0QRvSiFx4E1dDLDorqjKXaUULDvqR7+SKvu2VfK4pa6xFdFY7y3TgmYh9Q/syhwcdTk9DPJI9tvsKn3HDesIYwW89WmMZorN5fl0u0u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YXANeOT4; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1732224766; c=relaxed/simple;
+	bh=htrvxQ/acJt2mn32w1njKdyG5hdJdbkfDKs+NrdqLFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMqpM1eAFH7yKh3NlLwm0DOGOXZt2clgKrMOShgMvELh3CIYMcTXQjnBzXqaiDWpIuhQ8T6r9/EfFU325tx3rOrbtKUcrdw/cJyW5v6/WRHTxwswtE7PwSuiniE020lwS9UbW06KZd//5gxWg2iPkGfI/Lb9d4NG/9tnYIHjN+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s9uT45ix; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YXANeOT4"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 657C62000F;
-	Thu, 21 Nov 2024 17:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732210902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yAUih0Mkszte9aiN7a8UUEUbUpUNBM3lVZGf6CK9gUM=;
-	b=YXANeOT4VuQZKlUaFu1md2+8wKVPZNqSyV6u5suvZvIIrDJiDs/LUj13Wt89/OPEjRHOdq
-	nO7m0KyEqW9lvmbiHodz6wikxK6g2+GOCZUpv/vNZ3SLeZoBavJDaigf3xgKj3YcpOjkfv
-	AWmQks+Pez8OMjPWuGensS8q9N0MfyN/RhODto4VC1uYBiNrgmYwxcEI7IqQNQTbkASTdc
-	dDalVzIMsMkQEZuTZKL+3LG9wz11qD7ZWlh0d4NvnvtlnDJUvpOEXrFDLhhfwNaFA4mrir
-	tpz0WxKAshbYlKBcV3QDfWrMq64FXzEZXz7x7vHHgOf9r00+s5X1AfoJKnpvWA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Thu, 21 Nov 2024 18:41:15 +0100
-Subject: [PATCH 5/5] clk: imx: imx8mp: Prevent media clocks to be
- incompatibly changed
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s9uT45ix"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9E1C4CECC;
+	Thu, 21 Nov 2024 21:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732224765;
+	bh=htrvxQ/acJt2mn32w1njKdyG5hdJdbkfDKs+NrdqLFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9uT45ixbZuVdMo+D7KF90yl/M4gz4FOZG+z4QHSwZQfBNYtRrDTQPsMu4MO3iA2k
+	 KELBNAWcrzFY/wAazJxMr+f7n9L4juBJIsbng4iTsYokcXzUXiV61ml2PxRXi/d1Z+
+	 sXDGeU4Ie5dXi7xqKv8lgIOngFjO7GAhkwmoxzjA=
+Date: Thu, 21 Nov 2024 22:32:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+	lethal@linux-sh.org, g.liakhovetski@gmx.de,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
+Message-ID: <2024112128-faceted-moonstone-027f@gregkh>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-ge-ian-debug-imx8-clk-tree-v1-5-0f1b722588fe@bootlin.com>
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-In-Reply-To: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Ying Liu <victor.liu@nxp.com>, 
- Marek Vasut <marex@denx.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, Abel Vesa <abel.vesa@linaro.org>, 
- Herve Codina <herve.codina@bootlin.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ian Ray <ian.ray@ge.com>, 
- stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
 
-Having set the CLK_SET_RATE_PARENT flag to gain accuracy to the i.MX8
-media related clocks (media_ldb, media_disp1_pix, media_disp2_pix) broke
-most simple setups using the LDB and one LCDIF. Indeed, pixel
-frequencies being set first, the top level PLL (video_pll1) was tuned to
-achieve the perfect frequency, and the media_disp*_pix divisor was set
-to 1 (acting like a passthrough). But shortly later, when setting the
-LDB clock to 7 times the pixel clock, the PLL machinery was recomputed,
-leaving the pixel divisors untouched. As a result, the attempted factor
-of 7 between the two clocks could never be observed.
+On Fri, Nov 15, 2024 at 03:43:55PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
+> is called. The uart_suspend_port() calls 3 times the
+> struct uart_port::ops::tx_empty() before shutting down the port.
+> 
+> According to the documentation, the struct uart_port::ops::tx_empty()
+> API tests whether the transmitter FIFO and shifter for the port is
+> empty.
+> 
+> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
+> transmit FIFO through the FDR (FIFO Data Count Register). The data units
+> in the FIFOs are written in the shift register and transmitted from there.
+> The TEND bit in the Serial Status Register reports if the data was
+> transmitted from the shift register.
+> 
+> In the previous code, in the tx_empty() API implemented by the sh-sci
+> driver, it is considered that the TX is empty if the hardware reports the
+> TEND bit set and the number of data units in the FIFO is zero.
+> 
+> According to the HW manual, the TEND bit has the following meaning:
+> 
+> 0: Transmission is in the waiting state or in progress.
+> 1: Transmission is completed.
+> 
+> It has been noticed that when opening the serial device w/o using it and
+> then switch to a power saving mode, the tx_empty() call in the
+> uart_port_suspend() function fails, leading to the "Unable to drain
+> transmitter" message being printed on the console. This is because the
+> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
+> TEND=0 has double meaning (waiting state, in progress) we can't
+> determined the scenario described above.
+> 
+> Add a software workaround for this. This sets a variable if any data has
+> been sent on the serial console (when using PIO) or if the DMA callback has
+> been called (meaning something has been transmitted). In the tx_empty()
+> API the status of the DMA transaction is also checked and if it is
+> completed or in progress the code falls back in checking the hardware
+> registers instead of relying on the software variable.
+> 
+> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Set the CLK_NO_RATE_CHANGE_DURING_PROPAGATION flag to the LDB and LCDIF
-pixel clocks to force them to be kept as close as their initial target
-rate as possible across subtree walks.
+Why is this bug/regression fix burried in a long series?  It should be
+sent individually so that it could be applied on its own as it is not
+related to the other ones, right?
 
-Fixes: ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
---
-All patches in this series must be backported for this one to apply.
----
- drivers/clk/imx/clk-imx8mp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Or are you ok with waiting for this to show up in 6.14-rc1?
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 2e61d340b8ab7f626155563c46e0d4142caf3fa9..2b916a4df97141dce46cefeb22ff584178a3929b 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -547,7 +547,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
- 	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
- 	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
--	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT);
-+	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
- 
- 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
- 
-@@ -609,9 +609,9 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_USDHC3] = imx8m_clk_hw_composite("usdhc3", imx8mp_usdhc3_sels, ccm_base + 0xbc80);
- 	hws[IMX8MP_CLK_MEDIA_CAM1_PIX] = imx8m_clk_hw_composite("media_cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
- 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
--	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
-+	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
- 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
--	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
-+	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
- 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
- 	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
- 	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
+thanks,
 
--- 
-2.47.0
-
+greg k-h
