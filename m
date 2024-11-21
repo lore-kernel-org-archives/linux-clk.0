@@ -1,45 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BAB4502F;
-	Thu, 21 Nov 2024 21:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F7F1CB50D
+	for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 21:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732224766; cv=none; b=RJ6EeP+oU80iOGrehP9K2bZGIx6NtjQWp+44Z5914RgNtTHSSzolitVBiqQPvclUh0OUOtMlP3jI7xKJnsJV+lL5vtfz5WboTA4wqc4yDfMr8ViQUk4arErrxDGB1Oiy5ZI5ixl8EIq9Rg4Doqrj+OOvI5GgnYZTcuHeVS1dTaw=
+	t=1732226396; cv=none; b=ltssqBPQpRWmjSrAjPEvA0b+QITAvROxYdemk2vSDQCk/7n/A74fQhbmo3SYABgxHPb3QghYW0Cp/48fLNpP53PTkrxB7wxsofhLV++XBYWgN0o/i52CVoVXQg9aaR1WwPJSq7I8HlOMoQribo9Ugv5sk8EImziDRObLm5Zy+VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732224766; c=relaxed/simple;
-	bh=htrvxQ/acJt2mn32w1njKdyG5hdJdbkfDKs+NrdqLFY=;
+	s=arc-20240116; t=1732226396; c=relaxed/simple;
+	bh=Z9hBdIRlSlIOJt5RlJxNQ+/7oHtkA0DlqGr9R4P4wWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMqpM1eAFH7yKh3NlLwm0DOGOXZt2clgKrMOShgMvELh3CIYMcTXQjnBzXqaiDWpIuhQ8T6r9/EfFU325tx3rOrbtKUcrdw/cJyW5v6/WRHTxwswtE7PwSuiniE020lwS9UbW06KZd//5gxWg2iPkGfI/Lb9d4NG/9tnYIHjN+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s9uT45ix; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7IscckicqRT5/ShoJOKyfyRkrAIcDk6vPteV6v8kBLbQ5sjDaLuB78npzZpyAgByb9DUFQzYfeqMgtHPUe0A+SERHcgkLMpaOy9i0SXG6FpUMdXvwOicSzwodtjPaQYj9vnxt1JEDyq0DJ6PJB0ljbJS4r4gO6aRUIzY3Q0voY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nG75BV9l; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s9uT45ix"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9E1C4CECC;
-	Thu, 21 Nov 2024 21:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732224765;
-	bh=htrvxQ/acJt2mn32w1njKdyG5hdJdbkfDKs+NrdqLFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s9uT45ixbZuVdMo+D7KF90yl/M4gz4FOZG+z4QHSwZQfBNYtRrDTQPsMu4MO3iA2k
-	 KELBNAWcrzFY/wAazJxMr+f7n9L4juBJIsbng4iTsYokcXzUXiV61ml2PxRXi/d1Z+
-	 sXDGeU4Ie5dXi7xqKv8lgIOngFjO7GAhkwmoxzjA=
-Date: Thu, 21 Nov 2024 22:32:19 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
-	lethal@linux-sh.org, g.liakhovetski@gmx.de,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] serial: sh-sci: Check if TX data was written to
- device in .tx_empty()
-Message-ID: <2024112128-faceted-moonstone-027f@gregkh>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
- <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nG75BV9l"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5111747cso16761081fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 13:59:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732226393; x=1732831193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWJdS00cJ4rOlNcmR7aH9AGornPg9zKM2yab94TA0Ik=;
+        b=nG75BV9ll6f8M9nCyA2rtIYkr6oTFQnnZQfsVFdZstFylyRqzsThIm4TIEWxp1OsOB
+         ZnXj1b9FHHLdITKiswho7JrtFg+TNK/kYlq43Edh3krCavycojczVYIYpuVXuBtHbWSr
+         3GlXbjnL0capucBiV3iRfLZDnQrVQNyjQSEAqps80F8LxAhd8GETSqNQdwys3fa+mfb/
+         fLLMJnSnEE4aeUbpCfF5eB/VLQIXVTbggtF8UIN3+NaSMTamtS+UaMIbKmvO57P22CXg
+         ly+MdoTbZo47Zc05Q6+Jg2qPZUHHfLXBmZcIxiXyFZwgWtpGkYtlq4aDKzSExxYqxqfD
+         fmEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732226393; x=1732831193;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWJdS00cJ4rOlNcmR7aH9AGornPg9zKM2yab94TA0Ik=;
+        b=MV5MJFN3wslFHXpaZ3nbaB5EpC8Zl3pjjuLb7XnTSVq8sCKw5Ksvhh1JeI7TXYXxU2
+         ZHq5GncYIt0Oq1/OKk7zDtI5MnYMwetTqHe9plSLEK5yCXdRGsofgJsco9uVY8u/HUc5
+         Zi+eBA8AunCOvfo7TDs7L/IV71UUcq02+OG8YiD+oiZAv/Owqk01j4iThCvnrdqJZYmb
+         DVykTpPzfkt8QujOfdsJ+zFPJ+54nSBuhNoAgoyszVvI1bnXqfG2xF8eCvvDdZZKQFKK
+         JEVilm0hSkL50PCthmDf7hdCvw1FIRra0JDxsNIUgUAAQ/vHO0GlPrR2gJE/wOPybM3t
+         Vmbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkb14J41VqutTeU782zMXL/jLdFbImAu4B5M3I10NUM9LNDedxnSx4rOMOQ8mk4B5vro1IFTGs04A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5iyAZvKwUwR11+zQB8krUKGG5jtv9p16/16VwFY51Ak1Fqx6H
+	CD5Kzjzny/LCP4/lS4b2xbw01AWQ/J1A6pm6eZBCPddoTBL3RD66Yrvl4KjkmQQ=
+X-Gm-Gg: ASbGncsJ5clIIH1vGDyLOOx1p1KlLBlBIc5BMboUIyRXPLbHH2+6S5pKRRA7MeZEzX6
+	m8nwpawkPOrcyecgNgXQ9TW4WllqB6ppaXlgDnLSehXtg3xws15XBJD3G1YzENJAw/kf4A1rW/f
+	P8qtUifagLN8EDw01dfmr385tVNZZAzMtFdeRoFPNC7i+LNggRrs5j16a7p6fNiKUdzHq/fTu6R
+	H5VqijaUKk84g48ozUer0zNUdbJnjHpi/871nRF9wAJqPaO+uaiFZ3TkpQPaWcAmiOxwOpfcF2D
+	8U4AQzixqPZ8tPSqbSMV5wVb6YbwwQ==
+X-Google-Smtp-Source: AGHT+IHBwuG5kencpPo4m09q691DHgtw2tL/t0BfxRPekGjk62eEZPhMHiR1SRxKJAeR+W+b3uNZ+A==
+X-Received: by 2002:a05:651c:1148:b0:2ff:5f94:e649 with SMTP id 38308e7fff4ca-2ffa7125e84mr1424491fa.16.1732226392942;
+        Thu, 21 Nov 2024 13:59:52 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa538ea19sm652441fa.95.2024.11.21.13.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 13:59:51 -0800 (PST)
+Date: Thu, 21 Nov 2024 23:59:49 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: common: Add support for power-domain
+ attachment
+Message-ID: <hfkvbshgbhz3dst44kbdxxy34phrqtysxbfchuvefars7ibrwt@jqjl4oca6g2k>
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
+ <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
+ <u6azgqlmncadcwiz42pk36q7rehwajnftvwfjh4aoawskdwkof@ao2imoy34k4y>
+ <587de15d-06c8-4f12-8986-f60a80fe5ad8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,59 +77,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <587de15d-06c8-4f12-8986-f60a80fe5ad8@linaro.org>
 
-On Fri, Nov 15, 2024 at 03:43:55PM +0200, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Nov 20, 2024 at 04:49:04PM +0000, Bryan O'Donoghue wrote:
+> On 19/11/2024 15:41, Bjorn Andersson wrote:
+> audience what exactly you mean with "singleton" and "core logic".
+> > 
+> > > Use dev_pm_domain_attach_list() to automatically hook the list of given
+> > > power-domains in the dtsi for the clock being registered in
+> > > qcom_cc_really_probe().
+> > > 
+> > Do we need to power on/off all the associated power-domains every time
+> > we access registers in the clock controller etc, or only in relation to
+> > operating these GDSCs?
 > 
-> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
-> is called. The uart_suspend_port() calls 3 times the
-> struct uart_port::ops::tx_empty() before shutting down the port.
+> Its a good question.
 > 
-> According to the documentation, the struct uart_port::ops::tx_empty()
-> API tests whether the transmitter FIFO and shifter for the port is
-> empty.
+> No I don't believe these PDs are required for the regs themselves i.e. we
+> can write and read - I checked the regs in the clock's probe with the GDSCs
+> off
 > 
-> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
-> transmit FIFO through the FDR (FIFO Data Count Register). The data units
-> in the FIFOs are written in the shift register and transmitted from there.
-> The TEND bit in the Serial Status Register reports if the data was
-> transmitted from the shift register.
+>         /* Keep clocks always enabled */
+>         qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
+>         qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
 > 
-> In the previous code, in the tx_empty() API implemented by the sh-sci
-> driver, it is considered that the TX is empty if the hardware reports the
-> TEND bit set and the number of data units in the FIFO is zero.
+> only inside the probe where we actually try to switch the clock on, do we
+> need the PD.
 > 
-> According to the HW manual, the TEND bit has the following meaning:
+>         ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc,
+> regmap);
+>
+> Which means the registers themselves don't need the PD. The clock remains
+> "stuck" unless the GDSC is on which to me means that the PLL isn't powered
+> until the GDSC is switched on.
 > 
-> 0: Transmission is in the waiting state or in progress.
-> 1: Transmission is completed.
-> 
-> It has been noticed that when opening the serial device w/o using it and
-> then switch to a power saving mode, the tx_empty() call in the
-> uart_port_suspend() function fails, leading to the "Unable to drain
-> transmitter" message being printed on the console. This is because the
-> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
-> TEND=0 has double meaning (waiting state, in progress) we can't
-> determined the scenario described above.
-> 
-> Add a software workaround for this. This sets a variable if any data has
-> been sent on the serial console (when using PIO) or if the DMA callback has
-> been called (meaning something has been transmitted). In the tx_empty()
-> API the status of the DMA transaction is also checked and if it is
-> completed or in progress the code falls back in checking the hardware
-> registers instead of relying on the software variable.
-> 
-> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> So no, the regs are fine but the PLL won't budge without juice from the PD.
 
-Why is this bug/regression fix burried in a long series?  It should be
-sent individually so that it could be applied on its own as it is not
-related to the other ones, right?
+Is it for the MMCX or for MXC domain? If my memory doesn't play tricks
+on me (it can) I think that on sm8250 I had to keep MMCX up to access
+registers. But it also well might be that I didn't run the fine-grained
+test and the MMCX was really required to power up the PLLs rather than
+registers.
 
-Or are you ok with waiting for this to show up in 6.14-rc1?
 
-thanks,
-
-greg k-h
+-- 
+With best wishes
+Dmitry
