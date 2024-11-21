@@ -1,185 +1,401 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2133.outbound.protection.partner.outlook.cn [139.219.17.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACD412DD88;
-	Thu, 21 Nov 2024 04:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732162596; cv=none; b=W6sP4mYaJ2MuGaSZGpvT5BrZsXITbJnNXD2Y9Tkz/db1OERc3QSHZOh2RjkHfHi40vxC52LNkpcjWDsKSNLgRXMkjnJ21IW60sVJDFDeDcIoZiPUWQrk3fjL1h2E+w3hJNYYX6GeTgP8AnMxg3oTf752iBCSUw0YctBk1rvvzaA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732162596; c=relaxed/simple;
-	bh=1kB6/fvKOs03QKjHRmLNEhIfZK0odXkAbCqWPjmEIHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cxy60zrZpiFEvykFvmiSxyfNhI3cikS+pR+24MCQN05fB1CytZYNws3nlAhFa1b8T2Q/LGubxG8A5tVmY4RefhzxpudhtH4v8RBqLoZz1Y/ibD7KL1qBnO6Mh7y2OMuatQGKpGymwcdIWGiTR1Vl0EMu3c4mcP8lbXL84zAlhTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wCBSNVwy; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wCBSNVwy"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 634C089649;
-	Thu, 21 Nov 2024 05:16:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1732162587;
-	bh=2fodjiAgYPDtTdtLZpHcgtZf3CNy/SOSXhvCQwtxCgw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wCBSNVwyMCtyV+EJz0s8mS+rd+v36qvA6mFZGmMq5phZpHsR8dVcwGXv1+Rb9y2at
-	 vsjlPVwrsU5S4f4P5xYBBa5K0xb+uVxFaxY7j/z/l1UpozYFVIqww/Udrm5fpNjGT/
-	 LbUI5mQUyf6oWpXEpUbfI2rEWAl3jIx6jj1pSecUModI1Te5cxyi0666k4EfbEdKsA
-	 KPriDe1TbHoQXl52Y/tIL/T5YMdrjSuQAZir/s1AX/Jg+yTV3aAHfGwikJ3zcX2RAq
-	 Vr5rmPHGPGtbL4MU9z4M22mTSqhbimd8GZkUQxOTzmD53oJgF6xTxjvAcB6aM3CuRO
-	 tWMS71DS4zVPw==
-Message-ID: <c5ab63da-21ec-4c0d-8ecc-3745943d806f@denx.de>
-Date: Thu, 21 Nov 2024 03:45:57 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DF4230986;
+	Thu, 21 Nov 2024 04:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.133
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732164500; cv=fail; b=fbc8sBWPtNzJ+bqKWSZ2/aJKkLGAD6uIoaB6ChbU2UNixFVc6x2nkBJjS4KWMx6XnimtyqIO7y1TEbaM6FY9C9iRHGltUt2g/VGi1yMcjyYSr8pZg4Z4hI9Glf7qnxGw3Ct37nGR09guAFeVzUZJOdY9LTKMmOSm/cQ1uhVTr2o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732164500; c=relaxed/simple;
+	bh=ypyZePgswkaywOqNH7VkLDs+tCfYZSvHKduRG6VQKHc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=EzAao3LJFPMU90QEkoOLoPXl7j8OWSqF+V3bB+QzLYn9nbFu3JvXxD4HrleqFEBNXA0VEu9iKbjfA/+VrwJ8h85Ien/rc/2SadTskXih0Y2cuQZ/vutAbz+xkAi8R9KQLNdyNL4kp0R8Z8kdXQixmhny1i2AJRLsK4tVpPGMaVI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=b7mcmdr23ifct5ZxRM2vJWsR9xrqUnrKVaBBIOF5cE980bpl78vpb/rHb0KicOkBPyXPkvyWshdj3K7jhWBkOPButeJSI3gxUadN7OrrpWAR2yinsPVf9Xa+nu7zNa5apa9TdiHoe15CVk4+O1FZOuguhhM2TgZIGTUS2VVIf/rEHjkHJIStbONMswY3DjRQgH7sM0U5vEBzQvc6khn+wR/+8o4Uo9aXDas/adpNqGEYDcMFCigpYEo92tTv+othK0RJLhx5sb2vNyxuk7p5qedVObi6Wtkst9cnjw6VaKv6IsqU7ZKiG7E//sZ4h5YECg9bq2IlNELLsPutuZXwYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1TcuRXNc7CqsSLj+7qbK43KgLEKW2ltnrwkbSDaje0M=;
+ b=QQITA+QyLbM82gZ1Ec2hPrNvZisngBjZsAfmrfubjInHgiWNtGGrKL5nrK5Fywu87ZZiZX82dH+125ddii8yDA7wH/7gvzAEBPbPCFgiihzxejOhl6YbCSYpiTSo7MQnwwGueBBhxz8dQdDi9wjqRIOOWbnaP+xBpbTOnIVEcoXDy01DkL0iZZgtCs2lRbEzN0pDqhtBonUxnR1UFhJg7pa8P0GN4nLQk2CvShtQRZ3t/DUqx8Y4JQWF8NpFjjJWCDOz7B/TwUT9aVEG9bIVlcZm5z45NO4QHCcnWtCsn53u7+Hly1akvUPWna54ET2k3HgvRgTlIXCruLvTrDbf3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9) by ZQ0PR01MB1173.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1a::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.25; Thu, 21 Nov
+ 2024 03:14:43 +0000
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ ([fe80::64c5:50d8:4f2c:59aa]) by
+ ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%4])
+ with mapi id 15.20.8158.024; Thu, 21 Nov 2024 03:14:43 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: starfive: Make _clk_get become a common helper function
+Date: Wed, 20 Nov 2024 19:14:26 -0800
+Message-Id: <20241121031426.36588-1-changhuang.liang@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJSPR01CA0024.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:c::36) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
- pixel clock reconfigure parent rate"
-To: Ying Liu <victor.liu@nxp.com>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "abelvesa@kernel.org" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
- "rfoss@kernel.org" <rfoss@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "jonas@kwiboo.se" <jonas@kwiboo.se>,
- "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "nfraprado@collabora.com" <nfraprado@collabora.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20241114065759.3341908-1-victor.liu@nxp.com>
- <20241114065759.3341908-3-victor.liu@nxp.com>
- <df6ebdde-65f8-4aad-93c7-b1df695bd2ef@denx.de>
- <AM7PR04MB7046546A882A8D48E135D84698272@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <8a4fd234-4c7b-4a04-990d-3222aaa5172d@denx.de>
- <AM7PR04MB7046E282FD702ACE5E288F8998202@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <83be0a27-6b6c-4ba6-b9dc-f914a10abace@denx.de>
- <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1173:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec3f5cd2-3575-41e6-6804-08dd09daa4c7
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|366016|41320700013|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	G9zPLgOqs68IrU96Yo4MDMbsQLMpTnzpF0ysakNylByC3wCXb7687gbfs8vzj6AurEAf5Gy1jFTd48qqmEYVzUNf1s/UmPqJ38YjKImR3XCntNZB7c1QY2Yz/I6p+w3s8FPIAk9wIBMv/iQ3stjmDEof4+TESbg+QNagKV7wlxv2zW0gxCP1FuLUVR+MP6HrkcFOxPxU5oVr9PywD4XTZppt1qLpoTWmRhCj93j9ZnvfpCQPbosErruHmCbKjLEvIKAqqx9GxuES6d0GO1Zq1pVGBH2lT308pZuVoEzpkyA3+7ilO5diLO65+AX0Y35sTDaOhUHwGkj72eLokzdas6qPF6FhO3uRxEUYnBSHlvGfyUWCTKMIRXdHKJSh5+5yGkhC1Jwero90o0Lx7iAhrMj64V9Tlb6SmXuNDbhyJft8VRa55Hd+4QENZ1RE9dnJo+JcisK8qxeGEcuWgdraxtBmuRghenaf/gaHU0yb1u8IH+Oy1Ah5X/1JNAsV06qjUpcoADicUD9i5MX/6HcTKiX8QuMX8h0zgZxb9sgJJ6x0J+ONKx35Nf3oRU1mACx5BSpN/lvYQm8JQljEBjJnR2oNxy2hA7sz5N/TLYWBO6QDxHK1fCIE23iopwyFsdYG
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ephB8D7+qpn73AQzl3c1F+Kp16aGOzrwQdrjPHY+NmDDgtcIBKF0frVMBTIQ?=
+ =?us-ascii?Q?32aEBzwWimUsixFksE0/hT3dALA4Z2zK92I4RpxwCwPBku0v27v5IbXASr/A?=
+ =?us-ascii?Q?cag86UETavWBFk+K9ceyx4sy9j+cPPkOw/1MEqh0r7kwmbpjaJ7mfKrphY9J?=
+ =?us-ascii?Q?3Di59ffAyijKHrJ5vT0G2lmC8cBoy5zsKvtQzWcBijogRhh69cUv7dXzqMww?=
+ =?us-ascii?Q?32PMZJcbO9NhHt6mBPHMoxhfLbCIpQsd5z0qnH75WC5aPoQXCYVHw9B4BYug?=
+ =?us-ascii?Q?vR3M42iDQH+gZ0Pxua2tT/IjdftiN67X8DD4YLtCn38M8CoFMQuhrYwKuUKX?=
+ =?us-ascii?Q?MQ8qq5pMW+xVYTUpk1GkU2KUHl2H2avNEoMJH6lMODUOfTbEjZ+jNMY7/6MQ?=
+ =?us-ascii?Q?RzvPHwDuI9Fg2FMrQqshtN2AMLh1tknXNXvuru+nMLqSfJul1cJFs+2DpAyj?=
+ =?us-ascii?Q?80bh6oyFwmFgXyHAcU6/2d5L1uY4S1ft0AECcep5D/zAnmPcCToxAUmmpv0U?=
+ =?us-ascii?Q?NS0o1TIMM2hzhBPk2daJpxoasV3qU70/KbslOrIvBq+CLLX7MfkV+mSiasTo?=
+ =?us-ascii?Q?BtYqV1iY+SFFXGOGY9aZhLgiatGDVTNCucESRgzPNf2EqLCblec8eeDC5tSX?=
+ =?us-ascii?Q?oQZeiUSG4ekIvMTFeh10j1jqZjKvqY0FWu4z5xfOCdbUJdRtvX6sXJPZD7GD?=
+ =?us-ascii?Q?BgfSO3jI30ZdmJtcxpjbe0dvGIhsbGcztWmVjj7Ddjirz5aPj5FRK9tQnpkx?=
+ =?us-ascii?Q?GLFIQcDCUFcaSm841/6J7p4BRiFtLsbz/AyN68hwBWrWEXNngU8wNHZhGaFo?=
+ =?us-ascii?Q?8JRuhSsF9qZ/aF+T5MX2quQ8PrfDeRY1QR8wSGG8bxMR4q6lPc7n0+Vhpgar?=
+ =?us-ascii?Q?RQi0Yh7BUB44dut+YbrqrvXFtiqx9EwpP0j50ZGlrEy975YXGPBWzDJTfevC?=
+ =?us-ascii?Q?FYB2uVjHjNvtDgjVbpd0ls7BXMxiqE68rlLOjZxEFD7PS43yfdMfy3l4NG8q?=
+ =?us-ascii?Q?hSpyIgyBF2nqVMsVcDi+kFK3PT8ccuVOolD/DIGvAVLHWUyXbMDq7KGoZG3P?=
+ =?us-ascii?Q?ZmzwOg99GIdHmb3H/BuPV1ROlE06iP9+CmOXs36Mge9DIGtyH/PQm0pW8MNi?=
+ =?us-ascii?Q?8t4vIPgcmjWHQ0a9kDWq99Gu4Tcp7OPTdjvoAhuQYQf3cjTOXlii9LWtNGOi?=
+ =?us-ascii?Q?p0/wQsKxIbGiRyiAzVvlh555xF9DIaSWDrwEfheM8NFq3eM1mDLPRossYgeA?=
+ =?us-ascii?Q?3oN7PGWqDO4xndOUAtZnhWkoAwv5C46H3Fn2Cl3+XaLlipH36dnodgnGEr/p?=
+ =?us-ascii?Q?osTh5gSXYP66mtFWls1RCJQPhmqN+gkTpLLWF+/Zxt1zjT3nK42o+o3HOJXO?=
+ =?us-ascii?Q?QfuVkRutV4gpNtR2ZRherQ+9Z3/Ca5ohqf7cVpsBk1Pr7REF0EAXrU5uoU7u?=
+ =?us-ascii?Q?8Zc8XRLyaXT2iogtD3+Rr0r6VWsD/qxp1mCjyz3WDZEAEgl9DAyZLHh0OxHd?=
+ =?us-ascii?Q?uP0ocVGVsYa8zp7aeEoqV+MskFX9pWiR7raUIjpHYXe4gwtA4Tle69MD0Enq?=
+ =?us-ascii?Q?5Kl98VCgI2g5NELkXwxGGhBOck/xFEG6A7TPrmxfp/DZJa7vC63sJcl4OY4V?=
+ =?us-ascii?Q?ImxG1CvlGachCuut7PgAve8=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec3f5cd2-3575-41e6-6804-08dd09daa4c7
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 03:14:43.0082
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vkVYY5LQd/0Vt8zaz84gMVDsw+tPiq1ie+g+QlCVEHoncU0tTNm8aTjRAJ/lX8UnsSM+TVCYHkEXGnXumhxV0HYUTxD6HOnEqiuTujsvFs9xNOv1YX8VDXuJsCuJCdPq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1173
 
-On 11/20/24 7:38 AM, Ying Liu wrote:
+Introduce num_reg to store the number of clocks, this helps to make
+_clk_get become a common helper function which called jh71x0_clk_get().
+With this, it helps to simplify the code and extend the code in the
+future.
 
-[...]
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+---
+ drivers/clk/starfive/clk-starfive-jh7100-audio.c | 14 ++------------
+ drivers/clk/starfive/clk-starfive-jh7110-aon.c   | 14 ++------------
+ drivers/clk/starfive/clk-starfive-jh7110-isp.c   | 14 ++------------
+ drivers/clk/starfive/clk-starfive-jh7110-stg.c   | 14 ++------------
+ drivers/clk/starfive/clk-starfive-jh7110-sys.c   | 14 ++------------
+ drivers/clk/starfive/clk-starfive-jh7110-vout.c  | 14 ++------------
+ drivers/clk/starfive/clk-starfive-jh71x0.c       | 12 ++++++++++++
+ drivers/clk/starfive/clk-starfive-jh71x0.h       |  2 ++
+ 8 files changed, 26 insertions(+), 72 deletions(-)
 
->>> If the DP monitors support typical video modes like 1080p60 with
->>> 148.5MHz pixel clock rate, I assume these typical video modes work
->>> still ok with this patch at least.  Please help confirm this, since if the
->>> alternative solution(*) doesn't stand, we would know those video
->>> modes still work ok with my solution(fixed PLL rate).
->>
->> They do not work with the fixed PLL setting.
-> 
-> Why?  Did you assign a sensible fixed PLL rate in DT?
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100-audio.c b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
+index 1fcf4e62f347..7de23f6749aa 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100-audio.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
+@@ -84,17 +84,6 @@ static const struct jh71x0_clk_data jh7100_audclk_data[] = {
+ 		    JH7100_AUDCLK_AUDIO_12288),
+ };
+ 
+-static struct clk_hw *jh7100_audclk_get(struct of_phandle_args *clkspec, void *data)
+-{
+-	struct jh71x0_clk_priv *priv = data;
+-	unsigned int idx = clkspec->args[0];
+-
+-	if (idx < JH7100_AUDCLK_END)
+-		return &priv->reg[idx].hw;
+-
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ static int jh7100_audclk_probe(struct platform_device *pdev)
+ {
+ 	struct jh71x0_clk_priv *priv;
+@@ -106,6 +95,7 @@ static int jh7100_audclk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&priv->rmw_lock);
++	priv->num_reg = JH7100_AUDCLK_END;
+ 	priv->dev = &pdev->dev;
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+@@ -146,7 +136,7 @@ static int jh7100_audclk_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
+ 
+-	return devm_of_clk_add_hw_provider(priv->dev, jh7100_audclk_get, priv);
++	return devm_of_clk_add_hw_provider(priv->dev, jh71x0_clk_get, priv);
+ }
+ 
+ static const struct of_device_id jh7100_audclk_match[] = {
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+index 418efdad719b..6f67587f4335 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-aon.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+@@ -54,17 +54,6 @@ static const struct jh71x0_clk_data jh7110_aonclk_data[] = {
+ 	JH71X0_GATE(JH7110_AONCLK_RTC_CAL, "rtc_cal", 0, JH7110_AONCLK_OSC),
+ };
+ 
+-static struct clk_hw *jh7110_aonclk_get(struct of_phandle_args *clkspec, void *data)
+-{
+-	struct jh71x0_clk_priv *priv = data;
+-	unsigned int idx = clkspec->args[0];
+-
+-	if (idx < JH7110_AONCLK_END)
+-		return &priv->reg[idx].hw;
+-
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ static int jh7110_aoncrg_probe(struct platform_device *pdev)
+ {
+ 	struct jh71x0_clk_priv *priv;
+@@ -78,6 +67,7 @@ static int jh7110_aoncrg_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&priv->rmw_lock);
++	priv->num_reg = JH7110_AONCLK_END;
+ 	priv->dev = &pdev->dev;
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+@@ -127,7 +117,7 @@ static int jh7110_aoncrg_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
+ 
+-	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_aonclk_get, priv);
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh71x0_clk_get, priv);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
+index 8c4c3a958a9f..f3fa069db193 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-isp.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
+@@ -75,17 +75,6 @@ static inline int jh7110_isp_top_rst_init(struct jh71x0_clk_priv *priv)
+ 	return reset_control_deassert(top_rsts);
+ }
+ 
+-static struct clk_hw *jh7110_ispclk_get(struct of_phandle_args *clkspec, void *data)
+-{
+-	struct jh71x0_clk_priv *priv = data;
+-	unsigned int idx = clkspec->args[0];
+-
+-	if (idx < JH7110_ISPCLK_END)
+-		return &priv->reg[idx].hw;
+-
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ #ifdef CONFIG_PM
+ static int jh7110_ispcrg_suspend(struct device *dev)
+ {
+@@ -126,6 +115,7 @@ static int jh7110_ispcrg_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&priv->rmw_lock);
++	priv->num_reg = JH7110_ISPCLK_END;
+ 	priv->dev = &pdev->dev;
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+@@ -186,7 +176,7 @@ static int jh7110_ispcrg_probe(struct platform_device *pdev)
+ 			goto err_exit;
+ 	}
+ 
+-	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_ispclk_get, priv);
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh71x0_clk_get, priv);
+ 	if (ret)
+ 		goto err_exit;
+ 
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-stg.c b/drivers/clk/starfive/clk-starfive-jh7110-stg.c
+index dafcb7190592..2a5ad0e07d1d 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-stg.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-stg.c
+@@ -75,17 +75,6 @@ static const struct jh71x0_clk_data jh7110_stgclk_data[] = {
+ 	JH71X0_GATE(JH7110_STGCLK_DMA1P_AHB, "dma1p_ahb", 0, JH7110_STGCLK_STG_AXIAHB),
+ };
+ 
+-static struct clk_hw *jh7110_stgclk_get(struct of_phandle_args *clkspec, void *data)
+-{
+-	struct jh71x0_clk_priv *priv = data;
+-	unsigned int idx = clkspec->args[0];
+-
+-	if (idx < JH7110_STGCLK_END)
+-		return &priv->reg[idx].hw;
+-
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ static int jh7110_stgcrg_probe(struct platform_device *pdev)
+ {
+ 	struct jh71x0_clk_priv *priv;
+@@ -98,6 +87,7 @@ static int jh7110_stgcrg_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&priv->rmw_lock);
++	priv->num_reg = JH7110_STGCLK_END;
+ 	priv->dev = &pdev->dev;
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+@@ -145,7 +135,7 @@ static int jh7110_stgcrg_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
+ 
+-	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_stgclk_get, priv);
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh71x0_clk_get, priv);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+index 17325f17696f..e9d8168d02b8 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+@@ -323,17 +323,6 @@ static const struct jh71x0_clk_data jh7110_sysclk_data[] __initconst = {
+ 		    JH7110_SYSCLK_OSC),
+ };
+ 
+-static struct clk_hw *jh7110_sysclk_get(struct of_phandle_args *clkspec, void *data)
+-{
+-	struct jh71x0_clk_priv *priv = data;
+-	unsigned int idx = clkspec->args[0];
+-
+-	if (idx < JH7110_SYSCLK_END)
+-		return &priv->reg[idx].hw;
+-
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ static void jh7110_reset_unregister_adev(void *_adev)
+ {
+ 	struct auxiliary_device *adev = _adev;
+@@ -425,6 +414,7 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&priv->rmw_lock);
++	priv->num_reg = JH7110_SYSCLK_END;
+ 	priv->dev = &pdev->dev;
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+@@ -526,7 +516,7 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
+ 
+-	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_sysclk_get, priv);
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh71x0_clk_get, priv);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+index 04eeed199087..bad20d5d794a 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+@@ -80,17 +80,6 @@ static int jh7110_vout_top_rst_init(struct jh71x0_clk_priv *priv)
+ 	return reset_control_deassert(top_rst);
+ }
+ 
+-static struct clk_hw *jh7110_voutclk_get(struct of_phandle_args *clkspec, void *data)
+-{
+-	struct jh71x0_clk_priv *priv = data;
+-	unsigned int idx = clkspec->args[0];
+-
+-	if (idx < JH7110_VOUTCLK_END)
+-		return &priv->reg[idx].hw;
+-
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ #ifdef CONFIG_PM
+ static int jh7110_voutcrg_suspend(struct device *dev)
+ {
+@@ -131,6 +120,7 @@ static int jh7110_voutcrg_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&priv->rmw_lock);
++	priv->num_reg = JH7110_VOUTCLK_END;
+ 	priv->dev = &pdev->dev;
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+@@ -193,7 +183,7 @@ static int jh7110_voutcrg_probe(struct platform_device *pdev)
+ 			goto err_exit;
+ 	}
+ 
+-	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_voutclk_get, priv);
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh71x0_clk_get, priv);
+ 	if (ret)
+ 		goto err_exit;
+ 
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+index aebc99264a0b..80e9157347eb 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.c
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+@@ -325,3 +325,15 @@ const struct clk_ops *starfive_jh71x0_clk_ops(u32 max)
+ 	return &jh71x0_clk_inv_ops;
+ }
+ EXPORT_SYMBOL_GPL(starfive_jh71x0_clk_ops);
++
++struct clk_hw *jh71x0_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct jh71x0_clk_priv *priv = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx < priv->num_reg)
++		return &priv->reg[idx].hw;
++
++	return ERR_PTR(-EINVAL);
++}
++EXPORT_SYMBOL_GPL(jh71x0_clk_get);
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+index e3f441393e48..634d8cb91592 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.h
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+@@ -117,9 +117,11 @@ struct jh71x0_clk_priv {
+ 	struct clk *original_clk;
+ 	struct notifier_block pll_clk_nb;
+ 	struct clk_hw *pll[3];
++	unsigned int num_reg;
+ 	struct jh71x0_clk reg[];
+ };
+ 
+ const struct clk_ops *starfive_jh71x0_clk_ops(u32 max);
++struct clk_hw *jh71x0_clk_get(struct of_phandle_args *clkspec, void *data);
+ 
+ #endif
+-- 
+2.25.1
 
-Whatever was in imx8mp.dtsi does not really work for all the panels.
-Please keep in mind that the use case I have does not include only 
-1920x1080 "standard" panels, but also other resolutions.
-
-> Can you please compare clk_summary output for the failing cases
-> before and after this patch is applied? I assume that if you use
-> the fixed PLL rate same to the rate which works before this patch is
-> applied, the typical video modes still just work after this patch is
-> applied.
-
-I'm afraid I do not need to support only typical video modes, but also 
-the other "atypical" modes.
-
-[...]
-
->> One really nasty way I can think of is -- use find_node_by_compatible(),
->> look up all the relevant DT nodes, parse their clock properties, and
->> check whether they all point to the Video PLL or not.
-> 
-> That's nasty.  It looks even more nasty when considering the fact that
-> i.MX93 LCDIF is also driven by imx-lcdif DRM while only i.MX8MP LCDIF
-> needs the nasty check, because i.MX93 SoC embeds only one LCDIF.
-
-The check can be skipped based on compatible string.
-
-I agree it is nasty, but it is a start. Are there better ideas ?
-
->> Maybe the clock subsystem has a better way, like list "neighbor"
->> consumers of some specific parent clock or something like that.
-> 
-> What will imx-lcdif DRM look like by using this way? Get the ancestor PLL
-> clock of pixel clock(media_disp{1,2}_pix_root_clk), list all child clocks
-> (media_disp1_pix and/or media_disp2_pix + other possible clocks) of the
-> PLL clock in a string array and find media_disp1_pix + media_disp2_pix
-> in it?
-> 
-> Doesn't look nice, either.
-
-One other option came to my mind -- place a virtual clock between the 
-Video PLL and consumers (LCDIF1/2/LDB), and then have the virtual clock 
-driver do the clock rate negotiation in some .round_rate callback. That 
-is also nasty, but it is another idea. If there is a clock specifically 
-implemented to negotiate best upstream clock rate for all of its 
-consumers, and it is aware of the consumer behavior details and 
-requirements, maybe that could work ?
-
->> [...]
->>
->>>> Can something like (*) above be implemented instead, so both Shared
->> and
->>>> separate PLLs would be supported ? That should solve both of our use
->>>> cases, right ?
->>>
->>> I don't see any clear way to implement something like(*).
->>>
->>> Take the 3 i.MX8MP LCDIFs as one graphic card driven by one imx-lcdif
->>> DRM instance?  Would it be too intrusive?
->>
->> Yes, and I think unnecessary, one can simply traverse and parse the DT
->> to determine the clock assignment?
-> 
-> Yes, people can traverse and parse DT, but it's nasty.
-> 
-> In addition, one may argue that now that CLK_SET_RATE_PARENT flag
-> is set for the pixel clocks, all potential video modes read from EDID
-> should be supported when only either LVDS display pipeline or MIPI DSI
-> display pipeline is active in the shared PLL case.  This requires one
-> single DRM instance to detect single or dual active display pipelines
-> dynamically, hence this single DRM instance becomes necessary.
-
-Would single virtual clock which do the frequency negotiation between 
-multiple DRM consumers work too ?
-
-I do not have much to add to the points below.
