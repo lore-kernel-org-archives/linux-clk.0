@@ -1,64 +1,39 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBD623099D
-	for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 00:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006E080027
+	for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 04:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732149446; cv=none; b=UY/iF94/Ukj/vcc7koS9tuGpOVpfGrjxmk6i9XIuDhoFpEblN9o5VZ57KlV0FkKDMNpq4z+AOrFfeO0BoU1HktP99QqgkpSejpZ2v3LSf6l+MvB1qYZ/wqVN2Wr4VGWHWBhiUvxKNE560BFMWYP7VaGxmIYh8uHSl+wqaUishcE=
+	t=1732162592; cv=none; b=WQEGf0bYjX/k5BiCyZWOyVVIjgwVK1tk+DBYWCaBsIKQRevBEMwiUpoNaRO36kpE/rrzZ7j0oi7cr1lu7zJvunIQyDQb0XCsnK3Jj2US5haclQgVhCS34ifrYM95ig8VVaOs1f+HBOZsINH94c5sd8lUe2bN5SwNcM+ToR8X02s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732149446; c=relaxed/simple;
-	bh=U1S0roCBZy6Yr/IN5az14AchlrK43tHpIByXaXPoH0A=;
+	s=arc-20240116; t=1732162592; c=relaxed/simple;
+	bh=MHlNy/0tw8Q0FVWot95NbIAN831BQMEo/m14012GQ4w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oXBKcmH1ie0jFL8ql+MfnEj+qFE9vdEB8/vM36UI6acAq1DXPCyy6cd19saD7P3gpyKKFsUpEAoJWYqdyfgz+O5qZffM0WLBZ6q8N2RDSrCe6jXvKeBXX7IGyUhUtqg8NB1R1f3Nc+1jd636jqB7ZlZ7pm0AI8GMtD+4BLeHTso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sy/kmpcT; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=fW/EBbQXCmZdMgce7LgR9hBv+jLIIWOfMEDwnNcbZ5IYq0xZACBr+MYh0F3H2Ts0cJL02k9DIL0aEhP77BPynLd/Fb0LZzHn4s+NM7TTcFucAuVSZE0mKlfZF3gUXXAkuav0ZQSmrzkGnPj7lFxpjwAAAvLW3m9ogMesNL+24nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Z47VNZrj; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sy/kmpcT"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb5014de17so584441fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Nov 2024 16:37:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732149443; x=1732754243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YAuXluMpfSh0qDO+UckfWrXerNoxRK+af2VJkTt6Y4g=;
-        b=Sy/kmpcTwZM+69COId67IPOCa4YugyAXsuSPVcoY9yHEwBVGZ6IVnT1BQIVMfZdkc6
-         gFITm+wtk22RirvoctJ3TXWj4sa9gChSlZrVcPlXzjUJp1ef4QcN29+NRrWuxZ5j2gKY
-         Yl6tCVCqZQyPEs5iF7JqW8wckob9ds/wN96GCcaUvvErJmj7jxULtP09JQ0tfdYU/fDl
-         hVXHFgmv4vDulJ5Lq7GDHaoeJC86/hZgIIPBPgFWZ+USVm7gTsHzYOnMlBvGq6cX50Nj
-         trEncmtv9rArPj584tvykHjp4KGJkqtFzssMhcHcezm5ssjjpDkSZbUhE+qiIJtvdkuu
-         DzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732149443; x=1732754243;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAuXluMpfSh0qDO+UckfWrXerNoxRK+af2VJkTt6Y4g=;
-        b=mHskIu3dkWKeS0Gw19lqvYdtQDBRs6sN4YvTNTr06EOV6nAZiWeGQGyO3B3pcb6ecY
-         F0qAqtdeWp2mYaTv7Ysw5KtdDMxIG+hh8eKvsZOX9WSjapQM8uZQ8D5DFfXT/dIKwj9c
-         qd+swX5eyIBYnnEBaiLFdkA/MT2B6fwFgEybS8HtgRBH2RrjyV+0F1LBrmy8jv8IZihy
-         z+6BRvR5ZkI0jJYw7gMxbk20ZwiGHwnpd2cUhfoXcZuTvO8CpJtNBFw2OkOY0xSFZAnM
-         TohU6JE/LysZavfRk4RXmnUG1KTKjPsgBzxdiWHo+5KjKJJ9wb0QyqzDMclHrnHOUcsW
-         xk9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFGowesY8MHChTHV6Elsusa+E6RVA4ovB5s0y7WPeVutSUTi6ZMAzulo2D+y7838EKDjhLUnoQjHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMSFHrs+TVaak7YU2wPYFnLHRyBMlJmQ1L2a9saLQSzxFUEz6F
-	SUb4XoIehbR+E/16pBGjbAIU+8OMyvhJk1ayjhyfafYSMDbYUrvemyNiBRvMaVQ=
-X-Gm-Gg: ASbGnctNZ4PXJchkWviKLV1iGYxCs80ukD95JKISg+d39C/Jr34q5u1k9HBIEAYUTpJ
-	BOBL+BsHTolbv8gU5GyWl3/KY7W4ocuz3skEcxk0SIjPkp/kQGQ1rBTp28Lc+dIMoyULqS4XqcF
-	Z4GV1rwIbMhCU707zM/iRm4Pyx2DyPUro8zpf3MJRfZoLtDeTiHxs86hmcjpECr9MmdY146ZMJa
-	qoKFDd3DRnAvet/CPSNPLKPZXgFvFgecoR5QDRBCR5p62lZqp9P4oS/LuF+t63BrTYUOah80Ydc
-	xYQ5fZe9hH0u+QhQrCo5NeNs0Br0
-X-Google-Smtp-Source: AGHT+IFN9O08F0W2wl6yka9ElBfiou3gnBgywoKZF/lU+i/vNAQy12evwkDojEAvUqtsv0eO+fwRIA==
-X-Received: by 2002:a05:6512:3d12:b0:53d:a8a5:82d2 with SMTP id 2adb3069b0e04-53dc13281a8mr604562e87.3.1732149442659;
-        Wed, 20 Nov 2024 16:37:22 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd472766sm773787e87.204.2024.11.20.16.37.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 16:37:21 -0800 (PST)
-Message-ID: <f903025b-08ff-422c-a93e-fad911a7ee43@linaro.org>
-Date: Thu, 21 Nov 2024 02:37:19 +0200
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Z47VNZrj"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 6131789634;
+	Thu, 21 Nov 2024 05:16:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1732162589;
+	bh=/h+Aqf+FUd6Y7eBOAWkUFVG4S9BbIuewS7MSwsHNJ0U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z47VNZrjkXdRpTnkUBfyeS+GzuPm3YNuXhwk4wB3lz3abLpC5KL+scqK74W7Qk6y2
+	 Ykr9H/DHfjCHTHs4j0YoPjoj+Fb3BioGcvxQXmbexmKYeR8atLfkVNsyA5rr600KlS
+	 GpFsOwPSmL9PQMEczOJRqQDKGz/93fO0sovc7vN7FLrey6j0cyuN6jgUZP8KtQeO2/
+	 1FH6gk2or/Btc9F9JdpgirEgjHGTjOR9Xj9lIIXz/qI5KVnDhPBbfrzTOV0wdyBqF5
+	 lEXsCO+3TQaC5xG7dcbbVKJI/A3LOlw9OMnhQsmLcMNdeDAf4ZcTe5Gw0WqpVUVKzl
+	 nqjaRa7D319qg==
+Message-ID: <5f56ac1e-7b88-4962-838f-66dbac292828@denx.de>
+Date: Thu, 21 Nov 2024 03:47:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,68 +41,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: media: Add qcom,x1e80100-camss binding
+Subject: Re: [PATCH 1/2] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
+To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+ Isaac Scott <isaac.scott@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Robert Foss <rfoss@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ imx@lists.linux.dev, kernel@dh-electronics.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20241008223846.337162-1-marex@denx.de>
+ <dbede671-c97b-4ad7-8a54-f1b381fea082@nxp.com>
+ <00ffd38c-b01a-40cd-9130-19c35a387ca0@denx.de>
+ <819380c3-d13f-4989-b305-388fc60d30e4@nxp.com>
+ <d99e0021-3253-4312-9b50-6031ae0f8d8e@denx.de>
+ <d1307426-9a86-4356-93b8-9a10c8369ad8@nxp.com>
+ <1f5e9559-59f8-490b-9cb2-2f8d4a8823e6@denx.de>
+ <41855af3-53bf-4a02-bd5a-9982becf2726@nxp.com>
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-2-54075d75f654@linaro.org>
- <92f3f608-1ca6-4c41-9406-28c7ad589872@linaro.org>
- <66d1c50f-ebfc-41c7-95a4-5d555b336da4@linaro.org>
- <bb58d02f-9ed6-476f-8bc6-ad56cb35e37f@linaro.org>
- <91afb347-e8ee-4a97-bd8b-9a1413051cb9@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <91afb347-e8ee-4a97-bd8b-9a1413051cb9@linaro.org>
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <41855af3-53bf-4a02-bd5a-9982becf2726@nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 11/21/24 01:27, Bryan O'Donoghue wrote:
-> On 20/11/2024 23:02, Vladimir Zapolskiy wrote:
->> like "vdd-csiphy-0p9-supply" and "vdd-csiphy-1p2-supply"?
-> 
-> In theory, however I'd like to avoid adding endless strings of new names
-> into the driver code for each different power input.
+I'll stop this thread, let's continue the discussion in one place in:
 
-I don't understand this argument, it's the same degree of endlessness as
-the endlessness of new designed SoCs. Should it be stopped now or what's
-the point here?
-
-My argument is to represent the actual hardware instead of copying errors.
-
-> We can add this additional string name though in the interim between now
-> and refactor for the PHY API.
-
-I don't see it as a good reason to copy an easy to correct mistake.
-
->> Also you put a description like "supply to PHY refclk pll block", but if I
->> remember correctly once you've said that the datasheet (of another SoC)
->> does not give any clues about the usage of the supply, thus it invalidates
->> the given description.
-> 
-> I'm surmising by extrapolation - that's "probably" what those are just
-> at different voltage levels based on previous iterations of this PHY.
-
-But this is proven to be wrong, let me kindly ask you to align with the SoC
-documentation here.
-
-> I'm just as happy not to describe this or to describe it as no mor that
-> the 1.2v supply etc.
-> 
-
-Thank you for understanding.
-
---
-Best wishes,
-Vladimir
+[PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp pixel 
+clock reconfigure parent rate"
