@@ -1,308 +1,193 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB691C728F
-	for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 11:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189793; cv=fail; b=nM9dzxjJAaSeDcXNMVLKR9Q8jX3fLY3+Gh2KADDaSh3Yi7VbLOkrPEo3oJiUxcnv2rhRyOV2QzlJb4YERWS+vmMZjnCyALvFsOthpFhKUziKjbyMDNkzCMcJT88oqnfhNWif+US8v2kvebcOJsYm7Xz9pNxxOjZjjWC2ccSbxBs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189793; c=relaxed/simple;
-	bh=lPhiOGp1Io/6TURyER03lJmb+sthSJKWSHz3cjx4NTg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VVr4WWRvk2O786PucuGC0U5SVuL7K5yVEmk0bJacTDrrM+7QFEbrn/b5q685Lj6znQ+3Jyw356BuurK2Bw13GjEd21eI+rvn17R+Izch7EVovPmkISjBkKgr8P0eBhyZwl9EpV6CbJsloDr4Vjp3FE6JFdmieRHCysujR0Mmfeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bL3QtjiP; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E901B7083A
+	for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 15:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732203441; cv=none; b=pPqh2MPglPD1WRTrzUD8b0H0faVj+fwhgI5WxZ2Q+rhXEY4csj8obAPivWbovGpuks4Uw0P1gncoxCw9aRG+PFm/C0mxxK5OvKRzahrRGO/fgTB3d3dGvzoXSlkstJWevb1lZZhfm3J/hYuw92aXY8nduL0TLBZ/OnExmuXCkOU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732203441; c=relaxed/simple;
+	bh=hyM4vCib5BHN+oOIl3oJQy667UjA0LMFpe257ZTgAkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YSAv/BBS7pitilBecPskveQPcanLKO+sBQJtDIM4hW9Ziu6TCyA4RlPNg0H7vEJmc0AdJAvE0fXwU6EVnAtrGg9p8LfdYzV617ri8AW3AwdU6N6r+ECmeKrw71+9i2ucc/qO/TTIXpHKa/eb55JrHbXIj8+WSYOtCJ9hm2L9n2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=EKojV+J3; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bL3QtjiP"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ottmQevyRNNWhTqnR+/3U77EO3XPl2C5yJW80eZ+nrLZBdh2lwDKNeixTHonUzMgp6+bmAWZsUG2dIIwl55vcACCcMC7hBJ2a2RV1SF3ujJSLAX2uh6zWIeCUTZPdLPZndzwll0woPHLP18P0Km+rVkvV3ypU+/lfNZG/AvwX48lzTaGf/wi8YNIlOA3KU2UxOA9UP8BtjRJ4JO0pOErcJbfCMTkLzf+cOY76/GtZN0Jihap+R94LV6BJoMSXSragh/nqDgDNZmSjuGqYv095DY9Ch2nEKGtsi71wDPRQNSjZALs/A6WQKvY1ergMxH2MPsN1+GWiAtLGfZUIxkHdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dmt/n1//ZVes1IZPUVe6vvlWttFCKAZ3X0OHnxZXpVM=;
- b=hInru52rDWNqRJS585YA0TU3QUdw9k1m+icgtH2iTA1Y0ASgR3uNRKV13aWN+nK00sab5LcbeuxoBtgz5MsrlvjdyUAZiXfutLvnYvsBAu1i7MjsP13Z2NiUuNtjpm0Ur8Lal+5ecawNJ/28FSIDSMlttyQSHV6jKXsYbLOyf+cSn+R2fFmMxKQAmSctb9Ex3yMqd6158TJapi95Wp/4F1d5shhveKLmwNS6+Sz6Mgz9YrGr6AHnM3tsk0iiWRh9o8ZBKynLmc+301FS7LiTBrKIStLELbADnx2Hix9EgnM3gnIE6MSRmyi1DxAXQ3jJ1yBS+NgBJXUPjrqgvV8svA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dmt/n1//ZVes1IZPUVe6vvlWttFCKAZ3X0OHnxZXpVM=;
- b=bL3QtjiPAe4bSHoR5hYMzOksp/ihVOmYwhV6LcgRp5i5glUE65DpFrWHHQ1Wgi75t8df3+2oWmg7JX+WF9HxkXQkdwtxmqnZkiImkL6bi4c4UBlj7MMonB0t1NzGwL6RXYL2nfUGC0rUIsuLdwcEeMoxI+BV0YXPyM1jy/zOdhY=
-Received: from SN7PR12MB7276.namprd12.prod.outlook.com (2603:10b6:806:2af::8)
- by SA0PR12MB4494.namprd12.prod.outlook.com (2603:10b6:806:94::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15; Thu, 21 Nov
- 2024 11:49:47 +0000
-Received: from SN7PR12MB7276.namprd12.prod.outlook.com
- ([fe80::4ff7:c17a:b7a9:6c94]) by SN7PR12MB7276.namprd12.prod.outlook.com
- ([fe80::4ff7:c17a:b7a9:6c94%3]) with mapi id 15.20.8158.021; Thu, 21 Nov 2024
- 11:49:46 +0000
-From: "Trivedi Manojbhai, Naman" <Naman.TrivediManojbhai@amd.com>
-To: Stephen Boyd <sboyd@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	"Thangaraj, Senthil Nathan" <SenthilNathan.Thangaraj@amd.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>
-CC: "linux-kernel@" <"vger.kernel.org linux-kernel"@vger.kernel.org>
-Subject: RE: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
-Thread-Topic: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
-Thread-Index:
- AQHa3DFjsadbNYIEYkaS7Q2JUnj/tLIeEaqAgAWcUdCAAF+UgIAZ6KrggADdaQCAg4eWMA==
-Date: Thu, 21 Nov 2024 11:49:46 +0000
-Message-ID:
- <SN7PR12MB7276EE2CA7208EBF7391F2858A222@SN7PR12MB7276.namprd12.prod.outlook.com>
-References: <20240722121910.14647-1-naman.trivedimanojbhai@amd.com>
- <ac67f76d4b4b5f4bf108c1457f1263c7.sboyd@kernel.org>
- <PH7PR12MB72845D56BF4361441AA9CB9A8A852@PH7PR12MB7284.namprd12.prod.outlook.com>
- <1234a0176de236abb603f96ab9a1d6a1.sboyd@kernel.org>
- <PH7PR12MB728472C3022ADCD8DF5576DD8A962@PH7PR12MB7284.namprd12.prod.outlook.com>
- <7f295bf3b095bace843c28adc9941344.sboyd@kernel.org>
-In-Reply-To: <7f295bf3b095bace843c28adc9941344.sboyd@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN7PR12MB7276:EE_|SA0PR12MB4494:EE_
-x-ms-office365-filtering-correlation-id: e8f03ccc-cdee-47f0-f2cf-08dd0a2298fa
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?CNRd3RvD3yBVg61aWQEHtxVNdTAwKABZdn1NpA4vgCR1zFB0m7u5jIq7+lCH?=
- =?us-ascii?Q?29+PCdlqgsE2+9chNUyW5e7q4Ssv22HLrOxu1yypRGe1QK8bmQHIIhdpSKq/?=
- =?us-ascii?Q?gXrCV2ERmv1ogtgrwSwj6PKbyS/oyo4sQh/Y8dzHoEuZXxmRs9Z3XB7xnp/C?=
- =?us-ascii?Q?7EBqvX7XjVjnxGT4go6cvybZmr9AAxBMchODZt+qODzyepbiPSz8+bds+Rf4?=
- =?us-ascii?Q?Mtd0+VWFAeTj29PVLbN6eW1pulJ4CQ+jKuneNDw1Wb5o38cu8th3lq+Yh91I?=
- =?us-ascii?Q?nGbadJxQWVsxxy/I3o07rJH/sFwtLAIMGBH/7L9iwEbkFRvxabZYEsjqZruJ?=
- =?us-ascii?Q?YTDqqcw1pKBjqh9Y0I4Lu+tSlLt1it0gTyB9dtOxNNbJiGyvAjyfGp0f4X8r?=
- =?us-ascii?Q?x8o5ft8bvdHUkmGbNz3Qdi9EP0/81+OSmarxO1bteySu4ybajSl1ZA2L7TQx?=
- =?us-ascii?Q?1xkv/DCoA0GyfUtO50JHQEpc+WfS/Xw94UPoQZGqdHX3rDXF1FketnthkXY9?=
- =?us-ascii?Q?dsMJ4FtHcMzuKsgfnoAktpHB3WRnzbWd9quvfvg2+h/xAGyh8vRGNb6KZvc8?=
- =?us-ascii?Q?DT/VqanO/9l9tZO8uTmsLt02Y8FO6flNd5MgmNNNC1RqzGSQcLHsajA1qh+j?=
- =?us-ascii?Q?stXKSNL8xS5Y/2/QJdsk6dFqGwZOsrmgG0VmGjXi78DeAyEH7iZZGHvSEbv/?=
- =?us-ascii?Q?qHurt/u/VH5wzUw6IDjWU/LwPE6U/W/dYbStKSJePsYERg5ARhLl1acDKj8e?=
- =?us-ascii?Q?F/Cicjtg/SOoFTcsFVgiXVLI9AF/2gWpdxJ3PTOHZOtHfB5QJgY7J5ze/GgD?=
- =?us-ascii?Q?GcLBcYz1+gBiqFdzMAccA63xG27OGmGDbNIL4jsPZ5a+rUbafZs3UORbufgF?=
- =?us-ascii?Q?MfQz43QCmLlyp/tz1srAkir6+IwhqxXF0lcDBnksMS9TK7ql5LKRh3b5Lcpa?=
- =?us-ascii?Q?+m54fy0CMSoEK3/kPEqChyCqGEjPNog6bYtY42r9H2RGAg4JuasF/KQmFa+i?=
- =?us-ascii?Q?a/Wd4EQyjVD8qO7eHUTzrurBgR6aE5XMoYF6RFXln7bDV/gcpL9mZdJ3WiPX?=
- =?us-ascii?Q?XAMacdKEodiVMxcSWT0ZbXbyyBdktAgsKWxZ1LgCz7oc/CieTK8Kva+XAMXe?=
- =?us-ascii?Q?dQPNuxUUrplPN3R1y611lGvJ/4nTxJ4V7HRmfobluksVQSG+v5x352to6ssV?=
- =?us-ascii?Q?YsDMD87ugYFXglOTpr51nmzYMrdqjD6Oe2FgaznWLJL9Fjz913ttBIste2FP?=
- =?us-ascii?Q?8PrpDN4xOYWi74qDMFoJhtOGhf7/qi55L82840SSdmqLT1qPRL0DuRgx1jQD?=
- =?us-ascii?Q?bFeZ4FsjGpCPaO4WTi+eEcs7?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB7276.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8xt+n097X6/7dqzcXK3IA8Rdtv+TQl9uwIdxwT6hAR/7UwijRCL7wmQCMJIa?=
- =?us-ascii?Q?8W+AvRG4/xlW3KwJbOxCgUt3TFFW/B63w25VazRv8ZTOzPD7GGtNkRLTFjrf?=
- =?us-ascii?Q?PwSRsPY7THqe6CEOtayJr7iGCPCT2fy3ZXvBTR8fCMrgTcTjjlBtIA4XgSpD?=
- =?us-ascii?Q?3GpGvnkCmaiRDe0wHLg3yvjqdNRcy2lNJ9NBL6Igz/C4vmUI8/vEjUyYB8ZN?=
- =?us-ascii?Q?536PPOG6b1Nsdoy5ZgEQyT3zGTHb2rrqWZuwBsGi8uqi07TTsB3CU52h3Ft1?=
- =?us-ascii?Q?tQZFDTLu+D8fCyHUjHQDC9QwbAlIYFERxwnbhrAfPUEaZZSSQpOY4jTgSpxk?=
- =?us-ascii?Q?zIoCCs5sERkAviI5B+fayWuM/udGQ+CS7RTw/Q0gZaShFOb/tAI58zzCj+g3?=
- =?us-ascii?Q?2TmLbYGZEbZEj+QmfHqITXb+nA5eyjnrc2bFGsfHm6z8IBTkiBntKNZ0/2iY?=
- =?us-ascii?Q?Y/4bZqEiOf7eKcx0CUp9pu33sGsVT9GPz9qumF15g8xgroqft53FpdT2zc/x?=
- =?us-ascii?Q?OlJTowtY6536wQCB6kjEgKbo/WH823D82gwy3wM7xIR+Ti8P5GmqgK6Cu3Xx?=
- =?us-ascii?Q?unQnUtsJMDCxFrhL+2dlxbdTEIIUj+x1uToxh4Py5vtMxD8mxJbrrU8UE4hY?=
- =?us-ascii?Q?o9GS5OHaSrPRiSFXvvpaBjMrgUbOGX9zkwTJTBh4pSG9cUWE3JTTu/h87D1S?=
- =?us-ascii?Q?dCDSqHdwPwv8CXAWirsWF3kQ+wYDybBIvIjzOx9kg0/QZXKfNYYx5Ql3vRPj?=
- =?us-ascii?Q?fuikuCpTvL0vwHeMsXmft5z42LKMz7/mvavOpNXVAD3fyc2lQ1OpRsA6GBqN?=
- =?us-ascii?Q?dbWRKpSpjN6tEKqi+4wwpuWb0vyspLFoSDWj/r9hncvskg2e+2pIEdMb59w7?=
- =?us-ascii?Q?jzgvw2sIOqj6WL4Ccp7J+s4sUWP1yJ5or4VWEijnGSxrtAZWv4GA3nvL8gVH?=
- =?us-ascii?Q?oPcztdFSKMCteTvMTiN14E9hq5FvBj5EkbH+9OsBJih3pvQWmQQQcp0eP03w?=
- =?us-ascii?Q?kinU8Zex/9U2KjvFpDYyEK8z3QYhneLe0R7AIf2wvunoNswH5/e2ms+gkOHa?=
- =?us-ascii?Q?s/pCoqZEoPYquJkAxCHI0RtdJELdC78HDPakYdEF9QS7n0cAcoFEXmxXruku?=
- =?us-ascii?Q?4jxrEvWiK6VhKEGLL5ZH7N7u3xj2g9r0xOrlDNYMk0L/TMIFKNPAQX07cIKX?=
- =?us-ascii?Q?XuXcarvvPCg5whjv5DtAwWSQyXKoDtGIocliFHH89G7AeEmePVFXe0rqR1us?=
- =?us-ascii?Q?zpZLQHjEYwicqKtsQsOafbryzNjK21cGll6RasgQxoADIFD+8+sCXTa0pp9V?=
- =?us-ascii?Q?hS+kyZ/KZdOddjR6lDwstcyGsRZix8y0SmF0tZTWiXj0/zYa11b+sWatW9Wd?=
- =?us-ascii?Q?rIKXjJitfUr8ocgerKk1Nfqv/tvmHyzk1mpS8nGFP4FHxwCxEwcjchH1JyBd?=
- =?us-ascii?Q?afw3b4IPgoLaESgsTMG3qcO40eumUm5UnJrRRDyZdZe7P/akO9Ao9j+Jto/h?=
- =?us-ascii?Q?mK+YlKE1kDOpbXNaMq5ZPFLdjpIv8eH225Z5ItSqd22GE3K2w6LBUKYSVva8?=
- =?us-ascii?Q?BaIuCHWwdBduWVSgDCU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="EKojV+J3"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6eea47d51aeso9968577b3.2
+        for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2024 07:37:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1732203439; x=1732808239; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kP6pOE3po/1ziJMcsJhojsNldXrvD7NcZzZfzxDnn2Q=;
+        b=EKojV+J3lRwrz20olLhEmlNUV99Kdgrg0D4h5jkJdQItKoZTsk4e0uIankhhrY/dU1
+         5kB+dXZgI++9m02pacgV7YouPwsO0sl4lswz7BzMHLRajjM02mFk1Bz4qOSm14B1vfLN
+         oFET06wj4rgvIE/dbA7UPyt8gHytoAvVczFIplRN+8wh3dV0OvuZFvbMWtAJJgd+PluL
+         1fVYteHairwp58Cu9dY1pc+rkGKPUTwDFw0aDW4t3Q0QgbJpAjDHCswRI7KtccSy9AVR
+         go0e9WWetKJn4HmyXB+k2dTTNcjMPg0BZ4W7ESzs+CdqtedE/g35GDJaYFJ6ICk/lEtg
+         Gclg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732203439; x=1732808239;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kP6pOE3po/1ziJMcsJhojsNldXrvD7NcZzZfzxDnn2Q=;
+        b=uzmcaJfrvtyFKVp5DiIvj7LFWvkmJamPDWRhB70RGJE4P2kD7zpI+EfUcH72YMdSO2
+         539PcjyG/tYRweeFZBOeuW2QEtFUXlNvNwUkUrrEKsjpGs99TR4AlF14tbdoLCffLFeX
+         eZFRjey9lP33hGwZXWpsk/gXd5dnUTscjNvOAIjmyVk/mkvZ7tptUia1aoYv5IUiAQA/
+         YqPmGJL2CpmLmYtKm3EZICVdcW791fxZOX1HBCsh+xvjCZUgz/tZCOT6MK8Znxm2fJSi
+         MNjpaLrce/HlEy8HPq8mqRUkPyX7DRYgA4pHIZyV9EPy+ejBC0H5seg/Ps0qII9B1HYg
+         jGZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWius4/M46H13A+csPlkanhQ1g3co/TgkzC5wEdDBzqvum5G00uUko+FtDlt3e3t4lOFzoBUhagqAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcOBJh7nGbTf4RRTeXt3CeSEKdWenJggxaKbL0kNqpp1ucLS0H
+	Hxf+1ojK97VhmRYWwBbjDawzcwbnddeACDK66PN31njlYoShdV4byrFuN7BEWaqKz9zTwaieEQ2
+	sI0jpsfApaB209pZHuI4qX+9WQhldTl3D15SdQeFZrq/95q6h
+X-Gm-Gg: ASbGncutyPKNV/VEQ4UVPAxIHUlFdxWuTOv8K+6svo4HxFbspS73mbFOUvtbFWOQOFI
+	pMlTWKCGWxvH+PSneV6OWFULdVT0tQwI=
+X-Google-Smtp-Source: AGHT+IF8UTnU+5p7nKbdKVjbrthoiYcBYTuLfXNVkQGbQk0KfLyktr9CA5uLVCOTpHwOyzUd5aASTSTl99WTmj5pohI=
+X-Received: by 2002:a05:690c:6283:b0:6ee:9cb7:dc24 with SMTP id
+ 00721157ae682-6eebd2b24cemr74692547b3.38.1732203438928; Thu, 21 Nov 2024
+ 07:37:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB7276.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8f03ccc-cdee-47f0-f2cf-08dd0a2298fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2024 11:49:46.7727
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5qd1lmAOwLtQBErT/K6B7GzYWodTVbJuF/fmeWCqHdmKPQRY/6MPiHZr1t6UzbQf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4494
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Thu, 21 Nov 2024 15:37:00 +0000
+Message-ID: <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com>
+Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display hardware
+To: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Dom Cobley <popcornmix@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Stephen,
+On Wed, 23 Oct 2024 at 17:50, Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+>
+> This series adds the required DRM, clock, and DT changes
+> required to support the display hardware on Pi5.
+> There are a couple of minor fixes first before the main patches.
+>
+> Many of the patches were authored by Maxime whilst working
+> for us, however there have been a number of fixes squashed
+> into his original patches as issues have been found. I also
+> reworked the way UBM allocations are done to avoid double
+> buffering of the handles as they are quite a limited resource.
+>
+> There are 2 variants of the IP. Most Pi5's released to date
+> have used the C1 step of the SoC, whilst the 2GB Pi5 released
+> in August is using the D0 step, as will other boards in future.
+>
+> Due to various reasons the register map got reworked between
+> the steps, so there is extra code to handle the differences.
+> Which step is in use is read out of the hardware, so they
+> share a compatible string.
 
-While debugging further, I found that, CCF registers the clock by their nod=
-e name if the clock is present in DT. This was causing issue when the clock=
- node name is changed. By adding clock-output-names property in the clock p=
-rovider nodes in DT, it ensures output clock name is not changed. This DT c=
-hange is sufficient to fix the issue.
+A gentle ping on the patches for clk-raspberrypi (patches 29-33) and
+Broadcom DT (patches 34-36).
 
-I have submitted a patch - https://lkml.org/lkml/2024/11/21/412 to fix the =
-same in DT.  So, the driver changes which are part of this thread is not re=
-quired.=20
+All the DRM and dtbinding ones are reviewed or acked (thank you!).
 
-Thanks for review!
+Thanks
+  Dave
 
-Regards,
-Naman
-
-
->-----Original Message-----
->From: Stephen Boyd <sboyd@kernel.org>
->Sent: 30 August 2024 00:33
->To: Simek, Michal <michal.simek@amd.com>; Thangaraj, Senthil Nathan
-><SenthilNathan.Thangaraj@amd.com>; Trivedi Manojbhai, Naman
-><Naman.TrivediManojbhai@amd.com>; linux-arm-kernel@lists.infradead.org;
->linux-clk@vger.kernel.org; mturquette@baylibre.com
->Cc: linux-kernel@ <"vger.kernel.org linux-kernel"@vger.kernel.org>
->Subject: RE: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
+> Thanks!
 >
->Caution: This message originated from an External Source. Use proper cauti=
-on
->when opening attachments, clicking links, or responding.
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+> Dave Stevenson (12):
+>       drm/vc4: Limit max_bpc to 8 on Pi0-3
+>       drm/vc4: Use of_device_get_match_data to set generation
+>       drm/vc4: Fix reading of frame count on GEN5 / Pi4
+>       drm/vc4: drv: Add support for 2712 D-step
+>       drm/vc4: hvs: Add in support for 2712 D-step.
+>       drm/vc4: plane: Add support for 2712 D-step.
+>       drm/vc4: hdmi: Support 2712 D-step register map
+>       drm/vc4: Enable bg_fill if there are no planes enabled
+>       drm/vc4: Drop planes that are completely off-screen or 0 crtc size
+>       arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
+>       arm64: dts: broadcom: Add display pipeline support to BCM2712
+>       arm64: dts: broadcom: Add DT for D-step version of BCM2712
 >
+> Dom Cobley (3):
+>       clk: bcm: rpi: Add ISP to exported clocks
+>       clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
+>       clk: bcm: rpi: Enable minimize for all firmware clocks
 >
->Quoting Trivedi Manojbhai, Naman (2024-08-28 22:54:16)
->> >> >> +566,30 @@ static int zynqmp_get_parent_list(struct device_node
->> >> >> +*np,
->> >> >> u32 clk_id,
->> >> >>
->> >> >>         for (i =3D 0; i < total_parents; i++) {
->> >> >>                 if (!parents[i].flag) {
->> >> >> -                       parent_list[i] =3D parents[i].name;
->> >> >> +                       ret =3D of_property_match_string(np,
->> >> >> + "clock-names",
->> >> >> +
->> >> >> + parents[i].name);
->> >> >
->> >> >You shouldn't need to match 'clock-names'. The order of that
->> >> >property is fixed in the binding, which means you can simply use
->> >> >the index that the name is at in the binding in 'struct parent_data'=
-.
->> >>
->> >> This driver is common across multiple device families, and each
->> >> device has
->> >different set of clock names in device tree/binding.  This
->> >implementation seemed to be generic for all devices.
->> >> To use index directly, I have to add if..else for matching
->> >> compatible strings
->> >and more if..else inside each of them for matching clock names to find
->index.
->> >Please let me know if this is preferred approach.
->> >
->> >It is preferred to not use clock-names and use the index directly.
->> >This avoids a bunch of string comparisons and makes for smaller and fas=
-ter
->code.
->>
->> Agreed, using the "clock-names" adds string comparisons, however, two
->reasons why I think comparing with 'clock-names' is necessary.
->>
->> First, the clock driver is common for multiple platforms. And all platfo=
-rms
->have their unique DT binding.
->> So, clock name to DT index mapping is platform specific. Which means the
->driver will have to hardcode the clock name to index mapping for each
->platform.
+> Maxime Ripard (22):
+>       dt-bindings: display: Add BCM2712 HDMI bindings
+>       dt-bindings: display: Add BCM2712 HVS bindings
+>       dt-bindings: display: Add BCM2712 PixelValve bindings
+>       dt-bindings: display: Add BCM2712 MOP bindings
+>       dt-bindings: display: Add BCM2712 MOPLET bindings
+>       dt-bindings: display: Add BCM2712 KMS driver bindings
+>       drm/vc4: drv: Support BCM2712
+>       drm/vc4: hvs: Add support for BCM2712 HVS
+>       drm/vc4: crtc: Add support for BCM2712 PixelValves
+>       drm/vc4: hdmi: Add support for BCM2712 HDMI controllers
+>       drm/vc4: txp: Introduce structure to deal with revision differences
+>       drm/vc4: txp: Rename TXP data structure
+>       drm/vc4: txp: Add byte enable toggle bit
+>       drm/vc4: txp: Add horizontal and vertical size offset toggle bit
+>       drm/vc4: txp: Handle 40-bits DMA Addresses
+>       drm/vc4: txp: Move the encoder type in the variant structure
+>       drm/vc4: txp: Add a new TXP encoder type
+>       drm/vc4: txp: Add support for BCM2712 MOP
+>       drm/vc4: txp: Add BCM2712 MOPLET support
+>       drm/vc4: Add additional warn_on for incorrect revisions
+>       clk: bcm: rpi: Create helper to retrieve private data
+>       clk: bcm: rpi: Add disp clock
 >
->The clock name to DT index mapping must be described in the binding.
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml        |   2 +
+>  .../bindings/display/brcm,bcm2835-hvs.yaml         |   5 +-
+>  .../bindings/display/brcm,bcm2835-pixelvalve0.yaml |   3 +
+>  .../bindings/display/brcm,bcm2835-txp.yaml         |   5 +-
+>  .../bindings/display/brcm,bcm2835-vc4.yaml         |   1 +
+>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+>  arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts |  37 +
+>  arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  42 +
+>  arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 188 +++++
+>  drivers/clk/bcm/clk-raspberrypi.c                  |  34 +-
+>  drivers/gpu/drm/vc4/tests/vc4_mock.c               |   8 +-
+>  drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c     | 106 +--
+>  drivers/gpu/drm/vc4/vc4_crtc.c                     |  96 ++-
+>  drivers/gpu/drm/vc4/vc4_drv.c                      |  19 +-
+>  drivers/gpu/drm/vc4/vc4_drv.h                      |  54 +-
+>  drivers/gpu/drm/vc4/vc4_hdmi.c                     | 112 ++-
+>  drivers/gpu/drm/vc4/vc4_hdmi.h                     |   4 +
+>  drivers/gpu/drm/vc4/vc4_hdmi_phy.c                 | 640 +++++++++++++++
+>  drivers/gpu/drm/vc4/vc4_hdmi_regs.h                | 217 ++++++
+>  drivers/gpu/drm/vc4/vc4_hvs.c                      | 737 ++++++++++++++++--
+>  drivers/gpu/drm/vc4/vc4_kms.c                      | 102 ++-
+>  drivers/gpu/drm/vc4/vc4_plane.c                    | 866 ++++++++++++++++++++-
+>  drivers/gpu/drm/vc4/vc4_regs.h                     | 297 +++++++
+>  drivers/gpu/drm/vc4/vc4_txp.c                      |  91 ++-
+>  include/soc/bcm2835/raspberrypi-firmware.h         |   1 +
+>  25 files changed, 3464 insertions(+), 204 deletions(-)
+> ---
+> base-commit: 91e21479c81dd4e9e22a78d7446f92f6b96a7284
+> change-id: 20241002-drm-vc4-2712-support-9ad3236e3caf
 >
->>
->> Second, clock parents information is received from firmware. The parents=
- of a
->clock may or may not be present in the DT node 'clock-controller' as many
->clocks have "intermediate" clocks as parent.
->> We don't have DT index for intermediate clocks so need to register by
->fw_name.
+> Best regards,
+> --
+> Dave Stevenson <dave.stevenson@raspberrypi.com>
 >
->If there isn't a DT index for those intermediate clks then they should be =
-using a
->clk_hw pointer directly. The fw_name member matches an index in the clock-
->names property, which has a 1:1 relationship to the DT index.
->
->> For example, below debug prints show parents of "spi1_ref" clock. It doe=
-sn't
->have any parent which is in DT.
->> clkname: spi1_ref : parent 0: ppll_to_xpd
->> clkname: spi1_ref : parent 1: npll_to_xpd
->> clkname: spi1_ref : parent 2: flxpll
->> clkname: spi1_ref : parent 3: rpll
->> So, here we need to check if the parent is in the DT, and if not, regist=
-er by
->fw_name.
->
->If the parent isn't in DT then it can't use fw_name. There seems to be som=
-e
->misunderstanding.
->
->>
->> The zynqmp_get_parent_list function iterates over the parent list for ea=
-ch
->clock, check if the parent clock is present in the DT node under 'clock-na=
-mes'
->property. If so, the driver registers clock by index, else register by fw_=
-name.
->>
->> Because of this reason I believe the comparison with "clock-names" is
->unavoidable. Please share your inputs.
->>
->
->I think what you're saying is that zynqmp_get_clock_info() is building a
->topology description for clks that the driver registers. But some of those=
- clks
->have parents that aren't registered by this driver and are external to the=
- device.
->The zynqmp firmware interface is string based, not number based, so you ha=
-ve
->to keep "clock-names" DT property.
->
->That's all OK.
->
->You don't need to parse clock-names for the DT index if you take the strin=
-g
->from the zynqmp firmware and jam it into the fw_name when the parent isn't
->a clk registered by this device. When the parent _is_ a clk registered by =
-this
->device, you should use a clk_hw pointer for that other clk to indicate the
->parent. When it's a mixture of internal and external you use struct
->clk_parent_data. When it's only internal, use struct clk_init_data::clk_hw=
-s to
->avoid even considering having to parse DT.
->
->If you want to skip the string comparisons in the clk core, and I suggest =
-you do
->so, you can parse clock-names once, find the index for each external clk, =
-and
->then use that info when building the topology returned from the zynqmp
->firmware to mark the parent as "external". Then when you go to register al=
-l the
->clks you can use that info to build the parent_data or parent_hws structur=
-es.
->It's unfortunate that the zynqmp firmware interface is string based, but I
->understand it can't be changed.
->
->I looked at zynqmp_pm_clock_get_parents() and it looks like it's just a bu=
-nch of
->numbers for the parent descriptions. If that's true, then there aren't any
->external clks at all, and so clock-names and clocks shouldn't be in the DT
->binding and you should just use clk_hw pointers everywhere.
->Did I miss something?
