@@ -1,166 +1,149 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F731DED5A;
-	Fri, 22 Nov 2024 10:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047C018B47B
+	for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2024 10:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732271537; cv=none; b=bD2alt+fo8o9NmLPC9nre9lFS9AVNDNj7oxcjvkBQg1TlAuTdeH4IcaB5j9xNP9bkTLpBmpirGVC6zV5uSr2j3LWbzmE1I5m8E+gNmmxIoMW0cNb/OCaKG8Ff+5W/+2o6MBSPGdCZTLTJbQPWDF3sAGkiOuP2LRLkK9KqCAjUos=
+	t=1732273175; cv=none; b=LsiEe1B2i1Okre7ZoujzQvOlqHNe7/Ay37tPU2gJriEcybQIH/8wRMrilclVGAT5nh8igGGU73H+ACtpKQdZ2ZOvB4gbxfGpuhnwV8SxM7+tlg0zG9QB0TQgQxCQnwrJGSMebjj/DMvG8udItHFZhazdCtqtQVK75tBEOtkg5C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732271537; c=relaxed/simple;
-	bh=+/6ymI2gxodvy4p0D6VcTcHJuB8emEerX+YHB0Wuy38=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nc2RSLbZ1xvU7a+B+r7qzMMIPhwU1iQ3hhtfGWHoWeqw3HeieW8wNy3h7zipQ+OeJFMK1bY7WugFa3jY+KRKWPoPb8N5tCuAkEwsgFIwomLNZVrKxarpSAP65fbt5TDAOEBxAK06DcCIotC5VSpFkFbUjYqgzWw9V53WNQ6iHhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E7Q1Trti; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1732273175; c=relaxed/simple;
+	bh=nEzgREpChasM34b4gISMzAEe13sm7XvSNaprCZAX5HU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zrkbvbb/ltg1PJsfM5JXRWx5afRTAsxrkVs4M4MqyCzxYt7yx6/E5SQQXWnM/khXn99mGb1tHRw24zqC9zAtCil90C3PLv5hCyeKmzRq8i2702ab98ezMMqnALCjS7qx3fHuh2zPkKvmozwD6wRgZxyimNrnMHYa4HcsXsyGKXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MKFun1Nf; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E7Q1Trti"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM9O39t003950;
-	Fri, 22 Nov 2024 10:32:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BA3Q4EFy5gQR7GO/ZWbGXRYPqEOGYTkutQVPdzM+ZrI=; b=E7Q1TrtiVHdqoCpQ
-	pd1pf1FxJugJO0VPZiomMmaMnhjm8q3wB8p2M/DTzMLY9nE7BKxwmWyIH/EuFPpn
-	nj8WvFFfgk2d+wtwz5vcjC6dLhG9/f0OrT6h/Vi24wo2EefA1TbjhXiDXSLL/c+/
-	XLDobqtJ7g0d8wulaJ7iXkICFaZUM/Sk5qw1ymX4voWyfCn8HAPQsdA/mAnCjQGw
-	vhl9mkHFS5CYfvodTSC8GABJ4s5slq76Xw73HLBXwfm9cT875iYxCWWZcSqh1Mz0
-	v2Vuf0tVOrELOXddIJ/FTpS9VFiDlPKTdxWh9aysnfgXiVylCs5wGttbREdngutR
-	B16yHg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3f1ry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 10:32:10 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AMAW986025645
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 10:32:09 GMT
-Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 22 Nov 2024 02:32:06 -0800
-From: Renjiang Han <quic_renjiang@quicinc.com>
-Date: Fri, 22 Nov 2024 16:01:46 +0530
-Subject: [PATCH 2/2] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
- switch GDSC mode on V4
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MKFun1Nf"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb587d0436so22150401fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2024 02:59:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732273171; x=1732877971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ca1wh/KO+WUPMC9ZKsaxo5mo5dUX/wOwJn5Ib1h7hEA=;
+        b=MKFun1NfHOOc1g6GQm9fqqJB0kZlGHqEbo4JbbYuHdu3Ufn3qQ58UYfNiHLqWMTyta
+         PkvDgtd/FzsEZa4GnUf9vPqdBkG6s0yo9eiLukStnCcMZyGb+F1EGHRCJ4f1Vl0pqexI
+         nL+vIHsN1DMinyjMV6l2SFa9ZMatd5P6ri3tCjVlaJIw2v7LSzeBxNZoMCAQNqeGxA9A
+         idYRJ8URIXUvK+8nLn65/3k7+TM+ZFN1fiLwP2s6usDW06FW+XUdodSPsyat/8iqxePU
+         efu2xEFQENda2jCkpoxFDVzT9YbtQluuLErbwevQtkIlwR4xuf4194O/76Z9EpbsuKP1
+         +GlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732273171; x=1732877971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ca1wh/KO+WUPMC9ZKsaxo5mo5dUX/wOwJn5Ib1h7hEA=;
+        b=dlZ0bjN/ospxJKorADvkAAnz65WKu4KeP02WT1PyYyiIbieDEk9lLlhwKjG9IrNU6P
+         I/Mmcs5602v+DP8116s6h4Ek1x3PWefaqhDmTo7wyTJDjvvTvtKBuYduxCvlf7xo5of9
+         ppzcxzuBha9Ii3CGb2ZN6Amz5Z6jYpbse5hm05jGDHPCjhBBPcDJGzAsmqxxqwZqZLgH
+         t/9wsPXgybcj7hBeADtxWf0GxTOrV1cTtYwvs7PtK5clUQ2vEDH83bMCMGFBaVD9+GEj
+         c+rARHHj6/5JGdnsfwLprBU666OUTuca1FrkmzPQQuOrQteJOzRi8N0WvvLE3w9S6bew
+         1Gdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWioEeqe2I6aYRtP3QCZPWM3arMANM5BRojuj2iTV3W/D8N0mrKUSOF9x9HIl94GPsNwousRqJTXI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWWGb985rm+ZAOQ/nLzfuRUkKvIWAWlx7tfUR7Aqds0vjNM+zB
+	LHplZgdQOvzS1+fvlnTyJHzpIgdKpQjpaPj1b9dBBVuMtl52Y0q4fi1UpuZhGTY=
+X-Gm-Gg: ASbGncvWsiHCmCXTa2anDfUfE9jincW3gmT5Pz/bTKO4AI9uSouARttXcEyz0lyAOrR
+	8kWJlRdu5xyL8u9uUYeLl6+4V6OUsYTr06LiDOddUL9LWQR7R2ZbpvdIx4CQJ5jn1GmRUv365sy
+	Kg37NnBFLORUSXMIylm0fBobqOHR87Lmky+ywYDPE6H2rZIyhIRt8XxZ/RQ37goe6hntzzzA07b
+	BZPTexkyDV7X1SGz+ugz/8jxsmnek9OKv5G4EDMJ4bIEkBq8CW3T9YYBX+V32rjv1GAw+f24llk
+	s9PXi12wWKAfq5I9hBmd2bSMpL8aNw==
+X-Google-Smtp-Source: AGHT+IFlyxZP6biD5HPPeqicl8Wlb81WmlgYHkbJwaVmdfCVMRq/sOgXjiyZs52bpQDkMT/aAiHhjQ==
+X-Received: by 2002:a05:651c:503:b0:2fb:8774:440c with SMTP id 38308e7fff4ca-2ffa712017emr12224181fa.10.1732273171190;
+        Fri, 22 Nov 2024 02:59:31 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa53a112dsm2894751fa.119.2024.11.22.02.59.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 02:59:29 -0800 (PST)
+Date: Fri, 22 Nov 2024 12:59:27 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
+ video GDSC's
+Message-ID: <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241122-switch_gdsc_mode-v1-2-365f097ecbb0@quicinc.com>
-References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
-In-Reply-To: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Renjiang Han
-	<quic_renjiang@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732271519; l=2837;
- i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
- bh=+/6ymI2gxodvy4p0D6VcTcHJuB8emEerX+YHB0Wuy38=;
- b=0x9OuHKbDiCM+9ofr80qnRwYqHSUcw6lCARacUr9j4nRNoKIEgid+ba8DGK4Dke3viH7QCkTt
- yVTYmFR8a/yD4FTYKM4Cj2UndKWEaMM0cTEPKqGh8PT/XsfRoR4MTi/
-X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
- pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SeERNGgbhgOSKcs7wqDCw6BemL2Qnpyb
-X-Proofpoint-ORIG-GUID: SeERNGgbhgOSKcs7wqDCw6BemL2Qnpyb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411220089
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
 
-The POWER_CONTROL register addresses are not constant and can vary across
-the variants. Also as per the HW recommendation, the GDSC mode switching
-needs to be controlled from respective GDSC register and this is a uniform
-approach across all the targets. Hence use dev_pm_genpd_set_hwmode() API
-which controls GDSC mode switching using its respective GDSC register.
+On Fri, Nov 22, 2024 at 04:01:45PM +0530, Renjiang Han wrote:
+> From: Taniya Das <quic_tdas@quicinc.com>
+> 
+> The video driver will be using the newly introduced
 
-In venus v4 variants, the vcodec gdsc gets enabled in SW mode by default
-with new HW_CTRL_TRIGGER flag and there is no need to switch it to SW mode
-again after enable, hence add check to avoid switching gdsc to SW mode
-again after gdsc enable. Similarly add check to avoid switching GDSC to HW
-mode before disabling the GDSC, so GDSC gets enabled in SW mode in the
-next enable.
+'will be' or 'is using'? Or will be using it for these platforms? Is
+there any kind of dependency between two patches in the series?
 
-Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
----
- drivers/media/platform/qcom/venus/pm_helpers.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
+> control modes at runtime.
+> Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
+> Qualcomm SoC SC7180 and SDM845.
 
-diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..a2062b366d4aedba3eb5e4be456a005847eaec0b 100644
---- a/drivers/media/platform/qcom/venus/pm_helpers.c
-+++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-@@ -412,7 +412,7 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
- 	u32 val;
- 	int ret;
- 
--	if (IS_V6(core))
-+	if (IS_V6(core) || IS_V4(core))
- 		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
- 	else if (coreid == VIDC_CORE_ID_1) {
- 		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
-@@ -450,7 +450,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
- 
- 		vcodec_clks_disable(core, core->vcodec0_clks);
- 
--		if (!IS_V6(core)) {
-+		if (!IS_V6(core) && !IS_V4(core)) {
- 			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
- 			if (ret)
- 				return ret;
-@@ -468,7 +468,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
- 
- 		vcodec_clks_disable(core, core->vcodec1_clks);
- 
--		if (!IS_V6(core)) {
-+		if (!IS_V6(core) && !IS_V4(core)) {
- 			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
- 			if (ret)
- 				return ret;
-@@ -491,7 +491,7 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
- 		if (ret < 0)
- 			return ret;
- 
--		if (!IS_V6(core)) {
-+		if (!IS_V6(core) && !IS_V4(core)) {
- 			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
- 			if (ret)
- 				return ret;
-@@ -511,7 +511,7 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
- 		if (ret < 0)
- 			return ret;
- 
--		if (!IS_V6(core)) {
-+		if (!IS_V6(core) && !IS_V4(core)) {
- 			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
- 			if (ret)
- 				return ret;
+Is it applicable to any other platforms? Why did you select just these
+two?
+
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+>  drivers/clk/qcom/videocc-sc7180.c | 2 +-
+>  drivers/clk/qcom/videocc-sdm845.c | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+> index d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 100644
+> --- a/drivers/clk/qcom/videocc-sc7180.c
+> +++ b/drivers/clk/qcom/videocc-sc7180.c
+> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
+>  	.pd = {
+>  		.name = "vcodec0_gdsc",
+>  	},
+> -	.flags = HW_CTRL,
+> +	.flags = HW_CTRL_TRIGGER,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+> index f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 100644
+> --- a/drivers/clk/qcom/videocc-sdm845.c
+> +++ b/drivers/clk/qcom/videocc-sdm845.c
+> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
+>  	},
+>  	.cxcs = (unsigned int []){ 0x890, 0x930 },
+>  	.cxc_count = 2,
+> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
+>  	},
+>  	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
+>  	.cxc_count = 2,
+> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-2.34.1
-
+With best wishes
+Dmitry
