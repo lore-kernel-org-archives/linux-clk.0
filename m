@@ -1,149 +1,191 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047C018B47B
-	for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2024 10:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32F01E492;
+	Fri, 22 Nov 2024 12:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732273175; cv=none; b=LsiEe1B2i1Okre7ZoujzQvOlqHNe7/Ay37tPU2gJriEcybQIH/8wRMrilclVGAT5nh8igGGU73H+ACtpKQdZ2ZOvB4gbxfGpuhnwV8SxM7+tlg0zG9QB0TQgQxCQnwrJGSMebjj/DMvG8udItHFZhazdCtqtQVK75tBEOtkg5C4=
+	t=1732279583; cv=none; b=IrDmCZHMeZ34+IZEOanrIWgOxr+n2k78eP7nmTdPH0aesakQ4xrxFZLn8G7UWjLlJ9qgQeSwgP9Kjv4bl/T3zkGNvbC/5O9JGeIH6RW8l60msZreb6dLiXH8JfH1SGjU8U34FrO7ElNu3aUdX4X9fwUY3NfwHHo1c+tTT681VKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732273175; c=relaxed/simple;
-	bh=nEzgREpChasM34b4gISMzAEe13sm7XvSNaprCZAX5HU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zrkbvbb/ltg1PJsfM5JXRWx5afRTAsxrkVs4M4MqyCzxYt7yx6/E5SQQXWnM/khXn99mGb1tHRw24zqC9zAtCil90C3PLv5hCyeKmzRq8i2702ab98ezMMqnALCjS7qx3fHuh2zPkKvmozwD6wRgZxyimNrnMHYa4HcsXsyGKXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MKFun1Nf; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MKFun1Nf"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb587d0436so22150401fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2024 02:59:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732273171; x=1732877971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ca1wh/KO+WUPMC9ZKsaxo5mo5dUX/wOwJn5Ib1h7hEA=;
-        b=MKFun1NfHOOc1g6GQm9fqqJB0kZlGHqEbo4JbbYuHdu3Ufn3qQ58UYfNiHLqWMTyta
-         PkvDgtd/FzsEZa4GnUf9vPqdBkG6s0yo9eiLukStnCcMZyGb+F1EGHRCJ4f1Vl0pqexI
-         nL+vIHsN1DMinyjMV6l2SFa9ZMatd5P6ri3tCjVlaJIw2v7LSzeBxNZoMCAQNqeGxA9A
-         idYRJ8URIXUvK+8nLn65/3k7+TM+ZFN1fiLwP2s6usDW06FW+XUdodSPsyat/8iqxePU
-         efu2xEFQENda2jCkpoxFDVzT9YbtQluuLErbwevQtkIlwR4xuf4194O/76Z9EpbsuKP1
-         +GlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732273171; x=1732877971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ca1wh/KO+WUPMC9ZKsaxo5mo5dUX/wOwJn5Ib1h7hEA=;
-        b=dlZ0bjN/ospxJKorADvkAAnz65WKu4KeP02WT1PyYyiIbieDEk9lLlhwKjG9IrNU6P
-         I/Mmcs5602v+DP8116s6h4Ek1x3PWefaqhDmTo7wyTJDjvvTvtKBuYduxCvlf7xo5of9
-         ppzcxzuBha9Ii3CGb2ZN6Amz5Z6jYpbse5hm05jGDHPCjhBBPcDJGzAsmqxxqwZqZLgH
-         t/9wsPXgybcj7hBeADtxWf0GxTOrV1cTtYwvs7PtK5clUQ2vEDH83bMCMGFBaVD9+GEj
-         c+rARHHj6/5JGdnsfwLprBU666OUTuca1FrkmzPQQuOrQteJOzRi8N0WvvLE3w9S6bew
-         1Gdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWioEeqe2I6aYRtP3QCZPWM3arMANM5BRojuj2iTV3W/D8N0mrKUSOF9x9HIl94GPsNwousRqJTXI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWWGb985rm+ZAOQ/nLzfuRUkKvIWAWlx7tfUR7Aqds0vjNM+zB
-	LHplZgdQOvzS1+fvlnTyJHzpIgdKpQjpaPj1b9dBBVuMtl52Y0q4fi1UpuZhGTY=
-X-Gm-Gg: ASbGncvWsiHCmCXTa2anDfUfE9jincW3gmT5Pz/bTKO4AI9uSouARttXcEyz0lyAOrR
-	8kWJlRdu5xyL8u9uUYeLl6+4V6OUsYTr06LiDOddUL9LWQR7R2ZbpvdIx4CQJ5jn1GmRUv365sy
-	Kg37NnBFLORUSXMIylm0fBobqOHR87Lmky+ywYDPE6H2rZIyhIRt8XxZ/RQ37goe6hntzzzA07b
-	BZPTexkyDV7X1SGz+ugz/8jxsmnek9OKv5G4EDMJ4bIEkBq8CW3T9YYBX+V32rjv1GAw+f24llk
-	s9PXi12wWKAfq5I9hBmd2bSMpL8aNw==
-X-Google-Smtp-Source: AGHT+IFlyxZP6biD5HPPeqicl8Wlb81WmlgYHkbJwaVmdfCVMRq/sOgXjiyZs52bpQDkMT/aAiHhjQ==
-X-Received: by 2002:a05:651c:503:b0:2fb:8774:440c with SMTP id 38308e7fff4ca-2ffa712017emr12224181fa.10.1732273171190;
-        Fri, 22 Nov 2024 02:59:31 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa53a112dsm2894751fa.119.2024.11.22.02.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 02:59:29 -0800 (PST)
-Date: Fri, 22 Nov 2024 12:59:27 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
-Message-ID: <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
-References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
- <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
+	s=arc-20240116; t=1732279583; c=relaxed/simple;
+	bh=c/+zyr/Rn0EdyLB92wzKAsULxtS5gCAfuDJk2DOJZFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KsHO0PIgnrPvuSvB4DYYzLl/hqmzJcC5Mh2b0xJB8D6YnFcPkQebw1+abUpbytprDN/DBXHeaoV2sgINwPWto2drjiUshqls/ZAxpVbGJDaUkIiGnTBRX116Z5+DxPE4wo+5Ff3cgIP6Fz2nX122q8R8oYyvjOgcAfcQJPlf8oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: 6zuj4mPHTTKVRI/FMovSYA==
+X-CSE-MsgGUID: 3JsKBUaPSiWZ4kE3BdRuUw==
+X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
+   d="scan'208";a="225786430"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:14 +0900
+Received: from localhost.localdomain (unknown [10.226.92.254])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5402F4237D3A;
+	Fri, 22 Nov 2024 21:46:01 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 00/12] Add support for Renesas RZ/G3E SoC and SMARC-EVK platform
+Date: Fri, 22 Nov 2024 12:45:36 +0000
+Message-ID: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 04:01:45PM +0530, Renjiang Han wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
-> 
-> The video driver will be using the newly introduced
+Hi all,
 
-'will be' or 'is using'? Or will be using it for these platforms? Is
-there any kind of dependency between two patches in the series?
+This patch series adds initial support for the Renesas RZ/G3E SoC and
+RZ/G3E SMARC EVK platform. The RZ/G3E device is a general-purpose
+microprocessor with a quad-core CA-55, single core CM-33, Ethos-U55 NPU
+, Mali-G52 3-D Graphics and other peripherals.
 
-> dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
-> control modes at runtime.
-> Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
-> Qualcomm SoC SC7180 and SDM845.
+Support for below list of blocks added on SoC DTSI (r9a09g047.dtsi):
+ - EXT CLKs
+ - 4X CA55
+ - SCIF
+ - CPG
+ - GIC
+ - ARMv8 Timer
 
-Is it applicable to any other platforms? Why did you select just these
-two?
+This adds also support for the RZ/G3E SMARC EVK board
+(r9a09g047e57-smarc.dts) and enable the following peripheral:
+ - SCIF
+ 
+Note:
+ This patch series gives a boot console with serial driver support.
+Later there is a plan to add support for SoC Identification using
+SYSC driver and pin controller support were also added.
+ 
+Test logs:
+/ # uname -r
+6.12.0-next-20241122-12513-g189628626a52
 
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
-> ---
->  drivers/clk/qcom/videocc-sc7180.c | 2 +-
->  drivers/clk/qcom/videocc-sdm845.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-> index d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 100644
-> --- a/drivers/clk/qcom/videocc-sc7180.c
-> +++ b/drivers/clk/qcom/videocc-sc7180.c
-> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
->  	.pd = {
->  		.name = "vcodec0_gdsc",
->  	},
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL_TRIGGER,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-> index f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 100644
-> --- a/drivers/clk/qcom/videocc-sdm845.c
-> +++ b/drivers/clk/qcom/videocc-sdm845.c
-> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
->  	},
->  	.cxcs = (unsigned int []){ 0x890, 0x930 },
->  	.cxc_count = 2,
-> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
->  	},
->  	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
->  	.cxc_count = 2,
-> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> 
-> -- 
-> 2.34.1
-> 
+/ # cat /proc/cpuinfo
+processor       : 0
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 1
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 2
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 3
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+/ #
+
+/ # cat /proc/interrupts
+           CPU0       CPU1       CPU2       CPU3
+ 11:        436        539        467        446    GICv3  27 Level     arch_timer
+ 14:          0          0          0          0    GICv3 561 Level     11c01400.serial:rx err
+ 15:          0          0          0          0    GICv3 564 Level     11c01400.serial:rx full
+ 16:        391          0          0          0    GICv3 565 Level     11c01400.serial:tx empty
+ 17:          0          0          0          0    GICv3 562 Level     11c01400.serial:break
+ 18:         67          0          0          0    GICv3 566 Level     11c01400.serial:rx ready
+ 19:          0          0          0          0    GICv3 563 Level     11c01400.serial:tx end
+IPI0:         3         12         12         25       Rescheduling interrupts
+IPI1:       299        276        347         82       Function call interrupts
+IPI2:         0          0          0          0       CPU stop interrupts
+IPI3:         0          0          0          0       CPU stop NMIs
+IPI4:         0          0          0          0       Timer broadcast interrupts
+IPI5:         0          0          0          0       IRQ work interrupts
+IPI6:         0          0          0          0       CPU backtrace interrupts
+IPI7:         0          0          0          0       KGDB roundup interrupts
+Err:          0
+/ #
+
+/ # cat /proc/meminfo
+MemTotal:        3882652 kB
+MemFree:         3846048 kB
+MemAvailable:    3775780 kB
+
+Biju Das (12):
+  dt-bindings: serial: renesas: Document RZ/G3E (r9a09g047) scif
+  dt-bindings: soc: renesas: Document Renesas RZ/G3E SoC variants
+  dt-bindings: soc: renesas: Document RZ/G3E SMARC SoM and Carrier-II
+    EVK
+  dt-bindings: clock: renesas: Document RZ/G3E SoC CPG
+  soc: renesas: Add RZ/G3E (R9A09G047) config option
+  clk: renesas: Add support for RZ/G3E SoC
+  clk: renesas: rzv2h-cpg: Add MSTOP support
+  arm64: dts: renesas: Add initial DTSI for RZ/G3E SoC
+  arm64: dts: renesas: Add initial support for RZ/G3E SMARC SoM
+  arm64: dts: renesas: Add initial device tree for RZ/G3E SMARC EVK
+    board
+  arm64: defconfig: Enable R9A09G047 SoC
+  HACK-DO-NOT-APPLY-defconfig: Enable INIT RAMFS
+
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |  15 +-
+ .../bindings/serial/renesas,scif.yaml         |   5 +
+ .../bindings/soc/renesas/renesas.yaml         |  17 +++
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 144 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi |  18 +++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  18 +++
+ arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi |  13 ++
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |  24 +++
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  28 ++++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/clk/renesas/Kconfig                   |   7 +-
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a09g047-cpg.c           | 100 ++++++++++++
+ drivers/clk/renesas/r9a09g057-cpg.c           | 117 +++++++++-----
+ drivers/clk/renesas/rzv2h-cpg.c               |  98 +++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               |  23 ++-
+ drivers/soc/renesas/Kconfig                   |   5 +
+ .../dt-bindings/clock/renesas,r9a09g047-cpg.h |  21 +++
+ 19 files changed, 604 insertions(+), 54 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+ create mode 100644 drivers/clk/renesas/r9a09g047-cpg.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g047-cpg.h
 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
