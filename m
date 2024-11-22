@@ -1,243 +1,120 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D85A1DE2B8;
-	Fri, 22 Nov 2024 12:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE7A1DEFE0
+	for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2024 12:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279605; cv=none; b=QihinaWyPSn2dPYYJx+98njUfuLfpP8dKVTzFbI+Au3+3So7hW70/6NFd1VUPgOrZzayfY3sF75XMhAxeksCC3HxCLSKqkEFzJlhb8DzeNqBjzK0RFWbE4N5ZqouMl3uE3MpNYKDUovzJPfFy63SOG5u2J+82xDhqTdl3Yka3lg=
+	t=1732279861; cv=none; b=S8+WGC3irgaLnu/W57jwqvdKE6VsEfd04i0o5A80YyyqdgGq2U1kUDXaQ9J7rspNBDgHO7/iiG8g60EV1If7+2+a7sWbmt5zKhahcV/pcv9pDYfAmVWnT5R2vur7MjfrEviKaCXoGU/cZ4tBeoFs3boftYqWtDwB5Lzkj/3ol/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279605; c=relaxed/simple;
-	bh=PSM+eb0At7c1zzK0lFVdIDx/aza4kEcrXtZbPZK5V5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MpRbxJ2bIC317QjCA99QxVnAhHP9EPRffdMkDDpXX5pV31EXQITQjX8YuxvPQ4TXA8zNIOod25X43AWzuLm6uEperN/wxcOGM9HGvTytQlbWWD76vEeXyp8RWKXa1S7KkK369D1MfeMBdIB0egt0tQQ/IC8SLxz9ayQRddd7/Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: te8TqId9RP2mQuVCsrTBDQ==
-X-CSE-MsgGUID: 8pSRWh+TTs+Cg0L2GChCEw==
-X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
-   d="scan'208";a="225786448"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:41 +0900
-Received: from localhost.localdomain (unknown [10.226.92.254])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0FBAC423A74B;
-	Fri, 22 Nov 2024 21:46:23 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 06/12] clk: renesas: Add support for RZ/G3E SoC
-Date: Fri, 22 Nov 2024 12:45:42 +0000
-Message-ID: <20241122124558.149827-7-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
-References: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1732279861; c=relaxed/simple;
+	bh=JBHOh4rUnLADzXtOwvC84g7/JrNLMPYtlQhDKTzIkJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gGmyTGr5AyZRQwqsOBkzr7CzjWzCcYtzaTcwz6+QnDp635/jtqyBMUmpDN8NZ6oRIc0gOFsxv2bbEYVpV1G5ga9G3GURovJ6ESZo5lGKwJ7D11v86UwRm7HFVTS0q+uDnysTmV4wlFtJZImW0THhFyigl3jIlZ1TarQ4gz23HhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=euAhNgAx; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="euAhNgAx"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38230ed9baeso1422188f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2024 04:50:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732279858; x=1732884658; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KISqflzqP4C+qpQH2POLD8D91UlEquq5DIx6lhdqv9U=;
+        b=euAhNgAxorUVFsIASQSjJa5dVhdxz+PiPyB5faPqRuOSn+aKWBG1XSpIl/VtWkKuwE
+         Bdw8vLDl8bK7tPpnovrsliIbLi8LnW5uodLlL6Ul+gIPrxi20foUl4G/ZRXgxjxbtsD7
+         7op1n9gMyGQZ6g90HwJtVnu6jY4nwcm8pwBCKDc+rjqtMWkiC2kydcTeujeEJaMfI1d3
+         cE5/bvgkjCBEnpRWhLXxRvIaIpqb1xBpj2606A0HQ/fdtTyjBsgvLE7FSmoopUN4Ja+M
+         VJiE3BjevBK1/LfB4qbqdh9scSHNJgwzqRnD3RJOQY1evJ8MzW/Vj2po8Kk+FK4enI4E
+         SyCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732279858; x=1732884658;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KISqflzqP4C+qpQH2POLD8D91UlEquq5DIx6lhdqv9U=;
+        b=XoV7jQOFVmucyF8KqQr7XDA442lTB0YDhLqGuVBTHHZa4yWuoVjcp3vLjAVohqd3Jp
+         IsZxkVgie8osjGTZxw696x4HXTMP2jnnk0Dq9bDJTEIVFpFgyv+UvYuIFditOltlHUhz
+         Uj9hsl+WjhA5ho09DHlIvk1TLkaxwN/L1vbUjgkq/tdgJi06PRxSwlE9nSWumdyNmxdD
+         gOZwpTip/rLyE8hBpWMQPcD0sV/e0gFcP6eZVp0+GCwodOaH0v3hF05lhYpSzlbpDtrh
+         7/hIDzNjIPc7eL2osv2kPYv0CvSFUgcUAxHN+3rBvZdEyO25UqRf3EAq+Zeq3X4nNY7h
+         FTCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp9f6U2I7ElUcANnFGzNDilfMgrZ8Hv1yDg0U6vUpXBIqkz8iWgF/6Nmb5gbQ5dKgkLl0oIhsYWZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVu1JklRzZjswvmEp3eYVhr5xR9jAAbF+3UP4GJxPMP/KiQ6Iu
+	ARl1IG59HE+qXbNG2R35Z5qtaniqv1ca83YmzS2VGYsWPJet9tw7JT1H8d29fcg=
+X-Gm-Gg: ASbGncuYae3bRT8N/gHvaMl5aX1/yT4oI7DIS9PbPcNVTWORNlEqZUBWsFXkYX9OQIQ
+	XhEcAGWo/Vq8CeKbxXNX9yYX1dAgoMoUu4r9/SkhxGL27nyKwrxNw3JWUk7iD6uZcLvSmow1vUn
+	/6F4v+LzuWQKs9CSKELaVH/Szw19b4qEjClnqpVsY302F6UIHxoct2QYFFOS9o/ti4ltr0tbIdE
+	/dNRs6FZyUCTqLxv8K9CK6wN4KWwRJbSfFaO9VYLubS4Kq45tmD8jYrorJlQE8=
+X-Google-Smtp-Source: AGHT+IH8paRTgv6TgTv/fMTI/UYofpz859HmfaEoTHqkrdKZAJ6nGDUeZc0w5K8HyhUYuBIakIZLDQ==
+X-Received: by 2002:a05:6000:186b:b0:381:cffc:d40b with SMTP id ffacd0b85a97d-38260bcd023mr2225909f8f.39.1732279858025;
+        Fri, 22 Nov 2024 04:50:58 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedf63sm2333104f8f.102.2024.11.22.04.50.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 04:50:57 -0800 (PST)
+Message-ID: <2299ec8f-4b80-48ea-96ed-d1eb40998e55@linaro.org>
+Date: Fri, 22 Nov 2024 12:50:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
+ switch GDSC mode on V4
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <20241122-switch_gdsc_mode-v1-2-365f097ecbb0@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241122-switch_gdsc_mode-v1-2-365f097ecbb0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The clock structure for RZ/G3E is almost identical to RZ/V2H SoC with
-more IP blocks compared to RZ/V2H. For eg: VSPI, LVDS, DPI and LCDC1
-are present only on the RZ/G3E SoC.
+On 22/11/2024 10:31, Renjiang Han wrote:
+> -	if (IS_V6(core))
+> +	if (IS_V6(core) || IS_V4(core))
 
-Add minimal clock and reset entries required to boot the Renesas RZ/G3E
-SMARC EVK and binds it with the RZ/V2H CPG core driver.
+sdm845 IS_V4()
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+The GDSCs for the clock OTOH are
+
+
+static struct gdsc vcodec0_gdsc = {
+         .gdscr = 0x874,
+         .pd = {
+                 .name = "vcodec0_gdsc",
+         },
+         .cxcs = (unsigned int []){ 0x890, 0x930 },
+         .cxc_count = 2,
+         .flags = HW_CTRL | POLL_CFG_GDSCR,
+         .pwrsts = PWRSTS_OFF_ON,
+};
+
+static struct gdsc vcodec1_gdsc = {
+         .gdscr = 0x8b4,
+         .pd = {
+                 .name = "vcodec1_gdsc",
+         },
+         .cxcs = (unsigned int []){ 0x8d0, 0x950 },
+         .cxc_count = 2,
+         .flags = HW_CTRL | POLL_CFG_GDSCR,
+         .pwrsts = PWRSTS_OFF_ON,
+};
+
+I can't see how this series will work on 845.
+
 ---
- drivers/clk/renesas/Kconfig         |  7 ++-
- drivers/clk/renesas/Makefile        |  1 +
- drivers/clk/renesas/r9a09g047-cpg.c | 98 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.c     |  6 ++
- drivers/clk/renesas/rzv2h-cpg.h     |  1 +
- 5 files changed, 112 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/renesas/r9a09g047-cpg.c
-
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index ff01f5f0ed20..5a4bc3f94d49 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -40,6 +40,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G054 if ARCH_R9A07G054
- 	select CLK_R9A08G045 if ARCH_R9A08G045
- 	select CLK_R9A09G011 if ARCH_R9A09G011
-+	select CLK_R9A09G047 if ARCH_R9A09G047
- 	select CLK_R9A09G057 if ARCH_R9A09G057
- 	select CLK_SH73A0 if ARCH_SH73A0
- 
-@@ -194,6 +195,10 @@ config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
- 
-+config CLK_R9A09G047
-+       bool "RZ/G3E clock support" if COMPILE_TEST
-+       select CLK_RZV2H
-+
- config CLK_R9A09G057
-        bool "RZ/V2H(P) clock support" if COMPILE_TEST
-        select CLK_RZV2H
-@@ -234,7 +239,7 @@ config CLK_RZG2L
- 	select RESET_CONTROLLER
- 
- config CLK_RZV2H
--	bool "RZ/V2H(P) family clock support" if COMPILE_TEST
-+	bool "RZ/{G3E,V2H(P)} family clock support" if COMPILE_TEST
- 	select RESET_CONTROLLER
- 
- config CLK_RENESAS_VBATTB
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 82efaa835ac7..2d6e746939c4 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
-+obj-$(CONFIG_CLK_R9A09G047)		+= r9a09g047-cpg.o
- obj-$(CONFIG_CLK_R9A09G057)		+= r9a09g057-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-new file mode 100644
-index 000000000000..5d7611cee9bc
---- /dev/null
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G3E CPG driver
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
-+
-+#include "rzv2h-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A09G047_IOTOP_0_SHCLK,
-+
-+	/* External Input Clocks */
-+	CLK_AUDIO_EXTAL,
-+	CLK_RTXIN,
-+	CLK_QEXTAL,
-+
-+	/* PLL Clocks */
-+	CLK_PLLCM33,
-+	CLK_PLLDTY,
-+	CLK_PLLCA55,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV16,
-+	CLK_PLLDTY_ACPU,
-+	CLK_PLLDTY_ACPU_DIV4,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+static const struct clk_div_table dtable_2_64[] = {
-+	{0, 2},
-+	{1, 4},
-+	{2, 8},
-+	{3, 16},
-+	{4, 64},
-+	{0, 0},
-+};
-+
-+static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-+	DEF_INPUT("rtxin", CLK_RTXIN),
-+	DEF_INPUT("qextal", CLK_QEXTAL),
-+
-+	/* PLL Clocks */
-+	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
-+	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+
-+	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
-+
-+	/* Core Clocks */
-+	DEF_FIXED("sys_0_pclk", R9A09G047_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-+	DEF_FIXED("iotop_0_shclk", R9A09G047_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
-+};
-+
-+static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
-+	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19),
-+	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15),
-+};
-+
-+static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
-+	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
-+	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
-+	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-+	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
-+};
-+
-+const struct rzv2h_cpg_info r9a09g047_cpg_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r9a09g047_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a09g047_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a09g047_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a09g047_mod_clks),
-+	.num_hw_mod_clks = 28 * 16,
-+
-+	/* Resets */
-+	.resets = r9a09g047_resets,
-+	.num_resets = ARRAY_SIZE(r9a09g047_resets),
-+};
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index b524a9d33610..af961808f735 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -832,6 +832,12 @@ static const struct of_device_id rzv2h_cpg_match[] = {
- 		.compatible = "renesas,r9a09g057-cpg",
- 		.data = &r9a09g057_cpg_info,
- 	},
-+#endif
-+#ifdef CONFIG_CLK_R9A09G047
-+	{
-+		.compatible = "renesas,r9a09g047-cpg",
-+		.data = &r9a09g047_cpg_info,
-+	},
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index 819029c81904..8a676813f7bb 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -190,6 +190,7 @@ struct rzv2h_cpg_info {
- 	unsigned int num_resets;
- };
- 
-+extern const struct rzv2h_cpg_info r9a09g047_cpg_info;
- extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
- 
- #endif	/* __RENESAS_RZV2H_CPG_H__ */
--- 
-2.43.0
-
+bod
