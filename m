@@ -1,46 +1,46 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32F01E492;
-	Fri, 22 Nov 2024 12:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2981D799D;
+	Fri, 22 Nov 2024 12:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279583; cv=none; b=IrDmCZHMeZ34+IZEOanrIWgOxr+n2k78eP7nmTdPH0aesakQ4xrxFZLn8G7UWjLlJ9qgQeSwgP9Kjv4bl/T3zkGNvbC/5O9JGeIH6RW8l60msZreb6dLiXH8JfH1SGjU8U34FrO7ElNu3aUdX4X9fwUY3NfwHHo1c+tTT681VKY=
+	t=1732279592; cv=none; b=dobB/ZbysLOaTKNFaIYBFIN/C0ZBMzxWXziiFMIO4Nm9V1QDyRxT53XhhflCEL87LBwdJTDLUim/BMF/IF0bLe17HQ+/TbGPDKli0VQrbbpm3edaaDsVSd4xhahflQT2sPEWGsDhkVymX9C1K6XkpHXVz0UXZMBHgdc1t0a4qA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279583; c=relaxed/simple;
-	bh=c/+zyr/Rn0EdyLB92wzKAsULxtS5gCAfuDJk2DOJZFU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KsHO0PIgnrPvuSvB4DYYzLl/hqmzJcC5Mh2b0xJB8D6YnFcPkQebw1+abUpbytprDN/DBXHeaoV2sgINwPWto2drjiUshqls/ZAxpVbGJDaUkIiGnTBRX116Z5+DxPE4wo+5Ff3cgIP6Fz2nX122q8R8oYyvjOgcAfcQJPlf8oU=
+	s=arc-20240116; t=1732279592; c=relaxed/simple;
+	bh=DKvKQfSgFUxV5XDS23puEMFb3596mhXNSnIumIhFPac=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KPSOgJLIkGbANboL1yVEiLLfH9E+F8j4pim0YlSe3nDg6/iPMWHkG46TSxazvsntdd7oNvQpIEfxACEspAZPIV83OQLctWzrMjbJ1+pmlnC3/7mJcD5BApMwZDBFZUTsXRNzsv/AnhJ13kzZ83vC1Ip/nerb3foX99HP1Yd6mIo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 6zuj4mPHTTKVRI/FMovSYA==
-X-CSE-MsgGUID: 3JsKBUaPSiWZ4kE3BdRuUw==
+X-CSE-ConnectionGUID: 5sZI0oamR3KctX4/Q/pNoQ==
+X-CSE-MsgGUID: Zvs/0diLQD+bbTPuZ0LZ1A==
 X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
-   d="scan'208";a="225786430"
+   d="scan'208";a="225786442"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:14 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2024 21:46:29 +0900
 Received: from localhost.localdomain (unknown [10.226.92.254])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5402F4237D3A;
-	Fri, 22 Nov 2024 21:46:01 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 77A564237D3A;
+	Fri, 22 Nov 2024 21:46:17 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	devicetree@vger.kernel.org,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 00/12] Add support for Renesas RZ/G3E SoC and SMARC-EVK platform
-Date: Fri, 22 Nov 2024 12:45:36 +0000
-Message-ID: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 04/12] dt-bindings: clock: renesas: Document RZ/G3E SoC CPG
+Date: Fri, 22 Nov 2024 12:45:40 +0000
+Message-ID: <20241122124558.149827-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
+References: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,143 +49,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+Document the device tree bindings for the Renesas RZ/G3E SoC
+Clock Pulse Generator (CPG).
 
-This patch series adds initial support for the Renesas RZ/G3E SoC and
-RZ/G3E SMARC EVK platform. The RZ/G3E device is a general-purpose
-microprocessor with a quad-core CA-55, single core CM-33, Ethos-U55 NPU
-, Mali-G52 3-D Graphics and other peripherals.
+Also define constants for the core clocks of the RZ/G3E SoC.
 
-Support for below list of blocks added on SoC DTSI (r9a09g047.dtsi):
- - EXT CLKs
- - 4X CA55
- - SCIF
- - CPG
- - GIC
- - ARMv8 Timer
-
-This adds also support for the RZ/G3E SMARC EVK board
-(r9a09g047e57-smarc.dts) and enable the following peripheral:
- - SCIF
- 
-Note:
- This patch series gives a boot console with serial driver support.
-Later there is a plan to add support for SoC Identification using
-SYSC driver and pin controller support were also added.
- 
-Test logs:
-/ # uname -r
-6.12.0-next-20241122-12513-g189628626a52
-
-/ # cat /proc/cpuinfo
-processor       : 0
-BogoMIPS        : 48.00
-Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
-CPU implementer : 0x41
-CPU architecture: 8
-CPU variant     : 0x2
-CPU part        : 0xd05
-CPU revision    : 0
-
-processor       : 1
-BogoMIPS        : 48.00
-Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
-CPU implementer : 0x41
-CPU architecture: 8
-CPU variant     : 0x2
-CPU part        : 0xd05
-CPU revision    : 0
-
-processor       : 2
-BogoMIPS        : 48.00
-Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
-CPU implementer : 0x41
-CPU architecture: 8
-CPU variant     : 0x2
-CPU part        : 0xd05
-CPU revision    : 0
-
-processor       : 3
-BogoMIPS        : 48.00
-Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
-CPU implementer : 0x41
-CPU architecture: 8
-CPU variant     : 0x2
-CPU part        : 0xd05
-CPU revision    : 0
-
-/ #
-
-/ # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
- 11:        436        539        467        446    GICv3  27 Level     arch_timer
- 14:          0          0          0          0    GICv3 561 Level     11c01400.serial:rx err
- 15:          0          0          0          0    GICv3 564 Level     11c01400.serial:rx full
- 16:        391          0          0          0    GICv3 565 Level     11c01400.serial:tx empty
- 17:          0          0          0          0    GICv3 562 Level     11c01400.serial:break
- 18:         67          0          0          0    GICv3 566 Level     11c01400.serial:rx ready
- 19:          0          0          0          0    GICv3 563 Level     11c01400.serial:tx end
-IPI0:         3         12         12         25       Rescheduling interrupts
-IPI1:       299        276        347         82       Function call interrupts
-IPI2:         0          0          0          0       CPU stop interrupts
-IPI3:         0          0          0          0       CPU stop NMIs
-IPI4:         0          0          0          0       Timer broadcast interrupts
-IPI5:         0          0          0          0       IRQ work interrupts
-IPI6:         0          0          0          0       CPU backtrace interrupts
-IPI7:         0          0          0          0       KGDB roundup interrupts
-Err:          0
-/ #
-
-/ # cat /proc/meminfo
-MemTotal:        3882652 kB
-MemFree:         3846048 kB
-MemAvailable:    3775780 kB
-
-Biju Das (12):
-  dt-bindings: serial: renesas: Document RZ/G3E (r9a09g047) scif
-  dt-bindings: soc: renesas: Document Renesas RZ/G3E SoC variants
-  dt-bindings: soc: renesas: Document RZ/G3E SMARC SoM and Carrier-II
-    EVK
-  dt-bindings: clock: renesas: Document RZ/G3E SoC CPG
-  soc: renesas: Add RZ/G3E (R9A09G047) config option
-  clk: renesas: Add support for RZ/G3E SoC
-  clk: renesas: rzv2h-cpg: Add MSTOP support
-  arm64: dts: renesas: Add initial DTSI for RZ/G3E SoC
-  arm64: dts: renesas: Add initial support for RZ/G3E SMARC SoM
-  arm64: dts: renesas: Add initial device tree for RZ/G3E SMARC EVK
-    board
-  arm64: defconfig: Enable R9A09G047 SoC
-  HACK-DO-NOT-APPLY-defconfig: Enable INIT RAMFS
-
- .../bindings/clock/renesas,rzv2h-cpg.yaml     |  15 +-
- .../bindings/serial/renesas,scif.yaml         |   5 +
- .../bindings/soc/renesas/renesas.yaml         |  17 +++
- arch/arm64/boot/dts/renesas/Makefile          |   2 +
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 144 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi |  18 +++
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  18 +++
- arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi |  13 ++
- .../boot/dts/renesas/renesas-smarc2.dtsi      |  24 +++
- .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  28 ++++
- arch/arm64/configs/defconfig                  |   2 +
- drivers/clk/renesas/Kconfig                   |   7 +-
- drivers/clk/renesas/Makefile                  |   1 +
- drivers/clk/renesas/r9a09g047-cpg.c           | 100 ++++++++++++
- drivers/clk/renesas/r9a09g057-cpg.c           | 117 +++++++++-----
- drivers/clk/renesas/rzv2h-cpg.c               |  98 +++++++++++-
- drivers/clk/renesas/rzv2h-cpg.h               |  23 ++-
- drivers/soc/renesas/Kconfig                   |   5 +
- .../dt-bindings/clock/renesas,r9a09g047-cpg.h |  21 +++
- 19 files changed, 604 insertions(+), 54 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
- create mode 100644 drivers/clk/renesas/r9a09g047-cpg.c
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     | 15 +++++++------
+ .../dt-bindings/clock/renesas,r9a09g047-cpg.h | 21 +++++++++++++++++++
+ 2 files changed, 30 insertions(+), 6 deletions(-)
  create mode 100644 include/dt-bindings/clock/renesas,r9a09g047-cpg.h
 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+index 926c503bed1f..c3fe76abd549 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+@@ -4,19 +4,22 @@
+ $id: http://devicetree.org/schemas/clock/renesas,rzv2h-cpg.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Renesas RZ/V2H(P) Clock Pulse Generator (CPG)
++title: Renesas RZ/{G3E,V2H(P)} Clock Pulse Generator (CPG)
+ 
+ maintainers:
+   - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+ 
+ description:
+-  On Renesas RZ/V2H(P) SoCs, the CPG (Clock Pulse Generator) handles generation
+-  and control of clock signals for the IP modules, generation and control of resets,
+-  and control over booting, low power consumption and power supply domains.
++  On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) handles
++  generation and control of clock signals for the IP modules, generation and
++  control of resets, and control over booting, low power consumption and power
++  supply domains.
+ 
+ properties:
+   compatible:
+-    const: renesas,r9a09g057-cpg
++    enum:
++      - renesas,r9a09g047-cpg # RZ/G3E
++      - renesas,r9a09g057-cpg # RZ/V2H
+ 
+   reg:
+     maxItems: 1
+@@ -37,7 +40,7 @@ properties:
+     description: |
+       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+         and a core clock reference, as defined in
+-        <dt-bindings/clock/renesas,r9a09g057-cpg.h>,
++        <dt-bindings/clock/renesas,r9a09g0*-cpg.h>,
+       - For module clocks, the two clock specifier cells must be "CPG_MOD" and
+         a module number.  The module number is calculated as the CLKON register
+         offset index multiplied by 16, plus the actual bit in the register
+diff --git a/include/dt-bindings/clock/renesas,r9a09g047-cpg.h b/include/dt-bindings/clock/renesas,r9a09g047-cpg.h
+new file mode 100644
+index 000000000000..5bcab7ca2bfc
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas,r9a09g047-cpg.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G047_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G047_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* Core Clock list */
++#define R9A09G047_SYS_0_PCLK			0
++#define R9A09G047_CA55_0_CORE_CLK0		1
++#define R9A09G047_CA55_0_CORE_CLK1		2
++#define R9A09G047_CA55_0_CORE_CLK2		3
++#define R9A09G047_CA55_0_CORE_CLK3		4
++#define R9A09G047_CA55_0_PERIPHCLK		5
++#define R9A09G047_CM33_CLK0			6
++#define R9A09G047_CST_0_SWCLKTCK		7
++#define R9A09G047_IOTOP_0_SHCLK			8
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G047_CPG_H__ */
 -- 
 2.43.0
 
