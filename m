@@ -1,164 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F534A0A;
-	Sat, 23 Nov 2024 10:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B7617A5A4;
+	Sat, 23 Nov 2024 11:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732357066; cv=none; b=e8a2IkkGuB7Ys3VVHaym0PjXaeEeh9jNEtG2V8P1TM8pCGhoXjHMeafx02Q+BW49tY/YSjRcl94tMQpxGtbNemlRRgdGj64C0ekZGjp/WggYrT69jP797SwFC7RdRA0RAnKydJRoSXIG+OEV6lMv8k7jiV7EWj4JxUWV4d8Jo+Y=
+	t=1732359889; cv=none; b=Z3Z+OwEGuMabc1k6cxAHuJUMBLcMg2D2kMm4JDRTQXLTkWSpNKHoWOKH+9FFRB52JKVA/gjM6VmkSNhgUxtQvSnnMSRHu97F3CRqh3l3zIKeL6LDoMUNqiOnIKDufNYEj8hLNYg4j/8dWHhbobMb/hexXS9A9ketVOOY7tYtEc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732357066; c=relaxed/simple;
-	bh=0rdrQoLAvrP9GeeQDmFLTU4Ij1FObv0T5hb19RDhLLA=;
+	s=arc-20240116; t=1732359889; c=relaxed/simple;
+	bh=dgHM1gZZha8nibl7OCw9ZIf2IALe7GGVwhciE5uLXqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNVxIz80UtSJuBiHwpclYyiOQPmxaCV8BdNamEavAQrfANqY4jfWsOXZfeR8724QGshN6o3IwOGR5016RswQciTTA/J/V/VoVxfyZkbzwtB55D/5JC6oxvfF+NEIVwe6Ag5RXYt0Jpjc/IuiEXqIAeAo11alPkkIhvpC1jjSf0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAZDa2TR; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAZDa2TR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5445C4CECD;
-	Sat, 23 Nov 2024 10:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732357065;
-	bh=0rdrQoLAvrP9GeeQDmFLTU4Ij1FObv0T5hb19RDhLLA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RAZDa2TRbmJsJZZUgFUdt69U8MLFL3b4DDD2bsUPLpQoO3ArmzULlLRg0xAd18+x5
-	 7cN2jmmiMt7ERQQ0w8v8esvzaP9D2yAm8JFpeG9O985fs1Mbcqobt/p9YMCNGkxg29
-	 RjuzFbJZO7XFx3GeZNbEbRTcElKBUz7FzkgsHUWq+pvBrC96TPPTl+AIRqDZR7hbB1
-	 7bLOZSrYeQRIi2y5VxNy7pNVEdrmy0zT3Mim2pBxBCnRjEy/AgMkPPeCRDYoOSFk3A
-	 bCuOAwQQF5zh+KlTXQ8Hxs9EwvRBb+EHmbYxsgNsiHPFSBsXt4769wYroQBrTE1O/M
-	 +TwVoJlUQwYYg==
-Date: Sat, 23 Nov 2024 11:17:42 +0100
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITnoTtsNRxXrre87xOnXfIBFMOVt+87zswo1tnnehJ4VUeb3tMFQh8ZQ8Qqv9FN+lXGxU3VJ0QYGnFzw2Z5f3KHp64h6aZo8VIcLd5K4f/NOmY4HU2yaRDHCfFtLXm5qmxXX0u5wTFkVh+IEcGwkvO7PQOjK5GReWW+giRhj9SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tEnw5-0005uo-00; Sat, 23 Nov 2024 12:04:21 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 1FB76C0142; Sat, 23 Nov 2024 12:03:00 +0100 (CET)
+Date: Sat, 23 Nov 2024 12:03:00 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] PCI: mediatek-gen3: Add reset delay in
- mtk_pcie_en7581_power_up()
-Message-ID: <Z0GrxtFsGbL08X7P@lore-desk>
-References: <20241118-pcie-en7581-fixes-v4-0-24bb61703ad7@kernel.org>
- <20241118-pcie-en7581-fixes-v4-5-24bb61703ad7@kernel.org>
- <20241123091026.qxoeb2qye7kcwikj@thinkpad>
+	Stephen Boyd <sboyd@kernel.org>, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH v2 09/10] MIPS: mobileye: eyeq5: use OLB as provider for
+ fixed factor clocks
+Message-ID: <Z0G2ZBN35glUupWn@alpha.franken.de>
+References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
+ <20241106-mbly-clk-v2-9-84cfefb3f485@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jHZfs2ffVCIlHxKc"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241123091026.qxoeb2qye7kcwikj@thinkpad>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106-mbly-clk-v2-9-84cfefb3f485@bootlin.com>
 
+On Wed, Nov 06, 2024 at 05:04:00PM +0100, Théo Lebrun wrote:
+> Change the structure of the clock tree: rather than individual
+> devicetree nodes registering each fixed factor clock derived from OLB
+> PLLs, have the OLB node provide the necessary clocks.
+> 
+> Remove eyeq5-clocks.dtsi and move the three remaining "fixed-clock"s to
+> the main eyeq5.dtsi file.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi | 270 --------------------------
+>  arch/mips/boot/dts/mobileye/eyeq5.dtsi        |  30 ++-
+>  2 files changed, 24 insertions(+), 276 deletions(-)
 
---jHZfs2ffVCIlHxKc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+applied to mips-next.
 
-> On Mon, Nov 18, 2024 at 09:04:57AM +0100, Lorenzo Bianconi wrote:
-> > Airoha EN7581 has a hw bug asserting/releasing PCIE_PE_RSTB signal
-> > causing occasional PCIe link down issues. In order to overcome the
-> > problem, PCIe block is reset using REG_PCI_CONTROL (0x88) and
-> > REG_RESET_CONTROL (0x834) registers available in the clock module
-> > running clk_bulk_prepare_enable in mtk_pcie_en7581_power_up().
-> > In order to make the code more readable, move the wait for the time
-> > needed to complete the PCIe reset from en7581_pci_enable() to
-> > mtk_pcie_en7581_power_up().
-> > Reduce reset timeout from 250ms to PCIE_T_PVPERL_MS (100ms).
-> >=20
->=20
-> and this reduced timeout has no impact on the behavior? If so, it'd be go=
-od to
-> state it explicitly. But this information can be added while applying the=
- patch,
-> so no need to resend just for this.
+Thomas.
 
-nope, we discussed this here:
-https://patchwork.kernel.org/project/linux-pci/patch/aca00bd672ee576ad96d27=
-9414fc0835ff31f637.1720022580.git.lorenzo@kernel.org/#26114968
-
-no worries, I will fix it in v5 since I need to repost to address a
-comment in patch 3/6.
-
-Regards,
-Lorenzo
-
->=20
-> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
->=20
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->=20
-> - Mani
->=20
-> > ---
-> >  drivers/clk/clk-en7523.c                    | 1 -
-> >  drivers/pci/controller/pcie-mediatek-gen3.c | 7 +++++++
-> >  2 files changed, 7 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> > index 22fbea61c3dcc05e63f8fa37e203c62b2a6fe79e..bf9d9594bef8a54316e28e5=
-6a1642ecb0562377a 100644
-> > --- a/drivers/clk/clk-en7523.c
-> > +++ b/drivers/clk/clk-en7523.c
-> > @@ -393,7 +393,6 @@ static int en7581_pci_enable(struct clk_hw *hw)
-> >  	       REG_PCI_CONTROL_PERSTOUT;
-> >  	val =3D readl(np_base + REG_PCI_CONTROL);
-> >  	writel(val | mask, np_base + REG_PCI_CONTROL);
-> > -	msleep(250);
-> > =20
-> >  	return 0;
-> >  }
-> > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/=
-controller/pcie-mediatek-gen3.c
-> > index e4f890a73cb8ada7423301fa7a9acc3e177d0cad..f47c0f2995d94ea99bf4114=
-6657bd90b87781a7c 100644
-> > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
-> > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> > @@ -980,6 +980,13 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen=
-3_pcie *pcie)
-> >  		goto err_clk_prepare_enable;
-> >  	}
-> > =20
-> > +	/*
-> > +	 * Airoha EN7581 performs PCIe reset via clk callabacks since it has a
-> > +	 * hw issue with PCIE_PE_RSTB signal. Add wait for the time needed to
-> > +	 * complete the PCIe reset.
-> > +	 */
-> > +	msleep(PCIE_T_PVPERL_MS);
-> > +
-> >  	return 0;
-> > =20
-> >  err_clk_prepare_enable:
-> >=20
-> > --=20
-> > 2.47.0
-> >=20
->=20
-> --=20
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
-
---jHZfs2ffVCIlHxKc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ0GrxgAKCRA6cBh0uS2t
-rKMoAP93x075FJWNtocxh9wxnIcNLCF8UkTmdf1GPkTZaVez8QD/cjBj4ekttnp+
-gQmsMix69h2OLk1qTdpWWs3j91WJoQw=
-=AKOK
------END PGP SIGNATURE-----
-
---jHZfs2ffVCIlHxKc--
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
