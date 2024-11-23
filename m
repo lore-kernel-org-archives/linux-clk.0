@@ -1,64 +1,34 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19576165F01
-	for <linux-clk@vger.kernel.org>; Sat, 23 Nov 2024 09:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F534A0A;
+	Sat, 23 Nov 2024 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732353076; cv=none; b=a1+F7gKOLfeTBJrbjnwwat81pGHwg0vKuFSQ8++y/S8+J4hyHNEdlD/fnR6GmqkeMnLLzbqV/T+kNT1S499RxQR7afprIdfMUfK9SSYYY52HyaBTOaNX89n7wOZpO6R6DLzUmAtQhEd244qfrnF9zA2Q5SEnLhkDB6VsDMIm+f8=
+	t=1732357066; cv=none; b=e8a2IkkGuB7Ys3VVHaym0PjXaeEeh9jNEtG2V8P1TM8pCGhoXjHMeafx02Q+BW49tY/YSjRcl94tMQpxGtbNemlRRgdGj64C0ekZGjp/WggYrT69jP797SwFC7RdRA0RAnKydJRoSXIG+OEV6lMv8k7jiV7EWj4JxUWV4d8Jo+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732353076; c=relaxed/simple;
-	bh=yVWC+NTwGEIK2g8k/Fx61C9vuvFQGIEubVnwE8WWha0=;
+	s=arc-20240116; t=1732357066; c=relaxed/simple;
+	bh=0rdrQoLAvrP9GeeQDmFLTU4Ij1FObv0T5hb19RDhLLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s06SoImtZDfv485N+hZyjkMRVfgZ1HooQTLj0W5S6aSkdFTm9hh5y4YwL39PhrNzHuKcEOfTifpqj1ZJqPaGFt+a2jsuWnkvG3gBDlYv9Lyqp7rvfS8qeO3yWLzHi7abxz8ft/ob9Oxe5oJqJMFqG3siRnlWZqsijdzXurezdyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zeIfEInD; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=FNVxIz80UtSJuBiHwpclYyiOQPmxaCV8BdNamEavAQrfANqY4jfWsOXZfeR8724QGshN6o3IwOGR5016RswQciTTA/J/V/VoVxfyZkbzwtB55D/5JC6oxvfF+NEIVwe6Ag5RXYt0Jpjc/IuiEXqIAeAo11alPkkIhvpC1jjSf0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAZDa2TR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zeIfEInD"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7f43259d220so2258551a12.3
-        for <linux-clk@vger.kernel.org>; Sat, 23 Nov 2024 01:11:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732353073; x=1732957873; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hth4LIFfFqiX8BxvmFXuMrsAdL3uE4QFJCpdQRVIJ/k=;
-        b=zeIfEInDCLrFgAVTEUgfp84DbqR6xpNCmFxTYXx5QFnsYUUFENcSeIQnsJq0FAo+Gg
-         MVpEe4WrRcgjQwFWjRCuF9S9CzHzjDl/9+Pf9md62kb8TOwrE4Cm4ot0Wrpn1bt+kwpy
-         qtjJK6tZ1Dgy2BONC7252sZmxU2U03KnI7JA/+riYb+waHC0KyWyGmwNTLp30h4C8GKO
-         WAK5lrr45zStuCAYq7VcC+DRG1D9D/qjdXi0JaQVDjqwhzf0M6MCCpPBbhcQLaTIA+yn
-         Jr6IH1rFSffcByfCa8vhDW/mskSjE9LyXDbtYWcvpOniVjlw2ibIxUE58tHbAs0EXZRr
-         3G/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732353073; x=1732957873;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hth4LIFfFqiX8BxvmFXuMrsAdL3uE4QFJCpdQRVIJ/k=;
-        b=JN3JLIgNvY8mzWyEOFaQdnL3JB1cAonWpTpoVoNYLOH3MnUYZ86zAJgOnBpos8OvHZ
-         gntJwAbjF0H6PfCAFJMjnKprUxhqTEs+Kqag9kp/WxjkHWjqFVx42Ybz6bCR6uey0ONz
-         pWlJHKIl8OUxwS0jiJHuDZKx9O7qMQ9GCf/tEd95C/6m6y/zMsJOSRqfxX6hFhFzybr2
-         Idljsee8Ij0pQvyTQLJYjZ4lrqQ/6MUmCJ906m1qgnrYjBdkFug73nACBHMge2uZjIjU
-         XabaR/VOGttRdY9DeMEPHZts5m1+ndIjH6oRieZYukrKTCgML7T1iSTbLPMV4srrYpIN
-         BE1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSzXN8xxmCN5g9DmaPQ8BMuBEdhIruy0Cj2GI/mOaPdbnhkA2u89u2niZsYNo8wF0HEhAkmZhsHkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1OlZsOfzUa71gdlW1CT8tHMM+PI0REX4uyJ85QhMzJvKODaho
-	1oVOA+wbHKLeQNHIPSIGjWwX7fMVub/aV3tPANeYaB5sERT6laD//Co51vv0CA==
-X-Gm-Gg: ASbGnctKSE1i7IQdzeKLkaFqLhhCSUKdSWydGAaH1FY0CCo0IASoIXtK0Eoi11AJLIP
-	EzVQwPsGVivcFOSeH5D30RMhm/lA63mddH0NdzqvKJyIiZJqZKAoYCYHJVou7iYSZHNYliIyRXt
-	kTV9WgvxHJiyIUxWd5SK3fOgVVyAebpoXJzdq7vSzg33O5bTo+mz0yeOTk2YH+0CNSWGwZHC8FW
-	7vdTX2X953KICn8s2HsKUF4d16q3J4Hf26XFaMbkn9Kc+Xpo8eFuSPGghkjaLNTAw==
-X-Google-Smtp-Source: AGHT+IHSwQx5I6ydm2NN+J7aExyMX6mGiatTpiQcH3JLyc+Ei93oibZfVSEA6ImzJbB21LtSvMRsqw==
-X-Received: by 2002:a05:6a20:a112:b0:1dc:32a:d409 with SMTP id adf61e73a8af0-1e09e5cba7dmr7832706637.39.1732353073302;
-        Sat, 23 Nov 2024 01:11:13 -0800 (PST)
-Received: from thinkpad ([2409:40f2:101e:13d7:85cf:a1c4:6490:6f75])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbdb796esm2566484a12.0.2024.11.23.01.11.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 01:11:12 -0800 (PST)
-Date: Sat, 23 Nov 2024 14:41:06 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAZDa2TR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5445C4CECD;
+	Sat, 23 Nov 2024 10:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732357065;
+	bh=0rdrQoLAvrP9GeeQDmFLTU4Ij1FObv0T5hb19RDhLLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RAZDa2TRbmJsJZZUgFUdt69U8MLFL3b4DDD2bsUPLpQoO3ArmzULlLRg0xAd18+x5
+	 7cN2jmmiMt7ERQQ0w8v8esvzaP9D2yAm8JFpeG9O985fs1Mbcqobt/p9YMCNGkxg29
+	 RjuzFbJZO7XFx3GeZNbEbRTcElKBUz7FzkgsHUWq+pvBrC96TPPTl+AIRqDZR7hbB1
+	 7bLOZSrYeQRIi2y5VxNy7pNVEdrmy0zT3Mim2pBxBCnRjEy/AgMkPPeCRDYoOSFk3A
+	 bCuOAwQQF5zh+KlTXQ8Hxs9EwvRBb+EHmbYxsgNsiHPFSBsXt4769wYroQBrTE1O/M
+	 +TwVoJlUQwYYg==
+Date: Sat, 23 Nov 2024 11:17:42 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc: Ryder Lee <ryder.lee@mediatek.com>,
 	Jianjun Wang <jianjun.wang@mediatek.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -71,63 +41,124 @@ Cc: Ryder Lee <ryder.lee@mediatek.com>,
 	Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] PCI: mediatek-gen3: rely on msleep() in
+Subject: Re: [PATCH v4 5/6] PCI: mediatek-gen3: Add reset delay in
  mtk_pcie_en7581_power_up()
-Message-ID: <20241123091106.bpkzqjafvxa5yief@thinkpad>
+Message-ID: <Z0GrxtFsGbL08X7P@lore-desk>
 References: <20241118-pcie-en7581-fixes-v4-0-24bb61703ad7@kernel.org>
- <20241118-pcie-en7581-fixes-v4-6-24bb61703ad7@kernel.org>
+ <20241118-pcie-en7581-fixes-v4-5-24bb61703ad7@kernel.org>
+ <20241123091026.qxoeb2qye7kcwikj@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jHZfs2ffVCIlHxKc"
+Content-Disposition: inline
+In-Reply-To: <20241123091026.qxoeb2qye7kcwikj@thinkpad>
+
+
+--jHZfs2ffVCIlHxKc
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241118-pcie-en7581-fixes-v4-6-24bb61703ad7@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18, 2024 at 09:04:58AM +0100, Lorenzo Bianconi wrote:
-> Since mtk_pcie_en7581_power_up() runs in non-atomic context, rely on
-> msleep() routine instead of mdelay().
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> On Mon, Nov 18, 2024 at 09:04:57AM +0100, Lorenzo Bianconi wrote:
+> > Airoha EN7581 has a hw bug asserting/releasing PCIE_PE_RSTB signal
+> > causing occasional PCIe link down issues. In order to overcome the
+> > problem, PCIe block is reset using REG_PCI_CONTROL (0x88) and
+> > REG_RESET_CONTROL (0x834) registers available in the clock module
+> > running clk_bulk_prepare_enable in mtk_pcie_en7581_power_up().
+> > In order to make the code more readable, move the wait for the time
+> > needed to complete the PCIe reset from en7581_pci_enable() to
+> > mtk_pcie_en7581_power_up().
+> > Reduce reset timeout from 250ms to PCIE_T_PVPERL_MS (100ms).
+> >=20
+>=20
+> and this reduced timeout has no impact on the behavior? If so, it'd be go=
+od to
+> state it explicitly. But this information can be added while applying the=
+ patch,
+> so no need to resend just for this.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+nope, we discussed this here:
+https://patchwork.kernel.org/project/linux-pci/patch/aca00bd672ee576ad96d27=
+9414fc0835ff31f637.1720022580.git.lorenzo@kernel.org/#26114968
 
-- Mani
+no worries, I will fix it in v5 since I need to repost to address a
+comment in patch 3/6.
 
-> ---
->  drivers/pci/controller/pcie-mediatek-gen3.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-> index f47c0f2995d94ea99bf41146657bd90b87781a7c..69f3143783686e9ebcc7ce3dff1883fa6c80d0f4 100644
-> --- a/drivers/pci/controller/pcie-mediatek-gen3.c
-> +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> @@ -926,7 +926,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
->  	 * Wait for the time needed to complete the bulk assert in
->  	 * mtk_pcie_setup for EN7581 SoC.
->  	 */
-> -	mdelay(PCIE_EN7581_RESET_TIME_MS);
-> +	msleep(PCIE_EN7581_RESET_TIME_MS);
->  
->  	/*
->  	 * Unlike the other MediaTek Gen3 controllers, the Airoha EN7581
-> @@ -954,7 +954,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
->  	 * Wait for the time needed to complete the bulk de-assert above.
->  	 * This time is specific for EN7581 SoC.
->  	 */
-> -	mdelay(PCIE_EN7581_RESET_TIME_MS);
-> +	msleep(PCIE_EN7581_RESET_TIME_MS);
->  
->  	/* MAC power on and enable transaction layer clocks */
->  	reset_control_deassert(pcie->mac_reset);
-> 
-> -- 
-> 2.47.0
-> 
+Regards,
+Lorenzo
 
--- 
-மணிவண்ணன் சதாசிவம்
+>=20
+> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+>=20
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>=20
+> - Mani
+>=20
+> > ---
+> >  drivers/clk/clk-en7523.c                    | 1 -
+> >  drivers/pci/controller/pcie-mediatek-gen3.c | 7 +++++++
+> >  2 files changed, 7 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> > index 22fbea61c3dcc05e63f8fa37e203c62b2a6fe79e..bf9d9594bef8a54316e28e5=
+6a1642ecb0562377a 100644
+> > --- a/drivers/clk/clk-en7523.c
+> > +++ b/drivers/clk/clk-en7523.c
+> > @@ -393,7 +393,6 @@ static int en7581_pci_enable(struct clk_hw *hw)
+> >  	       REG_PCI_CONTROL_PERSTOUT;
+> >  	val =3D readl(np_base + REG_PCI_CONTROL);
+> >  	writel(val | mask, np_base + REG_PCI_CONTROL);
+> > -	msleep(250);
+> > =20
+> >  	return 0;
+> >  }
+> > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/=
+controller/pcie-mediatek-gen3.c
+> > index e4f890a73cb8ada7423301fa7a9acc3e177d0cad..f47c0f2995d94ea99bf4114=
+6657bd90b87781a7c 100644
+> > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
+> > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+> > @@ -980,6 +980,13 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen=
+3_pcie *pcie)
+> >  		goto err_clk_prepare_enable;
+> >  	}
+> > =20
+> > +	/*
+> > +	 * Airoha EN7581 performs PCIe reset via clk callabacks since it has a
+> > +	 * hw issue with PCIE_PE_RSTB signal. Add wait for the time needed to
+> > +	 * complete the PCIe reset.
+> > +	 */
+> > +	msleep(PCIE_T_PVPERL_MS);
+> > +
+> >  	return 0;
+> > =20
+> >  err_clk_prepare_enable:
+> >=20
+> > --=20
+> > 2.47.0
+> >=20
+>=20
+> --=20
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
+
+--jHZfs2ffVCIlHxKc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ0GrxgAKCRA6cBh0uS2t
+rKMoAP93x075FJWNtocxh9wxnIcNLCF8UkTmdf1GPkTZaVez8QD/cjBj4ekttnp+
+gQmsMix69h2OLk1qTdpWWs3j91WJoQw=
+=AKOK
+-----END PGP SIGNATURE-----
+
+--jHZfs2ffVCIlHxKc--
