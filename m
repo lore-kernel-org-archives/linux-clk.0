@@ -1,63 +1,62 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F80B165F01
-	for <linux-clk@vger.kernel.org>; Sat, 23 Nov 2024 09:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2D8257D
+	for <linux-clk@vger.kernel.org>; Sat, 23 Nov 2024 09:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732352761; cv=none; b=PddA2GrpiVqPIh4Fz5X6OVzw6k5MeqejolU2B1TUN6htxAw2p8NkDsp9xAQfFx+HWJVir1l9hV7k8Jyl4sUyNcLU0uWB+EzMpFigd/8kFFuRB2dfW/3v7f/Q1UfIwQlf3aMeLB195Pi08QzHIvt+bzQatx/+sWCx7YbPvbr7AQs=
+	t=1732352822; cv=none; b=uVNNM5D/InJM6ca74r92kCGhbAypTCTKfbjPPl1p9yWKlM/jCMCe7AWOaJd0CU6yi1tj71MOr2Fn67cbTNmE2Kg22GS0rMT2voVW5ywDprI92+jjr1XLkPrHjIpYo7M6HNSRbovfSIwTjXBqClA9ZChQlTzA6k9CDqx5R4fj4mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732352761; c=relaxed/simple;
-	bh=Dca5lQQZBUuYnZig9XxYqsF1j66VHHMxoeFJ12Du3jU=;
+	s=arc-20240116; t=1732352822; c=relaxed/simple;
+	bh=zsSAW+XK5JeI5gVARmUmgZjByt9qyUKUI9oqemfJ5zo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ebe/auDl8feXAw3VF1F5GchBmP/CB3oadwPGTDGBqRkNzLBU16cTNcf3ymYMsvyMoXNGj9AORAgFSlAAt3WMPTsYtSlFMWHu42cjwIVCWAG1dwVgdFUPTtLV0Q01NGuCfuUctJcKNciIp39YSPO4dWbZoFbdSjGreKC+PLVjDyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FNAJ981c; arc=none smtp.client-ip=209.85.210.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+Nxy3+c4VE93mvKHlLRjSZ4JSzLVzVbCsnAIxfcssWqO48h5F/XMkihlU4VboRQxQ3F9xdHsX8rNYqttYFj4gwP7yThFlCkUQZA6NRmMmE+kfraeaezlu9oAmBHNEcOpBFWRVvJhCV3PHzTyqErZP/49QT2m9nkYemdZcC3C90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r5z6K4dz; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FNAJ981c"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-724f0f6300aso583096b3a.2
-        for <linux-clk@vger.kernel.org>; Sat, 23 Nov 2024 01:05:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r5z6K4dz"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7245a9d0e92so3265627b3a.0
+        for <linux-clk@vger.kernel.org>; Sat, 23 Nov 2024 01:07:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732352759; x=1732957559; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732352820; x=1732957620; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=xZiVNGou0sUPR+VUZtEVpUsLh0jpbMmext51WC1uOek=;
-        b=FNAJ981cPe5tnAAV6pv/2mxEsw61y+jFgByg064fT1NZqYLclaehCqF9Kr75HiJde4
-         dGG8EnDHyGqG69nFZgRosgL9Li85G54mzyKogPY5BEFxDF9dZnFI3q8+N6O7IUbL/r0e
-         /zAgMdhcAWgHEFzLX+nmoMlR8hCi9689OCW9a1w2ysjZJHjO2clBl0OZz8lbEqDiwhGx
-         dJjVojiBs0Cdl2zgtFA5rR6y3BqQHX0KefVPkXJKMrOAnxqjjTZt9EZoY3Vilo6UcQ+D
-         ql75GSbn9GLjDE1FxsbUktTzM4WtO9boCSopO1l9deRAC6H9FqJEHNUjP3WYcuawZZn6
-         rr2Q==
+        bh=yZTqoEwTktGmXK3Qx5NYMXzlUej11tS8qvukucVyF4s=;
+        b=r5z6K4dz2ThFAUpZARN7/Cz8+YXfgxfx1yEPU3MFFlzoUNCKZIVodxbKlEjei5RBhX
+         WqvVYHirdp8LZGNrGJDOrg5IatX0w9Ru+w15IiiFy9wcZBM8AdSfVZC7mtzU15efPzdx
+         Zjbhe+PzZHhrGwa6We190XyzVczZWArvp1U5UEgoCBi9vMPYusiOE9WOhZyykik2D86v
+         63CHSMVEIovx/VJeVQRXJt+jxtjKmAW75nbI3Jq8wIUfMc4CmoVxKTh04/FMrhXoyZui
+         1jh+x3SsMGghMRv5y/6hvGqSA9XYgGeD9XwDbgdqHH/xTQ/ArVdnZDsAi9insLk3YNYu
+         Ei7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732352759; x=1732957559;
+        d=1e100.net; s=20230601; t=1732352820; x=1732957620;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZiVNGou0sUPR+VUZtEVpUsLh0jpbMmext51WC1uOek=;
-        b=i2ADs0YUDaPJKQpmralkYQoieWqz5xFlziQKxp1xSxHvAdyZRZmeWzADiy5rUyOw/h
-         DDB0akF8YC6om0zZ77IsSvTFbI6N2Ob/80lxi6jl6rdEQhLZbHvShKpqO62r4lHdNUHX
-         peckdtVoKxUM/e4KIohyzNkT5Ny8xf6TkNeRLYKUXMkKI34puFBK64ssp5x94ry+5xTE
-         8Yqr7aeEZliZXq3sVZms6urWiDroGA96gWmzvoCvUxue0SM0pGKhM8nOzruBtv//aoht
-         RKmM57QTzETmoUodEFNo1yDqGY5lc/xo3ZW6TUCB00WFLt5WqaMqiStQBrZa99fRMtO+
-         b3aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVx/OpaVpgbmPzZGP5pd6aiR6eP7WbMVuoop+D4kLUTfvz8Sm9CF+bRNl45VgvLk7eF6K8uqxZUrhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEZotI1jj6NagOR5j75FpLogHNqC2XbzjujmCDIFjA1QSfyUXB
-	uNC4oBOerlc+T1d1NNGimvdD0ENUBpo3JqBg8siqX1iCXh7nLsVg91WS409z7E8tZQBNL/B3fuI
-	=
-X-Gm-Gg: ASbGncs7MCkrjZlYVfgzyi3Vr44vfG/t0JWxQFcHzmrXEDO3X/QvnNPi5pwqCaJynQZ
-	0cx6XolF1IE8zuR53fGa4luMJSdC0BckrxuZc+b7lY9L9JWVyn+NJyTRVirLq21iPzNWrVspT37
-	qodEl7Ezc2/m5xCzGY3v86HJtUqVywjKBcv+CCtcsbZLPFs51iczIFa/x3epBk/ei4wxDI6rLPm
-	yZKXsuNN8hls0SMPOMpj452txQN9jUvmypW10NtgNO4ubvUJ3noAGECWeajzeZ/xQ==
-X-Google-Smtp-Source: AGHT+IGmEszMNhZtwje0Xvl4SgF09bMp9/3Vg2UfRxuTgmP2VK0VjGMW/4vV+mCtT1R8tU+WzR0uag==
-X-Received: by 2002:a05:6a00:244e:b0:724:591e:ea20 with SMTP id d2e1a72fcca58-724df66d881mr7872246b3a.14.1732352758798;
-        Sat, 23 Nov 2024 01:05:58 -0800 (PST)
+        bh=yZTqoEwTktGmXK3Qx5NYMXzlUej11tS8qvukucVyF4s=;
+        b=ADlTQ0oLwj2rOu2I69X05DgAw1OfIOqaTVIThbGsAyjK3YOyFIH/TvdSUyQoJX23Nu
+         x4k8gsKAEzcyzZ3EvVekAs9s+Awn6uevx2Va/jBXg8xhkJcJmymgvmx/Zb8y8KvkPSK5
+         ylG7S7mvJBn+wxz2DpPUeaQ+GQF7VLa/r6fhvljBh86pE5huVDYRy5SYI8DP5QefQysK
+         l8hhCutulJ5vArqi1RVElgdjgX5I+dqTgoVmnRrmvw38XKjqZaH0tUPQPZFAxsleYTaD
+         bnhJL9fI84o5dIy9iYHyAPICKvB5EHt0NwZ0qRoBl64Ep207QyfVUxS7xniJ6oFjUzP4
+         o4Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+OCre2r2tkp3wxpV7v1KqfKjn1YuXjN45E8wakuWDPym4kQ/RP/H7W3TpkEJ4YYvyILxJRUfQOis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznuRU3WUUbNg1qv0LPbqYLGU9zvaaIrn31NoHFlorTIWi3tsdQ
+	z7LA1AnApraRIlaReChhD4QqQZdFvV9uX00yI6Wz8LSMXQmqTE1nAXON2l9bdw==
+X-Gm-Gg: ASbGncs1AiA41s3lEty0gakNZLgNwfIlEys6lHhsPlQkY+XyHHKT9OMw0HQ1ZUb8ETa
+	Ob3aP5Cn2Xezls4ADfjYf9VZjvkrL9AFBxF546Lg8FZb1gCTXNmILsuqdqhij5xAl1IGpl7Py4Y
+	BpMZYJJnYRad6/idf5f2Te86NkQus5/47F6FbaeIeTGHGaYO9EX/UVdz9D7bwICHf55TYldBQKC
+	MRHsoQVQFHgGC56XWyCRX2kv3yHPR2Y0v7ZZP6WPiRdym+CPLt5U63Bd0CHmH23ww==
+X-Google-Smtp-Source: AGHT+IEpLHPVaJh+gwdLw83uetAfenPlalM1R5vdNmWHzoapvFpd0b11woYH7NFKGd9VPGuqxv2wQg==
+X-Received: by 2002:a05:6a00:3ccc:b0:71e:64fe:965f with SMTP id d2e1a72fcca58-724df666260mr9268664b3a.20.1732352819705;
+        Sat, 23 Nov 2024 01:06:59 -0800 (PST)
 Received: from thinkpad ([2409:40f2:101e:13d7:85cf:a1c4:6490:6f75])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de532db3sm2877085b3a.93.2024.11.23.01.05.53
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de55503bsm2966517b3a.142.2024.11.23.01.06.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 01:05:58 -0800 (PST)
-Date: Sat, 23 Nov 2024 14:35:49 +0530
+        Sat, 23 Nov 2024 01:06:58 -0800 (PST)
+Date: Sat, 23 Nov 2024 14:36:50 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: Lorenzo Bianconi <lorenzo@kernel.org>
 Cc: Ryder Lee <ryder.lee@mediatek.com>,
@@ -72,11 +71,11 @@ Cc: Ryder Lee <ryder.lee@mediatek.com>,
 	Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] PCI: mediatek-gen3: rely on
- clk_bulk_prepare_enable() in mtk_pcie_en7581_power_up()
-Message-ID: <20241123090549.epzrv5o2i5q2mgz7@thinkpad>
+Subject: Re: [PATCH v4 3/6] PCI: mediatek-gen3: Move reset/assert callbacks
+ in .power_up()
+Message-ID: <20241123090650.imccksnmovmt2pps@thinkpad>
 References: <20241118-pcie-en7581-fixes-v4-0-24bb61703ad7@kernel.org>
- <20241118-pcie-en7581-fixes-v4-2-24bb61703ad7@kernel.org>
+ <20241118-pcie-en7581-fixes-v4-3-24bb61703ad7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,11 +85,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241118-pcie-en7581-fixes-v4-2-24bb61703ad7@kernel.org>
+In-Reply-To: <20241118-pcie-en7581-fixes-v4-3-24bb61703ad7@kernel.org>
 
-On Mon, Nov 18, 2024 at 09:04:54AM +0100, Lorenzo Bianconi wrote:
-> Replace clk_bulk_prepare() and clk_bulk_enable() with
-> clk_bulk_prepare_enable() in mtk_pcie_en7581_power_up() routine.
+On Mon, Nov 18, 2024 at 09:04:55AM +0100, Lorenzo Bianconi wrote:
+> In order to make the code more readable, the reset_control_bulk_assert()
+> for PHY reset lines is moved to make it pair with
+> reset_control_bulk_deassert() in mtk_pcie_power_up() and
+> mtk_pcie_en7581_power_up(). The same change is done for
+> reset_control_assert() used to assert MAC reset line.
+> 
+> Introduce PCIE_MTK_RESET_TIME_US macro for the time needed to
+> complete PCIe reset on MediaTek controller.
 > 
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
@@ -100,47 +105,68 @@ Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 - Mani
 
 > ---
->  drivers/pci/controller/pcie-mediatek-gen3.c | 14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
+>  drivers/pci/controller/pcie-mediatek-gen3.c | 27 +++++++++++++++++++--------
+>  1 file changed, 19 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-> index 4d1c797a32c236faf79428eb8a83708e9c4f21d8..3cfcb45d31508142d28d338ff213f70de9b4e608 100644
+> index 3cfcb45d31508142d28d338ff213f70de9b4e608..2b80edd4462ad4e9f2a5d192db7f99307113eb8a 100644
 > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
 > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> @@ -948,12 +948,6 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
->  	pm_runtime_enable(dev);
->  	pm_runtime_get_sync(dev);
+> @@ -125,6 +125,8 @@
 >  
-> -	err = clk_bulk_prepare(pcie->num_clks, pcie->clks);
-> -	if (err) {
-> -		dev_err(dev, "failed to prepare clock\n");
-> -		goto err_clk_prepare;
-> -	}
-> -
->  	val = FIELD_PREP(PCIE_VAL_LN0_DOWNSTREAM, 0x47) |
->  	      FIELD_PREP(PCIE_VAL_LN1_DOWNSTREAM, 0x47) |
->  	      FIELD_PREP(PCIE_VAL_LN0_UPSTREAM, 0x41) |
-> @@ -966,17 +960,15 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
->  	      FIELD_PREP(PCIE_K_FINETUNE_MAX, 0xf);
->  	writel_relaxed(val, pcie->base + PCIE_PIPE4_PIE8_REG);
+>  #define MAX_NUM_PHY_RESETS		3
 >  
-> -	err = clk_bulk_enable(pcie->num_clks, pcie->clks);
-> +	err = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+> +#define PCIE_MTK_RESET_TIME_US		10
+> +
+>  /* Time in ms needed to complete PCIe reset on EN7581 SoC */
+>  #define PCIE_EN7581_RESET_TIME_MS	100
+>  
+> @@ -912,6 +914,14 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
+>  	int err;
+>  	u32 val;
+>  
+> +	/*
+> +	 * The controller may have been left out of reset by the bootloader
+> +	 * so make sure that we get a clean start by asserting resets here.
+> +	 */
+> +	reset_control_bulk_assert(pcie->soc->phy_resets.num_resets,
+> +				  pcie->phy_resets);
+> +	reset_control_assert(pcie->mac_reset);
+> +
+>  	/*
+>  	 * Wait for the time needed to complete the bulk assert in
+>  	 * mtk_pcie_setup for EN7581 SoC.
+> @@ -986,6 +996,15 @@ static int mtk_pcie_power_up(struct mtk_gen3_pcie *pcie)
+>  	struct device *dev = pcie->dev;
+>  	int err;
+>  
+> +	/*
+> +	 * The controller may have been left out of reset by the bootloader
+> +	 * so make sure that we get a clean start by asserting resets here.
+> +	 */
+> +	reset_control_bulk_assert(pcie->soc->phy_resets.num_resets,
+> +				  pcie->phy_resets);
+> +	reset_control_assert(pcie->mac_reset);
+> +	usleep_range(PCIE_MTK_RESET_TIME_US, 2 * PCIE_MTK_RESET_TIME_US);
+> +
+>  	/* PHY power on and enable pipe clock */
+>  	err = reset_control_bulk_deassert(pcie->soc->phy_resets.num_resets, pcie->phy_resets);
 >  	if (err) {
->  		dev_err(dev, "failed to prepare clock\n");
-> -		goto err_clk_enable;
-> +		goto err_clk_prepare_enable;
->  	}
+> @@ -1070,14 +1089,6 @@ static int mtk_pcie_setup(struct mtk_gen3_pcie *pcie)
+>  	 * counter since the bulk is shared.
+>  	 */
+>  	reset_control_bulk_deassert(pcie->soc->phy_resets.num_resets, pcie->phy_resets);
+> -	/*
+> -	 * The controller may have been left out of reset by the bootloader
+> -	 * so make sure that we get a clean start by asserting resets here.
+> -	 */
+> -	reset_control_bulk_assert(pcie->soc->phy_resets.num_resets, pcie->phy_resets);
+> -
+> -	reset_control_assert(pcie->mac_reset);
+> -	usleep_range(10, 20);
 >  
->  	return 0;
->  
-> -err_clk_enable:
-> -	clk_bulk_unprepare(pcie->num_clks, pcie->clks);
-> -err_clk_prepare:
-> +err_clk_prepare_enable:
->  	pm_runtime_put_sync(dev);
->  	pm_runtime_disable(dev);
->  	reset_control_assert(pcie->mac_reset);
+>  	/* Don't touch the hardware registers before power up */
+>  	err = pcie->soc->power_up(pcie);
 > 
 > -- 
 > 2.47.0
