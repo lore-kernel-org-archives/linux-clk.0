@@ -1,144 +1,138 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26851A724C;
-	Sat, 23 Nov 2024 22:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41C01531C4
+	for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2024 10:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732401281; cv=none; b=Uvve43jZu2qrp0CQTlBfFfkFItRa5Te6RQ5Tyr0VwnwgIn/scRudNBWdPAYjrsxiylMFx6qa8oPpcDSGPeYg5/P+s4d8ay3to5z81zeDQGfqtQ/uVss3n0/W6Ggd9+xdC5KnQ6AbvyQYpp6bYRGZ58gtKRttbhRYWnxa92ZrdwM=
+	t=1732442712; cv=none; b=tDvrWNZMU6KKo9vH/yhq4iCP1jk4Hd3AbGd296ol/tGHv0XvquqeXtYA5njxykEJ2NS8ULqmYfcO5filGM58hVBJRuCAriZOhrDiSnz+TazSsb/+c1tgc+0IgE+Qk2u0KIb8fuNZUeubcib50Mw+EY4nMOo3iKFtQwkvz7uX+XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732401281; c=relaxed/simple;
-	bh=vIqWvHz/juZcLWbUqjLSwK38ndJaU0c4olpBuC7k//M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FW5y+SfyObleo+hMGZOh4mBXIEufehbzGxkk6FCjVPnA3wUCUwZnLmDvGfljKjuj+xJ/VdHW7Lrs8cqkxFqzrXNWocCnizhjE31ikVPbnRJtcVoCGWcpCzalTogk1w7w0ZthGZaY2kURXLS4U0qebi0I6IgXGXzbVXwtPr4ub2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=cYxJwfmT; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1732442712; c=relaxed/simple;
+	bh=xYyBbJ1bV1F/AvNsXaz4DN1NT7f6hP3J7eQ9A3tlTH4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=c7WlCStf+D8LAzt/hZslX+cQ6qf9FI3X7O3DD6wOjlWqHVupDdugVuo0RM30fwbM4u3wteAno4cE7nMKvZlN8hyNaMvQyF0U/hPQZSVortW7BE9O1Egq2aWBajv5Wc0Pduk11BGLof9DWkR+Ay5j6F5VfPP8W6R6E10tl2v3PBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TLKQGZKh; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="cYxJwfmT"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 944DD89401;
-	Sat, 23 Nov 2024 23:34:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1732401268;
-	bh=UVI84fOke9gLRZ0suzoYkdmP/Z7GYELBjts2k6DzJl0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cYxJwfmTaViuJOl0E6LpQm/Yli1C/FbRzss9eticyEKW0qVpN1ZSjg/mt+Jhflech
-	 xZPDZK/2aDIWkoZCayi0JfCMpOWINUNWavA6h3p2lCt5sGaekQVrM1Rh3lMJzDDT9I
-	 0P5uEXc/IOYzu8lRmA7IUMCIbDIOfeYVkTgl43z8X46shVEBMmRvaPIOo39o0Smn2y
-	 MzUfd3fB98Nx4L29dvoE4Wub78AS+8by0lY2Ld8CUxGFA2OhGcx/7eFtjUcbUiFYI6
-	 UDMn/y70IKCsE1VZzCaAq9TgOEH8XdQr2XrBNHm4cLfehwhtgt2Hdz4lEZNyzoctiu
-	 1lij3zQXXUpgw==
-Message-ID: <bd884164-3a38-446d-8a54-3d716a3e0360@denx.de>
-Date: Sat, 23 Nov 2024 21:11:58 +0100
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TLKQGZKh"
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a9e44654ae3so481177766b.1
+        for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2024 02:05:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732442709; x=1733047509; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rc/jEUsBswYkaNb52ief0DkwziwerNcpWx/rdhbBFpU=;
+        b=TLKQGZKh+ukC5GklXmw+ac1cisJMfJ/M6s7jxDRqmrl/2wE9o6QcwwPv2dvzgZPJXa
+         DazyQG9LwNsz7SQqZV3eq2KfztXmaGh7rT3wU8uP6gijFuhzjlIKvWwGLeWuz75FecLS
+         WLpcpZ1seh/UX1LbbyRXR+rAd4s8ltTJON0tKceFw1cfduXDH9GU/RQ9JGdx6PGvzJ2j
+         UoG0Q4v9tMq0XLmlHClz1y5CWirF+nOmbL9MdkWCb7MdkgFAmln758io8bywfuYT2PCV
+         wQnc3c+Ki/6NECj4RX6fFWvJFla8KVGE6wOd+WwnbqR8zA/uoD+B+1CZ3sHp73fqW0kV
+         JAow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732442709; x=1733047509;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rc/jEUsBswYkaNb52ief0DkwziwerNcpWx/rdhbBFpU=;
+        b=izKf38yvpcZ5TlFiXOp9FKU6WcOqtkGn+Xf4I8JM2kxJjNp3MlyUomHxrJYpY7TqLe
+         vosbifeCO9RKOBVoiPEKaesM7aLR6Tt3jixZBy3aBw1L8DFS2Zvfmqth4XqHltPM+57I
+         71fssqDtcrv41KfDBLyMeAgomITjqce4eNBRtPCdLPYABd2I4JkwKxFioPBfbA4Jv78+
+         F4oY0emjBFUfr8zGeg9gLxtEBQKZqfRr3rEJciKq5K6QyhhtqkXJu8dsXOaikPoWcCey
+         ZTv36jEmI7QLOb1hW9VjaXZDT96GfbOzE5IQRxWyB9HjpqlY/N9l7UF3pbFc2OMxOk9V
+         Sh8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVwmZIdzhuUO+oal6O/Pbb20IRzqkdaIVTuKmBYY/bw1kVYy1MP7nUWAwQrQbyN4oYT9+uDoqFbLow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAtmzjYbMo82aOrhIAwx9Vc4ZsGXiYrq5aNxBzPRvaSZuIYuRl
+	RlUu3y9ceCAzxZA4bMNaCV3TNRmgJ2TvTViBD5uNNlE8ceW9VMnw96lqeB3GsuM=
+X-Gm-Gg: ASbGncuMRZJjn7ZmHvD4CZKOaOI4aKh2w/Fws6ZbS+OTCirsYPfM27+GoYxw8wAMSpr
+	4sDGNKLfguArYvZpXjJ5Bl0vdsjJqh5uu3LW0ZaABpu1kISWdZZqCh6KqL/dfXqGIQUlvIRJm/6
+	qIaKjQFWPbaJ2Kmt6Zg42sC+5bzhcFZ15eNgRDSTg+Z9ulWUWPwSJEibfeueEGCnRNGLR/ToF3S
+	O+oDjGe4JP15p9k0kd3x32UPXUMwBJT48+BurFxuNS2egJYa3kXIBcTcWyTy0C/npE5fix4osuF
+	9pb7Mz2uWbKKe4L5XStI
+X-Google-Smtp-Source: AGHT+IE6n1Sl2VjDnUF5IiR4wNGa1GDW8vw2+O+cu/s3Q+7FHS16Q8BL2O+lyk7mxoO9jBhc7KuPpQ==
+X-Received: by 2002:a17:907:77c9:b0:a9a:67aa:31f5 with SMTP id a640c23a62f3a-aa50990b2a9mr726045266b.10.1732442709155;
+        Sun, 24 Nov 2024 02:05:09 -0800 (PST)
+Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa51759732asm295266666b.14.2024.11.24.02.05.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2024 02:05:08 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v2 0/2] Preserve the flags portion on 1:1 dma-ranges mapping
+Date: Sun, 24 Nov 2024 11:05:35 +0100
+Message-ID: <cover.1732441813.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
- pixel clock reconfigure parent rate"
-To: Ying Liu <victor.liu@nxp.com>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "abelvesa@kernel.org" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
- "rfoss@kernel.org" <rfoss@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "jonas@kwiboo.se" <jonas@kwiboo.se>,
- "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "nfraprado@collabora.com" <nfraprado@collabora.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20241114065759.3341908-1-victor.liu@nxp.com>
- <20241114065759.3341908-3-victor.liu@nxp.com>
- <df6ebdde-65f8-4aad-93c7-b1df695bd2ef@denx.de>
- <AM7PR04MB7046546A882A8D48E135D84698272@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <8a4fd234-4c7b-4a04-990d-3222aaa5172d@denx.de>
- <AM7PR04MB7046E282FD702ACE5E288F8998202@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <83be0a27-6b6c-4ba6-b9dc-f914a10abace@denx.de>
- <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <c5ab63da-21ec-4c0d-8ecc-3745943d806f@denx.de>
- <AM7PR04MB7046D404841394382324DE7198232@AM7PR04MB7046.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <AM7PR04MB7046D404841394382324DE7198232@AM7PR04MB7046.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 
-On 11/22/24 4:39 AM, Ying Liu wrote:
-> On 11/22/24, Marek Vasut wrote:
->> On 11/20/24 7:38 AM, Ying Liu wrote:
->>
->> [...]
->>
->>>>> If the DP monitors support typical video modes like 1080p60 with
->>>>> 148.5MHz pixel clock rate, I assume these typical video modes work
->>>>> still ok with this patch at least.  Please help confirm this, since if the
->>>>> alternative solution(*) doesn't stand, we would know those video
->>>>> modes still work ok with my solution(fixed PLL rate).
->>>>
->>>> They do not work with the fixed PLL setting.
->>>
->>> Why?  Did you assign a sensible fixed PLL rate in DT?
->>
->> Whatever was in imx8mp.dtsi does not really work for all the panels.
->> Please keep in mind that the use case I have does not include only
->> 1920x1080 "standard" panels, but also other resolutions.
-> 
-> It looks like you are still sticking to the idea of supporting all potentially
-> valid video modes by trying to find an "alternative" solution, while
-> neglecting that the solution *could be* never working.
+Empty dma-ranges in DT nodes using 3-cell address spcifier cause the
+flag portion to be dropped by of_translate_one(), failing the translation
+chain. This patch aims at fixing this issue.
 
-Reconfiguring the PLL to achieve accurate pixel clock is working 
-already, right now.
+Part of this patchset was originally preparatory for a bigger patchset
+(see [1]). It has been split in a standalone one for better management
+and because it contains a bugfix which is probably of interest to stable
+branch.
+I've also added new tests to unittest to prove it.
 
->>> Can you please compare clk_summary output for the failing cases
->>> before and after this patch is applied? I assume that if you use
->>> the fixed PLL rate same to the rate which works before this patch is
->>> applied, the typical video modes still just work after this patch is
->>> applied.
->>
->> I'm afraid I do not need to support only typical video modes, but also
->> the other "atypical" modes.
-> 
-> If the "alternative" solution doesn't work, we'll end up using the "fixed
-> PLL rate" solution.  It that case, some video modes would be filtered
-> out as a sacrifice.
+Many thanks,
+Andrea
 
-Maybe it would be better to continue the discussion in
+References:
+[1] - https://lore.kernel.org/all/3029857353c9499659369c1540ba887d7860670f.1730123575.git.andrea.porta@suse.com/
 
-[PATCH 0/5] clk: Fix simple video pipelines on i.MX8
 
-which seems close to the alternative solution I was looking for ?
+Changes in V2:
+
+- Added blank lines between paragraphs in commit message for patch 2
+- Fixed a comment to explain the code behaviour in a straighter way
+
+
+Andrea della Porta (2):
+  of/unittest: Add empty dma-ranges address translation tests
+  of: address: Preserve the flags portion on 1:1 dma-ranges mapping
+
+ drivers/of/address.c                        |  3 +-
+ drivers/of/unittest-data/tests-address.dtsi |  2 ++
+ drivers/of/unittest.c                       | 39 +++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 1 deletion(-)
+
+-- 
+2.35.3
+
