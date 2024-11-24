@@ -1,62 +1,62 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6275815C140
-	for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2024 10:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA518871E
+	for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2024 10:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732442714; cv=none; b=q8yxjF4UJtiztHpcOA1jW1tK96T1o9NK0GgcizDYyw5E50QPBe802ZTZQnluHzAWEtMvZeCRtHeCSKK5IQo30jmSO8eFCNRskJsC53qZclM//93Eo1UQYgEM1jqqYa8kVBgPGiB+yrvF4aTKA5fJLw+nBgdLu16d9QfFtlb5jHQ=
+	t=1732442715; cv=none; b=O/6tjUBc2iqNh6q1xYaKPEnWkViLJqD5ro3/2JS8CiVyh0qtBsSxQ5IHIEeMP3ZL031bCG65e7DhkFRQQloFkiMu3gJ0XzbdfnXSEulRvGqCk4iNVqnzTbYjM0aARys/dCpmcO4UWS6rsYI2TdsCTJvDOGGiAf3Y4OBDNq5ixeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732442714; c=relaxed/simple;
-	bh=L2vOQpxf+jsewIrh71TowDocaxbrQWe/NVorAuStYX8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hjnfep0Peffl67uullk3dgwQQEB/tKxWajZEMbbnpeu+66uDVzIn7nMhiVZl9Cv58mpiBdkaWwkXlwEZ+5/9TAV+XQ6rTDlSbaI+F3lmsOVcMMG3oZ9H6JdBPlsa+kpeBNIG+ZuatyJgWB8z50SLHV/w9HSJQ2NKn4g0th/64q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=auraZ1VE; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1732442715; c=relaxed/simple;
+	bh=00GKzIkIov7sWC7YYf/fsmzjuTtHwftcYafHQRVNIQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=I0nRCCYSf53o0IcXHWfbkcjWKxUTOeDgaJcR6AtRxuhmHNxJ1KT8X2mwiN0MAzddbeAAFzeO3PBd5usyqvdTSiH2TcDMLo4zNnUvc4Y3qkbAfkMgP2qi6rD/oDUCSN1PyhmX/AoVdZVlvACHJMpBe+cSm/2CF4ihfb3DbTQC8jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A0CZfEhQ; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="auraZ1VE"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9e44654ae3so481179666b.1
-        for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2024 02:05:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A0CZfEhQ"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso260096666b.2
+        for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2024 02:05:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732442710; x=1733047510; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1732442712; x=1733047512; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/azjLItm0kRcZGnRsfAiDqYz09Bjkw+3gf50DzO5cz0=;
-        b=auraZ1VE35Pq1CgskQJl3IF1qsb2sP3XX2A8zuMz4TocbydcYT7CpYAY5OOQE5zc4c
-         mwlTQV6++o8ds9nM1r3d/cTuz1gOijnR9nyMuFiLDAmVmC6ZteIUDBsqOAOIao3ObsTb
-         7xFJx5v5tjjpaF7uC2TkLUeP9UjP5ek/2/lTea6LCoGSHIpyMBuqPnSD+0BnBJxHasfJ
-         1oOGTF5Z3DuWdwYmNLMaUz0PIHYn196dUz8zU4ZnR44sexKOZL5ZeLmE70pLs0NyTQkD
-         PUYDw+nJ1aJS2ut8jsi20HoH0vM9QhA40D8ls4TyvhuVwhfYVmkg2pxe7ZlPZaDclUgG
-         mzNg==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lk2GE1arbul51a1ynLU7Q9xhqGMt1ZdTPnPwO47t9KY=;
+        b=A0CZfEhQgZuNQ8XUXPzjnRT3zv6xBUgrbIEApsB8YDOs+8YIt6aLdgPxacHdQ6fGrE
+         4rbfMu2q8qqYnuLIAR1xVGQ9TpkMSD0a2KZh3sQp6U8s85NT1p6PzRiDkCkcxacIPULI
+         PpyvC6I2LjBos1zcw2mVC3LUUUKHC7J65nGvJZfOsfIeULRJyQyWZxMRcDKWVhB8hCG3
+         jyJM+Ee0ouYLEjtxx49p3j3PxwwUv75dSK0CSD725e4iBtgnBuarA8bLlmM/ZWv+uNTR
+         FiJGb/+P4PLKzu9MD7zgH900QuuWIWC04chcWChMeq5TUNYpN6x14sCDQiQf1UNgirm2
+         JSrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732442710; x=1733047510;
+        d=1e100.net; s=20230601; t=1732442712; x=1733047512;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/azjLItm0kRcZGnRsfAiDqYz09Bjkw+3gf50DzO5cz0=;
-        b=KPhsyEg2yQEgwqfKTaQtpD+cqn135738GlLM3F6yZWKyXYbdKvXQazBP1Iv/ia4G6R
-         d93+ztRGIAUtYjLERRqmgHTMRQBRU+pHWPUK+GxEygUvJCAF3cXiCK23oZkx8K1yZV0N
-         uCHoQ2jMHUUHKKy/Ia0SRFZ7+hxXAZR9L8tR/r0pu8QDzTUsv3FiRviNKnrkZJ3P+L0m
-         6tMQ9uQyKotw8UFG+vGRyHQfjLnYjkjkcVKDD5+uEQSdoRN+Oj8zjvvqBaMI0VvTgM/U
-         ufraMbaHz9yX7SizQl48KVjUoQQkyKlVZybT/TW1d2OYgmXVmHs7+k0+KlbwanZcjEUD
-         79Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIFBk0Qiql7tGP/cXM50Dfnca4FeLXWWdetNMCN6Hq3qUyUt2aN7B9noiLjdC/yo6ozAZ5NUYh+SI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaRsjWybRX2FUEW0LR9alk/9PE/D0tT5YPzLqeWpi/QZrkPnHR
-	ZLMiqyg9iIT8KGHgw4zS6zEe3SCjwTGX3hCZNNXqAThYQZxRHFxX3j5Etp0bOI0=
-X-Gm-Gg: ASbGnctPm9NgP3bJ7eGNHVmOpyI3q5/I4w5/j9lMuRuzqI+ImH+R6q5ZhZmo0oc/R2R
-	G0yjOCYX+6O/y+6AaZmbbIrFotfbtjmdsJLS1r2y9ndxq4bhlE3+gPujw3lUuclh3bHv/0pTxPu
-	vlCNWF21X8P0kaO1KgF2UVjTxHjGgckIjVD4xbRTOfAOE0loGG5eUkh5p1MmcPyhhGf5UCKvxt/
-	vg6ehmdZSXqsKgLQT8jySWZAMwo8JPUqX06Lw2HQMEb3IKckhby6hRK1cIuteTvFH0ugRhzyZHf
-	szFurDxSekeW6Hu+Xx5X
-X-Google-Smtp-Source: AGHT+IF27avX+bMlAPUDjojXnihXV+/+kooigFr7e9ZVvLkYgR4oL+7yerxVqNUweak7WLSGulhdMg==
-X-Received: by 2002:a17:906:292a:b0:aa5:2a71:1646 with SMTP id a640c23a62f3a-aa52a711b3emr430419266b.33.1732442710505;
-        Sun, 24 Nov 2024 02:05:10 -0800 (PST)
+        bh=lk2GE1arbul51a1ynLU7Q9xhqGMt1ZdTPnPwO47t9KY=;
+        b=msym+H+v2GCnPzdzMUmsoIlj5PgSSDfDSd7EnrsyrXEFtJqGmrxaK26zXI/cm7TWMz
+         D+tkLSGdZjBGlKwNLYSk9E0zgJGC3oRJz6Q9PEZev7nbVUcIZFdyMTRgkXsz59IIUWN2
+         /d58l04l1pR3D+npecshhpxaEGy2v0JXcdsaW7vzFhD5SnmGmdggLK6sm2scG5WaSeoC
+         miVDyeYz5HLpQa4X5QUs9qXAW/DZd32qomPr1kWTXG0oCogCG30mltPEts6gDug/ab0X
+         2DprosqBcUnpONo3xEe2HuzjPI9mWp7z5rIHMrMzRCj6HlDHVKkYaYKyfHqWxMhvmzF5
+         R3Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIUKN1b65D5EtgUlwuIe1+vIwQeZUh1kUChHnr0ldzT4dDTODaU9JKQ3YK8fz8gAp/usCx9TVm904=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOynJVPMV2ichPmv+eUM5XcoAwUTPUOTOPBs5MeIZuhEPJUupm
+	LSpOKkz+kGd2m0kY+l4jj/PHkNkVP1+U4KPLw+6FfHaQdqdGYW2JagDJgcL+iaM=
+X-Gm-Gg: ASbGnctknOGYGzboEjJVBcJ3n0Ur5GPGFfBYiNC5XZjNxqqT9xahsrVl6myghzf5FMs
+	h8WVNNQ34sfc3QOGjCdc2fhqATBOtPKBxMVaBVGO9ztjh6lFxMbTgC1rdq9akZSRFiZM7VF3Zop
+	xEc++9By14UqzFgPJStCilHsSoeUudlWxmdDfGhM8Rafd/YyvPrNA1jsfViJoBroFJFOGoweZ3+
+	7OJTksI63I/TWUWGmZqIahbS1f2U55xauZ69LW4n3+qCWjqdgwljt/KNUneeQ0CRIKZ14ca90q/
+	fvr3OpUQ7x4UFlPddZUP
+X-Google-Smtp-Source: AGHT+IHzhjRJgC4zyn46rADf4coPj01YWTVyf6AHNKqiCSQA366o1m7GZGOpC6OvPXD6QZ4IdkHEbQ==
+X-Received: by 2002:a17:907:770d:b0:aa5:29ef:3aa6 with SMTP id a640c23a62f3a-aa529ef3b9fmr468828366b.23.1732442711875;
+        Sun, 24 Nov 2024 02:05:11 -0800 (PST)
 Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fd52sm322314666b.116.2024.11.24.02.05.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57bda2sm325822466b.146.2024.11.24.02.05.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 02:05:09 -0800 (PST)
+        Sun, 24 Nov 2024 02:05:11 -0800 (PST)
 From: Andrea della Porta <andrea.porta@suse.com>
 To: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -92,9 +92,10 @@ To: Andrea della Porta <andrea.porta@suse.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v2 1/2] of/unittest: Add empty dma-ranges address translation tests
-Date: Sun, 24 Nov 2024 11:05:36 +0100
-Message-ID: <08f8fee4fdc0379240fda2f4a0e6f11ebf9647a8.1732441813.git.andrea.porta@suse.com>
+Cc: stable@vger.kernel.org
+Subject: [PATCH v2 2/2] of: address: Preserve the flags portion on 1:1 dma-ranges mapping
+Date: Sun, 24 Nov 2024 11:05:37 +0100
+Message-ID: <e51ae57874e58a9b349c35e2e877425ebc075d7a.1732441813.git.andrea.porta@suse.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1732441813.git.andrea.porta@suse.com>
 References: <cover.1732441813.git.andrea.porta@suse.com>
@@ -106,101 +107,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Intermediate DT PCI nodes dynamically generated by enabling
-CONFIG_PCI_DYNAMIC_OF_NODES have empty dma-ranges property. PCI address
-specifiers have 3 cells and when dma-ranges is missing or empty,
-of_translate_one() is currently dropping the flag portion of PCI addresses
-which are subnodes of the aforementioned ones, failing the translation.
-Add new tests covering this case.
+A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+translations. In this specific case, the current behaviour is to zero out
+the entire specifier so that the translation could be carried on as an
+offset from zero. This includes address specifier that has flags (e.g.
+PCI ranges).
 
-With this test, we get 1 new failure which is fixed in subsequent
-commit:
+Once the flags portion has been zeroed, the translation chain is broken
+since the mapping functions will check the upcoming address specifier
+against mismatching flags, always failing the 1:1 mapping and its entire
+purpose of always succeeding.
 
-FAIL of_unittest_pci_empty_dma_ranges():1245 for_each_of_pci_range wrong CPU addr (ffffffffffffffff) on node /testcase-data/address-tests2/pcie@d1070000/pci@0,0/dev@0,0/local-bus@0
+Set to zero only the address portion while passing the flags through.
 
+Fixes: dbbdee94734b ("of/address: Merge all of the bus translation code")
+Cc: stable@vger.kernel.org
 Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Tested-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/of/unittest-data/tests-address.dtsi |  2 ++
- drivers/of/unittest.c                       | 39 +++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+ drivers/of/address.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/unittest-data/tests-address.dtsi b/drivers/of/unittest-data/tests-address.dtsi
-index 3344f15c3755..f02a181bb125 100644
---- a/drivers/of/unittest-data/tests-address.dtsi
-+++ b/drivers/of/unittest-data/tests-address.dtsi
-@@ -114,6 +114,7 @@ pcie@d1070000 {
- 				device_type = "pci";
- 				ranges = <0x82000000 0 0xe8000000 0 0xe8000000 0 0x7f00000>,
- 					 <0x81000000 0 0x00000000 0 0xefff0000 0 0x0010000>;
-+				dma-ranges = <0x43000000 0x10 0x00 0x00 0x00 0x00 0x10000000>;
- 				reg = <0x00000000 0xd1070000 0x20000>;
- 
- 				pci@0,0 {
-@@ -142,6 +143,7 @@ local-bus@0 {
- 							#size-cells = <0x01>;
- 							ranges = <0xa0000000 0 0 0 0x2000000>,
- 								 <0xb0000000 1 0 0 0x1000000>;
-+							dma-ranges = <0xc0000000 0x43000000 0x10 0x00 0x10000000>;
- 
- 							dev@e0000000 {
- 								reg = <0xa0001000 0x1000>,
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index daf9a2dddd7e..80483e38d7b4 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -1213,6 +1213,44 @@ static void __init of_unittest_pci_dma_ranges(void)
- 	of_node_put(np);
- }
- 
-+static void __init of_unittest_pci_empty_dma_ranges(void)
-+{
-+	struct device_node *np;
-+	struct of_pci_range range;
-+	struct of_pci_range_parser parser;
-+
-+	if (!IS_ENABLED(CONFIG_PCI))
-+		return;
-+
-+	np = of_find_node_by_path("/testcase-data/address-tests2/pcie@d1070000/pci@0,0/dev@0,0/local-bus@0");
-+	if (!np) {
-+		pr_err("missing testcase data\n");
-+		return;
-+	}
-+
-+	if (of_pci_dma_range_parser_init(&parser, np)) {
-+		pr_err("missing dma-ranges property\n");
-+		return;
-+	}
-+
-+	/*
-+	 * Get the dma-ranges from the device tree
-+	 */
-+	for_each_of_pci_range(&parser, &range) {
-+		unittest(range.size == 0x10000000,
-+			 "for_each_of_pci_range wrong size on node %pOF size=%llx\n",
-+			 np, range.size);
-+		unittest(range.cpu_addr == 0x00000000,
-+			 "for_each_of_pci_range wrong CPU addr (%llx) on node %pOF",
-+			 range.cpu_addr, np);
-+		unittest(range.pci_addr == 0xc0000000,
-+			 "for_each_of_pci_range wrong DMA addr (%llx) on node %pOF",
-+			 range.pci_addr, np);
-+	}
-+
-+	of_node_put(np);
-+}
-+
- static void __init of_unittest_bus_ranges(void)
- {
- 	struct device_node *np;
-@@ -4272,6 +4310,7 @@ static int __init of_unittest(void)
- 	of_unittest_dma_get_max_cpu_address();
- 	of_unittest_parse_dma_ranges();
- 	of_unittest_pci_dma_ranges();
-+	of_unittest_pci_empty_dma_ranges();
- 	of_unittest_bus_ranges();
- 	of_unittest_bus_3cell_ranges();
- 	of_unittest_reg();
+diff --git a/drivers/of/address.c b/drivers/of/address.c
+index 286f0c161e33..b3479586bd4d 100644
+--- a/drivers/of/address.c
++++ b/drivers/of/address.c
+@@ -455,7 +455,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+ 	}
+ 	if (ranges == NULL || rlen == 0) {
+ 		offset = of_read_number(addr, na);
+-		memset(addr, 0, pna * 4);
++		/* set address to zero, pass flags through */
++		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
+ 		pr_debug("empty ranges; 1:1 translation\n");
+ 		goto finish;
+ 	}
 -- 
 2.35.3
 
