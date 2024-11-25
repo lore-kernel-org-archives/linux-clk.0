@@ -1,166 +1,105 @@
-Received: from mail-lf1-f67.google.com (mail-lf1-f67.google.com [209.85.167.67])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE5F18FDC2
-	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 09:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6974192D63
+	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 09:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732526079; cv=none; b=O9JD8+ij2vemdEJfUA0ZCJJcLRLziVdM6izUcoKtbHB26pl0h9h4GCfj0wnxZLwsWxFEgcUVLaHi19lF5p4BuHkJfUzW9h1V4jNQu5mALTPA7dtVAkNKN7YpbStYOJYMQCoXpToAj1/1XOTMfyiFC7LyZDFDrVENWBBZuf8bLb8=
+	t=1732527363; cv=none; b=m/MVfKI8kLo4bcI6R5LbOohtAWvNEVcqGg6lA/AzAXvVWKbPgp7DLk2e0kty706D7lxA6o3kk2hs4BcOJXm0DXZN2/87ix0Uq/S0QNC+LBEAceofypCx1VN8aUjH18zHqufqb9QDEqP+kFij/dxayV+lzeTBXZPuuOFG2b8si7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732526079; c=relaxed/simple;
-	bh=Z8jQntIYUuDqbpeg8tuOdkkbLTKTkbcIxwmwmqoh6r4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCA7v830+vOqcrKRZVbd7IWjMi77UZQuB/Y81X9OcWqJqXcGGD9HjcxBBF4ADM/iL5+aR+y5r9cZ54ClHIA4o3z4KZEWcNFfz3u+SCElTFy5ayEnp0FrjgdATDyzNlWrwX+fAv9gGBZ9rLIGqydex2SBlQUASE75PVtLZroMZIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=egyou7Fb; arc=none smtp.client-ip=209.85.167.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1732527363; c=relaxed/simple;
+	bh=SN1ke6h10N1tpIjFi42fcVYTTBA9mbS9XqPXAsZIIgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=srtBFS4XlpYCkEyhyp5DKbmAQeLqKEZa8RM4mEHZ+rCGKqktvUSHYSF5U2HP0nVW5rHfpbWSrzPDAXnqCySBY2UNtBZYxmzeIuEOsvCqzrqGIibk8zzRbPAik1JmJkFeWsUk3xVzIEb1bKoQWRblhB2Gf1lgDDFGCvbl/2bO0MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EfFPD5Oc; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="egyou7Fb"
-Received: by mail-lf1-f67.google.com with SMTP id 2adb3069b0e04-539f6e1f756so4630775e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 01:14:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EfFPD5Oc"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-432d866f70fso39028185e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 01:36:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732526074; x=1733130874; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4toVw0A5ZDZA3zYjFx66d73EEMSNS7vgXv0fs9opgvU=;
-        b=egyou7FbZgoU65bgdaRjf1eCy/5jmzFx13LzbEqle316n8PfA/yMdqI6isae75c9EA
-         xXunXPa91zFfjxs8TvCxv7s/RrKGDYz8kT+Mu4PJN1Ginx2/YsHVSba9kVN+lofpDXMl
-         tM2lBwdu2Fv+yZHnqLIrLGVKq2WgECP4dHz70Xtr7L4Tn79gZZdrFq/XkxtgNZU8ezuf
-         eVeEbj4RQS6ASlsj4jnYkWxAoeIrUuXbjCo7ZyfL7BVGlZvamjJdrjxwongjYy4QeJVo
-         f6CnBcG2KbCsUhCSVMGPI426DxSUC22xW0ArYV14V1DD9XTc1yPDsIHHTSOi8BYkXBY5
-         fxhQ==
+        d=linaro.org; s=google; t=1732527360; x=1733132160; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SN1ke6h10N1tpIjFi42fcVYTTBA9mbS9XqPXAsZIIgU=;
+        b=EfFPD5OcRby8/avfdKh+W4e1LF5kp1IiC3AVaUpPdRVW0T4K5dcKT+aqcxMo+Jfcip
+         9b2hgOtXTY7D2OX4LNZR9S1KLT9IZGDiKsZlmTloQHt9jOWmsRcvwXwhUn8+r0va1ZjS
+         rJ6D2kIJga+EqekfQkH9W/OrIsWWOrP08zb8uu4b/89uvs7krbfYgpMe6VK4Qg/I1u8j
+         HxUAYlOGv68XJ5jrEYQm9LXROnMuKCpRUXkZoXJLd+loA6JcZ9C2fTGQyMe9FzqFYGc0
+         iD9hYl+dbzuGLQZLUeViMnjepLBglwqla9RxSMsCzNMG+7qLkruQ9J/XaW6BmcC1tMd0
+         U16w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732526074; x=1733130874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4toVw0A5ZDZA3zYjFx66d73EEMSNS7vgXv0fs9opgvU=;
-        b=o3fp+3jAwXEjFB2D1vaj7JTuG3fm869j+bwz1HK0bvuLsHQvhNn6MDONauNWRQM9x7
-         1t3AOpBTGeWUOfBAmlgcdXs2XaLC3onQ8aQ8c28nHulBfp6yJ5tlnYlGTQWwOJfTR3Al
-         kGfzHxaIiOrZ8sYwMAY8P7N7M/NycOJf7kE7hGe8b0cBkH/CI2VGC1ZgqkgpyiAwv4IS
-         FRVr66lys9mqf58UoRBo8V9vUwa15OKcmk3gPv1pE828jV6dcvUNGbHHwgQtS66l+9TC
-         1dzzATNiXKLS8xFnkPNR7RrfMfYQlaEjMdeNIRzAata55pWqFk7ZVrl5QZiQ2q8CrLiC
-         NAdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW09w9c8Z9A3F3W1NawFXJ9Yq+E2wPgWysfDYB9kOV6yshsYaqmHhfipP7wykkAmYgPn4/IGg9OD+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKJFscP9kobok4DPWzvPfygWvQe6ARgcyQ3GVrVuLiCQtqxutO
-	U1x8vRbp8Lm/UYoZiqkA6XGYbTfRjUJY1pOChJVgISRKn4DPtfpkJ71MzWuseL4=
-X-Gm-Gg: ASbGncuW6EbQziYvWspQhy6d3bP2XVj1vnaLQf+PPmdUpqN9C5D8JCCqxAtCah6+DyC
-	f9G7Ny0jXC56b6/eWa8Mp5RN0IclPrZ9NzWf3IGa/Iu3dOyV29W4XzLbVQdXQU5geuivVUBbou9
-	YTKWbIInz68xsWXp5LprmE3yfxHKKOj0Vb/d4s/Wp7ejO3AbwH57wAtGNGE1ZOJNaoWFRRL1S+p
-	1qon7zE6ckZ04UFYCqjCuWfYmn2L++5lCltkJGLsmBaDeMLP97ylW1BiiTA/R2CwL/Xsr6l8H8a
-	wzBxSFS9WMeCH/BlaYPy
-X-Google-Smtp-Source: AGHT+IGzMekzBQYfXvbzxD9izRI1CL/rjOOOx/NwOujkSDTMSARyoXxxyDmvBO3p/5f/oLabAnZ/QA==
-X-Received: by 2002:ac2:4e0c:0:b0:53d:dc0e:4da0 with SMTP id 2adb3069b0e04-53ddc0e56e9mr2499509e87.15.1732526074368;
-        Mon, 25 Nov 2024 01:14:34 -0800 (PST)
-Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa524615e8fsm363089966b.182.2024.11.25.01.14.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 01:14:34 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 25 Nov 2024 10:15:06 +0100
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Dragan Cvetic <dragan.cvetic@amd.com>, linux-gpio@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Wilczynski <kw@linux.com>
-Subject: Re: [PATCH v4 04/10] dt-bindings: misc: Add device specific bindings
- for RaspberryPi RP1
-Message-ID: <Z0RAGkBc-yz5lqN6@apocalypse>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com>
- <173250040873.6640.9720381303445148722.robh@kernel.org>
+        d=1e100.net; s=20230601; t=1732527360; x=1733132160;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SN1ke6h10N1tpIjFi42fcVYTTBA9mbS9XqPXAsZIIgU=;
+        b=uImT+oY7fHjlTlv14OgBlgAjfPXrU3pC3Elzr4wt4MCW8wMhm5hf3xuK7/rvkbZoSi
+         +AilusUfJjxviXvPKlklNghrTvk1uVamQ4zi3eVsVy52FcARD5D6LVJw7wpDP3wQ11eM
+         WXEPn8ZqjPdbk/QMVObh11C6lsbiDHZbIR2AVnx3WcatKf44xHopIWbyLtyTN7ZFNh9E
+         6etqkdVXVp9YmY7mqR5BuGr0++8ttT3uO6rCs/SMJT3IzunTrw4qxvvN411FOGEIPLqs
+         sifSiVnwCVR6N8D39mKPvEZ/486QACOhZfBFD+9dVxukcZX9PiLGf3beaxN7NA3oEpOd
+         ixCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXg8/hxKjEB7gAi0xU7tOIN7UzecpGV/xFeXoZuyqV1P+urFziPGZRfHYMvLTcXdM2ZXKUmei+3BAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzDTH2ofiU6grkokslfdtT437821Q4B4hS9p9y9sJoSVXuFynb
+	REr805lCRDEzCkR8QMN5wkXl6Tv1x2eUpEQt5KVmsyRAWrRiQI4gPp9SzLN3pgQ=
+X-Gm-Gg: ASbGncs47nKqE5K77W72lgIOPIZSe16Y1aHw3eSGVIkT79tyovPyytFRer3gGdElvzI
+	NL1K/K6NiOnruM6gomf+0s4y8FY5erWvyAvFce6jpM6eYoF5gNRIANNSb4mlRnzQ7OHjd3vP3ZL
+	iZbHvNpnpsu9iZXcHguGO8nsjxK0kFyhaWEKWsv2fky3z+yu3iFyn/afupIOdcwvvc3DumAgva4
+	KEniDDlriXqq3BzcPArXNgw1iPdde98gxikgnt3C8NPfiStrGxtXsqT1I118bQ=
+X-Google-Smtp-Source: AGHT+IGGanB6M26FvTKDaJXED8zAo9zRUZhfKFIRCk7WD5/Sjbv4DRD3EJV+JM26XNm588PaSZdgMQ==
+X-Received: by 2002:a05:600c:4704:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-433ce49128cmr97088715e9.21.1732527360218;
+        Mon, 25 Nov 2024 01:36:00 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349dd9a597sm45357745e9.5.2024.11.25.01.35.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 01:35:59 -0800 (PST)
+Message-ID: <970a37f0-ccb4-4c23-972f-4100cb6c4e81@linaro.org>
+Date: Mon, 25 Nov 2024 09:35:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173250040873.6640.9720381303445148722.robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
+ v4 core
+To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "Taniya Das (QUIC)" <quic_tdas@quicinc.com>
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <f7c31279-8492-484c-94c4-893d98f53afb@linaro.org>
+ <2212eace0ed44c439da117fb05f2b1db@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <2212eace0ed44c439da117fb05f2b1db@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+On 25/11/2024 03:49, Renjiang Han (QUIC) wrote:
+>> What help do you need ?
+> Since the GDSC flag has been changed to HW_CTRL_TRIGGER, the v4 core needs to use
+> dev_pm_genpd_set_hwmode to switch the GDSC mode like v6. The video codec has
+> been verified on SC7180 and the result is OK. The same verification has been done on
+> the latest QCS615 and the result is also OK.
+> In addition, since the videocc of QCS615 uses the HW_CTRL_TRIGGER flag, QCS615 and
+> SC7180 both use the v4 core in venus. So the v4 core needs to use
+> dev_pm_genpd_set_hwmode to switch the GDSC mode like v6.
 
-On 20:06 Sun 24 Nov     , Rob Herring (Arm) wrote:
-> 
-> On Sun, 24 Nov 2024 11:51:41 +0100, Andrea della Porta wrote:
-> > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
-> > schema is intended as minimal support for the clock generator and
-> > gpio controller peripherals which are accessible through BAR1.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 74 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 75 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb: clocks@c040018000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+I think you need this tested on sdm845.
 
-Sorry about that, but even if I see that this should be the case (I've dropped
-the clock-name property from raspberrypi,rp1-clock.yaml), I can't reproduce it
-with:
+I can do that for you.
 
-# make W=1 dt_binding_check DT_SCHEMA_FILES=pci1de4,1.yaml
-
-and the output is:
-
-  CHKDT   Documentation/devicetree/bindings
-  LINT    Documentation/devicetree/bindings
-  DTEX    Documentation/devicetree/bindings/misc/pci1de4,1.example.dts
-  DTC [C] Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb
-
-dt-schema seems up to date. Is my command line correct?
-
-Many thanks,
-Andrea
-
+---
+bod
