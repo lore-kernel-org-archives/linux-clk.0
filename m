@@ -1,72 +1,74 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71221B3927;
-	Mon, 25 Nov 2024 15:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82301B4132
+	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547679; cv=none; b=LaP03r7nMGkrQfu5snvX5QfVqhMwegmaiEIMtgz5G7fBMJ4LT+SBxdCSojrSOACCR/VbEl+xW2pebBaAXuLugNtyEH5OD1rrXIQsRsfPpoZYl9mrR0JHaKPF8IBRa0rZcT2IHZy5sfMW9PjVzDpeewyZuHE2it2couKM/mPV0sY=
+	t=1732552061; cv=none; b=B1vdsThAnjmVNAEUh7yZg2O013q8kuuBPqZHl4/l1YBlDbYyC7FpT5fbQzslvxYfMPHqTb+q9PMBuO/nd5BClfwROrMjvH2lZqZaX7+uEi4/m0mCJj0JDh2zI2nRoOdvsQnl62jC2NsVdWqtTCNn1eUGtmHhSidfRGsjR2wbyn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547679; c=relaxed/simple;
-	bh=IDc3s65VgfufqNNVA8rbj6MGucc1mNxpQg9R06Yd0sw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WeEWSSG9Wxv8hBSA7cvUy3jUti55oEbXx5rpOYXAZix2SYXu3gnN4gZSaYToX3jNcZWm8Ocn0gBHHl0XprJc2JHOUdP7glIHF1TJDNa+t05DnLMmNzbpNao1eIW1RQPscrViB6DJbhyXlWsTh50l42KTNmeE2qTGeQhVC0oCU6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mnmMtTTp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1732552061; c=relaxed/simple;
+	bh=R0SfJyrw7C0KxLOqn1gC0wVxvdRJvYjZ2Aw3X8fWg2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5aMzO94XliV/Ps2rurW741Z3tRd9RhmbdenKBGzv+zMDxD+0fWCeUNirnDZiv6r0/g2dyZt15xRyraGz27UwXjGknBwD/RWGLG362XGQMHSwMngFU08x08CxsAeD/1QFwpufAFbAN6vtWlj32LMfsY/Lyajmu/QMr3DD5G/amY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VlaKL87e; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mnmMtTTp"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APAt3tr006831;
-	Mon, 25 Nov 2024 15:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IDc3s65VgfufqNNVA8rbj6MGucc1mNxpQg9R06Yd0sw=; b=mnmMtTTp6dtXIObt
-	prBiMtQo7FGuBzgpcgTLjNRtrZRxxoCkPeZBdCb4CcOV2oEey3MvP92VVJOuEPer
-	3DfvS4IG94zHO6NSpKSu8oCW9jQcGlEwrXwPcHm55ZmqAD0qXMZUbvx+bogFNE0q
-	NolHex9kd0AQPmyeAPMzI2MPxsxyxS+L9MW8vs4gSXPJgDqYrBZu9tXePbliPeZm
-	8cSdHtoW6jFT02foDDVABCdzMCkOH4KzFO+CXWr94/uW1TXNFXqMI6Hf4Uz77EzG
-	Z1il5ZmIfZZZqFgK7nwxDxL97O63XlgLmHZjpo7/oqVkmNZ6GJJUAmlERt9S+Jdy
-	M2gTLA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336mxd5vr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 15:14:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APFETZr004372
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 15:14:29 GMT
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 25 Nov 2024 07:14:28 -0800
-Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
- nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
- 15.02.1544.009; Mon, 25 Nov 2024 07:14:28 -0800
-From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
-To: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>
-CC: "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
-        "Taniya Das
- (QUIC)" <quic_tdas@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        "Vikash Garodia (QUIC)"
-	<quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Subject: RE: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VlaKL87e"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffc81cee68so7985911fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 08:27:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732552058; x=1733156858; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yChQ+Bc3/hLFAIXQy5Qdf3pVGzUQXtJDQxX2P5y2ICQ=;
+        b=VlaKL87ehHzpxul34gLSsW5ZTyFzGpS+H8arNwGCbjDtoYI1kd9VRs6G5d5joRZaQX
+         xXB/COd+UFMIf5kSxolGyh7C8bFAuN3Qm62+Tp+kdhG5xaCwct9i9O5kh/XUUKOLXnzj
+         wbrIgWJ27QZfjEAc15eELznwoogf9IxsoiumGvND/rpxB+zrkDdX08fVBHXdZ427JR1L
+         IgSmYwdt491PETFW+jBXej9uEet+8NPfHDh9yK+b3NX8lymymd1By3BO4zAPXX7GdOUi
+         Qgw+XpSqy1o+EyAjFn/jBYMqR3JRZH2POS4zhAXHiP6ZQRS7RTE8OfWx/VjHs/QqIe8w
+         AXsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732552058; x=1733156858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yChQ+Bc3/hLFAIXQy5Qdf3pVGzUQXtJDQxX2P5y2ICQ=;
+        b=X7mLJSW8m55lLiDXUKW7xlQUF2Msi7jcuS0sq6L0sT4nXXjuI5+mUuAFAe7dffFc12
+         n9LT5zZx0kNaSuTU05o/0Jn6niHwTHnn8SbE1R1pKhgp9SJ8O4ezf57XHfRwCUc8/EJ7
+         H53Lg94Jh9Sys/+8xge+YSycvTK6u7xBl34s25G2AI4gA9nl5QYztcWqCCmh5fJf24KF
+         pHUSNqgRdau/ygsuhBVwHIuuLNdszHyXTCWZ4J8gC10p0yj5Fd+BhYR2WaiD+bKin2Sz
+         vLyHlkw04Q7/LCRhjPwFWkFJBOT7xBT/P+CmBCPl03PBYUZIzunaZWGomDl389Ps/Ihz
+         5Diw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGWceHrLUkMeAap7tXKQE0yJLpJYqSLlpPtj9MVT25zeQHIcwIH1aID6q3+/gQ8DlNL7RqIsNwhOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBKa55b64MsAehIZP5dWNsncdMHSif5D18c7tFb6vVfxBFmf2R
+	LPN5lvP5dAbDPM6+4iLA86qGY+hWRI0KWt+740gx0Bte/lYLZnsLwvU7kjhMVhE=
+X-Gm-Gg: ASbGnctVy/k2a9KLeQMMbop3t5i4+IC4WTS3GCMzZGQknNhm6SZZdN5BzCEK5YeeC96
+	cbKoikhQyNN+7wRQK2pt8qTiaT5wX0rY6HvegMtNb3XzIb/8m5iieKqIvT8oa4ao7Uj3o3HRel9
+	ZjxC6F/a0tLfUxUgvSjew93zwbgg7dl+h2gSlVSGuSST8fWB7WMNguKT63sVLfOu4SMg067hxGD
+	0usRc2pzt06HC2PsgL5kT5FxZrGTongJ+rrCxTAPqAbZ24Bmscu7ROHGlGKVoLdpTi7uXk1mrwh
+	pVX0j0TV02Sg/mpTeSLoCnkvdnkCHQ==
+X-Google-Smtp-Source: AGHT+IEPzuV6qF3LRJebCgOSfgvwIUrR22q8orC9Jdgp0xsNFNCHkZEIt9rCIrv8k5TvvcNBZU9pkQ==
+X-Received: by 2002:a2e:a9ab:0:b0:2fb:6057:e67e with SMTP id 38308e7fff4ca-2ffa71a7b0amr69362691fa.32.1732552057728;
+        Mon, 25 Nov 2024 08:27:37 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d3ee22sm15745961fa.43.2024.11.25.08.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 08:27:36 -0800 (PST)
+Date: Mon, 25 Nov 2024 18:27:34 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+Cc: "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>, 
+	"Taniya Das (QUIC)" <quic_tdas@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
  video GDSC's
-Thread-Topic: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
-Thread-Index: AQHbPMnHbExtF43Cx0+9GIchxuRRY7LDp7qAgABjjACAAHgMAIAAAygAgALeqPCAASq6gP//jDyw
-Date: Mon, 25 Nov 2024 15:14:27 +0000
-Message-ID: <7765000a0f87447e98d827dee5977ca7@quicinc.com>
+Message-ID: <rtmrsvtfukekss4cccnuxgzsm53er5mvgsfshx7xvdwn5vsio2@hgiowygrsmgd>
 References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
  <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
  <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
@@ -75,63 +77,65 @@ References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
  <eec92088-edfb-4d0c-b81d-9d4f1d968b20@linaro.org>
  <b411489f9f2441f7a0f936127678e36b@quicinc.com>
  <CAA8EJpqYSujKXPFkdWcqRpOKZ+dJHQDkYM33Mt5JxuA=Mfs+WQ@mail.gmail.com>
-In-Reply-To: <CAA8EJpqYSujKXPFkdWcqRpOKZ+dJHQDkYM33Mt5JxuA=Mfs+WQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <7765000a0f87447e98d827dee5977ca7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OzGxjbSolOr4rvVNv6v92AOpA1bgYvit
-X-Proofpoint-GUID: OzGxjbSolOr4rvVNv6v92AOpA1bgYvit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- adultscore=0 impostorscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250128
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7765000a0f87447e98d827dee5977ca7@quicinc.com>
 
-T24gTW9uZGF5LCBOb3ZlbWJlciAyNSwgMjAyNCA5OjU1IFBNLCBEbWl0cnkgQmFyeXNoa292IHdy
-b3RlOg0KPiBPbiBNb24sIDI1IE5vdiAyMDI0IGF0IDA3OjMxLCBSZW5qaWFuZyBIYW4gKFFVSUMp
-IDxxdWljX3JlbmppYW5nQHF1aWNpbmMuY29tPiB3cm90ZToNCj4gPiBPbiBTYXR1cmRheSwgTm92
-ZW1iZXIgMjMsIDIwMjQgODoxNyBBTSwgQnJ5YW4gTydEb25vZ2h1ZSB3cm90ZToNCj4gPiA+IE9u
-IDIzLzExLzIwMjQgMDA6MDUsIERtaXRyeSBCYXJ5c2hrb3Ygd3JvdGU6DQo+ID4gPiA+IFRoaXMg
-bGVhdmVzIHNtNzE1MCwgc204MTUwIGFuZCBzbTg0NTAgdW50b3VjaGVkLiBEb24ndCB0aGV5IGFs
-c28gDQo+ID4gPiA+IG5lZWQgdG8gdXNlIEhXX0NUUkxfVFJJR0dFUj8NCj4gPg0KPiA+ID4gSSBi
-ZWxpZXZlIHRoZSBjb3JyZWN0IGxpc3QgaGVyZSBpcyBhbnl0aGluZyB0aGF0IGlzIEhGSV9WRVJT
-SU9OXzRYWCANCj4gPiA+IGluDQo+ID4NCj4gPiA+IFlvdSBjYW4ndCBhcHBseSB0aGUgc2Vjb25k
-IHBhdGNoIGluIHRoaXMgc2VyaWVzIHdpdGhvdXQgZW5zdXJpbmcgdGhlIA0KPiA+ID4gY2xvY2sg
-Y29udHJvbGxlcnMgZm9yIHNkbTg0NSBhbmQgc203MTgwDQo+ID4NCj4gPiA+IGdyZXAgSEZJX1ZF
-UlNJT05fNFhYIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vcWNvbS92ZW51cy9jb3JlLmMNCj4gPg0K
-PiA+ID4gZHJpdmVycy9jbGsvcWNvbS92aWRlb2NjLXNkbTg0NS5jDQo+ID4gPiBkcml2ZXJzL2Ns
-ay9xY29tL3ZpZGVvY2Mtc2M3MTgwLmMNCj4gPg0KPiA+ID4gSG1tLi4gdGhhdCdzIHdoYXQgdGhp
-cyBwYXRjaCBkb2VzLCB0byBiZSBmYWlyIG15IG90aGVyIGVtYWlsIHdhcyBmbGlwcGFudC4NCj4g
-Pg0KPiA+ID4gVGhpcyBpcyBmaW5lIGluIGdlbmVyYWwsIG9uY2Ugd2UgY2FuIGdldCBzb21lIFRl
-c3RlZC1ieTogZm9yIGl0Lg0KPiA+DQo+ID4gPiBUaGF0J3MgbXkgcXVlc3Rpb24gLSB3aGF0IHBs
-YXRmb3JtcyBoYXMgdGhpcyBjaGFuZ2UgYmVlbiB0ZXN0ZWQgb24gPw0KPiA+DQo+ID4gPiBJIGNh
-biBkbyBzZG04NDUgYnV0LCB3ZSdsbCBuZWVkIHRvIGZpbmQgc29tZW9uZSB3aXRoIDcxODAgdG8g
-dmVyaWZ5IElNTy4NCj4gPg0KPiA+IFRoYW5rcyBmb3IgeW91ciBjb21tZW50LiBXZSBoYXZlIHJ1
-biB2aWRlbyBjYXNlIHdpdGggdGhlc2UgdHdvIHBhdGNoZXMgb24gc2M3MTgwLiBUaGUgcmVzdWx0
-IGlzIGZpbmUuDQoNCj4gQSBzaW5nbGUgY2FzZSwgYSB0aG9yb3VnaCB0ZXN0cywgYSBtaXh0dXJl
-IG9mIHN1c3BlbmQmcmVzdW1lIHdoaWxlIHBsYXlpbmcgdmlkZW8gY2FzZXM/DQoNCj4gQWxzbywg
-Y2FuIEkgcGxlYXNlIHJlaXRlcmF0ZSBteSBxdWVzdGlvbjogc203MTUwLCBzbTgxNTAgYW5kIHNt
-ODQ1MCA/DQo+IFNob3VsZCB0aGV5IGFsc28gYmUgY2hhbmdlZCB0byB1c2UgSFdfQ1RSTF9UUklH
-R0VSPw0KPiBOZXh0IHF1ZXN0aW9uLCBzZG02NjAsIG1zbTg5OTYsIG1zbTg5OTg6IGRvIHRoZXkg
-c3VwcG9ydCBIV19DVFJMX1RSSUdHRVI/DQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXcuIFRoZSB2
-aWRlbyBwbGF5YmFjayBhbmQgcmVjb3JkaW5nIGNhc2VzIGluY2x1ZGUgdmlkZW8NCnBhdXNlIGFu
-ZCByZXN1bWUsIGFuZCBmdWxsIHZpZGVvIHBsYXliYWNrLiBUaGUgcmVzdWx0cyBhcmUgZmluZS4N
-CkFsc28sIHRoaXMgY2hhbmdlIGlzIG9ubHkgZm9yIHY0IGNvcmUgKEhGSV9WRVJTSU9OXzRYWCAp
-LiBUaGVyZWZvcmUsIHdlIGhhdmUgb25seSB0ZXN0ZWQgaXQNCm9uIHBsYXRmb3JtcyB1c2luZyB2
-NCBjb3JlLiBXZSBoYXZlIG5vdCB0cmllZCBvdGhlciBwbGF0Zm9ybXMuDQpzbTcxNTAsIHNtODE1
-MCBhbmQgc204NDUwIHNob3VsZCBub3QgdXNlIHZlbnVzIHY0IGNvcmUuIFNvIHRoZXkgbmVlZG4n
-dCB0byB1c2UgSFdfQ1RSTF9UUklHR0VSLg0KDQpCZXN0IFJlZ2FyZHMsDQpSZW5qaWFuZw0K
+On Mon, Nov 25, 2024 at 03:14:27PM +0000, Renjiang Han (QUIC) wrote:
+> On Monday, November 25, 2024 9:55 PM, Dmitry Baryshkov wrote:
+> > On Mon, 25 Nov 2024 at 07:31, Renjiang Han (QUIC) <quic_renjiang@quicinc.com> wrote:
+> > > On Saturday, November 23, 2024 8:17 AM, Bryan O'Donoghue wrote:
+> > > > On 23/11/2024 00:05, Dmitry Baryshkov wrote:
+> > > > > This leaves sm7150, sm8150 and sm8450 untouched. Don't they also 
+> > > > > need to use HW_CTRL_TRIGGER?
+> > >
+> > > > I believe the correct list here is anything that is HFI_VERSION_4XX 
+> > > > in
+> > >
+> > > > You can't apply the second patch in this series without ensuring the 
+> > > > clock controllers for sdm845 and sm7180
+> > >
+> > > > grep HFI_VERSION_4XX drivers/media/platform/qcom/venus/core.c
+> > >
+> > > > drivers/clk/qcom/videocc-sdm845.c
+> > > > drivers/clk/qcom/videocc-sc7180.c
+> > >
+> > > > Hmm.. that's what this patch does, to be fair my other email was flippant.
+> > >
+> > > > This is fine in general, once we can get some Tested-by: for it.
+> > >
+> > > > That's my question - what platforms has this change been tested on ?
+> > >
+> > > > I can do sdm845 but, we'll need to find someone with 7180 to verify IMO.
+> > >
+> > > Thanks for your comment. We have run video case with these two patches on sc7180. The result is fine.
+> 
+> > A single case, a thorough tests, a mixture of suspend&resume while playing video cases?
+> 
+> > Also, can I please reiterate my question: sm7150, sm8150 and sm8450 ?
+> > Should they also be changed to use HW_CTRL_TRIGGER?
+> > Next question, sdm660, msm8996, msm8998: do they support HW_CTRL_TRIGGER?
+> 
+> Thanks for your review. The video playback and recording cases include video
+> pause and resume, and full video playback. The results are fine.
+> Also, this change is only for v4 core (HFI_VERSION_4XX ). Therefore, we have only tested it
+> on platforms using v4 core. We have not tried other platforms.
+> sm7150, sm8150 and sm8450 should not use venus v4 core. So they needn't to use HW_CTRL_TRIGGER.
+
+We don't have venus / iris support for those platforms at all.
+This patch is not about venus, it is about the clock drivers. So
+mentioning venus is quite useless here.
+If these platforms will benefit from HW_CTRL_TRIGGER, then we should
+change them at the same time, before somebody even gets venus/iris on
+them.
+
+-- 
+With best wishes
+Dmitry
