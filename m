@@ -1,26 +1,26 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7D219E819
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB02A192B84
 	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 10:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732530830; cv=none; b=LrN2twywSzMco+P7m9U5AL0Jyzb8wdHdKMqUBb3oQ1NpFVk2ZkdIkirI/lP4KZeZntWfxIcHv7CRvzVqRq1SWF7EHOIMzbkOsJNf6GkgOt27H0jQTLTDo8q0Yfe86Ep4r0SD/bVPN7ZO3EoMLDFmWMhi+uLiVnqXR2sPqhy8ExQ=
+	t=1732530830; cv=none; b=HtyTrAKxvAeApvg7UbVv7U5iZmnPzmNrkdBVRBQI8KvjY1Zr3nLl4bEjQKs5oUP2yDey1nUmrdzhXRb7vklmCImSfZg7MIygpKkmEGRXcDScA+0tQh3m4NinKiMBbFe71Z7tLJjuKutLr0gABmGEE4UKVF4KL5JK8KBJT7+Jcbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732530830; c=relaxed/simple;
-	bh=mS8iXYVjVBdhnzOOGwa018+Hti3jLNwAxmOap9NVCks=;
+	bh=TqMhoV+NZRvuMBxDCg40/WCJJCJojclQ99Ip8Q5RU9w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q0cxv0zuqAs5Gr7gXbo//FygX5p/aXbG7YORlgyRLLY08dAgdMOHJ1xYa2Jc6kdw2Vx6NGdsEYVvLRWOu2+tcbqa1FIJn8Gi4KF7AGxUYFky4DOjEdvfmKpKxQh4HWk1qvratUoLb2JEbBu93NElGldiRwp1Wn7oJX9oFGiyafU=
+	 In-Reply-To:To:Cc; b=fyMp/eZDFVhUu5lEZUI3z4A85UvMt0TQ+2gyRn8mJidXP+ATJh2sM0LnyjwAis01/Rl3YGSG7OTFdH+twiK4SZSOBzvEeSnWWPKE924IiUkYXC1si9KspQvxeEuTwAHQxZAJbFlOnQqPwZX3MNBum4UQQIT4OcDSwJKWPWBaK8c=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1tFWPQ-0001Fo-NO; Mon, 25 Nov 2024 11:33:36 +0100
+	id 1tFWPR-0001Fo-Ch; Mon, 25 Nov 2024 11:33:37 +0100
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Mon, 25 Nov 2024 11:33:22 +0100
-Subject: [PATCH v2 3/4] dt-bindings: intel: add agilex5-based Arrow
+Date: Mon, 25 Nov 2024 11:33:23 +0100
+Subject: [PATCH v2 4/4] arm64: dts: agilex5: initial support for Arrow
  AXE5-Eagle
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -30,7 +30,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241125-v6-12-topic-socfpga-agilex5-v2-3-864256ecc7b2@pengutronix.de>
+Message-Id: <20241125-v6-12-topic-socfpga-agilex5-v2-4-864256ecc7b2@pengutronix.de>
 References: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
 In-Reply-To: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
 To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -41,34 +41,188 @@ To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
  Stephen Boyd <sboyd@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
 X-Mailer: b4 0.14.2
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
 X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Add binding for the Arrow Agilex5-based AXE5-Eagle board.
+The Arrow AXE5-Eagle is an Intel Agilex5 SoCFPGA based board with:
+
+   - 1x PCIe Gen4.0 edge connector
+   - 4-port USB HUB
+   - 2x 1Gb Ethernet
+   - microSD
+   - HDMI output
+   - 2x 10Gb SFP+ cages
+
+As most devices aren't supported mainline yet, this is only the initial
+support for the board.
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/intel,socfpga.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/intel/Makefile                 |   1 +
+ .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 140 +++++++++++++++++++++
+ 2 files changed, 141 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-index 2ee0c740eb56d63cff7767167ee3c640beba0803..03de49222d465584f24cc6c7dfff6ccfe304db46 100644
---- a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-+++ b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
-@@ -24,6 +24,7 @@ properties:
-       - description: Agilex5 boards
-         items:
-           - enum:
-+              - arrow,socfpga-agilex5-axe5-eagle
-               - intel,socfpga-agilex5-socdk
-           - const: intel,socfpga-agilex5
- 
+diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
+index d39cfb723f5b6674a821dfdafb21b12668bb1e0e..3e87d548c532b1a9e38f4489c037c5c4db3a50b8 100644
+--- a/arch/arm64/boot/dts/intel/Makefile
++++ b/arch/arm64/boot/dts/intel/Makefile
+@@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_n6000.dtb \
+ 				socfpga_agilex_socdk.dtb \
+ 				socfpga_agilex_socdk_nand.dtb \
+ 				socfpga_agilex5_socdk.dtb \
++				socfpga_agilex5_axe5_eagle.dtb \
+ 				socfpga_n5x_socdk.dtb
+ dtb-$(CONFIG_ARCH_KEEMBAY) += keembay-evm.dtb
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..c0f6870e7b40a53ca0d685b4109ff24e1409bb0e
+--- /dev/null
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
+@@ -0,0 +1,140 @@
++// SPDX-License-Identifier:     GPL-2.0
++/*
++ * Copyright (C) 2024, Arrow Electronics, Inc.
++ */
++#include "socfpga_agilex5.dtsi"
++
++/ {
++	model = "SoCFPGA Agilex5 Arrow AXE5-Eagle";
++	compatible = "arrow,socfpga-agilex5-axe5-eagle", "intel,socfpga-agilex5";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led-0 {
++			label = "hps_led0";
++			gpios = <&porta 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-1 {
++			label = "hps_led1";
++			gpios = <&porta 7 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		key-0 {
++			label = "hps_sw0";
++			gpios = <&porta 10 0>;
++			linux,input-type = <5>;	/* EV_SW */
++			linux,code = <0x0>;
++		};
++
++		key-1 {
++			label = "hps_sw1";
++			gpios = <&porta 1 0>;
++			linux,input-type = <5>;	/* EV_SW */
++			linux,code = <0x0>;
++		};
++
++		key-2 {
++			label = "hps_pb0";
++			gpios = <&porta 8 1>;
++			linux,code = <187>;		/* KEY_F17 */
++		};
++
++		key-3 {
++			label = "hps_pb1";
++			gpios = <&porta 9 1>;
++			linux,code = <188>;		/* KEY_F18 */
++		};
++	};
++
++	vdd: regulator-vdd {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-supply";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	vdd_3_3: regulator-vdd {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
++};
++
++&gmac2 {
++	status = "okay";
++	phy-mode = "rgmii-id";
++	phy-handle = <&emac2_phy0>;
++
++	mdio0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "snps,dwmac-mdio";
++		emac2_phy0: ethernet-phy@1 {
++			reg = <0x1>;
++		};
++	};
++};
++
++&gpio0 {
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++};
++
++&i2c1 {
++	status = "okay";
++
++	i2c-mux@70 {
++		compatible = "nxp,pca9544";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x70>;
++		status = "okay";
++	};
++};
++
++&osc1 {
++	clock-frequency = <25000000>;
++};
++
++&qspi {
++	status = "okay";
++
++	flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "micron,mt25qu02g", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <100000000>;
++
++		m25p,fast-read;
++		cdns,read-delay = <2>;
++		cdns,tshsl-ns = <50>;
++		cdns,tsd2d-ns = <50>;
++		cdns,tchsh-ns = <4>;
++		cdns,tslch-ns = <4>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
 
 -- 
 2.47.0
