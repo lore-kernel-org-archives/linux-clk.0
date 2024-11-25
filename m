@@ -1,64 +1,64 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECC718CC10
-	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 08:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2139718FC7B
+	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 08:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732524883; cv=none; b=kjsqCCVcKFcTaPMXGlPvtqAJqugnWwL5Ym7emn9RwsIgm9RhkeFEELRkZispdtpuHbWQpPzmCoFY7bHkFJZtN7awF/l3LmfmepWY3HZHyfTC6RAzSO9E7kI2kCz8k+1ZKeR0pORvavFnDtDo7BfEFWE/uC5bNHciEXlDDTCxBOA=
+	t=1732525036; cv=none; b=Fzbr46KIcxuJ4iB0JVQLsHa0XAhreNWSTO4oiQoYpyhih+s0eb8b7gZL555LNicjHcJSC50KgLOv8nXpFLpg+4rHhENQyj0AH1TzydswNF47xLQaJChv4PwZQopxflSl4urjqS4QAeV87xczSKQ5J8aBZskeLgvOkkZvqzTSN3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732524883; c=relaxed/simple;
-	bh=uZFCAWid8rhJHzelkWD3pFnre9T42ijXLP2LF1wPb9E=;
+	s=arc-20240116; t=1732525036; c=relaxed/simple;
+	bh=lGs7WCnVDsN7XxJSV5nbIsOaHiSpnOd0xbhnLSv2cgw=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nA1e4BxHEL0e78OfCrBLFkwtpKeHQiwK3tRsG+3b2Mv1FwGgsZwQdy1gwQsuDGniqhxN0xQ5FMM4/s0Gu1yAzFjVGX/vgGRXy4uxQg+tqYygxTSahwQsm3xQdo7Vh4G0GqnY99kbuZfKWNLo1aWiHWBGVRH0WKaG2wTIDp2be5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TYtW/zP3; arc=none smtp.client-ip=209.85.208.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=USyLhLAsB7dzVjYCpz6yLvusdSRsLbdeyLzmlnaFWwQlmavVODQtQ0EqWMsg7Zy62oXLnYrX2ohxSiaW6MSLTuE6tI3s+pIRhvPFVYm81QkP6Y9zX7ZffF4yKmbtxcK7CUox55xJbwMLTtcHpZrc/0GCFgCKZyL3YcdQug6yFb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Dr/JP/rg; arc=none smtp.client-ip=209.85.208.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TYtW/zP3"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfcb7183deso8840623a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 00:54:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Dr/JP/rg"
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5cefa22e9d5so5058113a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 00:57:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732524879; x=1733129679; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1732525032; x=1733129832; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBZh/dlJgKLPhdmjnm36EVhHzC98YQaW9Lth/5vAKvc=;
-        b=TYtW/zP3oxM1vFpM4KM8y6kvAht7l8o2L3yAU4ZwzteZAKmcbfAw8/WaoqTT3dTtiC
-         cUftivx1BsOxrK0/JqNDCiJc366IyQbjOH4EI6rY7ZiYoX0xhGT2irkgFxMdJcmyAVel
-         c/sjwVbyA4syCPaIRvjcuuZOi6VOS9DkpMBAOnNcGvcnPFrn9zNn6z1FYBNEfhObgdnJ
-         rzU21xHVizGo+uiDf1yW/OlhTtMQ3w39bQL9SOVSncSGPWMPfFo43Nx2Q1m1p1HYCgIK
-         0jqtquHIKJIzjITbwZf4Aif6uFYkC8+8Fu3RC6hb9avaZ1Q0rGptY2c+B4ggNkffJ57D
-         J84Q==
+        bh=vNEkjXcR05MS0wp8vkwMgIPKD9D5sF3FToehB53AVps=;
+        b=Dr/JP/rgWuMDD8gXvo5DbToxBHJOsLqp363vitL2SMxDTGSnehP/kOR1YPCBdVCvZ+
+         +YQ1OFwBBCfdAoz5/6SGQYV3PufeSxM6fTDvRhebkdp6f3TaBSb+bDvqCmpPH1X5gACO
+         BJWyl00o9tsqeOcsE9ufEmEwbF2fxhJXTWK0cyojCBRwkR23UoCOdA2l4lSa/X+vU/dF
+         Av/TKXPbHZ+fUHdCWA7EPsGuMuOopLRmnuIGYlp2fydTIf4l74v5lTb3jTDHwZ9sBrcd
+         r3yvBMQTItzKpcxIGjhmHRz+T8TiRnSATxt9aLQvdaxhCagZ2rPv4+zLpsKGg7UA6qih
+         Q3jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732524879; x=1733129679;
+        d=1e100.net; s=20230601; t=1732525032; x=1733129832;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mBZh/dlJgKLPhdmjnm36EVhHzC98YQaW9Lth/5vAKvc=;
-        b=GvaxzM+us9ZfAPvJXC3x7DZdaru/bj5jB/dzzy6VJzpysW0mMIE1x5DfjmO1LqC32e
-         zRzR8P+akIfkHXvQPw91GLxLC2YcxE1l0Cq+H2HOfApMcBey+5nTIwhc4TbiZHt2eeTX
-         FiNAqDMsNm76B+jAohT+j3ZGuF38vbrA+WbgZvcnI4eqp+EMOaFO8oa6qMfcg5zgIOqC
-         pC8VpVr5SaTHd30CQS0Vc55yrPiOKd77X0pPoHvHB7iAkRnu5Ae48GFLwkjnc84pkw4D
-         HvxLWf+fBJuwE2LoFQ3v8xNtF3zsIa31J7fAFR/LwbmhNA8llufpdWr7tz/XH/EtAT+m
-         3NLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJAwpTlGSO0jboKmblPJK8CyZ1rR27l8CKy5+jXFPsR8lr65QYvKd41X/+OnsVSZCY7oQqhaD2ZSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEgEDc308UM3rwW0YrRStXo6VhpC01+WuVAYAdNyJMP9HOIcRt
-	o49O8jKfN+ev86Ok4iyiJw51i0XqHBO7D1OHF7hXYr7zhoaUsJcHcDlF1cWMd70=
-X-Gm-Gg: ASbGnctoHUxb5986ju1qQemmzxXwVtmvyVDlgYUfDTYW/LVRDglcCEm+1jGdv4OOR6W
-	/sTbRzM40FODxhxqyrsUKppeDel89l5DU7V1XY5aQI3OCFL8/cUfGOzTAgZsjsknbp3IN5oaT0n
-	hIE3mjflJDmtpLn+rvoSUSMrDKn7p505d6bn9DBHzyhLOAnm1XjuJkKiUOT3Fr7eeWd8uYkpxO7
-	Yc7UuwmSurX0Y3Y7qvAV2rjG5yG5PyKuKZFHRrvvgEPw2LA5rbNJWN62uPgElT1SVo9DHjQ2V2E
-	z8Np/DGZmWnqPCaN2qdi
-X-Google-Smtp-Source: AGHT+IFNCFEK1ia8R/Vdi4LB9FLJuTXnKmbw4fkVMzsCxQu2qYrzuZQkQ2EAs+H3uMAiTz2NmcDbIA==
-X-Received: by 2002:a17:907:60ce:b0:aa4:e53f:5fbe with SMTP id a640c23a62f3a-aa509a1c2f9mr1339686366b.19.1732524879322;
-        Mon, 25 Nov 2024 00:54:39 -0800 (PST)
+        bh=vNEkjXcR05MS0wp8vkwMgIPKD9D5sF3FToehB53AVps=;
+        b=jiY0NR5/rs2RMlINTj9vM0Y3aMSg9+PSf/FfYTRyFlp81mdL+GNvGPJ7OBiCVYihxE
+         KXilXgDbrvs1XMi0wpJoudeEeP/tBSoy2jeH/4VD/SXUsHYJw0yIn7WZEha/D0BuHjsy
+         7qulLOJIkCA7ONruq+oLD3Zd/9fETwK2kcgKK2AOg+MtcdgdgbGdZ2ROA15/fQeA4aZX
+         cmqKX6vmIlk4akqj26wacq80E/0cQrRXwcvQaKZIfSHW8iAog5dhuwVcSKA0PLbkC0Mf
+         6Wc2Hkvr9iubjO4zZiJGU/UCfvlYo8V2N7JGbtXVRcE7pDKsYlP5lcqUWOHGZykKOETI
+         WXTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy6l+K6irJbOr5c1U2NFaujEH/ZBIQSHOlU+kYCXKCIHEDVyvUV8/wFqOjBFyjCNW6NXPj3SNNoHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm+RIYPqRoqWfs2qDOrVfzgPiuCJtb2vwzUP35wk/ESIdkuDms
+	FnpXerc8ObXnyKpAq9d/WpeDFkQfrhOS+tEZrVC+NWynIHEaRMiGciDIFavuB8s=
+X-Gm-Gg: ASbGnctkpLfsyRBMeXvRMormUC7YDXVrG29uJfigFWCuTv+ibYTjBaUrbe2Aiy+Cjw+
+	P+JQsS5KPK4lTHxCj3ZqYfFm4EbCo4LSdFzPE7EIHK440fCmn7YeDEj+8H7UlpK67hCCkMNAi2/
+	eRbGS3Kcp12MhGInkbpWtx+JXyhM+fGMwFJnunTCDu7PsbHHG+BIXHhDirG9pVQ4/loTcvkjzGf
+	A0LvrqMew8i0Fxpd+qBUyiSZZBq27h4lLMg4GeMa0kXSVEg3U/ZBgengz1dDVFhnxpbKF2lt7oi
+	nDOWL10xHr79h6Wnvxpm
+X-Google-Smtp-Source: AGHT+IH55hAqFtF1SAZEH6TDiO7aHZVwXL0OCOENrWcyyZFBIRACNLLEe84rTZrGuYqyUatS9TtS7A==
+X-Received: by 2002:a17:906:292a:b0:aa5:1cbd:def8 with SMTP id a640c23a62f3a-aa51cbdeea1mr942300566b.17.1732525032462;
+        Mon, 25 Nov 2024 00:57:12 -0800 (PST)
 Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa51759732asm406733166b.14.2024.11.25.00.54.38
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52f9b9sm442025666b.105.2024.11.25.00.57.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 00:54:38 -0800 (PST)
+        Mon, 25 Nov 2024 00:57:12 -0800 (PST)
 From: Andrea della Porta <andrea.porta@suse.com>
 X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 25 Nov 2024 09:55:11 +0100
+Date: Mon, 25 Nov 2024 09:57:45 +0100
 To: Andrew Lunn <andrew@lunn.ch>
 Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -87,12 +87,11 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Herve Codina <herve.codina@bootlin.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 09/10] arm64: dts: bcm2712: Add external clock for RP1
- chipset on Rpi5
-Message-ID: <Z0Q7b-Qgjqs7NLS2@apocalypse>
+Subject: Re: [PATCH v4 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <Z0Q8CekmPV4fAN6f@apocalypse>
 References: <cover.1732444746.git.andrea.porta@suse.com>
- <8deccbd7ab8915957342a097410473445987b044.1732444746.git.andrea.porta@suse.com>
- <9abb376c-3399-4c2c-8e7c-cea1184ea370@lunn.ch>
+ <22e08939-fa89-4781-824e-1ea01648fb1b@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -101,40 +100,38 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9abb376c-3399-4c2c-8e7c-cea1184ea370@lunn.ch>
+In-Reply-To: <22e08939-fa89-4781-824e-1ea01648fb1b@lunn.ch>
 
 Hi Andrew,
 
-On 20:41 Sun 24 Nov     , Andrew Lunn wrote:
-> On Sun, Nov 24, 2024 at 11:51:46AM +0100, Andrea della Porta wrote:
-> > The RP1 found on Raspberry Pi 5 board needs an external crystal at 50MHz.
-> > Add clk_rp1_xosc node to provide that.
+On 20:26 Sun 24 Nov     , Andrew Lunn wrote:
+> > This patchset is also a first attempt to be more agnostic wrt hardware
+> > description standards such as OF devicetree and ACPI, where 'agnostic'
+> > means "using DT in coexistence with ACPI", as been already promoted
+> > by e.g. AL (see [4]). Although there's currently no evidence it will also
+> > run out of the box on purely ACPI system, it is a first step towards
+> > that direction.
 > 
-> I'm wondering if this is the correct place for this clock. From your
-> description, the bcm2712 itself does not provide the clock. There is a
-> crystal on the board. So the board provides the clock. What happens
-> when the RP1 is used on other boards? Also, does the RP1 need an
-> actual crystal, or can you feed it a clock? Often such inputs are
-> flexible, you can connect a crystal across two pins, or you can feed a
-> clock into one pin.
+> When combined with CONFIG_PCI_DYNAMIC_OF_NODES and this patch series:
+> 
+> https://patchwork.kernel.org/project/linux-pci/cover/20241114165446.611458-1-herve.codina@bootlin.com/
 
-AFAICT the only choice would be a crystal (I'll try to confirm that with
-Rpi folksi, just to be sure).
-In fact, I've expressed your same concern in the dicsussion that followed 
-previous patchset revisions, and it seems that the preferred way is still
-to stick to the current hw: since the crystal is on the same board as bcm2712,
-it should not be described on the overaly.
-I think you're right though on moving the clock definition to the board dts.
-I'm still planning to define the clock in the rp1 overlay if any
-new PCI card will contain it in the future: after all it will not cause any
-clash with the clock defined in the board dts, which could be then removed
-gradually.
+That's great. I'll do some tests as soon as I can start my rpi5 from ACPI,
+I saw there has been some experimentation about it and should be feasible
+to run it succesfuly.
 
-Many thanks,
+> 
+> It probably does work, or is very near to working. Bootlin appear to
+> have the LAN966x working on an ACPI system, and what you are adding is
+> not very different.
+> 
+> I'm also currently playing around in this area, trying to instantiate
+> some complex networking hardware using DT overlays on an ACPI system.
+
+Nice!
+
+Cheers,
 Andrea
 
 > 
-> If a crystal is the only choice, i would probably have it part of the
-> RP1 overlay. If a clock can be used, i would make it a board property.
-> 
-> 	Andrew
+>      Andrew
