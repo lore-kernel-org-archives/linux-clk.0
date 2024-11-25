@@ -1,117 +1,142 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABCF17DFF2;
-	Mon, 25 Nov 2024 10:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F651ABEA0;
+	Mon, 25 Nov 2024 13:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531897; cv=none; b=VUxXEAgTQ8kVvZQBstodBqkqwsBY3XHxYcZ3UbrrlaGYtO+La5gWykdbxnjVURAl1JVoFVem5jiSfrz7JhG+z7hJkrg9Ke4SdD/i5G7gi+I7dAUV7ucg6NuCwUb5dsqj9o3QO0l7wHwfekjb68W/SBohGStywJNncmMvVDp8YM4=
+	t=1732540868; cv=none; b=aUaY3xT/o0cJLzCbDeXglCemjmEMvicq+vBSzAzD/dtB2Wx+kW530fcPIgLxkROZwZ2BHjz17kufh3b4xi+tl1SbgmgpApAjs6qfuR8s0H024e8Upf9P1D9wqSlHGQwWFd2dNp4uIYTbo3jqtwFDOdInGroRJfZKTS1QYyjzPE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531897; c=relaxed/simple;
-	bh=KskUYDOafEEpUyFS31TIrHEYG3ez8mPbthzKMzQhMwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CrqJKyXSkFbzv+YFCZyFmJ6/dqCKIDC/Dsj7XZiOzEUjDBDsOl0LvJmCh9H680odDJAx+ycwA/W+stkPrxY0SRuiCKzc2FXDIjk+gRLt/+s5tenKUUqVQAoo57pLz/UPNPRA5khfcedc9dOG6Vg3YZZIEonDGm0xt1Qo+4pwXKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4tuBI4f; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732540868; c=relaxed/simple;
+	bh=3Z560kziSQXi2my1WMJNnxEGuywtw7Uta9RcrJwEvHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SuooNe8ZwnTtoCOi9CmZaVxtI3RK4K5Q7VXDgNFl/4cisnYCLEltVo3upnd4MsGH9uqvaWCgZcUqIBBWREkcVxVBo2R+qRJY9YR5AL71vWj+oUW+hhKO9OvIiziennBN6Qy0GQ6zXn//BFbSF8CeBwA+qjP4FloJgegOLR388HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkykpNRv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4tuBI4f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B7DC4CECE;
-	Mon, 25 Nov 2024 10:51:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkykpNRv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610F7C4CED2;
+	Mon, 25 Nov 2024 13:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732531896;
-	bh=KskUYDOafEEpUyFS31TIrHEYG3ez8mPbthzKMzQhMwI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V4tuBI4fG0F4rZBd7otOSEQPP6MZn/49rKgMOhYw5SU195j4YAE2EbrRmgjCTH5+o
-	 ZXxT0ul5wTvdRKEeLNaFLjFPQnNIM2Gpoj63/L/Mvj8QDgRmNwoY6pm9O86+QmvuyQ
-	 XN2SQNpg9gJcILOqeBCStLERSTVoleQe20dHU8SpOxmJAGKq2uw/QFK5CdIjrqS/aC
-	 Dl6vk5qBNHqsf4QLK8OTt0oiaIJ99VZS4x5+aI2VbvYescw3ND/FLaXZCJkzxTLgzT
-	 x+EW9BoDuWlY3J2vDM/bhbJVAl0IeMKXL5pkBIZswADmG9VbMvZawktnNp6haUQv4m
-	 +bAk6pPGq8gHA==
-Message-ID: <017ae0c6-b221-4486-a2b9-d29b5a82e7de@kernel.org>
-Date: Mon, 25 Nov 2024 11:51:30 +0100
+	s=k20201202; t=1732540866;
+	bh=3Z560kziSQXi2my1WMJNnxEGuywtw7Uta9RcrJwEvHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YkykpNRv7e4NVi4Q3z8ffrcHtigFITXEIxN/5bTSjYdSwaphoIBGxqmG+/Xb46TI7
+	 lHS/FY0EsAUAz1aYRprNvi6QHcyObwv8xHeGqJ05oGkRLX0e0qKg8xflK6oz4lAXf7
+	 YhDyUrt9P4stTb7wr4Cj6faNKuabUVK/uT5TkuTTJ9M8Dgc7pTuXnnsJprFpWQcWsr
+	 oJtVByZrcaZVyAzTcmcBTi8a4HHu7UG0bHWY3Xph56B8h9135/UIM79mhNBzIGU96v
+	 JXhwAWUIHHY0CyLinhprle6eH9ZMJ6gAhhpTH9YT2OXbHgesMLMXeqrXQl9GDr9GhR
+	 cR4Addly+n0lQ==
+Date: Mon, 25 Nov 2024 07:21:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dragan Cvetic <dragan.cvetic@amd.com>, linux-gpio@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Wilczynski <kw@linux.com>
+Subject: Re: [PATCH v4 04/10] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <20241125132104.GA1520508-robh@kernel.org>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com>
+ <173250040873.6640.9720381303445148722.robh@kernel.org>
+ <Z0RAGkBc-yz5lqN6@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: dts: agilex5: initial support for Arrow
- AXE5-Eagle
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
- Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de
-References: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
- <20241125-v6-12-topic-socfpga-agilex5-v2-4-864256ecc7b2@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241125-v6-12-topic-socfpga-agilex5-v2-4-864256ecc7b2@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0RAGkBc-yz5lqN6@apocalypse>
 
-On 25/11/2024 11:33, Steffen Trumtrar wrote:
-> The Arrow AXE5-Eagle is an Intel Agilex5 SoCFPGA based board with:
+On Mon, Nov 25, 2024 at 10:15:06AM +0100, Andrea della Porta wrote:
+> Hi Rob,
 > 
->    - 1x PCIe Gen4.0 edge connector
->    - 4-port USB HUB
->    - 2x 1Gb Ethernet
->    - microSD
->    - HDMI output
->    - 2x 10Gb SFP+ cages
-> 
-> As most devices aren't supported mainline yet, this is only the initial
-> support for the board.
-> 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> ---
+> On 20:06 Sun 24 Nov     , Rob Herring (Arm) wrote:
+> > 
+> > On Sun, 24 Nov 2024 11:51:41 +0100, Andrea della Porta wrote:
+> > > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> > > schema is intended as minimal support for the clock generator and
+> > > gpio controller peripherals which are accessible through BAR1.
+> > > 
+> > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > ---
+> > >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 74 +++++++++++++++++++
+> > >  MAINTAINERS                                   |  1 +
+> > >  2 files changed, 75 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > > 
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb: clocks@c040018000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+> > 	from schema $id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The error comes from this schema and...
 
-Best regards,
-Krzysztof
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
+> 
+> Sorry about that, but even if I see that this should be the case (I've dropped
+> the clock-name property from raspberrypi,rp1-clock.yaml), I can't reproduce it
+> with:
+> 
+> # make W=1 dt_binding_check DT_SCHEMA_FILES=pci1de4,1.yaml
+
+You've limited testing to schema files matching pci1de4,1.yaml.
+
+> 
+> and the output is:
+> 
+>   CHKDT   Documentation/devicetree/bindings
+>   LINT    Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/misc/pci1de4,1.example.dts
+>   DTC [C] Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb
+> 
+> dt-schema seems up to date. Is my command line correct?
+> 
+> Many thanks,
+> Andrea
+> 
