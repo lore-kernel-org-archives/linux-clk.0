@@ -1,84 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDF42500CC;
-	Mon, 25 Nov 2024 18:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7E029CF0;
+	Mon, 25 Nov 2024 21:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732560761; cv=none; b=Wi49aw2xMEV4kfkSx8lxeNMTE6rv4315AJsKkgFOQ1uADtZg+57NpwVoyC+ACe69XTfaTVQ+DEbeI6ZosvdDpOosbqm3JFrd3YC/7bQQvUGhzc1K7tbRhtbYg7AACN27ZCXdDL9BXR+FinUDlHbibMOa5uVFtV9Q9Ba2Upr6gns=
+	t=1732569348; cv=none; b=hv2e9UoQ67ANdoj8z3ZEtnZY3pr91f2JQ/xOq2X2zJZAOTPTC0OsXUcG+wKdUF06LFy1CZ+xGySc5/niXh0WUthYvZzCjuftXaX3/EZNjEJQvZZ+zNRDZdYhinMDRHlE7JZBmwFOuJTeHB2luskolQDU5ejVWU9gk8Mpfk6+Djk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732560761; c=relaxed/simple;
-	bh=TY99x0IpbFO6YvRlx+38xE8lgcecMaQXkkhNXzicSLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKO41FPCBYZYfbT7tUhsHeSrjqy5u88kx0z3PIcpuOMxL+n8RcnOmAScjNPFSbIMrJ9cKGdqfjLiEvloEhhdh2Jc/mp57vlQx4UKWYrUHCpRMsqtHxTY+YYxNNdfbTeBJLe+dcOJ1y4ITekfQDgRiGeKFK6ERqRX7ZED1TCGFdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFCF6+cZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732569348; c=relaxed/simple;
+	bh=gZUSQSvzc5YB54ywrjqYGNjPec8n8bTjZdHFTF+U4ZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FNf06gCxuyLqFnLkKuCUm9zvBjg3uuc2Lb8gzedoxYvyIBGoknuBKesEfe22B+Nl86FxSpc5Wd5QdFvH+7vFzhmsuyu6liDxtZOoQmN3HcwAgnSIlCpXRNHicCZMn3rmKvmb61Srq0bx7UItkjdDqL+y6BSVUB6GXMRkLmkGzjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FP97FTA6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFCF6+cZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2264C4CECE;
-	Mon, 25 Nov 2024 18:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732560761;
-	bh=TY99x0IpbFO6YvRlx+38xE8lgcecMaQXkkhNXzicSLA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZFCF6+cZZWhWGxlmbnGL/sZL20MZ3Z/PG4VK8v+gEoQFyoVXFLwKzf0tWQZ6aaLHv
-	 KdxDsTQ1qSQfFOH2jl6JCIs9AuxHcvKKIXVwWtPajFnui4ZjKSrya/JYhFO2cGxUiW
-	 BApU4wgd4WEKnyOcG06PKbvP84EXUuhI6H582ziohWVaAJRnY07M3WnrRnAae61UGH
-	 HH5huIkEJuVvYgw5QooOono/BdN4kqdLmMGpBpx0fwwnoI4mK90KIClv55ipP3Pmi4
-	 6HqyccXoOYwuZ1nB+cCCndDFEGrTeUz0EuZIHAK41E1uOVPlkiOOlZp7ckSnbVQNA4
-	 RHltR0B9IQazg==
-Date: Mon, 25 Nov 2024 18:52:36 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Biju Das <biju.das.au@gmail.com>
-Subject: Re: [PATCH 04/12] dt-bindings: clock: renesas: Document RZ/G3E SoC
- CPG
-Message-ID: <20241125-kimono-disloyal-3079f20c5e76@spud>
-References: <20241122124558.149827-1-biju.das.jz@bp.renesas.com>
- <20241122124558.149827-5-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FP97FTA6"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APElRuv010591;
+	Mon, 25 Nov 2024 21:15:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aRy7i9uA1euDkAdBW7ircoYxa+MN9A0sO7imEMW1MRs=; b=FP97FTA6tVsbL+e8
+	N2N9koDUg/N8D51CEBTxavLCzam3xpGOugoTwfhe39+/F57Gy/+tXE3kr/WtGaOP
+	zspKC3/urcUIMb0nmDUl+b+tq3nejc9Exo5RFqv8NY35SDw7cGYChNV/jT65VsSF
+	/Yakx4VaiyZcNyZGROFERachBRKp/FTjcPLoJW/ikD+/VGyCgU+GGkEwl5+0KwyO
+	ii4wE77yyRWsay+Ehy1q//k+jJ7pqx3XQ41/RafwZ+ThRwQ39qqLHmtp5haGY5JM
+	Pgrh8j3WR/1Qxf34/qXEDJyfREZTbD7iTrNQItH3cPLeiWj/6wSne4JXwP74zuVR
+	qNlb+g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434mx729v4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 21:15:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APLFemB029058
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 21:15:40 GMT
+Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
+ 2024 13:15:40 -0800
+Message-ID: <a76a8f0e-9710-4312-b399-2ab907c08a57@quicinc.com>
+Date: Mon, 25 Nov 2024 13:15:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8X3esi+6+p4mCx3X"
-Content-Disposition: inline
-In-Reply-To: <20241122124558.149827-5-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: qcom: Add SM8750 GCC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+ <20241112002807.2804021-5-quic_molvera@quicinc.com>
+ <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W1FQ7tyF1K3GLgFS5QbMEhJ6HH8kSSgr
+X-Proofpoint-ORIG-GUID: W1FQ7tyF1K3GLgFS5QbMEhJ6HH8kSSgr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxlogscore=992 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250176
 
 
---8X3esi+6+p4mCx3X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 12:45:40PM +0000, Biju Das wrote:
-> Document the device tree bindings for the Renesas RZ/G3E SoC
-> Clock Pulse Generator (CPG).
->=20
-> Also define constants for the core clocks of the RZ/G3E SoC.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On 11/20/2024 12:17 AM, Krzysztof Kozlowski wrote:
+> On Mon, Nov 11, 2024 at 04:28:04PM -0800, Melody Olvera wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Add bindings documentation for the SM8750 General Clock Controller.
+> Subject prefix - use proper file prefix:
+> dt-bindings: clock: qcom,sm8650-gcc:
+>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,sm8650-gcc.yaml       |   8 +-
+>>   include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
+>>   2 files changed, 232 insertions(+), 2 deletions(-)
+>>   create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>> index 976f29cce809..e50b5f1cad75 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>> @@ -13,11 +13,15 @@ description: |
+>>     Qualcomm global clock control module provides the clocks, resets and power
+>>     domains on SM8650
+>>   
+>> -  See also:: include/dt-bindings/clock/qcom,sm8650-gcc.h
+>> +  See also: include/dt-bindings/clock/qcom,sm8650-gcc.h
+>> +            include/dt-bindings/reset/qcom,sm8750-gcc.h
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,sm8650-gcc
+>> +    items:
+> No need for items, simpler is just enum.
+>
+>> +      - enum:
+>> +          - qcom,sm8650-gcc
+>> +          - qcom,sm8750-gcc
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Hey Krzysztof; I want to draw you attention to the discussion on patch 
+v2 5/7 of this series;
+We realized these bindings don't match with the driver; notably SM8750 
+doesn't have the
+pcie1 clocks available on SM8650. To this end, it seems prudent to bring 
+back the separate
+bindings file from ps 1.
 
---8X3esi+6+p4mCx3X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0THdAAKCRB4tDGHoIJi
-0oJKAQD9qynagjUnwORRJ9HoYTe1ctoGF45/085LRM4fsvP7aAD45U7p65MgUxKt
-FMHx1Sv5ZklLuQ7SeXOn1tIdWErBBw==
-=RVe4
------END PGP SIGNATURE-----
-
---8X3esi+6+p4mCx3X--
+Thanks,
+Melody
