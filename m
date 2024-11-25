@@ -1,116 +1,90 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A9190692;
-	Mon, 25 Nov 2024 10:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634AA1993B6
+	for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 10:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732529630; cv=none; b=D/AnjT/w//+AgUWgvbIeXAWe7pd1ARHnBq3chDPVymZy9PErCEo7gKrHRCbQdQtYHKdJcUJwsWjFpNPEXBV05LSzhQ3OCs4G4THqozeGOUsp662tUU1oUmFmvoObcRJ8RpTb3R9HOVakYWgcbRmNMXi0ds01t8qPHqPdbw5j62o=
+	t=1732530827; cv=none; b=j/+mDoP4pMVCSN8KLU3zjwdyJ9+8Cr3Lz8b57vewj09X+GDEhSczZ87R1Cpll4IN3SHayt4AYfGtYJXYCq9sV0llo2mpBTQ9GaFMJoXioVvVJfHHlm0/u05K4kcPVOvOD+bdPKWKvVrgSjoe1D73PsT2bMV3kBrdYxTb2+jh844=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732529630; c=relaxed/simple;
-	bh=FL1Xtx4bsLEhMt9psLVFQieYZHh55oVV4re7iSg1qTs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tx3nFMYutmw4Of9x5ZH1oSEvwn2GtEjbYTzjVS8MOcsM47qJUMYEfFORo6auqe3K5pEBQZB+4oA1BgQDLr6e7Y7W0S1QGI0hDF6/P6TAp60u/4ypR5MCYeMXytXTzT94W5zM4T/mfWyemfkWdsff3Lq9739XtRz2s8pQBcoslos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jjBST2s5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jjBST2s5"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AOKeosm004853;
-	Mon, 25 Nov 2024 10:13:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FL1Xtx4bsLEhMt9psLVFQieYZHh55oVV4re7iSg1qTs=; b=jjBST2s5SrHm6xBl
-	KuStHG4o83IC0jgipN8BbWrSzM+bEsrtaZ+oR0hcnXdBTi8U2aiRtvKpvYa4HlgW
-	AyhDFluubTLEaHt6PFkxUF6pU9LlCG/Pyg9ejSYMMUq5OJgmlauRfQQBx41X0uCg
-	GnqqaIpdpqHGI6RyYKN/Dc4MJNQ+0BVZF7oTUvCN/Jpukv4TgWMWFDwn15Ssh4ML
-	BmsVh0+5KmzU3nDnwQbZ0IqQYZEpUUHBKSHy3u7iudCrPDJp8yLUehoL8DiTQ5Uk
-	a5RkjorBOAK9/9DNBFiM1VvKDgwF6F3oBL3p3DklrKXUign1jirz1qiJ/R/F+zh8
-	Jxxdfw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626ca41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 10:13:44 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APADhjf028407
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 10:13:43 GMT
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 25 Nov 2024 02:13:42 -0800
-Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
- nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
- 15.02.1544.009; Mon, 25 Nov 2024 02:13:42 -0800
-From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
-To: "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "Taniya Das
- (QUIC)" <quic_tdas@quicinc.com>
-Subject: RE: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
- v4 core
-Thread-Topic: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
- v4 core
-Thread-Index: AQHbPMnFuhcs0/Hoi02bEw0vEs1J7rLEhxwAgALQD9CAAPA8gP//ffFA
-Date: Mon, 25 Nov 2024 10:13:42 +0000
-Message-ID: <c82b5395b35a4d13a05f3826243070e0@quicinc.com>
-References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
- <f7c31279-8492-484c-94c4-893d98f53afb@linaro.org>
- <2212eace0ed44c439da117fb05f2b1db@quicinc.com>
- <970a37f0-ccb4-4c23-972f-4100cb6c4e81@linaro.org>
-In-Reply-To: <970a37f0-ccb4-4c23-972f-4100cb6c4e81@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732530827; c=relaxed/simple;
+	bh=7AN7KnYg4xrZ/VWYLA3GhcGWJkKWBkzUHxgeBRRx80s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=F3oTgkiyt7+0LvPidNEc7Ls+5HA6EtXaGZ8QCFH31g5++P2dEXc89EAokEL+GGVsof/Xo7zcbYyyaXazdWO2wRUgBSowXTgYWkFgau/pJN3RU5zp/QJolkY25HFQwHtFRlH4RZpz3PwKrbC80jzRyjOOsPcOSab1kwFZkhE2jKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1tFWPP-0001Fo-CQ; Mon, 25 Nov 2024 11:33:35 +0100
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Date: Mon, 25 Nov 2024 11:33:20 +0100
+Subject: [PATCH v2 1/4] arm64: dts: agilex5: add gpio0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3UsuNXl0orZiNfae8AET-Enpy3M7XSFF
-X-Proofpoint-ORIG-GUID: 3UsuNXl0orZiNfae8AET-Enpy3M7XSFF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=573
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250087
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241125-v6-12-topic-socfpga-agilex5-v2-1-864256ecc7b2@pengutronix.de>
+References: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
+In-Reply-To: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-T24gTW9uZGF5LCBOb3ZlbWJlciAyNSwgMjAyNCA1OjM2IFBNLCBCcnlhbiBPJ0Rvbm9naHVlIHdy
-b3RlOg0KPiBPbiAyNS8xMS8yMDI0IDAzOjQ5LCBSZW5qaWFuZyBIYW4gKFFVSUMpIHdyb3RlOg0K
-PiA+ID4gPiBXaGF0IGhlbHAgZG8geW91IG5lZWQgPw0KPiA+IFNpbmNlIHRoZSBHRFNDIGZsYWcg
-aGFzIGJlZW4gY2hhbmdlZCB0byBIV19DVFJMX1RSSUdHRVIsIHRoZSB2NCBjb3JlIA0KPiA+IG5l
-ZWRzIHRvIHVzZSBkZXZfcG1fZ2VucGRfc2V0X2h3bW9kZSB0byBzd2l0Y2ggdGhlIEdEU0MgbW9k
-ZSBsaWtlIHY2LiANCj4gPiBUaGUgdmlkZW8gY29kZWMgaGFzIGJlZW4gdmVyaWZpZWQgb24gU0M3
-MTgwIGFuZCB0aGUgcmVzdWx0IGlzIE9LLiBUaGUgDQo+ID4gc2FtZSB2ZXJpZmljYXRpb24gaGFz
-IGJlZW4gZG9uZSBvbiB0aGUgbGF0ZXN0IFFDUzYxNSBhbmQgdGhlIHJlc3VsdCBpcyBhbHNvIE9L
-Lg0KPiA+IEluIGFkZGl0aW9uLCBzaW5jZSB0aGUgdmlkZW9jYyBvZiBRQ1M2MTUgdXNlcyB0aGUg
-SFdfQ1RSTF9UUklHR0VSIA0KPiA+IGZsYWcsIFFDUzYxNSBhbmQNCj4gPiBTQzcxODAgYm90aCB1
-c2UgdGhlIHY0IGNvcmUgaW4gdmVudXMuIFNvIHRoZSB2NCBjb3JlIG5lZWRzIHRvIHVzZSANCj4g
-PiBkZXZfcG1fZ2VucGRfc2V0X2h3bW9kZSB0byBzd2l0Y2ggdGhlIEdEU0MgbW9kZSBsaWtlIHY2
-Lg0KDQo+IEkgdGhpbmsgeW91IG5lZWQgdGhpcyB0ZXN0ZWQgb24gc2RtODQ1Lg0KDQo+IEkgY2Fu
-IGRvIHRoYXQgZm9yIHlvdS4NClRoYW5rcyBmb3IgeW91ciByZXBseS4gWWVzLCB3ZSBuZWVkIHRv
-IHRlc3Qgb24gc2RtODQ1LiBQbGVhc2UgaGVscCBydW4gdGhlc2UgdHdvIGNoYW5nZXMgb24gc2Rt
-ODQ1LiBUaGFua3MgZm9yIHlvdXIgaGVscCBhZ2Fpbi4NCj4gLS0tDQo+IGJvZA0K
+gpio0 is the same as gpio1 with a different base address.
+
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+---
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+index 1162978329c1637aa0fd9a4adef16a9ae5017ac3..b1debf0317d0576f7b00200e9593481671183faa 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+@@ -222,6 +222,25 @@ i3c1: i3c@10da1000 {
+ 			status = "disabled";
+ 		};
+ 
++		gpio0: gpio@10c03200 {
++			compatible = "snps,dw-apb-gpio";
++			reg = <0x10c03200 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&rst GPIO0_RESET>;
++
++			porta: gpio-controller@0 {
++				compatible = "snps,dw-apb-gpio-port";
++				reg = <0>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				snps,nr-gpios = <24>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
+ 		gpio1: gpio@10c03300 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0x10c03300 0x100>;
+
+-- 
+2.47.0
+
