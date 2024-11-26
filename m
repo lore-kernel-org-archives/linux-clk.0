@@ -1,192 +1,163 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0532366;
-	Tue, 26 Nov 2024 11:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F5C1C36;
+	Tue, 26 Nov 2024 14:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732619027; cv=none; b=AyhwHfipCv5L/p/Xt0H+7e3JO05Zc31Gw+xmGdGwxXwfcMcAQpsmLZ0yEfkStoMGoPixRF6CrZeTEtcDclxiZdEklC+jEXVLS8+05oo72LiaGbEDL7T4RBodiT9LVO6iEGTR/YaUTYvhAbvt8WpKsB0c2rDjLztJ3jMbKyBNUX8=
+	t=1732631534; cv=none; b=NYSSBQ1K1Z3fbq2XsRTZKZ76GFDOrR3HT72jGkktscDx12aAVdwG7lFzJW3LL1uszipQwwMc0NK5ftTPicQUUnLeIizAunmqu5KmGjhiSNdA36AvGpABHVwEXGpEiMTs1UY15h5cyK7orJl50RNkUvo6OObcVTX8eNIKpFJGG1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732619027; c=relaxed/simple;
-	bh=6Z23awsBbOP6OgQ+o/XZYsLEbMzvF/Bu6+MuhtkIPiI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h8ykoMEh7IxpQGK5Qpz8z+DQDU4VFNKHji2XqIs7RhUBVwr4VoyyhDToRamkEYQujQ/OAnUPgjeRQq0wrn4NCzWgjtPxG3VMpJQBhqywYxj0gZpgiHFYj1rQTzlT3CA6jBaElzqTwsE9I61aQjuHdF5+QY5kSC3WKS0QRfOSL5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dGxOjP4Z; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1732631534; c=relaxed/simple;
+	bh=ufwLq/hepWd8Zhi0T5Z2rKCIOMMzX59F6ACCSuFg6Tk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jAvHhmOvLAqAPge5zIsu3MDAqvfQDm8Z0tdXY0RPk8iZ31OMZCnKeUqThrLploG7zM8Waz1rqOxM5xbMOw/nvfyjwaKe0FoQvsUIiyQMe1oNzpZKePzTJa/7bvQQgHJwmvXw2voOudV1kM368oW7KFGdLxCxPrq0+2tWEe+cILw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=LqOIXcsx; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=JLb0ZdQ2; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dGxOjP4Z"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2138140004;
-	Tue, 26 Nov 2024 11:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732619017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qIA4RDGJqq407wcmAgXUIpGA4Wmfra8Ng+61C/q9qs=;
-	b=dGxOjP4ZvCxQVdk1DkvAOxtspwrRNnjALhmi/ccJI/bJi4pEOSyW1c9xyiiF9U648W0kWk
-	jnXj12nGCKJz8JXIk047HqrQvNv4XID/J7+tvT5tp0Vdxb+ttSUfSLtBNlHOpnH8TIeJPl
-	IVwiw7RvJ8gD1ZEN90Ko4nU4OYvAz+wfz+ONxKBV8WDK/6fVbotTWHZxG/+pqoR6Qz/Kz9
-	AWcEGlAWi7Znia0fNB2Oce/Png0sULaIpyCXr/cdO4amdTnyf813ES29D6M4K7/4MXQEmd
-	V4ORwkluE/FjB8muTuKZUK3V8Mtp/MgCAvZUwLgN5ZjcLCxrDDd/KH6+LwJu+Q==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
- <festevam@gmail.com>,  Marek Vasut <marex@denx.de>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,  linux-clk@vger.kernel.org,
-  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  dri-devel@lists.freedesktop.org,  Abel
- Vesa <abel.vesa@linaro.org>,  Herve Codina <herve.codina@bootlin.com>,
-  Luca Ceresoli <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@ge.com>,
-  stable@vger.kernel.org
-Subject: Re: [PATCH 0/5] clk: Fix simple video pipelines on i.MX8
-In-Reply-To: <55bb77b4-5172-4b4a-aaea-df6972a417dc@nxp.com> (Liu Ying's
-	message of "Tue, 26 Nov 2024 14:49:38 +0800")
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-	<b98fdf46-3d09-4693-86fe-954fc723e3a6@nxp.com>
-	<87zflrpp8w.fsf@bootlin.com>
-	<55bb77b4-5172-4b4a-aaea-df6972a417dc@nxp.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 26 Nov 2024 12:03:35 +0100
-Message-ID: <87h67uw92w.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="LqOIXcsx";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="JLb0ZdQ2"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id B96E7122FE26;
+	Tue, 26 Nov 2024 06:32:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1732631524; bh=ufwLq/hepWd8Zhi0T5Z2rKCIOMMzX59F6ACCSuFg6Tk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LqOIXcsxLuQzPlvURJwIGw2l9ZVHof1hoiav6amj7EfC3z9IeH/L/O1KYlo2cTwoZ
+	 1TW9VBPq4IDf9kOiMlsXb1XmZxTestIonui53VH0GkyduYDg1SU4CWkxDQHmSyqNah
+	 JRUL/t6N+JqSk+omcghnN/QzdZpBxnZE8yu6hSL1cDhqREPsXmzhpD3ICzY3zjOBh+
+	 B1urE+kxq2lpJgjiO+uvD1JsyxdvzitiiOrNWhmdEQ3PPSuQb8/oHN/hUbVOLW+DFX
+	 3GQL6WybLX4lQBmtCLwODkFDzCy23QEot/nhqTw1BT39QrRrxuWPdZbcpZcjUxCN7G
+	 BvkF/TIgwGljA==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
+ header.d=4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id 1K28dH7PxUPH; Tue, 26 Nov 2024 06:31:59 -0800 (PST)
+Received: from localhost.localdomain (unknown [119.39.112.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 20610122FE1A;
+	Tue, 26 Nov 2024 06:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1732631519; bh=ufwLq/hepWd8Zhi0T5Z2rKCIOMMzX59F6ACCSuFg6Tk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JLb0ZdQ2sbAxuzHfsd4408ZeCj8kDWn0aXxXxL5Xz01HXKbhHMGg/uXmzC7IvO4JI
+	 k1KbBhLo+7Tryn3PgeRArgnpWQ+bk/G0XaaZAApcQlK0vcDT16FycfXmVLiofKH0Dh
+	 jLo6QF0trfZrjWouK9MqGa8/a2pinB0hNT+lOnpG9k+bHE4oA1O1xiUAXbtpbQweyg
+	 zkiEgf+n2T0WzGfrtIs6FtB4xLrYzBX19VVEqeMnlHTU87wj0s99BOxpihRK9zdGZB
+	 pAL1SAu1b75fQgvVkPn6h5JYV3oyzKUwFz7QcSTC0nygXQpIqNNAkxjA1Z2ZxF7XvG
+	 Og17MlFdEH/Zg==
+From: Haylen Chu <heylenay@4d2.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Haylen Chu <heylenay@4d2.org>
+Subject: [PATCH v3 0/3] Add clock controller support for Spacemit K1
+Date: Tue, 26 Nov 2024 14:31:23 +0000
+Message-ID: <20241126143125.9980-2-heylenay@4d2.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Liu,
+The clock tree of Spacemit K1 is managed by several independent
+controllers in different SoC parts. In this series, all clock hardwares
+in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
+driver, CPU cores and UARTs could be brought up (see below). More clocks
+will be implemented later soon.
 
->>> The
->>> pixel clock can be got from LDB's remote input LCDIF DT node by
->>> calling of_clk_get_by_name() in fsl_ldb_probe() like the below patch
->>> does. Similar to setting pixel clock rate, I think a chance is that
->>> pixel clock enablement can be moved from LCDIF driver to
->>> fsl_ldb_atomic_enable() to avoid on-the-fly division ratio change.
->>=20
->> TBH, this sounds like a hack and is no longer required with this series.
->
-> Pixel clock is an input signal to LDB, which is reflected in LDB block
-> diagram in i.MX8MP TRM(see Figure 13-70) where "CLOCK" goes into LDB
-> along with "DATA", "HSYNC", "VSYNC", "DATA_EN" and "CONTROL".  So,
-> fsl,ldb.yaml should have documented the pixel clock in clocks and
-> clock-names properties, but unfortunately it doesn't and it's too late
-> to do so.  The workaround is to get the pixel clock from LCDIF DT node
-> in the LDB driver.  I would call it a workaround rather than a hack,
-> since fsl,ldb.yaml should have documented the pixel clock in the first
-> place.
->
->>=20
->> You are just trying to circumvent the fact that until now, applying a
->> rate in an upper clock would unconfigure the downstream rates, and I
->> think this is our first real problem.
->
-> I'm still not a fan of setting CLK_SET_RATE_PARENT flag to the LDB clock
-> and pixel clocks.  If we look at the bigger picture, the first real
-> problem is probably how to support both separated video PLLs and shared
-> video PLL.
->
->>=20
->>> https://patchwork.kernel.org/project/linux-clk/patch/20241114065759.334=
-1908-6-victor.liu@nxp.com/
->>>
->>> Actually, one sibling patch of the above patch reverts ff06ea04e4cf
->>> because I thought "fixed PLL rate" is the only solution, though I'm
->>> discussing any alternative solution of "dynamically changeable PLL
->>> rate" with Marek in the thread of the sibling patch.
->>=20
->> I don't think we want fixed PLL rates. Especially if you start using
->
-> I don't want fixed PLL rates, either...
->
->> external (hot-pluggable) displays with different needs: it just does not
->
-> ... but, considering the problem of how to support separated/shared video
-> PLLs, I think we have to accept the fixed PLL rates.  So, unfortunately
-> some video modes read from EDID cannot fly.  If there is an feasible
-> alternative solution, it will be good to implement it, but till now I
-> don't see any.
+No device tree changes are included since Spacemit K1 UART needs two
+clocks to operate, but for now the driver gets only one. I would like to
+defer the changes until this is resolved.
 
-Can you please remind me what your exact display setup (and their
-required pixel clocks) is?
+This driver has been tested on BananaPi-F3 board and successfully
+brought up I2C, RTC, mmc and ethernet controllers. A clock tree dump
+could be obtained here[1].
 
-AFAIU, you don't want to use dynamic calculations for the PLL because it
-breaks your use case with HDMI. Of course this is a very limited use
-case, because using a static rate means almost a single type of display
-can be plugged.
+[1]: https://gist.github.com/heylenayy/ebc6316692dd3aff56575dbf0eb4f1a9
 
-The clock subsystem will not recalculate the video_pll1 if you can
-achieve a perfect rate change using the LDB/PIX divisors. So let me
-propose the below addition to this series. With the below diff, your
-setup should still work with assigned clock rates, while letting us
-handle our calculations dynamically.
+Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
 
-The addition I am now proposing is to remove CLK_SET_RATE_PARENT to both
-media_disp[12]_pix clocks. This should actually fix your situation while
-keeping pixel clocks accurate as far it is possible as the LDB clock
-will change video_pll1 only if the PLL rate is not suitable for it in
-the first place. And then, there will be no other clock messing with
-this PLL. This is probably a safer approach, which should still allow
-accurate dynamic rate calculations for "simple" setups *and* let the
-static assignations work otherwise:
+Changed from v2
+- dt-binding fixes
+- misc improvements in code
+- drop unnecessary spinlock in the driver
+- implement missing bus clocks
+- Link to v2: https://lore.kernel.org/all/SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
 
--       hws[IMX8MP_CLK_MEDIA_DISP2_PIX] =3D imx8m_clk_hw_composite_bus_flag=
-s("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET=
-_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
-+       hws[IMX8MP_CLK_MEDIA_DISP2_PIX] =3D imx8m_clk_hw_composite_bus_flag=
-s("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_NO_=
-RATE_CHANGE_DURING_PROPAGATION);
-[...]
--       hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite_bus_flag=
-s("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET=
-_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
-+       hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite_bus_flag=
-s("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_NO_=
-RATE_CHANGE_DURING_PROPAGATION);
+Changed from v1
+- add SoC prefix (k1)
+- relicense dt-binding header
+- misc fixes and style improvements for dt-binding
+- document spacemit,k1-syscon
+- implement all APBS, MPMU, APBC and APMU clocks
+- code cleanup
+- Link to v1: https://lore.kernel.org/all/SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
 
-Can you please give this proposal a try?
+Haylen Chu (3):
+  dt-bindings: clock: spacemit: Add clock controllers of Spacemit K1 SoC
+  dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+  clk: spacemit: Add clock support for Spacemit K1 SoC
 
-[...]
+ .../bindings/clock/spacemit,k1-ccu.yaml       |   57 +
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |   86 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/spacemit/Kconfig                  |   20 +
+ drivers/clk/spacemit/Makefile                 |    5 +
+ drivers/clk/spacemit/ccu-k1.c                 | 1747 +++++++++++++++++
+ drivers/clk/spacemit/ccu_common.h             |   62 +
+ drivers/clk/spacemit/ccu_ddn.c                |  146 ++
+ drivers/clk/spacemit/ccu_ddn.h                |   85 +
+ drivers/clk/spacemit/ccu_mix.c                |  296 +++
+ drivers/clk/spacemit/ccu_mix.h                |  336 ++++
+ drivers/clk/spacemit/ccu_pll.c                |  198 ++
+ drivers/clk/spacemit/ccu_pll.h                |   80 +
+ include/dt-bindings/clock/spacemit,k1-ccu.h   |  246 +++
+ 15 files changed, 3366 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/spacemit,k1-ccu.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+ create mode 100644 drivers/clk/spacemit/Kconfig
+ create mode 100644 drivers/clk/spacemit/Makefile
+ create mode 100644 drivers/clk/spacemit/ccu-k1.c
+ create mode 100644 drivers/clk/spacemit/ccu_common.h
+ create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+ create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+ create mode 100644 drivers/clk/spacemit/ccu_mix.c
+ create mode 100644 drivers/clk/spacemit/ccu_mix.h
+ create mode 100644 drivers/clk/spacemit/ccu_pll.c
+ create mode 100644 drivers/clk/spacemit/ccu_pll.h
+ create mode 100644 include/dt-bindings/clock/spacemit,k1-ccu.h
 
->> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
->> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
->> @@ -177,6 +177,17 @@ static void fsl_ldb_atomic_enable(struct drm_bridge=
- *bridge,
->>         mode =3D &crtc_state->adjusted_mode;
->>=20=20
->>         requested_link_freq =3D fsl_ldb_link_frequency(fsl_ldb, mode->cl=
-ock);
->> +       /*
->> +        * Dual cases require a 3.5 rate division on the pixel clocks, w=
-hich
->> +        * cannot be achieved with regular single divisors. Instead, dou=
-ble the
->> +        * parent PLL rate in the first place. In order to do that, we f=
-irst
->> +        * require twice the target clock rate, which will program the u=
-pper
->> +        * PLL. Then, we ask for the actual targeted rate, which can be =
-achieved
->> +        * by dividing by 2 the already configured upper PLL rate, witho=
-ut
->> +        * making further changes to it.
->> +        */
->> +       if (fsl_ldb_is_dual(fsl_ldb))
->> +               clk_set_rate(fsl_ldb->clk, requested_link_freq * 2);
->
-> I don't think i.MX6SX LDB needs this, because the "ldb" clock's parent
-> is a mux clock with "ldb_di0_div_3_5" or "ldb_di0_div_7" parents.
 
-Ah, you mean we should only do this in the imx8 case, right?
+base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+prerequisite-patch-id: 47dcf6861f7d434d25855b379e6d7ef4ce369c9c
+prerequisite-patch-id: 77787fe82911923aff15ccf565e8fa451538c3a6
+prerequisite-patch-id: b0bdb1742d96c5738f05262c3b0059102761390b
+prerequisite-patch-id: 3927d39d8d77e35d5bfe53d9950da574ff8f2054
+prerequisite-patch-id: a98039136a4796252a6029e474f03906f2541643
+prerequisite-patch-id: c95f6dc0547a2a63a76e3cba0cf5c623b212b4e6
+prerequisite-patch-id: 66e750e438ee959ddc2a6f0650814a2d8c989139
+prerequisite-patch-id: 29a0fd8c36c1a4340f0d0b68a4c34d2b8abfb1ab
+prerequisite-patch-id: 0bdfff661c33c380d1cf00a6c68688e05f88c0b3
+prerequisite-patch-id: 99f15718e0bfbb7ed1a96dfa19f35841b004dae9
+-- 
+2.47.0
 
-Thanks,
-Miqu=C3=A8l
