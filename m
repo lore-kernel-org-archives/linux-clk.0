@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B286A28F5;
-	Tue, 26 Nov 2024 14:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47F619995A;
+	Tue, 26 Nov 2024 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632518; cv=none; b=G7OQ0ag38186cGXj0+e/S+ZJc3SwUYNrZpjQsjoE9H6ZU7kk44c6dZePZ9HirO8GR8zbR70GRmqlF9GP3OXY/ko1lnKsZtFtUo22vxpJ+3W+NgIaJa7fbFbe+cDpKUjw8SNEPdb62Vjle9ZUmpRs6pqCo+CnTA88Y/AP2cjsj44=
+	t=1732632635; cv=none; b=qB+X5up1QkbgGvzmdG0w78ZgkdeseNYa7kVKGHBl0wJdfnzKTlZrtJnDpKkBGVwdwqBocoi6rOecBTZiMN5NA62IWd/VJfb7LDBoLqIugIEiixuAp77TM2eNz1sgTM9rV65apXRg1TZmFdKgUHJFJTk1/NXph2iDpE7a+FieE5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632518; c=relaxed/simple;
-	bh=UWMmLOb48Cslo60AINMqs75+15z/Wodb7L/G+tl2Wv8=;
+	s=arc-20240116; t=1732632635; c=relaxed/simple;
+	bh=i9SV05dkevmKXvAdd7JUzuAFpeqs0xHM3L5wHG258AM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jyMn6QJXYQivWC6aEw8KwY1e0yqvopLs2wdddd6Ch5T2sAysIDad4S7KEFsV9g8AYCwmVfSQ2//njOHcWcRjr+hkOF1ZAJARXVUah9Xo/4YPQ8Xj5ZY/L2RTzAbN2hZokTG5Or+/f6A/sjvNrTaNzXNvmtib2GDq+gTtZXqwRho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxNbk1Ii; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=l+BddTel2zalbB27G/LsWyKDtCQnHKpOAb7GO2Fkggdz7PDHJ2xF5c69zfKh0yaTRyPknLZbajAJH9vIoR1vAaUnAwxYNGStdJIzUbQ50z13Ny4UZZxgXzStQYoo5PeAZQ5Ji5uWFZqAVMfGsdX5xfVAJ4wHd9tKL6nWPlhUuwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAm7CCuL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxNbk1Ii"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9ADC4CECF;
-	Tue, 26 Nov 2024 14:48:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAm7CCuL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E5D8C4CED3;
+	Tue, 26 Nov 2024 14:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732632518;
-	bh=UWMmLOb48Cslo60AINMqs75+15z/Wodb7L/G+tl2Wv8=;
+	s=k20201202; t=1732632635;
+	bh=i9SV05dkevmKXvAdd7JUzuAFpeqs0xHM3L5wHG258AM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CxNbk1Ii4ro6NglDuQN89WyHwk+nQlPCJ6vYcEOLlSktW4qAzbsOR74hd9CB2Kk1Y
-	 0DSfBidSV9t9i9gftZsjLcfTzLZgzU5TbL77cjxdlmzZ5ELAwCIw3Z6BkyUq8Gi9Me
-	 nLV3Mo7HLL3+Qwf4O1G8YW8BgSxprULQK6zWYXJM5zpQIQN/A2aDqIcPaCwvg+rJsu
-	 Iwe/NRySAmdUhMXHkcr+LR489LFJ1vQCtZURJ414KOAvhvNwMxIGLIWGb8wLvseDdY
-	 uX8P3KKxMDra9qODsu9/SsRb3vqrHejJyHXJRM7aDr/Wxu8/bEQn2ZR0H52Kh2TZcw
-	 eznDa/zxgeUnQ==
-Message-ID: <64bf96a3-e28c-4c47-b7b3-e227bbaa7aee@kernel.org>
-Date: Tue, 26 Nov 2024 15:48:33 +0100
+	b=aAm7CCuLhrXigkkUfQOL4N5x+deJQ9uf1CgqVWelfHSNtAM+iVCyIWN8ZW5I7dUG3
+	 egxsKLBXc/cK65JvKSC+NZtlh1dM2dVvHg15dtpV59o1/SeNbYhfUinZwaKOTEpfUj
+	 3QBpA2nll6j3zfQ4ADBHyfpUsrPck++2epVbpKTh1+e8IGZZHM/k/Ey+oVEYspBX7v
+	 pChgS6GnjKLkv6cLqxLmxOd9Jyhvzm0MNC5ChYjsZXbXbXfXrKDckrzZSN3ojO8TiR
+	 v/85Jern0rqH01Kpk56x5bCI/1wkKrIBm0kO7oMNbVo/KdgwLUwIafILIY8uMfofSj
+	 Xq+mgxNoerOTw==
+Message-ID: <711362cf-5f4c-49e3-b771-38dfb441bc4c@kernel.org>
+Date: Tue, 26 Nov 2024 15:50:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
+Subject: Re: [PATCH v3 2/3] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
 To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
  <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -46,7 +45,7 @@ Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
  Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
  Jisheng Zhang <jszhang@kernel.org>
 References: <20241126143125.9980-2-heylenay@4d2.org>
- <20241126143125.9980-3-heylenay@4d2.org>
+ <20241126143125.9980-5-heylenay@4d2.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,40 +91,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241126143125.9980-3-heylenay@4d2.org>
+In-Reply-To: <20241126143125.9980-5-heylenay@4d2.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/11/2024 15:31, Haylen Chu wrote:
+> +examples:
+> +  - |
+> +    osc_32k: clock-32k {
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <32000>;
+> +        clock-output-names = "osc_32k";
+> +        #clock-cells = <0>;
+> +    };
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - spacemit,k1-ccu-apbs
-> +      - spacemit,k1-ccu-mpmu
-> +      - spacemit,k1-ccu-apbc
-> +      - spacemit,k1-ccu-apmu
+> +    vctcxo_1m: clock-1m {
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <1000000>;
+> +        clock-output-names = "vctcxo_1m";
+> +        #clock-cells = <0>;
+> +    };
 > +
-> +  clocks:
-> +    maxItems: 4
+> +    vctcxo_3m: clock-3m {
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <3000000>;
+> +        clock-output-names = "vctcxo_3m";
+> +        #clock-cells = <0>;
+> +    };
 > +
-> +  clock-names:
-> +    items:
-> +      - const: osc_32k
+> +    vctcxo_24m: clock-24m {
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <24000000>;
+> +        clock-output-names = "vctcxo_24m";
+> +        #clock-cells = <0>;
+> +    };
 
-osc
-
-> +      - const: vctcxo_1m
-> +      - const: vctcxo_3m
-> +      - const: vctcxo_24m
-> +
-> +  spacemit,mpmu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the syscon managing "Main PMU (MPMU)" registers. It is used to
-> +      check PLL lock status.
-
-Why your example does not have it? Example code is supposed to be complete.
+Drop all above. Your changelog is poor - does not explain this at all.
+Write changelogs which detail what you did and why.
 
 Best regards,
 Krzysztof
