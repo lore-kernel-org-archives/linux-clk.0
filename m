@@ -1,225 +1,192 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD5D19D8B2
-	for <linux-clk@vger.kernel.org>; Tue, 26 Nov 2024 07:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0532366;
+	Tue, 26 Nov 2024 11:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732606669; cv=none; b=rB3aU7W9IVUQ0zZgIagW7Fz+4rSozYYlLoqSYiiqixzEEfJimoU8F9n5pcPCU+5bLbx5yooTdOYXtNPSDFs1rQZDhj30uppQhOkBWcmftjHR/+1s9cwTDzpwVGYZR7BTQbhl6T2QDkhIyuOrPQCcZkBsJ9jgu9lXudsD8UVejuI=
+	t=1732619027; cv=none; b=AyhwHfipCv5L/p/Xt0H+7e3JO05Zc31Gw+xmGdGwxXwfcMcAQpsmLZ0yEfkStoMGoPixRF6CrZeTEtcDclxiZdEklC+jEXVLS8+05oo72LiaGbEDL7T4RBodiT9LVO6iEGTR/YaUTYvhAbvt8WpKsB0c2rDjLztJ3jMbKyBNUX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732606669; c=relaxed/simple;
-	bh=z0R18S0d0POXSq+hvwQl136nVU+kLIn61Jdmo0ILmVI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=TnDEybSueWRl+WVWcMcryQBE9lUWijjkhy0GUisqmq3yHKz8j9lk/fc9MrX/MpGYDKgXcpbgpszyJO2H2rIc2txuv4VGNpA02s56H8ZKlPtoEqyTAKGZ/5FUkm/1zca04ppiyf7V1ArtcLJzjaMehWtK2v/6ppVODuR9uPM0GRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H05zmFpZ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1732619027; c=relaxed/simple;
+	bh=6Z23awsBbOP6OgQ+o/XZYsLEbMzvF/Bu6+MuhtkIPiI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h8ykoMEh7IxpQGK5Qpz8z+DQDU4VFNKHji2XqIs7RhUBVwr4VoyyhDToRamkEYQujQ/OAnUPgjeRQq0wrn4NCzWgjtPxG3VMpJQBhqywYxj0gZpgiHFYj1rQTzlT3CA6jBaElzqTwsE9I61aQjuHdF5+QY5kSC3WKS0QRfOSL5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dGxOjP4Z; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H05zmFpZ"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fc968b3545so55850811fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2024 23:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732606665; x=1733211465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0S15AS2+IAWhOlFxUJLerXC5aMLzjf0hnvf3dDW0dVY=;
-        b=H05zmFpZd6oyjPH135nfaMtXtxfpK51ERmjX/jR+nfys4gPoleB+yzDI70AznkredK
-         /iWH13REwqcwxPYY3CTSmVf3Ygt3rNXnCbVr1rdNQ2e7jjMZC9XhRxikkXBSzWahIpzr
-         AWuMjwUDvnsA14Lq4RFHyxo+HlI3mYNNrTgKyqXk8JTiGlgnswI7E4HbWW+iP7qsgYua
-         AmhUrbxIrFOo0FKQsPWQnL0XHIZmxYMYujuGnxXFhNNt+Y9qeiT7JTIrt5GptLGuJb39
-         +z4puzpS38r7J9fE8uMi+BWAOzDEy7OWI+Il1NP9PfRx3d9MWe1w8X5qULdpnSEtvykU
-         Z0hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732606665; x=1733211465;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0S15AS2+IAWhOlFxUJLerXC5aMLzjf0hnvf3dDW0dVY=;
-        b=YaMNggVm4+AG9DjU63r4aXIIIpjZjdbFBhgAMoFXucBdxbPHJEulYznuLnOZlhTlWp
-         l+F2qiCHxWvQSOnYDzeBEocSX4vDcVoTfcBBdX+zdkei5XsHn82Ua8ehyRXARCdZ0/+h
-         zzQR6m97cwPlGMPUlg9/lA6YA4Tdy14fxIFfEPzp8NdglgZP38FJ+CFxYXT2F/b/Z/Ux
-         vwlyjYrdPKsH/itvfrtSUIk6WNiKFRD2zizTwLvVfoN37V7uwk0h+YnlyqNV+HGqZbn9
-         ItH8JKz1bbPdj1MiNICIO1WJ7sYmayxLmGBLRkl6V/DoI8aRvuMyn4b8+Tg8DJZOWgtr
-         8S8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXqHWuioABQeSO7wLZQY2tqTs/SZHEvTFu4jHpPzbAq4m8GwRRMdYzPQ5dsy/PWOg9+Xt6lfBbFraI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWR6BOVxBJdlJbHF6FsZPhSH6MPcYMdbVs3sjeJJSnznl6Ra/I
-	P18+YH18ui9A2sx4WlnvpePlghJ4kf2bfUT3ZR8v1ViP7mrGeG5JsdBf2uLS8iU=
-X-Gm-Gg: ASbGncuFahpUWkVIywmBnY/Yh3Uq8mvYkfQjn1wOMABcnQ8EYiMfSwSOUfeDswQ3ZAS
-	05jgUt9Z1JS0AcdNAYukfV8cNnJH8/KuDtExq2TYoyNDyIVfaYz7J59aGCU/aZETYB61bKP30iF
-	/ygSCcohAf8XL+Oqvjf/AkWbihOK8WPbidk9ezPRMORn5EqByU4Rrxygt7AqOM9CkQOeQBjdD/V
-	LnQqmh/z2Ro5ycd7ZmGTELJAk6wb+p8EaFwpuQfrznOR0i9Bkzzgd/A0cEiv2IcACKm9mmxXTtD
-	XO4YOoWLkhIem1w=
-X-Google-Smtp-Source: AGHT+IHSvd8+Okq1rWT0Gwj+Ojl6/8fdOcG083wycHgqsDoXJ6KPadO0/SSu0+2RmVjYC6Koyhifvg==
-X-Received: by 2002:a05:651c:b0b:b0:2ff:d03c:bcda with SMTP id 38308e7fff4ca-2ffd03cbda5mr3060351fa.9.1732606665534;
-        Mon, 25 Nov 2024 23:37:45 -0800 (PST)
-Received: from [127.0.0.1] (85-76-116-93-nat.elisa-mobile.fi. [85.76.116.93])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffb61bde51sm10798881fa.30.2024.11.25.23.37.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 23:37:44 -0800 (PST)
-Date: Tue, 26 Nov 2024 09:37:40 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_5/7=5D_clk=3A_qcom=3A_Add_supp?=
- =?US-ASCII?Q?ort_for_GCC_clock_controller_on_SM8750?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <3d9d3d18-9028-4dbc-8e72-3ed70edc97f4@quicinc.com>
-References: <20241112002807.2804021-1-quic_molvera@quicinc.com> <20241112002807.2804021-6-quic_molvera@quicinc.com> <n4h4jvxrsyahgmxedfsifhgmarw4rzn2cbg5pcvzo4ll3edziq@vgpvjco5hyb4> <f2bf7790-7387-4eb6-8e1e-e555a20a717b@quicinc.com> <xjfdqtiauxzmes3hwtgknjglu5rkp4mnyktsaxqtb7xmzsa2zx@phlkamgm47x4> <3d9d3d18-9028-4dbc-8e72-3ed70edc97f4@quicinc.com>
-Message-ID: <B5649FBA-0B04-462D-AEC9-DE228E05A806@linaro.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dGxOjP4Z"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2138140004;
+	Tue, 26 Nov 2024 11:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732619017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qIA4RDGJqq407wcmAgXUIpGA4Wmfra8Ng+61C/q9qs=;
+	b=dGxOjP4ZvCxQVdk1DkvAOxtspwrRNnjALhmi/ccJI/bJi4pEOSyW1c9xyiiF9U648W0kWk
+	jnXj12nGCKJz8JXIk047HqrQvNv4XID/J7+tvT5tp0Vdxb+ttSUfSLtBNlHOpnH8TIeJPl
+	IVwiw7RvJ8gD1ZEN90Ko4nU4OYvAz+wfz+ONxKBV8WDK/6fVbotTWHZxG/+pqoR6Qz/Kz9
+	AWcEGlAWi7Znia0fNB2Oce/Png0sULaIpyCXr/cdO4amdTnyf813ES29D6M4K7/4MXQEmd
+	V4ORwkluE/FjB8muTuKZUK3V8Mtp/MgCAvZUwLgN5ZjcLCxrDDd/KH6+LwJu+Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  Marek Vasut <marex@denx.de>,  Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>,  linux-clk@vger.kernel.org,
+  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  dri-devel@lists.freedesktop.org,  Abel
+ Vesa <abel.vesa@linaro.org>,  Herve Codina <herve.codina@bootlin.com>,
+  Luca Ceresoli <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@ge.com>,
+  stable@vger.kernel.org
+Subject: Re: [PATCH 0/5] clk: Fix simple video pipelines on i.MX8
+In-Reply-To: <55bb77b4-5172-4b4a-aaea-df6972a417dc@nxp.com> (Liu Ying's
+	message of "Tue, 26 Nov 2024 14:49:38 +0800")
+References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
+	<b98fdf46-3d09-4693-86fe-954fc723e3a6@nxp.com>
+	<87zflrpp8w.fsf@bootlin.com>
+	<55bb77b4-5172-4b4a-aaea-df6972a417dc@nxp.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 26 Nov 2024 12:03:35 +0100
+Message-ID: <87h67uw92w.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On 25 November 2024 23:31:58 EET, Melody Olvera <quic_molvera@quicinc=2Ecom=
-> wrote:
+Hi Liu,
+
+>>> The
+>>> pixel clock can be got from LDB's remote input LCDIF DT node by
+>>> calling of_clk_get_by_name() in fsl_ldb_probe() like the below patch
+>>> does. Similar to setting pixel clock rate, I think a chance is that
+>>> pixel clock enablement can be moved from LCDIF driver to
+>>> fsl_ldb_atomic_enable() to avoid on-the-fly division ratio change.
+>>=20
+>> TBH, this sounds like a hack and is no longer required with this series.
 >
->
->On 11/18/2024 5:59 PM, Dmitry Baryshkov wrote:
->> On Mon, Nov 18, 2024 at 11:30:58AM -0800, Melody Olvera wrote:
->>>=20
->>> On 11/15/2024 7:34 AM, Dmitry Baryshkov wrote:
->>>> On Mon, Nov 11, 2024 at 04:28:05PM -0800, Melody Olvera wrote:
->>>>> From: Taniya Das <quic_tdas@quicinc=2Ecom>
->>>>>=20
->>>>> Add support for GCC Clock Controller for SM8750 platform=2E
->>>>>=20
->>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc=2Ecom>
->>>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc=2Ecom>
->>>>> ---
->>>>>    drivers/clk/qcom/Kconfig      |    9 +
->>>>>    drivers/clk/qcom/Makefile     |    1 +
->>>>>    drivers/clk/qcom/gcc-sm8750=2Ec | 3274 ++++++++++++++++++++++++++=
-+++++++
->>>>>    3 files changed, 3284 insertions(+)
->>>>>    create mode 100644 drivers/clk/qcom/gcc-sm8750=2Ec
->>>>>=20
->>>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>>>> index ef89d686cbc4=2E=2E26bfb607235b 100644
->>>>> --- a/drivers/clk/qcom/Kconfig
->>>>> +++ b/drivers/clk/qcom/Kconfig
->>>>> @@ -1130,6 +1130,15 @@ config SM_GCC_8650
->>>>>    	  Say Y if you want to use peripheral devices such as UART,
->>>>>    	  SPI, I2C, USB, SD/UFS, PCIe etc=2E
->>>>> +config SM_GCC_8750
->>>>> +	tristate "SM8750 Global Clock Controller"
->>>>> +	depends on ARM64 || COMPILE_TEST
->>>>> +	select QCOM_GDSC
->>>>> +	help
->>>>> +	  Support for the global clock controller on SM8750 devices=2E
->>>>> +	  Say Y if you want to use peripheral devices such as UART,
->>>>> +	  SPI, I2C, USB, SD/UFS, PCIe etc=2E
->>>>> +
->>>>>    config SM_GPUCC_4450
->>>>>    	tristate "SM4450 Graphics Clock Controller"
->>>>>    	depends on ARM64 || COMPILE_TEST
->>>>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->>>>> index b09dbdc210eb=2E=2E1875018d1100 100644
->>>>> --- a/drivers/clk/qcom/Makefile
->>>>> +++ b/drivers/clk/qcom/Makefile
->>>>> @@ -143,6 +143,7 @@ obj-$(CONFIG_SM_GCC_8350) +=3D gcc-sm8350=2Eo
->>>>>    obj-$(CONFIG_SM_GCC_8450) +=3D gcc-sm8450=2Eo
->>>>>    obj-$(CONFIG_SM_GCC_8550) +=3D gcc-sm8550=2Eo
->>>>>    obj-$(CONFIG_SM_GCC_8650) +=3D gcc-sm8650=2Eo
->>>>> +obj-$(CONFIG_SM_GCC_8750) +=3D gcc-sm8750=2Eo
->>>>>    obj-$(CONFIG_SM_GPUCC_4450) +=3D gpucc-sm4450=2Eo
->>>>>    obj-$(CONFIG_SM_GPUCC_6115) +=3D gpucc-sm6115=2Eo
->>>>>    obj-$(CONFIG_SM_GPUCC_6125) +=3D gpucc-sm6125=2Eo
->>>>> diff --git a/drivers/clk/qcom/gcc-sm8750=2Ec b/drivers/clk/qcom/gcc-=
-sm8750=2Ec
->>>>> new file mode 100644
->>>>> index 000000000000=2E=2Efaaefa42a039
->>>>> --- /dev/null
->>>>> +++ b/drivers/clk/qcom/gcc-sm8750=2Ec
->>>>> @@ -0,0 +1,3274 @@
->>>>> +// SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
->>>>> +/*
->>>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc=2E All right=
-s reserved=2E
->>>>> + */
->>>>> +
->>>>> +#include <linux/clk-provider=2Eh>
->>>>> +#include <linux/mod_devicetable=2Eh>
->>>>> +#include <linux/module=2Eh>
->>>>> +#include <linux/platform_device=2Eh>
->>>>> +#include <linux/regmap=2Eh>
->>>>> +
->>>>> +#include <dt-bindings/clock/qcom,sm8750-gcc=2Eh>
->>>>> +
->>>>> +#include "clk-alpha-pll=2Eh"
->>>>> +#include "clk-branch=2Eh"
->>>>> +#include "clk-pll=2Eh"
->>>>> +#include "clk-rcg=2Eh"
->>>>> +#include "clk-regmap=2Eh"
->>>>> +#include "clk-regmap-divider=2Eh"
->>>>> +#include "clk-regmap-mux=2Eh"
->>>>> +#include "clk-regmap-phy-mux=2Eh"
->>>>> +#include "common=2Eh"
->>>>> +#include "gdsc=2Eh"
->>>>> +#include "reset=2Eh"
->>>>> +
->>>>> +enum {
->>>>> +	DT_BI_TCXO,
->>>>> +	DT_BI_TCXO_AO,
->>>>> +	DT_PCIE_0_PIPE_CLK,
->>>>> +	DT_SLEEP_CLK,
->>>>> +	DT_UFS_PHY_RX_SYMBOL_0_CLK,
->>>>> +	DT_UFS_PHY_RX_SYMBOL_1_CLK,
->>>>> +	DT_UFS_PHY_TX_SYMBOL_0_CLK,
->>>>> +	DT_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
->>>> This doesn't match Documentation/devicetree/bindings/clock/qcom,sm865=
-0-gcc=2Eyaml
->>> Hmmm I see what seems to have happened here=2E You're correct; this do=
-esn't
->>> match the bindings
->>> in sm8650-gcc=2E The v1 patchset had a new bindings file which matched=
- the
->>> sm8650 bindings, but also
->>> didn't match the driver; however we only seemed to catch that the two
->>> bindings matched and not the
->>> fact that they didn't match the drivers=2E
->> I don't see v1=2E Please bring bindings back=2E
->
->Will do=2E
+> Pixel clock is an input signal to LDB, which is reflected in LDB block
+> diagram in i.MX8MP TRM(see Figure 13-70) where "CLOCK" goes into LDB
+> along with "DATA", "HSYNC", "VSYNC", "DATA_EN" and "CONTROL".  So,
+> fsl,ldb.yaml should have documented the pixel clock in clocks and
+> clock-names properties, but unfortunately it doesn't and it's too late
+> to do so.  The workaround is to get the pixel clock from LCDIF DT node
+> in the LDB driver.  I would call it a workaround rather than a hack,
+> since fsl,ldb.yaml should have documented the pixel clock in the first
+> place.
 >
 >>=20
->>> In terms of remedy I see two options=2E I'm fairly certain the driver =
-here is
->>> correct, so we can either
->>> add the sm8750 bindings file back and remove the two lines about the P=
-CIE 1
->>> clocks or adjust the
->>> sm8650 binding to encompass both sm8650 and sm8750=2E It's unclear to =
-me how
->>> precedented the latter
->>> is; certainly having a single bindings file encompass both chips is
->>> feasible, but I think I'm currently
->>> leaning towards bringing back the original bindings file as that seems=
- more
->>> precedented=2E Lmk
->>> your thoughts=2E
->> How are you thinking to change SM8650 bindings without breaking the ABI
->> / backwards compatibility?
+>> You are just trying to circumvent the fact that until now, applying a
+>> rate in an upper clock would unconfigure the downstream rates, and I
+>> think this is our first real problem.
 >
+> I'm still not a fan of setting CLK_SET_RATE_PARENT flag to the LDB clock
+> and pixel clocks.  If we look at the bigger picture, the first real
+> problem is probably how to support both separated video PLLs and shared
+> video PLL.
 >
->Giant if-then (read: poorly)=2E
-
-I'd say, this means a separate file=2E
-
+>>=20
+>>> https://patchwork.kernel.org/project/linux-clk/patch/20241114065759.334=
+1908-6-victor.liu@nxp.com/
+>>>
+>>> Actually, one sibling patch of the above patch reverts ff06ea04e4cf
+>>> because I thought "fixed PLL rate" is the only solution, though I'm
+>>> discussing any alternative solution of "dynamically changeable PLL
+>>> rate" with Marek in the thread of the sibling patch.
+>>=20
+>> I don't think we want fixed PLL rates. Especially if you start using
 >
->Thanks,
->Melody
+> I don't want fixed PLL rates, either...
+>
+>> external (hot-pluggable) displays with different needs: it just does not
+>
+> ... but, considering the problem of how to support separated/shared video
+> PLLs, I think we have to accept the fixed PLL rates.  So, unfortunately
+> some video modes read from EDID cannot fly.  If there is an feasible
+> alternative solution, it will be good to implement it, but till now I
+> don't see any.
 
+Can you please remind me what your exact display setup (and their
+required pixel clocks) is?
+
+AFAIU, you don't want to use dynamic calculations for the PLL because it
+breaks your use case with HDMI. Of course this is a very limited use
+case, because using a static rate means almost a single type of display
+can be plugged.
+
+The clock subsystem will not recalculate the video_pll1 if you can
+achieve a perfect rate change using the LDB/PIX divisors. So let me
+propose the below addition to this series. With the below diff, your
+setup should still work with assigned clock rates, while letting us
+handle our calculations dynamically.
+
+The addition I am now proposing is to remove CLK_SET_RATE_PARENT to both
+media_disp[12]_pix clocks. This should actually fix your situation while
+keeping pixel clocks accurate as far it is possible as the LDB clock
+will change video_pll1 only if the PLL rate is not suitable for it in
+the first place. And then, there will be no other clock messing with
+this PLL. This is probably a safer approach, which should still allow
+accurate dynamic rate calculations for "simple" setups *and* let the
+static assignations work otherwise:
+
+-       hws[IMX8MP_CLK_MEDIA_DISP2_PIX] =3D imx8m_clk_hw_composite_bus_flag=
+s("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET=
+_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
++       hws[IMX8MP_CLK_MEDIA_DISP2_PIX] =3D imx8m_clk_hw_composite_bus_flag=
+s("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_NO_=
+RATE_CHANGE_DURING_PROPAGATION);
+[...]
+-       hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite_bus_flag=
+s("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET=
+_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
++       hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite_bus_flag=
+s("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_NO_=
+RATE_CHANGE_DURING_PROPAGATION);
+
+Can you please give this proposal a try?
+
+[...]
+
+>> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+>> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+>> @@ -177,6 +177,17 @@ static void fsl_ldb_atomic_enable(struct drm_bridge=
+ *bridge,
+>>         mode =3D &crtc_state->adjusted_mode;
+>>=20=20
+>>         requested_link_freq =3D fsl_ldb_link_frequency(fsl_ldb, mode->cl=
+ock);
+>> +       /*
+>> +        * Dual cases require a 3.5 rate division on the pixel clocks, w=
+hich
+>> +        * cannot be achieved with regular single divisors. Instead, dou=
+ble the
+>> +        * parent PLL rate in the first place. In order to do that, we f=
+irst
+>> +        * require twice the target clock rate, which will program the u=
+pper
+>> +        * PLL. Then, we ask for the actual targeted rate, which can be =
+achieved
+>> +        * by dividing by 2 the already configured upper PLL rate, witho=
+ut
+>> +        * making further changes to it.
+>> +        */
+>> +       if (fsl_ldb_is_dual(fsl_ldb))
+>> +               clk_set_rate(fsl_ldb->clk, requested_link_freq * 2);
+>
+> I don't think i.MX6SX LDB needs this, because the "ldb" clock's parent
+> is a mux clock with "ldb_di0_div_3_5" or "ldb_di0_div_7" parents.
+
+Ah, you mean we should only do this in the imx8 case, right?
+
+Thanks,
+Miqu=C3=A8l
