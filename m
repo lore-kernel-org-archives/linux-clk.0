@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6FDBE46;
-	Tue, 26 Nov 2024 14:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE4C9454;
+	Tue, 26 Nov 2024 14:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632268; cv=none; b=G2RUFs8X2AO/XyEABaNx4DsUBdhIebWXSixCXBJzReDsHwUHm2Y0gwMPFZzIm1MEw5kD1UbS9tWud56wzYA8AtfckMLtgRmQ+Ey9AA44N1leMOEVkTJ+yrK7+q3ozC3L9UqQxG+iEW29Y7d0FcSO2Xd8IKjyLNEgMqyY2tYlXVs=
+	t=1732632388; cv=none; b=mi+wrO+VWUvZ7ve81wemlXEV/vLK3oG7SkbLfxTSiis+WqMiMBx66AznmkgXFN0y6DNSuvcyAwqBOahmMUYSf8YMOKuzLqDEyicqMIdXX/GkfLJAE0FvfeIkY5FiSIwDWp2tCj0Y+hkCqVf8XxmxdARz/OTHw6RobUgxqOqkyqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632268; c=relaxed/simple;
-	bh=XYzOG08t1vD7d1OJKr/DTskWOi8KsmwLcNSz/fcdhCk=;
+	s=arc-20240116; t=1732632388; c=relaxed/simple;
+	bh=NpNbGj2wCM4uMUQYVG23W3gG/IV2i2QDerO7ztqkj/0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pS3C9m0Ji747G6PGYNF357QTBM3zqzdqNUVnmZiJirYPnA8HqmbsvQnEqzU9pCL4OnlJvyz1UP4WaIKPTqphrFRTh7AwScW5NpzhPxs6ablIDMHpsfLhxiGayf3sXAXcYjNpBFEYWrVXit0JOPyUTFU4sXeQOha8QgozkKAiQLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTHUZbr7; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KcrHghsgLnXxps6Df/LXO9wP5EF4OkFoB4riFniVmDhni8xJXU+vPI3xES8FEjIjq2VsCjg386+hnTWgAw0i/72hEOaIbz0VfDY1KdcP0DJzrTkF7vknUWcy62Ei0jhtpT5tQANzp/QfnqxfMDbtVEW3nioScpKaCZHeXOaMo5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m318xW/1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTHUZbr7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A59EC4CECF;
-	Tue, 26 Nov 2024 14:44:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m318xW/1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135C3C4CECF;
+	Tue, 26 Nov 2024 14:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732632265;
-	bh=XYzOG08t1vD7d1OJKr/DTskWOi8KsmwLcNSz/fcdhCk=;
+	s=k20201202; t=1732632388;
+	bh=NpNbGj2wCM4uMUQYVG23W3gG/IV2i2QDerO7ztqkj/0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uTHUZbr785vhaP9Sn348E5w4ewf8XKs3G3poomBuYD2lj/vTZ/LZKTXD0Lc+Hef3r
-	 qEkGst4+Cd5BgdiWI6Wl6TkNDau828baWloNKjG95axZ5E/SZIef5CSCBuDO69IvCp
-	 vQmCdthNb5dU48GWOfrU07HR0wDKBe6h+7Be0u7IZkINUIkuBXafCrm0TBSkrfFGZ1
-	 oOSONZgh+TAwSjv/DGeRuWu5E85FKue7u1SE/CpBzYzSID+uj1XikZyC4uTqA/DGgC
-	 QM66B2eI6YJRBCsfHDiec0JKS/CYcZbECSYLVpZw0m697mHoEsGLwT00R424+Eh4Lv
-	 CETf6qDUmyz/w==
-Message-ID: <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
-Date: Tue, 26 Nov 2024 15:44:20 +0100
+	b=m318xW/1yhki4YyczvznEGKEG0kad3EBI59+7rVvvWWMSOnH7ZMNR4VtN9AWD2AAp
+	 mtZuflRw93LCnE0i103tlXOdNizq9H4C3HveCpFLdhgCRx76z12DLPqLCGNZOFD9ks
+	 3iXn5MWL4MP4VS5piKrOLbq6THdlF9K5ydUr0J+BrJ2JROiF/m87mzip5bd2Yk5BKu
+	 5fFP0+Swb10LgM8c5zvxHiGXQlucismDguf4vbHPXz5OL2i4Tvf20FN/jw/cyMKe+M
+	 T6GFePJrzcmYwj/FKSePYG9PjX9KW16xBXFIZHy6JSv8+WDUZdhvXL6UnKxjfgOoJ5
+	 8g6JfLUtPqEzQ==
+Message-ID: <550d80c9-3a7a-4db4-96fa-758cb34dc746@kernel.org>
+Date: Tue, 26 Nov 2024 15:46:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Add clock controller support for Spacemit K1
+Subject: Re: [PATCH v3 2/3] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
 To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
  <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -45,6 +45,7 @@ Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
  Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
  Jisheng Zhang <jszhang@kernel.org>
 References: <20241126143125.9980-2-heylenay@4d2.org>
+ <20241126143125.9980-5-heylenay@4d2.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,32 +91,75 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241126143125.9980-2-heylenay@4d2.org>
+In-Reply-To: <20241126143125.9980-5-heylenay@4d2.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/11/2024 15:31, Haylen Chu wrote:
-> The clock tree of Spacemit K1 is managed by several independent
-> controllers in different SoC parts. In this series, all clock hardwares
-> in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
-> driver, CPU cores and UARTs could be brought up (see below). More clocks
-> will be implemented later soon.
+> Add documentation to describe Spacemit K1 system controller registers.
 > 
-> No device tree changes are included since Spacemit K1 UART needs two
-> clocks to operate, but for now the driver gets only one. I would like to
-> defer the changes until this is resolved.
+> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> ---
+>  .../soc/spacemit/spacemit,k1-syscon.yaml      | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
 > 
-> This driver has been tested on BananaPi-F3 board and successfully
-> brought up I2C, RTC, mmc and ethernet controllers. A clock tree dump
-> could be obtained here[1].
-> 
-> [1]: https://gist.github.com/heylenayy/ebc6316692dd3aff56575dbf0eb4f1a9
-> 
-> Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-> 
-> Changed from v2
-> - dt-binding fixes
-What fixes? Be specific, what did you change?
+> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> new file mode 100644
+> index 000000000000..b9f20190a70a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> @@ -0,0 +1,86 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Spacemit K1 SoC System Controller
+> +
+> +maintainers:
+> +  - Haylen Chu <heylenay@4d2.org>
+> +
+> +description:
+> +  The Spacemit K1 SoC system controller provides access to shared register files
+> +  for related SoC modules, such as clock controller and reset controller.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - spacemit,k1-apbc-syscon
+> +          - spacemit,k1-apbs-syscon
+> +          - spacemit,k1-apmu-syscon
+> +          - spacemit,k1-mpmu-syscon
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clock-controller:
+> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
+> +    type: object
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+Nothing improved. That's a no-go.
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
 
 Best regards,
 Krzysztof
