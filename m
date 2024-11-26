@@ -1,133 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47F619995A;
-	Tue, 26 Nov 2024 14:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29221D5CFF
+	for <linux-clk@vger.kernel.org>; Tue, 26 Nov 2024 15:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632635; cv=none; b=qB+X5up1QkbgGvzmdG0w78ZgkdeseNYa7kVKGHBl0wJdfnzKTlZrtJnDpKkBGVwdwqBocoi6rOecBTZiMN5NA62IWd/VJfb7LDBoLqIugIEiixuAp77TM2eNz1sgTM9rV65apXRg1TZmFdKgUHJFJTk1/NXph2iDpE7a+FieE5M=
+	t=1732633689; cv=none; b=aaqTNFiF3g8M0GvlV8h7AodbwN+cgJJhKQGLGD/otOz+AqldjSvuSMXDX2C8pn4q0LbRowBh93loDzLIAdnEU2MPExaVLZ9yQonX4+ESpGkLnbTcPXJQfSttW32DMnSZCR3yrO0rzzAJJl6GA14cj4g+5lOdjO0vQEMXnRuu6Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632635; c=relaxed/simple;
-	bh=i9SV05dkevmKXvAdd7JUzuAFpeqs0xHM3L5wHG258AM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+BddTel2zalbB27G/LsWyKDtCQnHKpOAb7GO2Fkggdz7PDHJ2xF5c69zfKh0yaTRyPknLZbajAJH9vIoR1vAaUnAwxYNGStdJIzUbQ50z13Ny4UZZxgXzStQYoo5PeAZQ5Ji5uWFZqAVMfGsdX5xfVAJ4wHd9tKL6nWPlhUuwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAm7CCuL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732633689; c=relaxed/simple;
+	bh=rR9fCYRGtZ0WqiCx7bsr9NOHtvAkUDm6R/T+RFpzqCM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=im4kK6IKS9x0rLKXWEtIqjhvzPpgxefE6a3WfmmvWUjYtNprkdRXJiNnW843aRBdQkPSOVYW7A7eyFAWVnE5oPzdpAhuUplhCTaMZJmZnx3rzXl7MJbM8gp+1bo94M4wcOpLEXCqNHrmkrSP+7yv2w65oSVkmQ33dYgnHIAH8DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VbV6WM9V; arc=none smtp.client-ip=209.85.208.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAm7CCuL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E5D8C4CED3;
-	Tue, 26 Nov 2024 14:50:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732632635;
-	bh=i9SV05dkevmKXvAdd7JUzuAFpeqs0xHM3L5wHG258AM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aAm7CCuLhrXigkkUfQOL4N5x+deJQ9uf1CgqVWelfHSNtAM+iVCyIWN8ZW5I7dUG3
-	 egxsKLBXc/cK65JvKSC+NZtlh1dM2dVvHg15dtpV59o1/SeNbYhfUinZwaKOTEpfUj
-	 3QBpA2nll6j3zfQ4ADBHyfpUsrPck++2epVbpKTh1+e8IGZZHM/k/Ey+oVEYspBX7v
-	 pChgS6GnjKLkv6cLqxLmxOd9Jyhvzm0MNC5ChYjsZXbXbXfXrKDckrzZSN3ojO8TiR
-	 v/85Jern0rqH01Kpk56x5bCI/1wkKrIBm0kO7oMNbVo/KdgwLUwIafILIY8uMfofSj
-	 Xq+mgxNoerOTw==
-Message-ID: <711362cf-5f4c-49e3-b771-38dfb441bc4c@kernel.org>
-Date: Tue, 26 Nov 2024 15:50:30 +0100
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VbV6WM9V"
+Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so60664361fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 Nov 2024 07:08:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732633686; x=1733238486; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wkXmTfuY/onFcHGFkT/ioLNg+ObOS9O+E99ZOLPbjVY=;
+        b=VbV6WM9VyuFtdfUmhTGye41Mq7eczXU6FxYhf/c/zBG/dwQynC5q1xiExXDmmja1Pc
+         DJeFB2s/Rldcalexh6N7op1aOm8cVxaAbUZHOCf00nNvzspZHpGPcrY40/NeJU0xfM7t
+         tRu2MF80hRR71npcKlZDwsSisr7DOMD9hQq14yvfLZDWGnyD6jfVmemvvE2956yI7uIA
+         zpQ5ncn7DypM2EMfTeTf7HbAkFcFDiybUUrq9b48R0LWfEHUWTvz2s25NtE+dtSrbYiK
+         3v0XWKfMmIbghIoCUhoT++ZuCTsnwZyPTLU4/ZyDREfXeV6StHUyV/p/nIGEjoF6LInT
+         AVDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732633686; x=1733238486;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wkXmTfuY/onFcHGFkT/ioLNg+ObOS9O+E99ZOLPbjVY=;
+        b=j26GdgVPMPHx7oCsBZJIz9+mzjf+Ib5EY8GSL6PJ8u9gyWWVV6FVG5wk+yevqIKv6E
+         0ce7h/j+9PS84rkqOxg+CHlaJSRoIqRey1zoVFDbe1jGzqLqrxsici6xv4MLtTUGobNm
+         SA+k24IFiv8N6klDx1vgHV1N2X65qrGZwDS2Vn7xMYxV73ykxSt99rBGi5HsrTK8fHC/
+         oZtB45SokkG2e/fyapvPb6PFEfpcf9En7yvGgQJpQNBUJlbWkjuvCBMPzyJukw+bp3np
+         Sc81C6m7xSMrFlqr1zOqAJ6P7qft6k/4xPATzOECUaa/dKvER7RSYtK7irBkjMj6ev7f
+         se1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDM8LdGl+nkQtcuWpmdsnhmO8qWsMqCSXjJDII75RV3TnlEFJRDXsl/Bs41n0t2VaqIZE2jzjm+1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy23MA7ayL+HWx7mIOUiuVbmlLCICK4qSdkSJMDYyB4I88iEtN7
+	7HRVPwHt7f1MLSQ5iZLihpsyIaFVRRaa1PDoVEVOJte6orWMpYYD4izZ5gLwNI8=
+X-Gm-Gg: ASbGnctT5hjqSRN8ylaDyIe1jNENR9OSs/2kR8D2AUrs8UPjdf8l+xUKFgUU+CvY20Y
+	EUVlUZLCDy9QVxNncOsBHjSxsFxuVv4m5A69Y5ci47o+glNJf539v6937+FyqPNoEJSthlwnVh4
+	qCJjABtGCOylkSpq4Xm2JW6Lz7g8j6/AIrGDs2r7vQrbeEvhXQZK8Mv9R4n3/70Dwsb+ZnmpIPe
+	wZI9dz8l+XTxTR4KbCHHn077raLzP8Ljz0jbNxAyoevv2Dv4D3RJqm88btaaBDY2uUFTfFsLJFK
+	VMqPIXfdJ2TXOBwqD8Yr
+X-Google-Smtp-Source: AGHT+IHfNZc0WKbh7sqF1+iBLIXYZDOl4JPTwwJG5rgrazocKw4s1ERx1hlewAc6ByNqGEspG3q/FQ==
+X-Received: by 2002:a05:651c:88d:b0:2ff:55b3:8e11 with SMTP id 38308e7fff4ca-2ffa7193c77mr95509071fa.36.1732633685736;
+        Tue, 26 Nov 2024 07:08:05 -0800 (PST)
+Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3fc94asm5286773a12.58.2024.11.26.07.08.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 07:08:05 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 26 Nov 2024 16:08:38 +0100
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dragan Cvetic <dragan.cvetic@amd.com>, linux-gpio@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Wilczynski <kw@linux.com>
+Subject: Re: [PATCH v4 04/10] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <Z0XkdoBkrhCGo9sf@apocalypse>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com>
+ <173250040873.6640.9720381303445148722.robh@kernel.org>
+ <Z0RAGkBc-yz5lqN6@apocalypse>
+ <20241125132104.GA1520508-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
- Jisheng Zhang <jszhang@kernel.org>
-References: <20241126143125.9980-2-heylenay@4d2.org>
- <20241126143125.9980-5-heylenay@4d2.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241126143125.9980-5-heylenay@4d2.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125132104.GA1520508-robh@kernel.org>
 
-On 26/11/2024 15:31, Haylen Chu wrote:
-> +examples:
-> +  - |
-> +    osc_32k: clock-32k {
-> +        compatible = "fixed-clock";
-> +        clock-frequency = <32000>;
-> +        clock-output-names = "osc_32k";
-> +        #clock-cells = <0>;
-> +    };
-> +
-> +    vctcxo_1m: clock-1m {
-> +        compatible = "fixed-clock";
-> +        clock-frequency = <1000000>;
-> +        clock-output-names = "vctcxo_1m";
-> +        #clock-cells = <0>;
-> +    };
-> +
-> +    vctcxo_3m: clock-3m {
-> +        compatible = "fixed-clock";
-> +        clock-frequency = <3000000>;
-> +        clock-output-names = "vctcxo_3m";
-> +        #clock-cells = <0>;
-> +    };
-> +
-> +    vctcxo_24m: clock-24m {
-> +        compatible = "fixed-clock";
-> +        clock-frequency = <24000000>;
-> +        clock-output-names = "vctcxo_24m";
-> +        #clock-cells = <0>;
-> +    };
+Hi Rob,
 
-Drop all above. Your changelog is poor - does not explain this at all.
-Write changelogs which detail what you did and why.
+On 07:21 Mon 25 Nov     , Rob Herring wrote:
+> On Mon, Nov 25, 2024 at 10:15:06AM +0100, Andrea della Porta wrote:
+> > Hi Rob,
+> > 
+> > On 20:06 Sun 24 Nov     , Rob Herring (Arm) wrote:
+> > > 
+> > > On Sun, 24 Nov 2024 11:51:41 +0100, Andrea della Porta wrote:
+> > > > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> > > > schema is intended as minimal support for the clock generator and
+> > > > gpio controller peripherals which are accessible through BAR1.
+> > > > 
+> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > > ---
+> > > >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 74 +++++++++++++++++++
+> > > >  MAINTAINERS                                   |  1 +
+> > > >  2 files changed, 75 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > > > 
+> > > 
+> > > My bot found errors running 'make dt_binding_check' on your patch:
+> > > 
+> > > yamllint warnings/errors:
+> > > 
+> > > dtschema/dtc warnings/errors:
+> > > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb: clocks@c040018000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+> > > 	from schema $id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
+> 
+> The error comes from this schema and...
+> 
+> > > 
+> > > doc reference errors (make refcheckdocs):
+> > > 
+> > > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com
+> > > 
+> > > The base for the series is generally the latest rc1. A different dependency
+> > > should be noted in *this* patch.
+> > > 
+> > > If you already ran 'make dt_binding_check' and didn't see the above
+> > > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > > date:
+> > > 
+> > > pip3 install dtschema --upgrade
+> > > 
+> > > Please check and re-submit after running the above command yourself. Note
+> > > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > > your schema. However, it must be unset to test all examples with your schema.
+> > > 
+> > 
+> > Sorry about that, but even if I see that this should be the case (I've dropped
+> > the clock-name property from raspberrypi,rp1-clock.yaml), I can't reproduce it
+> > with:
+> > 
+> > # make W=1 dt_binding_check DT_SCHEMA_FILES=pci1de4,1.yaml
+> 
+> You've limited testing to schema files matching pci1de4,1.yaml.
 
-Best regards,
-Krzysztof
+Ah I see. I thought that DT_SCHEMA_FILES just restrict the check to that
+particular file, instead it's also restricting all check of that file
+to itself. So I guess there's no way to check one specific file against all
+internally reference (e.g. from examples) schemas...
+
+Thanks for pointing that out!
+
+Regards,
+Andrea
+
+> 
+> > 
+> > and the output is:
+> > 
+> >   CHKDT   Documentation/devicetree/bindings
+> >   LINT    Documentation/devicetree/bindings
+> >   DTEX    Documentation/devicetree/bindings/misc/pci1de4,1.example.dts
+> >   DTC [C] Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb
+> > 
+> > dt-schema seems up to date. Is my command line correct?
+> > 
+> > Many thanks,
+> > Andrea
+> > 
