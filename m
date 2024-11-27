@@ -1,204 +1,136 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED8D201269;
-	Wed, 27 Nov 2024 16:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEC81FF7BB
+	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 17:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724940; cv=none; b=puJOr0XbPlnS0EVD4NBBhY9ZSFcjxPqOtj4zObrYXxFqVeysPafdLzn/D7XjnAm5OuC7InJRQbdEwTMH8CluO0tFKQBFrXpGPyAqX8tB6BeHy78tWfFimbeqHWnywsRRFKN8fJeKiVII9Cvc8YOLWiWRac0y9cWIUqVEQGFIPME=
+	t=1732728112; cv=none; b=qpw57MNyJyCnOOYozUBYQxJ4CCmk13j+1KhkEQ5ZHgO+Cmmhh+tI1575uhh8kg5aMzjPa0qJVyp6ljLfEyqlYsBrk64/pdOFICi9Fhmoff2lC4PbERnZ6p/dsHLsDukas9wnh5YT6ElUpqtbZSTv7zMWkiPfvSKrclHIklFkwAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724940; c=relaxed/simple;
-	bh=K0+UzOqrZ522gdt8O1euYjxEX1JtMraCjuxBRFmOd1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rw+75Bb0sZz3PKJhkLXuBL9/1OZX/PcPSQrOEOo6HLW73gFqgpms6fEtBMx89tAdq95C69hRfac3V4AmAuVNKuNsQ+6ARCkojkPK/6Q/o8SAhVos5Cu+4qm6sHUL/F9L+QBArDBKmCEZB86Fp7tRcVVZvMmgatTtuk9OhHbUly8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so858959566b.3;
-        Wed, 27 Nov 2024 08:28:57 -0800 (PST)
+	s=arc-20240116; t=1732728112; c=relaxed/simple;
+	bh=65aYM6N26qjzWOA+Lupo8UVQBrVj+zOdMVkxHTv50Fc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdAGc+yUjpvDS39e3gXd12OArZoIyKhzbRyxjdmoumvmhJ6zpOdEnlSumi9+yRQpeccTQTJ3WTp0x1goIWeb06nscD3nDJQCWYuMo9Hx7ByJrF1vx65q5G0RdtT79HYWgKz2k8zNAhGz/Lxj1JFghynXiPww4ER0BA6ZNC9RePs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=G77ziwA0; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="G77ziwA0"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-382325b0508so4431863f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 09:21:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1732728108; x=1733332908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=joY9jROGlnz2og0g8pwUmAhFhVOpMoCp26ajpyfTKYY=;
+        b=G77ziwA0y9G9j4cePwQnZAW154DzixMaIkHm0krR8wW8WEDoorADqsl5IHEwEBQtCG
+         YrIcl5JKcVl6DLcU9GdrfWhrbOF13k4LIT82pumvU+Suyn6Gqlju0ric9O3kYIoCa/2p
+         ZviuAWa7tPNucPLIzI6YFY5fE7VXwg3ywtr72B4RpOfUDXUW3yhK3pYJ5up8hXFUON3x
+         uDE/8uCQvPPE2kbdYM1O4qsTWIrSCgRSQy5zRUK/xnF0RpgQSc8XKKBvYj3vWoyNr5WQ
+         hZx8p3H/F+BbEwgBlF/ghshCNWgHDWQB7erhOEcb3BHtww5MnjLH7luagnTFO/zrfpyH
+         usVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732724931; x=1733329731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zhoGox/Y/qnISFpTctTC7YmzCxPu9xjctDpPDiZ/MzE=;
-        b=NweY8kcYWuLLdcWN1igvf7uuHR09R/d9FPFOup+4RVUWWtABVm0/+6x+/ksAO64hg1
-         6RayDtO3HtvFTnNycXOglV4NUuk+QWGobRji8gNC0YGf45p9C9/Xh67neweSl/FsRhc0
-         PVQVW+pj+vmnCDJIiZMd0Xc2U2K/BGEaTlKWnxs1cuIoRotduWozkvnXkSJtprqs/mk2
-         NDRzeeNOrleEBaegfotdEliNdxxgLcpCaFIRw5pc/x34iC9CfinEirQZ3M92gHjBeug9
-         upV4/XXLayPv2p3OadgZZ9mgCV1X4u95p1zGpTc40LhnAZ4ekdkm+/EX98s/2IUqF97R
-         q0TA==
-X-Forwarded-Encrypted: i=1; AJvYcCULT48LIBnG0wa82Xk7qdwRg1tloPedGbKMXIdeP/wn4wYvAx+DbUU4y+ZuFxb5ZeYbp2WP02/6UAjE@vger.kernel.org, AJvYcCURf/nwEvJ4bGLs/6azzWF7x83HRp7/O0ked5fxLEN24p6eCqyu8pfL0XsKqdWiv2e2L7gyzBe6dVVKeT548r0lya0=@vger.kernel.org, AJvYcCWPATFtrxtFn0Mq075CLU8Vjhk3mRhH6us60aT8laifUekR0PoG8c+a4fmflh/ZEXkYbrH2WQW9+i6eTjzh@vger.kernel.org, AJvYcCWeu5yoV8x2Ialnt8ZQ4azUiSRkdOFAqTVhIHnAvyxAAelO9WC8vpi1xiAtmz/0INTb5PA2fNyc@vger.kernel.org, AJvYcCXYyFpDpGPyRQr/qqJKGqdhy8ETj9PwoCxj+o3MTK76Cs1YSm6Vm4pJfR0xTu7/sL67fORorAoMvY3qoMq0@vger.kernel.org, AJvYcCXwYmvMSUkwz37z10TXQV1JTDMeCIQITZSXUwVvKpM8OVb5uO82DVtM70MTmUceA3ZYaZqw3lhIuVWb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIouEuMeN0KGcy2GgmGxmUDRiWrMez/Gzf9w2uIkecQemZFTJ0
-	z82jis5JQnLo4is4Mq5mihdG+4cjkV5jiJiVv+ueNIVpclKbdhywy0q8XeUN5rs=
-X-Gm-Gg: ASbGncsT7+x4CiXIV2akd/RJwQ2LzRTy0nHSFlBDtSP80Q/TLzC56E3fC6MFn2c2bUc
-	Y4842axrbeXRhrqsDJM7/gYaDRK0t5c4jFr++ejcWAuLF+ICZH7135UD6waxq4wQLnfmupi/POH
-	HOH5G0jqWdsflZJO4srbi86ArduREBrEbn1NsfHcU49MTBl6JKlbec4DtfzC/2UbXgEdOOwlux9
-	IcTBmeLHv8bkp8zqW6vB7PLAi+8TiplQ4vhyjLcPeSXTkS+nRxfQeInGK7C+8TTZTBfl1v2XNdj
-	F0kaQyFTbx+r
-X-Google-Smtp-Source: AGHT+IE+pjw5J8OCDMAGZEuyAcL74rbOEwKc8VL/2+CUBSPN+EkT698DKtPyKyyXST33D24HsM7PFA==
-X-Received: by 2002:a17:906:32c2:b0:aa5:2bfb:2ec5 with SMTP id a640c23a62f3a-aa580edf6f4mr388193766b.5.1732724931360;
-        Wed, 27 Nov 2024 08:28:51 -0800 (PST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28f719sm718718166b.12.2024.11.27.08.28.49
+        d=1e100.net; s=20230601; t=1732728108; x=1733332908;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=joY9jROGlnz2og0g8pwUmAhFhVOpMoCp26ajpyfTKYY=;
+        b=URgbl1eBsn3ZZMiRayMvmQ1MpMNw8NY0tc1uBJqVGA+YcZbYcKrqEUgqjUeja60Pk3
+         Fb3Nl6FE2JVbdsq+Fc1hmbo7HDERXmgBaQW2TsAbfb8TpILBS7T/xuqNHYOnSKDTI2RQ
+         0AXeokgMgwT5lDshyElwIqzCD19AFt4hLu9zmin/G45MQnJWAyz1cAPKGAIxRPiNuDXX
+         SFUv337/swVV9zato9Gyg73k7iS98hmBVow9p/LOQxSkClJiC7kImY/3nvEOLYP48/T1
+         MDLV9KR3Iv0aSt9HuxFlEp245gF4MmybSqQtN0Dujk9Yre8ldhIEWH3v+evzY30ylJ4Y
+         M5OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4El4fTYTmVvqAMwSU3saeM5AY/peGSjZPZ4D5CqxSJGN/gn0xwMX3XYdQi6PwP1Vy+sh0wV3iR9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZMxd29il5q/X6TuqU/4vctbFLXYR5BcDDzfvQ8Xjm4t1BbO69
+	/DSlv+bUTe8bePCXDy4FgbOSegwAyRpYK8n5bAHYZZTdroJ09Sc8HOGJe7S62v8=
+X-Gm-Gg: ASbGnctJyyOYatXzYT7E64+jYB/19JOpIZIyz30un8EgypY9+jYpt+O1p5LtRU02/e4
+	Y8fDDUXUmH0k4PUec5iS+zpiIQujYk0P1+8ayJErBW7fvpZLvvHNUEKQLBwgTGrRXS9IVQcxtkG
+	m/7qBbOkjMdQmSzeQnHd2WtsIrXb9ePAWMZ4GIw6ydE0/frRvVrmR+5Ef2jBg/cGTGyqRUeh+qg
+	TXGLvvYqbeoH9D/qXiBQwhLBIGc/sM0JWNEi0hDlrx0pg1gFrSQakiHqg==
+X-Google-Smtp-Source: AGHT+IEwxFX2alAudU3RtsTrvMnoOq4JYgGY0fdaW4rv6kK+qa7GhKDhgceGlbe6flrzyyd7UpC7Pw==
+X-Received: by 2002:a05:6000:2b03:b0:37d:3735:8fe7 with SMTP id ffacd0b85a97d-385c6ec08e2mr2414458f8f.32.1732728107563;
+        Wed, 27 Nov 2024 09:21:47 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe3cbsm16741588f8f.38.2024.11.27.09.21.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 08:28:50 -0800 (PST)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso9486350a12.1;
-        Wed, 27 Nov 2024 08:28:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU11r/WqvZLXxubdR9QL6aipC1rG3sug4/d/TGzPi7DOOWTovIRXMDXsX2PahFWkxcqkrvi4XeXLv+u@vger.kernel.org, AJvYcCU5e4JoV3OhNHRZrufuPK5uExxklLsWmOUqP8V7Q51NQtFgxfMvxwr3QG4/U13NtyEFhPXQJD4ej/iLdPvZ@vger.kernel.org, AJvYcCV7KXYFcipGuu9anCdXBeuysaG+faZQBAlUwfzn3fwAsR2+S3cEjYA9X1Nb3qajjPbd2WaIZFsBqDKfaq01sQxH6xc=@vger.kernel.org, AJvYcCWuP0hD89ddKnSAvXioOkdwtI4rr5/FxfF85Ntlc7up5R4Oc0X2R9AG3WAu1QLlzMlW5ffO5mzxyW2h+WlC@vger.kernel.org, AJvYcCX2ly4alxBAgAYg7FTydS91tWz7BkB9EhtVGVIDtWRqKIiywOdLlD9wGv9byBIF497zsCiRVhv49E45@vger.kernel.org, AJvYcCXtx9KFM42ZCRJzDGFy4iKaiS+qg3hdr262Kg72HmKZdqJDDatx20pr/S4+KUKnpqa7YqHd+eD5@vger.kernel.org
-X-Received: by 2002:a17:906:4c1:b0:aa5:2f8a:b94f with SMTP id
- a640c23a62f3a-aa581076afbmr296034666b.54.1732724929585; Wed, 27 Nov 2024
- 08:28:49 -0800 (PST)
+        Wed, 27 Nov 2024 09:21:47 -0800 (PST)
+Message-ID: <9cc61971-4a0a-4421-a998-341cc3072d3b@tuxon.dev>
+Date: Wed, 27 Nov 2024 19:21:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com> <20241106120118.1719888-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241106120118.1719888-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Nov 2024 17:28:34 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
-Message-ID: <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
-Subject: Re: [PATCH 3/9] serial: sh-sci: Clean sci_ports[0] after at earlycon exit
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de, 
-	lethal@linux-sh.org, g.liakhovetski@gmx.de, ysato@users.sourceforge.jp, 
-	ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/25] clk: renesas: r9a08g045-cpg: Add clocks, resets
+ and power domains support for SSI
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com,
+ linus.walleij@linaro.org, perex@perex.cz, tiwai@suse.com,
+ p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241113133540.2005850-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXfSmkbnTS463xa5ty_2W+vFbWhRK65nN1yiN_+c66P5A@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdXfSmkbnTS463xa5ty_2W+vFbWhRK65nN1yiN_+c66P5A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+Hi, Geert,
 
-Thanks for your patch, which is now commit 3791ea69a4858b81 ("serial:
-sh-sci: Clean sci_ports[0] after at earlycon exit") in tty/tty-next.
+On 27.11.2024 16:46, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Wed, Nov 13, 2024 at 2:35 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Add SSI clocks, resets and power domains support for the SSI blocks
+>> available on the Renesas RZ/G3S SoC.
+>>
+>> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v3:
+>> - collected tags
+> 
+> Thanks for the update!
+> 
+>> --- a/drivers/clk/renesas/r9a08g045-cpg.c
+>> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
+>> @@ -209,6 +209,14 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+>>         DEF_MOD("sdhi2_imclk2",         R9A08G045_SDHI2_IMCLK2, CLK_SD2_DIV4, 0x554, 9),
+>>         DEF_MOD("sdhi2_clk_hs",         R9A08G045_SDHI2_CLK_HS, R9A08G045_CLK_SD2, 0x554, 10),
+>>         DEF_MOD("sdhi2_aclk",           R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11),
+>> +       DEF_MOD("ssi0_pclk",            R9A08G045_SSI0_PCLK2, R9A08G045_CLK_P0, 0x570, 0),
+>> +       DEF_MOD("ssi0_sfr",             R9A08G045_SSI0_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 1),
+>> +       DEF_MOD("ssi1_pclk",            R9A08G045_SSI1_PCLK2, R9A08G045_CLK_P0, 0x570, 2),
+>> +       DEF_MOD("ssi1_sfr",             R9A08G045_SSI1_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 3),
+>> +       DEF_MOD("ssi2_pclk",            R9A08G045_SSI2_PCLK2, R9A08G045_CLK_P0, 0x570, 4),
+>> +       DEF_MOD("ssi2_sfr",             R9A08G045_SSI2_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 5),
+>> +       DEF_MOD("ssi3_pclk",            R9A08G045_SSI3_PCLK2, R9A08G045_CLK_P0, 0x570, 6),
+>> +       DEF_MOD("ssi3_sfr",             R9A08G045_SSI3_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 7),
+> 
+> If you don't mind, I will rename "ssi[0123]_pclk" to "ssi[0123]_pclk2",
+> to match the define and the documentation.
 
-On Wed, Nov 6, 2024 at 1:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
-rote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The early_console_setup() function initializes the sci_ports[0].port with
-> an object of type struct uart_port obtained from the object of type
-> struct earlycon_device received as argument by the early_console_setup().
->
-> It may happen that later, when the rest of the serial ports are probed,
-> the serial port that was used as earlycon (e.g., port A) to be mapped to =
-a
-> different position in sci_ports[] and the slot 0 to be used by a differen=
-t
-> serial port (e.g., port B), as follows:
->
-> sci_ports[0] =3D port A
-> sci_ports[X] =3D port B
+Sure, thank you!
 
-Haven't you mixed A and B?
-
-> In this case, the new port mapped at index zero will have associated data
-> that was used for earlycon.
-
-Oops, do you have a simple reproducer for this?
-
-> In case this happens, after Linux boot, any access to the serial port tha=
-t
-> maps on sci_ports[0] (port A) will block the serial port that was used as
-> earlycon (port B).
-
-Again, A <-> B?
-
-> To fix this, add early_console_exit() that clean the sci_ports[0] at
-> earlycon exit time.
->
-> Fixes: 0b0cced19ab1 ("serial: sh-sci: Add CONFIG_SERIAL_EARLYCON support"=
-)
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-This causes a crash (lock-up without any output) when
-CONFIG_DEBUG_SPINLOCK=3Dy (e.g. CONFIG_PROVE_LOCKING=3Dy).
-
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -3546,6 +3546,32 @@ sh_early_platform_init_buffer("earlyprintk", &sci_=
-driver,
->  #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
->  static struct plat_sci_port port_cfg __initdata;
->
-> +static int early_console_exit(struct console *co)
-> +{
-> +       struct sci_port *sci_port =3D &sci_ports[0];
-> +       struct uart_port *port =3D &sci_port->port;
-> +       unsigned long flags;
-> +       int locked =3D 1;
-> +
-> +       if (port->sysrq)
-> +               locked =3D 0;
-> +       else if (oops_in_progress)
-> +               locked =3D uart_port_trylock_irqsave(port, &flags);
-> +       else
-> +               uart_port_lock_irqsave(port, &flags);
-> +
-> +       /*
-> +        * Clean the slot used by earlycon. A new SCI device might
-> +        * map to this slot.
-> +        */
-> +       memset(sci_ports, 0, sizeof(*sci_port));
-
-Nit: I'd rather use "*sci_port" instead of "sci_ports".
-
-> +
-> +       if (locked)
-> +               uart_port_unlock_irqrestore(port, flags);
-
-"BUG: spinlock bad magic", as you've just cleared the port, including
-the spinlock.
-
-I guess we can just remove all locking from this function to fix this?
-
-However, could it happen that the new device taking slot 0 is probed
-before the early console is terminated?  In that case, its active
-sci_ports[] entry would be cleared when early_console_exit() is called.
-
-Also, what happens if "earlycon keep_bootcon" is passed on the kernel
-command line, and the new device takes slot 0?
-
-Thanks!
-
-> +
-> +       return 0;
-> +}
-> +
->  static int __init early_console_setup(struct earlycon_device *device,
->                                       int type)
->  {
-> @@ -3562,6 +3588,8 @@ static int __init early_console_setup(struct earlyc=
-on_device *device,
->                        SCSCR_RE | SCSCR_TE | port_cfg.scscr);
->
->         device->con->write =3D serial_console_write;
-> +       device->con->exit =3D early_console_exit;
-> +
->         return 0;
->  }
->  static int __init sci_early_console_setup(struct earlycon_device *device=
-,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.14.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
