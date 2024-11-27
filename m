@@ -1,230 +1,133 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FE818FC81;
-	Wed, 27 Nov 2024 09:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E2C155389;
+	Wed, 27 Nov 2024 10:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732701246; cv=none; b=jrlc/WGceXz3MqWZtkNZTfE5CTGfaUlS4qGNWvvYQbiGPMcizTgzMdv+21vnDPF/P227szWwVl6gSturseOZF5pr9XMSLcXJzlbCaX6QJBt/WnzENEwVWlF1D/3Zc0KZhh9fdfRtmiq8/TnKOT/mFg8DF8LKDwBJ6QvIDmNyOSA=
+	t=1732703860; cv=none; b=fJnQSiL1b9/pEGAWLe0auFSargW/i347nfQI9gvyx5yK0h2uhPpdW5ZIxzpcostoSvRRR+lK9in6XNI7CdxCyw2FeDrJPzrk3VoUdYyF0m0Pk0eH9sjyeQ2QUVMWgNtgJteM+Lc3+QsXBhF+AADC5f58wQSrVo8pZ1utRpr2Us4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732701246; c=relaxed/simple;
-	bh=xgynu+dnij/Ap4H8Z6VToiH02SriDSYtiIh9IuHQf6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ICHbOfVuAtnu0y81LcW/dhDH/qYEUkFLkBqsyd5/YUlS6lCX95xtyx7KwS6w5IbtH2Xex/AWmGPJNeBAzWzSz7IyHQrTh1kJsv4XG+GmUoEYsRjslrTmbPAMnGmyDWLC8xEU+PPistfxw11fNWYzY3EBnbY/rOXZ34XSyIHhaNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so8421681a12.2;
-        Wed, 27 Nov 2024 01:54:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732701241; x=1733306041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nFNxczP+b5V8JKJ5O2vCYbJjZZHSVrsWR+o7WcAs32s=;
-        b=oDc7FnlUqG3bexzIgW3O/GKsPqgDb7e+rOSakbZjxeikmihRiXjfbT4Od/mRGpi3an
-         D09IQo9Dy4DsJGWhjdiLQF7x44KGJaFLeVQSGc5buSKQpz8ov1yk+88RVzRqzJkJElOf
-         fFSaDQraZex2KLvkYNM4gsbTiCjheQALDK6KKcFeY3Tq4UaNqS/i16JzG390W8+eepwS
-         ZfqYGq5BuZUiQYImY2nqg0PpzYxvys2fOC9cr5IF3eE6Nir59s/ELDFaSqCCGCqad+HO
-         omuXfX+3QHXfCsyx8IugTdUy/sK4kFh8ngI4m+Q17hslC3aAjaelORLchw+spF8wjlES
-         0hvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh3RLN6+BUf0+3UWj0gTMWH6cEtkg3ItTQBUhD1qYa4Nejs4Vtuo3ZrrvAwZ1pUmC36Dn8LdlyTyMvQ9erynvAHr8=@vger.kernel.org, AJvYcCVXAO9L/yUa8X7BAPFD1RDK5HGQ8QHmKM3D6WG3HB8+3rsc266EWV7KnIYINQyRbqBO3MQozPnmySc=@vger.kernel.org, AJvYcCW3XsFmXukRR9FxgGIoC7cFaUW8akZSssFYa8Kql9wVjtWI616/mciD6DYAY/H7BT+6vIPDchvLhNsYGqla@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFF6/cQwbnXSXVZJy1RrxXJXHsBbSm1sRCIJs/FYP5EzDAU4CD
-	TDHk5EBP677WzPz5mQ6DABqnxKp+80zCB+F+WNA+KHYy2ngXs7GVDkJkLUH7yHo=
-X-Gm-Gg: ASbGncu7ca8xDYNoxMPHCebKh5XlTVVy1xot2c0UoS0GnUEHkxUMc69urVuQZr516wm
-	HiqiyOzab4wsBSGsBuBpCkq8qp66kBBc6ntFxhUmmiRil9LWwsnrxrUp1HjB9H2eHDHssFBE4yA
-	Ye6A0UJfS5wWpzuWIcLUWnCIaIBeDjf2z3ytSTbaBQBRNiLw4MSKNYcVjgNOuEhYr0guyarl0X0
-	7qVTbOXmIn25AqSBY0p9viHowdSIRvIE/fjJZdAxda1i+4pc9/HP/QCH3QnVa9GcJ09VViXCY8f
-	UKH8FvnL0Jzt
-X-Google-Smtp-Source: AGHT+IHmH3ImqJXE6O3fZkkabRKi4GRR/5G27AvOFYyipk2/zPz9Vt/gKSDyxRiTPadJTEJfFyCNlA==
-X-Received: by 2002:a17:906:328d:b0:aa5:1d08:dad0 with SMTP id a640c23a62f3a-aa580ede47cmr164258366b.1.1732701240895;
-        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57bf82sm688603866b.147.2024.11.27.01.54.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1055061866b.1;
-        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUA4hz8j2X4DQxTbw2gfla42wKVeO0I6xLeMEYTq3+1GGN+GfzoK27+suC/H52fx8d6vVp2KsVeGNalcMnf/RWh910=@vger.kernel.org, AJvYcCXi1N7YGPxVPQWx+0fI6ouce1qMY3lh6zvuN/gkvRf26pPAR2139DSORPxAn5E6iokwSKyX7o7FvU5NYlT4@vger.kernel.org, AJvYcCXzVz3Z2r215lFtN+PjTHWG2THt2BYvU2MIhMVsxcmsskEp2lSrA064qveiZ4CUapofOhsjU7WMX5Y=@vger.kernel.org
-X-Received: by 2002:a17:907:7616:b0:a9a:f0e:cd4 with SMTP id
- a640c23a62f3a-aa581066bb2mr149567166b.55.1732701239952; Wed, 27 Nov 2024
- 01:53:59 -0800 (PST)
+	s=arc-20240116; t=1732703860; c=relaxed/simple;
+	bh=EwkTX+MIFpLy9bn5raEc+I7FYh+YTAy5cL29F6FwZ48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fIsm2RIIdxQpTi5akGYyn0Ae2pVeLsuhmViy98Jth9yTu7f+oq3d0+PBbVamp5A1VHtcXKjDjEAYuaCqPk04WDPctplGvZi++8rfZbsXCbrdVA/3/lMELkQ4/9OKrrbnPkrmew/O957bzCoInpKOXmgqF40AmhmqczLeXxSPro0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=islEAvqI; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Dp4UrgW7; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="islEAvqI";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Dp4UrgW7"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 1581E122FE1E;
+	Wed, 27 Nov 2024 02:37:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1732703855; bh=EwkTX+MIFpLy9bn5raEc+I7FYh+YTAy5cL29F6FwZ48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=islEAvqIu14umc0Nh0BNtaP0O54EhJiE/KsA+8hCjHouDnLAMzIa0hA/1GJIQK2Ma
+	 8u9eFi0mi7Z6PHzaRGyiTZBBFjQZAjeEu7D45U4AHmoxpcYTpQs4r7nSyOSiKO77Eb
+	 kIZ6/J02wk+ftsCE+1enjvEiZ/tjre4O71Zgrrm26h9Mi1Zhjt5jKfvKntsyVE6LIN
+	 aQ0uiqTK2eL8dSnZrCEmZ9ozq/I99rssBjDLGqxqjJXwvGvG4MUURW7BzSUB95ZH5V
+	 q0VZDrAo9VVt0LYZjg9xI4qsFwAvBhSo9HnKKEBxRXoKiKMa3Ic4qH70L5IKcYxRkh
+	 Vi4kgWYfOu//Q==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id gT4AeVqNt7z5; Wed, 27 Nov 2024 02:37:33 -0800 (PST)
+Received: from ketchup (unknown [119.39.112.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 0E94A122FE1A;
+	Wed, 27 Nov 2024 02:37:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1732703853; bh=EwkTX+MIFpLy9bn5raEc+I7FYh+YTAy5cL29F6FwZ48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dp4UrgW77o9Ymd6bTjpRfztdQI5YoI8Jx6G+IprE8QppyWLBTchlw/HqDcCAFrY3c
+	 ZULd2sM/4mo0pFNtm3Fw5vaHW8akqi0gF2hIUGXAmoL5g0LdqHP2vS0NH0oypcswZa
+	 eLMteRDH7RCZA/1zTjKf4MHS9hi5kjjXZ4qZndXUvFRCkTyHxZvByw4ji8yACxopJo
+	 fQJYSiUZJtdrRogf6ch9w7eyyJFOoqd0Bo3nWn5BtxhB75MqagIKYFMmSvBLPQclI/
+	 UWNGvwbQXo+lXFGlwjVhdnfBLF1zRWmrq510Y8qelZp7Ofn/H+h8dB8SxRUeWrnd0J
+	 dFqueXyjg70eg==
+Date: Wed, 27 Nov 2024 10:37:20 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: spacemit: Add clock
+ controllers of Spacemit K1 SoC
+Message-ID: <Z0b2YOdIWfuJINDW@ketchup>
+References: <20241126143125.9980-2-heylenay@4d2.org>
+ <20241126143125.9980-3-heylenay@4d2.org>
+ <64bf96a3-e28c-4c47-b7b3-e227bbaa7aee@kernel.org>
+ <hgtrinu32q2jtxb4z5nvjskjlkwwzxhymtf3alvaxlbqxrbzd3@2rw3uy2tqgnf>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Nov 2024 10:53:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
-Message-ID: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add selective Runtime PM
- support for clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hgtrinu32q2jtxb4z5nvjskjlkwwzxhymtf3alvaxlbqxrbzd3@2rw3uy2tqgnf>
 
-Hi Prabhakar,
+On Wed, Nov 27, 2024 at 09:03:11AM +0100, Krzysztof Kozlowski wrote:
+> On Tue, Nov 26, 2024 at 03:48:33PM +0100, Krzysztof Kozlowski wrote:
+> > On 26/11/2024 15:31, Haylen Chu wrote:
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - spacemit,k1-ccu-apbs
+> > > +      - spacemit,k1-ccu-mpmu
+> > > +      - spacemit,k1-ccu-apbc
+> > > +      - spacemit,k1-ccu-apmu
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 4
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: osc_32k
+> > 
+> > osc
+> > 
+> > > +      - const: vctcxo_1m
+> > > +      - const: vctcxo_3m
+> > > +      - const: vctcxo_24m
+> > > +
+> > > +  spacemit,mpmu:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > +    description:
+> > > +      Phandle to the syscon managing "Main PMU (MPMU)" registers. It is used to
+> > > +      check PLL lock status.
+> > 
+> > Why your example does not have it? Example code is supposed to be complete.
+> 
+> I think I understand why - this is for only one variant?
 
-Thanks for your patch!
+Yes, currently all implemented PLLs are located at APBS region, thus
+this property is only meaningful in spacemit,k1-ccu-apbs.
 
-s/rzv2h-cpg/rzv2h/
+> But then this
+> should be disallowed in your binding for others. Currently your binding
+> says that it is required for one and allowed for others.
 
-On Tue, Nov 5, 2024 at 12:24=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Update `rzv2h_cpg_attach_dev` to prevent external clocks not tied to the
-> power domain from being managed by Runtime PM. This ensures that only
-> clocks originating from the domain are controlled, thereby avoiding
-> unintended handling of external clocks.
->
-> Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
-> structures to exclude specific clocks from Runtime PM when needed. Some
-> clocks, such as those in the CRU block, require unique enable/disable
-> sequences that are incompatible with standard Runtime PM. For example,
-> the CSI-2 D-PHY clock initialization requires toggling individual clocks,
-> making Runtime PM unsuitable.
->
-> The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
-> be managed by Runtime PM based on this `no_pm` flag. New macros, such as
-> `DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
-> PM.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> - Updated code to skip external clocks to be controlled from runtime PM
-> - Updated id range check
-> - Updated commit message
+Thanks for the correction. I'm considering moving the definition of
+spacemit,mpmu to the if block as well. Is it the correct way to disallow
+its usage in other variants?
 
-Thanks for the update!
+> 
+> Best regards,
+> Krzysztof
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -668,8 +671,38 @@ struct rzv2h_cpg_pd {
->         struct generic_pm_domain genpd;
->  };
->
-> +static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
-> +                               const struct of_phandle_args *clkspec)
-> +{
-> +       if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_count=
- !=3D 2)
-> +               return false;
-> +
-> +       switch (clkspec->args[0]) {
-> +       case CPG_MOD: {
-> +               struct rzv2h_cpg_priv *priv =3D pd->priv;
-> +               unsigned int id =3D clkspec->args[1];
-> +               struct mod_clock *clock;
-> +
-> +               if (id >=3D priv->num_mod_clks)
-> +                       return true;
-> +
-> +               if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR(-=
-ENOENT))
-> +                       return true;
-
-Shouldn't this return false for the two invalid cases above?
-
-> +
-> +               clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->num_=
-core_clks + id]));
-> +
-> +               return !clock->no_pm;
-> +       }
-> +
-> +       case CPG_CORE:
-> +       default:
-> +               return true;
-
-False? (I know the code treated it is a PM clock before)
-
-> +       }
-> +}
-> +
->  static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct=
- device *dev)
->  {
-> +       struct rzv2h_cpg_pd *pd =3D container_of(domain, struct rzv2h_cpg=
-_pd, genpd);
->         struct device_node *np =3D dev->of_node;
->         struct of_phandle_args clkspec;
->         bool once =3D true;
-> @@ -679,6 +712,12 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_do=
-main *domain, struct device
->
->         while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", =
-i,
->                                            &clkspec)) {
-> +               if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
-> +                       of_node_put(clkspec.np);
-> +                       i++;
-> +                       continue;
-
-This loop may start to loop nicer using
-"for (i =3D 0; !of_parse_phandle_with_args(...); i++)".
-
-> +               }
-> +
->                 if (once) {
->                         once =3D false;
->                         error =3D pm_clk_create(dev);
-> diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-=
-cpg.h
-> index 819029c81904..0723df4c1134 100644
-> --- a/drivers/clk/renesas/rzv2h-cpg.h
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> @@ -100,6 +100,7 @@ enum clk_types {
->   * @name: handle between common and hardware-specific interfaces
->   * @parent: id of parent clock
->   * @critical: flag to indicate the clock is critical
-> + * @no_pm: flag to indicate PM is not supported
->   * @on_index: control register index
->   * @on_bit: ON bit
->   * @mon_index: monitor register index
-> @@ -109,17 +110,19 @@ struct rzv2h_mod_clk {
->         const char *name;
->         u16 parent;
->         bool critical;
-> +       bool no_pm;
->         u8 on_index;
->         u8 on_bit;
->         s8 mon_index;
->         u8 mon_bit;
->  };
->
-> -#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _monin=
-dex, _monbit) \
-> +#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit=
-, _monindex, _monbit) \
-
-Note that this series conflicts with "[PATCH 00/12] Add support for
-Renesas RZ/G3E SoC and SMARC-EVK platform", which you are probably
-already aware of.
-
-[1] https://lore.kernel.org/all/20241122124558.149827-1-biju.das.jz@bp.rene=
-sas.com/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Haylen Chu
