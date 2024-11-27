@@ -1,134 +1,145 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008C726AD0;
-	Wed, 27 Nov 2024 14:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748171FF7AD
+	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 14:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732717941; cv=none; b=ckAF7DAIh12pUokGbzpKcO/JVx3pqS8cl793MetRJQQlicK96pJvkWY0Wexoovc8Tnb3Tkd3a/EnvopZFKd6MBm2UUrDy0aO0E+v8gyqhPQWe4HMhZjDTRpFYyOo3/Mk5zWhLH2x+V2rm9Ep+wv587akfxzcLuXo6XXPR2ZaHxo=
+	t=1732718641; cv=none; b=tsgFSUciOo6oFXW+bFG2Qhu7rhmHGnutzId1GtO1j3blTtMbAi+GiOAXrGjhmt3Q1OCHORyFdvQtzn0gAWYC4/+4vv/2WiJ/2n2NWluFdrjH6dI2M4HpTjzhUVdYZULe3FyqlwTA0IVWxcZAFIUf+4O8BNaN2FUMhLTkS1NyWhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732717941; c=relaxed/simple;
-	bh=0HvpP03fJIa9VL9yIjXyCxKkTPSv+tDsMAhrVsQoK2I=;
+	s=arc-20240116; t=1732718641; c=relaxed/simple;
+	bh=BKyo3SJUCENow7hT34xLm3QSUwMBEZLnMnf1c6fFVlE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6U9AalTzXtAXynZjsGcOfxKqfTF46FZysdZM5TOCGikp7/3lJCO7tG58c3mebu+3PjJ5NQWGW0TTw0dAYphLKarNc44jZcZ3rW1s2RSUcr9CQ2POUdZ28Ex4UiCIA+o6WztHRT4NUYFk4z1MiRvC/RwPOyjLcQbSH3dTd8dP20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b66ea49407so81184885a.0;
-        Wed, 27 Nov 2024 06:32:19 -0800 (PST)
+	 To:Cc:Content-Type; b=irQmUPLp1Ko1VDtunkWNK1y3VDPlTbYM6b2orHgacHBiLIeJr2VMHe14RjtXVVsTri3Tg74uYTar+6uYPgd5qrl31z5UMQaZ/XJVOhauBKAXrtJo/ODVb0MVk7aGL45m5+EckJ28wX0CkI+eblYWDfEFtcVANoV+myuVzTyXrLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Jpd+arMY; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Jpd+arMY"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffb3cbcbe4so47302391fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 06:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1732718638; x=1733323438; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9YVIFse3ZChPt5rxLEsxZQnkg/jV/uGoXgcbdEaGy7I=;
+        b=Jpd+arMYwsjdH3sCAJUdTTqlG829VAi/SjdCVQdEh5+XbjHO1ex1HT0Q4zFJqxo2pX
+         tTqEY8hFvvNpZzT1wDFXgQxg2FfERbi1hNzpHAL0ZCaB7HTwcvzEnhhi9rsMj2rbKBWP
+         XI2ccb5dEBe5hiRsNRxCvpdxrqGlJsuRvIiTWDxmmnxpR93P3k4BQcKnroDDqcAdFXMW
+         m75WAf2br4SdQKQ+a3mJbmUgipQ+XwIMBPB0l8lERGO+VQwwKlZVjnbkim3jUk7uTxRo
+         4wGtw4Li2wNoDt/24O2Ti3RJBdwRmAFoM902qpa55Zu4R/8t4Qt2G1qcg/gWCVJRyrIj
+         zIag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732717938; x=1733322738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2j2ZUq6xu9t3wTv8Cm7N7UCfA0pG8EHAdf2AYMgtddQ=;
-        b=mbd5WEk1miTX+Op/WVf9xXPI/W6wYXYXcqzkRXOnkZs4ohVuv6oxAVUpTT/3xfSV4p
-         RG4WBZ8XbeBilPj9WELWrmHrnNGXCnAnH4J+WCbG0kxYno5czyL3T6uDnuQFD8Xh8np7
-         oB/1cP7oSj0kvpQPzE/TO5RZb09pg+fshzcec/GCVwoJdLm3f5vEFq26ZI28hy7ANgEe
-         TVUnJEkS5dozBjYuhnLOZ1JrgrI+EVoywt9Y+M8O4+Q5AIs/aBi2WLD8aD+wyZAnXzQj
-         Nr36gzPHD2omVtaIDskGAo5nVgycy7AHffBacikwvt+1LIx3MNuSoFEbKSP7C0QjnO2q
-         U3Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTrJIcNdX+nq3HMWeDwouOb8jjXKfzUi+JWVCQFG6nav5Fny0pqIheW+LQd+CkZ1DD76aubRUgjfGg4mgg@vger.kernel.org, AJvYcCVGZv7QQR4NcQxBnMNsoQbv8rhOgKZt8zbcH79fKNGs5PM6FpdGYYElJNPgS4WUAoq4zmaBv6biyeUdFg==@vger.kernel.org, AJvYcCWBPqH1JS+TUfjezcVSaS6uSos+cB+54XSffHja8mI5Pd1L43afMhUbWKS9O4kFhfe5i9sFaP2dvYigGUI=@vger.kernel.org, AJvYcCWZqbe/nmGd+NCx9fa13ZpZ97KKkl6xFdrX7v0TM0hyWM/iXl7vZgrd2f81MFWfreynPgoSVTrjvK3V@vger.kernel.org, AJvYcCWdltFfXlVAj464H9DYswcWD/+isHW85qMk0Oj4yyDpn039bds/w7q4Y3SXIMHJ5nUu8n3p3/JWEKJtFHwfqCqhvl8=@vger.kernel.org, AJvYcCXoccJ+ytW3p1jY71fEIiqJQ7zYOie3cgIwkTeKQMKVWXDVAmRIYfE1OGP0DkA/B67iYrV8OhDVLh/N@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFvo51aLMhmLWo7YiJueUIXAw8gl/rKVpPwVZrdO/l4ocTgUOy
-	BE89wNrxs9M0URzGfrMUuCWDTu/jSKs/D4rP2NaKEv3aZ3hqoKRxnFLSRgA2Qug=
-X-Gm-Gg: ASbGncuPJyMPDkDoiFc9+hNruEqbwGbwiliR/sF9nxHbMGh2Nh+tryE/P4rC7WTdb8t
-	hrONN0N5W7GVqcf1Q25er3VMwzw1qdzY7Zr4NeBDBHGIgDq1yqTztyDOBdEEZOT8rFza6UC4cvG
-	LzRdQrIgq5AoJTo6Bm3RscPc2Op8o+aVmde08PPWU2givTlg9W2sj1jtJ6M+GiQ1kwCNTFvQNec
-	B71ZlwLzy9NhqswNtRc2ra8yEzDqSoZghgQA8loftF/ONblOnyXaasEu6vUBFpPD7CBBSzp1Qer
-	iqUf+zbhaBbQfz2V
-X-Google-Smtp-Source: AGHT+IHPmQWdd5kenGSHMPBppEIql98ObTNtrv4YVg7ZVWyjoB7kE5vbX+CT/cwEKn/RnQPepr6AXQ==
-X-Received: by 2002:a05:620a:371a:b0:7b6:740f:a535 with SMTP id af79cd13be357-7b67442f42fmr1350350585a.0.1732717938600;
-        Wed, 27 Nov 2024 06:32:18 -0800 (PST)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6767bace4sm157814185a.40.2024.11.27.06.32.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 06:32:16 -0800 (PST)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b66d08d529so76678985a.1;
-        Wed, 27 Nov 2024 06:32:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVNzRBm7BItlOFowfiujdfO0aM04W6RvGYF14PObrZdH39exqCznhLB8iLkCL/Y8b3f6C/5LeGc0QHY@vger.kernel.org, AJvYcCVYzvcSBVRou6KsaC4UcY+uaR/L9mqoiMFPf7kIeTAXqg2NQqxTUb5VoX0l61y3d/jDcZSuKNBfzIaXOajCXJ/Zz6Y=@vger.kernel.org, AJvYcCW5qgrL6h0pO2ihWGnyTtpxunMP3Ka+Br3+D73NkYJdLG/vjYU6YMt/H/+JBpDpLtoiur/sJGFJD1CskZ3c@vger.kernel.org, AJvYcCXFs+FecWzMxQI+vXaofKuexnm8mr52gtUU87+DizqbkS4Sa7JU1+mQliMQ2y7JVsP8wF5+6tNu73+2@vger.kernel.org, AJvYcCXRqgyTg438KKdF9YALkFNTE5N3tthTcclg+Q7Wt0D4JfGsDi1Kf6R/ITj71MkuUdtzKt0crQSvAeJUDQY=@vger.kernel.org, AJvYcCXpypu9MkKqFLJZkVgUadiHWNQ+x8YyPF9egePKXUnEkyn9ChwWXFZRdWmiIHEETWuOdi1oW2bEcDJ7oQ==@vger.kernel.org
-X-Received: by 2002:a05:620a:3186:b0:7a9:b2f4:42e0 with SMTP id
- af79cd13be357-7b67452f309mr1359261885a.15.1732717935088; Wed, 27 Nov 2024
- 06:32:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732718638; x=1733323438;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9YVIFse3ZChPt5rxLEsxZQnkg/jV/uGoXgcbdEaGy7I=;
+        b=KCe1NDWqzLs4b55sbaNFiOYRHSsDwqDepURmWj7ZElJ0HqXsvPcq9CaqcfmX9MEpAp
+         5SXV7B+9o0yfSEPrqa4CiRL8UCCzaetSauqhOw2I0k2C6AI0/C/DBOd2BSd8kLqoGItk
+         UEwy5FP4eYR1bwSLPRJyeeb4C2vIt3z3xj9JdIsHaDuc0lSBafQrt/MMFMafAGLUVtYt
+         IR9OmxgXjA4oFGSKgV3J4dio+gJt6ofbZRjfmru+0rLzgk0fYBUMhxsXM4UDPHewqE5/
+         Gm0clxx5pNSZqkaL+h3ackJ9b730dkWtSMsLRKy9QTahlTiEvxtetGfa90XPV9gM/46U
+         EWTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzARpsHRX10Nth7dR7j7woaUegqyIlSMSQ5AHZRuSHAfAsDPjA23VxJle1CLS2b13GLROGe5CALGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX260oSFRvS/iVtjPYRe5hlR/4yz6NcCfr+mkjMN+V2nMFd4kF
+	XI+nInuUPSLt7Z3nITr2DegamcT3aWlXg4nFPvuo2liyVqw2nBKNP/ILVpKpwuBtzfkZpY9UZgB
+	7jRa0HnmBZ+4N/ix2s3dFe8x9P4Gem5UKe2VUhw==
+X-Gm-Gg: ASbGncunEiqfZ8M4cEyoXzmz5uufA4lNCghWMSuILUoE7fBfh5nReiyYk9ZsPZQe0ft
+	AWqVqoYU0JCv4jf7J/amGnup2Cv7ipH8=
+X-Google-Smtp-Source: AGHT+IGRc+pnEqrVmcTeiSgm588KNdJoqDkUIBr6k6jJMRMMQfn38OBTZLWXgC+yJZqrBBmbWXdkKEpuJmNNp8+huYY=
+X-Received: by 2002:a2e:b8c9:0:b0:2ff:8a1b:547f with SMTP id
+ 38308e7fff4ca-2ffd60201f0mr16551901fa.14.1732718637613; Wed, 27 Nov 2024
+ 06:43:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Nov 2024 15:32:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+ <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com>
+ <20241122-orthodox-mantis-of-reading-2dcdcf@houat> <13cfb66b-f904-4720-8829-a6d9db85aaa5@broadcom.com>
+In-Reply-To: <13cfb66b-f904-4720-8829-a6d9db85aaa5@broadcom.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Wed, 27 Nov 2024 14:43:38 +0000
+Message-ID: <CAPY8ntD7tf6+PXKdWe8_KjCiPoemR0RQDiaHHndtjutOLGbR1w@mail.gmail.com>
+Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display hardware
+To: Florian Fainelli <florian.fainelli@broadcom.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
-
-On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Sun, 24 Nov 2024 at 17:00, Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
 >
-> Add audio clock pins. These are used by audio IPs as input pins to feed
-> them with audio clocks.
 >
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
 >
-> Changes in v3:
-> - collected tags
+> On 11/22/2024 12:06 AM, Maxime Ripard wrote:
+> > On Thu, Nov 21, 2024 at 03:37:00PM +0000, Dave Stevenson wrote:
+> >> On Wed, 23 Oct 2024 at 17:50, Dave Stevenson
+> >> <dave.stevenson@raspberrypi.com> wrote:
+> >>>
+> >>> This series adds the required DRM, clock, and DT changes
+> >>> required to support the display hardware on Pi5.
+> >>> There are a couple of minor fixes first before the main patches.
+> >>>
+> >>> Many of the patches were authored by Maxime whilst working
+> >>> for us, however there have been a number of fixes squashed
+> >>> into his original patches as issues have been found. I also
+> >>> reworked the way UBM allocations are done to avoid double
+> >>> buffering of the handles as they are quite a limited resource.
+> >>>
+> >>> There are 2 variants of the IP. Most Pi5's released to date
+> >>> have used the C1 step of the SoC, whilst the 2GB Pi5 released
+> >>> in August is using the D0 step, as will other boards in future.
+> >>>
+> >>> Due to various reasons the register map got reworked between
+> >>> the steps, so there is extra code to handle the differences.
+> >>> Which step is in use is read out of the hardware, so they
+> >>> share a compatible string.
+> >>
+> >> A gentle ping on the patches for clk-raspberrypi (patches 29-33) and
+> >> Broadcom DT (patches 34-36).
+> >>
+> >> All the DRM and dtbinding ones are reviewed or acked (thank you!).
+> >
+> > If the bindings and DRM patches are all merged, you can merge these at
+> > least.
+>
+> I will be taking in the DTS patche shortly. Thanks!
 
-Thanks for the update!
+Thank you Florian and Stephen.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
-edicated_pins[] =3D {
->                                                       PIN_CFG_SOFT_PS)) }=
-,
->         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_=
-SOFT_PS)) },
->         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A=
- | PIN_CFG_SOFT_PS) },
-> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
-> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
+I messed up and pinged the v1 cover note :( V2 is
+https://lore.kernel.org/linux-arm-kernel/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
+Thank you Florian for grabbing the correct version anyway, although
+there weren't any changes to the DT side anyway.
 
-I'll move these before WDTOVF_PERROUT# while applying, to preserve
-sort order (by port/pin number).
+V2 includes fixing Maxime's comment on "[PATCH 31/37] clk: bcm: rpi:
+Allow cpufreq driver to also adjust gpu clocks" that Stephen also
+commented on.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.14.
+Stephen: Sorry, maintaining newbie, particularly for clocks. I see in
+linux-clk patchwork they are marked as "Awaiting Upstream". What, if
+anything, do I need to do on those?
 
->         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN=
-_CFG_IO_VMC_SD0)) },
->         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN=
-_CFG_IEN |
->                                                      PIN_CFG_IO_VMC_SD0))=
- },
+I've pushed the v2 DRM patches with dtbindings, so the clock changes
+are the only ones left.
 
-Gr{oetje,eeting}s,
+Thanks again.
+  Dave
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> --
+> Florian
+>
