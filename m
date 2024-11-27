@@ -1,96 +1,134 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C431E4AB;
-	Wed, 27 Nov 2024 13:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48541FAC29;
+	Wed, 27 Nov 2024 13:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732712489; cv=none; b=YR6WBFlyxI5smJ3NJD3K0bSIIfIJx/VR7JpOGBTlJOdqLOiQVXM5LiyaO/1kV1Ch9AFZT0QOc7GtXe2IGqVKzs6ojT1yfJ6VPo6U2SVdKKl2WwQpIUlutD3pbF5AX0H+euPvGw9/3BirVd1iMwE3LIOidptXL+Lpto8F4WbN3mc=
+	t=1732713998; cv=none; b=VNS8QGd+RzfUSf4eBJoiNJMzZrpRCNA/PHU0m5LH0hK7Wbb94a9dK/8CSUtbVsaUA1fsYypykW7wBwaqvl5hv2OZRtcF2HOXeOyRS/5gJsQ4BXAtAj/nxcXMiBA+6gdbWbyDW+c6TKY/UC+c2QnNJ8CKCFu+ULluNh+zYmgXebY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732712489; c=relaxed/simple;
-	bh=fwCat6iOLZksnlBkz4J+k4Oy4tAyUgihlWvYmbFWD64=;
+	s=arc-20240116; t=1732713998; c=relaxed/simple;
+	bh=VrlZ5IEgCvEHIEiSIQpR2+Ht2H34GXLOS95yrTIXEfU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O/Fkv5zynXIte5WgrHafYXTlJ8nON5mHLDmblJVY2pNET9CeOK62kHTTGwMEteQhN3MOHXcxniuDghQlldxg8drzmDxihW4f9rBd/8szpKFnkZ96t8HpwhiJkwgOo/0bdoa50iANvpUHIufRg6VTF8rPj3GCfVPac/oNB5QRoYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.49
+	 To:Cc:Content-Type; b=JWxF06vNW8+wbrNfc2c7hn5fa/66m8MkPAlo+ct9PSclHFHdBodjc6E8qDy0L2iJH3CyBX3kIyCGQzoTZ0FUFCf81YYh7bCjNbLGCRkROAxwpuQmwOGETWQjdbkNYp4pWmTBJNahsO0Il+df5z2QQek50vRm+KZw7KKHA8abC3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-297078d8eaeso4853071fac.1;
-        Wed, 27 Nov 2024 05:01:27 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1084481066b.1;
+        Wed, 27 Nov 2024 05:26:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732712486; x=1733317286;
+        d=1e100.net; s=20230601; t=1732713992; x=1733318792;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ia/YcVLf6xUpnuxjWszjIdpvg2ssFJ896uOnlsg6PbM=;
-        b=IsYekhSwmXLPVYFQ73gEc9gUDOAkz5E5AHgHarZ3YLLhQ245sdjwFaMauX9K3YHMm4
-         aMXCyPlV+EkNTtnoCbj0rF2ADeH0WjsUP5+gfKnXQcjcjESFyfSxk+7ZlDfwx1xV5YPG
-         l4uuloormdtFzBbGCVWT86f8dKSS99lqpdBuELe3af2n+U3/oLpwXEuu4frTAfEyXAJ+
-         PDrFV9kgtO4aUMqqVPUOETru5TM0hwdZVcxCdFda+40kANH9Fsw13yeXIfTNzftf4xD5
-         wxeFZ7w2KRY9nIsDxaSK6cMUy1Jmo28ao+hjFtGo8IGFh0n0VXrgmVkHFx96gfv5Dcgj
-         QAOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnteZ5KvzUruQa8ntZgjYrJ41Xhq9v19GJm0zbvRC0lWtf8VLiY5wOf8uQzVilmtchx/3MCYXMUD9AFMIP@vger.kernel.org, AJvYcCVpJlHkINrB/KHetG+5zeQxCTAmvJh8Oj1JSwSVqNlH3QHDESx3X0QTsu7tyYY1XRMcTB1HTq13Un0=@vger.kernel.org, AJvYcCWmpElY99aA0IU1az1oHRDcJwKu5UBNFsPEd2+yitu/CbniyyJwGuBdu9NcPoEDp3oEmU+9cZ2WetGShelMrR/AG88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmsxO7KXRgonzyjNWCkf5QO9oTGGrRVDAiRgry7UesGZOYfuMG
-	L1QIeX5H18mHmb0QqFxAp57IiY9EDbd7TnE+TOmqpOE7lKl22YXgrN7YOyHJbEI=
-X-Gm-Gg: ASbGncsVSdNvjTqRFPGhxng7iyVJckhWYdgkXWV7vjHTW3KK7h1WHdy6ai4D3s4eFPg
-	F/PLY17VhjM1JBAowwl2GDXAKHFnpGKMBafE9S0JifEEyaxA/J9Kbm2a9Ec3RXVE9Z17L44fq3f
-	rK0F23m+XOYluljYtzeoG/H+G81SNrdUaqw4kt4hDHrDfn0jWD/E9bA2AQHOyveIZRMJTFC2231
-	6Itwgyz+0JDCyPZaQEA9kuNFPP5IIka49QVWhULz4jWr7M7FUimebYk5nIH/Y5Jj6g12wV9I9bR
-	1ehV8Dl6ADYk
-X-Google-Smtp-Source: AGHT+IH9iDijpSR5WzR2933rtX64qVY6pG1rRgSLBBXmts9T99UoCvRSsyCBJ7Q1wBest5M8CPOtVw==
-X-Received: by 2002:a05:6871:3a07:b0:297:2727:91be with SMTP id 586e51a60fabf-29dc4305d00mr2690278fac.27.1732712485943;
-        Wed, 27 Nov 2024 05:01:25 -0800 (PST)
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com. [209.85.160.43])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2971d5ebbbdsm4848351fac.17.2024.11.27.05.01.25
+        bh=XyeDQfwEDN0ttnkxwawP/koNscFpewJqgUMH52pWJCg=;
+        b=kvTaIw237vWiHGJDV+jeHuWYcWl04n9TP+yS3W9hVuQF6ReLRlywRgrln5Tcp2l/JJ
+         f5QfAbEhXGzoCQX4lDN9eHMOoyj8ecTHx5q3S3/2W5y2dtv474OAOTaMlO8B10k8L4U5
+         ghEj+JDo6RCcbNLv9fDude/HvxuYf+Q+m6wQ2VC+xWS7XPXaN3gl8RRf6TXtzjm8Ynsu
+         ZXap1WuZ0fXfS8StsZ/P+mAXCh72vHM7PqWDJNw1hqeYTGTkaW5rs8jkH5P++RUgrhfG
+         WKOZNJQYyy8nMiVwCoyyODB6D6GbMN7D94D64qVIVCxuumBJxZPntn5Bpazvl1C51ajZ
+         vyrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpv9SMpggQcTHKav7BrlQUaHdz3KojHnvdLDoHNJ9zqNxRk8jQntwSzALqOcb3IlmDyzayeA6ILxiewmpY@vger.kernel.org, AJvYcCXQA1IUKbees+6SukZ1R99E7RnabhmsX9D0S38+eOYr945hyMmXo2ivczLfx/NB1t+BmscblT4jzc0pLACkRYf8lpw=@vger.kernel.org, AJvYcCXhtppEdTVbQGmXhzysjfKFsl/eYWsqYCepqfEHUjr0RNcobBNSEylkypXi2BPK8Dq8woTWicjN4Vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN2F6CB34/n5W+G4AJ7I3FcrkeTIHerdQoKfedyFvRUYR2Vji1
+	kXvfgsU9k98W/kNcbd4/xao3dre68/rk7zliYXG2NmLw9EfwWqkKzuxks3EANUM=
+X-Gm-Gg: ASbGncsP6gE9cxGXkmBnUMLy5OUT9x/J3N5Sp2EjqSm6j6QbAyKc5SZYiPxrbV9KXpS
+	4+ib/dqMOEEeKE3vCLWldfNcID2iTb8J1Fbczbatll4/RyT8DJ9sLDbUJq7IW/w8C0mEQ+tMhHA
+	mgKiOfATz0UcowoMTuXJ6xa23pXqcXGeu7a4DsI6GNiHo6j6xCYmYBt099jlcyIbVKaCOzFWfBG
+	E7d9i/gn5GPJruOQ3eBP5qdzX7Lf62Gg0y+gfkox6suRrXiRD53IeukPeRt1uYXARQT0axO2v65
+	BAvP6FrRkZGe
+X-Google-Smtp-Source: AGHT+IEa6/NTuqgOSXxD/LPWNJRlGPIE88EUNsL40W1192c9Z0ArK8E+MVh6VTMBLdHhON0kx05NEg==
+X-Received: by 2002:a17:906:23ea:b0:aa5:d1d:1e7 with SMTP id a640c23a62f3a-aa581033172mr202463266b.38.1732713992519;
+        Wed, 27 Nov 2024 05:26:32 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa54f7fb6e7sm392870166b.30.2024.11.27.05.26.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 05:01:25 -0800 (PST)
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-297078d8eaeso4852989fac.1;
-        Wed, 27 Nov 2024 05:01:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU2xvq4Vh0L4UJlGUgdg9D5cWMSLt7PF8LgcbAleeOK/nnmtCQX8AT8hTE8UbI/z9ZnZgUXFYwW71xx4SEf@vger.kernel.org, AJvYcCV66HcCyIkE39N2zhrzIz79c9I3zma8qrxll6ikw2pD3DPYaGe9iUQA8OitiOxxouXnq68DoBfR9P0=@vger.kernel.org, AJvYcCXWUq9exp+UbwfwQtv5TSzmJUm3ZtLyddBr6mELrSfRYaBNInaSKJ2G8uXiQZFQVCnHquwi/onr0ZhkqrItDxOBzHU=@vger.kernel.org
-X-Received: by 2002:a05:6358:7184:b0:1ca:8d64:3719 with SMTP id
- e5c5f4694b2df-1cab15d0b1emr180778955d.11.1732712484823; Wed, 27 Nov 2024
- 05:01:24 -0800 (PST)
+        Wed, 27 Nov 2024 05:26:31 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9ec267b879so969460666b.2;
+        Wed, 27 Nov 2024 05:26:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVjbYSbN6DssMnCdMWtLQE5wop7uml8eMGbc1dhmslGXWmLvZ/mDXSmVJPXM0Nd13CAomkcidKnU50tIY9K/UP1mvY=@vger.kernel.org, AJvYcCWxYHcWX7CF/ze0XW4Aa+l76kxWxJzo46BY2YZfyEJSW9Zeq158xMhd4V0Lyeo/hQWke0iMs/N0NL2Ld0RJ@vger.kernel.org, AJvYcCXo7gImFLxNphPXyaR9GPkF6UQ9d8WXryigfZB0OE4aYsFlpHb+EmgsO1vL4PP5/WYjQFdkchIyohA=@vger.kernel.org
+X-Received: by 2002:a17:906:1db1:b0:a99:f6ee:1ee3 with SMTP id
+ a640c23a62f3a-aa5810328b9mr182689266b.43.1732713991418; Wed, 27 Nov 2024
+ 05:26:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031-clk-renesas-cpg-mssr-cleanup-v2-1-0010936d1154@gmail.com>
-In-Reply-To: <20241031-clk-renesas-cpg-mssr-cleanup-v2-1-0010936d1154@gmail.com>
+References: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com> <CA+V-a8vMMwyZ0rsdzrMuhvWDXa5dMtgYXf9+6YEAm1dXYUU+DQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8vMMwyZ0rsdzrMuhvWDXa5dMtgYXf9+6YEAm1dXYUU+DQ@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Nov 2024 14:01:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV+bvYQoOLxZ_eVRN2F604k1saJs5vbCLug0BmhVnKx3A@mail.gmail.com>
-Message-ID: <CAMuHMdV+bvYQoOLxZ_eVRN2F604k1saJs5vbCLug0BmhVnKx3A@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: fix 'soc' node handling in cpg_mssr_reserved_init()
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Wed, 27 Nov 2024 14:26:17 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVz5QWvi-aTGQrh3EUS9t9S45X8LoV1gXUiFSXJEpUXhQ@mail.gmail.com>
+Message-ID: <CAMuHMdVz5QWvi-aTGQrh3EUS9t9S45X8LoV1gXUiFSXJEpUXhQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add selective Runtime PM
+ support for clocks
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 1:43=E2=80=AFPM Javier Carrasco
-<javier.carrasco.cruz@gmail.com> wrote:
-> A device_node reference obtained via of_find_node_by_path() requires
-> explicit calls to of_node_put() after it is no longer required to avoid
-> leaking the resource.
->
-> Instead of adding the missing calls to of_node_put() in all execution
-> paths, use the cleanup attribute for 'soc' by means of the __free()
-> macro, which automatically calls of_node_put() when the variable goes
-> out of scope.
->
-> Fixes: 6aa175476490 ("clk: renesas: cpg-mssr: Ignore all clocks assigned =
-to non-Linux system")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> Changes in v2:
-> - Squash patches for mainline solution without intermediate steps.
-> - Link to v1: https://lore.kernel.org/r/20241031-clk-renesas-cpg-mssr-cle=
-anup-v1-0-628274ecbfcb@gmail.com
+Hi Prabhakar,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.14.
+On Wed, Nov 27, 2024 at 1:41=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Wed, Nov 27, 2024 at 9:54=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Tue, Nov 5, 2024 at 12:24=E2=80=AFAM Prabhakar <prabhakar.csengg@gma=
+il.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Update `rzv2h_cpg_attach_dev` to prevent external clocks not tied to =
+the
+> > > power domain from being managed by Runtime PM. This ensures that only
+> > > clocks originating from the domain are controlled, thereby avoiding
+> > > unintended handling of external clocks.
+> > >
+> > > Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_=
+clk`
+> > > structures to exclude specific clocks from Runtime PM when needed. So=
+me
+> > > clocks, such as those in the CRU block, require unique enable/disable
+> > > sequences that are incompatible with standard Runtime PM. For example=
+,
+> > > the CSI-2 D-PHY clock initialization requires toggling individual clo=
+cks,
+> > > making Runtime PM unsuitable.
+> > >
+> > > The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock sh=
+ould
+> > > be managed by Runtime PM based on this `no_pm` flag. New macros, such=
+ as
+> > > `DEF_MOD_NO_PM`, allow straightforward declaration of clocks that byp=
+ass
+> > > PM.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> > > ---
+> > > v1->v2
+> > > - Updated code to skip external clocks to be controlled from runtime =
+PM
+> > > - Updated id range check
+> > > - Updated commit message
+
+> > Note that this series conflicts with "[PATCH 00/12] Add support for
+> > Renesas RZ/G3E SoC and SMARC-EVK platform", which you are probably
+> > already aware of.
+> >
+> > [1] https://lore.kernel.org/all/20241122124558.149827-1-biju.das.jz@bp.=
+renesas.com/
+> >
+> Yep, I'll ask Biju kindly to rebase the changes on top of v3 while he
+> sends v2. Or do you want me to rebase on the above?
+
+I guess your series is closer to the point of acceptance.
 
 Gr{oetje,eeting}s,
 
