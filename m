@@ -1,55 +1,55 @@
 Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EED1D89ED;
-	Wed, 27 Nov 2024 10:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36771EBFFA;
+	Wed, 27 Nov 2024 11:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704962; cv=none; b=WEeq3AHaLTfv0EbJMzsWv+a4s2QyFbuj54oq/egiukqEhHL+g9wvbqtOS06a7F/Huo1eVUuTFh+U2p8SF/2bBCdEzTd5cY3mBYDdslabyKQJEeZ+TbfYnARM/M55iX69p5AOHhPcDYBd3DCVW9NSRgjwnAjkxRKsDbt33Hesi1c=
+	t=1732705304; cv=none; b=ZyZuRj9WenHtfGtV4hTEIJjvEJyC7qpGHmkP5vacb6d/erUar8T96cv36qELaWKRiiLYbNSIZW/QhiUT9mafdLtKRD2zxHu2+lDOlfgdx2DEyb/68Tbxa2Zl1PwVTAd+uMEECBfElYFBkFmHI651PDuWABsmqYjf/j1XOSnocOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704962; c=relaxed/simple;
-	bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
+	s=arc-20240116; t=1732705304; c=relaxed/simple;
+	bh=Mr+PrXarwOscZIn47L1gfNj1f8aJ1BHQ8BTWIOY61ls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YerwAz345eVd0fXpqBDZ0baOGtGsBbfhOfk4FPIaIHRp8vfC7FrJV1LARLUAqNlM+gfGrU7Ca/wejx1kP8sUXJsAUmn3jmuREzZntBavARgWpqp1R0tpJXeS82WMWhRcRukknxxZUqYtUDd3kjJjsP4eXIIjryfrMhoWcQLk9uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=LS69UuNH; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=uwsJfH+3; arc=none smtp.client-ip=5.78.89.93
+	 Content-Type:Content-Disposition:In-Reply-To; b=ellivNVVIlkf5lhJXuhz8LLuY/zHX0XMbd+TFr6PTB+POxuhutukcbvBFswFceqAxJgsUptfU7Rgi38d9b80Xeo3q1CSshl4N8cqo1IYDHrT533MVlRUKKDRabxXRvyfRZGREs1koRJYWT/7B3/NocsJ0kmMhd4lOROJESCQT0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=OHIzLYyP; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=FX47VPYp; arc=none smtp.client-ip=5.78.89.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="LS69UuNH";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="uwsJfH+3"
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="OHIzLYyP";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="FX47VPYp"
 Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 48A0E122FE1E;
-	Wed, 27 Nov 2024 02:55:58 -0800 (PST)
+	by bayard.4d2.org (Postfix) with ESMTP id 17570122FE1E;
+	Wed, 27 Nov 2024 03:01:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1732704958; bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
+	t=1732705302; bh=Mr+PrXarwOscZIn47L1gfNj1f8aJ1BHQ8BTWIOY61ls=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LS69UuNHegvzH1QSVS9u26+DzTmRUuAlEOWIyQCWg6gHwC/xTRVDnLJVMA5CMLvw9
-	 jgvd9Rei8dwzBzUJqtObWxY7lqY4eSGhv+d7YruAoVyCkKn7fnyIIIZiIFFDwfCf62
-	 hFopsYayeFM0SFASoPuRhE1CHIbBp7CqPmRg2ONgiXw18fEmCd8j62gmhSV4LRwW8o
-	 ra3bkHSwHwqTQhVZxw6w9vQGsP1nvn3pMY/62z7k1U1F2tMxIOhk5FrQjvcYDCTwf0
-	 XlsLFTnm9O0CuaQbjsTiAwlgoeIv1DWE1XLvPwOfRXWZ+pvid18ZQR8KIgcfuM5DWO
-	 5yMxMAkOe6QYw==
+	b=OHIzLYyPyFtoNjLCFvS5IPk8qT4yLEkbgh6LsK+BzonUqz/tc/xHELvL50nmjfpeX
+	 ntqG1EtvQCH1OdqzxCsHglwDgndwNWX9fZSKUBFYdbaXVib04zQ5GFYnD8E/21LSuK
+	 RC1fSm8FHWDcovwPmhs4zdAg9cImVgD6HrkzDW58M/PKfyKmZTOIZt4fBm+S2/tOdt
+	 BTTmS+Dfd7NQWqcLWGoUCRLfAvIedMS3ELYGB6MvrL+npvbGcYpgKqRl+bXPPKp+k9
+	 2nWnkE4p4nSgQbCFHJlME2de0owJGfn5CGg3kzfrF92dM1JJcaf+8HWTD87GqTzIQ7
+	 IzYgU5z+axBOQ==
 X-Virus-Scanned: amavisd-new at 4d2.org
 Received: from bayard.4d2.org ([127.0.0.1])
  by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id YNS0vbNhMu1C; Wed, 27 Nov 2024 02:55:54 -0800 (PST)
+ with ESMTP id NZ89x4naavqP; Wed, 27 Nov 2024 03:01:40 -0800 (PST)
 Received: from ketchup (unknown [119.39.112.187])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 9EAAB122FE1A;
-	Wed, 27 Nov 2024 02:55:51 -0800 (PST)
+	by bayard.4d2.org (Postfix) with ESMTPSA id B6AA7122FE1A;
+	Wed, 27 Nov 2024 03:01:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1732704954; bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
+	t=1732705300; bh=Mr+PrXarwOscZIn47L1gfNj1f8aJ1BHQ8BTWIOY61ls=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uwsJfH+3HRYpZD5erNRE95tLavoK9z63ZaX9LVjxZJHBKdEgmgXeS6ic7WBmDKMvU
-	 /eSyJl+JNlQy0ZHrPdw1iDW6BpZaPrdDwT4BfMmqBBwESOBfkRDgLdnaPdjMsgIFeP
-	 s7pYW+XoA7hHNQ9Mp17hcE5uWgsxQ7jUXegvYUt7z49HQbFHYK7QUvqiRGL7+0qC2+
-	 lbwhlTD4TJKqBmcFSh1/vw31YmsqnFJKO27CmJS4WssIQABF4Ml3jlz4dwLb+AngsB
-	 uXXPfZwVEVQqdABuBSP8hsIP8+4hQL7pTgJ+bEEu2HFFUf2IEvC9tBKedT2g61J92f
-	 RobmCn9pjXc+w==
-Date: Wed, 27 Nov 2024 10:55:42 +0000
+	b=FX47VPYpyNVOMtFWkYzfQso3D9D7SO9qMo41IRHV4Ur1Nmi6bskvj6VpBe8QKnYjR
+	 ogJVCTf7igfmo6J4xENGzcxgeSEvCzsO/WicYLW1xXA9SEpYR8RSDFkLu84ykQeIbA
+	 gFM1Vfogp8I9eJtNS2oQ2Y/PadA9WnNn9PRESVmTkFIPzBAicqFwgh8EuuEqc8xH75
+	 RKZI9WfzNhcZF1wS4lsNUmL5oMWQDm1Z2Z9Jyy0v2Yob4uxM8nn+G5ADJiDBVZRyDH
+	 tA4Bl69WLnXJkqwOFZl4eg3Dlenu1/ZRYRAIyprW7LvNTvP7nQLLZfWDWq5xxhHWby
+	 /fCLxZtCZAUhg==
+Date: Wed, 27 Nov 2024 11:01:28 +0000
 From: Haylen Chu <heylenay@4d2.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -62,10 +62,11 @@ Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
 	Inochi Amaoto <inochiama@outlook.com>,
 	Chen Wang <unicornxdotw@foxmail.com>,
 	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 0/3] Add clock controller support for Spacemit K1
-Message-ID: <Z0b6rqurcj-gfzjI@ketchup>
+Subject: Re: [PATCH v3 2/3] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Message-ID: <Z0b8CJGrAe_kUeuU@ketchup>
 References: <20241126143125.9980-2-heylenay@4d2.org>
- <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
+ <20241126143125.9980-5-heylenay@4d2.org>
+ <711362cf-5f4c-49e3-b771-38dfb441bc4c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,42 +75,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
+In-Reply-To: <711362cf-5f4c-49e3-b771-38dfb441bc4c@kernel.org>
 
-On Tue, Nov 26, 2024 at 03:44:20PM +0100, Krzysztof Kozlowski wrote:
+On Tue, Nov 26, 2024 at 03:50:30PM +0100, Krzysztof Kozlowski wrote:
 > On 26/11/2024 15:31, Haylen Chu wrote:
-> > The clock tree of Spacemit K1 is managed by several independent
-> > controllers in different SoC parts. In this series, all clock hardwares
-> > in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
-> > driver, CPU cores and UARTs could be brought up (see below). More clocks
-> > will be implemented later soon.
-> > 
-> > No device tree changes are included since Spacemit K1 UART needs two
-> > clocks to operate, but for now the driver gets only one. I would like to
-> > defer the changes until this is resolved.
-> > 
-> > This driver has been tested on BananaPi-F3 board and successfully
-> > brought up I2C, RTC, mmc and ethernet controllers. A clock tree dump
-> > could be obtained here[1].
-> > 
-> > [1]: https://gist.github.com/heylenayy/ebc6316692dd3aff56575dbf0eb4f1a9
-> > 
-> > Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-> > 
-> > Changed from v2
-> > - dt-binding fixes
-> What fixes? Be specific, what did you change?
+> > +examples:
+> > +  - |
+> > +    osc_32k: clock-32k {
+> > +        compatible = "fixed-clock";
+> > +        clock-frequency = <32000>;
+> > +        clock-output-names = "osc_32k";
+> > +        #clock-cells = <0>;
+> > +    };
+> > +
+> > +    vctcxo_1m: clock-1m {
+> > +        compatible = "fixed-clock";
+> > +        clock-frequency = <1000000>;
+> > +        clock-output-names = "vctcxo_1m";
+> > +        #clock-cells = <0>;
+> > +    };
+> > +
+> > +    vctcxo_3m: clock-3m {
+> > +        compatible = "fixed-clock";
+> > +        clock-frequency = <3000000>;
+> > +        clock-output-names = "vctcxo_3m";
+> > +        #clock-cells = <0>;
+> > +    };
+> > +
+> > +    vctcxo_24m: clock-24m {
+> > +        compatible = "fixed-clock";
+> > +        clock-frequency = <24000000>;
+> > +        clock-output-names = "vctcxo_24m";
+> > +        #clock-cells = <0>;
+> > +    };
+> 
+> Drop all above. Your changelog is poor - does not explain this at all.
+> Write changelogs which detail what you did and why.
 
-Sorry for the vague changelog about dt-binding changes... I'm willing
-to post a more precise one here,
-
-- drop clocks marked as deprecated by the vendor (CLK_JPF_4KAFBC and
-  CLK_JPF_2KAFBC)
-- add binding of missing bus clocks
-- change input clocks to use frequency-aware and more precise names
-- mark input clocks and their names as required
-- move the example to the (parent) syscon node and complete it
-- misc style fixes
+Thanks, I forgot that missing phandle references are acceptable in
+dt-binding examples. This and other required changes in v2 that I forgot
+to apply will be adapted in v4.
 
 > 
 > Best regards,
