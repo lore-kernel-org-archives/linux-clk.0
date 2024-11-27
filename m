@@ -1,226 +1,145 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A285200BBA
-	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 17:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52DE20309
+	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 18:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728796; cv=none; b=H4c0u7eYYypuXly+Mb21zzCgnmFB9yYKWqztwRJkBR75zKGr3LuWytt9j1O34nXAlLRh+idh8BjZNRZzyi3tS+jGAR5yPE6zgURhiX7G+pNi2qYrKwG8ZILLLJ65nGI79OCfVN/G2av2aIrQ3p9BYuTw8I5PtYpNDMLpGXyToO8=
+	t=1732733285; cv=none; b=GseGNDAaCd3A4sop0Xx+wjvTLXesOmQRWGCiz2qTLEuzGRdp+jO5/g2f/pgGVlLd8aWi2bRhJFhuN2phg72VKeGHFObCB6LgSXYcPT/u50JxNoPxrni5fukVhTUgwk5BfmNsT0TkiqBPOEo/fQimyBGl1RunJ5iQu7WTTqKy5kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728796; c=relaxed/simple;
-	bh=WHpE9eR5UhlUSBcB5vf5FzyYI2xQkCKts8Gpzp1P+K0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toPGmWx1JP71GKG70iVV/+VxPDCbUaRBGOF/NUEgTDj5cMeYrvQRucQyMubvjaY0qmXN3tlsfLxwarDAD2f4oWkJkTOzOl07L/jNWY0rpDk4vMXNIMqM3zTB9+BrIziy6wGEsxwowzPTad31i59s+1LjFb+kTnCbtllhdwBz0P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UfiPBUMI; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1732733285; c=relaxed/simple;
+	bh=NRkynitJcItte924uDQklomHInx09SX2d6xRgfzqXGA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qXWv/RUKfm76+djlpouTKC05w2QGT8oy9lkVynqFIjMhoDaqdxN0TsK0Nlfi1vHcyNMvriPZ+8O9kJ19cCgLc285XL7OcJxbFis6r4UjkpgfPcEJVsVFUveZrBC1ESKgcoB8I7gW6VoT+3hgImJEZG29i+vf0xH0YYSdrtE+U1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qBdWizEb; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UfiPBUMI"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43497839b80so33698285e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 09:33:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qBdWizEb"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4349e4e252dso33753115e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 10:48:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732728792; x=1733333592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W2Dvzpd6/ofo2QAO5d3vYdwlkF2Kp83/EUc916PDQGo=;
-        b=UfiPBUMI+WGc2LvyveaWleEzRnGRqEtBSw67Vr2gQtsyOZtwdoP7rUYgxUgwX8F+fM
-         /iaFFi15EgWS5fo7lLxBbrUyDGgfIy1MzLj6KWmtpN36MVRH0Cc9wTrTZl7H3LDcQ9Al
-         MnmpV9eU/VHQd3otwAwAlZa+FSsWd75iqQIATcryMMsF6VwemiTJ9BZbcz7hmN/uioHo
-         CQP2oXuPWw3JSaDEFVO52Z7skiTN4xPLYpHxqgyyUBkMF2xMlK89CENTTLQhq5SedySk
-         aDJM7JH/XyZ/CRWU6oVL7Ji+sjF2RKsqsGEudQIF5Hr1cUfbG+EVtydJtQ63coo/3UeF
-         HG1A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732733280; x=1733338080; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jcpw02mhb64jdwB+dNNvFHOzRMCWmmfGsK3Mw00EgFs=;
+        b=qBdWizEb7/PmB2KYH0aKUsVMt5+xEV2kXU+eBfT4gkxQf9V6fwJxlaI5DlAODFuI8U
+         JIV6GDa++/pVOKHk8QojSbyLl218mMGbS2x9Z59XJ6QihIqOwM/b3Dxof/4TfdCnepQU
+         HOiHVPbUXb5hvvxhEjOcKiYyCfa53VXOZjflpUFiS2yNT0FTZ9FmHBmY6a9IX7LYGef4
+         9njDh9Rn8mAc/Kj2dlYunXBKCIDhvPcoJxUaQF9ZEWNapO4baUDvLXNw1QS+7OHUirnm
+         S+YjOgKdphsPSeAz8F57drzIkHgDS1Xcl9/+Uzc2FwglrXCO0I57wn3YklomGx1oz2Yh
+         zwYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728792; x=1733333592;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W2Dvzpd6/ofo2QAO5d3vYdwlkF2Kp83/EUc916PDQGo=;
-        b=Od2yN4MIldlxIGpU2rlpnCUiFmgD6MRPaLjpCgErglbYUTMCmbZSlawDRPk37bgd7g
-         vek/iIL22byfHSRHaQU2XYvBsYaq4LmTDPIJqeXjB2NrKgKyPMxKrTNT+WLfLhR0/whj
-         HI+inFRxsx2k34bjVI1d62S293cP5UZvVfOVY80wrULGi+GimAyU6ZG6CmXMPW2i9TFi
-         5Tdb2eV99e8fh1RdMNnlG4w1N8t0vN5cIILBNI9lB7eOeFqTPR48nfATqt3BM/PeS8iC
-         LKWa7e/zZnZXcI3GdcgvbZ6DRBGrNlh++06X54HguWgtS8iSi/SWMiBhcVHWSgL6sGiP
-         XN+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXfhvshBH4guyF0XYsivk4fWqfEwmLU5wovDjPOXjFjPs4wyvRRwvSqn7mrMc9meHDxRluP1lCCCak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSUHQf8IKvmz0Q8DySZtPlT6mw6mKPoMRgRM4NA+khMxpUKw1/
-	pTKxBI3+Zoiv0SzMd9qoiZS1xGLTvAQcraVEjD7ENu4H769D1OF86qGQHHR+dg0=
-X-Gm-Gg: ASbGncuYEmQ8kyB5ZZDtYVQQ9VJ/VPZoR3RPsm5yBypWKqhdSmL+qrmaMsFA5Svw3/h
-	+j86Uq+R+b/gGsHU1WDh9upkqypXtHKEE3rRHTiTpJhQ0XORSTdqjBRTQ3wdJUVoqOMxHIDzQ6L
-	+jON2VFSJzmaTW4XGGZNQ/uyO5wmWN2ERmxK/6Zfoqy7WnaWi8FNgjKraU67Jd5SfdCvHQwOCyU
-	3m6oBrDZlGrVIC8W+Q1bEyEDyF85XediqyPsmcwz4rBFnpLrheji6EWuQ==
-X-Google-Smtp-Source: AGHT+IGtStnjKDVkWM4W4FfoiuUvanyDA4yxgbzn7BtijkP8yZgwoZcYmJJU95zF2wDM50TaHo+h3w==
-X-Received: by 2002:a05:6000:2704:b0:382:42c3:83e4 with SMTP id ffacd0b85a97d-385c6ec0a39mr2605026f8f.33.1732728791999;
-        Wed, 27 Nov 2024 09:33:11 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafeceesm16864453f8f.37.2024.11.27.09.33.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 09:33:11 -0800 (PST)
-Message-ID: <29b0e509-69a5-4098-bccf-d53cc6593c49@tuxon.dev>
-Date: Wed, 27 Nov 2024 19:33:09 +0200
+        d=1e100.net; s=20230601; t=1732733280; x=1733338080;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jcpw02mhb64jdwB+dNNvFHOzRMCWmmfGsK3Mw00EgFs=;
+        b=Gg01/gMd70VToKoIOnUhfSckjKwrAQ/p15doM3Zm4zoduQxt1gFnX4ICxCBlenlYtv
+         PgSUvOxdFYsJljCaMxdxcGQ9AjmhBgh3IFzkZihRefcJC9qP7kzylRZCWin8zXB34kWw
+         cPnGBbsqMwIxlP2Ox/i7VGGVD6eC1T2itjrMWdJhTrS1uVCbZ8/H9s6MOr56yV3FOwM+
+         CdY29irdCkikP2NK9vV0VDs07EohMLa0ceTZCqyIG6nMrV2uxP3TZskX51ReVjnUlTE1
+         5HT9ix6LFpZNO4xGDyVxHW2jk5n/LjsbPu0vsrjH7wKDXcn2xqoSjIkm7M7qTnpkZ7wF
+         grXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyeN7k9V/rWike0X/QxI39qFYTquCtv/W5Oc6nSR39U58za16Y9p7gTBn/I8vvvjS0u/xacPQLXiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1e/WjV6Vi8iz8qPaFUpeO573Rsd4S9hHaYhi4+kx18M6ZXbsY
+	Yi62tPKz4B8Vfvc9vtnZu6JgTMs4MzqHfNSVcLbJPaTOn9AFOnSklTUJ/4fGp2k=
+X-Gm-Gg: ASbGncvEP5V9+nNGkix/1Q7MQbNqX3FM6NBpkPCfF5rRvHO5LOAWtMPD3crvGHoCRhX
+	U3/sFepxJSiRz7HeByM/mbRNvlbm1n09T5l12Uzuq3f8QvyAFxvXu/giyBj6Tth3Wczio74QFEn
+	czs/sRs2um1hPVzI47LU3hEGLngPxMbtwhDrMDHIam0vHrz0UXbpQ8DtHLNtIu0Q8K5ty/9tAVW
+	lBBxIOfJf3xDJMDX9Nts7/16dB6QM/eJN0hOyb16a7gazJnJLYe7XDhgBs8fslQ
+X-Google-Smtp-Source: AGHT+IGr99n2pgmmmlqNTfnISk2hQpeyV5JpHyTyMj3WvVC6iQOTmJfEucqeLNOUYv2B6leOlv1B8A==
+X-Received: by 2002:a05:600c:3b88:b0:434:a765:7f9c with SMTP id 5b1f17b1804b1-434a9db839emr37961625e9.6.1732733280392;
+        Wed, 27 Nov 2024 10:48:00 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:e571:5afe:4e1b:8936])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa7cd343sm28854325e9.22.2024.11.27.10.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 10:47:59 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 27 Nov 2024 19:47:46 +0100
+Subject: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] serial: sh-sci: Clean sci_ports[0] after at earlycon
- exit
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
- lethal@linux-sh.org, g.liakhovetski@gmx.de, ysato@users.sourceforge.jp,
- ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
- <20241106120118.1719888-4-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAFFpR2cC/x2MWw5AMBAAryL7bZO2xOsq4gNdbFDSRSTi7hqfk
+ 8zMA0KeSaCKHvB0sfDmAug4gn5q3UjINjAYZVKtTY79MmN7Wt5w4Bu9HLiyCLsRVVeozBS2TNI
+ OQr97Csr/rpv3/QB9Wvy8awAAAA==
+X-Change-ID: 20241127-clk-audio-fix-rst-missing-0b80628d934b
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1632; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=NRkynitJcItte924uDQklomHInx09SX2d6xRgfzqXGA=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnR2ldNqnF+hCENTkKMXcIyoeqe6vo64sANMP3G
+ v8+TpjiOVeJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ0dpXQAKCRDm/A8cN/La
+ hSHeD/wMqPZGojSkTOSnh93vp6D1DDTdHNlEehKY7SxVGlFjp1RIE64G28ltFd5voZCdRTuaaRG
+ E7Log9CTOmBf0nReg2WINO1FfRKR0AC929HkeUFdKngXVIBSieROtVjvz2cRJJ5AAVFs67a3g22
+ cFaPyFy1rdmlP+rqcA2RyfjXtFohm2WsSKtUrColYXMr1FLcCwvjWrX/KFUQTeol+pAwtk0YjMr
+ MGn6ucKC8BmGeLn/AIsUjy9JJJSAt8EcB8X0q0+6lgIpOIjm0R8Lcc9RnFdBbHVb/Sx87xHWoNV
+ chtT31Nt7LScLqDuUJOOyZCUPhFQ1WuF/SzPK/l9AjXBW9S0s2tPEsG7AMV5Jl6rlEdKRTuhT+S
+ MYRfsbw7uLbydPEDIY9g+NjUBdnpPOYqFqrcwb/pJKqAq4vu7bKaYrvZoeew/YFho1WMB9gZMCu
+ DObmWT5CLGisIXCmqTfsI7oJM3n8RwRHjxXrkYGl3M/IMiItcT3pi4o7jEzko+wlO1MqplRrrPS
+ NN64QqczvMiS90HpiHmFxyTEJshpkD3x2l0HXE5dmwkcRN/A8xczzcuTU54dL66wNZFXhwcJ5hI
+ GkGP98Y/CD4Mb/BTFu/UZrpZ12QdJTqzWMaXWCjtE1BYTnHwGK/SarH7xJJht27F/rdqDsSY/Sg
+ i5TH5EzTDzIOlWA==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi, Geert,
+Depending on RESET_MESON_AUX result in axg-audio support being turned
+off by default for the users of arm64 defconfig, which is kind of a
+regression for them.
 
-On 27.11.2024 18:28, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> Thanks for your patch, which is now commit 3791ea69a4858b81 ("serial:
-> sh-sci: Clean sci_ports[0] after at earlycon exit") in tty/tty-next.
-> 
-> On Wed, Nov 6, 2024 at 1:02 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The early_console_setup() function initializes the sci_ports[0].port with
->> an object of type struct uart_port obtained from the object of type
->> struct earlycon_device received as argument by the early_console_setup().
->>
->> It may happen that later, when the rest of the serial ports are probed,
->> the serial port that was used as earlycon (e.g., port A) to be mapped to a
->> different position in sci_ports[] and the slot 0 to be used by a different
->> serial port (e.g., port B), as follows:
->>
->> sci_ports[0] = port A
->> sci_ports[X] = port B
-> 
-> Haven't you mixed A and B?
-> 
->> In this case, the new port mapped at index zero will have associated data
->> that was used for earlycon.
-> 
-> Oops, do you have a simple reproducer for this?
+RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
+COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
+necessary for every axg audio devices. Those are now deferring.
 
-It is reproducible with patches:
-- [PATCH 6/9] arm64: dts: renesas: rzg3s-smarc: Fix the debug serial alias
-- [PATCH 9/9] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for
-SCIF1
+Select RESET_MESON_AUX rather than just depending on it.
+With this, the audio subsystem of the affected platform should probe
+correctly again
 
-After boot, cat /dev/ttySC0 will lead to the issue described.
+Cc: Mark Brown <broonie@kernel.org>
+Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Hello Stephen,
+This fixes a problem introduced in this merge window.
+Could you please take it directly ?
 
-> 
->> In case this happens, after Linux boot, any access to the serial port that
->> maps on sci_ports[0] (port A) will block the serial port that was used as
->> earlycon (port B).
-> 
-> Again, A <-> B?
-> 
->> To fix this, add early_console_exit() that clean the sci_ports[0] at
->> earlycon exit time.
->>
->> Fixes: 0b0cced19ab1 ("serial: sh-sci: Add CONFIG_SERIAL_EARLYCON support")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> This causes a crash (lock-up without any output) when
-> CONFIG_DEBUG_SPINLOCK=y (e.g. CONFIG_PROVE_LOCKING=y).
+Thanks
+---
+ drivers/clk/meson/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I missed to check this. Thank you for testing it.
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
+ 	select COMMON_CLK_MESON_SCLK_DIV
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select REGMAP_MMIO
+-	depends on RESET_MESON_AUX
++	select RESET_MESON_AUX
+ 	help
+ 	  Support for the audio clock controller on AmLogic A113D devices,
+ 	  aka axg, Say Y if you want audio subsystem to work.
 
-> 
->> --- a/drivers/tty/serial/sh-sci.c
->> +++ b/drivers/tty/serial/sh-sci.c
->> @@ -3546,6 +3546,32 @@ sh_early_platform_init_buffer("earlyprintk", &sci_driver,
->>  #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
->>  static struct plat_sci_port port_cfg __initdata;
->>
->> +static int early_console_exit(struct console *co)
->> +{
->> +       struct sci_port *sci_port = &sci_ports[0];
->> +       struct uart_port *port = &sci_port->port;
->> +       unsigned long flags;
->> +       int locked = 1;
->> +
->> +       if (port->sysrq)
->> +               locked = 0;
->> +       else if (oops_in_progress)
->> +               locked = uart_port_trylock_irqsave(port, &flags);
->> +       else
->> +               uart_port_lock_irqsave(port, &flags);
->> +
->> +       /*
->> +        * Clean the slot used by earlycon. A new SCI device might
->> +        * map to this slot.
->> +        */
->> +       memset(sci_ports, 0, sizeof(*sci_port));
-> 
-> Nit: I'd rather use "*sci_port" instead of "sci_ports".
+---
+base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+change-id: 20241127-clk-audio-fix-rst-missing-0b80628d934b
 
-That would be better, indeed.
+Best regards,
+-- 
+Jerome
 
-> 
->> +
->> +       if (locked)
->> +               uart_port_unlock_irqrestore(port, flags);
-> 
-> "BUG: spinlock bad magic", as you've just cleared the port, including
-> the spinlock.
-> 
-> I guess we can just remove all locking from this function to fix this?
-
-I'll look to it.
-
-> 
-> However, could it happen that the new device taking slot 0 is probed
-> before the early console is terminated?
-
-I don't know to answer this. In my testing I haven't encountered it.
-
-> In that case, its active
-> sci_ports[] entry would be cleared when early_console_exit() is called.
-> 
-> Also, what happens if "earlycon keep_bootcon" is passed on the kernel
-> command line, and the new device takes slot 0?
-
-I checked it with earlycon and the serial device being on slot 0. In this
-case it was OK.
-
-> 
-> Thanks!
-> 
->> +
->> +       return 0;
->> +}
->> +
->>  static int __init early_console_setup(struct earlycon_device *device,
->>                                       int type)
->>  {
->> @@ -3562,6 +3588,8 @@ static int __init early_console_setup(struct earlycon_device *device,
->>                        SCSCR_RE | SCSCR_TE | port_cfg.scscr);
->>
->>         device->con->write = serial_console_write;
->> +       device->con->exit = early_console_exit;
->> +
->>         return 0;
->>  }
->>  static int __init sci_early_console_setup(struct earlycon_device *device,
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
