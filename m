@@ -1,63 +1,63 @@
 Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C11C201010
-	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 17:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A285200BBA
+	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 17:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728158; cv=none; b=VBySonOfsU6AIy25JEw6jqjPw90zQUrYrmTy6dzssH2L3QR5Mn8X9xCpW4Bx7+LYZLFFebYMxIYaNEXLTDt5ldIV7JOrwF3bOYb8Cb/6dj8PJlDPwvpQoYWsIqZ8KLfFkcGWdUSor+TUiNF4zi+foZZk1YVn+17I5HCOPui3qDU=
+	t=1732728796; cv=none; b=H4c0u7eYYypuXly+Mb21zzCgnmFB9yYKWqztwRJkBR75zKGr3LuWytt9j1O34nXAlLRh+idh8BjZNRZzyi3tS+jGAR5yPE6zgURhiX7G+pNi2qYrKwG8ZILLLJ65nGI79OCfVN/G2av2aIrQ3p9BYuTw8I5PtYpNDMLpGXyToO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728158; c=relaxed/simple;
-	bh=+vUOed904fqCM56GvdT6y2ZFeUnRxD9XR7KdTjK+tA4=;
+	s=arc-20240116; t=1732728796; c=relaxed/simple;
+	bh=WHpE9eR5UhlUSBcB5vf5FzyYI2xQkCKts8Gpzp1P+K0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lsUs4GDfgSNehMRWMsfueZg9HvW12TNjVyjzKam8s7LB/1AlC1gkqIYirpdMQkOdpFhvCpZW70qL6S7g77z+YGX0dR4n1xdZ9maiPW3USt1I/RYb8gpIprkM3ljo74t7L2dGy5SR1AIL24WgjQFJjx3oNPicoMTr3aEc4GDej/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JLkdulyq; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:Content-Type; b=toPGmWx1JP71GKG70iVV/+VxPDCbUaRBGOF/NUEgTDj5cMeYrvQRucQyMubvjaY0qmXN3tlsfLxwarDAD2f4oWkJkTOzOl07L/jNWY0rpDk4vMXNIMqM3zTB9+BrIziy6wGEsxwowzPTad31i59s+1LjFb+kTnCbtllhdwBz0P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UfiPBUMI; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JLkdulyq"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434aa472617so9408565e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 09:22:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UfiPBUMI"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43497839b80so33698285e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 09:33:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732728155; x=1733332955; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1732728792; x=1733333592; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zos3ZSR+4jZZkxC82FlxJ002wxj7wv8nR00Fq/bmK6A=;
-        b=JLkdulyqxb43c14uPF8uuI26xrNrGsYlfXxllhrWCnD1RAhPMGrnv8YdW+0Uvspf5B
-         Ftk0/TLpJhYwwT6oQ48h8DEglzYrDyrNGnAvfkgUs6Owg5mpXWVR6y42D3L8BjyprAvU
-         xgh6hnA5r0d7gCH/ADoOe9h69Om8aAx8RFGaJpjmyuDL49nZvXtMTQqRNLGozR2DfJX2
-         YEiH5+2TYQBI/hMby14P1Wdy7akV3SIAAcON5P0a86ett9HcAUBTazMMblg5fDRSBY1e
-         Sz9/uQTRzu7b2dSWJ95bz3iZ4frM7Zoqtd3g+lBI3Rct2+QbXEf87lfYB2+cWkTsVu2Q
-         MLqg==
+        bh=W2Dvzpd6/ofo2QAO5d3vYdwlkF2Kp83/EUc916PDQGo=;
+        b=UfiPBUMI+WGc2LvyveaWleEzRnGRqEtBSw67Vr2gQtsyOZtwdoP7rUYgxUgwX8F+fM
+         /iaFFi15EgWS5fo7lLxBbrUyDGgfIy1MzLj6KWmtpN36MVRH0Cc9wTrTZl7H3LDcQ9Al
+         MnmpV9eU/VHQd3otwAwAlZa+FSsWd75iqQIATcryMMsF6VwemiTJ9BZbcz7hmN/uioHo
+         CQP2oXuPWw3JSaDEFVO52Z7skiTN4xPLYpHxqgyyUBkMF2xMlK89CENTTLQhq5SedySk
+         aDJM7JH/XyZ/CRWU6oVL7Ji+sjF2RKsqsGEudQIF5Hr1cUfbG+EVtydJtQ63coo/3UeF
+         HG1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728155; x=1733332955;
+        d=1e100.net; s=20230601; t=1732728792; x=1733333592;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zos3ZSR+4jZZkxC82FlxJ002wxj7wv8nR00Fq/bmK6A=;
-        b=ByrmaG8DCKVR2SQvLnvScTj5gUlamz4tuIaC16k8w+L/IMC1Ku7pIkRIIP9EtJ46fa
-         wVTwJM3Q5EAf1hUkW0QnvmPIeGBweSJia2v4RZWJ2dc/TlVHzSSdLLlxD61FKRUepjoz
-         7WcCkvgVCCqe7N91ncanNOvqptGr9a5TLphY07hHyC153BeYIUs3XDWk9m+O1euzPdNF
-         lSjz466dUDh6AxP90Xc/LG+auqsXDHk2KyStbqNT8+JIf25tmdxYFUKpCnZJx/vSj85P
-         qzQFzZaMzMxxyD/V9QsCJ8apV3fCHGBXL1jGD+l86ev+352XDNdjcheJHeVTa0p63ZNF
-         xwfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBTzVBDTL2xLEX/FyWOl/Ywur5rJRV3DQCOeOPzG9pq3UbbG41vuJZcITh5Zk/lZYYUNWp8QMj1p0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDU86r4gesLs23TkSDNRoUNrqmILUOdziXOQhsuXMUyJ5I1r7a
-	HsPjH+CTrB2X/7iZ0adHotnu4n97mOBLnPfLqYM3+Dbn0h/sKDPR8iRBgaycR4U=
-X-Gm-Gg: ASbGncvIjeEoMdOKeD9RgZRPRj3Z4dg5wj+9+ckACIqUIz04QbDoCPWf3/Whn7W5GHG
-	6FCzmh9klSU8HeffnP6ZE/TeBDIkXH9UqFKDjbfcMyXjDc8l9WFblkyVUOYmtQnRTMPRl7UDsDC
-	jXh5s20gOQ3vKPCer6meZVL8+QPl3E73TqeDNNzyTcI3eSka7dvDdoP03/R7uXjT7d473IDIJh7
-	f1sxKwP0MNhhidBWYUpKQ9426DAmtYlCcTqdPFexYu4GD047ZRUXpWoUg==
-X-Google-Smtp-Source: AGHT+IFFWYbsBo99dq8o9ql/MRkTvADPckRvRFXRTZc5M9tvoTbk1c17SeAXZA4rqQw9msf2bDKKIA==
-X-Received: by 2002:a05:600c:1d9d:b0:434:9c1b:b36a with SMTP id 5b1f17b1804b1-434a9dbf226mr36685565e9.13.1732728153104;
-        Wed, 27 Nov 2024 09:22:33 -0800 (PST)
+        bh=W2Dvzpd6/ofo2QAO5d3vYdwlkF2Kp83/EUc916PDQGo=;
+        b=Od2yN4MIldlxIGpU2rlpnCUiFmgD6MRPaLjpCgErglbYUTMCmbZSlawDRPk37bgd7g
+         vek/iIL22byfHSRHaQU2XYvBsYaq4LmTDPIJqeXjB2NrKgKyPMxKrTNT+WLfLhR0/whj
+         HI+inFRxsx2k34bjVI1d62S293cP5UZvVfOVY80wrULGi+GimAyU6ZG6CmXMPW2i9TFi
+         5Tdb2eV99e8fh1RdMNnlG4w1N8t0vN5cIILBNI9lB7eOeFqTPR48nfATqt3BM/PeS8iC
+         LKWa7e/zZnZXcI3GdcgvbZ6DRBGrNlh++06X54HguWgtS8iSi/SWMiBhcVHWSgL6sGiP
+         XN+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXfhvshBH4guyF0XYsivk4fWqfEwmLU5wovDjPOXjFjPs4wyvRRwvSqn7mrMc9meHDxRluP1lCCCak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSUHQf8IKvmz0Q8DySZtPlT6mw6mKPoMRgRM4NA+khMxpUKw1/
+	pTKxBI3+Zoiv0SzMd9qoiZS1xGLTvAQcraVEjD7ENu4H769D1OF86qGQHHR+dg0=
+X-Gm-Gg: ASbGncuYEmQ8kyB5ZZDtYVQQ9VJ/VPZoR3RPsm5yBypWKqhdSmL+qrmaMsFA5Svw3/h
+	+j86Uq+R+b/gGsHU1WDh9upkqypXtHKEE3rRHTiTpJhQ0XORSTdqjBRTQ3wdJUVoqOMxHIDzQ6L
+	+jON2VFSJzmaTW4XGGZNQ/uyO5wmWN2ERmxK/6Zfoqy7WnaWi8FNgjKraU67Jd5SfdCvHQwOCyU
+	3m6oBrDZlGrVIC8W+Q1bEyEDyF85XediqyPsmcwz4rBFnpLrheji6EWuQ==
+X-Google-Smtp-Source: AGHT+IGtStnjKDVkWM4W4FfoiuUvanyDA4yxgbzn7BtijkP8yZgwoZcYmJJU95zF2wDM50TaHo+h3w==
+X-Received: by 2002:a05:6000:2704:b0:382:42c3:83e4 with SMTP id ffacd0b85a97d-385c6ec0a39mr2605026f8f.33.1732728791999;
+        Wed, 27 Nov 2024 09:33:11 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe3cbsm16741588f8f.38.2024.11.27.09.22.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafeceesm16864453f8f.37.2024.11.27.09.33.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 09:22:32 -0800 (PST)
-Message-ID: <9bc52590-3f68-423e-8eb6-4a9a06426709@tuxon.dev>
-Date: Wed, 27 Nov 2024 19:22:31 +0200
+        Wed, 27 Nov 2024 09:33:11 -0800 (PST)
+Message-ID: <29b0e509-69a5-4098-bccf-d53cc6593c49@tuxon.dev>
+Date: Wed, 27 Nov 2024 19:33:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,67 +65,160 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
+Subject: Re: [PATCH 3/9] serial: sh-sci: Clean sci_ports[0] after at earlycon
+ exit
 Content-Language: en-US
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com,
- broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org,
- perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+ lethal@linux-sh.org, g.liakhovetski@gmx.de, ysato@users.sourceforge.jp,
+ ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
- <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
+ linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106120118.1719888-4-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
+In-Reply-To: <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Hi, Geert,
 
-On 27.11.2024 16:32, Geert Uytterhoeven wrote:
+On 27.11.2024 18:28, Geert Uytterhoeven wrote:
 > Hi Claudiu,
 > 
-> On Wed, Nov 13, 2024 at 2:35 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> Thanks for your patch, which is now commit 3791ea69a4858b81 ("serial:
+> sh-sci: Clean sci_ports[0] after at earlycon exit") in tty/tty-next.
+> 
+> On Wed, Nov 6, 2024 at 1:02 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Add audio clock pins. These are used by audio IPs as input pins to feed
->> them with audio clocks.
+>> The early_console_setup() function initializes the sci_ports[0].port with
+>> an object of type struct uart_port obtained from the object of type
+>> struct earlycon_device received as argument by the early_console_setup().
 >>
->> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>> It may happen that later, when the rest of the serial ports are probed,
+>> the serial port that was used as earlycon (e.g., port A) to be mapped to a
+>> different position in sci_ports[] and the slot 0 to be used by a different
+>> serial port (e.g., port B), as follows:
+>>
+>> sci_ports[0] = port A
+>> sci_ports[X] = port B
+> 
+> Haven't you mixed A and B?
+> 
+>> In this case, the new port mapped at index zero will have associated data
+>> that was used for earlycon.
+> 
+> Oops, do you have a simple reproducer for this?
+
+It is reproducible with patches:
+- [PATCH 6/9] arm64: dts: renesas: rzg3s-smarc: Fix the debug serial alias
+- [PATCH 9/9] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for
+SCIF1
+
+After boot, cat /dev/ttySC0 will lead to the issue described.
+
+> 
+>> In case this happens, after Linux boot, any access to the serial port that
+>> maps on sci_ports[0] (port A) will block the serial port that was used as
+>> earlycon (port B).
+> 
+> Again, A <-> B?
+> 
+>> To fix this, add early_console_exit() that clean the sci_ports[0] at
+>> earlycon exit time.
+>>
+>> Fixes: 0b0cced19ab1 ("serial: sh-sci: Add CONFIG_SERIAL_EARLYCON support")
+>> Cc: stable@vger.kernel.org
 >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
+> 
+> This causes a crash (lock-up without any output) when
+> CONFIG_DEBUG_SPINLOCK=y (e.g. CONFIG_PROVE_LOCKING=y).
+
+I missed to check this. Thank you for testing it.
+
+> 
+>> --- a/drivers/tty/serial/sh-sci.c
+>> +++ b/drivers/tty/serial/sh-sci.c
+>> @@ -3546,6 +3546,32 @@ sh_early_platform_init_buffer("earlyprintk", &sci_driver,
+>>  #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
+>>  static struct plat_sci_port port_cfg __initdata;
 >>
->> Changes in v3:
->> - collected tags
+>> +static int early_console_exit(struct console *co)
+>> +{
+>> +       struct sci_port *sci_port = &sci_ports[0];
+>> +       struct uart_port *port = &sci_port->port;
+>> +       unsigned long flags;
+>> +       int locked = 1;
+>> +
+>> +       if (port->sysrq)
+>> +               locked = 0;
+>> +       else if (oops_in_progress)
+>> +               locked = uart_port_trylock_irqsave(port, &flags);
+>> +       else
+>> +               uart_port_lock_irqsave(port, &flags);
+>> +
+>> +       /*
+>> +        * Clean the slot used by earlycon. A new SCI device might
+>> +        * map to this slot.
+>> +        */
+>> +       memset(sci_ports, 0, sizeof(*sci_port));
 > 
-> Thanks for the update!
-> 
->> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
->>                                                       PIN_CFG_SOFT_PS)) },
->>         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS)) },
->>         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
->> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
->> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
-> 
-> I'll move these before WDTOVF_PERROUT# while applying, to preserve
-> sort order (by port/pin number).
+> Nit: I'd rather use "*sci_port" instead of "sci_ports".
 
-OK, thank you!
+That would be better, indeed.
 
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-pinctrl for v6.14.
+>> +
+>> +       if (locked)
+>> +               uart_port_unlock_irqrestore(port, flags);
 > 
->>         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
->>         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
->>                                                      PIN_CFG_IO_VMC_SD0)) },
+> "BUG: spinlock bad magic", as you've just cleared the port, including
+> the spinlock.
+> 
+> I guess we can just remove all locking from this function to fix this?
+
+I'll look to it.
+
+> 
+> However, could it happen that the new device taking slot 0 is probed
+> before the early console is terminated?
+
+I don't know to answer this. In my testing I haven't encountered it.
+
+> In that case, its active
+> sci_ports[] entry would be cleared when early_console_exit() is called.
+> 
+> Also, what happens if "earlycon keep_bootcon" is passed on the kernel
+> command line, and the new device takes slot 0?
+
+I checked it with earlycon and the serial device being on slot 0. In this
+case it was OK.
+
+> 
+> Thanks!
+> 
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>  static int __init early_console_setup(struct earlycon_device *device,
+>>                                       int type)
+>>  {
+>> @@ -3562,6 +3588,8 @@ static int __init early_console_setup(struct earlycon_device *device,
+>>                        SCSCR_RE | SCSCR_TE | port_cfg.scscr);
+>>
+>>         device->con->write = serial_console_write;
+>> +       device->con->exit = early_console_exit;
+>> +
+>>         return 0;
+>>  }
+>>  static int __init sci_early_console_setup(struct earlycon_device *device,
 > 
 > Gr{oetje,eeting}s,
 > 
