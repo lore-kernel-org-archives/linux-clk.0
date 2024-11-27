@@ -1,150 +1,150 @@
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA012E1E0;
-	Wed, 27 Nov 2024 19:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0002A20012B
+	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 20:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735832; cv=none; b=A9zp4sxKW5feynABNgbXGehHtDVvwTbTY0TTESsu2PLa955eYc89b+NqqTY/5IJMfIL4YJHI6rFR/1TvVB6qyH0NWwYmCPTj68BEXh8yGt+L3a2rB8RGZAH1xaFeuTNHmg8qOmaDcZl9ZwseRZWSI9HfiAFSYxcwVP4/UWMcMvo=
+	t=1732741021; cv=none; b=FSUuYF4oGc47RplsLry8E8ac4S/Uu3Z2kgy3BY7HGRsR3UsaAaL8fbwpnJTALubvA+S212Cw+WE8lZpXUWCujVl4v0Fo8gVIUIXrJiraVx8AA7yeKnT8nlQpTlWGNR91kDZfjEkq/H/LNI7yfGTOIehEpvXxYuxvsLVV5beVorU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735832; c=relaxed/simple;
-	bh=Bj/s6PT34SkAI6ztbW67uRqPMcWds4OjshAmxkBD6/s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IrvnbMyKeHXYYgCf0qsa/x9GtrHweDvbfFwI9bJ38YrN4XdZtJ3JtR+2EhfxzMuTUvU4H1sffHdXfJaACj5zLbVv6fn625XLixTZVgsFcB/393o7TA8/SXkRCteUdiO6a37wrUr7SpBCT4gKB+EaXjNwyVOtIfGJg0LkY5gpHqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fD2zUlVD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H5pOV3yH; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1732741021; c=relaxed/simple;
+	bh=r+RoTo5J6nLOhM3VtnIsWJC19xzClak7aHPvKpdFM7g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dJIj9PmJcWJ1aRqjHvh9tUIyqdWeOaueyvExwXQLh9ewQSKj2K0I1YiSK7mh4jEBspGh0D9N3CBJ0e3yyHdRKLSOjJsidBN3EOz+KOFkRmZWDdv/vBz+p9u7GwivGyBdbliRd98w2sowcrB7T/N7SbHDe5EhbCXykkV8kUfLzTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T54OfFsu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fD2zUlVD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H5pOV3yH"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0A9F51380756;
-	Wed, 27 Nov 2024 14:30:29 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 27 Nov 2024 14:30:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732735829;
-	 x=1732822229; bh=PMTKICLAk8Ul19wYWrq/UHHGVaNn10wFQLO8Ht338L4=; b=
-	fD2zUlVDRIa6UFm+LgOzMT9Zp9jJvynzA2AtXaUueyiT1VXO0MHD0GHhMHfyCICt
-	mTeuNlqUl2p6BX3M9tcPG4Egw8L4SYmcdKDrQQxYPy8sE+oE08fj9cPUUJzBEbRh
-	Gf51HgGfDcJE+O2czHENn4LQ4HuyXQ3SL2XwQ8xbZDXIfORO9Xe3M+H0B3sIFWeR
-	9uM1TD9ufZsT4WzTwdiODGBNs/mSXV+R9I2/8/OvcoJYnYYBxQ/PoBj4cSLEE+5/
-	lqMS9+GVWRWyKrbhC6RPqb0JB5roS41BjNUtwpUhij4FdMSUiemlSNU0XnRfxKg9
-	4dtkBKPpqKxE6QhBAoGBGg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732735829; x=
-	1732822229; bh=PMTKICLAk8Ul19wYWrq/UHHGVaNn10wFQLO8Ht338L4=; b=H
-	5pOV3yHAV1aXVBIGJ8YQfrresq2YqIFjtLtk/Fvp/XOj+Kv4v1SPbk3zFZRySLBV
-	LJcxdnyBlc+keML7Yn5jCPmXjKvygEp16dKnymIdFyOk74Gs0ynICO/sgEe5zL2r
-	uOZhhiiKEjnhGDs4YMmtakiqoEF8axEJHBcZllBkP5WCO+GlnfzSQZQV6LqJAJ+P
-	CWGCdpkfmrbn2mykq1XNq06ss2ZhtsKFMB+yWhInrf6KT9WEfz9HLzw4krbu5gGy
-	HwA2rlysZk3IV2LH+eeQtjHEZlw/AR5pjR9ZkQLKV4Pjar9J1I3ZokxEJEiz8Ipr
-	GaC6aK8AiK4LyB6I8NcrA==
-X-ME-Sender: <xms:VHNHZymJ-B8FSBgSfNQtcO69NdeQHxiqYGUcfnlKXKRESNgSDlNTXA>
-    <xme:VHNHZ51Yzy9o5AQpK6W2dCEGc1soTxW8zeBaqrdPpNhc9-IcaqEG3TdqRQAHTyHCq
-    O5SkLpHzd23bbilMpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisg
-    hrvgdrtghomhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdp
-    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
-    htohepmhgrrhhtihhnrdgslhhumhgvnhhsthhinhhglhesghhoohhglhgvmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshht
-    rhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrmhhlohhgih
-    gtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    rghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:VHNHZwohAnM6qcGvYt57x8rZYujNQDRAXuOvGZJFQ7FzDqB3MRsTTg>
-    <xmx:VHNHZ2l5skdIkAlbpfZ3uoruVk1hadaOboTgL5v2EayCDq2mudDMKg>
-    <xmx:VHNHZw3MIRdevzqJejuGzilVwfBFRQvJJD21Nq8Tcdx4pbpz708zvA>
-    <xmx:VHNHZ9srmhntVifpTVlUnu8iACTzYA1YER8tWYne4F4_YrwFUAa9Ww>
-    <xmx:VHNHZ5t7dwmXGd_wtkgHJ4-mlfxy7bHCgRhToztkEPC_dHMpKqOizRo3>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 7D7EF2220071; Wed, 27 Nov 2024 14:30:28 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T54OfFsu"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso666055e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 12:56:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732741016; x=1733345816; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7U9hOswjkTlIu0eHpVW8cvTyEAZU1a4KzVLqKR0PK0E=;
+        b=T54OfFsu1CXi4yy2IhuWtAmRamzIfF2whrQlEdnWfWgVg7nAMnaF699kCVz+1AQHif
+         N+iWBkn6ISr4KolYyDmOKycMeUu6OFIMLqVaQae6vJJ5BTay1NR+N5wUM+iMB8u6C4jQ
+         JmlNoO7q9ZjmBpYECCdOBSjztaCKKZAJnCuWZYvyd9Ia8J0Bkl7HhvL5/7hF/9NlXi+Z
+         HUpJhv2fEMRMNgm7zl7ewLwjhe6ybaDGMptjEI8U5x7o2VJO2P5e/++NQbuWS3Db/UFi
+         MHRzqTPk47//efTvI0h4MCrhLP+i4HOZirWoebYSvzVc+hNBwHTDcRWLFGJlBP/fD2AD
+         jNfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732741016; x=1733345816;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7U9hOswjkTlIu0eHpVW8cvTyEAZU1a4KzVLqKR0PK0E=;
+        b=Pb/+OiqPS4mP0mFouQQ4zJP1rkRp+YdFOCYTDzR36cqYTa/xa+p98mzLCeiVuIzTlR
+         trOV+Zskxukn5rtIGbLkUvpxA1WVcaFSKi9yfHDtCZgXZP22GUFkOgdW4ii5SZK9aR+h
+         5MJMy/zqFQwQBPTr7DLHkuwznUlcSyw3ocdkWxNOzNvA/1bngabkelELoH2GAl6eVl/X
+         suj2IgSQpGylb8FBPu2YLG/SxIF6niSn8cCFd9JlMH55rgemceRj0PBrrOcSuOehTmqJ
+         90/vqKVN4QAQc3F8d0k+Z+/8FKv6IfTQtLSxGjno3rXaBp3PnN3cG2ah8dbHOxSSDjV0
+         zr9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWovfosR2mzqH7Xgkhoq2hFKvxq0Cuo6xvaWKZlUT9/nTM4oEfF9CQeRkJ0UhiaDDE0eJPKRx0wusI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT6SprgW4zvHnUhGBWqvwaBvfRGJyW7e+qCUoKjWw4WKAL1Box
+	ONDcFg8nHowNMiEvD0M7jWltNSDQaaxoJduY95VOd5TEU7e22ympqPqtJhphGtc=
+X-Gm-Gg: ASbGncscf+50LaOKfHON6eH+jfcqmahilmFVUlnvakrLosfW1o+0vh7+coZCiTQ5ECN
+	p+13W5E4GPhIrgiskm0xn5ALHV+xFLkhJkMm9GCxjH+cq1kDVQhmdgP6NM2ZpLis7ykKw8eJxOw
+	/XU7LOo/U2d2pclnrbfeuIQa775URQK4KoQ4LaY9OQD+LiUgP3ce0uGmtQ4vmOTWPOQ7ofrTbXZ
+	Lx4QxCTbKiEQb3pEB0KQ83frGE9H9kwBMpeXeWciFz7zxVgKw==
+X-Google-Smtp-Source: AGHT+IF9mEC2PpHHSEE4f/UbbHmSaSloRZU6SDyajUiQ4Pk9pvlFm1bVlT9XTXNm/2ABjv1LiTOqoQ==
+X-Received: by 2002:a05:600c:4e8a:b0:42c:b52b:4335 with SMTP id 5b1f17b1804b1-434a9dc3e80mr49302555e9.10.1732741016193;
+        Wed, 27 Nov 2024 12:56:56 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:cc06:8990:4fb8:28e5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bc91sm493395e9.9.2024.11.27.12.56.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 12:56:54 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,  "Michael Turquette"
+ <mturquette@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,  "Kevin
+ Hilman" <khilman@baylibre.com>,  "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  "Mark Brown" <broonie@kernel.org>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+In-Reply-To: <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com> (Arnd
+	Bergmann's message of "Wed, 27 Nov 2024 20:30:07 +0100")
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 27 Nov 2024 21:56:54 +0100
+Message-ID: <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 27 Nov 2024 20:30:07 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
-In-Reply-To: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
 Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024, at 19:47, Jerome Brunet wrote:
-> Depending on RESET_MESON_AUX result in axg-audio support being turned
-> off by default for the users of arm64 defconfig, which is kind of a
-> regression for them.
+On Wed 27 Nov 2024 at 20:30, "Arnd Bergmann" <arnd@arndb.de> wrote:
+
+> On Wed, Nov 27, 2024, at 19:47, Jerome Brunet wrote:
+>> Depending on RESET_MESON_AUX result in axg-audio support being turned
+>> off by default for the users of arm64 defconfig, which is kind of a
+>> regression for them.
+>>
+>> RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
+>> COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
+>> necessary for every axg audio devices. Those are now deferring.
+>>
+>> Select RESET_MESON_AUX rather than just depending on it.
+>> With this, the audio subsystem of the affected platform should probe
+>> correctly again
+>>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency 
+>> on RESET_MESON_AUX")
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 >
-> RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
-> COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
-> necessary for every axg audio devices. Those are now deferring.
 >
-> Select RESET_MESON_AUX rather than just depending on it.
-> With this, the audio subsystem of the affected platform should probe
-> correctly again
+> febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 
+>> 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
+>>  	select COMMON_CLK_MESON_SCLK_DIV
+>>  	select COMMON_CLK_MESON_CLKC_UTILS
+>>  	select REGMAP_MMIO
+>> -	depends on RESET_MESON_AUX
+>> +	select RESET_MESON_AUX
+>>  	help
+>>  	  Support for the audio clock controller on AmLogic A113D devices,
+>>  	  aka axg, Say Y if you want audio subsystem to work.
 >
-> Cc: Mark Brown <broonie@kernel.org>
-> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency 
-> on RESET_MESON_AUX")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> You should generally not 'select' a symbol from another
+> subsystem, as this risks introducing dependency loops,
+> and missing dependencies.
 
+I do understand that one needs to be careful with that sort of things
+but I don't think this is happening here.
 
-febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 
-> 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
->  	select COMMON_CLK_MESON_SCLK_DIV
->  	select COMMON_CLK_MESON_CLKC_UTILS
->  	select REGMAP_MMIO
-> -	depends on RESET_MESON_AUX
-> +	select RESET_MESON_AUX
->  	help
->  	  Support for the audio clock controller on AmLogic A113D devices,
->  	  aka axg, Say Y if you want audio subsystem to work.
+>
+> It looks like RESET_MESON_AUX is a user-visible symbol,
+> so you can simply ask users to turn it on, and add it to
+> the defconfig.
 
-You should generally not 'select' a symbol from another
-subsystem, as this risks introducing dependency loops,
-and missing dependencies.
+That would work yes but It's really something a user should not be
+concerned with. I can follow-up with another change to remove the user
+visibilty of RESET_MESON_AUX. It is always going to be something
+requested by another driver.
 
-It looks like RESET_MESON_AUX is a user-visible symbol,
-so you can simply ask users to turn it on, and add it to
-the defconfig.
+>
+> I also see some silliness going on in the
+> include/soc/amlogic/reset-meson-aux.h, which has a
+> non-working 'static inline' definition of the exported
+> function. Before my fix, that would have caused the
+> problem auf a non-working audio driver.
 
-I also see some silliness going on in the
-include/soc/amlogic/reset-meson-aux.h, which has a
-non-working 'static inline' definition of the exported
-function. Before my fix, that would have caused the
-problem auf a non-working audio driver.
+If by 'silliness' you mean there is symbol definition for when
+RESET_MESON_AUX is disabled, indeed I guess that could go away.
 
-      Arnd
+Thanks for pointing it out.
+
+>
+>       Arnd
+
+-- 
+Jerome
