@@ -1,186 +1,230 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7A713A888
-	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 09:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FE818FC81;
+	Wed, 27 Nov 2024 09:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732700194; cv=none; b=fuW7o0yMVQPWIOfuj08lILURYnDdIWGizwft+e8KMY6Ot2N0FGohUh1jpXdMgsagtbXaeN3T7TRy6SPcKd8nkM6EP/moHIA8DpoPMzJfANoiFzV83I8fLPA1CuG1nrrR+N5dAhnM++amCSd7XI+RngrMsIwamfypi3m/qNzjRKI=
+	t=1732701246; cv=none; b=jrlc/WGceXz3MqWZtkNZTfE5CTGfaUlS4qGNWvvYQbiGPMcizTgzMdv+21vnDPF/P227szWwVl6gSturseOZF5pr9XMSLcXJzlbCaX6QJBt/WnzENEwVWlF1D/3Zc0KZhh9fdfRtmiq8/TnKOT/mFg8DF8LKDwBJ6QvIDmNyOSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732700194; c=relaxed/simple;
-	bh=gtprPVNdoBA0SQtz+Tn8Mp5pL32x47VlscWHTkUCCP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HqZvQmGRbBZ9lj60pZuxlyOsFq89R+qmOiy0KgXgSL7/LQA7LBIUNDsJw3mJzgKQUUj06P1n77qnG2PCsXNv2Q6KlWrUMuRZKN2WR4aQa9sc9ts/ExBcWQDqo3+R8Zk4dl+cwKjU2V98KIkQv08uAGVOykl55C0ILEUxscxS1Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hiuQIYz3; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hiuQIYz3"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38242100504so219527f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 01:36:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732700190; x=1733304990; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6JiUVixxYlECG0+CmoWGiRvTX57VPI+LOi/KpvIp4z8=;
-        b=hiuQIYz37WuUwNBMHn9k8wX7AlkjEE4jityz7hSQVKatNEWFf9xYqyXIN7F7VN31nl
-         JjUCojFBnIsuxOofB2KNz1WjI3QgK4Rq1m0ACdj3nfQBhuWKKh80K6LdINpVPa+BedcW
-         QvLOxzy1D10bctKhc/Rkb6zyedwG0o9jy/Dixj8bh+UEr7rU/0Jo0lprvCOy+kpTvFtQ
-         9CUULLP3HvonH2/z85CKvjyvGMDebdyXNisLfbiNikdH/forfvDmCo0L2UDEhFak0r6K
-         1zwJ3fVkX+68CDl/riVIpZpl5XdKqV+qKnw0dCmVmT5oWONoJ9Cz8VpOb+ML2XQgLOPV
-         trGw==
+	s=arc-20240116; t=1732701246; c=relaxed/simple;
+	bh=xgynu+dnij/Ap4H8Z6VToiH02SriDSYtiIh9IuHQf6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ICHbOfVuAtnu0y81LcW/dhDH/qYEUkFLkBqsyd5/YUlS6lCX95xtyx7KwS6w5IbtH2Xex/AWmGPJNeBAzWzSz7IyHQrTh1kJsv4XG+GmUoEYsRjslrTmbPAMnGmyDWLC8xEU+PPistfxw11fNWYzY3EBnbY/rOXZ34XSyIHhaNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so8421681a12.2;
+        Wed, 27 Nov 2024 01:54:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732700190; x=1733304990;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6JiUVixxYlECG0+CmoWGiRvTX57VPI+LOi/KpvIp4z8=;
-        b=WeknCurHN4c00bDh+Uvdkmc12Pt+PEXrzS77hr7DH6Z8kfjo0Z9zI6iVFRjTFfrifI
-         kBQq6YNO0k5/Eiq/hjGe2JOEDpzhj2YN5TZadySn3tgkRcIkHDjL2fOT0m0u+pLaALbi
-         R3FOguOhtaVjFHqgdbOcN8m8/Q8aujUO9JKGus4/v4byVo9j1GWx4zr3co4nVJG8UVCT
-         Xm92oxsdWPeo4UYwbyw9gydLfqh2NAWAb1bbUEB8jD3zl8cn6+dUGXePr49KGhljcuLk
-         NJoilXMaSnouQZlO7Mnox6aWKQ42BJ0VghOjdvkIkkgO/JmjQ2XsqbGcb34/+Ieh5OCy
-         61Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9O+XB/on33dAFheNK+a9rFVt2sgwkLVm2snIkByyPFjeIlDs72AbQJEK38fSYnMyjbwoM+4+2TaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv2Nrui8q1Q+dgryLVy0zB95reSe18e/kl2VmMEn2OvMLt4bFt
-	icErnQyK1M+15OWOa/aaJuZd6D3cysxuRrqiKdaGY+H5qDm596lmIXsPCWwt4yY=
-X-Gm-Gg: ASbGncv439iucsY4kcJ4on/9/aqE/gDF/AL54c3QhwSjSy+25BIGrBHdSYajoNFYUXP
-	OAryCfZkaZCvq3tu8jx8/DvlUhHro3+uQ58mh/QocbjUtt2MEU1ji7I2g8vobQgFja2PLpOydq+
-	dEy8Ku6PZnxmzuD9AtZCmaKO3u3yaETKd/eJ7BsdnRMPLVSqvz/wJpRWY8MqKsuU7p1VcO7Ri67
-	3T/d06EVpGInX90+RH2nC/UkaM5wim0ihg0UihMhanZ2FaI76KaqQcjfWnTEY8=
-X-Google-Smtp-Source: AGHT+IHg0M4TpF2Z6OCGwX2wDMIMPge9z2fUPxOqzZYk0qiCMYgz7Tddg7rr6pBtKhaG0tQg5d/Qaw==
-X-Received: by 2002:a5d:47cb:0:b0:382:498f:9d54 with SMTP id ffacd0b85a97d-385c6eb68a6mr711784f8f.6.1732700190581;
-        Wed, 27 Nov 2024 01:36:30 -0800 (PST)
-Received: from krzk-bin.. ([178.197.219.21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc38afsm15729035f8f.67.2024.11.27.01.36.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 01:36:29 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: qcom: clk-alpha-pll: Do not use random stack value for recalc rate
-Date: Wed, 27 Nov 2024 10:36:23 +0100
-Message-ID: <20241127093623.80735-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1732701241; x=1733306041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nFNxczP+b5V8JKJ5O2vCYbJjZZHSVrsWR+o7WcAs32s=;
+        b=oDc7FnlUqG3bexzIgW3O/GKsPqgDb7e+rOSakbZjxeikmihRiXjfbT4Od/mRGpi3an
+         D09IQo9Dy4DsJGWhjdiLQF7x44KGJaFLeVQSGc5buSKQpz8ov1yk+88RVzRqzJkJElOf
+         fFSaDQraZex2KLvkYNM4gsbTiCjheQALDK6KKcFeY3Tq4UaNqS/i16JzG390W8+eepwS
+         ZfqYGq5BuZUiQYImY2nqg0PpzYxvys2fOC9cr5IF3eE6Nir59s/ELDFaSqCCGCqad+HO
+         omuXfX+3QHXfCsyx8IugTdUy/sK4kFh8ngI4m+Q17hslC3aAjaelORLchw+spF8wjlES
+         0hvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh3RLN6+BUf0+3UWj0gTMWH6cEtkg3ItTQBUhD1qYa4Nejs4Vtuo3ZrrvAwZ1pUmC36Dn8LdlyTyMvQ9erynvAHr8=@vger.kernel.org, AJvYcCVXAO9L/yUa8X7BAPFD1RDK5HGQ8QHmKM3D6WG3HB8+3rsc266EWV7KnIYINQyRbqBO3MQozPnmySc=@vger.kernel.org, AJvYcCW3XsFmXukRR9FxgGIoC7cFaUW8akZSssFYa8Kql9wVjtWI616/mciD6DYAY/H7BT+6vIPDchvLhNsYGqla@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFF6/cQwbnXSXVZJy1RrxXJXHsBbSm1sRCIJs/FYP5EzDAU4CD
+	TDHk5EBP677WzPz5mQ6DABqnxKp+80zCB+F+WNA+KHYy2ngXs7GVDkJkLUH7yHo=
+X-Gm-Gg: ASbGncu7ca8xDYNoxMPHCebKh5XlTVVy1xot2c0UoS0GnUEHkxUMc69urVuQZr516wm
+	HiqiyOzab4wsBSGsBuBpCkq8qp66kBBc6ntFxhUmmiRil9LWwsnrxrUp1HjB9H2eHDHssFBE4yA
+	Ye6A0UJfS5wWpzuWIcLUWnCIaIBeDjf2z3ytSTbaBQBRNiLw4MSKNYcVjgNOuEhYr0guyarl0X0
+	7qVTbOXmIn25AqSBY0p9viHowdSIRvIE/fjJZdAxda1i+4pc9/HP/QCH3QnVa9GcJ09VViXCY8f
+	UKH8FvnL0Jzt
+X-Google-Smtp-Source: AGHT+IHmH3ImqJXE6O3fZkkabRKi4GRR/5G27AvOFYyipk2/zPz9Vt/gKSDyxRiTPadJTEJfFyCNlA==
+X-Received: by 2002:a17:906:328d:b0:aa5:1d08:dad0 with SMTP id a640c23a62f3a-aa580ede47cmr164258366b.1.1732701240895;
+        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57bf82sm688603866b.147.2024.11.27.01.54.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1055061866b.1;
+        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUA4hz8j2X4DQxTbw2gfla42wKVeO0I6xLeMEYTq3+1GGN+GfzoK27+suC/H52fx8d6vVp2KsVeGNalcMnf/RWh910=@vger.kernel.org, AJvYcCXi1N7YGPxVPQWx+0fI6ouce1qMY3lh6zvuN/gkvRf26pPAR2139DSORPxAn5E6iokwSKyX7o7FvU5NYlT4@vger.kernel.org, AJvYcCXzVz3Z2r215lFtN+PjTHWG2THt2BYvU2MIhMVsxcmsskEp2lSrA064qveiZ4CUapofOhsjU7WMX5Y=@vger.kernel.org
+X-Received: by 2002:a17:907:7616:b0:a9a:f0e:cd4 with SMTP id
+ a640c23a62f3a-aa581066bb2mr149567166b.55.1732701239952; Wed, 27 Nov 2024
+ 01:53:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 Nov 2024 10:53:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
+Message-ID: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add selective Runtime PM
+ support for clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If regmap_read() fails, random stack value was used in calculating new
-frequency in recalc_rate() callbacks.  Such failure is really not
-expected as these are all MMIO reads, however code should be here
-correct and bail out.  This also avoids possible warning on
-uninitialized value.
+Hi Prabhakar,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 41 ++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 12 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 5e9217ea3760..0cd937ab47d0 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -682,9 +682,12 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 alpha_width = pll_alpha_width(pll);
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
-+		return 0;
- 
--	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
- 	if (ctl & PLL_ALPHA_EN) {
- 		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &low);
- 		if (alpha_width > 32) {
-@@ -915,8 +918,11 @@ alpha_pll_huayra_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, alpha = 0, ctl, alpha_m, alpha_n;
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
--	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
-+		return 0;
- 
- 	if (ctl & PLL_ALPHA_EN) {
- 		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &alpha);
-@@ -1110,8 +1116,11 @@ clk_trion_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, frac, alpha_width = pll_alpha_width(pll);
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
--	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac))
-+		return 0;
- 
- 	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
- }
-@@ -1169,7 +1178,8 @@ clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 	u32 ctl;
- 
--	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
-+	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
-+		return 0;
- 
- 	ctl >>= PLL_POST_DIV_SHIFT;
- 	ctl &= PLL_POST_DIV_MASK(pll);
-@@ -1385,8 +1395,11 @@ static unsigned long alpha_pll_fabia_recalc_rate(struct clk_hw *hw,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, frac, alpha_width = pll_alpha_width(pll);
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
--	regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac))
-+		return 0;
- 
- 	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
- }
-@@ -2457,9 +2470,12 @@ static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
- 	struct regmap *regmap = pll->clkr.regmap;
- 	u32 l, frac;
- 
--	regmap_read(regmap, PLL_L_VAL(pll), &l);
-+	if (regmap_read(regmap, PLL_L_VAL(pll), &l))
-+		return 0;
- 	l &= LUCID_EVO_PLL_L_VAL_MASK;
--	regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac);
-+
-+	if (regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac))
-+		return 0;
- 
- 	return alpha_pll_calc_rate(parent_rate, l, frac, pll_alpha_width(pll));
- }
-@@ -2534,7 +2550,8 @@ static unsigned long clk_rivian_evo_pll_recalc_rate(struct clk_hw *hw,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l;
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
- 
- 	return parent_rate * l;
- }
--- 
-2.43.0
+s/rzv2h-cpg/rzv2h/
 
+On Tue, Nov 5, 2024 at 12:24=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Update `rzv2h_cpg_attach_dev` to prevent external clocks not tied to the
+> power domain from being managed by Runtime PM. This ensures that only
+> clocks originating from the domain are controlled, thereby avoiding
+> unintended handling of external clocks.
+>
+> Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
+> structures to exclude specific clocks from Runtime PM when needed. Some
+> clocks, such as those in the CRU block, require unique enable/disable
+> sequences that are incompatible with standard Runtime PM. For example,
+> the CSI-2 D-PHY clock initialization requires toggling individual clocks,
+> making Runtime PM unsuitable.
+>
+> The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
+> be managed by Runtime PM based on this `no_pm` flag. New macros, such as
+> `DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
+> PM.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Updated code to skip external clocks to be controlled from runtime PM
+> - Updated id range check
+> - Updated commit message
+
+Thanks for the update!
+
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -668,8 +671,38 @@ struct rzv2h_cpg_pd {
+>         struct generic_pm_domain genpd;
+>  };
+>
+> +static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
+> +                               const struct of_phandle_args *clkspec)
+> +{
+> +       if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_count=
+ !=3D 2)
+> +               return false;
+> +
+> +       switch (clkspec->args[0]) {
+> +       case CPG_MOD: {
+> +               struct rzv2h_cpg_priv *priv =3D pd->priv;
+> +               unsigned int id =3D clkspec->args[1];
+> +               struct mod_clock *clock;
+> +
+> +               if (id >=3D priv->num_mod_clks)
+> +                       return true;
+> +
+> +               if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR(-=
+ENOENT))
+> +                       return true;
+
+Shouldn't this return false for the two invalid cases above?
+
+> +
+> +               clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->num_=
+core_clks + id]));
+> +
+> +               return !clock->no_pm;
+> +       }
+> +
+> +       case CPG_CORE:
+> +       default:
+> +               return true;
+
+False? (I know the code treated it is a PM clock before)
+
+> +       }
+> +}
+> +
+>  static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct=
+ device *dev)
+>  {
+> +       struct rzv2h_cpg_pd *pd =3D container_of(domain, struct rzv2h_cpg=
+_pd, genpd);
+>         struct device_node *np =3D dev->of_node;
+>         struct of_phandle_args clkspec;
+>         bool once =3D true;
+> @@ -679,6 +712,12 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_do=
+main *domain, struct device
+>
+>         while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", =
+i,
+>                                            &clkspec)) {
+> +               if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
+> +                       of_node_put(clkspec.np);
+> +                       i++;
+> +                       continue;
+
+This loop may start to loop nicer using
+"for (i =3D 0; !of_parse_phandle_with_args(...); i++)".
+
+> +               }
+> +
+>                 if (once) {
+>                         once =3D false;
+>                         error =3D pm_clk_create(dev);
+> diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-=
+cpg.h
+> index 819029c81904..0723df4c1134 100644
+> --- a/drivers/clk/renesas/rzv2h-cpg.h
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> @@ -100,6 +100,7 @@ enum clk_types {
+>   * @name: handle between common and hardware-specific interfaces
+>   * @parent: id of parent clock
+>   * @critical: flag to indicate the clock is critical
+> + * @no_pm: flag to indicate PM is not supported
+>   * @on_index: control register index
+>   * @on_bit: ON bit
+>   * @mon_index: monitor register index
+> @@ -109,17 +110,19 @@ struct rzv2h_mod_clk {
+>         const char *name;
+>         u16 parent;
+>         bool critical;
+> +       bool no_pm;
+>         u8 on_index;
+>         u8 on_bit;
+>         s8 mon_index;
+>         u8 mon_bit;
+>  };
+>
+> -#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _monin=
+dex, _monbit) \
+> +#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit=
+, _monindex, _monbit) \
+
+Note that this series conflicts with "[PATCH 00/12] Add support for
+Renesas RZ/G3E SoC and SMARC-EVK platform", which you are probably
+already aware of.
+
+[1] https://lore.kernel.org/all/20241122124558.149827-1-biju.das.jz@bp.rene=
+sas.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
