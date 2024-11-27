@@ -1,76 +1,56 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FF914A4D1
-	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 07:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7018E0E;
+	Wed, 27 Nov 2024 07:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732693375; cv=none; b=Bj+jtN4bwNSYzv3pd+fjU+YLo8KTmTRXdExktwX1v8K4c/gvtsbe1UHyJK+QH5DsOO7Noiu3o1TzV3tZ40fiq6Z0IUtJopTNic5vJmJQqEds/uXmxSg0tzMaLyvtH6k4eOCFvYN/SnZNlqlO4nsEdItDKuu6zlkTKipI+C/hB2w=
+	t=1732694113; cv=none; b=tnmK7FOdzZ7OTxb3LY2s2xDD8AfyHcjuHn66wRT9wtdoOHjzVAKo510e5/0xLUlfO/rlRPunU566b/FbB5cTPyX85FZmwULWMfHCFH68Ie8IRskjCDR2ZfIQrC6ZydbGcZ+UiG9Bzxvqa7LLCT820YGKu3Uesb+r7HopvUipHec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732693375; c=relaxed/simple;
-	bh=LU6AwlYsk3CPKKY2s0mNL0hPX4NuZPGAywEkPk0vpeg=;
+	s=arc-20240116; t=1732694113; c=relaxed/simple;
+	bh=x0xX5vYSBWllewRjPzdfK0c874WVsNj5qAoWrojVTGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EElZoPyp5wFqet2s7iejKNLt8JyLEUoQCSCm49jY6MUdvhi0FarbUmx2EEcZ9mbYs0OK/q/QR+HWzNf/IMFyVp8uZZEhIVGqMEX6L2jjy5iuQXun5LnstIpJKmQC0jaPnz8OYeRsPxulZw0t2hCtYSOCq68Tan2mqcojDyqt5QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xAWT5veW; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYuDsypKvwkjC7mUNPQMAl1mJG2hhAyzJwFSLWUWxeMe5ApCS8R5LdFSarJrBm/xbouz2kzYHIDlq4Eh3G9LER5/kXGHI/ZKtJIeoQDSX4X99vj5/aEOnNeDRMTN5ruREwA9IpsCjguDZhVDzAnUfZR7tNyaOFrVCO5H2USWzyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bucSP35A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xAWT5veW"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21200c749bfso63687425ad.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 Nov 2024 23:42:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732693373; x=1733298173; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oMWDgk/n3j4GiaybswgAiKAVmYvm7oHmNlJIVMIMNac=;
-        b=xAWT5veWFj/XYJ1A1tOPYsUPA5QLLbRSKq1cnhQPYGAcid7rDYrT61U9HlxPNax0QK
-         2rok6R4SlfXLXShsS3Ae8TgXZP1Fr8A5FjLtZ+8/dtLgWgguCG1MeE/msauMNJyHWEe9
-         6pA/Lgfrw9TzNDgH8l73V435/DD6/Yr4qyVTTdglwIU5gu4qpBd5z9siq4zGz7sngUrH
-         tehw0J7GDcwIsgmrC6Fi1/RmtrW4rULmpDdNT/zKnTXK01H9LLPc6q+Y0RatrJPspGi5
-         2gYi+9c1OYfJpUKty8iL5zGkrIuuxUTNj8ybKpthN2h94l898Y7HqduXYZeu4jmjeTwz
-         nlzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732693373; x=1733298173;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMWDgk/n3j4GiaybswgAiKAVmYvm7oHmNlJIVMIMNac=;
-        b=mQDQJWQtHSeWI1QmEPelQyEHfJdtwg9KL6DMEuLLOws0xykznbh5gCCLRmdr4wVAAy
-         2f4ktJOg/stWMVTeXbl2c+xHs5MWv3itQMjW92ZCKRt55iFRB1P32ybCNTdyOkwpmtqx
-         +vngVI4lpWwFOR3gMomYADBG43wDC1jvMphe9HfSxcJaqEHwO1uZmXCqOPx/wtOe1jN8
-         xyXgdSfWA239AZENpDISdftp4TtnRso8QVVc5z95m/4GBshrEWDE30TSZeif9ei51kRF
-         atcHEpuqbRXmcoZnX14+diIDyHTI48SdJfQYZCM1i07YLUSOJw1gu3H7TUAgzTjnb7iR
-         NRxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Pi3qit+3Iag0RArFtH4rYaB1RCQc0bywHRkHctjhMQ8kU/GSUVN8VILnYEw7eRtznLMskgWRniE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdMS07CCSET0OWB7nRCLx0jr7EoSLUIvSTE9G9MPQ2ys1fO+ml
-	loo4gmxmwizxoYKZodnR8GDQshiZfwaGNZPc5kvDaCOCPyuisLHvadUshMCR9Q==
-X-Gm-Gg: ASbGncuq7XpeD56nwDTziegPi/ruGUZ31Mh/dxWgZpPriSHAl9iUYLwUMS2uMoPuaWk
-	RTXjFDxPnPoWv5yNr8rgUw6RhRb/Q9uex/aXSwzi2PxfPLwHAkor7Ha2E/dMXRNWcBAnwp3CgUN
-	84ENzWTe6CsGOifyvBhcrKkH4e50z30yX2nUprVIMtXcP4UtD5Buo2OHnHRImtb11HxR3bDN6dU
-	zUUcBtP7gH1DRBWcmqPHspaAYy/t/pCaNNBVzX+9+29YjhW4t62OvChBgGF
-X-Google-Smtp-Source: AGHT+IGp9I4DmuKPduEUQ+Vs8HvCWxBrCkbO+5RyEgGe/YSQ1SwDti6JUnGKKHfl4zUAgD/Vk310rA==
-X-Received: by 2002:a17:902:d551:b0:211:f8c8:372c with SMTP id d9443c01a7336-21501381ba1mr22923355ad.21.1732693373062;
-        Tue, 26 Nov 2024 23:42:53 -0800 (PST)
-Received: from thinkpad ([120.60.136.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc12f22sm96678915ad.186.2024.11.26.23.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 23:42:52 -0800 (PST)
-Date: Wed, 27 Nov 2024 13:12:45 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
-Message-ID: <20241127074245.4fhr3gypxbjipqnq@thinkpad>
-References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
- <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
- <tebgud2k4bup35e7rkfpx5kt7m5jxgw3yo3myjzfushnmdecsj@e4cb44jqoevp>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bucSP35A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6B3C4CECC;
+	Wed, 27 Nov 2024 07:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732694112;
+	bh=x0xX5vYSBWllewRjPzdfK0c874WVsNj5qAoWrojVTGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bucSP35AKAy65nI+BITULDx0+C9mvIKCfCDFgHIyv84XK+74qXxwFqUbTN41rkK+C
+	 Ra6tp1daRWkSizWrHnXH10FW7w58tZ2kX8hBinj8iFiX1chlQzHLXzCN+l4ncSQR03
+	 OnPHmh97RjPzSeDuH/4EE01NtM3RfoJgytMQdFBrt2uZX5X3MUhBxpKV/tKlolYwP2
+	 AAPuj17Gfvw2HqlZy5FOkO4Dv2lqO62E3NZ22t36PrOPbxmBz/MoM46QZS/72X63i3
+	 4rCESMHIqtId3GjebgFlSCLkaOZ8aJEJHy9tLVB3HTM8J+Qb7joF3gswz/if9EU4DG
+	 43V0+UResU/dA==
+Date: Wed, 27 Nov 2024 08:55:09 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof Wilczynski <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+Message-ID: <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,95 +59,51 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tebgud2k4bup35e7rkfpx5kt7m5jxgw3yo3myjzfushnmdecsj@e4cb44jqoevp>
+In-Reply-To: <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
 
-On Tue, Nov 26, 2024 at 10:21:10PM -0600, Bjorn Andersson wrote:
-> On Thu, Nov 07, 2024 at 11:58:09AM +0000, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > Starting from SM8550, UFS PHY GDSCs doesn't support hardware retention. So
-> > using RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs
-> > will get powered down during suspend, causing the UFS PHY to loose its
-> > state. And this will lead to below UFS error during resume as observed on
-> > SM8550-QRD:
-> > 
-> 
-> Unless I'm mistaken, ALWAYS_ON makes GDSC keep the gendpd ALWAYS_ON as
-> well, which in turn would ensure that any parent power-domain is kept
-> active - which in the case of GCC would imply CX.
-> 
+On Sun, Nov 24, 2024 at 11:51:39AM +0100, Andrea della Porta wrote:
+> +  '#interrupt-cells':
+> +    description:
+> +      Specifies the Bank number [0, 1, 2] and Flags as defined in
+> +      include/dt-bindings/interrupt-controller/irq.h.
+> +    const: 2
+> +
+> +  interrupt-controller: true
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/raspberrypi-rp1-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/raspberrypi-rp1-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  raspberrypi-rp1-state:
+> +    allOf:
+> +      - $ref: pincfg-node.yaml#
+> +      - $ref: pinmux-node.yaml#
+> +
+> +    description:
+> +      Pin controller client devices use pin configuration subnodes (children
+> +      and grandchildren) for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          pattern: "^gpio([0-9]|[1-5][0-9])$"
 
-That's correct. But there is one more way to fix this issue. We can powerdown
-UFS (controller and device) during suspend and the ufs-qcom driver can specify
-the default suspend level based on platform. I think that would be more
-appropriate than forbidding CX power collapse for the whole SoC.
+You have 54 GPIOs, so up to 53.
 
-Let me cook up a patch.
+Use also consistent quotes, either ' or ".
 
-> The way we've dealt with this elsewhere is to use the PWRSTS_RET_ON flag
-> in pwrsts; we then keep the GDSC active, but release any votes to the
-> parent and rely on hardware to kick in MX when we're shutting down CX.
-> Perhaps this can't be done for some reason?
-> 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-UFS team told me that there is no 'hardware retention' for UFS PHYs starting
-from SM8550 and asked to keep GDSCs ALWAYS_ON. So that would mean, there is no
-MX backing also.
+Best regards,
+Krzysztof
 
-- Mani
-
-> 
-> PS. In contrast to other platforms where we've dealt with issues of
-> under voltage crashes, I see &gcc in sm8550.dtsi doesn't specify a
-> parent power-domain, which would mean that the required-opps = <&nom> of
-> &ufs_mem_hc is voting for nothing.
-> 
-> Regards,
-> Bjorn
-> 
-> > ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
-> > ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
-> > ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
-> > ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
-> > ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
-> > 
-> > Cc: stable@vger.kernel.org # 6.8
-> > Fixes: 1fe8273c8d40 ("clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag")
-> > Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/clk/qcom/gcc-sm8550.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-> > index 5abaeddd6afc..7dd08e175820 100644
-> > --- a/drivers/clk/qcom/gcc-sm8550.c
-> > +++ b/drivers/clk/qcom/gcc-sm8550.c
-> > @@ -3046,7 +3046,7 @@ static struct gdsc ufs_phy_gdsc = {
-> >  		.name = "ufs_phy_gdsc",
-> >  	},
-> >  	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> > +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
-> >  };
-> >  
-> >  static struct gdsc ufs_mem_phy_gdsc = {
-> > @@ -3055,7 +3055,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
-> >  		.name = "ufs_mem_phy_gdsc",
-> >  	},
-> >  	.pwrsts = PWRSTS_OFF_ON,
-> > -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> > +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
-> >  };
-> >  
-> >  static struct gdsc usb30_prim_gdsc = {
-> > 
-> > -- 
-> > 2.25.1
-> > 
-> > 
-
--- 
-மணிவண்ணன் சதாசிவம்
