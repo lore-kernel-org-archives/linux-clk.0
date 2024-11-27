@@ -1,244 +1,134 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832291FCD18
-	for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 13:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008C726AD0;
+	Wed, 27 Nov 2024 14:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732715573; cv=none; b=uh4zzcAEVrZaN6yzHvLNsvy0VgxkxF7I2ufbN/izq7K5/oygcAxhdUP3MM1wuce/Y495cFQ5TRYPL3sP4rkk/leISSqZhU5ucV66TbZ3aEgWbjtCzvw/V35SCV42DwnFCk86hVWPlpieqIyWkXXLswmRrPpICM8cD+WMYdD5niQ=
+	t=1732717941; cv=none; b=ckAF7DAIh12pUokGbzpKcO/JVx3pqS8cl793MetRJQQlicK96pJvkWY0Wexoovc8Tnb3Tkd3a/EnvopZFKd6MBm2UUrDy0aO0E+v8gyqhPQWe4HMhZjDTRpFYyOo3/Mk5zWhLH2x+V2rm9Ep+wv587akfxzcLuXo6XXPR2ZaHxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732715573; c=relaxed/simple;
-	bh=spP7aS/G0vB9NhdoaHPHDZASg4ka8NHuT4TtFjBxPds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bw2abCR3qIkxcMx4IQUmjMme0y0B2Ccnu878vKbue9g+hH0iQY026eaOF5hZfWDlUIgop2lka5n8ot4gL7/964T+BuFfR+OlDxBLciUVNTC+I2oFhoqMSVZIPouDgdG9PFikH2tLI9jOJ/NJiLIAbbfYQ6+p1i0G0EHANwcW4Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=U6/XZ5oB; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="U6/XZ5oB"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434aa222d96so8388105e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Nov 2024 05:52:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732715569; x=1733320369; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1IkpbWCd6prDhO83Ej/ypjRbl84WZbjkg6D6dBYWG/8=;
-        b=U6/XZ5oBrdCqjOoHJz5rNRdsiojUxhT2IHw51rkKtrTW2Hk8QZIdiF7op/wm3ai/91
-         RE+Hwapgy5FCwP6U0zm77EV5fPtzyQ5Ai9nRWAAowQXawSvsixbmaWj4vl9Cbt5J3UCj
-         luRlVaNEBUcDbzbC/7wUFIvvAcoUCTVXzPzcis42mZLHX0PxTCya0gVRsJ8N0M+N38/R
-         aSJHoGr3LYzF9bWJhJGZxdiOUQ0d44gP4yWTEPqAAS4a2lkzbPbYtflpG/dkjVPcJDcJ
-         Ax6QYv2kcKoDfuV/Oqs/XG9P6vTHvlRWHRBq0qgwiDUINO71vYqzK/S5pZ1BkFqrPdAC
-         eh9A==
+	s=arc-20240116; t=1732717941; c=relaxed/simple;
+	bh=0HvpP03fJIa9VL9yIjXyCxKkTPSv+tDsMAhrVsQoK2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6U9AalTzXtAXynZjsGcOfxKqfTF46FZysdZM5TOCGikp7/3lJCO7tG58c3mebu+3PjJ5NQWGW0TTw0dAYphLKarNc44jZcZ3rW1s2RSUcr9CQ2POUdZ28Ex4UiCIA+o6WztHRT4NUYFk4z1MiRvC/RwPOyjLcQbSH3dTd8dP20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b66ea49407so81184885a.0;
+        Wed, 27 Nov 2024 06:32:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732715569; x=1733320369;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1IkpbWCd6prDhO83Ej/ypjRbl84WZbjkg6D6dBYWG/8=;
-        b=pS6oVJXP4/eX5Xcw5hlSFVi3OvqAZPeEUqLxXTkIsLZ2P7XBlYkspcIFRrth6JdV5d
-         /5mbIB+uYYUSegQ87z+oCzeHsIofAxvzAo/NTXH2VU7TND9fVuqYU3mGbm64BLz7TAX9
-         YzSgoTmIg9xGsoxj4L2xGxtrkbkBgKz5lOrYJaBfLqAFrpO17amcac6Au5zw/T6vYefx
-         vf5K1OCnH59qPpZSYprPu4j17pgBh+W3IiBuJQKR+wUltaeCh4lc0au3RLd5DYJFrIkU
-         0QHksGxvi4zBh7DKRRtuBifYvK1AQKy9ei1VCy/eQ317itv4mpJ42/Gxys93Aa2NJVxr
-         VpPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7KHwWkMz8wWIPRDaHGSwwbdtz3mT7HhCJmadNasT1IHf2nYQ5BJtMvX/7qmUv5KEG+8HghqEjw48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVa6nw2fp5EcR9hChhGK9HfgO9UZGHemePZRd+AaljjiW3JmQX
-	vd/FW0VAibWu3Gl9PjqXLgCBPBMTM+ZLryfTz8c7lOosMCBhzscXaU0RyPF8lP8=
-X-Gm-Gg: ASbGncts/XPzm8Ooiq3td/3glrPBbMYOhbMw339nOKJaIrImkzr/0uAzSglYc+fzJjS
-	AVQk6lACj9v+pvnDTCypPpO/fAZ1TccyIPQjZOEIpIS8WSuB5IvafMgb8VTCmiMGuC+2nzZxIEP
-	LdSUcN631w4VElWxQswHIafHvfauUk8xeOxoNonxBhh0lKoPOL8ytX07Y/bnfewZ7ro6W4uwczq
-	rPftEfiJxiAifc52BTu8Vvm4TK54XNTPsElYV2Q/50PyrI5IJW8k5Hm4g==
-X-Google-Smtp-Source: AGHT+IHelnzaRXyYVAopRBHD1cPjZ4Z6Zy6er+fo0QbEJ4GZDGm4ohDRqQ0t0CJf8Ue+qYAOOvWi0w==
-X-Received: by 2002:a05:600c:4f12:b0:431:542d:2599 with SMTP id 5b1f17b1804b1-434a9de8601mr27471045e9.22.1732715568683;
-        Wed, 27 Nov 2024 05:52:48 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e4df1sm21653705e9.39.2024.11.27.05.52.46
+        d=1e100.net; s=20230601; t=1732717938; x=1733322738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2j2ZUq6xu9t3wTv8Cm7N7UCfA0pG8EHAdf2AYMgtddQ=;
+        b=mbd5WEk1miTX+Op/WVf9xXPI/W6wYXYXcqzkRXOnkZs4ohVuv6oxAVUpTT/3xfSV4p
+         RG4WBZ8XbeBilPj9WELWrmHrnNGXCnAnH4J+WCbG0kxYno5czyL3T6uDnuQFD8Xh8np7
+         oB/1cP7oSj0kvpQPzE/TO5RZb09pg+fshzcec/GCVwoJdLm3f5vEFq26ZI28hy7ANgEe
+         TVUnJEkS5dozBjYuhnLOZ1JrgrI+EVoywt9Y+M8O4+Q5AIs/aBi2WLD8aD+wyZAnXzQj
+         Nr36gzPHD2omVtaIDskGAo5nVgycy7AHffBacikwvt+1LIx3MNuSoFEbKSP7C0QjnO2q
+         U3Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTrJIcNdX+nq3HMWeDwouOb8jjXKfzUi+JWVCQFG6nav5Fny0pqIheW+LQd+CkZ1DD76aubRUgjfGg4mgg@vger.kernel.org, AJvYcCVGZv7QQR4NcQxBnMNsoQbv8rhOgKZt8zbcH79fKNGs5PM6FpdGYYElJNPgS4WUAoq4zmaBv6biyeUdFg==@vger.kernel.org, AJvYcCWBPqH1JS+TUfjezcVSaS6uSos+cB+54XSffHja8mI5Pd1L43afMhUbWKS9O4kFhfe5i9sFaP2dvYigGUI=@vger.kernel.org, AJvYcCWZqbe/nmGd+NCx9fa13ZpZ97KKkl6xFdrX7v0TM0hyWM/iXl7vZgrd2f81MFWfreynPgoSVTrjvK3V@vger.kernel.org, AJvYcCWdltFfXlVAj464H9DYswcWD/+isHW85qMk0Oj4yyDpn039bds/w7q4Y3SXIMHJ5nUu8n3p3/JWEKJtFHwfqCqhvl8=@vger.kernel.org, AJvYcCXoccJ+ytW3p1jY71fEIiqJQ7zYOie3cgIwkTeKQMKVWXDVAmRIYfE1OGP0DkA/B67iYrV8OhDVLh/N@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFvo51aLMhmLWo7YiJueUIXAw8gl/rKVpPwVZrdO/l4ocTgUOy
+	BE89wNrxs9M0URzGfrMUuCWDTu/jSKs/D4rP2NaKEv3aZ3hqoKRxnFLSRgA2Qug=
+X-Gm-Gg: ASbGncuPJyMPDkDoiFc9+hNruEqbwGbwiliR/sF9nxHbMGh2Nh+tryE/P4rC7WTdb8t
+	hrONN0N5W7GVqcf1Q25er3VMwzw1qdzY7Zr4NeBDBHGIgDq1yqTztyDOBdEEZOT8rFza6UC4cvG
+	LzRdQrIgq5AoJTo6Bm3RscPc2Op8o+aVmde08PPWU2givTlg9W2sj1jtJ6M+GiQ1kwCNTFvQNec
+	B71ZlwLzy9NhqswNtRc2ra8yEzDqSoZghgQA8loftF/ONblOnyXaasEu6vUBFpPD7CBBSzp1Qer
+	iqUf+zbhaBbQfz2V
+X-Google-Smtp-Source: AGHT+IHPmQWdd5kenGSHMPBppEIql98ObTNtrv4YVg7ZVWyjoB7kE5vbX+CT/cwEKn/RnQPepr6AXQ==
+X-Received: by 2002:a05:620a:371a:b0:7b6:740f:a535 with SMTP id af79cd13be357-7b67442f42fmr1350350585a.0.1732717938600;
+        Wed, 27 Nov 2024 06:32:18 -0800 (PST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6767bace4sm157814185a.40.2024.11.27.06.32.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 05:52:48 -0800 (PST)
-Message-ID: <33fc27ec-e5fe-496a-b83a-69fcb357f6b9@tuxon.dev>
-Date: Wed, 27 Nov 2024 15:52:45 +0200
+        Wed, 27 Nov 2024 06:32:16 -0800 (PST)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b66d08d529so76678985a.1;
+        Wed, 27 Nov 2024 06:32:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNzRBm7BItlOFowfiujdfO0aM04W6RvGYF14PObrZdH39exqCznhLB8iLkCL/Y8b3f6C/5LeGc0QHY@vger.kernel.org, AJvYcCVYzvcSBVRou6KsaC4UcY+uaR/L9mqoiMFPf7kIeTAXqg2NQqxTUb5VoX0l61y3d/jDcZSuKNBfzIaXOajCXJ/Zz6Y=@vger.kernel.org, AJvYcCW5qgrL6h0pO2ihWGnyTtpxunMP3Ka+Br3+D73NkYJdLG/vjYU6YMt/H/+JBpDpLtoiur/sJGFJD1CskZ3c@vger.kernel.org, AJvYcCXFs+FecWzMxQI+vXaofKuexnm8mr52gtUU87+DizqbkS4Sa7JU1+mQliMQ2y7JVsP8wF5+6tNu73+2@vger.kernel.org, AJvYcCXRqgyTg438KKdF9YALkFNTE5N3tthTcclg+Q7Wt0D4JfGsDi1Kf6R/ITj71MkuUdtzKt0crQSvAeJUDQY=@vger.kernel.org, AJvYcCXpypu9MkKqFLJZkVgUadiHWNQ+x8YyPF9egePKXUnEkyn9ChwWXFZRdWmiIHEETWuOdi1oW2bEcDJ7oQ==@vger.kernel.org
+X-Received: by 2002:a05:620a:3186:b0:7a9:b2f4:42e0 with SMTP id
+ af79cd13be357-7b67452f309mr1359261885a.15.1732717935088; Wed, 27 Nov 2024
+ 06:32:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] serial: sh-sci: Check if TX data was written to
- device in .tx_empty()
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
- lethal@linux-sh.org, g.liakhovetski@gmx.de,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
- <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX_xp0o-_bg7VqcT2LQUCWHawZ_hdA+B2KwMw1NGpu0HA@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdX_xp0o-_bg7VqcT2LQUCWHawZ_hdA+B2KwMw1NGpu0HA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 Nov 2024 15:32:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
+Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Geert,
+Hi Claudiu,
 
-On 27.11.2024 15:47, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Nov 15, 2024 at 2:49 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
->> is called. The uart_suspend_port() calls 3 times the
->> struct uart_port::ops::tx_empty() before shutting down the port.
->>
->> According to the documentation, the struct uart_port::ops::tx_empty()
->> API tests whether the transmitter FIFO and shifter for the port is
->> empty.
->>
->> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
->> transmit FIFO through the FDR (FIFO Data Count Register). The data units
->> in the FIFOs are written in the shift register and transmitted from there.
->> The TEND bit in the Serial Status Register reports if the data was
->> transmitted from the shift register.
->>
->> In the previous code, in the tx_empty() API implemented by the sh-sci
->> driver, it is considered that the TX is empty if the hardware reports the
->> TEND bit set and the number of data units in the FIFO is zero.
->>
->> According to the HW manual, the TEND bit has the following meaning:
->>
->> 0: Transmission is in the waiting state or in progress.
->> 1: Transmission is completed.
->>
->> It has been noticed that when opening the serial device w/o using it and
->> then switch to a power saving mode, the tx_empty() call in the
->> uart_port_suspend() function fails, leading to the "Unable to drain
->> transmitter" message being printed on the console. This is because the
->> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
->> TEND=0 has double meaning (waiting state, in progress) we can't
->> determined the scenario described above.
->>
->> Add a software workaround for this. This sets a variable if any data has
->> been sent on the serial console (when using PIO) or if the DMA callback has
->> been called (meaning something has been transmitted). In the tx_empty()
->> API the status of the DMA transaction is also checked and if it is
->> completed or in progress the code falls back in checking the hardware
->> registers instead of relying on the software variable.
->>
->> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - s/first_time_tx/tx_occurred/g
->> - checked the DMA status in sci_tx_empty() through sci_dma_check_tx_occurred()
->>   function; added this new function as the DMA support is conditioned by
->>   the CONFIG_SERIAL_SH_SCI_DMA flag
->> - dropped the tx_occurred initialization in sci_shutdown() as it is already
->>   initialized in sci_startup()
->> - adjusted the commit message to reflect latest changes
-> 
-> Thanks for the update!
-> 
-> This causes a crash during boot on R-Car Gen2/3:
-> 
-> 8<--- cut here ---
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000 when read
-> [00000000] *pgd=43d6d003, *pmd=00000000
-> Internal error: Oops: 205 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 1 Comm: systemd Tainted: G        W        N
-> 6.12.0-koelsch-10073-ge416b6f6bb75 #2051
-> Tainted: [W]=WARN, [N]=TEST
-> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-> PC is at sci_tx_empty+0x40/0xb8
-> LR is at sci_txfill+0x44/0x60
-> pc : [<c063cfd0>]    lr : [<c063cf74>]    psr: 60010013
-> sp : f0815e40  ip : 00000000  fp : ffbfff78
-> r10: 00000001  r9 : c21c0000  r8 : c1205d40
-> r7 : ffff91eb  r6 : 00000060  r5 : 00000000  r4 : c1da4390
-> r3 : f097d01c  r2 : f0815e44  r1 : 00000000  r0 : 00000000
-> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-> Control: 30c5387d  Table: 422d8900  DAC: fffffffd
-> Register r0 information: NULL pointer
-> Register r1 information: NULL pointer
-> Register r2 information: 2-page vmalloc region starting at 0xf0814000
-> allocated at kernel_clone+0xa0/0x320
-> Register r3 information: 0-page vmalloc region starting at 0xf097d000
-> allocated at sci_remap_port+0x58/0x8c
-> Register r4 information: non-slab/vmalloc memory
-> Register r5 information: NULL pointer
-> Register r6 information: non-paged memory
-> Register r7 information: non-paged memory
-> Register r8 information: non-slab/vmalloc memory
-> Register r9 information: slab task_struct start c21c0000 pointer
-> offset 0 size 6208
-> Register r10 information: non-paged memory
-> Register r11 information: non-paged memory
-> Register r12 information: NULL pointer
-> Process systemd (pid: 1, stack limit = 0x(ptrval))
-> Stack: (0xf0815e40 to 0xf0816000)
-> 5e40: 00000bb8 00000001 60010013 c02bca80 00000000 95203767 c1da4390 00000004
-> 5e60: 00000001 c0637e88 c44bc000 c59f7c00 00000000 60010013 c44bc0b4 00000000
-> 5e80: 00000001 c0625c5c c44bc000 c59f7c00 c44bc000 c59f7c00 c216b0d0 c388d800
-> 5ea0: c2c002a8 00000000 b5403587 c0625e20 c59f7c00 00000000 c216b0d0 c061e3c0
-> 5ec0: 0000019f c2c002a8 00000000 b5403587 f0815ef4 c388d800 000e0003 c216b0d0
-> 5ee0: c28923c0 c2c002a8 00000000 b5403587 ffbfff78 c03ae2f0 c388d800 00000001
-> 5f00: c21c0000 c03ae450 00000000 c21c0000 c0e6f112 c21c07a4 c13b1d18 c0244030
-> 5f20: f0815fb0 c0200298 00040000 c21c0000 c0200298 c0209690 00000000 c21c0000
-> 5f40: b5003500 c388d8b8 beca19c4 c0243e6c c388d800 c388d8b8 c2177500 c3b53c00
-> 5f60: c388d800 c03ae134 00000000 c388d800 c2177500 c03a9568 00000002 c2177538
-> 5f80: c2177500 95203767 ffffffff ffffffff 00000002 00000003 0000003f c0200298
-> 5fa0: c21c0000 0000003f beca19c4 c0200088 00000002 00000002 00000000 00000000
-> 5fc0: ffffffff 00000002 00000003 0000003f 00000004 ffffffff beca19c4 beca19c4
-> 5fe0: b6e68264 beca19a4 b6d48857 b6bbbcc8 20010030 00000004 00000000 00000000
-> Call trace:
->  sci_tx_empty from uart_wait_until_sent+0xcc/0x118
->  uart_wait_until_sent from tty_port_close_start+0x118/0x190
->  tty_port_close_start from tty_port_close+0x10/0x58
->  tty_port_close from tty_release+0xf4/0x394
->  tty_release from __fput+0x10c/0x218
->  __fput from task_work_run+0x84/0xb4
->  task_work_run from do_work_pending+0x3b8/0x3f0
->  do_work_pending from slow_work_pending+0xc/0x24
-> Exception stack(0xf0815fb0 to 0xf0815ff8)
-> 5fa0:                                     00000002 00000002 00000000 00000000
-> 5fc0: ffffffff 00000002 00000003 0000003f 00000004 ffffffff beca19c4 beca19c4
-> 5fe0: b6e68264 beca19a4 b6d48857 b6bbbcc8 20010030 00000004
-> Code: e1a05000 e594020c e28d2004 e594121c (e5903000)
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-> ---[ end Kernel panic - not syncing: Attempted to kill init!
-> exitcode=0x0000000b ]---
+On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add audio clock pins. These are used by audio IPs as input pins to feed
+> them with audio clocks.
+>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - collected tags
 
-Sorry for that. It should be fixed by the standalone version of this patch
-[1] by the following check:
+Thanks for the update!
 
-+static void sci_dma_check_tx_occurred(struct sci_port *s)
-+{
-+	struct dma_tx_state state;
-+	enum dma_status status;
-+
-+	if (!s->chan_tx)
-+		return;
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
+edicated_pins[] =3D {
+>                                                       PIN_CFG_SOFT_PS)) }=
+,
+>         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_=
+SOFT_PS)) },
+>         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A=
+ | PIN_CFG_SOFT_PS) },
+> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
+> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
 
-[1]
-https://lore.kernel.org/all/20241125115856.513642-1-claudiu.beznea.uj@bp.renesas.com/
+I'll move these before WDTOVF_PERROUT# while applying, to preserve
+sort order (by port/pin number).
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.14.
 
-Thank you,
-Claudiu
+>         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN=
+_CFG_IO_VMC_SD0)) },
+>         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN=
+_CFG_IEN |
+>                                                      PIN_CFG_IO_VMC_SD0))=
+ },
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
