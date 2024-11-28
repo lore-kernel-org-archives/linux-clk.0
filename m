@@ -1,105 +1,163 @@
-Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E71A0B04
-	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 13:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A174A1A0732
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 13:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732799258; cv=none; b=pDpRG72VzW7X30zAyMQUuZHswDuuVcxh5ZrLd9bNxkvaQKlnj9RQo754TbEykZiYaq4E7tFYuD07sNG14v2Xh069pA7uD+OKZxPkAGNa6Xrrexpx3UcU0QP1Z5O7nR5eFmCL6y+8pMMLZ8+ncMK/RPaVyiwUklwoJd01EZyGi+A=
+	t=1732800804; cv=none; b=um5Bogn61wg0iCpje6t0BykA4nKv1NNkTxPIlkBz2qtr1qSe+gBANix7lacI+05Ek7ygI1lobAoecIxmQ2JgP87/ApnB3tefvCyZYN6Ydfsc9iM9+64ZY9Oq0kU/Zf7kAGF/4VrOd0uQL0J2BKKMRDLyHtz43loqL85/ALs3BGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732799258; c=relaxed/simple;
-	bh=TXaQzQ0BiAaroehXp2SHXJ2Y2paPRhigmiwEFz+r+eY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rbNYGRjUoS6qIuaoc9mftJX/3+aZLwdyYeux+Vi/YeGkfYr0J8WN7tc1dPjoVJoqrixbZk/NjLTL9+omGd03fAu0l191r9kkONgxh++gfvz7tPPYOcQgls8bo42BHTTU3cSljg5a2m+C9CmrpFkV4MqRMFLIJYt/93B14d7ZIO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w1d9PUJp; arc=none smtp.client-ip=209.85.208.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1732800804; c=relaxed/simple;
+	bh=PjLyi71hJ+wl65ox0a4Xn1LoN5tr4uIfT5gZ+kJDbBQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=knOi7l+qSKjqt0jVRn2/10FYOqqBjJmqwSd4+0DDT4mSvREngnQQmoUFpFeiTV+9Nd2g6wGqoSHoFr4nD9t0g2OwT9Rxa3qnb/NWLJkycfBoQ3JLPmB1Xi2XOvj35KgblsCPgeb7+4kKpkpDLRf5mWGGmUX7nwC/Re1/eXtIkj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SdW4dOF0; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w1d9PUJp"
-Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-2ffcd3c2b46so505641fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 05:07:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SdW4dOF0"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso7434065e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 05:33:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732799255; x=1733404055; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kP1bCAckSI/OkKwT28rFJsMYm5pGH3l6UtaR38jv7E8=;
-        b=w1d9PUJpdzTTURWaD+E/vYH2go3sP9ffahxV07HZA/E8sUxcKhHpt/zY5E9lKNn0TR
-         BAAEaW0qZ0LtkFBqJyOnhHxBV/UdzO7movr8uKTe0VT1bLLzRyi8MlCkCtoE4BZKRGJs
-         F2YiG1PgHYf6Csbs2Z/BjHK0FGg5/6a66OvytsJSq0Le4Y8+iJoWgv2+8cS7h/qC3tvO
-         fvHgSVQyjzsJ6RGz8GMeFPU8oysEePddOvQ/4z0sDfjpgS5LK6aBl0z+NoF7iXkjVEs9
-         i/3hzY2D5siodwMqeDf1nk38OU9Q8fuyGBT/fA5ovJgLY/Kb7tu8xPpvIy373Xr3ureI
-         eamQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732800800; x=1733405600; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gmgFSpEV/joPPiUmtOBENMot4M1WgXF/FvOd2XyYmN4=;
+        b=SdW4dOF0KGtcZSilfPOngLu3gu7WMh+deQUQZ6Xo9ezysvjQDtUZ/87cf7Rs84b2lK
+         HIVd0P2Zar94M7rdaW38YwQTIYFLBXLZxwgxpGtC5a3tXKZBS+KtDrFmbtqm6nT/l0Mx
+         d1JO8xt5Bh+5a1A0dgk8ncnGCBUILydG4mdIL6EHW/z4R67iWZHJtnjsOEpiswI2B/zK
+         ++0F7Vd9mrPKQZ58qXEC5DQkS5o1P+23TtxQXTWas0TVC40XKUMKLiiTIAwt881LDw6L
+         YuNX6qFdVD8aOxj9jc1Sca76/ofDYjaMmwm2iiw/Anc6LlfJ+4LLK8REoregG6wCLJM7
+         cyrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732799255; x=1733404055;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kP1bCAckSI/OkKwT28rFJsMYm5pGH3l6UtaR38jv7E8=;
-        b=jwpIT+MBi7yXwZuiG2RH7PGZ71VuccKXA49v0MPlfgJicSqcNMmqhPRJR21q7OUbRK
-         T9h13Fj7Liik47Y+RtS5IJYfFc2w6Kcqo83f8oqX8hFw3Scdba92HDmAl6I1kvLPQ1g/
-         adW7ZM80pVO+lnri4N0bwo6MGbeiCRaL4szsUpCj9yFh1nrf+nnk0QpgYiajQrKVN/LW
-         3QinIIOguS3bMvIQzX/jBbwWYNzqb0v/rEQigeZVyPpv/MoEIKw8g+GCmiC5ny8KmhO9
-         gzx5hCe+Pc0aPSoRQMHL3RZuD1fqseAAIfOgqsPhOz0EdxOrNXRsTdQyp9gcnyEFqeBn
-         lbBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkUjZU0UZS6BLU/ccb5/e3Jw5ZMn7JJ+zrVMANUW3bta6IMnbwIXXZrcbf5Z5OnU0MpgnwaK0nKQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyxF2avaLeARwa9b45A9xGbMCgROqGsK3XSO2knVF6xaQjgyDg
-	M+RHYTtuzjR303xYW3pKfQRzb0BEjdHXvC1JRUAZWiocjxZcOq0H5cYqNwdhcAg=
-X-Gm-Gg: ASbGnctznxOqUegbqRMN4+RIu7ZjiFwO7yqLf+YUJ7hpFgmKrBBowwMOT2qKKWYR6C7
-	GiP5H17QRCw3HGZH6ps5ncWQQuKIinP51OBTUaAiM4sEQaEqlwgPxUIaCmrAPrW6Z2zEkZM85Jo
-	v2u11j1ygTRl3n1qXelAwDEOYdlIH+NhBbS2MNSiDC+yT1gvtOWZ9DDCal9bxJMmuwDUAUcGD4M
-	T9BwYhPSRSYZQ+GSYX9znOYu9WfDOma81aPR1uwY8SnQ/eMifnIoBN6zvONFYLm2OjcEdsnlfRW
-	Mo3XfVDyNd9JbGGZnbBW9/NRIoSt
-X-Google-Smtp-Source: AGHT+IHLbzOfKgwnDlfh/55yxsap6kH/uHe5qjnZfubg3vSAG78tinN8zIUWjCGzLLDWYe9ztol14g==
-X-Received: by 2002:a2e:be87:0:b0:2fb:4ad6:a5fb with SMTP id 38308e7fff4ca-2ffd6007b89mr10008391fa.6.1732799254974;
-        Thu, 28 Nov 2024 05:07:34 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc751ecsm1909141fa.87.2024.11.28.05.07.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 05:07:33 -0800 (PST)
-Message-ID: <4997c6d8-fa9f-48e9-bb5a-f88946059462@linaro.org>
-Date: Thu, 28 Nov 2024 15:07:31 +0200
+        d=1e100.net; s=20230601; t=1732800800; x=1733405600;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmgFSpEV/joPPiUmtOBENMot4M1WgXF/FvOd2XyYmN4=;
+        b=fDeXPPoqCthJx8fCZ66BzsgdrMv5/G0D3lPNvq5UkeC9j8cwYJqHDYsECOkUsJuXg3
+         RsyfFq4aV0ioRskqkdIb5Ik7WxrddBCawcQVv1VN+hoDexQprEfl0Bst29Edmt+YYxqV
+         Q5d3TFH6rquQYP4RM2+ZrTsFQOjb0hFfzaYAorGJatYhMBFEeKm2PUO5JQ0nGx64lalj
+         Fvh3DUy5NDw4sOdPJEuG8LblzLJ4+B5N39GocBYOVhM+7SsioUEcRZI38w5d4zV4ZYd3
+         sRy7Ml6bBiKd2RH27jW4XX1zGs8LosFkegh3E4W8lMn/OJjb8I1ERpYr0mqEeSsYh/1i
+         JvGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV157w+dWKTdgHJuuIN3qmhljIjUsx8sZ6+fyyKPXslMxj4e83B9nSeV6DpKkk//FUKN2n824n/gHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpELuFC/4x4xOsZ/Uv9yyAmu0wL6p8CpQc/YD9coixGLbC8zpD
+	1eeCfQY8QGa6qDPZdvT0bsR3wwtcPemX1DdA330qJBlaGrGsyyOo7HrCqOszmZc=
+X-Gm-Gg: ASbGncuGo0OZPBrPznqKJpYbKPPaC3DkuLZBCoHjvdLVZ6tCxmuVWxLiXQdnEjZ8p2e
+	ukMgCuEh4Qlzng8+VStnBzYoGvuAUwVfyZZfBryhagzi5TcILL07uQp1VFbCpS5i4NhcRpylJV4
+	q8UwdE0JX9Fq4fG7dMVOaxk3QqD+tDpLZN2tya2pDXwXbTHiU5hno598Ga60CUk94NCueWfnIEU
+	Tos5YL05atZJoPT9+DKTuGgGCBiMH6DjncMgT50pjONarsMJg==
+X-Google-Smtp-Source: AGHT+IGrMdn+38U9uolOFNk+mS2Fm4W0jJARLcSQoHOhr2LuU6616dbNhFwztnrfvkaZnx6NZ9uZrw==
+X-Received: by 2002:a05:600c:1d8d:b0:434:a902:4168 with SMTP id 5b1f17b1804b1-434a9dd00d3mr68710925e9.18.1732800799856;
+        Thu, 28 Nov 2024 05:33:19 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b89d:29e9:7047:2d6f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bee2sm22577455e9.1.2024.11.28.05.33.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 05:33:19 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,  "Michael Turquette"
+ <mturquette@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,  "Kevin
+ Hilman" <khilman@baylibre.com>,  "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  "Mark Brown" <broonie@kernel.org>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+In-Reply-To: <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com> (Arnd
+	Bergmann's message of "Wed, 27 Nov 2024 22:23:52 +0100")
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+	<1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
+	<f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 28 Nov 2024 14:33:18 +0100
+Message-ID: <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clk: qcom: common: Add support for power-domain
- attachment
-Content-Language: en-US
-To: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org>
- <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-2-4348d40cb635@linaro.org>
- <a73a3b5a-cd83-4f87-876d-ea99ef8bbd70@linaro.org>
- <ec5faeb0-2cfd-4634-b772-80197c1b9092@nexus-software.ie>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <ec5faeb0-2cfd-4634-b772-80197c1b9092@nexus-software.ie>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 11/28/24 14:16, Bryan O'Donoghue wrote:
-> On 28/11/2024 12:09, Vladimir Zapolskiy wrote:
->> Please simplify this change, please do not ignore patch reviews, if you
->> find it possible.
+On Wed 27 Nov 2024 at 22:23, "Arnd Bergmann" <arnd@arndb.de> wrote:
+
+> On Wed, Nov 27, 2024, at 21:56, Jerome Brunet wrote:
+>> On Wed 27 Nov 2024 at 20:30, "Arnd Bergmann" <arnd@arndb.de> wrote:
+>>>
+>>> It looks like RESET_MESON_AUX is a user-visible symbol,
+>>> so you can simply ask users to turn it on, and add it to
+>>> the defconfig.
 >>
->> https://lore.kernel.org/all/8a33c0ff-0c6d-4995-
->> b239-023d2a2c2af5@linaro.org/
-> 
-> You want this inlined ?
+>> That would work yes but It's really something a user should not be
+>> concerned with. I can follow-up with another change to remove the user
+>> visibilty of RESET_MESON_AUX. It is always going to be something
+>> requested by another driver.
+>
+> But that's true for all reset drivers, each one of them is
+> only useful because it's going to be used by another driver,
+> same for clk, pinctrl, regulator, ...
+>
 
-Yes, please. A simpler version should be preferred, by any metrics 3 lines
-of code are better than 20 lines of code plus a new added function.
+All clk, pinctrl or regulator are used by other driver yes, this one as
+well, sure.
 
-Thank you for understanding.
+What special about this on is that it is an auxiliary bus driver.
+It is directly instantiated by another driver. That's where
+it differs. The axg-audio clock driver instantiate the auxiliary reset,
+it does not use it, which is why it makes sense for it to select the
+driver.
 
---
-Best wishes,
-Vladimir
+I agree that in such case I should not have added prompt for that
+symbol. I'd be happy to fix that mistake in the coming cycle.
+
+> All other reset drivers are user-visible, with 'default, so for
+> consistency I think it's best to keep it that way, and
+> just add a 'default ARCH_MESON' the same way we have for many
+> other reset drivers:
+
+Same consistency remark applies to the clock Kconfig patched here, which
+select the drivers they directly need and I'd like to keep consistency
+here too.
+
+Also 'default ARCH_MESON' does not accurately reflect when the driver is
+needed, it will turn on the driver in configuration where it is not
+necessarily needed, making it more difficult to trim the configuration
+down without intimate knowledge of the problem.
+
+ATM, RESET_MESON_AUX is only needed if COMMON_CLK_AXG_AUDIO is enabled.
+Isn't it what select is all about ?
+
+>
+> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
+> index 3bee9fd60269..c02edc1b51aa 100644
+> --- a/drivers/reset/amlogic/Kconfig
+> +++ b/drivers/reset/amlogic/Kconfig
+> @@ -14,6 +14,7 @@ config RESET_MESON
+>  config RESET_MESON_AUX
+>         tristate "Meson Reset Auxiliary Driver"
+>         depends on ARCH_MESON || COMPILE_TEST
+> +       default ARCH_MESON
+>         select AUXILIARY_BUS
+>         select RESET_MESON_COMMON
+>         help
+>
+> The only bit that's special here is the exported symbol,
+> but that is handled by the dependency.
+>
+>>> I also see some silliness going on in the
+>>> include/soc/amlogic/reset-meson-aux.h, which has a
+>>> non-working 'static inline' definition of the exported
+>>> function. Before my fix, that would have caused the
+>>> problem auf a non-working audio driver.
+>>
+>> If by 'silliness' you mean there is symbol definition for when
+>> RESET_MESON_AUX is disabled, indeed I guess that could go away.
+>
+> Yes, that's what I meant.
+>
+>       Arnd
+
+-- 
+Jerome
