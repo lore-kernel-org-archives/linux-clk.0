@@ -1,167 +1,322 @@
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD93211C;
-	Thu, 28 Nov 2024 17:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275821EB2E
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 17:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732814515; cv=none; b=SFg6Qe0DD9TY12Ng/jWBXiajD2NdBguVLpRJ827CChubYkizhj2cF6olQWno8teoR16Q2KWnFxV1w3tTzbed3+plILQ19ITOtI7IrEGFqAdIMrxuyVoOJQTThYkQ5Y9HwW1ipi3NtK+OS3Ckqr/V+Z2e9QYiuaMXPAL9MBCK1Ps=
+	t=1732815071; cv=none; b=bedrZiiLE2gywm8uYeOEoe7j0Gzv5ctR/5oh+xlmDU2IVB3FJ9CvVjkz4LY5vo1ECVMGvsRqzq2GSRHjBeFJjfobFcGDShksQhorjKAZl0rYbsxWdRsGCCjdGKAGVzAU7BTQUtm2sn5oB2cfHr/kTgciXwGOH9EKDHxbbvPV3pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732814515; c=relaxed/simple;
-	bh=pAX1jrffx7q9SDnrNtDT47lFFCez4oMl5YQVjpbvDwY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Qez6ke+RaO5Hl+kt9rAXrcpItOjz75383IwrG1XmokAzr413JqqPYCXbONJWKYA465v+i6IwOHh1dQmVpYPTr3AfJrYVmfycJ3jzukqkbzYflFeDijRL7Umq6uwGkLlgC5m7+Z2p3Evd4crUaiFPBZvgmDHrhOmc9o/zjwoLihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jp52ll3G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ET/uR+w0; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1732815071; c=relaxed/simple;
+	bh=aLEeckbAOzstWQ8GqyUU0U1ON+1IQGvGuu+IScVtjTA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cYZ4QZ9i5f8iLKVsZDSnOpaRywpjsOAVwcwTa6QJ1duFgfGSsnINzZcpb63esLK/nwh4ug5GtkqBTHnIKfoLkZY7qoaZJu1bOrJcVYEJ6cwJuAD+t89TmS0kUSbS40U9BW+H8Je/FyTEGikbP84XIT4IkoZ24K/4AGaV/2wzQUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dKSvrJhT; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jp52ll3G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ET/uR+w0"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 0161111400F6;
-	Thu, 28 Nov 2024 12:21:50 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 28 Nov 2024 12:21:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732814510;
-	 x=1732900910; bh=D2JfyjmFw8hYMAoKDuRJj7W6G1enn12a5hgwxx1fj9c=; b=
-	Jp52ll3G22wzbfSDV7I46FNUZiHQdr86GldQCqs5UqIpEUxBFmEE/7YDd1+MP2+g
-	DMUPsWMGLsRrC9fQFbLc/rlJn/zozKI7zegq+O1JFOpYCz7LHrWQ0LKAeh6Aj4tO
-	Jx3ciVBFG4MePp3pP6qMDztvw2znEUiTQ/jifJmmNsciSswIQ1cVu1GTb0ru5Vlt
-	Tvb6pZNsr1YVr/h2T0oZU2nT9oxh7dBVQ/MQxr7Of7+7MdYRXYtmk5g9b22uDjRD
-	9jxHXWGgL7FbtkFUiS3z6Zu0slR11ZX4fHb0TCeyGUv1/S5HbAKUQnMyIlsY6uqF
-	kMQFa1qTi1NzUjpzhuX1/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732814510; x=
-	1732900910; bh=D2JfyjmFw8hYMAoKDuRJj7W6G1enn12a5hgwxx1fj9c=; b=E
-	T/uR+w0Xbs4pt0N4XKqdYg+927Ck7HzQJt8icOd0efcIy+9lTQPKjAFwoutY4spp
-	ZIMAQaycjwgbpYnAaeixrkhnHVKEsFFolCVFEJJ8d5ZWU4bHSk2Hy5tPnfnjWMwD
-	8dh6YLk01gHuq92wkjhVOEZvU07ek9htbOQ/E6YdK/o1GGCUgl1x1ls1BIXatGwJ
-	LAc8ZPo5Lu9UzCGafrNq61ABTletA/We+ukKOHCK/lCqNH0VrKQ+F3nWkvm7JDF+
-	IAAbpyjR8KB9kzTDh1GSoRz5iGNxuQSsFCENHnftXJDCX1SLRYb5LbhvIE24vCGJ
-	f0wkLHzQG7womcTEYbAkw==
-X-ME-Sender: <xms:rqZIZwLyhuhF6CKIUD-Wfx2c2y6Rz9SpBQyG46K2ZyLADpr5fjoQEA>
-    <xme:rqZIZwLzsFzvyTpdwRHJbPBvjBgtWr58hdgg4_mooghvnLXhzE6-NsmHwb9Ke4fK_
-    fxkPyDM1ODsUDw40uo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedugdelkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrh
-    gvrdgtohhmpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhr
-    tghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtth
-    hopehmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtgho
-    mhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghrmhhsthhr
-    ohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghmlhhoghhitg
-    eslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
-    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:rqZIZwuc4yptTvpwqKE3Ho5XTlP5fj5MReG5ufvl8Psmg1mUHRhVbw>
-    <xmx:rqZIZ9a-ImrpDo4YOtLQNRq4PEhuebl77Q2c63Fy8Lp6CFHZ5DJwKw>
-    <xmx:rqZIZ3ZJyyWzl4jzoFKzBd4IZHpNwIN3ABU3I1MJ4vo1DlfAyopxLg>
-    <xmx:rqZIZ5DnPEnprSrx7jCZE0SPlxI8YOCSuQWoY45lpCo860CCjaUqMQ>
-    <xmx:rqZIZ0QlD0mp5wU8TQVyBLfb7M_X6fL5Yx7rZ3FYPC96wKEXRhPg7oX7>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 46BB02220071; Thu, 28 Nov 2024 12:21:50 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dKSvrJhT"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a742481aso9388245e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 09:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732815066; x=1733419866; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vhPQ5vvW/JkWuLOCWK7lUJrsyH8KFQdUBUxIro36iU=;
+        b=dKSvrJhT/1Jb8zociwB3MwdsiEqg3EDcrP3CYbnYMHRxu35tezQ3hNFJCNfETgycIK
+         PdpX5nqbB30RZT2pn31TadvlXd0gGhG1Y91fM31FDo1M7ERwrcVEnXMWWd6mCNsQfqCm
+         utB4kaOnQUzlEntO6p3dwR/0IhPKHHtq5taecNUz2RDp/GsXpp/6/QQ4KEi8/4FUXfXo
+         aLt2SQGLU48sFpk+37MuQizeu4doqTUoFbROHhN32KK1lgMv4yGfgTF6co6ECRRs1oRm
+         uzdbbBgfpy8VIVMoutGujT/wYrwxBVr8LzJRlGtgOuFDITsXj0CKj4/09q90r/EcuYot
+         Uiag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732815066; x=1733419866;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+vhPQ5vvW/JkWuLOCWK7lUJrsyH8KFQdUBUxIro36iU=;
+        b=W6OoHcrFZUKmB0QpJ5wdsZFbRue4CPHlgs0kTYF11KGsi5xeqOXsHQEG8rJO8R4maI
+         eE5Xl+QCRis00bWQ5UNoZstNPlfnyYUqPUN6UwZZ8E9UuTMie38LlBPP/QjAV1j4Vnl4
+         pW+HkicfNSRiwokCtm+72utl/K8nLWtrwgYwJfiJ/kT/I1vcagPGPZNIPaQNnM0WOmZy
+         Swp+x/ELafoqXQinGhFxcDDwHs8mBHjz8vii0v6s9fHKbHW2Rc7FXuWkR6ah9xtON/XN
+         tOwgqjFc3WtSyL2WtyPSGnD14DrCEYHNd5dyATqqitfvan5GJBvk9z7l+f3h1fpErRFI
+         4UzA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1taNfRap4aHwLd3kBkqND3Bpf3gCiurYLCr4Ao/vqIO+fDH46QVllc+SW584c6OUUbiK/gn5n6Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrtbEcR4b7IBayrLx/3pKOR8FG7AyyKUlvUm+26Bn3mjr2QUzk
+	+Og3R2jqxbtIW2Dlr+v7QuB03fhDcm4ITUUn5kF2+hKn5r9CSYlf+v9FBIU5j8M=
+X-Gm-Gg: ASbGnctLOjiifL3lihhtxVwCpBip2q6lO2N5+YG/YMP2s75nD9hwtMKiqN5Z7DUDSYI
+	bFFWyB0SC/ODCstA75D6MFbNGYcM8GchW0i6Y7IKWyg2idpZqOGtNn8X4pPYrRfmZT5pu3ra15b
+	eguWI6RCXhZKp323iv7xAQ9S7ZXCm6pY4TN+kLoKmu5oc4cFBZQ5gEUhhIArwRBQJcSqhbOY9AP
+	Z7FNZV/EqPzCRzGAlI2M3P4T4KJg77arVx4nEknP1WyYpTTU+bkcQ+kgPcvKwRI
+X-Google-Smtp-Source: AGHT+IGy64r2d4BwPGWPUsFPOuC+QekB2FZvVFvv+nAYGDgwB8ne+RjEFxW/5fvDEMLff0SYAC5jYA==
+X-Received: by 2002:a05:600c:4447:b0:434:a5bc:70fc with SMTP id 5b1f17b1804b1-434a9dc3c8emr76193385e9.8.1732815066393;
+        Thu, 28 Nov 2024 09:31:06 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:b89d:29e9:7047:2d6f])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434b0dc63f7sm27845545e9.23.2024.11.28.09.31.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 09:31:05 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 28 Nov 2024 18:30:42 +0100
+Subject: [PATCH v2] clk: amlogic: axg-audio: revert reset implementation
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 28 Nov 2024 18:21:19 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <4206bf5d-a11e-4d0d-86b7-50c922e41119@app.fastmail.com>
-In-Reply-To: <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
- <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
- <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
- <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
- <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
- <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
- <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
- <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
- <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
- <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
- <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241128-clk-audio-fix-rst-missing-v2-1-cf437d1a73da@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAMGoSGcC/42NTQ6CMBCFr0Jm7Zi2EqWuvIdh0T9gIlDSQSIh3
+ N3KCVx+L+99bwMOiQLDvdgghYWY4phBnQpwnRnbgOQzgxKqlFLd0PUvNG9PERv6YOIZB2KmsUV
+ hK3FVldeX0kLeTynkyuF+1pk74jmm9bha5C/9x7pIlKgb7YWxumpceFiz9mRTOLs4QL3v+xe+3
+ Tq+xQAAAA==
+X-Change-ID: 20241127-clk-audio-fix-rst-missing-0b80628d934b
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6830; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=aLEeckbAOzstWQ8GqyUU0U1ON+1IQGvGuu+IScVtjTA=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnSKjY9lg4Iso/jCF+n+X/G+qgZmozzC246Ji7j
+ N/NN1afzIuJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ0io2AAKCRDm/A8cN/La
+ hTEHEACAjx33XZCOL9voJIHp6Y+XOVDEiu7pZdppFk0QxnXtDHuCuuxqVxPShihgKbOuHmiCGl2
+ K9s7KWxhU654c4CmjJzt/pDl6CfY5D8ysjwzI3Fbq6n8xvjpjL5QlXJhos4trCJr+xaBSVx970w
+ ZKFYj8UWvkqq7cE3pQJPbsYckndk4ZEcplo6mTtnP5ePX/i/HusZsAPr9CTAUjY8Gt9oG3Nv5OE
+ +RMp7Sh/HoccpH2svTDo9gXD15zWyL6jU4BhJcWdpMRrFZ8xyA+hZ2/yt1W34CHd8mB6VYsbcov
+ y0bcvlZmgTIMZeqtER6GfwcZL4NlEwEnAeP4Ew+I07I2XRVCyv2catmuDjFqREZXkyE/H2CG5hH
+ ybO+q/yqTAmRJmWNcSQmw9gMOdw9EeafxIK13nZBZ/JtmjgwnEGQgE71VdqDcQyyBSz0FIker6/
+ 9xmekeIlOFStPBc5ot1P8NrpT8nQz+DwyBwg1rVmL/tbxe6QeTosWqhUxZa3/JyeHWetCe1n0cz
+ aZoY9bljfS3Emsj+fxew40Ru6LqCxAv8E01HUxQzgXE0MJFgDOU3u1ik7Vfhng7YkYeDP4QTS/c
+ tgBbMV7lImQUEVlmG9CrjpsSVQaFRjl3LmReMhUdolJtBboYjIMEX/3J1HDgregJ1I4M8HHHAQo
+ HLn79faeNBv+Ycw==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Thu, Nov 28, 2024, at 16:53, Jerome Brunet wrote:
-> On Thu 28 Nov 2024 at 16:34, "Arnd Bergmann" <arnd@arndb.de> wrote:
->> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
->>> We are deviating a bit from the initial regression reported by Mark.
->>> Is Ok with you to proceed with that fix and then continue this discussion
->>> ?
->>
->> I really don't want to see those stray 'select' statements
->> in there, as that leave very little incentive for anyone to
->> fix it properly.
->>
->> It sounds like Stephen gave you bad advice for how it should
->> be structured, so my best suggestion would be to move the
->> the problem (and the reset driver) back into his subsystem
->> and leave only a simple 'select RESET_CONTROLLER'.
->
-> Okay, though I don't really understand why that select is okay and not
-> the the proposed one. There is apparently a subtility I'm missing I'd
-> like to avoid repeating that.
+The audio subsystem of axg based platform is not probing anymore.
+This is due to the introduction of RESET_MESON_AUX and the config
+not being enabled with the default arm64 defconfig.
 
-The thing with 'select' is that it really has to be used very
-selectively. The 'select RESET_CONTROLLER' is fine as an
-exception because there are already tons of clk drivers
-that do this consistently so they can register themselves
-as a reset controller.
+This brought another discussion around proper decoupling between
+the clock and reset part. While this discussion gets sorted out,
+revert back to the initial implementation.
 
-A driver selecting a driver from another subsystem is pretty
-much always a mistake. A single one may not cause much harm,
-but the problems are frequent enough that we need to have
-fewer of them rather than more.
+This reverts
+ * commit 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
+ * commit 664988eb47dd ("clk: amlogic: axg-audio: use the auxiliary reset driver")
 
->> From the message you cited, I think Stephen had the right
->> intentions ("so that the clk and reset drivers are decoupled"),
->> but the end result did not actually do what he intended
->> even if you did what he asked for.
->>
->> Stephen, can you please take a look here and see if you
->> have a better idea for either decoupling the two drivers
->> enough to avoid the link time dependency, or to reintegrate
->> the reset controller code into the clk driver and avoid
->> the complexity?
->
-> If I may,
->
-> * short term fix: revert both your fix and the initial clock
->   change that needed fixing. That will essentially bring back the reset
->   implementation in clock.
->
-> * after that: remove the creation part from driver/reset and bring back
->   something similar to what was proposed in the initial RFC for the
->   creation and finally switch the clock driver back to it.
->   That should provide the proper decoupling your are requesting I think.
+Both are reverted with single change to avoid creating more compilation
+problems.
 
-Works for me as well, though Mark's suggestion would be simpler.
+Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
+Cc: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Changes in v2:
+- Drop symbol selection and revert to the previous implementation
+- Link to v1: https://lore.kernel.org/r/20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com
 
-     Arnd
+Hello Stephen,
+This fixes a problem introduced in this merge window.
+Could you please take it directly ?
+
+Thanks
+---
+
+---
+ drivers/clk/meson/Kconfig     |   2 +-
+ drivers/clk/meson/axg-audio.c | 109 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 101 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..be2e3a5f83363b07cdcec2601acf15780ff24892 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
+ 	select COMMON_CLK_MESON_SCLK_DIV
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select REGMAP_MMIO
+-	depends on RESET_MESON_AUX
++	select RESET_CONTROLLER
+ 	help
+ 	  Support for the audio clock controller on AmLogic A113D devices,
+ 	  aka axg, Say Y if you want audio subsystem to work.
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index 7714bde5ffc038a7a36d267a7149bc9f4e820be2..beda86349389990065954300369e5daa360856c9 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -15,8 +15,6 @@
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ 
+-#include <soc/amlogic/reset-meson-aux.h>
+-
+ #include "meson-clkc-utils.h"
+ #include "axg-audio.h"
+ #include "clk-regmap.h"
+@@ -1680,6 +1678,84 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
+ 	&sm1_earcrx_dmac_clk,
+ };
+ 
++struct axg_audio_reset_data {
++	struct reset_controller_dev rstc;
++	struct regmap *map;
++	unsigned int offset;
++};
++
++static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
++					unsigned long id,
++					unsigned int *reg,
++					unsigned int *bit)
++{
++	unsigned int stride = regmap_get_reg_stride(rst->map);
++
++	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
++	*reg += rst->offset;
++	*bit = id % (stride * BITS_PER_BYTE);
++}
++
++static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
++				unsigned long id, bool assert)
++{
++	struct axg_audio_reset_data *rst =
++		container_of(rcdev, struct axg_audio_reset_data, rstc);
++	unsigned int offset, bit;
++
++	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
++
++	regmap_update_bits(rst->map, offset, BIT(bit),
++			assert ? BIT(bit) : 0);
++
++	return 0;
++}
++
++static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct axg_audio_reset_data *rst =
++		container_of(rcdev, struct axg_audio_reset_data, rstc);
++	unsigned int val, offset, bit;
++
++	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
++
++	regmap_read(rst->map, offset, &val);
++
++	return !!(val & BIT(bit));
++}
++
++static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return axg_audio_reset_update(rcdev, id, true);
++}
++
++static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return axg_audio_reset_update(rcdev, id, false);
++}
++
++static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	int ret;
++
++	ret = axg_audio_reset_assert(rcdev, id);
++	if (ret)
++		return ret;
++
++	return axg_audio_reset_deassert(rcdev, id);
++}
++
++static const struct reset_control_ops axg_audio_rstc_ops = {
++	.assert = axg_audio_reset_assert,
++	.deassert = axg_audio_reset_deassert,
++	.reset = axg_audio_reset_toggle,
++	.status = axg_audio_reset_status,
++};
++
+ static struct regmap_config axg_audio_regmap_cfg = {
+ 	.reg_bits	= 32,
+ 	.val_bits	= 32,
+@@ -1690,14 +1766,16 @@ struct audioclk_data {
+ 	struct clk_regmap *const *regmap_clks;
+ 	unsigned int regmap_clk_num;
+ 	struct meson_clk_hw_data hw_clks;
++	unsigned int reset_offset;
++	unsigned int reset_num;
+ 	unsigned int max_register;
+-	const char *rst_drvname;
+ };
+ 
+ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	const struct audioclk_data *data;
++	struct axg_audio_reset_data *rst;
+ 	struct regmap *map;
+ 	void __iomem *regs;
+ 	struct clk_hw *hw;
+@@ -1756,11 +1834,22 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Register auxiliary reset driver when applicable */
+-	if (data->rst_drvname)
+-		ret = devm_meson_rst_aux_register(dev, map, data->rst_drvname);
++	/* Stop here if there is no reset */
++	if (!data->reset_num)
++		return 0;
++
++	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
++	if (!rst)
++		return -ENOMEM;
++
++	rst->map = map;
++	rst->offset = data->reset_offset;
++	rst->rstc.nr_resets = data->reset_num;
++	rst->rstc.ops = &axg_audio_rstc_ops;
++	rst->rstc.of_node = dev->of_node;
++	rst->rstc.owner = THIS_MODULE;
+ 
+-	return ret;
++	return devm_reset_controller_register(dev, &rst->rstc);
+ }
+ 
+ static const struct audioclk_data axg_audioclk_data = {
+@@ -1780,8 +1869,9 @@ static const struct audioclk_data g12a_audioclk_data = {
+ 		.hws = g12a_audio_hw_clks,
+ 		.num = ARRAY_SIZE(g12a_audio_hw_clks),
+ 	},
++	.reset_offset = AUDIO_SW_RESET,
++	.reset_num = 26,
+ 	.max_register = AUDIO_CLK_SPDIFOUT_B_CTRL,
+-	.rst_drvname = "rst-g12a",
+ };
+ 
+ static const struct audioclk_data sm1_audioclk_data = {
+@@ -1791,8 +1881,9 @@ static const struct audioclk_data sm1_audioclk_data = {
+ 		.hws = sm1_audio_hw_clks,
+ 		.num = ARRAY_SIZE(sm1_audio_hw_clks),
+ 	},
++	.reset_offset = AUDIO_SM1_SW_RESET0,
++	.reset_num = 39,
+ 	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
+-	.rst_drvname = "rst-sm1",
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+
+---
+base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+change-id: 20241127-clk-audio-fix-rst-missing-0b80628d934b
+
+Best regards,
+-- 
+Jerome
+
