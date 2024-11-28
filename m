@@ -1,64 +1,64 @@
-Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D0019004B
-	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 12:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62DB19924E
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 12:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732795755; cv=none; b=AKB9NZo9qhnF+U2eReY+wYdy5YRAvekZCXShFZIPiuxZEUoG6KnG+CetmNsNUoyuLvWoxHrO0YyATGBQXNxWUfvwgiyyMSQ4S38nGr7b11h6+EAzU8UBnZtPi9b4N+MkBCy0JzMHTYWAZpqWsxAz+gBDopTj3zkDefg1SNVDU9s=
+	t=1732795923; cv=none; b=KqTwvvyeuIZAE9iO33iFqEz52/LCT6AAeJx16+qsmxq9Tn6pCMTce0EDU4WDR2+/NtlpcK85MSeCOXUPGO0B0e3lxCPY5Ur5elsT/9IFzKbeIS5IA517sRIi0jkXTnxG6/cBz8Wkse0VGewhbbTDi/lMD42VBU0TvC4J93X1tHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732795755; c=relaxed/simple;
-	bh=RW3VZirTHPIW66UyzCS45tHNq7eH8+C33ljA4Nll6ZA=;
+	s=arc-20240116; t=1732795923; c=relaxed/simple;
+	bh=0MeGc/7s/CWBQN05R+oTUtFBb/goOcovHE356j/Oszg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RS56y3w2BRXwujIsG0lYhCWFWUmlPO2EJaudUyNQYf9IyZaCxUWFwqlJ5Pk0PlfTa4JXR06sklEcjp5PAZyzEzdXVKg8BcJUYW4zrlAc4Dcp8aTpZIH8zwRq9ZM46apxsHMsCWt3yZ/Fs9w8TMZ1w203EJmhCkIGloGwYFMa0fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g95C0Zm5; arc=none smtp.client-ip=209.85.208.193
+	 In-Reply-To:Content-Type; b=nVqwLgPmKnPr0sasoxN6USyGwkaxP7RR5BkdP5drhZh9qcdT4+LikHUecG2RSr1zwh2fYK3tI+qL7tRp2SfYCVwKeOgnn7MN5Q7SL/FVnYagDL8cG06SsghxZsugSrNIBkgZatAURoeyIBYZEW0iaMh5Wf/NpW46k6mwHZ2c+lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tS3TCf9G; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g95C0Zm5"
-Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-2f75d529b49so469531fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 04:09:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tS3TCf9G"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cfddb70965so891717a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 04:12:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732795752; x=1733400552; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1732795920; x=1733400720; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fwTWwA6azgLnozBWQBgEU2aEg7DOq4OXVVpm7/SKa7w=;
-        b=g95C0Zm5icFPawGfuyhIa+KLv+MwhNzbFM1YSsW1F8Bf5DR5/yE3mNlX8xruokEXjc
-         9gM6/92l2s6pjxAr8GuUOlCAS47vO7DPTFpwvZzeDzwv5Q3rUams2cp2Zny4M1Yq5dS2
-         reuhGFhpyaa5e8ahzzmZgH8KTvQ642ViZCZEZwnX+bVtgURS4j2yW9GwVuSE1zBV0ffO
-         fiImHbCqwPGkNZhxYiTGTJpBul0xWAlaVtLcrdRvjZvKCtEN20DpEEJAYoeI50YE1tXW
-         YY2UDU9aT3V39nxaI1n5wx8ED/M9NdKK7++ucjdbmU7dtk+JFZAqrlpLwhpSciRtRkFx
-         C0yQ==
+        bh=TlagLEJFtywwVUMe1dgXgwPpKrkSCr7O7E/5icGZLn4=;
+        b=tS3TCf9GbJVM54xegz7nf2GORR0cBMfxRDySJhFON77Ma0hMri69nqnIR9Ib9LtmaM
+         jMCE15QfBVHx2dugiNIfuFN8omGzdXEorwGSLZTj/u/XOZsVhm/+NDts3qOl5vam9XzP
+         psjleL5Fx/kke0pdY1a2UnMLbCSr3J3d/NVkNpRGOrLWdU3uxqDFVeRiZhrMq9FYjKdS
+         j67QErPvpwTUKPy2xjdTGlP4ho6AYsPXWd55rhYabuPGb4dSTuoQizgmnuqXZmCedjhW
+         +vVrJj/7/qSnZoQKRwVbX4/akOQVcgTU3P/U0Z670theUBZAidOyfpR3ZE4SChdjxck6
+         nofA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732795752; x=1733400552;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732795920; x=1733400720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fwTWwA6azgLnozBWQBgEU2aEg7DOq4OXVVpm7/SKa7w=;
-        b=B2o3nXXDo7f2vwHWOfOSb+KKthf1bmBTmew4UY2Mtvj++gF8Aw+ooxEbg+setTJVUM
-         epIGTbfx21fHSNB7YZwQDEPj0ziTL2Ar+k7M6mCYjOKQesweXU8Vy/JDOknPhltDOOdV
-         6knXscBzU3o8G+l864RED58oxhG/J1qgAdTmj7ooLeI7g1BqOKy3iOvvLu7K08JBjsgP
-         L3JNhOiMXT7Bk1ukPxTP334kIcNWaulXSp9TG252zM7u6E+B9y5bxpvPARdB8NwruDzR
-         7AJAxVdyQxDmQdK+/hsxMG9xLaZ/Lp978AVC2fe/ZzszG39+LT1aYM7zORtiudJ1rx/4
-         76iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXr32z0Qji/y7ln5dMm/z1Af66CSSwjIruYubx/cX80zh/jLvjcpg3TJaKZweG30NQhs+dwJEPdvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTy+uaGa1udoGtAzok4xv3/KlAiWaRhltgxLpdip1hXm/K0eYc
-	JxvkDPmcnYgtqzA56c1Z07LlxC1kj5fkO7mJDYe81SdCd0FoQ+b2CG3AFlSzJGQ=
-X-Gm-Gg: ASbGncu+K2QPqvNIf+K8LzoDKKfvfuw30CeYq/08LU87ZBIwlKfwHg+wdi5uPS0wNBA
-	hF5MVuPupyKTkkbCPOj/4UCzTEirblS6Ba19Ep3vqm2eUx5jvrh1A1SKF59BDPgGYuuN0Tgyqjw
-	+OMZ9wT5oftcXWn9ZyQEMQCzHmdy2yF7HMYEp/vKqWU755zN9zKDcLmLpnSgMQoerl/4BxGgrdn
-	umSvzMLIkN9PxWzo4VPKJMBLssi6rYGdcUFznpFyfQOezjTI1fEgMEkJWPIli/hkNqP7V8A2xHg
-	vrr4wkiy+OVDVfKizb84oS1XEC6n
-X-Google-Smtp-Source: AGHT+IGb+CquWGoLlCxlMN54dryp8DwwxL61NpjsPl9cVKA1OdiBA+RXxSDRUTTEFIMowEslwGRMSw==
-X-Received: by 2002:a2e:a583:0:b0:2ff:a97d:98f4 with SMTP id 38308e7fff4ca-2ffd60ab680mr9240231fa.9.1732795751941;
-        Thu, 28 Nov 2024 04:09:11 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc9bd7asm1726121fa.94.2024.11.28.04.09.09
+        bh=TlagLEJFtywwVUMe1dgXgwPpKrkSCr7O7E/5icGZLn4=;
+        b=aJ7qeajMtTaRavBYTQFnNrqSqvBK6zgN8+AJrp8WcV3Oi/N9xPsdSh3TD7/UfGIDif
+         mJJ1/2Q6/TsKkW7mPfHwUQZkxTgdy7TDWoyIXCeSVDdDetY59PBaFz7pgR+mYh5R+/yO
+         qcobIZo03b16QRxK2B9S/MfBJIhTsn49R1FR+huvjaNKsHz5wD/BP5LTmN8NKft6UrtB
+         gKYRqZ2kO5b/HtNPPosHWFwkrwg9PHHbiRA5auDYWlpnc9XESc3pXbxtiyq78l+ImuNT
+         5IqMP8zucLwX7CSJWCjMOvA++l7cPYYHkSWitqBP4HQP/ShRv7XcTaoHqS1j60oZg/c0
+         pgrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyKj99zPdbjlxYs31M6xFvP7axDiL5Bb84jY2mV6h0E119ZEsq5nzK2mOhxZiwNt8F/rchRhhfRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk6qkCP4EsgaY76lFIx9s9L7V+yD/YvwIHRIgQqFsJwPIacgVj
+	NjSd7RDmIsqKeYaMGw27CVE9woLkmZhcERZqJDH8YWion/JRPXGGfWQfkhOtkfVxwid6Uu3Mu5F
+	BmNQ=
+X-Gm-Gg: ASbGnctXXpi9fX+iAwnDkNEpdvJejdpU32drwXb415D+TGHMZErBlT+T+HFUD7Z1ODE
+	+9uvDvWmq/KPKYO0frBSeQs1G1vB/YnHOq3qGab7bwAVPOg4wcNXlPBqNpLhBuA7gQDNA/mCbFw
+	92EfoHgUKOusTIeRzAqrX3IsTfh53pZorclMrDxiXLqhkbS46pSF+/Wkec0AnbCdhO+BJsBBn3P
+	8S2Xa9ol0dg6Q6OQtu04SIlm82ZOuF3HmKp0mySene1Va5OggzIQ4LQJVWsuBg=
+X-Google-Smtp-Source: AGHT+IHvAUIzZYTgmNUEdyRVWk60wm4MmFIPzbhwhInYSuwK9GJKfO8YoQIj0jmD405fTVDHMr0VFg==
+X-Received: by 2002:a17:906:b3a4:b0:aa5:aa3:8c45 with SMTP id a640c23a62f3a-aa581055163mr464111866b.48.1732795920072;
+        Thu, 28 Nov 2024 04:12:00 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63a2sm59846366b.113.2024.11.28.04.11.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:09:10 -0800 (PST)
-Message-ID: <a73a3b5a-cd83-4f87-876d-ea99ef8bbd70@linaro.org>
-Date: Thu, 28 Nov 2024 14:09:08 +0200
+        Thu, 28 Nov 2024 04:11:59 -0800 (PST)
+Message-ID: <b76cea3a-b330-45b1-92a5-844aa081b0a3@linaro.org>
+Date: Thu, 28 Nov 2024 12:11:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,40 +66,64 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clk: qcom: common: Add support for power-domain
+Subject: Re: [PATCH v3 2/3] clk: qcom: common: Add support for power-domain
  attachment
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org>
- <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-2-4348d40cb635@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-2-4348d40cb635@linaro.org>
+References: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org>
+ <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-2-836dad33521a@linaro.org>
+ <8189fe4a-b6f5-43a6-9f7f-1abddc366ada@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <8189fe4a-b6f5-43a6-9f7f-1abddc366ada@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/27/24 17:53, Bryan O'Donoghue wrote:
-> Right now we support one power-domain per clock controller.
-> These single power-domains are switched on by the driver platform logic.
+On 28/11/2024 12:07, Vladimir Zapolskiy wrote:
+> Hello Bryan.
 > 
-> However when we have multiple power-domains attached to a clock-controller
-> that list of power-domains must be handled outside of driver platform
-> logic.
+> On 11/27/24 01:44, Bryan O'Donoghue wrote:
+>> Right now we support one power-domain per clock controller.
+>> These single power-domains are switched on by the driver platform logic.
+>>
+>> However when we have multiple power-domains attached to a clock- 
+>> controller
+>> that list of power-domains must be handled outside of driver platform
+>> logic.
+>>
+>> Use devm_pm_domain_attach_list() to automatically hook the list of given
+>> power-domains in the dtsi for the clock-controller driver.
+>>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>>   drivers/clk/qcom/common.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
 > 
-> Use devm_pm_domain_attach_list() to automatically hook the list of given
-> power-domains in the dtsi for the clock-controller driver.
+> Is there any particular reason why my review comment was ignored?
 > 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> https://lore.kernel.org/all/8a33c0ff-0c6d-4995- 
+> b239-023d2a2c2af5@linaro.org/
+> 
+> There is no signs of the change improvement, unfortunately.
+> 
+> -- 
+> Best wishes,
+> Vladimir
 
-Please simplify this change, please do not ignore patch reviews, if you
-find it possible.
+In the cover letter I cover what was done and not done and why.
 
-https://lore.kernel.org/all/8a33c0ff-0c6d-4995-b239-023d2a2c2af5@linaro.org/
+I made a new function because it "looks neater" to me that way.
 
---
-Best wishes,
-Vladimir
+I implemented your feedback on ret and -EEXIST.
+
+Passing NULL instead of &pd_data doesn't work unfortunately.
+
+Let me know what else you'd like covered or revised from the cover letter.
+
+---
+bod
