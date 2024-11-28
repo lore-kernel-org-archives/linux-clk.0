@@ -1,165 +1,112 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f67.google.com (mail-lf1-f67.google.com [209.85.167.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2901428E7;
-	Thu, 28 Nov 2024 10:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B292318D63A
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 12:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732790238; cv=none; b=qcrnpGyLXvIBD6SuKTUUG87w1saDOGnIXQSn0XmK1yNWHQo/Rs2wkGF3Sy2T73dZj6+gVyX2nxeP/8cBlfWGlGF7i8fO9pM1HELbhDt2imflNWe/fbMytDPRnFnJvfS+0dYUF5w2L9NUfBaMIIC+IYHT70wDAdlQj8gmtChnwgA=
+	t=1732795625; cv=none; b=egyWnTsVC3HQMhDPcRl3sh+z80h8IiKM1e7bM0HpOq42iIxSLDDol2pUsLhHw7b9KaDWL2mAnVgCbdN9Bq61vTdPyPlQL+eF7MHICgIJf2F/TiQMaipytPUJE2dysLqrPZO+W4K0/vbZbUd+mJgT/oeCcHCU+UhxV7eL9yLTMTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732790238; c=relaxed/simple;
-	bh=X//+aLlv/ZUgHtxgxEk8ipshJKC/R6yilpLawZd/s4Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVIGu+Mxpukb/MidKJ5k1IsCIDC0iPRiyRtKPcjPuIcjSKcGLlbBeNspl3PqvUfKyIbJitYetjc9H6zjsW60KnNviDkeXYGlNXzn7G3ejZ/3BrRHCd/mCODudIoXW2Bkcb7/F2U5WVTaB73+i6uQKOl3eLWTkVDqrbf3jbKrcrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KY3bXFRN; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1732795625; c=relaxed/simple;
+	bh=fQqYngYQaBH4nRkWFH+2RCIgNp656eo5Cdwm61nRK/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g74d3PE4W27fQMStnaFJqj/8vOOYI2mZLvaulWMHKgllsVJLplig3PDODDwdlGxLkPf2m3kNxaNCmPSXqnuCoN8Gvfn2RIAE2FCRjymXXSSuHGY2381MOWKdOgalsSYrqqq1eGg6d6aRJJmkF0aT8+kPRkGeN4ui3K4WYaaMBkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L0eL6tqo; arc=none smtp.client-ip=209.85.167.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KY3bXFRN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1732790237; x=1764326237;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X//+aLlv/ZUgHtxgxEk8ipshJKC/R6yilpLawZd/s4Q=;
-  b=KY3bXFRN1WtxX1Bmg45pfac1UjWhLRI/RhKqkGGcSZ4F144H+4bxOJIS
-   YYD2sneJHMBaE9cFN/iPNk2Zx0UxFWjMKVaeVIWLqqBxeyJwuKEuyGbRG
-   mJ/yoQndt64WJkmFPbo4pVfIfo4MYUfHrv39HT8X2gIz0+Q3ijH5OwS2M
-   578FCgBG/afcr6Eqf2ouE5qzybbwQCum8Hdb+XVsQf0oMUSZ0ymmNg4b9
-   niiDD4nKTRNuG9ueM+iS/874sIvdowP91ccDJ0lpstdntj6sFsD9pi4T5
-   3xl414u6OO8x0QOQkp7jMNDZPVkECTnVuRuaxL3Uj0hzKdDeRN/DCn/+9
-   w==;
-X-CSE-ConnectionGUID: wSflfb+LS36CStD+2SM6ZQ==
-X-CSE-MsgGUID: PIuDtMU8RDao3fADMTrbCA==
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="asc'?scan'208";a="35386534"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Nov 2024 03:37:10 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 28 Nov 2024 03:36:47 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 28 Nov 2024 03:36:43 -0700
-Date: Thu, 28 Nov 2024 10:36:16 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Conor Dooley <conor@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>, <linux-kernel@vger.kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	<pierre-henry.moussay@microchip.com>,
-	<valentina.fernandezalanis@microchip.com>, Michael Turquette
-	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones
-	<lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Kevin Hilman
-	<khilman@baylibre.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<linux-riscv@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to
- common code
-Message-ID: <20241128-monstrous-embargo-a665d921410d@wendy>
-References: <20241002-private-unequal-33cfa6101338@spud>
- <20241002-hula-unwashed-1c4ddbadbec2@spud>
- <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org>
- <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
- <20241003-tacking-ladylike-dfe2b633e647@spud>
- <20241106-freefall-slider-db379b05821e@spud>
- <430bde3b35382e640843e32a9f351326.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L0eL6tqo"
+Received: by mail-lf1-f67.google.com with SMTP id 2adb3069b0e04-53ddb4c05c0so113821e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 04:07:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732795622; x=1733400422; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7SF5OHl6Q6ZggZKWiO6IZg02nSrf/YPTh7wLw9TpiFw=;
+        b=L0eL6tqoED56UuVeo8BUpvq1uVWouDW7OAGiMvAB7S3Qg/xg2bAEVQmwkXiVO6RUI7
+         lhqRpp3YSyldoEWXue9piEioO6lLycrzfJeIhXDku9wVclYckX9KfmfkCSfa/HWsgOqv
+         YbmDb/UJa8CAXKmrWBcDdOpmainzuDJXdQ2Hw1kKoaBpRUUWQpWcQGP1yBQsDcVm12Vw
+         UbVYcTE68LRE6fBp8XO2Im/iQQ9hx6bGjO1+uBHxgOMv2j/2bkfKfdlOl7QQfYYjxDbb
+         K+uwLg3QWfNRCIjIqoIt9xOhJAXLWCwCloZ1GUm7V77ZoUVC/Sub2Vsis9/P9XJ6AILR
+         mXZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732795622; x=1733400422;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7SF5OHl6Q6ZggZKWiO6IZg02nSrf/YPTh7wLw9TpiFw=;
+        b=OYiWBCozAK7LCTQDYnUWGLIa5sCFA7CBtCUnXMSZRAb6C/VssCKfSgyE4gZb5QVp4O
+         8WSg5WMOJAYQoMgsC5fTRdV6MHPii1jlntp1YElzrYn4btUDWiHI3qL0Dx4XmXjOB0MS
+         kz4IEF+A2Ny3XsCBjU+er40TWHAmD4tIXj82gTj5LZzZRjjNlDPLQ9/hJAr4ClO0g5E5
+         /ID6MU/JZQS4aoUHnyV69xesMEZ+DW108dknERNZS3neTqVdATKXugjTnXUElvrbk26d
+         CDcdWN7c1S5UEr25+I9C4pEMUb/g4vKYPuic+5Y+zqNqHdeiLpmDk6a8t3K0VZKrN6N2
+         O1ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUKVMJKqViwhGXJbYHcA9L7WoBBC79jTfVCThjEzaS9J+czw10DicDOnkI08nB/OsrFZ9s6V0fHo0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztXLEH0cefH1iAwNzpRnYjmHjZajTK7b8ifslt61lRwOVIWNqZ
+	0Dp7TbMffnrHcEiAlaV/mj1OAOHyWBYdDQQ9Wmd0R0xviR5ajLFQziQ/uc0R6jo=
+X-Gm-Gg: ASbGncs7YangY2dcR9GFUM5wFfTIn7p3/GrwFoMBLqBbEajOYS5CrJ9u6QmhHklV6gA
+	1gJHPcPXPElpA5/gEUgMlCTUcd+pnpLIl6Z0oB7Q1oQxRZ4xo+jXkKyU3CpAwnymvrbqrzOFMmO
+	K7Wv75uy56RfPBfh75v2H/CwD26KyeRGhvE79DyFpj4UAMBEcOPJSn/z/m/+Y+hYfawzYyO+Xjz
+	Q/Q4CmVLnY8RRKyxi3rEIm/+OmO9/1Ku0g7+rZAMcXXVtm9RWo9JVRKY7k5Y0a/pay3psvHyE8I
+	/pcQEEGR3hQfr5aZW/F4I+P82Awq
+X-Google-Smtp-Source: AGHT+IHsfbfQFGYieKwKAf8ZPiuL2mZxi4Zqttbg2UBokuZg6RjtXSHIhC857ys4GHZZnwz2KVhYng==
+X-Received: by 2002:a05:651c:b21:b0:2f7:5c23:98fb with SMTP id 38308e7fff4ca-2ffd60dbc52mr8337221fa.10.1732795621780;
+        Thu, 28 Nov 2024 04:07:01 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc097c3sm1756931fa.54.2024.11.28.04.07.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 04:07:01 -0800 (PST)
+Message-ID: <8189fe4a-b6f5-43a6-9f7f-1abddc366ada@linaro.org>
+Date: Thu, 28 Nov 2024 14:07:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jOw7oZ/dHujpxqRG"
-Content-Disposition: inline
-In-Reply-To: <430bde3b35382e640843e32a9f351326.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] clk: qcom: common: Add support for power-domain
+ attachment
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org>
+ <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-2-836dad33521a@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-2-836dad33521a@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---jOw7oZ/dHujpxqRG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Bryan.
 
-On Thu, Nov 14, 2024 at 05:29:54PM -0800, Stephen Boyd wrote:
-> Quoting Conor Dooley (2024-11-06 04:56:25)
-> > My use case doesn't
-> > actually need the registration code changes either as, currently, only =
-reg
-> > gets set at runtime, but leaving that out is a level of incomplete I'd =
-not
-> > let myself away with.
-> > Obviously shoving the extra members into the clk structs has the downsi=
-de
-> > of taking up a pointer and a offset worth of memory for each clock of
-> > that type registered, but it is substantially easier to support devices
-> > with multiple regmaps that way. Probably moot though since the approach=
- you
-> > suggested in the thread linked above that implements a clk_hw_get_regma=
-p()
-> > has to store a pointer to the regmap's identifier which would take up an
-> > identical amount of memory.
->=20
-> We don't need to store the regmap identifier in the struct clk. We can
-> store it in the 'struct clk_init_data' with some new field, and only do
-> that when/if we actually need to. We would need to pass the init data to
-> the clk_ops::init() callback though. We currently knock that out during
-> registration so that clk_hw->init is NULL. Probably we can just set that
-> to NULL after the init routine runs in __clk_core_init().
->=20
-> Long story short, don't add something to 'struct clk_core', 'struct
-> clk', or 'struct clk_hw' for these details. We can have a 'struct
-> clk_regmap_hw' that everyone else can build upon:
->=20
->   struct clk_regmap_hw {
->         struct regmap *regmap;
->         struct clk_hw hw;
->   };
+On 11/27/24 01:44, Bryan O'Donoghue wrote:
+> Right now we support one power-domain per clock controller.
+> These single power-domains are switched on by the driver platform logic.
+> 
+> However when we have multiple power-domains attached to a clock-controller
+> that list of power-domains must be handled outside of driver platform
+> logic.
+> 
+> Use devm_pm_domain_attach_list() to automatically hook the list of given
+> power-domains in the dtsi for the clock-controller driver.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/clk/qcom/common.c | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+> 
 
-What's the point of this? I don't understand why you want to do this over
-what clk_divider et al already do, where clk_hw and the iomem pointer
-are in the struct itself.
+Is there any particular reason why my review comment was ignored?
 
->=20
-> and then set the regmap pointer during registration in
-> clk_hw_init_regmap().
->=20
-> int clk_hw_init_regmap(struct clk_hw *hw)
-> {
-> 	struct device *dev;
-> 	struct regmap *regmap;
-> 	struct clk_regmap_hw *rhw;
->=20
-> 	rhw =3D clk_hw_to_clk_regmap_hw(hw);
->=20
-> 	dev =3D clk_hw_get_dev(hw);
-> 	if (!dev)
-> 		return -EINVAL;
->=20
-> 	regmap =3D dev_get_regmap(dev, hw->init->regmap_name);
-> 	if (!regmap)
-> 		return -EINVAL; // Print helpful message
-> 	rhw->regmap =3D regmap;
->=20
-> 	return 0;
-> }
+https://lore.kernel.org/all/8a33c0ff-0c6d-4995-b239-023d2a2c2af5@linaro.org/
 
---jOw7oZ/dHujpxqRG
-Content-Type: application/pgp-signature; name="signature.asc"
+There is no signs of the change improvement, unfortunately.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0hHlQAKCRB4tDGHoIJi
-0r+YAQDAe67NaDMRenGcDGtot2a/AgJVl48Api+arsoWqWN6QAD9GCn98CCFJZBY
-gZMaI09bAeDcbhzSqAEHQ9GpSbRtMAg=
-=CQKc
------END PGP SIGNATURE-----
-
---jOw7oZ/dHujpxqRG--
+--
+Best wishes,
+Vladimir
