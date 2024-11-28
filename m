@@ -1,106 +1,63 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FBD14E2CD;
-	Thu, 28 Nov 2024 08:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1996A15359A
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 09:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783645; cv=none; b=m6tPCsxDZ09kDy9vQlBbnCaoFHmTqe6ElllPMD8J+JK/wAVDPhA0YuDaJyzJa9SsTa3RWFyxvq6AZXMxr4icd25+3iVTPEs0D9A3sTNoBxtXkkVWifEt+cEC7nY3HcY6i89TZygMWPxRnGF5/4VjrZXr7Y5DDmC1MQhCiTjVrSU=
+	t=1732785083; cv=none; b=D9XK1qirdr2VDP6koByNer/uvE0gk45r34EeP/PLDhXNItC2ycsqmouagKWRBmOIiqz5RGC2VN3at716ZeK1bI7/i/MK+IJ57WZXTt9W4NC04CjsOCvGPRpGGquWGX/zQtNJdxAVHN3eWqsFgQ3HbKV9BMTxLnhzjbgJUyaglOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783645; c=relaxed/simple;
-	bh=ZhYrJnvlh+i4LVmD0hsqQfgFobW/bRCaAOp+DMwf09s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qqEjCX+TN3DRqf0/qzvPrWb8qhkDVQ74RMu7+jphDdV3wOOKx7Q0duH+5ly+ZUUSa6bWmTbxRemt8b4PWQ1cJtpMqzpkDis6FoALckHLn/t4VJOBY7TPUtNZduytyM/XoMTvTOweLf3XcRvn+GKMNn8x+EHyusKaPpNCJX2XFm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so8711411fa.3;
-        Thu, 28 Nov 2024 00:47:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732783638; x=1733388438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RwggmOokH8Sa4c0OeKiw69D0dnR0y4O1b2vaenANGzw=;
-        b=HVOmanULMjEdyDOZUFAcHI69KREWkCYp1uZtMbzbhLLl2dwNP8uKXUoYV9k2dzeqWK
-         9EWL6Il8RBqMkfLqJPAUfHCE/id7MZcf4WQKmNnxkSW+arTnD5UNJlHvvulZ8zfpWwgb
-         pTodf7mQyPDWG+Zu9zj5Pkc2bywX/tgixA3sA2NjX/Hfa+u7c7joCPPv7M8bci0FJOIK
-         UdokmVJ382aiVFZAVkg+dvT80kNYDileqn1HlQQqnAIyMej7LQXLL+JnblwNN9XT53xL
-         KxDz+lZ0/1M+a2m7wWYNwm6GhMxTKoVPKl+qu+cXNQon5DSwRL+llPqrbzTXIFnQVy5/
-         g3XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOOK+BmM0OzPrs3fyaeRFIxb/TaBRe5VW2Bqq45phs7idhz1FGVDWJg95/9g2aeq286j80Yks5I6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDziJp7IQhdZNM/svS44z0dDXnrW9+mXCRc/jaUw1y2THnCb5/
-	hP9ziDpsXe5IHbnXb86qzFzCbVZ5TiVQyAkBRkOxkNrub8aqeqABrJoJ8HYketc=
-X-Gm-Gg: ASbGncsZ5PozXGsABxOP/0hynM6MTKN0CZ5mAxZUk9SCErOCHC2Kp6XZOEa9+mFlASN
-	cPPkUymw1WjKKk5KeTJ9GC/4WP5s5ZTx/dAO4TPU3fLGkkDLspIeZ2v+LdcDSAjdSz4XEF0grIc
-	dTRBDIUBC4wEVJCFms4WgDhi5QdDpiFZyv6FVRURNupg+KK2aNC+cLL+0IFWgnx0+Dews6Udf6p
-	cYHncMTgDFn4cZYr0HOuWCKcXiHpJ0Xjvp6IQvvfN0XrhLGls47hlyUH2k3x9RlGgywGWjdYSeX
-	S3PZyWR7w34r
-X-Google-Smtp-Source: AGHT+IF6H3Xl6B/aRxN2S1vEMUewNjabg8lxACcsteT5R5/EmaFfvy4BIBiZCCHQflESKSM7yNiS5Q==
-X-Received: by 2002:a2e:a544:0:b0:2fb:51a:d2a with SMTP id 38308e7fff4ca-2ffd5fff0d9mr47024071fa.12.1732783637498;
-        Thu, 28 Nov 2024 00:47:17 -0800 (PST)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbe535dsm1268471fa.27.2024.11.28.00.47.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 00:47:16 -0800 (PST)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53df67d6659so584504e87.3;
-        Thu, 28 Nov 2024 00:47:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWUXDxFA8dqfU2a9MTFwWwlnOXQ8PaQk93A1976ndf7IgtovTjnAdlNA2Cwi6gdpS6m8Vwej8Ujafo=@vger.kernel.org
-X-Received: by 2002:a05:6512:1286:b0:53d:eecf:e25d with SMTP id
- 2adb3069b0e04-53df010b161mr5411342e87.37.1732783636117; Thu, 28 Nov 2024
- 00:47:16 -0800 (PST)
+	s=arc-20240116; t=1732785083; c=relaxed/simple;
+	bh=pWhmKiDlZK9+9akVZ9p+hpCt4xgqv9qWpIdisBGhkUM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MgCCddgnX/Mcomto3OYoX3uvQ19hcSMYTPsBuYsDpWwZxay0Y3MLMM3UV+VRn5zhUeAfB7Zj2Y55lGhjcVUfZy1p0qqAAej5mq5fPOJbOBIXgU89UlWd+/LvgKwFtH8eMrE+ChRrSl9KlGJf84nVDV9qnpS69OFZ3wF0/HJCNSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fYlXkKL7; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fYlXkKL7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=t87BuDPy5GD+n7
+	KY0W2pe18qhCcVJgAIqIqyd8ApIwE=; b=fYlXkKL7pUdD3znd78u0x/JMCwyUDo
+	J9OuFTrCAgQqaUvpEP8nSlNOFsve9UtuzHOk4Uj75BqCeznpelSpuIfrqld4FLnX
+	H4lSNRr6TnDJkxlJOnjFqKtv95370Bgu1ydOKpVMZf5L+6vrsa00nt9j4WwySJSd
+	gs0nOrfz8WJX2REyLMKS1d4ym/odtjWccMAAvgMIj6D69aAW5AFnYaDTmQQun/ZU
+	gJHMEaFILLt9ngD9Y0fNI6C5X2z/VXIoMMnk0uoE8Qm4p9/FmLn4mMqwheCfvpCS
+	oOktgjVfy3U7KHE3X0JQdRKtPbfR8R2H/Z+T5fHADwQfGBJ/MWPNvLQw==
+Received: (qmail 853550 invoked from network); 28 Nov 2024 10:11:19 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Nov 2024 10:11:19 +0100
+X-UD-Smtp-Session: l3s3148p1@sscYd/UncORehhYU
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v2 0/2] clk: renesas: r9a06g032: add restart handler & clean up
+Date: Thu, 28 Nov 2024 10:11:10 +0100
+Message-Id: <20241128091113.24116-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107193145.20175-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdW1KpmsHEFUpKYNe96cEzUEEzGUXC52o4Fand6R+o9Y=A@mail.gmail.com> <Z0gtjA3RCLzDaUX9@ninjato>
-In-Reply-To: <Z0gtjA3RCLzDaUX9@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 28 Nov 2024 09:47:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVHLL+egVUum5AvPyhH9m4yOKSJbpd6Gver-9xYYWuF3A@mail.gmail.com>
-Message-ID: <CAMuHMdVHLL+egVUum5AvPyhH9m4yOKSJbpd6Gver-9xYYWuF3A@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: add restart handler
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+Add reset handler for RZ/N1D so 'reboot' finally works.
 
-On Thu, Nov 28, 2024 at 9:45=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+Changes since v1:
+* switched to 'devm_register_sys_off_handler' (Thanks, Geert!)
+* broke out 'BIT usage' fix because it is a separate thing
 
-> > > +       error =3D register_restart_handler(&clocks->restart_nb);
-> >
-> > You can simplify using devm_register_sys_off_handler(), cfr.
-> > drivers/power/reset/rmobile-reset.c.
->
-> Ok, will do, thanks for the pointer. One question, though...
->
-> > > +       if (error)
-> > > +               dev_warn(dev, "couldn't register restart handler (%d)=
-\n", error);
->
-> rmobile bails out on error. I still think a warning is enough. What is
-> your preference?
+Wolfram Sang (2):
+  clk: renesas: r9a06g032: add restart handler
+  clk: renesas: r9a06g032: use BIT macro consistently
 
-The mobile-reset driver is only a reset driver, hence failure is fatal.
-For a combined clock/reset driver, a warning is fine, IMO.
+ drivers/clk/renesas/r9a06g032-clocks.c | 29 +++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+2.39.2
