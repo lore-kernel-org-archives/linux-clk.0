@@ -1,170 +1,185 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8B03232;
-	Thu, 28 Nov 2024 16:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEA63232
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 16:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732810134; cv=none; b=P83FlyJT3Fo7to8gBqrWgvkceWPaZrmR6nh3zAEAq/hQwPHBGxc0Eq1VWkPeZIN6JV+OTU4jVgS/Is8FKSc35Q56vOpYZOagNTfoMTAQEoxLKoCbD7oFonCC6x4F7BnK07m4kHJGceSVHKNPBomiAAF7Mnc22dFCxzNoAdefalw=
+	t=1732811885; cv=none; b=Gtk7oCB3arG571f0TdZYG3wSziAkTZMC4PbFR3rXSnqUUnx/aAJYPmYCGl9OpKp+h1D/zNtDKp/0udPZIMFW/4Hk/IBy6D7B5TXQoMlkYAJoD8kHjPENQDTCeE/eiNGKkbpnjqQXvATeyz69BJhykxul5uZxHLVCesRoR/bcLv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732810134; c=relaxed/simple;
-	bh=zgR7POQipJr92V+u9Tt4pGs3gh2pe3hR7ESpRucymuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cth8vilh/vvOHYVvD2b2rTUKAlBnmD3bHbKZGzgnAR2W5eEMPK42KUY1tb7j0KUP0B30hSStks/W4FjPBxg1pqKX6ggHlVPDbtx9wTgfOAP3TtPzRRPqF0pxF06nxQS5OAAuJGUkFFIWRD2iF7KKSr9phLDb2YTdY/Ke3NpZL0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nsavjth6; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1732811885; c=relaxed/simple;
+	bh=vgYn9zLNQyjYaYo46ANhVNKjH+N1vOVW4WBYhS938hg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S70yWFIbRdmsvNdajLRYAMuzjFmyahbg2ZY+fsAIX9NUuRzIeA7WMMvQTrdw8ZOLhtTyIIUZbTfVlctJ+JWkkCCQdvGlkeqgXL/pXXipHAe0WXO1GZXaFQW/XCSr8BAqYRq2HPsL/vtvRoPfjewbs1qNMTCKwwNcek0PRyn/roE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OVvS2We0; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nsavjth6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732810132; x=1764346132;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zgR7POQipJr92V+u9Tt4pGs3gh2pe3hR7ESpRucymuM=;
-  b=Nsavjth6yKwhCt9sKsOIMGQIIE9VyFBxCqy8fpstLI+Cr9EyTakqf89I
-   mhAvJnijlYwZHvM/Z8Px779mtLQEIWqaMYTNACVqDdoK4RTdIwFAnHXJV
-   LCxEMY+M1EQ+qoZ+7lENB1syB+S/namzICSRex/j2gFgfotv15B79w5mS
-   rNNTl0pckYu4M4dxpV97PiZAnjDvGciP9BEYzSPzk+jteD7/HIMK2yMp3
-   6p5F1vxZABGp3K0KYfA1kPLUwQP9BCc15MNjaFHlAgEgfJtcDDd9khqXN
-   KculTBaliv5kLtkqp7bTHjtY0KI8GyUW8WfGFULx5Yhe9BFeUAhGQxcRd
-   g==;
-X-CSE-ConnectionGUID: rSqTnKEvSD+2SKomZ/2ZcQ==
-X-CSE-MsgGUID: 1/Vz7g8nQzCjB+Tm5jFRog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="32417689"
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="32417689"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 08:07:44 -0800
-X-CSE-ConnectionGUID: SOiR0bVYTaKLPWXALnNw+Q==
-X-CSE-MsgGUID: Z27cMCa4QpyjNYwuD8SyGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="92659227"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 28 Nov 2024 08:07:40 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGh3J-0009m6-2g;
-	Thu, 28 Nov 2024 16:07:37 +0000
-Date: Fri, 29 Nov 2024 00:07:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haylen Chu <heylenay@4d2.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <202411282305.iJ9x0lmj-lkp@intel.com>
-References: <20241126143125.9980-7-heylenay@4d2.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OVvS2We0"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a8640763so9121115e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 08:38:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732811882; x=1733416682; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n139LLUWEGUGqX2c4/yhRzaQFakjalspoAimcmAKESw=;
+        b=OVvS2We0nKvnV9MxHao376WSR2lqlpIT+WnE3qufQzvHNPleLhT1NpelBn6+hD5ht/
+         yN5IX+bQnMZfjmI3LTxXsB5YnXoSq1XZttnAAAR8PxPDxA5MQx+nRejccV6+yEoJEA0O
+         oaXt/2QFIRyz9Rh2UMsMO1YuDhzojbzBG9f9MEAbojPbacpUt/1RYNI2ukiuPdeJYVA7
+         IZBBW/DxfV50faEguinyhbsM2PeAOYOASHGG1sbEivLzqEz1hm5Ll9Bh0bY+1Y/CtjCG
+         nH9Ea9AN5nwS6zXoyiCT7XHWt+HMhpujXtkX8O/GYodNz/npXSbkPrrK58kJGiQPLOZ/
+         N9zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732811882; x=1733416682;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n139LLUWEGUGqX2c4/yhRzaQFakjalspoAimcmAKESw=;
+        b=VgA7RIxkNniGAwOMrwS6qFed0ab7sAJ+nXmSOKXwqRUCIX82N/00ToALc093m2/aHT
+         MRmJeWyooQi9gsruS96nxkpmbnj2vUR8wN9jICjNL4iqz8AF+c3RynUmb2hhCujBIUPw
+         41x9AXGuWDpbhlsOh8m3t/08BtuuH8vcXwgMGzlx99/3xedsooeeVoaSYCiqf2YsCvUS
+         WNyQSNeeaRgrb1ujxmsHTD6Es39lL3AEMpQVFf7yCrMgE22TgkQqgXzkF9RzLYYr29SQ
+         863z5M31ywE+Qr1XlSxay018MJpzpWKMmBHRdZllK5RQZ0v4X0kIckIF83NS/T4Fn+X0
+         yD8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Q/BUoKmd5OBfMRWG5vZ3bC0e6/jbrnCX548PZ9cXQLUE8q/3e8cpSbozgTtkipFTWYAWxT8XjDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPxntjMZPvgA/EdDa4QP+1+peGMrXqfmLlJnOzTax0bG4sTDUi
+	AT2CiWZXWbmBUBIiS5wm/oRiKG2YoyIGd3eIGpNlbfqOXA6mT8KAGKdsDPZ3q9w=
+X-Gm-Gg: ASbGncsTR/t35yLWIQGQ2M3SUFnQ7bfAAg27POF0BSRDopYHhdB1VvS+zr8gXWxjjIx
+	kGkdJDHArE4rhIfvSBoACI9Qv8JpvAd6rvgqgsRYEQD4WTvXPN7XO9fzdWLzcodMFdiwljTELd5
+	GrYSo3l5o+dy0I9MA7ak/cSCI5wpPXVwZegwTHByhW00oDnVv07TpQEL9n730wDlcUiB1/yS36e
+	scwWZ4XNqLCTDsyzGtXXPx4AESnJLB5mb8D6YRcJDX30egJs5qYkT6JhUg=
+X-Google-Smtp-Source: AGHT+IEiOOWgACWYX1/g1Wg/6XsKndsm80tgMnVPgYh0auGFPAFq9tazzhfi/I9LzHYD3Q5bujPz1Q==
+X-Received: by 2002:a05:600c:4ece:b0:432:b38e:a048 with SMTP id 5b1f17b1804b1-434a9dbeb5emr72168095e9.12.1732811882220;
+        Thu, 28 Nov 2024 08:38:02 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78c202sm57990155e9.26.2024.11.28.08.38.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 08:38:01 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v5 0/3] clk: qcom: Add support for multiple power-domains
+ for a clock controller.
+Date: Thu, 28 Nov 2024 16:37:59 +0000
+Message-Id: <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-0-ca2826c46814@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126143125.9980-7-heylenay@4d2.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGecSGcC/6XPTW7CMBAF4KsgrztVbI/j0FXvUXUx/gGsBjuyQ
+ whCuXsNq1Ts0uV7i/fN3FnxOfjCPnZ3lv0USkixBvW2Y/ZE8eghuJqZaARyzjswCH2Ilxmin0c
+ QCJxDrW2f7A+cL/0Yht7DkK4+g0tnCrEAqcN+j86iEsTq8pD9IcxP9eu75lMoY8q35xETf7T/8
+ yYODRhNwrhOGJL6s05QTu8pH9kDnMQKEWobIipCymul0GmP6gWRa6TdhsiKdLJ15KRUgtMLgmt
+ Eb0OwIiixc9hY08q/nyzL8gv8eeR7JgIAAA==
+X-Change-ID: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-355e8
 
-Hi Haylen,
+Changes in v5:
+- In-lines devm_pm_domain_attach_list() in probe() directly - Vlad
+- Link to v4: https://lore.kernel.org/r/20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org
 
-kernel test robot noticed the following build warnings:
+v4:
+- Adds Bjorn's RB to first patch - Bjorn
+- Drops the 'd' in "and int" - Bjorn
+- Amends commit log of patch 3 to capture a number of open questions -
+  Bjorn
+- Link to v3: https://lore.kernel.org/r/20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org
 
-[auto build test WARNING on 2d5404caa8c7bb5c4e0435f94b28834ae5456623]
+v3:
+- Fixes commit log "per which" - Bryan 
+- Link to v2: https://lore.kernel.org/r/20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-0-a5e7554d7e45@linaro.org
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-clock-spacemit-Add-clock-controllers-of-Spacemit-K1-SoC/20241128-101248
-base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
-patch link:    https://lore.kernel.org/r/20241126143125.9980-7-heylenay%404d2.org
-patch subject: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1 SoC
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241128/202411282305.iJ9x0lmj-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411282305.iJ9x0lmj-lkp@intel.com/reproduce)
+v2:
+The main change in this version is Bjorn's pointing out that pm_runtime_*
+inside of the gdsc_enable/gdsc_disable path would be recursive and cause a
+lockdep splat. Dmitry alluded to this too.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411282305.iJ9x0lmj-lkp@intel.com/
+Bjorn pointed to stuff being done lower in the gdsc_register() routine that
+might be a starting point.
 
-All warnings (new ones prefixed by >>):
+I iterated around that idea and came up with patch #3. When a gdsc has no
+parent and the pd_list is non-NULL then attach that orphan GDSC to the
+clock controller power-domain list.
 
-   drivers/clk/spacemit/ccu_pll.c: In function 'ccu_pll_set_rate':
->> drivers/clk/spacemit/ccu_pll.c:128:23: warning: variable 'old_rate' set but not used [-Wunused-but-set-variable]
-     128 |         unsigned long old_rate;
-         |                       ^~~~~~~~
---
-   drivers/clk/spacemit/ccu_mix.c: In function 'ccu_mix_set_rate':
->> drivers/clk/spacemit/ccu_mix.c:180:23: warning: variable 'best_rate' set but not used [-Wunused-but-set-variable]
-     180 |         unsigned long best_rate = 0;
-         |                       ^~~~~~~~~
---
-   drivers/clk/spacemit/ccu_ddn.c: In function 'clk_ddn_set_rate':
->> drivers/clk/spacemit/ccu_ddn.c:115:23: warning: variable 'prev_rate' set but not used [-Wunused-but-set-variable]
-     115 |         unsigned long prev_rate, rate = 0;
-         |                       ^~~~~~~~~
+Existing subdomain code in gdsc_register() will connect the parent GDSCs in
+the clock-controller to the clock-controller subdomain, the new code here
+does that same job for a list of power-domains the clock controller depends
+on.
 
+To Dmitry's point about MMCX and MCX dependencies for the registers inside
+of the clock controller, I have switched off all references in a test dtsi
+and confirmed that accessing the clock-controller regs themselves isn't
+required.
 
-vim +/old_rate +128 drivers/clk/spacemit/ccu_pll.c
+On the second point I also verified my test branch with lockdep on which
+was a concern with the pm_domain version of this solution but I wanted to
+cover it anyway with the new approach for completeness sake.
 
-   115	
-   116	/*
-   117	 * pll rate change requires sequence:
-   118	 * clock off -> change rate setting -> clock on
-   119	 * This function doesn't really change rate, but cache the config
-   120	 */
-   121	static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-   122				       unsigned long parent_rate)
-   123	{
-   124		struct ccu_pll *p = hw_to_ccu_pll(hw);
-   125		struct ccu_common *common = &p->common;
-   126		struct ccu_pll_config *params = &p->pll;
-   127		struct ccu_pll_rate_tbl *entry;
- > 128		unsigned long old_rate;
-   129		bool found = false;
-   130		u32 mask, val;
-   131		int i;
-   132	
-   133		if (ccu_pll_is_enabled(hw)) {
-   134			pr_err("%s %s is enabled, ignore the setrate!\n",
-   135			       __func__, __clk_get_name(hw->clk));
-   136			return 0;
-   137		}
-   138	
-   139		old_rate = __get_vco_freq(hw);
-   140	
-   141		for (i = 0; i < params->tbl_size; i++) {
-   142			if (rate == params->rate_tbl[i].rate) {
-   143				found = true;
-   144				entry = &params->rate_tbl[i];
-   145				break;
-   146			}
-   147		}
-   148		WARN_ON_ONCE(!found);
-   149	
-   150		mask = PLL_SWCR1_REG5_MASK | PLL_SWCR1_REG6_MASK;
-   151		mask |= PLL_SWCR1_REG7_MASK | PLL_SWCR1_REG8_MASK;
-   152		val |= entry->reg5 << PLL_SWCR1_REG5_OFF;
-   153		val |= entry->reg6 << PLL_SWCR1_REG6_OFF;
-   154		val |= entry->reg7 << PLL_SWCR1_REG7_OFF;
-   155		val |= entry->reg8 << PLL_SWCR1_REG8_OFF;
-   156		ccu_update(swcr1, common, mask, val);
-   157	
-   158		mask = PLL_SWCR3_DIV_INT_MASK | PLL_SWCR3_DIV_FRC_MASK;
-   159		val = entry->div_int << PLL_SWCR3_DIV_INT_OFF;
-   160		val |= entry->div_frac << PLL_SWCR3_DIV_FRC_OFF;
-   161		ccu_update(swcr3, common, mask, val);
-   162	
-   163		return 0;
-   164	}
-   165	
+Here's the item-by-item list of changes:
 
+- Adds a patch to capture pm_genpd_add_subdomain() result code - Bryan
+- Changes changelog of second patch to remove singleton and generally
+  to make the commit log easier to understand - Bjorn
+- Uses demv_pm_domain_attach_list - Vlad
+- Changes error check to if (ret < 0 && ret != -EEXIST) - Vlad
+- Retains passing &pd_data instead of NULL - because NULL doesn't do
+  the same thing - Bryan/Vlad
+- Retains standalone function qcom_cc_pds_attach() because the pd_data
+  enumeration looks neater in a standalone function - Bryan/Vlad
+- Drops pm_runtime in favour of gdsc_add_subdomain_list() for each
+  power-domain in the pd_list.
+  The pd_list will be whatever is pointed to by power-domains = <>
+  in the dtsi - Bjorn
+- Link to v1: https://lore.kernel.org/r/20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org
+
+v1:
+On x1e80100 and it's SKUs the Camera Clock Controller - CAMCC has
+multiple power-domains which power it. Usually with a single power-domain
+the core platform code will automatically switch on the singleton
+power-domain for you. If you have multiple power-domains for a device, in
+this case the clock controller, you need to switch those power-domains
+on/off yourself.
+
+The clock controllers can also contain Global Distributed
+Switch Controllers - GDSCs which themselves can be referenced from dtsi
+nodes ultimately triggering a gdsc_en() in drivers/clk/qcom/gdsc.c.
+
+As an example:
+
+cci0: cci@ac4a000 {
+	power-domains = <&camcc TITAN_TOP_GDSC>;
+};
+
+This series adds the support to attach a power-domain list to the
+clock-controllers and the GDSCs those controllers provide so that in the
+case of the above example gdsc_toggle_logic() will trigger the power-domain
+list with pm_runtime_resume_and_get() and pm_runtime_put_sync()
+respectively.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (3):
+      clk: qcom: gdsc: Capture pm_genpd_add_subdomain result code
+      clk: qcom: common: Add support for power-domain attachment
+      clk: qcom: Support attaching GDSCs to multiple parents
+
+ drivers/clk/qcom/common.c | 10 ++++++++++
+ drivers/clk/qcom/gdsc.c   | 41 +++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gdsc.h   |  1 +
+ 3 files changed, 50 insertions(+), 2 deletions(-)
+---
+base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+change-id: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
