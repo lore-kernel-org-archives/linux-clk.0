@@ -1,63 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EA519F103
-	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 12:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E71A0B04
+	for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 13:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796224; cv=none; b=qDECGFpzlBi1QLJ00Jh/NmoOovA5KvRWnuuoc2opsg4ik7HLeGxsPa4YGzpDZSRXUZJmw4BZ9K3MwauOm2AVQEBUQAG9PSnoagumEmiGiL/bY/TwjjrulMuSDrcpQfWwwx2fKLXMnRwi/QI0pdLgO4icng5+FXu0BAeVsdy5XKM=
+	t=1732799258; cv=none; b=pDpRG72VzW7X30zAyMQUuZHswDuuVcxh5ZrLd9bNxkvaQKlnj9RQo754TbEykZiYaq4E7tFYuD07sNG14v2Xh069pA7uD+OKZxPkAGNa6Xrrexpx3UcU0QP1Z5O7nR5eFmCL6y+8pMMLZ8+ncMK/RPaVyiwUklwoJd01EZyGi+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796224; c=relaxed/simple;
-	bh=2anrZsi8yYxZsGY8iWPbTzDGxeWMdq9pCPMPA2m4h/Y=;
+	s=arc-20240116; t=1732799258; c=relaxed/simple;
+	bh=TXaQzQ0BiAaroehXp2SHXJ2Y2paPRhigmiwEFz+r+eY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ly5v3NnjAasK/h+5/KiPOn1a6Itf18EV/Fx1GB3IB888sZPzPuxz6TJKLIjyx2rKlaR+VLYC4XPw6PwE5aK1JyZYL5xWk1gRDC2H/OYsXnDxWw0BDlDkkG2Hb/JXLJX3UVGaV+u/xxh/qfiYeE/mn4JUzKg7N3L7nLzun5Ylse4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=UOQnX+CO; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+	 In-Reply-To:Content-Type; b=rbNYGRjUoS6qIuaoc9mftJX/3+aZLwdyYeux+Vi/YeGkfYr0J8WN7tc1dPjoVJoqrixbZk/NjLTL9+omGd03fAu0l191r9kkONgxh++gfvz7tPPYOcQgls8bo42BHTTU3cSljg5a2m+C9CmrpFkV4MqRMFLIJYt/93B14d7ZIO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w1d9PUJp; arc=none smtp.client-ip=209.85.208.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="UOQnX+CO"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a7ee3d60so11057005e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 04:17:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w1d9PUJp"
+Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-2ffcd3c2b46so505641fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 28 Nov 2024 05:07:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1732796220; x=1733401020; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1732799255; x=1733404055; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qnYKNjsj9+DIg4dgtEwsJzOol8LULwkHizIbCsuFjgI=;
-        b=UOQnX+CO9rYOgMAHMozJhN5pBYnItkE/bw6KxtiHIz/u1FVaFMs3jBRb2oTeNFp7V+
-         fcQgqIgtBVioUX7dgicGKQ3MXXDtrxgkLlnrZW+IWqAyBKF+wzMK9t8ZVE47EHGwSVeR
-         EvEYzZs1CT5PpbPVnuk7V2jbcw0gDUXSgyp3mmxQz+/yHH10dUT4SlMg6FQoQte41Kq2
-         uDveZTs5K8Rq5AbRzlXgXeu8oZeLAKMVE5Vwcmkol4vQwFYGV8Qdpd9sp3lVT0ReWc16
-         yqIwgjrETx8+qUHjMcrFX3L+C+oMRLKtUPFFJKVyIXijs76aRUFxZyDXMeiuNmjIk/Mu
-         lk3Q==
+        bh=kP1bCAckSI/OkKwT28rFJsMYm5pGH3l6UtaR38jv7E8=;
+        b=w1d9PUJpdzTTURWaD+E/vYH2go3sP9ffahxV07HZA/E8sUxcKhHpt/zY5E9lKNn0TR
+         BAAEaW0qZ0LtkFBqJyOnhHxBV/UdzO7movr8uKTe0VT1bLLzRyi8MlCkCtoE4BZKRGJs
+         F2YiG1PgHYf6Csbs2Z/BjHK0FGg5/6a66OvytsJSq0Le4Y8+iJoWgv2+8cS7h/qC3tvO
+         fvHgSVQyjzsJ6RGz8GMeFPU8oysEePddOvQ/4z0sDfjpgS5LK6aBl0z+NoF7iXkjVEs9
+         i/3hzY2D5siodwMqeDf1nk38OU9Q8fuyGBT/fA5ovJgLY/Kb7tu8xPpvIy373Xr3ureI
+         eamQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732796220; x=1733401020;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732799255; x=1733404055;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qnYKNjsj9+DIg4dgtEwsJzOol8LULwkHizIbCsuFjgI=;
-        b=Cm7d2r+YWw0jFoXHH6qFbr+2ByCrwi6PKsb3paIGMN8BdcoLlvnDhBZ+UMF7v4RYTV
-         rMA+uT4umiTsTZ/+JQUksccDbJCP0kPGXkW8I91uVPKz0f7/pANEvfixyCMqC6poxZev
-         on9z8l/pcoEHuzeq8G/Ydzr/L2gHcmAbBXV641lfBER46Zk/2vA63vVgATYGBlM2A0o7
-         oMfYv/mk62wNacXQE41Pl1yw86ihudI9p5ksS3lzqrJoUjpwjlMCMsKHqnAiYkDUxXfP
-         WZQpJn6ooea2p9jL9RUNZ6wCyyysXBT9oxuLTkRp2XCbnRnWRlIgtjvvKigpMJnyoGkn
-         xMiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJvNlxwrkz15OvUBTBuzW9WFQ//pUb7OXixcOKvBGvaZNUaemUHVo7vHXCdBo9BZyNHG4v+YNvgPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJpV0qaA5WHwdAHWDaBSRW6DGBzySILAu4CbClZeh6i2IGo5OW
-	WchBPeIfpEfcr8m0cINQ6J3pMph90vGWMzHVd8MbDPPvMBa65sVPjKprF7V4cQI=
-X-Gm-Gg: ASbGncvqvkONVZSq/jCxaq8LTIS/DKxkLmiCwWusirsORWJTf+8LhYBKO8UNUoKS1qb
-	d8IuWB5jvocrvLpybSXTDXZq0HG7bAy9kpTuuKMB6WftO9K5VIrmsQlSuj+9l56youA+oxRuuUC
-	XPwKc8/BOUSCKC9c0HhLkkvQg+hy9SaTs3i7ierDF0FhXbgII2RGTUwM2Z4qyflSSVLquQ3Ec1l
-	xQu/aV2uIPULnT115e+rPDthEYR2evZ6o6A+5a44DloNtul6lWU+LE44z99dss8zQ==
-X-Google-Smtp-Source: AGHT+IEZjXNtTqeugmsm2btLkjXjVN1qa/0hxV/pE3MegQX6gcpP8J+clt9rtORx717q0sN/fuCk+g==
-X-Received: by 2002:a5d:5f93:0:b0:382:22d6:988c with SMTP id ffacd0b85a97d-385cbd6050dmr2242980f8f.5.1732796220493;
-        Thu, 28 Nov 2024 04:17:00 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd36c44sm1508127f8f.38.2024.11.28.04.16.59
+        bh=kP1bCAckSI/OkKwT28rFJsMYm5pGH3l6UtaR38jv7E8=;
+        b=jwpIT+MBi7yXwZuiG2RH7PGZ71VuccKXA49v0MPlfgJicSqcNMmqhPRJR21q7OUbRK
+         T9h13Fj7Liik47Y+RtS5IJYfFc2w6Kcqo83f8oqX8hFw3Scdba92HDmAl6I1kvLPQ1g/
+         adW7ZM80pVO+lnri4N0bwo6MGbeiCRaL4szsUpCj9yFh1nrf+nnk0QpgYiajQrKVN/LW
+         3QinIIOguS3bMvIQzX/jBbwWYNzqb0v/rEQigeZVyPpv/MoEIKw8g+GCmiC5ny8KmhO9
+         gzx5hCe+Pc0aPSoRQMHL3RZuD1fqseAAIfOgqsPhOz0EdxOrNXRsTdQyp9gcnyEFqeBn
+         lbBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkUjZU0UZS6BLU/ccb5/e3Jw5ZMn7JJ+zrVMANUW3bta6IMnbwIXXZrcbf5Z5OnU0MpgnwaK0nKQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyxF2avaLeARwa9b45A9xGbMCgROqGsK3XSO2knVF6xaQjgyDg
+	M+RHYTtuzjR303xYW3pKfQRzb0BEjdHXvC1JRUAZWiocjxZcOq0H5cYqNwdhcAg=
+X-Gm-Gg: ASbGnctznxOqUegbqRMN4+RIu7ZjiFwO7yqLf+YUJ7hpFgmKrBBowwMOT2qKKWYR6C7
+	GiP5H17QRCw3HGZH6ps5ncWQQuKIinP51OBTUaAiM4sEQaEqlwgPxUIaCmrAPrW6Z2zEkZM85Jo
+	v2u11j1ygTRl3n1qXelAwDEOYdlIH+NhBbS2MNSiDC+yT1gvtOWZ9DDCal9bxJMmuwDUAUcGD4M
+	T9BwYhPSRSYZQ+GSYX9znOYu9WfDOma81aPR1uwY8SnQ/eMifnIoBN6zvONFYLm2OjcEdsnlfRW
+	Mo3XfVDyNd9JbGGZnbBW9/NRIoSt
+X-Google-Smtp-Source: AGHT+IHLbzOfKgwnDlfh/55yxsap6kH/uHe5qjnZfubg3vSAG78tinN8zIUWjCGzLLDWYe9ztol14g==
+X-Received: by 2002:a2e:be87:0:b0:2fb:4ad6:a5fb with SMTP id 38308e7fff4ca-2ffd6007b89mr10008391fa.6.1732799254974;
+        Thu, 28 Nov 2024 05:07:34 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc751ecsm1909141fa.87.2024.11.28.05.07.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:16:59 -0800 (PST)
-Message-ID: <ec5faeb0-2cfd-4634-b772-80197c1b9092@nexus-software.ie>
-Date: Thu, 28 Nov 2024 12:16:58 +0000
+        Thu, 28 Nov 2024 05:07:33 -0800 (PST)
+Message-ID: <4997c6d8-fa9f-48e9-bb5a-f88946059462@linaro.org>
+Date: Thu, 28 Nov 2024 15:07:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,7 +68,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4 2/3] clk: qcom: common: Add support for power-domain
  attachment
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+Content-Language: en-US
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
  Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -77,22 +79,27 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
 References: <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org>
  <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-2-4348d40cb635@linaro.org>
  <a73a3b5a-cd83-4f87-876d-ea99ef8bbd70@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <a73a3b5a-cd83-4f87-876d-ea99ef8bbd70@linaro.org>
+ <ec5faeb0-2cfd-4634-b772-80197c1b9092@nexus-software.ie>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <ec5faeb0-2cfd-4634-b772-80197c1b9092@nexus-software.ie>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/11/2024 12:09, Vladimir Zapolskiy wrote:
-> Please simplify this change, please do not ignore patch reviews, if you
-> find it possible.
+On 11/28/24 14:16, Bryan O'Donoghue wrote:
+> On 28/11/2024 12:09, Vladimir Zapolskiy wrote:
+>> Please simplify this change, please do not ignore patch reviews, if you
+>> find it possible.
+>>
+>> https://lore.kernel.org/all/8a33c0ff-0c6d-4995-
+>> b239-023d2a2c2af5@linaro.org/
 > 
-> https://lore.kernel.org/all/8a33c0ff-0c6d-4995- 
-> b239-023d2a2c2af5@linaro.org/
+> You want this inlined ?
 
-You want this inlined ?
+Yes, please. A simpler version should be preferred, by any metrics 3 lines
+of code are better than 20 lines of code plus a new added function.
 
-It seems like a stylistic ask but OK.
+Thank you for understanding.
 
----
-bod
+--
+Best wishes,
+Vladimir
