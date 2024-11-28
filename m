@@ -1,152 +1,175 @@
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3313D518;
-	Wed, 27 Nov 2024 21:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF6E360;
+	Thu, 28 Nov 2024 04:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742656; cv=none; b=EJmP8dq7wCMDinKcMzVCa3ZBCUb0Y4Dz5A0ig3U0svDbrkGHCQgX7iEk1CxpCQVNs6Gpl9XL6xI5IlG8SCZ+DlTQMBecKuSOL8+TjGiN+7ZFsz4pXjqD4sK3a8x4NIQQmfd2O5/DDMD4hA/lIExyHUsl3I2f1wDO9a54ls3Adms=
+	t=1732769156; cv=none; b=laQL4S/hZy9PTWpGJX8oU3CC19FCVB5x3nkLZgf9F9HXrZg1oPQFqJAf02vFYa/4qRdFs7gTsFyk2BqlNyb8jwnkn5YPhHK4ujaoX5DDGybnEl6gu22zeDqbm42PliK+pZZtZTXq0BjHBC2eUH0N5GmZVegGvYE0CrW0EzC1RwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732742656; c=relaxed/simple;
-	bh=h6OeHMu0PZWvASV5lowdtV43UgQFs2F1Z5FoT+vDHsw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=s+8I74q7R+qyYfzy2E9NmMoQ+6Jfl1z/BHqh1Bh8ocTZgVlZIrRbwfjUa6Gm/yZPkV+nhR90DwsYeoyTUnz1nxOIAu1jhucR4hpr3V0uRSUOAthkpL+Tl2mcMEm4KGjjd+8VId4o7xZmir0ZgeRt1nSjolID7I4s9IYy88IMnlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=gjq3hl0X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OwTYQmd9; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1732769156; c=relaxed/simple;
+	bh=Nh/umBmDogP6K+8vOrQntqBkOwYJR9zftfW9Lv/r33A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=USG3XuDZvRalhzlTf8gY38TIi0E/49kCtH7xJxz6cBbbK5y3qFkcenCh5VHHE9W0dVKbo7mZS/XYpVfRQ7gU25EeKWg2ZxOK1yhETBUCKSx0kIfiIThe4tIbK6+nhbR8xX/5AED6cJ2HMQVqzaXV0LGRnKc4/+P18Tyk6sXlMVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Up6jx4PR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="gjq3hl0X";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OwTYQmd9"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 0F9E3114019B;
-	Wed, 27 Nov 2024 16:24:13 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 27 Nov 2024 16:24:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732742653;
-	 x=1732829053; bh=A/qG1PCWH5DIdjBCou8V6S3ZjochUv53NXLjRXrbNBA=; b=
-	gjq3hl0XgvRADwxaY6xtVoz2rKXiUC+9uUIjK4JTyo1B1TgozvlUu5J+lfzmMGRx
-	+U/PbOrTr4G7/wW18lBRGEjs9AGk0CuZ83nO6loMdATqv/Rjt8z93Z8kdraPeB7d
-	RNZlMOMN0ZsWn592gnrKjD5D7gnQDr87DZnHPgxet3szA6Q+QKzb6PogLVj1Bv8B
-	QnhbeiNFAu1wVbvxhpWpdoy2PYHhoUWp5GL1uMCozj8bbICGt0I9LKfQRFJUwKHo
-	Y6fd9aKXXMsJjkZTvivrdYdyA1UpyWT8xdyhM2imAD4506dtLLzhjHtKEdeQNwoE
-	+wSmRZXmmdicvinRZt7R4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732742653; x=
-	1732829053; bh=A/qG1PCWH5DIdjBCou8V6S3ZjochUv53NXLjRXrbNBA=; b=O
-	wTYQmd9TokVOLvF2vAUccJfwlyLPiRR+Ctjlp2D6Q/+QhK3bWZM02wr+h03D8YSm
-	6tOQf5lLvxwMMHMc1o/SmIuwG06+W6utUJMtT4GsgvWTHzrGdqCrV1fGdGBvVC/7
-	GMLQ//uep/AFuZkzU7mws1oFFxAfSFMAjckG1oWESy8lGU3qbPbidUZ8YLiKVewL
-	k0zy2FszKmEmkv/WoAALuUHhx5tH9d1nv5fKkgx2S9bPQaMm3KiouInkWVnQ2EZx
-	Q8V1gQMusCh+nCJ5UuXVa3V+gSHzC4jcdxzd/mHSyvgT+gCHWccCOVaPAu4v2cKL
-	Rmg19EGUt3wu5i9ezquzw==
-X-ME-Sender: <xms:_I1HZyaQhEH4eHjR5OhZ10hCPejA0CCvC8p2egqcgPvxViq50J-bSQ>
-    <xme:_I1HZ1ag8R2tf9dHilhGNaPLvdg3vOs-jhTjLRj5Xhg3xiadbUMimzlUHPN5iPGHX
-    A42ur3BB-deBEAgGlE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgddugedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisg
-    hrvgdrtghomhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdp
-    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
-    htohepmhgrrhhtihhnrdgslhhumhgvnhhsthhinhhglhesghhoohhglhgvmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshht
-    rhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrmhhlohhgih
-    gtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    rghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:_I1HZ8_gljDEAjSj2_i2Z32mj08WcG0CpxI1zfSJ_oJPxJPsntoPpQ>
-    <xmx:_I1HZ0oe70OojxKuJDXilLWlsi8MBucRGyAEZ3uUCGQ5n36zHwBSuQ>
-    <xmx:_I1HZ9olghZMkwyy6fj-KC-n5WxUi5GgDyBvL1LJOAPGhMcPWB1qIg>
-    <xmx:_I1HZySWSvXIL8IFo4ONqcn7vqXzffoi6f45QK1OqQcg3_N46AoHRQ>
-    <xmx:_Y1HZ6jihTLiBZlmwD58U1KDPO3yzSFtSW4gdoCbZ3mvINjfEFKhJ_mX>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A71B22220071; Wed, 27 Nov 2024 16:24:12 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Up6jx4PR"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARGRUNO018966;
+	Thu, 28 Nov 2024 04:45:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uJA0hZahYt3ouFeJrPPN50GKqvOKT7odLnSpABDr55o=; b=Up6jx4PRNz1yFAhm
+	dfccQ2dvTepXsmUdV97mH7ktaZWxatxL0XVO6daOLv07uWQ09Z3/p72bkZHGj872
+	gShTaHY4Tdk3XsmF3o0aKhELHcAmGHradCqeUF3lZMUQO5N8LNQH+ufh95ecP7OB
+	EOKh57ZPjAq/wTbbkjSbqrYw/0LJjE0Ufg0LEnhZFXRDiNhXTl/Z/o6NsSdVOA2G
+	wFzdDsw++gcl2Yt6ShF5+3pJpNt+cjPFgYCyWGvu6pkScfwo06nstgge0QU8LfaU
+	JV85yy6a31WlqDJ1/4lUw80rcwQduERdi0PRmjqY0Ebo4cqU59wXtOD5m1RtvxkK
+	2H1UqA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366y01b1v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 04:45:50 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS4jn72010111
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 04:45:49 GMT
+Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 20:45:46 -0800
+Message-ID: <73506419-e53d-4f45-8056-811dad1c163f@quicinc.com>
+Date: Thu, 28 Nov 2024 10:15:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 27 Nov 2024 22:23:52 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
-In-Reply-To: <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
- <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
- <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 5/5] firmware: qcom_scm: ipq5332: add support to pass
+ metadata size
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <sboyd@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_varada@quicinc.com>,
+        <quic_srichara@quicinc.com>
+References: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
+ <20240820055618.267554-6-quic_gokulsri@quicinc.com>
+ <pdyy4zflklvi5syhwt3oklidq3mwizthds2td4qzglhhdulel5@337xsbehgdp3>
+Content-Language: en-US
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <pdyy4zflklvi5syhwt3oklidq3mwizthds2td4qzglhhdulel5@337xsbehgdp3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: AQctSQfs-8J72bleLrV-MpC80p3cbkxM
+X-Proofpoint-GUID: AQctSQfs-8J72bleLrV-MpC80p3cbkxM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280036
 
-On Wed, Nov 27, 2024, at 21:56, Jerome Brunet wrote:
-> On Wed 27 Nov 2024 at 20:30, "Arnd Bergmann" <arnd@arndb.de> wrote:
+
+On 10/23/2024 9:22 PM, Bjorn Andersson wrote:
+> On Tue, Aug 20, 2024 at 11:26:18AM GMT, Gokul Sriram Palanisamy wrote:
+>> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 >>
->> It looks like RESET_MESON_AUX is a user-visible symbol,
->> so you can simply ask users to turn it on, and add it to
->> the defconfig.
+>> IPQ5332 security software running under trustzone
+>> requires metadata size. With V2 cmd, pass metadata
+>> size as well.
+> Documentation says commit messages should be wrapped at 75 characters,
+> not 50...
 >
-> That would work yes but It's really something a user should not be
-> concerned with. I can follow-up with another change to remove the user
-> visibilty of RESET_MESON_AUX. It is always going to be something
-> requested by another driver.
-
-But that's true for all reset drivers, each one of them is
-only useful because it's going to be used by another driver,
-same for clk, pinctrl, regulator, ...
-
-All other reset drivers are user-visible, with 'default, so for
-consistency I think it's best to keep it that way, and
-just add a 'default ARCH_MESON' the same way we have for many
-other reset drivers:
-
-diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
-index 3bee9fd60269..c02edc1b51aa 100644
---- a/drivers/reset/amlogic/Kconfig
-+++ b/drivers/reset/amlogic/Kconfig
-@@ -14,6 +14,7 @@ config RESET_MESON
- config RESET_MESON_AUX
-        tristate "Meson Reset Auxiliary Driver"
-        depends on ARCH_MESON || COMPILE_TEST
-+       default ARCH_MESON
-        select AUXILIARY_BUS
-        select RESET_MESON_COMMON
-        help
-
-The only bit that's special here is the exported symbol,
-but that is handled by the dependency.
-
->> I also see some silliness going on in the
->> include/soc/amlogic/reset-meson-aux.h, which has a
->> non-working 'static inline' definition of the exported
->> function. Before my fix, that would have caused the
->> problem auf a non-working audio driver.
+> Please improve the second sentence here, "v2 cmd" is coming out of
+> nowhere. Say that there is a new command with a size parameter added.
 >
-> If by 'silliness' you mean there is symbol definition for when
-> RESET_MESON_AUX is disabled, indeed I guess that could go away.
+> Is this operation available on all targets, or is it IPQ-specific?
+>
+>
+> I don't see the relationship between this patch and the cover letter
+> subject "remove unnecessary q6 clocks". Should this have been send on
+> its own?
+>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>> ---
+>> Changes in v7:
+>> 	- No changes.
+>> 	- Rebased on top of linux-next.
+>>
+>> Changes in v6:
+>> 	- Rebased on linux-next
+>>
+>> Changes in v5:
+>> 	- Rebased on linux-next
+>>
+>> Changes in v4:
+>> 	- Rebased on linux-next
+>>
+>>   drivers/firmware/qcom/qcom_scm.c | 8 ++++++++
+>>   drivers/firmware/qcom/qcom_scm.h | 1 +
+>>   2 files changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+>> index e60bef68401c..aa559fd01932 100644
+>> --- a/drivers/firmware/qcom/qcom_scm.c
+>> +++ b/drivers/firmware/qcom/qcom_scm.c
+>> @@ -607,6 +607,14 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>>   
+>>   	desc.args[1] = mdata_phys;
+>>   
+>> +	if (__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_PIL,
+>> +					 QCOM_SCM_PAS_INIT_IMAGE_V2)) {
+>> +		desc.cmd = QCOM_SCM_PAS_INIT_IMAGE_V2;
+>> +		desc.arginfo =
+>> +			QCOM_SCM_ARGS(3, QCOM_SCM_VAL, QCOM_SCM_RW, QCOM_SCM_VAL);
+>> +		desc.args[2] = size;
+>> +	}
+>> +
+> Please avoid default initialization and then conditionally overwrite
+> parts of the values. Make a clear:
+>
+> if (v2 availble) {
+> 	prepare v2 request;
+> } else {
+> 	prepare v1 request;
+> }
+>
+> Regards,
+> Bjorn
 
-Yes, that's what I meant.
+  sure, will address. Thank you.
 
-      Arnd
+Regards,
+
+Gokul
+
+>>   	ret = qcom_scm_call(__scm->dev, &desc, &res);
+>>   	qcom_scm_bw_disable();
+>>   
+>> diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
+>> index 685b8f59e7a6..008b59cbad36 100644
+>> --- a/drivers/firmware/qcom/qcom_scm.h
+>> +++ b/drivers/firmware/qcom/qcom_scm.h
+>> @@ -96,6 +96,7 @@ struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void);
+>>   
+>>   #define QCOM_SCM_SVC_PIL		0x02
+>>   #define QCOM_SCM_PIL_PAS_INIT_IMAGE	0x01
+>> +#define QCOM_SCM_PAS_INIT_IMAGE_V2	0x1a
+>>   #define QCOM_SCM_PIL_PAS_MEM_SETUP	0x02
+>>   #define QCOM_SCM_PIL_PAS_AUTH_AND_RESET	0x05
+>>   #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
+>> -- 
+>> 2.34.1
+>>
