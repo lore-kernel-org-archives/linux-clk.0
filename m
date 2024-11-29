@@ -1,110 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C30647;
-	Fri, 29 Nov 2024 15:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C5482D66;
+	Fri, 29 Nov 2024 15:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732894341; cv=none; b=uX/wT90OK5FF7ihOq84AJYt/YZbGIGvegCjJPoaCcwHGNPXC74RuhWgbwv8MSbbVYByyXnm581Pn5rCRZNwYTvo/tSqml5pV4X5rdo7Fc8aahdxElQdhIcMzQL2rVqfllnPLy1qox5Ug4AndUThP3MvUAtkUilOeJN0f9dNcExM=
+	t=1732894431; cv=none; b=hJ8AenMqsn7wv07oghzH4ZmEBnULx3UGYJTnhRFyt7Qh+dk1IiynLgZpcXPA8XvbR1HOTyRKwsMqfjsItTkMPHIYwcqeTMRraz7tvBdUnraraDEQLY4j7cbSbdj92wwNr/RdCakN6ez5H9vzdqDLqtrPS1+Md3N3yP2krHFC4bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732894341; c=relaxed/simple;
-	bh=VORdR2oTefI9Q07TPIcBdkIpcos+5okYlhQ1JFze8e4=;
+	s=arc-20240116; t=1732894431; c=relaxed/simple;
+	bh=pwYTMiV9PIf9qH8kgFwZp1YSVxRhW/cYgoj7lfu0J+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtN55ri9ajKFFEn+XIgAIDyqEbpUAIZCtblGjpDeCqxIDOuVcELKcHmoVBVJQiSR89eqsznsY15VZ8bcwocnvY3/Uu1Sgi64be2pDcM5J5xxwhs+pqvaSAalf/ULmKY8oEfEjbuX5Q6zHUCRHX2PrgumFgGPRdFJ+DwvlEcIYeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYfJWagc; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=QQ4XVChw8zJqddz7SqxapngPm4Cp1ycF7rFO9ol+sZk1HcsHdUGMrvt/IjeqElsIIFvLGGN5h9BDxqHqVc8ApGlIqutBVZdRMgT5agzbnHmWmFel2olGGztkghoteiGah8dL2lmLbD/5iN3hfvZfVXwEjkWeJGxNl5zXFyhh8BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6xjrSBO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYfJWagc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732894340; x=1764430340;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VORdR2oTefI9Q07TPIcBdkIpcos+5okYlhQ1JFze8e4=;
-  b=KYfJWagcyoeP7w7hiFrIYWhcmmGTfCjMN2CvkZBv5fSkHFb0SZloGfCN
-   zWxa5w5MjjeJ25qeMDkuWK6xCKbBYJIzNLo7mThehbeSff+k14m9b7kBg
-   fFgyyNaUbxbQ1xOAqZN+BBWEuN0FqmZrZYOMN+bOAyPUlbZi45aMIK00Q
-   Qny9Xax+IkrOyDam3rJ9UH48Jo4uyXmiHNQRTRJbRkOibefkdyu8Tex8R
-   CY0FMiI4DCSU/5vqzLXVisNbVTiz0zk8ljQFsjKEXSHpCrm/MmALY/KEC
-   wlBhXNWZxzacOjmfkCPKkwntFF6h4MbD8tKlL430YejS0hXEIQYh++kkb
-   w==;
-X-CSE-ConnectionGUID: AbFpxLqrRkqL/+KoInmQPg==
-X-CSE-MsgGUID: NOtW8f+STB+n+kwLKV0Exw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="37066646"
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="37066646"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 07:32:19 -0800
-X-CSE-ConnectionGUID: PihCXGuDQu6h1LwuDv3v0A==
-X-CSE-MsgGUID: MmX9NisoSsWTwkpO78HDdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="123379883"
-Received: from lkp-server01.sh.intel.com (HELO 5e2646291792) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 29 Nov 2024 07:32:16 -0800
-Received: from kbuild by 5e2646291792 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tH2yb-0000SV-12;
-	Fri, 29 Nov 2024 15:32:13 +0000
-Date: Fri, 29 Nov 2024 23:31:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haylen Chu <heylenay@4d2.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6xjrSBO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA2B1C4CECF;
+	Fri, 29 Nov 2024 15:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732894431;
+	bh=pwYTMiV9PIf9qH8kgFwZp1YSVxRhW/cYgoj7lfu0J+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B6xjrSBOzNKq6NvcNFXDNYLh+8/NrgtWdo9SkvB/ieouKgTiXYfzUkoHaeOS0T5CY
+	 IJsRFaKspWa485swf11g+kv6ZcL9zE+gxA9NRQGW0VboT7L1LDKBBqy1fFJ0PE75oU
+	 YqHBq3FIalRyVkbcwimGAqMgsEdeFFrDWxq75ZrV3DO2f2zy98M6yN5NCovcYCxYh9
+	 4vUmMb3sDyzAsOWxPbzTbzhH2t6htM5jBih/61G7rKrA+RHlNXkhNdRwLwrMoJVHec
+	 ULPjuzxrsudovawh/KAfZ+bo9Tw5sjaC0SBM3YzNgHU+UTdhls4x++L5pN4pavxQxa
+	 9HlacWpzPT/sA==
+Date: Fri, 29 Nov 2024 15:33:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <202411292351.6EVdr1rF-lkp@intel.com>
-References: <20241126143125.9980-7-heylenay@4d2.org>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,sm8550-dispcc: Add SM8750
+ DISPCC
+Message-ID: <20241129-tribunal-baguette-5720d4ace82d@spud>
+References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org>
+ <20241128-sm8750-dispcc-v1-1-120705a4015c@linaro.org>
+ <20241128-serotonin-carwash-62ad0fb09c3a@spud>
+ <55ceb6e2-3642-41b2-9428-ca92b8a43487@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fM8fp/4QEKBc9kM5"
+Content-Disposition: inline
+In-Reply-To: <55ceb6e2-3642-41b2-9428-ca92b8a43487@kernel.org>
+
+
+--fM8fp/4QEKBc9kM5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241126143125.9980-7-heylenay@4d2.org>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Haylen,
+On Thu, Nov 28, 2024 at 06:38:48PM +0100, Krzysztof Kozlowski wrote:
+> On 28/11/2024 18:12, Conor Dooley wrote:
+> >> =20
+> >>    clocks:
+> >> diff --git a/include/dt-bindings/clock/qcom,sm8750-dispcc.h b/include/=
+dt-bindings/clock/qcom,sm8750-dispcc.h
+> >> new file mode 100644
+> >> index 0000000000000000000000000000000000000000..dafb5069c96a0c3f83c15f=
+3c61978e138baa886c
+> >> --- /dev/null
+> >> +++ b/include/dt-bindings/clock/qcom,sm8750-dispcc.h
+> >> @@ -0,0 +1,112 @@
+> >> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >> +/*
+> >> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
+> >=20
+> > This looks pretty questionable, how does something that was apparently
+> > announced last month have a 2022 copyright from the Linux Foundation?
+> >=20
+> I copied the binding header from downstream sources, which had above
+> copyrights. Rest of the changes - driver and bindings - are my work.
 
-kernel test robot noticed the following build errors:
+Weird, and probably not correct, but w/e.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-[auto build test ERROR on 2d5404caa8c7bb5c4e0435f94b28834ae5456623]
+--fM8fp/4QEKBc9kM5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-clock-spacemit-Add-clock-controllers-of-Spacemit-K1-SoC/20241128-101248
-base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
-patch link:    https://lore.kernel.org/r/20241126143125.9980-7-heylenay%404d2.org
-patch subject: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1 SoC
-config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20241129/202411292351.6EVdr1rF-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411292351.6EVdr1rF-lkp@intel.com/reproduce)
+-----BEGIN PGP SIGNATURE-----
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411292351.6EVdr1rF-lkp@intel.com/
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0ne2gAKCRB4tDGHoIJi
+0h/SAQCPImhQQCsB5ZOhJ+At6G/Fm6f7SFtmH/r2330HNovrcQD/Uk0ojl8bRj8z
+GIZ5Xbd+19cmNewJpj6CtswVyhaBlAw=
+=3Txw
+-----END PGP SIGNATURE-----
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/spacemit/ccu_pll.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/spacemit/ccu_pll.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/spacemit/ccu_mix.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/spacemit/ccu_mix.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/spacemit/ccu_ddn.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/spacemit/ccu_ddn.o
->> ERROR: modpost: "spacemit_ccu_mix_ops" [drivers/clk/spacemit/ccu-k1.ko] undefined!
->> ERROR: modpost: "spacemit_ccu_ddn_ops" [drivers/clk/spacemit/ccu-k1.ko] undefined!
->> ERROR: modpost: "spacemit_ccu_pll_ops" [drivers/clk/spacemit/ccu-k1.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--fM8fp/4QEKBc9kM5--
