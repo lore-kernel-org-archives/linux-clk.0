@@ -1,70 +1,165 @@
-Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2562C18C;
-	Fri, 29 Nov 2024 17:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE23C155741
+	for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 17:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732900045; cv=none; b=gi6Z8GJx7yE56xvpUg4v3MhXrhx924khCoo5CCn6p4uarNlGQl9FMn+aJM3cLO1J/S13ONII/YWn3LtAoN+zyvGgb4ifS76ZZ7TNvQ/6LgHhqD5fPUMFy79ypk4vA61CJyXGYKSVUtX1XrVFOkZ39hDP1SgaexuGA67bj00tEJk=
+	t=1732900285; cv=none; b=CaHedRAyVBypY1/+xLGyL0q14YlfvJ4ddUxQmpz9Hc7jIT6N4PjtVoRrK59UvkKTgI6QzyzSM1LEzWOk23GQZFdbOt+XkKpcLXBwYUrsM7YzsZ5YpGiCnYqf9oI5fbjWpybSsolN/Q755sbsuMPKdHZtjyc5cQcq1BpzIR+5njc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732900045; c=relaxed/simple;
-	bh=NOE2eDrnm/P6MIh27gYZlbptNqTwu9iKUqkjPMlM6yQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMOMV/o/KcywPhtJOx1LNwY/Q3XJMIU93mDxCBPsgNy59ShxWqEJI+/OU5QOh/5Dlb901L06areqKj93Rwcb7Y3SLp8h6CUA+L9rxR9pBX0I55egiaaJ+kBB3srFGftt6jwfwyVLq+blWMhPF/4F3L+QhfAfubxqq0xpGH6eHWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
-Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-	by mx.skole.hr (mx.skole.hr) with ESMTP id 300DA82170;
-	Fri, 29 Nov 2024 18:07:20 +0100 (CET)
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject:
- Re: [PATCH next] clk: mmp: pxa1908-apbc: Fix NULL vs IS_ERR() check in probe
-Date: Fri, 29 Nov 2024 18:05:37 +0100
-Message-ID: <2352491.ElGaqSPkdT@radijator>
-In-Reply-To: <d7078eb7-a7d6-4753-b453-8fce15245c34@stanley.mountain>
-References: <d7078eb7-a7d6-4753-b453-8fce15245c34@stanley.mountain>
+	s=arc-20240116; t=1732900285; c=relaxed/simple;
+	bh=u4VeqDNvTWRAhnRMPvx5ZxHgDaIe1hpfxIJoqfWrVgE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnQGshmNccKuX8V3SoQXakPV3+tJZN2yzuHEtdS7qjqyoHYcPXf3ggz0iP8THDsxTJwNACG28HMY5nRry+IFW7aGDOlRuWBbrYFAOGK4Maw652TumXvWLrIfsQDoRGlX8MyR6IxGCaDm2cIzJE8k6S3WBwel6NLyZ90Zn8PEVkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bDOwkwrp; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bDOwkwrp"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53de035ea13so2173322e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 09:11:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732900281; x=1733505081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKStJ4JMYm6/f7jAdkMonmjOHy/XStYH3AHNh9QPw+k=;
+        b=bDOwkwrp57+hdJuQM2yuTXFuR2uJQz4KquU51t8PIHqO8eQiDyD9aQNlzcorNorPaT
+         xp7YOLadRHiHqNeLg9IJY6J/ulFR/j/syM1NdPODXmEbzVOl5mUR/WOlAKf2q/W7pRWF
+         OVISodhH2VoKdzyWp6LX1fXe+h47Uvf/jzI/K4qJMK0C/xvuS5ytvS7xf5oYa3VTLyd7
+         VWtiSLzoTH2KjPpjC534rVGaPgyoky1fRIlQrXwp05orw95J08DpqUP7G6xtWuVpeMBw
+         wDC8XOyxR1Qfs1jSuK0KTWCb5rsWjIdgrxuwVXnYBHN2hXoRrC0USPiYqn3iDJLpFYf4
+         VHpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732900281; x=1733505081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wKStJ4JMYm6/f7jAdkMonmjOHy/XStYH3AHNh9QPw+k=;
+        b=cVZOZXL6F9uOgb9UefXRvkVqGpMCCXkaa54alKa1Su1//xb3UnRfcfIzy6AYAtTfUh
+         +dEv3hVoX4xn+w8cB4kwk4j0kk35kC94CprIcQuIZRU2Xc83CWJyxwSQ6vsQ4CP6cWhe
+         bMRA8NwopoTIAWcL1kDJ4Z5++GGgWQU+Hgtoauukxa2hT5bj1BSBTYtEk6aSqjSNK7IV
+         e+y5PlzvSg+hhCyWY08nZmc0mxqnrDJ64YYV8lISA2N7mAxjeBDyHeDMXR/uCs1rsQqb
+         nqqYLPzuTMoihw6kBbJNF721ZH5LH36MJIQ16cjkDnn7JVtoF0zD7/Re7SA12H9sM4YL
+         v2ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVzM1W+gbLzIk+NuvI0eUh+9JTI2t5qfO1FQK4ZmCK56Qi8FHMBmlRmtY637hlywq4GHbCIEvt/Xx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD67xv7mH78Xhu1HduGUoMkqNWe6gTkbr2FqKvVnK8Itk4gemY
+	uvEGpm28acZU/NVs4wtYB8Tr2/yPVcqpta9si/CjfTMDoKcLTm1wbxdU2v8LztA=
+X-Gm-Gg: ASbGnctkdovqTyKnJx6mCC0Os93ms/b9AyYDc3VnCxWTe/yY80ZFctXgK2Oh12TqRhL
+	ZR5p7YpNhhyxfLrCt65JckqkeEFZED/Pr71rp2H+FG1KhhKatHunboIKSo4ZbIPQ7/coWvwJ4pG
+	tUzAQ3wxLQKRXzGX5VY9nJauVZazHrrGWUiUxj7hkLw/4Wp2ZdV3daIaDde729qZjBls+fosmuP
+	lJy/0dTntYldeczHg4i03GK1UYRFldzx/4ot6s8KTXz3C8xDK7TEzj7e3qT4rDQPVi59xEQ06qd
+	ginC8yTjhz7/6QzoUT+o
+X-Google-Smtp-Source: AGHT+IHZ3oTCh7gVSsmHhrZ3fiOp7cXkhyrNMHuydkCIk2tz2qxDfVIno+QP7oK2bTxacMEqt16MJg==
+X-Received: by 2002:a05:6512:39d2:b0:53d:ec9a:138f with SMTP id 2adb3069b0e04-53df0112687mr8431697e87.57.1732900280754;
+        Fri, 29 Nov 2024 09:11:20 -0800 (PST)
+Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63a2sm192130166b.113.2024.11.29.09.11.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 09:11:20 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 29 Nov 2024 18:11:53 +0100
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+Message-ID: <Z0n12a6irbXQomdD@apocalypse>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
+ <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=duje.mihanovic@skole.hr;
- keydata=
- mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KER
- 1amUgTWloYW5vdmnEhyA8ZHVqZUBkdWplbWloYW5vdmljLnh5ej6ImQQTFgoAQRYhBG3/QdYN8x
- S1t2umMK0xk1JFj60DBQJmiSHOAhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAA
- AoJEK0xk1JFj60D1GABAJVSorZdMOlrp/oQtCSH/G53NE56x/JHA8VX+ZQBd/H3AP4/EcUf6eef
- DUxVMh2bdkmuQKsVZGgOGiXpMksrVntWBrQpRHVqZSBNaWhhbm92acSHIDxkdWplLm1paGFub3Z
- pY0Bza29sZS5ocj6ImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSH/AhsDBQkJZg
- GABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw8A/i4lPOL7NaYoYePDq
- l8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xqh2MRcNmJCHA1YhWAbg4
- BGaJIc4SCisGAQQBl1UBBQEBB0DEc9JeA55OlZfWKgvmRgw6a/EpBQ8mDl6nQTBmnd1XHAMBCAe
- IfgQYFgoAJhYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSHOAhsMBQkJZgGAAAoJEK0xk1JFj6
- 0DG5MA/iuo4l2GDEZ1Zf+XaS//8FwdXDO9nHkfbV2MHjF4NZXwAQDroMzBdMcqVvc8GABFlTTgG
- j7KrRDz2HwWNyF8ZeprAQ==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
 
-On Wednesday 20 November 2024 18:18:38 Central European Standard Time Dan=20
-Carpenter wrote:
-> The devm_kzalloc() function returns NULL on error, not error pointers.
-> Fix the check.
->=20
-> Fixes: 51ce55919273 ("clk: mmp: Add Marvell PXA1908 APBC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+Hi Krzysztof,
 
-Acked-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+On 08:55 Wed 27 Nov     , Krzysztof Kozlowski wrote:
+> On Sun, Nov 24, 2024 at 11:51:39AM +0100, Andrea della Porta wrote:
+> > +  '#interrupt-cells':
+> > +    description:
+> > +      Specifies the Bank number [0, 1, 2] and Flags as defined in
+> > +      include/dt-bindings/interrupt-controller/irq.h.
+> > +    const: 2
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +patternProperties:
+> > +  "-state$":
+> > +    oneOf:
+> > +      - $ref: "#/$defs/raspberrypi-rp1-state"
+> > +      - patternProperties:
+> > +          "-pins$":
+> > +            $ref: "#/$defs/raspberrypi-rp1-state"
+> > +        additionalProperties: false
+> > +
+> > +$defs:
+> > +  raspberrypi-rp1-state:
+> > +    allOf:
+> > +      - $ref: pincfg-node.yaml#
+> > +      - $ref: pinmux-node.yaml#
+> > +
+> > +    description:
+> > +      Pin controller client devices use pin configuration subnodes (children
+> > +      and grandchildren) for desired pin configuration.
+> > +      Client device subnodes use below standard properties.
+> > +
+> > +    properties:
+> > +      pins:
+> > +        description:
+> > +          List of gpio pins affected by the properties specified in this
+> > +          subnode.
+> > +        items:
+> > +          pattern: "^gpio([0-9]|[1-5][0-9])$"
+> 
+> You have 54 GPIOs, so up to 53.
 
-Regards,
-=2D-=20
-Duje
+Ack.
 
+> 
+> Use also consistent quotes, either ' or ".
 
+Ack.
 
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Many thanks,
+Andrea
+
+> 
+> Best regards,
+> Krzysztof
+> 
