@@ -1,64 +1,66 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF71D156991
-	for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 13:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEFF19C558
+	for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 13:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732885646; cv=none; b=PskvQDc+icMv+Vb2gytLBCVetudRGpAAz3gQOWnB8+JqyclIlWvg9SoDWwDoILgyi9BWvL5dRgbG6lkO6qqwU4rnGbwzTEFKZplTzobQUGf91lctlRAaS2FGbyJyTxS+6jmY0ReXdh03iyQj6Y1Yfsun9/NjipgOOOe3LMj8otI=
+	t=1732885664; cv=none; b=lfQ8i9EsYk4/mCskQoyFQkLUgsXR2cEVb3q7OjEGuMapEU8sqhHthJQfRgx/Fi0yr48FwJbQHpk4oXfXJSi4MYFYeOqJw43OSQsudrv2N1v65xRCShdaC+Ih6sL+CSDxHX0lYZTEKN+DtKFbxpV9ow8YFRqS1+b6+bbSia0mWEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732885646; c=relaxed/simple;
-	bh=qxbzNss1BI/oiug9lBmh5y4cuBoGq10mu7r5XGWu9qs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Isg/EqSSju/yRzqRiE85zYvy0JkDck2Q/Y7z5aMUyEstisMullUS4zg2Q5gVzLtTgc1OQUbNHWV4jzITspdXm9EpCuBYUeRWk5nxbivclijFs7TSbki+R2ou/UuON3Wnvq7nKhglOlUA3P4ibb/dlNhPjfFu2PAxuKcN3MWyJLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=unDdMGHo; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1732885664; c=relaxed/simple;
+	bh=mQpHD0O/4DmVLloEpdEHgH89jVyxadWEyw/hKsvGyhE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cHxkljaKOcJEJWD8CBHvCEffwJ1ylN/1j6Ubd0qa5fmIpphJIrRI2M+cZohce5bgIm/hOHa598W2z1413bibN4Wxspu4YmRQ1/35c7U8MWLRLjkjs8/cHYyAFvHerr0NWspXtSiT8O7jfsltPwq2emh84uRl0YDm7p4ikHDLQxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5IDfDI9; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="unDdMGHo"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4349f160d62so16819345e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 05:07:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5IDfDI9"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a742481aso16801685e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 05:07:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732885641; x=1733490441; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ZZr43P8CMAkfD6cdkN7FEv1AxVJuI6eZC+wA5Ire5U=;
-        b=unDdMGHoLMDBGr+kuolzEhce3AXoHVm01j6s9fz3DfDxK9LT7b35fHu/mjg2G0Nzx6
-         C2U+Y2SX0ZKikaW2ffeSALpW3wRxhcxcf5AFlzMy7/4Sr+K5Ekxyv93JAhPHgBUTUHOs
-         O8TZSPFuM8sAyW0V9QMEPFoA4eXAEv0jFHEoVHUezq7nEtuyPUNonFqGwM7Jzw2UaVe0
-         N6rk252rkF76hTd0kGeIbH8XKql+BXVhqWLIv8kB/FedW47ZLcLzn/5mJjJelYUOXbsn
-         xPNOFkYlogfKULE2URugXsokPj0/1GWdA5H/9iUoyMllE2wweyWCuQHCssg2tN3W+BVJ
-         5kpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732885641; x=1733490441;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1732885661; x=1733490461; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9ZZr43P8CMAkfD6cdkN7FEv1AxVJuI6eZC+wA5Ire5U=;
-        b=IOCPdJr+vLaNnHPKja1RSMyNeBE0ukZggyK/eoU0AbgAAIbrzIqzxySwJZ0z2wrVGr
-         aSjO3YunMf1IzhsrPFHPXEiXRb/NQW8sMynd06GYZm9OpI4n06Z/N+wUhrkd842rctFO
-         NxYry9ASxtIX8LEp3X4PeRPBasEvVXMzAQUj1PLWtY3pdP4VBZJRgjlUjWi8UCcdLimX
-         IhNx/sg/qxkYXzmwxYuKKQfvh4YAwB1/NGT8kLn2/disHnEbUziF9FkCFiIQLCfHuswB
-         POlkHcS6nsL5fveGjftBS5Nw+KrqgzDDwc22sS+03lazPs6NFpAE2ZdcpOON7vy++ys0
-         mP+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCJrSFcJnRqcJ3AVi5rei0t/CKuBhrPc3bOUe3n6NV/dbablNd1+FqKbVk8oPxAyV/baSVqpl4C6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDWAKlNnMtHuhgmJL0tSg/Ry1byZ4dZ+mSpOaS9ly5S94/dUAy
-	4q/JwIkcLJ1jpg1OCneHVOPgB7TrKN8GXZw5Tg3g993yHmOZX+Tr9B9a10tLJyw=
-X-Gm-Gg: ASbGncvOrhoJO+iNN0bqEmyfRAw64UMr7hdrLKrPvpIIfJSpjtKIeh2Gm4zFIlD7qC0
-	0XpPGEtv3TC/A708gg/rSQLcGrPOf4UHhyyDEkOLPuv+i7dzQqVClsh528tZcXkXns9Ds9gvMFV
-	uYMnjLweFOXzkd0dWT5lr1g2QUpmdrkmCTpbUu+AR5+WaK4y5JxoCumsZM3aRvgyS45DH1UMPqE
-	/BGL/AmYkyYfIFVxdf32hPxc9AFPx/mWt2vdgFBEdIizfrlK2K5haNf/NY=
-X-Google-Smtp-Source: AGHT+IGxL6oQz9FnIs17wyrC0PXlW6fDNacEIvFfQUHleLYHBBsfyQleQvhStnWGaKIHQgezv7Cuqg==
-X-Received: by 2002:a05:600c:1e09:b0:434:a8d8:760e with SMTP id 5b1f17b1804b1-434a9dc6774mr97008665e9.19.1732885633267;
-        Fri, 29 Nov 2024 05:07:13 -0800 (PST)
+        bh=+aPv1A/6lNNGm3pKHhjnN5K2Ej+6bunOS3nenFEWG4Q=;
+        b=R5IDfDI9TKVnyj6lHw+l5l7gbB1ICpTZkx/K+V6gG4UQVmrLCb/iNc1ra4GaZE9txO
+         csKf2OX0dDpsciUKr84zqwTicYwS/pbfjEoDaQXfYRqTzteX65+KG7IdYwpRAjaOe6Fr
+         /nyEivv971MqrUE2DJcTPDSL+A7nUF8ihYRr+yEi5yWg7P3U/M1fI7ae4WvHYm6LR6Kq
+         L3T1f8fCxlWJw7ktevq7r43ujVuo+gppeTqsml0rsY2k1wnmF9Ltae9ChjAJjKziqkjK
+         1UD4MdXwlun1ujaOvCOdvJaXREGXpJs2vaylwQayUAPgQPQ3BkDIw7vb/KVMdQT49lem
+         1agQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732885661; x=1733490461;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+aPv1A/6lNNGm3pKHhjnN5K2Ej+6bunOS3nenFEWG4Q=;
+        b=eZXal9aRJPjwerqsM1WVhoS9zdQPADDnN5qpXvY3Rl2p5JKlgc4ezI6lxUg90/3b23
+         jTxGiC9kxp/bVg5cGH1aby9cjjv/nsdL+2hmEefoES56/CHc0vWhmMP/ZyDg8ObzFoSm
+         a0y94nbJSflxPkIp0V8AMM5I0DihKdjTHuUw5Eg+iT978/b2fyo/9L625N+rH1CCWLhN
+         /zV0eRXpqHacmelZRsyPamFN2YsZzNjCdEmRKRlzf3rIvplChG7y6dM3OtlMO4xc7MNP
+         VjbrT0OFU5b4uM4lepBfpdhyJVMaCmWLu10ECq2OtnvhUZ7rPPj1O0wfb4PaIK8kIQRL
+         ja8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWiNMIRELibteK/BX9ZAWWHV0UMqga67/Sfk1N1CYmcu6oRJchGwjVu1zQ4Qe7yLSA1kuDeTFC0Grg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn3iSdWVV6e4fJz04BspbkC+3LPIe2rcu4pk/ka2funfr/xrOp
+	HIljFRJLU/hcVO9w22RMbBcNchHVnRnGgldohFxeJf7T3834DYnvLl1mWy7AZsIkq0TAOfYUkfL
+	JuHk=
+X-Gm-Gg: ASbGnctkZJ9ZGE9X40h3OEMIMuk/k5jsqRhSmi4X1dor3VQakP1R5S9jMGVaP9Rpu+n
+	uClYoCveX2l6jQxLcibkvZyz3+AoiBVL4LIstcKMvGr111ddicRFmoM+P9zAbE+k6F9VozQnn+P
+	crNfor7OaSVUGpKnsapusnST+T6QhhKaZoc27UPCmS/eY7BuaBY1tT92c1yRatPrRhW593OKyr3
+	6M9anEpOUhhcQ3ChTwkv8Fq1FbhCYXwO+25qleos2r7IZOVqEEUxB/4WpU=
+X-Google-Smtp-Source: AGHT+IHhtPopN59nF0wT9aM0MO2ZUTkad4G2GioIMf1qnkxOPmpIkivwxwFk/94QpZ1tIVuayw0v5g==
+X-Received: by 2002:a05:600c:1d18:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-434a9dbbcc7mr111429935e9.4.1732885642767;
+        Fri, 29 Nov 2024 05:07:22 -0800 (PST)
 Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa77d01esm86228395e9.22.2024.11.29.05.06.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa77d01esm86228395e9.22.2024.11.29.05.07.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 05:06:52 -0800 (PST)
+        Fri, 29 Nov 2024 05:07:21 -0800 (PST)
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH v6 0/3] clk: qcom: Add support for multiple power-domains
- for a clock controller.
-Date: Fri, 29 Nov 2024 13:06:46 +0000
-Message-Id: <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-0-24486a608b86@linaro.org>
+Date: Fri, 29 Nov 2024 13:06:47 +0000
+Subject: [PATCH v6 1/3] clk: qcom: gdsc: Capture pm_genpd_add_subdomain
+ result code
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,12 +69,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGa8SWcC/6XRwW6DMAwG4Fepcp4n4jgh3WnvMe1gkrSNRgkKl
- DFVvPvSnpi4seP/H/zZ8l0MIccwiLfDXeQwxSGmrgTzchDuwt05QPQlC6yQpJQWGoI2drcZujC
- PgARSQqldm9wXXG/tGPs2QJ++Qwafrhy7AVifjkfyjjSyKJP7HE5xfqofnyVf4jCm/PNcYpKP9
- n/eJKGCpmZsvMWGVf1eRnBOrymfxQOccIWg3odgQViHWmvydSC9QdQaMfsQVRCrjGevlEbJG4T
- WSL0PoYKQIuupco1R20v0Gtn5E10Qx2jRODJW0h9kWZZffSEev4sCAAA=
-X-Change-ID: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+Message-Id: <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-1-24486a608b86@linaro.org>
+References: <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-0-24486a608b86@linaro.org>
+In-Reply-To: <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-0-24486a608b86@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, 
@@ -82,108 +81,39 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  stable@vger.kernel.org
 X-Mailer: b4 0.15-dev-355e8
 
-Changes in v6:
-- Passes NULL to second parameter of devm_pm_domain_attach_list - Vlad
-- Link to v5: https://lore.kernel.org/r/20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-0-ca2826c46814@linaro.org
+Adding a new clause to this if/else I noticed the existing usage of
+pm_genpd_add_subdomain() wasn't capturing and returning the result code.
 
-Changes in v5:
-- In-lines devm_pm_domain_attach_list() in probe() directly - Vlad
-- Link to v4: https://lore.kernel.org/r/20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org
+pm_genpd_add_subdomain() returns an int and can fail. Capture that result
+code and throw it up the call stack if something goes wrong.
 
-v4:
-- Adds Bjorn's RB to first patch - Bjorn
-- Drops the 'd' in "and int" - Bjorn
-- Amends commit log of patch 3 to capture a number of open questions -
-  Bjorn
-- Link to v3: https://lore.kernel.org/r/20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org
-
-v3:
-- Fixes commit log "per which" - Bryan 
-- Link to v2: https://lore.kernel.org/r/20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-0-a5e7554d7e45@linaro.org
-
-v2:
-The main change in this version is Bjorn's pointing out that pm_runtime_*
-inside of the gdsc_enable/gdsc_disable path would be recursive and cause a
-lockdep splat. Dmitry alluded to this too.
-
-Bjorn pointed to stuff being done lower in the gdsc_register() routine that
-might be a starting point.
-
-I iterated around that idea and came up with patch #3. When a gdsc has no
-parent and the pd_list is non-NULL then attach that orphan GDSC to the
-clock controller power-domain list.
-
-Existing subdomain code in gdsc_register() will connect the parent GDSCs in
-the clock-controller to the clock-controller subdomain, the new code here
-does that same job for a list of power-domains the clock controller depends
-on.
-
-To Dmitry's point about MMCX and MCX dependencies for the registers inside
-of the clock controller, I have switched off all references in a test dtsi
-and confirmed that accessing the clock-controller regs themselves isn't
-required.
-
-On the second point I also verified my test branch with lockdep on which
-was a concern with the pm_domain version of this solution but I wanted to
-cover it anyway with the new approach for completeness sake.
-
-Here's the item-by-item list of changes:
-
-- Adds a patch to capture pm_genpd_add_subdomain() result code - Bryan
-- Changes changelog of second patch to remove singleton and generally
-  to make the commit log easier to understand - Bjorn
-- Uses demv_pm_domain_attach_list - Vlad
-- Changes error check to if (ret < 0 && ret != -EEXIST) - Vlad
-- Retains passing &pd_data instead of NULL - because NULL doesn't do
-  the same thing - Bryan/Vlad
-- Retains standalone function qcom_cc_pds_attach() because the pd_data
-  enumeration looks neater in a standalone function - Bryan/Vlad
-- Drops pm_runtime in favour of gdsc_add_subdomain_list() for each
-  power-domain in the pd_list.
-  The pd_list will be whatever is pointed to by power-domains = <>
-  in the dtsi - Bjorn
-- Link to v1: https://lore.kernel.org/r/20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org
-
-v1:
-On x1e80100 and it's SKUs the Camera Clock Controller - CAMCC has
-multiple power-domains which power it. Usually with a single power-domain
-the core platform code will automatically switch on the singleton
-power-domain for you. If you have multiple power-domains for a device, in
-this case the clock controller, you need to switch those power-domains
-on/off yourself.
-
-The clock controllers can also contain Global Distributed
-Switch Controllers - GDSCs which themselves can be referenced from dtsi
-nodes ultimately triggering a gdsc_en() in drivers/clk/qcom/gdsc.c.
-
-As an example:
-
-cci0: cci@ac4a000 {
-	power-domains = <&camcc TITAN_TOP_GDSC>;
-};
-
-This series adds the support to attach a power-domain list to the
-clock-controllers and the GDSCs those controllers provide so that in the
-case of the above example gdsc_toggle_logic() will trigger the power-domain
-list with pm_runtime_resume_and_get() and pm_runtime_put_sync()
-respectively.
-
+Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+Cc: stable@vger.kernel.org
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
-Bryan O'Donoghue (3):
-      clk: qcom: gdsc: Capture pm_genpd_add_subdomain result code
-      clk: qcom: common: Add support for power-domain attachment
-      clk: qcom: Support attaching GDSCs to multiple parents
+ drivers/clk/qcom/gdsc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/clk/qcom/common.c |  6 ++++++
- drivers/clk/qcom/gdsc.c   | 41 +++++++++++++++++++++++++++++++++++++++--
- drivers/clk/qcom/gdsc.h   |  1 +
- 3 files changed, 46 insertions(+), 2 deletions(-)
----
-base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
-change-id: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index fa5fe4c2a2ee7786c2e8858f3e41301f639e5d59..4fc6f957d0b846cc90e50ef243f23a7a27e66899 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -555,9 +555,11 @@ int gdsc_register(struct gdsc_desc *desc,
+ 		if (!scs[i])
+ 			continue;
+ 		if (scs[i]->parent)
+-			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
++			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+ 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+-			pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
++			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return of_genpd_add_provider_onecell(dev->of_node, data);
 
-Best regards,
 -- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+2.45.2
 
