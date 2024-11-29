@@ -1,33 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66BF537F8;
-	Thu, 28 Nov 2024 17:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9641515B551
+	for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 11:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732815534; cv=none; b=POcZ3ya8fjIgopZf2aQz2QLpoCPzw/SPWUfJ7Cn/tqcMXwxpGp7mlFNRWi4Ae0oehtL71G4S7+hLNoZ8J9OFJnhRz3NUCBTWzF+VCrXXXTTbW5ZA6l3NrsA74s8g9knI4NvlbizZsktc9Fc5c7hpCe8szBWA2RG5sdxjR2LWRrA=
+	t=1732879861; cv=none; b=KnuPjjzWEaTQdP2a1HHxXZbty1RYZDrnQhg+Egg0+oIUcoN2ysBbjYbSUQ09PC5WzliJiyveB4a/J8usWkICE4Dr/zgDEIk31QRqcWKYTHFdcL4HLEhjOA8H9MC5YyTaJiTbXh7hnxvElHTzQJ2aUX69AoNg6Pm6MdFhgUYv190=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732815534; c=relaxed/simple;
-	bh=4KfpUrzSkNe6ynb61PNuvJN+Ztx1PoloamFneZjQprU=;
+	s=arc-20240116; t=1732879861; c=relaxed/simple;
+	bh=KvkDUcbjxSgA55eI4i8ys84ybkmkjThM4KqxgS2qbFg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hvjGL0bhAlUjx6NsuW1Edn9mgtZCbSOyuK/VrPadJSH0Qo7UoZ4E16bNPxSg3FAVmUj1dlFZeC25/0Cxr9uv4I6DGty/pPXBLDXxTNMMyaclOG5g5LiJK5HU0oDpsPAvOnd8XxXZYbo/+4lGano5buKO5RJOr79t9i5QFIPbmE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d++cxkK4; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=NNK+qtv3HaqzJqNdQCoS+RGeaKdQdyRzdCLbKVWyXeh9fsfZx5OdISd9V4W7jqv9WG/yfwkzMKDqmKAnXAguezobO3RiHX3/X28VYD7HZVEIR5JdDzzXOeezwLCg0+Mcx+9tjeS03fXOiOmWttQiWXPNYgVHeNh+CYVj9JgQ7QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gpl45+3f; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d++cxkK4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BFD1C4CECE;
-	Thu, 28 Nov 2024 17:38:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732815534;
-	bh=4KfpUrzSkNe6ynb61PNuvJN+Ztx1PoloamFneZjQprU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d++cxkK4xvBGGQEL4/RZz+eWSjjH3PLY0k6Nw/NO+T+ki9pTVEAoEIAWAvUh2uiDc
-	 AAzoICUEBfxPE2DBuM3cFFNI3uQhVQsMEKCy2gy154fHMVx1fj5QNg93Jnb4rOEjea
-	 VBtpNER3PMIAUYO3r9J0v5mHyNaUTA59Ge3uQrQwtwYgihWgyTz+szTa98CzskGPwO
-	 TKBaK6dpULFIpxaCxJVtDyC5MSJr7JzFgfP41h861xBJUfJBeETU04J5KEE2cdci+0
-	 W58XXfchOJFRyswFmABOvzDnMOGqrrnptU/UoAgl/3SxKnlDOEyDjS986ZkRPUbtHh
-	 xbZVGU9k7itZA==
-Message-ID: <55ceb6e2-3642-41b2-9428-ca92b8a43487@kernel.org>
-Date: Thu, 28 Nov 2024 18:38:48 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpl45+3f"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53ddb4c05d1so277218e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2024 03:30:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732879857; x=1733484657; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dru7XehxiadKT/ViJQ84q3HT+JPTxb4ywcU3T49Qslc=;
+        b=gpl45+3f10IWM8JA4HpDSHThFolrojAmixn1ppzOhCdegQHlM7BxNIsqh+9DPfT276
+         9/RuxJlcs12d3sCdvv+VqdnaNWiJnrlsPPOCSL+oG3ol6CpsVaF7+B4X/mnOYoO3aljM
+         vuoAgIq3i4gnuxGcBlR7jCiJmJObijgzKHQBZVZKEsq9MibS6QkGhMWeIl0ZwjX8Qizd
+         esE3kC1f38I2e0NHCPEYjekmrjQVBosz7RMrCEt88hfITapRdEPQn77t2aHgPxLlrjam
+         tENlWIFJ1CKR+CnJh5s1BUxSZ6tcd0CWNKJW2hxka/O3lCBzVo/ivmAH0yb0hYlTh7Xv
+         39hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732879857; x=1733484657;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dru7XehxiadKT/ViJQ84q3HT+JPTxb4ywcU3T49Qslc=;
+        b=KWf9/NQkd4lj6pB5AnPYZLv8cOUe1qMoAxjAhTE6XJP/gonJS4dA8aXqaP3O2tqSs9
+         R5Nv/kLrvfI+njUN5Rsa+4XdTV50Wt7eei4xcm3Boy0PndUcQH2LzMoASuffig/KzWTO
+         dqKDXy82CwwBJiAHTQFdVobpllBoeGFC7VTStK8n8zDyLufwkjz9M6UTUk9CncgTy54a
+         AlIRqaiMsX9qvPq/LiMWPcgdRRIPbq7eQjPqUv3HwO5dT12mmwKcg4RpQQpqAaibmhbk
+         M1K7AS0T7YrcYBasnWlce3zFypOOSpXX03PYTA2EVXAJYuhH8SOzY2RSiqcz9TnfN4Lc
+         9Kjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAqTtt12wnwqV49+W3/3I1EIZeb3z3ALNS076qTvBQ1WdLVcBYjwDtMVrH1zl/Pv7cJNiBCUk0bfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrY/UFRcnV4GXorWEZdUQJ+EcV8baGuSvHfNDxPZBNAW/eFpiL
+	PZ7sTfhzm0JOYFg5a0pVvbHaMfwArHFSWYyc5wrDmTaYtTfPt2XQfQoA06cRHx4=
+X-Gm-Gg: ASbGncvAq4Ped7TL+Gqd5OODrKyXLMzaseWJV4fRfngqEG+TpmnNrMFd090ku7uDwfj
+	zd9SEt3uSDSfu4AoC4oqSawZ48oan2UdTQuUXOa0BfY1HhS7pgjyHEi8BQF0p+KTnbt3d4RZgVo
+	w+JPVZSKuydn9ODQrqj2TLOTkAXfZbUVkigxAWTraZ/x3/e9hLIo8q5Y7XbJbpyI69de9DNAde1
+	HMJTe9e/BjBrqx4VcTZ6FLDdL6p3ay1/BVuUx35QMS8uxKwdX3mK9gp0jo7XGteiRNuPAc+xDcO
+	FrOcPOwqEn4mmpajsxpOP4qCk83y
+X-Google-Smtp-Source: AGHT+IGn69c9WrUJa5Fx5fZQEEMOvwP4jv1LmT5p/N4LSQWowO2axrDMJ+H0kV5B7ia/qeP27am3cw==
+X-Received: by 2002:a05:6512:2316:b0:53d:a9ab:2ec6 with SMTP id 2adb3069b0e04-53df0108fd0mr1406559e87.10.1732879856709;
+        Fri, 29 Nov 2024 03:30:56 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6430e69sm465538e87.44.2024.11.29.03.30.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 03:30:55 -0800 (PST)
+Message-ID: <9b9bf718-b5a5-4fef-810a-1206743495f6@linaro.org>
+Date: Fri, 29 Nov 2024 13:30:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,88 +66,81 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,sm8550-dispcc: Add SM8750
- DISPCC
-To: Conor Dooley <conor@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org>
- <20241128-sm8750-dispcc-v1-1-120705a4015c@linaro.org>
- <20241128-serotonin-carwash-62ad0fb09c3a@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 2/3] clk: qcom: common: Add support for power-domain
+ attachment
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241128-serotonin-carwash-62ad0fb09c3a@spud>
-Content-Type: text/plain; charset=UTF-8
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-0-ca2826c46814@linaro.org>
+ <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-2-ca2826c46814@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-2-ca2826c46814@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/11/2024 18:12, Conor Dooley wrote:
->>  
->>    clocks:
->> diff --git a/include/dt-bindings/clock/qcom,sm8750-dispcc.h b/include/dt-bindings/clock/qcom,sm8750-dispcc.h
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..dafb5069c96a0c3f83c15f3c61978e138baa886c
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,sm8750-dispcc.h
->> @@ -0,0 +1,112 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->> +/*
->> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-> 
-> This looks pretty questionable, how does something that was apparently
-> announced last month have a 2022 copyright from the Linux Foundation?
-> 
-I copied the binding header from downstream sources, which had above
-copyrights. Rest of the changes - driver and bindings - are my work.
+Hi Bryan,
 
+On 11/28/24 18:38, Bryan O'Donoghue wrote:
+> Right now we support one power-domain per clock controller.
+> These single power-domains are switched on by the driver platform logic.
+> 
+> However when we have multiple power-domains attached to a clock-controller
+> that list of power-domains must be handled outside of driver platform
+> logic.
+> 
+> Use devm_pm_domain_attach_list() to automatically hook the list of given
+> power-domains in the dtsi for the clock-controller driver.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/clk/qcom/common.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 33cc1f73c69d1f875a193aea0552902268dc8716..e6a024e95ab5f4b0776ffc6c7b3bebfbebb007fd 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -22,6 +22,7 @@ struct qcom_cc {
+>   	struct qcom_reset_controller reset;
+>   	struct clk_regmap **rclks;
+>   	size_t num_rclks;
+> +	struct dev_pm_domain_list *pd_list;
+>   };
+>   
+>   const
+> @@ -294,11 +295,19 @@ int qcom_cc_really_probe(struct device *dev,
+>   	struct clk_regmap **rclks = desc->clks;
+>   	size_t num_clk_hws = desc->num_clk_hws;
+>   	struct clk_hw **clk_hws = desc->clk_hws;
+> +	struct dev_pm_domain_attach_data pd_data = {
+> +		.pd_names = 0,
+> +		.num_pd_names = 0,
+> +	};
+>   
+>   	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+>   	if (!cc)
+>   		return -ENOMEM;
+>   
+> +	ret = devm_pm_domain_attach_list(dev, &pd_data, &cc->pd_list);
 
-Best regards,
-Krzysztof
+Please make a call to the function like this:
+
+	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+
+Here pd_data is unused.
+
+> +	if (ret < 0 && ret != -EEXIST)
+> +		return ret;
+> +
+>   	reset = &cc->reset;
+>   	reset->rcdev.of_node = dev->of_node;
+>   	reset->rcdev.ops = &qcom_reset_ops;
+> 
+
+--
+Best wishes,
+Vladimir
