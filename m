@@ -1,82 +1,78 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531931DD0F8
-	for <linux-clk@vger.kernel.org>; Sun,  1 Dec 2024 17:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3A1DDC06
+	for <linux-clk@vger.kernel.org>; Sun,  1 Dec 2024 17:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733075258; cv=none; b=nd1OqUQv2jMj9RVa/8GeIU6M8S9u2uc+5LFaR3K28XPnVnq1HDR4sHYTuF8CHiRBZy3/kR1x2BYgHuvTPJ5Avr48SfD6+G65DuLYtzVuoNaG4BT+NGNTjVPaObhM/aMrqSBuM68kEuB66zwhf5ittw7SfdNXPuyNDnjKEAcTEXU=
+	t=1733075260; cv=none; b=tqDtEC+0TEiUZu4VqT9d0V2RmucPfLGfiVBSJqV84NDmqw/0Anoad7v/PEPHq7wnLqC+Wg7LMIXG9SrCO0NxGOjT8VkhOW6Rm1li0u/pH2eTZYj60I4fON3xUqgh9Ap0OJHidGZ/NGfnYAE8lac13NaayqDvAXeHIpW4H7ji2OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733075258; c=relaxed/simple;
-	bh=FgS3VPSUb3LX7ZxAviEc5zpx+vimv7Cxc32ZpCChiWo=;
+	s=arc-20240116; t=1733075260; c=relaxed/simple;
+	bh=yCf6o4aEUfslJcLLJEqow/qgmD3/3fEPCIzJe9arT9A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uu6+JtI7AydUUYoh+Hbe3HQYnVcv8dpsdp/WcPs7XQcQyd3UvroiaqnLoimgshwlA3oNekeON6L+BFt1z7hGg9WOgQaOhK7CBOcidYBuxnp8LADxIi/Vt32vLVPMHdVpuZNV4nxYOO15l7NwkEMf/7A2WNk0XAN5mRaPDThqj7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=gJYrbosl; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version; b=UehYoYxtPqdfW2RjNsBYVuyEc3ny6EHvU/crFTID4xngaoAhTr7UGGT60ZpzcEYRa4cnXk8LR1t47kJMoJRAqTF8Spcm3KJINnFKzAMSD/kC7yfmDPWFysWqapz+Gt8wh+OYEnNBQo6bscJpnZnn51jl9NGHTwKdvzOsX+CWItk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=B/ZBjiYT; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="gJYrbosl"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa520699becso581433666b.1
-        for <linux-clk@vger.kernel.org>; Sun, 01 Dec 2024 09:47:36 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="B/ZBjiYT"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa532dcb470so241146066b.2
+        for <linux-clk@vger.kernel.org>; Sun, 01 Dec 2024 09:47:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1733075255; x=1733680055; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1733075258; x=1733680058; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z9ECY73UG8ehnqT2joX/xp2njmIlfmPxWimrFTqyoco=;
-        b=gJYrboslG1VqpZUncM458LGw1SIbQn5hUP1Dw/ovO+0WSFANfviYJTOFrBy9OmZyw5
-         BI68V7JE+M8igpI+T40+6g/VlsKYNHWLRjYrX4o82pSAGLqkE7Xr9IdvUCyATQwft3QX
-         CYxGJbqlg2q7k2xPf7GvCfIqrJipxfjAHyO5I=
+        bh=eZ3YHSAuF6GRZeer7tzybOaIp6SswmD+4eSpj3aybE0=;
+        b=B/ZBjiYT4sP2Dq/fYjDo6xdmyZJKzgEEhzrxAYSoGBEDZ6+EJsaHPcBw2TVDwdP8Ko
+         3zTbq3pjThRPEh/7vD1l9NmZZQg6EljJdAN3DXUCnXvOrz1sAmUeOCmjD7anOvoBTRHY
+         yZ34UexqOtxVQN8eM1I+pvRBDzDBxCXYnZszQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733075255; x=1733680055;
+        d=1e100.net; s=20230601; t=1733075258; x=1733680058;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z9ECY73UG8ehnqT2joX/xp2njmIlfmPxWimrFTqyoco=;
-        b=oPAhxCbychgkNvGnrnrWwJ/UFZVLsg4jiuEqLy3rA2K62Bfj4J3o0z58MLSjSSl7jo
-         Q/lnZdLfIyMn7kSnAAIRV8WO6MZI7o70cqUNf+xxyoCzGC0hzc1AVesXwd7Ad00haWhp
-         2xh6B6Zaa8ZFSyfC8d0vcSMmYdvL9sRUpWvb1ui8KzyJItwHEtp/N5g/ilY6RK9ACMhn
-         PTHmK1eNaV6x2RGYzNkn8DaYYbt85+r5TAqCA4HU9/4aWqin0dPspZHiIquHY2OUsd3r
-         G3AWVcnQ82pP5u5Ymkfh8zrZmTbyEgHkhuVr2hMxknR2iNLXR/7f2+SidFY063o35+ZP
-         Nf1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtENJq7lbGOTFNnEJVyytROoMkjVqD4O8IC0fakQQjfrVFTP/rQWABiyuHVUzSbhs75EVFg0M0JfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqZmoHCDUqPCx19JosN0w9zYVPzoOlfK9CA2xEfTTqZg1bVjkA
-	dCGG88xyTqK4ordhSIKT0+3Yu84ehVVKm/qptJvRNHhjQ018/xGUCE/INQv1R4w=
-X-Gm-Gg: ASbGncvDaNYOkVFxR8TY/JFCgPaqlUK2PWeGS/Zc2i7zpb3pLPB0YMW8DVoD5nLIrtQ
-	SL/w2kbQYFqmdDid7VYNVSZemlEgx8c9Z/TyDT+A0/Ij0LZMf6/nRx/zYlOz9k7gi07pZ2CUd5X
-	JJ5r1XXz2Zt2x2EKkKisndxBYMXlozJmq7zgiFHvLfRMs1f0va1tdMPHHswcDd0VF+kTf8d2EGr
-	ER18KS4g/yx1/yl0JOeEKPZEZAwaP2FybHiwL9O2qWWhxUsohsSllFh9EFKt7+ASYhfuktpcyyg
-	/MIsOvM3egphu3MF/BxOrYOyYhEQgxBQStXbyN39SQ8dsh1MOAGcoWu8780t6au0kbitKWqwLR7
-	FrD2DczvOSNUOwCc/
-X-Google-Smtp-Source: AGHT+IGWip9V7SPf/QghX0+OWBObLNjALVbM+OpWM2YdiKPU4MTIDv5I0WeF92pbW/fXTxQeu5Tp/A==
-X-Received: by 2002:a17:906:3d22:b0:aa5:11be:5703 with SMTP id a640c23a62f3a-aa580f3a76dmr1448724266b.35.1733075254737;
-        Sun, 01 Dec 2024 09:47:34 -0800 (PST)
+        bh=eZ3YHSAuF6GRZeer7tzybOaIp6SswmD+4eSpj3aybE0=;
+        b=sQPXARts757QIsA5Y45uZnuL6HI8WLChLlKyxzS/Z0gchttNiUqnIGpqxcEES2wS/k
+         u/UVoKhnHYjLZsb4s0rK646Bww4C3MoPdk0mhIHbnyZA9DxF/T8TIsSY9Ii5QSasy7wq
+         uFRCR8pHZsZdEdy94Az43kHO8cEtExn/PPf4a1caOysnsHcCryNCfigUVDYcimkTGaFF
+         5SC9QoATBhu5NcYG+uaaMlNjIqrH6JhFilQDPjPexKFz/bInGdPcVfhThBMC0GFvoCI9
+         L9Lx1QYexSO0AQpWfyXL8QDOS9obHg79OKPMF3dWuuyMLcfLt+D60PBEOp/6cRG2ByOn
+         VvoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYiFaPXPq6P+zsz89vwEm59Hm5opM6YK/H4adf27zEf0crWDlv1eM2Vc4HXOANwMekYgpH82t83C4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynbWm5U5VNnOSDy5c+WEelUNeDtt8yAqOGjkeFovGZP6ayhA3i
+	kd5UqCuRr0P33clnexylIM8yBVYCi+l0KRTi2ZwR43E3P+rb2AZ/L/ZrqGElR0Q=
+X-Gm-Gg: ASbGncvHwi/MnxETlpbuPaw3uo5xT8fmRZbRlY1dAVUtZGCWNpJDuQ+qzGzFBQL0XM6
+	i6lAjajXZ50v/jAgEjVp4l1PA18eDuKEEa4Su1j90o2Sa21fffIZyRdIJFQlrACtAPbID89vesz
+	PQ+DgUZd0FyHDXIBjO/HqGKRxZtI/lAHYNVse12XYRx2Bu62TE+5t58IpJTIDEks+pQgcd8gq+s
+	FKArKCHt7uiM1NWwu/h6fkcccPDnFFNJElpkOrrnhGTUTcJda9VOs3ukSyaaVlDL0Zw0YIVaN7m
+	OiXogRAm1t776/a/iqwTkD+Fww166xeQKpvPK/Yv1U8MZxMXdL7muLBAFtgC6onPCBe/8qsdDzV
+	ZnHe6zG4oCs9wP2lk
+X-Google-Smtp-Source: AGHT+IGzjP2fqXTt6+l7OVN5JKc8cizq18lY5oJ6KQTBWwgFH+n4/LFwzMSUmqzkFa0IBPwW9Wme7g==
+X-Received: by 2002:a05:6402:270d:b0:5d0:d2ed:ebb with SMTP id 4fb4d7f45d1cf-5d0d2ed103fmr8950481a12.3.1733075257612;
+        Sun, 01 Dec 2024 09:47:37 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-54-94-193.retail.telecomitalia.it. [82.54.94.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a78esm415220066b.163.2024.12.01.09.47.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a78esm415220066b.163.2024.12.01.09.47.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 09:47:34 -0800 (PST)
+        Sun, 01 Dec 2024 09:47:36 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
 	Abel Vesa <abelvesa@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Peng Fan <peng.fan@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Shawn Guo <shawnguo@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v4 10/18] dt-bindings: clock: imx8mp: add binding definitions for anatop
-Date: Sun,  1 Dec 2024 18:46:10 +0100
-Message-ID: <20241201174639.742000-11-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v4 11/18] clk: imx: add hw API imx8m_anatop_get_clk_hw
+Date: Sun,  1 Dec 2024 18:46:11 +0100
+Message-ID: <20241201174639.742000-12-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241201174639.742000-1-dario.binacchi@amarulasolutions.com>
 References: <20241201174639.742000-1-dario.binacchi@amarulasolutions.com>
@@ -88,7 +84,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the bindings definitions for the anatop node. The patch is
+Get the hw of a clock registered by the anatop module. This function is
 preparatory for future developments.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
@@ -99,86 +95,60 @@ Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 (no changes since v1)
 
- include/dt-bindings/clock/imx8mp-clock.h | 70 ++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ drivers/clk/imx/clk.c | 26 ++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h |  6 ++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index 0601df6c8d38..39e4ad470927 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -401,4 +401,74 @@
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index df83bd939492..8a8473a77b7c 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -128,6 +128,32 @@ struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name)
+ }
+ EXPORT_SYMBOL_GPL(imx_get_clk_hw_by_name);
  
- #define IMX8MP_CLK_AUDIOMIX_END			59
- 
-+#define IMX8MP_ANATOP_CLK_DUMMY			0
-+#define IMX8MP_ANATOP_CLK_24M			1
-+#define IMX8MP_ANATOP_CLK_32K			2
-+#define IMX8MP_ANATOP_AUDIO_PLL1_REF_SEL	3
-+#define IMX8MP_ANATOP_AUDIO_PLL2_REF_SEL	4
-+#define IMX8MP_ANATOP_VIDEO_PLL_REF_SEL		5
-+#define IMX8MP_ANATOP_DRAM_PLL_REF_SEL		6
-+#define IMX8MP_ANATOP_GPU_PLL_REF_SEL		7
-+#define IMX8MP_ANATOP_VPU_PLL_REF_SEL		8
-+#define IMX8MP_ANATOP_ARM_PLL_REF_SEL		9
-+#define IMX8MP_ANATOP_SYS_PLL1_REF_SEL		10
-+#define IMX8MP_ANATOP_SYS_PLL2_REF_SEL		11
-+#define IMX8MP_ANATOP_SYS_PLL3_REF_SEL		12
-+#define IMX8MP_ANATOP_AUDIO_PLL1		13
-+#define IMX8MP_ANATOP_AUDIO_PLL2		14
-+#define IMX8MP_ANATOP_VIDEO_PLL			15
-+#define IMX8MP_ANATOP_DRAM_PLL			16
-+#define IMX8MP_ANATOP_GPU_PLL			17
-+#define IMX8MP_ANATOP_VPU_PLL			18
-+#define IMX8MP_ANATOP_ARM_PLL			19
-+#define IMX8MP_ANATOP_SYS_PLL1			20
-+#define IMX8MP_ANATOP_SYS_PLL2			21
-+#define IMX8MP_ANATOP_SYS_PLL3			22
-+#define IMX8MP_ANATOP_AUDIO_PLL1_BYPASS		23
-+#define IMX8MP_ANATOP_AUDIO_PLL2_BYPASS		24
-+#define IMX8MP_ANATOP_VIDEO_PLL_BYPASS		25
-+#define IMX8MP_ANATOP_DRAM_PLL_BYPASS		26
-+#define IMX8MP_ANATOP_GPU_PLL_BYPASS		27
-+#define IMX8MP_ANATOP_VPU_PLL_BYPASS		28
-+#define IMX8MP_ANATOP_ARM_PLL_BYPASS		29
-+#define IMX8MP_ANATOP_SYS_PLL1_BYPASS		30
-+#define IMX8MP_ANATOP_SYS_PLL2_BYPASS		31
-+#define IMX8MP_ANATOP_SYS_PLL3_BYPASS		32
-+#define IMX8MP_ANATOP_AUDIO_PLL1_OUT		33
-+#define IMX8MP_ANATOP_AUDIO_PLL2_OUT		34
-+#define IMX8MP_ANATOP_VIDEO_PLL_OUT		35
-+#define IMX8MP_ANATOP_DRAM_PLL_OUT		36
-+#define IMX8MP_ANATOP_GPU_PLL_OUT		37
-+#define IMX8MP_ANATOP_VPU_PLL_OUT		38
-+#define IMX8MP_ANATOP_ARM_PLL_OUT		39
-+#define IMX8MP_ANATOP_SYS_PLL3_OUT		40
-+#define IMX8MP_ANATOP_SYS_PLL1_OUT		41
-+#define IMX8MP_ANATOP_SYS_PLL1_40M		42
-+#define IMX8MP_ANATOP_SYS_PLL1_80M		43
-+#define IMX8MP_ANATOP_SYS_PLL1_100M		44
-+#define IMX8MP_ANATOP_SYS_PLL1_133M		45
-+#define IMX8MP_ANATOP_SYS_PLL1_160M		46
-+#define IMX8MP_ANATOP_SYS_PLL1_200M		47
-+#define IMX8MP_ANATOP_SYS_PLL1_266M		48
-+#define IMX8MP_ANATOP_SYS_PLL1_400M		49
-+#define IMX8MP_ANATOP_SYS_PLL1_800M		50
-+#define IMX8MP_ANATOP_SYS_PLL2_OUT		51
-+#define IMX8MP_ANATOP_SYS_PLL2_50M		52
-+#define IMX8MP_ANATOP_SYS_PLL2_100M		53
-+#define IMX8MP_ANATOP_SYS_PLL2_125M		54
-+#define IMX8MP_ANATOP_SYS_PLL2_166M		55
-+#define IMX8MP_ANATOP_SYS_PLL2_200M		56
-+#define IMX8MP_ANATOP_SYS_PLL2_250M		57
-+#define IMX8MP_ANATOP_SYS_PLL2_333M		58
-+#define IMX8MP_ANATOP_SYS_PLL2_500M		59
-+#define IMX8MP_ANATOP_SYS_PLL2_1000M		60
-+#define IMX8MP_ANATOP_CLK_CLKOUT1_SEL		61
-+#define IMX8MP_ANATOP_CLK_CLKOUT1_DIV		62
-+#define IMX8MP_ANATOP_CLK_CLKOUT1		63
-+#define IMX8MP_ANATOP_CLK_CLKOUT2_SEL		64
-+#define IMX8MP_ANATOP_CLK_CLKOUT2_DIV		65
-+#define IMX8MP_ANATOP_CLK_CLKOUT2		66
++#if defined(CONFIG_CLK_IMX8MM) || defined(CONFIG_CLK_IMX8MN) || \
++	defined(CONFIG_CLK_IMX8MP) || defined(CONFIG_CLK_IMX8MQ)
++struct clk_hw *imx8m_anatop_get_clk_hw(int id)
++{
++#if defined(CONFIG_CLK_IMX8MQ)
++	const char *compatible = "fsl,imx8mq-anatop";
++#else
++	const char *compatible = "fsl,imx8mm-anatop";
++#endif
++	struct device_node *np;
++	struct of_phandle_args args;
++	struct clk_hw *hw;
 +
-+#define IMX8MP_ANATOP_CLK_END			67
++	np = of_find_compatible_node(NULL, NULL, compatible);
++	args.np = np;
++	args.args_count = 1;
++	args.args[0] = id;
++	of_node_put(np);
++
++	hw = __clk_get_hw(of_clk_get_from_provider(&args));
++	pr_debug("%s: got clk: %s\n", __func__, clk_hw_get_name(hw));
++	return hw;
++}
++EXPORT_SYMBOL_GPL(imx8m_anatop_get_clk_hw);
++#endif
++
+ /*
+  * This fixups the register CCM_CSCMR1 write value.
+  * The write/read/divider values of the aclk_podf field
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index aa5202f284f3..6b6af26f4f1e 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -487,4 +487,10 @@ struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
+ 			       u32 reg, const char **parent_names,
+ 			       u8 num_parents, const u32 *mux_table, u32 mask);
+ 
++
++#if defined(CONFIG_CLK_IMX8MM) || defined(CONFIG_CLK_IMX8MN) || \
++	defined(CONFIG_CLK_IMX8MP) || defined(CONFIG_CLK_IMX8MQ)
++struct clk_hw *imx8m_anatop_get_clk_hw(int id);
++#endif
 +
  #endif
 -- 
