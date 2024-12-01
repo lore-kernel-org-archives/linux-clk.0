@@ -1,82 +1,78 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4CE1DDC2C
-	for <linux-clk@vger.kernel.org>; Sun,  1 Dec 2024 17:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88261DE4ED
+	for <linux-clk@vger.kernel.org>; Sun,  1 Dec 2024 17:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733075264; cv=none; b=nTJxH8Fus/4e+ltqtaqFtP6aCFO39yIejZVC5DW3w+TODh9HqxZuPuFX4oMmXNA8+n5HrRg0NVlTbafPNSzz/Xg32DWx5oKna8ocoeN1vvj9BfuIxcenPHlm/7xnEX7MftLc0Ga3clAB+yoClLZjGPqOdCPLywOd3ABtX8n3nFM=
+	t=1733075275; cv=none; b=C3tOQeKrTgBY7zqqIkdKt4jYXkAQIj7m3iaaqggd6DUZOecwfSKStl/qcOrsuRihdL+9A4+arFtB3hp52CT7nRkkq9ybFA2mXYwnMlrrvcp8phKUQw1b4+JOCkNFMFBLEdG8XFOXc90KTwNUjbIXAIULq0jIvF6Q2lhRP7V+fAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733075264; c=relaxed/simple;
-	bh=i+zaQKGw+SJKrdqETRU8S6D5mn97fzLB2huk0KC7t7E=;
+	s=arc-20240116; t=1733075275; c=relaxed/simple;
+	bh=aK/8juuW7QVGSAQiYHJPYDAyivzX/oyropbSi4Hokt8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YrPuXwhFIk/JO0/8Of2c8u8DXa0/J/zp1WHqg7SZXpHFMf7WZg5eKbQ6pKPkssxKHK7PEiQyAwIlVuqAR2cfdTCLSlS2gabVa28IwXetZ09ZoAwAd8gQZby3Ol1g/cFHUvIBu9t+CjpJ0uFXvPYhx7uUdrM1/z1HQlLOrmlu3sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=TdXRAtwe; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version; b=LtOGTl/78EVPRqdPuBPlQUMjFZElY8PpdnSi1nWw6/G5iTmptjA+isgRL8GnD4imhZ9pWlSRAChdzsFPWlQv8fF0q9NrMGMpSKswnzySTGnopZ+gxFa4ZBWRuOCYptdK8sMuRuvJm2/fIZnWpGh0pDh1ZedvxbQPRHyViWak/mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=omUxwops; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TdXRAtwe"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa549f2fa32so548020966b.0
-        for <linux-clk@vger.kernel.org>; Sun, 01 Dec 2024 09:47:41 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="omUxwops"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d0c7c8cd6cso2437107a12.0
+        for <linux-clk@vger.kernel.org>; Sun, 01 Dec 2024 09:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1733075260; x=1733680060; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1733075272; x=1733680072; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B8Mnl1funP026bpupc6kClrugt4oD6R0yljLualdHeA=;
-        b=TdXRAtwedXGz/VxnGAzSId548nGsSo4FiAhzNxCEnpvXo2MziF5KONrLvzuy2U8x0B
-         OxpsJzoo+EPImiuLg4CM8qSasIW+mZk5ytJU4q21Ao/mjXDVlOm8ubA3MKjmMvKJvrIw
-         sKo3X/nQtc3oQccs9QPfUgHZ3xOwtTrH3eIgE=
+        bh=KkX+s5EHVn/U/f89vXhboloGzSq+GXoMTZ4AsN/1EgI=;
+        b=omUxwopsBn0yrIqi6RDjYpRR6NIx9PqTAnNW5A/ax9eJNg9qUkaU2VK18L1YymoEOV
+         so/5DzRHdHq/QXd0KmmYDQ+JvLAbGOVt57jwIwuqvGIP84xuJanbeoDrNOjWb5Dgr+I4
+         1cw0sxNlF1bEj+UufqcVvwuELH0tTmTGR6mDo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733075260; x=1733680060;
+        d=1e100.net; s=20230601; t=1733075272; x=1733680072;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B8Mnl1funP026bpupc6kClrugt4oD6R0yljLualdHeA=;
-        b=oLTg4gNr2qi6l0ZhIwneHHzmOLFTy7PTYBe7646gbhcpF0O7RS/QsJs6aSTjAYNsBf
-         f5ELSrpzpAvdZg6of8oGhX+VR2rcL4nIKA/Y1mAyNSzIFnbvRkSuioow5Q2zRnn+jtcr
-         sxArpNBWyZtR9Yki2DjqREdlV3CyLGWpThSOeJyLYJavbFn4zlHg5vosm4SpHBWfQJAS
-         KgEMzTRpGfGyQ16yBK9eGP7idgujfcsbs67KYFsvPWnmpVEFdVulsjMaHtPXDqKcMTy0
-         Rlo3PxvqhZROTtJWBMnJQKyhU6hNHUGz6XSovgoH34mkTIKoC3SAVbcYQHlXHrwNIbD1
-         CIjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjQ9DIBl51yaK3MQg0a4Og3lC+3wqaCGgEQ8wSQrOfC+S3b2p/PF0pr0o9KL02RyWD74UTNB3/nxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjybacnsiUQRYPGInLSb80ij94GjSdpsotTFfUKA8ZzYrIYnPe
-	LAOum3t5QWl6Ja/wAqvdLyWFg7N0PhEsZABQXAbst24xYa8BCgWMwoADO4MHesM=
-X-Gm-Gg: ASbGncuhwxl8scp7e01FS2iQF4DoMrgMWkyKAgTWhU3kKke6LpvlA6A/xCMEiuMxRbK
-	RfMCFdn6Ig2514RtAFh5n/sKo1Q7phJFdfXWZHhAs8Hgct/uhXOEbnKiv28uWeXthKVrkVVhNCM
-	4+t40I8eBpercPrbYQRfYcC8FLEg2VUgnqrQokBUS4xWSaOtFy9tPSxu3Q3tHJNMHo/OwaYTBeL
-	/IOxZvBRQE5Lla2bQIx18ygv5JGeuSUKkLA6vxt/6qzJ1CcL+1VmUntnoH6lbpGGTbj4zbbXBCv
-	co1nrnJtof4s2xZEMiMqtAvj6e6ovfm2Phlb+e3V56lFejYEOXk8UyVO/gvWe9WIggwH/MRWmBO
-	00Zkjdp9ccNIkpzVh
-X-Google-Smtp-Source: AGHT+IFV72Xrog96l7fs/EfUFu2CelIfYRaRPp9iwFgjtNC+Uq3ekIXkP8zlYtkGxH0RM/aN9S5fHg==
-X-Received: by 2002:a17:906:2921:b0:aa5:2232:c8d2 with SMTP id a640c23a62f3a-aa580ef31c1mr1541928666b.10.1733075260573;
-        Sun, 01 Dec 2024 09:47:40 -0800 (PST)
+        bh=KkX+s5EHVn/U/f89vXhboloGzSq+GXoMTZ4AsN/1EgI=;
+        b=bOPtl21QTxQa8kFfn8WKqnLsSZvNdRtuleL3oCVH+KVLCS+7bSHH3t9fxlu95leFRT
+         m9LxqSAGUSVR9Qq4W4I/nf9ZeYxUDS31QCIQ6RDSpwNr/g5MOJvs9IcVmEog858GSNFb
+         uR0LK105x1HODV18ge7lh7DCuBE8Ar0pLp3b4y43HOAN3hK+I2XaKvukhUffCjHzVffr
+         H2ydJszj8+N2cVzIdQYcVVJha3Of2gucRKsAC9zcECp1X5YpKZWkE43kNa29IrtX7arD
+         NiKWqUrua9LIwOO4Ai6durhzt+qj+WBjsPeLuFJ2c8CYOuq8NvW7TeBZvAsofrIxsruN
+         yIJg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+yZ7DRlurs+NYLsNCyS10oIyrzOalIQHiUY1cUcyEnBSQfS7BP9q/XEmtDNMJXA7zwleywD6swBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvAAIiE333+bzaXZG4/KU58l7sJPHXNQvldr1Y+biUuxzKqFxP
+	K/RhaeTspIKq4qpRz/LQ7brX5nj8eFTXQ09BNzgJnfDlfeqm+QxcCkF+nlbWKRY=
+X-Gm-Gg: ASbGncudvQiNl+0KOmKsSzrjzVIfYa8JCDdKP6rc7S7ex8YRDBog39uY3S+D9tl606C
+	pXonCtPSGs1fP5Al5/gd9ZeIPD1SB82fpum+TXZOtRIX0VAZTVMN1m6PIBwBVOhKXJe9rz2VvCa
+	bJNUlkFp4fnwSNtNm4ZjQjIU8EOUsVpdZDbAxu9ydelMMEiH6ObsJrZASQHs+YyZgsKZwYzsV3t
+	j2Uuq2oRzL3zTMC2GbhYif9AsERXb03DcFy6uzrRlFrXAykgo/C/AfGu6KaVIFR5ku4HLZ1B8mr
+	mGB+DlZDIyz7vVXCJ2wRNlfLsKdYMewb6pNKAkXVEv1zHJ5LLdCQ+sPeYSKBgappzHDP/N0rDpz
+	Zw7iTjPadguP2RMQW
+X-Google-Smtp-Source: AGHT+IF08jfHLRmXZ7Szt3i4A/3eiBp6wsc5YHFkMKK2MCTIzZC7tiGx6WvaEViBr4STlAAenUlT4g==
+X-Received: by 2002:a17:907:9494:b0:aa5:63a0:5d97 with SMTP id a640c23a62f3a-aa5945cdbdcmr2003825166b.13.1733075272328;
+        Sun, 01 Dec 2024 09:47:52 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-54-94-193.retail.telecomitalia.it. [82.54.94.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a78esm415220066b.163.2024.12.01.09.47.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a78esm415220066b.163.2024.12.01.09.47.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 09:47:40 -0800 (PST)
+        Sun, 01 Dec 2024 09:47:51 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
 	Abel Vesa <abelvesa@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Peng Fan <peng.fan@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Shawn Guo <shawnguo@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v4 13/18] dt-bindings: clock: imx8m-clock: support spread spectrum clocking
-Date: Sun,  1 Dec 2024 18:46:13 +0100
-Message-ID: <20241201174639.742000-14-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v4 17/18] clk: imx: pll14xx: support spread spectrum clock generation
+Date: Sun,  1 Dec 2024 18:46:17 +0100
+Message-ID: <20241201174639.742000-18-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241201174639.742000-1-dario.binacchi@amarulasolutions.com>
 References: <20241201174639.742000-1-dario.binacchi@amarulasolutions.com>
@@ -88,169 +84,227 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patch adds the DT bindings for enabling and tuning spread spectrum
-clocking generation.
+Add support for spread spectrum clock (SSC) generation to the pll14xxx
+driver.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-
- - Drop "fsl,ssc-clocks" property. The other added properties now refer
-   to the clock list.
- - Updated minItems and maxItems of
-   - clocks
-   - clock-names
-   - fsl,ssc-modfreq-hz
-   - fsl,ssc-modrate-percent
-   - fsl,ssc-modmethod
- - Updated the dts examples
-
- - Added in v3
- - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
-   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
-   indeed more or less a syscon, so it represents a memory area
-   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
-
- - Add "allOf:" and place it after "required:" block, like in the
-   example schema.
- - Move the properties definition to the top-level.
- - Drop unit types as requested by the "make dt_binding_check" command.
-
 ---
 
 (no changes since v1)
 
- .../bindings/clock/imx8m-clock.yaml           | 77 +++++++++++++++++--
- 1 file changed, 71 insertions(+), 6 deletions(-)
+ drivers/clk/imx/clk-pll14xx.c | 127 ++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h         |  16 +++++
+ 2 files changed, 143 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-index c643d4a81478..83036f6d2274 100644
---- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-@@ -29,12 +29,12 @@ properties:
-     maxItems: 2
- 
-   clocks:
--    minItems: 6
--    maxItems: 7
-+    minItems: 7
-+    maxItems: 10
- 
-   clock-names:
--    minItems: 6
--    maxItems: 7
-+    minItems: 7
-+    maxItems: 10
- 
-   '#clock-cells':
-     const: 1
-@@ -43,6 +43,34 @@ properties:
-       ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
-       for the full list of i.MX8M clock IDs.
- 
-+  fsl,ssc-modfreq-hz:
-+    description:
-+      The values of modulation frequency (Hz unit) for each clock
-+      supporting spread spectrum.
-+    minItems: 7
-+    maxItems: 10
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index d63564dbb12c..b07c59fd659a 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -20,6 +20,8 @@
+ #define GNRL_CTL	0x0
+ #define DIV_CTL0	0x4
+ #define DIV_CTL1	0x8
++#define SSCG_CTRL	0xc
 +
-+  fsl,ssc-modrate-percent:
-+    description:
-+      The percentage values of modulation rate for each clock
-+      supporting spread spectrum.
-+    minItems: 7
-+    maxItems: 10
-+
-+  fsl,ssc-modmethod:
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+    description:
-+      The modulation techniques for each clock supporting spread
-+      spectrum.
-+    minItems: 7
-+    maxItems: 10
-+    items:
-+      enum:
-+        - ""
-+        - down-spread
-+        - up-spread
-+        - center-spread
-+
- required:
-   - compatible
-   - reg
-@@ -76,6 +104,10 @@ allOf:
-             - const: clk_ext2
-             - const: clk_ext3
-             - const: clk_ext4
-+        fsl,ssc-modfreq-hz: false
-+        fsl,ssc-modrate-percent: false
-+        fsl,ssc-modmethod: false
-+
-     else:
-       properties:
-         clocks:
-@@ -86,6 +118,10 @@ allOf:
-             - description: ext2 clock input
-             - description: ext3 clock input
-             - description: ext4 clock input
-+            - description: audio1 PLL input
-+            - description: audio2 PLL input
-+            - description: dram PLL input
-+            - description: video PLL input
+ #define LOCK_STATUS	BIT(31)
+ #define LOCK_SEL_MASK	BIT(29)
+ #define CLKE_MASK	BIT(11)
+@@ -31,6 +33,10 @@
+ #define KDIV_MASK	GENMASK(15, 0)
+ #define KDIV_MIN	SHRT_MIN
+ #define KDIV_MAX	SHRT_MAX
++#define SSCG_ENABLE	BIT(31)
++#define MFREQ_CTL_MASK	GENMASK(19, 12)
++#define MRAT_CTL_MASK	GENMASK(9, 4)
++#define SEL_PF_MASK	GENMASK(1, 0)
  
-         clock-names:
-           items:
-@@ -95,20 +131,49 @@ allOf:
-             - const: clk_ext2
-             - const: clk_ext3
-             - const: clk_ext4
-+            - const: audio_pll1
-+            - const: audio_pll2
-+            - const: dram_pll
-+            - const: video_pll
+ #define LOCK_TIMEOUT_US		10000
  
- additionalProperties: false
+@@ -40,6 +46,8 @@ struct clk_pll14xx {
+ 	enum imx_pll14xx_type		type;
+ 	const struct imx_pll14xx_rate_table *rate_table;
+ 	int rate_count;
++	bool                            ssc_enable;
++	struct imx_pll14xx_ssc		ssc_conf;
+ };
  
- examples:
-   # Clock Control Module node:
-   - |
-+    #include <dt-bindings/clock/imx8mm-clock.h>
+ #define to_clk_pll14xx(_hw) container_of(_hw, struct clk_pll14xx, hw)
+@@ -347,6 +355,27 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	return 0;
+ }
+ 
++static void clk_pll1443x_enable_ssc(struct clk_hw *hw, unsigned long parent_rate,
++				    unsigned int pdiv, unsigned int mdiv)
++{
++	struct clk_pll14xx *pll = to_clk_pll14xx(hw);
++	struct imx_pll14xx_ssc *conf = &pll->ssc_conf;
++	u32 sscg_ctrl, mfr, mrr;
 +
-     clock-controller@30380000 {
-         compatible = "fsl,imx8mm-ccm";
-         reg = <0x30380000 0x10000>;
-         #clock-cells = <1>;
-         clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
--                 <&clk_ext3>, <&clk_ext4>;
-+                 <&clk_ext3>, <&clk_ext4>,
-+                 <&anatop IMX8MM_ANATOP_AUDIO_PLL1>,
-+                 <&anatop IMX8MM_ANATOP_AUDIO_PLL1>,
-+                 <&anatop IMX8MM_ANATOP_DRAM_PLL>,
-+                 <&anatop IMX8MM_ANATOP_VIDEO_PLL>;
-         clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
--                      "clk_ext3", "clk_ext4";
-+                      "clk_ext3", "clk_ext4", "audio_pll1", "audio_pll2",
-+                      "dram_pll", "video_pll";
-+        fsl,ssc-modfreq-hz = <0>, <0>, <0>, <0>,
-+                             <0>, <0>,
-+                             <6818>,
-+                             <0>,
-+                             <0>,
-+                             <2419>;
-+        fsl,ssc-modrate-percent = <0>, <0>, <0>, <0>,
-+                             <0>, <0>,
-+                             <3>,
-+                             <0>,
-+                             <0>,
-+                             <7>;
-+        fsl,ssc-modmethod = "", "", "", "",
-+                            "", "",
-+                            "down-spread",
-+                            "",
-+                            "",
-+                            "center-spread";
-     };
++	sscg_ctrl = readl_relaxed(pll->base + SSCG_CTRL);
++	sscg_ctrl &=
++		~(SSCG_ENABLE | MFREQ_CTL_MASK | MRAT_CTL_MASK | SEL_PF_MASK);
++
++	mfr = parent_rate / (conf->mod_freq * pdiv * (1 << 5));
++	mrr = (conf->mod_rate * mdiv * (1 << 6)) / (100 * mfr);
++
++	sscg_ctrl |= SSCG_ENABLE | FIELD_PREP(MFREQ_CTL_MASK, mfr) |
++		FIELD_PREP(MRAT_CTL_MASK, mrr) |
++		FIELD_PREP(SEL_PF_MASK, conf->mod_type);
++
++	writel_relaxed(sscg_ctrl, pll->base + SSCG_CTRL);
++}
++
+ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 				 unsigned long prate)
+ {
+@@ -368,6 +397,9 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		writel_relaxed(FIELD_PREP(KDIV_MASK, rate.kdiv),
+ 			       pll->base + DIV_CTL1);
  
-   - |
++		if (pll->ssc_enable)
++			clk_pll1443x_enable_ssc(hw, prate, rate.pdiv, rate.mdiv);
++
+ 		return 0;
+ 	}
+ 
+@@ -408,6 +440,9 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	gnrl_ctl &= ~BYPASS_MASK;
+ 	writel_relaxed(gnrl_ctl, pll->base + GNRL_CTL);
+ 
++	if (pll->ssc_enable)
++		clk_pll1443x_enable_ssc(hw, prate, rate.pdiv, rate.mdiv);
++
+ 	return 0;
+ }
+ 
+@@ -542,3 +577,95 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
+ 	return hw;
+ }
+ EXPORT_SYMBOL_GPL(imx_dev_clk_hw_pll14xx);
++
++void imx_clk_pll14xx_enable_ssc(struct clk_hw *hw, struct imx_pll14xx_ssc *conf)
++{
++	struct clk_pll14xx *pll = to_clk_pll14xx(hw);
++
++	pll->ssc_enable = true;
++	memcpy(&pll->ssc_conf, conf, sizeof(pll->ssc_conf));
++}
++EXPORT_SYMBOL_GPL(imx_clk_pll14xx_enable_ssc);
++
++static int clk_pll14xx_ssc_mod_type(const char *name,
++				    enum imx_pll14xx_ssc_mod_type *mod_type)
++{
++	int i;
++	struct {
++		const char *name;
++		enum imx_pll14xx_ssc_mod_type id;
++	} mod_types[] = {
++		{ .name = "down-spread", .id = IMX_PLL14XX_SSC_DOWN_SPREAD },
++		{ .name = "up-spread", .id = IMX_PLL14XX_SSC_UP_SPREAD },
++		{ .name = "center-spread", .id = IMX_PLL14XX_SSC_CENTER_SPREAD }
++	};
++
++	pr_info("%s, name: %s\n", __func__, name);
++	for (i = 0; i < ARRAY_SIZE(mod_types); i++) {
++		if (!strcmp(name, mod_types[i].name)) {
++			*mod_type = mod_types[i].id;
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++int imx_clk_pll14xx_ssc_parse_dt(struct device_node *np, const char *pll_name,
++				 struct imx_pll14xx_ssc *conf)
++{
++	int i, ret, num_clks;
++	const char *s;
++
++	if (!conf)
++		return -EINVAL;
++
++	ret = of_property_count_strings(np, "clock-names");
++	if (ret < 0)
++		return ret;
++
++	num_clks = ret;
++	for (i = 0; i < num_clks; i++) {
++		ret = of_property_read_string_index(np, "clock-names", i, &s);
++		if (strcmp(pll_name, s))
++			continue;
++
++		ret = of_property_read_u32_index(np, "fsl,ssc-modfreq-hz", i,
++						 &conf->mod_freq);
++		if (ret)
++			return ret;
++
++		ret = of_property_read_u32_index(np, "fsl,ssc-modrate-percent", i,
++						 &conf->mod_rate);
++		if (ret) {
++			pr_err("missing fsl,ssc-modrate-percent property for %pOFn\n",
++			       np);
++			return ret;
++		}
++
++		ret = of_property_read_string_index(np, "fsl,ssc-modmethod", i, &s);
++		if (ret) {
++			pr_err("failed to get fsl,ssc-modmethod property for %pOFn\n",
++			       np);
++			return ret;
++		}
++
++		if (strlen(s) == 0)
++			return -ENODEV;
++
++		ret = clk_pll14xx_ssc_mod_type(s, &conf->mod_type);
++		if (ret) {
++			pr_err("wrong fsl,ssc-modmethod property for %pOFn\n", np);
++			return ret;
++
++		}
++
++		pr_debug("%s: mod_freq: %d, mod_rate: %d: mod_method: %s [%d]\n",
++			 __func__, conf->mod_freq, conf->mod_rate, s, conf->mod_type);
++
++		return 0;
++	}
++
++	return -ENODEV;
++}
++EXPORT_SYMBOL_GPL(imx_clk_pll14xx_ssc_parse_dt);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 6b6af26f4f1e..dad6e90c7dc0 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -69,6 +69,18 @@ struct imx_pll14xx_clk {
+ 	int flags;
+ };
+ 
++enum imx_pll14xx_ssc_mod_type {
++	IMX_PLL14XX_SSC_DOWN_SPREAD,
++	IMX_PLL14XX_SSC_UP_SPREAD,
++	IMX_PLL14XX_SSC_CENTER_SPREAD,
++};
++
++struct imx_pll14xx_ssc {
++	unsigned int mod_freq;
++	unsigned int mod_rate;
++	enum imx_pll14xx_ssc_mod_type mod_type;
++};
++
+ extern struct imx_pll14xx_clk imx_1416x_pll;
+ extern struct imx_pll14xx_clk imx_1443x_pll;
+ extern struct imx_pll14xx_clk imx_1443x_dram_pll;
+@@ -493,4 +505,8 @@ struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
+ struct clk_hw *imx8m_anatop_get_clk_hw(int id);
+ #endif
+ 
++void imx_clk_pll14xx_enable_ssc(struct clk_hw *hw, struct imx_pll14xx_ssc *conf);
++int imx_clk_pll14xx_ssc_parse_dt(struct device_node *np, const char *pll_name,
++				 struct imx_pll14xx_ssc *conf);
++
+ #endif
 -- 
 2.43.0
 
