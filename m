@@ -1,111 +1,108 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D213720967B
-	for <linux-clk@vger.kernel.org>; Mon,  2 Dec 2024 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4320207A27
+	for <linux-clk@vger.kernel.org>; Mon,  2 Dec 2024 15:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153049; cv=none; b=mwEynOFjlyGHibuU1zqdgvfjIT9YLJh6msXXwuBt7VTh1dm3TJBjeHQ02nOgIRYa2WRBZZ2J0DO96bjDjd9HbAbTiyxvbk8LlL2t8rNlBBeoUHUKHVr2be4nQzWncv0pbjHHj0MXwK7F8fy0BvfnR/S1Hbt17QENNPZmqE5M5Og=
+	t=1733153409; cv=none; b=hXvAJy1Q22yFuWAjpQSsVLgm7rEUSD1IpN7gK0gyxNhRjjwObXORIXr+LXduQ1WQQbPX+tQTIWc6XmY944f6vy4YWecFCIkm2gLA/7qEIxopC4CjkW12VaIbtFQaMi9gYLi0sPKuRX7BShVtzj8K1Lu3p2IaTT8/I0duxzkIduc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153049; c=relaxed/simple;
-	bh=+Xl8s91uz6z0166yhunqPMLThqhGtXNxm6DGP1hGyaY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kxOQ11jfRxdh4j+afitkYkW9ItOD/eMNOZr4v4QxXXbbwwk5AERJopoNgSj/el7t8N0501jHdMrDEvBdk/S5yFnlsagHxU+8WyzrVgSZp7L6vwsvAJ1uafbdGAticlR764Vg5YWYdkUDOCvn3rwpGpSqbFweY+nv4VPdj30xh4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k5Lk6NCL; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733153409; c=relaxed/simple;
+	bh=4xxCGmBo7FQG0p5BmYqe1NOagdrpfXWw9XcSG+Ugioo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D38r7MVfHww8Ys4RO+SahUaJklf6Ovps6KFYYhgAdMsp68BC5zHew1QRKt3bxqo3YOMo1Ifpc8vu50+KdGzAV+buwLlclJSksZqHnLH3MDz2ei+A7jFJlMIJYXo5W2kYNRwD9gSEu0SwGhPtZQQLd3MjrJKJBnWM4/l/P7DtM7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=QJrAvFU9; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k5Lk6NCL"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e3970ac2dddso3383140276.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Dec 2024 07:24:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="QJrAvFU9"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43494a20379so35879545e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Dec 2024 07:30:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733153047; x=1733757847; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMx9usLc+8H+1O3Ux5r/Qz56sk5GB2iRle+hBCjO6+0=;
-        b=k5Lk6NCL/Q9S2n2SD7XUQy3GgjWsjcXzD2V/+giR9rhAUrOGGCsMQ/r8/8dAPLYGsW
-         ulCSdELHI1aTBluKfiDycsvm82o8sgvRyGtiXYSAGP0/WxrT27xmDDDgbwE+M/CCvKEd
-         0uh4t60+ULG1Ks4uJ4LNZYFklbSa+BPzal9TSB/GfYKX+XXRNKkYMor2pa3wur1kOHlS
-         FwhQtAJpO5o9tSZUZtX+ynvGl4TSVftm5BgyNchSRDtjBsudY0vkHF6+9NmXWz9zclq8
-         x8WgYa44Bx7oS49t0Opu8E+xUy/9ma+sg7UrILv5kSFdznhmNNCq9kHIJbfa2juCgfhX
-         oyJw==
+        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1733153406; x=1733758206; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P8jtIniQHqaGnIfrwCj5iJuQZ/gWHR/Lk4yIJETbzAw=;
+        b=QJrAvFU9PGw4ecwNa9iwbiRcvMsM81tKQr2eYUFLVZkF/qYnhOf9N0FQ58Lnx1mJJH
+         I9lbBL/yQxGzCV1CDfuodaYjDdma6kNDxwlHlnxatZbCKFY07MumOpCV5KAhH5850Ppu
+         grS+FyUAuQTeel53Bn9q1qvvzWyW/d48rXzKaaaBTjCOQ/dukEtLS3VXBC3L/pLelLIm
+         QJmhZ5SCQMp79/q2hgKF0fdvvIZPFEm01BWAQBfwXUz6+rgoOniIXUd/BDdz1s7hW/Vn
+         f5hPDXSFT1XD3rxMAgQwTPkuqfHlOOzCxOXfLgvogec9bUjNWh1tPkzVZQSpnsZSWcCr
+         pE7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733153047; x=1733757847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XMx9usLc+8H+1O3Ux5r/Qz56sk5GB2iRle+hBCjO6+0=;
-        b=DRJzmIiJxO62bsxIY7ApGEPlBpj/p4IRkwCYeulE3SkwDLCKnL/Re3jVhlIB/xDPdj
-         Afxy78oKI21zvhdIsi0mzTbYrsUWt/n+Z4OryApCgSFRpfCiLHNkUmuRRZ61CZIhM3ix
-         2vhUQAeXa1QqmUY0S3UIhg6wOS9NaUMFpaSa74pIg9dChVydR3PrrR/XLLAMrg83urWM
-         kBTc7AVJxrP9wrb9c9HqGkFtycM2X7O50j8+CB4oRUgwVrouApEO9ZYYoXSGgkLcxBTa
-         W743llNOIaGtoIGIouf7iLZvB1m4pEOdnFmTAoZtcKDQhwpJU684EN3Fy0qYJ7j8cxYU
-         3AvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWl0bwCuot4smJ9R3Uaeoe6u7JK4AYOcpwrkr2nMb3cZBWpGl7XxYgenScIlbTOk9RP5F5PX0RygVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMObErdOKRGCcviKQgwqgstD+0NpwE4MISowfXDi38RVLGSMsP
-	Se0klC/uDjfBncYazCP/yezhN+ZxM9VeqwIXESY/W6n3OEBYJ9Wx/PbXq7rT7QcGletYQ0DEU+K
-	lAddLtyt0roCOeyqozGEOSXafBOUh0at+/stRFg==
-X-Gm-Gg: ASbGncs3bGsgMzNZfiQVqycgZl6696DPdrc7mJ/oKowDBUGFuNwVMSIKudD+nSsYlQP
-	lcXOftiXygwk0IoILruxxpzzF5IHzMezl
-X-Google-Smtp-Source: AGHT+IEGJdd9IwF7sSUzoqqAWgtWCRY1a0UMhBwb88ErQOHU8BaxnCWHnPMW9+ru+41yFpFYGuJqHhtoLonEK76JtT0=
-X-Received: by 2002:a05:6902:1895:b0:e30:c614:5c3a with SMTP id
- 3f1490d57ef6-e395b869b78mr21357729276.3.1733153046692; Mon, 02 Dec 2024
- 07:24:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733153406; x=1733758206;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P8jtIniQHqaGnIfrwCj5iJuQZ/gWHR/Lk4yIJETbzAw=;
+        b=w8Gn8OPwXKhxSIAzNVt4vSt7K42q1dwuqPk+QCHivkrhO275T50ajcHgE1YBQCNX1R
+         lm1LBB+8QgukWFSELpOpjnso3GE5DfWx9Xo1LH5rju0e6rT29SEL/J0Azf9N/jNerbKH
+         k5jAErt9mpYPLmRXuXMX+3P2gay6ODz34RdXaH+ctF9RW3/cVvdCF64x/XfkXo0VgQiL
+         EZknvZGvkxhYov2dtM2I2kYKb4NHbbOBzWZiqm+8h0QOacohA8S124J25EPzS9/ROO+o
+         WMf0Q9aEVdgfISGZyzeO4gv0Zur+owpe8js2ckLYoP7O3fQT0Qftn4S8zAGnL2d7E5Kk
+         UFSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd2N75GAOt9O25SUjeoUMgpx3XVhWvmq2MWL62PaqIlJHlr6LPVrct/jm7fjFChYCKK+o5tHEzMWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMr6xsD4BGIxcxRvlqKi13bGdQf+ZQgbE6nXJ3Gl3pS82bQBk3
+	zhjMEichZPfHon0yqZUxIHvmWVGRQA1pskNL1zNonCLuENBd/g7e6kZH4zKrdf8=
+X-Gm-Gg: ASbGnctULlS5VwbT9uezI1zj2gKBWQfV3MPndDlg92oq1IYpEt1Fmk0Z+L67cKPR+e7
+	HLDyHw57Th/4ndzo2sxNyoxXwBmcz2ZIJAIZ2hwWDhSoblieaGKnjsX6jEezA5p+vIorBvVzQYR
+	Ij1pPj7cd0hGCQRMDOx62JaWw57guDkqsiSpa/EfiInUp5Z/26t+8iJ16EaJ+VZv+C8DdRLbJ2+
+	YkDdRx7l7nkWvsO/A969p78Edk2fuaMe7Lc713T3OMPnqI2qAIvGhn0yPXmbwpnFQ==
+X-Google-Smtp-Source: AGHT+IH1hTljFKEA9DHhDP/Bl2T9X3iPXf4B7h5kmrrQdKTb7FK5jK4sFt7iXegFoa1F8JVAtQP1Kw==
+X-Received: by 2002:a05:600c:4447:b0:434:a5bc:70fc with SMTP id 5b1f17b1804b1-434a9dc3c8emr211879435e9.8.1733153405821;
+        Mon, 02 Dec 2024 07:30:05 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e230b283sm8019425f8f.106.2024.12.02.07.30.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 07:30:05 -0800 (PST)
+Message-ID: <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
+Date: Mon, 2 Dec 2024 15:30:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1732030972.git.Ryan.Wanner@microchip.com> <e9e9e4cf0753422706bdc44fe7d20ca3a686ce7a.1732030972.git.Ryan.Wanner@microchip.com>
-In-Reply-To: <e9e9e4cf0753422706bdc44fe7d20ca3a686ce7a.1732030972.git.Ryan.Wanner@microchip.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 2 Dec 2024 16:23:30 +0100
-Message-ID: <CAPDyKFpN-2kowdi_eCtbW1WEdc5OKh7tj60GfbPPBR0Hbpyj5Q@mail.gmail.com>
-Subject: Re: [PATCH 04/15] dt-bindings: mmc: atmel,sama5d2-sdhci: add microchip,sama7d65-sdhci
-To: Ryan.Wanner@microchip.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, mturquette@baylibre.com, sboyd@kernel.org, 
-	arnd@arndb.de, dharma.b@microchip.com, mihai.sain@microchip.com, 
-	romain.sioen@microchip.com, varshini.rajendran@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-4-54075d75f654@linaro.org>
+ <02dd5593-38ba-4344-aa64-0913eca45808@oss.qualcomm.com>
+ <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
+Content-Language: en-US
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+In-Reply-To: <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 19 Nov 2024 at 17:42, <Ryan.Wanner@microchip.com> wrote:
->
-> From: Dharma Balasubiramani <dharma.b@microchip.com>
->
-> Add mmc binding documentation for SAMA7D65.
->
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+On 02/12/2024 15:02, Dmitry Baryshkov wrote:
+>>> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+>> This clock is not registered with the CCF
+> Isn't that be going to be handled by the CCF on its own (like orphans,
+> etc)?
 
-Applied for next, thanks!
+For refence this is always-on ATM.
 
-Kind regards
-Uffe
+drivers/clk/qcom/gcc-x1e80100.c:	qcom_branch_set_clk_en(regmap, 
+0x26004); /* GCC_CAMERA_AHB_CLK */
 
-
-> ---
->  Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-> index 8c8ade88e8fe..ba75623b7778 100644
-> --- a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-> @@ -22,6 +22,7 @@ properties:
->        - items:
->            - enum:
->                - microchip,sam9x7-sdhci
-> +              - microchip,sama7d65-sdhci
->                - microchip,sama7g5-sdhci
->            - const: microchip,sam9x60-sdhci
->
-> --
-> 2.43.0
->
->
+---
+bod
