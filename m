@@ -1,82 +1,80 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B549D1FE457
-	for <linux-clk@vger.kernel.org>; Mon,  2 Dec 2024 11:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7537A209691
+	for <linux-clk@vger.kernel.org>; Mon,  2 Dec 2024 12:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733140385; cv=none; b=IxJe8Bvb8Yi94WatnQV0pxrkkNdEmuFCkUHKarddweZ7Evpuy+pl8/ERvzDoSyXeiwviynsX5IiXxJbR94Xko/2TqDgbIuTq0I8T4r4wINGMxyMudHeE904eR7MJUX/P4CK9JbR15w34wUl9dAGSxUJEagHPpcLcV7BILu1DJss=
+	t=1733141468; cv=none; b=F8jvZ2NhBPsQgg9fp/6SARTpQrnJPT0CtrJFtYn6vk7wRq/btf0Jxf3aMagonIIYzN3M9Tj/5uGRihe1i0hHhtdX7wRlBjFI6sDAlcgh/9nMpFohQSmIx7n8TOlK1v5NApK97SCeFX8Fjl7OGhDYQ+pmzSP7WOzr5ql0RO0b7Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733140385; c=relaxed/simple;
-	bh=8u0/pKiZzR0QMfbIwSXjbnuu80JXSFmRExSsBIV679g=;
+	s=arc-20240116; t=1733141468; c=relaxed/simple;
+	bh=h6VpcuSndvt5gb/Lu3I7A7ng3nwMLL1ZD7IPVdwY++s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mxu0z3qbPLN3VC4T2j5Z8tfdVCzF3MQxnebq4FzfHlFx0zr+TYYPYXmN4cwklOW3R8YyU0ROpf0BiBcNQ+wilaJP9bTvWFDcfQdxyctw24p+WdoMkgTydg0RuZHYL+3suJnpnzcnhRtkGejZa/3qU8Dhk2BRN2rPKo4iRv6jCTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yagIull6; arc=none smtp.client-ip=209.85.208.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHLMBedshvouWldrea7i8TWqc0nsZLveQv48FhOo86NXtStO5iGPenrKZZtD528M/akf/m2q9QL44QfZ5zQzeCVj1E8J/UL+Hh/fizrmm1KA6VJpKk0s1dE/cJN4D3aVP+3qr/ar95Spw9E4K/+24xDFs+GSz0oUMfsQZDQsz+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BvhJpLxO; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yagIull6"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ffa12ad18cso44107541fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Dec 2024 03:53:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BvhJpLxO"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de579f775so5662750e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 02 Dec 2024 04:11:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733140382; x=1733745182; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733141465; x=1733746265; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfgDbmGn22ssjxiKjmQ0kPNy7r0F8TDilTFlsUWSPaw=;
-        b=yagIull6sud+PgG6fzBASbhFh+RN7LAIsfF+pQMzZUztK4nQguYz+K7va14ZIfj+t0
-         T3fR3aLzHgu+X3EHE7HauEmsozCQl9ULR/etDVe+XuZreXhWQ8UkXt4G2oeVqgZIF2At
-         KyJaCpM0mL1/RU8O0zNIHMOG5tew8B/3oPbEyd7ra1rhr6PLE32nFqlCsQGHrvCSg7wN
-         RXVAlbY3t4Wxj5lFygmuTTFNahgFvDewLTUS5FjAdGnq+i0mbrbvTjAI77OQzhC97ZZa
-         F7v/M+mcQ6dpJhhcxowhATIG3AaONhkeTYbCepzyTuxNOLvbvPx1tH+UiZHfLVQATmqj
-         IaaA==
+        bh=yQXENZQVJNQwnHrGpO9XimeeddczjCL8gDUobO6Gaic=;
+        b=BvhJpLxOWGf4z5LOJu1sLGJhk7b7mAU0wz2VVtmyrflK28Be8nX9jWEishs4RSSvEh
+         y9ZhnI4D5D8xSo4A+K/sZxrtaV0lwMeKpRnMkHN7rxwZt+dZukd59uj1Ou3m+YllaFC1
+         s2TpnZd+CCPmmSD/4QG4tn94qfjgw5U5CvzdjvPM2YYHBVJSNfY7GnuViEqx2nIEKRhy
+         DLopHQ3fu3aknKtwk0nSO9dzv7ZIy+A0RarB0Y0P2HydFFtI0rQc/dOxxHigxj7tE9gU
+         csAlkcXihu8R/dsOrk4P0kbHFI2GYueABRf1rQ2s2GQKqLZmrW9tEiHhY2lPC532nMhp
+         MeBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733140382; x=1733745182;
+        d=1e100.net; s=20230601; t=1733141465; x=1733746265;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UfgDbmGn22ssjxiKjmQ0kPNy7r0F8TDilTFlsUWSPaw=;
-        b=vhEIz5CSVw1lZJGxmo6VcyAoIlWM9FKT0FhPYZh1X3yekeXVLy76WNkiPW+ZjryW3u
-         3HFBngiWkv87FH6tO5/pTXnPmdXiX0T4D5NTWzJKUzgCCxkgPbKvqoEE76pjFrT9032j
-         uinkyfjZvII/ulHQMPqbZRv380oQg62i44NkHGNbmqHk0YZb0BvXmLSZJ15flkHwA7ME
-         mpRvaoJvgNCN+rYmIqbbBVHJGodcXywytNl7mWQ9gJGbz1UJvQm2F5ia37VowprNnk7D
-         J8WyuxJQv88rvBdVWjmLDCtINWy0HHs0pCTiFnXAByOcFEPVNKv2cL4gJboLhSeBep1n
-         DRzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtI4o8CtzyI2itlNKZzLxZG8AhxMgMAzMYYeyoqTTNu2VAiU5Nu05XQ57oktIgSkpi7PeCdxGnb+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0HUYHjEYDggd4uS6f6rjQ6NCANSf7xQfCmXfyoa0+PS95fRlx
-	LD/yLQ4Q8PVxJQHqKPIS2tEC6xL07q2zF0NTAEuIBtobOmcL/sddrLLH/bi71STnxtBO7FiRpN/
-	1
-X-Gm-Gg: ASbGncsNl52yqFyC3slLIt7d2yJSB1ih3ENOi9hhOPGck836SAPxug8JvwDC/FRsJLu
-	G95tS75zCr09fBqASYvWnzyKziic4RsFko3JKJmhYiNAnlJxrWy8TNOEJSs2v9L7lDAEt4jZOFd
-	Z1XVbzYhdivnqRsclOWYnfFNr4GBgxf7tK58YcuIKP01S4lDjkAh1h5LNpjEgsepjrdSx53cJaq
-	21jCejVnevjZ4F+xz4INL2X2YCVyRWnCXisvUkXf3UMdIcMGXlaPyqvzJ9Hdd240nziehcFIFeG
-	sUfDgk7MmnIK+313nmaERDZJ6z8MZg==
-X-Google-Smtp-Source: AGHT+IF7qcUlqwZCH0DJeBeEV13wXeWiYQJ32iffEYuN9hp6lhdLXbyTbs8ChuNW2LVLJzXXZe/bZw==
-X-Received: by 2002:a2e:b8c7:0:b0:2ff:559e:c94b with SMTP id 38308e7fff4ca-2ffd6059c0amr97739501fa.17.1733140380217;
-        Mon, 02 Dec 2024 03:53:00 -0800 (PST)
+        bh=yQXENZQVJNQwnHrGpO9XimeeddczjCL8gDUobO6Gaic=;
+        b=q4vdaeHm17tbRx+Ny6lXVpj6MsB5HJpoes0J/e0PWVL2S6Bqx0jgOmgZhZRmV4nkIX
+         AFnCGFVJ/PXAW0/YFdLu+P/8ZK3YQdjuFA0d4GUA2rprZkQc0JRR9Ds1U9cbqWZXOFTL
+         imZHvaBem4UVy4+3vHg76yFHfVg/e7g+5Gm1/iphSMAU0CJ8fBPEaONrQ6T6fZC4Y1H6
+         m9Yfa0Iqaq1PBGq15cqXvogR9XLCSsGv97uAL/pmn86/YCYNLeMZb9ZcWPahOy+H0jkH
+         a+s4I2DPDBVmO91hEd8CN2W2GB+PBvOLHZOrnQjNuC/oSzsUlx9eYvcTbOoc+vxUx4Z5
+         xdxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdo+n4LZzXp2if+IwL3nzk+H/5iUXv8z6yEDEG1ARW0IXKA3AnjtRpjqDPirWEz32WWrsAuDYUXM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2sDjbVtzKHOzP/KUcTpNo7xWJruFbObHKXSWILNMT+IvLqQm2
+	pXqxbNC1rXmYuMNwLuPg5uKr4M19+yfJtR7wkja+QFGq2F1QuSM5yy4JqvPCaJs=
+X-Gm-Gg: ASbGncu2ot5jCbkhKE6pmh+9Z3IFKEHDR+PcPBJwHMzao3+FjyYxBDtAn/OKqHUwATV
+	NYpLakrM4RCSapYOi9YZJgDRwQAnLaPdMMPBaeUM00yh77F5pgQyvtB7zBAN4Y2qaEf4Cb59vuZ
+	iMd6S4MxngcwH+2w6+9ufYilYLDmXy5l27IToDOLLY0dQkBkPwS5c4fhST8aF6qOVKKxthM9o4M
+	v81SAy9HxGOn6DeJFi6+opGAs2f+1Y1vQXt6ZkXfsGOhJcUV+cABNf8sj8/cjijqSSg4DuZCvV3
+	8RLnzUuBTPAyAzjw90NMve/Tde2TSQ==
+X-Google-Smtp-Source: AGHT+IEzRcIhzwnknvixHamvE9vlf/Jqh7zUcscNKtxe89RF9mRI+5Y0+FdqdzWwutifP0uXEZ5FAQ==
+X-Received: by 2002:a05:6512:1247:b0:53d:deb5:3376 with SMTP id 2adb3069b0e04-53df010b17bmr16440685e87.40.1733141464583;
+        Mon, 02 Dec 2024 04:11:04 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc097c3sm12501411fa.54.2024.12.02.03.52.58
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64968d6sm1416507e87.200.2024.12.02.04.11.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 03:52:58 -0800 (PST)
-Date: Mon, 2 Dec 2024 13:52:57 +0200
+        Mon, 02 Dec 2024 04:11:03 -0800 (PST)
+Date: Mon, 2 Dec 2024 14:11:00 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, Will Deacon <will@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
 	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH v3 05/11] dt-bindings: clock: Add Qualcomm QCS615 Display
- clock controller
-Message-ID: <afbxakprrm62hnlirqr3244wuf4zzlureejlce76av5xyqsuyy@gadkbshd3dam>
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Gabor Juhos <j4g8y7@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 00/11] Add support for videocc, camcc, dispcc and
+ gpucc on Qualcomm QCS615 platform
+Message-ID: <urlb2pn3cezyx7e6fxxf4j7psmf37amshnlzu7buixp6sxkrgy@mg4zljxn5s3v>
 References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
- <20241108-qcs615-mm-clockcontroller-v3-5-7d3b2d235fdf@quicinc.com>
- <173104478441.565041.9851772057058427001.robh@kernel.org>
- <s5rie2osuh2ngkwd2jinly7ulogqqeqois724h3e54a7rqrn2w@wn3yypxi7wca>
- <74e5b8b5-ee09-4fb5-9643-14ea11c445e5@quicinc.com>
+ <a4f6ojknv3hats4rwmdg5mw2rxhx7kq4u6axybdawak54crn5s@xnjbl7zno42s>
+ <bfabfba2-6688-4461-83d6-b6f4c86b08ab@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,52 +83,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <74e5b8b5-ee09-4fb5-9643-14ea11c445e5@quicinc.com>
+In-Reply-To: <bfabfba2-6688-4461-83d6-b6f4c86b08ab@quicinc.com>
 
-On Mon, Dec 02, 2024 at 01:05:54PM +0530, Taniya Das wrote:
+On Mon, Dec 02, 2024 at 01:09:12PM +0530, Taniya Das wrote:
 > 
 > 
-> On 11/8/2024 5:09 PM, Krzysztof Kozlowski wrote:
-> > > dtschema/dtc warnings/errors:
-> > > Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.example.dts:19:18: fatal error: dt-bindings/clock/qcom,qcs615-gcc.h: No such file or directory
-> > >     19 |         #include <dt-bindings/clock/qcom,qcs615-gcc.h>
-> > >        |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > compilation terminated.
-> > > make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/clock/qcom,qcs615-dispcc.example.dtb] Error 1
-> > > make[2]: *** Waiting for unfinished jobs....
-> > > make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-> > > make: *** [Makefile:224: __sub-make] Error 2
+> On 12/2/2024 9:55 AM, Bjorn Andersson wrote:
+> > On Fri, Nov 08, 2024 at 09:39:17AM +0530, Taniya Das wrote:
+> > > Add support for multimedia clock controllers on Qualcomm QCS615 platform.
+> > > Update the defconfig to enable these clock controllers.
 > > > 
-> > > doc reference errors (make refcheckdocs):
+> > > Global clock controller support
+> > > https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
 > > > 
-> > > Seehttps://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241108-qcs615-mm-clockcontroller-v3-5-7d3b2d235fdf@quicinc.com
-> > > 
-> > > The base for the series is generally the latest rc1. A different dependency
-> > > should be noted in*this*  patch.
-> > I see this patchset being sent again without changes and receiving same
-> > errors again, so maybe you expect different results, like some review? I
-> > don't know, but just in case that's the case please carefully read
-> > message you got.
+> > > Signed-off-by: Taniya Das<quic_tdas@quicinc.com>
+> > Dropping this series from my queue, due to lack of response from author.
 > > 
-> > If lack of review is expected, then of course no problem here.
+> > Taniya, please answer questions/feedback from Dmitry, Vladimir and
+> > Bryan, and repose as necessary.
 > 
-> The base patch dependency(GCC) clock controller was mentioned in the cover
-> letter:
+> Sure, Bjorn, I had a dependency on the GCC patch.
+> 
 > https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
 > 
-> Thanks, I will keep a note to notify reviewers explicitly mentioning the
-> dependency.
+> I will fix the comments once the Global clock controller patch is picked.
 
-This is usually being solved by:
-- specifying correct base id and prerequisites in b4 prep --edit-deps,
-- using ephemeral DT nodes in the bindings examples.
+I think this makes a good generic feedback (I observe the antipattern in
+other engineer's behaviour too): please try responding to the comment
+after receiving it, not just before getting back to the series.
 
-I think either of the options could have worked here. I don't know if
-the bot picks up prerequisites from the cover letter, but even if it
-doesn't, the issue is on its side, not on yours. However we still see
-the same issue on and on. Could you please update the internal
-guidelines on writing DT bindings so that the issue of (not) using
-bindings of (other) clock controllers gets handled there?
+For this particular case: there is no need to wait on GCC. Please stop
+using the external dt-bindings header and use <&gcc_foo_clock> instead.
+This is just an example, not a c&p from the platform's DT.
+
 
 -- 
 With best wishes
