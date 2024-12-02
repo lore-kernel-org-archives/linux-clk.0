@@ -1,62 +1,62 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8747C1DEFD2;
-	Mon,  2 Dec 2024 20:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5480C1DF256;
+	Mon,  2 Dec 2024 20:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733171974; cv=none; b=j/UmFDsFUpHh4mA1bIree5tgWqG5P+JV7Uxai0QA6uaYIHNJq90YsXpkqzsOcteML8wKnHf5+5J0L7O8MBdQ+MPdfXlbCKPYFCu2nVrh6wjze9Ko4RwHJTdsndsikYvrh17yhs7SdskEcS18+dQgUrBgnkFPx5e2MxC5IM+imvU=
+	t=1733171976; cv=none; b=a8VZ8Yh1Go9AqCWG1cISJMLM3/AR22RXkmJaIGKk7EfXj8dHpaulYjDWfEGjHs3sxpsJaUibbXFZqhiFXg/rcF8xEbmaajujK40kwl+d+cWqXz7gM3Mb3CsAYg20tldJ7z8W43zAaoXFpeQj0MnIEgNyf6VRdIoZhEFimsza2W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733171974; c=relaxed/simple;
-	bh=2PA3p9GOdm8qCLg8nr1vPh3TBdstHUOtl6ZXM6hqv4c=;
+	s=arc-20240116; t=1733171976; c=relaxed/simple;
+	bh=BCaK1aO4KZna0XCsloQIBK7tQFM+Pqir5gjeZDpJjS4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u6NBivt/BjeWLoLzyy6K4WuRzXLR6VGc9yqITgv3ExsDYpurctr/4LQyguYfygyOGqJL2eBtD0y9mIlE2e10r8EKGYmcjHmvmPA6PLLQijhSEXl5Nv9Pt9rE0w8Xdm4whhpmD+kzXvOkmtIT8fY9D0usCKtaHgvM/Ou1TgWclEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/ShCADX; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version; b=olFAiVTsW70fbLUSPm+rXfeSKuCzbCJ25DaFNSDnZbhZVAjNAGczhFL7YcUGHg/ruKIFZ8JjWvDJbVrBNyzY/a0/Lfc+wBzP6qTD0PwXvE5pRFps/1X+DU42Vy/iR5wvr6MzaXUGVnzqqSho55amu+MvqDcvxD9jw2/xXh4XkVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UVMfLDHA; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/ShCADX"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385d7b4da2bso3793313f8f.1;
-        Mon, 02 Dec 2024 12:39:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVMfLDHA"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e1721716so1636443f8f.3;
+        Mon, 02 Dec 2024 12:39:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733171971; x=1733776771; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733171973; x=1733776773; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RBCNxIql7vOqDHapA7sEh3yy9UhiEVzICf6BciQ2ElQ=;
-        b=T/ShCADX8NB3HI2Sy6e4NGT2TR1Uv0otMvG9noBPpB1cDGj+mji8n6oHQ/5IgH86Lx
-         W5ZO5Y0oBHjh8sschvCccPqFTY8iYBXtSiqj1WgFo7WY7L47sA7jsFhmFAmdvT937kH6
-         PpCNZbcP5HLSM1iw5V3QvLm5BlX+yEnhwV1Fcrx3SLstMzUeo0dh7LcwMer8fT0OIz/1
-         jEX7V3NNQ5frrFpJjo9LgZKEwE/U5nhrIdjPaZwnbYLGSj9z4/LI9lUR97v5cb0trEt6
-         IXQ97kiCKKYUIMOCxPpiVPimeCszqszM4gjnvpisKrpj57C4YCVhwLq/bZ3a93S5b5Vw
-         dxng==
+        bh=fs0Nof5XLHJqz/QZsHs365UbLh1LuE2mPSftoSJYNV4=;
+        b=UVMfLDHAmXLWYLYpJQXuhkL+qMlE/qenXsF+hyfbNYOj8PGaD2EGjmkmzJ3VX9DbRl
+         fgQ7R/xXdZz5noCjA6sUH6BBu5lg3ZorJ1Vlr35Oi4DfQVs/m0GvPNt+YefLsmeyN5uV
+         JS27mqFKCPJHd/+7lpZWGYu7mu28m49hYWYe3ACk+lc+lXzFV9okE6KGRSuZpI1tA7S0
+         IlQhzHR+B1ls5pBUOE+KepHSLzrRkqmv9RjzgvHv+z+6nNl8PbsV3MQV7W+UPY/sgE/f
+         115Qus6COdF9Zz7JCn4lFg6pLua835mBO0xXZY9e8ftwaleJGr8J+fovldUlvrmX8/1h
+         2dnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733171971; x=1733776771;
+        d=1e100.net; s=20230601; t=1733171973; x=1733776773;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RBCNxIql7vOqDHapA7sEh3yy9UhiEVzICf6BciQ2ElQ=;
-        b=s9nAcs/4npoJ/keeOTAb9p9b/b/kmEygOYPJVPDsEWWP9L99AKJRgPzTqnBRGuz089
-         zPsm/tvyfOXYh5EWCkSRl5tgugWHYotjL9Fp3MiN35kZj2PSTC4ouWOI8DQXxRN0cW+Q
-         POtyvrQmbUqVk9utBcXcs/hOAHhyBzIpnBw2bXjyMqJhzcQ2/LVDkCYwCHe4eIcoO7T1
-         zGOhIhBM2XkEwH4kXuYePrg2CHcvNgNoQke55ra4XMn/KZ/RHPZZA/Mdk2yuq0MoFEHu
-         eBqlpH82Ph3RBp2+kk/mWp/g9u7yUJ3XDP8uWkpIvvFOpK0SwJ6NcMgqXgVhlU8xRAOM
-         8+8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW2vJ0/HKSKCloQURsvvsz6hW1lKkDVsjCLYfF0OlfMEk+1iLX6oDCQwA+DxLjpYnXYE8mpdn2wEy0=@vger.kernel.org, AJvYcCXIt1DxquykECqyvK+c0+ayzaGijSe7uh8QTfaH74WgP1SOJH4NQIJJYEuBfN70ToOSuQDQbZghgcFN9cdK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwooLJsABRZS780GSJIz5fN372RLXrJVzFi5CnNJ0lIkqq1wrbO
-	dyyg+rNVP1BVpZPObyV3xMTglvtKT81oYRHUAiYCbA3qdIPkzB5I
-X-Gm-Gg: ASbGncseoBEk9WIt5SYwwQdTk92lkX1gTLAE6FjrrsRhWC08ONsA09BOpW2AL9aVpdw
-	4aTp2u4WvK5LadHZmMliChyHH6bMvUTIpC0dOB8Fzagzpv58hBQCHxfKooVHts4zsDkcaew5GCm
-	TCXlloehz8GWLfJo1Rroub11FJvZVzRvdRYze3tqRs5kep3Gb+iMeLzUt4m+1D1ODBYC4N3xK7k
-	3nI2ljjXr7tU0fgipJWyVVFYXU/5il4cyeB1g5pzzNnJCcHUMD8MoXyXEspXdevaILwn4Hdw276
-	gw==
-X-Google-Smtp-Source: AGHT+IExicnqlI7MUgisnDfcR3qET/OtXbBsZ99IMepiGNG6dt39iYau4MNLehxwgZdZoiXpqlypRA==
-X-Received: by 2002:a05:6000:1446:b0:385:e5dc:e285 with SMTP id ffacd0b85a97d-385e5dce400mr10941824f8f.58.1733171970573;
-        Mon, 02 Dec 2024 12:39:30 -0800 (PST)
+        bh=fs0Nof5XLHJqz/QZsHs365UbLh1LuE2mPSftoSJYNV4=;
+        b=nEjvpwb7LS+zbL28OxN2ZXme0KyagTPh2sLZ5JzdD0/MyGjE5k9EvXkoJbpMDGrbsk
+         +SYkY2swnrGHv0WVX+jXvkFARbRq+MHb/73Dc5Dwbr5HMYxmKMIwCMAKPfRg66RVjbJN
+         ZbV1D7eNDmNP4X4eKsDK516WrS5ul2koldH2wjJ2yPI5wKfeiRJhCig54RCDUfHJMOqI
+         m5xFZUXaCaIM3yZbD8GZRmVToZQps3G1+cfXKG8UkBx5nV4M8Yy4WLM3TE2IoIzXLkBN
+         HujNgezWejy3nY+c1uG0Bt8SOJ+icl3DPV5211ABIkeMEHmcVOaT0HGWKLgn62abLTWE
+         72Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwccluVLciLJRiZolwcFTKC8n/lWt7bP/nsRkzkr3pflskZCRSNi4A4B2QYEl+8GT13lRdb70oWIM=@vger.kernel.org, AJvYcCVkARhRuy3CsavKrX+6yKNiycutNKDI5WsekNz/kBI591CCCTwd9p0SlJKSSvkii3xAFeO/M95wYc6IOTOV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbGq2s3rnQ8PopH19FY0r55lFMMj3+wGW7gQD6gKdfZXzgu4ze
+	fy3xYWlb2XO+1sPu23zY/A9ZxOtOXCfHHzj+oRE1nqas8ECKKegJ
+X-Gm-Gg: ASbGnctvIJmn2Mv6/XusrGLfRaR+P4So0w093z82QZkIyLcywdTTcZwzeSictCRdQnZ
+	XqyoO6jOkb0YlepKKbe+YH0BeMJR25WVtnG+qpce/MJ/18/BcfIIzXI3MW4QSyVgTh6xw5iewma
+	AX8Rcl6xMCNknI7/BAZ8zu6x8Tvfpr7J5lpZo+aNn43DZZvMey2HvmA72ZNznsX6M80iENpA5wi
+	zXNUY8EnMUpRo4lU0VHTscNkw416rJnb6AWIshduLhh/2HJEkvVG7kVBne6aFCV7gMlNUJkaQSx
+	Nw==
+X-Google-Smtp-Source: AGHT+IE5zD0NGsbx0ZqCrs21Ur/saqYBwOFrtKLtjNxak3J7q0pHXqvMWbkMj3ZJO4wF6v26LLM5PQ==
+X-Received: by 2002:a5d:584d:0:b0:385:fc00:f5d4 with SMTP id ffacd0b85a97d-385fc00f9d3mr519467f8f.29.1733171972517;
+        Mon, 02 Dec 2024 12:39:32 -0800 (PST)
 Received: from prasmi.Home ([2a06:5906:61b:2d00:7f2:1e67:9db5:ea0c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e8783843sm7640201f8f.4.2024.12.02.12.39.28
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e8783843sm7640201f8f.4.2024.12.02.12.39.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 12:39:28 -0800 (PST)
+        Mon, 02 Dec 2024 12:39:30 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -69,9 +69,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 1/2] clk: renesas: rzv2h: Add selective Runtime PM support for clocks
-Date: Mon,  2 Dec 2024 20:39:15 +0000
-Message-ID: <20241202203916.48668-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 2/2] clk: renesas: r9a09g057: Add support for PLLVDO, CRU clocks, and resets
+Date: Mon,  2 Dec 2024 20:39:16 +0000
+Message-ID: <20241202203916.48668-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241202203916.48668-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241202203916.48668-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -85,179 +85,148 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Update `rzv2h_cpg_attach_dev` to prevent external and core clocks not tied
-to the power domain from being managed by Runtime PM. This ensures that
-only clocks originating from the domain are controlled, thereby avoiding
-unintended handling of external and core clocks.
-
-Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
-structures to exclude specific clocks from Runtime PM when needed. Some
-clocks, such as those in the CRU block, require unique enable/disable
-sequences that are incompatible with standard Runtime PM. For example,
-the CSI-2 D-PHY clock initialization requires toggling individual clocks,
-making Runtime PM unsuitable.
-
-The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
-be managed by Runtime PM based on this `no_pm` flag. New macros, such as
-`DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
-PM.
+Add support for the PLLVDO clock and its related CRU clocks and reset
+entries in the r9a09g057 CPG driver. Introduce `CLK_PLLVDO` and associated
+clocks like `CLK_PLLVDO_CRU0`, `CLK_PLLVDO_CRU1`, `CLK_PLLVDO_CRU2`, and
+`CLK_PLLVDO_CRU3`, along with their corresponding dividers.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2->v3
--> Replaced `rzv2h-cpg` to `rzv2h` in commit header
--> Switched to use for loop while looping
--> Considering core clocks to be non pm clocks
+- No change
 
 v1->v2
-- Updated code to skip external clocks to be controlled from runtime PM
-- Updated id range check
-- Updated commit message
+- Replaced r9a09g057-cpg with r9a09g057 in commit header
+- Collected RB tag from Geert
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 44 ++++++++++++++++++++++++++++++---
- drivers/clk/renesas/rzv2h-cpg.h | 12 ++++++---
- 2 files changed, 49 insertions(+), 7 deletions(-)
+ drivers/clk/renesas/r9a09g057-cpg.c | 45 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  6 ++++
+ 2 files changed, 51 insertions(+)
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index b524a9d33610..1154493583a7 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -98,6 +98,7 @@ struct pll_clk {
-  *
-  * @priv: CPG private data
-  * @hw: handle between common and hardware-specific interfaces
-+ * @no_pm: flag to indicate PM is not supported
-  * @on_index: register offset
-  * @on_bit: ON/MON bit
-  * @mon_index: monitor register offset
-@@ -106,6 +107,7 @@ struct pll_clk {
- struct mod_clock {
- 	struct rzv2h_cpg_priv *priv;
- 	struct clk_hw hw;
-+	bool no_pm;
- 	u8 on_index;
- 	u8 on_bit;
- 	s8 mon_index;
-@@ -541,6 +543,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
- 	clock->on_bit = mod->on_bit;
- 	clock->mon_index = mod->mon_index;
- 	clock->mon_bit = mod->mon_bit;
-+	clock->no_pm = mod->no_pm;
- 	clock->priv = priv;
- 	clock->hw.init = &init;
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 7c4507fd34e6..5aa9710aa402 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -28,6 +28,7 @@ enum clk_ids {
+ 	CLK_PLLCLN,
+ 	CLK_PLLDTY,
+ 	CLK_PLLCA55,
++	CLK_PLLVDO,
  
-@@ -668,17 +671,51 @@ struct rzv2h_cpg_pd {
- 	struct generic_pm_domain genpd;
+ 	/* Internal Core Clocks */
+ 	CLK_PLLCM33_DIV16,
+@@ -35,7 +36,13 @@ enum clk_ids {
+ 	CLK_PLLCLN_DIV8,
+ 	CLK_PLLCLN_DIV16,
+ 	CLK_PLLDTY_ACPU,
++	CLK_PLLDTY_ACPU_DIV2,
+ 	CLK_PLLDTY_ACPU_DIV4,
++	CLK_PLLDTY_DIV16,
++	CLK_PLLVDO_CRU0,
++	CLK_PLLVDO_CRU1,
++	CLK_PLLVDO_CRU2,
++	CLK_PLLVDO_CRU3,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -49,6 +56,12 @@ static const struct clk_div_table dtable_1_8[] = {
+ 	{0, 0},
  };
  
-+static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
-+				const struct of_phandle_args *clkspec)
-+{
-+	if (clkspec->np != pd->genpd.dev.of_node || clkspec->args_count != 2)
-+		return false;
++static const struct clk_div_table dtable_2_4[] = {
++	{0, 2},
++	{1, 4},
++	{0, 0},
++};
 +
-+	switch (clkspec->args[0]) {
-+	case CPG_MOD: {
-+		struct rzv2h_cpg_priv *priv = pd->priv;
-+		unsigned int id = clkspec->args[1];
-+		struct mod_clock *clock;
-+
-+		if (id >= priv->num_mod_clks)
-+			return false;
-+
-+		if (priv->clks[priv->num_core_clks + id] == ERR_PTR(-ENOENT))
-+			return false;
-+
-+		clock = to_mod_clock(__clk_get_hw(priv->clks[priv->num_core_clks + id]));
-+
-+		return !clock->no_pm;
-+	}
-+
-+	case CPG_CORE:
-+	default:
-+		return false;
-+	}
-+}
-+
- static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct device *dev)
- {
-+	struct rzv2h_cpg_pd *pd = container_of(domain, struct rzv2h_cpg_pd, genpd);
- 	struct device_node *np = dev->of_node;
- 	struct of_phandle_args clkspec;
- 	bool once = true;
- 	struct clk *clk;
-+	unsigned int i;
- 	int error;
--	int i = 0;
+ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 2},
+ 	{1, 4},
+@@ -69,6 +82,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
+ 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+ 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
++	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
  
--	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
--					   &clkspec)) {
-+	for (i = 0; !of_parse_phandle_with_args(np, "clocks", "#clock-cells", i, &clkspec); i++) {
-+		if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
-+			of_node_put(clkspec.np);
-+			continue;
-+		}
-+
- 		if (once) {
- 			once = false;
- 			error = pm_clk_create(dev);
-@@ -700,7 +737,6 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct device
- 				error);
- 			goto fail_put;
- 		}
--		i++;
- 	}
+ 	/* Internal Core Clocks */
+ 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
+@@ -78,7 +92,14 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
  
- 	return 0;
+ 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
++	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+ 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
++	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
++
++	DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
++	DEF_DDIV(".pllvdo_cru1", CLK_PLLVDO_CRU1, CLK_PLLVDO, CDDIV4_DIVCTL0, dtable_2_4),
++	DEF_DDIV(".pllvdo_cru2", CLK_PLLVDO_CRU2, CLK_PLLVDO, CDDIV4_DIVCTL1, dtable_2_4),
++	DEF_DDIV(".pllvdo_cru3", CLK_PLLVDO_CRU3, CLK_PLLVDO, CDDIV4_DIVCTL2, dtable_2_4),
+ 
+ 	/* Core Clocks */
+ 	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
+@@ -133,6 +154,18 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12),
+ 	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14),
++	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18),
++	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19),
++	DEF_MOD("cru_0_pclk",			CLK_PLLDTY_DIV16, 13, 4, 6, 20),
++	DEF_MOD("cru_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 5, 6, 21),
++	DEF_MOD_NO_PM("cru_1_vclk",		CLK_PLLVDO_CRU1, 13, 6, 6, 22),
++	DEF_MOD("cru_1_pclk",			CLK_PLLDTY_DIV16, 13, 7, 6, 23),
++	DEF_MOD("cru_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 8, 6, 24),
++	DEF_MOD_NO_PM("cru_2_vclk",		CLK_PLLVDO_CRU2, 13, 9, 6, 25),
++	DEF_MOD("cru_2_pclk",			CLK_PLLDTY_DIV16, 13, 10, 6, 26),
++	DEF_MOD("cru_3_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 11, 6, 27),
++	DEF_MOD_NO_PM("cru_3_vclk",		CLK_PLLVDO_CRU3, 13, 12, 6, 28),
++	DEF_MOD("cru_3_pclk",			CLK_PLLDTY_DIV16, 13, 13, 6, 29),
+ };
+ 
+ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+@@ -162,6 +195,18 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
++	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
++	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
++	DEF_RST(12, 8, 5, 25),		/* CRU_1_PRESETN */
++	DEF_RST(12, 9, 5, 26),		/* CRU_1_ARESETN */
++	DEF_RST(12, 10, 5, 27),		/* CRU_1_S_RESETN */
++	DEF_RST(12, 11, 5, 28),		/* CRU_2_PRESETN */
++	DEF_RST(12, 12, 5, 29),		/* CRU_2_ARESETN */
++	DEF_RST(12, 13, 5, 30),		/* CRU_2_S_RESETN */
++	DEF_RST(12, 14, 5, 31),		/* CRU_3_PRESETN */
++	DEF_RST(12, 15, 6, 0),		/* CRU_3_ARESETN */
++	DEF_RST(13, 0, 6, 1),		/* CRU_3_S_RESETN */
+ };
+ 
+ const struct rzv2h_cpg_info r9a09g057_cpg_info __initconst = {
 diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index 819029c81904..0723df4c1134 100644
+index 0723df4c1134..ed8d2cad3260 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.h
 +++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -100,6 +100,7 @@ enum clk_types {
-  * @name: handle between common and hardware-specific interfaces
-  * @parent: id of parent clock
-  * @critical: flag to indicate the clock is critical
-+ * @no_pm: flag to indicate PM is not supported
-  * @on_index: control register index
-  * @on_bit: ON bit
-  * @mon_index: monitor register index
-@@ -109,17 +110,19 @@ struct rzv2h_mod_clk {
- 	const char *name;
- 	u16 parent;
- 	bool critical;
-+	bool no_pm;
- 	u8 on_index;
- 	u8 on_bit;
- 	s8 mon_index;
- 	u8 mon_bit;
- };
+@@ -33,12 +33,18 @@ struct ddiv {
  
--#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _monindex, _monbit) \
-+#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit, _monindex, _monbit) \
- 	{ \
- 		.name = (_name), \
- 		.parent = (_parent), \
- 		.critical = (_critical), \
-+		.no_pm = (_no_pm), \
- 		.on_index = (_onindex), \
- 		.on_bit = (_onbit), \
- 		.mon_index = (_monindex), \
-@@ -127,10 +130,13 @@ struct rzv2h_mod_clk {
- 	}
+ #define CPG_CDDIV0		(0x400)
+ #define CPG_CDDIV1		(0x404)
++#define CPG_CDDIV3		(0x40C)
++#define CPG_CDDIV4		(0x410)
  
- #define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
--	DEF_MOD_BASE(_name, _parent, false, _onindex, _onbit, _monindex, _monbit)
-+	DEF_MOD_BASE(_name, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
- 
- #define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _monbit)	\
--	DEF_MOD_BASE(_name, _parent, true, _onindex, _onbit, _monindex, _monbit)
-+	DEF_MOD_BASE(_name, _parent, true, false, _onindex, _onbit, _monindex, _monbit)
-+
-+#define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
-+	DEF_MOD_BASE(_name, _parent, false, true, _onindex, _onbit, _monindex, _monbit)
+ #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
+ #define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
+ #define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
+ #define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
+ #define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
++#define CDDIV3_DIVCTL3	DDIV_PACK(CPG_CDDIV3, 12, 1, 15)
++#define CDDIV4_DIVCTL0	DDIV_PACK(CPG_CDDIV4, 0, 1, 16)
++#define CDDIV4_DIVCTL1	DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
++#define CDDIV4_DIVCTL2	DDIV_PACK(CPG_CDDIV4, 8, 1, 18)
  
  /**
-  * struct rzv2h_reset - Reset definitions
+  * Definitions of CPG Core Clocks
 -- 
 2.43.0
 
