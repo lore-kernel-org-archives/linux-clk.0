@@ -1,148 +1,239 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7085E1EB9ED;
-	Tue,  3 Dec 2024 12:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF79C1EBA04;
+	Tue,  3 Dec 2024 12:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229808; cv=none; b=dDurCyfOCc53mWxcuhpVO1RPTnO0R97+ifrxVAzcTJK6esdkBRxgKGsgB9s9XEvvyRBCeOPoPs8t5g8v4zknFe1BJ8NjxCjS5zD7j5tvS9FVS/aXB4BE8WJKef8kpAP60JMRL6eIkboSEmOGAMC4r+QXEMM4rvyhyYpDB4cT7Xs=
+	t=1733230415; cv=none; b=BsD2QP0/2AlFwEagnryw+8lU0j/50V4C6t48vCiMO4TZFK86+RXPBsYJmzVLI0gLYconcjUG1yTsWWk5HL1wSUAmoFcgefUrT3mgY/SF1tLJLZeYke6ILfEV/EN9ZP7ZYT8Bj9JkUKk3Agw9ia4cpYJfQaNPTpx/WTUA1/tx9o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229808; c=relaxed/simple;
-	bh=Lv2Z6NbTKMdxZZtSRvaijlwyt37zgKQUjTIZPiJEhLM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RtQFXj7ODv2RzWVBCP0XcF+VLQ7cF15zMeBchM7TY+AKeIaea7iNMTqBuplcEQcn5fLkrPughUpp6G2clNVIjY40GPaQNUJ5CrVppWtlRqC8ycgrJDljsJ4tLrecGqTkYqHcK3wUqlawHGI7oFMl8CJTmVnUL+sMpghN4LrQvRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OWpbv2Sd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KQl/Q/j6; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OWpbv2Sd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KQl/Q/j6"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 3F9A41140120;
-	Tue,  3 Dec 2024 07:43:24 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 03 Dec 2024 07:43:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733229804;
-	 x=1733316204; bh=e3rwoHqIVnmxtNxDPSG6Cqf+q8c4DgmmReYZaA9pX3Q=; b=
-	OWpbv2SdQuVdeXsxgYdIYA/KQEOsujuHaYuE+skl6m9P5hdrE1UaFcyybQkPuq76
-	6bDBp5NqD2kG0j0jDI6+04wCI5uvt1TO1z92YBGOc33JBgoO/zGJ7xpXQnYwB5VU
-	667WPgV0VTiOBBpkrYn1oW+AajdtHHYz6yjw5weKd0VHoteQxB+Sni1pyWC94cVn
-	oyFzT3pAVGLUe7OzVVq9M5pz5Jti3NLHzc3+9ZdMpRBKGK8Veka5ELFQby51OiUr
-	+1jr9TL1AJxvhzsOWtsUmoZ5MzY/TNz7PGb7rrIVtaHXyYXgqgniHuQDEzfkh6o4
-	fFAjI8NgK94sk2ElzYY0PQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733229804; x=
-	1733316204; bh=e3rwoHqIVnmxtNxDPSG6Cqf+q8c4DgmmReYZaA9pX3Q=; b=K
-	Ql/Q/j6EGWizSaPnM78KL9nimX4jWHu9cNWoF4HcO7W/wVQ1uUjxhZFhTTfx5Aqa
-	33M2uwreBzdZ3DpqTmvU9GsBnGJ2GjS79KV6sFxNvqIOKmm2TJyKdUUhVFzEBEDb
-	lyqQYwbrXuCV6yN+Unumr0KACnFBJH18vNTwqmfdn2113Vjze7mf4HCB5Kc7g352
-	8qWG+EANLFAd/r6OQYNVyMAloDENk/oyZBqHUwQMx8ARCxhZuq1mr5QNc0tIVy1G
-	UDhSXHQ/HU+fKLtkUQDQtrCBozEGl8F/KA4WbYh/NRa+QJrAKdCSCdjHG60cVwqd
-	Oo3OPhib3xoDag3C274eQ==
-X-ME-Sender: <xms:6_xOZ37LmToeylSHwE4pDy2CC6E5m2h_r4emE7KwttNNJVQHVt814g>
-    <xme:6_xOZ870bERLOl4bEyq42aEL1h4E0640CllVZme8LosqvVIuXgXJ4C9HRHoJHCkcP
-    5RY2rk4pE1J9tS-748>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieefgdduhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrh
-    gvrdgtohhmpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhr
-    tghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtth
-    hopehmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtgho
-    mhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghrmhhsthhr
-    ohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghmlhhoghhitg
-    eslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
-    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:6_xOZ-ennU-tpmMXwOsu6RaxhRKa7cQJ3SLICt0PVwd4NRL5gMtdig>
-    <xmx:6_xOZ4Jz0epV8mXeYVZkTuiQXVfz4hRW3uVdMBbCiJgN2KBOEe3SwA>
-    <xmx:6_xOZ7K-EJ0vlzGs_aawZZIr1KnCETj6hPiF1n82ixW_cVLWxCwPXw>
-    <xmx:6_xOZxy6c5QJ1uApKdY5MSpVFiSi-rLKFyt4L4vkrPcScJcNH3bxoA>
-    <xmx:7PxOZ4BhzLtJMlJEFOxcFCY0DqjofD7tFay4QLAAL-V2FXPVnqzKTQKW>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 913E62220072; Tue,  3 Dec 2024 07:43:23 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733230415; c=relaxed/simple;
+	bh=cNmkxzapUO7QczoDwL+xVGi9yBG+fPmNhU/lvd+cUvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a9nj/H4gCHfSqw8wYg/iWEDP7MtcQx1xpehxTDZYP9+KTybSZJ6rm07exHRbMQH4Qoj1rPmhkfgrYHnmXHR7IrJkLtwiB1WIgL03XFEC8RKUP8Vg2RUIX0vT64p2pMi8hN3fFJQ2C2UfxgIUwfqJNZwp5Budk0wNV4lkEQtEMgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: NZ2Q9QJrS8etHAiLa1x1gg==
+X-CSE-MsgGUID: JtmiqDwnS4m1caDtvBSMNA==
+X-IronPort-AV: E=Sophos;i="6.12,205,1728918000"; 
+   d="asc'?scan'208";a="226786275"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Dec 2024 21:53:30 +0900
+Received: from [10.226.93.8] (unknown [10.226.93.8])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 161DC4002623;
+	Tue,  3 Dec 2024 21:53:24 +0900 (JST)
+Message-ID: <9fbf057c-164b-4451-85a8-cf4d5807b4c1@bp.renesas.com>
+Date: Tue, 3 Dec 2024 12:53:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 03 Dec 2024 13:43:03 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Jerome Brunet" <jbrunet@baylibre.com>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <0f07300a-8b32-4d3e-a447-b3fe3cf1ca81@app.fastmail.com>
-In-Reply-To: <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
- <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
- <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
- <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
- <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
- <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
- <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
- <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
- <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
- <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
- <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/14] iio: adc: rzg2l_adc: Simplify the runtime PM code
+Content-Language: en-GB
+To: Claudiu <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------ejkQ6uLn0GaiFSlClZC0XSqf"
 
-On Tue, Dec 3, 2024, at 03:53, Stephen Boyd wrote:
-> Quoting Arnd Bergmann (2024-11-28 07:34:46)
->> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
->> Stephen, can you please take a look here and see if you
->> have a better idea for either decoupling the two drivers
->> enough to avoid the link time dependency, or to reintegrate
->> the reset controller code into the clk driver and avoid
->> the complexity?
->
-> I think the best approach is to add the reset auxilary device with a
-> function that creates the auxiliary device directly by string name and
-> does nothing else. Maybe we can have some helper in the auxiliary
-> layer that does that all for us, because it's quite a bit of boiler
-> plate that we need to write over and over again. Something like:
->
->   int devm_auxiliary_device_create(struct device *parent, const char *name)
->
-> that does the whole kzalloc() + ida dance that
-> devm_meson_rst_aux_register() is doing today and wraps it all up so that
-> the device is removed when the parent driver unbinds. Then this clk
-> driver can register the reset device with a single call and not need to
-> do anything besides select AUXILIARY_BUS. The regmap can be acquired
-> from the parent device in the auxiliary driver probe with
-> dev_get_regmap(adev->parent).
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------ejkQ6uLn0GaiFSlClZC0XSqf
+Content-Type: multipart/mixed; boundary="------------dmg0AGwwVL6W8RXA0ox4qbMm";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Message-ID: <9fbf057c-164b-4451-85a8-cf4d5807b4c1@bp.renesas.com>
+Subject: Re: [PATCH 03/14] iio: adc: rzg2l_adc: Simplify the runtime PM code
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
 
-I like the idea. Two questions about the interface:
+--------------dmg0AGwwVL6W8RXA0ox4qbMm
+Content-Type: multipart/mixed; boundary="------------u8Ideiazs4hCjoXAckzRyQhI"
 
- - should there be a 'void *platform_data' argument anyway?
-   Even if this can be looked up from the parent, it seems
-   useful enough
+--------------u8Ideiazs4hCjoXAckzRyQhI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
- - What is the scope of the 'ida' number? My impression was
-   this should be local to one parent device, but I don't
-   know how the number is used in the end, so maybe a global
-   number allocator is sufficient.
+Hi Claudiu,
 
-       Arnd
+On 03/12/2024 11:13, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> All Renesas SoCs using the rzg2l_adc driver manage ADC clocks through P=
+M
+> domains. Calling pm_runtime_{resume_and_get, put_sync}() implicitly set=
+s
+> the state of the clocks. As a result, the code in the rzg2l_adc driver =
+that
+> explicitly manages ADC clocks can be removed, leading to simpler and
+> cleaner implementation.
+>=20
+> Additionally, replace the use of rzg2l_adc_set_power() with direct PM
+> runtime API calls to further simplify and clean up the code.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  drivers/iio/adc/rzg2l_adc.c | 100 ++++++++----------------------------=
+
+>  1 file changed, 20 insertions(+), 80 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 7039949a7554..a17690ecbdc3 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -8,7 +8,6 @@
+>   */
+> =20
+>  #include <linux/bitfield.h>
+> -#include <linux/clk.h>
+>  #include <linux/completion.h>
+>  #include <linux/delay.h>
+>  #include <linux/iio/iio.h>
+> @@ -69,8 +68,6 @@ struct rzg2l_adc_data {
+> =20
+>  struct rzg2l_adc {
+>  	void __iomem *base;
+> -	struct clk *pclk;
+> -	struct clk *adclk;
+>  	struct reset_control *presetn;
+>  	struct reset_control *adrstn;
+>  	struct completion completion;
+> @@ -188,29 +185,18 @@ static int rzg2l_adc_conversion_setup(struct rzg2=
+l_adc *adc, u8 ch)
+>  	return 0;
+>  }
+> =20
+> -static int rzg2l_adc_set_power(struct iio_dev *indio_dev, bool on)
+> -{
+> -	struct device *dev =3D indio_dev->dev.parent;
+> -
+> -	if (on)
+> -		return pm_runtime_resume_and_get(dev);
+> -
+> -	return pm_runtime_put_sync(dev);
+> -}
+> -
+>  static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rzg2=
+l_adc *adc, u8 ch)
+>  {
+> +	struct device *dev =3D indio_dev->dev.parent;
+>  	int ret;
+> =20
+> -	ret =3D rzg2l_adc_set_power(indio_dev, true);
+> +	ret =3D pm_runtime_resume_and_get(dev);
+>  	if (ret)
+>  		return ret;
+
+Should we check (ret < 0) here instead of just (ret)? According to the
+docs [1], pm_runtime_resume_and_get() can return 1 if the device is
+already active.
+
+[1]: https://docs.kernel.org/power/runtime_pm.html#runtime-pm-device-help=
+er-functions
+
+Thanks,
+
+--=20
+Paul Barker
+--------------u8Ideiazs4hCjoXAckzRyQhI
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBGS4BNsBEADEc28TO+aryCgRIuhxWAviuJl+f2TcZ1JeeaMzRLgSXKuXzkiI
+g6JIVfNvThjwJaBmb7+/5+D7kDLJuutu9MFfOzTS0QOQWppwIPgbfktvMvwwsq3m
+7e9Qb+S1LVeV0/ldZfuzgzAzHFDwmzryfIyt2JEbsBsGTq/QE+7hvLAe8R9xofIn
+z6/IndiiTYhNCNf06nFPR4Y5ZDZPGb9aw5Jisqh+OSxtc0BFHDSV8/35yWM/JLQ1
+Ja8AOHw1kP9KO+iE9rHMt0+7lH3mN1GBabxH26EdgFfPShsi14qmziLOuUlGLuwO
+ApIYqvdtCs+zlMA8PsiJIMuxizZ6qCLur3r2b+/YXoJjuFDcax9M+Pr0D7rZX0Hk
+6PW3dtvDQHfspwLY0FIlXbbtCfCqGLe47VaS7lvG0XeMlo3dUEsf707Q2h0+G1tm
+wyeuWSPEzZQq/KI7JIFlxr3N/3VCdGa9qVf/40QF0BXPfJdcwTEzmPlYetRgA11W
+bglw8DxWBv24a2gWeUkwBWFScR3QV4FAwVjmlCqrkw9dy/JtrFf4pwDoqSFUcofB
+95u6qlz/PC+ho9uvUo5uIwJyz3J5BIgfkMAPYcHNZZ5QrpI3mdwf66im1TOKKTuf
+3Sz/GKc14qAIQhxuUWrgAKTexBJYJmzDT0Mj4ISjlr9K6VXrQwTuj2zC4QARAQAB
+zStQYXVsIEJhcmtlciA8cGF1bC5iYXJrZXIuY3RAYnAucmVuZXNhcy5jb20+wsGU
+BBMBCgA+FiEE9KKf333+FIzPGaxOJ/SzRZ8AIlcFAmS4BNsCGwEFCQPCZwAFCwkI
+BwIGFQoJCAsCBBYCAwECHgECF4AACgkQJ/SzRZ8AIlfxaQ/8CM36qjfad7eBfwja
+cI1LlH1NwbSJ239rE0X7hU/5yra72egr3T5AUuYTt9ECNQ8Ld03BYhbC6hPki5rb
+OlFM2hEPUQYeohcJ4Na5iIFpTxoIuC49Hp2ce6ikvt9Hc4O2FAntabg+9hE8WA4f
+QWW+Qo5ve5OJ0sGylzu0mRZ2I3mTaDsxuDkXOICF5ggSdjT+rcd/pRVOugImjpZv
+/jzSgUfKV2wcZ8vVK0616K21tyPiRjYtDQjJAKff8gBY6ZvP5REPl+fYNvZm1y4l
+hsVupGHL3aV+BKooMsKRZIMTiKJCIy6YFKHOcgWFG62cuRrFDf4r54MJuUGzyeoF
+1XNFzbe1ySoRfU/HrEuBNqC+1CEBiduumh89BitfDNh6ecWVLw24fjsF1Ke6vYpU
+lK9/yGLV26lXYEN4uEJ9i6PjgJ+Q8fubizCVXVDPxmWSZIoJg8EspZ+Max03Lk3e
+flWQ0E3l6/VHmsFgkvqhjNlzFRrj/k86IKdOi0FOd0xtKh1p34rQ8S/4uUN9XCVj
+KtmyLfQgqPVEC6MKv7yFbextPoDUrFAzEgi4OBdqDJjPbdU9wUjONxuWJRrzRFcr
+nTIG7oC4dae0p1rs5uTlaSIKpB2yulaJLKjnNstAj9G9Evf4SE2PKH4l4Jlo/Hu1
+wOUqmCLRo3vFbn7xvfr1u0Z+oMTOOARkuAhwEgorBgEEAZdVAQUBAQdAcuNbK3VT
+WrRYypisnnzLAguqvKX3Vc1OpNE4f8pOcgMDAQgHwsF2BBgBCgAgFiEE9KKf333+
+FIzPGaxOJ/SzRZ8AIlcFAmS4CHACGwwACgkQJ/SzRZ8AIlc90BAAr0hmx8XU9KCj
+g4nJqfavlmKUZetoX5RB9g3hkpDlvjdQZX6lenw3yUzPj53eoiDKzsM03Tak/KFU
+FXGeq7UtPOfXMyIh5UZVdHQRxC4sIBMLKumBfC7LM6XeSegtaGEX8vSzjQICIbaI
+roF2qVUOTMGal2mvcYEvmObC08bUZuMd4nxLnHGiej2t85+9F3Y7GAKsA25EXbbm
+ziUg8IVXw3TojPNrNoQ3if2Z9NfKBhv0/s7x/3WhhIzOht+rAyZaaW+31btDrX4+
+Y1XLAzg9DAfuqkL6knHDMd9tEuK6m2xCOAeZazXaNeOTjQ/XqCHmZ+691VhmAHCI
+7Z7EBPh++TjEqn4ZH+4KPn6XD52+ruWXGbJP29zc+3bwQ+ZADfUaL3ADj69ySxzm
+bO24USHBAg+BhZAZMBkbkygbTen/umT6tBxG91krqbKlDdc8mhGonBN6i+nz8qv1
+6MdC5P1rDbo834rxNLvoFMSLCcpjoafiprl9qk0wQLq48WGphs9DX7V75ZAU5Lt6
+yA+je8i799EZJsVlB933Gpj688H4csaZqEMBjq7vMvI+a5MnLCGcjwRhsUfogpRb
+AWTx9ddVau4MJgEHzB7UU/VFyP2vku7XPj6mgSfSHyNVf2hqxwISQ8eZLoyxauOD
+Y61QMX6YFL170ylToSFjH627h6TzlUDOMwRkuAiAFgkrBgEEAdpHDwEBB0Bibkmu
+Sf7yECzrkBmjD6VGWNVxTdiqb2RuAfGFY9RjRsLB7QQYAQoAIBYhBPSin999/hSM
+zxmsTif0s0WfACJXBQJkuAiAAhsCAIEJECf0s0WfACJXdiAEGRYIAB0WIQSiu8gv
+1Xr0fIw/aoLbaV4Vf/JGvQUCZLgIgAAKCRDbaV4Vf/JGvZP9AQCwV06n3DZvuce3
+/BtzG5zqUuf6Kp2Esgr2FrD4fKVbogD/ZHpXfi9ELdH/JTSVyujaTqhuxQ5B7UzV
+CUIb1qbg1APIEA/+IaLJIBySehy8dHDZQXit/XQYeROQLTT9PvyM35rZVMGH6VG8
+Zb23BPCJ3N0ISOtVdG402lSP0ilP/zSyQAbJN6F0o2tiPd558lPerFd/KpbCIp8N
+kYaLlHWIDiN2AE3c6sfCiCPMtXOR7HCeQapGQBS/IMh1qYHffuzuEy7tbrMvjdra
+VN9Rqtp7PSuRTbO3jAhm0Oe4lDCAK4zyZfjwiZGxnj9s1dyEbxYB2GhTOgkiX/96
+Nw+m/ShaKqTM7o3pNUEs9J3oHeGZFCCaZBv97ctqrYhnNB4kzCxAaZ6K9HAAmcKe
+WT2q4JdYzwB6vEeHnvxl7M0Dj9pUTMujW77Qh5IkUQLYZ2XQYnKAV2WI90B0R1p9
+bXP+jqqkaNCrxKHV1tYOB6037CziGcZmiDneiTlM765MTLJLlHNqlXxDCzRwEazU
+y9dNzITjVT0qhc6th8/vqN9dqvQaAGa13u86Gbv4XPYdE+5MXPM/fTgkKaPBYcIV
+QMvLfoZxyaTk4nzNbBxwwEEHrvTcWDdWxGNtkWRZw0+U5JpXCOi9kBCtFrJ701UG
+UFs56zWndQUS/2xDyGk8GObGBSRLCwsXsKsF6hSX5aKXHyrAAxEUEscRaAmzd6O3
+ZyZGVsEsOuGCLkekUMF/5dwOhEDXrY42VR/ZxdDTY99dznQkwTt4o7FOmkY=3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------u8Ideiazs4hCjoXAckzRyQhI--
+
+--------------dmg0AGwwVL6W8RXA0ox4qbMm--
+
+--------------ejkQ6uLn0GaiFSlClZC0XSqf
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ07/QwUDAAAAAAAKCRDbaV4Vf/JGvVOM
+AQCiRexXepiHi421Gc03OVPh445YisuIwwomitYof6QldgEAujvSzuyZroUMHy7zZTCeAHqe4H/E
+Z+DS14dFXJTVyQU=
+=hrD+
+-----END PGP SIGNATURE-----
+
+--------------ejkQ6uLn0GaiFSlClZC0XSqf--
