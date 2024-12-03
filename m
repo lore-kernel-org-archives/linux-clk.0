@@ -1,62 +1,62 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1257B1E8849
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 11:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02BB1E884E
+	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 11:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224431; cv=none; b=U+HGXWdgzPoTBGosfpPuUGVJX/O5XxG0xhewK1dOFgVaeXJo+Z+Q+Bf5dn2rUOBKxaQeQ66xuiQ7HVWzmptw+6g8LzlvkdP7Eq5fQyf4Tt86RL7SxAXOaP8GsB8SOK5CplzapT8U5A1mOUUgFzioGKc3WqmnseShGRVEPs0pdNE=
+	t=1733224433; cv=none; b=fMs1jK6oK6R3drxixPLxBQ9CiBbtXXVHdlUVQgsmEnES+pIRKwERBgfB8ComxFN2/GO4lio4/UVxsUiyFCq/kIhqssot/wCi23QsLs9wEcram5mRCHN5TC2x0JSytNxoF5efZV0gbXb4UfeTVui9GKRNySL5Lry5vvpjOEYT4/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224431; c=relaxed/simple;
-	bh=Y69irwvA9nAdEISeaSugtmkBncmO2msbevmdeed4uNU=;
+	s=arc-20240116; t=1733224433; c=relaxed/simple;
+	bh=tw3WVTxLm/IaiyRycyheKSRkKa+pSfnjlBXSAe1N70I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FVFwaZtJd/nWAj/OyK3pAvIZlxCBcVBIwU5Ql/or/1GrIYfX8HuG1Q76mLSSjeJzRnMPqF+B4Mi/pBkEbwqhmBHVjIqGPkFXV6PUhO1N4icEkr4CW/1KjKvfnUhR4n9c6NYqbztyiMWQuLmoXNqIeIjKvyJEJuRCfb2O37L96jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fW428MSd; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=jSqglHiTE0LB/9TBqpBfMbm7t3hIYnpS0C1hmIwVchXQ9AeYA0CL8YsTjWpDHTn/tl0F4IyXENzu2siMVuOcdktuQIF1egSKGiV6qocTL3tkVUfy4sRgwMlg54izsXONYV5DsflYFwlSEkWyd+43+hAgfsTXrg24UDP6nbz4HqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GXlE5gyc; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fW428MSd"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e1f12c82so3560523f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 03:13:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GXlE5gyc"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434ab114753so45224845e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 03:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733224428; x=1733829228; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733224430; x=1733829230; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yY1awRQa+zyuro3jiB3ITZ27W2RkjLLr6d38wv0V3dg=;
-        b=fW428MSdA0eNsKRq0KSPQVgU+Sy0KRs9d3NcJjm4eMygeSGLbvMJOPtfV3254a7sF8
-         qTGb1urJwgTYoTXdryABfoKjjYdgBmuBN2f2tfz8Q77ZKy5kzvrOT/9oF+YB4K2VZ/3M
-         Bg4vU+ZhF8ik9iIzxj26/NG+Xgtau+FY+Jkk8CsPDf8ngacRGXdmvofm/06WJlOKGKn6
-         87emAInSFQBpNxPK0fmOYDoHt8s3YXhT9fKiydDLGXp6IvAd05tf/VB58GCVmAeMEITB
-         EGbnCRdiIveDGYQsjJ22/xbbiGlEtJVmFzMsUeQoBM7iJKpczkZ5Xyrx8l90GHB5Smy7
-         9MBA==
+        bh=+2IzVzZln0ESPpBxngSq6J1V5nvj/Jt8Q+wvf62LlJo=;
+        b=GXlE5gycPdtYE82wP5LU4jlOfX6LjvURfvfDN8HwixSX76umjej3dCQjNWrAfBlX+e
+         +TT8a4WQ0VAa5wlNfgZz8hJZw1/RY6SNhgQRutn614/Ts6fuloI1/Mcad5gBriwX89g0
+         WuAaUgfqah86QroZ1Qo94EgjmZryV2RYOkCS2lPjcU8OOsRT71bNOO66Y1CR/sS5qxiv
+         JWgnEQP72feIdGmLcv8V/R0KksGkyA0+4E8nTM7kNmZVQocaM3lWaPl+zQ8l+6XFH6M5
+         jVk22LX6Csg2HYan+eIewrdLRNrj7bng+nqRWfPzku7l0YLFdm++IpQcfHzURH71jRa/
+         prEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733224428; x=1733829228;
+        d=1e100.net; s=20230601; t=1733224430; x=1733829230;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yY1awRQa+zyuro3jiB3ITZ27W2RkjLLr6d38wv0V3dg=;
-        b=peMn8gDnRNaYw+Uvf071aadTcSbnj+hpB8wEs9w3AEG1gK9rjxk+ZJOQICYXZ+AAF4
-         6aQcHNGPwFD9KTk14Kjv8FvUg9s5q0SnAjUchp9rQG3cPPkwwwmR/Jpzb9ZDXrHXIywt
-         iahqvdLtXw7HnGt77g3kSQUYSqeKgA88Ht3vJtZjeDY7ZdUSzA+5sz8FPPNi1ZBbyiUF
-         DzUyWjpcWsmFgPWoq3mhGXq6Q/O35BRwRNvd6wyUdh1AAGOqpyrMgGwn2b3ySeu6tYH1
-         j5fipGwBB+yQABRUbRYg8pwSSSXbJJhTtP3i/QnY1EW0lo5ifbUaCAh0YNFPjrntxTkZ
-         eCHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnN81DtoRXmWuLy2Th8ctoxcOIlb2wsCeHmA75SQfjt6h/4Obd3KL8UoAXQ+EXhaNxu92b0vvRBzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUsyiDzpWKVMMW/xocavddoY4n5dILBJO9ULIyh6k5uifhPQtM
-	PjlBFy0omGpKbqDsC37t7f6aYJvl1TwYAKX0Q1f7bOYNOHPBHj2QOGa4U9sabPw=
-X-Gm-Gg: ASbGncuK5NIHa1PlnPTDB4y7rSVxhRwz7QkLXq0sfMZj+p93BlWJfIvEiqhLCd9liti
-	6eBsaw1gqkpVlWIuoCe7an6tOGyd7dqgXjSNfAODgNLTo7E48tzc1fNbVm187rjBpkzQxEE+bte
-	G6YCOnVu0UYACFZXoq3BmJCTda9VxiPdSAUXnfcoxKcLcR7QjDpdqNPcCM96rF4f+jTaJmD+99a
-	Nb12F+veeHWatiVwepYozFVHr/3IIBmns2mBlmauXXBFWG9KKfzDM6jFRgk6ldpc8NdP22amOMF
-	NFgn
-X-Google-Smtp-Source: AGHT+IGk9ZwXh2lv3kqOYSslK9UCT/Vz0YqKSpfPIhAVOKw3r9ANzj/+Y6x2dQoPHDh+kHHLlBU9Rg==
-X-Received: by 2002:a05:6000:1f85:b0:382:40ad:44b2 with SMTP id ffacd0b85a97d-385fd3f8c6amr1816729f8f.34.1733224428433;
-        Tue, 03 Dec 2024 03:13:48 -0800 (PST)
+        bh=+2IzVzZln0ESPpBxngSq6J1V5nvj/Jt8Q+wvf62LlJo=;
+        b=T7rZjJCP6PxlKU6GzSxVE/FrKN/vWnsTs1Ijdb4uEETB4MLZvINMSch8arWXtNbKpn
+         GOmTv/pCzKDBQoi0qnDi/N4JY+k7I5pcov4nZFbtxAEeAZG6eYOF2G7zgVz2BqXiih3p
+         jAoaG04cnFXslS1huW/95UA3t3U+lvAuPgSJ4OL7oEmhKTWqMCsLuIZ6SAEoldCv3nD7
+         l1a3pJli9HVkTmYlDe+IhSG0u+6FedhhQqP890xDuwlJ4H3D7cyYcol35LyezjAzk2ho
+         Os7WM/Ixx+/gi8LG0//echQQXGoV1qadmy3j4OMFH0jiwAABqhNHVemilWRd0SEeNWHS
+         RS9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXN0bYS0GIm4KO0EadQlKbFh9W435uZLqT56wUA9oJ2VOo/M+pjU0MOV+xRk4fyoXy4dLBd92PS2kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztFqIQGgGUE0BHljjW4K4g14m9bBpKlJHz/YRL3/DyMHasYkbA
+	JF5cJ3+JPE27Cb5ot9/A2ZNEgGWPrU4fzm9RC1q4eqPtoPD2/ZzEXE/m+Er7tLM=
+X-Gm-Gg: ASbGncvkihFAXTg4quDLALqYBIz/hWoknf62v0vIaU7Hh53ii/dDz1+zilxRsxteieY
+	ZcJ5pbHsI35Ue6BqymFm4rz/lXJtD4DuoQmabRDmqlaiicw2V1RsYfdZe4ZhksOvy/vIIUzZeT4
+	bn9sCYinXL5gFrGPiXl0KzM+1qMnzRL8O1hUOMDWrUqbnkNiGr8XlkjVgtbvo1mJvl8fnKVfcGs
+	jdvxI9/JV9wYc8b+KbW+h7R/Y+6uHVOIkj97sqC4j7cntu9UHXLWSFreGM7VVt7tPyjbtWxAHyq
+	xlQk
+X-Google-Smtp-Source: AGHT+IEsCSfRfxwAWoN3TfFBzHFiRjaoLIVOtdbEsMJ9UzJYdE0tDS/Ao3+yFsalurDJzmRr4gtqgA==
+X-Received: by 2002:a05:6000:156c:b0:382:450c:2607 with SMTP id ffacd0b85a97d-385fd3ccd5dmr1577944f8f.4.1733224430086;
+        Tue, 03 Dec 2024 03:13:50 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:13:47 -0800 (PST)
+        Tue, 03 Dec 2024 03:13:49 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: prabhakar.mahadev-lad.rj@bp.renesas.com,
@@ -77,9 +77,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 10/14] iio: adc: rzg2l_adc: Add suspend/resume support
-Date: Tue,  3 Dec 2024 13:13:10 +0200
-Message-Id: <20241203111314.2420473-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 11/14] dt-bindings: iio: adc: renesas,rzg2l-adc: Document RZ/G3S SoC
+Date: Tue,  3 Dec 2024 13:13:11 +0200
+Message-Id: <20241203111314.2420473-12-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
@@ -93,110 +93,106 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S SoC features a power-saving mode where power to most of
-the SoC components is turned off, including the ADC IP.
-
-Suspend/resume support has been added to the rzg2l_adc driver to restore
-functionality after resuming from this power-saving mode. During suspend,
-the ADC resets are asserted, and the ADC is powered down. On resume, the
-ADC resets are de-asserted, the hardware is re-initialized, and the ADC
-power is restored using the runtime PM APIs.
+Document the ADC IP available on the RZ/G3S SoC. The ADC IP on the RZ/G3S
+differs slightly from the one found on the RZ/G2L. The identified
+differences are as follows:
+- different number of channels (one being used for temperature conversion);
+  consequently, various registers differ; the temperature channel
+  support was not available for the RZ/G2L variant; the #io-channel-cells
+  property was added to be able to request the temperature channel from
+  the thermal driver
+- different default sampling periods
+- the RZ/G3S variant lacks the ADVIC register.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/iio/adc/rzg2l_adc.c | 70 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 37 +++++++++++++------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index f938b0f9a795..634073e7241f 100644
---- a/drivers/iio/adc/rzg2l_adc.c
-+++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -86,6 +86,7 @@ struct rzg2l_adc {
- 	u16 *last_val;
- 	struct completion completion;
- 	struct mutex lock;
-+	bool was_rpm_active;
- };
+diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+index ba86c7b7d622..40341d541726 100644
+--- a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+@@ -17,12 +17,15 @@ description: |
  
- /**
-@@ -550,8 +551,77 @@ static int rzg2l_adc_pm_runtime_resume(struct device *dev)
- 	return 0;
- }
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - renesas,r9a07g043-adc   # RZ/G2UL and RZ/Five
+-          - renesas,r9a07g044-adc   # RZ/G2L
+-          - renesas,r9a07g054-adc   # RZ/V2L
+-      - const: renesas,rzg2l-adc
++    oneOf:
++      - items:
++          - enum:
++              - renesas,r9a07g043-adc   # RZ/G2UL and RZ/Five
++              - renesas,r9a07g044-adc   # RZ/G2L
++              - renesas,r9a07g054-adc   # RZ/V2L
++          - const: renesas,rzg2l-adc
++      - items:
++          - const: renesas,r9a08g045-adc  # RZ/G3S
  
-+static int rzg2l_adc_suspend(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct rzg2l_adc *adc = iio_priv(indio_dev);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = adc->presetn },
-+		{ .rstc = adc->adrstn },
-+	};
-+	int ret;
-+
-+	if (pm_runtime_suspended(dev)) {
-+		adc->was_rpm_active = false;
-+	} else {
-+		ret = pm_runtime_force_suspend(dev);
-+		if (ret)
-+			return ret;
-+		adc->was_rpm_active = true;
-+	}
-+
-+	ret = reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-+	if (ret)
-+		goto rpm_restore;
-+
-+	return 0;
-+
-+rpm_restore:
-+	if (adc->was_rpm_active)
-+		pm_runtime_force_resume(dev);
-+
-+	return ret;
-+}
-+
-+static int rzg2l_adc_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct rzg2l_adc *adc = iio_priv(indio_dev);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = adc->adrstn },
-+		{ .rstc = adc->presetn },
-+	};
-+	int ret;
-+
-+	ret = reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
-+	if (ret)
-+		return ret;
-+
-+	if (adc->was_rpm_active) {
-+		ret = pm_runtime_force_resume(dev);
-+		if (ret)
-+			goto resets_restore;
-+	}
-+
-+	ret = rzg2l_adc_hw_init(dev, adc);
-+	if (ret)
-+		goto rpm_restore;
-+
-+	return 0;
-+
-+rpm_restore:
-+	if (adc->was_rpm_active) {
-+		pm_runtime_mark_last_busy(dev);
-+		pm_runtime_put_autosuspend(dev);
-+	}
-+resets_restore:
-+	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-+	return ret;
-+}
-+
- static const struct dev_pm_ops rzg2l_adc_pm_ops = {
- 	RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend, rzg2l_adc_pm_runtime_resume, NULL)
-+	SYSTEM_SLEEP_PM_OPS(rzg2l_adc_suspend, rzg2l_adc_resume)
- };
+   reg:
+     maxItems: 1
+@@ -57,6 +60,9 @@ properties:
+   '#size-cells':
+     const: 0
  
- static struct platform_driver rzg2l_adc_driver = {
++  "#io-channel-cells":
++    const: 1
++
+ required:
+   - compatible
+   - reg
+@@ -68,7 +74,7 @@ required:
+   - reset-names
+ 
+ patternProperties:
+-  "^channel@[0-7]$":
++  "^channel@[0-8]$":
+     $ref: adc.yaml
+     type: object
+     description: |
+@@ -78,6 +84,8 @@ patternProperties:
+       reg:
+         description: |
+           The channel number.
++        minimum: 0
++        maximum: 8
+ 
+     required:
+       - reg
+@@ -92,18 +100,25 @@ allOf:
+             const: renesas,r9a07g043-adc
+     then:
+       patternProperties:
+-        "^channel@[2-7]$": false
++        "^channel@[2-8]$": false
+         "^channel@[0-1]$":
+           properties:
+             reg:
+-              minimum: 0
+               maximum: 1
+-    else:
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,r9a07g044-adc
++              - renesas,r9a07g054-adc
++    then:
+       patternProperties:
++        "^channel@[8]$": false
+         "^channel@[0-7]$":
+           properties:
+             reg:
+-              minimum: 0
+               maximum: 7
+ 
+ additionalProperties: false
 -- 
 2.39.2
 
