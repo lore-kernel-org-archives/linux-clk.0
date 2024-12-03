@@ -1,91 +1,183 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFD81FBEAB;
-	Tue,  3 Dec 2024 20:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20211B0F09;
+	Tue,  3 Dec 2024 20:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733256951; cv=none; b=RUOFsk22XLc6woU0MbDABg+KBBaz0QqZHn2laMp1Z5Pc1Y/3qzhHvlWmSI9kY2R5nWfeZP1d0otQBr4uIrm3Ni4jD0Y9W7++PMsNYOQLHO7t5jytdDSRmOtl+eGw8hGjH70swNNKULOzEol59gPwhP+qSIcnTx7bWwQ/oss0aqo=
+	t=1733257148; cv=none; b=Jk5fzkJl6eb/xw/DC7V4RhmD53nb7sMSDqZusMsXQSLopzm5cmBrDlmici0eVq1jMYS/4JeuveGwx5xUT9RBRlU8zUsDuadSQNW7e2/yIgLE66+aZ30CMdtJFPVN+0savOSL8Hfc7Fvq/n6/HtqB1UpVwNBCgMkuDTOGjKF0CoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733256951; c=relaxed/simple;
-	bh=nMvRbDWGMoteA80rhU5gF6aGUXcgXYmz/KEKmev1qRA=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=XG8nYSrosQYhcrtPq7u/ygHrssYeSpm0VUobof5IlTUZRa1T3KSbcpt04sLxn3A5YqbnGfzPysIzB2d2XdGwbm6MhRka2PvTTv4q0OxisBY1Z0rdxJvr4TrWDm7TgCy0GUSbpQEdU1IfsOMnTEfrpqN5YiwENIkNSyGT+Xx5HHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUeTdkSL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733257148; c=relaxed/simple;
+	bh=6+2KVTluPIDVxgkNKtooAg7EYhL81BVX5FVJw70UHz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qieNQTJ+kjqUFFD4qHgYyhAxMm9nh+JaZt5PjwDNsw8crf2zPM2LpD9qsTimjN1bJCBYFlqm4G+QdmulTtGvx/YZLtxEgzZdbk+93GFbJ+BokWDSb4uvf7JPNX3feQVFYlEeNGzwn8U3H93yzJZyxDueAwwhCoztWchWXIOcdSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTkBsFf7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUeTdkSL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8EAC4CECF;
-	Tue,  3 Dec 2024 20:15:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTkBsFf7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0A6C4CECF;
+	Tue,  3 Dec 2024 20:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733256950;
-	bh=nMvRbDWGMoteA80rhU5gF6aGUXcgXYmz/KEKmev1qRA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GUeTdkSLrwwtpyDCutlSLaSNwL8dR367APMpqZqPyfH3v/nlyyLuK9nBuPyt9fLpu
-	 HQJD85FLhiZRRnTI6wXi1nAOb7xvv3+OqbOyvsBfQUifI1fP09CNjVbHcgx56Gr7aM
-	 yAvoKaIzF4FTNYnQOa6V5w5ZtiDstQ1MOpJbh+ypN+thSBz2oNsALoV04wWwDjUr1n
-	 YilVlZuqpC9iKY5gbA1uAfwPMv9WgZo3FZQxwdyDnaGQV97BIE1xfwa+KHB8GFtdCU
-	 RRyRl8BqPN+ke4DNCi+84xlzhKPcV3INbqUrQHxiuDuNM9z/bnM4VYrnCiATJr0AIO
-	 pMeOWhOwA+OVw==
-Message-ID: <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1733257147;
+	bh=6+2KVTluPIDVxgkNKtooAg7EYhL81BVX5FVJw70UHz4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CTkBsFf7Rclr9R9AFgd5T12PSArLsh28gfaCmBQm8Geu07W3w5tT+JQFLBELMzWjd
+	 3pe79x1onntHpLBjxlMaIwDW7M9b/WFtQ3r7PaUuQ3TEc+0LUGmKKXIth+FvDewXeW
+	 dFu1JVRaE/rRhS8B/kIBvp9VfLCqxncxV2wBWcpqgwpvcG/g7cE3Ez1EQT4oa+e4eE
+	 MhDphfzAZOSELz/JH7GXYQJdWkCOpT4hoJIWw51lJc8NM+9Q7C9/nWOg9WgmEqqS62
+	 /DLHCJCOcuq0IkVQWA0jHD7dKoAaTSJwqpg8jLv1YfTj3Wpl8ifLOGGA+bdppeqnu6
+	 WGkQjS+nTHovA==
+Date: Tue, 3 Dec 2024 20:18:57 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 09/14] iio: adc: rzg2l_adc: Add support for channel 8
+Message-ID: <20241203201857.7ccdcf99@jic23-huawei>
+In-Reply-To: <20241203111314.2420473-10-claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-10-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jr06pkof6.fsf@starbuckisacylon.baylibre.com>
-References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com> <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com> <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com> <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> <1jy1131kxz.fsf@starbuckisacylon.baylibre.com> <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com> <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com> <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com> <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org> <1jr06pkof6.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 03 Dec 2024 12:15:48 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Jerome Brunet (2024-12-03 03:15:41)
-> On Mon 02 Dec 2024 at 18:53, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > I think the best approach is to add the reset auxilary device with a
-> > function that creates the auxiliary device directly by string name and
-> > does nothing else. Maybe we can have some helper in the auxiliary
-> > layer that does that all for us, because it's quite a bit of boiler
-> > plate that we need to write over and over again. Something like:
-> >
-> >   int devm_auxiliary_device_create(struct device *parent, const char *n=
-ame)
-> >
-> > that does the whole kzalloc() + ida dance that
-> > devm_meson_rst_aux_register() is doing today and wraps it all up so that
-> > the device is removed when the parent driver unbinds. Then this clk
-> > driver can register the reset device with a single call and not need to
-> > do anything besides select AUXILIARY_BUS.
->=20
-> I think this is fairly close to what I proposed in the inital RFC, but
-> generic instead of specific.
+On Tue,  3 Dec 2024 13:13:09 +0200
+Claudiu <claudiu.beznea@tuxon.dev> wrote:
 
-Ok :-/ I've realized that we need this sort of approach in more places
-to logically split the device without making it SoC specific. It's only
-useful to have the registration API live in the driver when we need to
-call functions provided by that module from the driver registering the
-auxiliary device.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The ADC on the Renesas RZ/G3S SoC includes an additional channel (channel
+> 8) dedicated to reading temperature values from the Thermal Sensor Unit
+> (TSU). There is a direct in-SoC connection between the ADC and TSU IPs.
+> 
+> To read the temperature reported by the TSU, a different sampling rate
+> (compared to channels 0-7) must be configured in the ADM3 register.
+> 
+> The rzg2l_adc driver has been updated to support reading the TSU
+> temperature.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
->=20
-> I suspect the the generic path is likely to trigger more discussion.
-> I'd like to be able to finish this migration, instead of leaving half
-> finished like it is now.
+>  static unsigned int rzg2l_adc_readl(struct rzg2l_adc *adc, u32 reg)
+> @@ -161,7 +173,7 @@ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
+>  	rzg2l_adc_writel(adc, RZG2L_ADM(1), reg);
+>  }
+>  
+> -static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+> +static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch, enum iio_chan_type type)
+>  {
+>  	const struct rzg2l_adc_hw_params *hw_params = adc->hw_params;
+>  	u32 reg;
+> @@ -177,6 +189,15 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+>  	reg |= BIT(ch);
+>  	rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
+>  
+> +	reg = rzg2l_adc_readl(adc, RZG2L_ADM(3));
+> +	reg &= ~hw_params->adsmp_mask;
+> +	/*
+> +	 * type could be IIO_VOLTAGE = 0 or IIO_TEMP = 9. Divide to 8 to get
+> +	 * index 0 or 1 depending on the channel type.
 
-Is the half finished migration a problem for this cycle? I was intending
-to send the revert later this week and try again next cycle.
+That is not particularly nice and potentially a little fragile if we get other device
+support in future. Better to match on the type in rzg2l_adc_channels[] possibly wrapped
+up in a little utility function bool rzg2l_adc_channels_is_temp(); Then use a
+? 1 : 0 to get the offset in default_adsmp[]
 
->=20
-> May I add back the boiler plate code in drivers/clk/meson, similar to
-> what was proposed in the RFC [1] and propose the generic implementation
-> in parallel ? It will just be a matter of switching when/if it is approve=
-d.
 
-Sure. You can make devm_meson_clk_rst_aux_register() use the same
-signature as I proposed above so that it's a one line patch later. And
-definitely drop the imply RESET_MESON and depends on REGMAP part. Maybe
-you can put it in the clkc-utils file?
+> +	 */
+> +	reg |= hw_params->default_adsmp[type / 8];
+> +	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
+> +
+>  	/*
+>  	 * Setup ADINT
+>  	 * INTS[31] - Select pulse signal
+> @@ -192,7 +213,8 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+>  	return 0;
+>  }
+>
+>  
+> +	case IIO_CHAN_INFO_PROCESSED:
+> +		if (chan->type != IIO_TEMP)
+> +			return -EINVAL;
+> +
+> +		mutex_lock(&adc->lock);
+> +		ret = rzg2l_adc_conversion(indio_dev, chan->type, adc, ch);
+> +		if (!ret) {
+> +			/* Convert it to mili Celsius. */
+> +			*val = adc->last_val[ch] * 1000;
+Prefer you provide a scale of 1000 and report this raw.
+> +		}
+Also strong preference for error conditions out of line.
+As in that other case, guard() makes that easier as yo ucan do
+		{
+
+			guard(mutex)(&adc->lock);
+			ret = rz....
+			if (ret)
+				return ret;
+
+			*val = ...
+			
+			return IIO_VAL_INT;
+		}
+
+> +		mutex_unlock(&adc->lock);
+> +
+> +		return ret ? ret : IIO_VAL_INT;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+
+>  static const struct iio_info rzg2l_adc_iio_info = {
+> @@ -332,11 +368,14 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
+>  		if (channel >= hw_params->num_channels)
+>  			return -EINVAL;
+>  
+> -		chan_array[i].type = IIO_VOLTAGE;
+> +		chan_array[i].type = rzg2l_adc_channels[channel].type;
+>  		chan_array[i].indexed = 1;
+>  		chan_array[i].channel = channel;
+> -		chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
+> -		chan_array[i].datasheet_name = rzg2l_adc_channel_name[channel];
+> +		if (rzg2l_adc_channels[channel].type == IIO_VOLTAGE)
+> +			chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
+> +		else
+> +			chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
+
+Make it raw, but I'm curious we have no _SCALE on this device.  Do we really have no idea
+of the calibration of these channels?
+
+> +		chan_array[i].datasheet_name = rzg2l_adc_channels[channel].name;
+>  		i++;
+>  	}
+>  
+> @@ -386,7 +425,7 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+>  	reg &= ~RZG2L_ADM3_ADCMP_MASK;
+>  	reg &= ~hw_params->adsmp_mask;
+>  	reg |= FIELD_PREP(RZG2L_ADM3_ADCMP_MASK, hw_params->default_adcmp) |
+> -	       hw_params->default_adsmp;
+> +	       hw_params->default_adsmp[0];
+>  
+>  	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
+>  
+> @@ -479,7 +518,7 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>  static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
+>  	.num_channels = 8,
+>  	.default_adcmp = 0xe,
+> -	.default_adsmp = 0x578,
+> +	.default_adsmp = { 0x578 },
+>  	.adsmp_mask = GENMASK(15, 0),
+>  	.adint_inten_mask = GENMASK(7, 0),
+>  	.adivc = true
+
