@@ -1,183 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20211B0F09;
-	Tue,  3 Dec 2024 20:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821AC143759;
+	Tue,  3 Dec 2024 20:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733257148; cv=none; b=Jk5fzkJl6eb/xw/DC7V4RhmD53nb7sMSDqZusMsXQSLopzm5cmBrDlmici0eVq1jMYS/4JeuveGwx5xUT9RBRlU8zUsDuadSQNW7e2/yIgLE66+aZ30CMdtJFPVN+0savOSL8Hfc7Fvq/n6/HtqB1UpVwNBCgMkuDTOGjKF0CoE=
+	t=1733257315; cv=none; b=KS2i4uJY40VRMMFtWH9yO0LGjhippg9XTjBxJSTVXKug3N0lU41quPcfqxmQiaAYDqfITWY8t7yp24yZ7vz6Q0rlfTEg95CbOK08lPm8RUCiNixj9BJ1rx7eNWbWvg3UqkhppRDtMsIGJOOC9Bt7CvnK7T+ikMI6JzDKBAjQOT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733257148; c=relaxed/simple;
-	bh=6+2KVTluPIDVxgkNKtooAg7EYhL81BVX5FVJw70UHz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qieNQTJ+kjqUFFD4qHgYyhAxMm9nh+JaZt5PjwDNsw8crf2zPM2LpD9qsTimjN1bJCBYFlqm4G+QdmulTtGvx/YZLtxEgzZdbk+93GFbJ+BokWDSb4uvf7JPNX3feQVFYlEeNGzwn8U3H93yzJZyxDueAwwhCoztWchWXIOcdSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTkBsFf7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733257315; c=relaxed/simple;
+	bh=XvHonDC5Zqxszw1JDIsgXnXHPmUro0m9SxjIASwNeoY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=eZorv0o6JTnSpQpv3llOqvNeTRufxp0AyeC0aEA45gjjymG+2HbHW37AR8B1idfqhTPg6snSroJkLqIDgnp71YMHvoI7COkUKhiG4W2fqmoHNIdKzlXkZYK0ZWozAksECWq2v5EbVhJJWbuPLyXAPpX+aVzQdejD20Hf+AohjAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pT74FNcN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTkBsFf7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0A6C4CECF;
-	Tue,  3 Dec 2024 20:19:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pT74FNcN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8D9C4CED6;
+	Tue,  3 Dec 2024 20:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733257147;
-	bh=6+2KVTluPIDVxgkNKtooAg7EYhL81BVX5FVJw70UHz4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CTkBsFf7Rclr9R9AFgd5T12PSArLsh28gfaCmBQm8Geu07W3w5tT+JQFLBELMzWjd
-	 3pe79x1onntHpLBjxlMaIwDW7M9b/WFtQ3r7PaUuQ3TEc+0LUGmKKXIth+FvDewXeW
-	 dFu1JVRaE/rRhS8B/kIBvp9VfLCqxncxV2wBWcpqgwpvcG/g7cE3Ez1EQT4oa+e4eE
-	 MhDphfzAZOSELz/JH7GXYQJdWkCOpT4hoJIWw51lJc8NM+9Q7C9/nWOg9WgmEqqS62
-	 /DLHCJCOcuq0IkVQWA0jHD7dKoAaTSJwqpg8jLv1YfTj3Wpl8ifLOGGA+bdppeqnu6
-	 WGkQjS+nTHovA==
-Date: Tue, 3 Dec 2024 20:18:57 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 09/14] iio: adc: rzg2l_adc: Add support for channel 8
-Message-ID: <20241203201857.7ccdcf99@jic23-huawei>
-In-Reply-To: <20241203111314.2420473-10-claudiu.beznea.uj@bp.renesas.com>
-References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
-	<20241203111314.2420473-10-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1733257315;
+	bh=XvHonDC5Zqxszw1JDIsgXnXHPmUro0m9SxjIASwNeoY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=pT74FNcNxVkwjB2rO21AYzErpMozWgTU1hTUGLgG4jrT/AT9oTopc+JJA2k5xCnPc
+	 QRhKyQxHvSPCH9GpGhlq199vQsqESY27KWU5qxMGQOZuYkYI6IhjUtkNwDS4HyQ9mg
+	 iR4NqZ9P7ie3R4/an+2UTmtdLM03G3KE6WPfJxbFMZZk8L6QE7NdFyiBazL+LkBUn8
+	 kL9Jx5YT/23Q/+LN2eiZech0HVdiXU9QuDAE0Sa+F93HRf3f9x9bz/k8sk/gwOTAHc
+	 hirQL9oa7nLkeOG62oyKY7AWwzd/zUnMna4NaWvrFHLS4nLM2hfZatzqVh9ga+JlSi
+	 E5MB+w+PEzKGA==
+Message-ID: <c9556de589e289cb1d278d41014791a6.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0f07300a-8b32-4d3e-a447-b3fe3cf1ca81@app.fastmail.com>
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com> <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com> <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com> <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> <1jy1131kxz.fsf@starbuckisacylon.baylibre.com> <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com> <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com> <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com> <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org> <0f07300a-8b32-4d3e-a447-b3fe3cf1ca81@app.fastmail.com>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 03 Dec 2024 12:21:52 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue,  3 Dec 2024 13:13:09 +0200
-Claudiu <claudiu.beznea@tuxon.dev> wrote:
+Quoting Arnd Bergmann (2024-12-03 04:43:03)
+> On Tue, Dec 3, 2024, at 03:53, Stephen Boyd wrote:
+> > Quoting Arnd Bergmann (2024-11-28 07:34:46)
+> >> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
+> >> Stephen, can you please take a look here and see if you
+> >> have a better idea for either decoupling the two drivers
+> >> enough to avoid the link time dependency, or to reintegrate
+> >> the reset controller code into the clk driver and avoid
+> >> the complexity?
+> >
+> > I think the best approach is to add the reset auxilary device with a
+> > function that creates the auxiliary device directly by string name and
+> > does nothing else. Maybe we can have some helper in the auxiliary
+> > layer that does that all for us, because it's quite a bit of boiler
+> > plate that we need to write over and over again. Something like:
+> >
+> >   int devm_auxiliary_device_create(struct device *parent, const char *n=
+ame)
+> >
+> > that does the whole kzalloc() + ida dance that
+> > devm_meson_rst_aux_register() is doing today and wraps it all up so that
+> > the device is removed when the parent driver unbinds. Then this clk
+> > driver can register the reset device with a single call and not need to
+> > do anything besides select AUXILIARY_BUS. The regmap can be acquired
+> > from the parent device in the auxiliary driver probe with
+> > dev_get_regmap(adev->parent).
+>=20
+> I like the idea. Two questions about the interface:
+>=20
+>  - should there be a 'void *platform_data' argument anyway?
+>    Even if this can be looked up from the parent, it seems
+>    useful enough
 
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> The ADC on the Renesas RZ/G3S SoC includes an additional channel (channel
-> 8) dedicated to reading temperature values from the Thermal Sensor Unit
-> (TSU). There is a direct in-SoC connection between the ADC and TSU IPs.
-> 
-> To read the temperature reported by the TSU, a different sampling rate
-> (compared to channels 0-7) must be configured in the ADM3 register.
-> 
-> The rzg2l_adc driver has been updated to support reading the TSU
-> temperature.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Sure. Probably that can be added as some variant like
+devm_auxiliary_device_create_pdata() when/if it's needed.
 
->  static unsigned int rzg2l_adc_readl(struct rzg2l_adc *adc, u32 reg)
-> @@ -161,7 +173,7 @@ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
->  	rzg2l_adc_writel(adc, RZG2L_ADM(1), reg);
->  }
->  
-> -static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
-> +static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch, enum iio_chan_type type)
->  {
->  	const struct rzg2l_adc_hw_params *hw_params = adc->hw_params;
->  	u32 reg;
-> @@ -177,6 +189,15 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
->  	reg |= BIT(ch);
->  	rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
->  
-> +	reg = rzg2l_adc_readl(adc, RZG2L_ADM(3));
-> +	reg &= ~hw_params->adsmp_mask;
-> +	/*
-> +	 * type could be IIO_VOLTAGE = 0 or IIO_TEMP = 9. Divide to 8 to get
-> +	 * index 0 or 1 depending on the channel type.
+>=20
+>  - What is the scope of the 'ida' number? My impression was
+>    this should be local to one parent device, but I don't
+>    know how the number is used in the end, so maybe a global
+>    number allocator is sufficient.
+>=20
 
-That is not particularly nice and potentially a little fragile if we get other device
-support in future. Better to match on the type in rzg2l_adc_channels[] possibly wrapped
-up in a little utility function bool rzg2l_adc_channels_is_temp(); Then use a
-? 1 : 0 to get the offset in default_adsmp[]
-
-
-> +	 */
-> +	reg |= hw_params->default_adsmp[type / 8];
-> +	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
-> +
->  	/*
->  	 * Setup ADINT
->  	 * INTS[31] - Select pulse signal
-> @@ -192,7 +213,8 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
->  	return 0;
->  }
->
->  
-> +	case IIO_CHAN_INFO_PROCESSED:
-> +		if (chan->type != IIO_TEMP)
-> +			return -EINVAL;
-> +
-> +		mutex_lock(&adc->lock);
-> +		ret = rzg2l_adc_conversion(indio_dev, chan->type, adc, ch);
-> +		if (!ret) {
-> +			/* Convert it to mili Celsius. */
-> +			*val = adc->last_val[ch] * 1000;
-Prefer you provide a scale of 1000 and report this raw.
-> +		}
-Also strong preference for error conditions out of line.
-As in that other case, guard() makes that easier as yo ucan do
-		{
-
-			guard(mutex)(&adc->lock);
-			ret = rz....
-			if (ret)
-				return ret;
-
-			*val = ...
-			
-			return IIO_VAL_INT;
-		}
-
-> +		mutex_unlock(&adc->lock);
-> +
-> +		return ret ? ret : IIO_VAL_INT;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-
->  static const struct iio_info rzg2l_adc_iio_info = {
-> @@ -332,11 +368,14 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
->  		if (channel >= hw_params->num_channels)
->  			return -EINVAL;
->  
-> -		chan_array[i].type = IIO_VOLTAGE;
-> +		chan_array[i].type = rzg2l_adc_channels[channel].type;
->  		chan_array[i].indexed = 1;
->  		chan_array[i].channel = channel;
-> -		chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-> -		chan_array[i].datasheet_name = rzg2l_adc_channel_name[channel];
-> +		if (rzg2l_adc_channels[channel].type == IIO_VOLTAGE)
-> +			chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-> +		else
-> +			chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
-
-Make it raw, but I'm curious we have no _SCALE on this device.  Do we really have no idea
-of the calibration of these channels?
-
-> +		chan_array[i].datasheet_name = rzg2l_adc_channels[channel].name;
->  		i++;
->  	}
->  
-> @@ -386,7 +425,7 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
->  	reg &= ~RZG2L_ADM3_ADCMP_MASK;
->  	reg &= ~hw_params->adsmp_mask;
->  	reg |= FIELD_PREP(RZG2L_ADM3_ADCMP_MASK, hw_params->default_adcmp) |
-> -	       hw_params->default_adsmp;
-> +	       hw_params->default_adsmp[0];
->  
->  	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
->  
-> @@ -479,7 +518,7 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
->  static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
->  	.num_channels = 8,
->  	.default_adcmp = 0xe,
-> -	.default_adsmp = 0x578,
-> +	.default_adsmp = { 0x578 },
->  	.adsmp_mask = GENMASK(15, 0),
->  	.adint_inten_mask = GENMASK(7, 0),
->  	.adivc = true
-
+From what I can tell it's only used for the device name and not for
+driver matching. That's probably to make it so we don't get conflicts in
+sysfs with devices because they all share the same bus. I'd guess that a
+global allocator is sufficient.
