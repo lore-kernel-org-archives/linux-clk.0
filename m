@@ -1,62 +1,62 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E551E570E
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 11:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBAE1E573B
+	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 11:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224425; cv=none; b=bH2TD6C8G8a+k0/9zHYEMv1AdISzx4HWibJW311TSvoddidNxDCUVsUcnXSRbdAkOB3HA+XRHP6wzSg4F0up1hHx8f8Py5cHUOHlXvsq88EUzLPn4k95PWx1tlA9WPWuIxA2wBeH5yBV/W7eLtK9XnOSe6ZdXbZ1QMuZiMX94Dc=
+	t=1733224425; cv=none; b=PQjFy5dHoWmR82Wcrv5rti78Pd10gWxgCTp3MelRnHLoEfQf+JL4WPCuHibQ8S+djd6Yt2l1IorAXoBEAqPM+Hg228ZyzxJRPKWAqQVzquBg9o4rQpJ9OwJXSHgnryiRDmKEi6MnBEoA16hdPQAr/zXK3SHlEOKPTGNCSZevx/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733224425; c=relaxed/simple;
-	bh=dJ66VqH1lPKbG1vJ5uyMkdnhCZK/cj9xWl8VrZo+eZw=;
+	bh=xJ4dALnf5mNTVJSAEIwW3H4ATLoC4Hm1NI+znfsjunw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VQp3QVp04VuwquO7tisF8EvG6NpgV5Fl1wNwRs9T75vZ1Ha6cNlwgdnnZiGos9wYimitraew2C8t1McE98ai0nDVOEJCm2jeWUEifR/wNwM62ACOq2WnhqETDMZrO3SPGV8TsXf2EBkr1AGp9/+24feosig5u+LvzUJucI40Xgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z+2gqJEx; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=D50ai0vzFvq36pkppGDLB67IxaX/T2iOZw7y3oRJE6Z6RPm7nbg/tsdhE9qGkMyJMnt5PkSBZF3l2h4DmbmrVDrH7+Byo+T1/lyxzzzDgZdUgvHwN51ZcOINYBWqS1kMarerrTs9hJBgo4hyRWT8hu7bCT5T3T7/wKJ+5J3swDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=A861IbJF; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z+2gqJEx"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a736518eso66708995e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 03:13:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="A861IbJF"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-385ddcfc97bso3546688f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 03:13:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733224421; x=1733829221; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733224422; x=1733829222; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JGjJNxAUoLlbHeze5dKZ8rYLCdUS04mEhaX4QA4tgNs=;
-        b=Z+2gqJExQdzuRiPv9DPdYMSZwZ5IdAbriIf91XWR916L8+vIxd4nR6+x5WeJtL9BuV
-         bGQzsrLyFcBToFHCiOHVrC+16vXjoVi5XiodBOLM4KyEdUa7bujkBN2liLc9GjE3+Sh/
-         NMER/kcmbuI17iMa32Pq4r0H+TI3Q1kEd3qFvU9YEB524KuuWy7VisMkdIGaof+t3FOi
-         Qrp8o79MZu69kJ6XgUpamlAJqPWpcCwQxi7bgfS845vRXOD92ujjh41zbUULSNO3S7Et
-         +7BDQnnQBXx4ZjWIUN4ABT6PeJrpyw9dg4QerBeYSZcFsCer9HWVnnQpRmnyya1/4VvK
-         pC0Q==
+        bh=hbKn6tGUYWTywSMd7jgYmbuzMuj/ru2cA6G4h80SF4s=;
+        b=A861IbJFvPqA0ouBOg6H/VFTbkVVUyfnDKvu2joAuZJxrouD6xfUJl/TLRH+NGhGMB
+         7LkgwlXpWUqglpi9ncwFA+Gj6Z9Y9vMMyF19ydwDHh+TylqjmL455QNqRbeI982W7Kxj
+         c5e2FmpJ/ORzqcZKc4DCG58GkClfNl5wxTZSG0Aqt2nMsX2zc/OkEaifBj3a6KVM49KD
+         BoiJ1u94FdjpvesXHq8lx4D1SwTPka3YMz/wO9+KLBPkfrS50uVmFuXCgfiS+98olfVU
+         EeorCt1y5XVfKhhU5IIcsZPBMIddEplRksqSQTGMUz3wxRdVjAEWg/PWTSKiQ/TieUua
+         62kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733224421; x=1733829221;
+        d=1e100.net; s=20230601; t=1733224422; x=1733829222;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JGjJNxAUoLlbHeze5dKZ8rYLCdUS04mEhaX4QA4tgNs=;
-        b=p0StSSV3VjwecDfJMhmYuVpsotkIPc31ZAeCTMtQDEOcPlFm5IhocOhYBFbV0ncc7N
-         /QwegK594cr59wuzRcvf66XW4qZhFTmm7vAi0kYLdBy7UrADpMSwkLnRwqQuRFB/YiRr
-         +MmnJeG1cTkRfThsNYqktsfwu7WMwd26ISIS1p6OltTp6F7/uMaRXpTsP+w8HHY93Adr
-         Tv8tj7vYf1kODOa3GEp/pNI2GVANS7OQ3/rj9svr/N7jWQ+quizUL0ScD2fXgENjyHg8
-         KlqxvTKti+Eee+aM2llNT2huamq2ISSl5GtcuzghbyADWXVt15L7ddvD1nRoKtmiZXpm
-         ckyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeppZGsGBXF/rTYU0k8OfRJK3ywgS4Da6j0jS743l5CEaL/qYEyQgriaBXJFmw2WeMXAr2Rhtg5rM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSUFd3d2J2fKKmlHBO0yNz5b8DLSY6fPME1nG50zqox8HmKih8
-	BCPhUMPVjTUYPh/C8D/tJbpyZ+r0t2iWAi/lPQQornA9yTg/fUaykqQUuZG3kwk=
-X-Gm-Gg: ASbGnctTEECMMZUmccBgojWSQIsUKJ4WB6I4nzW480XWPV7oVNEng7XcOxLsqbn8ZlW
-	FytCQrrdnHNb1L3GGcIybGYXj7lTs5dJ+/UJxr6na69M9mo6JoraNKTHo+1ZwW7MMVmKbfy48AK
-	u7qUjC+NrQKym7Dc/lz/1NnPqGyHQjasfiRBWu5xmScXussmNi2ZA39D6YX+lWig9gU7leakWoZ
-	aae5O50ZxVYtEKnH5gHF4qGMV/5Co90YvKgHOjL4ApfutvwqYGpuvLdy6UfgmMbiWq7kKvROZGH
-	zmSt
-X-Google-Smtp-Source: AGHT+IE+s1yoVLBzbwgkBBIAjbk6p+3eCyfk26hAJKZF4jfFJbnwH4ZzJ60DDcfVvJaXNdjv9UMOjA==
-X-Received: by 2002:a05:600c:138a:b0:434:a684:984 with SMTP id 5b1f17b1804b1-434d09b2f31mr20189215e9.4.1733224420880;
-        Tue, 03 Dec 2024 03:13:40 -0800 (PST)
+        bh=hbKn6tGUYWTywSMd7jgYmbuzMuj/ru2cA6G4h80SF4s=;
+        b=IX4MuXdnRIADQo70xIgwOOwQjy2Dskgkq3UuUHyTUQNqlq+CNK2G+lLoqIkdufsSIs
+         b6k592DrIYJGn/RTOljL1tZATGw69YgadjqT+DCp2Qi3DnTwPLbdIfYPKl+iovinnRAA
+         YEnEDXuQojuHizaZifQJEepx1Gb6WoXK5kTHTvkYQcA87xfm4WSrxa1oeWIFlE1P46fl
+         VBQ4nGgQmCdOrXkZVAYWnnbSDHaruylk7CmpkY/ywiGIH6NqWxy+r3/hEys7qflIa5d9
+         2YBAHQOXZPZA6lAvNtjn79l/JkqOclcELvjxIbqkYva/5w0OfMYFwKQADiDqiYI9MEhk
+         FqGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOb6kHy1MqwhKqtavetnybTMZwLWorBzg4oM7qtMsIBifHNzn/MFZViBjNbBsBcO/DKZMdIjnGE1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTlKpl40uo7QpmtlJhj5/sdSN8h9K13ZQGGfKE6KXn+Vb702T2
+	It7DwqF9Tsaz3Kcm0HjMmSY08fZ6Af6mXjU+XVrZbLhc3nao7C7oh6Xb0Z7HtHk=
+X-Gm-Gg: ASbGnctOjUFAeKGuIva9mfz5lv4P/tlV2e8gGIHwaoD2awgwasPcl289zPy0locxjP6
+	Sm/oYjLC6kYTGGTGu3/Wi1WmOMu8XIiPIIPHR4VcsAtwssef3YdChY4dmTNLaCV/UFYygzuoYDi
+	0p+vTvdMdNkZUreqvkwx4hU5hVwk4t5AaTU2UFHJDaPKwOwpPNgks31wc5ZRPKPr6IfmRObccWz
+	QvyHwei2Z2qe03KvnQnv198MH35BD/jj23slYVe3dj/E3ZDP/R9rcyC3GDFq9tuykObJ94tGnHN
+	hsXV
+X-Google-Smtp-Source: AGHT+IEOrZno5uDxt9ZVOUtNbpTQHBOs2RWQccg81owHc2jnjCTJ+2WWar5weAlgmhDsBKHCTYxVnw==
+X-Received: by 2002:a5d:5988:0:b0:385:fb56:5596 with SMTP id ffacd0b85a97d-385fd3cebdamr1638266f8f.19.1733224422476;
+        Tue, 03 Dec 2024 03:13:42 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:13:40 -0800 (PST)
+        Tue, 03 Dec 2024 03:13:42 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: prabhakar.mahadev-lad.rj@bp.renesas.com,
@@ -77,9 +77,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 06/14] iio: adc: rzg2l_adc: Simplify the locking scheme in rzg2l_adc_read_raw()
-Date: Tue,  3 Dec 2024 13:13:06 +0200
-Message-Id: <20241203111314.2420473-7-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 07/14] iio: adc: rzg2l_adc: Enable runtime PM autosuspend support
+Date: Tue,  3 Dec 2024 13:13:07 +0200
+Message-Id: <20241203111314.2420473-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
@@ -93,39 +93,54 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Simplify the locking scheme in rzg2l_adc_read_raw() by saving the converted
-value only if the rzg2l_adc_conversion() returns success. The approach
-simplifies the addition of thermal sensor support (that will be done in the
-next commits). The downside is that the ret variable need to be checked
-twice.
+Enable runtime PM autosuspend support for the rzg2l_adc driver. With this
+change, consecutive conversion requests will no longer cause the device to
+be runtime-enabled/disabled after each request. Instead, the device will
+transition based on the delay configured by the user.
+
+This approach reduces the frequency of hardware register access during
+runtime PM suspend/resume cycles, thereby saving CPU cycles. The default
+autosuspend delay is set to zero to maintain the previous driver behavior.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/iio/adc/rzg2l_adc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/iio/adc/rzg2l_adc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 62932f9295b6..eed2944bd98d 100644
+index eed2944bd98d..fda8b42ded81 100644
 --- a/drivers/iio/adc/rzg2l_adc.c
 +++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -227,14 +227,11 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio_dev,
- 		mutex_lock(&adc->lock);
- 		ch = chan->channel & RZG2L_ADC_CHN_MASK;
- 		ret = rzg2l_adc_conversion(indio_dev, adc, ch);
--		if (ret) {
--			mutex_unlock(&adc->lock);
--			return ret;
--		}
--		*val = adc->last_val[ch];
-+		if (!ret)
-+			*val = adc->last_val[ch];
- 		mutex_unlock(&adc->lock);
+@@ -207,7 +207,8 @@ static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rzg2l_adc *adc
+ 	rzg2l_adc_start_stop(adc, false);
  
--		return IIO_VAL_INT;
-+		return ret ? ret : IIO_VAL_INT;
+ rpm_put:
+-	pm_runtime_put_sync(dev);
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
+ 	return ret;
+ }
  
- 	default:
- 		return -EINVAL;
+@@ -372,7 +373,8 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+ 	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
+ 
+ exit_hw_init:
+-	pm_runtime_put_sync(dev);
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
+ 	return ret;
+ }
+ 
+@@ -412,6 +414,9 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(adc->presetn);
+ 	}
+ 
++	/* Default 0 for power saving. Can be overridden via sysfs. */
++	pm_runtime_set_autosuspend_delay(dev, 0);
++	pm_runtime_use_autosuspend(dev);
+ 	ret = devm_pm_runtime_enable(dev);
+ 	if (ret)
+ 		return ret;
 -- 
 2.39.2
 
