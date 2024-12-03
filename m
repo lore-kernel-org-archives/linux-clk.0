@@ -1,216 +1,246 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209B41DF739;
-	Tue,  3 Dec 2024 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD801DDA37;
+	Tue,  3 Dec 2024 10:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222902; cv=none; b=s/LBr3ZBdQ+H6aOdtCOZ/UKegkValxcRKfJ8sCGDcsH+GPjYVe6kUx5emxzZ3RAUmLvrnaVd26FwjQ0PDLjBLINEiGf2ITTd20rfJOrC1UnaFJik4YU4SAH4PFCwO+PuIl5OLhsD81g9zW/ntxwetAwxntMuEK3uo4pKLAg+hEg=
+	t=1733223045; cv=none; b=GFszVbn+FiZC5Vyy7dVsynmry1u0caymMn5+nrROgcu3BQ1jowc5m16o5aiGmfEJpmhwI1ivwVUptzk5PbWZ5fp2724gpAAWJLHCmNzfa+DiXWcdoZOWKlWN+MUsk1wvTCIOhbmj6/GIRwlny6U0+Nr9RCtyqQR7PkWs5IYt/XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222902; c=relaxed/simple;
-	bh=dJFQEv4Xxhh02RxjGMUH5vLtFgBKBRerslEin2vZrbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHlReZlPQKCG56JD9YsSQCBGk4hSwkc23Ki5z2bG6IEKiTOkMCko9vZYTeuN/F9rCuJ2F4YJjMmGQuCyKbxjl/RDq9a5gEMOvJ2NynKJKL1L8TeX4BOggEU8bWT/+s0xcM8nlVMSgMhwmabFfuzHdY/Jdqohfn96o4RFRKrCUUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AJ4QnhJF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AJ4QnhJF"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E022E1;
-	Tue,  3 Dec 2024 11:47:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733222870;
-	bh=dJFQEv4Xxhh02RxjGMUH5vLtFgBKBRerslEin2vZrbU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AJ4QnhJFmQYcexbMFey5y33sjiXDv4uCgfQrrQExkguUzzHT+hC5aWBsOlL6wpfaI
-	 xmU7o/WRG2ab23rcPtuX+a+XDKenJng/v2aJeW+NSW74dtaNnMuYyhgSkzpSW+3eGW
-	 kcARFRlFRWjc6Bnw+BG2R1rArLiky0pEXDoOwD/A=
-Date: Tue, 3 Dec 2024 12:48:06 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	s=arc-20240116; t=1733223045; c=relaxed/simple;
+	bh=FcaYsPwrLK3ZqoRhidvcE0etwCXxgZRYqtlhKQkntBI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oy8yEGWCSSKUPN0J24XfFNO17ZS/KgQIL4dqyuj4NXU2bQpEO6Sdw2/wXsXBpbtewuCGJS2NJHU9W+OkHvrZ8jga3AZy5jFp0MY+iuesSyuGSYP374YoPrfPcmvp9kGpHtE/nW8DsWdblQ12J7VCtuDKjKLj0ExX+ohjKjCwLc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: xo2p3+PHTyuoVpmJzaMLDQ==
+X-CSE-MsgGUID: Nd9GqulZTteRNK0eBOEcwg==
+X-IronPort-AV: E=Sophos;i="6.12,204,1728918000"; 
+   d="scan'208";a="230754411"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 03 Dec 2024 19:50:42 +0900
+Received: from localhost.localdomain (unknown [10.226.93.2])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7900F40061AD;
+	Tue,  3 Dec 2024 19:50:31 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 6/9] drm/rcar-du: Add support for r8a779h0
-Message-ID: <20241203104806.GN10736@pendragon.ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-6-738ae1a95d2a@ideasonboard.com>
- <20241203085654.GJ10736@pendragon.ideasonboard.com>
- <e155c9b1-a43f-4be3-9825-2639ac3bb61d@ideasonboard.com>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 06/13] clk: renesas: Add support for RZ/G3E SoC
+Date: Tue,  3 Dec 2024 10:49:33 +0000
+Message-ID: <20241203105005.103927-7-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241203105005.103927-1-biju.das.jz@bp.renesas.com>
+References: <20241203105005.103927-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e155c9b1-a43f-4be3-9825-2639ac3bb61d@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 11:22:15AM +0200, Tomi Valkeinen wrote:
-> On 03/12/2024 10:56, Laurent Pinchart wrote:
-> > On Tue, Dec 03, 2024 at 10:01:40AM +0200, Tomi Valkeinen wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add support for r8a779h0. It is very similar to r8a779g0, but has only
-> >> one output.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >> ---
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c   | 19 +++++++++++++++++++
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h   |  1 +
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 16 ++++++++++------
-> >>   3 files changed, 30 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> >> index fb719d9aff10..afbc74e18cce 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> >> @@ -545,6 +545,24 @@ static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
-> >>   	.dsi_clk_mask =  BIT(1) | BIT(0),
-> >>   };
-> >>   
-> >> +static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
-> >> +	.gen = 4,
-> >> +	.features = RCAR_DU_FEATURE_CRTC_IRQ
-> >> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
-> >> +		  | RCAR_DU_FEATURE_NO_BLENDING
-> >> +		  | RCAR_DU_FEATURE_NO_DPTSR,
-> >> +	.channels_mask = BIT(0),
-> >> +	.routes = {
-> >> +		/* R8A779H0 has one MIPI DSI output. */
-> >> +		[RCAR_DU_OUTPUT_DSI0] = {
-> >> +			.possible_crtcs = BIT(0),
-> >> +			.port = 0,
-> >> +		},
-> >> +	},
-> >> +	.num_rpf = 5,
-> >> +	.dsi_clk_mask = BIT(0),
-> >> +};
-> >> +
-> >>   static const struct of_device_id rcar_du_of_table[] = {
-> >>   	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
-> >>   	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-> >> @@ -571,6 +589,7 @@ static const struct of_device_id rcar_du_of_table[] = {
-> >>   	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
-> >>   	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
-> >>   	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
-> >> +	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
-> >>   	{ }
-> >>   };
-> >>   
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-> >> index 5cfa2bb7ad93..d7004f76f735 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-> >> @@ -32,6 +32,7 @@ struct rcar_du_device;
-> >>   #define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
-> >>   #define RCAR_DU_FEATURE_TVM_SYNC	BIT(4)	/* Has TV switch/sync modes */
-> >>   #define RCAR_DU_FEATURE_NO_BLENDING	BIT(5)	/* PnMR.SPIM does not have ALP nor EOR bits */
-> >> +#define RCAR_DU_FEATURE_NO_DPTSR	BIT(6)  /* V4M does not have DPTSR */
-> > 
-> > Do we need a quirk ? At first glance it seems the DPTSR register is only
-> > used for DU instances that have two channels, so a check on the number
-> > of channels should be enough ?
-> 
-> What do you mean with "DPTSR register is only used for DU instances that 
-> have two channels"? The upstream code sets it for all SoCs, doesn't it, 
-> without any checks?
+The clock structure for RZ/G3E is almost identical to RZ/V2H SoC with
+more IP blocks compared to RZ/V2H. For eg: VSPI, LVDS, DPI and LCDC1
+are present only on the RZ/G3E SoC.
 
-DPTSR is one of those registers that controls features shared between
-channels, in this specific case plane assignment to DU channels. The
-default register value (i.e. all 0's) splits resources between the
-channels. For DU groups with a single channel, there's no need for
-resource assignment. Logically speaking, the all 0's register value as
-documented in instances that have two channels would assign all the
-resources that exist in the single-channel group to the single channel.
-When computing the DPTSR value, the driver will (or at least should)
-therefore always come up with 0x00000000. Writing that to the register
-should be a no-op.
+Add minimal clock and reset entries required to boot the Renesas RZ/G3E
+SMARC EVK and binds it with the RZ/V2H CPG core driver.
 
-It's not clear if the register is present or not when the group has a
-single channel. Some datasheets document the register is not being
-applicable. Writing to it has never caused issues, so we may be dealing
-with the hardware just ignoring writes to a non-implemented register, or
-the register may be there, with only 0x00000000 being a meaningful
-value. This being said, some people are concerned about writes to
-registers that are not documented as present, as they could possibly
-cause issues. Safety certification of the driver could be impacted.
-We've updated the DU driver over the past few years to avoid those
-writes for this reason.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * No change.
+---
+ drivers/clk/renesas/Kconfig         |  7 ++-
+ drivers/clk/renesas/Makefile        |  1 +
+ drivers/clk/renesas/r9a09g047-cpg.c | 98 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     |  6 ++
+ drivers/clk/renesas/rzv2h-cpg.h     |  1 +
+ 5 files changed, 112 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/renesas/r9a09g047-cpg.c
 
-TL;DR: yes, the DU driver writes to DPTSR for DU groups with a single
-channel, but that seem it could be wrong, and we could fix it for all
-single-channel groups in one go without introducing this feature bit. I
-can test a patch on a M3 board that has a single channel in the second
-group.
-
-> Most of the SoCs seem to have two channels, but r8a77970 has one. 
-> However, I don't have docs for that one. It could be that it does not 
-> have DPTSR register, and indeed we could use the num_crtcs > 1 check there.
-> 
-> >>   #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
-> >>   
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> index 2ccd2581f544..132d930670eb 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> @@ -107,10 +107,12 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
-> >>   		 */
-> >>   		rcrtc = rcdu->crtcs;
-> >>   		num_crtcs = rcdu->num_crtcs;
-> >> -	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
-> >> +	} else if ((rcdu->info->gen == 3 && rgrp->num_crtcs > 1) ||
-> >> +		   rcdu->info->gen == 4) {
-> >>   		/*
-> >>   		 * On Gen3 dot clocks are setup through per-group registers,
-> >>   		 * only available when the group has two channels.
-> >> +		 * On Gen4 the registers are there for single channel too.
-> >>   		 */
-> >>   		rcrtc = &rcdu->crtcs[rgrp->index * 2];
-> >>   		num_crtcs = rgrp->num_crtcs;
-> >> @@ -185,11 +187,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> >>   		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
-> >>   	rcar_du_group_write(rgrp, DORCR, dorcr);
-> >>   
-> >> -	/* Apply planes to CRTCs association. */
-> >> -	mutex_lock(&rgrp->lock);
-> >> -	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> -			    rgrp->dptsr_planes);
-> >> -	mutex_unlock(&rgrp->lock);
-> >> +	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_NO_DPTSR)) {
-> >> +		/* Apply planes to CRTCs association. */
-> >> +		mutex_lock(&rgrp->lock);
-> >> +		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> +				    rgrp->dptsr_planes);
-> >> +		mutex_unlock(&rgrp->lock);
-> >> +	}
-> >>   }
-> >>   
-> >>   /*
-
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index ff01f5f0ed20..5a4bc3f94d49 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -40,6 +40,7 @@ config CLK_RENESAS
+ 	select CLK_R9A07G054 if ARCH_R9A07G054
+ 	select CLK_R9A08G045 if ARCH_R9A08G045
+ 	select CLK_R9A09G011 if ARCH_R9A09G011
++	select CLK_R9A09G047 if ARCH_R9A09G047
+ 	select CLK_R9A09G057 if ARCH_R9A09G057
+ 	select CLK_SH73A0 if ARCH_SH73A0
+ 
+@@ -194,6 +195,10 @@ config CLK_R9A09G011
+ 	bool "RZ/V2M clock support" if COMPILE_TEST
+ 	select CLK_RZG2L
+ 
++config CLK_R9A09G047
++       bool "RZ/G3E clock support" if COMPILE_TEST
++       select CLK_RZV2H
++
+ config CLK_R9A09G057
+        bool "RZ/V2H(P) clock support" if COMPILE_TEST
+        select CLK_RZV2H
+@@ -234,7 +239,7 @@ config CLK_RZG2L
+ 	select RESET_CONTROLLER
+ 
+ config CLK_RZV2H
+-	bool "RZ/V2H(P) family clock support" if COMPILE_TEST
++	bool "RZ/{G3E,V2H(P)} family clock support" if COMPILE_TEST
+ 	select RESET_CONTROLLER
+ 
+ config CLK_RENESAS_VBATTB
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 82efaa835ac7..2d6e746939c4 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
+ obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
++obj-$(CONFIG_CLK_R9A09G047)		+= r9a09g047-cpg.o
+ obj-$(CONFIG_CLK_R9A09G057)		+= r9a09g057-cpg.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+ 
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+new file mode 100644
+index 000000000000..5d7611cee9bc
+--- /dev/null
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas RZ/G3E CPG driver
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++
++#include "rzv2h-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R9A09G047_IOTOP_0_SHCLK,
++
++	/* External Input Clocks */
++	CLK_AUDIO_EXTAL,
++	CLK_RTXIN,
++	CLK_QEXTAL,
++
++	/* PLL Clocks */
++	CLK_PLLCM33,
++	CLK_PLLDTY,
++	CLK_PLLCA55,
++
++	/* Internal Core Clocks */
++	CLK_PLLCM33_DIV16,
++	CLK_PLLDTY_ACPU,
++	CLK_PLLDTY_ACPU_DIV4,
++
++	/* Module Clocks */
++	MOD_CLK_BASE,
++};
++
++static const struct clk_div_table dtable_2_64[] = {
++	{0, 2},
++	{1, 4},
++	{2, 8},
++	{3, 16},
++	{4, 64},
++	{0, 0},
++};
++
++static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
++	DEF_INPUT("rtxin", CLK_RTXIN),
++	DEF_INPUT("qextal", CLK_QEXTAL),
++
++	/* PLL Clocks */
++	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
++	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
++	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
++
++	/* Internal Core Clocks */
++	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
++
++	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
++	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
++
++	/* Core Clocks */
++	DEF_FIXED("sys_0_pclk", R9A09G047_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("iotop_0_shclk", R9A09G047_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
++};
++
++static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
++	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19),
++	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15),
++};
++
++static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
++	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
++	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
++	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
++	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
++};
++
++const struct rzv2h_cpg_info r9a09g047_cpg_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r9a09g047_core_clks,
++	.num_core_clks = ARRAY_SIZE(r9a09g047_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r9a09g047_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r9a09g047_mod_clks),
++	.num_hw_mod_clks = 28 * 16,
++
++	/* Resets */
++	.resets = r9a09g047_resets,
++	.num_resets = ARRAY_SIZE(r9a09g047_resets),
++};
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 1154493583a7..ef26e7760a88 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -868,6 +868,12 @@ static const struct of_device_id rzv2h_cpg_match[] = {
+ 		.compatible = "renesas,r9a09g057-cpg",
+ 		.data = &r9a09g057_cpg_info,
+ 	},
++#endif
++#ifdef CONFIG_CLK_R9A09G047
++	{
++		.compatible = "renesas,r9a09g047-cpg",
++		.data = &r9a09g047_cpg_info,
++	},
+ #endif
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index ed8d2cad3260..1e5bf1eb65a4 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -202,6 +202,7 @@ struct rzv2h_cpg_info {
+ 	unsigned int num_resets;
+ };
+ 
++extern const struct rzv2h_cpg_info r9a09g047_cpg_info;
+ extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
+ 
+ #endif	/* __RENESAS_RZV2H_CPG_H__ */
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
