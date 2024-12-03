@@ -1,71 +1,84 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8111E32B6
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 10:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80A71E378C
+	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 11:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223436; cv=none; b=EteHr7Ou2If+sz8qCUGk70Cu1zHQGTXy9B1grKA57n0qymrfxt74qBlD+r5hFNEPyHdbpxOGgYHuTSPeUn8xD9tLy0Dq4RON7YtETz1/pO4lZpFDa4brOJh4F06vt7hdDBoQ93UNjvtdKYmU9azcxvoBN9pKLfR88Rw+XBd0xpY=
+	t=1733224413; cv=none; b=b3pgfL6E9vIrVZEN42LpI/whcvAJ/JyrwB61du9j7FDOnAW1Q7/lD2egFazC4ifG9r1jmk8CBHrO3dEVJ6hpJeN3CGodlUHDiBOdfhC+EElVriqOuXiAlhqnHzRS02WHzklzBt6AE2LGt/nX6KGBgWNRmsRw8mlLSgVoRTJq418=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223436; c=relaxed/simple;
-	bh=svpFmIZ0E3MMSYhhbVkeiDatcfDY3UNV1PY9/Sw8tAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iLjmEqTrkhOvWW9sKfj46s1Gssr3esLK296zms9gLxSELnpA2ZKitR9z4bJHphc3ovbJ7hNIOFRj3gSOQFEELqzGmqShOskCD5uLs7KrKF6mF5RjKCEF7Mg99/WZEKMRRD/vMjv4rLRJNK5Tai2IgWzOTWCQbZT3uhw4iNkxx70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s6xWprSd; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733224413; c=relaxed/simple;
+	bh=oGSk6hVxW1wYB/QI1mVV80YFrcUPoJqrE8+x2OzhEEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OBvNFXPRwkAywXKhp2Ey9pGQrJN0t2lxL/XS5kOcm+5lRIm/G8gE8fWVs0nYQrmf4vl1R3lqeHiDeL/ui74QPiAlNOSCcIN/FVqFSIkiVTyas16NEpk5Z+XyaPZvXBWW+ibG65CsI6oR8ojpVsHtDbSMSRir+v4+XeiA8tb91g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=T1Mansl/; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s6xWprSd"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a7cef2e3so5228565e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 02:57:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="T1Mansl/"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a1639637so50073895e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 03:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733223432; x=1733828232; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733224410; x=1733829210; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fKVFXpi7ykIfpDkplW+mwjJ/AO2M9Jc/QclNAewzA/s=;
-        b=s6xWprSdjG/1ksEqbFpj48ldWrt8eAzufgFwfttxVYeMv3qEENJlzhzbOTkveuALo9
-         FMKvaxnswBISpZql1Df8Jr8ZfR1BMhg9pX1umMkRtSAACSmfAgyx1TcKdcfSleak50oN
-         w7yvX03cNTwT8xV+7MueV4jYcInkAkM8E7ZooCJwi5H+P/44m5VA4i+i021BrAc0LYlf
-         9ag6kxKGb0j7gQoQPbnB2nBOXICRJ4F0K1lVRm5jys3tK9cs00jxH1xve83CFPp9hNrK
-         uQq3Mv50UGJmS23z8UZ/GoHDDZAUWBZlSeYOtQ8f/XNlimt2I10oEJ2M/s+SbqZkWLty
-         uGlQ==
+        bh=ZHAew+5pIUtNZ469Ay/e6iOZX+tKVuk7Y65o+7qMTAc=;
+        b=T1Mansl/VVrNqeYSnHiYEZTqakQvk/nx49YN3fgp8Rg+KuMxAhUWAZabiOdqYyOZsp
+         8k5c0nH36NbZidcxPKY7IDdM3v/Ht8fzXEWFd0fiX3XvQhv4IieC7aCDgc8I/YHqNtv9
+         svkoribsIoW7pcoCaZUykqDrB82Mu3Bam8E+jfgHavADowlFG2YMYeUQ+fCL+CTeo2Sx
+         BniANs0Tr9sKS/rlgLv7q5QYW/UIwREHeuDPis1TeMDf5vLbPpfqMjBJRz+MBQVVN1XX
+         LAsAqjQWVXK+FnMDXUCUK7Im5di9D0MLb6sgx9Ymh5XDKu1wDlx0naTRBVsLe/0lheSC
+         bNOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733223432; x=1733828232;
+        d=1e100.net; s=20230601; t=1733224410; x=1733829210;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fKVFXpi7ykIfpDkplW+mwjJ/AO2M9Jc/QclNAewzA/s=;
-        b=aiQ/W/xFM6EzxKb89YZ5pBgO2WvEYUe5TrdciIlMhw1zBWdnIy+3HdI8VyqHM9hoJh
-         c9nya5ZQWLwdmQRnUSugb2lfKtysZxoB2TJasxcrgvaJW73PYrWVrJD1xtfLRFVFEKg6
-         DglTPh3cfo/VBpkAPCXGcbRyAi/aGYys0gJUnOioQ0G9/cAqrN4g3DdacllPEBbUmQAs
-         +VA4DiO36KQu4BsTfmNE6UviM0RcOv9EO2ngO+AKG27lrXxGMKCMPPRwNr2ZTziCh7DT
-         wPOfPfhYWqGx1G0dj1tmfEOH7vrAcMVqcE9BFXT8NzkAqoyFpaA0iq7F9eyhSCkced+r
-         wvwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXkSWkLtHUDKon4HGTghsFEieiiIwLtp9qtqx0doeKJA5iGFWqLeN5n739N9g+dJfyQEO5rbPmtbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmCZgD/4ycUYUZpTwnMHxgE07a1fbS5aDYlHJEfNPiL09pj0yt
-	m1p1OkNr2sCKodfgG9hsFB/WYYKEirm/YrJ+gVZgqBXf2TYJX3OGpWrMrcpwm6g=
-X-Gm-Gg: ASbGncuVvYBIgF4YPah3T7Bx5YFCUCpci217d9Xi21QaYmPUoxuZUBvGgJhgxt2Ykb5
-	/+6p42MGK3by51+xas54hbOl9/tZYiqCwUSkc6OSXUiDVQlOaoPnFh7uU5FUoqlncdpfzNSW+RA
-	/AcSSwwUzEemsmWsZDZ6Dbl/wyW9gsidvwGv8qx8s9JbXwycxl/RU2ITqofEtXe5PVbRmH0NdMk
-	MpbWp0S7Q6DjBM3DQ/KovOHpXyjkl8QkSnlijwObKoSlTogWFlX1oDCbpURbq8=
-X-Google-Smtp-Source: AGHT+IF3RQrgYMQBUra5s134a/+wlrVH2ULAv0GR1su1FJVR4zaGyhGAAM2BSPOn9K8bQ44CQ81cEw==
-X-Received: by 2002:a05:600c:350a:b0:434:9dcb:2f85 with SMTP id 5b1f17b1804b1-434d16dcadfmr5083215e9.0.1733223432292;
-        Tue, 03 Dec 2024 02:57:12 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d1a90sm215809515e9.32.2024.12.03.02.57.11
+        bh=ZHAew+5pIUtNZ469Ay/e6iOZX+tKVuk7Y65o+7qMTAc=;
+        b=CsIaBhiZjnO9vXCUCekuvX0j0SPPr9K6xfLNhk5jk4zJhb65Xn6Sn0Q6m+he6HxRTi
+         BbycQX63Zb38R7d9Ygm1Uqbj7ZPY6vN6sht4dF1M+Nu/zEyxM5usd5WfaYzDLE3W+Rx6
+         0ogyfbejlLECxlAt8G1xI9wDPHeO1EzBUkLH3oACc4+1K6VK0u7BTOU/PRIZlg+lp3ss
+         MoY3sYZvlmxZ6rJu/irNP5QPGloILbRDp+N6tpzxOFvwVT56kWKJyfcSyLurFs1P4XI3
+         J9uyRvLkbbV2XPtjFVpF3KD5Vp6E04Ruo3JE9Vvcf1pTfMjsq5PYQh268+LlVe9fMsBk
+         0p3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWpOJUXuIHAvK0NKrLf+kTMQNp7Pml9UFKG+djVzdWqyQy/7ZkyklT7G0ugiqkoHtSwRQjR19hWzg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyELU+iyytLJ1a+aaznrTemHaaFkrMl+BM69eGQi67zlImOvKF
+	GZVcjQ6qY+0eq5BoRaefEfYDOA7ywkVInzcFXTFTZNC8CwtV3fQOZUp4WnJhgdY=
+X-Gm-Gg: ASbGncvZtM0tlkaSX2Z23GU3B866J/ZGfj4MCuLttWNMKErFPwonKnCXxl4OlKqDT4b
+	X74f0Jg+ezu231D+mtgivx0uQCRP3nK3uxnarrOq68N9RP6OP/75P1pWb0Z41URqbwPYMLh+1aC
+	89qcv6qaUWt+bpY6Prp02hXQoZo3u1ptUIdkWa2JMLaUcxotwQ6hsM7piypIaf11nnepilsu2tt
+	6Xm+70udDtYrKObFsdw2ZaoAGZlygQhKNrtD6i2kHdgWkymG2Rnhhn9tQJp726XQu1vwu476xGT
+	BkvX
+X-Google-Smtp-Source: AGHT+IErtKnY0Pv3GfVcIJwifhLrCQ99HAQ814LD/e3xtS/wVzvpDdVQw8u6DVBzuWDInXQU6dGy3Q==
+X-Received: by 2002:a05:600c:1f91:b0:42c:de34:34be with SMTP id 5b1f17b1804b1-434d09acf48mr20434705e9.3.1733224409944;
+        Tue, 03 Dec 2024 03:13:29 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 02:57:11 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+        Tue, 03 Dec 2024 03:13:29 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: prabhakar.mahadev-lad.rj@bp.renesas.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] clk: qcom: clk-alpha-pll: Do not use random stack value for recalc rate
-Date: Tue,  3 Dec 2024 11:57:07 +0100
-Message-ID: <20241203105707.34996-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/14] iio: adc: rzg2l_adc: Add support for RZ/G3S
+Date: Tue,  3 Dec 2024 13:13:00 +0200
+Message-Id: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,138 +87,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If regmap_read() fails, random stack value was used in calculating new
-frequency in recalc_rate() callbacks.  Such failure is really not
-expected as these are all MMIO reads, however code should be here
-correct and bail out.  This also avoids possible warning on
-uninitialized value.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi,
 
----
+This series adds ADC support for the Renesas RZ/G3S SoC.
 
-Changes in v2:
-1. Three more regmap_read() failure checks (Stephen)
----
- drivers/clk/qcom/clk-alpha-pll.c | 52 ++++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 16 deletions(-)
+Series is organized as follows:
+- patch 01/14:		adds clocks, reset and power domain support
+			for ADC
+- patches 02-06/14:	cleanup patches to ease the addition of RZ/G3S
+			support
+- patches 07/14:	enables runtime PM autosuspend support
+- patches 08-12/14:	add RZ/G3S support, including suspend-to-RAM
+			functionality
+- patches 13-14/14:	add device tree support
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 5e9217ea3760..00d3659ea212 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -682,14 +682,19 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 alpha_width = pll_alpha_width(pll);
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
-+		return 0;
- 
--	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
- 	if (ctl & PLL_ALPHA_EN) {
--		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &low);
-+		if (regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &low))
-+			return 0;
- 		if (alpha_width > 32) {
--			regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
--				    &high);
-+			if (regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
-+					&high))
-+				return 0;
- 			a = (u64)high << 32 | low;
- 		} else {
- 			a = low & GENMASK(alpha_width - 1, 0);
-@@ -915,8 +920,11 @@ alpha_pll_huayra_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, alpha = 0, ctl, alpha_m, alpha_n;
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
--	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
-+		return 0;
- 
- 	if (ctl & PLL_ALPHA_EN) {
- 		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &alpha);
-@@ -1110,8 +1118,11 @@ clk_trion_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, frac, alpha_width = pll_alpha_width(pll);
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
--	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac))
-+		return 0;
- 
- 	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
- }
-@@ -1169,7 +1180,8 @@ clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 	u32 ctl;
- 
--	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
-+	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
-+		return 0;
- 
- 	ctl >>= PLL_POST_DIV_SHIFT;
- 	ctl &= PLL_POST_DIV_MASK(pll);
-@@ -1385,8 +1397,11 @@ static unsigned long alpha_pll_fabia_recalc_rate(struct clk_hw *hw,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, frac, alpha_width = pll_alpha_width(pll);
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
--	regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
-+
-+	if (regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac))
-+		return 0;
- 
- 	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
- }
-@@ -1536,7 +1551,8 @@ clk_trion_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	struct regmap *regmap = pll->clkr.regmap;
- 	u32 i, div = 1, val;
- 
--	regmap_read(regmap, PLL_USER_CTL(pll), &val);
-+	if (regmap_read(regmap, PLL_USER_CTL(pll), &val))
-+		return 0;
- 
- 	val >>= pll->post_div_shift;
- 	val &= PLL_POST_DIV_MASK(pll);
-@@ -2457,9 +2473,12 @@ static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
- 	struct regmap *regmap = pll->clkr.regmap;
- 	u32 l, frac;
- 
--	regmap_read(regmap, PLL_L_VAL(pll), &l);
-+	if (regmap_read(regmap, PLL_L_VAL(pll), &l))
-+		return 0;
- 	l &= LUCID_EVO_PLL_L_VAL_MASK;
--	regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac);
-+
-+	if (regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac))
-+		return 0;
- 
- 	return alpha_pll_calc_rate(parent_rate, l, frac, pll_alpha_width(pll));
- }
-@@ -2534,7 +2553,8 @@ static unsigned long clk_rivian_evo_pll_recalc_rate(struct clk_hw *hw,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l;
- 
--	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
-+	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
-+		return 0;
- 
- 	return parent_rate * l;
- }
+Merge strategy, if any:
+- patch 01/14 can go through the Renesas tree
+- patches 02-12/14 can go through the IIO tree
+- patch 13-14/14 can go through the Renesas tree
+
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (14):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the ADC IP
+  iio: adc: rzg2l_adc: Use devres helpers to request pre-deasserted
+    reset controls
+  iio: adc: rzg2l_adc: Simplify the runtime PM code
+  iio: adc: rzg2l_adc: Switch to RUNTIME_PM_OPS() and pm_ptr()
+  iio: adc: rzg2l_adc: Use read_poll_timeout()
+  iio: adc: rzg2l_adc: Simplify the locking scheme in
+    rzg2l_adc_read_raw()
+  iio: adc: rzg2l_adc: Enable runtime PM autosuspend support
+  iio: adc: rzg2l_adc: Prepare for the addition of RZ/G3S support
+  iio: adc: rzg2l_adc: Add support for channel 8
+  iio: adc: rzg2l_adc: Add suspend/resume support
+  dt-bindings: iio: adc: renesas,rzg2l-adc: Document RZ/G3S SoC
+  iio: adc: rzg2l_adc: Add support for Renesas RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add ADC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable ADC
+
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   |  37 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  53 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   7 +
+ drivers/iio/adc/rzg2l_adc.c                   | 414 ++++++++++--------
+ 5 files changed, 323 insertions(+), 192 deletions(-)
+
 -- 
-2.43.0
+2.39.2
 
