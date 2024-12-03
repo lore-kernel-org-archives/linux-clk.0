@@ -1,166 +1,208 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454891F708F
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 13:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F931DE4FA;
+	Tue,  3 Dec 2024 14:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233332; cv=none; b=fyH7C3eJqVt7TBAVwZjQS1MvV82Bi57X2Q3hD2V16X+pXUjN8HH2uSqmApSruF41GftplZ5Zo+6+XDZK+cjuQkkmaW+jaa/FECnPozK4le3sSe0fCi83lNniU3qM7EHosxOb6vDlvod+eingrCIfGvJFgs5FIYw6s2NKnZYe/xU=
+	t=1733235675; cv=none; b=kold5hO9qjVebjEmtWHAQ+fp1gtI/z4rQQWVzhy4AEEQ/o5LdfCXsaryFosghTVjgnxsIobSt1iCmEt6AdrCL4v97p3IsHvMgN7l1m1DUGCdD5YFCGTUN08jun6oL2KENylLCHxglCHRf5YJhrCoDYN6AW3PVD7t+aOOPyEGGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233332; c=relaxed/simple;
-	bh=Q09K24s6mZGeMftMhbsRCZSwqpl712NwsEN3b5mMKQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=QqQu6G/fkobSdHOsRrjG7vS8xtsAQg6Vt2oQaCiSQI2TBZLQA5bUVe17JuXMOZf6/R6MewwFtnCWCFqy29Oy3SsG/3FiqaH7Db4f24UplJjLAiG7hXrY+/pQ7WlBBQhdMv+jkfP6g0OVGWUbroz5s+I4vElmJ8toVYM20J9XqGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LzKmSEpZ; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LzKmSEpZ"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134208euoutp011afca29e252db064df3ee90392f1a599~NrodvBluT2554425544euoutp01l
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 13:42:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241203134208euoutp011afca29e252db064df3ee90392f1a599~NrodvBluT2554425544euoutp01l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733233328;
-	bh=asLRQbzZayMb9yjHqxeg3uy1MkPJO2HP86mTn2EInqs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LzKmSEpZlf1ut93GLgZgZkL5DvwA9/s4Z4tXQvpfizc1ptHHgyzvlvncYlfq23/kH
-	 koSmiIRIpYqjRAwjaBCHioczuiP5BFvOXVnOeS6DKnKMjxEEZZQlXAbLP71fAOB5w5
-	 2dIsgkMX7v142vE668YZEtP1iuEE35338SBxkwes=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241203134207eucas1p2192873d281269b06d9a62beceeba8f3d~NrodRG3hq2525825258eucas1p2T;
-	Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id EA.61.20397.FAA0F476; Tue,  3
-	Dec 2024 13:42:07 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c~NrocvXTNQ0681706817eucas1p27;
-	Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241203134207eusmtrp1bbfbc45095ec0d11460c41a654f8dea7~NrocuVBR50888908889eusmtrp1h;
-	Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-5e-674f0aaf06f9
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id FA.07.19654.FAA0F476; Tue,  3
-	Dec 2024 13:42:07 +0000 (GMT)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134205eusmtip25691c9bf5366d4112ecb39c2227629f5~Nrobfx7Vv3160631606eusmtip2L;
-	Tue,  3 Dec 2024 13:42:05 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	ulf.hansson@linaro.org, jszhang@kernel.org, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
-	<m.wilczynski@samsung.com>
-Subject: [RFC PATCH v1 14/14] riscv: dts: Add GPU node to TH1520 device tree
-Date: Tue,  3 Dec 2024 14:41:37 +0100
-Message-Id: <20241203134137.2114847-15-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1733235675; c=relaxed/simple;
+	bh=HkUi1jcKUP5m19r0eDKvTJLU5NYjHEejWfffRVQs+ks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sqC17wqp+3xrshzRCrFGpzRyn1/xx4DjpPNx5p/VDccJ4a011rTDsHffK38NnmKOSrTBE1R+C6rd6cqdfLbMM5VISXyNogtrNh9QXZTo3vA+sQyBnPOrZGZayhmj3oVoHpYCTicy+MGEzb1J0EQfA3HEW71cdrBhD/gKZSPCdAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: k7SdQu3iSUCtVLOTnTwljg==
+X-CSE-MsgGUID: eX+qpK93QEeZPTEecziZpA==
+X-IronPort-AV: E=Sophos;i="6.12,205,1728918000"; 
+   d="asc'?scan'208";a="230765382"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 03 Dec 2024 23:21:10 +0900
+Received: from [10.226.93.8] (unknown [10.226.93.8])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 086B540061A9;
+	Tue,  3 Dec 2024 23:20:56 +0900 (JST)
+Message-ID: <d37b9776-0727-46b6-93f2-02fb7b58732f@bp.renesas.com>
+Date: Tue, 3 Dec 2024 14:20:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf1CTdRzH7/s8z55nWzd6GJjfdMRBJ3cSoQjFlzSlu8qn1My6wyv/sBFP
-	g+KHt4ml0AXxQwdT1MXQgfLzxkLmANnip+C2YyoG6nQCAZFJBix2gOwuMojxWPnf6/t+vz/3
-	+XFfPi5uJNfwk1IPsvJUaXIwKSTMPX/2v2wU7pZttLrC0NV7VRgy/aWlUH1nH4bKbX08NHq7
-	GUN35t0kujh+k0K/d2YTyKk/R6GcHiOJJrSjJJpRjfKQo62MRHPHbQCZ53JJZLCNUMg4X46h
-	yhkTgWpa2gDKV+p46Nb1t9CEQ4WjfO2zaKmjhUKLzkYClU53UajZdYqH7Ia9KLfrOyI2gHEP
-	5FGMa2KCYKzHHlFMp6eCYFq1IxSjar0BmKY6JckMOztI5vy1PczPhXaMuVTzDZNr6MEY9+W7
-	JHOiuQ4wt3PuUcyl3oz3fT8Wbklgk5MOsfINWz8RJi643MSBxWe+0tU/BllgXlAABHxIR8Gs
-	kiZQAIR8Ma0H8IZRQ3kNMf0IwG9toZwxB+BpXf6ywV+psDiiOb0WwJs9lST3cAHYPraEeatJ
-	ehMcqy3neQ1/egqHA/ODKymcfgig+UEZ6U350TthSdEQ8DJBr4PnbIsrLKJj4W/TwzxuwEDY
-	deVH3MuCZX2quIDHZXzhtbMPCC/jy5kcUynubQDp74Uwz9aAc8VvQtP9LMCxH5y0N1McS2Cv
-	WkVwnAbHTLNP8pmwVWV/wpvhcN8C6d0Zp9dDY9sGTn4DapU5PO4UPnDgD19uBB942lyCc7II
-	HssXc+kQWKw6/l/TPr0Z45iBP3kawEkQpH1qGe1Ty2j/71sB8Dqwmk1XpMhYRWQq+2W4Qpqi
-	SE+VhX+altIEln9176J9vgXoJ2fCLQDjAwuAfDzYX1Rr3CETixKkh4+w8rT98vRkVmEBa/lE
-	8GrRuoRAVkzLpAfZL1j2ACv/18X4gjVZWAw5npy5R22K9OiqPI4GZcogDxktiWyRRZtR2K0+
-	HFKl+XBG927IZ5c/Oro9MiT+6rZSkTM2Ptr6nr9j1vP2viPmM1vW9jddeG0pu6Px632FqyL4
-	1ovZuqXNSUPMc67uU8UT1RF+kib3xvCzC2EvadSBZb/MWarPKKdiVlX7Lr3op38n6EKFtT4v
-	UdJQ5KwRZRCS9hfuB1yJuivatd41XTwlid5bF58XFxfwOTa+/+/z2300/duU7A+e0nrDkDa/
-	Ky7q+SqX5PXqyhL1bLs6raMxc2T40C3HY81kdOjI1lFBN3N999HkXTHWQcP0naCwE8WvOj/Y
-	9DA37pXYX7vaRgf9M4IJRaI0IhSXK6T/AGsy6TFEBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsVy+t/xe7rrufzTDeY+57Q4cX0Rk8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWXzsucdq
-	cXnXHDaLz71HGC22fW5hs1h75C67xfqv85ksFn7cymKxZMcuRou2zmWsFhdPuVq8vNzDbNE2
-	i9/i/54d7Bb/rm1ksZj9bj+7xZY3E1ktjq8Nt2jZP4XFQdbj/Y1Wdo83L1+yeBzu+MLusffb
-	AhaPnbPusnv07DzD6LFpVSebx51re9g85p0M9LjffZzJY/OSeo+WtceYPN7vu8rm0bdlFaPH
-	pebr7B6bT1cHCEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-	pRbp2yXoZfx6856l4B93xbI1fxgbGL9ydjFycEgImEgcumzexcjFISSwlFHix9Jeli5GTqC4
-	jMS17pdQtrDEn2tdbBBFrxglXp+cA5ZgEzCSeLB8PitIQkSgk0Xi7ea1jCAOs8BbRonrMzeC
-	VQkL+EhM77/FCGKzCKhKzD3yD8zmFXCQePbuDivECnmJ/QfPMoPYnEDx11O7wOJCAvYSO/4e
-	ZoWoF5Q4OfMJ2ExmoPrmrbOZJzAKzEKSmoUktYCRaRWjSGppcW56brGRXnFibnFpXrpecn7u
-	JkZgWtl27OeWHYwrX33UO8TIxMF4iFGCg1lJhHf5eu90Id6UxMqq1KL8+KLSnNTiQ4ymQHdP
-	ZJYSTc4HJra8knhDMwNTQxMzSwNTSzNjJXFetivn04QE0hNLUrNTUwtSi2D6mDg4pRqYNmlv
-	imsyitncuSiw/uS3jUEn5/Wtli65ePHAZrdDclxBhg4Fc68G2Ehnvk7lYTQxnLk4ifn0iuMH
-	bvHn5Zd/sv8XNV1fjFFqn9prPr5ZTDYTPF0W83/TtVNdkjmtQmHe5jkbsz81P87eOcPa3yT6
-	oM8Ocau+Yvc6G9am75ct5PN1Er4z6qRxnpo6ifv15FyTyA/7ijbqWUzo6TtYoXGQb5maxe4V
-	mY415refeZ3bf10v9aZT0859Uttn7zRi3Ls08dprE+27nL//fPsS039LvS7lk2TiDnW9d9MP
-	H536Sb1MSsvhhcf7GYesXKoV+Yu4DNokFqxIV1ZUapA50bArUfuM1uzD63Mrtl9zl+ZTYinO
-	SDTUYi4qTgQACEKcjLQDAAA=
-X-CMS-MailID: 20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
-	<CGME20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c@eucas1p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/14] iio: adc: rzg2l_adc: Simplify the runtime PM code
+Content-Language: en-GB
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+ <9fbf057c-164b-4451-85a8-cf4d5807b4c1@bp.renesas.com>
+ <3f2dc65c-61e9-4d4b-9610-4b106bb691cc@tuxon.dev>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+In-Reply-To: <3f2dc65c-61e9-4d4b-9610-4b106bb691cc@tuxon.dev>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------JKO102IA7gtgdP3Gxe3rS4vs"
 
-Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
-TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
-the GPU using the drm/imagination driver.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------JKO102IA7gtgdP3Gxe3rS4vs
+Content-Type: multipart/mixed; boundary="------------U7sqSrZ5ANkDJGrimd65030S";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Message-ID: <d37b9776-0727-46b6-93f2-02fb7b58732f@bp.renesas.com>
+Subject: Re: [PATCH 03/14] iio: adc: rzg2l_adc: Simplify the runtime PM code
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+ <9fbf057c-164b-4451-85a8-cf4d5807b4c1@bp.renesas.com>
+ <3f2dc65c-61e9-4d4b-9610-4b106bb691cc@tuxon.dev>
+In-Reply-To: <3f2dc65c-61e9-4d4b-9610-4b106bb691cc@tuxon.dev>
 
-By adding this node, the kernel can recognize and initialize the GPU,
-providing graphics acceleration capabilities on the Lichee Pi 4A and
-other boards based on the TH1520 SoC.
+--------------U7sqSrZ5ANkDJGrimd65030S
+Content-Type: multipart/mixed; boundary="------------Wbl7X980XAMYTlSgOy0kxJvM"
 
-This commit is following convention introduced here [1].
+--------------Wbl7X980XAMYTlSgOy0kxJvM
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Link: https://lore.kernel.org/all/20241118-sets-bxs-4-64-patch-v1-v2-1-3fd45d9fb0cf@imgtec.com/ [1]
+Hi Claudiu,
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 03/12/2024 13:40, Claudiu Beznea wrote:
+> On 03.12.2024 14:53, Paul Barker wrote:
+>> On 03/12/2024 11:13, Claudiu wrote:
+>>>  static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rz=
+g2l_adc *adc, u8 ch)
+>>>  {
+>>> +	struct device *dev =3D indio_dev->dev.parent;
+>>>  	int ret;
+>>> =20
+>>> -	ret =3D rzg2l_adc_set_power(indio_dev, true);
+>>> +	ret =3D pm_runtime_resume_and_get(dev);
+>>>  	if (ret)
+>>>  		return ret;
+>>
+>> Should we check (ret < 0) here instead of just (ret)? According to the=
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 58f93ad3eb6e..5023c0c29168 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -500,6 +500,18 @@ clk: clock-controller@ffef010000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		gpu: gpu@ffef400000 {
-+			compatible = "img,img-bxm-4-64", "img,img-rogue";
-+			reg = <0xff 0xef400000 0x0 0x100000>;
-+			interrupt-parent = <&plic>;
-+			interrupts = <102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&vosys_clk CLK_GPU_CORE>,
-+				 <&vosys_clk CLK_GPU_CFG_ACLK>;
-+			clock-names = "core", "sys";
-+			power-domains = <&pd TH1520_AON_GPU_PD>;
-+			status = "okay";
-+		};
-+
- 		vosys_clk: clock-controller {
- 			compatible = "thead,th1520-clk-vo";
- 			thead,vosys-regmap = <&vosys_reg>;
--- 
-2.34.1
+>> docs [1], pm_runtime_resume_and_get() can return 1 if the device is
+>> already active.
+>=20
+> The v6.13-rc1 implementation of pm_runtime_resume_and_get() is:
+>=20
+> static inline int pm_runtime_resume_and_get(struct device *dev)
+> {
+> 	int ret;
+>=20
+> 	ret =3D __pm_runtime_resume(dev, RPM_GET_PUT);
+> 	if (ret < 0) {
+> 		pm_runtime_put_noidle(dev);
+> 		return ret;
+> 	}
+>=20
+> 	return 0;
+> }
+>=20
+> It can return zero or negative error number.
 
+Ah, ok. The docs say that pm_runtime_resume_and_get() will "return the
+result of pm_runtime_resume" (which can return 1), but it doesn't do
+that exactly. I'll send a fix for the docs.
+
+Thanks,
+
+--=20
+Paul Barker
+--------------Wbl7X980XAMYTlSgOy0kxJvM
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------Wbl7X980XAMYTlSgOy0kxJvM--
+
+--------------U7sqSrZ5ANkDJGrimd65030S--
+
+--------------JKO102IA7gtgdP3Gxe3rS4vs
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ08TxwUDAAAAAAAKCRDbaV4Vf/JGvTQk
+AQCXHPEoYKvqfnUipHr1UNlyGnrmNPNeJT8jnL+aDf6RlQEApt4Ly3FIhmvqtvdaEi0TB5VUUhBj
+kNq6vqdHYEpmuQQ=
+=Eapy
+-----END PGP SIGNATURE-----
+
+--------------JKO102IA7gtgdP3Gxe3rS4vs--
