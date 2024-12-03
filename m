@@ -1,142 +1,117 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362D11E379C
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 11:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7085E1EB9ED;
+	Tue,  3 Dec 2024 12:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224546; cv=none; b=mkOrE1fnlrvtSKd5ruBrJm4/ARpUOQ/MNc7Mwvk3NHM+m7WzlNKgp2WWYGwnY0HosdWnlKbQHMzW4txD5unTgoUHZ8jt0tGmITfg3MRbt0y9k5L1xuxTLKhOHsTd8YX0L9cEXYJteqL+qyNsXWO20p8ALmLHB7PSRai1pQIFUfg=
+	t=1733229808; cv=none; b=dDurCyfOCc53mWxcuhpVO1RPTnO0R97+ifrxVAzcTJK6esdkBRxgKGsgB9s9XEvvyRBCeOPoPs8t5g8v4zknFe1BJ8NjxCjS5zD7j5tvS9FVS/aXB4BE8WJKef8kpAP60JMRL6eIkboSEmOGAMC4r+QXEMM4rvyhyYpDB4cT7Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224546; c=relaxed/simple;
-	bh=R3ynFlOFilzuAWCe4vj8v7PjXKKFesSQ307O+xSJrjI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o5bgqit+Lq2wLYWW0QxbZ70tibqT6usHguNA86y3qO9CW2ixEjrOgdOAKoCENH0eekVLpExOQzPX9rqTCquKXMfrCR1o9NUzxr4WyULJhffy0AtXdvm2bKEDlG8QwssqEo+BsJq77ZlbchYlPMgFX2zTmVcIyoVRh/lPs1T0fA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xlPDDe/G; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1733229808; c=relaxed/simple;
+	bh=Lv2Z6NbTKMdxZZtSRvaijlwyt37zgKQUjTIZPiJEhLM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=RtQFXj7ODv2RzWVBCP0XcF+VLQ7cF15zMeBchM7TY+AKeIaea7iNMTqBuplcEQcn5fLkrPughUpp6G2clNVIjY40GPaQNUJ5CrVppWtlRqC8ycgrJDljsJ4tLrecGqTkYqHcK3wUqlawHGI7oFMl8CJTmVnUL+sMpghN4LrQvRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OWpbv2Sd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KQl/Q/j6; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xlPDDe/G"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4349e1467fbso47053285e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2024 03:15:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733224542; x=1733829342; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pnArlX2bydGAe9JBj0W2EkNJm96HMGuKHkhrpz/xxnU=;
-        b=xlPDDe/GFzqKnGNzc4LmWR/7rSFn7xUYhOrmwjoHzJ3uS2c6RnMKZNIFuKA+nE1S4a
-         vG7EyKwidaVls1zIh3iKvSNfZPUXfu44pg/O9qC69BFMiX9Kg0XQ09Qchjr2AORSUXzB
-         7eSXeWFugMtL1AIbr2MFnk9RylBHMKdQincrbUfBAlr0gK0P5qebc2uRpYq8AeloC0wG
-         xQDZQJC3ICzla1YHMkrKWXiYQ1cT3uAiyPbcYYsjK6k2aILxvFA1vM2lPvXdIvHVCIWI
-         G8Y4VA5cYG3q2II+zhFrwaZVQYbkbQRCZRvITwu02LSSSNmMp2Y5/mfUud+Y4B2LcNSa
-         Z68g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733224542; x=1733829342;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnArlX2bydGAe9JBj0W2EkNJm96HMGuKHkhrpz/xxnU=;
-        b=mAxPPARnXQA87RmAKAKpdeC9ivXdPhgAVJSN+zRFlU5mbTcr5SKEB0dYD/FA2EiQW8
-         CA5NVTf+dK3QPE3WbPfmU3ZB9TajWdvivvyhCsAc3WYcsNzAX7t1VkXn2B9Xk/LNugFk
-         gGpnS3qKTor9ZiJLH1u3CyR5XOr86xY67ccC9bPOO9I3geVCsFlvCMKYuqhiWhAw2iUS
-         8fAYytQCyHWHXJO0BRpsL3e/B85wD9lOyQDFz3bDrW/ztbY2HyZIHpkzIIXfMAdt10gK
-         W+BA/HOe560xxM6i/n6fbAArimDxPwT2mv5bohCvuSeu+U4z3gz9boiUccB235qRPNhl
-         Q0nA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEHjbeWqzcqjrrGhQWoleL/FKKT4tnTcYkCB4iP+AyJRzCQOlqJDhV4Z8r+d3xrB1hxtOwF4ANmGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhkZGNXuFqYdzgqBL9XxF+jnHXUmbjXW8XEPFZNCfN7/LmYoXB
-	QHdN89rTvQHdG6GD96zALp1bswpyhq4nXAlVxr4gt52IGaHS2XSz2UnK/1nd83U=
-X-Gm-Gg: ASbGncu1sQClgrVOBB0SDV7amd5YVFvBBYikXIBqSZBe/ZqQbKRlXOMk6OubzS3/fQU
-	vS5X5bFLY2V1rs+HD3p1M1pauwp7kPmwQRhnqowXhmrwNaDwSKwLKcZ5gMIHhpkdbiU9s2/hJ0E
-	26IuhGizMDigXnSL32oObuRvAqykMnDtCnOMX03Uxe44O0Xeu161WuUpnlRAWhivX/QXA8Ktuc7
-	DgkBbnywP593/UPKT3+JJkuEu4Q2tJiTM8o9mYsE4GmVojEFw==
-X-Google-Smtp-Source: AGHT+IGLi/Q8mLP5TxaLwquvOT8BJfU6gorpDiNg0XMpRNl3txBjcplK3PZhkhWKuplXxiUTh5hsVw==
-X-Received: by 2002:a05:600c:4fc3:b0:434:a805:1939 with SMTP id 5b1f17b1804b1-434d0a1f0d9mr15164335e9.33.1733224542524;
-        Tue, 03 Dec 2024 03:15:42 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:7f8d:3a10:1eea:52e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e86f5dd2sm9131526f8f.18.2024.12.03.03.15.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:15:41 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Michael Turquette <mturquette@baylibre.com>,
-  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-In-Reply-To: <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org> (Stephen
-	Boyd's message of "Mon, 02 Dec 2024 18:53:30 -0800")
-References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
-	<1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
-	<f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
-	<1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
-	<306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
-	<1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
-	<c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
-	<1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
-	<ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
-	<df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 03 Dec 2024 12:15:41 +0100
-Message-ID: <1jr06pkof6.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OWpbv2Sd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KQl/Q/j6"
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 3F9A41140120;
+	Tue,  3 Dec 2024 07:43:24 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 03 Dec 2024 07:43:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733229804;
+	 x=1733316204; bh=e3rwoHqIVnmxtNxDPSG6Cqf+q8c4DgmmReYZaA9pX3Q=; b=
+	OWpbv2SdQuVdeXsxgYdIYA/KQEOsujuHaYuE+skl6m9P5hdrE1UaFcyybQkPuq76
+	6bDBp5NqD2kG0j0jDI6+04wCI5uvt1TO1z92YBGOc33JBgoO/zGJ7xpXQnYwB5VU
+	667WPgV0VTiOBBpkrYn1oW+AajdtHHYz6yjw5weKd0VHoteQxB+Sni1pyWC94cVn
+	oyFzT3pAVGLUe7OzVVq9M5pz5Jti3NLHzc3+9ZdMpRBKGK8Veka5ELFQby51OiUr
+	+1jr9TL1AJxvhzsOWtsUmoZ5MzY/TNz7PGb7rrIVtaHXyYXgqgniHuQDEzfkh6o4
+	fFAjI8NgK94sk2ElzYY0PQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733229804; x=
+	1733316204; bh=e3rwoHqIVnmxtNxDPSG6Cqf+q8c4DgmmReYZaA9pX3Q=; b=K
+	Ql/Q/j6EGWizSaPnM78KL9nimX4jWHu9cNWoF4HcO7W/wVQ1uUjxhZFhTTfx5Aqa
+	33M2uwreBzdZ3DpqTmvU9GsBnGJ2GjS79KV6sFxNvqIOKmm2TJyKdUUhVFzEBEDb
+	lyqQYwbrXuCV6yN+Unumr0KACnFBJH18vNTwqmfdn2113Vjze7mf4HCB5Kc7g352
+	8qWG+EANLFAd/r6OQYNVyMAloDENk/oyZBqHUwQMx8ARCxhZuq1mr5QNc0tIVy1G
+	UDhSXHQ/HU+fKLtkUQDQtrCBozEGl8F/KA4WbYh/NRa+QJrAKdCSCdjHG60cVwqd
+	Oo3OPhib3xoDag3C274eQ==
+X-ME-Sender: <xms:6_xOZ37LmToeylSHwE4pDy2CC6E5m2h_r4emE7KwttNNJVQHVt814g>
+    <xme:6_xOZ870bERLOl4bEyq42aEL1h4E0640CllVZme8LosqvVIuXgXJ4C9HRHoJHCkcP
+    5RY2rk4pE1J9tS-748>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieefgdduhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrh
+    gvrdgtohhmpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhr
+    tghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtth
+    hopehmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtgho
+    mhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghrmhhsthhr
+    ohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghmlhhoghhitg
+    eslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
+    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
+X-ME-Proxy: <xmx:6_xOZ-ennU-tpmMXwOsu6RaxhRKa7cQJ3SLICt0PVwd4NRL5gMtdig>
+    <xmx:6_xOZ4Jz0epV8mXeYVZkTuiQXVfz4hRW3uVdMBbCiJgN2KBOEe3SwA>
+    <xmx:6_xOZ7K-EJ0vlzGs_aawZZIr1KnCETj6hPiF1n82ixW_cVLWxCwPXw>
+    <xmx:6_xOZxy6c5QJ1uApKdY5MSpVFiSi-rLKFyt4L4vkrPcScJcNH3bxoA>
+    <xmx:7PxOZ4BhzLtJMlJEFOxcFCY0DqjofD7tFay4QLAAL-V2FXPVnqzKTQKW>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 913E62220072; Tue,  3 Dec 2024 07:43:23 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Tue, 03 Dec 2024 13:43:03 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stephen Boyd" <sboyd@kernel.org>, "Jerome Brunet" <jbrunet@baylibre.com>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Kevin Hilman" <khilman@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>
+Message-Id: <0f07300a-8b32-4d3e-a447-b3fe3cf1ca81@app.fastmail.com>
+In-Reply-To: <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
+References: 
+ <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+ <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+ <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
+ <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
+ <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
+ <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
+ <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+ <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
+ <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
+ <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
+ <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
 Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon 02 Dec 2024 at 18:53, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Happy Thanksgiving!
->
+On Tue, Dec 3, 2024, at 03:53, Stephen Boyd wrote:
 > Quoting Arnd Bergmann (2024-11-28 07:34:46)
 >> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
->> > On Thu 28 Nov 2024 at 15:51, "Arnd Bergmann" <arnd@arndb.de> wrote:
->> >> On Thu, Nov 28, 2024, at 15:39, Jerome Brunet wrote:
->> >>> On Thu 28 Nov 2024 at 15:11, "Arnd Bergmann" <arnd@arndb.de> wrote:
->> >>> Eventually that will happen for the rest of the reset implemented
->> >>> under drivers/clk/meson.
->> >>>
->> >>> It allows to make some code common between the platform reset
->> >>> drivers and the aux ones. It also ease maintainance for both
->> >>> Stephen and Philipp.
->> >>
->> >> I don't understand how this helps: the entire point of using
->> >> an auxiliary device is to separate the lifetime rules of
->> >> the different bits, but by doing the creation of the device
->> >> in the same file as the implementation, you are not taking
->> >> advantage of that at all, but instead get the complexity of
->> >> a link-time dependency in addition to a lot of extra code
->> >> for dealing with the additional device.
->> >
->> > My initial rework had the creation in clock (note: that is why I
->> > initially used 'imply', and forgot to update when the creation moved to
->> > reset).
->> >
->> > I was asked to move the creation in reset:
->> > https://lore.kernel.org/r/217a785212d7c1a5b504c6040b3636e6.sboyd@kernel.org
->> >
->> > We are deviating a bit from the initial regression reported by Mark.
->> > Is Ok with you to proceed with that fix and then continue this discussion
->> > ?
->> 
->> I really don't want to see those stray 'select' statements
->> in there, as that leave very little incentive for anyone to
->> fix it properly.
->> 
->> It sounds like Stephen gave you bad advice for how it should
->> be structured, so my best suggestion would be to move the
->> the problem (and the reset driver) back into his subsystem
->> and leave only a simple 'select RESET_CONTROLLER'.
->> 
->> From the message you cited, I think Stephen had the right
->> intentions ("so that the clk and reset drivers are decoupled"),
->> but the end result did not actually do what he intended
->> even if you did what he asked for.
->> 
 >> Stephen, can you please take a look here and see if you
 >> have a better idea for either decoupling the two drivers
 >> enough to avoid the link time dependency, or to reintegrate
@@ -155,26 +130,19 @@ On Mon 02 Dec 2024 at 18:53, Stephen Boyd <sboyd@kernel.org> wrote:
 > devm_meson_rst_aux_register() is doing today and wraps it all up so that
 > the device is removed when the parent driver unbinds. Then this clk
 > driver can register the reset device with a single call and not need to
-> do anything besides select AUXILIARY_BUS.
-
-I think this is fairly close to what I proposed in the inital RFC, but
-generic instead of specific.
-
-I suspect the the generic path is likely to trigger more discussion.
-I'd like to be able to finish this migration, instead of leaving half
-finished like it is now.
-
-May I add back the boiler plate code in drivers/clk/meson, similar to
-what was proposed in the RFC [1] and propose the generic implementation
-in parallel ? It will just be a matter of switching when/if it is approved.
-
-[1] https://lore.kernel.org/r/20240516150842.705844-9-jbrunet@baylibre.com
-
-> The regmap can be acquired
+> do anything besides select AUXILIARY_BUS. The regmap can be acquired
 > from the parent device in the auxiliary driver probe with
 > dev_get_regmap(adev->parent).
 
-Did not think about that, I'll check, Thanks
+I like the idea. Two questions about the interface:
 
--- 
-Jerome
+ - should there be a 'void *platform_data' argument anyway?
+   Even if this can be looked up from the parent, it seems
+   useful enough
+
+ - What is the scope of the 'ida' number? My impression was
+   this should be local to one parent device, but I don't
+   know how the number is used in the end, so maybe a global
+   number allocator is sufficient.
+
+       Arnd
