@@ -1,102 +1,123 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B271FC7F0;
-	Tue,  3 Dec 2024 18:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9A31E868;
+	Tue,  3 Dec 2024 18:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733249089; cv=none; b=rPRu1f7cIQyMdEjm2fPecHukljarWeHwKOF8ClVoWHK5JMZ8zf69TKeRmIfaJmCPlpYbDBdmmklsgYGfzDZZT8+9aXuO39MqSAG36bN+YN9/dpvE26HyREWT40HvVYqbk7PtlbYiTnGJtdXT9Y11a+xGM3nKBXmHmm7HL9/F95I=
+	t=1733249260; cv=none; b=rfYZZk+CgQLa6ars5mZW9yoS+TrIqkeWV9IKsXWHXst1qfl5WU+36DWYFQ3Rq5j8dmNDZAM/yuzmuZN5NRiKCAr0jBKUZJdlb7Y3+9aejoPArk+8GdKKWkmQL+drmBgQeambvgbsGeRTYk1mcxvmoZsvpVuBnKmGBb4G7XWmRjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733249089; c=relaxed/simple;
-	bh=CrMO/tRsD0YpGcnX2BE59r25dvEmkX1t4dphQwhmMSk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NFniE/T3B6tqyh5UUZ05tHR6PvCI+2vhnhTuwsmDwJ01PFhetK5MiqNqx2JCdY9ee8FCqoEyP1DVE/nfIa/q41ejrSMtaaG28g+2OYjjAGsKTXy3pAKPuMlN3DdShP7Ho0UpMwlBg/c7228WuO7XJ3dJSdlsY1+/ClUSdrrz0gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OVggdtwt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OVggdtwt"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3C077w008565;
-	Tue, 3 Dec 2024 18:40:38 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=LoV8E+YWhIydOLMEnE/SzJ
-	/Hu5kN6Y7HhbbpbAHakYU=; b=OVggdtwtNIMpzMGX4KSl6eJlFr2LntxkG6zVyr
-	0r4Q8NChRpw/CQ8nHVYOZ/SnlN7y0S5ArnoprBOg0j28/E0vs4w/0XByqzm26svI
-	hx7m859VAXu8DMW8NAsj5aA3TBiKwr6MlNtVfp61iQH2lAy8Gdk8++GGo4RJO1Oy
-	HxUEtBEH4vr4+X9+SHd888tB5dSjBTvFzBjDeB22k/C9NdMxpUWRTzlJb3u9QNXL
-	hbU1r9UPmowj3lSDq0/K5VTxIwifVH6yd1ROpGD9OVpxUwRFh/sjrxtmW4RYFj1a
-	sgyJBWir0taA2W4IcR/XQlI9bqmplQEfEJSyWs2nx8ynOdrw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 437rq96b6c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 18:40:38 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BB19D4004A;
-	Tue,  3 Dec 2024 18:39:44 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A4772359C7;
-	Tue,  3 Dec 2024 18:39:10 +0100 (CET)
-Received: from localhost (10.48.86.128) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 3 Dec
- 2024 18:39:10 +0100
-From: Etienne Carriere <etienne.carriere@foss.st.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi
-	<cristian.marussi@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Etienne
- Carriere <etienne.carriere@foss.st.com>
-Subject: [PATCH v2 0/2] firmware: arm_scmi: unbound discrete rates, support round rate
-Date: Tue, 3 Dec 2024 18:39:06 +0100
-Message-ID: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733249260; c=relaxed/simple;
+	bh=dqztknOIkm8ntS9wy+GQNN8ohu1VudzQqaeaZ2cvWb4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i/nkJ0re27qWWXI8a3nA+wfSjtn3tZ1H7D07A0Xerp94J6nPisPT4YsiJ4ABAJY3I4t0lyC5KBFcBNK9q75c9nLIjCPyXCNtIFzaMtv2kZQQI1TAPXQE98Uh7O869qHDCjz0w1ZFZP7drIsDjTckoLxRYKYm7dw0AqD4C1EXfFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y2pR80KFJz6K6XW;
+	Wed,  4 Dec 2024 02:03:00 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D7E5F140B63;
+	Wed,  4 Dec 2024 02:07:12 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 3 Dec
+ 2024 19:07:12 +0100
+Date: Tue, 3 Dec 2024 18:07:10 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Paul Barker <paul.barker.ct@bp.renesas.com>
+CC: Claudiu <claudiu.beznea@tuxon.dev>,
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, <jic23@kernel.org>,
+	<lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <geert+renesas@glider.be>, <magnus.damm@gmail.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
+	<linux-iio@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 06/14] iio: adc: rzg2l_adc: Simplify the locking scheme
+ in rzg2l_adc_read_raw()
+Message-ID: <20241203180710.0000204d@huawei.com>
+In-Reply-To: <6f627195-6c55-4687-b6b6-7fb791d13819@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-7-claudiu.beznea.uj@bp.renesas.com>
+	<6f627195-6c55-4687-b6b6-7fb791d13819@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-These 2 patches propose to remove the limitation of 16 discrete rate max on
-SCMI clocks and implements an effective round_rate operation on SCMI clocks
-that provides non-linear possible rates.
+On Tue, 3 Dec 2024 13:03:29 +0000
+Paul Barker <paul.barker.ct@bp.renesas.com> wrote:
 
-The 1st patch removes a limitation on SCMI clocks that is not really needed
-since the SCMI clock driver does not need to store the full list of
-supported discrete rates but only require to store the min and max rate
-values. This change was initially proposed in:
-https://lore.kernel.org/lkml/20240729065306.1210733-1-etienne.carriere@foss.st.com/
+> Hi Claudiu,
+> 
+> On 03/12/2024 11:13, Claudiu wrote:
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > 
+> > Simplify the locking scheme in rzg2l_adc_read_raw() by saving the converted
+> > value only if the rzg2l_adc_conversion() returns success. The approach
+> > simplifies the addition of thermal sensor support (that will be done in the
+> > next commits). The downside is that the ret variable need to be checked
+> > twice.
+> > 
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+> >  drivers/iio/adc/rzg2l_adc.c | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> > index 62932f9295b6..eed2944bd98d 100644
+> > --- a/drivers/iio/adc/rzg2l_adc.c
+> > +++ b/drivers/iio/adc/rzg2l_adc.c
+> > @@ -227,14 +227,11 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio_dev,
+> >  		mutex_lock(&adc->lock);
+> >  		ch = chan->channel & RZG2L_ADC_CHN_MASK;
+> >  		ret = rzg2l_adc_conversion(indio_dev, adc, ch);
+> > -		if (ret) {
+> > -			mutex_unlock(&adc->lock);
+> > -			return ret;
+> > -		}
+> > -		*val = adc->last_val[ch];
+> > +		if (!ret)
+> > +			*val = adc->last_val[ch];
+> >  		mutex_unlock(&adc->lock);
+> >  
+> > -		return IIO_VAL_INT;
+> > +		return ret ? ret : IIO_VAL_INT;  
+> 
+> It would be maybe slightly neater to use:
+> 
+> 	if (!ret) {
+> 		*val = adc->last_val[ch];
+> 		ret = IIO_VAL_INT;
+> 	}
+> 	mutex_unlock(&adc->lock);
+> 
+> 	return ret;
+> 
+Better I think to use {} for scope and
+guard(mutex)()
+...
+if (ret)
+	return ret;
 
-The second patch implements a real round_rate operation that is needed for
-example on STM32MP25 platforms for the video and the sound drivers that needs
-to know the effective possible clock rates in order to select a compliant sample
-clock frequency regarding the audio quality constraints.
+*val = adc->last_val[ch];
 
-STM32MP25 platforms also need the 1st patch of this series since many of the
-audio clocks (SAIx and MDFx interfaces) and the LTDC video clock are provided
-by SCMI clocks (CK_SCMI_FLEXGEN_x).
+Where possible keeping the error path as the out of line element is
+easier to follow on basis that is most common pattern so what a reviewers
+eye is 'trained' to see.
 
-Etienne Carriere (2):
-  firmware: arm_scmi: get only min/max clock rates
-  firmware: arm_scmi: round rate bisecting in discrete rates
+Jonathan
 
- drivers/clk/clk-scmi.c            |  21 ++-
- drivers/firmware/arm_scmi/clock.c | 205 +++++++++++++++++++++++++++++-
- include/linux/scmi_protocol.h     |   7 +-
- 3 files changed, 220 insertions(+), 13 deletions(-)
-
--- 
-2.25.1
+> Thanks,
+> 
 
