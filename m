@@ -1,136 +1,154 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B705F1F8910;
-	Tue,  3 Dec 2024 19:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEB22040BB;
+	Tue,  3 Dec 2024 19:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733254210; cv=none; b=dRwIZKPPemSgMvPXrsk98QcH+TtqxGI2YgLCb9u4UwMkx1O2QQmeE+F5C3XAuIanWJk5CPKPfWmHsz1gU/Yw981po7wyn9OUN+Fzfg3GbeWYgymbxw+8G/bty9nR+IlFr75DZ/uwP5w2eY7FAKk6s/nDHU7LBQV1F97d0VUygsk=
+	t=1733255497; cv=none; b=Mf0bHv9kDotkZhKV2yBIvLHbNqWLm2l7NchGPvp9dkXp/CS9PMBa5VALQCVM9VHvRV3rDgtButBOjW81P+Es+IGpA86pQjwNxUJPHdGQp+95GUPNYRblKurjSFSWoRN9yuMz9Yf3NLbskE9jkxMnies+RY+qFPrK/xbQMa+nIb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733254210; c=relaxed/simple;
-	bh=2K+i1S/3sf74gdv4NXTCEB0ZkasLUdboMLKU7Q6QF+A=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ekvC1lDLFht7kGFWCUwNNBr+fTwPH7mC10Z1a91jafKpMCo5Vi5WjykIdiMs+6ocoPSNoOTDHNtNUIRn4M/iOCKZeYIYkJzg3+FfdL65JwigSalijp+LqJmzqIBeamNXjOYbO0wmzbLKwKkh7G/nUTw73VQauYIpOCMVOJ4R7gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEOSSMAw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733255497; c=relaxed/simple;
+	bh=mV7LLrltgDkaVfXGQHRmcEnjN0pqK4N33xm9mgi5Lp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZkR6nsUGtj6zCK260/FPzC2wGSZ06XmXUNgwqdr+LrhrfPbtOyWfXgrbx+0JIw2YJrDbOei6rNSK6vXyn4Z5Ye7odW+3qMGRFD5B2ZzZxl/U2LsmQYqBU0bEqsPcd72SYV25UD8H0GVfQ+UNR6DNMaAI7ZrJhyQ8AWVn1rgbvXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEd3yKzO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEOSSMAw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15598C4CECF;
-	Tue,  3 Dec 2024 19:30:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEd3yKzO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1690C4CED8;
+	Tue,  3 Dec 2024 19:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733254210;
-	bh=2K+i1S/3sf74gdv4NXTCEB0ZkasLUdboMLKU7Q6QF+A=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=rEOSSMAw4aRVIFfjkZ/b9s5WQsVAdJl8UqHu4CEvzDgMSq+RMuqTHTq8lEghwGUKz
-	 bO/TpYbMyqWPDII5AOo6Y+XjPIF4RAWz7fHDNUjOirbOKvSIMZ/jKH5esQ+11WelbV
-	 UnYzdUOIDRvWH/Gqhmb9IPBkGk5/VTlkc9794+uD/RzQ5I2HZTDWg/WQJTIiZl/UJb
-	 yuOJf+zJOreYn2LK12Fh9NTPEhONJdWfdERUoESArOvdsDoJg7vLwjt5hQXygmHvLI
-	 2zVSBEvJ3JpWm0xgNVM+25l7YjenhetnbxAs0bpmGBFsirgmULEBQvbGItgCnGVxY6
-	 wihVM8k+X4Uhw==
-Message-ID: <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1733255497;
+	bh=mV7LLrltgDkaVfXGQHRmcEnjN0pqK4N33xm9mgi5Lp4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kEd3yKzOnjt6LF6f8itwYdPhZXgHtKqKbpdh3EhIeEMrLyew3h4asNosGxjGNYgVh
+	 pnDjgIdWRrTAyPmHmtmTcChKK7k5Jgn6TqjWWvLWP5+aVUf0FoEJWhAzan8aRKhhrB
+	 PIpI+9aRHXIyk9wSwzU0QBU5J68CTO68EdHC6n8N4AsJFGXSJ8mUVsVhfcIhoBpvr/
+	 Rbeo6etK/CaHF3BoGi/r81xdOvk90TQDXNTelLRS8ywg5PrNbk6mV5+47i4RyavVf+
+	 dT/ZOHHKsf7aJHKO/tx2Q8gpoMXW+U3t137u1ow7PUh1wkqR3U24Rj0Uwv1XAVG2Q4
+	 XyQdG3+VaUnJg==
+Date: Tue, 3 Dec 2024 19:51:27 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 02/14] iio: adc: rzg2l_adc: Use devres helpers to
+ request pre-deasserted reset controls
+Message-ID: <20241203195127.294245f6@jic23-huawei>
+In-Reply-To: <20241203111314.2420473-3-claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-3-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241203092151.izcsgzqep4imbcwe@thinkpad>
-References: <20241202100621.29209-1-johan+linaro@kernel.org> <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org> <Z07AXbQvvZwI8Ki6@hovoldconsulting.com> <20241203092151.izcsgzqep4imbcwe@thinkpad>
-Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>, Chuan Liu <chuan.liu@amlogic.com>, Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Tue, 03 Dec 2024 11:30:07 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Manivannan Sadhasivam (2024-12-03 01:21:51)
-> On Tue, Dec 03, 2024 at 09:25:01AM +0100, Johan Hovold wrote:
-> > [ +CC: Viresh and Sudeep ]
-> >=20
-> > On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
-> > > Quoting Johan Hovold (2024-12-02 02:06:21)
-> > > > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
-> > > >=20
-> > > > The offending commit results in errors like
-> > > >=20
-> > > >         cpu cpu0: _opp_config_clk_single: failed to set clock rate:=
- -22
-> > > >=20
-> > > > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
-> > > > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
-> > > >=20
-> > > > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clo=
-ck
-> > > > provider support"):
-> > > >=20
-> > > >         [T]he frequency supplied by the driver is the actual freque=
-ncy
-> > > >         that comes out of the EPSS/OSM block after the DCVS operati=
-on.
-> > > >         This frequency is not same as what the CPUFreq framework ha=
-s set
-> > > >         but it is the one that gets supplied to the CPUs after
-> > > >         throttling by LMh.
-> > > >=20
-> > > > which seems to suggest that the driver relies on the previous behav=
-iour
-> > > > of clk_set_rate().
-> > >=20
-> > > I don't understand why a clk provider is needed there. Is anyone look=
-ing
-> > > into the real problem?
-> >=20
-> > I mentioned this to Mani yesterday, but I'm not sure if he has had time
-> > to look into it yet. And I forgot to CC Viresh who was involved in
-> > implementing this. There is comment of his in the thread where this
-> > feature was added:
-> >=20
-> >       Most likely no one will ever do clk_set_rate() on this new
-> >       clock, which is fine, though OPP core will likely do
-> >       clk_get_rate() here.
-> >=20
-> > which may suggest that some underlying assumption has changed. [1]
-> >=20
+On Tue,  3 Dec 2024 13:13:02 +0200
+Claudiu <claudiu.beznea@tuxon.dev> wrote:
 
-Yikes.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Starting with commit d872bed85036 ("reset: Add devres helpers to request
+> pre-deasserted reset controls"), devres helpers are available to simplify
+> the process of requesting pre-deasserted reset controls. Update the
+> rzg2l_adc driver to utilize these helpers, reducing complexity in this
+> way.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Claudia,
 
->=20
-> I just looked into the issue this morning. The commit that triggered the =
-errors
-> seem to be doing the right thing (although the commit message was a bit h=
-ard to
-> understand), but the problem is this check which gets triggered now:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
-rivers/clk/clk.c?h=3Dv6.13-rc1#n2319
->=20
-> Since the qcom-cpufreq* clocks doesn't have parents now (they should've b=
-een
-> defined anyway) and there is no CLK_SET_RATE_PARENT flag set, the check r=
-eturns
-> NULL for the 'top' clock. Then clk_core_set_rate_nolock() returns -EINVAL,
-> causing the reported error.
->=20
-> But I don't quite understand why clk_core_set_rate_nolock() fails if ther=
-e is no
-> parent or CLK_SET_RATE_PARENT is not set. The API is supposed to set the =
-rate of
-> the passed clock irrespective of the parent. Propagating the rate change =
-to
-> parent is not strictly needed and doesn't make sense if the parent is a f=
-ixed
-> clock like XO.
+Minor comments below.
 
-The recalc_rate clk_op is telling the framework that the clk is at a
-different rate than is requested by the clk consumer _and_ than what the
-framework thinks the clk is currently running at. The clk_set_rate()
-call is going to attempt to satisfy that request, and because there
-isn't a determine_rate/round_rate clk_op it assumes the clk can't change
-rate so it looks to see if there's a parent that can be changed to
-satisfy the rate. There isn't a parent either, so the clk_set_rate()
-call fails because the rate can't be achieved on this clk.
+Thanks
 
-It may work to have a determine_rate clk_op that is like the recalc_rate
-one that says "this rate you requested is going to turn into whatever
-the hardware is running at" by simply returning the rate that the clk is
-running at.
+Jonathan
+
+> ---
+>  drivers/iio/adc/rzg2l_adc.c | 37 ++-----------------------------------
+>  1 file changed, 2 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index cd3a7e46ea53..7039949a7554 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -415,11 +415,6 @@ static void rzg2l_adc_pm_runtime_set_suspended(void *data)
+>  	pm_runtime_set_suspended(dev->parent);
+>  }
+>  
+> -static void rzg2l_adc_reset_assert(void *data)
+> -{
+> -	reset_control_assert(data);
+> -}
+> -
+>  static int rzg2l_adc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -456,46 +451,18 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(adc->adclk);
+>  	}
+>  
+> -	adc->adrstn = devm_reset_control_get_exclusive(dev, "adrst-n");
+> +	adc->adrstn = devm_reset_control_get_exclusive_deasserted(dev, "adrst-n");
+>  	if (IS_ERR(adc->adrstn)) {
+>  		dev_err(dev, "failed to get adrstn\n");
+I'd be tempted to keep the error message from below rather than this one.
+As we can only conclude the deassert failed to happen, not whether it was the
+get step or the deassert itself.
+
+Also, use dev_err_probe() throughout and definitely for anything you are touching
+in this series. Ideally add a patch converting all the other places where it
+is useful in things only called from probe.
+	return dev_err_probe(dev, PTR_ERR(adc->adrstn),
+			     "failed to deassert adrstn pin\n");
+
+>  		return PTR_ERR(adc->adrstn);
+>  	}
+>  
+> -	adc->presetn = devm_reset_control_get_exclusive(dev, "presetn");
+> +	adc->presetn = devm_reset_control_get_exclusive_deasserted(dev, "presetn");
+>  	if (IS_ERR(adc->presetn)) {
+>  		dev_err(dev, "failed to get presetn\n");
+>  		return PTR_ERR(adc->presetn);
+>  	}
+>  
+> -	ret = reset_control_deassert(adc->adrstn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to deassert adrstn pin, %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(&pdev->dev,
+> -				       rzg2l_adc_reset_assert, adc->adrstn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to register adrstn assert devm action, %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = reset_control_deassert(adc->presetn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to deassert presetn pin, %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(&pdev->dev,
+> -				       rzg2l_adc_reset_assert, adc->presetn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to register presetn assert devm action, %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+>  	ret = rzg2l_adc_hw_init(adc);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to initialize ADC HW, %d\n", ret);
+
