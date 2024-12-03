@@ -1,116 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B37713FD72;
-	Tue,  3 Dec 2024 02:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DD11F95A;
+	Tue,  3 Dec 2024 04:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733194413; cv=none; b=Co7yu0WEqANVJZ6CRy/2eeb2XPw5sGUjQ4XBVjdHFroiN3mamsqv+cIo2yh8g1jhpyFiCGpldfU/xL0Ca1vgGQhyWH8PDdVFC3ROQvJaNYSY7m3DEgAqEr5imQwuvWBwtNh46J+lEDTKGjXOiz69Q64VFeU7ncFz7iwqaLfVieg=
+	t=1733200469; cv=none; b=NKDX1c9cYuK5BPO7xGlEslep13xdRQRsjVFuVWW02neh9tPBRFGYcFlO9nFdF97OKHhGgysXu8cZHz4ndqfKP+1HAh9OItdgqOoRzYDkYh8ssloMOPWucqmWt51dPu0Vu/iXfAHmRhKaF0jAdPl9BaUEkm7e9Tp1zgP6W2jnCUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733194413; c=relaxed/simple;
-	bh=5NrfrujeFDf+fSH5kneC5axcRATmJ0Nz3tqBpohP0O4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=H8GgYY5P+hkakvXKpgOpexKeP2MpQbVCVnQ6Kgxl2mOiYcocVJ+GPBWBzcnDhjuhg7/o7oL6tg+k9MA+phA+VKcRap/tpucm9oBZD7wZDvEXamf0MokzhxL5/bzz7leMY/M36tokA8zgu5bVT6tjBw2c+P2lHhWmKJT4RhzN+jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDMb89+c; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733200469; c=relaxed/simple;
+	bh=dacbi10IAGPrR/TJEE/lVeWhVYMlBBjh6nXpcRIbyEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aRVeEwTKVvcntZ8J790CC5k+njJbrX3/bUNhbi1ghky2Jio57sStADwFB2sUC0lhJT9TaNOd/x/mjpIbkZ95+qJhsSZ3dP0tehCOnMg4klzf7eM2xIw8iIJ53dErEvZ2SYqmoQehVZSQcmt2MniF0NDXhpLSaJmgc4qTSdmG+VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dGr6FT74; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDMb89+c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EE1C4CED1;
-	Tue,  3 Dec 2024 02:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733194412;
-	bh=5NrfrujeFDf+fSH5kneC5axcRATmJ0Nz3tqBpohP0O4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MDMb89+cXWpckQeitaTf+4Fsdz2GcREa0ZeO+jAxqBDf4AoOIZerr12+iiwTXJfJm
-	 EwC95pmrY2tOpTHpeMcaus/DE/qIC1pcf4TkH6uEavp1i6l3zu3Q7DjAGRJWoo4aee
-	 KfS5xOuGxQ46w0C7bKs8UyWctftKF1sR1ItCFb14YznnkNWp7EYFWDEFgwkfaPwZ07
-	 Z7gkyitCytSLX4UOySYqy7S9PhV7e85pRkvmvpdc6ITUdCzBdhvoq4ne8X9QxWQ6H5
-	 hx63iPyVu9bjUV+GYRhMcBcpwJbOoeQC49b65w3JbzM6Eff8jcZWxllOTh/VcYGQ9r
-	 9UTP8UDzDsJwg==
-Message-ID: <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dGr6FT74"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2JLmhW032665;
+	Tue, 3 Dec 2024 04:34:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7r+fTmL3Npekgfx1Bw1R4lQ7zlWHmzynV+Skqmaw7PU=; b=dGr6FT74v/5Lx+H8
+	sMvtP1p2ANdd7/iHkt2KzREUytcHEaEVGF1DaXZYTDv5Mj19MVJO0fVzi1BlR6yC
+	gTGOpjAbVsHfGtWxdYtB7slre46wR+IBw4CH6gxqtBtUjYmyCBKw3h2p4vqgBeG8
+	sLzx2kKx09OGgYABsP82ZaRLG1tyqsDnib4a7SPQ/FOM/tNOq5LvIfn6DIDF6k/y
+	YF2sIN32RDFuDqEARWj/cbYHP0pjT/Nz4s2z6JseLbIs4cUMaAfCN/LVeLe9NgKm
+	Vrd+hrtPGUVXvTvwRDSPDtBZIzLg4RLHic07vIH37PjzJDUeZAKjEeS5rpgR0O5m
+	qAc+tQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2xsrx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 04:34:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B34YMSf026361
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 04:34:22 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 20:34:16 -0800
+Message-ID: <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
+Date: Tue, 3 Dec 2024 10:04:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
-References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com> <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com> <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com> <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com> <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com> <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> <1jy1131kxz.fsf@starbuckisacylon.baylibre.com> <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com> <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com> <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 02 Dec 2024 18:53:30 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: sa8775p: Add support for clock
+ controllers
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <quic_imrashai@quicinc.com>,
+        <quic_jkona@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>
+References: <20241025-sa8775p-mm-v4-resend-patches-v6-0-329a2cac09ae@quicinc.com>
+ <20241025-sa8775p-mm-v4-resend-patches-v6-2-329a2cac09ae@quicinc.com>
+ <e810ab3d-a225-4c85-a755-3aa18c311cc5@oss.qualcomm.com>
+ <9e0f200b-53dd-4dbf-8b0d-1a2f576d3e3f@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <9e0f200b-53dd-4dbf-8b0d-1a2f576d3e3f@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HNTHWeFsis9Efc1EhwplX26Drn1XB8AC
+X-Proofpoint-GUID: HNTHWeFsis9Efc1EhwplX26Drn1XB8AC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=697
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030036
 
-Happy Thanksgiving!
 
-Quoting Arnd Bergmann (2024-11-28 07:34:46)
-> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
-> > On Thu 28 Nov 2024 at 15:51, "Arnd Bergmann" <arnd@arndb.de> wrote:
-> >> On Thu, Nov 28, 2024, at 15:39, Jerome Brunet wrote:
-> >>> On Thu 28 Nov 2024 at 15:11, "Arnd Bergmann" <arnd@arndb.de> wrote:
-> >>> Eventually that will happen for the rest of the reset implemented
-> >>> under drivers/clk/meson.
-> >>>
-> >>> It allows to make some code common between the platform reset
-> >>> drivers and the aux ones. It also ease maintainance for both
-> >>> Stephen and Philipp.
-> >>
-> >> I don't understand how this helps: the entire point of using
-> >> an auxiliary device is to separate the lifetime rules of
-> >> the different bits, but by doing the creation of the device
-> >> in the same file as the implementation, you are not taking
-> >> advantage of that at all, but instead get the complexity of
-> >> a link-time dependency in addition to a lot of extra code
-> >> for dealing with the additional device.
-> >
-> > My initial rework had the creation in clock (note: that is why I
-> > initially used 'imply', and forgot to update when the creation moved to
-> > reset).
-> >
-> > I was asked to move the creation in reset:
-> > https://lore.kernel.org/r/217a785212d7c1a5b504c6040b3636e6.sboyd@kernel=
-.org
-> >
-> > We are deviating a bit from the initial regression reported by Mark.
-> > Is Ok with you to proceed with that fix and then continue this discussi=
-on
-> > ?
->=20
-> I really don't want to see those stray 'select' statements
-> in there, as that leave very little incentive for anyone to
-> fix it properly.
->=20
-> It sounds like Stephen gave you bad advice for how it should
-> be structured, so my best suggestion would be to move the
-> the problem (and the reset driver) back into his subsystem
-> and leave only a simple 'select RESET_CONTROLLER'.
->=20
-> From the message you cited, I think Stephen had the right
-> intentions ("so that the clk and reset drivers are decoupled"),
-> but the end result did not actually do what he intended
-> even if you did what he asked for.
->=20
-> Stephen, can you please take a look here and see if you
-> have a better idea for either decoupling the two drivers
-> enough to avoid the link time dependency, or to reintegrate
-> the reset controller code into the clk driver and avoid
-> the complexity?
 
-I think the best approach is to add the reset auxilary device with a
-function that creates the auxiliary device directly by string name and
-does nothing else. Maybe we can have some helper in the auxiliary
-layer that does that all for us, because it's quite a bit of boiler
-plate that we need to write over and over again. Something like:
+On 10/26/2024 12:12 AM, Konrad Dybcio wrote:
+> On 25.10.2024 8:42 PM, Konrad Dybcio wrote:
+>> On 25.10.2024 10:52 AM, Taniya Das wrote:
+>>> Add support for video, camera, display0 and display1 clock controllers
+>>> on SA8775P. The dispcc1 will be enabled based on board requirements.
+> 
+> Actually, why would that be? CCF should park it gracefully with
+> unused cleanup
+> 
 
-  int devm_auxiliary_device_create(struct device *parent, const char *name)
+Yes, CCF should take care to cleanup. But I am of an opinion that as we 
+are aware that this platform do not require the dispcc1 so we could 
+avoid the clock driver initialization and help in boot KPI.
 
-that does the whole kzalloc() + ida dance that
-devm_meson_rst_aux_register() is doing today and wraps it all up so that
-the device is removed when the parent driver unbinds. Then this clk
-driver can register the reset device with a single call and not need to
-do anything besides select AUXILIARY_BUS. The regmap can be acquired
-from the parent device in the auxiliary driver probe with
-dev_get_regmap(adev->parent).
+> Konrad
+> 
+>>>
+>>> Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> ---
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> Konrad
+
+-- 
+Thanks & Regards,
+Taniya Das.
