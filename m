@@ -1,99 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363E71F130F;
-	Tue,  3 Dec 2024 15:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA99D1F8AFA;
+	Tue,  3 Dec 2024 15:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239518; cv=none; b=nUIU4k4Ppfsoyp21z/EnVWbCNTgD3C9q1IHAKrMMz3Y9PXMCEkT6wScsCDgU3Hw0yXvjdfoMpMLXcHEKwGP2RdtDq4jsRcheacVKakXOq1UAvqiRJfto7Ju0W4e9NmqqUgfoqLr787VrWDsqvkNWWxpIWE229OjmqOGH8hRdjuA=
+	t=1733239955; cv=none; b=oDoUMj3p77OEgcP8zbMzs3NLnFg6PFpooAUzvC4JIS0QUa60I0USQ93JjTaq+SRxWhLUoota90ccG9EuLt5BCW1XHiVGtbs/wEl7/iTqGvllrA+sCYRyHrXdQe7fdw3yc/5EaeN466k1EOxxw74q8abnR63BWeNw85vv7oRRDI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239518; c=relaxed/simple;
-	bh=X/PwEvQP5tU0vB8EoXqX3xfn/sW++pmyf4vXD3OCWfI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=tshxSQneNN1nR7nRnCitHxhsqPnf6L7NCIp0Z5D5IJzP/ydu/jty1E+7TDERC0WSvuU0uzjyv1xsM9rs00l5pgRlmED+gx4NSIwR3y3vHFws9q/RNH3YY5aNBTxrROmqf8jVrL1qNlP8kmF4fKdsNe5Dn3YYZqtu+j8FcslO30o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BibNDSdI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733239955; c=relaxed/simple;
+	bh=9dyobPuiAigqFkgy1nXf6Wr/bRq7fJo42aRsWAsXsgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJZRjqTaHDElOutYO/m0dZn/DwENUpPo+s8+lw+25AugtLr+9Cs6LX5kbROrM7eubNA+ENTsRcLmSqJ67kCIFFKK4CrvVUH/ufqTOVgiiwcg83LtlNylNRMhR+crtit2ES3tQUS1KRe70P18b5YzxZl8++Zwc2KD4Xmv4/NPSRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgIgt+mD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BibNDSdI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4D98C4CECF;
-	Tue,  3 Dec 2024 15:25:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgIgt+mD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2A1C4CECF;
+	Tue,  3 Dec 2024 15:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733239518;
-	bh=X/PwEvQP5tU0vB8EoXqX3xfn/sW++pmyf4vXD3OCWfI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=BibNDSdIxD5dJNes1vJ7140QWABbcfK++KnAHPuRH34JJyltkmOovhdFy1ythpMcf
-	 Jgt+X0vAfjdECQevLJNkTTtUM9aIJAefQRcN5aRk2mOXcIzItQZYV+TYYf9kHkbMsN
-	 JB43bQz718szORF+xGZB1wrbaN6402z/7dJ/e1OMHJI4QMRkr2M/Wup8ldZAAW0bHL
-	 arhJtg9HrfmdBNiCy15xVrQcxPODNLdMDZXsFOpjw4CqjZyn88aCXAoj1G/CVJOTCa
-	 OLhJ7kNSWUAGXTiDqyC6R2x/C0ATmOvC9ytIP2sxvUPXMX5LD7v2D0pMT91r9TTHee
-	 kco2TN/wiPeGg==
-Date: Tue, 03 Dec 2024 09:25:16 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733239954;
+	bh=9dyobPuiAigqFkgy1nXf6Wr/bRq7fJo42aRsWAsXsgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FgIgt+mDsPsf122bbvT7gowNtGD6kjdn6EEl6x0FUr0CUyTUYIJteho8ZB7nVavOP
+	 lt70sI7leixdD4LrqXBoBSVEyjXfKTToeyBirNZ51JgaRyLg3r6zwpAWb4IDTtJTgS
+	 k/8gyMVgex2SMy5t47Yt1bCmq+cQ3+vZzqvPpsLIaz6+vGPAWHB6BbkAaY0ca59U2Y
+	 qkWOihUmIblKZd9MCQ9NIWUuL775HQYE5q/5UAtOp/PxvaYMb1oUVcIsuspo5tZYH1
+	 OeUHN02rqALZzqHEFZNACYGMvkz2kSYOApIOwBWTDVXTuvS6cSpf9i5dYmSENSkOJj
+	 F5LDvT6ys9pLA==
+Date: Tue, 3 Dec 2024 09:32:31 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: sa8775p: Add support for clock
+ controllers
+Message-ID: <gpikswuggsfnfu5ay3se46ah6rdehaeu5ylaa5aidmqtcejoo2@um7inmnjrcvq>
+References: <20241025-sa8775p-mm-v4-resend-patches-v6-0-329a2cac09ae@quicinc.com>
+ <20241025-sa8775p-mm-v4-resend-patches-v6-2-329a2cac09ae@quicinc.com>
+ <e810ab3d-a225-4c85-a755-3aa18c311cc5@oss.qualcomm.com>
+ <9e0f200b-53dd-4dbf-8b0d-1a2f576d3e3f@oss.qualcomm.com>
+ <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: m.szyprowski@samsung.com, frank.binns@imgtec.com, 
- linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
- paul.walmsley@sifive.com, jszhang@kernel.org, 
- linux-riscv@lists.infradead.org, ulf.hansson@linaro.org, 
- mturquette@baylibre.com, wefu@redhat.com, conor+dt@kernel.org, 
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, 
- airlied@gmail.com, aou@eecs.berkeley.edu, matt.coster@imgtec.com, 
- guoren@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- sboyd@kernel.org, simona@ffwll.ch, drew@pdp7.com, krzk+dt@kernel.org, 
- jassisinghbrar@gmail.com, mripard@kernel.org, palmer@dabbelt.com, 
- tzimmermann@suse.de
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20241203134137.2114847-9-m.wilczynski@samsung.com>
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134159eucas1p1eafefef0dfe7f2b6343a639733012bcf@eucas1p1.samsung.com>
- <20241203134137.2114847-9-m.wilczynski@samsung.com>
-Message-Id: <173323951617.1836905.12806289628083482638.robh@kernel.org>
-Subject: Re: [RFC PATCH v1 08/14] dt-bindings: power: thead,th1520: Add
- support for power domains
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
 
-
-On Tue, 03 Dec 2024 14:41:31 +0100, Michal Wilczynski wrote:
-> Add power domain support to the Thead TH1520 clock controller bindings.
-> This enables devices to specify their power domain dependencies,
-> improving power management for components like the GPU.
+On Tue, Dec 03, 2024 at 10:04:13AM +0530, Taniya Das wrote:
 > 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../bindings/power/thead,th1520-power.yaml    | 52 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/thead,th1520-power.yaml
+> 
+> On 10/26/2024 12:12 AM, Konrad Dybcio wrote:
+> > On 25.10.2024 8:42 PM, Konrad Dybcio wrote:
+> > > On 25.10.2024 10:52 AM, Taniya Das wrote:
+> > > > Add support for video, camera, display0 and display1 clock controllers
+> > > > on SA8775P. The dispcc1 will be enabled based on board requirements.
+> > 
+> > Actually, why would that be? CCF should park it gracefully with
+> > unused cleanup
+> > 
+> 
+> Yes, CCF should take care to cleanup. But I am of an opinion that as we are
+> aware that this platform do not require the dispcc1 so we could avoid the
+> clock driver initialization and help in boot KPI.
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Does that imply that we're guaranteed that the bootloader will never
+configure any clocks in dispcc1 that needs to be gracefully parked from
+the OS? Is this guaranteed to be the case for all QCS9100 boards?
 
-yamllint warnings/errors:
+IMHO we should default to correctness, and then make product-specific
+boot time optimizations from that starting point.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/thead,th1520-power.example.dtb: vosys@ffef528000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/thead,th1520-power.example.dtb: vosys@ffef528000: reg: [[255, 4015161344], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+Regards,
+Bjorn
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241203134137.2114847-9-m.wilczynski@samsung.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> > Konrad
+> > 
+> > > > 
+> > > > Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> > > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> > > > ---
+> > > 
+> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > > 
+> > > Konrad
+> 
+> -- 
+> Thanks & Regards,
+> Taniya Das.
