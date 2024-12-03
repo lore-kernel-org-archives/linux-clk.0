@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B111362;
-	Tue,  3 Dec 2024 22:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88B020A5C8;
+	Tue,  3 Dec 2024 22:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733266313; cv=none; b=F+tzPKFnPnAoQp5B071Fchi0GzO0tNgNTnHrg7E/j41NpEslycRaiIbMrMl4zazGUGmGXjUDp2PV+6jEyv83MwnBIv5dnXv9eU8E/Xeugup0k0+Qk/mgF8r0kzEfoMC0DgVrK/dvLglRf1UeOQSnjifl23+TyBj+eUDP0S5zVwk=
+	t=1733266427; cv=none; b=O5+n+7ev2tmJwYsHtmBm8ISOrdopwwcEXFhdZMDKTi7zVupybCUfLibijHJa5iu+uNSWLwDPH+ijUOXkwwtwDjYba4IfW1st7PaTWN4Rw/mrv8d4GyPOdGwrp5/N+xzepowCVTP4mspPcZRl9kTYrOeJuypfzJsD5V4UwYC/66U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733266313; c=relaxed/simple;
-	bh=+fjbAkrVzYde5+w2K06l9ghDnn2UjRQ+8F3dqZ+qLTU=;
+	s=arc-20240116; t=1733266427; c=relaxed/simple;
+	bh=hxJM0uX66rDrdmeB4lH8XrQkCJxJlOGvl0CFbwZ7dXI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kUti7mytsE3ecC11YVwQaHElH7TGFV2hCTjUsQRtCOx9BRZ/G1+tbbzRXSPvIY2mcQXW8Iu0J0WszTfswLwkjnWCwGIaFxRHAVXDQ9S7gnTYn6ovjwrO0SNmgudPy0yaImDDZyg7Jlki593NMLgPH6Qpcvx/xd1QCnijyiJ40fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXfhp2Qm; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Y+YCYVr1lb/HiMDU1DDOzDZYqFFlQrrB1f0ASRkTa+lRhWtpXMjJhaFJlUC2aCs0VXhX5SPbZD8goAt3WEnBeHoLcHdnu5dTsymFJKR1FqdogL8Fp8hGZVFdWDhCPAsLqIDDmLDNVc7V+6R030TeWYUbmrKm6lXhg2Seu5rETGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPVurdUY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXfhp2Qm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EAD4C4CEDC;
-	Tue,  3 Dec 2024 22:51:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPVurdUY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 380FEC4CEDC;
+	Tue,  3 Dec 2024 22:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733266313;
-	bh=+fjbAkrVzYde5+w2K06l9ghDnn2UjRQ+8F3dqZ+qLTU=;
+	s=k20201202; t=1733266426;
+	bh=hxJM0uX66rDrdmeB4lH8XrQkCJxJlOGvl0CFbwZ7dXI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UXfhp2QmYJWm6VA30rBw/rmkkSEPSkp3U6NrxQPslV2kpoBGTA/QIjiQljZzlxSyS
-	 YeO3IBsamlJWrY8iBeBaB9lH9OkK7Nkb/Vkxo9xEL01wWILQ0aRvXuieAHb3xFl5sX
-	 Q00/HdRVqtXVa6uUdMUw/euKZwFidjeXOBZpuzw7PoCXoXMWPKnnH9u8E4ps0Gw2Kq
-	 St1GAKeEEwm/agGLGXZkEPAbwO+t7YHH6jD9fWa4RLfRxCRyjiVjRU/DK/4fxp5uKB
-	 Bri8Cl4DsiiurwNzqjvQSYncArUtcg4bzC6o1urPNthVD9fwYUiA/C7c4Bm27/g6mg
-	 uh56Y3CvkcV+g==
-Message-ID: <23defccb1545a66064b02a5ac4b80536.sboyd@kernel.org>
+	b=KPVurdUY+AxlcDq/kWJ170VjyO9jjmU7KlqD7y5yWINwP1V2gpmvcznd2WWVeE0j7
+	 SQObpKE/PNyRRq+fbY3oJl1mcOPiH8kS0vNDCrTbSrsqXRD1UQ/vVTvozKEk+5iGfv
+	 pSeuwqn7L6BNF3x36181A1b+BS8UlEQCPjIFFEoJccqhBzk9zVF1BbJEv7MXe8Gr3U
+	 oBL+f+eJN0+KiOVo2a4lQhjhHfV/HKGY2mfdKjTUK8VFXzX2gPtNNmeucE1W2BT1nD
+	 0uv0EXdLKkaG4yVU09PWJhJmjtZeIR62mZcnW8T601V0vXaJB+5c0VWROkIEpbtXI5
+	 PXNx/UidhA+ZQ==
+Message-ID: <a83b9497295bd8efd6260dadf37c5a77.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,31 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241116105710.19748-1-ansuelsmth@gmail.com>
-References: <20241116105710.19748-1-ansuelsmth@gmail.com>
-Subject: Re: [PATCH] clk: en7523: Fix wrong BUS clock for EN7581
+In-Reply-To: <20241203142915.345523-1-lihaoyu499@gmail.com>
+References: <20241203142915.345523-1-lihaoyu499@gmail.com>
+Subject: Re: [PATCH] drivers: clk: clk-en7523.c: Initialize num before accessing hws in en7523_register_clocks
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>, stable@vger.kernel.org
-To: Christian Marangi <ansuelsmth@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, upstream@airoha.com
-Date: Tue, 03 Dec 2024 14:51:51 -0800
+Cc: stable@vger.kernel.org, Haoyu Li <lihaoyu499@gmail.com>
+To: Gustavo A . R . Silva <gustavoars@kernel.org>, Haoyu Li <lihaoyu499@gmail.com>, Kees Cook <kees@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 03 Dec 2024 14:53:44 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Christian Marangi (2024-11-16 02:56:53)
-> The Documentation for EN7581 had a typo and still referenced the EN7523
-> BUS base source frequency. This was in conflict with a different page in
-> the Documentration that state that the BUS runs at 300MHz (600MHz source
-> with divisor set to 2) and the actual watchdog that tick at half the BUS
-> clock (150MHz). This was verified with the watchdog by timing the
-> seconds that the system takes to reboot (due too watchdog) and by
-> operating on different values of the BUS divisor.
+Quoting Haoyu Li (2024-12-03 06:29:15)
+> With the new __counted_by annocation in clk_hw_onecell_data, the "num"
+> struct member must be set before accessing the "hws" array. Failing to
+> do so will trigger a runtime warning when enabling CONFIG_UBSAN_BOUNDS
+> and CONFIG_FORTIFY_SOURCE.
 >=20
-> The correct values for source of BUS clock are 600MHz and 540MHz.
+> Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __cou=
+nted_by")
 >=20
-> This was also confirmed by Airoha.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 66bc47326ce2 ("clk: en7523: Add EN7581 support")
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
 > ---
 
-Applied to clk-next
+Applied to clk-fixes
