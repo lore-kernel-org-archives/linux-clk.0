@@ -1,32 +1,32 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181981DFE2E;
-	Tue,  3 Dec 2024 09:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FAF1E2605;
+	Tue,  3 Dec 2024 10:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218639; cv=none; b=glglvok/m6enF8IlZ9LB/nu0VJ4ThkTaTY3vvFfWIKGcSYR6E90NsMfA88d90gWzPy6lnsf6LxlzUp+USV6ev1Ox5nW1dym9idMmhp5xsScw5h5MmfB2/x8YVfoWzuzsQvf+biCV27Nw/hay9GVyOwlOSGMZzOq7pyBEOzuP5KM=
+	t=1733222424; cv=none; b=J81/xUHA4KyGzQjtO0nP4J9hrrDYGk5KVXHgsbNaxW/DNtSRjmcV7ZPlio4SIQqFtHqhDRhtUaBTLdA66Z+102ZHotWBYkRfUZEfWxQga5mqZGzxrSqDhXhrv06nX1DPbpeFPuZA7nBOtnGYzdaulRKnHNR5CGsSgcc4C68hWVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218639; c=relaxed/simple;
-	bh=jQXX/Tc40kph/7OBLJnEEHlRiFU1zhsnN3QXwzQG3EA=;
+	s=arc-20240116; t=1733222424; c=relaxed/simple;
+	bh=AgD4sUxGspGjnJqKj6uE5BA2J1nTqX8g/zDM10q08B0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1pRPBaDJ2IDR9Ch1BEgzvvIqzzPun3IdTeTdi+X+VujlPZ1QgkarcDhJEDMbfUbakkQz3Hbjrv4BeNfYfnM0FvZxxdwJQEajejwSUvhJhkRXbCKhfNMuOyfmuRx5+O2OnpvoozwrX7RMP10OXlXi9SaclY6D6pd/xaIPiITekE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YKuB4AXb; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvwTwm5g8CBryfC9t55twLB1ElSjPGFkG+anaQJyOyHcHqJ4z8CkHF4tM8itoiCm2pQeatMbigpFnmy1Sjo8whwqLfL7Qi3ty1JetaidGaNcfAX4iJIaWCab92+jQ4BnmU8zlnCnFIp1eYt0PRUUHfQ48dCliZWFEHUiEEuOGds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SUMpr5Pq; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YKuB4AXb"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SUMpr5Pq"
 Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C59994CE;
-	Tue,  3 Dec 2024 10:36:47 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E67808DB;
+	Tue,  3 Dec 2024 11:39:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733218608;
-	bh=jQXX/Tc40kph/7OBLJnEEHlRiFU1zhsnN3QXwzQG3EA=;
+	s=mail; t=1733222391;
+	bh=AgD4sUxGspGjnJqKj6uE5BA2J1nTqX8g/zDM10q08B0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YKuB4AXbRMhscTWbDWfRTbNGPURysibT8ay+/BUsYsk5ruwPwvod/Z8ANtwVLPX+m
-	 4YUAPFw7VbQrfWN2PeXlVZ4elGmpGiXE/IkctEaJ3V6P5Bhn17BRaPHmPKJMeiipoL
-	 1eD1zdRGU6DB72E6rDe9aTcpZCkqD+QwOjko6uCk=
-Date: Tue, 3 Dec 2024 11:37:03 +0200
+	b=SUMpr5Pqiart36e+UnmS+68J5xy25ZrQyWErnK4XJLIgVtNJU4/SAhaAfipIiBgmP
+	 CE0aC+w9ZivDv7e+1tHUXYv/ImhqMj3wOGDRlILD9yzvBosAuEvZpxSxdiqfY9VSH/
+	 pyfYwBSmifXlB+eymmPgl5Dthvo+lh0rNjiB9nVo=
+Date: Tue, 3 Dec 2024 12:40:06 +0200
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -52,10 +52,11 @@ Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a779h0: Add display support
-Message-ID: <20241203093703.GL10736@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 9/9] arm64: dts: renesas: gray-hawk-single: Add
+ DisplayPort support
+Message-ID: <20241203104006.GM10736@pendragon.ideasonboard.com>
 References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-9-738ae1a95d2a@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,127 +65,161 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com>
+In-Reply-To: <20241203-rcar-gh-dsi-v1-9-738ae1a95d2a@ideasonboard.com>
 
 Hi Tomi,
 
 Thank you for the patch.
 
-On Tue, Dec 03, 2024 at 10:01:42AM +0200, Tomi Valkeinen wrote:
+On Tue, Dec 03, 2024 at 10:01:43AM +0200, Tomi Valkeinen wrote:
 > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > 
-> Add the device nodes for supporting DU and DSI.
+> Add support for the mini DP output on the Gray Hawk board.
 > 
 > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 77 +++++++++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> index 12d8be3fd579..82df6ee98afb 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> @@ -1828,6 +1828,54 @@ csi41isp1: endpoint {
->  			};
->  		};
->  
-> +		fcpvd0: fcp@fea10000 {
-> +			compatible = "renesas,fcpv";
-> +			reg = <0 0xfea10000 0 0x200>;
-> +			clocks = <&cpg CPG_MOD 508>;
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 508>;
-> +		};
-> +
-> +		vspd0: vsp@fea20000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfea20000 0 0x8000>;
-> +			interrupts = <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>;
 
-The documentation lists this interrupt as being LevelSensitive and
-Negative. I wouldn't expect the VSP to work at all with a wrong polarity
-in DT, so the level may get inverted somewhere.
-
-> +			clocks = <&cpg CPG_MOD 830>;
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 830>;
-> +			renesas,fcp = <&fcpvd0>;
-> +		};
-> +
-> +		du: display@feb00000 {
-> +			compatible = "renesas,du-r8a779h0";
-> +			reg = <0 0xfeb00000 0 0x40000>;
-> +			interrupts = <GIC_SPI 523 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 411>;
-> +			clock-names = "du.0";
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 411>;
-> +			reset-names = "du.0";
-> +			renesas,vsps = <&vspd0 0>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					du_out_dsi0: endpoint {
-> +						remote-endpoint = <&dsi0_in>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-
-On V4M the DU has a single channel, so there should be a single port.
+Assuming this has passed the DT checks,
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-> +			};
-> +		};
-> +
->  		isp0: isp@fed00000 {
->  			compatible = "renesas,r8a779h0-isp",
->  				     "renesas,rcar-gen4-isp";
-> @@ -1996,6 +2044,35 @@ isp1vin15: endpoint {
->  			};
->  		};
+> ---
+>  .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 95 ++++++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+> index 057f959d67b3..7cdf07b6dde6 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+> @@ -59,6 +59,12 @@ chosen {
+>  		stdout-path = "serial0:921600n8";
+>  	};
 >  
-> +		dsi0: dsi-encoder@fed80000 {
-> +			compatible = "renesas,r8a779h0-dsi-csi2-tx";
-> +			reg = <0 0xfed80000 0 0x10000>;
-> +			clocks = <&cpg CPG_MOD 415>,
-> +				 <&cpg CPG_CORE R8A779H0_CLK_DSIEXT>,
-> +				 <&cpg CPG_CORE R8A779H0_CLK_DSIREF>;
-> +			clock-names = "fck", "dsi", "pll";
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 415>;
+> +	sn65dsi86_refclk: clk-x6 {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <38400000>;
+> +	};
 > +
-> +			status = "disabled";
+>  	keys {
+>  		compatible = "gpio-keys";
+>  
+> @@ -126,6 +132,27 @@ memory@480000000 {
+>  		reg = <0x4 0x80000000 0x1 0x80000000>;
+>  	};
+>  
+> +	mini-dp-con {
+> +		compatible = "dp-connector";
+> +		label = "CN5";
+> +		type = "mini";
 > +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
+> +		port {
+> +			mini_dp_con_in: endpoint {
+> +				remote-endpoint = <&sn65dsi86_out0>;
+> +			};
+> +		};
+> +	};
 > +
-> +				port@0 {
-> +					reg = <0>;
-> +					dsi0_in: endpoint {
-> +						remote-endpoint = <&du_out_dsi0>;
-> +					};
+> +	reg_1p2v: regulator-1p2v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "fixed-1.2V";
+> +		regulator-min-microvolt = <1200000>;
+> +		regulator-max-microvolt = <1200000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +	};
+> +
+>  	reg_1p8v: regulator-1p8v {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "fixed-1.8V";
+> @@ -200,6 +227,24 @@ channel1 {
+>  	};
+>  };
+>  
+> +&dsi0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			reg = <1>;
+> +			dsi0_out: endpoint {
+> +				remote-endpoint = <&sn65dsi86_in0>;
+> +				data-lanes = <1 2 3 4>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&du {
+> +	status = "okay";
+> +};
+> +
+>  &extal_clk {
+>  	clock-frequency = <16666666>;
+>  };
+> @@ -269,6 +314,51 @@ eeprom@53 {
+>  	};
+>  };
+>  
+> +&i2c1 {
+> +	pinctrl-0 = <&i2c1_pins>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +	clock-frequency = <400000>;
+> +
+> +	bridge@2c {
+> +		compatible = "ti,sn65dsi86";
+> +		reg = <0x2c>;
+> +
+> +		clocks = <&sn65dsi86_refclk>;
+> +		clock-names = "refclk";
+> +
+> +		interrupt-parent = <&intc_ex>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+> +
+> +		vccio-supply = <&reg_1p8v>;
+> +		vpll-supply = <&reg_1p8v>;
+> +		vcca-supply = <&reg_1p2v>;
+> +		vcc-supply = <&reg_1p2v>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				sn65dsi86_in0: endpoint {
+> +					remote-endpoint = <&dsi0_out>;
 > +				};
+> +			};
 > +
-> +				port@1 {
-> +					reg = <1>;
+> +			port@1 {
+> +				reg = <1>;
+> +				sn65dsi86_out0: endpoint {
+> +					remote-endpoint = <&mini_dp_con_in>;
 > +				};
 > +			};
 > +		};
+> +	};
+> +};
 > +
->  		prr: chipid@fff00044 {
->  			compatible = "renesas,prr";
->  			reg = <0 0xfff00044 0 4>;
+>  &i2c3 {
+>  	pinctrl-0 = <&i2c3_pins>;
+>  	pinctrl-names = "default";
+> @@ -361,6 +451,11 @@ i2c0_pins: i2c0 {
+>  		function = "i2c0";
+>  	};
+>  
+> +	i2c1_pins: i2c1 {
+> +		groups = "i2c1";
+> +		function = "i2c1";
+> +	};
+> +
+>  	i2c3_pins: i2c3 {
+>  		groups = "i2c3";
+>  		function = "i2c3";
 
 -- 
 Regards,
