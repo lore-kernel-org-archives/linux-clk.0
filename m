@@ -1,55 +1,55 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426BD1F1302
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 13:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926DC1F427B
+	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 13:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233321; cv=none; b=cWgly3MWxVMRX0I5B6jtFMEWeT834o8b6yop5gInGjbHDlpLkfEHl306ntY33VeTu+bGZCynnjV01oo0ci8Q/LEeUlOGTcdWkst1uTlHrqUzTprLVAVy2WSBfAVbWrI0YniaBusN2aIvplWT/W0PIpbbDCEKRnA4kxZHB7eDlO0=
+	t=1733233324; cv=none; b=U1EkRe4emacYq9susSwnO0VbGg74siMwmGBKbBC1UpFZ7XPf4gXTrJc3pFCsxLaqdu0Ujt0//GB7T89y4PMDFXi+e24dQ0pLoUNnuySta1jpmSMB7nrC186wBqaoJslA2Xjqtq2OFZ6S06sftp518qLOlW8gd7W1XlAa8DJ20sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233321; c=relaxed/simple;
-	bh=0gOfd9dZt9MGufLYogl+fZTyCnDVj3RbDJk5/Sde4zI=;
+	s=arc-20240116; t=1733233324; c=relaxed/simple;
+	bh=OGLtTxbpTtXaSRXv6pLjTlt1O9CEipR68uf6gA8hz4A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=e2GSUqhYcEYa0GoYZ5NNSnYuXv/aFHuleGNEHzPlpJwVivPQn2w6c6pzl4NaVCnYIN9K2sTTr0zEIz4nDJ/+C/OfPtGLF/ltnQSQ3Ck1u3aHaemtmi+OyWWtJncjh0nefe3yw5jHMq+dFtGFCL0kcq+//J1KzxRKvvn9vmOfAMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HeNOLIqk; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=pwxNK509q9eDEZJ6p1jl0ba2vNxc4dtOzwmAuIjn9Wis8rOeijOja2UXJIr/DJbjOsBVdpZvHcmXYRfO+YwAJJU9pQWuH8nN8Wmt4rmwvzmV4mlTkkChIYTqIibuZomYb7wAbKlWlVEwIGDCVbDcrSonjNHit3nkBGXcJx9P1gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cfkNzmB3; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HeNOLIqk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cfkNzmB3"
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134151euoutp0267aff1c99ecf8c3d75c370df71282d8f~NroN62fAI3035730357euoutp02V
-	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 13:41:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241203134151euoutp0267aff1c99ecf8c3d75c370df71282d8f~NroN62fAI3035730357euoutp02V
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134152euoutp02335af841ab5fa2d9e374e59fb614fce4~NroPBkcJP3035230352euoutp02Y
+	for <linux-clk@vger.kernel.org>; Tue,  3 Dec 2024 13:41:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241203134152euoutp02335af841ab5fa2d9e374e59fb614fce4~NroPBkcJP3035230352euoutp02Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733233311;
-	bh=An2FnGzhZlzxYk3d0KbYBPV10vyvjEv9yIWGJmCixm4=;
+	s=mail20170921; t=1733233312;
+	bh=+XIFXNOuRC/rcFhjLbJmehyyVGJ3vIOum8KvaMBq9LI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HeNOLIqkLv/QP391hSBIUly3/90IicaVVj90K3Hz3OWDPmnlQMXps1dk8HiIXfL8P
-	 GHOE+B6QcMp0W1xzKzl/TzwC8U05hphL4lITFjy2dRY4KPSt5GVd2HHnXO3+FX8t+H
-	 UrYKRevC6ThyYc5gMVwWqEcCQcMMj9n+/S7lojdk=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241203134150eucas1p25a85460ccafd9ed5d7d22b8d8d8ae598~NroNXDkru2018620186eucas1p26;
-	Tue,  3 Dec 2024 13:41:50 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 26.51.20397.E9A0F476; Tue,  3
-	Dec 2024 13:41:50 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134150eucas1p24ba8d2fbf2af5b8f9abe503b4334127d~NroM69Jq52020120201eucas1p2T;
-	Tue,  3 Dec 2024 13:41:50 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241203134150eusmtrp1889f2361b76d63d4267f624abc7c4a20~NroMzQkh_0887308873eusmtrp1E;
-	Tue,  3 Dec 2024 13:41:50 +0000 (GMT)
-X-AuditID: cbfec7f5-ed1d670000004fad-25-674f0a9e7821
+	b=cfkNzmB3x86Z2xSbjTLmvnC8O8eNK0nCs/UNO4hXeR43ZlTbIL8JsQv/uTHAUl91Y
+	 +GovTpLFSZ6ecaGS6Qa/AwM2iAqiDMHUfKFRbIJDCFEmXe5OUR2FUoPI4XMagJYtGY
+	 DmsK14Sx30SPI5xxyxFTq4jaT9ZT7LPBrAGDaeLk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241203134151eucas1p1bbd536f1e8d6d8946eb144dedbb9445d~NroObdrzt2130621306eucas1p1F;
+	Tue,  3 Dec 2024 13:41:51 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 3F.7F.20409.F9A0F476; Tue,  3
+	Dec 2024 13:41:51 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b~NroN-p4wm2535425354eucas1p1Z;
+	Tue,  3 Dec 2024 13:41:51 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241203134151eusmtrp207114ab96da6efa994f6550edf24126f~NroN9FfPc3025130251eusmtrp2H;
+	Tue,  3 Dec 2024 13:41:51 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-78-674f0a9f0ccf
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 04.F6.19654.D9A0F476; Tue,  3
-	Dec 2024 13:41:49 +0000 (GMT)
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 48.C8.19920.F9A0F476; Tue,  3
+	Dec 2024 13:41:51 +0000 (GMT)
 Received: from AMDC4942.home (unknown [106.210.136.40]) by
 	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134148eusmtip2682121417cbbd74031114cca8880e1e2~NroLd3eh02944429444eusmtip2M;
-	Tue,  3 Dec 2024 13:41:48 +0000 (GMT)
+	20241203134149eusmtip22891f5955fca0861755c99081618733c~NroMrXVOB3010130101eusmtip2U;
+	Tue,  3 Dec 2024 13:41:49 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
 To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
@@ -62,10 +62,10 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
 	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
 	<m.wilczynski@samsung.com>
-Subject: [RFC PATCH v1 01/14] clk: thead: Refactor TH1520 clock driver to
- share common code
-Date: Tue,  3 Dec 2024 14:41:24 +0100
-Message-Id: <20241203134137.2114847-2-m.wilczynski@samsung.com>
+Subject: [RFC PATCH v1 02/14] dt-bindings: clock: thead,th1520: Rename
+ header file
+Date: Tue,  3 Dec 2024 14:41:25 +0100
+Message-Id: <20241203134137.2114847-3-m.wilczynski@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241203134137.2114847-1-m.wilczynski@samsung.com>
 Precedence: bulk
@@ -75,752 +75,150 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTZxjG951zes6hWdmh4PhWtjExlU1cccM/PoJuzEByEsy8bdmFyVbk
-	rLIVMC0oDsIwYMOl6txgarmUzU46tCPKJUC4OEDKZZZLHdaARRgi5WqFOkXCRmnd/O/3vO/z
-	fu/zJh+NC6tIER2fmMwpEqXyAJJP1HY87n2zlL9LtsUwtRF13vwZQzVPNBS61GTCkLbdxEPW
-	gWoM3XDMk+i3u30Ummw6RqBBfQmFsjoqSWTTWElkV1t5yNxQTKKFE+0A1S5kk8jQfptClQ4t
-	hn6y1xBIV9cAkCr3Ag/1d0cim1mNI5XmBfRPYx2FVgYvE6horoVC1TOnecho+AhltxQQ4a+w
-	85bjFDtjsxFsW84ixTY9LCPYes1tilXX/wHYKxW5JDs82EiypV172JF8I8ZW6b5lsw0dGDvf
-	/CfJnqyuAOxA1k2KrepJ2+31KX9bHCePP8wpgt/5gn8wq8uCHzKfAqlFTbO8TPAwOQ940JDZ
-	Ch9M1xF5gE8LGT2AS6YyzCUWAey++MQtFgDs09qopyOLjlO4q1EO4NhFO+USMwA+ul9IOl0k
-	8za8U67lORs+zDQOLY5bpFPgzD0Aa8eL11zezH44W5FLOJlgxNCsbVt9iqYFzLvwWuc+1zp/
-	2PL7ddzJHkw4nC7M4zlZwHjBrnPja6P4qierpmgtEmQMfDhwxo65hiPgsGrMzd5wyljtvuFl
-	2PODmnBxErxT8wB3cTqsVxvdHAaHTUukMw/OvAErG4Jd5fegbrEXd5Yh4wkts16uCJ7w+9oz
-	7rIA5qiELvdGWKg+8d9Sk77WHYaFjZdmiO/Aes0zx2ieOUbz/94ygFcAXy5FmSDjlCGJ3BGJ
-	UpqgTEmUSQ4kJVwBq/+6Z8XoqAP6KbukFWA0aAWQxgN8BOWVUTKhIE569BtOkfS5IkXOKVuB
-	H00E+ArEcf6ckJFJk7mvOe4Qp3jaxWgPUSaWF0Z6h4onr2X2X88/uaOezQlRJMRGhnslydal
-	PyfP2DcRFLHSHSl8XOIf1duXKc7omchI9PbTtVyO3wtbz55vl7wafWD8qujq2baJ044dnRWG
-	zft1oaYvR9OOf9X9t37bsBz7MfbFkZi5NPX2vSrVh7vSZ45a55TPlw7q9lhSrK+9dKN43V+e
-	r/M+yJfGYH13d0Y13zc0TVZuTv1kZ1C+b2DI+qKs0ch7BSnBbOCGKfmy4H3xcqqw/5F5SM2Z
-	o+mtPkMlksmI6GNBMaN9m27xw0b0hL/fhV9Cx46Ycj5On1vkfRYnFc1uKIhrHtLEWssCC7Z3
-	FC0vNfdqDvfozm9ZNv4qCiCUB6VvbcIVSum/1LjqekYEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsVy+t/xe7pzufzTDf48tbY4cX0Rk8XW37PY
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTZxzNd+/tvbfNCpfSxE9gYe2ibi7AaAx8RAMuUXITlgBGAllGtJPL
+	IzzTwthwDwwPgZUNF4laqwVEy4odGY9aWDsGIy1S7ZxsUDJB4iSuyCA8xeFg1Fs3/zu/8zvn
+	O7+TfDQu6SSD6JyCYk5VoMyTkyLCbH/qCtOLErPePmuLQMPjLRjq2dBS6LrNhSH9kEuApu52
+	Y+jX1QUSfTtzh0J/2k4RaKztEoUq7B0k8minSLSomRKg0T4diZbrhwAyL1eSyDQ0SaGOVT2G
+	mhd7CNRq6QOouvaaAP0ychh5RjU4qtb6oy2rhUKbY98R6OJ8P4W6584IkMOUiir7zxIHX2UX
+	3FUUO+fxEOxPNSsUa1trIthe7STFanpvAbbTWEuy98asJHv5ZjJ7/wsHxna1fs5WmuwYu/DD
+	byT7ZbcRsHcrxim2y3kyKeA90YEMLi/nQ04VEXtclH2mNa3o9msfXa0cFpQDS3AdENKQ2Qf/
+	abxD1AERLWHaAFw1DWD8sAJgo75PwA/LAI65f6deWDb+mKb4hQFA3dQVn2UOwJahHwmvimQU
+	cNqgf26XMo9x6F6dIL0DzjwC0PxQR3pVgcxRuLZZjnkxweyCW2Yt8GIxEwdPb93H+LxQ2D9w
+	G/diIXMQPm6sE/CaAHjzwsPnafi2pqLnIu4NgIxJBK/XPCF48yG4Puf2PRQIZx3dvhIhcKtX
+	7+ML4XTPEs7jT2CvxuHD++E919/bh9LbAW/Cjr4Inn4H2hdchJeGjB90/xXAn+AHvzafw3la
+	DGuqJbx6N2zU1P8X6moz+0JZOKubAA1Apn2pjPalMtr/c5sAbgQ7uBJ1fhanVhRwpeFqZb66
+	pCAr/ERhfifY/tbOTceKBRhmF8MHAUaDQQBpXC4VGzoSsiTiDOXHZZyq8JiqJI9TD4JgmpDv
+	EO/KCOUkTJaymMvluCJO9WKL0cKgcqxkOL5UJrjS6eSM7a+HNPhrEurl+9azkw4rdLGO3qAL
+	VcKGRyRHj0h/thV3xc8kTTmsyZ+l2WeMT/VLwvMt8ht9pW+UXFWe3xMcOW6ZDDiSsjej6oGs
+	O8wQGJ1Q5Oz35AkTYw+1t2QWZF+yeKy6qvdzFpdyrc4PFNkPbqXv/j6yOXq+9S2QJttIefdJ
+	2WJdWkdqCj3YrrgRfU22VhkzYo+q5Y7teUUjS3XGrZ9sFobuPzW8FJWYLHl2ThHjCTsgXThB
+	jotDJX7T3/SMckMTNjZdMJ4R0rgVFX48s2msTFpU9akprul0ZkxIQvxX/kHzO9OP7MytCOKO
+	5gueDcy50+WEOlsZuRdXqZX/ApXKKZRFBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsVy+t/xe7rzufzTDU4tFbQ4cX0Rk8XW37PY
 	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWXzsucdq
 	cXnXHDaLz71HGC22fW5hs1h75C67xfqv85ksFn7cymKxZMcuRou2zmWsFhdPuVq8vNzDbNE2
 	i9/i/54d7Bb/rm1ksZj9bj+7xZY3E1ktjq8Nt2jZP4XFQdbj/Y1Wdo83L1+yeBzu+MLusffb
 	AhaPnbPusnv07DzD6LFpVSebx51re9g85p0M9LjffZzJY/OSeo+WtceYPN7vu8rm0bdlFaPH
 	pebr7B6bT1cHCEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-	pRbp2yXoZTSfvMFccLmfsWL23resDYzfSroYOTkkBEwkvnztZ+5i5OIQEljKKLFt1QoWiISM
-	xLXul1C2sMSfa11sEEWvGCVO7H7CDJJgEzCSeLB8PitIQkSgk0Xi7ea1jCAOs8BbRonrMzeC
-	tQsLREtMaVjLBmKzCKhKXJ5/mL2LkYODV8Be4uiJYIgN8hL7D54FG8op4CDxemoXK4gtBFSy
-	4+9hMJtXQFDi5MwnYCOZgeqbt85mnsAoMAtJahaS1AJGplWMIqmlxbnpucVGesWJucWleel6
-	yfm5mxiBiWXbsZ9bdjCufPVR7xAjEwfjIUYJDmYlEd7l673ThXhTEiurUovy44tKc1KLDzGa
-	Ap09kVlKNDkfmNrySuINzQxMDU3MLA1MLc2MlcR52a6cTxMSSE8sSc1OTS1ILYLpY+LglGpg
-	2tQ9od1WsPyQb2TF1y67re0vdv+ZLXyWY0nRavEr2UeDP1t/keAz+7NucUr8pYequfL/J8e2
-	uGzWtQkJq9915mOb7GKf2vWPdBqlMicwlm1gPDCjT79S/OiPNdwhfDY/Hrn5n0uezZJu8yxE
-	fSLXXdsP9YrZmeyXvaZZzFJ203gZv2CR0fTyKRN3p9duuqwr4210xHjqscfVJxdo/66/+jXh
-	knCNeKKIs4i5HseFwkAXhuxz854wHOERkf7AMvv5v80mgo/XB/Lft+hPepngKvq2NFpyxd9i
-	s0z7ZJWD23Y2f6t9G9OYuCNINSX/zhzVe1u69WNzdR14A3g9leMlPuwPazVXWp1VKP72hJwS
-	S3FGoqEWc1FxIgAVcv9xtQMAAA==
-X-CMS-MailID: 20241203134150eucas1p24ba8d2fbf2af5b8f9abe503b4334127d
+	pRbp2yXoZUxcElFwVqFiacsJ1gbGHdJdjJwcEgImEr8fP2DvYuTiEBJYyigx5fJNNoiEjMS1
+	7pcsELawxJ9rXWwQRa8YJZq73jKBJNgEjCQeLJ/PCpIQEehkkXi7eS0jiMMs8JZR4vrMjWDt
+	wgJBElum/WAHsVkEVCX+b5vFCGLzCthLtP+/zwSxQl5i/8GzzCA2p4CDxOupXawgthBQzY6/
+	h1kh6gUlTs58AjaTGai+eets5gmMArOQpGYhSS1gZFrFKJJaWpybnltsqFecmFtcmpeul5yf
+	u4kRmFa2Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuFdvt47XYg3JbGyKrUoP76oNCe1+BCjKdDd
+	E5mlRJPzgYktryTe0MzA1NDEzNLA1NLMWEmc1+3y+TQhgfTEktTs1NSC1CKYPiYOTqkGJp/J
+	4g1S7XLrdypwFZ0sOJDXsWntDev/ziIJbx1n/1r8luGhXsmHhZ2rP+SemXpw+2VHh8bJyZsX
+	aR8SsZyilyAaJ/3a4cZNDlGHhXkTvrncFDUN/6K+xv/inQm7y9f3MC4W3mTwsO/4k5lNTeWq
+	RU2b+467q120fiFmc95d8Y1tZ7tit/LhefG/bdZzaT/peaoppsHAcq1/usrFF1EW9ze/z0rS
+	X3vq0Pyfb7UchFNdbv3dFj/jWtCFlRf/HpbLLr1vOuHCgtm/DXI8H0sEd1Seznx22uu9zFrn
+	6canjeyiV5bOnFj4V3byr76JtwSSVRecnZS4INXiGe/6DV8f/v7uJ8D7h+fSx0NPpWPWzHqn
+	xFKckWioxVxUnAgAGT2kN7QDAAA=
+X-CMS-MailID: 20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241203134150eucas1p24ba8d2fbf2af5b8f9abe503b4334127d
+X-RootMTR: 20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20241203134150eucas1p24ba8d2fbf2af5b8f9abe503b4334127d
+X-CMS-RootMailID: 20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b
 References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
-	<CGME20241203134150eucas1p24ba8d2fbf2af5b8f9abe503b4334127d@eucas1p2.samsung.com>
+	<CGME20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b@eucas1p1.samsung.com>
 
-The T-Head TH1520 SoC includes various clocks for different subsystems
-like Application Processor (AP) and Video Output (VO) [1]. Currently, the
-clock driver only implements AP clocks.
+As support for clocks from new subsystems is being added to the T-Head
+TH1520 SoC, the header file name should reflect this broader scope. The
+existing header file 'thead,th1520-clk-ap.h' includes the '-ap' suffix,
+indicating it's specific to the Application Processor (AP) subsystem.
 
-Since the programming interface for these clocks is identical across
-subsystems, refactor the code to move common functions into
-clk-th1520.c. This prepares the driver to support VO clocks by reducing
-code duplication and improving maintainability.
-
-No functional changes are introduced with this refactoring.
-
-Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+Rename the header file to 'thead,th1520-clk.h' to generalize it for all
+subsystems.  Update all references to this header file accordingly.
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- MAINTAINERS                       |   2 +-
- drivers/clk/thead/Makefile        |   2 +-
- drivers/clk/thead/clk-th1520-ap.c | 301 +-----------------------------
- drivers/clk/thead/clk-th1520.c    | 188 +++++++++++++++++++
- drivers/clk/thead/clk-th1520.h    | 134 +++++++++++++
- 5 files changed, 326 insertions(+), 301 deletions(-)
- create mode 100644 drivers/clk/thead/clk-th1520.c
- create mode 100644 drivers/clk/thead/clk-th1520.h
+ .../devicetree/bindings/clock/thead,th1520-clk-ap.yaml        | 4 ++--
+ .../devicetree/bindings/mailbox/thead,th1520-mbox.yaml        | 2 +-
+ MAINTAINERS                                                   | 2 +-
+ arch/riscv/boot/dts/thead/th1520.dtsi                         | 2 +-
+ drivers/clk/thead/clk-th1520.h                                | 2 +-
+ .../clock/{thead,th1520-clk-ap.h => thead,th1520-clk.h}       | 0
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+ rename include/dt-bindings/clock/{thead,th1520-clk-ap.h => thead,th1520-clk.h} (100%)
 
+diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+index 0129bd0ba4b3..4a0806af2bf9 100644
+--- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
++++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+@@ -32,7 +32,7 @@ properties:
+   "#clock-cells":
+     const: 1
+     description:
+-      See <dt-bindings/clock/thead,th1520-clk-ap.h> for valid indices.
++      See <dt-bindings/clock/thead,th1520-clk.h> for valid indices.
+ 
+ required:
+   - compatible
+@@ -44,7 +44,7 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
++    #include <dt-bindings/clock/thead,th1520-clk.h>
+     clock-controller@ef010000 {
+         compatible = "thead,th1520-clk-ap";
+         reg = <0xef010000 0x1000>;
+diff --git a/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+index 0971fb97896e..0b58b8d0d351 100644
+--- a/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+@@ -68,7 +68,7 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
++    #include <dt-bindings/clock/thead,th1520-clk.h>
+     soc {
+       #address-cells = <2>;
+       #size-cells = <2>;
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..7c85abf1dd1e 100644
+index 7c85abf1dd1e..bd4bbf07d588 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -20188,7 +20188,7 @@ F:	Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
- F:	Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
- F:	Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
- F:	arch/riscv/boot/dts/thead/
--F:	drivers/clk/thead/clk-th1520-ap.c
-+F:	drivers/clk/thead/
+@@ -20192,7 +20192,7 @@ F:	drivers/clk/thead/
  F:	drivers/mailbox/mailbox-th1520.c
  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
  F:	drivers/pinctrl/pinctrl-th1520.c
-diff --git a/drivers/clk/thead/Makefile b/drivers/clk/thead/Makefile
-index 7ee0bec1f251..d7cf88390b69 100644
---- a/drivers/clk/thead/Makefile
-+++ b/drivers/clk/thead/Makefile
-@@ -1,2 +1,2 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_CLK_THEAD_TH1520_AP) += clk-th1520-ap.o
-+obj-$(CONFIG_CLK_THEAD_TH1520_AP) += clk-th1520.o clk-th1520-ap.o
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 17e32ae08720..a6015805b859 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -5,297 +5,9 @@
-  *  Authors: Yangtao Li <frank.li@vivo.com>
+-F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
++F:	include/dt-bindings/clock/thead,th1520-clk.h
+ 
+ RNBD BLOCK DRIVERS
+ M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index acfe030e803a..dc2d554b4a71 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -5,7 +5,7 @@
   */
  
+ #include <dt-bindings/interrupt-controller/irq.h>
 -#include <dt-bindings/clock/thead,th1520-clk-ap.h>
--#include <linux/bitfield.h>
--#include <linux/clk-provider.h>
--#include <linux/device.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
--#include <linux/regmap.h>
--
--#define TH1520_PLL_POSTDIV2	GENMASK(26, 24)
--#define TH1520_PLL_POSTDIV1	GENMASK(22, 20)
--#define TH1520_PLL_FBDIV	GENMASK(19, 8)
--#define TH1520_PLL_REFDIV	GENMASK(5, 0)
--#define TH1520_PLL_BYPASS	BIT(30)
--#define TH1520_PLL_DSMPD	BIT(24)
--#define TH1520_PLL_FRAC		GENMASK(23, 0)
--#define TH1520_PLL_FRAC_BITS    24
--
--struct ccu_internal {
--	u8	shift;
--	u8	width;
--};
--
--struct ccu_div_internal {
--	u8	shift;
--	u8	width;
--	u32	flags;
--};
--
--struct ccu_common {
--	int		clkid;
--	struct regmap	*map;
--	u16		cfg0;
--	u16		cfg1;
--	struct clk_hw	hw;
--};
--
--struct ccu_mux {
--	struct ccu_internal	mux;
--	struct ccu_common	common;
--};
--
--struct ccu_gate {
--	u32			enable;
--	struct ccu_common	common;
--};
--
--struct ccu_div {
--	u32			enable;
--	struct ccu_div_internal	div;
--	struct ccu_internal	mux;
--	struct ccu_common	common;
--};
--
--struct ccu_pll {
--	struct ccu_common	common;
--};
--
--#define TH_CCU_ARG(_shift, _width)					\
--	{								\
--		.shift	= _shift,					\
--		.width	= _width,					\
--	}
--
--#define TH_CCU_DIV_FLAGS(_shift, _width, _flags)			\
--	{								\
--		.shift	= _shift,					\
--		.width	= _width,					\
--		.flags	= _flags,					\
--	}
--
--#define CCU_GATE(_clkid, _struct, _name, _parent, _reg, _gate, _flags)	\
--	struct ccu_gate _struct = {					\
--		.enable	= _gate,					\
--		.common	= {						\
--			.clkid		= _clkid,			\
--			.cfg0		= _reg,				\
--			.hw.init	= CLK_HW_INIT_PARENTS_DATA(	\
--						_name,			\
--						_parent,		\
--						&clk_gate_ops,		\
--						_flags),		\
--		}							\
--	}
--
--static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
--{
--	return container_of(hw, struct ccu_common, hw);
--}
--
--static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
--{
--	struct ccu_common *common = hw_to_ccu_common(hw);
--
--	return container_of(common, struct ccu_mux, common);
--}
--
--static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
--{
--	struct ccu_common *common = hw_to_ccu_common(hw);
-+#include "clk-th1520.h"
++#include <dt-bindings/clock/thead,th1520-clk.h>
  
--	return container_of(common, struct ccu_pll, common);
--}
--
--static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
--{
--	struct ccu_common *common = hw_to_ccu_common(hw);
--
--	return container_of(common, struct ccu_div, common);
--}
--
--static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
--{
--	struct ccu_common *common = hw_to_ccu_common(hw);
--
--	return container_of(common, struct ccu_gate, common);
--}
--
--static u8 ccu_get_parent_helper(struct ccu_common *common,
--				struct ccu_internal *mux)
--{
--	unsigned int val;
--	u8 parent;
--
--	regmap_read(common->map, common->cfg0, &val);
--	parent = val >> mux->shift;
--	parent &= GENMASK(mux->width - 1, 0);
--
--	return parent;
--}
--
--static int ccu_set_parent_helper(struct ccu_common *common,
--				 struct ccu_internal *mux,
--				 u8 index)
--{
--	return regmap_update_bits(common->map, common->cfg0,
--			GENMASK(mux->width - 1, 0) << mux->shift,
--			index << mux->shift);
--}
--
--static void ccu_disable_helper(struct ccu_common *common, u32 gate)
--{
--	if (!gate)
--		return;
--	regmap_update_bits(common->map, common->cfg0,
--			   gate, ~gate);
--}
--
--static int ccu_enable_helper(struct ccu_common *common, u32 gate)
--{
--	unsigned int val;
--	int ret;
--
--	if (!gate)
--		return 0;
--
--	ret = regmap_update_bits(common->map, common->cfg0, gate, gate);
--	regmap_read(common->map, common->cfg0, &val);
--	return ret;
--}
--
--static int ccu_is_enabled_helper(struct ccu_common *common, u32 gate)
--{
--	unsigned int val;
--
--	if (!gate)
--		return true;
--
--	regmap_read(common->map, common->cfg0, &val);
--	return val & gate;
--}
--
--static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
--					 unsigned long parent_rate)
--{
--	struct ccu_div *cd = hw_to_ccu_div(hw);
--	unsigned long rate;
--	unsigned int val;
--
--	regmap_read(cd->common.map, cd->common.cfg0, &val);
--	val = val >> cd->div.shift;
--	val &= GENMASK(cd->div.width - 1, 0);
--	rate = divider_recalc_rate(hw, parent_rate, val, NULL,
--				   cd->div.flags, cd->div.width);
--
--	return rate;
--}
--
--static u8 ccu_div_get_parent(struct clk_hw *hw)
--{
--	struct ccu_div *cd = hw_to_ccu_div(hw);
--
--	return ccu_get_parent_helper(&cd->common, &cd->mux);
--}
--
--static int ccu_div_set_parent(struct clk_hw *hw, u8 index)
--{
--	struct ccu_div *cd = hw_to_ccu_div(hw);
--
--	return ccu_set_parent_helper(&cd->common, &cd->mux, index);
--}
--
--static void ccu_div_disable(struct clk_hw *hw)
--{
--	struct ccu_div *cd = hw_to_ccu_div(hw);
--
--	ccu_disable_helper(&cd->common, cd->enable);
--}
--
--static int ccu_div_enable(struct clk_hw *hw)
--{
--	struct ccu_div *cd = hw_to_ccu_div(hw);
--
--	return ccu_enable_helper(&cd->common, cd->enable);
--}
--
--static int ccu_div_is_enabled(struct clk_hw *hw)
--{
--	struct ccu_div *cd = hw_to_ccu_div(hw);
--
--	return ccu_is_enabled_helper(&cd->common, cd->enable);
--}
--
--static const struct clk_ops ccu_div_ops = {
--	.disable	= ccu_div_disable,
--	.enable		= ccu_div_enable,
--	.is_enabled	= ccu_div_is_enabled,
--	.get_parent	= ccu_div_get_parent,
--	.set_parent	= ccu_div_set_parent,
--	.recalc_rate	= ccu_div_recalc_rate,
--	.determine_rate	= clk_hw_determine_rate_no_reparent,
--};
--
--static unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
--						unsigned long parent_rate)
--{
--	struct ccu_pll *pll = hw_to_ccu_pll(hw);
--	unsigned long div, mul, frac;
--	unsigned int cfg0, cfg1;
--	u64 rate = parent_rate;
--
--	regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
--	regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
--
--	mul = FIELD_GET(TH1520_PLL_FBDIV, cfg0);
--	div = FIELD_GET(TH1520_PLL_REFDIV, cfg0);
--	if (!(cfg1 & TH1520_PLL_DSMPD)) {
--		mul <<= TH1520_PLL_FRAC_BITS;
--		frac = FIELD_GET(TH1520_PLL_FRAC, cfg1);
--		mul += frac;
--		div <<= TH1520_PLL_FRAC_BITS;
--	}
--	rate = parent_rate * mul;
--	rate = rate / div;
--	return rate;
--}
--
--static unsigned long th1520_pll_postdiv_recalc_rate(struct clk_hw *hw,
--						    unsigned long parent_rate)
--{
--	struct ccu_pll *pll = hw_to_ccu_pll(hw);
--	unsigned long div, rate = parent_rate;
--	unsigned int cfg0, cfg1;
--
--	regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
--	regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
--
--	if (cfg1 & TH1520_PLL_BYPASS)
--		return rate;
--
--	div = FIELD_GET(TH1520_PLL_POSTDIV1, cfg0) *
--	      FIELD_GET(TH1520_PLL_POSTDIV2, cfg0);
--
--	rate = rate / div;
--
--	return rate;
--}
--
--static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
--					 unsigned long parent_rate)
--{
--	unsigned long rate = parent_rate;
--
--	rate = th1520_pll_vco_recalc_rate(hw, rate);
--	rate = th1520_pll_postdiv_recalc_rate(hw, rate);
--
--	return rate;
--}
--
--static const struct clk_ops clk_pll_ops = {
--	.recalc_rate	= ccu_pll_recalc_rate,
--};
-+#define NR_CLKS	(CLK_UART_SCLK + 1)
- 
- static const struct clk_parent_data osc_24m_clk[] = {
- 	{ .index = 0 }
-@@ -956,15 +668,6 @@ static struct ccu_common *th1520_gate_clks[] = {
- 	&sram3_clk.common,
- };
- 
--#define NR_CLKS	(CLK_UART_SCLK + 1)
--
--static const struct regmap_config th1520_clk_regmap_config = {
--	.reg_bits = 32,
--	.val_bits = 32,
--	.reg_stride = 4,
--	.fast_io = true,
--};
--
- static int th1520_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-diff --git a/drivers/clk/thead/clk-th1520.c b/drivers/clk/thead/clk-th1520.c
-new file mode 100644
-index 000000000000..e2bfe56de9af
---- /dev/null
-+++ b/drivers/clk/thead/clk-th1520.c
-@@ -0,0 +1,188 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
-+ * Copyright (C) 2023 Vivo Communication Technology Co. Ltd.
-+ *  Authors: Yangtao Li <frank.li@vivo.com>
-+ */
-+
-+#include "clk-th1520.h"
-+
-+static u8 ccu_get_parent_helper(struct ccu_common *common,
-+				struct ccu_internal *mux)
-+{
-+	unsigned int val;
-+	u8 parent;
-+
-+	regmap_read(common->map, common->cfg0, &val);
-+	parent = val >> mux->shift;
-+	parent &= GENMASK(mux->width - 1, 0);
-+
-+	return parent;
-+}
-+
-+static int ccu_set_parent_helper(struct ccu_common *common,
-+				 struct ccu_internal *mux, u8 index)
-+{
-+	return regmap_update_bits(common->map, common->cfg0,
-+				  GENMASK(mux->width - 1, 0) << mux->shift,
-+				  index << mux->shift);
-+}
-+
-+static void ccu_disable_helper(struct ccu_common *common, u32 gate)
-+{
-+	if (!gate)
-+		return;
-+	regmap_update_bits(common->map, common->cfg0, gate, ~gate);
-+}
-+
-+static int ccu_enable_helper(struct ccu_common *common, u32 gate)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	if (!gate)
-+		return 0;
-+
-+	ret = regmap_update_bits(common->map, common->cfg0, gate, gate);
-+	regmap_read(common->map, common->cfg0, &val);
-+	return ret;
-+}
-+
-+static int ccu_is_enabled_helper(struct ccu_common *common, u32 gate)
-+{
-+	unsigned int val;
-+
-+	if (!gate)
-+		return true;
-+
-+	regmap_read(common->map, common->cfg0, &val);
-+	return val & gate;
-+}
-+
-+static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	unsigned long rate;
-+	unsigned int val;
-+
-+	regmap_read(cd->common.map, cd->common.cfg0, &val);
-+	val = val >> cd->div.shift;
-+	val &= GENMASK(cd->div.width - 1, 0);
-+	rate = divider_recalc_rate(hw, parent_rate, val, NULL, cd->div.flags,
-+				   cd->div.width);
-+
-+	return rate;
-+}
-+
-+static u8 ccu_div_get_parent(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_get_parent_helper(&cd->common, &cd->mux);
-+}
-+
-+static int ccu_div_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_set_parent_helper(&cd->common, &cd->mux, index);
-+}
-+
-+static void ccu_div_disable(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	ccu_disable_helper(&cd->common, cd->enable);
-+}
-+
-+static int ccu_div_enable(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_enable_helper(&cd->common, cd->enable);
-+}
-+
-+static int ccu_div_is_enabled(struct clk_hw *hw)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_is_enabled_helper(&cd->common, cd->enable);
-+}
-+
-+const struct clk_ops ccu_div_ops = {
-+	.disable = ccu_div_disable,
-+	.enable = ccu_div_enable,
-+	.is_enabled = ccu_div_is_enabled,
-+	.get_parent = ccu_div_get_parent,
-+	.set_parent = ccu_div_set_parent,
-+	.recalc_rate = ccu_div_recalc_rate,
-+	.determine_rate = clk_hw_determine_rate_no_reparent,
-+};
-+
-+static unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct ccu_pll *pll = hw_to_ccu_pll(hw);
-+	unsigned long div, mul, frac;
-+	unsigned int cfg0, cfg1;
-+	u64 rate = parent_rate;
-+
-+	regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
-+	regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
-+
-+	mul = FIELD_GET(TH1520_PLL_FBDIV, cfg0);
-+	div = FIELD_GET(TH1520_PLL_REFDIV, cfg0);
-+	if (!(cfg1 & TH1520_PLL_DSMPD)) {
-+		mul <<= TH1520_PLL_FRAC_BITS;
-+		frac = FIELD_GET(TH1520_PLL_FRAC, cfg1);
-+		mul += frac;
-+		div <<= TH1520_PLL_FRAC_BITS;
-+	}
-+	rate = parent_rate * mul;
-+	rate = rate / div;
-+	return rate;
-+}
-+
-+static unsigned long th1520_pll_postdiv_recalc_rate(struct clk_hw *hw,
-+						    unsigned long parent_rate)
-+{
-+	struct ccu_pll *pll = hw_to_ccu_pll(hw);
-+	unsigned long div, rate = parent_rate;
-+	unsigned int cfg0, cfg1;
-+
-+	regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
-+	regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
-+
-+	if (cfg1 & TH1520_PLL_BYPASS)
-+		return rate;
-+
-+	div = FIELD_GET(TH1520_PLL_POSTDIV1, cfg0) *
-+	      FIELD_GET(TH1520_PLL_POSTDIV2, cfg0);
-+
-+	rate = rate / div;
-+
-+	return rate;
-+}
-+
-+static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	unsigned long rate = parent_rate;
-+
-+	rate = th1520_pll_vco_recalc_rate(hw, rate);
-+	rate = th1520_pll_postdiv_recalc_rate(hw, rate);
-+
-+	return rate;
-+}
-+
-+const struct clk_ops clk_pll_ops = {
-+	.recalc_rate = ccu_pll_recalc_rate,
-+};
-+
-+const struct regmap_config th1520_clk_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.fast_io = true,
-+};
+ / {
+ 	compatible = "thead,th1520";
 diff --git a/drivers/clk/thead/clk-th1520.h b/drivers/clk/thead/clk-th1520.h
-new file mode 100644
-index 000000000000..285d41e65008
---- /dev/null
+index 285d41e65008..5d30f55e88a1 100644
+--- a/drivers/clk/thead/clk-th1520.h
 +++ b/drivers/clk/thead/clk-th1520.h
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
-+ * Copyright (C) 2023 Vivo Communication Technology Co. Ltd.
-+ *  Authors: Yangtao Li <frank.li@vivo.com>
-+ *
-+ * clk-th1520.h - Common definitions for T-HEAD TH1520 Clock Drivers
-+ */
-+
-+#ifndef CLK_TH1520_H
-+#define CLK_TH1520_H
-+
-+#include <dt-bindings/clock/thead,th1520-clk-ap.h>
-+#include <linux/bitfield.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define TH1520_PLL_POSTDIV2	GENMASK(26, 24)
-+#define TH1520_PLL_POSTDIV1	GENMASK(22, 20)
-+#define TH1520_PLL_FBDIV	GENMASK(19, 8)
-+#define TH1520_PLL_REFDIV	GENMASK(5, 0)
-+#define TH1520_PLL_BYPASS	BIT(30)
-+#define TH1520_PLL_DSMPD	BIT(24)
-+#define TH1520_PLL_FRAC		GENMASK(23, 0)
-+#define TH1520_PLL_FRAC_BITS    24
-+
-+struct ccu_internal {
-+	u8	shift;
-+	u8	width;
-+};
-+
-+struct ccu_div_internal {
-+	u8	shift;
-+	u8	width;
-+	u32	flags;
-+};
-+
-+struct ccu_common {
-+	int		clkid;
-+	struct regmap	*map;
-+	u16		cfg0;
-+	u16		cfg1;
-+	struct clk_hw	hw;
-+};
-+
-+struct ccu_mux {
-+	struct ccu_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+struct ccu_gate {
-+	u32			enable;
-+	struct ccu_common	common;
-+};
-+
-+struct ccu_div {
-+	u32			enable;
-+	struct ccu_div_internal	div;
-+	struct ccu_internal	mux;
-+	struct ccu_common	common;
-+};
-+
-+struct ccu_pll {
-+	struct ccu_common	common;
-+};
-+
-+#define TH_CCU_ARG(_shift, _width)					\
-+	{								\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+	}
-+
-+#define TH_CCU_DIV_FLAGS(_shift, _width, _flags)			\
-+	{								\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.flags	= _flags,					\
-+	}
-+
-+#define CCU_GATE(_clkid, _struct, _name, _parent, _reg, _gate, _flags)	\
-+	struct ccu_gate _struct = {					\
-+		.enable	= _gate,					\
-+		.common	= {						\
-+			.clkid		= _clkid,			\
-+			.cfg0		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS_DATA(	\
-+						_name,			\
-+						_parent,		\
-+						&clk_gate_ops,		\
-+						_flags),		\
-+		}							\
-+	}
-+
-+static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct ccu_common, hw);
-+}
-+
-+static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_mux, common);
-+}
-+
-+static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_pll, common);
-+}
-+
-+static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_div, common);
-+}
-+
-+static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_gate, common);
-+}
-+
-+extern const struct clk_ops ccu_div_ops;
-+extern const struct clk_ops clk_pll_ops;
-+extern const struct regmap_config th1520_clk_regmap_config;
-+
-+#endif /* CLK_TH1520_H */
+@@ -10,7 +10,7 @@
+ #ifndef CLK_TH1520_H
+ #define CLK_TH1520_H
+ 
+-#include <dt-bindings/clock/thead,th1520-clk-ap.h>
++#include <dt-bindings/clock/thead,th1520-clk.h>
+ #include <linux/bitfield.h>
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+diff --git a/include/dt-bindings/clock/thead,th1520-clk-ap.h b/include/dt-bindings/clock/thead,th1520-clk.h
+similarity index 100%
+rename from include/dt-bindings/clock/thead,th1520-clk-ap.h
+rename to include/dt-bindings/clock/thead,th1520-clk.h
 -- 
 2.34.1
 
