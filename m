@@ -1,48 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B482321C198;
-	Wed,  4 Dec 2024 16:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9639F2066FB;
+	Wed,  4 Dec 2024 17:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331519; cv=none; b=NmxE89G0To2qURF6sNNrUjWKP19UTTEz4/OK9X86/daSUSSwdEbvf1IbH5W9ib86wQ8c1UZafzywqYGfCGCE4ufSRvIJAwubo0H0Uf7PKKeQ36h9oVMdh3UWvpz1aEpihRCzf19JzTl2MlAZ0c8S5DBm78wfWbMxQmMnCcdyrZs=
+	t=1733331625; cv=none; b=nnD1gPDG/Y+nzThAaaFvFzfqWuQ2r8xrkJ5BwkXf5LHi94OiIp2p/S8e7TtLd5+/8chqc3DYvLnEKxd4r+rU5u6t3N5tnd/gPzUyjC7HXABASKxm/qt6SOBgnAs35XP3Ayzzfpo+oLQdxwQclqq6q+egddt1tm4tLBjZ8O66G+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331519; c=relaxed/simple;
-	bh=wN8wO8W0gVEkSJGK4xGzUnurDDPyKsvPEccqxqeSioc=;
+	s=arc-20240116; t=1733331625; c=relaxed/simple;
+	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RoJUgmtDJGDcxWJ0ZsGgBfNdCwNaoyYgNAMh0LhO1eYqsKBXFQ4QPfHwh1M/Feuats5IhvKBRJ/UMC3Fn5tfgYsJ7bdIgCSFhtXt81KylNufKkokVRvP8SqjR9togqhqc8MxDK+kA0NQ/6jI+lPoBQWszWq+4PfjNa+0Ax+r3sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngZKVQxJ; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=PIbb0blirHmLpSFB2uy4iEvn5ymTizwCcHFhsm+8x7MrEHRVATK5EnLy4leYRqYVuMzpor2KraekTve36UsoK8SoquVW4S3qmYgUXPAtoq4brad28HMwBTfZj3XgkNfETnvZXMPeTqKHT4nFxBhGhr6bg4GE3J7d1S8zNkqQYdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URnYcJ4e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngZKVQxJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290F8C4CECD;
-	Wed,  4 Dec 2024 16:58:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URnYcJ4e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261D8C4CECD;
+	Wed,  4 Dec 2024 17:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331519;
-	bh=wN8wO8W0gVEkSJGK4xGzUnurDDPyKsvPEccqxqeSioc=;
+	s=k20201202; t=1733331625;
+	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ngZKVQxJ98EDTA10iaQmUL9IYP6yYDwFYpO87mSKGsByTfKNBvmYiqhTN516+UEcA
-	 q4gEW76gD5Ggb+WmopbnbOzVibFoW2pfeCWKPGB0IiYqySXSwqMQF209VrAdd6FICE
-	 PlvUzaX4I+bfmQjZsSOwT990rUTuZAFPGOujuOCIF7Jl5Ib7JG1NTtQRJGw9ucegSM
-	 uT0xV/fGduicgDhXqmue5r3o5l96tdHYPFbIblKlcNXMqhEwVulYOEcW8KrR+32DEw
-	 zRl/75QghYbjYO0kqMdu/hwxm9tNrjpyGp48dMCyxOKzG6accjmZLTCyilabb0AXny
-	 /5e0YqwJp8SrQ==
+	b=URnYcJ4eGF20bRoIcTwNjaBb2U8i5w1lXtChHXTsfEJ2ItQ56O1qpIM7Mqp9DE3+7
+	 Hdzd4QXYPakiu68oh3YTWSyD0rSCh+SejMSVV5CU5YznIEmkgmZD0KAUbo0XBjddnq
+	 s3FZwJCV66G7X/sk35uEoETLrgFKhHLr4LJQFGUdOFweENx/QlHEonWwnp2Uqky8rg
+	 MYOxozHESx/BfVu1qhFy+VXC5IYMq66vwFUBJedwLNvtzubiNQ/Ns0Ur2FX0m1qEwf
+	 JFOLIittHr4E7GoYth8b/0GB5YZEqkms5xt+VpAkCnOIHjuAgPq2ze44BkgQ7iAX1E
+	 VqNvVrKxqLAxw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Devi Priya <quic_devipriy@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 24/36] clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
-Date: Wed,  4 Dec 2024 10:45:40 -0500
-Message-ID: <20241204154626.2211476-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.11 19/33] clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+Date: Wed,  4 Dec 2024 10:47:32 -0500
+Message-ID: <20241204154817.2212455-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
-References: <20241204154626.2211476-1-sashal@kernel.org>
+In-Reply-To: <20241204154817.2212455-1-sashal@kernel.org>
+References: <20241204154817.2212455-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,61 +50,120 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.1
+X-stable-base: Linux 6.11.10
 Content-Transfer-Encoding: 8bit
 
-From: Devi Priya <quic_devipriy@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-[ Upstream commit 79dfed29aa3f714e0a94a39b2bfe9ac14ce19a6a ]
+[ Upstream commit aec8c0e28ce4a1f89fd82fcc06a5cc73147e9817 ]
 
-Add support for NSS Huayra alpha pll found on ipq9574 SoCs.
-Programming sequence is the same as that of Huayra type Alpha PLL,
-so we can re-use the same.
+Generally SDCC clocks use clk_rcg2_floor_ops, however on SAR2130P
+platform it's recommended to use rcg2_shared_ops for all Root Clock
+Generators to park them instead of disabling. Implement a mix of those,
+clk_rcg2_shared_floor_ops.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-Link: https://lore.kernel.org/r/20241028060506.246606-2-quic_srichara@quicinc.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-6-ecad2a1432ba@linaro.org
 Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 11 +++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  1 +
- 2 files changed, 12 insertions(+)
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 48 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 44 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index be9bee6ab65f6..49687512184b9 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -267,6 +267,17 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_OPMODE] = 0x30,
- 		[PLL_OFF_STATUS] = 0x3c,
- 	},
-+	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =  {
-+		[PLL_OFF_L_VAL] = 0x04,
-+		[PLL_OFF_ALPHA_VAL] = 0x08,
-+		[PLL_OFF_TEST_CTL] = 0x0c,
-+		[PLL_OFF_TEST_CTL_U] = 0x10,
-+		[PLL_OFF_USER_CTL] = 0x14,
-+		[PLL_OFF_CONFIG_CTL] = 0x18,
-+		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
-+		[PLL_OFF_STATUS] = 0x20,
-+	},
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 8e0f3372dc7a8..80f1f4fcd52a6 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
++extern const struct clk_ops clk_rcg2_shared_floor_ops;
+ extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
+ extern const struct clk_ops clk_dp_ops;
+ 
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bf26c5448f006..bf6406f5279a4 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1186,15 +1186,23 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
+ 	return clk_rcg2_clear_force_enable(hw);
+ }
+ 
+-static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+-				    unsigned long parent_rate)
++static int __clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long parent_rate,
++				      enum freq_policy policy)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f;
+ 
+-	f = qcom_find_freq(rcg->freq_tbl, rate);
+-	if (!f)
++	switch (policy) {
++	case FLOOR:
++		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
++		break;
++	case CEIL:
++		f = qcom_find_freq(rcg->freq_tbl, rate);
++		break;
++	default:
+ 		return -EINVAL;
++	}
+ 
+ 	/*
+ 	 * In case clock is disabled, update the M, N and D registers, cache
+@@ -1207,10 +1215,28 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+ }
+ 
++static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
++}
 +
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+ 		unsigned long rate, unsigned long parent_rate, u8 index)
+ {
+-	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
++}
++
++static int clk_rcg2_shared_set_floor_rate(struct clk_hw *hw, unsigned long rate,
++					  unsigned long parent_rate)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
++}
++
++static int clk_rcg2_shared_set_floor_rate_and_parent(struct clk_hw *hw,
++		unsigned long rate, unsigned long parent_rate, u8 index)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
+ }
  
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 55eca04b23a1f..c6d1b8429f951 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -32,6 +32,7 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
- 	CLK_ALPHA_PLL_TYPE_STROMER,
- 	CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
-+	CLK_ALPHA_PLL_TYPE_NSS_HUAYRA,
- 	CLK_ALPHA_PLL_TYPE_MAX,
+ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+@@ -1348,6 +1374,18 @@ const struct clk_ops clk_rcg2_shared_ops = {
  };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
  
++const struct clk_ops clk_rcg2_shared_floor_ops = {
++	.enable = clk_rcg2_shared_enable,
++	.disable = clk_rcg2_shared_disable,
++	.get_parent = clk_rcg2_shared_get_parent,
++	.set_parent = clk_rcg2_shared_set_parent,
++	.recalc_rate = clk_rcg2_shared_recalc_rate,
++	.determine_rate = clk_rcg2_determine_floor_rate,
++	.set_rate = clk_rcg2_shared_set_floor_rate,
++	.set_rate_and_parent = clk_rcg2_shared_set_floor_rate_and_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_shared_floor_ops);
++
+ static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
 -- 
 2.43.0
 
