@@ -1,99 +1,171 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214991922F5
-	for <linux-clk@vger.kernel.org>; Wed,  4 Dec 2024 22:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7079119DFB4;
+	Wed,  4 Dec 2024 23:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733351618; cv=none; b=epr+mEvVs6pMuX/eIEoua9UUjs9cN14eMTWocMZdf1318XFsHa/wfJlPddRFqKkY5jI9egDMwDPSQD0iapq1HPjZmHfGpqWX7B8YhP5hlGYspr44EMA2AfF5qrPSz+qBa7qvEvDAQWx5VbtjcZe0O1DwLb5dtgFjOtpfH3xJ1kc=
+	t=1733354682; cv=none; b=CXtwid035kuDxPWIbFjlHHNyNLUJMGhen/zDu527eQP8P3hC8X2T6jssH5Mc7Yv+XdGkdiL/rCqXYPu4LL9ZqHoHMvXv+ucfznnAZr1gKwW+xOxS+9phS+HTq+xSRBAPGgGI85UHYBbj7LitX5pM58mmKWhbrLXgKC4u+Tb7yZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733351618; c=relaxed/simple;
-	bh=db+eBbeeOwSwRMrB+GHo1wPKEqzB3v2TTN3uqBqJHZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joYLVpAnNtnJzT/WVibwYq43cgsyKqjbDclXSUVPJD7k3aZtbTNWWNnvo1Tn9B5gSw2NZnzTv+Bu2TDyI5H5fu/jw4LV02NUB3nW2OPoZcSsGlKGkcp1lrU3jCzoV1QwrjGrRm4jcxfNO8rfTuJcwBN49SS3PU8BJi06SEXvMk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yHpxWdxC; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733354682; c=relaxed/simple;
+	bh=n6tt8G5iTvpqN8Ai25XZii/0NhY4FJ0gg4/pPLwKCLU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=Sx71rXZHyQ4Ap2iTmMrU57+u42DO8jZBYrds8KFX9HuMlFy3UrqrKakcON6fncvLW9xMDarUvGwCLR/8FK3GixGI2lq2wtwmmvHG1uvjayM9UiEkh51LfpcDc1WZcdY2TTUO5e+6I4IRhWAJAXXDnfwku/NevRYY8lYgBgfyFhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiOWzsli; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yHpxWdxC"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53de92be287so321792e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 04 Dec 2024 14:33:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733351615; x=1733956415; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ZA+/Ynbct9XmJ/pDgZLrlz4vByV1+ncrGt31MmPRsc=;
-        b=yHpxWdxCKhFt8UvkEe6gcBgdkR5GuDHe2MXgs64CQoTIDiqEINp1+IS+75jyB8JVeA
-         afCCTt0k6+RKH17QUILDfBw/eEAejkeXZxIegNkX4yJc9uNoqPkehmvutVj+j1DhiZIt
-         9eWH2TwzDUX7MwtZWix0atNcx52WA5tdG4C777T9IHEr1r1yG1ZatiQ+aQnR9dWMH4EN
-         Qmsl4qRaDyINAWJb32EcMDgQA8W5CznsVaOVCbijX8v6x2mTD0XjfTpowHYWTR/c38S+
-         mMm5744XsH5V5fL+oosf+jw5hIkyRAQIOHrNWU9KFrQAKZX2JhRQOi7mJGjiZq28xPD+
-         BNdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733351615; x=1733956415;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ZA+/Ynbct9XmJ/pDgZLrlz4vByV1+ncrGt31MmPRsc=;
-        b=MTmfapWlqyL3eajWMttCByHXb8Tx+ULErucxWhGe4ANEqnYAfkDvT+aUAdAXWRiYOx
-         vlq24tUkfFkOo52190bhScf8lwCFaYE/ntYdDgjDFqdquemOdVzZ+tS/7jFeArbR6h1w
-         w2yqwgYkNF4wNsYmoQrOqsk/X7yKI/mOey89TdjSiE12GElOfIA7qAzA8vr6vSH41MLB
-         eR1JYG07SF1SbJGA3sg+L2AKc1/qtzQHH77kydzKUv5jhPBNIyEMD+yPam8RC8RVpfd4
-         5A4wW6UQEiinYeBnh87R+n0+dqiJAPfNJ7CP2e9oHRPydyfR5AQCcYpwsFGo3od9bbKn
-         D31Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXicJyVf0UczoHkGNMcdFxIPpTeyt76bb/fuA75n0K6/Iq/jL51Cm9MmW1n2ZIN92S37jCXIZp/M9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwStQTWZ2wAK/mQUT4nLGlATOD6m1KQIctvlp9Hf3KOAvU/jxft
-	gU5IioYjAv97K29encVDDtMAj7S/sbvps5LujOaIdWhLkCtPvOYDE1EandI0UYA=
-X-Gm-Gg: ASbGncsKbt8ZlEfx35yucq1wto0TcoyDq+HvMgVB48WHR/3t9SDi6Bqot4J1ZG+0iD0
-	HWFbPZ8QHJ9REHLnEeVu0/+x9Xw/5IbY8HYpPzQdUDEfkAAxn2I+rNK/EyZRIYIWo94vZI0IcSH
-	8fjv+CJcCconIyX8TROr5qfdOuQoeHK8zm/Tz1v5773Tv5XYxP4XUIv9EY/FgM5XJ+LKPQzH9in
-	OWQOqhE9fPwCtb9AIc17HyAJUge2VwijHZ9v9pF/jl9a/rC6uz99uoJeKDcFTAJEM6NW480UQN6
-	AA6LEr4ijMc07BweK2ZMbSSgFq3ejg==
-X-Google-Smtp-Source: AGHT+IGQS+X6xxLW7rENTxfs/AsPLqM9/viSn6e/WXTrVzgckr92jwEcQHj1cg2TaCS9ztS2W2MXkQ==
-X-Received: by 2002:a05:6512:12c5:b0:53d:85dc:7c58 with SMTP id 2adb3069b0e04-53e12a3932amr6597198e87.50.1733351615312;
-        Wed, 04 Dec 2024 14:33:35 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229bada0sm21317e87.168.2024.12.04.14.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 14:33:34 -0800 (PST)
-Date: Thu, 5 Dec 2024 00:33:31 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] clk: qcom: Add support for GCC on SM8750
-Message-ID: <s7kuwinorqu7i6sdhwqjftcawa65szzze2bhczgpmuqp4dkids@jsa6dthf3omj>
-References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
- <20241204-sm8750_master_clks-v3-6-1a8f31a53a86@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiOWzsli"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D87C4CECD;
+	Wed,  4 Dec 2024 23:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733354682;
+	bh=n6tt8G5iTvpqN8Ai25XZii/0NhY4FJ0gg4/pPLwKCLU=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=GiOWzsliDjYjlm7BEB7r0ofwLpgEMaFF1CGsnuzGfzn3rh9A2v2GqkccSbrv1sJiB
+	 nyNb6EBSmgIV/FNj23TTr9go6o8Y2kTC/gUtGyOX55nD8WrRXMiINDLLtIz1vJCjY4
+	 d6iBZmpUJB5yp2lADEAQO1ulCBnKanstPMRIATkRj0xBuSiodEyezHFGjBjztzfPYk
+	 6/AB26dA+ZB0Pml+u0UUDE/kS747yKT0oGfF53KrQ7o1hQLesFLCVxrCnYaTbGSyud
+	 NKxTGfE5Iz2YYqKLPlRSbG7CA+RK4C1SVmWivF3EZ+lr4wU+fIYubbzTqyl/AGgQt9
+	 N3iRPScMm7DFw==
+Message-ID: <9ccfb478d9a122db6c634e9559e211ff.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204-sm8750_master_clks-v3-6-1a8f31a53a86@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <OS8PR06MB75419637D55A022300E00850F2352@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20241028053018.2579200-1-ryan_chen@aspeedtech.com> <20241028053018.2579200-4-ryan_chen@aspeedtech.com> <287924eed186e3b6b52cd13bcf939ab6.sboyd@kernel.org> <SI6PR06MB7535F5D22E3FCCF5C610B307F2552@SI6PR06MB7535.apcprd06.prod.outlook.com> <a68516df98c8b8fb80f094e6e55fcb8d.sboyd@kernel.org> <OS8PR06MB75419637D55A022300E00850F2352@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Subject: RE: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
+From: Stephen Boyd <sboyd@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, andrew@codeconstruct.com.au, conor+dt@kernel.org, devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, joel@jms.id.au, krzk+dt@kernel.org, lee@kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Wed, 04 Dec 2024 15:24:40 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Wed, Dec 04, 2024 at 11:37:18AM -0800, Melody Olvera wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
-> 
-> Add support for GCC for SM8750 platform.
-> 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig      |    9 +
->  drivers/clk/qcom/Makefile     |    1 +
->  drivers/clk/qcom/gcc-sm8750.c | 3274 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 3284 insertions(+)
-> 
+Quoting Ryan Chen (2024-12-01 19:12:01)
+> > > > Subject: Re: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
+> > > >
+> > > > Quoting Ryan Chen (2024-10-27 22:30:18)
+> > > > > diff --git a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c
+> > > > > new file mode 100644 index 000000000000..db9ee5031b7c
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/clk/clk-ast2700.c
+> > > > > @@ -0,0 +1,1513 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > [...]
+> > > > > +struct ast2700_clk_info {
+> > > > > +       const char *name;
+> > > > > +       const char * const *parent_names;
+> > > >
+> > > > Please don't use strings for parent names.
+> > > Sorry, do you mean use clk_parent_data struct for parent?
+> > >         +const struct clk_parent_data   parent;         /* For gate */
+> > >         +const struct clk_parent_data   *parents;               /*
+> > For mux */
+> >=20
+> > Yes.
+> And I find a better way for parent_data. The following is my modification=
+.=20
+> And parent_data will be union data structure. Like following.
+> Is this good direction?=20
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Looks OK.
 
--- 
-With best wishes
-Dmitry
+>=20
+> #define DIVIDER_CLK(_id, _name, _parent, _reg, _shift, _width, _div_table=
+) \
+>         [_id] =3D { \
+>                 .type =3D CLK_DIVIDER, \
+>                 .name =3D _name, \
+>                 .data =3D { \
+>                         .div =3D { \
+>                                 .parent =3D _parent, \
+>                                 .reg =3D _reg, \
+>                                 .bit_shift =3D _shift, \
+>                                 .bit_width =3D _width, \
+>                                 .div_table =3D _div_table, \
+>                         }, \
+>                 }, \
+>         }
+> struct ast2700_clk_info {
+>         const char *name;
+>         u8 clk_idx;
+>         u32 reg;
+>         u32 type;
+>         union {
+>                 struct ast2700_clk_fixed_factor_data factor;
+>                 struct ast2700_clk_fixed_rate_data rate;
+>                 struct ast2700_clk_gate_data gate;
+>                 struct ast2700_clk_div_data div;
+>                 struct ast2700_clk_pll_data pll;
+>                 struct ast2700_clk_mux_data mux;
+>         } data;
+> };
+>=20
+> struct ast2700_clk_div_data {
+>         const struct clk_div_table *div_table;
+>         const struct clk_parent_data *parent;
+>         u8 bit_shift;
+>         u8 bit_width;
+>         u32 reg;
+> };
+>=20
+> static const struct ast2700_clk_info ast2700_scu0_clk_info[] __initconst =
+=3D {
+> ...........................
+>         DIVIDER_CLK(SCU0_CLK_AHB, "soc0-ahb", soc0_ahbmux,
+
+Can you also show what soc0_ahbmux is?
+
+>                     SCU0_HWSTRAP1, 5, 2, ast2700_hclk_div_table),
+> ......................
+> >=20
+> > >
+> > > >
+> > > > > +       const struct clk_div_table *div_table;
+> > > > > +       unsigned long fixed_rate;
+> > > > > +       unsigned int mult;
+> > > > > +       unsigned int div;
+> > > > > +       u32 reg;
+> > > > > +       u32 flags;
+> > > > > +       u32 type;
+> > > > > +       u8 clk_idx;
+> > > > > +       u8 bit_shift;
+> > > > > +       u8 bit_width;
+> > > > > +       u8 num_parents;
+> > > > > +};
+> > > > > +
+> > > > [...]
+> > > > > +
+> > > > > +static const struct clk_div_table ast2700_clk_div_table2[] =3D {
+> > > > > +       { 0x0, 2 },
+> > > > > +       { 0x1, 4 },
+> > > > > +       { 0x2, 6 },
+> > > > > +       { 0x3, 8 },
+> > > > > +       { 0x4, 10 },
+> > > > > +       { 0x5, 12 },
+> > > > > +       { 0x6, 14 },
+> > > > > +       { 0x7, 16 },
+> > > >
+> > > > Isn't this the default divider setting for struct clk_divider?
+> > > Sorry, I don't catch your point.
+> > > the SoC do have default divider setting. But it can be modified.
+> > > And also have different divider table setting.
+> >=20
+> > I mean that this is the way that struct clk_divider works already. So y=
+ou don't
+> > need to make the clk_div_table array for what is supported in code.
+>=20
+> Sorry, I understand your point. But I trace the code didn't get any clue.=
+ "clk_divider work already".
+> finally function call will be __clk_hw_register_divider
+> https://github.com/torvalds/linux/blob/master/drivers/clk/clk-divider.c#L=
+589
+> It still need table point need to address. Can you give me more direction=
+ or example?
+>=20
+
+The 'table' member is optional. When the table is NULL, we treat each
+number that fits into the divider field width as a divider. It may be
+CLK_DIVIDER_EVEN_INTEGERS that you have here though.
