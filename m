@@ -1,235 +1,210 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8D21AAE02
-	for <linux-clk@vger.kernel.org>; Wed,  4 Dec 2024 09:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C3B13AA2E;
+	Wed,  4 Dec 2024 09:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733304315; cv=none; b=o+2T1c9+LLrqI5Ct4wT8vnSKVb+WyqOMQ5KzbNmFF4D2eJkQgr7j6hR4qdUZyIQ/+fQkosug+5rHLIQgcXJ6NcODiiw79WwlD4m9xXEkPjv/hqh5jPdmPhtmLMuucUh8R7XBrTImAOq3dvOHCM9srrFp1UXJT/fRbsbwDdFs1MA=
+	t=1733305276; cv=none; b=Ee3XNevBc7SPv1mgNBv3RHRadsbSZr8eL7kB6b6OOoGk8VQBKIKjpYKCOesq43qRQKnJHLbC4aVTYz3jCYo6xne+3wnDtd2DfBAtA/ihkrqzIgRGwEfvtQUkISVznf1tVt7kBJiPs2LsYC0ztP6piOZp8nz1O2yYMkOK6s9kvOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733304315; c=relaxed/simple;
-	bh=IOioREQ7k18L3jP39Gc/HqqFJ0dRj9fDrGSgDDoODFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VrvCq1Mi4fkuMdDlnvx05//NhvJtxGvD64YhD22RABg0VRGRkL1YnEHaR9QEPkaQvn0PycU1dGvI3Q0nVnbo/G7JXOqLZkoQSQwa06v18l5mJFbwODnahnVlU/i/I/3o68n6WULAwqUVmimX8fgKvUpPtRbxHFK0nelJ37KnwG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uEAUnB0T; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uEAUnB0T"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4349dea3e0dso6639445e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Dec 2024 01:25:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733304312; x=1733909112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8DaQdDkfEfGBJ2lNaIrewpoCtOfg7AdvFQ8X4rPfJ8=;
-        b=uEAUnB0TJ+0M/cZiPi30tL11ZRoZ8P8KUSnv9VP99ZKv3+gTAycXSavhg9PprWP70h
-         tLzsE6CXVDYyh/7Slarn9Pbnbp9WOnGQhPqT/e+0I11yWag/mV7Pvg7iFqaDs1MSE7+x
-         57fHsCBYHNKhx+1W5lBCk6pDzqtHR3w3e5+UDji2f5Y8eKkjbj9hYmpE23WUa6EBNfQl
-         t0czJeafnVPWUufeqCFTJgWCmg8IwdV2d1Hhn+QQoIBzW8r5zOk5gimmeWOuDg9kJv+u
-         qy4VyeJUVoP+x3S24mJupYsYaaHfllYB4ekYXl6EgPlTMdHP1b8UJ3X6pHt3YNwplQmT
-         9NyQ==
+	s=arc-20240116; t=1733305276; c=relaxed/simple;
+	bh=tVmbPF2pJpMy5k0c/k1i6rwkCBPV7LEpyNc6zrDcJs8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=de7HPw1nn1l3t1UiBT4sk5Py1C6t5pM2fIxfzrl9BB1jkHZ+ZVxnybZbR4gi7GtIjYy6Oxp8z23XrtmPB7By/9QhRNeedfP5mfflhkJQoi7X0xJz/9QLfQwQ+wV1h0WX0qBYgssGpucISRpZC6Fwjc05zVtvtW40ruTAw6wTQGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afb23be757so83588137.0;
+        Wed, 04 Dec 2024 01:41:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733304312; x=1733909112;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m8DaQdDkfEfGBJ2lNaIrewpoCtOfg7AdvFQ8X4rPfJ8=;
-        b=SH+/ck7tY4SU7CysfiZTPNVGk5dhYMw5hDqRYo1rcph/MSVNjh56r86sF/ngJ+zr0w
-         N/smP0J2wcd7stdoc3PalgOund+9zXXLCSCJPBrMK1LZdg0sGTsndatVKoDWoiJrjeib
-         tcbuw9mfDqv13ix5pjkik97ZFjzdCmzd2wLTVH9yiLBDDL3q8QtJQm2ih7KdDET0PyOS
-         ndqDi3S4RCU5mBY9+oZ8fDj/lOjdQ9JxCnDeyRfsryF32V8aXWZ/QSpKkpkDYbfdQw7l
-         Zio/HW3iwf2KOus+83oUMlzKQ7XLre1XBivUXLm67E9zmhsGUcekBBbu1E9C62mG/pCL
-         6f1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDPB5pEQQvONLRLLRUK2qHnEBAT/p16u/65SoTlSklC3dWx81gCgXoK/HSQqzsHALK1cwBJ8fsnvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX0lgPlOF4By4rPDhlqhoGfozpuH4J9rnLY7LOcNo8c/l8ysdM
-	/HqXrypBwozut2trVfoZ12hmlAz1BR3+fm6Raklw0EHEnVBLm25Uj+aS71pBwOY=
-X-Gm-Gg: ASbGncvXBkNd6inNxBw8TozvWHoyP/7xv/V6feMP17G8nI3D4DJwz4eLztkCwoKzccC
-	b+c84Ln5VUDpcNtIgVGcucpI8GFGERtIsF1Em4ZBWQSPb1/Y1EWubE2VJ/Pot9vTYk7ZTjhYsIG
-	cX64jPxY0hNWdv4Rntv+VoADZ/w3WNNB40MGO5YCuni6RZEkaSZC/8uLADstkGC/4vrNxy1K8VQ
-	32DzReZAyWQjm0O9kDSAOBvoZZSW70Awko1iIozw11b/hwdeXQBk+SEmkL0lh+u/zuIBA==
-X-Google-Smtp-Source: AGHT+IFPDrgwPysTQNJ4gCRHmPmwekHSCTmDhMf33Hj14KtYSarTwzVoBNgKPkKaUfDyt0l7DW5IFw==
-X-Received: by 2002:a05:600c:46cf:b0:42c:aeee:e603 with SMTP id 5b1f17b1804b1-434d0a1f397mr18009855e9.7.1733304311559;
-        Wed, 04 Dec 2024 01:25:11 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b312sm18208205e9.6.2024.12.04.01.25.10
+        d=1e100.net; s=20230601; t=1733305271; x=1733910071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3I1mx9iMvoMrIftcsdLHcYs1anLKta4hVW8NBR8O1XM=;
+        b=NwP09RRo8mVgAC9FGF6a7llfp7NKbERw3lnU9oMEwO4QPumm+B/bny51JFutIkXhFj
+         BL98/nJY6KaO0P/BgHmdGKiKK7Av5aVuYL8y0wKlUDS3jFinv3B1fS6ZkPi9mu6RHpbn
+         fjO0WkslGqg+FJuxB1uxVMwlLcpAsdRarb8CZLh92+mIHYPwN09oe0/MCDi45oDwpIuW
+         uwaQRD/9KqdCwUJbdI6c9jiji4xulynhyu0mU+5rhNQbtKbWX33a8CjUGm+Qi9OelHRJ
+         GTsMzN2pbH4xswUV5tRoK5JX47RJskyrB4KCRgFDpBPkOtvRCwd2o2S5caDnub70ax2y
+         I91A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9uLbaTnHDN6m25IVUdvTArx/LS9omm7lTtBEP9mpDCx1lXwVhleaw8TqtKRoJr0N8SN6EzoH5CUMV@vger.kernel.org, AJvYcCWHMo2tvih24mrhh3PRqkwVIN6nkZS9BRGqAJgRHFPyMmZ6bP5kgeMM+7UaWe52QZ34JQHa3ZYk8Thn@vger.kernel.org, AJvYcCWVNCWVo3i2MrbMRXUOaPpwmGbVH7CzBbDMk2tLVfP/5H7t6ylRCv3UhlT9YK55kexf6eQp1Eg3KMsv9XgL@vger.kernel.org, AJvYcCWpWICwfvmZxwWlaYREgku73cmW2xApSLiLFvdE6XaDRunJUMzOkh/w/NAbTQdmy8xNLup7YZ1gjVpQ@vger.kernel.org, AJvYcCXRP5INpnK7eAc4xHZL77FzskElLlqodIlP7DXh4MJyA9bh1ZXnnR2W2r547kU29YHKBzpW4mZNjNGnUQDL2FQZPGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6TXUT75QQMZd5cSyNQFKtvXnPRDNsPezpiIIl/yf5wTUP2uSv
+	B8+e7dF0oDroL57gje9TKN9jZ3TSu3jFl8O8An63KyXIff3Lf15/W8gohqT7
+X-Gm-Gg: ASbGncvgKonKJSlYKg2uMuyKh9zfMpe5ldnHy9H3S/jCqRPAQDYEzdzixUwxX5m1Fs9
+	Jebqfi/LPDF8+3GCDtHw09dflrIUqGybc1hYT7FDhvtnwudsOPJvSPBugwc0TlIvgJiYVlPH96L
+	s3/Ex63wUcARX1gH8ERtkUPGKX7qggxd86KLq2v8C0+2XAybUb3Owwg2gsQujzoWJzc2hPUSgW0
+	vd2zkTknQEEztdCSY7DIynCCSzcWksii9THe3Hk1EIfOk5UC7g2DScnET1VgcSLLzKZuYDQpiqH
+	ZbJvbdCsOC/P
+X-Google-Smtp-Source: AGHT+IHQUITYODpk38lmOSp76al6jYxknEGib6bMTxU6siSDzku1pIV2UkJWxBfAu3z1f/D7rZNrXA==
+X-Received: by 2002:a05:6102:548a:b0:4a4:8346:186d with SMTP id ada2fe7eead31-4af9731606cmr8190089137.26.1733305271273;
+        Wed, 04 Dec 2024 01:41:11 -0800 (PST)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af592352b8sm2384145137.27.2024.12.04.01.41.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 01:25:11 -0800 (PST)
-Message-ID: <52f7ce30-0159-4779-982d-7714d0b45ae3@linaro.org>
-Date: Wed, 4 Dec 2024 10:25:09 +0100
+        Wed, 04 Dec 2024 01:41:10 -0800 (PST)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85bad9e0214so979142241.3;
+        Wed, 04 Dec 2024 01:41:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNe99KEpT2QNSLRZMACFKz8nQyB12pkWdVqX8RP/e4ewCXYdcQbwImV4bzgpIqbSHmxMthgyWJkc5LZHSg@vger.kernel.org, AJvYcCW6quHemLO4plfEo/FTNPtW2zgeMUIsxNeTYs6Tob8WrOPByH9FBR9oTinZjVTEs4BBz6M+vZHdUVh1@vger.kernel.org, AJvYcCWQm0fvt+Kdrs1dKsK4HKyo63BHxwuUbvdSrB9Y4BGQbTqUZqnYpwha8MMPe3BueosyhRPHQABnBbbf@vger.kernel.org, AJvYcCWrjAbTk6HWlCPVN7FicfldGiYKweuRI7UaIMYFA7YEafH9ve9XeA64xj1WTH6l7ZrKbMZte2dMO+F6bHN8FN++DPk=@vger.kernel.org, AJvYcCWtGrw43U3nVqTDgrOMQ7V7b30LIwKFo/BRGd1neKXu8TyflqUNpVdg8AKyUYHKC3agZ95xlzxF4k0W@vger.kernel.org
+X-Received: by 2002:a05:6102:2929:b0:4af:5f93:3557 with SMTP id
+ ada2fe7eead31-4af97183aa1mr6835274137.5.1733305269874; Wed, 04 Dec 2024
+ 01:41:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: qcom: clk-alpha-pll: Add Pongo PLL
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org>
- <20241128-sm8750-dispcc-v1-2-120705a4015c@linaro.org>
- <aed888b8c2f49eaaffcd6cfbdda84078.sboyd@kernel.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <aed888b8c2f49eaaffcd6cfbdda84078.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-9-claudiu.beznea.uj@bp.renesas.com> <20241203200941.03ec9ea3@jic23-huawei>
+In-Reply-To: <20241203200941.03ec9ea3@jic23-huawei>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Dec 2024 10:40:58 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
+Message-ID: <CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
+Subject: Re: [PATCH 08/14] iio: adc: rzg2l_adc: Prepare for the addition of
+ RZ/G3S support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/12/2024 23:07, Stephen Boyd wrote:
->> -       for (count = 200; count > 0; count--) {
->> +       /* Pongo PLLs using a 32KHz reference can take upwards of 1500us to lock. */
->> +       for (count = 1500; count > 0; count--) {
->>                 ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
->>                 if (ret)
->>                         return ret;
->> @@ -378,6 +403,13 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
->>                 udelay(1);
->>         }
->>  
->> +       /* Called with clocks already registered ... */
->> +       if (pll->clkr.hw.core)
->> +               name = clk_hw_get_name(&pll->clkr.hw);
->> +       else
->> +               /* or before registering, when init data is present */
->> +               name = pll->clkr.hw.init->name;
-> 
-> This is sad. Why can't we enable the PLL from the clk prepare/enable
-> path? PLLs are typically calibrated during clk_prepare().
+Hi Jonathan,
 
-I don't know. I'll move it to prepare() and see what happens.
+On Tue, Dec 3, 2024 at 9:09=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+> On Tue,  3 Dec 2024 13:13:08 +0200
+> Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> > The ADC IP available on the RZ/G3S differs slightly from the one found =
+on
+> > the RZ/G2L. The identified differences are as follows:
+> > - different number of channels (one being used for temperature conversi=
+on);
+> >   consequently, various registers differ
+> > - different default sampling periods
+> > - the RZ/G3S variant lacks the ADVIC register.
+> >
+> > To accommodate these differences, the rzg2l_adc driver has been updated=
+ by
+> > introducing the struct rzg2l_adc_hw_params, which encapsulates the
+> > hardware-specific differences between the IP variants. A pointer to an
+> > object of type struct rzg2l_adc_hw_params is embedded in
+> > struct rzg2l_adc_data.
+> >
+> > Additionally, the completion member of struct rzg2l_adc_data was reloca=
+ted
+> > to avoid potential padding, if any.
+> >
+> > The code has been adjusted to utilize hardware-specific parameters stor=
+ed
+> > in the new structure instead of relying on plain macros.
+> >
+> > The check of chan->channel in rzg2l_adc_read_raw() function, against th=
+e
+> > driver specific mask was removed as the subsystem should have already
+> > been done this before reaching the rzg2l_adc_read_raw() function.
+> >
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+> >  drivers/iio/adc/rzg2l_adc.c | 92 ++++++++++++++++++++++++++-----------
+> >  1 file changed, 64 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> > index fda8b42ded81..aff41152ebf8 100644
+> > --- a/drivers/iio/adc/rzg2l_adc.c
+> > +++ b/drivers/iio/adc/rzg2l_adc.c
+> > @@ -32,20 +32,15 @@
+> >  #define RZG2L_ADM1_MS                        BIT(2)
+> >  #define RZG2L_ADM1_BS                        BIT(4)
+> >  #define RZG2L_ADM1_EGA_MASK          GENMASK(13, 12)
+> > -#define RZG2L_ADM2_CHSEL_MASK                GENMASK(7, 0)
+> >  #define RZG2L_ADM3_ADIL_MASK         GENMASK(31, 24)
+> >  #define RZG2L_ADM3_ADCMP_MASK                GENMASK(23, 16)
+> > -#define RZG2L_ADM3_ADCMP_E           FIELD_PREP(RZG2L_ADM3_ADCMP_MASK,=
+ 0xe)
+> > -#define RZG2L_ADM3_ADSMP_MASK                GENMASK(15, 0)
+> >
+> >  #define RZG2L_ADINT                  0x20
+> > -#define RZG2L_ADINT_INTEN_MASK               GENMASK(7, 0)
+> >  #define RZG2L_ADINT_CSEEN            BIT(16)
+> >  #define RZG2L_ADINT_INTS             BIT(31)
+> >
+> >  #define RZG2L_ADSTS                  0x24
+> >  #define RZG2L_ADSTS_CSEST            BIT(16)
+> > -#define RZG2L_ADSTS_INTST_MASK               GENMASK(7, 0)
+> >
+> >  #define RZG2L_ADIVC                  0x28
+> >  #define RZG2L_ADIVC_DIVADC_MASK              GENMASK(8, 0)
+> > @@ -56,12 +51,26 @@
+> >  #define RZG2L_ADCR(n)                        (0x30 + ((n) * 0x4))
+> >  #define RZG2L_ADCR_AD_MASK           GENMASK(11, 0)
+> >
+> > -#define RZG2L_ADSMP_DEFAULT_SAMPLING 0x578
+> > -
+> > -#define RZG2L_ADC_MAX_CHANNELS               8
+> > -#define RZG2L_ADC_CHN_MASK           0x7
+> >  #define RZG2L_ADC_TIMEOUT            usecs_to_jiffies(1 * 4)
+> >
+> > +/**
+> > + * struct rzg2l_adc_hw_params - ADC hardware specific parameters
+> > + * @default_adsmp: default ADC sampling period (see ADM3 register)
+> > + * @adsmp_mask: ADC sampling period mask (see ADM3 register)
+> > + * @adint_inten_mask: conversion end interrupt mask (see ADINT registe=
+r)
+> > + * @default_adcmp: default ADC cmp (see ADM3 register)
+> > + * @num_channels: number of supported channels
+> > + * @adivc: specifies if ADVIC register is available
+> > + */
+> > +struct rzg2l_adc_hw_params {
+> > +     u16 default_adsmp;
+> > +     u16 adsmp_mask;
+> > +     u16 adint_inten_mask;
+> > +     u8 default_adcmp;
+> > +     u8 num_channels;
+> > +     bool adivc;
+> > +};
+> > +
+> >  struct rzg2l_adc_data {
+> >       const struct iio_chan_spec *channels;
+> >       u8 num_channels;
+> > @@ -71,10 +80,11 @@ struct rzg2l_adc {
+> >       void __iomem *base;
+> >       struct reset_control *presetn;
+> >       struct reset_control *adrstn;
+> > -     struct completion completion;
+> >       const struct rzg2l_adc_data *data;
+> > +     const struct rzg2l_adc_hw_params *hw_params;
+> > +     u16 *last_val;
+> > +     struct completion completion;
+> >       struct mutex lock;
+> > -     u16 last_val[RZG2L_ADC_MAX_CHANNELS];
+>
+> Just make this big enough for the max device.  Chances are it will make l=
+ittle or
+> no difference to this allocation and nice to avoid the dynamic part.
+>
+> Feel free to add a runtime check to make sure this is big enough to avoid=
+ any
+> future problems with forgetting to update it.
 
-> 
->> +
->>         WARN(1, "%s failed to %s!\n", name, action);
->>         return -ETIMEDOUT;
->>  }
->> @@ -2524,6 +2556,129 @@ const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops = {
->>  };
->>  EXPORT_SYMBOL_GPL(clk_alpha_pll_reset_lucid_evo_ops);
->>  
->> +static int alpha_pll_pongo_elu_enable(struct clk_hw *hw)
->> +{
->> +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->> +       struct regmap *regmap = pll->clkr.regmap;
->> +       int ret;
->> +
->> +       /* Check if PLL is already enabled */
->> +       if (trion_pll_is_enabled(pll, regmap))
->> +               return 0;
->> +
->> +       ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Set operation mode to RUN */
->> +       regmap_write(regmap, PLL_OPMODE(pll), PLL_RUN);
->> +
->> +       ret = wait_for_pll_enable_lock(pll);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Enable the global PLL outputs */
->> +       ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Ensure that the write above goes through before returning. */
->> +       mb();
->> +
->> +       return ret;
->> +}
->> +
->> +static void alpha_pll_pongo_elu_disable(struct clk_hw *hw)
->> +{
->> +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->> +       struct regmap *regmap = pll->clkr.regmap;
->> +       int ret;
->> +
->> +       /* Disable the global PLL output */
->> +       ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
->> +       if (ret)
->> +               return;
->> +
->> +       /* Place the PLL mode in STANDBY */
->> +       regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
->> +}
->> +
->> +static unsigned long alpha_pll_pongo_elu_recalc_rate(struct clk_hw *hw,
->> +                                                    unsigned long parent_rate)
->> +{
->> +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->> +       struct regmap *regmap = pll->clkr.regmap;
->> +       u32 l;
->> +
->> +       if (regmap_read(regmap, PLL_L_VAL(pll), &l))
->> +               return 0;
->> +
->> +       l &= PONGO_PLL_L_VAL_MASK;
->> +
->> +       return alpha_pll_calc_rate(parent_rate, l, 0, pll_alpha_width(pll));
->> +}
->> +
->> +const struct clk_ops clk_alpha_pll_pongo_elu_ops = {
->> +       .enable = alpha_pll_pongo_elu_enable,
->> +       .disable = alpha_pll_pongo_elu_disable,
->> +       .recalc_rate = alpha_pll_pongo_elu_recalc_rate,
->> +};
->> +EXPORT_SYMBOL(clk_alpha_pll_pongo_elu_ops);
-> 
-> GPL please.
+Flexible array member and the new __counted_by() attribute?
 
-Ack (and one more as well)
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
