@@ -1,100 +1,169 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F1433C4;
-	Wed,  4 Dec 2024 16:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B62217658;
+	Wed,  4 Dec 2024 16:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330671; cv=none; b=OFOQK6sv07s2islB+ftDmQf4LyvTCO5Gw0RzlqBl47e/X0zvY2m3qD1xsrj0YkI0vOcXbM6D2ecpYbTK50Jr8Qjh/dKqGYBSnviAk9P1M9jUXhEWU8aNpJN9KWAJnE3nZgMNPvfYJm1XU/bEDd7lGJTu0enfS8+lV+JHFQiXMqw=
+	t=1733331513; cv=none; b=hQuOspK7v8XuOsop2YjGEq5zs5cGcuseca8dXJ6/s7tU3FLLGWMAxuVYQe6ngwe99BKnykZ+1DC1jn7Y5fEYiPafSzVJ97xEQYa7nOQViYnR2QW/IiB5QnJGfv/w/hs7RCRD6L3QfNAlwvttVgXPJvnHwwTieE0wXeSxgDKU/Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330671; c=relaxed/simple;
-	bh=2f5XonaelA3mjOVwjimASfcGBRCwJeItUFo/UzcLIs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OtY7sKxBShEdbGxTnnGoolvUG6uyxBjFHWFd8AmVx0wyseZik8a7NDB3aCfy+5NuwLbrk3ejN69Ka7rUgRqzUxHzHQ8j6splqUqMma++z3QzpnUgdFhXgFdu+rvtc23vioqoAW7dd2ADLcW6fncWzjFWRvYioJUNBtewn6Ejv/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pt9V/SIM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1733331513; c=relaxed/simple;
+	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=L5zmxD+SIvRCNW2ZSVvsAPJ4QBCWYgVTZBLfoljbOGF/TVAIc4X6tuQsK2nD73N+PkcGDzAlY/M7F2cytoPXgZu+ije2+kM34i+Qg4tdliqQvEk4cO9WmTyp5vRO7Qz/SirNyAHsWRsGG6/Msfe9NnsgDD78HcDMQY1s+XC/TkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH0xiY0W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pt9V/SIM"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4DwBE3031913;
-	Wed, 4 Dec 2024 16:44:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8XuEB6fL8smqpeJlR0UGp/sqUDXqOcOq79XmbRvYVL4=; b=pt9V/SIMLJjZIO/t
-	g3/xAI/BnKnh270xE699DgsYWM/ILEHUuLNfEbxXFjHWZtOM6IT11Unk39/QFBmR
-	42BHugfdVTm9sCXYMDdqxfs1lBtUD6yqSnI2L8WKVI1XXG1/I+cBPwLxvpvonbQq
-	CwlrnOKniyH4+RLV65ftDQpZHu2KLu+etQ6CFWVYKi7xFekFUzSjb/MWoZXXR1lA
-	GpOflkEi5G5VCIgMtsMqj/pnl+iO1rnDnF7uFNc0gyoJcXUXPR+PMY70xAw6KUgI
-	jSIRKA4/1XmGSVMtayjXZ+xUICAjxW9vwU7aCwqO+LahdKLM1t9uaJ83HskT2Z8+
-	zJ6pdQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbn8n4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 16:44:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4GiN9l029017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 16:44:23 GMT
-Received: from [10.216.58.11] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 08:44:20 -0800
-Message-ID: <f9e93864-f99f-449f-affb-d513ab5476a7@quicinc.com>
-Date: Wed, 4 Dec 2024 22:14:17 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH0xiY0W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813BFC4CED1;
+	Wed,  4 Dec 2024 16:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733331512;
+	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sH0xiY0W1Yc7+8mc620UJfEutvD6C61j22Z+jtSy8y41B2tTLlS51wOhLh0ddOnLF
+	 XHheBlFeZR9j5gWeuyfG+U0GqFvyHwomnIEHBwPvd/+YhgpZYXFbUAzsAZ+7/ZhyqD
+	 GSvOkNCmwI0bYc0KlM0c1xwgk8TKx2iRHLT8CpnfctavSCaR2SQW11WHOh+hE2ngaG
+	 kP/eJP/jfPTlmvCx4uPnK0YKSNjg36UDlywRCndVyy33uZb2e0UpvgP6Bl7gVvv33w
+	 GpAx6iWeMytrg21+BryYWVtZNmFcbzbAJrqgT+xuSaNlaLb3fQtsbuZ4X47QQZv9Ya
+	 bdcFtHSv92Lug==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 20/36] clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+Date: Wed,  4 Dec 2024 10:45:36 -0500
+Message-ID: <20241204154626.2211476-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
+References: <20241204154626.2211476-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: Include missing header includes
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241204110348.100841-1-krzysztof.kozlowski@linaro.org>
- <20241204110348.100841-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20241204110348.100841-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jFrPrecSLt-fyMPqgXtXq-yfArBtW1kp
-X-Proofpoint-ORIG-GUID: jFrPrecSLt-fyMPqgXtXq-yfArBtW1kp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=673 mlxscore=0
- suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040127
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.1
+Content-Transfer-Encoding: 8bit
 
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
+[ Upstream commit aec8c0e28ce4a1f89fd82fcc06a5cc73147e9817 ]
 
-On 12/4/2024 4:33 PM, Krzysztof Kozlowski wrote:
-> Include mod_devicetable.h for the 'struct of_device_id' and
-> clk-provider.h for the 'struct clk_hw'.
-> 
-> Signed-off-by: Krzysztof Kozlowski<krzysztof.kozlowski@linaro.org>
-> ---
->   drivers/clk/qcom/camcc-sc7180.c    | 1 +
->   drivers/clk/qcom/camcc-sc7280.c    | 1 +
->   drivers/clk/qcom/camcc-sdm845.c    | 1 +
->   drivers/clk/qcom/camcc-sm6350.c    | 1 +
+Generally SDCC clocks use clk_rcg2_floor_ops, however on SAR2130P
+platform it's recommended to use rcg2_shared_ops for all Root Clock
+Generators to park them instead of disabling. Implement a mix of those,
+clk_rcg2_shared_floor_ops.
 
-Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-6-ecad2a1432ba@linaro.org
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 48 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 44 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 8e0f3372dc7a8..80f1f4fcd52a6 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
++extern const struct clk_ops clk_rcg2_shared_floor_ops;
+ extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
+ extern const struct clk_ops clk_dp_ops;
+ 
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bf26c5448f006..bf6406f5279a4 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1186,15 +1186,23 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
+ 	return clk_rcg2_clear_force_enable(hw);
+ }
+ 
+-static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+-				    unsigned long parent_rate)
++static int __clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long parent_rate,
++				      enum freq_policy policy)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f;
+ 
+-	f = qcom_find_freq(rcg->freq_tbl, rate);
+-	if (!f)
++	switch (policy) {
++	case FLOOR:
++		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
++		break;
++	case CEIL:
++		f = qcom_find_freq(rcg->freq_tbl, rate);
++		break;
++	default:
+ 		return -EINVAL;
++	}
+ 
+ 	/*
+ 	 * In case clock is disabled, update the M, N and D registers, cache
+@@ -1207,10 +1215,28 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+ }
+ 
++static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
++}
++
+ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+ 		unsigned long rate, unsigned long parent_rate, u8 index)
+ {
+-	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
++}
++
++static int clk_rcg2_shared_set_floor_rate(struct clk_hw *hw, unsigned long rate,
++					  unsigned long parent_rate)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
++}
++
++static int clk_rcg2_shared_set_floor_rate_and_parent(struct clk_hw *hw,
++		unsigned long rate, unsigned long parent_rate, u8 index)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
+ }
+ 
+ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+@@ -1348,6 +1374,18 @@ const struct clk_ops clk_rcg2_shared_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
+ 
++const struct clk_ops clk_rcg2_shared_floor_ops = {
++	.enable = clk_rcg2_shared_enable,
++	.disable = clk_rcg2_shared_disable,
++	.get_parent = clk_rcg2_shared_get_parent,
++	.set_parent = clk_rcg2_shared_set_parent,
++	.recalc_rate = clk_rcg2_shared_recalc_rate,
++	.determine_rate = clk_rcg2_determine_floor_rate,
++	.set_rate = clk_rcg2_shared_set_floor_rate,
++	.set_rate_and_parent = clk_rcg2_shared_set_floor_rate_and_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_shared_floor_ops);
++
+ static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
 -- 
-Thanks & Regards,
-Taniya Das.
+2.43.0
+
