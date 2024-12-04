@@ -1,157 +1,128 @@
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479AE24B26;
-	Wed,  4 Dec 2024 19:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9EB1A8F70;
+	Wed,  4 Dec 2024 19:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340064; cv=none; b=GJtllBfIO7+uNqSOwXikrJc7pb0uN9SjxtwNSCLQ4Cc3x9itg/Q/rulR+Et912AEQDnjetfRtFGtCpmeUM+KGLhXENySUzq2ByU6yP54fxuTGtHebgBk2+Z2+uoesbAGsG5YFb+Q/MAYkemmM5OUTv1TSY7YkY2ilCNW82VI8QE=
+	t=1733341065; cv=none; b=JMp/JzJi8czfNX4+6XMUwzAgupKmEpIqQ+1j8q25vEkGEm4tm1xWjChC8F4arZk7qzRqLRe7HLAq4XyZY7TPJDDYKEn5YMX2SWT+a972CsPQiiVFqPBbCS1fmEqpRd7UDDP+XiphDmkB4wZ4Ra6HH2gFIqiwxikxcIlg54TuNFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340064; c=relaxed/simple;
-	bh=rYhegL9//2A2bkxLAO5La3avhpkdVv+Y03oZNvQdDP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bc6zr5E7Oi7fiXFSE4iASTjfoGtsEfOoKzES0DHnClSFtpiw6hKNa7+CU3j7Ua5QbMHJ01uk24+4iiN+FNj3BwGJACOzP9hjd1lViOCALq6F3xGjX2FY1ad3vGtCGHdcbomEFeBfGAGoOCKh0JT9Px/TevFNFsPgyra60malhfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4afab735b6cso19566137.1;
-        Wed, 04 Dec 2024 11:21:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733340059; x=1733944859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=inT4fZZhlTH1i9AqeiQIOnUqbVGNn3i6ScA8tNJSX0o=;
-        b=rrkn7jUWaqqnkKTtqBrX2IvTkz2PXyTF6diWFK/ct9Y/JCkB9aGR4NxsDm9N1tjhWH
-         LK/5vYPXyj+H9d2rFS7c9OnD3i2vb/Utc6YbNbxo/hne5ZoB2os3AT7huJEQaz1UK90y
-         Plvb+/JrJIOSNoQ5ITLetg7kXXJrOdcRCiLdbTMZgCwkwCmuVe1fX9ONszOzBJKsYgfJ
-         oDGE/2V9mK4F7uauuhmLm0U/zkLHXTa6yf4M0+aYMSQLrncR04/0gCmfB7nkCeZohelt
-         DYZOB5XuWcTJEkHMPv3qiwB7bv9+dQnVxyC/MAPOiMp3oC/7pNWl3Fv6d2p2bRlADbPX
-         DI3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUXPoLigzQVvMSJvZvtbyCTlnGX0n6x2+jHvE9ZHqM+WtVLYBf2F0PSmB1fy54gTbuw42EycCeDdL6I@vger.kernel.org, AJvYcCVYOvfRoh4+L2p2C608m268ImPoyUHN9BOBntDnicmP6YDKM5i+qfobTTrJCBHEOPNtXRuzY1wqzax+PnPS@vger.kernel.org, AJvYcCWNWEPbx+4YvN6NVpCRio1/h9/h9X7joyDkxdnCtmXNyDeDmrd50ffFQUgxYPlJniFL2fqBpyTQ2540@vger.kernel.org, AJvYcCWn4nV109sYQJVkhMIr4yhccoDMOLyVOW2P2UvV8JkAOGwaxX962wSv3clAF0VZXl7xmiJcbeKh9JE72DeFlbmClXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUf8ZUjpNXEpQhBMpqjIdMFOwdBRgbR6Yhat04VYhRCovp3pw/
-	qLAQ9jcOQkZ546naGU0W5GXWDtkLS+LdtF5aEbRG7BGGWK+XrMszz+LZh1dY
-X-Gm-Gg: ASbGncu3p6Wu1R6PTbBHvAyr24hB4aDkf32XNPwAVmsAl2rSjqwmkKLzMQEQxZXyEvy
-	kIqZLA3LQbyr3UnFwkaLMKNCwUWjiOggeZ4a8FAr/WYeC8f4/edBseopk2WeCneaLcVQjUwsyUY
-	OYMvqBV+Go4oml8RxTn7X9si6iLdmBGcvJLXlSLll0YbvrqxwHTGHWnHP+tvznavfg/W7kJ4ioa
-	/ygag2fDG4WKipwzRFwW1yqYX64ZKTrEFySCkqXCWoIrtC6AOl6Akq9eJHj9q0O0y8p+Snbp31i
-	SbTrcpVOCZKV
-X-Google-Smtp-Source: AGHT+IEEIZ8CorMuYzHXaNNDh4cSOaq176oWOIGGNawbSdY8MvMyxV6s4iJqrQL2TWN1aWVXKhUqVw==
-X-Received: by 2002:a05:6102:3f53:b0:4ad:de0b:fe11 with SMTP id ada2fe7eead31-4af97375fe1mr11646918137.17.1733340059620;
-        Wed, 04 Dec 2024 11:20:59 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af9d9d123bsm514620137.5.2024.12.04.11.20.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 11:20:57 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4af4575ec4cso15593137.2;
-        Wed, 04 Dec 2024 11:20:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUPrrvZ8v+6dfnyZKo4pWLdfNW7h7MV8OuCzV8XtjwuFLEIBpoLITAVB3ZJWfjQR0z0okdEjvuz5ftd@vger.kernel.org, AJvYcCUZpo6TKX9cgxUAGbf0KOQlo9+u19Rh00BlwO0lDQuhA47/hCX6lrvHiTjw6GVJJIr50SSIQTIlxHkFW04V@vger.kernel.org, AJvYcCUkj812aZHMW674kbnLGjZBDuAdh0pphw11QDE7UHj2EI67e+TlnwqbuaC/MiJonr0DBF80ZOY9luqPY1o2aowmuQ0=@vger.kernel.org, AJvYcCUz/hv9SWDFCfR44n6VBDZHTfDxnwjdXN651PuDbPGARcZitfpb9WyiFrcPko2iWUwdsf6+gyqyoi1D@vger.kernel.org
-X-Received: by 2002:a05:6102:3054:b0:4a4:8d45:6839 with SMTP id
- ada2fe7eead31-4af97268516mr11708144137.13.1733340056024; Wed, 04 Dec 2024
- 11:20:56 -0800 (PST)
+	s=arc-20240116; t=1733341065; c=relaxed/simple;
+	bh=T/L3XHh7XkfaV9/eKOqIYN1c850iHFdd3pTxfYePqCc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=SOBFRcDTkzRSwSIY+DWJ6OXswPCIOuD/ry4o9rH3QSDVt3i78YyeOGQ/TmU0kF930ZcPsak7T7ATrL1psf0MBGqlydm9JwdZ04F8rOc1xeaLOiXt+gffSRj8S25HScJlsjq+lQ+pc+4fnv1eak+22qolGWIG3sUSnsK4y9ZprRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BZZm83m9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BZZm83m9"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4DPxxG031997;
+	Wed, 4 Dec 2024 19:37:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FX2fxB132Y0nVOZsSralzVssGO3Xx2iqgAjcbXjueFk=; b=BZZm83m9HbmNcrXQ
+	+85TmAnv38fWMriXJFjryji8P1SqwmdOxEKTmY9gHiBpNO8s8jcwVlvkIHLSPokm
+	OVbWNYmfjwg0VU61jzx8xxta7nPyOL+fXSI2HzuRIvhYSs1oDzmmCPXcNpsyfAAl
+	RjR2ceURDmXol/X8iPx1aXb02/Zafe8rfYbbdqA14eTmxL5+ll0hHI7UBGK4wbc0
+	/L2ZqwefuTsDVOduSvNilFgJ4GX8NSEDTXquOlgo+GJ8H9ia2/klsKzO6J0jR5or
+	r/Ji94fvcruryhPukOfQgJ+GL94ZvQ8YGdfmsARX3MJqGa2pCfN6qclkZZ7ZYnDl
+	L3QWUw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3fav78m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:37:40 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4Jbdut031065
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 19:37:39 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 11:37:38 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+Date: Wed, 4 Dec 2024 11:37:14 -0800
+Subject: [PATCH v3 2/8] clk: qcom: rpmh: Sort the match table
+ alphabetically
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com> <20241203093703.GL10736@pendragon.ideasonboard.com>
- <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
-In-Reply-To: <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Dec 2024 20:20:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWa0frtVLJcoz7QRe=ZHa24K9MxyV5-_Ce4AUJo+LDEGA@mail.gmail.com>
-Message-ID: <CAMuHMdWa0frtVLJcoz7QRe=ZHa24K9MxyV5-_Ce4AUJo+LDEGA@mail.gmail.com>
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a779h0: Add display support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241204-sm8750_master_clks-v3-2-1a8f31a53a86@quicinc.com>
+References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
+In-Reply-To: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733341058; l=1555;
+ i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
+ bh=lQ0poWDoC7mT4MMS5CcvruZaXk8EehP0HEyQJZ4c6Ms=;
+ b=UehSsa7sHFktKfmPGrfvk+10RWMi7S1zbw8L+yxFXsh08rJN/RBIl9hUgbdenEuWSYhMFu1SV
+ utGiBxHDtHCAVPmlSLh1YmCFq981DtxLRDK1qi4UjR7xr0Z4gTYVOWr
+X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
+ pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UzPrY9mhE8s4SpToGKe2B2gNq-VHzODk
+X-Proofpoint-GUID: UzPrY9mhE8s4SpToGKe2B2gNq-VHzODk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=899
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040150
 
-Hi Tomi,
+From: Taniya Das <quic_tdas@quicinc.com>
 
-On Wed, Dec 4, 2024 at 5:04=E2=80=AFPM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> On 03/12/2024 11:37, Laurent Pinchart wrote:
-> > On Tue, Dec 03, 2024 at 10:01:42AM +0200, Tomi Valkeinen wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add the device nodes for supporting DU and DSI.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
->
-> >> ---
-> >>   arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 77 +++++++++++++++++++++=
-++++++++++
-> >>   1 file changed, 77 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/bo=
-ot/dts/renesas/r8a779h0.dtsi
-> >> index 12d8be3fd579..82df6ee98afb 100644
-> >> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> >> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> >> @@ -1828,6 +1828,54 @@ csi41isp1: endpoint {
-> >>                      };
-> >>              };
-> >>
-> >> +            fcpvd0: fcp@fea10000 {
-> >> +                    compatible =3D "renesas,fcpv";
-> >> +                    reg =3D <0 0xfea10000 0 0x200>;
-> >> +                    clocks =3D <&cpg CPG_MOD 508>;
-> >> +                    power-domains =3D <&sysc R8A779H0_PD_C4>;
-> >> +                    resets =3D <&cpg 508>;
-> >> +            };
-> >> +
-> >> +            vspd0: vsp@fea20000 {
-> >> +                    compatible =3D "renesas,vsp2";
-> >> +                    reg =3D <0 0xfea20000 0 0x8000>;
-> >> +                    interrupts =3D <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>;
-> >
-> > The documentation lists this interrupt as being LevelSensitive and
-> > Negative. I wouldn't expect the VSP to work at all with a wrong polarit=
-y
-> > in DT, so the level may get inverted somewhere.
->
-> Indeed... It's the same for V4H. And it also has IRQ_TYPE_LEVEL_HIGH in
-> the dts. I tried changing it to LOW on V4H, but:
->
-> genirq: Setting trigger mode 8 for irq 91 failed
-> vsp1 fea20000.vsp: failed to request IRQ
->
-> I didn't dig further yet.
+Update the match table for SC7280 to sort it in alphabetical order.
 
-Yeah, I don't think the GIC supports anything but IRQ_TYPE_LEVEL_HIGH.
-Which brings us to the two ISP nodes on R-Car V4H and V4M, both using
-IRQ_TYPE_LEVEL_LOW.
-Niklas: looks like drivers/media/platform/renesas/rcar-isp.c doesn't
-actually use the IRQ, so I guess that's how this could slip in?
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ drivers/clk/qcom/clk-rpmh.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index eefc322ce367989f625f1285dcccddbdd8341a12..9d38b667a445f3acebcd04bac212b7adcfb001da 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -894,6 +894,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+ 	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
+ 	{ .compatible = "qcom,sar2130p-rpmh-clk", .data = &clk_rpmh_sar2130p},
+ 	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
++	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+ 	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
+ 	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
+ 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+@@ -909,7 +910,6 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+ 	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
+ 	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
+ 	{ .compatible = "qcom,sm8650-rpmh-clk", .data = &clk_rpmh_sm8650},
+-	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+ 	{ .compatible = "qcom,x1e80100-rpmh-clk", .data = &clk_rpmh_x1e80100},
+ 	{ }
+ };
 
-                        Geert
+-- 
+2.46.1
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
