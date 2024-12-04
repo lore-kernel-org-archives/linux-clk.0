@@ -1,147 +1,119 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBB8184;
-	Wed,  4 Dec 2024 07:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11081FA4;
+	Wed,  4 Dec 2024 08:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733296691; cv=none; b=ma/v0FDShJtrFiP6Hccayv/k/C2M4ik2xAPBmC8KT0le6VLADFsf8Q2KYkP8mjZbhOPqZ/6Sk/mjcZ7BObcKNgHL8ShBsB0NuFu5eaZtyUP0gt5xV4Ynob8a9xbwKxLzXqVmYMo1E7JgJ+BsGxJHNcAIVFD6P4NFkjg9gdwuPhI=
+	t=1733299254; cv=none; b=A5zDulQaa9rE32hrU9vPd7RndCorR7dInE11+zHQ2IOpMIbFWLn/tN0Roc64JfoDe+bKT8IYVtqqD3V8cjqA5J3kUaHhY4I5BgKwgH44XM4xwrmGsVnyPu0OdaEkW01rmEWfB4kQ50QEeSU6mXDk5m4iBxws2iLbiWw8xcf5XuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733296691; c=relaxed/simple;
-	bh=Ek8lB3mFDu+n0uSn1+oAO1HJ1c9uXkf4oSjc21yQHxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=skliRrb9eq619xsl+BlPlVwaP6r5kcbbWFtouX2S1vKyu3Zs+5C4bLqRhqlZY4vjpRBjLbygafa7FzkvfreniQZ5CXkDn4wpe49AD5H3lnyTyJDgQ/LgwE7R4gyfx3dtUaJX7gfERj7Aa4OjIkqI3TpYgVUgDJSEfDuEkPoUDj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EidmqL3Z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EidmqL3Z"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B46li01025018;
-	Wed, 4 Dec 2024 07:18:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g5zWXSlONaKd4AvAgwYPf1vqc/QhuZXvoYZ9i0MBJ2o=; b=EidmqL3Zuzx9jIJU
-	RbgnhOX6EQcs4rCrQAjclQJ6fP2H6jheJ/R3dHx0c8RyGcKkeWYLdTwmFcOnyySz
-	5NJeKL/EDEP8tBCvHz+50EKu7wIuGIfb5zRRRuCjItebIF4dXlOF8KtKdPAcsDGB
-	ikN3UIhmYT+rM2wcZpCKMVAjNRFCQwM4t1AZRrqchXR4PATERZrbY3mKKPe/1Cna
-	BTquAIj62JOllsEjZgtvbzdyRBqDcbkf9WpfM1zE6/dHcwWZkRNam101JAveZ3hZ
-	eFkLuZeqlL0sG97XccFFUQDxNJHoU9gQHvQUBjXyzu6Mv4KHFLJIpLHWldZOYaUK
-	tKf0Tw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43aj4282fj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 07:18:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B47I4KU030518
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 07:18:04 GMT
-Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 23:18:00 -0800
-Message-ID: <9d0bb244-ecbd-4630-a774-6f2cd1ffb2cb@quicinc.com>
-Date: Wed, 4 Dec 2024 12:47:52 +0530
+	s=arc-20240116; t=1733299254; c=relaxed/simple;
+	bh=qX0JAZx3mOqjs38gq9rFR5GKcM/eDXXMNX8VRgGDQT4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mYG8nqGOGR3+8EKiJdthrMbaGBuzwaCB6esR4/I+gtG8wA7GH91EDH1f2EDThqV8o8pSi9Xrq+I2vqzNCw1TIUuH0y7sKjPn5JR8cdRt6pUkljVLT7cFKjoXMNj9u9y+44CYqkIxaltDmYDNRUOc/2HxvHQ4mQaWsVtbIIZ6/cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4af4da7d22fso2019506137.0;
+        Wed, 04 Dec 2024 00:00:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733299250; x=1733904050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GONdbMSirRoIxoa5Koj9rUw2uC+DqLIh+b3SysJcOZo=;
+        b=O9iwlmCzU/dxCI/tmH+GSNVOcdGI0v6jh2sOsZjgXU+LPwiZ4RAWmqmODX7pR0pX2w
+         ilFCMrpqpnrP4res4ODMyX/YpO6zhiEYrycL7pNXmzZtsQm9+UioLWVDUQhRPeBSl8xa
+         ro69gGhNc1eyM2Jie50pJykRQZviglZZCrAbY7bylOqSyOcN8zX46EXXfccU1w8ATO4f
+         PbxESEHghs88AVNVxzxzXYBMgUw+dNMXhMHP6PLmA8CC5p/0Fvf2Vh8iqol9LfWwwQaO
+         fUU6+8lKy0IXXDsAgESqz/B+IIXiKBga/4TrX3YAiYtav6Iom7QwiBbK7d3O1X11Xyp5
+         orgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqE8Pk9zJU9hsbYPil+BTtJujvILxSa/CFm5Ot1U/eWMpHTkTkbvIB44qwFxKEuSNLXNMYlMkIw9s3eLebawp6/L0=@vger.kernel.org, AJvYcCVXfkNR8eIqKIcMo7JTZu0BBOWAQlAG3M3s/c5fORXxOpmOm0SJUkt5R5otOcJMS31zwT8eExOYmakL@vger.kernel.org, AJvYcCW8ztWsPiJfVX3het/duL44zxgq6b35Lk56XTMi6FUPpNtS30dKc3zoGq7sSlhJNbcjK9mAqc8S5mKE69Be@vger.kernel.org, AJvYcCXU8mDm1V7P+Z/cjZsLVbCTAdsvdB2LDMvIeTOSVmHeKCFG95S6PWjZq1WqvEDNjZUkk21LcStPexFo@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxcik7CDqgMT7z7frgRtDJdNqKdodfPRP7fDWOg7yAFkLKo0mz
+	zKDdtod7NB5d3hnOzTdB41O6TQU6Kkx6yWwBi+WE09C/l7F8mvn56qjbsxBt
+X-Gm-Gg: ASbGncvLSxPb4+zHIbL0iEbohf3sP9VkCaUkdfDoyyhbiQOLLgD+7FjLOI46AkrLy1W
+	rDSCNnkPrmxhE3ZLx4CSDkF7FsD6tvpbmQyyM2eALrdBNIqr/+SOra2PcVF63Qxgq31TZfC0Tf9
+	5Rx/g21DZwlTu8p1LNAzfIF8Y5rYje3c6hMxSYDOOdS8/ldvFL1RPChTJXaz+PQbrPsPD5GNGr2
+	WLejEX5lKHNZjTGQa11+CEtGeIXGCoXAsCOBhK9dL4uxnCBYYxi1EbdSBTfdPNM1ys/OuUc3NiB
+	svLcY7rBjDYZ
+X-Google-Smtp-Source: AGHT+IEQYVxqngvc8AC/wSX2bHJFoU/I2ALJvF4bOv8wQshvnR8+yueiI6A/gDzEoNBA6cQaGf+khg==
+X-Received: by 2002:a05:6102:3753:b0:4af:469b:d3ae with SMTP id ada2fe7eead31-4af9729081cmr7373184137.27.1733299250501;
+        Wed, 04 Dec 2024 00:00:50 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afa51e97casm276276137.10.2024.12.04.00.00.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 00:00:47 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4af173cd0e5so2083932137.1;
+        Wed, 04 Dec 2024 00:00:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV9nL7mkPq3IYcpfbd+9phvhb11N15j17wcT/7N6H5gX9vs4ryqNxFalUeGYV1KwzQoZkP9vLP1SnZz@vger.kernel.org, AJvYcCWgXmogVtieeaO9G7Da0cU5JaX+uZDNEhEouqUcRMXDVzig6ne2M8hF3ruReAvUvXXIqnTcS7WEcibjkpnf@vger.kernel.org, AJvYcCXb6ZkaLDbgi/IfMF5kI6muEQoNp/dJI+aYjzznWo6MECtAElitmjIThDRJmXhA+y+1NnX2WV8ED2XiDrWLny0hBtU=@vger.kernel.org, AJvYcCXjiCbXQ4KPhZJDCRr+JOtcvaaW4rTtwxums2x9aNs1Nr0CFdFYRkRBEIyGCENxBT3sN9i9L0HsGn9e@vger.kernel.org
+X-Received: by 2002:a05:6102:41a5:b0:4af:5eb5:8448 with SMTP id
+ ada2fe7eead31-4af97162869mr6809478137.6.1733299246794; Wed, 04 Dec 2024
+ 00:00:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] dt-bindings: clock: qcom: Add SM8750 GCC
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
- <20241112002807.2804021-5-quic_molvera@quicinc.com>
- <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bwbsGqTWIPdVCbF4raf70A4PJ_RHuD6w
-X-Proofpoint-ORIG-GUID: bwbsGqTWIPdVCbF4raf70A4PJ_RHuD6w
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040056
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+In-Reply-To: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Dec 2024 09:00:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVatmOscaX9++y3L5SPhpPpbLw6fROqCw1Cc9iU=YJFpw@mail.gmail.com>
+Message-ID: <CAMuHMdVatmOscaX9++y3L5SPhpPpbLw6fROqCw1Cc9iU=YJFpw@mail.gmail.com>
+Subject: Re: [PATCH 0/9] drm: Add DSI/DP support for Renesas r8a779h0 V4M and
+ grey-hawk board
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Tomi,
 
+On Tue, Dec 3, 2024 at 9:02=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+> Add everything needed to support the DSI output on Renesas r8a779h0
+> (V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
+> Renesas grey-hawk board.
+>
+> Overall the DSI and the board design is almost identical to Renesas
+> r8a779g0 and white-hawk board.
 
-On 11/20/2024 1:47 PM, Krzysztof Kozlowski wrote:
-> On Mon, Nov 11, 2024 at 04:28:04PM -0800, Melody Olvera wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Add bindings documentation for the SM8750 General Clock Controller.
-> 
-> Subject prefix - use proper file prefix:
-> dt-bindings: clock: qcom,sm8650-gcc:
-> 
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,sm8650-gcc.yaml       |   8 +-
->>   include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
->>   2 files changed, 232 insertions(+), 2 deletions(-)
->>   create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
->> index 976f29cce809..e50b5f1cad75 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
->> @@ -13,11 +13,15 @@ description: |
->>     Qualcomm global clock control module provides the clocks, resets and power
->>     domains on SM8650
->>   
->> -  See also:: include/dt-bindings/clock/qcom,sm8650-gcc.h
->> +  See also: include/dt-bindings/clock/qcom,sm8650-gcc.h
->> +            include/dt-bindings/reset/qcom,sm8750-gcc.h
->>   
->>   properties:
->>     compatible:
->> -    const: qcom,sm8650-gcc
->> +    items:
-> 
-> No need for items, simpler is just enum.
-> 
+Thanks for your series!
 
-will fix in the next patch.
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
->> +      - enum:
->> +          - qcom,sm8650-gcc
->> +          - qcom,sm8750-gcc
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+Woot, SoB tags for cover letters ;-)
 
--- 
-Thanks & Regards,
-Taniya Das.
+Works fine up to 2560x1440 (I don't have a 4K display).
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
