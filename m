@@ -1,33 +1,48 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2714F1F7099;
-	Wed,  4 Dec 2024 16:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F1433C4;
+	Wed,  4 Dec 2024 16:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733328300; cv=none; b=Y4VHPhOkWPDeZTiBowibFGkCqLBg+k1Cn5MJxbalfZMZyalQ6h6NCRvETs1b/jYz4+JrIh+V9VPHqf42z7BopQ49pvxAhot/14SZR/RHxRAJbVW4OgnnWhvLJDhn/R+9Fyz1rjs3v/t1D1wctnTsPOz3nX5i+/tCP2O2v3KfDEc=
+	t=1733330671; cv=none; b=OFOQK6sv07s2islB+ftDmQf4LyvTCO5Gw0RzlqBl47e/X0zvY2m3qD1xsrj0YkI0vOcXbM6D2ecpYbTK50Jr8Qjh/dKqGYBSnviAk9P1M9jUXhEWU8aNpJN9KWAJnE3nZgMNPvfYJm1XU/bEDd7lGJTu0enfS8+lV+JHFQiXMqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733328300; c=relaxed/simple;
-	bh=C3PVXGm45ULNAqZE4h9VZWoMGKJEU0y/gIV6rWMrPF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gXG3KFBgRVPwL4JlJC8mxaH6dQyZ160yzueM1BBOyW2AntRdS16wYQdBFRN3wfaq+h+UG6sANToBy1J/GRXGxYibE52Wf2eiNUZFgW7/D/GUc/F3aVCK+r8sPKRxZi9DgLh4pyRLUmytoSM1bfl6U/plaIf5r4fdzDcvzffC4YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OEdPDLnP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1733330671; c=relaxed/simple;
+	bh=2f5XonaelA3mjOVwjimASfcGBRCwJeItUFo/UzcLIs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OtY7sKxBShEdbGxTnnGoolvUG6uyxBjFHWFd8AmVx0wyseZik8a7NDB3aCfy+5NuwLbrk3ejN69Ka7rUgRqzUxHzHQ8j6splqUqMma++z3QzpnUgdFhXgFdu+rvtc23vioqoAW7dd2ADLcW6fncWzjFWRvYioJUNBtewn6Ejv/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pt9V/SIM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OEdPDLnP"
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A99536D6;
-	Wed,  4 Dec 2024 17:04:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733328267;
-	bh=C3PVXGm45ULNAqZE4h9VZWoMGKJEU0y/gIV6rWMrPF0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OEdPDLnPd6N+fxDyZ2Q7P1hZWZ7/63Zy5NrZ8TinHpQDrzvN8ar2Mnxrk2oZvWnpk
-	 tdaHeBvj6mHbvHB2dtEnasjKJpxJbzqtuwjy6Az+R01wGakkh55wIrSw3QrVGI+eh9
-	 u7JypWdpJ1mQoBOxmLAtR74XBTP7LJ5mThS5LC0M=
-Message-ID: <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
-Date: Wed, 4 Dec 2024 18:04:50 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pt9V/SIM"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4DwBE3031913;
+	Wed, 4 Dec 2024 16:44:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8XuEB6fL8smqpeJlR0UGp/sqUDXqOcOq79XmbRvYVL4=; b=pt9V/SIMLJjZIO/t
+	g3/xAI/BnKnh270xE699DgsYWM/ILEHUuLNfEbxXFjHWZtOM6IT11Unk39/QFBmR
+	42BHugfdVTm9sCXYMDdqxfs1lBtUD6yqSnI2L8WKVI1XXG1/I+cBPwLxvpvonbQq
+	CwlrnOKniyH4+RLV65ftDQpZHu2KLu+etQ6CFWVYKi7xFekFUzSjb/MWoZXXR1lA
+	GpOflkEi5G5VCIgMtsMqj/pnl+iO1rnDnF7uFNc0gyoJcXUXPR+PMY70xAw6KUgI
+	jSIRKA4/1XmGSVMtayjXZ+xUICAjxW9vwU7aCwqO+LahdKLM1t9uaJ83HskT2Z8+
+	zJ6pdQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbn8n4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 16:44:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4GiN9l029017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 16:44:23 GMT
+Received: from [10.216.58.11] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 08:44:20 -0800
+Message-ID: <f9e93864-f99f-449f-affb-d513ab5476a7@quicinc.com>
+Date: Wed, 4 Dec 2024 22:14:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,211 +50,51 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a779h0: Add display support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com>
- <20241203093703.GL10736@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 2/2] clk: qcom: Include missing header includes
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241204110348.100841-1-krzysztof.kozlowski@linaro.org>
+ <20241204110348.100841-2-krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20241203093703.GL10736@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20241204110348.100841-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jFrPrecSLt-fyMPqgXtXq-yfArBtW1kp
+X-Proofpoint-ORIG-GUID: jFrPrecSLt-fyMPqgXtXq-yfArBtW1kp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=673 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040127
 
-Hi,
 
-On 03/12/2024 11:37, Laurent Pinchart wrote:
-> Hi Tomi,
+
+On 12/4/2024 4:33 PM, Krzysztof Kozlowski wrote:
+> Include mod_devicetable.h for the 'struct of_device_id' and
+> clk-provider.h for the 'struct clk_hw'.
 > 
-> Thank you for the patch.
-> 
-> On Tue, Dec 03, 2024 at 10:01:42AM +0200, Tomi Valkeinen wrote:
->> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>
->> Add the device nodes for supporting DU and DSI.
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->> ---
->>   arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 77 +++++++++++++++++++++++++++++++
->>   1 file changed, 77 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
->> index 12d8be3fd579..82df6ee98afb 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
->> @@ -1828,6 +1828,54 @@ csi41isp1: endpoint {
->>   			};
->>   		};
->>   
->> +		fcpvd0: fcp@fea10000 {
->> +			compatible = "renesas,fcpv";
->> +			reg = <0 0xfea10000 0 0x200>;
->> +			clocks = <&cpg CPG_MOD 508>;
->> +			power-domains = <&sysc R8A779H0_PD_C4>;
->> +			resets = <&cpg 508>;
->> +		};
->> +
->> +		vspd0: vsp@fea20000 {
->> +			compatible = "renesas,vsp2";
->> +			reg = <0 0xfea20000 0 0x8000>;
->> +			interrupts = <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> The documentation lists this interrupt as being LevelSensitive and
-> Negative. I wouldn't expect the VSP to work at all with a wrong polarity
-> in DT, so the level may get inverted somewhere.
+> Signed-off-by: Krzysztof Kozlowski<krzysztof.kozlowski@linaro.org>
+> ---
+>   drivers/clk/qcom/camcc-sc7180.c    | 1 +
+>   drivers/clk/qcom/camcc-sc7280.c    | 1 +
+>   drivers/clk/qcom/camcc-sdm845.c    | 1 +
+>   drivers/clk/qcom/camcc-sm6350.c    | 1 +
 
-Indeed... It's the same for V4H. And it also has IRQ_TYPE_LEVEL_HIGH in 
-the dts. I tried changing it to LOW on V4H, but:
+Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
 
-genirq: Setting trigger mode 8 for irq 91 failed
-vsp1 fea20000.vsp: failed to request IRQ
-
-I didn't dig further yet.
-
->> +			clocks = <&cpg CPG_MOD 830>;
->> +			power-domains = <&sysc R8A779H0_PD_C4>;
->> +			resets = <&cpg 830>;
->> +			renesas,fcp = <&fcpvd0>;
->> +		};
->> +
->> +		du: display@feb00000 {
->> +			compatible = "renesas,du-r8a779h0";
->> +			reg = <0 0xfeb00000 0 0x40000>;
->> +			interrupts = <GIC_SPI 523 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 411>;
->> +			clock-names = "du.0";
->> +			power-domains = <&sysc R8A779H0_PD_C4>;
->> +			resets = <&cpg 411>;
->> +			reset-names = "du.0";
->> +			renesas,vsps = <&vspd0 0>;
->> +
->> +			status = "disabled";
->> +
->> +			ports {
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				port@0 {
->> +					reg = <0>;
->> +					du_out_dsi0: endpoint {
->> +						remote-endpoint = <&dsi0_in>;
->> +					};
->> +				};
->> +
->> +				port@1 {
->> +					reg = <1>;
->> +				};
-> 
-> On V4M the DU has a single channel, so there should be a single port.
-
-Yep, I'll drop.
-
-  Tomi
-
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
->> +			};
->> +		};
->> +
->>   		isp0: isp@fed00000 {
->>   			compatible = "renesas,r8a779h0-isp",
->>   				     "renesas,rcar-gen4-isp";
->> @@ -1996,6 +2044,35 @@ isp1vin15: endpoint {
->>   			};
->>   		};
->>   
->> +		dsi0: dsi-encoder@fed80000 {
->> +			compatible = "renesas,r8a779h0-dsi-csi2-tx";
->> +			reg = <0 0xfed80000 0 0x10000>;
->> +			clocks = <&cpg CPG_MOD 415>,
->> +				 <&cpg CPG_CORE R8A779H0_CLK_DSIEXT>,
->> +				 <&cpg CPG_CORE R8A779H0_CLK_DSIREF>;
->> +			clock-names = "fck", "dsi", "pll";
->> +			power-domains = <&sysc R8A779H0_PD_C4>;
->> +			resets = <&cpg 415>;
->> +
->> +			status = "disabled";
->> +
->> +			ports {
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				port@0 {
->> +					reg = <0>;
->> +					dsi0_in: endpoint {
->> +						remote-endpoint = <&du_out_dsi0>;
->> +					};
->> +				};
->> +
->> +				port@1 {
->> +					reg = <1>;
->> +				};
->> +			};
->> +		};
->> +
->>   		prr: chipid@fff00044 {
->>   			compatible = "renesas,prr";
->>   			reg = <0 0xfff00044 0 4>;
-> 
-
+-- 
+Thanks & Regards,
+Taniya Das.
