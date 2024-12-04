@@ -1,97 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F3220ADD3;
-	Tue,  3 Dec 2024 22:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A1F383;
+	Wed,  4 Dec 2024 04:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733266763; cv=none; b=fYf6JCgU6qL1tNYsFqUbMWWz6n/Fkrjp/Ug70H3iK2kNnQVZsoVtd3Z+6zCu+09DbVuLs1qrFMu8t6dODVgZwUFBuhz078+tsn6l3AUoR945rs2rkvdZU/836V+n8kGAIFTYRFfWST9TQHiAvzJOQCcibUB59K7tirQEZrl0lQc=
+	t=1733287369; cv=none; b=dICt09rn2gd4PcqdAb444ykUou24HwKFGmcN2FFHhEGdw9KO8Qc9jgXnEU/IpXaRoT7/Us1GwkILp3qov7X3Ikn5uYjiG8k2nSRRaJsp0Bfm8a9A0M6l2yfr4F20SPaHi3qxS72jltJIhA6QPs8jS8RqURm2C72yPyz0lt0v8SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733266763; c=relaxed/simple;
-	bh=RHovkVW6REiiiCFyAhJ+JqNCBa0opkh9DJwle8ld2R0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nadL32J7gue6A0PZt1cvYgw6PCT5vnef8f77tP1Kr7vZ1m9RqIOg9fQUaf/DvdOnxMJkN1pY6wqmkoqSI/SOM2yW7Xaws5LwgzLgUL0EF1a8FaLKjvTxLzlFEuGPXcW+dH3j6SYoqXv6ON22FRKhh4DmAxppf4cUQRA9NOvpavg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rn3dN8Xe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733287369; c=relaxed/simple;
+	bh=5EKfOt38K82BnMIxNgyxs4POZDCXZEsPDK8yiorxv0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AgcQ/oGMZtXO40Djk2Z1N+CsGXse7bgmTsQIZcTrxm0SrELpsg/Lhx3Cn+VjdWOEAFp0zB2xDqETwoPtCOZE90v9lOIk+bVKPE8z6I3jSO/FivcbVogK2II13EgQI0RghUp/mjlI/jsK+dE/sBWp6a7S58IGsgRP3NGMCpmW8dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TLjMdvyI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rn3dN8Xe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A55DC4CEDC;
-	Tue,  3 Dec 2024 22:59:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733266763;
-	bh=RHovkVW6REiiiCFyAhJ+JqNCBa0opkh9DJwle8ld2R0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rn3dN8XeKM5vVkOfP7bFH82cyF2OhOe7YMZqUkY3EgOXMhYPv8lzs76l6dxOdv8Ng
-	 Lb+v/wLBHkzoHCGe0kYd38ICn8tMeBTNyjxXHaTVZq0plXNY9ZOZN9o8nnlRSz+5mx
-	 DxUBtOKuYVoZVDtwwPa1sUm7o1okC8KfhoZ1GX9dKBdGZ1/pSHPJaq85Xu0O5IGncw
-	 bRASROsD9nHFm8zo0NZAr+lJRW6Uk1UHeEqscZGtdDQEC25TeHUGgObOntX0ScRG6Y
-	 rMZHWHH+rQgZULwczzz4FKW4uPe2zs+o9eQZqTjtUdw/5uFvVHr0LLRrzlvae3ezfv
-	 Z2qjCA0a2vDrQ==
-Date: Tue, 3 Dec 2024 22:59:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Message-ID: <31edf979-e03a-4c9c-bb93-59ceea6b44a1@sirena.org.uk>
-References: <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
- <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
- <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
- <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
- <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
- <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
- <1jr06pkof6.fsf@starbuckisacylon.baylibre.com>
- <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org>
- <dbb2de3c-cb29-4384-a00b-4fdedeab1a10@sirena.org.uk>
- <c982c5061ea6b0d465dd8b7fefc59cc7.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TLjMdvyI"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B445VG9020221;
+	Wed, 4 Dec 2024 04:42:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uWCTtijkX4Ym2tIYCpmzq6UqmSqL+/Rn/56+j7deBjc=; b=TLjMdvyImEtAvjHZ
+	dOD3bmnycsnpUVwdSbVmhwWfdvIi+WD91Z6h7yD9eEOGJee/xsnEW7aQnS8oYdsY
+	tVCbzcytPBZ0VsJ6phmm3tLDQA05xVPNJbR47ktpKm4XYfnK1OjaYvnHjf6uip4n
+	4Ined8RGD9/3Ntho7/tfS8T5Ip7Gvu+xpwilwHZXCSrBjzm2XRSyBsCe0bonFQ+v
+	MHVlWVJz6x1W+VHLtx40pQkg60HwqYrA28meV5y0l/1ZypkIpqJFFw19MA4dN0te
+	b9cTMM12p4Rt8K+w5U910hGxtUf6Fkw2Vu/6mAxalz07R/IoPf7UlzGWWBC85GpP
+	Fdatlw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3exa0bt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 04:42:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B44gV8J001336
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 04:42:31 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 20:42:26 -0800
+Message-ID: <6cbe51ea-01a0-4adf-af41-314d42ec6d65@quicinc.com>
+Date: Wed, 4 Dec 2024 10:12:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oHjAMmplQrPbLqyA"
-Content-Disposition: inline
-In-Reply-To: <c982c5061ea6b0d465dd8b7fefc59cc7.sboyd@kernel.org>
-X-Cookie: Blackout restrictions apply.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] clk: qcom: rpmh: Add support for SM8750 rpmh
+ clocks
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya Durga
+ Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+ <20241112002807.2804021-3-quic_molvera@quicinc.com>
+ <5pgwerxhqhyr2u47grqzgzvvng4rojzq4gozil7vy37bew5pqj@wt676vfjs7bg>
+ <8d3c2efd-b6c3-4b01-ae01-78460f4e9f26@quicinc.com>
+ <lyqiwzahl46fy2eqaz6g4wqwik623mstbjlew5mkfqj2zp4jxz@xjnt5uh2bc3p>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <lyqiwzahl46fy2eqaz6g4wqwik623mstbjlew5mkfqj2zp4jxz@xjnt5uh2bc3p>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QxO7JkSaVZU_cyUo6Os1g_BZxg5fkDb5
+X-Proofpoint-GUID: QxO7JkSaVZU_cyUo6Os1g_BZxg5fkDb5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 phishscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040035
 
 
---oHjAMmplQrPbLqyA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 02:32:56PM -0800, Stephen Boyd wrote:
-> Quoting Mark Brown (2024-12-03 14:22:04)
+On 11/19/2024 7:28 AM, Dmitry Baryshkov wrote:
+> On Mon, Nov 18, 2024 at 10:53:16AM -0800, Melody Olvera wrote:
+>> On 11/15/2024 7:31 AM, Dmitry Baryshkov wrote:
+>>> On Mon, Nov 11, 2024 at 04:28:02PM -0800, Melody Olvera wrote:
+>>>> From: Taniya Das <quic_tdas@quicinc.com>
+> 
+> [...]
+> 
+>>>> @@ -894,6 +919,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+>>>>    	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
+>>>>    	{ .compatible = "qcom,sar2130p-rpmh-clk", .data = &clk_rpmh_sar2130p},
+>>>>    	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
+>>>> +	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+>>>>    	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
+>>>>    	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
+>>>>    	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+>>>> @@ -909,7 +935,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+>>>>    	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
+>>>>    	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
+>>>>    	{ .compatible = "qcom,sm8650-rpmh-clk", .data = &clk_rpmh_sm8650},
+>>>> -	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+>>> Please don't mix fixes and actual code. I'd suggest splitting sc7280
+>>> move to the separate commit.
+>>
+>> Bryan O'Donoghue requested we sort these as part of this patch. I don't feel
+>> strongly either way,
+>> but clear guidance here would be appreciated.
+> 
+> I don't see v1 of this patch on the linux-arm-msm list (hint: use b4
+> tool to send patches), so I can not comment on what Bryan ment. But I'd
+> definitely say, moving of the sc7280 entry is a _separate_ commit.
+> 
+>>
 
-> > Yes, this patch was triggered by me reporting that multiple boards in my
-> > test farm have completely broken audio with defconfig.=20
+I will push the latest patch fixing the issues in this patch.
 
-> I thought that commit 5ae1a43486fb ("clk: amlogic: axg-audio: revert
-> reset implementation") was sufficient to fix the problem. Is that
-> incorrect?
+>> Thanks,
+>> Melody
+>>
+>>>
+>>>> +	{ .compatible = "qcom,sm8750-rpmh-clk", .data = &clk_rpmh_sm8750},
+>>>>    	{ .compatible = "qcom,x1e80100-rpmh-clk", .data = &clk_rpmh_x1e80100},
+>>>>    	{ }
+>>>>    };
+>>>> -- 
+>>>> 2.46.1
+>>>>
+>>
+> 
 
-Yes, it should be - it didn't appear in mainline or -next yet and was a
-bit more buried in my mailbox than this thread but I see it's in now.
-
---oHjAMmplQrPbLqyA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPjUEACgkQJNaLcl1U
-h9Ck5wf+IvbqQTemhM/dZRBZBQkVRYqK48KrdX0LIz2UA9Ezxw90SsDD8aKlYrfS
-eaHXd1CUNlZu+BLoA4GwTxjF/Qysu0xs1vd3DscOZ6NkFgMIU3g/THIXv4gGCxLp
-6PCBcOlNxmtOPIHaW8HgUEJpn9EsvJyEC+KQ47vVbZWnnkIkYoWrVj19uJacKfcI
-EQu0TxpKuj3Z21YqEFBRIvTCy/ZXfFLXy39EthD/0q/LUmQ7oLySJl5MLXeh0Wls
-Gvme2HfCtenwVhZ1glILuB/Fcqcg1wZlbnhrv4B/9E+dqUh/9lkgwoeILLzInWpc
-l0p1PqdwpqlE+vH9uPWGGmMzQRdwfg==
-=Tcei
------END PGP SIGNATURE-----
-
---oHjAMmplQrPbLqyA--
+-- 
+Thanks & Regards,
+Taniya Das.
