@@ -1,250 +1,157 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE67206F3C;
-	Wed,  4 Dec 2024 17:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479AE24B26;
+	Wed,  4 Dec 2024 19:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733334605; cv=none; b=SAvRUu+wxpBESDog3A/2dXHlHl88qzuKls2Q6GVRL4Fxjv+IdPvX0wU2VclZlGJ1WiRkUWf6lZdJRUsSnTVbSvjbtzHlP/LnpuojCNPyC/xAmEwdXYNAO95eBSFjJX2u45lUWN5IS6NU1dcwABeToWKVpC8KQBAh0zuqdCtaUfw=
+	t=1733340064; cv=none; b=GJtllBfIO7+uNqSOwXikrJc7pb0uN9SjxtwNSCLQ4Cc3x9itg/Q/rulR+Et912AEQDnjetfRtFGtCpmeUM+KGLhXENySUzq2ByU6yP54fxuTGtHebgBk2+Z2+uoesbAGsG5YFb+Q/MAYkemmM5OUTv1TSY7YkY2ilCNW82VI8QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733334605; c=relaxed/simple;
-	bh=opmGdehnxln2nQW1oGD8VtWYJxzY95xTjOSYrBeQQVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tIjV2Ho8KCKEA99pdUmblbfORclzZFmzr0bzMRe+d8pdr87PWFF9TPNfafT7xw+lhXyac72UUY01SeBi9/2j69BAW5hzkTiIAOCjPF10MUBzJi5Hbb/29QmqzzJiz60YZkUGcmnLaN3R1XMdCewVSegHRZRFYbPwiIvW5u/pqzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V+CixEyr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V+CixEyr"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4EYRvw020496;
-	Wed, 4 Dec 2024 17:49:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uVyJPQ3V2aziLhjmvXLA9/9uqX/uOZt5e+r48GBUVns=; b=V+CixEyrIxrWE8E8
-	rafj9nXfIh3qRNQOONvc+E1+qLWusbyAhhaovl7QGK1r3+v5VWeuWa1sWNwdZ7rp
-	MLZG18/XVYFq4sonGtggVYAld+4RBr/hU9gPFn3Rtp8INWmIS7DjIjNpnDWHJeZW
-	HAbZwkIBOWruMl/lSyKX9yBzcTA/CTbD7pEgNvXIvaiGC8qzEodoFtH6jCmHYKJi
-	xt0LbjH9mLcfOVhn6VW0aMDAqHRh6opC2HzvHKjv81RaJtqOYXrWM97oWRqZCLPQ
-	XRqzMtihRA3Wlhvkdh1ZDLIFDzMCA6W2irLu4+GHrie9MspW/1AhrlgiOpbouqhc
-	MIGA8Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3exbygn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 17:49:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4HnvKb008376
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 17:49:57 GMT
-Received: from [10.216.58.11] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 09:49:53 -0800
-Message-ID: <a260a2a7-5cb3-468c-b73e-ef83f021278c@quicinc.com>
-Date: Wed, 4 Dec 2024 23:19:50 +0530
+	s=arc-20240116; t=1733340064; c=relaxed/simple;
+	bh=rYhegL9//2A2bkxLAO5La3avhpkdVv+Y03oZNvQdDP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bc6zr5E7Oi7fiXFSE4iASTjfoGtsEfOoKzES0DHnClSFtpiw6hKNa7+CU3j7Ua5QbMHJ01uk24+4iiN+FNj3BwGJACOzP9hjd1lViOCALq6F3xGjX2FY1ad3vGtCGHdcbomEFeBfGAGoOCKh0JT9Px/TevFNFsPgyra60malhfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4afab735b6cso19566137.1;
+        Wed, 04 Dec 2024 11:21:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733340059; x=1733944859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=inT4fZZhlTH1i9AqeiQIOnUqbVGNn3i6ScA8tNJSX0o=;
+        b=rrkn7jUWaqqnkKTtqBrX2IvTkz2PXyTF6diWFK/ct9Y/JCkB9aGR4NxsDm9N1tjhWH
+         LK/5vYPXyj+H9d2rFS7c9OnD3i2vb/Utc6YbNbxo/hne5ZoB2os3AT7huJEQaz1UK90y
+         Plvb+/JrJIOSNoQ5ITLetg7kXXJrOdcRCiLdbTMZgCwkwCmuVe1fX9ONszOzBJKsYgfJ
+         oDGE/2V9mK4F7uauuhmLm0U/zkLHXTa6yf4M0+aYMSQLrncR04/0gCmfB7nkCeZohelt
+         DYZOB5XuWcTJEkHMPv3qiwB7bv9+dQnVxyC/MAPOiMp3oC/7pNWl3Fv6d2p2bRlADbPX
+         DI3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUXPoLigzQVvMSJvZvtbyCTlnGX0n6x2+jHvE9ZHqM+WtVLYBf2F0PSmB1fy54gTbuw42EycCeDdL6I@vger.kernel.org, AJvYcCVYOvfRoh4+L2p2C608m268ImPoyUHN9BOBntDnicmP6YDKM5i+qfobTTrJCBHEOPNtXRuzY1wqzax+PnPS@vger.kernel.org, AJvYcCWNWEPbx+4YvN6NVpCRio1/h9/h9X7joyDkxdnCtmXNyDeDmrd50ffFQUgxYPlJniFL2fqBpyTQ2540@vger.kernel.org, AJvYcCWn4nV109sYQJVkhMIr4yhccoDMOLyVOW2P2UvV8JkAOGwaxX962wSv3clAF0VZXl7xmiJcbeKh9JE72DeFlbmClXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUf8ZUjpNXEpQhBMpqjIdMFOwdBRgbR6Yhat04VYhRCovp3pw/
+	qLAQ9jcOQkZ546naGU0W5GXWDtkLS+LdtF5aEbRG7BGGWK+XrMszz+LZh1dY
+X-Gm-Gg: ASbGncu3p6Wu1R6PTbBHvAyr24hB4aDkf32XNPwAVmsAl2rSjqwmkKLzMQEQxZXyEvy
+	kIqZLA3LQbyr3UnFwkaLMKNCwUWjiOggeZ4a8FAr/WYeC8f4/edBseopk2WeCneaLcVQjUwsyUY
+	OYMvqBV+Go4oml8RxTn7X9si6iLdmBGcvJLXlSLll0YbvrqxwHTGHWnHP+tvznavfg/W7kJ4ioa
+	/ygag2fDG4WKipwzRFwW1yqYX64ZKTrEFySCkqXCWoIrtC6AOl6Akq9eJHj9q0O0y8p+Snbp31i
+	SbTrcpVOCZKV
+X-Google-Smtp-Source: AGHT+IEEIZ8CorMuYzHXaNNDh4cSOaq176oWOIGGNawbSdY8MvMyxV6s4iJqrQL2TWN1aWVXKhUqVw==
+X-Received: by 2002:a05:6102:3f53:b0:4ad:de0b:fe11 with SMTP id ada2fe7eead31-4af97375fe1mr11646918137.17.1733340059620;
+        Wed, 04 Dec 2024 11:20:59 -0800 (PST)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af9d9d123bsm514620137.5.2024.12.04.11.20.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 11:20:57 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4af4575ec4cso15593137.2;
+        Wed, 04 Dec 2024 11:20:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUPrrvZ8v+6dfnyZKo4pWLdfNW7h7MV8OuCzV8XtjwuFLEIBpoLITAVB3ZJWfjQR0z0okdEjvuz5ftd@vger.kernel.org, AJvYcCUZpo6TKX9cgxUAGbf0KOQlo9+u19Rh00BlwO0lDQuhA47/hCX6lrvHiTjw6GVJJIr50SSIQTIlxHkFW04V@vger.kernel.org, AJvYcCUkj812aZHMW674kbnLGjZBDuAdh0pphw11QDE7UHj2EI67e+TlnwqbuaC/MiJonr0DBF80ZOY9luqPY1o2aowmuQ0=@vger.kernel.org, AJvYcCUz/hv9SWDFCfR44n6VBDZHTfDxnwjdXN651PuDbPGARcZitfpb9WyiFrcPko2iWUwdsf6+gyqyoi1D@vger.kernel.org
+X-Received: by 2002:a05:6102:3054:b0:4a4:8d45:6839 with SMTP id
+ ada2fe7eead31-4af97268516mr11708144137.13.1733340056024; Wed, 04 Dec 2024
+ 11:20:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: qcom: dispcc-sm8750: Add SM8750 Display clock
- controller
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Rob Herring <robh@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org>
- <20241128-sm8750-dispcc-v1-3-120705a4015c@linaro.org>
- <5f05f2305f37bd40bf92299c04480fbf.sboyd@kernel.org>
- <ef6f9bd0-c24b-4964-9228-bdab1221fff5@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <ef6f9bd0-c24b-4964-9228-bdab1221fff5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: c8rQ7TiPKTtS53QXweTMtx1ZEJ-mxxIY
-X-Proofpoint-GUID: c8rQ7TiPKTtS53QXweTMtx1ZEJ-mxxIY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1015 phishscore=0 adultscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040135
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com> <20241203093703.GL10736@pendragon.ideasonboard.com>
+ <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
+In-Reply-To: <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Dec 2024 20:20:44 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWa0frtVLJcoz7QRe=ZHa24K9MxyV5-_Ce4AUJo+LDEGA@mail.gmail.com>
+Message-ID: <CAMuHMdWa0frtVLJcoz7QRe=ZHa24K9MxyV5-_Ce4AUJo+LDEGA@mail.gmail.com>
+Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a779h0: Add display support
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Tomi,
 
+On Wed, Dec 4, 2024 at 5:04=E2=80=AFPM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+> On 03/12/2024 11:37, Laurent Pinchart wrote:
+> > On Tue, Dec 03, 2024 at 10:01:42AM +0200, Tomi Valkeinen wrote:
+> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >>
+> >> Add the device nodes for supporting DU and DSI.
+> >>
+> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
+>
+> >> ---
+> >>   arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 77 +++++++++++++++++++++=
+++++++++++
+> >>   1 file changed, 77 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/bo=
+ot/dts/renesas/r8a779h0.dtsi
+> >> index 12d8be3fd579..82df6ee98afb 100644
+> >> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> >> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> >> @@ -1828,6 +1828,54 @@ csi41isp1: endpoint {
+> >>                      };
+> >>              };
+> >>
+> >> +            fcpvd0: fcp@fea10000 {
+> >> +                    compatible =3D "renesas,fcpv";
+> >> +                    reg =3D <0 0xfea10000 0 0x200>;
+> >> +                    clocks =3D <&cpg CPG_MOD 508>;
+> >> +                    power-domains =3D <&sysc R8A779H0_PD_C4>;
+> >> +                    resets =3D <&cpg 508>;
+> >> +            };
+> >> +
+> >> +            vspd0: vsp@fea20000 {
+> >> +                    compatible =3D "renesas,vsp2";
+> >> +                    reg =3D <0 0xfea20000 0 0x8000>;
+> >> +                    interrupts =3D <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>;
+> >
+> > The documentation lists this interrupt as being LevelSensitive and
+> > Negative. I wouldn't expect the VSP to work at all with a wrong polarit=
+y
+> > in DT, so the level may get inverted somewhere.
+>
+> Indeed... It's the same for V4H. And it also has IRQ_TYPE_LEVEL_HIGH in
+> the dts. I tried changing it to LOW on V4H, but:
+>
+> genirq: Setting trigger mode 8 for irq 91 failed
+> vsp1 fea20000.vsp: failed to request IRQ
+>
+> I didn't dig further yet.
 
-On 12/4/2024 3:35 PM, Krzysztof Kozlowski wrote:
-> On 03/12/2024 23:09, Stephen Boyd wrote:
->> Quoting Krzysztof Kozlowski (2024-11-28 07:08:01)
->>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>> index 2ec9be21ff678e3343cccafa85801aa68805f440..d9ab42c625ddd61f9bf1857522d44d4547e42bf5 100644
->>> --- a/drivers/clk/qcom/Kconfig
->>> +++ b/drivers/clk/qcom/Kconfig
->>> @@ -1022,6 +1022,16 @@ config SM_DISPCC_8550
->>>            Say Y if you want to support display devices and functionality such as
->>>            splash screen.
->>>   
->>> +config SM_DISPCC_8750
->>> +       tristate "SM8750 Display Clock Controller"
->>> +       depends on ARM64 || COMPILE_TEST
->>
->> Please select QCOM_GDSC
-> 
-> Ack
-> 
->>
->>> +       depends on SM_GCC_8750
->>
->> select? Or imply? It's a functional dependency, not a build time one.
-> 
-> ARM64 is as well functional dependency, ARCH_QCOM present in all other
-> drivers as well. It is all the same. The point is to limit the config
-> options available to users/distros when they do not need them. In this
-> particular case: if user does not select main clock controller (GCC)
-> then allowing to choose Display clock controller is pointless.
-> 
->>
->>> +       help
->>> diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-sm8750.c
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..ff64ff93c4dbdd2aae22b55dd0e404544cc9373e
->>> --- /dev/null
->>> +++ b/drivers/clk/qcom/dispcc-sm8750.c
->>> @@ -0,0 +1,1960 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->>> + * Copyright (c) 2023-2024, Linaro Ltd.
->>> + */
->>> +
->>> +#include <linux/clk.h>
->>
->> Is this include used?
-> 
-> Not used, copy pasta from older driver. I'll clean it up.
-> 
->>
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/err.h>
->>> +#include <linux/kernel.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/pm_runtime.h>
->>> +
->>> +#include <dt-bindings/clock/qcom,sm8750-dispcc.h>
->>> +
->>> +#include "common.h"
->>> +#include "clk-alpha-pll.h"
->>> +#include "clk-branch.h"
->>> +#include "clk-pll.h"
->>> +#include "clk-rcg.h"
->>> +#include "clk-regmap.h"
->>> +#include "clk-regmap-divider.h"
->>> +#include "clk-regmap-mux.h"
->>> +#include "reset.h"
->>> +#include "gdsc.h"
->> [...]
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
->>> +       .cmd_rcgr = 0x8150,
->>> +       .mnd_width = 0,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_9,
->>> +       .freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src,
->>> +       .clkr.hw.init = &(const struct clk_init_data) {
->>> +               .name = "disp_cc_mdss_mdp_clk_src",
->>> +               .parent_data = disp_cc_parent_data_9,
->>> +               .num_parents = ARRAY_SIZE(disp_cc_parent_data_9),
->>> +               .flags = CLK_SET_RATE_PARENT,
->>> +               .ops = &clk_rcg2_shared_ops, /* TODO: switch to cesta managed clocks */
->>
->> What is cesta?
-> 
-> Cesta is a new hardware block which receives votes from consumers and
-> then manages groups of clocks. We do not have drivers for it, so I am
-> not sure how this here will work out.
-> 
-> I will grow the explanation in comment.
-> 
+Yeah, I don't think the GIC supports anything but IRQ_TYPE_LEVEL_HIGH.
+Which brings us to the two ISP nodes on R-Car V4H and V4M, both using
+IRQ_TYPE_LEVEL_LOW.
+Niklas: looks like drivers/media/platform/renesas/rcar-isp.c doesn't
+actually use the IRQ, so I guess that's how this could slip in?
 
-Clocks can work without cesta block as well.
+Gr{oetje,eeting}s,
 
->>
->>> +       },
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
->>> +       .cmd_rcgr = 0x8108,
->>> +       .mnd_width = 8,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_1,
->>> +       .freq_tbl = ftbl_disp_cc_esync0_clk_src,
->>> +       .clkr.hw.init = &(const struct clk_init_data) {
->>> +               .name = "disp_cc_mdss_pclk0_clk_src",
->>> +               .parent_data = disp_cc_parent_data_1,
->>> +               .num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
->>> +               .flags = CLK_SET_RATE_PARENT,
->>> +               .ops = &clk_pixel_ops,
->>> +       },
->> [...]
->>> +               .enable_reg = 0x80b4,
->>> +               .enable_mask = BIT(0),
->>> +               .hw.init = &(const struct clk_init_data) {
->>> +                       .name = "disp_cc_osc_clk",
->>> +                       .parent_hws = (const struct clk_hw*[]) {
->>> +                               &disp_cc_osc_clk_src.clkr.hw,
->>> +                       },
->>> +                       .num_parents = 1,
->>> +                       .flags = CLK_SET_RATE_PARENT,
->>> +                       .ops = &clk_branch2_ops,
->>> +               },
->>> +       },
->>> +};
->>> +
->>> +static struct gdsc mdss_gdsc = {
->>> +       .gdscr = 0x9000,
->>> +       .en_rest_wait_val = 0x2,
->>> +       .en_few_wait_val = 0x2,
->>> +       .clk_dis_wait_val = 0xf,
->>> +       .pd = {
->>> +               .name = "mdss_gdsc",
->>> +       },
->>> +       .pwrsts = PWRSTS_OFF_ON,
->>> +       .flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
->>> +       // TODO: no supply?
->>
->> What is this?
-> 
-> Development note. I will clean it up.
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+                        Geert
 
--- 
-Thanks & Regards,
-Taniya Das.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
