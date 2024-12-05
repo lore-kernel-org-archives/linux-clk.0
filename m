@@ -1,26 +1,26 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36A71DB92E
-	for <linux-clk@vger.kernel.org>; Thu,  5 Dec 2024 09:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA0C2066C6
+	for <linux-clk@vger.kernel.org>; Thu,  5 Dec 2024 09:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389594; cv=none; b=bH15hqOhEIJCmb4erWW0CWSSN4rIB9+9SPjxmp/g/DyICUwRSpX47yLZCt1QPRF545NsFceduQV8+2b9UTTVDtq7WgH3d9wC6qUSFVWF3xUK+5CQYxUCFfDJSxYQnrFptd6wE99D5IvkVqIGcMMJo0eQtx7pzyoJTbJ1jIgxDMc=
+	t=1733389595; cv=none; b=cQa2yhWpluMtz6hYJeGtNlhzz8qJdvkrfiUpC7Nq4b1x4qVoypOGOsIjIqRbLzRIDWbp3HUAyIXZEg7KfCssvagG0Rk7c4MbmvnGhXo5PmOi5QoZkPjvN9F6ysDGolW1rnIUxaPR1EN1mNk/EppfdpnO81u4gFSlHNeEX95PVFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389594; c=relaxed/simple;
-	bh=BrjZih4Ol/B/N7HxsWl8g5R6vYxxpRcHt620HszKJVU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QWPNYxxmH3KbGWN8qRlyoeJKUcqCpc76bVgWSB1VKnsl/GZ2272lEbbMr8cuAJbdxzlbNByyzzYwAMLHTn1+ViF0qbblSrm563pzgj388NrcBCb4HIyyyEohcrkMEkIi+DJkfOvdA/4yaJQMp0QQBX9DkVMEWPG2S1Xs1nAqIuo=
+	s=arc-20240116; t=1733389595; c=relaxed/simple;
+	bh=oK+x3raXO0ZklCx6Lwdr6h2upXcFX7OssXs9Pph4aKs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ju3gubGG2vq8iBZDJ4W1JPiEetuGhtHuz8R5j+eWIJXkW9sMWGwbWZDy/sGPJORZWyJ1T5cGxyABzCFOlCXlx41bPB2oJcNPQAatVFVEkCu5x/16kuArF0epSYLshbOv0W8PThWmMcec5xpSodK2//Nqk2r/9Dz55ySXJ1T0pf8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1tJ7oQ-0004Ks-Ji; Thu, 05 Dec 2024 10:06:18 +0100
+	id 1tJ7oS-0004Ks-KQ; Thu, 05 Dec 2024 10:06:20 +0100
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Subject: [PATCH v3 0/6] ARM64: dts: intel: agilex5: add nodes and new board
-Date: Thu, 05 Dec 2024 10:06:00 +0100
-Message-Id: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
+Date: Thu, 05 Dec 2024 10:06:02 +0100
+Subject: [PATCH v3 2/6] dt-bindings: net: dwmac: add compatible for Agilex5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -29,11 +29,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPhsUWcC/43NQQ6CMBCF4auQrh3TDlDAlfcwLqAMMImhpMUGQ
- 7i7hY0LE+Pyf4vvrcKTY/LikqzCUWDPdoyRnhJhhnrsCbiNLVBipmQqIWhQCLOd2IC3ppv6Guq
- eH7TkUMmuTduyq0ppRBQmRx0vh367xx7Yz9a9jrOg9vU/NyiQ0GCji6KUpCVdJxr75+zsyMu5J
- bHjAT+gwvw3iBEsdYa5JmOKBr/Abdve+EgsIxwBAAA=
-X-Change-ID: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
+Message-Id: <20241205-v6-12-topic-socfpga-agilex5-v3-2-2a8cdf73f50a@pengutronix.de>
+References: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
+In-Reply-To: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
 To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -42,60 +40,49 @@ To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
  Stephen Boyd <sboyd@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
 X-Mailer: b4 0.14.2
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
 X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
-As the the socfpga-dwmac binding is still in txt format, convert it to
-yaml, to pass dtb_checks.
+The Agilex5 SoCs have three Synopsys DWXGMAC-compatible ethernet
+IP-cores.
 
-An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
-Currently only QSPI and network are functional as all other hardware
-currently lacks mainline support.
+Add a SoC-specific front compatible to the binding.
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 ---
-Changes in v3:
-- add socfpga-stmmac-agilex5 compatible
-- convert socfpga-dwmac.txt -> yaml
-- add Acked-bys
-- rebase to v6.13-rc1
-- Link to v2: https://lore.kernel.org/r/20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de
+ Documentation/devicetree/bindings/net/socfpga-dwmac.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Changes in v2:
-- fix node names according to dtb_check
-- remove gpio 'status = disabled'
-- mdio0: remove setting of adi,[rt]x-internal-delay-ps. 2000 is the
-  default value
-- add Acked-by to dt-binding
-- Link to v1: https://lore.kernel.org/r/20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de
+diff --git a/Documentation/devicetree/bindings/net/socfpga-dwmac.yaml b/Documentation/devicetree/bindings/net/socfpga-dwmac.yaml
+index 022d9eb7011d47666b140aaecf54541ca3dec0ec..c578b4280c6c85f08b6e0918352d38ed98998489 100644
+--- a/Documentation/devicetree/bindings/net/socfpga-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/socfpga-dwmac.yaml
+@@ -21,6 +21,7 @@ select:
+         enum:
+           - altr,socfpga-stmmac # For Cyclone5/Arria5 SoCs
+           - altr,socfpga-stmmac-a10-s10 # For Arria10/Agilex/Stratix10 SoCs
++          - altr,socfpga-stmmac-agilex5 # For Agilex5 SoCs
+   required:
+     - compatible
+ 
+@@ -44,6 +45,12 @@ properties:
+               - altr,socfpga-stmmac-a10-s10
+           - const: snps,dwmac-3.74a
+           - const: snps,dwmac
++      - items:
++          - enum:
++              - altr,socfpga-stmmac-agilex5
++          - const: altr,socfpga-stmmac-a10-s10
++          - const: snps,dwxgmac-2.10
++          - const: snps,dwxgmac
+ 
+   altr,sysmgr-syscon:
+     $ref: /schemas/types.yaml#/definitions/phandle-array
 
----
-Steffen Trumtrar (6):
-      dt-bindings: net: dwmac: Convert socfpga dwmac to DT schema
-      dt-bindings: net: dwmac: add compatible for Agilex5
-      arm64: dts: agilex5: add gmac nodes
-      arm64: dts: agilex5: add gpio0
-      dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
-      arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
-
- .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
- .../devicetree/bindings/net/socfpga-dwmac.txt      |  57 ---------
- .../devicetree/bindings/net/socfpga-dwmac.yaml     | 126 +++++++++++++++++++
- arch/arm64/boot/dts/intel/Makefile                 |   1 +
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 109 ++++++++++++++++
- .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 140 +++++++++++++++++++++
- 6 files changed, 377 insertions(+), 57 deletions(-)
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
-
-Best regards,
 -- 
-Steffen Trumtrar <s.trumtrar@pengutronix.de>
+2.46.0
 
