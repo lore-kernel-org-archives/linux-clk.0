@@ -1,151 +1,92 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89EE217F3C;
-	Thu,  5 Dec 2024 18:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EDA229B00
+	for <linux-clk@vger.kernel.org>; Thu,  5 Dec 2024 18:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733421633; cv=none; b=aja2hlJHwljYWE6XtAj7xY7R4EEmmOl6LkiMhGWoiOo27aStuf0woIJ3lEctVb9ERXK/JblCUEBteEy4mzPFYr2xf4mpujUHRXjCk22raCKl4ceaD9NP768p41YAQGvSPimeLSkU9J+QrEqzy2Hd9dvN0/2OfRsMvaOPoThbMSA=
+	t=1733423435; cv=none; b=X8wdCUhs3lO7dW+YhBEP+3RGcxRkzY2G33GHP4zyicA4cGzvvIoYrYZjM1myGgUJoUSUdbYLXrPDtZU92USGpEQ2PDaiU5OCSVVDy9WQBb4riSd3jDbHGgDI43GTc83MZnecWC7aCkJZwxtcoTcIMBQHmk9WeL8PDjvrWU21FYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733421633; c=relaxed/simple;
-	bh=DoE5xA9xyi5p2e98u9ZbaYAK68xpaq+1Bs3+aldkt5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rl0uKp0qabOh0OpzKcLExKEimu+f0lcdxGzw2WKHUhTe1q/g7qzVJMG+PV+PQuMVNydEJqyGFLtesbHMk0PTSPdXISZXRPk9Us8lq3uFGSAFHyZ/lRjF/bVvfojbN7lFRl/ZfxED7pHDx51VnRDm04BZJ6gB74T2S+n9vSavx3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FI43LJmA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1733423435; c=relaxed/simple;
+	bh=ywTNg8/5ZwIso+ek5/ibrNAeaXrGW5XPSv4RyxxTzdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=A7zYd23kFxusiUyQPQN3RLW3ipjaBysJBVxOXXI+Q6v0s7i02ifIw1GXvsbBGYYiZ1r2uwkjtlUeClO3tP1VA1BPDOh+UM4sfkA9CSG23v2ZcHxZrH4UfrxewczTMH/kys6wqgDBnqRgiTbjmnRt1lku9gw7vylXTea7suQGGRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=KrHN/yPJ; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FI43LJmA"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaWL9007445;
-	Thu, 5 Dec 2024 18:00:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7ZYlfxZKV+ppmVXJGBfOMTmVD1CYCHv0LcoKCzf3A6Y=; b=FI43LJmAZ4ELiHhT
-	AIJeED6ddo6kdXywLI0LG/IrwK6DRQxm4noQ1EtzdI+NIKhXNvVqdgjP8MmuTM+k
-	tvMFpg5I5kamJGtWOf39dcpZPS+qyaHRLmLnObT5Sv6vrNPETgC3yIMUtDWHTzQR
-	5cog6SVX3pylQthlQvjqTAU3fT2OrN/ECyD9nXWzR+A8kkf4xp23vuGk61bvW8ZF
-	qLARkHqxFc/ZIDoBhy7+YtMeaE4N4jgBLpzXoE0VL9wl/gvkzOz/bIAMouJfHjTz
-	eD62tGefpi5zqTdtVXKQjj0v32DmvKEak6RP8KFblvSYqvkzhkHWmtH4deLEPpnX
-	jsLt6g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben88g3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 18:00:27 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5I0QHZ029550
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 18:00:26 GMT
-Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 10:00:26 -0800
-Message-ID: <affbe506-6a74-4822-ad83-9db5faa60cf6@quicinc.com>
-Date: Thu, 5 Dec 2024 10:00:25 -0800
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="KrHN/yPJ"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1733423431;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Amz6hL2pw8x/SHWoLqNvQ1TRgfepZkFsNEB+hKs1uI=;
+	b=KrHN/yPJZSIGemVuk010y1lAmWFREJjim9GC88LZepf3syOICcGH1lwV2+d+liZUYU6mtI
+	J9WvE0qk+AvAflHJAfFNHXJkXVGvpN6AwgQLPVDb5QsyXMFiPCor473fBmUUOd3R53L3l/
+	dX46Q8Te1EsaIItsGRbMhdedNF3HB1bEtYRcvW3Hqy6PMc9ojq9P38vLdTAlK+wPeVUosM
+	DC5NIGw0yPnsKQxXDBDXMHC8tfpU3Ge2RQB+XKEII0fuAh/Pk/K2P1oyoMhQ/tT0GIqgcY
+	w9SFpXN4acLzqINjZy9Da6T3+2ADrn6SB4v8FQHCk1oONC1juK10YdCWrs+7XA==
+From: Val Packett <val@packett.cool>
+To: 
+Cc: Val Packett <val@packett.cool>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 2/2] clk: rockchip: use PCLK_CIF0/1 clock IDs on RK3066
+Date: Thu,  5 Dec 2024 15:29:36 -0300
+Message-ID: <20241205182954.5346-2-val@packett.cool>
+In-Reply-To: <20241205182954.5346-1-val@packett.cool>
+References: <20241205182954.5346-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] dt-bindings: clock: qcom: Add SM8750 GCC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
- <20241204-sm8750_master_clks-v3-5-1a8f31a53a86@quicinc.com>
- <lgkjp7aocv2sij6tiectv5vm3yygcfnaguj4nomxu27scvtggu@uwzvgbvm44nn>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <lgkjp7aocv2sij6tiectv5vm3yygcfnaguj4nomxu27scvtggu@uwzvgbvm44nn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qt6cIDWZyLdFd-N4y8m6xA7IJVU2AqSR
-X-Proofpoint-GUID: qt6cIDWZyLdFd-N4y8m6xA7IJVU2AqSR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 clxscore=1015
- malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050132
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+RK3066 has two "CIF" video capture interface blocks, reference the
+newly added IDs for their PCLK clocks.
 
+Signed-off-by: Val Packett <val@packett.cool>
+---
+ drivers/clk/rockchip/clk-rk3188.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 12/5/2024 1:28 AM, Krzysztof Kozlowski wrote:
-> On Wed, Dec 04, 2024 at 11:37:17AM -0800, Melody Olvera wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Add device tree bindings for the global clock controller on Qualcomm
->> SM8750 platform.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   .../devicetree/bindings/clock/qcom,sm8750-gcc.yaml |  62 ++++++
->>   include/dt-bindings/clock/qcom,sm8750-gcc.h        | 226 +++++++++++++++++++++
->>   2 files changed, 288 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..aab7039fd28db2f4e2a6b9b7a6340d17ad05156d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
->> @@ -0,0 +1,62 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gcc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Global Clock & Reset Controller on SM8750
->> +
->> +maintainers:
->> +  - Taniya Das <quic_tdas@quicinc.com>
->> +
->> +description: |
->> +  Qualcomm global clock control module provides the clocks, resets and power
->> +  domains on SM8750
->> +
->> +  See also: include/dt-bindings/clock/qcom,sm8750-gcc.h
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,sm8750-gcc
->> +
->> +  clocks:
->> +    items:
->> +      - description: Board XO source
->> +      - description: Board Always On XO source
->> +      - description: Sleep clock source
->> +      - description: PCIE 0 Pipe clock source
-> Are you absolutely sure there is no PCIE 1 Pipe clock? List will only be
-> able to grow at the end, breaking the order, if it turns out there is
-> such clock input.
-
-Yes; I've checked all our dts and documentation and as far as I can 
-tell, there's
-no PCIE 1 pipe clk.
-
-Thanks,
-Melody
-
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 684233e72105..81e94b338d0f 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -344,7 +344,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclkin_cif0", "ext_cif0", 0,
+ 			RK2928_CLKGATE_CON(3), 3, GFLAGS),
+-	INVERTER(0, "pclk_cif0", "pclkin_cif0",
++	INVERTER(PCLK_CIF0, "pclk_cif0", "pclkin_cif0",
+ 			RK2928_CLKSEL_CON(30), 8, IFLAGS),
+ 
+ 	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+@@ -602,7 +602,7 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclkin_cif1", "ext_cif1", 0,
+ 			RK2928_CLKGATE_CON(3), 4, GFLAGS),
+-	INVERTER(0, "pclk_cif1", "pclkin_cif1",
++	INVERTER(PCLK_CIF1, "pclk_cif1", "pclkin_cif1",
+ 			RK2928_CLKSEL_CON(30), 12, IFLAGS),
+ 
+ 	COMPOSITE(0, "aclk_gpu_src", mux_pll_src_cpll_gpll_p, 0,
+-- 
+2.47.1
 
