@@ -1,143 +1,151 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A6C21A42B;
-	Thu,  5 Dec 2024 17:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89EE217F3C;
+	Thu,  5 Dec 2024 18:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420110; cv=none; b=X8qE5gCYVKfAy/lcjrUI+HxBisAcUn3xnW3vlTnG2pWQhflRU8kZ0wEIDeFrowqhOglfmiMOA9XYPVu4bd7H1CGdiwSjWO21qasHnfbZfPuqX47PeCYKv5ZuCzzmd6qHLkcPU+1EP7UnSu0vumqrsme5LQSiSvJ4pb+e9gtJNto=
+	t=1733421633; cv=none; b=aja2hlJHwljYWE6XtAj7xY7R4EEmmOl6LkiMhGWoiOo27aStuf0woIJ3lEctVb9ERXK/JblCUEBteEy4mzPFYr2xf4mpujUHRXjCk22raCKl4ceaD9NP768p41YAQGvSPimeLSkU9J+QrEqzy2Hd9dvN0/2OfRsMvaOPoThbMSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420110; c=relaxed/simple;
-	bh=WQlqs2b3gZl3ijVpbkx65Dbf+b3YV9hOMw6FMzNRzgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJOQ5Ool1nCb68nSeZ5j79DJpxVMWEG6ZcKZNbJyrabdoXcJIcFwGeDAtAJIPhs/qVXAihpTxn/lkZDiiloIZBklxqrpPIU2yFQ9TSePGbRB7WT2O40XtJ+S5xhqRTFod2lHq7zRtTQKeQiS2brcKaTofDHUvu5+D7wtE8gUpTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HwxXKHoA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1733421633; c=relaxed/simple;
+	bh=DoE5xA9xyi5p2e98u9ZbaYAK68xpaq+1Bs3+aldkt5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rl0uKp0qabOh0OpzKcLExKEimu+f0lcdxGzw2WKHUhTe1q/g7qzVJMG+PV+PQuMVNydEJqyGFLtesbHMk0PTSPdXISZXRPk9Us8lq3uFGSAFHyZ/lRjF/bVvfojbN7lFRl/ZfxED7pHDx51VnRDm04BZJ6gB74T2S+n9vSavx3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FI43LJmA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HwxXKHoA"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 69D762B3;
-	Thu,  5 Dec 2024 18:34:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733420076;
-	bh=WQlqs2b3gZl3ijVpbkx65Dbf+b3YV9hOMw6FMzNRzgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HwxXKHoA0W9slXiSRGl9gxsQ5iE6RURj3g8O/5xRzQf8G9ONWEojrYL9F/Hu/8ENF
-	 TY7+GZUP0Ko9zxewaSg4d5BMTZxVJ6YzUO91Qf5Xzj09CbWKWTnhxJqMv77YcPdnZB
-	 jHpTeH3QNsGTCpJf54wqRxMeyA8R8q4KIeTy0Z/g=
-Date: Thu, 5 Dec 2024 19:34:52 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v2 02/10] drm/rcar-du: Write DPTSR only if there are more
- than one crtc
-Message-ID: <20241205173452.GA21014@pendragon.ideasonboard.com>
-References: <20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com>
- <20241205-rcar-gh-dsi-v2-2-42471851df86@ideasonboard.com>
- <CAMuHMdVHRWbeQ8UF-xsKuxUNwHc5_kVwSgrTfOkwFFG5vG7fwA@mail.gmail.com>
- <98b43276-2a68-4ba9-999a-c738b8f7654f@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FI43LJmA"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaWL9007445;
+	Thu, 5 Dec 2024 18:00:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7ZYlfxZKV+ppmVXJGBfOMTmVD1CYCHv0LcoKCzf3A6Y=; b=FI43LJmAZ4ELiHhT
+	AIJeED6ddo6kdXywLI0LG/IrwK6DRQxm4noQ1EtzdI+NIKhXNvVqdgjP8MmuTM+k
+	tvMFpg5I5kamJGtWOf39dcpZPS+qyaHRLmLnObT5Sv6vrNPETgC3yIMUtDWHTzQR
+	5cog6SVX3pylQthlQvjqTAU3fT2OrN/ECyD9nXWzR+A8kkf4xp23vuGk61bvW8ZF
+	qLARkHqxFc/ZIDoBhy7+YtMeaE4N4jgBLpzXoE0VL9wl/gvkzOz/bIAMouJfHjTz
+	eD62tGefpi5zqTdtVXKQjj0v32DmvKEak6RP8KFblvSYqvkzhkHWmtH4deLEPpnX
+	jsLt6g==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben88g3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 18:00:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5I0QHZ029550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 18:00:26 GMT
+Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 10:00:26 -0800
+Message-ID: <affbe506-6a74-4822-ad83-9db5faa60cf6@quicinc.com>
+Date: Thu, 5 Dec 2024 10:00:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98b43276-2a68-4ba9-999a-c738b8f7654f@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] dt-bindings: clock: qcom: Add SM8750 GCC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
+ <20241204-sm8750_master_clks-v3-5-1a8f31a53a86@quicinc.com>
+ <lgkjp7aocv2sij6tiectv5vm3yygcfnaguj4nomxu27scvtggu@uwzvgbvm44nn>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <lgkjp7aocv2sij6tiectv5vm3yygcfnaguj4nomxu27scvtggu@uwzvgbvm44nn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qt6cIDWZyLdFd-N4y8m6xA7IJVU2AqSR
+X-Proofpoint-GUID: qt6cIDWZyLdFd-N4y8m6xA7IJVU2AqSR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=999 clxscore=1015
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050132
 
-On Thu, Dec 05, 2024 at 06:08:24PM +0200, Tomi Valkeinen wrote:
-> On 05/12/2024 16:16, Geert Uytterhoeven wrote:
-> > Hi Tomi,
-> > 
-> > CC Jacopo
-> > 
-> > On Thu, Dec 5, 2024 at 2:45 PM Tomi Valkeinen wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Currently the driver always writes DPTSR when setting up the hardware.
-> >> However, the register is only meaningful when there are more than one
-> >> crtc, and the only SoC with one crtc, V3M, does not have the register
-> >> mentioned in its documentation.
-> > 
-> > R-Car V3H/V3H_2, too.
-> 
-> Right... I was looking at the number of outputs, not the number of crtcs 
-> when going through the SoCs.
-> 
-> >> So move the write behind a condition.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >> ---
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 12 +++++++-----
-> >>   1 file changed, 7 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> index 2ccd2581f544..0fbf6abbde6e 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> @@ -185,11 +185,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> >>                  dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
-> >>          rcar_du_group_write(rgrp, DORCR, dorcr);
-> >>
-> >> -       /* Apply planes to CRTCs association. */
-> >> -       mutex_lock(&rgrp->lock);
-> >> -       rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> -                           rgrp->dptsr_planes);
-> >> -       mutex_unlock(&rgrp->lock);
-> >> +       if (rgrp->num_crtcs > 1) {
-> >> +               /* Apply planes to CRTCs association. */
-> >> +               mutex_lock(&rgrp->lock);
-> >> +               rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> +                                   rgrp->dptsr_planes);
-> >> +               mutex_unlock(&rgrp->lock);
-> >> +       }
-> > 
-> > This is per group, not per DU, right?
-> > The second group on R-Car M3-W/M3-W+ has a single channel, hence no
-> > DPTSR2 register.
-> > The second group on R-Car M3-N has a single channel, but it's actually
-> > the second physical channel in the group, and thus does have DPTSR2.
-> 
-> That logic does make sense. So that would be if (rgrp->channels_mask & 
-> BIT(1)) then write DPTSR? And probably add a comment in the code about this.
-> 
-> > And apparently we had this discussion before...
-> > https://lore.kernel.org/all/CAMuHMdXxf4oePnyLvp84OhSa+wdehCNJBXnhjYO7-1VxpBJ7eQ@mail.gmail.com
-> 
-> Somehow I hadn't even realized Jacopo had sent these before...
 
-Oops...
 
-I'll let Jacopo and you decide who will send an updated patch.
+On 12/5/2024 1:28 AM, Krzysztof Kozlowski wrote:
+> On Wed, Dec 04, 2024 at 11:37:17AM -0800, Melody Olvera wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Add device tree bindings for the global clock controller on Qualcomm
+>> SM8750 platform.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,sm8750-gcc.yaml |  62 ++++++
+>>   include/dt-bindings/clock/qcom,sm8750-gcc.h        | 226 +++++++++++++++++++++
+>>   2 files changed, 288 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..aab7039fd28db2f4e2a6b9b7a6340d17ad05156d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
+>> @@ -0,0 +1,62 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gcc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller on SM8750
+>> +
+>> +maintainers:
+>> +  - Taniya Das <quic_tdas@quicinc.com>
+>> +
+>> +description: |
+>> +  Qualcomm global clock control module provides the clocks, resets and power
+>> +  domains on SM8750
+>> +
+>> +  See also: include/dt-bindings/clock/qcom,sm8750-gcc.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,sm8750-gcc
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Board XO source
+>> +      - description: Board Always On XO source
+>> +      - description: Sleep clock source
+>> +      - description: PCIE 0 Pipe clock source
+> Are you absolutely sure there is no PCIE 1 Pipe clock? List will only be
+> able to grow at the end, breaking the order, if it turns out there is
+> such clock input.
 
--- 
-Regards,
+Yes; I've checked all our dts and documentation and as far as I can 
+tell, there's
+no PCIE 1 pipe clk.
 
-Laurent Pinchart
+Thanks,
+Melody
+
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+
