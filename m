@@ -1,214 +1,231 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0701AB517;
-	Thu,  5 Dec 2024 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A38E1D3194;
+	Thu,  5 Dec 2024 08:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383889; cv=none; b=kwkh59D3pFWQwGAR61cAjy2P1W8BaSd4o8i/WHLqYlmwrj4mvVS/vPuw/gE+0kYeHuwm449U/v1xbX5tDcg8cN/wuEXVOV73q4lqr2VmJVPjmC/nW2rbnUejHA1Ye0Sdwq19Mh8TU1X9YMMLuIbsMTLbLvPzFhMfV/RSeqnvBNA=
+	t=1733388503; cv=none; b=tilYWBmme1naXcmNHwtrNS8m0Btb1XsR0553UhMpJlIzgVd1KrBGaCs8dUpMLhLHVFi6XQyp/uOt+mpXD/wWnQd+AZANkfnzPDFAXblm7F+xMyrogYVO+s2P3ZaBNpXwBjPvUdCuwkNZv23RGJXDlajXk3kyWmgrjaWS4jJVdRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383889; c=relaxed/simple;
-	bh=tl7z5khqHwgfmMC1yiN0DCsWW590Zda7OF1raNXX9wo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gB18VIcCndzTzi/cOFwZGGdC92MN248Q2yRf1hm6zE9VjOJ6dwZwX4HVK4rLFZ4ypFVv2fgCjwpmFFVmK576bdu+UrYgLoh3tiEldBi7ZhUYAWLZ/YgIaF2ifigUykOyCcpV4tQv4EnsjnTepbZ/6NED4I+LEcU+vQNCyYmpuCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4S6usSu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733388503; c=relaxed/simple;
+	bh=kh1ZXVUS/kPUQYJb5ReNSJqKUxpeGMQq/7MUjMgViPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFzS+zn5SRPbIKdPEFetLCNs6RysfvCqlKpamH7FraR/mCWxOSRqIZ8vFtnxBgVWDm9HLy+VibGYNhJsxSz9lkZH5qsJB8TSY1KTElee+DCO0A/fvMdf0dKU4ye2cwbe+qdkI9LLw8MpCYJ5J8tzR5hlwVKGpO3cv99mfwnXl7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gHIhX/4M; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4S6usSu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC662C4CED1;
-	Thu,  5 Dec 2024 07:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733383888;
-	bh=tl7z5khqHwgfmMC1yiN0DCsWW590Zda7OF1raNXX9wo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e4S6usSuH5khmzNH0uwBG77QC78odPh/2kq0qMDeGd/ANo+7o2nuziV3Jq2mSUKpf
-	 dYh0PvwQehqhnJyfTH3JzGBmNODJ3u2eAe148ta1ZpfjuBKmVMLPV4NocVHUKWoVjq
-	 47LRw2chq/03glgPtpgZXYl56+3EnT6q6xyJn9sTqzfZ48rgWzZmnLyyw4+uiPb8Z3
-	 8bee0JOBwaP+qne5ecQ3OM4X//OzcNyaQoh8nCp1Qan5gXLNjtt4b1rpc52tBzQ9OD
-	 5o1V2PKEQhmjkiZvIZH3ExgEzAXYvfmGOHDhvJiqDnUjXCX2xfcJdJyJ+DQQSyx7c2
-	 QzyjbZrPQP62g==
-Message-ID: <5206c6a1-0473-40c2-b651-5dbca1204729@kernel.org>
-Date: Thu, 5 Dec 2024 08:31:17 +0100
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gHIhX/4M"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6F1CD7E2;
+	Thu,  5 Dec 2024 09:47:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733388469;
+	bh=kh1ZXVUS/kPUQYJb5ReNSJqKUxpeGMQq/7MUjMgViPo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gHIhX/4MnXbzQFe3SGYkSsgS+idt12lPeOfYUPzoTrwq09tuBwObLsiFzEIDU7/xz
+	 X3C6+L9P46MQbjWG+Dq/RHWmoL+u/bF/piePwSfQ3kc9MgUSUHmxAeFvLDZlKtE56H
+	 G2RhXTcpNhzPCIfCJ644fY8KVYNHMY0arcPwvM64=
+Date: Thu, 5 Dec 2024 10:48:06 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH 6/9] drm/rcar-du: Add support for r8a779h0
+Message-ID: <20241205084806.GB12436@pendragon.ideasonboard.com>
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-6-738ae1a95d2a@ideasonboard.com>
+ <20241203085654.GJ10736@pendragon.ideasonboard.com>
+ <e155c9b1-a43f-4be3-9825-2639ac3bb61d@ideasonboard.com>
+ <20241203104806.GN10736@pendragon.ideasonboard.com>
+ <1c557030-a267-4311-a942-f6245a5cc81a@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 01/14] clk: thead: Refactor TH1520 clock driver to
- share common code
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
- Stephen Boyd <sboyd@kernel.org>, airlied@gmail.com, aou@eecs.berkeley.edu,
- conor+dt@kernel.org, drew@pdp7.com, frank.binns@imgtec.com,
- guoren@kernel.org, jassisinghbrar@gmail.com, jszhang@kernel.org,
- krzk+dt@kernel.org, m.szyprowski@samsung.com,
- maarten.lankhorst@linux.intel.com, matt.coster@imgtec.com,
- mripard@kernel.org, mturquette@baylibre.com, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, simona@ffwll.ch,
- tzimmermann@suse.de, ulf.hansson@linaro.org, wefu@redhat.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134150eucas1p24ba8d2fbf2af5b8f9abe503b4334127d@eucas1p2.samsung.com>
- <20241203134137.2114847-2-m.wilczynski@samsung.com>
- <94a57c718a09a20d148101884bf2e5f2.sboyd@kernel.org>
- <94356242-7c94-4da5-a9ad-684d03ddedd6@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <94356242-7c94-4da5-a9ad-684d03ddedd6@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1c557030-a267-4311-a942-f6245a5cc81a@ideasonboard.com>
 
-On 04/12/2024 14:54, Michal Wilczynski wrote:
+On Thu, Dec 05, 2024 at 07:41:09AM +0200, Tomi Valkeinen wrote:
+> On 03/12/2024 12:48, Laurent Pinchart wrote:
+> > On Tue, Dec 03, 2024 at 11:22:15AM +0200, Tomi Valkeinen wrote:
+> >> On 03/12/2024 10:56, Laurent Pinchart wrote:
+> >>> On Tue, Dec 03, 2024 at 10:01:40AM +0200, Tomi Valkeinen wrote:
+> >>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >>>>
+> >>>> Add support for r8a779h0. It is very similar to r8a779g0, but has only
+> >>>> one output.
+> >>>>
+> >>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >>>> ---
+> >>>>    drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c   | 19 +++++++++++++++++++
+> >>>>    drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h   |  1 +
+> >>>>    drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 16 ++++++++++------
+> >>>>    3 files changed, 30 insertions(+), 6 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+> >>>> index fb719d9aff10..afbc74e18cce 100644
+> >>>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+> >>>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+> >>>> @@ -545,6 +545,24 @@ static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
+> >>>>    	.dsi_clk_mask =  BIT(1) | BIT(0),
+> >>>>    };
+> >>>>    
+> >>>> +static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
+> >>>> +	.gen = 4,
+> >>>> +	.features = RCAR_DU_FEATURE_CRTC_IRQ
+> >>>> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> >>>> +		  | RCAR_DU_FEATURE_NO_BLENDING
+> >>>> +		  | RCAR_DU_FEATURE_NO_DPTSR,
+> >>>> +	.channels_mask = BIT(0),
+> >>>> +	.routes = {
+> >>>> +		/* R8A779H0 has one MIPI DSI output. */
+> >>>> +		[RCAR_DU_OUTPUT_DSI0] = {
+> >>>> +			.possible_crtcs = BIT(0),
+> >>>> +			.port = 0,
+> >>>> +		},
+> >>>> +	},
+> >>>> +	.num_rpf = 5,
+> >>>> +	.dsi_clk_mask = BIT(0),
+> >>>> +};
+> >>>> +
+> >>>>    static const struct of_device_id rcar_du_of_table[] = {
+> >>>>    	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
+> >>>>    	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+> >>>> @@ -571,6 +589,7 @@ static const struct of_device_id rcar_du_of_table[] = {
+> >>>>    	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
+> >>>>    	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
+> >>>>    	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
+> >>>> +	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
+> >>>>    	{ }
+> >>>>    };
+> >>>>    
+> >>>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
+> >>>> index 5cfa2bb7ad93..d7004f76f735 100644
+> >>>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
+> >>>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
+> >>>> @@ -32,6 +32,7 @@ struct rcar_du_device;
+> >>>>    #define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
+> >>>>    #define RCAR_DU_FEATURE_TVM_SYNC	BIT(4)	/* Has TV switch/sync modes */
+> >>>>    #define RCAR_DU_FEATURE_NO_BLENDING	BIT(5)	/* PnMR.SPIM does not have ALP nor EOR bits */
+> >>>> +#define RCAR_DU_FEATURE_NO_DPTSR	BIT(6)  /* V4M does not have DPTSR */
+> >>>
+> >>> Do we need a quirk ? At first glance it seems the DPTSR register is only
+> >>> used for DU instances that have two channels, so a check on the number
+> >>> of channels should be enough ?
+> >>
+> >> What do you mean with "DPTSR register is only used for DU instances that
+> >> have two channels"? The upstream code sets it for all SoCs, doesn't it,
+> >> without any checks?
+> > 
+> > DPTSR is one of those registers that controls features shared between
+> > channels, in this specific case plane assignment to DU channels. The
+> > default register value (i.e. all 0's) splits resources between the
+> > channels. For DU groups with a single channel, there's no need for
+> > resource assignment. Logically speaking, the all 0's register value as
+> > documented in instances that have two channels would assign all the
+> > resources that exist in the single-channel group to the single channel.
+> > When computing the DPTSR value, the driver will (or at least should)
+> > therefore always come up with 0x00000000. Writing that to the register
+> > should be a no-op.
+> > 
+> > It's not clear if the register is present or not when the group has a
+> > single channel. Some datasheets document the register is not being
+> > applicable. Writing to it has never caused issues, so we may be dealing
+> > with the hardware just ignoring writes to a non-implemented register, or
+> > the register may be there, with only 0x00000000 being a meaningful
+> > value. This being said, some people are concerned about writes to
+> > registers that are not documented as present, as they could possibly
+> > cause issues. Safety certification of the driver could be impacted.
+> > We've updated the DU driver over the past few years to avoid those
+> > writes for this reason.
+> > 
+> > TL;DR: yes, the DU driver writes to DPTSR for DU groups with a single
+> > channel, but that seem it could be wrong, and we could fix it for all
+> > single-channel groups in one go without introducing this feature bit. I
+> > can test a patch on a M3 board that has a single channel in the second
+> > group.
 > 
-> 
-> On 12/3/24 20:56, Stephen Boyd wrote:
->> Quoting Michal Wilczynski (2024-12-03 05:41:24)
->>> diff --git a/drivers/clk/thead/Makefile b/drivers/clk/thead/Makefile
->>> index 7ee0bec1f251..d7cf88390b69 100644
->>> --- a/drivers/clk/thead/Makefile
->>> +++ b/drivers/clk/thead/Makefile
->>> @@ -1,2 +1,2 @@
->>>  # SPDX-License-Identifier: GPL-2.0
->>> -obj-$(CONFIG_CLK_THEAD_TH1520_AP) += clk-th1520-ap.o
->>> +obj-$(CONFIG_CLK_THEAD_TH1520_AP) += clk-th1520.o clk-th1520-ap.o
->>
->> Can the -ap driver be extended instead? Or are the clks in a different
->> IO region?
-> 
-> The Video Output (VO) clocks reside in a different address space as
-> defined in the T-HEAD manual 4.4.1 [1]. Therefore, creating a separate
-> driver made sense to maintain clarity and adhere to the existing
+> Do you have docs for r8a77970? Is the register there?
 
-There is no such rule, no convention even. But there is a rule and
-convention of re-using drivers.
+According to the Gen3 documentation the register isn't preent in V3M.
 
-> convention of having one driver per subsystem, similar to the
+> Do you want me to change the series to use the number of channels here, 
+> or shall we go with the current version and change it later if we're 
+> confident that the change works?
 
-You have here two drivers per subsystem, so even if there was such a
-rule, you just broke it.
+The change is easy so I'd like to do it now. It should be split to a
+separate patch. I'll test it on Gen3 hardware right away.
 
-> AP-specific driver.
-> 
-> [1] - https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
->>
->>> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
->>> index 17e32ae08720..a6015805b859 100644
->>> --- a/drivers/clk/thead/clk-th1520-ap.c
->>> +++ b/drivers/clk/thead/clk-th1520-ap.c
->>> @@ -5,297 +5,9 @@
->>>   *  Authors: Yangtao Li <frank.li@vivo.com>
->>>   */
->>>  
->>> -#include <dt-bindings/clock/thead,th1520-clk-ap.h>
->>
->> Presumably this should stay here.
->>
->>> -#include <linux/bitfield.h>
->>> -#include <linux/clk-provider.h>
->>> -#include <linux/device.h>
->>> -#include <linux/module.h>
->>> -#include <linux/platform_device.h>
->>> -#include <linux/regmap.h>
->>
+> >> Most of the SoCs seem to have two channels, but r8a77970 has one.
+> >> However, I don't have docs for that one. It could be that it does not
+> >> have DPTSR register, and indeed we could use the num_crtcs > 1 check there.
+> >>
+> >>>>    #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
+> >>>>    
+> >>>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+> >>>> index 2ccd2581f544..132d930670eb 100644
+> >>>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+> >>>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+> >>>> @@ -107,10 +107,12 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
+> >>>>    		 */
+> >>>>    		rcrtc = rcdu->crtcs;
+> >>>>    		num_crtcs = rcdu->num_crtcs;
+> >>>> -	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
+> >>>> +	} else if ((rcdu->info->gen == 3 && rgrp->num_crtcs > 1) ||
+> >>>> +		   rcdu->info->gen == 4) {
+> >>>>    		/*
+> >>>>    		 * On Gen3 dot clocks are setup through per-group registers,
+> >>>>    		 * only available when the group has two channels.
+> >>>> +		 * On Gen4 the registers are there for single channel too.
+> >>>>    		 */
+> >>>>    		rcrtc = &rcdu->crtcs[rgrp->index * 2];
+> >>>>    		num_crtcs = rgrp->num_crtcs;
+> >>>> @@ -185,11 +187,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+> >>>>    		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
+> >>>>    	rcar_du_group_write(rgrp, DORCR, dorcr);
+> >>>>    
+> >>>> -	/* Apply planes to CRTCs association. */
+> >>>> -	mutex_lock(&rgrp->lock);
+> >>>> -	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+> >>>> -			    rgrp->dptsr_planes);
+> >>>> -	mutex_unlock(&rgrp->lock);
+> >>>> +	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_NO_DPTSR)) {
+> >>>> +		/* Apply planes to CRTCs association. */
+> >>>> +		mutex_lock(&rgrp->lock);
+> >>>> +		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+> >>>> +				    rgrp->dptsr_planes);
+> >>>> +		mutex_unlock(&rgrp->lock);
+> >>>> +	}
+> >>>>    }
+> >>>>    
+> >>>>    /*
 
-...
+-- 
+Regards,
 
->>> +static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
->>> +{
->>> +       return container_of(hw, struct ccu_common, hw);
->>> +}
->>> +
->>> +static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
->>> +{
->>> +       struct ccu_common *common = hw_to_ccu_common(hw);
->>> +
->>> +       return container_of(common, struct ccu_mux, common);
->>> +}
->>> +
->>> +static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
->>> +{
->>> +       struct ccu_common *common = hw_to_ccu_common(hw);
->>> +
->>> +       return container_of(common, struct ccu_pll, common);
->>> +}
->>> +
->>> +static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
->>> +{
->>> +       struct ccu_common *common = hw_to_ccu_common(hw);
->>> +
->>> +       return container_of(common, struct ccu_div, common);
->>> +}
->>> +
->>> +static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
->>> +{
->>> +       struct ccu_common *common = hw_to_ccu_common(hw);
->>> +
->>> +       return container_of(common, struct ccu_gate, common);
->>> +}
->>> +
->>> +extern const struct clk_ops ccu_div_ops;
->>> +extern const struct clk_ops clk_pll_ops;
->>> +extern const struct regmap_config th1520_clk_regmap_config;
->>
->> Why is the regmap config exported?
-> 
-> The regmap_config is exported to allow reuse across multiple drivers.
-> Initially, I passed the clock VOSYS address space using the reg property
-> and created the regmap from it, enabling other drivers to utilize the
-> same configuration. Later, I switched to a regmap-based syscon approach
-> but haven’t moved the regmap_config back to the AP driver.
-
-
-It anyway in your original code cannot be exported. If you want to use
-syscon, then use syscon, not exporting regmaps manually.
-
-
-
-
-Best regards,
-Krzysztof
+Laurent Pinchart
