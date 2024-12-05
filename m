@@ -1,168 +1,133 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B6421D5BF
-	for <linux-clk@vger.kernel.org>; Thu,  5 Dec 2024 16:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E620B222574
+	for <linux-clk@vger.kernel.org>; Thu,  5 Dec 2024 17:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417585; cv=none; b=nVsWYyUH3qBYYVU6QWWBbfqv1qNE3qG/ZuyjmPXWIXcZwVuuzylbEgX2VD2u43/igMFKF6Prjv0WgOzGY4PNs/rH2NRlXd6iOeLScXXr/TqoqH6mS2J74GamNONeiIZcO3biFuXQTgEPHz0EElu/7LY35bAhCYa6ruCBa36oia0=
+	t=1733419650; cv=none; b=O/6+3473aayDoIe9WyAaubZuBtWHQoNVypXAZnjDQu5a3VlDi7XtbJyjMZXMatdED7jtjzWgqGhATa/PKzOwMn+QPIPh0+H81SaIwR1Q/Oi8RnLoFUWsau29/maLnYzXzI6TEk6VqsCB3IudpR1pLNmR+tuz0/J2DsXDNSu3UUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417585; c=relaxed/simple;
-	bh=OyMQfIrxSzriwv8hX5lVDVFWmfDKiMyaBU/TmxWr4wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIV0TCma5IYvmghVyujZrRzO5MKgHg6pKTL7YJr+UL8tZ2NJ+thv+4PqtqBE+Mes8/dsU9CiwthFH8oxvL+Ha+lEUtQr7Goi8U170sxAbloNgCfoE5mxspL4kE6YhTLM0MIP0HEPb+SfQbasRY4Toa6Y63JhCvF/337zegatd+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZDd5XrT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733419650; c=relaxed/simple;
+	bh=fF2LhtfF45ILB8O3xln5CQMo1Ph6TXBGzfylj3dTqI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8GLZKPxxxEPMJleInFdnFY1senmREGmUXGAcZTp+v1EK7KALYpOoUpd22K3l0L3H9dvtK4RoAStPMUYNOh6lff6EmnQuTArd2NisOwdjQKs7ciB69PxwT75yo2IhB0+QLWqkRBoDPNojfws67JD2n1aGs/Wm4R0UCh0yHIdNxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c6HWnIL8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZDd5XrT"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2155e9dcbe7so10625395ad.3
-        for <linux-clk@vger.kernel.org>; Thu, 05 Dec 2024 08:53:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733417581; x=1734022381; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3M40H5CkYQDVeDAAfwHVgOu/JLVGUmGE+3t86nRTx/0=;
-        b=MZDd5XrTrGVDGM/UG+y1/B74BshLnyb5UJbR9ZVE1MeRqQsgZ1O6qey7ZS0EzbbAhn
-         r4MsZhyKaE2+Z9Q7lHXrS1Xleeqh+SdrrGRslFudik+zEyOqjIhY3/6SgSo3H+Eouzg1
-         fmfTuqTvhdrg6RXqVC0jQ58PopqV6kHa0Msk1VJbhIVLGqfYExg8FN7DLV839w3+61u5
-         7uFLtN5PU+scn6tUdBFbNBABnqplKNLanODem2KQWJzpDP8wfCkrlSOdpK0Ev8kYKP6s
-         9lptjXeB9l20YL+RFKJRSmBpFPFpUMtaPXyKMQC88TS6cT/YaEHTRW7V6lUNWULhKSrV
-         OWhw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c6HWnIL8"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5EWlAC016480
+	for <linux-clk@vger.kernel.org>; Thu, 5 Dec 2024 17:27:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fj1DwXHWgW6cIws9PIYZhpFQWc7IBvxR8/G4nwNPL70=; b=c6HWnIL8lwL49g5q
+	MuxA763cZ+2VCknfeNDQKVHyOQ3+P2VaVoOaQnMh8BWFIOpBRwYs1uAjHtLYpYig
+	gHOfFOHnC9mCkB2jccPXAkYxFKH7K3tT4m+ZyWRLMScLJ8B6OzckmgoqPAxsnFz4
+	67mxhCMUH7J9kVgtPeKwRP2ZfDjgPokd8uW1LqgkxGmfuD4C6q4riq8jfdtYufYR
+	A7Sj5t43/pu8M8Imu2W2j6O4yn5t1XL23+UN2TCgNr+MUojHX52dBPL3rgfnS0Bs
+	QywoxgsJdHLPW2SvpOpy1DIMWAa/QD6NbsqlhSKEwzDHzEEtclaFZKWXogyRH2vM
+	bu8UMA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43be170h0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 05 Dec 2024 17:27:27 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-466a20c8e57so1598261cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Dec 2024 09:27:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733417581; x=1734022381;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1733419647; x=1734024447;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3M40H5CkYQDVeDAAfwHVgOu/JLVGUmGE+3t86nRTx/0=;
-        b=wHnTZENba0SFsfYZsySym9DmZWvOUhlhnnTD6Bsp9JgKMEh75bUkwjId4gxuEFiLwA
-         ypzU4a0aZO1iUtvzRIOq9aUOmftHuZREtKZozVYNj9U9N9LgcQvbdfpLz/OLdLCiu1lt
-         pMCgcZElplMUrPBnwpLqdu18xoWpAm7VwuM79d9c/Ktoe/jknXZECewNy/Rj0LsUDDk9
-         Sw8d88JD5p8hNP43G6splUhTnrKSJ81obHm88MwEaNNXgmwVPusbNjVdeWRi2GcKsVtR
-         2wSd8yTinH0gB9eMR1mSIEi1XOQgctqyTSOXwNfio9RZAz39Bs/pHNyjf5VrxEwW4iF9
-         +hTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ4WEsdSAaDVOTh7fij3lvHBpiXZ/XUqSwJVKrfH2SCXdJPG9ZrQti5M5tGCh/IZWli65sF+1+aWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD8IvcODDLPkZvourok8zP9BqbxdSWf/7YGoPBXXzqqAe7DvCA
-	4MSdOwV27WF16B97P3JpuT5GOFWU7Xz59rwxqVKw42NWFCn1+z/hTUv/uDBZ8Q==
-X-Gm-Gg: ASbGncuxNesiIXa3VKfFJgsSNBzLjMxzoIJwNb7Mvz48VjUSnEVrzo/QnXRFT8AwE1W
-	BBKRvPzk6SQTmu6SjAcviHy7bJNezZ9pEoNT1qDI3C5z50DHvHpC2YEfNp27qxEJZa6rDvr/o+R
-	EDskR9r3YAZBp8rlN/CKwSLWQr3DiCmsETAII6PTeIfcD4/a/VhBbu4nUBIhCy3yniUGUQsJ1AH
-	2VgxhnDK7nce/J3BoZRKUsqUxB/QhHZ2qM+gmw2+cBi5QXts6uTKyVEpEP4SA==
-X-Google-Smtp-Source: AGHT+IFYO3XDZ6IIHPLOsjky3D00Q3xsDrNzgdjwZkcMxnvdQlHnJg11TlcIOJ2l2C46xAjuD8l7Zw==
-X-Received: by 2002:a17:902:e810:b0:215:734f:ffe5 with SMTP id d9443c01a7336-215bd128365mr145479605ad.32.1733417581263;
-        Thu, 05 Dec 2024 08:53:01 -0800 (PST)
-Received: from thinkpad ([120.60.133.114])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0921asm14725025ad.178.2024.12.05.08.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 08:53:00 -0800 (PST)
-Date: Thu, 5 Dec 2024 22:22:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>,
-	Chuan Liu <chuan.liu@amlogic.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
-Message-ID: <20241205165251.fbf3ty6jgdqt4r3x@thinkpad>
-References: <20241202100621.29209-1-johan+linaro@kernel.org>
- <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
- <Z07AXbQvvZwI8Ki6@hovoldconsulting.com>
- <20241203092151.izcsgzqep4imbcwe@thinkpad>
- <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
+        bh=fj1DwXHWgW6cIws9PIYZhpFQWc7IBvxR8/G4nwNPL70=;
+        b=ix3K7fXj6aVUup2lYNju+e3P3331DdrJx1XhXvP8awiRJAPLYSPHRd1bpHNjKhI9fY
+         xM7l1vwSk//N1EVCDydfsTKEK/oiQaYUpMCTBIghKceFTgI99HCGl2G6QYcz1IhFzCLO
+         Eoi3o6ewpmuMUXo+4+Y1cWB4uV+7g/upU8i7Al6H3LXP1sxF4NGoqcsl+F/wqxvwQD7h
+         Wa/qqX14ZY2R59Ghdi72HG5BdrpudDIVBa3sWWHBN7K2orv1dYnIL65sIO/Cd4kf97/R
+         RHRYe6FhKECfurKU+Yx5Mm3r6zHqzpR4udH+Q+MBRFKXbht/JSYMTL8fkxtuOe4+VT8m
+         gh7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUPNR1LfvctrVE3+DI5G8azkHGsC92puIwzU/m+K+PHrv3mIsiJOALlN8N/8up9YbZwygAcWMT+Ujw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBms+miJcJBiFxvRdTJBR4Iu9tHzU1rN207rvKF12FLGWl13mx
+	1pxG+H44dtQQGsz1YUiyT/iiLibe3eRF3Qw5lchwEvExDMilNqL4yTDhAVKdkkdc4O7klOqER/C
+	2j6WKhzKWs3xvC8LW4O3qElBSzQG5m2KWYLumd6kOl3MEm0Il344/cpmLy9c=
+X-Gm-Gg: ASbGncuhXgvuOhVc4o+J26ZQOml4Tfpgl/VFM2WO3LD9jhZPDvrQ2UdaX6Wl69AcCUG
+	5+PWdSlINlE8028atO2rNRjfDja6prK74nRs01hpn39p4IgfsupsR/gXkZJ+vEU9N1G4RHmfRyh
+	UA8x7WdvTBzWDxPp3qI8sH6NgGg6V/sEan5VWqRXvg5LUsrfh48r8PRUcX4gH5rL5LyargTv/r+
+	DcMRzdOqOEqqZDaOKJcRUYn8mmVnSQoBTWrsDE9Bocqso1vnAinLxETzOb5ICYnNJ3OZYS2L338
+	8q4CKuQvgoXWgFidAlTaI6AaBPhtvHE=
+X-Received: by 2002:a05:622a:cf:b0:461:4467:14bb with SMTP id d75a77b69052e-46734ca2a7fmr95021cf.2.1733419646864;
+        Thu, 05 Dec 2024 09:27:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9jw9d6QQQ742d1X4H1GTd0gJ/jXukZyEhfsj2yNb2yqqSlyALEbJIukWb/H2Gua4FXrmiPw==
+X-Received: by 2002:a05:622a:cf:b0:461:4467:14bb with SMTP id d75a77b69052e-46734ca2a7fmr94721cf.2.1733419646416;
+        Thu, 05 Dec 2024 09:27:26 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608faesm1042160a12.44.2024.12.05.09.27.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 09:27:24 -0800 (PST)
+Message-ID: <3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com>
+Date: Thu, 5 Dec 2024 18:27:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-4-54075d75f654@linaro.org>
+ <02dd5593-38ba-4344-aa64-0913eca45808@oss.qualcomm.com>
+ <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
+ <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
+X-Proofpoint-GUID: BHobn1EyWmjaEhIqoV3dU162QcCekwN5
+X-Proofpoint-ORIG-GUID: BHobn1EyWmjaEhIqoV3dU162QcCekwN5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
+ mlxlogscore=905 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050128
 
-On Tue, Dec 03, 2024 at 11:30:07AM -0800, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2024-12-03 01:21:51)
-> > On Tue, Dec 03, 2024 at 09:25:01AM +0100, Johan Hovold wrote:
-> > > [ +CC: Viresh and Sudeep ]
-> > > 
-> > > On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
-> > > > Quoting Johan Hovold (2024-12-02 02:06:21)
-> > > > > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
-> > > > > 
-> > > > > The offending commit results in errors like
-> > > > > 
-> > > > >         cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
-> > > > > 
-> > > > > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
-> > > > > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
-> > > > > 
-> > > > > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
-> > > > > provider support"):
-> > > > > 
-> > > > >         [T]he frequency supplied by the driver is the actual frequency
-> > > > >         that comes out of the EPSS/OSM block after the DCVS operation.
-> > > > >         This frequency is not same as what the CPUFreq framework has set
-> > > > >         but it is the one that gets supplied to the CPUs after
-> > > > >         throttling by LMh.
-> > > > > 
-> > > > > which seems to suggest that the driver relies on the previous behaviour
-> > > > > of clk_set_rate().
-> > > > 
-> > > > I don't understand why a clk provider is needed there. Is anyone looking
-> > > > into the real problem?
-> > > 
-> > > I mentioned this to Mani yesterday, but I'm not sure if he has had time
-> > > to look into it yet. And I forgot to CC Viresh who was involved in
-> > > implementing this. There is comment of his in the thread where this
-> > > feature was added:
-> > > 
-> > >       Most likely no one will ever do clk_set_rate() on this new
-> > >       clock, which is fine, though OPP core will likely do
-> > >       clk_get_rate() here.
-> > > 
-> > > which may suggest that some underlying assumption has changed. [1]
-> > > 
+On 2.12.2024 4:30 PM, Bryan O'Donoghue wrote:
+> On 02/12/2024 15:02, Dmitry Baryshkov wrote:
+>>>> +            clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+>>> This clock is not registered with the CCF
+>> Isn't that be going to be handled by the CCF on its own (like orphans,
+>> etc)?
 > 
-> Yikes.
+> For refence this is always-on ATM.
 > 
-> > 
-> > I just looked into the issue this morning. The commit that triggered the errors
-> > seem to be doing the right thing (although the commit message was a bit hard to
-> > understand), but the problem is this check which gets triggered now:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c?h=v6.13-rc1#n2319
-> > 
-> > Since the qcom-cpufreq* clocks doesn't have parents now (they should've been
-> > defined anyway) and there is no CLK_SET_RATE_PARENT flag set, the check returns
-> > NULL for the 'top' clock. Then clk_core_set_rate_nolock() returns -EINVAL,
-> > causing the reported error.
-> > 
-> > But I don't quite understand why clk_core_set_rate_nolock() fails if there is no
-> > parent or CLK_SET_RATE_PARENT is not set. The API is supposed to set the rate of
-> > the passed clock irrespective of the parent. Propagating the rate change to
-> > parent is not strictly needed and doesn't make sense if the parent is a fixed
-> > clock like XO.
-> 
-> The recalc_rate clk_op is telling the framework that the clk is at a
-> different rate than is requested by the clk consumer _and_ than what the
-> framework thinks the clk is currently running at. The clk_set_rate()
-> call is going to attempt to satisfy that request, and because there
-> isn't a determine_rate/round_rate clk_op it assumes the clk can't change
-> rate so it looks to see if there's a parent that can be changed to
-> satisfy the rate. There isn't a parent either, so the clk_set_rate()
-> call fails because the rate can't be achieved on this clk.
-> 
-> It may work to have a determine_rate clk_op that is like the recalc_rate
-> one that says "this rate you requested is going to turn into whatever
-> the hardware is running at" by simply returning the rate that the clk is
-> running at.
+> drivers/clk/qcom/gcc-x1e80100.c:    qcom_branch_set_clk_en(regmap, 0x26004); /* GCC_CAMERA_AHB_CLK */
 
-Sounds reasonable to me. Fix submitted incorporating your suggestion, thanks!
+Okay let's keep it asis and call this a Linux impl detail
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Konrad
