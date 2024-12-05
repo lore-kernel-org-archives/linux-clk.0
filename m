@@ -1,43 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B96F18E028;
-	Thu,  5 Dec 2024 09:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082E31D90A7;
+	Thu,  5 Dec 2024 10:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390937; cv=none; b=QYuOEGbQGPZ6vm3/0VQ0sorxOfGLev4cl9twcyAgEA4bkZ8P3ZVDVPS3IYhTc10BS/QrRs7V45MrgcAnQ6F7fF+W2uU12lRiFQDKJ764w9BpRHa5gqgQVtWH1oxRy72RxmS+njA4W6EFO2qNfVP/lbcrHnTXtkM4BNUQISPRDBQ=
+	t=1733394332; cv=none; b=WgJd+gcbkONrXzMP74I8BUrtCE3vjXZSr6rCxeQFV/fH/N3mdDbcjcgUMMmnlwowIcEws9SVVOVxEWlilFY6YU3MouR5LHalloXOn6qHp/7wyY0Ug0u923M+wFovVtjrTDEeUGDx6zZFn3Fr28sxuFqOuTkcboA9u7k0hCXlyOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390937; c=relaxed/simple;
-	bh=tk3LIQCxFVT/6TzDXNiyaw+HXW8CetB5EIotosZrDiU=;
+	s=arc-20240116; t=1733394332; c=relaxed/simple;
+	bh=xc/AP1q5J7sVe4uDrqIu8OSigI0sdX0g5xbtoyVjNxE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAhkU/7fnvR7Y+k073m1W52c/FIirdrZw+dxcRK6D5GgF4sSp/rV0NL7AcWsNhtWR/c4GKp9EZzSwhyCpsQgLoE+tPYuCekokBxfb7E3N4cnWgZ5/MSzL32WUAlBUH/eT2LDu0b8qzkwVkUvp71CWMXdDHFyr7ZKb4SfBgbqs08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=deoroIp7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1EXYYLpaLruVrtvC7C9k64hDZJNjMRRj2l+4m+WvWsB2ZXmwasu6TwIat+MgglR84YFplKY9Xr6nZzOSC3ZlPse4jQsXb06FzokGO9MusKAz4QQC0+EDYb/oeSwuAYeCutAWYQHCBKPNcSsAKt7XHQKDxF5mcY3/kts3uXO3aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7f/dkLh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="deoroIp7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF54DC4CED1;
-	Thu,  5 Dec 2024 09:28:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7f/dkLh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEFEC4CED1;
+	Thu,  5 Dec 2024 10:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733390937;
-	bh=tk3LIQCxFVT/6TzDXNiyaw+HXW8CetB5EIotosZrDiU=;
+	s=k20201202; t=1733394331;
+	bh=xc/AP1q5J7sVe4uDrqIu8OSigI0sdX0g5xbtoyVjNxE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=deoroIp76syUUWCBcHWlSyWz/IXwR8nslt0uhVaH1+Tr/cP7QSLQH8K0oWLd0f2h6
-	 Mgvm7ye55eoC6ZGhibIYQINNG1CVd1wY6/qf+Gnnokx8bBP6wxju6UKD2t2LsEnedA
-	 IwgnRppCwcayDDBzn4kOKbCSRgXgJ1D4cS1W1SsEmi/5snKptLoUX0Kw94fC/Dh8Ub
-	 LyzYAqEckn2JhRxiarldHJuxSseqKzG56CRDs5x4oGto1OR8+8kQNg2nYxRUJPz3/U
-	 o8NYgI+ZpZFvD8tzgiX/77VG/4UanJVFL6RIdcYtkutM9g9t7JYDesV4bc/FgdVEPL
-	 Em+7Q3mkLD+EQ==
-Date: Thu, 5 Dec 2024 10:28:54 +0100
+	b=s7f/dkLhhctWIeUhGLpjKXnajl+5VZbXesXWXsw3g9wn7qcKhle+r+8J9OmlTgPtP
+	 4VziQdVRNp9frk6Gd3HgDsmJQ5yMp/ov/RMej/aIvR8Xt/wCVL5IdZXYLSX5/aFlsn
+	 /87Q4MMfeo+q2fKouI/C2HTFxtkh1QrDsCFiZGE62cFHULm8HWpHzrMp+QWJChO7aH
+	 WZVR5Rrder2DLmoTSi4Jcf4VMHrf06/SnzgMo3rTGpXSjSary79Wmj4hYZHfNLURpg
+	 fKL2XVZMAOyCLw/Sk4yEDZ/gs5zbJfQiO16d1fmuulK8tUR/X2L5qUaf+0tT0M0TgV
+	 9aUR7/WdcYNQw==
+Date: Thu, 5 Dec 2024 11:25:28 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] dt-bindings: clock: qcom: Add SM8750 GCC
-Message-ID: <lgkjp7aocv2sij6tiectv5vm3yygcfnaguj4nomxu27scvtggu@uwzvgbvm44nn>
-References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
- <20241204-sm8750_master_clks-v3-5-1a8f31a53a86@quicinc.com>
+To: Val Packett <val@packett.cool>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: add clock ID for CIF0/1 on RK3066
+Message-ID: <5kesytgbhfununu5li4ychaw4newkctx4wuhlshks2ertfkd2t@jauqcntehv2z>
+References: <20241205055122.11613-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,60 +45,23 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241204-sm8750_master_clks-v3-5-1a8f31a53a86@quicinc.com>
+In-Reply-To: <20241205055122.11613-1-val@packett.cool>
 
-On Wed, Dec 04, 2024 at 11:37:17AM -0800, Melody Olvera wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
+On Thu, Dec 05, 2024 at 02:50:46AM -0300, Val Packett wrote:
+> RK3066 does have two "CIF" video capture interface blocks, add their
+> corresponding clock IDs so that they could be used.
 > 
-> Add device tree bindings for the global clock controller on Qualcomm
-> SM8750 platform.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> Signed-off-by: Val Packett <val@packett.cool>
 > ---
->  .../devicetree/bindings/clock/qcom,sm8750-gcc.yaml |  62 ++++++
->  include/dt-bindings/clock/qcom,sm8750-gcc.h        | 226 +++++++++++++++++++++
->  2 files changed, 288 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..aab7039fd28db2f4e2a6b9b7a6340d17ad05156d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller on SM8750
-> +
-> +maintainers:
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module provides the clocks, resets and power
-> +  domains on SM8750
-> +
-> +  See also: include/dt-bindings/clock/qcom,sm8750-gcc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8750-gcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board Always On XO source
-> +      - description: Sleep clock source
-> +      - description: PCIE 0 Pipe clock source
+>  drivers/clk/rockchip/clk-rk3188.c             | 4 ++--
+>  include/dt-bindings/clock/rk3188-cru-common.h | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 
-Are you absolutely sure there is no PCIE 1 Pipe clock? List will only be
-able to grow at the end, breaking the order, if it turns out there is
-such clock input.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
 Best regards,
 Krzysztof
