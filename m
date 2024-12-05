@@ -1,181 +1,177 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A440917E473;
-	Thu,  5 Dec 2024 16:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F146721D592;
+	Thu,  5 Dec 2024 16:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733414914; cv=none; b=rnLtkflmJdyYEmKyWaZb0FOvn+vxQ/gML+Z45r8w3Aju4M6ybgap30XcO9Q9kYo0HlbPXZzkRauSPPB7uHuJCaKo9Ms7eLRyB4MFJ+YveVQw8rXsnNQtCgJByFcW8RB9ebruqovilgXJIXOnp4gvGWXUYN06EW+dMmzq8w5fjq4=
+	t=1733417449; cv=none; b=HXoKXwU5CyzB4Z+jj3q6PJBHlREJ6AUrCys1hGQDyJ2/0OM3oH8EZtcwJxFhYNx8/2Z/0w7/YDIk3y6TV64TnHJhXZ8edKtTOea1CD/o6kGjS/FDGOFGSt9CU+JB1XIF2atNlJzJDBeS53T0duXc+rJ87qoeS7ZGNSW0F/JdeV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733414914; c=relaxed/simple;
-	bh=laiIJD9x59dMaPoXu8TfoBIpHF70Qyx8qxXjOIXVd8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s4NG7oSAMdIYZyJYAk2QuRzElgSj9zbpHljTVmQsITR7xE/rzRe97kQri48ycIKZQdI6BtBc44jbx10W7W05W03Lg5VHD1Z7Dnb2wma+ouxkOUG978Bz5CDM8Vz0zIx8r7vcsC0sqHjKIxQy4ID2RdrKVQf9XFGy2gcust+qkWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wHaIcIXu; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1733417449; c=relaxed/simple;
+	bh=dJ3uHGKm141EUtpjkl8lgeTC3Mt+dxJ7luN1jss0jFM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cJAz4kE4cp+a5O5J3i13FXj7KQAysVhoKGZax41kS8Kf0mxj75QpC3fYvCAKb0OsrEL57bOQd7G2XeeOWM0y2tSn4EOPLkzZU042twLn+IL6uO85qn06xgk72LInsQWp8qXSTPgDmfKdzuiX63RrB0tYfd9yJIlq1GTsFoeBmn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZAVJh5B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wHaIcIXu"
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D925C7E2;
-	Thu,  5 Dec 2024 17:07:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733414880;
-	bh=laiIJD9x59dMaPoXu8TfoBIpHF70Qyx8qxXjOIXVd8g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wHaIcIXuZBA59Omydk/Jq9R+iNDX86ayihxZwyXk6bzh65jagTE9P2/3EHMGVmWtu
-	 goo7MOud7sCYM4R91IxqFOsRxb/rg20uiHeRPeHBz4onm5/CH1wEPg25+dkUlTEdhu
-	 OWSVHuo26j3I+JukYWftfzcZaFRWKNO51ibat1c0=
-Message-ID: <98b43276-2a68-4ba9-999a-c738b8f7654f@ideasonboard.com>
-Date: Thu, 5 Dec 2024 18:08:24 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZAVJh5B"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C617EC4CEDD;
+	Thu,  5 Dec 2024 16:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733417448;
+	bh=dJ3uHGKm141EUtpjkl8lgeTC3Mt+dxJ7luN1jss0jFM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=gZAVJh5BBUOaJnfr6AeKfhpdnlNQv4qH4+7vjs4QJ8xgYCT51IbYFpcLSu+9E8WHR
+	 MdN2oJC54IZnnxdkqtrF6VORnCN9R/+hou+OvZscDwA3kthKHjFfsMOLp+Wyd5fbrD
+	 iLsEHJ87EEQKhtFxQ1zrs4ggXjDHwhrcmmAV6do5AnmVBzj9cBuFUi8Z8JGBu+idbB
+	 hQZapT4kcT3cdKcJYSYjKPMiJoQkZ+qtWMyAyPU/rCmLiYmX44qQr4JuugrS8thCG5
+	 DaG3Wlh7l0OV3qg8HYjObpCL0vUV6VM30S1waf43nVd/S/wZt5wLQq7dYhdENTyrhE
+	 O04WKSFnUtaVg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E30E77178;
+	Thu,  5 Dec 2024 16:50:48 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Date: Thu, 05 Dec 2024 22:20:28 +0530
+Subject: [PATCH 1/2] cpufreq: qcom: Fix qcom_cpufreq_hw_recalc_rate() to
+ query LUT if LMh IRQ is not available
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] drm/rcar-du: Write DPTSR only if there are more
- than one crtc
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-clk@vger.kernel.org,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-References: <20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com>
- <20241205-rcar-gh-dsi-v2-2-42471851df86@ideasonboard.com>
- <CAMuHMdVHRWbeQ8UF-xsKuxUNwHc5_kVwSgrTfOkwFFG5vG7fwA@mail.gmail.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CAMuHMdVHRWbeQ8UF-xsKuxUNwHc5_kVwSgrTfOkwFFG5vG7fwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241205-qcom-cpufreq-clk-fix-v1-1-de46c82e0fe5@linaro.org>
+References: <20241205-qcom-cpufreq-clk-fix-v1-0-de46c82e0fe5@linaro.org>
+In-Reply-To: <20241205-qcom-cpufreq-clk-fix-v1-0-de46c82e0fe5@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johan Hovold <johan+linaro@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3875;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=xmiEc5cOXq2ANoWwzxjIO5rWx7Q3nJD+YIF6y04T2iQ=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnUdnlBP1CABLHnZzjSP6jNwaGz5daIXzuoAOAa
+ WynAPeIWE+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ1HZ5QAKCRBVnxHm/pHO
+ 9azSB/0cw6Y73j0oaalOLQST8EQUx/erBarpb7V+I1aDXzmr42UHP7Q38PGRYMkav9CBTh2zjBb
+ WovoRP8hFtZMawolRvd7Bh0p19K2V2+qpRWhE9e3J7lV0qDSAuFAQwmPEvsQzrrR5NvDv5bPgCx
+ xkcYO60T771CLqonKOsVlzgLmhlynuZCfH/nMg4bPir9GrsXS5gePTegdda3uHFpkDn+rPVx+IW
+ flrIk+fpDfAmYzgs9Ve8cjld4lWGXQ2OoqorR+NeQ6Uz8RPWw6YfCmARQq8c96a4n3/ZnL1b+7j
+ 3UvvX+sPxa/Q8RkV5wY0VHqPDBNOKRa4m0dhJjOIJFofTNnu
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-Hi,
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-On 05/12/2024 16:16, Geert Uytterhoeven wrote:
-> Hi Tomi,
-> 
-> CC Jacopo
-> 
-> On Thu, Dec 5, 2024 at 2:45 PM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>
->> Currently the driver always writes DPTSR when setting up the hardware.
->> However, the register is only meaningful when there are more than one
->> crtc, and the only SoC with one crtc, V3M, does not have the register
->> mentioned in its documentation.
-> 
-> R-Car V3H/V3H_2, too.
+Currently, qcom_cpufreq_hw_recalc_rate() returns the LMh throttled
+frequency for the domain even if LMh IRQ is not available. But as per
+qcom_cpufreq_hw_get(), the driver has to query LUT entries to get the
+actual frequency of the domain. So do the same in
+qcom_cpufreq_hw_recalc_rate().
 
-Right... I was looking at the number of outputs, not the number of crtcs 
-when going through the SoCs.
+While doing so, refactor the existing qcom_cpufreq_hw_get() function so
+that qcom_cpufreq_hw_recalc_rate() can make use of the existing code and
+avoid code duplication. This also requires setting the
+qcom_cpufreq_data::policy even if LMh IRQ is not available.
 
-> 
->>
->> So move the write behind a condition.
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->> ---
->>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 12 +++++++-----
->>   1 file changed, 7 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
->> index 2ccd2581f544..0fbf6abbde6e 100644
->> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
->> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
->> @@ -185,11 +185,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
->>                  dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
->>          rcar_du_group_write(rgrp, DORCR, dorcr);
->>
->> -       /* Apply planes to CRTCs association. */
->> -       mutex_lock(&rgrp->lock);
->> -       rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
->> -                           rgrp->dptsr_planes);
->> -       mutex_unlock(&rgrp->lock);
->> +       if (rgrp->num_crtcs > 1) {
->> +               /* Apply planes to CRTCs association. */
->> +               mutex_lock(&rgrp->lock);
->> +               rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
->> +                                   rgrp->dptsr_planes);
->> +               mutex_unlock(&rgrp->lock);
->> +       }
-> 
-> This is per group, not per DU, right?
-> The second group on R-Car M3-W/M3-W+ has a single channel, hence no
-> DPTSR2 register.
-> The second group on R-Car M3-N has a single channel, but it's actually
-> the second physical channel in the group, and thus does have DPTSR2.
+Fixes: 4370232c727b ("cpufreq: qcom-hw: Add CPU clock provider support")
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/cpufreq/qcom-cpufreq-hw.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-That logic does make sense. So that would be if (rgrp->channels_mask & 
-BIT(1)) then write DPTSR? And probably add a comment in the code about this.
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+index 98129565acb8..c145ab7b0bb2 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -143,14 +143,12 @@ static unsigned long qcom_lmh_get_throttle_freq(struct qcom_cpufreq_data *data)
+ }
+ 
+ /* Get the frequency requested by the cpufreq core for the CPU */
+-static unsigned int qcom_cpufreq_get_freq(unsigned int cpu)
++static unsigned int qcom_cpufreq_get_freq(struct cpufreq_policy *policy)
+ {
+ 	struct qcom_cpufreq_data *data;
+ 	const struct qcom_cpufreq_soc_data *soc_data;
+-	struct cpufreq_policy *policy;
+ 	unsigned int index;
+ 
+-	policy = cpufreq_cpu_get_raw(cpu);
+ 	if (!policy)
+ 		return 0;
+ 
+@@ -163,12 +161,10 @@ static unsigned int qcom_cpufreq_get_freq(unsigned int cpu)
+ 	return policy->freq_table[index].frequency;
+ }
+ 
+-static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
++static unsigned int __qcom_cpufreq_hw_get(struct cpufreq_policy *policy)
+ {
+ 	struct qcom_cpufreq_data *data;
+-	struct cpufreq_policy *policy;
+ 
+-	policy = cpufreq_cpu_get_raw(cpu);
+ 	if (!policy)
+ 		return 0;
+ 
+@@ -177,7 +173,12 @@ static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
+ 	if (data->throttle_irq >= 0)
+ 		return qcom_lmh_get_throttle_freq(data) / HZ_PER_KHZ;
+ 
+-	return qcom_cpufreq_get_freq(cpu);
++	return qcom_cpufreq_get_freq(policy);
++}
++
++static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
++{
++	return __qcom_cpufreq_hw_get(cpufreq_cpu_get_raw(cpu));
+ }
+ 
+ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
+@@ -363,7 +364,7 @@ static void qcom_lmh_dcvs_notify(struct qcom_cpufreq_data *data)
+ 	 * If h/w throttled frequency is higher than what cpufreq has requested
+ 	 * for, then stop polling and switch back to interrupt mechanism.
+ 	 */
+-	if (throttled_freq >= qcom_cpufreq_get_freq(cpu))
++	if (throttled_freq >= qcom_cpufreq_get_freq(cpufreq_cpu_get_raw(cpu)))
+ 		enable_irq(data->throttle_irq);
+ 	else
+ 		mod_delayed_work(system_highpri_wq, &data->throttle_work,
+@@ -441,7 +442,6 @@ static int qcom_cpufreq_hw_lmh_init(struct cpufreq_policy *policy, int index)
+ 		return data->throttle_irq;
+ 
+ 	data->cancel_throttle = false;
+-	data->policy = policy;
+ 
+ 	mutex_init(&data->throttle_lock);
+ 	INIT_DEFERRABLE_WORK(&data->throttle_work, qcom_lmh_dcvs_poll);
+@@ -552,6 +552,7 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+ 
+ 	policy->driver_data = data;
+ 	policy->dvfs_possible_from_any_cpu = true;
++	data->policy = policy;
+ 
+ 	ret = qcom_cpufreq_hw_read_lut(cpu_dev, policy);
+ 	if (ret) {
+@@ -622,7 +623,7 @@ static unsigned long qcom_cpufreq_hw_recalc_rate(struct clk_hw *hw, unsigned lon
+ {
+ 	struct qcom_cpufreq_data *data = container_of(hw, struct qcom_cpufreq_data, cpu_clk);
+ 
+-	return qcom_lmh_get_throttle_freq(data);
++	return __qcom_cpufreq_hw_get(data->policy) * HZ_PER_KHZ;
+ }
+ 
+ static const struct clk_ops qcom_cpufreq_hw_clk_ops = {
 
-> And apparently we had this discussion before...
-> https://lore.kernel.org/all/CAMuHMdXxf4oePnyLvp84OhSa+wdehCNJBXnhjYO7-1VxpBJ7eQ@mail.gmail.com
+-- 
+2.25.1
 
-Somehow I hadn't even realized Jacopo had sent these before...
-
-  Tomi
 
