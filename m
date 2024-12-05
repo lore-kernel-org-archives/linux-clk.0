@@ -1,117 +1,101 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B991C1C2323;
-	Thu,  5 Dec 2024 08:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36A71DB92E
+	for <linux-clk@vger.kernel.org>; Thu,  5 Dec 2024 09:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733388513; cv=none; b=k3eeQw4EMqM87IqdaU+pCzI4QiUOTnxyxfGz3gocNF93TPinFZUvcYB7m8u0ckKvS+x5h/37HpGVetk9ffwuj6yI6O3qH49HfaaRgL55iBAJIHx/QlUkO9kz6ahPrcaIcI+unJDPDmGyXUzGJaEPi1yqV5ZzSoY7heL/RuO+qaM=
+	t=1733389594; cv=none; b=bH15hqOhEIJCmb4erWW0CWSSN4rIB9+9SPjxmp/g/DyICUwRSpX47yLZCt1QPRF545NsFceduQV8+2b9UTTVDtq7WgH3d9wC6qUSFVWF3xUK+5CQYxUCFfDJSxYQnrFptd6wE99D5IvkVqIGcMMJo0eQtx7pzyoJTbJ1jIgxDMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733388513; c=relaxed/simple;
-	bh=AUn8/aAHyVbsysI5oIbofwlY0V0h1c3DllvJCGQWvbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U0j6dBFFHMlqGez56qmnW6yUVQvVDirZCVMChxuBxq+NjGNEmv3/J9Wb0AUVE5M0Cxt0+1c4dbXoJWOFs9AdGcMc9pN3rc0COCpJs2U9+jfD5E8AUsunTxcRm+quEov4McqW4fSWeYwe1OXJMC7YPhAICalLiX15c+nCZ24krt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0ZtQ6DJE; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0ZtQ6DJE"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vkoVyy6uCpLzlhwSnm1vHxEsbOQ+nXvkDsqoKqIAe5Q=; b=0ZtQ6DJEFHGEmBh1Tww482lN82
-	Vej40ed98V17Tt6bWDap4Tpmedv9HxkoQiHuimmhMGDGmNn/+fK0cqEL2k1vz9Jv819Jrs6Z7Lva0
-	7G4cw2t76SRONtp8KTTDxO9Aoce8kvvAcUq4SzOHNEr3rx4ZvP3pFPsQTixTivhmNnE47qVWSD0NM
-	twujlr47srFp0AI9EPCQl48iZF4+bnCqslssmnvlvbEfI+NYRtMyokpPV4Z6cTdRWsGOBIYAt8vf/
-	P9mYZjdcHuJbsLLd9iezUv+i2D7tCE4yHAqhOEqDxzaJtaPk3iqKnmgwa2Rp0fPO9FiymiVHbgMMA
-	TU2AdtIg==;
-Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tJ7Wz-0001jK-VE; Thu, 05 Dec 2024 09:48:17 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Val Packett <val@packett.cool>
-Cc: Val Packett <val@packett.cool>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: add clock ID for CIF0/1 on RK3066
-Date: Thu, 05 Dec 2024 09:48:17 +0100
-Message-ID: <5336726.6fTUFtlzNn@diego>
-In-Reply-To: <20241205055122.11613-1-val@packett.cool>
-References: <20241205055122.11613-1-val@packett.cool>
+	s=arc-20240116; t=1733389594; c=relaxed/simple;
+	bh=BrjZih4Ol/B/N7HxsWl8g5R6vYxxpRcHt620HszKJVU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QWPNYxxmH3KbGWN8qRlyoeJKUcqCpc76bVgWSB1VKnsl/GZ2272lEbbMr8cuAJbdxzlbNByyzzYwAMLHTn1+ViF0qbblSrm563pzgj388NrcBCb4HIyyyEohcrkMEkIi+DJkfOvdA/4yaJQMp0QQBX9DkVMEWPG2S1Xs1nAqIuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1tJ7oQ-0004Ks-Ji; Thu, 05 Dec 2024 10:06:18 +0100
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Subject: [PATCH v3 0/6] ARM64: dts: intel: agilex5: add nodes and new board
+Date: Thu, 05 Dec 2024 10:06:00 +0100
+Message-Id: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPhsUWcC/43NQQ6CMBCF4auQrh3TDlDAlfcwLqAMMImhpMUGQ
+ 7i7hY0LE+Pyf4vvrcKTY/LikqzCUWDPdoyRnhJhhnrsCbiNLVBipmQqIWhQCLOd2IC3ppv6Guq
+ eH7TkUMmuTduyq0ppRBQmRx0vh367xx7Yz9a9jrOg9vU/NyiQ0GCji6KUpCVdJxr75+zsyMu5J
+ bHjAT+gwvw3iBEsdYa5JmOKBr/Abdve+EgsIxwBAAA=
+X-Change-ID: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Hi Val,
+This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
+As the the socfpga-dwmac binding is still in txt format, convert it to
+yaml, to pass dtb_checks.
 
-Am Donnerstag, 5. Dezember 2024, 06:50:46 CET schrieb Val Packett:
-> RK3066 does have two "CIF" video capture interface blocks, add their
-> corresponding clock IDs so that they could be used.
-> 
-> Signed-off-by: Val Packett <val@packett.cool>
+An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
+Currently only QSPI and network are functional as all other hardware
+currently lacks mainline support.
 
-please split this into two patches
-- addition of the clock-ids to the dt-binding header
-- setting the clock-ids in the clock driver
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+---
+Changes in v3:
+- add socfpga-stmmac-agilex5 compatible
+- convert socfpga-dwmac.txt -> yaml
+- add Acked-bys
+- rebase to v6.13-rc1
+- Link to v2: https://lore.kernel.org/r/20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de
 
-Thanks
-Heiko
+Changes in v2:
+- fix node names according to dtb_check
+- remove gpio 'status = disabled'
+- mdio0: remove setting of adi,[rt]x-internal-delay-ps. 2000 is the
+  default value
+- add Acked-by to dt-binding
+- Link to v1: https://lore.kernel.org/r/20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de
 
-> ---
->  drivers/clk/rockchip/clk-rk3188.c             | 4 ++--
->  include/dt-bindings/clock/rk3188-cru-common.h | 2 ++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-> index 684233e72105..81e94b338d0f 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -344,7 +344,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
->  
->  	GATE(0, "pclkin_cif0", "ext_cif0", 0,
->  			RK2928_CLKGATE_CON(3), 3, GFLAGS),
-> -	INVERTER(0, "pclk_cif0", "pclkin_cif0",
-> +	INVERTER(PCLK_CIF0, "pclk_cif0", "pclkin_cif0",
->  			RK2928_CLKSEL_CON(30), 8, IFLAGS),
->  
->  	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
-> @@ -602,7 +602,7 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
->  
->  	GATE(0, "pclkin_cif1", "ext_cif1", 0,
->  			RK2928_CLKGATE_CON(3), 4, GFLAGS),
-> -	INVERTER(0, "pclk_cif1", "pclkin_cif1",
-> +	INVERTER(PCLK_CIF1, "pclk_cif1", "pclkin_cif1",
->  			RK2928_CLKSEL_CON(30), 12, IFLAGS),
->  
->  	COMPOSITE(0, "aclk_gpu_src", mux_pll_src_cpll_gpll_p, 0,
-> diff --git a/include/dt-bindings/clock/rk3188-cru-common.h b/include/dt-bindings/clock/rk3188-cru-common.h
-> index 01e14ab252a7..dd988cc9d582 100644
-> --- a/include/dt-bindings/clock/rk3188-cru-common.h
-> +++ b/include/dt-bindings/clock/rk3188-cru-common.h
-> @@ -103,6 +103,8 @@
->  #define PCLK_PERI		351
->  #define PCLK_DDRUPCTL		352
->  #define PCLK_PUBL		353
-> +#define PCLK_CIF0		354
-> +#define PCLK_CIF1		355
->  
->  /* hclk gates */
->  #define HCLK_SDMMC		448
-> 
+---
+Steffen Trumtrar (6):
+      dt-bindings: net: dwmac: Convert socfpga dwmac to DT schema
+      dt-bindings: net: dwmac: add compatible for Agilex5
+      arm64: dts: agilex5: add gmac nodes
+      arm64: dts: agilex5: add gpio0
+      dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
+      arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
 
+ .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
+ .../devicetree/bindings/net/socfpga-dwmac.txt      |  57 ---------
+ .../devicetree/bindings/net/socfpga-dwmac.yaml     | 126 +++++++++++++++++++
+ arch/arm64/boot/dts/intel/Makefile                 |   1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 109 ++++++++++++++++
+ .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 140 +++++++++++++++++++++
+ 6 files changed, 377 insertions(+), 57 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
 
-
+Best regards,
+-- 
+Steffen Trumtrar <s.trumtrar@pengutronix.de>
 
