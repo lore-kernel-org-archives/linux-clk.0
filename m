@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082E31D90A7;
-	Thu,  5 Dec 2024 10:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919B71D2B34;
+	Thu,  5 Dec 2024 10:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394332; cv=none; b=WgJd+gcbkONrXzMP74I8BUrtCE3vjXZSr6rCxeQFV/fH/N3mdDbcjcgUMMmnlwowIcEws9SVVOVxEWlilFY6YU3MouR5LHalloXOn6qHp/7wyY0Ug0u923M+wFovVtjrTDEeUGDx6zZFn3Fr28sxuFqOuTkcboA9u7k0hCXlyOw=
+	t=1733394402; cv=none; b=hEuhQae2LqCB5aUjl4lG/FZnKYqK8APHcFtRRIb5BdL4EowOXc9tvKhfgeKsrCcSnhS+nBFp5kyoPWXEch8unYhPYFxzeiENar1L1f1D4lxCJCXl9KXgtq0B+0TvX/266T4dU0rwzwzg/CxqJM30PMzFDhecvN3ctMyldm5yjcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394332; c=relaxed/simple;
-	bh=xc/AP1q5J7sVe4uDrqIu8OSigI0sdX0g5xbtoyVjNxE=;
+	s=arc-20240116; t=1733394402; c=relaxed/simple;
+	bh=N3MAuEy2Y7gKleYTsk83diYvCxdHM/d9mBFcU+rGUec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1EXYYLpaLruVrtvC7C9k64hDZJNjMRRj2l+4m+WvWsB2ZXmwasu6TwIat+MgglR84YFplKY9Xr6nZzOSC3ZlPse4jQsXb06FzokGO9MusKAz4QQC0+EDYb/oeSwuAYeCutAWYQHCBKPNcSsAKt7XHQKDxF5mcY3/kts3uXO3aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7f/dkLh; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=OjMiezmur7l+3vy0W2rszdBqkfeWbnIMFKfnQsobYp0g/OvY2sNJthsaSNQukA34j1YlRJMcT17o1KTqym/8nitFRHfJsI+sOUZge/7BxiuLj0JjOLl6O8bxXhchFq/uyZyaU6p6QSm7EHLQAXlk8LAR2JXNaME8r3WSHImOfeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMC1Dilv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7f/dkLh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEFEC4CED1;
-	Thu,  5 Dec 2024 10:25:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMC1Dilv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 244D4C4CED1;
+	Thu,  5 Dec 2024 10:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733394331;
-	bh=xc/AP1q5J7sVe4uDrqIu8OSigI0sdX0g5xbtoyVjNxE=;
+	s=k20201202; t=1733394402;
+	bh=N3MAuEy2Y7gKleYTsk83diYvCxdHM/d9mBFcU+rGUec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s7f/dkLhhctWIeUhGLpjKXnajl+5VZbXesXWXsw3g9wn7qcKhle+r+8J9OmlTgPtP
-	 4VziQdVRNp9frk6Gd3HgDsmJQ5yMp/ov/RMej/aIvR8Xt/wCVL5IdZXYLSX5/aFlsn
-	 /87Q4MMfeo+q2fKouI/C2HTFxtkh1QrDsCFiZGE62cFHULm8HWpHzrMp+QWJChO7aH
-	 WZVR5Rrder2DLmoTSi4Jcf4VMHrf06/SnzgMo3rTGpXSjSary79Wmj4hYZHfNLURpg
-	 fKL2XVZMAOyCLw/Sk4yEDZ/gs5zbJfQiO16d1fmuulK8tUR/X2L5qUaf+0tT0M0TgV
-	 9aUR7/WdcYNQw==
-Date: Thu, 5 Dec 2024 11:25:28 +0100
+	b=sMC1DilvXUSNb0OaN8Mn+Ypztbmh9yIE+l3ZA5Bi2vAzGijp4ykp493EdaSBQSRrB
+	 7tFK+5iaN6eQFjHUIMjvdTslmFJAnzodJffbjYb6Dj3XQ0S8mrUH+ghJqFxmnUh2Bk
+	 yZG9WeTYEnEWxlMSsiixh8MfLpJxHtKKTTAg9Zus2NBWNYIbfHnTm9q73VrDyxsxHa
+	 6hF+JgIrmb1By4zeYgw7JaPqUKxTl6zGb7SWSEGQg2KNRq0Mfww+IG/q6+U2OVDEzM
+	 AhUkj708/2U7DRfvbYilIi7krsIH0f2FQJI8nZiZFZltUMybwrtq9AcCDiBGZImDne
+	 8/RI09B+Vrs1Q==
+Date: Thu, 5 Dec 2024 11:26:38 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Val Packett <val@packett.cool>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: add clock ID for CIF0/1 on RK3066
-Message-ID: <5kesytgbhfununu5li4ychaw4newkctx4wuhlshks2ertfkd2t@jauqcntehv2z>
-References: <20241205055122.11613-1-val@packett.cool>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: gcc-ipq5424: remove
+ apss_dbg clock macro
+Message-ID: <dahqtkq6o6vrzfrmr76x7yd6iia4ihhcjfsaskilzw44wcjxth@ql2bkxnv6n3k>
+References: <20241205064037.1960323-1-quic_mmanikan@quicinc.com>
+ <20241205064037.1960323-2-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,23 +46,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205055122.11613-1-val@packett.cool>
+In-Reply-To: <20241205064037.1960323-2-quic_mmanikan@quicinc.com>
 
-On Thu, Dec 05, 2024 at 02:50:46AM -0300, Val Packett wrote:
-> RK3066 does have two "CIF" video capture interface blocks, add their
-> corresponding clock IDs so that they could be used.
-> 
-> Signed-off-by: Val Packett <val@packett.cool>
-> ---
->  drivers/clk/rockchip/clk-rk3188.c             | 4 ++--
->  include/dt-bindings/clock/rk3188-cru-common.h | 2 ++
->  2 files changed, 4 insertions(+), 2 deletions(-)
+On Thu, Dec 05, 2024 at 12:10:36PM +0530, Manikanta Mylavarapu wrote:
+> Since gcc_apss_dbg_clk has no consumers, the linux kernel will turn it
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+That's not a reason to drop a binding.
+
+> off. This causes a kernel crash because this clock is access protected
+
+This could be. Please rephrase stating that this clock should not be
+exposed to any user because trust zone handles it and any access would
+trigger faults.
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
