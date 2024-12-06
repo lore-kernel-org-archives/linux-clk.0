@@ -1,168 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FC1FF7B4;
-	Fri,  6 Dec 2024 13:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683E213D8B5;
+	Fri,  6 Dec 2024 14:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493375; cv=none; b=P2EBLn+pc4fMCuALsrgn8SbNdE5ApOrcrMrifMF7PxgWINWJ8gDyTecxGEE/3DJ34WG8h5LT8fUIS45UPKAvTlIiPzHOLac3eYgwO0TZqnCM4+xkz2cDRUdZWr5MrIYk5YJ3Z+Kbbo16p0hbkHf6UoRFKkF+XZVFH1KOhy4BtKY=
+	t=1733495423; cv=none; b=gYLy2OlLPr8LpIOpL+Ja9hqjNOuPDx3q//lvpI+1jhFz8kxUHNlyISqupms5TtjFIRCGdnQeYSNaMY//yv6xCW0E8gVPdV8NPwjZG1kPKiKVSnZHj44SuZSuTW1tUJGaailStFBwL9b15xPOwdG2nmQdntvjC8aimUEbMSABYtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493375; c=relaxed/simple;
-	bh=563SsPu6/+OsYwdbvzEtes3bIYtTyUec5qqj5KSLCAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AvF0vYeGzv02Ksbrz2qGeJ7fSyYZbi9s0x9doPprSwSrCJFExApXDgTxMzwxsW06hJHN2H2URyETYi7fZniAls6DW0DKoVYai409pH36XqZRySESItKGuijMr5D8wcH9j36hseDVwnMNd2gxUt8UhnT3XvepED9TqQPp10cLKjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0++dduS; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0++dduS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261C0C4CEDC;
-	Fri,  6 Dec 2024 13:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733493375;
-	bh=563SsPu6/+OsYwdbvzEtes3bIYtTyUec5qqj5KSLCAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0++dduS4VP6El2s8mBfIALW+2dmy6vZ33ooYuEgdXM317b/U4EqhGelyHGrrZNzL
-	 miIzeR+cSJnDn2jCkwlWbbPQzMvGFWSHJhDdY+7Q/Yd+Cq1A2hSDtsk9xQb/HEkLVt
-	 0ZmBu6Yv/uqEFGGpNw+RidIfX39MLYvNpox74jqIsyHDwG8s0kme4AlF6hXb3g1p4Q
-	 PD8UA0A0sOhtVkJtPiVQde7vkG47XDvRIjeALCafiEVQT9rNkK5XaiRD+igQQhlf1T
-	 9Ixw6DsaTKfU0t/e/lZGzQ9lrlMDkUdvGSpTCflX+LMZTIiL/wAyKsXyfrrwV7lYxj
-	 OjWK6lrW78A6Q==
-Date: Fri, 6 Dec 2024 13:56:08 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to
- common code
-Message-ID: <20241206-threaten-showing-1214491f3899@spud>
-References: <20241002-private-unequal-33cfa6101338@spud>
- <20241002-hula-unwashed-1c4ddbadbec2@spud>
- <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org>
- <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
- <20241003-tacking-ladylike-dfe2b633e647@spud>
- <20241106-freefall-slider-db379b05821e@spud>
- <430bde3b35382e640843e32a9f351326.sboyd@kernel.org>
- <20241128-monstrous-embargo-a665d921410d@wendy>
- <e53adbf9fdf6e3f142083b0d40d074ca.sboyd@kernel.org>
+	s=arc-20240116; t=1733495423; c=relaxed/simple;
+	bh=TGVasmDCO3tnOBpJKA4aLJGzJlE4q7jJxKgqMz/34tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cL+3OA7NqX4z/4n4m8PSbvwuLe3j45HqK1ZJwF9t1GPOmiXfdqROewT3dhbVoJIHbBHwiMU0fNYh5Jyby48jTXpsf2g0BRa3/fifheasL8VNPz+zACbkZC4hJMitF9/E6s0m1IyIxWCFB/gPUlJ0PXLdR8KBcsAWZeSztVl7a3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-85c4557fce0so165845241.3;
+        Fri, 06 Dec 2024 06:30:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733495419; x=1734100219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dKDuu8Gf8V/wWQlq1EzhT4nZUUbeswEARFJ5dyRd2oo=;
+        b=JoDov9tIAZv3S0XiVELfDFANQMtL1AMbv9yZr3trzd8r7/Yp9ZgToh/DAxhu9f2t+c
+         JE7rhj3l4vgy5Ij6A5Y0AFjQiiEGEsYccU2QAqZc0Ze7z2Og9N6VX0F7LfGh47HE/6qn
+         zKU1zU0Lcxd8k+jhf11HSzA8j706/XfS8K/PHuJgHkz3R8vdRp2iTEJv7v1UGi0w73uF
+         JmZ+lQXcFpWo9OOVs7NIZRoNvKzbYRQOHGAs39GIEEKm0ZNZRAn0EJGZNhKSAyvayisQ
+         Sc3LJ6IJYcKBnt6gqgupsJSSMqGVTkZSy6KYjwow7hZi0HqyR9VvW6kFMmg1QsDTV+i7
+         QpVg==
+X-Forwarded-Encrypted: i=1; AJvYcCU24aozmzlkDhR0VB13c6oLmr7OSxRPwUo+fd2L2J78271Pv9Xhn8QkIOzDfzg5YokyeVRadP0aJn6X0xC9@vger.kernel.org, AJvYcCVIr+lTrShPFJ4ILJorFwK9bSDhnvRgSuZqkpTjGu6iGjHUwet+14EDrhT4oaWGAQYjjw4uEAk45x41jz+a@vger.kernel.org, AJvYcCVn8ZBS1Lb4epZlue+KwMaNvosHCG+TtPE4K/PkiRzEp+zRb0btbSmm/ge9seKQ0VXm+aym3rTcqJO01Gm+xKLxx1Q=@vger.kernel.org, AJvYcCWjsN61UWJyUjcczIEmtGMSnjVNnbCzA7veV0mL4+yvDHImcjNg1+TDplT6TOC2A2ZGD/I7Nvt3i/yT@vger.kernel.org, AJvYcCXb/dHkAzX+9SJgMMb2PHXmuXvB1BmbZiAIeToeHLidBIOtfHw7lNec0Q1smeLOcd94p33Z4wjK4IRz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKcOGXnYIe8VeN2DUgxyFQkmfh6FqY4S8AUxuXN8YvK0ztV4pM
+	sgiZbie/Jr3NfW8KieWfaBYfkkC3f5IPrbR4Tny10+0wmH8mbqHLiNXX28dF
+X-Gm-Gg: ASbGncvgsGKBFi6iyTk/PjxSBI2u6Sm4ArLRzD7uv2J9KstYizw9cSAHZOqRuAhSnhU
+	1KT9gV82W7zg0tlZEemwWztsfRmZ/fXv+euLIxc017+HDwNPj61KzINFaMMhwts9VuzGzWldcfG
+	s43+JWez2retFanNbrPtUDoOsivV00KWnAgabOj/RhZbIYVuJS5OjYiawi5hHQ/q/2dsYPx0EWc
+	lWOxbzdO3/pRtLTm9W7IUTO9wLNvBpk2Eg8xjCkPClaUKpYpkcBucbk942yfcMWzYHUot0A3c5d
+	JE7UBTGor/Dl0c2H
+X-Google-Smtp-Source: AGHT+IFcxhlJzUj7uxEx3SlyHKEVyAMYIbTLbaPBa9NHFLbRhbWv8Im71D6vq/QsTyuX8H251q9xug==
+X-Received: by 2002:a05:6122:2a12:b0:501:2556:1cd9 with SMTP id 71dfb90a1353d-515fcae3475mr3236127e0c.10.1733495417846;
+        Fri, 06 Dec 2024 06:30:17 -0800 (PST)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eaf60863sm333026e0c.46.2024.12.06.06.30.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 06:30:17 -0800 (PST)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-515e7d76f65so559484e0c.1;
+        Fri, 06 Dec 2024 06:30:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUOCI/QBEIPAZXg/hy65ZDihgsmbJL1rZrU4N87EK0159IdHT2tOa8YEJnOgj/XmRTeQgZTsrUVGkkK6J0e2eebqbs=@vger.kernel.org, AJvYcCVIh/jo2/QDtWg84msfrc3wVAWXUJGAQQhbh8VwpUZg3aeKTi6J4scCCLtvNoLaxmCP1sChIOFifJ2i@vger.kernel.org, AJvYcCWbXpMGxoeXcMAYN7Me/3Ss0WwC12q5TGyzsPpl3rS8Qg55pdmmnmlfKfosBW7WNy+lnlSGKOP6geUO@vger.kernel.org, AJvYcCXPSzzlFDgHf8DuIr5TEjYUfIIWzFeEoiwbWLXRfzOwedXduLsFRm8QkT2aAQzpCEQhjS6I2MuKUsNtK87k@vger.kernel.org, AJvYcCXjmnBLuBo7OU1h8Jkl6NPMuMmUQQZ65EppfPg/l/ueYe6KIB0oRDofW5AN6jwFS64RyuYO3FerVRBqDHrN@vger.kernel.org
+X-Received: by 2002:a05:6122:2526:b0:50c:79a4:c25 with SMTP id
+ 71dfb90a1353d-515fcac6327mr3656559e0c.8.1733495417121; Fri, 06 Dec 2024
+ 06:30:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="D3KsjEcBH/hYSuAR"
-Content-Disposition: inline
-In-Reply-To: <e53adbf9fdf6e3f142083b0d40d074ca.sboyd@kernel.org>
-
-
---D3KsjEcBH/hYSuAR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com> <20241115134401.3893008-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241115134401.3893008-5-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Dec 2024 15:30:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUoC-MUgOpudNeKqVD-ka_Kiem6kzskX7VCJDH4rVRR2g@mail.gmail.com>
+Message-ID: <CAMuHMdUoC-MUgOpudNeKqVD-ka_Kiem6kzskX7VCJDH4rVRR2g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] arm64: dts: renesas: r9a08g045: Add the remaining
+ SCIF interfaces
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de, 
+	lethal@linux-sh.org, g.liakhovetski@gmx.de, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 02:50:31PM -0800, Stephen Boyd wrote:
-> Quoting Conor Dooley (2024-11-28 02:36:16)
-> > On Thu, Nov 14, 2024 at 05:29:54PM -0800, Stephen Boyd wrote:
-> > > Quoting Conor Dooley (2024-11-06 04:56:25)
-> > > > My use case doesn't
-> > > > actually need the registration code changes either as, currently, o=
-nly reg
-> > > > gets set at runtime, but leaving that out is a level of incomplete =
-I'd not
-> > > > let myself away with.
-> > > > Obviously shoving the extra members into the clk structs has the do=
-wnside
-> > > > of taking up a pointer and a offset worth of memory for each clock =
-of
-> > > > that type registered, but it is substantially easier to support dev=
-ices
-> > > > with multiple regmaps that way. Probably moot though since the appr=
-oach you
-> > > > suggested in the thread linked above that implements a clk_hw_get_r=
-egmap()
-> > > > has to store a pointer to the regmap's identifier which would take =
-up an
-> > > > identical amount of memory.
-> > >=20
-> > > We don't need to store the regmap identifier in the struct clk. We can
-> > > store it in the 'struct clk_init_data' with some new field, and only =
-do
-> > > that when/if we actually need to. We would need to pass the init data=
- to
-> > > the clk_ops::init() callback though. We currently knock that out duri=
-ng
-> > > registration so that clk_hw->init is NULL. Probably we can just set t=
-hat
-> > > to NULL after the init routine runs in __clk_core_init().
-> > >=20
-> > > Long story short, don't add something to 'struct clk_core', 'struct
-> > > clk', or 'struct clk_hw' for these details. We can have a 'struct
-> > > clk_regmap_hw' that everyone else can build upon:
-> > >=20
-> > >   struct clk_regmap_hw {
-> > >         struct regmap *regmap;
-> > >         struct clk_hw hw;
-> > >   };
-> >=20
-> > What's the point of this? I don't understand why you want to do this ov=
-er
-> > what clk_divider et al already do, where clk_hw and the iomem pointer
-> > are in the struct itself.
->=20
-> Can you give an example? I don't understand what you're suggesting. I
-> prefer a struct clk_regmap_hw like above so that the existing struct
-> clk_hw in the kernel aren't increased by a pointer. SoC drivers can use
-> the same struct as a replacement for their struct clk_hw member today.
+On Fri, Nov 15, 2024 at 2:50=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The Renesas RZ/G3S SoC has 6 SCIF interfaces. SCIF0 is used as debug
+> console. Add the remaining ones.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Best example I guess is to link what I did? This one is the core
-changes:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
-=3Dsyscon-rework-2&id=3D35904222355e971c24b3eb9b9fad3dd0c38d1393
-clk-gate has my original hack that I did while trying to figure out
-what you wanted, clk-divider-regmap is a 99% copy of clk-divider with
-the types, function names and readl()/writel() implementations modified.
-Before your last set of comments I was doing something identical to the
-clk-gate change for clk-divider also.
-Here's the changes required to my driver to make it work with the
-updated:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
-=3Dsyscon-rework-2&id=3Dea40211fe20f8bc6ef0320b93e1baa5b3f244601
-It's pretty much a drop in replacement, other than the additional
-complexity in probe.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.14.
 
-Hopefully that either gets my point across or lets you spot why I don't
-understand the benefit of a wrapper around clk_hw.
+Gr{oetje,eeting}s,
 
-Cheers,
-Conor.
+                        Geert
 
---D3KsjEcBH/hYSuAR
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1MCeAAKCRB4tDGHoIJi
-0sqzAP9waSsOIi7fzVRAF2IfUyhCzbN2HRg7fuiXsVL8Q28vwQD7BAtQFxtD1L8h
-wFWZMACgozCdkOQyTUTRyE/s54HVoAg=
-=wQYC
------END PGP SIGNATURE-----
-
---D3KsjEcBH/hYSuAR--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
