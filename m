@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E01D5464A;
-	Fri,  6 Dec 2024 12:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283F71FC11F;
+	Fri,  6 Dec 2024 13:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489971; cv=none; b=ovPCdXnMn1Fzaxquqg2sBgCIdiXEGZ/sLg4e5w3trQT9Uqfcn4c1g8JLckOb4V7YEHYHvZcQ885BTfbW2MeYQTTy3Cx+s4Z2oUBrHzYNaSFhmoJBAZ/0qb1nzx2x6rzg+RU10g8H8Ud2XxcsvlUVQT3zLe8F54CtMTsNbMCkbX0=
+	t=1733490058; cv=none; b=EG+N2S5d3L5yfLPqOPe5u6jqF2QzDyJSnZhA2knmQ7KN4qSV+FFMZBCtAQH4lEEcjVI1u0W5iGJUmm4+J9brhyF7Pwi88nsWGM4H4r8Q8cRrthWrElQuGeMv0Yrr5Sw9ZHYuBTrMnQNn0y6HdqPtrhgbJgR0hSAufHYQ3nsr6Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489971; c=relaxed/simple;
-	bh=7kZlBs8/qsHwIl5r8qzSVYO7uA12w337ENyPIR3/4bo=;
+	s=arc-20240116; t=1733490058; c=relaxed/simple;
+	bh=qnHw0NICoJNSFfda7z3Yzm4l1maJwc3jy/JgCMdgy7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9Yh9n97ac9x66gq6XHDh2GZGJ5UzTnnnycL3G4tY755c3hQblS3liKoorvdvCQMtmGsh7WWCtJo0zuyjrgVRDxTdh2i1nveS67wasZiJHJmttTPEWQoLc4BQrcANwFokzFhegIx4G/iV1jQE8V7v2DsYQM+Gsf5lz58kFVka2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCHplatO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4tkgyzEZTuXAspH6ku4l7k/f+Eiinx3POttHUp3d4iKEBiNw4DLE/1ycg28rwRf07nCW93pfETDKbFGMhw51Lk+4QvioxXLAcLenDUW2NAWMiSfs1ytfkT+bDKu1QOPVKbBEB+6FBCcdO39/nsW4RGcc9TXueQZ/JtFoXC3yDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACTgGvbD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCHplatO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 534F9C4CED1;
-	Fri,  6 Dec 2024 12:59:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACTgGvbD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26976C4CED2;
+	Fri,  6 Dec 2024 13:00:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733489970;
-	bh=7kZlBs8/qsHwIl5r8qzSVYO7uA12w337ENyPIR3/4bo=;
+	s=k20201202; t=1733490057;
+	bh=qnHw0NICoJNSFfda7z3Yzm4l1maJwc3jy/JgCMdgy7w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HCHplatOiR9NWakpnvXfl+RRoMZvOPuIE5P8uck2x49RC4ewGLdfdBq2y87QbQb/4
-	 RDHG9gGugqxZ8X5w2613ZkucytuRGKJuHSH9abWKvMnA/mGAFybB4jGlVx8p63T6lS
-	 XP0EL4bFJ8fqjRFgSP9mJzivzFbAsdN75UHB0gpoKR/Khln575C+TfnCHsywBHlIbz
-	 rN9laGmpKZ4Oqat0hilX+nteIIdnzYyWsau07GxEVmFstN2e9YK3yEYvO7kMRxp85K
-	 MiWvMGv59ekSwNOu0HYzdkd3iqmzXPXaFbd/LgopPe8yHVzQb8R9aYlpMpc/ThColb
-	 8RhF5PUQ/IEHw==
-Date: Fri, 6 Dec 2024 13:59:27 +0100
+	b=ACTgGvbDzphR3QuOq24UQXXPfTPpm46grp44J+8aQipVfqAJ6imZQ06sZ2vaMbBtQ
+	 CHZ0I8dqVbNhX+e9Beqw/pj11Oahrm+7H3Z5V7bYZ4n6HxKnihMEIqibp1BiSL5guU
+	 nZDM0pJXGjqyapxcN8LD/sQJCGSIhcQHTOxezKp7/qaprBDYYqrEVVe6eCogabgPfB
+	 CDko4TzWmjXiNqGGGIHx6GhM/ym7fVOasMQcN5pPsx3rvm2HADeog00iv9IJ2f8tDj
+	 r8tJhysqGnZzegg2db2xLqltFLKx588ldAjcX5zNyXWaYmIeanOuJSiJuywynGmOEI
+	 voHw4mlaV2zGA==
+Date: Fri, 6 Dec 2024 14:00:54 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
@@ -37,11 +37,11 @@ Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
 	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
 	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 10/20] dt-bindings: clock: imx8mm: add binding
+Subject: Re: [PATCH v5 11/20] dt-bindings: clock: imx8mn: add binding
  definitions for anatop
-Message-ID: <46awbd7wxh56l3wmgj43zhz7d75was6drkmlydcjqgefee35ll@73jw2xxtpwic>
+Message-ID: <jgkbsxwhttebjpul43wtt6simygkst7bnis47b5pkevica2th5@n7elmf4u5k3n>
 References: <20241205111939.1796244-1-dario.binacchi@amarulasolutions.com>
- <20241205111939.1796244-11-dario.binacchi@amarulasolutions.com>
+ <20241205111939.1796244-12-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,13 +50,15 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205111939.1796244-11-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20241205111939.1796244-12-dario.binacchi@amarulasolutions.com>
 
-On Thu, Dec 05, 2024 at 12:17:45PM +0100, Dario Binacchi wrote:
+On Thu, Dec 05, 2024 at 12:17:46PM +0100, Dario Binacchi wrote:
 > Add the bindings definitions for the anatop node. The patch is
 > preparatory for future developments.
 
-This is never a separate patch but goes with the binding doc.
+I don't understand last statement. How this can prepare? Either you add
+bindings for clock provider or not.
+
 
 > 
 > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
@@ -68,22 +70,21 @@ This is never a separate patch but goes with the binding doc.
 > Changes in v4:
 > - New
 > 
->  include/dt-bindings/clock/imx8mm-clock.h | 66 ++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
+>  include/dt-bindings/clock/imx8mn-clock.h | 67 ++++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
 
 ...
 
-> +#define IMX8MM_ANATOP_SYS_PLL2_1000M		56
-> +#define IMX8MM_ANATOP_CLK_CLKOUT1_SEL		57
-> +#define IMX8MM_ANATOP_CLK_CLKOUT1_DIV		58
-> +#define IMX8MM_ANATOP_CLK_CLKOUT1		59
-> +#define IMX8MM_ANATOP_CLK_CLKOUT2_SEL		60
-> +#define IMX8MM_ANATOP_CLK_CLKOUT2_DIV		61
-> +#define IMX8MM_ANATOP_CLK_CLKOUT2		62
+> +#define IMX8MN_ANATOP_CLK_CLKOUT1_SEL		57
+> +#define IMX8MN_ANATOP_CLK_CLKOUT1_DIV		58
+> +#define IMX8MN_ANATOP_CLK_CLKOUT1		59
+> +#define IMX8MN_ANATOP_CLK_CLKOUT2_SEL		60
+> +#define IMX8MN_ANATOP_CLK_CLKOUT2_DIV		61
+> +#define IMX8MN_ANATOP_CLK_CLKOUT2		62
 > +
-> +#define IMX8MM_ANATOP_CLK_END			63
+> +#define IMX8MN_ANATOP_CLK_END			63
 
-Drop, not a binding really.
+Drop
 
 > +
 >  #endif
