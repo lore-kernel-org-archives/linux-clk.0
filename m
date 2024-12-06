@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B187E2147ED;
-	Fri,  6 Dec 2024 22:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B300622C6C1;
+	Fri,  6 Dec 2024 22:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523188; cv=none; b=XyJMfu6CjhdXtMqZR5JBNaDKUqrICPFP8sGoMIWYyCYcf68wWazliurUHr9lBLTaaADAwgj+25iVSP4TcNodRWP6ZlWY4op9DNt1x8UzrG2P+X8B8n6ymt8pBy2X6Aj/Nc0JrZA+IALQ3JuREedvT95c/NykuAfXGWOwtUBhIZE=
+	t=1733523349; cv=none; b=tRxLPDBwA8NANuwEbQlOL+A/onAmW122VRWtJdDHI+23pkeNi4ymjfuiq1xGU3lEnk5G83C5J4IpA0A6ATcFhs4lcprvszt4DZ7btiCyhz6hKq4LJcG8V6zyZk0x4nl6fRsgVRhZlZamtbwGypQDpcIPulAiMX7LI3skJ3GhJ6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523188; c=relaxed/simple;
-	bh=cuLU+yr92U1uHjewZ/aEJ+erWQI/1e+MOKI1DEOper0=;
+	s=arc-20240116; t=1733523349; c=relaxed/simple;
+	bh=5hI/uypdQ/H8IoEyLiu4ZQJXiF2mNJEIaK8PWV6n+Us=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=EDCUIyrP5aa/Sgg1Iol4rgzfswDudaiJ+ZLU+g6ys72Rd5CrkUmndsiIgvIo6QNaPKXz8MMNWw6dHkOEpJohPVuQiCIaTVRHKqN3QWJSNhgXaaMHcEFJkllDzjq2YlHE23uAP+nQMlUCUFMbl5ZkABUZjqRB9TdK7JvrCMlET9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QugtRP2o; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:To:Date; b=Cydu4We1My/mMTtYM4BX+KwwbXKsRiWvOMuK+JtluvsYkqoZzq3L6JlYoEN7BFUtspqsY+hinG3b4KE1JqUFU5VhGCajJG67yr1lHsBlhpSy6jd+/SgWThYmt7YH84kJr45S16xey4BPJZC88a4+B8SUiWUm4nGsCM5gCt45neA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvqzUsXZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QugtRP2o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB1BC4CED2;
-	Fri,  6 Dec 2024 22:13:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvqzUsXZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0D1C4CED1;
+	Fri,  6 Dec 2024 22:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733523188;
-	bh=cuLU+yr92U1uHjewZ/aEJ+erWQI/1e+MOKI1DEOper0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QugtRP2ohbKYyW4XJFJe2wqmICWC4eCg4+pdl5x+IMzZ6z89518pnEqPDQk+8wYNI
-	 lMT/t4S6mnNERucaip2SPSg1z8y0XXLgwu3wjs+2Mhs0end80m48dqzVZWcZ1KRrcH
-	 Me5YeEQYv7Ce8g+wXxrXSnvp82dJdsPi3m8G21vDm7C5rs/4mJQ4rVgBSdjsnjRbeo
-	 y+3O7QrWlUU0CkzInN7ZzhiFYDhHjexmC99K88BDInfxBjaF9WYbmgKRXh1jPHVXXN
-	 u6OIbh2N3CfzogMcjmGn6lB46gq+J9Oo1Vu+PV7CvbqfPRYFu9xp9veE+8la7iNTNr
-	 g34Gq79F9ASmg==
-Message-ID: <dee94bf85dd158e4f0846617ba20d2d8.sboyd@kernel.org>
+	s=k20201202; t=1733523349;
+	bh=5hI/uypdQ/H8IoEyLiu4ZQJXiF2mNJEIaK8PWV6n+Us=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=GvqzUsXZoGMcNUjVnwdwKwQVvHQX3ZGAVH/1iCL4fI1Att4BK5LiOOpASFiQUA4p1
+	 p+bONBwTrRgrlGDAOYAOmowbokEdDtazIvMBcOKBtsi+W3G4dr57OH3vGpUSlNJO1I
+	 uwcQ8VtvlQlhR/ktqYNx97hG/IBDHkThDgtQLffUYtHfZKgXIx6VZusZdp0kGT8iiG
+	 S1+5EoLHmj9ZIwfRmstGG2N7U7HRbQepRqApC7i0+qlyvQu8UGY1jlZMFXG7AZwQ10
+	 A8QMNELaAHuyoclDsPYHiFEw+CZlXv6FmrCw4R77ukLGfhUhEC9TI3FL5d42aDMEx4
+	 cm16AMPPg28sg==
+Message-ID: <c898338622625cbfc825e8d4cc5f0fff.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,41 +35,51 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
-References: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
-Subject: Re: [PATCH v3 0/6] ARM64: dts: intel: agilex5: add nodes and new board
+In-Reply-To: <OS8PR06MB75418449B451224C5AB46FBFF2302@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20241028053018.2579200-1-ryan_chen@aspeedtech.com> <20241028053018.2579200-4-ryan_chen@aspeedtech.com> <287924eed186e3b6b52cd13bcf939ab6.sboyd@kernel.org> <SI6PR06MB7535F5D22E3FCCF5C610B307F2552@SI6PR06MB7535.apcprd06.prod.outlook.com> <a68516df98c8b8fb80f094e6e55fcb8d.sboyd@kernel.org> <OS8PR06MB75419637D55A022300E00850F2352@OS8PR06MB7541.apcprd06.prod.outlook.com> <9ccfb478d9a122db6c634e9559e211ff.sboyd@kernel.org> <OS8PR06MB75418449B451224C5AB46FBFF2302@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Subject: RE: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>, Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Fri, 06 Dec 2024 14:13:05 -0800
+To: Ryan Chen <ryan_chen@aspeedtech.com>, andrew@codeconstruct.com.au, conor+dt@kernel.org, devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, joel@jms.id.au, krzk+dt@kernel.org, lee@kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Fri, 06 Dec 2024 14:15:47 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Steffen Trumtrar (2024-12-05 01:06:00)
-> This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
-> As the the socfpga-dwmac binding is still in txt format, convert it to
-> yaml, to pass dtb_checks.
+Quoting Ryan Chen (2024-12-04 16:48:42)
+> > > struct ast2700_clk_info {
+> > >         const char *name;
+> > >         u8 clk_idx;
+> > >         u32 reg;
+> > >         u32 type;
+> > >         union {
+> > >                 struct ast2700_clk_fixed_factor_data factor;
+> > >                 struct ast2700_clk_fixed_rate_data rate;
+> > >                 struct ast2700_clk_gate_data gate;
+> > >                 struct ast2700_clk_div_data div;
+> > >                 struct ast2700_clk_pll_data pll;
+> > >                 struct ast2700_clk_mux_data mux;
+> > >         } data;
+> > > };
+> > >
+> > > struct ast2700_clk_div_data {
+> > >         const struct clk_div_table *div_table;
+> > >         const struct clk_parent_data *parent;
+> > >         u8 bit_shift;
+> > >         u8 bit_width;
+> > >         u32 reg;
+> > > };
+> > >
+> > > static const struct ast2700_clk_info ast2700_scu0_clk_info[]
+> > > __initconst =3D { ...........................
+> > >         DIVIDER_CLK(SCU0_CLK_AHB, "soc0-ahb", soc0_ahbmux,
+> >=20
+> > Can you also show what soc0_ahbmux is?
+> It will be following.=20
 >=20
-> An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
-> Currently only QSPI and network are functional as all other hardware
-> currently lacks mainline support.
->=20
-[...]
-> Steffen Trumtrar (6):
->       dt-bindings: net: dwmac: Convert socfpga dwmac to DT schema
->       dt-bindings: net: dwmac: add compatible for Agilex5
->       arm64: dts: agilex5: add gmac nodes
->       arm64: dts: agilex5: add gpio0
->       dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
->       arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
->=20
->  .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
->  .../devicetree/bindings/net/socfpga-dwmac.txt      |  57 ---------
->  .../devicetree/bindings/net/socfpga-dwmac.yaml     | 126 +++++++++++++++=
-++++
->  arch/arm64/boot/dts/intel/Makefile                 |   1 +
->  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 109 ++++++++++++++++
->  .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 140 +++++++++++++++=
-++++++
->  6 files changed, 377 insertions(+), 57 deletions(-)
+> static const struct clk_parent_data soc0_ahbmux[] =3D {
+>         { .fw_name =3D "soc0-ahbmux", .name =3D "soc0-ahbmux" },
+> };
 
-Why are clk framework maintainers Cced on this patch series?
+Instead of that, please use only the index.
+
+ static const struct clk_parent_data soc0_ahbmux[] =3D {
+         { .index =3D <number from DT binding> },
+ };
