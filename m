@@ -1,46 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607C05464A;
-	Fri,  6 Dec 2024 12:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AFB205AA3;
+	Fri,  6 Dec 2024 12:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489804; cv=none; b=cUvgXjixH1bvnM64ixK654MO1x3zjqUYx91jjyoJyLSCD9024rx3pwG78sSo5RTT/OI3uP7r+kuaJcFY5YyeCbrjFODkG1IDHbTznxtJ0rN5mJNLG7pMzK3S4pxtqK5woHFVepMA/2tl4TIXyx1vujE+9srYmcG5wSrUIjdM1Vs=
+	t=1733489898; cv=none; b=n/a6ohOagmvVzfLmognlGJ+6uK4Qy9A5wSmyiMie7YfRuwugYzmxUP8d1sSLNxwuE0eUa7Wd/7c9NbBPuuIijf7MJNmoyAU/Vc0yF2n38yhCqIiljAQk9tUqYlf+MhjPiXyh+CCx345nsdy+s70nDENylg+/m2YWw397pxA19n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489804; c=relaxed/simple;
-	bh=vtIIcakrqZxr5Cn12lC9/zaEE5BlQXDpTN+QCqnD/HM=;
+	s=arc-20240116; t=1733489898; c=relaxed/simple;
+	bh=0DPWLJNoBPA4d09rGw4XVjzfqhYj+boN76XLzVvjlbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MPW1a4rXWHvK7yJwsXneiO/O+AT7XTBC9bX9oe8owWO+8fQg0ksjIY/rtWV32UIA32s1l9ChkTuPAa30lhez26MI6DQtzjUfTBEhkr2oj1Xwy0ODwNV5UfkeqICCEww9nLEo6YHICldkVqc+0M/8jeSIC+xXt4iFGuimmgJHxyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhMlta4k; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SOmpZQBtQv4HEJryEA1TOYgNtuu9s2Sd+Z6jMzhxWfnrG0eeDStj60vczYraJ14rTkhfLlJHuGwgmOVYse0GKShh8EDaVLuTo8yimOIqjKGPXeAB85NKwaQZhhqC2k0uo+IdfJchFASjBiEl+jnTpa/4sBmd75lNu5CxvCgpg9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tj4s5uyy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhMlta4k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46EC2C4CED1;
-	Fri,  6 Dec 2024 12:56:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tj4s5uyy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 052D8C4CED1;
+	Fri,  6 Dec 2024 12:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733489804;
-	bh=vtIIcakrqZxr5Cn12lC9/zaEE5BlQXDpTN+QCqnD/HM=;
+	s=k20201202; t=1733489897;
+	bh=0DPWLJNoBPA4d09rGw4XVjzfqhYj+boN76XLzVvjlbE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhMlta4k3VdC6X1yLUjTKn3OqxwJ4bH0bZMCxuho7rL7Sike9wibGA2REkSQVV3gm
-	 oSm1ibOqks4h00ay9Irq8q0VFDuBunrab0b5jxUJw+a64h3PFygtUb5NTLCFjCZ0Cf
-	 LEy0cKQTc5N2Jg+W0e9rE8HnrS8I0S6YRl9m868OcbhbQJQT3WZ8PitB0P5jFdlJS+
-	 aPQRxd29agli47B2iW/tMNko/Ami+KWXxg/03HzM5/U6yCk2n6fziYxi64k4zRbJvf
-	 QslR7QF0chJJLtXOotiUtJUoBtQuUuv2zICPh28MLaBxreHLurRnp10nq9H0m79biE
-	 DH3ofo99XXuIQ==
-Date: Fri, 6 Dec 2024 13:56:40 +0100
+	b=tj4s5uyy1JcclCOgqxp9Az+6LLzAJCl75naicwpGr8i2wnTtdKhL2gqEgmOzpKBHu
+	 vti6B6o/uLenSxERTQysRWIbIuvWNoPu9G3K7ikGhjbUSo/h0BBEKk/sL3Xm/7lUWy
+	 m/WhokIrwoADniFAUAcAVn1X1BW+oFI81c5WA9grBUCmWv0erLC+UQ7pKF3eaVvNQP
+	 4V8ggRCkzB7h6VSLjrEV+CGbwmt8QN52VXtMdtDbMtf5TvmVTCr5iQDrgQGkxIlMYF
+	 /5rmecuLgjkzpHsVduippuIk+8nwj8INX+3PLW5vLVvDD8m7j7WJPjRRVyn7KRceow
+	 7MzB3nVq2JHoA==
+Date: Fri, 6 Dec 2024 13:58:14 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 03/20] dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
-Message-ID: <djqa52bhxkwtdf5uyccyay5omgwkyevilylmta5aydigdpgk3v@nd3glqyhsyl6>
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 05/20] dt-bindings: clock: imx8m-anatop: define
+ clocks/clock-names
+Message-ID: <227zmz7rg4t6j5ylbe4ft7udheffalcqj4uxxrwutcfwuvcm2v@qbih67ilxigy>
 References: <20241205111939.1796244-1-dario.binacchi@amarulasolutions.com>
- <20241205111939.1796244-4-dario.binacchi@amarulasolutions.com>
+ <20241205111939.1796244-6-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,29 +49,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205111939.1796244-4-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20241205111939.1796244-6-dario.binacchi@amarulasolutions.com>
 
-On Thu, Dec 05, 2024 at 12:17:38PM +0100, Dario Binacchi wrote:
-> Unlike audio_pll1 and audio_pll2, there is no video_pll2. Further, the
-> name used in the RM is video_pll. So, let's add the IMX8MP_VIDEO_PLL[_*]
-> definitions to be consistent with the RM and avoid misunderstandings.
-> 
-> The IMX8MP_VIDEO_PLL1* constants have not been removed to ensure
-> backward compatibility of the patch.
-> 
-> No functional changes intended.
+On Thu, Dec 05, 2024 at 12:17:40PM +0100, Dario Binacchi wrote:
+> Define clocks and clock-names properties of the anatop device node.
+
+This we see from the diff. Say something useful, instead of repeating
+subject and patch contents.
+
 > 
 > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 > 
 > ---
 > 
-> Changes in v5:
+> (no changes since v4)
+> 
+> Changes in v4:
 > - New
 > 
->  include/dt-bindings/clock/imx8mp-clock.h | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+>  .../bindings/clock/fsl,imx8m-anatop.yaml      | 53 ++++++++++++++++++-
+>  1 file changed, 52 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> index bbd22e95b319..f439b0a94ce2 100644
+> --- a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> @@ -30,22 +30,73 @@ properties:
+>    interrupts:
+>      maxItems: 1
+>  
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    maxItems: 3
+> +
+>    '#clock-cells':
+>      const: 1
+>  
+>  required:
+>    - compatible
+>    - reg
+> +  - clocks
+> +  - clock-names
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+That's an ABI break and nothing in commit msg mentions it, nothing
+explains impact or rationale behind.
+
+>    - '#clock-cells'
 
 Best regards,
 Krzysztof
