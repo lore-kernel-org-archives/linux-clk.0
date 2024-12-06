@@ -1,35 +1,34 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B72C1BD9E4;
-	Fri,  6 Dec 2024 09:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993521F03E4;
+	Fri,  6 Dec 2024 09:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477611; cv=none; b=hdYHCLhB22ODVF/SLkeGhh76QOwbVBwpmYtveNN7nKLdq9J5CXqsB1BeGGA2j8TswEyAMZmhme2t0IA4/eLz2Pk43gND5Ag585a8WGO4N/w23YEKqxv2VS3AeEBgJqbdPRRrmaSSQ9WhfEYxiRlQj7wF9qj6Lvim1SQXRv26zh8=
+	t=1733477613; cv=none; b=aPKCk19wBsejh8Yk9CxOKeRZkLqbZp4mIvp6MMVYjg/SrRIKkXIa8yUp/TOXo1uimeY1esn3szsAeBh33K3V+ZzXD2eVRxAmtck+uS9cbXpSvcE1R2NGPvO3OLOzrxBxEDTBNkNfSaeLkClHmtYFH9rl1RrITcSShQO8AR1LsTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477611; c=relaxed/simple;
-	bh=kJ+kCSC3s5A9h0v99LF+tl5qDYYIgHG+gOREB+KG41U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W/U1sWid3PpnULn7ASUnnE1Qny1cfb50UyRRXHHZDj/NvbGJJryMgWJgn4/cX24VhTyLpY24/dUj5QLORHlUcBjuIMEBohRflsuLm2iMeBWbtUhxDCkC2ap2A2bgSrIvy29vEP9tslRBgZMY3gS0AHbNxW4u7r0aZ4td2LqM3GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EoRQVrwV; arc=none smtp.client-ip=213.167.242.64
+	s=arc-20240116; t=1733477613; c=relaxed/simple;
+	bh=Cj2VeJ8uFjY3w3v+Ynbvv8L6oauOfCaE6Fq+A8xrCKE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oEhOavLftwZs8GI3ZUO3gIdmxqLerTUV9/eS/5TqhKp6tX9/pbXbOYEZMencWIL9umbeRqDAuj4FElIfTKkhGJ9g1O/DAG5vMK0nFpI+m3dvnfyxsFmg/ImcIWuqFPgD8jMG0eN7+QAJklYdFT0SMCFZn08Y1tif7uJtMZ4tEog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SwGQM1/U; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EoRQVrwV"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SwGQM1/U"
 Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2C793641;
-	Fri,  6 Dec 2024 10:32:48 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1471916D7;
+	Fri,  6 Dec 2024 10:32:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733477569;
-	bh=kJ+kCSC3s5A9h0v99LF+tl5qDYYIgHG+gOREB+KG41U=;
-	h=From:Subject:Date:To:Cc:From;
-	b=EoRQVrwVQKYsmaG/gQPfrXgdXhVyAokW6dDn7GKIXlRTKrWwiexLMVPDQLDhTCe1I
-	 rI8QzlNuOwVQzjL7/H2FxJVb6MkCj8RUp+de5Ca6EZL1XjmdPekl2XV15NNd3w9SVv
-	 e9Wb5Cdqhs9gKgLQRWN4brGrjxXzLiWyuGWoLdOI=
+	s=mail; t=1733477576;
+	bh=Cj2VeJ8uFjY3w3v+Ynbvv8L6oauOfCaE6Fq+A8xrCKE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=SwGQM1/UEuLpowiaq9r5Yfobnq0ArKybwR1BqdLJGsRXQTwXMWTGaXrx9IzFbnUCb
+	 dAT9yPn/oxL6DCQNXMKMwkyHzmPOVyYkvRMiUGu4gNkr7n5hQjzUT2+9Ll3kvJ6Ssl
+	 MFivztd1oJV0umUiQYHzy6oVmA6rlmhszPwKP9yE=
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [PATCH v3 00/10] drm: Add DSI/DP support for Renesas r8a779h0 V4M
- and grey-hawk board
-Date: Fri, 06 Dec 2024 11:32:33 +0200
-Message-Id: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+Date: Fri, 06 Dec 2024 11:32:37 +0200
+Subject: [PATCH v3 04/10] dt-bindings: display: renesas,du: Add r8a779h0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,10 +37,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALHEUmcC/23MQQ7CIBCF4asY1mKAFktdeQ/jYoRpOwuLGQzRN
- L27tG5s4vJ/yfsmkZAJkzjtJsGYKVEcS1T7nfADjD1KCqWFUabWSjnJHlj2gwyJZOuV7mxABO9
- EeTwYO3qt2uVaeqD0jPxe8ayX9esYVW2crKWSTeUANbQ2GDhTQEhxvEXgcPDxLhYum1/CbglTi
- NrUjXZWh84d/xDzPH8AYzTF6/AAAAA=
+Message-Id: <20241206-rcar-gh-dsi-v3-4-d74c2166fa15@ideasonboard.com>
+References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+In-Reply-To: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
  Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
  Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -63,81 +61,120 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
  linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- stable@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2499;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2543;
  i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=kJ+kCSC3s5A9h0v99LF+tl5qDYYIgHG+gOREB+KG41U=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUsTVfwGNZGG7KG9JClvLjKj6lIgTWnNApNAaX
- Zm92rResoKJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1LE1QAKCRD6PaqMvJYe
- 9TMdEACJRYIkG5zi1lN2zs4kEskoSapB1bxCIYUhHspPtILgF1QJ0dm903CBYz7n9Koz9quhQ+o
- W/cma3U8xdm9x6oOKAoy0jHMVm1Io5p8NxsxzSKhKeTOfMCdxux8gOPoHwKt8362gNIvoJGf6YK
- 1RijWu27ucJB66MuLbrEGRp/96cJBfdCrRr60YhChFzhMFDr8UBdP9N3lG+VLG+2227UWo41nBi
- C4whHHmvHaRsLbJu7dhducmGmxMb5ZLcKdTBCFTGrdQSJzqgrwtwTheia75Fe2+/EKua/rgdLAU
- krAmR/cheAh/JoWLeb8BPUG/uY+CjvvaGMJGfbevDmzIFHvvEoLubQcyVx0u1GCTIzydY5RjWeg
- CoauUFwGF6x5rEBZnXAtu1POdigQ/BIy1iJGSvQj9y8+RxSQqJe+YKFn4jkLJt/Q0+F7EEjDXTu
- cA4iqItUl8cvC9Ee4qYC9n8dZ4yi7rgfPJwfCjC+CaTxqeG6aLm5S1UOnfRD3DEAM81n++qZmd8
- Z1kUwSVwGa9Y5ybx4krsg7OOmg0+QE0DqEuu0VZ96SeZNQ0H43h49sv3FCQapFCrwSBZTVaC6wx
- 20TA7Gd+FekPfRr3chCm+mlo60QfRaYUS9aIQ7c2Gz/AaMJFBqJjl5hEhmpRYbOKHMJ557O8hS2
- AwwvLkwniNNkwdw==
+ bh=+C1FPFSno+ZBvGJfrkZWI9g3QFl0y7ZqagIAzaX59o8=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUsTadeh5WjxAaL61az4+5BnS3a8/1kvzKNFP9
+ 9t2a163+8CJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1LE2gAKCRD6PaqMvJYe
+ 9fxpD/93kRIWLCInEfV/Fc53w47/ILSL/dcP2IyJGeFQvtGaSVJtLkPbwUyjHC4hHbvGzuw5Jvc
+ hmOVMKSlWq/9UnJUf1oxME/o8+xpN4Q4tSbr7eGObenJ7KwL5cM9aScfMgz/aEFv1Stko+Lulhl
+ 72Xow6nLVi5vHUF82N+kBFe48a2EriwsO+oGU1OUR2AYVnz0b5JeVfgj7dLFR8BH9x9V3OtrrEF
+ StmPS4TRsndWnfA91iS3zR+VOBI1DvdKLnsxiUv+K+TTx6Mi8ArtRb3TvcWbQQ1o0tbR8Y+KNpb
+ 5Z7bWHKKgq7MJ91N0T84YIua3EKe/qqgb7IAX+PIgRt2J8kVp74yBVkaOgMrhfE5niGi3bgPzrW
+ UShK1SGJFXGIG3SAK/HGPfH6B+y+meJ5AFbxXQsFt/utXhxGoPVrHReWzFQKgY7bPWYCq7VgG/y
+ wvF7jL+lp193zcTFh7Isdcuw9hI3TsXzLv5tmZm/AbHTbzfI9HPNwPSrdWsdysPWU6WGsz9x3i6
+ eTbO5NaqVzVoQ/UdkvkEi07pj/KQAZHmVJixJ9zXrz0V+2jym4tOmjVhEGfCIjKNEQlvgVkrdZk
+ KYbapxpiktD4jOJogj0ZU+k2McQGcEn/5TBasFMK+yeBbTblCiFTp0FysKinczn1TxuLAKn4pat
+ T2rt+XAdrW6Mjyw==
 X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Add everything needed to support the DSI output on Renesas r8a779h0
-(V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
-Renesas grey-hawk board.
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Overall the DSI and the board design is almost identical to Renesas
-r8a779g0 and white-hawk board.
+Extend the Renesas DU display bindings to support the r8a779h0 V4M.
+
+Note that we remove the requirement for two ports from the global part
+of the bindings, as each conditional part defines the number of required
+ports already. This came up with r8a779h0 as it's the first one that has
+only one port.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in v3:
-- Update "Write DPTSR only if there are more than one crtc" patch to
-  "Write DPTSR only if the second source exists"
-- Add Laurent's Rb
-- Link to v2: https://lore.kernel.org/r/20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com
+ .../devicetree/bindings/display/renesas,du.yaml    | 52 ++++++++++++++++++++--
+ 1 file changed, 48 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- Add the DT binding with a new conditional block, so that we can set
-  only the port@0 as required
-- Drop port@1 from r8a779h0.dtsi (there's no port@1)
-- Add a new patch to write DPTSR only if num_crtcs > 1
-- Drop RCAR_DU_FEATURE_NO_DPTSR (not needed anymore)
-- Add Cc: stable to the fix, and move it as first patch
-- Added the tags from reviews
-- Link to v1: https://lore.kernel.org/r/20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
+index c5b9e6812bce..7dec47aea052 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+@@ -41,6 +41,7 @@ properties:
+       - renesas,du-r8a77995 # for R-Car D3 compatible DU
+       - renesas,du-r8a779a0 # for R-Car V3U compatible DU
+       - renesas,du-r8a779g0 # for R-Car V4H compatible DU
++      - renesas,du-r8a779h0 # for R-Car V4M compatible DU
+ 
+   reg:
+     maxItems: 1
+@@ -69,10 +70,6 @@ properties:
+         $ref: /schemas/graph.yaml#/properties/port
+         unevaluatedProperties: false
+ 
+-    required:
+-      - port@0
+-      - port@1
+-
+     unevaluatedProperties: false
+ 
+   renesas,cmms:
+@@ -807,6 +804,53 @@ allOf:
+         - reset-names
+         - renesas,vsps
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,du-r8a779h0
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Functional clock
++
++        clock-names:
++          items:
++            - const: du.0
++
++        interrupts:
++          maxItems: 1
++
++        resets:
++          maxItems: 1
++
++        reset-names:
++          items:
++            - const: du.0
++
++        ports:
++          properties:
++            port@0:
++              description: DSI 0
++            port@1: false
++            port@2: false
++            port@3: false
++
++          required:
++            - port@0
++
++        renesas,vsps:
++          minItems: 1
++
++      required:
++        - clock-names
++        - interrupts
++        - resets
++        - reset-names
++        - renesas,vsps
++
+ additionalProperties: false
+ 
+ examples:
 
----
-Tomi Valkeinen (10):
-      drm/rcar-du: dsi: Fix PHY lock bit check
-      drm/rcar-du: Write DPTSR only if the second source exists
-      dt-bindings: display: bridge: renesas,dsi-csi2-tx: Add r8a779h0
-      dt-bindings: display: renesas,du: Add r8a779h0
-      clk: renesas: r8a779h0: Add display clocks
-      drm/rcar-du: dsi: Add r8a779h0 support
-      drm/rcar-du: Add support for r8a779h0
-      arm64: dts: renesas: gray-hawk-single: Fix indentation
-      arm64: dts: renesas: r8a779h0: Add display support
-      arm64: dts: renesas: gray-hawk-single: Add DisplayPort support
-
- .../display/bridge/renesas,dsi-csi2-tx.yaml        |   1 +
- .../devicetree/bindings/display/renesas,du.yaml    |  52 ++++++++-
- .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 119 ++++++++++++++++++---
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi          |  73 +++++++++++++
- drivers/clk/renesas/r8a779h0-cpg-mssr.c            |   4 +
- drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c      |  18 ++++
- drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c    |  24 +++--
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |   4 +-
- .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h   |   1 -
- 9 files changed, 272 insertions(+), 24 deletions(-)
----
-base-commit: adc218676eef25575469234709c2d87185ca223a
-change-id: 20241008-rcar-gh-dsi-9c01f5deeac8
-
-Best regards,
 -- 
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+2.43.0
 
