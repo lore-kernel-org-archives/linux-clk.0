@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736FD1FECD4;
-	Fri,  6 Dec 2024 12:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607C05464A;
+	Fri,  6 Dec 2024 12:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489790; cv=none; b=B2JNzaXfh4VzJbrqfV66j2YutyRf85CXpQtWqxKHPBuA0KhpJhLfm7PiSqm3qe8pa1UR5i/R9G+b+/V8lS0j0Fl7ol6Opma9EQfaXhjLTaTxJhemG4Rc5fNZTK1gZf1aQwLBH7N+Xn9nPC96mnVjRtFPDTqdLVQbu4VR6AiicEc=
+	t=1733489804; cv=none; b=cUvgXjixH1bvnM64ixK654MO1x3zjqUYx91jjyoJyLSCD9024rx3pwG78sSo5RTT/OI3uP7r+kuaJcFY5YyeCbrjFODkG1IDHbTznxtJ0rN5mJNLG7pMzK3S4pxtqK5woHFVepMA/2tl4TIXyx1vujE+9srYmcG5wSrUIjdM1Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489790; c=relaxed/simple;
-	bh=CcvGwj3nX/cJL1PK353IPE4b9ZUoSfd2vgCJQVxEO60=;
+	s=arc-20240116; t=1733489804; c=relaxed/simple;
+	bh=vtIIcakrqZxr5Cn12lC9/zaEE5BlQXDpTN+QCqnD/HM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KevfqbDwEL8e836dsuhHawqLpygVh6UVx6Cwd9masDsnxPoOVIGz17rhq/k9gdfwVJv67vKKy4KFEPN7yX/HcCNlITOn1t1ggVElx6NzHnQPHTUqTzCr8tD5QHV+LAp4zeuu1RbSKakhwQ8/Vop09vR7MgTVzGJr8h48Ce7IuTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWszWwZ+; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPW1a4rXWHvK7yJwsXneiO/O+AT7XTBC9bX9oe8owWO+8fQg0ksjIY/rtWV32UIA32s1l9ChkTuPAa30lhez26MI6DQtzjUfTBEhkr2oj1Xwy0ODwNV5UfkeqICCEww9nLEo6YHICldkVqc+0M/8jeSIC+xXt4iFGuimmgJHxyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhMlta4k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWszWwZ+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D9AC4CED1;
-	Fri,  6 Dec 2024 12:56:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhMlta4k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46EC2C4CED1;
+	Fri,  6 Dec 2024 12:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733489790;
-	bh=CcvGwj3nX/cJL1PK353IPE4b9ZUoSfd2vgCJQVxEO60=;
+	s=k20201202; t=1733489804;
+	bh=vtIIcakrqZxr5Cn12lC9/zaEE5BlQXDpTN+QCqnD/HM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XWszWwZ+HkTEZCTr5MgjLWvfnHiAllNkXcFZAWTxxeoGEO8/pNdIiAUXZ4Surj0Ns
-	 5eQopZu6arlr0rUCaCYGfuWVaPwMQ+NNMLo/DtH9opaUI66OMWxn7imQEKM/zYdeV7
-	 gduhLq/UgTZU+VbmiV/Z0d3cXWfKk8RVdfuoisXRDyYFWiFjo9sdu35EsjLl+hf0fL
-	 gdwwKtEXApQfv+f2nvV70UtDXoL72NGXyTW8oxAb50lK/tQLuSktRv197wqNSi5LDX
-	 +b3dINQlpqtV7+kuh/s+7mRogj1tdMucOx1IKydrkM734Uf4C1Ucej9JGu9Zr/GaSb
-	 +aQ0TWgPnJo+Q==
-Date: Fri, 6 Dec 2024 13:56:26 +0100
+	b=jhMlta4k3VdC6X1yLUjTKn3OqxwJ4bH0bZMCxuho7rL7Sike9wibGA2REkSQVV3gm
+	 oSm1ibOqks4h00ay9Irq8q0VFDuBunrab0b5jxUJw+a64h3PFygtUb5NTLCFjCZ0Cf
+	 LEy0cKQTc5N2Jg+W0e9rE8HnrS8I0S6YRl9m868OcbhbQJQT3WZ8PitB0P5jFdlJS+
+	 aPQRxd29agli47B2iW/tMNko/Ami+KWXxg/03HzM5/U6yCk2n6fziYxi64k4zRbJvf
+	 QslR7QF0chJJLtXOotiUtJUoBtQuUuv2zICPh28MLaBxreHLurRnp10nq9H0m79biE
+	 DH3ofo99XXuIQ==
+Date: Fri, 6 Dec 2024 13:56:40 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
@@ -37,10 +37,10 @@ Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
 	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
 	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 01/20] dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
-Message-ID: <cnacul23vrat2vmoxmi626awgmodp5zvb7rf5pu2g6cwysmlzh@oqcopgp7tzlm>
+Subject: Re: [PATCH v5 03/20] dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
+Message-ID: <djqa52bhxkwtdf5uyccyay5omgwkyevilylmta5aydigdpgk3v@nd3glqyhsyl6>
 References: <20241205111939.1796244-1-dario.binacchi@amarulasolutions.com>
- <20241205111939.1796244-2-dario.binacchi@amarulasolutions.com>
+ <20241205111939.1796244-4-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,14 +49,14 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205111939.1796244-2-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20241205111939.1796244-4-dario.binacchi@amarulasolutions.com>
 
-On Thu, Dec 05, 2024 at 12:17:36PM +0100, Dario Binacchi wrote:
+On Thu, Dec 05, 2024 at 12:17:38PM +0100, Dario Binacchi wrote:
 > Unlike audio_pll1 and audio_pll2, there is no video_pll2. Further, the
-> name used in the RM is video_pll. So, let's add the IMX8MM_VIDEO_PLL[_*]
+> name used in the RM is video_pll. So, let's add the IMX8MP_VIDEO_PLL[_*]
 > definitions to be consistent with the RM and avoid misunderstandings.
 > 
-> The IMX8MM_VIDEO_PLL1* constants have not been removed to ensure
+> The IMX8MP_VIDEO_PLL1* constants have not been removed to ensure
 > backward compatibility of the patch.
 > 
 > No functional changes intended.
@@ -67,6 +67,9 @@ On Thu, Dec 05, 2024 at 12:17:36PM +0100, Dario Binacchi wrote:
 > 
 > Changes in v5:
 > - New
+> 
+>  include/dt-bindings/clock/imx8mp-clock.h | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
