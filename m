@@ -1,185 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063E920765A;
-	Fri,  6 Dec 2024 13:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6530946426;
+	Fri,  6 Dec 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490259; cv=none; b=nc7T76xIaQ1oMOanMRi2gG5z6Hy+hotBdM2djsR0MmmdzWYHdKTsDjy+pKI0/+L+HvpVTHM0rsm6MNG0OqAyARYnP4VdtLB4KbGB+pFeUlvrPHIc2jEtxwuw37CyHdhVLz9Cv1IVKqEvSlo/X0oKNRslPIUHdKBFgX7GC6rWZ4c=
+	t=1733490606; cv=none; b=YJJyE+0z0f16A0FXahCb+qwAhc2ruXFaLRvU1GbN45xpY5LeZrI8msGYww20aolzJxC87lpLPVN094PPa1lyLrTUaXJwaSb0cpWDlFmyyRjK+IjMMDou4PLacxzxyigaMtwEw51OP3o1oajCHZPgUrXNO+9RFuiP5p7O5nSjC7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490259; c=relaxed/simple;
-	bh=VLfoQRnwWe0Rvqit/Z+Tb+RfEtPz3Jei9eCUy65SVAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmdoPf5mAQzuhtIBlQUTqBdUWdII9NDedAfOi2CLBWGC6stl07YKvM50Rod4fwhLwc/N0XbIdXmRTFRwChES9n34qc4PTDkyk60PVuZzP0zZLbyu+wCPNQlVeDqKvKrAaundwmOxG3EqujTX+hTXI7O0ZUPvQC4DfnAAjCugt7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0EpTmWL; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0EpTmWL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B17C4CEE0;
-	Fri,  6 Dec 2024 13:04:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733490258;
-	bh=VLfoQRnwWe0Rvqit/Z+Tb+RfEtPz3Jei9eCUy65SVAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y0EpTmWLThG3R0PlwzAt7twm24nccovDnKlaPEcQS420UMIwrtO8xHxpRVxkymzH9
-	 KH5TnQgF9SxF7RhZwz83d0UAZ7VrV6Mn2zCla7AcoZyDrKudTYbv5rqby013bXNGJo
-	 f2lhAIDa8OwmIDCnwMLAPYGwWDFVA082tVGOO3ohR/GMKagavcsPEtMIJy80BcI5K5
-	 pWjAoeR6vrve6+NdEWNQTKH+KPSJfEK2TmrH28pTH4f4KrY7SKWxtu4Ufk0dRGBCGq
-	 TjtVm+G6AsBDUc0t8I2hBdKMw8+O31HQ9RfqgrWcXdX40FfDIJ9wWyM/pX1WP/Z+/5
-	 0lHK18/yeAvAA==
-Date: Fri, 6 Dec 2024 14:04:15 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 15/20] dt-bindings: clock: imx8m-clock: support spread
- spectrum clocking
-Message-ID: <gbymcmoya7dfmedq4nkopqpswh63d2ujxl2elc2x7x325b75bu@anp36sdya43v>
-References: <20241205111939.1796244-1-dario.binacchi@amarulasolutions.com>
- <20241205111939.1796244-16-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1733490606; c=relaxed/simple;
+	bh=vLb6TFJMRVrWuUEMKVZ8X3STvYVWdH2JopjooWhn/7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ra21yBn2GAKra8i0HhuyfTl99NzxkWxKUDC9kOhJlgUENKc8tGi15ElJjHdx0pM0Mhcp7Wcyo72WpuJj/n1JIGnx4lzuUpKlzxL/xK4Z3Xp5VUaIWoca4Q9NkDO1QO6Z4fMh0Ch469d1PTdnQ1h5Zm0EICnnZ4+4Xn/q/PdP9qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4668d7d40f2so16744311cf.1;
+        Fri, 06 Dec 2024 05:10:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733490602; x=1734095402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pql6sQFky/8z/PHhGi6bUNlibDNQZClt0A7VMJ+07bY=;
+        b=kzStCU09U3KW/hMTozBrHNpCFgZIy4se/kSALwyY4g56DWUJ08yTMDjxW98UTsIMSB
+         MvLXVYMOXx4B1G6cBmKiWZbGzIhgMUWWMXz+m0rcbhCwhovZZ0plSDH68EpfbX35F+Jv
+         6eZs81uztnHIITHlKU0xu4gzy0BObAGQF5gh7zi82Ov5U9iPtJqCklYQsoJ7C0NiSUvM
+         zQ96v04YN35eZCCXMDsiHa1ViJ4QVdA+PnaeJJUnu1AzXqnwsUOGG2S3ZsWrD0to/8tl
+         j9vsMDP0LqZ/MfthRJ/mgWrBczzoCLv788j490xVTy8KaLN1uv2X9LaMw5dGtJpyukxj
+         iSdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ3VkD32mgXMbFa2Si1M4L36D7Ha0OxUXsgprDix/lMdKp/9ixren1TF3VoNIu5aWaClEKXzbbifgjyCVFkrt4vDg=@vger.kernel.org, AJvYcCV0qDrp5F+41FPbvT39V3E/KIqwARmcNhgfLgm8rXYuoLQoyr+7sPWyBq2J/WpH8mMD5xJ+FL6m8pXDqLsY@vger.kernel.org, AJvYcCXG1ckz5FgFWx6Zirn5hPo7pNrhE1gyrPdyxPNl/3uphVKV01qTUCm1NTtRENA3Uf982jJa9JyqKsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPMofbJTuEOp06nKbBACSwrH5jFGKxW/ITsqMACENJVhSzqu1K
+	HI5TzmoX95/RY2ufJyRUlKFK0sYrC02r+Tvvp5V2aub5eROx9syP048DuiJh
+X-Gm-Gg: ASbGncuNnukZs7Y0EsYK5PPGi5P0kZuydx9JjisUOkl3cO1JUH3JJVIUQ0FIiP0ZLYG
+	XrNmXpzfHmBQU9UQSr5QYiie/igbAcLXehEY2QZOVSPQbIwKdI6Zh/fEkKH59OPJj1kNlaGoTj/
+	nKnP57wOEh5wixROlMStoxpBheQ6uk6Vipzr1yXl9XYBAJqy9XnB0XCAyW26d0NDTg5mGl/TZzG
+	OwF7RPIjDk0crGKk/agSM9B3WzdT76tCtYlU52ewkL+fYIGyW6Z7THf09Hs18mCfRjbK/A23/il
+	zbqx5jgdzVUTMJZy
+X-Google-Smtp-Source: AGHT+IFRVwImThhZxsJ6zLb+cZGmBQfGKze6z2uNg2Vg0cwDsQ4jPXF8KaWBiQ4iwh4JFvfUr62MCQ==
+X-Received: by 2002:a05:622a:292:b0:461:1895:d9a with SMTP id d75a77b69052e-46734cc3b42mr50133461cf.14.1733490602032;
+        Fri, 06 Dec 2024 05:10:02 -0800 (PST)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a5df45sm171506085a.51.2024.12.06.05.10.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 05:10:01 -0800 (PST)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b67441cf32so129282185a.0;
+        Fri, 06 Dec 2024 05:10:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW8FVi3+atWyW9ivYggHxjm+gvQwhsAwCN9FdumUP/Ywf7twYP7AdQlV9rJ7aTJfNfE4ro9ZQW6/Rc=@vger.kernel.org, AJvYcCWUUGa8Kb/ZiPCemQVCTdGJ6UJyMUlmfSFC8/rD1buJebs9LuRce8035OFxf9Ndv2Zk7CP3cqYXeIuUFhZv@vger.kernel.org, AJvYcCX4EQViFZAtSPfuHR/qCX5mLmRVMTZVYsVLA16/EI+mwkSt5twZA8zq1FmzasZaqJ2TqUgWPLs3zIFS8+ljFv1fpJk=@vger.kernel.org
+X-Received: by 2002:a05:620a:2441:b0:7b6:7ac5:5de1 with SMTP id
+ af79cd13be357-7b6bcac6876mr426592485a.7.1733490601354; Fri, 06 Dec 2024
+ 05:10:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241205111939.1796244-16-dario.binacchi@amarulasolutions.com>
+References: <20241202203916.48668-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241202203916.48668-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241202203916.48668-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Dec 2024 14:09:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUbu8aR50NhChJ1Ur-GXW4eiELU=XyFAmBNPRzzA1dvKw@mail.gmail.com>
+Message-ID: <CAMuHMdUbu8aR50NhChJ1Ur-GXW4eiELU=XyFAmBNPRzzA1dvKw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: renesas: rzv2h: Add selective Runtime PM
+ support for clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 05, 2024 at 12:17:50PM +0100, Dario Binacchi wrote:
-> The patch adds the DT bindings for enabling and tuning spread spectrum
-> clocking generation.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> 
+On Mon, Dec 2, 2024 at 9:39=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Update `rzv2h_cpg_attach_dev` to prevent external and core clocks not tie=
+d
+> to the power domain from being managed by Runtime PM. This ensures that
+> only clocks originating from the domain are controlled, thereby avoiding
+> unintended handling of external and core clocks.
+>
+> Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
+> structures to exclude specific clocks from Runtime PM when needed. Some
+> clocks, such as those in the CRU block, require unique enable/disable
+> sequences that are incompatible with standard Runtime PM. For example,
+> the CSI-2 D-PHY clock initialization requires toggling individual clocks,
+> making Runtime PM unsuitable.
+>
+> The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
+> be managed by Runtime PM based on this `no_pm` flag. New macros, such as
+> `DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
+> PM.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> 
-> (no changes since v4)
-> 
-> Changes in v4:
-> - Drop "fsl,ssc-clocks" property. The other added properties now refer
->   to the clock list.
-> - Updated minItems and maxItems of
->   - clocks
->   - clock-names
->   - fsl,ssc-modfreq-hz
->   - fsl,ssc-modrate-percent
->   - fsl,ssc-modmethod
-> - Updated the dts examples
-> 
-> Changes in v3:
-> - Added in v3
-> - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
->   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
->   indeed more or less a syscon, so it represents a memory area
->   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
-> 
-> Changes in v2:
-> - Add "allOf:" and place it after "required:" block, like in the
->   example schema.
-> - Move the properties definition to the top-level.
-> - Drop unit types as requested by the "make dt_binding_check" command.
-> 
->  .../bindings/clock/imx8m-clock.yaml           | 77 +++++++++++++++++--
->  1 file changed, 71 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> index c643d4a81478..83036f6d2274 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-> @@ -29,12 +29,12 @@ properties:
->      maxItems: 2
->  
->    clocks:
-> -    minItems: 6
-> -    maxItems: 7
-> +    minItems: 7
-> +    maxItems: 10
+> v2->v3
+> -> Replaced `rzv2h-cpg` to `rzv2h` in commit header
+> -> Switched to use for loop while looping
+> -> Considering core clocks to be non pm clocks
 
-ABI break without mentioning, without any explanation in the commit msg.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.14.
 
->  
->    clock-names:
-> -    minItems: 6
-> -    maxItems: 7
-> +    minItems: 7
-> +    maxItems: 10
->  
->    '#clock-cells':
->      const: 1
-> @@ -43,6 +43,34 @@ properties:
->        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
->        for the full list of i.MX8M clock IDs.
->  
-> +  fsl,ssc-modfreq-hz:
-> +    description:
-> +      The values of modulation frequency (Hz unit) for each clock
-> +      supporting spread spectrum.
-> +    minItems: 7
-> +    maxItems: 10
+Gr{oetje,eeting}s,
 
-Why all cloks receive now spread spectrum? I had impression - and all
-your previous versions were doing this - that you have only three or
-four clocks with SSC.
+                        Geert
 
-Do existing clocks 1-6 support SSC?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> +
-> +  fsl,ssc-modrate-percent:
-> +    description:
-> +      The percentage values of modulation rate for each clock
-> +      supporting spread spectrum.
-> +    minItems: 7
-> +    maxItems: 10
-> +
-> +  fsl,ssc-modmethod:
-> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> +    description:
-> +      The modulation techniques for each clock supporting spread
-> +      spectrum.
-> +    minItems: 7
-> +    maxItems: 10
-> +    items:
-> +      enum:
-> +        - ""
-
-Drop "", not sure why do you need it.
-
-> +        - down-spread
-> +        - up-spread
-> +        - center-spread
-> +
->  required:
->    - compatible
->    - reg
-> @@ -76,6 +104,10 @@ allOf:
->              - const: clk_ext2
->              - const: clk_ext3
->              - const: clk_ext4
-> +        fsl,ssc-modfreq-hz: false
-> +        fsl,ssc-modrate-percent: false
-> +        fsl,ssc-modmethod: false
-> +
->      else:
->        properties:
->          clocks:
-> @@ -86,6 +118,10 @@ allOf:
->              - description: ext2 clock input
->              - description: ext3 clock input
->              - description: ext4 clock input
-> +            - description: audio1 PLL input
-> +            - description: audio2 PLL input
-> +            - description: dram PLL input
-> +            - description: video PLL input
-
-Also ABI break....
-
-Best regards,
-Krzysztof
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
