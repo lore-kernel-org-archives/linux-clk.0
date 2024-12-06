@@ -1,154 +1,116 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8BC1BBBF1;
-	Thu,  5 Dec 2024 22:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56FF1741D2;
+	Fri,  6 Dec 2024 02:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733437332; cv=none; b=NouVG7UUc09h6oLgxw9x0zgsgUQLEY/ayTXOPE3Zd6Cy7LwWpIMAmUK5UQw5MK6e6bOTgPkyT6jtfcCNykuAwj9I1/1bUemxp8J40XdIRpmOKOVd8ZERy4GaJU5jvVZs4OhcTvN2W0JvFgWlXY1m2rpM9AzKiXCr4B7b3tm9uZ8=
+	t=1733452177; cv=none; b=PqW8gyjvmwAtm3Zs712RZuAdK3cRdmMIABaoxU5Oqn07B5Ea68qb4h/NTodBD/m05r7yIICANu3z0lmVXmeKJnjxCNbM1JuceZnb0lcJcYLeek4MnjntDZ2fa17JXyLSjbrg39Jv1WFmKWciAMRPR24+33aqMusnaTgoB/XZ85c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733437332; c=relaxed/simple;
-	bh=t82vRrD6unr/xrJVlts5wpsmomQrJ3XxRMWJ6iiZEKY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CnV44ioX1cK7Qq6MRtFQfIArAgFfW3oqyIcW9tM2BqSZfGLFdgTzv/3w44gQbb7HU80U9aa43IzFoaxMLzPwZ0e/SGoFeSm7fGlsC30POzygB5XxvfYpKwXxpkZXPn8HdOJGOo/d6llRtpNzQtDn2OLb0vBOqw7rtDM9dJvKJU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=askbjCWr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1733452177; c=relaxed/simple;
+	bh=UWYkmQgJqsODlM0e3u/6lpT+QT8jC6RKy54hcLbglIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDtgZOEWvLnMbmIjlAh11/kkBXRMzjvP4KDjVfI8wBDswav+pVmhnhm+70aHLPLvP+3IR4ptdY5tiE43eoswAhOxhgvoVNapM0SaQuDQnZjUkk8RuWSryi79JqrCXxSzYCDElRFXeVXFdiIXt++ktmuqxWZmLpj9lmlFCOq3EzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HmdrrhjA; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="askbjCWr"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaNKh003810;
-	Thu, 5 Dec 2024 22:22:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=oEHKbVwkFtPhnMCvlskLSf
-	JguaxofIzLV8n80Bz4s3A=; b=askbjCWrU2O1LIIaqAlu8AfhvDOrgN79lRc0ws
-	NiTftRIylVa+d5ndiYHJ/cgu+FpY6kPhjr+A6R9/IP2xN5cHxAz62KLNZGFB1A/n
-	U0kFP8N/9kEvAj2DS8hLBTln3PYDkEb2vlfKnkW2zJtrMDB0FgPEkKgyuVhykBix
-	xQ1fKM/zIXJr8HiKWZUqUHPx8OlgXg8OmTonlQSQnjKj2VHF/J8JH9YNx4hFDbDI
-	6yWN05ThnOZJTcZDgktqcPbDy53uS+ben3EbZqH/8vHu8+HHjpL+zkrtySM2YeTO
-	LdtKmD4Rnbva2N+cKqrw/pOSqnzA41E+jkrSqHO4kuWj19Jw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm1hy2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 22:22:06 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5MM6OY028834
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 22:22:06 GMT
-Received: from hu-c-gdjako-lv.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Dec 2024 14:22:05 -0800
-From: Georgi Djakov <quic_c_gdjako@quicinc.com>
-To: <andersson@kernel.org>
-CC: <sboyd@kernel.org>, <mturquette@baylibre.com>, <quic_mdtipton@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <djakov@kernel.org>
-Subject: [PATCH v3] clk: qcom: gdsc: Add a flag to skip setting power collapse bits
-Date: Thu, 5 Dec 2024 14:21:56 -0800
-Message-ID: <20241205222156.1880299-1-quic_c_gdjako@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HmdrrhjA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733452176; x=1764988176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UWYkmQgJqsODlM0e3u/6lpT+QT8jC6RKy54hcLbglIU=;
+  b=HmdrrhjAd1tYBPNKhYBStFC2Ek5Ra/3vkg6oMbUgOSGkdBNqX06OepQg
+   4b/OJcw2n00fKOv37oCydkwCn6TU4FUsFlD2iK2SpfCuSRYCtBHARcQiJ
+   eu560MvoL31SGrcIr0Fz4Is1I1NR7z4x3XZsw3UqtsbzrtltxaiyD1tzI
+   u1mr50UjMkTEKhJvm7wb8xnMDWhuUaEnU+gmaTXrQPtIpHTPBY/G0Fv8K
+   QC2IveNezNnTpDjvIBrXjrym4kWHMaMMY53vmo+sPnCbU83kzPl9fKXh+
+   oks/V4V68xySlC4yanHhf3Wk97b4pRjNuWYSk/EkCIHWLf39+Ff3Q35mx
+   A==;
+X-CSE-ConnectionGUID: L3Tvmo5kRw+e4bfgRL1CNw==
+X-CSE-MsgGUID: Zvub0rilT2i0kMPml5W4KQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33943020"
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="33943020"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 18:29:35 -0800
+X-CSE-ConnectionGUID: lwXnpxdgQ6yYKcNCD6eNMA==
+X-CSE-MsgGUID: znHyy5KWTeu/Yt7uR8mtgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="94749549"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Dec 2024 18:29:32 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJO5x-0000cl-24;
+	Fri, 06 Dec 2024 02:29:29 +0000
+Date: Fri, 6 Dec 2024 10:28:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] clk: samsung: Introduce Exynos990 clock
+ controller driver
+Message-ID: <202412061048.3gu75pLi-lkp@intel.com>
+References: <20241205193423.783815-4-igor.belwon@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UCQxtff08_J3EJV2FNb8Vu1hkXK5TRad
-X-Proofpoint-ORIG-GUID: UCQxtff08_J3EJV2FNb8Vu1hkXK5TRad
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050166
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205193423.783815-4-igor.belwon@mentallysanemainliners.org>
 
-The sdm845 platforms have a hardware issue that requires keeping
-some of the MMNOC GDSCs in SW collapse mode (which is the power-on
-default). But if some driver tries to use these GDSCs and the mode
-is updated because of runtime pm calls, we may get a board hang.
-Introduce a flag to skip any updates to the power collapse settings
-for the impacted GDSCs to avoid unexpected board hangs.
+Hi Igor,
 
-Fixes: 7bb38c20f2b6 ("arm64: dts: qcom: sdm845: Add DT nodes for the TBUs")
-Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
-Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
----
-v3:
-- No changes
+kernel test robot noticed the following build errors:
 
-v2: https://lore.kernel.org/r/20241009151657.1041691-1-quic_c_gdjako@quicinc.com/
-- Pick up Reviewed-by tag
-- Add Fixes tag
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on krzk-dt/for-next clk/clk-next linus/master v6.13-rc1 next-20241205]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-v1: https://lore.kernel.org/r/20240813120015.3242787-1-quic_c_gdjako@quicinc.com/ 
- drivers/clk/qcom/gcc-sdm845.c | 6 +++---
- drivers/clk/qcom/gdsc.c       | 3 +++
- drivers/clk/qcom/gdsc.h       | 1 +
- 3 files changed, 7 insertions(+), 3 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Igor-Belwon/clk-samsung-clk-pll-Add-support-for-pll_-0717x-0718x-0732x/20241206-043559
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241205193423.783815-4-igor.belwon%40mentallysanemainliners.org
+patch subject: [PATCH v1 3/3] clk: samsung: Introduce Exynos990 clock controller driver
+config: arc-randconfig-001-20241206 (https://download.01.org/0day-ci/archive/20241206/202412061048.3gu75pLi-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061048.3gu75pLi-lkp@intel.com/reproduce)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index dc3aa7014c3e..019b780e31c8 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3503,7 +3503,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | SKIP_SET_COLLAPSE,
- };
- 
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
-@@ -3512,7 +3512,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | SKIP_SET_COLLAPSE,
- };
- 
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
-@@ -3521,7 +3521,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | SKIP_SET_COLLAPSE,
- };
- 
- static struct clk_regmap *gcc_sdm670_clocks[] = {
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index fa5fe4c2a2ee..4b83cec9137c 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -121,6 +121,9 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
- 	u32 reg, mask;
- 	int ret;
- 
-+	if (sc->flags & SKIP_SET_COLLAPSE)
-+		return 0;
-+
- 	if (sc->collapse_mask) {
- 		reg = sc->collapse_ctrl;
- 		mask = sc->collapse_mask;
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 1e2779b823d1..6bb7e023a19a 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -68,6 +68,7 @@ struct gdsc {
- #define RETAIN_FF_ENABLE	BIT(7)
- #define NO_RET_PERIPH	BIT(8)
- #define HW_CTRL_TRIGGER	BIT(9)
-+#define SKIP_SET_COLLAPSE	BIT(10)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412061048.3gu75pLi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/samsung/clk-exynos990.c:13:10: fatal error: dt-bindings/clock/exynos990.h: No such file or directory
+      13 | #include <dt-bindings/clock/exynos990.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +13 drivers/clk/samsung/clk-exynos990.c
+
+    12	
+  > 13	#include <dt-bindings/clock/exynos990.h>
+    14	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
