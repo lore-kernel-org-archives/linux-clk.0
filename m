@@ -1,125 +1,133 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793F1FBC95;
-	Fri,  6 Dec 2024 09:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6CD3D6B;
+	Fri,  6 Dec 2024 09:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475958; cv=none; b=Pb0CJ7ht1OHIWKC2J1bpyJ20vMSuosLQ6F4mLXAj5PruqgkwJmtIH+Mz4LGy0ZvGefKOn+u5IgBaKF05wxHMm3RGLsB7Zyiu2pyrai7D8xuwK/ZWYB4o//0vzIf2PhVcXkkMD8xaPZ7lARN0UlhgMsNTepvGlrVgwJP4AdgxyLs=
+	t=1733477609; cv=none; b=qmoTAIjutzNY7Co5EGUwkFg7F9cL1HMuextU9hteC4JShZSW865ofzu+TbtHnCRJO8yDh+TlxjRds/jWX3OEuLmcPac5jvUCZkFlr2TlGpEMFsf92Smj+L3RyoQA/AS45JsI4pGNaywxfyJ/TzzA87Tyzuy/hHLxsGKM3rEbgns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475958; c=relaxed/simple;
-	bh=KMel/fejqC4xHakZdeJNDBt2c9vzHF+RSzfWeo+L2f4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HP4uODHHI7luhRmkAhCwL/udRqSchtHlaRCnzP1EE5bQzEbksMp4Zh13XN0Kp43EvN3FM4MUhYv7w2JX4qVpLvkprgCWQCKVokljhqAbwpl8LmCqjOtJNm/WPoWfJB6qhUuKlMQO01IczICPaRfIDmkZacWZlF3M0tykVXTB5ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=XQrZYdbF; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rm6Ic1fZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1733477609; c=relaxed/simple;
+	bh=avI8ClOrtHzD2SipA/Fyk+O8iRhwsleato1FpezpTWY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tVnC/XzjeVc3BhByo6r432fwrnxyKG1vHpteHwTDl5/yCT83iZFMxlOX3kYmPHp3j7LolP1RuEexenfb2bS5vqDozRBuFhCOsXTYYTcaK9XwcPS4ynZR6I56QF/ndUtvspCakevwL+s8/nGH4IXP8ufcIPUlnf5nbXLy5cOdULA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=b86zVfEA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="XQrZYdbF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rm6Ic1fZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733475955; x=1765011955;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=+YIfUdq9OR5ROGXG2tbL8UIVwnPsC3GbJ9XOwhsQXWg=;
-  b=XQrZYdbFlWsGLJJhXiiFFWev/2VLCcnhEuUQmOEtaFne4CpThmxe7DRu
-   nU9I1WjrbITAKedMIVVzEdq+pN92AASFR4+wXwLcyxgBzRpD5lduuCvrp
-   oBMBeqHqJutde9Y+ochMdM5IGPhCUxQO+rf2JdxWfQOtI90o1egFT6zFP
-   aR58KCOHFgY4Tn8KofoEl6zwSLG6/di9jHC2FcHQe7sVvGtXoa1uq9zSz
-   tDhcly6fHP+ZTdN24ev5HZ5E///jCdJm+iGBcgpHNsRJg+jJjkcXISGfi
-   jtSOgAOtSqFGRPJlzwMo+xmlT9lZSY722TnVenThUJDU8Sv/jUMsPXx79
-   Q==;
-X-CSE-ConnectionGUID: oVbENiJ4R3iM76QGjQUZbw==
-X-CSE-MsgGUID: YnhpYHKDRjOcgqB0ukZk4Q==
-X-IronPort-AV: E=Sophos;i="6.12,213,1728943200"; 
-   d="scan'208";a="40449387"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 06 Dec 2024 10:05:52 +0100
-X-CheckPoint: {6752BE70-2-1E10F2A5-CC0651E5}
-X-MAIL-CPID: 313663F2906B776E37CF64B963F0996B_4
-X-Control-Analysis: str=0001.0A682F17.6752BE70.0064,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 786FF163AD6;
-	Fri,  6 Dec 2024 10:05:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733475947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YIfUdq9OR5ROGXG2tbL8UIVwnPsC3GbJ9XOwhsQXWg=;
-	b=rm6Ic1fZRlZmgzFL/7eQp1nhcTTvMsgpS9iWRkPgv1JDg/Ns2sYSxwQf/bZezXw447Kzki
-	1F8E5iNQtQQbMxiZPX1HgsO/xVUJLzMbprmisfvvnxy+2IE3Ubw4alQO5wjgMiWiPN8r9U
-	3hajrS3sEQPb7Z4c2fierSy9XjVNo0tcxmvxEK02C3JH64DEFXpwM9IO/hCGLtLn/Zn4PC
-	oVc8aRcUXK2gVwX3wqAwKgNiTKpoVzktaroRC6jt/6uBW6jFdRiM8bdXxNmtzDAF19mGzV
-	2vPwZLMeb/8y6NyicmynZBd6CT2hydwBNuzmMTPw/NdQ7VbJgOlePcy5WxCNpg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Pengfei Li <pengfei.li_1@nxp.com>, "open list:NXP i.MX CLOCK DRIVERS" <linux-clk@vger.kernel.org>, "open list:NXP i.MX CLOCK DRIVERS" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Subject: Re: [PATCH] clk: imx: Enable IMX93_CLK_LVDS_GATE only for i.MX93
-Date: Fri, 06 Dec 2024 10:05:46 +0100
-Message-ID: <4615625.LvFx2qVVIh@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20241203130530.1206526-1-peng.fan@oss.nxp.com>
-References: <20241203130530.1206526-1-peng.fan@oss.nxp.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b86zVfEA"
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EEA289FC;
+	Fri,  6 Dec 2024 10:32:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733477571;
+	bh=avI8ClOrtHzD2SipA/Fyk+O8iRhwsleato1FpezpTWY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=b86zVfEA652HS/zggvjO4MBo++yhe37R+/FjEwQ3j8uacMsVe71DzJW5URW2HJ8w9
+	 10xFUriP9nd1GoJ9VtVBaKnLGBkBTFW1pcIR4SMyt7wZlfx/mThjJ7gaql+yUXtx9r
+	 5TGQWuuw/bh9HIPY7Z0km0MU4ctJxucGv3sqCaeE=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date: Fri, 06 Dec 2024 11:32:34 +0200
+Subject: [PATCH v3 01/10] drm/rcar-du: dsi: Fix PHY lock bit check
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241206-rcar-gh-dsi-v3-1-d74c2166fa15@ideasonboard.com>
+References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+In-Reply-To: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ linux-clk@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2124;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=oDefLvswOZixERy//YecN6qGggsNckidLEErkzhvvTE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUsTZKqBlNSAmmsuyI1/BI0pgoiWom3wicv1jq
+ /dDC75fpRaJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1LE2QAKCRD6PaqMvJYe
+ 9atqD/9n0Ru3e3iLbS6ZB7lQ7yUSTMw+MbnMTbWuD5CUsUL1n6/dLlvdhVGzNXIZaodZsbdBTf0
+ LdU/f/N6F5/vqhD1MBMObxRR20ihRed1AN6oU3IHY9PywCGiL+IlV4b60r49v86byKw8E0CwRKB
+ h+w02bqwQ9xysZ1mLzrcaELI4xEC/dzqPVpmxXClLq5WnYWvQfgimd9/NQicqYOb7EmwfGaHOlY
+ LLQUSFlwKn7CqxetIojY5AAG1cOO+Rv2ovgrf8vZtHSUh6hwBU5vhDJbhCitwDfs7nWU59WpPUt
+ NZPZxAywf5/X/DCW/n6OZcCihriYgceBvHOeoorHWrFHIUTPYVqTmJqFXeq5B0GYlFCZ2ascVvs
+ bzqWWDPtsufsSmFwuCsxIkfLL2EKhWTumfd7bK0SOEhEN1t8NZcUvBV+F3cp3yOKLeXHosSTBlZ
+ GRAy+g84/ZlElaeXZhNX3GB3SjHMmt7Cs/u9oa8KiIVUcTiQEg8dSrJurpaG+o9pyGOW/1iWbx4
+ 4Ma4DNSc1offDrOHQNHChLfu+fPj6D4HY+Dg9cIgl1XTXzA0jxrGUdBCCDyWW5VnVuUrt7oV5hM
+ jGa6fibrZHW+0/5Gy3y/Gi5XY2D7YGr/9jpy1VM/7PUuCs713oz5i/jo5IOdVh00gCRMOIjHw8I
+ m+Be+DgwLccENCw==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Am Dienstag, 3. Dezember 2024, 14:05:29 CET schrieb Peng Fan (OSS):
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Enable the LVDS gate only for i.MX93, because i.MX91 does not support
-> LVDS.
->=20
-> Fixes: a27bfff88dd2 ("clk: imx: add i.MX91 clk")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx93.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 58a516dd385b..a0d2972ba9cd 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -239,7 +239,7 @@ static const struct imx93_clk_ccgr {
->  	{ IMX93_CLK_SAI3_IPG,		"sai3_ipg_clk", "bus_wakeup_root",	0x94c0, 0, &s=
-hare_count_sai3},
->  	{ IMX93_CLK_MIPI_CSI_GATE,	"mipi_csi",	"media_apb_root",	0x9580, },
->  	{ IMX93_CLK_MIPI_DSI_GATE,	"mipi_dsi",	"media_apb_root",	0x95c0, },
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-mipi_csi and mipi_dsi are also only PLAT_IMX93.
+The driver checks for bit 16 (using CLOCKSET1_LOCK define) in CLOCKSET1
+register when waiting for the PPI clock. However, the right bit to check
+is bit 17 (CLOCKSET1_LOCK_PHY define). Not only that, but there's
+nothing in the documents for bit 16 for V3U nor V4H.
 
-> -	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, },
-> +	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, 0, NULL, PLA=
-T_IMX93 },
->  	{ IMX93_CLK_LCDIF_GATE,		"lcdif",	"media_apb_root",	0x9640, },
->  	{ IMX93_CLK_PXP_GATE,		"pxp",		"media_apb_root",	0x9680, },
+So, fix the check to use bit 17, and drop the define for bit 16.
 
-pxp is also only PLAT_IMX93.
+Fixes: 155358310f01 ("drm: rcar-du: Add R-Car DSI driver")
+Fixes: 11696c5e8924 ("drm: Place Renesas drivers in a separate dir")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
->  	{ IMX93_CLK_ISI_GATE,		"isi",		"media_apb_root",	0x96c0, },
->=20
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+index 2dba7c5ffd2c..92f4261305bd 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+@@ -587,7 +587,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
+ 	for (timeout = 10; timeout > 0; --timeout) {
+ 		if ((rcar_mipi_dsi_read(dsi, PPICLSR) & PPICLSR_STPST) &&
+ 		    (rcar_mipi_dsi_read(dsi, PPIDLSR) & PPIDLSR_STPST) &&
+-		    (rcar_mipi_dsi_read(dsi, CLOCKSET1) & CLOCKSET1_LOCK))
++		    (rcar_mipi_dsi_read(dsi, CLOCKSET1) & CLOCKSET1_LOCK_PHY))
+ 			break;
+ 
+ 		usleep_range(1000, 2000);
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+index f8114d11f2d1..a6b276f1d6ee 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+@@ -142,7 +142,6 @@
+ 
+ #define CLOCKSET1			0x101c
+ #define CLOCKSET1_LOCK_PHY		(1 << 17)
+-#define CLOCKSET1_LOCK			(1 << 16)
+ #define CLOCKSET1_CLKSEL		(1 << 8)
+ #define CLOCKSET1_CLKINSEL_EXTAL	(0 << 2)
+ #define CLOCKSET1_CLKINSEL_DIG		(1 << 2)
 
-Not visible in this diff, but also only PLAT_IMX93:
-* flexio1
-* flexio2
-* cm33
-
-An most probably also mu*_a and mu*_b, even though they are listed in
-i.MX91 RM, but AFAIK this SoC lacks MU.
-
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+-- 
+2.43.0
 
