@@ -1,35 +1,35 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4E01F03DB;
-	Fri,  6 Dec 2024 09:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B01FCF5B;
+	Fri,  6 Dec 2024 09:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477625; cv=none; b=GOvIdpoiKq+r6xMTV57Slq+z7tomaZaAJF6VbrCgZdDI7fI51uu+GH6PqXqLRMQ4jw6qmTuGz1shyP4MF3aOYumAZh58GggUc0r6KX3TcjDV2fQUXMo5ttTlkEWXZZHXpoUHSNcIynrd7ppBLa6tZyN5+M3qk/LwbuyliaxWt94=
+	t=1733477627; cv=none; b=qY/IDF3j8A2p/uY4Ea6PZN5qUA5vuydZlqV3kKbr9uGYVjdT79p2QELsh4bubIRB4eCiSPKhtkzOUW7TOvypAz3Llf04LNR6da+QGJ3TaZAaVlnAEU/IulinvuVkXBFdtc6cr+AVfo+GfDxmagl5lm77SInv4mgkIRjerLZNEYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477625; c=relaxed/simple;
-	bh=ew3Muv7MPQxqUGbM+KoQnCxBlFs7GGorAf6A+5Mac4g=;
+	s=arc-20240116; t=1733477627; c=relaxed/simple;
+	bh=tRF43KBsvxv3hRirW7Pu5wocJ26K3VE9RSkQJeg7ABU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d7JOjk9Cts1W1ViQnv0DpGuJ2qxBxiCus3finCrjuHG6ZYt6ACvajbMehpSFBFp67srcNNl+JFP4qzc5x1aH8l2xrhZNQOo7r6+sYdl6W1ZDBZU9jfbuAjLo6CZn4fN2MJdUTaTfNm8CpnI+4rZI76dQjn2i07JaMzoNdHobrec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=P/wC+9xs; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=f3kLaQN/ZOkZaMYHJC2g4YSrGn08nBlwUvRQL8YZkIzqqYNmCOh3R5amKVAhvh3fFvcIzgsxTL41TSawtVOLMhB5WLuN5nAtup1yyPE41vIOx3fOqpEf/iV5ghNzXq/nPZIhIpxGByuhBmCVnE/rUDZYWE8w4hQwkUiiMRc6WXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Dmrs1KLl; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="P/wC+9xs"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Dmrs1KLl"
 Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A66FBB2B;
-	Fri,  6 Dec 2024 10:32:51 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2CBA61F0F;
+	Fri,  6 Dec 2024 10:33:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733477573;
-	bh=ew3Muv7MPQxqUGbM+KoQnCxBlFs7GGorAf6A+5Mac4g=;
+	s=mail; t=1733477586;
+	bh=tRF43KBsvxv3hRirW7Pu5wocJ26K3VE9RSkQJeg7ABU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=P/wC+9xsgr9Fyi4jwZfuFlhGQtuAzK9Yh12mW3YFj50GGwNHbvA5pqgR4Qd5ajIKv
-	 pSf9VoqoVAKUSGC7LgwtpDH6wFuKfTp5+kAVHN/IdrPz280Y57D2rAntLBOFV85g8/
-	 D74Pii0SyeMMQboWCszguT4I2Zk/4cvPJx5sxWD0=
+	b=Dmrs1KLlMQSemD1bBMDSiUxGc6pXwsMioChvZmuOcx0d8o7bXVvoB/ujJ5AtSOl2I
+	 z2FfEv3R/qejtIZjY+RCA4NHf/LIx3X71MKA/DLAew9/7Bi5LMj4HSI50UhQxfaSk0
+	 B7U++VvkDV4ICMOTrioNF+IeDPx2ROBrndfIguIE=
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Fri, 06 Dec 2024 11:32:35 +0200
-Subject: [PATCH v3 02/10] drm/rcar-du: Write DPTSR only if the second
- source exists
+Date: Fri, 06 Dec 2024 11:32:43 +0200
+Subject: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
+ DisplayPort support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,7 +38,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-rcar-gh-dsi-v3-2-d74c2166fa15@ideasonboard.com>
+Message-Id: <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
 References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
 In-Reply-To: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -64,69 +64,169 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
  linux-clk@vger.kernel.org, 
  Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1836;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3107;
  i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=WgJUjyHVjpUZhqroUVXkYdZsN54pZDvBuc2FAqHU/bw=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUsTZv+lZt+VI6OjQT11qyLdJQuLRoD9mE8aB8
- mMuGoSQQ0eJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1LE2QAKCRD6PaqMvJYe
- 9fXSD/9f0Yu01vQPEZbGCiuzab8N0z2dogT/6nBDhwJAES4+i4dJFYxOworNw2WnibQg5uN+tKz
- kvxJIpOWap7b+7myvlxDsxAn4gthYQ0d8rlGDwy9R9OVQTVHjxD7KGMV3O0oKVpZAY78CJ7xKO3
- A5bc6bccKdjEVNxnGZWLoKz/zWLo6XSJBxp0eKvPgQGBCJ6t8PgGxs71sXjGMzfUsaWyRnjViom
- l2wlnWiHF5O+Nh4yiR7DqknrlnsRjfR+sdwJjr+Q7QYbMOLgQSZiPaOry5FsDOunpDvxcDA+pk0
- oveoe2CEEp23uJ/6GdYeqidSbKwfS7JYCkfQlayevhSZxs15kl++M6R23HEuYm6xeXxC2WDkIMH
- YXHARQLivF8daMPgqH+vlpLXjGoikPGUc1InV5AR2kl/bMrq+ekoYvifPg1IEKKFKEwI3lLrNMq
- yw7HdaZnX1bYr4mhHjGGScXQnjDS6ASsn9xYD0TvkvlCPWRGC2haEG/YEV2e7O9YWgxkWlwtuE8
- uKaMGsh2C/KNtl7h2p+osnYybrdW5qAwsJLYZeW6Y4hkF4BqKnmva0P3zQWB1AlUN3bP6BQaKTp
- 9HoS8m6NQmA55hICx62WAMRw1yA/FSAiJ4Wzh7gcSKamVKIyYJCB5HoK+QqKEDhTlrpOCZz58y6
- yr/hWBws6zkXuaw==
+ bh=u9rlLJsMm1XL9+aRvQppvfNen/IBc5LxFiSkKc7jCZA=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUsTcLr7EbKTpYqLBEzl6EqBRoaarvIQUs14jC
+ 5iA1V++5f2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1LE3AAKCRD6PaqMvJYe
+ 9cZBD/wN9RSVdZZzMHzOjyLnVcpV1agPQgtIhQbneeVneez5LLSJosNo7gLU1z3gAeFKlS7CSFK
+ toBmHpV0D6L4aMwY+AvL3k+esuKENVC2dFbfxRj8k2G1hlWtsnjyf+wdupO340ERmxKImKELFmE
+ 8/KbsSDLJxlz1VKcL4NVcFH9hZvy7pIBWsb2R8xaIz+JeBui0BtlAWJQScaJGIS5Tyk2Qvsebmq
+ aZD4TAhLXdHalQfppQxTQ44JwS5WGvfxmIgQrGVkNLZk59sDlqsRPQOJuTgPwqU+0Bdc+wIAran
+ lSbrL8Fsd8hzgG+b1yVo1T/8mf0aE90hS/jdIizGzFaq6OIHsTr6m99Y96hreGMaQZDZavkGCFl
+ UG62/VjBuGFd9fWLA3v85uh3VfCyk+eqr4wYv651XxkYYKtZtt/SF4D6jfp1L7V4TK40FNuHdia
+ yBFXbNETxTtYqf8CWbLBKlmCygXPUOs7riHYPd+An7wRlsVA+TSHjfjYMs+R866ieeyhja7OL/x
+ jLAuyVeNq1LAnXRCgPDakgd6fMZRzfJm/wq/emFPOeq2XjW/YVwU/8vyZe1ZRQYuvRydF4ZzBYd
+ kd7EjynZkL09ElirlpRealV1rh1p126AyRUh66JKUxJ2sdQWcSYBaJxoFMRQYTj7IQRgqzWvTyz
+ L56R2MRyI7IeVaQ==
 X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
 From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Currently the driver always writes DPTSR when setting up the hardware.
-However, writing the register is only meaningful when the second source
-for a plane is used, and the register is not even documented for SoCs
-that do not have the second source.
-
-So move the write behind a condition.
+Add support for the mini DP output on the Gray Hawk board.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 95 ++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-index 2ccd2581f544..1ec806c8e013 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-@@ -185,11 +185,21 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- 		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
- 	rcar_du_group_write(rgrp, DORCR, dorcr);
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+index 057f959d67b3..7cdf07b6dde6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+@@ -59,6 +59,12 @@ chosen {
+ 		stdout-path = "serial0:921600n8";
+ 	};
  
--	/* Apply planes to CRTCs association. */
--	mutex_lock(&rgrp->lock);
--	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
--			    rgrp->dptsr_planes);
--	mutex_unlock(&rgrp->lock);
-+	/*
-+	 * DPTSR is used to select the source for the planes of a group. The
-+	 * first source is chosen by writing 0 to the respective bits, and this
-+	 * is always the default value of the register. In other words, writing
-+	 * DPTSR is only needed if the SoC supports choosing the second source.
-+	 *
-+	 * The SoCs documentations seems to confirm this, as the DPTSR register
-+	 * is not documented if only the first source exists on that SoC.
-+	 */
-+	if (rgrp->channels_mask & BIT(1)) {
-+		mutex_lock(&rgrp->lock);
-+		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-+				    rgrp->dptsr_planes);
-+		mutex_unlock(&rgrp->lock);
-+	}
- }
++	sn65dsi86_refclk: clk-x6 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <38400000>;
++	};
++
+ 	keys {
+ 		compatible = "gpio-keys";
  
- /*
+@@ -126,6 +132,27 @@ memory@480000000 {
+ 		reg = <0x4 0x80000000 0x1 0x80000000>;
+ 	};
+ 
++	mini-dp-con {
++		compatible = "dp-connector";
++		label = "CN5";
++		type = "mini";
++
++		port {
++			mini_dp_con_in: endpoint {
++				remote-endpoint = <&sn65dsi86_out0>;
++			};
++		};
++	};
++
++	reg_1p2v: regulator-1p2v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.2V";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	reg_1p8v: regulator-1p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -200,6 +227,24 @@ channel1 {
+ 	};
+ };
+ 
++&dsi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			dsi0_out: endpoint {
++				remote-endpoint = <&sn65dsi86_in0>;
++				data-lanes = <1 2 3 4>;
++			};
++		};
++	};
++};
++
++&du {
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -269,6 +314,51 @@ eeprom@53 {
+ 	};
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	bridge@2c {
++		compatible = "ti,sn65dsi86";
++		reg = <0x2c>;
++
++		clocks = <&sn65dsi86_refclk>;
++		clock-names = "refclk";
++
++		interrupt-parent = <&intc_ex>;
++		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++
++		enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
++
++		vccio-supply = <&reg_1p8v>;
++		vpll-supply = <&reg_1p8v>;
++		vcca-supply = <&reg_1p2v>;
++		vcc-supply = <&reg_1p2v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				sn65dsi86_in0: endpoint {
++					remote-endpoint = <&dsi0_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				sn65dsi86_out0: endpoint {
++					remote-endpoint = <&mini_dp_con_in>;
++				};
++			};
++		};
++	};
++};
++
+ &i2c3 {
+ 	pinctrl-0 = <&i2c3_pins>;
+ 	pinctrl-names = "default";
+@@ -361,6 +451,11 @@ i2c0_pins: i2c0 {
+ 		function = "i2c0";
+ 	};
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	i2c3_pins: i2c3 {
+ 		groups = "i2c3";
+ 		function = "i2c3";
 
 -- 
 2.43.0
