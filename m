@@ -1,110 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B488D7A13A;
-	Sat,  7 Dec 2024 18:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6756A38FA3;
+	Sat,  7 Dec 2024 20:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733596474; cv=none; b=ZESXadPT2bBppeJXt0Fgq9KmAKMn6iM2K+GcDSKhuEazkscjjcS9zc2dbAN+buRpPHozEdosEfRSPEKvZCdA4hr7hW2drZCCc/AX2h8o2FnAT0Uk4CC4881vFwLF52lXFsrUMPe6VvZQZatLjd0oev8EDIL8O5LqHp+suK3q8pA=
+	t=1733602961; cv=none; b=EvzMU1v1SyN8A0lVBxa15gLzGEn7kBZlfS51p7BSdMyoehJlQn8SNFJf6jQ/HfisOXlrKqOqtB0kEN9sNpxgnMItPj11jcPFAnN0NysOhUyhh8crwpxEMmSv9HRtNvPkrRryC046Nn6kuAhWyDkgFEo28aJ6Dgmo6v+DLMMyXuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733596474; c=relaxed/simple;
-	bh=l+6Ko6CQ5FhFJ9D0H70DrCdGgtswUd0TVzG4Virbb1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dn6NjRbro61+NOu09Y9ZYc9LAhnJ093AuZuKHh43c4XxADF9kZY1YttuE9sHr44Y7ZitlBdaawLdeZTYmyCDNRqBqU0yuRnwVbvg4ZDOstp3koefP3uaeWf/3WvLy486/T96YA1Tr2ofeiqgdRPEAqEoPKeTGe9CV8OE3D8bsvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRughQ36; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733602961; c=relaxed/simple;
+	bh=dJeQR7JHkDb+R+n19PfgT79IMI8iDZvMntrXyI2vNgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGdxYD/9yX125uM9cSmqTvczKFkxvQS/GlAY87zLbCf6hUm/SPq/+yoCxl3az9cjfAoe/ApoLC3rHpPZcs4GftcSy72UCIBldmBfRut/QY8uwVX/WwrwcjxkAo+0+XR31O57IEJDwXKkNSWuksK5IFRBNXRkM/BvMdMljpwSLk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fMc+1EA4; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRughQ36"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD49C4CECD;
-	Sat,  7 Dec 2024 18:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733596474;
-	bh=l+6Ko6CQ5FhFJ9D0H70DrCdGgtswUd0TVzG4Virbb1M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aRughQ36HT2p4loQhbrJkiIfTBvFZz91GBRwnCJCmGvtbTqiBOZuBbDWshas8KGBk
-	 lSkVPnvf4yVh2utuJ+WwJC7FyZTJa8ktz8VV30Ds+J/o7L3No4wdCsvY1sv1zO65UR
-	 CimPYlXWqb49mUxZkTTU7sY2Upp8HRv1wj8SgwTHVcNndPe8HGz1eWzNytHZjmXNt0
-	 60GbB8DHrkpXEazqFCcnn2mB3AyR3HCp4uLP/paRZTqGbgY2ebbAIuwsDPvRnkFeQs
-	 czdP5raLRs+Ta+3kmGBDfluAsPeoN8SApd5pzi074m4G7ShPCGySY3WyyySsxMQd8b
-	 l7pA48A1CFWPA==
-Date: Sat, 7 Dec 2024 18:34:23 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 13/15] iio: adc: rzg2l_adc: Add support for Renesas
- RZ/G3S
-Message-ID: <20241207183423.4af1f988@jic23-huawei>
-In-Reply-To: <20241206111337.726244-14-claudiu.beznea.uj@bp.renesas.com>
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
-	<20241206111337.726244-14-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fMc+1EA4"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AdQDxGNQHNVKv36ErwTX07LnqwQfzWDJudJ+JjKzK40=; b=fMc+1EA4XaEGbVLwWgiuWR0mRc
+	mlO5GK7r9DZrcMPs9DAZwmCHKJ2KFj06FeOc5Vl3Kxq7Ytwvf5pEU6/BGx0By3vQDkcAaDb57LUya
+	FS6SMNua8lKbSErliWYWevW/bsJQg/A2t+wd6D/tcPGGOQoRib59OAjGGQIIxAt3GAqc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tK1Jy-00FVGB-Us; Sat, 07 Dec 2024 21:22:34 +0100
+Date: Sat, 7 Dec 2024 21:22:34 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH v3 1/6] dt-bindings: net: dwmac: Convert socfpga dwmac to
+ DT schema
+Message-ID: <031e9299-4722-42ef-94e9-ec4985a0e73d@lunn.ch>
+References: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
+ <20241205-v6-12-topic-socfpga-agilex5-v3-1-2a8cdf73f50a@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205-v6-12-topic-socfpga-agilex5-v3-1-2a8cdf73f50a@pengutronix.de>
 
-On Fri,  6 Dec 2024 13:13:35 +0200
-Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> +  phy-mode:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phy mode the ethernet operates in.
 
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Add ADC support for the Renesas RZ/G3S SoC. The key features of this IP
-> include:
-> - 9 channels, with one dedicated to reading the temperature reported by the
->   Thermal Sensor Unit (TSU)
-> - A different default ADCMP value, which is written to the ADM3 register.
-> - Different default sampling rates
-> - ADM3.ADSMP field is 8 bits wide
-> - ADINT.INTEN field is 11 bits wide
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Hi Claudiu
+I think you should be getting this via ethernet-controller.yaml. And
+it is not a phandle.
 
-As my comments were all minor stuff, I have applied this.
-However they were the sort of minor changes that result in lots of
-fuzz and hand editing when applying so please check the result.
-Applied to the testing branch of iio.git.
-
-Thanks,
-
-Jonathan
-
-> ---
-> 
-> Changes in v2:
-> - none
-> 
->  drivers/iio/adc/rzg2l_adc.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index 2a911269a358..81904e2c4075 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -502,7 +502,16 @@ static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
->  	.adivc = true
->  };
->  
-> +static const struct rzg2l_adc_hw_params rzg3s_hw_params = {
-> +	.num_channels = 9,
-> +	.default_adcmp = 0x1d,
-> +	.default_adsmp = { 0x7f, 0xff },
-> +	.adsmp_mask = GENMASK(7, 0),
-> +	.adint_inten_mask = GENMASK(11, 0),
-> +};
 > +
->  static const struct of_device_id rzg2l_adc_match[] = {
-> +	{ .compatible = "renesas,r9a08g045-adc", .data = &rzg3s_hw_params },
->  	{ .compatible = "renesas,rzg2l-adc", .data = &rzg2l_hw_params },
->  	{ /* sentinel */ }
->  };
+> +  altr,sgmii-to-sgmii-converter:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the TSE SGMII converter.
+> +
+> +      This device node has additional phandle dependency, the sgmii converter
+> +        - compatible that should be altr,gmii-to-sgmii-2.0
+> +        - reg-names that should be "eth_tse_control_port"
 
+Is this a PCS?
+
+
+    Andrew
+
+---
+pw-bot: cr
