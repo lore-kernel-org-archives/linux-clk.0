@@ -1,99 +1,198 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A20B1E4B2
-	for <linux-clk@vger.kernel.org>; Sat,  7 Dec 2024 12:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12921494AD;
+	Sat,  7 Dec 2024 17:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733576052; cv=none; b=GDRwjSU6M8c0Ta/jA2V6A6dqoxFVczEr1Ut1roMKZJERoL0jii0BSeLBwT4AqtaXJirqf7F4VYwodYA6o/CIwUkcrPozLmS9je4q8kSZvwRPHRh2vLzw8vdOVQXm4Yx9/EeianVCu8VDCquLbXKSp6E6SBlOdDP16MjPW61Titk=
+	t=1733593064; cv=none; b=f2X6bV/68v22ivs08KKP/AE0CRxyxE+WT4IcJ0jIJpXO5VGVZQrlSD2+5zam9/J0nnCE70Gz2sA+6yOpPW94Y3dwqyFJkn81IEm79gJOn/z0inDctcUFcbAeWHQehBmdiJswviFTI9cEGFGUTCv3r6QZWVrdmKTgfriYz5BUpy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733576052; c=relaxed/simple;
-	bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjtyKUs9fm4RFu0l7BUAkCUDXWUwo0OTI569DW1b4cDa3ijoDjHDA8Fc0Z8E/Cpq/vBAsJf0gemIW0THD2uJXn7btp/sE/iGbT+44NAboTbxxuBSTVv2+dITq9xHYy9N3Vk3e6J8Red2VCKNNs0Gjw6MIEA6ZDvBpl6iTEWbxN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vZcbW689; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733593064; c=relaxed/simple;
+	bh=ox1B8to36A/KHcuaMZ8cKSQ7KleVJ/upW6RNLQBXHCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ds6qGEJo9EebrzRfYOsyNzZokzp2Mcyw/4ML6vn82/HkO4VzXZ7K/aCNGNnZpghBn+E4HLdtRbsNArU/AowOK0b4dDGPHS/yKz5nMg6cFeUAc76cEQizXkCUXi8udlTZg390WDeAXmC4jGOOrkKSQPtLxsmWFBTLr/o1QC2kNXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAryukcp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vZcbW689"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so209432266b.3
-        for <linux-clk@vger.kernel.org>; Sat, 07 Dec 2024 04:54:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733576049; x=1734180849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
-        b=vZcbW689fo9hzgFT96Kn11WBOtOmQxJIb0z1krKuK/Z4iKbkLRRwB5pv3My+Ec7mO0
-         v1Y1DJUC5O0af/NyvYZQ1EteMj1qnoGXF2m549WDFNmrpHtGYvGvOEUs9KBWMnk09LeE
-         i1ZK9HohEIofn7JLQP0ZNdkZr6+5YqyDe86AAEm33SpYEz6mzcB0d1GF3wWpkyoE7oKA
-         wDJNwXkU2kTfjHS6JRgfbADXToFAy4sSpZY7YPJdIqlXVibmVN2Ds+lTEvR7cOTnFltG
-         te6zqD5lZnmHHAk2n/3fwVdFf2vob419E2deYM++vHOBuMTBBxROTCa6xyOSKGd0kbKB
-         OlPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733576049; x=1734180849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
-        b=u3SxdtkPwFQI2RJXBaOjj379mPpUNzvPWX0Kz7B1n3QBdrNeVGSIE25IstDz7U1An9
-         VS1a050wubYC4C9bhlVhHO9As+P7XEPUJsajPipySaNT1XziUJiWM9/JfAzDd4nEUnj3
-         I34oetQgHet3HqoHeJ+HebMNXSrGrV+bxxUB2IWgurtCjIBk8r3019JjDlkneU4ee0PI
-         FeTUjEd0O0egDl3lx4PvX9tEcqLsR0LdQy77Mp1QJnRKz8r2tEYCYtIrAJYslq+J/g9B
-         1IJ0RB6cnhoOduMj3cy1Ehmo7FHhO6B9sW6ABH2PwUNV829l/dqOeOPgkwYshKSmfaqe
-         kUEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtzLkQGDI6wwL3VIPmBC2tfnR07yPU9wLXtVdDCDIJmuqHiiy/3msJ8Pk0GrDG1UmPF+hwkfsFhII=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3qTT6mcsyP6A1mvLH8JsfM4lxrijoMolPiWQywYui7/icNnYK
-	ReXPvvYXFHhYhzEsPdk0zu7WQKnxIBxXak0Ut16TGo8nCJN4fqUrreXP7Dy8X6c=
-X-Gm-Gg: ASbGnct+T25InboaSpE1aG/qlaDOfUFY437/UHnUiXSq3hBUmJd8uvwfgLq2/3wKtJ9
-	FOWcwVsrMLoNa36LGfOrQnt3ohCFdlacZCI36rC3a3VhZIeLnbbUQaBMK3pg3ReYHS3/NB8tZV9
-	vbtTv2xSN71/yRusrfdQofuYkRS4WmMIAB+H+RTbzjMISURROxCbChQNh6UhA2Cj5a40YQOlzAF
-	HFC9JNDheF+fVeKAavPOt/khKrhc6gx4raITQOk5qmrFd6v0pr5dKgdG8h2QdY=
-X-Google-Smtp-Source: AGHT+IFc59lrx1M6saKGPjF02Omnnsj0HLfp4v7ByL1sRkcUPHF3WsyaIILgsB+Yi9QNF0Qp9YtwjA==
-X-Received: by 2002:a17:907:7814:b0:aa6:19f3:d083 with SMTP id a640c23a62f3a-aa63a07357dmr584148866b.30.1733576048745;
-        Sat, 07 Dec 2024 04:54:08 -0800 (PST)
-Received: from [192.168.0.27] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm19541366b.159.2024.12.07.04.54.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 04:54:08 -0800 (PST)
-Message-ID: <444a0d03-7518-4f54-a29d-2d3c85d9743d@linaro.org>
-Date: Sat, 7 Dec 2024 12:54:06 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAryukcp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28863C4CECD;
+	Sat,  7 Dec 2024 17:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733593063;
+	bh=ox1B8to36A/KHcuaMZ8cKSQ7KleVJ/upW6RNLQBXHCU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LAryukcphYBSkaUrTHag+XyG8cjAF4kRY4aayo7dZwPzeY7AwtVCKmgGneWBw4XvT
+	 g/+yOHZfURmVzejw95Bru6ZU3uxh2CrVMNGIzZcJfJxo8YvZKDW4MIk8E3ux9xsqQI
+	 DOiU4xbUp2bnRoa2TAUUU43cXFRa4SQDZvBpuppFNv4rkl0OKPr0LfNVNkf2MwYIhj
+	 VaCbsWvqrTsX0cZzasapxH7DnS5Xz5p604vsAGIBwh75NRFbAPaema06r/9K9LyvfH
+	 eJAR4VedFHdsOBIIyen4OteZEaxNaftD+Oe81KsAvj5tqpxrzXxOhW9CVS7hSQ1+/b
+	 XxzRZOtIgunUg==
+Date: Sat, 7 Dec 2024 17:37:31 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+ magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 08/14] iio: adc: rzg2l_adc: Prepare for the addition of
+ RZ/G3S support
+Message-ID: <20241207173731.523ce96b@jic23-huawei>
+In-Reply-To: <CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-9-claudiu.beznea.uj@bp.renesas.com>
+	<20241203200941.03ec9ea3@jic23-huawei>
+	<CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: x1e80100: Add CCI definitions
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
- <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 07/12/2024 11:59, Konrad Dybcio wrote:
-> Otherwise looks good and I can attest to this working, as the sensor on the
-> SL7 happily talks back
+On Wed, 4 Dec 2024 10:40:58 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-:x
+> Hi Jonathan,
+>=20
+> On Tue, Dec 3, 2024 at 9:09=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> > On Tue,  3 Dec 2024 13:13:08 +0200
+> > Claudiu <claudiu.beznea@tuxon.dev> wrote: =20
+> > > The ADC IP available on the RZ/G3S differs slightly from the one foun=
+d on
+> > > the RZ/G2L. The identified differences are as follows:
+> > > - different number of channels (one being used for temperature conver=
+sion);
+> > >   consequently, various registers differ
+> > > - different default sampling periods
+> > > - the RZ/G3S variant lacks the ADVIC register.
+> > >
+> > > To accommodate these differences, the rzg2l_adc driver has been updat=
+ed by
+> > > introducing the struct rzg2l_adc_hw_params, which encapsulates the
+> > > hardware-specific differences between the IP variants. A pointer to an
+> > > object of type struct rzg2l_adc_hw_params is embedded in
+> > > struct rzg2l_adc_data.
+> > >
+> > > Additionally, the completion member of struct rzg2l_adc_data was relo=
+cated
+> > > to avoid potential padding, if any.
+> > >
+> > > The code has been adjusted to utilize hardware-specific parameters st=
+ored
+> > > in the new structure instead of relying on plain macros.
+> > >
+> > > The check of chan->channel in rzg2l_adc_read_raw() function, against =
+the
+> > > driver specific mask was removed as the subsystem should have already
+> > > been done this before reaching the rzg2l_adc_read_raw() function.
+> > >
+> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > ---
+> > >  drivers/iio/adc/rzg2l_adc.c | 92 ++++++++++++++++++++++++++---------=
+--
+> > >  1 file changed, 64 insertions(+), 28 deletions(-)
+> > >
+> > > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> > > index fda8b42ded81..aff41152ebf8 100644
+> > > --- a/drivers/iio/adc/rzg2l_adc.c
+> > > +++ b/drivers/iio/adc/rzg2l_adc.c
+> > > @@ -32,20 +32,15 @@
+> > >  #define RZG2L_ADM1_MS                        BIT(2)
+> > >  #define RZG2L_ADM1_BS                        BIT(4)
+> > >  #define RZG2L_ADM1_EGA_MASK          GENMASK(13, 12)
+> > > -#define RZG2L_ADM2_CHSEL_MASK                GENMASK(7, 0)
+> > >  #define RZG2L_ADM3_ADIL_MASK         GENMASK(31, 24)
+> > >  #define RZG2L_ADM3_ADCMP_MASK                GENMASK(23, 16)
+> > > -#define RZG2L_ADM3_ADCMP_E           FIELD_PREP(RZG2L_ADM3_ADCMP_MAS=
+K, 0xe)
+> > > -#define RZG2L_ADM3_ADSMP_MASK                GENMASK(15, 0)
+> > >
+> > >  #define RZG2L_ADINT                  0x20
+> > > -#define RZG2L_ADINT_INTEN_MASK               GENMASK(7, 0)
+> > >  #define RZG2L_ADINT_CSEEN            BIT(16)
+> > >  #define RZG2L_ADINT_INTS             BIT(31)
+> > >
+> > >  #define RZG2L_ADSTS                  0x24
+> > >  #define RZG2L_ADSTS_CSEST            BIT(16)
+> > > -#define RZG2L_ADSTS_INTST_MASK               GENMASK(7, 0)
+> > >
+> > >  #define RZG2L_ADIVC                  0x28
+> > >  #define RZG2L_ADIVC_DIVADC_MASK              GENMASK(8, 0)
+> > > @@ -56,12 +51,26 @@
+> > >  #define RZG2L_ADCR(n)                        (0x30 + ((n) * 0x4))
+> > >  #define RZG2L_ADCR_AD_MASK           GENMASK(11, 0)
+> > >
+> > > -#define RZG2L_ADSMP_DEFAULT_SAMPLING 0x578
+> > > -
+> > > -#define RZG2L_ADC_MAX_CHANNELS               8
+> > > -#define RZG2L_ADC_CHN_MASK           0x7
+> > >  #define RZG2L_ADC_TIMEOUT            usecs_to_jiffies(1 * 4)
+> > >
+> > > +/**
+> > > + * struct rzg2l_adc_hw_params - ADC hardware specific parameters
+> > > + * @default_adsmp: default ADC sampling period (see ADM3 register)
+> > > + * @adsmp_mask: ADC sampling period mask (see ADM3 register)
+> > > + * @adint_inten_mask: conversion end interrupt mask (see ADINT regis=
+ter)
+> > > + * @default_adcmp: default ADC cmp (see ADM3 register)
+> > > + * @num_channels: number of supported channels
+> > > + * @adivc: specifies if ADVIC register is available
+> > > + */
+> > > +struct rzg2l_adc_hw_params {
+> > > +     u16 default_adsmp;
+> > > +     u16 adsmp_mask;
+> > > +     u16 adint_inten_mask;
+> > > +     u8 default_adcmp;
+> > > +     u8 num_channels;
+> > > +     bool adivc;
+> > > +};
+> > > +
+> > >  struct rzg2l_adc_data {
+> > >       const struct iio_chan_spec *channels;
+> > >       u8 num_channels;
+> > > @@ -71,10 +80,11 @@ struct rzg2l_adc {
+> > >       void __iomem *base;
+> > >       struct reset_control *presetn;
+> > >       struct reset_control *adrstn;
+> > > -     struct completion completion;
+> > >       const struct rzg2l_adc_data *data;
+> > > +     const struct rzg2l_adc_hw_params *hw_params;
+> > > +     u16 *last_val;
+> > > +     struct completion completion;
+> > >       struct mutex lock;
+> > > -     u16 last_val[RZG2L_ADC_MAX_CHANNELS]; =20
+> >
+> > Just make this big enough for the max device.  Chances are it will make=
+ little or
+> > no difference to this allocation and nice to avoid the dynamic part.
+> >
+> > Feel free to add a runtime check to make sure this is big enough to avo=
+id any
+> > future problems with forgetting to update it. =20
+>=20
+> Flexible array member and the new __counted_by() attribute?
+Messy as it's embedded in iio_dev via a rather round about route.
+It happens to be at the end of that structure but that's an implementation =
+detail.
 
----
-bod
+So in this particular case I'd go with no for flexible array and __counted_=
+by.
+It is very unlikely the difference in size will actually result in a bigger=
+ allocation
+as it's a substantial allocation however big this is.
+
+Jonathan
+
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+
