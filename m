@@ -1,63 +1,63 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D04016EB7C
-	for <linux-clk@vger.kernel.org>; Sun,  8 Dec 2024 16:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BDA170822
+	for <linux-clk@vger.kernel.org>; Sun,  8 Dec 2024 16:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733675620; cv=none; b=ecd4/DmRbssERypLYczI+D6w8EkA0JqDdP2T49YOGHglEZNZ5eIeRd0ShJeYowpR+zV46ldCmUxANiWRi5ra+3nXM+VgwgYQYS52jECDA8jzfswHr1cZ3LCnSiNsxaMoAMAuTcielqHU+RyfasiqOEMM1mNyXd/7NWPOTwCCbm0=
+	t=1733675665; cv=none; b=cHwZzhpxt8P6XTXxqg13Js08a90v5Eisp9JTZCkmHpmMWqfJKwVsVWIETveAi+UvEcfWjatRwEbS9Yhs97PyE9GlqPnCsR7aie4OYCt3bhAtp4/Jp+I9iEea5kpNvuYjQPtbxJfJqxQzNGi2dFCjULUwVj5rHVFJ6KSULHfPzW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733675620; c=relaxed/simple;
-	bh=/35qo1NSaXfj274xmXlQdRGosPADR6c0eJgSNOG7OjY=;
+	s=arc-20240116; t=1733675665; c=relaxed/simple;
+	bh=sfwHUbpW8XDdoQtwvphDU/WFW5sPN+tjwHvMRp8wfok=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMM71KSxwb6GabvH9L+2XNEJXfid1cooHq3zMNafUFr84OetphQrASflSnVlJ/1FldGUR/g8+zxJqRztTAJ7DDTKObaGtLsr5lumiT1NfY+OGpgGiqx4YPH0+VRTzmjlA290gw+WeFajJI0czkMWNOlNsBcdokvMFq5liZ4ZTFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cPog8pRH; arc=none smtp.client-ip=209.85.218.43
+	 In-Reply-To:Content-Type; b=RGjJqsgNpUKdwSmDHh/CsHoxPhB3FumHWgLTPYi5qEU7cl8LrtASygucC1RY2NQUxeH6MAbtKVvmFAOufYMrUHd840Y6MmRqctToSaHjgoHhfENaS7fgvke2KXYg0ixQvK7a5Taib4CXaAM1wno9i3rOJ8tKV8SQC2gx6fRqX44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Qp1/DbZZ; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cPog8pRH"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso620374666b.1
-        for <linux-clk@vger.kernel.org>; Sun, 08 Dec 2024 08:33:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Qp1/DbZZ"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3e9f60bf4so1451640a12.3
+        for <linux-clk@vger.kernel.org>; Sun, 08 Dec 2024 08:34:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733675617; x=1734280417; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733675662; x=1734280462; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pAZgKK7Ob7dVD/6GRHg29F0t0wRjMiOSNr01J0LKftk=;
-        b=cPog8pRHKdk/okPkIRve2/Z9TqHy/oP114O8aBGG/kgUGYAE8asM9POL/3cEmVGaF0
-         4vlINOjfpBaA1uuQPyfq9va3Yrx659D+R6aQvXT91LkfdtCU1c3kN3+VkCAyT4YAAq1n
-         BITjI4hTOx+pLsPZaeGg5Szkc/ZuOwLnb5ZuKeP6fOZ0KheqI4w2EV6hJnOy6TXkdaz9
-         sfPrh7ENqzhadDvR2i5Behk+dh6H0IEBqviSUMtSh0+RRjtJdhiP6JO1XDaFy1AhzA/S
-         2KGvNsXXtzcyW8mjNiynTjWK7hlIxNdwMsQLHagGVTPDzocYYhVmVBHwuW60FaKncFr9
-         NASA==
+        bh=1iT4NSRVpd0erHt+8HYNhpTfhW4lFJNhq1fa73nwHoQ=;
+        b=Qp1/DbZZx2NGqg7d8a+PsUD+4gr75eDQYBm/GAQqKy3W44kbIF5ZRsXDdpQwfWmapi
+         J0j62l4c/cEZijGgoxTW1jXxIoxpBn1NKr1TSH9KAb1ynmMB1pU7j+U0kalioAX1lFA/
+         xngEgTOiSVlQ/yByDnSqrEbZTmCNYyLilDculHjIVpDcPpaoOUTt7iGnUgknRI9jtyR+
+         R0gqqBTY3927/kyVyRY1+H5lD2tMWJGVxsvtegnjeCWoQEQIsdEImYlKRF02seft2PcQ
+         tM7US9+v1TPP/arR/+lxFpV7qxttnolxheb3JOpXPEQgNAT1Rtb+4Ut7l+2MCYCPJOWx
+         qyDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733675617; x=1734280417;
+        d=1e100.net; s=20230601; t=1733675662; x=1734280462;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pAZgKK7Ob7dVD/6GRHg29F0t0wRjMiOSNr01J0LKftk=;
-        b=SckbjNg1lGe91s2ZDRxytsZZXBDDlpONraAjwd8Np+kUtHhm7dyNVr6LLAmSOcqLQe
-         xrxEJA49DyjeLyKM7EB9TwFJSaKr0Dap8/F2PfXNXX2okz0PwHDZa2VuEtA/wb62ErwY
-         lmiTU4Nuyne8AlEbpV5Y7A8aAkZwTHk/xZAQ+ym4Pjq/T2BsrEDaq/ArYJB/Zd5pCJQW
-         mGhMCC+5sj9qFGFeSYjv3AqwciAwzHnwe2iG8OT7iDuIfMOFlLPusvdgHHJvE8TGs5Em
-         PT56DxzcQ69/KalaLtPK98EyzR6AVUQZzZ9jXqCAG8cAZNBFN5b4LcmbZ7iNuFxOl1qG
-         K7Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXD/hm9aBb2ci6QSk9XqSwAq7ZPAGn/lu3Pccnl/cVz+s6R8kYbe6WXDN27vxzAAqk64s9THZNQCLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsgANuTFOTMuHoMPh9BoUNUDiN7scLk5PWyFc8kArxps5UEdui
-	jX3UyonWyzz9/rZBYnoOwD+cYHFsuzxI38EqKCeRpbRJ/BRYG+y64rehFqQ4Zwo=
-X-Gm-Gg: ASbGncsRwAw5KYsCFir6x42/Dym+D1NO44/l0jt8k0mpFtJLEEb5t5J1P+2BZ/xpMAg
-	W0/aSUgOw9c+hHNLcHjZOXS69lyVJM8LuJnvha6vfp0dUMSv9EX2gsLSbqpe0GxD13AGU3dUFab
-	7H4w4EwdggbSpSmWqzosGShrCvvh+t8LAliDB+SvnTCOe1bO8t92pKgexsdW/vber1NtL2UYvuf
-	XgeIHdTcpFXIpPkVpkmrFxVqwjtoNZVmJFqfvDOvwIfBp55soCoTWxoIyw=
-X-Google-Smtp-Source: AGHT+IEG5BzdBKSU5T5ma5GlgSE9+K05duEqvgjt64DfRU1QPy3ISe7GWbOxCcAy7BgfRsflElX9gA==
-X-Received: by 2002:a17:906:32d0:b0:aa6:7027:7b01 with SMTP id a640c23a62f3a-aa670277bf0mr300268066b.20.1733675616848;
-        Sun, 08 Dec 2024 08:33:36 -0800 (PST)
+        bh=1iT4NSRVpd0erHt+8HYNhpTfhW4lFJNhq1fa73nwHoQ=;
+        b=VPpPwAT+NF2+qzGn6prRtaKrXvLZ6tOPsH0nipg4zb5dHNsZZGMnBemyMnNg9dSTdR
+         lrtaFEgGr560B+XN3cg/tsHWJ5vrwGebCMzsRrUdmFeFhv01ymWv2O6lP7IHZUPiDHPC
+         8QQwlwaNeJLPc8Kvu8ekJSg5iQwr0nXud0T0vLPnHYw8OnhP/m3lwQ9mc1mx0HhM+hTm
+         e0liirksRxCc3I8cQQKIvia27N5U6+MgsIt7plRxXwa1VsZXJWw0My2Qxlp+utdsio4p
+         tTudfahtrW4Gki4cPlPIqg/zXtOINE2786B0lIllrAqV/E/cEjD8zqvG8tc177ndn4nR
+         jqdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFQlH05aA5cp6N92K+uT4I2orvzZ4f1eEH+Tp/4RXdkqS9wvxaIZWvfP2QuJckZ8Sf9ZDnnYnNX8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzYqeZRjLwoyHsnsypScfb7a5Zad7Oh8mEWPW3b1G7EIz4noxa
+	oQdxNQf20pNw8nnMCFbWKtdNXaAYm9J6rTyEi9fpUejtv7NTsJpqojdDGmDyK28=
+X-Gm-Gg: ASbGncs71Wo4SrNgiZM9pvGtGBRTBJPeKZXYTZJLmHU8PmnS8lV29UBtFgL1moJSI08
+	LIwYUsYEILZMLn2vUEYZJyQB+gON6k/kN/OSPn0eKnvpVMER3EDgRHWl9YzTuxju2H+6SUqXrn3
+	4SoD1CYunoQNC0iRJiKWGRvgqypoNBsumEtHRIMVviFhCsdYCwTtSm6AV1PByUC+0HK3kfDTbn5
+	6pA75wW1oKPDqegRSQ7vATcuNxV/ywXYif8LKY+RYucuUWQeQ6wr8WQmKI=
+X-Google-Smtp-Source: AGHT+IHiWExZ8bPK4wGroZLlYPeAABfeeYHqCY2Pc7mcSXStanDyIam/ppcbW7eqPB4JrD4ws75z6g==
+X-Received: by 2002:a17:906:314e:b0:aa6:57aa:1fe9 with SMTP id a640c23a62f3a-aa657aa2b65mr521603366b.51.1733675662072;
+        Sun, 08 Dec 2024 08:34:22 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa67a4f8dc2sm113804466b.179.2024.12.08.08.33.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa67a4f8dc2sm113804466b.179.2024.12.08.08.34.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Dec 2024 08:33:36 -0800 (PST)
-Message-ID: <6ea8fa5a-78e4-46d3-8e20-c2a723bb7e86@tuxon.dev>
-Date: Sun, 8 Dec 2024 18:33:34 +0200
+        Sun, 08 Dec 2024 08:34:21 -0800 (PST)
+Message-ID: <30d2d8af-836c-440a-8b39-4131e8c85540@tuxon.dev>
+Date: Sun, 8 Dec 2024 18:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/13] ARM: configs: at91: sama7: add new SoC config
+Subject: Re: [PATCH v3 13/13] ARM: at91: add new SoC sama7d65
 Content-Language: en-US
 To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, nicolas.ferre@microchip.com,
@@ -78,9 +78,9 @@ Cc: dharma.b@microchip.com, mihai.sain@microchip.com,
  linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
  linux-serial@vger.kernel.org
 References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
- <e5a1311100a4f05fdc44107e124129d2d93df2e0.1733505542.git.Ryan.Wanner@microchip.com>
+ <465960c9240553753e96a7f4ff3f48879ade7558.1733505542.git.Ryan.Wanner@microchip.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <e5a1311100a4f05fdc44107e124129d2d93df2e0.1733505542.git.Ryan.Wanner@microchip.com>
+In-Reply-To: <465960c9240553753e96a7f4ff3f48879ade7558.1733505542.git.Ryan.Wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -89,9 +89,37 @@ Content-Transfer-Encoding: 7bit
 On 06.12.2024 21:59, Ryan.Wanner@microchip.com wrote:
 > From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Add sama7d65 to the sama7_defconfig.
+> Add new SoC from at91 family: sama7d65
 > 
 > Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+>  arch/arm/mach-at91/Kconfig | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+> index 344f5305f69a..2c7179b1baa0 100644
+> --- a/arch/arm/mach-at91/Kconfig
+> +++ b/arch/arm/mach-at91/Kconfig
+> @@ -58,6 +58,15 @@ config SOC_SAMA5D4
+>  	help
+>  	  Select this if you are using one of Microchip's SAMA5D4 family SoC.
+>  
+> +config SOC_SAMA7D65
+> +        bool "SAMA7D65 family"
+> +        depends on ARCH_MULTI_V7
+> +        select HAVE_AT91_GENERATED_CLK
+> +        select HAVE_AT91_SAM9X60_PLL
+> +        select SOC_SAMA7
+> +        help
+> +         Select this if you are using one of Microchip's SAMA7D65 family SoC.
+> +
 
+Spaces ^
+
+Other than this:
 Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+
+
+>  config SOC_SAMA7G5
+>  	bool "SAMA7G5 family"
+>  	depends on ARCH_MULTI_V7
