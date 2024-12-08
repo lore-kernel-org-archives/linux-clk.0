@@ -1,49 +1,75 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16BD34CC4;
-	Sat,  7 Dec 2024 20:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9519E18E1F
+	for <linux-clk@vger.kernel.org>; Sun,  8 Dec 2024 05:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733603192; cv=none; b=i3ishPLItsekz8+KbrdFsp8ppynUleCyPo/1V8nJWpXL3pGnwwrjH4fdLHkFdsCKkJRDKhadHHZkHSkhcqRYR7gS4JQ2K0p91hHM6oSGBqnoaSmXQRW3ZBleQ+CbRweI3Qr/TScqe8lpHFdjm6WZBN6kBPNFaq4OtI5Dfk40zAk=
+	t=1733635832; cv=none; b=RvMX5mvnBqnATfMXJFKZIB4nGq9b+ycY5sOeMfVmj7v0QFrugyxikExTDHIs73dSChh1248teJDlnUyBojA3wtbit2bfco9TRZmKzP+g18+RFOYAJvf08yM5sPBOVaYnMoIoBV/iU6XziVgfm7XxslxdiTpoUpTs6cBXZKHFVPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733603192; c=relaxed/simple;
-	bh=uUbianTua1fqJ3xsTd9AIf0EsuQrYK4M6Llw6yFInFw=;
+	s=arc-20240116; t=1733635832; c=relaxed/simple;
+	bh=KvnIfFf8P+FLDr+t06zo2ANjcZmqdeZgnkbH9neKfp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iF7Eu00VULn2bKc9zJY73J16Uvs6kaLYyYQXsQlZWrojIrGEjTLLeDqVBaVWa2BdGB50SENA+KMwp7IL5VlXkhMb4vZME+NnRVYmUvCTj1dRXy4T6lv48BRF/h4ExxGa4vgXCWL1C1iy16BjQlsJw3XZbz2/QQBfjboDFtWoiqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Poap3r8c; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	 Content-Type:Content-Disposition:In-Reply-To; b=KU5Rfszq3IviNI1Fxugu2grw0k6YVOioK0k+s5573loxOu7Xo+MiAXFOvKnshml+yinssiJ86VJNfGn60myaqSlOpUZ70/ifYcNhBO+GC7zYK911F9WRfzN31hKAdmFNhagMPIMpRCWncGiA/8jC2b5fJs+Hf7phBVM9rt+rY/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mx0o2C2U; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Poap3r8c"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=39pDgSNiUk/hOnbnaEPvFVAZbZyU2gLC1/FdQLOqz98=; b=Poap3r8cL36LdEf/kxUIjmPFEK
-	+ENesw96BbTmgqtLpseJlLdjdKhMmrH6YEKBKwIrnpBjDCBfIsv4Zp0k6+TA9Tu+T7lwvoLaTDpRs
-	2v2vfywg8fsbSbAOtdwOwWYXo0LAPwlzKUoes7+/mnEuHUE87wyW51E7QSe8mWT7JYrI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tK1Nj-00FVHZ-L9; Sat, 07 Dec 2024 21:26:27 +0100
-Date: Sat, 7 Dec 2024 21:26:27 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel@pengutronix.de,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 6/6] arm64: dts: agilex5: initial support for Arrow
- AXE5-Eagle
-Message-ID: <4ba6d338-9910-487e-8b98-1f576f9f0366@lunn.ch>
-References: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
- <20241205-v6-12-topic-socfpga-agilex5-v3-6-2a8cdf73f50a@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mx0o2C2U"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5401c37d8afso162843e87.1
+        for <linux-clk@vger.kernel.org>; Sat, 07 Dec 2024 21:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733635828; x=1734240628; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wvacb83oMug8ZaJH3xcieEjmfoUkx49WyZ97VXV3ZeM=;
+        b=mx0o2C2UYAfyxuPhYQ4zF+/r38aKN9+/2jiaOtQfv5vlKbXYKwBNfy2bB52g9jOtR2
+         dcSW/16Y9mVFUOOrzwMBBp+2dUyUoMBlpn9fHbfS2r9HMH2sbBJRYA4w7mQW15ri8kZm
+         T8rkTuccUp6OUALmooc7B/lVKEBntNpFN+R/Uk+xxMljs6p2qnOh9gUFzepWB7qoyHKo
+         l8mmUFdphT1cs/GfaESue2UC3N5bs9K4sFopCUOUbeF7V2v9pA/JRUNndAMhli9zV4G6
+         DP+s5snisJKACnsl9hkIDHbcQ+870UdzBEbc/YZ3VbCg628GnWwJEDQn8+QE7QG//Fa0
+         OzUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733635828; x=1734240628;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wvacb83oMug8ZaJH3xcieEjmfoUkx49WyZ97VXV3ZeM=;
+        b=jGAOuOLWQfQBQThZuw2lqfsbilgCn4h/Tm4xdnRBINylZajvkA0UKRAMekv/ORkqNk
+         3FMIaLtih75E8VSX0JpRIR5KGKRNAsCPlC3UliUukq8nBDgzDb2KI1bfhKgG4J31Qw8J
+         PZ5wqKKyKGZCvxjwKpjvXfNdmk2B0hvAlzYtqBS9wIq0sOxbPaj87dDUtG5Hkc1/8ZaT
+         K76T+MYtRXYoRY+L2hp/MlNxvu/ViqpuKrhAo0VFW29eosOCck5eS90w1RFVjLVn1WQR
+         RP0YlfEZqTFLMuXj/pEEb+AhcfqhbtsB8ZK11Q23mXc7TmGkaSnjd8dxHjHIgse0fu/c
+         nBMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO8kvd/yXJ71t4VgsXjh2EmT2uRhwJO3Lw9u20kv6qgqpfrzn+Dd+X+oTh+0vvJFE7ZsNkJj+zksY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHc6IGqZd13KCyNwXoF5gBvkHHnY3ydjZdpG807AufE4Fcrxrs
+	iPgSfspnXvSIMGMCqT51L+Tv/vrEcnnEkZWawTli7xY1Lahdrdhz6spSE1z9lBI=
+X-Gm-Gg: ASbGnctpYRZ4sAQ2D6d9ovUc1l5RLQcMFUPpDq9Y+hK5Wj1xR+uiMlxEIPQLd3RDZWc
+	PPjtziPf97isPqeoDVba79HpvzEnB84hspW7tu/2lI0OadBxglvTcYeq7oo93JzE1CzqMPXwEab
+	5boeuxc9GfgQ9BZqpIlCn3sFVRkUhIFXeyVerWnsQ5S1kDFh9hWl4+JXuRhk+xS42Zcbe/Rgneo
+	tzhwbzkFjHaR46kejlFTcpVPs4Ng77bpXzkUPFUFGbgj3VFtUeTd2isOx9qB0MMcoe1pRzLQpb8
+	rdz2Jrxu4IWtDKnxOyPWCaZx+NBZUw==
+X-Google-Smtp-Source: AGHT+IEGWyfmfMdOOWg2y1WPhvOD4Je6bh0ZK678xD9W3i2q/SCD+U4JO0yDb00ekQtqi9O1yIIVaw==
+X-Received: by 2002:a05:6512:3d07:b0:53e:3ac2:9c03 with SMTP id 2adb3069b0e04-53e3ac29ca4mr1184966e87.31.1733635827566;
+        Sat, 07 Dec 2024 21:30:27 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e378c4264sm574040e87.239.2024.12.07.21.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 21:30:26 -0800 (PST)
+Date: Sun, 8 Dec 2024 07:30:23 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: qcom: branch: Extend invert logic for branch2
+ mem clocks
+Message-ID: <oylnao5wjtqyczivesfg46eexfb5oj6o2azprtwf4bl7yhko2c@saqzbycbixqk>
+References: <20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com>
+ <20241206-sm8750_videocc-v1-1-5da6e7eea2bd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,26 +78,82 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205-v6-12-topic-socfpga-agilex5-v3-6-2a8cdf73f50a@pengutronix.de>
+In-Reply-To: <20241206-sm8750_videocc-v1-1-5da6e7eea2bd@quicinc.com>
 
->    - 2x 1Gb Ethernet
+On Fri, Dec 06, 2024 at 11:07:11PM +0530, Taniya Das wrote:
+> Extend the support for mem ops implementation to handle the
+> sequence of enable/disable of the memories for the invert
+> logic.
 
-> +&gmac2 {
-> +	status = "okay";
-> +	phy-mode = "rgmii-id";
-> +	phy-handle = <&emac2_phy0>;
-> +
-> +	mdio0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "snps,dwmac-mdio";
-> +		emac2_phy0: ethernet-phy@1 {
-> +			reg = <0x1>;
-> +		};
-> +	};
-> +};
+This mostly duplicates the patch contents. Instead commit message should
+explain what is the "invert logic" and why it is relevant.
 
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-branch.c | 14 +++++++++++---
+>  drivers/clk/qcom/clk-branch.h |  4 ++++
+>  2 files changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+> index 229480c5b075a0e70dc05b1cb15b88d29fd475ce..6caded8688c081e51ad0649f9c2f82919e461668 100644
+> --- a/drivers/clk/qcom/clk-branch.c
+> +++ b/drivers/clk/qcom/clk-branch.c
+> @@ -142,8 +142,12 @@ static int clk_branch2_mem_enable(struct clk_hw *hw)
+>  	u32 val;
+>  	int ret;
+>  
+> -	regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
+> -			   mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
+> +	if (mem_br->mem_enable_invert)
+> +		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
+> +				mem_br->mem_enable_mask, 0);
+> +	else
+> +		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
+> +			mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
+>  
+>  	ret = regmap_read_poll_timeout(branch.clkr.regmap, mem_br->mem_ack_reg,
+>  				       val, val & mem_br->mem_enable_ack_mask, 0, 200);
+> @@ -159,7 +163,11 @@ static void clk_branch2_mem_disable(struct clk_hw *hw)
+>  {
+>  	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
+>  
+> -	regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+> +	if (mem_br->mem_enable_invert)
+> +		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+> +			   mem_br->mem_enable_mask, mem_br->mem_enable_mask);
+> +	else
+> +		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+>  			   mem_br->mem_enable_ack_mask, 0);
+>  
+>  	return clk_branch2_disable(hw);
+> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> index 292756435f53648640717734af198442a315272e..6bc2ba2b5350554005b7f0c84f933580b7582fc7 100644
+> --- a/drivers/clk/qcom/clk-branch.h
+> +++ b/drivers/clk/qcom/clk-branch.h
+> @@ -44,6 +44,8 @@ struct clk_branch {
+>   * @mem_enable_reg: branch clock memory gating register
+>   * @mem_ack_reg: branch clock memory ack register
+>   * @mem_enable_ack_mask: branch clock memory enable and ack field in @mem_ack_reg
+> + * @mem_enable_mask: branch clock memory enable mask
+> + * @mem_enable_invert: branch clock memory enable and disable has invert logic
+>   * @branch: branch clock gating handle
+>   *
+>   * Clock which can gate its memories.
+> @@ -52,6 +54,8 @@ struct clk_mem_branch {
+>  	u32	mem_enable_reg;
+>  	u32	mem_ack_reg;
+>  	u32	mem_enable_ack_mask;
+> +	u32	mem_enable_mask;
+> +	bool	mem_enable_invert;
+>  	struct clk_branch branch;
+>  };
+>  
+> 
+> -- 
+> 2.45.2
+> 
 
-No gmac1?
-
-	Andrew
+-- 
+With best wishes
+Dmitry
