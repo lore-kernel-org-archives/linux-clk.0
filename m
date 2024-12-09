@@ -1,159 +1,162 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816621C2335
-	for <linux-clk@vger.kernel.org>; Mon,  9 Dec 2024 06:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3521506F;
+	Mon,  9 Dec 2024 07:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733727116; cv=none; b=Vw8JvRiPC2zUoTzqaBa1BWN/fA6qNSg626hiYKXuXXdV3vPwPQWPBhojNQIJF41dTwwwj2Ev2RxEmk3BbZZLIXsLy6alyfUWL3ECiQdCY9E9cLyYT2iI/GOF0iBczFdPxiVi4gFDo/jVbZzc7kXFhyMEEbFZ2nNvyWl8qjyS2Js=
+	t=1733731076; cv=none; b=kyfeeEMbepwSXuECJmuRKe6QEuIbe9dmJQc75UfOA3ejNQ7S12cp6ab12DoF2I2NawF0kXyWLFO6NmaKafLQruYvE8FKvMcFRahKm3YgNf0R8JKSSJ5VrzyOyryiCzsiGPRVcnBxe0c/48isQ080NWU9qIPBcNp8n/AtkFSIt4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733727116; c=relaxed/simple;
-	bh=gjWi9UfQlY8GyExiw+avsaQCZ/mlkQOOqNPCHaN/8Mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KpQ93zQryrf00Z5uTOxx//eOcpncLcLPH3KzQEFrtqic/I4PPobocI3XkUj5Qx/jdjyffIr1Y0bnzAJNIp/JBpJ2irqbn4m2HTJgSNKTPSZ0vNzbBl/KS4RvK8mlAfLh8sfdBs7L4KHE7hyWZUOd8UdNlrNTXMvj2pD6o+ba4sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yk5NPPTp; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yk5NPPTp"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso38921675e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 08 Dec 2024 22:51:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733727113; x=1734331913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UU+rFrYBqU+HyZU9fxW7fsHHwD25k+Ib4ntmd1sD3tw=;
-        b=Yk5NPPTpvRMEs+Am6QeodtOC7RlbENcKZ4NxQslc1HWf+Ih2xMUpTE9FWJgQsIbV7V
-         OfSsIsmy+1RS27icwWERU1Y/ilHhGCy8n5ra0495gJ4UjsD8YzuBE0AXje8XSO+PMJEk
-         lJv9H6Gkskdgqx+6ejLyqRoqrxDh10g0dqBe7FoXyOpwPUujo17fJxOurYB2J+tuVSGJ
-         Y2MT73xFspruI/x+Z//arKKzlPUAA1vPmJrIteC9Qm6eXyBucefikrdMHvNBEBc6wxri
-         SugJaYEQhB/ag6YncZo4dcthGC4+ARBR0B25N6ZvJahuA5ulyaDxpyi1LbFhpfubggd7
-         KbAg==
+	s=arc-20240116; t=1733731076; c=relaxed/simple;
+	bh=RIa2kOzACgFkRzY7fcBR76qUkQAYeIrmNbpzmK9NbQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iDkR7grrMXo70ZX0b9iP9cysBQrAVkUyDCjNvbZqIlUMnWhk+wx+1RcjAnkVVqe0BtJCO734kC/xOOMkyA9xovrHE9DJV0ndy7VGeo2eXDYPHvw8nR703EwSudBz0wFw70D3LmThECpk9AQTwRsk3PrRZM9aTeJkSaU0p/9OswI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6d08cb7c2so63820285a.2;
+        Sun, 08 Dec 2024 23:57:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733727113; x=1734331913;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UU+rFrYBqU+HyZU9fxW7fsHHwD25k+Ib4ntmd1sD3tw=;
-        b=fk9zMfm/rN7BSu1YrdcklOQdEO6m57xzHAaTqVWjMCe5Mp49/oHE0Hctdb6+Krd+fY
-         wc8QXSF/cM2G2+pRcUCxqF90MKJyCJd09EHb4FbDobOkBnODyolxCw8kR4SHL8R2pUQ+
-         IXRtQjKzqBIwFoHmC+FITySkv3uXlZMHvB7+hLe8kqVdfVpWxOVGVTUXO/w1N9yDWbrA
-         nnX786Yr+6HxipL5tTIkP1U5Hwdpq+41jmZpN4fmks+f7ULUy/Do44FbEGp2a3Cb6gYZ
-         kwCE0yo+HX7vo+wBqNrnOH9OmP5Y5MXdHaupderqnAO7f5hrxUQMEnrlv6TIDvI8jL2d
-         av3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJxidB2GydVcDG8z+efOYGdKheFLgw8uKyE2EmZu/6IpydqcwOdkV6clfaJevxxDWf7gLqatevsEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrW75e9U4nWHobnTjWFxWZifhhqZIqCE/SGhCyYKLPOYjDyMTw
-	Ax4q7IcWr0JAUpW1XKZVzBH1HFJaUJTTcYlgodmZMXemTSomNWC0Aq43XJgS79w=
-X-Gm-Gg: ASbGnctqFXlx4RR+ci65Xluq+aFj7n1q96JOsjo0ppjimy4o0c0RbUBglfMHKv/yBHO
-	tcd3OCH+4WA0qQt8gYJo84X4gr7U/NKgDirbRyxOGll9lyMROkaVsnxI7PkTzKI3VZ9UpePfYa3
-	EJol2xlQFoFbp16cntZ3eF8WhP3Gna6P6dL5wSeLoLzIto6PEI0lMOId0PShGsnrI9TOuG9fUyF
-	a4rjMZa+GUCt3wUiIHGxxEYSvTIMqRvm65y3LoUG9MJYgyWyzRTL/Q=
-X-Google-Smtp-Source: AGHT+IGEzc4vwHmaIfvTMIfIV37e15tsohqeHODjPaefoObT5Iz92AFnPqv8LysQYDOG0yI6+qlhwA==
-X-Received: by 2002:a05:600c:3155:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-434dded67b1mr79239335e9.20.1733727112718;
-        Sun, 08 Dec 2024 22:51:52 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434eb8f18fcsm72397395e9.24.2024.12.08.22.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:51:52 -0800 (PST)
-Date: Mon, 9 Dec 2024 09:51:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Haylen Chu <heylenay@4d2.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <9a3f6975-d99d-430b-9a09-697638667e97@stanley.mountain>
+        d=1e100.net; s=20230601; t=1733731072; x=1734335872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qk7zs9BOOihPQGUTMvGHn5Ym+4dxQx5CVpUjftA0HQQ=;
+        b=DfaE6H+EIVEDn5aICzm3VT2nPEudRudn9K3358KK92Gx5vdp97TzJXjZHqi4yorKuC
+         vHrc3rLUepeYGKVuZgpdgsDV3sSMpu0R4rYbbnw3WvMQwmF6YgOJMrbOT6snw4zBRrxu
+         Uif71fp1vMGnUtW9UXzuLjnHJcxP1XqRrTG4eZK85PYAZeEoJb5FQn5szyPXVx/kVsG+
+         lEha7R3sBLxKy/8qiBRJzdP6DxgRg+hRNTHWK3KnNmg/TaOqAZBe2KqOv427BlEEDyKk
+         aetFTPC4WEgwQD4AqQYX0lV+hyEZLYCNRqm6uKf1SlP6W4sT0lccFca0Dx3f1OwYEiEG
+         +zeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPLtQicr0nxM4FafVz2l0I4ozMqiBpSP7OTN0VebLoBP27DmmEP5C9UCQFN29cjoUabcphekHE9LRz@vger.kernel.org, AJvYcCVO/lgFUkHfxiazDeguEQxx0iH9FobSuqXkj7nj6LfRk7bk9jQiJ2+SeaEiY95+JQr2Pj+ZffCM3S6KCWpXbYTq5uM=@vger.kernel.org, AJvYcCXZrfggQd2L0WylnMGeZ2zBHQZf6brL6BRXkZvDYT3dX4cV4TrPlStp70vOcMRFWsPwlhhLkHq1LYAK@vger.kernel.org, AJvYcCXuRLsFIu6XiE1a03T451dvABVP1Yijcr31E59nZL3fhobyLy0PEAT8VuqFw/7d8WysV6qP3wyQMHZ20bxQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztk4TRb0jojauNsfJLqA7iKfSteaYMngnBIpAc1R6cAEtI6VM8
+	LFHGqT+CUe5GT9jRpMW4u6RYg+kcy9RY1Quy45ef7Qb9OmKNqXBJd4XZs84c
+X-Gm-Gg: ASbGnctH4E7PC7cViQrFNpE0zl1jZ8mKq0zVLIGX6iT6pc7/9r3fWsAe7+DKRhYcYhY
+	WkUv7WrKgitAAacyjPJHdzEMbqSIJWLkFI72ChqcjVNr+Q4zvZaaF51fK7p+vFykIi/dJUCyTEF
+	Fcj6gVR9JQdWRR4yA1rCgDGHx5TQDljaNvzrF0y+rQklLbjIfDuKY96MxGfNqSKv6hiWSao9hUy
+	+eBihXvug8rSSjrb7jeeE0S3F+vZDbggtMdcqcAHDprmhJvR3JvEWlE9CkHK5BypN/LlLJXB+6k
+	7bWUpJM4O9Ta6Rkd
+X-Google-Smtp-Source: AGHT+IGUnQ97y15elEkOy0iEyVN6f6wNoJWVGV7xDQz21NOXLb90IgiciAMUIzQASbbztlkrcZ3E6g==
+X-Received: by 2002:a05:620a:4897:b0:7b6:c92e:2e6d with SMTP id af79cd13be357-7b6c92e2f11mr949687385a.52.1733731072282;
+        Sun, 08 Dec 2024 23:57:52 -0800 (PST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com. [209.85.160.173])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d4e837a3sm83590585a.65.2024.12.08.23.57.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2024 23:57:51 -0800 (PST)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46760d9e4daso5252871cf.0;
+        Sun, 08 Dec 2024 23:57:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUIXbnVTtcGyi0l927ur3+fMUXE9ot88QfkeC6Sgj6Uwt4IQqqCfriaJMo7BkERmsC3HAnVVpoW9xd8WnKv@vger.kernel.org, AJvYcCVDNDHnuLQhy/CUJpH27ljuzJwtpKhayGeDVE+rdkC0AYYVW470qQSPi5S8UdsIvw7Vwx5hPWMTPpHV@vger.kernel.org, AJvYcCW0wNJNaBGXhDiv5VaXrCKabbGQMOa94Ke6pcyTK2CQQchUlDdpiyqJuRbkXgaOZY58Zgk3zK1wMo1V6cEw6nXwXB4=@vger.kernel.org, AJvYcCXyMoeCCBrSMt8FWhHL8oD7SWYMbbuUFN81JU3YNRFmQyo23LU2YHRn7T69IUBwiuujOz9v9ma8fNXG@vger.kernel.org
+X-Received: by 2002:a05:6102:1152:b0:4af:e135:1ca9 with SMTP id
+ ada2fe7eead31-4afe1356f47mr3950083137.13.1733730570269; Sun, 08 Dec 2024
+ 23:49:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126143125.9980-7-heylenay@4d2.org>
+References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+ <20241206-rcar-gh-dsi-v3-5-d74c2166fa15@ideasonboard.com> <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
+ <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
+In-Reply-To: <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 08:49:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
+Message-ID: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] clk: renesas: r8a779h0: Add display clocks
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Haylen,
+Hi Tomi,
 
-kernel test robot noticed the following build warnings:
+On Mon, Dec 9, 2024 at 6:26=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+> On 06/12/2024 15:43, Geert Uytterhoeven wrote:
+> > On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
+> > <tomi.valkeinen@ideasonboard.com> wrote:
+> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >>
+> >> Add display related clocks for DU, DSI, FCPVD, and VSPD.
+> >>
+> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
+>
+> >> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
+om>
+> >> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > i.e. will queue in renesas-clk for v6.14.
+> >
+> >> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> >> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> >> @@ -179,6 +179,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks=
+[] __initconst =3D {
+> >>          DEF_MOD("canfd0",       328,    R8A779H0_CLK_SASYNCPERD2),
+> >>          DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
+> >>          DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
+> >> +       DEF_MOD("dis0",         411,    R8A779H0_CLK_S0D3),
+> >> +       DEF_MOD("dsitxlink0",   415,    R8A779H0_CLK_DSIREF),
+> >> +       DEF_MOD("fcpvd0",       508,    R8A779H0_CLK_S0D3),
+> >>          DEF_MOD("hscif0",       514,    R8A779H0_CLK_SASYNCPERD1),
+> >>          DEF_MOD("hscif1",       515,    R8A779H0_CLK_SASYNCPERD1),
+> >>          DEF_MOD("hscif2",       516,    R8A779H0_CLK_SASYNCPERD1),
+> >> @@ -227,6 +230,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks=
+[] __initconst =3D {
+> >>          DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D4_VIO),
+> >>          DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D4_VIO),
+> >>          DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D4_VIO),
+> >> +       DEF_MOD("vspd0",        830,    R8A779H0_CLK_S0D1_VIO),
+> >>          DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
+> >>          DEF_MOD("cmt0",         910,    R8A779H0_CLK_R),
+> >>          DEF_MOD("cmt1",         911,    R8A779H0_CLK_R),
+> >
+> > As mentioned by Laurent during his review on v1, all clock parents
+> > should probably be some form of R8A779H0_CLK_S0Dx_VIO.
+> > So I'm inclined to replace all of them by R8A779H0_CLK_VIOBUSD2 while
+> > applying, which would match R-Car V4H.
+>
+> What do you mean with the above? First you say the clock parents should
+> be some form of S0Dx_VIO, but then you say you'll use VIOBUSD2. Aren't
+> those unrelated clocks, from different PLLs?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-clock-spacemit-Add-clock-controllers-of-Spacemit-K1-SoC/20241128-101248
-base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
-patch link:    https://lore.kernel.org/r/20241126143125.9980-7-heylenay%404d2.org
-patch subject: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1 SoC
-config: arm64-randconfig-r073-20241207 (https://download.01.org/0day-ci/archive/20241207/202412072123.ne7GnRyJ-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
+Oops, copy-'n-paste went wrong. I did mean R8A779H0_VIOBUSD*.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202412072123.ne7GnRyJ-lkp@intel.com/
+> > Are you OK with that?
+>
+> I'm fine with that. I can't really get much out of the docs wrt.
+> clocking, and the clocks I used were from the BSP. Afaics, it looks
+> similar to V4H, so it's probably best have the same clocks, as you sugges=
+t.
 
-smatch warnings:
-drivers/clk/spacemit/ccu-k1.c:1686 k1_ccu_probe() error: uninitialized symbol 'lock_map'.
+Agreed.
 
-vim +/lock_map +1686 drivers/clk/spacemit/ccu-k1.c
+Gr{oetje,eeting}s,
 
-e71e4621b06cd42 Haylen Chu 2024-11-26  1651  static int k1_ccu_probe(struct platform_device *pdev)
-e71e4621b06cd42 Haylen Chu 2024-11-26  1652  {
-e71e4621b06cd42 Haylen Chu 2024-11-26  1653  	const struct spacemit_ccu_data *data;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1654  	struct regmap *base_map, *lock_map;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1655  	struct device *dev = &pdev->dev;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1656  	struct spacemit_ccu_priv *priv;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1657  	struct device_node *parent;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1658  	int ret;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1659  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1660  	data = of_device_get_match_data(dev);
-e71e4621b06cd42 Haylen Chu 2024-11-26  1661  	if (WARN_ON(!data))
-e71e4621b06cd42 Haylen Chu 2024-11-26  1662  		return -EINVAL;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1663  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1664  	parent   = of_get_parent(dev->of_node);
-e71e4621b06cd42 Haylen Chu 2024-11-26  1665  	base_map = syscon_node_to_regmap(parent);
-e71e4621b06cd42 Haylen Chu 2024-11-26  1666  	of_node_put(parent);
-e71e4621b06cd42 Haylen Chu 2024-11-26  1667  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1668  	if (IS_ERR(base_map))
-e71e4621b06cd42 Haylen Chu 2024-11-26  1669  		return dev_err_probe(dev, PTR_ERR(base_map),
-e71e4621b06cd42 Haylen Chu 2024-11-26  1670  				     "failed to get regmap\n");
-e71e4621b06cd42 Haylen Chu 2024-11-26  1671  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1672  	if (data->need_pll_lock) {
-e71e4621b06cd42 Haylen Chu 2024-11-26  1673  		lock_map = syscon_regmap_lookup_by_phandle(dev->of_node,
-e71e4621b06cd42 Haylen Chu 2024-11-26  1674  							   "spacemit,mpmu");
-e71e4621b06cd42 Haylen Chu 2024-11-26  1675  		if (IS_ERR(lock_map))
-e71e4621b06cd42 Haylen Chu 2024-11-26  1676  			return dev_err_probe(dev, PTR_ERR(lock_map),
-e71e4621b06cd42 Haylen Chu 2024-11-26  1677  					     "failed to get lock regmap\n");
-e71e4621b06cd42 Haylen Chu 2024-11-26  1678  	}
+                        Geert
 
-lock_map not initialized on else path.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-e71e4621b06cd42 Haylen Chu 2024-11-26  1679  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1680  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-e71e4621b06cd42 Haylen Chu 2024-11-26  1681  	if (!priv)
-e71e4621b06cd42 Haylen Chu 2024-11-26  1682  		return -ENOMEM;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1683  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1684  	priv->data	= data;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1685  	priv->base	= base_map;
-e71e4621b06cd42 Haylen Chu 2024-11-26 @1686  	priv->lock_base	= lock_map;
-                                                                  ^^^^^^^^^
-
-e71e4621b06cd42 Haylen Chu 2024-11-26  1687  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1688  	ret = spacemit_ccu_register(dev, priv);
-e71e4621b06cd42 Haylen Chu 2024-11-26  1689  	if (ret)
-e71e4621b06cd42 Haylen Chu 2024-11-26  1690  		return dev_err_probe(dev, ret, "failed to register clocks\n");
-e71e4621b06cd42 Haylen Chu 2024-11-26  1691  
-e71e4621b06cd42 Haylen Chu 2024-11-26  1692  	return 0;
-e71e4621b06cd42 Haylen Chu 2024-11-26  1693  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
