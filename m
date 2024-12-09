@@ -1,29 +1,29 @@
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE722145C;
-	Mon,  9 Dec 2024 11:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAE1221D87;
+	Mon,  9 Dec 2024 11:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733745195; cv=none; b=rnYS+Dke14G88h1XfzIeuhiv/nerrKC/2bAvmRktnKWRcUS3oO12+8B8wvT9CLqcb5hzRJ6m3vN8HBc8HPyJBVKRwPuc9VoLWu/yH+C6jG++6aM85O7l4T9NBbyAFWgvNNGE4G5HNdNJyDQSWqzgfyMu2B1ufb7eXOWog/OO1HI=
+	t=1733745274; cv=none; b=dkZDKTDufeaLheK18E9eYcD3Y8m10gg512cF4KGpgvPaNq0/iy5Cfz/1gVvC/m3eZwoi9QdPhVLm3EpIqkHlS+LnhJb811mvWV+mPXVH0xuYVslCmXC/ibiukzkF7EHlVUBGZz8YmuTE8MYHBrpEMN7hCTdMRu0iq4QtaADZDfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733745195; c=relaxed/simple;
-	bh=a6RLnagjYk6FxWaDYNCB14xzDyQCd1oNDwzxq5w4Hdw=;
+	s=arc-20240116; t=1733745274; c=relaxed/simple;
+	bh=JATDnXxIw4ps6VbfWy9O0/mdWb8P5+bessEHfg+7AXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MfUAcdkmNyJPQC4ThDo5QVebazl303gbLBhChzibeBFVdHniBJSvL2wptnPOY1voGwpQUsadsQlWwYko/zDUUYN+CIW1uRxYC889sam2QzJT94Ub7eU1M2Gpe+Qkv5EiFAvjF4wJ3eSv2FuYuo08afdcq6VZdmz5CB/d+b7icfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Wl9Uwb3h; arc=none smtp.client-ip=1.95.21.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ng3QVg2O/ZuVq5d4bbH4ISi9mmzvE3Illu80//D9XK5BatR4XcdyXimMBTgNa5jU508a52dsm/Opg9iS1hVGZuA5Rl9bQ8dwtW6lDgkfLMvLpsPKSN2/gl4csJHhiOzCNsNl7CGHSv3tNcrE1dyQU+ampDfxIMpNRWQv4K3RT5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=pPMT6acz; arc=none smtp.client-ip=1.95.21.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Wl9Uwb3h"
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="pPMT6acz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ahtKyo3umu0l8xANNPbc/omC47RmvAyiOEB98A3zRFk=;
-	b=Wl9Uwb3hHHYw1gXSGXz5c9Av0256OS/lw+UeGGnBU2D3FOnTxEqpD+4SYAcazJ
-	8I5juTXjI7/sdyKwQPMJmTlJu+06Eu/oX0g6dYXP8lW5UmTc8XpUqOY4QTi9n/nA
-	wvO0/C8DCt81JKSI5t46SxjkYeubpjnoyxz2TN8YyiTtg=
+	Content-Type; bh=9YFBKvdle0l8WYYtUgX7JaCFYCO3nh7exjS+lwB+V18=;
+	b=pPMT6aczMRxqEoN5iIcFKQZ2Rcche8mg9BHFtGM2py0ENvhf5/YI66MtzJWYhL
+	hST/2Fz5B56swjXNtVHCH7Vf85j4ppB2zopIucpRaUrnM54v9ytADTRz07YKNPmt
+	rqiIVl1h/WdqYgeDDw6kQdKRmghczxih3miBe8rZU8lV0=
 Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgC3ZJi+2VZn8elyBA--.46363S3;
-	Mon, 09 Dec 2024 19:51:29 +0800 (CST)
-Date: Mon, 9 Dec 2024 19:51:26 +0800
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDHbODn2VZnjriPBA--.47417S3;
+	Mon, 09 Dec 2024 19:52:10 +0800 (CST)
+Date: Mon, 9 Dec 2024 19:52:07 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
 To: Liu Ying <victor.liu@nxp.com>
 Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
@@ -41,11 +41,10 @@ Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	simona@ffwll.ch, quic_bjorande@quicinc.com, geert+renesas@glider.be,
 	dmitry.baryshkov@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
 	marex@denx.de
-Subject: Re: [PATCH v6 1/7] arm64: dts: imx8mp-skov-revb-mi1010ait-1cp1: Set
- "media_disp2_pix" clock rate to 70MHz
-Message-ID: <Z1bZvsGdwd5dlJow@dragon>
+Subject: Re: [PATCH v6 7/7] arm64: defconfig: Enable ITE IT6263 driver
+Message-ID: <Z1bZ57fn/upwHWQ5@dragon>
 References: <20241112100547.2908497-1-victor.liu@nxp.com>
- <20241112100547.2908497-2-victor.liu@nxp.com>
+ <20241112100547.2908497-8-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,28 +53,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112100547.2908497-2-victor.liu@nxp.com>
-X-CM-TRANSID:M88vCgC3ZJi+2VZn8elyBA--.46363S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw45tFyrZr13XF17Ar4rAFb_yoWfArbEyF
-	17ZF4v9rs5XFyYkwsFkrZ3Aw48K3srZryUCayUJw45ta47Xan8ZF1S9ry5Wa1UXa4ayw1q
-	gFn5Wa98K3sIkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1xpnDUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRWwZWdWsiw1LwACs+
+In-Reply-To: <20241112100547.2908497-8-victor.liu@nxp.com>
+X-CM-TRANSID:Ms8vCgDHbODn2VZnjriPBA--.47417S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUr2NtUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBAGwZWdWx209gQABs2
 
-On Tue, Nov 12, 2024 at 06:05:41PM +0800, Liu Ying wrote:
-> The LVDS panel "multi-inno,mi1010ait-1cp" used on this platform has
-> a typical pixel clock rate of 70MHz.  Set "media_disp2_pix" clock rate
-> to that rate, instead of the original 68.9MHz.  The LVDS serial clock
-> is controlled by "media_ldb" clock.  It should run at 490MHz(7-fold the
-> pixel clock rate due to single LVDS link).  Set "video_pll1" clock rate
-> and "media_ldb" to 490MHz to achieve that.
-> 
-> This should be able to suppress this LDB driver warning:
-> [   17.206644] fsl-ldb 32ec0000.blk-ctrl:bridge@5c: Configured LDB clock (70000000 Hz) does not match requested LVDS clock: 490000000 Hz
-> 
-> This also makes the display mode used by the panel pass mode validation
-> against pixel clock rate and "media_ldb" clock rate in a certain display
-> driver.
+On Tue, Nov 12, 2024 at 06:05:47PM +0800, Liu Ying wrote:
+> ITE IT6263 LVDS to HDMI converter is populated on NXP IMX-LVDS-HDMI
+> and IMX-DLVDS-HDMI adapter cards.  The adapter cards can connect to
+> i.MX8MP EVK base board to support video output through HDMI connectors.
+> Build the ITE IT6263 driver as a module.
 > 
 > Signed-off-by: Liu Ying <victor.liu@nxp.com>
 
