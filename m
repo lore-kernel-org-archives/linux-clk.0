@@ -1,168 +1,159 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ECC14A4CC;
-	Mon,  9 Dec 2024 05:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816621C2335
+	for <linux-clk@vger.kernel.org>; Mon,  9 Dec 2024 06:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733722017; cv=none; b=orQFSIUsLGY81V0pA/Mz9CCbETaGJyAopWn2JnP/Rd4gldSa//2Jsqr4rTamcyBEdxRG5DlJ+ge8gR3uH68nqjj6rWJvDE8mimihiyEB/1nX4WWbc+8Fu+iy6WDqtq7zr0ATXKbXgNmSxR28fSfkk0w4lmbIyKjPnKMEpbcmXTs=
+	t=1733727116; cv=none; b=Vw8JvRiPC2zUoTzqaBa1BWN/fA6qNSg626hiYKXuXXdV3vPwPQWPBhojNQIJF41dTwwwj2Ev2RxEmk3BbZZLIXsLy6alyfUWL3ECiQdCY9E9cLyYT2iI/GOF0iBczFdPxiVi4gFDo/jVbZzc7kXFhyMEEbFZ2nNvyWl8qjyS2Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733722017; c=relaxed/simple;
-	bh=r3GRkniscda1h2jGia96dSzPLBBeCAFfWtcoKtCndGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3Ey/5CcDlDfGyEizT1G2idsi5seVhNVvN4f2eemWSNTCyhYgCwH24FybAjm3ogBTLAOwEDgSVyZYw7/oIXwddF68DhoSeVDD+cYd2il5KaxqUS+Dtv1twoVbuFaov6g+zg16BMa3STX7KXCp2WTBOFjKac8EQdulgsJnlwqTxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MNcFaGRJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1733727116; c=relaxed/simple;
+	bh=gjWi9UfQlY8GyExiw+avsaQCZ/mlkQOOqNPCHaN/8Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KpQ93zQryrf00Z5uTOxx//eOcpncLcLPH3KzQEFrtqic/I4PPobocI3XkUj5Qx/jdjyffIr1Y0bnzAJNIp/JBpJ2irqbn4m2HTJgSNKTPSZ0vNzbBl/KS4RvK8mlAfLh8sfdBs7L4KHE7hyWZUOd8UdNlrNTXMvj2pD6o+ba4sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yk5NPPTp; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MNcFaGRJ"
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D15D4502;
-	Mon,  9 Dec 2024 06:26:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733721974;
-	bh=r3GRkniscda1h2jGia96dSzPLBBeCAFfWtcoKtCndGQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MNcFaGRJBul5yuH7NaP0tg2XJDSNmygMpCc4b5I+kzpZhFdf/+jqvsUrjcomDAGgW
-	 HMcuw98tx6rcyZZu/0v8bh6E2hdpABQr8j3h+Tq0uBkEBW1Ay7jABVRJQRgvzqYonB
-	 l3zuGGhsdXifB0AVrFn5g9BgwC7qQkiJrDXnZk9M=
-Message-ID: <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
-Date: Mon, 9 Dec 2024 07:26:41 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yk5NPPTp"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso38921675e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 08 Dec 2024 22:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733727113; x=1734331913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UU+rFrYBqU+HyZU9fxW7fsHHwD25k+Ib4ntmd1sD3tw=;
+        b=Yk5NPPTpvRMEs+Am6QeodtOC7RlbENcKZ4NxQslc1HWf+Ih2xMUpTE9FWJgQsIbV7V
+         OfSsIsmy+1RS27icwWERU1Y/ilHhGCy8n5ra0495gJ4UjsD8YzuBE0AXje8XSO+PMJEk
+         lJv9H6Gkskdgqx+6ejLyqRoqrxDh10g0dqBe7FoXyOpwPUujo17fJxOurYB2J+tuVSGJ
+         Y2MT73xFspruI/x+Z//arKKzlPUAA1vPmJrIteC9Qm6eXyBucefikrdMHvNBEBc6wxri
+         SugJaYEQhB/ag6YncZo4dcthGC4+ARBR0B25N6ZvJahuA5ulyaDxpyi1LbFhpfubggd7
+         KbAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733727113; x=1734331913;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UU+rFrYBqU+HyZU9fxW7fsHHwD25k+Ib4ntmd1sD3tw=;
+        b=fk9zMfm/rN7BSu1YrdcklOQdEO6m57xzHAaTqVWjMCe5Mp49/oHE0Hctdb6+Krd+fY
+         wc8QXSF/cM2G2+pRcUCxqF90MKJyCJd09EHb4FbDobOkBnODyolxCw8kR4SHL8R2pUQ+
+         IXRtQjKzqBIwFoHmC+FITySkv3uXlZMHvB7+hLe8kqVdfVpWxOVGVTUXO/w1N9yDWbrA
+         nnX786Yr+6HxipL5tTIkP1U5Hwdpq+41jmZpN4fmks+f7ULUy/Do44FbEGp2a3Cb6gYZ
+         kwCE0yo+HX7vo+wBqNrnOH9OmP5Y5MXdHaupderqnAO7f5hrxUQMEnrlv6TIDvI8jL2d
+         av3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJxidB2GydVcDG8z+efOYGdKheFLgw8uKyE2EmZu/6IpydqcwOdkV6clfaJevxxDWf7gLqatevsEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrW75e9U4nWHobnTjWFxWZifhhqZIqCE/SGhCyYKLPOYjDyMTw
+	Ax4q7IcWr0JAUpW1XKZVzBH1HFJaUJTTcYlgodmZMXemTSomNWC0Aq43XJgS79w=
+X-Gm-Gg: ASbGnctqFXlx4RR+ci65Xluq+aFj7n1q96JOsjo0ppjimy4o0c0RbUBglfMHKv/yBHO
+	tcd3OCH+4WA0qQt8gYJo84X4gr7U/NKgDirbRyxOGll9lyMROkaVsnxI7PkTzKI3VZ9UpePfYa3
+	EJol2xlQFoFbp16cntZ3eF8WhP3Gna6P6dL5wSeLoLzIto6PEI0lMOId0PShGsnrI9TOuG9fUyF
+	a4rjMZa+GUCt3wUiIHGxxEYSvTIMqRvm65y3LoUG9MJYgyWyzRTL/Q=
+X-Google-Smtp-Source: AGHT+IGEzc4vwHmaIfvTMIfIV37e15tsohqeHODjPaefoObT5Iz92AFnPqv8LysQYDOG0yI6+qlhwA==
+X-Received: by 2002:a05:600c:3155:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-434dded67b1mr79239335e9.20.1733727112718;
+        Sun, 08 Dec 2024 22:51:52 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434eb8f18fcsm72397395e9.24.2024.12.08.22.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 22:51:52 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:51:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Haylen Chu <heylenay@4d2.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Subject: Re: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <9a3f6975-d99d-430b-9a09-697638667e97@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] clk: renesas: r8a779h0: Add display clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-clk@vger.kernel.org,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-5-d74c2166fa15@ideasonboard.com>
- <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126143125.9980-7-heylenay@4d2.org>
 
-Hi,
+Hi Haylen,
 
-On 06/12/2024 15:43, Geert Uytterhoeven wrote:
-> Hi Tomi,
-> 
-> On Fri, Dec 6, 2024 at 10:33 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>
->> Add display related clocks for DU, DSI, FCPVD, and VSPD.
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-clk for v6.14.
-> 
->> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
->> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
->> @@ -179,6 +179,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
->>          DEF_MOD("canfd0",       328,    R8A779H0_CLK_SASYNCPERD2),
->>          DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
->>          DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
->> +       DEF_MOD("dis0",         411,    R8A779H0_CLK_S0D3),
->> +       DEF_MOD("dsitxlink0",   415,    R8A779H0_CLK_DSIREF),
->> +       DEF_MOD("fcpvd0",       508,    R8A779H0_CLK_S0D3),
->>          DEF_MOD("hscif0",       514,    R8A779H0_CLK_SASYNCPERD1),
->>          DEF_MOD("hscif1",       515,    R8A779H0_CLK_SASYNCPERD1),
->>          DEF_MOD("hscif2",       516,    R8A779H0_CLK_SASYNCPERD1),
->> @@ -227,6 +230,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
->>          DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D4_VIO),
->>          DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D4_VIO),
->>          DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D4_VIO),
->> +       DEF_MOD("vspd0",        830,    R8A779H0_CLK_S0D1_VIO),
->>          DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
->>          DEF_MOD("cmt0",         910,    R8A779H0_CLK_R),
->>          DEF_MOD("cmt1",         911,    R8A779H0_CLK_R),
-> 
-> As mentioned by Laurent during his review on v1, all clock parents
-> should probably be some form of R8A779H0_CLK_S0Dx_VIO.
-> So I'm inclined to replace all of them by R8A779H0_CLK_VIOBUSD2 while
-> applying, which would match R-Car V4H.
+kernel test robot noticed the following build warnings:
 
-What do you mean with the above? First you say the clock parents should 
-be some form of S0Dx_VIO, but then you say you'll use VIOBUSD2. Aren't 
-those unrelated clocks, from different PLLs?
+url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-clock-spacemit-Add-clock-controllers-of-Spacemit-K1-SoC/20241128-101248
+base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
+patch link:    https://lore.kernel.org/r/20241126143125.9980-7-heylenay%404d2.org
+patch subject: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1 SoC
+config: arm64-randconfig-r073-20241207 (https://download.01.org/0day-ci/archive/20241207/202412072123.ne7GnRyJ-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
 
-> Are you OK with that?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202412072123.ne7GnRyJ-lkp@intel.com/
 
-I'm fine with that. I can't really get much out of the docs wrt. 
-clocking, and the clocks I used were from the BSP. Afaics, it looks 
-similar to V4H, so it's probably best have the same clocks, as you suggest.
+smatch warnings:
+drivers/clk/spacemit/ccu-k1.c:1686 k1_ccu_probe() error: uninitialized symbol 'lock_map'.
 
-  Tomi
+vim +/lock_map +1686 drivers/clk/spacemit/ccu-k1.c
+
+e71e4621b06cd42 Haylen Chu 2024-11-26  1651  static int k1_ccu_probe(struct platform_device *pdev)
+e71e4621b06cd42 Haylen Chu 2024-11-26  1652  {
+e71e4621b06cd42 Haylen Chu 2024-11-26  1653  	const struct spacemit_ccu_data *data;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1654  	struct regmap *base_map, *lock_map;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1655  	struct device *dev = &pdev->dev;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1656  	struct spacemit_ccu_priv *priv;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1657  	struct device_node *parent;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1658  	int ret;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1659  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1660  	data = of_device_get_match_data(dev);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1661  	if (WARN_ON(!data))
+e71e4621b06cd42 Haylen Chu 2024-11-26  1662  		return -EINVAL;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1663  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1664  	parent   = of_get_parent(dev->of_node);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1665  	base_map = syscon_node_to_regmap(parent);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1666  	of_node_put(parent);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1667  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1668  	if (IS_ERR(base_map))
+e71e4621b06cd42 Haylen Chu 2024-11-26  1669  		return dev_err_probe(dev, PTR_ERR(base_map),
+e71e4621b06cd42 Haylen Chu 2024-11-26  1670  				     "failed to get regmap\n");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1671  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1672  	if (data->need_pll_lock) {
+e71e4621b06cd42 Haylen Chu 2024-11-26  1673  		lock_map = syscon_regmap_lookup_by_phandle(dev->of_node,
+e71e4621b06cd42 Haylen Chu 2024-11-26  1674  							   "spacemit,mpmu");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1675  		if (IS_ERR(lock_map))
+e71e4621b06cd42 Haylen Chu 2024-11-26  1676  			return dev_err_probe(dev, PTR_ERR(lock_map),
+e71e4621b06cd42 Haylen Chu 2024-11-26  1677  					     "failed to get lock regmap\n");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1678  	}
+
+lock_map not initialized on else path.
+
+e71e4621b06cd42 Haylen Chu 2024-11-26  1679  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1680  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1681  	if (!priv)
+e71e4621b06cd42 Haylen Chu 2024-11-26  1682  		return -ENOMEM;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1683  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1684  	priv->data	= data;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1685  	priv->base	= base_map;
+e71e4621b06cd42 Haylen Chu 2024-11-26 @1686  	priv->lock_base	= lock_map;
+                                                                  ^^^^^^^^^
+
+e71e4621b06cd42 Haylen Chu 2024-11-26  1687  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1688  	ret = spacemit_ccu_register(dev, priv);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1689  	if (ret)
+e71e4621b06cd42 Haylen Chu 2024-11-26  1690  		return dev_err_probe(dev, ret, "failed to register clocks\n");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1691  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1692  	return 0;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1693  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
