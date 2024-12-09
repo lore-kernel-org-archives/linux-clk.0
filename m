@@ -1,140 +1,140 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A69F1ACEAA;
-	Mon,  9 Dec 2024 13:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC9523313C;
+	Mon,  9 Dec 2024 13:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752210; cv=none; b=fMP78ZsZrGyhAcM7rpxAPDMXHjm1fRU2t6EJGJC20X7w76AnpVyJCh2Zhi3Wi/bqJ5fyRo+kmRtL+0D4ETmjrXYzjATyvAJiNzTyDVbp7rCml915ZQduNqOa8ci6jof7LnltNQzVlcmsJvt20q8WsHepHLGw9ldYJmgLCngGYwU=
+	t=1733752330; cv=none; b=eUQOZYBjwq0/XxBxDEaL51l9FNEPchrWBW1yxs1t9hsz1SsqtvkENecSzkM5cHDWKBFGdICDwMHRMqchFvj+tZR/yfj0HCy1qKebBXgaSdCfmf4VMbL5lROEQ+ii5cnu3KfyXKzDbA5rJhcug+2kU5UnfI4cOyF3JD8hcHHpsOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752210; c=relaxed/simple;
-	bh=Psa+YU3cfq0yUGgmZOTG77vQgbttwuxULBjwDamDVeA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=X+/YgjW0WdXaSmN3bRsirABjs+7MbE6lEEg2g77bBLzY6wUb3s2odrXFBjw4MuuR8GSdmbGOY9W/+n9KndM1xNLd4NMwAA7RJ0lZoQkn1UPL80BZx2y9+fQDGrG+5VMUr7hVvj0m1KRqYdGNCXugCR0lyGTKxasfY28VonEe9Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7ms22kXM; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7ms22kXM"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9B746e014441;
-	Mon, 9 Dec 2024 14:49:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ApqDR59Bz5QrChxrwP0ZQ76X6NNQKG7JHxhDlDsT6xg=; b=7ms22kXMThn6fbqu
-	Pj2D32hgbWhnMDZPVblSImuZilEYvndYQRO1UaFtORMRtiw+8MFbl56IyRITe/wP
-	1GRl/wWnhOgFRiJvweVAwGoGbUAPapi0fIACBsr7ZwAUeNmMh+gMFLyEpz0pZ2xG
-	ffHlCD2TqihEzkbk2oHGTZN/5su4S7PjrDbNxkuRmP5KVmVRgqVxB6TcHmL/GTdW
-	iPc1tX3Dt8EHfepoeYZBizZQVS2FfcdLiZQn/4RyzS1fXrLHy2dUrKpx7hJXgM3g
-	shS1JQ8KxC8EAX+7sB3UjvsWIUdamGoeEYhYgEK/Lir86b9QUEy/KtriK1aAVvdq
-	ObI89w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccc8r42t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 14:49:56 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8E61F40053;
-	Mon,  9 Dec 2024 14:48:49 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 078CD27C4C1;
-	Mon,  9 Dec 2024 14:48:49 +0100 (CET)
-Received: from SHFDAG1NODE1.st.com (10.75.129.69) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
- 2024 14:48:48 +0100
-Received: from SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0]) by
- SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0%13]) with mapi id
- 15.01.2507.037; Mon, 9 Dec 2024 14:48:48 +0100
-From: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Cristian
- Marussi" <cristian.marussi@arm.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] firmware: arm_scmi: get only min/max clock rates
-Thread-Topic: [PATCH v2 1/2] firmware: arm_scmi: get only min/max clock rates
-Thread-Index: AQHbRapDJ7ccjxlxv0mHV7BZdhy65bLdr4SAgAA7caE=
-Date: Mon, 9 Dec 2024 13:48:48 +0000
-Message-ID: <22ff786d1e034169be21ef7dc32c4a3a@foss.st.com>
-References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
- <20241203173908.3148794-2-etienne.carriere@foss.st.com>,<Z1bHgf_4qqZgSnDt@bogus>
-In-Reply-To: <Z1bHgf_4qqZgSnDt@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1733752330; c=relaxed/simple;
+	bh=KVSzxO4n3eVIi2k+dY9vAMYddcYqXvIROSatSRHDyAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gIR15aOktExbdM0ioAGvKD2JnwRJ/V3hKdvaFf0mu03Kmeg49wZrneQr21Nx2zNipiwmENkq0tBg1qbpENFcBgYPuIausY5hvm6V0RpFiqPSqi/xEbrenOKFiEaf1bVzWOF9/l3bFlMTvUowNS2Sp25p+YJWv8c4zO7Okjiu+3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4affbc4dc74so315630137.0;
+        Mon, 09 Dec 2024 05:52:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733752325; x=1734357125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lHnG1lQA5ML9HkTzWoGAcGw6cp3gHA+KA94RyrtUoYE=;
+        b=UuMJnNKy6NWas75Ncuvz7szgrW/bNaEjYN4ftaARDd7UGKwBAIETsEiXVQxLHUJdIF
+         MeY1IZKoBy+kjVD2O6Vs9kMx1tbKgeTaZE070F3rr92y8rMrg6wmyroOGg/pfO5a/Ptj
+         kod7zpcHUmjRXA/sZrE8Qv9T96Mw4RtYOR+/eRg7h/vi5qSulGcoQBO+mMZFAWOIdDIb
+         UwOBDbeMUso/Bl9GRXoB1UBIsfTy5VIYalbLGdB65yAfTlJ56D20M0kXarSCQQ3rPcUD
+         Zgf9GMajph5WEH/dK2wNlLe0gwCCZDTO9vs9ZYApWVA9RgOx2cWxyQeu6j+5uZOAMwtM
+         Zfcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcuiwqAfs9rZ9chd72e3KQ3HeD/q/5U8pWFhWP5k18cve0obEXl22d86PmgN3mYdZZBz9QQcpZNign@vger.kernel.org, AJvYcCVMImxEQU7UQWBNNr1+rGEFzCpD7jASeaan2e4q9mXatM4hitWrjEGSB9RyzM+Qd1ioyLSkw+LcFjJ7vcc=@vger.kernel.org, AJvYcCVRhO1IZbolat+5zbgz/o5CCkTN++qxrMwkW41sdPaOpKUxV6XhHjoNJGGIgU+f8Wf3cgGYdW5lZatzZw==@vger.kernel.org, AJvYcCXWqDLlByqJORaCbqLjkxheq8KOJWB49HEaVEuciNUVe517gFkGdX3BHILO85DbXt8sCNhvlDidb3Sp@vger.kernel.org, AJvYcCXilZatpuqvHGsvp82ZT+UP5NfMgRQCKs38mlAlR1t7bRm/0Q30W9+KpkT9N8MmJ6xRh54Yg0AZdKpkEbVe7RqhQBE=@vger.kernel.org, AJvYcCXj3TuYWuh2RGz2kRIntzGodHCW+zh5DqGT3SV4oQAz0HJwLHvtKm8S/ucjiJpeTOl3Km41a6u2Dw4qpocX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5ouJlgYFaYkQWwUzpFQhX8FT8+5aR5X8pqm0m3EcChcZDt53/
+	4KXJH15arRJCmbWx5G/GF5+nml1ybs8BUGaEp4gyPhqz2uEjFtUgdfSTplE6Cfo=
+X-Gm-Gg: ASbGnctyYDn8tHF/5UVTqGbffGZ1zs8RmHaOiFAk9cmdtSDYFWoiZq75nyllcAIi31Z
+	pYxCUYJ+r3Cs7f19ZIGJ1t0vucspdHLqIZiQ57lFe2ByZU0YiVpHdqLqbpZj4QHbki84knVMCYe
+	D0wcRHC3emMi/pBu30p6ViHScr+QnqFg7i1iIglJVnLN+4OfQYtnychMwwJltGlbYyFsEulcXBt
+	cr8GQ3hSqZuCPUe5z85DbmDuXjPbvkNBuzQ1e6dH1PntU1ptQFJPC8TaRRhsaTzQd/41Bt5g17t
+	lOfITXLem59L
+X-Google-Smtp-Source: AGHT+IF0MnpEMx3NOBgUS4egQaYxpLHdES8JkO7lz42wTnWK1UmTyhNbO1MKQd5yZll95UhZLCP06w==
+X-Received: by 2002:a05:6102:5494:b0:4af:df60:8649 with SMTP id ada2fe7eead31-4b116c6eee3mr673534137.9.1733752325003;
+        Mon, 09 Dec 2024 05:52:05 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afe6969140sm553661137.7.2024.12.09.05.52.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:52:04 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85c5a91374cso487340241.3;
+        Mon, 09 Dec 2024 05:52:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUQR3KBJtVfp5rwtCJpUVo4IxTLcFpslFfbKzxWQBlP0W9xXzDUQ+EAi5Vs652tySijKfjSEXAMR/ZG25Q=@vger.kernel.org, AJvYcCUfaWKfAU+fzw6ddhTsvGYqgpPCWVVsXsgejo9sQeyMMwsqHyX7e/I7iNihCAqrg37tXpJpdj91z6agUg==@vger.kernel.org, AJvYcCVF0aJxX+IQQMOVJ7e6T+c+0lRT1qvWBssP51wYx4s2dvnJFS1clCyxiGIEkSZmZjvF04JvYQEsgp3U@vger.kernel.org, AJvYcCW1VdHQmiUsHTk3ncCjhjwoHwxYPqxYwfc1bcBqY8sQAZSgVlQscbKsKrRhHX63cE/jKOdmWmdo8y8POsYM59ZYNVg=@vger.kernel.org, AJvYcCX/dLmfr/WGZGj5Ocb9xsbiVrn4kn62LPzUpPDld4RZ33UgkA6rcGJ0QaLV37jaxTgZNO7RrzB4d2OQU7ff@vger.kernel.org, AJvYcCXu/peKCbcYb+av4FvlCsknv51gBCFZjYX/lSd/GvhVjkLgSQ4Eeq8n9BA0Jz8CTpNlmBHYwf1NKzUI@vger.kernel.org
+X-Received: by 2002:a05:6102:290c:b0:4b1:11c6:d3d2 with SMTP id
+ ada2fe7eead31-4b111c6e527mr1362540137.27.1733752323343; Mon, 09 Dec 2024
+ 05:52:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:51:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com>
+Message-ID: <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com>
+Subject: Re: [PATCH v3 14/25] ASoC: renesas: rz-ssi: Use goto label names that
+ specify their actions
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, December 9, 2024, Sudeep Holla wrote:
-> On Tue, Dec 03, 2024 at 06:39:07PM +0100, Etienne Carriere wrote:
-> > Remove limitation of 16 clock rates max for discrete clock rates
-> > description when the SCMI firmware supports SCMI Clock protocol v2.0
-> > or later.
-> >
-> > Driver clk-scmi.c is only interested in the min and max clock rates.
-> > Get these by querying the first and last discrete rates with SCMI
-> > clock protocol message ID CLOCK_DESCRIBE_RATES since the SCMI
-> > specification v2.0 and later states that rates enumerated by this
-> > command are to be enumerated in "numeric ascending order" [1].
-> >
-> > Preserve the implementation that queries all discrete rates (16 rates
-> > max) to support SCMI firmware built on SCMI specification v1.0 [2]
-> > where SCMI Clock protocol v1.0 does not explicitly require rates
-> > described with CLOCK_DESCRIBE_RATES to be in ascending order.
-> >
-> > Link: https://developer.arm.com/documentation/den0056 [1]
-> > Link: https://developer.arm.com/documentation/den0056/a [2]
-> > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-> > ---
->=20
-> [...]
->=20
-> > +
-> > +static int scmi_clock_get_rates_bound(const struct scmi_protocol_handl=
-e *ph,
-> > +                                   u32 clk_id, struct scmi_clock_info =
-*clk)
-> > +{
->=20
-> This new function seem to have unwraped the scmi_iterator_ops(namely
-> prepare_message, update_state and process_response instead of reusing the=
-m.
-> Can you please explain why it wasn't possible to reuse them ?
+Hi Claudiu,
 
-Since we're interested here only in min and max rates, let's query the
-first and last rates only. This can save a bit of useless transactions betw=
-een
-agent and firmware in case there are many clocks with somewhat large
-the discrete rate lists.
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Use goto label names that specify their action. In this way we can have
+> a better understanding of what is the action associated with the label
+> by just reading the label name.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I though using the iterator for this specific case would add a bit more
-complexity: it's expected to iterate (st->desc_index incremented from the
-common scmi_iterator_run() function) whereas here I propose to send
-only 2 messages.
+Thanks for your patch!
 
-BR,
-Etienne
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->=20
-> --
-> Regards,
-> Sudeep
->=
+> --- a/sound/soc/renesas/rz-ssi.c
+> +++ b/sound/soc/renesas/rz-ssi.c
+> @@ -1084,15 +1084,15 @@ static int rz_ssi_probe(struct platform_device *p=
+dev)
+>         /* Error Interrupt */
+>         ssi->irq_int =3D platform_get_irq_byname(pdev, "int_req");
+>         if (ssi->irq_int < 0) {
+> -               rz_ssi_release_dma_channels(ssi);
+> -               return ssi->irq_int;
+> +               ret =3D ssi->irq_int;
+> +               goto err_release_dma_chs;
+>         }
+>
+>         ret =3D devm_request_irq(dev, ssi->irq_int, &rz_ssi_interrupt,
+>                                0, dev_name(dev), ssi);
+>         if (ret < 0) {
+> -               rz_ssi_release_dma_channels(ssi);
+> -               return dev_err_probe(dev, ret, "irq request error (int_re=
+q)\n");
+> +               dev_err_probe(dev, ret, "irq request error (int_req)\n");
+> +               goto err_release_dma_chs;
+>         }
+>
+>         if (!rz_ssi_is_dma_enabled(ssi)) {
+
+Inside this block there are several return statements.
+As we know DMA is not available when we get here, these do not
+need to call rz_ssi_release_dma_channels() hence do not use
+"goto err_release_dma_chs".
+However, this may be missed when making future changes.
+So perhaps it may be prudent to make this safer, by moving this inside
+the failure branch of the rz_ssi_dma_request() check above?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
