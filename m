@@ -1,64 +1,65 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E8223706
-	for <linux-clk@vger.kernel.org>; Mon,  9 Dec 2024 12:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FA3224896
+	for <linux-clk@vger.kernel.org>; Mon,  9 Dec 2024 12:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747058; cv=none; b=UIDizsDF74iYE9l1ZVguza8xl+WOY25Bjh46UCDXjDL08wzlzL+QVSFMwycWy+UX6hS1Y6TaXTVAhB7dCtIQzndQ7fnldkob6rthUo8Nki/hky88VLDGOl8fzcM8WBZKUINYk4LGSywjiaskiZiPsDF0cgCEQRYsxspIpRD5NdY=
+	t=1733747059; cv=none; b=dW59Z/39Qe8tjuTeJvsmFr1Lmi0+0BQ1Pfi6H6YyncQ7O+wUYKy7jmEUeWQ52wZi+HVT3IMKgN4emFW/VD94ML5wBiOSzkVcqXmdQazvdpXGGbxCz40KvJ2z1j41t5qnH1DAKnTUBh6DvBMBblUQ6hHP0wcX3b4GjsJtGgxJP34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747058; c=relaxed/simple;
-	bh=rkMjCrwS1+wByjVOGZBOyBmwHcPRefAACRVZAjVFMrg=;
+	s=arc-20240116; t=1733747059; c=relaxed/simple;
+	bh=dXTvMwZ3IWa8w/PCirVYpiMdDockPwSZQVUAZm7Ua1o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uB4z+WJxfNWyennvl4GKfBRVuzG34XJahc+g8dqBWHwZHQA4vcH47FdsJOPTL8BuneHi06pYMzKNXg6oNaXxOEnI6sBxbqNsm+VJNEI8qb5w6Q/cXOqwNUZw16TSl1a8T09hZHgxbMAQTSBwO2wqOsGEgM4exTLUxqWLIC3HQFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TSkfFdnj; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:To:Cc; b=gnxec4hgdcfX4hroVH+Tk3nWonJQtqOfFRKf2FW/pbEoWtDpmlzwZFQD5Z03ELAddr8pv0MIGrc4IR0ZeZUHz4Ms+rBto9P6XT2GnLarbVcJIdIfSn7hrV4jb7ekpWYoVUQ18R53uvCQCPLt7wj1vSR7n5VcOsGx4RfkeDEwAw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwjWWKg/; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TSkfFdnj"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa67ceb4e31so27183166b.1
-        for <linux-clk@vger.kernel.org>; Mon, 09 Dec 2024 04:24:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwjWWKg/"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa659775dd5so22030566b.0
+        for <linux-clk@vger.kernel.org>; Mon, 09 Dec 2024 04:24:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733747055; x=1734351855; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733747056; x=1734351856; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4VS86PQrU3aNTPQz7X0NdV1vS6PaGx8hn6CNMCEHmEw=;
-        b=TSkfFdnj85CTjX7fstayGkA+yd08BtcXBT/3toiUjY3nBkkYZBXSHhN3uk3kBVpPMc
-         vAexlKp7C2eSDL63Hz7EXl3hZSBshsIx/mqlkgt8AR2Yh2U1JYzuWX4u2GKtPjE/ujVs
-         RAykGzOOb37O2A/EDHjXwX7tWS++CrZI5fNBDrTMVIl55WgvPENwXKfpEq0wKsYToyBG
-         uDkaT0PcH/XRXTTBZhD/RgZzA26FxUcOKXXR/wbkCI8JHxMO3WFFKdnTAIOWpjpKiy02
-         7dhz+75DkHynof/09jlwwFvPdxmM9C33wIwuWayf3bHuZUsMy2WenQKMXRmVSLxNklM5
-         W4SQ==
+        bh=JoCVrD28ayqu5D/DI17RscermoixTp22627F0aNO5EA=;
+        b=ZwjWWKg/iwSlnFS+GTCOaFYbL/Y4ag4IGujXPUwQJ7U5gJfs9Z6M8NxNePkPFWv3y4
+         lMUNLBgNHer3UmMQVJEcXybf/nDsJX81h+juUNafmMuMUtbA6Os0ukHNci4yAnj01pKN
+         tcUr66SbmlX+a+5Ilk4I12bdQKKdIqhMVmubbrVAXwH4cOkBd9ODOwrUuypzD9V0FhWP
+         mLdLzkNrwGwWcJHC8RwRn+sLaFzqqBGYDSQ8rF1O1weHkM/GxDbr6a6oaEla6WbEB+Ta
+         itX9PTo4/Rk2U9dTfYxnc28QEXup+J7jEGlRFvQohb/5aPQc+TjHX+EetdY4fSnk8zrh
+         pshQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747055; x=1734351855;
+        d=1e100.net; s=20230601; t=1733747056; x=1734351856;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4VS86PQrU3aNTPQz7X0NdV1vS6PaGx8hn6CNMCEHmEw=;
-        b=GMosZFookKdJ2A0zp3gANnRfgSrkfSAvM0C0xXRVRYnN3hqwvi0WPgxLwboierSbdF
-         XZ507ecJwwTnpg1Q40BlNK3ucG4iYAUPlIH9fbUvkDQMlAdSUVvQhpridAdytfwf/A8M
-         tL0u0fFPXryXqNdStXBbwC2kvdSButoVET6ArifAC9ovRT+c/fL2F19qMNxg6ZAdttCZ
-         RKoYxcNL456nBS79ZsZuziSEMC0rRi8xhaQUj3hZkOxKEgMp7TDs/Iv2wiBwMzHr5XyW
-         fD/3W80UGt7zVdyiAT/8O/klWdsWus3wnoR54xvaPuOAPdqHgBh/ZQLk8TH7F8y/GWvZ
-         m8bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdX5TCHrH50jtif5qLTSsZHjEVsPqffZTphWd6pHMludB2nfHHFCkQ+bR2jz1U1/hmy059le/xaLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya9xrDbXQKRJp6HeXt1ez+Z3J7TO4Rngqhu2TDjqIHFASRrJCw
-	Eyy3IM94a4W/Pz5sxkuqXyDPD8LjboU1DvLzsS8uUzeNpfp8XVkub4QxvlYiDVo=
-X-Gm-Gg: ASbGnctJl/NaUr1ra7hDXUdn7HdtHPEd6abPMxqgp6ULbMlD/tDfnNhuBY6zCMhC8M3
-	sQ2XL4h4MLxXuNmqzoaB2zYcvEJa0TrLFNIEN66SJxcRf7HPxCzB7ZZhHUnAWLJDKzUgbKMlG44
-	C1RtgQfHXCwvEMQ/0IDLKA6j262ocuoz64ch91Fuh93AN831hXI+tBWfIUMt4j+hb50qqzRem8m
-	mNQX3h0ixbf6izKblK2215+e76tV8rsJT+7IFyYwP3YHU6nUXmc+M7PjxWFuZ25OA==
-X-Google-Smtp-Source: AGHT+IHMa1lVKER8h4Ap0+h8iEA/ASsQQiOkTcbxptlpeVP7AhBWBqczT0R0GsKDETc4Mf1TgulAPw==
-X-Received: by 2002:a17:907:874a:b0:aa5:3e81:5aa2 with SMTP id a640c23a62f3a-aa639feb836mr488047766b.4.1733747054666;
-        Mon, 09 Dec 2024 04:24:14 -0800 (PST)
+        bh=JoCVrD28ayqu5D/DI17RscermoixTp22627F0aNO5EA=;
+        b=Iyo7q0LN8+SFg8JgU3V2DsmvME1ZH5AX3pM9k0aaGIaATo05L4zFfApPES3iF1uWe7
+         VoVmQV6UUPKew01MqAtJNFzooX4Vh4e+yYUpaorXjpc1AgDe/qnNKdY+JgOtBbNCx73W
+         Dcbp13OniwUbiLWePgrToEjXNzzmr77vcaBQPKXtGW30H34fTTVHZNz+JsmkmWMuHJdr
+         er1XYDGt1xUuhhT5yuzZ2/yzWZccN2N2YpehRt/R8+5semJfNJLV0ygw7KMb5qp/2o8r
+         /j1gGWjJ6h/4xVWJGaIe+VjjJPOZ8VzWR46u7wScCaivX+QuYfeCpsx+1m0CNFiUjGBN
+         0tjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg3TxsqpUuAxxE1C1r4XQUhKvpJvzqPTfcrTEPj4R5xsZPEuDtuTE5UBojla42OwID61tI4LIvg4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqDd1EsyJtSveChf4VdIQ2jM8zpNhKXTgo0HaFmY/W7XiiGBNr
+	/ZvyzTIxy9v6pmiHnCo2BP8sZlm+ghg2H5eQeTH1qLaP1WEpfOA5fx3LBFlzYxt6g6D/+ghpbne
+	f
+X-Gm-Gg: ASbGncu2a6IBqa0fvwSqSlaepcR/R+YD+Yacdzu8Pj1Y0W9JAXVFBBfbQG9EQwvIomx
+	cpId4g59DLc94aSDQuaLsAoh3wkn2f4fBm58dybBOLZvM7cDTX9qlVK5DWBnemqKiJ9rFJSDFcI
+	qV4gR5/7wKS2jY1Fcci0ucT4wp4KaJxcnKN2C1FlIIdnsIpRHd+/mTO/akfI9raY3sNqkvomiu0
+	r2uetgLZGeR8CnL1jTOP3bCCEFI3Xt+rs6tj+qc0nmqJKBTblI9jQN1v9WnYysAuA==
+X-Google-Smtp-Source: AGHT+IEL0p06Hwmo+9E/f1lCO4dyZG2n/TdjzYJd+woyN99M4MYMI2vd+kMHzKES2YH6I7KFGRLVew==
+X-Received: by 2002:a17:907:c008:b0:aa6:79e6:5b03 with SMTP id a640c23a62f3a-aa679e65d87mr176768466b.6.1733747056131;
+        Mon, 09 Dec 2024 04:24:16 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm309925866b.159.2024.12.09.04.24.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm309925866b.159.2024.12.09.04.24.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:24:14 -0800 (PST)
+        Mon, 09 Dec 2024 04:24:15 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 09 Dec 2024 13:24:05 +0100
-Subject: [PATCH RESEND 2/3] clk: qcom: smd-rpm: simplify locking with
+Date: Mon, 09 Dec 2024 13:24:06 +0100
+Subject: [PATCH RESEND 3/3] clk: qcom: spmi-pmic-div: simplify locking with
  guard()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -68,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-cleanup-h-guard-clk-qcom-v1-2-b1077540230c@linaro.org>
+Message-Id: <20241209-cleanup-h-guard-clk-qcom-v1-3-b1077540230c@linaro.org>
 References: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
 In-Reply-To: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -78,21 +79,21 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2526;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1606;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=rkMjCrwS1+wByjVOGZBOyBmwHcPRefAACRVZAjVFMrg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnVuFpiHvV0uVRDjZL66G52Y9rZuBpcDh97yVqm
- 7VCNFzDmjqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1bhaQAKCRDBN2bmhouD
- 1z6bEACDJRMV3tKG8OzJzEzGyfz0lOZpMOl3jN/tTBoHX1ttuGWTy4ndNdqgrS10DEBZX6AukHR
- 2RkvqWkTyKKdNzNQuzOUVZceVDzp6+14dJh8OmLv9rh3T1CybD01NWxDyX9E7dHwpzdzjKuOzik
- ysttIokEqGs7IBZ/l/nokgkJYYEd29LH5YirY5+WRuNafy79CfiPlh6J+BUxTMaw+qQuWFmoD4t
- PQFyq2OQiBrgTYYxqsxrT4JmK2wXe6+MD2E7A6hE6VJdr1O23cjjMVX3b6+Y0+zZbP6h7VO6cUc
- VyQzxXWG70zOEUW0ncp8VxGy836HsZoZT6XQuxBfOW+3dq2jEzkzDA3JMmNc/gFNaqb2eOHd0ll
- P6LbKNLNdJScsdo+7cCv6RlcXMffERSL6CNnOY62KiEfAIJyXrxcvOL6RvGd7qZA6Dom2kJeNAq
- 6M3qnKP7ZQsFDIENjvEUPMTO95+zN6Ql5fL8pkAPLtsOESS6QvIBV7qnYM+dyTwGeTMJzqk9LZ6
- g/725GdkH60DSX36J3YUYaUjUqos7CJFgBuENmayd8k+e+t3MOOzpeh9pEF0K++9Z8PV1kbpVOP
- LEy2KoplchfXrzS10mQIx+q5O2+boaYrOiH4dh5kiLIoLpYZv1npQMxIclDZpW2qHr0xOE8sctQ
- WzPlTI+EO1P8OkA==
+ bh=dXTvMwZ3IWa8w/PCirVYpiMdDockPwSZQVUAZm7Ua1o=;
+ b=kA0DAAoBwTdm5oaLg9cByyZiAGdW4WqjVaZZPkcN8v9OPTJHUcgo366JtrL28bgL8+92JHHiT
+ okCMwQAAQoAHRYhBN3SYig9ERsjO264qME3ZuaGi4PXBQJnVuFqAAoJEME3ZuaGi4PX+/cQAJk+
+ Nt95XiYbAfyAfpF+qC/Os14df5UkJTTbXxd/sOxHbKrDVc8xSx1fyqDWRaTcOD5Pe0wiD4glAzh
+ FlXAenPqrW8yS3Vsne+gjpl3Yy9MknYypm+Wieyxvw3Uc0WUYJ9J3uf24bzJk/a0RGQIG/lq/Qw
+ oOH6GoFnzTfQCDQeILelFLUkuYrnxQi+k1rs5rdVVL+8JYOBNoOVnjcA3DGFXvHmfWlV+f5xJcF
+ JtcXMOUMZVrhra+7Tp7oLXbgaANGpci3rsCG+1cYV0OHsa0nqSivyPVfaIvX2PeBYJuiRUxbnBM
+ /07FS0Cgmh4IYDM/zGJUQpXv66VARq3957sN/+kxJa3aOGa7KUjn8GQTZiu/pr5vr3QHA81ou76
+ CbqlYK4hEWS59pz/LAp5afj6TZIHqK+4v/oHQfttCrpGI+nojazSGCIlC0oA5Pkvz6rDlllc19n
+ YEo90GQZW5Z06eYCyzJ2UocPPDpWsGI3vU9aNgpXoT4RYLSvrWUXLcLR3WyF72Vsa8mCH/oEVab
+ oDk2Vl6hs7wb/GtKKh2ljMeeXrL1k+JuSnERSXmF7hPTqNNvlJF7bO7xJVX6MJZOtxhuz5ELHyT
+ j8Je7O7bNIj7bs58E1Gfvfdo69Pk9YphLl8kHumVDITdXye1khfPUhziiSbxHT8okOoRoCITbw0
+ ymeVV
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -100,90 +101,56 @@ Simplify error handling (less gotos) over locks with guard().
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ drivers/clk/qcom/clk-spmi-pmic-div.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 45c5255bcd11bae69b83138ba1d5e52a8a3f3be8..b8cd9f7301194a539d5fb18f974a5600496a1032 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
+index f394031eb0e520b1b59e863dfbda4312f4f8215b..41a0a4f3b4fb316827365a522079dcd99630c49f 100644
+--- a/drivers/clk/qcom/clk-spmi-pmic-div.c
++++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
+@@ -3,6 +3,7 @@
   */
  
+ #include <linux/bitops.h>
 +#include <linux/cleanup.h>
+ #include <linux/clk.h>
  #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/export.h>
-@@ -309,10 +310,10 @@ static void clk_smd_rpm_unprepare(struct clk_hw *hw)
- 	unsigned long active_rate, sleep_rate;
+ #include <linux/delay.h>
+@@ -140,30 +141,26 @@ static int clk_spmi_pmic_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clkdiv *clkdiv = to_clkdiv(hw);
+ 	unsigned int div_factor = div_to_div_factor(parent_rate / rate);
+-	unsigned long flags;
+ 	bool enabled;
  	int ret;
  
--	mutex_lock(&rpm_smd_clk_lock);
-+	guard(mutex)(&rpm_smd_clk_lock);
+-	spin_lock_irqsave(&clkdiv->lock, flags);
++	guard(spinlock_irqsave)(&clkdiv->lock);
++
+ 	enabled = is_spmi_pmic_clkdiv_enabled(clkdiv);
+ 	if (enabled) {
+ 		ret = spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
+ 		if (ret)
+-			goto unlock;
++			return ret;
+ 	}
  
- 	if (!r->rate)
--		goto out;
-+		return;
- 
- 	/* Take peer clock's rate into account only if it's enabled. */
- 	if (peer->enabled)
-@@ -322,17 +323,14 @@ static void clk_smd_rpm_unprepare(struct clk_hw *hw)
- 	active_rate = r->branch ? !!peer_rate : peer_rate;
- 	ret = clk_smd_rpm_set_rate_active(r, active_rate);
+ 	ret = regmap_update_bits(clkdiv->regmap, clkdiv->base + REG_DIV_CTL1,
+ 				 DIV_CTL1_DIV_FACTOR_MASK, div_factor);
  	if (ret)
--		goto out;
-+		return;
- 
- 	sleep_rate = r->branch ? !!peer_sleep_rate : peer_sleep_rate;
- 	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
- 	if (ret)
--		goto out;
-+		return;
- 
- 	r->enabled = false;
--
--out:
--	mutex_unlock(&rpm_smd_clk_lock);
- }
- 
- static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -345,10 +343,10 @@ static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long peer_rate = 0, peer_sleep_rate = 0;
- 	int ret = 0;
- 
--	mutex_lock(&rpm_smd_clk_lock);
-+	guard(mutex)(&rpm_smd_clk_lock);
- 
- 	if (!r->enabled)
--		goto out;
-+		return 0;
- 
- 	to_active_sleep(r, rate, &this_rate, &this_sleep_rate);
- 
-@@ -360,19 +358,16 @@ static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	active_rate = max(this_rate, peer_rate);
- 	ret = clk_smd_rpm_set_rate_active(r, active_rate);
- 	if (ret)
--		goto out;
+-		goto unlock;
 +		return ret;
  
- 	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
- 	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	r->rate = rate;
- 
--out:
--	mutex_unlock(&rpm_smd_clk_lock);
+ 	if (enabled)
+ 		ret = __spmi_pmic_clkdiv_set_enable_state(clkdiv, true,
+ 							  div_factor);
 -
--	return ret;
-+	return 0;
+-unlock:
+-	spin_unlock_irqrestore(&clkdiv->lock, flags);
+-
+ 	return ret;
  }
  
- static long clk_smd_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
 
 -- 
 2.43.0
