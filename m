@@ -1,101 +1,165 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED7578C9C;
-	Mon,  9 Dec 2024 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5E313AA2F;
+	Mon,  9 Dec 2024 17:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759731; cv=none; b=MAgtggmlkD4Dw0UX8HWFnEYMK8uvQraG7pEbOAoCla3uiDBLrbcLfbfClG4BiMDVZJYafF6sUA4E88acm9BrS/foFoO1i6WAATTWWXliutRcMJMsYPw3cEZ3ibo5XlWgaVLQnvGqrl7nPhhLtp5va0MwYBm1vUP3qfh6ssA3BA4=
+	t=1733764333; cv=none; b=M6+ou6rfmSxFScQBh58IUxJEmVJLOzq/pc/AMnTD5rT8JwhH2ZRKIHzfswQ/M3Hm/ZAwgL/7m+OLyNJG8taMz5DzgOu9pf6WhAhdctPyrnxXa5gCxOFug8qzGUl84Pvs1YB/prm1R49y+MoRCpIRW9glC0ox9kpBrrUtOhRwuu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759731; c=relaxed/simple;
-	bh=XswTRhc2FgsKGapPraVnaq5t3FsVcVZuNOD29axiOxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rfn1eyeXwquhTVLimTLYejlGocHwmLrMCWrpu6ZQ8OwK4E7hxcEFhi4ybMT1C3XuQOWnsczxS6TuMAq1w6zrjDUCFVF6ER4xOkMUeHyKHqs9R6D09y5YlYUmGJNhImiJw9JUU0SlxTwsNQlsY67S0IFcmTMOMZFOusMM+Dw070g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-517ae9ff6e8so348912e0c.3;
-        Mon, 09 Dec 2024 07:55:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733759728; x=1734364528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j5iSM4ixQflBoS0B8PVVLYzHGyv6dQ39nvBtZwQMiCA=;
-        b=YybBHg0fMsYDi2NanqK/AjO1ywrpMnIHuo2GWpykaJm7lT+rPmSLK8wqT6yuvEoW1c
-         SleEhtKe2YqVmRCM8pyR/QjYB7jyYAHkmtoGWaBapNYLLeizrW2y4dLO5QtoqdezvkBB
-         MSfXMlgrbrlsQOU42QSFAwMeynEtbpZaGx+Nvh+B6vUL8+DyqoHDZe25jioHu9hwo1nH
-         tMPm4Tnmqn/ic+Tp5XWdQOaw2HwYue5ht0wsU+wckNkgIDerlb0zlw+Y3VlIhIIk/R5t
-         vJIa0ZMLn7DvATifasZSh4B5iCQwpimBsxHMRjJvKg9mlMAtBi7iqWuDTAc7T6b9JX9O
-         RcuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXpJ70HiNQMxWKpL+h9L7iBmRpSasN5mgLOk3y49kE+YJwvhMWAPUipVCXVEIzIWOVgyqpDOzKWrfC@vger.kernel.org, AJvYcCUo2ClH2ztmEbnnYfGvw1XV4GCE0Gswwd97scA1F3ppE00jvObNNgImOgybIQnkKQuAxXPtmXSd7fag3w==@vger.kernel.org, AJvYcCVSgu/Gohv630YRPLqkbNhh7CkJj/u3q+fxbe8CUpmahOGPEM2CEbeHzfqrEP5OXrrvHLs5tjohXxJKVRDR@vger.kernel.org, AJvYcCVzRIJ2cg4nhWqnuGVRo91nWj0AzvgML/HtfvDvv3j2ippz2igMdCbcFIZBoiiY/HhxcukDbrwJkJHz@vger.kernel.org, AJvYcCXCBaip20g7noiEFWS5yicn1ZsCfYWKBLSHsSIcHX+Bu7ZDhIeJ1KFcZGd78y1LEyOgq7UwPoE6+LB6Sh4=@vger.kernel.org, AJvYcCXU8yJ9opNfXz/zH9zLDJ3fu8pHlSJHEqxPr0i6yJfBbYUkMSH4ZaQ+DbygemeynYgmdr03MOaDljWtjyv9doQfpBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPpzKWhe1F72990pydvi3ZK72h1fVVhqMQwgWPt32125n4lsR/
-	ZZCxwrVHBvBP9iIUmSJoGC5dCNvPD1Zl8HhOZO3/MNcPUQHSC+mNUiBa0HzP4g8=
-X-Gm-Gg: ASbGncuyB6eGkN1ABdrGE2gQL3xa6DS15w9Kc+RyGKB2wNqXZ3hrLEglaV1DU2TfK+n
-	F2x6zksmNFQQezKPDYXX/Vn95RUyQskbODCz3nkWR9wX0iyRNHMLezcQEKA5NPgyAa8OmBit/9w
-	gyd7uq1RXwlYwpS06FXICf8qPEvHCoLUkZ4zRE1wbQJgBenYBMkxLjgX/7ifAZBFq+G+0k8FpXg
-	l1lgNTbQUMx/dM30mu2aHgFQShJnTCO/5Vi4wSQJgxKX1Io6CDnJh4OQ4KgmLOnHOS0lbsfQOzh
-	/C0VJQzrOZigVvVV
-X-Google-Smtp-Source: AGHT+IGauaD9zmQKDL9wEafyogWUEnj70oQrlvS72K1x5VCEWXrwcrqyy+mpdsUDr6XIUPrK1adpbQ==
-X-Received: by 2002:a05:6122:3981:b0:50c:4efb:835a with SMTP id 71dfb90a1353d-515fc9e20c0mr12225599e0c.1.1733759728089;
-        Mon, 09 Dec 2024 07:55:28 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eae3edfcsm751157e0c.12.2024.12.09.07.55.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 07:55:27 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-515fc723d3eso880287e0c.0;
-        Mon, 09 Dec 2024 07:55:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUw/RhNAp/AYkBQEpwdNkUgpY1DZGhn2L/3/C6TLIvHFUN8RTFmWWNcd1p4qK497QWZg3sTKMtiF6Go7sDR@vger.kernel.org, AJvYcCW8MPpHfPgnAYxnIcMqD7KnRnJsc13yqPLHqRi6A1X2BS/YLqVKnjFmqDBgUtmZ62E+mhNMNvFv/WigOscd5Z6y+yk=@vger.kernel.org, AJvYcCWgU16gopZJK1UYBH0RlprdPqWqT1Lsyf5u8v9QWkz3tGDY4avgiU1XNIjRJlCg5YrB/Lih/Ize/9/d6g==@vger.kernel.org, AJvYcCXEt+NdAlGSPCtgOnKWGh6PviiW5tkmQ0k5HNBAnCJ/xE/Tt/AqVohkgabtlqmya/ZlFtWPH5rVx5vj@vger.kernel.org, AJvYcCXJRgndOYF/ypOS+S06kt9WMO0C2+qgb+2vB3hAzMYRlOxpKUvGoovldDUGx9uc/OuYRBnNie3xv41WOdU=@vger.kernel.org, AJvYcCXxpt6wC8FSqidmNxeTW6H/MkC4RPiByOPzsuCy6UN7V/kA8U4c80LiA0BpgyLU39ZYND2rbAqjdqB4@vger.kernel.org
-X-Received: by 2002:a05:6122:308e:b0:517:83d1:d438 with SMTP id
- 71dfb90a1353d-51783d1d7d7mr3556407e0c.3.1733759727639; Mon, 09 Dec 2024
- 07:55:27 -0800 (PST)
+	s=arc-20240116; t=1733764333; c=relaxed/simple;
+	bh=hzUyGNVfCQBZvBO5ORr/vOicfzOFSqA0ThYtXXos5fA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRJiCnCMIx7NcMbwltKh9nA4ciDVcOmz7BFmS2v1hQQw8VY14d7pDxW8MlZa4w+eyrUBAXp47FCP7R/g+V+IP0/0C7iabYa1xB2KgbplCJ7LjB9LEB9n+cXaoB1vthH+HgCbPYQdsdS3/DdOiTkz3X2jdSXa8xWWBNArsKgsddU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0EE6113E;
+	Mon,  9 Dec 2024 09:12:38 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 469FA3F720;
+	Mon,  9 Dec 2024 09:12:09 -0800 (PST)
+Date: Mon, 9 Dec 2024 17:12:06 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Cristian Marussi" <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Message-ID: <Z1ck5tFkb41wReZP@bogus>
+References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
+ <20241203173908.3148794-3-etienne.carriere@foss.st.com>
+ <Z1bKlOeHJFHpe9ZU@bogus>
+ <ed164b6704ab4086b2fb22ae51658f31@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-26-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-26-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 16:55:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW0Rg9J+cqoeP_z5Xr5RYCbNG++4o6gRunEhQ3WfSqx=A@mail.gmail.com>
-Message-ID: <CAMuHMdW0Rg9J+cqoeP_z5Xr5RYCbNG++4o6gRunEhQ3WfSqx=A@mail.gmail.com>
-Subject: Re: [PATCH v3 25/25] arm64: dts: renesas: rzg3s-smarc: Add sound card
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed164b6704ab4086b2fb22ae51658f31@foss.st.com>
 
-On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, Dec 09, 2024 at 12:59:58PM +0000, Etienne CARRIERE - foss wrote:
+> Hello Sudeep,
+> 
+>  On Monday, December 9, 2024 11:46 AM, Sudeep Holla wrote: 
+> > On Tue, Dec 03, 2024 at 06:39:08PM +0100, Etienne Carriere wrote:
+> > > Implement clock round_rate operation for SCMI clocks that describe a
+> > > discrete rates list. Bisect into the supported rates when using SCMI
+> > > message CLOCK_DESCRIBE_RATES to optimize SCMI communication transfers.
+> > 
+> > Let me stop here and try to understand the requirement here. So you do
+> > communicate with the firmware to arrive at this round_rate ? Does the
+> > list of discreet clock rates changes at the run-time that enables the
+> > need for it. Or will the initial list just include max and min ?
+> 
+> I don't expect the list to change at run-time. The initial list is
+> expected to describe all supported rates. But because this list may
+> be big, I don't think arm_scmi/clock.c driver should store the full list
+> of all supported rates for each of the SCMI clocks. It would cost to
+> much memory. Therefore I propose to query it at runtime, when
+> needed, and bisect to lower the number of required transactions
+> between the agent and the firmware.
 >
-> Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
+
+Ah so, this is nothing to do with set_parent, but just an optimisation.
+This change optimises for space but some other platform may have all the
+space but the communication with SCMI platform is not good enough to make
+runtime calls like this change. How do we cater that then ?
+
+We need some spec-ed way or a unique way to identify what is best for
+the platform IMO. We can change the way you have done in this change set
+as someone else may complain in the future that it is costly to send
+such command every time a clock needs to be set. I am just guessing here
+may not be true.
+
+> > 
+> > > Parse the rate list array when the target rate fit in the bounds
+> > > of the command response for simplicity.
+> > >
+> > 
+> > I don't understand what you mean by this.
+> 
+> I meant here that we bisect into supported rates when communicating
+> with the firmware but once the firmware response provides list portion
+> when target rate fits into, we just scan into that array instead of bisecting
+> into. We could also bisect into that array but it is likely quite small
+> (<128 byte in existing SCMI transport drivers) and that would add a bit
+> more code for no much gain IMHO.
+> 
+> 
+> > 
+> > > If so some reason the sequence fails or if the SCMI driver has no
+> > > round_rate SCMI clock handler, then fallback to the legacy strategy that
+> > > returned the target rate value.
+> > >
+> > 
+> > Hmm, so we perform some extra dance but we are okay to fallback to default.
+> > I am more confused.
+> 
+> Here, I propose to preserve the exiting sequence in clk/clk-scmi.c in case
+> arm_scmi/clock.c does not implement this new round_rate SCMI clock 
+> operation (it can be the case if these 2 drivers are .ko modules, not
+> well known built-in drivers).
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I don't think it would work if it is not built on the same kernel anyways.
+I don't work much about this use-case.
 
-Gr{oetje,eeting}s,
+> > 
+> > > Operation handle scmi_clk_determine_rate() is change to get the effective
+> > > supported rounded rate when there is no clock re-parenting operation
+> > > supported. Otherwise, preserve the implementation that assumed any
+> > > clock rate could be obtained.
+> > >
+> > 
+> > OK, no I think I am getting some idea. Is this case where the parent has
+> > changed and the describe rates can give a different result at run-time.
+> 
+> This does not deal with whether parent has changed or not. I would expect
+> the same request sent multiple times to provide the very same result. But
+> as I said above, I don't think arm_scmi/clock.c should consume a possibly
+> large array of memory to store all supported rate each of the SCMI clocks
+> (that describe discrete rates).
+>
 
-                        Geert
+Right, my assumption was totally wrong. Thanks for confirming.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> An alternate way could be to add an SCMI Clock protocol command in the
+> spec allowing agent to query a closest supported rate, in 1 shot. Maybe
+> this new command could return both rounded rate and the SCMI parent
+> clock needed to reach that rounded rate, better fitting clk_determine_rate()
+> expectations.
+>
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+May be that would be ideal but you need to make a case for such a spec change.
+
+> > 
+> > I need to re-read the part of the spec, but we may need some clarity so
+> > that this implementation is not vendor specific. I am yet to understand this
+> > fully. I just need to make sure spec covers this aspect and anything we
+> > add here is generic solution.
+> > 
+> > I would like to avoid this extra query if not required which you seem to
+> > have made an attempt but I just want to be thorough and make sure that's
+> > what we need w.r.t the specification.
+> 
+> Sure, I indeed prefer clear and robust implementation in the long term,
+> being the one I propose here or another one.
+> 
+
+Good then, we can work towards achieving that. If you can specify how slow
+or memory hungry is it without these changes and how much this change helps
+your platform, we can take it up with spec authors and see if they are happy
+to provide some alternative to deal with this in a generic way.
+
+--
+Regards,
+Sudeep
