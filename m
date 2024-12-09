@@ -1,162 +1,146 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3521506F;
-	Mon,  9 Dec 2024 07:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B115215075;
+	Mon,  9 Dec 2024 08:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731076; cv=none; b=kyfeeEMbepwSXuECJmuRKe6QEuIbe9dmJQc75UfOA3ejNQ7S12cp6ab12DoF2I2NawF0kXyWLFO6NmaKafLQruYvE8FKvMcFRahKm3YgNf0R8JKSSJ5VrzyOyryiCzsiGPRVcnBxe0c/48isQ080NWU9qIPBcNp8n/AtkFSIt4Y=
+	t=1733732405; cv=none; b=bg0X7fjpLmNen+sSLMcAur6EAQo8URRdRjK7017p4A65CWruOc1Rjf169/eir1qxETNuHi1zHI/uhMkg7UfJ51v6uHC1umBgar6YmsoBTL/0+vd/EGpaOTbXCvsgZ+/h+Du2qpRhHyqb2zvMakBGs+3ErG87tYpnf4mYTpxlFvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731076; c=relaxed/simple;
-	bh=RIa2kOzACgFkRzY7fcBR76qUkQAYeIrmNbpzmK9NbQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDkR7grrMXo70ZX0b9iP9cysBQrAVkUyDCjNvbZqIlUMnWhk+wx+1RcjAnkVVqe0BtJCO734kC/xOOMkyA9xovrHE9DJV0ndy7VGeo2eXDYPHvw8nR703EwSudBz0wFw70D3LmThECpk9AQTwRsk3PrRZM9aTeJkSaU0p/9OswI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6d08cb7c2so63820285a.2;
-        Sun, 08 Dec 2024 23:57:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733731072; x=1734335872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qk7zs9BOOihPQGUTMvGHn5Ym+4dxQx5CVpUjftA0HQQ=;
-        b=DfaE6H+EIVEDn5aICzm3VT2nPEudRudn9K3358KK92Gx5vdp97TzJXjZHqi4yorKuC
-         vHrc3rLUepeYGKVuZgpdgsDV3sSMpu0R4rYbbnw3WvMQwmF6YgOJMrbOT6snw4zBRrxu
-         Uif71fp1vMGnUtW9UXzuLjnHJcxP1XqRrTG4eZK85PYAZeEoJb5FQn5szyPXVx/kVsG+
-         lEha7R3sBLxKy/8qiBRJzdP6DxgRg+hRNTHWK3KnNmg/TaOqAZBe2KqOv427BlEEDyKk
-         aetFTPC4WEgwQD4AqQYX0lV+hyEZLYCNRqm6uKf1SlP6W4sT0lccFca0Dx3f1OwYEiEG
-         +zeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLtQicr0nxM4FafVz2l0I4ozMqiBpSP7OTN0VebLoBP27DmmEP5C9UCQFN29cjoUabcphekHE9LRz@vger.kernel.org, AJvYcCVO/lgFUkHfxiazDeguEQxx0iH9FobSuqXkj7nj6LfRk7bk9jQiJ2+SeaEiY95+JQr2Pj+ZffCM3S6KCWpXbYTq5uM=@vger.kernel.org, AJvYcCXZrfggQd2L0WylnMGeZ2zBHQZf6brL6BRXkZvDYT3dX4cV4TrPlStp70vOcMRFWsPwlhhLkHq1LYAK@vger.kernel.org, AJvYcCXuRLsFIu6XiE1a03T451dvABVP1Yijcr31E59nZL3fhobyLy0PEAT8VuqFw/7d8WysV6qP3wyQMHZ20bxQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztk4TRb0jojauNsfJLqA7iKfSteaYMngnBIpAc1R6cAEtI6VM8
-	LFHGqT+CUe5GT9jRpMW4u6RYg+kcy9RY1Quy45ef7Qb9OmKNqXBJd4XZs84c
-X-Gm-Gg: ASbGnctH4E7PC7cViQrFNpE0zl1jZ8mKq0zVLIGX6iT6pc7/9r3fWsAe7+DKRhYcYhY
-	WkUv7WrKgitAAacyjPJHdzEMbqSIJWLkFI72ChqcjVNr+Q4zvZaaF51fK7p+vFykIi/dJUCyTEF
-	Fcj6gVR9JQdWRR4yA1rCgDGHx5TQDljaNvzrF0y+rQklLbjIfDuKY96MxGfNqSKv6hiWSao9hUy
-	+eBihXvug8rSSjrb7jeeE0S3F+vZDbggtMdcqcAHDprmhJvR3JvEWlE9CkHK5BypN/LlLJXB+6k
-	7bWUpJM4O9Ta6Rkd
-X-Google-Smtp-Source: AGHT+IGUnQ97y15elEkOy0iEyVN6f6wNoJWVGV7xDQz21NOXLb90IgiciAMUIzQASbbztlkrcZ3E6g==
-X-Received: by 2002:a05:620a:4897:b0:7b6:c92e:2e6d with SMTP id af79cd13be357-7b6c92e2f11mr949687385a.52.1733731072282;
-        Sun, 08 Dec 2024 23:57:52 -0800 (PST)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com. [209.85.160.173])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d4e837a3sm83590585a.65.2024.12.08.23.57.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Dec 2024 23:57:51 -0800 (PST)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46760d9e4daso5252871cf.0;
-        Sun, 08 Dec 2024 23:57:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUIXbnVTtcGyi0l927ur3+fMUXE9ot88QfkeC6Sgj6Uwt4IQqqCfriaJMo7BkERmsC3HAnVVpoW9xd8WnKv@vger.kernel.org, AJvYcCVDNDHnuLQhy/CUJpH27ljuzJwtpKhayGeDVE+rdkC0AYYVW470qQSPi5S8UdsIvw7Vwx5hPWMTPpHV@vger.kernel.org, AJvYcCW0wNJNaBGXhDiv5VaXrCKabbGQMOa94Ke6pcyTK2CQQchUlDdpiyqJuRbkXgaOZY58Zgk3zK1wMo1V6cEw6nXwXB4=@vger.kernel.org, AJvYcCXyMoeCCBrSMt8FWhHL8oD7SWYMbbuUFN81JU3YNRFmQyo23LU2YHRn7T69IUBwiuujOz9v9ma8fNXG@vger.kernel.org
-X-Received: by 2002:a05:6102:1152:b0:4af:e135:1ca9 with SMTP id
- ada2fe7eead31-4afe1356f47mr3950083137.13.1733730570269; Sun, 08 Dec 2024
- 23:49:30 -0800 (PST)
+	s=arc-20240116; t=1733732405; c=relaxed/simple;
+	bh=K9moFDoizrc3zjDX2/5OHV2TsYNaF4HSoc+DYblkQAM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NRpeXFE/+qlHEFwX7/msOt99x3bcxwC+mIKQg/aVhu3mnvp3r9gMz+LKGwyAYeV6Hm94JCEPXmagCMCxOn18vtIIuRb+EByaLF1mvRdPtv0PyUKD5daIU5KkhISX9YDZByxOu4kdC0rIH0lk2wh8eKq+EbqwaRbipBAFF3DnlTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eX3dknxc; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eX3dknxc"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B97QH8Q002203;
+	Mon, 9 Dec 2024 09:19:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	0iv2sDYqhII/oUdzq8z/89H/h95qof5i2GIADRNucOE=; b=eX3dknxczKyW1cnH
+	DZ1ySSrixcO8k8S8b6PKSdq+TZz8rMS17tWlXesA6SuKEB0nDLsn2zC9BSb/jzqM
+	VDKonYX+0GosyUPUMpxNCfH+TqNhQnAGDe5xJo9QUNeaILC5PbC0iK4cdlTYCAVL
+	h70c8lBf54Mc1QzNSRu3fbAyOMZMQHjDI7sTbovdImu61tvuFr/tamuIr6i8QqkR
+	Df9SOQqriN9DYr2kDOEn3o6fGwFGLVyR+PZSbSl3KZOl5W8IE+xNXt3TcksH7o01
+	yQifRAXk3VvBGRXuTCcs2k7zNBLj95xtWY8N5YYAa+52pP11H61GZ5HcYrb5ClJ/
+	3HMXFw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccc8phmn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 09:19:37 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B889E40085;
+	Mon,  9 Dec 2024 09:18:19 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B4FFA24A484;
+	Mon,  9 Dec 2024 09:16:24 +0100 (CET)
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
+ 2024 09:16:24 +0100
+Received: from SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0]) by
+ SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0%13]) with mapi id
+ 15.01.2507.037; Mon, 9 Dec 2024 09:16:24 +0100
+From: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sudeep
+ Holla" <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Thread-Topic: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Thread-Index: AQHbRapDtK1zP5F5+E+8H5T6eqOTIbLZnqSAgAP4mXw=
+Date: Mon, 9 Dec 2024 08:16:24 +0000
+Message-ID: <4c39a5a437fa42d483d1f704ec7ab4ac@foss.st.com>
+References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
+ <20241203173908.3148794-3-etienne.carriere@foss.st.com>,<7fe840af-d56d-4cb6-8d82-d42631409b2a@stanley.mountain>
+In-Reply-To: <7fe840af-d56d-4cb6-8d82-d42631409b2a@stanley.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-5-d74c2166fa15@ideasonboard.com> <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
- <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
-In-Reply-To: <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 08:49:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
-Message-ID: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] clk: renesas: r8a779h0: Add display clocks
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hi Tomi,
+Hello Dan,
 
-On Mon, Dec 9, 2024 at 6:26=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> On 06/12/2024 15:43, Geert Uytterhoeven wrote:
-> > On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-> > <tomi.valkeinen@ideasonboard.com> wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add display related clocks for DU, DSI, FCPVD, and VSPD.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
->
-> >> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> >> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for looking at this change.
+
+On Friday, December 6, 2024, Dan Carpenter wrote:
+>=20
+> On Tue, Dec 03, 2024 at 06:39:08PM +0100, Etienne Carriere wrote:
+> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > index 09ccd6cea7f2..7bbb2ee55f4f 100644
+> > --- a/drivers/clk/clk-scmi.c
+> > +++ b/drivers/clk/clk-scmi.c
+> > @@ -61,13 +61,20 @@ static long scmi_clk_round_rate(struct clk_hw *hw, =
+unsigned long rate,
+> >       struct scmi_clk *clk =3D to_scmi_clk(hw);
 > >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-clk for v6.14.
+> >       /*
+> > -      * We can't figure out what rate it will be, so just return the
+> > +      * In case we can't figure out what rate it will be when the cloc=
+k
+> > +      * describes a list of discrete rates, then just return the
+> >        * rate back to the caller. scmi_clk_recalc_rate() will be called
+> >        * after the rate is set and we'll know what rate the clock is
+> >        * running at then.
+> >        */
+> > -     if (clk->info->rate_discrete)
+> > +     if (clk->info->rate_discrete) {
+> > +             ftmp =3D rate;
+>=20
+> No need for this assignment.
+
+It is needed. The round_rate handler in scmi clock protocol driver=20
+I added in drivers/firmware/arm_scmi/clock.c expects the argument
+to carry the target rate as input value and provide the closest reachable
+rate as output value, hence initializing @ftmp above. I needed to preserve
+the value @rate since used if this round_rate handle is not available
+or returns with an error.
+
+Note that I could have changed scmi_proto_clk_ops->round_rate()=20
+function ABI to split input target rate and output rounded rate into
+2 separated explicit arguments.
+
+Regards,
+Etienne
+
+>=20
+> > +             if (scmi_proto_clk_ops->round_rate &&
+> > +                 !scmi_proto_clk_ops->round_rate(clk->ph, clk->id, &ft=
+mp))
+> > +                     return ftmp;
+> > +
+> >               return rate;
+> > +     }
 > >
-> >> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> >> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> >> @@ -179,6 +179,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks=
-[] __initconst =3D {
-> >>          DEF_MOD("canfd0",       328,    R8A779H0_CLK_SASYNCPERD2),
-> >>          DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
-> >>          DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
-> >> +       DEF_MOD("dis0",         411,    R8A779H0_CLK_S0D3),
-> >> +       DEF_MOD("dsitxlink0",   415,    R8A779H0_CLK_DSIREF),
-> >> +       DEF_MOD("fcpvd0",       508,    R8A779H0_CLK_S0D3),
-> >>          DEF_MOD("hscif0",       514,    R8A779H0_CLK_SASYNCPERD1),
-> >>          DEF_MOD("hscif1",       515,    R8A779H0_CLK_SASYNCPERD1),
-> >>          DEF_MOD("hscif2",       516,    R8A779H0_CLK_SASYNCPERD1),
-> >> @@ -227,6 +230,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks=
-[] __initconst =3D {
-> >>          DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D4_VIO),
-> >>          DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D4_VIO),
-> >>          DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D4_VIO),
-> >> +       DEF_MOD("vspd0",        830,    R8A779H0_CLK_S0D1_VIO),
-> >>          DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
-> >>          DEF_MOD("cmt0",         910,    R8A779H0_CLK_R),
-> >>          DEF_MOD("cmt1",         911,    R8A779H0_CLK_R),
-> >
-> > As mentioned by Laurent during his review on v1, all clock parents
-> > should probably be some form of R8A779H0_CLK_S0Dx_VIO.
-> > So I'm inclined to replace all of them by R8A779H0_CLK_VIOBUSD2 while
-> > applying, which would match R-Car V4H.
->
-> What do you mean with the above? First you say the clock parents should
-> be some form of S0Dx_VIO, but then you say you'll use VIOBUSD2. Aren't
-> those unrelated clocks, from different PLLs?
-
-Oops, copy-'n-paste went wrong. I did mean R8A779H0_VIOBUSD*.
-
-> > Are you OK with that?
->
-> I'm fine with that. I can't really get much out of the docs wrt.
-> clocking, and the clocks I used were from the BSP. Afaics, it looks
-> similar to V4H, so it's probably best have the same clocks, as you sugges=
-t.
-
-Agreed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> >       fmin =3D clk->info->range.min_rate;
+> >       fmax =3D clk->info->range.max_rate;
+>=20
+> regards,
+> dan carpenter
+> =
