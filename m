@@ -1,165 +1,88 @@
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ACA216E31;
-	Mon,  9 Dec 2024 10:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855EE217739;
+	Mon,  9 Dec 2024 10:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741112; cv=none; b=klCGjMJAaHtJsWxYDI4HM/J+Qne+YU8RcFS/8T5dPZqbyRdeR7ZCb8Rn0HWow/3V9pekyauEE7HXfdvhUrNiFWcm5AeiMq3yCoQbDqLd5KVFmV8sO1tlLuh+A/cOw1NepQndNKpkXN5ykfjm19JiyFAVbjkJKYe12BWbmhMIobE=
+	t=1733741210; cv=none; b=oBQKi9EsUPBhRrMrG3a5B93oRJGgZKwE1FRbKvR0e5t6iX+NSYYr3c18HJt3h0VeOF7t4CTyjZbBB/cKcHyLZfAzusHE/4FVCI2oQ1pu4n4ILCTPtU1LoRf6MeRN3Fx41kxcC446D1+HLSjmt43M4KDso1/qTrbdJqXR9T0//g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741112; c=relaxed/simple;
-	bh=KALGrvRceaj0Np1tlNKSV8kRzCWqGUY4Tz6c9Zqe0zg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tA4aCzlkOCSNbpO6u5JfMqGdVNCGgjZGMdBQr6GUbcjg7UnZiakO/DTFzT76YlOlLoWmRwQgVyeFOLid6GxALscDs6l8CskAO9LOae8Z3ARZZ1yEt8GSwSmlNl6GyULBWUk4xnu5aNS/+eMJCIvv3buDhmi0v4zlks31dYbiTYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85b9f2de38eso791081241.2;
-        Mon, 09 Dec 2024 02:45:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733741107; x=1734345907;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JJIdX8rIt3byI39AjDmGrNg88Cw5YvVzSsI4ea5fZNY=;
-        b=uRbugkCmc6aR1+Qvdkylr/1V2/Bg+Xs8sPOd9+aqMH/Z8mCasHEeJbAhCJnvO7mLIe
-         p0qDnOmmXrW97TCCUldE3O/pB/P9OJeRyGU0JS0Qe9CSUs1IBecmRN9IsDedzr1OlRG1
-         X3HyXxGznt8mwRg3Ag0i/JnkApeavaMIR3leAFKHSbc8mGxny21E3FYx/eK9z7969k3E
-         R4M1UrkA/rN475+hm1fFq+KrDbCTX6b/RTsW9yIkVAdwMnW7LVJuFji7EnnFY4RHlXRm
-         2Fh57lFhk823tUDCKQTAtIFVj08tH1vpIobw/o8TDYqhqa+1ZqeAYQCagTseHq5rrpfe
-         6jLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiRlzjlkdsmpR+nOhRkqvcpn/9puO2qwY3XNEFYUXXo+Li0InZAd9psIGxpsa7TJ847w8v8amlXx+2sD4f@vger.kernel.org, AJvYcCV0VJB9bo74uDJA7kkbsV15YJUZgqvDBifZo5Xn/KUnsv9ZTRJ9m+VgHGnlBKp5GKPYP6SBbKRNjG3m@vger.kernel.org, AJvYcCVmOvEa7wq+Odr/7e9J5uGNTnHcUcXs2zSdpv5ts6sPbiY2/nuCGsYjMap1x448wmJKs/jVVbF9Yki8@vger.kernel.org, AJvYcCWrAA/jTZs5Ly7hktXVtrFTYuumPw3L2oGfg8LPwKgfOSeYzV6mIPfhPWhsfjSpX4hk0qyNQfFiFroMi7Sz@vger.kernel.org, AJvYcCWzF5pfKoS/1snaxQrG81E3LT5Ql75EeD+e4GdH99RR3xGgqjiz6CbDmDUYt68JCvryK0vYW5DHonGKhLINo1utYRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgw27r7Fe931eQQQQF8Qz6V+146n2DGTOpAbLwL7Ese6UidMxe
-	tKK2UHMPugU9pWphHzy71Ze/heRSHOhO1V2tTPXSY//c6fkDoTXdN9waom6JkgI=
-X-Gm-Gg: ASbGncs1++iT/N/Kh4SX0rvXu4EYouCnyLxpzC8WqtxEocdYhIGr9bIswJgW39RzpP9
-	Cuna+obggDTpxG7+Ammyx/EK0t4+nuKI24peSkd00zylJcQP0c5bet0xA1FY2NROykfNlUmne3g
-	a8qW/hWQJF+D9C9NYJ4hRAyOTqk4EPkSBGPtoxss+pkYNCiBvWhl5eVfo5JhCjEnURy+qudVDu/
-	EiZEkWoZAUAdDiWfJFiUGZEXz78kuc6NbKmKrxL28LXKgJZK/vfRhBb4nexXjiyF0w43y2oHk9/
-	Kwy91MfkSo9w
-X-Google-Smtp-Source: AGHT+IGjjWvIiljlipDAq07sxFkPX2TvCRltpo+y8mn8XU/1ASX3KSFGCZ4qTSDLYwmnoLvehURdtA==
-X-Received: by 2002:a05:6102:32ce:b0:4af:a990:d212 with SMTP id ada2fe7eead31-4b11607c10cmr24225137.9.1733741107269;
-        Mon, 09 Dec 2024 02:45:07 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afdeeedddbsm636560137.30.2024.12.09.02.45.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 02:45:06 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4afdfd3124dso537069137.2;
-        Mon, 09 Dec 2024 02:45:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU57AHaLjHwZBE7J1UCYZ5PhX8yMbsPgU62LiPJYAq9YJNlEZ00npqQHQfVke/JPX3rQwD9S71GqmHyqMay@vger.kernel.org, AJvYcCUPHg4t9RU/5mjJVgNNYL99ieRt4US+VpEZmJRqUsPGTJ8MSVQdPQb0JkGFxTFdYZ0eujtnKSGIdMR+qB8v@vger.kernel.org, AJvYcCW9TrvTgJIRMscYmvS6E9JFUzzSafmpMM3WOJLdoAFP0BzV84rL6N4r28cpPzy9TioMp752sJADkgCUS19byczy5Jk=@vger.kernel.org, AJvYcCWae+i3YFg7ECP/A83tWGVCcyaZ4PsZdCk4HYtQoglOKu2scUJ7oWm2Guofxbx9iuyjDNJ3heGKO2Gs@vger.kernel.org, AJvYcCXnlQKKMBQ+PWmVP/BwkFLPX5/15HXP0iWq74QFQtOGONfzXMR9bUhLF4xxxHAqoxQQFNDxO5c4WOMd@vger.kernel.org
-X-Received: by 2002:a05:6102:2ac6:b0:4af:ba38:d04a with SMTP id
- ada2fe7eead31-4b1161c2740mr15636137.21.1733741105957; Mon, 09 Dec 2024
- 02:45:05 -0800 (PST)
+	s=arc-20240116; t=1733741210; c=relaxed/simple;
+	bh=fTFYkbL9/wsQkx54YhY2KnzAwaijQwihIUPEg/UzVAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bL9GnhSylfmuj9bGhmnxXwQx2WWr8hB1FIxV+GXE7OjbYWKR1xAf1KE7hNOGPAlmI5RQbyRkL1W0euPD2Q2zAPcUSA0DcWQ84G6svpm7dyO5pe/qjTTVdhQZwBL5uLxobb40BBw2JjO+iLFe+aOFpia8PRc1fF+rtrrPSWu10QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEC04113E;
+	Mon,  9 Dec 2024 02:47:15 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B09D03F720;
+	Mon,  9 Dec 2024 02:46:46 -0800 (PST)
+Date: Mon, 9 Dec 2024 10:46:44 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Etienne Carriere <etienne.carriere@foss.st.com>
+Cc: <linux-kernel@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, <arm-scmi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Message-ID: <Z1bKlOeHJFHpe9ZU@bogus>
+References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
+ <20241203173908.3148794-3-etienne.carriere@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com> <20241115134401.3893008-9-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241115134401.3893008-9-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 11:44:54 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUskZAY6sw-dqKGfWpqhqnM9E_Jh+44ceybCeyASTf7vQ@mail.gmail.com>
-Message-ID: <CAMuHMdUskZAY6sw-dqKGfWpqhqnM9E_Jh+44ceybCeyASTf7vQ@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add
- overlay for SCIF1
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de, 
-	lethal@linux-sh.org, g.liakhovetski@gmx.de, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203173908.3148794-3-etienne.carriere@foss.st.com>
 
-Hi Claudiu,
+On Tue, Dec 03, 2024 at 06:39:08PM +0100, Etienne Carriere wrote:
+> Implement clock round_rate operation for SCMI clocks that describe a
+> discrete rates list. Bisect into the supported rates when using SCMI
+> message CLOCK_DESCRIBE_RATES to optimize SCMI communication transfers.
 
-On Fri, Nov 15, 2024 at 2:50=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Let me stop here and try to understand the requirement here. So you do
+communicate with the firmware to arrive at this round_rate ? Does the
+list of discreet clock rates changes at the run-time that enables the
+need for it. Or will the initial list just include max and min ?
+
+> Parse the rate list array when the target rate fit in the bounds
+> of the command response for simplicity.
 >
-> Add DT overlay for SCIF1 (of the Renesas RZ/G3S SoC) routed through the
-> PMOD1_3A interface available on the Renesas RZ SMARC Carrier II board.
+
+I don't understand what you mean by this.
+
+> If so some reason the sequence fails or if the SCMI driver has no
+> round_rate SCMI clock handler, then fallback to the legacy strategy that
+> returned the target rate value.
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch!
+Hmm, so we perform some extra dance but we are okay to fallback to default.
+I am more confused.
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-> @@ -0,0 +1,48 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the RZ/G3S SMARC Carrier II EVK PMOD parts
+> Operation handle scmi_clk_determine_rate() is change to get the effective
+> supported rounded rate when there is no clock re-parenting operation
+> supported. Otherwise, preserve the implementation that assumed any
+> clock rate could be obtained.
+>
 
-So you plan to describe all 3 PMOD interfaces in a single overlay?
-The board has:
-  1. PMOD0 - Type-2A,
-  2. PMOD1 - Tpye-3A,
-  3. PMOD1 - Type 6A.
-Wouldn't it be more convenient to have separate overlays for each port,
-so you can more easily use them as e.g. Type-1(A) (GPIO only)?
+OK, no I think I am getting some idea. Is this case where the parent has
+changed and the describe rates can give a different result at run-time.
 
-BTW, naming both the second and third port "PMOD1" in the schematics,
-and differentiating them by their type, was definitely a bad idea.
-How can you distinguish between Type-1(A) on the second or third port?
+I need to re-read the part of the spec, but we may need some clarity so
+that this implementation is not vendor specific. I am yet to understand this
+fully. I just need to make sure spec covers this aspect and anything we
+add here is generic solution.
 
-> + *
-> + * Copyright (C) 2024 Renesas Electronics Corp.
-> + *
-> + *
-> + * [Connection]
-> + *
-> + * SMARC Carrier II EVK
-> + * +--------------------------------------------+
-> + * |PMOD1_3A (PMOD1 PIN HEADER)                        |
-> + * |   SCIF1_CTS# (pin1)  (pin7)  PMOD1_GPIO10 |
-> + * |   SCIF1_TXD  (pin2)  (pin8)  PMOD1_GPIO11 |
-> + * |   SCIF1_RXD  (pin3)  (pin9)  PMOD1_GPIO12 |
-> + * |   SCIF1_RTS# (pin4)  (pin10) PMOD1_GPIO13 |
-> + * |   GND        (pin5)  (pin11) GND          |
-> + * |   PWR_PMOD1  (pin6)  (pin12) GND          |
-> + * +--------------------------------------------+
+I would like to avoid this extra query if not required which you seem to
+have made an attempt but I just want to be thorough and make sure that's
+what we need w.r.t the specification.
 
-This depends not only on CONFIG_SW3 (for RXD only), but also on
-SW_OPT_MUX4 (SW_SER0_PMOD=3DL gates all 4 SCIF1 signals).
-While including "rzg3s-smarc-switches.h" for (out-of-tree) overlay
-configfs is not really needed, please document the switches in the
-comments.  As this is included in r9a08g045s33-smarc-pmod.dtb, you
-may still want to include "rzg3s-smarc-switches.h".
-
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-> +
-> +&{/} {
-> +       aliases {
-> +               serial0 =3D "/soc/serial@1004bc00";
-
-Note that configuring aliases doesn't work in dynamic overlays
-(but we don't care in upstream).
-However, this is also wired on the Carrier board to the M2 slot when
-SW_SER0_PMOD is low. so I think it makes sense to have the alias
-unconditionally in rzg3s-smarc.dtsi instead.
-
-> +       };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Regards,
+Sudeep
