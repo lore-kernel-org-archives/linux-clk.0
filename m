@@ -1,127 +1,101 @@
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553751B4230;
-	Mon,  9 Dec 2024 14:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6267E1ACED0
+	for <linux-clk@vger.kernel.org>; Mon,  9 Dec 2024 14:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755004; cv=none; b=PoFzwBEvZtmJoM2jy2EqGtIlAX0u7tFzjLucpBUuLsGJvUBjcRkIHXiTVgWciKfpafXX3SmXFR0ejHSw7urA0cKlsN6sxgf/Pl9lU97BnaV7E4y1Ij1Py0QJEaftdRNwwNh8hn2Czlb+DUwGTpfsUvgw34D3WKYr9lAJHayy59Q=
+	t=1733755729; cv=none; b=ZMIRVcSnOQyGlOsl3lmIqcKjMxe8+r+tZfiCEUHHZBC5TWXzpkQiozjoFdq9XarJwvWh36upD5E4HQNtllBXVXpGu/B8KXF7fjhjIYR0clNfQSzwW+FN30KyiBWEY6asvhmocJjO/xKilTEhUImQtQOM4frI4ZSdYBGQ5nH31AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755004; c=relaxed/simple;
-	bh=Nd3H8p6H+rsIOUfjuB+bee+f98nbsvyxdUK30ssb0N8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g4gPLlgCAg6FNSDO3DNraJVHVkH3xaRbn5MBp1tIy9TqAvdiSvcgmFGvVf6pzDeIkIoLwMLdahVnqbxRnUleFuWSL0n6ocludL5nr+dyIISn4NYVVkno2W8OqjAlJagAVGForTjrXbLVwczSBD4kFd8khQSpxjNt8gzZffSGOcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4676859b911so5649021cf.2;
-        Mon, 09 Dec 2024 06:36:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733754998; x=1734359798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/cu7yqJcTi11GhnQJf4QGWZ6ZChKi43wkfq11i2dHuM=;
-        b=tBswoW4KKnJRBVHyebStc06u0pQncXF+RxPvdth8BO2/+wTijJn8nOaiv7tMrPY51T
-         tTWeFYwd2fHkeCqa4L1/ZKR2gKZY8CCievc0yrmyxWynT/5d8ph+jS81KUCnN0hmOk1L
-         Xig1wT81m2OfrZ8D7kUpuVAaXW9EtiyCbFepE14sf8h5inJ+8gaNAmH4wI+WUrf6IsTc
-         t9QQuDRIHnkO76dBR7dGm2HMpk/ySpLU1ze5U1157fEFW7rRbtSlJaMr6NT138X9lMLv
-         //HE9uZz6Z7dNVCxx8UT+X6CT1p2PPJg5sxpe3DgluuRNQhLXBBaL0l3IwBn7B6x/mzh
-         LAOw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+nmCb2wqpC3+nj9yW4H9fc5NIlBJ8UZ/LTcFSQkJJT97akh5uG4aCBtFpAhhZRZ2LjOQ4iu5yOR2q9xXc@vger.kernel.org, AJvYcCUNm90QY7qPKOYUgVml8NwyqFSvetuN4MGmWevDtq/64Rr40vHYWmoY6HVLc+EY9MBJraG+xQ1aDNqd6g==@vger.kernel.org, AJvYcCVcc8uTnpNQxVjB/983TXNEH6Sb6a/eTjFFuFQTU0sAR2QWpIJ8m5vRRAKreOpMvP8Uk/SLSp5Qo0euvyw=@vger.kernel.org, AJvYcCWHmJwywr1QUWMXPkj2M31+7hwzwhRwWblt9bf4mmN5/EPhFiuuTLn2PjI4TiIGLZYxAbnHNnuBib9N@vger.kernel.org, AJvYcCWs7Rylg2qXJsghB0HzJ+OGMG6cQbIIv0ZjimcEdHWMpNWumhVPHPhLDdbTRgcXTGP+NAVNzfYlaJlraZ0uPf1CXAw=@vger.kernel.org, AJvYcCX/4/CXGXMfrtqS/ooNkeDdQKtBXxIOV+ckhpRiKWtMv8750pP48AQRvvf2MyQndTbdG2hK0bgUe3Qu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbKqbbkI7VuzUD7AyFK18oFMV97J0NFgQzTFSgQUxxMcut/sOF
-	/iTR6AgtZZlnjkCK8e7BJPDzMtMErWd8jYMnsB1UaqZeGrOfR/WRQX0MweeOAR4=
-X-Gm-Gg: ASbGncsvC29LuHHnx0D9mBaFI+gNDx/2aooT3jcYXMui9V22TyYYsD96tKZGxCM5wa4
-	Hem70m6S0gdreDOe7J9/HQUKHomDwZ6RtG84siZGwfhQmMnvJDjQDYq1n0THDW/wxgfr7QRUihw
-	3CWElilPmu0DAZu1CbJNFwHnBwTaiYJpB0Bha+LS22wIzllqKED0hqZZ7ohDfide/o/7NKbrP8/
-	az/++PjHPQs63npJxwdLC6tKAG9Bg61/4ODhijp+uRTIVZjNRrKCnW84rM2zyoEUR9Jm7eg3+IX
-	4iKv9sO2gaGx7rgN
-X-Google-Smtp-Source: AGHT+IH0/ZnsmiUgr0hIwRMBYH0jxsVpdyVZKKGlnX0pnS/xTeatm+CszvDLZG2fn2Qj8iiAd3CeAQ==
-X-Received: by 2002:ac8:5f87:0:b0:466:ac8d:7341 with SMTP id d75a77b69052e-46734f70394mr188339731cf.35.1733754997806;
-        Mon, 09 Dec 2024 06:36:37 -0800 (PST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com. [209.85.222.177])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46764d04355sm11682981cf.54.2024.12.09.06.36.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:36:36 -0800 (PST)
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b15d7b7a32so290501485a.1;
-        Mon, 09 Dec 2024 06:36:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVGryO4Lrb+2kY5StLpLZwz4rtUS46xRWUWhV/NzluFQ1/owBjIDLyMgZlz1O8O9nmH6ZnJg1Usu+sB@vger.kernel.org, AJvYcCVW00rYqNZSi8hc+0InQhXjRqv6TZyDhO+LErlIHbQHZcN46VDs9FbGTlyYvwWXFDK6HQDvVr81hIQ8EDg=@vger.kernel.org, AJvYcCVcISAhRiA+c8sHhyiylvoPS3+QjGNILpFpKtyKFcWhOyCUUA0nNVRDzZqiuIeff9nzqPxJqkJD2sMtCA==@vger.kernel.org, AJvYcCWK4Pt8fnitP1Er1r97p8RPe1Rq7A5bqOxbmRg076zYr4fS5th1QksB80+97w3bFbx4lm+gs92q+6QW@vger.kernel.org, AJvYcCWx3bJPULlAOa2VwPAJSkOskad8NCC+uIjfDeDdmroIwItsFnaw83+TXDmFDynTFaUNZ+K/IncbWR+YfStya/pqBd0=@vger.kernel.org, AJvYcCXMocXL9RoWrCKh53fOzXl9jrF5sIOj3+sRoKeXOdYTabMolavCqcqhC8TdXAshRZzCJUgJjGJpB6VuwbPI@vger.kernel.org
-X-Received: by 2002:a05:620a:1a87:b0:7b6:66d0:5abf with SMTP id
- af79cd13be357-7b6bcbb328emr1528679585a.59.1733754996319; Mon, 09 Dec 2024
- 06:36:36 -0800 (PST)
+	s=arc-20240116; t=1733755729; c=relaxed/simple;
+	bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AILmHLkYEpYGcVbIlHHtkfccvp1xgVMQKxsugaDa436TjkVTOVpOIafZPrXCX9wcj7+e4mjarAxFe/Dwe8/IwG9Y7mu2Pn6OiVbG8tNGPfi5kSvGCmfgnGpi4fHTkoXP4PbP9e8frgN2BWyijrF/xf7rikwuVyllMcfDnE8MM58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=omU85tSB; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="omU85tSB"
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=omU85tSBO7Y1q8Jp3QkXwT+aCv1XLNNRnNDhMEk36Mctts3wts4Q9ocOoPdbLHhSiNcsorar1HeB2MCipsookfHTix9XiiKZahfHmSm6Gf+NclFawZGGxeBPG9WU91blZsjpMmjpkAPS0wrw7koDEJwbcK5okcJ1TBWXuMTU/pmFmVW15kWM0NlmkhLzdaVBe0VaOgSaMB8ZaA6V+RSIF1tU+kG/VELWlboGyWL7mxWxdapttCHEgqjSi60iH//tvQ83EJ3MH0A+S4C9DbyKV7GgtFc4bUM7ucWzOBVlFMelDEPod8poE517KXsVTjVe1lMi+2JAGgxljf9Y1+8m9w==; s=purelymail2; d=purelymail.com; v=1; bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=; h=Feedback-ID:Received:From:Subject:Date:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-clk@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -291099510;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 09 Dec 2024 14:48:35 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Subject: [PATCH v4 0/3] clk: samsung: Introduce Exynos990 clock support
+Date: Mon, 09 Dec 2024 15:45:20 +0100
+Message-Id: <20241209-exynos990-cmu-v4-0-57f07080f9e4@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
- <20241113133540.2005850-21-claudiu.beznea.uj@bp.renesas.com> <CAMuHMdW_2hMfT3tGNEANyWkUqVW3wAEsSttyqfR=L4mn9VxStA@mail.gmail.com>
-In-Reply-To: <CAMuHMdW_2hMfT3tGNEANyWkUqVW3wAEsSttyqfR=L4mn9VxStA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 15:36:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVa-CJ1T40B+Dg=p44gHWhGB3tyiGW7F-Ygi7B0SJ2ePQ@mail.gmail.com>
-Message-ID: <CAMuHMdVa-CJ1T40B+Dg=p44gHWhGB3tyiGW7F-Ygi7B0SJ2ePQ@mail.gmail.com>
-Subject: Re: [PATCH v3 20/25] ASoC: dt-bindings: renesas,rz-ssi: Document the
- Renesas RZ/G3S SoC
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIACV2cC/33MQQ6CMBCF4auYrq0ZC63WlfcwLkaYQhNoTYsNh
+ HB3Cytjosv/Je+bWaRgKbLLbmaBko3WuxzlfseqFl1D3Na5mQBRHgUoTuPkfNQaeNW/uDxjjRK
+ kwlqy/HkGMnbcvNs9d2vj4MO08Ums6y8pCQ68VEoZAwhaP649uQG7boroqEfrOusoxIMPDVvpV
+ Hxyp2+uyJyACowiBGHgL7csyxvgLNW6CgEAAA==
+X-Change-ID: 20241206-exynos990-cmu-58ada5056ad5
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733755636; l=1630;
+ i=igor.belwon@mentallysanemainliners.org; s=20241206;
+ h=from:subject:message-id; bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=;
+ b=n3BbgPVNEwn1n+dt2NNprNcTmKWI55eTVgUHFTXMOkPkPjCCxxVMDf93F9LLt3h8pEOv/r1TP
+ 8/ttTbd6CPoB4sFnPG6Hmuh6ttsWaGrBvjCxmDwVmUFrH8KujfvLkTp
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-On Mon, Dec 9, 2024 at 3:24=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
-> On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev=
-> wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > The SSI IP variant present on the Renesas RZ/G3S SoC is similar to the
-> > one found on the Renesas RZ/G2{UL, L, LC} SoCs. Add documentation for
-> > it.
-> >
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-> > +++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-> > @@ -19,6 +19,7 @@ properties:
-> >            - renesas,r9a07g043-ssi  # RZ/G2UL and RZ/Five
-> >            - renesas,r9a07g044-ssi  # RZ/G2{L,LC}
-> >            - renesas,r9a07g054-ssi  # RZ/V2L
-> > +          - renesas,r9a08g045-ssi  # RZ/G3S
-> >        - const: renesas,rz-ssi
->
-> This part is fine.
->
-> The section about the dmas properties also needs an update, as the
-> documented MID/RID values do not apply to RZ/G3S.  I recommend just
-> dropping the list of values.  People should look them up in the
-> hardware documentation.
+Hi all,
 
-Actually the whole dma description can be dropped, as its format
-is duplicated from, and dictated by .../dma/renesas,rz-dmac.yaml.
+This patchset adds support for the Clock Management Unit found in the
+Exynos990 SoC. This CMU allows for clocking peripherals such as USB, UFS,
+MCT, et cetera.
 
-Gr{oetje,eeting}s,
+Currently there are two blocks implemented, CMU_TOP which
+generates clocks for other blocks, and CMU_HSI0, which generates clocks
+for USB. More blocks will be added (hopefully soon), like HSI1 for UFS.
 
-                        Geert
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+Changes in v4:
+- bindings: Use one-per-line convention for clock names. (Thanks, Krzysztof!)
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+- Link to v3: https://lore.kernel.org/r/20241207-exynos990-cmu-v3-0-20c0f6ea02f0@mentallysanemainliners.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+- Link to v2: https://lore.kernel.org/r/20241206-exynos990-cmu-v2-0-4666ff0a099b@mentallysanemainliners.org
+
+---
+Igor Belwon (3):
+      dt-bindings: clock: Add Exynos990 SoC CMU bindings
+      clk: samsung: clk-pll: Add support for pll_{0717x, 0718x, 0732x}
+      clk: samsung: Introduce Exynos990 clock controller driver
+
+ .../bindings/clock/samsung,exynos990-clock.yaml    |  121 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos990.c                | 1343 ++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |   14 +-
+ drivers/clk/samsung/clk-pll.h                      |    3 +
+ include/dt-bindings/clock/samsung,exynos990.h      |  236 ++++
+ 6 files changed, 1716 insertions(+), 2 deletions(-)
+---
+base-commit: ed74808ae420a2ae611738c2d62800ab157a9ee8
+change-id: 20241206-exynos990-cmu-58ada5056ad5
+
+Best regards,
+-- 
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
+
