@@ -1,62 +1,62 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50473242ABC
-	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 17:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531B524353E
+	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 17:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850663; cv=none; b=l8+OZmW9MzK5bHx5po2T8bOVkS3wTnu87Sj/HwsLYHn+LHPxMHzSatB/U2NO5pI2NyVJ1CYtc2XGxBMc/KBz9Affv4KWcfgjls/YLvEmHPNJmi78EKEjo/0vUtYZgaYzStfSoqNHu/vjDdqah10DN7mZIj9zHr/9W7haUPEeP+E=
+	t=1733850665; cv=none; b=Rw8IOxcajt2b9ld0+F8sm9rDIsJOf9bI3NwmZ/t+nUfB2wPO0TxTlRQonJ/PNtOeICvWl6K12ximksLzvz0GjrZ7ip5DTdWJBZwOnjUKs0g5TSgPGIJkOU+kUOPwycZcSSZt2TLNEneQtQ5Abwkd/5ewx4ECFvkEd70Jb/g3FQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850663; c=relaxed/simple;
-	bh=j3EZQQ+bJ4Pgh8+9W/k4Ypg3jmTVeLSoZtZxACS5Ilw=;
+	s=arc-20240116; t=1733850665; c=relaxed/simple;
+	bh=hJDCv1TyaQlo/L0tvA82G+IiLtzZURDjCsIXt6YWZzI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rUn0E+AA+tYn03IyUE846EL3Qfs3mTJ5+jXmb9buTvSkW4ZgYwJ0G3ht1r17ZXfHekUvCOz5dFkHhorFcbubWzThGElHWR+iyYMwfawDz5DPQHqdX/T3vZMzNK7DTp1P4nRlaM94JGkoxmHkCopOBUdenCuozawEze3ZNHZJZNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZUd6KoHx; arc=none smtp.client-ip=209.85.208.44
+	 MIME-Version; b=EnFp4m1wyRlFVgzvIAbUh+oqUX2SBbvoZNi+iXMS6m6ILBFylMH0QeIGmYL8c1m3FleLvatYJ0KCmhqrKPgkIEaC/gLjA1mSBryD3GxjxiqrIFeCAseqKnu+VstStqQddnwmwWUmZE8Z6rQq64jGyc8sUZx8ci6WDuKPVIEuG2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H4Oo73oc; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZUd6KoHx"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3d0205bd5so5072443a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 09:11:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H4Oo73oc"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d3cf094768so6587767a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 09:11:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733850660; x=1734455460; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733850663; x=1734455463; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jE6wTwaLZbTxO8+1zmhGoRQFuhziI2yndu2tr5ybLTY=;
-        b=ZUd6KoHxKUkZMl4YclFXBsHflSt9GCw+rx+Gpsrq6TTs5QX4jgkXrgGTYXCN6PALaK
-         q80rRXMJsxj3Qt3fCxRv/oKsmrtOAPPw1UMJJdne8jQrCcp6JlvB03urTzkY7rakPhnQ
-         T69cej1tAaWAijNxNwOvbIA0BOPlAGX+NIIrCMvuwKujcTl98Vn+3TMwjdD/eAblZCP+
-         zYFIXt+2umxLxxLRDuGg7Wty0d2hf3UZVOOf9m352Ufe8fS6bH0mLohsiO82326s5i0c
-         2dmH6ZtwOpFUkyur5lGfjGKOPLHhlaKR+T8hMPbsMkwntU2NjqTBrG1jqjjFu386saVU
-         GUJw==
+        bh=TwyXnruxyE1MIUM59wwP+urrQ2EdZ5O+ybJnem/vHTM=;
+        b=H4Oo73ocUU6EO5L86bsbLakxd18SGRoMb/J2jzJtaIAmNhotmttFlW/TmdIeordbJZ
+         Dq+bShklzmdfREDBwuxJjDLed5ej3M+XFdsU4eDmnuGhRUVNt+PJ40Ionl0av+NKnuam
+         20kW6ycQNBXnYADF2aarxkcua1Z23wHlFv4RkB10Mzt9g4G4T1wVBNpetas+bTy1Y/ra
+         QxlTvkMagWUEayvqovJIrXb6kvLmnSdz5LF+mTMRyfpXgNdPR5z4JALaPwtMfAI4Jqk2
+         ssmNkWomPf8q8YXmUV3JnL5oqVsbP/qx81usGKG8bDL3iWU+IqMU+2BeYTV4XYrxA9yj
+         pM7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850660; x=1734455460;
+        d=1e100.net; s=20230601; t=1733850663; x=1734455463;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jE6wTwaLZbTxO8+1zmhGoRQFuhziI2yndu2tr5ybLTY=;
-        b=SvefgTZh1pmYkSQNJh7UnfBAqA20KSmg7ZuumTap/gGtaXUeAxysJJaV5PQ7j64aHr
-         5obpDTc54xaK11CMMoDP60BCT41a177EVl3TFy3UnAqcklhR/1bmSvczCHwauOXrZg4s
-         RxzwQndKhEBV0t2m0bW5MuJQFQXTOJkShs2H22EWuNuWjK6CjzVKDOfa+OsyyOu+K1Ly
-         k4oBeoBmPGTlxc1cIGgsSThiirBeTMzarjXU1ir3m28an5badBLCUqIsgJImB82Co4IP
-         fye8dgZN3aigCsb0HJENk0ajojahE0ZpQ2I3Gpk/OV9An6N/2KkHJaHhaJizZnC728MC
-         CVKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUWD9XNHG5CAh7PVjgpwXDO3RRWZy8RWGQmB+fzSR0TJQEJbhhHhzpMHs7W17MnVbXmMsRipr3CRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1hb4w/gLggmULxr6Vmbc0J5RFiTHp5ljg6AWEIc62lUy7x6s9
-	kr0jU4qfz+EAiSYsdchp0/dDIDDNrQCgdlC9GD7iQ5RxmvdQQLKt1iLxKEGV6MA=
-X-Gm-Gg: ASbGnctM06dcmhBL92i1l7HW25m+5oEYKtWdqh/IMuWJhF8tqOoZdak9O4EUd1DvH9f
-	3AMpEiI6pCX4WgARS+Ltqe7M/+bXkfgWY6bKFcohdztB4UBkzNDrxlyvw9Uzyo+XwUiIZ2T8tTT
-	cn/JQhDUpGc+B0buzBXB3x8i2hC/k9JjAVSmEQdgUfpplYof0vohEQH43Ze5u6GP9oSjfGXhWOY
-	UCxMMIKEBdvx3iLxPtUXklJ45RXvpz0whOa+3nIpGV/MXE+WnNR9Q/dCc2i5c1FoWFahXn8UIxK
-	jLVt+1RD
-X-Google-Smtp-Source: AGHT+IFlYyo736yb9cxpJS2cGnLCOO0TpZQwWI6UbvDphomE+gSa6jZr1VtWzN9wAD+vqnofdD3cjQ==
-X-Received: by 2002:a05:6402:2791:b0:5d0:b925:a8a with SMTP id 4fb4d7f45d1cf-5d3be6c1598mr19946134a12.16.1733850659570;
-        Tue, 10 Dec 2024 09:10:59 -0800 (PST)
+        bh=TwyXnruxyE1MIUM59wwP+urrQ2EdZ5O+ybJnem/vHTM=;
+        b=R/henB4mjkilY7p0hkfxym7YXuzZnIsBvZNBM1tUYMOgP8qxNuZ69aAFIaJgMIYRzP
+         VahEFqfhhs2zUuzU+P6GlEMlOBqyxVXUvH7WqkEdNEm87RJknAdhICom5cKcz1iqkf0d
+         +nRHCx2POwfcJMiPPWhxBvW2QIBELaqrNLZLKJorOaeLb0+zulIV1+7nHE8VWlLmEAdA
+         +KaF7/Z4I6lAAfNNGuh6h960fdUIsPnCBYgu6EZ5tXcl5WzK8QYLdatamGOc1Ubup5ja
+         cMDu52/kwjjZy+H3bDJamK2bCiSjhJtnZGPKWOJkNZlSeJMzf+ds3f7XSNH7CksKaza0
+         uqzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNk5d57bOBF0BPt4CvlX9QxJ+w90g3miCHhQV3wAqs2t953blC8co91a1NqR4IrA7jVN0/LkX8c28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhJ4ZhmGuvkKpxmg1PMOrJ/v2F8bNmHy/n/WqQOzR6tl6PLdQJ
+	F0MQu+vS7QyIShq1L4ci01Z4zFzldJR517CYWJ5Ypa3IzxC6zjQVU7m9aXopwkk=
+X-Gm-Gg: ASbGncv4tHZkALT55BhCayNmLQjzzhKrelNEE/rSdZP/b/uvxw86FPwnlfUkSTE/ZRh
+	6hPLtPkCkzmSIpVxQlHvdEOsxwYrqpPGypBWuw/vdBqVDcy3Y+ToCfYzEkbbuNX6DefH6IT41C8
+	1sUlm8UKW2mS4xhKa2KIeP+IqEnXIXRrqUGLKLa++l31Wbio2rCehf3d4VK1J1TsjHryYbs+VGN
+	TJzDh6X7S/65hh7WQCWmFmG2MXbk3cEyu+xqVUzPOTV7vu6dS+mAK7eSdjD/dNmms5uWKpY8NxK
+	qW8EZhj3
+X-Google-Smtp-Source: AGHT+IGQNruuJ2fmbhGEBR6v4EYtbwtUlKzpp82KdDiJC4wYZhl0SU6OosybB2Txg3S5RjOBSBjG+g==
+X-Received: by 2002:a05:6402:3490:b0:5d0:d5af:d417 with SMTP id 4fb4d7f45d1cf-5d418502c64mr5890914a12.1.1733850662767;
+        Tue, 10 Dec 2024 09:11:02 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.57
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:10:59 -0800 (PST)
+        Tue, 10 Dec 2024 09:11:01 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -77,9 +77,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
 	alsa-devel@alsa-project.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 23/24] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
-Date: Tue, 10 Dec 2024 19:09:52 +0200
-Message-Id: <20241210170953.2936724-24-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 24/24] arm64: dts: renesas: rzg3s-smarc: Add sound card
+Date: Tue, 10 Dec 2024 19:09:53 +0200
+Message-Id: <20241210170953.2936724-25-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
@@ -93,7 +93,7 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Enable SSI3.
+Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
@@ -101,7 +101,6 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 Changes in v4:
 - collected tags
-- dropped status for audio_clk2
 
 Changes in v3:
 - none
@@ -109,63 +108,37 @@ Changes in v3:
 Changes in v2:
 - none
 
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 25 ++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 899d88467d79..1944468a2961 100644
+index 1944468a2961..5329f3461990 100644
 --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
 +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -64,6 +64,10 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
- 	};
- };
- 
-+&audio_clk2 {
-+	clock-frequency = <12288000>;
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -105,6 +109,11 @@ power-monitor@44 {
- };
- 
- &pinctrl {
-+	audio_clock_pins: audio-clock {
-+		pins = "AUDIO_CLK1", "AUDIO_CLK2";
-+		input-enable;
-+	};
-+
- 	key-1-gpio-hog {
- 		gpio-hog;
- 		gpios = <RZG2L_GPIO(18, 0) GPIO_ACTIVE_LOW>;
-@@ -162,6 +171,13 @@ cd {
- 			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
+@@ -44,6 +44,23 @@ key-3 {
  		};
  	};
-+
-+	ssi3_pins: ssi3 {
-+		pinmux = <RZG2L_PORT_PINMUX(18, 2, 8)>, /* BCK */
-+			 <RZG2L_PORT_PINMUX(18, 3, 8)>, /* RCK */
-+			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
-+			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
-+	};
- };
  
- &scif0 {
-@@ -182,3 +198,12 @@ &sdhi1 {
- 	max-frequency = <125000000>;
- 	status = "okay";
- };
++	snd_rzg3s: sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&cpu_dai>;
++		simple-audio-card,frame-master = <&cpu_dai>;
++		simple-audio-card,mclk-fs = <256>;
 +
-+&ssi3 {
-+	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
-+		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
-+		 <&versa3 2>, <&audio_clk2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
-+	status = "okay";
-+};
++		cpu_dai: simple-audio-card,cpu {
++			sound-dai = <&ssi3>;
++		};
++
++		codec_dai: simple-audio-card,codec {
++			sound-dai = <&da7212>;
++			clocks = <&versa3 1>;
++		};
++	};
++
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "SDHI1 Vcc";
 -- 
 2.39.2
 
