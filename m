@@ -1,58 +1,77 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EB122CBD2;
-	Tue, 10 Dec 2024 06:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24EC41C64;
+	Tue, 10 Dec 2024 08:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733812928; cv=none; b=NL1SxgRrEPRuw4zuqG58ufurvZxEFUEDnOt4RwuUF1LMvPYxxcu0sjEYIfJVCpWEYIVxkrEF/oudfbvDABVF9eZe6pOlDDZMXE1bIO7F8lAM9z/Z0ImSKTV1jV/yIgorJVlEYqUA9s0R+ziSzqgrkdXY7+qMCUeMf5WBG/vmBEI=
+	t=1733819455; cv=none; b=ff2oN/hQcPOV5b8BsJQKnOFNUhQgueCd2VVcPDGR9bX3YLRZnuZ5IihsR4pDSzP7J9ioBMu6Kf+gtLzXUXFqCtwrctRYQBp+H8OT+ttdTkc60p82MUcbLNrbglgl9dbE0cIXL3VEhZBcci3+wb0KeJUmuWXyhrLgEjtoM7P2HIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733812928; c=relaxed/simple;
-	bh=nRJRbmC/+4oDF4B8lr2qEkw6gMH9ao0FKeHhdQoS08c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C4nUxjmY6TKCuwPwgqUwEl+S9plfHVGYcp5Xm4m+iisoV22G+d3/aaWswV4fvvxNZ9jyU5mqG2tKfdkGK59pZD3hsghAIEDOZvLlosJ2oEXPZiOXBCgpGTkw/U+i/f60rBZQH9bS7w+l+t1NNkPKNKEcMrNtPO3zJ6bTmXNHo/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NGLdqBmb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1733819455; c=relaxed/simple;
+	bh=NDk1UlnFfI3f7i35JPDdgQRcBUxdeqLzIzQ8s03OAdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RPTl2fahuPv46Bgdf/GZUdv/MxHwMHdImF2+McnBt6x6LXht5Px57bvmZJyKbnSuMzYJu3NZO3/1CCiWFBk9uJgD8bsw8KulFuvPKrnJ0z7ZZ17rzAt5MqDCGsEjtlj/61vrncFt9kXOe2taoIyZQGCMXNFuZPAs+sOsUH8xIjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjlkDKFZ; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NGLdqBmb"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA2Wq6v014059;
-	Tue, 10 Dec 2024 06:42:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BYjteXDO9K1QxrO9QqwHq+9KZmZklpLpvfhxvWWMmdk=; b=NGLdqBmbTziPZ+GI
-	JMUivXBORmEpKZFsOXpuJPpJSHYtYk+BVz2mPjpRj58V9zIWE56Ql6GratbTLP6p
-	YzbSptWoXlSuzDRV60cNBN48iHH86kfwlF7STK3KgUQxiQ7TGkPpZQrMg/OVlZlc
-	Qdeqo7uNMSekcs44zFlf9ek6ea+vFOWqHUb+3Fd0/ryNgMtvGmr4lHb52Bf3/lCQ
-	yvN0MUrirzLCjUnU6PSaD0bAk4m/56pghNJKh6a/UAwLjlG87hTs/XZtCok8/MmD
-	wWXuKj+MjAWEtEYDf/IZpQU2mE9CcHsWltfYpelCZ7YeivstScXshi7Bxcppt/6L
-	c5e/wA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dvyakkfk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 06:42:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA6g1ag030986
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 06:42:01 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 22:41:57 -0800
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH 2/2] clk: qcom: ipq5424: add gcc_xo_clk
-Date: Tue, 10 Dec 2024 12:11:10 +0530
-Message-ID: <20241210064110.130466-3-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241210064110.130466-1-quic_mmanikan@quicinc.com>
-References: <20241210064110.130466-1-quic_mmanikan@quicinc.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjlkDKFZ"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df80eeeedso5134485e87.2;
+        Tue, 10 Dec 2024 00:30:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733819452; x=1734424252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=90ZkUIqsBdVLrJBG0q75ZwBWmjhC0C/y0EueSUVYRDg=;
+        b=FjlkDKFZ1C/yJOXwMKgsJLcWBCS6POZDvQRszFAPbXjamf5XwG4/JCg8gmczUQ/oPE
+         E7qwNFYJwewwq3dus4Hr8a4o6j3nk2vquLOB/Bvd/Ky44qbd0Btu9abNw4xg31m7wX1u
+         jdAZcfuNk8Z78OIAVxUcOF39ycvG4TgqW53TPF+Y0Jv4OFIHh9tayYKczsquDHnX/dkQ
+         MCa0cN0OdQBQ/l9hxu9V4YKaAXd8Pxizo0fGH2kyEY9Pj/bj5r45pgneLnQS/y9RJzu1
+         ZnW11V3mFhBhKldTDGt1/QwbeDYJ8AkKtxmLT7iZuFFDXSZDxPRba9D0mMQ7UoOut5tW
+         /kew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733819452; x=1734424252;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=90ZkUIqsBdVLrJBG0q75ZwBWmjhC0C/y0EueSUVYRDg=;
+        b=QW1HzEBXUGMjoI18OJsVRsEBhbQiUbc5v+DZ8JeA5jfo4B+3gdG26pJ4yEIfivLY0L
+         GXFgAMxXfxU1dL/CtyfzKgg+bwLc5Lo8U72pItNQzfmH6gS1gOegb3Kcu3SgbXjaN8NK
+         KtAe4MRfOh7+oY2CccwUrYZfWBV3iFO7gashxYYmqMHZkoJ40T4IN0vV9VMw4YCKV2vO
+         97GaT1cLyQDE5EPjFD6CP7J6d1CAo/i8Qz5uTRaAed7jHeN+cWoI4E99fjV/xVbDDtZQ
+         A1cU93z6D6MH/OqJpFToQKSk0RuJKcguuw0iBbYbZ9MQNuXx7+s3fLoy7Wwd/uKj2mj3
+         +a5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUm13+AkpQlFHSmaSpbEdweEnhqVyA9NfpaDqr9u7+bU0Z3kgSQPtruGZmCxuZTzlcbXXogmb4dSwI=@vger.kernel.org, AJvYcCVGFmQaavhReCARW/HtusaPi9/BzlP5nYSGlO1jiyXLoMmbUNmTzwyygR5oMYjwJG/a0OU9PoAo/mV3hWkE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVDWPyvbi+BFw51IJBlWBKubMir2Lobns+tYQ3J6MQ7XKLhpXp
+	PEGLDtOfaU68KRTl3w+t6wIeszlrUuXAQ1Yct2K4MT+W53EbCSZFjkMKJ+iuw9M=
+X-Gm-Gg: ASbGncsqKr3iNpjPwL21kq/jgeHNp1l5h1PHnoKyAnMXyRFubp9NgA8V5cDYEvn5PLT
+	/psQoMDsgFkmRCu90/ES1m3LAmraV7TsRN2eNx293OgwYmeDNKiBn26EsJ5nc1A3QkvVm6ExtLu
+	Eqwo7U1AoCHZRD32WCEfb8fZfbjScaiQNOyJLsDnYOz7npYqbONR1OW//kndU0MZPR62IAZpJGj
+	vHZniARfV++2QrbL+d57UHPOgU56gpHeZrjEQJho8yBHj7Xczsdt4U8S58iQ22I1IvtWjE60dCw
+	0Ai3qTbzF+enEA==
+X-Google-Smtp-Source: AGHT+IE5OZMXD5wGIi+gQNBFtFm/8ORVBm/3TlKPK1kt/NeR8RusvkrggIMTg8CDMExbsnpqReNNxg==
+X-Received: by 2002:a05:6512:3c91:b0:53e:39c2:f021 with SMTP id 2adb3069b0e04-540240c0e6amr1174314e87.15.1733819451569;
+        Tue, 10 Dec 2024 00:30:51 -0800 (PST)
+Received: from wpc.yadro.com (host-95-152-63-227.dsl.sura.ru. [95.152.63.227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3745b0bbsm1216804e87.185.2024.12.10.00.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 00:30:50 -0800 (PST)
+From: bigunclemax@gmail.com
+To: 
+Cc: bigunclemax@gmail.com,
+	Drew Fustini <drew@pdp7.com>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: thead: Fix TH1520 emmc and shdci clock rate
+Date: Tue, 10 Dec 2024 11:30:27 +0300
+Message-ID: <20241210083029.92620-1-bigunclemax@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,67 +79,66 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ek_nEVzDo36iugzqJm9SqYgKtqbocvw9
-X-Proofpoint-ORIG-GUID: Ek_nEVzDo36iugzqJm9SqYgKtqbocvw9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- mlxlogscore=847 mlxscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100050
 
-The gcc_xo_clk is required for the functionality of the WiFi
-copy engine block. Therefore, add the gcc_xo_clk in gcc driver.
+From: Maksim Kiselev <bigunclemax@gmail.com>
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
+is 198Mhz which is got through frequency division of source clock
+VIDEO PLL by 4 [1].
+
+But now the AP_SUBSYS driver sets the CLK EMMC SDIO to the same
+frequency as the VIDEO PLL, equal to 792 MHz. This causes emmc/sdhci
+to work 4 times slower.
+
+Let's fix this issue by adding fixed factor clock that divides
+VIDEO PLL by 4 for emmc/sdhci.
+
+Link: https://github.com/revyos/thead-kernel/blob/7563179071a314f41cdcdbfd8cf6e101e73707f3/drivers/clk/thead/clk-light-fm.c#L454
+
+Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
 ---
- drivers/clk/qcom/gcc-ipq5424.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/clk/thead/clk-th1520-ap.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
-index 88a7d5b2e751..a30287f6a517 100644
---- a/drivers/clk/qcom/gcc-ipq5424.c
-+++ b/drivers/clk/qcom/gcc-ipq5424.c
-@@ -325,6 +325,24 @@ static struct clk_rcg2 gcc_xo_clk_src = {
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+index 17e32ae08720..1015fab95251 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -779,6 +779,13 @@ static struct ccu_div dpu1_clk = {
  	},
  };
  
-+static struct clk_branch gcc_xo_clk = {
-+	.halt_reg = 0x34018,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x34018,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gcc_xo_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gcc_xo_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
++static CLK_FIXED_FACTOR_HW(emmc_sdio_ref_clk, "emmc-sdio-ref",
++			   &video_pll_clk.common.hw, 4, 1, 0);
++
++static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
++	{ .hw = &emmc_sdio_ref_clk.hw },
 +};
 +
- static struct clk_fixed_factor gcc_xo_div4_clk_src = {
- 	.mult = 1,
- 	.div = 4,
-@@ -2920,6 +2938,7 @@ static struct clk_regmap *gcc_ipq5424_clocks[] = {
- 	[GCC_QPIC_CLK_SRC] = &gcc_qpic_clk_src.clkr,
- 	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
- 	[GCC_XO_CLK_SRC] = &gcc_xo_clk_src.clkr,
-+	[GCC_XO_CLK] = &gcc_xo_clk.clkr,
- 	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
- 	[GCC_QDSS_AT_CLK] = &gcc_qdss_at_clk.clkr,
- 	[GPLL0] = &gpll0.clkr,
+ static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
+ static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
+ static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
+@@ -798,7 +805,7 @@ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", p
+ 		0x150, BIT(12), 0);
+ static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
+ static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
+-static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", video_pll_clk_pd, 0x204, BIT(30), 0);
++static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+ static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
+ static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+ static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, BIT(23), 0);
+@@ -1059,6 +1066,10 @@ static int th1520_clk_probe(struct platform_device *pdev)
+ 		return ret;
+ 	priv->hws[CLK_PLL_GMAC_100M] = &gmac_pll_clk_100m.hw;
+ 
++	ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
++	if (ret)
++		return ret;
++
+ 	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
+ 	if (ret)
+ 		return ret;
 -- 
-2.34.1
+2.45.2
 
