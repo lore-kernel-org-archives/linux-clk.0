@@ -1,312 +1,111 @@
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA14227581;
-	Tue, 10 Dec 2024 23:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31CE21128F
+	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 23:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733873762; cv=none; b=bZxK6p25H12wsrjUoeNmP7FLP27M0HqpjTyAVuGS1NwqJ3n71yPmM1A6WTdQT/f8SXmgPCg0tZYGH9oOlBJdwhQyrb2XnW2MmbLP3b5gmTHE1EI8ulokEDkbF69KIUgdjHEZqbQb8Ga/dv8kj69EIgHFqZk2Uy9rvol0AxLqRRg=
+	t=1733874364; cv=none; b=MSE8kOLL1a/T4ZDdRjdJRg1HkpisdIuVm0p9Qnt+8EJydB8ENfYLKFEmE5vF0YREuaw2yBan72YHYySAxVALNER4gl/SJdNUYQoN+cNGS7KqW1catbuT4x+owGjld9GDaKTkejtzHU2wx+4BhPyTOnxVIy7MwyCqvsGT3YlzMfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733873762; c=relaxed/simple;
-	bh=VVKqiqISW/ONQpIkdsvkkK7xVexqVHvQ/scrYExzw7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IkWwCdjD88Z88XQ+YX+h/EoG1LgsIGYEKgOSpjS3ATfKSVv5I5M1wxn9DZB1crYS8+K+vsvqqhmejrNPdjJIZ96A8Q8g+xBM4ZZVSZjp8ZjDBziRn18mxRHB2jYh9xe2kbH3flB4aqcOXxJ6yUr5O3F9PdDzyX1aMACJDFYOKyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJ05nr0Z; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733874364; c=relaxed/simple;
+	bh=UwRsTVENoKuapuXoJkzI2ldmpDPY5nWtFJ4BVsBVGgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DjDpsUiS5iejWEmSHz/hZ0ULRq4tkKvPFXlRf2Pa034+YfZCdj/62rx9mPaYFDEHxpBZyE8IUv0QGdqYVHviuTMd2yozxAc3+R2bBNGLYLza3Upq/m5GFACmrHFcdhfAvAID+1JbOMGuf1W5Z5G8Ztfai3j8peHayHL0n/2ow2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BCJC79Av; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJ05nr0Z"
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d8fa32d3d6so46455916d6.2;
-        Tue, 10 Dec 2024 15:36:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BCJC79Av"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3f57582a2so240521a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 15:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733873759; x=1734478559; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GA9lE8Sp5jyUWZ7a2rWqO2S0lPYRAcCaGaOYmXKfUlo=;
-        b=fJ05nr0ZPcmBjhT6ggB1POLNchl8bKQolOC8sN4YVrLDmb+vXg/JsF5deJozUA+yDV
-         84pRl1E+6XCVvKTzuGKFA1VaxRa5JfEvhMS+IkljYgjzI6e8f85FpCfRQNMaCS+Eow67
-         rDyhOCs0kHvB31XdX6IKTviYsUUJDW4BRIp1h7Fvo1QasptQx3/44ad3y6btVSqKUiyp
-         tBT5s/+bb2ssaXQr+SHiOmVIH34/fASW8iCkOsfOo4G1UD3W0dKnv+kreDe0zMMCKDYb
-         U5teJQdUz2gB3UEERpHsmgVDdirLTgHr99RXeXJIasUEaYld/SIZ+VXCosi4n9uO4LUL
-         l7oQ==
+        d=linaro.org; s=google; t=1733874361; x=1734479161; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dUFQtOuHVAdyoBXRcqgtOx+EIFFocH6sZ24cVAKwDzo=;
+        b=BCJC79AvvMqQUFklhf1DqqAyi1XfzuqlFU7yIEg0Hc/c2PyewNbGIsybQrnZKgW+1F
+         Xd6gC9AwGKsLUNf1V/DtQ28EBvarZMlMmm+JlL0gSr9a5XbNqculYj93/7lcgJD+MjiO
+         VtOcTNA3o0cOHwvbzkxGEJBNPEUClQTPD+D9HnA4HRSFlqviRRK8YybJkHgVA6lEoxGK
+         dUoj0QuoEwNJazHxLz3mF4E1GIH5GGLQha5hguhKNYFHuC6YksIK9x+0MW1Wa35YrJMG
+         tvk8rt8I02/IH4qVHa2lvAc8cYweRTloBsmraiZOEFkCsgpdCysX9bFdsdjfEE45z5xr
+         LXvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733873759; x=1734478559;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GA9lE8Sp5jyUWZ7a2rWqO2S0lPYRAcCaGaOYmXKfUlo=;
-        b=caCqQxwZVt41dYoplZQRzXgKuX9qMdsZDC4DXIylAouoCKkema0OTdRIGCjh0Lt3XN
-         dJ9UgNUV937N64dnmHAp+8te0CyteUG0I/R8vxi0V7kFeROiXrFBgDXrNP+6wLszasr8
-         FowSqAmS28aLouaVmqK+2hzoZDLmpPxOLdk+azNQnyiSa8z75iQ4uny3LE/OWFYtXaah
-         8XIL4Lp9ZEIj1fZMjGLWm8q98EdjnxWUIRu6nrNYQUvAiWPdWlruYDA8ahU+wsyEcar5
-         sYjJuf105Dh+ULfhtFifF3hq2q0bHeAML5j4Aqzs03XlNU9myqXtkpra0ZpgNXvhhc9Y
-         9W6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIjcaEGUmOqWImtnPnNyDL4oKqlAKK2BZMWUdDGJE4VoeYSsVQilYoeihn3CUFnH82CYW6zE1MTedG@vger.kernel.org, AJvYcCVvh1c9kAdyo+ti6SJcpnV8rZTdzvtshBij5V/oVTbeALjE562QUrw+zpq4d2KNcdpkZqpekbISc77fiKBMlA==@vger.kernel.org, AJvYcCXIGvJxzpkFHo/lRj3J14t+rIo7QmfU0y4UoVyKsjYtkW9EqF08H0pgUch7/wQsReoASrexoGBpky/Pbzw=@vger.kernel.org, AJvYcCXwFqhQM4BUavJC86G9sZPwoPHA+fzzE1WlPrF4Q2lk7mVVS32jg6W0gxDNlGfhfLpVXEwH3Rt1r35p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw9ZJOxfsiUM2pFWPaUnuMdiPoesAb9UPHHTECAFB9O2w8zNAj
-	lbfzgDc07z1gzgNmqSZdc1izJ9O2a+xFa7NWoh8wMUuplabEiwex
-X-Gm-Gg: ASbGncvNXTgxTLZIavmELQbMOoOmQqYrDvdbPskjvYNF2u1rsAaa6WpFIQ9LPmVlVx9
-	KURRas7QT1m7gOZ7K/tbDNykATaom5Jp9KDzyYsrA9XInSlqKW2oh4LLrIjRTrcM5L6nlzfKdAc
-	yflFpsIV83rUBRf3ZkC/1Vg9ViYxx6fyI00CAgf3OfQNOn4cqMnkOQnGkDzesK/5RbtiqVTpAQr
-	NMzlT1HGK6xNl5WEiepGYxJukmitHb6wp/W3YKSvg==
-X-Google-Smtp-Source: AGHT+IGgQ7yYCyHB0Deo33wsSdyGdAgh1ekuW86gzhiFvkQxDzaVAUb/knxXieaEX/BuRXk3T2+iPA==
-X-Received: by 2002:a05:6214:2527:b0:6d8:a32e:8430 with SMTP id 6a1803df08f44-6d934ad175fmr16140436d6.8.1733873759683;
-        Tue, 10 Dec 2024 15:35:59 -0800 (PST)
-Received: from localhost ([2607:fea8:52a3:d200::6d3f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d1aae961sm292125385a.93.2024.12.10.15.35.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 15:35:59 -0800 (PST)
-From: Richard Acayan <mailingradian@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Richard Acayan <mailingradian@gmail.com>
-Subject: [PATCH v7 5/5] arm64: dts: qcom: sdm670: add camss and cci
-Date: Tue, 10 Dec 2024 18:35:40 -0500
-Message-ID: <20241210233534.614520-12-mailingradian@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241210233534.614520-7-mailingradian@gmail.com>
-References: <20241210233534.614520-7-mailingradian@gmail.com>
+        d=1e100.net; s=20230601; t=1733874361; x=1734479161;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUFQtOuHVAdyoBXRcqgtOx+EIFFocH6sZ24cVAKwDzo=;
+        b=HVev5qjixgC81IG3hWLzX8P4dbyXZU3BIQdi2cppFIYxWt7/fYY2LQc7O7CZTeko2q
+         OLOR6E1Da6IPbT7rQd6r6ncWPLLhDyH40Ruw1dU+4drfGngrqrLWiqTttuIYRLG/P7bh
+         7IkLJkU5ZkojCnSgyI5DFqfRSf/UtijT6y3rs3slxeyxnjIKmEN2ucDD+XsI7Rfs6fHR
+         e+S0yHHC1/3ZCi22HyvtBL5qJ0ImZM7wiJX6PnxFH/5fS2k0jnopWxD/GsDHUAZ2tcOT
+         DkfnAE0WSBAGC2BCwiu7LUb+iywQRR268u1kRg95ApH7ThkpxScq7VmL0MWQww5J40Fe
+         QQjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEtQNLhEkPEMeXSGQRzcKaZEJR0UJpOBCHm57qKRrlPJK6mw7JmwhzxzoCsQr7Rc9WlKewZXLwW8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG0bvV+WXSi0BiRknWBBcJsPjD09H3XKElap9grEjf/NNHTD3r
+	JfhpqK3RBd4lvzmGkugdsPa8KxKGvqcZ+lOwh7aBX0dqtPGcndOIpufP7JQRFQ8=
+X-Gm-Gg: ASbGncunhfEeEdGas4ARbVKkkl+GybCeb+4iYRnPDEUjiC6bguViUZdJmpIOC11Y7+A
+	/eQhVjsQ6ysiSewjwmQYNwvE4cNW9IELpgh+5D0YpDYu2zS826FmJtheOnYAjyR+9nW8oSL909A
+	fLsSfHonNk1rDNLbyi+yE4biGwcb59KE6VQZOrzQzVbSEdQ6y9TUzXdtbIaYh2CBZrROcuoi9wU
+	N8IQW/QafaV7dVbovrSGw40mHVnrI4FsOGvLdqQE4/SojLldNJnawlA/z5wm+pRY7I=
+X-Google-Smtp-Source: AGHT+IH8DOw8jFu20tYWeECEvg3iojml0rDggWVUOXEmQq6TtEKUwAtdydqgImho+auqElK84ZJvfQ==
+X-Received: by 2002:a17:906:3111:b0:aa5:1d68:1f43 with SMTP id a640c23a62f3a-aa6b159e292mr58213266b.11.1733874361407;
+        Tue, 10 Dec 2024 15:46:01 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62602cf3esm899768866b.97.2024.12.10.15.45.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2024 15:46:01 -0800 (PST)
+Message-ID: <64bfc226-4840-4d0c-859c-b6609d169aea@linaro.org>
+Date: Tue, 10 Dec 2024 23:45:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
+To: Richard Acayan <mailingradian@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20241210233534.614520-7-mailingradian@gmail.com>
+ <20241210233534.614520-9-mailingradian@gmail.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241210233534.614520-9-mailingradian@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add the camera subsystem and CCI used to interface with cameras on the
-Snapdragon 670.
+On 10/12/2024 23:35, Richard Acayan wrote:
+> As found in the Pixel 3a, the Snapdragon 670 has a camera subsystem with
+> 3 CSIDs and 3 VFEs (including 1 VFE lite). Add this camera subsystem to
+> the bindings.
+> 
+> Adapted from SC8280XP camera subsystem.
+> 
+> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+Hi Richard.
 
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Thanks for sticking with the series.
+
+Could you please implement this yaml as per the latest format here:
+
+https://lore.kernel.org/linux-arm-msm/20241206191900.2545069-2-quic_vikramsa@quicinc.com
+
+- Ordering of the description of the nodes should follow
+   the example and the example should be in-line with:
+   Documentation/devicetree/bindings/dts-coding-style.rst
+
+- Sort regs, clocks, interrupts alphanumerically
+
 ---
- arch/arm64/boot/dts/qcom/sdm670.dtsi | 185 +++++++++++++++++++++++++++
- 1 file changed, 185 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm670.dtsi b/arch/arm64/boot/dts/qcom/sdm670.dtsi
-index 328096b91126..aa486602a2db 100644
---- a/arch/arm64/boot/dts/qcom/sdm670.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm670.dtsi
-@@ -6,6 +6,7 @@
-  * Copyright (c) 2022, Richard Acayan. All rights reserved.
-  */
- 
-+#include <dt-bindings/clock/qcom,camcc-sdm845.h>
- #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-@@ -1168,6 +1169,34 @@ tlmm: pinctrl@3400000 {
- 			gpio-ranges = <&tlmm 0 0 151>;
- 			wakeup-parent = <&pdc>;
- 
-+			cci0_default: cci0-default-state {
-+				pins = "gpio17", "gpio18";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			cci0_sleep: cci0-sleep-state {
-+				pins = "gpio17", "gpio18";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
-+			cci1_default: cci1-default-state {
-+				pins = "gpio19", "gpio20";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			cci1_sleep: cci1-sleep-state {
-+				pins = "gpio19", "gpio20";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
- 			qup_i2c0_default: qup-i2c0-default-state {
- 				pins = "gpio0", "gpio1";
- 				function = "qup0";
-@@ -1400,6 +1429,162 @@ spmi_bus: spmi@c440000 {
- 			#interrupt-cells = <4>;
- 		};
- 
-+		cci: cci@ac4a000 {
-+			compatible = "qcom,sdm670-cci", "qcom,msm8996-cci";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			reg = <0 0x0ac4a000 0 0x4000>;
-+			interrupts = <GIC_SPI 460 IRQ_TYPE_EDGE_RISING>;
-+			power-domains = <&camcc TITAN_TOP_GDSC>;
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_SOC_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CCI_CLK>;
-+			clock-names = "camnoc_axi",
-+				      "soc_ahb",
-+				      "cpas_ahb",
-+				      "cci";
-+
-+			pinctrl-names = "default", "sleep";
-+			pinctrl-0 = <&cci0_default &cci1_default>;
-+			pinctrl-1 = <&cci0_sleep &cci1_sleep>;
-+
-+			status = "disabled";
-+
-+			cci_i2c0: i2c-bus@0 {
-+				reg = <0>;
-+				clock-frequency = <1000000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			cci_i2c1: i2c-bus@1 {
-+				reg = <1>;
-+				clock-frequency = <1000000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
-+		camss: camera-controller@acb3000 {
-+			compatible = "qcom,sdm670-camss";
-+			reg = <0 0x0acb3000 0 0x1000>,
-+			      <0 0x0acba000 0 0x1000>,
-+			      <0 0x0acc8000 0 0x1000>,
-+			      <0 0x0ac65000 0 0x1000>,
-+			      <0 0x0ac66000 0 0x1000>,
-+			      <0 0x0ac67000 0 0x1000>,
-+			      <0 0x0acaf000 0 0x4000>,
-+			      <0 0x0acb6000 0 0x4000>,
-+			      <0 0x0acc4000 0 0x4000>;
-+			reg-names = "csid0",
-+				    "csid1",
-+				    "csid2",
-+				    "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "vfe0",
-+				    "vfe1",
-+				    "vfe_lite";
-+
-+			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid2",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe_lite";
-+
-+			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&gcc GCC_CAMERA_AXI_CLK>,
-+				 <&camcc CAM_CC_SOC_AHB_CLK>,
-+				 <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>;
-+			clock-names = "gcc_camera_ahb",
-+				      "gcc_camera_axi",
-+				      "soc_ahb",
-+				      "camnoc_axi",
-+				      "cpas_ahb",
-+				      "csi0",
-+				      "csi1",
-+				      "csi2",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "vfe0_axi",
-+				      "vfe0",
-+				      "vfe0_cphy_rx",
-+				      "vfe1_axi",
-+				      "vfe1",
-+				      "vfe1_cphy_rx",
-+				      "vfe_lite",
-+				      "vfe_lite_cphy_rx";
-+
-+			iommus = <&apps_smmu 0x808 0x0>,
-+				 <&apps_smmu 0x810 0x8>,
-+				 <&apps_smmu 0xc08 0x0>,
-+				 <&apps_smmu 0xc10 0x8>;
-+
-+			power-domains = <&camcc IFE_0_GDSC>,
-+					<&camcc IFE_1_GDSC>,
-+					<&camcc TITAN_TOP_GDSC>;
-+			power-domain-names = "ife0",
-+					     "ife1",
-+					     "top";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				camss_port0: port@0 {
-+					reg = <0>;
-+				};
-+
-+				camss_port1: port@1 {
-+					reg = <1>;
-+				};
-+
-+				camss_port2: port@2 {
-+					reg = <2>;
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ad00000 {
- 			compatible = "qcom,sdm670-camcc", "qcom,sdm845-camcc";
- 			reg = <0 0x0ad00000 0 0x10000>;
--- 
-2.47.1
-
+bod
