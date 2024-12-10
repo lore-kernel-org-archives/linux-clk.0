@@ -1,62 +1,63 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ACC237A28
-	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 17:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575DB237A59
+	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 17:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850613; cv=none; b=Ct9jsxuhDZeBY9psiUAqjYNU492kGa4Yu0dYMPYa3Bhf6xpn2qj+WrrcNN2P9V0FWSYCe3+s914xo+809RLeV6m1cJklUYl3GZ5doqhQ71LEJUCPSPnoUkD/6qOMz6OU/gYMlIzHwDYuna6MNjT73nbl+7cC6kunRH2aAoE+0lc=
+	t=1733850616; cv=none; b=WffwVb/r+YrkNE+ajgj365w2dKqNPj19YZBjBiYTNz2TcnvVL1B7X1OTYIoK98tel288opUf9R/780p4Xu8RNNuIKYeNjNyYDSALVZvbX5S79dvJJ/WBpIVxfjJcmBhAFaNIUkqqBPVGALjOy8kjWahP3NE8cvPnGC9jR5AQBk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850613; c=relaxed/simple;
-	bh=28M0DwDkMWfh/cCYd77FlED8MgZgXdkVNsI9ruq8oCo=;
+	s=arc-20240116; t=1733850616; c=relaxed/simple;
+	bh=OTYVPrJXZsCibJypCZf8QK2KZMdsmtd9T0kWyznh0q0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rPVPnbQd4R09QfeftdfoHt7vWZpEGf8uV+xevi6RTzItbpmSsWeUt4LxbqFsyib8z7lvHNopkmTDKCx9hB/fM4Rjb6DdhW8dtmiJY8hUCGlrNGG0QgSe+ZL1Qq1njfO0lzowyoqma6djGpjR0OiJOuCzezVaZspmbsg4K1+loN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MQzjBXDp; arc=none smtp.client-ip=209.85.208.53
+	 MIME-Version; b=OjgOIvRGgnJsKT4sMLekdnJ3MJZOnJ9yFl5xTLbl0UCViOLQDSsRAhhDJUGINuee+YenZdUHwBf0W0UGFE8C3zLAydr8YcSQMix5fFda0VUdAjeEU3T0t+IFbV5l856q93rrwSId5pEo4IhkiQsDveZ67oPqOo4gsugn+r93URo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bHzgadTq; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MQzjBXDp"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so7354852a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 09:10:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bHzgadTq"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d3ea065b79so4488784a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 09:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733850609; x=1734455409; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733850613; x=1734455413; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ehtFOxPVmrl0HXvdtrtv9cXQJbKgItgUhCJ0+pIiLcI=;
-        b=MQzjBXDpRt18BnyVhFu9LW0hpGwvvwgHbxOjUiClJRXR5FVfaLIcqTvY+AH+LG3Kym
-         v6A3midGaWsqoE1p7IqYJmQlSfnloI8iql6JSIms2HdJ5zZNEm663ModvEElq7Lihl3M
-         OYgG5fJ3Tm5LgkoTXe0ZwLfAJg0Qb3N8/3+eWq2pg7ZQe24Er7zOp/5n9fCv6pOfwhWX
-         N90AH9dvQZem8yoXZKO9Mbsw0pqeO1fqEn4x4SjZG6fE64Btrjc6mzUPACvHIr8ojC2f
-         yoLrRyr9hGVHj17l9COx+a7NKAeIFVYt3z1bb2wf6AZ1Hlo/+7TMnth9iS9asdpKEm3o
-         7Buw==
+        bh=Y4VjqX7iwW/vu6N1WvzJJpy4sCnLnXPgQs452O7qiog=;
+        b=bHzgadTqkHFD23BtqN2KbvqYcbXCWKNUpmCFiMAvclw4XLSAoYgrzQ3jl0PppOLaGC
+         2guV1KrjMFb/xNpNtSVhLLhizXZkv/WVqDyhAK4+0zvCiKgaN8qASbW/DZ0ESOVWhcYr
+         2mAtA2hpqZtUouIL8PyLmxSVpGapr/QtPWRkV0WIr3etRR7WM4oQ3uj4WFfeig3nJjR3
+         RX4aMNwM5coMXfJy0wXFRf8RLOIrtDJelVmkR+EKSp/qt4GRM9CdKxhpTNeHCUhvtPuu
+         kMcyUIziiPvWZFq77/6D46/4wGYT0Gm8pWaqHjIPImy5VHEVA5Cr+o1puS89MMbcjWzb
+         0nrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850609; x=1734455409;
+        d=1e100.net; s=20230601; t=1733850613; x=1734455413;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ehtFOxPVmrl0HXvdtrtv9cXQJbKgItgUhCJ0+pIiLcI=;
-        b=kLFkUyriiUHlX6aK2+22riwvFeW6HM4YChj3KqOaRLFjpErOtDCI5jg00Jxg/FMJv8
-         YFNnrHMMFpNem0tocDuHIAcWNHwIFAIGMCQpYJFOLpfi4GSvd1L0VXsCznGhmp1b0hg0
-         aBF4zvXbUe9mo5E+kQ2jf/0WDKRns8W3+ILDr3yOuBiU36Psa7rF6Qa5b9nh6WFxUoXK
-         vXrtGtmNZXDyXQhFTJ4HD59DN4BcsAoitcENU0QGjEi7aY37WVWyQpW1RzWM6SVj4mxf
-         fZi+H9NkXW518eVJqn5XhbIZHUPM3E3+DgCHDbKJ/Rhb5fm5978BOTHGVqsVsK7RtkMh
-         y36Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUoS7u6EhRzokn2ovdshmlqcIv3vQQhZebz13a8umSssKA+TTwTkWqSE+14C8CrdkP5bds5aZu9+z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsgPSBGwZmphUk5l7YSEdm3wPox9qwUZsdj8CF/4vNXiZ9B2Kt
-	kQoMGUy3EXhzt9HpzzgaQOKhABQGmoYVZ9J9k4Dr1p95vqOxeE0uffe5YzhL/jI=
-X-Gm-Gg: ASbGncuDajpKsW160eoFyFnHGvvMI+deLeNNNIhT66B0J6vCuJK5qN/eLzleF2IYbvy
-	Ci4hj74io9KlimR8hfin3f4n6YBh/D9ExmmmVoNd/F+cA3hR4pW5GF72yy+nA/RyExKuSxW9JPs
-	JZwWEmZ3ISvednuFK0sfqPUjs0fI+igl9fThsFWTfZyxBfG1CGVAOhxypeHTSLTFvoR8NAq0Uw1
-	5lqY3dLyO0pW8aHch3T2WN84oSr5VXx3LjKsyt1TbEF55EzG2M7uPir4gYaClre5wjaRzRpvcNN
-	q7rDs+rJ
-X-Google-Smtp-Source: AGHT+IFmnNKXXAN067E1UbwhBJfMpK5O10AWTX9+hlwh80SSPAEOWU+7C2pI3MGNxXbuHtb4mGyh4w==
-X-Received: by 2002:a05:6402:1ed6:b0:5d1:3da:e6c with SMTP id 4fb4d7f45d1cf-5d41853e70cmr5928380a12.10.1733850609561;
-        Tue, 10 Dec 2024 09:10:09 -0800 (PST)
+        bh=Y4VjqX7iwW/vu6N1WvzJJpy4sCnLnXPgQs452O7qiog=;
+        b=jx44BQS+5PU4sN59oS80ZEnMm6N0xzCg2mp6Se4ZgXc8ALMbLE4oM/YT7ZdQxw3PZg
+         KIy8WPW76zwjM/a7xO1a1WW54BhgZf93Er6IOIN/uxwhsofkUrAtuvh5RBSAUO+V+FiB
+         zSbc8LYcve1DE1id8YDZ7c4qx3sVbH2v3a6rPHVN7YtHr8ToSpzQ94cWZCxHsL7CtZok
+         MGZsMXgEglBgTuuHvqv4k3EWJCpV4y+r4Rt6m+Uek33eNHLdAFstcACiKo0oqmMs8jA2
+         e51H1rU3+YadVifnE2HPmqN1SjTb5bL6rTJ9Qxv+jKbDFwIgfxaH50W4FCqDsEPN3ge9
+         Q6oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiBH+BYYECfwTgORl9oczM8T0dxajkEzC76FtVzFrz6ZaO41RwI/orj4worC5Uc2Wks7bjfgxP4ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvcqcv0S4Il/KTA8dcCoBBVAW/WhZxxHiWTywpGoEu1D9CIQNg
+	9yeK4JPFkBDmN9YgyR+JQijJx4bP7bZqiwWXF3D7zRRNMexpVj8+FX+F9cjGAOALspxLUp4sY6h
+	v
+X-Gm-Gg: ASbGncuSt8Eku0Duc8HubOP48K76SpcITRwmpTRlf0Bm04tskvsbZ9FCFTliVkQMa3S
+	q/crcjX5LfqAyrbHuz8kv/NG3x/2BpaLF8XtBw2+5nWnEwWgYgZJ0WzUz601ruRdk5Y9b/pZiy3
+	6iG/kbxPEJPfb//b5R7BS78pI221cGxLF/sd0AZ6A5Fl77Sg5PFVdH6b/4OoQQNGg2Mlyf9zSLY
+	x+2aHdUfUHspffSN0Ydrd3pP37vTAKOo49n/c5CGIq3U9bqgo1MXNJLjlsvxwUVIAGhEJAeJ3tq
+	IffDxLb8
+X-Google-Smtp-Source: AGHT+IF1pww2qqLE9zMCq4Z4/K+bkG+iAYWr1I2S2Beewnfd6QMcuan64k6kobi5emQ4TB2NMs4iTA==
+X-Received: by 2002:a05:6402:13d4:b0:5d3:ba97:527e with SMTP id 4fb4d7f45d1cf-5d4185fea2fmr5584908a12.25.1733850612616;
+        Tue, 10 Dec 2024 09:10:12 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.07
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:10:09 -0800 (PST)
+        Tue, 10 Dec 2024 09:10:11 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -76,11 +77,10 @@ Cc: claudiu.beznea@tuxon.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	alsa-devel@alsa-project.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 02/24] dt-bindings: clock: versaclock3: Document 5L35023 Versa3 clock generator
-Date: Tue, 10 Dec 2024 19:09:31 +0200
-Message-Id: <20241210170953.2936724-3-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 03/24] clk: versaclock3: Add support for the 5L35023 variant
+Date: Tue, 10 Dec 2024 19:09:32 +0200
+Message-Id: <20241210170953.2936724-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
@@ -94,12 +94,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-There are some differences b/w 5L35023 and 5P35023 Versa3 clock
-generator variants but the same driver could be used with minimal
-adjustments. The identified differences are PLL2 Fvco, the clock sel
-bit for SE2 clock and different default values for some registers.
+Add support for the 5L35023 variant of the Versa 3 clock generator.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
@@ -112,23 +108,30 @@ Changes in v3:
 - collected tags
 
 Changes in v2:
-- collected tags
+- none
 
- Documentation/devicetree/bindings/clock/renesas,5p35023.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-versaclock3.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-index 42b6f80613f3..162d38035188 100644
---- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
-@@ -31,6 +31,7 @@ description: |
- properties:
-   compatible:
-     enum:
-+      - renesas,5l35023
-       - renesas,5p35023
+diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
+index 1398d16df5d0..9fe27dace111 100644
+--- a/drivers/clk/clk-versaclock3.c
++++ b/drivers/clk/clk-versaclock3.c
+@@ -1133,8 +1133,14 @@ static const struct vc3_hw_cfg vc3_5p = {
+ 	.se2_clk_sel_msk = BIT(6),
+ };
  
-   reg:
++static const struct vc3_hw_cfg vc3_5l = {
++	.pll2_vco = { .min = 30000000UL, .max = 130000000UL },
++	.se2_clk_sel_msk = BIT(0),
++};
++
+ static const struct of_device_id dev_ids[] = {
+ 	{ .compatible = "renesas,5p35023", .data = &vc3_5p },
++	{ .compatible = "renesas,5l35023", .data = &vc3_5l },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, dev_ids);
 -- 
 2.39.2
 
