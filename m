@@ -1,140 +1,274 @@
-Received: from xry111.site (xry111.site [89.208.246.23])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8039E23DE8B;
-	Tue, 10 Dec 2024 10:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437E51D5CE8;
+	Tue, 10 Dec 2024 10:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733825233; cv=none; b=SDt3jFlOZ9DXmMYRpr/rKqSqT6laD5zzClxXqXSEnwLHymQ6snETdycsc5IP1aefTrxvs+vLwx0qJxO1w9cxNLJFCbMMsZdRLNMX3Vwiok/bZmKUI5cQVondTajsk1fj1ep9FXDKMVOT3GVjOjw5jW6S7lBDsUaUgHOLZlx9Ky8=
+	t=1733828106; cv=none; b=QoBVCudik/n2f5U07P1JV90iCLFFtA399Z3SjSFdEzJppIVzTfmYOsSC4E7mQPHR13QWueiBbU+J/gY74WUYmorK7O4aKkEfP4+yZ0Bqmvv83XzC753gZjrgkYkyHOXXaxfGMC2QURbwtUzzBw7Hnd9IOmKyy11QqvVyMmPPZrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733825233; c=relaxed/simple;
-	bh=Msp8EBwbSaDVGDutN7E7ic9HQFOi4liVHYOLAu6bbcc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ymh402dkNUwXSLXr87bqpnw3GPatKuzYew3qqEUhpc5+H1qXObKcHGk4VS2Hh8Dv/dNLXpoTAEaFBsvlYsPcJih4UT6qQSZVj5hQhfVS5fLUrO0nGjTo8xOu5LNSQ9szgl3+tEc2BBAqZIBBr2frgw6Xi7p5TNAg3wjQ0nKKGyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=mlLJlGZ8; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+	s=arc-20240116; t=1733828106; c=relaxed/simple;
+	bh=tcL2vnPk4Uo0JIrBOrkTI0QFy+X6OH0TPmC6bSGM7a0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=V1TJNugvO2FaySss1r6GwZ21Y1KMtyd8SH5hTQnAAK2NCHWVYF4UJIAf+m+ahUQeHOoZ5tyK7Zrtc2851UeBJfcLwjqWQtF+gXULoeBRtlZvjWzHiqw3QLNEo7Zdk7WlWD42kGeQEWLNDeNRuNBxEIolQKxXfEa2ZZ+o+H5RyUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EBBDPnRm; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="mlLJlGZ8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1733825224;
-	bh=abpofRq31ORHYJ4N/NA7SJPQZ+/vA7JXL4gI2ORl16U=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=mlLJlGZ84oi24RkI4/WWM0pQA4+OYFCGEVS5SSS3+ox/gBVd/bTx2dLTNNFd2aEVV
-	 Ru9FzBwoOP53KyDhcfWUlGE0yM4n9NnJkiAkSmM0He1rNGCIqMXMoDRXyLAbPlbhzi
-	 lIxJ/1AcOVHm6NPewpPtkXrLbSrz04qczLfWEMNk=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id BF3C71A3F9A;
-	Tue, 10 Dec 2024 05:07:01 -0500 (EST)
-Message-ID: <fb9f77696318823b405d30f7224a8bd95d922a36.camel@xry111.site>
-Subject: Re: [PATCH v2] clk: thead: Fix TH1520 emmc and shdci clock rate
-From: Xi Ruoyao <xry111@xry111.site>
-To: bigunclemax@gmail.com
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei	
- <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd	 <sboyd@kernel.org>, Yangtao Li <frank.li@vivo.com>, Jisheng Zhang	
- <jszhang@kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 10 Dec 2024 18:07:00 +0800
-In-Reply-To: <20241210083029.92620-1-bigunclemax@gmail.com>
-References: <20241210083029.92620-1-bigunclemax@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EBBDPnRm"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA8JTPP013783;
+	Tue, 10 Dec 2024 11:54:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	IZeE9h1il+DsauaUC8/Tt9EQJI2HmML+xYXUzSuaNCE=; b=EBBDPnRmvTeMFUQu
+	rQueLTvQotmaBGL/Vz0IOHPGLDs8zB/PAqIIaqW1DOpPd1Y9gycxQMpKcf55xrbs
+	0JmP8oCcHGC9IDv3yKjpVFFcvduElckBzcfVYYawT3byQhbkDfrJ8LaJXU6KNEvq
+	It2RUdJES2aXkOTXrdBjW3/9s0jWMaHcFni5SXvkAsVi9fEkqrt/m6VPnbrsYRe3
+	13TIs+yRQqT/u7oaekZlZQsGehMmF1sclluGZJMoiJSnAOeBkwYH72XW0MKUGzFK
+	vznxqTmxJRe0x0oCmiweFQjaiGhGMTjsufsY2ju85kS3tMKq0pDISmOggB4QTmSm
+	GXmxpA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccnm4g0j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 11:54:38 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D4BBC40050;
+	Tue, 10 Dec 2024 11:53:41 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 81ED8244283;
+	Tue, 10 Dec 2024 11:52:15 +0100 (CET)
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
+ 2024 11:52:15 +0100
+Received: from SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0]) by
+ SHFDAG1NODE1.st.com ([fe80::b848:dbeb:cd0:84a0%13]) with mapi id
+ 15.01.2507.037; Tue, 10 Dec 2024 11:52:15 +0100
+From: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Cristian
+ Marussi" <cristian.marussi@arm.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Thread-Topic: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
+ discrete rates
+Thread-Index: AQHbRapDtK1zP5F5+E+8H5T6eqOTIbLdsy4AgAAr30uAAD/MAIABMogo
+Date: Tue, 10 Dec 2024 10:52:15 +0000
+Message-ID: <aac4c00dc3ba4599aaa91392dac71d6d@foss.st.com>
+References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
+ <20241203173908.3148794-3-etienne.carriere@foss.st.com>
+ <Z1bKlOeHJFHpe9ZU@bogus>
+ <ed164b6704ab4086b2fb22ae51658f31@foss.st.com>,<Z1ck5tFkb41wReZP@bogus>
+In-Reply-To: <Z1ck5tFkb41wReZP@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 2024-12-10 at 11:30 +0300, bigunclemax@gmail.com wrote:
-> From: Maksim Kiselev <bigunclemax@gmail.com>
+On Monday, December 9, 2024, Sudeep Holla wrote:
+> On Mon, Dec 09, 2024 at 12:59:58PM +0000, Etienne CARRIERE - foss wrote:
+> > Hello Sudeep,
+> >
+> >  On Monday, December 9, 2024 11:46 AM, Sudeep Holla wrote:
+> > > On Tue, Dec 03, 2024 at 06:39:08PM +0100, Etienne Carriere wrote:
+> > > > Implement clock round_rate operation for SCMI clocks that describe =
+a
+> > > > discrete rates list. Bisect into the supported rates when using SCM=
+I
+> > > > message CLOCK_DESCRIBE_RATES to optimize SCMI communication transfe=
+rs.
+> > >
+> > > Let me stop here and try to understand the requirement here. So you d=
+o
+> > > communicate with the firmware to arrive at this round_rate ? Does the
+> > > list of discreet clock rates changes at the run-time that enables the
+> > > need for it. Or will the initial list just include max and min ?
+> >
+> > I don't expect the list to change at run-time. The initial list is
+> > expected to describe all supported rates. But because this list may
+> > be big, I don't think arm_scmi/clock.c driver should store the full lis=
+t
+> > of all supported rates for each of the SCMI clocks. It would cost to
+> > much memory. Therefore I propose to query it at runtime, when
+> > needed, and bisect to lower the number of required transactions
+> > between the agent and the firmware.
+> >
 >=20
-> In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
-> is 198Mhz which is got through frequency division of source clock
-> VIDEO PLL by 4 [1].
->=20
-> But now the AP_SUBSYS driver sets the CLK EMMC SDIO to the same
-> frequency as the VIDEO PLL, equal to 792 MHz. This causes emmc/sdhci
-> to work 4 times slower.
->=20
-> Let's fix this issue by adding fixed factor clock that divides
-> VIDEO PLL by 4 for emmc/sdhci.
->=20
-> Link: https://github.com/revyos/thead-kernel/blob/7563179071a314f41cdcdbf=
-d8cf6e101e73707f3/drivers/clk/thead/clk-light-fm.c#L454
->=20
-> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS=
- clocks")
-> Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
+> Ah so, this is nothing to do with set_parent, but just an optimisation.
+> This change optimises for space but some other platform may have all the
+> space but the communication with SCMI platform is not good enough to make
+> runtime calls like this change. How do we cater that then ?
 
-It has raised the "dd if=3Dgcc-14.2.0.tar.xz of=3D/dev/null" speed report
-from 22MB/s to 61MB/s (the file is on a SD card).
+This change does not optimize memory. It implements a real clk_round_rate()
+operation for SCMI clocks that have a discrete supported rates list. The
+existing implementation does not support it, it behaves as if the
+requested clock is supported and let caller change the clock rate to
+find out which rounded rate it effectively gets. This does not suit=20
+audio and video clock constraints.
 
-Tested-by: Xi Ruoyao <xry111@xry111.site>
+How to deal between platforms with large memory/slow SCMI=20
+communication and those with the opposite? I think the easiest way
+would be to have a dedicated SCMI Clock protocol command.
 
-> ---
-> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 13 ++++++++++++-
-> =C2=A01 file changed, 12 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th=
-1520-ap.c
-> index 17e32ae08720..1015fab95251 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -779,6 +779,13 @@ static struct ccu_div dpu1_clk =3D {
-> =C2=A0	},
-> =C2=A0};
-> =C2=A0
-> +static CLK_FIXED_FACTOR_HW(emmc_sdio_ref_clk, "emmc-sdio-ref",
-> +			=C2=A0=C2=A0 &video_pll_clk.common.hw, 4, 1, 0);
-> +
-> +static const struct clk_parent_data emmc_sdio_ref_clk_pd[] =3D {
-> +	{ .hw =3D &emmc_sdio_ref_clk.hw },
-> +};
-> +
-> =C2=A0static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x=
-100, BIT(4), 0);
-> =C2=A0static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x10=
-0, BIT(5), 0);
-> =C2=A0static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", ax=
-i4_cpusys2_aclk_pd,
-> @@ -798,7 +805,7 @@ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_h=
-clk, "perisys-apb4-hclk", p
-> =C2=A0		0x150, BIT(12), 0);
-> =C2=A0static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0=
-x1c8, BIT(5), 0);
-> =C2=A0static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e=
-0, BIT(13), 0);
-> -static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", video_pll_clk=
-_pd, 0x204, BIT(30), 0);
-> +static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref=
-_clk_pd, 0x204, BIT(30), 0);
-> =C2=A0static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x2=
-04, BIT(26), 0);
-> =C2=A0static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb=
-_pclk_pd, 0x204, BIT(24), 0);
-> =C2=A0static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_=
-pd, 0x204, BIT(23), 0);
-> @@ -1059,6 +1066,10 @@ static int th1520_clk_probe(struct platform_device=
- *pdev)
-> =C2=A0		return ret;
-> =C2=A0	priv->hws[CLK_PLL_GMAC_100M] =3D &gmac_pll_clk_100m.hw;
-> =C2=A0
-> +	ret =3D devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
-> +	if (ret)
-> +		return ret;
-> +
-> =C2=A0	ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, pr=
-iv);
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
+> We need some spec-ed way or a unique way to identify what is best for
+> the platform IMO. We can change the way you have done in this change set
+> as someone else may complain in the future that it is costly to send
+> such command every time a clock needs to be set. I am just guessing here
+> may not be true.
+>=20
+> > >
+> > > > Parse the rate list array when the target rate fit in the bounds
+> > > > of the command response for simplicity.
+> > > >
+> > >
+> > > I don't understand what you mean by this.
+> >
+> > I meant here that we bisect into supported rates when communicating
+> > with the firmware but once the firmware response provides list portion
+> > when target rate fits into, we just scan into that array instead of bis=
+ecting
+> > into. We could also bisect into that array but it is likely quite small
+> > (<128 byte in existing SCMI transport drivers) and that would add a bit
+> > more code for no much gain IMHO.
+> >
+> >
+> > >
+> > > > If so some reason the sequence fails or if the SCMI driver has no
+> > > > round_rate SCMI clock handler, then fallback to the legacy strategy=
+ that
+> > > > returned the target rate value.
+> > > >
+> > >
+> > > Hmm, so we perform some extra dance but we are okay to fallback to de=
+fault.
+> > > I am more confused.
+> >
+> > Here, I propose to preserve the exiting sequence in clk/clk-scmi.c in c=
+ase
+> > arm_scmi/clock.c does not implement this new round_rate SCMI clock
+> > operation (it can be the case if these 2 drivers are .ko modules, not
+> > well known built-in drivers).
+> >
+>=20
+> I don't think it would work if it is not built on the same kernel anyways=
+.
+> I don't work much about this use-case.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Using the same kernel will not enforce the driver was not modified regardin=
+g
+the vanilla upstream version. This may be also true for built-in modules
+I guess.
+
+>=20
+> > >
+> > > > Operation handle scmi_clk_determine_rate() is change to get the eff=
+ective
+> > > > supported rounded rate when there is no clock re-parenting operatio=
+n
+> > > > supported. Otherwise, preserve the implementation that assumed any
+> > > > clock rate could be obtained.
+> > > >
+> > >
+> > > OK, no I think I am getting some idea. Is this case where the parent =
+has
+> > > changed and the describe rates can give a different result at run-tim=
+e.
+> >
+> > This does not deal with whether parent has changed or not. I would expe=
+ct
+> > the same request sent multiple times to provide the very same result. B=
+ut
+> > as I said above, I don't think arm_scmi/clock.c should consume a possib=
+ly
+> > large array of memory to store all supported rate each of the SCMI cloc=
+ks
+> > (that describe discrete rates).
+> >
+>=20
+> Right, my assumption was totally wrong. Thanks for confirming.
+>=20
+> > An alternate way could be to add an SCMI Clock protocol command in the
+> > spec allowing agent to query a closest supported rate, in 1 shot. Maybe
+> > this new command could return both rounded rate and the SCMI parent
+> > clock needed to reach that rounded rate, better fitting clk_determine_r=
+ate()
+> > expectations.
+> >
+>=20
+> May be that would be ideal but you need to make a case for such a spec ch=
+ange.
+
+We need effective round_rate support for STM32MP2 platforms where audio
+and video clocks are provided by a clock exposed by the SCMI server. These
+drivers detect the (possibly external) device needs at runtime and need
+to select an input clock that fits some constraints for quality reason.
+Audio quality is the most sensible to clock rate inaccuracy.
+
+>=20
+> > >
+> > > I need to re-read the part of the spec, but we may need some clarity =
+so
+> > > that this implementation is not vendor specific. I am yet to understa=
+nd this
+> > > fully. I just need to make sure spec covers this aspect and anything =
+we
+> > > add here is generic solution.
+> > >
+> > > I would like to avoid this extra query if not required which you seem=
+ to
+> > > have made an attempt but I just want to be thorough and make sure tha=
+t's
+> > > what we need w.r.t the specification.
+> >
+> > Sure, I indeed prefer clear and robust implementation in the long term,
+> > being the one I propose here or another one.
+> >
+>=20
+> Good then, we can work towards achieving that. If you can specify how slo=
+w
+> or memory hungry is it without these changes and how much this change hel=
+ps
+> your platform, we can take it up with spec authors and see if they are ha=
+ppy
+> to provide some alternative to deal with this in a generic way.
+
+The platforms we target usually have plenty of RAM, lets say hundreds of MB=
+ytes.
+Not that much for some system but enough I guess to store a few hundreds of
+clock rates for a few dozen of clocks (few kByte of RAM).
+
+That said, thinking more and more about this, I really belive a dedicate SC=
+MI
+clock protocol command would better fit platform needs in the long term.
+
+BR,
+Etienne
+
+>=20
+> --
+> Regards,
+> Sudeep
+>=20
