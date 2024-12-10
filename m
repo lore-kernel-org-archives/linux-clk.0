@@ -1,92 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C70821126D;
-	Tue, 10 Dec 2024 22:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBF7211278
+	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 22:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733871243; cv=none; b=ciXq3MyMFwglQ0fD7O37MC8+AVl1kzW+5YodwpK0rmli7J0BQ6IH01JGzqkNVxyNoQScVpdSgRqZ8TX1a1CL6BQj3tPjw55IKkV1tOxCGFxIGwMgxRvT42CDv87uE9X6k1q7F6NNh5QmJ3vjo8CMOhWiRJeVydo+rSQNN4OvY9E=
+	t=1733871256; cv=none; b=pm64ClO7XOTfPG3hEUrcsKFKJcNG3ryrtlp+kDUSa+8uV1GAoyql6yIf8DzZQAMMfwQGn75OvckcAXEltK1opiVYQJ7/1ptvmtqD1jWJuHJjIE0H4STSnLujd1LSChZ+dIEMeMhjFz4ATFK5esFyLSdV/JUs0py/XdwbNxWkcbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733871243; c=relaxed/simple;
-	bh=xHboJ6Nj+jUBjuysVSh5kzHiNcpv6miOBLy03WABifE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWM2aqIKQ6FpCUQZlaKCPrQl8Bhvnxv1DhHsUlGJw6kQCc9tvzDTCcBqdAck6yWoT1CuXnVK+dJLlOwkfjLst4fUILk2zCTlDMwz0IQcZ+SaGiTx1C4GRl10kat7oaw18AWWELaFthvsb5kz/2DKI+b/4oNHSEvYiANPN0Xo+7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6RNkTpo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733871256; c=relaxed/simple;
+	bh=LP6ij4oc1NpuRbJXPV6dbu6Qong7TvfSYsYH1k+NVB4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=SgD9zFqwhtAC6nXl/aF/DKuMth2YNjTIT+1rWxnRULfU5yKWW7HohUXpr9DCEfPg2b1U5PymFEUGZSS/qaMXM3r54aug7yafoHY8QEadyssQIWQz+Py+1FHtYPziLhpIgpaD49uo3mf68y+fI/k816oDGPHWa2mKIaIwifddbJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRiIQjgh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6RNkTpo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD594C4CEDE;
-	Tue, 10 Dec 2024 22:54:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRiIQjgh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55353C4CEDF;
+	Tue, 10 Dec 2024 22:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733871243;
-	bh=xHboJ6Nj+jUBjuysVSh5kzHiNcpv6miOBLy03WABifE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F6RNkTporGLhP919FrAvtVaRdlwD6OHKF9LVyCWvSPhS6/L86mghmTp3sWhxV6wNb
-	 QlFBLBsCx5p3BCADTSSJlGiZoVGQUxg0BvJZURibCzW7PEsrxr547c8BfR2mdkLGk9
-	 jxaD+B41ZsnY4nGwKXLpOJSOokz1SfQvjul3MYuG+BmUdjAfMYOfMCzqvxr7mfk3gD
-	 RfUh0l8GKGMp71ka3TfjDrVw0L/2n83cPMNl5jULVNenO4kzoUP92Oqil4RgXC7Abq
-	 10g9W6QDZj1WACB3tkQ++E5BONJ7jF+yNA9r5RaNIdkhA5tl3jpAH7Uvt55OeEaQRl
-	 lMW6sHikMq9hg==
-Date: Tue, 10 Dec 2024 16:54:01 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Krzysztof Wilczynski <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	devicetree@vger.kernel.org, Saravana Kannan <saravanak@google.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Derek Kiernan <derek.kiernan@amd.com>, linux-gpio@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Will Deacon <will@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v5 03/10] dt-bindings: pci: Add common schema for devices
- accessible through PCI BARs
-Message-ID: <173387124038.751229.17185539657512592303.robh@kernel.org>
-References: <cover.1733136811.git.andrea.porta@suse.com>
- <92fe1c6eb3ae1e7e7c151423568be2d13f19b55a.1733136811.git.andrea.porta@suse.com>
+	s=k20201202; t=1733871255;
+	bh=LP6ij4oc1NpuRbJXPV6dbu6Qong7TvfSYsYH1k+NVB4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=uRiIQjgheYBlOChLNxKIjfGjRE/cT+4Dizl2EoiTYCkJy6H2rY7p1ZXhaT+0GYNRb
+	 NuUMNgUTOsHS3b0c7vucA4R3D3+apEgUO9wOZiE6zU9WC9rCYsguowO6BM/jZoyr3S
+	 D+rLJqcrMwcY5PXsiBgrNdL17PUUTqLVnApAHhW9xgYR2ssmFSaotrS9OkVJuiSNfn
+	 1aHFSrHC24GGU6vRwswI3yxEVAkK2Fej62QiIgAWaemJwW2i5X3P76R+p9M7dWRc5P
+	 A+a+FQ9rPaltfOKteY2fbaw2sfFF3EkBcWCzZ67YCbD5flOOJ7WwZSVeC4rsWy20NN
+	 UnnTdFwdpy/GA==
+Message-ID: <93eead72b24cf69a871e88ba93bc13ef.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92fe1c6eb3ae1e7e7c151423568be2d13f19b55a.1733136811.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241210130913.3615205-1-joe@pf.is.s.u-tokyo.ac.jp>
+References: <20241210130913.3615205-1-joe@pf.is.s.u-tokyo.ac.jp>
+Subject: Re: [PATCH] clk: fix an OF node reference leak in of_clk_get_parent_name()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+To: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, mturquette@baylibre.com
+Date: Tue, 10 Dec 2024 14:54:13 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-
-On Mon, 02 Dec 2024 12:19:27 +0100, Andrea della Porta wrote:
-> Common YAML schema for devices that exports internal peripherals through
-> PCI BARs. The BARs are exposed as simple-buses through which the
-> peripherals can be accessed.
-> 
-> This is not intended to be used as a standalone binding, but should be
-> included by device specific bindings.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Quoting Joe Hattori (2024-12-10 05:09:12)
+> Current implementation of of_clk_get_parent_name() leaks an OF node
+> reference on error path. Add a of_node_put() call before returning an
+> error.
+>=20
+> This bug was found by an experimental static analysis tool that I am
+> developing.
+>=20
+> Fixes: 8da411cc1964 ("clk: let of_clk_get_parent_name() fail for invalid =
+clock-indices")
+> Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
 > ---
->  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 58 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Applied to clk-next
