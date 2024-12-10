@@ -1,137 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492BD1D9A40;
-	Tue, 10 Dec 2024 05:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7812222617C;
+	Tue, 10 Dec 2024 06:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808291; cv=none; b=GrjLwaCSbS4Px0X53OCohhW0e3rL9bpPuPco77jiALvCc3L3fC2hJJ1K7T3T6Lll72s2pOHBCkMdNtXQhYjjXslKEAtTkaqP/ZTml4a8JlTVCPGKWI6LcX5jsD2MyfQj5750i73avyuTNrvLNVE9dZT4dJc7aMEr2q0xig9kU+U=
+	t=1733812920; cv=none; b=qjfWnkwpEOzz2UH6uTkUYnrfvxki2MY8CsV448Kp/RAJNbhbHFacsEa93rRrk0KusurYRJsize3u1IqdKHSgkQVfAsHkUGCEcrWrx5uTnsg8tkFx7QJtk3T+1eCW4hoQyo11UXX9ZFYWbVpNh6G/T4mx0axMz5L5gy1By25oHjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808291; c=relaxed/simple;
-	bh=DAxhrU8nYe3wIVwTN/sHDUPcQXoFKKbHmXYU8frJH4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTCKoZKvZivP+V4GlMSiLa+JSYMjZlhySwRHLAU2ZsSyr4NX7U+43e1RtuKyEAL8gwJeKtq67Tbculv5P6EUae9jpTaosgNQEQe2Q9T1X75NpNv2xx0wAHR3uujr/Z7z8QjMoLmHVdODDJGXYxl37SA4kuIb6ccPb5PrnojnYCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXf6BTqq; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1733812920; c=relaxed/simple;
+	bh=e9OTnPLB2umO0k7QnLuiEOZBUnwpjq7GIwOI1trdZ6A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nX5civv+rw5+CU2fOcXWieUox46XMpbr02nbqmH/qQRYBjh29Zi9JWUcJMZ7Lc7q+T5BiztMWa4c+rBBN+8EaVZRmxFDkQC7rYi3470IUlzGW0TK6T1MK5WObJXhRWgyxN48wQWp2hPR/ctrzzORzh7hpjJokKRTxZoFnWgWDb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kex2sXsA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXf6BTqq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733808291; x=1765344291;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DAxhrU8nYe3wIVwTN/sHDUPcQXoFKKbHmXYU8frJH4s=;
-  b=SXf6BTqqt3Qnx3YmO1u/cfFRn+xCztCQ5xfxwojDjulJxscLVjgAgzx7
-   Gun9e9QGeJ/MA8cJT6TKI9JvUJTRPauaNipUInZoNkEUK0mNnfBjKedZK
-   wwiCSs2rmSyzJtvImtdCV3ulcPhBGQlYsdhR+Gqd+8XC6QsGZiqfCgVwh
-   AKNUF82JswU1SvYJQhCygzDVZ8caoKE2f7/VKQjGNIwJBDbVdtzGAT0Ld
-   GsDndVgB/l6/GtyX4ISQ6kPWtGB4Wd8x/jjgi2O518Mn46vOeIl6RJ+kj
-   iCXpgt43ngpYR7YDdg5PwzDuPV+HkYVCpKTZzNgw8aB1LaMpohVXOe4qL
-   w==;
-X-CSE-ConnectionGUID: B/JfgfNNTOah+X7GUT2+ug==
-X-CSE-MsgGUID: O4zHj/q/TcKCAKB6+A1B0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45517234"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="45517234"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 21:24:50 -0800
-X-CSE-ConnectionGUID: yT3wQW55SUqvh5zoMS2Sng==
-X-CSE-MsgGUID: atNr2jojQd+IxiaOFRtDGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,221,1728975600"; 
-   d="scan'208";a="95490968"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 09 Dec 2024 21:24:46 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKsjj-00058n-1q;
-	Tue, 10 Dec 2024 05:24:43 +0000
-Date: Tue, 10 Dec 2024 13:23:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Inochi Amaoto <inochiama@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] clk: sophgo: Add clock controller support for SG2044
- SoC
-Message-ID: <202412101358.czZY7XmR-lkp@intel.com>
-References: <20241209082132.752775-3-inochiama@gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kex2sXsA"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9NpUEk018822;
+	Tue, 10 Dec 2024 06:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6jkjtLvNTflzzjXdpuM4sY
+	Tezia6xxDBrhHzxR5gS8Y=; b=Kex2sXsADUJXYrRT3J+RiwG0/sc232ksgspnZw
+	TFgrG1By/dITp9X9/8Lj5u+1oK9SvYy9Zeuard4/El48PRquwot0fOykldcXiy0b
+	UUwr5VBElUXf2j+9wP34Wf25nvPjs/2mrHbt4nGUAGKt8nfji14q7eQGUhPOsK6U
+	3Ya2RVqtxm4bg3INAr61sujt7F0L6QoDoJoB1xv++8XqQmYYKBBgV9y1l4UvgdaE
+	Dxaol1EXsii4KI/dXU7mSGb4NTdCXW4x3njcZLVO1NgOi1Of7NCorZwn1p3A7lkr
+	zyOC1q3n0J//isvP0PK+u0Lb+NpViplG7p6gyfTiKDu8VugA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eak38uxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 06:41:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BA6fqqH029895
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Dec 2024 06:41:52 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Dec 2024 22:41:48 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH 0/2] Add gcc_xo_clk for IPQ5424 
+Date: Tue, 10 Dec 2024 12:11:08 +0530
+Message-ID: <20241210064110.130466-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209082132.752775-3-inochiama@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: D7AbsbtbH4CSBV4s4oxGbAlRgwsOIIhL
+X-Proofpoint-GUID: D7AbsbtbH4CSBV4s4oxGbAlRgwsOIIhL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=646 clxscore=1015 spamscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412100050
 
-Hi Inochi,
+The gcc_xo_clk is essential for the functionality of the WiFi
+copy engine block. Therefore, add the gcc_xo_clk in dt-bindings
+and gcc driver.
 
-kernel test robot noticed the following build warnings:
+Manikanta Mylavarapu (2):
+  dt-bindings: clock: qcom: gcc-ipq5424: add gcc_xo_clk macro
+  clk: qcom: ipq5424: add gcc_xo_clk
 
-[auto build test WARNING on sophgo/for-next]
-[also build test WARNING on sophgo/fixes clk/clk-next robh/for-next linus/master v6.13-rc2 next-20241209]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Inochi-Amaoto/dt-bindings-clock-sophgo-add-clock-controller-for-SG2044/20241209-162418
-base:   https://github.com/sophgo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241209082132.752775-3-inochiama%40gmail.com
-patch subject: [PATCH 2/2] clk: sophgo: Add clock controller support for SG2044 SoC
-config: parisc-randconfig-r053-20241210 (https://download.01.org/0day-ci/archive/20241210/202412101358.czZY7XmR-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412101358.czZY7XmR-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/clk/sophgo/clk-sg2044.c:133:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
->> drivers/clk/sophgo/clk-sg2044.c:149:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
-
-vim +133 drivers/clk/sophgo/clk-sg2044.c
-
-   126	
-   127	static unsigned long sg2044_pll_calc_vco_rate(unsigned long parent_rate,
-   128						      unsigned long refdiv,
-   129						      unsigned long fbdiv)
-   130	{
-   131		u64 numerator = parent_rate * fbdiv;
-   132	
- > 133		do_div(numerator, refdiv);
-   134	
-   135		return numerator;
-   136	}
-   137	
-   138	static unsigned long sg2044_pll_calc_rate(unsigned long parent_rate,
-   139						  unsigned long refdiv,
-   140						  unsigned long fbdiv,
-   141						  unsigned long postdiv1,
-   142						  unsigned long postdiv2)
-   143	{
-   144		u64 numerator, denominator;
-   145	
-   146		numerator = parent_rate * fbdiv;
-   147		denominator = refdiv * (postdiv1 + 1) * (postdiv2 + 1);
-   148	
- > 149		do_div(numerator, denominator);
-   150	
-   151		return numerator;
-   152	}
-   153	
+ drivers/clk/qcom/gcc-ipq5424.c               | 19 +++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5424-gcc.h |  1 +
+ 2 files changed, 20 insertions(+)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
