@@ -1,110 +1,133 @@
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622F219D060;
-	Tue, 10 Dec 2024 15:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C08223DEAD
+	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 16:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733845863; cv=none; b=nCSbEb+lDSheQsfdCjuKOCvcIg/2pR9HI57iok4RkDghuCtxyxCrdua44iQQb4jVVZQCx8sQa/LUlqwJAGeoDaOe7tvgfun1SEz/MeY4gkaQAf8IyMcPcKbBEuISSNh5tY/f1K214NiAsAaNAQJMnw9TSRp0sV5PmLR8cFPz5ps=
+	t=1733847951; cv=none; b=llfobnQ+mC90lPsbdtzlwE1piu4S4DrZTlI7jtFGVsIXzFoG4Kpi8AqXOyxdPRw1ag/PaszokWtiO4GPrADtkuGw8d57Mcv75agpS+b1IOWZ9mHV8p1Jqg4o/ReoX0HCIxspV7/Tuw6hiW18I4QzdiOP9mxF54U7ZPHFIPTBMKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733845863; c=relaxed/simple;
-	bh=Y37U+uT2jbAZ91pLBf8bs13LmT2ax+q/R3krH5S0H8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rmef4ry4EX72kVjTzD/zATVY/DYhB7luXIOTj0mWfcyD2hkBr6uvM8Vh1TntlReEAh3XadIqZa1nQ+EfSFKDRHFhYf7nHFf0HwWf7OJ/t4BPKD6ISR5EMNmn6vI6YtWonJfWA7e26rLkt6abQYmJ/xIQWx4MVPSwH5pdWX2osyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85c529e72bcso771832241.0;
-        Tue, 10 Dec 2024 07:51:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733845859; x=1734450659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VM5eZtEFSnellC7wxhcnLuAYVI8OYFt4yC3DLm0J29Y=;
-        b=UqXYXKeEAvvXrC84HKPUwX6nAsMpgu1bPveWjhcjIbdREQG1eDUKntcN39lhLtUjo1
-         YqvST+M3UPQaHILodBaka+/4pgi8wEpPzLKKgjqwj3/55ZAoo/dsxEbX4wJkCDsDGLUs
-         DuSrbzwUxLcXf3bIe81ZKEOHoFSSTY6z21BSTtF6NYoyAncFl6TdTsWuHLRHuk6j6IaA
-         vZqWJOwo+cOBAcEp/f00pl9z9f8TG0CGyY92JogxMbOSameMycRdkN2cWzrwzqFv1PVo
-         PlJgxtmmHeyf24stE+e4KJfn/fMPiq3c6oe90ZXXCrF0xFWyqV7GlfT3vU7p716XCb3p
-         GvPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVKN6YI21e6fHEdlp+jhGq2TpgS1mCL65Aia5+L85h0sQoYYvh7TUwN0Zco4U3+pNgMWNLKHjTO8V@vger.kernel.org, AJvYcCWKVlo5dR6jydqgFe3b+l5GYb3urBJMEciUYRHWgQ+G7RK3o6rCcAupxVJHsGwcjri/DxjJl02b9TF8QJ+1KXIpGNo=@vger.kernel.org, AJvYcCWvUKGKrNWuc9AJ1or0v9h2go+qoVWTrKC1+tXfukWVdI7OH6IAAAJuZTRswEbpjit7hF5SoPT0v5d+@vger.kernel.org, AJvYcCXWFDfNBrd+to3J/hL1aUSZlAzO2vK4USuoe5FqVqx2xA6voMS9TBySO4U/2xgR/SmWAh7mEvHe/ceGB55+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdwxh86kdvrzvggIKnLP93dX1onW7deWXBUufIyKrR/PB16v9b
-	1VVnprmGhDIW+sZfrNdCnAhTxPP3Ydf3g9faYZzFC/7cuPDiXdUW54zN3Jva
-X-Gm-Gg: ASbGncsMUYaF1+XYoimvKXU1su/pPPoMkgB0b3RGiLVJZCgkO5C0jIA7JadrsbszsaI
-	lsHmkAgOH1usOUprl24Rz2uOW7C9C47BLHhb2jKIzWakvki7DXen2U76CbKHPWUqAT0jQYmGuDH
-	C8hbRY8rp7Sfzgh5VX4GZKmErUY7Tn2w8JmUK0YCgDpWn1qZYb+tisH5uHaIHJ3S+5YT5y+Vunm
-	LlSoblY2R89Qjw1Srjfz9JLIRrOBF2ACp8lhtLx9OfPD6XpdsKqfPxP7TXvAumzIrbegaM/XkK/
-	GNOI0TO2FKyd7C03
-X-Google-Smtp-Source: AGHT+IEmrsXd9XaxWBj3a3FUBkcEAWz9uZqq8+iD7qruYgsfOU/0y2hfwhq+wzwIrkO05gSICY61ag==
-X-Received: by 2002:a05:6102:5494:b0:4af:f630:7216 with SMTP id ada2fe7eead31-4b1160ed2e1mr6112616137.16.1733845858867;
-        Tue, 10 Dec 2024 07:50:58 -0800 (PST)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2bac2217sm1229108241.21.2024.12.10.07.50.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 07:50:58 -0800 (PST)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-85c529e72bcso771813241.0;
-        Tue, 10 Dec 2024 07:50:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUtw9I1fBSXHKFm2UfR4Dg0XPAh1hwc6n2EKkfDxM8JLtI8Ri/CWuWzJGrtpW0BQpCRDKZG6GDv9zRy@vger.kernel.org, AJvYcCV8HIe2suy6CIEaGq1cfRvJtXgoTq3NtTYyIEmxG/NyHKR46/7VApmMeAsXYwCWABOajjFH/5B//J98ttqIKVKpA6E=@vger.kernel.org, AJvYcCVWqykbMBp33pmO71yCH+4OG0dpLjrWKIzXDY96nKP+QF952eVnYMNurw1blgDWtMhOGFSysHpPsZig@vger.kernel.org, AJvYcCW6J+AHo/ik+CdIA+Fu5kQHDx6DBcl9xCL+KJPQBD4NdGnnHXDjcCnidpval0U9ZLUHdINKeddn7gPhGay3@vger.kernel.org
-X-Received: by 2002:a05:6102:3a08:b0:4ad:497a:268d with SMTP id
- ada2fe7eead31-4b1161c25f5mr5617537137.19.1733845857539; Tue, 10 Dec 2024
- 07:50:57 -0800 (PST)
+	s=arc-20240116; t=1733847951; c=relaxed/simple;
+	bh=lNDEl1jFraHMx+yjBlSG6hrmLnmDOXsjaHrVuUlWP5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Am8efpiL6pHd/ToaRIn0RF/ZA5bvnLLzYZ/VIphPwKlNOtB21m3jad2dtwi8tKphaMKgVdSuJ0OHUZzTHLVwmMxabih1MNJfQe1dAPdNxxT3o/bUT5BBd4xl0lf/TUqnK3B+69PAW7hnGF8IJeeOIdIocHfziIrJ67bJU4zUvF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=yurxfwQ7; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="yurxfwQ7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1733847942;
+ bh=Rfks6ZTiwp1kxRzHwe4qrzjZlR1gfefb3q3lO/fYtDA=;
+ b=yurxfwQ7unIjEb47s7vUlZ5nmET+d0VFLe6GN+5yltcPCDp55mdq2yk34tDlbS1JKKK26E+6Q
+ BuA01kE/9Q2TbpPFlrERXB1zdYKsJMIxjHKT11m/ehftMhBLy3ywdXesujxDSIlMk4auO5xK/IX
+ IoihvM5L/pGdCuFof4QVP2sKMBuQ7TALx9EzorM+fdc9WgSrMpoJXwXqQRXGPUV3qEp0e5MjGAL
+ GOwHoJVAXmn1NpbS9KXfk3et5WGdZ8iCMmm70veO9F+NN55Q+rfvPYdC652EjICEVx1lejT3FQm
+ K64+FyWCPm6yF+6fHKu4ptB2KpLyvQWFpgssZ/GmBhXA==
+Message-ID: <304fd668-0e61-4f5e-a12c-36fd7e54ab6e@kwiboo.se>
+Date: Tue, 10 Dec 2024 17:25:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com> <20241206-rcar-gh-dsi-v3-8-d74c2166fa15@ideasonboard.com>
-In-Reply-To: <20241206-rcar-gh-dsi-v3-8-d74c2166fa15@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Dec 2024 16:50:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVqO0MUVNCuynHGdH4cQaE85FzOei=8QAzQXfp8d07epw@mail.gmail.com>
-Message-ID: <CAMuHMdVqO0MUVNCuynHGdH4cQaE85FzOei=8QAzQXfp8d07epw@mail.gmail.com>
-Subject: Re: [PATCH v3 08/10] arm64: dts: renesas: gray-hawk-single: Fix indentation
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] clk: rockchip: fix wrong clk_ref_usb3otg parent for
+ rk3328
+To: Peter Geis <pgwipeout@gmail.com>, Dragan Simic <dsimic@manjaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Elaine Zhang
+ <zhangqing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <20241210013010.81257-1-pgwipeout@gmail.com>
+ <20241210013010.81257-3-pgwipeout@gmail.com>
+ <0d11705121f29ccfb7cfa342505a6e35@manjaro.org>
+ <CAMdYzYqJLK6oJHCUVztth6mtJsYrRQSPzNYpR-ZmR7rNprZXfg@mail.gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <CAMdYzYqJLK6oJHCUVztth6mtJsYrRQSPzNYpR-ZmR7rNprZXfg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 67586b83ce9f514b1380d1a4
 
-On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->
-> Fix the indent on the two regulators.
->
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 2024-12-10 14:27, Peter Geis wrote:
+> On Tue, Dec 10, 2024 at 4:44 AM Dragan Simic <dsimic@manjaro.org> wrote:
+>>
+>> Hello Peter,
+>>
+>> On 2024-12-10 02:30, Peter Geis wrote:
+>>> Correct the clk_ref_usb3otg parent to fix clock control for the usb3
+>>> controller on rk3328. Verified against the rk3328 trm and usb3 clock
+>>> tree
+>>> documentation.
+>>>
+>>> Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+>>> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+>>> ---
+>>>
+>>>  drivers/clk/rockchip/clk-rk3328.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/rockchip/clk-rk3328.c
+>>> b/drivers/clk/rockchip/clk-rk3328.c
+>>> index 3bb87b27b662..cf60fcf2fa5c 100644
+>>> --- a/drivers/clk/rockchip/clk-rk3328.c
+>>> +++ b/drivers/clk/rockchip/clk-rk3328.c
+>>> @@ -201,7 +201,7 @@ PNAME(mux_aclk_peri_pre_p)        = { "cpll_peri",
+>>>                                   "gpll_peri",
+>>>                                   "hdmiphy_peri" };
+>>>  PNAME(mux_ref_usb3otg_src_p) = { "xin24m",
+>>> -                                 "clk_usb3otg_ref" };
+>>> +                                 "clk_ref_usb3otg_src" };
+>>>  PNAME(mux_xin24m_32k_p)              = { "xin24m",
+>>>                                   "clk_rtc32k" };
+>>>  PNAME(mux_mac2io_src_p)              = { "clk_mac2io_src",
+>>
+>> Sorry, but I was unable to verify this in the part 1 of the
+>> RK3328 TRM, in both versions 1.1 and 1.2, which is all I have
+>> when it comes to the RK3328 TRM.  Is that maybe described in
+>> the part 2, which I've been unable to locate for years?
+>>
+>> Moreover, the downstream kernel source from Rockchip does it
+>> the way [1] it's currently done in the mainline kernel, which
+>> makes me confused a bit?  Could you, please, provide more
+>> details about the two references you mentioned in the patch
+>> description, or maybe even you could provide the links to
+>> those two references?
+>>
+>> [1]
+>> https://raw.githubusercontent.com/rockchip-linux/kernel/refs/heads/develop-4.4/drivers/clk/rockchip/clk-rk3328.c
+> 
+> It is unfortunate the TRM doesn't include the clock maps, because they
+> are extremely helpful when one can acquire them. It also doesn't help
+> that the TRM register definition only referred to this as "pll". I was
+> sent specifically the usb3 phy clock map for my work on the driver,
+> which had the location of each switch and divider along with the
+> register and bit that controlled it. That combined with the TRM
+> register map allowed me to find this error.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.14.
+I can also confirm that the changes in this patch matches Fig. 3-8
+RK3228H Clock Architecture Diagram 7 for the USB3OTG block.
 
-Gr{oetje,eeting}s,
+                                    XIN24M -\
+                                             S45_8 - ref_clk_usb3otg
+S45_7 (2PLL) / G4_9 / S45_0 (DivFree 1~64) -/
 
-                        Geert
+Regards,
+Jonas
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> 
+> Thanks!
+> Peter
+> 
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
