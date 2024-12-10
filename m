@@ -1,133 +1,147 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E4A19E97A;
-	Mon,  9 Dec 2024 23:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFC340BE0;
+	Tue, 10 Dec 2024 01:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733786608; cv=none; b=jdiHSQUDwwwhyzrVFqc75WZtQIEq5SXRW64EsQ6GRV0kYItrQ1nNlMUeheW47Gnm0aB38M3HWcNFi4xZc1L2cgBnidfOFnwcCTJb6/hsCRnaIv98TzwzkZ9FnXVs5N15xA0VySaZWdpW/loo9/zY/7Wgk9+YljpVq1IrObmDBK0=
+	t=1733794230; cv=none; b=HT/RphVBZv1yiuwdEzpqysbzjyhgRDt8PuLAoS1ePDBIddpdG6n3VgEOVCbaBVP3Sr0gMMlY/WRYS5hrhNsqifVQMAMe8f708WMWy1YEOkrKvWSc6Fm//9vDU6ZvJCzQRsrsIi6Etr5fhLKUxcvnY6X5g8YqeOTOVHXQqIZ8IUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733786608; c=relaxed/simple;
-	bh=onfSVdcpXGO++g+yXPULxyEw7kQFplRigK9pz8Hz9d0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SSdR7hdK7N4nikF9nG/oHjsVSgSdns5F2heC+XhAR9Xw6fceJ8Rpfr2X825XXHGH9iak1NSINqBbEl17rYHiG+uIj2QrEbhg/XRUA7Ip+0LP8bLFZGnnZmghN7zY1HY7xfqi0BnjcogD66b1tLoY/T23iH0ww09Jx5EF36eC/C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uAd3CKzB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1733794230; c=relaxed/simple;
+	bh=/3/Fa996/wPp/z2tuRA7CnvQdgcWzerb8WWKan2wAvI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n/swsfgFkm2JuzYYy/lTT0HGgejeMT/pNvZyx9rMxRpoyBs9hPIBnrXNszLyxhN1H/nsMj7KJjGWCZOPIZ8ctNAH4/8jx57ajeGzEjStmubyYtlwzsJKNw2cceB2cMg4oV8YhEUenxrVADfz1jQl46TMrPhCooZSwDmaqOODpMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqUncYvN; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uAd3CKzB"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 70FEC6EC;
-	Tue, 10 Dec 2024 00:22:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733786571;
-	bh=onfSVdcpXGO++g+yXPULxyEw7kQFplRigK9pz8Hz9d0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uAd3CKzBDElCZ6cdecisX3szg4bFbShSCShSwsxdcJivihvcqO5Cin+9GS/bjeMJi
-	 9d215cvaZICkNc9FbJTEZTf4MHZ3JFJwXf/qfHnq6wRC8lkN0YWOdH6NmmhwupNXCz
-	 we2F0mX5RyH+LRfdQNz1GTXajhN5h/fwjjwlFZHE=
-Date: Tue, 10 Dec 2024 01:23:08 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqUncYvN"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6d8f1505045so23813036d6.1;
+        Mon, 09 Dec 2024 17:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733794225; x=1734399025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yLptFqAMCqePRuk20SWKFsGYRWkZDJ2kBARfQHLQM5A=;
+        b=XqUncYvNXnbJ1GrK19YSiN/olUbVDddX3Txyhz5qhe5rngOSkRbwGoGNjB27U9F24G
+         e/RGB7k8urp0JcO3OEZn8GgjN1pwwv3YNcs/KVVr2Mqe2ogbWH0sRF1TQS7PM0zPCwDD
+         gLi8p8PhrT9z4WKo3HSC7NOyY2TIWbY16uC2QyLMLQOTHyhkHf91GKBJv4SlbHV/vH3E
+         RFSDbvfg+L2jI5Ah0hEFLLLXD8ClBEjq0Z08r/mnw/fC6acnr7o72+uP+hZUHxwxprtk
+         nUOZumug84AC7H2EQaRWTgoYXROeWfOIR2Ds4dd1uOpEi1Bd+yF6AkTQ3GaH4az5htEG
+         c3bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733794225; x=1734399025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yLptFqAMCqePRuk20SWKFsGYRWkZDJ2kBARfQHLQM5A=;
+        b=DWBkyY1uWwHE7UVOINgumdMMgct96RYA3I/5SjJEb390VEc5yKPYYvkL7LCCHm/vda
+         ULTtr5wPOF2UNN7E/cnNdncpLlmfWjChvHB4dmdqnWGvmBnWB1L2f2f5pN3USCA07BuI
+         MHuePemXUZqy9dHUVl83aCKpnqixZfI02+VVkV8h5plHQnRJV4qEetEycxu866iURXw1
+         a6y0z/pTMOkwzseKJlYH5GZSIcoQ5qxzPtxFMgp9Yc+/NO6AUgZw0BdrHp1NA/2U3f5C
+         E8z7g6PZb30AKHyX/Q5r5vZ7RuKNCNZGXDwT89PSxSGfmqSfRehigVZcvu8XBbsQEIhP
+         UJYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU60+7dkq/Dz9qZC1Ra1I9U3AzFAurf5s3MtQLmztU1n9DK0N+9N+0xkMuxa1gyDocW5CnZglscLp9YvvD+@vger.kernel.org, AJvYcCUERru12nk433xTZtVJNYJ9epr6yU5ymVeNSkYVIfzXIABNUEadoFS058EzK9EzhwrrtLHZkbJ/M/Q=@vger.kernel.org, AJvYcCUxTGHYyAL0ngtUlGm1Dcrww7ZP/7oDfmJd1mHLhPovd11WbwbOzlogyE7n9MG2wcxxfv7sokiSrbT/@vger.kernel.org, AJvYcCWIbSgnLIit3lnwlwDetjxbvKoCdT8fYMepwdKkdgJEG4Tsu3knqEonjGJuUOFFFraOFqktcx0EB6L0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzITfK3oZGMmosYpY/6rHjWUY+47+KNFomrfRTwz4hlHaiP/cYz
+	YOuHy1+NVRjDpWQe0I/rEKXFYl/DkTlVolaYSdSbvZDuwLKidPFeQRs8iqHE
+X-Gm-Gg: ASbGnct7KsWWX4Q7qBORoRhQAZ4sKbP8dlAhlGZkZeqokLeZVuu+BE/C6UPaN/Shl8J
+	JQ0gqERlBi1NYvhjGZ1HglfC2ohh6FYKPPjy3TAWboUN/jiCOve1+s7T3fXb5EjOakbsly1Zf2v
+	kLAHeyWzQzhdn/omSvGEnSH/Eq/IzB8hOwKRIzFxWbQSmr528bjJC/h5rzHp0W40FC0KxAI6Gwd
+	ATx3U5/LlRKE+veoUakEdWVwGDnfj0XAtvHGy+bzmYNQISmhtlKlmI5BjvoJ/j3iA==
+X-Google-Smtp-Source: AGHT+IGl94+bcjaYHpUAJtAtPKM7ozTtuuRWPzM7fSjzKBKRwV5Bk+GTu1vmg7p1bUUPpYPUkPwp+Q==
+X-Received: by 2002:a05:6214:e6b:b0:6d4:1dc0:2620 with SMTP id 6a1803df08f44-6d91e4465a0mr47573006d6.40.1733794224737;
+        Mon, 09 Dec 2024 17:30:24 -0800 (PST)
+Received: from master-x64.sparksnet ([204.111.53.234])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8f429a79csm36834346d6.72.2024.12.09.17.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 17:30:23 -0800 (PST)
+From: Peter Geis <pgwipeout@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Peter Geis <pgwipeout@gmail.com>,
+	Alex Bee <knaerzche@gmail.com>,
+	Caesar Wang <wxt@rock-chips.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Levin Du <djw@t-chip.com.cn>,
+	Liang Chen <cl@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 02/10] drm/rcar-du: Write DPTSR only if the second
- source exists
-Message-ID: <20241209232308.GD26531@pendragon.ideasonboard.com>
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-2-d74c2166fa15@ideasonboard.com>
- <20241209230418.GC26531@pendragon.ideasonboard.com>
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	shironeko <shironeko@tesaguri.club>
+Subject: [PATCH 0/6] rockchip: rk3328 fixes in preparation for usb3-phy
+Date: Tue, 10 Dec 2024 01:30:04 +0000
+Message-Id: <20241210013010.81257-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241209230418.GC26531@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 10, 2024 at 01:04:19AM +0200, Laurent Pinchart wrote:
-> On Fri, Dec 06, 2024 at 11:32:35AM +0200, Tomi Valkeinen wrote:
-> > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> > 
-> > Currently the driver always writes DPTSR when setting up the hardware.
-> > However, writing the register is only meaningful when the second source
-> > for a plane is used, and the register is not even documented for SoCs
-> > that do not have the second source.
-> 
-> I've confirmed that for all the models currently supported by the DU
-> driver.
-> 
-> > So move the write behind a condition.
-> > 
-> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> I will test the series on an M3N board.
 
-Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> # On R-Car M3-N
+This is a series of fixes I uncovered during my work on the next
+generation rk3328 usb3 phy driver.
 
-> > ---
-> >  drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 20 +++++++++++++++-----
-> >  1 file changed, 15 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> > index 2ccd2581f544..1ec806c8e013 100644
-> > --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> > +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> > @@ -185,11 +185,21 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> >  		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
-> >  	rcar_du_group_write(rgrp, DORCR, dorcr);
-> >  
-> > -	/* Apply planes to CRTCs association. */
-> > -	mutex_lock(&rgrp->lock);
-> > -	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> > -			    rgrp->dptsr_planes);
-> > -	mutex_unlock(&rgrp->lock);
-> > +	/*
-> > +	 * DPTSR is used to select the source for the planes of a group. The
-> > +	 * first source is chosen by writing 0 to the respective bits, and this
-> > +	 * is always the default value of the register. In other words, writing
-> > +	 * DPTSR is only needed if the SoC supports choosing the second source.
-> > +	 *
-> > +	 * The SoCs documentations seems to confirm this, as the DPTSR register
-> > +	 * is not documented if only the first source exists on that SoC.
-> > +	 */
-> > +	if (rgrp->channels_mask & BIT(1)) {
-> > +		mutex_lock(&rgrp->lock);
-> > +		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> > +				    rgrp->dptsr_planes);
-> > +		mutex_unlock(&rgrp->lock);
-> > +	}
-> >  }
-> >  
-> >  /*
-> > 
+The first patch fixes the error handling of the pm-domain driver. I
+don't expect this to break anything, but it is entirely possible some
+driver code makes some bad assumptions on the fact that this has been
+broken from the very beginning.
+
+The second patch fixes the ref_usb3otg clock parent. This was preventing
+correct reclocking of the usb3 phy.
+
+The third patch fixes the ethernet alias that was accidentlly readded
+during the rk3328-roc dtsi conversion.
+
+The fourth patch fixes a race condition between power domains and clocks
+being shut off during boot, which would cause an ugly splat on rk3328
+during boot on recent kernels.
+
+The fifth patch corrects the rk3328-roc fixed regulators and power input
+map. It also cleans up the fixed regulator flags to be consistent.
+
+The sixth patch removes address aligned beats and the redundant rxpbl
+and txpbl flags from the rk3328-roc, which are unnecessary now.
+
+Please examine and test these as necessary, especially the pm-domain fix
+patch.
+
+Very Respectfully,
+Peter Geis
+
+
+Peter Geis (6):
+  pmdomain: rockchip: fix rockchip_pd_power error handling
+  clk: rockchip: fix wrong clk_ref_usb3otg parent for rk3328
+  arm64: dts: rockchip: remove ethernet alias from rk3328-roc
+  arm64: dts: rockchip: add hevc power domain clock to rk3328
+  arm64: dts: rockchip: correct rk3328-roc regulator map
+  arm64: dts: rockchip: Remove address aligned beats from rk3328-roc
+
+ arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 27 +++++++++++---------
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi     |  1 +
+ drivers/clk/rockchip/clk-rk3328.c            |  2 +-
+ drivers/pmdomain/rockchip/pm-domains.c       |  8 ++++--
+ 4 files changed, 23 insertions(+), 15 deletions(-)
 
 -- 
-Regards,
+2.39.5
 
-Laurent Pinchart
