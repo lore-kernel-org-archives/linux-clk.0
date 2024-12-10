@@ -1,144 +1,101 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24EC41C64;
-	Tue, 10 Dec 2024 08:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88291DC990;
+	Tue, 10 Dec 2024 09:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733819455; cv=none; b=ff2oN/hQcPOV5b8BsJQKnOFNUhQgueCd2VVcPDGR9bX3YLRZnuZ5IihsR4pDSzP7J9ioBMu6Kf+gtLzXUXFqCtwrctRYQBp+H8OT+ttdTkc60p82MUcbLNrbglgl9dbE0cIXL3VEhZBcci3+wb0KeJUmuWXyhrLgEjtoM7P2HIE=
+	t=1733823885; cv=none; b=F6PBj0vWWvDipGeh18Jr0MXqeaHQXQivmfhGoEdPPjVjpGc5Rzmgmad9G/DLrAbi1sSQmmJOPicohqIA9a2hOTA+hZ8RKgcJmn/tI+RXy5s/hmYgPkq8xfrJ5AivIsoijNYP/amhDbaH68NDMNJKTTErbyffSaMAddT3ZbKCcHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733819455; c=relaxed/simple;
-	bh=NDk1UlnFfI3f7i35JPDdgQRcBUxdeqLzIzQ8s03OAdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RPTl2fahuPv46Bgdf/GZUdv/MxHwMHdImF2+McnBt6x6LXht5Px57bvmZJyKbnSuMzYJu3NZO3/1CCiWFBk9uJgD8bsw8KulFuvPKrnJ0z7ZZ17rzAt5MqDCGsEjtlj/61vrncFt9kXOe2taoIyZQGCMXNFuZPAs+sOsUH8xIjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjlkDKFZ; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733823885; c=relaxed/simple;
+	bh=e4u2714Btd5HDg6xOeh0GIX/gEGUmICMubVqVTDnYr0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=cDjnmaFJQfPe1wlt2BWhVRycqPxrOYIxXv3YknZUKu2uRdk/UV0TOHG8NKgVnNRIKt9s3de7t1gcOu2V4srEUufjN2VdIJALalxe+R57J072k8sEQzK8reAUIhWflz5xv5b2ZOILR9YbniU315ZaADh7fNYa8yDh608JusPoTVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=vPqeDVKo; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjlkDKFZ"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df80eeeedso5134485e87.2;
-        Tue, 10 Dec 2024 00:30:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733819452; x=1734424252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=90ZkUIqsBdVLrJBG0q75ZwBWmjhC0C/y0EueSUVYRDg=;
-        b=FjlkDKFZ1C/yJOXwMKgsJLcWBCS6POZDvQRszFAPbXjamf5XwG4/JCg8gmczUQ/oPE
-         E7qwNFYJwewwq3dus4Hr8a4o6j3nk2vquLOB/Bvd/Ky44qbd0Btu9abNw4xg31m7wX1u
-         jdAZcfuNk8Z78OIAVxUcOF39ycvG4TgqW53TPF+Y0Jv4OFIHh9tayYKczsquDHnX/dkQ
-         MCa0cN0OdQBQ/l9hxu9V4YKaAXd8Pxizo0fGH2kyEY9Pj/bj5r45pgneLnQS/y9RJzu1
-         ZnW11V3mFhBhKldTDGt1/QwbeDYJ8AkKtxmLT7iZuFFDXSZDxPRba9D0mMQ7UoOut5tW
-         /kew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733819452; x=1734424252;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90ZkUIqsBdVLrJBG0q75ZwBWmjhC0C/y0EueSUVYRDg=;
-        b=QW1HzEBXUGMjoI18OJsVRsEBhbQiUbc5v+DZ8JeA5jfo4B+3gdG26pJ4yEIfivLY0L
-         GXFgAMxXfxU1dL/CtyfzKgg+bwLc5Lo8U72pItNQzfmH6gS1gOegb3Kcu3SgbXjaN8NK
-         KtAe4MRfOh7+oY2CccwUrYZfWBV3iFO7gashxYYmqMHZkoJ40T4IN0vV9VMw4YCKV2vO
-         97GaT1cLyQDE5EPjFD6CP7J6d1CAo/i8Qz5uTRaAed7jHeN+cWoI4E99fjV/xVbDDtZQ
-         A1cU93z6D6MH/OqJpFToQKSk0RuJKcguuw0iBbYbZ9MQNuXx7+s3fLoy7Wwd/uKj2mj3
-         +a5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUm13+AkpQlFHSmaSpbEdweEnhqVyA9NfpaDqr9u7+bU0Z3kgSQPtruGZmCxuZTzlcbXXogmb4dSwI=@vger.kernel.org, AJvYcCVGFmQaavhReCARW/HtusaPi9/BzlP5nYSGlO1jiyXLoMmbUNmTzwyygR5oMYjwJG/a0OU9PoAo/mV3hWkE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVDWPyvbi+BFw51IJBlWBKubMir2Lobns+tYQ3J6MQ7XKLhpXp
-	PEGLDtOfaU68KRTl3w+t6wIeszlrUuXAQ1Yct2K4MT+W53EbCSZFjkMKJ+iuw9M=
-X-Gm-Gg: ASbGncsqKr3iNpjPwL21kq/jgeHNp1l5h1PHnoKyAnMXyRFubp9NgA8V5cDYEvn5PLT
-	/psQoMDsgFkmRCu90/ES1m3LAmraV7TsRN2eNx293OgwYmeDNKiBn26EsJ5nc1A3QkvVm6ExtLu
-	Eqwo7U1AoCHZRD32WCEfb8fZfbjScaiQNOyJLsDnYOz7npYqbONR1OW//kndU0MZPR62IAZpJGj
-	vHZniARfV++2QrbL+d57UHPOgU56gpHeZrjEQJho8yBHj7Xczsdt4U8S58iQ22I1IvtWjE60dCw
-	0Ai3qTbzF+enEA==
-X-Google-Smtp-Source: AGHT+IE5OZMXD5wGIi+gQNBFtFm/8ORVBm/3TlKPK1kt/NeR8RusvkrggIMTg8CDMExbsnpqReNNxg==
-X-Received: by 2002:a05:6512:3c91:b0:53e:39c2:f021 with SMTP id 2adb3069b0e04-540240c0e6amr1174314e87.15.1733819451569;
-        Tue, 10 Dec 2024 00:30:51 -0800 (PST)
-Received: from wpc.yadro.com (host-95-152-63-227.dsl.sura.ru. [95.152.63.227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3745b0bbsm1216804e87.185.2024.12.10.00.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 00:30:50 -0800 (PST)
-From: bigunclemax@gmail.com
-To: 
-Cc: bigunclemax@gmail.com,
-	Drew Fustini <drew@pdp7.com>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: thead: Fix TH1520 emmc and shdci clock rate
-Date: Tue, 10 Dec 2024 11:30:27 +0300
-Message-ID: <20241210083029.92620-1-bigunclemax@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="vPqeDVKo"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1733823881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YiF7ThrDbAWeKuRCOAFsJKBbN+BqrzeViLR+WJYBGs=;
+	b=vPqeDVKo1NuK++72WGjDs5Xgi2ccTif6seKQoz8N1jraAKbxWjh1xsj9p9fKxk5kBtjak2
+	Y0B1KqAk1QaPGV5y0Bqd+soG2AtWYXWIrJbmta/TgRIVhvZLJ/ns29XXX8SWyYB7M+Eflw
+	Da005oSFEzy3hU2FQv23SHrYlsihCE7MeEh7+AKgmGUOiXjJT8EgskvFMQlIGAd3+yf0Wf
+	b7SRLYf8BrVNeZ0qWQUWqtPK7qyN8LE8sTA9K6E1DEIYEumta8tQ9J9vcdFHl1w8n1mhPA
+	DVS2QvvTyoYO25N25eQKgyPZkp6KJX8sDp5iBtSU+UY+4VusU/zoSF7GvfrqJQ==
+Date: Tue, 10 Dec 2024 10:44:40 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Peter Geis <pgwipeout@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Elaine Zhang
+ <zhangqing@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 2/6] clk: rockchip: fix wrong clk_ref_usb3otg parent for
+ rk3328
+In-Reply-To: <20241210013010.81257-3-pgwipeout@gmail.com>
+References: <20241210013010.81257-1-pgwipeout@gmail.com>
+ <20241210013010.81257-3-pgwipeout@gmail.com>
+Message-ID: <0d11705121f29ccfb7cfa342505a6e35@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: Maksim Kiselev <bigunclemax@gmail.com>
+Hello Peter,
 
-In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
-is 198Mhz which is got through frequency division of source clock
-VIDEO PLL by 4 [1].
+On 2024-12-10 02:30, Peter Geis wrote:
+> Correct the clk_ref_usb3otg parent to fix clock control for the usb3
+> controller on rk3328. Verified against the rk3328 trm and usb3 clock 
+> tree
+> documentation.
+> 
+> Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> ---
+> 
+>  drivers/clk/rockchip/clk-rk3328.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3328.c
+> b/drivers/clk/rockchip/clk-rk3328.c
+> index 3bb87b27b662..cf60fcf2fa5c 100644
+> --- a/drivers/clk/rockchip/clk-rk3328.c
+> +++ b/drivers/clk/rockchip/clk-rk3328.c
+> @@ -201,7 +201,7 @@ PNAME(mux_aclk_peri_pre_p)	= { "cpll_peri",
+>  				    "gpll_peri",
+>  				    "hdmiphy_peri" };
+>  PNAME(mux_ref_usb3otg_src_p)	= { "xin24m",
+> -				    "clk_usb3otg_ref" };
+> +				    "clk_ref_usb3otg_src" };
+>  PNAME(mux_xin24m_32k_p)		= { "xin24m",
+>  				    "clk_rtc32k" };
+>  PNAME(mux_mac2io_src_p)		= { "clk_mac2io_src",
 
-But now the AP_SUBSYS driver sets the CLK EMMC SDIO to the same
-frequency as the VIDEO PLL, equal to 792 MHz. This causes emmc/sdhci
-to work 4 times slower.
+Sorry, but I was unable to verify this in the part 1 of the
+RK3328 TRM, in both versions 1.1 and 1.2, which is all I have
+when it comes to the RK3328 TRM.  Is that maybe described in
+the part 2, which I've been unable to locate for years?
 
-Let's fix this issue by adding fixed factor clock that divides
-VIDEO PLL by 4 for emmc/sdhci.
+Moreover, the downstream kernel source from Rockchip does it
+the way [1] it's currently done in the mainline kernel, which
+makes me confused a bit?  Could you, please, provide more
+details about the two references you mentioned in the patch
+description, or maybe even you could provide the links to
+those two references?
 
-Link: https://github.com/revyos/thead-kernel/blob/7563179071a314f41cdcdbfd8cf6e101e73707f3/drivers/clk/thead/clk-light-fm.c#L454
-
-Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
-Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
----
- drivers/clk/thead/clk-th1520-ap.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 17e32ae08720..1015fab95251 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -779,6 +779,13 @@ static struct ccu_div dpu1_clk = {
- 	},
- };
- 
-+static CLK_FIXED_FACTOR_HW(emmc_sdio_ref_clk, "emmc-sdio-ref",
-+			   &video_pll_clk.common.hw, 4, 1, 0);
-+
-+static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
-+	{ .hw = &emmc_sdio_ref_clk.hw },
-+};
-+
- static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
- static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
- static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
-@@ -798,7 +805,7 @@ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", p
- 		0x150, BIT(12), 0);
- static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
- static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
--static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", video_pll_clk_pd, 0x204, BIT(30), 0);
-+static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
- static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
- static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
- static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, BIT(23), 0);
-@@ -1059,6 +1066,10 @@ static int th1520_clk_probe(struct platform_device *pdev)
- 		return ret;
- 	priv->hws[CLK_PLL_GMAC_100M] = &gmac_pll_clk_100m.hw;
- 
-+	ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
-+	if (ret)
-+		return ret;
-+
- 	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
- 	if (ret)
- 		return ret;
--- 
-2.45.2
-
+[1] 
+https://raw.githubusercontent.com/rockchip-linux/kernel/refs/heads/develop-4.4/drivers/clk/rockchip/clk-rk3328.c
