@@ -1,88 +1,70 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531B524353E
-	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 17:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17D81B4220
+	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 17:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733850665; cv=none; b=Rw8IOxcajt2b9ld0+F8sm9rDIsJOf9bI3NwmZ/t+nUfB2wPO0TxTlRQonJ/PNtOeICvWl6K12ximksLzvz0GjrZ7ip5DTdWJBZwOnjUKs0g5TSgPGIJkOU+kUOPwycZcSSZt2TLNEneQtQ5Abwkd/5ewx4ECFvkEd70Jb/g3FQk=
+	t=1733853450; cv=none; b=AcUrwpghTPx5+eLC768rFHCK/9Uph3LAwZmtayEYvOovpmPMOxMesz6fchgXEcrCANYootZadnAptm9JVee+3sZu3A7E2e7nXGSHCvk+/EaWa4ceNPzIf5jtlWRIrK/Trsr88V7N/eajAcdRwqLTWy+IcBWMvujQdeFNAHchWus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733850665; c=relaxed/simple;
-	bh=hJDCv1TyaQlo/L0tvA82G+IiLtzZURDjCsIXt6YWZzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EnFp4m1wyRlFVgzvIAbUh+oqUX2SBbvoZNi+iXMS6m6ILBFylMH0QeIGmYL8c1m3FleLvatYJ0KCmhqrKPgkIEaC/gLjA1mSBryD3GxjxiqrIFeCAseqKnu+VstStqQddnwmwWUmZE8Z6rQq64jGyc8sUZx8ci6WDuKPVIEuG2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H4Oo73oc; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1733853450; c=relaxed/simple;
+	bh=q7850sFx0AojKZfepV5IKTTvsWmrtq2q5B1CbYiisnY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m3G2xHg0ypawiriCmK1JH5vOGmmc6jcNc9E9mEh9BIAFL2H87BklG/zQZ0yzJBxAihdRhGHs+EP3ohMLeCeUfokuFLjehq9EEc7rXregIiDKANtkZgd+EvQTf/QoO1445PHnfOxCp+YcBfMPIxdMFtY8nU8kxiWhhGxMVZRswBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ipkg0sXi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H4Oo73oc"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d3cf094768so6587767a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 09:11:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ipkg0sXi"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434f30ba149so18817295e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 09:57:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733850663; x=1734455463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TwyXnruxyE1MIUM59wwP+urrQ2EdZ5O+ybJnem/vHTM=;
-        b=H4Oo73ocUU6EO5L86bsbLakxd18SGRoMb/J2jzJtaIAmNhotmttFlW/TmdIeordbJZ
-         Dq+bShklzmdfREDBwuxJjDLed5ej3M+XFdsU4eDmnuGhRUVNt+PJ40Ionl0av+NKnuam
-         20kW6ycQNBXnYADF2aarxkcua1Z23wHlFv4RkB10Mzt9g4G4T1wVBNpetas+bTy1Y/ra
-         QxlTvkMagWUEayvqovJIrXb6kvLmnSdz5LF+mTMRyfpXgNdPR5z4JALaPwtMfAI4Jqk2
-         ssmNkWomPf8q8YXmUV3JnL5oqVsbP/qx81usGKG8bDL3iWU+IqMU+2BeYTV4XYrxA9yj
-         pM7w==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733853446; x=1734458246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIHjMml9/i3NudYkhW0WMl6STQ3T0Tp/kjGEjO9vq9I=;
+        b=ipkg0sXisKqWZnf4saPIOz24hfVn8PODk8HtfUwqO1CFOV8mViIDAIA8K/Tv3y7SNd
+         R+MiHhGxneCcMNAoC/f0iTskevz4G2EOSIvXxr0zlwqp6njNG3PwGD62a6B8A/b2i7y1
+         xRtRF5Hg/1ytDUJ0/mScOhN59vbtrVgQIvbC3yuc3n92pdCSUOIl8NSDYGmrF+Bu83SX
+         YCMEvqMHA1jCG56HAweXCW1pBJ2UQOLm6M8VgjYFu0OFaKX440qSobWM7QJYjSkkQyIK
+         7gXZBkbK8PNigIpL6BpTG6tz25vX/Okg0O9dlp4HHtM4AtwgpOay+mfEQrDm9VHJr7Ze
+         GLGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733850663; x=1734455463;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TwyXnruxyE1MIUM59wwP+urrQ2EdZ5O+ybJnem/vHTM=;
-        b=R/henB4mjkilY7p0hkfxym7YXuzZnIsBvZNBM1tUYMOgP8qxNuZ69aAFIaJgMIYRzP
-         VahEFqfhhs2zUuzU+P6GlEMlOBqyxVXUvH7WqkEdNEm87RJknAdhICom5cKcz1iqkf0d
-         +nRHCx2POwfcJMiPPWhxBvW2QIBELaqrNLZLKJorOaeLb0+zulIV1+7nHE8VWlLmEAdA
-         +KaF7/Z4I6lAAfNNGuh6h960fdUIsPnCBYgu6EZ5tXcl5WzK8QYLdatamGOc1Ubup5ja
-         cMDu52/kwjjZy+H3bDJamK2bCiSjhJtnZGPKWOJkNZlSeJMzf+ds3f7XSNH7CksKaza0
-         uqzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNk5d57bOBF0BPt4CvlX9QxJ+w90g3miCHhQV3wAqs2t953blC8co91a1NqR4IrA7jVN0/LkX8c28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhJ4ZhmGuvkKpxmg1PMOrJ/v2F8bNmHy/n/WqQOzR6tl6PLdQJ
-	F0MQu+vS7QyIShq1L4ci01Z4zFzldJR517CYWJ5Ypa3IzxC6zjQVU7m9aXopwkk=
-X-Gm-Gg: ASbGncv4tHZkALT55BhCayNmLQjzzhKrelNEE/rSdZP/b/uvxw86FPwnlfUkSTE/ZRh
-	6hPLtPkCkzmSIpVxQlHvdEOsxwYrqpPGypBWuw/vdBqVDcy3Y+ToCfYzEkbbuNX6DefH6IT41C8
-	1sUlm8UKW2mS4xhKa2KIeP+IqEnXIXRrqUGLKLa++l31Wbio2rCehf3d4VK1J1TsjHryYbs+VGN
-	TJzDh6X7S/65hh7WQCWmFmG2MXbk3cEyu+xqVUzPOTV7vu6dS+mAK7eSdjD/dNmms5uWKpY8NxK
-	qW8EZhj3
-X-Google-Smtp-Source: AGHT+IGQNruuJ2fmbhGEBR6v4EYtbwtUlKzpp82KdDiJC4wYZhl0SU6OosybB2Txg3S5RjOBSBjG+g==
-X-Received: by 2002:a05:6402:3490:b0:5d0:d5af:d417 with SMTP id 4fb4d7f45d1cf-5d418502c64mr5890914a12.1.1733850662767;
-        Tue, 10 Dec 2024 09:11:02 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7936581sm4853124a12.56.2024.12.10.09.10.59
+        d=1e100.net; s=20230601; t=1733853446; x=1734458246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zIHjMml9/i3NudYkhW0WMl6STQ3T0Tp/kjGEjO9vq9I=;
+        b=xElLK0ODp968l7mR51ZBbL01nLdkIKtDp4uFTt/ez2n5uIfbdoVYoAxWgSm4urKcvv
+         81smHL7OKlCz69u9r/dG9vbCHpviCrV21ZM1i+Q2l0yoeFfca6bWEg4XyBZx9Xu5yaa8
+         kgeTwaWN/GjUZexkDceYbtv9pSEHuUjx1QB/od4P/2+xyQbl6yqpOef8aFNlBUWUuJLF
+         lpeTf67TCBRAc/qsywPf27r5GTuykBXE1Ney7ZoKqTLTnT/gYVrm12TozBlxKuZ1UYEB
+         fmPCi9KF4y4HmfL+Ax3muu0I+wEkAM/zvFsY5xfjtkcbGx8lgjGnx7Q6lHQJkC20YeyQ
+         uZBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdmF+VhNfS+GeIbgyMtSJN3Bjflmd3W2guXEALHjQhEQc6fstZ0K3BEQF8RiJ1MJr7Jzf1/vvZgJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6+Ksz/pNi+CSyd9W4PzSHRkmTDkxYVu27Vwxk8S58TMSc2QrO
+	Z6IkuFCZtKN6b5Ejk+wngA3WCYEaiAfzP5vgeRq7jAqkmghuCgvSy2QRQbezO6w=
+X-Gm-Gg: ASbGncuXjpgFAp0mAHEeDst8vimQDXDTc8UpnlAXPRa6AeMx9HxtnvHL9hThQ/QXo0q
+	11UMjdWwEaj9TqzTBLzeAj10uJk4C9IbcYqqXMOPZJQUsXpe19LrsGz7zoTzVktcPFqma2IY4Ly
+	hprDsE7n4t3fKPO6fJJb3BY23Ll7dcN5OsRpRmKje29X3AI/1YLO9a73+iCnHgaVISWmWxfc/9Z
+	28tUjMjxSNDRaCgH/zpzy3NFetaUC3CwLH9hFcnpRujKvsc+RVI6g==
+X-Google-Smtp-Source: AGHT+IHj8QobrzmEZEduyaYU3tAx4inoHt1dQaLHSZB+Hbt42qCHjutA5qEL9cLT3MYUv5BvjiY0cA==
+X-Received: by 2002:a05:600c:5104:b0:434:a7b6:10e9 with SMTP id 5b1f17b1804b1-434fff55649mr53795855e9.17.1733853445973;
+        Tue, 10 Dec 2024 09:57:25 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4c2b:c454:658c:f771])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526ac03sm241103195e9.4.2024.12.10.09.57.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 09:11:01 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	magnus.damm@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	p.zabel@pengutronix.de,
-	biju.das.jz@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
+        Tue, 10 Dec 2024 09:57:25 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 24/24] arm64: dts: renesas: rzg3s-smarc: Add sound card
-Date: Tue, 10 Dec 2024 19:09:53 +0200
-Message-Id: <20241210170953.2936724-25-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241210170953.2936724-1-claudiu.beznea.uj@bp.renesas.com>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] clk: davinci: remove platform data struct
+Date: Tue, 10 Dec 2024 18:57:23 +0100
+Message-ID: <20241210175723.127594-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,54 +73,118 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
+There are no board files using struct davinci_pll_platform_data anymore.
+The structure itself is currently used to store a single pointer. Let's
+remove the struct definition, the header and rework the driver to not
+require the syscon regmap to be stored in probe().
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
+ drivers/clk/davinci/pll.c                     | 33 +++----------------
+ include/linux/platform_data/clk-davinci-pll.h | 21 ------------
+ 2 files changed, 4 insertions(+), 50 deletions(-)
+ delete mode 100644 include/linux/platform_data/clk-davinci-pll.h
 
-Changes in v4:
-- collected tags
-
-Changes in v3:
-- none
-
-Changes in v2:
-- none
-
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 1944468a2961..5329f3461990 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -44,6 +44,23 @@ key-3 {
- 		};
- 	};
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 5bbbb3a66477..b284da602f8d 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -19,7 +19,6 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/notifier.h>
+ #include <linux/of.h>
+-#include <linux/platform_data/clk-davinci-pll.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+@@ -840,27 +839,6 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 	return 0;
+ }
  
-+	snd_rzg3s: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&cpu_dai>;
-+		simple-audio-card,frame-master = <&cpu_dai>;
-+		simple-audio-card,mclk-fs = <256>;
-+
-+		cpu_dai: simple-audio-card,cpu {
-+			sound-dai = <&ssi3>;
-+		};
-+
-+		codec_dai: simple-audio-card,codec {
-+			sound-dai = <&da7212>;
-+			clocks = <&versa3 1>;
-+		};
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI1 Vcc";
+-static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
+-{
+-	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
+-
+-	/*
+-	 * Platform data is optional, so allocate a new struct if one was not
+-	 * provided. For device tree, this will always be the case.
+-	 */
+-	if (!pdata)
+-		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
+-		return NULL;
+-
+-	/* for device tree, we need to fill in the struct */
+-	if (dev->of_node)
+-		pdata->cfgchip =
+-			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+-
+-	return pdata;
+-}
+-
+ /* needed in early boot for clocksource/clockevent */
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
+ CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
+@@ -890,8 +868,8 @@ typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base,
+ static int davinci_pll_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct davinci_pll_platform_data *pdata;
+ 	davinci_pll_init pll_init = NULL;
++	struct regmap *cfgchip;
+ 	void __iomem *base;
+ 
+ 	pll_init = device_get_match_data(dev);
+@@ -903,17 +881,14 @@ static int davinci_pll_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	pdata = davinci_pll_get_pdata(dev);
+-	if (!pdata) {
+-		dev_err(dev, "missing platform data\n");
+-		return -EINVAL;
+-	}
++	if (dev->of_node)
++		cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+ 
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	return pll_init(dev, base, pdata->cfgchip);
++	return pll_init(dev, base, cfgchip);
+ }
+ 
+ static struct platform_driver davinci_pll_driver = {
+diff --git a/include/linux/platform_data/clk-davinci-pll.h b/include/linux/platform_data/clk-davinci-pll.h
+deleted file mode 100644
+index e55dab1d578b..000000000000
+--- a/include/linux/platform_data/clk-davinci-pll.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * PLL clock driver for TI Davinci SoCs
+- *
+- * Copyright (C) 2018 David Lechner <david@lechnology.com>
+- */
+-
+-#ifndef __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__
+-#define __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__
+-
+-#include <linux/regmap.h>
+-
+-/**
+- * davinci_pll_platform_data
+- * @cfgchip: CFGCHIP syscon regmap
+- */
+-struct davinci_pll_platform_data {
+-	struct regmap *cfgchip;
+-};
+-
+-#endif /* __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__ */
 -- 
-2.39.2
+2.45.2
 
