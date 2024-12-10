@@ -1,60 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBF7211278
-	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 22:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E745A211260;
+	Tue, 10 Dec 2024 22:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733871256; cv=none; b=pm64ClO7XOTfPG3hEUrcsKFKJcNG3ryrtlp+kDUSa+8uV1GAoyql6yIf8DzZQAMMfwQGn75OvckcAXEltK1opiVYQJ7/1ptvmtqD1jWJuHJjIE0H4STSnLujd1LSChZ+dIEMeMhjFz4ATFK5esFyLSdV/JUs0py/XdwbNxWkcbc=
+	t=1733871309; cv=none; b=pM/lDwmKR54Zs28Zq0z0lsHv/vyaM6+K5AUtar0otVHB+tfzyqLcJ0m/HmC82LY/eNZ9tC7czoIpAwIVU0sJpSzeS1oATnBunbR2tXjlmpx61G871NwgxObRqCAtZZjz8UWTKuvwqYAIamjbkBfQaKhJXmGR4e8z7zwS3vdoRw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733871256; c=relaxed/simple;
-	bh=LP6ij4oc1NpuRbJXPV6dbu6Qong7TvfSYsYH1k+NVB4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=SgD9zFqwhtAC6nXl/aF/DKuMth2YNjTIT+1rWxnRULfU5yKWW7HohUXpr9DCEfPg2b1U5PymFEUGZSS/qaMXM3r54aug7yafoHY8QEadyssQIWQz+Py+1FHtYPziLhpIgpaD49uo3mf68y+fI/k816oDGPHWa2mKIaIwifddbJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRiIQjgh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733871309; c=relaxed/simple;
+	bh=9J1aa/Yh3HudPCpHSSxjlghwlr0RlKDY/3giY0+oXAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SV29nzA7LIpizlrO+SAWh35PUhzipxD+SiRa0sDeaQQfUZx4fwze9e6nLPY5H5/3dcF/eEHhM6bjfmqw+Wlg84uxhM+cPT4DrA+TL+Hx0rnDo2rKb5ae29hO0BkJXwNP6u5Jy1d8cqtUXQNVEvJPrd4vci43zvjtyos7Ih1qoyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cM/4Vcru; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRiIQjgh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55353C4CEDF;
-	Tue, 10 Dec 2024 22:54:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM/4Vcru"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D0CC4CED6;
+	Tue, 10 Dec 2024 22:55:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733871255;
-	bh=LP6ij4oc1NpuRbJXPV6dbu6Qong7TvfSYsYH1k+NVB4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=uRiIQjgheYBlOChLNxKIjfGjRE/cT+4Dizl2EoiTYCkJy6H2rY7p1ZXhaT+0GYNRb
-	 NuUMNgUTOsHS3b0c7vucA4R3D3+apEgUO9wOZiE6zU9WC9rCYsguowO6BM/jZoyr3S
-	 D+rLJqcrMwcY5PXsiBgrNdL17PUUTqLVnApAHhW9xgYR2ssmFSaotrS9OkVJuiSNfn
-	 1aHFSrHC24GGU6vRwswI3yxEVAkK2Fej62QiIgAWaemJwW2i5X3P76R+p9M7dWRc5P
-	 A+a+FQ9rPaltfOKteY2fbaw2sfFF3EkBcWCzZ67YCbD5flOOJ7WwZSVeC4rsWy20NN
-	 UnnTdFwdpy/GA==
-Message-ID: <93eead72b24cf69a871e88ba93bc13ef.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1733871308;
+	bh=9J1aa/Yh3HudPCpHSSxjlghwlr0RlKDY/3giY0+oXAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cM/4VcruTmwaKzBl3kR1lSSTuI66cHreDK5675IsNhiplmDizdIGMfZ+nI44JMql5
+	 DH3X4ohXX3l/ep1vMlb7vIzPn9+2AU7LUII2O8Se2NtKiyCJXUMiAmF1f8W6U8gp9G
+	 FS8MX3tervSTGlzOXNvMVZt1tmwQCVgj3Rd4lZdFtqMVJJalSKAXgKeZpo2fLKXYNX
+	 N2znVb6+Nw+vmeaZl+nMgu0owQDAgr+5DaN49jhV8j22NoPIkhmIMTTMofMhYell/e
+	 ReYtTk5PNKoBXB+W/Jds/GnthHUuDkwvBz5wTKmYz9yPN9Hnpc/27Rseyz6KRVtDSV
+	 lSM7prZIWZ8vQ==
+Date: Tue, 10 Dec 2024 16:55:06 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	linux-kernel@vger.kernel.org, Krzysztof Wilczynski <kw@linux.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Will Deacon <will@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+	Saravana Kannan <saravanak@google.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-rpi-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
+	linux-pci@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v5 04/10] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <173387130632.752894.7048832305370106368.robh@kernel.org>
+References: <cover.1733136811.git.andrea.porta@suse.com>
+ <99c23bd584d7b1b998d2cafb7807e0650db73f20.1733136811.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241210130913.3615205-1-joe@pf.is.s.u-tokyo.ac.jp>
-References: <20241210130913.3615205-1-joe@pf.is.s.u-tokyo.ac.jp>
-Subject: Re: [PATCH] clk: fix an OF node reference leak in of_clk_get_parent_name()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-To: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, mturquette@baylibre.com
-Date: Tue, 10 Dec 2024 14:54:13 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <99c23bd584d7b1b998d2cafb7807e0650db73f20.1733136811.git.andrea.porta@suse.com>
 
-Quoting Joe Hattori (2024-12-10 05:09:12)
-> Current implementation of of_clk_get_parent_name() leaks an OF node
-> reference on error path. Add a of_node_put() call before returning an
-> error.
->=20
-> This bug was found by an experimental static analysis tool that I am
-> developing.
->=20
-> Fixes: 8da411cc1964 ("clk: let of_clk_get_parent_name() fail for invalid =
-clock-indices")
-> Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+
+On Mon, 02 Dec 2024 12:19:28 +0100, Andrea della Porta wrote:
+> The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> schema is intended as minimal support for the clock generator and
+> gpio controller peripherals which are accessible through BAR1.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 > ---
+>  .../devicetree/bindings/misc/pci1de4,1.yaml   | 73 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 74 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> 
 
-Applied to clk-next
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
