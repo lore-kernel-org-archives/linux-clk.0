@@ -1,93 +1,77 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFC340BE0;
-	Tue, 10 Dec 2024 01:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61AE70821;
+	Tue, 10 Dec 2024 01:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733794230; cv=none; b=HT/RphVBZv1yiuwdEzpqysbzjyhgRDt8PuLAoS1ePDBIddpdG6n3VgEOVCbaBVP3Sr0gMMlY/WRYS5hrhNsqifVQMAMe8f708WMWy1YEOkrKvWSc6Fm//9vDU6ZvJCzQRsrsIi6Etr5fhLKUxcvnY6X5g8YqeOTOVHXQqIZ8IUs=
+	t=1733794231; cv=none; b=Hbc123+OK2A6mmy5vW9fvrX/7sbbbufyYFY8iSdNxaffvzW5l6lJh1vvu+o/WJ7EPz4rpYdh4enSggl0y0xPBsfhtM8sUU+Z0XdTKeV/tkdFYdetG4sOp+Lg0xb7ciaIVQBu8MJo2dc79njiH+lk+OoGOufzHpilmEGH/WRi0N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733794230; c=relaxed/simple;
-	bh=/3/Fa996/wPp/z2tuRA7CnvQdgcWzerb8WWKan2wAvI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n/swsfgFkm2JuzYYy/lTT0HGgejeMT/pNvZyx9rMxRpoyBs9hPIBnrXNszLyxhN1H/nsMj7KJjGWCZOPIZ8ctNAH4/8jx57ajeGzEjStmubyYtlwzsJKNw2cceB2cMg4oV8YhEUenxrVADfz1jQl46TMrPhCooZSwDmaqOODpMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqUncYvN; arc=none smtp.client-ip=209.85.219.50
+	s=arc-20240116; t=1733794231; c=relaxed/simple;
+	bh=Dzs3B7MIUzasS8NT6pMEAG53wjk3aUUcR96wcHK22Hc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sf9wb8yn7y+RQGDemdbFmHyFHQZGtbULPP0m6y6Hd5AUGLjLB6hAeShLYFu+Uu2hXQqBCPgtUV5CROtFWHBZ1mIjE5UjyH9/l2ki3c+lAQyOzDwlM852zzO8+ySf9r7m+qrEPZgx38X+KFTlEylM5NIGHGxbfHHrXGgjWwUIczY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl+35DYE; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqUncYvN"
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6d8f1505045so23813036d6.1;
-        Mon, 09 Dec 2024 17:30:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jl+35DYE"
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d87ab49423so49438976d6.0;
+        Mon, 09 Dec 2024 17:30:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733794225; x=1734399025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLptFqAMCqePRuk20SWKFsGYRWkZDJ2kBARfQHLQM5A=;
-        b=XqUncYvNXnbJ1GrK19YSiN/olUbVDddX3Txyhz5qhe5rngOSkRbwGoGNjB27U9F24G
-         e/RGB7k8urp0JcO3OEZn8GgjN1pwwv3YNcs/KVVr2Mqe2ogbWH0sRF1TQS7PM0zPCwDD
-         gLi8p8PhrT9z4WKo3HSC7NOyY2TIWbY16uC2QyLMLQOTHyhkHf91GKBJv4SlbHV/vH3E
-         RFSDbvfg+L2jI5Ah0hEFLLLXD8ClBEjq0Z08r/mnw/fC6acnr7o72+uP+hZUHxwxprtk
-         nUOZumug84AC7H2EQaRWTgoYXROeWfOIR2Ds4dd1uOpEi1Bd+yF6AkTQ3GaH4az5htEG
-         c3bA==
+        d=gmail.com; s=20230601; t=1733794228; x=1734399028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZbMZ1XEGG9+iR89acIoDRWlRdmkKPe5qHYKAcY8LBOk=;
+        b=Jl+35DYEfVogm58CPyz4HUdFoeeovtj0hJgIAbi0VKU/TnS0nke2YVhQrN5daU2j1d
+         cqnrvFYG3fKuH9MNLqwHcWMXbt5N9HBL06dyEMQCF0nc1qS4AXn+6kyXEkK6l35mn5yZ
+         cg3Qf8LlwOedF+0chwR6xICTHd8YQk4VENe6VxUz3YZFylakUo+uaWjt9v3A4roMoICq
+         gK05EjWBKt6Vpu4OLqzhHUrHHe6Tp2yXJ5kOG3o7ddwZD2iJWvjzuxc4p/qy5bh8IWE9
+         24lfVpPGxzcYOAP3IdrBgde6dSaPV00jpxltD1HkzwqyZRlaW1zWy7acJV5EbLj6+9jq
+         vvlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733794225; x=1734399025;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yLptFqAMCqePRuk20SWKFsGYRWkZDJ2kBARfQHLQM5A=;
-        b=DWBkyY1uWwHE7UVOINgumdMMgct96RYA3I/5SjJEb390VEc5yKPYYvkL7LCCHm/vda
-         ULTtr5wPOF2UNN7E/cnNdncpLlmfWjChvHB4dmdqnWGvmBnWB1L2f2f5pN3USCA07BuI
-         MHuePemXUZqy9dHUVl83aCKpnqixZfI02+VVkV8h5plHQnRJV4qEetEycxu866iURXw1
-         a6y0z/pTMOkwzseKJlYH5GZSIcoQ5qxzPtxFMgp9Yc+/NO6AUgZw0BdrHp1NA/2U3f5C
-         E8z7g6PZb30AKHyX/Q5r5vZ7RuKNCNZGXDwT89PSxSGfmqSfRehigVZcvu8XBbsQEIhP
-         UJYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU60+7dkq/Dz9qZC1Ra1I9U3AzFAurf5s3MtQLmztU1n9DK0N+9N+0xkMuxa1gyDocW5CnZglscLp9YvvD+@vger.kernel.org, AJvYcCUERru12nk433xTZtVJNYJ9epr6yU5ymVeNSkYVIfzXIABNUEadoFS058EzK9EzhwrrtLHZkbJ/M/Q=@vger.kernel.org, AJvYcCUxTGHYyAL0ngtUlGm1Dcrww7ZP/7oDfmJd1mHLhPovd11WbwbOzlogyE7n9MG2wcxxfv7sokiSrbT/@vger.kernel.org, AJvYcCWIbSgnLIit3lnwlwDetjxbvKoCdT8fYMepwdKkdgJEG4Tsu3knqEonjGJuUOFFFraOFqktcx0EB6L0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzITfK3oZGMmosYpY/6rHjWUY+47+KNFomrfRTwz4hlHaiP/cYz
-	YOuHy1+NVRjDpWQe0I/rEKXFYl/DkTlVolaYSdSbvZDuwLKidPFeQRs8iqHE
-X-Gm-Gg: ASbGnct7KsWWX4Q7qBORoRhQAZ4sKbP8dlAhlGZkZeqokLeZVuu+BE/C6UPaN/Shl8J
-	JQ0gqERlBi1NYvhjGZ1HglfC2ohh6FYKPPjy3TAWboUN/jiCOve1+s7T3fXb5EjOakbsly1Zf2v
-	kLAHeyWzQzhdn/omSvGEnSH/Eq/IzB8hOwKRIzFxWbQSmr528bjJC/h5rzHp0W40FC0KxAI6Gwd
-	ATx3U5/LlRKE+veoUakEdWVwGDnfj0XAtvHGy+bzmYNQISmhtlKlmI5BjvoJ/j3iA==
-X-Google-Smtp-Source: AGHT+IGl94+bcjaYHpUAJtAtPKM7ozTtuuRWPzM7fSjzKBKRwV5Bk+GTu1vmg7p1bUUPpYPUkPwp+Q==
-X-Received: by 2002:a05:6214:e6b:b0:6d4:1dc0:2620 with SMTP id 6a1803df08f44-6d91e4465a0mr47573006d6.40.1733794224737;
-        Mon, 09 Dec 2024 17:30:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733794228; x=1734399028;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZbMZ1XEGG9+iR89acIoDRWlRdmkKPe5qHYKAcY8LBOk=;
+        b=qI6nWCMwkeYc2jnC3B5o7l/ySeDhqNvYCt5w+Vc4iMJ5BuS1Yc8Xcp/oBCmSMu7EG9
+         dIzW2UqFKNyTbItavSjXMHTIhojWMWDlOYP2UEMOkd6/ODWqHNJBKPC9Yx3Rn76HcpIP
+         81cFvJwzmA0gwrdXTKY1zrPvTXUdY71saqdraLg71eShdqhDoEs7rCE6XZHQa92Utodn
+         NjmnUmFoPzftzgQdihzPu9kyLZFbJMBXxZrWqfBxPsxHY2qRBKpu7Ch180a8+zOmK+p/
+         LGGQFYLh3Rz77bpO6ACp5ikgMGfgZ7gmPZCslbp70cMoN7BwQGuBmXvKeUS/+jlPN0dC
+         ibvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0vE1LX2dseg+J5zsObQXkIu9nuo1l9TKBdW6O8OHQR526BlIVABdba79amMz18ZXGJ4pXeRHwgcc=@vger.kernel.org, AJvYcCXOH4diWMiKhLV6QJctv1sjBR+fmYn6MEJo1eYFIp+TXn4wpg74S/2Pyl7XZ8TOuBqOGhw/QKT1qCxZDkwm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMN5r0zqp2yJa2xzU9uh3zZubIg87H1sAzzlPInuGfptjtdy5/
+	EAGMMvaKj1WXCYIUEcWEal0q5c/eblf4NTMZiBMf2m8FWmwP3AjzKGMQSy1e
+X-Gm-Gg: ASbGncseXRyoLBVFWE8R3RVw2cwWhEnN5M8molpFbwd7lVZjEXBhkGrfbYzay8sAvAm
+	vK9PzeLf8M+T+POONFyTSnsXTIaSkeJwJvWLfCSKP0NQfpQfh0F6g2Fom+Iw46dV3nTWiGBtxGX
+	GyI2/rZ5XPQ98jIC94SMf4gMHDEBtRCoJIt/gEqCVeZ/a1P9ndOuTudTQgDqbQEZ45/n1f2ClXH
+	ijJ0JQuBT1f5e9Vn3JeNu8wDqNa6HU3V5PjpOctH5nHoyzATPnzH7m1nPJDRjBB4g==
+X-Google-Smtp-Source: AGHT+IHtWOPd4M5xIQAtOFMGvJ2WXw5oVrlCvjGb1M5Y3tJlywOZoegb0SMUWVqBgkFNZkQZZVQ7Og==
+X-Received: by 2002:a05:6214:d06:b0:6d8:850a:4d6a with SMTP id 6a1803df08f44-6d91e2d2bf2mr47042826d6.1.1733794228302;
+        Mon, 09 Dec 2024 17:30:28 -0800 (PST)
 Received: from master-x64.sparksnet ([204.111.53.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8f429a79csm36834346d6.72.2024.12.09.17.30.22
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8f429a79csm36834346d6.72.2024.12.09.17.30.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 17:30:23 -0800 (PST)
+        Mon, 09 Dec 2024 17:30:27 -0800 (PST)
 From: Peter Geis <pgwipeout@gmail.com>
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: Peter Geis <pgwipeout@gmail.com>,
-	Alex Bee <knaerzche@gmail.com>,
-	Caesar Wang <wxt@rock-chips.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Dragan Simic <dsimic@manjaro.org>,
 	Elaine Zhang <zhangqing@rock-chips.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Johan Jonker <jbx6244@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Levin Du <djw@t-chip.com.cn>,
-	Liang Chen <cl@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	shironeko <shironeko@tesaguri.club>
-Subject: [PATCH 0/6] rockchip: rk3328 fixes in preparation for usb3-phy
-Date: Tue, 10 Dec 2024 01:30:04 +0000
-Message-Id: <20241210013010.81257-1-pgwipeout@gmail.com>
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH 2/6] clk: rockchip: fix wrong clk_ref_usb3otg parent for rk3328
+Date: Tue, 10 Dec 2024 01:30:06 +0000
+Message-Id: <20241210013010.81257-3-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241210013010.81257-1-pgwipeout@gmail.com>
+References: <20241210013010.81257-1-pgwipeout@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,52 +80,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Correct the clk_ref_usb3otg parent to fix clock control for the usb3
+controller on rk3328. Verified against the rk3328 trm and usb3 clock tree
+documentation.
 
-This is a series of fixes I uncovered during my work on the next
-generation rk3328 usb3 phy driver.
+Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+---
 
-The first patch fixes the error handling of the pm-domain driver. I
-don't expect this to break anything, but it is entirely possible some
-driver code makes some bad assumptions on the fact that this has been
-broken from the very beginning.
+ drivers/clk/rockchip/clk-rk3328.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The second patch fixes the ref_usb3otg clock parent. This was preventing
-correct reclocking of the usb3 phy.
-
-The third patch fixes the ethernet alias that was accidentlly readded
-during the rk3328-roc dtsi conversion.
-
-The fourth patch fixes a race condition between power domains and clocks
-being shut off during boot, which would cause an ugly splat on rk3328
-during boot on recent kernels.
-
-The fifth patch corrects the rk3328-roc fixed regulators and power input
-map. It also cleans up the fixed regulator flags to be consistent.
-
-The sixth patch removes address aligned beats and the redundant rxpbl
-and txpbl flags from the rk3328-roc, which are unnecessary now.
-
-Please examine and test these as necessary, especially the pm-domain fix
-patch.
-
-Very Respectfully,
-Peter Geis
-
-
-Peter Geis (6):
-  pmdomain: rockchip: fix rockchip_pd_power error handling
-  clk: rockchip: fix wrong clk_ref_usb3otg parent for rk3328
-  arm64: dts: rockchip: remove ethernet alias from rk3328-roc
-  arm64: dts: rockchip: add hevc power domain clock to rk3328
-  arm64: dts: rockchip: correct rk3328-roc regulator map
-  arm64: dts: rockchip: Remove address aligned beats from rk3328-roc
-
- arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi | 27 +++++++++++---------
- arch/arm64/boot/dts/rockchip/rk3328.dtsi     |  1 +
- drivers/clk/rockchip/clk-rk3328.c            |  2 +-
- drivers/pmdomain/rockchip/pm-domains.c       |  8 ++++--
- 4 files changed, 23 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index 3bb87b27b662..cf60fcf2fa5c 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -201,7 +201,7 @@ PNAME(mux_aclk_peri_pre_p)	= { "cpll_peri",
+ 				    "gpll_peri",
+ 				    "hdmiphy_peri" };
+ PNAME(mux_ref_usb3otg_src_p)	= { "xin24m",
+-				    "clk_usb3otg_ref" };
++				    "clk_ref_usb3otg_src" };
+ PNAME(mux_xin24m_32k_p)		= { "xin24m",
+ 				    "clk_rtc32k" };
+ PNAME(mux_mac2io_src_p)		= { "clk_mac2io_src",
 -- 
 2.39.5
 
