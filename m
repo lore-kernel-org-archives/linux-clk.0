@@ -1,120 +1,90 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602E522C35B
-	for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 23:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7EB259C;
+	Wed, 11 Dec 2024 00:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733874567; cv=none; b=NOAtGdZPNzqeXGO4hOpB/MFx2BRcVxDCloDMUN82y88WXiovMjqZbfnLqWWZUn0FOiXFaiiRSynhVOND/xGah4S8+2eMtiWO05ZA5lvwn8acyGG4z1AmuEGrnZIdkdh0ZiQr0Q5ZKqYVLtL5eiTbKSjKL7p/xcn/a2zmT6LfuIw=
+	t=1733876653; cv=none; b=Inn3YhXgj9uz0dHeZklZS8TM5Fs/aXE96zEnUxwpP3x0An3TRki6XSiQYDgj9mqi1FxIDlYqwfM477avJROEZxMrpAyrC6J7159FrLjiTLyUNx/Gvk8OmL2upOPII6IwgeKTQaXp2gn95AFJLKIwpH5DJsp7JI+FUGAHH8tglec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733874567; c=relaxed/simple;
-	bh=kdVOR3Wklu2GB+n1WaWD3NPikmxtKRQ+RYJP3kaNy8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwieevVEohueLlqK7k3aM0hw6si+q5NxeU9eyTrDW+dGOENqy/aIHVRfjfZb0Bu4u8cMqwhWzlHwJFQjIS9BcrNDkbMfwruvkIdPp7QjWOBH4u1h7/n4wJoZJy/AZQaS7P4gq87wiJD6y98RG2lQC4z/T/19TqowPpxVxwDTgs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aTyCii4L; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733876653; c=relaxed/simple;
+	bh=5db9h6vEYljnH4SdvZ/1gtkuSb6es2XIyXpEQw0tmcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X8q8yH4QY/+3cSVVfO8eDYr8HevKY25IiqYY+vgzvisNsfTM4mhQNLunD6ahlSJDdBnGgewQiufAk9FJMDyT/kBVUfht1P7Wjts77gM8rdnNVUcQPL0QIX55L6qxCp3AEQmQJ/lMWY5IA0LL+4J2IJ++6ME+kliHAqq9+iJwOZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNECI96T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aTyCii4L"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d414b8af7bso3720048a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2024 15:49:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733874564; x=1734479364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w0Bi83nwvzBHW9htNaoYyBIkvuLS9x1PWwSOzilvAhQ=;
-        b=aTyCii4LWyoa2OHa80DLNkJS4aKIv2vO4xR9PuM8UmJ3ysF3MNmds8O+XAnDMS4POL
-         lbcnRX/Td2hFIqMLlZQxw1OIbU9KiZScj8JoVpKPrQQsxU3I1jffXDasJAibMrCy/6wF
-         fRoj/zvYlF9PzEbQHDLsb086pWeYTSeek8qMSVXYmSDOia38BOsQXPUMPvGI2yuQsbxu
-         SFrn+YY4IfNSVIiW4XD0o91QEOX+aDEZZbZvhGp49gEqnt/YeoQFErxKO9LjUJf1+atL
-         NulixXsya6sV0gVGOiJ9G2btnbq2+WUQdg9CEqi/ACl8vjN0mGMtjhmRNpLBeyp2OLhT
-         Ht7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733874564; x=1734479364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w0Bi83nwvzBHW9htNaoYyBIkvuLS9x1PWwSOzilvAhQ=;
-        b=pWlrCfWiq1tm3SRHk69M2pWuq9N3MTxy0U3zpaFGgBMdBOh2v/7BSs/KhGicNb/4Vp
-         HnXzr7nuc1Nr3iBoyceKqUwhB4b+pco3FO9t694YbOQQgxUB0ItitLXaQrlYuIZi6r1a
-         R5YsOnu2OIZqB+JlpX+Pkqh6km0gqDyj1pK7i2X0GG/793rfoNA8crM1pCr9QgpTxW/u
-         yCUG9w5swQgVXli3E2ndYsK1G9WyEuO5eVX+uBxD8JrTC94roTmEsHNkuXP44DYSmiLa
-         LTTL6I6nFQ91ATa6UQyKjMUQ6FHZL9JTEzGzrspdYb46NbN2D3034zcHEsae8xZmFC6G
-         2kgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpa/lnbwvpv++hgx998dC4m4EeUusIImKMX/ZoiioOq4khvsLh2Hzdd/VkiCcajItZtw+H8T4VBG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaeOlMvxgizyWRLExwUgV0AUvmQNsw/UVEvyU3dD6rCMgvO+vH
-	00moDrmo/tZNR2MoOU4Oy0xW+Lw+z/Dsr0ehdRIAkCuoupJ1AuiA/ElYwUo92Mg=
-X-Gm-Gg: ASbGnctC657CtMD1tUaB1kPuuNUsp/gYvTIxOcxSzoD1CCBnchbRxMBIzZBNBbU1UR1
-	xK194STNhU8yhCBosAFLGBFNHo/WgMQ3ba2QzXdNmq6SxoNXOGvICWfCMmdk5lW1sQhvddkUhpp
-	XhpSpGsOjZVSTGcoE9rxkYMkcDVGxJgx4EvacR7deuxjuhME5r/5HKqqJ1Q8/pUyP1EE5I1N1FA
-	bOwYokaE5BPA50sJI1m5pdQNfe4n2vsdz5d4InSiDEhR5280bVhYLamXs0OZj8kcUs=
-X-Google-Smtp-Source: AGHT+IH3jF2Z/UsyE2JcokH/TitWFHL68lwzNBprD9TUestO/ngKH+QJQZekruekHvuCtiR3BRVDbA==
-X-Received: by 2002:a05:6402:5305:b0:5d2:723c:a568 with SMTP id 4fb4d7f45d1cf-5d433094803mr714069a12.10.1733874563797;
-        Tue, 10 Dec 2024 15:49:23 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ee6ddf5dsm4755794a12.86.2024.12.10.15.49.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 15:49:22 -0800 (PST)
-Message-ID: <fe8dbb4e-9d0e-4ecf-874b-be9225ae1487@linaro.org>
-Date: Tue, 10 Dec 2024 23:49:20 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNECI96T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C09C4CED6;
+	Wed, 11 Dec 2024 00:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733876653;
+	bh=5db9h6vEYljnH4SdvZ/1gtkuSb6es2XIyXpEQw0tmcI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gNECI96TdAa//mtsHM2Lh34XqPUdaoz2Gakb24BH4EXFbCWb5Ve+hxJaXKU1VtCYY
+	 RipJdgsN6oGju2zUuvthVP1BwPLQnjg6HFlSQf00NjQOiU4wjWedA73aVSGD0EvX8F
+	 bx/E6keRXdVTeaqfUFyvL+H40KBw6U+B8aHkM6cftfmAV5VuurQtVf25nyZUXjKGtY
+	 o1owOLFds0ZxdXZxzSJY2OXqwb01sS/VbouNobBlx680sW+8pzbg8J+Js17hPnsSkY
+	 +a15X1DYcN15uHDm3m1q7P2fdcyTyzfsuw8JNHjT5two+NcQxIhH9zfvuFAaUFJpl/
+	 7QfPxAeFxLNzA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.13-rc2
+Date: Tue, 10 Dec 2024 16:24:11 -0800
+Message-ID: <20241211002412.449222-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/5] arm64: dts: qcom: sdm670: add camss and cci
-To: Richard Acayan <mailingradian@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20241210233534.614520-7-mailingradian@gmail.com>
- <20241210233534.614520-12-mailingradian@gmail.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241210233534.614520-12-mailingradian@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/12/2024 23:35, Richard Acayan wrote:
-> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-> +				 <&gcc GCC_CAMERA_AXI_CLK>,
-> +				 <&camcc CAM_CC_SOC_AHB_CLK>,
-> +				 <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
-> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
-> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
-> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>;
-> +			clock-names = "gcc_camera_ahb",
-> +				      "gcc_camera_axi",
-> +				      "soc_ahb",
-> +				      "camnoc_axi",
-> +				      "cpas_ahb",
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-I think you sorted the regs, interrupts but forgot the clocks ?
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
----
-bod
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 52fd1709e41d3a85b48bcfe2404a024ebaf30c3b:
+
+  clk: en7523: Initialize num before accessing hws in en7523_register_clocks() (2024-12-03 14:54:12 -0800)
+
+----------------------------------------------------------------
+Two reverts and two EN7581 driver fixes:
+
+ - Revert the attempt to make CLK_GET_RATE_NOCACHE flag work in
+   clk_set_rate() because it led to problems with the Qualcomm CPUFreq
+   driver
+ - Revert Amlogic reset driver back to the initial implementation. This
+   broke probe of the audio subsystem on axg based platforms and also
+   had compilation problems. We'll try again next time.
+ - Fix a clk frequency and fix array bounds runtime checks in the Airoha
+   EN7581 driver
+
+----------------------------------------------------------------
+Christian Marangi (1):
+      clk: en7523: Fix wrong BUS clock for EN7581
+
+Haoyu Li (1):
+      clk: en7523: Initialize num before accessing hws in en7523_register_clocks()
+
+Jerome Brunet (1):
+      clk: amlogic: axg-audio: revert reset implementation
+
+Johan Hovold (1):
+      Revert "clk: Fix invalid execution of clk_set_rate"
+
+ drivers/clk/clk-en7523.c      |   9 ++--
+ drivers/clk/clk.c             |   2 +-
+ drivers/clk/meson/Kconfig     |   2 +-
+ drivers/clk/meson/axg-audio.c | 109 ++++++++++++++++++++++++++++++++++++++----
+ 4 files changed, 107 insertions(+), 15 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
