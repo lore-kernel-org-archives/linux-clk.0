@@ -1,63 +1,63 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C79229149
-	for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 13:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5911494CC
+	for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 14:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733925209; cv=none; b=f9ZidHlX43LdOK0IsANvehlOyNSy8S/XEnMigjCZS+JAL7io30zrw82vjcmWciEkf7D2EC6FehuYrZihBIfETRrWZtCPBl4jpOd43QE0vKtbkFNYVJDMidfeVtqtev8OQnxjcYeG880WS5KR5q1e29Y3cmahT3N5cyyctJjGOkg=
+	t=1733928852; cv=none; b=TMQ/kMOG0K46OENl1vjfTC6dgNChXrgeyr8zYAxzB9zrAbon3IAsGNVYf+Pv2SwehagJ5tPFKzvvxZRD7Pp6GDdrSxGJFodTpMr0W3aWDvH2uvqPk73EQVg9hVwqjPBOfL5czFA0w8opkjKESNsQK6Bk9T7rmYTdtFf10FhJUu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733925209; c=relaxed/simple;
-	bh=YSdh0Mm0FonlMgaa3imnf9PPReZOary7MqBo29RKeZI=;
+	s=arc-20240116; t=1733928852; c=relaxed/simple;
+	bh=TA26KGjfUYtHcpviYZWDnnwFJwB1nA6T2oAA/scN6hU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPhdqLhNWo1KMiB9q6R06E1ziz+CBlkgvi0tZOXZvQ9p53GBNtB6ow+qd9Z8wPwEeXK0OEk7Y48AMuebhL6ZOnTy1qKRljYtl2BsFuE49+fgqcThbFDsEfOA7CN9j70boa5Shtrk5TW0mzFngz8De8rTC7lHqB6+dpKn23G77uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=We7Ro6Qp; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	 In-Reply-To:Content-Type; b=dNsrRS5AkXHbcf3wzmVDUPRK3N9HImPyL+DMoELpf/yPYunja9HD1RyJYLz/Z9HSI7GMjpdhI5+lzI5+a2xh5fhm6n/BJZvHmgGGt1nfUvZ8kLIq3bTYUw+L5UQLLmsB1mYKTUe1iqflCvcU7eRlLqfhEn2nrr7hnnolgxfljsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nTcLD1z/; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="We7Ro6Qp"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa69077b93fso470424266b.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 05:53:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nTcLD1z/"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa69077b93fso481095166b.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 06:54:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733925205; x=1734530005; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1733928849; x=1734533649; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2JAQ94DgwmZTsFqQuFhEr5XjtlJo5Liq/MWFSbEP7oQ=;
-        b=We7Ro6QpXdFqx1EZCLNk/BGMGe7KhGl6PAlNriTd27U4td+pcYwIjAR39eWjr3fQV3
-         hbwqiaKicF/joN8+62DAYg8Wf9/MURxT8V6z8bGdUlL0iV0Y0xNXupuRo9OjB3QYbfXB
-         csYSDW2tU10Y1v8TLomFlX/NG62h5wyDlxRXMB8/GWwUj6vIlZrublRxbyO8JQNTZs1M
-         OcPBeDjVKdSmVLyG3jFTn0n0XIj0HAlr/ZL0YbhyX4t0B5HGjOtgCwRfE8wv4qfhgf1p
-         XHhWsm3/GVeyw5+QUaPsEKGZ4IfFzeXu8dZNVG5Z9qY2DOR51vj1yLn1M/mVxfIyXI4X
-         sg9A==
+        bh=3ktlO6czYcyYSCmYggj2K8QrV0XdcUJX5mHC3XGXDtU=;
+        b=nTcLD1z/hx6Mz0dpJu78nxwyu9yUzZLsjYihxO0rpUMK8albX8aKyeh+/yHyxHGeAH
+         EknDZiMcTt/XD0iR/35YWwntvbRDxMM0veWkpw2yj6g2G0Omr83w14ktMuN6Kx/rimRP
+         0dqNXx32rCFLwuX2pH9dxIzpl8ovmFikn/WncVpVReWp6J2SdBaFQh/CZJoCZhaBvMYL
+         WnwBHPF/TvtLEHJBomfGcDMXmH0EEGcYiMmrfNnMDsCFqLkYlBtXnCMGHlQIu+7LbKwY
+         HkxM7W2yOQtCP6OMQhFN2SzXpkUuuzIhQniLB9Wp44Ecl5Ef1avkf1MUb/+H0+7U/uj1
+         GnVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733925205; x=1734530005;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733928849; x=1734533649;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2JAQ94DgwmZTsFqQuFhEr5XjtlJo5Liq/MWFSbEP7oQ=;
-        b=tiL5D2BIOb3bqcvphnX1PaajYoGugdoU11jhhQzpIe+otl2Cfg9Yy38aA6Du+6mHu2
-         8C6s23mWgNZd49kQ+jD9hG2tAznVtdFYMj1JErAQTtRqRj46TNUR66/rAIfeGZI82roq
-         kunV6/k2scj0JDawXeJR95SmHlfSbeSqFmsf6Mfs3tTO/mblyyij4fag3zRkKjuw+DSV
-         qBwSDGsAqeXiGXcLJDwnfxsi2qxr96Mx7cLpNKL3xuvxur15WoDYhW54TNFtxX3+S5M5
-         decXDzl9nBjEOIJHQyvetT25r+SxCKBjV7bUSpVOrwXSWf/PtSJw98SjkSDAwxluuJ//
-         jbLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDhSlDqPjemS1lAk07Lu4GCb6SXA+H+Tg+Ds3CViDG7RKI5ql7BE5lX3ZAoQ4TNVsKaz5PUG3G6ZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7smBNd6OkByxSPNzS3t1zoGb1f7DzEQNp0+zH2CqRSYBbioGs
-	g/JDz7a/0BoHzUc0ToKnC+IQoW+iPygXo4mmO5Sb3Epw2AIVPJ6D4g52WpsXWG4=
-X-Gm-Gg: ASbGncu6imJ4sQn6PX/wQMzrEVKPrWMdk9+iKL1TsaR28IkztxgqaGnhr3xPlzHGnUc
-	mZMHpjJBMbae2izDS7w+bTb/JsL6ZeIrKKeFRP3A9EamElWPJW5krguAENIdQsGz3o1V6AhtHDi
-	bEtlj3jwSisZbkc6gdQ67VnrGrniQzNjwjZnDmA4HCHO39lN7MurvwCkXN2pRfzzDLDoeZtYw8J
-	xWLrIMeMnYYjzZwP0XiMIvGePHR3KUZ485beDnWVTzRBiSHk0QC1y5zBV+mljc=
-X-Google-Smtp-Source: AGHT+IHhR+q/yjOR8fMgpp+HvsWmN+ncd/5Lo5Mk+pkPGE0cvah/TqVw4ZywcOYOxY2cukLaXrgmug==
-X-Received: by 2002:a17:906:b3a1:b0:aa6:75e1:186c with SMTP id a640c23a62f3a-aa6b1505cf0mr213318566b.50.1733925205362;
-        Wed, 11 Dec 2024 05:53:25 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa653d1df95sm682900766b.98.2024.12.11.05.53.23
+        bh=3ktlO6czYcyYSCmYggj2K8QrV0XdcUJX5mHC3XGXDtU=;
+        b=rAm7rEgCjiEoOYnOEHO64EY1VHXuuDzcVeFsjsKBOnGkGShqKGaIp7aUoRsLy7r1t9
+         fDqeSwTM9vR16fQVQYlgXo0wRbxvPE0rFYJc4ZUU4XnxVMC9CvicoX6/wpwFayd3+SkX
+         0LD0efNO4ysl0AGhj7JCQZ07MLaMMF1lXggWjj2wJMkWcNm94s9fw2DjTdn4iVlC3aT9
+         zQlviRtuBQ74raVUHdfcGN0DdELjxVhLJd45eZJ4rrjoTukasVCRILRjEc3ha+BMsgqo
+         FWOUPiAlEGg5SGXLln6YKOjTxfBpcqGvvi0h/5AstJwNcEPG3Yzmy4rSOuc4cM+ZeNS4
+         ch5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXlotSacgRmmhUqKrVnB8vpclgX7M2Nr60J2PIK7Myxl2PpGF3GgIAO2RryyypXjDyEXne5fsFqwWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE2WiQJFQIkVCuNz5OuGZPOEk0voXcwp/pVlttao62zSXUaOot
+	O+0gL1jVpE6ISBAcZHAf5CWzVEuMf9G8ZYnYJevEvUQ1D7Gx4B7Iaabdtms0JIA=
+X-Gm-Gg: ASbGncsEUSWG42rvjbacFTFV8JAqZmkGd332proATjTYs7uanYvcPljX5yRqCzrFMfq
+	aGQxHv5zseloxYI/rcGadCHUHbgn5kNgBW475wiF/w/T5FdYMbsC0nLxaKm2qx5qQuqW0Q2AGeW
+	IZRZ1FViNUovqXpFtMZ7qAQdIrQNLUQF1Ky1LrYhUTyoVoMfUfkAspbBBw871lYXh0/eYoDK9+K
+	ccVpiBZQlLQR5gG3nGG9Fnzd7AdkONiFY3EBezmr8IUQ3hOTQJXKP/KEPONg0tDgrs=
+X-Google-Smtp-Source: AGHT+IExrTQgcrzFJ0AioGe6gUTXc8SXmmdedfxuT1544kYxd1QbVPq7wj4wcyNV0DI4WQLs6/DGMw==
+X-Received: by 2002:a17:907:82a7:b0:aa6:9ee2:f4c9 with SMTP id a640c23a62f3a-aa6c1ae752bmr8454466b.23.1733928849467;
+        Wed, 11 Dec 2024 06:54:09 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68770c4a4sm473262766b.163.2024.12.11.06.54.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 05:53:24 -0800 (PST)
-Message-ID: <5e7d316d-2e13-436d-8474-48411e2a12d9@tuxon.dev>
-Date: Wed, 11 Dec 2024 15:53:22 +0200
+        Wed, 11 Dec 2024 06:54:09 -0800 (PST)
+Message-ID: <beaf4e8a-51a5-431e-8538-269d2db94f15@linaro.org>
+Date: Wed, 11 Dec 2024 14:54:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,58 +65,42 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/15] arm64: dts: renesas: r9a08g045: Add ADC node
+Subject: Re: [PATCH v7 2/3] clk: qcom: common: Add support for power-domain
+ attachment
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-0-7e302fd09488@linaro.org>
+ <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-2-7e302fd09488@linaro.org>
+ <fca39cde-b9c8-4f1d-a4d0-92a1d739b57f@linaro.org>
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
- <20241206111337.726244-15-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVMQr9RhG7v32vQeSrepmdh2VdzzwF5obJUpdGNotGV7Q@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVMQr9RhG7v32vQeSrepmdh2VdzzwF5obJUpdGNotGV7Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <fca39cde-b9c8-4f1d-a4d0-92a1d739b57f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+On 11/12/2024 13:36, Vladimir Zapolskiy wrote:
+>> +    struct dev_pm_domain_attach_data pd_data = {
+>> +        .pd_names = 0,
+>> +        .num_pd_names = 0,
+>> +    };
+> 
+> Please remove the added local variable.
+> 
+>>       cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+>>       if (!cc)
+>>           return -ENOMEM;
+>> +    ret = devm_pm_domain_attach_list(dev, &pd_data, &cc->pd_list);
+> 
+> Please simplify it to
+> 
+>      ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
 
-On 11.12.2024 15:27, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Dec 6, 2024 at 12:14 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Add the device tree node for the ADC IP available on the Renesas RZ/G3S
->> SoC.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
->> @@ -87,6 +87,59 @@ rtc: rtc@1004ec00 {
->>                         status = "disabled";
->>                 };
->>
->> +               adc: adc@10058000 {
->> +                       compatible = "renesas,r9a08g045-adc";
->> +                       reg = <0 0x10058000 0 0x400>;
-> 
-> Table 5.1 ("Detailed Address Space") says the size is 4 KiB.
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.14, with the above fixed.
+My apologies, I cherry-picked the wrong version of this patch from my 
+working tree to my b4/send tree.
 
-Thank you!
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+---
+bod
