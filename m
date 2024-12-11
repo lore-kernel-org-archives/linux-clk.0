@@ -1,39 +1,40 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0AC1DE884;
-	Wed, 11 Dec 2024 17:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407DC1DE4D4;
+	Wed, 11 Dec 2024 17:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936409; cv=none; b=VWF/rI3z99c7UCod2pwpBj5kinuZKnDx21rntbafgdxM7Id8BWqosDgUuWQLleiI1xgOASjYnmGyrxFenG//13b+frvG5Uf2Q/5NNL/Ks2x546TXl9lxv34k2KdlwBqFovI8HmAHsYGmSpK99eVugzlcOmwJasx2jk3ar+I5Gvc=
+	t=1733936409; cv=none; b=fuc+FBgLbe3RRRcdrH7DFdy9EnEMcYRkkzXL7/gjbqPdUvwV5AkDpdJ26WLFzGphtHiXzoXgnZBF/Dscuq+FuiO5MXpFUkfNOhSUc2uy2/WDmp2d+nWcUuvrtRz5rXWvsChSlkh9x4RYlyTqoIaFHFH6TxO82gvDa0mTxokGF7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733936409; c=relaxed/simple;
-	bh=bwaO47C/VDBLli4uK24DxQvuVZGRCzTeS8I7FFz++X4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o0+dW4Tpw3wFZjZZJoI7L3EhFwn4Az3h1dMPgBzlQR0yzTdzN28XThfsBAvJtgPazbpM6Vts1CNAH1/xGTewLEW7ptGPT6/xFiVjF2hojFuIldsoghCjeRcsggreocqu4hIb7d4qOqlRC2XXEGFY3l4nbyAz7KLd+T1Rmd+BEn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EKkSP7CA; arc=none smtp.client-ip=148.251.105.195
+	bh=wscIrGbAnnlwwmBenRu9NQ9zTdMnj0cQssdU+EELuq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YA3IBswnh2tk7YdLtAPglfmZDM5/eKU/Jfx3hs3iLZjw0m4N9TZpUIO3cBlCwfXlLRDbKV4mpG25SAiIYLWuzQVGq7egOkbsbGtTRrTrW25FaSjAyQDs0vEgW5fR37jUPnI7VJRD8DEITE8c+xAr+Y+uYr+SChXLcwk12j5lte4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YaSvZPCD; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EKkSP7CA"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YaSvZPCD"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1733936399;
-	bh=bwaO47C/VDBLli4uK24DxQvuVZGRCzTeS8I7FFz++X4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EKkSP7CAyFZKwzhXEbg0pgRDCzeqdyuvFiLTmVXdKCmf3bR63zLQUnJ860nLD9I/f
-	 BOq9XGgi4apIRWVOoh1nVfQzLdZcXTiKxyyGm2C7Gmq7GaQDPubYAMI057Ur/rTiim
-	 NUWn4uDhgtX93QlKY8YtaguOwcHfujvGO45A/V6Kye5L72r4ZqlxDeGcHHzWOtf5fU
-	 4ubxYQjv0+ee9hgJuqnXfTTlrgyKsb6cb/CPIb72yMfpxIMJvxGw67q33Vydx5JjDK
-	 t8zsVkq3/ArjdP9CqV5F83kipesJpXeIyditY5RKMuK1kqKVk7f7QgXPX+LcB9ph0g
-	 gE3NoqwgAr4Mw==
+	bh=wscIrGbAnnlwwmBenRu9NQ9zTdMnj0cQssdU+EELuq0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YaSvZPCDh5d+JN8T+LubgKK74yeYa41ieMmqcGrTVsh0ZwK7WQrBmR8aCGpcXcxR1
+	 ux+TEGkptFixBYg3M0Q35YMMJy3AgRTJ/gHwOnPzjhE0bKT8ASiro+jeddUO84QdbR
+	 s/85Guq08/kaK1UUTRLOpEKlgCjwwxyZK9/vS7rjt2PDk50jJXQW6/aKtp46f/k9bk
+	 mlGhKJ9zsNHAd3fjXuJrhzBuM0ROHyCiTzgeuKrtBaAgXxBCduQDAXucr6RM8NQGne
+	 hs/KVoDA14xqNVLCk+Xag2YtIPOIDgsNzPQJMJN3/NnobfBfMmC7ppgEajPNF66ToO
+	 nrE0oMaN0myug==
 Received: from jupiter.universe (dyndsl-091-248-215-089.ewe-ip-backbone.de [91.248.215.89])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2E6CD17E37C2;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2D90017E37C0;
 	Wed, 11 Dec 2024 17:59:59 +0100 (CET)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 78C0E48CC8A; Wed, 11 Dec 2024 17:59:58 +0100 (CET)
+	id 7E6FA48CC8D; Wed, 11 Dec 2024 17:59:58 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Heiko Stuebner <heiko@sntech.de>,
 	linux-clk@vger.kernel.org
@@ -53,10 +54,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-rockchip@lists.infradead.org,
 	Sebastian Reichel <sebastian.reichel@collabora.com>,
 	kernel@collabora.com
-Subject: [PATCH v12 0/5] rockchip: clk: add GATE_LINK support
-Date: Wed, 11 Dec 2024 17:58:49 +0100
-Message-ID: <20241211165957.94922-1-sebastian.reichel@collabora.com>
+Subject: [PATCH v12 3/5] clk: rockchip: expose rockchip_clk_set_lookup
+Date: Wed, 11 Dec 2024 17:58:52 +0100
+Message-ID: <20241211165957.94922-4-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241211165957.94922-1-sebastian.reichel@collabora.com>
+References: <20241211165957.94922-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,68 +68,93 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Move rockchip_clk_add_lookup to clk.h, so that it can be used
+by sub-devices with their own driver. These might also have to
+do a lookup, so rename the function to rockchip_clk_set_lookup
+and add a matching rockchip_clk_get_lookup.
 
-This implements proper GATE_LINK support following the suggestion from Stephen
-Boyd to use clk PM operations by creating MFD dynamically. This required some
-restructuring, since CLK_OF_DECLARE() is called before devices are available.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ drivers/clk/rockchip/clk.c | 14 ++++----------
+ drivers/clk/rockchip/clk.h | 12 ++++++++++++
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
-Apart from improved power consumption, this fixes the runtime errors from the
-pmdomain driver (failed to set idle on domain '%s'). Last but not least it is
-a first step towards reducing usage of CLK_OF_DECLARE_DRIVER() registered
-clocks, which should only be used for early clocks needed for the system
-timer (see this talk from LPC: https://www.youtube.com/watch?v=dofbbVuIAPk ).
-
-Changes since PATCHv11:
- * https://lore.kernel.org/all/20241024181621.210509-1-sebastian.reichel@collabora.com/
- * rebase to v6.13-rc1 based for-next branch from Heiko
-   - no changes needed, so v12 is more or less a resend of v11
-
-Changes since PATCHv10:
- * https://lore.kernel.org/linux-rockchip/20240913184720.57381-1-sebastian.reichel@collabora.com/
- * rebased to v6.12-rc1
- * make struct platform_driver static
-
-Changes since PATCHv9:
- * https://lore.kernel.org/linux-rockchip/20240325193609.237182-1-sebastian.reichel@collabora.com/
- * drop patches 1 & 5 (merged)
- * keep reporting ENOENT for missing clocks after CRU has been fully initialized
- * drop module remove support for the linked gate clock driver
-
-Changes since PATCHv8:
- * https://lore.kernel.org/linux-rockchip/20240126182919.48402-1-sebastian.reichel@collabora.com/
- * rebased to v6.9-rc1
- * dropped all merged patches (i.e. all but the last one)
- * rewrote and split the final patch
-   - should be easier to review
-   - properly calls pm_clk_suspend/pm_clk_resume
-   - now works on Orange Pi
-
-Changes since PATCHv7:
- * https://lore.kernel.org/all/20231213185114.47565-1-sebastian.reichel@collabora.com/
- * rebased to v6.8-rc1
- * Collected Reviewed-by/Acked-by from Krzysztof Kozlowski for DT binding patches
- * support nr_clk=0 in rockchip_clk_find_max_clk_id() for smatch
-
-Greetings,
-
--- Sebstian
-
-Sebastian Reichel (5):
-  clk: rockchip: support clocks registered late
-  clk: rockchip: rk3588: register GATE_LINK later
-  clk: rockchip: expose rockchip_clk_set_lookup
-  clk: rockchip: implement linked gate clock support
-  clk: rockchip: rk3588: drop RK3588_LINKED_CLK
-
- drivers/clk/rockchip/Makefile     |   1 +
- drivers/clk/rockchip/clk-rk3588.c | 116 ++++++++++++++++++------------
- drivers/clk/rockchip/clk.c        | 101 ++++++++++++++++++++++----
- drivers/clk/rockchip/clk.h        |  40 +++++++++++
- drivers/clk/rockchip/gate-link.c  |  85 ++++++++++++++++++++++
- 5 files changed, 285 insertions(+), 58 deletions(-)
- create mode 100644 drivers/clk/rockchip/gate-link.c
-
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 45214607467e..90eb651f1425 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -197,12 +197,6 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
+ 	clk_fractional_divider_general_approximation(hw, rate, parent_rate, m, n);
+ }
+ 
+-static void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
+-				    struct clk *clk, unsigned int id)
+-{
+-	ctx->clk_data.clks[id] = clk;
+-}
+-
+ static struct clk *rockchip_clk_register_frac_branch(
+ 		struct rockchip_clk_provider *ctx, const char *name,
+ 		const char *const *parent_names, u8 num_parents,
+@@ -292,7 +286,7 @@ static struct clk *rockchip_clk_register_frac_branch(
+ 			return mux_clk;
+ 		}
+ 
+-		rockchip_clk_add_lookup(ctx, mux_clk, child->id);
++		rockchip_clk_set_lookup(ctx, mux_clk, child->id);
+ 
+ 		/* notifier on the fraction divider to catch rate changes */
+ 		if (frac->mux_frac_idx >= 0) {
+@@ -451,7 +445,7 @@ void rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
+ 			continue;
+ 		}
+ 
+-		rockchip_clk_add_lookup(ctx, clk, list->id);
++		rockchip_clk_set_lookup(ctx, clk, list->id);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_plls);
+@@ -613,7 +607,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
+ 			continue;
+ 		}
+ 
+-		rockchip_clk_add_lookup(ctx, clk, list->id);
++		rockchip_clk_set_lookup(ctx, clk, list->id);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_branches);
+@@ -637,7 +631,7 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 		return;
+ 	}
+ 
+-	rockchip_clk_add_lookup(ctx, clk, lookup_id);
++	rockchip_clk_set_lookup(ctx, clk, lookup_id);
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk);
+ 
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 4c6e2c931f8e..d9e071ca9c5d 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -1022,6 +1022,18 @@ struct rockchip_clk_branch {
+ #define SGRF_GATE(_id, cname, pname)				\
+ 		FACTOR(_id, cname, pname, 0, 1, 1)
+ 
++static inline struct clk *rockchip_clk_get_lookup(struct rockchip_clk_provider *ctx,
++						  unsigned int id)
++{
++	return ctx->clk_data.clks[id];
++}
++
++static inline void rockchip_clk_set_lookup(struct rockchip_clk_provider *ctx,
++					   struct clk *clk, unsigned int id)
++{
++	ctx->clk_data.clks[id] = clk;
++}
++
+ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+ 			void __iomem *base, unsigned long nr_clks);
+ struct rockchip_clk_provider *rockchip_clk_init_early(struct device_node *np,
 -- 
 2.45.2
 
