@@ -1,134 +1,116 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A9C1D5CFB;
-	Wed, 11 Dec 2024 08:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8E27080E;
+	Wed, 11 Dec 2024 10:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733905001; cv=none; b=JIy8/QsOtcV9Rl+n2zW1afwUc87gR0Zs6ltoANnTDedyO9bkwC4xswVddtaNN4o1g9HSnsNB+8yLNzAMVkZIZqgzBe+XIqYcqb5wcpJyZcvwCy+yJBDoaqPHxtBznA6EkB03GYCLSrUyL/XjNkPAbkTjKQlLQewg02yQ6ayzSh8=
+	t=1733913123; cv=none; b=bx6LGFKvZuivONK8doms0R2m7AZ/hUiFCcMFEqNn8Bm9rlnFihOW4MjIntCUJcuUsYYIEWOSfe//ryu2grV5a8zh86mN+D2mEp2lEmdMcYj1Jc5Dcko0mj0G6NgWBW/e1MioCUwQriKvmGmoftcuKni/aKxddSBTy7NBaqpg+/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733905001; c=relaxed/simple;
-	bh=biO91JnATLAGSRO58Hw1O7G20km0aNxHEm4JoTIOAKA=;
+	s=arc-20240116; t=1733913123; c=relaxed/simple;
+	bh=vvbIMsKFGRouwxwNL2xJ+YwuGu1qOdxwhUKtu12VLrY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u9SNmVNUrSV65D371MVsRDm8ADBCJgjloACcPYKCqvrA1yQX3yqqiSxh3IT+RagiFKehTOXzX0+nO2kmNTSYVpI5WWTQSIKo7bafOnIHTHQikHu5dI2V1fa2RGoD+qt+tTiWJqoWMiZAMRcWesy4k9PJPEcgOfkAVjvKPzpjenU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+	 To:Cc:Content-Type; b=Ecfm3YIYJWpCncl/6G20d4/3aLg0SB2GNYNe8RUxDme6dsSUKGHzugNhSmq/er1U+1RW+Zsx/H8R0tWG7b3Zvtg+M1t2bVSGQDvuHhTFSfcyDbBflG+kmeVNyrI81xk9bZlVx55LTw0LlZR9fSlIG62EqtwyDpZSQZR4Xf8AjAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-51889930cb1so622147e0c.0;
-        Wed, 11 Dec 2024 00:16:38 -0800 (PST)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-518802a1e7eso1421401e0c.3;
+        Wed, 11 Dec 2024 02:32:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733904996; x=1734509796;
+        d=1e100.net; s=20230601; t=1733913119; x=1734517919;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5FY0XX7TvU9anI/w2FWrAwi4RB2/V1Am38o5HNJIjvQ=;
-        b=DGZ0ypmFUK3MuGngPGmwSnZt6zBttBqkUM5FPeLEs9qDvnwE+ZWm3uKFKPVuoIzlhR
-         stUOVlMS9G1MaVhqMihpdhB4T73Hx9zQ4J3mlHN3AgnqbzSbNavR9RMg3fWVJLAR7WpF
-         sEUlSySY2t5wqBBTuQsqBgSbjLAKK6roHdYKbN1lH7/Jv2hJkrjMsAhX8xXpu1ErEHsF
-         pp/PIxVdcbiFUNX848YP2xKBK9YPMxtlKg0uJWvfLjoYRD+b8AhwUd5A3mCydGen8evz
-         PtIhaYBExiDs0Jks1zURzTLJIcnedwxfd5ATvGP6UoMqyVHdHTAW2tCS/CaO5toT1l+S
-         sYSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIz9QDK2fuQCZQW1tse8E3gNvxMcbw+8Qf11057nWhjGn1nwDoSgvtoXc1ycwoFtf+SHFqdIHHYbmH@vger.kernel.org, AJvYcCUlYaanKgJr6wqPVIMaD6GPQM2le6mTIkWXbEOrn7jvyHf5gIwXPlDd29w5GNw5Z5Prm+dU70gYl8u+@vger.kernel.org, AJvYcCUpXUF6AyLZ2WPknG9lGQKSCHQlkx1CuPOy9H9xsgMBJbhZXvbD7J5URyZmkg0cm2E9/vmOEVkHHEBv7Bl9Wvlq2pQ=@vger.kernel.org, AJvYcCXvfl9CFqUcTJcN1KFe9ZOTVjC3jB0tkPmn+On/OKFRYYxoVm8loz6KuynJ9ybhmQXZhP+pjY/Rf3g90zc+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0UsyqEnHFuXS9LydWbipJyCoAFpZSvPiD1M1DXgNByHCh9G19
-	XYUmerd9grUjwZlYmKOO3AoJgMXxBm1cVasL7Ge9/5mSr/YFQknBBgIqSJmG
-X-Gm-Gg: ASbGncu3VYhWe9cs2s1tLY8f35Zi6wOG+Kj23f0Nsm5TNgpj+KYOvsgLdQ/jdCYSZi8
-	/Sqd68TmZ/5R8tULQePYfH2MugY24qaGMVmly9ZXCP59W5+0sDWn5a0RZGtQeilyFtckGVEE7XB
-	JBseAnoS+6nK1RbPDNCf9sIoiWb+iWqLHBItpovM//X/BFOY6f4x46vzTcDCrmVMacjqzFlisxJ
-	CQnCDb4vek3aYPdPyAO/EP4fNJCcsIVL5F/LVaFInWyzcdNUObvO2mtCpkU/7KmPaBGuUn6EddP
-	07xk15t3+p8iGeMW
-X-Google-Smtp-Source: AGHT+IGyFRKJPR/XDq3+Fa87B0TS/OBCS3zjgdrPOSgETVivHf9G7+1buM4yxq0mWBmA3QhiNRZNYQ==
-X-Received: by 2002:a05:6122:2a4e:b0:50a:c70b:9453 with SMTP id 71dfb90a1353d-518a3c21c53mr1847644e0c.10.1733904996551;
-        Wed, 11 Dec 2024 00:16:36 -0800 (PST)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5174fbc9923sm482141e0c.11.2024.12.11.00.16.36
+        bh=t+MDsr8huyTLqyUVeHOpEDXmsDH5QVNclrAtaTfv2Zc=;
+        b=neOZK7QIENptQukYjhi/ol8odcrIYiDePYaWCvQIX4uH6ch6ICMoRb6K6bmyuX3snx
+         xtQUo/F0r8gQkGwPUBPaynXyooVE0GqrFdStmn3g+b+186IiSSii167UC2igUNqgTjJv
+         VBkQaFw+vbDeauwnF9/DFdMOh8ZN3Q3fLK+1CBAvwQIv5PDG3APwJRysgbF2bti4XPfW
+         zYbZwn/Io6Lyj3X7q+mDhS/tIH9U++VFehonSWUGKrR7WRQy5NyVxHZvC41+NuuMFhWj
+         Jagq8AoW9wefZ2Z42aGJb5+dVLDLaZzvDlHLct7hADfLAHi55x0IjkbqSYQuH2WyTVGN
+         WKUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfeT9rCGiYxAiy1zKxLe40K/6ltUey4aKWemv+9cvYPyhQLV2yC0utu3gBftoeYufFrQRgus+3VF0=@vger.kernel.org, AJvYcCVZyVJC4pMKEhiEueRBg5CldRpZ+iLUsjGVWnb71p9JP0Wx8Y0Y2uwogdCLwELRBIgmxDwbVGwoliTXxuVX3SuxjJs=@vger.kernel.org, AJvYcCW/rJ6bTibsMjlau6t2BcHT9dkQmHKdBleCSYLTJ4G/BLJr/i6opjuULVBDAYvR55Rflgr8QGxCx7dx@vger.kernel.org, AJvYcCWoPOjt/+NeT7DZR4HSAafpIVCOd1ciKKFSbfxcJHvqGTjz7DPvLxpfOBtakAQeq7wEj0qbXCpev97rKatD@vger.kernel.org, AJvYcCXmM/MLFZzIJsZk2jYPWK3TnzsK1a07ZcW+qNqfIw8iVJvUBLEQ64sEaGnvQoWpbngQnczVRHIRDrJm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAd3nqNi69xhKqQySKof92PWd9kjeMrmUFdWwyC8Txg1ca4Ajg
+	AvT05w1jz+9fdMT0AyYk+T2o8JTb+Nl+d1heDP4PPIo6HpkVmAiGSs892ufy
+X-Gm-Gg: ASbGncvVJAPQvcNUn6aUM8L3TGl3zUQ/Xe4PRHf5BWjvdrdyciAD7w013qpw7mn14Lo
+	eiHa3Y9b6aouWJh59TiCiakSOLXCl0KXTFE9WizJak6KmOrcma8qClQD3odXAI546lSC/7U7RJ5
+	jsoolGwthLr3TfGgjGXfESIH/HD76rPHVW6p27LGnEV/ZsPiqu4s6eq01NjMR0vy8HzfAeaH4N5
+	UaT5u9LE5b2WbCXkA9FPO2y7gEikgo29GQywjEzHn/YjVFOuWOzb7UeC41faCTFTawoRCBpW1Vg
+	dI6JG1PVG4G0Kyy6
+X-Google-Smtp-Source: AGHT+IFhaaTCve1BtENFDB5mGp85ndp5dT1fXvBQP3z302eXnQ+WSfwC7o1J57Y3eE+sWOm5j2KoMA==
+X-Received: by 2002:a05:6122:2510:b0:50a:d1e3:82f7 with SMTP id 71dfb90a1353d-518a3cc335dmr1718899e0c.8.1733913118747;
+        Wed, 11 Dec 2024 02:31:58 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5161697f966sm761130e0c.22.2024.12.11.02.31.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 00:16:36 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-85bc5d0509bso1321341241.1;
-        Wed, 11 Dec 2024 00:16:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVsDmfi63mbGMlpkth50wrJCwcj6FmfXtUmhwtAv+hNkHUw1qwXyI9rN97QVNYhV3+C4Ex9z+tC41TFGxCR4bYSzyM=@vger.kernel.org, AJvYcCWCj4WsyXKciNBDD8bO8wcQZLH8QavUoV6uQ9GNq2eMCgvXPW9Sf/UUoMs9c0J+iPZDo6x00zqwa7Cf@vger.kernel.org, AJvYcCXJEd7oB0PXrjcdUlhzAZyRT5c9LTMBCYgTknxO7cYxM3XJ74DirCnXGKz+a/B7L+XikD4pQlPrbO8O@vger.kernel.org, AJvYcCXlKQJ6Bv4wfNTV8IBNob9QTHL8PwLMMAe1ryGCRXjaoWZcT5YaoVofQmeWuLu3z/BKe6STfbjLXsx3ktr7@vger.kernel.org
-X-Received: by 2002:a05:6102:5108:b0:4af:f275:e747 with SMTP id
- ada2fe7eead31-4b12912a99bmr1969256137.22.1733904995896; Wed, 11 Dec 2024
- 00:16:35 -0800 (PST)
+        Wed, 11 Dec 2024 02:31:58 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4afdf300d07so2346855137.3;
+        Wed, 11 Dec 2024 02:31:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUkClaLpkclzofok/bWdzI0lt/CWEL46IgKex2YF31qXyNH7MJ6OfgAToxQJ88wO/R+WLYjV0HuGco=@vger.kernel.org, AJvYcCV/HGMKcwSno/3G5cO1gqTNcDuOE6gpFPVa85xaN14H0VwOslJtUswnCXNARRCaEIAbdIKwvdIoHKPku/gyiuQkTvY=@vger.kernel.org, AJvYcCV4kQXmmeOHJYrmeX/6VZD0uWCu03t3Hnygho89FaisHa2mkQlMHfSFqNUCb9H9i9YUHSNi9cSB7x8y@vger.kernel.org, AJvYcCWBQOGMKiYCaZAvbuPOt5B1woSpYJ0SC/GTk2GMWw1KYJidHIQgvT9NJb2ugrGAVvlfMwTlQcdlbWOjwC9u@vger.kernel.org, AJvYcCWKwUPo/MXdfkVS6U1Ubo1C/fWk3dwBh+CYFHSJnTRgna7iyB01nHfGxp79uNSbPFPoIUQ3OyQ0gw50@vger.kernel.org
+X-Received: by 2002:a05:6102:5114:b0:4b1:102a:5834 with SMTP id
+ ada2fe7eead31-4b1290e242emr1983934137.21.1733913117926; Wed, 11 Dec 2024
+ 02:31:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
- <CAMuHMdXMt74okJjqinLwrVmf5hZFm7YQkE5s3u2F9AOTWk+zXQ@mail.gmail.com> <da31d29e-6a2b-45fc-bb16-3ee78be41d66@ideasonboard.com>
-In-Reply-To: <da31d29e-6a2b-45fc-bb16-3ee78be41d66@ideasonboard.com>
+References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240422105355.1622177-9-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com>
+ <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev> <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Dec 2024 09:16:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXsmnPrXSWqh_JN04d+Gh=X=4SWKEWZyfUE6Mim97d06Q@mail.gmail.com>
-Message-ID: <CAMuHMdXsmnPrXSWqh_JN04d+Gh=X=4SWKEWZyfUE6Mim97d06Q@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
- DisplayPort support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+Date: Wed, 11 Dec 2024 11:31:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXXTRUiToA3r8+xgS0uUrrfOF8iZA58_na0V9+JB6hg6Q@mail.gmail.com>
+Message-ID: <CAMuHMdXXTRUiToA3r8+xgS0uUrrfOF8iZA58_na0V9+JB6hg6Q@mail.gmail.com>
+Subject: Re: [PATCH v4 8/8] arm64: dts: renesas: r9a08g045: Update
+ #power-domain-cells = <1>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, ulf.hansson@linaro.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tomi,
+Hi Claudiu,
 
-On Tue, Dec 10, 2024 at 7:10=E2=80=AFPM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-
-> On 10/12/2024 18:34, Geert Uytterhoeven wrote:
-> > On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-> > <tomi.valkeinen@ideasonboard.com> wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add support for the mini DP output on the Gray Hawk board.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
+On Thu, Aug 1, 2024 at 7:34=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+> On Thu, Aug 1, 2024 at 7:28=E2=80=AFPM claudiu beznea <claudiu.beznea@tux=
+on.dev> wrote:
+> > On 01.08.2024 19:13, Geert Uytterhoeven wrote:
+> > > On Mon, Apr 22, 2024 at 12:54=E2=80=AFPM Claudiu <claudiu.beznea@tuxo=
+n.dev> wrote:
+> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >>
+> > >> Update CPG #power-domain-cells =3D <1> and move all the IPs to be pa=
+rt of the
+> > >> IP specific power domain as the driver has been modified to support
+> > >> multiple power domains.
+> > >>
+> > >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >
+> > > Now the watchdog fixes are in v6.11-rc1, I will queue this in
+> > > renesas-devel for v6.12.
+> >
+> > Only the RZ/G3S support has been merged.
+> >
+> > The watchdog fixes that allows us to use this patch were submitted as R=
+FC
+> > but got no input from Ulf, yet.
 >
-> >> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> >> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-> >> +++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+> Oops, postponing.
 
-> >> +               compatible =3D "ti,sn65dsi86";
-> >> +               reg =3D <0x2c>;
-> >> +
-> >> +               clocks =3D <&sn65dsi86_refclk>;
-> >> +               clock-names =3D "refclk";
-> >> +
-> >> +               interrupt-parent =3D <&intc_ex>;
-> >> +               interrupts =3D <0 IRQ_TYPE_LEVEL_HIGH>;
-> >
-> > interrupts-extended =3D ...
->
-> Is that just to use the same style in the whole dts, or is there some
-> specific need for the extended one here?
+The watchdog fix is now commit bad201b2ac4e238c ("watchdog: rzg2l_wdt:
+Power on the watchdog domain in the restart handler") in v6.13-rc2,
+so it is time to revisit this (and rebase my renesas-dts-for-v6.1
+branch to v6.13-rc2)?
 
-There is no real technical need to use the extended one, but it is
-more concise. That's why we just converted all such cases in Renesas
-DTS files in v6.13-rc1.
-
-And of course it reduces the difference between
-arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi and
-arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts.
+Thanks!
 
 Gr{oetje,eeting}s,
 
