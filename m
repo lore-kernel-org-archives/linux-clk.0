@@ -1,91 +1,116 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D99225A34
-	for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 13:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434091F193D;
+	Wed, 11 Dec 2024 13:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733922933; cv=none; b=rvDH8RRg2XnlFUyl2XUwKMBn5uGtgnCNgGA5Xp0XVrT3ttoWRrob272Opt8Odh0XJBr5VI/lg+EmemnwNNYDfws/tgBmnUsuy3Fy0c5phIbc5Qbcmz67W5yKqpclESsceMKRADXL7+zWI2Mr7NQDVdSTMKV3LoegSJwRf/bUZdM=
+	t=1733923671; cv=none; b=ubAYRVYJBkSxz+n/GgDpMdSSC7mT4/PqbEUKnmK9HPbqxGybcQIqmniaX7Og7+jVV+7z7iVv6Zl6tDp9zNkW1mlWe4REoHzdlTBFnVDOEvuYySgMwVxW4mDVeMbmaufxxxX/AFrtCGp+y998lcoIRomfojw8XEn2C5TsmYPfsCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733922933; c=relaxed/simple;
-	bh=jUViW32COeGoeYELh9LbBlj4465oJrhfN7e+K2CTTdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ku1KaeGh65QIIM9Uspc7L4CNWt2plCIo0SeZkX3nlA4vyR6cGFXMDUpiA3vRtx5ImMpQvaF6FPmTE5kwVNqs1CPHrEObWJuQaa6b1GYZpws0AfJjyCTlXNC7RcR2DHY1uNcLe2bE+ydosxaklp4E/thGT7ZPJd+Inbfd3c158E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjLT3ahG; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjLT3ahG"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d3f28a4fccso4608442a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 05:15:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733922930; x=1734527730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2wwyxsApnY4hDVPBOHJhItY5Jgr+I4T7A0sablhlGmg=;
-        b=qjLT3ahGjn3eV8pVibROAMaRsVIcgYOEdLyRb6jQWxEZuzTqhKUqQ42MvK64iG+kws
-         hRo1nTr2srA0QpZ/JdEp3u4inEkM7qQshpvWJCcbceQ49s2lQTsP0GYC4QlZ61SZ/bZB
-         0nGd1MIqB8l0vYEYrWhkEKZB+Qu5wGhOajHW4x7L+P5+ipaVMU0IV/SE5FdbsIhfgd8e
-         7eGTiFfUbVJkiKXx0NLs8A871P+07wF7ypis8275KaZx2nqHiUQOT5CY92uB5e5WfC5T
-         dbXZwtOL5WBGgZ/xeQ9dPtcRjqyY2c7krCOSxdxtMoNxEsOf2kBb+mgtG3JDewNFGT6M
-         GGSQ==
+	s=arc-20240116; t=1733923671; c=relaxed/simple;
+	bh=l0n79E0UwxAsx0c03t/5SUdllR1UMQbgv1in/olMbfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iaKvy2wc8fUGy0Kv1XiZQLi041YpPAjyzy0Icp86Ho0K5MURSBl2lmC9txHHVFFx8h1S5RG0H2lRP7L1yBP8W+yLLqxvWGerhJmd2NtmWx7S1i6mbLvzNm/G7MYRMaSQ1rPFUlieC0KfqUDY+dIc6HlrFQapdj8dLcsuGWc8dKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4affd0fb6adso883031137.1;
+        Wed, 11 Dec 2024 05:27:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733922930; x=1734527730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wwyxsApnY4hDVPBOHJhItY5Jgr+I4T7A0sablhlGmg=;
-        b=qkHBSYZi4xIzT4ugAgWXw3hAFXfpmYUa9qKYAri1BZBToMH3OV/w5xboPby0on9mHx
-         ElkniLCxiM4EMeynnXg+TyoZ/GI+CWsSVsXit0GYOgZ7vjsBVzGkMGXbx5F+QGV+BwVs
-         yW4ttg5JB03uWT8trYurUx/ZZ8CM7xMUv0iMt5nc0GWVY7ueLbT+ntJhpjKzBSi/O++x
-         6qbte/E5pbj5K8OIV9YvLKZJo8qyXy883vgZmzcHxNLxrRiUa2r/UhIFQkSf3RIR/zZ3
-         Da8qBaArwgJ4tncqcZPZy7WupAVTbQI0Q3k16UGAUYEWRWZBeIsl3D+HKUnWj8U0ZzxN
-         ssPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYBlvE1+CTI0/HqKRtfXyiM377aHM5Tjq7yiyLA3udOBFkburFPvwxFO7uMfzQ981JovpfOroahLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPybrqReoEjglxgYROh10tsu5yQ0BkPCFEkBA5hRKipodLhPP6
-	Rhgr3pJfuDDCUGjx357iQ8tLRu03LqicqWm9Rq433/3MeZD2j1Tb00u2k3bLP94=
-X-Gm-Gg: ASbGncsJPUL6suSFClD7B6eoRTROu0NN3aZzOHqFshuf3iqTy0MfFENpgLPMyqj/4eX
-	Xjyj+3XpD4yu8uZ11mAyR/OnXdvkZuwXyrkZlPxobBvLw/lVdtSoAhST4DJju9X8WkattuFMPV7
-	wePAloC5CidQ7PXuw1DAAPMhSpdgblJi7Cosl7JCJ3CdJw3MDIQ7J7CgHhXO78ekhyRk6uKyK/o
-	jRW1pjVkHxca/9nKWNYAzUbL9/LJTiFrmSUMbcO4pblPA0VWve/4tVPw/bekAFdXK4=
-X-Google-Smtp-Source: AGHT+IEQ3VuB9AehLYFtF0JsGB2XRiyuFHW63nuUHnZmuZQ3vdkrpWWLByAocPF8PI57hfUSLB2v1Q==
-X-Received: by 2002:a05:6402:2553:b0:5d1:2534:57bf with SMTP id 4fb4d7f45d1cf-5d433170532mr2909736a12.32.1733922930525;
-        Wed, 11 Dec 2024 05:15:30 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a25ce7sm8914783a12.5.2024.12.11.05.15.29
+        d=1e100.net; s=20230601; t=1733923666; x=1734528466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FsR3cWj2rQxpzGsWHeVcLZXw5195PPdpxK8V3I3ghRw=;
+        b=YYZqbrqSyeOZI2Fqzkicj0UKbM+YQNUfFy7PzkfhwkWWJGZ1EeSY5TPwT2mGwdg+dx
+         xyQQvWVr2UbiwGkYiYqBlxGrs64LV5KWdbQWt3Wb4AAtPQtNRWmyvlzu50o+0qdz6KhG
+         TMVOl9VF18wizZUSL7/Wxl8hQnbGHNNp25E2mA6Nk2/9XO8mBxvbGpSWD7JM5GThsG07
+         z483Fj2UvBKlBAyJ7+LEzfecCrHk7GOPo/hYRv5rUsuvNFgmwY0zthqMGIxqIC5OxLKZ
+         0BhEb0LhikChrqxvcfMlwQneLbORa3+s6zxaXHnaWw2+C+yL9hO/vg3XeBrpKFPh0HsD
+         U8AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVj2as5QSUeRzdZmiRPzuQC1paSBzkJ/IGCG2Z8iU+q6Nv7sFzpY2CY7fR+7qXIDpZN+ekzyCNb9//HL+P/kap0bt4=@vger.kernel.org, AJvYcCXOR/LbON0XZI+fbxITcafV1TqlVuX91gTx0slMX+LPSEmDWO8JY8YnQcy0HNJeEoOmHUjH+TopTTGQAc8w@vger.kernel.org, AJvYcCXTIIyHmX+kF6pttteAvc3KTJ6S6LtOB+Ou73hGzmgzaaQaAx8TgXoryRHsSCb1HWWPEV5tnFlo3EUF@vger.kernel.org, AJvYcCXeVzmDNdHddGmXw3PQjoiXYchnamDpGdVUvw5yBq6o9Oi06heexyFOwemF7FqMS/LjpB9Mvky35h+x@vger.kernel.org, AJvYcCXu3Vv37E8+z5K8WsqWEzcV20222gLa+SkiyXe7Zn3/McTC4QvTo4qpjhqY4tG3GPRIRS4vyeetsH+B@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9p78pnv4NNsAkSZZvoYvzD382z5jCseBxN/1Cgx9V6TvdPAUP
+	+Vms90n1IEvVL6Lh5pvG+mozHJNrE/I8u1usfNQMmxo5bQIi0NmMjL/zX2UF
+X-Gm-Gg: ASbGnculy+oKyCcKE02L74CSRG+fKgbbSifRyw9V3MmliuL4hkRoIMHiaEdQQ+wDKm1
+	3P/f6lzhyu+OLG1xWaEAgEUt5uJsTx4ZfdazAWpZnd+Erwxd2rKykckg7otqLfQjFsJWaTqhRWG
+	cSouJ1x46gORndje7kd7522ymnnA61UE2LXy3ENZ1vreDIEXMY19NMdIhd6EREGOMRLXLazJrFc
+	QT6fYeNWkC1r2G8im2/oy7tottPtSAfpmF1eyVi1rO5ogOlrGJRMgycKTjLFjH8rFU8nZiVAqrt
+	AMFOOjEDa5VYTrtp
+X-Google-Smtp-Source: AGHT+IFG5nawDJgp9Y9hp1fhzqYJ9iMidO8pohabDIzv8vzkSQD2kgphyJLtwTgEP3KQs7hivQbNzQ==
+X-Received: by 2002:a05:6102:32c3:b0:4af:2f95:4ae5 with SMTP id ada2fe7eead31-4b128fa102fmr2556194137.9.1733923666478;
+        Wed, 11 Dec 2024 05:27:46 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4aff0e2fae7sm947447137.3.2024.12.11.05.27.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 05:15:29 -0800 (PST)
-Message-ID: <19ac5167-017c-45a4-b9ef-9b9e11b216c2@linaro.org>
-Date: Wed, 11 Dec 2024 13:15:28 +0000
+        Wed, 11 Dec 2024 05:27:45 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4afde39e360so1352677137.0;
+        Wed, 11 Dec 2024 05:27:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUoGjeVU54a+hbZndzpflVRhUw/qJUan4tR6Rv6AHF5gWObp4RpNN+4IKGWsGMt5V6gwiFWbAaFkHbB@vger.kernel.org, AJvYcCVlLLPJkzFYULS8GW7dYBktLzVfbpQKLksGnGKMuG0qWUqbqUf0dlrDtdTta+/5JS/FbMtxSO1sVgvT@vger.kernel.org, AJvYcCVlM5/XRQYy32M5MGtACNL3LPySYxFF72+XUikZjkZ9Fhhjv8VW4TSGXXU4RycapeQmCkXDWSDEN3idD3IZT5FyVCs=@vger.kernel.org, AJvYcCVuxbsV/Vr0ycuP9Zo0Sp7Y9O7v53M/QPsUdoOyrmJHXaaG0PP2f6ZNa2YH/fGLCpUtwQlLI/x1FEzsIw0u@vger.kernel.org, AJvYcCXLrNsn6qO9tP4xhmWnTTbZpWrruAfIHaLmAkkIMaahiE/RU4ZDV4vCE5FGSfSnTFNeskQUWHuvhWAI@vger.kernel.org
+X-Received: by 2002:a05:6102:3747:b0:4af:c31d:b4e9 with SMTP id
+ ada2fe7eead31-4b128fedb4cmr2541368137.13.1733923665100; Wed, 11 Dec 2024
+ 05:27:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] clk: qcom: Support attaching GDSCs to multiple
- parents
-To: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-0-7e302fd09488@linaro.org>
- <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-3-7e302fd09488@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-3-7e302fd09488@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com> <20241206111337.726244-15-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241206111337.726244-15-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Dec 2024 14:27:33 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVMQr9RhG7v32vQeSrepmdh2VdzzwF5obJUpdGNotGV7Q@mail.gmail.com>
+Message-ID: <CAMuHMdVMQr9RhG7v32vQeSrepmdh2VdzzwF5obJUpdGNotGV7Q@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] arm64: dts: renesas: r9a08g045: Add ADC node
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/2024 00:27, Bryan O'Donoghue wrote:
->   takes care of hooking up the GDSC to the clock-controller.
+Hi Claudiu,
 
-This should read "hooking up the power-domain to the clock-controller"
+On Fri, Dec 6, 2024 at 12:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add the device tree node for the ADC IP available on the Renesas RZ/G3S
+> SoC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I will update the commit log.
+Thanks for your patch!
 
----
-bod
+> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> @@ -87,6 +87,59 @@ rtc: rtc@1004ec00 {
+>                         status =3D "disabled";
+>                 };
+>
+> +               adc: adc@10058000 {
+> +                       compatible =3D "renesas,r9a08g045-adc";
+> +                       reg =3D <0 0x10058000 0 0x400>;
+
+Table 5.1 ("Detailed Address Space") says the size is 4 KiB.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.14, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
