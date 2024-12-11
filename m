@@ -1,63 +1,50 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5911494CC
-	for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 14:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF41B1B6D0D;
+	Wed, 11 Dec 2024 15:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733928852; cv=none; b=TMQ/kMOG0K46OENl1vjfTC6dgNChXrgeyr8zYAxzB9zrAbon3IAsGNVYf+Pv2SwehagJ5tPFKzvvxZRD7Pp6GDdrSxGJFodTpMr0W3aWDvH2uvqPk73EQVg9hVwqjPBOfL5czFA0w8opkjKESNsQK6Bk9T7rmYTdtFf10FhJUu4=
+	t=1733930748; cv=none; b=o1/9BwqB5V8+TiHvE4Q97tPVZBpakBY6lMws2kxmznEZjl5roqnN2J5da6tDFiNuxFuKOoc4Ynij0dEOWS0e8xN12HLdhhacJz9pKSRYxFtt0o9lf9X26n+CJx2JUDfDTr5bg/kpk0m0Fk0u3veT+LD8aamyO6tkRIU7WL3rmfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733928852; c=relaxed/simple;
-	bh=TA26KGjfUYtHcpviYZWDnnwFJwB1nA6T2oAA/scN6hU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dNsrRS5AkXHbcf3wzmVDUPRK3N9HImPyL+DMoELpf/yPYunja9HD1RyJYLz/Z9HSI7GMjpdhI5+lzI5+a2xh5fhm6n/BJZvHmgGGt1nfUvZ8kLIq3bTYUw+L5UQLLmsB1mYKTUe1iqflCvcU7eRlLqfhEn2nrr7hnnolgxfljsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nTcLD1z/; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733930748; c=relaxed/simple;
+	bh=PX0Dak1GrNxWpNhFmQrRSn4HhzzLwAXXKZWfOHdy07c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iFv5hypgRZEP7wuudBnp5bVU69M0DYy2uIk7s4VI4k/6krJDdTQzNZiwfpDVQuNOlz5rfcbSm8/AViVCw0m2+lQlFtqrxflVVk5BVEFXwJG42UbSfgbpGR/njWrAp6RCb6hAHJYY+BdSPaQWrDV0wioXhuguTSfVZSRK/H6Ekms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BLKgsUF/; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nTcLD1z/"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa69077b93fso481095166b.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 06:54:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733928849; x=1734533649; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ktlO6czYcyYSCmYggj2K8QrV0XdcUJX5mHC3XGXDtU=;
-        b=nTcLD1z/hx6Mz0dpJu78nxwyu9yUzZLsjYihxO0rpUMK8albX8aKyeh+/yHyxHGeAH
-         EknDZiMcTt/XD0iR/35YWwntvbRDxMM0veWkpw2yj6g2G0Omr83w14ktMuN6Kx/rimRP
-         0dqNXx32rCFLwuX2pH9dxIzpl8ovmFikn/WncVpVReWp6J2SdBaFQh/CZJoCZhaBvMYL
-         WnwBHPF/TvtLEHJBomfGcDMXmH0EEGcYiMmrfNnMDsCFqLkYlBtXnCMGHlQIu+7LbKwY
-         HkxM7W2yOQtCP6OMQhFN2SzXpkUuuzIhQniLB9Wp44Ecl5Ef1avkf1MUb/+H0+7U/uj1
-         GnVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733928849; x=1734533649;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ktlO6czYcyYSCmYggj2K8QrV0XdcUJX5mHC3XGXDtU=;
-        b=rAm7rEgCjiEoOYnOEHO64EY1VHXuuDzcVeFsjsKBOnGkGShqKGaIp7aUoRsLy7r1t9
-         fDqeSwTM9vR16fQVQYlgXo0wRbxvPE0rFYJc4ZUU4XnxVMC9CvicoX6/wpwFayd3+SkX
-         0LD0efNO4ysl0AGhj7JCQZ07MLaMMF1lXggWjj2wJMkWcNm94s9fw2DjTdn4iVlC3aT9
-         zQlviRtuBQ74raVUHdfcGN0DdELjxVhLJd45eZJ4rrjoTukasVCRILRjEc3ha+BMsgqo
-         FWOUPiAlEGg5SGXLln6YKOjTxfBpcqGvvi0h/5AstJwNcEPG3Yzmy4rSOuc4cM+ZeNS4
-         ch5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXlotSacgRmmhUqKrVnB8vpclgX7M2Nr60J2PIK7Myxl2PpGF3GgIAO2RryyypXjDyEXne5fsFqwWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE2WiQJFQIkVCuNz5OuGZPOEk0voXcwp/pVlttao62zSXUaOot
-	O+0gL1jVpE6ISBAcZHAf5CWzVEuMf9G8ZYnYJevEvUQ1D7Gx4B7Iaabdtms0JIA=
-X-Gm-Gg: ASbGncsEUSWG42rvjbacFTFV8JAqZmkGd332proATjTYs7uanYvcPljX5yRqCzrFMfq
-	aGQxHv5zseloxYI/rcGadCHUHbgn5kNgBW475wiF/w/T5FdYMbsC0nLxaKm2qx5qQuqW0Q2AGeW
-	IZRZ1FViNUovqXpFtMZ7qAQdIrQNLUQF1Ky1LrYhUTyoVoMfUfkAspbBBw871lYXh0/eYoDK9+K
-	ccVpiBZQlLQR5gG3nGG9Fnzd7AdkONiFY3EBezmr8IUQ3hOTQJXKP/KEPONg0tDgrs=
-X-Google-Smtp-Source: AGHT+IExrTQgcrzFJ0AioGe6gUTXc8SXmmdedfxuT1544kYxd1QbVPq7wj4wcyNV0DI4WQLs6/DGMw==
-X-Received: by 2002:a17:907:82a7:b0:aa6:9ee2:f4c9 with SMTP id a640c23a62f3a-aa6c1ae752bmr8454466b.23.1733928849467;
-        Wed, 11 Dec 2024 06:54:09 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68770c4a4sm473262766b.163.2024.12.11.06.54.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 06:54:09 -0800 (PST)
-Message-ID: <beaf4e8a-51a5-431e-8538-269d2db94f15@linaro.org>
-Date: Wed, 11 Dec 2024 14:54:08 +0000
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BLKgsUF/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733930746; x=1765466746;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PX0Dak1GrNxWpNhFmQrRSn4HhzzLwAXXKZWfOHdy07c=;
+  b=BLKgsUF/wbMyTGyowKR6w+3rieVTd8ha3flvuryhF1JiDRHuGWWi77pB
+   lxRa/o25IEnIlFcR9cylPVAYPCfJFd+69HMnFaNxIx4beiuXGJf5e7y2P
+   jjIZHif8PIqoGpu2AsC/bDw58eAOkRgGOiFna0G59EkXpyIutwGxL8nb9
+   mhZQAiGpC/MyJCj+KuROP2V6ohJqW+xB961Pd3I6qajaXR5mb1WsadoEB
+   Jmnz4zIbQnIB852ljMk8Z9HX8m8GR+ZQ0VYg6MRCXYFm3cBHCrQyvxumq
+   aw6+qAnFmvJxu/BwukHLRgRSOvBXRypu83MPnkW97ykF8iRcg+bQZOOSW
+   g==;
+X-CSE-ConnectionGUID: qgV54QVtS8C7rcxkisT06g==
+X-CSE-MsgGUID: PyP866H5QiSc3zjJIIYzAA==
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="35876300"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Dec 2024 08:25:44 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Dec 2024 08:25:31 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 11 Dec 2024 08:25:31 -0700
+Message-ID: <fb11338b-986f-4a9a-a0dd-e8f4e63941aa@microchip.com>
+Date: Wed, 11 Dec 2024 08:25:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,42 +52,44 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/3] clk: qcom: common: Add support for power-domain
- attachment
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-0-7e302fd09488@linaro.org>
- <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-2-7e302fd09488@linaro.org>
- <fca39cde-b9c8-4f1d-a4d0-92a1d739b57f@linaro.org>
+Subject: Re: [PATCH v3 07/13] dt-bindings: clock: Add SAMA7D65 PMC compatible
+ string
+To: Rob Herring <robh@kernel.org>
+CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<arnd@arndb.de>, <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
+	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>
+References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
+ <5252a28531deaee67af1edd8e72d45ca57783464.1733505542.git.Ryan.Wanner@microchip.com>
+ <20241210164638.GA3770349-robh@kernel.org>
+From: Ryan Wanner <ryan.wanner@microchip.com>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <fca39cde-b9c8-4f1d-a4d0-92a1d739b57f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241210164638.GA3770349-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-On 11/12/2024 13:36, Vladimir Zapolskiy wrote:
->> +    struct dev_pm_domain_attach_data pd_data = {
->> +        .pd_names = 0,
->> +        .num_pd_names = 0,
->> +    };
+On 12/10/24 09:46, Rob Herring wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> Please remove the added local variable.
+> On Fri, Dec 06, 2024 at 12:59:52PM -0700, Ryan.Wanner@microchip.com wrote:
+>> From: Dharma Balasubiramani <dharma.b@microchip.com>
+>>
+>> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
+>> since the SAMA7D65 PMC shares the same properties and clock requirements
+>> as the SAMA7G5.
+>>
+>> Export MCK3 and MCK5 to be accessed and referenced in DT to assign to
+>> the clocks property for sama7d65 SoC.
+>>
+>> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
->>       cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
->>       if (!cc)
->>           return -ENOMEM;
->> +    ret = devm_pm_domain_attach_list(dev, &pd_data, &cc->pd_list);
-> 
-> Please simplify it to
-> 
->      ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
-
-My apologies, I cherry-picked the wrong version of this patch from my 
-working tree to my b4/send tree.
-
----
-bod
+> Missing Conor's ack.
+I removed the ack because I have changed the original patch that was
+acked. Should the ack not have been removed even though the original
+patch as been changed?
