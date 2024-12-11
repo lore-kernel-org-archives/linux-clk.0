@@ -1,314 +1,173 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1D71DDC1B
-	for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 16:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABDA1DE3A9
+	for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 17:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936081; cv=none; b=tNoAZARnabgRColKQctOYxCjFKLSdiq6dLbsoJKMo2fHne5nkYL+KbdtIPaHEEXZZuE81uN6c9NaQ2r06Mrq6GBkvgfeP2ysEv5p1OoczUWAbAOQVJoFYUcZVAImQkt4SIfsAwt/4obd/dJ5N/X2CbZjOoaZYokSWU1YFkimBDY=
+	t=1733936404; cv=none; b=bb8jKEeXyqyrM+WApXDkjhCV3aQ5KH97cNudpA81ddnrVecc6mdFN7pV44ydOQezxLWB2okHuDxVDh8hc+u3bDaqF2jClaT0vRRT+FVpPJVk73QN4nL6rfd9DvQXSq7HK33rnyJZrCf+PL0gbceY/+DWF5+tzh20L2Oh73mdTHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936081; c=relaxed/simple;
-	bh=efeXa7kgYwb3mHLsGpDYh6uMOUyyIgGO03EJS/PZJpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g0NV8NQ2ItOZrAa9O9plO9IYXDa5nuKogxkVgo2YRoWAoWzMNwuzIIbM1e8gf4l9o7R63uXpH0yz1quVmfh8HCZVkypcN7R3gLI064ORm+KaVHE2RFcwen30CNEVL1EkhJmBMHulrrxkhguVdcptpiva/0l3U/3HO0auDsQX78g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jgj6aki9; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733936404; c=relaxed/simple;
+	bh=IZxCC/20iwP/7bKPshvoeShLuu3TwAqQL3G2CrRUJqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBJe8TmUTB0Ka4uXIxaozr7b8jLM/prNlA6HdIKer3feWJYYf5d4d0uQGAiyv6oVAKC2B7UgvR6DZCleuGsTY2N4nD5pEo/CJ5f2odQmbaOiPrG0EXM+wpKjyS05wLcM2WIVcK6J02i+l0uwyCpVf0zm7OEVY2NUnGz2FaalwZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=RkFTJSix; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jgj6aki9"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa6aad76beeso279430566b.2
-        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 08:54:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="RkFTJSix"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21654fdd5daso32945195ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 09:00:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733936077; x=1734540877; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LT4Y4IAOHXINu1wqdwJVPtJlO3Wbe04qhOh0Y3ZXAqs=;
-        b=Jgj6aki95z26nMzwi0wlPg0FiAwbwzp5DngkaDce8ORexPnDi+5Ydx/gk3cku6kQLq
-         jP1Ab9OILcZ3NnzgJgD1Ys6ZOZ1TZ8fl90B+n6jKM9xksv3PiTtf31Yt7CRQRMYCl/pT
-         uQswnENZMID7hyLDQlbxrQiiJm2bbBbDsmqU1aMEL7BMSA5VZ1GpB8WlEa5K9zA6PcyH
-         EgYLtysryVNhr1FDOLhecllcSUTbSyEKs8NdkC2skwI3qH7rkOO5BHPOTG0fgFIsROlJ
-         gunyb6ZCOstxhBg8ewVtKQzxf/nCb9EXrC8yzYne4HOApGw+n8xIKI4LyVtWX5sCPoAk
-         7/YA==
+        d=tenstorrent.com; s=google; t=1733936402; x=1734541202; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZcWqO7y57cWM6CWwmLstYLccTGjvJS+PAY2Pr1FYpjA=;
+        b=RkFTJSixL7Tf0fU5HCVAKDkLBsLl45b1Mi8zY0oxvMZcDu/BqNUaEVtQyfg+mPsgTG
+         Jx41LgdeDDNf6Xop73cLHuY+fQTI0h2M9apZVCtRu7pq+glKn+rA547GsoZi7e6tJSbt
+         y290IDRucG5vFtgVi1VtCNW+VsfMD3V4NLPr1jb9wP09zFhkj1cA8Fk6OTj4Yf+9UznT
+         Pc03CCMQ7fLT91pgPRwUhyaK98ERTP4OIjES9lGb2djEemDDXGGJregYFCRknJrQc7eX
+         nEUvPs8ToukG+OWRSinZBlK0Qx7uV954oz3VQ0LyIL00Aykgz9tFZQNTK7kTo7vSZ49e
+         KbOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733936077; x=1734540877;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LT4Y4IAOHXINu1wqdwJVPtJlO3Wbe04qhOh0Y3ZXAqs=;
-        b=ky7lzjmIsz5T45anLVaklP5fCKkMS/rWv472VVcBUUxHsih63xVbz92VNAZfVx8g1+
-         8o/GBZWpbf52DKBUOzhbmWDk9ar7M+bIo4bPxBFWt54b51T7YCubIt1QaMVTXAFSOpHe
-         cwPHuFVB3YdK2TieP1Cf7xY6hVWwi3dRvSh675utpD97y4od/iPR1VLx1/J3Kmzp8k+l
-         wHzWSUfszskSq7sDOyQQdFpqdO8TbAWcg3t5vFaQwVRDB3Yn3W6ph+5b8IVUvFV3yZpN
-         fp+cqBiI55ghtRtBh5RoWP6/zYhojsCTtvUEJfVmU2tkAesgL7Ny6CFzHenHVRRrVGqb
-         ESDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWwyZ9lEZY+KZaQLNqAd6bqP3e0dm96SWBQPWQA1AZbAkxZQFrH7e/84AJwKTZriVM0xiWmupw6v8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxRFVd+Lecqt6mnwvfzSq8RYkpM3EVqc2FCOr4VCNbLtQ12DbO
-	ZP/KM2fhRC7PjfZJtaAlVb47Jef1q3FvxGKw5q2Y2mTwI5KkYmnojQCtTjabrGk=
-X-Gm-Gg: ASbGncvenNeTzy4gKcxAJhRAHr2GjOhSdvR5YZUWU4HnanLOUcTSrtLQLRLSEZalX/L
-	ZEWc97rwdyhAj0qwYAToxRvOpO7m9kkoyIo2P2zX61/jt6b73Q0wIZ5M9WEwHh0+t2V+z+MNgSQ
-	iVYto9uwpjnn77qFr2p3SJAafyF+sjvKsYc8w2aqSOD6yC0u0ALT/9+FX6+VaT2f9p4OaxUJ7Sn
-	fFvkDW9YNZhDYlPQsdogV2wHg8fiRdkSpfI5j2hwxu5X+BbTEKTAOnyi69sCHY=
-X-Google-Smtp-Source: AGHT+IG2KfzjXRF8C9q1+x+mUMJK8e9Aju/8Okxr9ZzQ+192LiiZ+ttwURACIw3KklZE95rySqsAsQ==
-X-Received: by 2002:a17:906:3ca1:b0:aa6:9e40:ca66 with SMTP id a640c23a62f3a-aa6b11eab02mr318706266b.28.1733936077472;
-        Wed, 11 Dec 2024 08:54:37 -0800 (PST)
-Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66c646defsm651623866b.181.2024.12.11.08.54.36
+        d=1e100.net; s=20230601; t=1733936402; x=1734541202;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZcWqO7y57cWM6CWwmLstYLccTGjvJS+PAY2Pr1FYpjA=;
+        b=cTnZ1e6vi7JWdILIUlAm/Z/vFa6JRcitGhCq3pRla6q5QTVvKNmUPKfl+EcHxa9Jam
+         RfC8nvV9/y/7Rhc00dRNQMB/Jz2J1B6oHTPvPJdzCBfZYpNZYqL9h+aXlqGcVln+IVeO
+         vKOt7dlvXmqdWBgilildalw2+HdM6if1x+A0QOatgC64uJCFQfVJVGAqOYgz6Cu95qO0
+         joaunSTLvaTDFcIJ9P7n6Ezg810WgE3ILub7H8QU+RtDAO/WRdrkFtJeeHv0hW+BFLLA
+         bYquF/QpK/TsHHFZmlf5ogqkNM7wBmxrntFmIXBtvXFusWzLIwGns+2M/dvPRcyUNEap
+         ZraA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP2Kmb8PpQ2Lf3o/F656N+0BQ0uXR05X8CZ5KXLXwQsLfsFHNM24GD3EP7iBRsvoaDdhPZCwlteII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCrXVs9EgRe9c1b/uCuly1Q0Si+pmdIEMW7PokHX+5RWpB2M0D
+	jX/h3/8LrC467gLLY8dPUk/Ucy3MpDPXHqJodxIEOXNyKYfimrBuCr5gEiJlwz8=
+X-Gm-Gg: ASbGncsn/1MmbdGGGWzMAs2tLn1VbHF5hdgciMcR+nDKivDv406bib5YmcnXgsbrEM2
+	CmnSKSDK8gylJ8lyNXwsPG1//rKvyqfaErx1/mMbYTPMhMgx1+8tdznJaBmieGY1phVeCQpz8Ry
+	V5URVaph/AL0HDUKjFEOBDrkTq/ZSM2sHe0shPcTy5CJCqxeDL+b/TrareZfeyA4GRnti+BolJ2
+	J4pEnfv9VQWJqCwRpofSYsWHV4Uts/Lj4lpJEu8s618X17BGuBtKZK9MaEtwxwpTZ8wCcT4xVm2
+	SA==
+X-Google-Smtp-Source: AGHT+IHKMDJy+8aMTo0L9V3kptUu4ExSspBRWYnaTTDSkbDRcqUrBQ6wSExEs1ilCcg4ibGX1mWAlw==
+X-Received: by 2002:a17:902:e74d:b0:216:4b66:1f1f with SMTP id d9443c01a7336-2178aee74e6mr7394085ad.54.1733936401569;
+        Wed, 11 Dec 2024 09:00:01 -0800 (PST)
+Received: from x1 (75-164-218-15.ptld.qwest.net. [75.164.218.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2166ef8b8d7sm35272785ad.67.2024.12.11.09.00.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 08:54:37 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Wed, 11 Dec 2024 16:54:34 +0000
-Subject: [PATCH v8 3/3] clk: qcom: Support attaching GDSCs to multiple
- parents
+        Wed, 11 Dec 2024 09:00:01 -0800 (PST)
+Date: Wed, 11 Dec 2024 08:59:59 -0800
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: bigunclemax@gmail.com
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Yangtao Li <frank.li@vivo.com>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: thead: Fix TH1520 emmc and shdci clock rate
+Message-ID: <Z1nFD5XHGzhYMVXj@x1>
+References: <20241210083029.92620-1-bigunclemax@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-3-5d93cef910a4@linaro.org>
-References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org>
-In-Reply-To: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-355e8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210083029.92620-1-bigunclemax@gmail.com>
 
-When a clock-controller has multiple power-domains we need to attach the
-GDSCs provided by the clock-controller to each of the list of power-domains
-as power subdomains of each of the power-domains respectively.
+On Tue, Dec 10, 2024 at 11:30:27AM +0300, bigunclemax@gmail.com wrote:
+> From: Maksim Kiselev <bigunclemax@gmail.com>
+> 
+> In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
+> is 198Mhz which is got through frequency division of source clock
+> VIDEO PLL by 4 [1].
+> 
+> But now the AP_SUBSYS driver sets the CLK EMMC SDIO to the same
+> frequency as the VIDEO PLL, equal to 792 MHz. This causes emmc/sdhci
+> to work 4 times slower.
+> 
+> Let's fix this issue by adding fixed factor clock that divides
+> VIDEO PLL by 4 for emmc/sdhci.
+> 
+> Link: https://github.com/revyos/thead-kernel/blob/7563179071a314f41cdcdbfd8cf6e101e73707f3/drivers/clk/thead/clk-light-fm.c#L454
+> 
+> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+> Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> index 17e32ae08720..1015fab95251 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -779,6 +779,13 @@ static struct ccu_div dpu1_clk = {
+>  	},
+>  };
+>  
+> +static CLK_FIXED_FACTOR_HW(emmc_sdio_ref_clk, "emmc-sdio-ref",
+> +			   &video_pll_clk.common.hw, 4, 1, 0);
+> +
+> +static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
+> +	{ .hw = &emmc_sdio_ref_clk.hw },
+> +};
+> +
+>  static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
+>  static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
+>  static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
+> @@ -798,7 +805,7 @@ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", p
+>  		0x150, BIT(12), 0);
+>  static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
+>  static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
+> -static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", video_pll_clk_pd, 0x204, BIT(30), 0);
+> +static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+>  static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
+>  static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+>  static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, BIT(23), 0);
+> @@ -1059,6 +1066,10 @@ static int th1520_clk_probe(struct platform_device *pdev)
+>  		return ret;
+>  	priv->hws[CLK_PLL_GMAC_100M] = &gmac_pll_clk_100m.hw;
+>  
+> +	ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
+>  	if (ret)
+>  		return ret;
+> -- 
+> 2.45.2
+> 
 
-GDSCs come in three forms:
+Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
 
-1. A GDSC which has no parent GDSC in the controller and no child GDSCs.
-2. A GDSC which has no parent GDSC in the controller and has child GDSCs.
-3. A child GDSC which derives power from the parent GDSC @ #2.
+Thanks for fixing this. Reads are over 3 times faster now.
 
-Cases 1 and 2 are "top-level" GDSCs which depend on the power-domains - the
-power-rails attached to the clock-controller to power-on.
+6.13-rc1:
 
-When dtsi::power-domains = <> points to a single power-domain, Linux'
-platform probe code takes care of hooking up the referenced power-domains
-to the clock-controller.
+  debian@lpi4amain:~$ dd bs=1M count=512 if=/dev/zero of=zero_512M.bin oflag=direct
+  512+0 records in
+  512+0 records out
+  536870912 bytes (537 MB, 512 MiB) copied, 11.8457 s, 45.3 MB/s
 
-When dtsi::power-domains = <> points to more than one power-domain we must
-take responsibility to attach the list of power-domains to our
-clock-controller.
+  debian@lpi4amain:~$ dd bs=1M if=zero_512M.bin iflag=direct of=/dev/null
+  512+0 records in
+  512+0 records out
+  536870912 bytes (537 MB, 512 MiB) copied, 6.60576 s, 81.3 MB/s
 
-An added complexity is that currently gdsc_enable() and gdsc_disable() do
-not register the top-level GDSCs as power subdomains of the controller's
-power-domains.
+6.13-rc1 with patch:
 
-This patch makes the subdomain association between whatever list of
-top-level GDSCs a clock-controller provides and the power-domain list of
-that clock-controller.
+  debian@lpi4amain:~$ dd bs=1M count=512 if=/dev/zero of=zero_512M.bin oflag=direct
+  512+0 records in
+  512+0 records out
+  536870912 bytes (537 MB, 512 MiB) copied, 11.5359 s, 46.5 MB/s
 
-What we don't do here is take responsibility to adjust the voltages on
-those power-rails when ramping clock frequencies - PLL rates - inside of
-the clock-controller.
+  debian@lpi4amain:~$ dd bs=1M if=zero_512M.bin iflag=direct of=/dev/null
+  512+0 records in
+  512+0 records out
+  536870912 bytes (537 MB, 512 MiB) copied, 2.03638 s, 264 MB/s
 
-That voltage adjustment should be performed by operating-point/performance
-setpoint code in the driver requesting the new frequency.
-
-There are some questions that it is worth discussing in the commit log:
-
-1. Should there be a hierarchy of power-domains in the clock-controller ?
-
-   In other words if a list of dtsi::power-domains = <pd_a, pd_b, ..>
-   should a specific hierarchy be applied to power pd_a then pd_b etc.
-
-   It may be appropriate to introduce such a hierarchy however reasoning
-   this point out some more, any hierarchy of power-domain dependencies
-   should probably be handled in dtsi with a chain of power-domains.
-   One power-domain provider would point to another via
-   dtsi::power-domains = <>.
-
-   For the case of GDSC on/off there is no clear use-case to implement
-   a mechanism for a dependency list in the GDSC logic in-lieu of already
-   existing methods to do dependencies in dtsi::power-domains = <>.
-
-   A defacto ordering happens because the first power-domain pd_a will be
-   powered before pd_b as the list of domains is iterated through linearly.
-
-   This defacto hierarchical structure would not be reliable and should
-   not be relied upon.
-
-   If you need to have a hierarchy of power-domains then structuring the
-   dependencies in the dtsi to
-
-   Do this:
-
-   pd_a {
-	compat = "qcom, power-domain-a";
-        power-domains = <&pd_c>;
-   };
-
-   pd_b {
-        compat = "qcom, power-domain-b";
-
-   };
-
-   pd_c {
-        compat = "qcom, power-domain-c";
-   };
-
-   clock-controller {
-       compat ="qcom, some-clock-controller";
-       power-domains = <&pd_a, &pd_b>;
-   }
-
-   Not this:
-
-   pd_a {
-	compat = "qcom, power-domain-a";
-   };
-
-   pd_b {
-        compat = "qcom, power-domain-b";
-
-   };
-
-   pd_c {
-        compat = "qcom, power-domain-c";
-   };
-
-   clock-controller {
-       compat ="qcom, some-clock-controller";
-       power-domains = <&pd_c, &pd_a, &pd_b>;
-   }
-
-   Thus ensuring that pd_a directly references its dependency to pd_c
-   without assuming the order of references in clock-controller imparts
-   or implements a deliberate and specific dependency hierarchy.
-
-2. Should each GDSC inside a clock-controller be attached to each
-   power-domain listed in dtsi::power-domains = <> ?
-
-   In other words should child GDSCs attach to the power-domain list.
-
-   The answer to this is no. GDSCs which are children of a GDSC within a
-   clock-controller need only attach to the parent GDSC.
-
-   With a single power-domain or a list of power-domains either way only
-   the parent/top-level GDSC needs to be a subdomain of the input
-   dtsi::power-domains = <>.
-
-3. Should top-level GDSCs inside the clock-controller attach to each
-   power-domain in the clock-controller.
-
-   Yes a GDSC that has no parent GDSC inside of the clock-controller has an
-   inferred dependency on the power-domains powering the clock-controller.
-
-4. Performance states
-   Right now the best information we have is that performance states should
-   be applied to a power-domain list equally.
-
-   Future implementations may have more detail to differentiate the option
-   to vote for different voltages on different power-domains when setting
-   clock frequencies.
-
-   Either way setting the performance state of the power-domains for the
-   clock-controller should be represented by operating-point code in the
-   hardware driver which depends on the clocks not in the
-   gdsc_enable()/gdsc_disable() path.
-
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/clk/qcom/common.c |  1 +
- drivers/clk/qcom/gdsc.c   | 35 +++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h   |  1 +
- 3 files changed, 37 insertions(+)
-
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index b79e6a73b53a4113ca324d102d7be5504a9fe85e..9e3380fd718198c9fe63d7361615a91c3ecb3d60 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -323,6 +323,7 @@ int qcom_cc_really_probe(struct device *dev,
- 		scd->dev = dev;
- 		scd->scs = desc->gdscs;
- 		scd->num = desc->num_gdscs;
-+		scd->pd_list = cc->pd_list;
- 		ret = gdsc_register(scd, &reset->rcdev, regmap);
- 		if (ret)
- 			return ret;
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 4fc6f957d0b846cc90e50ef243f23a7a27e66899..cb4afa6d584899f3dafa380d5e01be6de9711737 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -506,6 +506,36 @@ static int gdsc_init(struct gdsc *sc)
- 	return ret;
- }
- 
-+static int gdsc_add_subdomain_list(struct dev_pm_domain_list *pd_list,
-+				   struct generic_pm_domain *subdomain)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < pd_list->num_pds; i++) {
-+		struct device *dev = pd_list->pd_devs[i];
-+		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+
-+		ret = pm_genpd_add_subdomain(genpd, subdomain);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void gdsc_remove_subdomain_list(struct dev_pm_domain_list *pd_list,
-+				       struct generic_pm_domain *subdomain)
-+{
-+	int i;
-+
-+	for (i = 0; i < pd_list->num_pds; i++) {
-+		struct device *dev = pd_list->pd_devs[i];
-+		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+
-+		pm_genpd_remove_subdomain(genpd, subdomain);
-+	}
-+}
-+
- int gdsc_register(struct gdsc_desc *desc,
- 		  struct reset_controller_dev *rcdev, struct regmap *regmap)
- {
-@@ -558,6 +588,9 @@ int gdsc_register(struct gdsc_desc *desc,
- 			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
- 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
- 			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
-+		else if (desc->pd_list)
-+			ret = gdsc_add_subdomain_list(desc->pd_list, &scs[i]->pd);
-+
- 		if (ret)
- 			return ret;
- 	}
-@@ -580,6 +613,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
- 			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
- 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
- 			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
-+		else if (desc->pd_list)
-+			gdsc_remove_subdomain_list(desc->pd_list, &scs[i]->pd);
- 	}
- 	of_genpd_del_provider(dev->of_node);
- }
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..dd843e86c05b2f30e6d9e978681580016333839d 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -80,6 +80,7 @@ struct gdsc_desc {
- 	struct device *dev;
- 	struct gdsc **scs;
- 	size_t num;
-+	struct dev_pm_domain_list *pd_list;
- };
- 
- #ifdef CONFIG_QCOM_GDSC
-
--- 
-2.45.2
-
+-Drew
