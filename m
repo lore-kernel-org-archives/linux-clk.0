@@ -1,191 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7B7259483;
-	Wed, 11 Dec 2024 19:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E332F5A
+	for <linux-clk@vger.kernel.org>; Thu, 12 Dec 2024 00:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733944811; cv=none; b=YvN7wJ1AqUBGLGZPqaUPurnuZuulKiO6+v8mzdvjO3HLVhhymKkPey9rvB2oMLAyaOY6dsQNAZmjnm8a7zTWdTzqjsljfKbT72PoF43kpLcv8fhc20KiW9UycRPiOaJTBIxYJtP+2DAcMMyL2pLD6URMC6Z9MljDpsgFMVNfuRA=
+	t=1733963158; cv=none; b=c1+xKBSR855hrHDzxoC92Uj2f22KqyYakiQCq/AEatYGleLHFwmk9S0G5Zyw3gI0lb6Wy+UmIj0zDs1A5f47NnF6Z/uKlnkxTun9rT/j8TuJHOZM63y7ad8pGtHtJwwAMfxnDuvU7x8MGZWO2cU9Zioqwwk14Ln/C5VQmS/G3gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733944811; c=relaxed/simple;
-	bh=p/Xx8QnAWy25KqreG9RP47kRg5CpGfys4XG+Zt9wH1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BkRHQOYbURZasQFozZn4Zh/rVRJEAZgW9Q+imVPAQeKeW/1IYGGk0tezmEtkKewzc5NYRxlxY86DTs6NjhZS1s/UO/3/+VoJcmiIxuA9yOl99AXrZobPYoGk6R3/gsCzrVQ8j13/1Mz7QzJFFQo1vfRWfzx0Y1jmkA/lDow7Il0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnSMQeE2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733963158; c=relaxed/simple;
+	bh=VMRhznEfuWRzm4PskXKJVX6kiXv2IdahJDfuMosc19g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jyjq+rq1nhxOCHKckGzH1OSJUAouIqwytztwCY/TxWVue9IAAeDzQGdAbZCR7/Wp+iCeXBh6E8Lh2xKlh9cBJtcBJYxs3KF1+p2EuihTxv61VGvT0NI1ZX+5o+F2GG/m1tb18BmHFpfHo74483FR4q/AbVJGhhlTDU8LPyLL0II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hKCjdvhT; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnSMQeE2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A02FC4CED2;
-	Wed, 11 Dec 2024 19:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733944811;
-	bh=p/Xx8QnAWy25KqreG9RP47kRg5CpGfys4XG+Zt9wH1E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GnSMQeE28iiBAoTlFlEkuubq7ZCxcwkuZVmI1nhrUExXDEBn0PGwm1yZ7bliKHOCG
-	 7xAfbyR2w2kjdIWx53Uk6vdLc9I9doib4OamCQaFAPEYFOcv9PHKXJOtQHE/3oZoAG
-	 RKXC1ehP4B2qWe8PhaZ9CcDnImHgRV7YRg/Jsg9ffAJ3LbSgMwYBcSY2lT/YVU3tel
-	 MZ0H3j4F3l0RdnvmDwdYcvdHPUiro7y3gJpILC7Fds6QkZRCTFjfj+EnTbjjyhmlYG
-	 4ajGraJy6ETiPGx5ZSCnlz3cfqWRe2OD09r4WE4DbTMD7j/q61txCgXTxsXso5GWUr
-	 pvemXYzevXmMQ==
-Date: Wed, 11 Dec 2024 19:19:59 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 11/15] iio: adc: rzg2l_adc: Add suspend/resume
- support
-Message-ID: <20241211191959.3bd377d9@jic23-huawei>
-In-Reply-To: <CA+V-a8vHovd7L2bcY61n_Ox_hKvTvhUZMZPKgHFtd5DHQeZNMw@mail.gmail.com>
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
-	<20241206111337.726244-12-claudiu.beznea.uj@bp.renesas.com>
-	<CA+V-a8vHovd7L2bcY61n_Ox_hKvTvhUZMZPKgHFtd5DHQeZNMw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hKCjdvhT"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso363865e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2024 16:25:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733963154; x=1734567954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=19KAgtQ3cw31dITBtSLiYsrKex1kzCFQG+F837LVi9w=;
+        b=hKCjdvhT9fNckN373W0BpfhaPMK8pKL1Od1WN0HBFEmWQI2N2T+0IwqmHtHKXpOC7K
+         4/6Z7Nk6/6ueneNKASTpyeIrK43UuZoNYJ4/zpc6TTJvRjmxsYNRreuhMDatuMP3BBlR
+         XVkENOFOBhvPAQTFOD0ups1R0AEYDCNxkuqSQvDR2q3q1y2m0Qa0X7dNPY6WmSvUqUxb
+         UuwTqI+olAvXjK0G7W+6hvKlg4yJMeOFHeiW7ZRsm8+vgkBOjswZqu8vOYsZsAykO5zI
+         jBOHu8fdJFdOh3oM2ObMRRtQOCwEWV1dvUfRzS6eWlWQJv+AMz5ZwDSVQjxEzRjjfNm1
+         hdtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733963154; x=1734567954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=19KAgtQ3cw31dITBtSLiYsrKex1kzCFQG+F837LVi9w=;
+        b=f3AkGyLHO7o+SpndjA0Cx/Wfe5zVULUft50dTF175h5j8lQeoGAOitepDVYheITG2w
+         XjSmL83Hmj4JkPLkNJYpyf897YOXGMQ8DTgKI7ePn97/cac0LjnDHw4TgCcpX+CHZOtW
+         2HfEd+plU90Rjs20rBb+p7zG/0GIcuzc+Re3xL99O6ZMAxG1JxiZahquKUeO1UVhKKcc
+         A2UwOBrdgnao0IYvtf7sl9x1eMny24xLEcF7Mc2CVYvq87kZDNzlrmSagvorvj58w9/h
+         7bONuXalw+wxL97LVVhFmefwkYKE6Shonhtng9JKvI5viYpcgtILYL0CZ1byIjSVD0zx
+         89Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXq9nW2K9MhS/1myVSpveQJKcxG50XOkYEP2Rulv3X1KcpBw2P5abcHKlHJhCVDoYXD0qcazrdGbgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQD1V9nyo2lnZv774Cxw7Ay5jwB9QXRET3St8I2ukO8HPIRJRg
+	JxxcdT0EFgxzImHid0i1mlsCiDQ7jT04eKh4w3pzoL8vizOqzqW8/8WwZKWBfIA=
+X-Gm-Gg: ASbGncvxGm2wgmkkbB6n3QO/cnvozfEELz9KC3hghcVH/dKG6PybGN+KZLHonJQbbH8
+	O5BmuQ9eFXc6zJehopzZC5mXjgFupQCXZ/jjiaHSG1qa7RubPbjNgz2tixWt/gBt4vfwOQ3z2lV
+	YJQyV0kRJDpOYX79YjgHIOD3XP629+Gs4g0L0DSS7Z9LIXWXEBKAf9dtmwDp9QdOYP+pRlcrFO4
+	lJ1TAjHkBIXMaPwRP3hOG5clBUtmODSoycb4UmxUVRuipV5N3oSnd3fX/uXsHZ3nJZe4NNQ
+X-Google-Smtp-Source: AGHT+IGvxDqLJUy3fFQzIVuzvp27FetMomZVJ18+KKI8WYt/hlHo5f831O2u91CuH917Kdc7PAT0Rw==
+X-Received: by 2002:a05:600c:b99:b0:434:9c60:95a3 with SMTP id 5b1f17b1804b1-4362282abaamr12382335e9.11.1733963154513;
+        Wed, 11 Dec 2024 16:25:54 -0800 (PST)
+Received: from localhost.localdomain ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625553333sm46095e9.6.2024.12.11.16.25.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 16:25:53 -0800 (PST)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	krzk+dt@kernel.org
+Cc: konradybcio@kernel.org,
+	konrad.dybcio@oss.qualcomm.com,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 RESEND 0/2] Qualcomm sm6115 LPASS clock controller
+Date: Thu, 12 Dec 2024 00:25:49 +0000
+Message-ID: <20241212002551.2902954-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, 8 Dec 2024 21:35:50 +0000
-"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
+Updates from previous version:
+-- no updates, just resend.
+The same version as here: https://lore.kernel.org/linux-clk/20241101012247.216825-1-alexey.klimov@linaro.org/
+just rebased and re-tested.
 
-> On Fri, Dec 6, 2024 at 11:16=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev=
-> wrote:
-> >
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > The Renesas RZ/G3S SoC features a power-saving mode where power to most=
- of
-> > the SoC components is turned off, including the ADC IP.
-> >
-> > Suspend/resume support has been added to the rzg2l_adc driver to restore
-> > functionality after resuming from this power-saving mode. During suspen=
-d,
-> > the ADC resets are asserted, and the ADC is powered down. On resume, the
-> > ADC resets are de-asserted, the hardware is re-initialized, and the ADC
-> > power is restored using the runtime PM APIs.
-> >
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > ---
-> >
-> > Changes in v2:
-> > - none
-> >
-> >  drivers/iio/adc/rzg2l_adc.c | 70 +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 70 insertions(+)
-> > =20
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This is one of the required dependencies for audio support on sm6115 and
+its derivatives SoCs. This was written by Konrad Dybcio, however his linaro
+email is already invalid. Konrad suggested sending it as-is and keeping
+him in c/c. Some updates may be still required, for instance the
+maintainers line in DT bindings file.
 
-Thanks.  I've updated tags.
+This was tested on QRB4210 (Qualcomm RB2 board). The only changes from my
+side were fixing compilation errors and small changes in commit messages.
 
-Jonathan
+This is second attempt and v2 as suggested.
 
->=20
-> Cheers,
-> Prabhakar
->=20
-> > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> > index e8dbc5dfbea1..2a911269a358 100644
-> > --- a/drivers/iio/adc/rzg2l_adc.c
-> > +++ b/drivers/iio/adc/rzg2l_adc.c
-> > @@ -88,6 +88,7 @@ struct rzg2l_adc {
-> >         struct completion completion;
-> >         struct mutex lock;
-> >         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
-> > +       bool was_rpm_active;
-> >  };
-> >
-> >  /**
-> > @@ -527,8 +528,77 @@ static int rzg2l_adc_pm_runtime_resume(struct devi=
-ce *dev)
-> >         return 0;
-> >  }
-> >
-> > +static int rzg2l_adc_suspend(struct device *dev)
-> > +{
-> > +       struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> > +       struct rzg2l_adc *adc =3D iio_priv(indio_dev);
-> > +       struct reset_control_bulk_data resets[] =3D {
-> > +               { .rstc =3D adc->presetn },
-> > +               { .rstc =3D adc->adrstn },
-> > +       };
-> > +       int ret;
-> > +
-> > +       if (pm_runtime_suspended(dev)) {
-> > +               adc->was_rpm_active =3D false;
-> > +       } else {
-> > +               ret =3D pm_runtime_force_suspend(dev);
-> > +               if (ret)
-> > +                       return ret;
-> > +               adc->was_rpm_active =3D true;
-> > +       }
-> > +
-> > +       ret =3D reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-> > +       if (ret)
-> > +               goto rpm_restore;
-> > +
-> > +       return 0;
-> > +
-> > +rpm_restore:
-> > +       if (adc->was_rpm_active)
-> > +               pm_runtime_force_resume(dev);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int rzg2l_adc_resume(struct device *dev)
-> > +{
-> > +       struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> > +       struct rzg2l_adc *adc =3D iio_priv(indio_dev);
-> > +       struct reset_control_bulk_data resets[] =3D {
-> > +               { .rstc =3D adc->adrstn },
-> > +               { .rstc =3D adc->presetn },
-> > +       };
-> > +       int ret;
-> > +
-> > +       ret =3D reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       if (adc->was_rpm_active) {
-> > +               ret =3D pm_runtime_force_resume(dev);
-> > +               if (ret)
-> > +                       goto resets_restore;
-> > +       }
-> > +
-> > +       ret =3D rzg2l_adc_hw_init(dev, adc);
-> > +       if (ret)
-> > +               goto rpm_restore;
-> > +
-> > +       return 0;
-> > +
-> > +rpm_restore:
-> > +       if (adc->was_rpm_active) {
-> > +               pm_runtime_mark_last_busy(dev);
-> > +               pm_runtime_put_autosuspend(dev);
-> > +       }
-> > +resets_restore:
-> > +       reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-> > +       return ret;
-> > +}
-> > +
-> >  static const struct dev_pm_ops rzg2l_adc_pm_ops =3D {
-> >         RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend, rzg2l_adc_pm_runti=
-me_resume, NULL)
-> > +       SYSTEM_SLEEP_PM_OPS(rzg2l_adc_suspend, rzg2l_adc_resume)
-> >  };
-> >
-> >  static struct platform_driver rzg2l_adc_driver =3D {
-> > --
-> > 2.39.2
-> >
-> > =20
+Changes in v2:
+ -- added Reviewed-by tag to first patch;
+ -- removed the second example as suggested by Krzysztof in the first patch;
+ -- dropped patch "clk: qcom: reset: Increase max reset delay", the change
+ already landed.
+
+URL to initial series by Konrad:
+https://lore.kernel.org/linux-clk/20230825-topic-6115_lpasscc-v1-0-d4857be298e3@linaro.org/
+URL to failed attempt to send it recently:
+https://lore.kernel.org/linux-clk/20241017005800.1175419-1-alexey.klimov@linaro.org/
+
+Konrad Dybcio (2):
+  dt-bindings: clock: Add Qualcomm SM6115 LPASS clock controller
+  clk: qcom: Add SM6115 LPASSCC
+
+ .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 46 ++++++++++
+ drivers/clk/qcom/Kconfig                      |  9 ++
+ drivers/clk/qcom/Makefile                     |  1 +
+ drivers/clk/qcom/lpasscc-sm6115.c             | 85 +++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++
+ 5 files changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+ create mode 100644 drivers/clk/qcom/lpasscc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+
+-- 
+2.45.2
 
