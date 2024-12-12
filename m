@@ -1,177 +1,89 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B383288DA;
-	Thu, 12 Dec 2024 07:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901D0126C01;
+	Thu, 12 Dec 2024 08:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986844; cv=none; b=bTVCiA2+7P4fIjYE55tZ5JuzOCorfLEivCoySMOQMwJrnNpa2z5d0axdSd9gEayKGXVU3QLcBlzFnIQ+xOHWHOYoPQ9bKvrQMS+rS6c3FYR0rFA4vqAZeRDO3eNxtvF4eqW/8KUZzvP6dJUi2+Wgcxi3IFiOGHZgw19Eek8TVHM=
+	t=1733991451; cv=none; b=QynJHs5Dh1OFBvClrm8/fBkzf1tvBwka+3BvbHbcVIzMe36G1BKJLautpIMrG8qZguxf75NaZ2vLyryNFWPmEL0nWKPM++ffPfgGD0ADMwq4P/frK2ZvC6HN0BWV3totj9jnbT1BeMU8hNK1KdvkWSHb55/rs/twMHNQD7jt0V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986844; c=relaxed/simple;
-	bh=tr3H9l9bGW6ozzkXMOSie+z2ipjQ3UPuQLVoO3W9s64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BjRwxsh1cogknKad1bxgg4tCbnS8dyCMwlNMN5fAdpRlPo/ZZkl1ZBhS4vRbjxLhGN5elbYLZl+gjgAK3MFvNpE40fTOeo1rngMd/8PxpDsujI8MZKgqkQ1ney5I+v40CxZq3zmLiITlldlg8DNoRvBRbprxjwEto+bbX3PF6p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZTxInMDC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1733991451; c=relaxed/simple;
+	bh=k0FKOuDzgEVL7PpLLyql5QGBAf1lpNggxg9A2Cs/6gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DE7BHfEMQ6xz+e4bmBQt7wf6flk3gQQsZ7eJGdkbMWL+oPVbKIUbLwqMkIFF+99fSQIHnE1EvpnfHuthupW/1rmCMSDaj7tFeSP9OxPO+Ijp4GJ3vRyeu20uDm+ESQzBxQpQs4osUO+2ckgIv32F6hSgGlE7B2wV5Hz6TFx7MoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dU8i6Qv6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZTxInMDC"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHD9T0027283;
-	Thu, 12 Dec 2024 07:00:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	542Z1YhSgDVb8yaviufnRA8DzBabzMl5pL3RWJoYS64=; b=ZTxInMDC9O01VbaD
-	pTAj7Kuff0O/thuJ+0syDGjLbK+UsqBrklpnDBvK7QI0H+z2zakGNEGUjCAGvtdN
-	Tm1e8j1Mq0N7O6M5HaowNemZJ4tffMH3vvSynuIEUfuscsZPhlXzL076mth+PpVq
-	/xtImtoKqXSfrsn4hzs7UaU+IHloUt35TozWPo4j6zPpcUKf5q0IxP8xCScXFlaF
-	rpZI5OQEwsFtir4JkSSnFEyKHjCUrA15S35Up/bfOTG0UMzG+spfFZtMMkLZFyBc
-	RQjr4WxDfEx7VIhp3jirE8mPjMXJw/z9eo4U8+atbL3KLSAQ24ReIOgEwP/tr+q5
-	EMbmdg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43etn8w9yu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 07:00:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC70bmw000595
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 07:00:37 GMT
-Received: from [10.50.15.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 23:00:32 -0800
-Message-ID: <2b0a4a87-b67c-4d24-9091-4a1d0c434815@quicinc.com>
-Date: Thu, 12 Dec 2024 12:30:29 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dU8i6Qv6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6253CC4CECE;
+	Thu, 12 Dec 2024 08:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733991451;
+	bh=k0FKOuDzgEVL7PpLLyql5QGBAf1lpNggxg9A2Cs/6gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dU8i6Qv6AHW8QJDEe6c/rZc4kMHxuZ/sXsid0haVKb6BqAg2fZzGn/HILsGnBXLDk
+	 JKhwLrxrVxoTts/73qlTnAUTUUmNZGpkTEKJNx/ugh70oRkCtMcIV1av4UgQeOayMW
+	 PrwN8vGoH3uJY1YzeZpcanLDgEmNu3CvlA6zvP8IH3C56jGxQt+TeuJ8EzDgThGchc
+	 q83iE1qlRAxAPDRTGvtMx97lwtVvogqMi5HuDJaiuD7XpUp8KmPVNIWYomP/FPhye1
+	 GOzdlA4HUqcC17Ovv8gRefokYwG6r98t2ktCmWs3Vz7pmIf87Oz+Bu/hu5m/fcPr2l
+	 fYLQcaO/y0Jng==
+Date: Thu, 12 Dec 2024 09:17:27 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan Wanner <ryan.wanner@microchip.com>
+Cc: Rob Herring <robh@kernel.org>, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de, dharma.b@microchip.com, 
+	mihai.sain@microchip.com, romain.sioen@microchip.com, varshini.rajendran@microchip.com, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] dt-bindings: clock: Add SAMA7D65 PMC compatible
+ string
+Message-ID: <s77ndnhfnpssi4hynbf5n2ylkrhftnlfu37km5vpqbeb552w47@fhklcvdnwasa>
+References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
+ <5252a28531deaee67af1edd8e72d45ca57783464.1733505542.git.Ryan.Wanner@microchip.com>
+ <20241210164638.GA3770349-robh@kernel.org>
+ <fb11338b-986f-4a9a-a0dd-e8f4e63941aa@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND 1/2] dt-bindings: clock: Add Qualcomm SM6115
- LPASS clock controller
-To: Alexey Klimov <alexey.klimov@linaro.org>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <krzk+dt@kernel.org>
-CC: <konradybcio@kernel.org>, <konrad.dybcio@oss.qualcomm.com>,
-        <robh@kernel.org>, <conor+dt@kernel.org>,
-        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241212002551.2902954-1-alexey.klimov@linaro.org>
- <20241212002551.2902954-2-alexey.klimov@linaro.org>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <20241212002551.2902954-2-alexey.klimov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SXzxlJepK6j9VJZMM5FkPzJanUtT3e8Y
-X-Proofpoint-GUID: SXzxlJepK6j9VJZMM5FkPzJanUtT3e8Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 spamscore=0 impostorscore=0 adultscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120046
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fb11338b-986f-4a9a-a0dd-e8f4e63941aa@microchip.com>
 
+On Wed, Dec 11, 2024 at 08:25:32AM -0700, Ryan Wanner wrote:
+> On 12/10/24 09:46, Rob Herring wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On Fri, Dec 06, 2024 at 12:59:52PM -0700, Ryan.Wanner@microchip.com wrote:
+> >> From: Dharma Balasubiramani <dharma.b@microchip.com>
+> >>
+> >> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
+> >> since the SAMA7D65 PMC shares the same properties and clock requirements
+> >> as the SAMA7G5.
+> >>
+> >> Export MCK3 and MCK5 to be accessed and referenced in DT to assign to
+> >> the clocks property for sama7d65 SoC.
+> >>
+> >> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> >> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> > 
+> > Missing Conor's ack.
+> I removed the ack because I have changed the original patch that was
+> acked. Should the ack not have been removed even though the original
+> patch as been changed?
 
+Nothing in changelog says about changes to this patch. Nothing also
+mentions dropping acks.
 
-On 12/12/2024 5:55 AM, Alexey Klimov wrote:
-> From: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> SM6115 (and its derivatives or similar SoCs) has an LPASS clock
-> controller block which provides audio-related resets.
-> 
-> Add bindings for it.
-> 
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> [alexey.klimov] slightly changed the commit message
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 46 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
->  2 files changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
-> new file mode 100644
-> index 000000000000..247b6b0a9f5a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-lpasscc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm LPASS Core & Audio Clock Controller on SM6115
-> +
-> +maintainers:
-> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
+Please read:
 
-Please check the mail id.
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
-> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> +
-> +description: |
-> +  Qualcomm LPASS core and audio clock controllers provide audio-related resets
-> +  on SM6115 and its derivatives.
-> +
-> +  See also::
-> +    include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm6115-lpassaudiocc
-> +      - qcom,sm6115-lpasscc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    lpass_audiocc: clock-controller@a6a9000 {
-> +        compatible = "qcom,sm6115-lpassaudiocc";
-> +        reg = <0x0a6a9000 0x1000>;
-> +        #reset-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,sm6115-lpasscc.h b/include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> new file mode 100644
-> index 000000000000..799274517c9a
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2023, Linaro Ltd.
-> + */
+If a tag was not added on purpose, please state why and what changed.
 
-Do we need to update the Copyright year?
+Best regards,
+Krzysztof
 
-Thanks & Regards,
-Manikanta.
