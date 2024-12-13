@@ -1,150 +1,208 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C08199947
-	for <linux-clk@vger.kernel.org>; Fri, 13 Dec 2024 10:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A4A1C3BEB;
+	Fri, 13 Dec 2024 10:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734086076; cv=none; b=bu7os6R66QnXPsLc10RS23ZVbmCnQ6vgxM3HYMHW2kdgqtYQ2Ga0inqNRjq8hyPl26x/ZuwGBhE2eB/cvPlmdHDS7WCH+sL51bkMv+jCL/K34CgRe+2zQdfZwSQFTpG+UAkvVrxgMrXlYaFkvh6mRfSIHZW9fHGiZsbXdAVJp5A=
+	t=1734087328; cv=none; b=rbog/J1YulD1KwsDZ33N+1y+IJSjIA98vnjEwaQXHYuEK+aw0HITwNFWThofH4fjc7FJ1CfctM0R8i8xbOWu0+Y/jcmJiBLUZu4Pwtlgeri5d7K+lzvbC+9YKMXNk9BEXAv73JeYZ8Coejeqh4RxBJXBr/OcTgNDn5oABoNeVNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734086076; c=relaxed/simple;
-	bh=vA7NH8o/F4vK4PbMAOETXVFvHlJYHLaG8zCc6moiqr0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KpvLfqDQeKaDwTHGoXrge+Yiz7S59t06xHx/Q1MNTm0UysHG8dqONyBGSls2IOwdgm84p2tr5yM3AwEg+ab2s9swtuM+xmyFd3tYe8BOsgMaBTouzVwotR4ISK+GByxZAUSI17SyLNPlUyj0l/kR1jibtmLVJH8W6IVWMIMlzds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HGUe8sxx; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734087328; c=relaxed/simple;
+	bh=/sIQNiCyvCJV1BU0yujr3/A2B9wAu1BGuwyBU4noC2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtydaH76Zg622wTzBVB4WMbcpeFmJ877EofKmW7MIO1ZD7q27firWZrezFG8v3KU+37x5GutZSxFdleT7gk6JmB0P4HVsTvJ+ZF53/VexYpsp46MyI0HXIVSdQHao5MeFuAbWYVuOeERmdMn8nXmDop2y4WyoLShWdFeuJRUFyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGl3GROS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HGUe8sxx"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so16744005e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 13 Dec 2024 02:34:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734086073; x=1734690873; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WA6drCMppYdVISfpkuD87PDa0h+Hfy91b3d0JmUIEnc=;
-        b=HGUe8sxx4NFRCvxg8UEXk5FFaCQfGU59AHpOOVNAlHdzftn483xukzwL6N8pUTkQD0
-         Jergi81k4oUzm7I3eiPiPFMsbNCOGxHK31viB2SpZbuWJpykAvxhiwWFswLCTfwyMltB
-         70VbVk+e4nVsaeJ7r2e2z85oMHieo8tlZ4Ht8ob5HX1PG29k2Z6CMbTGut0shdLPctva
-         4dJsGuhs/0WzP4da2FC9c1QkaniIZlgV7jlVUebKl9tMMrW2pVaA0louugI9aeI8KUfp
-         eMjyQ/1fqfKgQTjX0cG5pg9yMyQW4+XVeXtE4Hq59GZXx5VYrrdW/3Hkz9D3opg7swL5
-         PCWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734086073; x=1734690873;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WA6drCMppYdVISfpkuD87PDa0h+Hfy91b3d0JmUIEnc=;
-        b=SP+TPhJoju+eTmnTAZ6ZejIZBp4AV8MS0iasOQHQctKaXNYls7W+spLxFPcdyJtmEB
-         gDhgDNJWivRSp7vXMUQsNQNiA8GBDLFddQr4LIb+V8lQi/AkKhKjYZkvwcgQBNa5l2IX
-         UaEpDpvU9Gx0TS7r2iRsCK4F5VpLwLH2XwCDH89s8/7L+r1K0nn54J3nxsnD26G1Sx5w
-         V1aX7dDda1KDAcFPw4nCcFo1iyFXaEJ1d9JaC/LfxbXwrOlG7umcfd9kNqS8jYYVfZND
-         IkhlEhyNv3KuEegkbFu0bMRXhkpl3sH/eNymVVrWoL8NZkkhiKCXy89nwdzRvxLyAy7y
-         rLdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUc6oesOK6sXqx24R4rsKvcAEIM6szSgyr3pNuA8xidrqTJi5dHmL9d0eOKorRUwnbPDeO+P7nJtow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPnDJcIKygO3zxtyXm6WvBx+U3Wuo3TkAfO9lIb0yRqX5+ZQ5h
-	s3IAREFb97FoKzOBgvtDzS+1GIbFEPSjIoAbj4pN5NobGuFC/mnsOXjGftLdeqM=
-X-Gm-Gg: ASbGncup6AgNqJm14hyq5S2i3aZENtLjRX+PAvE+5zXPkZ/Fc66TysSmuYw9WOhmewN
-	lb1ATbNUD67MS7TIIEjljmJtsvHfseh4eBKqEcdPMBVtRFVZ08MDuxz93qFliYHEgJ/SdRGnZd6
-	jtejEQXsme8Pp/ygQfCidLo82nXKn74+8R2c7V9gJXfhyeSNt3MsQa1GYTlw3BpVpnOLRfEPd/v
-	Di2uq9IkuflIlDFo9y1pShF/CnGiaV1MDi5ATrjKqu3K1cHS6Do0PnNMFS96YoyRjoJt0cZBbva
-	nwazlk/hxmxaRAyCXiYFVaGZd7sBFWYfNQ==
-X-Google-Smtp-Source: AGHT+IE8QIvOjYdMGFe/6r6ILHvAeGLSVV3a3eXEBuyeoNQwwo9IPedJWyk14Nak5HhAqjkv4xRTYQ==
-X-Received: by 2002:a05:600c:3503:b0:434:ff25:19a0 with SMTP id 5b1f17b1804b1-4362aa94379mr15608885e9.21.1734086073135;
-        Fri, 13 Dec 2024 02:34:33 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:4795:2d16:2587:ed70? ([2a01:e0a:982:cbb0:4795:2d16:2587:ed70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436257178e3sm45453865e9.41.2024.12.13.02.34.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 02:34:32 -0800 (PST)
-Message-ID: <cbf51c06-2183-4423-ab61-65a93f903a04@linaro.org>
-Date: Fri, 13 Dec 2024 11:34:31 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGl3GROS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADCECC4CED0;
+	Fri, 13 Dec 2024 10:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734087326;
+	bh=/sIQNiCyvCJV1BU0yujr3/A2B9wAu1BGuwyBU4noC2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gGl3GROSZcllCztHrgYMNvJ+Ez+9jaWvrE0TcBxsMc3at1ozAWYkDyT7Cr3AP+615
+	 G5svGg75KGrSqcJrBgMFtdjqUD9FLjOLKF6K3P9mT+uYYsPNnxqtzyG+XZfgeFjZHr
+	 IlVigeckSfCcmoyMzYvt4EcMHKDCW2r8mo/Gygwniiuj28Go8LSL0plhXT8CwnyDFR
+	 Cyh8RP7qLYfP2joQoaYh/oKuLjP3J8IsmECgvF69CcLUanJE4Y94jDhR599d7cQpXj
+	 HfDIm4Gq8B7cZ5r4He81i5vT161LKmcQXi+JScrV6yZAOv/2Wb9LPPqS/bi+qBo4Pp
+	 SVZgHaXJsAH3A==
+Date: Fri, 13 Dec 2024 11:55:22 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Paul Handrigan <paulha@opensource.cirrus.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-binding: clock: cs2600: Add support for the CS2600
+Message-ID: <gofhuzpxqm4fmusebwkjbgblffk5ail27mtgdk4vpwjvyhipcw@2ep6gpgjkgwl>
+References: <20241211003236.2523604-1-paulha@opensource.cirrus.com>
+ <20241211003236.2523604-2-paulha@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] clk: amlogic: g12a: fix mmc A peripheral clock
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jian Hu <jian.hu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241213-amlogic-clk-g12a-mmca-fix-v1-1-5af421f58b64@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241213-amlogic-clk-g12a-mmca-fix-v1-1-5af421f58b64@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241211003236.2523604-2-paulha@opensource.cirrus.com>
 
-On 13/12/2024 11:03, Jerome Brunet wrote:
-> The bit index of the peripheral clock for mmc A is wrong
-> This was probably not a problem for mmc A as the peripheral is likely left
-> enabled by the bootloader.
+On Tue, Dec 10, 2024 at 06:32:35PM -0600, Paul Handrigan wrote:
+> Add device tree support for the Cirrus Logic CS2600 clock
+> device.
 > 
-> No issues has been reported so far but it could be a problem, most likely
-> some form of conflict between the ethernet and mmc A clock, breaking
-> ethernet on init.
-> 
-> Use the value provided by the documentation for mmc A before this
-> becomes an actual problem.
-> 
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Paul Handrigan <paulha@opensource.cirrus.com>
 > ---
->   drivers/clk/meson/g12a.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/clock/cirrus,cs2600.yaml         | 78 +++++++++++++++++++
+>  include/dt-bindings/clock/cirrus,cs2600.h     | 23 ++++++
+>  2 files changed, 101 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
+>  create mode 100644 include/dt-bindings/clock/cirrus,cs2600.h
 > 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index d3539fe9f7af5538201a78ce560f662ddb3935f2..20be7b037c07535bd2115f6e70404a95a7832756 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -4311,7 +4311,7 @@ static MESON_GATE(g12a_spicc_1,			HHI_GCLK_MPEG0,	14);
->   static MESON_GATE(g12a_hiu_reg,			HHI_GCLK_MPEG0,	19);
->   static MESON_GATE(g12a_mipi_dsi_phy,		HHI_GCLK_MPEG0,	20);
->   static MESON_GATE(g12a_assist_misc,		HHI_GCLK_MPEG0,	23);
-> -static MESON_GATE(g12a_emmc_a,			HHI_GCLK_MPEG0,	4);
-> +static MESON_GATE(g12a_emmc_a,			HHI_GCLK_MPEG0,	24);
->   static MESON_GATE(g12a_emmc_b,			HHI_GCLK_MPEG0,	25);
->   static MESON_GATE(g12a_emmc_c,			HHI_GCLK_MPEG0,	26);
->   static MESON_GATE(g12a_audio_codec,		HHI_GCLK_MPEG0,	28);
-> 
-> ---
-> base-commit: 52fd1709e41d3a85b48bcfe2404a024ebaf30c3b
-> change-id: 20241213-amlogic-clk-g12a-mmca-fix-c9ebacf34d9c
-> 
-> Best regards,
+> diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
+> new file mode 100644
+> index 000000000000..ed23f347f382
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/cirrus,cs2600.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cirrus Logic Fractional-N Clock Synthesizer & Clock Multiplier
+> +
+> +maintainers:
+> +  - Paul Handrigan <paulha@opensource.cirrus.com>
+> +  - patches@opensource.cirrus.com>
+> +
+> +description: |
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Do not need '|' unless you need to preserve formatting.
+
+> +  The CS2600 is a system-clocking device that enables frequency synthesis and
+> +  clock generation from a stable timing reference clock. The device can generate
+> +  low-jitter clocks from a noisy clock reference at frequencies as low as 50 Hz.
+
+Be sure these are wrapped at 80 (looks like 81).
+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - cirrus,cs2600
+> +
+> +  clocks:
+> +    description:
+> +      Common clock binding for XTI/REF_CLK, CLK_IN
+
+Just drop description, kind of obvious from the clock-names. If you want
+to keep it, then rather list the items with description per each item.
+
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref_clk
+
+s/ref_clk/ref/
+(or xti)
+
+"clk" is just obvious.
+
+> +      - const: clk_in
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: Power Supply
+> +
+> +  cirrus,aux-output-source:
+> +    description:
+> +      Specifies the function of the auxiliary clock output pin
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum:
+> +      - 0 # CS2600_AUX_OUTPUT_FREQ_UNLOCK: Frequency unlock notification
+> +      - 1 # CS2600_AUX_OUTPUT_PHASE_UNLOCK: Phase unlock notification
+> +      - 2 # CS2600_AUX_OUTPUT_NO_CLKIN: CLK_IN is not available
+
+I don't get the meanings - how clock output could be clock is not
+available? clk_in is a required property, so it cannot be unavailable.
+
+
+> +    default: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/cirrus,cs2600.h>
+> +
+> +    i2c@0 {
+
+i2c {
+
+> +      reg = <0x0 0x100>;
+
+Drop reg
+
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      clock-controller@2c {
+> +        #clock-cells = <1>;
+> +        compatible = "cirrus,cs2600";
+> +        reg = <0x2c>;
+> +        clocks = <&xtl_clk>, <&sync_clock>;
+> +        clock-names = "ref_clk", "clk_in";
+> +        vdd-supply = <&vreg>;
+> +      };
+> +    };
+> diff --git a/include/dt-bindings/clock/cirrus,cs2600.h b/include/dt-bindings/clock/cirrus,cs2600.h
+> new file mode 100644
+> index 000000000000..673b4b4cb1f4
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/cirrus,cs2600.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024 Cirrus Logic, Inc. and
+> + *		      Cirrus Logic International Simiconductor Ltd.
+> + *
+> + * Author: Paul Handrigan <paulha@opensource.cirrus.com>
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_CIRRUS_CS2600_H
+> +#define _DT_BINDINGS_CLK_CIRRUS_CS2600_H
+> +
+> +/* CS2600 Clock Outputs  */
+> +#define CS2600_CLK_OUTPUT		0
+
+Drop "OUTPUT". These are names of the clocks.
+
+> +#define CS2600_BCLK_OUTPUT		1
+> +#define CS2600_FSYNC_OUTPUT		2
+> +
+> +/* CS2600 Auxiliary Output */
+> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
+> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
+> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
+
+Not sure what are these, but feel like some register values. Otherwise,
+why these are exactly bindings? What part of driver do they bind?
+
+Best regards,
+Krzysztof
+
