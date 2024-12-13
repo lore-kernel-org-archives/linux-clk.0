@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A4A1C3BEB;
-	Fri, 13 Dec 2024 10:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433D79F5;
+	Fri, 13 Dec 2024 10:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087328; cv=none; b=rbog/J1YulD1KwsDZ33N+1y+IJSjIA98vnjEwaQXHYuEK+aw0HITwNFWThofH4fjc7FJ1CfctM0R8i8xbOWu0+Y/jcmJiBLUZu4Pwtlgeri5d7K+lzvbC+9YKMXNk9BEXAv73JeYZ8Coejeqh4RxBJXBr/OcTgNDn5oABoNeVNk=
+	t=1734087492; cv=none; b=irFUMHI5sTOBo+pqdSA5XT7TbXTYHzzS/QKGQddKITpN6VPS8SyPzZlfK3cXy6VCG4AjhI2LE4Zr5WqXd/1iX20W9PUX6FUTN7oH3VocfAO8mfoyvzWlrA5z89OicYr+6Zt4vUGbkEcqqalj3OBtmfF7PL64lO8pu4qmv91pZYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087328; c=relaxed/simple;
-	bh=/sIQNiCyvCJV1BU0yujr3/A2B9wAu1BGuwyBU4noC2U=;
+	s=arc-20240116; t=1734087492; c=relaxed/simple;
+	bh=VqWJe5Eh99rvaeapsfqh4V97X3xsoMHaftKpsVrx+Xw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtydaH76Zg622wTzBVB4WMbcpeFmJ877EofKmW7MIO1ZD7q27firWZrezFG8v3KU+37x5GutZSxFdleT7gk6JmB0P4HVsTvJ+ZF53/VexYpsp46MyI0HXIVSdQHao5MeFuAbWYVuOeERmdMn8nXmDop2y4WyoLShWdFeuJRUFyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGl3GROS; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZnrheWSO9ct6RUzaDIdN2Z3TPXXIlnuN15rnu5r1De1chvCMk05eR1h0aP4oqZC04JJlgy6RFnitim45LZBkfkEqFgHnb9Q70Cj1SfhGpgHvZnxyFcSGRTkQxvfogwDP2Jf7tQ9Y1m4CZHjB6oNTX9eMEVMEVHJhGLRzIj20hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uv+9IWN2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGl3GROS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADCECC4CED0;
-	Fri, 13 Dec 2024 10:55:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uv+9IWN2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ABC1C4CED0;
+	Fri, 13 Dec 2024 10:58:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734087326;
-	bh=/sIQNiCyvCJV1BU0yujr3/A2B9wAu1BGuwyBU4noC2U=;
+	s=k20201202; t=1734087490;
+	bh=VqWJe5Eh99rvaeapsfqh4V97X3xsoMHaftKpsVrx+Xw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gGl3GROSZcllCztHrgYMNvJ+Ez+9jaWvrE0TcBxsMc3at1ozAWYkDyT7Cr3AP+615
-	 G5svGg75KGrSqcJrBgMFtdjqUD9FLjOLKF6K3P9mT+uYYsPNnxqtzyG+XZfgeFjZHr
-	 IlVigeckSfCcmoyMzYvt4EcMHKDCW2r8mo/Gygwniiuj28Go8LSL0plhXT8CwnyDFR
-	 Cyh8RP7qLYfP2joQoaYh/oKuLjP3J8IsmECgvF69CcLUanJE4Y94jDhR599d7cQpXj
-	 HfDIm4Gq8B7cZ5r4He81i5vT161LKmcQXi+JScrV6yZAOv/2Wb9LPPqS/bi+qBo4Pp
-	 SVZgHaXJsAH3A==
-Date: Fri, 13 Dec 2024 11:55:22 +0100
+	b=Uv+9IWN2DUvC8640Hw1SqeF4hg+INj3ksnKROHICsPlE9mSaPDNQYUjVPRpEeZdA0
+	 lm9nf0ZctwYJHyUmo0Bg1L8TyPzsG0y8BkbLKGTO5AS/xy1syE5ZAFmPYf/tIDMdBx
+	 mS0EOR4V2S3ODHf2MYdrtvBl3G/aQyokuVuPoA1v/mPV07anaAmjOYyAY5dF6eWREf
+	 dfsCmvuph4cvXvutbLP+RrG8HDyfemrm0fmYSA2yUlolYUjUoXz53wdqTAQMoBXmZk
+	 gLGOOZlgkSmUn3Dg0ZWxUyHzOSvmv4atf9tmFESJAOFheRDP98TM+34FHDF//TeTTK
+	 BllS7Q9KRMXRw==
+Date: Fri, 13 Dec 2024 11:58:07 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Paul Handrigan <paulha@opensource.cirrus.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org, 
 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-binding: clock: cs2600: Add support for the CS2600
-Message-ID: <gofhuzpxqm4fmusebwkjbgblffk5ail27mtgdk4vpwjvyhipcw@2ep6gpgjkgwl>
+Subject: Re: [PATCH 2/2] clk: cs2600: Add Fractional-N clock driver
+Message-ID: <gjkknwwxvzdkljonsfyl42vamr6kjngytf2mbbhbfxkmwmhnyt@rry6pqzxmnsi>
 References: <20241211003236.2523604-1-paulha@opensource.cirrus.com>
- <20241211003236.2523604-2-paulha@opensource.cirrus.com>
+ <20241211003236.2523604-3-paulha@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,164 +44,197 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241211003236.2523604-2-paulha@opensource.cirrus.com>
+In-Reply-To: <20241211003236.2523604-3-paulha@opensource.cirrus.com>
 
-On Tue, Dec 10, 2024 at 06:32:35PM -0600, Paul Handrigan wrote:
-> Add device tree support for the Cirrus Logic CS2600 clock
-> device.
+On Tue, Dec 10, 2024 at 06:32:36PM -0600, Paul Handrigan wrote:
+> Add support for the CS2600 Fractional-N Clock Synthesizer
+> and Multiplier driver.
 > 
 > Signed-off-by: Paul Handrigan <paulha@opensource.cirrus.com>
 > ---
->  .../bindings/clock/cirrus,cs2600.yaml         | 78 +++++++++++++++++++
->  include/dt-bindings/clock/cirrus,cs2600.h     | 23 ++++++
->  2 files changed, 101 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
->  create mode 100644 include/dt-bindings/clock/cirrus,cs2600.h
+>  drivers/clk/Kconfig      |    9 +
+>  drivers/clk/Makefile     |    1 +
+>  drivers/clk/clk-cs2600.c | 1152 ++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/clk-cs2600.h |  176 ++++++
+>  4 files changed, 1338 insertions(+)
+>  create mode 100644 drivers/clk/clk-cs2600.c
+>  create mode 100644 drivers/clk/clk-cs2600.h
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 713573b6c86c..6b279ebf9c80 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -209,6 +209,15 @@ config COMMON_CLK_CS2000_CP
+>  	help
+>  	  If you say yes here you get support for the CS2000 clock multiplier.
+>  
+> +config COMMON_CLK_CS2600
+> +	tristate "Clock driver for CS2600 Fractional-N Clock Synthesizer & Clock Multiplier"
+> +	depends on I2C
+> +	depends on OF
+> +	select REGMAP_I2C
+> +	help
+> +	  If you say yes here you get support for the CS2600 clock synthesizer
+> +	  and multiplier.
+> +
+>  config COMMON_CLK_EN7523
+>  	bool "Clock driver for Airoha EN7523 SoC system clocks"
+>  	depends on OF
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index bf4bd45adc3a..5d5264432613 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -53,6 +53,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+>  obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+>  obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+>  obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
+> +obj-$(CONFIG_COMMON_CLK_CS2600)		+= clk-cs2600.o
+>  obj-$(CONFIG_COMMON_CLK_EP93XX)		+= clk-ep93xx.o
+>  obj-$(CONFIG_ARCH_SPARX5)		+= clk-sparx5.o
+>  obj-$(CONFIG_COMMON_CLK_EN7523)		+= clk-en7523.o
+> diff --git a/drivers/clk/clk-cs2600.c b/drivers/clk/clk-cs2600.c
 > new file mode 100644
-> index 000000000000..ed23f347f382
+> index 000000000000..694736bbbff0
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/cirrus,cs2600.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/drivers/clk/clk-cs2600.c
+> @@ -0,0 +1,1152 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// CS2600  --  CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
+> +//
+> +// Copyright (C) 2024 Cirrus Logic, Inc. and
+> +//                    Cirrus Logic International Semiconductor Ltd.
 > +
-> +title: Cirrus Logic Fractional-N Clock Synthesizer & Clock Multiplier
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/container_of.h>
+> +#include <linux/delay.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
 > +
-> +maintainers:
-> +  - Paul Handrigan <paulha@opensource.cirrus.com>
-> +  - patches@opensource.cirrus.com>
+> +#include "clk-cs2600.h"
+
+You do not include here even the bindings, so clearly
+CS2600_AUX_OUTPUT_FREQ_UNLOCK and others are not bindings.
+
+...
+
+> +static int cs2600_check_device_id(struct cs2600 *cs2600)
+> +{
+> +	struct device *dev = cs2600->dev;
+> +	unsigned int dev_id, rev;
+> +	int ret;
 > +
-> +description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +  The CS2600 is a system-clocking device that enables frequency synthesis and
-> +  clock generation from a stable timing reference clock. The device can generate
-> +  low-jitter clocks from a noisy clock reference at frequencies as low as 50 Hz.
-
-Be sure these are wrapped at 80 (looks like 81).
-
+> +	ret = regmap_read(cs2600->regmap, CS2600_DEVICE_ID1, &dev_id);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Can't read device ID\n");
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - cirrus,cs2600
+> +	if (dev_id != CS2600_DEVICE_ID_VALUE)
+> +		return dev_err_probe(dev, -ENODEV, "Invalid device id 0x%x\n",
+> +				     dev_id);
 > +
-> +  clocks:
-> +    description:
-> +      Common clock binding for XTI/REF_CLK, CLK_IN
-
-Just drop description, kind of obvious from the clock-names. If you want
-to keep it, then rather list the items with description per each item.
-
-> +    maxItems: 2
+> +	ret = regmap_read(cs2600->regmap, CS2600_DEVICE_ID2, &rev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Can't read device revision\n");
 > +
-> +  clock-names:
-> +    items:
-> +      - const: ref_clk
-
-s/ref_clk/ref/
-(or xti)
-
-"clk" is just obvious.
-
-> +      - const: clk_in
+> +	dev_dbg(dev, "Device ID %x Rev %x", dev_id, rev);
 > +
-> +  '#clock-cells':
-> +    const: 1
+> +	return 0;
+> +}
 > +
-> +  reg:
-> +    maxItems: 1
+> +static int cs2600_i2c_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct cs2600 *cs2600;
+> +	int ret;
 > +
-> +  vdd-supply:
-> +    description: Power Supply
+> +	cs2600 = devm_kzalloc(dev, sizeof(*cs2600), GFP_KERNEL);
+> +	if (!cs2600)
+> +		return -ENOMEM;
 > +
-> +  cirrus,aux-output-source:
-> +    description:
-> +      Specifies the function of the auxiliary clock output pin
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0 # CS2600_AUX_OUTPUT_FREQ_UNLOCK: Frequency unlock notification
-> +      - 1 # CS2600_AUX_OUTPUT_PHASE_UNLOCK: Phase unlock notification
-> +      - 2 # CS2600_AUX_OUTPUT_NO_CLKIN: CLK_IN is not available
+> +	ret = devm_regulator_get_enable(dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Error with vdd supply\n");
+> +
+> +	cs2600->dev = dev;
+> +	i2c_set_clientdata(client, cs2600);
+> +
+> +	cs2600->regmap = devm_regmap_init_i2c(client, &cs2600_regmap_config);
+> +	if (IS_ERR(cs2600->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(cs2600->regmap),
+> +				     "Regmap not created\n");
+> +
+> +	/* Required to wait at least 20ms after vdd is enabled */
+> +	usleep_range(20000, 21000);
+> +	ret = cs2600_check_device_id(cs2600);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(cs2600->regmap, CS2600_SW_RESET, CS2600_SW_RST_VAL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Required to wait at least 5ms after software reset */
+> +	usleep_range(5000, 6000);
+> +	ret = cs2600_clk_get(cs2600);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Invalid parent clocks\n");
+> +
+> +	/* Set output clocks to HiZ */
+> +	cs2600_set_freeze(cs2600);
+> +	regmap_set_bits(cs2600->regmap, CS2600_PLL_CFG1, CS2600_CLK_OUT_DIS);
+> +	regmap_set_bits(cs2600->regmap, CS2600_OUTPUT_CFG1,
+> +			CS2600_BCLK_OUT_DIS | CS2600_FSYNC_OUT_DIS);
+> +	cs2600_clear_freeze(cs2600);
+> +
+> +	ret = cs2600_parse_dt_params(cs2600);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Cannot parse dt params\n");
+> +
+> +	ret = cs2600_clk_register(cs2600);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Cannot register clocks\n");
+> +
+> +	if (cs2600->ref_clk) {
+> +		cs2600->refclk_rate = clk_get_rate(cs2600->ref_clk);
+> +		regmap_update_bits(cs2600->regmap, CS2600_PLL_CFG3,
+> +				   CS2600_SYSCLK_SRC_MASK,
+> +				   CS2600_SYSCLK_SRC_REFCLK);
+> +	} else {
+> +		cs2600->refclk_rate = CS2600_INTERNAL_OSC_RATE;
+> +		regmap_update_bits(cs2600->regmap, CS2600_PLL_CFG3,
+> +				   CS2600_SYSCLK_SRC_MASK,
+> +				   CS2600_SYSCLK_SRC_OSC);
+> +	}
+> +
+> +	if (cs2600->refclk_rate < 8000000 || cs2600->refclk_rate > 75000000)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Invalid REFCLK Frequency %lu\n",
+> +				     cs2600->refclk_rate);
+> +
+> +	return 0;
+> +}
+> +
 
-I don't get the meanings - how clock output could be clock is not
-available? clk_in is a required property, so it cannot be unavailable.
+ID table definition goes here or somewhere around the probe.
 
-
-> +    default: 0
+> +static struct i2c_driver cs2600_driver = {
+> +	.driver = {
+> +		.name = "cs2600",
+> +		.of_match_table = cs2600_of_match,
+> +	},
+> +	.probe		= cs2600_i2c_probe,
+> +	.id_table	= cs2600_id,
+> +};
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
+> +module_i2c_driver(cs2600_driver);
 > +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/cirrus,cs2600.h>
-> +
-> +    i2c@0 {
-
-i2c {
-
-> +      reg = <0x0 0x100>;
-
-Drop reg
-
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      clock-controller@2c {
-> +        #clock-cells = <1>;
-> +        compatible = "cirrus,cs2600";
-> +        reg = <0x2c>;
-> +        clocks = <&xtl_clk>, <&sync_clock>;
-> +        clock-names = "ref_clk", "clk_in";
-> +        vdd-supply = <&vreg>;
-> +      };
-> +    };
-> diff --git a/include/dt-bindings/clock/cirrus,cs2600.h b/include/dt-bindings/clock/cirrus,cs2600.h
-> new file mode 100644
-> index 000000000000..673b4b4cb1f4
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/cirrus,cs2600.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/*
-> + * Copyright (c) 2024 Cirrus Logic, Inc. and
-> + *		      Cirrus Logic International Simiconductor Ltd.
-> + *
-> + * Author: Paul Handrigan <paulha@opensource.cirrus.com>
-> + *
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_CIRRUS_CS2600_H
-> +#define _DT_BINDINGS_CLK_CIRRUS_CS2600_H
-> +
-> +/* CS2600 Clock Outputs  */
-> +#define CS2600_CLK_OUTPUT		0
-
-Drop "OUTPUT". These are names of the clocks.
-
-> +#define CS2600_BCLK_OUTPUT		1
-> +#define CS2600_FSYNC_OUTPUT		2
-> +
-> +/* CS2600 Auxiliary Output */
-> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
-> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
-> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
-
-Not sure what are these, but feel like some register values. Otherwise,
-why these are exactly bindings? What part of driver do they bind?
+> +MODULE_DESCRIPTION("CS2600 clock driver");
+> +MODULE_AUTHOR("Paul Handrigan <paulha@opensource.cirrus.com>");
+> +MODULE_LICENSE("GPL");
 
 Best regards,
 Krzysztof
