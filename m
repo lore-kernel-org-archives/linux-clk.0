@@ -1,161 +1,106 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69B61DFE01;
-	Fri, 13 Dec 2024 16:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD41168B1;
+	Sat, 14 Dec 2024 04:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108370; cv=none; b=t5zZ3WSUvztNZYi8RCsT7jVLCYmeL9EECQO2659IQutzIPWodf6463sOZs7bja2nvkhdIXav7KjNpieFNQ+IeVvsMllTFEUn4ohGHVlQeiNTIS2do5J/n67HdLDKuHCzAgsVbx9DAF2KTP22QzXcbAzo3lgutl2cJFm4A0kAPDg=
+	t=1734149529; cv=none; b=blOmUfsqwwtIXGvmHOiu5HpZHkytj7TFBvD71NKXtOLedhFe7PUx7EnD/W+/oKQrTh8pnF/ZQTCL0KYU6QCCxbfkcZq0WBZc134qlfFS5Q6bhsbjsKrgz1/+L/lb6aWRt3nWBK1TrSEShWUHTDFTdHZlVsD4EzEjWMno3SU2jdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108370; c=relaxed/simple;
-	bh=M8kcQm2A0ykm55axI3kDdeYhrMewZUX1CR/r0W7/ncU=;
+	s=arc-20240116; t=1734149529; c=relaxed/simple;
+	bh=Aujp23MA7YyHDLJ2MbjCd8wyARqmkubYdfpJ0Ej5CDI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdxDmulnjKrucYA+azvX2/j/TItS05MeF99WL6AMgu3UJ7w75ynjzZkhbDpHdYn7P8X2lueukCKYmBdac/ZhEVkQRHIQi6KZBn96qlmsSwtV4yFJLxdCPKVY0tpghmlXkEQ56PVXkN7MFfJSTE0sOTmKWIBjuJn4fdSGACGlf/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mJnvKbi1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jyc3XM/fbvrqG5Nhu2oHm3NXEGBlv2fXRZFvfXSNqQOKoRRIEqrg5aJlaGcIILXr8vhd6039v/tukaOXSwKWzTwVsQYZYQdcXZolPcBz28lH7n3l7zA1TyIWqgNqYCTg9CntsPFLKjnxUBre/2Aj5BBwoSEROuPiJIkdJPlxW9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FuE14pFy; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mJnvKbi1"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 07B21465;
-	Fri, 13 Dec 2024 17:45:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734108324;
-	bh=M8kcQm2A0ykm55axI3kDdeYhrMewZUX1CR/r0W7/ncU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mJnvKbi1XTtUpAOhk1oNAuwTRxLq6PdodzjHwaWfSPT1zZ25ymT+Idk2kOPmxIlzX
-	 Fmv/2mL0Jr2fVFdq22MHWsA3t80mVE+kJQxRcSXq9+ekcpzdg4EQJRzOUhzOctEeDk
-	 Sw1MP6/DuoQuoqnj6cfGf7CE1COc70mNUrALakHk=
-Date: Fri, 13 Dec 2024 18:45:41 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FuE14pFy"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46788c32a69so29503451cf.2;
+        Fri, 13 Dec 2024 20:12:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734149527; x=1734754327; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A2ZXUNJUzsIZYyQ65j5HvtYHB4v0YyeGbQjnsrF79CI=;
+        b=FuE14pFyFwmN9nWXztl/E8CpM/P8B3Zen+4ZY2KWX/9wgPzztnXfFZoDI+ZlgyTEHR
+         WcTwFwpatmzv6G8gcry/8DHMXCvGqYiFyv8fR6GIkMFE4zCPc51MViLAPs12rnvvAbiz
+         W6QEdUh4R8hm7GDUM7s54bKMHRwJ5by/B1p9SZXI0nqUgTxDLZ/54L1Nm9n0FF9y5Yu/
+         YpEiS/oRpZBxEbLIztv6oD2aJKOj0ok1bPZFa/kbricIPMCJUTOE1ViujHUVpA1nq2s8
+         3tMOrvScV5mlyWt+C0/EQDSAJ/FHcqSBJe4pIXpDHOaV39lkPbvqdExVli4s2lyeDq6D
+         nAfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734149527; x=1734754327;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A2ZXUNJUzsIZYyQ65j5HvtYHB4v0YyeGbQjnsrF79CI=;
+        b=gc87lBrlNtAe0qDzgICPT8Dn7HiPutZjUaM92JiYAf+gCJUSNwJUpPFfe3Zq/gD/gT
+         NdwkpzCJSoa1f6/nrSdcIp31w7lc7WiKQwg+hVk1YSBd7Qdf+Nqu617KiZEZ06VJ1ZrM
+         kiD2g8V/h0x4fVKsaWUpto4mSW96MEpjv2Ior1vARbFP5qw6QBkN4cLedSbQ5YwKG7s3
+         OexdCdSamChJv3BcWirQM25b1G9z6EvTPcXkD6efEYiOoLL+LHFdF+roRTKYNa2Aqkgj
+         KKDh19ytDauq1t9fMiiIVqwrK0zlkZ8a33wJm2SBuwUzHD2RNNJPAkaNyqUvUamRSp0+
+         +6jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUBt54bWUpUxobvPZSI3T4+gZ0bUKC9oZ7wcZs9pSy7MVfqFekkXbpUOLjSCbCP5cTcMWPwzipaJWyeoVveg==@vger.kernel.org, AJvYcCUtCOrgX9hAPHHBmQ5Z+Cer9Lw/O2DUaXe937zYoEzXD1Wb/X/RTvymXbiQe64LVRIsex2NEjdtrb1N@vger.kernel.org, AJvYcCVbtgjdoUWrT8NnbTgmyZo8seKxxc31oFm7nBGWKZythiqYKOLlqGU0peonYm3Wyu8LbkNNu9nOuAMIcUk=@vger.kernel.org, AJvYcCVmHZoEheEgNY1yjDRukBfF1EXq/KAriXPJ9bnUvl8pHlXEki2/rvJrm1aQ+YceekOs7r8kmLU+5mHA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye2R1k2K6pUikV+MFpH53Vr7A+tVy7VMkOjDqK61jYI6OUufvw
+	I3Uw56HR5r51h0R7+4kzlT88W5+r5kHsB1QlCgdUuq/h7zYDP0lc
+X-Gm-Gg: ASbGncuDgMyNYuJ5F4yo6CAzr8Ex1EFopAkDM87ZZBNNf5Mk4TvT0Xpp2ck+7H2QKRu
+	VIIkMTkMj7mKCcfQ2ULgtGjHLs9j84qUPdIskS03ZRsr0dXfyJ8nAzpI11iTWT5LTCDi0XT2MgU
+	KEYm4KXxHXii87mNWqoMHi/yNwwagVrtZLopgROqdKcp9BKKnfjI1ZbvogurbF/LqtUb9VKbid7
+	OvBnAQk0uEL3u6uexAVXMdiZCNr9ZrsagIne1YMasYV
+X-Google-Smtp-Source: AGHT+IEkT7SA9qD4VQI+Pz7RyOblo7eaTFuND1N51KdlZ8Ie+jaFeyWJHFDM6Wgq/1onp6R5EF6s3Q==
+X-Received: by 2002:a05:622a:1dcb:b0:466:8cc1:6221 with SMTP id d75a77b69052e-467a58380eemr112002381cf.50.1734149526794;
+        Fri, 13 Dec 2024 20:12:06 -0800 (PST)
+Received: from localhost ([2607:fea8:52a3:d200::8f60])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2ed1a0asm4417401cf.87.2024.12.13.20.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 20:12:05 -0800 (PST)
+Date: Fri, 13 Dec 2024 23:12:02 -0500
+From: Richard Acayan <mailingradian@gmail.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
- maxItems
-Message-ID: <20241213164541.GA8294@pendragon.ideasonboard.com>
-References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
- <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+	Todor Tomov <todor.too@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v7 5/5] arm64: dts: qcom: sdm670: add camss and cci
+Message-ID: <Z10FkmBq95HQkOgv@radian>
+References: <20241210233534.614520-7-mailingradian@gmail.com>
+ <20241210233534.614520-12-mailingradian@gmail.com>
+ <fe8dbb4e-9d0e-4ecf-874b-be9225ae1487@linaro.org>
+ <Z1jdNaeoictuCK7N@radian>
+ <a499bc08-1505-4f7c-833c-68240fdec275@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
+In-Reply-To: <a499bc08-1505-4f7c-833c-68240fdec275@linaro.org>
 
-Hi Tomi,
-
-Thank you for the patch.
-
-On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On Wed, Dec 11, 2024 at 11:24:30AM +0000, Bryan O'Donoghue wrote:
+> On 11/12/2024 00:30, Richard Acayan wrote:
+> > > I think you sorted the regs, interrupts but forgot the clocks ?
+> > Do you mean the first three clocks placed first? The order was suggested
+> > by Vladimir in [1], but I can undo it.
+> > 
+> > [1]https://lore.kernel.org/r/40cd7a52-1c60-40dc-aee6-730b5247b216@linaro.org
 > 
-> The binding is missing maxItems for all renesas,cmms and renesas,vsps
-> properties. As the amount of cmms or vsps is always a fixed amount, set
-> the maxItems to match the minItems.
+> We've had a long, long discussion on ordering subsequent.
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Have a look at the sc7280 and align your ordering with that.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Ok, it seems SC7280 renames the CSID clocks to change their alphabetical
+sorting so I'll rename them as well.
 
-> ---
->  Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> index c5b9e6812bce..e5fbc4ffe29c 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> @@ -489,9 +489,11 @@ allOf:
->  
->          renesas,cmms:
->            minItems: 4
-> +          maxItems: 4
->  
->          renesas,vsps:
->            minItems: 4
-> +          maxItems: 4
->  
->        required:
->          - clock-names
-> @@ -558,9 +560,11 @@ allOf:
->  
->          renesas,cmms:
->            minItems: 3
-> +          maxItems: 3
->  
->          renesas,vsps:
->            minItems: 3
-> +          maxItems: 3
->  
->        required:
->          - clock-names
-> @@ -627,9 +631,11 @@ allOf:
->  
->          renesas,cmms:
->            minItems: 3
-> +          maxItems: 3
->  
->          renesas,vsps:
->            minItems: 3
-> +          maxItems: 3
->  
->        required:
->          - clock-names
-> @@ -684,6 +690,7 @@ allOf:
->  
->          renesas,vsps:
->            minItems: 1
-> +          maxItems: 1
->  
->        required:
->          - clock-names
-> @@ -746,9 +753,11 @@ allOf:
->  
->          renesas,cmms:
->            minItems: 2
-> +          maxItems: 2
->  
->          renesas,vsps:
->            minItems: 2
-> +          maxItems: 2
->  
->        required:
->          - clock-names
-> @@ -799,6 +808,7 @@ allOf:
->  
->          renesas,vsps:
->            minItems: 2
-> +          maxItems: 2
->  
->        required:
->          - clock-names
-
--- 
-Regards,
-
-Laurent Pinchart
+	csi0 -> vfe0_csid
+	csi1 -> vfe1_csid
+	csi2 -> vfe_lite_csid
