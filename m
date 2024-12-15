@@ -1,51 +1,80 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7546B374FF;
-	Sat, 14 Dec 2024 22:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE80217BA2;
+	Sun, 15 Dec 2024 05:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734216518; cv=none; b=nv1uwGuYWjxWmyssjxDddarnMb9Sm5dJost5j8OMEZlinSkjvdcEv3DAtGnJWaePVfeV8GG+sdjBMhweUq3wgl6wmbEuCWbXstimzzUy9zirjndUYonApBgh7xSmH2KWJ2RRgtZK9i4jeh8AJspBc8M2235w4uh5JW/piqaA0+0=
+	t=1734241019; cv=none; b=WWk8BT5Gfz6nEiz3MDPTeVfdACkIHeTaPw3FxP4hg8Kh8bri2kePv/UrXaM0BoelR7cFOBd2vglyZPlP3xLp0LxxoMrcgSma9d17nJ/1wstM38747MPFRzmb6Ri5b5fvK+9zxQp/cXPVdpDVhuCe2JgKl5oounBtSFWrQwUsLPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734216518; c=relaxed/simple;
-	bh=cnWMBdJhjRflNaOJVBSpemvy1cg2o3A54r2tYAo/T8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j/eGWDAyxxBpPoXG/od3n+EVksYslooJn4al18AwIjzXkQnEqcf4y0LLEuxd37qmMu4GtqSoBlGhAbuNVKkx/pImSCq6j48BF+JkcN1OgO+yy9V6tTECBLSXfcZns+OAUkX1U1U5nrDXZMd71vuKum0yvyX36xJ/GzSLZz0KQ+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0XE8byCm; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1734241019; c=relaxed/simple;
+	bh=tm2ZBhzuEFEoW3o28d+5TOHGvceka3GHwCO5JinxcNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=So/E+kZVuQFlhUxQjdy0x7hctnN57WP/nnIStyz10DN3Zqde7RDiFg/fb1O3Q7jyOc9Zfs7+Ngl2mXY+sr/+9FkhJbkT6ErV0UBqzx5fiSqSbzqpL9pWWTG/6bn9axEN4TucUjV7nNxCeu7RYI2yiHeTvuQVF14mWMRYU9/S+KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUB50UrG; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0XE8byCm"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=w/mwqlldhdUNZw8mhvNpRd4TsYnOabctYvvTfesFo7E=; b=0XE8byCmo+jmC1INaQjAPTlrus
-	pPgB1W+DtrHXZxckAdQ8tpoNGo63j6EWf5xQYwEE2TzLhZS/5d4tkvPOVm8LlywyT//jfGfw/HXaW
-	T6yDc68rzv5Meia8jIcZREvC4R2K+Lrk1FMeYDMCJGZgCMEAoDmIsbjUS43Elf6h6NRzIkkBXAvoJ
-	avrIKxVO7Luc6zYYSFENDqDRaG0SFx0GuIJvNBGaosdmVFCVH14K1i1RaPSVwU/JhR67ddXf+MK7s
-	yw+xv1oA7FtwI62+Z+jmu9uDogCzzpyBqL+ezXeiqDvn4LC6gYGhEbItOLeCwjP6G2J090ckNAq75
-	TrOJStGw==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tMavv-0000P4-Tk; Sat, 14 Dec 2024 23:48:23 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUB50UrG"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215770613dbso20274855ad.2;
+        Sat, 14 Dec 2024 21:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734241017; x=1734845817; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5T7Xps2U+Xbtct6WpNh1Ms/jHQH/Zy0/yiacfJI6eY8=;
+        b=bUB50UrGv2NKbTPlNElauaAA6+CWNPtSkE+pjC8hoM77ttaldi1kTYyFdV1nEFmbYr
+         v/LStV28ymKc1+pbV12E13MpIdgSc5YNkqwxprFzDfw7GVh3DGYYWZGelbx4kPIgHgVR
+         zuRPxPYZXuEMIVA92P5EkMKD826jBX3J9i+P+58M/Go4sY2q3owJGVESs71ELF+8cuSz
+         BQPV5HTkHxelHKJfQnmAgYghT1tAmKhFwILcoYnOS9RFRoH6gWBXyxQw+fNSsdE6QoAA
+         160A4pT2nS/DK3A9P6tLuHSD4ZVPie/9o/5VkauBts5BjGPYZJL6+ee4yTmA0xPiRcQ8
+         uCfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734241017; x=1734845817;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5T7Xps2U+Xbtct6WpNh1Ms/jHQH/Zy0/yiacfJI6eY8=;
+        b=PBwVivwnzTSkLQzmlfSi2G23Suk8sO/FkIn/+v8TwLHILWDDZsFAIiV7/zKRNRXxON
+         8iKT1VipftcX0Mi0HYYtK2gN0zoDawyF5igCrZxDmfKAjnD/2ULoKsWhevZBVm3iS9K7
+         BSZlYhrsF4ea7WdB4IJJhWilFgQDeO/+Di+yI+4z4nRKsmL2eXwiso0iBOkZdtcdcFm6
+         iW4R2uGPft3kjYcKzIK5yRc4Ug52jqjP5L2ci/jenK8ZeoeSpayvFZ4/dv+lp/tHZIUO
+         2O6MQlkPgJMnvYL69cdEsJpwR16dDBcrYb7DfOHtU3u+9d+QLAgXSh0ZmsljXcDZBgCX
+         yrSg==
+X-Forwarded-Encrypted: i=1; AJvYcCW34Y7GutyuklAwsmf3aOuxX5g4pU63tUHrgCJN076I3VE2tKtfkPmLF+bDXYcTNISEvAZ54339A67s@vger.kernel.org, AJvYcCX6fRfb3dZypPygZHY8UpWYQxwt+mDDR0+RF9ixOV8I3NkQ57U3zm5iyCpMQ0oEo2oQVkuAJpcbD61E@vger.kernel.org, AJvYcCXAYlaaVWTh5jJytvKpqXSsmA2iLMi1xktmy+G6DN9DDnGs4nXg4OoxlgV1hjeSzuquWeSfIId0a1fupMfm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6o6U+/leHQ++lmLnh3w8yEKzJZEU+OETM1bUf6Nei+p1d6tNk
+	6JNt61VHRMQhUclticUaN6zRdewFY8Og2Iybl7Q4cCJ9EVAUEj80
+X-Gm-Gg: ASbGncu3m1pgoRNbCvUUBOVQyQp+21Cs3Muh3CVzWnm6IOFurXwXbNdje2KDLEIOb+h
+	cqa0ZLdfVNVquxiDPqWkNApOwPmBxgi5jtv/Q91ygZMe3jncOheZ4C+sWg/YU25uidvAJ4dCKVb
+	/2ZpeNvygdXNKkGQ+FihQzJBWnw9eD2wQtTFU71dfQhVt5EVemVAT3opyBHvr2XBmkSfLWMt1P8
+	ocFxCOiHFFD3Z5VkygU9sw/PP4zLhWhwPsJV8EYofr54d3PGw==
+X-Google-Smtp-Source: AGHT+IFi1PPQSUOrCioA0Ut+2J5jgMJCNCDNT6STQp0qD6xWCc08BjaoFiUHYwBhtNmNrzFypeNIzA==
+X-Received: by 2002:a17:902:e806:b0:20f:aee9:d8b8 with SMTP id d9443c01a7336-218929a248fmr95477575ad.20.1734241016960;
+        Sat, 14 Dec 2024 21:36:56 -0800 (PST)
+Received: from anarsoul-xps15.lan ([2604:3d08:7780:1ca9::398])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142fa1cf8sm5729803a91.38.2024.12.14.21.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 21:36:56 -0800 (PST)
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Roman Beranek <me@crly.cz>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	quentin.schulz@cherry.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH] clk: rockchip: rk3588: make refclko25m_ethX critical
-Date: Sat, 14 Dec 2024 23:48:19 +0100
-Message-ID: <20241214224820.200665-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.45.2
+	linux-clk@vger.kernel.org
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH 0/3] arm64: allwinner: a64: fix video output on Pinebook
+Date: Sat, 14 Dec 2024 21:34:56 -0800
+Message-ID: <20241215053639.738890-1-anarsoul@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,57 +83,33 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+Since commit ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux"),
+TCON0 clock parent is always set to PLL_MIPI, but unfortunately it breaks
+video output on Pinebook.
 
-Ethernet phys normally need a 25MHz refclk input. On a lot of boards
-this is done with a dedicated 25MHz crystal. But the rk3588 CRU also
-provides a means for that via the refclko25m_ethX clock outputs that
-can be used for that function.
+I did an experiment: I manually configured PLL_MIPI and PLL_VIDEO0_2X
+to the same clock rate and flipped the switch with devmem. Experiment clearly
+showed that whenever PLL_MIPI is selected as TCON0 clock parent, the video
+output stops working.
 
-The mdio bus normally probes devices on the bus at runtime, by reading
-specific phy registers. This requires the phy to be running and thus
-also being supplied by its reference clock.
+To fix the issue, I partially reverted mentioned commit and added explicit
+TCON0 clock parent assignment to device tree. By default, it will be
+PLL_MIPI, and the only users with RGB output - Pinebook and Teres-I will
+override it in their dts.
 
-While there exist the possibility and dt-binding to declare these
-input clocks for each phy in the phy-dt-node, this is only relevant
-_after_ the phy has been detected and during the drivers probe-run.
+Vasily Khoruzhick (3):
+  dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
+  arm64: dts: allwinner: a64: explicitly assign clock parent for TCON0
+  clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as TCON0 parent
 
-This results in a chicken-and-egg-problem. The refclks in the CRU are
-running on boot of course, but phy-probing can very well happen after
-clk_disable_unused has run.
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts |  2 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  |  2 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  2 ++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c                 | 11 -----------
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  2 --
+ include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
+ 6 files changed, 8 insertions(+), 13 deletions(-)
 
-In the past I tried to make clock-handling part of the mdio bus code [0]
-but that wasn't very well received, due to it being specific to OF and
-clocks with the consensus being that resources needed for detection
-need to be enabled before.
-
-So to make probing ethernet phys using the internal refclks possible,
-make those 2 clocks critical.
-
-[0] https://lore.kernel.org/netdev/13590315.F0gNSz5aLb@diego/T/
-
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
----
- drivers/clk/rockchip/clk-rk3588.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-index 0ffaf639f807..2f63985a6d07 100644
---- a/drivers/clk/rockchip/clk-rk3588.c
-+++ b/drivers/clk/rockchip/clk-rk3588.c
-@@ -792,10 +792,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
- 	COMPOSITE(MCLK_GMAC0_OUT, "mclk_gmac0_out", gpll_cpll_p, 0,
- 			RK3588_CLKSEL_CON(15), 7, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK3588_CLKGATE_CON(5), 3, GFLAGS),
--	COMPOSITE(REFCLKO25M_ETH0_OUT, "refclko25m_eth0_out", gpll_cpll_p, 0,
-+	COMPOSITE(REFCLKO25M_ETH0_OUT, "refclko25m_eth0_out", gpll_cpll_p, CLK_IS_CRITICAL,
- 			RK3588_CLKSEL_CON(15), 15, 1, MFLAGS, 8, 7, DFLAGS,
- 			RK3588_CLKGATE_CON(5), 4, GFLAGS),
--	COMPOSITE(REFCLKO25M_ETH1_OUT, "refclko25m_eth1_out", gpll_cpll_p, 0,
-+	COMPOSITE(REFCLKO25M_ETH1_OUT, "refclko25m_eth1_out", gpll_cpll_p, CLK_IS_CRITICAL,
- 			RK3588_CLKSEL_CON(16), 7, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK3588_CLKGATE_CON(5), 5, GFLAGS),
- 	COMPOSITE(CLK_CIFOUT_OUT, "clk_cifout_out", gpll_cpll_24m_spll_p, 0,
 -- 
-2.45.2
+2.47.1
 
