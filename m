@@ -1,130 +1,119 @@
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78D61CFB6;
-	Sun, 15 Dec 2024 08:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC20199BC;
+	Sun, 15 Dec 2024 08:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734250137; cv=none; b=K9N9xJaZ+rjk3yNSTFw2vuOXI3nPue6rIRk4QO/lp2dD+BOnpbIgf/s+bfJMq3piF9QiGKm/hEkaxf/mmZQoF+j3UNfaATMyh8EKyDVo6k+lf1Rgby67J439RM8vjKwyVFgquvCee8rFDa+YJY+61Ujd1Y034MxFCxpD7/qv6vI=
+	t=1734250520; cv=none; b=glm00PHJQArRRq8I74ZdsK8hvNOCcMmHt7IMnukfzx2frunHGhyxE8zYewiQU4fALcdwRZAdqj7ZwRVuKbfZkzQvcYURKAMEm84zcfgcxPEn6qEHtdmTgSgURK9M7ngcjWsDZ6jm7OL1C5ih3n2AhEqbk2SfsPCh6A2EFAOAAdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734250137; c=relaxed/simple;
-	bh=mTx/SUo/2cPYukaVP0N9YGA5hwppTVdVXECxTHdD1f8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=MHSeqNhv7kk39MvwfNWLCXVK31EU8JFua2BSd+FeBpqioKiAq9kH2WG0pQ1p4ZccuaYe4rDHNR3uFTlbY56ZSsRk1gR6FeP4IfmoGk+CkQQgUqYmwCOAlvhUzbHYhFhLACh1udxjUAzBE5k1I1dAwuGr0Hgf3pTuiJreNxXdJXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=VQwcq5hc; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="VQwcq5hc"
+	s=arc-20240116; t=1734250520; c=relaxed/simple;
+	bh=MfzlMTD2QL4BZMnKQKMZj1xTmWxcCa0w/vAtL5LJle4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uq8T0zrZogXmTqcUxtdCnfQSvh74NCeZPGaYkJIvFkQ88rt/pwMo4240V9413dqREXZbBmtCRSZhuPsihB7jz778oNmApyodLeMZNhLPhPxFdEfiy8VeA96qz2FdGm0CcJzyYB4Ful5Y7Quokl1Fvi/C8nDLoQVJKz59OTIbyGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so4538436e87.1;
+        Sun, 15 Dec 2024 00:15:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734250513; x=1734855313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jbW+PaUOzCwCbF61CRYPi7XMG3ao6Wxw90lcjAtKDFs=;
+        b=t7o1ejUNV5jz1vIxIItcMZwpgS9EtHtq8zbeNI9EnxOGa+2uPtNnzvpedb4azJOSTj
+         X9YtoRNBqGx7xbiJfsqbKeiXJtq3TeeVi5qmAWEHrjRgkWHfRTEx36zhknsEN27yVnz6
+         WFFoeR0c3T7pnd17iElkVPlB1BZ8RqBt1JxpT4E0BVgO3umBa9+7dmrZ+mZnHF2VFs/1
+         ZA0riSYuMTkVeESxZc3t2TigZjzUPium+VNMFfnbZElSHLU/IsiuK4dE7wc67zKBU4UJ
+         vU9TsJF1272g1OLrfM814RhgP6AJ0LVYuzx8ihD/sZSl2+LoyRo3VicBivUQhEjU4dZe
+         0OoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVa29rfftaH8UqSW5jzmxq2SrFJtKFTvpRHEgFJoRyZ8ll4/9YFACSE/VnodK7JFlRtQ1OEMOAqSY3p@vger.kernel.org, AJvYcCWPFQDuMn+LQDwiVW2RRcTBtJNUV+Xd0LQBTfl75FTHM+Z1gNc9VbKURGVJ4CzDqcfm+YBWtRKE6Rk2Malz@vger.kernel.org, AJvYcCWdTZORS8bpcWQdzjFTilCLiBZ2RPOsRBzZMiUrpYoyrfa+RYjl77jrCeM0ADLQluWZBuWDJhe8c7px@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLzpitU4ZKXF2+gsHuw/ypvSqXPBkTWzH4sdEZoOiiEeDkmtQy
+	KceKjOkeKPIPQhJ/xSH9XH5jjQRlXGEAs6wAbje3O0HpLlInkbOPVEj+BJtc
+X-Gm-Gg: ASbGncvi3lpu4T1l22GsFu90gzQTiZPOWgPdzrmizpl/204F+SX3HXT49MWYCtGEQfR
+	bdJgh3a5D4Vpwjjq0Tm6K+0RkLupUExiocvd0SqH0fO4GiInLIlG01DwdDeh1HijRGVHXTRpgdn
+	xIgIkHYmYTzwRg6XVQhdCMjI2Y2WIB5MvgWl4BbAOiuZNdNxwfCpMO0g9kqlm87H/NNKxdGzuvY
+	+lkknvwZpiWp54yv6c4Q/8dXe3oQfzvRY2wWVy8rO7kFooQGh6+mnRgQ4gfHXM118ibcO+95fJk
+	BDg/mZhYY4jLgA==
+X-Google-Smtp-Source: AGHT+IE4kdx9KP+GTdphcLf5oLKpCZsV/Ub3q3kJzPn7HwT+5BDvQB+re7v2vmCROMO3PGEN9V8Ivw==
+X-Received: by 2002:a05:6512:104c:b0:53e:3a9d:e4a with SMTP id 2adb3069b0e04-54090268d57mr2530532e87.10.1734250512671;
+        Sun, 15 Dec 2024 00:15:12 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c00166sm442510e87.159.2024.12.15.00.15.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Dec 2024 00:15:12 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso38006401fa.0;
+        Sun, 15 Dec 2024 00:15:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV4ZviGXOVWSHQMt4bRBWyQ1kVGeUrykmm/ZuFnbI+N97zKBoOBTc37apqlf3WfsPIcXaupz9PpRxgH@vger.kernel.org, AJvYcCXCkwy+pgnmW2nRima0AQh2aesCeYtww9uZE8Iz0/5++1FEG5L4nNhLTbN3jGneCVn2whuP8x/6Xod6@vger.kernel.org, AJvYcCXoyb8ZneaKqnjRdVH88lWSH32ZOJpGjjv7m71LH6+8U7GENlngcyMtKACggGHEhpxz3wpHGW0fKd6PjUjo@vger.kernel.org
+X-Received: by 2002:a05:651c:198b:b0:300:3de4:ff7f with SMTP id
+ 38308e7fff4ca-3025456691dmr30121161fa.6.1734250511023; Sun, 15 Dec 2024
+ 00:15:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1734250133;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QUb5xuTuYQHpC3cVU3eh5B+19cq4zd2piW0HbbFtwAo=;
-	b=VQwcq5hcvGxLAtm/bOe0r7v+VbxFmms5LcWlEqTd4qYYmdRx0yNVCaJa4xxsOAo2ifn/l6
-	Hk2Gd3kOpurSjjfzK46Zo1w/VnGvJdOLFEXY5l/+Gx+gkxVA4LKghcC/31KfVj75eQlh0i
-	YjZWUX/HiE9ASnjgmXMU4MRqgFbgrtAmMJlSyHmvJ8urrPeZo3ocZewkvTlbmSnibz5WE1
-	gKqyBzBvzKcfD8gBSyI3gqn+/LCLcZO5RA79RtbCazdp6n5aenuZYtzpDoqeyW0QQRvkvZ
-	ikQ9ClfZUYibbStlY+Yxi31i1iYHs39Ksp3RiNBLfpl3U/W9Yo3AuSACe9BcFg==
-Date: Sun, 15 Dec 2024 09:08:53 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, Roman Beranek
- <me@crly.cz>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as
- TCON0 parent
-In-Reply-To: <20241215053639.738890-4-anarsoul@gmail.com>
 References: <20241215053639.738890-1-anarsoul@gmail.com>
- <20241215053639.738890-4-anarsoul@gmail.com>
-Message-ID: <32683972639853c626d46fa4374d1558@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+In-Reply-To: <20241215053639.738890-1-anarsoul@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 15 Dec 2024 16:14:57 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65odTCjkC493e=q57ikeKHWrKYS26N7-0Hjc=S_d6ELyQ@mail.gmail.com>
+Message-ID: <CAGb2v65odTCjkC493e=q57ikeKHWrKYS26N7-0Hjc=S_d6ELyQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] arm64: allwinner: a64: fix video output on Pinebook
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, Roman Beranek <me@crly.cz>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Vasily,
+On Sun, Dec 15, 2024 at 1:36=E2=80=AFPM Vasily Khoruzhick <anarsoul@gmail.c=
+om> wrote:
+>
+> Since commit ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in =
+TCON0 mux"),
+> TCON0 clock parent is always set to PLL_MIPI, but unfortunately it breaks
+> video output on Pinebook.
+>
+> I did an experiment: I manually configured PLL_MIPI and PLL_VIDEO0_2X
+> to the same clock rate and flipped the switch with devmem. Experiment cle=
+arly
+> showed that whenever PLL_MIPI is selected as TCON0 clock parent, the vide=
+o
+> output stops working.
+>
+> To fix the issue, I partially reverted mentioned commit and added explici=
+t
+> TCON0 clock parent assignment to device tree. By default, it will be
+> PLL_MIPI, and the only users with RGB output - Pinebook and Teres-I will
+> override it in their dts.
+>
+> Vasily Khoruzhick (3):
+>   dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
+>   arm64: dts: allwinner: a64: explicitly assign clock parent for TCON0
+>   clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as TCON0 parent
 
-On 2024-12-15 06:34, Vasily Khoruzhick wrote:
-> Force selecting PLL-MIPI as TCON0 parent breaks video output on 
-> Pinebook
-> that uses RGB to eDP bridge.
-> 
-> TCON0 clock parent will be selected in the device tree instead.
-> 
-> Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in 
-> TCON0 mux")
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Looks good to me.
 
-Looking good to me, as a patch that completes the panel bugfix.
-Thanks once again for the patches!
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-I'd suggest that the patch description is improved further a bit,
-by incorporating some parts of the good description of the issue
-that's already in the cover letter.  In particular, I'd suggest
-that you describe that the patch partially reverts an earlier
-commit, etc.
+I'll wait for a bit for Andre to comment.
 
-Additionally, I'd suggest that the comment block deleted below is
-actually adjusted and copied to the addition to the A64 SoC dtsi,
-which is performed in the first patch in your series.  That might
-be of high value later.
-
-With that addressed, please feel free to include
-
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
-
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> index 3a7d61c81667..cc8de0bfbc67 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> @@ -534,12 +534,6 @@ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", 
-> de_parents,
->  				 0x104, 0, 4, 24, 3, BIT(31),
->  				 CLK_SET_RATE_PARENT);
-> 
-> -/*
-> - * DSI output seems to work only when PLL_MIPI selected. Set it and 
-> prevent
-> - * the mux from reparenting.
-> - */
-> -#define SUN50I_A64_TCON0_CLK_REG	0x118
-> -
->  static const char * const tcon0_parents[] = { "pll-mipi", 
-> "pll-video0-2x" };
->  static const u8 tcon0_table[] = { 0, 2, };
->  static SUNXI_CCU_MUX_TABLE_WITH_GATE_CLOSEST(tcon0_clk, "tcon0", 
-> tcon0_parents,
-> @@ -959,11 +953,6 @@ static int sun50i_a64_ccu_probe(struct
-> platform_device *pdev)
-> 
->  	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
-> 
-> -	/* Set PLL MIPI as parent for TCON0 */
-> -	val = readl(reg + SUN50I_A64_TCON0_CLK_REG);
-> -	val &= ~GENMASK(26, 24);
-> -	writel(val | (0 << 24), reg + SUN50I_A64_TCON0_CLK_REG);
-> -
->  	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_a64_ccu_desc);
->  	if (ret)
->  		return ret;
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts |  2 ++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  |  2 ++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  2 ++
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c                 | 11 -----------
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  2 --
+>  include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
+>  6 files changed, 8 insertions(+), 13 deletions(-)
+>
+> --
+> 2.47.1
+>
