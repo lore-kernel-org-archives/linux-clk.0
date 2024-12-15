@@ -1,102 +1,78 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DF71714B7;
-	Sun, 15 Dec 2024 13:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13C11BC9E6;
+	Sun, 15 Dec 2024 22:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734270047; cv=none; b=iSjDvnSKiOb9e5pwzSDVWAn+oZ74xS6T/Aa60tS9GCDkI7rlo6PgD0N3WDB7W0m7aabvMHpo627oKZ6ztOgnbs7D+LCdR0B2sSr2v/VsNhtWYFgUSEmyGtvCZjijSs6mPJqjdHqGtQuZv1aLCx+bHWJCAuX6XfRCWJxNR/07wc0=
+	t=1734300844; cv=none; b=hPwudSWH+j8txfYthqSOhv67CDQ3IbKbVdWRAzwMWEJ12gsDqv92uBsU7Fjw7Lsg+0K2craKuw4veCfb2qmRHY3F2KK0p83YXL/Fscy15UNSbwwrp2bmbqmF02ZHl7xoL7QPMoiWK9sWcoU6Ht1fYMAO6gE1Zmg6rBxmqak71Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734270047; c=relaxed/simple;
-	bh=Clhigu/Q4gCmERhzrswzfgXprFlUs+6+4e/00LAi3G0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qc99dl6JhAc2hdX8t856RzJRKkda9GGTW6CDWQ9PkAQECh39t9JDeQsnuPPSxz9Tsxu2gH3C5yvPskQlI5LVtoa6pfhvIcfyNntQ8ZJItfd9g6uX2C+1uZaNV14ycixt8+3CmzVW1uBA/p3dEheY1wTmgALdwNp5oTd7huJgRyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8414611FB;
-	Sun, 15 Dec 2024 05:41:05 -0800 (PST)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 730863F720;
-	Sun, 15 Dec 2024 05:40:35 -0800 (PST)
-Date: Sun, 15 Dec 2024 13:39:50 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, Roman Beranek
- <me@crly.cz>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/3] arm64: allwinner: a64: fix video output on Pinebook
-Message-ID: <20241215133950.27e5877a@minigeek.lan>
-In-Reply-To: <20241215053639.738890-1-anarsoul@gmail.com>
-References: <20241215053639.738890-1-anarsoul@gmail.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1734300844; c=relaxed/simple;
+	bh=xrJUrrzi8EBdVQFu+4cRAq9JfJvGNYjnuVvEtBs/2DM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KkGXAV0l6baGvqmUXPb7kGlU7yZhUO+OZtSfV6YXcng/sdFTIG5pbbFukbPfOGL7F2uj4BdQWKZ+NQzCAA0g0gWVx5LibQ3Hs7pYcMKkeLgO1pHosiwjD+/bASVDfiYMsyEwKZOkvwj8ZiDAOb2Lz43Avmh/N5fR9iuZZyFIKkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1tMws6-000000002qE-1xbS;
+	Sun, 15 Dec 2024 22:13:54 +0000
+Date: Sun, 15 Dec 2024 22:13:49 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Miles Chen <miles.chen@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	John Crispin <john@phrozen.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, stable@vger.kernel.org
+Subject: [PATCH 1/5] clk: mediatek: mt2701-vdec: fix conversion to
+ mtk_clk_simple_probe
+Message-ID: <b126a5577f3667ef19b1b5feea5e70174084fb03.1734300668.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 14 Dec 2024 21:34:56 -0800
-Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+Commit 973d1607d936 ("clk: mediatek: mt2701: use mtk_clk_simple_probe to
+simplify driver") broke DT bindings as the highest index was reduced by
+1 because the id count starts from 1 and not from 0.
 
-Hi Vasily,
+Fix this, like for other drivers which had the same issue, by adding a
+dummy clk at index 0.
 
-thanks for tracking this issue down and sending the fixes!
+Fixes: 973d1607d936 ("clk: mediatek: mt2701: use mtk_clk_simple_probe to simplify driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/clk/mediatek/clk-mt2701-vdec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Since commit ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux"),
-> TCON0 clock parent is always set to PLL_MIPI, but unfortunately it breaks
-> video output on Pinebook.
-> 
-> I did an experiment: I manually configured PLL_MIPI and PLL_VIDEO0_2X
-> to the same clock rate and flipped the switch with devmem. Experiment clearly
-> showed that whenever PLL_MIPI is selected as TCON0 clock parent, the video
-> output stops working.
-
-That is good info, together with what Roman reported in that patch
-mentioned above it seems to confirm that the parent clock selection
-also determines the output path of TCON0.
-Since there does not seem to be another register or switch setting
-the path (ignoring the pinmux), I think a DT solution is appropriate
-here, and assigned-clock-parents is the right way to go.
-
-So the patch series looks good to me in general, but we thought that of
-Roman's series as well, so I would really like to see a Tested-by: from
-a Pinephone user and ideally a confirmation from Roman that this still
-works for him.
-
-Also I second Dragan's comments about copying the rationale into at
-least the commit messages (if not in comments). Having explanations
-in the cover letter is good, but having it in the git repo is much
-better - as the cover letter will only be in the email archives.
-
-Cheers,
-Andre
+diff --git a/drivers/clk/mediatek/clk-mt2701-vdec.c b/drivers/clk/mediatek/clk-mt2701-vdec.c
+index 94db86f8d0a4..5299d92f3aba 100644
+--- a/drivers/clk/mediatek/clk-mt2701-vdec.c
++++ b/drivers/clk/mediatek/clk-mt2701-vdec.c
+@@ -31,6 +31,7 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
+ 	GATE_MTK(_id, _name, _parent, &vdec1_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
  
-> 
-> To fix the issue, I partially reverted mentioned commit and added explicit
-> TCON0 clock parent assignment to device tree. By default, it will be
-> PLL_MIPI, and the only users with RGB output - Pinebook and Teres-I will
-> override it in their dts.
-> 
-> Vasily Khoruzhick (3):
->   dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
->   arm64: dts: allwinner: a64: explicitly assign clock parent for TCON0
->   clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as TCON0 parent
-> 
->  arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts |  2 ++
->  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  |  2 ++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  2 ++
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c                 | 11 -----------
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  2 --
->  include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
->  6 files changed, 8 insertions(+), 13 deletions(-)
-> 
-
+ static const struct mtk_gate vdec_clks[] = {
++	GATE_DUMMY(CLK_DUMMY, "vdec_dummy"),
+ 	GATE_VDEC0(CLK_VDEC_CKGEN, "vdec_cken", "vdec_sel", 0),
+ 	GATE_VDEC1(CLK_VDEC_LARB, "vdec_larb_cken", "mm_sel", 0),
+ };
+-- 
+2.47.1
