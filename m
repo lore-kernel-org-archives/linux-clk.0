@@ -1,99 +1,144 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2222C17C7C;
-	Mon, 16 Dec 2024 04:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C19192D69;
+	Mon, 16 Dec 2024 07:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734321865; cv=none; b=JLaf7pzmHGcMjTLw+CFDnmZ1poc42m4BF6V8Q/S27kaMlbGIdaQXH1QrUAweRYvNhwtYxeW1jR1RoGIRmlyvS0/ItdJq396OADK3Ui+o8/1hP6uGswjczQrFEaVN2rhTG3FxS9o2nkucQfqlAqJGNDUhl13xX2RWvBkOA7PXGTk=
+	t=1734334172; cv=none; b=vAYg9aOHG5jvmu5UYm7c0C1RimJJTgpLmSNPaMShg6ZlKanDWL9IwQkJDMDq5bHxaQB/HwTQhc6du0Anr4Q8/32RAEvSF3vA1sSMigiso5iPiS879drpGc3xtk+jnEiQ8f7RADuwaw4hM5M0FYzPxx84lrnX37RzpysJR0IHkn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734321865; c=relaxed/simple;
-	bh=L9O1CUhqES2iPppXt2s+dnCXTdYr//DdxI8fhsvVtJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESUcT0KlnarMVoWpzbxCKW4Wtwie3DRrOebvYs/9Vy5P77drHVWIZY3YuzXGO0j+91uifw71ImJ1D9AA5g48fbyEp2DJunqgZR/ZSxYeKJLKg7uwcnxRipQ1VWyg1VHXsblGDZdWM2tkh1k8BjSCtNA9zqL+ntGxOBN43woUd+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DaModl1/; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1734334172; c=relaxed/simple;
+	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jqMuxjZCPU3uY6/XZA0V3qWBr0X47owaLqdl0vHowymsSu9Lvn4AgFkFmjLru01JWV68fI4CVGWmwqkI7JMbTacy1uNOkBIsMSrjoWlxWIneVB2mK7E5L2JxxZKRypVJbXtUddlTlo47LoKKp4C+kuvFRmwcAu+fzq/yt/J9nfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akmXyn2j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DaModl1/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734321863; x=1765857863;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L9O1CUhqES2iPppXt2s+dnCXTdYr//DdxI8fhsvVtJ0=;
-  b=DaModl1/En5WfhwBJnbZf0y++L+J3YxqIDeh08xXBCMIMwc0PzNtkXby
-   m282rk5zJJSXEC7LSkHbiTqDLOMPhYBFQHd7ji7SUNfd8T9OXqsYXwdrd
-   E0ISXYFKBjHH07XkcF3QMGSJLXMxLPlVLYT6wEXSTAwyAotJL8XrocvMF
-   eT9EiBeVIvNW30BbmsbaOCfp74L8D7auZK8oEMOdx72PKM4v0g2LF0qBD
-   S53P3H1RrbSIPl0s7XGih6eF7SsIEjwOdiklfsbYtK48yjnLCLDs3qCRJ
-   ljnNIo50kGRPAFkwuaEuHt582Xz5da83CwIRu0oheK6z31es4LfGJm22q
-   g==;
-X-CSE-ConnectionGUID: uIVH5DdCTriSMOlqi5xLcw==
-X-CSE-MsgGUID: xQvA6sJRToqSxB/aQrVW6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45179660"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="45179660"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 20:04:23 -0800
-X-CSE-ConnectionGUID: txI5LGo+S1eGhaMmUkW/aw==
-X-CSE-MsgGUID: ZL9/0NoDQzWNrXs/70EmXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="97130289"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 15 Dec 2024 20:04:20 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tN2LC-000E0I-0Y;
-	Mon, 16 Dec 2024 04:04:18 +0000
-Date: Mon, 16 Dec 2024 12:03:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Paul Handrigan <paulha@opensource.cirrus.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Paul Handrigan <paulha@opensource.cirrus.com>
-Subject: Re: [PATCH 2/2] clk: cs2600: Add Fractional-N clock driver
-Message-ID: <202412161152.7xKtUJQr-lkp@intel.com>
-References: <20241211003236.2523604-3-paulha@opensource.cirrus.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akmXyn2j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31887C4CED0;
+	Mon, 16 Dec 2024 07:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734334171;
+	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=akmXyn2jfDilSj2r94s1ULYl7iiXgEqAJEVozPTniguACWUbfUmBdnVueBJrwU+l1
+	 aKls2K/Ek8h8Trh0D0/q+bBHnL3ZrbLx+I1uCwtT5sJt7rYMtSkIVBQm8RyrqUjhjM
+	 pmvlI7Lhtw6HjiJBh3Jc8C/AoQZBtW/gXoARUVDNpu0d94x+qXTajKsLFn6+q91eC+
+	 GWwCmmzrkWHD/gCQKZwGOLcODobA2bQSGwm56AjfOcSqi0tkb2S5H/hWasRKT2FNsd
+	 4Kzvpf/H7KNEr3Bj9CpcW4HDIaqIGLUGI9w7OebL2kkHWYwLp+lXoj3YTaF8BMEwR7
+	 2xSIWmPMuccfQ==
+Message-ID: <d2b9bcba-703c-4d5e-8677-65cacc8f2636@kernel.org>
+Date: Mon, 16 Dec 2024 08:29:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211003236.2523604-3-paulha@opensource.cirrus.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com
+References: <20241211112253.27905-1-ansuelsmth@gmail.com>
+ <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
+ <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Paul,
+On 13/12/2024 12:16, Christian Marangi wrote:
+> On Fri, Dec 13, 2024 at 12:01:40PM +0100, Krzysztof Kozlowski wrote:
+>> On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
+>>> Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+>>> between 200MHz and 150MHz.
+>>>
+>>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>>> ---
+>>>  include/dt-bindings/clock/en7523-clk.h | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+>>> index 717d23a5e5ae..78d16068228a 100644
+>>> --- a/include/dt-bindings/clock/en7523-clk.h
+>>> +++ b/include/dt-bindings/clock/en7523-clk.h
+>>> @@ -11,7 +11,8 @@
+>>>  #define EN7523_CLK_NPU		5
+>>>  #define EN7523_CLK_CRYPTO	6
+>>>  #define EN7523_CLK_PCIE		7
+>>> +#define EN7581_CLK_EMMC		8
+>>>  
+>>> -#define EN7523_NUM_CLOCKS	8
+>>> +#define EN7523_NUM_CLOCKS	9
+>>
+>> This cannot change.
+>>
+>> If this changes, then it is not a binding and first drop it in separate
+>> patch.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Hi Krzysztof,
+> 
+> maybe I can introduce EN7581_NUM_CLOCKS with the correct number? Just to
+> give more info about this... It's not clear to me why NUM_CLOCKS is
+> needed considering is only needed in clk-en7523.c to probe the driver
+> and allock memory...
+> 
+> Anyway is a different define OK for you?
 
-kernel test robot noticed the following build errors:
+I don't understand. You just added that enum with corrected number...
+Anyway, review does not change. Number of clocks is not a binding. Drop
+or don't touch.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.13-rc3 next-20241213]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Paul-Handrigan/dt-binding-clock-cs2600-Add-support-for-the-CS2600/20241211-083439
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20241211003236.2523604-3-paulha%40opensource.cirrus.com
-patch subject: [PATCH 2/2] clk: cs2600: Add Fractional-N clock driver
-config: i386-randconfig-016-20241215 (https://download.01.org/0day-ci/archive/20241216/202412161152.7xKtUJQr-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241216/202412161152.7xKtUJQr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412161152.7xKtUJQr-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__udivdi3" [drivers/clk/clk-cs2600.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
