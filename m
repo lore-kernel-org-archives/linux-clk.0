@@ -1,66 +1,41 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B75207E16
-	for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2024 18:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ADD1D54FE;
+	Mon, 16 Dec 2024 20:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734375236; cv=none; b=iRZfmkDiY5WWlcTZE1omP/H7USNPOU1gi3a5VAGh2JAbmxjHNRF5y50hzRLJc/71BDcgxX1RQ4RN0humF/ifu/TzyfptCOsCbxslqD7EKE5JANCx1CXVMwVrhAA65m5PtJSJfGNxP6hp72EvHm/ZmwkrMO3S6WBRLq95THgR//k=
+	t=1734382590; cv=none; b=Tm5B4b1ZeCySYS9qbdxxAlYC717NTXiTgE47cNjdQRBgAw83Vvg2BDi/PS2tmT3+Bal6bS/8+WdchsfNGnfbtZjlJgyu/bNNQbFbyzkPzOvzpqypw9LFZwTChZSfYOx4lUpYzZqMGN4j1q0XRktnthu7wCoFU0pWD2fkRAGlQUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734375236; c=relaxed/simple;
-	bh=WL+c9MsMLCftMhyW+I2h5TrtsdsOlsdR2umauGA3zpo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CKZDyDXOkkdS3Hyt0xhj3c72iLhWgFCmpiwXkPAMOt90Dwo7uFp/Knd740qRJ84nktETbsG9cIR6KtcruO8CrVZH7obfeCaqWbmnGTit7sUYIC7X+WIf4upelE2Pm08HrwYwm2dugfXhsMOxhtVQ9FF/o9J8HmnvaE2z811e3bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o0xqpOrZ; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734382590; c=relaxed/simple;
+	bh=f33spiVBZWwMRJ3qOGnfEAtYYVvmfxcG+mtlDjn47SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MbDFJy1iJFCiNyBhNnOKVf6dKU5vKrTVP952qTstGznRv3NFlrzt6EYEcHKGbAEbL5RLbjJcO/8c53fcujOdcgYFHA6ZLnbmEwU7k9CMcBkb6jW2VjajCaMVHKIWRkdPiwU02Qap67yCizFinTZNJYcuMHC3bAbHuys/rLVvCLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=dCBsJe4B; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o0xqpOrZ"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-436341f575fso31519505e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2024 10:53:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734375232; x=1734980032; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O9TdY8wDAQIhgT2ZvDa2oy0Rrrdx753hIU59bQKGYyc=;
-        b=o0xqpOrZlPFIA4H9bAE+hYiZwJ+SoEz3eNc+pgQA9rrM7Fkdc0av2mlc818RCvAGwE
-         gs1sRRWfUuMp3gKzSXzjfNuk3DKPcxj8jaHZcvH1dAT8YLOB1gNH45Kr64nRNVHYSmxW
-         fQtHC7Kxilk+phxyhCi1UmPcWZhzhwit7CzoAIH9OvqJ8Wj5nlxgE+Feq0mMUUV8dYk5
-         iM5nvzvxAx/PUa/M3JOnLElfX5w2c22HM0s/jYKFhxlb4OddiV4ElS6iR5egNuYXFijo
-         WCdPdY2J31Dufr2aIo6d/tVAKNGk3eOw7Zg8w2B/UqDgzPoJbSBnHmYqSYWeyFHZA1En
-         A9oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734375232; x=1734980032;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O9TdY8wDAQIhgT2ZvDa2oy0Rrrdx753hIU59bQKGYyc=;
-        b=nIazpBTxjbyd4vE2Me2p0Ott8J9K47XLDnS+3F+wqBDhkFMMeHZGnX0+E2WrbII161
-         5slnaIOo+wp4Ilhq3Z6bt4AORKB8eLrEjES8bYYrdvJUzrLjN4DRKlYPW21vvVRfPvRu
-         g2mmk6fNn5X1alYe1P4JJD8ib01BT3laMC0TGgeV86Fs/FOKHxEOhk9BAVixoKV/Zpya
-         MQr+24IzOShf7BJZvJp2P7No0Q2pasN0+P2m/I/zVaaQf1TpPJGg43Cu8G6m+RtdueYY
-         Ah4Qza9zNGDLFXdupyDgkDQ8R2cPV4bNSNiG+GxdJVf+6zVIqZLqhYm/KrJ/avh3yjPY
-         V32g==
-X-Forwarded-Encrypted: i=1; AJvYcCULRQBx5VWIYHBK6QmFrXHt+gJpCSjZZOSwTn+4mn/rafvGIDR4O4wH6DJgcpcT/OE9/BGpmDIADx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy33Nz6j81yymuEJ0S8+xQdELh2AUpwzwjXkKwMOXEby1gPgqA7
-	mj+h40rzpk4BprzV0xQ5mw3QrgRZuhFaAcuO5xeJTlyft81NfQqULtHX1poVcI4=
-X-Gm-Gg: ASbGnctI6/xWd1Dr8zIhIdPMgxcQobT3nwL5VosE1/PMoFbXrqz50HtvrDmDRZpkcjV
-	JmydSpessOp+iD4YIc8XCvuksyOIqyjODiz/+5XMX8Hcp6g1IhkaLyAw1Eu4Df9Idf+1FLxQVaE
-	oPRVQBD2/Bb2+pOgA4J7trKql+SpMyspftRBPPfcVeM2jlBk0ZT1KM1YmEwT6JbLw3d0iyfs4b+
-	m9Cpg7qfB4OMXiycJUwAcLLAizAW0PvkDKHMinkiC6jpiTrvtIwUoWVwyYsFBXW0l77ulvfPXzO
-	Th09Lit07L5JcHKjgbgwCvz55TBb9nwJvQ==
-X-Google-Smtp-Source: AGHT+IG59oeD9k/rUOCvesGIKAV/ezj83uuhcluTrje5318wlJogWM8odJk4nxizFM14ZiA9HZnziA==
-X-Received: by 2002:a05:6000:471b:b0:386:3835:9fff with SMTP id ffacd0b85a97d-3888e0c06c7mr12974884f8f.59.1734375231995;
-        Mon, 16 Dec 2024 10:53:51 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8b75:a430:7bc1:919b? ([2a01:e0a:982:cbb0:8b75:a430:7bc1:919b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c805d489sm8978020f8f.88.2024.12.16.10.53.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 10:53:51 -0800 (PST)
-Message-ID: <5c8691c4-4a57-40a9-9da6-00accf3d1a4f@linaro.org>
-Date: Mon, 16 Dec 2024 19:53:50 +0100
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="dCBsJe4B"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u0i/nqNynhxorDvBqYi7rvVswVl5vc8AALs0sk1McnI=; b=dCBsJe4Bk88bliVyeBzNr1Uwdr
+	ukVRX8GFzABGPSrQM5nnA4tfZnTgC3ILRuRZgfYheRcoRJ7Y5T4O2/2s1NyoBLdYhdCtPP8al6Q0a
+	E23JGHAt8UUC4Fly10pF3suh8ol89JOXgJxeLchkQFyEOIsK/1Cc8iEmbBAMKk6bFrvpx1BmSoxOS
+	zgqyHtVKCWAcC9VmZS9Lpy5aFROJxn+zjLDXL+GUMBW6hQ1xi7C/XgVRSsG3wAXy2ruruZhJ3rwoS
+	2do2NfqCPpBb+AXu8fdiy8ZhE8/dU/CnyEYYkydpQzgf4uYhEGK4w1Rxs7dFSew4lRIl03ApLa2wW
+	gTysbyIg==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:47916 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1tNHjj-0003xF-2u;
+	Mon, 16 Dec 2024 15:29:40 -0500
+Message-ID: <24fb0bdb-6d59-424e-bb8f-a9d54d835f4b@lechnology.com>
+Date: Mon, 16 Dec 2024 14:29:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,143 +43,159 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] clk: amlogic: g12b: fix cluster A parent data
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241213-amlogic-clk-g12a-cpua-parent-fix-v1-1-d8c0f41865fe@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241213-amlogic-clk-g12a-cpua-parent-fix-v1-1-d8c0f41865fe@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] clk: davinci: remove platform data struct
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241210175723.127594-1-brgl@bgdev.pl>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20241210175723.127594-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 13/12/2024 15:30, Jerome Brunet wrote:
-> Several clocks used by both g12a and g12b use the g12a cpu A clock hw
-> pointer as clock parent. This is incorrect on g12b since the parents of
-> cluster A cpu clock are different. Also the hw clock provided as parent to
-> these children is not even registered clock on g12b.
+On 12/10/24 11:57 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Fix the problem by reverting to the global namespace and let CCF pick
-> the appropriate, as it is already done for other clocks, such as
-> cpu_clk_trace_div.
+> There are no board files using struct davinci_pll_platform_data anymore.
+> The structure itself is currently used to store a single pointer. Let's
+> remove the struct definition, the header and rework the driver to not
+> require the syscon regmap to be stored in probe().
 > 
-> Fixes: 25e682a02d91 ("clk: meson: g12a: migrate to the new parent description method")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->   drivers/clk/meson/g12a.c | 36 ++++++++++++++++++++++++------------
->   1 file changed, 24 insertions(+), 12 deletions(-)
+>  drivers/clk/davinci/pll.c                     | 33 +++----------------
+>  include/linux/platform_data/clk-davinci-pll.h | 21 ------------
+>  2 files changed, 4 insertions(+), 50 deletions(-)
+>  delete mode 100644 include/linux/platform_data/clk-davinci-pll.h
 > 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 20be7b037c07535bd2115f6e70404a95a7832756..4e6584377e43fa7c9956017ddfcd3f295fafd686 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -1137,8 +1137,18 @@ static struct clk_regmap g12a_cpu_clk_div16_en = {
->   	.hw.init = &(struct clk_init_data) {
->   		.name = "cpu_clk_div16_en",
->   		.ops = &clk_regmap_gate_ro_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&g12a_cpu_clk.hw
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			/*
-> +			 * Note:
-> +			 * G12A and G12B have different cpu clocks (with
-> +			 * different struct clk_hw). We fallback to the global
-> +			 * naming string mechanism so this clock picks
-> +			 * up the appropriate one. Same goes for the other
-> +			 * clock using cpu cluster A clock output and present
-> +			 * on both G12 variant.
-> +			 */
-> +			.name = "cpu_clk",
-> +			.index = -1,
->   		},
->   		.num_parents = 1,
->   		/*
-> @@ -1203,7 +1213,10 @@ static struct clk_regmap g12a_cpu_clk_apb_div = {
->   	.hw.init = &(struct clk_init_data){
->   		.name = "cpu_clk_apb_div",
->   		.ops = &clk_regmap_divider_ro_ops,
-> -		.parent_hws = (const struct clk_hw *[]) { &g12a_cpu_clk.hw },
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "cpu_clk",
-> +			.index = -1,
-> +		},
->   		.num_parents = 1,
->   	},
->   };
-> @@ -1237,7 +1250,10 @@ static struct clk_regmap g12a_cpu_clk_atb_div = {
->   	.hw.init = &(struct clk_init_data){
->   		.name = "cpu_clk_atb_div",
->   		.ops = &clk_regmap_divider_ro_ops,
-> -		.parent_hws = (const struct clk_hw *[]) { &g12a_cpu_clk.hw },
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "cpu_clk",
-> +			.index = -1,
-> +		},
->   		.num_parents = 1,
->   	},
->   };
-> @@ -1271,7 +1287,10 @@ static struct clk_regmap g12a_cpu_clk_axi_div = {
->   	.hw.init = &(struct clk_init_data){
->   		.name = "cpu_clk_axi_div",
->   		.ops = &clk_regmap_divider_ro_ops,
-> -		.parent_hws = (const struct clk_hw *[]) { &g12a_cpu_clk.hw },
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "cpu_clk",
-> +			.index = -1,
-> +		},
->   		.num_parents = 1,
->   	},
->   };
-> @@ -1306,13 +1325,6 @@ static struct clk_regmap g12a_cpu_clk_trace_div = {
->   		.name = "cpu_clk_trace_div",
->   		.ops = &clk_regmap_divider_ro_ops,
->   		.parent_data = &(const struct clk_parent_data) {
-> -			/*
-> -			 * Note:
-> -			 * G12A and G12B have different cpu_clks (with
-> -			 * different struct clk_hw). We fallback to the global
-> -			 * naming string mechanism so cpu_clk_trace_div picks
-> -			 * up the appropriate one.
-> -			 */
->   			.name = "cpu_clk",
->   			.index = -1,
->   		},
-> 
-> ---
-> base-commit: 799ce46951dcc75682223cdab12fdc905f2fe735
-> change-id: 20241213-amlogic-clk-g12a-cpua-parent-fix-64362495fc9b
-> 
-> Best regards,
+> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+> index 5bbbb3a66477..b284da602f8d 100644
+> --- a/drivers/clk/davinci/pll.c
+> +++ b/drivers/clk/davinci/pll.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/notifier.h>
+>  #include <linux/of.h>
+> -#include <linux/platform_data/clk-davinci-pll.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/property.h>
+>  #include <linux/regmap.h>
+> @@ -840,27 +839,6 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+>  	return 0;
+>  }
+>  
+> -static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
+> -{
+> -	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
+> -
+> -	/*
+> -	 * Platform data is optional, so allocate a new struct if one was not
+> -	 * provided. For device tree, this will always be the case.
+> -	 */
+> -	if (!pdata)
+> -		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> -	if (!pdata)
+> -		return NULL;
+> -
+> -	/* for device tree, we need to fill in the struct */
+> -	if (dev->of_node)
+> -		pdata->cfgchip =
+> -			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+> -
+> -	return pdata;
+> -}
+> -
+>  /* needed in early boot for clocksource/clockevent */
+>  #ifdef CONFIG_ARCH_DAVINCI_DA850
+>  CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
+> @@ -890,8 +868,8 @@ typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base,
+>  static int davinci_pll_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct davinci_pll_platform_data *pdata;
+>  	davinci_pll_init pll_init = NULL;
+> +	struct regmap *cfgchip;
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+I think we need to initialize this to NULL since it is only set
+conditionally later.
+
+>  	void __iomem *base;
+>  
+>  	pll_init = device_get_match_data(dev);
+> @@ -903,17 +881,14 @@ static int davinci_pll_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	pdata = davinci_pll_get_pdata(dev);
+> -	if (!pdata) {
+> -		dev_err(dev, "missing platform data\n");
+> -		return -EINVAL;
+> -	}
+> +	if (dev->of_node)
+
+Or just leave out the if here.
+
+> +		cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+>  
+>  	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>  
+> -	return pll_init(dev, base, pdata->cfgchip);
+> +	return pll_init(dev, base, cfgchip);
+>  }
+>  
