@@ -1,133 +1,397 @@
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550772629C;
-	Mon, 16 Dec 2024 13:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B9205AA4
+	for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2024 14:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734356017; cv=none; b=W8WYNE0uFezm2gdJnBJd1+WnRdh/pf6WZ7x5YGZl3+WJ34qz2lV/a2BlY6iXrPheSTBOHHWbQk2qc6MuU9M/0KDTT965BBhhTkpeQ0jwDcxY9AaMhng48OLe+zKMRI6HnjCz9Vpl+CYd2kaVFlX4pLYShmAzcOBgDnRHl2YjsR0=
+	t=1734358085; cv=none; b=DN/sr7k3jTZeQflX3KWeYAgGr/y1SBqgGvdtvFhk4uWMXrzl1f1S6u5VvtBakLe4rvjwFdZahW3nwwK/+21gjoY43971lnZOdVheD7CUujOO7YabeaFpIvzHgl2dv5hiGgeM8hgDXwOuw3kNKwuUQnyG8p8jV8+JxU6Ev/43G+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734356017; c=relaxed/simple;
-	bh=/ZHLX7pS2TYrCKb1KFxzJ/agCTsC58ROi/NT2ImpY1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fuk5x5dZlObsIsjKDvPhNEjLnnP0HURdc2liXXQzFw3oNHjCIkM/IwHUM7Q2WaSVes9bDrYmjyXbUYZ63pWB8wsSzph1HSZpCsPa2IOet/PtG6d8onM4KN+D+B8Y0VPTBg+vNTCwVhZXCTXvfx9GOXuPBzG76AMkKRN3drKYhU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4affd0fb6adso1040505137.1;
-        Mon, 16 Dec 2024 05:33:35 -0800 (PST)
+	s=arc-20240116; t=1734358085; c=relaxed/simple;
+	bh=KKqNSCpHid+iihTpFuSbyOay+c5TD2aBVW/EWXFXmto=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkh93UTGT7chv+Ds7AIVyOmfCwD14m83b5AFGrMqUurDgZ5JNdkqDaUV1EaYgO8skGtcyh/FXAzr/pvIGGH15WTAisdA1PHm5JTkvRPorxVsTR2NbqSpVkV8hVkNvjurPbXZeTN5cn57zq5FhSWHQQdiRb1p24ZgAoSatd6CmH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bhL9TfvW; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bhL9TfvW"
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5d3e6f6cf69so6937899a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2024 06:08:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1734358081; x=1734962881; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g23mucpDPWoIoAgdgc80DmEEwr48Eand/iJXEa98s34=;
+        b=bhL9TfvW/s0F1Z6MPnYLEJynUPZbsG0nvk2aM9Q1w6mK0Wt8R+X+/RwLbrduMHzBWK
+         7YMD1zK2D0AcD8Zq8MLj9QHAsk3/VSwFjLZ41voV4P77F5iJljIxQDwMR4REEILu9ocO
+         VRekdRnK4sFozqoW55PbL/9vqop5NRmdnI57if2rBOpGrna+EsNQr0iFAJv2WC+OQlsr
+         PzZnnEz1amUR40KmDCx2xcSTeYkgOhF2VszSNAIST9SCXoGKk2OTt3eCzud55vAJB6XY
+         mZwSVn8dtbVIWYH1bodKgMgJhjLcnmc6YsKDvpfLCOJIbce1vN5s13XZV5L2e3jCPGIq
+         gnCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734356012; x=1734960812;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2YeQ/juaU1aTYjB8NikAS7tXvAIBonFs53JoSLLpdzU=;
-        b=qnjtPeh8cSCZ3aw9gYwdEoeAiQAoOR45ZsZ6AirPb/00leDDmQJNwi5lPWhUkm1Cb9
-         9oMiWA22giSS1aWIKJ0sAC3DnllvRVlm+F1V15d5YH4T6gLpK3ArtjOp2k9uJ/iCShf4
-         s9IOmcUsdOki0ojbMOfh9GTBjhtD3GVfFLKZd/9HzzqMOmM4WdxKUZbwz0KZs+csmBYr
-         +Y262DQr6/ynKE391UxLvOfVzTpDIq7zTxxoRLgv1t+l8e1fbVoZrvG9jLGsJ6jsZuHD
-         mnH3g/j/MODRsxj8xzMKfAwaJY3XxmU4+pW5IIck9A3JQlwB1+dV5I3o5jOg0SqOC89c
-         TrmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU72BEgMmiAqB2qZ64gQk9jqzjoHqiQe+bhhzmb3BM43H6xKU3bLUQXXJ9wvYVI9BpGfYNjXYXDYGGqaKyN@vger.kernel.org, AJvYcCUXMz7Qnt6JNzCtN182v65t9ZhkoifYu/hKdLO+xfBuZy0JwGaTYDZgqKtIKvzCkTVhWwgPjtsz6gKqzJoWsTptwDs=@vger.kernel.org, AJvYcCV/M3gQdvRnlRsbUjmaGLkqKhrbw5Gi6RjTdJM+tsMz3vr5oZYOjXKk4n10LOxccNPn1TQLaxByXT1K@vger.kernel.org, AJvYcCWwkjiIVYw3GJJ3CYfiBIAoAi0bs26kCHtd0w2UVzwUGVFwqADiRVmjntHtfksCzRxdNbBEeIDyHGsB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDA6FtdVN0azzK2nnFADbaIYDGK9rugzNxq7cieIRF+8X1D6XD
-	EWmRqq+r95RkrVb5xSilMBdyDYWjyPv7FIpK/M/9LU0EZUmXNPdp33cLSUrZ
-X-Gm-Gg: ASbGnct6AfU/WFT9xO4dDNZZybnF0TNpX2ipIqASI386kjlfwshFkCGxwK2j+BF3Oow
-	x3fHhWPpGkFTO2xoBixBQ+UpViV3qu8wE+0Ed8URMxAqwmFJ4MtvDFbZp6SAjnI/H4P0xAlLlD2
-	McBXHSoFbQO6vdVSjxnYCcRu7j+hllskx/UjkIQvS0rdM2eikKo1CCJ8bNsJl4lZxLRIg0UePuG
-	S4vzhf044X9lLRXsaS7pvxgOk/Ah5px6G08Km7OZJi+x7LI/AxEeakhdxze5vkryQNan479Q943
-	vi172ZIhqwTcr3sRNO8=
-X-Google-Smtp-Source: AGHT+IG3cWzqsckGVqnZxVs+MG5R8tf/WggJwYXvY4XH8HoHD/9rMk7zbIXTYHMdlVsK5CSDAIahCw==
-X-Received: by 2002:a05:6102:418e:b0:4b1:1b33:eb0f with SMTP id ada2fe7eead31-4b25db3f6a0mr10921745137.24.1734356011808;
-        Mon, 16 Dec 2024 05:33:31 -0800 (PST)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b27023368esm816594137.11.2024.12.16.05.33.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 05:33:30 -0800 (PST)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afefc876c6so1100594137.2;
-        Mon, 16 Dec 2024 05:33:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVJq6WNQgyRcbQYhcS6aeUOJQ3bm5muFWGQ0r2eokoKc8souk+CVU8YOz2c3LLxwD9wunJvvBOq/L/y@vger.kernel.org, AJvYcCVdEdmiboFXN7usU0ZXAY//mjOyOVfrVUPScBx1F0Vzv0IKW2u/K2wWzMYmgzxfAiCF3qslpy0oBqSonD/7@vger.kernel.org, AJvYcCX1drt9s5D6jV6uiG/5mqAyruiIXUwDs36jvRnr7f/FXlQMvb5jTcvxClk1efXx5IjIt/hZrwwrpbW89FDfOlnu+Ho=@vger.kernel.org, AJvYcCXnJsjwTUgifohk6VIiUFGBrjCUAOZPD6+259m9CtZ25R8YROe0ml9kxiMx2NktPVbSU9kser8tyJuO@vger.kernel.org
-X-Received: by 2002:a05:6102:b02:b0:4af:dcbe:4767 with SMTP id
- ada2fe7eead31-4b25d98d34bmr10283091137.10.1734356010555; Mon, 16 Dec 2024
- 05:33:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734358081; x=1734962881;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g23mucpDPWoIoAgdgc80DmEEwr48Eand/iJXEa98s34=;
+        b=S/jRbqBw4tWTkvBIMSExcENRB5ZyFm9wTNJVBKM3cETa43j6H4K42wstOfL00MZ2Ne
+         ALwSe/WAx0POf8ur5efbbP8B573XomPmOSDemOOFN8wPyflU7n9GCtQjAj0bInjKc2gd
+         QJVNJRCGhDQaYPuEtFi8Ocmg3i9ZQB1ERb/CJPaiM+JTfE3ToHqyS48eAK/3s3PXknQV
+         WCHr2azZYeR6cJmngrsafO5J6WHDvV6G++4FjgXFjJC31gVruou+vFs/Ku2bgNQlpzKr
+         jclTa5aNomO5mTwBjBpYuRPvAZnm9cVpQ3hrKxJ3Z2rQrA6dgvh4LX2pz/10jPjBjvHU
+         fg4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUh7uIQ0cLmm3bVAqas5jtZCwEQFCbGHBqbPJvY0AsPU+kQmscMj5n8oK1nEumXy6ZcnM/p0ny0kp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjb5f+v1AdKRfZ+aC+VVtGaGEpGUcDRDtRGbqqY3UocKcEp7Iz
+	csKiuPwSq4PWqz0kEtB9FY463O6iBORZBRQhSWdCJi6BufE2p42uhZOnFeJDFn8=
+X-Gm-Gg: ASbGncuifeGNhQd/grE8PJQLReVU/k/cpg9D3GibzDXzCERXXAdu7qM1mZ5KABG+8qp
+	SRNeG6EDrotNzyJdFFQ4E8xqpWe+Plarwhnxp5yOQNA6GtX/9mSgdV7+/Rmi2ItulDAv6FXg1Ii
+	W24DkQ2rM7tg2VnU/yu2L4i0aFPGJZqCuI8F53I+J+KGN80fxYUNqd7AheE3wBukQ6QkICF9MkQ
+	De3FEhwO+7nxHKkoAUIaDfhJYYfpyuE3LZxNmlS0+WxwNqnYzijrPV7TrShR53mrmXLwfgMhkM7
+	3NHr0NazpWmbfjLsPduWwlGr47WetQ==
+X-Google-Smtp-Source: AGHT+IHJ+/eVj5EyRxoB9mvnG3pVunHQUFhMNAY2rf/VZ/yDfG/on5Zd+2ZxoFIfP5qTA0cM8Ok/Fg==
+X-Received: by 2002:a05:6402:5410:b0:5d2:d72a:77e4 with SMTP id 4fb4d7f45d1cf-5d63c3bf481mr13213986a12.28.1734358081004;
+        Mon, 16 Dec 2024 06:08:01 -0800 (PST)
+Received: from localhost (host-95-237-237-185.retail.telecomitalia.it. [95.237.237.185])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ae1205sm3220723a12.44.2024.12.16.06.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 06:08:00 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 16 Dec 2024 15:08:40 +0100
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v5 08/10] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z2A0aAPotT0NvoCl@apocalypse>
+References: <cover.1733136811.git.andrea.porta@suse.com>
+ <28fe72eec1c08781770cee65032bb10a6d5994a9.1733136811.git.andrea.porta@suse.com>
+ <20241210224837.GA702616-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com> <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
-In-Reply-To: <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Dec 2024 14:33:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
-Message-ID: <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
- DisplayPort support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210224837.GA702616-robh@kernel.org>
 
-Hi Tomi,
+Hi Rob,
 
-On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On 16:48 Tue 10 Dec     , Rob Herring wrote:
+> On Mon, Dec 02, 2024 at 12:19:32PM +0100, Andrea della Porta wrote:
+> > The RaspberryPi RP1 is a PCI multi function device containing
+> > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > and others.
+> > 
+> > Implement a bare minimum driver to operate the RP1, leveraging
+> > actual OF based driver implementations for the on-board peripherals
+> > by loading a devicetree overlay during driver probe.
+> > 
+> > The peripherals are accessed by mapping MMIO registers starting
+> > from PCI BAR1 region.
+> > 
+> > With the overlay approach we can achieve more generic and agnostic
+> > approach to managing this chipset, being that it is a PCI endpoint
+> > and could possibly be reused in other hw implementations. The
+> > presented approach is also used by Bootlin's Microchip LAN966x
+> > patchset (see link) as well, for a similar chipset.
+> > 
+> > Since the gpio line names should be provided by the user, there
+> > is an interface through configfs that allows the userspace to
+> > load a DT overlay that will provide gpio-line-names property.
+> > The interface can be invoked like this:
+> > 
+> > cat rpi-rp1-gpios-5-b.dtbo > /sys/kernel/config/rp1-cfg/gpio_set_names
+> 
+> Where's the configfs support? This looks like a stale comment.
+
+Yes, you are right. Thanks for pointing that out, I've dropped that
+paragraph, since there is no gpio name support in this specific patchset
+anymore.
+
+> 
+> If this is the general purpose configfs interface for overlays, that's 
+> likely never going upstream. If you want this support, then you should 
+> load your overlay with the firmware loader instead of building it into 
+> the kernel. You can of course add that later.
+
+I think the best thing would be to leave the actual base overlay compiled
+inside the driver as it is now, and to prepare a secondary overlay for the
+gpio names to be loaded as a binary blob through request_firmware(). Does
+it make sense? Of course, the gpio name overlay support would be a future
+patchset of its own.
+
+> 
+> > and is designed to be similar to what users are already used to
+> > from distro with downstream kernel.
+> > 
+> > For reasons why this driver is contained in drivers/misc, please
+> > check the links.
+> > 
+> > This driver is heavily based on downstream code from RaspberryPi
+> > Foundation, and the original author is Phil Elwell.
+> > 
+> > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > Link: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+> > Link: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+> > Link: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+> > Link: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  MAINTAINERS                   |   1 +
+> >  drivers/misc/Kconfig          |   1 +
+> >  drivers/misc/Makefile         |   1 +
+> >  drivers/misc/rp1/Kconfig      |  21 ++
+> >  drivers/misc/rp1/Makefile     |   3 +
+> >  drivers/misc/rp1/rp1-pci.dtso |   8 +
+> >  drivers/misc/rp1/rp1_pci.c    | 366 ++++++++++++++++++++++++++++++++++
+> >  drivers/misc/rp1/rp1_pci.h    |  14 ++
+> >  drivers/pci/quirks.c          |   1 +
+> >  include/linux/pci_ids.h       |   3 +
+> >  10 files changed, 419 insertions(+)
+> >  create mode 100644 drivers/misc/rp1/Kconfig
+> >  create mode 100644 drivers/misc/rp1/Makefile
+> >  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+> >  create mode 100644 drivers/misc/rp1/rp1_pci.c
+> >  create mode 100644 drivers/misc/rp1/rp1_pci.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index fbdd8594aa7e..d67ba6d10aa8 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19583,6 +19583,7 @@ F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> >  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >  F:	drivers/clk/clk-rp1.c
+> > +F:	drivers/misc/rp1/
+> >  F:	drivers/pinctrl/pinctrl-rp1.c
+> >  F:	include/dt-bindings/clock/rp1.h
+> >  F:	include/dt-bindings/misc/rp1.h
+> > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> > index 09cbe3f0ab1e..ffa4d8315c35 100644
+> > --- a/drivers/misc/Kconfig
+> > +++ b/drivers/misc/Kconfig
+> > @@ -651,4 +651,5 @@ source "drivers/misc/uacce/Kconfig"
+> >  source "drivers/misc/pvpanic/Kconfig"
+> >  source "drivers/misc/mchp_pci1xxxx/Kconfig"
+> >  source "drivers/misc/keba/Kconfig"
+> > +source "drivers/misc/rp1/Kconfig"
+> >  endmenu
+> > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> > index 40bf953185c7..3b6b07a23aac 100644
+> > --- a/drivers/misc/Makefile
+> > +++ b/drivers/misc/Makefile
+> > @@ -74,3 +74,4 @@ lan966x-pci-objs		:= lan966x_pci.o
+> >  lan966x-pci-objs		+= lan966x_pci.dtbo.o
+> >  obj-$(CONFIG_MCHP_LAN966X_PCI)	+= lan966x-pci.o
+> >  obj-y				+= keba/
+> > +obj-$(CONFIG_MISC_RP1)		+= rp1/
+> > diff --git a/drivers/misc/rp1/Kconfig b/drivers/misc/rp1/Kconfig
+> > new file mode 100644
+> > index 000000000000..15c443e13389
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/Kconfig
+> > @@ -0,0 +1,21 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +#
+> > +# RaspberryPi RP1 misc device
+> > +#
+> > +
+> > +config MISC_RP1
+> > +	tristate "RaspberryPi RP1 PCIe support"
+> > +	depends on OF_IRQ && PCI_MSI && PCI_QUIRKS
+> > +	select OF_OVERLAY
+> > +	select PCI_DYNAMIC_OF_NODES
+> > +	help
+> > +	  Support the RP1 peripheral chip found on Raspberry Pi 5 board.
+> > +
+> > +	  This device supports several sub-devices including e.g. Ethernet
+> > +	  controller, USB controller, I2C, SPI and UART.
+> > +
+> > +	  The driver is responsible for enabling the DT node once the PCIe
+> > +	  endpoint has been configured, and handling interrupts.
+> > +
+> > +	  This driver uses an overlay to load other drivers to support for
+> > +	  RP1 internal sub-devices.
+> > diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
+> > new file mode 100644
+> > index 000000000000..508b4cb05627
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/Makefile
+> > @@ -0,0 +1,3 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
+> > +rp1-pci-objs			:= rp1_pci.o rp1-pci.dtbo.o
+> > diff --git a/drivers/misc/rp1/rp1-pci.dtso b/drivers/misc/rp1/rp1-pci.dtso
+> > new file mode 100644
+> > index 000000000000..0bf2f4bb18e6
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/rp1-pci.dtso
+> > @@ -0,0 +1,8 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +
+> > +/* the dts overlay is included from the dts directory so
+> > + * it can be possible to check it with CHECK_DTBS while
+> > + * also compile it from the driver source directory.
+> 
+> I haven't tried, but I think if you set CHECK_DTBS=y, then this file 
+> will get checked. Applying it to the base DT will not though.
+
+I think we're saying the same thing here, which is that the dtso can be
+checked by passing CHECK_DTB=y but it has to be located somewhere under
+arch/*/boot/dts. Or maybe I'm misunderstandig what you mean here?
+
+> 
+> > + */
+> > +
+> > +#include "arm64/broadcom/rp1.dtso"
+> > diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
+> > new file mode 100644
+> > index 000000000000..0dd345341c6f
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/rp1_pci.c
+> > @@ -0,0 +1,366 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018-24 Raspberry Pi Ltd.
+> > + * All rights reserved.
+> > + */
+> > +
+> > +#include <linux/err.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/irqchip/chained_irq.h>
+> > +#include <linux/irqdomain.h>
+> > +#include <linux/module.h>
+> > +#include <linux/msi.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include "rp1_pci.h"
+> > +
+> > +#define RP1_DRIVER_NAME		"rp1"
+> > +
+> > +#define RP1_HW_IRQ_MASK		GENMASK(5, 0)
+> > +
+> > +#define REG_SET			0x800
+> > +#define REG_CLR			0xc00
+> > +
+> > +/* MSI-X CFG registers start at 0x8 */
+> > +#define MSIX_CFG(x) (0x8 + (4 * (x)))
+> > +
+> > +#define MSIX_CFG_IACK_EN        BIT(3)
+> > +#define MSIX_CFG_IACK           BIT(2)
+> > +#define MSIX_CFG_ENABLE         BIT(0)
+> > +
+> > +/* Address map */
+> > +#define RP1_PCIE_APBS_BASE	0x108000
+> > +
+> > +/* Interrupts */
+> > +#define RP1_INT_IO_BANK0	0
+> > +#define RP1_INT_IO_BANK1	1
+> > +#define RP1_INT_IO_BANK2	2
+> > +#define RP1_INT_AUDIO_IN	3
+> > +#define RP1_INT_AUDIO_OUT	4
+> > +#define RP1_INT_PWM0		5
+> > +#define RP1_INT_ETH		6
+> > +#define RP1_INT_I2C0		7
+> > +#define RP1_INT_I2C1		8
+> > +#define RP1_INT_I2C2		9
+> > +#define RP1_INT_I2C3		10
+> > +#define RP1_INT_I2C4		11
+> > +#define RP1_INT_I2C5		12
+> > +#define RP1_INT_I2C6		13
+> > +#define RP1_INT_I2S0		14
+> > +#define RP1_INT_I2S1		15
+> > +#define RP1_INT_I2S2		16
+> > +#define RP1_INT_SDIO0		17
+> > +#define RP1_INT_SDIO1		18
+> > +#define RP1_INT_SPI0		19
+> > +#define RP1_INT_SPI1		20
+> > +#define RP1_INT_SPI2		21
+> > +#define RP1_INT_SPI3		22
+> > +#define RP1_INT_SPI4		23
+> > +#define RP1_INT_SPI5		24
+> > +#define RP1_INT_UART0		25
+> > +#define RP1_INT_TIMER_0		26
+> > +#define RP1_INT_TIMER_1		27
+> > +#define RP1_INT_TIMER_2		28
+> > +#define RP1_INT_TIMER_3		29
+> > +#define RP1_INT_USBHOST0	30
+> > +#define RP1_INT_USBHOST0_0	31
+> > +#define RP1_INT_USBHOST0_1	32
+> > +#define RP1_INT_USBHOST0_2	33
+> > +#define RP1_INT_USBHOST0_3	34
+> > +#define RP1_INT_USBHOST1	35
+> > +#define RP1_INT_USBHOST1_0	36
+> > +#define RP1_INT_USBHOST1_1	37
+> > +#define RP1_INT_USBHOST1_2	38
+> > +#define RP1_INT_USBHOST1_3	39
+> > +#define RP1_INT_DMA		40
+> > +#define RP1_INT_PWM1		41
+> > +#define RP1_INT_UART1		42
+> > +#define RP1_INT_UART2		43
+> > +#define RP1_INT_UART3		44
+> > +#define RP1_INT_UART4		45
+> > +#define RP1_INT_UART5		46
+> > +#define RP1_INT_MIPI0		47
+> > +#define RP1_INT_MIPI1		48
+> > +#define RP1_INT_VIDEO_OUT	49
+> > +#define RP1_INT_PIO_0		50
+> > +#define RP1_INT_PIO_1		51
+> > +#define RP1_INT_ADC_FIFO	52
+> > +#define RP1_INT_PCIE_OUT	53
+> > +#define RP1_INT_SPI6		54
+> > +#define RP1_INT_SPI7		55
+> > +#define RP1_INT_SPI8		56
+> > +#define RP1_INT_SYSCFG		58
+> > +#define RP1_INT_CLOCKS_DEFAULT	59
+> > +#define RP1_INT_VBUSCTRL	60
+> > +#define RP1_INT_PROC_MISC	57
+> 
+> Why all these defines which will never be used because they come from 
+> DT?
 >
-> Add support for the mini DP output on the Gray Hawk board.
->
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for your patch, which is now commit b1000645dc29701f
-("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
-in renesas-devel/renesas-dts-for-v6.14.
+Right, those defines where originally designed to be included from dts, but
+previous discussion deemed interrupt numbers to be hardcoded instead of being
+specified as mnemonics. In the driver source code I just use RP1_INT_END as the
+number of interrupts but I thought that the specific interrupt numbers should
+be documented in some way or another. Since no one is currently referencing
+those defines, would it be better to just turn those in a multiline comment
+just to describe them in a more compact form?
 
-Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
-v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
-when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
-is not available, the ti_sn65dsi86.bridge part fails to probe with
--EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
-driver must do something critical, as resuming from s2idle now hangs.
-I haven't identified yet where exactly it hangs.
+Many thanks,
+Andrea
 
-As a result, s2idle is broken in current renesas-devel, which only
-has the DTS changes.  Perhaps I should drop the DTS until the issue
-is resolved?
-
-However, I suspect White Hawk has the same issue (if
-CONFIG_DRM_RCAR_USE_MIPI_DSI=3Dn), but I cannot verify as my local White
-Hawk is currently not available for kernel testing.
-
-Do you have a clue?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> Rob
