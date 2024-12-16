@@ -1,187 +1,205 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C15126C0D;
-	Mon, 16 Dec 2024 17:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F828204F8B;
+	Mon, 16 Dec 2024 18:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734368538; cv=none; b=KBJN4nvzakqmUw425evJpmHWvsfhohveWpa3Nww/repKf6Cnz7pX34UXyPai+hHa4hK0UtkNEuGW25YSCFhg+ooN6geV710oj4UO7okvcIP7gAMiaOmlatg15mh8fCGK9gmxQPnTkeLHW7OKc91Cy/fWTWdcoHYp6kqAl2P3FqM=
+	t=1734374963; cv=none; b=IoOVWt5Ub/BBu3YheP+lGX4RI15SRWSY+PihnHyTENjZzKjRab7UyQHqFq2V/DzNHxNVj72L0KZD6wn+XClJVaFqQVcBZbGPj3nzTkXv1YP+aiNGj/5qQvLClV5GYSqR1a38lg1WC9Wkwmr9Nt0Z6TbTynC5HhCB4/VQ4BO5X50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734368538; c=relaxed/simple;
-	bh=UW20wMLDtKYD7znq/RZ0x6LreKeB60g+rC/Djw6rzy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TYjemUhf9erkwbmUTm1xVWEbZ/e3IY9frpoqvuRfe/MzeHJuQEOGKwsXqZLzNO+d1nISpe4C8KeMUCWIJFkSubAgDf3Zgcpo73kTA6/quWorZcIfRjSntOn4vBGVq46yFP3sXHREHQ/GFpGC2rYXtKFKTBXjB3m1OzV8lIXGdKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CRjqajU7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734374963; c=relaxed/simple;
+	bh=ZeQQScruNqW/bJ/x/lj6Dul84Yp6/f/jX5d+nsFQXP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m97OQSLiCYArpUd/hEgpaWKNAIQ1hFk16ivlt25LvKhlZx4bzA7Z6lBf4DLeoDEnP+pmyRi+T9ncda5YdsUwiznQjKYFC8gcCOQg3Q6jftjlfnKVy9xx3Lxi1BHuEA6oQp5n8vvofoFrt8NpSMhYIeOSv6uj15xuiG6KyNopOoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1ZPNrm7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CRjqajU7"
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BBA7D675;
-	Mon, 16 Dec 2024 18:01:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734368496;
-	bh=UW20wMLDtKYD7znq/RZ0x6LreKeB60g+rC/Djw6rzy4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CRjqajU7oG0BW/CNsL3f7NFdx3qdPOIUnafFbqqzJgEd0LVP+pnFK3QEynOzbcapO
-	 pBh7u856lbFdXCd/9Tuw4705/M8NeD/XYjvBA+qxlE+gzlSmvXkg57f8cBvCZM431F
-	 SRQ5ERS1j5puFFcipxwo8ltq0B1wTZDOO5XOOBtA=
-Message-ID: <a9e21786-af00-4464-b144-5be13e120287@ideasonboard.com>
-Date: Mon, 16 Dec 2024 19:02:08 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1ZPNrm7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C25A3C4CED0;
+	Mon, 16 Dec 2024 18:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734374963;
+	bh=ZeQQScruNqW/bJ/x/lj6Dul84Yp6/f/jX5d+nsFQXP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V1ZPNrm77Hzb3Yr+VIztPlS4AaSqQZsY4L4YZA9QyjHnf9y9BKoeORsmL5zqgKM5z
+	 zLaNqRq6UgjB77sZjplhEZvkYOwLVcGoCG3dowN1eWsh6i5FORV033E1421uFMGfFD
+	 ikzKblefGpcRe5va/r0VTspaftVOegoMzFiPLys3IV/zW/amTD8r56rT9kmc+udtBt
+	 4QRQxrK5zAnkPf+4VqrMovYSuSx4UGoHBY6wxRrubhkokRlvQdN8/aFhXyhQv60rcM
+	 a4ZHBnq1aW8/33AXSZy4Tfg96sbT4oMedVo3YzFjVgm0J++jU5Ff5gptjzJi3iK5wo
+	 UEUM1dM3cddig==
+Date: Mon, 16 Dec 2024 18:49:17 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/8] dt-bindings: mailbox: Add bindings for RPMI
+ shared memory transport
+Message-ID: <20241216-untrained-scarce-211d99984416@spud>
+References: <20241216084817.373131-1-apatel@ventanamicro.com>
+ <20241216084817.373131-3-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
- DisplayPort support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-clk@vger.kernel.org
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
- <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
- <631bda4c-2226-4693-bcb8-a64872533c6c@ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <631bda4c-2226-4693-bcb8-a64872533c6c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DW1/Ea3gbyAW1RUZ"
+Content-Disposition: inline
+In-Reply-To: <20241216084817.373131-3-apatel@ventanamicro.com>
 
-Hi,
 
-On 16/12/2024 17:15, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 16/12/2024 15:33, Geert Uytterhoeven wrote:
->> Hi Tomi,
->>
->> On Fri, Dec 6, 2024 at 10:33 AM Tomi Valkeinen
->> <tomi.valkeinen@ideasonboard.com> wrote:
->>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>
->>> Add support for the mini DP output on the Gray Hawk board.
->>>
->>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>> Reviewed-by: Laurent Pinchart 
->>> <laurent.pinchart+renesas@ideasonboard.com>
->>> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> Thanks for your patch, which is now commit b1000645dc29701f
->> ("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
->> in renesas-devel/renesas-dts-for-v6.14.
->>
->> Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
->> v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
->> when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
->> is not available, the ti_sn65dsi86.bridge part fails to probe with
->> -EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
->> driver must do something critical, as resuming from s2idle now hangs.
->> I haven't identified yet where exactly it hangs.
->> > As a result, s2idle is broken in current renesas-devel, which only
->> has the DTS changes.  Perhaps I should drop the DTS until the issue
->> is resolved?
-> 
-> I'm fine with that. The DT bindings are still under work anyway.
-> 
->> However, I suspect White Hawk has the same issue (if
->> CONFIG_DRM_RCAR_USE_MIPI_DSI=n), but I cannot verify as my local White
->> Hawk is currently not available for kernel testing.
-> 
-> I can reproduce on White Hawk. And I agree that it's probably related to 
-> sn65dsi86.
-> 
-> I use modules, so I tried dropping modules to see when the issue goes 
-> away. And it's always sn65dsi86. So without the rcar DRM & DSI modules 
-> loaded, if I load or don't load sn65dsi86, I see or don't see the hang, 
-> respectively.
-> 
-> Even if I drop the ti_sn65dsi86_pm_ops, it doesn't help. And looks like 
-> just doing the i2c_add_driver() part in ti_sn65dsi86_init() will cause 
-> the issue, so it's something that happens there.
-> 
-> I'll continue the debug later.
+--DW1/Ea3gbyAW1RUZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I wrote a minimal kernel module that has an i2c driver that does 
-nothing, using ti,sn65dsi86 as the compatible string. I can still see 
-the hang with that driver (i.e. no DRM drivers loaded at all). So it's 
-not an issue in the driver.
+On Mon, Dec 16, 2024 at 02:18:11PM +0530, Anup Patel wrote:
+> Add device tree bindings for the common RISC-V Platform Management
+> Interface (RPMI) shared memory transport as a mailbox controller.
+>=20
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  .../mailbox/riscv,rpmi-shmem-mbox.yaml        | 135 ++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-=
+shmem-mbox.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-m=
+box.yaml b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.=
+yaml
+> new file mode 100644
+> index 000000000000..8d713ba7ffc7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RISC-V Platform Management Interface (RPMI) shared memory mailbox
+> +
+> +maintainers:
+> +  - Anup Patel <anup@brainfault.org>
+> +
+> +description: |
+> +  The RISC-V Platform Management Interface (RPMI) [1] defines a common s=
+hared
+> +  memory based RPMI transport. This RPMI shared memory transport integra=
+tes as
+> +  mailbox controller in the SBI implementation or supervisor software wh=
+ereas
+> +  each RPMI service group is mailbox client in the SBI implementation and
+> +  supervisor software.
+> +
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +  References
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +  [1] RISC-V Platform Management Interface (RPMI)
+> +      https://github.com/riscv-non-isa/riscv-rpmi/releases
+> +
+> +properties:
+> +  compatible:
+> +    const: riscv,rpmi-shmem-mbox
+> +
+> +  reg:
+> +    oneOf:
+> +      - items:
+> +        - description: A2P request queue base address
+> +        - description: P2A acknowledgment queue base address
+> +        - description: P2A request queue base address
+> +        - description: A2P acknowledgment queue base address
+> +        - description: A2P doorbell address
+> +      - items:
+> +        - description: A2P request queue base address
+> +        - description: P2A acknowledgment queue base address
+> +        - description: A2P doorbell address
+> +
+> +  reg-names:
+> +    oneOf:
+> +      - items:
+> +        - const: a2p-req
+> +        - const: p2a-ack
+> +        - const: p2a-req
+> +        - const: a2p-ack
+> +        - const: db-reg
+> +      - items:
+> +        - const: a2p-req
+> +        - const: p2a-ack
+> +        - const: db-reg
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 1
+> +    description:
+> +      The RPMI shared memory transport supports wired interrupt specifie=
+d by
+> +      this property as the P2A doorbell.
+> +
+> +  msi-parent:
+> +    description:
+> +      The RPMI shared memory transport supports MSI as P2A doorbell and =
+this
+> +      property specifies the target MSI controller.
+> +
+> +  riscv,slot-size:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 64
+> +    description:
+> +      Power-of-2 RPMI slot size of the RPMI shared memory transport.
+> +
+> +  riscv,db-mask:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Update only the register bits of doorbell defined by the mask (32 =
+bit).
 
-I didn't really figure anything out, but I did notice that if I comment 
-the following lines from the dts, the problem goes away:
+For an untested RFC, the bindings here look mostly fine. I'd suggest
+renaming "db" to "doorbell" in properties etc, since we can easily
+afford the extra characters. Please make sure to actually test the
+bindings next time around, looks like all 3 bindings produced warnings.
 
-		interrupt-parent = <&intc_ex>;
-		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+General comments like not needing to provide minItems: 1 when maxItems
+is also 1, and not needing a | unless you have formatting to preserve.
 
-		enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+> +      If this property is not present then mask is assumed to be 0xfffff=
+fff.
 
-		vccio-supply = <&reg_1p8v>;
-		vpll-supply = <&reg_1p8v>;
-		vcca-supply = <&reg_1p2v>;
-		vcc-supply = <&reg_1p2v>;
+Also, things like this should be handled with a `default: 0xffffffff`,
+rather than describing it in text.
 
-  Tomi
+I'll give the !rfc bindings a proper review when they appear, but before
+that I'll give the code here a go too - thanks for sending the patches.
 
+Cheers,
+Conor.
+
+--DW1/Ea3gbyAW1RUZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2B2LQAKCRB4tDGHoIJi
+0oJNAP9JzetQCsrZEN1o9LOtrG9uzZmopAxjlXBU4Ev0ivS0wgD9GrrhOQX2dGfa
+MzxcsO3uL5ROuSy48vQfWsf+RA9CnAA=
+=lG3u
+-----END PGP SIGNATURE-----
+
+--DW1/Ea3gbyAW1RUZ--
