@@ -1,144 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C19192D69;
-	Mon, 16 Dec 2024 07:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11741202C2E;
+	Mon, 16 Dec 2024 07:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734334172; cv=none; b=vAYg9aOHG5jvmu5UYm7c0C1RimJJTgpLmSNPaMShg6ZlKanDWL9IwQkJDMDq5bHxaQB/HwTQhc6du0Anr4Q8/32RAEvSF3vA1sSMigiso5iPiS879drpGc3xtk+jnEiQ8f7RADuwaw4hM5M0FYzPxx84lrnX37RzpysJR0IHkn4=
+	t=1734335933; cv=none; b=Pm+GZlD5uBNGtuirOn7xFGZEMv9gDukjbNmlEiGYfhrA9ikUuG1VOOUCaL2tX7mF4myYmuKTREmXrIuA+kwwhIf8svzQzYPuFMnF7hGiPO4s3Xvlds6qP/YolvPBW9iw0huNZV67FCZeAq73DtAt2egIKDx5dxL20jrhfKu7lZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734334172; c=relaxed/simple;
-	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jqMuxjZCPU3uY6/XZA0V3qWBr0X47owaLqdl0vHowymsSu9Lvn4AgFkFmjLru01JWV68fI4CVGWmwqkI7JMbTacy1uNOkBIsMSrjoWlxWIneVB2mK7E5L2JxxZKRypVJbXtUddlTlo47LoKKp4C+kuvFRmwcAu+fzq/yt/J9nfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akmXyn2j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734335933; c=relaxed/simple;
+	bh=86rMqP/WtCR5k4n5iIFjBozgm/ac1HefdAeeBPp6VTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsZnm29bHwL0lKGh3vUAjf+l6ZZuAEkekmS4Lp0fYBgVVh+ic+NgzLhL0huZwwdVed7e8GCwMhZJgX3eo18UImyt/Vudoex/CAyL4pE3djnL4FcSV82XgylBiKaimZU9Uxd4G4SG3nU7Xi4tOeMZx10oKar8GLotX8ojDRc8yi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBZCiC5t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akmXyn2j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31887C4CED0;
-	Mon, 16 Dec 2024 07:29:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBZCiC5t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB6B1C4CED0;
+	Mon, 16 Dec 2024 07:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734334171;
-	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=akmXyn2jfDilSj2r94s1ULYl7iiXgEqAJEVozPTniguACWUbfUmBdnVueBJrwU+l1
-	 aKls2K/Ek8h8Trh0D0/q+bBHnL3ZrbLx+I1uCwtT5sJt7rYMtSkIVBQm8RyrqUjhjM
-	 pmvlI7Lhtw6HjiJBh3Jc8C/AoQZBtW/gXoARUVDNpu0d94x+qXTajKsLFn6+q91eC+
-	 GWwCmmzrkWHD/gCQKZwGOLcODobA2bQSGwm56AjfOcSqi0tkb2S5H/hWasRKT2FNsd
-	 4Kzvpf/H7KNEr3Bj9CpcW4HDIaqIGLUGI9w7OebL2kkHWYwLp+lXoj3YTaF8BMEwR7
-	 2xSIWmPMuccfQ==
-Message-ID: <d2b9bcba-703c-4d5e-8677-65cacc8f2636@kernel.org>
-Date: Mon, 16 Dec 2024 08:29:26 +0100
+	s=k20201202; t=1734335932;
+	bh=86rMqP/WtCR5k4n5iIFjBozgm/ac1HefdAeeBPp6VTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KBZCiC5tWu/KEnpK8VcmL9veMbh2v08TBDASgJs27RUsVHhdETI+TgilNZXdp8ken
+	 VHuGF9Fl6d3Uat8pzqKMuP4k9u7sRJuQMIMenTwWqbVxgd3gaIQiEIbHqUiQRgd56o
+	 dDMpwfohujadN+SXoQ0ZMmMdK5XCCx3YpbM5J/ZlN3yvYi1t+NSFsOjSasXfNy7WIv
+	 Z+K6DUpRD0GOHBDdzTie5jhHTtlykuhNLg9SIpz7VPQW4haBlPfaCIGop0djFH30cb
+	 N+zQNzsoC3hV9SAf9lr6eRPPc/wcB/cVNDJT2hCU4hUmxrHCFKqUMkTPDFm9ESKzr/
+	 uGlQBi/U5iMdQ==
+Date: Mon, 16 Dec 2024 08:58:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
+ maxItems
+Message-ID: <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
+References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
+ <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com
-References: <20241211112253.27905-1-ansuelsmth@gmail.com>
- <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
- <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
 
-On 13/12/2024 12:16, Christian Marangi wrote:
-> On Fri, Dec 13, 2024 at 12:01:40PM +0100, Krzysztof Kozlowski wrote:
->> On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
->>> Add ID for eMMC for EN7581. This is to control clock selection of eMMC
->>> between 200MHz and 150MHz.
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>> ---
->>>  include/dt-bindings/clock/en7523-clk.h | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
->>> index 717d23a5e5ae..78d16068228a 100644
->>> --- a/include/dt-bindings/clock/en7523-clk.h
->>> +++ b/include/dt-bindings/clock/en7523-clk.h
->>> @@ -11,7 +11,8 @@
->>>  #define EN7523_CLK_NPU		5
->>>  #define EN7523_CLK_CRYPTO	6
->>>  #define EN7523_CLK_PCIE		7
->>> +#define EN7581_CLK_EMMC		8
->>>  
->>> -#define EN7523_NUM_CLOCKS	8
->>> +#define EN7523_NUM_CLOCKS	9
->>
->> This cannot change.
->>
->> If this changes, then it is not a binding and first drop it in separate
->> patch.
->>
->> Best regards,
->> Krzysztof
->>
+On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
+> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > 
-> Hi Krzysztof,
+> The binding is missing maxItems for all renesas,cmms and renesas,vsps
+> properties. As the amount of cmms or vsps is always a fixed amount, set
+> the maxItems to match the minItems.
 > 
-> maybe I can introduce EN7581_NUM_CLOCKS with the correct number? Just to
-> give more info about this... It's not clear to me why NUM_CLOCKS is
-> needed considering is only needed in clk-en7523.c to probe the driver
-> and allock memory...
-> 
-> Anyway is a different define OK for you?
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> ---
+>  Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
-I don't understand. You just added that enum with corrected number...
-Anyway, review does not change. Number of clocks is not a binding. Drop
-or don't touch.
+The top level property should define widest constraints as well.
 
 Best regards,
 Krzysztof
+
