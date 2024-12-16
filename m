@@ -1,110 +1,139 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6C8203D6D;
-	Mon, 16 Dec 2024 10:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EAF203D4A;
+	Mon, 16 Dec 2024 10:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734345702; cv=none; b=a5V1BjcIBAknkHZXLEmbaYJ9b72DHJpBBMx60r2yQJHSa7seGhHHP6YLPHdgQEaDlV9I90dHJccvRs2vw3EluM4sSQu8kWXrER2i41SW370dEg/oOsZfUgS7i6OToam7jWmpXGhP/9yrjK+jRg1puk7LU/EUDAJlojgvFhARCIo=
+	t=1734345764; cv=none; b=fT0FVmx+DLEl3yRmASw/VZKZ1QdRQUxPuer//8MA1DDJO3FaBxOfKC+r6OHkdHZhwoABs3F4MeyNVS+Of9t8t5nTrX2u1Au17tvkhpN9UUYyRUTA578ZKh8x4MaW1kszR5acWQOcV3DJMzYYFrjDMyM0UqjX1bpL2x7e9k7X7mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734345702; c=relaxed/simple;
-	bh=mljov7sKFphAAju6hgObLkzU6ii6fcbdLfyoYgfipWs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Jt5B8akycH2/bpZ3zB8v5kE+5X11M3TxM8WrpW6XOTfceshbNKfRDtp3imsFqXqf9k5PUY2HyFLMrtVpRa4PItj1Sy3UYSofF4yEesX6gPRd40xkXOM+TwoLxKR4PWKXM0K09qZDBhPwP/X4mQQN2cJ9VezBQLgLkcuidq4lUKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGvVKPCX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734345764; c=relaxed/simple;
+	bh=cOxCgIlxyJLgv2zm3KG3CPzYrl+Z/jFPIxKjceSqlGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f9Pdf4qIHy33u15xKrPvN6Y1yfq3Jl6IuLHSSYEXxvc12PSyw+t0eTwyZRDUNFriSDv8ZPfykKS7VLJ2f9gN4ZZwCjx6q4ipNO+wDofD5mVMUrYT4B8LonCVT4PFcX9QtxdBBw9Vssyn0918oDuWZGRm7VrDOMKrabVoSZHCUBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjgO2erg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGvVKPCX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11BBFC4CEDF;
-	Mon, 16 Dec 2024 10:41:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjgO2erg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C56AC4CED0;
+	Mon, 16 Dec 2024 10:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734345702;
-	bh=mljov7sKFphAAju6hgObLkzU6ii6fcbdLfyoYgfipWs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=TGvVKPCXjpQnWXD3XCgdSYz0796+AqWhjBQsUuDnagoHds/uWQGaUKHxZfVLQ8iXs
-	 rDVmTTtdVRT2rLgKhKauILmwbz2RtwwVvY7Z0kWfgQbcX5OGhCQRheVQvDaeY0ak/z
-	 Pbl3FdZBeGiK3aBQIPCPt/5Q6ma9UpSQXl9/kjlpDKfT8M/Xx8hVbe+8ACTy10n/z7
-	 I5dddbyWIOgg57zGySccXn/dxkTTsNmUSV9HeplQs+iObD4+9fDfEe2cXuzEVf46nV
-	 jUbsi6kblzap9CC4cHZW+XCO1MtTURTQICo7u8zDxGcNcOFClT15wcJFFU35y8+/4t
-	 XupaM2tOmxNwA==
-Date: Mon, 16 Dec 2024 04:41:40 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1734345763;
+	bh=cOxCgIlxyJLgv2zm3KG3CPzYrl+Z/jFPIxKjceSqlGo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LjgO2ergYevyAx4UNykaYA0aDtAwBQ7z79oQchkNdZ3qw8LnuHgr57pkCi2iWZ7LI
+	 uKUZgCOQ3SMbYgb7yX3R7BedhBkcnNFM+6sKE+rldsMlqVcJzhqbfbphbCi44D/Y4T
+	 qY2ESHNTw46+nqoB3HPU9TA6qRvZf8d2p6GWaQ82HU4vCktceZTTuIWqJODOgqnzcM
+	 FUYYZhvn5l1MlRVoN/3XzZt/tdtDI9lZMFSxgEnEKKu+oCUHZtbuWiS6Xm4sCELGod
+	 Bqxr38E9AUE4QIbUKYWjKmy9fatycULf0jVUjHHMeG/EKSLuXaNftfsonB89n7gzkM
+	 WbLvi2GTvl3ew==
+Message-ID: <12d157af-e309-4c8d-9c14-bd0e9da8194d@kernel.org>
+Date: Mon, 16 Dec 2024 11:42:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Jassi Brar <jassisinghbrar@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Anup Patel <anup@brainfault.org>, Sunil V L <sunilvl@ventanamicro.com>, 
- Andrew Jones <ajones@ventanamicro.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Atish Patra <atishp@atishpatra.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-In-Reply-To: <20241216084817.373131-8-apatel@ventanamicro.com>
-References: <20241216084817.373131-1-apatel@ventanamicro.com>
- <20241216084817.373131-8-apatel@ventanamicro.com>
-Message-Id: <173434569718.3760744.3925940874684255534.robh@kernel.org>
-Subject: Re: [RFC PATCH 7/8] dt-bindings: clock: Add bindings for RISC-V
- RPMI clock service group
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
+ maxItems
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
+ <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
+ <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
+ <20241216083239.GC32204@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241216083239.GC32204@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Mon, 16 Dec 2024 14:18:16 +0530, Anup Patel wrote:
-> Add device tree bindings for the clock service group defined by the
-> RISC-V platform management interface (RPMI) specification.
+On 16/12/2024 09:32, Laurent Pinchart wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  .../bindings/clock/riscv,rpmi-clock.yaml      | 78 +++++++++++++++++++
->  1 file changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
+> On Mon, Dec 16, 2024 at 08:58:49AM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
+>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>>
+>>> The binding is missing maxItems for all renesas,cmms and renesas,vsps
+>>> properties. As the amount of cmms or vsps is always a fixed amount, set
+>>> the maxItems to match the minItems.
+>>>
+>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
+>>>  1 file changed, 10 insertions(+)
+>>
+>> The top level property should define widest constraints as well.
 > 
+> I'm curious, why is that ? I understand why a top-level default would
+> make sense when it's optionally overridden by model-specific values, but
+> in this case there's no such default. Every SoC has its own fixed value.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Because otherwise top level property does not have proper description
+and we expect properties to be defined at top-level.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml: properties:mboxes: 'anyOf' conditional failed, one must be fixed:
-	'minItems' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/mailbox.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml: properties:mboxes: 'anyOf' conditional failed, one must be fixed:
-	'minItems' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/mailbox.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241216084817.373131-8-apatel@ventanamicro.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Best regards,
+Krzysztof
