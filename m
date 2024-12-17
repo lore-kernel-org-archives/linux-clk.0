@@ -1,105 +1,104 @@
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA221F9A8D;
-	Tue, 17 Dec 2024 23:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4418C38F9C;
+	Tue, 17 Dec 2024 23:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734477615; cv=none; b=p7mPpSTzkxhdYCw1MPlnzRc90djQVAprE3fCKmdTFMtEEEGo3XlZT9xtreKb07RcFjWmF3uR04ABMC7q7C4zS5mpc04WYgYvuL7c1b/hc0sfkQe2AxewbKbkxwCuOJUX5DDRvCHDIWCMYfceIKnOCdtC1LsihcgULCWxbvU8ZeM=
+	t=1734478261; cv=none; b=bQBQD0PTcy4rxs1UhXkFzxwVO2ZvwMazKG4zGjtZ5ZDWEia/He8YdtXvwnmLtLI7oBT8Dj6OFndugAU+26M/+hTLx7kdwQwR5+FGD1bz6/Trb7DBH+Vg97dLbDeZdLHlD+Xz5q7YKXMLN/h0Ihj+1YuU4CKvptY3HZLDxWwjdds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734477615; c=relaxed/simple;
-	bh=JqIV6tXx8tIAUlYAP5uzDfLYcpL3NO3HNC+91AQV5v8=;
+	s=arc-20240116; t=1734478261; c=relaxed/simple;
+	bh=pqFb0fRhDaGQe9FnLfQabvYYIWWhDb/yY9LO2iXNCfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VUrjRGBS/NpJGkXsEZaJgcgCDwQ4i52wjNwMuCLOwM7NGkmDIPnNcVTauB10kWFjvUz22mK2zNWn+wt+8kr+5vVQ7c3LE/aX8CNSOTY8y4JqXxuZowkvOOXpoN9GITWviKfi+byhYPbhXv918hmdcp175WgkG+FsFGM5oSVu3QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfUHe6oQ; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=QGqzZEQc0LaabnaFcy5FS9aqiMR9s7qDDQNrjdLR7eAH3a1HmlgCbN8M5M35spInCQBKkLgXLy79xYnt+n+uQ7xW8s3HK2AD+DF+HFP6jt0cxgoJCWIokYabqVdcKUB+OrdVBFchTEgr+OIAXuWCt2PicgmiZiZSy7ZgZhqp/BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=b2l+jcA+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfUHe6oQ"
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a9cb667783so47216555ab.1;
-        Tue, 17 Dec 2024 15:20:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734477613; x=1735082413; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a2ut+U+UFksY9pjpmXdvSwGsV7tGa9RTGHAwPiDCRYc=;
-        b=FfUHe6oQQ5YqWRzI2PJcwZzaqjbZvQdWPAhyJ34nF4jHEfSC7UGX5lRczcPgow4tPq
-         A5Umzl68h8Fy08tV/6mjA7v0ADKr8R0rFkl0bY+vvQZoUiJ+R7RDYjjbpFNQaMUfYuTh
-         XFLohVUfBy3YxPWW0QKLFVv1o6tau72Tx8scW1tSZxX9iQiKNz4bDHwbuMyxsmRPjlv0
-         elXhSBf+rifAFWnSo2c0+dscyBHnIUujKENfZbPnWcF5Pi053CvChCg4oLryMeYnh0hO
-         GHxSIzyt2PSXT/ywPHS4+/p8uo0X/nDA0rPShBw3B2DIr1Tja4aaw1ggl2MbxMGVjq4B
-         0hgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734477613; x=1735082413;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a2ut+U+UFksY9pjpmXdvSwGsV7tGa9RTGHAwPiDCRYc=;
-        b=Pm5ncC9jXLV7eZwvKMaGGHJNT8UeK0/0f+N1fWUtXwjVph/ZRGgZBOwU1Rzm9+BSYh
-         9A/WPKndZFZ4WrU5vZwrgMlisWP9t8zUrQ/F8N3ZYLSyZ+Rnqe9RR7FQvNQEXuaWgDkO
-         ue7mPwCscFt9YspwEcP5TFoW+NktjqxfiCBbtliM2VuFliUMmd5elwQ642ERSPpI6h95
-         PrlGUiTMY1lwWo4c6LI/FGm/5RK1sEMV7WEBvXfUo4ctpijKGCHD4xSQ4ST7veMBroTH
-         EKCOWH3UeTpKmYbNomP/kLXIcwoFiyFnYfuqGiyCgjAv/ulUu7tpDudJh2WUG07jSK07
-         md+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUPS7mbHIUpVg80eqVUUnbGhx0JHRNDga1OWf3Q7tee7afXRJKYr9ahwxOATYM+h2m/BBmC4LYXHQZCj/uoEQ==@vger.kernel.org, AJvYcCW4er+QMikF244N4PoDHlpI+X6Ue5hnqGzu2/CSZ0v6W0QTe2MGd7GH9SuZg4JG1I9tmfFRjZ6j4ss7@vger.kernel.org, AJvYcCXM8nBxM3ZewgmhfRZMn4zgzDYcBLXZ3b3CORBpmNst1yD7bCCp8bU+w5AqI+xl55kJ5TbhawSjNng3@vger.kernel.org, AJvYcCXmcg1o2375bDVhM9I/f+1/RCuyV1pz9CgwNkz5QP/E+7pM8a1cwxgX/flvMI7KXqp7YbO8ZIBit1LRUmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysv4O7OwyrUr4WTJmIRkQAv75YNNbVJk/ik6zPh4l7nuMvBr0/
-	L0uHmOiDkOMFbgv/NHYbAd2L7nSldBfj3wU6nhc6kreYQ7IyhNgyitDymu5A
-X-Gm-Gg: ASbGncsyXq4QWCF7BuHx2Fz2mOJrvb/Ykqv+D1JpjrsC3jakb2L0+VjGuLuigu5ej+D
-	m9NbNWlUpnmSQa8P2MGer12tLMj9OmhhkUxDD8uoOwNM2rdTuys7RVKiOsELBgwmXFOyU+KU1Mo
-	Zqa1wcV3g4U/QOvjfzZoOLCeScOiq8QUE8wVhfufIeO7PzA5bqeotc/YJY9Rpr/Agjwo849PAPa
-	y0up40IdKUSELAtdh4bvDqxYql2oLTMH2Xi13Us65/C
-X-Google-Smtp-Source: AGHT+IGNIqbtCEhBg7W6GvXfekFWUVhfGw5JTDt8DThOAxcDwQhAhCFshh5Q0pPoYbNanyOf+10IPw==
-X-Received: by 2002:a05:6e02:1c26:b0:3a7:e83c:2d10 with SMTP id e9e14a558f8ab-3bdc4f186eemr7183255ab.24.1734477613056;
-        Tue, 17 Dec 2024 15:20:13 -0800 (PST)
-Received: from localhost ([2607:fea8:52a3:d200::b824])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3b24d7e4e5fsm23163055ab.65.2024.12.17.15.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 15:20:12 -0800 (PST)
-Date: Tue, 17 Dec 2024 18:20:09 -0500
-From: Richard Acayan <mailingradian@gmail.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b2l+jcA+"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 91207415;
+	Wed, 18 Dec 2024 00:30:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734478219;
+	bh=pqFb0fRhDaGQe9FnLfQabvYYIWWhDb/yY9LO2iXNCfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b2l+jcA+Z/C41+Q1PFlZO2U1xLZzFGgcMRs48tBdLA6SgCtvl/Tye9djLG2Krf10P
+	 BEDf1jtuxkCSY/RpprBUzu5fVmZAjd90aV43JTiGHHbthw54lTGjrZMtI92kmarVQQ
+	 fToB7p/4x/lY5H2o4Wsz2SvoD15kMmrbXP7WEVUs=
+Date: Wed, 18 Dec 2024 01:30:54 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH v8 3/5] media: qcom: camss: add support for SDM670 camss
-Message-ID: <Z2IHKbvVw2jyap4E@radian>
-References: <20241216223019.70155-8-mailingradian@gmail.com>
- <20241216223019.70155-11-mailingradian@gmail.com>
- <56f606b8-35cc-4bbd-af39-106277530928@linaro.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] arm64: dts: renesas: r8a779g0: Add FCPVX instances
+Message-ID: <20241217233054.GP23470@pendragon.ideasonboard.com>
+References: <20241217-rcar-v4h-vspx-v1-0-de04ea044ed4@ideasonboard.com>
+ <20241217-rcar-v4h-vspx-v1-2-de04ea044ed4@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <56f606b8-35cc-4bbd-af39-106277530928@linaro.org>
+In-Reply-To: <20241217-rcar-v4h-vspx-v1-2-de04ea044ed4@ideasonboard.com>
 
-On Mon, Dec 16, 2024 at 10:41:52PM +0000, Bryan O'Donoghue wrote:
-> On 16/12/2024 22:30, Richard Acayan wrote:
-> >   .../bindings/media/qcom,sdm670-camss.yaml     |  72 +++----
-> >   drivers/media/platform/qcom/camss/camss.c     | 191 ++++++++++++++++++
-> >   2 files changed, 227 insertions(+), 36 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml
-> > index f8701a8d27fe..892412fb68a9 100644
-> > --- a/Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml
-> > +++ b/Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml
-> > @@ -31,21 +31,6 @@ properties:
-> >         - const: vfe1
-> >         - const: vfe_lite
-> > -  interrupts:
-> > -    maxItems: 9
+Hi Jacopo,
+
+Thank you for the patch.
+
+On Tue, Dec 17, 2024 at 06:53:15PM +0100, Jacopo Mondi wrote:
+> Add device nodes for the FCPVX instances on R-Car V4H (R8A779G0) SoC.
 > 
-> I think you've had an error squashing some patches.
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+> index 61c6b8022ffdc3b22444fb13e748b4aaebe454a4..e49748563e2f5706ed982d6c9cc1df59f27bd0dc 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+> @@ -2171,6 +2171,24 @@ fcpvd1: fcp@fea11000 {
+>  			iommus = <&ipmmu_vi1 7>;
+>  		};
+>  
+> +		fcpvx0: fcp@fedb0000 {
 
-Yeah, copy-paste error... best to revert the change (and change back DTS).
+Please sort the nodes by unit address.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfedb0000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 1100>;
+> +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 1100>;
+> +			iommus = <&ipmmu_vi1 24>;
+> +		};
+> +
+> +		fcpvx1: fcp@fedb8000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfedb8000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 1101>;
+> +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 1101>;
+> +			iommus = <&ipmmu_vi1 25>;
+> +		};
+> +
+>  		vspd0: vsp@fea20000 {
+>  			compatible = "renesas,vsp2";
+>  			reg = <0 0xfea20000 0 0x7000>;
+
+-- 
+Regards,
+
+Laurent Pinchart
