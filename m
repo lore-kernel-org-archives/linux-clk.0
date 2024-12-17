@@ -1,108 +1,107 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBD414A0A3;
-	Tue, 17 Dec 2024 21:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981031D45FC;
+	Tue, 17 Dec 2024 22:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734471985; cv=none; b=gsxg48kfO710PAVfHcIx13UkRrHO6a72VwogGNQRE5lxbZaM4slcJR6inu+J96C6zw362yv7KOiVPkY7Y2Cw69V9vG5G9kz4mlYJ1rMMjqrCBbr0mJllTLbInrJh8YF9sqB5aMNAZCVM9fPZeP8t4BW/z215faj3d3QCOgaL/HI=
+	t=1734472975; cv=none; b=GroCjZQiIrAxP3aAcPQlm0/sKxHdAy9QrqTXTaqRuj8iFpcssEmzkhauQEjbnYrFAMQGPBCRpzWWHtGyKEfWJKqhZVDhVj8ogs7eN7QBHHkbASkl0Ktj9H4Wc+KC2xF1gmKdjUVOF57LJvA45P1WkH6YzctsdciH8eflW8iNbVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734471985; c=relaxed/simple;
-	bh=9/SlMqJheV6UBlMdYFEbz4fj4zpzDrak/dbk5Hz2i7E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Wv9eU97PqZTCYKF/GPaMz/0zsR3yVcnNZejSEIGcERIkCuGWBk8wBUJVwwpu5BtZgrVhu7bNCvJHBxD6dJVL67VbnuX+hR0Cm4dMBS+eYK0T7q/iXr/6HXtlUH5Q0AL/uSbmWa4D9SV9YCNoKvl3XxX05UMHX7EMYk1I1ONJkCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A9VWstEz; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1734472975; c=relaxed/simple;
+	bh=bG8GzNyU8OV2tRULvMNKD/TFcT+BhQkIg7OBoanqriw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=EsQ/OcUxkw11PmuyJG0HcZWPfjBohf4wIMXcAycNaFfCSO3+3tXa2rNhGpeQuXyokMJkbENUudxxspx4AtX+vb+sOam1gJAxgAlfgbDVYNXhvRne4kzWJzRI3X6WomqcIqMVMSI9zwJv/o8JVurkfKXM9H/ImeZD9WzW23CgD1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=EDauNmcP; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A9VWstEz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734471982;
-	bh=9/SlMqJheV6UBlMdYFEbz4fj4zpzDrak/dbk5Hz2i7E=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=A9VWstEzPcXQiWHL0C4j6BVCWeKwPoOtm1T/XMCWve83tkNjkNOyZlAWQSNPm1P30
-	 MfQuPMdoNnBDLUZr5DKsIsUnxhmN0UAA89kTnyOB3QCLd7iJ6KVD3AC95iuab7Yn7G
-	 Eifiv1gvsW7mBze0HKR+KCIrEnrEfyDHifr+veNHpJrdqbEHf6lz0O6amCY69buCtu
-	 Hf7J7YXPCb0WKByKoe9Co8sseE6kTC/wBJjYuZNXfeOuJm9YyYCrvyJEQ8lS2Mr7be
-	 b1Mip2WCQ63TvMiqtG1SbGeHOtP3Y7alg3oxNuebUvDeJXuhEbiYCHoZWf+P3Ovq+4
-	 ZUPbX6RdIoBWA==
-Received: from [192.168.1.90] (unknown [84.232.140.38])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 223D817E381B;
-	Tue, 17 Dec 2024 22:46:21 +0100 (CET)
-Message-ID: <b13cbeda-79b6-4700-a2e7-083a50541c80@collabora.com>
-Date: Tue, 17 Dec 2024 23:46:19 +0200
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="EDauNmcP"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] Provide devm_clk_bulk_get_all_enabled() helper
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1734472965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3T0I8Im+xs38OE09Iv+okJqntT08tdxR/DACobP2E3c=;
+	b=EDauNmcPkUwwP8lSPH+M30N+OnKv8Q1PSFsSnr+QaUKHSmPphOQzEhH3iTcqTw97igd+0M
+	yOThkqJBcPPHlNNOrXOguFiij6PHVVqEUSJ6lpyffeCWgwAOtMSXloLfJYn6NGZ2ewojs4
+	YQ9x/hzasx92SPbXhf/2+LvHWRq5GgIv9zh/HMSSlZtVvi6OMYXv5mZY98tdunT1I1TfDM
+	N+7IRG9LAUQtXFDdbHfjlOPGXOArB1P+uDOAczKm7qWXI+7Vw8yyg6/Zs6vz6eQtfnA0yG
+	wC28LJOoOZLiBpcJFz0fQ/d0YaLpg32/qv2hRv5R7A+eCCkBKNq6tC0lCvVSlw==
+Date: Tue, 17 Dec 2024 23:02:43 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, Roman Beranek
+ <me@crly.cz>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and
+ PLL_MIPI
+In-Reply-To: <20241217211505.7f9c9e4e@minigeek.lan>
+References: <20241215053639.738890-1-anarsoul@gmail.com>
+ <20241215053639.738890-2-anarsoul@gmail.com>
+ <qbtp4jvkx3r5azufe4k3vtapqpfs54dyjiu4cy5v5wkkzumrzx@vy3xzkfplbue>
+ <CA+E=qVeQ8uHBCeFtw6_2cY3252-YXc6eWrf5_YdeVgbp5LJo5g@mail.gmail.com>
+ <20241217211505.7f9c9e4e@minigeek.lan>
+Message-ID: <d0bf0d9cd2df65dc2e17eb203d56eb13@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 12/17/24 11:41 PM, Cristian Ciocaltea wrote:
-> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-> return the number of clocks stored in the clk_bulk_data table referenced
-> by the clks argument.
-> 
-> That is required in case there is a need to iterate these clocks later,
-> therefore I couldn't see any use case of this parameter and should have
-> been simply removed from the function declaration.
-> 
-> The first patch in the series provides devm_clk_bulk_get_all_enabled()
-> variant, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->  > 0 if one or more clocks have been stored
->  = 0 if there are no clocks
->  < 0 if an error occurred
-> 
-> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
-> the past form of 'enable'.
-> 
-> The next two patches switch existing users of devm_clk_get_enable() to
-> the new helper - there were only two, as of next-20240913.
-> 
-> The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
-> helper.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-> Changes in v5:
-> - Rebased series onto next-20241217
-> - Removed the patch introducing the new helper - merged in v6.13-rc1
-> - Updated last patch to fix a rebase conflict
-> - Link to v4: https://lore.kernel.org/r/20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com
+Hello all,
 
-@Angelo, Matthias, Bjorn:
+On 2024-12-17 22:15, Andre Przywara wrote:
+> On Tue, 17 Dec 2024 10:00:45 -0800
+> Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>> On Mon, Dec 16, 2024 at 11:33 PM Krzysztof Kozlowski <krzk@kernel.org> 
+>> wrote:
+>> >
+>> > On Sat, Dec 14, 2024 at 09:34:57PM -0800, Vasily Khoruzhick wrote:
+>> > > These will be used to explicitly select TCON0 clock parent in dts
+>> > >
+>> > > Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux")
+>> > > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+>> > > ---
+>> > >  drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 2 --
+>> > >  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 +
+>> 
+>> > You cannot combine these changes.
+>> 
+>> The patch basically moves defines out from ccu-sun50i-a64.h to
+>> sun50i-a64-ccu.h. How do I split the change without introducing
+>> compilation failure?
+> 
+> You can just have the binding part first, adding the (same) definition
+> to the binding headers. As long as the #define's are not conflicting,
+> this is fine.
+> Then remove the now redundant definitions in the kernel headers, with a
+> subsequent patch.
 
-Could you please provide an ack for the first two patches so that
-Stephen can apply them to the clk tree along with the last one removing
-the obsolete helper - there are no other users of it as of next-20241217.
+Yes, that would be a way to make it formally correct, but also much
+less readable and understandable later, as part of the source code
+repository.  FWIW, I find this to be an example of the form being
+more important than the actual function.
 
-Thanks,
-Cristian
+>> > Please run scripts/checkpatch.pl and fix reported warnings. Then please
+>> > run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+>> > Some warnings can be ignored, especially from --strict run, but the code
+>> > here looks like it needs a fix. Feel free to get in touch if the warning
+>> > is not clear.
+>> 
+>> Yeah, it is not clear what do you want me to do, assuming the previous
+>> similar change to sun50i-a64-ccu.h did essentially the same, see
+>> 71b597ef5d46a326fb0d5cbfc1c6ff1d73cdc7f9
