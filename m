@@ -1,35 +1,35 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECA18F77;
-	Tue, 17 Dec 2024 05:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CAF156227;
+	Tue, 17 Dec 2024 05:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413550; cv=none; b=TLRjXA2856IVfHYu4osylN2fY9ZoDcqo1TADYT/O39wL8CwaQYVWQxsCgShbgMAqIiwyuPwKJthcXtR35sPHKye1oA1qx6CEpZweRqp2u49Nr/8NALFbQCCNqS8NjXaw8VWatvObyaZ05YN4ykg9+/em8K+zEzESWRnyDIBExCs=
+	t=1734413552; cv=none; b=tYO1T0KPzaeqFoOpAefv67+7jodnulNmmG1VCWwLT71w27I4OnGFVLRQxYNGKAcjhQDazGq2WGCTWoN0XWOoUfDtXi5ujgUq1pZ2Fvkp4dJfMf8Pl8479myBIyZqMEEcrmOCrHjMeJQJ8RIlUw5iJvAEHqzAkpoMPhPqd9utLm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413550; c=relaxed/simple;
-	bh=HdtBvsbTGHsxmfWL54oA5X/bE+Zp9SwVPyMQpH8+GGQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GGhEIyC/N+4Vo9Cp2LxGig5clLG8uV5KXt0nPAjITYuSvMXKu/OEXxUMBp6j/01B9+IOU81hsSqYD6ZIoynUZq1Sk9wHI6/JaCPjl7p2EyPZuBtnJvD7V9QpOR5nlgaDdSrY/QlGnfNqsv3SWMSTbAO/qtEX4n8Q5WZ0FxwHjjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aWnuJW76; arc=none smtp.client-ip=213.167.242.64
+	s=arc-20240116; t=1734413552; c=relaxed/simple;
+	bh=DMH9kb64WnVAVtxcUTTPxPJIxU2uJoWDyUzVe2vOmFI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pqM2G8lzUqqlsWfCTUrwCvygvTU7BzIAL4Z+3K5zuDSY4Vj+rZ/0LXW/doumCKYuQmBqnyoQMU++9KeO17edcRzuO93inVRpmS7Lb1e8+uRSq//rQvA5nALfp+lLfthtdT7PA7PtmCSwX4svtmsjflQBw3Et1ril7aDZ8u3QWBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T5eI+a/X; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aWnuJW76"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T5eI+a/X"
 Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C2AC03E;
-	Tue, 17 Dec 2024 06:31:44 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 553C159D;
+	Tue, 17 Dec 2024 06:31:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734413506;
-	bh=HdtBvsbTGHsxmfWL54oA5X/bE+Zp9SwVPyMQpH8+GGQ=;
-	h=From:Subject:Date:To:Cc:From;
-	b=aWnuJW76Bslpm0CRI9Puy8pOfeOIFU9AICsC1IrjHHiKcd8d9/RG3FZ3LDiS81frU
-	 Uf8WYTSDsGyfUL9iuW8qqfvflrGEIlt3/iSBAXc8torPfMufGjiq8BcP40mPFW+eIP
-	 uKtDBXH1zUCxAMeFB56kzIvJhAByV38SC42NjXkQ=
+	s=mail; t=1734413509;
+	bh=DMH9kb64WnVAVtxcUTTPxPJIxU2uJoWDyUzVe2vOmFI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=T5eI+a/XeHqygFTSp1eTjC1h1MjoSV+okoXSXbI5obK3O2YpINnbreh6t3F0a9Nei
+	 rkCKxJdgFp9v0gaSMA4Ox4w1fi1p/TFsEKoEXTj97EeNB/iSaf+F0f18UK/EqAAi3J
+	 zH3LsmHWFSMkNeY8R7YVirvalEhpJaNy9UCsdKlU=
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [PATCH v5 0/7] drm: Add DSI/DP support for Renesas r8a779h0 V4M
- and grey-hawk board
-Date: Tue, 17 Dec 2024 07:31:34 +0200
-Message-Id: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
+Date: Tue, 17 Dec 2024 07:31:36 +0200
+Subject: [PATCH v5 2/7] drm/rcar-du: Write DPTSR only if the second source
+ exists
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,11 +38,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALcMYWcC/3XPQW7DIBCF4atErEPFjMEmWfUeVRcTGGIWMRFEV
- ivLdy9xN3YUL/8nzSfNJArnyEWcD5PIPMYS01DDHA/C9TRcWUZfW6BCDUpZmR1lee2lL1GenIJ
- gPDM5K+rFPXOIP4v29V27j+WR8u+Cj/Bc/x1UzcYZQSrZNZYY6GQ80mf0TCUNl0TZf7h0E09ux
- DVhtgRWQqPuwBrwwbY7RLMm2i3RVMJ32iG0bSAwO4ReEfDyiK5EsKxBo0HVXd4Q8zz/ARNwzt1
- 2AQAA
+Message-Id: <20241217-rcar-gh-dsi-v5-2-e77421093c05@ideasonboard.com>
+References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
+In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
  Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
  Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -64,91 +62,74 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
  linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- stable@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2782;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2000;
  i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=HdtBvsbTGHsxmfWL54oA5X/bE+Zp9SwVPyMQpH8+GGQ=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQze8lHfUWPEkg55zHzELzk2Y+Kopngu3clvr
- BGx5RyS2IWJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM3gAKCRD6PaqMvJYe
- 9TcvD/9IWDTL0RawT8b8w4CDfMh2GBDFPB6y9Dv0SJZeXO0+Mjg7x43rOKzHK+UdlGyjIXvPzZn
- LZL4NmlaqIABCQWcA0lo4BZG3GH19FUxLLCTLuDsQ0nn4m9HNYUlm7HPATcblCF91fdD7yU3Khs
- X7hgvlVOvqc1Ktt5k0IeysjfOp5bBMcrak4+HhYCSJlMiTo4UoFKiXOzdVi4NZyOegOYx6ikM+7
- PgGUkucTma3HwsaKF+MvHE8Wkvl9LpCoiuB2y58QqO5AgP9J6Dsdhdvspvpd3rY5vOUjuhoH/7m
- DpGKmMG6AX4tyX3Ol5WRKC555A2o0tHQawcpWT1Hd3+KxpvMgtzG0Hj2GNxds2b9fNrmdx2nqQB
- w3vGBI1VHL3RBu736tOpg0qrSxCOwBbLXf08Su6dq+Ad0eezYkmeSRcvqvOxuUlL4ocyyyvs9zg
- CU4sNKb/QKjwxdcUFmQwlqPIT0+JxSL9RAWCvHDxp8/D0BTQmKsbZe8F8gz3w89yeSUKLzDcuCA
- KOhfWTcMLsktR7X0Ni2jru5BP/FaoHs2Y9ize+lG1tuJG2dWE7qOnEllrTIXdpejetlMTITqX5i
- w22UmWZB9Uokpc2zNJymaOo8Dwxm0XC/0usNSNwqdH5UKWEzZmFUVXccr5ICn5JNi9sYdHCwNiH
- WCUj6pI5kLm58VQ==
+ bh=ic1vAEEJzv9LWzHbe/oAaaiBIH9en2R++zJCqIckjhU=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQzjAGyBquK3k4IKCnAtB031px74JdR4tOqxq
+ AX6/rUnUkmJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM4wAKCRD6PaqMvJYe
+ 9T9wD/4wXxR0wurq9bCR2PwPA/9nJLMZ6+BKuoWaKWnzlgiXkaQdG6w6JeIClygju+QcpIHXAMv
+ Q20zXbmgn0Xm2pkYhR/A9IncfleWIJGpWoJwlcrl+qfzvIDcOlIzijgz5FpK4sO2gm8LTBNmdUu
+ hW8RHIr7Lq9VtchuUrFRfpDTYP0kCmsMjt49JN6inssQn9pW5CT0u41lU7XEyVdrO51yJq8lLCX
+ ILGIi5yKoHh1dZCAxpdZ2QxP3zZrUlBxqxO12FcHhXdeSUi7CJiaYCEssO02vFM53qSo1WJJLR5
+ he8i5scQOnW5eKStfOLCUwDGDyPbgpCYZEssCT9pgYHmcBWBpG1PCjVXktNxGT9uEhAHbYnSIrI
+ URKI1WdSbtcPooTOGnC5YJ1PJVadc/gm1fEpHDosyRzr1SPDB+13zVxkVjtPzE/zaJShO1zOkNj
+ NtHHVWm8voDp2Ae3b2XyspCZbiRJpdIpguAbnjrKqaseNgQuuOtkJddVagm+7SsxJnNjvnxY/mv
+ 8lG1+st9fg5NafqmDJ/PIurN03ReYSkaUrO/EpnwTQASV65f2LDh7PmT7GExbquLBuMq9NmDJ5l
+ bIsR+wfPhXS2w3pw3efXsPvj75txCKPCyxjs93JxwO5jFIbtjLXxMad4A1jgftKDBoqunX5jAT+
+ 2SnMX9lL2zkkuMg==
 X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Add everything needed to support the DSI output on Renesas r8a779h0
-(V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
-Renesas grey-hawk board.
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Overall the DSI and the board design is almost identical to Renesas
-r8a779g0 and white-hawk board.
+Currently the driver always writes DPTSR when setting up the hardware.
+However, writing the register is only meaningful when the second source
+for a plane is used, and the register is not even documented for SoCs
+that do not have the second source.
 
-Note: the v4 no longer has the dts and the clk patches, as those have
-been merged to renesas-devel.
+So move the write behind a condition.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> # On R-Car M3-N
 ---
-Changes in v5:
-- Add minItems/maxItems to the top level cmms & vsps properties
-- Drop "minItems: 1" when not needed
-- Link to v4: https://lore.kernel.org/r/20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-Changes in v4:
-- Dropped patches merged to renesas-devel
-- Added new patch "dt-bindings: display: renesas,du: Add missing
-  maxItems" to fix the bindings
-- Add the missing maxItems to "dt-bindings: display: renesas,du: Add
-  r8a779h0"
-- Link to v3: https://lore.kernel.org/r/20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+index 2ccd2581f544..1ec806c8e013 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+@@ -185,11 +185,21 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+ 		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
+ 	rcar_du_group_write(rgrp, DORCR, dorcr);
+ 
+-	/* Apply planes to CRTCs association. */
+-	mutex_lock(&rgrp->lock);
+-	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+-			    rgrp->dptsr_planes);
+-	mutex_unlock(&rgrp->lock);
++	/*
++	 * DPTSR is used to select the source for the planes of a group. The
++	 * first source is chosen by writing 0 to the respective bits, and this
++	 * is always the default value of the register. In other words, writing
++	 * DPTSR is only needed if the SoC supports choosing the second source.
++	 *
++	 * The SoCs documentations seems to confirm this, as the DPTSR register
++	 * is not documented if only the first source exists on that SoC.
++	 */
++	if (rgrp->channels_mask & BIT(1)) {
++		mutex_lock(&rgrp->lock);
++		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
++				    rgrp->dptsr_planes);
++		mutex_unlock(&rgrp->lock);
++	}
+ }
+ 
+ /*
 
-Changes in v3:
-- Update "Write DPTSR only if there are more than one crtc" patch to
-  "Write DPTSR only if the second source exists"
-- Add Laurent's Rb
-- Link to v2: https://lore.kernel.org/r/20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com
-
-Changes in v2:
-- Add the DT binding with a new conditional block, so that we can set
-  only the port@0 as required
-- Drop port@1 from r8a779h0.dtsi (there's no port@1)
-- Add a new patch to write DPTSR only if num_crtcs > 1
-- Drop RCAR_DU_FEATURE_NO_DPTSR (not needed anymore)
-- Add Cc: stable to the fix, and move it as first patch
-- Added the tags from reviews
-- Link to v1: https://lore.kernel.org/r/20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com
-
----
-Tomi Valkeinen (7):
-      drm/rcar-du: dsi: Fix PHY lock bit check
-      drm/rcar-du: Write DPTSR only if the second source exists
-      dt-bindings: display: renesas,du: Add missing constraints
-      dt-bindings: display: renesas,du: Add r8a779h0
-      dt-bindings: display: bridge: renesas,dsi-csi2-tx: Add r8a779h0
-      drm/rcar-du: dsi: Add r8a779h0 support
-      drm/rcar-du: Add support for r8a779h0
-
- .../display/bridge/renesas,dsi-csi2-tx.yaml        |  1 +
- .../devicetree/bindings/display/renesas,du.yaml    | 67 ++++++++++++++++++++--
- drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c      | 18 ++++++
- drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c    | 24 ++++++--
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |  4 +-
- .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h   |  1 -
- 6 files changed, 102 insertions(+), 13 deletions(-)
----
-base-commit: adc218676eef25575469234709c2d87185ca223a
-change-id: 20241008-rcar-gh-dsi-9c01f5deeac8
-
-Best regards,
 -- 
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+2.43.0
 
