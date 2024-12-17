@@ -1,129 +1,145 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7245C1F3D41;
-	Tue, 17 Dec 2024 13:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01AB3E49D;
+	Tue, 17 Dec 2024 13:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442427; cv=none; b=TMD3s9flZgG5+EOYGa89D0iqP48b35amd4XAxZOdNPKqPxXFm9ZA+1vrQxqPLFPKIhMwRT6bxGjPesXjQL6lKgVuTu4m+G6saDHQsvaeRfRlZxyZSiDbLReZi+ZVFnf7SRMyzCzaS2tJNLKbSOc6OaSESs0ST2cDH0lMobrz5zQ=
+	t=1734442567; cv=none; b=Jb7xxvRVlvka7PzIWSMIwZVQKdJukVVN62zJ+9E4RqupSv9lbqlrFDR8mp2wa3vgOzMe5QqGBbHr9Nq8lO7n/eXIhpFTnk5Z8LznbZ1UQnzau8qUE8RpTRId4oa2FwyEtMZD3BF8QruCISLQjfBcCwANsqpahtyji7iD+f0lNYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442427; c=relaxed/simple;
-	bh=YT3+ZFz9l1fk8kwTZgau3x62xAYstfOl9sQbSIveHI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUqWsydbxiZfN7lm5lFY8OKK8bfcwFdafVhkkJcRyS1C5fRkMKQulRIpvDfB8Ix4NT9sAgxdKlJWgnXJhmTMoz4emZ9E0P6eEmp6o+atLdd+h2pAyDTXSfK7RcqmGd35GEn8Y50tFGoZwzL61v/kVjv7BQUZcRbSY6Wpskapb6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=f/58Wh/2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="f/58Wh/2"
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8C3284C7;
-	Tue, 17 Dec 2024 14:33:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734442385;
-	bh=YT3+ZFz9l1fk8kwTZgau3x62xAYstfOl9sQbSIveHI0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f/58Wh/2eCMpGT5V8MWyxwDepQUft8sMLoMR9vrYC/sLtP1xEHAAgyviRqBqrv7d1
-	 bEWZsokzkVjFNg8VLMoGEfVa1ENX1cvS2T3ALrUNSJnMCC2T+dh92y40LQZn21579X
-	 3mwf4FVuz4Ky/QZFg+btD5AeNYvd7aJxl7heXtNs=
-Message-ID: <aa858619-56f6-4d3a-b27d-f38cbfa57d98@ideasonboard.com>
-Date: Tue, 17 Dec 2024 15:33:37 +0200
+	s=arc-20240116; t=1734442567; c=relaxed/simple;
+	bh=+OJfhSy7+/bcb3wM9Q8H0Bd1dWQPgY/GYvGJjFAb+v4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RUOtdr43/FD/SQ2xcgtT4LadM80x9W5gvcJulcTrSWGkJ/Tt37oFayU6dCSzgryvTK7mwwiRf9vUSJ0ea5Js988ZKEHy1Bn7Dn6QwrsoeL6PmFBfSTwjf9bdKax5yc1bj5htOGEn5Ax/5jMQYm+ZBAgiOemIYi195wDP2jUAwU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3eb9101419cso2749715b6e.0;
+        Tue, 17 Dec 2024 05:36:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734442564; x=1735047364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cmkHaZD6J8lgJAaNNA2tVsqfCUgS7g2I77JqUK/2el8=;
+        b=VJ9HOebAyEPM44UzCM/1uO19Y7cuHFHgJy8/goGpwgPDybIEFCIMsnxjAZu5C1Ah/2
+         GMK/3pBi/8HmWvDIHsPG11QKRmlUQpNIcw8URvkHTRmGALiI2JLRMlGGoKMlEqUvNeW1
+         j2VCm+AQW+5y5TVU8ljYw+9bsxXRGf9ba7LJIThyeGI0iuL83l4yVIYXXhvwy6QMVT3e
+         Ox9mwNZO3uPXvo+4RLVjpNjOkmBcuSB6wEZqe/pCc5FmF18QWcOgCrkBh/s4OsKDavVT
+         4lNGfVKeLh6I+EW8BdfM6uLHlBfrwMvDiin0kq80byXJVo8DNAg5o8twmDVbHGqhh3dA
+         HRAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQpzMj2gs1HFUFaT8fhJJlhXAldu03gaTGa8Bcxci+3nOsi/DMR29+t0ShzaDr7X8YB8xDPN6AUHApjtd9@vger.kernel.org, AJvYcCUTtXb+1nKXUgiOiZsw1G88hGE2UoHy8I3hf5yAPf88Pov9ks4KY58ns3z4aEoYLzL60yU7l78Kdseq@vger.kernel.org, AJvYcCVRT83yDXUZCKU+AQ8UZNQAugtVOk9S4jeQ3j4/8zhjhrRpoN9NYhT2zL821W21vMs5e6cX/03cC5OZVninL1uu9Fw=@vger.kernel.org, AJvYcCXjF4tgyBAVQs6pusY4LwCmXTpexIbCHmqmXUKqAjcaZIPiR5SFTt3VYvf8VeXo9V9UgP4W+PtloziU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzWdC1h81/bAGgGRRC+0QuiMlBigA7V0gUf7+MmEQkMP7mYRa1
+	0xurC4ieCQyZ1aOWnpPnZmvQ1zVWtj8i6whbzSGzweIbFMaAoYU+xsMPHpUs
+X-Gm-Gg: ASbGncuOc8s31kNitdkJvEi5OqYA+ql9AWM4r8gHcamObODvDOm01FoTkmuKCiKHAak
+	RqybzsJJTknIp2mXXPBvlCJfRNUEcEPtlxcgZdNft5mz6HvH2+i8ZKDreoVjxxKmJ5pCmou+kUm
+	CGCBqHgiXWMLZAjTWqhSdVaOlGiCdhPua1+Lwh8VuCX41vnYKtgJiJmYVqBqNdKtUmSQVUuZQ+E
+	NSjlGquEjVT9QdwSFK03fIVkW7UKFuKfDfoeue2+PnovLIoHz/eyGAQBVNqfIurjZC1h9n0jIzL
+	MS0FXBcmWi/NhXlqLgqHm9U=
+X-Google-Smtp-Source: AGHT+IHaJ/xAogpjVa0+gYArCyT4dLlLj8O0oocOTeo6KK/dUy2ylM//MI+wcUzfjvetReJsqwpV9A==
+X-Received: by 2002:a05:6808:15a1:b0:3eb:4e94:5648 with SMTP id 5614622812f47-3ebcb27bc1fmr1470941b6e.14.1734442564478;
+        Tue, 17 Dec 2024 05:36:04 -0800 (PST)
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ebb478a280sm2252776b6e.5.2024.12.17.05.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 05:36:04 -0800 (PST)
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3eb7f3b1342so2251186b6e.1;
+        Tue, 17 Dec 2024 05:36:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUE4dnFCfqXcp7cx7k+ml5ucH4tHCCXflu0YdA24kb1AoobQ4unenh0PAYKVwkMqXuk8+p6PKw+Sn5y@vger.kernel.org, AJvYcCWWkgVH9LOdDOr4E1KuEItyElXI/XFqrFz+uescCHQ0RdsOsz9ah7c8Eli3ljYPfVM6LaQoPz8OgKop@vger.kernel.org, AJvYcCXP6wYfdgvpHwpKdSehBmKzlphJs1ljbpzF6jnMKkHNjYd2AlVXvkBip96Q0ZeLMjGf92bQWgt+o8BD45wE@vger.kernel.org, AJvYcCXxBorVsBBDgUFFdDm19HQNZkyCPOzFJ9mFa+2Y/8+B2WJH8KVRrg/CMP0IejKjsBaomD6/BkSiCoCrpvndkA72sSo=@vger.kernel.org
+X-Received: by 2002:a05:6102:32c7:b0:4b1:130f:9fc0 with SMTP id
+ ada2fe7eead31-4b25d9e28a4mr17003299137.16.1734442157476; Tue, 17 Dec 2024
+ 05:29:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] drm: Add DSI/DP support for Renesas r8a779h0 V4M
- and grey-hawk board
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-clk@vger.kernel.org, stable@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+ <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com> <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Dec 2024 14:29:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
+Message-ID: <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
+ DisplayPort support
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Dec 16, 2024 at 2:33=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+> On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
+> <tomi.valkeinen@ideasonboard.com> wrote:
+> > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >
+> > Add support for the mini DP output on the Gray Hawk board.
+> >
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
+m>
+> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Thanks for your patch, which is now commit b1000645dc29701f
+> ("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
+> in renesas-devel/renesas-dts-for-v6.14.
+>
+> Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
+> v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
+> when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
+> is not available, the ti_sn65dsi86.bridge part fails to probe with
+> -EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
+> driver must do something critical, as resuming from s2idle now hangs.
+> I haven't identified yet where exactly it hangs.
+>
+> As a result, s2idle is broken in current renesas-devel, which only
+> has the DTS changes.  Perhaps I should drop the DTS until the issue
+> is resolved?
+>
+> However, I suspect White Hawk has the same issue (if
+> CONFIG_DRM_RCAR_USE_MIPI_DSI=3Dn), but I cannot verify as my local White
+> Hawk is currently not available for kernel testing.
 
-On 17/12/2024 07:31, Tomi Valkeinen wrote:
-> Add everything needed to support the DSI output on Renesas r8a779h0
-> (V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
-> Renesas grey-hawk board.
-> 
-> Overall the DSI and the board design is almost identical to Renesas
-> r8a779g0 and white-hawk board.
-> 
-> Note: the v4 no longer has the dts and the clk patches, as those have
-> been merged to renesas-devel.
-> 
+Confirmed on White Hawk by Tomi and me.
 
-I have pushed this to drm-misc-next. Thank you all for the reviews!
+When the hang occurs, magic sysrq no longer works. However, the system
+still prints "nfs server not responding" once in a while, so I added
+calls to various sysrq print functions to rpc_check_timeout().
+This revealed that the system is blocked on wait_for_completion()
+in dpm_wait_for_superior(), called from device_resume_noirq().
+Printing the actual device and parent gives:
 
-  Tomi
+    platform fed80000.dsi-encoder: PM: device_resume_noirq
+    platform fed80000.dsi-encoder: PM: dpm_wait_for_superior: parent
+fed80000.dsi-encoder
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
