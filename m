@@ -1,114 +1,115 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416751F9F5F;
-	Tue, 17 Dec 2024 17:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E681F8F03;
+	Tue, 17 Dec 2024 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458041; cv=none; b=gnH76Y1otA6uCxK7y7Kohc5lnN5jszZKdRXSbi+OpGR/H5GvdtV4zhomeBmWwHyoNtX2Nicoh2XxtM/xQz15TDw96UsjioDF2XqyPCbdlyR0MaSWAy3U1aot/zXDpaSkLJBALJoKpVaqySTmnGJl1kdM3ILad69M3EoHBJMEo2I=
+	t=1734458473; cv=none; b=Gmeyc79rC4b76pMw9ytlLtRqSQbq5BED9fC/8vRP7h6gPSm2urXu2rw7kcE8DHtIYAWC+vfHHoeqG0aaxaJDTft9+oQHstw5n1btWxilfynUvSDZ9cwsyrB9iR0fsNHPqI71bvPnOGPQAhldr/xTVwtBZHZQ6zVEFXaysFvZNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458041; c=relaxed/simple;
-	bh=mo9HZf0+C76zOe6oEAVBZ4C3Ezowqaf2EVu2kE+TSVE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WbkrRnT0Ok3Ukv+JPhDz87AUoI8rNw92Tj0McZ53VtELw/QNy+U4PZxqHMLLfu1uF8FKQeSzys8h2viwnYgKWy33gIJftqQboPMLYusgcI9QI5lJrCby5miHxPczCbOdRN/m0ESb5ATEBLVnG7qFTdtok3zd3chN+lY1Qf0QkyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RlrSPaKB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734458473; c=relaxed/simple;
+	bh=QC/c1n5Jks7m2uW84qsP/rNoe34vEW18ChfBNCtXubc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P5ov4lN7fSC5OJzZdWJKwbLkhujz8HAmf9efICQNtqyyrfc9eFf6HrK0q026XWitimrRitcLLzYY8q6pSr/sECpjmLJQrjTV5ksa5KMNSO4bkpUbsxOPRAF3TZE2C4e0+1yS+OLezzE2lBYQ1Ciet0viCWf/LBnWdQXHC4ZE4wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a183yPZS; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RlrSPaKB"
-Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BF3D880A;
-	Tue, 17 Dec 2024 18:53:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734457997;
-	bh=mo9HZf0+C76zOe6oEAVBZ4C3Ezowqaf2EVu2kE+TSVE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RlrSPaKB7xQw3eViZlQPX23wygkYi7LLxyo4+SACb1fvcHW6xg7PEWHE5dcVz5fhp
-	 cmOSJqs5dje3WCUaYsTtZf7bQsgxRoRWZ4Kj5jp8JcD2Eph66GZKTPZkcCE5B3sFuS
-	 nLws/BJi+2lCpgp1j+obDN81rC321PDIoW1cCk0k=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Tue, 17 Dec 2024 18:53:17 +0100
-Subject: [PATCH 4/4] arm64: dts: renesas: r8a779g0: Add VSPX instances
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a183yPZS"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f1dfb0b44dso1255501eaf.2;
+        Tue, 17 Dec 2024 10:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734458471; x=1735063271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SiwHnId7iQeGUr8OsM8sKryugiv1jIm1WvtUfh1wJ+Y=;
+        b=a183yPZSNTFegk4wKgQ1DfY5H/zESXErRxmTJRZlnWa1z9xShD3/rMfeYm3QMFSZ/5
+         TO0aFM0Wykf8Bdv5LPDkzbkMLU/ATbgPgKtnuWPwJrVUxIxqal9QkaPIAr2s+8xG+AJK
+         asrELk7i7LC30H1Bpuqiamxpx7rTTR4ITjr7X/ZtETahfRoHp8F2XFdIYWJmjMQv0PV5
+         GUpPLXQ2z2UPvLIN2fN2mfacCYgU3fOijqPZ6wMtgBZ6KOQ/U88yui4pNUy/mZGR60/h
+         lqqbKcJttNAMCK5KSZyYCTncIHQpz4It14en/CQg9arlAURDZLvGx+MFDicW8ac6rWY1
+         ohuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734458471; x=1735063271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SiwHnId7iQeGUr8OsM8sKryugiv1jIm1WvtUfh1wJ+Y=;
+        b=CMplvC78WzydNiXilNzuL06RlzKR9k9TqCiayMJdlsBhm7vdLLSUo9vapHGYWavo1d
+         K6+DgFigWO1c6mIYcBS6TcinhAttvES+CjaVllkTfZe9kgVKpg39Ne2Z/AKy7EFTxhgZ
+         UiFT/Th69/Ep8MhDCfj7q/mGS5/ZnEq0hMfuuwBRCX4nTZSQq24inSnwiRtFgbIKfFIs
+         mCOF8IaFYrEO2hMi4U515QSLGnnyy2AYKSR6Us4AV2oVXwaKJ6ntu2DmFL/0PAOuWH1M
+         Og7rH25DSULEihoZsP+8IAe+LEbgs4tdeVm+/ieaR7ZUCPhIFeMQpldmJR+tmPUYlUKg
+         S1AA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI1ZggJbvZa0PhanvRyUkV68C/9PBM3Qw+Yp7FNbigeSuhfFIkg51JwMV3hhn1y0YKl36Wj8QKbjX71RL1@vger.kernel.org, AJvYcCUbwvbNyw3m/1JsqwX2tQ3FWizr2BkLPizzpei4R3iIg0tfdpDiOeocHyJaFBrj2Ht0GvSNfXATugSz@vger.kernel.org, AJvYcCWcnusQnL03kkMliPeCOOupRkurZBHGJg+pcXKL1lc3C+CMAVDPnrHc9dpdqGEbbMHRu0BsrwKGHLug@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqS1J/UhDLt/HEi0V7Fen+VxZPsttL7o/uWSJgwDGTvytb5V7l
+	uBx/s9gxxH9O7Op3kr8Qa0B3Bxr51YbxWX6cBI5Mgqdlkk6Zua5AlWWcCvhk62MBj3m7DZmW/8c
+	T2el51g3Skm7WcJgot8nKxhiD2XM=
+X-Gm-Gg: ASbGnctisSWtkJ+r+Sl1WkAVD2wm7/rDyN1q2oQdbHDBNoCHWTK9UMfJjsXCQIzQTyt
+	c8QVq+EjDlpRUPj0iV+2p23yey5rwuQtez7LRu7QeMQ9FetlZdoRwU0wqZpZdd3yTEu6xt93e
+X-Google-Smtp-Source: AGHT+IHd+3ZVfpm2NDJm9bWCoeeRHqvP9fk+8IUJThjwea2MK0kqPI6ZhSam/HTj+u/wwVy83PXt4Sd7guaeIDXPgdg=
+X-Received: by 2002:a05:6871:823:b0:29e:2422:49e2 with SMTP id
+ 586e51a60fabf-2a3ac8e1087mr10260963fac.31.1734458471419; Tue, 17 Dec 2024
+ 10:01:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-rcar-v4h-vspx-v1-4-de04ea044ed4@ideasonboard.com>
-References: <20241217-rcar-v4h-vspx-v1-0-de04ea044ed4@ideasonboard.com>
-In-Reply-To: <20241217-rcar-v4h-vspx-v1-0-de04ea044ed4@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1360;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=mo9HZf0+C76zOe6oEAVBZ4C3Ezowqaf2EVu2kE+TSVE=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnYbqu6W2YHmBqQ3mu3qmHNWDRhRCKrpBci5Dgg
- 7m/nHz0eIGJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2G6rgAKCRByNAaPFqFW
- PEMfD/9mLCh5r8eJ90x/tCZWpcX8YMqUa3GcdTTTvdidvqL3MAAtXfGgDxubRh7NMPTJVVOcWo/
- IFsAAyDHDJy8iUQ8O/Hc9f6b6lVk1/HyiR5B7wHN9KYmse0ijhVLJktyMaJUF3sb3bas5I8tX4H
- uMbehJT0m09w2Y6y+zgGGNwUyTLLil4aA1zt8qbWEDiUs5hTEV7tmuvXoOf6FT7M5mHNG2MNBNn
- 64uI0U8t4UW+LaHu3MtdzWM9CAAjOLWAgd04DEwNFLp4gb7GLGIbtJyUHCvz+x+e8bjECEcBnKK
- j/UE1VWYek22tCPbH574y2gblJLDF98cX/HXjo2rS8fHhYdITbbLqtOd5L185n3AtB64GHOm6fm
- pUsdUqg3nqlijKCGHF8+Mzw0Ialy4/w+xkzcNc5TDT05ZZRBn0ie9wYMkvmNT8bTSRSOO8gBIuF
- LgIkAWwIbdYY3fni7FHsPW2+P99QweDJZ+woyw1Xf61EaCXbFHNFQSAeaqareA4kW6nMwsulVVd
- 7mRUQg6scwK9pzKLLFy39ALC5k93ZzAXyMIMwXFcgNCox+18NqCQ6KoGKN2E/yVzbUUj+gPlJus
- bLSFxNheZGAXOUVHuMvIXB5gZklYKWbXPrvujKFldQz6sWjf9J1fjv1V9GX74v4bDdslPzRsLaX
- sqRnI8aPjLc7+Uw==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+References: <20241215053639.738890-1-anarsoul@gmail.com> <20241215053639.738890-2-anarsoul@gmail.com>
+ <qbtp4jvkx3r5azufe4k3vtapqpfs54dyjiu4cy5v5wkkzumrzx@vy3xzkfplbue>
+In-Reply-To: <qbtp4jvkx3r5azufe4k3vtapqpfs54dyjiu4cy5v5wkkzumrzx@vy3xzkfplbue>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Tue, 17 Dec 2024 10:00:45 -0800
+Message-ID: <CA+E=qVeQ8uHBCeFtw6_2cY3252-YXc6eWrf5_YdeVgbp5LJo5g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Roman Beranek <me@crly.cz>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add device nodes for the VSPX instances on R-Car V4H (R8A779G0) SoC.
+On Mon, Dec 16, 2024 at 11:33=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On Sat, Dec 14, 2024 at 09:34:57PM -0800, Vasily Khoruzhick wrote:
+> > These will be used to explicitly select TCON0 clock parent in dts
+> >
+> > Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON=
+0 mux")
+> > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 2 --
+> >  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 +
 
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Hi Krzysztof,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index e49748563e2f5706ed982d6c9cc1df59f27bd0dc..bf4ec5fb7bbdba55e2994f332fcbd623839079c2 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -2211,6 +2211,28 @@ vspd1: vsp@fea28000 {
- 			renesas,fcp = <&fcpvd1>;
- 		};
- 
-+		vspx0: vsp@fedd0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd0000 0 0x8000>;
-+			interrupts = <GIC_SPI 556 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1028>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1028>;
-+
-+			renesas,fcp = <&fcpvx0>;
-+		};
-+
-+		vspx1: vsp@fedd8000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd8000 0 0x8000>;
-+			interrupts = <GIC_SPI 557 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1029>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1029>;
-+
-+			renesas,fcp = <&fcpvx1>;
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a779g0";
- 			reg = <0 0xfeb00000 0 0x40000>;
+> You cannot combine these changes.
 
--- 
-2.47.1
+The patch basically moves defines out from ccu-sun50i-a64.h to
+sun50i-a64-ccu.h. How do I split the change without introducing
+compilation failure?
 
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
+
+Yeah, it is not clear what do you want me to do, assuming the previous
+similar change to sun50i-a64-ccu.h did essentially the same, see
+71b597ef5d46a326fb0d5cbfc1c6ff1d73cdc7f9
+
+Regards,
+Vasily
+
+> Best regards,
+> Krzysztof
+>
