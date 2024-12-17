@@ -1,222 +1,133 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340AB13DDB9
-	for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2024 04:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC611361;
+	Tue, 17 Dec 2024 05:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734409192; cv=none; b=Om66wVE922Ev6Ok7OAIB8AoGIQVmUZDyIK5rWVuJ3eI4eoOPwLcAusoeOsnOpgzNff/o8ou7g2E8e0ZSVOCbj5LAkOKdlzh2nti/NDwjIozlNk1k3XgU7bU3tdg5wchg5ej7fgYLhnRkj6KKU7kQiN+z5+CYI09vpIwo7HK6wGE=
+	t=1734413549; cv=none; b=DVA8rpDVCNpjr6uW2Oc/AeR12kXUuO3Xmr6UI3c+p6uoolGsNZLAQQ5JeaEdIe8fxrLxbIdno1HYN4RT72SN17VGKiFEfOyqTj7Kln997+8tcRYjZGyeiOmMeKPtN0Q63GixinTCSbRBadjWVQQJHG2W0EBWTq0B4eZoxw8JYak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734409192; c=relaxed/simple;
-	bh=QZmqhdVsAT2arRv5BiYh8G4Ca8gJY8A99rpA9VIjAxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xbg8QlQRZfPXJTkgDXG+azX/FdXxBfr6cc2Beuhu5yVx3s8N8cDUlHnCvqDnFjLC8/hZm7SRa/lVcTa3xrVaWZTgtfGWTphrX0YSQX4moxJ29AkTBu4LjdpPh90OiDodLVcNpXHPLEvq5ksk+SVNZDUzDjj5XMoFHr0tefDB+aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Zu8s1fNY; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1734413549; c=relaxed/simple;
+	bh=avI8ClOrtHzD2SipA/Fyk+O8iRhwsleato1FpezpTWY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=uWAAWHeJbMky/vC3uoMi9/Fa6KjFVlH/WG+ifkQFdn3O78T8kZZKIx6Jy/YpCW1dS4ZYDwyvZ4SWzzhEw/fVfhdiYgR3/JCM+TICJuXIj0dWOLr1N+oMwgPHBqCd1LZquD2m+ESQyq9vNqAsIKPu+rsV6KAPCt6I6bOegnhdthw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ascbri/1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Zu8s1fNY"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-540254357c8so4388871e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2024 20:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1734409188; x=1735013988; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMW0UeIvJI+AhemOmgTlEsEldsGeJG60ZjFykMIumKo=;
-        b=Zu8s1fNYBZe+DfEScdR9ln5aEODn7OyiEoFr7iwdr33G+GWaMT501IMRrfENrpflCR
-         WzJ5KPEVQB559LNJ6G9tDFQl60ybRefKeB0/m+ZATaFo8q+xNHk8HuXzyPAlTHhGB+1e
-         eHJcyWJV9A1DeB8Pk8DyYPZGVmToLAYspbduqPJjSc6tDJcU/lDtIgvI+NGYikSJt1gn
-         zDh9PmQ31xKTnp1Qaw6U0BFnv+kTXylfH+6lXWKg0VvhtqfIBY+5UCscLKUP4xm6TMsh
-         26ZFEEjcE/iU4yIPywjFXYR85U1Zf8xt+vD9zW+SOLUiAmZcScHVFgtXX9ZdZYY2yT02
-         wMEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734409188; x=1735013988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tMW0UeIvJI+AhemOmgTlEsEldsGeJG60ZjFykMIumKo=;
-        b=jJoXRTvINkFSu88GIBVMq0iBiglU+JGAFzGbtxJ8Lq3Jjp0r7C8LnAvvaWHkXx1AS1
-         ccuIZLeAQHGVkQk38uwM0PR3+pbFDaDXCQPoq6Hbgr0de17nc2R4Nips/6j2WLPRTnhU
-         QGN0uqVj6dskXWmzltSKiT+qxTJ1Z6X7xWzwESdSr5xdcEnQ7htaZp6VEkO9keD+yRbP
-         DAHz/b77HglMtuwSYexlPO3wiCS/i9wXmO954LN7iOuTWa5nQIyEk3DuJFkCwZM10D60
-         sNt1u5wft8p8yueUgWSidrfYhtz73v4k+kDEMvHDBKFI0PAe9Tnp2qJcdsWY6NZoK8Dw
-         tQtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUysWIYmbXeUn5SfQoNssC3JMoJH6Ky0dIhQ76rE3JA44AywRA7mqaeKpzoclQj+5TSzuDCrBVSWZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKLGaVFRqV2MrEofCiYPmoWu7FBKVqrWZ1K7MKLlwR8WAQ1ve7
-	9Wf/rntTGEQBqByduvpcMhjGDSgrlCr8xN8KUZV6Mzvyb9ARHfopEd5FYi22AyYhPCcJY3lkBnv
-	/D1OPlc5P4FVuahDhQ8XwbW9NOrSoHm5bLwIQFg==
-X-Gm-Gg: ASbGncurA6qIwSzwxJVyYw/sIelKeTqeH21ycDxDbkIv/nBCQoUj349Q3wHwKclGTvd
-	FQvwFg8fhWGnMJyfSig4an5HV1h8f6bPVbHUB3nOf
-X-Google-Smtp-Source: AGHT+IE4WGSqZi/gpxX7yhuAHe5iSqT/x1A4bVt45VkgotfxHWWf4b7WOZPPzXtry/pOUrXrcUS5yW49UEDWenDscJ8=
-X-Received: by 2002:a05:6512:b8a:b0:53e:3aaa:5c7c with SMTP id
- 2adb3069b0e04-54099b72a81mr5673404e87.51.1734409188244; Mon, 16 Dec 2024
- 20:19:48 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ascbri/1"
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95B5455;
+	Tue, 17 Dec 2024 06:31:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734413508;
+	bh=avI8ClOrtHzD2SipA/Fyk+O8iRhwsleato1FpezpTWY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ascbri/1u93szfYgP25SSr857XPCHi19Xxk75o3Uuyt6a0yr3rlQOOx+jtAM4ELOO
+	 HZW5wGirgk5wEjLt7hZtZuWre2fR6/Urijr2e0PyFNa+2aJ5Gh/rB6KDtvGc6kzI3V
+	 HyHILpRgRQsw6/Oy2w0u7OKSdEu49Hp99em50UZA=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date: Tue, 17 Dec 2024 07:31:35 +0200
+Subject: [PATCH v5 1/7] drm/rcar-du: dsi: Fix PHY lock bit check
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216084817.373131-1-apatel@ventanamicro.com>
- <20241216084817.373131-3-apatel@ventanamicro.com> <20241216-untrained-scarce-211d99984416@spud>
-In-Reply-To: <20241216-untrained-scarce-211d99984416@spud>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 17 Dec 2024 09:49:36 +0530
-Message-ID: <CAK9=C2UtxKm_38SVzUZoe_OSqcU5Q6k87cZvGyPTozkVR8YoFQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/8] dt-bindings: mailbox: Add bindings for RPMI
- shared memory transport
-To: Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, 
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241217-rcar-gh-dsi-v5-1-e77421093c05@ideasonboard.com>
+References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
+In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ linux-clk@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2124;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=oDefLvswOZixERy//YecN6qGggsNckidLEErkzhvvTE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQziJXZaCRqtyAepVhFqXvRuXc7hmQtry8RBi
+ vb+pezoR5+JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM4gAKCRD6PaqMvJYe
+ 9fpzD/98xI478iBWlIUKmY8TkYpK9YSt/GywTd/lEUxSQPNX4pbS6yEF4M20oDZT3JotFemFaV1
+ DcBidbJnDoR+OOwktWAv6n0nbZn6klPFHFDq2c4dWW5b+7DIpZj7Hw+I5trhok5xBirxOlscrII
+ NJt4rTo6oMGZaRwB0nyiBf8sNnwva0m/auJ5zldAzlGWrC//LEAaxZ9th0RU5HK02UY6tzpsGou
+ rYZUx6UqBXFj7TckZwSvWU9Hf2qpSBbtM9YHh4nWqUPcrxL6PtWFWRUw41EChcOC2nR8gVwqhh9
+ EPmK+vkZxtf6aYEfOUiT4dKELd+SHoVXINkiXLiFTJRRK1NdI5vKgOCwvJvRqckfdkkuhc1TuUc
+ YwJVH71Ck+p8YEgw15JJnf3W88sxrYyGj2xkZBll55FwWGwAzckqSlP+IxFHftxM01Bej5a0MIW
+ t46SFnbK+Tn+MRgXep1T70W8RlkEMNlL2sfWjsUFLBnWi8OFhQx7akQfJdRb2164t7KufLR0/b1
+ iLOmMfbsc/A4bsGjrxBAcPts0m7Db0Xqd/fje1Tg7NeW12r4loOOkJ+p9tL+BrdMcfJylwm4CdI
+ j7tzBKhjKJcaQ7pG76UmbJ+aEOZmp18aEfHsKpFSkGCFdbeanEGwnMQkEjQPPKzmj9M+DcrjB4z
+ kDeh8xdiSBFxqdQ==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Tue, Dec 17, 2024 at 12:19=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
-ote:
->
-> On Mon, Dec 16, 2024 at 02:18:11PM +0530, Anup Patel wrote:
-> > Add device tree bindings for the common RISC-V Platform Management
-> > Interface (RPMI) shared memory transport as a mailbox controller.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > ---
-> >  .../mailbox/riscv,rpmi-shmem-mbox.yaml        | 135 ++++++++++++++++++
-> >  1 file changed, 135 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpm=
-i-shmem-mbox.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem=
--mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbo=
-x.yaml
-> > new file mode 100644
-> > index 000000000000..8d713ba7ffc7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.y=
-aml
-> > @@ -0,0 +1,135 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RISC-V Platform Management Interface (RPMI) shared memory mailb=
-ox
-> > +
-> > +maintainers:
-> > +  - Anup Patel <anup@brainfault.org>
-> > +
-> > +description: |
-> > +  The RISC-V Platform Management Interface (RPMI) [1] defines a common=
- shared
-> > +  memory based RPMI transport. This RPMI shared memory transport integ=
-rates as
-> > +  mailbox controller in the SBI implementation or supervisor software =
-whereas
-> > +  each RPMI service group is mailbox client in the SBI implementation =
-and
-> > +  supervisor software.
-> > +
-> > +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +  References
-> > +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +  [1] RISC-V Platform Management Interface (RPMI)
-> > +      https://github.com/riscv-non-isa/riscv-rpmi/releases
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: riscv,rpmi-shmem-mbox
-> > +
-> > +  reg:
-> > +    oneOf:
-> > +      - items:
-> > +        - description: A2P request queue base address
-> > +        - description: P2A acknowledgment queue base address
-> > +        - description: P2A request queue base address
-> > +        - description: A2P acknowledgment queue base address
-> > +        - description: A2P doorbell address
-> > +      - items:
-> > +        - description: A2P request queue base address
-> > +        - description: P2A acknowledgment queue base address
-> > +        - description: A2P doorbell address
-> > +
-> > +  reg-names:
-> > +    oneOf:
-> > +      - items:
-> > +        - const: a2p-req
-> > +        - const: p2a-ack
-> > +        - const: p2a-req
-> > +        - const: a2p-ack
-> > +        - const: db-reg
-> > +      - items:
-> > +        - const: a2p-req
-> > +        - const: p2a-ack
-> > +        - const: db-reg
-> > +
-> > +  interrupts:
-> > +    minItems: 1
-> > +    maxItems: 1
-> > +    description:
-> > +      The RPMI shared memory transport supports wired interrupt specif=
-ied by
-> > +      this property as the P2A doorbell.
-> > +
-> > +  msi-parent:
-> > +    description:
-> > +      The RPMI shared memory transport supports MSI as P2A doorbell an=
-d this
-> > +      property specifies the target MSI controller.
-> > +
-> > +  riscv,slot-size:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    minimum: 64
-> > +    description:
-> > +      Power-of-2 RPMI slot size of the RPMI shared memory transport.
-> > +
-> > +  riscv,db-mask:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      Update only the register bits of doorbell defined by the mask (3=
-2 bit).
->
-> For an untested RFC, the bindings here look mostly fine. I'd suggest
-> renaming "db" to "doorbell" in properties etc, since we can easily
-> afford the extra characters. Please make sure to actually test the
-> bindings next time around, looks like all 3 bindings produced warnings.
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Okay, I will fix these issues in the next revision.
+The driver checks for bit 16 (using CLOCKSET1_LOCK define) in CLOCKSET1
+register when waiting for the PPI clock. However, the right bit to check
+is bit 17 (CLOCKSET1_LOCK_PHY define). Not only that, but there's
+nothing in the documents for bit 16 for V3U nor V4H.
 
->
-> General comments like not needing to provide minItems: 1 when maxItems
-> is also 1, and not needing a | unless you have formatting to preserve.
+So, fix the check to use bit 17, and drop the define for bit 16.
 
-Okay, I will update.
+Fixes: 155358310f01 ("drm: rcar-du: Add R-Car DSI driver")
+Fixes: 11696c5e8924 ("drm: Place Renesas drivers in a separate dir")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
->
-> > +      If this property is not present then mask is assumed to be 0xfff=
-fffff.
->
-> Also, things like this should be handled with a `default: 0xffffffff`,
-> rather than describing it in text.
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+index 2dba7c5ffd2c..92f4261305bd 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+@@ -587,7 +587,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
+ 	for (timeout = 10; timeout > 0; --timeout) {
+ 		if ((rcar_mipi_dsi_read(dsi, PPICLSR) & PPICLSR_STPST) &&
+ 		    (rcar_mipi_dsi_read(dsi, PPIDLSR) & PPIDLSR_STPST) &&
+-		    (rcar_mipi_dsi_read(dsi, CLOCKSET1) & CLOCKSET1_LOCK))
++		    (rcar_mipi_dsi_read(dsi, CLOCKSET1) & CLOCKSET1_LOCK_PHY))
+ 			break;
+ 
+ 		usleep_range(1000, 2000);
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+index f8114d11f2d1..a6b276f1d6ee 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+@@ -142,7 +142,6 @@
+ 
+ #define CLOCKSET1			0x101c
+ #define CLOCKSET1_LOCK_PHY		(1 << 17)
+-#define CLOCKSET1_LOCK			(1 << 16)
+ #define CLOCKSET1_CLKSEL		(1 << 8)
+ #define CLOCKSET1_CLKINSEL_EXTAL	(0 << 2)
+ #define CLOCKSET1_CLKINSEL_DIG		(1 << 2)
 
-Okay, I will update.
+-- 
+2.43.0
 
->
-> I'll give the !rfc bindings a proper review when they appear, but before
-> that I'll give the code here a go too - thanks for sending the patches.
->
-> Cheers,
-> Conor.
-
-Regards,
-Anup
