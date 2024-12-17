@@ -1,54 +1,54 @@
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01AB3E49D;
-	Tue, 17 Dec 2024 13:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD091F426B;
+	Tue, 17 Dec 2024 13:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442567; cv=none; b=Jb7xxvRVlvka7PzIWSMIwZVQKdJukVVN62zJ+9E4RqupSv9lbqlrFDR8mp2wa3vgOzMe5QqGBbHr9Nq8lO7n/eXIhpFTnk5Z8LznbZ1UQnzau8qUE8RpTRId4oa2FwyEtMZD3BF8QruCISLQjfBcCwANsqpahtyji7iD+f0lNYI=
+	t=1734442945; cv=none; b=UZiw24jifiIl4odwS7Ink5w2VyH/JvMZbqzC+K9M781sCQ7uKvNNR03jLo0pI9vIPHBKlOWo3SDwKhjtqY+uwlRg59R90qDAQtwzNMCP5OqXeLxRcJLI09tGb+qrh5IXz5UW1/QRBmmrbZiywfS3I2KaPFhgNH1bkjS6pZw5X6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442567; c=relaxed/simple;
-	bh=+OJfhSy7+/bcb3wM9Q8H0Bd1dWQPgY/GYvGJjFAb+v4=;
+	s=arc-20240116; t=1734442945; c=relaxed/simple;
+	bh=+NLEb6CqCiJoZfeGjcIUH+M3JreOrl4k58RvErRAt5c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RUOtdr43/FD/SQ2xcgtT4LadM80x9W5gvcJulcTrSWGkJ/Tt37oFayU6dCSzgryvTK7mwwiRf9vUSJ0ea5Js988ZKEHy1Bn7Dn6QwrsoeL6PmFBfSTwjf9bdKax5yc1bj5htOGEn5Ax/5jMQYm+ZBAgiOemIYi195wDP2jUAwU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.179
+	 To:Cc:Content-Type; b=MMY+vi5HMr/PWnSnenH0IXrE9k1+vn8yC4fxgM+AspWkKztPds7R62uG38KQptBNDXmqI7NQHTEpKlBSuaW4raNeob5VsVqjpiesbIpvawUh4Fp3kPbDL/8NZJ4FnBVbQbxs6lTGael12VRbyMMBZ8VPBdt+cjVu89jjJYxw+h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3eb9101419cso2749715b6e.0;
-        Tue, 17 Dec 2024 05:36:05 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-85b88a685e6so2379683241.2;
+        Tue, 17 Dec 2024 05:42:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734442564; x=1735047364;
+        d=1e100.net; s=20230601; t=1734442941; x=1735047741;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cmkHaZD6J8lgJAaNNA2tVsqfCUgS7g2I77JqUK/2el8=;
-        b=VJ9HOebAyEPM44UzCM/1uO19Y7cuHFHgJy8/goGpwgPDybIEFCIMsnxjAZu5C1Ah/2
-         GMK/3pBi/8HmWvDIHsPG11QKRmlUQpNIcw8URvkHTRmGALiI2JLRMlGGoKMlEqUvNeW1
-         j2VCm+AQW+5y5TVU8ljYw+9bsxXRGf9ba7LJIThyeGI0iuL83l4yVIYXXhvwy6QMVT3e
-         Ox9mwNZO3uPXvo+4RLVjpNjOkmBcuSB6wEZqe/pCc5FmF18QWcOgCrkBh/s4OsKDavVT
-         4lNGfVKeLh6I+EW8BdfM6uLHlBfrwMvDiin0kq80byXJVo8DNAg5o8twmDVbHGqhh3dA
-         HRAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQpzMj2gs1HFUFaT8fhJJlhXAldu03gaTGa8Bcxci+3nOsi/DMR29+t0ShzaDr7X8YB8xDPN6AUHApjtd9@vger.kernel.org, AJvYcCUTtXb+1nKXUgiOiZsw1G88hGE2UoHy8I3hf5yAPf88Pov9ks4KY58ns3z4aEoYLzL60yU7l78Kdseq@vger.kernel.org, AJvYcCVRT83yDXUZCKU+AQ8UZNQAugtVOk9S4jeQ3j4/8zhjhrRpoN9NYhT2zL821W21vMs5e6cX/03cC5OZVninL1uu9Fw=@vger.kernel.org, AJvYcCXjF4tgyBAVQs6pusY4LwCmXTpexIbCHmqmXUKqAjcaZIPiR5SFTt3VYvf8VeXo9V9UgP4W+PtloziU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzWdC1h81/bAGgGRRC+0QuiMlBigA7V0gUf7+MmEQkMP7mYRa1
-	0xurC4ieCQyZ1aOWnpPnZmvQ1zVWtj8i6whbzSGzweIbFMaAoYU+xsMPHpUs
-X-Gm-Gg: ASbGncuOc8s31kNitdkJvEi5OqYA+ql9AWM4r8gHcamObODvDOm01FoTkmuKCiKHAak
-	RqybzsJJTknIp2mXXPBvlCJfRNUEcEPtlxcgZdNft5mz6HvH2+i8ZKDreoVjxxKmJ5pCmou+kUm
-	CGCBqHgiXWMLZAjTWqhSdVaOlGiCdhPua1+Lwh8VuCX41vnYKtgJiJmYVqBqNdKtUmSQVUuZQ+E
-	NSjlGquEjVT9QdwSFK03fIVkW7UKFuKfDfoeue2+PnovLIoHz/eyGAQBVNqfIurjZC1h9n0jIzL
-	MS0FXBcmWi/NhXlqLgqHm9U=
-X-Google-Smtp-Source: AGHT+IHaJ/xAogpjVa0+gYArCyT4dLlLj8O0oocOTeo6KK/dUy2ylM//MI+wcUzfjvetReJsqwpV9A==
-X-Received: by 2002:a05:6808:15a1:b0:3eb:4e94:5648 with SMTP id 5614622812f47-3ebcb27bc1fmr1470941b6e.14.1734442564478;
-        Tue, 17 Dec 2024 05:36:04 -0800 (PST)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ebb478a280sm2252776b6e.5.2024.12.17.05.36.04
+        bh=55x747loPYs9UKeI6ysGYmeJmLBuEdA1brrJreZX3rI=;
+        b=TqbUZh7BV5YNOZPfnHfynMuCM+/d+khBPjUPAat2EYoda+6as69wlNsyk9hI8Altxw
+         d0CZepN+s0uzz6zsJOVajY5vrwive3IMeMXCC7csI1YaL6CkFJcX1c94uEU4v2Igxwiu
+         rdt7PJbwW3Z7A43zeDCAJlih5g9yvN5v3u9Hgw48Q2dMIpdgsFmPpgp0fNMnaqha16Y3
+         qMU+GvlleFO17Wr+kc5oLY4zARfb1XZU6MSQ93CwsQfm8vWSsp0eOCqqv/2512bHnrAr
+         xAU/H3UF7or2ncyQUGvpAlI8vYVe2YMmwb0D1ImhAuSCZ0i18M8gEMJ4KwJGTszvAslZ
+         nnkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw2/zj/mJhbPT0QY93YU//tIR+YxTbljhaDTfkv99QXigfsPAX53XAG7Taon3HrxaRq7WQyS28DXzH9e2n@vger.kernel.org, AJvYcCVphbEriuK2a6pJdSejX3jutQjvgTL5NYcj5CbVcPmI8MnF9Oxo5dLEUpX+43jqIWk1e/OEFfbfKP1NpZNJ8n0z1aw=@vger.kernel.org, AJvYcCVt0S26APclShmorTS2T5aiHhMaBcRy5rRBWsUqVnDacuOr62WXLwV41daHLLA7lcDjHbV5Jvcyx2he@vger.kernel.org, AJvYcCWlhn9eHQfwAmVAkYnRrEgOXaAN6xf40dMPELbrzU5p8AeK/rmWDQtgp1dz1IWvOMyK1UErzK1vEH97@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW3RFMzGm1HAS9Kx+wF/ttiGiScSLOZE9XRBg1sdVYYJLBj1XG
+	ldSVDXwDX323CwolQsz8NThj3ZGk18pddiRmf3Kx3gXdtkhuamjw2CEdMA/P
+X-Gm-Gg: ASbGncuKdCECl2xB+BjjxiyT+96cFnfhuMKz0OaYuRsOkT7O4/Mvc4EenswznJ935DQ
+	9+PcIrq32/dHGObrFSJtdHP2TOd8nE7BS7PeR/4pDhiSojuo8+ssjBl6r2vGrpzJ6ZpcuQjEhWR
+	vhNHeB7ottOKylMIy4w9GwRSMIm9vpB3mmyzlwnCv8WWBfh3bQIbO5BrDLDNEC45vV1uxowSno2
+	eHedErhvGIZdJFmWZWqjsT4AtH+6ofpfHBrdsUuJ2o0BG0C6/WIOkOhrwuTBKkjYTK7eylNi0ow
+	HiLmJny2h30IQ78sQtw=
+X-Google-Smtp-Source: AGHT+IGXk+bIQkA+vs44jCZavZSL5TkL+WHLryMuIhUxedGP6axYmeZUHD20UU7WTIEuf2HUgL3MMA==
+X-Received: by 2002:a05:6102:3e27:b0:4b0:2d7c:43ca with SMTP id ada2fe7eead31-4b25ddc752dmr16415745137.18.1734442940972;
+        Tue, 17 Dec 2024 05:42:20 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b270231d1dsm1152174137.8.2024.12.17.05.42.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 05:36:04 -0800 (PST)
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3eb7f3b1342so2251186b6e.1;
-        Tue, 17 Dec 2024 05:36:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUE4dnFCfqXcp7cx7k+ml5ucH4tHCCXflu0YdA24kb1AoobQ4unenh0PAYKVwkMqXuk8+p6PKw+Sn5y@vger.kernel.org, AJvYcCWWkgVH9LOdDOr4E1KuEItyElXI/XFqrFz+uescCHQ0RdsOsz9ah7c8Eli3ljYPfVM6LaQoPz8OgKop@vger.kernel.org, AJvYcCXP6wYfdgvpHwpKdSehBmKzlphJs1ljbpzF6jnMKkHNjYd2AlVXvkBip96Q0ZeLMjGf92bQWgt+o8BD45wE@vger.kernel.org, AJvYcCXxBorVsBBDgUFFdDm19HQNZkyCPOzFJ9mFa+2Y/8+B2WJH8KVRrg/CMP0IejKjsBaomD6/BkSiCoCrpvndkA72sSo=@vger.kernel.org
-X-Received: by 2002:a05:6102:32c7:b0:4b1:130f:9fc0 with SMTP id
- ada2fe7eead31-4b25d9e28a4mr17003299137.16.1734442157476; Tue, 17 Dec 2024
- 05:29:17 -0800 (PST)
+        Tue, 17 Dec 2024 05:42:20 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85b88a685e6so2379653241.2;
+        Tue, 17 Dec 2024 05:42:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCURyLqochOV57Y96LSnZjbAYgLK+bo5rvmBWrdKoY7riQXiUXfBI2S4Pdby+hHFqUEUL2Ma7RfeXZoUoman8ABVXqs=@vger.kernel.org, AJvYcCV4svlOnXcN4Zh8inM7x7s61ZqOtpwUUZVt1ubeacZhDObA/iQIB1XF2xm8COjUbt5FQgVXLqv8ulu8@vger.kernel.org, AJvYcCXctSyRc+IdZFuKCxUsWMzZBBDP8dFzAu8zh5JqkF6OGK+iC/aQlfUcE9uPmnZTSNj+dVpDHKiFAOQznfLO@vger.kernel.org, AJvYcCXq7cEj4KX+jXWwpJb18cG00xlcOnoEhtP4S9sQq0qs1FXnUIs48VFokQ8I59GgluGK2mIQqIFpLER4@vger.kernel.org
+X-Received: by 2002:a05:6102:1591:b0:4af:597b:ef with SMTP id
+ ada2fe7eead31-4b25dca388dmr15489033137.8.1734442939984; Tue, 17 Dec 2024
+ 05:42:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,12 +56,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com> <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
+ <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
+ <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com> <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Dec 2024 14:29:05 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
-Message-ID: <CAMuHMdWx5v24UMV7DabxUcYJUeetGeiWidGurT2vEWRw4BTrNg@mail.gmail.com>
+Date: Tue, 17 Dec 2024 14:42:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX+baSFtX-U-w4CBSqMsceDS+RoQY55qs=SmyydK6BLVA@mail.gmail.com>
+Message-ID: <CAMuHMdX+baSFtX-U-w4CBSqMsceDS+RoQY55qs=SmyydK6BLVA@mail.gmail.com>
 Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
  DisplayPort support
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
@@ -80,55 +81,77 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Saravana Kannan <saravanak@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 2:33=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+CC Saravana
+
+On Tue, Dec 17, 2024 at 2:29=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
 k.org> wrote:
-> On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
-> > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >
-> > Add support for the mini DP output on the Gray Hawk board.
-> >
-> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
+> On Mon, Dec 16, 2024 at 2:33=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
+> > <tomi.valkeinen@ideasonboard.com> wrote:
+> > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > >
+> > > Add support for the mini DP output on the Gray Hawk board.
+> > >
+> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.co=
 m>
-> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
+com>
+> > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Thanks for your patch, which is now commit b1000645dc29701f
+> > ("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
+> > in renesas-devel/renesas-dts-for-v6.14.
+> >
+> > Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
+> > v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
+> > when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
+> > is not available, the ti_sn65dsi86.bridge part fails to probe with
+> > -EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
+> > driver must do something critical, as resuming from s2idle now hangs.
+> > I haven't identified yet where exactly it hangs.
+> >
+> > As a result, s2idle is broken in current renesas-devel, which only
+> > has the DTS changes.  Perhaps I should drop the DTS until the issue
+> > is resolved?
+> >
+> > However, I suspect White Hawk has the same issue (if
+> > CONFIG_DRM_RCAR_USE_MIPI_DSI=3Dn), but I cannot verify as my local Whit=
+e
+> > Hawk is currently not available for kernel testing.
 >
-> Thanks for your patch, which is now commit b1000645dc29701f
-> ("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
-> in renesas-devel/renesas-dts-for-v6.14.
+> Confirmed on White Hawk by Tomi and me.
 >
-> Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
-> v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
-> when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
-> is not available, the ti_sn65dsi86.bridge part fails to probe with
-> -EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
-> driver must do something critical, as resuming from s2idle now hangs.
-> I haven't identified yet where exactly it hangs.
+> When the hang occurs, magic sysrq no longer works. However, the system
+> still prints "nfs server not responding" once in a while, so I added
+> calls to various sysrq print functions to rpc_check_timeout().
+> This revealed that the system is blocked on wait_for_completion()
+> in dpm_wait_for_superior(), called from device_resume_noirq().
+> Printing the actual device and parent gives:
 >
-> As a result, s2idle is broken in current renesas-devel, which only
-> has the DTS changes.  Perhaps I should drop the DTS until the issue
-> is resolved?
->
-> However, I suspect White Hawk has the same issue (if
-> CONFIG_DRM_RCAR_USE_MIPI_DSI=3Dn), but I cannot verify as my local White
-> Hawk is currently not available for kernel testing.
+>     platform fed80000.dsi-encoder: PM: device_resume_noirq
+>     platform fed80000.dsi-encoder: PM: dpm_wait_for_superior: parent fed8=
+0000.dsi-encoder
 
-Confirmed on White Hawk by Tomi and me.
+So it's waiting for itself, i.e. deadlock :-(
 
-When the hang occurs, magic sysrq no longer works. However, the system
-still prints "nfs server not responding" once in a while, so I added
-calls to various sysrq print functions to rpc_check_timeout().
-This revealed that the system is blocked on wait_for_completion()
-in dpm_wait_for_superior(), called from device_resume_noirq().
-Printing the actual device and parent gives:
+When the DSI driver is available:
 
-    platform fed80000.dsi-encoder: PM: device_resume_noirq
-    platform fed80000.dsi-encoder: PM: dpm_wait_for_superior: parent
-fed80000.dsi-encoder
+    rcar-mipi-dsi fed80000.dsi-encoder: PM: device_resume_noirq:627
+    rcar-mipi-dsi fed80000.dsi-encoder: PM: dpm_wait_for_superior:280
+    rcar-mipi-dsi fed80000.dsi-encoder: PM: dpm_wait_for_superior:296:
+parent fed80000.dsi-encoder
+
+still waiting for itself, but it does continue!
+Note that the fed80000.dsi-encoder block is now bound, and
+"rcar-mipi-dsi" is printed instead of "platform".
+
+fw_devlink issue?
 
 Gr{oetje,eeting}s,
 
