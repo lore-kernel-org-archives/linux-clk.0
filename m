@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488331F76BE;
-	Tue, 17 Dec 2024 18:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6AB1F9A98;
+	Tue, 17 Dec 2024 19:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734461595; cv=none; b=KgKV1VrGbNZ5LHm8LhftJ460YF946b3RZIMQhjIvbgRZgY7/Aao8+SqkIQsABZ5EbqvO85J/IT5OeEbvp//l2rkWx6m1EW5gRgM6+HEXlgO1wbdH99pomyEVqpue/ly8+y9p4MuX6mV8Gq58InTYAwnLlxpeDQQ2ImMBxK74Leg=
+	t=1734464454; cv=none; b=kv6fpiM6nU7mmBNWpYEMPXQv8aArClO78alW+KAE05iD0BxZCSVz8PobA3R4WUYqLBxjWwQ7xhzeG4bQasrIX9/e1Fe18knIjHbwSL1FgG34T7cWxnOLw4pf7Ghjt6Luh2JONLNYyakNccsmRGKs3fi2qwswP/21TGBE+JA71V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734461595; c=relaxed/simple;
-	bh=6RgTZqHjU7r6mRU3DFiGShoSX50zWfvKJDzxXD+jdnk=;
+	s=arc-20240116; t=1734464454; c=relaxed/simple;
+	bh=sMWxwMc5jv9BCRlE6TvdrDoir8ne0lP4dSkKb9txpdo=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=MrsV6+yLBrM8dbSLvdj91u6Gd8gJZNskd6uleKe1d9XQwi0VNsHub3reGos3stf9GyJ38AAPfhHdrYSkimYHHh7FscCrSv5WtZ27LE/ImNmKULkURRO1ZeL2MguDoZoOC0qcNmtD6a35AfJ6gNK+6KEIKieGE1BwXJodNMy0BCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwMFc97a; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Hbeua076MB4P/2aoytSnSWy3mh7BMmtyXf3L6JjeWWa/+VsjCoTWYYYsLtD9FSBVskIcJ80wsqoKjL5uYrKyHlwy8RaagMXXk+ZRvT6UQBh1I6ye4Bf3GKGIcZBP9G23m/Dk1IxRo0Q65PE123W1IGgs2a1c30Rp7J4vl+Mpgz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZE/E7kri; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwMFc97a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B58AC4CED3;
-	Tue, 17 Dec 2024 18:53:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZE/E7kri"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C60C4CEDD;
+	Tue, 17 Dec 2024 19:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734461594;
-	bh=6RgTZqHjU7r6mRU3DFiGShoSX50zWfvKJDzxXD+jdnk=;
+	s=k20201202; t=1734464454;
+	bh=sMWxwMc5jv9BCRlE6TvdrDoir8ne0lP4dSkKb9txpdo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YwMFc97a3KHMZQL+nl4u36nkjTRizldCYFEyTpwbwPkKQiW/3AjxWISWjKuXh5KNW
-	 2HFMLb8zYJaG4wYBx4YCQY9osf+Moch8YMDqKQHegPpQjHHnlqq68xRzvHXu0qaHm3
-	 bumdwlfbCfnsiFClRgSxaBUt1gGbIgLl8IgESZas8nrH+EAYqne+7x0eaJdsGHxoB6
-	 GdWfTwEmBDhy9Vwn5DA+Hx3tIc99uISZ2KLEX9Jo9Fb7OQn3nw9dWkwNnKaGQtrdHb
-	 J/wDM5adU4y+9N2Y09TFFyjdFGt2fluFc2UGR6O2rSDu24OgRc49CPNdRK9MpN14p8
-	 REJDRTFmP4XOQ==
-Message-ID: <431fd00e656048d474b53ee32abb7e7d.sboyd@kernel.org>
+	b=ZE/E7kripekEf6Lm0/9RX3ufX/1nbhN/fOJVrQoyenTTT8qEQrBYdlBIWkpVfp8Ko
+	 ITFq8vDwPfXEAo7fzrLgguh4wwWMOv02zTpjtyYVZtFsL2gmr3vSWcBDmw/Km6IM2y
+	 8MJSB1qk+Xcczy5KZcN5RoC55KpyIxr+yzFL9frXSGSNHxjdQ21FCzMbK519njemtQ
+	 d+K6zokf879oSxhreMBAXt/RlAOwii3b08YdQ2UcmXXWM8RR+oPkf3lr/ihLp7l1zN
+	 xZMWA617d8DwipEp/Olq6czk8Nh9ihQIyftPCV418doR+fcD3V4fudys3hhyaZriOG
+	 qhywlLoyQU1kw==
+Message-ID: <08d2d8977847e1bc0bfcb1b884a6fb59.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241217174154.84441-1-brgl@bgdev.pl>
-References: <20241217174154.84441-1-brgl@bgdev.pl>
-Subject: Re: [PATCH v2] clk: davinci: remove platform data struct
+In-Reply-To: <20241129142446.407443-1-eugen.hristev@linaro.org>
+References: <20241129142446.407443-1-eugen.hristev@linaro.org>
+Subject: Re: [PATCH v4] soc: qcom: Rework BCM_TCS_CMD macro
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 17 Dec 2024 10:53:12 -0800
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, konradybcio@kernel.org, andersson@kernel.org, evgreen@chromium.org, Eugen Hristev <eugen.hristev@linaro.org>
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org
+Date: Tue, 17 Dec 2024 11:40:51 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Bartosz Golaszewski (2024-12-17 09:41:54)
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Quoting Eugen Hristev (2024-11-29 06:24:46)
+> Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
 >=20
-> There are no board files using struct davinci_pll_platform_data anymore.
-> The structure itself is currently used to store a single pointer. Let's
-> remove the struct definition, the header and rework the driver to not
-> require the syscon regmap to be stored in probe().
+> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades t=
+o integer
+> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades t=
+o integer
 >=20
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> While at it, used u32_encode_bits which made the code easier to
+> follow and removed unnecessary shift definitions.
+>=20
+> The use of cpu_to_le32 was wrong and thus removed.
+>=20
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 > ---
 
-Applied to clk-next
+Thanks
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
