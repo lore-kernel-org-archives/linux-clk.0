@@ -1,193 +1,100 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8B31FC7DF
-	for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2024 17:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3DE1F8AE2;
+	Tue, 17 Dec 2024 17:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457321; cv=none; b=t1zvmsnBs/M/dOw8zz4+CcFfbREdZsNiVdG2NbqDkYCNYHg1F9VESY89kOsP20ABGGBjzXIWSv06xIohEnEHkWuv4HMzvfCGXhMwf89LusCWzK0SRmsPfS0IkyA6/R066wAjg2K+fo4MMJQy5ovVYtjk8BGp/2hMzjIf14hjc4I=
+	t=1734458035; cv=none; b=CYHiCXt6Tb0ZTf2szVn0Hy1C7mcVK11EQt5Te8m7dk3G5lFeL2f/eLgHwvsYbzsAF3zuxlCleoanhjB0UbzFLv3JGi8HofioKGeAT8uXfnRl6w8EnaHtHJyyR2RwLaznNHSZfAbuRmmvcNA0f8lfLqyJEhkszajl1tmGtUCja/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457321; c=relaxed/simple;
-	bh=Dtxyoi7doHBih2RE+tW4O4Zl3p0PlcEyWecU0LpLJks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=og9Eh97Yoxt1bnOLEM6pEem9Nsxnk8ziTD4FzOOgvqUuUA7XAC5KdTXhR1rkZXJxkohGasbYWSffMUcT7+jcZPVDiZQaFEGPgBjLt/CoPy1iGNDOble8NApuIFgtbbbmsMmdboyGd5yHGDJoix4wa1Yi8Sthi/4owYb+huoq7ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=O3H5Kwqk; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1734458035; c=relaxed/simple;
+	bh=ZRQdhu9Uvb5+CPkrAEN7VMpgQj5MoXeR2uIlG+nUASI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Oh9W27oG5kvlZD9kw81jyznRJM/rpFi3R+7cVGASIJQpwriC3B61Kau6gwsQjVhRDZjL2dqD5zd0GxwTKU7jM+ugA8npcexWzaRid0q5ms6SsIEn6RqRPv5vaEFzDfsHD86HLKJzZsDGYbgGvgesLBBhk8bajIb0nk3vV51jYmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uGzB6Hfc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="O3H5Kwqk"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so54691985e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2024 09:41:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734457317; x=1735062117; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Osl1zSUTzkBPkmQO9nNp4iwBDW/vG7efr1iHu7KFxo=;
-        b=O3H5KwqkRAecuiPxNnpxtluowBxy/jpJO5/K7+lWbZNVXkuAwxBriMahN9WMPDTISY
-         7VtMnbKftDUC1YLCDcGpNa6D7fOQRgk7z/Ugn1tcqM18KEx9h/k51jXMIQ5/NQEUyBGh
-         NB6Vf/YuUwWLizvUXMkTy6YGhfS10xrQtj/DcIrzZrI0TAcQ8RPz6FK1rqIpI83lD5qw
-         sWs/EBC5OgRKZu1o2x62YS4fmPU3AZbqyhTxKvp/vpXuXTrJl6wY4PAZ20cmpR8Dm+xb
-         0xFrQTSez4z2Vp/SF1QVFfIxwd04UkEAy8tKb9lfVnZmEXJNCIIPj3XvVGKEaYTR3Pl0
-         ZXbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734457317; x=1735062117;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4Osl1zSUTzkBPkmQO9nNp4iwBDW/vG7efr1iHu7KFxo=;
-        b=soWIAcABAo5ANAvDxA9hvUE/gVBm3x7N6g8G80xGE2kdN7g5EpQ076OJEPu8Oc9Tod
-         LEe7J3JcOgROiNo4RBCEjuKI9vtNROi5ZTgC5ht/hbZixfzcgv9Sv1R4vczT0Z1RFblD
-         I3btv8jKjMnWh87IHo6Ns9AgLILSZTpjV/PpKuJ6tD0je+rkT2SGL+rW/3+VmW0SESzZ
-         N1GoeCYmrlyw1aViqAYOptLU2VHAolItkczbxtQ28qwgRko/i/mZwFsdCihBhzspL0js
-         tChdvIDUu0fav0HiXkizF995Qd61wx+zL6hf2WZD2YXGUsuGO8ovp0XjOMUMH0PqiLrG
-         qodQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHZG1Wx54OCV7f9ZgGtjWG6OGHGk/QU7RwIwghGh1d6fDp52oN8A+DltA/6hXXrecbvWvyo6uQSU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg+N85hUzg/mPIF43mOg/yi4X91uj6vWOYFSDcsSGqbvRdl2tb
-	CTjOzUeLJeDYqriST8kDg5Y5r8LE9rmL2+3qSEImE2v1+7OkuyG3sSEcCF72OzI=
-X-Gm-Gg: ASbGncsUyPTYvqDNYUtYWUS3ec4x+v6hx9EaFmuC3MKYhPR45n2MJ73TDId2cNwQe7u
-	xmvyIo4Ury3TmbwGQ7kEM0gBKBhtIdGySrV1AG5/z4A/Ppgprzq4s9HCo/gcjj7vIWjmr9TpOiw
-	UmFIO20AJiVpXsuFoWGQ3vRLOSru194QBnmf19PLgS5hI2AxVLrYTGcfP4FaHILcc3TEsFaFGHa
-	fyJtGN0MPaMt4+fV/IMo7RHh4qXFklQsjJvFr//4r3bbnI/8WYZ6t2L
-X-Google-Smtp-Source: AGHT+IGqntv26z6BFLoPHoUGTbiJyjSJJzeBVoYgwb8TZuHAEKq/qkNzfv4RfYGG8n/kAlz1Ay7MsQ==
-X-Received: by 2002:a05:600c:34c2:b0:435:1b:65ee with SMTP id 5b1f17b1804b1-4362aa9dc5dmr142370185e9.24.1734457316712;
-        Tue, 17 Dec 2024 09:41:56 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4699:6189:1775:3ce7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801ac68sm11674749f8f.51.2024.12.17.09.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 09:41:56 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2] clk: davinci: remove platform data struct
-Date: Tue, 17 Dec 2024 18:41:54 +0100
-Message-ID: <20241217174154.84441-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uGzB6Hfc"
+Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 741DC4C7;
+	Tue, 17 Dec 2024 18:53:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734457994;
+	bh=ZRQdhu9Uvb5+CPkrAEN7VMpgQj5MoXeR2uIlG+nUASI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uGzB6HfcX3Sd4249FPHrFLhYI+sgFsedjFLHs66biy22Hzm8qJuvERlzTaXrviLLc
+	 AaS7yd5R9N4iVRfHX1haByBH0IXlKtLRMj4VntPjVX8JT1Irk8DkpPiLhR5ShH+EVS
+	 hAiabM1B8OuBIpZjvoX03IgMTQH6xPAJ5ulGZJd0=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: [PATCH 0/4] renesas: r8a779g0: Enable VSPX on R-Car V4H
+Date: Tue, 17 Dec 2024 18:53:13 +0100
+Message-Id: <20241217-rcar-v4h-vspx-v1-0-de04ea044ed4@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIq6YWcC/x3MQQqAIBBA0avIrBtQKayuEi3MppxNxQgihHdPW
+ r7F/y8kEqYEs3pBKHPi+2ownYIQ/XUS8t4MVtveWONQghfMfcScnoJuH/W0OW2CG6A1j9DB5f8
+ ta60fWSiQHV8AAAA=
+X-Change-ID: 20241217-rcar-v4h-vspx-7d809b701c75
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1056;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=ZRQdhu9Uvb5+CPkrAEN7VMpgQj5MoXeR2uIlG+nUASI=;
+ b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnYbqtmdz5yxWiDiiys7tyVDGNQMTpGk3gwHccA
+ gyqTa5u7WyJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2G6rQAKCRByNAaPFqFW
+ PDOKD/9T92wiVxvc7qq1gEGj3pmmi12t3Y0r+5b9ARXH+hBfbGi+v5c4PqN42UvHUSrmmw5fSS6
+ 6zuZd+RHwzMaAng5irXm4yupnm2dK4oXeO92PFSG68g0XNZzcq2/6RytVzi7jJwMthLp2xyQLq1
+ LEJpTwhCQvvaQ4F6rKhsK9I/IiCDJGR19NCHomIgPN7MzHE8eIryA5OLewNCT7Q5NW8G/Qxx35b
+ RTLgqcmlsWqnvoOV2VzL7ROnw+3csYbYgLvZt9fKBrHTZy4PhO8EOTKrQ3fMv8fsS3o8DwuNL2B
+ 9ZiPYCzi4i4aXj5+urM+qggo46xjjj+b/mbUwfsGyZLUUWaOgbyeYyQh4hNglT57SmE4kK/3DuQ
+ 4/iMyReVF+ePVfFmlXp4SQmi1xTiRGO4keClDn+Tjn9CuvZI3PobFdFd7m8Z6/8kO7WeEBqzQnY
+ LdqmzQoyB8also5UhecIyijVcZKnyIakXnlsX7y0GxQlS6w9tNTs95iVRtM7dIj4z1nF1UKwLHK
+ OjfRsQs4OomalvQ4e8ZJWSdDPx1Z+ZzTOIIZQrG9ma45hLsgy7j6fHpujfRV0hFr/g794N2QAkK
+ oV8KfccyFzWGWcDjpx8NNVwoXDOoVxqD3tAy7JLy+Zb+WJyOeUqK4IcRLzYfScOM3phu5XIQ6lL
+ qrnsVe0HOgyJD+w==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The series enables the two VSPX instances connected to the R-Car ISP
+on Renesas R-Car V4H. Define clock identifiers based on the MSTPCR id
+for the VSPX instances and defined device nodes in the V4H .dts file.
 
-There are no board files using struct davinci_pll_platform_data anymore.
-The structure itself is currently used to store a single pointer. Let's
-remove the struct definition, the header and rework the driver to not
-require the syscon regmap to be stored in probe().
+The VSPX modules interface with extenal memory through dedicated FCP
+instances named FCPVX. Before defining VSPDX, define and enable the
+FXPVX instances as well.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Compile-tested only series.
+
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 ---
-Changes in v2:
-- fix using an uninitialized pointer
-- lookup syscon uncoditionally to avoid an OF node check
+Jacopo Mondi (4):
+      clk: renesas: r8a779g0: Add FCPVX clocks
+      arm64: dts: renesas: r8a779g0: Add FCPVX instances
+      clk: renesas: r8a779g0: Add VSPX clocks
+      arm64: dts: renesas: r8a779g0: Add VSPX instances
 
- drivers/clk/davinci/pll.c                     | 32 ++-----------------
- include/linux/platform_data/clk-davinci-pll.h | 21 ------------
- 2 files changed, 3 insertions(+), 50 deletions(-)
- delete mode 100644 include/linux/platform_data/clk-davinci-pll.h
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 40 +++++++++++++++++++++++++++++++
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c   |  4 ++++
+ 2 files changed, 44 insertions(+)
+---
+base-commit: 50d451b19cc58cf374160e30cbf72a5ed5b1b129
+change-id: 20241217-rcar-v4h-vspx-7d809b701c75
 
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 5bbbb3a66477..82727b1fc67a 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -19,7 +19,6 @@
- #include <linux/mfd/syscon.h>
- #include <linux/notifier.h>
- #include <linux/of.h>
--#include <linux/platform_data/clk-davinci-pll.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/regmap.h>
-@@ -840,27 +839,6 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
- 	return 0;
- }
- 
--static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
--{
--	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
--
--	/*
--	 * Platform data is optional, so allocate a new struct if one was not
--	 * provided. For device tree, this will always be the case.
--	 */
--	if (!pdata)
--		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata)
--		return NULL;
--
--	/* for device tree, we need to fill in the struct */
--	if (dev->of_node)
--		pdata->cfgchip =
--			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
--
--	return pdata;
--}
--
- /* needed in early boot for clocksource/clockevent */
- #ifdef CONFIG_ARCH_DAVINCI_DA850
- CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
-@@ -890,8 +868,8 @@ typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base,
- static int davinci_pll_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct davinci_pll_platform_data *pdata;
- 	davinci_pll_init pll_init = NULL;
-+	struct regmap *cfgchip;
- 	void __iomem *base;
- 
- 	pll_init = device_get_match_data(dev);
-@@ -903,17 +881,13 @@ static int davinci_pll_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	pdata = davinci_pll_get_pdata(dev);
--	if (!pdata) {
--		dev_err(dev, "missing platform data\n");
--		return -EINVAL;
--	}
-+	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	return pll_init(dev, base, pdata->cfgchip);
-+	return pll_init(dev, base, cfgchip);
- }
- 
- static struct platform_driver davinci_pll_driver = {
-diff --git a/include/linux/platform_data/clk-davinci-pll.h b/include/linux/platform_data/clk-davinci-pll.h
-deleted file mode 100644
-index e55dab1d578b..000000000000
---- a/include/linux/platform_data/clk-davinci-pll.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * PLL clock driver for TI Davinci SoCs
-- *
-- * Copyright (C) 2018 David Lechner <david@lechnology.com>
-- */
--
--#ifndef __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__
--#define __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__
--
--#include <linux/regmap.h>
--
--/**
-- * davinci_pll_platform_data
-- * @cfgchip: CFGCHIP syscon regmap
-- */
--struct davinci_pll_platform_data {
--	struct regmap *cfgchip;
--};
--
--#endif /* __LINUX_PLATFORM_DATA_CLK_DAVINCI_PLL_H__ */
+Best regards,
 -- 
-2.45.2
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
