@@ -1,112 +1,71 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49DB1D54E3;
-	Tue, 17 Dec 2024 05:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BB38BF8;
+	Tue, 17 Dec 2024 06:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413560; cv=none; b=HB89/ZW9JzjhC9fTNjFG1hshYKhr7FY1zVdwW5FNBlgxbeb1rUgtkSVJGDaFjyVFEk8FE/PBlhQFJPbAbLZQ9wfoom252fAQMaLp7ojShUhW/M/LDT0BzLmp818I0lNnR8OLXzXwSklsbUldBSryMXFAsYOqdlJgeUXosWk5qK8=
+	t=1734416415; cv=none; b=tiyfL2GAkcKcmt7XMcHcHJCOv7Nf59AoXGkZgyzMBcyAcxobRuHZ5kPSCAagkth5xaOwOH7zW0DQPnlrDKOSNbyoHjc/FAIc2tFA2psT2hYK2CWK+TZmDSLh7aSn2PZfYLGRmKjYZS9R4i4VdGOWhVE82uG5hnNIlteUSNfPVtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413560; c=relaxed/simple;
-	bh=47sDiubgqaQkaDbcosAByaG1Ni6cOzGOKnQlTVO76og=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hIqHTmFX0a+nNvhXbae9WX7/9yKXpj2cAwGoRlbXMaLzJleoPhudcKLIpuAtc3jWvzy9D+Im7zZbXvJo99gTChfa4tvjWzBcw2B1EU5YT594pIYSJDslfq9v5A4MFYtZIgrGy2NX+GLW1TQdUGt52AQI3P1ic49fxc2SR4h/AlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T4ZFC3Ps; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734416415; c=relaxed/simple;
+	bh=rqXWB3u9ZxvXDScKrU5LAc/xwQxxqDDGs8te1hon9RE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AS6qJFA8YXYkMMNlZEK1PmAAN/uvKkOsNE1NZViTn4HvvQ3zyQLVHcque3w4pNXuTt6mKpy0l7zYPrAqL6Rp+WIJ32UAa9m6w3Xw2wyOaevRdCT3mK4N0JYzmu0GWr2E2ovdYxuL5x2/wHsUFjUJcxp4KMVcWBNKHMTJ1i3k8SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvnjVI/3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T4ZFC3Ps"
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 562CC55;
-	Tue, 17 Dec 2024 06:31:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734413516;
-	bh=47sDiubgqaQkaDbcosAByaG1Ni6cOzGOKnQlTVO76og=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=T4ZFC3PsTYJd0oxdmEB2iEdEgxcrrosy2D4E7TVzm48hbM8SbG0f23LqlBQIfe4D4
-	 P8jWyUJ18M1Rs+EUaRyMTR7U6/sMspMDTp0KyjQut2j89VTWiK3UhRcdRSwxu1SsG4
-	 VcDfS5eqhFGyOG9PZ1m1h8EpUxE/MWA0KPOTBLPc=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Tue, 17 Dec 2024 07:31:40 +0200
-Subject: [PATCH v5 6/7] drm/rcar-du: dsi: Add r8a779h0 support
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvnjVI/3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9260EC4CED3;
+	Tue, 17 Dec 2024 06:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734416414;
+	bh=rqXWB3u9ZxvXDScKrU5LAc/xwQxxqDDGs8te1hon9RE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nvnjVI/3O1AHrWLZEUhuqIqfAiGpmTZp16uuVwrGisGXz/Dm5amuaxiyZjQcG0qoS
+	 D/LPUFBlwpl6FZ5AvZnC8dVEEBPV27tVFesXfYI0uE2e8dgLVCdwxJeEUvwIMR9AZG
+	 DTVy10OCpRHdRgwkArv/8J83Fm2Hg/bAy7rhriIYmPoCM3Hsauo12WOfJl03S3Y0ih
+	 Siq6d2P11ILt1cbILS3UJnyDlST/vAVqDQT911hKr2xOithzvU5e2+eSqbHwv787fA
+	 7oSAqUJe8BdTMTR51T8K0qA+BuElIo6uvsB73g4R97LvzbrK0UY1gjwOqbQ785hrCp
+	 VynmhwCx104og==
+Date: Tue, 17 Dec 2024 07:20:10 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v8 2/5] dt-bindings: media: camss: Add qcom,sdm670-camss
+Message-ID: <uy4ahej6uecpef3djpxb6izk3o3w4e4e3qtwkdrpfu2nnamn6o@behbaakmw5qt>
+References: <20241216223019.70155-8-mailingradian@gmail.com>
+ <20241216223019.70155-10-mailingradian@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-rcar-gh-dsi-v5-6-e77421093c05@ideasonboard.com>
-References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1132;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=dOcoxtMfzjVQWbNdCVgHPfsgULtxlauUf/dbpEGcHa8=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQzk76RXTNsgekr9Z29j8YIdp9ab9gkeRLB6c
- XMH1nfMASSJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM5AAKCRD6PaqMvJYe
- 9WuOD/93Mj5teiUnCSzU7gfu+YPsrcWv7fDZsbCaMm0utaX1X53evehI1enUxHjIZc056Lbq+Xf
- K5AnvhMieZbOsV8kTaRg3XDS43wbYoG65fCOC2KoR1Culprny+ett3k/6/zPga21boDqAnEzCFa
- JVZbiEfdUKy63ViLtQMhRYlQg94u/GCkxxA/HswHrOja5n7QG5wV04+PJizsXVJHcBvMo750//4
- Nuo1ycxlWtrx0vepS1xypdX5P37iQKwpjiXEpsVavt7EWCGx0WAA6KeHOGmPJ4Ms5uoj5L87/me
- XRL446Z1f2wUpV6BEtzGSiVaEYoLgyGWMYHP1fepSmyqLlIGSaNJT/AMz9pc6bFTG/w255BV63B
- O1Ha7FuVOylVFTPgvDhjAFH62JE7Ki/Xw5ef4JO0dqcwHIT59Gzlnb0VvpRndyFnW5xQfC5DB/Z
- vXO+eBZst5lLd08OVg8wTobBKYWZibnw0fJ8hY4obf8RPZroEucu8sfpEDMjFK4CszuoCGM564s
- DQq8fgl8CdX7K2kr82MY1P3Ht5hrWiONfirPQimPskum5CguKOzh+m/UULjI5+obOfGoMQhlK5i
- HzdlAyLzbZf7s7PPk1bRNImhPQvKBw5rOWG99Iui646v/yyYg/NaScUjvNyxlaTu30jsdUOKRFL
- iJ1gj/uF87ISRUg==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241216223019.70155-10-mailingradian@gmail.com>
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On Mon, Dec 16, 2024 at 05:30:23PM -0500, Richard Acayan wrote:
+> As found in the Pixel 3a, the Snapdragon 670 has a camera subsystem with
+> 3 CSIDs and 3 VFEs (including 1 VFE lite). Add this camera subsystem to
+> the bindings.
+> 
+> Adapted from SC8280XP camera subsystem.
+> 
+> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+> ---
+>  .../bindings/media/qcom,sdm670-camss.yaml     | 318 ++++++++++++++++++
+>  1 file changed, 318 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml
 
-Add support for DSI on r8a779h0. As it is identical to DSI on r8a779g0,
-all we need is to handle the compatible string.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-index 92f4261305bd..36e902601f84 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-@@ -1081,6 +1081,8 @@ static const struct rcar_mipi_dsi_device_info v4h_data = {
- static const struct of_device_id rcar_mipi_dsi_of_table[] = {
- 	{ .compatible = "renesas,r8a779a0-dsi-csi2-tx", .data = &v3u_data },
- 	{ .compatible = "renesas,r8a779g0-dsi-csi2-tx", .data = &v4h_data },
-+	/* DSI in r8a779h0 is identical to r8a779g0 */
-+	{ .compatible = "renesas,r8a779h0-dsi-csi2-tx", .data = &v4h_data },
- 	{ }
- };
- 
-
--- 
-2.43.0
+Best regards,
+Krzysztof
 
