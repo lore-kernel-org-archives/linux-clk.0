@@ -1,101 +1,108 @@
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C919CC17;
-	Wed, 18 Dec 2024 13:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6207F477;
+	Wed, 18 Dec 2024 14:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734528517; cv=none; b=O/Ey5F56B/oF8J8uzuCtNrAP/5ImeHVjLCTCRXqQ3sDhnKRmmUzxOLcB+LuBZpcP/6K9xONbpoV7n3KXblHApy4uYZPjJ8Hvc7RH2S8de8YCYCYoxMWJVnJDa6PFpxTeKF8x9tY2RvrQ8iInkyrlwoZV9+aCD3gwWvlsqnSBD8I=
+	t=1734531654; cv=none; b=te8sgFXkhiVpAn6WqLqxN2KuaDPlGORtRJP9dNPuQ3+1ipWI+cO81uYqFy3WKQdJKeM4fcYKhHh5KEVnANY1rXGUzP3U/iA9dhN42KP4CAxEgouXWDPcAsMLtKG3l60XrmHEUPyoDahEozWwMpilkb0BwpuM5KI6SEWrg83rXzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734528517; c=relaxed/simple;
-	bh=djA1jBard+Rj3Rcrfb0fkoS7kC6nrkUQTKh7qyCl0oE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O3Uc6npEcXzdl1i5Pq8ZXEWS84a5I/Lh7/nhFA8Oo6M7G/BCnELinyqalghnnNk5AglqlGMoSzT0mzA4LPRnvDtsre52ea3gU+PQgCOtbQhOiz2JvNJfWdwCNFxb9m89l9f2zmZhUFBp/2lZXoXVeiVSDBeT4+pwfJynBLL/czI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1734531654; c=relaxed/simple;
+	bh=zoTt0puefZv5r1LpvqPkZzp48Yss7QzAJe1f+q5mZ6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qDAOmv0/26Z+35DMLQJnZeEiOjvJ+Kj1MJ7Oc9nvJmGJMZ4Ct806pxuAYi7jHzjGn42rmipKoNoDJ7MjcCBEmKPlELHDtVQPIv5kcRtM/Wo72ovog/F3r3/1oAfWjg2xZonvh6gXv2LYpTAG9AWx4gC2XwdPrY4bnF8JZ13VU1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lA0r/f8r; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4afd68271b6so1719506137.0;
-        Wed, 18 Dec 2024 05:28:34 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lA0r/f8r"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385dece873cso3098703f8f.0;
+        Wed, 18 Dec 2024 06:20:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734531651; x=1735136451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZJUUOcSLzYHcbWi3FJgaxrODJzDVHPPA/EOheJAVvY=;
+        b=lA0r/f8rO3sbKoiOEG/DeWD7WOskqgETALtPrkYWnrhDfNN5r4g8M8bsUK2CmJA6Jv
+         XnZP0mdaopc7pJmVfp7o3/su4BGtPztAfpD7e3UeRsz73HA+wpyTkeF2BrDXyjaCEw+d
+         fCLUpfs/YpbTW6vNUzzQi/SnGhkgpzDGAIt6SZ0DIkhu/rKPW6ztsVfCgt6FXGv0El5k
+         MFRnJHOTBI/Pa4rUNPsgoasXrzQSrjdMmvJfN66CQRdewR6JJMvBmP2h47NECArvlZHk
+         kkySqeDsLIpjY0Bqb+Ua3J7j2kMKHW/WiEX7o6LZjBQtbJM1chgNe4gTciy+O2GSEyEc
+         9ORA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734528513; x=1735133313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cTacFp++r5NfxwZGaBpjY2/puQPcOUu0ObpmJSqE3YA=;
-        b=Jo7Wqy4YKOy+3uTG9SlilRxdadjJt0ql+UM/i1psMiGDflWePuFHZNWm+7mPQ2bqqU
-         cae/ZtmSYy6VrUtqtI0f6VuAYqusmcU3ryBwCis8UdUgJaZFyoZcraHnB/fxKrdrl/Vj
-         sy3KZGhNGegsfi4e0FamE9H4Q7S73vjgvXPTfDfdXqE82msM89MzlbDaavYMN/hCafre
-         Nu6Ip+SR+QIJtJ1znLt83Z+JLFUVK1oYKqhM9upOIOWG+hHeggDlBQFd6SS/+0uMIoVG
-         XIQ5lN9ojEsmfLW53At+tDi/62EqBSRibvq2BDQwuTSELIv/FdwDU54CzBHdoXPdmyW4
-         zckg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBRvJy+nD6J7UBal9/d9BohOVHhuIripqVjtgBTDNAVl1M+VaeZJwDZpVCLLyD2UxdOEbFEkVSnOiR@vger.kernel.org, AJvYcCVsBvGYvKoPKd3OTxhX5UNudPkaVu8HyI5WbLizlqeKTWIkJVFak5oxV0p+FFzXLtqJYpRfeggpYQBo@vger.kernel.org, AJvYcCWengoTgTZV9sdhlgFVJ2hcQbap/p93k1PEozVfPGd6RSVF2mf5wWv4RHOqvXCz5qwaHRy+uPGJK5Q83OVuFNquQeU=@vger.kernel.org, AJvYcCXA/zojt28al3IVQ1p/dzvJK7EBjNe5woJLAA1QNdREx/ZLv9uGadqwm4lUNGFjTLYFCB2mKe29lxWY1R7x@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs+q4JWxZu70t3J0jV0NEM85J24GUmDfUgEfi4VW6tcUPkIbhs
-	kozNeBFSR9Ccit8+bLFBq4rZ3MNLvYMVPoQvCaFgm4qnFhtVKY/4QWv3js8f
-X-Gm-Gg: ASbGncsiYCNHGysn08wX9IkwoR8hiptCwD2ddqxpn+22s0nfLPKqLrA4j3SIfAkS9WE
-	g8mZjDqctC+E4VgvkHpVMQRlN9X10fONriUprtZCXYLetY2JvsDFtvxfy89GMD7fyvUWeLMd9N1
-	vBngBMBp2trd81iqXYHkIK3nCwjx3U1DcCdkRx3ESOHBYHa9mPYW0Gr4Y0XQj0Aq08MaJ6o/cR6
-	iIgJgAaLc4pnA2rShJMaWVAs9VoYPiqV16sp7LYg7fGcR/coR+rMR0vkr8jr0oA5kVjNSL3AgWV
-	XzA4FYJM6z90KnowFs4=
-X-Google-Smtp-Source: AGHT+IELoJ13alZwyAy6pW6Ef7MPG5wE17lK0XaPofqQEU0OU6v5DlU+XFuMfuDXIUw2C4Q5PBsdzw==
-X-Received: by 2002:a05:6102:26c5:b0:4b1:11c6:d3c6 with SMTP id ada2fe7eead31-4b2ae704814mr1980429137.5.1734528512952;
-        Wed, 18 Dec 2024 05:28:32 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b270391006sm1402528137.26.2024.12.18.05.28.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2024 05:28:32 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85b9f2de38eso1305908241.2;
-        Wed, 18 Dec 2024 05:28:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUfzsh3rAANfXyfLpS9XN0MmpAuKZGr6w6BCsD5p8vNIJWTfk7r4rv4Sb4tFMjqllF0Eh6OgoAwuVq/@vger.kernel.org, AJvYcCVQ4p04XgWnz7+r6twdpKCHi5f0Se2TKp6egZNfz33bVAnOHzkKWBixokrSuUimtBtL5cs2xtH/yFkVrmvvUozSFv0=@vger.kernel.org, AJvYcCVS+5UQe0nELKLaSp/wPV2eNGu69cQ7mPwvlJOmSfaOjIvgV8C+e6ObuE8jNbUXtSNBGU4lxZYfMyJS+oS+@vger.kernel.org, AJvYcCXa/V5+LWCbPEZMV39E6SkeO7UAzHm5LdP6AjR4hl+cLStp6DkZMILDtoHie5mWr1y1JvjckkmOumKJ@vger.kernel.org
-X-Received: by 2002:a05:6102:50a3:b0:4b2:5c4b:5186 with SMTP id
- ada2fe7eead31-4b2ae86ec60mr1995517137.23.1734528512382; Wed, 18 Dec 2024
- 05:28:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734531651; x=1735136451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FZJUUOcSLzYHcbWi3FJgaxrODJzDVHPPA/EOheJAVvY=;
+        b=b/NnNP/FyXokEP5mrWFzY6mZVDTIlEX3QApsUQUgKEfeXTOOE/3zW2pBiqJquwzQad
+         RytNNEAQFMRuKT1kZ1P2hRFpZz/gKMUdzYVTkVimaMntIjqMaiBD9qNTg9i0UP55/G0/
+         q4AbQloWW64EX8fNAsNvr+lkoXj4+nvCWs+iI1MEVprMNn9nIWCKjQh0NPODgGhWz8DC
+         CrIdX9LjZH1kIhkIWCO53otPXcwJQ5uWsjx2YPtpoksogZRBiU9RzvCByINpLWvmvb3P
+         pXMBZLMlvQpXGhuKvi/gmFnGo+OV41nEt61x2hWnlVntpo3IDN5bMGHgBy7pshhdRqs7
+         y6wA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvWQERFeAA6cj0tzB8+7Ws0iP1mCRouRaVXcVSTLm/WfvSz+5FzNLG0A9vsA+/0jgRsnmiUIf6YgQ=@vger.kernel.org, AJvYcCVF0NzzvGWHema49tytKh2F0FYjLQMX+USaR0iUrPgwe84DUEuMRO2Egto2rmhIICgL1R2bHx6RMbsx6ZNQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqbVvtmK1O7lCSEDRoeqKe0lVOPmmuBDiK9lfNbkYP0bLC0YBI
+	8WQxYIdjHdcue4IPTammRFGki1YfKc7Rpcv1Lv/nZS8werFrxltU
+X-Gm-Gg: ASbGncsENyQ1PKtFD9BjzMv6P29Mha7zLf24j6E8YNggICQpytNLGY03tnysBlBib8d
+	nabTS3okKQLUTUAj6Y7OmEd3BiIQJ8fx0h5c7l0SMcp7U7jyIsThLBa/Ut9t1EvSzdboqmAgd+K
+	B1UFhqtlY9GaJ6itaCiSlSvW1nbUIFTU90/Ns1/1PjrC4V2nekIfXHsE+DC/4U8fi6DAsZlEkLY
+	LGjv+uYdBiUUbhgUXGkOb1uPkVJVDHLJH20ogCxgR/XwSXM0ZNx1+84dtVWSXPh2lkV4UkVZfr+
+	lLuexSvDYw==
+X-Google-Smtp-Source: AGHT+IHQUNuEoBdI2jfXrvGZj17PLXDgsTNr71MBl4jwIy/9QuQzStIqEb0oBLGUDC2ShfHEQyHUJg==
+X-Received: by 2002:a5d:47cf:0:b0:385:dd10:215d with SMTP id ffacd0b85a97d-388e4d8e695mr3228872f8f.44.1734531650526;
+        Wed, 18 Dec 2024 06:20:50 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:9516:68be:c7cd:69f2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801ac68sm14107033f8f.51.2024.12.18.06.20.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2024 06:20:49 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/5] Add SYS and GIC clock entries for RZ/V2H(P) SoC
+Date: Wed, 18 Dec 2024 14:20:40 +0000
+Message-ID: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218-rcar-v4h-vspx-v2-0-c673647d96e1@ideasonboard.com> <20241218-rcar-v4h-vspx-v2-4-c673647d96e1@ideasonboard.com>
-In-Reply-To: <20241218-rcar-v4h-vspx-v2-4-c673647d96e1@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Dec 2024 14:28:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUL8fFUyWp6dUEFfU1ik4BO6=qbNe_AKV-qZayxQzQpiQ@mail.gmail.com>
-Message-ID: <CAMuHMdUL8fFUyWp6dUEFfU1ik4BO6=qbNe_AKV-qZayxQzQpiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: r8a779g0: Add VSPX instances
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 18, 2024 at 10:06=E2=80=AFAM Jacopo Mondi
-<jacopo.mondi@ideasonboard.com> wrote:
-> Add device nodes for the VSPX instances on R-Car V4H (R8A779G0) SoC.
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->
-> ---
-> v1->v2:
-> - Re-sort nodes by unit address
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi All,
 
-Gr{oetje,eeting}s,
+This patch series adds support for clock and reset entries for GIC and
+SYS, along with some cleanup and fixes to the CPG family driver.
 
-                        Geert
+Cheers,
+Prabhakar
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Lad Prabhakar (5):
+  clk: renesas: rzv2h: Fix use-after-free in MSTOP refcount handling
+  clk: renesas: rzv2h: Relocate MSTOP-related macros to the family
+    driver
+  clk: renesas: rzv2h: Simplify BUS_MSTOP macros and field extraction
+  clk: renesas: r9a09g057: Add reset entry for SYS
+  clk: renesas: r9a09g057: Add clock and reset entries for GIC
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+ drivers/clk/renesas/r9a09g057-cpg.c |  5 +++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 15 +++++++++++----
+ drivers/clk/renesas/rzv2h-cpg.h     |  8 ++++----
+ 3 files changed, 20 insertions(+), 8 deletions(-)
+
+-- 
+2.43.0
+
