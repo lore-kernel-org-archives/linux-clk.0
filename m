@@ -1,94 +1,98 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DAD13212A;
-	Wed, 18 Dec 2024 15:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81B41F541A;
+	Wed, 18 Dec 2024 16:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734536107; cv=none; b=uKp+NA5a/I4j71F/Kkoni9zG1h1jU6d7Gsyib3MWgEHemkw48USva1c019Tipo0EOp6pCvbIBQpqFSRf4krf5MqLfYABrBSSA2I6q8qdAoazmXe8IAI9PMczj0+AuJkvJsufAi/FPzjWCo7N1HXNjWsiT4fik8GhUNJNXfS7Z/A=
+	t=1734540252; cv=none; b=rYvF3ZNKr6qCGB+XeDydfSA8rt4hg7iD1Z6fdGAlPRmjD8dQB8MjJJS0+S1PmhDQWKo2L2fJck8FI6qk1MD92OphTiYJ4nUy6C9zikrv9aRiKYx6HN8xbqrkkBSIq59+DOS460V/Zxpz3dkeTDCyYzXKRWuR47aW9BLWmmhJn4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734536107; c=relaxed/simple;
-	bh=DG5Uydk1Hvw8FVpZxUIigNGD17tSbGmGCQHmGMHwuqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NFpc458R+2ExjfL3DuI7Gawo7hJhZH5dgtn8ShlbBXUR1UtOtxwxaAMyRWsBakDbj7fyaSLNmbxk6D+PjiQkEVdT04xGDtd7obvVE1Dzl59XI5iM9A778IYVVucnUFA2dqPIiK4Ur5t58Up0PEI+D3wde+3zjw9wedXruhFh2JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k6XM9zP/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1734540252; c=relaxed/simple;
+	bh=pB0kgdn2bOfLkrxZ9uo+wGEPrm/eb16hrnNYiA6bbiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhQYxHZSamP5rNqD4oDAVoBlgrkWyEL0CN4pKJdfO5DrI27uRCj8rBM5mxlYSGzs10REZCtLl9jk1tptkhMDKyvv/miHtvGHa/KhoOWzNHcK9jzWemSfwEI5sEEPea0lJzv/llFole0X/MWDid9KOwaILxR3ctsXHkoht13aTgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRQ1EkPT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k6XM9zP/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734536103;
-	bh=DG5Uydk1Hvw8FVpZxUIigNGD17tSbGmGCQHmGMHwuqQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k6XM9zP/gM9gkkcCyB8vtKl1bj9B4jIrcwvsd3dYbF2nvbO4pbGcEnHC8H8P3OL6b
-	 jn2kxmChKvWi7HYpjviQbH5mI9nK6e+7ruMMAwe4PQvFmAazo95WpqDBquFKKnihXA
-	 JxOPh0CNTyc9BLNdrY9PkycApngwiUd5Rg+vXiM6fGW4aYHkw3WMYUeCTsJ+bnlbKY
-	 HIZJTCYMq02O44AcL31+TY570HZsPK08P6eDtuEVzEKhpnxXwTfr8tV/W3lrx4NHv0
-	 6UASO5v/CodOvaFYljIT59x9FlFhYC/USq0GSCLPG8O7kto0ucfLHw8OPsqZSpCxsR
-	 Pd5Rg8+lnWK5w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B0E4D17E3784;
-	Wed, 18 Dec 2024 16:35:02 +0100 (CET)
-Message-ID: <54598909-979a-40b6-aa68-78ad87105088@collabora.com>
-Date: Wed, 18 Dec 2024 16:35:02 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRQ1EkPT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8813EC4CECD;
+	Wed, 18 Dec 2024 16:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734540251;
+	bh=pB0kgdn2bOfLkrxZ9uo+wGEPrm/eb16hrnNYiA6bbiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QRQ1EkPT3omHuxktYvRSWPyTjMxF1HLVF0DMDwMO4sfWc25d1v0amUkufVVNME9rp
+	 ohWR6o97Bsye7LrwHlAHbiLbvlXrmeWX8fHvgX91MpyD3BI2OgeEJc8bPAHWaOUgXG
+	 m9W4yeW6Nm89519yX8Q16C6V5T3LxRe6WNyzbX7gqHt3ldY5II4z25bf2YO07dhL8a
+	 J/2OHP1B/eWUnzN7xfrQ2VeyC129sKxSoPUll6CAYOtC+U6jbx3CG3ZZjlJe21AWR5
+	 2v7kI/E0I8O2Kjd6feIWaHomxKZUEY6BjARFV5lbUQdSC8sIC2u5LGCHA0ylZyWcCO
+	 uW37sCv9s5pmA==
+Date: Wed, 18 Dec 2024 16:44:06 +0000
+From: Conor Dooley <conor@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	geert+renesas@glider.be, u.kleine-koenig@baylibre.com,
+	amergnat@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	kernel@collabora.com, macpaul.lin@mediatek.com
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: mediatek,mt8188: Add
+ VDO1_DPI1_HDMI clock
+Message-ID: <20241218-twelve-requisite-c63827edfbad@spud>
+References: <20241218105415.39206-1-angelogioacchino.delregno@collabora.com>
+ <20241218105415.39206-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] soc: mediatek: pwrap: Switch to
- devm_clk_bulk_get_all_enabled()
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>, Jingoo Han
- <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
- <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Il 17/12/24 22:41, Cristian Ciocaltea ha scritto:
-> The helper devm_clk_bulk_get_all_enable() missed to return the number of
-> clocks stored in the clk_bulk_data table referenced by the clks
-> argument and, therefore, will be dropped.
-> 
-> Use the newly introduced devm_clk_bulk_get_all_enabled() variant
-> instead, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->   > 0 if one or more clocks have been stored
->   = 0 if there are no clocks
->   < 0 if an error occurred
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Qo/gdjEA9Ojw6e4h"
+Content-Disposition: inline
+In-Reply-To: <20241218105415.39206-2-angelogioacchino.delregno@collabora.com>
 
 
-Stephen, sorry for missing the discussion about needing an ack on older versions -
-Cristian just pointed that out to me.
+--Qo/gdjEA9Ojw6e4h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, if you want to take this one with patch [3/3] I'm fine with that, so
+On Wed, Dec 18, 2024 at 11:54:14AM +0100, AngeloGioacchino Del Regno wrote:
+> Add binding for the HDMI TX clock found in the VDO1 controller
+>=20
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  include/dt-bindings/clock/mediatek,mt8188-clk.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/dt-bindings/clock/mediatek,mt8188-clk.h b/include/dt=
+-bindings/clock/mediatek,mt8188-clk.h
+> index bd5cd100b796..8af44560a74c 100644
+> --- a/include/dt-bindings/clock/mediatek,mt8188-clk.h
+> +++ b/include/dt-bindings/clock/mediatek,mt8188-clk.h
+> @@ -721,6 +721,7 @@
+>  #define CLK_VDO1_DPINTF				58
+>  #define CLK_VDO1_DISP_MONITOR_DPINTF		59
+>  #define CLK_VDO1_26M_SLOW			60
+> +#define CLK_VDO1_DPI1_HDMI			61
 
-Acked-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> -#define CLK_VDO1_NR_CLK				61
+> +#define CLK_VDO1_NR_CLK				62
 
+If you can change this, you can delete it ;)
+Please do.
 
-Cheers!
+--Qo/gdjEA9Ojw6e4h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2L71gAKCRB4tDGHoIJi
+0j/KAQDmCSeccCtIXH3YnVuThBDWjOequnU2D37KNlgCO7NVwAEA+NUFAAulVwrn
+akvszzqa/q8wOU9JjKM7NDq0fHbFhAY=
+=5V+2
+-----END PGP SIGNATURE-----
+
+--Qo/gdjEA9Ojw6e4h--
