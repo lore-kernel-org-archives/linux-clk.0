@@ -1,34 +1,34 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E011991DA;
-	Wed, 18 Dec 2024 09:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7736919F422;
+	Wed, 18 Dec 2024 09:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734512768; cv=none; b=e7SNhMsiae+mS7G+HX3LoscJrpzRGMEMMYx/AyO6eUJDMX/Vbymeggq9+94PnX2HJM7zg7jXW/n35ovg4uyBmo6OhHmrHbGnDVb0oTZbvtvnYcIvisYB9Gca86DV0AzwQNdc6KrZKhw1/5CJ5fwIQFqN9UJJRMu329yWtKYtg24=
+	t=1734512771; cv=none; b=HRV5/rVJD3Hcn9kVFGeLxaGgFbe4jy4R5k01yOQ29byABcFo4IMJ04V6Bd+uYbTQTgDuLTCctMedJf9BBbYWJhGNzKOnb79d17RhUv36KNgooXgqhVkHqTLXLn3y5htBQavtmmzzk4zg9U778xPy+M8e/sdlYNSr3oTWa3Sd2lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734512768; c=relaxed/simple;
-	bh=5BbhOPRrDW7SqUts5g+/KtHAiF/OLk8XENF/z1CcFF0=;
+	s=arc-20240116; t=1734512771; c=relaxed/simple;
+	bh=uq8TgpIgbcMe1O9uiKHRrNcGZAdZvgl2WksQo0PqQHE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jjhUA86JqSbp4X0iIJxM9hESWm3y1MjQ5lCCZQefxCSGoHD6bT9JIb31pn+fNziZJN5I63fOCpg/i/Gl/JuUxwounNHylJAKr0EdYyxsgUVUVgVKkXrr5XtziVo3M6qNNx7ftyke7Ta2QI0lc44Fh/BgKrTdnCwHmY/YE4NddHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wHxANcqg; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=IQZP4OJIH6AsF9+JbUtaD0o/EZGd2SAuflk+3hCY9DEjqKbVDyrUI+SAurKkCKvevlQn8d7ZPMyHMGECbJaTcNRrZT+aHxWjmi6MC20l7O//plTW8wEndopxF89eo+w3CRgMFc5urQ0feako+VIPtS2pX7hSpfkpqRjOMNCfqcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SONlG9Fs; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wHxANcqg"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SONlG9Fs"
 Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B926E827;
-	Wed, 18 Dec 2024 10:05:20 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6B3DEDEE;
+	Wed, 18 Dec 2024 10:05:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734512721;
-	bh=5BbhOPRrDW7SqUts5g+/KtHAiF/OLk8XENF/z1CcFF0=;
+	s=mail; t=1734512723;
+	bh=uq8TgpIgbcMe1O9uiKHRrNcGZAdZvgl2WksQo0PqQHE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=wHxANcqgWmqPX00bMqTGojv52kwyf0V7uo+m/TSqoWbrlailBn+XkckB0sjv+js7p
-	 Z39jdVTZfm794cyWhXOoN2VpuO3sbX893p200GxMK/wdXbL3eRWeaptTOxVX7YIPMN
-	 E8njxspLPjaghGhq2xP6G1hnhsNfPwHnyCUPugTY=
+	b=SONlG9Fsz/HhqSfLvLDG+zXHY5phBTn98shqJEOd09Y6tWD2MxK9V8Q8I/qPbICkF
+	 EQyuTdvOya7BGDbCDlvsPJplJtZsj4qvccA8TEXieM0NkwmDfvIJw1ag0zaFsHSkLW
+	 8HpW2YAPBStL9XZdwSHKQQyBew6rvLwDQfXjz4+U=
 From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Wed, 18 Dec 2024 10:05:35 +0100
-Subject: [PATCH v2 2/4] arm64: dts: renesas: r8a779g0: Add FCPVX instances
+Date: Wed, 18 Dec 2024 10:05:37 +0100
+Subject: [PATCH v2 4/4] arm64: dts: renesas: r8a779g0: Add VSPX instances
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,7 +37,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241218-rcar-v4h-vspx-v2-2-c673647d96e1@ideasonboard.com>
+Message-Id: <20241218-rcar-v4h-vspx-v2-4-c673647d96e1@ideasonboard.com>
 References: <20241218-rcar-v4h-vspx-v2-0-c673647d96e1@ideasonboard.com>
 In-Reply-To: <20241218-rcar-v4h-vspx-v2-0-c673647d96e1@ideasonboard.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -51,25 +51,25 @@ Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
  Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1322;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1472;
  i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=5BbhOPRrDW7SqUts5g+/KtHAiF/OLk8XENF/z1CcFF0=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnYpB0863Qxw5cFiry5k/hHwCSZJuvv3AlfrG4o
- SrmSC5lPDeJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2KQdAAKCRByNAaPFqFW
- PP8ED/0YrzNxpEiccA2hct3xvsWhRFT5K2B90QuvhF4lOq9PeAgav6YEgRkNzsVib1JOPlvdERz
- d4AnVaqdgK57L07ncGUxEou6EQvEH9XcZ8X5BxxyNB0Lzn6a+VOXLFI62lTVpKuKgXfneMbl4vl
- 2ocLx4ck4tNX07H/u6rWOZO4CJFttD9vmHHHlCwsHodZndGGnGXmHPwg9d3gCie2znFvnRDkmfF
- FN3wcYcZb/Gbow+Z+8rGdXE1EQlDfczclqSrljBlsDre1LQC8n97astmx2Q+jvITrNwynwbqLz8
- +d5TeQqL9X6S1cTnhIRdkGqQpQ9xyeAAasEbVIyhrKxYEJjfFUIPi0SCu3e2ABkdDLEJf4KxnpT
- fusz8z8d2TlDohqlRKqPiB0yauKE3pAYXZ4wyYTVa06Ow3hR8jzYV6HJMGlrdbJ+qdPuN5TNaFA
- mFNDNkJ4rho9YTUq3T+Zh4QB3YCghujHpWhD0uvv1ln0VSIWNYqhc/A2LwjK5jKQFe8Yovmhqi4
- Zb4o+TNCjEqHcsOob2fyaoF1UM07epZKvHVZ85RK+eH6EwFK8Hmekw96qRmbvfhwThBW+HD5oYb
- IFdYwe73Ig/nTXrSYa+goCo0gM+oFm9IY6xBqFBpTGI9Q3xlBFb8onJMBQ3r1nDCaGEyGsDC9IV
- cGf5rL3SdQS3Dog==
+ bh=uq8TgpIgbcMe1O9uiKHRrNcGZAdZvgl2WksQo0PqQHE=;
+ b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnYpB09OPRnO37Z5k1jBs4HlqXsD+YQdJ0MHio/
+ vSUWlZhIFmJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2KQdAAKCRByNAaPFqFW
+ PN/PEACw72ECzjMUpoyDKUQqyovUuyTIIzuStVghAJPpJ67JYQ6BNzEa0UGvdbZEzt1+ytEJtDp
+ F4nOtzmRasnv+ssBIfa9JoaNuYOSlU1qUoJEPtO/tiW6rk73PlQJ2X+m9hxHNO6lctluv5CFVTZ
+ fyNYSga+GfNV7UuCT+txUlC62GJr/QmzAka1P+3iB7o8AloPIbNYCtz1Peczylr5OJS6mZis+Vn
+ UpzR+MTA63e5Hf9TGMjZVHGzGucYu8eQ4qPzr+MkJjBV8U6vNqBf8LF8BMnWIviFWA53dswoZDB
+ FxWCohYytjEl0pJVSCFVtAkQfZxGVkcNB1NgYxSqu/tNXi+jfX7+ZNUZyoP7kVJQ0qn/jhjbMwr
+ hjTRTjVdH4Pp9ciXUYHCUwfRxR7kp/Ouckp9F+gmDoYKn1aBpGvVZVj4tbtrwQaonWPNnt5DhVn
+ kMSrtai4kN8owxFAPO960/sJq5VefxZaV31ymsCN8ZWdVvv4XctgVB7tG8dqnmvhe83hMyUSyim
+ dlJGanZADzj1gwYetJjjeW1qoBiLm+oe09jJ6VssCEFhQnD9fpjHet7R0tbqiamR6JKBATwicP+
+ 0SODoqxL7cd1BTSMMss5Xqh7BGxHfPaEqO2w19rzMIV9cBpm2TZ7ZR+YdiLq1lYJroT2iiwCWSA
+ I0BJNVCNmWd0NKA==
 X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
  fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-Add device nodes for the FCPVX instances on R-Car V4H (R8A779G0) SoC.
+Add device nodes for the VSPX instances on R-Car V4H (R8A779G0) SoC.
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
@@ -78,33 +78,37 @@ Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 v1->v2:
 - Re-sort nodes by unit address
 ---
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 61c6b8022ffdc3b22444fb13e748b4aaebe454a4..3eb53deecb63cf1aacf4a2ed663fe5402aa1199d 100644
+index 3eb53deecb63cf1aacf4a2ed663fe5402aa1199d..cf2550abc58620c453e312d6fd3f46fa1a58c1a1 100644
 --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -2453,6 +2453,24 @@ port@1 {
- 			};
+@@ -2471,6 +2471,28 @@ fcpvx1: fcp@fedb8000 {
+ 			iommus = <&ipmmu_vi1 25>;
  		};
  
-+		fcpvx0: fcp@fedb0000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfedb0000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 1100>;
++		vspx0: vsp@fedd0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfedd0000 0 0x8000>;
++			interrupts = <GIC_SPI 556 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 1028>;
 +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1100>;
-+			iommus = <&ipmmu_vi1 24>;
++			resets = <&cpg 1028>;
++
++			renesas,fcp = <&fcpvx0>;
 +		};
 +
-+		fcpvx1: fcp@fedb8000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfedb8000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 1101>;
++		vspx1: vsp@fedd8000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfedd8000 0 0x8000>;
++			interrupts = <GIC_SPI 557 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 1029>;
 +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1101>;
-+			iommus = <&ipmmu_vi1 25>;
++			resets = <&cpg 1029>;
++
++			renesas,fcp = <&fcpvx1>;
 +		};
 +
  		prr: chipid@fff00044 {
