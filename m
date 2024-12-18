@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572E91FC0FD;
-	Wed, 18 Dec 2024 17:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6511FBCAE;
+	Wed, 18 Dec 2024 17:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734543934; cv=none; b=QrZ3lhhv6ZtjGOiGFh+UHWeMgNU8/LNfRhXOn0n+cdYDPJTn1+gIEgXodlUmoCn3VStd/0kGpUMxKlCC78p/2tjYBdDaBItshfH8KDAOhTLEE1nGcVSUlI43wI43jeAAsw6y7C3J7ES+AUOZp3xENd0QUqfFdg3bv1oy+rtyrJc=
+	t=1734543965; cv=none; b=nPI4l7ZoASQP8b3FN1cMl0Ygh24b7MaJHuo0pWkWBz8hc1tqv3bnzus7DmQhPx8EqhPK18jBwIO4tpxmoO0ei9U6HQR3XztlpWzHKqidlYrcRZSpWBxQI5lITuQqKTpQSJqbTwWwq7d/ZWaNH+CUWBbupfL8fcDQTuLv1B38Q/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734543934; c=relaxed/simple;
-	bh=J54mRCc4TA8Z4VciDzr3Ksuq/v73u4HvAr9RSsexGr4=;
+	s=arc-20240116; t=1734543965; c=relaxed/simple;
+	bh=pudHmww6Cx7s8A7MfEpd2ws0OfeJewH4Q0LJ7v+Ror8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y61lKaLj6UeB5U+bY9wY2V+AoRyI+39Oz1emaV/RqG/r2eTnqO++T7XgxfYkCyb28HdYBCPE+PdVHXln3oCOqHYaBN8SbQFz7VzIW5ILMvxEZ9PkMQEIVHCQ8Q+/MA+mm0J+9huBkd0uXTZyDC6KoDWEWPr4IH2CRz18bxHLL0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcxaDu+u; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMrVedwPgCWeNOR//orZDuc59T405jCOIaQERypWm0/bN7Vcaqtu7YQc5rEwYJfTsegaR9e35JJT7i9lSKf2mlO9x4OQUais7iq30Iw7AhZa+Wn6iOhPyjf5U3rJuKYz+ZrnTxm8Ug//QGLzkAtuO9ceHLaUxA+xq/V643DbJ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDJLrA6r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcxaDu+u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E048CC4CEDC;
-	Wed, 18 Dec 2024 17:45:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDJLrA6r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB40C4CECD;
+	Wed, 18 Dec 2024 17:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734543933;
-	bh=J54mRCc4TA8Z4VciDzr3Ksuq/v73u4HvAr9RSsexGr4=;
+	s=k20201202; t=1734543964;
+	bh=pudHmww6Cx7s8A7MfEpd2ws0OfeJewH4Q0LJ7v+Ror8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YcxaDu+uoAsY5MlHCbhemgZPrkhaH9taYJKpE3cNfs55hmzYdFJAiYPRr5S1yeEDB
-	 QydPSuk37ltYyIHmEi68TjJm4aXUdedrC/Lzo8rNDVrjyzs1aKYoogf94T2y8LDTHf
-	 /yOEsMWV2q/faJ+aLU6oM+XdDcT+0BgvmFLofBINBmVNhNdFp1G57dYcq6fBxZSnbB
-	 /ZAjX3hOw3TUeScQMNIiYdmKwZDoFYEhrvpwI8GYtUYDkQCyzlVx+YbzkJKCCtmdiT
-	 Vm3ULERUdr0HOD2YeDIwF5h2XNQYW0Qn3Gc8mqEUvl8sus29GjPUTcUKpOCnd3KxbD
-	 h7sZNmK4jQIlg==
-Date: Wed, 18 Dec 2024 17:45:29 +0000
+	b=IDJLrA6rO+P7EzHvpB3O6NcRAOZKWEo0p7syOLXXxs5VmKAEod17VQNON7Ip97ydj
+	 Slu96wu7UmadndsH17TiqbOiCvITu8i4cffLqmi1NfET6IjIFvXtTPbmOupqbyELkz
+	 of93xqYJItcCBPqRR9gJbG4VrxhgWOnxyROQcsttdsLbfKs5yc/SNl/XV5EkSoZbBR
+	 mqiJOT9fJHKnDFgmL1FP5bZ9lUadQZb8/RGrvkKPOrwPsgIFPVD61lWvaptaLKqmtA
+	 zlg/37hKvdj/s7J87WpvhVbk5rArRdyNAg6/mBS1VFOnswRF8vudoOeoDcGgK5StpD
+	 jyUe5HUNGjHgA==
+Date: Wed, 18 Dec 2024 17:46:00 +0000
 From: Conor Dooley <conor@kernel.org>
 To: Christian Marangi <ansuelsmth@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -36,10 +36,8 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 	upstream@airoha.com
 Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add ID for eMMC for EN7581
-Message-ID: <20241218-untimely-step-fe3e4048f7f8@spud>
+Message-ID: <20241218-unlit-karaoke-ee4ad4425a5a@spud>
 References: <20241218091153.30088-1-ansuelsmth@gmail.com>
- <20241218-shimmer-defog-97f86d6ebe98@spud>
- <6763045f.df0a0220.10df6b.5428@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,69 +45,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="v61rXNvGvaOJ70v6"
+	protocol="application/pgp-signature"; boundary="TdYup3nKZLKxrcv2"
 Content-Disposition: inline
-In-Reply-To: <6763045f.df0a0220.10df6b.5428@mx.google.com>
+In-Reply-To: <20241218091153.30088-1-ansuelsmth@gmail.com>
 
 
---v61rXNvGvaOJ70v6
+--TdYup3nKZLKxrcv2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 18, 2024 at 06:20:27PM +0100, Christian Marangi wrote:
-> On Wed, Dec 18, 2024 at 05:04:03PM +0000, Conor Dooley wrote:
-> > On Wed, Dec 18, 2024 at 10:11:33AM +0100, Christian Marangi wrote:
-> > > Add ID for eMMC for EN7581. This is to control clock selection of eMMC
-> > > between 200MHz and 150MHz.
-> > >=20
-> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > ---
-> > > Changes v2:
-> > > - Drop additional define for EN7581_NUM_CLOCKS
-> > >=20
-> > >  include/dt-bindings/clock/en7523-clk.h | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >=20
-> > > diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bind=
-ings/clock/en7523-clk.h
-> > > index 717d23a5e5ae..c4f8a161b981 100644
-> > > --- a/include/dt-bindings/clock/en7523-clk.h
-> > > +++ b/include/dt-bindings/clock/en7523-clk.h
-> > > @@ -12,6 +12,8 @@
-> > >  #define EN7523_CLK_CRYPTO	6
-> > >  #define EN7523_CLK_PCIE		7
-> > > =20
-> >=20
-> > Why the gap?
-> >
+On Wed, Dec 18, 2024 at 10:11:33AM +0100, Christian Marangi wrote:
+> Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+> between 200MHz and 150MHz.
 >=20
-> It's only present in en7523 so maybe it's a good idea to have the gap to
-> make that more clear?
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+> Changes v2:
+> - Drop additional define for EN7581_NUM_CLOCKS
 >=20
-> > > +#define EN7581_CLK_EMMC		8
-> > > +
-> > >  #define EN7523_NUM_CLOCKS	8
-> >=20
-> > Can you delete this please? Your changelog appears to suggest you did,
-> > but I see it still.
+>  include/dt-bindings/clock/en7523-clk.h | 2 ++
+>  1 file changed, 2 insertions(+)
 >=20
-> Yes sure didn't want to change this too much to cause regression
-> downstream if anyone was using it. Will drop in a dedicated patch when I
-> will post v3 tomorrow.
+> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings=
+/clock/en7523-clk.h
+> index 717d23a5e5ae..c4f8a161b981 100644
+> --- a/include/dt-bindings/clock/en7523-clk.h
+> +++ b/include/dt-bindings/clock/en7523-clk.h
+> @@ -12,6 +12,8 @@
+>  #define EN7523_CLK_CRYPTO	6
+>  #define EN7523_CLK_PCIE		7
+> =20
+> +#define EN7581_CLK_EMMC		8
+> +
+>  #define EN7523_NUM_CLOCKS	8
+> =20
+>  #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Oh, I'm dumb. I didn't notice 1 instead of 3, sorry.
-
---v61rXNvGvaOJ70v6
+--TdYup3nKZLKxrcv2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2MKOQAKCRB4tDGHoIJi
-0uiKAQD9TRIHxNEEM6wzcPXTFdjEXbDeHGgdM1q3BQZqyi5jiAD/VmFQ5m5TTQeN
-NzBU+KoeTFulHXvW//ZTprC6SjBfNwc=
-=WFLJ
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2MKWAAKCRB4tDGHoIJi
+0nOoAP9oJz0/+EqHnRlVcL21Pt63jlI2AY23b2eXSXNX6Hmj7AD/UEPuUiTNKpB6
+Fpr/avAW6RQ1uwNDwxSSukdAk0csxQc=
+=i2Qx
 -----END PGP SIGNATURE-----
 
---v61rXNvGvaOJ70v6--
+--TdYup3nKZLKxrcv2--
