@@ -1,48 +1,48 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5930B19F135;
-	Wed, 18 Dec 2024 11:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5760E19CC0E;
+	Wed, 18 Dec 2024 11:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734520646; cv=none; b=ZNTrQHa2bVqvzo+amGW8hq4kwMHbeuq2ZMNbsmDH1aA9G6x+JTl3Igj4YZz7NhG3RQhSxRvElb4q/tol3VFdJP64zW1paFJX8S7MAugLw6gKq7lCegE/dfpcMsZacXctaduPq6LF2EKQhmcDuA8mk6vaojBU7RJUT7A61s5SllE=
+	t=1734521231; cv=none; b=sZi9ye2kX5frLQD5O7nopnxnKgC34qItHrLxRfqJTL1Zp++qUa8W32ovnhJ8pfQKCN4hsN4a7zTZjw6TseutomWvLobi8OjYrRAO3sSGImDuihCv07XYfCx58o3LQBUORWGIvFmWtsG2k7hEqk1k/jd6mAj23LMMk5QABbIPHAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734520646; c=relaxed/simple;
-	bh=uRPbjv0wW3QJvhZeu9hnxcAXgDfqB8FKFOcvzI5/juc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=pDyzJFKpG2y7EkF7PAFpibHBd6bffw2s02Y3EUx0Tk6GD8QJBV3P5QbGVZ+48dCO5anhusvZ9a+vi4SQ/tfH8omXK/usiW0eJHbM0v6+q92rIO0H04XtinxOeEUgBcOUKIvy40QFY0HnPUUShLb5nJm8nxDJrALea/W3kXmMYqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lpJUP4Sl; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1734521231; c=relaxed/simple;
+	bh=UURFz+1y8P1BqHysxYusHurCyXBg2SPsk1AGkC4DwWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NtCtb0vatocAnimUKkID/uW+kpUF9t1WKpLACt6iLT+h5T3jWQL6qktWUzWDcmgvOMs9z2MFx5OvrTT597iMVn5w5TsMa4hfJjIk7VfeAWONe+Io+eQkPvAL5RF+D9Uy2IppH1fFQ87c/mTatMcAhH1PDDrR8VvoPJarZtJWiJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YYR9aHXJ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lpJUP4Sl"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BI4YAbm004011;
-	Wed, 18 Dec 2024 11:17:13 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YYR9aHXJ"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BI5CUbG013052;
+	Wed, 18 Dec 2024 11:27:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rSAIpP3vHzYCPqelUrOZtnAmCrK9TwEHJ8JYEWRi3Iw=; b=lpJUP4SlFEb1PfN2
-	NNqNFMIIrHELFVx1CPeAVS2zE+7cVHQ+C4Ld6Cw9og1I4eb5I7sZ1jHzhxETpy1q
-	oOxfKXyyqMpoBk+OnOgruE+eSpSUGZ3SLOP7xdDiIFYSTo05nXaIO+HQVpB4mUtf
-	zGKlLmCwXzGAUwYkn7/6Tv6rBBIuA1/r/U9LnxOAiM+pNhDlROcjK8kTYVkQB+Ay
-	TWAYvK7q6X8ghqw+tRekN59c/Kk5FN2dAaBr2gphfE8kry1vr+TCK9t/zXda5U5+
-	hGLAjyeNm7y6fty/ChNJJmwHn3XYgxogsLahtzvBlCcaCjblhrCnouwGgQDPs7qM
-	PjcVKQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43kqfsrx6q-1
+	qrJ3v4FR9berKozV6Q5uj4iuZChtJpJKDl4iOjVlIJk=; b=YYR9aHXJxgbfwJ+H
+	PC185RTAbPVQCsNIi4QypjAALnKplXCDzUUdZ5rHBRbqYuEaxkXnvFUER8OpNHcG
+	R7nY9VC+BIlNvXqcCUt4Vcw0X9WdGhDqvMffYosWt1NeWTbIKVxwp0bbqKAB8Cer
+	elcmDFXfGYIG3+j4KcpCtQL1LZHZVEQnpfJqjN5aBN/SIvZEr+9SKYcDW9MIW96V
+	+NpK4Xh1Jv+RODYFSKzDao2obSaxGraQMw/E1Cm0qPTi8sspOSvZSlUfLBC3bAkh
+	S6eafTF7jD6O1R2IYcL5BwmdzeRHkXLK8GB4PkhvCP59t2zteHHb6U+X+CCS/kpM
+	tkZwjQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43kr1xrwa5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Dec 2024 11:17:13 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BIBHC7e027681
+	Wed, 18 Dec 2024 11:27:03 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BIBR2ia025494
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Dec 2024 11:17:12 GMT
-Received: from [10.253.10.199] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 18 Dec 2024 11:27:02 GMT
+Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 18 Dec
- 2024 03:17:06 -0800
-Message-ID: <2456ab36-f48e-4aa3-88e1-aeb7895c9816@quicinc.com>
-Date: Wed, 18 Dec 2024 19:17:04 +0800
+ 2024 03:26:59 -0800
+Message-ID: <b66f458c-a060-4c53-aa71-031eab55a524@quicinc.com>
+Date: Wed, 18 Dec 2024 19:26:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,119 +50,95 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
- use fixed factor clock
-From: Jie Luo <quic_luoj@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
+Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
+ video GDSC's
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+        "Taniya Das
+ (QUIC)" <quic_tdas@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
- <20241107-qcom_ipq_cmnpll-v6-5-a5cfe09de485@quicinc.com>
- <0776a26e-56cd-4838-9b52-210ae9a1f281@oss.qualcomm.com>
- <8063460d-18ad-4e54-8232-716bad9d37c3@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia (QUIC)"
+	<quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
+ <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
+ <1d9aa2e7-d402-42dc-baa6-155f01b132ca@quicinc.com>
+ <23ho25gl3iwyi2jspb6a2x5bv76fco5pkg2x5ct4gu3c44dbiq@yec6evx5sihm>
+ <eec92088-edfb-4d0c-b81d-9d4f1d968b20@linaro.org>
+ <b411489f9f2441f7a0f936127678e36b@quicinc.com>
+ <CAA8EJpqYSujKXPFkdWcqRpOKZ+dJHQDkYM33Mt5JxuA=Mfs+WQ@mail.gmail.com>
+ <7765000a0f87447e98d827dee5977ca7@quicinc.com>
+ <rtmrsvtfukekss4cccnuxgzsm53er5mvgsfshx7xvdwn5vsio2@hgiowygrsmgd>
 Content-Language: en-US
-In-Reply-To: <8063460d-18ad-4e54-8232-716bad9d37c3@quicinc.com>
+From: Renjiang Han <quic_renjiang@quicinc.com>
+In-Reply-To: <rtmrsvtfukekss4cccnuxgzsm53er5mvgsfshx7xvdwn5vsio2@hgiowygrsmgd>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ru_USJpoJE25j71X-NtyJ94x5LsqLzxu
-X-Proofpoint-ORIG-GUID: ru_USJpoJE25j71X-NtyJ94x5LsqLzxu
+X-Proofpoint-GUID: J4Jxq2ua78srzKT7sM7t0cUavuifkrn_
+X-Proofpoint-ORIG-GUID: J4Jxq2ua78srzKT7sM7t0cUavuifkrn_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=918 bulkscore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 malwarescore=0 phishscore=0
- impostorscore=0 adultscore=0 mlxscore=0 suspectscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412180091
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 spamscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412180092
 
 
+On 11/26/2024 12:27 AM, Dmitry Baryshkov wrote:
+> On Mon, Nov 25, 2024 at 03:14:27PM +0000, Renjiang Han (QUIC) wrote:
+>> On Monday, November 25, 2024 9:55 PM, Dmitry Baryshkov wrote:
+>>> On Mon, 25 Nov 2024 at 07:31, Renjiang Han (QUIC) <quic_renjiang@quicinc.com> wrote:
+>>>> On Saturday, November 23, 2024 8:17 AM, Bryan O'Donoghue wrote:
+>>>>> On 23/11/2024 00:05, Dmitry Baryshkov wrote:
+>>>>>> This leaves sm7150, sm8150 and sm8450 untouched. Don't they also
+>>>>>> need to use HW_CTRL_TRIGGER?
+>>>>> I believe the correct list here is anything that is HFI_VERSION_4XX
+>>>>> in
+>>>>> You can't apply the second patch in this series without ensuring the
+>>>>> clock controllers for sdm845 and sm7180
+>>>>> grep HFI_VERSION_4XX drivers/media/platform/qcom/venus/core.c
+>>>>> drivers/clk/qcom/videocc-sdm845.c
+>>>>> drivers/clk/qcom/videocc-sc7180.c
+>>>>> Hmm.. that's what this patch does, to be fair my other email was flippant.
+>>>>> This is fine in general, once we can get some Tested-by: for it.
+>>>>> That's my question - what platforms has this change been tested on ?
+>>>>> I can do sdm845 but, we'll need to find someone with 7180 to verify IMO.
+>>>> Thanks for your comment. We have run video case with these two patches on sc7180. The result is fine.
+>>> A single case, a thorough tests, a mixture of suspend&resume while playing video cases?
+>>> Also, can I please reiterate my question: sm7150, sm8150 and sm8450 ?
+>>> Should they also be changed to use HW_CTRL_TRIGGER?
+>>> Next question, sdm660, msm8996, msm8998: do they support HW_CTRL_TRIGGER?
+>> Thanks for your review. The video playback and recording cases include video
+>> pause and resume, and full video playback. The results are fine.
+>> Also, this change is only for v4 core (HFI_VERSION_4XX ). Therefore, we have only tested it
+>> on platforms using v4 core. We have not tried other platforms.
+>> sm7150, sm8150 and sm8450 should not use venus v4 core. So they needn't to use HW_CTRL_TRIGGER.
+> We don't have venus / iris support for those platforms at all.
+> This patch is not about venus, it is about the clock drivers. So
+> mentioning venus is quite useless here.
+> If these platforms will benefit from HW_CTRL_TRIGGER, then we should
+> change them at the same time, before somebody even gets venus/iris on
+> them.
+  Thanks for pointing it out. HW_CTRL_TRIGGER can be used for sm7150,
+  sm8150 and sm8450. But this flag can't be used for sdm660, msm8996
+  and msm8998. Because venus doesn't support it on these three
+  platforms.
 
-On 12/13/2024 6:30 PM, Jie Luo wrote:
-> 
-> 
-> On 12/13/2024 2:33 AM, Konrad Dybcio wrote:
->> On 7.11.2024 10:50 AM, Luo Jie wrote:
->>> xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
->>> 48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
->>> block routing channel.
->>>
->>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
->>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
->>>   2 files changed, 8 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/ 
->>> arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>> index 78f6a2e053d5..9a8692377176 100644
->>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>> @@ -174,8 +174,13 @@ &ref_48mhz_clk {
->>>       clock-mult = <1>;
->>>   };
->>> +/*
->>> + * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
->>> + * from WiFi output clock 48 MHZ divided by 2.
->>> + */
->>>   &xo_board_clk {
->>> -    clock-frequency = <24000000>;
->>> +    clock-div = <2>;
->>> +    clock-mult = <1>;
->>>   };
->>>   &xo_clk {
->>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/ 
->>> dts/qcom/ipq9574.dtsi
->>> index 8246a00a3e3e..25aed33e9358 100644
->>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>> @@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
->>>           };
->>>           xo_board_clk: xo-board-clk {
->>> -            compatible = "fixed-clock";
->>> +            compatible = "fixed-factor-clock";
->>> +            clocks = <&ref_48mhz_clk>;
->>
->> This must be squashed with the previous patch, you can't introduce
->> code and replace it immediately afterwards.
->>
->> Konrad
-
-Hi Konrad,
-
-Looking at this comment again, there may have been some
-misunderstanding. We are not introducing xo_board_clk in patch 4 of this
-series. xo_board_clk is a pre-existing node.
-
-As part of this additional patch 5, we wanted to address Dmitry's
-comment earlier in v5 (reference to comment below), by converting the
-xo_board_clk as well to a fixed-factor clock. So it is better to keep
-this change as a separate patch in my view. Hope this is OK.
-
-https://lore.kernel.org/linux-arm-msm/CAA8EJpoQO7=v8QWeH8MAgX4uU=m4VJqfC3J5PKyySM2TBcHWiw@mail.gmail.com/
-
-> 
-> Ok, I will update the patch series with this patch dislodged, and push
-> this single patch in next update. Thanks.
-> 
-> 
+-- 
+Best Regards,
+Renjiang
 
