@@ -1,114 +1,101 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4091ACEC7;
-	Wed, 18 Dec 2024 10:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2099227726;
+	Wed, 18 Dec 2024 11:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734519266; cv=none; b=pFqzZqxLlxGAAZ9Q//POjp26JMYHHOYWa+kMHRjED7CXW6Ch5rn436Ijw9oyHAZBBU7tXgx79Fjt4V53Hwwih4aRXtrn9FmjojgVMItdBVwRP232RlOilbbHMZ7gNeuGU1LJtHnAIiEZZkvRig5pxrOoZLV4JejFzrRCiGiTduc=
+	t=1734519989; cv=none; b=lvoz0der4P6J+GGLg7otVxFZe3z1ui0I/HamXfHa74KS/aqc3xkjrYtP19nwVRbTdS/C9Hhm9PvgExcn9UJUNlqwrlLViPawSGDEBn6HYmqODAtvog68qS7ZTARViq+6TtB/KefBwQBfw437WoRLF+bjU811L/oo6XjnGxoWQ44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734519266; c=relaxed/simple;
-	bh=yk77vsE3x+ErK6MEuD/5lMiwXMA2ViIKn58pIYLQzzc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=awhmAlaMqKlqeu6cBZEtbypE3B0t7BQCeZJB2/2+m0ULJL7poMmz7IlrUL8hrOShrVyqzF1CPXITBIdul16xe4xOQc80k2eUZ1MZcJoICuQtfCr8mgXG0ymMb898FcOghSoY5ZUTi9S+RG33Bsn+jRoD/y6zzy8C9kfPv2rjA5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nA/PFay/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1734519989; c=relaxed/simple;
+	bh=oXfPnGRFbEkjozDA407hzOTccmVamTWj4CrAxuE5vOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DvzD74qukeX+kj54WWvzOFCUuSd7MgoROo9zICUlfXshFjrYIpPnkyeSjClYxdUB6ERsf32Cxja3ZW2Lq83vx0bTI2YC426MuS0raYWJblqC2KkqzCu04Gie7PaHO12+U6SdtwMBG1m5Yvy2hbVXBmm9Xlki7FIPcKe8r2mnvj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=yXCprO+z; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=c3sb6tH8; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nA/PFay/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734519262;
-	bh=yk77vsE3x+ErK6MEuD/5lMiwXMA2ViIKn58pIYLQzzc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nA/PFay/e+qHE2doEAtO/o++UwgxL6X6OAkHLQENJKWgwwfG0PuhXK3M9lQq0Flb3
-	 ORjEnDWksk0BWoSXFEoyN7e0YkoP09NK6Q9kmsinYKccRL5lImCc86dNRdPR3+yapk
-	 TJQdRWZjEtyOEPr84Smav6f+dKEBF2KU0Li0Wxyglv+hbAQ8BmDKO4GwN16IpK4W7a
-	 HN8zngZuEMiIPtfc/ECnNtSna9AivqYQaD2ZULOpFWCFqhUF5wyrCx9uAipA377CwL
-	 TL7wcp9VoG+3s+j3T1biZlPjaSeqHOD9Hw3k5AAp/i625cqLEBVdQRfCRqpUUANdGy
-	 PbV5QnO4jflHA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="yXCprO+z";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="c3sb6tH8"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id ADB3C122FE21;
+	Wed, 18 Dec 2024 02:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1734518833; bh=oXfPnGRFbEkjozDA407hzOTccmVamTWj4CrAxuE5vOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yXCprO+zF+z/QopJaV5ZmRrypeu/J2JBFbkHX0d4s9qR5bUe+HqGS27MBidilY+y0
+	 ujz59XgbjC7WiX9XhySIhnQ3nbQzlFGMln6AbsbadGuIZur1SWr5p0Krmed0+hySXD
+	 86cQjiLHB1vR78Mag1T7PYQSm8gHpwQG1GL43TLT7wo2yjYfAytVTrn6hmDvaMeCnh
+	 O7Qj+L0vp1UYxZPOpuztHhWe9gtTpYEniTUzbSg+jfz2E4jBWlpwFmWnIvLxYHKTJQ
+	 52yqgQp3OtSRAla595KKvVyjn97XTKUenAffRaqPbCLnT8CeSbA0DQEKENtSMclQpD
+	 9VmPtTHBEGTJQ==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id XXDRVW_v-VyQ; Wed, 18 Dec 2024 02:47:11 -0800 (PST)
+Received: from ketchup (unknown [183.217.82.26])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A19D817E361E;
-	Wed, 18 Dec 2024 11:54:21 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: sboyd@kernel.org
-Cc: mturquette@baylibre.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	u.kleine-koenig@baylibre.com,
-	amergnat@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	kernel@collabora.com,
-	macpaul.lin@mediatek.com
-Subject: [PATCH v1 2/2] clk: mediatek: mt8188-vdo1: Add VDO1_DPI1_HDMI clock for hdmitx
-Date: Wed, 18 Dec 2024 11:54:15 +0100
-Message-ID: <20241218105415.39206-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241218105415.39206-1-angelogioacchino.delregno@collabora.com>
-References: <20241218105415.39206-1-angelogioacchino.delregno@collabora.com>
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 0F10F122FE1A;
+	Wed, 18 Dec 2024 02:47:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1734518831; bh=oXfPnGRFbEkjozDA407hzOTccmVamTWj4CrAxuE5vOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c3sb6tH8CA4AY8pOYptyxflBrvbIt3zADorq8En3ckxb5UlhLO7Hmg0hXveio0EWE
+	 Vhgy/5g6XPQ8qyxpb3o2Gt1AqXQisDelMx1ZMpzSP/y1NBPhHf5b+WeaqMqXaTcS+Y
+	 7FGgits8FJLJjBgbLxfqQarAxMiOyamz7PZes8oFOF4MnRXEM4llTqJbvdXHwzGVRR
+	 1yQTEazvXYpuVAbvk7CIatKJQBtaPBNaiVJ+YzDTYf4E3ideZqKLu4amHFi4AjF+ug
+	 2PicQIpfV3uUr0V6qMEJgeP1nXNx9hsNxfnNy3E0+F2SOkiaaZ9Q/Id221vM0TGXZQ
+	 z1P9iU/1JYY5Q==
+Date: Wed, 18 Dec 2024 10:46:59 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Subject: Re: [PATCH v3 0/3] Add clock controller support for Spacemit K1
+Message-ID: <Z2KoI9IXOKTcwJ-b@ketchup>
+References: <20241126143125.9980-2-heylenay@4d2.org>
+ <CAJM55Z88=jq4brJeDuXF37yAHqQKCCs7L8gVOdHQhjVT7r-eZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJM55Z88=jq4brJeDuXF37yAHqQKCCs7L8gVOdHQhjVT7r-eZA@mail.gmail.com>
 
-Add a missing clock found in the VDO1 controller for the HDMI TX
-controller over DPI1.
+On Wed, Dec 04, 2024 at 03:54:25AM -0800, Emil Renner Berthing wrote:
+> Haylen Chu wrote:
+> > The clock tree of Spacemit K1 is managed by several independent
+> > controllers in different SoC parts. In this series, all clock hardwares
+> > in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
+> > driver, CPU cores and UARTs could be brought up (see below). More clocks
+> > will be implemented later soon.
+> >
+> > No device tree changes are included since Spacemit K1 UART needs two
+> > clocks to operate, but for now the driver gets only one. I would like to
+> > defer the changes until this is resolved.
+> 
+> Hi,
+> 
+> Do you have a git tree with these dt changes though? It's impossible to test
+> this patchset without them.
+> 
+> /Emil
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mt8188-vdo1.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I'll send the dt changes together in v4, as suggested by Yixun.
 
-diff --git a/drivers/clk/mediatek/clk-mt8188-vdo1.c b/drivers/clk/mediatek/clk-mt8188-vdo1.c
-index 4fa355f8f0c2..f715d45e545e 100644
---- a/drivers/clk/mediatek/clk-mt8188-vdo1.c
-+++ b/drivers/clk/mediatek/clk-mt8188-vdo1.c
-@@ -43,6 +43,12 @@ static const struct mtk_gate_regs vdo1_4_cg_regs = {
- 	.sta_ofs = 0x140,
- };
- 
-+static const struct mtk_gate_regs vdo1_5_cg_regs = {
-+	.set_ofs = 0x400,
-+	.clr_ofs = 0x400,
-+	.sta_ofs = 0x400,
-+};
-+
- #define GATE_VDO1_0(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &vdo1_0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
- 
-@@ -62,6 +68,9 @@ static const struct mtk_gate_regs vdo1_4_cg_regs = {
- #define GATE_VDO1_4(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &vdo1_4_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
- 
-+#define GATE_VDO1_5(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &vdo1_5_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
- static const struct mtk_gate vdo1_clks[] = {
- 	/* VDO1_0 */
- 	GATE_VDO1_0(CLK_VDO1_SMI_LARB2, "vdo1_smi_larb2", "top_vpp", 0),
-@@ -129,6 +138,8 @@ static const struct mtk_gate vdo1_clks[] = {
- 	GATE_VDO1_3(CLK_VDO1_DISP_MONITOR_DPINTF, "vdo1_disp_monitor_dpintf_ck", "top_vpp", 17),
- 	/* VDO1_4 */
- 	GATE_VDO1_4(CLK_VDO1_26M_SLOW, "vdo1_26m_slow_ck", "clk26m", 8),
-+	/* VDO1_5 */
-+	GATE_VDO1_5(CLK_VDO1_DPI1_HDMI, "vdo1_dpi1_hdmi", "hdmi_txpll", 0),
- };
- 
- static const struct mtk_clk_desc vdo1_desc = {
--- 
-2.46.1
-
+Thanks,
+Haylen
