@@ -1,144 +1,122 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6951292CE;
-	Wed, 18 Dec 2024 00:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38F9219ED;
+	Wed, 18 Dec 2024 01:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734482070; cv=none; b=pIi9iGx85Z5JbL/dRF7uyH9rhRnWbPhG5VdLjPBa6hyCu0fQ6HxiKFVG3fRKfdaauabPvhpLJMX2AwYPB/Kuw8go2YeN45tkJrbYhh8RtZe1+K6O7tgneo7nKHEDhaIMmDTdZ5PLUUXnUszNYaW8TF43LdxoCSqjH6ItSM6nxLs=
+	t=1734485969; cv=none; b=uxWl7Qwzdqb/WzrMMYM22Z8OMtKx6XaHqc9lLzVFSngqKVTWDtlXgn1Uk+sdids1D5SpDRvvD8ZE0lWG/H0oCDGdhuVU8aDWscMmnEJxl7WclIG+YUxpq1ae9ZWKWj4S2zGOnSieASYRchiMKBp+D4/gbIErx54Fwnw1CcxEX4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734482070; c=relaxed/simple;
-	bh=g7CBUVHObfczqvKej4PI7dHfDwEwYeD+gLMKxsADLeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qxgRpxX5jXELrOalVCJ0OP+wW3WoCyD8qkXKqf9AHEl0fQA/FtWIxk2diXATH/p49hnMUvOPrJdnjSJv5BxkjQJbYjfvJ0LZHT9jqZK71ZvzPoW9bZO6vM9SPu9u6e+uwOxhXZkYfAklFZc726DTLY10t8ECauDAMLRnUQ6iMlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=laqg6jCj; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="laqg6jCj"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-432d86a3085so39503475e9.2;
-        Tue, 17 Dec 2024 16:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734482067; x=1735086867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6iel7EZTyU471ieceLJn0FpRUk3Ypdff7DrLuP+ux0Y=;
-        b=laqg6jCjsfBFahjn+jyK5JBtw2GMkF/nEXX3m/fdJZjlyYJoB9IQI3TWDR1G+fpJ1v
-         1MSEPVp8eAKHwf3GA+IvatXahO0fpnysLHt4KHvVoMandqjo6aNjIES4N7kztPzoaeW7
-         xDq9srM+0oTzKc2GULWdA6CxWWYw0vQ7D/PJE3lM5hDUFq5hsZ5mxlbOuyS1hpyiTpQz
-         DRq4CzhJyUP48hlU55OI7cvmNG6QiXDoU9mWinCYdOf4+fauQdgs0VjE1RTLFf3DBqvI
-         JjCGWg+52aaqScPCebOonMoRJrJQmVpEFK8I7IEkToGmWavy8bwzVh6VRcngvUxoHoAq
-         tEwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734482067; x=1735086867;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6iel7EZTyU471ieceLJn0FpRUk3Ypdff7DrLuP+ux0Y=;
-        b=W1psRU8HxVbapdI0AmMDwIG8cqEw1FRBhiYoJJjKoju+K7OsKybUR+TfztV83jRQtc
-         XtN2NznV8OqvNDpLAfmeUAjMMlinlf1Nolp4GdlfB2WkhzWxoqCmx0cumEAWHoVX+0iS
-         mynyV0AozT4x0N66EdlliWwvlqruRRFnR4vVHgretC19bnEgtNxO2WLySYV1S8lUV3cx
-         l0Y9Njv6wcqBntRs0wWotupvvhS3twTHGIOrFYZI26/9QDN4BaNDgTKLNjiKbk9lQM6b
-         FgPhek0r/F7rB3yReCRBric5N/GG9jUCbZFtbiFfJoPaVByfpF2zsF75y71WNpTxYim2
-         /bYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7AGGguGgT9oBRYOEe/zGP0XbR6O0AcDQFk9ytpMiAVd8GxBMn/Fx5PiXinyszq/1d66c0a3jmUUvDijh3Ifc=@vger.kernel.org, AJvYcCWYRw595xDuQOdfNiulhogdR8cg0hUEmH3vYyVmh4qOo5xId12Mml0jUirog9SQkbDw6EuS1wERLMvqz+T4@vger.kernel.org, AJvYcCXVWXJwCiyhLlPho86CIp+kRXJYAqxBbQLAnSAqldAIwJawd+s+OuvpkngEhSjHMdgYUXVeanEevjE3@vger.kernel.org, AJvYcCXx7OKOZmngjY6hsrtShgNmGSfKt1rEwJVE0VYqbw9l6P4vAMYsen7LlhK67+/ws3ChY24dpcSKTLVu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0vfQw+akuiRkSZd+5jSvLaA3A3KRaSTiH336RQsXiixWPLxFI
-	SmnnnK7X4G9AEJbBLK6qdLUN7Gsj8lHtUTi3AlcBJtrsA0xqlbhR
-X-Gm-Gg: ASbGncsPwn/9Gtdu01fzMBA5BvDkzmE+DPIIrd/8rGFQrByILayLJQ0No5E+rABQx11
-	JAdHQe16H3g5tG8ul+zA+ZneTqI0pR01pjcbtorG48HqTTN32/6igQFlVwccoTZXlQPz+jQSPUq
-	a3ozJFRuTmE76ae1c+2nEdjvAZ32oJWtxv6RH+DCYq/EJSOCQ5tUb86i3MIV5mYwDEYvzgF1s0O
-	Fib1VUsWxT2EwUbIa5Xq0G+PeQYJN4PTNeSyKtUmT1NQVoihb0f8USkjBp8AE+6YjVEz/u2lqIS
-	f4dXjPG9CQ==
-X-Google-Smtp-Source: AGHT+IFFpsSC1T1fRG2/2x5iygn+Q/HqLAamb/rsk+LcO1z3tSDGdZKezgL8Id5Hf7+S4CalQZtyPA==
-X-Received: by 2002:a05:600c:4fd3:b0:434:fddf:5c13 with SMTP id 5b1f17b1804b1-4365536faa3mr5010715e9.14.1734482066694;
-        Tue, 17 Dec 2024 16:34:26 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:ca61:1d3a:8af0:1c5a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b3b287sm2365625e9.29.2024.12.17.16.34.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 16:34:25 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6/6] arm64: dts: renesas: r9a09g057: Add `renesas,r9a09g057-syscon-wdt-errorrst` property to WDT node
-Date: Wed, 18 Dec 2024 00:34:14 +0000
-Message-ID: <20241218003414.490498-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241218003414.490498-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241218003414.490498-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1734485969; c=relaxed/simple;
+	bh=5LgC8caZOAImXegiKr2GNMgyM1JEnZ0UYk+PYPMywbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B7jmU0UWCIh7cOp4+mMNWGPtx0iXz3H5l/bJio78XvfbUjYE4cMNym7b93yPeVgCbzsIBGtbqTPhS3hiCsXc1U7Vl5rFy3BNlPXX2t57vJQHQm8aa4EFrj6FTiZGU2dhtXleYtH2LyIvzAbQ61J8D0u1H/eqNwqfqTlFKT55ChA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECC68FEC;
+	Tue, 17 Dec 2024 17:39:53 -0800 (PST)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FB753F720;
+	Tue, 17 Dec 2024 17:39:23 -0800 (PST)
+Date: Wed, 18 Dec 2024 01:38:36 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, Roman Beranek
+ <me@crly.cz>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and
+ PLL_MIPI
+Message-ID: <20241218013836.421cc616@minigeek.lan>
+In-Reply-To: <d0bf0d9cd2df65dc2e17eb203d56eb13@manjaro.org>
+References: <20241215053639.738890-1-anarsoul@gmail.com>
+	<20241215053639.738890-2-anarsoul@gmail.com>
+	<qbtp4jvkx3r5azufe4k3vtapqpfs54dyjiu4cy5v5wkkzumrzx@vy3xzkfplbue>
+	<CA+E=qVeQ8uHBCeFtw6_2cY3252-YXc6eWrf5_YdeVgbp5LJo5g@mail.gmail.com>
+	<20241217211505.7f9c9e4e@minigeek.lan>
+	<d0bf0d9cd2df65dc2e17eb203d56eb13@manjaro.org>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, 17 Dec 2024 23:02:43 +0100
+Dragan Simic <dsimic@manjaro.org> wrote:
 
-Add `renesas,r9a09g057-syscon-wdt-errorrst` property to WDT node, to
-determine whether the current boot resulted from a `Power-on Reset`
-or a `Watchdog Reset`.
+Hi Dragan,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+> Hello all,
+>=20
+> On 2024-12-17 22:15, Andre Przywara wrote:
+> > On Tue, 17 Dec 2024 10:00:45 -0800
+> > Vasily Khoruzhick <anarsoul@gmail.com> wrote: =20
+> >> On Mon, Dec 16, 2024 at 11:33=E2=80=AFPM Krzysztof Kozlowski <krzk@ker=
+nel.org>=20
+> >> wrote: =20
+> >> >
+> >> > On Sat, Dec 14, 2024 at 09:34:57PM -0800, Vasily Khoruzhick wrote: =
+=20
+> >> > > These will be used to explicitly select TCON0 clock parent in dts
+> >> > >
+> >> > > Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in=
+ TCON0 mux")
+> >> > > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> >> > > ---
+> >> > >  drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 2 --
+> >> > >  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 + =20
+> >>  =20
+> >> > You cannot combine these changes. =20
+> >>=20
+> >> The patch basically moves defines out from ccu-sun50i-a64.h to
+> >> sun50i-a64-ccu.h. How do I split the change without introducing
+> >> compilation failure? =20
+> >=20
+> > You can just have the binding part first, adding the (same) definition
+> > to the binding headers. As long as the #define's are not conflicting,
+> > this is fine.
+> > Then remove the now redundant definitions in the kernel headers, with a
+> > subsequent patch. =20
+>=20
+> Yes, that would be a way to make it formally correct, but also much
+> less readable and understandable later, as part of the source code
+> repository.  FWIW, I find this to be an example of the form being
+> more important than the actual function.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 69de6c302b17..44ec54569ce1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -445,6 +445,7 @@ wdt0: watchdog@11c00400 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x75>;
- 			power-domains = <&cpg>;
-+			renesas,r9a09g057-syscon-wdt-errorrst = <&cpg 0xb40 0>;
- 			status = "disabled";
- 		};
- 
-@@ -455,6 +456,7 @@ wdt1: watchdog@14400000 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x76>;
- 			power-domains = <&cpg>;
-+			renesas,r9a09g057-syscon-wdt-errorrst = <&cpg 0xb40 1>;
- 			status = "disabled";
- 		};
- 
-@@ -465,6 +467,7 @@ wdt2: watchdog@13000000 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x77>;
- 			power-domains = <&cpg>;
-+			renesas,r9a09g057-syscon-wdt-errorrst = <&cpg 0xb40 2>;
- 			status = "disabled";
- 		};
- 
-@@ -475,6 +478,7 @@ wdt3: watchdog@13000400 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x78>;
- 			power-domains = <&cpg>;
-+			renesas,r9a09g057-syscon-wdt-errorrst = <&cpg 0xb40 3>;
- 			status = "disabled";
- 		};
- 
--- 
-2.43.0
+Not sure I understand your last sentence, exactly, but what
+Krzysztof pointed out is that one part (the header change in
+include/dt-bindings) is a DT binding patch, so part of a spec, if you
+like, the other is Linux *code*. There is the DT rebasing repo, which
+cherry-picks DT patches, so they form a separate history there, and
+Linux code has no place in there. U-Boot for instance pull this
+repo now on a regular basis. So keeping those things strictly separate
+is really important here.
+
+Cheers,
+Andre.
+
+> >> > Please run scripts/checkpatch.pl and fix reported warnings. Then ple=
+ase
+> >> > run 'scripts/checkpatch.pl --strict' and (probably) fix more warning=
+s.
+> >> > Some warnings can be ignored, especially from --strict run, but the =
+code
+> >> > here looks like it needs a fix. Feel free to get in touch if the war=
+ning
+> >> > is not clear. =20
+> >>=20
+> >> Yeah, it is not clear what do you want me to do, assuming the previous
+> >> similar change to sun50i-a64-ccu.h did essentially the same, see
+> >> 71b597ef5d46a326fb0d5cbfc1c6ff1d73cdc7f9 =20
+>=20
 
