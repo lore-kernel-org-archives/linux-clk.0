@@ -1,119 +1,94 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8534E1C5CDA;
-	Wed, 18 Dec 2024 14:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DAD13212A;
+	Wed, 18 Dec 2024 15:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734531661; cv=none; b=HhKo+gSlQGxqyQVx4I57oCdWvMt8dEyffxib5bPL8FrtuEQXmh38UofZNq8yrnI8hGvO4XbI5G0Kmz57XxYsu2HUK6KDl1xr4fOhpy29Nhe2moIMeHPNjhQ8NnLbOMoClvGVNm0sXX/d4okKSZnG4Ep5+KSU17qybFxojPE5MDQ=
+	t=1734536107; cv=none; b=uKp+NA5a/I4j71F/Kkoni9zG1h1jU6d7Gsyib3MWgEHemkw48USva1c019Tipo0EOp6pCvbIBQpqFSRf4krf5MqLfYABrBSSA2I6q8qdAoazmXe8IAI9PMczj0+AuJkvJsufAi/FPzjWCo7N1HXNjWsiT4fik8GhUNJNXfS7Z/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734531661; c=relaxed/simple;
-	bh=ZdUn1eZ8PxzARU+wmajVvceff/9hM5OkdTDmgJirXes=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fUAAJ0NatfrcIAX8mXtG/aGkn2PKGuyycvSceQLx5w2vC2YMSAikSLh/5mbViUkqSq7zOyd3fmQHJH6+L2PDSRmX/ENms6DL4SVMwSGEz+dO/rUM+4U4fG6tehvlj7vC2EOgr0sjTyzzitIeKDqB7GErEumNusvaGGPRJoeqpyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFdW+Qkn; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734536107; c=relaxed/simple;
+	bh=DG5Uydk1Hvw8FVpZxUIigNGD17tSbGmGCQHmGMHwuqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NFpc458R+2ExjfL3DuI7Gawo7hJhZH5dgtn8ShlbBXUR1UtOtxwxaAMyRWsBakDbj7fyaSLNmbxk6D+PjiQkEVdT04xGDtd7obvVE1Dzl59XI5iM9A778IYVVucnUFA2dqPIiK4Ur5t58Up0PEI+D3wde+3zjw9wedXruhFh2JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k6XM9zP/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFdW+Qkn"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3863c36a731so4732634f8f.1;
-        Wed, 18 Dec 2024 06:20:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734531658; x=1735136458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/wPRBxwXQr6qi1bj2F1wQGHx6oV7CcRt3Wr/kJbxfbI=;
-        b=nFdW+QknA72GgBVNptx+QKtPHtqKvSTgKmQqfciLcZh+RVMLiw58EPNDsK4s0OZrc9
-         LVRm9y4eSoyKOix+O3t1X1OeIHZK0YQW7BKsDxzef6BJqjU96YzE5EL+2rfB6DxqRpKK
-         AVLHubuMaHBSbwlmwzm2NQ0iYqneW2htO/yEQVawka5TRj/Ed//RKaEQ5X0uz016yd2e
-         4jSXQMXbeHhdVUBYDkx1gkH65fVHc13DlNtuQrINtBcZpX6CTb+9Q4f0lXfBfzPz0jpe
-         hTZTzcFAx/IJF4Day9/Mgl6pXYPmu2qVsrBRMPgHb4JC9fu17mnWGaZiORR1/O1rP9Ip
-         FwYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734531658; x=1735136458;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/wPRBxwXQr6qi1bj2F1wQGHx6oV7CcRt3Wr/kJbxfbI=;
-        b=OsQOWVoCe0WWg8kPv0CXz90zGXoKA59xjrbxAc62UTBijldogauDkhLvspk9g5pBST
-         X6XfPulo/3eySWIyKX1FnZIWD71l+Rs24u9QeuEIPs9pt8DYSsJiipcKgbAwkIJU9zEk
-         nRzZjgHTvFhH8TQDAd0lXmlvLNl0Aep0/dMdndDDn/Xhsyc3HEaOk7aPL8s6h8P6ET2a
-         n8V8xs6d/ZDIhHR3MDbDJj0iTtKQuNXL7aqKVwKtW6Q/n6LEJtHmvrZsztofw/Xk6smZ
-         alSnx7RiYrUh9xqQnZpJm0tn2HZ1Z9X/U+zmWm1p0/4Wq9mTB0C7TN4FlPwqRNVFILYU
-         YiPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMBWIZf4xFCbgCoahW5U4O/rtuhCJkF3JMfZVhtdMalN2YwewV0Qm2veCz/1MvEM8MN7xOQYVHnhM=@vger.kernel.org, AJvYcCUzu+YzqjJNbUdFMMrI4jiqLyeO22KL6Qfz2T4MxoXtBchW1wrzMfSclku2x22CiXA/qCJvISJkRp2Yp1Kq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRMaZ+swP4uCb0jHW4lQACkeoayr4N5XLIXdvcmrF6LwT1R1Uv
-	OJd9qcw1FZqDRobw5iKsrVvYUSKnz3GN7zyfJu+D1nFMV3wNAbYh
-X-Gm-Gg: ASbGncsUFCIGLsRhgOwzXTUDJ6oLX1yvp1kbd/GDoMTiIlCXFpi3RhXAqb3nE8E0L4S
-	fIITC4frP52I4hP7oZbyjONH+ivsN6odaITZht1IHlbT+OjNkFFk+Cu1xd2uLBscbpASC17nixY
-	UWsm+w1dApI6uVYnYAMsmfuJqz1spA+Xy+uAV+L02pY0I591ZHtX0MhBdWPThN4t5BvNfPCcOs6
-	4roM46r63Lt06m8VILo2aAh1VPAmBkVL0HuF9TgNKzpNtqfuPqcloplzqsTKQuvhDFe2C/xkYC3
-	LFb/ykMspg==
-X-Google-Smtp-Source: AGHT+IFy23ae27JfhnUcgRwv/BCbx2Dk5qDQAWbELnkQVOZQ2tGejMuCe/hbp0wK4ILT/cYrsSOuvA==
-X-Received: by 2002:adf:b182:0:b0:388:cacf:24c6 with SMTP id ffacd0b85a97d-388e4d4afa9mr2051380f8f.22.1734531657667;
-        Wed, 18 Dec 2024 06:20:57 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:9516:68be:c7cd:69f2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801ac68sm14107033f8f.51.2024.12.18.06.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 06:20:56 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5/5] clk: renesas: r9a09g057: Add clock and reset entries for GIC
-Date: Wed, 18 Dec 2024 14:20:45 +0000
-Message-ID: <20241218142045.77269-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k6XM9zP/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734536103;
+	bh=DG5Uydk1Hvw8FVpZxUIigNGD17tSbGmGCQHmGMHwuqQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k6XM9zP/gM9gkkcCyB8vtKl1bj9B4jIrcwvsd3dYbF2nvbO4pbGcEnHC8H8P3OL6b
+	 jn2kxmChKvWi7HYpjviQbH5mI9nK6e+7ruMMAwe4PQvFmAazo95WpqDBquFKKnihXA
+	 JxOPh0CNTyc9BLNdrY9PkycApngwiUd5Rg+vXiM6fGW4aYHkw3WMYUeCTsJ+bnlbKY
+	 HIZJTCYMq02O44AcL31+TY570HZsPK08P6eDtuEVzEKhpnxXwTfr8tV/W3lrx4NHv0
+	 6UASO5v/CodOvaFYljIT59x9FlFhYC/USq0GSCLPG8O7kto0ucfLHw8OPsqZSpCxsR
+	 Pd5Rg8+lnWK5w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B0E4D17E3784;
+	Wed, 18 Dec 2024 16:35:02 +0100 (CET)
+Message-ID: <54598909-979a-40b6-aa68-78ad87105088@collabora.com>
+Date: Wed, 18 Dec 2024 16:35:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] soc: mediatek: pwrap: Switch to
+ devm_clk_bulk_get_all_enabled()
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
+ <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Il 17/12/24 22:41, Cristian Ciocaltea ha scritto:
+> The helper devm_clk_bulk_get_all_enable() missed to return the number of
+> clocks stored in the clk_bulk_data table referenced by the clks
+> argument and, therefore, will be dropped.
+> 
+> Use the newly introduced devm_clk_bulk_get_all_enabled() variant
+> instead, which is consistent with devm_clk_bulk_get_all() in terms of
+> the returned value:
+> 
+>   > 0 if one or more clocks have been stored
+>   = 0 if there are no clocks
+>   < 0 if an error occurred
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-Add clock and reset entries for GIC.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g057-cpg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Stephen, sorry for missing the discussion about needing an ack on older versions -
+Cristian just pointed that out to me.
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 856a02ac7ac5..947efb1a5914 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -117,6 +117,8 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5,
- 						BUS_MSTOP_NONE),
-+	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
-+						BUS_MSTOP(3, BIT(5))),
- 	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3,
- 						BUS_MSTOP(5, BIT(10))),
- 	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4,
-@@ -222,6 +224,8 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
- 	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
-+	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
-+	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
- 	DEF_RST(6, 13, 2, 30),		/* GTM_0_PRESETZ */
- 	DEF_RST(6, 14, 2, 31),		/* GTM_1_PRESETZ */
- 	DEF_RST(6, 15, 3, 0),		/* GTM_2_PRESETZ */
--- 
-2.43.0
+Anyway, if you want to take this one with patch [3/3] I'm fine with that, so
 
+Acked-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
+Cheers!
