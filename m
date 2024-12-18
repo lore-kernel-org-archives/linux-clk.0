@@ -1,120 +1,107 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7736919F422;
-	Wed, 18 Dec 2024 09:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F036D1547FF;
+	Wed, 18 Dec 2024 09:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734512771; cv=none; b=HRV5/rVJD3Hcn9kVFGeLxaGgFbe4jy4R5k01yOQ29byABcFo4IMJ04V6Bd+uYbTQTgDuLTCctMedJf9BBbYWJhGNzKOnb79d17RhUv36KNgooXgqhVkHqTLXLn3y5htBQavtmmzzk4zg9U778xPy+M8e/sdlYNSr3oTWa3Sd2lc=
+	t=1734513143; cv=none; b=QXHPa7MQK0J8f/m+4hSMFNJTKM2i7bEg3isxLIiKTb+7YEJtsit+1Nl0bcXL1dI6ghVHoFJ1AfTN5+kNJdtJWFRO4xxOGJRll/f5scfQQC8AKX0LhrzRq48NkBPPJDnl1hFOeZaDKnbEgr88E7onXMs3V6MEg+P4fPYHmVgu+oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734512771; c=relaxed/simple;
-	bh=uq8TgpIgbcMe1O9uiKHRrNcGZAdZvgl2WksQo0PqQHE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IQZP4OJIH6AsF9+JbUtaD0o/EZGd2SAuflk+3hCY9DEjqKbVDyrUI+SAurKkCKvevlQn8d7ZPMyHMGECbJaTcNRrZT+aHxWjmi6MC20l7O//plTW8wEndopxF89eo+w3CRgMFc5urQ0feako+VIPtS2pX7hSpfkpqRjOMNCfqcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SONlG9Fs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734513143; c=relaxed/simple;
+	bh=fmQi5yW5kHCy1X7Iwo5JVwtqfOZ9e78/hQ+Y8gzlekE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUjw1nlaRWK5LZnxaF11tsJaUyN4kpZbQZk8j0m+pG7CBnK4/97OMDlpfY0PMy+QSUoO8wIhfqtoKZhdU47uZaeAqVwv1USf8L6mgFYD0yQMZE39srk7lOOt2N2NYysXnPyxARL/fFxw1l9nwIQ4t/h3vCBgqdHhzX7UH/JX36E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OEcUTXQi; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SONlG9Fs"
-Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6B3DEDEE;
-	Wed, 18 Dec 2024 10:05:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734512723;
-	bh=uq8TgpIgbcMe1O9uiKHRrNcGZAdZvgl2WksQo0PqQHE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SONlG9Fsz/HhqSfLvLDG+zXHY5phBTn98shqJEOd09Y6tWD2MxK9V8Q8I/qPbICkF
-	 EQyuTdvOya7BGDbCDlvsPJplJtZsj4qvccA8TEXieM0NkwmDfvIJw1ag0zaFsHSkLW
-	 8HpW2YAPBStL9XZdwSHKQQyBew6rvLwDQfXjz4+U=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Wed, 18 Dec 2024 10:05:37 +0100
-Subject: [PATCH v2 4/4] arm64: dts: renesas: r8a779g0: Add VSPX instances
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEcUTXQi"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-432d86a3085so41397885e9.2;
+        Wed, 18 Dec 2024 01:12:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734513140; x=1735117940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8D09SNzz+WyyXsaGNK5e8Zge6Qu66UIaee7FgqWdY8w=;
+        b=OEcUTXQiMOKJ2nnqoKHRAjQFwn91HHhrHTpcs6aRpQ6ni9hy7ZVFt62XLM+rAAilQu
+         pJCMMG07iD5iFfL9EYPaSNUzW9zqiePC7UHotNivpsQtLLrnYBU19D77ItszlUJTzxeG
+         qlC2+9jWJJSG6llSZCckNrxc0DnP59YFK+vs1czl+emupSfSwTszAqxgQ2dHbpS0XTWe
+         05WPQf+620HyVoHGV+/XGOa+jh4wqNZT/2KraBAfDdlLfR7Z2hw8eKWkW2qUfZjmKBoH
+         SCyS71QRkIiXJp0xWy+cs4EkWTlsdcIG//AOBmg72zU4sEGFCw+qDlpunFZrQQq0wLCv
+         OiEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734513140; x=1735117940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8D09SNzz+WyyXsaGNK5e8Zge6Qu66UIaee7FgqWdY8w=;
+        b=CSxNnZjfjsMvCq333VT/bUOIsKsvN3s0eCb+nnmkNkIf3QvGQl92CONaEzyJ5kAW4S
+         WQgMdkMsnNCJpyJWlzJ2E5G4rogZWrLg6OCMoDyw9laPyDDLaX/5+INyR6wPW/yBP0pC
+         sTGLo9S6+85I3/v6IAOTfEkIuJWhaZ3rxU/CMvgnMCxIYlgMmSlXxJVjwUsMyoKlnVxR
+         IMaVJVMi57yLPt7iiVfASzbVefArgjUG/lZ0QXriX2AzCS3wBaUSm8ufhCKNI6PipNzE
+         7ieZw2SvpbYIVNgyU95JrWFSM+8PRSfvbpN0lgHMtXLjRE+jyDpr3bat/dWhbFjdDXhP
+         gT2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWspqAeMpG8StSVStWgG5pNJzgIWrhTyKxkCTlrFIqaIFKj4g4in60je8993iTetU7O7O43G9tOK2kM@vger.kernel.org, AJvYcCX0JlnPK16Ezd+HvxnY5uvDNw7YYUWw+GlzXkyVjQ3mCefjXXvXkJDA7x33K8l/yOHIvPeZY7OUXxTs2VDd@vger.kernel.org, AJvYcCXQeOcDE0PeMzDBRfTr4ZjOPY3sPxVZTkVCD26mXYkjKPOs6lk3UnDSoPZK5WydioFrgj1lqVuEZT2d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmIrT/3/rjTi6FfCI9EElh5Ybv2m9ETTYbxRFnU2Kd/w0zaujT
+	a077CbLQWLLdHjGGTI7TtZoD7fdEI1QlAiq4+cE/x97f6LaFdHBF
+X-Gm-Gg: ASbGnctbWCClnmI4h9+EBtXMhs3CszImIKiHUn3lggNTaZgQNawkdbpoByePif75TXg
+	+fPhoCrwcKNA+iNBYt0bpoJDPcMLQy0KinfTTCvW6zmeLhcqfJzHyyHk1T/NWp3D+JSYepui3AQ
+	AG+O1BHoBJtHc6KMPViAXO33Mi2XrvL1rGHhNCDeGRJyPz6QODj2e/GmoDFJmK+yYyDsJPe3hQF
+	ZvTHL+siFToYSnKcWd6gB+cBRvlvgKhiERIlzLAtpkRfET/ZBk3E/ELXClxbZUZacBlquM1V2QP
+	ukxYSCwSfqPZO41PoXZbAB44kBEZTGdYAtkZn1wLWuk=
+X-Google-Smtp-Source: AGHT+IE5L1P9o1kOM+MCGo4KPzvUiYxkBJO61jQ5RXtVJxZCx4aNlJyuPGKtiMrd4B3xboRKNBmj+g==
+X-Received: by 2002:a05:600c:3109:b0:434:ff25:1988 with SMTP id 5b1f17b1804b1-4365540cfd4mr14336255e9.32.1734513139995;
+        Wed, 18 Dec 2024 01:12:19 -0800 (PST)
+Received: from localhost.localdomain (host-80-181-61-65.pool80181.interbusiness.it. [80.181.61.65])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-388c8012034sm13325339f8f.22.2024.12.18.01.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2024 01:12:19 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	upstream@airoha.com
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v2 1/3] dt-bindings: clock: add ID for eMMC for EN7581
+Date: Wed, 18 Dec 2024 10:11:33 +0100
+Message-ID: <20241218091153.30088-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241218-rcar-v4h-vspx-v2-4-c673647d96e1@ideasonboard.com>
-References: <20241218-rcar-v4h-vspx-v2-0-c673647d96e1@ideasonboard.com>
-In-Reply-To: <20241218-rcar-v4h-vspx-v2-0-c673647d96e1@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1472;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=uq8TgpIgbcMe1O9uiKHRrNcGZAdZvgl2WksQo0PqQHE=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnYpB09OPRnO37Z5k1jBs4HlqXsD+YQdJ0MHio/
- vSUWlZhIFmJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2KQdAAKCRByNAaPFqFW
- PN/PEACw72ECzjMUpoyDKUQqyovUuyTIIzuStVghAJPpJ67JYQ6BNzEa0UGvdbZEzt1+ytEJtDp
- F4nOtzmRasnv+ssBIfa9JoaNuYOSlU1qUoJEPtO/tiW6rk73PlQJ2X+m9hxHNO6lctluv5CFVTZ
- fyNYSga+GfNV7UuCT+txUlC62GJr/QmzAka1P+3iB7o8AloPIbNYCtz1Peczylr5OJS6mZis+Vn
- UpzR+MTA63e5Hf9TGMjZVHGzGucYu8eQ4qPzr+MkJjBV8U6vNqBf8LF8BMnWIviFWA53dswoZDB
- FxWCohYytjEl0pJVSCFVtAkQfZxGVkcNB1NgYxSqu/tNXi+jfX7+ZNUZyoP7kVJQ0qn/jhjbMwr
- hjTRTjVdH4Pp9ciXUYHCUwfRxR7kp/Ouckp9F+gmDoYKn1aBpGvVZVj4tbtrwQaonWPNnt5DhVn
- kMSrtai4kN8owxFAPO960/sJq5VefxZaV31ymsCN8ZWdVvv4XctgVB7tG8dqnmvhe83hMyUSyim
- dlJGanZADzj1gwYetJjjeW1qoBiLm+oe09jJ6VssCEFhQnD9fpjHet7R0tbqiamR6JKBATwicP+
- 0SODoqxL7cd1BTSMMss5Xqh7BGxHfPaEqO2w19rzMIV9cBpm2TZ7ZR+YdiLq1lYJroT2iiwCWSA
- I0BJNVCNmWd0NKA==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Transfer-Encoding: 8bit
 
-Add device nodes for the VSPX instances on R-Car V4H (R8A779G0) SoC.
+Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+between 200MHz and 150MHz.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
-v1->v2:
-- Re-sort nodes by unit address
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Changes v2:
+- Drop additional define for EN7581_NUM_CLOCKS
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 3eb53deecb63cf1aacf4a2ed663fe5402aa1199d..cf2550abc58620c453e312d6fd3f46fa1a58c1a1 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -2471,6 +2471,28 @@ fcpvx1: fcp@fedb8000 {
- 			iommus = <&ipmmu_vi1 25>;
- 		};
+ include/dt-bindings/clock/en7523-clk.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+index 717d23a5e5ae..c4f8a161b981 100644
+--- a/include/dt-bindings/clock/en7523-clk.h
++++ b/include/dt-bindings/clock/en7523-clk.h
+@@ -12,6 +12,8 @@
+ #define EN7523_CLK_CRYPTO	6
+ #define EN7523_CLK_PCIE		7
  
-+		vspx0: vsp@fedd0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd0000 0 0x8000>;
-+			interrupts = <GIC_SPI 556 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1028>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1028>;
++#define EN7581_CLK_EMMC		8
 +
-+			renesas,fcp = <&fcpvx0>;
-+		};
-+
-+		vspx1: vsp@fedd8000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd8000 0 0x8000>;
-+			interrupts = <GIC_SPI 557 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1029>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 1029>;
-+
-+			renesas,fcp = <&fcpvx1>;
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
-
+ #define EN7523_NUM_CLOCKS	8
+ 
+ #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
 -- 
-2.47.1
+2.45.2
 
