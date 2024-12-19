@@ -1,144 +1,183 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D9713A41F;
-	Thu, 19 Dec 2024 16:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A6F226548;
+	Thu, 19 Dec 2024 16:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734625224; cv=none; b=pnyUt2jpLw212Nq/dCAnt/Td8L4D4RZG0Wb8RqjYoA//Rx4wzeJeRBYb+b2srPSjqALbWKKcI94+xqxM7lzkSfZVIpLIEhfFPkHnf8Rikkn4vHgG9l0l/MhHiA7wNQgzqMG01+92Zj7CMaDvQDMeahgBinLhBcJDZyq6M0byCcI=
+	t=1734625347; cv=none; b=PThgLBI0f4fLCpg8Utpbj3LUuHQQqShpajpDl2GnMsDvx5rJyhwZed9zGA4WBsgkGxPv92pT0fEeMgLgQFPEta7l9rfwEXZQhpLs5nwYPLBMKvg9GXHD92rUDmYiwBtPyKef5ryLDefDMqr4b1wBxpfHEadxYS/hqqO06c0s5cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734625224; c=relaxed/simple;
-	bh=1FBzNDdddOAjY6CCV/FYaY2O2YDJBnM7zPYDce+orr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7MotvdQFmO7+ert+oiNHC6AJPiC9YJfZGmBPsYVaadSWrIrUy6fsI2zzyLy3GO2VXk7+n1QaG4MVtDpj0wMMy7T5/H09lLWiNOpFp9B9Zr5NGInGISsEHO8bKXWR6fN9zjKFi/KC6oqb8/3ruldkpmMFnCcSvnPmJkGOMmiZ2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b6f19a6c04so77185385a.0;
-        Thu, 19 Dec 2024 08:20:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734625220; x=1735230020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r0DCle1c4hoD7xrVNaXrgEr8en3HZBbQZppsq8Vm3Bc=;
-        b=l4vokiyv86wbVMLn3TH75UQurVvopKqOX/L/aNETnbG0mXpwWJS9gv4QEvMWP3JtHN
-         4IlEvImBZEHHVTX6eXbNpGoAuZ996BGY3cO0m2UgMR6/UhK22iTBab3jowlIM2QjH4kP
-         VylcP7kDZpB3wGkPKSr+r6OR72Q7HmPTXMooFcJkA6ksMB7JlFubQuUw4WOtl1JZTyZx
-         zemapDUdHW8Y3je6DBDsdEypTqsGDmumjocgxUPGow38jyqnY9udNt7126Z2TzKnUWPP
-         BsWI+7lW7G0VsFhVI8qACQjGGugrArN3Njzcxka4g510MgP5o4LmbaGF3B8iXr2cjmIo
-         8XkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1418MRq3gJ9FGNTAytM+f+sv532cqIltLsLC/PMfmvOOzlQ7gxeIqz0PeCky/6EB2flWn5woBjYc=@vger.kernel.org, AJvYcCVRRx3+iX0NhHPv2kY5s8D8fa4EWmnwZRkSsU9pL0FwTi6RY5RUCHOm043GHzzKpa3KqVdGjnYc4KZQH5/L@vger.kernel.org, AJvYcCWkMMQR68+hn/me2hkdNbcj8OgUOU2SAv/Tog8hyMYM+j9uz0esnrc8kjUNPTxuaItWa1VuzfOzP1JXHgwrYfi7LSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY09AMV2ysa1y0FbvZ06S8oZVv/UjM4Nt58RONQN6P0SW1U1Qj
-	NF657op4eG0JN1B3+3DN+YE6UXwbdVjzTcnWhcE+Lih3R/mITn19w6WsAK5l
-X-Gm-Gg: ASbGncvNZsBAx5uCSheIJc7TwP1eV2teFTVwdMoOqUaD8Ji86SSAJv3LjTxzbqAT8v+
-	GTIMos0tyuIsua2c7SayUiWDsL+f6ew1f8j5zPBmTSdpjlefpXn1fnxHLh9JCMCEo8MYEuoue2Y
-	236H8nHtqjOqkcNgXR6KazGC0EB9CkInfnG9AwfcOD9TuljVcftvA5SRMFbnqDc0wEOChI91jkx
-	aC7/OBoRH7ZyS6VwoUv0Z1Ax3hXNAWvuo8Ry1b2Rm1b7O77HHlC8Ej0wCjJXpy5gRJO7nEbQ/iu
-	qzR5+6El+LIWqqeQoH8=
-X-Google-Smtp-Source: AGHT+IH8NFDxYyGZAhrMnYYifFA6k+sm68mmlSOXaVKloxOuNk1zZG5bbnXr2v1hKUCHUGQcielVUw==
-X-Received: by 2002:a05:620a:45aa:b0:7b6:f143:44e3 with SMTP id af79cd13be357-7b86375a1b2mr1071793285a.32.1734625220439;
-        Thu, 19 Dec 2024 08:20:20 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8610ad3e9fesm262398241.25.2024.12.19.08.20.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 08:20:20 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4b1279ca1d2so220783137.3;
-        Thu, 19 Dec 2024 08:20:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCTdQyMKWvxpSwpAz6oN8ZYm4nYI2O7bX7jXKeX6Askx3xHLXtgdulcDs+9tv6lCHtVlSRA1wjqXA=@vger.kernel.org, AJvYcCUofgwTwi8+V5twsCWKDNANizOQzNT0pwHJyoTlyiLsVpHuryvio7dhbwuDCEZ6JuW2volhWPorv+0l7rVUXZwzEJ0=@vger.kernel.org, AJvYcCXHetSJMBG+ENf3rjEtiaVCjDLkDvmdnAheQJX6EX0dwHUMSSso674usCM7oQ5lupt/dhtSMW83SbHaMwwv@vger.kernel.org
-X-Received: by 2002:a05:6102:cca:b0:4b2:48ba:9943 with SMTP id
- ada2fe7eead31-4b2ae86db7dmr7436778137.24.1734625220006; Thu, 19 Dec 2024
- 08:20:20 -0800 (PST)
+	s=arc-20240116; t=1734625347; c=relaxed/simple;
+	bh=jhYWaF7rygKseby78w3TXRVgNmrEpYYL8D4xAGSRa+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ikBlpk/pc1TZMi3GL7Gzsj2krj6v0tT17xAsCdDBVEpji4pXWdQeIxI9cftH5ZcLWdhMSGCOPx7Q+wTCR0De+l0ObV6ucSQbEtOp63UOtmMcLK4Z6u273vLCmlS92dPczerqOU/8+3OTuRjYyFxGWjUZ8dhJBzP9w8woxrZUS7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=gWH6GGi2; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="gWH6GGi2"
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJ5KRww027660;
+	Thu, 19 Dec 2024 10:22:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=suDOwpk7TtpVAHoyNPbA3gkZQzr+ZsNZtrP3JHnnAWM=; b=
+	gWH6GGi2H1GaoRwkNJMHAcmqa4AZuc16NArR5zWYSbwCtEHqrOXPqe1nfIeckNZC
+	q9jKJPHSnog487ulT4jMMVdSJenZ5aSedq9AJIpK4sElLUSoJq6+4sSrIZXQNM60
+	gmM7roW/tqDi4lEY7MxqFvpTRjGQjVG3E5vMoIlMwv+RNtNa495cJL0t4iS3jIWH
+	zwwv2wRMFHyUuq46e9yNnCCOyCu8OeMjpBwsXQoJ9cCIDgqb4i6imFpseDPlAN8D
+	S4PMhFzgdehK/grTPLNfCcKODUDxvNi336xUyB27PU7Q232F3n0gKqKxb48FSNS+
+	MyCcrMvfY548qOma3s2ktw==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 43h8a26kdg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Dec 2024 10:22:17 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 19 Dec
+ 2024 16:22:15 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Thu, 19 Dec 2024 16:22:15 +0000
+Received: from [198.61.68.170] (EDIN4L06LR3.ad.cirrus.com [198.61.68.170])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 96B76820247;
+	Thu, 19 Dec 2024 16:22:14 +0000 (UTC)
+Message-ID: <51a5c92c-be2d-4e05-a3d8-8ba4fb0b759b@opensource.cirrus.com>
+Date: Thu, 19 Dec 2024 16:22:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Dec 2024 17:20:08 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
-Message-ID: <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
- refcount handling
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
+ CS2600
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Charles Keepax
+	<ckeepax@opensource.cirrus.com>
+CC: Paul Handrigan <paulha@opensource.cirrus.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <patches@opensource.cirrus.com>
+References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
+ <20241219024631.3145377-2-paulha@opensource.cirrus.com>
+ <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
+ <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
+ <3c09367c-808b-4414-bf6a-99e0bdaa3a27@kernel.org>
+ <Z2QYooZJ9kFeYzgc@opensource.cirrus.com>
+ <ebc6bc7d-d847-46fe-908c-c618d94e3345@kernel.org>
+ <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
+ <c7278ed3-9361-4cd1-ad28-cdbcc3d84bcd@kernel.org>
+Content-Language: en-US
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <c7278ed3-9361-4cd1-ad28-cdbcc3d84bcd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Eb7PFffvg74n4wHZHjtAlV4pin8MiV_z
+X-Proofpoint-GUID: Eb7PFffvg74n4wHZHjtAlV4pin8MiV_z
+X-Proofpoint-Spam-Reason: safe
 
-Hi Prabhakar,
+On 19/12/24 15:57, Krzysztof Kozlowski wrote:
+> On 19/12/2024 14:36, Richard Fitzgerald wrote:
+>> On 19/12/24 13:16, Krzysztof Kozlowski wrote:
+>>> On 19/12/2024 13:59, Charles Keepax wrote:
+>>>> On Thu, Dec 19, 2024 at 12:39:38PM +0100, Krzysztof Kozlowski wrote:
+>>>>> On 19/12/2024 12:02, Charles Keepax wrote:
+>>>>>> On Thu, Dec 19, 2024 at 09:51:00AM +0100, Krzysztof Kozlowski wrote:
+>>>>>>> On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
+>>>>>>>> +/* CS2600 Auxiliary Output */
+>>>>>>>> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
+>>>>>>>> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
+>>>>>>>> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
+>>>>>>>
+>>>>>>> I still don't see why these three are supposed to be bindings. Drop
+>>>>>>> them.
+>>>>>>
+>>>>>> In a binding one would presumably do:
+>>>>>>
+>>>>>> cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
+>>>>>>
+>>>>>> Apologies but I don't quite understand what you mean by the values
+>>>>>> are not used in the binding? The driver reads the property and sets
+>>>>>
+>>>>> There is no user of these defines, so not a binding.
+>>>>>
+>>>>>> the pin to have the appropriate function. Admittedly one could drop
+>>>>>
+>>>>> It's not a proof that this is a binding.
+>>>>>
+>>>>>> the defines and then DTS would just have to do:
+>>>>>>
+>>>>>> cirrus,aux-output-source = <0>;
+>>>>>>
+>>>>>> But that feels a bit less helpful when reading the binding.
+>>>>>
+>>>>> Binding and being helpful are two different things. This to be the
+>>>>> binding, it has to be used as a binding, so some translation layer
+>>>>> between driver and DTS. It must have an user in DTS. I keep repeating
+>>>>> this over and over...
+>>>>>
+>>>>
+>>>> Apologies, but I not sure I totally follow this, and apologies if
+>>>> you have already explained this are there some docs I can look
+>>>> at?
+>>>>
+>>>> I think you are saying because these defines merely represent the
+>>>> valid values for a device tree property and are not translated
+>>>> into different values you can't put defines for them in the binding
+>>>> header?
+>>>>
+>>>> So this would not be allowed:
+>>>>
+>>>>     #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 0
+>>>>
+>>>>     cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
+>>>>
+>>>>     device_property_read_u32(dev, "cirrus,aux-output-source", &val);
+>>>>     regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
+>>>>
+>>>> But this would be fine:
+>>>>
+>>>>     #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 1
+>>>>
+>>>>     cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
+>>>>
+>>>>     device_property_read_u32(dev, "cirrus,aux-output-source", &val);
+>>>>     switch (val) {
+>>>>     case CS2600_AUX_OUTPUT_FREQ_UNLOCK:
+>>>>       regmap_write(regmap, CS2600_OUTPUT_CFG2, 0);
+>>>>     }
+>>>>
+>>>> And this would also be fine?
+>>>>
+>>>>     cirrus,aux-output-source = <0>;
+>>>>
+>>>>     device_property_read_u32(dev, "cirrus,aux-output-source", &val);
+>>>>     regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
+>>>>
+>>> Yes. If you want to use in DTS user-readable values, then use string.
+>>>
+>>
+>> I don't understand this. Why should we have to use a string value for
+>> something that only needs a simple integer value? Why can't we define
+>> constants with meaningful names?
+> 
+> You can and you will find plenty examples of this, but as I explained
+> earlier - this is not a binding. We avoid defining as a binding
+> something which is not a binding.
+> 
 
-On Wed, Dec 18, 2024 at 3:20=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Avoid triggering a `refcount_t: addition on 0; use-after-free.` warning
-> when registering a module clock with the same MSTOP configuration. The
-> issue arises when a module clock is registered but not enabled, resulting
-> in a `ref_cnt` of 0. Subsequent calls to `refcount_inc()` on such clocks
-> cause the kernel to warn about use-after-free.
->
-> [    0.113529] ------------[ cut here ]------------
-> [    0.113537] refcount_t: addition on 0; use-after-free.
-> [    0.113576] WARNING: CPU: 2 PID: 1 at lib/refcount.c:25 refcount_warn_=
-saturate+0x120/0x144
+What does that mean?
+Perhaps if you clearly explained what the problem is and what you want
+us to change instead of making cryptic statements like "this is not a
+binding" we wouldn't have to waste all this time exchanging emails that
+aren't getting anywhere.
 
-[...]
+You didn't explain earlier. You typed some words earlier, but they
+failed to explain, and you are continuing to fail to explain.
 
-> Resolve this by checking the `ref_cnt` value before calling
-> `refcount_inc()`. If `ref_cnt` is 0, reset it to 1 using `refcount_set()`=
-.
+> Best regards,
+> Krzysztof
 
-Thanks for your patch!
-
-> Fixes: 7bd4cb3d6b7c ("clk: renesas: rzv2h: Relocate MSTOP-related macros =
-to the family driver")
-
-The description (from your [PATCH 2/5]?) does not match the commit.
-
-Fixes: 7bd4cb3d6b7c43f0 ("clk: renesas: rzv2h: Add MSTOP support")
-
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -565,8 +565,12 @@ static struct rzv2h_mstop
->                         continue;
->
->                 if (BUS_MSTOP(clk->mstop->idx, clk->mstop->mask) =3D=3D m=
-stop_data) {
-> -                       if (rzv2h_mod_clock_is_enabled(&clock->hw))
-> -                               refcount_inc(&clk->mstop->ref_cnt);
-> +                       if (rzv2h_mod_clock_is_enabled(&clock->hw)) {
-> +                               if (refcount_read(&clk->mstop->ref_cnt))
-> +                                       refcount_inc(&clk->mstop->ref_cnt=
-);
-> +                               else
-> +                                       refcount_set(&clk->mstop->ref_cnt=
-, 1);
-> +                       }
->                         return clk->mstop;
->                 }
->         }
-
-This makes me wonder if refcount is the right abstraction?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
