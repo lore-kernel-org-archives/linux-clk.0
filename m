@@ -1,121 +1,91 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434B92253FE;
-	Thu, 19 Dec 2024 12:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E31E47B6;
+	Thu, 19 Dec 2024 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734611454; cv=none; b=VfYVycx5jgo7PPQGypwhrIfwJdrciGo6gddR3S7xL0Uc/Ny3GcrN72fvlzakE6aKYlRjuQGLgnXoTaHJx9NWUs68Ou2EEjPcvnFFg6BIu8+2CGuIJnfZdJP46Cx/X05N+AFArnXLNFFHVsd1Nue4kTp83mKFDJ671R9TKAetOTU=
+	t=1734611547; cv=none; b=Vx375wLBxYo6Y9s9L8gX7EVNrMgL1lcCItqK1VW8kJKx2zfc8d1ZixG2osnKVWLbi5utMLY0Gg9JnucCmUiL0lErFsvLs2PtvJXISTUIMYE8+ps2gXgLnTwzO3ELpGDPGHVgZ/jAXHpykdqMISyEtVRGvG3PC8mufoFVCLUvOcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734611454; c=relaxed/simple;
-	bh=NxBnfk9qfZvRjzLyS5TO/nI++Jp99D958SXqmfzZgyc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/tEcce/gU1Z4HiwXVe8kcCxqG4/xkkHUSgHTylCeji8rXR5LuBKVLPh4Qduug0x6QMS/rCRexGnYBCdh9YEbWXDCL0IuklbNNleMpK2sYQYoh60S0mOeDYFp0Nbm1IBjIKeelgxi22m1mDS9RtGbDeu9pvlideF4fS3M4shnjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCP8kL3t; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1734611547; c=relaxed/simple;
+	bh=GOYHpcU/Q+P+r0X77Zz0YHEEb0zxo8YrY+jPBXg1f8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oA5ETKJoHoIFDRvPErn8CwJyx5LP2FrvPD6BBZ9sHZINypZWICNwLstXKjuqCq7Ca9exVcds8WUvYZb3duSrZfrQkc3wmeofyvFo5LLXKLDBH7jllXgM0c8VKcEeXIOxJ8GyBDHHnD80+pwtNPz2pZIF7WzBXgF0L6wvL9N36zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pk0oJa8h; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCP8kL3t"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-436341f575fso7701365e9.1;
-        Thu, 19 Dec 2024 04:30:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pk0oJa8h"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ef28f07dbaso491196a91.2;
+        Thu, 19 Dec 2024 04:32:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734611451; x=1735216251; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1g6LR4H0uqz9RJU2diA1TuooLF3ku5hcyt+RvjYjh34=;
-        b=WCP8kL3tiyyTBYrOuj1vbB5jS+vJ/h3KAVEp9o6GmyfKqXe7rLjKBmxePq02McFdZq
-         Ima5LJIhA08mzKlxVw91ZtieIZTEJmRzBVKqe6XqpLTkwWZR1K62vkzR7QdJbruQ4eZ3
-         NFlDExSYDPO0uq/xfqRv+un/UjSXQZ/PntEXRyHJs9Axk5amkleact7emFgqyZfj3CKD
-         GLpIjrpp0a4o4f/uISDZuBbT5WHQlwLHjB1+eZTIcbFzZPPJyijQh8XJzqxV8Dtlghx8
-         r/ajwi1tyOQJSq1ZSJWV9DPbmYp3dJSUITQvvrR76NIm5WxgTWAumdCVwYkdn4HVipBd
-         gRHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734611451; x=1735216251;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734611545; x=1735216345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1g6LR4H0uqz9RJU2diA1TuooLF3ku5hcyt+RvjYjh34=;
-        b=TH04MU98HPAwUXpe/M+pAjvCMVrPUiEFFtLliJ/hygLqB8dW1Zvp62p/AZZrdC0Q6f
-         8tIErD4sP3GN35z+IaoMLpXtNyzC57ophH55GAJUFXqkqUSsK73YqVf/jxIGLVoZxSj1
-         0WPEIIUCUQjeMdZqnEuoTsSyZRmO14bZCS2x97DiXcWr5ZtJiEh++gDSGsBGvXtlyzOn
-         xwnvcPou+pSYOEK6T6e13RJW18fdIaowRT8tBPRQTT9iwbNnG6Rec+QtqTSVfwCsVtFc
-         ZFhLB9V31H2V8NJ39JU43dgqJ9LdFMFEyE7Bce4pqHtCEKq0exjUenpm92aPlzO1P+Vr
-         FumA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqaV3g3GAu/YjIXACFOPKW6Q08ciYFN2G7DHLVwNEiUHENFuotT1cNtTBWyMXRtQvh9GVuhJoCatBm@vger.kernel.org, AJvYcCW1uHjupwTOxFqBc3LiAnS4o/oy4wOaT/qB57K0CIrgqbHzs4VE+qLBbPCvZpAv9SIS36RRX941u6IL@vger.kernel.org, AJvYcCWHyuTmrrCCI2Tf7XMzMcCgaP7JVYeazRgL/YszW8Jzqy/tuCw092iWPHuGkNStK+VinOjqy0AjPET8ruZQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8B4+XgeHzLsADKyzqS9a8M3uK2jCdYhPSZVc/IsuOhJaXHcRI
-	fVdewwracBYylxXIC4Ka3v9pe33JjI24QeXDrRunUFH9XDYhfP83
-X-Gm-Gg: ASbGncsO6wp6EeabUmTxnw2L42Id3J6tE9uGERco4tFTfJNnW+CqrjIqobOS2ru1LF6
-	Gz+Dl64ioWpwTS6FDeG5slnCyKSpChR9iiJCCRSRYxdvcRSyibxWgdkTUrmFwUlmjH1eIyvjyes
-	8cL8tF8a2FbArdNwXkqkQ6Pmr6sK5BY+PxXRCx+auYInxOawLdXBTH+J2KMOXhRGPeSshNuOEle
-	n6cGMjojAKzHlZm4nvo+uquYy1hut/9xqVzIzKrLE149jMM+W2qbmEshcJFtMrGkNjhVD90Q419
-	3mGI4Gwx4KccuYfoN9VT4UZjVlfTdw==
-X-Google-Smtp-Source: AGHT+IH4dfGSkyzPdj2CjqnsPdAaGQdc9+XlzMv+SJ3G7irF2/hJiSyypr2kfvgSu/h3wPOvreJftg==
-X-Received: by 2002:a05:600c:3b88:b0:434:f586:7520 with SMTP id 5b1f17b1804b1-4365c77dd07mr29004795e9.6.1734611451254;
-        Thu, 19 Dec 2024 04:30:51 -0800 (PST)
-Received: from Ansuel-XPS. (host-80-181-61-65.pool80181.interbusiness.it. [80.181.61.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b3b271sm50462095e9.34.2024.12.19.04.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2024 04:30:50 -0800 (PST)
-Message-ID: <676411fa.050a0220.1868.3d3d@mx.google.com>
-X-Google-Original-Message-ID: <Z2QR-xrl1NqvfUmS@Ansuel-XPS.>
-Date: Thu, 19 Dec 2024 13:30:51 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v3 2/4] dt-bindings: clock: drop NUM_CLOCKS define for
- EN7581
-References: <20241219121902.16339-1-ansuelsmth@gmail.com>
- <20241219121902.16339-2-ansuelsmth@gmail.com>
- <af251ba3-660b-4281-84aa-a715eb83039b@kernel.org>
+        bh=GOYHpcU/Q+P+r0X77Zz0YHEEb0zxo8YrY+jPBXg1f8w=;
+        b=Pk0oJa8hzy+B104MBEk21pnALLBub67j4fnZKPGtK+ztFU5P8B9bOmdgaKx+lrrHGK
+         WmBCjUyPHeo4841lfwBdFjW5k2FisL8iNFOGc/8vj59g1gk/eyfvjlHtpU+vjKTjbdVN
+         q8lXoApOLgZt1VgaHEHdAE87LRvkxHiPYKeTBEQJIfzmZxS5GPpkPLFPh7M0EBUIOuyj
+         I+0w5t7pd5mTRjsZmrSv/hwFGgubgH0NztJW8TTGX/XB+sLNCbHdqJMWFfRSYSxTW9J4
+         ZCaer9a1ZxxaPNYUvdGgzLvRlsW+RYf8kbooccwFy+Tf0D4OVUipoav07vZ9u6savbaB
+         R0Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734611545; x=1735216345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GOYHpcU/Q+P+r0X77Zz0YHEEb0zxo8YrY+jPBXg1f8w=;
+        b=Q9RsIOeAlJdi6fATwvE8RCIhGt1eAOJAhH4gGp4qAOH1L6mbiE2e5lnhoBg10O3fLA
+         ovoIgA3YvnMwwt1JAqKOBT6kqaqc6eZdPCbsXurgllAURPbcFGpw087fG082y/4o85+6
+         wuhsVOArfS3CB6CJ3Xf3dzg1z1vRrwTuxRP1E1NGDXlxiAKiBsmt8+v15VOxwzIt4iuN
+         midehEL6IBKTiCSAC0PwGJMtEONMvgB5MKbKDEj9KdP3WcsEJIfBBzAOlg78RNW/C/Zx
+         Pil9xMZhB8dsRaJRNsNCpEXJ+9WT3jX17x+6cqCIzJVZfIhNtQrTq5mmgaC8RxQ7NBIR
+         6Rag==
+X-Forwarded-Encrypted: i=1; AJvYcCUYFkgOeN0gJdgQy0upq6zK5QrdDitlfhVyGdcnRJabjv0fYxWm/GJ6DY++UBLYhJqIOccnXQrKCYu01x0H@vger.kernel.org, AJvYcCVEGVWnOt043V0Fp1j58jttZSEUT/uon0NJrEJ9xxLccFj1Z4FRthG5VHmrTre0VTp8EPc9hh4XjGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT+UBk5MVmffVYDNZcXddWTH7iORNkFk0jO5BGfoGkv1cRnQff
+	/OY4hfKCy7oSCvnMDagTmQqYmxms3w4cbIQBXnYxrTmbgfebyvGtR2TaUmHM0Jj8EBw1Cf7lePX
+	uqgaehzu4cjt50uwzZxnQuIbOmErSYWKpaVI=
+X-Gm-Gg: ASbGnct3hQ/E6R4+/JujsG1X1SGm34glCOx7kjt6ilXfoOys8iKSkZexcw/SgOywHes
+	RbnLEG4spl+lgiqi8BJEAG/7vK+6LOJGc+A==
+X-Google-Smtp-Source: AGHT+IHcg5vqSpXfUTUZweqIHL07aifAd1gPNzxvvUmfB8dTWfic5k5beaD1PDMZ/x6BjXB0Dny895x/DQZ0sNv5fOg=
+X-Received: by 2002:a17:90b:5148:b0:2ea:3f34:f194 with SMTP id
+ 98e67ed59e1d1-2f443ce59edmr4668352a91.10.1734611543931; Thu, 19 Dec 2024
+ 04:32:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af251ba3-660b-4281-84aa-a715eb83039b@kernel.org>
+References: <20241219105447.889CB11FE@mail.steuer-voss.de>
+In-Reply-To: <20241219105447.889CB11FE@mail.steuer-voss.de>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Thu, 19 Dec 2024 14:33:40 +0200
+Message-ID: <CAEnQRZBpWQ936-yhV2WcxzvTP3m3CNXmopt6YcawzzdZjxh2zw@mail.gmail.com>
+Subject: Re: [PATCH] clk: clk-imx8mp-audiomix: fix function signature
+To: Nikolaus Voss <nv@vosn.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Marco Felsch <m.felsch@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 19, 2024 at 01:28:59PM +0100, Krzysztof Kozlowski wrote:
-> On 19/12/2024 13:18, Christian Marangi wrote:
-> > Drop NUM_CLOCKS define for EN7581 include. This is not a binding and
-> > should not be placed here. Value is derived internally in the user
-> > driver.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> > Changes v3:
-> > - Add this patch
-> > 
-> >  include/dt-bindings/clock/en7523-clk.h | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
-> > index c4f8a161b981..edfa64045f52 100644
-> > --- a/include/dt-bindings/clock/en7523-clk.h
-> > +++ b/include/dt-bindings/clock/en7523-clk.h
-> > @@ -14,6 +14,4 @@
-> >  
-> >  #define EN7581_CLK_EMMC		8
-> >  
-> > -#define EN7523_NUM_CLOCKS	8
-> Are you sure your patchset bisects?
+On Thu, Dec 19, 2024 at 12:55=E2=80=AFPM Nikolaus Voss <nv@vosn.de> wrote:
 >
+> clk_imx8mp_audiomix_reset_controller_register() in the
+> "if !CONFIG_RESET_CONTROLLER" branch had the first
+> argument missing. It is an empty function for this branch
+> so it wasn't immediately apparent.
+>
+> Fixes: 6f0e817175c5 ("clk: imx: clk-audiomix: Add reset controller")
+> Cc: <stable@vger.kernel.org> # 6.12.x
+> Signed-off-by: Nikolaus Voss <nv@vosn.de>
 
-Well bisectability is a problem. Either this can't be dropped or the
-change must be shipped with the driver change.
+Good catch.
 
-> Also better to arrange cleanups before new clocks added, so lack of
-> conflict between number of clocks and new clock ID is obvious.
-> 
-
-ok
-
--- 
-	Ansuel
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
