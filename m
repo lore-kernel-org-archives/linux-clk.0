@@ -1,42 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A036FC147;
-	Thu, 19 Dec 2024 08:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9842914AD2B;
+	Thu, 19 Dec 2024 09:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734598264; cv=none; b=NzFsNVWOOGt6qQSA1ncv4EOn7F43Lufi+0yWNSJWW0u2DNskFPa3TOPr5SvSTk6355yAtFTtRTFhCVrUyflAXzSAmam/ISS6t7fZFGHAL1N40VyKPX5PRRFnhUX1Qo+foOxqwCaQ5SbwMcyep9NmAKC5W81YzRsqtSWR6SnZG4s=
+	t=1734598935; cv=none; b=FfrWI0VfKzijA5Qr7abwcSkeaVU5K2BKz44Hq8IM4EE7fKZYRs3OdbBmwdGAKtuWZJNQ3TiTcKhdeuigACJ6tDu1JofzH5oB0XUxcZg7GIXWMNQ1rYB2htPpnd5tT1LoRzmjqq8MtfgosMKlQpbxW3b1VtkZIE77jdwDc1JbWe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734598264; c=relaxed/simple;
-	bh=FY7UgRIJY0I7XhQ9puZS3wRTOEvSjmNAtnDfKwmRvoA=;
+	s=arc-20240116; t=1734598935; c=relaxed/simple;
+	bh=TbCe4RXQAeYeYJ/+ZSxGUf1agPRvKjC84JeBcIC3cj0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JuHqRXBq0lK38NC41ihywPH2BqQG+ub17r9qnjC5r0mAlfLhGe+qvRg+cHyw3BeARHSdgjRZ25Vk6oC8HFUPyI8+DgPgbkWNfKMnH6oKs7HinRQ3Hy39rA9X0HUZkHxZXT50rIJOa3Gp0gjcsFFVMPI0iG/pfuu22tVLqcQzyAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzdojG2z; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q95Fojb0m9H3yT70GClCaJDMotvT6yV36XyOfB2Klpbpgpt6E/38G1pNFVO7lhS5NdUxT+ZZnbMS1gNEjqdCYCd9eNRHriYZhqJO8VUljCJirlD5aYJZvXT2c8GZl9hIaFhzrb0o4GOUyOZ9Atuxzxdjr4RL2Ztv0czhWoFFR20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBH9V3Ec; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzdojG2z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53385C4CECE;
-	Thu, 19 Dec 2024 08:51:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBH9V3Ec"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EAAC4CECE;
+	Thu, 19 Dec 2024 09:02:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734598264;
-	bh=FY7UgRIJY0I7XhQ9puZS3wRTOEvSjmNAtnDfKwmRvoA=;
+	s=k20201202; t=1734598933;
+	bh=TbCe4RXQAeYeYJ/+ZSxGUf1agPRvKjC84JeBcIC3cj0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JzdojG2zOyxT4yrFvM8wd+m2KjjbC5J3JJ08Nfa00J0ivi73jUZ5BAwosifrRN6Ef
-	 pr1/QaWpeMJf9YcHJwiOD09vrN5Lg9+Bs1ny/SUOzlhwwkXDMb41UKVyHh+YCb7mr2
-	 UArj6uYLs2NM11FcGK8WqlJP6hzJWwyhR051+da9jeJlnTcUX8wbPUNrvcvyrSD22y
-	 tI59t0wda6LsmrcSRBGI6OI941vw3/fKvI6Jbi2hLOzjKKfk5GSF5oMxGvyfqfCmTi
-	 y7gqOi4F5pN7mmSMD2UCfI3omeWK9XCk/NL2vz1qKcPNuEk4sHGtWKGjMdPkT49BFL
-	 62MMTNxyUdoqw==
-Date: Thu, 19 Dec 2024 09:51:00 +0100
+	b=ZBH9V3EchidZhqFdYOsA4XvAkIulaup+JSSJdnkantrno3evNT1MzIzFNELCY7sr8
+	 U2AxUsm/ALvUElqKReBdS9/it2fesf7dg7QOXxeOvaXVn9LYbalamIpwIzGCNjD6Te
+	 4fNdxLQi+8pTdVTkuMivVPYt3LxwTNDTJKgPbSpv7Tc61bY/ZWnxNKHRCmOALpCbR2
+	 y8C1Bhn9DaFShGsaAGmbPwOHO51H8zT8c/hwJHsvkP3SMar9+YJ0/Ytk5xlL+JsMJ1
+	 qu8cdwzhBCQYicPTTOUPJE6aH7pAJ058pr0dcABM4bNFW3gGGhgb844ayvNJ2eLsBB
+	 mxUGeRoq54aPA==
+Date: Thu, 19 Dec 2024 10:02:10 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Paul Handrigan <paulha@opensource.cirrus.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
- CS2600
-Message-ID: <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
-References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
- <20241219024631.3145377-2-paulha@opensource.cirrus.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 4/6] dt-bindings: watchdog: renesas: Document
+ `renesas,r9a09g057-syscon-wdt-errorrst` property
+Message-ID: <wouo4k7rd7y57jzez3qdrz27fscozofuksgs4ivft75y6cwvqa@zfq3wgerwaza>
+References: <20241218003414.490498-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241218003414.490498-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,92 +51,95 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241219024631.3145377-2-paulha@opensource.cirrus.com>
+In-Reply-To: <20241218003414.490498-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
-> +  clock-output-names:
-> +    maxItems: 3
-> +    description: Names for CLK_OUT, BCLK_OUT and FSYNC_OUT clocks.
-> +
-> +  cirrus,aux-output-source:
+On Wed, Dec 18, 2024 at 12:34:12AM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> The RZ/V2H(P) CPG block includes Error Reset Registers (CPG_ERROR_RSTm).
+> A system reset is triggered in response to error interrupt factors, and
+> the corresponding bit is set in the CPG_ERROR_RSTm register. These
+> registers can be utilized by various IP blocks as needed.
+> 
+> In the event of a watchdog overflow or underflow, a system reset is issued,
+> and the CPG_ERROR_RST2[0/1/2/3] bits are set depending on the watchdog in
+> use: CM33 = 0, CA55 = 1, CR8_0 = 2, CR8_1 = 3. For the watchdog driver to
+> determine and report the current boot status, it needs to read the
+> CPG_ERROR_RST2[0/1/2/3]bits and provide this information to the user upon
+> request.
+> 
+> To facilitate this operation, add `renesas,r9a09g057-syscon-wdt-errorrst`
+> property to the WDT node, which maps to the `syscon` CPG node, enabling
+> retrieval of the necessary information. For example:
+> 
+>     wdt1: watchdog@14400000 {
+>         compatible = "renesas,r9a09g057-wdt";
+>         renesas,r9a09g057-syscon-wdt-errorrst = <&cpg 0xb40 1>;
+>         ...
+
+Drop, obvious.
+
+>     };
+> 
+> The `renesas,r9a09g057-syscon-wdt-errorrst` property consists of three
+> cells:
+> 1. The first cell is a phandle to the CPG node.
+> 2. The second cell specifies the offset of the CPG_ERROR_RSTm register
+>    within the SYSCON.
+> 3. The third cell indicates the specific bit within the CPG_ERROR_RSTm
+>    register.
+
+Don't describe the contents of patch.  Drop paragraph. There is no need
+to make commit msg unnecessary long. Focus on explaining unknown parts
+of commit: why? or who is affected by ABI break? why breaking ABI?
+instead of repeating diff.
+
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../bindings/watchdog/renesas,wdt.yaml          | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> index 29ada89fdcdc..8d29f5f1be7e 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> @@ -112,6 +112,19 @@ properties:
+>  
+>    timeout-sec: true
+>  
+> +  renesas,r9a09g057-syscon-wdt-errorrst:
+
+There are never, *never* SoC names in property names, because we want
+properties to be re-usable.
+
+Make the property generic for all your devices and be sure to disallow
+it everywhere the CPG_ERROR_RSTm *does not* exist (which is different
+from "where CPG_ERROR_RSTm is not used by watchdog driver").
+
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
 > +    description:
-> +      Specifies the function of the auxiliary output pin
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0 # CS2600_AUX_OUTPUT_FREQ_UNLOCK: Frequency unlock notification
-> +      - 1 # CS2600_AUX_OUTPUT_PHASE_UNLOCK: Phase unlock notification
-> +      - 2 # CS2600_AUX_OUTPUT_NO_CLKIN: CLK_IN is not available
+> +      The first cell is a phandle to the SYSCON entry required to obtain
+> +      the current boot status. The second cell specifies the CPG_ERROR_RSTm
+> +      register offset within the SYSCON, and the third cell indicates the
+> +      bit within the CPG_ERROR_RSTm register.
+> +    items:
+> +      - items:
+> +          - description: Phandle to the CPG node
+> +          - description: The CPG_ERROR_RSTm register offset
+> +          - description: The bit within CPG_ERROR_RSTm register of interest
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -182,7 +195,11 @@ allOf:
+>        properties:
+>          interrupts: false
+>          interrupt-names: false
+> +      required:
+> +        - renesas,r9a09g057-syscon-wdt-errorrst
 
-I still do not understand how "clk_in", which is required, could be not
-available. To me it contradicts itself, but maybe just description is a
-bit incomplete.
-
-Anyway, why this cannot be simple string?
-
-
-> +    default: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/cirrus,cs2600.h>
-> +
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      clock-controller@2c {
-> +        #clock-cells = <1>;
-
-Use order from DTS coding style.
-
-> +        compatible = "cirrus,cs2600";
-> +        reg = <0x2c>;
-> +        clocks = <&xtl_clk>, <&sync_clock>;
-> +        clock-names = "xti", "clk_in";
-> +        clock-output-names = "audio_clk_out", "audio_bclk", "audio_lrclk";
-> +        vdd-supply = <&vreg>;
-> +      };
-> +    };
-> diff --git a/include/dt-bindings/clock/cirrus,cs2600.h b/include/dt-bindings/clock/cirrus,cs2600.h
-> new file mode 100644
-> index 000000000000..86065f94a2b2
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/cirrus,cs2600.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/*
-> + * Copyright (c) 2024 Cirrus Logic, Inc. and
-> + *		      Cirrus Logic International Simiconductor Ltd.
-> + *
-> + * Author: Paul Handrigan <paulha@opensource.cirrus.com>
-> + *
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_CIRRUS_CS2600_H
-> +#define _DT_BINDINGS_CLK_CIRRUS_CS2600_H
-> +
-> +/* CS2600 Clocks  */
-> +#define CS2600_PLL      0 /* Internal clock */
-> +#define CS2600_CLK		1
-> +#define CS2600_BCLK		2
-> +#define CS2600_FSYNC	3
-> +
-> +/* CS2600 Auxiliary Output */
-> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
-> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
-> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
-
-I still don't see why these three are supposed to be bindings. Drop
-them.
+No, ABI break.
 
 Best regards,
 Krzysztof
