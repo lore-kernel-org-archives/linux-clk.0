@@ -1,113 +1,115 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16033155757;
-	Thu, 19 Dec 2024 17:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F391A2632;
+	Thu, 19 Dec 2024 19:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734628553; cv=none; b=MlQqWhh+0KZai1gYf6yQcSaZbTMsaoUY7vyMxSo5QJa0JQh3BOYlqb1YbdhuNOQVGW/4uRYKOgM8f/lzSFGL5auPTzxW23vb/fTJisNfiBhxWlih13eZYESQ6tuJdZTxTsyA1m9zsMUgb7uaLj/eSKP7looZvYZTvqrguCDYqQU=
+	t=1734635312; cv=none; b=dPjzzVt8Hqyt26elH5ZXYTeqiyBcK3Ywcs7KMdQBdG/nrn6GglHhQxQ5r4y7q7oPb6tDZeTLuppzsJNDY02ffdz4EEIeFKIRkxdcgp/Vniu1v5+4H8e43aFLv1OEDK1IlDJhi+UrA5M7tr76GmkwPWGgJMKVYq92ASEvtnE4gDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734628553; c=relaxed/simple;
-	bh=PrFMJath0AI7V+ueZKvT/syVDmwYDHFVw6Y2+ShBjKI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxuefxu649vLpSRI6Yqs0g/PjzLmnAYLW8Bh+a1o0IvH/1DBNPLFLLKcRC/H84vZdC2Nn7OclS6CnnJnXjwJk8+LtxqEwxunvy0aMfX0tq0X1bjnoHy3rxbm1UaZZOpfEy/TqCJituKy8UT/Sxaa/mcZ1ELGSfFFMOdNBVydbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jvSghn7i; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jvSghn7i"
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id ED54E163;
-	Thu, 19 Dec 2024 18:15:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734628511;
-	bh=PrFMJath0AI7V+ueZKvT/syVDmwYDHFVw6Y2+ShBjKI=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=jvSghn7iEazEVEmPAImFuHSS/kcMarzOeo76iQFxhmTk3eJg5qXdVAIuq+glm/KyD
-	 jj4cQPaFpex0oKUAOiUeWYl+KiNhEVE8l3Drtc0VKnCBzSespK/2hJ4nUu3ya0gAss
-	 m2WbLqIusni3xnkJpmVL2YkuqrSkDWjgN5rtghy0=
-Date: Thu, 19 Dec 2024 18:15:46 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 0/4] renesas: r8a779g0: Enable VSPX on R-Car V4H
-Message-ID: <njgjpk6ez5ydahpeexvuuo43m7y3axylspgckthjwllliuf6bd@hrng5ceynoaw>
-References: <20241219-rcar-v4h-vspx-v3-0-8fe8d2afb268@ideasonboard.com>
- <Z2RF4vGtTd1wDjJS@shikoro>
+	s=arc-20240116; t=1734635312; c=relaxed/simple;
+	bh=5Ef+6rZWH8dDGtU7zv2iioXJYo0m2yELmssYQ0nJyMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aNn21p8MH/5BG1uoppaKCUHfrB3Zt8+H5XZiKcxLPfpckL22ZWJTA5HOCM0IPVnM/842GAeNPjq0EWcONgNg+gAi/5NJkEdRrw0xnvgIPf8GD4/Q3PDY6/iHc8ShgKVMOu7DfV8/8+xEWKdgkIIa+N0idyz6qm5vytvbOq/k+7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6dcc42b5e30so14404246d6.1;
+        Thu, 19 Dec 2024 11:08:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734635309; x=1735240109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XPaniiWHezQ/g7pat40XY3/npFC9VXw3O9cONcVxZoQ=;
+        b=gzj6KN+4s5/uYCLA7eeIlyY0XCtFaRNk3wS6gc3A7pvZGenMtTkWyL3+s20mFMQYfH
+         KKmlDleE408jqnBGugrUn0HAgdlMxL67tgWKCUx2+jmjUH4wgJpCqmu1SmPlDDdxd7KP
+         7iGdt2nFDfv0BoCwd2HoMQLjSGjiz4DZsUiI9XA6RB8wzdpTmwN6E3xMHmQVwwdIJ2kI
+         ZP/fSV+ZZIC5hNXqRT6StnXFcYkH+cn2AjrrfpN6pPcLwhRmP37xiBw92ktweHtzfTuy
+         7wyCjYYg/esPgftS+h7AyFIHUv4UImc5e0XZy3T2pbMVtWFnqR5N8oJ7PdCu+O06w/NN
+         DpNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtLbuAwfZHsDdyzCdFT3wDur72dGG2aPAhBWPZh+S/vb3+PbqQy4eqK4z0XbycF9OszBYo6NbVW7Ywi9aVYi5HO9s=@vger.kernel.org, AJvYcCWlHluEaNnHMTNHCA2HAfJjytj+0oKoTPmT4m7EV42fO5n4VJ75gY1VK6dfKzzFPT20K3rUx9YNHLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLEetF8JGf3XqkGTsy91Y0ADwIfnb+DAlR3gFqLcxcZHmYE+ka
+	b1GQD8zJnIDkZv8trU6O2Ff9K0p3Z8Ow4C1T/+0MTNZ3ABjHOj5WJFbK3oBN
+X-Gm-Gg: ASbGncus4st9LuPSeHljvOGbIWChg7MMrpAu413nwo+i22vzc4sKU+hHFJeBEZD8he6
+	/z/S+5rwxrHWrwpBw8vwD8Ra1M5KZDOWpPW7++p7znAzRdz/FzRUm3aEMQMNo7NdBWF2qXDvLJq
+	JyTOweH+pvqLCpomz9Fd0jDXD/sNQdoRukhowxq9c9qPg+6nqWeGv4D3joRJ3MVPBKGhm9IcQdk
+	uQZUH7dRGXai2ojwZLPbVBqAoLWhby66CvGMkrAXtub6LKz59Vi9293GcVw8jhFduSDBl36uqzA
+	8LI3tQd3b0Sek7iQoVE=
+X-Google-Smtp-Source: AGHT+IFMJDmRciNDbuBXZlymOlXbUot68jEvORAIIe7KzXL5fcZjIjYKUNccG/OjdQQDJMVJ4Z5/FQ==
+X-Received: by 2002:ad4:5b83:0:b0:6d8:850a:4d6a with SMTP id 6a1803df08f44-6dd2332ee4dmr850246d6.1.1734635308898;
+        Thu, 19 Dec 2024 11:08:28 -0800 (PST)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com. [209.85.219.54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd18137373sm9228926d6.64.2024.12.19.11.08.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Dec 2024 11:08:28 -0800 (PST)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6dcc42b5e30so14403926d6.1;
+        Thu, 19 Dec 2024 11:08:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVm4YL9OPQkk+USFxQWvHTAQE52SejQ0UNalHANzb48Z8TuND1y+3AxXnAWz8ge6yLEQBIoLpPJuzkEuAzOsYkQ6No=@vger.kernel.org, AJvYcCXZEbsjv9RLlSnShdFioBCPdY1cIZjd3iPElBc7M7LKfCw7yUtad2YrZEQCmN8DsStECqDqbIKH5iM=@vger.kernel.org
+X-Received: by 2002:a05:6214:d46:b0:6d8:9994:ac30 with SMTP id
+ 6a1803df08f44-6dd2335ddf3mr629566d6.26.1734635308346; Thu, 19 Dec 2024
+ 11:08:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qhufuk5dzuxkhdvs"
-Content-Disposition: inline
-In-Reply-To: <Z2RF4vGtTd1wDjJS@shikoro>
+References: <20241213123550.289193-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20241213123550.289193-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Dec 2024 20:08:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUEkN6Z7p=LspP+npB3xs4ui+D9oGG+Q15kQ-mYiaoK-A@mail.gmail.com>
+Message-ID: <CAMuHMdUEkN6Z7p=LspP+npB3xs4ui+D9oGG+Q15kQ-mYiaoK-A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Add clock driver support for Renesas RZ/G3E SoC
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Biju et al,
 
---qhufuk5dzuxkhdvs
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Subject: Re: [PATCH v3 0/4] renesas: r8a779g0: Enable VSPX on R-Car V4H
-MIME-Version: 1.0
-
-Hi Wolfram
-
-On Thu, Dec 19, 2024 at 05:12:18PM +0100, Wolfram Sang wrote:
-> Hi Jacopo,
+On Fri, Dec 13, 2024 at 1:36=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
+m> wrote:
+> This patch series adds clock driver support for RZ/G3E. Also add
+> MSTOP support for RZ/V2H.
 >
-> > Compile-tested only series.
->
-> Can't this go ...
+> This patch series is tested on renesas-devel and next.
 
-Ah yes, leftover from v1 and v2 where I hadn't access to the board
-(yet)
+> Biju Das (3):
+>   clk: renesas: rzv2h-cpg: Add MSTOP support
+>   clk: renesas: rzv2h-cpg: Add support for RZ/G3E SoC
+>   clk: renesas: r9a09g047: Add CA55 core clocks
 
->
-> > Changes in v3:
-> > - Test on an actual board and fix the VSPX and FCPVX power domains to
-> >   use the ISP power domains
->
-> ... because of this?
+Given the issues with "[PATCH v3 1/3] clk: renesas: rzv2h-cpg: Add
+MSTOP support" reported by email[1] and on #renesas-soc, I think it
+is best not to include this patch and all other patches that depend
+on it in tomorrow's pull request for clk-next.  That leaves us with
+some extra time to fix the issues.
 
-Indeed!
+Unfortunately, I understand not all parties will have returned from
+holidays by the time I will send my second pull request (usually
+just before rc6)...
 
->
-> Happy hacking,
+[1] "[PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
+refcount handling"
+    https://lore.kernel.org/all/20241218142045.77269-2-prabhakar.mahadev-la=
+d.rj@bp.renesas.com
 
-You too :)
+Gr{oetje,eeting}s,
 
->
->    Wolfram
->
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
---qhufuk5dzuxkhdvs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAmdkVMIACgkQcjQGjxah
-VjwrZhAAm+NVFm9MDlMIM0gv2K5mEveIyoNqFQTacOSTH2GXVSXz0YLpMYELdeTI
-5834NWnDzjiDkrr4G+nnJo6BLzgTPDzRQYt6dJ7Fb9BTtcU/hqnaBy5g7GyBpOb3
-9x6pSMht5DXbyo3RHKL/BILwedO5NA9zz/XkiO8pBuLM0DlrV10shmWuzOnopFSs
-aKMSxrcwsO4UEfNdwZ0MTiGnK7VXLnz7MvAP/zJ7Ndm0CLxkfJC4/HUZU1kDoBF1
-1WxzCE9MDYpL0KJR7zZdrZvHvOLtUL/Tc7rOrooiVFPhV2pHLphtCAAk3cjrbHA7
-zLiTTXf7JnK/aqy2Ri9ScCFHmmutYNHs/onTByGqoaYyAsWAIYbp71MDI2UlXjV1
-fhmsb9fha81WpDPJz0JRvn+AaRr81QrFu83pU4nKDxbO9z203C0sN/2BokL2de0Z
-YFkRCgID9fJQjzSu4+eAGn340GAgzi33dbCxE86UohEqkgamfYIwRwpGcHyJWrQO
-afL98rKhlRZWZBKIKXLe1pZiYDmeDlc1HKD7jcbWYVvrb4yaZ6qalihHjYIiko9S
-cjPSh7EKn5PvOmjO6H84hPFZhrwMrmRPgJS/At48pu6x2ZSMt9EUqKUSfURwGlrL
-n5WkjJH5z14UxM9P2rtGIbeylETPvB+GbzmXP4fh/MaMaZmhvrg=
-=s57P
------END PGP SIGNATURE-----
-
---qhufuk5dzuxkhdvs--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
