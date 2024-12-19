@@ -1,126 +1,125 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8D12248AB;
-	Thu, 19 Dec 2024 12:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED382221DAD;
+	Thu, 19 Dec 2024 12:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734610773; cv=none; b=bXf42jabZ549mrhhn0VzAuZzgxUZ/NTIuGT6CTj/ONramJPpOq7vWuxVhMRv8/8qshj3Yg/PdFag58R/PYyds9qXqiA3hXLMM4ZnYqGBR2zXkVxEqhep0c+4pBUGcgLmZH4zWL3wU7+Mst0/jYh0OAphMS0u5hSPRQ8tkKWw5dQ=
+	t=1734611346; cv=none; b=aksTrhh4CLNziSbZq67Uy64LdCaltwmAWJAT0kLb05Ol4yRnBlpPLpQ+wn9SJqDbhm99b98TVlCyDPF/MzE2jynsNSTAqexukhlapSIZWLk+XSm3epVW6CsXdt6qu4LNuL+DtI47g+GvSWqG7fIJdxlazyd1HHjxTbGs9JM5y8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734610773; c=relaxed/simple;
-	bh=cugUH0d+SlgkRyuP28N0msPKI703sIZVVOLV5vnDtT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rj/eJK3rlTA5///Lcu3nxrZOCrZSMBhbmMhSl1Se5KSrJiZ1GQFZRMLlr/YOo1xHqrijEYAVFzA18NNdnCVmxHVOEWbkpVhLekJZbHDRc3AUTngB1J/SPCrJk3AkLH8//82h3ggaLGunFRmxETIFlz/r4LLWxBq5UNn8y2vLHF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuXNMMJi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734611346; c=relaxed/simple;
+	bh=eCLfNi7HfRE3zT4OgqlC9hDgrM682HO/N2L7Stce7Bo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KJCDKnti+yCYqzd/lulH02OAvSl5x3GUaWsN8v0Q4dUDGGPrwOGc+S3wfmZkrGES43h/FNQoDcK46DP72F3q07di0Mg/693BK21S1Ru6VIGAdJ7JqXosUv95Oqw2VEGrOu9Y8TLC3ILuMeZ24tLJC1hm7G2xwxPrK9aJkGZVdi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kq4DtrI+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuXNMMJi"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-436637e8c8dso2647595e9.1;
-        Thu, 19 Dec 2024 04:19:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734610770; x=1735215570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=59Aoy43dWzBwCaG2A8ucKh0QGC/BCGRrGg0QGt/ktA0=;
-        b=RuXNMMJi4XYbZ+lQ/qS2X0JKIeuGm32ezg4Ja0tTd6AjnRbyErqZTai3SIaE3NRTq2
-         T3TUq0aVV3Utcq9LBNegIEd7tvhbw2mxrBIotQFCFNsWzb3lH0/WY/GX4NmgyyfNsBYN
-         teai81pYnZpK8WLacOBUJgdBIaEeJVbMXIGPBNEdoWwtpTjOZwo4JyMc/9EgUsRbqI0z
-         n1TSw7KH0DHLR1Hl6F4KFbuA0D0o1hxT9vq6TUh8poGaGv048yXWyTLEGTT1uzLh/qoP
-         Kry26+1Ya6LGfQe13wxvCHnbcXpwzEZdoaSoLFpvQF/mx3HFg/z7+n+73RY4ucOdt3xs
-         s+tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734610770; x=1735215570;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=59Aoy43dWzBwCaG2A8ucKh0QGC/BCGRrGg0QGt/ktA0=;
-        b=FCCbm64VjvUQke7oexw1fPTeNuIvsv1Nek7xYriPA3ssU5NVDBZSf627Pq2t1LmG5y
-         Z/ZOzXM+SJHqfKnapS5cpCLmXx82FdLA9nDRTfYVCuuCw93cQXkorujQ33rTd+a7aYUO
-         XItT37/kmsK8iByCSlPf5t6g8Z9y3bgINXODepkWTtTH9x2HlOICzRVkhfKz5PqhUt94
-         XwRvrP7Ng6Lvv/75wfO61C0qlDYT/0vBPWZL/37l80Sa/cshvN49wD1NDPnN3H7bm5p0
-         /CU1SazFdYpWsZmLpT6xPYdJZByszInAzubNt1mRSyvP8zi2iHMZDl4Xu6P8lMsq30dh
-         n/mw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Wm1ptDLdJQFEReyU0fWugKWlZ+I5vxA+yERwEBV/mvvUhTVHTUs+cBU+OLuDDFLiZTcdM18Epqhc@vger.kernel.org, AJvYcCX4sERrXMAVpTqjjEkKFoz6BuMEcI3gpqnWTnQTiPrsZDGgthN1B+O2/VueDWT/Kn2WJlkS4UpPBQRy@vger.kernel.org, AJvYcCXTy3iKMDDO50zcrzYk8T3kzPOUx0lutfpJAPKwxwh3xNLsJ2WEPgZ87osQnh9R9VwxTkSItMb0C9q6o/+A@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwhHR5X+48dA+c+8K963mxSUHKi3Yi7xM46vgxlGXEQlnKyFuE
-	a3iZuTljDr4OZTrSrfz+lqcAieJ9xkvWgVEgZ9YB7/GaTU24yqVIBc56YQ==
-X-Gm-Gg: ASbGnctNL3ojZdcvdoBWljJwOmVQ4UGvGoacjV2lzn0nTiqcpXgwux/wZt1+vqkmeDC
-	V4npGaK2fCkasK4/McVIG2/HJBOxdUGAv1g2R7uUnhMB74n/RCMSUS/Rtqg+nfVtbsMwKRE0df7
-	fpvQ49X/dpwU/Jf4GTu4bX+yG8JGiqFAWhFSKkwTmAZOsRN6z/F5DPumql0osZdQ1a6ALaujVcD
-	Blngpn6GA8eDkacu4tIIz/OZCewOsP3UQ8lyURSZ0ZvVQabNuZzfsZqRhhlyCrhYweXKoJ0+Dm9
-	fRSAfg405CtG4BxvyyOd0KOp3sJdvQyXZxEG4ouBjiI=
-X-Google-Smtp-Source: AGHT+IGlnD59bx6wdPWBteUTx3SXxB0HfDoL9TeSvQiDMj9nT1n7cW8ovuxdXdFbCCZQWxvBR5t9/w==
-X-Received: by 2002:a05:600c:450a:b0:434:f4f9:8104 with SMTP id 5b1f17b1804b1-43655428a0bmr53822195e9.33.1734610769724;
-        Thu, 19 Dec 2024 04:19:29 -0800 (PST)
-Received: from localhost.localdomain (host-80-181-61-65.pool80181.interbusiness.it. [80.181.61.65])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-436611fc762sm16679975e9.11.2024.12.19.04.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2024 04:19:29 -0800 (PST)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	upstream@airoha.com
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v3 4/4] clk: en7523: Add clock for eMMC for EN7581
-Date: Thu, 19 Dec 2024 13:18:53 +0100
-Message-ID: <20241219121902.16339-4-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241219121902.16339-1-ansuelsmth@gmail.com>
-References: <20241219121902.16339-1-ansuelsmth@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kq4DtrI+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9EEC4CED0;
+	Thu, 19 Dec 2024 12:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734611345;
+	bh=eCLfNi7HfRE3zT4OgqlC9hDgrM682HO/N2L7Stce7Bo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Kq4DtrI+0vLF22EMn1H7IxgenKSqCt92TY/KZ2Nu+H7J9gxdqrR+aBART88fQXr4+
+	 /k7Ki8XFpwSgSRWTfPcloY8HxlUABkG6tM7DRFiAhF/+lvcZHObH1xDqUwya+QmzY1
+	 EdwlOr1NPeTDZZcNWHz/TEw03I8sP6tZOXUWeK5UKkIy43D8iCQHEy3mJime7qJJ6p
+	 ZWN6IK+yudAmuMxQfaKdHAbKU5OASrLOj1HX/H24UF5UDhntWf5YqbuLRN4iBwZqWu
+	 HBu15uZhMgZgANndNG+dM9xROgivwYarYR8OWJzr7KFrBAjjOwI5gloQD6PJOStIsv
+	 nXkVR7YMgDEFw==
+Message-ID: <af251ba3-660b-4281-84aa-a715eb83039b@kernel.org>
+Date: Thu, 19 Dec 2024 13:28:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: clock: drop NUM_CLOCKS define for
+ EN7581
+To: Christian Marangi <ansuelsmth@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com
+References: <20241219121902.16339-1-ansuelsmth@gmail.com>
+ <20241219121902.16339-2-ansuelsmth@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241219121902.16339-2-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add clock for eMMC for EN7581. This is used to give info of the current
-eMMC source clock and to switch it from 200MHz or 150MHz.
+On 19/12/2024 13:18, Christian Marangi wrote:
+> Drop NUM_CLOCKS define for EN7581 include. This is not a binding and
+> should not be placed here. Value is derived internally in the user
+> driver.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+> Changes v3:
+> - Add this patch
+> 
+>  include/dt-bindings/clock/en7523-clk.h | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+> index c4f8a161b981..edfa64045f52 100644
+> --- a/include/dt-bindings/clock/en7523-clk.h
+> +++ b/include/dt-bindings/clock/en7523-clk.h
+> @@ -14,6 +14,4 @@
+>  
+>  #define EN7581_CLK_EMMC		8
+>  
+> -#define EN7523_NUM_CLOCKS	8
+Are you sure your patchset bisects?
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v2:
-- Rename emmc_base to emmc7581_base to make it more clear
+Also better to arrange cleanups before new clocks added, so lack of
+conflict between number of clocks and new clock ID is obvious.
 
- drivers/clk/clk-en7523.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 596847446b14..b36445359b5a 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -91,6 +91,7 @@ static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 }
- static const u32 bus7581_base[] = { 600000000, 540000000 };
- static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
- static const u32 crypto_base[] = { 540000000, 480000000 };
-+static const u32 emmc7581_base[] = { 200000000, 150000000 };
- 
- static const struct en_clk_desc en7523_base_clks[] = {
- 	{
-@@ -281,6 +282,15 @@ static const struct en_clk_desc en7581_base_clks[] = {
- 		.base_shift = 0,
- 		.base_values = crypto_base,
- 		.n_base_values = ARRAY_SIZE(crypto_base),
-+	}, {
-+		.id = EN7581_CLK_EMMC,
-+		.name = "emmc",
-+
-+		.base_reg = REG_CRYPTO_CLKSRC2,
-+		.base_bits = 1,
-+		.base_shift = 12,
-+		.base_values = emmc7581_base,
-+		.n_base_values = ARRAY_SIZE(emmc7581_base),
- 	}
- };
- 
--- 
-2.45.2
-
+Best regards,
+Krzysztof
