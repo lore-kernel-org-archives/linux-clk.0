@@ -1,165 +1,114 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA428E37;
-	Thu, 19 Dec 2024 13:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8837214AD2B;
+	Thu, 19 Dec 2024 15:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734615406; cv=none; b=R8sV/IBGt+jZpFtH1HGE8T3pEnVg0RCAEt7dg9rHrdDCvvedcM6FhjByjKAKl5CuDAcUaDPfXn4Hsu158tiWfr83qhraySF7oRCAJkRq3WtGjskVdtkgiO1mrC+Qb2OoyFiKCsgaaKefziWGJ2M2/KYDs+YUe1xnuuf/WFg9ZoU=
+	t=1734621919; cv=none; b=s+BDpVPKnZRT1+2e36KRseQanWijK97QwKC2MIUBg0fQWgXtGdaHPUr4Ngr3PLmzmFxLhxYjGlq+G4oJCYwrsTROgfrDjQ+oNqEaKIqINwU2AwScPWpHmOFbDDYdxtdMNgkQa0dFod3FmVfd8DyU6WA8iXkMjKzay5CzTatLjl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734615406; c=relaxed/simple;
-	bh=0IckwFL91Q4fxWJADgq3EYPJ/+DamnhHCBDNi7DH3LI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZopJIZY2H6OM7wVKh48H5FVVl4e6pWVZeGCZA/K2Xd+/jrYR/FuWgfj8n9VlMtB163OLFbboPzcYEWXtsKSuGy/fU9mDaAhbmcozR2wURU3MajnIplc6pBpccHvWEGnOIYXIpe/LPy8fg8auLhU5RgifOUo4dwCvVB30/x+KQUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=oC7cHeEr; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1734621919; c=relaxed/simple;
+	bh=8CenElWxsrQM+5q5jUKzqdqA9U9JpdH7i598RKM6JOY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Es+vXUw4Y/kVuW43j1MCaeIlqQbrGZ3wMy1lsDX2eT+z2CJmMyClatTe4LWcBkUEKGLDDqbCVxcme5UqW+VPyREkDgD3QbN+FT+ZWSQ6klujrphoCN2Oe1aaKIG5dhsQRr7w15koWsjCobT1kzKVxxm1n7xAvGLuhUADNdNre4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kp2vhVH3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="oC7cHeEr"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJ5Ik67024760;
-	Thu, 19 Dec 2024 07:36:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=sCD+MGsuo/Z9wyljr5In2Zq1sfIHzX8XYf+WKwDTZjY=; b=
-	oC7cHeErQPMLEYxYEJ6vrXHgnY4nbzC/qKW4qX48wsBB87pg6Xim4vYmYLd1by3s
-	4w+KJhG2b79BY30kI81Y9Qqlok8vf82+zH5+CSB+7CiVVFsdj/T4lYg3gYwgLZge
-	V3LXZUqwtEVrwikPpqR8KIFFImODhsdjpstRJz9S8GXRjMAQrRoNBhgYlBjgd858
-	/l56GHjqgXmYJYeAQqtAgJ39fkSCEeSNdg1GNmZPtd4Z6utN9r+ZCjHjZzUWev0q
-	HZVKAzuHCmNPLGOuh0YBSiZJE5NHO/xASKjVESQ+8oN7NzP+U8NaveX3DCucAFU1
-	FDVLGD845ECvCajecGq4mA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 43h8a26aur-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Dec 2024 07:36:40 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 19 Dec
- 2024 13:36:38 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.13 via Frontend Transport; Thu, 19 Dec 2024 13:36:38 +0000
-Received: from [198.61.68.170] (EDIN4L06LR3.ad.cirrus.com [198.61.68.170])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 9B2CE820247;
-	Thu, 19 Dec 2024 13:36:37 +0000 (UTC)
-Message-ID: <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
-Date: Thu, 19 Dec 2024 13:36:37 +0000
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kp2vhVH3"
+Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5C291163;
+	Thu, 19 Dec 2024 16:24:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734621877;
+	bh=8CenElWxsrQM+5q5jUKzqdqA9U9JpdH7i598RKM6JOY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kp2vhVH3egWy+0/jOA4/v8ovM6RY2VfkFUQuQ47tdSaWLEaCB6LQM+ZDqqKZuNPKD
+	 fz1E+kc+XsFzgdFwfWefXbVf3iWMxvip6lL25MDJNuZxfbINpzcFJ4swd6764sAtTj
+	 6fyh3jzers4NV4rd6lT/4OHlvpT22qAxSJumbgcU=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: [PATCH v3 0/4] renesas: r8a779g0: Enable VSPX on R-Car V4H
+Date: Thu, 19 Dec 2024 16:24:48 +0100
+Message-Id: <20241219-rcar-v4h-vspx-v3-0-8fe8d2afb268@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
- CS2600
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Charles Keepax
-	<ckeepax@opensource.cirrus.com>
-CC: Paul Handrigan <paulha@opensource.cirrus.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <patches@opensource.cirrus.com>
-References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
- <20241219024631.3145377-2-paulha@opensource.cirrus.com>
- <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
- <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
- <3c09367c-808b-4414-bf6a-99e0bdaa3a27@kernel.org>
- <Z2QYooZJ9kFeYzgc@opensource.cirrus.com>
- <ebc6bc7d-d847-46fe-908c-c618d94e3345@kernel.org>
-Content-Language: en-US
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <ebc6bc7d-d847-46fe-908c-c618d94e3345@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: jeWE6MR1dbBk8fQEIC2xkxfQZbWNkYpw
-X-Proofpoint-GUID: jeWE6MR1dbBk8fQEIC2xkxfQZbWNkYpw
-X-Proofpoint-Spam-Reason: safe
+X-B4-Tracking: v=1; b=H4sIAMA6ZGcC/3XMQQ7CIBCF4auYWYsBiqV15T2MCwqjnYWlGQypa
+ Xp3aVfG6PJ/yftmSMiECU67GRgzJYpDiWq/A9+74Y6CQmnQUhullRXsHYtsepHTOAkbGtl2Vip
+ vj1A+I+ONps27XEv3lJ6RXxuf1br+k7ISUgSUBp00BoM5U0CX4tBFx+Hg4wNWMOtPpPlGdEF8b
+ ava2NDWqH4gy7K8AcP9B1P2AAAA
+X-Change-ID: 20241217-rcar-v4h-vspx-7d809b701c75
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: b4 0.15-dev-1b0d6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1502;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=8CenElWxsrQM+5q5jUKzqdqA9U9JpdH7i598RKM6JOY=;
+ b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnZDraU4K7ZtuQ49pFq5JwvQVmMpYKLOqzBkvxP
+ RmSoW3dzfKJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2Q62gAKCRByNAaPFqFW
+ PO93D/95gfskUIilPphp9pqSOtIhY6kTH6R5j7PpXAUyh7yzBT0MbtZT+xRSlqFuyTwPgbsGSh9
+ L4xtnL5ANfQLI+xLqLfMbE4/x6pfs7XS2x1dxFRIosqqleTTO696F6UDHYjTvYJiDsltiNmBtXE
+ QD+w6WKROe3PMDXUa292Koberdb/ngpEs0VosJIIGVC87CYO1nsMQvOcRpU/Kkdc+Oq7LNfiPEq
+ CQB0Rw1Ur0Ao5LdszLazK0DEgpWxuyA0KNSZJzgJyXI1W/H+9NfWoQg1C3lwcYrRApG+tr4SjOU
+ dB0vjZDLVE25eABHQxIcrnUfx4VgpNHrbDgsBByj6CYoA8Po8inR/BdatomgAF1pD0sFsXr+ISS
+ HmcuYE3OzcALp2z5p+E/0siOpQjA7KhAyBH1YJ8rrgleUFRwQHj/msBkJKXhMny0120wx0hnYZF
+ KdHaH3bj8bg4n887waRDQcGYHhRYa00X0WWwEmG39QQLtR+4VOywRu1UnGBfybJgSsXXF7OitU6
+ Yg5qMZTABXHx8bj62iepgMa0rBMbffo7SeukGkRrH2wg+YUST3hoZBW+vHAuuCpDStANX6I6V4c
+ jI6DR2FphWKVwoutRIfKAPCXcaxecBFEPa58uUsczfruA+saco9Ct4Bc2zy9R/8skfVSuGh0RwF
+ eN/TSEeVmoPIsHg==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-On 19/12/24 13:16, Krzysztof Kozlowski wrote:
-> On 19/12/2024 13:59, Charles Keepax wrote:
->> On Thu, Dec 19, 2024 at 12:39:38PM +0100, Krzysztof Kozlowski wrote:
->>> On 19/12/2024 12:02, Charles Keepax wrote:
->>>> On Thu, Dec 19, 2024 at 09:51:00AM +0100, Krzysztof Kozlowski wrote:
->>>>> On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
->>>>>> +/* CS2600 Auxiliary Output */
->>>>>> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
->>>>>> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
->>>>>> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
->>>>>
->>>>> I still don't see why these three are supposed to be bindings. Drop
->>>>> them.
->>>>
->>>> In a binding one would presumably do:
->>>>
->>>> cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>>
->>>> Apologies but I don't quite understand what you mean by the values
->>>> are not used in the binding? The driver reads the property and sets
->>>
->>> There is no user of these defines, so not a binding.
->>>
->>>> the pin to have the appropriate function. Admittedly one could drop
->>>
->>> It's not a proof that this is a binding.
->>>
->>>> the defines and then DTS would just have to do:
->>>>
->>>> cirrus,aux-output-source = <0>;
->>>>
->>>> But that feels a bit less helpful when reading the binding.
->>>
->>> Binding and being helpful are two different things. This to be the
->>> binding, it has to be used as a binding, so some translation layer
->>> between driver and DTS. It must have an user in DTS. I keep repeating
->>> this over and over...
->>>
->>
->> Apologies, but I not sure I totally follow this, and apologies if
->> you have already explained this are there some docs I can look
->> at?
->>
->> I think you are saying because these defines merely represent the
->> valid values for a device tree property and are not translated
->> into different values you can't put defines for them in the binding
->> header?
->>
->> So this would not be allowed:
->>
->>    #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 0
->>
->>    cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>
->>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>    regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
->>
->> But this would be fine:
->>
->>    #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 1
->>
->>    cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>
->>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>    switch (val) {
->>    case CS2600_AUX_OUTPUT_FREQ_UNLOCK:
->>      regmap_write(regmap, CS2600_OUTPUT_CFG2, 0);
->>    }
->>
->> And this would also be fine?
->>
->>    cirrus,aux-output-source = <0>;
->>
->>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>    regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
->>
-> Yes. If you want to use in DTS user-readable values, then use string.
-> 
+The series enables the two VSPX instances connected to the R-Car ISP
+on Renesas R-Car V4H. Define clock identifiers based on the MSTPCR id
+for the VSPX instances and defined device nodes in the V4H .dts file.
 
-I don't understand this. Why should we have to use a string value for
-something that only needs a simple integer value? Why can't we define
-constants with meaningful names?
+The VSPX modules interface with extenal memory through dedicated FCP
+instances named FCPVX. Before defining VSPDX, define and enable the
+FXPVX instances as well.
 
-> Best regards,
-> Krzysztof
+Compile-tested only series.
+
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+---
+Changes in v3:
+- Test on an actual board and fix the VSPX and FCPVX power domains to
+  use the ISP power domains
+- Re-parent the VSPX and FCPVX clocks to the 800MHz S0D1
+- Link to v2: https://lore.kernel.org/r/20241218-rcar-v4h-vspx-v2-0-c673647d96e1@ideasonboard.com
+
+Changes in v2:
+- Collect tags
+- Re-sort nodes by unit address
+- Link to v1: https://lore.kernel.org/r/20241217-rcar-v4h-vspx-v1-0-de04ea044ed4@ideasonboard.com
+
+---
+Jacopo Mondi (4):
+      clk: renesas: r8a779g0: Add FCPVX clocks
+      arm64: dts: renesas: r8a779g0: Add FCPVX instances
+      clk: renesas: r8a779g0: Add VSPX clocks
+      arm64: dts: renesas: r8a779g0: Add VSPX instances
+
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 40 +++++++++++++++++++++++++++++++
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c   |  4 ++++
+ 2 files changed, 44 insertions(+)
+---
+base-commit: 50d451b19cc58cf374160e30cbf72a5ed5b1b129
+change-id: 20241217-rcar-v4h-vspx-7d809b701c75
+
+Best regards,
+-- 
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
