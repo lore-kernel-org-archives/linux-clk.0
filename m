@@ -1,115 +1,144 @@
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F391A2632;
-	Thu, 19 Dec 2024 19:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9608D1A9B5C;
+	Thu, 19 Dec 2024 19:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734635312; cv=none; b=dPjzzVt8Hqyt26elH5ZXYTeqiyBcK3Ywcs7KMdQBdG/nrn6GglHhQxQ5r4y7q7oPb6tDZeTLuppzsJNDY02ffdz4EEIeFKIRkxdcgp/Vniu1v5+4H8e43aFLv1OEDK1IlDJhi+UrA5M7tr76GmkwPWGgJMKVYq92ASEvtnE4gDg=
+	t=1734637792; cv=none; b=OWm3vVWhS96KEbkXkr0CVYTcE8UMianRzfaSImi+5xv2/ApPIakcCMxLq3ohOnDMcvZdOSIDg6LdAquwUmdVEg9MYQncCGY3+76F5EErpzttQMDclllb1Mmpcw8Jdoj0bKIYf3X8JZgHckILilrByc+Nt2tSZ5rnm1BNyDUBqs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734635312; c=relaxed/simple;
-	bh=5Ef+6rZWH8dDGtU7zv2iioXJYo0m2yELmssYQ0nJyMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aNn21p8MH/5BG1uoppaKCUHfrB3Zt8+H5XZiKcxLPfpckL22ZWJTA5HOCM0IPVnM/842GAeNPjq0EWcONgNg+gAi/5NJkEdRrw0xnvgIPf8GD4/Q3PDY6/iHc8ShgKVMOu7DfV8/8+xEWKdgkIIa+N0idyz6qm5vytvbOq/k+7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6dcc42b5e30so14404246d6.1;
-        Thu, 19 Dec 2024 11:08:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734635309; x=1735240109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XPaniiWHezQ/g7pat40XY3/npFC9VXw3O9cONcVxZoQ=;
-        b=gzj6KN+4s5/uYCLA7eeIlyY0XCtFaRNk3wS6gc3A7pvZGenMtTkWyL3+s20mFMQYfH
-         KKmlDleE408jqnBGugrUn0HAgdlMxL67tgWKCUx2+jmjUH4wgJpCqmu1SmPlDDdxd7KP
-         7iGdt2nFDfv0BoCwd2HoMQLjSGjiz4DZsUiI9XA6RB8wzdpTmwN6E3xMHmQVwwdIJ2kI
-         ZP/fSV+ZZIC5hNXqRT6StnXFcYkH+cn2AjrrfpN6pPcLwhRmP37xiBw92ktweHtzfTuy
-         7wyCjYYg/esPgftS+h7AyFIHUv4UImc5e0XZy3T2pbMVtWFnqR5N8oJ7PdCu+O06w/NN
-         DpNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtLbuAwfZHsDdyzCdFT3wDur72dGG2aPAhBWPZh+S/vb3+PbqQy4eqK4z0XbycF9OszBYo6NbVW7Ywi9aVYi5HO9s=@vger.kernel.org, AJvYcCWlHluEaNnHMTNHCA2HAfJjytj+0oKoTPmT4m7EV42fO5n4VJ75gY1VK6dfKzzFPT20K3rUx9YNHLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLEetF8JGf3XqkGTsy91Y0ADwIfnb+DAlR3gFqLcxcZHmYE+ka
-	b1GQD8zJnIDkZv8trU6O2Ff9K0p3Z8Ow4C1T/+0MTNZ3ABjHOj5WJFbK3oBN
-X-Gm-Gg: ASbGncus4st9LuPSeHljvOGbIWChg7MMrpAu413nwo+i22vzc4sKU+hHFJeBEZD8he6
-	/z/S+5rwxrHWrwpBw8vwD8Ra1M5KZDOWpPW7++p7znAzRdz/FzRUm3aEMQMNo7NdBWF2qXDvLJq
-	JyTOweH+pvqLCpomz9Fd0jDXD/sNQdoRukhowxq9c9qPg+6nqWeGv4D3joRJ3MVPBKGhm9IcQdk
-	uQZUH7dRGXai2ojwZLPbVBqAoLWhby66CvGMkrAXtub6LKz59Vi9293GcVw8jhFduSDBl36uqzA
-	8LI3tQd3b0Sek7iQoVE=
-X-Google-Smtp-Source: AGHT+IFMJDmRciNDbuBXZlymOlXbUot68jEvORAIIe7KzXL5fcZjIjYKUNccG/OjdQQDJMVJ4Z5/FQ==
-X-Received: by 2002:ad4:5b83:0:b0:6d8:850a:4d6a with SMTP id 6a1803df08f44-6dd2332ee4dmr850246d6.1.1734635308898;
-        Thu, 19 Dec 2024 11:08:28 -0800 (PST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com. [209.85.219.54])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd18137373sm9228926d6.64.2024.12.19.11.08.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 11:08:28 -0800 (PST)
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6dcc42b5e30so14403926d6.1;
-        Thu, 19 Dec 2024 11:08:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVm4YL9OPQkk+USFxQWvHTAQE52SejQ0UNalHANzb48Z8TuND1y+3AxXnAWz8ge6yLEQBIoLpPJuzkEuAzOsYkQ6No=@vger.kernel.org, AJvYcCXZEbsjv9RLlSnShdFioBCPdY1cIZjd3iPElBc7M7LKfCw7yUtad2YrZEQCmN8DsStECqDqbIKH5iM=@vger.kernel.org
-X-Received: by 2002:a05:6214:d46:b0:6d8:9994:ac30 with SMTP id
- 6a1803df08f44-6dd2335ddf3mr629566d6.26.1734635308346; Thu, 19 Dec 2024
- 11:08:28 -0800 (PST)
+	s=arc-20240116; t=1734637792; c=relaxed/simple;
+	bh=rGOvvqg02/2Kcbo+slRA09ppaoCh2Sdscv53DQPXwwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtaEXOHal66aSR+QwztNSPJ6gtZtPTOocNOA0jO/oV49eYjMRWS2vCRwah2zYDmDu7dJQ29mQ64KvwVmcXZqwjeOqYQeUYVqyzXWQZ3b6QKQtk6YXlmC1MFPYV1NStdP3lpeAFxFzX1oUPwGokn5rYoZGHgintG23qKwmK/ylwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNoPFuai; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNoPFuai"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D7AC4CECE;
+	Thu, 19 Dec 2024 19:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734637792;
+	bh=rGOvvqg02/2Kcbo+slRA09ppaoCh2Sdscv53DQPXwwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FNoPFuaissLylLW6vl6ENQR11UJB32vS4pGe0DTWHhbfAVBov3DWOJsuyXWkZelOS
+	 pwfPu7gX9wTE3VG6afRok5aMPh8fl2+kue6Y7MWSn8TFrSXRCMxHI9HL9FlbVuBbn9
+	 GlcWNB00kAzw0WozKoRiLJfZ/UvcB1LjyDQbz3zWQlxbwzLJAsavKVPmnXVDf6Vp1O
+	 n3fOWLMTn4H01vq1NdMltXKWdEsWV2h8t9dC3Htqv+TljtHKKHLFDco42BMBgIwboj
+	 Wp+K1yH5BnL/3GWXnMTLd986iCZ/UHVIIk+Z793S9XuPKtEm8qv6itBSH8Rkcg6PKE
+	 ETaU6H0R51U5g==
+Date: Thu, 19 Dec 2024 19:49:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Abel Vesa <abel.vesa@linaro.org>, Marek Vasut <marex@denx.de>,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m: document
+ nominal/overdrive properties
+Message-ID: <20241219-lash-lather-31443ced0e0c@spud>
+References: <20241219-imx8m-clk-v1-0-cfaffa087da6@pengutronix.de>
+ <20241219-imx8m-clk-v1-1-cfaffa087da6@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213123550.289193-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20241213123550.289193-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Dec 2024 20:08:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUEkN6Z7p=LspP+npB3xs4ui+D9oGG+Q15kQ-mYiaoK-A@mail.gmail.com>
-Message-ID: <CAMuHMdUEkN6Z7p=LspP+npB3xs4ui+D9oGG+Q15kQ-mYiaoK-A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] Add clock driver support for Renesas RZ/G3E SoC
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
-	Chris Paterson <Chris.Paterson2@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ngXsONZmUzjSKy68"
+Content-Disposition: inline
+In-Reply-To: <20241219-imx8m-clk-v1-1-cfaffa087da6@pengutronix.de>
+
+
+--ngXsONZmUzjSKy68
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Biju et al,
+On Thu, Dec 19, 2024 at 08:27:32AM +0100, Ahmad Fatoum wrote:
+> The imx8m-clock.yaml binding covers the clock controller inside all
+> of the i.MX8M Q/M/N/P SoCs. All of them have in common that they
+> support two operating modes: nominal and overdrive mode.
 
-On Fri, Dec 13, 2024 at 1:36=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> This patch series adds clock driver support for RZ/G3E. Also add
-> MSTOP support for RZ/V2H.
->
-> This patch series is tested on renesas-devel and next.
+This implies that only the two modes you mention are possible, but you
+leave the option open to a dts author to use either. How come?
 
-> Biju Das (3):
->   clk: renesas: rzv2h-cpg: Add MSTOP support
->   clk: renesas: rzv2h-cpg: Add support for RZ/G3E SoC
->   clk: renesas: r9a09g047: Add CA55 core clocks
+Makes it seem like we only need one of these, for whatever the
+non-default option is?
 
-Given the issues with "[PATCH v3 1/3] clk: renesas: rzv2h-cpg: Add
-MSTOP support" reported by email[1] and on #renesas-soc, I think it
-is best not to include this patch and all other patches that depend
-on it in tomorrow's pull request for clk-next.  That leaves us with
-some extra time to fix the issues.
+>=20
+> While the overdrive mode allows for higher frequencies for many IPs,
+> the nominal mode needs a lower SoC voltage, thereby reducing
+> heat generation and power usage.
+>=20
+> In any case, software should respect the maximum clock rate limits
+> described in the datasheet for each of the two operating modes.
+>=20
+> To allow device tree consumers to enforce these limits, document two new
+> optional properties that can be used to sanity check the clock tree.
+>=20
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 14 ++++++++++=
+++++
+>  1 file changed, 14 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/D=
+ocumentation/devicetree/bindings/clock/imx8m-clock.yaml
+> index c643d4a81478..a6ae5257ef53 100644
+> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> @@ -43,6 +43,14 @@ properties:
+>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx=
+8m-clock.h
+>        for the full list of i.MX8M clock IDs.
+> =20
+> +  fsl,nominal-mode:
+> +    description: Set if SoC is operated in nominal mode
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +
+> +  fsl,overdrive-mode:
+> +    description: Set if SoC is operated in overdrive mode
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -95,6 +103,12 @@ allOf:
+>              - const: clk_ext2
+>              - const: clk_ext3
+>              - const: clk_ext4
+> +  - if:
+> +      required:
+> +        - fsl,overdrive-mode
+> +    then:
+> +      properties:
+> +        fsl,nominal-mode: false
+> =20
+>  additionalProperties: false
+> =20
+>=20
+> --=20
+> 2.39.5
+>=20
 
-Unfortunately, I understand not all parties will have returned from
-holidays by the time I will send my second pull request (usually
-just before rc6)...
+--ngXsONZmUzjSKy68
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] "[PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
-refcount handling"
-    https://lore.kernel.org/all/20241218142045.77269-2-prabhakar.mahadev-la=
-d.rj@bp.renesas.com
+-----BEGIN PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2R42gAKCRB4tDGHoIJi
+0vi0AQDyo0dpjmecgbYGZWFjWTgwStcmLQ4GGpLpOk50s+I6rgEAhLl57IPin5RD
+Msn0CDRtkfOYmjJkFXiEEwgZVTCHvgo=
+=JUib
+-----END PGP SIGNATURE-----
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--ngXsONZmUzjSKy68--
