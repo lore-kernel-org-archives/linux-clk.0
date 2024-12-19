@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BFB2236EB;
-	Thu, 19 Dec 2024 11:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94972236EB;
+	Thu, 19 Dec 2024 11:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734608384; cv=none; b=EakiYMxHfT/uD8qkAlcCpkQ171tasnwvTrMojCloJf8Rc4f3xnTgCJFevii1K8ZDd0uUnQEmwM+hT1kWWcuIeXEXWQVG3cnYtaL4KZommuPKy8rzpMASpYG1c6SHicW3MXL8K7DnHYZaRcmMMI3jjmuoV/mA2yvi5l6Crlav0Hg=
+	t=1734608436; cv=none; b=QaEr2ul1lGFA8l8oBx1bUtWULvy8AiSTg02azvTt9X683tTN30KYLZPHEMg+V9czAa1tWmZNuXXsCXLysx0ovyEGXz3+V/tumkDxNAmLdN31HI/3K8eaeLb0Q+9TezvTS9PlpDudkMLj+cjgsRfB5H4wWwljDSIw5ivydyaFYuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734608384; c=relaxed/simple;
-	bh=s1zz9MrvmCB8Hgx+l40AvJDyfL2iozU8OjCTwAQz6oI=;
+	s=arc-20240116; t=1734608436; c=relaxed/simple;
+	bh=bXf1n5av++1NpzldNupTfjreWKWKA3AaiMuabD8m+hQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HC040UVSFan3U1LPOIVuwO2YI7totHwIPCsnfR6vXhtxSudH/89vFZGehSe8WXsvnkSzwrZN+6R3ws2kYu5Yx3QStLhlIEyUVYy3bplrP2QR9a3dKc9iA3PYnpJmzSh6Ktkl5GsAjtiwOLNxmLTeQp+QgM7X6C8MmLX41prl9Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfCATepD; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KlhsfjioObCV26Uuyi7gXcDamcWRqgMmctPKgZhNCRbK4FOnWE66AYxEn+L0iyyXcXHACY6XwFl2iywQSgDxfsU3YE+Vc+L2/bgN+JGCJ6+QicR5rQxeiWkorgqM0XGJ1dSRDkEqmSqwBOECf4f+fObbR8iRwxuD+wUTmOhP82k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFGDTvua; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfCATepD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C006C4CECE;
-	Thu, 19 Dec 2024 11:39:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFGDTvua"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50D6C4CECE;
+	Thu, 19 Dec 2024 11:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734608383;
-	bh=s1zz9MrvmCB8Hgx+l40AvJDyfL2iozU8OjCTwAQz6oI=;
+	s=k20201202; t=1734608436;
+	bh=bXf1n5av++1NpzldNupTfjreWKWKA3AaiMuabD8m+hQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nfCATepDBK8it7ra8WttTdq+mdxHrbo7P0B9wN2hoYgkbaic8lXnf6hZoVUOwCL2a
-	 LbFUkN5B/Wh7dI7hrjljy1SFPxakYogdD7Qu5Td2u53RN515kTIVi3eY+KD3wF7CLF
-	 yNClflRTH7l6GJ3cZNOJ5D7UG9FH8mT7AHtSlaAT6lgHjDeVAOSJnD+ZyGvGdKnq+T
-	 QALTt2xBi3cf0V8afwYPghgzDcoy2kztrMfifg5DlvxSbJWvcRrqJ5brV0zRHBkIIG
-	 La6bXdV978uzWxfJwdZcnCf/FI2kS3ljqHY2+mFWUjbP1QJCt8ULOKE1APDenmrOHB
-	 afPJsB0+H8byw==
-Message-ID: <3c09367c-808b-4414-bf6a-99e0bdaa3a27@kernel.org>
-Date: Thu, 19 Dec 2024 12:39:38 +0100
+	b=pFGDTvuaBFdrwRN7mos2xpbaqirH3A4Gc4bJuBccj4t80IWcimfpBZ4rPhu9k3sQq
+	 2J4WMAfR/NY6hkNB4V5TLN/s7/3pKzI2G2ZRhBGfCTk//qZWENa3une6PX/tjb99ST
+	 pW7v3JSgfqWZLhUhYQyg83LeYUz4iksvD+LzXsAgIhoQBaiNydBzgwgNp3haNNE/s8
+	 C6QWhwnXrsx0SSoNSiZP+1xoEIF+qBnB+a7Y85zOCi8qUPiIJCephujKyyLPXW6xyB
+	 KRaEQzw/KKFVcB+fwqbYrLB+Q8siczbbeWe9munP7bfBGVz6t5X1GpsWwCuup95V1t
+	 I/4u8G5fZEyOg==
+Message-ID: <73077b74-10b0-4191-a024-8b9edb21f507@kernel.org>
+Date: Thu, 19 Dec 2024 12:40:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,17 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
- CS2600
+Subject: Re: [PATCH v2 2/2] clk: cs2600: Add Fractional-N clock driver
 To: Charles Keepax <ckeepax@opensource.cirrus.com>
 Cc: Paul Handrigan <paulha@opensource.cirrus.com>, mturquette@baylibre.com,
  sboyd@kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
  patches@opensource.cirrus.com
 References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
- <20241219024631.3145377-2-paulha@opensource.cirrus.com>
- <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
- <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
+ <20241219024631.3145377-3-paulha@opensource.cirrus.com>
+ <wv5od7uzup275onlvq36w4gvyh2j5oxepqkxiptanm5udidq5u@mbr64dxodkwd>
+ <Z2P6wgUowoW3v7UX@opensource.cirrus.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,65 +90,49 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
+In-Reply-To: <Z2P6wgUowoW3v7UX@opensource.cirrus.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/12/2024 12:02, Charles Keepax wrote:
-> On Thu, Dec 19, 2024 at 09:51:00AM +0100, Krzysztof Kozlowski wrote:
->> On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
->>> +  clock-output-names:
->>> +    maxItems: 3
->>> +    description: Names for CLK_OUT, BCLK_OUT and FSYNC_OUT clocks.
+On 19/12/2024 11:51, Charles Keepax wrote:
+> On Thu, Dec 19, 2024 at 09:48:05AM +0100, Krzysztof Kozlowski wrote:
+>> On Wed, Dec 18, 2024 at 08:46:31PM -0600, Paul Handrigan wrote:
+>>> +/* DEVICE_ID2 */
+>>> +#define CS2600_AREVID_MASK		GENMASK(7, 4)
+>>> +#define CS2600_MTLRVID_MASK		GENMASK(3, 0)
 >>> +
->>> +  cirrus,aux-output-source:
->>> +    description:
->>> +      Specifies the function of the auxiliary output pin
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    enum:
->>> +      - 0 # CS2600_AUX_OUTPUT_FREQ_UNLOCK: Frequency unlock notification
->>> +      - 1 # CS2600_AUX_OUTPUT_PHASE_UNLOCK: Phase unlock notification
->>> +      - 2 # CS2600_AUX_OUTPUT_NO_CLKIN: CLK_IN is not available
+>>> +/* UNLOCK_INDICATORS */
+>>> +#define CS2600_P_UNLOCK_STICKY		BIT(3)
+>>> +#define CS2600_P_UNLOCK			BIT(2)
+>>> +#define CS2600_F_UNLOCK_STICKY		BIT(1)
+>>> +#define CS2600_F_UNLOCK			BIT(0)
+>>> +
+>>> +/* ERROR_STS */
+>>> +#define CS2600_ERR_DEV_DEFECT		BIT(7) /* Device defective */
+>>> +#define CS2600_ERR_OTP_CORRUPT		BIT(6)
+>>> +#define CS2600_ERR_REG_CFG		BIT(5) /* Invalid register config */
+>>> +#define CS2600_ERR_PLL_DISABLED		BIT(4)
+>>> +#define CS2600_ERR_HW_CFG		BIT(3) /* Invalid HW Config */
+>>> +#define CS2600_ERR_REFCLK_MISSING	BIT(2)
+>>> +#define CS2600_ERR_CLKIN_UNSTABLE	BIT(1)
+>>> +#define CS2600_ERR_CLKIN_MISSING	BIT(0)
+>>> +
+>>> +#define CS2600_PLL_OUT			0
+>>> +#define CS2600_CLK_OUT			1
+>>> +#define CS2600_BCLK_OUT			2
+>>> +#define CS2600_FSYNC_OUT		3
 >>
->> I still do not understand how "clk_in", which is required, could be not
->> available. To me it contradicts itself, but maybe just description is a
->> bit incomplete.
-> 
-> I think yeah the description perhaps needs to make this more
-> clear this is setting an error output pin, ie. the pin goes high
-> for the linked error condition.
-> 
->>> +/* CS2600 Auxiliary Output */
->>> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
->>> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
->>> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
+>> No, the entire point of the binding header is to bind. Drop all four
+>> above and use properly your header.
 >>
->> I still don't see why these three are supposed to be bindings. Drop
->> them.
+>> Otherwise I claim your binding header is not used or not really a
+>> binding.
+>>
 > 
-> In a binding one would presumably do:
-> 
-> cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
-> 
-> Apologies but I don't quite understand what you mean by the values
-> are not used in the binding? The driver reads the property and sets
-
-There is no user of these defines, so not a binding.
-
-> the pin to have the appropriate function. Admittedly one could drop
-
-It's not a proof that this is a binding.
-
-> the defines and then DTS would just have to do:
-> 
-> cirrus,aux-output-source = <0>;
-> 
-> But that feels a bit less helpful when reading the binding.
-
-Binding and being helpful are two different things. This to be the
-binding, it has to be used as a binding, so some translation layer
-between driver and DTS. It must have an user in DTS. I keep repeating
-this over and over...
+> This excert is from the drivers internal header not the binding
+> header?
+I replied in patch two, stripping unnecessary context. There is no
+binding header here, so I do not understand your comment.
 
 Best regards,
 Krzysztof
