@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC51227B92;
-	Thu, 19 Dec 2024 15:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1109B3D3B8;
+	Thu, 19 Dec 2024 16:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734623861; cv=none; b=B9leUJ4+Q6TyMvg54XU/EzQvOOED8bS4j/asX3+/gEWxXu8BNO/1Ei/d0GmFPNakMZDfOA14+UQaAdTylMrvkD7o988LVQpOmoBAerBi5BoMIiFN+Nvs410hfrNBZ68zeEAPYRbSjCc9KL/hYgJdsomaZXAU5d04R82myoMlfCw=
+	t=1734624096; cv=none; b=Gal86AOlHLqA+hiTUvJfXP25MoaaQJ+a93huMAWkl6Wb92b55byDLNIOz1DQcjLgR5uxqgQXZUZQKi5MBX7j0wuJzTaXucHkcohB9Cx+W19T9pQGDAUTIN33hh0TB4OXo6FFF5OXn46u7UYR4vqypW+U+ZDQMF9AsXUjbkXuMrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734623861; c=relaxed/simple;
-	bh=WHsaPH4vN65eQ3EHG00DyYwrh6aVIZf2EWqKlB/GkLk=;
+	s=arc-20240116; t=1734624096; c=relaxed/simple;
+	bh=6uMXLt4ypoVy4tnF262rE8ywognqpxGkvT/QWn0rhzE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hm010B6bPLpwKuw9ygPIwWkfXEr9PHzOwMMgcQox9KsVLxnv4C8K1TKBBz3gByQqkZfNBDfeAEhFPs4OgG+JGAYTxJ50G0w5d61PzMfQP5AvmkXKz/BJIoHc+j+/9fHu15LVglueO58rfR0cHck+4Djb+BcHA1k2H1WbhxDPeQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBrAyI32; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=BCvBjlJsFMTMfclE8cxMv53QyOZ4m8eZJox3p7t6kSu5jhYuFkRbZ6OSV/OGRJvPKbb09KkGFtW8Qi0FYfrOwu1oaSUHZz9QyGhWBf1BjCfW5sm4acwLoWyiVEQOKJZtfRbVfyzBqk9TK0pyW+gb5ZQNFVCkHdM99a9JNFYUHds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0t0JgTZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBrAyI32"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D74C4CECE;
-	Thu, 19 Dec 2024 15:57:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0t0JgTZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F19AC4CECE;
+	Thu, 19 Dec 2024 16:01:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734623861;
-	bh=WHsaPH4vN65eQ3EHG00DyYwrh6aVIZf2EWqKlB/GkLk=;
+	s=k20201202; t=1734624095;
+	bh=6uMXLt4ypoVy4tnF262rE8ywognqpxGkvT/QWn0rhzE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bBrAyI32CgnSEZBLY/CjF8WpoTPGd1WYjsCU99jzEyNBqnRkDQyFJ4B+82AyPfWjM
-	 ZHC98tCmbF7hqqAOHvIH2WLFSYHh4JNw22+afQNk0JWTfVcK6lQ6PorGmvBau6lSes
-	 oOlQi4LNY40DfQrZig4aYhJ9RVlJ/IvqmqlPtHqzXXNyha3DxFXPocb4yoQYh7N4F8
-	 yl1JmkL6uKuC5H4PTBlplmg1RliZV/cAF5yPsYtSWhy2SqmCNhSqsSyaachtNVSkyi
-	 wwFYV+7yZo07tsg6nn/n3oaClbU6CKjswfKc77C8nv+XobNF7tuxMtbhg8SJIBDB9C
-	 OA0M9vEOL0yHw==
-Message-ID: <c7278ed3-9361-4cd1-ad28-cdbcc3d84bcd@kernel.org>
-Date: Thu, 19 Dec 2024 16:57:35 +0100
+	b=n0t0JgTZSvmIkwYofKJIgfgS/+mu4+SGUIX/F2aTqz+7jiWZp4w3/sCMhPQHNZBSr
+	 otN+aFzz3XQN7FtOv14YEDaJx+K2vpZ6vYf9WqG1w09ptH5GhoL8N0VyMY8PjlOvi0
+	 PbnD1YDzTE95cK1M8JQiml0Lik3EOQ6d5SbMcpQyxpjy9gRhV4w0wa30OLfQ2yWQMO
+	 HSl0ooym3wmU/sYqcXGfuJGmCICHywWnQH/dAPjiMXGE8OdgL+r0pXj0rJNLLH1kiF
+	 1RyPrzywJRNGUHLDI7DKroHpEpC+OxkL0GK4OQ92NSH/Bj/kVHSGD0BqFqSokiGdGF
+	 cOaNO/eSok4MA==
+Message-ID: <53c2fc82-2b09-4f7e-a89f-c7c16c38cb8e@kernel.org>
+Date: Thu, 19 Dec 2024 17:01:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
- CS2600
-To: Richard Fitzgerald <rf@opensource.cirrus.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Paul Handrigan <paulha@opensource.cirrus.com>, mturquette@baylibre.com,
- sboyd@kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- patches@opensource.cirrus.com
-References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
- <20241219024631.3145377-2-paulha@opensource.cirrus.com>
- <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
- <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
- <3c09367c-808b-4414-bf6a-99e0bdaa3a27@kernel.org>
- <Z2QYooZJ9kFeYzgc@opensource.cirrus.com>
- <ebc6bc7d-d847-46fe-908c-c618d94e3345@kernel.org>
- <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
+Subject: Re: [PATCH 4/6] dt-bindings: watchdog: renesas: Document
+ `renesas,r9a09g057-syscon-wdt-errorrst` property
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Magnus Damm <magnus.damm@gmail.com>,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241218003414.490498-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241218003414.490498-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <wouo4k7rd7y57jzez3qdrz27fscozofuksgs4ivft75y6cwvqa@zfq3wgerwaza>
+ <CA+V-a8s-_OMJy=4v_whpBr7S4aE3Dn6KouFfCnQ=oUBM9MD4nA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,97 +99,124 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
+In-Reply-To: <CA+V-a8s-_OMJy=4v_whpBr7S4aE3Dn6KouFfCnQ=oUBM9MD4nA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/12/2024 14:36, Richard Fitzgerald wrote:
-> On 19/12/24 13:16, Krzysztof Kozlowski wrote:
->> On 19/12/2024 13:59, Charles Keepax wrote:
->>> On Thu, Dec 19, 2024 at 12:39:38PM +0100, Krzysztof Kozlowski wrote:
->>>> On 19/12/2024 12:02, Charles Keepax wrote:
->>>>> On Thu, Dec 19, 2024 at 09:51:00AM +0100, Krzysztof Kozlowski wrote:
->>>>>> On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
->>>>>>> +/* CS2600 Auxiliary Output */
->>>>>>> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
->>>>>>> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
->>>>>>> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
->>>>>>
->>>>>> I still don't see why these three are supposed to be bindings. Drop
->>>>>> them.
->>>>>
->>>>> In a binding one would presumably do:
->>>>>
->>>>> cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>>>
->>>>> Apologies but I don't quite understand what you mean by the values
->>>>> are not used in the binding? The driver reads the property and sets
->>>>
->>>> There is no user of these defines, so not a binding.
->>>>
->>>>> the pin to have the appropriate function. Admittedly one could drop
->>>>
->>>> It's not a proof that this is a binding.
->>>>
->>>>> the defines and then DTS would just have to do:
->>>>>
->>>>> cirrus,aux-output-source = <0>;
->>>>>
->>>>> But that feels a bit less helpful when reading the binding.
->>>>
->>>> Binding and being helpful are two different things. This to be the
->>>> binding, it has to be used as a binding, so some translation layer
->>>> between driver and DTS. It must have an user in DTS. I keep repeating
->>>> this over and over...
->>>>
+On 19/12/2024 11:06, Lad, Prabhakar wrote:
+>>> To facilitate this operation, add `renesas,r9a09g057-syscon-wdt-errorrst`
+>>> property to the WDT node, which maps to the `syscon` CPG node, enabling
+>>> retrieval of the necessary information. For example:
 >>>
->>> Apologies, but I not sure I totally follow this, and apologies if
->>> you have already explained this are there some docs I can look
->>> at?
->>>
->>> I think you are saying because these defines merely represent the
->>> valid values for a device tree property and are not translated
->>> into different values you can't put defines for them in the binding
->>> header?
->>>
->>> So this would not be allowed:
->>>
->>>    #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 0
->>>
->>>    cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>
->>>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>>    regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
->>>
->>> But this would be fine:
->>>
->>>    #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 1
->>>
->>>    cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>
->>>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>>    switch (val) {
->>>    case CS2600_AUX_OUTPUT_FREQ_UNLOCK:
->>>      regmap_write(regmap, CS2600_OUTPUT_CFG2, 0);
->>>    }
->>>
->>> And this would also be fine?
->>>
->>>    cirrus,aux-output-source = <0>;
->>>
->>>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>>    regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
->>>
->> Yes. If you want to use in DTS user-readable values, then use string.
+>>>     wdt1: watchdog@14400000 {
+>>>         compatible = "renesas,r9a09g057-wdt";
+>>>         renesas,r9a09g057-syscon-wdt-errorrst = <&cpg 0xb40 1>;
+>>>         ...
 >>
+>> Drop, obvious.
+>>
+> Ok.
 > 
-> I don't understand this. Why should we have to use a string value for
-> something that only needs a simple integer value? Why can't we define
-> constants with meaningful names?
+>>>     };
+>>>
+>>> The `renesas,r9a09g057-syscon-wdt-errorrst` property consists of three
+>>> cells:
+>>> 1. The first cell is a phandle to the CPG node.
+>>> 2. The second cell specifies the offset of the CPG_ERROR_RSTm register
+>>>    within the SYSCON.
+>>> 3. The third cell indicates the specific bit within the CPG_ERROR_RSTm
+>>>    register.
+>>
+>> Don't describe the contents of patch.  Drop paragraph. There is no need
+>> to make commit msg unnecessary long. Focus on explaining unknown parts
+>> of commit: why? or who is affected by ABI break? why breaking ABI?
+>> instead of repeating diff.
+>>
+> Ok, I'll drop the para. There isnt any ABI breakage as the driver
+> patch [0] will skip supporting watchdog bootstatus if this property is
+> not present.
+> 
+> [0] https://lore.kernel.org/all/20241218003414.490498-6-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-You can and you will find plenty examples of this, but as I explained
-earlier - this is not a binding. We avoid defining as a binding
-something which is not a binding.
+Really? I see in rzv2h_wdt_probe():
+
++		if (ret)
++			return ret;
+
+so to me you are failing the probe, not skipping anything.
+
+> 
+>>>
+>>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>> ---
+>>>  .../bindings/watchdog/renesas,wdt.yaml          | 17 +++++++++++++++++
+>>>  1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+>>> index 29ada89fdcdc..8d29f5f1be7e 100644
+>>> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+>>> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+>>> @@ -112,6 +112,19 @@ properties:
+>>>
+>>>    timeout-sec: true
+>>>
+>>> +  renesas,r9a09g057-syscon-wdt-errorrst:
+>>
+>> There are never, *never* SoC names in property names, because we want
+>> properties to be re-usable.
+>>
+> I should have mentioned this in my commit message (my bad). The
+> renesas,wdt.yaml binding file is being used for all the SoCs
+> currently. To avoid any conflicts by just having vendor specific
+> property I added SoC name to the preoperty.
+
+I know what you did and I replied: that's a no go for reasons I stated.
+
+> 
+> @Geert/Wolfram - Maybe we need to split the binding on per SoC bases?
+
+You can but I don't understand why exactly.
+
+> 
+>> Make the property generic for all your devices and be sure to disallow
+>> it everywhere the CPG_ERROR_RSTm *does not* exist (which is different
+>> from "where CPG_ERROR_RSTm is not used by watchdog driver").
+>>
+> This patch already disallows `renesas,r9a09g057-syscon-wdt-errorrst`
+> for the rest of the SoCs and only allows for RZ/V2H(P) SoC or am I
+> missing something?
+
+No, that's fine, but to avoid disallowing it for others you named it per
+SoC.
+
+> 
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description:
+>>> +      The first cell is a phandle to the SYSCON entry required to obtain
+>>> +      the current boot status. The second cell specifies the CPG_ERROR_RSTm
+>>> +      register offset within the SYSCON, and the third cell indicates the
+>>> +      bit within the CPG_ERROR_RSTm register.
+>>> +    items:
+>>> +      - items:
+>>> +          - description: Phandle to the CPG node
+>>> +          - description: The CPG_ERROR_RSTm register offset
+>>> +          - description: The bit within CPG_ERROR_RSTm register of interest
+>>> +
+>>>  required:
+>>>    - compatible
+>>>    - reg
+>>> @@ -182,7 +195,11 @@ allOf:
+>>>        properties:
+>>>          interrupts: false
+>>>          interrupt-names: false
+>>> +      required:
+>>> +        - renesas,r9a09g057-syscon-wdt-errorrst
+>>
+>> No, ABI break.
+>>
+> As mentioned above we won't break ABI, this required flag is for future changes.
+
+Then why is this required? Or at least explain this in the commit msg.
 
 Best regards,
 Krzysztof
