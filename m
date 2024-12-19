@@ -1,138 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94972236EB;
-	Thu, 19 Dec 2024 11:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B9B221D80;
+	Thu, 19 Dec 2024 12:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734608436; cv=none; b=QaEr2ul1lGFA8l8oBx1bUtWULvy8AiSTg02azvTt9X683tTN30KYLZPHEMg+V9czAa1tWmZNuXXsCXLysx0ovyEGXz3+V/tumkDxNAmLdN31HI/3K8eaeLb0Q+9TezvTS9PlpDudkMLj+cjgsRfB5H4wWwljDSIw5ivydyaFYuQ=
+	t=1734610770; cv=none; b=lFpBca2aRa8LPDog2ufMh0vzx4QgLbxeT7K1sSyuRJRKesFHlD77qmoBx7CIzrNhOWzuIjrt2k5b1FK32XJy5tB5DPvnGocrntfk8Qk3v+5UMns2sJZ5+DEYpgEEjOQB2LprLHRRSnvkA7AlBQg1OBJxawUU1a8aGWFAHSnbWPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734608436; c=relaxed/simple;
-	bh=bXf1n5av++1NpzldNupTfjreWKWKA3AaiMuabD8m+hQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KlhsfjioObCV26Uuyi7gXcDamcWRqgMmctPKgZhNCRbK4FOnWE66AYxEn+L0iyyXcXHACY6XwFl2iywQSgDxfsU3YE+Vc+L2/bgN+JGCJ6+QicR5rQxeiWkorgqM0XGJ1dSRDkEqmSqwBOECf4f+fObbR8iRwxuD+wUTmOhP82k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFGDTvua; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734610770; c=relaxed/simple;
+	bh=PgfDE5K20sJkmjHKfX+qO6Vd1BtqUvoxW4eyrcXDNSU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bNErPCSLYZahDhzcw2t8Fo2cD3RWSS1SQYtRiw41bIotT7KtpTaMN9j3HQH15RGXFnBtyAjuLWzeXOiFFmeNaPvEQ0inT9NmpkaAnb1CmxQKWFOTBcgVs7Cza88mFxkCbNhe7wJd2UFMcUok4R6/XunxKm/FibHi+jnyo+fPBfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Krv5cCs9; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFGDTvua"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50D6C4CECE;
-	Thu, 19 Dec 2024 11:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734608436;
-	bh=bXf1n5av++1NpzldNupTfjreWKWKA3AaiMuabD8m+hQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pFGDTvuaBFdrwRN7mos2xpbaqirH3A4Gc4bJuBccj4t80IWcimfpBZ4rPhu9k3sQq
-	 2J4WMAfR/NY6hkNB4V5TLN/s7/3pKzI2G2ZRhBGfCTk//qZWENa3une6PX/tjb99ST
-	 pW7v3JSgfqWZLhUhYQyg83LeYUz4iksvD+LzXsAgIhoQBaiNydBzgwgNp3haNNE/s8
-	 C6QWhwnXrsx0SSoNSiZP+1xoEIF+qBnB+a7Y85zOCi8qUPiIJCephujKyyLPXW6xyB
-	 KRaEQzw/KKFVcB+fwqbYrLB+Q8siczbbeWe9munP7bfBGVz6t5X1GpsWwCuup95V1t
-	 I/4u8G5fZEyOg==
-Message-ID: <73077b74-10b0-4191-a024-8b9edb21f507@kernel.org>
-Date: Thu, 19 Dec 2024 12:40:30 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Krv5cCs9"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43624b2d453so7472315e9.2;
+        Thu, 19 Dec 2024 04:19:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734610766; x=1735215566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pUlwPfx2tzwzQUez9JevYHjfZdtPbECxmSChhEuFiKQ=;
+        b=Krv5cCs9jZ2p6xPJM9yLpfDtPGiAUeHPw+S2Mk1iU72GyJKP1HyD7o9Gnkcynoz69Q
+         QlI3Y0X8L66MrxjSQNLiCsii2/oldas8qtEfSy7Maxz/KHmHTEPWyQa64yi2QzI8Zk36
+         TyVKd+PUiC1+bnTJyqkuXUYrGIQH1nsU/9EZN1gkP6Ejssw1BR6nutMlFTgOTJw9ni7s
+         EN2ZVQpnTDF5uQ5Y2Dj1Mw5gCxrov/8JBeFlkzoLOEHyVWxm53UdTY5Tu0bcBLx+3UoB
+         +OMhQeAVyIz60AETtvwcfeDd6L4RhCE3VRST6tIl5QAWkBi/XmIERRNqN+sVM4bDoW6f
+         Jm7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734610766; x=1735215566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pUlwPfx2tzwzQUez9JevYHjfZdtPbECxmSChhEuFiKQ=;
+        b=WZwcIkLhWKHqM0YCdHobXenqSd75bE3ooNFT/lFHuJ8uZq9r1L6ITIlqwttTI6mURU
+         OZmhwHs1RLp4yd39Kw83vlXZstjg2sII9fW41CCunU1LbfpmpjvawtdHLFpXAArArvTG
+         /pEomLxLdpNT83y8If2ogV1jOQczQdP4R44dUEk37Mw3w4bVQEciJnv/GytWEKCOb+s0
+         O7Xy5t9az7T0N7ClERXEpTY6ZdrSYBDvQkF6yR3HUkCAEkCv3hSOBs/jRgnUc9jmgsE7
+         lEbpQkgLnjhGj7oyfC55ByeOgTvjovtdRabfGxD3jX4BGknbYLTS+TWNIcXqKcMPz3Iz
+         EKLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl7fF5j8P9ix2mC620Zd9qWSW+clDLY9PZieUjJ3cE2g7ZGU6tXnqxDaP8UTVH99OigQZHQ6Zxs0iCf3sx@vger.kernel.org, AJvYcCV9WOYqzsrV04vc5qqemEBXpOHpFQKMG+HOI3D83QbpHCp3BBo/FwY1qR9z/KvspyuPJEeNjVv/w+wL@vger.kernel.org, AJvYcCWz92597vbKfYbaeBSXfdZxAHEy8sAWCsvyxXMqTHCVz2FBoaQYgbhGu4jKPkCZk7iMKCiAIFjf44JA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz76nKG7drrx0QJdpAMRQ9z4ycyihWR7cjjV+Uwx/fW7+7yCY2o
+	U+bVPgYiqnHPYCznYF1jAubL6aYnUu4U7TKs9KRNxAgL80BL/UFtsk7q+A==
+X-Gm-Gg: ASbGncuVyVQekCungylhDF7SYwyM5m9bYP7sZXRUtKYFljn2fZH8NLS/GUBTfPy0bDx
+	FTwTpGlWetUsEU++jyTZwRo/biV5kmSl0RGRO9o4N4FBpMwIaW0HsO2u5lOEHIlkqDZhVqu2Ubl
+	cBxrUwVZvbuw4wofI3zqvJ6xXFS/ws8LNeb3OCj+nTlQqZKqy0O2WCoggq8gHmILnF8sd0DarXi
+	oJiUpvAe5Txf1er0dAUebEyidbIKQ+bfDgQlZrQj03SZh+kdFcopKomrWtdDqd4XOFmUuHdK6A+
+	r51uRYG/PFV4T/y2rh+msQPirOHOM2lqniAtzepXPsQ=
+X-Google-Smtp-Source: AGHT+IEYb/TxWH7h9rIJYdFAhCx5Y6IaZqou1OZ01+Q2yYFx9tNkyEvjOAUAcCjaMbDGrpe7Y/AIAg==
+X-Received: by 2002:a05:600c:4f47:b0:436:1baa:de1c with SMTP id 5b1f17b1804b1-4365c78125cmr26618105e9.13.1734610765626;
+        Thu, 19 Dec 2024 04:19:25 -0800 (PST)
+Received: from localhost.localdomain (host-80-181-61-65.pool80181.interbusiness.it. [80.181.61.65])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-436611fc762sm16679975e9.11.2024.12.19.04.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2024 04:19:25 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	upstream@airoha.com
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 1/4] dt-bindings: clock: add ID for eMMC for EN7581
+Date: Thu, 19 Dec 2024 13:18:50 +0100
+Message-ID: <20241219121902.16339-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clk: cs2600: Add Fractional-N clock driver
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Paul Handrigan <paulha@opensource.cirrus.com>, mturquette@baylibre.com,
- sboyd@kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- patches@opensource.cirrus.com
-References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
- <20241219024631.3145377-3-paulha@opensource.cirrus.com>
- <wv5od7uzup275onlvq36w4gvyh2j5oxepqkxiptanm5udidq5u@mbr64dxodkwd>
- <Z2P6wgUowoW3v7UX@opensource.cirrus.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z2P6wgUowoW3v7UX@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/12/2024 11:51, Charles Keepax wrote:
-> On Thu, Dec 19, 2024 at 09:48:05AM +0100, Krzysztof Kozlowski wrote:
->> On Wed, Dec 18, 2024 at 08:46:31PM -0600, Paul Handrigan wrote:
->>> +/* DEVICE_ID2 */
->>> +#define CS2600_AREVID_MASK		GENMASK(7, 4)
->>> +#define CS2600_MTLRVID_MASK		GENMASK(3, 0)
->>> +
->>> +/* UNLOCK_INDICATORS */
->>> +#define CS2600_P_UNLOCK_STICKY		BIT(3)
->>> +#define CS2600_P_UNLOCK			BIT(2)
->>> +#define CS2600_F_UNLOCK_STICKY		BIT(1)
->>> +#define CS2600_F_UNLOCK			BIT(0)
->>> +
->>> +/* ERROR_STS */
->>> +#define CS2600_ERR_DEV_DEFECT		BIT(7) /* Device defective */
->>> +#define CS2600_ERR_OTP_CORRUPT		BIT(6)
->>> +#define CS2600_ERR_REG_CFG		BIT(5) /* Invalid register config */
->>> +#define CS2600_ERR_PLL_DISABLED		BIT(4)
->>> +#define CS2600_ERR_HW_CFG		BIT(3) /* Invalid HW Config */
->>> +#define CS2600_ERR_REFCLK_MISSING	BIT(2)
->>> +#define CS2600_ERR_CLKIN_UNSTABLE	BIT(1)
->>> +#define CS2600_ERR_CLKIN_MISSING	BIT(0)
->>> +
->>> +#define CS2600_PLL_OUT			0
->>> +#define CS2600_CLK_OUT			1
->>> +#define CS2600_BCLK_OUT			2
->>> +#define CS2600_FSYNC_OUT		3
->>
->> No, the entire point of the binding header is to bind. Drop all four
->> above and use properly your header.
->>
->> Otherwise I claim your binding header is not used or not really a
->> binding.
->>
-> 
-> This excert is from the drivers internal header not the binding
-> header?
-I replied in patch two, stripping unnecessary context. There is no
-binding header here, so I do not understand your comment.
+Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+between 200MHz and 150MHz.
 
-Best regards,
-Krzysztof
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Changes v3:
+- Add ack tag
+Changes v2:
+- Drop additional define for EN7581_NUM_CLOCKS
+
+ include/dt-bindings/clock/en7523-clk.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+index 717d23a5e5ae..c4f8a161b981 100644
+--- a/include/dt-bindings/clock/en7523-clk.h
++++ b/include/dt-bindings/clock/en7523-clk.h
+@@ -12,6 +12,8 @@
+ #define EN7523_CLK_CRYPTO	6
+ #define EN7523_CLK_PCIE		7
+ 
++#define EN7581_CLK_EMMC		8
++
+ #define EN7523_NUM_CLOCKS	8
+ 
+ #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
+-- 
+2.45.2
+
