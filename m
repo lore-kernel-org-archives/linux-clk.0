@@ -1,110 +1,83 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B055F218AB7
-	for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2024 07:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767E7C147;
+	Thu, 19 Dec 2024 08:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734593301; cv=none; b=OyGHkgjrXyY+eS5fEqIerFC2rt9xiHq5fW5WPsTADC0yhm4yC+AsscyW5Aow2cyBueX7DNkhHmosxiIw20SHxtf9Q0+sjV0qZUiN76C988PyQO9w89Lx3gVsdbNRWBOrX2SVKOyOhRyf45qhklAtl/bYAo+zT0nsydk52NoKFyc=
+	t=1734598090; cv=none; b=eH9rZwpYMAihldqUkfXVr1Z/2Upgc1R5TlKnYoNWtACgleWqG3OHYwpiedKgaFuucZiYkBYDwS9zHTOumrqKX1a33yl27/oHw2yHyrVa1FJ2GXxT+RsD8ZC6n7+HbAEsOtJ7gc5LiHjx2Sp8ZiCffpdzbSPDTG91nGh4a40N824=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734593301; c=relaxed/simple;
-	bh=rfvpn1pfEekZZhLEHjOu6jZCZm59cxk6zu8y9TSiWyo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T2AXkx5R+F4ZlvLlz+rRCidqGRq3uzGYK7f5hcDf328MdIarQim3wboIeewfTyZykE9eU1CjC20jwbbLLpUSxCcmxfNxkX4tSAD/rnq06OcaN5ssJKD1p+Oqp8EBr4fLAAhJKsKdGD4oZ7DC79J7O+oJXJGQ8d/aEL62GEjMQFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tOAwX-000727-NA; Thu, 19 Dec 2024 08:27:33 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tOAwW-004AP5-1G;
-	Thu, 19 Dec 2024 08:27:33 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tOAwX-00Gewn-0I;
-	Thu, 19 Dec 2024 08:27:33 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Subject: [PATCH 0/6] arm64: dts: freescale: imx8mp-skov: switch to nominal
- drive mode
-Date: Thu, 19 Dec 2024 08:27:31 +0100
-Message-Id: <20241219-imx8m-clk-v1-0-cfaffa087da6@pengutronix.de>
+	s=arc-20240116; t=1734598090; c=relaxed/simple;
+	bh=r1xppXFvQwdW0HOar5JXZ2e7E+t01nW1qHbBfbJKEOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oN29RQsQMXQQfKBF2vFAydyp7c2KRnYUGXEHwfTzNarfuUbVxNtRnFsZbwrFGoM7EmXrOx1nLkDku/hTVz+Pdkhe078/PjHrlzJUizLXtfjEuG0ifNNOkMGBVogTKxZIUi0mQcsJ4BR+E6QDzxAhvR+Ob08CSEFNFGWRMm4Y3GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXUh8GU/; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXUh8GU/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 548DCC4CECE;
+	Thu, 19 Dec 2024 08:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734598089;
+	bh=r1xppXFvQwdW0HOar5JXZ2e7E+t01nW1qHbBfbJKEOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RXUh8GU/rrIAe0R9iIaDRkeuzfyvp/TGlzubvvSZ6F8tUOyC/nJ/Dlm0yF3aalgeH
+	 ppu8fWdH3D/TlGL10m8olUXNSM0rHLniitf480fllo4PaKJ8IYDbYNK+xmqxrNEaHQ
+	 Yb6SHirVRuGmHw2jUP6JbfM62e04BtD/chiAzB5DC7qDxTeLzEJkU+pR7Eg2O7/Uw6
+	 tfK9kQvLzcuZKsOJibxlS4m+4QerCHb9r3F2+qOi3oZuZ3IXhrHfbD0wYn1jWWnvKo
+	 7TEUPdQ5VSK2GxcCU1CbwT7cpMRT8aYzXQGXZPa7ZX1akT7777ynIvpxeZmSnGsJci
+	 CicK2MvCjAtuw==
+Date: Thu, 19 Dec 2024 09:48:05 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Paul Handrigan <paulha@opensource.cirrus.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 2/2] clk: cs2600: Add Fractional-N clock driver
+Message-ID: <wv5od7uzup275onlvq36w4gvyh2j5oxepqkxiptanm5udidq5u@mbr64dxodkwd>
+References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
+ <20241219024631.3145377-3-paulha@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOPKY2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDI0Nz3czcCotc3eScbF1LEzNzczPjlLTkFAsloPqCotS0zAqwWdGxtbU
- AOf4Rq1sAAAA=
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
- Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.13-dev
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241219024631.3145377-3-paulha@opensource.cirrus.com>
 
-Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the imx8mp.dtsi
-configures some clocks at frequencies that are only validated for
-overdrive mode, i.e., when VDD_SOC is 950 mV.
+On Wed, Dec 18, 2024 at 08:46:31PM -0600, Paul Handrigan wrote:
+> +/* DEVICE_ID2 */
+> +#define CS2600_AREVID_MASK		GENMASK(7, 4)
+> +#define CS2600_MTLRVID_MASK		GENMASK(3, 0)
+> +
+> +/* UNLOCK_INDICATORS */
+> +#define CS2600_P_UNLOCK_STICKY		BIT(3)
+> +#define CS2600_P_UNLOCK			BIT(2)
+> +#define CS2600_F_UNLOCK_STICKY		BIT(1)
+> +#define CS2600_F_UNLOCK			BIT(0)
+> +
+> +/* ERROR_STS */
+> +#define CS2600_ERR_DEV_DEFECT		BIT(7) /* Device defective */
+> +#define CS2600_ERR_OTP_CORRUPT		BIT(6)
+> +#define CS2600_ERR_REG_CFG		BIT(5) /* Invalid register config */
+> +#define CS2600_ERR_PLL_DISABLED		BIT(4)
+> +#define CS2600_ERR_HW_CFG		BIT(3) /* Invalid HW Config */
+> +#define CS2600_ERR_REFCLK_MISSING	BIT(2)
+> +#define CS2600_ERR_CLKIN_UNSTABLE	BIT(1)
+> +#define CS2600_ERR_CLKIN_MISSING	BIT(0)
+> +
+> +#define CS2600_PLL_OUT			0
+> +#define CS2600_CLK_OUT			1
+> +#define CS2600_BCLK_OUT			2
+> +#define CS2600_FSYNC_OUT		3
 
-For the Skov i.MX8MP board, we want to run the SoC at the lower voltage of
-850 mV though to reduce heat generation and power usage. For this to work,
-clock rates need to adhere to the limits of the nominal drive mode.
+No, the entire point of the binding header is to bind. Drop all four
+above and use properly your header.
 
-This is done by this series: A new imx8mp-nominal.dtsi reconfigures
-the imx8mp.dtsi clock tree to be compatible with nominal mode, an adaptation
-to the Linux clock driver makes it sanity check the actual clock rates against
-the SoC operating mode's constraints and finally the Skov DT makes use
-of it.
-
-Actual configuration of the VDD_SOC rail continues to happen prior to Linux
-as well as PLL configuration that needs to happen earlier than the kernel
-running. See the corresponding barebox patch series[1] for details.
-Note that the barebox series didn't yet include VDD_SOC reconfiguration
-to 850mV, that would follow once the kernel changes have been merged.
-
-[1]: https://lore.kernel.org/barebox/20240503103717.1370636-1-a.fatoum@pengutronix.de/
-
----
-Ahmad Fatoum (6):
-      dt-bindings: clock: imx8m: document nominal/overdrive properties
-      arm64: dts: imx8mp: Add optional nominal drive mode DTSI
-      arm64: dts: imx8mp: add fsl,nominal-mode property into nominal.dtsi
-      arm64: dts: freescale: imx8mp-skov: fix LDB clock rate configuration
-      arm64: dts: freescale: imx8mp-skov: operate SoC in nominal mode
-      clk: imx8mp: inform CCF of maximum frequency of clocks
-
- .../devicetree/bindings/clock/imx8m-clock.yaml     |  14 ++
- arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi  |  64 +++++++++
- .../arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi |   5 +-
- .../freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts  |  19 +--
- drivers/clk/imx/clk-imx8mp.c                       | 147 +++++++++++++++++++++
- 5 files changed, 233 insertions(+), 16 deletions(-)
----
-base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-change-id: 20241217-imx8m-clk-9467763dfcd8
+Otherwise I claim your binding header is not used or not really a
+binding.
 
 Best regards,
--- 
-Ahmad Fatoum <a.fatoum@pengutronix.de>
+Krzysztof
 
