@@ -1,123 +1,192 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63302227594;
-	Thu, 19 Dec 2024 15:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC51227B92;
+	Thu, 19 Dec 2024 15:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734621926; cv=none; b=Biboe+tUefAK4eNgvgUqdbwjgsbkoUWydUrRyS3tmV2Ua8ZipG8fFSRpXZi4OgdhJpwYccaGT+xtzClnPksurI7KRjorQWmbcrsDUmslF0j3Wd49/AARCchdbSFE/kje/q1LUghfPRRdMXXA4yVl1ftA1cgnFsPTfTOPJeOMZ+Y=
+	t=1734623861; cv=none; b=B9leUJ4+Q6TyMvg54XU/EzQvOOED8bS4j/asX3+/gEWxXu8BNO/1Ei/d0GmFPNakMZDfOA14+UQaAdTylMrvkD7o988LVQpOmoBAerBi5BoMIiFN+Nvs410hfrNBZ68zeEAPYRbSjCc9KL/hYgJdsomaZXAU5d04R82myoMlfCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734621926; c=relaxed/simple;
-	bh=VTkLpaiH+VM6UokTmNQ9l0jXwGpqKfr0LWdoGEB/x24=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kyF2ts4VhxadR51nSEXYtn1BNPso4G+2VBoevGf/Yes/gDI9SXL0jfM4qZaCSW81DIo+HixjJWtdPvVARgCzu1kGf4pxa1II/eaJbboItnvBIiXGxxn6KcxA58pJBcJ18WLKvxVqJ6dzmYqHbxPL0aRcLwsdF7tWLJghdN6SbdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DsNY7IVg; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734623861; c=relaxed/simple;
+	bh=WHsaPH4vN65eQ3EHG00DyYwrh6aVIZf2EWqKlB/GkLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hm010B6bPLpwKuw9ygPIwWkfXEr9PHzOwMMgcQox9KsVLxnv4C8K1TKBBz3gByQqkZfNBDfeAEhFPs4OgG+JGAYTxJ50G0w5d61PzMfQP5AvmkXKz/BJIoHc+j+/9fHu15LVglueO58rfR0cHck+4Djb+BcHA1k2H1WbhxDPeQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBrAyI32; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DsNY7IVg"
-Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 90787BEB;
-	Thu, 19 Dec 2024 16:24:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734621880;
-	bh=VTkLpaiH+VM6UokTmNQ9l0jXwGpqKfr0LWdoGEB/x24=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DsNY7IVg7mL3HI8JOEuJw8FhoA8EbeTT6k6WLNMnGE6ISnaVuLq+a5No4NelXHWZC
-	 AfmF85OiMIpcfvswzPcPI6q9bPU3UAR8Ys4oEQZRlwYGFBO+HTVnroO6jPjxaI0egu
-	 tjtfxpHG8PQuebGAjEP5hv6rgYDO5OtBuI8QIWMI=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Thu, 19 Dec 2024 16:24:52 +0100
-Subject: [PATCH v3 4/4] arm64: dts: renesas: r8a779g0: Add VSPX instances
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBrAyI32"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D74C4CECE;
+	Thu, 19 Dec 2024 15:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734623861;
+	bh=WHsaPH4vN65eQ3EHG00DyYwrh6aVIZf2EWqKlB/GkLk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bBrAyI32CgnSEZBLY/CjF8WpoTPGd1WYjsCU99jzEyNBqnRkDQyFJ4B+82AyPfWjM
+	 ZHC98tCmbF7hqqAOHvIH2WLFSYHh4JNw22+afQNk0JWTfVcK6lQ6PorGmvBau6lSes
+	 oOlQi4LNY40DfQrZig4aYhJ9RVlJ/IvqmqlPtHqzXXNyha3DxFXPocb4yoQYh7N4F8
+	 yl1JmkL6uKuC5H4PTBlplmg1RliZV/cAF5yPsYtSWhy2SqmCNhSqsSyaachtNVSkyi
+	 wwFYV+7yZo07tsg6nn/n3oaClbU6CKjswfKc77C8nv+XobNF7tuxMtbhg8SJIBDB9C
+	 OA0M9vEOL0yHw==
+Message-ID: <c7278ed3-9361-4cd1-ad28-cdbcc3d84bcd@kernel.org>
+Date: Thu, 19 Dec 2024 16:57:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
+ CS2600
+To: Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Paul Handrigan <paulha@opensource.cirrus.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ patches@opensource.cirrus.com
+References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
+ <20241219024631.3145377-2-paulha@opensource.cirrus.com>
+ <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
+ <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
+ <3c09367c-808b-4414-bf6a-99e0bdaa3a27@kernel.org>
+ <Z2QYooZJ9kFeYzgc@opensource.cirrus.com>
+ <ebc6bc7d-d847-46fe-908c-c618d94e3345@kernel.org>
+ <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241219-rcar-v4h-vspx-v3-4-8fe8d2afb268@ideasonboard.com>
-References: <20241219-rcar-v4h-vspx-v3-0-8fe8d2afb268@ideasonboard.com>
-In-Reply-To: <20241219-rcar-v4h-vspx-v3-0-8fe8d2afb268@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1572;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=VTkLpaiH+VM6UokTmNQ9l0jXwGpqKfr0LWdoGEB/x24=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnZDraGlgRmWoS4x1AbfwY1jM6qpwiIGA0yaAKm
- 684rh30hF+JAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2Q62gAKCRByNAaPFqFW
- PNERD/94s/dpZpcG+EFAz403FgCP/bSTu89TjwR0cTm6YS7wblaEXUlWf6utZUL51I73w8rMir8
- knn58ci+SJ/HnkJD+Aod1pfcYGj731eGeQr8aYEnLYYchBh1ew9SyeL04a1hKcd+D4syWtqvaCF
- Ub4BMaLFfjHyu2EmwF9GBgFYRXETNJoeS+zEzJCvpDiOF4JXq4Fq9rAFZfiPsXv7ohAYFr/kgJJ
- zYyweNRSuvIH9BpcST2DeZdNP1bjqL071yv8ntG2XZ/mnRqmW11ljVYyAq30P/LnJx1Vrns18pM
- 2q2j8WijHQKwAEcbkqsFOS6wnP+pgoln79BHsseuCjmksd560BW/PMy+bsTH6neVRaELIh7uhGe
- jZmPcb3w9T2a+9waPw7h9CUQsGj/eJtT3pp5lkAhHGT4OifNbPV5mf6AQqRHO9Kx4bHPXBu4Gkr
- BjppmxfKbOL+B8A8zuuPyiVT+hWovU37HUafW1u204lXxIYUQWbbQyf2iQuiWqHbL1/3RA7uuxy
- hHawxhE+ek0iP0qdl8qIwkUMv6o2KMzFveo6C5NAaENNoMtRjWJ7gp5n63D23c601NGMqbaK7f2
- uZ/PVrrWzORiSt8Od99GaFCXGl6EOGa9ibYGCXdB8BsGy2/zDZyLjB8C/+qrOY5r/hHP2KMqMbN
- fwuiLtZZbrB1HIg==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-Add device nodes for the VSPX instances on R-Car V4H (R8A779G0) SoC.
+On 19/12/2024 14:36, Richard Fitzgerald wrote:
+> On 19/12/24 13:16, Krzysztof Kozlowski wrote:
+>> On 19/12/2024 13:59, Charles Keepax wrote:
+>>> On Thu, Dec 19, 2024 at 12:39:38PM +0100, Krzysztof Kozlowski wrote:
+>>>> On 19/12/2024 12:02, Charles Keepax wrote:
+>>>>> On Thu, Dec 19, 2024 at 09:51:00AM +0100, Krzysztof Kozlowski wrote:
+>>>>>> On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
+>>>>>>> +/* CS2600 Auxiliary Output */
+>>>>>>> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
+>>>>>>> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
+>>>>>>> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
+>>>>>>
+>>>>>> I still don't see why these three are supposed to be bindings. Drop
+>>>>>> them.
+>>>>>
+>>>>> In a binding one would presumably do:
+>>>>>
+>>>>> cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
+>>>>>
+>>>>> Apologies but I don't quite understand what you mean by the values
+>>>>> are not used in the binding? The driver reads the property and sets
+>>>>
+>>>> There is no user of these defines, so not a binding.
+>>>>
+>>>>> the pin to have the appropriate function. Admittedly one could drop
+>>>>
+>>>> It's not a proof that this is a binding.
+>>>>
+>>>>> the defines and then DTS would just have to do:
+>>>>>
+>>>>> cirrus,aux-output-source = <0>;
+>>>>>
+>>>>> But that feels a bit less helpful when reading the binding.
+>>>>
+>>>> Binding and being helpful are two different things. This to be the
+>>>> binding, it has to be used as a binding, so some translation layer
+>>>> between driver and DTS. It must have an user in DTS. I keep repeating
+>>>> this over and over...
+>>>>
+>>>
+>>> Apologies, but I not sure I totally follow this, and apologies if
+>>> you have already explained this are there some docs I can look
+>>> at?
+>>>
+>>> I think you are saying because these defines merely represent the
+>>> valid values for a device tree property and are not translated
+>>> into different values you can't put defines for them in the binding
+>>> header?
+>>>
+>>> So this would not be allowed:
+>>>
+>>>    #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 0
+>>>
+>>>    cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
+>>>
+>>>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
+>>>    regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
+>>>
+>>> But this would be fine:
+>>>
+>>>    #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 1
+>>>
+>>>    cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
+>>>
+>>>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
+>>>    switch (val) {
+>>>    case CS2600_AUX_OUTPUT_FREQ_UNLOCK:
+>>>      regmap_write(regmap, CS2600_OUTPUT_CFG2, 0);
+>>>    }
+>>>
+>>> And this would also be fine?
+>>>
+>>>    cirrus,aux-output-source = <0>;
+>>>
+>>>    device_property_read_u32(dev, "cirrus,aux-output-source", &val);
+>>>    regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
+>>>
+>> Yes. If you want to use in DTS user-readable values, then use string.
+>>
+> 
+> I don't understand this. Why should we have to use a string value for
+> something that only needs a simple integer value? Why can't we define
+> constants with meaningful names?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+You can and you will find plenty examples of this, but as I explained
+earlier - this is not a binding. We avoid defining as a binding
+something which is not a binding.
 
----
-v2->v3:
-- Place VSPX in the ISP power domain
-v1->v2:
-- Re-sort nodes by unit address
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 13bc49a535f8655db2af0493779f2756317ec806..104f740d20d315d43af9d0e63e418155f14a600c 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -2471,6 +2471,28 @@ fcpvx1: fcp@fedb8000 {
- 			iommus = <&ipmmu_vi1 25>;
- 		};
- 
-+		vspx0: vsp@fedd0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd0000 0 0x8000>;
-+			interrupts = <GIC_SPI 556 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1028>;
-+			power-domains = <&sysc R8A779G0_PD_A3ISP0>;
-+			resets = <&cpg 1028>;
-+
-+			renesas,fcp = <&fcpvx0>;
-+		};
-+
-+		vspx1: vsp@fedd8000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd8000 0 0x8000>;
-+			interrupts = <GIC_SPI 557 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1029>;
-+			power-domains = <&sysc R8A779G0_PD_A3ISP1>;
-+			resets = <&cpg 1029>;
-+
-+			renesas,fcp = <&fcpvx1>;
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
-
--- 
-2.47.1
-
+Best regards,
+Krzysztof
