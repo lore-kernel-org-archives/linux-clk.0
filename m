@@ -1,180 +1,149 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1325765;
-	Fri, 20 Dec 2024 06:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066FA1804A;
+	Fri, 20 Dec 2024 08:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734677049; cv=none; b=iC/ysxAZ2V6yiHpARK7O3qKOXCh/bj+J14eqzBtI7FeflzLXUHlnHwp7xsyCojubJsfNZ74oanlb/AJx0Bhx5Yfw0GPvDZW36FbuRqc6cmeOHZsmIcIp3F1vvcVydPgGcA6wzOvdP/vPqUXZHLFbDkjsftYFwG0IuWAMhy1AEVQ=
+	t=1734683070; cv=none; b=hNl35jzCWp0BsTycfmocp1eu+LPL/jZFlohciWiGgKOSRQCGgYwv3Ssrn/3UpRFHbzuv7YM0Zz4DxCSh5S9gbfknKgrL+YDubhcMsTJVCG+hgp0Gjkudrernra9dB2qCT4Kr/gqt9pg6D7CSpG+f/BIH9WW4VKxc660/kDMPDOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734677049; c=relaxed/simple;
-	bh=+XZqY7Czl0Dc6v9pigdmhhDRlR9SmSMlfzTPM4Q/yyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=do6MVBLB3rreaJbfs3bUvJkuMZVWfvN5EHoi9KFTY1MsE0HuSfKb4kOcHYB7KmZ1q9Et+NLVa+PVS4tWlriWlsxnEQWE8nzrrzort9yiwxqcAh2hkKTTZU9KAdmy2rRCZMI52wb6FPN/JQRllr5hOsoJaPe2hr93hVZQw0lun7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H0ieImpB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1734683070; c=relaxed/simple;
+	bh=g2ivRmVjBclytEWUEdITLiIdlp+tYqZ4AN31Wyq+lSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZOrWng/p5QX9aR7IpZ7SN1Ys9tGrW/MBw6kkkEY4/e1uMFlVPDSsTr3jbsHqvJ3tH83xpT8uWn8Br9IaIPrKmQwsSoWta5m1Gm15zcclO2n7I2pqKvFdJkr3+hD5OJ2QOfbPZK0q1NewlvEwTQ8tzk4Q0ugI9QgJY62ZmV9Cnfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSJk99eN; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H0ieImpB"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BK5ejHP005092;
-	Fri, 20 Dec 2024 06:43:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vtFBXkqVj1dep+GtPPs1kNMNrl/cJ0RdGXwT5VL7VeI=; b=H0ieImpBVKhwGwlr
-	GrJQn4qi67a3vmu3h70DL3iFW75tAsTqZuevLEjpdZsiWPkF68GDtVMmjY0oaG47
-	pFZxrwhGRR/QKm0w8KFaBDjYq7oiKYV7gX8chi2XYoMUtzohwaHI+/yKWYznKGHw
-	1RRCByuniB78qXODFuvo/WwEQM3z45KgW3w2j3BjsCltGLPrW8Bo23RDywCz2foA
-	eEBVMmvSqPbyD78imfWyofVcMv3q/hTI8O4ffeI/NYthUNotzHhC/KH9JOOjno3D
-	ne0dAf0++qVrXmDTM8g2tisGdTnhvhgpaPSl3P5eyC9WI97BCogREurZGvG6pOch
-	kekHIA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43n2n5r4t3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Dec 2024 06:43:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BK6hwhd022279
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Dec 2024 06:43:58 GMT
-Received: from [10.253.34.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Dec
- 2024 22:43:54 -0800
-Message-ID: <f6930a4c-6d31-4cd9-a9ba-d6ff50e274e2@quicinc.com>
-Date: Fri, 20 Dec 2024 14:43:51 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSJk99eN"
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5188b485988so508716e0c.3;
+        Fri, 20 Dec 2024 00:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734683068; x=1735287868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKyFlyNK5UBMo7uLDnK/c9yGedR44TZ2Zr2p76TGWKs=;
+        b=GSJk99eN31a6qwFm2o1KHf8k+wWe/xcrYJXj0kkcLX6AcK1HqGQTaoAfUdSQbm3m4i
+         b98/1z5yvZtI+PRO4YNqcRm/LxCL1Q+K8y/C25pQJ1Ftm2UQYXPlNbRPT7KMutoJl8CE
+         I2T890hKGhOFpmriduSjSa3mdNbE2MtNjmKbWurEbxupyel/hhoVvJYeObxV+7oK8Pdg
+         b2ryeWOJCljubK7pdw4d15b5Y/0fLtRJGZmFJJABI2784pIAE/OgeGzEFTJ5F2Np0Ezf
+         0KWjVQcVu10g7OXFnXd9EIEPMwOJRJIfri38looTK3y+f6UdelQTTDUD/xDvdkKyiz7z
+         TVzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734683068; x=1735287868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKyFlyNK5UBMo7uLDnK/c9yGedR44TZ2Zr2p76TGWKs=;
+        b=Rzu5itOw/5sCUyspygSWzyXFV8rOODXZ6izNQlWSohuDYkyq0Va9/CSrvrb6sGwavA
+         BcD5zyhKeeWBvL+OovP6J1q46xTcXUxT9g8YuivF1yHSftRg3D8bGww2PpVIauL8M2om
+         r6/XKJs3XySYL9CVN2BgCzOPFZ0TMp2R34ORlH2vwJp1TdF6n/IMIwhaGoMhaV38DCdz
+         bmeOukhswvy7wrYY3Kb82PW5DfyEAM4+HSPBaMJUEjRwhlLAiLHX1LwrsMlmtt0ZJrXL
+         ZB1yvb8yjnqgHpl0afTsqcwCeHPPirFuc2w9fHJQBj6JRXPbeVZFu8MzLmDERtc7ruBw
+         oO7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU783u62WdksoEdlvIsAVm6zyJ98JBOW2T84kREdkX+XN3HvfaWh9S4b77wXqeIKOJ2w3uljR2HdY44hlO9FqfnSAs=@vger.kernel.org, AJvYcCX/IylHXyfv9ZyHkGo9FOpm4GkQ795iwnxp+Bm25n4tGsnE7e9ktvJ8tXAc3Ba9Npcp3LQVV7c/q/A=@vger.kernel.org, AJvYcCXQZe8O3KfS4zKgFhUOoO1P4eDNyLLZzMP/i9st0Cxhplfj/hOW8WxTsqH4o3yrD8DoxGSiRFzqhxYcZRF5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxznzTzlCKy9hOM4T1HnUCa/pPvz4faEunwH9YjhyUjvq/dZjbr
+	ZUIngVeY7kDuRKb9cjyTAY59lZB8da9OCwDmi+fZPVvecj+Fqedgl2MsQEDyIfnr56iyETK42uL
+	70jCFEEc6EKMIQSLXnhAqjHtxLl8=
+X-Gm-Gg: ASbGnct1rfg9SbpvUjWOKsSm4dqnlc1lP1e+v0nX/T5hDW5T5M+gqfuZtlZSEBsgoU9
+	lBsKF89RxjoA3QXBJuewBRbJENCixfh8a/6Jws08=
+X-Google-Smtp-Source: AGHT+IF1UV39pKX7PM9xcs62YZrCNRQLA/dyQy5XFvwl/ik38xc+IFRNSpFiGHpjBWV+5QOOAtIgPwuROwj1Ot4Yisg=
+X-Received: by 2002:a05:6122:210e:b0:50a:b5a3:e00c with SMTP id
+ 71dfb90a1353d-51b75c2ac0amr1748696e0c.1.1734683067751; Fri, 20 Dec 2024
+ 00:24:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
- use fixed factor clock
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
- <20241107-qcom_ipq_cmnpll-v6-5-a5cfe09de485@quicinc.com>
- <0776a26e-56cd-4838-9b52-210ae9a1f281@oss.qualcomm.com>
- <8063460d-18ad-4e54-8232-716bad9d37c3@quicinc.com>
- <2456ab36-f48e-4aa3-88e1-aeb7895c9816@quicinc.com>
- <fb9d117e-77bd-4a01-a738-f72d07f6b84c@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <fb9d117e-77bd-4a01-a738-f72d07f6b84c@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gY6dZNpW44EhaxGfjAfgtSKNPqoRNL7Y
-X-Proofpoint-GUID: gY6dZNpW44EhaxGfjAfgtSKNPqoRNL7Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- bulkscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412200055
+References: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 20 Dec 2024 08:24:01 +0000
+Message-ID: <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
+ refcount handling
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Geert,
 
+On Thu, Dec 19, 2024 at 4:20=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, Dec 18, 2024 at 3:20=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Avoid triggering a `refcount_t: addition on 0; use-after-free.` warning
+> > when registering a module clock with the same MSTOP configuration. The
+> > issue arises when a module clock is registered but not enabled, resulti=
+ng
+> > in a `ref_cnt` of 0. Subsequent calls to `refcount_inc()` on such clock=
+s
+> > cause the kernel to warn about use-after-free.
+> >
+> > [    0.113529] ------------[ cut here ]------------
+> > [    0.113537] refcount_t: addition on 0; use-after-free.
+> > [    0.113576] WARNING: CPU: 2 PID: 1 at lib/refcount.c:25 refcount_war=
+n_saturate+0x120/0x144
+>
+> [...]
+>
+> > Resolve this by checking the `ref_cnt` value before calling
+> > `refcount_inc()`. If `ref_cnt` is 0, reset it to 1 using `refcount_set(=
+)`.
+>
+> Thanks for your patch!
+>
+> > Fixes: 7bd4cb3d6b7c ("clk: renesas: rzv2h: Relocate MSTOP-related macro=
+s to the family driver")
+>
+> The description (from your [PATCH 2/5]?) does not match the commit.
+>
+Ouch!
 
-On 12/20/2024 5:28 AM, Konrad Dybcio wrote:
-> On 18.12.2024 12:17 PM, Jie Luo wrote:
->>
->>
->> On 12/13/2024 6:30 PM, Jie Luo wrote:
->>>
->>>
->>> On 12/13/2024 2:33 AM, Konrad Dybcio wrote:
->>>> On 7.11.2024 10:50 AM, Luo Jie wrote:
->>>>> xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
->>>>> 48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
->>>>> block routing channel.
->>>>>
->>>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>>> ---
->>>>>    arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
->>>>>    arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
->>>>>    2 files changed, 8 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/ arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>> index 78f6a2e053d5..9a8692377176 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>> @@ -174,8 +174,13 @@ &ref_48mhz_clk {
->>>>>        clock-mult = <1>;
->>>>>    };
->>>>> +/*
->>>>> + * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
->>>>> + * from WiFi output clock 48 MHZ divided by 2.
->>>>> + */
->>>>>    &xo_board_clk {
->>>>> -    clock-frequency = <24000000>;
->>>>> +    clock-div = <2>;
->>>>> +    clock-mult = <1>;
->>>>>    };
->>>>>    &xo_clk {
->>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/ dts/qcom/ipq9574.dtsi
->>>>> index 8246a00a3e3e..25aed33e9358 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>> @@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
->>>>>            };
->>>>>            xo_board_clk: xo-board-clk {
->>>>> -            compatible = "fixed-clock";
->>>>> +            compatible = "fixed-factor-clock";
->>>>> +            clocks = <&ref_48mhz_clk>;
->>>>
->>>> This must be squashed with the previous patch, you can't introduce
->>>> code and replace it immediately afterwards.
->>>>
->>>> Konrad
->>
->> Hi Konrad,
->>
->> Looking at this comment again, there may have been some
->> misunderstanding. We are not introducing xo_board_clk in patch 4 of this
->> series. xo_board_clk is a pre-existing node.
->>
->> As part of this additional patch 5, we wanted to address Dmitry's
->> comment earlier in v5 (reference to comment below), by converting the
->> xo_board_clk as well to a fixed-factor clock. So it is better to keep
->> this change as a separate patch in my view. Hope this is OK.
-> 
-> Oh okay..
-> 
-> What's the difference between xo_board_clk and xo_clk then, if the
-> divider is accounted for in xo_board_clk?
-> 
-> Konrad
+> Fixes: 7bd4cb3d6b7c43f0 ("clk: renesas: rzv2h: Add MSTOP support")
+>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -565,8 +565,12 @@ static struct rzv2h_mstop
+> >                         continue;
+> >
+> >                 if (BUS_MSTOP(clk->mstop->idx, clk->mstop->mask) =3D=3D=
+ mstop_data) {
+> > -                       if (rzv2h_mod_clock_is_enabled(&clock->hw))
+> > -                               refcount_inc(&clk->mstop->ref_cnt);
+> > +                       if (rzv2h_mod_clock_is_enabled(&clock->hw)) {
+> > +                               if (refcount_read(&clk->mstop->ref_cnt)=
+)
+> > +                                       refcount_inc(&clk->mstop->ref_c=
+nt);
+> > +                               else
+> > +                                       refcount_set(&clk->mstop->ref_c=
+nt, 1);
+> > +                       }
+> >                         return clk->mstop;
+> >                 }
+> >         }
+>
+> This makes me wonder if refcount is the right abstraction?
+>
+You mean as discussed on irc, refcount per mstop bit instead of groups
+is not OK too? Do you have any other better approach in mind?
 
-Here is the clock chain for the relationship between the clocks:
-xo_clk (48 MHZ or 96 MHZ)-->WiFi (mul/div)--> 48 MHZ-->CMN PLL
-				               |
-					       +-->fixed factor(div by 2) --> xo_board_clk (24 MHZ)
-
-So there are two dividers (fixed factor clocks): first for generating
-the 48 MHZ clock (ref-48mhz-clk) from the fixed clock source 'xo_clk',
-and a second for generating the 24 MHZ 'xo_board_clk' from the 48 MHZ
-ref clock.
+Cheers,
+Prabhakar
