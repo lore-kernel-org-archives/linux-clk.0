@@ -1,181 +1,134 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3897C1B21A0;
-	Fri, 20 Dec 2024 09:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B619F42F
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734687440; cv=none; b=TvErb1G2yP6YEx5R37hGmIrltKdJV0yGfM6P0lLpLL+nBVx3arjdFKQroqXbzgDwBU/2qeH5IN0sZFeGDZrfQctl9APO5iJWXsEszzhHVTe/Ydd1U83Pqu54Kie0XcSAlif6Dook9JFLKHyK+OOh5So4chS+Y8tsBw6mZA/INsY=
+	t=1734687733; cv=none; b=ZwCAtJSIKmAqLInFi7ozZCInSjVfEDi2OvrsO2YDx9qxKL++jTAFUcbB0EUnkV2q4o9zNhBsqsaVhrdeJ35tFotifZJ7FKltF6TCGplI7PBmHOgagq4ta7yHZ+fqBeBwIv6jvZrgHM74pNcXZKiywX+MlkLtW0TC0IE4eGRGXXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734687440; c=relaxed/simple;
-	bh=M6vp6o513sej+wtmRd9sn3xUAaosqcRDTsMpj90iJpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mFq+D5ud2ZocjgUHMDZ4uHIktW9FndJANFUlt0PgDtZ883XFHe7b//d0ueJf0R8yu6piKot1frgL+HrZ6LNLzlp2JKDN3NEyV5TSBxntcc0cR9Exbz+0xpIc03C0+y5ERp3lb5S4bgv9SVdNWf5PegHewo6lz881uCK4IIHHabc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MO6RdnoY; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734687733; c=relaxed/simple;
+	bh=XbNct4c76Ic9uCHPcqgGY5elj+bO80ByXs4FfSvDnls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ocy5o7D0Z4wKjq2zq942a/047fQkvF3LeoCtJNq8+W125O00gjAswONHv0I5IJl1mVE5QipJEXL1zhbsDsp2r/OTacjL2DZVVPTKqvXYuSqkTepxZkhiWTIn15iR4IDmv5+gzKctRsVsWjg+Z4dLtTUZ5z2S5Ij/5hfErH49HSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BXk8PPEI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MO6RdnoY"
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5188e0c2b52so511665e0c.1;
-        Fri, 20 Dec 2024 01:37:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734687438; x=1735292238; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yPmnfcpFLsuSaSv65bQoDQp6Z3PFnbR38VLgkD78qdg=;
-        b=MO6RdnoYIlHG5PNWWWbVUupojI1M7/XYUT9bmC3480S0B+s63JNcyc0pRzdi0Key5Q
-         jH/m7YzM/zEoQ4Gg03C1dJNH696UPfhHOObxYHbejtJu3QwIeoSZX1CjKR3eKSEoDjsT
-         LDSRRSLfWFpP36KximzN8QMjzXmNeCf3XSyhs2CZ6MNObOEgEAZY/xi0jlahXMAt7a2y
-         te7wXzpY+cE11qjJla3SHSXxDoKFSEOOV5JeDokRIlA+wvuzMMJi1lnW0G8x/aPB+8yw
-         l7otjK17hgA3oflBICRKpgPoQobO8EIb0n1PLIvvljtEXchT+J0ANxGY2BW9Sj0oirB5
-         ipjQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BXk8PPEI"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BK7Ll9E028157
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:42:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	upEuZgACcGPccteNXGsHcBPQQzGSh0ZOSBP1SMmeJg8=; b=BXk8PPEIElthn9uS
+	1RlQKDRU81nifa+wViZyd4TcddzOlJrAFB4RDs3kS37dSsbv6ZKfkXOGeJoorx/M
+	G4Syzb1A+BIOa/qdOjZnPGZVtg5nomXkYAsmndSjs65HY3C+jlAS7rMShuaFW4D1
+	x8Dsiyv2MUUjW6Diz0cevzv/Z6u/CtM6wdOjKrHgfBcKO0Yq3WTWt4MWu4RNjahd
+	RWosAvYyxYfyKwW0gocmvkaVr8/rrcdtrCbo0YlszLIRJiB5jNInzAZj1Uo0MLYc
+	sSXLsTBu4fuLyeZOXsMtuSfi856MpZ/OMsm/ja67FWvfe7lrqGU7zzXqZJggnDJF
+	vlZAog==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43n44ggcu8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:42:10 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-467975f1b53so4333561cf.3
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 01:42:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734687438; x=1735292238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yPmnfcpFLsuSaSv65bQoDQp6Z3PFnbR38VLgkD78qdg=;
-        b=bMRTYATXrrLpdP9YDeSWZb1pftYxe+4aqJ0DCDeCUMoYmvpaIWesKu5jyiovKQW9FD
-         QcyNKATQ++KQ0mXH5xOQ7U1Zojx4cADZX6J9Q8rY9wc6j9PD2gibhBRJJ1jB3NvT2KLo
-         FQMApbaC8WCJTOGP24ikxTh/xBS8UagWykSAUuLYaydsqzfkmoPx6OL+SGJIWW3trdpw
-         pfj6SZqmo3X1RxV0/++4HdB+cN0blRPxhQukW62qRlQsBnVN3TRoTjr2duLO5JxRXhmf
-         0gyhrEaKpqkesfZjbc9TnF8YiPBhlKYSPvZ0AHK287kamERSlxJ3wgc1mMnWhGTNCAW9
-         FVTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBYIe6SSHxHJD1pwVgQd0ZLW38+NAnIGEysLsdbcfyKOqDYcDaNZc/awiVtbo3HAisGdFdo8XT3Vo=@vger.kernel.org, AJvYcCW2TlOT1HuTwUBpzv2rgGBcPiAXABYOKjpuelpGE0VfN8CPNqp3aUzGvCjTJC/iqMjwB8VnNwG1mJyk6uWXzB9iYG8=@vger.kernel.org, AJvYcCXRWbghsu//fjtqm2/5i/6Ehm2bxO+6oGKtfsUv146Q+bC2n0gawhI3twBMJPMd660Zd37SS7JhJ930oM6f@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy857Ltr0WQL/xzD58sXvNu5STiOuXFfhfrkXW5/smibscO8QXH
-	Y61ch/2ood8oHOaZzxzOqjaKB9454YpF/dKi0hvZqxF3gKz9AJAQNRFfDKJjlBdTJS/0ZTf2xUt
-	vkO1lTWpjggNramtn9iB/jnS7qZY=
-X-Gm-Gg: ASbGncum+2Kljv44FdB60n3IPgiPSwrk8BU44NOwXJ+h1MFk7fKeDfywgvOZtJ39/5H
-	R/ZTv1hx9Yuav+nXkoXlHatNo8k/PS3fD/GNOAWk=
-X-Google-Smtp-Source: AGHT+IF6nTixpo4pxyLE4uRS9dnOBpuDX62nFXKv29quCn9cPeoQb5nyS/fU/izPgLMe59a2uBsEiCOVt9kIeJIUjjI=
-X-Received: by 2002:a05:6122:240a:b0:515:3bfb:d421 with SMTP id
- 71dfb90a1353d-51b75c5a219mr1783790e0c.6.1734687437910; Fri, 20 Dec 2024
- 01:37:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734687730; x=1735292530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=upEuZgACcGPccteNXGsHcBPQQzGSh0ZOSBP1SMmeJg8=;
+        b=dKitAA82e+ACtbsC59oOdOVLjTpW+jCVVErDkbu38wzhEdZTTA8mIl43OknrsnnNHt
+         +CMneeYh/RrSGUVtEMg2b5JyjzXevAc2z2JyOcCLPMzf1GjHq3cbyC4dVoPagUlFwhJs
+         pSWOKB/ZVOE3faD75tJkeKCIIfj5nNMvM5kBYgwNSbh+N8eLp0EeYd/Kn06uoMBX7CgP
+         X/Tt3S9RZAjhTb8yiDiq4lJhDbf8XPwZ5l0wngrMuy9Q8hq+lny/43wbGTDSEYwqIWZC
+         tZ2T0pQzsfSpYjdbc9+FDlJWYNYjlqvbaR8Uuod1xpt5QZtJvrSgk+hvn9WoV0lr9HoQ
+         zHOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrwyftxyAdlzpJeFc56v5duADyI1uHjJhUt1m/TWOPyye+R2/mW3avSztQlz1ICAfivOR7rrUEbck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj3Hciocg2LXQ7vbWEKrVPe4IhuB9MVpQG3DseifVaTATV5vO1
+	MAO3OIdXbioTpFuZ/UqG+uGgzRN09pnCrlYiW0evO6fclu5uXLa7ZsbaLiDjETdscVeUXmnPwJe
+	bGFDZTZ7LB12Jq8iDIq7lt/IQQSCyDm4eodKXa7Z/Ov99sG/o9DDKhyZjfY8=
+X-Gm-Gg: ASbGncv0kfyjqHxnkIt03Uw9hxEY3xNffS8KO+c5P774XI10NSV8/SXLM386pgSxMLn
+	imIm+mFhg6S56UA46WSsgXecmUz/NzOMAcjulj8sPxeL5AuqcwC8iAjP+s9RliR3oKhAmw656EP
+	fYhFgV6j+CqQu2ug7tu2p+y4nHjQKVbVW5ANif43guP6hC5JtvKixxFnFLKyOpC01l0EZa7aZu1
+	c85+o8WVBjqRtFiLibzjyUMHxHjsGH938t4bm/1ZpIXTj8lhWjpYUuMnZgm1MvZRLbNm4ix27t6
+	y9x85/e3NEPZpA2I872smX/H/jIZxYqerFg=
+X-Received: by 2002:ac8:5d0f:0:b0:466:92d8:737f with SMTP id d75a77b69052e-46a4a8fae4fmr14883641cf.8.1734687730202;
+        Fri, 20 Dec 2024 01:42:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHfnR1C569lsJcHofBTD7Tj37idjv8eOfCgixtSaFptqF2Mtevk8lxBAJ7GLYBUU39hwBD6vQ==
+X-Received: by 2002:ac8:5d0f:0:b0:466:92d8:737f with SMTP id d75a77b69052e-46a4a8fae4fmr14883441cf.8.1734687729883;
+        Fri, 20 Dec 2024 01:42:09 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e82f595sm157358866b.10.2024.12.20.01.42.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2024 01:42:09 -0800 (PST)
+Message-ID: <e909ac59-b2d6-4626-8d4e-8279a691f98a@oss.qualcomm.com>
+Date: Fri, 20 Dec 2024 10:42:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
- <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com> <CAMuHMdUDABcDXRemYLAXEh3cEMQqUrmhdeBCJm4mXhnHGrALKQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUDABcDXRemYLAXEh3cEMQqUrmhdeBCJm4mXhnHGrALKQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 20 Dec 2024 09:36:52 +0000
-Message-ID: <CA+V-a8twbRisXD7ThVjpPUR-E7bH+Agqx_OsL34-DqwM=jmSfA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
- refcount handling
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm6350: Add missing parent_map for two
+ clocks
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241220-sm6350-parent_map-v1-0-64f3d04cb2eb@fairphone.com>
+ <20241220-sm6350-parent_map-v1-1-64f3d04cb2eb@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241220-sm6350-parent_map-v1-1-64f3d04cb2eb@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 0HqNB2msJo5RTPvW7Mb20fzemwXBlTkZ
+X-Proofpoint-GUID: 0HqNB2msJo5RTPvW7Mb20fzemwXBlTkZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412200080
 
-Hi Geert,
+On 20.12.2024 10:03 AM, Luca Weiss wrote:
+> If a clk_rcg2 has a parent, it should also have parent_map defined,
 
-On Fri, Dec 20, 2024 at 8:42=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Dec 20, 2024 at 9:24=E2=80=AFAM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Thu, Dec 19, 2024 at 4:20=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Wed, Dec 18, 2024 at 3:20=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Avoid triggering a `refcount_t: addition on 0; use-after-free.` war=
-ning
-> > > > when registering a module clock with the same MSTOP configuration. =
-The
-> > > > issue arises when a module clock is registered but not enabled, res=
-ulting
-> > > > in a `ref_cnt` of 0. Subsequent calls to `refcount_inc()` on such c=
-locks
-> > > > cause the kernel to warn about use-after-free.
-> > > >
-> > > > [    0.113529] ------------[ cut here ]------------
-> > > > [    0.113537] refcount_t: addition on 0; use-after-free.
-> > > > [    0.113576] WARNING: CPU: 2 PID: 1 at lib/refcount.c:25 refcount=
-_warn_saturate+0x120/0x144
-> > >
-> > > [...]
-> > >
-> > > > Resolve this by checking the `ref_cnt` value before calling
-> > > > `refcount_inc()`. If `ref_cnt` is 0, reset it to 1 using `refcount_=
-set()`.
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > Fixes: 7bd4cb3d6b7c ("clk: renesas: rzv2h: Relocate MSTOP-related m=
-acros to the family driver")
-> > >
-> > > The description (from your [PATCH 2/5]?) does not match the commit.
-> > >
-> > Ouch!
-> >
-> > > Fixes: 7bd4cb3d6b7c43f0 ("clk: renesas: rzv2h: Add MSTOP support")
-> > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > >
-> > > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > > > @@ -565,8 +565,12 @@ static struct rzv2h_mstop
-> > > >                         continue;
-> > > >
-> > > >                 if (BUS_MSTOP(clk->mstop->idx, clk->mstop->mask) =
-=3D=3D mstop_data) {
-> > > > -                       if (rzv2h_mod_clock_is_enabled(&clock->hw))
-> > > > -                               refcount_inc(&clk->mstop->ref_cnt);
-> > > > +                       if (rzv2h_mod_clock_is_enabled(&clock->hw))=
- {
-> > > > +                               if (refcount_read(&clk->mstop->ref_=
-cnt))
-> > > > +                                       refcount_inc(&clk->mstop->r=
-ef_cnt);
-> > > > +                               else
-> > > > +                                       refcount_set(&clk->mstop->r=
-ef_cnt, 1);
-> > > > +                       }
->
-> Or simply
->
->     do refcount_set(&clk->mstop->ref_cnt,
->                     refcount_read(&clk->mstop->ref_cnt) +1);
->
-> ?
->
-> Still, you risk some janitor replacing that by refcount_inc() regardless.=
-..
->
-Agreed.
+                      ^
+                        freq_tbl
 
-> > > >                         return clk->mstop;
-> > > >                 }
-> > > >         }
-> > >
-> > > This makes me wonder if refcount is the right abstraction?
-> > >
-> > You mean as discussed on irc, refcount per mstop bit instead of groups
-> > is not OK too? Do you have any other better approach in mind?
->
-> I mean if you need such silly workarounds to do a simple increment, is
-> refcount_t the right abstraction, instead of a plain atomic_t?
->
-OK, I'll switch to the atomic_t variant. For this I will still rebase
-my work on [0]  along with atomic_t per mstop bit. Is that OK?
+> otherwise we'll get a NULL pointer dereference when calling clk_set_rate
+> like the following:
+> 
+>   [    3.388105] Call trace:
+>   [    3.390664]  qcom_find_src_index+0x3c/0x70 (P)
+>   [    3.395301]  qcom_find_src_index+0x1c/0x70 (L)
+>   [    3.399934]  _freq_tbl_determine_rate+0x48/0x100
+>   [    3.404753]  clk_rcg2_determine_rate+0x1c/0x28
+>   [    3.409387]  clk_core_determine_round_nolock+0x58/0xe4
+>   [    3.421414]  clk_core_round_rate_nolock+0x48/0xfc
+>   [    3.432974]  clk_core_round_rate_nolock+0xd0/0xfc
+>   [    3.444483]  clk_core_set_rate_nolock+0x8c/0x300
+>   [    3.455886]  clk_set_rate+0x38/0x14c
+> 
+> Add the parent_map property for two clocks where it's missing and also
+> un-inline the parent_data as well to keep the matching parent_map and
+> parent_data together.
 
-[0] https://lore.kernel.org/all/CAMuHMdUEkN6Z7p=3DLspP+npB3xs4ui+D9oGG+Q15k=
-Q-mYiaoK-A@mail.gmail.com/
+The patch looks good otherwise
 
-Cheers,
-Prabhakar
+Konrad
+
