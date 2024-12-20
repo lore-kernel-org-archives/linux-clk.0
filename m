@@ -1,63 +1,63 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196C122259D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A61321C176
 	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 17:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734715077; cv=none; b=jRyEv1DKbdIZ838/TEJptG/K+pL/gzBi5p7KgbmemWIBQs+iPL4xL17Zv2v1yZbGS/hC55HL4GBP56sElHXg3FNCA3ncMAb9EIGJU77T0KN3cqR2S27X4WIOo2w4deaMElpfLoxgy4Tb2oXFAZkjYcF7FNPmAOnIu3HOpd023Aw=
+	t=1734715078; cv=none; b=ceG5+QpKNxDKV46huezJ951fQUTSeS55Ma4cSw40e51ZFAfswYQ8Hvn/A/kj0KvPtC41QD0T4wt9JY3ceqIhzyUuz4h/UvdEH6yW24BdcoGGikKQE0JRryhMCANRgZ3E+ARL0s5uf/JoshtBVRPmx7DI6igozzxTmKbiVUlyHfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734715077; c=relaxed/simple;
-	bh=tvh8JlfNuT44ThrGDFE2JBh8kT+71CwmF8GtX4Rjbzo=;
+	s=arc-20240116; t=1734715078; c=relaxed/simple;
+	bh=QZzuh4YCk4+u8HqOY55Ten7fBqCy9NqgRNvOFfuDlRw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E07hkiwAb8WwDVHU9X19BhigSeEmrvzdSXgLbO5159w90pjpFdloBcGF7qsfgI/sPuwL7+2sVZF1cQ/aC+Hy0pbme/vPcPntVzQJhxIbPdDsAXAY2sKAZ/2GzHYrnmrZOWkSoscXG2G4/J0vZct2Hb6EFpEJEhLQM3GqPfZVHpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g4iTOmc3; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:To:Cc; b=Xaswg9kDV7PzAw0kw60uOJ6eWOjCl0ZM7h1R1ZKV2HEPcj4nbxNENatGF/2E7WDYC/8GXeag+melom9hOyaX7c/kp3pkqzOiBDdps/cD0bx4ngAx3noWBngiYYeWg239znSQWz/kILvVBzXD46CDVKWyKGmfGBF4dJ64UcUNTE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YfljSgCW; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g4iTOmc3"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3862d161947so1122530f8f.3
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YfljSgCW"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso21015005e9.0
         for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:17:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734715073; x=1735319873; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Cgs5QNP7O8iugv52YTWDU3oFoGi5v9FMjpGDuCdwf+k=;
-        b=g4iTOmc33QswFgGUlUrOh+hQZzkLu7WXh5TTeWMaMzalyzbwm3XIox34bup61rshxe
-         JzkITmuhk4Z7b1Kzy76GLbaDbTkcEHNR9PchSLog+Z7yFPXDC8VUNgeGB5xm8EV1c/nK
-         qlrQipH58Ta9MADXL8WyLO1zErXw04AFMvUfluR/iHXf2WEZjskmOnH4MMVgVsfGohrN
-         l3ky6Kbv2p5fpwDFH8fH9La79pSw1MZsoNcznXPEbHRrJZtRb69MwNFvcxlr/SQ7MXv0
-         9OlUQqiJEMIoGgjsV2V5yJaTBeE4xuSLRFhBII2xTH6vehwm5i/pqSzoLWWjx4pncPy+
-         7voQ==
+        bh=jLmef4oF8TlA8y0qlctbEguphmyevq+ZiZJhDulEau4=;
+        b=YfljSgCW0XldlZIziwa0JLqyphndwjgPR6urYFfbA26KenY7Bk2nZ3ygSCoBUGzppJ
+         shFnGBVtVqluDdQEyG5PmTpdj19SLAmTUK+yeonYOLy5NdhoPJb2wjp2/o5QNIAOsjua
+         pgVP3Ttg7+jxbD9Tfq+tmKyin0ER2Y3QBvxS4FuSJ1VYKRgnXflRt1/w7MBA2i9P1O+R
+         d5uaDVP2ezLIFG7Cm3oC6fYk1h5CAcFQCpiTUSzYihDPZ6wHj/YF/YPpW8ThI/2g07d2
+         G/uONt5k8mA2TItFMkum7/zrpxPaPOdWtgmW9UO4MvuRLquLUMjf/Uw7isqgrJIHfmgo
+         qXUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1734715073; x=1735319873;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cgs5QNP7O8iugv52YTWDU3oFoGi5v9FMjpGDuCdwf+k=;
-        b=bPIzis6TWOmGrzuj95wzgVtxwYaFmz3T9oLAObrNdyUnsjpv6N4eETiHPA8zEUUbso
-         qlf/3CcVpObKO9n6SKChOLiqezBRojGVCpZpZOIeeJUR0Ycw7FhC8vV9LLGUgBaO7duc
-         eFigAxfobkFd4Q7jqnpIyiL9hix38jHD8qtg0U2mph3ycruOJTMPikgRxNqlYjO13soS
-         BURAo1mjCPPleednn/yVolLo5sNVGcptmlK/XKJAadgd+wCRExSLbDFHGOUkWwxplxcW
-         O65Q1NqKkg5j1SQMF6DPuSnB8c5EoDm8iMqDLSKY5ylodJVpAxHKgWNiRMweIPzdkkqZ
-         DUpQ==
-X-Gm-Message-State: AOJu0YyLpCjKEUfPETfDVcYewO91IwORpV7/AhN4ZMonKqcJ8sVTSM9G
-	7s2AOLjbS99gYGlEknssBr8L5Eme5LAfoLCf/g4FmiN3HUASYOgwnq36yZHfyWQ=
-X-Gm-Gg: ASbGnctnWE9jGot8tULABF0tkOD5CXFLxG0OA6SAKwJGxJggX02CeaJfOxTr6Wc57cw
-	TThqQ+Agq6U42v2g4DTrMMaheCthLRQW4JIKehyWIKOl4APq7ELN0aXbm4dWJhO2izrI3a89KOV
-	qlGV76TVo1E+SaRGTWPSQoTDhiNUibM/M2A8uyBGgy4kyuC6xIjbv03+Hr2RRfqSSy9nGRc1GrL
-	ArQcgvPmBx8KxwFXuMpTgTOV8JPBToAE2o4aKD0sBmHNdnfIyV2/r1xLssOxspgCEj+XWc=
-X-Google-Smtp-Source: AGHT+IGYlzQLR4J9adpke1hx6AAFsWeyzGPiUR+SyMcWO2IVMtoisGzuqWJuHjjRKM9zNCOgImfvIw==
-X-Received: by 2002:a5d:598f:0:b0:386:424e:32d5 with SMTP id ffacd0b85a97d-38a221ea939mr4106400f8f.14.1734715073465;
-        Fri, 20 Dec 2024 09:17:53 -0800 (PST)
+        bh=jLmef4oF8TlA8y0qlctbEguphmyevq+ZiZJhDulEau4=;
+        b=bV+SrpnScVth67T1yZzpV88cKyou+FJWvXOtjFmGORjlgyWBROeWgS+PbmbsCd1Zwn
+         pjGXgrIkoqM4yunUDAKUfrFR+poKBdEJVCNYH5Hp1pj2z7b3AZuTiRLc47V68T3W+Dvi
+         odHZIT12MWKvxOH4EM1sga9vsxKFMCBc/9kTD0Lvg2lhXUNYaTUG4j0ieGbAZf5/KK9M
+         ePK7cvazI5SEIY3qx2YvQpjk5GhTUlljCAi56owrSlvzVDWwQHZYYNSeLxkBkvxCgW5x
+         CDmf06YU+U0mzQaKV0ceXKZAf6rPuBOO/GBbW5MLDL9VQP3PXguUp5KdbPd8hFvLafDT
+         pUZQ==
+X-Gm-Message-State: AOJu0Yw43DbeBYYHLRSftbK3BIYm7vGaVz2GvcCOuwqtZd9fmhUth1mY
+	nLKiaU07POmk1PktTH5YJY/3LoCO+rQ/2JFRUH9kExy01fGbFqvVaCUfwBcNL3g=
+X-Gm-Gg: ASbGncttumYyGMWx/jX+5XeoXU27eM5+Exfv/YLp+SIOO7AVZbdFuH2pjpZVIyid5hB
+	BMgxeOIX6SScI+eTjfYEADVUBOcBILM+fnjZJJJ1WyRGfOz/zz01k8wN9w7nXDWotPLVPcqOJYU
+	TKPl/3cfmGTFe70JPCjEV0+No1e+kTRSDsS/t/BMGt3wSSPhhIGVUoiFzvLX0LAVtvcWA9KfeR0
+	lEsTcmVEFM1/pPhZ9u1vCGhdQTzqMPtDXcrb91oouyYeALSIfxbj4KynGB8Q+zvnaPOd8c=
+X-Google-Smtp-Source: AGHT+IHc34w3d4Nx9g9u6ybs4KCVCbRyVQZ2W3hBulqNvsWd11rCyNEyfIn/nFVq78p0f+6X97DtBA==
+X-Received: by 2002:a05:6000:144b:b0:385:efc7:932d with SMTP id ffacd0b85a97d-38a223ffb44mr3904096f8f.46.1734715072566;
+        Fri, 20 Dec 2024 09:17:52 -0800 (PST)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:c000:46df:1e3e:983f])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a1c8add5asm4432847f8f.107.2024.12.20.09.17.52
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a1c8add5asm4432847f8f.107.2024.12.20.09.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 09:17:53 -0800 (PST)
+        Fri, 20 Dec 2024 09:17:52 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 20 Dec 2024 18:17:44 +0100
-Subject: [PATCH 3/3] clk: amlogic: s4: remove unused data
+Date: Fri, 20 Dec 2024 18:17:43 +0100
+Subject: [PATCH 2/3] clk: amlogic: drop clk_regmap tables
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-3-96dd657cbfbd@baylibre.com>
+Message-Id: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-2-96dd657cbfbd@baylibre.com>
 References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
 In-Reply-To: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -77,159 +77,2793 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3977; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=tvh8JlfNuT44ThrGDFE2JBh8kT+71CwmF8GtX4Rjbzo=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnZaa8huQnimyWNluiyiI+CqSpsbYXDeVZSFdL+
- Ho18RI74oqJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ2WmvAAKCRDm/A8cN/La
- haBXD/9AGOS2JTSDO6JJiE8kB1oiX8eb7GTQH3ESwZO99Ez7orpE9CFgr4umREPh6u+yUUQIIsi
- VuJW6e5VJoBA4G6Ueh9SC9IFQF/u5FsG2KGWz18UCo+u7mCL8A+OSt6yZunQtV3uMplGPy9+O+p
- q52jusn0iNnjqVM3gtuBYcl85n4c0FkUhdqpac0rsedIl5KdIrCKe3d6ks05QGYab+exnrWQMNa
- 31zoRaSJ7JL2ljimtgjMjYloq4h9XlsrTII/JK1kbHCePAuajq7RLrRNjfri3OQJglSUNekRorz
- PFAjLgfdfFTeIa7f/jshO04/RaSMl6jUcSJNLGLxvJ4M24v5jUPmNeDL7HL0UFpcmk7PA25QOi8
- c+Kqfd5GPduZ6s4SI1Dp6THKlPH+n+CuVDTvwk18mnvOvjPSCJMNFIJByEkWmx3rWcW9nJ5SKWh
- XyzvmHaUg2p5jOm77UHUnE2TqR8lAtQ1IFPnM+hcTrJc9FRHyDnSFKZetihmgnUNOoRGf8p2b3W
- VHjgPcvpUykOmIJAQOdUjYUVxDxtQdSOs038LZq5BSpTggX7zsAmXu5Bhr4Iw5MGapneO/VDUhr
- WVxqUruSDsT6SyNc/ABvI4PSj+nQmwKsZRrEbhsz2GKyOVCugml60Kf+thdSZg87fW8MVPj9B3a
- xJKiAoUM1rwzd7w==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=68703; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=QZzuh4YCk4+u8HqOY55Ten7fBqCy9NqgRNvOFfuDlRw=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnZaa8eYLCMvQ7tzhPO0nWbxFUN9yol1nZEQ4Ix
+ gpunfpNXEmJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ2WmvAAKCRDm/A8cN/La
+ hYK5D/9zzPYzPBRkgAR1wYrwRKF/dZ5eZ0CXyCqKaYbTlVXL3sKstM9AS0VIyiKyOWjnk7zTqlF
+ m/5wJPkMaP5agBCBfx7q4ZTt2fsH9lbollK3zKIyErZXMjgfBphVsh3QqqL81/U2jmCTMlKwkJK
+ twGUhaQfW112MDBEXoYrmgh/n4BhbukPpPmrHPHxzoJkck4Rl/69QfnTYv6crSSqkGvT93VvzWl
+ OkirOnLIaJppqaTLkdmiOT3cybtbYaSahgJyp5D+DNL/AGfm9S0p0M7Qh/ukm/gggY2vGOBVKkv
+ WcrhOYnIo3vAhTnJuxrDzNrtHIu6D94ausyRperFaxjY5h90FllSm0e+nsUK2IUxTe7vsGFew1P
+ Vw7UiiyCPtyYJapfeNi7VrfsWt/xWf2f2RbN5rT1Ttxz8U9KGZUNY0N2nkvTi3EAoL3nv8mJYZc
+ p3TQSxSvk8jeT2OK8AJKqDcXN7KKhJ8gOCyT12mU13F75WiOvnY4DafNf4Uh4fZufK3US9XvU1G
+ 2P7/8P5t4jVG8W9s2kboId8LKjpoIYmNlOtNMq+uABI2pysfVpfd8sVZ0CRJvfOufN8RpgM+WTf
+ lsFLWWF4s2RNpfAOA99ggoHOc/W51+TXGYFw/bK8KM3hL6WmenCebKpbZ7L0Rn5ltl2CzT+kssg
+ VKF8ZGPz8Rbx7pA==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Following the removal of the big clk_regmap clock table from the
-s4-peripherals clock controller driver, it appears some clocks are unused,
-which means these are not exported or even registered.
+Remove the big clk_regmap tables that are used to populate the regmap
+field of clk_regmap clocks at runtime. Instead of using tables, use devres
+to allow the clocks to get the necessary regmap.
 
-In all likelihood, these clocks have not been tested. Remove the unused
-clocks for now. These can added back later when they have been properly
-tested.
+A simpler solution would have been to use dev_get_regmap() but this would
+not work with syscon based controllers.
+
+This rework save a bit memory and the result is less of a maintenance
+burden.
+
+Unfortunately meson8b is left out for now since it is an early clock
+driver that does not have proper device support for now.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/s4-peripherals.c | 112 -------------------------------------
- 1 file changed, 112 deletions(-)
+ drivers/clk/meson/a1-peripherals.c | 165 +-------------
+ drivers/clk/meson/a1-pll.c         |  18 +-
+ drivers/clk/meson/axg-aoclk.c      |  22 --
+ drivers/clk/meson/axg-audio.c      | 435 +------------------------------------
+ drivers/clk/meson/axg.c            | 131 -----------
+ drivers/clk/meson/c3-peripherals.c | 212 +-----------------
+ drivers/clk/meson/c3-pll.c         |  34 +--
+ drivers/clk/meson/clk-cpu-dyndiv.c |   1 +
+ drivers/clk/meson/clk-dualdiv.c    |   2 +
+ drivers/clk/meson/clk-mpll.c       |   6 +
+ drivers/clk/meson/clk-phase.c      |  11 +
+ drivers/clk/meson/clk-pll.c        |   7 +
+ drivers/clk/meson/clk-regmap.c     |  88 ++++++++
+ drivers/clk/meson/clk-regmap.h     |   7 +
+ drivers/clk/meson/g12a-aoclk.c     |  34 ---
+ drivers/clk/meson/g12a.c           | 261 ----------------------
+ drivers/clk/meson/gxbb-aoclk.c     |  19 --
+ drivers/clk/meson/gxbb.c           | 393 ---------------------------------
+ drivers/clk/meson/meson-aoclk.c    |   7 +-
+ drivers/clk/meson/meson-aoclk.h    |   2 -
+ drivers/clk/meson/meson-eeclk.c    |   6 +-
+ drivers/clk/meson/meson-eeclk.h    |   2 -
+ drivers/clk/meson/meson8-ddr.c     |  11 +-
+ drivers/clk/meson/s4-peripherals.c | 231 +-------------------
+ drivers/clk/meson/s4-pll.c         |  33 +--
+ drivers/clk/meson/sclk-div.c       |   5 +
+ drivers/clk/meson/vclk.c           |   2 +
+ drivers/clk/meson/vid-pll-div.c    |   1 +
+ 28 files changed, 165 insertions(+), 1981 deletions(-)
 
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 91c7b10c2b68c626dd1d6164ea855370aae71485..72b990fc0de8e4e2c83d0fc3b4c6e3fc1fc96367 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -3129,118 +3129,6 @@ static struct clk_regmap s4_gen_clk = {
- 	},
+diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+index 7aa6abb2eb1f2b804916d5c2515eefc15149433d..020779e4042d5e1e7ec555bf543604e2bc137477 100644
+--- a/drivers/clk/meson/a1-peripherals.c
++++ b/drivers/clk/meson/a1-peripherals.c
+@@ -2026,163 +2026,6 @@ static struct clk_hw *a1_periphs_hw_clks[] = {
+ 	[CLKID_DMC_SEL2]		= &dmc_sel2.hw,
  };
  
--static const struct clk_parent_data s4_adc_extclk_in_parent_data[]  = {
--	{ .fw_name = "xtal", },
--	{ .fw_name = "fclk_div4", },
--	{ .fw_name = "fclk_div3", },
--	{ .fw_name = "fclk_div5", },
--	{ .fw_name = "fclk_div7", },
--	{ .fw_name = "mpll2", },
--	{ .fw_name = "gp0_pll", },
--	{ .fw_name = "hifi_pll", },
+-/* Convenience table to populate regmap in .probe */
+-static struct clk_regmap *const a1_periphs_regmaps[] = {
+-	&xtal_in,
+-	&fixpll_in,
+-	&usb_phy_in,
+-	&usb_ctrl_in,
+-	&hifipll_in,
+-	&syspll_in,
+-	&dds_in,
+-	&sys,
+-	&clktree,
+-	&reset_ctrl,
+-	&analog_ctrl,
+-	&pwr_ctrl,
+-	&pad_ctrl,
+-	&sys_ctrl,
+-	&temp_sensor,
+-	&am2axi_dev,
+-	&spicc_b,
+-	&spicc_a,
+-	&msr,
+-	&audio,
+-	&jtag_ctrl,
+-	&saradc_en,
+-	&pwm_ef,
+-	&pwm_cd,
+-	&pwm_ab,
+-	&cec,
+-	&i2c_s,
+-	&ir_ctrl,
+-	&i2c_m_d,
+-	&i2c_m_c,
+-	&i2c_m_b,
+-	&i2c_m_a,
+-	&acodec,
+-	&otp,
+-	&sd_emmc_a,
+-	&usb_phy,
+-	&usb_ctrl,
+-	&sys_dspb,
+-	&sys_dspa,
+-	&dma,
+-	&irq_ctrl,
+-	&nic,
+-	&gic,
+-	&uart_c,
+-	&uart_b,
+-	&uart_a,
+-	&sys_psram,
+-	&rsa,
+-	&coresight,
+-	&am2axi_vad,
+-	&audio_vad,
+-	&axi_dmc,
+-	&axi_psram,
+-	&ramb,
+-	&rama,
+-	&axi_spifc,
+-	&axi_nic,
+-	&axi_dma,
+-	&cpu_ctrl,
+-	&rom,
+-	&prod_i2c,
+-	&dspa_sel,
+-	&dspb_sel,
+-	&dspa_en,
+-	&dspa_en_nic,
+-	&dspb_en,
+-	&dspb_en_nic,
+-	&rtc,
+-	&ceca_32k_out,
+-	&cecb_32k_out,
+-	&clk_24m,
+-	&clk_12m,
+-	&fclk_div2_divn,
+-	&gen,
+-	&saradc_sel,
+-	&saradc,
+-	&pwm_a,
+-	&pwm_b,
+-	&pwm_c,
+-	&pwm_d,
+-	&pwm_e,
+-	&pwm_f,
+-	&spicc,
+-	&ts,
+-	&spifc,
+-	&usb_bus,
+-	&sd_emmc,
+-	&psram,
+-	&dmc,
+-	&sys_a_sel,
+-	&sys_a_div,
+-	&sys_a,
+-	&sys_b_sel,
+-	&sys_b_div,
+-	&sys_b,
+-	&dspa_a_sel,
+-	&dspa_a_div,
+-	&dspa_a,
+-	&dspa_b_sel,
+-	&dspa_b_div,
+-	&dspa_b,
+-	&dspb_a_sel,
+-	&dspb_a_div,
+-	&dspb_a,
+-	&dspb_b_sel,
+-	&dspb_b_div,
+-	&dspb_b,
+-	&rtc_32k_in,
+-	&rtc_32k_div,
+-	&rtc_32k_xtal,
+-	&rtc_32k_sel,
+-	&cecb_32k_in,
+-	&cecb_32k_div,
+-	&cecb_32k_sel_pre,
+-	&cecb_32k_sel,
+-	&ceca_32k_in,
+-	&ceca_32k_div,
+-	&ceca_32k_sel_pre,
+-	&ceca_32k_sel,
+-	&fclk_div2_divn_pre,
+-	&gen_sel,
+-	&gen_div,
+-	&saradc_div,
+-	&pwm_a_sel,
+-	&pwm_a_div,
+-	&pwm_b_sel,
+-	&pwm_b_div,
+-	&pwm_c_sel,
+-	&pwm_c_div,
+-	&pwm_d_sel,
+-	&pwm_d_div,
+-	&pwm_e_sel,
+-	&pwm_e_div,
+-	&pwm_f_sel,
+-	&pwm_f_div,
+-	&spicc_sel,
+-	&spicc_div,
+-	&spicc_sel2,
+-	&ts_div,
+-	&spifc_sel,
+-	&spifc_div,
+-	&spifc_sel2,
+-	&usb_bus_sel,
+-	&usb_bus_div,
+-	&sd_emmc_sel,
+-	&sd_emmc_div,
+-	&sd_emmc_sel2,
+-	&psram_sel,
+-	&psram_div,
+-	&psram_sel2,
+-	&dmc_sel,
+-	&dmc_div,
+-	&dmc_sel2,
 -};
 -
--static struct clk_regmap s4_adc_extclk_in_mux = {
--	.data = &(struct clk_regmap_mux_data) {
--		.offset = CLKCTRL_DEMOD_CLK_CTRL,
--		.mask = 0x7,
--		.shift = 25,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "adc_extclk_in_mux",
--		.ops = &clk_regmap_mux_ops,
--		.parent_data = s4_adc_extclk_in_parent_data,
--		.num_parents = ARRAY_SIZE(s4_adc_extclk_in_parent_data),
--		.flags = 0,
--	},
--};
--
--static struct clk_regmap s4_adc_extclk_in_div = {
--	.data = &(struct clk_regmap_div_data) {
--		.offset = CLKCTRL_DEMOD_CLK_CTRL,
--		.shift = 16,
--		.width = 7,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "adc_extclk_in_div",
--		.ops = &clk_regmap_divider_ops,
--		.parent_hws = (const struct clk_hw *[]) {
--			&s4_adc_extclk_in_mux.hw
--		},
--		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
--	},
--};
--
--static struct clk_regmap s4_adc_extclk_in_gate = {
--	.data = &(struct clk_regmap_gate_data) {
--		.offset = CLKCTRL_DEMOD_CLK_CTRL,
--		.bit_idx = 24,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "adc_extclk_in",
--		.ops = &clk_regmap_gate_ops,
--		.parent_hws = (const struct clk_hw *[]) {
--			&s4_adc_extclk_in_div.hw
--		},
--		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
--	},
--};
--
--static struct clk_regmap s4_demod_core_clk_mux = {
--	.data = &(struct clk_regmap_mux_data) {
--		.offset = CLKCTRL_DEMOD_CLK_CTRL,
--		.mask = 0x3,
--		.shift = 9,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "demod_core_clk_mux",
--		.ops = &clk_regmap_mux_ops,
--		.parent_data = (const struct clk_parent_data []) {
--			{ .fw_name = "xtal", },
--			{ .fw_name = "fclk_div7", },
--			{ .fw_name = "fclk_div4", },
--			{ .hw = &s4_adc_extclk_in_gate.hw }
--		},
--		.num_parents = 4,
--		.flags = CLK_SET_RATE_PARENT,
--	},
--};
--
--static struct clk_regmap s4_demod_core_clk_div = {
--	.data = &(struct clk_regmap_div_data) {
--		.offset = CLKCTRL_DEMOD_CLK_CTRL,
--		.shift = 0,
--		.width = 7,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "demod_core_clk_div",
--		.ops = &clk_regmap_divider_ops,
--		.parent_hws = (const struct clk_hw *[]) {
--			&s4_demod_core_clk_mux.hw
--		},
--		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
--	},
--};
--
--static struct clk_regmap s4_demod_core_clk_gate = {
--	.data = &(struct clk_regmap_gate_data) {
--		.offset = CLKCTRL_DEMOD_CLK_CTRL,
--		.bit_idx = 8,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "demod_core_clk",
--		.ops = &clk_regmap_gate_ops,
--		.parent_hws = (const struct clk_hw *[]) {
--			&s4_demod_core_clk_div.hw
--		},
--		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
--	},
--};
--
- #define MESON_GATE(_name, _reg, _bit) \
- 	MESON_PCLK(_name, _reg, _bit, &s4_sys_clk.hw)
+ static const struct regmap_config a1_periphs_regmap_cfg = {
+ 	.reg_bits   = 32,
+ 	.val_bits   = 32,
+@@ -2200,7 +2043,7 @@ static int meson_a1_periphs_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	void __iomem *base;
+ 	struct regmap *map;
+-	int clkid, i, err;
++	int clkid, err;
  
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+@@ -2212,9 +2055,9 @@ static int meson_a1_periphs_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(map),
+ 				     "can't init regmap mmio region\n");
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(a1_periphs_regmaps); i++)
+-		a1_periphs_regmaps[i]->map = map;
++	err = clk_regmap_init_regmap(dev, map);
++	if (err)
++		return err;
+ 
+ 	for (clkid = 0; clkid < a1_periphs_clks.num; clkid++) {
+ 		err = devm_clk_hw_register(dev, a1_periphs_clks.hws[clkid]);
+diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+index 8e5a42d1afbbcd82341a5dcdd19b9f352e725e91..58d63936bd6bf3109bdd76712ce445ba2f35be46 100644
+--- a/drivers/clk/meson/a1-pll.c
++++ b/drivers/clk/meson/a1-pll.c
+@@ -285,16 +285,6 @@ static struct clk_hw *a1_pll_hw_clks[] = {
+ 	[CLKID_HIFI_PLL]	= &hifi_pll.hw,
+ };
+ 
+-static struct clk_regmap *const a1_pll_regmaps[] = {
+-	&fixed_pll_dco,
+-	&fixed_pll,
+-	&fclk_div2,
+-	&fclk_div3,
+-	&fclk_div5,
+-	&fclk_div7,
+-	&hifi_pll,
+-};
+-
+ static const struct regmap_config a1_pll_regmap_cfg = {
+ 	.reg_bits   = 32,
+ 	.val_bits   = 32,
+@@ -312,7 +302,7 @@ static int meson_a1_pll_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	void __iomem *base;
+ 	struct regmap *map;
+-	int clkid, i, err;
++	int clkid, err;
+ 
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+@@ -324,9 +314,9 @@ static int meson_a1_pll_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(map),
+ 				     "can't init regmap mmio region\n");
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(a1_pll_regmaps); i++)
+-		a1_pll_regmaps[i]->map = map;
++	err = clk_regmap_init_regmap(dev, map);
++	if (err)
++		return err;
+ 
+ 	/* Register clocks */
+ 	for (clkid = 0; clkid < a1_pll_clks.num; clkid++) {
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 1dabc81535a6f77a6420f075f1bbef8ab8b31fd2..84cf0fac86b4482e8966f12a49c09c820aa19987 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -270,26 +270,6 @@ static const unsigned int axg_aoclk_reset[] = {
+ 	[RESET_AO_IR_BLASTER]	= 23,
+ };
+ 
+-static struct clk_regmap *axg_aoclk_regmap[] = {
+-	&axg_aoclk_remote,
+-	&axg_aoclk_i2c_master,
+-	&axg_aoclk_i2c_slave,
+-	&axg_aoclk_uart1,
+-	&axg_aoclk_uart2,
+-	&axg_aoclk_ir_blaster,
+-	&axg_aoclk_saradc,
+-	&axg_aoclk_cts_oscin,
+-	&axg_aoclk_32k_pre,
+-	&axg_aoclk_32k_div,
+-	&axg_aoclk_32k_sel,
+-	&axg_aoclk_32k,
+-	&axg_aoclk_cts_rtc_oscin,
+-	&axg_aoclk_clk81,
+-	&axg_aoclk_saradc_mux,
+-	&axg_aoclk_saradc_div,
+-	&axg_aoclk_saradc_gate,
+-};
+-
+ static struct clk_hw *axg_aoclk_hw_clks[] = {
+ 	[CLKID_AO_REMOTE]	= &axg_aoclk_remote.hw,
+ 	[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master.hw,
+@@ -314,8 +294,6 @@ static const struct meson_aoclk_data axg_aoclkc_data = {
+ 	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
+ 	.num_reset	= ARRAY_SIZE(axg_aoclk_reset),
+ 	.reset		= axg_aoclk_reset,
+-	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
+-	.clks		= axg_aoclk_regmap,
+ 	.hw_clks	= {
+ 		.hws	= axg_aoclk_hw_clks,
+ 		.num	= ARRAY_SIZE(axg_aoclk_hw_clks),
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index beda86349389990065954300369e5daa360856c9..803bb7a3ac716f1d16b779949e2d5ebc2dd95478 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -1257,427 +1257,6 @@ static struct clk_hw *sm1_audio_hw_clks[] = {
+ 	[AUD_CLKID_EARCRX_DMAC]		= &sm1_earcrx_dmac_clk.hw,
+ };
+ 
+-
+-/* Convenience table to populate regmap in .probe(). */
+-static struct clk_regmap *const axg_clk_regmaps[] = {
+-	&ddr_arb,
+-	&pdm,
+-	&tdmin_a,
+-	&tdmin_b,
+-	&tdmin_c,
+-	&tdmin_lb,
+-	&tdmout_a,
+-	&tdmout_b,
+-	&tdmout_c,
+-	&frddr_a,
+-	&frddr_b,
+-	&frddr_c,
+-	&toddr_a,
+-	&toddr_b,
+-	&toddr_c,
+-	&loopback,
+-	&spdifin,
+-	&spdifout,
+-	&resample,
+-	&power_detect,
+-	&mst_a_mclk_sel,
+-	&mst_b_mclk_sel,
+-	&mst_c_mclk_sel,
+-	&mst_d_mclk_sel,
+-	&mst_e_mclk_sel,
+-	&mst_f_mclk_sel,
+-	&mst_a_mclk_div,
+-	&mst_b_mclk_div,
+-	&mst_c_mclk_div,
+-	&mst_d_mclk_div,
+-	&mst_e_mclk_div,
+-	&mst_f_mclk_div,
+-	&mst_a_mclk,
+-	&mst_b_mclk,
+-	&mst_c_mclk,
+-	&mst_d_mclk,
+-	&mst_e_mclk,
+-	&mst_f_mclk,
+-	&spdifout_clk_sel,
+-	&spdifout_clk_div,
+-	&spdifout_clk,
+-	&spdifin_clk_sel,
+-	&spdifin_clk_div,
+-	&spdifin_clk,
+-	&pdm_dclk_sel,
+-	&pdm_dclk_div,
+-	&pdm_dclk,
+-	&pdm_sysclk_sel,
+-	&pdm_sysclk_div,
+-	&pdm_sysclk,
+-	&mst_a_sclk_pre_en,
+-	&mst_b_sclk_pre_en,
+-	&mst_c_sclk_pre_en,
+-	&mst_d_sclk_pre_en,
+-	&mst_e_sclk_pre_en,
+-	&mst_f_sclk_pre_en,
+-	&mst_a_sclk_div,
+-	&mst_b_sclk_div,
+-	&mst_c_sclk_div,
+-	&mst_d_sclk_div,
+-	&mst_e_sclk_div,
+-	&mst_f_sclk_div,
+-	&mst_a_sclk_post_en,
+-	&mst_b_sclk_post_en,
+-	&mst_c_sclk_post_en,
+-	&mst_d_sclk_post_en,
+-	&mst_e_sclk_post_en,
+-	&mst_f_sclk_post_en,
+-	&mst_a_sclk,
+-	&mst_b_sclk,
+-	&mst_c_sclk,
+-	&mst_d_sclk,
+-	&mst_e_sclk,
+-	&mst_f_sclk,
+-	&mst_a_lrclk_div,
+-	&mst_b_lrclk_div,
+-	&mst_c_lrclk_div,
+-	&mst_d_lrclk_div,
+-	&mst_e_lrclk_div,
+-	&mst_f_lrclk_div,
+-	&mst_a_lrclk,
+-	&mst_b_lrclk,
+-	&mst_c_lrclk,
+-	&mst_d_lrclk,
+-	&mst_e_lrclk,
+-	&mst_f_lrclk,
+-	&tdmin_a_sclk_sel,
+-	&tdmin_b_sclk_sel,
+-	&tdmin_c_sclk_sel,
+-	&tdmin_lb_sclk_sel,
+-	&tdmout_a_sclk_sel,
+-	&tdmout_b_sclk_sel,
+-	&tdmout_c_sclk_sel,
+-	&tdmin_a_sclk_pre_en,
+-	&tdmin_b_sclk_pre_en,
+-	&tdmin_c_sclk_pre_en,
+-	&tdmin_lb_sclk_pre_en,
+-	&tdmout_a_sclk_pre_en,
+-	&tdmout_b_sclk_pre_en,
+-	&tdmout_c_sclk_pre_en,
+-	&tdmin_a_sclk_post_en,
+-	&tdmin_b_sclk_post_en,
+-	&tdmin_c_sclk_post_en,
+-	&tdmin_lb_sclk_post_en,
+-	&tdmout_a_sclk_post_en,
+-	&tdmout_b_sclk_post_en,
+-	&tdmout_c_sclk_post_en,
+-	&tdmin_a_sclk,
+-	&tdmin_b_sclk,
+-	&tdmin_c_sclk,
+-	&tdmin_lb_sclk,
+-	&axg_tdmout_a_sclk,
+-	&axg_tdmout_b_sclk,
+-	&axg_tdmout_c_sclk,
+-	&tdmin_a_lrclk,
+-	&tdmin_b_lrclk,
+-	&tdmin_c_lrclk,
+-	&tdmin_lb_lrclk,
+-	&tdmout_a_lrclk,
+-	&tdmout_b_lrclk,
+-	&tdmout_c_lrclk,
+-};
+-
+-static struct clk_regmap *const g12a_clk_regmaps[] = {
+-	&ddr_arb,
+-	&pdm,
+-	&tdmin_a,
+-	&tdmin_b,
+-	&tdmin_c,
+-	&tdmin_lb,
+-	&tdmout_a,
+-	&tdmout_b,
+-	&tdmout_c,
+-	&frddr_a,
+-	&frddr_b,
+-	&frddr_c,
+-	&toddr_a,
+-	&toddr_b,
+-	&toddr_c,
+-	&loopback,
+-	&spdifin,
+-	&spdifout,
+-	&resample,
+-	&power_detect,
+-	&spdifout_b,
+-	&mst_a_mclk_sel,
+-	&mst_b_mclk_sel,
+-	&mst_c_mclk_sel,
+-	&mst_d_mclk_sel,
+-	&mst_e_mclk_sel,
+-	&mst_f_mclk_sel,
+-	&mst_a_mclk_div,
+-	&mst_b_mclk_div,
+-	&mst_c_mclk_div,
+-	&mst_d_mclk_div,
+-	&mst_e_mclk_div,
+-	&mst_f_mclk_div,
+-	&mst_a_mclk,
+-	&mst_b_mclk,
+-	&mst_c_mclk,
+-	&mst_d_mclk,
+-	&mst_e_mclk,
+-	&mst_f_mclk,
+-	&spdifout_clk_sel,
+-	&spdifout_clk_div,
+-	&spdifout_clk,
+-	&spdifin_clk_sel,
+-	&spdifin_clk_div,
+-	&spdifin_clk,
+-	&pdm_dclk_sel,
+-	&pdm_dclk_div,
+-	&pdm_dclk,
+-	&pdm_sysclk_sel,
+-	&pdm_sysclk_div,
+-	&pdm_sysclk,
+-	&mst_a_sclk_pre_en,
+-	&mst_b_sclk_pre_en,
+-	&mst_c_sclk_pre_en,
+-	&mst_d_sclk_pre_en,
+-	&mst_e_sclk_pre_en,
+-	&mst_f_sclk_pre_en,
+-	&mst_a_sclk_div,
+-	&mst_b_sclk_div,
+-	&mst_c_sclk_div,
+-	&mst_d_sclk_div,
+-	&mst_e_sclk_div,
+-	&mst_f_sclk_div,
+-	&mst_a_sclk_post_en,
+-	&mst_b_sclk_post_en,
+-	&mst_c_sclk_post_en,
+-	&mst_d_sclk_post_en,
+-	&mst_e_sclk_post_en,
+-	&mst_f_sclk_post_en,
+-	&mst_a_sclk,
+-	&mst_b_sclk,
+-	&mst_c_sclk,
+-	&mst_d_sclk,
+-	&mst_e_sclk,
+-	&mst_f_sclk,
+-	&mst_a_lrclk_div,
+-	&mst_b_lrclk_div,
+-	&mst_c_lrclk_div,
+-	&mst_d_lrclk_div,
+-	&mst_e_lrclk_div,
+-	&mst_f_lrclk_div,
+-	&mst_a_lrclk,
+-	&mst_b_lrclk,
+-	&mst_c_lrclk,
+-	&mst_d_lrclk,
+-	&mst_e_lrclk,
+-	&mst_f_lrclk,
+-	&tdmin_a_sclk_sel,
+-	&tdmin_b_sclk_sel,
+-	&tdmin_c_sclk_sel,
+-	&tdmin_lb_sclk_sel,
+-	&tdmout_a_sclk_sel,
+-	&tdmout_b_sclk_sel,
+-	&tdmout_c_sclk_sel,
+-	&tdmin_a_sclk_pre_en,
+-	&tdmin_b_sclk_pre_en,
+-	&tdmin_c_sclk_pre_en,
+-	&tdmin_lb_sclk_pre_en,
+-	&tdmout_a_sclk_pre_en,
+-	&tdmout_b_sclk_pre_en,
+-	&tdmout_c_sclk_pre_en,
+-	&tdmin_a_sclk_post_en,
+-	&tdmin_b_sclk_post_en,
+-	&tdmin_c_sclk_post_en,
+-	&tdmin_lb_sclk_post_en,
+-	&tdmout_a_sclk_post_en,
+-	&tdmout_b_sclk_post_en,
+-	&tdmout_c_sclk_post_en,
+-	&tdmin_a_sclk,
+-	&tdmin_b_sclk,
+-	&tdmin_c_sclk,
+-	&tdmin_lb_sclk,
+-	&g12a_tdmout_a_sclk,
+-	&g12a_tdmout_b_sclk,
+-	&g12a_tdmout_c_sclk,
+-	&tdmin_a_lrclk,
+-	&tdmin_b_lrclk,
+-	&tdmin_c_lrclk,
+-	&tdmin_lb_lrclk,
+-	&tdmout_a_lrclk,
+-	&tdmout_b_lrclk,
+-	&tdmout_c_lrclk,
+-	&spdifout_b_clk_sel,
+-	&spdifout_b_clk_div,
+-	&spdifout_b_clk,
+-	&g12a_tdm_mclk_pad_0,
+-	&g12a_tdm_mclk_pad_1,
+-	&g12a_tdm_lrclk_pad_0,
+-	&g12a_tdm_lrclk_pad_1,
+-	&g12a_tdm_lrclk_pad_2,
+-	&g12a_tdm_sclk_pad_0,
+-	&g12a_tdm_sclk_pad_1,
+-	&g12a_tdm_sclk_pad_2,
+-	&toram,
+-	&eqdrc,
+-};
+-
+-static struct clk_regmap *const sm1_clk_regmaps[] = {
+-	&ddr_arb,
+-	&pdm,
+-	&tdmin_a,
+-	&tdmin_b,
+-	&tdmin_c,
+-	&tdmin_lb,
+-	&tdmout_a,
+-	&tdmout_b,
+-	&tdmout_c,
+-	&frddr_a,
+-	&frddr_b,
+-	&frddr_c,
+-	&toddr_a,
+-	&toddr_b,
+-	&toddr_c,
+-	&loopback,
+-	&spdifin,
+-	&spdifout,
+-	&resample,
+-	&spdifout_b,
+-	&sm1_mst_a_mclk_sel,
+-	&sm1_mst_b_mclk_sel,
+-	&sm1_mst_c_mclk_sel,
+-	&sm1_mst_d_mclk_sel,
+-	&sm1_mst_e_mclk_sel,
+-	&sm1_mst_f_mclk_sel,
+-	&sm1_mst_a_mclk_div,
+-	&sm1_mst_b_mclk_div,
+-	&sm1_mst_c_mclk_div,
+-	&sm1_mst_d_mclk_div,
+-	&sm1_mst_e_mclk_div,
+-	&sm1_mst_f_mclk_div,
+-	&sm1_mst_a_mclk,
+-	&sm1_mst_b_mclk,
+-	&sm1_mst_c_mclk,
+-	&sm1_mst_d_mclk,
+-	&sm1_mst_e_mclk,
+-	&sm1_mst_f_mclk,
+-	&spdifout_clk_sel,
+-	&spdifout_clk_div,
+-	&spdifout_clk,
+-	&spdifin_clk_sel,
+-	&spdifin_clk_div,
+-	&spdifin_clk,
+-	&pdm_dclk_sel,
+-	&pdm_dclk_div,
+-	&pdm_dclk,
+-	&pdm_sysclk_sel,
+-	&pdm_sysclk_div,
+-	&pdm_sysclk,
+-	&mst_a_sclk_pre_en,
+-	&mst_b_sclk_pre_en,
+-	&mst_c_sclk_pre_en,
+-	&mst_d_sclk_pre_en,
+-	&mst_e_sclk_pre_en,
+-	&mst_f_sclk_pre_en,
+-	&mst_a_sclk_div,
+-	&mst_b_sclk_div,
+-	&mst_c_sclk_div,
+-	&mst_d_sclk_div,
+-	&mst_e_sclk_div,
+-	&mst_f_sclk_div,
+-	&mst_a_sclk_post_en,
+-	&mst_b_sclk_post_en,
+-	&mst_c_sclk_post_en,
+-	&mst_d_sclk_post_en,
+-	&mst_e_sclk_post_en,
+-	&mst_f_sclk_post_en,
+-	&mst_a_sclk,
+-	&mst_b_sclk,
+-	&mst_c_sclk,
+-	&mst_d_sclk,
+-	&mst_e_sclk,
+-	&mst_f_sclk,
+-	&mst_a_lrclk_div,
+-	&mst_b_lrclk_div,
+-	&mst_c_lrclk_div,
+-	&mst_d_lrclk_div,
+-	&mst_e_lrclk_div,
+-	&mst_f_lrclk_div,
+-	&mst_a_lrclk,
+-	&mst_b_lrclk,
+-	&mst_c_lrclk,
+-	&mst_d_lrclk,
+-	&mst_e_lrclk,
+-	&mst_f_lrclk,
+-	&tdmin_a_sclk_sel,
+-	&tdmin_b_sclk_sel,
+-	&tdmin_c_sclk_sel,
+-	&tdmin_lb_sclk_sel,
+-	&tdmout_a_sclk_sel,
+-	&tdmout_b_sclk_sel,
+-	&tdmout_c_sclk_sel,
+-	&tdmin_a_sclk_pre_en,
+-	&tdmin_b_sclk_pre_en,
+-	&tdmin_c_sclk_pre_en,
+-	&tdmin_lb_sclk_pre_en,
+-	&tdmout_a_sclk_pre_en,
+-	&tdmout_b_sclk_pre_en,
+-	&tdmout_c_sclk_pre_en,
+-	&tdmin_a_sclk_post_en,
+-	&tdmin_b_sclk_post_en,
+-	&tdmin_c_sclk_post_en,
+-	&tdmin_lb_sclk_post_en,
+-	&tdmout_a_sclk_post_en,
+-	&tdmout_b_sclk_post_en,
+-	&tdmout_c_sclk_post_en,
+-	&tdmin_a_sclk,
+-	&tdmin_b_sclk,
+-	&tdmin_c_sclk,
+-	&tdmin_lb_sclk,
+-	&g12a_tdmout_a_sclk,
+-	&g12a_tdmout_b_sclk,
+-	&g12a_tdmout_c_sclk,
+-	&tdmin_a_lrclk,
+-	&tdmin_b_lrclk,
+-	&tdmin_c_lrclk,
+-	&tdmin_lb_lrclk,
+-	&tdmout_a_lrclk,
+-	&tdmout_b_lrclk,
+-	&tdmout_c_lrclk,
+-	&spdifout_b_clk_sel,
+-	&spdifout_b_clk_div,
+-	&spdifout_b_clk,
+-	&sm1_tdm_mclk_pad_0,
+-	&sm1_tdm_mclk_pad_1,
+-	&sm1_tdm_lrclk_pad_0,
+-	&sm1_tdm_lrclk_pad_1,
+-	&sm1_tdm_lrclk_pad_2,
+-	&sm1_tdm_sclk_pad_0,
+-	&sm1_tdm_sclk_pad_1,
+-	&sm1_tdm_sclk_pad_2,
+-	&sm1_aud_top,
+-	&toram,
+-	&eqdrc,
+-	&resample_b,
+-	&tovad,
+-	&locker,
+-	&spdifin_lb,
+-	&frddr_d,
+-	&toddr_d,
+-	&loopback_b,
+-	&sm1_clk81_en,
+-	&sm1_sysclk_a_div,
+-	&sm1_sysclk_a_en,
+-	&sm1_sysclk_b_div,
+-	&sm1_sysclk_b_en,
+-	&earcrx,
+-	&sm1_earcrx_cmdc_clk_sel,
+-	&sm1_earcrx_cmdc_clk_div,
+-	&sm1_earcrx_cmdc_clk,
+-	&sm1_earcrx_dmac_clk_sel,
+-	&sm1_earcrx_dmac_clk_div,
+-	&sm1_earcrx_dmac_clk,
+-};
+-
+ struct axg_audio_reset_data {
+ 	struct reset_controller_dev rstc;
+ 	struct regmap *map;
+@@ -1763,8 +1342,6 @@ static struct regmap_config axg_audio_regmap_cfg = {
+ };
+ 
+ struct audioclk_data {
+-	struct clk_regmap *const *regmap_clks;
+-	unsigned int regmap_clk_num;
+ 	struct meson_clk_hw_data hw_clks;
+ 	unsigned int reset_offset;
+ 	unsigned int reset_num;
+@@ -1808,9 +1385,9 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < data->regmap_clk_num; i++)
+-		data->regmap_clks[i]->map = map;
++	ret = clk_regmap_init_regmap(dev, map);
++	if (ret)
++		return ret;
+ 
+ 	/* Take care to skip the registered input clocks */
+ 	for (i = AUD_CLKID_DDR_ARB; i < data->hw_clks.num; i++) {
+@@ -1853,8 +1430,6 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct audioclk_data axg_audioclk_data = {
+-	.regmap_clks = axg_clk_regmaps,
+-	.regmap_clk_num = ARRAY_SIZE(axg_clk_regmaps),
+ 	.hw_clks = {
+ 		.hws = axg_audio_hw_clks,
+ 		.num = ARRAY_SIZE(axg_audio_hw_clks),
+@@ -1863,8 +1438,6 @@ static const struct audioclk_data axg_audioclk_data = {
+ };
+ 
+ static const struct audioclk_data g12a_audioclk_data = {
+-	.regmap_clks = g12a_clk_regmaps,
+-	.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
+ 	.hw_clks = {
+ 		.hws = g12a_audio_hw_clks,
+ 		.num = ARRAY_SIZE(g12a_audio_hw_clks),
+@@ -1875,8 +1448,6 @@ static const struct audioclk_data g12a_audioclk_data = {
+ };
+ 
+ static const struct audioclk_data sm1_audioclk_data = {
+-	.regmap_clks = sm1_clk_regmaps,
+-	.regmap_clk_num = ARRAY_SIZE(sm1_clk_regmaps),
+ 	.hw_clks = {
+ 		.hws = sm1_audio_hw_clks,
+ 		.num = ARRAY_SIZE(sm1_audio_hw_clks),
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 1b08daf579b2e57c4f618ce13d10206330fdce3e..c1c53ba1449f0dde5f70012b213a58d2ec8628c8 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -2025,138 +2025,7 @@ static struct clk_hw *axg_hw_clks[] = {
+ 	[CLKID_VDIN_MEAS]		= &axg_vdin_meas.hw,
+ };
+ 
+-/* Convenience table to populate regmap in .probe */
+-static struct clk_regmap *const axg_clk_regmaps[] = {
+-	&axg_clk81,
+-	&axg_ddr,
+-	&axg_audio_locker,
+-	&axg_mipi_dsi_host,
+-	&axg_isa,
+-	&axg_pl301,
+-	&axg_periphs,
+-	&axg_spicc_0,
+-	&axg_i2c,
+-	&axg_rng0,
+-	&axg_uart0,
+-	&axg_mipi_dsi_phy,
+-	&axg_spicc_1,
+-	&axg_pcie_a,
+-	&axg_pcie_b,
+-	&axg_hiu_reg,
+-	&axg_assist_misc,
+-	&axg_emmc_b,
+-	&axg_emmc_c,
+-	&axg_dma,
+-	&axg_spi,
+-	&axg_audio,
+-	&axg_eth_core,
+-	&axg_uart1,
+-	&axg_g2d,
+-	&axg_usb0,
+-	&axg_usb1,
+-	&axg_reset,
+-	&axg_usb_general,
+-	&axg_ahb_arb0,
+-	&axg_efuse,
+-	&axg_boot_rom,
+-	&axg_ahb_data_bus,
+-	&axg_ahb_ctrl_bus,
+-	&axg_usb1_to_ddr,
+-	&axg_usb0_to_ddr,
+-	&axg_mmc_pclk,
+-	&axg_vpu_intr,
+-	&axg_sec_ahb_ahb3_bridge,
+-	&axg_gic,
+-	&axg_ao_media_cpu,
+-	&axg_ao_ahb_sram,
+-	&axg_ao_ahb_bus,
+-	&axg_ao_iface,
+-	&axg_ao_i2c,
+-	&axg_sd_emmc_b_clk0,
+-	&axg_sd_emmc_c_clk0,
+-	&axg_mpeg_clk_div,
+-	&axg_sd_emmc_b_clk0_div,
+-	&axg_sd_emmc_c_clk0_div,
+-	&axg_mpeg_clk_sel,
+-	&axg_sd_emmc_b_clk0_sel,
+-	&axg_sd_emmc_c_clk0_sel,
+-	&axg_mpll0,
+-	&axg_mpll1,
+-	&axg_mpll2,
+-	&axg_mpll3,
+-	&axg_mpll0_div,
+-	&axg_mpll1_div,
+-	&axg_mpll2_div,
+-	&axg_mpll3_div,
+-	&axg_fixed_pll,
+-	&axg_sys_pll,
+-	&axg_gp0_pll,
+-	&axg_hifi_pll,
+-	&axg_mpll_prediv,
+-	&axg_fclk_div2,
+-	&axg_fclk_div3,
+-	&axg_fclk_div4,
+-	&axg_fclk_div5,
+-	&axg_fclk_div7,
+-	&axg_pcie_pll_dco,
+-	&axg_pcie_pll_od,
+-	&axg_pcie_pll,
+-	&axg_pcie_mux,
+-	&axg_pcie_ref,
+-	&axg_pcie_cml_en0,
+-	&axg_pcie_cml_en1,
+-	&axg_gen_clk_sel,
+-	&axg_gen_clk_div,
+-	&axg_gen_clk,
+-	&axg_fixed_pll_dco,
+-	&axg_sys_pll_dco,
+-	&axg_gp0_pll_dco,
+-	&axg_hifi_pll_dco,
+-	&axg_pcie_pll_dco,
+-	&axg_pcie_pll_od,
+-	&axg_vpu_0_div,
+-	&axg_vpu_0_sel,
+-	&axg_vpu_0,
+-	&axg_vpu_1_div,
+-	&axg_vpu_1_sel,
+-	&axg_vpu_1,
+-	&axg_vpu,
+-	&axg_vapb_0_div,
+-	&axg_vapb_0_sel,
+-	&axg_vapb_0,
+-	&axg_vapb_1_div,
+-	&axg_vapb_1_sel,
+-	&axg_vapb_1,
+-	&axg_vapb_sel,
+-	&axg_vapb,
+-	&axg_vclk,
+-	&axg_vclk2,
+-	&axg_vclk_sel,
+-	&axg_vclk2_sel,
+-	&axg_vclk_input,
+-	&axg_vclk2_input,
+-	&axg_vclk_div,
+-	&axg_vclk_div1,
+-	&axg_vclk2_div,
+-	&axg_vclk2_div1,
+-	&axg_vclk_div2_en,
+-	&axg_vclk_div4_en,
+-	&axg_vclk_div6_en,
+-	&axg_vclk_div12_en,
+-	&axg_vclk2_div2_en,
+-	&axg_vclk2_div4_en,
+-	&axg_vclk2_div6_en,
+-	&axg_vclk2_div12_en,
+-	&axg_cts_encl_sel,
+-	&axg_cts_encl,
+-	&axg_vdin_meas_sel,
+-	&axg_vdin_meas_div,
+-	&axg_vdin_meas,
+-};
+-
+ static const struct meson_eeclkc_data axg_clkc_data = {
+-	.regmap_clks = axg_clk_regmaps,
+-	.regmap_clk_num = ARRAY_SIZE(axg_clk_regmaps),
+ 	.hw_clks = {
+ 		.hws = axg_hw_clks,
+ 		.num = ARRAY_SIZE(axg_hw_clks),
+diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+index 7dcbf4ebee078abaebc28c666c6ffe8160d8d7e5..fd6ac1cd6c3d24b749f09c2170f360850f19432d 100644
+--- a/drivers/clk/meson/c3-peripherals.c
++++ b/drivers/clk/meson/c3-peripherals.c
+@@ -2092,210 +2092,6 @@ static struct clk_hw *c3_periphs_hw_clks[] = {
+ 	[CLKID_VAPB]			= &vapb.hw,
+ };
+ 
+-/* Convenience table to populate regmap in .probe */
+-static struct clk_regmap *const c3_periphs_clk_regmaps[] = {
+-	&rtc_xtal_clkin,
+-	&rtc_32k_div,
+-	&rtc_32k_mux,
+-	&rtc_32k,
+-	&rtc_clk,
+-	&sys_reset_ctrl,
+-	&sys_pwr_ctrl,
+-	&sys_pad_ctrl,
+-	&sys_ctrl,
+-	&sys_ts_pll,
+-	&sys_dev_arb,
+-	&sys_mmc_pclk,
+-	&sys_cpu_ctrl,
+-	&sys_jtag_ctrl,
+-	&sys_ir_ctrl,
+-	&sys_irq_ctrl,
+-	&sys_msr_clk,
+-	&sys_rom,
+-	&sys_uart_f,
+-	&sys_cpu_apb,
+-	&sys_rsa,
+-	&sys_sar_adc,
+-	&sys_startup,
+-	&sys_secure,
+-	&sys_spifc,
+-	&sys_nna,
+-	&sys_eth_mac,
+-	&sys_gic,
+-	&sys_rama,
+-	&sys_big_nic,
+-	&sys_ramb,
+-	&sys_audio_pclk,
+-	&sys_pwm_kl,
+-	&sys_pwm_ij,
+-	&sys_usb,
+-	&sys_sd_emmc_a,
+-	&sys_sd_emmc_c,
+-	&sys_pwm_ab,
+-	&sys_pwm_cd,
+-	&sys_pwm_ef,
+-	&sys_pwm_gh,
+-	&sys_spicc_1,
+-	&sys_spicc_0,
+-	&sys_uart_a,
+-	&sys_uart_b,
+-	&sys_uart_c,
+-	&sys_uart_d,
+-	&sys_uart_e,
+-	&sys_i2c_m_a,
+-	&sys_i2c_m_b,
+-	&sys_i2c_m_c,
+-	&sys_i2c_m_d,
+-	&sys_i2c_s_a,
+-	&sys_rtc,
+-	&sys_ge2d,
+-	&sys_isp,
+-	&sys_gpv_isp_nic,
+-	&sys_gpv_cve_nic,
+-	&sys_mipi_dsi_host,
+-	&sys_mipi_dsi_phy,
+-	&sys_eth_phy,
+-	&sys_acodec,
+-	&sys_dwap,
+-	&sys_dos,
+-	&sys_cve,
+-	&sys_vout,
+-	&sys_vc9000e,
+-	&sys_pwm_mn,
+-	&sys_sd_emmc_b,
+-	&axi_sys_nic,
+-	&axi_isp_nic,
+-	&axi_cve_nic,
+-	&axi_ramb,
+-	&axi_rama,
+-	&axi_cpu_dmc,
+-	&axi_nic,
+-	&axi_dma,
+-	&axi_mux_nic,
+-	&axi_cve,
+-	&axi_dev1_dmc,
+-	&axi_dev0_dmc,
+-	&axi_dsp_dmc,
+-	&clk_12_24m_in,
+-	&clk_12_24m,
+-	&fclk_25m_div,
+-	&fclk_25m,
+-	&gen_sel,
+-	&gen_div,
+-	&gen,
+-	&saradc_sel,
+-	&saradc_div,
+-	&saradc,
+-	&pwm_a_sel,
+-	&pwm_a_div,
+-	&pwm_a,
+-	&pwm_b_sel,
+-	&pwm_b_div,
+-	&pwm_b,
+-	&pwm_c_sel,
+-	&pwm_c_div,
+-	&pwm_c,
+-	&pwm_d_sel,
+-	&pwm_d_div,
+-	&pwm_d,
+-	&pwm_e_sel,
+-	&pwm_e_div,
+-	&pwm_e,
+-	&pwm_f_sel,
+-	&pwm_f_div,
+-	&pwm_f,
+-	&pwm_g_sel,
+-	&pwm_g_div,
+-	&pwm_g,
+-	&pwm_h_sel,
+-	&pwm_h_div,
+-	&pwm_h,
+-	&pwm_i_sel,
+-	&pwm_i_div,
+-	&pwm_i,
+-	&pwm_j_sel,
+-	&pwm_j_div,
+-	&pwm_j,
+-	&pwm_k_sel,
+-	&pwm_k_div,
+-	&pwm_k,
+-	&pwm_l_sel,
+-	&pwm_l_div,
+-	&pwm_l,
+-	&pwm_m_sel,
+-	&pwm_m_div,
+-	&pwm_m,
+-	&pwm_n_sel,
+-	&pwm_n_div,
+-	&pwm_n,
+-	&spicc_a_sel,
+-	&spicc_a_div,
+-	&spicc_a,
+-	&spicc_b_sel,
+-	&spicc_b_div,
+-	&spicc_b,
+-	&spifc_sel,
+-	&spifc_div,
+-	&spifc,
+-	&sd_emmc_a_sel,
+-	&sd_emmc_a_div,
+-	&sd_emmc_a,
+-	&sd_emmc_b_sel,
+-	&sd_emmc_b_div,
+-	&sd_emmc_b,
+-	&sd_emmc_c_sel,
+-	&sd_emmc_c_div,
+-	&sd_emmc_c,
+-	&ts_div,
+-	&ts,
+-	&eth_125m,
+-	&eth_rmii_div,
+-	&eth_rmii,
+-	&mipi_dsi_meas_sel,
+-	&mipi_dsi_meas_div,
+-	&mipi_dsi_meas,
+-	&dsi_phy_sel,
+-	&dsi_phy_div,
+-	&dsi_phy,
+-	&vout_mclk_sel,
+-	&vout_mclk_div,
+-	&vout_mclk,
+-	&vout_enc_sel,
+-	&vout_enc_div,
+-	&vout_enc,
+-	&hcodec_0_sel,
+-	&hcodec_0_div,
+-	&hcodec_0,
+-	&hcodec_1_sel,
+-	&hcodec_1_div,
+-	&hcodec_1,
+-	&hcodec,
+-	&vc9000e_aclk_sel,
+-	&vc9000e_aclk_div,
+-	&vc9000e_aclk,
+-	&vc9000e_core_sel,
+-	&vc9000e_core_div,
+-	&vc9000e_core,
+-	&csi_phy0_sel,
+-	&csi_phy0_div,
+-	&csi_phy0,
+-	&dewarpa_sel,
+-	&dewarpa_div,
+-	&dewarpa,
+-	&isp0_sel,
+-	&isp0_div,
+-	&isp0,
+-	&nna_core_sel,
+-	&nna_core_div,
+-	&nna_core,
+-	&ge2d_sel,
+-	&ge2d_div,
+-	&ge2d,
+-	&vapb_sel,
+-	&vapb_div,
+-	&vapb,
+-};
+-
+ static const struct regmap_config clkc_regmap_config = {
+ 	.reg_bits       = 32,
+ 	.val_bits       = 32,
+@@ -2313,7 +2109,7 @@ static int c3_peripherals_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct regmap *regmap;
+ 	void __iomem *base;
+-	int clkid, ret, i;
++	int clkid, ret;
+ 
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+@@ -2323,9 +2119,9 @@ static int c3_peripherals_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(c3_periphs_clk_regmaps); i++)
+-		c3_periphs_clk_regmaps[i]->map = regmap;
++	ret = clk_regmap_init_regmap(dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	for (clkid = 0; clkid < c3_periphs_clks.num; clkid++) {
+ 		/* array might be sparse */
+diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
+index 35fda31a19e218bb6db71346a264ec20e832382c..cbfc9d0b189edecbd0cee87044c245283776a74d 100644
+--- a/drivers/clk/meson/c3-pll.c
++++ b/drivers/clk/meson/c3-pll.c
+@@ -653,32 +653,6 @@ static struct clk_hw *c3_pll_hw_clks[] = {
+ 	[CLKID_MCLK1]		= &mclk1.hw
+ };
+ 
+-/* Convenience table to populate regmap in .probe */
+-static struct clk_regmap *const c3_pll_clk_regmaps[] = {
+-	&fclk_50m_en,
+-	&fclk_div2,
+-	&fclk_div2p5,
+-	&fclk_div3,
+-	&fclk_div4,
+-	&fclk_div5,
+-	&fclk_div7,
+-	&gp0_pll_dco,
+-	&gp0_pll,
+-	&hifi_pll_dco,
+-	&hifi_pll,
+-	&mclk_pll_dco,
+-	&mclk_pll_od,
+-	&mclk_pll,
+-	&mclk0_sel,
+-	&mclk0_div_en,
+-	&mclk0_div,
+-	&mclk0,
+-	&mclk1_sel,
+-	&mclk1_div_en,
+-	&mclk1_div,
+-	&mclk1,
+-};
+-
+ static const struct regmap_config clkc_regmap_config = {
+ 	.reg_bits       = 32,
+ 	.val_bits       = 32,
+@@ -696,7 +670,7 @@ static int c3_pll_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct regmap *regmap;
+ 	void __iomem *base;
+-	int clkid, ret, i;
++	int clkid, ret;
+ 
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+@@ -706,9 +680,9 @@ static int c3_pll_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(c3_pll_clk_regmaps); i++)
+-		c3_pll_clk_regmaps[i]->map = regmap;
++	ret = clk_regmap_init_regmap(dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	for (clkid = 0; clkid < c3_pll_clks.num; clkid++) {
+ 		/* array might be sparse */
+diff --git a/drivers/clk/meson/clk-cpu-dyndiv.c b/drivers/clk/meson/clk-cpu-dyndiv.c
+index 6c1f58826e24a2bf7706f0fc98cdcdb44fd60b64..0498fd3af7de7b9a4e72930ac4de11368d686393 100644
+--- a/drivers/clk/meson/clk-cpu-dyndiv.c
++++ b/drivers/clk/meson/clk-cpu-dyndiv.c
+@@ -61,6 +61,7 @@ static int meson_clk_cpu_dyndiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ };
+ 
+ const struct clk_ops meson_clk_cpu_dyndiv_ops = {
++	.init = clk_regmap_init,
+ 	.recalc_rate = meson_clk_cpu_dyndiv_recalc_rate,
+ 	.determine_rate = meson_clk_cpu_dyndiv_determine_rate,
+ 	.set_rate = meson_clk_cpu_dyndiv_set_rate,
+diff --git a/drivers/clk/meson/clk-dualdiv.c b/drivers/clk/meson/clk-dualdiv.c
+index 913bf25d3771bdffa8db28e9b08dc566d1aac1ff..7c668df1a29f6eb20bde3f23d8701443602d774c 100644
+--- a/drivers/clk/meson/clk-dualdiv.c
++++ b/drivers/clk/meson/clk-dualdiv.c
+@@ -126,6 +126,7 @@ static int meson_clk_dualdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ }
+ 
+ const struct clk_ops meson_clk_dualdiv_ops = {
++	.init		= clk_regmap_init,
+ 	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
+ 	.determine_rate	= meson_clk_dualdiv_determine_rate,
+ 	.set_rate	= meson_clk_dualdiv_set_rate,
+@@ -133,6 +134,7 @@ const struct clk_ops meson_clk_dualdiv_ops = {
+ EXPORT_SYMBOL_NS_GPL(meson_clk_dualdiv_ops, CLK_MESON);
+ 
+ const struct clk_ops meson_clk_dualdiv_ro_ops = {
++	.init		= clk_regmap_init,
+ 	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
+ };
+ EXPORT_SYMBOL_NS_GPL(meson_clk_dualdiv_ro_ops, CLK_MESON);
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index aa9abd06ae653585f68043bb1ddc2b0b96feeb6d..166fbcb053cc573ec92489c2bb03f81caffdf64b 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -128,6 +128,11 @@ static int mpll_init(struct clk_hw *hw)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
++	int ret;
++
++	ret = clk_regmap_init(hw);
++	if (ret)
++		return ret;
+ 
+ 	if (mpll->init_count)
+ 		regmap_multi_reg_write(clk->map, mpll->init_regs,
+@@ -151,6 +156,7 @@ static int mpll_init(struct clk_hw *hw)
+ }
+ 
+ const struct clk_ops meson_clk_mpll_ro_ops = {
++	.init		= clk_regmap_init,
+ 	.recalc_rate	= mpll_recalc_rate,
+ 	.determine_rate	= mpll_determine_rate,
+ };
+diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
+index c1526fbfb6c4ccdd4034df465f70a56e0f9214ac..d05065e56483a218e0eaf402807c8734271d0cf5 100644
+--- a/drivers/clk/meson/clk-phase.c
++++ b/drivers/clk/meson/clk-phase.c
+@@ -58,6 +58,7 @@ static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
+ }
+ 
+ const struct clk_ops meson_clk_phase_ops = {
++	.init		= clk_regmap_init,
+ 	.get_phase	= meson_clk_phase_get_phase,
+ 	.set_phase	= meson_clk_phase_set_phase,
+ };
+@@ -83,6 +84,11 @@ static int meson_clk_triphase_sync(struct clk_hw *hw)
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+ 	unsigned int val;
++	int ret;
++
++	ret = clk_regmap_init(hw);
++	if (ret)
++		return ret;
+ 
+ 	/* Get phase 0 and sync it to phase 1 and 2 */
+ 	val = meson_parm_read(clk->map, &tph->ph0);
+@@ -142,6 +148,11 @@ static int meson_sclk_ws_inv_sync(struct clk_hw *hw)
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_sclk_ws_inv_data *tph = meson_sclk_ws_inv_data(clk);
+ 	unsigned int val;
++	int ret;
++
++	ret = clk_regmap_init(hw);
++	if (ret)
++		return ret;
+ 
+ 	/* Get phase and sync the inverted value to ws */
+ 	val = meson_parm_read(clk->map, &tph->ph);
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 89f0f04a16abad99748e1ff3784e7ed91abd0f88..eaaf021d2f6911a99a722c8b9d8b4e1f1f77d0e6 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -311,6 +311,11 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
++	int ret;
++
++	ret = clk_regmap_init(hw);
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * Keep the clock running, which was already initialized and enabled
+@@ -468,6 +473,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+  * the other ops except set_rate since the rate is fixed.
+  */
+ const struct clk_ops meson_clk_pcie_pll_ops = {
++	.init		= clk_regmap_init,
+ 	.recalc_rate	= meson_clk_pll_recalc_rate,
+ 	.determine_rate	= meson_clk_pll_determine_rate,
+ 	.is_enabled	= meson_clk_pll_is_enabled,
+@@ -488,6 +494,7 @@ const struct clk_ops meson_clk_pll_ops = {
+ EXPORT_SYMBOL_NS_GPL(meson_clk_pll_ops, CLK_MESON);
+ 
+ const struct clk_ops meson_clk_pll_ro_ops = {
++	.init		= clk_regmap_init,
+ 	.recalc_rate	= meson_clk_pll_recalc_rate,
+ 	.is_enabled	= meson_clk_pll_is_enabled,
+ };
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+index 07f7e441b9161c47fdb38ec61ed162a2f9d4fe41..a69c83215571051b88f4b33e342d34c0065f29fc 100644
+--- a/drivers/clk/meson/clk-regmap.c
++++ b/drivers/clk/meson/clk-regmap.c
+@@ -4,9 +4,91 @@
+  * Author: Jerome Brunet <jbrunet@baylibre.com>
+  */
+ 
++#include <linux/device.h>
+ #include <linux/module.h>
+ #include "clk-regmap.h"
+ 
++static void clk_regmap_devres_release(struct device *dev, void *res)
++{
++	/*
++	 * Nothing to be done here
++	 * This is meant as an id for devres related functions
++	 */
++}
++
++static int clk_regmap_devres_match(struct device *dev, void *res, void *data)
++{
++	struct regmap **r = res;
++
++	if (!r || !*r) {
++		WARN_ON(!r || !*r);
++		return 0;
++	}
++
++	/*
++	 * NOTE:
++	 * At the moment, only one regmap is needed so only one is expected
++	 * to be registered. Should more be needed in the future,
++	 * struct clk_regmap should evolve to carry the name of regmap it
++	 * needs
++	 */
++	return 1;
++}
++
++int clk_regmap_init_regmap(struct device *dev, struct regmap *map)
++{
++	struct regmap **m;
++
++	m = devres_alloc(clk_regmap_devres_release, sizeof(*m), GFP_KERNEL);
++	if (!m)
++		return -ENOMEM;
++
++	*m = map;
++	devres_add(dev, m);
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(clk_regmap_init_regmap, CLK_MESON);
++
++static struct regmap *clk_regmap_init_get_regmap(struct device *dev)
++{
++	struct regmap **r = devres_find(dev, clk_regmap_devres_release,
++					clk_regmap_devres_match, NULL);
++
++	if (!r)
++		return NULL;
++
++	return *r;
++}
++
++int clk_regmap_init(struct clk_hw *hw)
++{
++	struct device *dev = clk_hw_get_dev(hw);
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct regmap *map;
++
++	/*
++	 * Do not try to go through devres if there is not device associated
++	 * with the clock. It may happen with early controller that have no
++	 * device support. In this case, regmap should already be set.
++	 */
++	if (!dev)
++		return clk->map ? 0 : -EINVAL;
++
++	map = clk_regmap_init_get_regmap(dev);
++	if (!map)
++		return -EINVAL;
++
++	/*
++	 * Cache the regmap here so it not necessary to through devres
++	 * for each clock action
++	 */
++	clk->map = map;
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(clk_regmap_init, CLK_MESON);
++
+ static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+@@ -45,6 +127,7 @@ static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
+ }
+ 
+ const struct clk_ops clk_regmap_gate_ops = {
++	.init		= clk_regmap_init,
+ 	.enable = clk_regmap_gate_enable,
+ 	.disable = clk_regmap_gate_disable,
+ 	.is_enabled = clk_regmap_gate_is_enabled,
+@@ -52,6 +135,7 @@ const struct clk_ops clk_regmap_gate_ops = {
+ EXPORT_SYMBOL_NS_GPL(clk_regmap_gate_ops, CLK_MESON);
+ 
+ const struct clk_ops clk_regmap_gate_ro_ops = {
++	.init		= clk_regmap_init,
+ 	.is_enabled = clk_regmap_gate_is_enabled,
+ };
+ EXPORT_SYMBOL_NS_GPL(clk_regmap_gate_ro_ops, CLK_MESON);
+@@ -121,6 +205,7 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ /* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+ 
+ const struct clk_ops clk_regmap_divider_ops = {
++	.init = clk_regmap_init,
+ 	.recalc_rate = clk_regmap_div_recalc_rate,
+ 	.determine_rate = clk_regmap_div_determine_rate,
+ 	.set_rate = clk_regmap_div_set_rate,
+@@ -128,6 +213,7 @@ const struct clk_ops clk_regmap_divider_ops = {
+ EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, CLK_MESON);
+ 
+ const struct clk_ops clk_regmap_divider_ro_ops = {
++	.init = clk_regmap_init,
+ 	.recalc_rate = clk_regmap_div_recalc_rate,
+ 	.determine_rate = clk_regmap_div_determine_rate,
+ };
+@@ -170,6 +256,7 @@ static int clk_regmap_mux_determine_rate(struct clk_hw *hw,
+ }
+ 
+ const struct clk_ops clk_regmap_mux_ops = {
++	.init		= clk_regmap_init,
+ 	.get_parent = clk_regmap_mux_get_parent,
+ 	.set_parent = clk_regmap_mux_set_parent,
+ 	.determine_rate = clk_regmap_mux_determine_rate,
+@@ -177,6 +264,7 @@ const struct clk_ops clk_regmap_mux_ops = {
+ EXPORT_SYMBOL_NS_GPL(clk_regmap_mux_ops, CLK_MESON);
+ 
+ const struct clk_ops clk_regmap_mux_ro_ops = {
++	.init		= clk_regmap_init,
+ 	.get_parent = clk_regmap_mux_get_parent,
+ };
+ EXPORT_SYMBOL_NS_GPL(clk_regmap_mux_ro_ops, CLK_MESON);
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+index e365312da54ece08098293b1a831c803415db814..0945aab6d99e537eb66cc7a72643e0a293cea74d 100644
+--- a/drivers/clk/meson/clk-regmap.h
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -7,6 +7,7 @@
+ #ifndef __CLK_REGMAP_H
+ #define __CLK_REGMAP_H
+ 
++#include <linux/device.h>
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ 
+@@ -31,6 +32,12 @@ static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
+ 	return container_of(hw, struct clk_regmap, hw);
+ }
+ 
++/* Controllers should call this to provide regmap to clk_regmap clocks */
++int clk_regmap_init_regmap(struct device *dev, struct regmap *map);
++
++/* clk_regmap init op to get and cache regmap from the controllers */
++int clk_regmap_init(struct clk_hw *hw);
++
+ /**
+  * struct clk_regmap_gate_data - regmap backed gate specific data
+  *
+diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+index f0a18d8c9fc2318d04dde0e63b4a53d0e1f88db5..ff468f43eb0185ed84e667650ee9b9f94384c687 100644
+--- a/drivers/clk/meson/g12a-aoclk.c
++++ b/drivers/clk/meson/g12a-aoclk.c
+@@ -381,38 +381,6 @@ static const unsigned int g12a_aoclk_reset[] = {
+ 	[RESET_AO_IR_OUT]	= 23,
+ };
+ 
+-static struct clk_regmap *g12a_aoclk_regmap[] = {
+-	&g12a_aoclk_ahb,
+-	&g12a_aoclk_ir_in,
+-	&g12a_aoclk_i2c_m0,
+-	&g12a_aoclk_i2c_s0,
+-	&g12a_aoclk_uart,
+-	&g12a_aoclk_prod_i2c,
+-	&g12a_aoclk_uart2,
+-	&g12a_aoclk_ir_out,
+-	&g12a_aoclk_saradc,
+-	&g12a_aoclk_mailbox,
+-	&g12a_aoclk_m3,
+-	&g12a_aoclk_ahb_sram,
+-	&g12a_aoclk_rti,
+-	&g12a_aoclk_m4_fclk,
+-	&g12a_aoclk_m4_hclk,
+-	&g12a_aoclk_cts_oscin,
+-	&g12a_aoclk_32k_by_oscin_pre,
+-	&g12a_aoclk_32k_by_oscin_div,
+-	&g12a_aoclk_32k_by_oscin_sel,
+-	&g12a_aoclk_32k_by_oscin,
+-	&g12a_aoclk_cec_pre,
+-	&g12a_aoclk_cec_div,
+-	&g12a_aoclk_cec_sel,
+-	&g12a_aoclk_cec,
+-	&g12a_aoclk_cts_rtc_oscin,
+-	&g12a_aoclk_clk81,
+-	&g12a_aoclk_saradc_mux,
+-	&g12a_aoclk_saradc_div,
+-	&g12a_aoclk_saradc_gate,
+-};
+-
+ static struct clk_hw *g12a_aoclk_hw_clks[] = {
+ 	[CLKID_AO_AHB]		= &g12a_aoclk_ahb.hw,
+ 	[CLKID_AO_IR_IN]	= &g12a_aoclk_ir_in.hw,
+@@ -449,8 +417,6 @@ static const struct meson_aoclk_data g12a_aoclkc_data = {
+ 	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
+ 	.num_reset	= ARRAY_SIZE(g12a_aoclk_reset),
+ 	.reset		= g12a_aoclk_reset,
+-	.num_clks	= ARRAY_SIZE(g12a_aoclk_regmap),
+-	.clks		= g12a_aoclk_regmap,
+ 	.hw_clks	= {
+ 		.hws	= g12a_aoclk_hw_clks,
+ 		.num	= ARRAY_SIZE(g12a_aoclk_hw_clks),
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 4e6584377e43fa7c9956017ddfcd3f295fafd686..34d8398b06c3bdd2571b963339843c0b53843a95 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -5125,261 +5125,6 @@ static struct clk_hw *sm1_hw_clks[] = {
+ 	[CLKID_MIPI_DSI_PXCLK]		= &g12a_mipi_dsi_pxclk.hw,
+ };
+ 
+-/* Convenience table to populate regmap in .probe */
+-static struct clk_regmap *const g12a_clk_regmaps[] = {
+-	&g12a_clk81,
+-	&g12a_dos,
+-	&g12a_ddr,
+-	&g12a_audio_locker,
+-	&g12a_mipi_dsi_host,
+-	&g12a_eth_phy,
+-	&g12a_isa,
+-	&g12a_pl301,
+-	&g12a_periphs,
+-	&g12a_spicc_0,
+-	&g12a_i2c,
+-	&g12a_sana,
+-	&g12a_sd,
+-	&g12a_rng0,
+-	&g12a_uart0,
+-	&g12a_spicc_1,
+-	&g12a_hiu_reg,
+-	&g12a_mipi_dsi_phy,
+-	&g12a_assist_misc,
+-	&g12a_emmc_a,
+-	&g12a_emmc_b,
+-	&g12a_emmc_c,
+-	&g12a_audio_codec,
+-	&g12a_audio,
+-	&g12a_eth_core,
+-	&g12a_demux,
+-	&g12a_audio_ififo,
+-	&g12a_adc,
+-	&g12a_uart1,
+-	&g12a_g2d,
+-	&g12a_reset,
+-	&g12a_pcie_comb,
+-	&g12a_parser,
+-	&g12a_usb_general,
+-	&g12a_pcie_phy,
+-	&g12a_ahb_arb0,
+-	&g12a_ahb_data_bus,
+-	&g12a_ahb_ctrl_bus,
+-	&g12a_htx_hdcp22,
+-	&g12a_htx_pclk,
+-	&g12a_bt656,
+-	&g12a_usb1_to_ddr,
+-	&g12a_mmc_pclk,
+-	&g12a_uart2,
+-	&g12a_vpu_intr,
+-	&g12a_gic,
+-	&g12a_sd_emmc_a_clk0,
+-	&g12a_sd_emmc_b_clk0,
+-	&g12a_sd_emmc_c_clk0,
+-	&g12a_mpeg_clk_div,
+-	&g12a_sd_emmc_a_clk0_div,
+-	&g12a_sd_emmc_b_clk0_div,
+-	&g12a_sd_emmc_c_clk0_div,
+-	&g12a_mpeg_clk_sel,
+-	&g12a_sd_emmc_a_clk0_sel,
+-	&g12a_sd_emmc_b_clk0_sel,
+-	&g12a_sd_emmc_c_clk0_sel,
+-	&g12a_mpll0,
+-	&g12a_mpll1,
+-	&g12a_mpll2,
+-	&g12a_mpll3,
+-	&g12a_mpll0_div,
+-	&g12a_mpll1_div,
+-	&g12a_mpll2_div,
+-	&g12a_mpll3_div,
+-	&g12a_fixed_pll,
+-	&g12a_sys_pll,
+-	&g12a_gp0_pll,
+-	&g12a_hifi_pll,
+-	&g12a_vclk2_venci0,
+-	&g12a_vclk2_venci1,
+-	&g12a_vclk2_vencp0,
+-	&g12a_vclk2_vencp1,
+-	&g12a_vclk2_venct0,
+-	&g12a_vclk2_venct1,
+-	&g12a_vclk2_other,
+-	&g12a_vclk2_enci,
+-	&g12a_vclk2_encp,
+-	&g12a_dac_clk,
+-	&g12a_aoclk_gate,
+-	&g12a_iec958_gate,
+-	&g12a_enc480p,
+-	&g12a_rng1,
+-	&g12a_vclk2_enct,
+-	&g12a_vclk2_encl,
+-	&g12a_vclk2_venclmmc,
+-	&g12a_vclk2_vencl,
+-	&g12a_vclk2_other1,
+-	&g12a_fixed_pll_dco,
+-	&g12a_sys_pll_dco,
+-	&g12a_gp0_pll_dco,
+-	&g12a_hifi_pll_dco,
+-	&g12a_fclk_div2,
+-	&g12a_fclk_div3,
+-	&g12a_fclk_div4,
+-	&g12a_fclk_div5,
+-	&g12a_fclk_div7,
+-	&g12a_fclk_div2p5,
+-	&g12a_dma,
+-	&g12a_efuse,
+-	&g12a_rom_boot,
+-	&g12a_reset_sec,
+-	&g12a_sec_ahb_apb3,
+-	&g12a_vpu_0_sel,
+-	&g12a_vpu_0_div,
+-	&g12a_vpu_0,
+-	&g12a_vpu_1_sel,
+-	&g12a_vpu_1_div,
+-	&g12a_vpu_1,
+-	&g12a_vpu,
+-	&g12a_vapb_0_sel,
+-	&g12a_vapb_0_div,
+-	&g12a_vapb_0,
+-	&g12a_vapb_1_sel,
+-	&g12a_vapb_1_div,
+-	&g12a_vapb_1,
+-	&g12a_vapb_sel,
+-	&g12a_vapb,
+-	&g12a_hdmi_pll_dco,
+-	&g12a_hdmi_pll_od,
+-	&g12a_hdmi_pll_od2,
+-	&g12a_hdmi_pll,
+-	&g12a_vid_pll_div,
+-	&g12a_vid_pll_sel,
+-	&g12a_vid_pll,
+-	&g12a_vclk_sel,
+-	&g12a_vclk2_sel,
+-	&g12a_vclk_input,
+-	&g12a_vclk2_input,
+-	&g12a_vclk_div,
+-	&g12a_vclk2_div,
+-	&g12a_vclk,
+-	&g12a_vclk2,
+-	&g12a_vclk_div1,
+-	&g12a_vclk_div2_en,
+-	&g12a_vclk_div4_en,
+-	&g12a_vclk_div6_en,
+-	&g12a_vclk_div12_en,
+-	&g12a_vclk2_div1,
+-	&g12a_vclk2_div2_en,
+-	&g12a_vclk2_div4_en,
+-	&g12a_vclk2_div6_en,
+-	&g12a_vclk2_div12_en,
+-	&g12a_cts_enci_sel,
+-	&g12a_cts_encp_sel,
+-	&g12a_cts_encl_sel,
+-	&g12a_cts_vdac_sel,
+-	&g12a_hdmi_tx_sel,
+-	&g12a_cts_enci,
+-	&g12a_cts_encp,
+-	&g12a_cts_encl,
+-	&g12a_cts_vdac,
+-	&g12a_hdmi_tx,
+-	&g12a_hdmi_sel,
+-	&g12a_hdmi_div,
+-	&g12a_hdmi,
+-	&g12a_mali_0_sel,
+-	&g12a_mali_0_div,
+-	&g12a_mali_0,
+-	&g12a_mali_1_sel,
+-	&g12a_mali_1_div,
+-	&g12a_mali_1,
+-	&g12a_mali,
+-	&g12a_mpll_50m,
+-	&g12a_sys_pll_div16_en,
+-	&g12a_cpu_clk_premux0,
+-	&g12a_cpu_clk_mux0_div,
+-	&g12a_cpu_clk_postmux0,
+-	&g12a_cpu_clk_premux1,
+-	&g12a_cpu_clk_mux1_div,
+-	&g12a_cpu_clk_postmux1,
+-	&g12a_cpu_clk_dyn,
+-	&g12a_cpu_clk,
+-	&g12a_cpu_clk_div16_en,
+-	&g12a_cpu_clk_apb_div,
+-	&g12a_cpu_clk_apb,
+-	&g12a_cpu_clk_atb_div,
+-	&g12a_cpu_clk_atb,
+-	&g12a_cpu_clk_axi_div,
+-	&g12a_cpu_clk_axi,
+-	&g12a_cpu_clk_trace_div,
+-	&g12a_cpu_clk_trace,
+-	&g12a_pcie_pll_od,
+-	&g12a_pcie_pll_dco,
+-	&g12a_vdec_1_sel,
+-	&g12a_vdec_1_div,
+-	&g12a_vdec_1,
+-	&g12a_vdec_hevc_sel,
+-	&g12a_vdec_hevc_div,
+-	&g12a_vdec_hevc,
+-	&g12a_vdec_hevcf_sel,
+-	&g12a_vdec_hevcf_div,
+-	&g12a_vdec_hevcf,
+-	&g12a_ts_div,
+-	&g12a_ts,
+-	&g12b_cpu_clk,
+-	&g12b_sys1_pll_dco,
+-	&g12b_sys1_pll,
+-	&g12b_sys1_pll_div16_en,
+-	&g12b_cpub_clk_premux0,
+-	&g12b_cpub_clk_mux0_div,
+-	&g12b_cpub_clk_postmux0,
+-	&g12b_cpub_clk_premux1,
+-	&g12b_cpub_clk_mux1_div,
+-	&g12b_cpub_clk_postmux1,
+-	&g12b_cpub_clk_dyn,
+-	&g12b_cpub_clk,
+-	&g12b_cpub_clk_div16_en,
+-	&g12b_cpub_clk_apb_sel,
+-	&g12b_cpub_clk_apb,
+-	&g12b_cpub_clk_atb_sel,
+-	&g12b_cpub_clk_atb,
+-	&g12b_cpub_clk_axi_sel,
+-	&g12b_cpub_clk_axi,
+-	&g12b_cpub_clk_trace_sel,
+-	&g12b_cpub_clk_trace,
+-	&sm1_gp1_pll_dco,
+-	&sm1_gp1_pll,
+-	&sm1_dsu_clk_premux0,
+-	&sm1_dsu_clk_premux1,
+-	&sm1_dsu_clk_mux0_div,
+-	&sm1_dsu_clk_postmux0,
+-	&sm1_dsu_clk_mux1_div,
+-	&sm1_dsu_clk_postmux1,
+-	&sm1_dsu_clk_dyn,
+-	&sm1_dsu_final_clk,
+-	&sm1_dsu_clk,
+-	&sm1_cpu1_clk,
+-	&sm1_cpu2_clk,
+-	&sm1_cpu3_clk,
+-	&g12a_spicc0_sclk_sel,
+-	&g12a_spicc0_sclk_div,
+-	&g12a_spicc0_sclk,
+-	&g12a_spicc1_sclk_sel,
+-	&g12a_spicc1_sclk_div,
+-	&g12a_spicc1_sclk,
+-	&sm1_nna_axi_clk_sel,
+-	&sm1_nna_axi_clk_div,
+-	&sm1_nna_axi_clk,
+-	&sm1_nna_core_clk_sel,
+-	&sm1_nna_core_clk_div,
+-	&sm1_nna_core_clk,
+-	&g12a_mipi_dsi_pxclk_sel,
+-	&g12a_mipi_dsi_pxclk_div,
+-	&g12a_mipi_dsi_pxclk,
+-	&g12b_mipi_isp_sel,
+-	&g12b_mipi_isp_div,
+-	&g12b_mipi_isp,
+-	&g12b_mipi_isp_gate,
+-	&g12b_csi_phy1,
+-	&g12b_csi_phy0,
+-};
+-
+ static const struct reg_sequence g12a_init_regs[] = {
+ 	{ .reg = HHI_MPLL_CNTL0,	.def = 0x00000543 },
+ };
+@@ -5558,8 +5303,6 @@ static int meson_g12a_probe(struct platform_device *pdev)
+ 
+ static const struct meson_g12a_data g12a_clkc_data = {
+ 	.eeclkc_data = {
+-		.regmap_clks = g12a_clk_regmaps,
+-		.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
+ 		.hw_clks = {
+ 			.hws = g12a_hw_clks,
+ 			.num = ARRAY_SIZE(g12a_hw_clks),
+@@ -5572,8 +5315,6 @@ static const struct meson_g12a_data g12a_clkc_data = {
+ 
+ static const struct meson_g12a_data g12b_clkc_data = {
+ 	.eeclkc_data = {
+-		.regmap_clks = g12a_clk_regmaps,
+-		.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
+ 		.hw_clks = {
+ 			.hws = g12b_hw_clks,
+ 			.num = ARRAY_SIZE(g12b_hw_clks),
+@@ -5584,8 +5325,6 @@ static const struct meson_g12a_data g12b_clkc_data = {
+ 
+ static const struct meson_g12a_data sm1_clkc_data = {
+ 	.eeclkc_data = {
+-		.regmap_clks = g12a_clk_regmaps,
+-		.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
+ 		.hw_clks = {
+ 			.hws = sm1_hw_clks,
+ 			.num = ARRAY_SIZE(sm1_hw_clks),
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 83b034157b3534dd157c6cc2b0ae5ba320197400..30fb57c2d849fdf4958ec444932539c7166b83c1 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -237,23 +237,6 @@ static const unsigned int gxbb_aoclk_reset[] = {
+ 	[RESET_AO_IR_BLASTER] = 23,
+ };
+ 
+-static struct clk_regmap *gxbb_aoclk[] = {
+-	&remote_ao,
+-	&i2c_master_ao,
+-	&i2c_slave_ao,
+-	&uart1_ao,
+-	&uart2_ao,
+-	&ir_blaster_ao,
+-	&ao_cts_oscin,
+-	&ao_32k_pre,
+-	&ao_32k_div,
+-	&ao_32k_sel,
+-	&ao_32k,
+-	&ao_cts_rtc_oscin,
+-	&ao_clk81,
+-	&ao_cts_cec,
+-};
+-
+ static struct clk_hw *gxbb_aoclk_hw_clks[] = {
+ 		[CLKID_AO_REMOTE] = &remote_ao.hw,
+ 		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
+@@ -275,8 +258,6 @@ static const struct meson_aoclk_data gxbb_aoclkc_data = {
+ 	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
+ 	.num_reset	= ARRAY_SIZE(gxbb_aoclk_reset),
+ 	.reset		= gxbb_aoclk_reset,
+-	.num_clks	= ARRAY_SIZE(gxbb_aoclk),
+-	.clks		= gxbb_aoclk,
+ 	.hw_clks	= {
+ 		.hws	= gxbb_aoclk_hw_clks,
+ 		.num	= ARRAY_SIZE(gxbb_aoclk_hw_clks),
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 262c318edbd512239b79e5ad26643ae6c7b0173b..79b6cda95df773747140aefa3565bf6603298308 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -3140,398 +3140,7 @@ static struct clk_hw *gxl_hw_clks[] = {
+ 	[CLKID_ACODEC]		    = &gxl_acodec.hw,
+ };
+ 
+-static struct clk_regmap *const gxbb_clk_regmaps[] = {
+-	&gxbb_clk81,
+-	&gxbb_ddr,
+-	&gxbb_dos,
+-	&gxbb_isa,
+-	&gxbb_pl301,
+-	&gxbb_periphs,
+-	&gxbb_spicc,
+-	&gxbb_i2c,
+-	&gxbb_sar_adc,
+-	&gxbb_smart_card,
+-	&gxbb_rng0,
+-	&gxbb_uart0,
+-	&gxbb_sdhc,
+-	&gxbb_stream,
+-	&gxbb_async_fifo,
+-	&gxbb_sdio,
+-	&gxbb_abuf,
+-	&gxbb_hiu_iface,
+-	&gxbb_assist_misc,
+-	&gxbb_spi,
+-	&gxbb_i2s_spdif,
+-	&gxbb_eth,
+-	&gxbb_demux,
+-	&gxbb_aiu_glue,
+-	&gxbb_iec958,
+-	&gxbb_i2s_out,
+-	&gxbb_amclk,
+-	&gxbb_aififo2,
+-	&gxbb_mixer,
+-	&gxbb_mixer_iface,
+-	&gxbb_adc,
+-	&gxbb_blkmv,
+-	&gxbb_aiu,
+-	&gxbb_uart1,
+-	&gxbb_g2d,
+-	&gxbb_usb0,
+-	&gxbb_usb1,
+-	&gxbb_reset,
+-	&gxbb_nand,
+-	&gxbb_dos_parser,
+-	&gxbb_usb,
+-	&gxbb_vdin1,
+-	&gxbb_ahb_arb0,
+-	&gxbb_efuse,
+-	&gxbb_boot_rom,
+-	&gxbb_ahb_data_bus,
+-	&gxbb_ahb_ctrl_bus,
+-	&gxbb_hdmi_intr_sync,
+-	&gxbb_hdmi_pclk,
+-	&gxbb_usb1_ddr_bridge,
+-	&gxbb_usb0_ddr_bridge,
+-	&gxbb_mmc_pclk,
+-	&gxbb_dvin,
+-	&gxbb_uart2,
+-	&gxbb_sana,
+-	&gxbb_vpu_intr,
+-	&gxbb_sec_ahb_ahb3_bridge,
+-	&gxbb_clk81_a53,
+-	&gxbb_vclk2_venci0,
+-	&gxbb_vclk2_venci1,
+-	&gxbb_vclk2_vencp0,
+-	&gxbb_vclk2_vencp1,
+-	&gxbb_gclk_venci_int0,
+-	&gxbb_gclk_vencp_int,
+-	&gxbb_dac_clk,
+-	&gxbb_aoclk_gate,
+-	&gxbb_iec958_gate,
+-	&gxbb_enc480p,
+-	&gxbb_rng1,
+-	&gxbb_gclk_venci_int1,
+-	&gxbb_vclk2_venclmcc,
+-	&gxbb_vclk2_vencl,
+-	&gxbb_vclk_other,
+-	&gxbb_edp,
+-	&gxbb_ao_media_cpu,
+-	&gxbb_ao_ahb_sram,
+-	&gxbb_ao_ahb_bus,
+-	&gxbb_ao_iface,
+-	&gxbb_ao_i2c,
+-	&gxbb_emmc_a,
+-	&gxbb_emmc_b,
+-	&gxbb_emmc_c,
+-	&gxbb_sar_adc_clk,
+-	&gxbb_mali_0,
+-	&gxbb_mali_1,
+-	&gxbb_cts_amclk,
+-	&gxbb_cts_mclk_i958,
+-	&gxbb_32k_clk,
+-	&gxbb_sd_emmc_a_clk0,
+-	&gxbb_sd_emmc_b_clk0,
+-	&gxbb_sd_emmc_c_clk0,
+-	&gxbb_vpu_0,
+-	&gxbb_vpu_1,
+-	&gxbb_vapb_0,
+-	&gxbb_vapb_1,
+-	&gxbb_vapb,
+-	&gxbb_mpeg_clk_div,
+-	&gxbb_sar_adc_clk_div,
+-	&gxbb_mali_0_div,
+-	&gxbb_mali_1_div,
+-	&gxbb_cts_mclk_i958_div,
+-	&gxbb_32k_clk_div,
+-	&gxbb_sd_emmc_a_clk0_div,
+-	&gxbb_sd_emmc_b_clk0_div,
+-	&gxbb_sd_emmc_c_clk0_div,
+-	&gxbb_vpu_0_div,
+-	&gxbb_vpu_1_div,
+-	&gxbb_vapb_0_div,
+-	&gxbb_vapb_1_div,
+-	&gxbb_mpeg_clk_sel,
+-	&gxbb_sar_adc_clk_sel,
+-	&gxbb_mali_0_sel,
+-	&gxbb_mali_1_sel,
+-	&gxbb_mali,
+-	&gxbb_cts_amclk_sel,
+-	&gxbb_cts_mclk_i958_sel,
+-	&gxbb_cts_i958,
+-	&gxbb_32k_clk_sel,
+-	&gxbb_sd_emmc_a_clk0_sel,
+-	&gxbb_sd_emmc_b_clk0_sel,
+-	&gxbb_sd_emmc_c_clk0_sel,
+-	&gxbb_vpu_0_sel,
+-	&gxbb_vpu_1_sel,
+-	&gxbb_vpu,
+-	&gxbb_vapb_0_sel,
+-	&gxbb_vapb_1_sel,
+-	&gxbb_vapb_sel,
+-	&gxbb_mpll0,
+-	&gxbb_mpll1,
+-	&gxbb_mpll2,
+-	&gxbb_mpll0_div,
+-	&gxbb_mpll1_div,
+-	&gxbb_mpll2_div,
+-	&gxbb_cts_amclk_div,
+-	&gxbb_fixed_pll,
+-	&gxbb_sys_pll,
+-	&gxbb_mpll_prediv,
+-	&gxbb_fclk_div2,
+-	&gxbb_fclk_div3,
+-	&gxbb_fclk_div4,
+-	&gxbb_fclk_div5,
+-	&gxbb_fclk_div7,
+-	&gxbb_vdec_1_sel,
+-	&gxbb_vdec_1_div,
+-	&gxbb_vdec_1,
+-	&gxbb_vdec_hevc_sel,
+-	&gxbb_vdec_hevc_div,
+-	&gxbb_vdec_hevc,
+-	&gxbb_gen_clk_sel,
+-	&gxbb_gen_clk_div,
+-	&gxbb_gen_clk,
+-	&gxbb_fixed_pll_dco,
+-	&gxbb_sys_pll_dco,
+-	&gxbb_gp0_pll,
+-	&gxbb_vid_pll,
+-	&gxbb_vid_pll_sel,
+-	&gxbb_vid_pll_div,
+-	&gxbb_vclk,
+-	&gxbb_vclk_sel,
+-	&gxbb_vclk_div,
+-	&gxbb_vclk_input,
+-	&gxbb_vclk_div1,
+-	&gxbb_vclk_div2_en,
+-	&gxbb_vclk_div4_en,
+-	&gxbb_vclk_div6_en,
+-	&gxbb_vclk_div12_en,
+-	&gxbb_vclk2,
+-	&gxbb_vclk2_sel,
+-	&gxbb_vclk2_div,
+-	&gxbb_vclk2_input,
+-	&gxbb_vclk2_div1,
+-	&gxbb_vclk2_div2_en,
+-	&gxbb_vclk2_div4_en,
+-	&gxbb_vclk2_div6_en,
+-	&gxbb_vclk2_div12_en,
+-	&gxbb_cts_enci,
+-	&gxbb_cts_enci_sel,
+-	&gxbb_cts_encp,
+-	&gxbb_cts_encp_sel,
+-	&gxbb_cts_vdac,
+-	&gxbb_cts_vdac_sel,
+-	&gxbb_hdmi_tx,
+-	&gxbb_hdmi_tx_sel,
+-	&gxbb_hdmi_sel,
+-	&gxbb_hdmi_div,
+-	&gxbb_hdmi,
+-	&gxbb_gp0_pll_dco,
+-	&gxbb_hdmi_pll,
+-	&gxbb_hdmi_pll_od,
+-	&gxbb_hdmi_pll_od2,
+-	&gxbb_hdmi_pll_dco,
+-};
+-
+-static struct clk_regmap *const gxl_clk_regmaps[] = {
+-	&gxbb_clk81,
+-	&gxbb_ddr,
+-	&gxbb_dos,
+-	&gxbb_isa,
+-	&gxbb_pl301,
+-	&gxbb_periphs,
+-	&gxbb_spicc,
+-	&gxbb_i2c,
+-	&gxbb_sar_adc,
+-	&gxbb_smart_card,
+-	&gxbb_rng0,
+-	&gxbb_uart0,
+-	&gxbb_sdhc,
+-	&gxbb_stream,
+-	&gxbb_async_fifo,
+-	&gxbb_sdio,
+-	&gxbb_abuf,
+-	&gxbb_hiu_iface,
+-	&gxbb_assist_misc,
+-	&gxbb_spi,
+-	&gxbb_i2s_spdif,
+-	&gxbb_eth,
+-	&gxbb_demux,
+-	&gxbb_aiu_glue,
+-	&gxbb_iec958,
+-	&gxbb_i2s_out,
+-	&gxbb_amclk,
+-	&gxbb_aififo2,
+-	&gxbb_mixer,
+-	&gxbb_mixer_iface,
+-	&gxbb_adc,
+-	&gxbb_blkmv,
+-	&gxbb_aiu,
+-	&gxbb_uart1,
+-	&gxbb_g2d,
+-	&gxbb_usb0,
+-	&gxbb_usb1,
+-	&gxbb_reset,
+-	&gxbb_nand,
+-	&gxbb_dos_parser,
+-	&gxbb_usb,
+-	&gxbb_vdin1,
+-	&gxbb_ahb_arb0,
+-	&gxbb_efuse,
+-	&gxbb_boot_rom,
+-	&gxbb_ahb_data_bus,
+-	&gxbb_ahb_ctrl_bus,
+-	&gxbb_hdmi_intr_sync,
+-	&gxbb_hdmi_pclk,
+-	&gxbb_usb1_ddr_bridge,
+-	&gxbb_usb0_ddr_bridge,
+-	&gxbb_mmc_pclk,
+-	&gxbb_dvin,
+-	&gxbb_uart2,
+-	&gxbb_sana,
+-	&gxbb_vpu_intr,
+-	&gxbb_sec_ahb_ahb3_bridge,
+-	&gxbb_clk81_a53,
+-	&gxbb_vclk2_venci0,
+-	&gxbb_vclk2_venci1,
+-	&gxbb_vclk2_vencp0,
+-	&gxbb_vclk2_vencp1,
+-	&gxbb_gclk_venci_int0,
+-	&gxbb_gclk_vencp_int,
+-	&gxbb_dac_clk,
+-	&gxbb_aoclk_gate,
+-	&gxbb_iec958_gate,
+-	&gxbb_enc480p,
+-	&gxbb_rng1,
+-	&gxbb_gclk_venci_int1,
+-	&gxbb_vclk2_venclmcc,
+-	&gxbb_vclk2_vencl,
+-	&gxbb_vclk_other,
+-	&gxbb_edp,
+-	&gxbb_ao_media_cpu,
+-	&gxbb_ao_ahb_sram,
+-	&gxbb_ao_ahb_bus,
+-	&gxbb_ao_iface,
+-	&gxbb_ao_i2c,
+-	&gxbb_emmc_a,
+-	&gxbb_emmc_b,
+-	&gxbb_emmc_c,
+-	&gxbb_sar_adc_clk,
+-	&gxbb_mali_0,
+-	&gxbb_mali_1,
+-	&gxbb_cts_amclk,
+-	&gxbb_cts_mclk_i958,
+-	&gxbb_32k_clk,
+-	&gxbb_sd_emmc_a_clk0,
+-	&gxbb_sd_emmc_b_clk0,
+-	&gxbb_sd_emmc_c_clk0,
+-	&gxbb_vpu_0,
+-	&gxbb_vpu_1,
+-	&gxbb_vapb_0,
+-	&gxbb_vapb_1,
+-	&gxbb_vapb,
+-	&gxbb_mpeg_clk_div,
+-	&gxbb_sar_adc_clk_div,
+-	&gxbb_mali_0_div,
+-	&gxbb_mali_1_div,
+-	&gxbb_cts_mclk_i958_div,
+-	&gxbb_32k_clk_div,
+-	&gxbb_sd_emmc_a_clk0_div,
+-	&gxbb_sd_emmc_b_clk0_div,
+-	&gxbb_sd_emmc_c_clk0_div,
+-	&gxbb_vpu_0_div,
+-	&gxbb_vpu_1_div,
+-	&gxbb_vapb_0_div,
+-	&gxbb_vapb_1_div,
+-	&gxbb_mpeg_clk_sel,
+-	&gxbb_sar_adc_clk_sel,
+-	&gxbb_mali_0_sel,
+-	&gxbb_mali_1_sel,
+-	&gxbb_mali,
+-	&gxbb_cts_amclk_sel,
+-	&gxbb_cts_mclk_i958_sel,
+-	&gxbb_cts_i958,
+-	&gxbb_32k_clk_sel,
+-	&gxbb_sd_emmc_a_clk0_sel,
+-	&gxbb_sd_emmc_b_clk0_sel,
+-	&gxbb_sd_emmc_c_clk0_sel,
+-	&gxbb_vpu_0_sel,
+-	&gxbb_vpu_1_sel,
+-	&gxbb_vpu,
+-	&gxbb_vapb_0_sel,
+-	&gxbb_vapb_1_sel,
+-	&gxbb_vapb_sel,
+-	&gxbb_mpll0,
+-	&gxbb_mpll1,
+-	&gxbb_mpll2,
+-	&gxl_mpll0_div,
+-	&gxbb_mpll1_div,
+-	&gxbb_mpll2_div,
+-	&gxbb_cts_amclk_div,
+-	&gxbb_fixed_pll,
+-	&gxbb_sys_pll,
+-	&gxbb_mpll_prediv,
+-	&gxbb_fclk_div2,
+-	&gxbb_fclk_div3,
+-	&gxbb_fclk_div4,
+-	&gxbb_fclk_div5,
+-	&gxbb_fclk_div7,
+-	&gxbb_vdec_1_sel,
+-	&gxbb_vdec_1_div,
+-	&gxbb_vdec_1,
+-	&gxbb_vdec_hevc_sel,
+-	&gxbb_vdec_hevc_div,
+-	&gxbb_vdec_hevc,
+-	&gxbb_gen_clk_sel,
+-	&gxbb_gen_clk_div,
+-	&gxbb_gen_clk,
+-	&gxbb_fixed_pll_dco,
+-	&gxbb_sys_pll_dco,
+-	&gxbb_gp0_pll,
+-	&gxbb_vid_pll,
+-	&gxbb_vid_pll_sel,
+-	&gxbb_vid_pll_div,
+-	&gxbb_vclk,
+-	&gxbb_vclk_sel,
+-	&gxbb_vclk_div,
+-	&gxbb_vclk_input,
+-	&gxbb_vclk_div1,
+-	&gxbb_vclk_div2_en,
+-	&gxbb_vclk_div4_en,
+-	&gxbb_vclk_div6_en,
+-	&gxbb_vclk_div12_en,
+-	&gxbb_vclk2,
+-	&gxbb_vclk2_sel,
+-	&gxbb_vclk2_div,
+-	&gxbb_vclk2_input,
+-	&gxbb_vclk2_div1,
+-	&gxbb_vclk2_div2_en,
+-	&gxbb_vclk2_div4_en,
+-	&gxbb_vclk2_div6_en,
+-	&gxbb_vclk2_div12_en,
+-	&gxbb_cts_enci,
+-	&gxbb_cts_enci_sel,
+-	&gxbb_cts_encp,
+-	&gxbb_cts_encp_sel,
+-	&gxbb_cts_vdac,
+-	&gxbb_cts_vdac_sel,
+-	&gxbb_hdmi_tx,
+-	&gxbb_hdmi_tx_sel,
+-	&gxbb_hdmi_sel,
+-	&gxbb_hdmi_div,
+-	&gxbb_hdmi,
+-	&gxl_gp0_pll_dco,
+-	&gxl_hdmi_pll,
+-	&gxl_hdmi_pll_od,
+-	&gxl_hdmi_pll_od2,
+-	&gxl_hdmi_pll_dco,
+-	&gxl_acodec,
+-};
+-
+ static const struct meson_eeclkc_data gxbb_clkc_data = {
+-	.regmap_clks = gxbb_clk_regmaps,
+-	.regmap_clk_num = ARRAY_SIZE(gxbb_clk_regmaps),
+ 	.hw_clks = {
+ 		.hws = gxbb_hw_clks,
+ 		.num = ARRAY_SIZE(gxbb_hw_clks),
+@@ -3539,8 +3148,6 @@ static const struct meson_eeclkc_data gxbb_clkc_data = {
+ };
+ 
+ static const struct meson_eeclkc_data gxl_clkc_data = {
+-	.regmap_clks = gxl_clk_regmaps,
+-	.regmap_clk_num = ARRAY_SIZE(gxl_clk_regmaps),
+ 	.hw_clks = {
+ 		.hws = gxl_hw_clks,
+ 		.num = ARRAY_SIZE(gxl_hw_clks),
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index 053940ee8940d7ca785ad89f026071244e247d7f..64ae2aff8736ac71fef1b6eb804f84d687f0b4f3 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -18,6 +18,7 @@
+ 
+ #include <linux/slab.h>
+ #include "meson-aoclk.h"
++#include "clk-regmap.h"
+ 
+ static int meson_aoclk_do_reset(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+@@ -70,9 +71,9 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	/* Populate regmap */
+-	for (clkid = 0; clkid < data->num_clks; clkid++)
+-		data->clks[clkid]->map = regmap;
++	ret = clk_regmap_init_regmap(dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	/* Register all clks */
+ 	for (clkid = 0; clkid < data->hw_clks.num; clkid++) {
+diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
+index 308be3e4814a9477287c5d1df5138142e3fa38f1..ea5fc61308af14c63489b7c72410d9d981d8745b 100644
+--- a/drivers/clk/meson/meson-aoclk.h
++++ b/drivers/clk/meson/meson-aoclk.h
+@@ -23,8 +23,6 @@ struct meson_aoclk_data {
+ 	const unsigned int			reset_reg;
+ 	const int				num_reset;
+ 	const unsigned int			*reset;
+-	const int				num_clks;
+-	struct clk_regmap			**clks;
+ 	struct meson_clk_hw_data		hw_clks;
+ };
+ 
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 66f79e384fe5118dcbf6b29daf2b20e01fee9934..0475d7def15121e18f6d9f970c244dd0e810ec8d 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -39,9 +39,9 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 	if (data->init_count)
+ 		regmap_multi_reg_write(map, data->init_regs, data->init_count);
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < data->regmap_clk_num; i++)
+-		data->regmap_clks[i]->map = map;
++	ret = clk_regmap_init_regmap(dev, map);
++	if (ret)
++		return ret;
+ 
+ 	for (i = 0; i < data->hw_clks.num; i++) {
+ 		/* array might be sparse */
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+index 37a48b75c66051b68730f808f7c01e6397c34231..6a81d67b46b2270315e24eb58042de8c09b37763 100644
+--- a/drivers/clk/meson/meson-eeclk.h
++++ b/drivers/clk/meson/meson-eeclk.h
+@@ -14,8 +14,6 @@
+ struct platform_device;
+ 
+ struct meson_eeclkc_data {
+-	struct clk_regmap *const	*regmap_clks;
+-	unsigned int			regmap_clk_num;
+ 	const struct reg_sequence	*init_regs;
+ 	unsigned int			init_count;
+ 	struct meson_clk_hw_data	hw_clks;
+diff --git a/drivers/clk/meson/meson8-ddr.c b/drivers/clk/meson/meson8-ddr.c
+index 4b73ea244b630fb4cfb6525a8cb4848c987a8107..64fe6dcf7d12317ae7e1b190a88bdf4c697b41d7 100644
+--- a/drivers/clk/meson/meson8-ddr.c
++++ b/drivers/clk/meson/meson8-ddr.c
+@@ -85,11 +85,6 @@ static struct clk_hw_onecell_data meson8_ddr_clk_hw_onecell_data = {
+ 	.num = 2,
+ };
+ 
+-static struct clk_regmap *const meson8_ddr_clk_regmaps[] = {
+-	&meson8_ddr_pll_dco,
+-	&meson8_ddr_pll,
+-};
+-
+ static const struct regmap_config meson8_ddr_clkc_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 32,
+@@ -113,9 +108,9 @@ static int meson8_ddr_clkc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	/* Populate regmap */
+-	for (i = 0; i < ARRAY_SIZE(meson8_ddr_clk_regmaps); i++)
+-		meson8_ddr_clk_regmaps[i]->map = regmap;
++	ret = clk_regmap_init_regmap(&pdev->dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	/* Register all clks */
+ 	for (i = 0; i < meson8_ddr_clk_hw_onecell_data.num; i++) {
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index c930cf0614a0f4250a712dc20ce8e8a0ed812e6d..91c7b10c2b68c626dd1d6164ea855370aae71485 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -3522,231 +3522,6 @@ static struct clk_hw *s4_periphs_hw_clks[] = {
+ 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk_gate.hw,
+ };
+ 
+-/* Convenience table to populate regmap in .probe */
+-static struct clk_regmap *const s4_periphs_clk_regmaps[] = {
+-	&s4_rtc_32k_by_oscin_clkin,
+-	&s4_rtc_32k_by_oscin_div,
+-	&s4_rtc_32k_by_oscin_sel,
+-	&s4_rtc_32k_by_oscin,
+-	&s4_rtc_clk,
+-	&s4_sysclk_b_sel,
+-	&s4_sysclk_b_div,
+-	&s4_sysclk_b,
+-	&s4_sysclk_a_sel,
+-	&s4_sysclk_a_div,
+-	&s4_sysclk_a,
+-	&s4_sys_clk,
+-	&s4_ceca_32k_clkin,
+-	&s4_ceca_32k_div,
+-	&s4_ceca_32k_sel_pre,
+-	&s4_ceca_32k_sel,
+-	&s4_ceca_32k_clkout,
+-	&s4_cecb_32k_clkin,
+-	&s4_cecb_32k_div,
+-	&s4_cecb_32k_sel_pre,
+-	&s4_cecb_32k_sel,
+-	&s4_cecb_32k_clkout,
+-	&s4_sc_clk_mux,
+-	&s4_sc_clk_div,
+-	&s4_sc_clk_gate,
+-	&s4_12_24M_clk_gate,
+-	&s4_12_24M_clk,
+-	&s4_vid_pll_div,
+-	&s4_vid_pll_sel,
+-	&s4_vid_pll,
+-	&s4_vclk_sel,
+-	&s4_vclk2_sel,
+-	&s4_vclk_input,
+-	&s4_vclk2_input,
+-	&s4_vclk_div,
+-	&s4_vclk2_div,
+-	&s4_vclk,
+-	&s4_vclk2,
+-	&s4_vclk_div1,
+-	&s4_vclk_div2_en,
+-	&s4_vclk_div4_en,
+-	&s4_vclk_div6_en,
+-	&s4_vclk_div12_en,
+-	&s4_vclk2_div1,
+-	&s4_vclk2_div2_en,
+-	&s4_vclk2_div4_en,
+-	&s4_vclk2_div6_en,
+-	&s4_vclk2_div12_en,
+-	&s4_cts_enci_sel,
+-	&s4_cts_encp_sel,
+-	&s4_cts_vdac_sel,
+-	&s4_hdmi_tx_sel,
+-	&s4_cts_enci,
+-	&s4_cts_encp,
+-	&s4_cts_vdac,
+-	&s4_hdmi_tx,
+-	&s4_hdmi_sel,
+-	&s4_hdmi_div,
+-	&s4_hdmi,
+-	&s4_ts_clk_div,
+-	&s4_ts_clk_gate,
+-	&s4_mali_0_sel,
+-	&s4_mali_0_div,
+-	&s4_mali_0,
+-	&s4_mali_1_sel,
+-	&s4_mali_1_div,
+-	&s4_mali_1,
+-	&s4_mali_mux,
+-	&s4_vdec_p0_mux,
+-	&s4_vdec_p0_div,
+-	&s4_vdec_p0,
+-	&s4_vdec_p1_mux,
+-	&s4_vdec_p1_div,
+-	&s4_vdec_p1,
+-	&s4_vdec_mux,
+-	&s4_hevcf_p0_mux,
+-	&s4_hevcf_p0_div,
+-	&s4_hevcf_p0,
+-	&s4_hevcf_p1_mux,
+-	&s4_hevcf_p1_div,
+-	&s4_hevcf_p1,
+-	&s4_hevcf_mux,
+-	&s4_vpu_0_sel,
+-	&s4_vpu_0_div,
+-	&s4_vpu_0,
+-	&s4_vpu_1_sel,
+-	&s4_vpu_1_div,
+-	&s4_vpu_1,
+-	&s4_vpu,
+-	&s4_vpu_clkb_tmp_mux,
+-	&s4_vpu_clkb_tmp_div,
+-	&s4_vpu_clkb_tmp,
+-	&s4_vpu_clkb_div,
+-	&s4_vpu_clkb,
+-	&s4_vpu_clkc_p0_mux,
+-	&s4_vpu_clkc_p0_div,
+-	&s4_vpu_clkc_p0,
+-	&s4_vpu_clkc_p1_mux,
+-	&s4_vpu_clkc_p1_div,
+-	&s4_vpu_clkc_p1,
+-	&s4_vpu_clkc_mux,
+-	&s4_vapb_0_sel,
+-	&s4_vapb_0_div,
+-	&s4_vapb_0,
+-	&s4_vapb_1_sel,
+-	&s4_vapb_1_div,
+-	&s4_vapb_1,
+-	&s4_vapb,
+-	&s4_ge2d_gate,
+-	&s4_hdcp22_esmclk_mux,
+-	&s4_hdcp22_esmclk_div,
+-	&s4_hdcp22_esmclk_gate,
+-	&s4_hdcp22_skpclk_mux,
+-	&s4_hdcp22_skpclk_div,
+-	&s4_hdcp22_skpclk_gate,
+-	&s4_vdin_meas_mux,
+-	&s4_vdin_meas_div,
+-	&s4_vdin_meas_gate,
+-	&s4_sd_emmc_c_clk0_sel,
+-	&s4_sd_emmc_c_clk0_div,
+-	&s4_sd_emmc_c_clk0,
+-	&s4_sd_emmc_a_clk0_sel,
+-	&s4_sd_emmc_a_clk0_div,
+-	&s4_sd_emmc_a_clk0,
+-	&s4_sd_emmc_b_clk0_sel,
+-	&s4_sd_emmc_b_clk0_div,
+-	&s4_sd_emmc_b_clk0,
+-	&s4_spicc0_mux,
+-	&s4_spicc0_div,
+-	&s4_spicc0_gate,
+-	&s4_pwm_a_mux,
+-	&s4_pwm_a_div,
+-	&s4_pwm_a_gate,
+-	&s4_pwm_b_mux,
+-	&s4_pwm_b_div,
+-	&s4_pwm_b_gate,
+-	&s4_pwm_c_mux,
+-	&s4_pwm_c_div,
+-	&s4_pwm_c_gate,
+-	&s4_pwm_d_mux,
+-	&s4_pwm_d_div,
+-	&s4_pwm_d_gate,
+-	&s4_pwm_e_mux,
+-	&s4_pwm_e_div,
+-	&s4_pwm_e_gate,
+-	&s4_pwm_f_mux,
+-	&s4_pwm_f_div,
+-	&s4_pwm_f_gate,
+-	&s4_pwm_g_mux,
+-	&s4_pwm_g_div,
+-	&s4_pwm_g_gate,
+-	&s4_pwm_h_mux,
+-	&s4_pwm_h_div,
+-	&s4_pwm_h_gate,
+-	&s4_pwm_i_mux,
+-	&s4_pwm_i_div,
+-	&s4_pwm_i_gate,
+-	&s4_pwm_j_mux,
+-	&s4_pwm_j_div,
+-	&s4_pwm_j_gate,
+-	&s4_saradc_mux,
+-	&s4_saradc_div,
+-	&s4_saradc_gate,
+-	&s4_gen_clk_sel,
+-	&s4_gen_clk_div,
+-	&s4_gen_clk,
+-	&s4_ddr,
+-	&s4_dos,
+-	&s4_ethphy,
+-	&s4_mali,
+-	&s4_aocpu,
+-	&s4_aucpu,
+-	&s4_cec,
+-	&s4_sdemmca,
+-	&s4_sdemmcb,
+-	&s4_nand,
+-	&s4_smartcard,
+-	&s4_acodec,
+-	&s4_spifc,
+-	&s4_msr_clk,
+-	&s4_ir_ctrl,
+-	&s4_audio,
+-	&s4_eth,
+-	&s4_uart_a,
+-	&s4_uart_b,
+-	&s4_uart_c,
+-	&s4_uart_d,
+-	&s4_uart_e,
+-	&s4_aififo,
+-	&s4_ts_ddr,
+-	&s4_ts_pll,
+-	&s4_g2d,
+-	&s4_spicc0,
+-	&s4_usb,
+-	&s4_i2c_m_a,
+-	&s4_i2c_m_b,
+-	&s4_i2c_m_c,
+-	&s4_i2c_m_d,
+-	&s4_i2c_m_e,
+-	&s4_hdmitx_apb,
+-	&s4_i2c_s_a,
+-	&s4_usb1_to_ddr,
+-	&s4_hdcp22,
+-	&s4_mmc_apb,
+-	&s4_rsa,
+-	&s4_cpu_debug,
+-	&s4_vpu_intr,
+-	&s4_demod,
+-	&s4_sar_adc,
+-	&s4_gic,
+-	&s4_pwm_ab,
+-	&s4_pwm_cd,
+-	&s4_pwm_ef,
+-	&s4_pwm_gh,
+-	&s4_pwm_ij,
+-	&s4_demod_core_clk_mux,
+-	&s4_demod_core_clk_div,
+-	&s4_demod_core_clk_gate,
+-	&s4_adc_extclk_in_mux,
+-	&s4_adc_extclk_in_div,
+-	&s4_adc_extclk_in_gate,
+-};
+-
+ static const struct regmap_config clkc_regmap_config = {
+ 	.reg_bits       = 32,
+ 	.val_bits       = 32,
+@@ -3776,9 +3551,9 @@ static int meson_s4_periphs_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(regmap),
+ 				     "can't init regmap mmio region\n");
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(s4_periphs_clk_regmaps); i++)
+-		s4_periphs_clk_regmaps[i]->map = regmap;
++	ret = clk_regmap_init_regmap(dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	for (i = 0; i < s4_periphs_clks.num; i++) {
+ 		/* array might be sparse */
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index d8e621e794281a14cdbc90e1990f677a087771ef..69581d7f154785321c6bd9abf8064d45332e6cea 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -767,33 +767,6 @@ static struct clk_hw *s4_pll_hw_clks[] = {
+ 	[CLKID_MPLL3]			= &s4_mpll3.hw,
+ };
+ 
+-static struct clk_regmap *const s4_pll_clk_regmaps[] = {
+-	&s4_fixed_pll_dco,
+-	&s4_fixed_pll,
+-	&s4_fclk_div2,
+-	&s4_fclk_div3,
+-	&s4_fclk_div4,
+-	&s4_fclk_div5,
+-	&s4_fclk_div7,
+-	&s4_fclk_div2p5,
+-	&s4_gp0_pll_dco,
+-	&s4_gp0_pll,
+-	&s4_hifi_pll_dco,
+-	&s4_hifi_pll,
+-	&s4_hdmi_pll_dco,
+-	&s4_hdmi_pll_od,
+-	&s4_hdmi_pll,
+-	&s4_mpll_50m,
+-	&s4_mpll0_div,
+-	&s4_mpll0,
+-	&s4_mpll1_div,
+-	&s4_mpll1,
+-	&s4_mpll2_div,
+-	&s4_mpll2,
+-	&s4_mpll3_div,
+-	&s4_mpll3,
+-};
+-
+ static const struct reg_sequence s4_init_regs[] = {
+ 	{ .reg = ANACTRL_MPLL_CTRL0,	.def = 0x00000543 },
+ };
+@@ -832,9 +805,9 @@ static int meson_s4_pll_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, ret,
+ 				     "Failed to init registers\n");
+ 
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(s4_pll_clk_regmaps); i++)
+-		s4_pll_clk_regmaps[i]->map = regmap;
++	ret = clk_regmap_init_regmap(dev, regmap);
++	if (ret)
++		return ret;
+ 
+ 	/* Register clocks */
+ 	for (i = 0; i < s4_pll_clks.num; i++) {
+diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+index ae03b048182f3bbaf4a7e86b605fb4fb37b9cfd5..13536df1760d135cc2d62062e2699ed6842e1e5f 100644
+--- a/drivers/clk/meson/sclk-div.c
++++ b/drivers/clk/meson/sclk-div.c
+@@ -222,6 +222,11 @@ static int sclk_div_init(struct clk_hw *hw)
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
+ 	unsigned int val;
++	int ret;
++
++	ret = clk_regmap_init(hw);
++	if (ret)
++		return ret;
+ 
+ 	val = meson_parm_read(clk->map, &sclk->div);
+ 
+diff --git a/drivers/clk/meson/vclk.c b/drivers/clk/meson/vclk.c
+index 36f637d2d01b5d86bf5d85196643ad9d66c6f19b..bcdec8a444f60838c84eb27c4cdf2b8f8574ce71 100644
+--- a/drivers/clk/meson/vclk.c
++++ b/drivers/clk/meson/vclk.c
+@@ -45,6 +45,7 @@ static int meson_vclk_gate_is_enabled(struct clk_hw *hw)
+ }
+ 
+ const struct clk_ops meson_vclk_gate_ops = {
++	.init = clk_regmap_init,
+ 	.enable = meson_vclk_gate_enable,
+ 	.disable = meson_vclk_gate_disable,
+ 	.is_enabled = meson_vclk_gate_is_enabled,
+@@ -127,6 +128,7 @@ static int meson_vclk_div_is_enabled(struct clk_hw *hw)
+ }
+ 
+ const struct clk_ops meson_vclk_div_ops = {
++	.init = clk_regmap_init,
+ 	.recalc_rate = meson_vclk_div_recalc_rate,
+ 	.determine_rate = meson_vclk_div_determine_rate,
+ 	.set_rate = meson_vclk_div_set_rate,
+diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
+index 486cf68fc97a0205ee5139056b1eabc6e743ff35..c28d8b150400308df050e500c2aedc14157c1bcf 100644
+--- a/drivers/clk/meson/vid-pll-div.c
++++ b/drivers/clk/meson/vid-pll-div.c
+@@ -90,6 +90,7 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ const struct clk_ops meson_vid_pll_div_ro_ops = {
++	.init		= clk_regmap_init,
+ 	.recalc_rate	= meson_vid_pll_div_recalc_rate,
+ };
+ EXPORT_SYMBOL_NS_GPL(meson_vid_pll_div_ro_ops, CLK_MESON);
 
 -- 
 2.45.2
