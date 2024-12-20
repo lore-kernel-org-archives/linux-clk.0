@@ -1,57 +1,54 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066FA1804A;
-	Fri, 20 Dec 2024 08:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271EF197A8F;
+	Fri, 20 Dec 2024 08:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734683070; cv=none; b=hNl35jzCWp0BsTycfmocp1eu+LPL/jZFlohciWiGgKOSRQCGgYwv3Ssrn/3UpRFHbzuv7YM0Zz4DxCSh5S9gbfknKgrL+YDubhcMsTJVCG+hgp0Gjkudrernra9dB2qCT4Kr/gqt9pg6D7CSpG+f/BIH9WW4VKxc660/kDMPDOA=
+	t=1734684129; cv=none; b=IBZlkpFxt+AZyWw50AxKuDn9yZSZioPZcnu44qUrVxMRBVj9kKHXujq+E9BrvkzVfIQgEBKasIcaDt8kjH8syInZXNLuhLcVuCxAsmWssfbcCB/iKCZKegKjj/imYuiMM/P5k7XBnrukaMzxbclZNxnP1Z3oogqnp9nBE0NnVTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734683070; c=relaxed/simple;
-	bh=g2ivRmVjBclytEWUEdITLiIdlp+tYqZ4AN31Wyq+lSs=;
+	s=arc-20240116; t=1734684129; c=relaxed/simple;
+	bh=xC6OyuU4/k5dcJzQ0dGHNVDdJGFWFi3RraPSZcU9nzc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOrWng/p5QX9aR7IpZ7SN1Ys9tGrW/MBw6kkkEY4/e1uMFlVPDSsTr3jbsHqvJ3tH83xpT8uWn8Br9IaIPrKmQwsSoWta5m1Gm15zcclO2n7I2pqKvFdJkr3+hD5OJ2QOfbPZK0q1NewlvEwTQ8tzk4Q0ugI9QgJY62ZmV9Cnfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSJk99eN; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=p7LscefuAMYjFGtZr0alZVKom/VMZVGbubNoQ+R6PKZY+WID9TgdGdPuw404qxwsHusjPmXOW5Tnxn61+sU+RNOo/0JpPvrjeCz7zSaMJu/cug7AsRw5zv+YPucG4GywJRLBAXg7LzEtvCJ7rQXxM8/1bYgcB7pBjfMDRyQIeGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSJk99eN"
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5188b485988so508716e0c.3;
-        Fri, 20 Dec 2024 00:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734683068; x=1735287868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FKyFlyNK5UBMo7uLDnK/c9yGedR44TZ2Zr2p76TGWKs=;
-        b=GSJk99eN31a6qwFm2o1KHf8k+wWe/xcrYJXj0kkcLX6AcK1HqGQTaoAfUdSQbm3m4i
-         b98/1z5yvZtI+PRO4YNqcRm/LxCL1Q+K8y/C25pQJ1Ftm2UQYXPlNbRPT7KMutoJl8CE
-         I2T890hKGhOFpmriduSjSa3mdNbE2MtNjmKbWurEbxupyel/hhoVvJYeObxV+7oK8Pdg
-         b2ryeWOJCljubK7pdw4d15b5Y/0fLtRJGZmFJJABI2784pIAE/OgeGzEFTJ5F2Np0Ezf
-         0KWjVQcVu10g7OXFnXd9EIEPMwOJRJIfri38looTK3y+f6UdelQTTDUD/xDvdkKyiz7z
-         TVzg==
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51619b06a1cso907989e0c.3;
+        Fri, 20 Dec 2024 00:42:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734683068; x=1735287868;
+        d=1e100.net; s=20230601; t=1734684124; x=1735288924;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FKyFlyNK5UBMo7uLDnK/c9yGedR44TZ2Zr2p76TGWKs=;
-        b=Rzu5itOw/5sCUyspygSWzyXFV8rOODXZ6izNQlWSohuDYkyq0Va9/CSrvrb6sGwavA
-         BcD5zyhKeeWBvL+OovP6J1q46xTcXUxT9g8YuivF1yHSftRg3D8bGww2PpVIauL8M2om
-         r6/XKJs3XySYL9CVN2BgCzOPFZ0TMp2R34ORlH2vwJp1TdF6n/IMIwhaGoMhaV38DCdz
-         bmeOukhswvy7wrYY3Kb82PW5DfyEAM4+HSPBaMJUEjRwhlLAiLHX1LwrsMlmtt0ZJrXL
-         ZB1yvb8yjnqgHpl0afTsqcwCeHPPirFuc2w9fHJQBj6JRXPbeVZFu8MzLmDERtc7ruBw
-         oO7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU783u62WdksoEdlvIsAVm6zyJ98JBOW2T84kREdkX+XN3HvfaWh9S4b77wXqeIKOJ2w3uljR2HdY44hlO9FqfnSAs=@vger.kernel.org, AJvYcCX/IylHXyfv9ZyHkGo9FOpm4GkQ795iwnxp+Bm25n4tGsnE7e9ktvJ8tXAc3Ba9Npcp3LQVV7c/q/A=@vger.kernel.org, AJvYcCXQZe8O3KfS4zKgFhUOoO1P4eDNyLLZzMP/i9st0Cxhplfj/hOW8WxTsqH4o3yrD8DoxGSiRFzqhxYcZRF5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxznzTzlCKy9hOM4T1HnUCa/pPvz4faEunwH9YjhyUjvq/dZjbr
-	ZUIngVeY7kDuRKb9cjyTAY59lZB8da9OCwDmi+fZPVvecj+Fqedgl2MsQEDyIfnr56iyETK42uL
-	70jCFEEc6EKMIQSLXnhAqjHtxLl8=
-X-Gm-Gg: ASbGnct1rfg9SbpvUjWOKsSm4dqnlc1lP1e+v0nX/T5hDW5T5M+gqfuZtlZSEBsgoU9
-	lBsKF89RxjoA3QXBJuewBRbJENCixfh8a/6Jws08=
-X-Google-Smtp-Source: AGHT+IF1UV39pKX7PM9xcs62YZrCNRQLA/dyQy5XFvwl/ik38xc+IFRNSpFiGHpjBWV+5QOOAtIgPwuROwj1Ot4Yisg=
-X-Received: by 2002:a05:6122:210e:b0:50a:b5a3:e00c with SMTP id
- 71dfb90a1353d-51b75c2ac0amr1748696e0c.1.1734683067751; Fri, 20 Dec 2024
- 00:24:27 -0800 (PST)
+        bh=hDMNInSv1RvKE9O+T8QKsBi9B8/JQ3ymFOYC0JdhAao=;
+        b=pFbMwewRoy9nKDc99mTq6yr1ZBqWJeR8DKeL0Ea+u7qOwOQHIN1jgjN0eHEAGtrelJ
+         sCwtvObPtJj1SwBuNY8votxr/XEpZ/pus7LeN4w07quGQt135XrV50VRTszXcgLCKbzx
+         q2gTzJ62DAnLuLUmUtCTcXye/+lrGuu8v0bVik9l43Rt7IbefaPR+euzB9Rhf/wTSkhS
+         JJHku2/+BMjuJ3NwgwSTq3yZvR9oermBeb+P2wPHrTPabu38HAohHmugmNw2BMjPTD02
+         oTK50OuQHYA8BeDQTTaSc7DlJ7XNrGyuh6Vji77CBhlQ9VxdnPuJ2tLZXDJ2ScuH5U+C
+         l7eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU71dUy+WPp1VBxJc84QRQV3pjLrW8yiX67El34z8qEWNY2Kz+hBy3cTi28g5wfUGkRbV8TXS81JG2BbXgW@vger.kernel.org, AJvYcCUdSgCW47FeKqrWwcO1TTnljW24on/heNNx8wHOl2E9dP21be2mr71H6og7KKyiovtVyxVe7laK6Bs=@vger.kernel.org, AJvYcCWfnpORALA+Ea9BHX2S6CfSfS9WFtENxE7iL/133VKYWjQdGFqaD+0SiWczDbYB2CwyR4Jl/2v9RNHuaiQsgZzX+zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3GrMxa7lD1ENnHge7CwbWspr92l2jpaic9Uk5RvS5IOdm95PV
+	DWSayAeRDxgUQdNM2Pa5YMPTBsXFRcWHpxeSl4K7O/Ccb0rYMWWNM0j273Y4
+X-Gm-Gg: ASbGncswfPCrCAPufUXiqEhEUL7MzoBCzHQH5mtLioCF2aJ8CnPyVefyBR/hG5rCOU3
+	ubLu3OShulYITKvbEm7fButRusA+CRupJMCiohHQBLp4tnd23rtxSTu3wsVek/kuBvM6DDQX4u5
+	8QCa3w92C5p+ewJ5n4swk7EIAWDa3g8uJsRt6eKQSWGmvDc0Q8Ghdk+RTg660vK3rnbEyDUx6td
+	NYJl98eGpXE0KJ1rFRQglbLhasp2MNLdfMYC0pNV43twtXrNzwnHxqLoNpydQ+dNZwUSTufTKeR
+	OEp7KpvNMfcWMyf0rZc=
+X-Google-Smtp-Source: AGHT+IHIzk/9O/gsMFEzE6nL2yZMrGsPmfTIBg0iUBaBED2I9m3yy/UavQN0s+e6TUjr+kNEjroQRw==
+X-Received: by 2002:a05:6122:2490:b0:518:a287:56e3 with SMTP id 71dfb90a1353d-51b75d3cd79mr1499651e0c.7.1734684124327;
+        Fri, 20 Dec 2024 00:42:04 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51b68d08df2sm321008e0c.47.2024.12.20.00.42.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2024 00:42:04 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4affbc4dc74so884196137.0;
+        Fri, 20 Dec 2024 00:42:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVKPi7uh4nXUU+ov8vupa/MWjDJwqkZNdv/+MTj9CKEkb09+iPi6DmtnObSnyD12soMDKKFhYFLBTACe/NvvjjCRiQ=@vger.kernel.org, AJvYcCW+T3EMRMcuKkp3YDZagWWShiz+I2PxQpm9v3d/iP/E9vgF5KPWhkIo0qcOa+szvKKMKS/URfEOzP8=@vger.kernel.org, AJvYcCWSTiAuMEMtixhGTSfU5KSYTvSaoLGI9Nko9vHB2vsDEku+9R0TBYS4oqYDK9oCFt5sbIMxpwreoHuAcD48@vger.kernel.org
+X-Received: by 2002:a05:6102:419f:b0:4b1:11c6:d3d2 with SMTP id
+ ada2fe7eead31-4b2cc472ec8mr1784780137.27.1734684123793; Fri, 20 Dec 2024
+ 00:42:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,14 +56,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 20 Dec 2024 08:24:01 +0000
-Message-ID: <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com>
+ <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com> <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com>
+In-Reply-To: <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Dec 2024 09:41:52 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUDABcDXRemYLAXEh3cEMQqUrmhdeBCJm4mXhnHGrALKQ@mail.gmail.com>
+Message-ID: <CAMuHMdUDABcDXRemYLAXEh3cEMQqUrmhdeBCJm4mXhnHGrALKQ@mail.gmail.com>
 Subject: Re: [PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
  refcount handling
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
@@ -75,75 +74,101 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Prabhakar,
 
-On Thu, Dec 19, 2024 at 4:20=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, Dec 18, 2024 at 3:20=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Avoid triggering a `refcount_t: addition on 0; use-after-free.` warning
-> > when registering a module clock with the same MSTOP configuration. The
-> > issue arises when a module clock is registered but not enabled, resulti=
+On Fri, Dec 20, 2024 at 9:24=E2=80=AFAM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, Dec 19, 2024 at 4:20=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Wed, Dec 18, 2024 at 3:20=E2=80=AFPM Prabhakar <prabhakar.csengg@gma=
+il.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Avoid triggering a `refcount_t: addition on 0; use-after-free.` warni=
 ng
-> > in a `ref_cnt` of 0. Subsequent calls to `refcount_inc()` on such clock=
-s
-> > cause the kernel to warn about use-after-free.
+> > > when registering a module clock with the same MSTOP configuration. Th=
+e
+> > > issue arises when a module clock is registered but not enabled, resul=
+ting
+> > > in a `ref_cnt` of 0. Subsequent calls to `refcount_inc()` on such clo=
+cks
+> > > cause the kernel to warn about use-after-free.
+> > >
+> > > [    0.113529] ------------[ cut here ]------------
+> > > [    0.113537] refcount_t: addition on 0; use-after-free.
+> > > [    0.113576] WARNING: CPU: 2 PID: 1 at lib/refcount.c:25 refcount_w=
+arn_saturate+0x120/0x144
 > >
-> > [    0.113529] ------------[ cut here ]------------
-> > [    0.113537] refcount_t: addition on 0; use-after-free.
-> > [    0.113576] WARNING: CPU: 2 PID: 1 at lib/refcount.c:25 refcount_war=
-n_saturate+0x120/0x144
->
-> [...]
->
-> > Resolve this by checking the `ref_cnt` value before calling
-> > `refcount_inc()`. If `ref_cnt` is 0, reset it to 1 using `refcount_set(=
-)`.
->
-> Thanks for your patch!
->
-> > Fixes: 7bd4cb3d6b7c ("clk: renesas: rzv2h: Relocate MSTOP-related macro=
-s to the family driver")
->
-> The description (from your [PATCH 2/5]?) does not match the commit.
->
-Ouch!
-
-> Fixes: 7bd4cb3d6b7c43f0 ("clk: renesas: rzv2h: Add MSTOP support")
->
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > @@ -565,8 +565,12 @@ static struct rzv2h_mstop
-> >                         continue;
+> > [...]
 > >
-> >                 if (BUS_MSTOP(clk->mstop->idx, clk->mstop->mask) =3D=3D=
- mstop_data) {
-> > -                       if (rzv2h_mod_clock_is_enabled(&clock->hw))
-> > -                               refcount_inc(&clk->mstop->ref_cnt);
-> > +                       if (rzv2h_mod_clock_is_enabled(&clock->hw)) {
-> > +                               if (refcount_read(&clk->mstop->ref_cnt)=
-)
-> > +                                       refcount_inc(&clk->mstop->ref_c=
-nt);
-> > +                               else
-> > +                                       refcount_set(&clk->mstop->ref_c=
-nt, 1);
-> > +                       }
-> >                         return clk->mstop;
-> >                 }
-> >         }
+> > > Resolve this by checking the `ref_cnt` value before calling
+> > > `refcount_inc()`. If `ref_cnt` is 0, reset it to 1 using `refcount_se=
+t()`.
+> >
+> > Thanks for your patch!
+> >
+> > > Fixes: 7bd4cb3d6b7c ("clk: renesas: rzv2h: Relocate MSTOP-related mac=
+ros to the family driver")
+> >
+> > The description (from your [PATCH 2/5]?) does not match the commit.
+> >
+> Ouch!
 >
-> This makes me wonder if refcount is the right abstraction?
+> > Fixes: 7bd4cb3d6b7c43f0 ("clk: renesas: rzv2h: Add MSTOP support")
+> >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
 >
-You mean as discussed on irc, refcount per mstop bit instead of groups
-is not OK too? Do you have any other better approach in mind?
+> >
+> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > > @@ -565,8 +565,12 @@ static struct rzv2h_mstop
+> > >                         continue;
+> > >
+> > >                 if (BUS_MSTOP(clk->mstop->idx, clk->mstop->mask) =3D=
+=3D mstop_data) {
+> > > -                       if (rzv2h_mod_clock_is_enabled(&clock->hw))
+> > > -                               refcount_inc(&clk->mstop->ref_cnt);
+> > > +                       if (rzv2h_mod_clock_is_enabled(&clock->hw)) {
+> > > +                               if (refcount_read(&clk->mstop->ref_cn=
+t))
+> > > +                                       refcount_inc(&clk->mstop->ref=
+_cnt);
+> > > +                               else
+> > > +                                       refcount_set(&clk->mstop->ref=
+_cnt, 1);
+> > > +                       }
 
-Cheers,
-Prabhakar
+Or simply
+
+    do refcount_set(&clk->mstop->ref_cnt,
+                    refcount_read(&clk->mstop->ref_cnt) +1);
+
+?
+
+Still, you risk some janitor replacing that by refcount_inc() regardless...
+
+> > >                         return clk->mstop;
+> > >                 }
+> > >         }
+> >
+> > This makes me wonder if refcount is the right abstraction?
+> >
+> You mean as discussed on irc, refcount per mstop bit instead of groups
+> is not OK too? Do you have any other better approach in mind?
+
+I mean if you need such silly workarounds to do a simple increment, is
+refcount_t the right abstraction, instead of a plain atomic_t?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
