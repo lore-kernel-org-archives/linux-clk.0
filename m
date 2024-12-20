@@ -1,184 +1,119 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90DD1B6541
-	for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2024 21:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6B4800;
+	Fri, 20 Dec 2024 01:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734643704; cv=none; b=iWIbQVzc3Jq5wC7E7+Cx3VsS2WwJLDKn4iXjg7cERJDvx2U+p9ilkJ2kksSvJKGvLss+xrburQLvFEIOAO518a2/kGKuaQkH8ViKsqFPk6g70ZawhhIOIWxoV1zJBeex32vbgJBc/m2P5D6IaXsDTsnkYA99JyCDvNUJS42gVZI=
+	t=1734659997; cv=none; b=pbA8wXX1x898yVXWyk99zJuxRt31+turm7usKLsrkfuOGhc62kyaEnzC2Y+m/QL2SHng8U6RBb1bccA31mT/GMODVHQKpEO9gNE6qMXwX7cmxKQSFSR8BkWwi4/eWcQULqo7OOCiM4nqxTjaAoItmGF+9qfb1gGtz2GAMW7NWMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734643704; c=relaxed/simple;
-	bh=cgkCGW7F8juBfQc78upAw76Zpu/tXczi1pONS96pY0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aTPmlsDFClw23JQFsD07LtsR5EwYShhHvMENe6pWC2CAP4kx3LVqypRcYr1MOy/PMMIdMSsJayTyqrmZN/yDMllQ1CwaNZkO2xf12qhxUOguQXRC/BSn/2LZuWbu2gCb1VQ4xKArCI09bBQQDkdeTZAVPRTmKxkPuUd0i+xQGW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KGU3Prd7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1734659997; c=relaxed/simple;
+	bh=txGIzZDZ7emAst1jDCWk9iBkRM9m9iTw9c4HuFUPL+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lB3CojAr2nLUtK7ATXV/Ww5NIUqC9DHkK+SGxprp82Tw7BSpV6vCTuexjS9WPCJG3owsMrbfYPuFQZkTz23iwRV2eEELLC0/EfFv9sg6wW4cmudO5RKYGy1J7qSbZK5MATekaTkcb5FDjOhjY3zwqhpFeXPCuLPT8jRelFxyrw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPSDHZrX; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KGU3Prd7"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJBk1Mn016852
-	for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2024 21:28:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/VAUnAOqDKD/w7nsfXSvt4pC3AXzpCBYpE3jsdeI1ag=; b=KGU3Prd77RQ/ARn1
-	UbzGSNkfE7ojalLZbAX2gFWUCHWV3WmJqjZ7ifLrsfNKziWEG5UHF2VTjN3QW9zi
-	D0aqMvbtyK7768hr9iaQFzK7BzXBCAM+B2dKDHcspKdWSIJYVPMNDSS+Bl+evt4+
-	z8sEmKCFYcbvAcpOB55tK6/iFC/y3lX7h81Cw95Tw/RynVHiF1URyFJy6ajUN3Gn
-	q9S46kZiOpPk0ppJk0lIL06beV5DjLKDGTMXWaNQpOh1aBVGA6DmqbgNeN3YEHde
-	Cl59q9AVJou+LilCK7sXpKanrINu4Kxi/XTPYL+50k48UXiyAVZbZxxHvf5IHOra
-	Ahd8TQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43mjw81gcp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2024 21:28:21 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d880eea0a1so3571336d6.3
-        for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2024 13:28:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPSDHZrX"
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-844e9b7e50dso125439839f.3;
+        Thu, 19 Dec 2024 17:59:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734659995; x=1735264795; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w68OVCNKDRUYLbgJOcwMFHEvgy4OB2hhFbrartVXJTg=;
+        b=QPSDHZrX/0E1nuGUU89wlaUQ/xL7SePg8/nl+EU3lqnQWfJGyhXMV2ZeIA5l2zFYwm
+         QkzTha00CdWCm4xnjNnJJCUXMrI934vTo0WcBfKQooz/qaBs/dL/e6vOlVqq+LdnGNPi
+         gpzY+PhxCVqTlGcp1YjZcWRl7uuOzqIcG0uLstMjMLlPQsrsk5FNr6V6mjEgbGRwtdaj
+         Y2ZcOwf7oRidIwSYRpQQarJUi4Buw311PiMVrA0cb8XMxCO20bvzkHZ4PKXK1LCd1W6T
+         w9mRq56o0cYViHYZtdL8es7I5ynz3W+wrNGktewb3rPw5hAu69MJFUfAptWbvoQoWj2O
+         BZUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734643701; x=1735248501;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VAUnAOqDKD/w7nsfXSvt4pC3AXzpCBYpE3jsdeI1ag=;
-        b=kz+8rs/2x0HR/wjv1VvDy6Y5RwPlPeOvHcsHIprizjMuHMVIcTF29BCPzWvcHO97G9
-         9w9ObdWGUK7TKz9wIl9gyRbdwo1gHBl8oJdT2cSKN4goJllPdTNR1YeyPhFJHdyiGuT2
-         aOU2a97Ig/v2SY35+vQNd1wa32bK4gLqd04O0uvtLGfGcH8OPGBVSV8Smx3TGb7y3gAm
-         eVLLbsrY6o+VWuaLeNFRUfv9+2v0UipwoLqh+Ax4mgPGrpWeU8x5axd76WrQ2SHUFt+k
-         N0BBfZ4w2bexfBcePXEdOLEwmWGyrZ61kh+KRVr+qe2zMcr4QoeKsktpVLnXG3Mpy1jW
-         onIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1HkbVm2abA4u/wHc3hdzgfq3gvVWtZmYGNB2KlAE33RNfusCTSjivZnOYwyVMHPf6jAUyPxnO0E0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzljVi77U0voyPEQc5tC7WhlsxtIFYxpaYzSy8uruiKJuWtNCYV
-	jsFxgbj5ZPfZzK7g+P9USGYa6vOqAgegDGasyPulmcEvpnmmKqoD2I8f0gKA6TRMvqBLxA9tjoN
-	YguzbXMEcUFqFR/VuTnoEe9VTDqfYTalNPkOpm1v9sI8iWrVfU3E9N7UYECE=
-X-Gm-Gg: ASbGncuuWKPWziEgo3MsHzRwZRVyzr4Af2HFxYkfHRhDqFqWZvxv9Pd14ctDorfLjY+
-	1KHnCGWlu+F1ht9qtvjBrnBELeX6sM+JZ0Tw017WCzpi/UNxLKFPUbsVQk5NialgD/4EgJqFGcE
-	b2My18IIvf6Jb8dN9sVfq9mtZ8oCpzuYgz81IpBlYzivMo5TQB2atXQiZOLGUxkFZNro7+L8WyD
-	vx/br+LT1wC9Mw6n4QUOQLMSHbxcOoFRgB2u6Xd+OHt5ieXRaxuWI69W2LPkbfb5j/0cnSnWEmu
-	5QTt89YvsSlV7HD1CcXdgmEYULPCPKSwxGA=
-X-Received: by 2002:a05:6214:2a89:b0:6d8:8cb0:b403 with SMTP id 6a1803df08f44-6dd233acd65mr2590416d6.11.1734643700666;
-        Thu, 19 Dec 2024 13:28:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHJnIn0G4+Wnlxs6LmziXnXITZL4O7KHJ/pJ3YBrBe8olWnjoRqJWPN5SOL8KlIfXyMXzRSAA==
-X-Received: by 2002:a05:6214:2a89:b0:6d8:8cb0:b403 with SMTP id 6a1803df08f44-6dd233acd65mr2590216d6.11.1734643700234;
-        Thu, 19 Dec 2024 13:28:20 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d806fed718sm1056008a12.62.2024.12.19.13.28.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 13:28:19 -0800 (PST)
-Message-ID: <fb9d117e-77bd-4a01-a738-f72d07f6b84c@oss.qualcomm.com>
-Date: Thu, 19 Dec 2024 22:28:17 +0100
+        d=1e100.net; s=20230601; t=1734659995; x=1735264795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w68OVCNKDRUYLbgJOcwMFHEvgy4OB2hhFbrartVXJTg=;
+        b=cBJbhwzNiCZGm3JUwBmzzvxcm1gG4vBMNu6E9qsMDdFthJpXiV52SsXDLel2x6Hnxd
+         wHOOkW5mXInSJM9DAxik8yd/SEfxaNt5ctGRLLkhqR4NPK6w1voDK94qP7Vpr+8fbdyy
+         gbkCkgQ6Ayu/aQzrwp5A79g2HsC92OJXVEWFoqpQ3Ioj4ibwQAq4qM/Bjo5NCyN/bHiX
+         BkhbTE+TKH1kTYgUdXkJy/jaV7q4TpaBYCPPofSKZfTcrdWPV5ziMtFw6PfeKI9sbTbM
+         cw7Ku7hbrD858lUYqRQaXOCByagnCKPbPznEXe3ExikP1lUK9u2iQ/9RlncDU29iaL8D
+         r9Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUaptWoPIrB6HzeqKTeyQGYrBtqKH3eqYryY+/5Fa4s5dYOGSRikltBdu2V4QNTF2CVkQ/aiYNetk=@vger.kernel.org, AJvYcCX/6JAb2zOHpy7MMOutFmZWpdz8LUVFMNhB6sOnkOd94svIVC9tnBQJjFbsIywr5/M+sdpaqI4m4Os7TjMc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHPxkQk0I1i4JEfs4aNfQtPU4BNg/AaJ/sxS/wXdY4VigHycHA
+	WYu9+oEjtr372QMAjYPD12CPrFl5sYP+3HeJFvTnADpcqU407xzWpnSM/r9YXBlAcaSARPoIYAl
+	v27xKu+Fjyj8n9JSEdHX9maUm1MO6PCmp
+X-Gm-Gg: ASbGncvQI8OAgA0TlRH07Mj7qYSYmXWlRlqNdO6M/CSpoatceinxgtuT2TuO2Sjevmu
+	ZXf1CrinfPbMVH27LZ/smnikOwHVLXRrAPwbwxQ==
+X-Google-Smtp-Source: AGHT+IGGWwEgfDagGWdRJ2sz9qd4EJDpuuMO//PocPQVWC4Le5q0Eh1GxoTcg1NZhKqs+MDGDTNUymTHBZPUut5L6BE=
+X-Received: by 2002:a05:6e02:2687:b0:3a7:e83c:2d10 with SMTP id
+ e9e14a558f8ab-3c2d5b37857mr16006015ab.24.1734659995420; Thu, 19 Dec 2024
+ 17:59:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
- use fixed factor clock
-To: Jie Luo <quic_luoj@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
-        quic_suruchia@quicinc.com, quic_pavir@quicinc.com,
-        quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
-        bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
- <20241107-qcom_ipq_cmnpll-v6-5-a5cfe09de485@quicinc.com>
- <0776a26e-56cd-4838-9b52-210ae9a1f281@oss.qualcomm.com>
- <8063460d-18ad-4e54-8232-716bad9d37c3@quicinc.com>
- <2456ab36-f48e-4aa3-88e1-aeb7895c9816@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <2456ab36-f48e-4aa3-88e1-aeb7895c9816@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: D0yO4mNf-GCpzh1tdFGXd4P1H41aOzoJ
-X-Proofpoint-ORIG-GUID: D0yO4mNf-GCpzh1tdFGXd4P1H41aOzoJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- spamscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412190170
+References: <20241219105447.889CB11FE@mail.steuer-voss.de>
+In-Reply-To: <20241219105447.889CB11FE@mail.steuer-voss.de>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 20 Dec 2024 09:59:44 +0800
+Message-ID: <CAA+D8AMO+ia5ztD8Z97TOn-NBbXKHfd+T65zBc6vJuNkeVdVhQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: clk-imx8mp-audiomix: fix function signature
+To: Nikolaus Voss <nv@vosn.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Marco Felsch <m.felsch@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18.12.2024 12:17 PM, Jie Luo wrote:
-> 
-> 
-> On 12/13/2024 6:30 PM, Jie Luo wrote:
->>
->>
->> On 12/13/2024 2:33 AM, Konrad Dybcio wrote:
->>> On 7.11.2024 10:50 AM, Luo Jie wrote:
->>>> xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
->>>> 48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
->>>> block routing channel.
->>>>
->>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
->>>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
->>>>   2 files changed, 8 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/ arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>> index 78f6a2e053d5..9a8692377176 100644
->>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>> @@ -174,8 +174,13 @@ &ref_48mhz_clk {
->>>>       clock-mult = <1>;
->>>>   };
->>>> +/*
->>>> + * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
->>>> + * from WiFi output clock 48 MHZ divided by 2.
->>>> + */
->>>>   &xo_board_clk {
->>>> -    clock-frequency = <24000000>;
->>>> +    clock-div = <2>;
->>>> +    clock-mult = <1>;
->>>>   };
->>>>   &xo_clk {
->>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/ dts/qcom/ipq9574.dtsi
->>>> index 8246a00a3e3e..25aed33e9358 100644
->>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>> @@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
->>>>           };
->>>>           xo_board_clk: xo-board-clk {
->>>> -            compatible = "fixed-clock";
->>>> +            compatible = "fixed-factor-clock";
->>>> +            clocks = <&ref_48mhz_clk>;
->>>
->>> This must be squashed with the previous patch, you can't introduce
->>> code and replace it immediately afterwards.
->>>
->>> Konrad
-> 
-> Hi Konrad,
-> 
-> Looking at this comment again, there may have been some
-> misunderstanding. We are not introducing xo_board_clk in patch 4 of this
-> series. xo_board_clk is a pre-existing node.
-> 
-> As part of this additional patch 5, we wanted to address Dmitry's
-> comment earlier in v5 (reference to comment below), by converting the
-> xo_board_clk as well to a fixed-factor clock. So it is better to keep
-> this change as a separate patch in my view. Hope this is OK.
+On Thu, Dec 19, 2024 at 6:55=E2=80=AFPM Nikolaus Voss <nv@vosn.de> wrote:
+>
+> clk_imx8mp_audiomix_reset_controller_register() in the
+> "if !CONFIG_RESET_CONTROLLER" branch had the first
+> argument missing. It is an empty function for this branch
+> so it wasn't immediately apparent.
+>
+> Fixes: 6f0e817175c5 ("clk: imx: clk-audiomix: Add reset controller")
+> Cc: <stable@vger.kernel.org> # 6.12.x
+> Signed-off-by: Nikolaus Voss <nv@vosn.de>
 
-Oh okay..
+Acked-by: Shengjiu Wang <shengjiu.wang@gmail.com>
 
-What's the difference between xo_board_clk and xo_clk then, if the
-divider is accounted for in xo_board_clk?
-
-Konrad
+Best regards
+Shengjiu Wang
+> ---
+>  drivers/clk/imx/clk-imx8mp-audiomix.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-=
+imx8mp-audiomix.c
+> index b2cb157703c57..c409fc7e06186 100644
+> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> @@ -278,7 +278,8 @@ static int clk_imx8mp_audiomix_reset_controller_regis=
+ter(struct device *dev,
+>
+>  #else /* !CONFIG_RESET_CONTROLLER */
+>
+> -static int clk_imx8mp_audiomix_reset_controller_register(struct clk_imx8=
+mp_audiomix_priv *priv)
+> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *=
+dev,
+> +                                                        struct clk_imx8m=
+p_audiomix_priv *priv)
+>  {
+>         return 0;
+>  }
+> --
+> 2.43.0
+>
+>
