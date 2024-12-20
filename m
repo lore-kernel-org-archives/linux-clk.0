@@ -1,65 +1,62 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217DF21C171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5408821C16E
 	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 17:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734715075; cv=none; b=K4KB35bHwj++9uRDEnBgXeI7+9TcTndmrtJ/HGF49J+aFkMUyZzA4UAQQoyOAFlK/pjT1ADy766oo+2cQPAJPxSgGqL1GZwICN9W7Vv8hp+aqDUrkpVupEPnfmFL8JPO9UAZkTcaXtIwhrJn52fz8d8pSu1SoJZP9GI/H0XjUwA=
+	t=1734715076; cv=none; b=Kayul7oIQGWvkHqIq8aKjgsIIaIpn3+0IOB2KukPLkmAKSA7Vt+eTOta3rrnVvbs9ezIRdKx7WSj/7b9WVqGCh2644rBX86X4q9Uyti67rl1V7/ra4JC3k7vBsnAREF+oC6z10VJ01pxc14fawDYscUYKNOnWVCFUmgUSif9OmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734715075; c=relaxed/simple;
-	bh=lzI6hgL1Uto5BUE1A5yvsC6KtlJXJ2Z6oRUTIPtisw4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XmgeMGcMGI5BgyIlfjpkkJmF3uvqfsLWMAiXqL73VZiGbfg1VG5M5k6mA5bwbp0VSgeNSRvuVsGaFgiy15+9G6K598itSzkpsKvhBgUau/W4Yv7EX/K8Xrncyj5t503/slwVcWJlXo3olqLzWmojOo/ho+yxYhItjAe5WqPMKAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xvmAW53N; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1734715076; c=relaxed/simple;
+	bh=0/1MgQhSTo4SZ2txed9gv05z9rFjmcWl6hwe7WthPg8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Gb/JUWhFxOVKVigmKDc17Koy5RBjas016Nh70uxsIc0Tr+1N85r63TjbODgucJzPafrYGWE32I9HNGyQv7zJQIVhY1Utq152nww5xeiZrQGpjuAHs9yXamXRNZDHLLBlyBHETmBCZmTJKlV15SpAfmH1TA52KFgx8EOwS/39X+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mFtZzaoF; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xvmAW53N"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385d7b4da2bso1901051f8f.1
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mFtZzaoF"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-436341f575fso23425245e9.1
         for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:17:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734715071; x=1735319871; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QBrk8IHiCPUAUjirIi3a2N/h2yY5LVz9whBiDVWucEc=;
-        b=xvmAW53NcAuf/MSpZ03cMmbQVKdceur+gJVvBeatfanpmeL/h/xu5gRcG3KIrl2VGn
-         URIeaNTI2vXqDn+rk1ry3NNhiRTFj+KOOnj1Du2HfJh/qXyZHkq2uyzSzu9dDYoN8T43
-         07cGxNjilgAbMPewoB0uGQ0/BEaPVytfCOS3WAQgXKWMJjOA2PiyzD8R22qy4K1WyvA7
-         E2/Dz7h7E1kMyb4BNQly4d2T+TTynvQLFIvI6aW7Bexqby7VETDMxoagGJrSPJ+conMk
-         NnMUOpC3d3T8lI6nLytGr6zm9wVbH+8ChLAkuRR7CgzAUa20LI0G+jbMPdaJtgOQU/wm
-         YYRQ==
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RdbZD6VJJqkFEO21ymFS5qOiPFzyVaYTPvnIpLlMFG8=;
+        b=mFtZzaoFudrq/UNy6PVmNk0lW3paiiuZmueio4lNyOcLa1jmOpzk6xVmJ3r6v+SIhF
+         0vwzfkaWZ+7HePHqr9eorP25NoVWTHGklhLatLnvDkqIf7IImDqJxSC3jsrVrfTEg25H
+         0zlGg14EnhAkqAGhj3TCBBMvJfl7dsaO6ASrLo14UIh5+QT2sde2UrI+BKjsFZmq1Q6J
+         VwjM9BY9npAgi2oJWHaLFYBNKE4/qwiDf41J4A+HwkSmFsHm+4lA7CT0XqtAkcOI1Mio
+         qPG0vi/z/tLEjBHFfXci7C9ocxdYqJST3P0zteQ46eq9VR5v6OzV5ddLx5KQkd2oRTz7
+         QoTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1734715071; x=1735319871;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QBrk8IHiCPUAUjirIi3a2N/h2yY5LVz9whBiDVWucEc=;
-        b=uq/+5NMOOkULGFzshriumOSToT/C1Ly3AEbKok81AeBG4GuY6LTgl/1y896CTGtQLQ
-         Tfxb7VV67m9skRBPoewdG4BQNGSaqfx4QV6m8h/MDNOZoyeyPZi8vb6fN3zWkUFzYe/b
-         jkkblI1EU7jtZJUY97WuqAwyZhqyXqxzHI1WnAm8GIkVDG0OLcabyYG+KvlKg9JG3DHJ
-         Ea1rw0HijjDvN1ZfCVjJzA1nb/VoOiyVME35zBF5/qcGjKR9KZhZQXkBFKI9OO3mbm0S
-         MWIhOiBgel1SH4ZgvgTa7wcWnqCncQCOCzGWuX1BSZH/VHcJz4jYGJARqMIsDUrT2MVp
-         eomQ==
-X-Gm-Message-State: AOJu0YzLT4ZsNIl8JnBT+goDX5SORIEzAK2kW3yNdA8OOxLwoIcgqmei
-	NFSgViKfiLxJGbgZckTl1mn71X0mNQiVIzKCkBH5TcqiEdJIqMi4lpKua+Q5I29HD41mDrRXMUh
-	X
-X-Gm-Gg: ASbGncvYnUMBKxkICL/I+kRkClFOTcWNyHN5kNmMjgaxbWZFWxYOMCCQ/axRoZErMKz
-	wl+nbbVosK840p/fR5WpEIJNqHI348uCH5Q4hGghC8jWNnimu+96z2FX1IhpFd4LSaeqmAv/zWu
-	oKp/SUeAAArBegLWJzNmBvocnd2tirSxh2LmpyKV6ObCSzjAawOU/2GhZjJtrMaFx6PD0GksnA0
-	eXjuCc6wqLHZCUvaL3QI5NX9wMjos5dcNMRgSzIHHpjM1ghgI/007ybk763lAibCg/iNPg=
-X-Google-Smtp-Source: AGHT+IGYjIQWS975xDwK6uARayIsF+UuvzRGZ0ACwFZ7y0KZUKYksnNLhFqF0wvPuasDTYVMf4jEjw==
-X-Received: by 2002:a05:6000:78d:b0:386:31a9:31ea with SMTP id ffacd0b85a97d-38a221faa71mr4933719f8f.33.1734715071561;
-        Fri, 20 Dec 2024 09:17:51 -0800 (PST)
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RdbZD6VJJqkFEO21ymFS5qOiPFzyVaYTPvnIpLlMFG8=;
+        b=EKcr/OpSVbDaqpHMXazLH6sWkcmG6Wq+5XqotzxOYa8SCnei2V2D0rhR+PubpxIL5W
+         bC+97IsJ25aHspZHkZsRuOQeTkz+fKHz8jv783omtUVEPKxIjUqBP2W/+ddgaLf73wRm
+         N4aXz7Vwy5LE7uO2VVGhR7hJSWOTvPDpfxQo9LJw36Q/+n9rTzohFFfnCxSgvQqP5aQy
+         wivjApTqfdg46WwGlkzsuKvmWf+ZW9GWp5/zb8ADS+t2e+WB2m91qVRq68U+Q42UksuQ
+         gsedDwf7ZyoerRN9HV6GxwyGt24Ibb68JcXDkIVIC6YmrNVulSUY7/1AmQsDIIUnJMN7
+         +NkQ==
+X-Gm-Message-State: AOJu0YwWa/2kwRjxBLB7xTY60xkCDiFbqPLnlnXZAAqQCQ+nQ+E+lYHp
+	aYq6X7VbL3heLLdAAy0aJBIPPOuO4BjHFyVAUHQKzYUIvYPuyceeCuKMZaMU0O0=
+X-Gm-Gg: ASbGncvsylz8JobXj05OxUXRj5LPcnkN2JIMcIC1b6xRfjZiye20vR54Jc5xtE6zqCe
+	5PmXrhlViGc1lmI+Z9K8QmhF7osiUHIn6G3kdWPucxfWR4vXW+T02psYmPeWJwnsRb2fzToCatA
+	jDpEUOYLeqv32JvycDA48OaNcRE04MF/58xXF/R9e7xKynnZEIAof2s242mrSHz6+GJuIVcH7az
+	CZT68+umLHItgsn6aQ+7lkpl1uaAL0d5uuAqFv/ElJf5vyg177VRV+n+00cv1osPxLy138=
+X-Google-Smtp-Source: AGHT+IF9f/T14X1AvJnEvREcpdS8/52lUJw/ZwFZojh7k/RDOYI+PqbwwQJ/BIYRcYtgDvOajktM8w==
+X-Received: by 2002:a05:600c:3b13:b0:436:488f:4f5 with SMTP id 5b1f17b1804b1-4366864420bmr36545735e9.19.1734715070689;
+        Fri, 20 Dec 2024 09:17:50 -0800 (PST)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:c000:46df:1e3e:983f])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a1c8add5asm4432847f8f.107.2024.12.20.09.17.50
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a1c8add5asm4432847f8f.107.2024.12.20.09.17.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 09:17:51 -0800 (PST)
+        Fri, 20 Dec 2024 09:17:50 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 20 Dec 2024 18:17:42 +0100
-Subject: [PATCH 1/3] clk: add a clk_hw helper to get the associate device
- structure
+Subject: [PATCH 0/3] clk: amlogic: drop clk_regmap tables
+Date: Fri, 20 Dec 2024 18:17:41 +0100
+Message-Id: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,9 +65,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-1-96dd657cbfbd@baylibre.com>
-References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
-In-Reply-To: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIALWmZWcC/x2NQQqDMBAAvyJ77oLZNlb8SukhxjUujSZsShHEv
+ zd4m7nMHFBYhQsMzQHKPymStirm1oBf3BYYZaoO1NLDELXo1piCePTxg5OmfIFyWF3GrxsjFzQ
+ 9Wz/bJ91tBzWUlWfZr8nrfZ5/bBey9XQAAAA=
+X-Change-ID: 20241220-amlogic-clk-drop-clk-regmap-tables-18e5cf572356
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
  Kevin Hilman <khilman@baylibre.com>, 
@@ -79,63 +77,75 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1519; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=lzI6hgL1Uto5BUE1A5yvsC6KtlJXJ2Z6oRUTIPtisw4=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnZaa7wUNcjmvWe7ugM4KUNzU9JqGgsDgAGcF28
- Ubg1wb0XhqJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ2WmuwAKCRDm/A8cN/La
- hUvpD/41vPeL2vy9n9wB3yHNzP/lOE6YCfj6USZRqALCjhWtxSbswP8WZCyBuUIXKdG07CRxR5d
- paOxLsunCkYbhW7KSaCfpJMygtwE3DEfub5JufG8ga7DUa+275WRN/c4LfncMx69NBFf0rORpyx
- chnAJpZVgJ7/5ZCQ5+wFuUqOwTAEucgYAHigQhuZRzVV87u7AV7pblaov709S8DBLYNAXlicu00
- ew+n+ztIFXtNeZDmTlOGvCiAAsBloAIP4+o0DkFqEBvjFANliLxfsqgj1lpOrFKX6CwpwsL92bs
- ogLSJtIpkqDS8NSrTDXzbeYQa9nFG3pOjlLuDVIdoaMC1Ep5o9mgIiIpZzkUYMXorv4wz26ESpW
- TihG0xXFARXKABPiOG7HhyWWNWjtMcmKwK+i6fcay3Zzi4eEWIrqPaI67wI1CMmVyeS4vQx8bww
- GtC0JI8SFLRXaky9FEprQ7cZOUXHmWFrEJLyYJCWPpgKCJ//TLvko5QSyINOxI7ksNqb4yuQF71
- NIjzjUjaYO5ocsfRAcvTUeGQ+zknlBoZelumy8x2vQkQM+eDsFA0GKN0lm54KZIqX9Hfb99yKnH
- j/9BM94Vx/txhYZ5A8FQ/xa7gSgNAXFIi50ORgPYBsM98oyGgvPj6O03/Y3WZy2UVeX4FvaAjye
- ek8VxEQIotKHbrg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2325; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=0/1MgQhSTo4SZ2txed9gv05z9rFjmcWl6hwe7WthPg8=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnZaa6K8PagUSRbBXNIVgWlwByGMO32kVHibKpo
+ b8WCFcc5WuJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ2WmugAKCRDm/A8cN/La
+ hRnnD/9f3l83yXUjaKaPT3xakf3kCxkgRh9K6gtDX+UCd3ss7AQ48yYzWirHLZeG5I72h1v7rg4
+ +kscCCA+mueRs2+syySFdvGCU1P5EYPn16fO38x5L6n1X7DyDHJtKvpOrireORtgu/WzTETV4Vx
+ 2uVGKKW9kJNkVGci9iTGNDkEjfKnILkArM5Ogobc/IRnkMgj/ePaQtwzxhRD5SISWa+qChE+Z8u
+ cfRfqluWWkN4DTFoG7plqgTBDWLxVIOAHFSxQbvh4pZwsfcqIp5W+LqYkHUzIyvfnQcHWacZOnL
+ fVvkWLFh85YYdUKEqq2dhvjqybkiB95jK4wgtqjwnRRSoK/MfmvH6NhFYFPxMWpzke2B/kY0d62
+ ai+kR6LbuavihtRF0beq1zJBQ61K0dwsze/Z+M7IDuZ3oCELF5dGgwJatOmqdrC8TJ3jYXO2Szm
+ POUns4BVhVQrle6Knpfxz7fZ8eUsrGNdx1dUEkoff0M53YCWvWQ28Xledd8petrrUguM6qiRm+y
+ m6/9d6A29thmvYHki1E7HVz4BKO+VDM5GXB3Ao1G/6z2AZZS9iM2YKQlbQuZOn/WTvCxDm0uPVA
+ 8o0n5uwNq1xGZvI8siNMytDCiq50lIIMkuJ7hls9TbtPhyQPu/awUrQclDEYo81D7w28OdxNyFC
+ 44cpl3+jhYGv6+w==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Add an helper function to get the 'struct device' associated with
-an a 'clk_hw'. This can be used by clock drivers to access various
-device related functionnalities such as devres, dev_ prints, etc ...
+This patchset removes the needs for clk_regmap tables in each clock
+controller driver. Those were used to populate regmap with in the regmap
+based clocks.
+
+This saves a some memory and ease maintenance a bit.
+
+This is the 1st step in a series of rework of Amlogic clocks, to clean-up,
+increase code re-use and ease future maintenance.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk.c            | 6 ++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 7 insertions(+)
+Jerome Brunet (3):
+      clk: add a clk_hw helper to get the associate device structure
+      clk: amlogic: drop clk_regmap tables
+      clk: amlogic: s4: remove unused data
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9b45fa005030f56e1478b9742715ebcde898133f..7e734d2955978cafd77d911562a26f1646684ec2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -365,6 +365,12 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_name);
- 
-+struct device *clk_hw_get_dev(const struct clk_hw *hw)
-+{
-+	return hw->core->dev;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_dev);
-+
- struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return !clk ? NULL : clk->core->hw;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2e6e603b749342931c0d0693c3e72b62c000791b..e5f111dce6ae26c1103f5ff60bebbdb2fa230060 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1360,6 +1360,7 @@ void clk_hw_unregister(struct clk_hw *hw);
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
-+struct device *clk_hw_get_dev(const struct clk_hw *hw);
- #ifdef CONFIG_COMMON_CLK
- struct clk_hw *__clk_get_hw(struct clk *clk);
- #else
+ drivers/clk/clk.c                  |   6 +
+ drivers/clk/meson/a1-peripherals.c | 165 +-------------
+ drivers/clk/meson/a1-pll.c         |  18 +-
+ drivers/clk/meson/axg-aoclk.c      |  22 --
+ drivers/clk/meson/axg-audio.c      | 435 +------------------------------------
+ drivers/clk/meson/axg.c            | 131 -----------
+ drivers/clk/meson/c3-peripherals.c | 212 +-----------------
+ drivers/clk/meson/c3-pll.c         |  34 +--
+ drivers/clk/meson/clk-cpu-dyndiv.c |   1 +
+ drivers/clk/meson/clk-dualdiv.c    |   2 +
+ drivers/clk/meson/clk-mpll.c       |   6 +
+ drivers/clk/meson/clk-phase.c      |  11 +
+ drivers/clk/meson/clk-pll.c        |   7 +
+ drivers/clk/meson/clk-regmap.c     |  88 ++++++++
+ drivers/clk/meson/clk-regmap.h     |   7 +
+ drivers/clk/meson/g12a-aoclk.c     |  34 ---
+ drivers/clk/meson/g12a.c           | 261 ----------------------
+ drivers/clk/meson/gxbb-aoclk.c     |  19 --
+ drivers/clk/meson/gxbb.c           | 393 ---------------------------------
+ drivers/clk/meson/meson-aoclk.c    |   7 +-
+ drivers/clk/meson/meson-aoclk.h    |   2 -
+ drivers/clk/meson/meson-eeclk.c    |   6 +-
+ drivers/clk/meson/meson-eeclk.h    |   2 -
+ drivers/clk/meson/meson8-ddr.c     |  11 +-
+ drivers/clk/meson/s4-peripherals.c | 343 +----------------------------
+ drivers/clk/meson/s4-pll.c         |  33 +--
+ drivers/clk/meson/sclk-div.c       |   5 +
+ drivers/clk/meson/vclk.c           |   2 +
+ drivers/clk/meson/vid-pll-div.c    |   1 +
+ include/linux/clk-provider.h       |   1 +
+ 30 files changed, 172 insertions(+), 2093 deletions(-)
+---
+base-commit: 1909d0d351ed98fdb9f5cbe377213ba0154bf2e0
+change-id: 20241220-amlogic-clk-drop-clk-regmap-tables-18e5cf572356
 
+Best regards,
 -- 
-2.45.2
+Jerome
 
