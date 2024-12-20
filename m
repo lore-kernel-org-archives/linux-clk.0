@@ -1,107 +1,180 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9D3199E84
-	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 06:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1325765;
+	Fri, 20 Dec 2024 06:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734676837; cv=none; b=OTrXkZPwQiObyhV7Jzt5vd7He0MvgvsTL4jqgxc6iBl+zcayCUjzqIOmlhatHy7T9WvwhWmvV4kPobirqd/sBExAFAmHY+X+7mWgLa1m03ngQV+Vl4N1lLEp5/6PQ7NSfCvS+j6/SzSgPJLGlmUN/iRovRFR35xj1W7RwpC3g78=
+	t=1734677049; cv=none; b=iC/ysxAZ2V6yiHpARK7O3qKOXCh/bj+J14eqzBtI7FeflzLXUHlnHwp7xsyCojubJsfNZ74oanlb/AJx0Bhx5Yfw0GPvDZW36FbuRqc6cmeOHZsmIcIp3F1vvcVydPgGcA6wzOvdP/vPqUXZHLFbDkjsftYFwG0IuWAMhy1AEVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734676837; c=relaxed/simple;
-	bh=y9JHwmsgJykn5Vuz5DPHZlgGFgCSKQIm9DCJUV+dnAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gzSbFm0pLkXfxatOxs2SRvmdZ0ZRnyhEwEOb8O4999GcBWCnQswiXFdm7bDo2NuFXDRy22TDYSJPPxaFETBX83Tfd5LoYznhOJJqlQ6a5UwcbogkUjGz5dtPmHAa4ZBLy6L61Or5wMp9Gg+8Mx5rnIdnd9xJCLUKnQtuoDaNDSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c/sSn5/e; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734677049; c=relaxed/simple;
+	bh=+XZqY7Czl0Dc6v9pigdmhhDRlR9SmSMlfzTPM4Q/yyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=do6MVBLB3rreaJbfs3bUvJkuMZVWfvN5EHoi9KFTY1MsE0HuSfKb4kOcHYB7KmZ1q9Et+NLVa+PVS4tWlriWlsxnEQWE8nzrrzort9yiwxqcAh2hkKTTZU9KAdmy2rRCZMI52wb6FPN/JQRllr5hOsoJaPe2hr93hVZQw0lun7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H0ieImpB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c/sSn5/e"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-728e81257bfso1413674b3a.2
-        for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2024 22:40:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734676834; x=1735281634; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oAR6EL4b1dcR37cH4D1lnXYbRYlW9ts5uPuKUPE4Krk=;
-        b=c/sSn5/ecqqiQAgWvjLfwuDZd1R5AVnM498/3A8HYJKLgjo02JJSTAjI0T3v9IHNHO
-         VrxgNhwinAfoTZoOmwluJaL4YC3tyif61gljPqqU2eZVC4G8KR2MPRlYSPZVtdJKv6mZ
-         T7n6Ofl59ONEijcvD5ATw6bbHitylNLpHWoMd0v4Hjaehys04OIcVUGtzDQPDO+ju7tF
-         3f1KiGtYG3LZG4tyqBK3ERRRBS4MDhl64bNgjNRcE8SfIcnkF0LHkLrEPdWjidCMKxCF
-         wZOQKqS2oba7UeUg8adUO8qmKZVFcPko0oWm1EA+axgYr1lYX2rDNA52q+hewu7y9y8U
-         T4Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734676834; x=1735281634;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oAR6EL4b1dcR37cH4D1lnXYbRYlW9ts5uPuKUPE4Krk=;
-        b=hB9MPDiUXC39e1oEFCZOah8HYUR25ttNpOhABH0TSCSmGfyGaT6wEooMTi0/Jupwro
-         hR5FPmdmHkCfswM5eNHewiqepOGhkjjP1ap0uiZhJk19niZ2kVYLwIfXn2xVW4Z+AHej
-         ObJvAj2XkAxyY8k2F3TnUhNGVZIzJh5YEyrN/KOqOgHmPt9Ueq3UjjfUiujVseaJn7aX
-         PoQ5YNYW52/2VkUkbCL7SeRwRMWebMpS3YQWCoNp9HYr74ZkkdfNqrIPujGlTR36xqae
-         z7p9t2ZctBPt4vHThD6vfQ2SC2NGPS/lGWnTFVMBTDyhs9q1Ldrofq4/f44dUIMP1+rJ
-         NvwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTo+E/65ktOPpyHeJAlXTwQdpFv+hI0bTYRz4oXKl1JRHGVc6ujI3b3fNSu7Im48uS0h7l8Sw7BfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRvRW6iqjl2O59UytXag6Op+yCg1kKgU8trzMoClzY4TIYBKqD
-	YQDS7vQ1fUyMrZ3D5702MXCSBw5LA5IGm9/n4b8tohpbg8qFcR7Wb4eXXg9gpaU=
-X-Gm-Gg: ASbGnctQcJ2lg0bLn1kHhy9VLJC28+J9AJgd7SZab+korXRIXIuqiz0pyYiqRrHdt6l
-	xfYmPObgj04w3j5OF/0Itfdgf9PmgQnemilDt1whoH7oyV2VutL195Uox2o6ihGzZq5ep2n/0yd
-	tDGILe/67NtGNeyEGszNOxp3vnrt9fv9eLBtGaGr7wey9Pbe8GxpA8ADWsLeUEEKPcxxBC604sy
-	6rQVDzW7hEg721q666pv6AhEyNkmpoFnfAZY9wWOs1y6FGovkG7NCKGLUk=
-X-Google-Smtp-Source: AGHT+IG+SV0wvhd/C/3SUzB6URLeBHUlw0VzafbKosxxw6sZbA2+f4EkHrtw3uo6TK73xskXOue4og==
-X-Received: by 2002:a05:6a21:7108:b0:1d9:fbc:457c with SMTP id adf61e73a8af0-1e5e08028ebmr3084396637.36.1734676834228;
-        Thu, 19 Dec 2024 22:40:34 -0800 (PST)
-Received: from localhost ([122.172.83.132])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-842aba7325csm2198123a12.7.2024.12.19.22.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2024 22:40:33 -0800 (PST)
-Date: Fri, 20 Dec 2024 12:10:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: manivannan.sadhasivam@linaro.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 0/2] cpufreq: qcom: Clock provider fixes
-Message-ID: <20241220064031.qgbfndt5ijlksnf6@vireshk-i7>
-References: <20241205-qcom-cpufreq-clk-fix-v1-0-de46c82e0fe5@linaro.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H0ieImpB"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BK5ejHP005092;
+	Fri, 20 Dec 2024 06:43:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vtFBXkqVj1dep+GtPPs1kNMNrl/cJ0RdGXwT5VL7VeI=; b=H0ieImpBVKhwGwlr
+	GrJQn4qi67a3vmu3h70DL3iFW75tAsTqZuevLEjpdZsiWPkF68GDtVMmjY0oaG47
+	pFZxrwhGRR/QKm0w8KFaBDjYq7oiKYV7gX8chi2XYoMUtzohwaHI+/yKWYznKGHw
+	1RRCByuniB78qXODFuvo/WwEQM3z45KgW3w2j3BjsCltGLPrW8Bo23RDywCz2foA
+	eEBVMmvSqPbyD78imfWyofVcMv3q/hTI8O4ffeI/NYthUNotzHhC/KH9JOOjno3D
+	ne0dAf0++qVrXmDTM8g2tisGdTnhvhgpaPSl3P5eyC9WI97BCogREurZGvG6pOch
+	kekHIA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43n2n5r4t3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Dec 2024 06:43:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BK6hwhd022279
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Dec 2024 06:43:58 GMT
+Received: from [10.253.34.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Dec
+ 2024 22:43:54 -0800
+Message-ID: <f6930a4c-6d31-4cd9-a9ba-d6ff50e274e2@quicinc.com>
+Date: Fri, 20 Dec 2024 14:43:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205-qcom-cpufreq-clk-fix-v1-0-de46c82e0fe5@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
+ use fixed factor clock
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
+ <20241107-qcom_ipq_cmnpll-v6-5-a5cfe09de485@quicinc.com>
+ <0776a26e-56cd-4838-9b52-210ae9a1f281@oss.qualcomm.com>
+ <8063460d-18ad-4e54-8232-716bad9d37c3@quicinc.com>
+ <2456ab36-f48e-4aa3-88e1-aeb7895c9816@quicinc.com>
+ <fb9d117e-77bd-4a01-a738-f72d07f6b84c@oss.qualcomm.com>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <fb9d117e-77bd-4a01-a738-f72d07f6b84c@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gY6dZNpW44EhaxGfjAfgtSKNPqoRNL7Y
+X-Proofpoint-GUID: gY6dZNpW44EhaxGfjAfgtSKNPqoRNL7Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ bulkscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412200055
 
-On 05-12-24, 22:20, Manivannan Sadhasivam via B4 Relay wrote:
-> Hi,
-> 
-> This series has a couple of fixes for the Qcom CPUFreq clock provider.
-> Patch 1 fixes an issue where incorrect rate might be reported if LMh IRQ is not
-> available for a platform (issue identified based on code inspection). Patch 2
-> fixes a regression reported for v6.13-rc1 [1]. The regression was triggered by
-> commit 25f1c96a0e84 ("clk: Fix invalid execution of clk_set_rate"), which fixed
-> the behavior of the clk_set_rate() API. Even though the commit got reverted now,
-> patch 2 fixes the issue in the clock provider code.
-> 
-> This series is tested on Qcom RB5 development board.
-> 
-> [1] https://lore.kernel.org/all/20241202100621.29209-1-johan+linaro@kernel.org
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> Manivannan Sadhasivam (2):
->       cpufreq: qcom: Fix qcom_cpufreq_hw_recalc_rate() to query LUT if LMh IRQ is not available
->       cpufreq: qcom: Implement clk_ops::determine_rate() for qcom_cpufreq* clocks
-> 
->  drivers/cpufreq/qcom-cpufreq-hw.c | 34 ++++++++++++++++++++++++----------
->  1 file changed, 24 insertions(+), 10 deletions(-)
 
-Applied. Thanks.
 
--- 
-viresh
+On 12/20/2024 5:28 AM, Konrad Dybcio wrote:
+> On 18.12.2024 12:17 PM, Jie Luo wrote:
+>>
+>>
+>> On 12/13/2024 6:30 PM, Jie Luo wrote:
+>>>
+>>>
+>>> On 12/13/2024 2:33 AM, Konrad Dybcio wrote:
+>>>> On 7.11.2024 10:50 AM, Luo Jie wrote:
+>>>>> xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
+>>>>> 48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
+>>>>> block routing channel.
+>>>>>
+>>>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>>>>> ---
+>>>>>    arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
+>>>>>    arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
+>>>>>    2 files changed, 8 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/ arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>>>>> index 78f6a2e053d5..9a8692377176 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>>>>> @@ -174,8 +174,13 @@ &ref_48mhz_clk {
+>>>>>        clock-mult = <1>;
+>>>>>    };
+>>>>> +/*
+>>>>> + * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
+>>>>> + * from WiFi output clock 48 MHZ divided by 2.
+>>>>> + */
+>>>>>    &xo_board_clk {
+>>>>> -    clock-frequency = <24000000>;
+>>>>> +    clock-div = <2>;
+>>>>> +    clock-mult = <1>;
+>>>>>    };
+>>>>>    &xo_clk {
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/ dts/qcom/ipq9574.dtsi
+>>>>> index 8246a00a3e3e..25aed33e9358 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>>> @@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
+>>>>>            };
+>>>>>            xo_board_clk: xo-board-clk {
+>>>>> -            compatible = "fixed-clock";
+>>>>> +            compatible = "fixed-factor-clock";
+>>>>> +            clocks = <&ref_48mhz_clk>;
+>>>>
+>>>> This must be squashed with the previous patch, you can't introduce
+>>>> code and replace it immediately afterwards.
+>>>>
+>>>> Konrad
+>>
+>> Hi Konrad,
+>>
+>> Looking at this comment again, there may have been some
+>> misunderstanding. We are not introducing xo_board_clk in patch 4 of this
+>> series. xo_board_clk is a pre-existing node.
+>>
+>> As part of this additional patch 5, we wanted to address Dmitry's
+>> comment earlier in v5 (reference to comment below), by converting the
+>> xo_board_clk as well to a fixed-factor clock. So it is better to keep
+>> this change as a separate patch in my view. Hope this is OK.
+> 
+> Oh okay..
+> 
+> What's the difference between xo_board_clk and xo_clk then, if the
+> divider is accounted for in xo_board_clk?
+> 
+> Konrad
+
+Here is the clock chain for the relationship between the clocks:
+xo_clk (48 MHZ or 96 MHZ)-->WiFi (mul/div)--> 48 MHZ-->CMN PLL
+				               |
+					       +-->fixed factor(div by 2) --> xo_board_clk (24 MHZ)
+
+So there are two dividers (fixed factor clocks): first for generating
+the 48 MHZ clock (ref-48mhz-clk) from the fixed clock source 'xo_clk',
+and a second for generating the 24 MHZ 'xo_board_clk' from the 48 MHZ
+ref clock.
