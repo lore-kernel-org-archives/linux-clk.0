@@ -1,34 +1,79 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427C017A586;
-	Fri, 20 Dec 2024 09:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3C81AAA10
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734686115; cv=none; b=r/5QhHZ5p2pcJlbySkmXaOUh/E2Ns6xGaLYX64EkhV3lBYK09BElLbWpaSmu/yHopWjmkaHyVqcYyfdYbsf2EsDcg3pGHKXygl/QeytmDxCcICNpk+xlR/0bksajcWyhxMc4Pvqn/zCfKXhPvFynYRjXehtiN9mUelDEhCQ6XHc=
+	t=1734686633; cv=none; b=dU2GIZpiCmIYMALUdIi7g4XKbkCVCJrPyddCTd6cFGuP6nAToeDiUgcl+oAvXog2xMpGRN97aYrepe4wqU8QqNQYwr/KfhKvzNjlBllGy0O8L8sOotgxufz1Rd7UYyMaYONe/k6lKnir+srBedAVQ6DHfKMQGU20nBmIOdSRTyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734686115; c=relaxed/simple;
-	bh=E6vaocoSUG7H31Unn/d+CgzkmWBWqP5e63DYvB3I50Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RkpiYRbG6wv6FUeysqL668DE22xpNFePrXVQOcztL2H+i8V8eGDo+JkPVGsuTqbaH741RWJkaoZMxroP225enV5m53NiPbrUePGOfKsem655etqLffb68YrZxmsUutILDQhdXToCwogW5NPgwpZtLDSmCVCM+AiMpKqTzaE1DUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=J600pIkA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1734686633; c=relaxed/simple;
+	bh=P2zi0QHsTdKUIcgA51Bko5MKtcxqqN5usJ6c3q1Nx+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BZid2r3I6H0LtSntZg+OZMG9XTnIlmKrlkN4sE2P+GJbdPivK/oS64v2xnJUjQn7aRbsyxpE1TTqrFI1JFJgyDFNkO49tuldxhY4yqtkcD28712jqEZK8D/JfqIVVOl7kUUEkxvIllD5KXx+36Gcwlz/gOSB15lew5M11tcls8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LkCOop2j; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="J600pIkA"
-Received: from [192.168.1.105] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 84F111063;
-	Fri, 20 Dec 2024 10:14:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734686067;
-	bh=E6vaocoSUG7H31Unn/d+CgzkmWBWqP5e63DYvB3I50Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=J600pIkAGhBquCyzWJ+uasv+YrywEi3+Ob0jWk8+0Qf4nWP0zWuxLoo1AUtIVgKjo
-	 /YGUIHX0a9X6Osh4N3ILbt5WMp8OUR0CFBTQPiORHazPl3wuBpgYG0ARPrSJpAvs5T
-	 27RCPBf9/xiCwblWUJCpL5mT9tBtJu7dTpEvuzxQ=
-From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Date: Fri, 20 Dec 2024 10:14:41 +0100
-Subject: [PATCH v4 4/4] arm64: dts: renesas: r8a779g0: Add VSPX instances
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LkCOop2j"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3862b40a6e0so998756f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 01:23:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734686628; x=1735291428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iNCwTAAXeO7cfiIJbpT278fKLSv6GPfZdgeicUTKEO8=;
+        b=LkCOop2jB84SUXJG3QkCrp+4aFWDxa+j9T4eJA0fo6FUs6HYWQQm1zNOGBYuy3OFqR
+         Ff9O1Zc1nLqy8D0HIJ1anlkvnsYY39GsDm2zlMpSo8wcFZOh3zcq6Q4o2b4ipaz2vMER
+         4DXFMmh3SnRBexiO08tRs+r+gVpPTX33l9wGmVLutNgKvzGT5RVXqnKQgHsO1phJ2Cia
+         YSuI3eq0VYMTJkbF+D4n0ye7M9egWak3rc2TWa99t0cBOgTBO/giqo+326ULd862UFul
+         5D3+7kF9uHrknYHB6iYHsL/UMTDg3vkW+EXNPYNb4b91ujmLy8UFvw3/jAzQzTiUZSyb
+         jbsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734686628; x=1735291428;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iNCwTAAXeO7cfiIJbpT278fKLSv6GPfZdgeicUTKEO8=;
+        b=b926TCTF9XhtFuwSVfyZZCMBCXEFSfaXzBn4UyI8L8HXOz5B90Q3lqy+Oomt1+u1PG
+         2IB+0IxmFzsr6sw1O/FiyoKYJkAIkd14aUtydxV3l/bu5GK+UjzNylgLmATLGIDje4lX
+         GKM5s5ePneQCIdcJw6wx+lyLYp5KY6YWvMY4cmPxuvnWioCNst4mx1WFjqiTUU+W6zNK
+         zXmdUvzJAXxgPoFr8eMPhz2+zEx7Gc/JkJUeJyKoqZYzWm29aVXFASmlWFsp91o4xmvF
+         vOyBWZ8FK2iX8IzvuFfRfMYf8gKs/FOxeh/j5+oPRgijfya0SIESXUWsGdMR0p6X8LVa
+         R/Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxswonsUfkl64hD0818sJCw/UeWWbozAsuH8t6VaNnWwtJp2VnyS/cpP8X/Y078YOScTezB/PRHj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3g34JS/qy4UwMXWogktnI1om6kab0VHXOZpyX/tCuSgM4VuLu
+	QXi9FUedLPh67bbT8DgQ44M2SopbtDmIVbkCwyInoITIRq+l3O5YNYsYftjekcE=
+X-Gm-Gg: ASbGnctHqE749ISVKFYmUWQfTPxsTEjhsPA/6eIqlu3bYZvRjQ3TkHT/Tjv0k0Opv/j
+	W+jlE7V7XH4kKsXQwtHeJdY2Sr07kWoS9LgovCjWyidZgyqAPQvJlAsLpr67Bbw/mVtAmJELZLr
+	zW2Fa51sOTJCjrENLqXGzy1sCz5ti3xzrVsjDuwCxhKmr+qd7ygAd+34lM4qM5LOhGmDcH6+cBd
+	MnS0/yQVEI7dwOMU8I1ez/3YscwcVBMGh0/RK6Uqv4q672H/QPGUDrlvkQ=
+X-Google-Smtp-Source: AGHT+IHCGJuc0QPgWiSCcz1rPztAry1sR+Zkfuc/Y/QNK+fl9LlKGIVA6ytnJgB8Y5pGXPIW38hmKw==
+X-Received: by 2002:a05:6000:1a8f:b0:386:4034:f9a8 with SMTP id ffacd0b85a97d-38a223f5c51mr1646408f8f.38.1734686628582;
+        Fri, 20 Dec 2024 01:23:48 -0800 (PST)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:c000:46df:1e3e:983f])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a1c828f8fsm3538787f8f.12.2024.12.20.01.23.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2024 01:23:48 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jian Hu <jian.hu@amlogic.com>,
+	Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: amlogic: g12a: fix mmc A peripheral clock
+Date: Fri, 20 Dec 2024 10:23:37 +0100
+Message-ID: <173468657763.2759236.17472540885807657211.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241213-amlogic-clk-g12a-mmca-fix-v1-1-5af421f58b64@baylibre.com>
+References: <20241213-amlogic-clk-g12a-mmca-fix-v1-1-5af421f58b64@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -36,88 +81,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241220-rcar-v4h-vspx-v4-4-7dc1812585ad@ideasonboard.com>
-References: <20241220-rcar-v4h-vspx-v4-0-7dc1812585ad@ideasonboard.com>
-In-Reply-To: <20241220-rcar-v4h-vspx-v4-0-7dc1812585ad@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1580;
- i=jacopo.mondi+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=E6vaocoSUG7H31Unn/d+CgzkmWBWqP5e63DYvB3I50Y=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnZTWVR0LoPzjC7OwVcGcWD0ZzgQdgvbIVP3wfj
- XFrmBneg2uJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2U1lQAKCRByNAaPFqFW
- PMvZD/9pjqnaddfrEB+x4iouZKU3oThtUrRzRy2eruW//+1wMQxGaVoixOIX8cH4WZzD7KVfJ6F
- 1iomuVJ1dVRc37HWxggWIFAibrE06dPytHkWKE1fuGFVB+nAGCV2k28xqCDs3D0wN+cHl516Q9o
- znb7Zn56pxEQFyIDd7HreR/8njxB5945YGrNIQ3ax3JrI1AEbN9kTXbEQIzMze5lKBLrc9TQSwx
- UORoDlqsBwXpUbAJ2nZDMATm+MP1/qKcPjVWyb8vc6rDCippHxT2qD347s5Rxh9CQo6R9B4Xee1
- hYcenFDNxGEn5Wt/S/BaYCE/UXrWRr3+pIkMIaImpH2qFjADN8Yvz4RI691cdL4xcjHSbe0mMZZ
- fLBhMjE0TEZtVQiOp5SaSyyiiptlvttORX7F9o7WAuUjq7j+aNuutjSmhJBnfplo3w2FAAYXUmL
- 4rqd/em3Z1Q7wtEKVjJjjas+lQG5QBTYWlIHlIPoHlgdq1vkQE+9kVOIWXOr/OoQePgrJi/eQFI
- cqvErL7PJvE/uiCR3qU97+4+vOG3TEYF8GmnN3uYmUG2QkPSBcY5238+yBBNzE+JykGicYsE7iM
- Qa0/RMzcGdXLTF9iyEcKaZbpMjYZnC4GpiHy29xQHCfqCk1bINQlLu92mWyqlzYN03nhuytLLxB
- mQ327QqcGY4oOAg==
-X-Developer-Key: i=jacopo.mondi+renesas@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Transfer-Encoding: 8bit
 
-Add device nodes for the VSPX instances on R-Car V4H (R8A779G0) SoC.
+Applied to clk-meson (clk-meson-next), thanks!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+[1/1] clk: amlogic: g12a: fix mmc A peripheral clock
+      https://github.com/BayLibre/clk-meson/commit/799ce46951dc
 
----
-v2->v3:
-- Place VSPX in the ISP power domain
-v1->v2:
-- Re-sort nodes by unit address
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 13bc49a535f8655db2af0493779f2756317ec806..104f740d20d315d43af9d0e63e418155f14a600c 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -2471,6 +2471,28 @@ fcpvx1: fcp@fedb8000 {
- 			iommus = <&ipmmu_vi1 25>;
- 		};
- 
-+		vspx0: vsp@fedd0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd0000 0 0x8000>;
-+			interrupts = <GIC_SPI 556 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1028>;
-+			power-domains = <&sysc R8A779G0_PD_A3ISP0>;
-+			resets = <&cpg 1028>;
-+
-+			renesas,fcp = <&fcpvx0>;
-+		};
-+
-+		vspx1: vsp@fedd8000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfedd8000 0 0x8000>;
-+			interrupts = <GIC_SPI 557 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1029>;
-+			power-domains = <&sysc R8A779G0_PD_A3ISP1>;
-+			resets = <&cpg 1029>;
-+
-+			renesas,fcp = <&fcpvx1>;
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
-
--- 
-2.47.1
-
+Best regards,
+--
+Jerome
