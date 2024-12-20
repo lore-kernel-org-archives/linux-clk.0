@@ -1,174 +1,108 @@
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271EF197A8F;
-	Fri, 20 Dec 2024 08:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DCD19994F
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 09:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734684129; cv=none; b=IBZlkpFxt+AZyWw50AxKuDn9yZSZioPZcnu44qUrVxMRBVj9kKHXujq+E9BrvkzVfIQgEBKasIcaDt8kjH8syInZXNLuhLcVuCxAsmWssfbcCB/iKCZKegKjj/imYuiMM/P5k7XBnrukaMzxbclZNxnP1Z3oogqnp9nBE0NnVTs=
+	t=1734685428; cv=none; b=pxLDqNR4HNEaumV3BK0FoGQNC2sPn2ljoIzTy8vvtRvtg1dKeTSp3nlsYYt4lyM+GLVHGbAzVJKNgetual2zE02OyHbXUogFd8LIhVnaEs/fTW3xeMparbrX6KN7YjzxXUqxGBsDyXkkus5+kZFvAjjV5SnQ5XS8s1xKPtUQTtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734684129; c=relaxed/simple;
-	bh=xC6OyuU4/k5dcJzQ0dGHNVDdJGFWFi3RraPSZcU9nzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p7LscefuAMYjFGtZr0alZVKom/VMZVGbubNoQ+R6PKZY+WID9TgdGdPuw404qxwsHusjPmXOW5Tnxn61+sU+RNOo/0JpPvrjeCz7zSaMJu/cug7AsRw5zv+YPucG4GywJRLBAXg7LzEtvCJ7rQXxM8/1bYgcB7pBjfMDRyQIeGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51619b06a1cso907989e0c.3;
-        Fri, 20 Dec 2024 00:42:05 -0800 (PST)
+	s=arc-20240116; t=1734685428; c=relaxed/simple;
+	bh=DbfIVgwdPOtjGyPYp3zFC8cSx0e4NRwlmaO+ILtD/1s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NxsmIWEs3Z9lE09tIExKA6s3ELE8v/UFp/QUPOqy9UIRaY/ce0zWkV7hEq+GauJHJpAC7cDYQo5W1w01ytIyh0/RGvlRs6elQ8t1B3t+yee3p5VvpIY4PnNPLcCzVgCEvxCHmOzRvmHOaZsTNCvJujSdy4YpS48+wnkjEfzxRWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=vuWkiM2X; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="vuWkiM2X"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43625c4a50dso11306885e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 01:03:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1734685425; x=1735290225; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TKQF6v9mjJTHAGrz+anbwJhJc4N1fYhnSvoLIwg6Hw4=;
+        b=vuWkiM2X2LurHfl3/g+Jj7uFleBh8ZZDzDqFryqzDp9kC5QIc8gZ2WbFhc/TTsyN5x
+         IZs3kh9hl0UccvbDEYBOQlMdhXagX4bHcRRIIpbJXJTN7sFNvQdDSmtaXQhTOYRfeOOz
+         M4ZKV9qzuxEcw3FGFo4lOazlVpYOIrfLPFZBui5clscZelSHKo2L/PXSSuIa1Qknaf6K
+         UG5DwwVxu45S4zgKRNtr7m7EfpT5X8/rjvxsgFYATcKobrG2D+935LQAUH5+Adufgl6o
+         OTEuaH51tfS6q5fjpO1mnZTTH6XBgcHK3oKjQB5mT4ylM/e6BD8ldfwIbiri9Qp7VUDh
+         tE0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734684124; x=1735288924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hDMNInSv1RvKE9O+T8QKsBi9B8/JQ3ymFOYC0JdhAao=;
-        b=pFbMwewRoy9nKDc99mTq6yr1ZBqWJeR8DKeL0Ea+u7qOwOQHIN1jgjN0eHEAGtrelJ
-         sCwtvObPtJj1SwBuNY8votxr/XEpZ/pus7LeN4w07quGQt135XrV50VRTszXcgLCKbzx
-         q2gTzJ62DAnLuLUmUtCTcXye/+lrGuu8v0bVik9l43Rt7IbefaPR+euzB9Rhf/wTSkhS
-         JJHku2/+BMjuJ3NwgwSTq3yZvR9oermBeb+P2wPHrTPabu38HAohHmugmNw2BMjPTD02
-         oTK50OuQHYA8BeDQTTaSc7DlJ7XNrGyuh6Vji77CBhlQ9VxdnPuJ2tLZXDJ2ScuH5U+C
-         l7eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU71dUy+WPp1VBxJc84QRQV3pjLrW8yiX67El34z8qEWNY2Kz+hBy3cTi28g5wfUGkRbV8TXS81JG2BbXgW@vger.kernel.org, AJvYcCUdSgCW47FeKqrWwcO1TTnljW24on/heNNx8wHOl2E9dP21be2mr71H6og7KKyiovtVyxVe7laK6Bs=@vger.kernel.org, AJvYcCWfnpORALA+Ea9BHX2S6CfSfS9WFtENxE7iL/133VKYWjQdGFqaD+0SiWczDbYB2CwyR4Jl/2v9RNHuaiQsgZzX+zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3GrMxa7lD1ENnHge7CwbWspr92l2jpaic9Uk5RvS5IOdm95PV
-	DWSayAeRDxgUQdNM2Pa5YMPTBsXFRcWHpxeSl4K7O/Ccb0rYMWWNM0j273Y4
-X-Gm-Gg: ASbGncswfPCrCAPufUXiqEhEUL7MzoBCzHQH5mtLioCF2aJ8CnPyVefyBR/hG5rCOU3
-	ubLu3OShulYITKvbEm7fButRusA+CRupJMCiohHQBLp4tnd23rtxSTu3wsVek/kuBvM6DDQX4u5
-	8QCa3w92C5p+ewJ5n4swk7EIAWDa3g8uJsRt6eKQSWGmvDc0Q8Ghdk+RTg660vK3rnbEyDUx6td
-	NYJl98eGpXE0KJ1rFRQglbLhasp2MNLdfMYC0pNV43twtXrNzwnHxqLoNpydQ+dNZwUSTufTKeR
-	OEp7KpvNMfcWMyf0rZc=
-X-Google-Smtp-Source: AGHT+IHIzk/9O/gsMFEzE6nL2yZMrGsPmfTIBg0iUBaBED2I9m3yy/UavQN0s+e6TUjr+kNEjroQRw==
-X-Received: by 2002:a05:6122:2490:b0:518:a287:56e3 with SMTP id 71dfb90a1353d-51b75d3cd79mr1499651e0c.7.1734684124327;
-        Fri, 20 Dec 2024 00:42:04 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51b68d08df2sm321008e0c.47.2024.12.20.00.42.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2024 00:42:04 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4affbc4dc74so884196137.0;
-        Fri, 20 Dec 2024 00:42:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVKPi7uh4nXUU+ov8vupa/MWjDJwqkZNdv/+MTj9CKEkb09+iPi6DmtnObSnyD12soMDKKFhYFLBTACe/NvvjjCRiQ=@vger.kernel.org, AJvYcCW+T3EMRMcuKkp3YDZagWWShiz+I2PxQpm9v3d/iP/E9vgF5KPWhkIo0qcOa+szvKKMKS/URfEOzP8=@vger.kernel.org, AJvYcCWSTiAuMEMtixhGTSfU5KSYTvSaoLGI9Nko9vHB2vsDEku+9R0TBYS4oqYDK9oCFt5sbIMxpwreoHuAcD48@vger.kernel.org
-X-Received: by 2002:a05:6102:419f:b0:4b1:11c6:d3d2 with SMTP id
- ada2fe7eead31-4b2cc472ec8mr1784780137.27.1734684123793; Fri, 20 Dec 2024
- 00:42:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734685425; x=1735290225;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TKQF6v9mjJTHAGrz+anbwJhJc4N1fYhnSvoLIwg6Hw4=;
+        b=ToBZCvX/akZTcgDUmy2eFoVoZoqmuMCqALT/X6ZuHEk5K6pgHXerCPVIZ6vfFeXEn/
+         n6M9cBxK7E88QshJmsNHt4wMo3eR4c6Yjxe8NICKEPsjbbZy1QKxyWAEXi4oM8WfM01d
+         3Yp73bx2qGgf1ABseJZ+BRUkdi2yK/jA49kIgGxSY8dZwKnnNV9p/F4YOplW2mJoNGgv
+         ow9gPoVsWvoEm92jc1Cszh1E3KYQjKNm87yv3Nqjozr9VgQ4FJtApl9xI7gUR8pcQvYf
+         4vzHyRb/EUe9qxUwk7lF73hVXOLAAloNyCDR68n15hu55kvQx+dIDi0/uYL8ghu+rIlW
+         8UUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1n1aYewHbpcWG7dXBzkPmrde1znuH2f+jAn5L5hgP5xYx+JCSeh+dMXk8i5vCp4GrzwZgjxV754U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUfLsJKsAGe96X6oBzy8RyX49LEK2K5TyXFPFU58AU2KgfO9PH
+	FnRwR70vXXLlvvVuDgFnyi02YOnPViEflVDb2L1tcy2+Dw+9oByZrwuABawWWBM=
+X-Gm-Gg: ASbGncv5NekXG3vx4h5R05nzdFBZsMRxEYitTbEjU8ryP4dc7zlC6qnaLFdrx0anRP8
+	/ukjawP97i6bMxVGK8IP/8R+oP0hdplF4fERQ1ZO77+pBDcNHB9xSRWabPDWiLL8ic2sVlkX2lI
+	If7MJ7h9TfXbijQI6HT3nEMt6q0zKtNBl6XXkpeCicnh+h3WXXP2UJs3WvK1jJb/gYw3qPmNlvS
+	LUDjdPUACmxRyrZUZj8sdn6LxEaH80wm1aIdYT5+ELpfFIw/TaUeEnUcBnHHxGPzYFqpnA4Fm01
+	7/RlDypanc0hC2AEI4zpXNkHMDBPwA==
+X-Google-Smtp-Source: AGHT+IGSHfVV7ZgeNmbzBWx67alIxQ8s1vI3ArjQYk5K4x5dU5OensPI2MOkBdI3RPTXPnjlqYDKeg==
+X-Received: by 2002:a05:600c:4f51:b0:436:1b7a:c0b4 with SMTP id 5b1f17b1804b1-4366854850emr12697055e9.1.1734685425468;
+        Fri, 20 Dec 2024 01:03:45 -0800 (PST)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea3e0sm40610375e9.7.2024.12.20.01.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2024 01:03:45 -0800 (PST)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/2] Add missing parent_map to clocks in SM6350 clock
+ drivers
+Date: Fri, 20 Dec 2024 10:03:29 +0100
+Message-Id: <20241220-sm6350-parent_map-v1-0-64f3d04cb2eb@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218142045.77269-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241218142045.77269-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVz95gXsYpF57sDJ4Y_by0chEuzgN-Bz-KZpzycZMrtGQ@mail.gmail.com> <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com>
-In-Reply-To: <CA+V-a8vMYFT6VgCjS-OJnaOON3SOkAhYKN7-RvFqA35se+VUkA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Dec 2024 09:41:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUDABcDXRemYLAXEh3cEMQqUrmhdeBCJm4mXhnHGrALKQ@mail.gmail.com>
-Message-ID: <CAMuHMdUDABcDXRemYLAXEh3cEMQqUrmhdeBCJm4mXhnHGrALKQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: renesas: rzv2h: Fix use-after-free in MSTOP
- refcount handling
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOEyZWcC/x3MSQqAMAxA0atI1hY6OF9FRKpGzcJaGhFBeneLy
+ 7f4/wXGQMjQZS8EvInpdAkqz2DerdtQ0JIMWupCaS0FH5UppfA2oLvGw3oxS4PtVClbqwZS5wO
+ u9PzPfojxA5EIHo1jAAAA
+X-Change-ID: 20241220-sm6350-parent_map-c03e9b61a718
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Hi Prabhakar,
+If a clk_rcg2 has a parent, it should also have parent_map defined,
+otherwise we'll get a NULL pointer dereference when calling clk_set_rate
+on those clocks.
 
-On Fri, Dec 20, 2024 at 9:24=E2=80=AFAM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Thu, Dec 19, 2024 at 4:20=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Wed, Dec 18, 2024 at 3:20=E2=80=AFPM Prabhakar <prabhakar.csengg@gma=
-il.com> wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Avoid triggering a `refcount_t: addition on 0; use-after-free.` warni=
-ng
-> > > when registering a module clock with the same MSTOP configuration. Th=
-e
-> > > issue arises when a module clock is registered but not enabled, resul=
-ting
-> > > in a `ref_cnt` of 0. Subsequent calls to `refcount_inc()` on such clo=
-cks
-> > > cause the kernel to warn about use-after-free.
-> > >
-> > > [    0.113529] ------------[ cut here ]------------
-> > > [    0.113537] refcount_t: addition on 0; use-after-free.
-> > > [    0.113576] WARNING: CPU: 2 PID: 1 at lib/refcount.c:25 refcount_w=
-arn_saturate+0x120/0x144
-> >
-> > [...]
-> >
-> > > Resolve this by checking the `ref_cnt` value before calling
-> > > `refcount_inc()`. If `ref_cnt` is 0, reset it to 1 using `refcount_se=
-t()`.
-> >
-> > Thanks for your patch!
-> >
-> > > Fixes: 7bd4cb3d6b7c ("clk: renesas: rzv2h: Relocate MSTOP-related mac=
-ros to the family driver")
-> >
-> > The description (from your [PATCH 2/5]?) does not match the commit.
-> >
-> Ouch!
->
-> > Fixes: 7bd4cb3d6b7c43f0 ("clk: renesas: rzv2h: Add MSTOP support")
-> >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >
-> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > > @@ -565,8 +565,12 @@ static struct rzv2h_mstop
-> > >                         continue;
-> > >
-> > >                 if (BUS_MSTOP(clk->mstop->idx, clk->mstop->mask) =3D=
-=3D mstop_data) {
-> > > -                       if (rzv2h_mod_clock_is_enabled(&clock->hw))
-> > > -                               refcount_inc(&clk->mstop->ref_cnt);
-> > > +                       if (rzv2h_mod_clock_is_enabled(&clock->hw)) {
-> > > +                               if (refcount_read(&clk->mstop->ref_cn=
-t))
-> > > +                                       refcount_inc(&clk->mstop->ref=
-_cnt);
-> > > +                               else
-> > > +                                       refcount_set(&clk->mstop->ref=
-_cnt, 1);
-> > > +                       }
+Correct this on clocks in both gcc-sm6350 and dispcc-sm6350.
 
-Or simply
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Luca Weiss (2):
+      clk: qcom: gcc-sm6350: Add missing parent_map for two clocks
+      clk: qcom: dispcc-sm6350: Add missing parent_map for a clock
 
-    do refcount_set(&clk->mstop->ref_cnt,
-                    refcount_read(&clk->mstop->ref_cnt) +1);
+ drivers/clk/qcom/dispcc-sm6350.c |  7 +++----
+ drivers/clk/qcom/gcc-sm6350.c    | 22 ++++++++++++++--------
+ 2 files changed, 17 insertions(+), 12 deletions(-)
+---
+base-commit: 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2
+change-id: 20241220-sm6350-parent_map-c03e9b61a718
 
-?
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
-Still, you risk some janitor replacing that by refcount_inc() regardless...
-
-> > >                         return clk->mstop;
-> > >                 }
-> > >         }
-> >
-> > This makes me wonder if refcount is the right abstraction?
-> >
-> You mean as discussed on irc, refcount per mstop bit instead of groups
-> is not OK too? Do you have any other better approach in mind?
-
-I mean if you need such silly workarounds to do a simple increment, is
-refcount_t the right abstraction, instead of a plain atomic_t?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
