@@ -1,65 +1,72 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344A51A8402
-	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 10:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9961C3316
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 10:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734690508; cv=none; b=B5U4BF8Xu/0INwfXFqic8hRNTDH556LlC8wd1Bx8Zq1HKQqpArHhPzFUfVHmK+a+vamJKIdnEwLL6pbnoRSC9Aln2On7aN4nzVO1/vywyOv743r5iwGnJCEAjbi+8RJQeNQo69cXjPpRRizrV/m9WxY4qym1/frrcZqblFNKNmU=
+	t=1734690514; cv=none; b=lZhgflhE0hi0YNuUftbJ23s10lJE3cQuAq6ef76Zz9tbPZirzST731TM4YKrRJVUXtkzLAoEl7rhSn3vsC70d6/1teaDdyASwJSGt1vqFsOAKWTGSx+RKRaqiwjPgI0j5ovcHK3egoi9aZQJU1JID98O8CrtgiuZXj3a64TtQ38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734690508; c=relaxed/simple;
-	bh=WXWHQ1it3fu+a5/OI8vOfG0zA8RO95s5eyYL3lqaDzs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sK8Yy2hK808Xvx/rrkN63nO4n/kTSFZYu1Uv9MNnI8k2Dv0NV+ROkfXSVrcLdu46wvVljJpDy76KLJsR6rjnlzQLBo8IEVbhmABZn53vp/HyDwn9SUhpOutzHXeLvVBusW3f4z6sCAdefGjdpLxgI+VH6qtzhIGRf0HadETbcGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=usSjCXuK; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734690514; c=relaxed/simple;
+	bh=1hjBVCcUS89gAYDyc+pvRL1kdXckem1XTkgZ8bCc7Sk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bpp3kn31qbpo00K/IRJ1owXty9htx624KYB/qNtwM7y53naA3Rjin+gx77Kz9N2Gn0i+YlBEPuon4LqLwgsA0zNBheqOVke41gVF7PXxc2IqDjkuGlWPNTPJlXaryiAo+BKnNBroxATYNfYWINQHH8F9vIrlXDivrwtVj9cjSQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ne/R+R9T; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="usSjCXuK"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43622354a3eso11937315e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 02:28:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734690504; x=1735295304; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HdJ/eOxCZGHcu9pA14lAD6dnUt0v18sp+NWLvry5BiA=;
-        b=usSjCXuKLuUPik5owrxST7+ABp5DBcv0CrahtvWdEUdHDRZbu/A/eUHr7/lYx5s+la
-         OSc2cYfzGqx/jPeRXcpVbUjsVuafo8j1zRPeKBcHvmR7w5eSyWJreRDJmdWFVyEmzRWe
-         aFx4LD/iVQeT5aE4OlBqFUrCZWGjQCtxqGVa49t+mc+4R0ZSSbyePuopiWuecBBxNcoa
-         8ZsCwq20B67NVfWMfOqXx/hfpYjFxpeniLtQ6iPLd0bu/r3AmfZeieZDECMO7JQc6QUu
-         Anw4JiQush3ocWuF0263u0ogjiMpep71wJBISdLoAxIcKy9Df8QOTBklUD/a2HIborpr
-         jWuQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ne/R+R9T"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BK7LqCx028657
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 10:28:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XjQWa0qd5X0wQZSFo1zpsnnF4GInUf2OufuV4F6Rxo8=; b=Ne/R+R9TGe/rAt4I
+	8gdnZL4m4HNlcU9vDI6/Ao4tHqnlb540+ToYBxs5hqao/bIZXxtmuLi5jLVgOsqH
+	YnqhlXYHA6bpYaoTbceHUL1MLjfefiRnkOJ5HBKPge0auYoohHSYCyIcqwtShuBU
+	E3k4gKG4QLblChNktt38+wVswowx9ZTTvnNu5tEeIS3dNN3JCA33xXSZHC1XMjLR
+	Npg2MrdhWwHspL+aWMjdQrGvqLRAQuDKdHvt7kkZJKWwRd9g7LFyQH8Za+TgqkC5
+	uyktPWL1XzB5iN6iCZQ4arfaQURLuOa05BhtvNfwte4/ijFLL+j/lB0QOGAjKUz4
+	3e/Ccg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43n44hrh79-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 10:28:30 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-467922cf961so4407601cf.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 02:28:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734690504; x=1735295304;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HdJ/eOxCZGHcu9pA14lAD6dnUt0v18sp+NWLvry5BiA=;
-        b=HysVrrYhOaelal9nKrA6fJEhyOjFy+fX9txKjwLaPsx0XXDMY64gdLc9CneouMGSyn
-         SvTFo7pD8asERiRE+0Rwxu2+1Nw02FbLy1kHRc/3+fOKeRXdANIoi5c8uZqniPcM8yTk
-         xD5t555d/mkCEmwQAkDl8baaPpQs7PJEdBzKJL8i9KOwBaSGJCpWAXBb3h0o1edG676A
-         5w/JyEF5dA0ODNCbHrEw2fk24cpdTYZeFtwFy+lpS7x7oSkOCo5kdPRI/TbyB3t4UGtZ
-         MgBsdmUyH1+IGgQNilnrprkbylJyPyqLKZtvFpkNUAGs058x9A1haYLJtlielNEvqaqT
-         AVOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQYW/3sqiA9awwxR3YwYiDq+00ldwJPfYhrw90Dm72XtQj6Hi8kqBPCrbDeK+RG5FzfLp19rtPzNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydPSxoop4e6OJ0cP97n1tCxcyr2zucOnZbUs1pz5giZFSXwhy/
-	DY/hUJW7/LU7iLDp9Sr/uGaN61LP8Ut4WeIjacAJGfsSAs4A1oZ6OA0jsd269+0=
-X-Gm-Gg: ASbGncsbELWTaWIJgi6hNqhTAQb3sSLbjPbmYwubY8rHRc/jLcAu9KyDxb6RZKIRuaU
-	NN22w11jv6xkz6rK4zf7cDns1WMolLKJc8bElwzrjGJPai0TMep85CTq4UToG+QaCZ48S9Owrgf
-	7Kxv1DwMNs5m8qcnwljefd1S9dW+HSo5bapcbflIo0PIWK/I4vo/DVFnt5Kp/JfRdIvKIQUL7FX
-	epyj0TYzbKcyKBtHrKo4Ybm2sm/wXiw3FAtNe/qlMkDnZYOBhn5TR9p+4J81DIBq+Tf
-X-Google-Smtp-Source: AGHT+IEYzK+j+dey8xf+KzqWLoGsi0Q/WX4eyBcHDbdTKpfLYjVtZFyqCoMyxH7cKJs47i+/dXz29A==
-X-Received: by 2002:a05:600c:470b:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-436685482f4mr17044165e9.7.1734690504486;
-        Fri, 20 Dec 2024 02:28:24 -0800 (PST)
-Received: from [192.168.7.191] ([212.114.21.58])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b4274csm76509465e9.38.2024.12.20.02.28.22
+        d=1e100.net; s=20230601; t=1734690509; x=1735295309;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjQWa0qd5X0wQZSFo1zpsnnF4GInUf2OufuV4F6Rxo8=;
+        b=NCw/rilBvcGspPxcjzPzSG7EO3OFt+HLplNloxtAlBMH1le0hXCAgjqtYkHW+68FlR
+         rg0yGrQLqYL0/MTwcvhESOB2CrTAXQq2/+zanEpCuGOT1dNkjJ8bvYkGph9uvN/mRyTn
+         b0ObuTBYE/kK7C+nQ+2CP4qfVsYIdYBDHojOZJVCOwwSrA/wCuOQJU+nZkVb4QHUi9Nl
+         1ie2KuyRCqiklc8T/y5NawEGDieipqMYsBY1ASNgcqWzpMX5ZmJKKrtJc/m2utFdxMVu
+         6nkJ2o3XhbbFz0WeLWXScRLr0kJt8oTqtTBIkSNy6s3lsb/Vnpr9cH598uPNSo6koq4W
+         RpJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP8Lh4Pvognk/s2VwDLWuiGcauTxYDDRTEof5hx4PaF2DgTGji8OY/Ie+X5ZvKeX7s3/Vx62NAxYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnVncaDaCJ34xJmQv5uuAmQcnpq07wn53dYbC4FbuJMqsnnfUn
+	z/KCD/ZsC3mnFQplBHw1AY8no3kumH/4JKi5MjkU+/653ljV93gi06WHDT/Hx/Vpjw9aAZjaANT
+	MbXRfm1FdaJO9QYNSNpBvLO2nxJhClEvkbKGWCXP8CFKUprX3iM5mqrH+GY4=
+X-Gm-Gg: ASbGncsxvPatcq8RpqymGt2o722JK8KhGVf0ofNu4qUSYeWWrzr/DMdiWxRaEljMvw9
+	2llyaZWveFg0nzbRjb9euUB+VOPGaOSW753gILBwwXDyAgn2JTH+W2pc4Fja9kAMFlzrViTI0WI
+	T+//6JUd3jGQsdm9I16wFXbuHQgaQivibbBQimCsSRLfRYRctIwWvRY37nb7ElARjrhGcoVBYRt
+	5LJ1+7RcDTK1svF59E3hjAvwx7rh+K3vD55tCgXHLGBTCv7iOnH28G9lG8r8tFkMXlU9ynpjK9z
+	BJwX5bMGTMb5ra0yI4unA/1+7WSc71qPOus=
+X-Received: by 2002:a05:622a:4e:b0:469:dcc0:9b23 with SMTP id d75a77b69052e-46a4a9a3eecmr15332301cf.13.1734690509600;
+        Fri, 20 Dec 2024 02:28:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFMtjaKvTFUsh9ZDwXASae8DAiBKh90dcboQDUxU8iSgVq6zGvdYVzXhh/z0oYYZdIkXxgu7Q==
+X-Received: by 2002:a05:622a:4e:b0:469:dcc0:9b23 with SMTP id d75a77b69052e-46a4a9a3eecmr15332111cf.13.1734690509230;
+        Fri, 20 Dec 2024 02:28:29 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f06cf19sm160882366b.198.2024.12.20.02.28.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2024 02:28:23 -0800 (PST)
-Message-ID: <e74da1e8-d1fe-4937-9f41-63347beb40a2@linaro.org>
-Date: Fri, 20 Dec 2024 11:28:22 +0100
+        Fri, 20 Dec 2024 02:28:28 -0800 (PST)
+Message-ID: <0f5f07f8-dc6a-4162-b9b4-82e40b9ca526@oss.qualcomm.com>
+Date: Fri, 20 Dec 2024 11:28:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,76 +74,69 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/2] clk: amlogic: gxbb: drop incorrect flag on 32k clock
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241220-amlogic-clk-gxbb-32k-fixes-v1-0-baca56ecf2db@baylibre.com>
- <20241220-amlogic-clk-gxbb-32k-fixes-v1-1-baca56ecf2db@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241220-amlogic-clk-gxbb-32k-fixes-v1-1-baca56ecf2db@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm6350: Add missing parent_map for two
+ clocks
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241220-sm6350-parent_map-v1-0-64f3d04cb2eb@fairphone.com>
+ <20241220-sm6350-parent_map-v1-1-64f3d04cb2eb@fairphone.com>
+ <e909ac59-b2d6-4626-8d4e-8279a691f98a@oss.qualcomm.com>
+ <D6GGBPC4V5XV.YU8Z2KASBH07@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <D6GGBPC4V5XV.YU8Z2KASBH07@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Idesddad0x4TGxy155LHZHAUrWUJdt0p
+X-Proofpoint-ORIG-GUID: Idesddad0x4TGxy155LHZHAUrWUJdt0p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ mlxlogscore=991 phishscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ adultscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412200086
 
-On 20/12/2024 11:25, Jerome Brunet wrote:
-> gxbb_32k_clk_div sets CLK_DIVIDER_ROUND_CLOSEST in the init_data flag which
-> is incorrect. This is field is not where the divider flags belong.
+On 20.12.2024 11:21 AM, Luca Weiss wrote:
+> On Fri Dec 20, 2024 at 10:42 AM CET, Konrad Dybcio wrote:
+>> On 20.12.2024 10:03 AM, Luca Weiss wrote:
+>>> If a clk_rcg2 has a parent, it should also have parent_map defined,
+>>
+>>                       ^
+>>                         freq_tbl
 > 
-> Thankfully, CLK_DIVIDER_ROUND_CLOSEST maps to bit 4 which is an unused
-> clock flag, so there is no unintended consequence to this error.
+> I was basing this on that part of the clk-rcg2.c, so for every parent
+> there also needs to be a parent_map specified.
 > 
-> Effectively, the clock has been used without CLK_DIVIDER_ROUND_CLOSEST
-> so far, so just drop it.
+>     int num_parents = clk_hw_get_num_parents(hw);
+>     [...]
+>     for (i = 0; i < num_parents; i++)
+>         if (cfg == rcg->parent_map[i].cfg)
+>             [...]
 > 
-> Fixes: 14c735c8e308 ("clk: meson-gxbb: Add EE 32K Clock for CEC")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/clk/meson/gxbb.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Should I still change the commit message? I guess there's no clk_rcg2
+> without a parent at all?
 > 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 262c318edbd512239b79e5ad26643ae6c7b0173b..62494cf06e7d775bdb18b2242c3d45bf246bdd0e 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -1306,7 +1306,7 @@ static struct clk_regmap gxbb_32k_clk_div = {
->   			&gxbb_32k_clk_sel.hw
->   		},
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
-> +		.flags = CLK_SET_RATE_PARENT,
->   	},
->   };
->   
+> I guess I could reword it like that also or something?
 > 
+>   A clk_rcg2 needs to have a parent_map entry for every parent it has,
+>   otherwise [...]
+> 
+> Regards
+> Luca
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Okay I suppose it's fine as-is
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
