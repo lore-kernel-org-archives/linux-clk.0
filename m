@@ -1,50 +1,75 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CD3215711;
-	Fri, 20 Dec 2024 13:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D961C5F37
+	for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 14:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734701031; cv=none; b=Zr+NFGvPnty0zcUpalzCxsMEjqSFW2N9e0DQ69/lSyBxGvnonB4+UsB0LFSJgioNADyYLGtJ4dEMpcIYyyHFR/101OugA4IIfO3NVk0KpLf/v1hY1UCVxddKBSK63jccTa2WnVG7xofkho3yAxrGK2dcSmr4WB1jQHAlXz6WDEw=
+	t=1734703710; cv=none; b=XzNKcpSjGRlpLG8u48tMWSuVVnziaCd2JsMFqlWO9cL/CEKIEODLV0MTanpFS8bnJCiHKUR6555uWResREued8X5tUQDzodLw7Gsxv+D64lVmtwlUMesHsremfxUAXIDPuN/YFfj/dNpVoPH13GrrEQ7aG53lZNvyA26Pdiivf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734701031; c=relaxed/simple;
-	bh=VyC3W8O7pEMyWv06ZRGk03/Ezl+Iu9sbnPsh4K208us=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Y7P8pO8gq8Jg+3ze+lifxesfw1zQmQW/GiwqWf0SloQn468vJjQS5adp+gh6oPLNKvi0/8lzH8mqPbhTYagy66fCkoV1Mp9MoQ29rJWGiYVpfbM0/MGVjfGghgANgOU+pkRcD9drQv9spqF0dN4xwux4tzKqZBZLCZYNp+NzT9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n//yoy8M; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1734703710; c=relaxed/simple;
+	bh=kdpV/1xfTuaatySHSN6ZAPx6uhpo/oA5zrymbcwkZYg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UL45GPSF1IFeIxWR2MKMb226/jszPgvtb04ZYicXyqL3ROYfkbKI8erBiFZqSDrZ7s0itS9qkBmJlqV24CrggpaiBomgF74+kVoaHlZGwJ0+Aq/jBr5arXT4RltKQjil+QpQpielWt5UOTEx1eSXiXOuck0jwRVKO0iB7GEWSWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EVSScW9z; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n//yoy8M"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BKDHX3m017499;
-	Fri, 20 Dec 2024 13:23:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8aydGhIo9XxOke5I+yIVto0Os8osvsq6hM83XEMMBBE=; b=n//yoy8MWHpGQ6yl
-	hEePsQAqwgote55twPpdcHHjIovxXxvijiwy73MJ5/RIYAM+I9fwDjqIiBd8qgL9
-	MQMuGDwNlxCKWBlOAYALta8ZKcB+4v6Bn8WRdFmKBBwhKF9I2jmAYAuda12TJxBl
-	XtcoTRVkQ6ZCad99q+tkb/TvLRRupI9iPMQzLxcQ3I1aIMSc+NAC0njwsuupxI3x
-	i6gNu/K1308kfqVAwNrwrxOU9VYwYuEH9idDkgK6SeIhgEub4F02ZP5PjnAmwS+M
-	p/A+u4XnKOwryNj3JyQ4ZoA/C/bWjCQIqgOuDrtxmmNaeS46q40Od8h/e42ftgEk
-	oG3L6g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43n9b9g0mt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Dec 2024 13:23:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BKDNesO029020
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Dec 2024 13:23:41 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 20 Dec 2024 05:23:35 -0800
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Fri, 20 Dec 2024 21:22:46 +0800
-Subject: [PATCH v7 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
- use fixed factor clock
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EVSScW9z"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e0e224cbso1115203f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2024 06:08:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734703705; x=1735308505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p2OQDSxlIjkv6IYB32QqjLNdXWxA9l5+c++JHu/xF9o=;
+        b=EVSScW9zR7JexEOHRrI1rBNeuxA2pVZ5uP7IfCOKAG4UIIBxTua4dwGA1AKS3WV+PV
+         H0vmXVnt7Bd3bl29OOvJvl/NOiGFKFH8IBUA2oP/faiFTbkajF1yfaWwEnow8bHgR0FV
+         K4mV3s19wLEgYWqU93bJVX7xbERqcFbC+snL3Ym71k0q4Kj10xn6JkeIXL8m4T6CZlpI
+         s+8ioxdvbgvBNLYyqkpgh3Y4zs/5hMG0qUi+fzocB8Xwb51gvCaw9dUF5AuOWBTrfxOp
+         RSOH9ENGPdnRRsK4D2+HB0hSALj6YBRU285rVXsGR/LTo2Auf0q11NYoGB8tDzCY2lmM
+         Yp+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734703705; x=1735308505;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p2OQDSxlIjkv6IYB32QqjLNdXWxA9l5+c++JHu/xF9o=;
+        b=UQT+Y9YffPZrfj6Ux8uuzsSfitXjJkcchQWmxLGx1mwm3fxzVwNgrbXyB4dasaq81+
+         kx73rO5Mhqa6vMWaMFmuEblmKmfYDUbHYFeRzOhyGOrWxf158iereMFjOIGXKrBiZ8JP
+         FkRP5cm2khfZN8yrpj39OK1AF6O6S3V0VxS53I0AtuuI3b1A9hmHW0mW9fsHtqQCVzbW
+         ctNp6Pv4gFonO6jFXMDc5cLzyNJeuyxSsh54K+ngeN9X9O2EYR+WRAXmJQb+J2CwrG27
+         H2ThLiFkUCnZvfG5Azdp+qmG02vgsKtc/UOIsuFSKDG78Qa1jBsiOiF1JJyrTWg9erRo
+         HOkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4E/3zNB3xTYBqRwUoiUUwP/648QqTzPaUfAzhs0hpgN6fdxx14l+MrWOLWFnFeYHAkA+3uE3sGeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU3Cn4+olxeBI0kqteiRtb7M5ouspEafgAv3wetMt+EcTMu4Gi
+	wuUFWr3+I9U3qz5OKENzBxnHFl09OrqLup6HUM8UHQRIMCPLCi9tRxauah95pLKfNcAhyhwDvHW
+	s
+X-Gm-Gg: ASbGncvM3tbtH3IPaewiaj6o0t3JQxe09MilPhgKWyPDL0Ktg2MzdvqM/FYvpYjHrMh
+	4KRg4N1TSC8KEbeWRKiqLP6zU1zUlJ1i+LnMgHjkfmF2bF+29J5O7TAz26SW+uThMCEVjHF9DA9
+	BcGipAW+SX5MDBOhohSRWSwf8ZVlFyxx5ZM0yW3MVQEqAzcCBSzDu6RulVewoRW7Va8khpRAncB
+	S4aSH9flLaCSOskWFuPITThZI75ijNWse/7fDgSygGoQ2TJSkQmnLQXCf7XN0JseKA3yNc=
+X-Google-Smtp-Source: AGHT+IHaVoo3sOmtyWzw4UW+4I/j953uzAjZoTRNej1wZU+3u9kyNjoPkTcRqItKHRuM4B6rwHxI9A==
+X-Received: by 2002:a05:6000:1fa5:b0:385:ed16:c91 with SMTP id ffacd0b85a97d-38a221faf85mr2931306f8f.24.1734703704952;
+        Fri, 20 Dec 2024 06:08:24 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:c000:46df:1e3e:983f])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38a1c84722dsm4148880f8f.53.2024.12.20.06.08.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2024 06:08:24 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241220-amlogic-clk-gxbb-32k-fixes-v1-0-baca56ecf2db@baylibre.com>
+References: <20241220-amlogic-clk-gxbb-32k-fixes-v1-0-baca56ecf2db@baylibre.com>
+Subject: Re: [PATCH 0/2] clk: amlogic: gxbb: 32k clock fixes
+Message-Id: <173470370410.3067219.1883604095856278984.b4-ty@baylibre.com>
+Date: Fri, 20 Dec 2024 15:08:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,97 +78,16 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241220-qcom_ipq_cmnpll-v7-5-438a1b5cb98e@quicinc.com>
-References: <20241220-qcom_ipq_cmnpll-v7-0-438a1b5cb98e@quicinc.com>
-In-Reply-To: <20241220-qcom_ipq_cmnpll-v7-0-438a1b5cb98e@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
-        Luo Jie
-	<quic_luoj@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734700989; l=1501;
- i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
- bh=VyC3W8O7pEMyWv06ZRGk03/Ezl+Iu9sbnPsh4K208us=;
- b=Lqqt3yw5tzWS6T/CG8ZThU7Q8tm0UkLLT0dlHtLS5R5vObpMGwqZYH32YWpGLNBeX0mwDN3A8
- s6grmxNFgokDJBR3O1urPzwBWdtg39GUW+mdW4r9xj8sL2EISlvbSxp
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bNmf3A6NCSZq-Xp2jHc3Mq56imBzgx1K
-X-Proofpoint-GUID: bNmf3A6NCSZq-Xp2jHc3Mq56imBzgx1K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 impostorscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 phishscore=0
- suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412200110
+X-Mailer: b4 0.14.2
 
-xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
-48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
-block routing channel.
+Applied to clk-meson (clk-meson-next), thanks!
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+[1/2] clk: amlogic: gxbb: drop incorrect flag on 32k clock
+      https://github.com/BayLibre/clk-meson/commit/66eff51d972c
+[2/2] clk: amlogic: gxbb: drop non existing 32k clock parent
+      https://github.com/BayLibre/clk-meson/commit/1e1fd26ed4ca
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-index bb1ff79360d3..ae12f069f26f 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-@@ -175,8 +175,13 @@ &ref_48mhz_clk {
- 	clock-mult = <1>;
- };
- 
-+/*
-+ * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
-+ * from WiFi output clock 48 MHZ divided by 2.
-+ */
- &xo_board_clk {
--	clock-frequency = <24000000>;
-+	clock-div = <2>;
-+	clock-mult = <1>;
- };
- 
- &xo_clk {
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 475868a241cc..b5c8d2ab2ab5 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
- 		};
- 
- 		xo_board_clk: xo-board-clk {
--			compatible = "fixed-clock";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&ref_48mhz_clk>;
- 			#clock-cells = <0>;
- 		};
- 
-
--- 
-2.34.1
+Best regards,
+--
+Jerome
 
