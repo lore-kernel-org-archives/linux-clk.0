@@ -1,147 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BD1846F;
-	Sun, 22 Dec 2024 10:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2E148FF5;
+	Sun, 22 Dec 2024 10:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734862018; cv=none; b=hx+MA92VCokCi+g7Q0JgtBwxhPmwqbE4czGuhC/rn5+PnwhRtJkPwHJ6Lw5/ARHAqiFpooBnkZXppISlVaqG1MXS42QCu8CFj/drhuQ+iSLVh622/DnfCIPHjHyZ3oeRq6Db8C9v5S+XICXdgjBJBJgaBiUp97dOQmju4rhm2y8=
+	t=1734862659; cv=none; b=Up0tVgzGOG2zh+N673Z/etJ7HGff0t4yFjd7cFh97h4fwRgyaTpkrNhzsuv1LvAMW//OQcOGEjuW/mwp0WjeVVjZC8vb/yFMGyb5Asdpjm5+vamA74pCRXD6bUxdLG//EK9eHzk+0AgLE9X5KuaIcphv2wa7RcCW1YpKKuWKUwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734862018; c=relaxed/simple;
-	bh=sHCtg4von/olng1R4HlYChWVtzpfTivVlSvduFQtli4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a50+JPbNJAI3bk4/q3jWIul6AA9xfDxPRFOIsZvvwvQ85pFZgIkRqpRxuiq0ZbFyeJc/vx1V6a/vHYVvEyTQAKL5fxX00nKu01gMIJKg52JZOZUDk9aKaRUJ9NjbgkQldXrPcSjjV8uYhkb1OLV5waWbQAAzXwgAr2afudiDXpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3+eZLw2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734862659; c=relaxed/simple;
+	bh=mniBqk/RexziIWML9GCoBdOKAriTgcbv6f8UiJZg9O8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Zs9WP9KgI0zCiS/SCZNHVIAo9nDYmUBWmqLNdqCjBTXqky0uMwZnejGRdjhZZzMtFC1RqwCaDrkJv/3Xb1J0vxi0OFq4Vn2WP8lRJnuPpnd55AmNUUm7ZfIfXG2uVddDF0eKIzrymCmJyfH8+WqofWcrrNnzG5MDXfgvTxGVYig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=jz7MWse3; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3+eZLw2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7832C4CECD;
-	Sun, 22 Dec 2024 10:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734862017;
-	bh=sHCtg4von/olng1R4HlYChWVtzpfTivVlSvduFQtli4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s3+eZLw2H4fsTfYy7R26AMbxlUMiT45Y42thwzbQ7PzYcjCMV+xxnbiGc5SjcS8ee
-	 N/pq6zKrdaTkA0THA/ohfrCjL8qwibt1MJ2o6NoUYUPkl8EkNQJF5tSH+SY+J1fE/8
-	 Cvqm19I8xARPjWukujUbLNF0kg/VQ2JYfhr7BGGUm+m05r04yTqUEGCkxSjPDtezqD
-	 tVCjBp4QZY5na1pptfRr8OCkrj7c6+qsi21cr2LJfacf2iXQzPcBvoG6AX6jq7P+Mk
-	 T1nS6fK7nO7+rovxDAahs2X2IJBNreAhQtCCLuO9qzEwhrWBjbRlWnWXYxS/hWfdIV
-	 u6Jyj1v1mllWg==
-Date: Sun, 22 Dec 2024 12:06:22 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Guo Weikang <guoweikang.kernel@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Sam Creasey <sammy@sammy.net>, Huacai Chen <chenhuacai@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Oreoluwa Babatunde <quic_obabatun@quicinc.com>,
-	rafael.j.wysocki@intel.com, Palmer Dabbelt <palmer@rivosinc.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	KP Singh <kpsingh@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>, Helge Deller <deller@gmx.de>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Geoff Levand <geoff@infradead.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v6] mm/memblock: Add memblock_alloc_or_panic interface
-Message-ID: <Z2fknmnNtiZbCc7x@kernel.org>
-References: <20241222054331.2705948-1-guoweikang.kernel@gmail.com>
+	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="jz7MWse3"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4YGHCC0pywz9sr2;
+	Sun, 22 Dec 2024 11:17:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+	s=MBO0001; t=1734862647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U7bWVFZ2ocZx/i+mr3Fjw04VK06XaWuS30/5YDXiDlM=;
+	b=jz7MWse3HHVYSkcgb0cSihd2gV9xa6ibXhjO1V9QeYrJiJUvZnDK80sDTpixYf2oeQvDsf
+	xyJjXrn3FRCcZUiooF2NQgpQMot0YDYQEkG5OeepMa+cFhUjntBAJJz0dyGq4yYfrdju4g
+	etDa9LQoVLzc/tJGH4uQRFU0nZfGqp7yw2uQ5QrLz9aIKUL6nWbQxdaqXzmFORMHlFLgZR
+	FaO11Nz4qW3KzkSoX8D8h5tsjngWqloMwcND/DrD0C14fAVnbZ/Rm9TOKcnSYiKgN71HUq
+	wZdbH32Y35uV/rH2lTq9SKIXKVY+Z2joaDQ885Es6hS13ITTG9iDbKXLIy0vPA==
+From: Frank Oltmanns <frank@oltmanns.dev>
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Chen-Yu Tsai
+ <wens@csie.org>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Samuel
+ Holland <samuel@sholland.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Maxime
+ Ripard <mripard@kernel.org>,  Roman Beranek <me@crly.cz>,
+  devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org,
+  linux-clk@vger.kernel.org, Ondrej Jirman <megi@xff.cz>
+Subject: Re: [PATCH 0/3] arm64: allwinner: a64: fix video output on Pinebook
+In-Reply-To: <20241215053639.738890-1-anarsoul@gmail.com> (Vasily Khoruzhick's
+	message of "Sat, 14 Dec 2024 21:34:56 -0800")
+References: <20241215053639.738890-1-anarsoul@gmail.com>
+Date: Sun, 22 Dec 2024 11:17:09 +0100
+Message-ID: <87pllk58ey.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241222054331.2705948-1-guoweikang.kernel@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 4YGHCC0pywz9sr2
 
-On Sun, Dec 22, 2024 at 01:43:31PM +0800, Guo Weikang wrote:
-> Before SLUB initialization, various subsystems used memblock_alloc to
-> allocate memory. In most cases, when memory allocation fails, an immediate
-> panic is required. To simplify this behavior and reduce repetitive checks,
-> introduce `memblock_alloc_or_panic`. This function ensures that memory
-> allocation failures result in a panic automatically, improving code
-> readability and consistency across subsystems that require this behavior.
-> 
-> Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
-> ---
+Hi Vasily,
 
-...
+On 2024-12-14 at 21:34:56 -0800, Vasily Khoruzhick <anarsoul@gmail.com> wro=
+te:
+> Since commit ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in =
+TCON0 mux"),
+> TCON0 clock parent is always set to PLL_MIPI, but unfortunately it breaks
+> video output on Pinebook.
+>
+> I did an experiment: I manually configured PLL_MIPI and PLL_VIDEO0_2X
+> to the same clock rate and flipped the switch with devmem. Experiment cle=
+arly
+> showed that whenever PLL_MIPI is selected as TCON0 clock parent, the video
+> output stops working.
+>
+> To fix the issue, I partially reverted mentioned commit and added explicit
+> TCON0 clock parent assignment to device tree. By default, it will be
+> PLL_MIPI, and the only users with RGB output - Pinebook and Teres-I will
+> override it in their dts.
 
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index 673d5cae7c81..73af7ca3fa1c 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -417,6 +417,12 @@ static __always_inline void *memblock_alloc(phys_addr_t size, phys_addr_t align)
->  				      MEMBLOCK_ALLOC_ACCESSIBLE, NUMA_NO_NODE);
->  }
->  
-> +void *__memblock_alloc_or_panic(phys_addr_t size, phys_addr_t align,
-> +				       const char *func);
+I've successfully tested this series on my pinephone where it still
+correctly selects PLL_MIPI.
 
-Please align this line with the first parameter to the function.
-Other than that
+Hence,
+Tested-by: Frank Oltmanns <frank@oltmanns.dev> # on pinephone
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+I've also tested it on Ond=C5=99ej's downstream kernel (added him to cc),
+where also the HDMI output continues to work.
 
-> +
-> +#define memblock_alloc_or_panic(size, align)    \
-> +	 __memblock_alloc_or_panic(size, align, __func__)
-> +
->  static inline void *memblock_alloc_raw(phys_addr_t size,
->  					       phys_addr_t align)
->  {
+Thank you and best regards,
+  Frank
 
-
--- 
-Sincerely yours,
-Mike.
+> Vasily Khoruzhick (3):
+>   dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
+>   arm64: dts: allwinner: a64: explicitly assign clock parent for TCON0
+>   clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as TCON0 parent
+>
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts |  2 ++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  |  2 ++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  2 ++
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c                 | 11 -----------
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  2 --
+>  include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
+>  6 files changed, 8 insertions(+), 13 deletions(-)
