@@ -1,134 +1,153 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28D0224FA;
-	Sun, 22 Dec 2024 06:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E29FB660;
+	Sun, 22 Dec 2024 08:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734847641; cv=none; b=RH1ZA4jcL35mDeLrODBI96aHzsKVOMQrk2up52x7bvl2abzeKV483hV1gYRul5L4sQ13H/s/cTlm+crdd9yaneNByGMqktJYI+c4xbioYfuflsJlDjdsRaKLx5H1adZtZVP30CqGiiy2G5vSD1yp+9fdkRDB0FCTswXLq1m1Olg=
+	t=1734855560; cv=none; b=lZJqDgE3TAraLe10+j15d8mdQCRrP7qQuhS/Tb5wAoSSexnROg0Zc62rf5/DGnHbqIXWekgszfbsEMb593ksfP3VYPih5B8Dv7TP6N7bvpB2YsRu3wPtCcsy3xelWbpCgBasNLAjwgWs7KBAdiVSQSbLLU920k0u0IDvosNRulY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734847641; c=relaxed/simple;
-	bh=ZI7mtoNdl+3R+xCvx6C6G12E13skabgOFMAvirAjF+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=blWHpgKaDL3HwuGj+qXmB48ePz/9NL6gMqWyW8FxyfujIZmY3EGyGAcjpXp7unGXjvoIL4Lp/BpnLwF33d2GjVHhJQFBtc0fhNQvzBFjlhvNuYPByDl3wXwmM97NPraH2lKxubjsZWsF+FjyWGgXKnhiDXTWrXBG6X9wI6JO7oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBGRRdBu; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBGRRdBu"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3fd6cd9ef7so3434396276.1;
-        Sat, 21 Dec 2024 22:07:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734847639; x=1735452439; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=htlpToW+3tDMXYk9LHSjN7kEjprwT0u1X/m/1Vl/oro=;
-        b=QBGRRdBuOr5GMZySiiLbNqypnvhh/Yx6dizJLtITvOav1Gx0J+VId0P26jpk03yBTS
-         99zppBa/1orI36oLn1Ve+eWvcJfDTMNpTMVnhdDUYidLCvHn7KsJ8ytX31syQ39xntET
-         4iQuIEpK2hNP86UgYCjbUzq9+c3L2cAAwYs9lK0y1Fdhvy/MBQzosCTQGHvhSkHt+MyU
-         W94bql7ATY+IFwwxzLTnYrIo6SQjgdMypcUuegXI6akCUtq3NvBW7Q9hKmWc/Kde6T0P
-         eWb3gSAIA/PQlwgH3OLKx3+7M/03bycnuXm+/4fIGBID+WGzN7v7OUy46BqXWzenArjn
-         rKeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734847639; x=1735452439;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=htlpToW+3tDMXYk9LHSjN7kEjprwT0u1X/m/1Vl/oro=;
-        b=JAJNkW5NJ4LVrqcCCCdIX0c+wwZ97jZxJM4lFQKf9RCfhT7LsG1agHxnJY3NIqKbZB
-         Ux29rMVivN19hny42u3ysSZPVKuG/2aTePrWpu6GKCMxtAIRIBbIcz7rDptgxIWTp64H
-         RsRJuiv/f+Glo+xc5pgKmQlcMwgU2P5o1tIaMy/OyJ0fELPg1cz0U0phs4IHpGs05aYM
-         lz2oY+WcsAFfTNw3XgiJYLeObYZxs01aNDwIpJnFK20OtjmS9B6w9++M0GfO9QdpQoUw
-         /AIpjJrMqOxd5xo3jS1kn2+VDgosNQSdTqpFK2gjORaG8ze6DUsiPqG4WfOV0oRMkka4
-         /JCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+imrt3MmdCz/fooXLswRnu65ed8BLg3ZNxuEdgn/c8NK0A1ip+U6vEnPdv563s6zmB9anCFPvsWNfQA4M@vger.kernel.org, AJvYcCU82v7t5podpR8V2mEC7UU3b58G0QFI0ozLVvC0xQbUBP+UJVOohkUmxPy3tGVA30bQXAZ6HrLEnq4MMQ==@vger.kernel.org, AJvYcCUA3YBVro9rVx5l7yEaHVXqXCrGoGkLiKxUeiug4hwUatGUOrU3kL03UdwVM5+YVNstC81cScuTGn7h3Q==@vger.kernel.org, AJvYcCV4AheVfLYMaq0Uc+uoUGjnWxiU46pOUWUn8/FCwEwae07IbUwtC4tQ8nyUwmnB/AkZY/yTisy97HEk@vger.kernel.org, AJvYcCVBZf+XPmpSVW5om9bvAtMRg0jewZoPNJaae4NDwXvitqZ3qE768cajzIyHj4QltHPf15/Fo7UJh2gCtw==@vger.kernel.org, AJvYcCVCE3eEDuaN/UMO/Zb/y0P/vzsXeRoBHXCbFDoHA1wB+cLQ0ESn2zA+nJn1jbDkgxzhZX9I6ZOmVtri0p0m@vger.kernel.org, AJvYcCVUvsQ1pFYF3T2OcmIHFgsx2ZAx3QL96X+4xqgWUIoA9KPoWGJXRW2RVyg+Yr9lPIvGk2iJKGWAGNw6mw==@vger.kernel.org, AJvYcCVXk9ksaS9HPImXgVqm1udtJHi4C+pu+voPnopNnSS6wzqhZrQottwpXcrGtilrayrcbgbb7ivstqOO6VGirt8=@vger.kernel.org, AJvYcCVhRCnjcfmArWxdhRzF11YkOUQtWkOsAW0C2zK7oaf3G39X9cxtMHvnUvOql4YRwI4FBgYq0dtj8mE=@vger.kernel.org, AJvYcCWdPWJhwF7ytF/yPM/dvh7EYDsUMzC4oor+qXhQGfC/HuNYT4/dxztNtvWqrHctzs32lyOMtColJdj0Fg==@vger.kernel.org, AJvYcCWwDdeMvcNp9XrX6NdAuERUZRsuhzXFQewmd2y7EAOCAz0eBcV2tro+mrBjgoBpzVrjo81C74oVw3o=@vger.kernel.org, AJvYcCXBvAqbWcYP3mdqsThOp01RC1i1I7ztNGZ9YUNmBZY/sFmLwJtI6qJl9ro/r+RFlf0rV8nPpNOP+uGU@vger.kernel.org, AJvYcCXL0h4BXhpqHTCEJHPTcUUk1wmvLCcbvC1z0zRTqjsjPPjVf6eAPoTt5pq1yKuFslaR/Vod+bhmwr1wVF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwstGfBq3ffKbylcLgM5DKQ/Hfv1gabGh4ciss8XkY1glVQ3r8r
-	sW0vLJs9vd11vrYMwjOBua1T0RXoKN7v3nViKPjsSkJZZURqAYQ1wFAM84T/+ge7wlvWNpAO3te
-	z5r7V1xuPIy6P9OiM9+OsE8QlSS4=
-X-Gm-Gg: ASbGncuCpW1mLvDu0I3nJuopxRxpCejhg1+8GTQk7TESot0oCztr6Wrr2wHmfUn8b3V
-	LR7W/EQ3zMmoIdNjYPreBe+wo2XXX8hqvc9NEYDI=
-X-Google-Smtp-Source: AGHT+IHTObibTWvFBx2RCqB+bk/1ZpT+xydtv33cOquvAas7ggMPQiaYSrqKqDsv5/UZU90VEPoAsSH6qDx1lw2KYn4=
-X-Received: by 2002:a05:690c:6908:b0:664:74cd:5548 with SMTP id
- 00721157ae682-6f3e2a65668mr105552167b3.1.1734847638651; Sat, 21 Dec 2024
- 22:07:18 -0800 (PST)
+	s=arc-20240116; t=1734855560; c=relaxed/simple;
+	bh=7dedxWZlfHcvdXPQyn+nkvHPRxkM7FABOCTnMOafI04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KuH5D598fEPmBHqfDkE+9R2dz/FLMODckm0VCcr8+hKHRAOSwMy8OxcKaqhd1XJe6FtfB+90lAmptiKlwWd91nPWZ7bnD+sMJwKuLRS6kRLJgmmGDPvU/jxnfUgz+Bk8iUZ1HbT+jf99wOZCPbUj0vvS0VWIZ2OHJROgee5A19o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 322A5C4CECD;
+	Sun, 22 Dec 2024 08:19:17 +0000 (UTC)
+Date: Sun, 22 Dec 2024 09:19:15 +0100
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
+	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH v7 1/5] dt-bindings: clock: qcom: Add CMN PLL clock
+ controller for IPQ SoC
+Message-ID: <yngf4ngbnkcmohjfkd6muynfr72v5yhynmyqfjmxh6qbxidmo7@bsvimplmpwsl>
+References: <20241220-qcom_ipq_cmnpll-v7-0-438a1b5cb98e@quicinc.com>
+ <20241220-qcom_ipq_cmnpll-v7-1-438a1b5cb98e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241222054331.2705948-1-guoweikang.kernel@gmail.com> <02d042a6590ddb1fadb9f98d95de169c4683b9e7.camel@xry111.site>
-In-Reply-To: <02d042a6590ddb1fadb9f98d95de169c4683b9e7.camel@xry111.site>
-From: Weikang Guo <guoweikang.kernel@gmail.com>
-Date: Sun, 22 Dec 2024 14:07:09 +0800
-Message-ID: <CAOm6qnk0KYJXuCLU=7Y10wjMjWnUQ+n_RDsJZv5rAqBmq9bkug@mail.gmail.com>
-Subject: Re: [PATCH v6] mm/memblock: Add memblock_alloc_or_panic interface
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Sam Creasey <sammy@sammy.net>, 
-	Huacai Chen <chenhuacai@kernel.org>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
-	rafael.j.wysocki@intel.com, Palmer Dabbelt <palmer@rivosinc.com>, 
-	Hanjun Guo <guohanjun@huawei.com>, Easwar Hariharan <eahariha@linux.microsoft.com>, 
-	Johannes Berg <johannes.berg@intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	Dave Hansen <dave.hansen@intel.com>, Christian Brauner <brauner@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	Helge Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Geoff Levand <geoff@infradead.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, kasan-dev@googlegroups.com, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241220-qcom_ipq_cmnpll-v7-1-438a1b5cb98e@quicinc.com>
 
-Xi Ruoyao <xry111@xry111.site> wrote on Sunday, 22 December 2024 13:51:
->
-> On Sun, 2024-12-22 at 13:43 +0800, Guo Weikang wrote:
-> > Before SLUB initialization, various subsystems used memblock_alloc to
-> > allocate memory. In most cases, when memory allocation fails, an immediate
-> > panic is required. To simplify this behavior and reduce repetitive checks,
-> > introduce `memblock_alloc_or_panic`. This function ensures that memory
-> > allocation failures result in a panic automatically, improving code
-> > readability and consistency across subsystems that require this behavior.
-> >
-> > Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
-> > ---
->
->
-> Please try to avoid bumping the patch revision number so quickly.
->
-you are right,  I'll pay more attention to this in the future.
-> And if you must do it, you should embed a ChangeLog of your patch (below
-> this "---" line) so people can know what has been changed.
->
-The update was indeed due to my problem. CI prompted me that there
-were some compilation warnings that needed to be dealt with, so this
-update was to fix the CI warnings. Refer to this:
-- https://lore.kernel.org/oe-kbuild-all/202412221259.JuGNAUCq-lkp@intel.com/
+On Fri, Dec 20, 2024 at 09:22:42PM +0800, Luo Jie wrote:
+> The CMN PLL controller provides clocks to networking hardware blocks
+> and to GCC on Qualcomm IPQ9574 SoC. It receives input clock from the
+> on-chip Wi-Fi, and produces output clocks at fixed rates. These output
+> rates are predetermined, and are unrelated to the input clock rate.
+> The primary purpose of CMN PLL is to supply clocks to the networking
+> hardware such as PPE (packet process engine), PCS and the externally
+> connected switch or PHY device. The CMN PLL block also outputs fixed
+> rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ as sleep
+> clock supplied to GCC.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 85 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 22 ++++++
+>  2 files changed, 107 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> new file mode 100644
+> index 000000000000..db8a3ee56067
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm CMN PLL Clock Controller on IPQ SoC
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Luo Jie <quic_luoj@quicinc.com>
+> +
+> +description:
+> +  The CMN (or common) PLL clock controller expects a reference
+> +  input clock. This reference clock is from the on-board Wi-Fi.
+> +  The CMN PLL supplies a number of fixed rate output clocks to
+> +  the devices providing networking functions and to GCC. These
+> +  networking hardware include PPE (packet process engine), PCS
+> +  and the externally connected switch or PHY devices. The CMN
+> +  PLL block also outputs fixed rate clocks to GCC. The PLL's
+> +  primary function is to enable fixed rate output clocks for
+> +  networking hardware functions used with the IPQ SoC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq9574-cmn-pll
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: The reference clock. The supported clock rates include
+> +          25000000, 31250000, 40000000, 48000000, 50000000 and 96000000 HZ.
+> +      - description: The AHB clock
+> +      - description: The SYS clock
+> +    description:
+> +      The reference clock is the source clock of CMN PLL, which is from the
+> +      Wi-Fi. The AHB and SYS clocks must be enabled to access CMN PLL
+> +      clock registers.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref
+> +      - const: ahb
+> +      - const: sys
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  assigned-clocks:
 
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
+Drop
+
+> +    maxItems: 1
+> +
+> +  assigned-clock-rates-u64:
+> +    maxItems: 1
+
+These wasn't here when you received review. Adding new properties always
+invalidates review.
+
+No, drop them.
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - "#clock-cells"
+> +  - assigned-clocks
+
+Drop
+
+> +  - assigned-clock-rates-u64
+
+Drop... or explain
+
+Drop all review tags after making significant changes like that.
+
+Best regards,
+Krzysztof
+
