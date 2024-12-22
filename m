@@ -1,213 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C992746C;
-	Sat, 21 Dec 2024 20:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F5F1854;
+	Sun, 22 Dec 2024 00:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734812362; cv=none; b=Ze25FJGM+qNxLH45Jsz7ls25ELq05r2+qh+L89SuCfKn9QpgIgfkqJT05Ml0TulcOTs2pGvs/3v/ZdlTfLPnrwU101HAyegV7WIkZOwLguAExG4CMgNhwGC0Euh4AAk9i9kjCWLEyjj0daa5Oh08OmIJ94hgmdnrcARSWhH+TvE=
+	t=1734828747; cv=none; b=CsIKqhynanBcSDgocXXWD5omDbd4GDkvwJutwhyqKZeM7GibbR7KYkazkuqAtXnX3fzgV8aJOooNyDOJNqKKUsCKuPh4urinYyXEueSJ6Twhxh3mRn51Q3KoXD9G5mwHd7lsfHoWxLIPYLDAaW+BgGh/AF3j62n6sdwQTixldeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734812362; c=relaxed/simple;
-	bh=eyn1IuEfhoj+k8zhwZKiparOtxsbTPRUkyexcAf3PyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uHmnUaQcBwLc1cgEicPPVJ1TPS0CmObigUQJLqo6dP/lpCJB+OVDADx4xUMA1H+UxaXsske8FV4Z6N89kWkRu7xAnxAjbe3MvF/DPZq9vjoM0U4y6XcgUliv4O4R1xkv4yJ7UT5oQZhV5F+7EWHFY9FXXepaeNvb+46BmG1hbSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYNXg6FT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734828747; c=relaxed/simple;
+	bh=Lwv+95ot2twUX6GsOV+1rAqhwnRBzkh6SEQLcu7rgjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hcFmSGUb/24nLXjLwQ0qXnXTMu3J67o+NWeokHvVmhv0NYTMbdNBEPPHF1Pw+2m97UjUOebMNuXmDLEgf98EOKnO/IKSZmzfdgJN0Vrl6+u7TpJEK0GemTioT7ivA0/GebrIPW1N3C8EiKGC81yGqlUvZaPZlIW8O12OxLwucZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjhtN6Ln; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYNXg6FT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D2DC4CECE;
-	Sat, 21 Dec 2024 20:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734812362;
-	bh=eyn1IuEfhoj+k8zhwZKiparOtxsbTPRUkyexcAf3PyA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EYNXg6FTg8zUB2xIpThMeVdxgIWLuJt26mUgEqs8yupIFJGyU5vzdqEG/4ql6IILL
-	 LepgzyGplSl1WIQiOKGcxyrJOSbSeDBsZy1SQOaHOXKNBGdOJy2WBbv8UrCso3w4o6
-	 heHBBYh9GTuhgAIaiO/P40Feljcs0sBaoBYyA2GFKsqzKxvqxileoyQyQn2X+XYRyJ
-	 IZkQS/GZVVd9Wq9s6WHNT8THHK/V7yKKQnQr7IS1mCqeZ6mWWKlN3fcJX599gBhKxy
-	 q74FKhkU5md/5/CM8zmdhS+DQc/C2UDCVNaz3jF06tge13UMKLV83Ba38H8N6+wgMX
-	 c5SazDyk6+7zw==
-Message-ID: <9067df7d-01df-44d4-8fcf-0e4c37c91770@kernel.org>
-Date: Sat, 21 Dec 2024 21:19:16 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjhtN6Ln"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f2c8aea797so24963377b3.1;
+        Sat, 21 Dec 2024 16:52:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734828744; x=1735433544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G56dFj5BRaIttSoRxhRi+K83W3sP81bwdAaZ6QoaIrc=;
+        b=VjhtN6Lnq/b5eUHhbxrAlUyqLeDNSkb1rLqw0Mmq/DxufZDAp8MxvvEFxG+3zAcpSo
+         dCzocuDfMr97+DA4APKECYQu5Y3e646hQ1yKwc9CPObBRVxDIWBdW0ubqOsIGl9DIPfC
+         Mue4ee7f0+2aQGmuAeE0BTfbKQuD4Nu0wXBueFNeDaPCS91VaqvvlHwfA/57+2LmxYsk
+         RMrXGDJqDTdsp7foaMxJUZqXx61mN6HiP0i1XNBsYl5fdq7pJezBmbWyacC16QnZuc+s
+         zO1VSTKmBWTeqhsGfssI+pDEkmYsic7JsV2YyuhjmixtIbMeJzPveUHZwdi5/bVG+C6B
+         7hdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734828744; x=1735433544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G56dFj5BRaIttSoRxhRi+K83W3sP81bwdAaZ6QoaIrc=;
+        b=BtRzjPDNsh9uVptfyswBW9KNADDkT18bFzGqRgSP/wNlbZ7M3j49VPsCO3KjGvPTm4
+         Y+JeSfrdL7omfrJUy882n/xf4CGecT4T/QFAzmW9ECn2B3EVCoqy0wPyWmeIUAajvvta
+         VXRAVAqLRAzzFhAQLCJuUp4yE6Ce+MlqrTDEJOlzNFYT3Ow+CFOwj75SKHq/BG991Ff6
+         PebZ+ezqPYEyX3Dd/NeMAh811r3zgxEgYPcabmdkEj2yT0/Ev5hLdNEYADFOZzJEyGG6
+         ShpqEqDlYkwcS3riO9T/EniyR2fDZGBbp07geVCXjR4t7d30hkrAMBPyfSpbj+GNi7DL
+         SmiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUT/h1J7NHBvtpBl62RdbisEE9LC937abaMU4Ps+nnNIjLr1PsAOPKrahG05JXH6lwXvLOtpp8NlZk=@vger.kernel.org, AJvYcCUmaEeOFasPm2LaeRQXUsX+ODFFpe9XkFzqPiTCuDaNcBO3gEc8N7Y44jBuULoCJg0an2qZwJi9wJeo@vger.kernel.org, AJvYcCUz6i49DgS/sw0XTg14Br9qCW55fvJhhS+7XjxgGTFQTCM40aPOja8P/4BcYtbBWyRsE729djRibrFB8g==@vger.kernel.org, AJvYcCW/vYFnIclr0YTxdixHF7nhY+Rbnxly7q8YWaANHj+AbGyE7xmDZhgiAcctMLczDN8/nILC+5dP02yHVFCW@vger.kernel.org, AJvYcCW4JJWRGzn6cMshFvUHT+pS7cFpD6i1y5m/Cta7OS1omFW2FLh6nDo+x+Co6PGOYNo3NDJhFgPMvoMf59eEdsU=@vger.kernel.org, AJvYcCWHkGBTPd0QM8JRKJTFKdduFMzHc9Qa6U6/s/6109C/+JP+uGEcL0y+wxrlTHnVhT4ivVh/LEpCZTFG@vger.kernel.org, AJvYcCWaTlcolB0Bi+b8gUuLQWvhQEG5MTHOxOuTbdCYQWlvXqFIwLbA8QoC0D3v6aDqS/nvwtfcmFbNeIK/tBY8@vger.kernel.org, AJvYcCWyf5v18KtaCukhYhVMfydZg7Y1lZNi7QJ7YVQxhZajGO2sjWqjZssGA/RjPNSsFx75clV+n18kloQ=@vger.kernel.org, AJvYcCWzHaQwDZeQ9L4dOZKAqRRs3l4EED80r2ao3DFKM1uGxSRmOUwBrGqHhFUb8rgNdzFbN29PIRlk38dmAw==@vger.kernel.org, AJvYcCX+1THZNZ3p0QG4HqTUB/IgJzhTAOXxdIqlRammgikTSfl3yOjqleORnwLfjK3cHCfQSwqOEL/+HA6G1Q==@vger.kernel.org, AJvYcCXa31wyMV+5+YOaSnPsdBJeFF8QEUs+tpOJLjMkouYeMDxVbmin8CALb9UNKnb1+vkvoqTzlW4PsRrtn0M=@vger.kernel.org, AJvYcCXg7EKIhe7F/H7Z5Wp0zd3i4uMgDBy3u0tXxd73EqEQVeeDmh229I2AvzjCyOYYwhnt4Muq3Fcwf5ba9Q==@vger.kernel.org, AJvYcCXmkyHrkeowEB2H/9Xgr3/AwkB1KJKB1xXNKFLW0u8N+ORU4CBvJJhEDymmcZwBXic/fgry1YQcfGgbag==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNSvkn64ncZxlTFV7M4vUj/3q5JY3nh+e2Wlp+3JOIeIvD5R5s
+	O6N7lo2uUQYmXerF1gSWscnr+mIupp60DkJ1fFaNTJjP1QHVGRaD8wJEFQ7bi7ec7N8noZX4SIo
+	dWQVyrX7BtMiA4ttQ6ENbyp17rJc=
+X-Gm-Gg: ASbGncudvlwzbf6/dUj9SGQHM7Zbf0pmYNLJR0EATPOVBFQFJvyk4TiCm63tSZxioOS
+	eDO1106OS96H5zQS4KUwFMSz4Zw5CKvrgwdRN4ko=
+X-Google-Smtp-Source: AGHT+IHH5gTAOmFubOYjlrK+2+jdIvePBlyZPYVyBZBy90RljxEGCQgcvHQMo3bTypvAoytVk58QJl8i95oeqQUdh1w=
+X-Received: by 2002:a05:690c:4e82:b0:6f0:21d6:4497 with SMTP id
+ 00721157ae682-6f3f80d911amr42730727b3.9.1734828744363; Sat, 21 Dec 2024
+ 16:52:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-binding: clock: cs2600: Add support for the
- CS2600
-To: Richard Fitzgerald <rf@opensource.cirrus.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Paul Handrigan <paulha@opensource.cirrus.com>, mturquette@baylibre.com,
- sboyd@kernel.org, linux-clk@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- patches@opensource.cirrus.com
-References: <20241219024631.3145377-1-paulha@opensource.cirrus.com>
- <20241219024631.3145377-2-paulha@opensource.cirrus.com>
- <3glyuu4yg7wbykdsfm33m5evnn7fwg4dbplrkgzcceld3cgu2s@t3xjlhryt2y6>
- <Z2P9X5b+oTo4Du/n@opensource.cirrus.com>
- <3c09367c-808b-4414-bf6a-99e0bdaa3a27@kernel.org>
- <Z2QYooZJ9kFeYzgc@opensource.cirrus.com>
- <ebc6bc7d-d847-46fe-908c-c618d94e3345@kernel.org>
- <a23a5e89-0a55-4b17-9911-a12cfa154ef2@opensource.cirrus.com>
- <c7278ed3-9361-4cd1-ad28-cdbcc3d84bcd@kernel.org>
- <51a5c92c-be2d-4e05-a3d8-8ba4fb0b759b@opensource.cirrus.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <51a5c92c-be2d-4e05-a3d8-8ba4fb0b759b@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241221104304.2655909-1-guoweikang.kernel@gmail.com> <CAMuHMdXbB-ksxZ9+YRz86wazPGSM09ZFX7JZoyH--=UDndS=TQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXbB-ksxZ9+YRz86wazPGSM09ZFX7JZoyH--=UDndS=TQ@mail.gmail.com>
+From: Weikang Guo <guoweikang.kernel@gmail.com>
+Date: Sun, 22 Dec 2024 08:52:14 +0800
+Message-ID: <CAOm6qn=aN_n3jRc79wr-AGVaQXCbZoyE0yXYcZfw28-uBv+zuQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/memblock: Add memblock_alloc_or_panic interface
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>, 
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Sam Creasey <sammy@sammy.net>, 
+	Huacai Chen <chenhuacai@kernel.org>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
+	rafael.j.wysocki@intel.com, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Hanjun Guo <guohanjun@huawei.com>, Easwar Hariharan <eahariha@linux.microsoft.com>, 
+	Johannes Berg <johannes.berg@intel.com>, Ingo Molnar <mingo@kernel.org>, 
+	Dave Hansen <dave.hansen@intel.com>, Christian Brauner <brauner@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
+	Helge Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Geoff Levand <geoff@infradead.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, kasan-dev@googlegroups.com, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/12/2024 17:22, Richard Fitzgerald wrote:
-> On 19/12/24 15:57, Krzysztof Kozlowski wrote:
->> On 19/12/2024 14:36, Richard Fitzgerald wrote:
->>> On 19/12/24 13:16, Krzysztof Kozlowski wrote:
->>>> On 19/12/2024 13:59, Charles Keepax wrote:
->>>>> On Thu, Dec 19, 2024 at 12:39:38PM +0100, Krzysztof Kozlowski wrote:
->>>>>> On 19/12/2024 12:02, Charles Keepax wrote:
->>>>>>> On Thu, Dec 19, 2024 at 09:51:00AM +0100, Krzysztof Kozlowski wrote:
->>>>>>>> On Wed, Dec 18, 2024 at 08:46:30PM -0600, Paul Handrigan wrote:
->>>>>>>>> +/* CS2600 Auxiliary Output */
->>>>>>>>> +#define CS2600_AUX_OUTPUT_FREQ_UNLOCK	0
->>>>>>>>> +#define CS2600_AUX_OUTPUT_PHASE_UNLOCK	1
->>>>>>>>> +#define CS2600_AUX_OUTPUT_NO_CLKIN	2
->>>>>>>>
->>>>>>>> I still don't see why these three are supposed to be bindings. Drop
->>>>>>>> them.
->>>>>>>
->>>>>>> In a binding one would presumably do:
->>>>>>>
->>>>>>> cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>>>>>
->>>>>>> Apologies but I don't quite understand what you mean by the values
->>>>>>> are not used in the binding? The driver reads the property and sets
->>>>>>
->>>>>> There is no user of these defines, so not a binding.
->>>>>>
->>>>>>> the pin to have the appropriate function. Admittedly one could drop
->>>>>>
->>>>>> It's not a proof that this is a binding.
->>>>>>
->>>>>>> the defines and then DTS would just have to do:
->>>>>>>
->>>>>>> cirrus,aux-output-source = <0>;
->>>>>>>
->>>>>>> But that feels a bit less helpful when reading the binding.
->>>>>>
->>>>>> Binding and being helpful are two different things. This to be the
->>>>>> binding, it has to be used as a binding, so some translation layer
->>>>>> between driver and DTS. It must have an user in DTS. I keep repeating
->>>>>> this over and over...
->>>>>>
->>>>>
->>>>> Apologies, but I not sure I totally follow this, and apologies if
->>>>> you have already explained this are there some docs I can look
->>>>> at?
->>>>>
->>>>> I think you are saying because these defines merely represent the
->>>>> valid values for a device tree property and are not translated
->>>>> into different values you can't put defines for them in the binding
->>>>> header?
->>>>>
->>>>> So this would not be allowed:
->>>>>
->>>>>     #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 0
->>>>>
->>>>>     cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>>>
->>>>>     device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>>>>     regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
->>>>>
->>>>> But this would be fine:
->>>>>
->>>>>     #define CS2600_AUX_OUTPUT_FREQ_UNLOCK 1
->>>>>
->>>>>     cirrus,aux-output-source = <CS2600_AUX_OUTPUT_FREQ_UNLOCK>;
->>>>>
->>>>>     device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>>>>     switch (val) {
->>>>>     case CS2600_AUX_OUTPUT_FREQ_UNLOCK:
->>>>>       regmap_write(regmap, CS2600_OUTPUT_CFG2, 0);
->>>>>     }
->>>>>
->>>>> And this would also be fine?
->>>>>
->>>>>     cirrus,aux-output-source = <0>;
->>>>>
->>>>>     device_property_read_u32(dev, "cirrus,aux-output-source", &val);
->>>>>     regmap_write(regmap, CS2600_OUTPUT_CFG2, val);
->>>>>
->>>> Yes. If you want to use in DTS user-readable values, then use string.
->>>>
->>>
->>> I don't understand this. Why should we have to use a string value for
->>> something that only needs a simple integer value? Why can't we define
->>> constants with meaningful names?
->>
->> You can and you will find plenty examples of this, but as I explained
->> earlier - this is not a binding. We avoid defining as a binding
->> something which is not a binding.
->>
-> 
-> What does that mean?
-> Perhaps if you clearly explained what the problem is and what you want
-> us to change instead of making cryptic statements like "this is not a
-> binding" we wouldn't have to waste all this time exchanging emails that
-> aren't getting anywhere.
-> 
-> You didn't explain earlier. You typed some words earlier, but they
-> failed to explain, and you are continuing to fail to explain.
-Mentioned defines do not meet criteria of a binding, because of reasons
-I already stated very clear, so do not try to make them a binding.
+Geert Uytterhoeven <geert@linux-m68k.org> wrote on Saturday, 21
+December 2024 at 22:10
+>
+> Hi Guo,
+>
+> On Sat, Dec 21, 2024 at 11:43=E2=80=AFAM Guo Weikang
+> <guoweikang.kernel@gmail.com> wrote:
+> > Before SLUB initialization, various subsystems used memblock_alloc to
+> > allocate memory. In most cases, when memory allocation fails, an immedi=
+ate
+> > panic is required. To simplify this behavior and reduce repetitive chec=
+ks,
+> > introduce `memblock_alloc_or_panic`. This function ensures that memory
+> > allocation failures result in a panic automatically, improving code
+> > readability and consistency across subsystems that require this behavio=
+r.
+> >
+> > Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
+>
+> Thanks for your patch!
+>
+> > --- a/include/linux/memblock.h
+> > +++ b/include/linux/memblock.h
+> > @@ -417,6 +417,20 @@ static __always_inline void *memblock_alloc(phys_a=
+ddr_t size, phys_addr_t align)
+> >                                       MEMBLOCK_ALLOC_ACCESSIBLE, NUMA_N=
+O_NODE);
+> >  }
+> >
+> > +static __always_inline void *__memblock_alloc_or_panic(phys_addr_t siz=
+e,
+> > +                                                      phys_addr_t alig=
+n,
+> > +                                                      const char *func=
+)
+> > +{
+> > +       void *addr =3D memblock_alloc(size, align);
+> > +
+> > +       if (unlikely(!addr))
+> > +               panic("%s: Failed to allocate %llu bytes\n", func, size=
+);
+> > +       return addr;
+> > +}
+>
+> Please make this out-of-line, and move it to mm/memblock.c, so we have
+> just a single copy in the final binary.
+>
+Got it, I'll make the change
+> > +
+> > +#define memblock_alloc_or_panic(size, align)    \
+> > +        __memblock_alloc_or_panic(size, align, __func__)
+> > +
+> >  static inline void *memblock_alloc_raw(phys_addr_t size,
+> >                                                phys_addr_t align)
+> >  {
+> > diff --git a/init/main.c b/init/main.c
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
-You got also pretty clear answer from Charles what to do, so what is
-unclear here? Drop these defines and use register values or better
-strings. Or fix them to be really a binding (and then come with a reason
-why these are bindings).
-
-Best regards,
-Krzysztof
+Best regards
+             Guo
