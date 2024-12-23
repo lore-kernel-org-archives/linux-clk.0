@@ -1,59 +1,59 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240B31B6556;
-	Mon, 23 Dec 2024 18:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034651B3939;
+	Mon, 23 Dec 2024 18:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734979106; cv=none; b=YYyHH2OwxLal+X/rBcPdzpV0YuVkN12gQRZxwGMLllaaLv8tzZBaxEqitVxsEEIh6paFbLz8oyywn6LIkD+sa0ioOsIWxGnaEr6/VQW7jxt5CGbro9qjiDfXOU2Q3VlNaw1dHaetPR5JUxTU7ilnItynYArwf6MGOhWI+b3HvRM=
+	t=1734979400; cv=none; b=i92PM0S9/huDVR6fSs634Jk7RjouNCaLTEMChpK+ye0IMc/xaOD+rcc5o9jrqil2N+Ch3aA3MxCqjT1wwdDtMFaR/c0nWmYzyERV6ql9YWFlfiDhu+X8ZulQtk/uEWKdJNVE+kXgo6fC+pVmq3DPnR0FyCAYwxVuC+fcy7Hzufs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734979106; c=relaxed/simple;
-	bh=q5bZB9tN6Ej5m8fd1ZE4u2Ym/mpu03gi79bnPoBZCto=;
+	s=arc-20240116; t=1734979400; c=relaxed/simple;
+	bh=tAYHojWDBj7aASE78SJBwyqHmLpbCeHQhFPsRBYYZkA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BKvHlVM+y3l9Ykvwi/+IZtZsCYPlMwpy0S+duGbicTLZyzDg6CW/bADv8lS16/mKz8d00Kq8VphYE1EvJC92+KNJZ2yD4PBr/xlAqPYk/1MSRhx2YknPv/4Y3Lasl+FHhhOzdi7IOGi41wPI543XWUOn5ZfLrHJisgZtmEqnCTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AEPx8jWE; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version:Content-Type; b=ChpzfRawWMhlc8feBwedyu8rWuWlQ/w1AsRVZy5dEE5qOi9xwDe/v8ilTes8klXBOKC32gABzr6mP2YhC3hlShJEkppYs7Fuaw0q3XP2YU6LhKVtsVRsJldY4Og+sePfZBFSxHhWJeDdsCEaI3/BKlWeZoRZ+e2Ysw14ILn8744=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o8YbE1A8; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AEPx8jWE"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1EDC2E0002;
-	Mon, 23 Dec 2024 18:38:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o8YbE1A8"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CFFA460005;
+	Mon, 23 Dec 2024 18:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734979102;
+	t=1734979396;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q5bZB9tN6Ej5m8fd1ZE4u2Ym/mpu03gi79bnPoBZCto=;
-	b=AEPx8jWEsJxPYdnDQzfB8/CNI5cobqCAzbcuBIKwuH7AiTDdkAkZqNcIIIxmP58+epXv8L
-	kEJJ8N3BI9y8tQyvVcwWb/Bd39aLZrP7JZvOoOycQlxobAzMhq3iLCPdj7yzhI71TQtzOq
-	GY10Ulp4TwgoaFPbnLcGQCezegpVUm37z+kK5BBhJibptU7vUDgy6BNEwirZx4RCVf8I3h
-	pAKQv84nw1J5JySH2a1viZeZy0g6aiBtT8pT6oxm3/WsxJlA0pkRRUIb2AU+bQzjoPiH7v
-	mjdLpmzyYbPRkpSwCvqtbzprLhUMOxoL+DXaE4NdBJ1Va5H9u5jxReDFjPl0Rg==
+	bh=vC2iV4OwakMwa517Uq3365YZVqec+LRelz4Fh+drw5s=;
+	b=o8YbE1A8M5Wk+WJj303PoOyMqOb3lY0FmnkCryQ1Duhok7CFcWDa8XGO47pLGkA2rnRHPO
+	IrxXHjgdYedODe7iN5BhJMjYRT8kl2AuRydSgOGRRmh+xF0CS00L40MO5XLXOBoeZi/Glv
+	rcsrsUPuruiYvn6ocB5PoVR6238/qyidXY6ZnhHdA97QT8fwNYPJgV64EFzEM3IJqAyX8X
+	S2juydpWqTBfonB6B3QFlqOyrpfxAkHh3xl02I+eXnnGB67G77CmotkgjZ3u7t3gaFU546
+	rDvRC2M2aAPXqe1y7YoG8jcv7RIau0BWsTEVPYGkkL3YB5AkN32byaqG6Q04Bg==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Abel Vesa <abelvesa@kernel.org>,  Fabio Estevam <festevam@gmail.com>,
-  Marek Vasut <marex@denx.de>,  Michael Turquette
- <mturquette@baylibre.com>,  Peng Fan <peng.fan@nxp.com>,  Pengutronix
- Kernel Team <kernel@pengutronix.de>,  Sascha Hauer
- <s.hauer@pengutronix.de>,  Shawn Guo <shawnguo@kernel.org>,  Ying Liu
- <victor.liu@nxp.com>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,  linux-clk@vger.kernel.org,
-  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  dri-devel@lists.freedesktop.org,  Abel
- Vesa <abel.vesa@linaro.org>,  Herve Codina <herve.codina@bootlin.com>,
-  Luca Ceresoli <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
+To: Maxime Ripard <mripard@redhat.com>
+Cc: Abel Vesa <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  Ying Liu <victor.liu@nxp.com>,  Marek Vasut
+ <marex@denx.de>,  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+  linux-clk@vger.kernel.org,  imx@lists.linux.dev,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  dri-devel@lists.freedesktop.org,  Abel Vesa <abel.vesa@linaro.org>,
+  Herve Codina <herve.codina@bootlin.com>,  Luca Ceresoli
+ <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
  <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@ge.com>
 Subject: Re: [PATCH 4/5] clk: Add flag to prevent frequency changes when
  walking subtrees
-In-Reply-To: <fd2b473bc7c3c70ae0e85b2a6315d9e8.sboyd@kernel.org> (Stephen
-	Boyd's message of "Tue, 10 Dec 2024 14:44:19 -0800")
+In-Reply-To: <20241217-brown-wapiti-of-promotion-e3bec6@houat> (Maxime
+	Ripard's message of "Tue, 17 Dec 2024 13:47:53 +0100")
 References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
 	<20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
-	<fd2b473bc7c3c70ae0e85b2a6315d9e8.sboyd@kernel.org>
+	<20241217-brown-wapiti-of-promotion-e3bec6@houat>
 User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 23 Dec 2024 19:38:20 +0100
-Message-ID: <87jzbqtfc3.fsf@bootlin.com>
+Date: Mon, 23 Dec 2024 19:43:13 +0100
+Message-ID: <87bjx2tf3y.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,17 +64,65 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Stephen,
+Hi Maxime,
 
->> +/* do not passively change this clock rate during subtree rate propagat=
-ion */
->> +#define CLK_NO_RATE_CHANGE_DURING_PROPAGATION BIT(14)
+On 17/12/2024 at 13:47:53 +01, Maxime Ripard <mripard@redhat.com> wrote:
+
+> On Thu, Nov 21, 2024 at 06:41:14PM +0100, Miquel Raynal wrote:
+>> There are mainly two ways to change a clock frequency.
 >
-> Why doesn't rate locking work?
+> There's much more than that :)
 
-Can you be more specific? What function from the API is supposed to do
-what I need? AFAIU, none of them is properly locking the rate during a
-subtree walk, but if I misread one of them, I'd be glad to drop all this.
+"mainly"
 
-Thanks,
+Or maybe I should have added "on purpose".
+
+>
+> Off the top of my head, setting/clearing a min/max rate and changing the
+> parent might also result in a rate change.
+>
+> And then, the firmware might get involved too.
+>
+>> The active way requires calling ->set_rate() in order to ask "on
+>> purpose" for a frequency change. Otherwise, a clock can passively see
+>> its frequency being updated depending on upstream clock frequency
+>> changes. In most cases it is fine to just accept the new upstream
+>> frequency - which by definition will have an impact on downstream
+>> frequencies if we do not recalculate internal divisors. But there are
+>> cases where, upon an upstream frequency change, we would like to
+>> maintain a specific rate.
+>
+> Why is clk_set_rate_exclusive not enough?
+
+I am trying to protect these rate changes from subtree walks, I don't
+see where setting an exclusive rate would have an effect? But I might be
+overlooking something, definitely.
+
+...
+
+>> @@ -2272,7 +2271,13 @@ static void clk_calc_subtree(struct clk_core *cor=
+e)
+>>  {
+>>  	struct clk_core *child;
+>>=20=20
+>> -	core->new_rate =3D clk_recalc(core, core->parent->new_rate);
+>> +	if (core->flags & CLK_NO_RATE_CHANGE_DURING_PROPAGATION) {
+>> +		core->new_rate =3D clk_determine(core, core->rate);
+>> +		if (!core->new_rate)
+>> +			core->new_rate =3D clk_recalc(core, core->parent->new_rate);
+>> +	} else {
+>> +		core->new_rate =3D clk_recalc(core, core->parent->new_rate);
+>> +	}
+>
+> Sorry, it's not clear to me how it works. How will the parent clocks
+> will get notified to adjust their dividers in that scenario? Also, what
+> if they can't?
+
+The idea is: if the flag is set, instead of accepting the new upstream
+rate and recalculate the downstream rate based on a previously set
+divider value, we change our divider value to match the same frequency
+as before. But if we cannot, then we just keep the old way.
+
+Cheers,
 Miqu=C3=A8l
+
