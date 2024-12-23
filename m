@@ -1,124 +1,146 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D50263C;
-	Mon, 23 Dec 2024 09:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB4718950A;
+	Mon, 23 Dec 2024 09:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734944516; cv=none; b=ZPwl6YDFCejqsTEqrbU4NayShE6NlndqN720HLJkOC2pO7SKE5kcuqbHn4hCvGIAJ2KrG4ZZ2w7AurAm7c86bPYna1eElml2dIJsCU27Knr2kVXHO6W8FnYi/K2azpU/KD5kfWOCvmgbssRP8KuEIhUlu5RYw8NWzQCash8fu4o=
+	t=1734944598; cv=none; b=WBozqdrIsiUxL3Z8S15Vv8vQD/lT2cGNbTo2bw2hMyQB+1f6RcQwxfXUAx0DRkUWGNt/Af0bdvVXwRNI1xKTS9Hopfi6OMMFQfSl1SAvsr+SiUtViZTJx8Qck6e42qIlWDxOOlXQqn9vq6rNavF3NDjIC7EgOENURgQSadqz5wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734944516; c=relaxed/simple;
-	bh=326KEhqo4F9QWWsvg1l8wQk0+ffhwwCoqJyhYS1CWkA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eNHxE/cHALOQg3fivlxaubSDr2vk7VrgHP/8ZpkNIRdXTmcfTre4h3l1vqSI64zffSoelazLuYYVWNXiFYNBnYc4JKzjhwb8klr6itW6mlj2zuyFryYoM9fJ51Wl7x93v6SAtNyzvH+CnMa2I0DTzGriXa4/6Tr+IvhXgRBqZw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Fzerw90+; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1734944598; c=relaxed/simple;
+	bh=JnqaOjxpDlEfIDe+q060j3nTcVDgy4R8TN3nDR4peeg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=I1YF60CJKDLSTAer1caKGCj26n9x+hNba1nSkfNpkmkZ5DbwqJyCzT7Acf3TGYZbh7QiORh1l8cmE36697JzyjzHraiXbx+6tmdd+AoLBYiCG4ms3XUtUwXMlbxK4JYq3kTAmvlDgZqucLFYaIX6YVKwKIcAgr5KdFUAc/IrBX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pmO24pTe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Fzerw90+"
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id EA04E120002;
-	Mon, 23 Dec 2024 12:01:37 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru EA04E120002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1734944497;
-	bh=QDrTsEzWaOX89BojzNH8QfMOE2AqATecLGA8bl4b9H8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=Fzerw90+2sw2l3OYYJAjcsRRxc5JBP/63yqNHAn/V7MWkkMOOgIZQYLM2vSOhXpeD
-	 YPdTlfTZ38U9SIZtMrElQ21v/RfltO5KGiC2yjGqXYPHLfktU4Ds1a3OgO3r5lq6s/
-	 OK0Z9woh+genAzmYtt9yAadd+G2+5ATviOGIvapRa9Ni9Tpa/V+cUbr7u8dHg1aybp
-	 9/yZuWPfabHUOelkcf01+IZGVsNJvsrseHBzf41Kh5Vr1EP8w0WdCrgwWmSMLBo4OO
-	 z84ZOP7fQ94cpeO7uzHcMEr5S1YpCjvhMvI40pBDw6kaJazjdhca6Bc1iGOjF6mbo2
-	 94ftDwetSyU3w==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 23 Dec 2024 12:01:37 +0300 (MSK)
-Date: Mon, 23 Dec 2024 12:01:37 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-CC: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [DMARC error][DKIM error]Re: [PATCH 3/3] clk: amlogic: s4:
- remove unused data
-Message-ID: <20241223090137.jbzwrlazhkumatfx@CAB-WSD-L081021>
-References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
- <20241220-amlogic-clk-drop-clk-regmap-tables-v1-3-96dd657cbfbd@baylibre.com>
- <3ce97435-71c6-4a7c-8d6c-fa387f68494d@amlogic.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pmO24pTe"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BN6BZQg020816;
+	Mon, 23 Dec 2024 09:03:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=u+nrQlTDL9aBrOvNoXicLD
+	wRyH/0FncItu4hPBtE1AI=; b=pmO24pTeNc4rpoasEw4uUFYHoGv+fzEtjg16GL
+	DXwwiTp0P+zxnBz1YPUSHgUtO8Mht7qCjSMfLS4JG32nX+lqR2zsUcsbaeeP1Q51
+	jjbhOHalfkDI3Hv0pyZ1P/lyaLygioXuBSgjXVigJelwS4PKYfnq2eCkhCsrLCFg
+	EAUn1JsX/y6CK787QtxDnBtyOcvpMYjwAWRPWvYkkwBlUsQFP+mwdc+DyYVi2XNb
+	OAO9CLVX65uyPX6eRh/DJFTBA195NLbTP9tfunhlQs2mhvYk0zPEhVIAjebcPltU
+	HcwrHHIOxK1qD64JEf0bybDge4kE3QdSM+jXcNMo8WnZEiPw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43q2cm0ne1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Dec 2024 09:03:10 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BN93ALc010282
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Dec 2024 09:03:10 GMT
+Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 23 Dec 2024 01:03:06 -0800
+From: Renjiang Han <quic_renjiang@quicinc.com>
+Subject: [PATCH v2 0/2] Use APIs in gdsc genpd to switch gdsc mode for
+ venus v4 core
+Date: Mon, 23 Dec 2024 14:32:40 +0530
+Message-ID: <20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3ce97435-71c6-4a7c-8d6c-fa387f68494d@amlogic.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189997 [Dec 23 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 49 0.3.49 28b3b64a43732373258a371bd1554adb2caa23cb, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/23 05:07:00 #26899502
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADAnaWcC/2WOwW6DMAxAfwX5vEyOIYX01P+YqgocU3wA2oSxV
+ RX/3owed7KeJT+/JySJKgmOxROirJp0njLQRwE8tNNVjIbMQEiVJSpN+tGFh8s1JL6McxCDB1c
+ GaRlr20I+u0Xp9XdXfp3fHOX+nc3Lewldm8TwPI66HItSKgrsiTw771CaqrMSanS9r/J0Eggbo
+ gb+XIOmZY6PvXa1u2wPy2X/w1Zr0JQH16OvhbsOT7mCdeLP/BvO27a9AGEfqwn+AAAA
+X-Change-ID: 20241223-switch_gdsc_mode-0653deac071a
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        Renjiang Han
+	<quic_renjiang@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734944586; l=2239;
+ i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
+ bh=JnqaOjxpDlEfIDe+q060j3nTcVDgy4R8TN3nDR4peeg=;
+ b=4ZrWVZTil88QA7QzB14BlgCv+RQAAILAMvxcoYvtCk4JqIEE5NyRWOpe2UM5ybrqBoNKXbuRn
+ sB7dZuS1TO7Dbq1PkVvCiPp73go+Yj8NahS1jbEd+Hn1K8LZPP6XxIb
+X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
+ pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Xj-0ewAr33OAhkziW85-aiH1aiv1orLa
+X-Proofpoint-ORIG-GUID: Xj-0ewAr33OAhkziW85-aiH1aiv1orLa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 spamscore=0 phishscore=0 adultscore=0 suspectscore=0
+ mlxlogscore=652 impostorscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412230081
 
-Hello Chuan!
+The Venus driver requires vcodec GDSC to be ON in SW mode for clock
+operations and move it back to HW mode to gain power benefits. Earlier,
+as there is no interface to switch the GDSC mode from GenPD framework,
+the GDSC is moved to HW control mode as part of GDSC enable callback and
+venus driver is writing to its POWER_CONTROL register to keep the GDSC ON
+from SW whereever required. But the POWER_CONTROL register addresses are
+not constant and can vary across the variants.
 
-On Mon, Dec 23, 2024 at 03:59:07PM +0800, Chuan Liu wrote:
-> Hi Jerome:
-> 
-> Thank you for pointing out.
-> 
-> 
-> On 12/21/2024 1:17 AM, Jerome Brunet wrote:
-> > [ EXTERNAL EMAIL ]
-> > 
-> > Following the removal of the big clk_regmap clock table from the
-> > s4-peripherals clock controller driver, it appears some clocks are unused,
-> > which means these are not exported or even registered.
-> 
-> 
-> I have confirmed here that these clocks are used for the demodulator
-> of DTV (Digital Television). The DTV-related driver will use these
-> clocks.
-> 
-> 
-> > 
-> > In all likelihood, these clocks have not been tested. Remove the unused
-> > clocks for now. These can added back later when they have been properly
-> > tested.
-> 
-> 
-> I will complete these clocks later after testing.
+Also as per the HW recommendation, the GDSC mode switching needs to be
+controlled from respective GDSC register and this is a uniform approach
+across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
+controls GDSC mode switching using its respective GDSC register.
 
-Are you planning to submit the DTV drivers that will utilize these
-clocks to the upstream?
+Validated this patch series on QCS615 and SC7180.
+Also, need help to verify on sdm845 as we have no sdm845 device in hand.
 
-If I correctly interpret Jerome's patch series, it appears that these
-clocks will not be applied to the upstream kernel unless there are
-clients present in the future.
+Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+---
+Changes in v2:
+- 1. Add the HW_CTRL_TRIGGER flag for the targets SM7150/SM8150 and SM8450
+video GDSCs supporting movement between HW and SW mode of the GDSC.
+(Suggested by Dmitry Baryshkov)
+- 2. There is a dependency of the clock driver introducing the new flag
+and the video driver adapting to this new API. Missing either the clock
+and video driver could potentially break the video driver.
+- Link to v1: https://lore.kernel.org/r/20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com
 
-Please correct me if I'm wrong.
+---
+Renjiang Han (1):
+      venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on V4
 
-[...]
+Taniya Das (1):
+      clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for video GDSC's
 
+ drivers/clk/qcom/videocc-sc7180.c              |  2 +-
+ drivers/clk/qcom/videocc-sdm845.c              |  4 ++--
+ drivers/clk/qcom/videocc-sm7150.c              |  4 ++--
+ drivers/clk/qcom/videocc-sm8150.c              |  4 ++--
+ drivers/clk/qcom/videocc-sm8450.c              |  4 ++--
+ drivers/media/platform/qcom/venus/pm_helpers.c | 10 +++++-----
+ 6 files changed, 14 insertions(+), 14 deletions(-)
+---
+base-commit: 3e42dc9229c5950e84b1ed705f94ed75ed208228
+change-id: 20241223-switch_gdsc_mode-0653deac071a
+
+Best regards,
 -- 
-Thank you,
-Dmitry
+Renjiang Han <quic_renjiang@quicinc.com>
+
