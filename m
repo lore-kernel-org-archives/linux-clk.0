@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED82187848;
-	Mon, 23 Dec 2024 16:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F25A1B6CFE;
+	Mon, 23 Dec 2024 16:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734971203; cv=none; b=Ynchl0MOjFwPKeX6xt5RMPz8gcTYwewrRSxNt2+RBQ0nO4OjDHbIdJhmw3gfrnAdy0Kt2TCwk6Wt8i+20sk6JLxdDcUx/LxR4KpMH5DLQwhqJKBeppInyZzZxtQt2L1tiwHlVzjSz5AKcasiC5PeZ9kxPx/c3qfOgvEjGHzfLuo=
+	t=1734971356; cv=none; b=sOr9qgAi6Yn3MLzyziRU4/JO5g5QEBx/PFqruWvsZcWqq6jJZmi9dDl7ht+Shi6EUXddgUvYQHshCT5oEpIUuoE6ZXt3kNqNMNtRAeJpn6BHG2rcDZNlvUYsYYmK80VF+UsLaFql7+6CBeWMi7qysdMEUOn/YZuBUvKy+mVjEeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734971203; c=relaxed/simple;
-	bh=SpibcqlZmzhHP5M7rb1BfLKQeqe2s1fFqr8oFCIWDCw=;
+	s=arc-20240116; t=1734971356; c=relaxed/simple;
+	bh=XygZQRpJWNRjIbchkiN9zAFoutbPnIdXdggo9ovNnuQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rqBeaLaGSo//xR+54lcScMEmELmrGZY7V1DkUijoov80QxV3ZDyICLUO/PliugLXMlFF9XK24iXHKtowLYc9iMEwbSAHTilaRVFLpzaxWnSBzpdgrwHm2+SA98u5ytjsJnCX6aNkC/PCk2DeodKAfX/nhP8iQv473o8JEu/DSBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l09IWAFi; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=VtDAFlH4AEQwQEXbb8IUNwmsTadPl+ufW5Q4x3Bcn2MP6Jn6hfmxgs7/dWTHmyHXmPziS8+KkjF2/mGDCYn4DVlIitVQMfcYzm/q9QYOJU9Ot0RLNA4TK5P3fwpxxOUDnAHj0nU99uVDqnCU722INH796FNqLrvxhZZjA/HD6D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBOVXoAT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l09IWAFi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAFAC4CED3;
-	Mon, 23 Dec 2024 16:26:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBOVXoAT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9A4C4CED3;
+	Mon, 23 Dec 2024 16:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734971201;
-	bh=SpibcqlZmzhHP5M7rb1BfLKQeqe2s1fFqr8oFCIWDCw=;
+	s=k20201202; t=1734971355;
+	bh=XygZQRpJWNRjIbchkiN9zAFoutbPnIdXdggo9ovNnuQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l09IWAFiS5Vij+ODX6yzNZGu6ZgPfIuNCkUbYhyWPW971pbObxvHPgTAHG+q1m3L7
-	 0pen81f01rvpqivtIfH541oEOGTJSSjqXSOGrEUliFiK1V3xd94La7mZdZoNjcPu6R
-	 VJ2B2CFO6pot8gfUll3NrzFk/Abm7lIe5CNWO6VsfwvttQP9g8Ki2W47VF3nYUsEVo
-	 F9ephFRC6/wnmMU+WitqsjE17BK32IzC19Q/lJzmojXxH67N+gHwg/ukjc7LUKqQCz
-	 xk8DYE81TRfHREEEYOvFjlCWq/4WRwxGW4Fum2Bu5+P7SPDp94zWSy3xX+XKR1KFpw
-	 jewAa1+9+0sXg==
-Message-ID: <567e2ea6-ad6b-44bb-a5ec-fdb95da5b166@kernel.org>
-Date: Mon, 23 Dec 2024 17:26:31 +0100
+	b=YBOVXoAT/0v5TyJWpBPDWBHr/0LTx0YYWnAgGCL+a0XYlXbFOmVqGBirPoX0i4c1s
+	 SdGCzOkzWCFh0LQCbEI6xoXl5C2Iux48lbpfOk+4FFKmqRhrdbhBpVd5Ay7e46AsQ8
+	 FIaceDzbPZsLqqeHWnSGEArd9hDuGxA6YEzWiAWxd2btT2XmGD4HzaPT+UdnZ4Ngjr
+	 hiEixwbhFZltUcvzyHAhoZCdwoA4InJJfuTbvaG+lsTtVqJLjVULq/Y33335HO9mj+
+	 02C95ioDoarhsjRxjrnMzA7P9XMfjqXECocQqr6soelqqgIlTssVW/J00zI9EBQcmf
+	 v5Th2T+JxcVuA==
+Message-ID: <06c381c3-f181-4422-8aec-d4efcc6d3f07@kernel.org>
+Date: Mon, 23 Dec 2024 17:29:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 06/19] soc: thead: power-domain: Add power-domain
- driver for TH1520
+Subject: Re: [RFC PATCH v2 11/19] dt-bindings: gpu: Add 'resets' property for
+ GPU initialization
 To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
@@ -49,8 +49,8 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
 References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
- <CGME20241223125608eucas1p25f0be9eb6fb7ab906f942201560dd881@eucas1p2.samsung.com>
- <20241223125553.3527812-7-m.wilczynski@samsung.com>
+ <CGME20241223125615eucas1p10cd69b9a6f03f33ce9b9346558de6ce6@eucas1p1.samsung.com>
+ <20241223125553.3527812-12-m.wilczynski@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,30 +96,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241223125553.3527812-7-m.wilczynski@samsung.com>
+In-Reply-To: <20241223125553.3527812-12-m.wilczynski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 23/12/2024 13:55, Michal Wilczynski wrote:
-> +	pd_data->domains = domains;
-> +	pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
-> +	pd_data->xlate = th1520_pd_xlate;
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 256e252f8087..4078cc816ea1 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -37,6 +37,12 @@ properties:
+>    power-domains:
+>      maxItems: 1
+>  
+> +  resets:
+> +    maxItems: 1
 > +
-> +	/*
-> +	 * Initialize all power domains to off to ensure they start in a
-> +	 * low-power state. This allows device drivers to manage power
-> +	 * domains by turning them on or off as needed.
-> +	 */
-> +	th1520_pd_init_all_off(domains, dev);
-> +
-> +	return of_genpd_add_provider_onecell(dev->of_node, pd_data);
-> +}
-> +
-> +static const struct of_device_id th1520_pd_match[] = {
-> +	{ .compatible = "thead,th1520-pd" },
-> +	{ /* sentinel */ }
-> +};
-MODULE_DEVICE_TABLE, this applies to all your patches.
+> +  reset-names:
+> +    const: gpu
+Name being equal to the name of the block is not useful. Drop
+reset-names. Reset framework allows to get the reset instance without name.
 
 Best regards,
 Krzysztof
