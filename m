@@ -1,208 +1,82 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F4C1B415B;
-	Mon, 23 Dec 2024 18:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627851CD205;
+	Mon, 23 Dec 2024 20:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734980353; cv=none; b=okNMmJp6t5DykSgU0K5QXtQo3GHLCtEckAWB+xjVQ7mumvgcFa9xhj7KXGCnEKSpD+8vJ8QIyIEsn5Dp1AS7hIbz0h4sMFuIkKQnUuqBv3TbL5dByXM51JDJ7MKmVWPpTcXT8VPzeOjivjsx6AneiHLTbmf/ZOXZIhKvh+QgKkc=
+	t=1734987062; cv=none; b=fQoRz4HKGVyK56TDmdpjxmUEd+q39338qNtFQiQocYNjaG2634lH9S1H8yOXe597bi+eAFzYPeTHQMrBmLmDl/V8QOcIZkAyLwk88hFeI/InGBFnwqPXWrn5mnSmHLX2CVEtHVTEixNhaC17rDyeRewdKNVoWrnaoDCn8IOlS+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734980353; c=relaxed/simple;
-	bh=dknIv+CtpKoMyqEyxGSJYZr7Yg/bwR3iLAfBjgt4ddU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MrB/hniUPrqmoWW+gCvOBiT4OQ4WXi1pjkm1NkVc85DtIEfmJTBmazNjjDJKmgDMPrxDUAJGAQbzl628vBvsl30beqIhUuHVDjMsaQzNiKGcEZJ92E+qLrS+OkNwtubaQDZL1G4e/VBMxrj6Y7tZb04V996jRWAs5hHz/TOXl8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XD/YazfU; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1734987062; c=relaxed/simple;
+	bh=7vXp6bg3mIjFXJtB/znIi7nXzs2VzEStHvDISKqmwas=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=SNhGYQJhxBbaAYRP2MmEE32RnK9YScjC+cP8tK89bv/dQ1IXndn/rkx4LbKH6xA3FMx/IoRE8ix+s0Aaglw6rXh8+FqMTOjoxbJOJefZ4wUc4b6TOZ3OkeLhXsF8kNP10eSZ8mfbT+pBsilLB3Yhklw/ZsSej4aXw2Xh9+peKZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSOCwWnL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XD/YazfU"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EC58E1C0004;
-	Mon, 23 Dec 2024 18:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734980344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TdiuPB9bq/4aCMg4E3kNucse6Zv0E07gnxdpcuBtioU=;
-	b=XD/YazfUbfpgmMWjNw6rFagb9g92PQuspY4BKzYOQ1avsLOpHM33iXbbsDnLtFQmXWgrZ1
-	J8+blL7J4mzXdyiPeH+Dyo3W3bZaYzS1v6lyNrlg3t7mngDfdPgqpBHI1xKZ5tSAUyTafb
-	J6MWzArSxY1XzYtkSHVgtTnLnY6psF9xcXEBQaSF/USLQOKV9hG7oz6/rae3XGvejIWZ9m
-	+N5z3+Y7ck24CfYSzYEWQhfvMgA/Tjs7wnP7Qbn3M/yz5RCZeX4rEB/f7l8hl+uq93xEg5
-	/l7i2STzkE+pbgnI1omFtYsrqBDP1vizVR7kheE/ba/RZr+r5vHVcbXYuNZNtA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Maxime Ripard <mripard@redhat.com>
-Cc: Liu Ying <victor.liu@nxp.com>,  Abel Vesa <abelvesa@kernel.org>,  Peng
- Fan <peng.fan@nxp.com>,  Michael Turquette <mturquette@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Shawn Guo <shawnguo@kernel.org>,
-  Sascha Hauer <s.hauer@pengutronix.de>,  Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,  Marek Vasut
- <marex@denx.de>,  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-  linux-clk@vger.kernel.org,  imx@lists.linux.dev,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  dri-devel@lists.freedesktop.org,  Abel Vesa <abel.vesa@linaro.org>,
-  Herve Codina <herve.codina@bootlin.com>,  Luca Ceresoli
- <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@ge.com>,
-  stable@vger.kernel.org
-Subject: Re: [PATCH 0/5] clk: Fix simple video pipelines on i.MX8
-In-Reply-To: <20241217-didactic-hedgehog-from-heaven-004c37@houat> (Maxime
-	Ripard's message of "Tue, 17 Dec 2024 13:54:07 +0100")
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-	<b98fdf46-3d09-4693-86fe-954fc723e3a6@nxp.com>
-	<87zflrpp8w.fsf@bootlin.com>
-	<20241217-didactic-hedgehog-from-heaven-004c37@houat>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 23 Dec 2024 19:59:02 +0100
-Message-ID: <87ttaurzt5.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSOCwWnL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4109C4CED3;
+	Mon, 23 Dec 2024 20:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734987061;
+	bh=7vXp6bg3mIjFXJtB/znIi7nXzs2VzEStHvDISKqmwas=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=sSOCwWnLvbLB7dADE52q5aALdUxvb09wMkoarI/KHYD6xnMZCS9HA0QgYGvJeVPvC
+	 4jT9A4kyA/stK3cZITP0N3WB1YFxk0FDAs2fglyqg3HwQK2tV727ewQ4MGed2Rg4RY
+	 btCD6CqdOm2cdAUrdryVpUklmsJXvW4awF0LN6dV2FgK7dQwxof3qdeH93xKvie8NL
+	 XBizgv1/9TFlJ9Ws9wiSeJQJ3aCRcOoLRUA2103q171a3ojEi8sinaB6XYqOKxk8aq
+	 QmuXfwf5aH893lR84Uqqq742Wfkw5Wq/EEYRZkMhxFQShUQ2o1xHQK7eYNc6X8xB8u
+	 ds4jlVT/frsPg==
+Message-ID: <2cd0c34fbd14a0d69e689d04c2241938.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+In-Reply-To: <20241223125553.3527812-2-m.wilczynski@samsung.com>
+References: <20241223125553.3527812-1-m.wilczynski@samsung.com> <CGME20241223125601eucas1p1d274193122638075dc65310a22616bae@eucas1p1.samsung.com> <20241223125553.3527812-2-m.wilczynski@samsung.com>
+Subject: Re: [RFC PATCH v2 01/19] dt-bindings: clock: Add VO subsystem clocks and update address requirements
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski <m.wilczynski@samsung.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, airlied@gmail.com, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, frank.binns@imgtec.com, guoren@kernel.org, jassisinghbrar@gmail.com, jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com, matt.coster@imgtec.com, mripard@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, ulf.hansson@linaro.org, wefu@redhat.com
+Date: Mon, 23 Dec 2024 12:50:59 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Hello,
-
->> >> [After applying PATCH "clk: imx: clk-imx8mp: Allow LDB serializer clo=
-ck reconfigure parent rate"]
->> >>=20
->> >> This is a commit from Marek, which is, I believe going in the right
->> >> direction, so I am including it. Just with this change, the situation=
- is
->> >> slightly different, but the result is the same:
->> >> - media_disp[12]_pix is set to freq A by using a divisor of 1 and
->> >>   setting video_pll1 to freq A.
->> >> - media_ldb is set to 7*A by using a divisor of 1 and setting video_p=
-ll1
->> >>   to freq 7*A.
->> >>   /!\ This as the side effect of changing media_disp[12]_pix from fre=
-q A
->> >>   to freq 7*A.
->> >
->> > Although I'm not of a fan of setting CLK_SET_RATE_PARENT flag to the
->> > LDB clock and pixel clocks,
->>=20
->> I haven't commented much on this. For me, inaccurate pixel clocks mostly
->> work fine (if not too inaccurate), but it is true that having very
->> powerful PLL like the PLL1443, it is a pity not to use them at their
->> highest capabilities. However, I consider "not breaking users" more
->> important than having "perfect clock rates".
->
-> Whether an inaccurate clock "works" depends on the context. A .5%
-> deviation will be out of spec for HDMI for example. An inaccurate VBLANK
-> frequency might also break some use cases.
->
-> So that your display still works is not enough to prove it works.
-
-Well, my display used to work. And now it no longer does. The perfect
-has become the enemy of the good.
-
->> This series has one unique goal: accepting more accurate frequencies
->> *and* not breaking users in the most simplest cases.
->>=20
->> > would it work if the pixel clock rate is
->> > set after the LDB clock rate is set in fsl_ldb_atomic_enable()?
->>=20
->> The situation would be:
->> - media_ldb is set to 7*A by using a divisor of 1 and setting video_pll1
->>   to freq 7*A.
->> - media_disp[12]_pix is set to freq A by using a divisor of 7.
->>=20
->> So yes, and the explanation of why is there:
->> https://elixir.bootlin.com/linux/v6.11.8/source/drivers/clk/clk-divider.=
-c#L322
->>=20
->> > The
->> > pixel clock can be got from LDB's remote input LCDIF DT node by
->> > calling of_clk_get_by_name() in fsl_ldb_probe() like the below patch
->> > does. Similar to setting pixel clock rate, I think a chance is that
->> > pixel clock enablement can be moved from LCDIF driver to
->> > fsl_ldb_atomic_enable() to avoid on-the-fly division ratio change.
->>=20
->> TBH, this sounds like a hack and is no longer required with this series.
->>=20
->> You are just trying to circumvent the fact that until now, applying a
->> rate in an upper clock would unconfigure the downstream rates, and I
->> think this is our first real problem.
->>=20
->> > https://patchwork.kernel.org/project/linux-clk/patch/20241114065759.33=
-41908-6-victor.liu@nxp.com/
->> >
->> > Actually, one sibling patch of the above patch reverts ff06ea04e4cf
->> > because I thought "fixed PLL rate" is the only solution, though I'm
->> > discussing any alternative solution of "dynamically changeable PLL
->> > rate" with Marek in the thread of the sibling patch.
->>=20
->> I don't think we want fixed PLL rates. Especially if you start using
->> external (hot-pluggable) displays with different needs: it just does not
->> fly. There is one situation that cannot yet be handled and needs
->> manual reparenting: using 3 displays with a non-divisible pixel
->> frequency.
->
-> Funnily, external interfaces (ie, HDMI, DP) tend to be easier to work
-> with than panels. HDMI for example works with roughly three frequencies:
-> 148.5MHz, 297MHz and 594MHz. If you set the PLL to 594MHz and the
-> downstream clock has a basic divider, it works just fine.
->
->> FYI we managed this specific "advanced" case with assigned-clock-parents
->> using an audio PLL as hinted by Marek. It mostly works, event though the
->> PLL1416 are less precise and offer less accurate pixel clocks.
->
-> Note that assigned-clock-parents doesn't provide any guarantee on
-> whether the parent will change in the future or not. It's strictly
-> equivalent to calling clk_set_parent in the driver's probe.
-
-Oh yeah, but here I'm mentioning en even more complex case where we
-connect three panels with pixel clocks that cannot be all three derived
-from the same parent. There has never been any upstream support for
-that and I doubt we will have any anytime soon because we need a central
-(drm) place to be aware of the clock limitations and make these
-decisions.
-
+Quoting Michal Wilczynski (2024-12-23 04:55:35)
+> The T-Head TH1520 SoC=E2=80=99s AP clock controller now needs two address=
+ ranges
+> to manage both the Application Processor (AP) and Video Output (VO)
+> subsystem clocks. Update the device tree bindings to require two `reg`
+> entries, one for the AP clocks and one for the VO clocks.
+>=20
+> Additionally, introduce new VO subsystem clock constants in the header
+> file. These constants will be used by the driver to control VO-related
+> components such as display and graphics units.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
 [...]
+> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.=
+yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> index 0129bd0ba4b3..f0df97a450ef 100644
+> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> @@ -47,7 +54,9 @@ examples:
+>      #include <dt-bindings/clock/thead,th1520-clk-ap.h>
+>      clock-controller@ef010000 {
+>          compatible =3D "thead,th1520-clk-ap";
+> -        reg =3D <0xef010000 0x1000>;
+> +        reg =3D <0xef010000 0x1000>,
+> +              <0xff010000 0x1000>;
 
->> +       /*
->> +        * Dual cases require a 3.5 rate division on the pixel clocks, w=
-hich
->> +        * cannot be achieved with regular single divisors. Instead, dou=
-ble the
->> +        * parent PLL rate in the first place. In order to do that, we f=
-irst
->> +        * require twice the target clock rate, which will program the u=
-pper
->> +        * PLL. Then, we ask for the actual targeted rate, which can be =
-achieved
->> +        * by dividing by 2 the already configured upper PLL rate, witho=
-ut
->> +        * making further changes to it.
->> +        */
->> +       if (fsl_ldb_is_dual(fsl_ldb))
->> +               clk_set_rate(fsl_ldb->clk, requested_link_freq * 2);
->>         clk_set_rate(fsl_ldb->clk, requested_link_freq);
->
-> This has nothing to do in a DRM driver. The clock driver logic needs
-> to handle it.
+I don't get it. Why not have two nodes and two devices? They have
+different register regions so likely they're different devices on the
+internal SoC bus. They may have the same input clks, but otherwise I
+don't see how they're the same node.
 
-The approach I am proposing in this series can sadly not work, because
-it is not possible to slightly modify a clock after the crtc has been
-set up without getting back into drm for further tuning. I observed
-that my series was dependent on the probe order, because the exact same
-clock tree would work and not work depending on the order.
-
-To get back to your comment, unfortunately, there will be no other
-choice than having drm drivers being aware of clock limitations, just
-because the clock subsystem alone, even if it would do the right thing
-behind the hood, would still sometimes break displays. This means drm
-drivers will have to care about clock constraints.
-
-As an example here, I am fine arguing about the way (calling
-clk_set_rate twice on the same clock), but the fact that the parent
-clock must be multiplied: this is drm business, because it is a drm
-requirement.
-
-Thanks,
-Miqu=C3=A8l
+> +        reg-names =3D "ap-clks", "vo-clks";
+>          clocks =3D <&osc>;
+>          #clock-cells =3D <1>;
+>      };
