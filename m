@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627851CD205;
-	Mon, 23 Dec 2024 20:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA16EAC5;
+	Mon, 23 Dec 2024 20:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734987062; cv=none; b=fQoRz4HKGVyK56TDmdpjxmUEd+q39338qNtFQiQocYNjaG2634lH9S1H8yOXe597bi+eAFzYPeTHQMrBmLmDl/V8QOcIZkAyLwk88hFeI/InGBFnwqPXWrn5mnSmHLX2CVEtHVTEixNhaC17rDyeRewdKNVoWrnaoDCn8IOlS+4=
+	t=1734987264; cv=none; b=Ww3JusjbyVxD1ESn2ZhkmfKmgSxlnY/ZeCFTOz438Vp5kViifDDkQOxw+kC1Pany7qym12aiAK+01rhK7tCo7wuWO2W6v2FJKqK/9zMNBi9MFYojOtlsgpfxGrDlxvX2q6xTJKDj53qw3yKRdQ5PuhZBUDBdX0Icfe5G7ouX0oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734987062; c=relaxed/simple;
-	bh=7vXp6bg3mIjFXJtB/znIi7nXzs2VzEStHvDISKqmwas=;
+	s=arc-20240116; t=1734987264; c=relaxed/simple;
+	bh=NMMtTTxdzJLwiKMxV+CYvOfL5ZFO48bV3CdhVJI34gE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=SNhGYQJhxBbaAYRP2MmEE32RnK9YScjC+cP8tK89bv/dQ1IXndn/rkx4LbKH6xA3FMx/IoRE8ix+s0Aaglw6rXh8+FqMTOjoxbJOJefZ4wUc4b6TOZ3OkeLhXsF8kNP10eSZ8mfbT+pBsilLB3Yhklw/ZsSej4aXw2Xh9+peKZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSOCwWnL; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=E6Kam/DlxSJZjqvhqYkAaHQirv2AGNnvMtEzZo8QKOoDnXdJufTp5x7OHz4qzXi7d+EqO5xigBTyHo8TNi4NaMqkzGdX2FjH1NHHUJRyxC5xWos8ByqeeO34HBZZsA2MYJJvHnTPOvcbpDM+/NSK4WlcyCEOnfU4QLuVpbht5NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUB5a1yX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSOCwWnL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4109C4CED3;
-	Mon, 23 Dec 2024 20:51:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUB5a1yX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CC6C4CED3;
+	Mon, 23 Dec 2024 20:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734987061;
-	bh=7vXp6bg3mIjFXJtB/znIi7nXzs2VzEStHvDISKqmwas=;
+	s=k20201202; t=1734987264;
+	bh=NMMtTTxdzJLwiKMxV+CYvOfL5ZFO48bV3CdhVJI34gE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sSOCwWnLvbLB7dADE52q5aALdUxvb09wMkoarI/KHYD6xnMZCS9HA0QgYGvJeVPvC
-	 4jT9A4kyA/stK3cZITP0N3WB1YFxk0FDAs2fglyqg3HwQK2tV727ewQ4MGed2Rg4RY
-	 btCD6CqdOm2cdAUrdryVpUklmsJXvW4awF0LN6dV2FgK7dQwxof3qdeH93xKvie8NL
-	 XBizgv1/9TFlJ9Ws9wiSeJQJ3aCRcOoLRUA2103q171a3ojEi8sinaB6XYqOKxk8aq
-	 QmuXfwf5aH893lR84Uqqq742Wfkw5Wq/EEYRZkMhxFQShUQ2o1xHQK7eYNc6X8xB8u
-	 ds4jlVT/frsPg==
-Message-ID: <2cd0c34fbd14a0d69e689d04c2241938.sboyd@kernel.org>
+	b=aUB5a1yXiMwZPIGTyk+izkH/ShpjHcOdrTKB4oIAbQd1FntAk76oJfDOXe4dp0WT2
+	 4wL40jcrxAGXkVwac6Acd2fffMI5wrdoJKaWnLve3jk+MF2OAHXtv22nqelpggGwPT
+	 ZwO3TkWjCf4ZrupDLAmFmRGxbID1M5tx24EBvMWmQDMM5V3Wfz4/zNe8i+nvTZCyju
+	 RM5FnAmGSEBis0mVHp68SxXtzw9lTvkKB69zuoPTYnGm0j5UuQJ/Vyn8ubi21wBEH/
+	 Sa/MvoGBlBW0mPBBmdNRYL3xUZjbzp6Jzplf3B5Gvuiw6pYGkfsfP0PiQlrv0BlZYR
+	 PEN6Jh84UGZIQ==
+Message-ID: <94021cd67e259722e10ac7db2c987b6c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,48 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241223125553.3527812-2-m.wilczynski@samsung.com>
-References: <20241223125553.3527812-1-m.wilczynski@samsung.com> <CGME20241223125601eucas1p1d274193122638075dc65310a22616bae@eucas1p1.samsung.com> <20241223125553.3527812-2-m.wilczynski@samsung.com>
-Subject: Re: [RFC PATCH v2 01/19] dt-bindings: clock: Add VO subsystem clocks and update address requirements
+In-Reply-To: <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
+References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com> <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
+Subject: Re: [PATCH v5 1/3] soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski <m.wilczynski@samsung.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, airlied@gmail.com, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, frank.binns@imgtec.com, guoren@kernel.org, jassisinghbrar@gmail.com, jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com, matt.coster@imgtec.com, mripard@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, ulf.hansson@linaro.org, wefu@redhat.com
-Date: Mon, 23 Dec 2024 12:50:59 -0800
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Helgaas <bhelgaas@google.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
+Date: Mon, 23 Dec 2024 12:54:21 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Michal Wilczynski (2024-12-23 04:55:35)
-> The T-Head TH1520 SoC=E2=80=99s AP clock controller now needs two address=
- ranges
-> to manage both the Application Processor (AP) and Video Output (VO)
-> subsystem clocks. Update the device tree bindings to require two `reg`
-> entries, one for the AP clocks and one for the VO clocks.
+Quoting Cristian Ciocaltea (2024-12-17 13:41:51)
+> The helper devm_clk_bulk_get_all_enable() missed to return the number of
+> clocks stored in the clk_bulk_data table referenced by the clks
+> argument and, therefore, will be dropped.
 >=20
-> Additionally, introduce new VO subsystem clock constants in the header
-> file. These constants will be used by the driver to control VO-related
-> components such as display and graphics units.
+> Use the newly introduced devm_clk_bulk_get_all_enabled() variant
+> instead, which is consistent with devm_clk_bulk_get_all() in terms of
+> the returned value:
 >=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>  > 0 if one or more clocks have been stored
+>  =3D 0 if there are no clocks
+>  < 0 if an error occurred
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > ---
-[...]
-> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.=
-yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> index 0129bd0ba4b3..f0df97a450ef 100644
-> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> @@ -47,7 +54,9 @@ examples:
->      #include <dt-bindings/clock/thead,th1520-clk-ap.h>
->      clock-controller@ef010000 {
->          compatible =3D "thead,th1520-clk-ap";
-> -        reg =3D <0xef010000 0x1000>;
-> +        reg =3D <0xef010000 0x1000>,
-> +              <0xff010000 0x1000>;
 
-I don't get it. Why not have two nodes and two devices? They have
-different register regions so likely they're different devices on the
-internal SoC bus. They may have the same input clks, but otherwise I
-don't see how they're the same node.
-
-> +        reg-names =3D "ap-clks", "vo-clks";
->          clocks =3D <&osc>;
->          #clock-cells =3D <1>;
->      };
+Applied to clk-next
