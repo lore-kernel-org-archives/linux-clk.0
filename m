@@ -1,161 +1,124 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FEE84E0A;
-	Mon, 23 Dec 2024 08:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D50263C;
+	Mon, 23 Dec 2024 09:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734941163; cv=none; b=qN6RfHA8K/PSWaxMFptJiV2ikEisMlo2ShCzP6zowwhLrJXPgTvMecKvkqv5ck+77z7PA1vN7aP88DUWCG2pJPsOXY4oazN0iWxowOpzqfLCqAzu5g+N5/7rbDQnBTfuiaMPzkT6UD5gOHPPbPrwNq56d0m4DV7uWO+psSLaxRc=
+	t=1734944516; cv=none; b=ZPwl6YDFCejqsTEqrbU4NayShE6NlndqN720HLJkOC2pO7SKE5kcuqbHn4hCvGIAJ2KrG4ZZ2w7AurAm7c86bPYna1eElml2dIJsCU27Knr2kVXHO6W8FnYi/K2azpU/KD5kfWOCvmgbssRP8KuEIhUlu5RYw8NWzQCash8fu4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734941163; c=relaxed/simple;
-	bh=oLAFDpVTm28rpp13OPocO6rqDyE1uCgUFmuvPbVrLjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7XhrutxkwThO2+UJhxIgzSXY5GjLjThZMNE16+NZSrhEbJnt992Tm+LvR0FE6DZjHodE9w5VR5+yub8M4Lghw1kQfsbHg8QXZwZsk12T4HiJHnv7m0AfuM3oTZt4S8mGPnDSsdhvGu1FOAgCbRc02QtXf+c8/g/LJdPFWw6c4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NwAS/XG2 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1734944516; c=relaxed/simple;
+	bh=326KEhqo4F9QWWsvg1l8wQk0+ffhwwCoqJyhYS1CWkA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNHxE/cHALOQg3fivlxaubSDr2vk7VrgHP/8ZpkNIRdXTmcfTre4h3l1vqSI64zffSoelazLuYYVWNXiFYNBnYc4JKzjhwb8klr6itW6mlj2zuyFryYoM9fJ51Wl7x93v6SAtNyzvH+CnMa2I0DTzGriXa4/6Tr+IvhXgRBqZw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Fzerw90+; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NwAS/XG2"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D012140E0288;
-	Mon, 23 Dec 2024 07:59:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IM0pXPZd7px8; Mon, 23 Dec 2024 07:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734940795; bh=oLmiO6e1v7+WwnKur2gbXxPFrWqAvAvJYXOalhGYmh0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NwAS/XG2uaILqi2tnPoMceO1SFvcdwgB2eUP+lF0E3qtxPsrkKvNIAdwvcYOwYLbg
-	 VvqRX9HbNopYUz0E8WqlR4+hwS4evjJxGuAOGasHGtlugkVJp9ywpiKC8EbDZ422zm
-	 muU9ukFK3vu7hlaK35oICq0nKKtYMvBJQy2OPsR+mvKsFD61IL8Mw2MAlMJkEryItZ
-	 Tzude+wGqe0Sw9wWIR9qCEh9iQ+cGYRJHeuycqd23zgYmnzkMpT5N1DW0p6NrAgCYf
-	 olFh8rx2BkdY5or8KF6raR/v2Ni/IFGcDQKB5uSqrYJiXVWNpgp+jX4ZxJgjDbURJ4
-	 cSrvSAzFi4ZxrvHZ1a2k5YfgSAP6AQYRPi9NLJBbrvSRcSIni8b7sSzt4BURfuxCE2
-	 r4sJGrTU/6kz8jXjqNQu+e5JVOpZaEHuyoW5vdTmIKsc1KmSM8jxmKbimkXbQrlsIH
-	 90+POUXhp51ZscIRGQuA125qI7jngipHuMx2xQIaDiLgkkm892NzJLWoWCASuUcIjP
-	 t7xw06sq/JRCWhb65oG60xkW3rPq6o8p+BSEtePeDRS1FBXX3NANrTP8cZLWwcZ34D
-	 4b4E4Fx232+BRVdx65v4LFgXYODS/oGKPtkkdO7V+2SrY5pMunLK7ADoymYz7xZnXg
-	 ml+quzLMltF9PXnz4EArbLUs=
-Received: from nazgul.tnic (2-228-221-6.ip193.fastwebnet.it [2.228.221.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Fzerw90+"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id EA04E120002;
+	Mon, 23 Dec 2024 12:01:37 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru EA04E120002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1734944497;
+	bh=QDrTsEzWaOX89BojzNH8QfMOE2AqATecLGA8bl4b9H8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=Fzerw90+2sw2l3OYYJAjcsRRxc5JBP/63yqNHAn/V7MWkkMOOgIZQYLM2vSOhXpeD
+	 YPdTlfTZ38U9SIZtMrElQ21v/RfltO5KGiC2yjGqXYPHLfktU4Ds1a3OgO3r5lq6s/
+	 OK0Z9woh+genAzmYtt9yAadd+G2+5ATviOGIvapRa9Ni9Tpa/V+cUbr7u8dHg1aybp
+	 9/yZuWPfabHUOelkcf01+IZGVsNJvsrseHBzf41Kh5Vr1EP8w0WdCrgwWmSMLBo4OO
+	 z84ZOP7fQ94cpeO7uzHcMEr5S1YpCjvhMvI40pBDw6kaJazjdhca6Bc1iGOjF6mbo2
+	 94ftDwetSyU3w==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C580D40E0286;
-	Mon, 23 Dec 2024 07:58:32 +0000 (UTC)
-Date: Mon, 23 Dec 2024 08:58:11 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Weikang Guo <guoweikang.kernel@gmail.com>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Sam Creasey <sammy@sammy.net>, Huacai Chen <chenhuacai@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Oreoluwa Babatunde <quic_obabatun@quicinc.com>,
-	rafael.j.wysocki@intel.com, Palmer Dabbelt <palmer@rivosinc.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	KP Singh <kpsingh@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>, Helge Deller <deller@gmx.de>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Geoff Levand <geoff@infradead.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-pm@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v7] mm/memblock: Add memblock_alloc_or_panic interface
-Message-ID: <20241223075811.GAZ2kYEwZ93CYkatrD@fat_crate.local>
-References: <20241222111537.2720303-1-guoweikang.kernel@gmail.com>
- <Z2kNTjO8hXzN66bX@kernel.org>
- <CAOm6qnkRUMnVGj7tnem822nRpJ8R6kFVf6B4W9MhMSBQY8X7Kg@mail.gmail.com>
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 23 Dec 2024 12:01:37 +0300 (MSK)
+Date: Mon, 23 Dec 2024 12:01:37 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+CC: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [DMARC error][DKIM error]Re: [PATCH 3/3] clk: amlogic: s4:
+ remove unused data
+Message-ID: <20241223090137.jbzwrlazhkumatfx@CAB-WSD-L081021>
+References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
+ <20241220-amlogic-clk-drop-clk-regmap-tables-v1-3-96dd657cbfbd@baylibre.com>
+ <3ce97435-71c6-4a7c-8d6c-fa387f68494d@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAOm6qnkRUMnVGj7tnem822nRpJ8R6kFVf6B4W9MhMSBQY8X7Kg@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3ce97435-71c6-4a7c-8d6c-fa387f68494d@amlogic.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189997 [Dec 23 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 49 0.3.49 28b3b64a43732373258a371bd1554adb2caa23cb, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/23 05:07:00 #26899502
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Mon, Dec 23, 2024 at 03:32:01PM +0800, Weikang Guo wrote:
-> First of all, thank you for your reminder and patience. In fact, this
-> is the first time I received a patch discussion when submitting a
-> patch.
-> About Reviewed-by or Acked-by tags, I will not add it myself in the
-> future. Regarding this patch, do I need to provide a new patch to
-> update it? Or will you modify it?  Looking forward to your reply
+Hello Chuan!
 
-It is all explained here:
+On Mon, Dec 23, 2024 at 03:59:07PM +0800, Chuan Liu wrote:
+> Hi Jerome:
+> 
+> Thank you for pointing out.
+> 
+> 
+> On 12/21/2024 1:17 AM, Jerome Brunet wrote:
+> > [ EXTERNAL EMAIL ]
+> > 
+> > Following the removal of the big clk_regmap clock table from the
+> > s4-peripherals clock controller driver, it appears some clocks are unused,
+> > which means these are not exported or even registered.
+> 
+> 
+> I have confirmed here that these clocks are used for the demodulator
+> of DTV (Digital Television). The DTV-related driver will use these
+> clocks.
+> 
+> 
+> > 
+> > In all likelihood, these clocks have not been tested. Remove the unused
+> > clocks for now. These can added back later when they have been properly
+> > tested.
+> 
+> 
+> I will complete these clocks later after testing.
 
-https://kernel.org/doc/html/latest/process/development-process.html
+Are you planning to submit the DTV drivers that will utilize these
+clocks to the upstream?
 
-Go read it while waiting instead of spamming everyone.
+If I correctly interpret Jerome's patch series, it appears that these
+clocks will not be applied to the upstream kernel unless there are
+clients present in the future.
 
-Lemme get your started on that reading:
+Please correct me if I'm wrong.
 
-"Don=E2=80=99t get discouraged - or impatient
+[...]
 
-After you have submitted your change, be patient and wait. Reviewers are
-busy people and may not get to your patch right away.
-
-Once upon a time, patches used to disappear into the void without
-comment, but the development process works more smoothly than that now.
-You should receive comments within a few weeks (typically 2-3); if that
-does not happen, make sure that you have sent your patches to the right
-place. Wait for a minimum of one week before resubmitting or pinging
-reviewers - possibly longer during busy times like merge windows."
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+-- 
+Thank you,
+Dmitry
