@@ -1,67 +1,100 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC589192D7B;
-	Sun, 22 Dec 2024 21:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E7DEEB5;
+	Mon, 23 Dec 2024 07:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734902108; cv=none; b=RSqIcgHsGkBFFgZ5HeyVoaBQF9zW8CQRIzNwRXttzB9ONoaMUxCjL/WbECxRptuAwnRR4ww7YkGir7Zggx18/eY4/uSiaSG5PaT2Za1E9e8ZmYd+UUCnoAdwxRbYQ27Mr4V8+nR1CPzIhWNvlPm/T2wBvqYDJLL4MO5QUaPaLZg=
+	t=1734937969; cv=none; b=snHG42aaUkWPFmaVRpb8BREmdwGNRZN76AzysjEndYLuyR7JIegUbv0vkCz2BEkLhMfKM6Q0KIRTxyvFGlJmNABCB3i/WTWjd8pR+YLNZUJktXdxKCB7RNoik8w4ffblMo6oUx5G5rWNxPJH3gBptWDwQ+VA+HT60FKQaL219jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734902108; c=relaxed/simple;
-	bh=Spe0xJ6A60wVvLDJX49Zn/oShZOuqycqezYeOxSKF3s=;
+	s=arc-20240116; t=1734937969; c=relaxed/simple;
+	bh=KiW6z79yHKtUcMEX/b8/Sp0F2L3XtvvNObnoy9wnwCI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvFbm+oeFy8Be211Su+GVp0E+b981D2tTBk5sQZ3eX8sQflsdAtdyS7RCfo7OXhsSqYf7WmNFDoNExAb2bL1u6WrZ4KZ3jCpB/tonwerC20JQHj2LiGjHusPsXB4OUpkc3If4Vkyvl+o4lbpHQSECECQPXs+MlK2rfvhCmljRH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216395e151bso23050615ad.0;
-        Sun, 22 Dec 2024 13:15:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734902106; x=1735506906;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m2EAvvGaGQe4GZOyf1+O7bXahYdeX6C577uneV/yQI8=;
-        b=hOqLTJlf+ow57sna9U3DlR7Txi1yEWB3kUwIWc2/wLIElVJ3KgzaR1Iy325SyrN3GD
-         22L/TvW9pqPK71Oxjii1Y3qRluO6W3GYknuXHK0U05tmFQ3DfN+6CkDwmkk5gQmiUb0P
-         1ChfXdiEqNA9n0Y4gme1QQflcuAzY610Gh+X/nL3qtgsfPrhzbQHpCHgqtFYyCTSAX+x
-         XjAmWc6N3wFEoc0b+M40aZPVng9R7lcTRtLA+WjLa0+JkVY45Q9gGWur7AXVyO6rWrKN
-         LkkCnjMDyyufnPivyaCmPNLKKFlo44Yq3YqW1tKab35+UGIrhcPunz3Lwb11FTKxhgNt
-         Ps0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXdQ7eWZk9iPrICK/qbLAFL4LJ7u4jUttWMvv/kbLVC58n+cdYSMcTPX4vcBg5crR7gjotRe583pLwj@vger.kernel.org, AJvYcCXvX9nsf8sf5+hndL3khXPOS2oFeWoKEJu8I8NOr1AOVENF4dE4RjAtVhu1/xjriRlg9q8s7NxEQYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFr4huPJ/jDdwnhjHKzCMWmOI7L6M4If5c1F9s0dTkTrr4kE63
-	QQEWLfkrfXKiWbLb8iEdoTxwadBp3QPu8bcpxFkagblHks36uH7y
-X-Gm-Gg: ASbGnctrnZf6tmzVUM61RlLYZcKP6D4H5xRTqWzhQtiz8am7WbXJr1KSx4HFOJFpFZa
-	fIRfchg+5+RStqVtwq+7Mtfa3rfm5sdqDcOcOhyzaXT2Oz3BpcDY1sfJU90sTK4urO8dI6FlNdp
-	TZzc58cGv5AiXc8REO9wP6Jacntlo77q2/VVkUujaUw4rmN2H4c7ZzT36v3RNwneR8Bab6PE4fe
-	dibsm570lEyaG920gFL5TOEdEhXP9CCkGoA2wheVkXsWoGubArvCAeqO3DTh2iuYLfZhF05Tpi3
-	7RYOEcjtXiAlad8=
-X-Google-Smtp-Source: AGHT+IFnh8/2jH1K2C8laRyf+QSqdgxXTyVDB6IlMXv9COCrJqawDYFQvRtiTT9LwezuAyZuQTniUg==
-X-Received: by 2002:a17:902:c402:b0:215:a034:3bae with SMTP id d9443c01a7336-219e6d59abemr151928855ad.18.1734902106227;
-        Sun, 22 Dec 2024 13:15:06 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dca0194bsm61117915ad.248.2024.12.22.13.15.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Dec 2024 13:15:05 -0800 (PST)
-Date: Mon, 23 Dec 2024 06:15:03 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] PCI: mediatek-gen3: mtk_pcie_en7581_power_up()
- code refactoring
-Message-ID: <20241222211503.GE3111282@rocinante>
-References: <20241130-pcie-en7581-fixes-v5-0-dbffe41566b3@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AKqL7y/ouO2p1OPG7NNYsZ2XpAebYpYtcHhE61Vkq4MGIzc2w8mUtF/E72B59YoaCHwn9/ZJfm5+GcANGXuLplBdPTZPm7sEjbFURC+Vy5pSAWVu2Jw+dF1122NKFhGrfMfSegFw0FnRk5TUJejzqWAKVOXa4n19XQo88HKaRCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PadoaIur; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PadoaIur"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2221C4CED4;
+	Mon, 23 Dec 2024 07:12:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734937968;
+	bh=KiW6z79yHKtUcMEX/b8/Sp0F2L3XtvvNObnoy9wnwCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PadoaIur+Bq/ska4dZ3htQaJQz4uazLSVowJVHucSNC53reVkWxd5YVJWY/8jYQei
+	 G/2ikWxztSp4IduffOwXB0a3mVJH23t9Ex7EGVUz/CnbNl3iJwZRxMrSqxsyp7jx0f
+	 g/t903ItkhiEVo2DrupFM7faoTX7/DPcXhBh/bkr20Ay+uNKYZumDkMyBSpawM5raK
+	 Ut+5vnDGc2C1sPQD75jm/n63pJiamwi58eI2wR3M3lVdk6xTR5vMn3Ur4QTOlkun8B
+	 BK41Buv9qow1NTThvM4tSiBT0cMpdhUu2SLkRibN1ROgpuegs2ZYg313l0II/8FbH3
+	 cxXTeCHYfJOYg==
+Date: Mon, 23 Dec 2024 09:12:14 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Guo Weikang <guoweikang.kernel@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Sam Creasey <sammy@sammy.net>, Huacai Chen <chenhuacai@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Oreoluwa Babatunde <quic_obabatun@quicinc.com>,
+	rafael.j.wysocki@intel.com, Palmer Dabbelt <palmer@rivosinc.com>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Stafford Horne <shorne@gmail.com>, Helge Deller <deller@gmx.de>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Geoff Levand <geoff@infradead.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-pm@vger.kernel.org,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH v7] mm/memblock: Add memblock_alloc_or_panic interface
+Message-ID: <Z2kNTjO8hXzN66bX@kernel.org>
+References: <20241222111537.2720303-1-guoweikang.kernel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,25 +103,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241130-pcie-en7581-fixes-v5-0-dbffe41566b3@kernel.org>
+In-Reply-To: <20241222111537.2720303-1-guoweikang.kernel@gmail.com>
 
-Hello,
+On Sun, Dec 22, 2024 at 07:15:37PM +0800, Guo Weikang wrote:
+> Before SLUB initialization, various subsystems used memblock_alloc to
+> allocate memory. In most cases, when memory allocation fails, an immediate
+> panic is required. To simplify this behavior and reduce repetitive checks,
+> introduce `memblock_alloc_or_panic`. This function ensures that memory
+> allocation failures result in a panic automatically, improving code
+> readability and consistency across subsystems that require this behavior.
+> 
+> Changelog:
+> ----------
+> v1: initial version
+> v2: add __memblock_alloc_or_panic support panic output caller
+> v3: panic output phys_addr_t use printk's %pap
+> v4: make __memblock_alloc_or_panic out-of-line, move to memblock.c
+> v6: Fix CI compile error
+> Links to CI: https://lore.kernel.org/oe-kbuild-all/202412221000.r1NzXJUO-lkp@intel.com/
+> v6: Fix CI compile warinigs
+> Links to CI: https://lore.kernel.org/oe-kbuild-all/202412221259.JuGNAUCq-lkp@intel.com/
+> v7: add chagelog and adjust function declaration alignment format
+> ----------
+> 
+> Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
+> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Acked-by: Xi Ruoyao <xry111@xry111.site>
 
-> Minor fixes and code refactoring in mtk_pcie_en7581_power_up() routine
+If people commented on your patch it does not mean you should add
+Reviewed-by or Acked-by tags for them. Wait for explicit tags from the
+reviewers.
 
-Applied to controller/mediatek, thank you!
+And don't respin that often, "Reviewers are busy people and may not get to
+your patch right away" [1].
 
-[01/06] PCI: mediatek-gen3: Add missing reset_control_deassert() for mac_rst in mtk_pcie_en7581_power_up()
-        https://git.kernel.org/pci/pci/c/3b2ea2d9a669
-[02/06] PCI: mediatek-gen3: Use clk_bulk_prepare_enable() in mtk_pcie_en7581_power_up()
-        https://git.kernel.org/pci/pci/c/a28adc4d00b7
-[03/06] PCI: mediatek-gen3: Move reset/assert callbacks in .power_up()
-        https://git.kernel.org/pci/pci/c/599e5a6bc452
-[04/06] PCI: mediatek-gen3: Add comment about initialization order in mtk_pcie_en7581_power_up()
-        https://git.kernel.org/pci/pci/c/cdd822338f1b
-[05/06] PCI: mediatek-gen3: Add reset delay in mtk_pcie_en7581_power_up()
-        https://git.kernel.org/pci/pci/c/6c042f72a930
-[06/06] PCI: mediatek-gen3: Use msleep() in mtk_pcie_en7581_power_up()
-        https://git.kernel.org/pci/pci/c/90fcb3d015ef
+[1] https://docs.kernel.org/process/submitting-patches.html
 
-	Krzysztof
+
+-- 
+Sincerely yours,
+Mike.
