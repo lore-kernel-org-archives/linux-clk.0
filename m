@@ -1,71 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299381AE003;
-	Mon, 23 Dec 2024 15:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D636748A;
+	Mon, 23 Dec 2024 15:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734966407; cv=none; b=L1oWSmi7tmjsC3PktCuoGZZeXtqSSkYzQGSNrXbgUyO+vtIKnF5BTwB6fr9xS9S8iBmQbW6xP+BEvOvD9OYwCO1oRNkRuLTn7xNGqP6FEYdeQ7s+JKJLxmgTFbjskYu4iw4zPeR7zR0Aynub98UUQuXBaZHkNdkMq4Vd9XiyvMA=
+	t=1734966974; cv=none; b=fg6V8jsZBbK/BoCWxzrAWAidTnpjcyJVvqyXrKU+KcQoaM7bHCQTsZe2GXN+OkMasoCM6pkjMTHjNLw/AqY6f312YVHlHPclcV+RfcnX/lSJg+xMt120nU2QHpZmTsm9KjQcnGo1MnmBuSHLY02fCtU+SBl+nPiR7VLhfMuO3zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734966407; c=relaxed/simple;
-	bh=gkto7QS9LdR/GtBNVxViKH+qvPII1SzIpBgCHoMbph0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ai/sBdzJCV7odaFFmOMB5qOSF00E2CxpzJylJoJsh6bVTlbLyXRXGO1sxpddJld9bdRPsORVb5UHOSN5+xBKNFvce49ulzmWHXuQh8yIxP7g5gKfR4mvdBzmnpEGux2ElMOuZtJ/WrzzKdaSr/UDTPVCM+t7ula/aYkL/eHstp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDhfQCeq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734966974; c=relaxed/simple;
+	bh=BB3R4LhpT1qumoCcyu94hcb/+Z5AodbxcVxv7XXNnlo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=D+5skRbPLVnTkDFjcLGAiILLpG3+MR+/+xod27q36ugox1MOd9VVe72MQCBgSAr++j0w+yUcQugW1DXBQsh/C6lmHMW0JgpD+VMQsypjMAlwvs8hsaeHPGK47cYPmkSWGa0w8CB1Z9ftF/zEHn67F3d35eJkJ6d0ie7XpaqGtvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/8PDBNA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDhfQCeq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FD8C4CED4;
-	Mon, 23 Dec 2024 15:06:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/8PDBNA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ABA3C4CED3;
+	Mon, 23 Dec 2024 15:16:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734966406;
-	bh=gkto7QS9LdR/GtBNVxViKH+qvPII1SzIpBgCHoMbph0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CDhfQCeq3nB0Ax3J8VoywUU9YTkgTAltQ5mzmjp+X6GheNrZIxObQUslcfQJi3YLF
-	 YrhJzATvmcBHd4FTqS9NfcXfxGHlxrJ69Vl5VQrBlGrkot2bN2Ir+ZZZBcxaeXRoYf
-	 AD1WJkR88TftMaycZuzngqFpuvWDCzoQLAWtAR9cz0Ew0wwcM2VkQw/0yniiN3E1rV
-	 sCqnbPSP6qteqTNCamWf7RB9QZ0r75y8TDmZAWBU1fxIGzw2GhT2t7GyYui7YsXmAR
-	 oaRfozW+g+4JC5wP1K5YH/6REV4b/z8GGMErHnJi2LAyOBn8oJA9gkPnC9lkVNptTH
-	 WE+xqLNm1UOmw==
-Date: Mon, 23 Dec 2024 16:06:44 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 12/18] dt-bindings: clock: imx8m-clock: add PLLs
-Message-ID: <ftlezlv6cjgtj7qigebbkqhfsdhrxbde7x7vnemvuag5cs74v3@ww3t3zgs7c7y>
-References: <20241222170534.3621453-1-dario.binacchi@amarulasolutions.com>
- <20241222170534.3621453-13-dario.binacchi@amarulasolutions.com>
+	s=k20201202; t=1734966973;
+	bh=BB3R4LhpT1qumoCcyu94hcb/+Z5AodbxcVxv7XXNnlo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=J/8PDBNAjDsbMHT4ohKjjYowkPAH8mHtko322ltly9LGNpsGn2abCfbajgZjkxjiG
+	 eWAEJNKTFt1BOllO+CrxjZg97NPoeWTng+3BPQyK5YsNDVjvJiiMlzVKXWMNk4XsRV
+	 rH9ia4oQSTR/QZ2B9+ibwQlr+PSGYVsDLHgmpvaknHODudO+5TE+0FOAx+PNJy6lv1
+	 oUwNgZeUtMCUtf+58quO0uw3w16aT9XTZllfis6IXgtwo1mkNCnVwOxwn2KyGB1wRO
+	 x20tu6Q1LmafO/5i6X5pxUUdUL4CBzrBQckDb782bczHoXH+huTZB93wBNFpBL+C+X
+	 1dg9lLVjt/+vw==
+Date: Mon, 23 Dec 2024 09:16:12 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241222170534.3621453-13-dario.binacchi@amarulasolutions.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: guoren@kernel.org, linux-riscv@lists.infradead.org, conor+dt@kernel.org, 
+ krzk+dt@kernel.org, sboyd@kernel.org, mripard@kernel.org, 
+ jassisinghbrar@gmail.com, dri-devel@lists.freedesktop.org, 
+ m.szyprowski@samsung.com, palmer@dabbelt.com, jszhang@kernel.org, 
+ aou@eecs.berkeley.edu, airlied@gmail.com, ulf.hansson@linaro.org, 
+ frank.binns@imgtec.com, linux-pm@vger.kernel.org, paul.walmsley@sifive.com, 
+ devicetree@vger.kernel.org, p.zabel@pengutronix.de, 
+ linux-clk@vger.kernel.org, matt.coster@imgtec.com, mturquette@baylibre.com, 
+ linux-kernel@vger.kernel.org, drew@pdp7.com, tzimmermann@suse.de, 
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, wefu@redhat.com
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20241223125553.3527812-4-m.wilczynski@samsung.com>
+References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
+ <CGME20241223125604eucas1p26b870756eeaf2a5666b70de3f7554c13@eucas1p2.samsung.com>
+ <20241223125553.3527812-4-m.wilczynski@samsung.com>
+Message-Id: <173496697225.830201.2249501258776075204.robh@kernel.org>
+Subject: Re: [RFC PATCH v2 03/19] dt-bindings: power: thead,th1520: Add
+ support for power domains
 
-On Sun, Dec 22, 2024 at 06:04:27PM +0100, Dario Binacchi wrote:
-> Though adding the PLLs to clocks and clock-names properties will break
-> the ABI, it is required to accurately describe the hardware. Indeed,
-> the Clock Control Module (CCM) receives clocks from the PLLs and
-> oscillators and generates clocks for on-chip peripherals.
+
+On Mon, 23 Dec 2024 13:55:37 +0100, Michal Wilczynski wrote:
+> Introduce a device tree binding for the T-HEAD TH1520 power domain
+> controller. This allows devices to specify their power domain
+> dependencies, thereby improving power management for subsystems such as
+> the GPU. The new YAML schema describes the power domain node for the
+> T-HEAD TH1520 SoC.
 > 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
+>  .../bindings/power/thead,th1520-power.yaml    | 42 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  .../dt-bindings/power/thead,th1520-power.h    | 18 ++++++++
+>  3 files changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/thead,th1520-power.yaml
+>  create mode 100644 include/dt-bindings/power/thead,th1520-power.h
 > 
-> Changes in v6:
-> - New
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Best regards,
-Krzysztof
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/power/thead,th1520-power.example.dtb: /example-0/firmware/aon: failed to match any schema with compatible: ['thead,th1520-aon']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241223125553.3527812-4-m.wilczynski@samsung.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
