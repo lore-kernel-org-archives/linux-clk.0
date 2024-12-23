@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751BF8827;
-	Mon, 23 Dec 2024 16:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B121B4127;
+	Mon, 23 Dec 2024 16:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734970834; cv=none; b=bsdxTmKzEeL9gr2Y5pwIlIOxByjNLh+ysKeKQJpGFAxRKZM0vjQVvsdCp2/Oo5cCSpi6T2Q87yxxEit0HG9fPbtTi1hkga5SmcAcePIRyOXNnJu2UXmdIia0pcw1PHRWew/+6Jdy2LUmTZD2P2cBCnU822dIgqhHo+YdEPtTbT0=
+	t=1734970945; cv=none; b=JTuLi7sKm2+2o8xfsmaRWYZV6rnWCjeHqhvQnDogGtDx+9+e8YfYJ1pfNsRmmhqOypxEdnykYbzUP5g1iNMomFWKELaMRht/2cz7kwoMx5LlG976JUjPujPIuGzbmbLRY/5L1l08QhjvfCchqPbtMlXaxvEeiCqr3L0rYsJdQhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734970834; c=relaxed/simple;
-	bh=7wlSzIwoKKWjdoIdeSM+QZG2X3+f0y+yiHRgSv58THs=;
+	s=arc-20240116; t=1734970945; c=relaxed/simple;
+	bh=s3eirBo87GbwMwKk9aMOYDlwNe9g2heQX4Fix86GvNk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cLHn+fCvsaWZhZdef3aSAcycjp+WFf6D1GwkWTgQoGQNzt/HscJiK6DvcGRqqJ9Z60GIIqezr8XVywS9ANsUkpoqGqSVn8eViT5zm9RJWixUXteRT+SS6C+Hm4FxYdpoZB96dc5aR1cctOetbmcKpbZBSjBtVoGxm3k730qll8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxWdDGj9; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=lP968+JEbJokNXtvmJf6HbP4EaiMsK3hv9MT/J8Tpo2xhG98wEyUtl1OUSPNwr7vDvFibQpvqmwQ7UNDnJlEI1HELM5AAsev7GLlOHJ8rCW9CwyDq8/zfWRvINIcsElF2aodZqT6w6Mpdyn292Q2OPFEIAy8L5WD6mOU0PLhN38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIeWYDfv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxWdDGj9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30517C4CED3;
-	Mon, 23 Dec 2024 16:20:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIeWYDfv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8777CC4CED3;
+	Mon, 23 Dec 2024 16:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734970833;
-	bh=7wlSzIwoKKWjdoIdeSM+QZG2X3+f0y+yiHRgSv58THs=;
+	s=k20201202; t=1734970944;
+	bh=s3eirBo87GbwMwKk9aMOYDlwNe9g2heQX4Fix86GvNk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sxWdDGj9YSbSC1WBGRHWSYTewVb+ZPldkEqXL4vM0AeJanifQ2kPqdckE167NKRSp
-	 BAqUhuEMso39C17m4XHtWbP8liF5eHdJ0J9ogSBNaH0JLipvAdqt6iP++V8GPkXXPm
-	 ChDcNNSnqCgQaN1+pa0Powj6NdZ2JGSRTeMB2PWtrFi2aGB7jTxriC0ezwoGCfCBGf
-	 zznf9hJEC44mQQR3/4kfgoz4U1kZRT9czeYjZj0Q8aDocDLE4OAJdZu91Wf0GGgbeY
-	 hc9KhMPinfbswIRvYIrNPwETK2JC1M2dXh816N8lVO6by0Po3LPm9icsogHV/wFdoP
-	 fPd38yk0QnD+Q==
-Message-ID: <902bfbef-7ebd-4397-b229-86611e65f4fa@kernel.org>
-Date: Mon, 23 Dec 2024 17:20:24 +0100
+	b=AIeWYDfvUumx4s7P5Sf1ZW/n4Mf0nPcuIHR7qlFYIEjm0OWMuskTSqiVSgh4hFXqh
+	 d6cyHbR/uSKOkZtO84AtNa3Y8eYeRFlFcTFRc41Fdr/S9PpW2UDHOiFo7jZca79g8F
+	 35VDwj9ua0tV058Z1GcKeS00hmIkLneqKCV00N5JWYT/qf49D064uC4RHcR/iB7jCB
+	 mD0ecP2KDgkidFtFR0OlMAJ61dqc+X+aclG5EyFnhrpPIW2sDViXzALCAiBB8SDIOh
+	 6NW9XHgJkUj9eVHodSD+SdwoliPsT5uF4BIq/meAuJLcKja5Jrk//6JKh1SJ/objWU
+	 ZVXk67p8L5mqw==
+Message-ID: <1699014b-8874-4756-8538-11c5fbfc383f@kernel.org>
+Date: Mon, 23 Dec 2024 17:22:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 06/19] soc: thead: power-domain: Add power-domain
- driver for TH1520
+Subject: Re: [RFC PATCH v2 08/19] dt-bindings: reset: Add T-HEAD TH1520 SoC
+ Reset Controller
 To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
@@ -49,8 +49,8 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
 References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
- <CGME20241223125608eucas1p25f0be9eb6fb7ab906f942201560dd881@eucas1p2.samsung.com>
- <20241223125553.3527812-7-m.wilczynski@samsung.com>
+ <CGME20241223125611eucas1p1acf9a7f030c4c8687f946c34f8043bcd@eucas1p1.samsung.com>
+ <20241223125553.3527812-9-m.wilczynski@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,112 +96,87 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241223125553.3527812-7-m.wilczynski@samsung.com>
+In-Reply-To: <20241223125553.3527812-9-m.wilczynski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 23/12/2024 13:55, Michal Wilczynski wrote:
-> The T-Head TH1520 SoC contains multiple power islands that can be
-> programmatically turned on and off using the AON (Always-On) protocol
-> and a hardware mailbox [1]. The relevant mailbox driver has already been
-> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
-> Introduce support for T-head TH1520 Mailbox driver");
-> 
-> This commit introduces a power-domain driver for the TH1520 SoC, which
-> is using AON firmware protocol to communicate with E902 core through the
-> hardware mailbox. This way it can send power on/off commands to the E902
-> core.
-> 
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+> Add a YAML schema for the T-HEAD TH1520 SoC reset controller. This
+> controller manages resets for subsystems such as the GPU within the
+> TH1520 SoC.
 > 
 > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-E.g.
-pmdomain: thead: Add driver for TH1520 AON
-
-
 > ---
->  MAINTAINERS                                |   1 +
->  drivers/pmdomain/Kconfig                   |   1 +
->  drivers/pmdomain/Makefile                  |   1 +
->  drivers/pmdomain/thead/Kconfig             |  12 ++
->  drivers/pmdomain/thead/Makefile            |   2 +
->  drivers/pmdomain/thead/th1520-pm-domains.c | 181 +++++++++++++++++++++
->  6 files changed, 198 insertions(+)
->  create mode 100644 drivers/pmdomain/thead/Kconfig
->  create mode 100644 drivers/pmdomain/thead/Makefile
->  create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
+>  .../bindings/reset/thead,th1520-reset.yaml    | 45 +++++++++++++++++++
+>  MAINTAINERS                                   |  2 +
+>  .../dt-bindings/reset/thead,th1520-reset.h    | 13 ++++++
+>  3 files changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
+>  create mode 100644 include/dt-bindings/reset/thead,th1520-reset.h
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42aef66bd257..173eeaf3bbe8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20200,6 +20200,7 @@ F:	drivers/firmware/thead,th1520-aon.c
->  F:	drivers/mailbox/mailbox-th1520.c
->  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
->  F:	drivers/pinctrl/pinctrl-th1520.c
-> +F:	drivers/pmdomain/thead/
->  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
->  F:	include/linux/firmware/thead/thead,th1520-aon.h
->  
-> diff --git a/drivers/pmdomain/Kconfig b/drivers/pmdomain/Kconfig
-> index 23c64851a5b0..91f04ace35d4 100644
-> --- a/drivers/pmdomain/Kconfig
-> +++ b/drivers/pmdomain/Kconfig
-> @@ -16,6 +16,7 @@ source "drivers/pmdomain/st/Kconfig"
->  source "drivers/pmdomain/starfive/Kconfig"
->  source "drivers/pmdomain/sunxi/Kconfig"
->  source "drivers/pmdomain/tegra/Kconfig"
-> +source "drivers/pmdomain/thead/Kconfig"
->  source "drivers/pmdomain/ti/Kconfig"
->  source "drivers/pmdomain/xilinx/Kconfig"
->  
-> diff --git a/drivers/pmdomain/Makefile b/drivers/pmdomain/Makefile
-> index a68ece2f4c68..7030f44a49df 100644
-> --- a/drivers/pmdomain/Makefile
-> +++ b/drivers/pmdomain/Makefile
-> @@ -14,6 +14,7 @@ obj-y					+= st/
->  obj-y					+= starfive/
->  obj-y					+= sunxi/
->  obj-y					+= tegra/
-> +obj-y					+= thead/
->  obj-y					+= ti/
->  obj-y					+= xilinx/
->  obj-y					+= core.o governor.o
-> diff --git a/drivers/pmdomain/thead/Kconfig b/drivers/pmdomain/thead/Kconfig
+> diff --git a/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
 > new file mode 100644
-> index 000000000000..3b61e92dde43
+> index 000000000000..46d0e6b8c712
 > --- /dev/null
-> +++ b/drivers/pmdomain/thead/Kconfig
-> @@ -0,0 +1,12 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
+> +++ b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +
-> +config TH1520_PM_DOMAINS
-> +	tristate "Support TH1520 Power Domains"
-> +	depends on TH1520_AON_PROTOCOL || COMPILE_TEST
 
+Drop blank line
 
-What sort of dependency is this? Looks build time, but you miss handling
-modules. You might need: https://lwn.net/Articles/944368/
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reset/thead,th1520-reset.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: T-HEAD TH1520 SoC Reset Controller
+> +
+> +description: |
 
-Test if it really builds if TH1520_AON_PROTOCOL is a module.
+Do not need '|' unless you need to preserve formatting.
 
-> +	select REGMAP_MMIO
-> +	help
-> +	  This driver enables power domain management for the T-HEAD
-> +	  TH-1520 SoC. On this SoC there are number of power domains,
-> +	  which can be managed independently. For example GPU, NPU,
-> +	  and DPU reside in their own power domains which can be
-> +	  turned on/off.
-> diff --git a/drivers/pmdomain/thead/Makefile b/drivers/pmdomain/thead/Makefile
+> +  The T-HEAD TH1520 reset controller is a hardware block that asserts/deasserts
+> +  resets for SoC subsystems.
+> +
+> +maintainers:
+> +  - Michal Wilczynski <m.wilczynski@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - thead,th1520-reset
+> +
+
+...
+
+>  RNBD BLOCK DRIVERS
+> diff --git a/include/dt-bindings/reset/thead,th1520-reset.h b/include/dt-bindings/reset/thead,th1520-reset.h
 > new file mode 100644
-> index 000000000000..adfdf5479c68
+> index 000000000000..a4958b2ed710
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/thead,th1520-reset.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> + * Author: Michal Wilczynski <m.wilczynski@samsung.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_TH1520_RESET_H
+> +#define _DT_BINDINGS_TH1520_RESET_H
+> +
+> +#define TH1520_RESET_ID_GPU	0
+> +#define TH1520_RESET_NUM_IDS	1
+
+Drop the NUM_IDS define. Number is not a binding.
+
+But this leads to another question: only one reset? Then reset-cells
+should be 0.
+
+> +
+> +#endif /* _DT_BINDINGS_TH1520_RESET_H */
+
 
 Best regards,
 Krzysztof
