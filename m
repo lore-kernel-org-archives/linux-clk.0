@@ -1,158 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEA454F81;
-	Mon, 23 Dec 2024 16:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C936116FF37;
+	Mon, 23 Dec 2024 17:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734971512; cv=none; b=CszCQCETovmK7g3PXBtKW/aULS8feY4ZjW1RRUkvnoIYnJvSSBj3R7JNaTOsiN5G9Ejqxx6dvDGl5ICNt81AXKxLlcql7utIMR3LHx79bdTEoDfIlJVEfrYYrvgrZBe8vQpjRMDel1RyobpSVo8FjIj6GACMeMzUaM7NQQAt7EI=
+	t=1734975441; cv=none; b=uZGdtyqN0F6SHxKu1rUjRFA6r8q0Bz5NXpHdoeus8+KWpL6xYSaiXvevaaY3neg9Yg0XjukY+Jvehz9qloPMs7GstSjRC0dgxqqGoAOpJxiwJ7xsWDVk7/TccZKmtug8Z8XdMiR+rfhnW+GVSCvxmJ/jq4mymLOkzAh5PoiHmGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734971512; c=relaxed/simple;
-	bh=w+QV/mB1TkcNRz22qPGBMzO1669gtw0sjjDXxZLS0ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SGthb1v5o72JSYfrlkIxQGIOh/Fycj1Ig/exfv3wpMKVEOJRwJybOGlA9beKSdPrDsEMDYfrcNUa5fDLtzX+KqzEwbSCS6WS9am2Kron1qscN9L8GSQNphQINUrchW0+9Z4UignkS4//XMRMJGiQqvq1GskTmWjVIAgF/iWDRcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxCuIiLM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734975441; c=relaxed/simple;
+	bh=mvbzwBvmS5VLAINt2ZKTFv+XDicvmvwnA/RWjqmiuxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VlKO+d9HT39Idkqmpjw7lF/VzSSFYEXzGkbEfF9O5xyWthND6ewX68mZnXqhARXUuDfWVS3Ne6eYf6bFmggC15wNPO/YnQPxmBLHrKmiNMgg8+yBzGhBSmOGOVVfBO9d+dNPmrjZuIF/51GFVp/lL2cjnSPzkFBSG9xH65i+caY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQv3sBzG; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxCuIiLM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C734BC4CED3;
-	Mon, 23 Dec 2024 16:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734971512;
-	bh=w+QV/mB1TkcNRz22qPGBMzO1669gtw0sjjDXxZLS0ps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KxCuIiLMWCOoFhkGB/Efi6bq45psfCemWTVlJ6X+jGmT0kiquKLM8AYW3CtfcH7Kx
-	 SOOeOaacl9o24FO0KtbJeP/oPO3rq8pomEiWI1BqWicuYz9PjS+m7UQ3UdK3QulANU
-	 cHgeAhjoZCl6YEtXSvbF/WbxKBrb4fB1Y79yaHcuYLWYsnPri8ukMTUjsSF0nilkjo
-	 3fZyKDeNBjlsfiiq/Xmx5k/PFOAUBRx/56xuqcxdRJBOqAx2KLlsPVCWXycMfF1q+k
-	 4jV0Ht9BbZXIAtkuRKuQMLv5ossb5j0qDmFSa4xNU+mMyESxczRN6dttK5SctnZJu9
-	 37MC5TVjDvfGQ==
-Message-ID: <6d488724-c315-4ba8-954f-1eaee3eb701d@kernel.org>
-Date: Mon, 23 Dec 2024 17:31:42 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQv3sBzG"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-728ea1573c0so3639099b3a.0;
+        Mon, 23 Dec 2024 09:37:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734975439; x=1735580239; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5BPXUs7XDFyKDHNZ078Dqly+mBHZoWSc+mzflUGYTs=;
+        b=OQv3sBzGYO7n4hRlsOMkuSFFOLWvlsPARwpB7DG5Mvdw0wv11p4djA5znxaZEq68+s
+         Ctqq/bFL4Bh/x0SC74keO/8/2tW7Y3KDUJcB6HrHJa8EIF9J6yH/XR5hE9WLy/S8QmLr
+         5lg41L49i60OljnUmyc66rZ78DrErUseAPbp5cjW4rZjcAyAjWsPRQ5T3XwyDmGdsWMr
+         lXH5IA+u3mcpP3p3i+XfWixJsOaf3EP7uhHSBzEgsVXgV7ZgbmayEINLFr1bWF1/D0mt
+         kdC0wOefktkgJdtx2vuEKwoW/nGH70/QBxp1kwC0aSrL6XWY9txco31y4oBH+8j8Vzfo
+         lkHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734975439; x=1735580239;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T5BPXUs7XDFyKDHNZ078Dqly+mBHZoWSc+mzflUGYTs=;
+        b=kdxRalSYiT09pjKGxU+skWLnhLR9AnFdlWKEW3OaI8M7Uy1wfPq1Wdpf643vgLtajt
+         MKIz+08+SYv8p55JDHtHVxSwiIGrQKc8eEFrQOK2Ka918uyqhSPI1xiU78CJSjvmMoN+
+         HPEy+63Om1pUgpct5EWTU8v6QCLMJ2RWcUBUx59UlzvvIn04PaG/ZopB6xxvq+8W9n+y
+         7vimuCL2N5KE3qCrJ7BJGY4ZM/0hlW5d/aVkR2n7ep+3tRLM7XL2C9+2u8UqePOYzVHl
+         FlBymGGxoM78t62aYCYnkVxyhHpmUCVy3O2Ha6L1hrw3ScIQsZJU8ufKbhpwtlzGbvmo
+         knXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHtAJZyGSecS6CiQIjoqJtEW1v0hckljnC3jvsq8EUnKCoaZnkJWTtVhnr/6nKjxuXzUr1bd9r6Q2LiCVa@vger.kernel.org, AJvYcCW4JM5clb2vud70idF1huS+PU3xeCIq4Gu4kYqk5hjWpmtYwHp45FeydW4fruvRYK1m4Jkxe3sNGmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyayN+lD1DyRWXNaCYfhS/WNowOp+pS6AXjd7QjfT1GwobI62Al
+	JzW8k0Ob4iH8ujjTk36sJGpufmrub5X80oDpEM1+5qE2iXLSzpZ3fUkbzD06
+X-Gm-Gg: ASbGnct49P1jOx9Vzi/HDty+70PqZeageZST6OS63rw+EfFOTCuzmWo3NWHBB4FNRJf
+	8s2QcqqZQqH0457xskqCFqVUGev0zRLjPmlTz3diDMZcZUvMp3Tv/uyYrjf/YaDT+OpLIbRtNvh
+	lcNFNaVpmRbhhYAomus+4B0KESIkLDI9AeC8NnffvrGjy4Q31YOfV/xltbanOLjpIgUz+cyvfXT
+	e2L+bY2/3HfCkKvcEJ1ca3vEFU0UAftVeylNDTcsmsfqG5Z3jPvx/ReKfwiBry53d7B+tV1RdpK
+	xNCH36I=
+X-Google-Smtp-Source: AGHT+IE4KvKdBQ8/TWxuITx2WijanHajsN1ggmNoomTbz9HF5hlCh156tQlqKmT+12J78X1dFeegsg==
+X-Received: by 2002:a17:90b:514d:b0:2f1:2fa5:1924 with SMTP id 98e67ed59e1d1-2f452ec1ceemr17475655a91.26.1734975439017;
+        Mon, 23 Dec 2024 09:37:19 -0800 (PST)
+Received: from prasmi.. ([2401:4900:1c07:689d:b086:b856:9280:38c3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2ed52cec5sm10664032a91.7.2024.12.23.09.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Dec 2024 09:37:18 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/6] Add SYS and GIC clock entries for RZ/V2H(P) SoC
+Date: Mon, 23 Dec 2024 17:37:02 +0000
+Message-ID: <20241223173708.384108-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 12/19] dt-bindings: gpu: Add compatibles for T-HEAD
- TH1520 GPU
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- frank.binns@imgtec.com, matt.coster@imgtec.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
- jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
- <CGME20241223125617eucas1p25256081c64ae4e64a12c6ec427f75e8e@eucas1p2.samsung.com>
- <20241223125553.3527812-13-m.wilczynski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241223125553.3527812-13-m.wilczynski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/12/2024 13:55, Michal Wilczynski wrote:
-> Add a new SoC-specific compatible ("thead,th1520-gpu") for the T-HEAD
-> TH1520 GPU, alongside the Imagination BXM family compatible
-> ("img,img-bxm").  This documents the GPU integration on the T-HEAD
-> platform.
-> 
-> Also adjust clock name constraints to accommodate a second clock named
-> "sys" instead of "mem" for T-HEAD. This is achieved by changing the
-> order, and making the 'sys' appear before 'mem'.
-> 
-> Provide example of the new GPU node.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../bindings/gpu/img,powervr-rogue.yaml       | 32 +++++++++++++++++--
->  1 file changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index 4078cc816ea1..1eb1c15baec4 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -15,7 +15,10 @@ properties:
->      items:
->        - enum:
->            - ti,am62-gpu
-> -      - const: img,img-axe # IMG AXE GPU model/revision is fully discoverable
-> +          - thead,th1520-gpu
-> +      - enum:
-> +          - img,img-axe # IMG AXE GPU model/revision is fully discoverable
-> +          - img,img-bxm
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This cannot be flexible. You now changed am62-gpu. Look how other
-bindings do it: oneOf with two lists.
->  
->    reg:
->      maxItems: 1
-> @@ -27,8 +30,8 @@ properties:
->    clock-names:
->      items:
->        - const: core
-> -      - const: mem
->        - const: sys
-> +      - const: mem
+Hi All,
 
-That's ABI break, so no.
+This patch series adds support for clock and reset entries for GIC and
+SYS, along with some cleanup and fixes to the CPG family driver.
 
-Widest constraints - min/maxItems - stay here. In allOf:if:then you
-specify the list of items. See:
-https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L127
+v1->v2
+- Updated commit description in patch 1/6
+- Updated fixes tag commit header in patch 1/6
+- Introduced new patch to support mstop configration per-bit
+  instead of group based
 
-You will need to adjust existing variants - list the items there.
+Cheers,
+Prabhakar
 
->      minItems: 1
->  
-Best regards,
-Krzysztof
+Lad Prabhakar (6):
+  clk: renesas: rzv2h: Fix use-after-free in MSTOP refcount handling
+  clk: renesas: rzv2h: Relocate MSTOP-related macros to the family
+    driver
+  clk: renesas: rzv2h: Simplify BUS_MSTOP macros and field extraction
+  clk: renesas: rzv2h: Switch MSTOP configuration to per-bit basis
+  clk: renesas: r9a09g057: Add reset entry for SYS
+  clk: renesas: r9a09g057: Add clock and reset entries for GIC
+
+ drivers/clk/renesas/r9a09g047-cpg.c |   2 +
+ drivers/clk/renesas/r9a09g057-cpg.c |   7 ++
+ drivers/clk/renesas/rzv2h-cpg.c     | 167 +++++++++++++---------------
+ drivers/clk/renesas/rzv2h-cpg.h     |  13 ++-
+ 4 files changed, 96 insertions(+), 93 deletions(-)
+
+-- 
+2.43.0
+
