@@ -1,55 +1,55 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7051B21AE
-	for <linux-clk@vger.kernel.org>; Mon, 23 Dec 2024 12:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806871B4126
+	for <linux-clk@vger.kernel.org>; Mon, 23 Dec 2024 12:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734958581; cv=none; b=dtMF6hHldY5wNrhEnltZRzojWD6pfDefGCrTJQ7bNwP/oGB55W0HZHi1MRT518vzYj5bBZMjlX0qfRczoEIMnK16oYNTDXAS/ZgfQ1IhXwdf28qLYqxkzLgCr4vNMl+Ucsl4slSr702k2nfVsbe/4mhpHSS+pm9k4qaj0CrKD64=
+	t=1734958582; cv=none; b=A9oN9GPhh9yylHLTQ2X4X5RSfUE/LPMCapn+/YlB/AhTqcGXZMbjBO7m+rNwa9sFln6w49sQBnBxFhV6AU6xkuL9VFJZj2XNIjce0F6uXH/eRsBMRfI5YFTvJDawrf3AmeXQK81lmUdhpLGKs84DMPr1sWjp9iyoa/j4UxSQ/m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734958581; c=relaxed/simple;
-	bh=95DKUk809pnnSS/25r4k3ditR4Lo5N36BP20WzHYARg=;
+	s=arc-20240116; t=1734958582; c=relaxed/simple;
+	bh=AvOuBhpS/RO4n/V2TKEgU+sci1oVNo2VYWPMwnRe7lc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=kDSA8w03+cCbYKyoDJ0Kuvp0XCUp8+8VRBOChBLSWv6PAezn6TeyhQvr4/VXjN78+SRDgtdVBTjy8YlyfFnjHQShn/r2A9diKH5PF6t8Swpz0ThXwhiV1snCEqndBBj0l1uNZxenXYRQ5cxUyMfjPqD32rEYgDDO3Aw683/jHIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FJnfsJpm; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=ISZLDnSkP7I5xQPtUIG4JuoH1FDNSavzy4sC7/3rX0mxYI7aZ/GtcVVC1JOEwH5doR3L9qiWDFx/tIw4ZWEym47izNAbzgX4cvrqoqjgThvC9RiJj1MVHqAIKkfvcL4HM+btq4GX5x/MGH67/ThuVXwTD1WgVPGVKf5SAUA3xsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y9zZlokr; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FJnfsJpm"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y9zZlokr"
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241223125613euoutp0230cc3ee084943c946c8811a2ab6571ce~Tz6FwXIuf0908209082euoutp024
-	for <linux-clk@vger.kernel.org>; Mon, 23 Dec 2024 12:56:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241223125613euoutp0230cc3ee084943c946c8811a2ab6571ce~Tz6FwXIuf0908209082euoutp024
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241223125611euoutp019d69007e6217c0aff2ba8423ecbeefe7~Tz6DQ--hT3222032220euoutp011
+	for <linux-clk@vger.kernel.org>; Mon, 23 Dec 2024 12:56:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241223125611euoutp019d69007e6217c0aff2ba8423ecbeefe7~Tz6DQ--hT3222032220euoutp011
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1734958573;
-	bh=rsVgMSE0qrD9/Dm6ayVky1t6/68XWrLqc/Q39UlEoYg=;
+	s=mail20170921; t=1734958571;
+	bh=db70OtbkcGzgNDsJliSTwbkZ7rSF5HHS/kqbDimn6GA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FJnfsJpmkGdKoQcI+Ljv74o1o22d1XTgTh1Lgpquyjb26kDAdDrIGqtTxt7CFgPnl
-	 Z9lc7ybkIGcbEdLWbU8i+CbxENKIbk3ENpZdmmJocbi1i7YuExs4gjOYEOn3172TBe
-	 UaLRK5bWgr9yBxW65Wz2AVNbDVV69IkR6/aZJIqc=
+	b=Y9zZlokrpLTziVg1m4j/Btvq0GaSoSfnUc0S/tyAiwExPV/d+NqkV7vKLrg4rHCTN
+	 yLx9VaZSIYc821nuw9dV0xIz1ZWuJrR1IB+vUVXNJw9uBSvzijsahksPc0u0a/d7c/
+	 +XhmPN+g9MI7PI5GD2REIq8WQJwQvcr+a/XwccNs=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241223125613eucas1p180dfd9f65b3bd810f1e049740d45d02e~Tz6FWguXl2328723287eucas1p1c;
-	Mon, 23 Dec 2024 12:56:13 +0000 (GMT)
+	20241223125610eucas1p13d0d6c558e8d20ca73db6b12a36a956c~Tz6C1Q7an1526615266eucas1p1e;
+	Mon, 23 Dec 2024 12:56:10 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 41.C6.20821.DED59676; Mon, 23
-	Dec 2024 12:56:13 +0000 (GMT)
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 1C.B6.20821.AED59676; Mon, 23
+	Dec 2024 12:56:10 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241223125612eucas1p1d27f793116fa405911f07cfc926c0129~Tz6E-L9jd2328723287eucas1p1b;
-	Mon, 23 Dec 2024 12:56:12 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241223125610eucas1p2721f8a199bc6ff16345b3b46fc44dd63~Tz6Cc7BJ81252912529eucas1p2_;
+	Mon, 23 Dec 2024 12:56:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
 	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241223125612eusmtrp17620118d05e2ae0e860868a2b1c8fe66~Tz6E8UZRU2051220512eusmtrp1a;
-	Mon, 23 Dec 2024 12:56:12 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-82-67695ded60de
+	20241223125610eusmtrp1f47963956bbde8dc246f60cfda0af461~Tz6CcIyqW2051220512eusmtrp1V;
+	Mon, 23 Dec 2024 12:56:10 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-79-67695dea61f5
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 3E.73.19654.CED59676; Mon, 23
-	Dec 2024 12:56:12 +0000 (GMT)
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 27.F3.19920.AED59676; Mon, 23
+	Dec 2024 12:56:10 +0000 (GMT)
 Received: from AMDC4942.home (unknown [106.210.136.40]) by
 	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241223125611eusmtip2d22b094104dd478af478866667b01b85~Tz6DiN4vn3173831738eusmtip2M;
-	Mon, 23 Dec 2024 12:56:11 +0000 (GMT)
+	20241223125608eusmtip21b1fb906d48b2037ed6ae100eecaa9fb~Tz6BEXflX2259822598eusmtip2J;
+	Mon, 23 Dec 2024 12:56:08 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
 To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
@@ -63,10 +63,10 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
 	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
 	<m.wilczynski@samsung.com>
-Subject: [RFC PATCH v2 09/19] reset: thead: Add TH1520 reset controller
- driver
-Date: Mon, 23 Dec 2024 13:55:43 +0100
-Message-Id: <20241223125553.3527812-10-m.wilczynski@samsung.com>
+Subject: [RFC PATCH v2 07/19] riscv: Enable PM_GENERIC_DOMAINS for T-Head
+ SoCs
+Date: Mon, 23 Dec 2024 13:55:41 +0100
+Message-Id: <20241223125553.3527812-8-m.wilczynski@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241223125553.3527812-1-m.wilczynski@samsung.com>
 Precedence: bulk
@@ -76,270 +76,84 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xbZRz1u/f23tvO4l2Z2yeIzOJMUHkZST50WzBBcolRcVGZIw7u5MKY
-	ULYWxlAjzAKyrgwZ4rLSCsMhDfKcpbxBuo7CeDkQaCKUoZDBAjY8RsTHZrt2uv/O75zz+875
-	JR+NS1pJLzpZls7LZVyKlBQRxr6tkYCVD5KTglsqPFD/VCWGmv/SUKi2awRD5eYRAbKNGTD0
-	8x07ieoXfqLQYtdpAk3qdRRS9jWQaEljI9Gq2iZA4+1aEq0XmgEyrueSqM48Q6GGO+UYurTa
-	TKDLre0A5Z/5ToBuXH8Nzdj6CbQ0rsZRvuYxdK+zlUJ3J5sIVPZ7D4UMy8UCZKmLQbk9XxHh
-	T7F2ax7FLi8tEezVgg2K7dqsINg2zQzFqtuGAHul5gzJTk92kuw3A2+zs2ctGPvD5Ww2t64P
-	Y4v+CWbt3RMke85QA9gx5RQVLTkk2pvApySf5OVB++NFRxd7F6jjJaGnls5eoHKA+QUVENKQ
-	eQmuDesxFRDREkYPoPW8hXQNGwDWNCrdyjqAqvpB4sFK0cIXbqEawHMD31OuYRnAv9s7caeL
-	ZF6EN6vLBU5hB5NHwLxrp4FzwJlbABrntaTT5clEw7H2YsqJCWYPrJirAE4sZsLhkKqAcuX5
-	wp7e4fuvCh18rcrq9myHAxfn73fCHR5lcxnuDIBMnQj+2KgVuJYjYOngqLu4J7xtMbgffRIO
-	lqjdfBq82byGu/CnsE1tceNX4PTIn46itCPAHza0B7noV2HP3B+4k4aMB7SubHdV8IDnjRfc
-	tBgW5Etc7mdhqbrwv9ARvRFzYRYuNxmpL8HTmoeO0Tx0jOb/3AqA14BdfIYiNYlXhMj4zEAF
-	l6rIkCUFfpiWegU4PvfgXctaK9DdXg00AYwGJgBpXLpDbJIkJ0nECVzWx7w8LU6ekcIrTMCb
-	JqS7xHsSfHkJk8Sl8x/x/HFe/kDFaKFXDlZgEYXIrjKPnwjz2s0+83zwNt270zlZkdFe0zEB
-	Qf6HO30Cek+EcUrUZN8WtV91rPfztaojLTP1eu0T+qHftoo00dZK3ey+uaqdm9lhn33r5783
-	PqY7Iev90Jqm+E/SD3T0Z0ca+k7VF8nSDt06IkzLFEmUo97dw8MGe3xUy9dmi3wi9pEOfXii
-	p6nx4mSoLWSriheOHnx9yj8z/5dj7+0ebbxuKtt65/A9nwhrR5VHZmJkVO4N79rl0rYDurjC
-	ShFdoreFL4an/1odUbwyAE8ScbETftek4wuxXGrbpX264vpe6JM4u7Jx0E/LcX4235fnzT07
-	Sdlbb/h5JGy+ufmoVkoojnIhz+FyBfcvg2aCVEsEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsVy+t/xe7pvYjPTDRYu17E4cX0Rk8XW37PY
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxiHd+69vbd0AS+FjRM3J3ZxiSwiGhZPokPn2HI1ZGFzzulGpMod
+	spVi2jJhKQ7WUj6sQ1RkFBwfIdqwYofQSsvX7IBC6yofo4ICugyDZZ2ICBEGOGjr5n+/877P
+	Oe/zJoeL8xvJ1dwksYyViIUiAckjjJ1zjo0TcUmJEfVn1qGum1UYMvyjoZCuxYGh8nYHB432
+	NWDo95lJEl2+10Oh+y1ZBHJqL1BI0aknkUszSqIp9SgH9ZvLSDR9qh0g47SSRLXtIxTSz5Rj
+	qHLKQKDqRjNAqryLHNRrew+NjHYRyNWvxpFKswo9bW6k0JKzjkClD9oo1OAu5CBr7X6kbDtH
+	7HyNmRzMphi3y0Uwv+Y+ppiW2QqCMWlGKEZtug6YKzV5JDPsbCaZH7s/ZO6ctGJMffW3jLK2
+	E2MKFiOYydYBkvm+oQYwfYqbVCz/IG97AitK+pqVbIqK5x3tMOrwY+f80pTFOioT2Kl84MeF
+	dCS0WcZBPuBx+bQWwJnzObj38BhATWGrrzMN4MPmJuzZFbPiDsfbuATgoj3XR7kB7G7X4ysU
+	SW+Bdy+Ve6hgOpuA2R1ZHgqnxwE0jpWRK1QQHQudeUMeFYJeD+f6mzkr2Z/eAZUKtU9xLWy7
+	9pvnVT96J9TlDwIvEwi7S8aIlYwvMwpDqccc0nU8eNle6pONhj9c7/DlIDhhbfA9+iq0n1UT
+	3pwC7xoe4d4shya11Ze3wWHH/LIod3nABqg3b/KW34Hls05PGdIBcPDvQK9CADxjLMa9ZX+Y
+	q+J76TdgkfrUf0MdWqNPhoFN+SXYabBO89wymueW0fw/twLgNSCETZUmJ7LSzWL2eLhUmCxN
+	FSeGH0lJvgKWP7d9yfqoEVyYmAq3AIwLLABycUGwv4WflMj3TxCmf8NKUg5JUkWs1AJe4RKC
+	EP/1CWtZPp0olLFfsewxVvKsi3H9Vmdi+ecH5rc+2fu+zbHQEz8VHz0mTTse2poHX2J3Xc2z
+	f64NvRF6q2BhNyO/rzo9XDdH3JYGhRugWfTmvq7cPZknUqoWsjIG9C+c/LIhzX4kveTwwcjY
+	t1TFcWG9J2ziHseOyrQhXoU5RGablz+59jaeU7BvJmYpurd/Va741usHYiwo6N2KLz7Z8KlL
+	tKgd+OVGVJUuchuGZuVr3Kqz83GWj3/O2aX8bvuLEZKn4qKLe7aQKfEBw+Hj1ca+n+TCj+o3
+	ake35gTXK/ZXynIkuiFd4OHFB1fvhe2dFrz8x233X1F9TZzgNY7CBfMHMapWmfNQQPFn6QfU
+	fwpCi3rLdhdmPDRlmASE9KhwcxgukQr/BfWoE0ZLBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsVy+t/xe7qvYjPTDXZ/ZLY4cX0Rk8XW37PY
 	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWXzsucdq
 	cXnXHDaLz71HGC22fW5hs1h75C67xfqv85ksFn7cymKxZMcuRou2zmWsFhdPuVrcvXeCxeLl
 	5R5mi7ZZ/Bb/9+xgt/h3bSOLxex3+9kttryZyGpxfG24Rcv+KSwOch7vb7Sye7x5+ZLF43DH
 	F3aPvd8WsHjsnHWX3aNn5xlGj02rOtk87lzbw+Yx72Sgx/3u40wem5fUe7SsPcbk0f/XwOP9
 	vqtsHn1bVjF6XGq+zh4gFKVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
-	k5Kak1mWWqRvl6CX8eLgU/aCyaYVL7unszcwHtHpYuTkkBAwkeh/2s7UxcjFISSwlFHi+IkL
-	jBAJGYlr3S9ZIGxhiT/Xutggil4xSrRMOwqWYBMwkniwfD4riC0isJhFYu++SpAiZoG3jBLX
-	Z24EKxIW8JP4vPcs2FQWAVWJBQ8XgNm8Ag4SZ7o62CE2yEvsP3iWGcTmBIqv6boBViMkYC/x
-	79QHNoh6QYmTM5+AzWQGqm/eOpt5AqPALCSpWUhSCxiZVjGKpJYW56bnFhvpFSfmFpfmpesl
-	5+duYgQmmG3Hfm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeA8JZaYL8aYkVlalFuXHF5XmpBYfYjQF
-	unsis5Rocj4wxeWVxBuaGZgamphZGphamhkrifOyXTmfJiSQnliSmp2aWpBaBNPHxMEp1cA0
-	87DDW5Yt5yVO7OQ67PT3yOoqFo0v5wr1ps5fa9wu6MEcra3ZJbeEJdvX4P52gejzUz3ffUyc
-	2hChVrtG0N7a89cW/YBjht96l78Jm8HP/OriiWKPql1WCg84fXK2ppzd//JyJWu2ce4NsemB
-	+1o+OT7YucjsSMeflR67t029kX3x7xl3lhMHuPacnRrXz7UjYbvG/o12R5w3dk9k4bmjkMga
-	y3O2XyvofP/pVUz50ifvrOe6b3n9IGNP3tK8Z//86i4VvzVaus31Tvlp3Wohw8kzFndkebxP
-	1Y38nK03o6yyPZz3dmDFJaEmQ9ljvzb02lrOYZ/OLDDP3i8t1IbT4f1hI7uVtdJsttoluUFK
-	LMUZiYZazEXFiQALVyeRuQMAAA==
-X-CMS-MailID: 20241223125612eucas1p1d27f793116fa405911f07cfc926c0129
+	k5Kak1mWWqRvl6CXcXTbGuaCKZwVLdPXsDcwnmbvYuTkkBAwkdjVfJ+1i5GLQ0hgKaPE1UOz
+	mCASMhLXul+yQNjCEn+udbFBFL1ilPg3dw0jSIJNwEjiwfL5rCC2iMBiFom9+ypBipgF3jJK
+	XJ+5EaxbWMBP4vy0uWANLAKqEj8v7wFr4BWwl2hp7oE6Q15i/8GzzCA2p4CDxJquG2D1QkA1
+	/059YIOoF5Q4OfMJ2ExmoPrmrbOZJzAKzEKSmoUktYCRaRWjSGppcW56brGhXnFibnFpXrpe
+	cn7uJkZggtl27OfmHYzzXn3UO8TIxMF4iFGCg1lJhPeQUGa6EG9KYmVValF+fFFpTmrxIUZT
+	oLsnMkuJJucDU1xeSbyhmYGpoYmZpYGppZmxkjiv2+XzaUIC6YklqdmpqQWpRTB9TBycUg1M
+	Ur82Sx+ev+PgTNW5/30s3kpMcHNM0F176/vefr5i1cu3tOVe/s09oSu5+rfcpuOei09deTHZ
+	vzmc736E65eyz77PzDLWG53Le/7fYn6HHJfFi787am+wtC1mjmZefuvS638ptZ/+SL0IPPG0
+	cnOMm7Duc8cT66Y5r2+YVlV8PbL8mtiRi+vuCJp82OOU+GFLz+xSDamdJ5x4lTP23H3Co7ho
+	z8I9LzcZHw+91Ckzr0jtLduOSjGFdRVTzsxQ6vRbfsmb9fTLU5fZvPOiD/2tKj3tvVmA+8BU
+	+Yh9GZc2rX419U4v+8WauA0a7P7zFSZEbRWN8I+PPOi65FrfZrYp8Yq7FkZcu+jnvXttS7x3
+	ywUlluKMREMt5qLiRADvTtLnuQMAAA==
+X-CMS-MailID: 20241223125610eucas1p2721f8a199bc6ff16345b3b46fc44dd63
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241223125612eucas1p1d27f793116fa405911f07cfc926c0129
+X-RootMTR: 20241223125610eucas1p2721f8a199bc6ff16345b3b46fc44dd63
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20241223125612eucas1p1d27f793116fa405911f07cfc926c0129
+X-CMS-RootMailID: 20241223125610eucas1p2721f8a199bc6ff16345b3b46fc44dd63
 References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
-	<CGME20241223125612eucas1p1d27f793116fa405911f07cfc926c0129@eucas1p1.samsung.com>
+	<CGME20241223125610eucas1p2721f8a199bc6ff16345b3b46fc44dd63@eucas1p2.samsung.com>
 
-This patch introduces the reset controller driver for the T-HEAD
-TH1520 SoC. The controller manages hardware reset lines for various SoC
-subsystems, such as the GPU. By exposing these resets via the Linux
-reset subsystem, drivers can request and control hardware resets to
-reliably initialize or recover key components.
+T-Head SoCs feature separate power domains (power islands) for major
+components like the GPU, Audio, and NPU. To manage the power states of
+these components effectively, the kernel requires generic power domain
+support.
+
+This commit enables `CONFIG_PM_GENERIC_DOMAINS` for T-Head SoCs,
+allowing the power domain driver for these components to be compiled and
+integrated. This ensures proper power management and energy efficiency
+on T-Head platforms.
+
+By selecting `PM_GENERIC_DOMAINS`, we provide the necessary framework
+for the power domain drivers to function correctly on RISC-V
+architecture with T-Head SoCs.
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- MAINTAINERS                  |   1 +
- drivers/reset/Kconfig        |  10 +++
- drivers/reset/Makefile       |   1 +
- drivers/reset/reset-th1520.c | 151 +++++++++++++++++++++++++++++++++++
- 4 files changed, 163 insertions(+)
- create mode 100644 drivers/reset/reset-th1520.c
+ arch/riscv/Kconfig.socs | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index db8c55058c29..38130ae25c6f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20202,6 +20202,7 @@ F:	drivers/mailbox/mailbox-th1520.c
- F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
- F:	drivers/pinctrl/pinctrl-th1520.c
- F:	drivers/pmdomain/thead/
-+F:	drivers/reset/reset-th1520.c
- F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
- F:	include/dt-bindings/reset/thead,th1520-reset.h
- F:	include/linux/firmware/thead/thead,th1520-aon.h
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 5b3abb6db248..fa0943c3d1de 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -272,6 +272,16 @@ config RESET_SUNXI
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index f51bb24bc84c..c414dc618b66 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -48,6 +48,7 @@ config ARCH_THEAD
+ 	bool "T-HEAD RISC-V SoCs"
+ 	depends on MMU && !XIP_KERNEL
+ 	select ERRATA_THEAD
++	select PM_GENERIC_DOMAINS if PM
  	help
- 	  This enables the reset driver for Allwinner SoCs.
+ 	  This enables support for the RISC-V based T-HEAD SoCs.
  
-+config RESET_TH1520
-+	tristate "T-HEAD 1520 reset controller"
-+	depends on ARCH_THEAD || COMPILE_TEST
-+	select REGMAP_MMIO
-+	help
-+	  This driver provides support for the T-HEAD TH1520 SoC reset controller,
-+	  which manages hardware reset lines for SoC components such as the GPU.
-+	  Enable this option if you need to control hardware resets on TH1520-based
-+	  systems.
-+
- config RESET_TI_SCI
- 	tristate "TI System Control Interface (TI-SCI) reset driver"
- 	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 677c4d1e2632..d6c2774407ae 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -35,6 +35,7 @@ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
- obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-+obj-$(CONFIG_RESET_TH1520) += reset-th1520.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
- obj-$(CONFIG_RESET_TI_TPS380X) += reset-tps380x.o
-diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-new file mode 100644
-index 000000000000..10ca200690d5
---- /dev/null
-+++ b/drivers/reset/reset-th1520.c
-@@ -0,0 +1,151 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2024 Samsung Electronics Co., Ltd.
-+ * Author: Michal Wilczynski <m.wilczynski@samsung.com>
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/reset/thead,th1520-reset.h>
-+
-+ /* register offset in VOSYS_REGMAP */
-+#define TH1520_GPU_RST_CFG		0x0
-+#define TH1520_GPU_RST_CFG_MASK		GENMASK(2, 0)
-+
-+/* register values */
-+#define TH1520_GPU_SW_GPU_RST		BIT(0)
-+#define TH1520_GPU_SW_CLKGEN_RST	BIT(1)
-+
-+struct th1520_reset_priv {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *map;
-+};
-+
-+static inline struct th1520_reset_priv *
-+to_th1520_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct th1520_reset_priv, rcdev);
-+}
-+
-+static void th1520_rst_gpu_enable(struct regmap *reg)
-+{
-+	int val;
-+
-+	/* if the GPU is not in a reset state it, put it into one */
-+	regmap_read(reg, TH1520_GPU_RST_CFG, &val);
-+	if (val) {
-+		regmap_update_bits(reg, TH1520_GPU_RST_CFG,
-+				   TH1520_GPU_RST_CFG_MASK, 0x0);
-+	}
-+
-+	/* rst gpu clkgen */
-+	regmap_set_bits(reg, TH1520_GPU_RST_CFG, TH1520_GPU_SW_CLKGEN_RST);
-+
-+	/*
-+	 * According to the hardware manual, a delay of at least 32 clock
-+	 * cycles is required between de-asserting the clkgen reset and
-+	 * de-asserting the GPU reset. Assuming a worst-case scenario with
-+	 * a very high GPU clock frequency, a delay of 1 microsecond is
-+	 * sufficient to ensure this requirement is met across all
-+	 * feasible GPU clock speeds.
-+	 */
-+	udelay(1);
-+
-+	/* rst gpu */
-+	regmap_set_bits(reg, TH1520_GPU_RST_CFG, TH1520_GPU_SW_GPU_RST);
-+}
-+
-+static void th1520_rst_gpu_disable(struct regmap *reg)
-+{
-+	regmap_update_bits(reg, TH1520_GPU_RST_CFG, TH1520_GPU_RST_CFG_MASK, 0x0);
-+}
-+
-+static int th1520_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct th1520_reset_priv *priv = to_th1520_reset(rcdev);
-+
-+	switch (id) {
-+	case TH1520_RESET_ID_GPU:
-+		th1520_rst_gpu_disable(priv->map);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int th1520_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct th1520_reset_priv *priv = to_th1520_reset(rcdev);
-+
-+	switch (id) {
-+	case TH1520_RESET_ID_GPU:
-+		th1520_rst_gpu_enable(priv->map);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct reset_control_ops th1520_reset_ops = {
-+	.assert	= th1520_reset_assert,
-+	.deassert = th1520_reset_deassert,
-+};
-+
-+const struct regmap_config th1520_reset_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.fast_io = true,
-+};
-+
-+static int th1520_reset_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct th1520_reset_priv *priv;
-+	void __iomem *base;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	priv->map =
-+		devm_regmap_init_mmio(dev, base, &th1520_reset_regmap_config);
-+	if (IS_ERR(priv->map))
-+		return PTR_ERR(priv->map);
-+
-+	priv->rcdev.owner = THIS_MODULE;
-+	priv->rcdev.nr_resets = TH1520_RESET_NUM_IDS;
-+	priv->rcdev.ops = &th1520_reset_ops;
-+	priv->rcdev.of_node = dev->of_node;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+static const struct of_device_id th1520_reset_match[] = {
-+	{ .compatible = "thead,th1520-reset" },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver th1520_reset_driver = {
-+	.driver = {
-+		.name = "th1520-reset",
-+		.of_match_table = th1520_reset_match,
-+	},
-+	.probe = th1520_reset_probe,
-+};
-+module_platform_driver(th1520_reset_driver);
-+
-+MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
-+MODULE_DESCRIPTION("T-HEAD TH1520 SoC reset controller");
-+MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
