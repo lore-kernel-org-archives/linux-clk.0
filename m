@@ -1,26 +1,57 @@
-Received: from mail-m121150.qiye.163.com (mail-m121150.qiye.163.com [115.236.121.150])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3290986250;
-	Tue, 24 Dec 2024 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.121.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD22B192589
+	for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 09:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735031512; cv=none; b=RtaVHAgoAX8/BGCKZsmltlN6CA6/agc7TVA/H2OVgsWaMAiPMvGMPSTsu8jyguR8lzgIMnii6ZCPnTJca6VGHTBe9a4oAYsMX0smQh+NdSY7L9dPiuGstG45LwLB27mH+5AsI5kg8efGXMy1f6dRQuZ+WdVeMYnlLEc38j9/+r0=
+	t=1735032211; cv=none; b=a3lcbISFudBqywrjjeXAh4yDN5uh48oFSpMBdtXiKBRf3j/8g9Fpv1G8BLkDqtahgj6D9LN3/Wz+mXJLL+uthfjFil/5spUGkZ6stWFITK366fqbohC4rQ11/oMlVq9h80aAKBmmsf9XqTOOwzR0lWeI/1ATR96enQqIpLN+MH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735031512; c=relaxed/simple;
-	bh=63SIagATQ1gYYwEjwMbPv4smVM4SNhW6zJRftR1vPLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ilmtn+ohVQv5L654RzE0q016x3acaIwsbQ24invpkH+oCUkvOcBnGJKlQ7Dmd5vQHaGUFdM4Iy1U0BV9IbMQAkR20Pi6cwvvHmYVEcHxev4wDz+4EWe9q1vwzhutvM0Z41yohD1vwS/3hThw/Wv+u781sP4SICdf5JbQ4U9RZSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BDoLd2np; arc=none smtp.client-ip=115.236.121.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1735032211; c=relaxed/simple;
+	bh=pMvRf8hUcZ5wOr703xS4zo+NdM8Sea48fKsDiPx/7kI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=d+TQrsg1IpgQdpm8uD1e2IRykZQI8BhJl7bsdkFZKrOZsLxxWSv3xH60FLtiVm6+LXH3YA/nH1b4eQBjsVLVD4e4L0KYvBsKV0nT6gn+cTbtirgvpBv9654OvppuPwZMS9zrtp6VFTgQrRvb9AF8P3qPbW3VVzeiayFrX8a83sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HN1GkHY4; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BDoLd2np"
-Received: from [172.16.12.67] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 6a83f662;
-	Tue, 24 Dec 2024 16:36:12 +0800 (GMT+08:00)
-Message-ID: <e75b38b4-605f-4f9e-8c95-204877b9bf84@rock-chips.com>
-Date: Tue, 24 Dec 2024 16:36:11 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HN1GkHY4"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241224092327euoutp01ee5454b4efcd4f54cea467c7a09f2022~UEpmJLX6S0972009720euoutp01T
+	for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 09:23:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241224092327euoutp01ee5454b4efcd4f54cea467c7a09f2022~UEpmJLX6S0972009720euoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1735032207;
+	bh=CT2LjMsvQK3WeyDfvFPXgtfccMOoBoYCxpw/ibKFJpo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=HN1GkHY4p8oH+1ybH6mEMXkSiQB67tfNPyRL1zdM2I/QvGp28V+jzvfAEfoUt/ekW
+	 fqY3t2M66s3bG+p5hP2cxzPMZ1YsJKYcnPB0DIyPFj+WoBp7lTFq/3dZUNreZ8vNLy
+	 adkAOnOTl9Eg90ZbMmoFERELUfzJguao8m24ZJ1k=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241224092326eucas1p1f4f75608b215db9b334d5565da46c897~UEplaSOUC2771027710eucas1p1G;
+	Tue, 24 Dec 2024 09:23:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 2E.0E.20409.E8D7A676; Tue, 24
+	Dec 2024 09:23:26 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241224092325eucas1p26ee00a131762a9f84e9e664825badeb2~UEpk8g0gZ1296012960eucas1p2F;
+	Tue, 24 Dec 2024 09:23:25 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241224092325eusmtrp24c38df110972e48c124839503473da55~UEpk6vi7l2656126561eusmtrp2A;
+	Tue, 24 Dec 2024 09:23:25 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-55-676a7d8ed08f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 68.BA.19920.D8D7A676; Tue, 24
+	Dec 2024 09:23:25 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241224092324eusmtip2ab49005b6b39ee6c5c0dcce8544a43bc~UEpjl3rZ-0443004430eusmtip2I;
+	Tue, 24 Dec 2024 09:23:24 +0000 (GMT)
+Message-ID: <c17c75c0-ef13-48df-9095-67fbf31bb817@samsung.com>
+Date: Tue, 24 Dec 2024 10:23:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -28,135 +59,119 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/38] dt-bindings: clock: add rk3562 cru bindings
-To: Conor Dooley <conor@kernel.org>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20241220103825.3509421-1-kever.yang@rock-chips.com>
- <20241220103825.3509421-2-kever.yang@rock-chips.com>
- <20241222-grandpa-vessel-66e9ca9cde75@spud>
+Subject: Re: [RFC PATCH v2 01/19] dt-bindings: clock: Add VO subsystem
+ clocks and update address requirements
+To: Krzysztof Kozlowski <krzk@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: airlied@gmail.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
+	drew@pdp7.com, frank.binns@imgtec.com, guoren@kernel.org,
+	jassisinghbrar@gmail.com, jszhang@kernel.org, krzk+dt@kernel.org,
+	m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com,
+	matt.coster@imgtec.com, mripard@kernel.org, mturquette@baylibre.com,
+	p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de,
+	ulf.hansson@linaro.org, wefu@redhat.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-pm@vger.kernel.org
 Content-Language: en-US
-From: Kever Yang <kever.yang@rock-chips.com>
-In-Reply-To: <20241222-grandpa-vessel-66e9ca9cde75@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkhITlZIGh1JQ0tLGh9CGE9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	JVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93f7cf356603afkunm6a83f662
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OEk6Txw5HjILCEtDQiJNS0oC
-	CDwaCgFVSlVKTEhOS0lCSExIQkhKVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQ09ONwY+
-DKIM-Signature:a=rsa-sha256;
-	b=BDoLd2npj0n6Om1OH5DJXSsVpoK+ms+L4VEFsKWa6Q0BUz0mLywgGE0K0gSQ1wUl+kIAVw6MhuIoiApVIqXDgVQhOx+++sWjEqjmkDWYpFpvd6MKN9JfoWOjlFO0Sd9OelNfkNzAb+tQPJ4C7mAajNDAC8Ru9FqNGdq8lAKktAk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=YBxLONAc2YXY1BIJF//FZvX1aM+Sn/tfGnBkN7/bO1Q=;
-	h=date:mime-version:subject:message-id:from;
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <wjet4yvtcobjaf7c4u7to6rm3ppkvmgyitp6evoqjpndtno6qg@h5xxyukph6y6>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTVxzeub29t5RVbquGE9mGkumcyQCbZTmKYU6HuRIzWeLGYNlmJzeV
+	jYdpRRi4zA3GChaYFLdRkIcW2qDIZluklUcslaJzrSi0gPKYUbY2KKmwOmXAaC9u/Pfle/x+
+	3+/k8DgiC7GGl5pxmJFlSNIiCD7e2vPE8Vrpl59Jo12+YNTrOo0h46yaROc67Biqtdq5aPSm
+	AUP9f00R6Pz9GyT6s+NrHDl1p0iU39NCILd6lEAOx88k8ipHueiWuZpA0yVWgFqnCwjUbB0h
+	Ub3XiCNNmxmgwqJGLuq7FodGRntx5L6l5KBCdQhaaG8j0bzzFxxVPewikWHyBBfZmhNRQVcF
+	vv0lemrwW5KedLtxulsxQ9IdvjqcNqlHSFppug7oC01FBH3H2U7QNVffpceO2zBar/mKLmju
+	weiyuWh6qnOAoEsNTYC+me8iE0TJ/G0pTFrqEUYWFbuff/C36afEoTNUzvnvnmDHQIOgGATx
+	IPU6nBuYw4sBnyeidADWNlbhfkFEzQBY3ghZYRpAvfk0+SwxWOkgWUEL4B9mxVL8AYCTl1yB
+	uICKhbcrF7h+jFPrYbXpPsnyQni18l7As5oKh2PDPwX4lVQmHKpTEX68ioqHPcMVhH8oh2ri
+	QqPGFTBxqFA4fK8W82OCEsNxbW1gQRD1DrQXDOGsJxzmG6s4/jCk+vhQdc3EZXu/DX3z+qUb
+	VkKPzbCEX4ALJnYoXGwxbnzEYfFRaFLalnAMvGN/utiIt7jgVdhijmLpt6BSlQ/8NKRWwMEH
+	QrbCClje+iOHpQVQUShi3RvgSWXJf0vtulbsexChXvYq6mVHqpcdo/5/bx3Am0AokyVPlzJy
+	cQaTHSmXpMuzMqSRBzLTL4DFb/7rvG2mDWg93kgLwHjAAiCPE7FKYBGlSkWCFMkXuYws8xNZ
+	Vhojt4AwHh4RKlifEs6IKKnkMPM5wxxiZM9UjBe05hj2PravL2r7XaHTobYkOCdi+Tu9zUTN
+	ur36vJzHow1S5cvn3F292cHwdkZ4b+euLfHJx3e/90pkLFORvPBhpi44JNmx1uvTJJcL6n0l
+	/4ROhBd7ijeGJe1ijN4K4YatP4gTTmx78fmaveID9ugwX5r3sfZj8am+3UWhZybtezau/Sjx
+	zb8pxdbsSzR0csf3fJCkMXhLW7o6rujO7ujMUU0EhXjqErXjA2+sG5qyttX3KxI8Dd5vcjsv
+	f/pcfbuwuvvkjSuzm+3x7os7r+9rsHp23BVPuceOXp480j2bNJK3//e8RIGqrH91XLUmF6U4
+	YwqoqosPY/RlW5JUZ+O6zaZNj7AIXH5QsnkTRyaX/AtkeGD+VQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsVy+t/xe7q9tVnpBms/qFucuL6IyWLr71ns
+	Fmv2nmOymH/kHKvFvUtbmCyufH3PZrHu6QV2ixd7G1ksrq2Yy27RfGw9m8XLWffYLM6f38Bu
+	8bHnHqvF5V1z2Cw+9x5htNj2uYXNYu2Ru+wWCz9uZbFYsmMXo0Vb5zJWi4unXC3u3jvBYvHy
+	cg+zRdssfov/e3awW/y7tpHFYva7/ewWW95MZLU4vjbcomX/FBYHOY/3N1rZPd68fMnicbjj
+	C7vH3m8LWDx2zrrL7tGz8wyjx6ZVnWwed67tYfOYdzLQ4373cSaPzUvqPVrWHmPy6P9r4PF+
+	31U2j74tqxg9LjVfZw8QitKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rez
+	SUnNySxLLdK3S9DLOPv5F1vBYoGKde0/mRoYl/J2MXJySAiYSNyYeZ69i5GLQ0hgKaPEyofL
+	WSASMhLXul9C2cISf651sUEUvWaUmHxgGjNIglfATuL2zP+sIDaLgKrEnJ1P2SHighInZz4B
+	axYVkJe4f2sGWFxYIF9i7e6ZYPUiAl4Sx25NARvKLLCKVeL82kWsEBsOM0nsW7QBrIpZQFzi
+	1pP5TCA2m4CRxIPl88HinAJ+EudabgJt4ACqUZdYP08IolxeonnrbOYJjEKzkNwxC8mkWQgd
+	s5B0LGBkWcUoklpanJueW2yoV5yYW1yal66XnJ+7iRGYvrYd+7l5B+O8Vx/1DjEycTAeYpTg
+	YFYS4T0klJkuxJuSWFmVWpQfX1Sak1p8iNEUGBYTmaVEk/OBCTSvJN7QzMDU0MTM0sDU0sxY
+	SZzX7fL5NCGB9MSS1OzU1ILUIpg+Jg5OqQYmsy2SX/ee3/V36nJ1t0U9Lydk9QvJ73/NO1vb
+	dNmdsLkeO3gvSTz+HZsv4nVy6/qfAo84WVdqSEnsMNL2i1Q87zhxh7/7wTspj90vSXI9YGiV
+	srq4j+2Gwk/xI4knJ2pLLczj1Jj19OnRCKMKAY/M5FqZJmXjKp6Z9etslN6b76qz/JS6s+Bk
+	0ZK80N76OZ+urQh8/TbPJHXuQf691osWrW0+cbj9dYJKVlRJ6Y95Lm9Of/kuYx2roVGpmXBF
+	+ffLGROZ/z2e6yOcKlR/IdT29sIlL0IV0j+8zjhSfeWA1jOj2bq7Pkdabdhs8UyTax5jrIuK
+	S+bVm4ZdlrMOhS86Ycv7f8ud90vZ+Wq2rLl2T4mlOCPRUIu5qDgRAIEEWcXoAwAA
+X-CMS-MailID: 20241224092325eucas1p26ee00a131762a9f84e9e664825badeb2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20241223125601eucas1p1d274193122638075dc65310a22616bae
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241223125601eucas1p1d274193122638075dc65310a22616bae
+References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
+	<CGME20241223125601eucas1p1d274193122638075dc65310a22616bae@eucas1p1.samsung.com>
+	<20241223125553.3527812-2-m.wilczynski@samsung.com>
+	<2cd0c34fbd14a0d69e689d04c2241938.sboyd@kernel.org>
+	<wjet4yvtcobjaf7c4u7to6rm3ppkvmgyitp6evoqjpndtno6qg@h5xxyukph6y6>
 
-Hi Conor,
 
-On 2024/12/22 22:51, Conor Dooley wrote:
-> On Fri, Dec 20, 2024 at 06:37:47PM +0800, Kever Yang wrote:
->> Document the device tree bindings of the rockchip rk3562 SoC
->> clock and reset unit.
+
+On 12/24/24 09:53, Krzysztof Kozlowski wrote:
+> On Mon, Dec 23, 2024 at 12:50:59PM -0800, Stephen Boyd wrote:
+>> Quoting Michal Wilczynski (2024-12-23 04:55:35)
+>>> The T-Head TH1520 SoC’s AP clock controller now needs two address ranges
+>>> to manage both the Application Processor (AP) and Video Output (VO)
+>>> subsystem clocks. Update the device tree bindings to require two `reg`
+>>> entries, one for the AP clocks and one for the VO clocks.
+>>>
+>>> Additionally, introduce new VO subsystem clock constants in the header
+>>> file. These constants will be used by the driver to control VO-related
+>>> components such as display and graphics units.
+>>>
+>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>>> ---
+>> [...]
+>>> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>>> index 0129bd0ba4b3..f0df97a450ef 100644
+>>> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>>> @@ -47,7 +54,9 @@ examples:
+>>>      #include <dt-bindings/clock/thead,th1520-clk-ap.h>
+>>>      clock-controller@ef010000 {
+>>>          compatible = "thead,th1520-clk-ap";
+>>> -        reg = <0xef010000 0x1000>;
+>>> +        reg = <0xef010000 0x1000>,
+>>> +              <0xff010000 0x1000>;
 >>
->> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
->> ---
->>
->>   .../bindings/clock/rockchip,rk3562-cru.yaml   | 62 +++++++++++++++++++
->>   1 file changed, 62 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3562-cru.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3562-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3562-cru.yaml
->> new file mode 100644
->> index 000000000000..aa8dedf2bfce
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3562-cru.yaml
->> @@ -0,0 +1,62 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/rockchip,rk3562-cru.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Rockchip rk3562 Clock and Reset Control Module
->> +
->> +maintainers:
->> +  - Elaine Zhang <zhangqing@rock-chips.com>
->> +  - Heiko Stuebner <heiko@sntech.de>
->> +
->> +description:
->> +  The RK3562 clock controller generates the clock and also implements a reset
->> +  controller for SoC peripherals. For example it provides SCLK_UART2 and
->> +  PCLK_UART2, as well as SRST_P_UART2 and SRST_S_UART2 for the second UART
->> +  module.
->> +
->> +properties:
->> +  compatible:
->> +    const: rockchip,rk3562-cru
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  "#clock-cells":
->> +    const: 1
->> +
->> +  "#reset-cells":
->> +    const: 1
->> +
->> +  clocks:
->> +    maxItems: 2
->> +
->> +  clock-names:
->> +    items:
->> +      - const: xin24m
->> +      - const: xin32k
->> +
->> +  rockchip,grf:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle to the syscon managing the "general register files" (GRF),
->> +      if missing pll rates are not changeable, due to the missing pll
->> +      lock status.
-> Two questions:
-> - Why would it ever be missing? Seems like you should make it required.
+>> I don't get it. Why not have two nodes and two devices? They have
+>> different register regions so likely they're different devices on the
+>> internal SoC bus. They may have the same input clks, but otherwise I
+>> don't see how they're the same node.
+> 
+> That's a good point. Aren't here simply two different clock controllers?
 
-This may not need for some of SoC, for the rk3562, we don't need it, I 
-will remove it.
-
+Yeah there are two clock controllers, based on the review comments I was
+trying to re-use the driver, but the driver can also be re-used to serve
+multiple nodes and multiple compatible and .data properties, if that's
+fine with you that's how it will look like in v3.
 
 Thanks,
-- Kever
-> - Why is it not possible to look the grf up by compatible rather than
->    phandle?
->
-> Cheers,
-> Conor.
->
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - "#clock-cells"
->> +  - "#reset-cells"
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    clock-controller@ff100000 {
->> +      compatible = "rockchip,rk3562-cru";
->> +      reg = <0xff100000 0x40000>;
->> +      #clock-cells = <1>;
->> +      #reset-cells = <1>;
->> +    };
->> -- 
->> 2.25.1
->>
->>
+Michał
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
