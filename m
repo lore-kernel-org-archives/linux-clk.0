@@ -1,186 +1,227 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2115.outbound.protection.partner.outlook.cn [139.219.146.115])
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020129.outbound.protection.outlook.com [52.101.128.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E63EBE;
-	Tue, 24 Dec 2024 03:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF261A28D;
+	Tue, 24 Dec 2024 05:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.129
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735012448; cv=fail; b=sPiHmRNGAWQMVJn8hM82FE8DNpuCELLkPSGMdYVy3NxPp/FGd9pef6+GQYqCizpRrKsMSAabI0ZQG0IifK4wsxWy0yJ2t7nc9G561YQxdijWGOpIaxVDzkm+B2EOURP84bZnO8fBrpHcmKoOLgdSxxNLui/nTSEPgDca1CugERQ=
+	t=1735017637; cv=fail; b=BdyCCkE/JsI/a9t41k+GSslhrtFu5cbiKHm2AAfxm8NIrpIPvdtb2b2ZfGb6f1HkoFYip40w2fMNbbASEsNJIdCBR8yhmOlCm/FD9ny2RJtpX7YR8wZ4XtqI4o46q6IZYwZTwHR/FGor53Dh7wWKTvLL4jJmdYBX25prdQQwjjE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735012448; c=relaxed/simple;
-	bh=imH2I3ep4uoZ6/2CX7NZXKWP6o5mx1ennnWmfewUk8w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OBsGQ6d6PDhwAZLBCr2DC4lO/lLsKvG3dKQejQS9nXCJAdHYo1ML0++QonLJwqER/j0x1ec5xly0MCekT9UVC0/khSPoLX7y7kCLZWp54zek3RMsbyKLu1+NBowd0OikbUo46EoIPLXXoEZxid0mV7tfcN8T2QPf0NFLQNNqDvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T5w32TtgN2Hy4CTNQ20d8fzJB1wIgq+K0IG5cFlERat50TvKBSegt7BRlR4U5C1higuvMQ0c33aY/NjseR22G6zACl+UiRBm6JaYCWAnVXs3Ouvm+3OfULAwhOuFnS8tLX2coCqOW7vE09w8MdQxtwmpyVKpRQzS1xizTLSev1qslHHAbf1oeWVWTNlVj7wfs3uj7LAoFW1AiNNPK5Tj8Fp7tLCisV8QPH0+ItEODIEutFexYT6+ffB7jrs1HOzs2cgvBtd+v+EBt6ekLsHB9UofvNiHaZOmL1+oGPZurkSW7u+zuRagy8h8d21VSy1xHz7N+tsfp3DJBs6CpwqQZQ==
+	s=arc-20240116; t=1735017637; c=relaxed/simple;
+	bh=UcDy/Z9QefWQVV2I2Qdq5h4XgghQkao+OJlwCT8a/FQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Lrtk/rJpF6mQwCaMmrgalh3eolDDdd3yaoPHZHrBNskvAC9SZCKRZY/g2s46EqXchZRnQokhDticX6J6+aItUVhmETwpXbOOZb9SqRq8OLH5YF1NAli3tU4dsIcfx/LFJU4AcPDCy3Mmm7BP0olqSOZ+UuXgbKG/A5IGPV4nD40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=gFcquQoc; arc=fail smtp.client-ip=52.101.128.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="gFcquQoc"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Eh2vwIPbFgNHXPXQsmEzx1Z/dh3VKxaUzD9jjFj8dmF2jCQ+MdlXADnWF8VDzDFHu/JEN/Xb11XB4wfuP+4ZDd0QkXgsf/QqvQhTU8gMeXwuydBFWkbxFY6uuzYzXs/HpdNJ8sDwheBfQnLzwEdRXAMfMTLD0zNzRKz26lM4AkBjbHw9XtIEHIZruK7f1FOlIbYK8xCGM0VjHx8CfUev/x3/gC0Brx1xBcsvD26JBFw35LBjt5bS7dRIzU0JQW3SytHDG80nPMGWtf5u+/Bxdeyz4rH1hm3TnQmIWuuMNDnSfzkFrqslTys2fHqzKbSmYp7hw1W9a0mfP0LEy7k/2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
+ s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zagZKcqp7nTGuVoGmUBjn1bsQZX6d3s3a3itSjZDyvY=;
- b=PdyM9hreIEuSwcXnldUQ8/Aru8DMWk16jhiIxnEh1BV8aM+vkI4lZ6dAwK0DQtg4fYQe9xaf8kvYTMPp9HkCemTCEMiTC8MvwAjMHikZtGUq5Ed0SgiPwu6u09QnGTRKXAFiD0VwLX34SiN9rBqD0gXj8X5xqOGXjRAmJG/v3nYgVsb9LNxAJxKJ8+WT0lSIzNhzZdWxJ2ff7Yf9ejaSxKjzt8ppnT4WI+DBfGBAacqvLMkbg+yqP+fAeDm1wkPUgaQnU4ca8K1sFpiN6xgdyej4tNV81PhvMZ02vs6q1vc8ZJh4dKRdnoQrff44o+zs7DPYMLkrtxc+s5CTfDBLxA==
+ bh=UcDy/Z9QefWQVV2I2Qdq5h4XgghQkao+OJlwCT8a/FQ=;
+ b=TFy4wGcWVQDMUjpwOIQuRKJj45lKuz4EsFLWyBUmIdQ13R1Ze25c/r5IVCmCY5kVP4XHK4nhGjrI9ZhGUni5pahmPKdPDHxZ3OZ8Uidw5nZpmMbhz6B8lcl78o0/+5qApmJxM/qkEgyMZy+FyCmDK8NauYcKRgEnmhLqp/2LLJUQ5GY5Oc1B8shbz02uRBTSV4kcT38q6Cfk9Qvcoie3twvqlpEEMqKG7BC+j3OoMc3+MCy/2pzTVXb04qsbsF6gmvW8s/IyRaMNnoG9sp3AncRz4L3QmIdkf9HYEgVMdFl6JCz6n54DECMO7OIlKq1YJADq/AvHlYBg1mVMoorytQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:f::12) by ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:f::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.31; Tue, 24 Dec
- 2024 02:19:57 +0000
-Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
- ([fe80::617c:34a2:c5bf:8095]) by
- ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn ([fe80::617c:34a2:c5bf:8095%6])
- with mapi id 15.20.8137.030; Tue, 24 Dec 2024 02:19:57 +0000
-From: Leyfoon Tan <leyfoon.tan@starfivetech.com>
-To: Anup Patel <apatel@ventanamicro.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
-CC: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Sunil V L <sunilvl@ventanamicro.com>, Rahul
- Pathak <rpathak@ventanamicro.com>, Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH 2/8] dt-bindings: mailbox: Add bindings for RPMI
- shared memory transport
-Thread-Topic: [RFC PATCH 2/8] dt-bindings: mailbox: Add bindings for RPMI
- shared memory transport
-Thread-Index: AQHbT5dkWIpoJhPBDEKPr7Y+jsZN27L0tOFQ
-Date: Tue, 24 Dec 2024 02:19:57 +0000
-Message-ID:
- <ZQZPR01MB097924AF0A246677CCA17CDF8A03A@ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn>
-References: <20241216084817.373131-1-apatel@ventanamicro.com>
- <20241216084817.373131-3-apatel@ventanamicro.com>
-In-Reply-To: <20241216084817.373131-3-apatel@ventanamicro.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQZPR01MB0979:EE_
-x-ms-office365-filtering-correlation-id: 3d257174-2724-4dfa-60d6-08dd23c17600
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|41320700013|7416014|38070700018;
-x-microsoft-antispam-message-info:
- EbD9BKdE5lE6dbkzozUaPSA7+2cW2f5KwuTCem1tDdzg70SAGXiNLSokW38XsVhSF4tYuf7WYLK2V+6d1XoQu57msr87qa5LZ5iNY5xDuI8NGh9ZiaL6YLmjc3l1Q1qsbDQH+RpJBveF8XH/gyUux96GQsArwaUNb2CQmed8/M881NCCUkT6NZ6JIYhlfH9gqti2dOKL6bJwneE48f75sbxCyEZQvINnNaBgslGTcxTHFWOmZL/tWT9Q2JN31nUBfleCDvySXhOxXXcAEDESeW5CJ+bPN8+tlAibm7hBkWODsKZqgRQdf0/tSY2QGcHpDlacFLHqwT5f5XsrrcS1sYigX1a6iQndVMFJvjR+HjAXe+DGVFmknSGcCZfSSa+R7c1Euvt5weyE40/VvfO79hd/pwpmH40FkLp0xIrLYubB9VhDfGv747g9D3JM+cLCuCNhtaCJHFi/kF4253Y9bvVUEtQhmR/ovUy261JGo0huaAUJe0PQeAcU+TZTvj5e0in6I0lxS+oLt2nurOizWf1tFkls0RzY77frWtpPJsEwTtN+jl1pF0jpOF5ZB57rg3oG1q1WkjHiQywvt6IjRcJSy14hHZTYC3ron/KidCU=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(41320700013)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?vjUCWluIGhq6mdk+swoW9jGDyciLVNBTF0d5YIUkLFiPaIQG7AY/jpf4ZoxY?=
- =?us-ascii?Q?HZqhM4NkvnXPSKElyFrcKDBg33QFB5ARBFCEasuNv+aCurDPbL3Zut4hGvm+?=
- =?us-ascii?Q?OJdnnHfDTWcQamJuAWy000Bm42ycqqSgsFGD8YRbWgJgJhj4IMnHdBTRfkT9?=
- =?us-ascii?Q?ARKE1s51feN2dct2QXn2zkV6QwMg74/Ifxj6qWpNg1uCHxW+V76/WElhPzxG?=
- =?us-ascii?Q?LGcR44WFCsrOxWEZSz/xi1YtR8tpRywCJmgYsZwewOSRnsDySKHV5mhsQ6D8?=
- =?us-ascii?Q?KEAPeBCtOlc1oA2I5rfoEODJGndqmv9ZsTmJOFn9I1ubpm1ekC46yXY+tl4O?=
- =?us-ascii?Q?Vsa940fC0jBrQ/gn4TUgXgRBBr63ZNEp1lXZT+aKH896kfgL3nsY7yp56iHz?=
- =?us-ascii?Q?cFh5zDnf8IghccU97e+gUPYeBeXaAiXYRWviIRgz/YgU02ldVoYgZS/nlfEn?=
- =?us-ascii?Q?F8g64IFteuR5euLEUjKOjpNpNoAo61vjULljrup5ihDMZk/ZhBFP5+2f44La?=
- =?us-ascii?Q?NJl2MB2VNRSdDHncdaiQHQCatRtku/zaEVYmutwDEwR52FqyEn2gJ3a70dic?=
- =?us-ascii?Q?3vj/rKSI43awT2b3mWFvnVSPz8Bz7cPZXg710rWpWPUGUmJRsNM8juFFSzSt?=
- =?us-ascii?Q?gbAScYpu9lo0152Gdk/KBzzpTJM3Stlui20xWHa2MbZd8pIbx8jYqCcGoGal?=
- =?us-ascii?Q?LEVKnH6XSyvqpO2wvjvS3N56bESUXO27gFlNlURgF8+5x0CnHv1UNcMdm7rW?=
- =?us-ascii?Q?gqn3SkMgHeZL/gakfNmp0+HieGaNvQtcz+uxU41x0UMhYFtcrwcpjiROrYUr?=
- =?us-ascii?Q?JvndzvXnxKaL82S8otq80tWeslPAyi4BcISl29NmlmxB+Uqh7mY2S7A2TSgT?=
- =?us-ascii?Q?eer/5g58JfjVqDSm7/6zk1rT+sU6P1jzPs5VF1BOQvujBUP/bXCf+8Yqrn3/?=
- =?us-ascii?Q?i2YtessxwI9oisz8f7ewUHzSV0BEBzFhxQxHrnJe5OxEt0iIiSUVoCQLn9FS?=
- =?us-ascii?Q?BjHikgGMrxdAhJ5jf9zwLTkwOrKzhwzn+X06d7ZDLt16aSP3kORNEfOMCoy8?=
- =?us-ascii?Q?OtVZ2tbauRK+P0eRGIBycn7I+YfqCa5xZYl8ji/h/Gk0X0BfkdvNjs/kGs/C?=
- =?us-ascii?Q?eJiTfNwQNoKvcti47qWu3sisQUorqoRq+shxBK3ilReOZA+bJtMbqwx/RUJK?=
- =?us-ascii?Q?Rk4I5iiOLQ3Nxp5X4+6RvNs4XMzWrscvBRICgfKNCTsSeuj3JeeQepAGVowa?=
- =?us-ascii?Q?vNFsy7CU/f1wMR8th5Q+wPXFDxxkJP8LpfrdGHGtOoRyVfzAdQjl+BuqI2/r?=
- =?us-ascii?Q?oRUMhbu9Kz5isKvBlufTUsaxCV6MBSNR1CwrxxVYRE49gqnpOZTY2DvWUr7p?=
- =?us-ascii?Q?yL0ROMATDwaVwJ7bh1KR2stAiTi1AvvTKbWmGPfiAS0pBpak49jqcjMrXG8b?=
- =?us-ascii?Q?ptFi4Hl8Q297TqCls0G/o/7qyHjpegIQG6wSJwPx+aexKfUkQ/PZuMKT9gIF?=
- =?us-ascii?Q?HTbHB5sPL68756EydAzLRDX5XzVV1HvKi2SUu8gaAJRB1+BiF5Kx9qvIK71B?=
- =?us-ascii?Q?vY/J3Kibp3KYJd/YhCLkNJoq/plG2UJWUxdJej+xUpY/26IXAoOtwy70HGZG?=
- =?us-ascii?Q?XA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UcDy/Z9QefWQVV2I2Qdq5h4XgghQkao+OJlwCT8a/FQ=;
+ b=gFcquQocHLetKCy7ity4VWJwniH/tDE1bEHMVlvCEG6dBElv9VLql5r1o9+YWS2n/X4KN5DXGOHaIUPjgQVgHiyQhbmtOVDg0tvkCW3TDl/TFMQP9Z2eElAolZRGfNoYPr+lig/RC81/dRMKXzRVX2FQ7w80gmP7tOjEohcSfp3h8XxJvvK1Wiem96mG3xMtFIINr5YkTuGfwMeA5PsaHBs/tdLQuR/vu9ROChAB9DkeYBiW+9SX3LlZ/3VYaAQ7aOY5JHx/jtQC/xHAFjTpxkXk02AQNJ71TnId58EX1Y6uwuDV55kT478+PEa88oyQW/aLJUGKJniD8suybKhGZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+ by SEZPR03MB8140.apcprd03.prod.outlook.com (2603:1096:101:17f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.17; Tue, 24 Dec
+ 2024 05:20:24 +0000
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::9d11:d1f6:1097:22ca%7]) with mapi id 15.20.8272.013; Tue, 24 Dec 2024
+ 05:20:24 +0000
+Message-ID: <4e4808ee-07f2-43db-b7f8-e9362c9898e4@amlogic.com>
+Date: Tue, 24 Dec 2024 13:20:14 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [DMARC error][DKIM error]Re: [PATCH 3/3] clk: amlogic: s4: remove
+ unused data
+To: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
+ <20241220-amlogic-clk-drop-clk-regmap-tables-v1-3-96dd657cbfbd@baylibre.com>
+ <3ce97435-71c6-4a7c-8d6c-fa387f68494d@amlogic.com>
+ <20241223090137.jbzwrlazhkumatfx@CAB-WSD-L081021>
+From: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <20241223090137.jbzwrlazhkumatfx@CAB-WSD-L081021>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0007.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::11) To KL1PR03MB5778.apcprd03.prod.outlook.com
+ (2603:1096:820:6d::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEZPR03MB8140:EE_
+X-MS-Office365-Filtering-Correlation-Id: a95d9717-1d28-4080-8798-08dd23daab56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TmFiZWF1cDU3YlJncFpsM3JtcWk1OFpCc0lFdVovTnhDVFMxejkwYUo2aXA4?=
+ =?utf-8?B?N1l2SzR3S0RHbW41OE8raGdNbDRtaHZ6d2lHcGNhN3JyL1ROejVBMEZnOVZx?=
+ =?utf-8?B?eG9lYkdiL2Rwb0tTb1A1Q3MzWFllNENCUk9OdWxIZWdQaUd5Z0o3Z3hDSmZM?=
+ =?utf-8?B?L25WQ0M0SFl4TjdxKzFNWWN1dVBoYWhmRGJSbFJEUU5VU1lvazcxbkJSdmRT?=
+ =?utf-8?B?cWlwU3J5L2ZjbytqOVlSaUdFS3dRZGtkVDZ5SEFKQlI0SDNIa1JONXVzQzhB?=
+ =?utf-8?B?VG1pczVqK2NWQVdCRjlOeVpMYVN5ZWtla2JaM0d1Qk1QZXAxK1R1ZTZWZU12?=
+ =?utf-8?B?NUdPR01LK3VBaDdOZC9nRjFkYUpVZkszd1ZQa25ETFhOTFQzOUFlRHYvdjRP?=
+ =?utf-8?B?eUtjMlJ6ZEN3YlliZWdhZ1BsLzA3NTFHUjFDY2hOa2d0dnZTM05IeXM5N3RM?=
+ =?utf-8?B?RXF0dlNibjJLNUpRMlhuT2pMTUNyZDdDSDNCUStTdjV3QmRSa2grdi83eElH?=
+ =?utf-8?B?VTlNOGc5VUh3RVh4OUpsU1FwU0Y3ZnFyMVhXVk5NaHpMaWx1MjJiMjBrc0Z4?=
+ =?utf-8?B?VFdEbVpDSUJSejREN3czSWNraldmckFBd2FkaStqZVJjbC8yZ1Urcm90bFA2?=
+ =?utf-8?B?WGFOUWJXNDVOaE5IcDZaRU1neWYzNC9KQy9jRUdQcjJhTUszWHFPWFBVZi9G?=
+ =?utf-8?B?L0RnOE90dXlZWGMwWUZVRFZwcW5VanNUdHF1NW5DdVpGQ0dJbzZ4UFZJUHVK?=
+ =?utf-8?B?aWp2dEE0ejlneWp3c0N2dzk4U1p3RzgvSFRGN05VdXlGMzMrckhkWWlmNzFI?=
+ =?utf-8?B?WG1md0QrRTZIMU1VWElwcTFFNkNJTEEvREc2dUlEK2RxNjA1T1ZlVUhaYmpk?=
+ =?utf-8?B?Q0JEMm0yTXVJK3Q3dmRNMCtoWlVQTmU1cFpFdTd1dDVlOEhoNi9VR1M5WU81?=
+ =?utf-8?B?bW1HbEVibmNtMnRWU2NIYTNRZmhMTWlQQmtIMEVJS0lMOXcvK3JSOHBzZHRt?=
+ =?utf-8?B?cnpnb1NDMkNjSGd6OVFNMExhYVpKc2s5MG4xcmxsZnFZaWZNL3I4S3hWUmpz?=
+ =?utf-8?B?ZXovV0dma0tucmdUb3pCalpFbjk4cW93QnIvU2ZsNGZiQUpiRFlSeDdHTmJv?=
+ =?utf-8?B?aWVnUzBFMittR2dCaFVHRUQvaHlrQWJnY1pMVlAzdHlpQUlJcWpDM0lVYXZk?=
+ =?utf-8?B?YWNQTXN2YzFSRnhteExjcXRDQy9odWd1aU5uckJQMUxFRWxQcERXejBNOU9I?=
+ =?utf-8?B?NWNmZVp3ZlQrc3BtNExFbmYrZ25UMnY1SUpGMGFzcTFYTHBNZXJvZ1Bhb3Qx?=
+ =?utf-8?B?ZmVvc2ZlclN1UmFmVktGVHBvTWJlYTk2bTc3MUNOTCtSdmlRY2VrQ3VCeDEy?=
+ =?utf-8?B?MElvOFRScENweUdQR3FKZUVtUGEvSVRDZThlTGVXN3pPd0Y0d0M1aUR0QW9P?=
+ =?utf-8?B?eFZKTFgwWW9GRGdMY3FmOHYxZ1F5RytCUVFLajVHREF5NkNOa2tLd0Rtb2l6?=
+ =?utf-8?B?Uzk0L0MwaXR5ZW5hQit6OHBldWtxZG42WmV0UUE4TjdsYTNLS1ZDR093K0x6?=
+ =?utf-8?B?Mnd3VWJXUWNoVVkzeGpFTnExeHpIVENHTWtPdGZ2WnlhUC9RbWlIQTYwdXcw?=
+ =?utf-8?B?azJ4eXZmc1hpandGbmpXMnRZYzZGRytNdlVIY0p4aXYyQnpRbTNEYTgyR25r?=
+ =?utf-8?B?U0lHdlJ0bjBHb0JtQU90bGxvai9QQ3RLcHV0dVZCMURlSVVPdnV4V3dpTWxT?=
+ =?utf-8?B?VXZuak93RVpvWmpSNnhDRG0yWS9MVXRKZlEzKzFzL2t0VXBYUVl0eGRjc1hI?=
+ =?utf-8?B?ek5heEE3cStIOWNaU0V0NEt1azNzeHE4RkhuVis2U2tDMVNsWkVkY0VSOWlz?=
+ =?utf-8?Q?70LI/y5RvGlGZ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cHR4Rmc0VVNNa3pFeG0zTWx3bGtEVEUrZlZCcDB6WnlkWkIzaFFILzNDQTdi?=
+ =?utf-8?B?Tjc4WHBHZGNpY3pHeVc1ZUdWckRRS01qc1ZwYWJ2MS9hL2YrbmZ1dGY2dERz?=
+ =?utf-8?B?aGVHY1NjTFh2QzBwRW41TXdoZGhoTXJzVTN0YlNsdTg5Y1gyU1lUNnNLZ3p0?=
+ =?utf-8?B?LzRsbkJqWnI0RlFuQmw4QVFzazg4bjR4Nk1QRFlRTGJaTlN0T250dExJRDhX?=
+ =?utf-8?B?Ni9nUGlMbkdiRUx5YmhrbmZNVHJieXF4TkFYaDVETjlDN2h5T1FmT09qdG5I?=
+ =?utf-8?B?ak1wNEwrVW1iQW43UHE5N0NzRHA2OVd4dGF2STdWY0ZOd2JuNk9mbERzUWFh?=
+ =?utf-8?B?dXU3Sy82UFBJVkhQZWtMZlNLVE1oOW0xb0lPRGVwMU5GY3ZQeDB6MDA0V3RJ?=
+ =?utf-8?B?NHl4TEFHaFN4SEduZysyTkZiWUMrNG5QbTN4aFJIMFJ0VDV0aW9aUzVjZEow?=
+ =?utf-8?B?eXV2K0t2cUZGb1VkdXBKay82TDZGU0VZZ1Q5bmFYNGRnRTV5NytIYUFXMmV6?=
+ =?utf-8?B?VWE2ZVA3bzBHYVdDYWtxU0JFZFJFUWUvZlM4SFhtaWxwZXVtUzRZcnBoaFVH?=
+ =?utf-8?B?WXh3aGtRVDNoZTUzU01jaWg2OEVpZmduZENOY3ZKWlZHQThpOUdwNkp5NVA0?=
+ =?utf-8?B?QWF4WGxtWlFVVTN2K1d0YlV2TFFva2VIL2dOeXRZTkpWL0VLUTlQR2tJWU8y?=
+ =?utf-8?B?ajUyTUI3VWpwOWUwZjM0OVBBaDNmV0V6MVlQZjJqV1U1eHhGM2txOXNyaVdE?=
+ =?utf-8?B?ZTlDeVNXWEYyTEhheVdOU1JuTVVEd0V3M3A3Y1JXQ3VsS2NoMmFueW14SXZt?=
+ =?utf-8?B?TXVWNnJQYWtUb0ZJMjFPNiszTzkyUE5WdlRmNmtzNTF1cm5KbHNjZDA5Tm1v?=
+ =?utf-8?B?MW1sN085NUZqUzl1R05CVkxHcmd1UHZISUdMdTNNeG5JY3lHOUp0R0xsWHB0?=
+ =?utf-8?B?dUgxTTVMb1JSMVh0c2FsRUErY1E3U250OUlyTFZDTXlkSE5tbW1idk9FNHhC?=
+ =?utf-8?B?Q3IrUG5WWUxCaWpFeDB2ZTh5MzN1dVF2VFVHUnBpMjNGNHJGcnlxRmFwRVVR?=
+ =?utf-8?B?UGQzaEZPaXNyUDVtV0FmYWFMWC9wZnBlbldpOWZrazgwcjlwN3QySkcrOVFs?=
+ =?utf-8?B?OFFhaDNZQ2Nuc3NsNVdBcmlRRjFjUnAraFQ4aGNNU29TQzRaM3RrKzl1aS9i?=
+ =?utf-8?B?alZYc3BLTjNqWFlwU1ZMZDBQL2laUkIrTjJkUWV2N09VbVdnYjJkRURxckM4?=
+ =?utf-8?B?NkIxdnZoYVRYcmY3MENHbDlrRE15UHhGZTRyWlVvcCs0ZzFITlJpemY0UWVB?=
+ =?utf-8?B?S1crQTUrbnFTNzlqQU5hejgvTk9TcDYrbWltTFQrRnl0cmFuc3JPa3pORUNW?=
+ =?utf-8?B?dWJyZzZiM083RjZtd0tpOTlSYk0vNDRvaHBaUUw4SzViWDB0RnUrSjhsM2kv?=
+ =?utf-8?B?UnZRT2s0V3NxcU02TVBYblp2VXlnQmNST25vVThwSUsweW9wbFp5U29nMFBq?=
+ =?utf-8?B?SkxGM0tObUx4VXdQVzlaN2Z2YzZBQ0RyWVp0a0hLNmpVckNHQjNxWFpOQ2E3?=
+ =?utf-8?B?c1ljMnozWTFraVlVa0owb01mUzdkRGFudWRQaFRycFNnUHVlSlYwVWJ5Vldp?=
+ =?utf-8?B?WXdkZjZGcjlZNzJRWXUzTEROdWEvR1lQVi9TMnlGa3VJN1JKUUR0eTVtUlVq?=
+ =?utf-8?B?d01uTC9oWUdZT05EYXNhWVBWL2R1eXlESkFyU0E4eHB6azdoaGVEQVRNQlZx?=
+ =?utf-8?B?TnpqTjVucExRUVRPM1N3YUQrTGcvWGxrb0NIUjJ5U3JNR0tVSGMyanNYdXdI?=
+ =?utf-8?B?UHFQQStQYnVaN2I5ZUl6WmFtSzlabzB6TktGN1dXZ1hZUm1kdUJCMTNSbG5C?=
+ =?utf-8?B?MG5ubUFQV0N0M3M1WWQrK1RhbTVoWkZ5QVFSMU5XSWN2N0dkV0k3MHlUMzU0?=
+ =?utf-8?B?UHpKaUMyMnR2aVJQemkyamFJQTZINU0yUnhVQTg0bzBFaDZUR29FYzl0SGFK?=
+ =?utf-8?B?WTNVOXZHdVErV285QlAxMTV5OTBZRDlnL1BhczM3TFBWRDR4Q0tBT3NYNFZG?=
+ =?utf-8?B?eFIrajh4QkpRSnlrNXQ5YkxVMnJkQ0hpUG9CRVZ3QlFad0J4eWt1QkNNcER0?=
+ =?utf-8?Q?V7l69TBp68tJBZvLKewXdr9W2?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a95d9717-1d28-4080-8798-08dd23daab56
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d257174-2724-4dfa-60d6-08dd23c17600
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Dec 2024 02:19:57.1369
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Dec 2024 05:20:24.2529
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VRNX2Tx5CSAxpWxyFhTYjsGHvHhBwOJ92tlANWeASxiZRZLcbHd0N501sqfYKE0YjIXKi43Tn3mgBk+fAn1L2HN2Wnrniku3gtJz1RElp70=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQZPR01MB0979
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4RrLYdF8r62qAGZubAoRU5lIBd3s9Kk96IirjEI86UG7ckXGFQt6S0Sr36997wpHmewFVlAiLQXHtY25+9kkdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB8140
+
+hi Dmitry:
 
 
+On 12/23/2024 5:01 PM, Dmitry Rokosov wrote:
+> [You don't often get email from ddrokosov@salutedevices.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>
+> [ EXTERNAL EMAIL ]
+>
+> Hello Chuan!
+>
+> On Mon, Dec 23, 2024 at 03:59:07PM +0800, Chuan Liu wrote:
+>> Hi Jerome:
+>>
+>> Thank you for pointing out.
+>>
+>>
+>> On 12/21/2024 1:17 AM, Jerome Brunet wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> Following the removal of the big clk_regmap clock table from the
+>>> s4-peripherals clock controller driver, it appears some clocks are unused,
+>>> which means these are not exported or even registered.
+>>
+>> I have confirmed here that these clocks are used for the demodulator
+>> of DTV (Digital Television). The DTV-related driver will use these
+>> clocks.
+>>
+>>
+>>> In all likelihood, these clocks have not been tested. Remove the unused
+>>> clocks for now. These can added back later when they have been properly
+>>> tested.
+>>
+>> I will complete these clocks later after testing.
+> Are you planning to submit the DTV drivers that will utilize these
+> clocks to the upstream?
 
-> -----Original Message-----
-> From: Anup Patel <apatel@ventanamicro.com>
-> Sent: Monday, December 16, 2024 4:48 PM
-> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jassi Brar
-> <jassisinghbrar@gmail.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>; Paul Walmsley
-> <paul.walmsley@sifive.com>; Sunil V L <sunilvl@ventanamicro.com>; Rahul
-> Pathak <rpathak@ventanamicro.com>; Leyfoon Tan
-> <leyfoon.tan@starfivetech.com>; Atish Patra <atishp@atishpatra.org>;
-> Andrew Jones <ajones@ventanamicro.com>; Anup Patel
-> <anup@brainfault.org>; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-riscv@lists.infradead.org; linux-
-> kernel@vger.kernel.org; Anup Patel <apatel@ventanamicro.com>
-> Subject: [RFC PATCH 2/8] dt-bindings: mailbox: Add bindings for RPMI shar=
-ed
-> memory transport
->=20
-[...]
 
-> +
-> +examples:
-> +  - |
-> +    // Example 1 (RPMI shared memory with only 2 queues):
-> +    mailbox@10080000 {
-> +        compatible =3D "riscv,rpmi-shmem-mbox";
-> +        reg =3D <0x00 0x10080000 0x00 0x10000>,
-> +              <0x00 0x10090000 0x00 0x10000>,
-> +              <0x00 0x100a0000 0x00 0x4>;
-> +        reg-names =3D "a2p-req", "p2a-ack", "db-reg";
-> +        msi-parent =3D <&imsic_mlevel>;
-> +        riscv,slot-size =3D <64>;
-> +        #mbox-cells =3D <1>;
-> +    };
-> +  - |
-> +    // Example 2 (RPMI shared memory with only 4 queues):
-> +    mailbox@10001000 {
-> +        compatible =3D "riscv,rpmi-shmem-mbox";
-> +        reg =3D <0x00 0x10001000 0x00 0x800>,
-> +              <0x00 0x10001800 0x00 0x800>,
-> +              <0x00 0x10002000 0x00 0x800>,
-> +              <0x00 0x10002800 0x00 0x800>,
-> +              <0x00 0x10003000 0x00 0x4>;
-> +        reg-names =3D "a2p-req", "p2a-ack", "db-reg";
+I have learned that there is no plan for now. It is uncertain whether
+it will be submitted upstream in the later stage.
 
-reg has 5 entries, missing 2 reg-names?
 
-> +        msi-parent =3D <&imsic_mlevel>;
-> +        riscv,slot-size =3D <64>;
-> +        riscv,db-mask =3D <0x00008000>;
-> +        riscv,db-value =3D <0x00008000>;
-> +        #mbox-cells =3D <1>;
-> +    };
+>
+> If I correctly interpret Jerome's patch series, it appears that these
+> clocks will not be applied to the upstream kernel unless there are
+> clients present in the future.
+
+
+Jerome deleted these clocks because they were defined in the driver
+but were not referenced and registered.
+
+These clocks should be added to "s4d_hw_onecell_data" to be registered.
+They were omitted when the driver was submitted previously.
+
+
+> Please correct me if I'm wrong.
+>
+> [...]
+>
 > --
-> 2.43.0
-
-Regards
-Ley Foon
+> Thank you,
+> Dmitry
