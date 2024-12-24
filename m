@@ -1,200 +1,110 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F3A1B4120
-	for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 12:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E581392;
+	Tue, 24 Dec 2024 12:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735042747; cv=none; b=BTK5Fw/A5ccD3s4atmRmedlI7wo/hGS3nvcaIME3yC4ap62dNkStb5igFkvNCeSEBjQ8Fvi3euDlvofLHkomWJGUKyS4ZugnDzQuoCv1SrrnRJZwnzEfmZN3Gw4gA4YbDVnnR6jp/I/5Ik0WLyu7umPEk7TCbGSmSWVDz83IjZY=
+	t=1735044911; cv=none; b=VLUsMPlSS9LD/5UCgMEP93ORDjNs4TQefALDAI59lvChd+esr+npJFu1NXV7gW7i+/SrbuRyRr6tYVGkd5xH3g3WBtI3toDFTE6EblTMmaNhXPNqWIgUoqy4/iEHU0x4XUZH3p95SiWDLz+wlso3PPONcBz0vM/WZfruY0wBuBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735042747; c=relaxed/simple;
-	bh=iSZbopuJTWSo/8vniA36NEL/klC1Puu0S5meTNnXccM=;
+	s=arc-20240116; t=1735044911; c=relaxed/simple;
+	bh=fkNVPn9R1sjRs6kvph8dSEhh3A1tKA6Hd107uxLLiF8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cJuop4lj5R0xyeJhwGkon2PIB8tFBSnheV6XIz0RgllIB2WXPi71zITtCXnePugKra+U803oD2y7tSQOqxH+8u9cdxMujypuYajXg6yHEGDWs3msQGTMdVeQub1O5FKiRdd6IJnrFv9cjFgqi3RCy09asxv0Y7GCQrnR4eFET3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=iLrPD17o; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iLrPD17o"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e46ac799015so4249589276.0
-        for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 04:19:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1735042745; x=1735647545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DGyWve3qbblUYqOCxPmmeOlnAyP7jD3mNyNAuZHZkX8=;
-        b=iLrPD17oCn3IodTJdKI99YYvXfy1lXtNvQbyC3hikHSK/RNfmMn9JKAQeWaQlBgrir
-         FIFOiwDU/QhcIgN6vbodKjBqgKVkNOvVgms4VhUk7ngSVs0XHpzWQ4yvHGkFs9f8F4r9
-         95JMn0FvPMCGsdZtf9WRnJp8pUYjF8DiYsR1s=
+	 To:Cc:Content-Type; b=Nchmn/1bTIg+BOh25ileuaeb6Mk5B8SdO3zKbSUmv0HfHEsgRr8tKGK34gZQdfpO0Y9ksyy/O8IBc2qPRHJbYqanB73ZvujhBEs9G5lNOxbM4wbvCUwEccdCVOUT5R9H80+jf1cZkoQHSHd2/5kggLTthIUxdZCmgTD9szeUY+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-51619b06a1cso2924290e0c.3;
+        Tue, 24 Dec 2024 04:55:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735042745; x=1735647545;
+        d=1e100.net; s=20230601; t=1735044907; x=1735649707;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DGyWve3qbblUYqOCxPmmeOlnAyP7jD3mNyNAuZHZkX8=;
-        b=uaH7h3vGoLw1fnmAkIOp/EkuavMDpDKGjYGR315Uo8QAFYpKZuHgNalJtAiWg7OaCf
-         nlu1MQrVjbfh+/yzzfkVGp0JZRuWi2bKZe/luNJTVH48Plj9DcgqcsmyzN2EgQ1MzS/t
-         ZYYgezUvcwOZgbtpGRwdyzdeIXuaIupRfSneAnRJKsgNNQQx6Chx/6RKI6qX3svD2AlE
-         k1klM0ruvX3dwUx9wze+JqEa1O+iTvCty1yMrb2Gg4HRUaRjbNA1zWneyIFSZWu/fguT
-         NrHqvAFzeFVTnp2UHO4vaiJU5UAp1Q+1mIPAG8YrFmXJtMSWCQl4FsB5iwFA9O97YPPT
-         DaXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUexjP0h6r5csjWs9BqUbQJEG0wUb3bF8KqwdXaagorFPo5sol+u6lu7MbmcgvYKXLk6lZcNHJ+YCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHyrV6BZkwOa00vSbr5ZHqsWMLddrhOacj8YIRYaahDswz5pq3
-	8kytb5Tc5ES/iZ3DoROPj8ETji3KGvhM+LRySidqtJDgs7L8biWqXC/Yu2n3BetP0ktKgMmpN+j
-	AhMptVwsfxzM5j59QR/IXqRThroD6eVyyFez6FomMfmZRmfPqip0=
-X-Gm-Gg: ASbGncv/SQsuH51n1LkYAvaIApiqCu68t5YGqPiTZjykXjoGplpugfofrIZv+oMUW5M
-	MTNOD7a+UoHIuivk0XjXFqJeaf5cRVvbowTU=
-X-Google-Smtp-Source: AGHT+IH0riz8i408V1go9BqRjnhl3rg4DSK4AgKGCx/MVPvbG6Ayq1HxKA9H10UEg0e3O98yC0fCqBHSM4WINMwLeDg=
-X-Received: by 2002:a05:690c:6188:b0:6ec:b10a:22a4 with SMTP id
- 00721157ae682-6f3f814987fmr118816497b3.25.1735042744731; Tue, 24 Dec 2024
- 04:19:04 -0800 (PST)
+        bh=fpjCeAVdSwRPdWUW6IvEgqiV+bPnm1uJ0WGp1QMeJH0=;
+        b=uZtJVBEPJJeS8qXPI1JLnKOOM3LkEZn1tj5qLvOWOlgHucwd8l2bQsrqEeT9QEPikW
+         Z+ojvW8v/fTbvgvDZDsHZMFWJQI+LsmTAjUWC8Bz6anWuM0RHOj1HfkFp7x9uBssgrse
+         bLPorGBTOOsUzdrfD0GKfsuepkDTnfaW4RI8r0IiPehG0zkfKKibdW0wj60ilTBtCV3Q
+         5JzMk5kjYzjCDLq9x3E6V3sUS56Zlrt7ij9JRYKj/vURN7ch5PG9QUpurRIntVb8rP0G
+         8fBHKnbifmHEAwu1XTequ4ZiUjbbP18nCwwiHZzfCgcllzzrY9VqhndjODBcTpItuxAC
+         vorA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaLgS2bko0H3LPgeeh0V9/XXxuXlsRUOgTAsdWN+2FCV0zCvja2aS2bPH8Ouzpjeot4g53W6tsjx6gyb8g@vger.kernel.org, AJvYcCUi35NKXYUrCXz490FBVJ9iXTB0C0Z8KpgvJX3x1s5+7P9PHG1fYErRAMatWefjt+1+kR+guyNLkEupbJvn3Hiidlo=@vger.kernel.org, AJvYcCW5kzTsfCHKhwRxp7w0epZqQLiEk+0oVPO90l8srULYsgF+H3s6HUagltH593YG8Yh/JB8omM154ig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRocIPzjqRxz8tFNSt+BjGK0q6RqmFn6uxqkPFWwBXS7+hm4Ri
+	Nc0VyHu+al+pzQ5W7uwvIXHBvbp7etfD9ecASro2dCP24yQSw8kxXzbLUyMa
+X-Gm-Gg: ASbGncsRtM9ux6tJq0KCQ5oKFBnltK8Dj2u6/k7JKdQ+mIm00zaQsJyw/4BzhkHRMNK
+	Qi18yQRhqFHucP9V+qQLfrz6jo8QKYJE/lGztRHPlsSFpNZedAtKbfbfWS/iqmsEBRffsKwra5n
+	nWq64gwBsuXdFRVTuKmrWTBSP6hpU0XA4tyibUtjabcNrelrb84u49esPXtqf3OCzbbGTWbmRLB
+	VtMRsNF42i3W7wfIMlUx17T1RIVFgouWe8ADvg4PWCMaoJERDGbmTQUhsY1co5MSE9v4TpAocFb
+	Auw3lJVnqlzriBaZr+Y=
+X-Google-Smtp-Source: AGHT+IFuLRladAEWPvKUlUKNa9zlzKMSYf3iJso48l8xSqTyx92Ql0366wJKhrbRxnvQlP2gEbxdUg==
+X-Received: by 2002:a05:6122:2519:b0:516:1106:4c1a with SMTP id 71dfb90a1353d-51b75d6b15emr11549028e0c.12.1735044907627;
+        Tue, 24 Dec 2024 04:55:07 -0800 (PST)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51b68bb4751sm1172522e0c.18.2024.12.24.04.55.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Dec 2024 04:55:07 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afe2a1849bso2854783137.3;
+        Tue, 24 Dec 2024 04:55:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2PO4FAwVK5NZ8JHK167oqukySnErPgUhzclrC+rkHbJNHh1vtVAhMH5u3SOwjiYEXAQN5o/ywQXIjVT90@vger.kernel.org, AJvYcCUm4klVNh4IfOUIUK0pwr3s4yGNPuvQLr5KsuKQjWMjPdjMOhHQai09IfwYibGoHSwadbH22TiAGH7dgwgUKsnDA9Q=@vger.kernel.org, AJvYcCVQzhBr0d2Pcgu585i4MV8w9IM66lGCl+51wLqxHDxgShVxMYirAQmBCJtInxBtIGPhL4djrnv9G4Y=@vger.kernel.org
+X-Received: by 2002:a05:6102:41a2:b0:4af:4cb0:a310 with SMTP id
+ ada2fe7eead31-4b2cc3612a4mr14335513137.11.1735044907206; Tue, 24 Dec 2024
+ 04:55:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241222170534.3621453-1-dario.binacchi@amarulasolutions.com>
- <20241222170534.3621453-11-dario.binacchi@amarulasolutions.com> <20241224032223.GC20573@localhost.localdomain>
-In-Reply-To: <20241224032223.GC20573@localhost.localdomain>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Tue, 24 Dec 2024 13:18:54 +0100
-Message-ID: <CABGWkvrdMF-sUsHt4Af+Wn-OUgwbjpOpUq-yzMfOYo334_BTjA@mail.gmail.com>
-Subject: Re: [PATCH v6 10/18] clk: imx: add hw API imx8m_anatop_get_clk_hw
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20241223173708.384108-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241223173708.384108-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241223173708.384108-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Dec 2024 13:54:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVe15kQK-4mXkeUE9J9faf-_--Qx485GGimx2W02qLMOQ@mail.gmail.com>
+Message-ID: <CAMuHMdVe15kQK-4mXkeUE9J9faf-_--Qx485GGimx2W02qLMOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] clk: renesas: rzv2h: Switch MSTOP configuration to
+ per-bit basis
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peng,
+Hi Prabhakar,
 
-On Tue, Dec 24, 2024 at 3:17=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
-te:
+On Mon, Dec 23, 2024 at 6:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> On Sun, Dec 22, 2024 at 06:04:25PM +0100, Dario Binacchi wrote:
-> >Get the hw of a clock registered by the anatop module. This function is
-> >preparatory for future developments.
-> >
-> >Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> >
-> >---
-> >
-> >(no changes since v5)
-> >
-> >Changes in v5:
-> >- Consider CONFIG_CLK_IMX8M{M,N,P,Q}_MODULE to fix compilation errors
-> >
-> >Changes in v4:
-> >- New
-> >
-> > drivers/clk/imx/clk.c | 28 ++++++++++++++++++++++++++++
-> > drivers/clk/imx/clk.h |  7 +++++++
-> > 2 files changed, 35 insertions(+)
-> >
-> >diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> >index df83bd939492..9a21f233e105 100644
-> >--- a/drivers/clk/imx/clk.c
-> >+++ b/drivers/clk/imx/clk.c
-> >@@ -128,6 +128,34 @@ struct clk_hw *imx_get_clk_hw_by_name(struct device=
-_node *np, const char *name)
-> > }
-> > EXPORT_SYMBOL_GPL(imx_get_clk_hw_by_name);
-> >
-> >+#if defined(CONFIG_CLK_IMX8MM) || defined(CONFIG_CLK_IMX8MM_MODULE) || =
-\
-> >+      defined(CONFIG_CLK_IMX8MN) || defined(CONFIG_CLK_IMX8MN_MODULE) |=
-| \
-> >+      defined(CONFIG_CLK_IMX8MP) || defined(CONFIG_CLK_IMX8MP_MODULE) |=
-| \
-> >+      defined(CONFIG_CLK_IMX8MQ) || defined(CONFIG_CLK_IMX8MQ_MODULE)
+> Refactor MSTOP handling to switch from group-based to per-bit
+> configuration. Introduce atomic counters for each MSTOP bit and update
+> enable/disable logic.
 >
-> drop the guarding macros, then this could be reused by i.MX9.
->
-> >+struct clk_hw *imx8m_anatop_get_clk_hw(int id)
->
-> how about change to
-> struct clk_hw *imx_anatop_get_clk_hw(int id, struct device_node *np)?
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - New patch
 
-I designed this function so that the caller, i.e., the CCM driver,
-would no longer need to
-reference the anatop compatible in any way, but I agree with you that
-it would be better
- to add the np parameter. Do you think it would then make sense to add
-a phandle to the
- anatop node in the clk node?
+Thanks for your patch!
 
-clk: clock-controller@30380000 {
-    compatible =3D "fsl,imx8mn-ccm";
-    ...
-    fsl,anatop =3D <&anatop>
-}
+Early review comment: the big missing part in the patch description
+is the answer to the "Why?"-question.  So please elaborate.
 
-So that we can call
-anatop_np =3D of_parse_phandle(np, "fsl,anatop", 0);
-instead of
-anatop_np =3D of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
-This would require an additional patch to
-Documentation/devicetree/bindings/clock/imx8m-clock.yaml,
-but it would make the CCM driver code more generic.
+No need to resend (for now).
+Thanks!
 
-What do you think? I=E2=80=99m waiting for your response before sending ver=
-sion 7.
+Gr{oetje,eeting}s,
 
-Thanks and regards,
-Dario
-
-
-
-
-
->
-> >+{
-> >+#if defined(CONFIG_CLK_IMX8MQ) || defined(CONFIG_CLK_IMX8MQ_MODULE)
-> >+      const char *compatible =3D "fsl,imx8mq-anatop";
-> >+#else
-> >+      const char *compatible =3D "fsl,imx8mm-anatop";
-> >+#endif
-> >+      struct device_node *np;
-> >+      struct of_phandle_args args;
-> >+      struct clk_hw *hw;
-> >+
-> >+      np =3D of_find_compatible_node(NULL, NULL, compatible);
->
-> Then no need to find the compatible for every function call.
->
-> >+      args.np =3D np;
-> >+      args.args_count =3D 1;
-> >+      args.args[0] =3D id;
-> >+      of_node_put(np);
-> >+
->
-> Thanks,
-> Peng
-
-
+                        Geert
 
 --=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
