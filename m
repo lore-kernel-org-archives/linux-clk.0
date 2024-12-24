@@ -1,110 +1,191 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E581392;
-	Tue, 24 Dec 2024 12:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE378C1F;
+	Tue, 24 Dec 2024 13:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735044911; cv=none; b=VLUsMPlSS9LD/5UCgMEP93ORDjNs4TQefALDAI59lvChd+esr+npJFu1NXV7gW7i+/SrbuRyRr6tYVGkd5xH3g3WBtI3toDFTE6EblTMmaNhXPNqWIgUoqy4/iEHU0x4XUZH3p95SiWDLz+wlso3PPONcBz0vM/WZfruY0wBuBM=
+	t=1735047154; cv=none; b=SEjr0CYjsR6+v8FA2ddwym5r/0qUheoe704+y/cmFbSvgsNQTi3cdHySWSdHurwTbUhTeA3M3aupaeRmo39zTj2MZ+qsIFSNDSJdqP52W6aQa7i5e67/9SrFPkxsHG+W5LF/4Kgv+0Rwf9u8+zhtxVkIhtAtRlTs1O7boB1oPFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735044911; c=relaxed/simple;
-	bh=fkNVPn9R1sjRs6kvph8dSEhh3A1tKA6Hd107uxLLiF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nchmn/1bTIg+BOh25ileuaeb6Mk5B8SdO3zKbSUmv0HfHEsgRr8tKGK34gZQdfpO0Y9ksyy/O8IBc2qPRHJbYqanB73ZvujhBEs9G5lNOxbM4wbvCUwEccdCVOUT5R9H80+jf1cZkoQHSHd2/5kggLTthIUxdZCmgTD9szeUY+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-51619b06a1cso2924290e0c.3;
-        Tue, 24 Dec 2024 04:55:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735044907; x=1735649707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fpjCeAVdSwRPdWUW6IvEgqiV+bPnm1uJ0WGp1QMeJH0=;
-        b=uZtJVBEPJJeS8qXPI1JLnKOOM3LkEZn1tj5qLvOWOlgHucwd8l2bQsrqEeT9QEPikW
-         Z+ojvW8v/fTbvgvDZDsHZMFWJQI+LsmTAjUWC8Bz6anWuM0RHOj1HfkFp7x9uBssgrse
-         bLPorGBTOOsUzdrfD0GKfsuepkDTnfaW4RI8r0IiPehG0zkfKKibdW0wj60ilTBtCV3Q
-         5JzMk5kjYzjCDLq9x3E6V3sUS56Zlrt7ij9JRYKj/vURN7ch5PG9QUpurRIntVb8rP0G
-         8fBHKnbifmHEAwu1XTequ4ZiUjbbP18nCwwiHZzfCgcllzzrY9VqhndjODBcTpItuxAC
-         vorA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaLgS2bko0H3LPgeeh0V9/XXxuXlsRUOgTAsdWN+2FCV0zCvja2aS2bPH8Ouzpjeot4g53W6tsjx6gyb8g@vger.kernel.org, AJvYcCUi35NKXYUrCXz490FBVJ9iXTB0C0Z8KpgvJX3x1s5+7P9PHG1fYErRAMatWefjt+1+kR+guyNLkEupbJvn3Hiidlo=@vger.kernel.org, AJvYcCW5kzTsfCHKhwRxp7w0epZqQLiEk+0oVPO90l8srULYsgF+H3s6HUagltH593YG8Yh/JB8omM154ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRocIPzjqRxz8tFNSt+BjGK0q6RqmFn6uxqkPFWwBXS7+hm4Ri
-	Nc0VyHu+al+pzQ5W7uwvIXHBvbp7etfD9ecASro2dCP24yQSw8kxXzbLUyMa
-X-Gm-Gg: ASbGncsRtM9ux6tJq0KCQ5oKFBnltK8Dj2u6/k7JKdQ+mIm00zaQsJyw/4BzhkHRMNK
-	Qi18yQRhqFHucP9V+qQLfrz6jo8QKYJE/lGztRHPlsSFpNZedAtKbfbfWS/iqmsEBRffsKwra5n
-	nWq64gwBsuXdFRVTuKmrWTBSP6hpU0XA4tyibUtjabcNrelrb84u49esPXtqf3OCzbbGTWbmRLB
-	VtMRsNF42i3W7wfIMlUx17T1RIVFgouWe8ADvg4PWCMaoJERDGbmTQUhsY1co5MSE9v4TpAocFb
-	Auw3lJVnqlzriBaZr+Y=
-X-Google-Smtp-Source: AGHT+IFuLRladAEWPvKUlUKNa9zlzKMSYf3iJso48l8xSqTyx92Ql0366wJKhrbRxnvQlP2gEbxdUg==
-X-Received: by 2002:a05:6122:2519:b0:516:1106:4c1a with SMTP id 71dfb90a1353d-51b75d6b15emr11549028e0c.12.1735044907627;
-        Tue, 24 Dec 2024 04:55:07 -0800 (PST)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51b68bb4751sm1172522e0c.18.2024.12.24.04.55.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Dec 2024 04:55:07 -0800 (PST)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afe2a1849bso2854783137.3;
-        Tue, 24 Dec 2024 04:55:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU2PO4FAwVK5NZ8JHK167oqukySnErPgUhzclrC+rkHbJNHh1vtVAhMH5u3SOwjiYEXAQN5o/ywQXIjVT90@vger.kernel.org, AJvYcCUm4klVNh4IfOUIUK0pwr3s4yGNPuvQLr5KsuKQjWMjPdjMOhHQai09IfwYibGoHSwadbH22TiAGH7dgwgUKsnDA9Q=@vger.kernel.org, AJvYcCVQzhBr0d2Pcgu585i4MV8w9IM66lGCl+51wLqxHDxgShVxMYirAQmBCJtInxBtIGPhL4djrnv9G4Y=@vger.kernel.org
-X-Received: by 2002:a05:6102:41a2:b0:4af:4cb0:a310 with SMTP id
- ada2fe7eead31-4b2cc3612a4mr14335513137.11.1735044907206; Tue, 24 Dec 2024
- 04:55:07 -0800 (PST)
+	s=arc-20240116; t=1735047154; c=relaxed/simple;
+	bh=Wj6Ge9xRyhftxbU/Vrb5rWIH7VfNQJ8RdkY2OTPlFrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qb56Buit89ufxMzF+ieq9g3wu6wf26BmJb82/xV9b3e3ylEMSor1iFU/vLBvpvoccCmGNaV4Zv3rgAbsWRCrRWsxQH+orNF/NFtq/NOSDpc4B+hLKUJb9QC9kd7FDubDqWnW2NxYw897LXJEI/VDvXpulTqcWHctJM5floveLJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTsz09Zk; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTsz09Zk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21DEC4CED0;
+	Tue, 24 Dec 2024 13:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735047153;
+	bh=Wj6Ge9xRyhftxbU/Vrb5rWIH7VfNQJ8RdkY2OTPlFrU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NTsz09ZkW2Cc/WTqOYRhMlYKJuf7B2wxPAgv7aGnE4J2l4i63uuLG2STK7MbTXlXf
+	 OWkHbbPyH1WaQ5qz+JVCM311vhtmrZzDsA1gjcOkK4ga6IZ1dXnrOMJdlcHKDqRkci
+	 pAXKCxntbvGsxs+ixvhq3L/zP9C4wWInpj/R/2nN7kHpbMpX0qrwMZ8khTb1L4miw2
+	 FLjk6MvTAvVAIIj0M0jq5DBdCXGJNxHhdAwGa7y6I1/MK5/OskheR412z2pin1aysE
+	 07yZNbS+/jtndgG9u34ZPivcmkRGaUeHxddziKsV1l5O8Ci0QQf1pl/3xZizbd/z13
+	 RT7y024iYdkRA==
+Message-ID: <b6935ae6-5426-440f-9dbd-775002e110fc@kernel.org>
+Date: Tue, 24 Dec 2024 14:32:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241223173708.384108-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241223173708.384108-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241223173708.384108-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Dec 2024 13:54:55 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVe15kQK-4mXkeUE9J9faf-_--Qx485GGimx2W02qLMOQ@mail.gmail.com>
-Message-ID: <CAMuHMdVe15kQK-4mXkeUE9J9faf-_--Qx485GGimx2W02qLMOQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] clk: renesas: rzv2h: Switch MSTOP configuration to
- per-bit basis
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 03/19] dt-bindings: power: thead,th1520: Add
+ support for power domains
+To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ frank.binns@imgtec.com, matt.coster@imgtec.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+ jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
+ <CGME20241223125604eucas1p26b870756eeaf2a5666b70de3f7554c13@eucas1p2.samsung.com>
+ <20241223125553.3527812-4-m.wilczynski@samsung.com>
+ <db2987c2-53fc-4d3a-b85c-f5683f74e7a0@kernel.org>
+ <756031bf-4f81-424d-8cbc-db27ac27f6dd@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <756031bf-4f81-424d-8cbc-db27ac27f6dd@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Prabhakar,
+On 24/12/2024 10:31, Michal Wilczynski wrote:
+> 
+> 
+> On 12/23/24 17:09, Krzysztof Kozlowski wrote:
+>> On 23/12/2024 13:55, Michal Wilczynski wrote:
+>>> +  compatible:
+>>> +    const: thead,th1520-pd
+>>> +
+>>> +  "#power-domain-cells":
+>>> +    const: 1
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - "#power-domain-cells"
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    firmware {
+>>
+>> Drop
+>>
+>>> +        aon: aon {
+>>> +            compatible = "thead,th1520-aon";
+>>> +            mboxes = <&mbox_910t 1>;
+>>> +            mbox-names = "aon";
+>>
+>> Drop aon node... but the main problem is you do not have any resources
+>> in your power-domain device node, assuming your binding is complete.
+>> This suggests that this is part of aon, not separate device. Fold the
+>> device node into its parent (so everything goes to AON).
+> 
+> Merging everything to AON node would definitely work. I was looking at
+> the other implementations of firmware protocols for example, and that's
+> how I figured the current implementation:
+> 
+> arch/arm/boot/dts/broadcom/bcm2835-rpi.dtsi
+> soc {
+> 	firmware: firmware {
+> 		compatible = "raspberrypi,bcm2835-firmware", "simple-mfd";
+> 		mboxes = <&mailbox>;
 
-On Mon, Dec 23, 2024 at 6:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Refactor MSTOP handling to switch from group-based to per-bit
-> configuration. Introduce atomic counters for each MSTOP bit and update
-> enable/disable logic.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> - New patch
+That's a 10 year old binding. Not even reviewed initially by DT maintainers.
 
-Thanks for your patch!
+> 
+> 		firmware_clocks: clocks {
+> 			compatible = "raspberrypi,firmware-clocks";
+> 			#clock-cells = <1>;
+> 		};
+> 	};
+> 
+> 	power: power {
+> 		compatible = "raspberrypi,bcm2835-power";
+> 		firmware = <&firmware>;
+> 		#power-domain-cells = <1>;
+> 	};
+> };
+> 
+> This is fairly similar, as the firmware is passed as property, instead
+> as in a parent-child relationship. Would you consider it more canonical
+> ?
 
-Early review comment: the big missing part in the patch description
-is the answer to the "Why?"-question.  So please elaborate.
+I consider early Raspberry bindings as antipattern. Same as many other
+early approaches and that's not an accusation to their authors. Just
+rules changed and capacity of DT maintainers increased.
 
-No need to resend (for now).
-Thanks!
+> 
+> I would be happy to merge everything to AON node, and merge the
+> power-domain driver and AON driver together, but it seemed to me like
+> those could use some separation, and since power-domain and the AON
+> represent actual HW it's fine to represent them in the device tree.
+> 
 
-Gr{oetje,eeting}s,
+I said nothing about drivers and I did not suggest merging drivers.
+Device nodes should not be split because they have different functions.
+This is one single device with multiple functions. Just like hundreds of
+others, e.g. clock, power domain and reset controller - all in one. Lack
+of separate address space is the main aspect here indicating this is not
+a separate device.
 
-                        Geert
+So merge the device nodes.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+Best regards,
+Krzysztof
