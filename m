@@ -1,65 +1,65 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20FC1B3949
-	for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 10:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F961B3936
+	for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 10:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735035157; cv=none; b=vCJdSkZO89NXnCj8tMFp+vi7uFuC4zeDISoraVZTmfy6LA8tXz4cXn1jafaPtLpC1NXq/9NQLGBFPfg/Z1o0GtdWQhjz87JQuggMIcrvCJczBAVvTtF5P9XaAcCiK9CrO0yEwxA9nkbx/q6ASCA1a4lnq9hzfQ3HQKsFVjyyUr0=
+	t=1735035159; cv=none; b=AsPAv1NI+x0HoVoZXP6PXILXQCCt4OGgVYklIpH8joKiZPs+b+ivCZg66IY4hJztWUHShXdDOCDKyxnZTILkRNHqAmJ3OyuRT6AcKrzMq9iMXCmvyuC8mhrwuV4czPwhxpKPkRp/LIZ4whyniMgh7aGvx4Sg6lAThRb7wezh0Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735035157; c=relaxed/simple;
-	bh=Qth8lmPCD2HZ8e7n0fcscU6OItm375v1ZHaNDTxe/k0=;
+	s=arc-20240116; t=1735035159; c=relaxed/simple;
+	bh=fDugKsDeVD1y+LzqxMpm2ULzlklXCe9X5w6RlCG7Zeg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m1T3iodypyR4Yn8PEJHJzry7ztXip0Bse9nn4/vnkbvA/XH5z4VfxLKZxPvNkDjhPoE8sQuwkhTdmgvO4DqvcfEOPbXzlLFfLreypUtudUbMjCsMW2drBDnPhMzdBHi2bMgnC+XbpujMOOqx3eHM38SZ7qSLecz/fO0ty4Z4KEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cg2NWYcg; arc=none smtp.client-ip=209.85.167.47
+	 In-Reply-To:To:Cc; b=CfiQCZ3/7iqQ2B4tnPCN2DsWJeBCLmXt5FefJ548txug/U2fJly31+03UXgak7YBmHzkPTGNS0t4ZQQ2OgtHXi79oTUb0e18/7dcATdgOAGX+D016tGH1V4I1mvItqsr7/91kXYlroili/vfciKzaTbq6jkDP0MTuB4nbvpeK8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=asG5TYMk; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cg2NWYcg"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5401e6efffcso6015567e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 02:12:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="asG5TYMk"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53f22fd6832so5453121e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2024 02:12:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735035154; x=1735639954; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1735035156; x=1735639956; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DNv7vuo/nVPsOvSPfX1b8QlBVUPniiNuRCRjr7neK+w=;
-        b=Cg2NWYcgXS3gGV0XjQXFG180zVG7fGlQwQ7A/NkGKIK6x2bqqIZe0r4EBarr7NS2Qe
-         1SGBfN6bCdWPZdcaumM6Wp0X9KJ48Vsxq79PgiHLwudOssK0nbJMwCPbKU24qk4DYvg+
-         J7M47zTqVBsl4b1T5pJ5ODxl7LoijkEuPwWxRSp+Ip+tAiAL22xpWDZRi4uBgbPvCalR
-         wfrub/6OpfzrInNMS/SFlkiRI+RzJfJtNpVdMd1aOt6UmCVezGC1JavAmJGXnVHEWFoq
-         01ie8vIfkyl2pEZxh+6imDuYoUGiac5ZYwqNYC4DZPoZlZLLP+sMk6qMtBy6BGGxwkvk
-         BIxA==
+        bh=rSwKnWOLzkCsyJkMhnXokdr8YZs5LN4HoxuNCOPRu9Q=;
+        b=asG5TYMkPjExmmE74OKhqY8ZUUaAi8JmTop2aTQWMR+eT/zIyed4eOcdZcZKBSfpt4
+         IxuGBv5q1/PfreU1KBgIcuzQdxeRUwcrwiEqU20FdPk1YFfo22vRB1R1/ilA7nrvzVHK
+         nKILQv7reKQSSZDFiw1pVSb7Cqa6HjH+IviktCe6KDUasl8QmirSULQAd7Eu4bjs1d9o
+         d9X5EWBf038s+vJ1dVNHBiOMNLn04xkI2RuJKrUU0tdvAXckcis1UxsZq4AGyZqOBt3L
+         z7vDdrviBSsvHZ5upJl7flR8s3TNScXZ5IsE5wU6EskvkQGnitz7ineuOtQu8HJiS2vS
+         4cgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735035154; x=1735639954;
+        d=1e100.net; s=20230601; t=1735035156; x=1735639956;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DNv7vuo/nVPsOvSPfX1b8QlBVUPniiNuRCRjr7neK+w=;
-        b=lgkrSGyMk/Wnyek2zRqBP9/HTxWfy5pL8HGiSNrClWwO8c7pQDEhlmkAzm5FA6UxBQ
-         wYCAiGCrQZMXCaiq3rewqhIzDwBGyMfTu9IjqJm3QTBPTEQOQw5O4g844O9UMckisFsX
-         DRLzZrV41SzwE7wtI05xYee9+uLQ+2APuOqWwn292r6AV83WrL/5FBuUefJltyjWkuUa
-         rtvnKyW890Bu18WduYy/fNXwLQ249pabPNcR1+tb0cB+Z4dJIyaOAZNcMdMwrgq33N/k
-         Y9Hax+dzfTqaHtFr1vvSlbMjaFmp3cs1/cRPPNOTe20m9IKDpt28YvvRz4qBCY9sa5yR
-         BmgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnEMefbSQzOSR86bc31KJPV1NrNl8amfVlGKPjrrD1Q97DypNbhH/x+2k+wxru40OcupJMrjGDkoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCXWgtfhaNOUOkz+XaY/fa68S74/8GEV40dWhIJo13CuSV0Tem
-	Uf1I2AyyE+slg9oWwE7F76I7fx6U1boQeRSu2+02w6i3AT9UNAS9/hyP3HDalFI=
-X-Gm-Gg: ASbGncvDKDWXWeTELfsBPHluDkQfy3BeBDlWSAM1xT8N4/dfpye7uchJIaO8uxmM2SO
-	dm3R/AYuODuqSgmtKCwctkaq+t4Xl6GcDdVUgnBH9RD2qcWVTzFCdKFubuixoUTjcOvaowUsDNQ
-	i2Tpe/73/1/96nX3fIdaBNTg+kmq29119eapBuKGSF9dHU0w2/4sNxsPG6Kd1Wkz/ishoFfJzzk
-	5h+rshvGyEK6+rnZWTjVquR67T65h0zGUrHs4HwFx9rhcJUC4Ch5CbgZFCLMMwn
-X-Google-Smtp-Source: AGHT+IGqnFZxpigpQ9ODtiMrS6DALNNNczOXgsG0KCWv9iCI5/tAgbeiqKkqCBnMr84iq0mo6PD4rg==
-X-Received: by 2002:a05:6512:1283:b0:540:3581:5047 with SMTP id 2adb3069b0e04-5422959cfdbmr4227024e87.48.1735035153783;
-        Tue, 24 Dec 2024 02:12:33 -0800 (PST)
+        bh=rSwKnWOLzkCsyJkMhnXokdr8YZs5LN4HoxuNCOPRu9Q=;
+        b=jCUqtxbjF0FX290pnqDRlHwd9eKbgP9lH/hO98pRKv+f6Og4zunN1ubbeFPnr9dwSs
+         IUZpkaIqXUI0kFCUeDt1QtgFc5MDv42HrcbQ+p9I7hR3iqIt5xuDdYrGXZOs35KpPPPr
+         CJ/QuyokFskRFNjZuSl5jLbk6WR0VYWtA8qFB10SiBWfl97dE06StCHNPqLpZVwLdyZD
+         o7+0Yzr4yzlcPMF1XFyCxIQbiPmee+x6m0WONE0tY5s0GyDXdi5K+8lLEybOQsVFrQwI
+         3x+9n/lQ7WAzUMMiR/hrBxrgUaiG04WO2RLfnoKYBedm03rsh52afjHTdUbkHknQwrgf
+         6HNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa8q1qDxsK4QX47b6+m0JQJVqQdNYCnXfud1vz2RDaBpKyNhX9ndb3ot3lgFoELtZrLEBnwa7RMLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVnZaLYyNQikvfA3tX9yFfieW4s0lKZgi21c9I7VPSAVYRNqcH
+	iRZZyr7LW+koL8kPTxZ3Oxu65eXU+ztYe4P9ydN3TtdzTcyhiWOmGDfVX4DV070=
+X-Gm-Gg: ASbGncvOXk6/HgMqq4CXRa8W83Us4u5/pQx2t5hvAgntbYb5MwtthGQTIiX+ir3876x
+	AKcES8X80slp+9xR8vp3Pug9+ACfXvYZN6gMdAfu6+7oyIbrpFrp87hpjDLetUd4oqoZlb+3EsR
+	f0VxtfLUebS4uDk+j5OM1WaEljQgJdOuGNh1HQQqK83TBcHQ94baB1W1tlQbkX+EBYNq41NftEq
+	8n3rSrh9u63WtvdtTlDmTdWf6EZ6+jSrnSswrExpowoXfmkc1+PLJ65F6Y5uTwq
+X-Google-Smtp-Source: AGHT+IECKNu67FWvHQ2QUifRTlJ037c4pteUklzWFsoIoNF4WT5PbdcpxFeMhO04XrfpCPUoVxMipA==
+X-Received: by 2002:a05:6512:3d15:b0:540:1c6e:f040 with SMTP id 2adb3069b0e04-5422956040bmr4441373e87.45.1735035156215;
+        Tue, 24 Dec 2024 02:12:36 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54223832073sm1574233e87.260.2024.12.24.02.12.31
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54223832073sm1574233e87.260.2024.12.24.02.12.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2024 02:12:32 -0800 (PST)
+        Tue, 24 Dec 2024 02:12:34 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 24 Dec 2024 12:12:13 +0200
-Subject: [PATCH 1/4] dt-bindings: clock: qcom,mmcc: support LVDS PLL input
- for apq8064
+Date: Tue, 24 Dec 2024 12:12:14 +0200
+Subject: [PATCH 2/4] dt-bindings: clock: qcom,mmcc-msm8960: add
+ LCDC-related clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241224-apq8064-fix-mmcc-v1-1-c95d2e2bf143@linaro.org>
+Message-Id: <20241224-apq8064-fix-mmcc-v1-2-c95d2e2bf143@linaro.org>
 References: <20241224-apq8064-fix-mmcc-v1-0-c95d2e2bf143@linaro.org>
 In-Reply-To: <20241224-apq8064-fix-mmcc-v1-0-c95d2e2bf143@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -81,58 +81,39 @@ Cc: Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1416;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=809;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=Qth8lmPCD2HZ8e7n0fcscU6OItm375v1ZHaNDTxe/k0=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnaokMnqkvhxjSffwsb2H2ODnrmOrLntpagqmz6
- DSMteYvVxmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2qJDAAKCRCLPIo+Aiko
- 1XOxB/4kwF9PgbpsVnjxy1HtELAqbnhuecamdGx7qGW052yeXgyQh/vocy6c2Qst83ESM0eeI4u
- bZF/BeIcfFkzleUyyrxuDioDAslxNyw2ETS1R6qDJWLsWdulkwiHmD0BVyXJCgZBypPjGJfBY0B
- ZPbsMnjThr3IZalaU/Xp2pO1Gy5qXMFazELw1oXN+qMV5zm/OnFmtb39oZHL3plfoApdC/gujlj
- e77pvtGMcvjjYg+HbkLDOZwQtsTEVo9304tTM25IHN/hnU9Q9HKRQ02SaT7/fgsjumBP3gv56UP
- Uja8v699FBjAkoq7Cj5yC6Wi3wb7xl4YokuCxkTiyM6v08SP
+ bh=fDugKsDeVD1y+LzqxMpm2ULzlklXCe9X5w6RlCG7Zeg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnaokMlip7bs0ty8+2O6ZJZqGn6PLk6+bLXnLc7
+ tBdfVnA2j6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2qJDAAKCRCLPIo+Aiko
+ 1ejYB/0RXq3L3aWz7wWLSlNdpf03jkOd1D7/4rexEAxTxxMov83idgfrGiu7mDmn1FYnPPH8pUv
+ BEsM2+xvqDdDaWqlIVYLYLAPGPzvRtwIMWnph6H8Rh6xVEiBgEvi+h3QhpL5csW9lGl1ZjsOGVw
+ qQAi9RPU57hQBYOSg1a1W1wFFJixkhFRMBRQNf0yDWLvz7+CUTqtsj5qSnm7N/S5b2cYHUB6Gmz
+ HLDO/wwB67dKOb5TXPRB5wrh7tDI6gjXkoyaaxgner1Me2ETOSpcUHuON1EtwFr//IEP/E2JgTt
+ N1o9UtJwBzL7bRmYrxzcZMMAIKdwHj0W8zyeYYk2K8WlQcfd
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-APQ8064 / MSM8960 have separate LVDS PLL driving the LVDS / LCDC clock.
-Add corresponding input to clock controller bindings.
+APQ8064 / MSM8960 have separate LVDS / LCDC clock, driving the MDP4 LCD
+controller. Add corresponding indices to clock controller bindings.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/dt-bindings/clock/qcom,mmcc-msm8960.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-index aa35a40648ba8a606c9d6286a1916e2cff339f1a..59ac288ca5f12de4f14fac3ce0d783d1ee1ebb4f 100644
---- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-@@ -78,6 +78,7 @@ allOf:
-     then:
-       properties:
-         clocks:
-+          minItems: 8
-           items:
-             - description: Board PXO source
-             - description: PLL 3 clock
-@@ -87,8 +88,10 @@ allOf:
-             - description: DSI phy instance 2 dsi clock
-             - description: DSI phy instance 2 byte clock
-             - description: HDMI phy PLL clock
-+            - description: LVDS PLL clock
+diff --git a/include/dt-bindings/clock/qcom,mmcc-msm8960.h b/include/dt-bindings/clock/qcom,mmcc-msm8960.h
+index 81714fc859c503cd865e61f78ba463dfa9431e8d..717431d735c18a14ed02502dd8796f7f135c416d 100644
+--- a/include/dt-bindings/clock/qcom,mmcc-msm8960.h
++++ b/include/dt-bindings/clock/qcom,mmcc-msm8960.h
+@@ -133,5 +133,7 @@
+ #define VCAP_CLK					124
+ #define VCAP_NPL_CLK					125
+ #define PLL15						126
++#define DSI2_PIXEL_LVDS_SRC				127
++#define LVDS_CLK					128
  
-         clock-names:
-+          minItems: 8
-           items:
-             - const: pxo
-             - const: pll3
-@@ -98,6 +101,7 @@ allOf:
-             - const: dsi2pll
-             - const: dsi2pllbyte
-             - const: hdmipll
-+            - const: lvdspll
- 
-   - if:
-       properties:
+ #endif
 
 -- 
 2.39.5
