@@ -1,153 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D0C440C;
-	Tue, 24 Dec 2024 13:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832121C3C15;
+	Tue, 24 Dec 2024 17:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735047202; cv=none; b=VorF+G/IaMl6ABAUbr4f8E6EKGQ8E17+y/KkuxgMnhRTOtD5nnJB0WAns8GAkOpR8tsrnhGc3soBe7Lzhc/hsUhOltJTQoR8cXud4rfvPaYmMhzCfAL11hma8DXA9HIGKuj51GS33iGiryIcRPKluYzTg1GirH8Dwy6rrfzZflc=
+	t=1735062972; cv=none; b=Z436Prz8M/ySFkMeN30R6r+/njTt6ZZiSJnyV3+IfR17MKVs2H89cQ5IT9yUWFKUw+Wp3KAYXRocssEUYsXWS/nbpl4gB8HChAqkrDu9fVI3uhEnPZ+mbLm7xoDOg1A3czA/QXxJ4+VLNBnezZq0FnyhcDOJXdI5iI2M9XqxmTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735047202; c=relaxed/simple;
-	bh=iCylm2MRvv6PAKDEQXGNVZEgHIMFQpRlTrGrKOgYpeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZcck2VybndzjUhwFLMAmF3epZrMUcDUIRp92DbHekVelwOi8cCZbjhQ3eTCqBNeoPtjbxoOX2M9AlKdv2r9vuuBHO7aI9/R/NZ1TkSrQ6XyVrvjObe4151by+xpKpn+SiCXX6DwbLW6OT4MXHyHtwFs0UMGHtQceP76rqaKW1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KC2xmTne; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735062972; c=relaxed/simple;
+	bh=ABGN+tIl/xWqTu2qM31EYBi8ppBkweH9QahT2deVQmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dfZ9YJGcdYVjYBTH+QQHEnxe3Q1cWmvcwDKusUvKhlFW5/sqOTD5j1yDlLqn1zSGl47teor1AKKEpt9OzSlrTqRvgr4xiKWGoeUc8R67D/09p0lfjH6WsHBu7vLEnSA3gB+ubRqlHjHJsprN899OAlqA4nuFVzTei2Of1Duvo9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqC4kDGz; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KC2xmTne"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF34C4CED0;
-	Tue, 24 Dec 2024 13:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735047202;
-	bh=iCylm2MRvv6PAKDEQXGNVZEgHIMFQpRlTrGrKOgYpeA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KC2xmTneRSFNwSAJp3+8iCsRqXaAFVJFSiPVeiE+x7IeYyahP4CRNOqrcVigGQ2X+
-	 OMxLGycqlfZBJGVq9XTubCZ2Pjuh71d8E2MlJHLE6Z+gPo4QysVD8FtXZOJRkWSnCF
-	 MW0ra5Tcr026pyup6Am4ik9LvUqxs8wZ+T+b0uolRA33fqVzijnFU5Q+ul67ITeoY6
-	 vAhE/QyRrR0lEfhUlFv9QLMBfgE6E+nIKXJLbdMt8OYM5J6iC6RXNDK6+7EMzAPAsy
-	 /evMujANNZdyALfkZ2KHylhHNmRi3CxNcHaifmkfNwCmaMsq946pFw6sc1KQD3Xb8o
-	 BXBzXn+aZgE9A==
-Message-ID: <24b7cb33-779c-447f-a080-5ed05cd7faf1@kernel.org>
-Date: Tue, 24 Dec 2024 14:33:13 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqC4kDGz"
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-51bb020339fso218258e0c.0;
+        Tue, 24 Dec 2024 09:56:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1735062969; x=1735667769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c4ZFlWCxMideknpI/WJabBpuLH0nBl1yUOtKktfxVek=;
+        b=jqC4kDGzH6+GMzfcN9ejZX3c9+o/oei6DslZTyRnMGXkYgYin1uMKal3HV/eWOUv/j
+         E13Ve1XDp32vUsQATGQEnHLssjdR02tPLXVsooXaHl0QQIiA91q359ou3ESGKulXnOSM
+         AT1PGx6yy3qQAJelEDMIM6hEoZK7PtgGObdRDZTa5gSrASO9kUPEyRwCscK/LvUmXQuA
+         befBpceRK+pEJeqthmm6dpJ8ofUXh60ymI6u+HAkuPt89t9anFFlmJwq0WxDPmsTQlwC
+         kSCclfI/tfEae5FQKMnQVj9DKN4nyYgVmV4eIJOwiXEhNjCxk92shTDFAAHIW5KQF1wZ
+         pNBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735062969; x=1735667769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c4ZFlWCxMideknpI/WJabBpuLH0nBl1yUOtKktfxVek=;
+        b=kgCmW0I4bxEDMXNg1xVCMotMPIpujHRUEyKF6GX7QuuHTD490pVXWsoTbng1qKomFk
+         qxV8RvPApYiXCK0It0U2Mnt3d/mtnEKSyNEzrtaQH6laJ7Q0Vcx6zUHncXDacg9qYdnU
+         ZA7OPT+smrygz1uCEmJLlbfSsdjum0GWMBYYup19WSnb+CIsc0aJas5WNkoLEkwvFuji
+         LlzRNZiNd08aT8MUq377OoT/cPdHLJhxiWGFc83cqflcSzVCoqeW7OpcrMkzWHoYZRX4
+         W6cplO1kFL7ovZX47mNvVZ/sXw9vBHJI+2sT7dOBlTIMXuErc+elo2akTZ5nbPSXvzON
+         ekEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBS/HlxvBAk6ms1XQhhbQU32KhZ9oTgbybCOCWRga/mb0bynA+0+qQc1vM3XAXqjPIDT6pW5LYjSkE11YB@vger.kernel.org, AJvYcCWfLCw48sA3pplFJXNxuTWem/pon1nTzdhyZ+J4mud7eEaZYjLh+E0S92s5QePaIvjZK1K3TIRKs3UR8RnF6p2/OvU=@vger.kernel.org, AJvYcCXAVK4g2fLMflAycWjaukR177JAcDvCXid30/YAcBu2dCi9pMoWw9xLmrshgiaVL1blVP/RbiaDj6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT2Jdj4RZKvV6Zw1IdGpSMEqKFzN0L0D1kWl3BNInk4SG1ejsz
+	cJKG7sUxKEbR0FpoJmn49ErxfQD5Na86SxJnoWkA95tm6Pp5Vjs9p6Xs+G8oWdtkx9p3oYQK5IO
+	wJxyXj79trE3FO6e7zz1MUhA1kYk=
+X-Gm-Gg: ASbGncsvcF6qnz2dWEGM7m0vS6k2QaOQzMlgT7j2IrE0mpgNxL5wt361/wvHjGdmg/O
+	kVaXDSBOSXuZ/HfgbL5GsxevdmkarRwlq09lK3hQB4BZ9vfPXvC5Bzqk9xR8dOFiXdZha4zyd
+X-Google-Smtp-Source: AGHT+IH2BQbja1ScFyd1htesUKSzlhqcDH5gTJN3Fl/0YrAgotdoVx/LzvnAD1Fy72ORap20JdleILGxPDQMJ9lbqno=
+X-Received: by 2002:a05:6122:d0c:b0:518:773b:39f with SMTP id
+ 71dfb90a1353d-51b75c5a23cmr15793236e0c.4.1735062969281; Tue, 24 Dec 2024
+ 09:56:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 01/19] dt-bindings: clock: Add VO subsystem clocks
- and update address requirements
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: airlied@gmail.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
- drew@pdp7.com, frank.binns@imgtec.com, guoren@kernel.org,
- jassisinghbrar@gmail.com, jszhang@kernel.org, krzk+dt@kernel.org,
- m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com,
- matt.coster@imgtec.com, mripard@kernel.org, mturquette@baylibre.com,
- p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com,
- robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de,
- ulf.hansson@linaro.org, wefu@redhat.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linux-pm@vger.kernel.org
-References: <20241223125553.3527812-1-m.wilczynski@samsung.com>
- <CGME20241223125601eucas1p1d274193122638075dc65310a22616bae@eucas1p1.samsung.com>
- <20241223125553.3527812-2-m.wilczynski@samsung.com>
- <2cd0c34fbd14a0d69e689d04c2241938.sboyd@kernel.org>
- <wjet4yvtcobjaf7c4u7to6rm3ppkvmgyitp6evoqjpndtno6qg@h5xxyukph6y6>
- <c17c75c0-ef13-48df-9095-67fbf31bb817@samsung.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c17c75c0-ef13-48df-9095-67fbf31bb817@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241223173708.384108-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241223173708.384108-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVe15kQK-4mXkeUE9J9faf-_--Qx485GGimx2W02qLMOQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVe15kQK-4mXkeUE9J9faf-_--Qx485GGimx2W02qLMOQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 24 Dec 2024 17:55:43 +0000
+Message-ID: <CA+V-a8u_tB951Ha4Y8X8Ef2u7D=znh0i=HZRZUcBAv8aRYUsOg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] clk: renesas: rzv2h: Switch MSTOP configuration to
+ per-bit basis
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/12/2024 10:23, Michal Wilczynski wrote:
-> 
-> 
-> On 12/24/24 09:53, Krzysztof Kozlowski wrote:
->> On Mon, Dec 23, 2024 at 12:50:59PM -0800, Stephen Boyd wrote:
->>> Quoting Michal Wilczynski (2024-12-23 04:55:35)
->>>> The T-Head TH1520 SoC’s AP clock controller now needs two address ranges
->>>> to manage both the Application Processor (AP) and Video Output (VO)
->>>> subsystem clocks. Update the device tree bindings to require two `reg`
->>>> entries, one for the AP clocks and one for the VO clocks.
->>>>
->>>> Additionally, introduce new VO subsystem clock constants in the header
->>>> file. These constants will be used by the driver to control VO-related
->>>> components such as display and graphics units.
->>>>
->>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>>> ---
->>> [...]
->>>> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->>>> index 0129bd0ba4b3..f0df97a450ef 100644
->>>> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->>>> @@ -47,7 +54,9 @@ examples:
->>>>      #include <dt-bindings/clock/thead,th1520-clk-ap.h>
->>>>      clock-controller@ef010000 {
->>>>          compatible = "thead,th1520-clk-ap";
->>>> -        reg = <0xef010000 0x1000>;
->>>> +        reg = <0xef010000 0x1000>,
->>>> +              <0xff010000 0x1000>;
->>>
->>> I don't get it. Why not have two nodes and two devices? They have
->>> different register regions so likely they're different devices on the
->>> internal SoC bus. They may have the same input clks, but otherwise I
->>> don't see how they're the same node.
->>
->> That's a good point. Aren't here simply two different clock controllers?
-> 
-> Yeah there are two clock controllers, based on the review comments I was
-> trying to re-use the driver, but the driver can also be re-used to serve
-> multiple nodes and multiple compatible and .data properties, if that's
-> fine with you that's how it will look like in v3.
-Yeah, please drop my review tag and rework it to have two different
-devices. Driver design should not influence DTS.
+Hi Geert,
 
-Best regards,
-Krzysztof
+On Tue, Dec 24, 2024 at 12:55=E2=80=AFPM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, Dec 23, 2024 at 6:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Refactor MSTOP handling to switch from group-based to per-bit
+> > configuration. Introduce atomic counters for each MSTOP bit and update
+> > enable/disable logic.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2
+> > - New patch
+>
+> Thanks for your patch!
+>
+> Early review comment: the big missing part in the patch description
+> is the answer to the "Why?"-question.  So please elaborate.
+>
+Ahh, I was under the impression patch 1-4 will be squashed into the
+original patch series so I didn't elaborate it much. If that's not the
+case I'll update the commit message as below:
+
+clk: renesas: rzv2h: Switch MSTOP configuration to per-bit basis
+
+Switch MSTOP handling from group-based to per-bit configuration to
+address issues with shared dependencies between module clocks. In the
+current group-based configuration, multiple module clocks may rely on
+a single MSTOP bit. When both clocks are turned ON and one is
+subsequently turned OFF, the shared MSTOP bit will still be set, which
+is incorrect since the other dependent module clock remains ON. By
+switching to a per-bit configuration, we ensure precise control over
+individual MSTOP bits, preventing such conflicts.
+
+Replace the refcount API with atomic operations for managing MSTOP bit
+counters. The refcount API requires explicitly setting the counter to
+`1` before calling `refcount_inc()`, which introduces potential edge
+cases and unnecessary complexity. Using atomic operations simplifies
+the logic and avoids such issues, resulting in cleaner and more
+maintainable code.
+
+
+> No need to resend (for now).
+OK.
+
+Cheers,
+Prabhakar
