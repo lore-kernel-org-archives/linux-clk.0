@@ -1,161 +1,72 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270022CCC0
-	for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 16:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF041D5CFA;
+	Thu, 26 Dec 2024 18:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735232081; cv=none; b=E6Fd2Xvab1y7GqUTb+A+E2MSFbgVIxR1KYq+6kufU8qk13hAMJ4hRurVwuTRAHaQZ9sS/KOEnJWIWVCsW8+dpO5XgF8bxW3uH0n3oxS1SLelECdYoDGQbWBUXd/KuKhXLUfKqb/4V/kZUoJBSIl2BmNb19PXXqhIgauTNGDa3rk=
+	t=1735237640; cv=none; b=QsmR7Rb5iR9UR67SWFm+kQfVD//pNqO/FY2MlpAgNAvZ9wMKWY2FY3d/jZGDxatXypTA4tbXRCiBSWFnw0iic22ZdeIaNJ4VBrHpLPnpLVonInHk7zyUs5+VrWeWuyQvm/53WMMLF6V5nVLPA3wm/3d4OKwXS+2r+hblEeNMoU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735232081; c=relaxed/simple;
-	bh=GEsCXOMZBcuny3Xrk6hJXn3nKZqH3D95VMiEH+4cU4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jT7TeWWXjfm2lKq9G8SijuuWNlMqPZU1FRyFfSBiy8ukMESHALprWF5cQxVXZuENV9cnXvmV+DQYBtF2R2QDvEAjrzbofA6o40ipTl2LwzuD2Z40swC2ioJEbpTFlpKDFEOgSG0+mZtTxW74D+kat4fBAh3M16gOoJzi0TS4Oh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tQr7u-0001Lw-2X; Thu, 26 Dec 2024 17:54:22 +0100
-Message-ID: <8a8f315b-9e6b-4c18-985e-5df4ecbe34da@pengutronix.de>
-Date: Thu, 26 Dec 2024 17:54:15 +0100
+	s=arc-20240116; t=1735237640; c=relaxed/simple;
+	bh=xJC9Nm0YHwJstoJ4lo3nMMA7t8v/iMOSBA6NUo2yGWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c6Gh2NsgGFrZVOTIYBghmXHKeM4QxfOSYSm5Xngjh+SbtNVu5jDWIgQDkmTKoHfx6Ad4oJtnnbSOBvWKFTVoSZPtQb3gcsEzuHM7kCEdnNjat2Fe3Ea0VIHMXxtRCARAd1Ze2f3Ooov01gP53ZT40FgyYsNKjdN+5OqKoajwt7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVsLKle9; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVsLKle9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BDD5C4CED6;
+	Thu, 26 Dec 2024 18:27:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735237638;
+	bh=xJC9Nm0YHwJstoJ4lo3nMMA7t8v/iMOSBA6NUo2yGWg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nVsLKle9jLY2CAfCHHV4TBcaXid+hYjqIuejZsZDa/5fN8WV8Bc9W1oB56YsT88lY
+	 GHZE37ASl5L2FOgcaD0kHJ57bIGeg/0Aj+DfP/Q60hR7iQ256XpJeyTGy/4oz92hf5
+	 xUcHK83PM9zn06Zf3Z8uf3ZPWOIQacJzYIctJSLJekcoPz2Wspo8Rcj9NeEui+NHGJ
+	 aKsFI8KuyikCVcG2DWYfcd6GrCUf9gjDiKzAZqp+0eCfKToU/T4ZK3l8y3oAD8W5Am
+	 MgRej6EWD254NoXEm4/0ZQXy4GbGS5Vu8uGeYgrqaS9VcftMoCJYlDW8ZFzx8eoq/h
+	 bVYoymCbq0lYQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: linux-arm-msm@vger.kernel.org,
+	sboyd@kernel.org,
+	Eugen Hristev <eugen.hristev@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	konradybcio@kernel.org,
+	evgreen@chromium.org
+Subject: Re: [PATCH v4] soc: qcom: Rework BCM_TCS_CMD macro
+Date: Thu, 26 Dec 2024 12:26:37 -0600
+Message-ID: <173523761394.1412574.5233882312649238359.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241129142446.407443-1-eugen.hristev@linaro.org>
+References: <20241129142446.407443-1-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m: document nominal/overdrive
- properties
-To: Conor Dooley <conor@kernel.org>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>,
- Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241219-imx8m-clk-v1-0-cfaffa087da6@pengutronix.de>
- <20241219-imx8m-clk-v1-1-cfaffa087da6@pengutronix.de>
- <20241219-lash-lather-31443ced0e0c@spud>
- <4e2250b3-5170-4e88-aa0a-dd796b81e78b@pengutronix.de>
- <20241225-untapped-flyover-47254d06d418@spud>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20241225-untapped-flyover-47254d06d418@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Conor,
 
-On 25.12.24 15:20, Conor Dooley wrote:
-> On Thu, Dec 19, 2024 at 09:14:10PM +0100, Ahmad Fatoum wrote:
->> On 19.12.24 20:49, Conor Dooley wrote:
->>> On Thu, Dec 19, 2024 at 08:27:32AM +0100, Ahmad Fatoum wrote:
->> Theoretically, we could infer mode at runtime from VDD_SOC voltage,
->> but we need to set up clocks to read out the PMIC and I want to
->> apply the constraints as early as possible as I don't want the SoC
->> to run outside of spec even for a short while.
+On Fri, 29 Nov 2024 16:24:46 +0200, Eugen Hristev wrote:
+> Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
 > 
-> Apologies for the delay responding to you, doing it today cos I feel
-> guilty!
-
-I am fully aware that I needn't expect prompt review feedback so late in
-December. Thanks a lot for taking the time still.
-
-> I think what you've explained here is fine, but could you add a
-> bit more of that info to the commit message, explaining why one cannot
-> be default? With that,
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks. I will await further review feedback and adjust this commit's
-message for v2 as requested.
-
-Wishing you nice holidays,
-Ahmad
-
+> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
 > 
-> Cheers,
-> Conor.
+> While at it, used u32_encode_bits which made the code easier to
+> follow and removed unnecessary shift definitions.
 > 
->>
->> Thanks,
->> Ahmad
->>
->>>
->>>>
->>>> While the overdrive mode allows for higher frequencies for many IPs,
->>>> the nominal mode needs a lower SoC voltage, thereby reducing
->>>> heat generation and power usage.
->>>>
->>>> In any case, software should respect the maximum clock rate limits
->>>> described in the datasheet for each of the two operating modes.
->>>>
->>>> To allow device tree consumers to enforce these limits, document two new
->>>> optional properties that can be used to sanity check the clock tree.
->>>>
->>>> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
->>>> ---
->>>>  Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 14 ++++++++++++++
->>>>  1 file changed, 14 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
->>>> index c643d4a81478..a6ae5257ef53 100644
->>>> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
->>>> @@ -43,6 +43,14 @@ properties:
->>>>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
->>>>        for the full list of i.MX8M clock IDs.
->>>>  
->>>> +  fsl,nominal-mode:
->>>> +    description: Set if SoC is operated in nominal mode
->>>> +    $ref: /schemas/types.yaml#/definitions/flag
->>>> +
->>>> +  fsl,overdrive-mode:
->>>> +    description: Set if SoC is operated in overdrive mode
->>>> +    $ref: /schemas/types.yaml#/definitions/flag
->>>> +
->>>>  required:
->>>>    - compatible
->>>>    - reg
->>>> @@ -95,6 +103,12 @@ allOf:
->>>>              - const: clk_ext2
->>>>              - const: clk_ext3
->>>>              - const: clk_ext4
->>>> +  - if:
->>>> +      required:
->>>> +        - fsl,overdrive-mode
->>>> +    then:
->>>> +      properties:
->>>> +        fsl,nominal-mode: false
->>>>  
->>>>  additionalProperties: false
->>>>  
->>>>
->>>> -- 
->>>> 2.39.5
->>>>
->>
->>
->> -- 
->> Pengutronix e.K.                           |                             |
->> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
->> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> [...]
 
+Applied, thanks!
 
+[1/1] soc: qcom: Rework BCM_TCS_CMD macro
+      commit: 2705bce5b4c45e2a0a354ec4df937d2803241cd8
+
+Best regards,
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Bjorn Andersson <andersson@kernel.org>
