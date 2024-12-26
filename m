@@ -1,76 +1,77 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B4522097
-	for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 14:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91421CF9B
+	for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 14:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735224064; cv=none; b=qZa0v47j3l6BczpLjnrOz8EKuujNGXuy+EagTDHFsie/Ozej4UNgJH5rf/be2oO+zRwAZx9C17BcXo04x2PJGPEpdLn2W1f7M/KMRwO6nv6ztK5iVeAhV4l+QvNUHay5vlT3ME+J1rhFpxhOa7erC+bec62PzRXS1unApnANlt4=
+	t=1735224275; cv=none; b=hNvtzQFQ5+zqMAEHnXdYRYRirBe5jIyjRjyfPURgXsoaCxDSItg9UVHI2uICiy7x286yNiywnWtLmJJ8cJl+iq5GA0hC0H7CFOeA33irhz8c7P428v2tJRovCBwi7b/Z3UXw9zHj671uq6ViVhrDS9Far83a26y5xd/tNdiqXy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735224064; c=relaxed/simple;
-	bh=CDJo8kESXFKCvYAWUmatdZJVWIm0WawwcEFXIhXwWVQ=;
+	s=arc-20240116; t=1735224275; c=relaxed/simple;
+	bh=oiR1m+/R1lO7OoSCqZgA4U0p4g/dqDSxkVqMYZkRDU0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6rNwRZUp3oRCrViJwHyNyoGKUATfY6NWmV/NnQsVGEb+9i7GPyYEjiHpyB886a2PQX5Dp9gk5vPxDcyBFBNYt7hYFrB34uqWXK3QScc8Ddy9cBMTaFQL73IwtYEdM4OdyOoMW57c1XaCkjxFo/4CZFHib3gHbeTVcFIlynoM54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fzBXx8qb; arc=none smtp.client-ip=209.85.128.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcRlhzP6rJyQDtTbxHhEnp4B3kQm+xld9qr65r5r0gdMLsCxX45c6LQ1mQ6s+dfHsmrsswtnDDnBtZW83UluHAWh+Mff5dAOhVzsAXQ16jCg0bI3n91qLNLHIEzmdAkk06yR5wUg9Ptspx+dQ/VcwwN77oIDkuZaeVpuTqjjdN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xfFfHfpV; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzBXx8qb"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361f796586so69044025e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 06:41:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xfFfHfpV"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso47039075e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 06:44:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735224060; x=1735828860; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1735224271; x=1735829071; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EaV50W72dcye3DySmDtBOo9K9oTUuHhi5CzxEbusJOc=;
-        b=fzBXx8qb9iEDzxbpIzeNMsNukKzqysaWXUx7rtw/XVxewNWV3zQSAS7z21AJKXPluA
-         Uoi74+umF70mlWuZ64wR+xHBVO4u4tWsjrYwaRGhE+UPiAsN3lVUlAmjBmXJIF+XZFBY
-         EpX9XBubNc4ySkAPmmb73U7DJbOKDsmiXPwOY/03/NFUiocflPXjNjk67mJNl6xan/MU
-         GQSQJdudCl8QwBrN/FRNwJYG3bKylp8lCogFwrklIFzkAdUCDejqXnQH6hHpP/AnU+TS
-         +37TL4XVOvnUdWiJQ4/MuwT1rz+RZN0LEoiDPI804nJQbVXeiE0Iud2/kgAQUAtQWgUr
-         jpMA==
+        bh=A7rn19r4HgbPbGx9r0DQ1iakhx3qC0hkuGhdxpRpgMI=;
+        b=xfFfHfpVU74oS8rAdeJkIp8e+hB1ho9M8V6FjReY1TSlEaSOqA9Dn2V4e5ZoJUtP/i
+         6nM7Q4jPUNSFPRtquYUyEbrnFecMdY676aproXksaVGPkVwePDbJfZbAJa75get1iiUi
+         /ZfDkhmEEYKA4TrH0qPlenACVa1WveISOH76LZuzW8O+EVyPzfeW0yEIpXp1h7Nwg/hj
+         B8AwE1c+tdmGJSny9vFuJAlsRKvF7gpWmAeYErxc9JKaEvWJIS2JCZgWiEkULX72+tfu
+         3E3EA2oDuJKiKY/Sahmf4OUlErBCUf/7d3L/asJD/9+Yg2ytKeWbZ1mKfMHzTZ1ekNGG
+         k39w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735224060; x=1735828860;
+        d=1e100.net; s=20230601; t=1735224271; x=1735829071;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EaV50W72dcye3DySmDtBOo9K9oTUuHhi5CzxEbusJOc=;
-        b=aTD/IDZz3iP+L97FqSX/C5dJZyzJ/DCg3qdGyC+D7C/xh4+HoCbRDq/zkkzpkM5wI3
-         nVp8AtrXoZWolOjSxrrG0HFkWBp5ivPEKcz3GLvS95pJCODXyKJCg5P5BcpskGrfAeXx
-         fMHfudBJnazdX5IbG1CN4CZ4olbWEzYQFCC7jmNbnEOtbh5h//kd24Dzbx+Idwl7XYdI
-         rfsmzVl1bbLoGaSu25nl0M2P56WJVFXnX7DK4gy1dsVNP/cJZFO+gFi3ALlRgU60FdgU
-         bzhyBYChcbNE5Qp85h3if76UP4pCU+F89nzCxu5u/m9GJ/t31etrd5Do/AcZ6OJYIzfu
-         lflQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMtrkwZzvDwqrI6PNuBsMn2qdFfUAbS4U6uI5RYtM+L+XXviUJ3/XBzWOl3d3p1Qt8olWngyMJgvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxZhIfe7PDC4Kn9hfE595vhq1P21vD+jHzh1W5QU3iMAaottRh
-	g6ZDknl2/cKJL8FSlFeLN6SLfZha/wS1fvvY1RFYDmW/BOhfql//e/63MTrxK8c=
-X-Gm-Gg: ASbGnctTlIVRwYRat3Jv8DynQXo6tIK3S5VNo/IWf4nCU+kaXPk7p0F1RvOJMFjenqp
-	UJZg7pgjpsU9w0R0YWlbhVbDs0ZYGFWOnekt7SJ9F6sTqwkFnAwaILKRBqKezGV8nCe9E+DSKc8
-	gtyzTBRxJObso3dWZY1DZRlPlLUvEeo1ACJjn87wk2pv/HW0MQ4yCqCpmBhmesqPFHmE7p5mzPQ
-	kNeFxNx4SUaBwLB/i4N2PFlXjvUr5Lrs1p3J+EPhZHDXoa0wvaKjAA=
-X-Google-Smtp-Source: AGHT+IFAkeYRxenuSnMh5whe4fj3qf2FXC2/YY8gmQiLBoDE4x9299sSrv8G4XcwveZUu2qAO5Z/wA==
-X-Received: by 2002:a05:600c:1c95:b0:434:a1d3:a321 with SMTP id 5b1f17b1804b1-4366835c1b0mr210961505e9.3.1735224060629;
-        Thu, 26 Dec 2024 06:41:00 -0800 (PST)
+        bh=A7rn19r4HgbPbGx9r0DQ1iakhx3qC0hkuGhdxpRpgMI=;
+        b=Mio+emM3g1bez09sX/MojIwYl9VYD3BKE/5Rn00mu+o+R0Afi+sZJW4WONjnOEBXzC
+         EHATpAe/nb/jSuwxSFj73Jl0oCQupviBZv/TpFZhMGKcqTPvZb9SFOn8JFtdhpHitfc1
+         2NiTliEcWcx1EGp0Mhi9Gfipq0c9a0H/OKBdnrDgYvtGZjYhglVifL+oJZoCM9DSNw2g
+         rFHk7HpEfSKiOkexkz49wHxvZU0J7XdD+4mItGDI9Y5ZekumLOXQSQH4wfspT2qm/9LI
+         dzfW24vXQhk099bkVDjBaA4AlY6UASwVE3w8GnhwH6lqDUK2atzmsiDUhWd9h2gTuxXV
+         Rxhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ/BOuJySp7HhmGmJIJhwf4C3e89+Iq3x4Uxl2fxEBura5Rlu8YuM556eL85d3dMYBdOYglMipPqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVuv3WXm0Qw4yPw6SEnww04QnzEdlJ9ByPHV1T4ILXJF5g68U+
+	rEOJ5F4rhss2/N8RwN1Vb4MaRZXMz14HpJhWutR6oQoVA8G38XYZ/BaLvxgZ2uE=
+X-Gm-Gg: ASbGncuS2ftAU/+warNTKeupq5rOGYobpzgCCjpRoSBAPvucs//iGjEU6+1efHLMdQM
+	6QK1wUcLdsczVl9SK2Pgox4uRrffn5GIQbPcrRcnaAXJuloPo0lLHm8qE9mIM7LYzfn52PUr9DD
+	TeUmK2PX0j6tSj1+RgNnRtBdthuoq76ZLfEWyHR+cFbkxH4bhpen04KiHiF74PnhvRrulExU1HQ
+	jerkBvvBIZw5UpgKBZTFC8dr4iWgtUFXa9z4C2nON5U4rClt2WQ4v4=
+X-Google-Smtp-Source: AGHT+IEs46r2QTrphoxhnYAjoEZ26B+gzvCJ6J2PHOuEvEPqcIAkbr1HCYher+BV97nl0i4rzQRD/A==
+X-Received: by 2002:a05:600c:350c:b0:434:a91e:c709 with SMTP id 5b1f17b1804b1-43668b78c11mr157293045e9.28.1735224271050;
+        Thu, 26 Dec 2024 06:44:31 -0800 (PST)
 Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4366127c4bbsm233695145e9.32.2024.12.26.06.40.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea47asm234453595e9.4.2024.12.26.06.44.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2024 06:41:00 -0800 (PST)
-Date: Thu, 26 Dec 2024 16:40:57 +0200
+        Thu, 26 Dec 2024 06:44:30 -0800 (PST)
+Date: Thu, 26 Dec 2024 16:44:28 +0200
 From: Abel Vesa <abel.vesa@linaro.org>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: abelvesa@kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev, shengjiu.wang@gmail.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: imx93: Use IMX93_CLK_SPDIF_IPG as
- SPDIF IPG clock
-Message-ID: <Z21q+Xyz7bQjN+yJ@linaro.org>
-References: <20241119015805.3840606-1-shengjiu.wang@nxp.com>
- <20241119015805.3840606-4-shengjiu.wang@nxp.com>
- <Z1bkixjbyFhH3ZgL@dragon>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengfei Li <pengfei.li_1@nxp.com>,
+	"open list:NXP i.MX CLOCK DRIVERS" <linux-clk@vger.kernel.org>,
+	"open list:NXP i.MX CLOCK DRIVERS" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] clk: imx: Apply some clks only for i.MX93
+Message-ID: <Z21rzK6Nejti6lsA@linaro.org>
+References: <20241225001443.883131-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,57 +80,96 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1bkixjbyFhH3ZgL@dragon>
+In-Reply-To: <20241225001443.883131-1-peng.fan@oss.nxp.com>
 
-On 24-12-09 20:37:31, Shawn Guo wrote:
-> On Tue, Nov 19, 2024 at 09:58:05AM +0800, Shengjiu Wang wrote:
-> > IMX93_CLK_BUS_WAKEUP is not accurate IPG clock, which
-> > missed the clock gate part.
-> > 
-> > IMX93_CLK_SPDIF_IPG is the correct clock.
-> > 
-> > Fixes: 1c4a4f7362fd ("arm64: dts: imx93: Add audio device nodes")
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On 24-12-25 08:14:43, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Hi Abel,
+> Enable the LVDS gate, MIPI DSI, PXP, FLEXIO and MU only for i.MX93,
+> because i.MX91 does not support them.
 > 
-
-Hi Shawn,
-
-> I guess it would be the best for you to apply the whole series through
-> clock tree?  In that case:
-
-Sure, will take this whole series through my tree.
-
+> Update enet clk entry format to align with others.
 > 
-> Acked-by: Shawn Guo <shawnguo@kernel.org>
-> 
+> Fixes: a27bfff88dd2 ("clk: imx: add i.MX91 clk")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Thanks,
-Abel
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-> Thanks,
-> Shawn
+> ---
 > 
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx93.dtsi | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/dts/freescale/imx93.dtsi
-> > index 688488de8cd2..56766fdb0b1e 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
-> > @@ -925,7 +925,7 @@ xcvr: xcvr@42680000 {
-> >  				reg-names = "ram", "regs", "rxfifo", "txfifo";
-> >  				interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
-> >  					     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
-> > -				clocks = <&clk IMX93_CLK_BUS_WAKEUP>,
-> > +				clocks = <&clk IMX93_CLK_SPDIF_IPG>,
-> >  					 <&clk IMX93_CLK_SPDIF_GATE>,
-> >  					 <&clk IMX93_CLK_DUMMY>,
-> >  					 <&clk IMX93_CLK_AUD_XCVR_GATE>;
-> > -- 
-> > 2.34.1
-> > 
+> V2:
+>  Update subject and commit log after phasing out more clks
+>  https://lore.kernel.org/lkml/20241203130530.1206526-1-peng.fan@oss.nxp.com/
+> 
+>  drivers/clk/imx/clk-imx93.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 58a516dd385b..5bdd2bdce46e 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -70,8 +70,8 @@ static const struct imx93_clk_root {
+>  	{ IMX93_CLK_WAKEUP_AXI,		"wakeup_axi_root",	0x0380,	FAST_SEL, CLK_IS_CRITICAL },
+>  	{ IMX93_CLK_SWO_TRACE,		"swo_trace_root",	0x0400,	LOW_SPEED_IO_SEL, },
+>  	{ IMX93_CLK_M33_SYSTICK,	"m33_systick_root",	0x0480,	LOW_SPEED_IO_SEL, 0, PLAT_IMX93, },
+> -	{ IMX93_CLK_FLEXIO1,		"flexio1_root",		0x0500,	LOW_SPEED_IO_SEL, },
+> -	{ IMX93_CLK_FLEXIO2,		"flexio2_root",		0x0580,	LOW_SPEED_IO_SEL, },
+> +	{ IMX93_CLK_FLEXIO1,		"flexio1_root",		0x0500,	LOW_SPEED_IO_SEL, 0, PLAT_IMX93, },
+> +	{ IMX93_CLK_FLEXIO2,		"flexio2_root",		0x0580,	LOW_SPEED_IO_SEL, 0, PLAT_IMX93, },
+>  	{ IMX93_CLK_LPTMR1,		"lptmr1_root",		0x0700,	LOW_SPEED_IO_SEL, },
+>  	{ IMX93_CLK_LPTMR2,		"lptmr2_root",		0x0780,	LOW_SPEED_IO_SEL, },
+>  	{ IMX93_CLK_TPM2,		"tpm2_root",		0x0880,	TPM_SEL, },
+> @@ -177,10 +177,10 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_WDOG5_GATE,		"wdog5",	"osc_24m",		0x8400, },
+>  	{ IMX93_CLK_SEMA1_GATE,		"sema1",	"bus_aon_root",		0x8440, },
+>  	{ IMX93_CLK_SEMA2_GATE,		"sema2",	"bus_wakeup_root",	0x8480, },
+> -	{ IMX93_CLK_MU1_A_GATE,		"mu1_a",	"bus_aon_root",		0x84c0, CLK_IGNORE_UNUSED },
+> -	{ IMX93_CLK_MU2_A_GATE,		"mu2_a",	"bus_wakeup_root",	0x84c0, CLK_IGNORE_UNUSED },
+> -	{ IMX93_CLK_MU1_B_GATE,		"mu1_b",	"bus_aon_root",		0x8500, 0, &share_count_mub },
+> -	{ IMX93_CLK_MU2_B_GATE,		"mu2_b",	"bus_wakeup_root",	0x8500, 0, &share_count_mub },
+> +	{ IMX93_CLK_MU1_A_GATE,		"mu1_a",	"bus_aon_root",		0x84c0, CLK_IGNORE_UNUSED, NULL, PLAT_IMX93 },
+> +	{ IMX93_CLK_MU2_A_GATE,		"mu2_a",	"bus_wakeup_root",	0x84c0, CLK_IGNORE_UNUSED, NULL, PLAT_IMX93 },
+> +	{ IMX93_CLK_MU1_B_GATE,		"mu1_b",	"bus_aon_root",		0x8500, 0, &share_count_mub, PLAT_IMX93 },
+> +	{ IMX93_CLK_MU2_B_GATE,		"mu2_b",	"bus_wakeup_root",	0x8500, 0, &share_count_mub, PLAT_IMX93 },
+>  	{ IMX93_CLK_EDMA1_GATE,		"edma1",	"m33_root",		0x8540, },
+>  	{ IMX93_CLK_EDMA2_GATE,		"edma2",	"wakeup_axi_root",	0x8580, },
+>  	{ IMX93_CLK_FLEXSPI1_GATE,	"flexspi1",	"flexspi1_root",	0x8640, },
+> @@ -188,8 +188,8 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_GPIO2_GATE,		"gpio2",	"bus_wakeup_root",	0x88c0, },
+>  	{ IMX93_CLK_GPIO3_GATE,		"gpio3",	"bus_wakeup_root",	0x8900, },
+>  	{ IMX93_CLK_GPIO4_GATE,		"gpio4",	"bus_wakeup_root",	0x8940, },
+> -	{ IMX93_CLK_FLEXIO1_GATE,	"flexio1",	"flexio1_root",		0x8980, },
+> -	{ IMX93_CLK_FLEXIO2_GATE,	"flexio2",	"flexio2_root",		0x89c0, },
+> +	{ IMX93_CLK_FLEXIO1_GATE,	"flexio1",	"flexio1_root",		0x8980, 0, NULL, PLAT_IMX93},
+> +	{ IMX93_CLK_FLEXIO2_GATE,	"flexio2",	"flexio2_root",		0x89c0, 0, NULL, PLAT_IMX93},
+>  	{ IMX93_CLK_LPIT1_GATE,		"lpit1",	"bus_aon_root",		0x8a00, },
+>  	{ IMX93_CLK_LPIT2_GATE,		"lpit2",	"bus_wakeup_root",	0x8a40, },
+>  	{ IMX93_CLK_LPTMR1_GATE,	"lptmr1",	"lptmr1_root",		0x8a80, },
+> @@ -238,10 +238,10 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_SAI3_GATE,          "sai3",         "sai3_root",            0x94c0, 0, &share_count_sai3},
+>  	{ IMX93_CLK_SAI3_IPG,		"sai3_ipg_clk", "bus_wakeup_root",	0x94c0, 0, &share_count_sai3},
+>  	{ IMX93_CLK_MIPI_CSI_GATE,	"mipi_csi",	"media_apb_root",	0x9580, },
+> -	{ IMX93_CLK_MIPI_DSI_GATE,	"mipi_dsi",	"media_apb_root",	0x95c0, },
+> -	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, },
+> +	{ IMX93_CLK_MIPI_DSI_GATE,	"mipi_dsi",	"media_apb_root",	0x95c0, 0, NULL, PLAT_IMX93 },
+> +	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, 0, NULL, PLAT_IMX93 },
+>  	{ IMX93_CLK_LCDIF_GATE,		"lcdif",	"media_apb_root",	0x9640, },
+> -	{ IMX93_CLK_PXP_GATE,		"pxp",		"media_apb_root",	0x9680, },
+> +	{ IMX93_CLK_PXP_GATE,		"pxp",		"media_apb_root",	0x9680, 0, NULL, PLAT_IMX93 },
+>  	{ IMX93_CLK_ISI_GATE,		"isi",		"media_apb_root",	0x96c0, },
+>  	{ IMX93_CLK_NIC_MEDIA_GATE,	"nic_media",	"media_axi_root",	0x9700, },
+>  	{ IMX93_CLK_USB_CONTROLLER_GATE, "usb_controller", "hsio_root",		0x9a00, },
+> @@ -256,8 +256,8 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_HSIO_32K_GATE,	"hsio_32k",	"osc_32k",		0x9dc0, },
+>  	{ IMX93_CLK_ENET1_GATE,		"enet1",	"wakeup_axi_root",	0x9e00, 0, NULL, PLAT_IMX93, },
+>  	{ IMX93_CLK_ENET_QOS_GATE,	"enet_qos",	"wakeup_axi_root",	0x9e40, 0, NULL, PLAT_IMX93, },
+> -	{ IMX91_CLK_ENET2_REGULAR_GATE, "enet2_regular",        "wakeup_axi_root",      0x9e00, 0, NULL, PLAT_IMX91, },
+> -	{ IMX91_CLK_ENET1_QOS_TSN_GATE,     "enet1_qos_tsn",        "wakeup_axi_root",      0x9e40, 0, NULL, PLAT_IMX91, },
+> +	{ IMX91_CLK_ENET2_REGULAR_GATE, "enet2_regular", "wakeup_axi_root",	0x9e00, 0, NULL, PLAT_IMX91, },
+> +	{ IMX91_CLK_ENET1_QOS_TSN_GATE, "enet1_qos_tsn", "wakeup_axi_root",	0x9e40, 0, NULL, PLAT_IMX91, },
+>  	/* Critical because clk accessed during CPU idle */
+>  	{ IMX93_CLK_SYS_CNT_GATE,	"sys_cnt",	"osc_24m",		0x9e80, CLK_IS_CRITICAL},
+>  	{ IMX93_CLK_TSTMR1_GATE,	"tstmr1",	"bus_aon_root",		0x9ec0, },
+> -- 
+> 2.37.1
 > 
