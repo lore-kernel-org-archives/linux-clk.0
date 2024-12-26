@@ -1,73 +1,83 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B6BF9FE
-	for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5DF17758
+	for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 14:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735223672; cv=none; b=sYNdix8XzznglBzR96xWcvhqXZYHGKxsaKZtVnkJBkBwkP3TFOymLbywexo5p5ime4/Kw6U6bIM4U8Wr7ccHtgvK4A4e5GMrFrjoPzbZATGEaw9H6LD1PmJh95VUeirxO7vY0d7THHfbyHqb3pL+tBOybUWYJbYjffGe11Br7eQ=
+	t=1735223918; cv=none; b=n87mksi05Ea6mYNlvjsAB3gu4rKYl4ABsWPwm7vWkKfyeja/P/CkzGonc4cwKhyJ9VSwKskVQU9QzeTPNadTfRrosQDMjW+mBb3YJuPgmxRFu0WAQtiRnQ5T6CtsYDsQx8SJYgwprz7HNHINfo347L5RhnRUcEkQKuOhP8+MeCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735223672; c=relaxed/simple;
-	bh=/joUKp1FapFV0FDWL3iLSB/au/h69W3DHzHfU4GF3KQ=;
+	s=arc-20240116; t=1735223918; c=relaxed/simple;
+	bh=vEsdYvups3gEP5yn5PstJ1DmPRncvVS/rQlaAxVO50U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rDEsnPr2LxCxHGMaC2us2vU15XAU+Soni2qXZ5l3Iy/Gf0j4pP0pa0s43F4SoJEgL1PY8iZuKLJLG9NRMaamehQEaCvRinxM2h2BRbqo4Aa+uLhi4f8QMbmQJ1HonU1HoWm8UOHwBsT2HHK+NcZeRrGocbAjzZ8oeBN0iAVPW8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ueZFeYYW; arc=none smtp.client-ip=209.85.221.51
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTteSC3jGRiav/TGvGmUkxwAF6niMpiNq0YwfuN4Z1T37fxUe9aIzWtf8vQJZgoFckHONvmZ6fzoZaEz7/AmG+nyUaw9uYjs4AuaytJy5apwIgSZpxuuzmtF2tpLGZyz6EcklxVOTQQRWJKFRb5KJJB7atdl8rBtQ9MtGWHnwIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RZyl6iZX; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ueZFeYYW"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385d7f19f20so3020650f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 06:34:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RZyl6iZX"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so65060385e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2024 06:38:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735223669; x=1735828469; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1735223915; x=1735828715; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZWaMQHTniKNiKHMTp7F80RZe2wo6ZB4wndPYy3Gh4Fs=;
-        b=ueZFeYYWl+22X9ePoTStvND369ctQ3U1abECjmC/Qlm3FU+R6zp4pB/2p+ra2RR2Gq
-         d9wW3jPOw/tjvCn4u2SyPyIayPbAocJw4e4bFbYX31Pl5Xw7RQFeZKeLWeDLAJejfIwZ
-         iilDRdraHTMdLX08H+ZhyBUc2/AOzQUGgWrNSFqA90A5xex1d2YZNEGXViCi4vzv5TSw
-         QrMcufdIKu4gn8xNUtmtb2xZBC9CCdWSB6H0qbGQj3lvN9sR+q96u4Vlr/grZP5bXE6q
-         yVKrHBN3pTYFSLUTKDdTqkX8gQRDYE4YsbklWD85EIWKv6il3161tjRZhYTpAmcaLVsU
-         bt5Q==
+        bh=ppCCMWUp+TBSk6cyVK5gjcdhw0wzNeHxXsbdb9zpgKQ=;
+        b=RZyl6iZXLVV29GI48smdvLOxMFq7OPi2OZPV0bXGeang+YrIlGnS+Cu1hybc5rnx9q
+         64NiGgCutQZeaEICKQg30DcfP78VHNHog4uqQDPPZTW8L4V/lMp49zf7BaTcJEbz5HsM
+         OecPSb+KJ8E1mkEu6dY+Q4Uh9/W7AeyUVoYpvioMDHB6mPStphgiSfmfq+BC/R9KpbgU
+         +uK7kA3+L0xfs8/i/F/Qm1p5yDTsVS9iU0Rcb0JLoymev2E68jazzRA55OJ8ZqGrXVqw
+         yYAjGEzDiRBfRvLizwf5BaKeDPkVEl1x8aA/hs3tuOgI2WgRnCCxjzTa1j/vXK5RwV5m
+         Ypfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735223669; x=1735828469;
+        d=1e100.net; s=20230601; t=1735223915; x=1735828715;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZWaMQHTniKNiKHMTp7F80RZe2wo6ZB4wndPYy3Gh4Fs=;
-        b=goBNzuY+0BHgXlEXVozau5Z7KJkB/s/L8KywipTbiziqFDzR0ddtElIAwRooFwe/Vm
-         xmQ9//tn6LNhCE4fu4TgcC7yGyCgzEBoUV+nYR1GgatGR1jHAZyDjk8u302kYg9wnEzP
-         LQidOhGEGSwpsx3DqD4DWzndwA4VWM2G8SrkhWsWPHTijTymWtSfI/toHprbiwmLu+Tt
-         QKhj+oDcEo/Cl8vrPIuA1FTbz+DsdTsp9b9bCJyUBWx1dEG0W1/GEcjQdEkhj3/d3/Wh
-         NturiDVPOBmG7c0daklNotxLiM/WUtSHhIeEzGNTn1lIpy8Ry3e1KqNd0cdaMFMEDq89
-         CbNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyYy9sB6rJfVDK3yufFPX6qSVQTmg5p+Jhy3nlpxVV9gIwejarOTrnMk0i67kl9AkLxt9WEipS3A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjO8qYWsPKmAAvIL8NbhgPNBResyO4gbJ5rRRFBUQaCjEMH7aF
-	+aX1A+RYrKorrPUJTHHvA14isFi6uJZNPtR9468U7zsZ8v/mRAFA4bhsLqJBYZM=
-X-Gm-Gg: ASbGncs7iQyNOC3BH2m7KdTcU0J0LuZ1j/5mR7YnyGfsCDsII+7TxmQu3lm0a+5q7oX
-	ZdZuQidW818TR1v2cagWMwPt78qsf4nmj08M9N5XuwonuHXf8DO7nTLi0qxhWAjpZd28YoWCZtT
-	QTDRLbIvhBwTCJp7Dq2KU/qz/tNi9QL5xbB4VEqT2oA5y+chPs9jljCyBnsP80Ava7IkIRmG4HU
-	flg0Qwu2CzD4FeqhC4jakUevvf2E6TFU3d1KfAXUtglqujnWqtroUg=
-X-Google-Smtp-Source: AGHT+IEpquj9mqHQrFXHSl5hzcnxKsnrxJ39lD9GV2mzs7t3fW0dHSS7dyN+P7J8ye5qxYUx0CveZA==
-X-Received: by 2002:a05:6000:1848:b0:386:459e:655d with SMTP id ffacd0b85a97d-38a221fa039mr22306469f8f.20.1735223668760;
-        Thu, 26 Dec 2024 06:34:28 -0800 (PST)
+        bh=ppCCMWUp+TBSk6cyVK5gjcdhw0wzNeHxXsbdb9zpgKQ=;
+        b=S8n7Mr3csokIgdXYs/3sEE2BERqw0OYLg6A1bCX5nzL5ESZ8SbIJbwmohKUi3x0IvX
+         oZ5kx6Lc3OOzKUfO6Beqx8h9AQfQrajykwFghuU6JBDL8FH0hpJQKFC4fMYsBk7HOZER
+         16nGPMECbTblVhoI1C/ACbbfuf+J/TfaxGQwiqUv0GQsKL9m3Bf3OXSborHbhzQT6hGv
+         5PpnR5ZTUPP5VxHGqI2ZSQV497rxRfdxLVRgPDmgfuLq2C8GjXSaw+H7fQxamjhiAJvZ
+         L+umRbfv+3ttHjjyqX4U25SagjLlmmp8E6NGocAWp4CAwO3+/ovM02Nk6GMdcU2EFNTK
+         VvIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDfvqpeMk7jQrRK34/BcRitnU6acuk/zNdfFVg5BwWVo8sthMsnmbjGPvON8u7Q+78ZyK9wYfqzwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzamOql0E2YpQ3WTS4p3UD28l4oUy3G4H0cOjJ+/nX98hRKFL9c
+	rzKBR9DXIoxJJe5MVMeNQ3nhNMqjocsn5/i6quxlomzCGye/QjviGbeMF5Xfs2Y=
+X-Gm-Gg: ASbGnctUV+e2yoe75Ef1bH31odpRlbclgDUQFk9lcz20vvBIugpbm400yyPC4iZXMIA
+	BgMXSiT7RPUYBV36uvVxNlodH/fIWjJ7EtC28qJGnd0yZ8W6mggRn0I1L4hGUBA6JPPavIS5JXE
+	JKY4dC68xM6QFlTqrjVRz6ASTCnA/VfmeqrnnmkS+QYIrqvHQktNspyJG7nDryCfrU3WvN/Fif6
+	pCcYpE5tQakCaILK94ZU1IP5qKB9CDktVKBnUMKol89xX2vUah8+Ts=
+X-Google-Smtp-Source: AGHT+IFPzIF1oPeem4JaOE0kiI2t8N5T16Kp29XglspdwnIhUCG31MxEJbnojAYYdfxmNkxmbdm+AA==
+X-Received: by 2002:a05:600c:a0a:b0:434:fe62:28c1 with SMTP id 5b1f17b1804b1-43668645ffdmr208219815e9.18.1735223914701;
+        Thu, 26 Dec 2024 06:38:34 -0800 (PST)
 Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8ac97fsm19364218f8f.92.2024.12.26.06.34.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656af6c25sm267607585e9.8.2024.12.26.06.38.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2024 06:34:28 -0800 (PST)
-Date: Thu, 26 Dec 2024 16:34:26 +0200
+        Thu, 26 Dec 2024 06:38:34 -0800 (PST)
+Date: Thu, 26 Dec 2024 16:38:31 +0200
 From: Abel Vesa <abel.vesa@linaro.org>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, akshay.bhat@timesys.com,
-	p.zabel@pengutronix.de, Ranjani.Vaidyanathan@nxp.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx6q: No need to repeatedly disable analog clk
- during kdump
-Message-ID: <Z21pcg6ZGA7n0wXy@linaro.org>
-References: <20241107112750.3590720-1-xiaolei.wang@windriver.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, quic_bjorande@quicinc.com, geert+renesas@glider.be,
+	dmitry.baryshkov@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
+	marex@denx.de
+Subject: Re: [PATCH v6 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
+ pixel clock reconfigure parent rate"
+Message-ID: <Z21qZzfjzxPb6PzO@linaro.org>
+References: <20241112100547.2908497-1-victor.liu@nxp.com>
+ <20241112100547.2908497-3-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,160 +86,75 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241107112750.3590720-1-xiaolei.wang@windriver.com>
+In-Reply-To: <20241112100547.2908497-3-victor.liu@nxp.com>
 
-On 24-11-07 19:27:50, Xiaolei Wang wrote:
-> During kdump, when the second kernel is started, the LDB parent
-> has already been switched and will not be switched again, so
-> there is no need to repeatedly disable PLL2_PFD2, PLL5, etc.
-> Repeatedly disabling PLL2_PFD2 causes the system to hang
+On 24-11-12 18:05:42, Liu Ying wrote:
+> This reverts commit ff06ea04e4cf3ba2f025024776e83bfbdfa05155.
 > 
-> LDB Clock Switch Procedure & i.MX6 Asynchronous Clock
-> Switching Guidelines[1]
+> media_disp1_pix clock is the pixel clock of the first i.MX8MP LCDIFv3
+> display controller, while media_disp2_pix clock is the pixel clock of
+> the second i.MX8MP LCDIFv3 display controller.  The two display
+> controllers connect with Samsung MIPI DSI controller and LVDS Display
+> Bridge(LDB) respectively.  Since the two display controllers are driven
+> by separate DRM driver instances and the two pixel clocks may be derived
+> from the same video_pll1_out clock(sys_pll3_out clock could be already
+> used to derive audio_axi clock), there is no way to negotiate a dynamically
+> changeable video_pll1_out clock rate to satisfy both of the two display
+> controllers.  In this case, the only solution to drive them with the
+> single video_pll1_out clock is to assign a sensible/unchangeable clock
+> rate for video_pll1_out clock.  Thus, there is no need to set the
+> CLK_SET_RATE_PARENT flag for media_disp{1,2}_pix clocks, drop it then.
 > 
-> [1]https://www.nxp.com/docs/en/engineering-bulletin/EB821.pdf
-> 
-> Fixes: 5d283b083800 ("clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK")
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
-
-LGTM.
+> Fixes: ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-imx6q.c | 84 ++++++++++++++++++-------------------
->  1 file changed, 42 insertions(+), 42 deletions(-)
+> v6:
+> * New patch.
 > 
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index bf4c1d9c9928..edbdaeea68b3 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -291,6 +291,42 @@ static void mmdc_ch1_reenable(void __iomem *ccm_base)
->  	writel_relaxed(reg, ccm_base + CCM_CCSR);
->  }
+>  drivers/clk/imx/clk-imx8mp.c | 4 ++--
+>  drivers/clk/imx/clk.h        | 4 ----
+>  2 files changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 516dbd170c8a..e561ff7b135f 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -547,7 +547,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
+>  	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
+>  	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
+> -	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT);
+> +	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
 >  
-> +#define CCM_ANALOG_PLL_VIDEO    0xa0
-> +#define CCM_ANALOG_PFD_480      0xf0
-> +#define CCM_ANALOG_PFD_528      0x100
-> +
-> +#define PLL_ENABLE              BIT(13)
-> +
-> +#define PFD0_CLKGATE            BIT(7)
-> +#define PFD1_CLKGATE            BIT(15)
-> +#define PFD2_CLKGATE            BIT(23)
-> +#define PFD3_CLKGATE            BIT(31)
-> +
-> +static void disable_anatop_clocks(void __iomem *anatop_base)
-> +{
-> +	unsigned int reg;
-> +
-> +	/* Make sure PLL2 PFDs 0-2 are gated */
-> +	reg = readl_relaxed(anatop_base + CCM_ANALOG_PFD_528);
-> +	/* Cannot gate PFD2 if pll2_pfd2_396m is the parent of MMDC clock */
-> +	if (clk_get_parent(hws[IMX6QDL_CLK_PERIPH_PRE]->clk) ==
-> +	   hws[IMX6QDL_CLK_PLL2_PFD2_396M]->clk)
-> +		reg |= PFD0_CLKGATE | PFD1_CLKGATE;
-> +	else
-> +		reg |= PFD0_CLKGATE | PFD1_CLKGATE | PFD2_CLKGATE;
-> +	writel_relaxed(reg, anatop_base + CCM_ANALOG_PFD_528);
-> +
-> +	/* Make sure PLL3 PFDs 0-3 are gated */
-> +	reg = readl_relaxed(anatop_base + CCM_ANALOG_PFD_480);
-> +	reg |= PFD0_CLKGATE | PFD1_CLKGATE | PFD2_CLKGATE | PFD3_CLKGATE;
-> +	writel_relaxed(reg, anatop_base + CCM_ANALOG_PFD_480);
-> +
-> +	/* Make sure PLL5 is disabled */
-> +	reg = readl_relaxed(anatop_base + CCM_ANALOG_PLL_VIDEO);
-> +	reg &= ~PLL_ENABLE;
-> +	writel_relaxed(reg, anatop_base + CCM_ANALOG_PLL_VIDEO);
-> +}
-> +
->  /*
->   * We have to follow a strict procedure when changing the LDB clock source,
->   * otherwise we risk introducing a glitch that can lock up the LDB divider.
-> @@ -320,7 +356,7 @@ static void mmdc_ch1_reenable(void __iomem *ccm_base)
->   * switches the parent to the bottom mux first and then manipulates the top
->   * mux to ensure that no glitch will enter the divider.
->   */
-> -static void init_ldb_clks(struct device_node *np, void __iomem *ccm_base)
-> +static void init_ldb_clks(struct device_node *np, void __iomem *ccm_base, void __iomem *anatop_base)
->  {
->  	unsigned int reg;
->  	unsigned int sel[2][4];
-> @@ -368,6 +404,10 @@ static void init_ldb_clks(struct device_node *np, void __iomem *ccm_base)
->  	if (sel[0][0] == sel[0][3] && sel[1][0] == sel[1][3])
->  		return;
+>  	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
 >  
-> +	disable_anatop_clocks(anatop_base);
-> +
-> +	imx_mmdc_mask_handshake(ccm_base, 1);
-> +
->  	mmdc_ch1_disable(ccm_base);
+> @@ -609,7 +609,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_USDHC3] = imx8m_clk_hw_composite("usdhc3", imx8mp_usdhc3_sels, ccm_base + 0xbc80);
+>  	hws[IMX8MP_CLK_MEDIA_CAM1_PIX] = imx8m_clk_hw_composite("media_cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
+>  	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+> -	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
+> +	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00);
+>  	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+>  	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+>  	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index aa5202f284f3..adb7ad649a0d 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -442,10 +442,6 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>  	_imx8m_clk_hw_composite(name, parent_names, reg, \
+>  			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
 >  
->  	for (i = 1; i < 4; i++) {
-> @@ -382,42 +422,6 @@ static void init_ldb_clks(struct device_node *np, void __iomem *ccm_base)
->  	mmdc_ch1_reenable(ccm_base);
->  }
->  
-> -#define CCM_ANALOG_PLL_VIDEO	0xa0
-> -#define CCM_ANALOG_PFD_480	0xf0
-> -#define CCM_ANALOG_PFD_528	0x100
+> -#define imx8m_clk_hw_composite_bus_flags(name, parent_names, reg, flags) \
+> -	_imx8m_clk_hw_composite(name, parent_names, reg, \
+> -			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAULT | flags)
 > -
-> -#define PLL_ENABLE		BIT(13)
-> -
-> -#define PFD0_CLKGATE		BIT(7)
-> -#define PFD1_CLKGATE		BIT(15)
-> -#define PFD2_CLKGATE		BIT(23)
-> -#define PFD3_CLKGATE		BIT(31)
-> -
-> -static void disable_anatop_clocks(void __iomem *anatop_base)
-> -{
-> -	unsigned int reg;
-> -
-> -	/* Make sure PLL2 PFDs 0-2 are gated */
-> -	reg = readl_relaxed(anatop_base + CCM_ANALOG_PFD_528);
-> -	/* Cannot gate PFD2 if pll2_pfd2_396m is the parent of MMDC clock */
-> -	if (clk_get_parent(hws[IMX6QDL_CLK_PERIPH_PRE]->clk) ==
-> -	    hws[IMX6QDL_CLK_PLL2_PFD2_396M]->clk)
-> -		reg |= PFD0_CLKGATE | PFD1_CLKGATE;
-> -	else
-> -		reg |= PFD0_CLKGATE | PFD1_CLKGATE | PFD2_CLKGATE;
-> -	writel_relaxed(reg, anatop_base + CCM_ANALOG_PFD_528);
-> -
-> -	/* Make sure PLL3 PFDs 0-3 are gated */
-> -	reg = readl_relaxed(anatop_base + CCM_ANALOG_PFD_480);
-> -	reg |= PFD0_CLKGATE | PFD1_CLKGATE | PFD2_CLKGATE | PFD3_CLKGATE;
-> -	writel_relaxed(reg, anatop_base + CCM_ANALOG_PFD_480);
-> -
-> -	/* Make sure PLL5 is disabled */
-> -	reg = readl_relaxed(anatop_base + CCM_ANALOG_PLL_VIDEO);
-> -	reg &= ~PLL_ENABLE;
-> -	writel_relaxed(reg, anatop_base + CCM_ANALOG_PLL_VIDEO);
-> -}
-> -
->  static struct clk_hw * __init imx6q_obtain_fixed_clk_hw(struct device_node *np,
->  							const char *name,
->  							unsigned long rate)
-> @@ -641,10 +645,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  	hws[IMX6QDL_CLK_IPU1_SEL]         = imx_clk_hw_mux("ipu1_sel",         base + 0x3c, 9,  2, ipu_sels,          ARRAY_SIZE(ipu_sels));
->  	hws[IMX6QDL_CLK_IPU2_SEL]         = imx_clk_hw_mux("ipu2_sel",         base + 0x3c, 14, 2, ipu_sels,          ARRAY_SIZE(ipu_sels));
->  
-> -	disable_anatop_clocks(anatop_base);
-> -
-> -	imx_mmdc_mask_handshake(base, 1);
-> -
->  	if (clk_on_imx6qp()) {
->  		hws[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_hw_mux_flags("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
->  		hws[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_hw_mux_flags("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
-> @@ -654,7 +654,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  		 * bug. Set the muxes to the requested values before registering the
->  		 * ldb_di_sel clocks.
->  		 */
-> -		init_ldb_clks(np, base);
-> +		init_ldb_clks(np, base, anatop_base);
->  
->  		hws[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_hw_mux_ldb("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
->  		hws[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_hw_mux_ldb("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
+>  #define imx8m_clk_hw_composite_bus_critical(name, parent_names, reg)	\
+>  	_imx8m_clk_hw_composite(name, parent_names, reg, \
+>  			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
 > -- 
-> 2.25.1
+> 2.34.1
 > 
