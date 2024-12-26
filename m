@@ -1,47 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC5E1BD4F7;
-	Thu, 26 Dec 2024 22:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08801D8A04;
+	Thu, 26 Dec 2024 22:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735252740; cv=none; b=FWxgwO+H+4XRZ1d0jrnLkhHdE7I5wToBg25tFkzlKWhC/m984yaWHG4+gspuup69IxLyvTvMr53O3qHqd5GQocqYAXIz/zKX1ed/YtXQAmfZ0S+ynObp4PMD9VeIhDIuKUx1ZR4oZ9ij2IJk+w3T2DRtdRJTqlyrQ2ejKY/XB1c=
+	t=1735252750; cv=none; b=fCYpKugMmuTZR/cZShR5kJp8cbgq0od0onWKZt9GizuQjQjEnF1fhbpJKrr0SXJR60qBkdILrANGc93hR+UQQ9PxY1YtDYLA3WRwxC6t8zcD2fg03kC0ZUktHn7QeL9j22OO0T1L0+tFWsXXUIJbTr893DSlcyI4w8P7itLNBfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735252740; c=relaxed/simple;
-	bh=PRnqGqye9XLcM7XryqGktyEXPjFZialyNlgxDprsjto=;
+	s=arc-20240116; t=1735252750; c=relaxed/simple;
+	bh=+RXCqt+iNZcaUif2XtyI5LwtUaXAQ0XSI65MsanBs/0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ao0Io2NIatBmAX0DKULR4SjnCFM+8FqWZq+5bsc411Sblqpdm0Fydbh3PgMroALxJILm1dK9cI3aEqGXOSvC2URXsMPV2P5FMI67OtPtK0jjmKK6dVUz9pfeW+imn/VVp0+q2m7mBRdGrRAcj4jaT4I2o0MMRMGw4GgN7rs89gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwt3JaJP; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=RMwc/kKcxcwGA8C2iusFswq6idJuor20Lcmdc2olFgxhezacRZ6XcVPAhZFcctOFWopHfmh0MWWQo33Vw5q1UTozPOcSFA6aVqgR/B5RJobrUUaeNruFFHaFDb/NI4Ms3dfO0FNFlrqEtbK86AzwReF+zvU4dgGqJCscNXQGn7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxMPoQRa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwt3JaJP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A887C4CEE1;
-	Thu, 26 Dec 2024 22:38:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxMPoQRa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B763C4CED3;
+	Thu, 26 Dec 2024 22:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735252740;
-	bh=PRnqGqye9XLcM7XryqGktyEXPjFZialyNlgxDprsjto=;
+	s=k20201202; t=1735252750;
+	bh=+RXCqt+iNZcaUif2XtyI5LwtUaXAQ0XSI65MsanBs/0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kwt3JaJPPleS9RIrUeVFTmRq/7VGdHXr7JFCCzjAVTyUAFdWHDsiP67YyCqjwch2x
-	 wEqHhau5xfAiphIyg2obojARRMuFzbhDO7kQ0bCTmFDO6Prpc3I167jqXM9zeG75Zx
-	 LVUrEmuTsyWiEJ6HWYYerRE0Oqj6+eNAyIJlzJiVNyac8jFOXz8yLHSAcTW/zhfXgp
-	 eXBI4Gqky32dzMKwz+ZnNIM/e/RlkkvsZspSKWBGui6ppLcXXQPslXEmnzFNZ+K5gs
-	 66slMAD0K3b8Agg2YRTnvbkg0BKUJVQ6Z5/hQloqwkw6xHIc70iQTExiGsgJCGAh3W
-	 GcFSF2KHGQz1g==
+	b=hxMPoQRaaKAX8xVcKL6KDHl9YV0scIvaZjzGEFkoasmChLqGStNq5ntFMrBgnCqFx
+	 BKFqRFw3Yp8wZHxx2VO1SrXBvo74NJ9583gP9BOXwmqi9nHDRTKUGEzIlct8V4LnjR
+	 74JEoYqsQnToxi0gJ4KHQ8g5/xQD8qxemagDR0VYP+8WhNTB2FyXRupfKfee+R6FUM
+	 bTe6B0Zl8QEAzmGvKPqElAls5ekj2p5lmfAHGkW3aPKm32TaDO5nb3PNgFJIJxz+0w
+	 YaRINyAPqbu6nxoLRSxWy7Gyo9ZMJW8dvvhn0staLcSIbDTB2rAaD6G6RXI2/bvVFh
+	 JC2wB9nzeoOvQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Anastasia Belova <abelova@astralinux.ru>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	David Dai <daidavid1@codeaurora.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: prevent integer overflow in recalc_rate
-Date: Thu, 26 Dec 2024 16:38:31 -0600
-Message-ID: <173525273254.1449028.13893672295374918386.b4-ty@kernel.org>
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add missing parent_map to clocks in SM6350 clock drivers
+Date: Thu, 26 Dec 2024 16:38:40 -0600
+Message-ID: <173525273261.1449028.9949887980005310718.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241203084231.6001-1-abelova@astralinux.ru>
-References: <20241203084231.6001-1-abelova@astralinux.ru>
+In-Reply-To: <20241220-sm6350-parent_map-v1-0-64f3d04cb2eb@fairphone.com>
+References: <20241220-sm6350-parent_map-v1-0-64f3d04cb2eb@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,20 +54,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 03 Dec 2024 11:42:31 +0300, Anastasia Belova wrote:
-> aggr_state and unit fields are u32. The result of their
-> multiplication may not fit in this type.
+On Fri, 20 Dec 2024 10:03:29 +0100, Luca Weiss wrote:
+> If a clk_rcg2 has a parent, it should also have parent_map defined,
+> otherwise we'll get a NULL pointer dereference when calling clk_set_rate
+> on those clocks.
 > 
-> Add explicit casting to prevent overflow.
+> Correct this on clocks in both gcc-sm6350 and dispcc-sm6350.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: clk-rpmh: prevent integer overflow in recalc_rate
-      commit: 89aa5925d201b90a48416784831916ca203658f9
+[1/2] clk: qcom: gcc-sm6350: Add missing parent_map for two clocks
+      commit: 96fe1a7ee477d701cfc98ab9d3c730c35d966861
+[2/2] clk: qcom: dispcc-sm6350: Add missing parent_map for a clock
+      commit: d4cdb196f182d2fbe336c968228be00d8c3fed05
 
 Best regards,
 -- 
