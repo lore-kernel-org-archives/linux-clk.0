@@ -1,35 +1,35 @@
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C540D28F5;
-	Thu, 26 Dec 2024 15:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26D912C475;
+	Thu, 26 Dec 2024 15:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735227139; cv=none; b=ExHLTOxilV8GMzwyCN+ArxLGxmW3xSdZ0V6KdIV8NpYInOYoXIHG2AkYl0JDhxgMytT6gCcjW9uYmvv7oFFVWKMwJ5/4F/3vhE/FVDDLjIjz8QNZ/KAO7gqGnrXN1xaVYS63BAX4dQ1BB8mKu/M54ZWYX11MxGCEn8g7KRp6X3s=
+	t=1735227141; cv=none; b=N44BT82vHBN82w3RaAS2s0+g91Lxql7aeZrxlgCk6jIiMWZ6szL1DG5gJfDK56aq/To81T0MbuBcNrYEHrwTzqBu5t/ic5k25HHnf+45uOUKETM4JrLnYu8pvrL8wTPtm97Kdb8OanyUQCuOKY+3N+OCQQWZjr9OLGXPAxLO1SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735227139; c=relaxed/simple;
-	bh=7dL55AlvJRi+H1afrvbkQRz8fLGH7itx4UESJB1AjxY=;
+	s=arc-20240116; t=1735227141; c=relaxed/simple;
+	bh=G7FkfJM0ZFeH0jGDNkqh2vLmqKFJDBp57Re9vGTNVm4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fQBMvi9YOZviGFurgGM7XMrK2hjEpYyFOnOkjs43UvO+2anbGa8x2kYJUjossmjHVacPr+7AbcbFEnIAP+OMCmTpq3FQQHez3CDdKdQW2SsU3NJC4HpIXTbITb8+G/Rm07/fd2ReYtHG1ogILeXoM6sM/duITw/eSbSfYmCqIoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=f1zoNcLM; arc=none smtp.client-ip=89.58.32.78
+	 MIME-Version; b=pql5Y2K/tUquyEmjI0xmiiF+XL5AiTiQ1XkdlQ6sB10zalBc6j1wddsnb2cvzpJwJNuDKorbe0KQfGCfR1EMkwWUoRARJ04K5DjIYq9WduG+MuBaNUo622rCkeiv20w/3roTI6RhkowCeTO1SjAI/W/DDfJuMxTa9nedHntIZdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=DK6w7lm3; arc=none smtp.client-ip=89.58.32.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="f1zoNcLM"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F295D1040DBDA;
-	Thu, 26 Dec 2024 16:32:13 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="DK6w7lm3"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EBD41104858B5;
+	Thu, 26 Dec 2024 16:32:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1735227135;
+	t=1735227137;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qV06uPDyV/m3CHHviV2vOwjO8cVMkjk8mJ1uMo9EmyM=;
-	b=f1zoNcLMZaxNc4y/0DaNr7OJXVNERGkZQJAf3vDoWVGAleqhq1v02mEhVmBDI3J2EWvAFg
-	T6gFiCQywOv7smzrmYOjMrqzirP34Dmlgn9rulYTIE8aUGtYZX5HQ2fdliC7V2JiM02soG
-	FosCDfjpIV4sDI8ymheLtsZP+RXQdZQQAmz2UqRn6gbozwh3HRv9x4aIbJo3n2fLTFkD9s
-	tlOrLFXY7z5MjdzMBCLxyXjFMbCWyKUoItnfioYydEhSJtkfXUKVBA0QIUVPZ1ZmFNiqpy
-	+xZCa4Yqv3NkMAOjQ8sQlp8Wj/dLT+UyNTUKQXkb/iEV6jA4v1EMGKA30MYZ3g==
+	bh=kKmoFE3dk1ZqBnU4d3e0plkYhv+Qub5uMFmN5vpUg0Q=;
+	b=DK6w7lm3WAmu6qYjMA6qq706PteRm01au4oTAGPIEJMGOz2V6s31I7AZdopX6ZBvx880fM
+	WyK2kUic1BRqDObxZRYvq54xzHZPF55aOxbimkitZb426+Igi6x5myHrrkCbWI8bINHcF0
+	moeM9RxHxZXj3vvceJ+uLbp1+x3vjvYn0iGZf7MiV4jCIf/mLJa/pZ/IOG16n3EoIdoyQM
+	NjglJR8y1qJwo29LHPQz9VL63d0LZq2cnyv/HVKIRYHKNjdF/65Yedyir3vv0GzY1HNyjT
+	miIa15vMcd7Oi15AcC/2UCpbvO2xxenk2NHjDdI90mM0b3fRd5WYm5x5BSKU4Q==
 From: Marek Vasut <marex@denx.de>
 To: linux-clk@vger.kernel.org
 Cc: Marek Vasut <marex@denx.de>,
@@ -49,9 +49,9 @@ Cc: Marek Vasut <marex@denx.de>,
 	Xiubo Li <Xiubo.Lee@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-sound@vger.kernel.org
-Subject: [PATCH 3/4] dt-bindings: clock: fsl-sai: Document clock-cells = <1> support
-Date: Thu, 26 Dec 2024 16:30:29 +0100
-Message-ID: <20241226153155.36351-3-marex@denx.de>
+Subject: [PATCH 4/4] clk: fsl-sai: Add MCLK generation support
+Date: Thu, 26 Dec 2024 16:30:30 +0100
+Message-ID: <20241226153155.36351-4-marex@denx.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241226153155.36351-1-marex@denx.de>
 References: <20241226153155.36351-1-marex@denx.de>
@@ -64,9 +64,11 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The driver now supports generation of both BCLK and MCLK, document
-support for #clock-cells = <0> for legacy case and #clock-cells = <1>
-for the new case which can differentiate between BCLK and MCLK.
+The driver currently supports generating BCLK. There are systems which
+require generation of MCLK instead. Register new MCLK clock and handle
+clock-cells = <1> to differentiate between BCLK and MCLK. In case of a
+legacy system with clock-cells = <0>, the driver behaves as before, i.e.
+always returns BCLK.
 
 Signed-off-by: Marek Vasut <marex@denx.de>
 ---
@@ -88,31 +90,155 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-fsl-sai.c | 81 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 67 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-index e62543deeb7da..250d7ec729c6e 100644
---- a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-@@ -10,7 +10,7 @@ maintainers:
-   - Michael Walle <michael@walle.cc>
+diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+index 628e53a3a26fa..0f8e2f2662d87 100644
+--- a/drivers/clk/clk-fsl-sai.c
++++ b/drivers/clk/clk-fsl-sai.c
+@@ -7,6 +7,7 @@
  
- description: |
--  It is possible to use the BCLK pin of a SAI module as a generic
-+  It is possible to use the BCLK or MCLK pin of a SAI module as a generic
-   clock output. Some SoC are very constrained in their pin multiplexer
-   configuration. E.g. pins can only be changed in groups. For example, on
-   the LS1028A SoC you can only enable SAIs in pairs. If you use only one SAI,
-@@ -40,7 +40,7 @@ properties:
-     maxItems: 1
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+@@ -15,27 +16,44 @@
  
-   '#clock-cells':
--    const: 0
-+    maximum: 1
+ #define I2S_CSR		0x00
+ #define I2S_CR2		0x08
++#define I2S_MCR		0x100
+ #define CSR_BCE_BIT	28
++#define CSR_TE_BIT	31
+ #define CR2_BCD		BIT(24)
+ #define CR2_DIV_SHIFT	0
+ #define CR2_DIV_WIDTH	8
++#define MCR_MOE		BIT(30)
  
- allOf:
-   - if:
+ struct fsl_sai_clk {
+-	struct clk_divider div;
+-	struct clk_gate gate;
++	struct clk_divider bclk_div;
++	struct clk_divider mclk_div;
++	struct clk_gate bclk_gate;
++	struct clk_gate mclk_gate;
++	struct clk_hw *bclk_hw;
++	struct clk_hw *mclk_hw;
+ 	spinlock_t lock;
+ };
+ 
+ struct fsl_sai_data {
+ 	unsigned int	offset;	/* Register offset */
++	bool		have_mclk; /* Have MCLK control */
+ };
+ 
++static struct clk_hw *
++fsl_sai_of_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct fsl_sai_clk *sai_clk = data;
++
++	return clkspec->args[0] ? sai_clk->mclk_hw : sai_clk->bclk_hw;
++}
++
+ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	const struct fsl_sai_data *data = device_get_match_data(dev);
+-	struct fsl_sai_clk *sai_clk;
+ 	struct clk_parent_data pdata = { .index = 0 };
++	struct fsl_sai_clk *sai_clk;
++	struct clk *clk_bus;
+ 	void __iomem *base;
+ 	struct clk_hw *hw;
+ 
+@@ -47,39 +65,74 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
++	clk_bus = devm_clk_get_enabled(dev, "bus");
++	if (IS_ERR(clk_bus))
++		return PTR_ERR(clk_bus);
++
+ 	spin_lock_init(&sai_clk->lock);
+ 
+-	sai_clk->gate.reg = base + data->offset + I2S_CSR;
+-	sai_clk->gate.bit_idx = CSR_BCE_BIT;
+-	sai_clk->gate.lock = &sai_clk->lock;
++	sai_clk->bclk_gate.reg = base + data->offset + I2S_CSR;
++	sai_clk->bclk_gate.bit_idx = CSR_BCE_BIT;
++	sai_clk->bclk_gate.lock = &sai_clk->lock;
+ 
+-	sai_clk->div.reg = base + data->offset + I2S_CR2;
+-	sai_clk->div.shift = CR2_DIV_SHIFT;
+-	sai_clk->div.width = CR2_DIV_WIDTH;
+-	sai_clk->div.lock = &sai_clk->lock;
++	sai_clk->bclk_div.reg = base + data->offset + I2S_CR2;
++	sai_clk->bclk_div.shift = CR2_DIV_SHIFT;
++	sai_clk->bclk_div.width = CR2_DIV_WIDTH;
++	sai_clk->bclk_div.lock = &sai_clk->lock;
+ 
+ 	/* set clock direction, we are the BCLK master */
+ 	writel(CR2_BCD, base + data->offset + I2S_CR2);
+ 
+-	hw = devm_clk_hw_register_composite_pdata(dev, dev->of_node->name,
++	hw = devm_clk_hw_register_composite_pdata(dev, "BCLK",
+ 						  &pdata, 1, NULL, NULL,
+-						  &sai_clk->div.hw,
++						  &sai_clk->bclk_div.hw,
+ 						  &clk_divider_ops,
+-						  &sai_clk->gate.hw,
++						  &sai_clk->bclk_gate.hw,
+ 						  &clk_gate_ops,
+ 						  CLK_SET_RATE_GATE);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
++	sai_clk->bclk_hw = hw;
++
++	if (data->have_mclk) {
++		sai_clk->mclk_gate.reg = base + data->offset + I2S_CSR;
++		sai_clk->mclk_gate.bit_idx = CSR_TE_BIT;
++		sai_clk->mclk_gate.lock = &sai_clk->lock;
++
++		sai_clk->mclk_div.reg = base + I2S_MCR;
++		sai_clk->mclk_div.shift = CR2_DIV_SHIFT;
++		sai_clk->mclk_div.width = CR2_DIV_WIDTH;
++		sai_clk->mclk_div.lock = &sai_clk->lock;
++
++		pdata.index = 1; /* MCLK1 */
++		hw = devm_clk_hw_register_composite_pdata(dev, "MCLK",
++							  &pdata, 1, NULL, NULL,
++							  &sai_clk->mclk_div.hw,
++							  &clk_divider_ops,
++							  &sai_clk->mclk_gate.hw,
++							  &clk_gate_ops,
++							  CLK_SET_RATE_GATE);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++
++		sai_clk->mclk_hw = hw;
++
++		/* set clock direction, we are the MCLK output */
++		writel(MCR_MOE, base + I2S_MCR);
++	}
++
++	return devm_of_clk_add_hw_provider(dev, fsl_sai_of_clk_get, sai_clk);
+ }
+ 
+ static const struct fsl_sai_data fsl_sai_vf610_data = {
+ 	.offset	= 0,
++	.have_mclk = false,
+ };
+ 
+ static const struct fsl_sai_data fsl_sai_imx8mq_data = {
+ 	.offset	= 8,
++	.have_mclk = true,
+ };
+ 
+ static const struct of_device_id of_fsl_sai_clk_ids[] = {
 -- 
 2.45.2
 
