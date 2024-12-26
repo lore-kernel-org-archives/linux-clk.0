@@ -1,33 +1,35 @@
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB2728F5;
-	Thu, 26 Dec 2024 15:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC081BC3F;
+	Thu, 26 Dec 2024 15:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735227136; cv=none; b=u2mkozMAxf1LC1uBBP3LGnIc1++EZxh8DyZOzWD94VJc+4Iv6PPO0xB+FVBHLHbW0xvtcfwtD8vtxTRiwcDnzlIh4JJ/eiIRIlhlPGMX2hGsn7QoS152Dv7p5yZ2oO88JxDpmoHGZmf8UY/Ta2y8MEgOUavv6sn5Zl6BI+c7m/8=
+	t=1735227138; cv=none; b=SdRikApoj4+nt8/DaVCcmoCP3Zz9tKgK4tzXWyqsovbd5ZrVFNqPQmMPksMeg7iSWVJ2LYPM+ZcCjhbRyK95M2o9N+kZCuN4r8YZffTFaa8rPxr9j6nyPEICgm+SOeAbSuQosTqunjuEtBmRZ+SGJewGNY++pMdhSa1y3gaJI8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735227136; c=relaxed/simple;
-	bh=XG5wfEFnvgv4JHy0e1TZWinPeEPRdFLWq7DR1JbJ2Tc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VqY7pjcPDulUte4fI0h/eumFPwetGnc56KCcImPQcijyRsjVIQeG/UlfSDie9h3p7QmSX1nDJpplm6+9f1YTlrrh5/EQMXQXfeECSzsx8jM7U3oh1+AQ7UJ/1t/4YI0neE/q0rT/SQDGi3PDnfvdsprEFZXux0qdFocSqo86Kds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=JT8HIk9t; arc=none smtp.client-ip=89.58.32.78
+	s=arc-20240116; t=1735227138; c=relaxed/simple;
+	bh=eCf61TV879FRWEletVkB/ZyBXkpMxHRp1k5UfEMeshY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tBXr4wA+8uRf1bdL3VJ1nDFVo64S0gaoP/P33lpCKSdL/hA7EPBlGQb/a56tR+/7aMnwZig9xocGpzgli4C+p36kHkxxoutxsFeXWPUreJb4RhhSCCOGmZoYW1P9orJm3BkxLxBKVMlC581MghOBEuhbyn7UNmJwWRuZBAU6eEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=gTlnc5Qw; arc=none smtp.client-ip=89.58.32.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="JT8HIk9t"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12CC71040DBCA;
-	Thu, 26 Dec 2024 16:32:08 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="gTlnc5Qw"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 184361040DBCD;
+	Thu, 26 Dec 2024 16:32:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1735227131;
+	t=1735227133;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mlPjGe+YvDRKwEhbsCQj6RcWcvFNND+nWTvb971d0UQ=;
-	b=JT8HIk9t/KSNNx/ovdOK5IohmQ5NEH6wbrWS7VvSsasgc+L0DVsiN7g2R7PKRjuCilq/Iw
-	qePgHueGsgh92ox3XFv+8lWkh/DS8+/m/KODgKdh1I2NM+LiEGQ+2hmmdsz2C1EoNFs3Jh
-	vsEx2frhzrIh4fvGYnEJoZWAiFWeBMFqlh9+7CbTtLGAQ/PDrTDiRKarCHTcuSWHBQzJev
-	GVr1wJjPLX5bwMWQ3QqcV+P+1y2fTiNbEbOBRaoov6igEx90UgUUEYPNFy+lGn4SxH+wVg
-	DThzCdpeSUXz6qcBIuXvYIZfsK3gX7fmZJyftdgCPEOFldQgFQq0maneZKM7+g==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TFjUgAGBP328g7w3LzTuf6nKlBpliXFLKE+Q4uYY6ig=;
+	b=gTlnc5QwEUEggTx4AgJj7cIhuBXsi6tYpnmGxetSjtQezLrWzkt/jGUHvGJvz+rhLREq5P
+	96PMoor0aWbQY+xKFStM0qcxbu5OCNA4GJynsuezdw2YT6RlEBi9iwE6hi6rIrBivui//6
+	zx6/FT+hbOk/89Aboy0TzM0Orv2rhYLGgr1QyA+bZ7GQ6W97fpOn6zthWYUE5lDqeWdpKI
+	slkiy0AzNwXzr6h60ewSHgrT4bRiFgMcjJDMANSNLOVXqkR/h6sbvT1G/BJ17afbS5Lkpq
+	aWrUH8HUz22DVDfkwTWGb3OeEy0pocIel5Q0zqFbfCPCEr5vdTF4Niq+zpfVsQ==
 From: Marek Vasut <marex@denx.de>
 To: linux-clk@vger.kernel.org
 Cc: Marek Vasut <marex@denx.de>,
@@ -47,10 +49,12 @@ Cc: Marek Vasut <marex@denx.de>,
 	Xiubo Li <Xiubo.Lee@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-sound@vger.kernel.org
-Subject: [PATCH 1/4] dt-bindings: clock: fsl-sai: Document i.MX8M support
-Date: Thu, 26 Dec 2024 16:30:27 +0100
-Message-ID: <20241226153155.36351-1-marex@denx.de>
+Subject: [PATCH 2/4] clk: fsl-sai: Add i.MX8M Mini support with 8 byte register offset
+Date: Thu, 26 Dec 2024 16:30:28 +0100
+Message-ID: <20241226153155.36351-2-marex@denx.de>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241226153155.36351-1-marex@denx.de>
+References: <20241226153155.36351-1-marex@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,10 +64,9 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The i.MX8M/Mini/Nano/Plus variant of the SAI IP has control registers
-shifted by +8 bytes and requires additional bus clock. Document support
-for the i.MX8M variant of the IP with this register shift and additional
-clock. Update the description slightly.
+The i.MX8M Mini/Nano/Plus variant of the SAI IP has control registers
+shifted by +8 bytes, add support for the i.MX8M Mini variant of the IP
+with this register shift.
 
 Signed-off-by: Marek Vasut <marex@denx.de>
 ---
@@ -85,66 +88,82 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- .../bindings/clock/fsl,sai-clock.yaml         | 32 ++++++++++++++++---
- 1 file changed, 27 insertions(+), 5 deletions(-)
+ drivers/clk/Kconfig       |  2 +-
+ drivers/clk/clk-fsl-sai.c | 22 ++++++++++++++++++----
+ 2 files changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-index 3bca9d11c148f..e62543deeb7da 100644
---- a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-@@ -10,10 +10,10 @@ maintainers:
-   - Michael Walle <michael@walle.cc>
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 713573b6c86c7..575743d7e2c71 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -247,7 +247,7 @@ config COMMON_CLK_FSL_FLEXSPI
  
- description: |
--  It is possible to use the BCLK pin of a SAI module as a generic clock
--  output. Some SoC are very constrained in their pin multiplexer
--  configuration. Eg. pins can only be changed groups. For example, on the
--  LS1028A SoC you can only enable SAIs in pairs. If you use only one SAI,
-+  It is possible to use the BCLK pin of a SAI module as a generic
-+  clock output. Some SoC are very constrained in their pin multiplexer
-+  configuration. E.g. pins can only be changed in groups. For example, on
-+  the LS1028A SoC you can only enable SAIs in pairs. If you use only one SAI,
-   the second pins are wasted. Using this binding it is possible to use the
-   clock of the second SAI as a MCLK clock for an audio codec, for example.
+ config COMMON_CLK_FSL_SAI
+ 	bool "Clock driver for BCLK of Freescale SAI cores"
+-	depends on ARCH_LAYERSCAPE || COMPILE_TEST
++	depends on ARCH_LAYERSCAPE || ARCH_MXC || COMPILE_TEST
+ 	help
+ 	  This driver supports the Freescale SAI (Synchronous Audio Interface)
+ 	  to be used as a generic clock output. Some SoCs have restrictions
+diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+index cba45e07562da..628e53a3a26fa 100644
+--- a/drivers/clk/clk-fsl-sai.c
++++ b/drivers/clk/clk-fsl-sai.c
+@@ -26,9 +26,14 @@ struct fsl_sai_clk {
+ 	spinlock_t lock;
+ };
  
-@@ -21,7 +21,17 @@ description: |
- 
- properties:
-   compatible:
--    const: fsl,vf610-sai-clock
-+    oneOf:
-+      - items:
-+          - enum:
-+              - fsl,imx8mm-sai-clock
-+              - fsl,imx8mn-sai-clock
-+              - fsl,imx8mp-sai-clock
-+          - const: fsl,imx8mq-sai-clock
-+      - items:
-+          - enum:
-+              - fsl,imx8mq-sai-clock
-+              - fsl,vf610-sai-clock
- 
-   reg:
-     maxItems: 1
-@@ -32,6 +42,18 @@ properties:
-   '#clock-cells':
-     const: 0
- 
-+allOf:
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              const: fsl,imx8mq-sai-clock
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 2
++struct fsl_sai_data {
++	unsigned int	offset;	/* Register offset */
++};
 +
- required:
-   - compatible
-   - reg
+ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	const struct fsl_sai_data *data = device_get_match_data(dev);
+ 	struct fsl_sai_clk *sai_clk;
+ 	struct clk_parent_data pdata = { .index = 0 };
+ 	void __iomem *base;
+@@ -44,17 +49,17 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&sai_clk->lock);
+ 
+-	sai_clk->gate.reg = base + I2S_CSR;
++	sai_clk->gate.reg = base + data->offset + I2S_CSR;
+ 	sai_clk->gate.bit_idx = CSR_BCE_BIT;
+ 	sai_clk->gate.lock = &sai_clk->lock;
+ 
+-	sai_clk->div.reg = base + I2S_CR2;
++	sai_clk->div.reg = base + data->offset + I2S_CR2;
+ 	sai_clk->div.shift = CR2_DIV_SHIFT;
+ 	sai_clk->div.width = CR2_DIV_WIDTH;
+ 	sai_clk->div.lock = &sai_clk->lock;
+ 
+ 	/* set clock direction, we are the BCLK master */
+-	writel(CR2_BCD, base + I2S_CR2);
++	writel(CR2_BCD, base + data->offset + I2S_CR2);
+ 
+ 	hw = devm_clk_hw_register_composite_pdata(dev, dev->of_node->name,
+ 						  &pdata, 1, NULL, NULL,
+@@ -69,8 +74,17 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
+ }
+ 
++static const struct fsl_sai_data fsl_sai_vf610_data = {
++	.offset	= 0,
++};
++
++static const struct fsl_sai_data fsl_sai_imx8mq_data = {
++	.offset	= 8,
++};
++
+ static const struct of_device_id of_fsl_sai_clk_ids[] = {
+-	{ .compatible = "fsl,vf610-sai-clock" },
++	{ .compatible = "fsl,vf610-sai-clock", .data = &fsl_sai_vf610_data },
++	{ .compatible = "fsl,imx8mq-sai-clock", .data = &fsl_sai_imx8mq_data },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, of_fsl_sai_clk_ids);
 -- 
 2.45.2
 
