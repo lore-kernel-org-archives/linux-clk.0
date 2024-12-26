@@ -1,53 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEC41DFDAB;
-	Thu, 26 Dec 2024 18:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC5E1BD4F7;
+	Thu, 26 Dec 2024 22:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735237673; cv=none; b=hCy55HkRwFcoxYiZV3fb9TxsDMKfXwewDjZTe00z6o+wZPP39Oiu1D5N7C2bmH5ReM/TnXk7c9SgzGmI564WcxOSSUp1EJYWbEb/mtxrByqjkIBLPI+E4gDZjHblOjxOGnkJ/2euvtGhTah8JdC4lYvAK34HdXJ7HDuQpKUTlPo=
+	t=1735252740; cv=none; b=FWxgwO+H+4XRZ1d0jrnLkhHdE7I5wToBg25tFkzlKWhC/m984yaWHG4+gspuup69IxLyvTvMr53O3qHqd5GQocqYAXIz/zKX1ed/YtXQAmfZ0S+ynObp4PMD9VeIhDIuKUx1ZR4oZ9ij2IJk+w3T2DRtdRJTqlyrQ2ejKY/XB1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735237673; c=relaxed/simple;
-	bh=V3/0p/mF/tXtQxOMbRL0fTawGvBGGeNdHlT6pIpkapc=;
+	s=arc-20240116; t=1735252740; c=relaxed/simple;
+	bh=PRnqGqye9XLcM7XryqGktyEXPjFZialyNlgxDprsjto=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ccUGfvv6IlpAfwgHzcBvKfX3A9+o1VN5uy0Y1IF3FBUPF7dFz0zKmvQ+WDkQYb4VRkB8zHRGfHjUmB7ZruGdkDlSRNo2NjUUMCZXXPkzQHIIs4241vAIGBIZAnI/lvuYWcI5aQRTMl+GhaTFpyzm9voRK7AJuiMXPZbqFQitX6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqf0wT0v; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Ao0Io2NIatBmAX0DKULR4SjnCFM+8FqWZq+5bsc411Sblqpdm0Fydbh3PgMroALxJILm1dK9cI3aEqGXOSvC2URXsMPV2P5FMI67OtPtK0jjmKK6dVUz9pfeW+imn/VVp0+q2m7mBRdGrRAcj4jaT4I2o0MMRMGw4GgN7rs89gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwt3JaJP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqf0wT0v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E9DC4CEDC;
-	Thu, 26 Dec 2024 18:27:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwt3JaJP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A887C4CEE1;
+	Thu, 26 Dec 2024 22:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735237673;
-	bh=V3/0p/mF/tXtQxOMbRL0fTawGvBGGeNdHlT6pIpkapc=;
+	s=k20201202; t=1735252740;
+	bh=PRnqGqye9XLcM7XryqGktyEXPjFZialyNlgxDprsjto=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qqf0wT0vliC4ty/F5VdmuE2xfh2EIODolEst3BosiIxStBfCiNeKvcQeJDlsRJq9L
-	 cZ0VrOIIUWEyDesClR44+2N6voOgRiyTGpV+mGDyTItGz4mibD0j7HCUXUrpNxLz9w
-	 x4ahhrnW+rQA9h9ivslFyHzoseq6bQo8HavDkSmIF+CyQDz2AFudAIUSQzVVEick4Y
-	 QrJaix9GqstHcYHbqHPcjiL0HFi3zW7S93cOKgQFbSnjtQvmq2n0z4QZld310EeGui
-	 Kcrtbh4Z2nM1wAHzPVJ2C1MLSOP96nBg+xeC5lXhTIcEpaicBhrkYQjfp4gr/SQUq5
-	 J92F3HXsQd13A==
+	b=kwt3JaJPPleS9RIrUeVFTmRq/7VGdHXr7JFCCzjAVTyUAFdWHDsiP67YyCqjwch2x
+	 wEqHhau5xfAiphIyg2obojARRMuFzbhDO7kQ0bCTmFDO6Prpc3I167jqXM9zeG75Zx
+	 LVUrEmuTsyWiEJ6HWYYerRE0Oqj6+eNAyIJlzJiVNyac8jFOXz8yLHSAcTW/zhfXgp
+	 eXBI4Gqky32dzMKwz+ZnNIM/e/RlkkvsZspSKWBGui6ppLcXXQPslXEmnzFNZ+K5gs
+	 66slMAD0K3b8Agg2YRTnvbkg0BKUJVQ6Z5/hQloqwkw6xHIc70iQTExiGsgJCGAh3W
+	 GcFSF2KHGQz1g==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Anastasia Belova <abelova@astralinux.ru>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	quic_imrashai@quicinc.com,
-	quic_jkona@quicinc.com,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	David Dai <daidavid1@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH v6 0/2] Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P platform.
-Date: Thu, 26 Dec 2024 12:27:07 -0600
-Message-ID: <173523761384.1412574.17195452154242339333.b4-ty@kernel.org>
+	stable@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: prevent integer overflow in recalc_rate
+Date: Thu, 26 Dec 2024 16:38:31 -0600
+Message-ID: <173525273254.1449028.13893672295374918386.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241025-sa8775p-mm-v4-resend-patches-v6-0-329a2cac09ae@quicinc.com>
-References: <20241025-sa8775p-mm-v4-resend-patches-v6-0-329a2cac09ae@quicinc.com>
+In-Reply-To: <20241203084231.6001-1-abelova@astralinux.ru>
+References: <20241203084231.6001-1-abelova@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,23 +52,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 25 Oct 2024 14:22:52 +0530, Taniya Das wrote:
-> [v6]
->  Update commit subject and commit message for both the DT patches [Bjorn]
->  Subset of the patch series applied: (Removed from this series)
->    Link to v5: https://lore.kernel.org/r/20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com
+On Tue, 03 Dec 2024 11:42:31 +0300, Anastasia Belova wrote:
+> aggr_state and unit fields are u32. The result of their
+> multiplication may not fit in this type.
 > 
-> [v5]
->   Rebased the device tree patch to add clock controller nodes.
+> Add explicit casting to prevent overflow.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] arm64: dts: qcom: sa8775p: Update sleep_clk frequency
-      commit: 30f7dfd2c4899630becf477447e8bbe92683d2c6
-[2/2] arm64: dts: qcom: sa8775p: Add support for clock controllers
-      commit: 727dc481e50a4de846c49d6ef761616f299d127b
+[1/1] clk: qcom: clk-rpmh: prevent integer overflow in recalc_rate
+      commit: 89aa5925d201b90a48416784831916ca203658f9
 
 Best regards,
 -- 
