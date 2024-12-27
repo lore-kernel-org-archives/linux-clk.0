@@ -1,173 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7C82BAF7;
-	Fri, 27 Dec 2024 08:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848F413B792
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 08:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735288201; cv=none; b=WuuDKnMG8ezQK50O9QYZtGXRrOqi+WIcvz1U1eueRc2Jl0m0qaQIUjrPot+Pa7HoTTsuZohzcuBquzQZ3wr32SGplNZPGegacBu/W9L1P7wfvl2I5YeTm+sc/0Ek4diUywP0p4QMwa4PLrfCbevSVSzbprpz7EcRdvH/9shs/ZI=
+	t=1735289122; cv=none; b=K8luWAoGHDX8nFVKyQfWfwaG3eQYvfLNCpvgzP6y4zPydsBN3PBOGCF7uKfgqiAVZH2ZYLLwLk/GT9n6ZFhZB9+VSvkUljGBWp0/DpsM+V0WeleGvg3Ml4yZbRM+hTUrqgtSisxIwLeyXWd+MTIvQ3vRvLB8O8fqVQvjTzVyBLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735288201; c=relaxed/simple;
-	bh=q4BglVonBtnI/qxK5vzOvvLIE4bBQr/ItGFYCqjwiBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsniXJMEjHzEB9XjOKVrwMz6ODU5uUIA/uUYfgz3wRg6HF7E13e/Ov9xCxRkfThcfYyO24e/sTM7HrEJYAI2OmPGKzhzD7KrIWz8MmemdO+CR1lkryIiaPMMONKhtE4/m/KprOZBZBPcu8b7i23WWPfo2h7STJsMfGhepXbGcZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKQVhGMf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735289122; c=relaxed/simple;
+	bh=CLaRTwNrBEuvYmMR2ZHeWDlLDsqiojHM+Zpk2bGtvqI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uWggnWjtx8nipE9iiuAJmldnU9YcxTf5JndGssUiUD4uYp9Iu6uMp87CBwI9sEk0hj3CDCZqJgcEWTI65INgd+wUq/oYRXv+1nKzD88MzNY2bbbejIAEcWe78v9bnH7BjhSqp5lBtRv3NUkhYPHJnIMv3Mrv5MoJ8Nqou4DUiro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=NDNJRDDn; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKQVhGMf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D067DC4CED0;
-	Fri, 27 Dec 2024 08:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735288201;
-	bh=q4BglVonBtnI/qxK5vzOvvLIE4bBQr/ItGFYCqjwiBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RKQVhGMfDOABBq0ix8kEFLD/a1HFbBX2ROgo/rh9Dknj+2HB0H9C7kqeb9451wCvD
-	 vruZGXPQJlcZhSylmX74OnVQAyPdgKC1wn0L5qJKMdB+QQ1+M3RAvgRrX2c5yfz5oK
-	 h6hmqcZvbrLGcXBze/L7x1ZsVvGv4URR2uIBHnDT9FOvg9+95JGb1sc/6CvPzU3WQQ
-	 PLv/zMX4vqd4Dy0lH1BQmy8gp04wmQj5BqBtX33DEaV9r+EJpNPMVelV2vAqrY2a6g
-	 nBvF81XJjlVulgfdnesWuIcMsmCp07IlSao7PCGWaxV1EEPwrzsB86ytn+QC7zveSx
-	 wKxbJlyflO+Wg==
-Date: Fri, 27 Dec 2024 09:29:58 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, 
-	Finley Xiao <finley.xiao@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>, 
-	Sugar Zhang <sugar.zhang@rock-chips.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] clk: rockchip: Add clock controller for the RK3562
-Message-ID: <drybpdss7gr5rgeuxfph5rghqymxzbqqysjbnbu6llvr4njrjn@nwqxhfiu4ttl>
-References: <20241224092310.3814460-1-kever.yang@rock-chips.com>
- <20241224092310.3814460-3-kever.yang@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="NDNJRDDn"
+Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
+	by cmsmtp with ESMTPS
+	id QxWxtcN3eqvuoR5y4txCga; Fri, 27 Dec 2024 08:45:12 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id R5y1t5OIblDL5R5y2tRRpg; Fri, 27 Dec 2024 08:45:11 +0000
+X-Authority-Analysis: v=2.4 cv=LLtgQoW9 c=1 sm=1 tr=0 ts=676e6917
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=NEAV23lmAAAA:8
+ a=oIXfh7CG2JD6673A1wUA:9 a=QEXdDO2ut3YA:10 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=CbHybnIOXmlSwaXNoaXYOUqH0/mYuZ8kkjuKjW87omQ=; b=NDNJRDDnw/y2q/XpMHCG2FL1sK
+	oITjouXaGaiFTHEqjQ1JABwZmQ0zzYnzoflffHMbU1Pjkj15KTHaR7OyQNyL4t7Ldkku8gntKicsO
+	nFBwg3skiPmnF+9QeKVeYfiIZjA+tjRroZ/t8+gAlEqXfTdHol7mNAYzGekP6uIRKCy7HdIfVFqgg
+	nnm+VYrMucoVSeE+0O388Pz3oumqegJkOKSsrN/SP8rkh7MgdPwt86JlP2uH5MgmOvAAYhmVWmWEZ
+	0y7OPy/Uj+4Z58HzetcOlpOv9tfweAhraj0p/KWJkKCX5dSIAHFhLZYOLEn0CGAUaoJdk1pbK5LvK
+	zh0wxk8Q==;
+Received: from [122.165.245.213] (port=48506 helo=[192.168.1.5])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1tR5xx-003AmV-0N;
+	Fri, 27 Dec 2024 14:15:05 +0530
+Message-ID: <9415ca9c-f303-4507-8cd6-cb08ee09e988@linumiz.com>
+Date: Fri, 27 Dec 2024 14:14:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241224092310.3814460-3-kever.yang@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Cc: parthiban@linumiz.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: a100: enable MMC clock reparenting
+To: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yangtao Li <frank@allwinnertech.com>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Cody Eksal <masterr3c0rd@epochal.quest>
+References: <20241109003739.3440904-1-masterr3c0rd@epochal.quest>
+ <173124139852.3585539.10704015898700065278.b4-ty@csie.org>
+Content-Language: en-US
+From: Parthiban <parthiban@linumiz.com>
+Organization: Linumiz
+In-Reply-To: <173124139852.3585539.10704015898700065278.b4-ty@csie.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1tR5xx-003AmV-0N
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:48506
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 6
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNLN8yl+7QwPEYXtm8Gyy2PPTJCMWWSVyK6oPVdVdHymxH2rv34/83F/n7K3NEwIRZ45y81xSnCPpe+rqG96XLkagCw9OPd/qf9LKnX+tH3lyqP/Yq09
+ lydIFaG+MaThXC2+LQ7+U8sUaQ2/r/TrAyrv3MHYow1AJTkeL1t7MrJQdASzcnkREJQ2MDCPQnbA9zGE9gHiCvgJNwKQDf/SqqY=
 
-On Tue, Dec 24, 2024 at 05:23:10PM +0800, Kever Yang wrote:
-> +	/* PD_VO */
-> +	COMPOSITE(ACLK_VO_PRE, "aclk_vo_pre", gpll_cpll_vpll_dmyhpll_p, 0,
-> +			RK3562_CLKSEL_CON(28), 6, 2, MFLAGS, 0, 5, DFLAGS,
-> +			RK3562_CLKGATE_CON(13), 0, GFLAGS),
-> +	COMPOSITE_NOMUX(HCLK_VO_PRE, "hclk_vo_pre", "aclk_vo", 0,
-> +			RK3562_CLKSEL_CON(29), 0, 5, DFLAGS,
-> +			RK3562_CLKGATE_CON(13), 1, GFLAGS),
-> +	GATE(ACLK_VOP, "aclk_vop", "aclk_vo", 0,
-> +			RK3562_CLKGATE_CON(13), 6, GFLAGS),
-> +	GATE(HCLK_VOP, "hclk_vop", "hclk_vo_pre", 0,
-> +			RK3562_CLKGATE_CON(13), 7, GFLAGS),
-> +	COMPOSITE(DCLK_VOP, "dclk_vop", gpll_dmyhpll_vpll_apll_p, CLK_SET_RATE_NO_REPARENT,
-> +			RK3562_CLKSEL_CON(30), 14, 2, MFLAGS, 0, 8, DFLAGS,
-> +			RK3562_CLKGATE_CON(13), 8, GFLAGS),
-> +	COMPOSITE(DCLK_VOP1, "dclk_vop1", gpll_dmyhpll_vpll_apll_p, CLK_SET_RATE_NO_REPARENT,
-> +			RK3562_CLKSEL_CON(31), 14, 2, MFLAGS, 0, 8, DFLAGS,
-> +			RK3562_CLKGATE_CON(13), 9, GFLAGS),
-> +};
-> +
-> +static void __iomem *rk3562_cru_base;
+On 11/10/24 5:53 PM, Chen-Yu Tsai wrote:
+> On Fri, 08 Nov 2024 20:37:37 -0400, Cody Eksal wrote:
+>> While testing the MMC nodes proposed in [1], it was noted that mmc0/1
+>> would fail to initialize, with "mmc: fatal err update clk timeout" in
+>> the kernel logs. A closer look at the clock definitions showed that the MMC
+>> MPs had the "CLK_SET_RATE_NO_REPARENT" flag set. No reason was given for
+>> adding this flag in the first place, and its original purpose is unknown,
+>> but it doesn't seem to make sense and results in severe limitations to MMC
+>> speeds. Thus, remove this flag from the 3 MMC MPs.
+>>
+>> [...]
+> 
+> Applied to clk-for-6.13 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+> 
+> [1/1] clk: sunxi-ng: a100: enable MMC clock reparenting
+>       commit: 3fd8177f0015c32fdb0af0feab0bcf344aa74832
+This commit is missing in 6.13-rc4. Will it be merged in the next rcX?
 
-Drop, not used.
-
-> +
-> +static void __init rk3562_clk_init(struct device_node *np)
-> +{
-> +	struct rockchip_clk_provider *ctx;
-> +	unsigned long clk_nr_clks;
-> +	void __iomem *reg_base;
-> +
-> +	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3562_clk_branches,
-> +					ARRAY_SIZE(rk3562_clk_branches)) + 1;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("%s: could not map cru region\n", __func__);
-> +		return;
-> +	}
-> +
-> +	rk3562_cru_base = reg_base;
-> +
-> +	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
-> +	if (IS_ERR(ctx)) {
-> +		pr_err("%s: rockchip clk init failed\n", __func__);
-> +		iounmap(reg_base);
-> +		return;
-> +	}
-> +
-> +	rockchip_clk_register_plls(ctx, rk3562_pll_clks,
-> +				   ARRAY_SIZE(rk3562_pll_clks),
-> +				   RK3562_GRF_SOC_STATUS0);
-> +
-> +	rockchip_clk_register_branches(ctx, rk3562_clk_branches,
-> +				       ARRAY_SIZE(rk3562_clk_branches));
-> +
-> +	rk3562_rst_init(np, reg_base);
-> +
-> +	rockchip_register_restart_notifier(ctx, RK3562_GLB_SRST_FST, NULL);
-> +
-> +	rockchip_clk_of_add_provider(np, ctx);
-> +}
-> +
-> +CLK_OF_DECLARE(rk3562_cru, "rockchip,rk3562-cru", rk3562_clk_init);
-> +
-> +#ifdef MODULE
-> +struct clk_rk3562_inits {
-> +	void (*inits)(struct device_node *np);
-> +};
-> +
-> +static const struct clk_rk3562_inits clk_3562_cru_init = {
-> +	.inits = rk3562_clk_init,
-> +};
-> +
-> +static const struct of_device_id clk_rk3562_match_table[] = {
-> +	{
-> +		.compatible = "rockchip,rk3562-cru",
-> +		.data = &clk_3562_cru_init,
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, clk_rk3562_match_table);
-> +
-> +static int clk_rk3562_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	const struct of_device_id *match;
-> +	const struct clk_rk3562_inits *init_data;
-> +
-> +	match = of_match_device(clk_rk3562_match_table, &pdev->dev);
-> +	if (!match || !match->data)
-> +		return -EINVAL;
-> +
-> +	init_data = match->data;
-> +	if (init_data->inits)
-> +		init_data->inits(np);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver clk_rk3562_driver = {
-> +	.probe		= clk_rk3562_probe,
-> +	.driver		= {
-> +		.name	= "clk-rk3562",
-> +		.of_match_table = clk_rk3562_match_table,
-> +		.suppress_bind_attrs = true,
-> +	},
-> +};
-> +module_platform_driver(clk_rk3562_driver);
-> +
-> +MODULE_DESCRIPTION("Rockchip RK3562 Clock Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:clk-rk3562");
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-
-Best regards,
-Krzysztof
+Thanks,
+Parthiban
+> 
+> Best regards,
 
