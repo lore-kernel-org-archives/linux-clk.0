@@ -1,54 +1,81 @@
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246341F2365
-	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 11:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39B0155741
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 12:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735297834; cv=none; b=tiixisAhoQjg0Gql7VSfMYxlzTvxA8D7JULw/YqVIM/IbeJRY4GQ8xC9lu/m2Fk9wcs/sNBG6mMQ8lrhqvztrFfypkEwp00COQ4vH+yxrsorv0QgBdWbOysW9w8IJH6ooOBgHtdVtwLigj/rPzsGndf2JaOW//HQUy0KvfbiEmw=
+	t=1735303606; cv=none; b=aJR02xe3EMlf8V0g5izyFeuICZEAmqQboMJBB396tplQlw/1XSrGjxxJTdOHobzuSQYimWki9VFx6BMPkJYU5SxctUyvukaQ4KbHZQwOcbBGY5UyOd2glIOH448w5iJ7zuj8qBWP8EkLB3b0iEHiCElD4uNatzWUFwDtPWZ20ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735297834; c=relaxed/simple;
-	bh=jfPsPwWKRhhV21IwFSRmL+uw8EZXVaV/9179PemDy/M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Se7d1APn5qNQmeg5AdYlfdue/YfQWwmxaoIb3G0XE2QEjf/MpW34pGzkbV43CawXLomfb9IZFUNn48Sues5Bkk+7rO2dK1pFIEePg69346ejKBAfHdkh16hxR2ZCQNCh7S3A0cOTct1uxww8T2bQctYCLnLYk9QIJsRVPSdSiqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=MmADfID+; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+	s=arc-20240116; t=1735303606; c=relaxed/simple;
+	bh=IX1Pbb9e9j1HoYmbUCLz0vmxGQOa9VaE8MApR1YCGOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FH7v0EkB308EZf+E+5I1yQ+XlBmWalb5fiK+hF3VubZ99Q6CEBkrybO24d6g2zwRcZ3sVS5DeuLrFVG86I7AszpYSa9toBDMa0TSxJ6ysgM31liFJhRUrVxIC6/RwkdLer1dGN9QyloYlECn0vty9+eh/XGaoRqq6p7KcLdV8i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q//aZnUz; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="MmADfID+"
-Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
-	by cmsmtp with ESMTPS
-	id R6I0tXQ8mxoE1R8DHtkiq9; Fri, 27 Dec 2024 11:09:03 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id R8DEt6jpUlDL5R8DGtSaOa; Fri, 27 Dec 2024 11:09:02 +0000
-X-Authority-Analysis: v=2.4 cv=LLtgQoW9 c=1 sm=1 tr=0 ts=676e8ace
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=YmDlHjd7AAAA:8
- a=vU9dKmh3AAAA:8 a=L4MHaItcyTsGJ2lxC4sA:9 a=QEXdDO2ut3YA:10
- a=jsfG_yEu7aiiUYXEnMLs:22 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VrQzcpsEZrRxzYneklGMKbZSVevXccoK1hLw4KZeU8Y=; b=MmADfID++vJZInjAxO+ke3ncQv
-	k6lDqXSc4xRJRQohMx7+LLBZKxvH1xCViQfbOqiPtcZEsw6Xc2KDYaIIzyHbR7By5EjVCFAC5UA1I
-	GpyA2pMYVBexWEIKqbqEVyiEl2F6JQh528r3RGK8C2FoewaEE8/LLPoh/E/l6/OlYAwRlQWKXHq4y
-	DgvNtopjCF4ciuHzdjwNUN8lLJJ3MOedR5+iGqItg7ho6Yud07Ym5sIckOxvdIiI/9DiATpbVFIHF
-	EWpx8Xw1xRpsZMFzOsMBCbgB1MubFm6SeBYmKggJ31teQEqgTZLmlUAuChhch3yFYtloavFK2U2N3
-	/9ykVKRQ==;
-Received: from [122.165.245.213] (port=50828 helo=[127.0.1.1])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1tR8D5-000bEK-2z;
-	Fri, 27 Dec 2024 16:38:51 +0530
-From: Parthiban Nallathambi <parthiban@linumiz.com>
-Date: Fri, 27 Dec 2024 16:37:54 +0530
-Subject: [PATCH 07/22] dt-bindings: vendor-prefixes: Shenzhen Baijie
- Technology
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q//aZnUz"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-386329da1d9so3254987f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 04:46:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735303603; x=1735908403; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qAr5MJyxW4tliQqtSvIibq4rtO0kf94wwATw2mUtoLU=;
+        b=Q//aZnUzV9muSqLahVP7KhXETYk0BL1wsxA07GNo2UvpcQxPO6r0XnJdXvb2qn4Fke
+         yEzIQAa5LjNnFltmBm1i5xAObm5VHoDm+a+SKcV7gk+zc9DvJrTyDnAETXRhIqK1K0/S
+         9B30svSQ9XIc57Wyfa7f4ATPOTFFEbJO9c8kPeZl2BMLI8tyxnxfIfQpmHwP5B0fuB2f
+         tZaOXyPIh64XlspQrvUNP3Y7xg7IGdzJhUZPxpHExKqetgkNecrvoX117OaEmrLRPfle
+         dLU5Q32knnc+QzddMkLjnfjCZPR4YAIq5QQhH2/GNsvEjpk0W0Ug/wvggu2b7pneCfx1
+         YoRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735303603; x=1735908403;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qAr5MJyxW4tliQqtSvIibq4rtO0kf94wwATw2mUtoLU=;
+        b=tcUVi37AYdcaDO2e6mnXrZakR41I3f03zjqH7fpxkcf3twI9Vf8xTr2pCJPM+8ThNS
+         +PSbC0BsP15b07ysovJ2Gx/LtyuMCjqVCH9Cgds0r2rhLOo48ZX4dBz/+Cu96q4VMuDm
+         JUcMiB1/MFuc9/0IojFnmxKZednLiZ8gzg63OvpRvtuB6Tusp8XOESeKy3qpnVegNVpa
+         QYYcPmAeEQVGjy2D62i6vKOooZJ5PPWwMcD2pTV/eCyH38QipvJTTabhCfCRtpzUK6eQ
+         t+QDJXwTpbG5pIHiPK5L2NvhZZGFfO0JTqPZWpgb+2N5E3tsXC1buZdsLiWjaUScRQKZ
+         PpnQ==
+X-Gm-Message-State: AOJu0YzZ85nEHSH34Tj3hhzJYWGZzkxTSdrAPYR1oKf9GFefOAtPjPEF
+	7uwSfsnQxruj9d840x+kY4l1coCx9QxuKmA9rhmIx5zki5fUJbGChK7SLpfZIKRcMLsaOdsvPFR
+	Q
+X-Gm-Gg: ASbGncufc3bSrPcpj+55f7OW60r6N1s39XDOcbHpRlYH3WuGyHdI1LiE46FYWk3ZD0f
+	jEKO1kbdJ+yudcyTTqEcFBU5gq/KX2ErPcDgLrH41rUUDaUrmeKgwPS0QsMD7XrmRg+6aOwnqkf
+	7wL5jBh5wPAcE1/nkxu3QNfmcde9V3cFP6JzLCTeEac6eAVYNrjGHcabyWUQbEqR2e4qO1BEqfc
+	+td+/pTwI9O6re41BAd27NB2/PMcOwRpU6rciOJsbqMozvmVDsmvrEJ
+X-Google-Smtp-Source: AGHT+IFOSyN6MsRY52PNGIySqb8jJ3jiAJ8ipn+mH7OpC8pga8Vo0BdkKK7utvCX05gXYmLza6GGZg==
+X-Received: by 2002:a5d:584d:0:b0:385:e0d6:fb73 with SMTP id ffacd0b85a97d-38a221fa9cdmr21953130f8f.15.1735303603117;
+        Fri, 27 Dec 2024 04:46:43 -0800 (PST)
+Received: from hackbox.lan ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b11495sm297172905e9.19.2024.12.27.04.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Dec 2024 04:46:42 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: linux-clk@vger.kernel.org,
+	Marek Vasut <marex@denx.de>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: imx8mp: Fix clkout1/2 support
+Date: Fri, 27 Dec 2024 14:45:59 +0200
+Message-Id: <173530350106.4140483.17403614068290152779.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241112013718.333771-1-marex@denx.de>
+References: <20241112013718.333771-1-marex@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,79 +83,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241227-a133-display-support-v1-7-13b52f71fb14@linumiz.com>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
-In-Reply-To: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: iommu@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-phy@lists.infradead.org, 
- Parthiban Nallathambi <parthiban@linumiz.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735297689; l=835;
- i=parthiban@linumiz.com; s=20241125; h=from:subject:message-id;
- bh=jfPsPwWKRhhV21IwFSRmL+uw8EZXVaV/9179PemDy/M=;
- b=CJOVx2TC4fLDcjQ6xgq4N4Mi1niTuzwwERJ6yiEMANOEwpSEoLqBhfJmD+PDB56mjpO3si6jf
- jx7xLttFSJpD3tHngJF3gIva/96uOpoEpuitCdS8Sqx1ZgpvNpSt7UF
-X-Developer-Key: i=parthiban@linumiz.com; a=ed25519;
- pk=PrcMZ/nwnHbeXNFUFUS833wF3DAX4hziDHEbBp1eNb8=
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1tR8D5-000bEK-2z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([127.0.1.1]) [122.165.245.213]:50828
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 221
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfE5kBn2eL2ZufYgNmaqG0HS6uzLUeHNCNsCP59Oi8DqNI6QAcbIEbjp4gA2ziUWUEgquJE8V0PcKJL3MQ/8Qxs+FJTOh+8c8M4+g0S/wSZyPp8782Ax9
- 1PmSq+cUt7LgpP46OyI7G4rh5iI6HcAw2RPySeTJGePPfx8wUxHbkqCnEj4hiGxXiFmDCI6RG8mpg+B5nER18ursl4WuM6W3yrc=
+Content-Transfer-Encoding: 8bit
 
-Add entry for Shenzhen Baijie Technology (https://szbaijie.com)
 
-Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+On Tue, 12 Nov 2024 02:36:54 +0100, Marek Vasut wrote:
+> The CLKOUTn may be fed from PLL1/2/3, but the PLL1/2/3 has to be enabled
+> first by setting PLL_CLKE bit 11 in CCM_ANALOG_SYS_PLLn_GEN_CTRL register.
+> The CCM_ANALOG_SYS_PLLn_GEN_CTRL bit 11 is modeled by plln_out clock. Fix
+> the clock tree and place the clkout1/2 under plln_sel instead of plain plln
+> to let the clock subsystem correctly control the bit 11 and enable the PLL
+> in case the CLKOUTn is supplied by PLL1/2/3.
+> 
+> [...]
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index da01616802c7..81cbc8b6b195 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1466,6 +1466,8 @@ patternProperties:
-   "^synopsys,.*":
-     description: Synopsys, Inc. (deprecated, use snps)
-     deprecated: true
-+  "^szbaijie,.*":
-+    description: Shenzhen Baijie Technology Co., Ltd.
-   "^tbs,.*":
-     description: TBS Technologies
-   "^tbs-biometrics,.*":
+Applied, thanks!
 
+[1/1] clk: imx8mp: Fix clkout1/2 support
+      commit: a9b7c84d22fb1687d63ca2a386773015cf59436b
+
+Best regards,
 -- 
-2.39.5
-
+Abel Vesa <abel.vesa@linaro.org>
