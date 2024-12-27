@@ -1,85 +1,53 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AD31F37A0
-	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 12:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA9C1F2370
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 13:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735303620; cv=none; b=NjkLNmVNrTIok7x8ozm27YaWeMg75PfOXfUO+IWjXD+6SuvRqx/fVu7J2uxo8D6keyd9vdAGMjaCTGbmpz1Ivq1WMK5LOmZPR75k8pSS0rXRC8Srgnmsrtese2kfH9er4hFAX3n0OeX+qL1GkQEab/4Af3K0qk2WolRjPgmWJ3M=
+	t=1735304490; cv=none; b=opIKr4/dMiAnjS9V+F/gKBAOhi70MRo7gCJCLbg3AePSFcG1yC/lu2XPUFfp2BQyGxDfltybVh4d/Qrhnp9akJpSkvdhkdejI+CW8rPlvH713iVl7Q+QC6fIlb8LltFqomLQuWEW9trBCpLjQXlhavNB9Y6O8wZ5KXi1yOrQPqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735303620; c=relaxed/simple;
-	bh=Nq96OkZh3I2dZ1KGPOiRpqceVPg6Y6dtZ8YbuLUGboM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uafvdzf5kGmalDm+xRXkVB18fWQoSpUHOpoUnzjl8PPa9T8BHhjrqoBfdzGikB6Ktcg05iu2Alg/TmeLremKLpZhX3CswvuhuHqtwdH7XA0vy5Hv24u7zRpSrMqNuqohDiCW5cIdD7R/asoRTsK4s+o1HxS21XqJWOY4gaTVV/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YNxutRGK; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735304490; c=relaxed/simple;
+	bh=s6pgeYhBovYKLxAfzogU3RAM9N8F/zvXTKruRhJeLms=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t7g8y2BvjrSgvV2od8Gg2GbriRciSE+U0jYK6lGRGqfi0HhvyqDLj2wPe34+NRHNeFlH63HMgRPtgic3BJoSRzkJaA7zNLSALkTPJzS8+qE0cSMSUDrrkp9O5mi5pX0Kg9Dia31iGKNG3gpdYUwXvL9qjWsZItpHbzOjUT7tvpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=oiMun6aA; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YNxutRGK"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso43606685e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 04:46:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735303617; x=1735908417; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3UN1PfYXNv5GA5EWcDyG0SuUKxMnngW7vBJ/To7wqj0=;
-        b=YNxutRGKIM/J75I6++IRPz/WDJjeWP8tFhcyUElvTZG1+hkszOFlUjtYerDb2KSTcW
-         gGOgDdn5u/vEn65PjFIrIh5W6Kmd+4E8R8OaBLGKAaihfAWIzrVKXN379kZWYWRdDopp
-         DpjlR2a1IO69MSkZGchEeqjP0/WZ64f3zxtUmvzJir+BqZm+5O/OAyCg5irpj4Hom5HH
-         bDQPUPb97FkmFPl5EZX4qfs7ouiUTVFOzsHJD00MPGRKhhxCq5ohwFM9MxXvr+YggDe/
-         w3c13OljeR0rY6Qb2uLwGL8hEUXXm6nK706GZxJNGmZBKAe20bFjHgvStcThzUNjvA5x
-         mFCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735303617; x=1735908417;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3UN1PfYXNv5GA5EWcDyG0SuUKxMnngW7vBJ/To7wqj0=;
-        b=jSGPIgiQcd6AoaoI4Bi5b/zEN03RU8HtUVhAt3AkdFYrYtYOwK8CnbuKGdu+x+oTqI
-         X+/SpD338nNarQkpX5s5u3rwzCUQF7j0yNvD5/U8YhMJea3E8IjuKggVxZ7yls4Y7nqG
-         ut0QlaUhH1rUUj9GJTPONaLsMgG32uYH8UUn3O2lvanaaBZKWJ22/CS2Hd9OJegm6n6Z
-         qkgehB3FXiqE00HgDEDo4FU/huAzjzlRYARlRIEQBX6gFEC4iIo6uskYmY6heht1AiM3
-         ewpbJClEsgYU/vl5RTk4TRMUNydfRZ5R3XNhRAz3T8p5oowaKgBBqJAyaZAxqjJZ6aLN
-         X+eA==
-X-Gm-Message-State: AOJu0YwfzIbeW6QxYVss6hb7yT833KYkl4Ignx4mJdHLT5wiVD6xWsLx
-	Zv4VVdxAFSctYXo7imeE7BBOJn2dQFJNKymtwRsDgrMxMjiLgxOw19p/ASPZsQE=
-X-Gm-Gg: ASbGnctuROFpX+HWm9HOCM8dadeQcypeqE0C7abNu5pxhPl6F00wc1bh7yqpFXIu1H8
-	AMcQlphjYrHzbdb5HUDDJeqsStW8i8r+87mmtrhZY8fdMMCkY/seNJDa099xln0/lAHIKTU09E/
-	kiwE9hwhyibIEzfPwi8C/oXs+jx9ec0vVwlcCdOqsTSCE0G4W3Q9K7+AD5VvJkAMXnzit0k2Yed
-	9O4bwDq+RVu3J29hjWrbEa6UO2K2RKN108k+DTB9pa0OCXRpBEODKQC
-X-Google-Smtp-Source: AGHT+IGUz2NO9FEIpAO3AKn3yA2N+FizKlvW523dxOyulaD8vq0KUtWqJu6Qzescg3PJZW/KKP45Nw==
-X-Received: by 2002:a05:600c:585a:b0:42c:baf1:4c7 with SMTP id 5b1f17b1804b1-4365c770795mr216692485e9.4.1735303617020;
-        Fri, 27 Dec 2024 04:46:57 -0800 (PST)
-Received: from hackbox.lan ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b11495sm297172905e9.19.2024.12.27.04.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Dec 2024 04:46:56 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	shengjiu.wang@gmail.com,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] clk: imx93: Add IMX93_CLK_SPDIF_IPG clock
-Date: Fri, 27 Dec 2024 14:46:02 +0200
-Message-Id: <173530350112.4140483.13164625485950770989.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119015805.3840606-1-shengjiu.wang@nxp.com>
-References: <20241119015805.3840606-1-shengjiu.wang@nxp.com>
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="oiMun6aA"
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id R3OItTXDk09RnR9y1trEox; Fri, 27 Dec 2024 13:01:25 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id R9xztkBfEbs9MR9y0tfTia; Fri, 27 Dec 2024 13:01:25 +0000
+X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=676ea525
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=VwQbUJbxAAAA:8
+ a=vU9dKmh3AAAA:8 a=RKcyukLPUNyM5a_w4rQA:9 a=QEXdDO2ut3YA:10
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Qi3UoCUDEqcy6/oiO96EhEgtnu7BnyUeV/rid1HTKPw=; b=oiMun6aAJKc2QS/GfxGw3ZpAbo
+	eqt4pnCoOOcSOcaeI0P6kujVagUlispeJfo87tz4QroK92xHf66VXCikwKNVeRRM362Wq7OxeQoeh
+	E1yTCzQbqlNCXfqwKn42U7JkHmZ6L8OX8yGF9tvVz7DJi0D1oePsEPivLWatej12oSvjcE2D9TY3L
+	p260RycW0eU3fbz5AvZgfhR3/FedkFVYbVQXVm8DnYC11xpiJ293WKam4I6AtGakz9LXeMuFU3Rk8
+	5INQdz4uTivaF1TZ3eEW8hz/0OVnZszBiih27bwu+VVWDJ45H4d0OMHK5VDE143g5utDRMNzf7Ztq
+	rk5F7Umg==;
+Received: from [122.165.245.213] (port=58270 helo=[127.0.1.1])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1tR9xq-002EaQ-22;
+	Fri, 27 Dec 2024 18:31:14 +0530
+From: Parthiban Nallathambi <parthiban@linumiz.com>
+Subject: [PATCH RESEND 00/22] Add support for A100/A133 display
+Date: Fri, 27 Dec 2024 18:30:49 +0530
+Message-Id: <20241227-a133-display-support-v1-0-abad35b3579c@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,29 +55,129 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-phy@lists.infradead.org, 
+ Parthiban Nallathambi <parthiban@linumiz.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735304468; l=4037;
+ i=parthiban@linumiz.com; s=20241125; h=from:subject:message-id;
+ bh=s6pgeYhBovYKLxAfzogU3RAM9N8F/zvXTKruRhJeLms=;
+ b=rUdWVAf2EzUVnilFnmP394/5gRG3wuQ4qZKiArbTwORd7JREQHwjrpu+VM2LSswVY088RCvTX
+ WqUG9bY0lJXCf7KJwRg9jmbIdsLD9nBHg6tLQw1PtNvmCAY0Mhmq7SE
+X-Developer-Key: i=parthiban@linumiz.com; a=ed25519;
+ pk=PrcMZ/nwnHbeXNFUFUS833wF3DAX4hziDHEbBp1eNb8=
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1tR9xq-002EaQ-22
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([127.0.1.1]) [122.165.245.213]:58270
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 11
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNrike/diJb+BmMUxw4JbCrypMjLZrPTWSQAAtWDQAqViYTLOfU3BkswrgGIj8XFesSV0tHip0a1PbgnVqhBt3IhAxrpdetKinyGqZeUIoN/jOlfYu3v
+ d4cQYohiy3HdDu2kh5sKFqOMxw6lUKjtsBnhQfr+UgxsbTpjMhxg59VJW1oHAxWWaWqVS7zI0YYJ10Hkc+fZjS+aUJbqZkedmcM=
 
+This series depends on [1] for the eMMC/MMC controller to work and
+[2] (lined up for 6.14) which adds support for the sram nodes and
+display engine extends it's usage. Idea of this series to get initial
+feedback and adjust, which will be rebased for 6.14 once [2] is merged.
 
-On Tue, 19 Nov 2024 09:58:02 +0800, Shengjiu Wang wrote:
-> The IMX93_CLK_SPDIF_GATE also controls the gate of IPG clock
-> and root clock, need to define them separately.
-> Otherwise driver disable IMX93_CLK_SPDIF_GATE will cause
-> IPG clock is also disabled, then register accessing fail.
-> 
-> changes in v3:
-> - add fixes tag for all 3 commits
-> 
-> [...]
+This patch series adds support for A133 display pipeline based on
+LVDS. dt-bindigs are organized in the start and later with code
+changes.
 
-Applied, thanks!
+PHY is shared between DSI and LVDS, so to control the PHY specific
+to DSI/LVDS, phy_ops set_mode is introduced. To enable the DSI
+using set_mode, analog control register MIPI Enable is used, which
+may not be available for A31 (shares the same driver).
 
-[1/3] dt-bindings: clock: imx93: Add SPDIF IPG clk
-      commit: 32e9dea2645fa10dfa08b4e333918affaf1e4de5
-[2/3] clk: imx93: Add IMX93_CLK_SPDIF_IPG clock
-      commit: 6a7853544482e2336b5b8bb9a4b964f9d687f290
-[3/3] arm64: dts: imx93: Use IMX93_CLK_SPDIF_IPG as SPDIF IPG clock
-      commit: 570b890e66334f283710af36feb2115f16c7a27c
+Otherwise, A133 also got hidden independent display engine i.e
+mixer + tcon top to handle parallel display. But this patch series
+adds only support for the 1 mixer which is documented.
+
+[1]: https://lore.kernel.org/linux-sunxi/20241109003739.3440904-1-masterr3c0rd@epochal.quest/
+[2]: https://lore.kernel.org/linux-sunxi/20241218-a100-syscon-v2-0-dae60b9ce192@epochal.quest/
+
+Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+---
+Parthiban Nallathambi (22):
+      dt-bindings: iommu: sun50i: remove resets from required property
+      dt-bindings: display: sunxi: Add a100/a133 display engine compatibles
+      dt-bindings: clock: sun8i de2 clock: Add PLL com clock
+      dt-bindings: clock: sun8i de2 clock: Add a100/a133 compatible
+      dt-bindings: display: sun4i: add phy property
+      dt-bindings: display: sun4i: add a100/a133 tcon lcd
+      dt-bindings: vendor-prefixes: Shenzhen Baijie Technology
+      dt-bindings: arm: sunxi: document Szbaijie A133 helper board
+      iommu: sun50i: make reset control optional
+      pinctrl: sunxi: add missed lvds pins for a100/a133
+      drm/sun4i: Add support for a100/a133 display engine
+      drm/sun4i: Add support for a100/a133 mixer
+      drm/sun4i: make tcon top tv0 optional
+      drm/sun4i: add a100/a133 tcon top quirks
+      clk: sunxi-ng: sun8i-de2: add pll-com clock support
+      clk: sunxi-ng: sun8i-de2: Add support for a100/a133
+      phy: allwinner: phy-sun6i-mipi-dphy: add LVDS support
+      drm/sun4i: tcon: add a100/a133 lcd controller support
+      arm64: dts: allwinner: a100: add iommu
+      clk: sunxi-ng: add missing pll-com binding
+      arm64: dts: allwinner: a100: add display pipeline
+      arm64: dts: allwinner: a133: add szbaijie helper board
+
+ Documentation/devicetree/bindings/arm/sunxi.yaml   |   6 +
+ .../clock/allwinner,sun8i-a83t-de2-clk.yaml        |   6 +
+ .../allwinner,sun4i-a10-display-engine.yaml        |   2 +
+ .../bindings/display/allwinner,sun4i-a10-tcon.yaml |   7 +
+ .../display/allwinner,sun8i-a83t-de2-mixer.yaml    |   1 +
+ .../display/allwinner,sun8i-r40-tcon-top.yaml      |  17 ++
+ .../bindings/iommu/allwinner,sun50i-h6-iommu.yaml  |   1 -
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi     | 165 ++++++++++++++++++
+ .../dts/allwinner/sun50i-a133-helper-board.dts     | 129 ++++++++++++++
+ .../dts/allwinner/sun50i-a133-helper-core.dtsi     | 190 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c               |  23 ++-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  23 +++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  13 ++
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c             |  42 +++--
+ drivers/iommu/sun50i-iommu.c                       |   2 +-
+ drivers/phy/allwinner/phy-sun6i-mipi-dphy.c        |  23 ++-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c        |  12 ++
+ include/dt-bindings/clock/sun50i-a100-ccu.h        |   1 +
+ 21 files changed, 645 insertions(+), 22 deletions(-)
+---
+base-commit: 6c086b91df8c6619239c6d6d6cbf6ae50da6c110
+change-id: 20241126-a133-display-support-ab43af32180a
 
 Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+Parthiban Nallathambi <parthiban@linumiz.com>
+
