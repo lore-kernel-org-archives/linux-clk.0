@@ -1,107 +1,167 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C8628691;
-	Fri, 27 Dec 2024 13:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21561F37A3
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 13:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735305408; cv=none; b=PlgxlF9o4OP8UpLV5OKWu82TvWaARadk63jDbvh7AH66pFwPMoOkH2tayM4pzr8PvFk5gLBkCUEEM7Y4kJdPDiNdcqVE4HrXbderVXnpHNetmbSMfcC0kSnbmzKszDKOWW//xHnPUiMAtkhPXBXtb3ZM9WzRr9rWspH6014pIlI=
+	t=1735305791; cv=none; b=KLgcr61MnryEJPzPxziIW9Rv15RWaTdcLCIREZdCsfU3HNTH5kSev2lCF/EZ/HYrTfCy2/K9s4McIvRk230dQF2N6EpXxWMrsPYpUDLtkuJHJR1xjPt/AXUdK4h0RKpB0ukQXuJvTteOKb1bpaZa2XjCi04OunJIJAR5+WDG5iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735305408; c=relaxed/simple;
-	bh=Z7yi+afmx/uhCK7HF/9WlkjMbcxfvg7Jvqse7KgInuc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=vGX/PUG5rv4Ls6tD2Sgou/Q0YnaazLM069CHueKT8unne3ljOb/42FVIthfRiKIq4Dq7lhjhzzde2ES7BWVgk5yKrpFhQkK47m1efyr0JqsOOxbyENIUe4m9CeonLSGTE3GaRaDLlydOoMUK0x4dMFgsi6fXb44aEsAAZD7Dm1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8P2gXOn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735305791; c=relaxed/simple;
+	bh=UROKsWo8V/DaJ6J2DFxN+2VsMsQXZzObgoBQA6JVAr0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HEYQv1MUP+Q0ZXeq4Ed15gcQ9iywgQzfVmGDpYmbNXK1WQDpI1pqu98Y1sPJgxBfNOM7GVeEyqsBzH3zoeqjC8QBvVRltDn448v0JEAfwzjAqIL2R/LLmDPRhU4ks240RdMpH1qknK24jxKwsHOlAYYqvwKoWPDtBsqhY8gUq7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TdyU6FcM; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8P2gXOn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A3BC4CEDD;
-	Fri, 27 Dec 2024 13:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735305407;
-	bh=Z7yi+afmx/uhCK7HF/9WlkjMbcxfvg7Jvqse7KgInuc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Y8P2gXOnGvjWSR7pppbIn9+uiy3Y9Z0vluLjkcnTQQIn84OguGqJjddlR0L88yLuL
-	 6V421rGIxpejqKE1L75webWki/DzFlCQVYLG2EEYZUu5aMg7m/bqDDZBCa+9e0gYRc
-	 GQvakfM4lr1cf5OTDgZLfuizLhngqWC04+vFgSChXzU7C2wkSRI+1Y6TOZu5bddOva
-	 HpnmhmiemPafHX9z1Btzexlk1nP9OWD4z8Am666h9i+Xn7O6XfbI8llWno+XkcbsLg
-	 ufOCrrp0ZZ6Vo/+/3GmhHKoAhS02PuJ3f8CVCDc+tmhHOxbt6Qx7e2+DPzz9eMQkOs
-	 OKmBdYqFoXs3w==
-Date: Fri, 27 Dec 2024 07:16:45 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdyU6FcM"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e27c75f4so5278297f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 05:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735305788; x=1735910588; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pPz3HASoQs0rkuPwc8L0u5tnD0VG/E5QMzIms3zXL8=;
+        b=TdyU6FcM3UVEYzc8esEZZ2LEh59ad58nBerabRq9l3HSHRmFU5NmijL0vV7PHRx53/
+         HkDu9MjHZk4JPH/PR9iL0aKAn4khTwcySC6Q0jQCMxBH+CjDvRrqPCBTzyjGlJkXmd+S
+         xp2yvLJQsd/c9m5h2dsIlF1s5b6FgdyZr6lb7oJeO7LTDGvuM397ReIxiNVZeVgbyUNF
+         b7jGMlm2UEujRk1yTcmQw3B+b4fg6Zb2uzfxqGMzCaUqx5w2wiRtbucxAutf7Tc8dspE
+         cp+7vuO5g8V2lkm/j2ybphMS6Snl8SpSHu+5D78j3j4Mc2k7B1rhW0mVmusnGR0hHkGm
+         yIaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735305788; x=1735910588;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9pPz3HASoQs0rkuPwc8L0u5tnD0VG/E5QMzIms3zXL8=;
+        b=WGDGHPb6HEhSuY1j1ii7fp5Yqde+Y7aWJgYDTvGLzRBUcxzeUTTycNtp0bjdYKYXs+
+         2y6zP7kY6Gynob8zpe2WpreYyZB+OUKiD3qrq8qtzUXwG39AsLSMF8LXyvQHf2TlSIao
+         16DfS2m/mNtSgq038q5Ajx5HNkg7Ws2l5bLrQuahzJqK/vbdyJwUXuunhx6FC/4ul31P
+         2DGGHju9fB5cXMfTWWQWpMvwQmiKuq4zSIbYd0InNefIAYwopw7JrQ9L3/zHJ0ZfNk09
+         l3st9LF3cGoBXcgpal7KVx06V3+dJjLkk5EA2JyP8kf4uwapgl7/wOoY8KAgwUEHASVx
+         khYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmC5ob9lzHiqSsmhn1i8tk1hyuU6XH/DPqi2om5C8VbNQM5Y8ug3IzJeaUOvDXivcd5imgdhCWOhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhQRUFkh0rfd7AUV3Q3Gi45LwKL+RM6B9Ue7jVSfpUlSEgAZLU
+	3VCztJ2SRk7w8MPCbrDWUbNfVNyGjH0P8FrlZ6L56YcJ9F6nt8G4K/yFYaj017o=
+X-Gm-Gg: ASbGncteh4pTA3CIz0NhW1B/Y3DfXGDLj+k0zKCrsRofryhd8Oiq9kxpSnqZ29R1zC7
+	UveL/fRbzuH4zU4fFxhUhnmVA7hZLJfn93N7AT7Bthp8wFBe2FvAyLkB6MsFTF2j2SsD/ocU/1R
+	7ZkwqxJQh9ZFTN64uJFw2adAJ17UK1TncjLMHqSp5xope9rzupcW2Fr7yGW3lWB3OFUHIyZ/OPp
+	1wQTkijsAJjqO0wPKsX4mNd9OF3UeEgiIurJaSvRTWySxu1SFiuNFRKfSMaPnVxTA==
+X-Google-Smtp-Source: AGHT+IEjpwtleDRAsFoWWjEMocwdDG5Pf19DRszPC5L9KNcPLxBjDj/EVABreunnYQEmzDuAMYB5sA==
+X-Received: by 2002:a05:6000:18a3:b0:386:8ff:d20b with SMTP id ffacd0b85a97d-38a221f2f2dmr20697869f8f.27.1735305788138;
+        Fri, 27 Dec 2024 05:23:08 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c84840asm22149627f8f.61.2024.12.27.05.23.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Dec 2024 05:23:07 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Fri, 27 Dec 2024 13:23:03 +0000
+Subject: [PATCH] clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the
+ parent GDSC of subordinate GDSCs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-phy@lists.infradead.org, Robin Murphy <robin.murphy@arm.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, devicetree@vger.kernel.org, 
- Chen-Yu Tsai <wens@csie.org>, Joerg Roedel <joro@8bytes.org>, 
- linux-gpio@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
- iommu@lists.linux.dev, Linus Walleij <linus.walleij@linaro.org>, 
- Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- David Airlie <airlied@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
- linux-sunxi@lists.linux.dev, Maxime Ripard <mripard@kernel.org>, 
- linux-clk@vger.kernel.org, Samuel Holland <samuel@sholland.org>, 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241227-b4-linux-next-24-12-16-titan-top-gdsc-v1-1-c96ef62fc307@linaro.org>
+X-B4-Tracking: v=1; b=H4sIADaqbmcC/x3NQQrCMBBG4auUWfuDmQarXkVcpOm0Dsi0JFECp
+ Xc3uPw27+2UJalkunc7Jflq1tUa3Kmj+Aq2CHRqJj6zd8wDRo+32qfCpBawh2O4C4qWYCjrhmX
+ KEXGYox/7awj9jVprSzJr/X8ez+P4Ae/9JVd3AAAA
+X-Change-ID: 20241227-b4-linux-next-24-12-16-titan-top-gdsc-c7fc4b38aa39
+To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-In-Reply-To: <20241227-a133-display-support-v1-3-13b52f71fb14@linumiz.com>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-3-13b52f71fb14@linumiz.com>
-Message-Id: <173530540581.3097883.7476966654699325435.robh@kernel.org>
-Subject: Re: [PATCH 03/22] dt-bindings: clock: sun8i de2 clock: Add PLL com
- clock
+ Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.15-dev-1b0d6
 
+The Titan TOP GDSC is the parent GDSC for all other GDSCs in the CAMCC
+block. None of the subordinate blocks will switch on without the parent
+GDSC switched on.
 
-On Fri, 27 Dec 2024 16:37:50 +0530, Parthiban Nallathambi wrote:
-> Some platforms like A100/A133 also uses pll-com clock as additional
-> clock source for the display clock. This is not documents both in
-> user manual and DE 2.0 specification. These changes are mainly from
-> vendor BSP.
-> 
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  .../devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml         | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
+Acked-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+This is the second patch of this series:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Link: https://lore.kernel.org/linux-arm-msm/e19ca61f-894e-40c8-86b9-dbd42df4aa46@linaro.org/
 
-yamllint warnings/errors:
+I've since moved the CAMCC part to a standalone patch in another series:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.example.dtb: clock@1000000: clocks: [[4294967295, 48], [4294967295, 101]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/allwinner,sun8i-a83t-de2-clk.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.example.dtb: clock@1000000: clock-names: ['bus', 'mod'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/allwinner,sun8i-a83t-de2-clk.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.example.dtb: clock@0: clocks: [[4294967295, 52], [4294967295, 99]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/allwinner,sun8i-a83t-de2-clk.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.example.dtb: clock@0: clock-names: ['bus', 'mod'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/allwinner,sun8i-a83t-de2-clk.yaml#
+Link: https://lore.kernel.org/linux-arm-msm/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-2-06fdd5a7d5bb@linaro.org
 
-doc reference errors (make refcheckdocs):
+Fixing the GDSC parent doesn't rely on the CAMCC yaml anyway so this one is
+safe/correct to apply standalone.
+---
+ drivers/clk/qcom/camcc-x1e80100.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241227-a133-display-support-v1-3-13b52f71fb14@linumiz.com
+diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
+index 85e76c7712ad84c88decb62ccaed68533d8848de..b73524ae64b1b2b1ee94ceca88b5f3b46143f20b 100644
+--- a/drivers/clk/qcom/camcc-x1e80100.c
++++ b/drivers/clk/qcom/camcc-x1e80100.c
+@@ -2212,6 +2212,8 @@ static struct clk_branch cam_cc_sfe_0_fast_ahb_clk = {
+ 	},
+ };
+ 
++static struct gdsc cam_cc_titan_top_gdsc;
++
+ static struct gdsc cam_cc_bps_gdsc = {
+ 	.gdscr = 0x10004,
+ 	.en_rest_wait_val = 0x2,
+@@ -2221,6 +2223,7 @@ static struct gdsc cam_cc_bps_gdsc = {
+ 		.name = "cam_cc_bps_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2233,6 +2236,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
+ 		.name = "cam_cc_ife_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2245,6 +2249,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
+ 		.name = "cam_cc_ife_1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2257,6 +2262,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
+ 		.name = "cam_cc_ipe_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2269,6 +2275,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
+ 		.name = "cam_cc_sfe_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+---
+base-commit: 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2
+change-id: 20241227-b4-linux-next-24-12-16-titan-top-gdsc-c7fc4b38aa39
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
