@@ -1,42 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A67A42070;
-	Fri, 27 Dec 2024 08:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D8314AD3D;
+	Fri, 27 Dec 2024 08:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735287957; cv=none; b=FlC6efRmJ4HS8vOyKEJLNb8YPcxyqm4D/7Ku/Xqd32aZR62LPIyzySZQ5y4iOEzE/lfacLKEugRx8KZqE7p6G1GpMvC+ltuR4HPSJeuKxD0LZbdDj7eilnYDZjxhjXYcAYEVx+7zJMn2UDZvJPM7Or3EWIXWGJTsNYByQA+BNFg=
+	t=1735288107; cv=none; b=PNhPeS/ZkkXgsANe6pqgL6PQ2EapWkAxSXrHBrXW2heYK5x4PrHJMPPWWDSHCdmdSvRWlcDfiOG6XZbhch89DTN/gsx5K00KHxFTCUuF96vq1rLiN58apXI2B+1/ZT6PE/kzXX3cUljov/nDOdvqj2nYc8X6EyeJneuSVqndyx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735287957; c=relaxed/simple;
-	bh=kkic30YQ5TOo/SlO6pr1SQR1B+qz6Q+mjSYY2kIShSc=;
+	s=arc-20240116; t=1735288107; c=relaxed/simple;
+	bh=p8zJeNpOL7BNADVFRZy7kL0pcKZuH29D+UKM40qaNt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1/Gt1HqYSe12bKxPcIQpF8hJ4nelzc15w54RtN0v8CnkKXKk5GI1/nFJuj5YxbImuw/L/Y9tZmYQGXkC3j/FdngruqQXyZ/uYslXNmkuG9LYrHM4Q6xLpphIWLy7eorXPLk86+7Xr2HiB9g2UH4DCSWt5Ss7UiG7a5/2YvIL80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBUIrJGg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhAs52aZTT1On9d9VZfsCYkKXZnLKsFczoVQHCEvjpI4Ybtw367nW/2aMCE7HvETQrPpNaXVuUpsDciiI4ZasT5tbliwZqnYHD9pRL0p3IG3Z3xgmjju7QuNqV5fePKyaVllATCTtZuAHPUBcaqB0Je1fKiPd+hf2hsbnYdkggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdwEqomw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBUIrJGg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5452BC4CED0;
-	Fri, 27 Dec 2024 08:25:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdwEqomw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6393C4CED0;
+	Fri, 27 Dec 2024 08:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735287957;
-	bh=kkic30YQ5TOo/SlO6pr1SQR1B+qz6Q+mjSYY2kIShSc=;
+	s=k20201202; t=1735288106;
+	bh=p8zJeNpOL7BNADVFRZy7kL0pcKZuH29D+UKM40qaNt0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SBUIrJGgQbqqjn53lLUdo4Aacmg8K7pDiYaUlnE4TlAVywF6qPIRd+p2PfXu+HCXO
-	 qeLSULeJUxuqum/mCiKLzfCCO9Abwtrlbgcer1t+Eq52WUmVh7FBc7B9GJQWSE3kfz
-	 p9sZ6Ds1/tS6QVZU6vJJ3bWzARF7AbcdJugflc6cTXh/2CsM+vBqd8e4jhLj7OBp67
-	 7BXyfLa5Cg6ILP3Kz5DSb83cR9XnPiXurrLXZnnEPpEkIY7m70Bi2x+uO4LtPVMJki
-	 iu+1fHTUGBIF4bNf4+/0W/LKO0bP01LP+EjUMX2yYLKDp8dsdRI9WYgj7Co5OX92OX
-	 rvDDckw//yiMQ==
-Date: Fri, 27 Dec 2024 09:25:53 +0100
+	b=IdwEqomwr07J32xV1rjUBDpb/fkHGCsOjExRz2sOdvKz2W33GbeCkKKMZilA2gKPx
+	 KtPHw1JCZMqlA6AUr3bqiJSO3x9jfF46InAhKCBH3Uqc73A7FFbTC48+QzKWyPzU/v
+	 r9o6/rkGVcdvfM9B62IrZlrUAXsc5AnIqxu95uKLfRyME3QrbGG6JDCCQV1Dk7yV4a
+	 90MuHXbB3F469uLcYuQLfmzQnVe6fCbAe4KomuviANMiQJF8kKWxPB1+0W4u5Oz1Ys
+	 fUd6I4SzOhldP807P/yxwRB+KYevQ4zsE7T4PolWY+ig5uv7FQv7oipnMfYbRoCphd
+	 rMD5ytqMPAoYw==
+Date: Fri, 27 Dec 2024 09:28:23 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kever Yang <kever.yang@rock-chips.com>
 Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, 
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add rk3562 cru bindings
-Message-ID: <krrqtjllx6akrurefbtuhgxw6bwmkiro5rtvdexoevjyufm2uz@r5biw7kbttyr>
+	Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock, reset: rockchip: Add support
+ for rk3562
+Message-ID: <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
 References: <20241224092310.3814460-1-kever.yang@rock-chips.com>
+ <20241224092310.3814460-2-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,67 +48,79 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241224092310.3814460-1-kever.yang@rock-chips.com>
+In-Reply-To: <20241224092310.3814460-2-kever.yang@rock-chips.com>
 
-On Tue, Dec 24, 2024 at 05:23:08PM +0800, Kever Yang wrote:
-> Document the device tree bindings of the rockchip rk3562 SoC
-> clock and reset unit.
+On Tue, Dec 24, 2024 at 05:23:09PM +0800, Kever Yang wrote:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
 > 
+> Add the dt-bindings header for the rk3562, that gets shared between
+> the clock controller and the clock references in the dts.
+> Add softreset ID for rk3562.
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Liang Chen <cl@rock-chips.com>
 > Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 > ---
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-
-s/rk3562/Rocchip RK3562/
-or whatever your proper name is (and use proper capitalized parts of
-products)
-
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3562-cru
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 2
+> 
+> Changes in v2:
+> - rename the file to rockchip,rk3562-cru.h
+> - remove CLK_NR_CLKS
+> - add new file for reset ID
+> - update to use dual license
+> 
+>  .../dt-bindings/clock/rockchip,rk3562-cru.h   | 377 ++++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rk3562-cru.h   | 360 +++++++++++++++++
 
 
-Why clocks are not required?
+No, that's not a separate patch. Headers *ALWAYS* go with the bindings
+patch.
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xin24m
-> +      - const: xin32k
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@ff100000 {
-> +      compatible = "rockchip,rk3562-cru";
-> +      reg = <0xff100000 0x40000>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
 
-Why clocks are not here?
+>  2 files changed, 737 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3562-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3562-cru.h
+> 
+> diff --git a/include/dt-bindings/clock/rockchip,rk3562-cru.h b/include/dt-bindings/clock/rockchip,rk3562-cru.h
+> new file mode 100644
+> index 000000000000..ad07ad3a12ad
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rockchip,rk3562-cru.h
+> @@ -0,0 +1,377 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+
+Why not using license requested by checkpatch?
+
+> +/*
+> + * Copyright (c) 2022-2024 Rockchip Electronics Co., Ltd.
+> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3562_H
+> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3562_H
+> +
+> +/* cru-clocks indices */
+> +
+> +/* cru plls */
+> +#define PLL_APLL			1
+
+Start with 0. Your other binding also starts with 0, so be consistent.
+
+> +#define PLL_GPLL			2
+> +#define PLL_VPLL			3
+> +#define PLL_HPLL			4
+> +#define PLL_CPLL			5
+> +#define PLL_DPLL			6
+> +
+> +/* cru clocks */
+
+Missing clock for 7. You are not supposed to have any holes here.
+
+
+
+
+> +#define ARMCLK				8
+> +#define CLK_GPU				9
+> +#define ACLK_RKNN			10
 
 Best regards,
 Krzysztof
