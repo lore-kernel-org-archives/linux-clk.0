@@ -1,31 +1,31 @@
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD891F4286
-	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 11:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52C31F2397
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 11:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735297763; cv=none; b=OSGOQGIcIDAcy+J1gP4COBSzHm6YNAU7m+v6ZVL2zX6q+Q5dJ3VF+cPBLQm8ZR5f6z3OxjpY3Ngk/UM3ATkDI8grIkX/gyfXgq5oV/Ol5PtWa9OM52ifZ8Xm0Fh3b9z3G6iIFIzgxaJ7kZqejR0VjS3TdBH7wwDNEkRlxnKYwqI=
+	t=1735297772; cv=none; b=D9yhu5XE2PxePUZfQH5kYACCCv7VUhf2MZmgYlTO2ZIkxKDeBZOVO9ANqz2Ncuymzv6cTw2IriEay8olespzRy5a4hbNLB+ckYLQT2BLywdSZpUliz3k16SCkU5GWQ8Hw1aEOOOcEft7vpOA2lO/RS5eacbcePZwFVoNdiblN7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735297763; c=relaxed/simple;
-	bh=OF2xEirt2I4TWCuMHqY/Rfu3fQsoGOZ+4waicM8FC9g=;
+	s=arc-20240116; t=1735297772; c=relaxed/simple;
+	bh=cEYXVRlHCL2jiFXMcJ1CyLQxMMvsOuDFr2JBco5EkAo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aqQHBNNXkCf2wrRjD5rsVtpwJ+ykRmrlXl1Hv7d0H8sEQLMvPenWmKA94Rotpc2bH/TELIZGR08Ki5mUQkoI/3Zqcn94v0iaH2GVN7UboKp6+iU8bNnjHRH8vM2bvc24uj6SX3UCR7GA/te+NL7zdKov/00TL1jU5dc83QdhuWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=ThXseK5o; arc=none smtp.client-ip=44.202.169.39
+	 In-Reply-To:To:Cc; b=pUCMBT0Bm0REUG1vdkySteC728Ozm59DL1x7CMZm9SA2l9JshWcubqW98rjwY6RPA0R85Fwq0F/O44lPFVjI/Vatd+ePhOsaA6AfWnNkZJKrvmIQW3GrwILwFMJCukZUdefwHGoObaI5xdZ17mZhFRDB7HmssABojHcj72HROEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=I3a0a9X5; arc=none smtp.client-ip=35.89.44.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="ThXseK5o"
-Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="I3a0a9X5"
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
 	by cmsmtp with ESMTPS
-	id QgZztXmPtnNFGR8DZtXDOf; Fri, 27 Dec 2024 11:09:21 +0000
+	id R1WCtEdZGvH7lR8DitJAbB; Fri, 27 Dec 2024 11:09:30 +0000
 Received: from md-in-79.webhostbox.net ([43.225.55.182])
 	by cmsmtp with ESMTPS
-	id R8DWtoE2U2Zy0R8DYttMud; Fri, 27 Dec 2024 11:09:20 +0000
-X-Authority-Analysis: v=2.4 cv=Q4EZ4J2a c=1 sm=1 tr=0 ts=676e8ae0
+	id R8DgtjD18bs9MR8DhtedFo; Fri, 27 Dec 2024 11:09:30 +0000
+X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=676e8aea
  a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
  a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
- a=VANPn-21L8UGAxZ6yr4A:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
+ a=cKcOzP3ZHZptonc-xdQA:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
  a=ZCPYImcxYIQFgLOT52_G:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
 	; s=default; h=Cc:To:In-Reply-To:References:Message-Id:
@@ -33,21 +33,21 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=phv7iVVXVzjakNqDgdbYw7zx5GFmWGAQJh9j37w1dWc=; b=ThXseK5od/f2R25+PRsd43PiM4
-	cP8A/ZvhAybkT+LCINpqRQNduiMwq4RyglowjexUDqdJFJx/ekog1Jhz7eeULZJkNVNE/TtRu4lYR
-	74F4vqYVts/i07DvN56m80IeiZMWc4Isgo2a0ZT+PizZAb42ama6zJ4+y0xYDYRNHARh2eKQGj1A2
-	vkynkrdMtm3/vGrkvgiQlegBN+mbFKnL3r+uHkn0cDwoVsODlLiRtjrxJ8G/afYk2kcuR/vZ2ipnj
-	ttIcQJQFKCzvQ5strteptQJNHvFT9pV3SI92qMUA1GxuKfjmXU5MlkZNdFXqxMKgdzzGcCi/OdBJw
-	JWi0K/Sg==;
+	bh=CrJYnGSuQ/C3gLGR8duqgqPICFRR6aXoD7bOvZZBy6U=; b=I3a0a9X5lI0wzRtsIdNOukklaO
+	NIJpKEjQy++/uBFOIe8Kizt+V8Koz9IEkTVlIYn4u54R/kcnI8jsHLWyhMYE8ft6jFZxX7hL5kQ1b
+	hXBYTDN3OeOA9ddEgV7LPBiauAdG9cBCYXAUZrM6wdCG9OWdr2XY87iplcSjUx0VaYO8ZLjv9s4gz
+	++h8867cyxfG0wYjpGbK01v7iL7WZkPoJPW/weC0+EE+naSbgK4m8uhWf8aJiKLxASdKvzyYIaaGZ
+	XilQ3cG86hEyVv//1BMdlqCOPNNWGU+3KO+qeq5OLIalnebZ/bEJ0Y5zmOg4TXE+yRkVDxplEfjfn
+	Bkrp3AxQ==;
 Received: from [122.165.245.213] (port=50828 helo=[127.0.1.1])
 	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <parthiban@linumiz.com>)
-	id 1tR8DP-000bEK-2q;
-	Fri, 27 Dec 2024 16:39:11 +0530
+	id 1tR8DU-000bEK-0F;
+	Fri, 27 Dec 2024 16:39:16 +0530
 From: Parthiban Nallathambi <parthiban@linumiz.com>
-Date: Fri, 27 Dec 2024 16:37:58 +0530
-Subject: [PATCH 11/22] drm/sun4i: Add support for a100/a133 display engine
+Date: Fri, 27 Dec 2024 16:37:59 +0530
+Subject: [PATCH 12/22] drm/sun4i: Add support for a100/a133 mixer
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241227-a133-display-support-v1-11-13b52f71fb14@linumiz.com>
+Message-Id: <20241227-a133-display-support-v1-12-13b52f71fb14@linumiz.com>
 References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
 In-Reply-To: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
 To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
@@ -79,11 +79,11 @@ Cc: iommu@lists.linux.dev, devicetree@vger.kernel.org,
  linux-phy@lists.infradead.org, 
  Parthiban Nallathambi <parthiban@linumiz.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735297689; l=915;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735297689; l=1309;
  i=parthiban@linumiz.com; s=20241125; h=from:subject:message-id;
- bh=OF2xEirt2I4TWCuMHqY/Rfu3fQsoGOZ+4waicM8FC9g=;
- b=fGp7v4SGTK0k7oY1nfO7iOPyXtT+W0sH/qCeqn4yRfELAjBZ2AytoCH4bQp52XB14uVa69J0o
- aCEINdrh3p7DQ9sPMwGkrEx6YufICcsAuyqeNObKpd1Q/R9jiYnQtO1
+ bh=cEYXVRlHCL2jiFXMcJ1CyLQxMMvsOuDFr2JBco5EkAo=;
+ b=5KgFwyFJwXRqgFb+1AwyCG4NVbHlAA+0Gud9ArI4tbsf+12Vwj4Zr4reY7LCTfJVGeOLZQ793
+ +5jPpZU8HP9AFPy4qIGdA61FqeK5P1fJ6LWF8jgbIthvI5nYY09bmee
 X-Developer-Key: i=parthiban@linumiz.com; a=ed25519;
  pk=PrcMZ/nwnHbeXNFUFUS833wF3DAX4hziDHEbBp1eNb8=
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -94,40 +94,58 @@ X-AntiAbuse: Sender Address Domain - linumiz.com
 X-BWhitelist: no
 X-Source-IP: 122.165.245.213
 X-Source-L: No
-X-Exim-ID: 1tR8DP-000bEK-2q
+X-Exim-ID: 1tR8DU-000bEK-0F
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: ([127.0.1.1]) [122.165.245.213]:50828
 X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 337
+X-Email-Count: 373
 X-Org: HG=dishared_whb_net_legacy;ORG=directi;
 X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfM3SJm8HOLO/HbhhS/KJmhNT+j9fnTofylstnQC4QFznZn3TQDj6LlY0Nr15w2vKD0r+7lwnxeUVriSqzn+4dxwRf0MlF3gDbBoYiSbAoZU8VoqArnsQ
- OMtWB6V7R3ZBLM+WAQ02/UB8wv/ccV+dju6fXfsFtz8LhFcdy+JWNZpn46U/SrrwQPHN2x3vMmigpI+AHaK7urqxL0SxLIVl76k=
+X-CMAE-Envelope: MS4xfBqlt7P1lWquBcKqiCAThxhVRpXh9toxkXhXkUSu012dPHCzKeN6cnMjjrDFy4QXUmwHcKasf7Be9dbotkHpfA427IBjfjmFnFk+2DXlcZpoDkDCLLWd
+ RN08WLHgNaEmj9/XwSAAHULB1q+2M20zE6k3Y51wP7U9xjZGgH5xt/1Uq7fhLOkSFZBs2FUX1UIIntxC3ZwsNFCycoDfTb4hEf8=
 
-Display Engine(DE2) in Allwinner A100/A133 has one mixers and tcon.
-The routing for mixer0 is through tcon0 and connected to
-LVDS/RGB/MIPI-DSI controller.
+Mixers in Allwinner A100/A133 have similar capabilities as others
+SoCs with DE2. Add support for them.
 
 Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 5eccf58f2e17..e012a6316bba 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -436,6 +436,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun9i-a80-display-engine" },
- 	{ .compatible = "allwinner,sun20i-d1-display-engine" },
- 	{ .compatible = "allwinner,sun50i-a64-display-engine" },
-+	{ .compatible = "allwinner,sun50i-a100-display-engine" },
- 	{ .compatible = "allwinner,sun50i-h6-display-engine" },
- 	{ }
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 8b41d33baa30..0a1fccb87d5d 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -714,6 +714,15 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
+ 	.vi_num		= 1,
  };
+ 
++static const struct sun8i_mixer_cfg sun50i_a100_mixer0_cfg = {
++	.ccsc		= CCSC_MIXER0_LAYOUT,
++	.mod_rate	= 300000000,
++	.scaler_mask	= 0xf,
++	.scanline_yuv	= 2560,
++	.ui_num		= 2,
++	.vi_num		= 2,
++};
++
+ static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
+ 	.ccsc		= CCSC_MIXER0_LAYOUT,
+ 	.is_de3		= true,
+@@ -765,6 +774,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
+ 		.data = &sun50i_a64_mixer1_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-a100-de2-mixer-0",
++		.data = &sun50i_a100_mixer0_cfg,
++	},
+ 	{
+ 		.compatible = "allwinner,sun50i-h6-de3-mixer-0",
+ 		.data = &sun50i_h6_mixer0_cfg,
 
 -- 
 2.39.5
