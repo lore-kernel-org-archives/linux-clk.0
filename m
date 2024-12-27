@@ -1,118 +1,134 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820CE320B;
-	Fri, 27 Dec 2024 14:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851E51F540A
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 14:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735310017; cv=none; b=fpOJbuoPGpdNs1UWtG/cn7KhD1k8c+Gq7f4o/Abuy+RSOTDXVQdvKbODZ6zQO6iysML5H9HPKTGtqZrVbL48OmYBcqbiMgm7oCifD9KSqrWdj96xDhXI3l8LN5dReXypfzlzowKLopGmCtnB2qvPQqKtDzniaI7FqzApwnbzDds=
+	t=1735310217; cv=none; b=Fjb/Yd8atvAPDJNMV4h2nzkGSVfKq6+heYQpUUZLeNAwFTReRwkikLyn9FV+xU439kaMCULeZ8x1LhxqufMeZ/l4nzO3D29FMad/nNWqrGJWO1LuogQI850bhF9EcOaYcEtRVU0YtJPadoEBKFkmeW/lrjqRfuT1kAa64+tmFDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735310017; c=relaxed/simple;
-	bh=2KCgWDs+lh2toHZyOBYzBQFvJoQWFXH0um2X4ax9m/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jvd9eThIQOEhq7trG0x65s/4cwzbjiGhAQQQeD47MKdm1NiL09SIYbtz4QA2z/vjTqhM0olYZ+10n8KwoZhlZAaOg/zFg/92rnV+MCkrFh+6rCPZKM2mRdSZb4QB/nB3AYKIjJio/vkcVGzh4QD3YAo7IGz4VbtA5mhK0rfGCAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6d8f916b40bso99031586d6.3;
-        Fri, 27 Dec 2024 06:33:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735310014; x=1735914814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pV+ixgcLTpXwx8I8b4yJ+1KuFH/7+8KtkK1o0490Dc4=;
-        b=C+2FiG2PNQUxkgkjzdXgz+fi0FdYd4ezyKmaU4/szBoBoPDJm1G8PTCJHGL934ptXq
-         3LxISjiz4D9sW6yXZ/E5Gc3txGie55b5DFdhqG6c0MNgWF1DkfuwesyrUxGWImnDJ9O/
-         4Ohe8kCw2oZr7Ewfu76DEFxHs8uTtZepo7/19BRnqkNluIcPKNQNlb4QrRN0AC3KJoTf
-         pYmzTwTirEh+sf9hI3a2R1tpstmjK14k4sH7o8XEvsJCt6k1JtUIscRyxE3v0LD9TjqC
-         vUdeiKKRI25xL527WsHD1tBau0d6HosGEjJLsNdpbxBxX/dMhV0RunBfO8KWwNMK5CcC
-         2jhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEo7rW8MZAXzKdhm9bSqYXMQF2j5RqWHKPWktDmGYTtcusgIE0u0wOkGohhG2JhTbOqOZfHDrdLJQ=@vger.kernel.org, AJvYcCXHI4cD+PoGlLhfsbYqNdAGN8xW6dsa4oIIJ74yD0QlTtOCmy0XeLdHdGJjimnUItLA+WrxtLIGObG1CoNfKRtksQM=@vger.kernel.org, AJvYcCXQJXY9Hl3ZpX0VqdU6srbTeC/HoVcRP3iNoDxM51sw264S3wSs4AkEm4IYatkd6olrMCm+tOdEXwv1nQAs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4YrcQuCmOxBeV5Ir6uys8bhfF5qlD+tqNXex7i5BUkx0S6nfx
-	Hc+DnjcZqq1wUFAoLGwC6Ys7Cz9zRMQxN7UrZTMhbIcsTOmFfUK0p3E+R0MD
-X-Gm-Gg: ASbGnctW+KI7sgkaNlI3V7AZbxD2irxEV1RlCXd0Uf/tiTPSUs8IFDo84HWo3vHGLSE
-	pJR9WbOYeoIO+7lZByXFQ4FV0YQClYc336psN1sn9Q74T5rBYKXu6FbHf7iOmd2I9hlOhLpMK7s
-	6ZzLoaEQyBCBPC1W0Y+p4q+Y3GI3CVYKvUH+w9t7eLwW3+upueim5LbeV1pJ2wGcln0r2d3vNeX
-	QESNd4VTi69RYIv5dSgDA5t9THQcV6EJGV1/xnt1xVwOpZDyborml2ShcNHqNTgCynMkxRztxtQ
-	sO7fOfel2CB0N5X7bgc=
-X-Google-Smtp-Source: AGHT+IH780I//K5GyrRuvPEre3LLeoA/+R9x46eV4jyYUrHNj7E4S722c1O7+EjWTLEOYZcMrhiEvg==
-X-Received: by 2002:a05:6214:1c43:b0:6d8:8d16:7cf3 with SMTP id 6a1803df08f44-6dd233a10f5mr454668106d6.40.1735310014203;
-        Fri, 27 Dec 2024 06:33:34 -0800 (PST)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com. [209.85.219.41])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd180eaaa8sm78486686d6.1.2024.12.27.06.33.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Dec 2024 06:33:33 -0800 (PST)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d8f916b40bso99031486d6.3;
-        Fri, 27 Dec 2024 06:33:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUNHcZSHPpE3D6QeJmgFS53eZqJzB/lRIpvbgrRN1jwnjo+Wh23XMZYZf3GjvQimioY04KcYyTcCRU=@vger.kernel.org, AJvYcCVfYeb7FCEx7loGV52YGhTyY6pnU1iB3PuU8FQ+Zw9pWPDdxnVxycpbvPjzZVHYW0TzgWFlTA6c6za6Yb/P@vger.kernel.org, AJvYcCW6Uye8V0yk+JMc+dGhjxO/SU9F5Z13BBgTMQu+8wSrSs7yqzyQVgmAwSLHYiBhoeBEFfofYqVYVT3b16evMAQWTMs=@vger.kernel.org
-X-Received: by 2002:ad4:5cca:0:b0:6d3:b636:eccc with SMTP id
- 6a1803df08f44-6dd233545a7mr392501196d6.21.1735310013650; Fri, 27 Dec 2024
- 06:33:33 -0800 (PST)
+	s=arc-20240116; t=1735310217; c=relaxed/simple;
+	bh=sCDFXA2d6qIG0HjSf+icovIGvMld5LVg65YZVLam7vw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YrR+xlrO+vWqnGFyCyy+wK+U7Xt57itIzGEIZukoyfLsUR/UWpjg88BjeWwqJdrp1a35C8vQzcjMP3aj1g5JoXwRPBjDEwCnT2peWJGNqrDPgyRH3xK4Iryg87d+8n6O3aGknaW6oaumRqjCBznzpzOjbzAPx30d992WoGuC4tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=YG1iVMf9; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="YG1iVMf9"
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id RAfJtInTaumtXRBSQt0pwc; Fri, 27 Dec 2024 14:36:54 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id RBSNtubn165gFRBSPtgu1X; Fri, 27 Dec 2024 14:36:54 +0000
+X-Authority-Analysis: v=2.4 cv=Z58nH2RA c=1 sm=1 tr=0 ts=676ebb86
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=VwQbUJbxAAAA:8
+ a=vU9dKmh3AAAA:8 a=CPlf_J6x6-pEMq4byrgA:9 a=QEXdDO2ut3YA:10
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wKy2kDXPQg5LSJ+WcxFbAZTOLG7mg+guZsqD/SyCt7Y=; b=YG1iVMf9n8nyhxGhXJ9JXjShIz
+	CyyVHB+uRKIVJ9+f3o66/63AWQ+e2tf91kaQlq03ZafdNpCFtSO20QO3/hkxSe3kZz2cMuN+OzSV/
+	gCH7NCp2ujKMEdg+x2fu58mSTaHD3ySNgyVpsQoPtbpHHFpHKT0CqpPYN+MJQ2Y2GY4JyMpuRZHsf
+	QfzCR7j02pPHzgiDiLeZeI3ubt//2OyB5LFWqTbPTRkhmqJoJi+H28/pzQGqEdZlyWTWH6CgYlj7m
+	YYTVSgzuV+COIIuZLeZcXAFZ+Qdrq9iKj3Z4UoIxMCpDDNX1ckqDTEzZVBcEcp5tYbwQ5s/Ibe/N6
+	9vkQx57Q==;
+Received: from [122.165.245.213] (port=40816 helo=[192.168.1.5])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1tRBS8-003aTF-2w;
+	Fri, 27 Dec 2024 20:06:36 +0530
+Message-ID: <314b6bbe-613e-41a6-955e-50db6e11ef8e@linumiz.com>
+Date: Fri, 27 Dec 2024 20:06:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241223173708.384108-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241223173708.384108-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241223173708.384108-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Dec 2024 15:33:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVfcqHVkJ3ea=uN7zGAw=ho=gLGVJjFFB_O82C-RTU11Q@mail.gmail.com>
-Message-ID: <CAMuHMdVfcqHVkJ3ea=uN7zGAw=ho=gLGVJjFFB_O82C-RTU11Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] clk: renesas: rzv2h: Simplify BUS_MSTOP macros and
- field extraction
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: parthiban@linumiz.com, iommu@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-phy@lists.infradead.org
+Subject: Re: [PATCH RESEND 00/22] Add support for A100/A133 display
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>
+References: <20241227-a133-display-support-v1-0-abad35b3579c@linumiz.com>
+Content-Language: en-US
+From: Parthiban <parthiban@linumiz.com>
+Organization: Linumiz
+In-Reply-To: <20241227-a133-display-support-v1-0-abad35b3579c@linumiz.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1tRBS8-003aTF-2w
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:40816
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 4
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPfkbjKQgXR9rAQY6l0IVetix3d2+vzCtUSKWC86h4RKspLXsl8lEPJhJWAz7zJnFY+DWQpkjiYM0aWVuEbJpQj7x0X5aHXbdVLBI31kITX0TYmwH9Qo
+ 1KsVPyCapldcPpQLBEGfsziP0WQjDJefO//FAEzUosxhVk09PC2yCXBrntVfVHdKQrjIaxsdkuTWoa9bV+BBRd22c4UoXJ05he8=
 
-Hi Prabhakar,
+On 12/27/24 6:30 PM, Parthiban Nallathambi wrote:
+> This series depends on [1] for the eMMC/MMC controller to work and
+> [2] (lined up for 6.14) which adds support for the sram nodes and
+> display engine extends it's usage. Idea of this series to get initial
+> feedback and adjust, which will be rebased for 6.14 once [2] is merged.
+> 
+> This patch series adds support for A133 display pipeline based on
+> LVDS. dt-bindigs are organized in the start and later with code
+> changes.
+> 
+> PHY is shared between DSI and LVDS, so to control the PHY specific
+> to DSI/LVDS, phy_ops set_mode is introduced. To enable the DSI
+> using set_mode, analog control register MIPI Enable is used, which
+> may not be available for A31 (shares the same driver).
+> 
+> Otherwise, A133 also got hidden independent display engine i.e
+> mixer + tcon top to handle parallel display. But this patch series
+> adds only support for the 1 mixer which is documented.
+> 
+> [1]: https://lore.kernel.org/linux-sunxi/20241109003739.3440904-1-masterr3c0rd@epochal.quest/
+> [2]: https://lore.kernel.org/linux-sunxi/20241218-a100-syscon-v2-0-dae60b9ce192@epochal.quest/
+> 
+> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+Apologize for polluting with resend again. My internal mail server got blocked due to
+volume count, which resulted in incomplete series again.
 
-On Mon, Dec 23, 2024 at 6:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Replace manual bit manipulation in `BUS_MSTOP` with `FIELD_PREP_CONST` an=
-d
-> `FIELD_GET` macros for better clarity and maintainability. Introduce
-> explicit masks (`BUS_MSTOP_IDX_MASK`, `BUS_MSTOP_BITS_MASK`) to improve
-> readability.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+I will fix the mail server issue before resending the series. Sorry.
 
-Thanks for your patch!
+Thanks,
+Parthiban
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -582,8 +582,8 @@ static struct rzv2h_mstop
->         if (!mstop)
->                 return NULL;
->
-> -       mstop->idx =3D (mstop_data >> 16) & 0xffff;
-> -       mstop->mask =3D mstop_data & 0xffff;
-> +       mstop->idx =3D FIELD_GET(BUS_MSTOP_IDX_MASK, (mstop_data));
-> +       mstop->mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, (mstop_data));
-
-Nit: no need for the parentheses around mstop_data.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
