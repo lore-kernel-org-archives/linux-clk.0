@@ -1,59 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B8C1FB3;
-	Fri, 27 Dec 2024 17:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4267080D;
+	Fri, 27 Dec 2024 17:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735321442; cv=none; b=Hy/Ngf+abrzbnndhgo92fagxqRdSk8J+GrrU7PIwnwhmWObHUvo0IYSzoFz7h1M8ULqQZgGK3CdWzqeaXcgrfaYcWj6qWZhdQnJsQvNQsI2Lw5cNlKuoIv4kc8y1z96QsP4ex6OP3bc1pb581X2jgInxrOGcH277LMHbXjk8wY0=
+	t=1735321732; cv=none; b=Ouh8OiCTKXJCClKMrMkVkY2hCb/geUkqdaXQNRoJPeNhduPm4DJIKjCxyJ9vzk/KavONhlrtpZIp6TQV0vsdabOp93v3vXDGsmo1s86+lP8HrtvZEy90py1HhGEYigd3RlIahw84GxMFQ3h4IfAdMhWAWhVsdxYxrZF9sAalJlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735321442; c=relaxed/simple;
-	bh=rVom9/ZZasClWq+RMKE/v1dwwP+Hq6n5W8W09rP7IWk=;
+	s=arc-20240116; t=1735321732; c=relaxed/simple;
+	bh=Gpp/+IUBDLZ9HXWJtheRXr3yudwHj26ifQkhR6iljgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PU7W71Heos2NZ05pHge4OSsRQNayo9AamzvMHcVQ93xhwIY15uXzS/g5JDE44n1JwN/II1tdN++E9iCc3KfuIi6YZ+czbhvVlgbM5EeavIj3zUGsxMdtXb+Lbe/v/a4KJIq4LR9fxx63VxXdc5svrFCmjAr59UIy7wcMqJgT3DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/lIsLKI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=IctALZA+8CF5wrLANBZ4fMhJhJsKWL21DNHlu4axiO4N0K2N27H3q4n5nlQk2xI3o3mN2ipojEJVhr+3aKLI5kiInr/hBTCCa0L131aWGZYnRbLeYgQ6l5c/+ksl4BSzfuyMLejXG5tujXqu0MQHaYTnd7DxXEzvsBws13vTEu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sj140oDF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/lIsLKI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0A1C4CED0;
-	Fri, 27 Dec 2024 17:43:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj140oDF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBC8C4CED0;
+	Fri, 27 Dec 2024 17:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735321441;
-	bh=rVom9/ZZasClWq+RMKE/v1dwwP+Hq6n5W8W09rP7IWk=;
+	s=k20201202; t=1735321732;
+	bh=Gpp/+IUBDLZ9HXWJtheRXr3yudwHj26ifQkhR6iljgU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d/lIsLKIkBgXKQ34U15BY9lLur9y54xTZbPqCUrcmmK2ht5tdH6XqQTBo2iLHC8IT
-	 bUk77LLzfY/XK+BTYPxUmSv5IV+d7yhtyEWHZzthhrcE3Lzx08Sn/D+rQOaQFgfPkW
-	 IjCrvyFqLKyEDWzHv6y8jY4XcXEroGzvmNf7RSsK01wrFBESprsDn/GIcLt4RlEQEY
-	 UcT9GOtN6QD3rN/PaaiouEAqbPdDRkZaJbyPnaL/4/y6mDB2BpUrsrEnWz9946MTv/
-	 87rxQqBFe+U+WLGNikhg91j7MahXyIEO0XrFvFDYH7xGIEM5DZNLq0SRRg0dci09NS
-	 4z+1VI1TDGtNg==
-Date: Fri, 27 Dec 2024 17:43:54 +0000
+	b=sj140oDFk5GBWYm4hwua6PH61Rd69ZHuoSOyRg5MQUXIvx6HRE2kVa7/nN0jZMK9g
+	 Dne0GlXVAvK9Fc0akjfWv6Z3nIkrYHUMzFP/E3/+rRHQGtwuymbldVy7XZ5sPuaBeG
+	 OlMSL9Q7qaRFrWw3p8vq7sjHE3gyye34C3Hb684joqacPWkQ3SaDZ0t71B2/hUIUgo
+	 HReete7V2ZrwI6ksUwg5dfhAzdlKMwtvprnuGOjgnK4avH9uIdalDdD0Oo/R96M9pZ
+	 WCJ1CN0pBfWyuEY5jxtg4cukVX2BrdMRbZAZX6kEauIlZdho/7JdL+joiZZlw69XoJ
+	 16RMSVb4WWaLg==
+Date: Fri, 27 Dec 2024 17:48:46 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Abel Vesa <abel.vesa@linaro.org>, Marek Vasut <marex@denx.de>,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH RESEND 03/22] dt-bindings: clock: sun8i de2 clock: Add
- PLL com clock
-Message-ID: <20241227-swept-seduce-d21e6537ddfc@spud>
-References: <20241227-a133-display-support-v1-0-abad35b3579c@linumiz.com>
- <20241227-a133-display-support-v1-3-abad35b3579c@linumiz.com>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m: document
+ nominal/overdrive properties
+Message-ID: <20241227-scenic-haziness-3806c50177cb@spud>
+References: <20241219-imx8m-clk-v1-0-cfaffa087da6@pengutronix.de>
+ <20241219-imx8m-clk-v1-1-cfaffa087da6@pengutronix.de>
+ <20241219-lash-lather-31443ced0e0c@spud>
+ <4e2250b3-5170-4e88-aa0a-dd796b81e78b@pengutronix.de>
+ <20241225-untapped-flyover-47254d06d418@spud>
+ <8a8f315b-9e6b-4c18-985e-5df4ecbe34da@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,70 +57,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0jjBOv89hldoMdhb"
+	protocol="application/pgp-signature"; boundary="ftb44cQFhFFMb4XF"
 Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-3-abad35b3579c@linumiz.com>
+In-Reply-To: <8a8f315b-9e6b-4c18-985e-5df4ecbe34da@pengutronix.de>
 
 
---0jjBOv89hldoMdhb
+--ftb44cQFhFFMb4XF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 27, 2024 at 06:30:52PM +0530, Parthiban Nallathambi wrote:
-> Some platforms like A100/A133 also uses pll-com clock as additional
-> clock source for the display clock. This is not documents both in
-> user manual and DE 2.0 specification. These changes are mainly from
-> vendor BSP.
+On Thu, Dec 26, 2024 at 05:54:15PM +0100, Ahmad Fatoum wrote:
+> Hi Conor,
 >=20
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+> On 25.12.24 15:20, Conor Dooley wrote:
+> > On Thu, Dec 19, 2024 at 09:14:10PM +0100, Ahmad Fatoum wrote:
+> >> On 19.12.24 20:49, Conor Dooley wrote:
+> >>> On Thu, Dec 19, 2024 at 08:27:32AM +0100, Ahmad Fatoum wrote:
+> >> Theoretically, we could infer mode at runtime from VDD_SOC voltage,
+> >> but we need to set up clocks to read out the PMIC and I want to
+> >> apply the constraints as early as possible as I don't want the SoC
+> >> to run outside of spec even for a short while.
+> >=20
+> > Apologies for the delay responding to you, doing it today cos I feel
+> > guilty!
+>=20
+> I am fully aware that I needn't expect prompt review feedback so late in
+> December. Thanks a lot for taking the time still.
 
-Ditto here, the new clocks are only in the new IP you're adding so this
-patch needs to get merged. When you merge them, make 2 clocks all that's
-allowed for the existing devices and 3 clocks for your new one only
-please.
+I guess, but I /had/ replied to other things that came in after your
+mail, which is where my guilt comes from!
 
-> ---
->  .../devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml         =
-| 2 ++
->  1 file changed, 2 insertions(+)
+> > I think what you've explained here is fine, but could you add a
+> > bit more of that info to the commit message, explaining why one cannot
+> > be default? With that,
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t=
--de2-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83=
-t-de2-clk.yaml
-> index 70369bd633e4..3e00905b66ca 100644
-> --- a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-cl=
-k.yaml
-> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-cl=
-k.yaml
-> @@ -39,11 +39,13 @@ properties:
->      items:
->        - description: Bus Clock
->        - description: Module Clock
-> +      - description: PLL common clock
-> =20
->    clock-names:
->      items:
->        - const: bus
->        - const: mod
-> +      - const: pll-com
-> =20
->    resets:
->      maxItems: 1
+> Thanks. I will await further review feedback and adjust this commit's
+> message for v2 as requested.
 >=20
-> --=20
-> 2.39.5
->=20
+> Wishing you nice holidays,
 
---0jjBOv89hldoMdhb
+You too (or what's left of em at least).
+
+--ftb44cQFhFFMb4XF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ27nWgAKCRB4tDGHoIJi
-0laCAQC3f8JN+f/M1J2eeAFVurWF99YyrOoc11b9kgfjtf1thQEAtw4OLJJ4yje4
-qC320wF5zcGFYDEFFJjXa4TfgosTGww=
-=cfWT
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ27ofgAKCRB4tDGHoIJi
+0sQ/AQDOR3WXvsSsQFz+lLhiYbrYkjtuZAWDaLhBmi9uJKNtVQD/YB2Vbo249Q2C
+KhJBej2Wm204JRHpcFQv2oe1TtQx8wA=
+=pjOU
 -----END PGP SIGNATURE-----
 
---0jjBOv89hldoMdhb--
+--ftb44cQFhFFMb4XF--
