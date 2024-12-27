@@ -1,89 +1,57 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5431F8AD8;
-	Fri, 27 Dec 2024 19:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907612CDAE;
+	Fri, 27 Dec 2024 22:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735326188; cv=none; b=YBbXscigG0vwQU6mzYfwbVzG9+5KQkwpIxkuJ+i3JXkGm9n1xfv1j3qX9olTPqlv5sslRC69UKUXI7IjCR0euyRmgh7VO3qGHWiJfN4unkabhkHCAJjj7aQLe0ZOh7eHiJCWtOUXCS+U+idZB6gaLcrinTIgJUc7kXo5/xYkCTw=
+	t=1735339783; cv=none; b=uMRXccR4z7VwujHTJKDRsYwDYQ/4vfbkaXOYZEJxbGD1HDCiFaqkP5cxbpoJvqzEZhqadXu9bAOiqv6A08EC3ERwGjZYZqs0DLpQhWcqWDkqj1Y0Ti33rwJU6QJ60Mji7Sw6kAXlG1/0r5L9dSAewnJoslV//K/T+GURk7N2csk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735326188; c=relaxed/simple;
-	bh=/IAGnTy2IYyK4HHK19qpN0BQgEWU57aHh+40aFZGiPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eyCZ1dSwqINJFVgjhTsmP1Nk8dfvTRJAe4FNt+vCDVVQafwlXHmvT/3ZFbwg5GFHzGfpfzPbbsd2TxV66AytsmUN7DE4wOlEjHWL8aozrtxR8B72YMrrkO/y2KxV1DcDVZwrCEQh2zW/IXw2ixQ6urrLV74zFlpXWg6lI1M6wRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+0OrFKG; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1735339783; c=relaxed/simple;
+	bh=qlHPkCaJELMbNWUpcfIlNXWV1nfX+Y37d2bQPsr9C+M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BuEpyWbYET+2SM36w8TvTcjTCm1wWXlHIiPsZxLCk0iTncHwxxN2W5gB0wmyJNwcc7rdv3hVMqvDuw9y9ZK69W+lQ7mPpuaG/qYKHw4YdAQOgm7xW0fhxcX9svGxcNoeN81K8XmIlqmpIWljhIa6py6X1A2MQciwncp+cLm6wM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=kGg3lWk1; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+0OrFKG"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21680814d42so81540885ad.2;
-        Fri, 27 Dec 2024 11:03:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735326186; x=1735930986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V1J2dnV8brqVh/DdliqC6kZPsixqWVPm/rUxD17Pm08=;
-        b=L+0OrFKG/MkzWHLnb9liXkz1WBi5vztIpe70fzdk9AaRtI4MaWHMDOb0/lDpiEcaNr
-         Le2Igr4p6XsEz2l42sfjm8dVIQUjG6/7D/nJ9F52sGy2lDIHOxhgqH2MAv2eM5OZw3m2
-         +TBVyRwolYiLEvlbECDCZjqxVoxmwiqrjjTD18h5EX9U2rW9B3sIwVJGhgIF8D3biCM0
-         jizhnaqgc97X4H8J3q9B0rfahw5Ak9gZgJKoHp5WTzjMpZsjTX/nuoaLjL17NmogxCXx
-         UrPP8j/QgwEXtNsbFw1vxLC6HUlPcl+2iP7k7zOavypIghrHSMpzQgxvAB8wuRC9wTen
-         2HBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735326186; x=1735930986;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V1J2dnV8brqVh/DdliqC6kZPsixqWVPm/rUxD17Pm08=;
-        b=jMqQshAHz1MEAAjqPPm0b8J4WLmy4HVLFWUFKm8IwWyoz2skY6uEIM0rpjZq8A0v5T
-         LtRv5xFUA4IOkBjM0AzGUhvAVj8FG9PRHiQ6LVblX/WI48gqSD1Zlils5KUlIFC3oJee
-         Axsn0kx79YGEmQClnovBzSUlbMaYXui09999oWXD+Z7UI7MPqOE3ZDhZrd2PPPRXURTu
-         Fpulm3FMKeswP/6uS/cXHpRc5GckEQB6xD7wPn8/GoSRJ3Zew7VVapi/i7ig7YQ2jSR1
-         30936zNCwkg5WRUyvEGfPfrjrjyIOm3f924mpWamzclfQNWkTOvS8gwnljMDRdPkYiTh
-         Vukg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWKW+EB4lOuqmUAnJIyPhbFFMMfATSccaQ9QtcKXZLOHJUnCcWvSSxu4jnBC6vKTs1MiJy2PDKS9TWC7ErEIE=@vger.kernel.org, AJvYcCWanYzLNLWQu3QZkxRZLohzDTkzQjWt4BJOBC0nOJKyuiAl0yTURLonnitSWJrl904eg/rTHd/SGscTtShL@vger.kernel.org, AJvYcCXUxCGq0rHxbAfxM5ByL/Rb9PNos6fAPQDafkehe4MrgHEvUBCZnZxcrDczVWWM1byrKmwEqJsig0FL@vger.kernel.org, AJvYcCXePSuh53spRKqZO7II9YmjIWOdW761SbFyP4HMaaHhgfRpKM8NqDRGeNGK8XYSnefGqRmsjNaAkozs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgvOr1uKLwc/DHEVMIzv70ZTAU8bidl/8g+dEYHGMMot485vFj
-	fEY0iQ+elyeCj1vQi8wYb4JYQgRQAjxtK0p7AA2CrNtgclMsGfcW
-X-Gm-Gg: ASbGncs2mE8az1VOhfbMzHA1XMgvd3gwQfSwSjQadsv3XuW2gBCQWY1PTcLrk41DqQO
-	nOdUlkVUIqncEs4d4th2ccgCOiy9lGyMWJW8M/oZV5HNWsNdcevVbluX1M+93lFEE3nN/2NoznV
-	wAy12bbaZRchu+3+cwrCUb2uSRZcWsvCVjeW8br1OLUpZDobcZvKLS+983YoIPWQGjRvBvvUfGY
-	Ym3gAlNCiouX7fThNK71q1xoJMZ00fq2TxGzBGnCTsucPkL4tK94QN3AIPxveanSKpZvNz+5OAZ
-	3sWQjIM=
-X-Google-Smtp-Source: AGHT+IFL+M73myxJNmX1bGIfrW37yeUdq+u1cotILMeODj/VRZzE/LPIf1prAWoT2pg7kdjxJshCMw==
-X-Received: by 2002:a05:6a20:d48f:b0:1e1:9fef:e974 with SMTP id adf61e73a8af0-1e5e04a3040mr44538890637.24.1735326186240;
-        Fri, 27 Dec 2024 11:03:06 -0800 (PST)
-Received: from prasmi.. ([2401:4900:1c07:9010:ac08:3a91:844a:cc65])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbbd3sm14877943b3a.110.2024.12.27.11.03.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Dec 2024 11:03:05 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 6/6] arm64: dts: renesas: r9a09g057: Add `renesas,syscon-cpg-error-rst` property to WDT node
-Date: Fri, 27 Dec 2024 19:02:10 +0000
-Message-ID: <20241227190210.69025-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241227190210.69025-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241227190210.69025-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="kGg3lWk1"
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BRMMAuT019525;
+	Fri, 27 Dec 2024 16:49:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=FVa4ZWEyrX8PiJz7
+	DT5X3WWKUQFX1yTH2mjZD7aqmY0=; b=kGg3lWk1cytWHfhqxgApnvGLxXFbLbGX
+	19Wev9J0KdQqFYn8cu0Q9+TFnKZPT7GzfzagTj5nW59lGkXCKdKlBT9eZByDRRnb
+	16VPp1R7Pz+FFo8+BedS1XMiH3+2whUv5BfLnv1CSstFOBh7MVF+u1zeCPYg6HRP
+	/ecGkYwLIyPNrJVJa/K7xucFNUEMBp7RDpZR1nYII+tggGsG0+5gBtPq3uHAqUV2
+	Lg8E0nVsOwyT6XbvMstX4QEjh+V2WpSI796fwOOE+pzXHrJ2egU41eLyjUBLKmW6
+	Th7J6uv+jgvuPwxTOPF6w49gWRtvfWtTGCA7UvO6g+Q6jy+3zpJAcQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 43nuy26kss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Dec 2024 16:49:26 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Fri, 27 Dec
+ 2024 22:49:23 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Fri, 27 Dec 2024 22:49:23 +0000
+Received: from paulha.crystal.cirrus.com (paulha.ad.cirrus.com [141.131.145.123])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 74E6B820247;
+	Fri, 27 Dec 2024 22:49:22 +0000 (UTC)
+From: Paul Handrigan <paulha@opensource.cirrus.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <devicetree@vger.kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <patches@opensource.cirrus.com>,
+        Paul Handrigan
+	<paulha@opensource.cirrus.com>
+Subject: [PATCH v3 0/2] Cirrus Logic CS2600 clock device
+Date: Fri, 27 Dec 2024 16:49:13 -0600
+Message-ID: <20241227224915.3813253-1-paulha@opensource.cirrus.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,57 +59,60 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: CBz2GdrTzBhfNQ9mYWUi7UWwqo_ncke_
+X-Proofpoint-ORIG-GUID: CBz2GdrTzBhfNQ9mYWUi7UWwqo_ncke_
+X-Proofpoint-Spam-Reason: safe
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This patch set provides Common Clock Framework support for the latest
+Cirrus Logic clocking device, the CS2600.
 
-Add `renesas,syscon-cpg-error-rst` property to WDT node, to
-determine whether the current boot resulted from a `Power-on Reset`
-or a `Watchdog Reset`.
+This device has two input clocks and three output clocks.  One of the
+input clocks, the REFCLK, can be a constant reference clock input, a
+crystal reference input, or not available and use the internal clock.
+The second input is the CLK_IN digital clock input.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-- No change
----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+The three clock outputs are CLK_OUT, BCLK_OUT, and FSYNC_OUT.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 69de6c302b17..efc3fd582e12 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -445,6 +445,7 @@ wdt0: watchdog@11c00400 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x75>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 0>;
- 			status = "disabled";
- 		};
- 
-@@ -455,6 +456,7 @@ wdt1: watchdog@14400000 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x76>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 1>;
- 			status = "disabled";
- 		};
- 
-@@ -465,6 +467,7 @@ wdt2: watchdog@13000000 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x77>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 2>;
- 			status = "disabled";
- 		};
- 
-@@ -475,6 +478,7 @@ wdt3: watchdog@13000400 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x78>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 3>;
- 			status = "disabled";
- 		};
- 
+v2 changes:
+- Remove | from after "discription" in DT binding.
+- Remove discription from "clocks" in DT binding.
+- Change ref_clk to xti
+- Clarify auxiliary clock pin
+- Change DT example to not have "reg" for the bus
+- Change DT example to change i2c@0 to i2c
+- Remove "OUTPUT" from the clock ouputs in the dt binding include file.
+- Remove AUX_OUT defines
+- Use do_div when dividing u64 by a u32
+- Include the dt bindings include file
+- Use the includes from the dt bindings include file aux output.
+- Move of_device_id and i2c_device_id tables next to i2c_driver struct.
+
+
+v3 changes:
+- Changed clock-names in device tree to an emum since the both clocks
+  are not always required.
+- Changed cirrus,aux-output-source to a string input.
+- Added cirrus,clock-mode as a string input.
+- Fixed ordering in DT example.
+- Removed dt-bindings .h file.
+- Add in_range to allow for acceptable ranges for clock rates.
+
+
+Paul Handrigan (2):
+  dt-binding: clock: cs2600: Add support for the CS2600
+  clk: cs2600: Add Fractional-N clock driver
+
+ .../bindings/clock/cirrus,cs2600.yaml         |   89 ++
+ drivers/clk/Kconfig                           |    9 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-cs2600.c                      | 1177 +++++++++++++++++
+ drivers/clk/clk-cs2600.h                      |  173 +++
+ 5 files changed, 1449 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
+ create mode 100644 drivers/clk/clk-cs2600.c
+ create mode 100644 drivers/clk/clk-cs2600.h
+
 -- 
-2.43.0
+2.34.1
 
