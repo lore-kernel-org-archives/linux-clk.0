@@ -1,157 +1,186 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677D2EEAA;
-	Fri, 27 Dec 2024 09:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4259F1F131C
+	for <linux-clk@vger.kernel.org>; Fri, 27 Dec 2024 11:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735291825; cv=none; b=HmRj0fGAPzKdWU0iPIg4YUHI6AIef+5NJkFvgw6seyVWrg/u5ajmhFR4LTJGl/rc2jrcxbuZA0slydALpnSEXpTyjDWSyALwmNsVb234rPk1o+L0ITAqXDH5pVLfL3PoEEeydCkFLy5ccjhMQnML7pTkvt9dvSuEIHArchXAnI8=
+	t=1735297707; cv=none; b=fPBOoIdx6JPM4Qkm/fMZvIVwXI4/Foqm4Y2cQAsQIDdi0bt+cwzDmsNbjg4RUgfpcOZL+OU8HDBfyxVKz2VdWxLF6hx5ROtyzJ1IETyZ8ORzxEZpmKN4K14CfpeIx5LbXFo4y7RrQhjo9eahbAOqtqcyHzQzLKnWnRZrOI2haMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735291825; c=relaxed/simple;
-	bh=EP0IHX0DdWwe4SDS6MWrtqA/P1/jEzD1O9Y2saHQvrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEc/nqFUAprp5yTu+j/xifS+Kg/qHArmEb4p1lELhXLJc5pAXWBgsYYPs17oMSttULFciYagkHM+L/Qld1joiYDqGYjjXeiSchWWEfJMh25BUG8NA3M5/WAdZQumE27JVlQKcVh0JvpIgWGDqroNNnQS0SXxgZ1gPRxZY33IrWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCRQ6HvZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735297707; c=relaxed/simple;
+	bh=s6pgeYhBovYKLxAfzogU3RAM9N8F/zvXTKruRhJeLms=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UeaIccpBzf3jSkNiI0Kp9LuSpY+4srJ3rb6kBrCoEns6VvoTFnBaDy/ambZodYmg9QlCfTu4RbVLC8lCmL6QGRSlWDw41CAsvVlDzgvbDEGJ7hoRienModLFaNMjLoufnqKJOr1fir6Qqojv0SlHuu8SZojtoddxHaKmfoNdwRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=fkZWFWTG; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCRQ6HvZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46955C4CED0;
-	Fri, 27 Dec 2024 09:30:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735291824;
-	bh=EP0IHX0DdWwe4SDS6MWrtqA/P1/jEzD1O9Y2saHQvrg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CCRQ6HvZWl/GX8Z0SG8iQMImkPUR58U8vvTykakEwJhUb0UNeARr/9JbqZjRQUyEf
-	 aNn+bq2Om1eNo/HsfW3y1hx+nkn/R1VpaA8rIEsw5GQxwDfvQdVTZhClm6lOfXgPlH
-	 ULKAoEHfJRV315IuQm/9qVo3HjLyCRLGPrRyPzQjV/KPv5G/2MGUUsj1YJEaNpkojR
-	 KrG0aU48+6JnKLQD+AVpiXUZAhFJ87Wl/9vNsLv6c2O3zE+eVo4kKc9jJMSXxywXZ2
-	 fO9eX2oRkrJV2MtlWcRWe6gGBaKhCFpEZ68G/HEUGQloPi6hMzaFbmeGUcGTOwunl0
-	 M2mXg597ccOwg==
-Message-ID: <88b6e7ec-0265-4507-9ce1-a72217563e32@kernel.org>
-Date: Fri, 27 Dec 2024 10:30:17 +0100
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="fkZWFWTG"
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id QyUytHCnnumtXR8Cetzk44; Fri, 27 Dec 2024 11:08:24 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id R8CbtjCQUbs9MR8CdtecjJ; Fri, 27 Dec 2024 11:08:24 +0000
+X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=676e8aa8
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=VwQbUJbxAAAA:8
+ a=vU9dKmh3AAAA:8 a=RKcyukLPUNyM5a_w4rQA:9 a=QEXdDO2ut3YA:10
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Qi3UoCUDEqcy6/oiO96EhEgtnu7BnyUeV/rid1HTKPw=; b=fkZWFWTGC+zRmdjCb/wb69q7Oo
+	XhOjvw5PgWaBt6W7xI+DtLQLR73ui2o1RXsdfzbfZY3z2YLPnP0ggJ/efGOVlD++5W1b/vesW/kyp
+	obkjmrgKH+Owz3WRg5p0jgOscC1YVbK5jPeGkwEc+6ctKlADl3mQfQtP7NwOX5OzO6QjTfnix1pjY
+	1yAJMY/4KkoOjrKq3FHzwbKhTXFjkFf9XXXF8b4nJgjLcUL4+o9lqKEkTozD2zWIZjX626Kt3Vh+S
+	ClZICOaRtyDB6LDROsGHF7QlWxsbeedlNVyGMAu4Sjc0eyMyJDG6kockqCcOGV7FXCm86A2AVvaF2
+	pB6r5EYw==;
+Received: from [122.165.245.213] (port=50828 helo=[127.0.1.1])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1tR8CT-000bEK-2m;
+	Fri, 27 Dec 2024 16:38:13 +0530
+From: Parthiban Nallathambi <parthiban@linumiz.com>
+Subject: [PATCH 00/22] Add support for A100/A133 display
+Date: Fri, 27 Dec 2024 16:37:47 +0530
+Message-Id: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: pinctrl: qcom: rename spi0 pins on
- IPQ5424
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
- linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, konradybcio@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Cc: quic_varada@quicinc.com, quic_srichara@quicinc.com
-References: <20241227072446.2545148-1-quic_mmanikan@quicinc.com>
- <20241227072446.2545148-2-quic_mmanikan@quicinc.com>
- <fbdf716d-0c4c-4f51-9f54-0f38931e26cd@kernel.org>
- <2234c9d5-f434-48cf-ba77-38e9109541eb@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2234c9d5-f434-48cf-ba77-38e9109541eb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIOKbmcC/x3MwQqDMAyA4VeRnA00rYzhq8gOmY0uMLQ0UxzSd
+ 7d4/A7/f4JJVjHomxOy7Gq6LhXUNjB+eJkFNVaDd74j8g9kCgGjWvryH21Lac0/5HcXeAqeno6
+ hpinLpMe9HV6lXEqy7oxmAAAA
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-phy@lists.infradead.org, 
+ Parthiban Nallathambi <parthiban@linumiz.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735297689; l=4037;
+ i=parthiban@linumiz.com; s=20241125; h=from:subject:message-id;
+ bh=s6pgeYhBovYKLxAfzogU3RAM9N8F/zvXTKruRhJeLms=;
+ b=wWAYHRbwEECIDPFbPFqQ59rjdwtQ+jw3vZ52WZTk9fVX86Ea+nommDiehtuC86+EGPkNIpqoA
+ z9ov1dxYuUGAKe8SZH7wnREK9pOCHQl29v03yVf/v52pgE3tSUX1/Kq
+X-Developer-Key: i=parthiban@linumiz.com; a=ed25519;
+ pk=PrcMZ/nwnHbeXNFUFUS833wF3DAX4hziDHEbBp1eNb8=
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1tR8CT-000bEK-2m
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([127.0.1.1]) [122.165.245.213]:50828
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 18
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBV+e2cN6ff31xOzow9zHrPc/SEgOxQ3M9uXgEQ/DlVJAXYP08t/iB+VV21q7Na0B6DVQ3Qj5A968zty3fbssItKw2l/QX3UslgJ7egdAV4KcwBJ7nbX
+ ssSkN/qNmlTTf+gdWfE84uTrBxtGhP6ldSxxCmS7TsMRwLYR6751QTgnWtvsa2gY2hc6oCyVUWIeRF2/3A3iL4cHJsaomTYqSI4=
 
-On 27/12/2024 10:18, Manikanta Mylavarapu wrote:
-> 
-> 
-> On 12/27/2024 1:06 PM, Krzysztof Kozlowski wrote:
->> On 27/12/2024 08:24, Manikanta Mylavarapu wrote:
->>> SPI protocol runs on serial engine 4. Hence rename
->>> spi0 pins to spi4 like spi0_cs to spi4_cs etc.
->>>
->>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>> ---
->>
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It looks like you received a tag and forgot to add it.
->>
->> If you do not know the process, here is a short explanation:
->> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
->> of patchset, under or above your Signed-off-by tag, unless patch changed
->> significantly (e.g. new properties added to the DT bindings). Tag is
->> "received", when provided in a message replied to you on the mailing
->> list. Tools like b4 can help here. However, there's no need to repost
->> patches *only* to add the tags. The upstream maintainer will do that for
->> tags received on the version they apply.
->>
->> Please read:
->> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
->>
->> If a tag was not added on purpose, please state why and what changed.
->> </form letter>
->>
-> 
-> Hi Krzysztof,
-> 
-> 	Patches #1 to #4 are newly added in V3 (to rename SPI0 to SPI4). Hence, there are no A-b/R-b
-> 	tags associated with these patches. I mentioned this information in the cover letter.
-> 	
-> 	I assume you are referring to Patch #1 from the V2 series.
-> 	Patch #1 [1] and #2 [2] from the V2 series have been merged into linux-next.
-> 	[1] https://lore.kernel.org/linux-arm-msm/20241217091308.3253897-2-quic_mmanikan@quicinc.com/
-> 	[2] https://lore.kernel.org/linux-arm-msm/20241217091308.3253897-3-quic_mmanikan@quicinc.com/
-> 
-> 	Please let me know if i missed anything.
+This series depends on [1] for the eMMC/MMC controller to work and
+[2] (lined up for 6.14) which adds support for the sram nodes and
+display engine extends it's usage. Idea of this series to get initial
+feedback and adjust, which will be rebased for 6.14 once [2] is merged.
 
-v3 mislead me here and three different subsystems in one patchset.
+This patch series adds support for A133 display pipeline based on
+LVDS. dt-bindigs are organized in the start and later with code
+changes.
 
-Anyway, if this is different patch then review follows - there is no ABI
-impact explanation and this is an ABI break. What's more, entries are
-not sorted anymore and why there is a gap? spi4, spi1 and spi10? Where
-is spi3?
+PHY is shared between DSI and LVDS, so to control the PHY specific
+to DSI/LVDS, phy_ops set_mode is introduced. To enable the DSI
+using set_mode, analog control register MIPI Enable is used, which
+may not be available for A31 (shares the same driver).
 
-Not sure if this renaming is useful or correct, especially considering
-not many arguments in commit msg (e.g. datasheet?).
+Otherwise, A133 also got hidden independent display engine i.e
+mixer + tcon top to handle parallel display. But this patch series
+adds only support for the 1 mixer which is documented.
 
+[1]: https://lore.kernel.org/linux-sunxi/20241109003739.3440904-1-masterr3c0rd@epochal.quest/
+[2]: https://lore.kernel.org/linux-sunxi/20241218-a100-syscon-v2-0-dae60b9ce192@epochal.quest/
+
+Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+---
+Parthiban Nallathambi (22):
+      dt-bindings: iommu: sun50i: remove resets from required property
+      dt-bindings: display: sunxi: Add a100/a133 display engine compatibles
+      dt-bindings: clock: sun8i de2 clock: Add PLL com clock
+      dt-bindings: clock: sun8i de2 clock: Add a100/a133 compatible
+      dt-bindings: display: sun4i: add phy property
+      dt-bindings: display: sun4i: add a100/a133 tcon lcd
+      dt-bindings: vendor-prefixes: Shenzhen Baijie Technology
+      dt-bindings: arm: sunxi: document Szbaijie A133 helper board
+      iommu: sun50i: make reset control optional
+      pinctrl: sunxi: add missed lvds pins for a100/a133
+      drm/sun4i: Add support for a100/a133 display engine
+      drm/sun4i: Add support for a100/a133 mixer
+      drm/sun4i: make tcon top tv0 optional
+      drm/sun4i: add a100/a133 tcon top quirks
+      clk: sunxi-ng: sun8i-de2: add pll-com clock support
+      clk: sunxi-ng: sun8i-de2: Add support for a100/a133
+      phy: allwinner: phy-sun6i-mipi-dphy: add LVDS support
+      drm/sun4i: tcon: add a100/a133 lcd controller support
+      arm64: dts: allwinner: a100: add iommu
+      clk: sunxi-ng: add missing pll-com binding
+      arm64: dts: allwinner: a100: add display pipeline
+      arm64: dts: allwinner: a133: add szbaijie helper board
+
+ Documentation/devicetree/bindings/arm/sunxi.yaml   |   6 +
+ .../clock/allwinner,sun8i-a83t-de2-clk.yaml        |   6 +
+ .../allwinner,sun4i-a10-display-engine.yaml        |   2 +
+ .../bindings/display/allwinner,sun4i-a10-tcon.yaml |   7 +
+ .../display/allwinner,sun8i-a83t-de2-mixer.yaml    |   1 +
+ .../display/allwinner,sun8i-r40-tcon-top.yaml      |  17 ++
+ .../bindings/iommu/allwinner,sun50i-h6-iommu.yaml  |   1 -
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi     | 165 ++++++++++++++++++
+ .../dts/allwinner/sun50i-a133-helper-board.dts     | 129 ++++++++++++++
+ .../dts/allwinner/sun50i-a133-helper-core.dtsi     | 190 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c               |  23 ++-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  23 +++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  13 ++
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c             |  42 +++--
+ drivers/iommu/sun50i-iommu.c                       |   2 +-
+ drivers/phy/allwinner/phy-sun6i-mipi-dphy.c        |  23 ++-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c        |  12 ++
+ include/dt-bindings/clock/sun50i-a100-ccu.h        |   1 +
+ 21 files changed, 645 insertions(+), 22 deletions(-)
+---
+base-commit: 6c086b91df8c6619239c6d6d6cbf6ae50da6c110
+change-id: 20241126-a133-display-support-ab43af32180a
 
 Best regards,
-Krzysztof
+-- 
+Parthiban Nallathambi <parthiban@linumiz.com>
+
