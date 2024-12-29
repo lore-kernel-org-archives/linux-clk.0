@@ -1,125 +1,93 @@
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89308AD23;
-	Sun, 29 Dec 2024 15:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23817083A;
+	Sun, 29 Dec 2024 15:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735485395; cv=none; b=onnrJRHW9q/YaG2n01Z9pzmBrVFD/WHAPfdIaQ1+nRcXTGas2S7/L5e31+vTX1V1mOLxZRQZlPTjizHO3xtS+I2b0gFXSCq7hALvnQjz01QUjIg2nnRsAg/2L152L0ssJZo0GNEf96q0xTtYkJ11eEnPJDw873kMHV15H0rrdtQ=
+	t=1735486260; cv=none; b=KwOQU29FPi/1Ib9pDqsnPYbjSLRt82rtxk+iiWmE2FXxlNXQ+E1v/17flJQbmL5R33oZAVq4GM/iQNY9aXKW3fHw39YUdxqcd/QMhgozyLszOeq8E2i3SxRwkZM2wAU1iBD/lKbXu6pamiKCURrpVfHSjY40aNojZOkq2WzSgto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735485395; c=relaxed/simple;
-	bh=8Ryfifp5KD6fwG1ehPT+X5npHFy8EeQOutvzLhRMWLk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=f7d5JgSypoVscOQD23E+3AIOos+MFwRVFfMiak5gAKKYNVi/liWCF37d/LeYBa4dEleIkAWgNawzYHCaGSaK/uwqSa1NifUyT0pL9iiZRKgVY+/P1oc2vjmO/dSHqZodJy5bOCSGleOyxGMRqkq4qHh7iUr0dE/slQcuasndVYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJiBdIg/; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1735486260; c=relaxed/simple;
+	bh=gx4ySKcacwUc3HORUH8zTWHyXS9kDPTmEK7EdeNVu2U=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=LE2QJBWn77AyIJZoaTFSmb9A9QMvrsuzcynX/WaMbEkzRHdSkQM6TCNilToXE1xZLeyNzs8RTBFAlyQoZR7OnOReLT9t9j/goZhm+zlXOCcB5SeA/jlMLFnPMd1TRT+K+FM/s1xRT6A9OO2Vyc642fC19wp17eSU8ZZUv1zexHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEtiZzPG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJiBdIg/"
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-21670dce0a7so6684335ad.1;
-        Sun, 29 Dec 2024 07:16:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735485394; x=1736090194; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hq78cmiaEPaV4FfrF6EAh1QhQFFCPQzra4GNWV266D0=;
-        b=iJiBdIg/skwD30VLjI0Rcyr8NhJK7Te9F4CFxkmDJgwO1Ce/DJffdlEkEoN5Ts3rJT
-         ZEsM/uwvrCv3DuIhIegJb18WXjf1Y/OcQYlG17jQGIqETLYp9eWYfIfaxpj/9LLA0WLO
-         qj103FlYbbjnOwLqDvNYDKpiSDYU7ff3HnTZamWddWD4z7XdzoMA06uz0mxq2a5atRkN
-         uZ2QDLABetzD8bfSuf13YJpURTXS+7m0s8eVw6ZGIc1Vl997Z0ksaY9N9czCfSs1isKD
-         mLDTHzjaGzS6LkDX2phpxQYaDxZPCh0iZqDi5WYlHa4CXseqwmHkt+L7phr345KCxWpd
-         ANsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735485394; x=1736090194;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hq78cmiaEPaV4FfrF6EAh1QhQFFCPQzra4GNWV266D0=;
-        b=sGtfsthT3//3eqbHI2GCk7H2Rdl2gPIIKCPghuDRsWt057ZZpMew9Kr/fSC/S9z30U
-         HmucWR4vrWOd8gECNAiAJoa7OMHP2zuk9q+eD/rwbmLnYE6AQ//jFmp2vqT3LDFeumL7
-         mbk7vZJt6t1tvUv6AnwXDpKBzUFXOQw9gaT9FMx5oRoDJIBM3j5eigmAlqmaycrIYam3
-         TpU3uF1EeypYXWNAYPZh0LW/Ra5R8ATZsCzRK6LfhJ2zyQkp5t6yZMvYmTGfn1QGo0x/
-         QTXcIK1/Bc/A6KiO2eij4vLKM7Dv4MqO4TVKb12iJQuHhNLVAUq5xBDgVTgnMaa8F+2b
-         uFuA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Zhu1qwTzHWEWn//Ypfrg5ioK+iV5/TuWFMP6aoxgpHwGAEPWlqPYeZoF3GmphFHqnlT5WzG9Mlj0Pt/D@vger.kernel.org, AJvYcCXN4YarPZ6rRE+fwNc8mNCEC7u4ulUAjZJzyN4eEROM1jAKZDynFEWCX0nYpOvb5pBN6DRpXfrkgxrR@vger.kernel.org, AJvYcCXQVKsl6Qb4TBXU5cP9/6y8+tI3y5M40sv43XKQVNAMza0N4hdGtOTu/gjFj5maTudhpcdEe9RpYRUa@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtuL1yJ9tX3MTDbwOMASJbX0bdP4kCFPHrimvHnFuPrQR2ZWAF
-	VEhubAqKMeWto7FGqVGbZNhsZvjHrj5Q1nARBSVh6aH2vxcScYy8
-X-Gm-Gg: ASbGncsni39qRenSwRv5x2bolykO4dR5kpQbDQ6PociRk7MFB0bUrxFg3OLKomyB7AZ
-	7aXKj5prNvKPV2PzWGAsajZUL7biOeaRHI7en0qQosEhLDhXqyske8dstYPDxaiFdJJQbXts803
-	JbAPe60PIw7MlaWzLBRTZ+PlposuSUWqG7/1XFJfmp1KF/ZhfOHeJx69GWlYpbxeSl12B8/yjoO
-	V+OV/JFuuArlxu4isekH9Thg37y/dqgCQOw8GoU
-X-Google-Smtp-Source: AGHT+IFFEwNrJMwRkLT29asUZ9fj0F/Jg8lbFG6p3eIzLyKLwNVq/VPJMBS9ZdTV8E4XHszzqYw5dw==
-X-Received: by 2002:a17:903:2c8:b0:215:a412:4f12 with SMTP id d9443c01a7336-219e6ed00ddmr391630595ad.33.1735485393650;
-        Sun, 29 Dec 2024 07:16:33 -0800 (PST)
-Received: from [127.0.0.1] ([2a0d:2683:c100::bf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc97432dsm163693425ad.110.2024.12.29.07.16.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Dec 2024 07:16:32 -0800 (PST)
-Message-ID: <65709464-8a34-4842-9b06-6365b549ce49@gmail.com>
-Date: Sun, 29 Dec 2024 23:16:24 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEtiZzPG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86D4C4CED1;
+	Sun, 29 Dec 2024 15:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735486260;
+	bh=gx4ySKcacwUc3HORUH8zTWHyXS9kDPTmEK7EdeNVu2U=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=LEtiZzPGgR6cl5DdZzDLfDheSm7BOo9JPhEQAo4yMYRqvhAIxJuEha7nbk+UJ1t3s
+	 etu6emXNzY0FkCKDG8z+9Ok+h6N6t+cx2/+AVuOi2Ov+TpKXEeoaKabrAAdDdNEp7H
+	 Iy43Mj66V3R5pBobIRHMC/br9ZlbxO/mTTnLY3gAmTp06buNr6Zn3t3e5XnbRQyltD
+	 T00LyH96RWv4Fsu/2HOYYw0U2cKw9Iv63Edmh3z2TIhKKDWrts2Anl0PGi7W/cUu37
+	 d/bRqzk4MsqPAVaI682LvOJiRLcXTw0xMzU935rwc9wajgZKmI0Ub0RPB2v1O2yNVa
+	 5EMLF247xSMnw==
+Date: Sun, 29 Dec 2024 09:30:58 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: troymitchell988@gmail.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
-To: Xukai Wang <kingxukai@zohomail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com>
- <20241229-b4-k230-clk-v1-1-221a917e80ed@zohomail.com>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-In-Reply-To: <20241229-b4-k230-clk-v1-1-221a917e80ed@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-omap@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>, 
+ Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>
+To: akemnade@kernel.org
+In-Reply-To: <20241229135351.5014-3-akemnade@kernel.org>
+References: <20241229135351.5014-1-akemnade@kernel.org>
+ <20241229135351.5014-3-akemnade@kernel.org>
+Message-Id: <173548625834.3975164.12604542224025301344.robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: ti: Convert composite.txt to
+ json-schema
 
-On 2024/12/29 21:21, Xukai Wang wrote:
-> This patch adds the Device Tree binding for the clock controller
-> on Canaan k230. The binding defines the new clocks available and
-> the required properties to configure them correctly.
+
+On Sun, 29 Dec 2024 14:53:51 +0100, akemnade@kernel.org wrote:
+> From: Andreas Kemnade <andreas@kemnade.info>
 > 
-> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+> Convert the OMAP gate clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
+> Choose GPL-only license because original binding was also GPL.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
->  .../devicetree/bindings/clock/canaan,k230-clk.yaml | 41 ++++++++++++++++++
->  include/dt-bindings/clock/k230-clk.h               | 49 ++++++++++++++++++++++
->  2 files changed, 90 insertions(+)
+>  .../bindings/clock/ti/composite.txt           | 55 -------------
+>  .../bindings/clock/ti/ti,composite-clock.yaml | 80 +++++++++++++++++++
+>  2 files changed, 80 insertions(+), 55 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/composite.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,composite-clock.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ffd4e0b052455bf3dcedd9355d93764119df3d68
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> @@ -0,0 +1,41 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Canaan Kendryte K230 Clock
-> +
-> +maintainers:
-> +  - Xukai Wang <kingxukai@zohomail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: canaan,k230-clk
-> +
-> +  clocks: 
-> +    const: 1
-`maxItems: 1` instead of `const: 1`
-> +
 
--- 
-Troy Mitchell
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/ti/ti,composite-clock.example.dtb: /example-0/bus/clock-controller@a10: failed to match any schema with compatible: ['ti,composite-interface-clock']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241229135351.5014-3-akemnade@kernel.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
