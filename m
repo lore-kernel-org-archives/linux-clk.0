@@ -1,37 +1,63 @@
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D5C199E84;
-	Mon, 30 Dec 2024 22:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68B0199EA1
+	for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 22:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735597255; cv=none; b=JfcjudcBq3Z/c/aveP6r88SD9XdH4oMZdzuDod1C74WGhJ7fZIPD/KqBwbUtaanoKhupKpQC+j3zdKecReUJNjdSe5Mqa2wBbx8pLFp+uB1/UlauRmGuQ86Rt7gOzI+kjY/pxsQYefYcGqyyh98cSM7eVPLX0WS7J+HutsDuZmE=
+	t=1735598078; cv=none; b=DVwfXKJgNML03EJXg5TDV5+UIHZILSDqve/aaK5SQJayBywRzlQGDnYz7gIqwmTznqPr6EuUIb64T/50Cfgd3doX4K0FlFYKccIkGAbZ2T9d6IS/gUJt6j1RQbBzFtKElMNIQivE6qK1MmF7gyLxkXLD2P2Kvqyp2wyfsZxQMLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735597255; c=relaxed/simple;
-	bh=WMCl32Jca+Ndw4He83tjcyOwptAzR1B9GaF0P+SC10o=;
+	s=arc-20240116; t=1735598078; c=relaxed/simple;
+	bh=LOO1Rh2481JcNYNndqVuMRmZHFmkQrOk9y9yQ01ttTE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NLRYVC84Gb3YiN8OoJi2bBFPpC3StrJN4inYPNUMhbI1wwgjivh566uQrRKAWwXXsbhjdgOmf+0L3lD0wrnOsMawXP0N5/jVsYRiQ1uXIqEtHvtN+XgRQRd3GfYqNkKuLT4/6SYEry48EG1U8iA7Ts/6BmcJjg1JTAiDC2Vld4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=R0hP+UJi; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	 In-Reply-To:Content-Type; b=kpRHRvb07Uf7cr/iVqIvmMUAqb8lC+KTArFPMGEzbJ/UPvsoCE8WeB6MDrwXxRtsCb/RGjS9CMqad8C3o0GzfpNN6mYIKfZoLhyHB85vuwG0P5aVPVzOucSbb8y3fZKNHxdD2WqeqTS++QG7Ar9DuxRtdzgKbd3uM/mfvibQXmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JQ6my9fM; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="R0hP+UJi"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A35F9104855A2;
-	Mon, 30 Dec 2024 23:20:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1735597251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kI5DEexhRDHaifeoO2yldrR3aqXqXtpFHALvj2nkVQo=;
-	b=R0hP+UJi5hbVtz06yR8D9rFX/JOwvUwQ7w4nIxTXgoLQk0Vw8qHNwM0D3YjmQag+O9/pxo
-	mJQuu2FErTmsVHF3/H8R4FZlVpIi7ppQpZ8D+iHfFYso2A0HQCdnzxcwgUEcJwp7A8O1+W
-	VcW+WOem5ync8r2efD0Rocy5gPDRYFWyInDIEqViyoGQ0ntq8BT8NttqQ1BZwFF3nYkimL
-	RdhmaDt3A2kZZbF+db1p3QsfXWHDQEbSqW+dwJ/2bT99enMxx5JWXkNqXmX1hxOf6NgljP
-	3aQWDkBY9xgsXpAjoyrrqudicXs3X04Uvsnr6XwlAevCvBu+jgUC57ot8tf+hA==
-Message-ID: <36665ab9-16de-4f77-a55f-b7942dc0c1bf@denx.de>
-Date: Mon, 30 Dec 2024 23:18:17 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JQ6my9fM"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-436637e8c8dso96905375e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 14:34:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735598075; x=1736202875; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qf+6YUKEAK6RmW0Zawgag6y0Zk8iAO/X5OAFkTK3r3s=;
+        b=JQ6my9fMV6X2iAKiGGq1e9qXhQMIRbn11BzoUst1O7bkFQvjYJbMjtGCtCFCVnFwCT
+         l/m8PyjDh50YbMickMpckrFpWf97vnZ8gPwzOPp0mT8mD/Dq0T6O4c7apfVqv7L2qyaz
+         bXmhWTXLwfnTDz8Prvo+ykF6yFbly3hW+zVROtgiBoUMjIFTlh1Bi7bJBluqcig8Vpio
+         9zOksAh01c2OGD0VAtP3mjnmA3Q9Q6Vn/VK8KUUvctsbTF2HpKdUKyBAFdiiAFDxOoEC
+         aLnQZHA9GhXvLr+y2p3y8aMSL/uU/X5nzLCLWwK1WcKNSi+swPEY87p9OTfpGOvKJ8pb
+         Axwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735598075; x=1736202875;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qf+6YUKEAK6RmW0Zawgag6y0Zk8iAO/X5OAFkTK3r3s=;
+        b=OvHaqjUjQESwImmIfQxX55U/PmI+Qk4FHcDz3PM1Vq04ubmqHXmMihNC59QTwaRqWg
+         N8gFeOVOBsQhEp63HPzwwCssJWmQQlwakefyeQTQCClhUrQeWiPql1jBjuP5PPyNc94k
+         /fVi7Pgd7ewFBrbQy4EjKelFBa4AxRZt71ZGVtQ9EmItQkOz2pJtrRNMg92VpTBHmlb4
+         QxQKbHJyIHbv9hxZhrXvSsfaTegoA64yg7cj3txwT7tSDRDyGriJJg2qUvQzxwsHF35/
+         /c8Gkx+04C8Pbx5XC9KjlNIUONhPgrSYrw+RVpGqn/XuRc5468WiEKPZSAJEemW5Y0K6
+         WI7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtL2f3jo342BAzq2QDyhc1ITZwH+pZFzUurZtd+VwlsrGCSXT3W2Y3Tq2vmuKtYVmUxLsjAEtigZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Sdm8yABzSicIXANMoVqZ6UYNe0FApGAc4t9dgqhmrgwnudnO
+	ewpm2hi/lOwGaXjXe6fDUuiL28LMBFLDNqmmdjGLH4qpbZ6aRkesiUkc2dWCCoU=
+X-Gm-Gg: ASbGnctbCgQQsG1DZDR3JuexLF+KF6O8yfmh480pt+fdlyQLwY0yWIw+wrEfdEp9egU
+	1NUIOdM9ghy6avNPcmzTVsWumneSpetNMGU2J+kHxJhLmMT/yD8XW1AD/U89xNVL+bkjBbJdV/i
+	N28KwfnND0ay144rR0rORFMeMNCypLSjlLw30KY61lkaOHPcOfOwA88QDPuWtwXHBFBoNGU7VbM
+	KBspNl9zmrDTMESPvmRgaaCPG+wXbonMoO8VYIUSezLz7xVXknWd/eDqd1sBzVs8y2/iw==
+X-Google-Smtp-Source: AGHT+IEkGNe23vunsFVznIzhni6Rd6kVfbzGRe+omgR6DEZtQKbekPwmqGHbmW4xitobE7MNowwCkQ==
+X-Received: by 2002:a05:600c:3b23:b0:436:4708:9fb6 with SMTP id 5b1f17b1804b1-43668b5e02dmr275300155e9.20.1735598075131;
+        Mon, 30 Dec 2024 14:34:35 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43665cd9c29sm349733625e9.14.2024.12.30.14.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Dec 2024 14:34:34 -0800 (PST)
+Message-ID: <c9d97c40-d3bf-486f-b348-91ffedeece5a@linaro.org>
+Date: Mon, 30 Dec 2024 22:34:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,73 +65,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] clk: fsl-sai: Add MCLK generation support
-To: Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org
-Cc: Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Nicolin Chen <nicoleotsuka@gmail.com>, Rob Herring <robh@kernel.org>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Takashi Iwai <tiwai@suse.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- devicetree@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20241226162234.40141-1-marex@denx.de>
- <20241226162234.40141-4-marex@denx.de> <D6OVE2W07NDX.2Q4AFF46TWCWJ@walle.cc>
+Subject: Re: [PATCH v2 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org>
+ <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-4-06fdd5a7d5bb@linaro.org>
+ <aaead9e5-a978-4b3b-8635-bd8be647ae35@linaro.org>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <D6OVE2W07NDX.2Q4AFF46TWCWJ@walle.cc>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <aaead9e5-a978-4b3b-8635-bd8be647ae35@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On 12/30/24 8:51 AM, Michael Walle wrote:
-> Hi Marek,
-
-Hi,
-
-> On Thu Dec 26, 2024 at 5:22 PM CET, Marek Vasut wrote:
->> The driver currently supports generating BCLK.
+On 30/12/2024 19:45, Vladimir Zapolskiy wrote:
+>> +            status = "disabled";
 > 
-> I'd say the driver supports generating *any* clock on the BCLK pin.
+> Please do not disable the clock controller, it was discussed in the 
+> past, that
+> all clock controllers should be enabled by default.
 
-The clock are coming out of the SAI 'BCLK' output and are controlled by 
-the SAI BCLK control bits. Of course, it is possible to feed arbitrary 
-upstream clock into the SAI and have those exposed on the BCLK pin. I'll 
-try to reword the commit message to make that clearer.
+Looks true but, news to me.
 
-> It's not necessarily the BCLK clock. I.e. on the board where this is
-> used, this is the clock with a given frequency sourcing the PLL in
-> the audio codec.
+Do you have a link to the discussion?
 
-Right
-
->> There are systems which require generation of MCLK instead.
-> 
-> You mean systems that use the MCLK pin instead?
-
-Yes
-
-> ..Which is the
-> normal use case for this pin. This driver was created because the
-> LS1028A doesn't have a MCLK pin, so we've "misused" the BCLK pin,
-> with the restriction that only integer dividers are possible.
-
-I have a system that is wired a bit unfortunately, I need to source 
-codec clock, where the codec is the clock consumer and needs to be able 
-to control the clock (SGTL5000). SAI MCLK is the only way I can get them 
-out of the pin I need, hence this patch.
-
-> I
-> haven't looked at the datasheet, but doesn't the MCLK has a PLL
-> which could generate any frequency?
-
-Audio PLL , sure.
-
-> Also I'd expect that the imx
-> SoCs already supports the MCLK for audio applications. Isn't that
-> the case?
-
-That does not work if the MCLK has to be enabled/disabled by the MCLK 
-clock consumer .
-
-[...]
+---
+bod
