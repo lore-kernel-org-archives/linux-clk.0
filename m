@@ -1,72 +1,97 @@
-Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6688156C71
-	for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 05:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B770A335BA;
+	Mon, 30 Dec 2024 06:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735536553; cv=none; b=l0HLDf9ysltV6F+sgLIdqzZf7ZEVkASgPUtEvyHeNzGRwKtIoak+Dh7KzSsdilQ0or+UlWD7GajLuoljruFvxQjpybZGrl9z1hZDYmjk7Mat4JLnpkymLLeWbpeJXT0NS+W0d4w11mAAJSMRWqzPlqIRU61/gERSK7j/zMxNgqw=
+	t=1735541523; cv=none; b=Y5jwRxdZWxNdIRG/ObkDJxuS3OCKCKQ7Q0syKueniAj0FaLygaLKTYtx3SnpbuVCiT4Z3OsPzITqaYQN6pSkNKNZaOPeQBIaKRLbhq7vX2yUYgYS3PRotpQmLkvj2UBsYe+q/j47WcR8HTyFYieXelcbU4Sm0E0bv5iQCSBKjtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735536553; c=relaxed/simple;
-	bh=z1tbn6LI4vl+YBo18LDIWQRtOtRiBFMCb910mSXG7cw=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dJ6889bJUWgE+3qrYl3kxKW10hs3p1UP+9ukzDAXN+J3Pa9U9jV/5wVqjEhoMya3YvQpa7rajKD7xTo95lEDcAHxs0GblfGQYYCsMmDZn7L5KytqVvUNL5D/yz7wom6zYynOX3Dwtn46Oev8FqZYqpzhTBSXb27n26OlEKt0CiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=Zz+OiCX2; arc=none smtp.client-ip=185.70.40.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+	s=arc-20240116; t=1735541523; c=relaxed/simple;
+	bh=vkCraO+Ig7stjn5gvKeunHMQ+Wj73HfpI3V4dSWqzzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qtSRdPgDOJpv/T8mIgjvHLbzFDUYgvzl6CQCZh6yQor1atBQ4ISp22Q8uF+bWNPjhfPyBOuni1kyLADzEZXijMvNPQWAZ626LNkCEwMLuhdfQxdhcsmkEEQdEU1xFGcz60FyA661XuyXqM1Tvdvc/COj+TVBvO6T2kEl7/ZnLPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=patvKnbP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="Zz+OiCX2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=protonmail3; t=1735536542; x=1735795742;
-	bh=z1tbn6LI4vl+YBo18LDIWQRtOtRiBFMCb910mSXG7cw=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=Zz+OiCX2Xx5bWEmeK5nnR0zJicm4mDJY2qP8WXWcGEm4CJRfBzyhIk5nUpHMlrAiy
-	 qACymolqPfeQ0oRmKFgNO83NaaKuLDi6eMm49luMd7Ox4WN3V97Rk7yuVqUHRQpWmu
-	 qFb0V3RTJsYHfyKb2yN4J6APE/odc9bHOO5O9r1JVwIvQH7m2Dp0p3e6e/gSL49dQZ
-	 qqgXjR0AB0Fg8UrxUnEBN+eYQ5gAtRPnI6ahDrEhIP7lJ22DASd65oZK7F7nCy00aV
-	 sPYOx3QD+SphcicQgA1RTvrwznPwidKQWxc1ech84w/SmBarlzbETAxM8Ug5JDu8yQ
-	 w2yS26kefmBZQ==
-Date: Mon, 30 Dec 2024 05:28:58 +0000
-To: kristo@kernel.org
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH] clk: ti: use kcalloc() instead of kzalloc()
-Message-ID: <xfjn4wqrhukvi45dkgkbulamq3242eijn7567vxwaxznh4ebdr@waat7u3l2mhi>
-Feedback-ID: 28410670:user:proton
-X-Pm-Message-ID: b630a1367cff86984b54c694637490e109da7999
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="patvKnbP"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BU2kDJB027066;
+	Mon, 30 Dec 2024 06:51:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WWXtJULQGiJJVIBh3B7lfeJ0krwDnFaYhJyLvuXbwcg=; b=patvKnbPaB3XpjUV
+	8JQ5uy0L7tyoo28NyCbLksRN2T4MtKak3bg6R6yBXliMlIH9AntUYDSaQmjACCdJ
+	VBsqBsRvhy+O1z/tPmFQjprkNQY5f3sixkYHa+ljka4W1SJ2amWffeSlnfYj3Y7r
+	OMUfXw/MfMmeG72qWX9Dg/IW+IaY+ZMOieqUwsNJ8+ZXQSGpYmU0sjJEaSqBRHio
+	TnS+x7CD01B3DJjFXSioaO+2iZxWxeUosXtcJwFbarJK/ZdbPqWNnaeRk3XMJtqF
+	dOUKqGpMWwH9yIlJQAXuKxNL8RABY1/oHBJQMcWOQvsqtycCnweFtXgsXLyNgFUN
+	KP9v7g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43uk120d61-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 06:51:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BU6pubi028470
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 06:51:56 GMT
+Received: from [10.216.11.39] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 29 Dec
+ 2024 22:51:50 -0800
+Message-ID: <e673dbdf-9b16-4c64-a3e0-cf5bb31e2b82@quicinc.com>
+Date: Mon, 30 Dec 2024 12:21:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] Add SPI4 support for IPQ5424
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, <andersson@kernel.org>,
+        <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20241227072446.2545148-1-quic_mmanikan@quicinc.com>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <20241227072446.2545148-1-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0dPMx3QJzgiWtWZZzi7drn84RGXK9dFn
+X-Proofpoint-GUID: 0dPMx3QJzgiWtWZZzi7drn84RGXK9dFn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 impostorscore=0 suspectscore=0 mlxlogscore=865
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412300056
 
-Use 2-factor multiplication argument form kcalloc() instead
-of kzalloc().
 
-Link: https://github.com/KSPP/linux/issues/162
 
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
----
- drivers/clk/ti/mux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 12/27/2024 12:54 PM, Manikanta Mylavarapu wrote:
+> Add SPI4 node to the IPQ5424 device tree and update the relevant
+> bindings, GPIO pin mappings accordingly.
+> 
+> Changes in V3:
+> 	- Rename SPI0 to SPI4 because SPI protocol runs on serial engine 4
 
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 216d85d6aac6..f684fc306ecc 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -180,7 +180,7 @@ static void of_mux_clk_setup(struct device_node *node)
- =09=09pr_err("mux-clock %pOFn must have parents\n", node);
- =09=09return;
- =09}
--=09parent_names =3D kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
-+=09parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
- =09if (!parent_names)
- =09=09goto cleanup;
-=20
---=20
-2.47.1
+Do we really need to do this? If so, it will not align with the HW 
+documentation and will lead to the confusion down the line. IMHO, we 
+should stick with the convention followed in the HW documentation.
 
+Thanks,
+Kathiravan T.
