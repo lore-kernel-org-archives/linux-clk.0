@@ -1,173 +1,227 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0205B19995D;
-	Mon, 30 Dec 2024 10:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06DF1A238F
+	for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 13:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735555690; cv=none; b=Vx2YDBs8oiHcpHrdsvFSjKS/YwOD+gLLq9Fa6PjElktY481uOXEzW1AoS7HoElMF7DeOCcdg1PGArllevn+gzI9rjm8R3tcPiH+unK5vUNfohjySegZoQZ5KwM4FXmkP2/T6MHCcqv9prnQxwmeMWFK0hXcvUS3dhzaBJezBJeM=
+	t=1735565433; cv=none; b=K5I2XOQZCqRVWVw1li71Ez5ppBDUTva4HCNIICb5PrUlKl2po3gKtyWhimzBqdEXhTyvr3oyTxCMSx+h8hZkS2mabjnHVUwPNoZnnuVy8ClJoHEZfGgs0pl1t3Cm8OhkKoSuaBkKSjs61j1X8edkoMt8nPHJ6WOWlFw4XaRjMSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735555690; c=relaxed/simple;
-	bh=NobdQdHmCtuB/Sj+n4FPbxrPC8pPbvLMeiXofRRbiPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l43MzEvxdevREyw1zUfGuVQ5kfpglVwDEnWxB+c1AEMjzUmBqHRWmaXpimvoj891mQUfsk9L/hk2dql06RaTUumcxaI0XBExwzs8yhOJ1szcO+AKyegMhvkeuhIhIhRkdlZkFcwbQghHWGMydq6tcz6ov0P620iLz/8Us76+UIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dSdfJdV0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1735565433; c=relaxed/simple;
+	bh=hTxYE4ZKAFH1aRDR8sJ5Nb399xU6yuWM2PXt4q5N0Qc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=vF5FTzOcspeuarlwkJKjQOxJ5RUME1gzLXTkulUlSDliYRvM3PGe9y7SoixQrDjje+TORFTvmckxZyrkI7oADAJVUReKy/JugL42MvVZ7XbTP0jBl+srOhanWYP5lRD1Zk+SqGzHxZLmqX9YkbydqoWCV4CByOH1VJ+2xuxmGLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H/06P6aP; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dSdfJdV0"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BU1X420028167;
-	Mon, 30 Dec 2024 10:48:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XKMA1gLm8gn+bP4UZIa5voLI71re8IgNZreD1JMKVCM=; b=dSdfJdV0fEUHahEO
-	zz3Qju1tT1orLUyvy47tafNBObknYCt87R+605zO9Bs3He6WpCwSfUcji1oYM8IA
-	1OylSftUQ6g4GtNqkSsUVlwAYRVydWVaKped9gQSRLeF4lScd/bgYziwWGwQbUIJ
-	xRYSrqnsi6r7Di5N1e9C8hl3J2F7gpeo+O/olsITcivS14lql09IxMVPHhKKwRGF
-	DmDeZvH9FL44TNwhkUzv5t8+HGtVfOHTNjAqDP2kvk8972o1VhfJwOzReG1WKr7g
-	qY/dFylYuQQSjRER1DdRUIHaBBAtBncrYyQZ9o08hgJvsQrxl3GkA478d3CaQeGc
-	wiQqJg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43uhxvrym4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Dec 2024 10:48:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BUAlxW6003724
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Dec 2024 10:47:59 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Dec
- 2024 02:47:54 -0800
-Message-ID: <2ed8afe0-4cf7-4d97-8de8-3c3119db3342@quicinc.com>
-Date: Mon, 30 Dec 2024 16:17:50 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/06P6aP"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-436345cc17bso66861585e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 05:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735565430; x=1736170230; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTrM0yyDJXD9bFtEtBPUoCeH8j7YG6AaFMdrnGgLcok=;
+        b=H/06P6aPmG6MBZABZ5zR9h5oUJAUuZSeR8FT60yK4ePvy7L0vSPMLRqL3UYm9h5Y4F
+         QNGm+CfKfUBvanSfH39a6DnEqaBJK8QSU13OoLQ+Rk6K8+hu7Pja/IOtalMtYcONSlnS
+         kntgxur46+Kc292/N3obmycccDXVOy4xm8HCWwZM3TAaOxANUiKaIFR5DxbsfVtuSP6w
+         duA8FpPD4XncsULA0aa/+WXP/qB5wQ92jTy/juu8XYLtNA60X4BAg1pCEiB+OqTAMGYx
+         1/VNjzyDuniLQR4RWNj3Hf/V5vk4b8xK4zjdOwau92A5TRqetzTtWIsCAt8tum67b3pE
+         EKeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735565430; x=1736170230;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vTrM0yyDJXD9bFtEtBPUoCeH8j7YG6AaFMdrnGgLcok=;
+        b=AR+FhCEP+3ZbqZU8ofnzLsV8mT5KoS9l0T8NMTxdGvq+VRmgnkS5PCIXAQbquK3CXM
+         gsJ9qKroQJBlCk3Qccrxi2c+JMMm9S05x5KuBvM0bI0fpPAVynjgIan7p9fBaMDWhtkg
+         Ae4hlpW6tL30cRAhfVDO7z0p4WLMdxe5/2ExxCV+lt8bnPe/I8t+lB11iZCtjrYLHHgn
+         CiR7edK5uCFkPIEQZwunfeawkSZniNTAvbnqFp7mw0GWeinV4xEujdHtcQLSZT9vmw2C
+         /5F1pyFNnpkmGzi0L8h4ReI8Tal3UEGYnD+JGyg8FqZGpQoIB51nJHOSUeo6ZYbXr/fp
+         Ew9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVxVOOshwgQqPVE8eOVD5xOXk5pxkfE22MQSE1bgZhBrMMu6UGGv35PBV4LknesPkYY6xAGJo6Ik7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTPVYl09V8ydsA+fOvz1+xLV2jKyyPXEOtKRZAZ1hP8gVc/pBZ
+	gkdWex3jgXe4cuBbAFsl57xGfb3B33eH/9YZiklH0Unq5UJ4odef0yqea1Al2f8=
+X-Gm-Gg: ASbGncv9ytSL0Y202Cn1k9Z4KEpqyBnLjPMfV/+FSwjFzzTmxVl23XQHfkftgZb/Tqr
+	Lza9mZqPlNVomobSQWYbSZyzra2GSCeAGiLBQcdJj68nskNjlW5MqYrJIS6IfXY/Kjx/bfkvxLo
+	3tJNNI/V5FnAu+lQ6mjrqJ4WT70TUewwhlhN05nLMywAxfaHvfRUEQWhS4Pxrk3l9pZ7kmaMZoj
+	s1z/TiAKTNm1GRYT44AWjiIFMJ4pzH0M/B3pOVaivotO/NEkQLMQe6IC9eRD0/Bxw==
+X-Google-Smtp-Source: AGHT+IHJ9du+ewY/Bdye9mAK+cfBMiFQ5y7C32fk0dJ22m8Y8FLixLbLTHjqYrU9c2M4dMtGjd4GKw==
+X-Received: by 2002:a05:600c:1d03:b0:434:a529:3b87 with SMTP id 5b1f17b1804b1-4366864313dmr372503735e9.10.1735565430054;
+        Mon, 30 Dec 2024 05:30:30 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c828d39sm31079082f8f.9.2024.12.30.05.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2024 05:30:28 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v9 0/4] clk: qcom: Add support for multiple power-domains
+ for a clock controller.
+Date: Mon, 30 Dec 2024 13:30:17 +0000
+Message-Id: <20241230-b4-linux-next-24-11-18-clock-multiple-power-domains-v9-0-f15fb405efa5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: pinctrl: qcom: rename spi0 pins on
- IPQ5424
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20241227072446.2545148-1-quic_mmanikan@quicinc.com>
- <20241227072446.2545148-2-quic_mmanikan@quicinc.com>
- <fbdf716d-0c4c-4f51-9f54-0f38931e26cd@kernel.org>
- <2234c9d5-f434-48cf-ba77-38e9109541eb@quicinc.com>
- <88b6e7ec-0265-4507-9ce1-a72217563e32@kernel.org>
- <ea31d59b-38da-4844-9ea5-32e51b8578fd@quicinc.com>
- <4adc7827-dc5f-41ca-b091-74e86bfdefb1@kernel.org>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <4adc7827-dc5f-41ca-b091-74e86bfdefb1@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xOLZ3noFnUo4KdAUx_5_LiPzxggnDoK_
-X-Proofpoint-GUID: xOLZ3noFnUo4KdAUx_5_LiPzxggnDoK_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 clxscore=1015 bulkscore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412300093
+X-B4-Tracking: v=1; b=H4sIAGmgcmcC/63RTW7DIBAF4KtErEsFw/DjrnqPqgsMOEF1jIUTN
+ 1WUu3eSTV1553b5ZvE+ZriyKdWcJvayu7Ka5jzlMlBonnYsHPywTzxHygwEoJTS8RZ5n4fzhQ/
+ pcuKAXEpO49CX8MGP5/6Uxz7xsXymymM5+jxM3OuuaTAG1OAZNY81dfnyUN/eKR/ydCr16/GIW
+ d6nf/NmyQVvrYc2Omi9sq9U4Wt5LnXP7uAMCwT0NgQI8TpZrTHahHqFqCVitiGKEKdM9FEpDdK
+ vEFwidhuChKBCF1GE1qj1JnqJbPwTTUjw4MAENE7iCjFLpNmGGEIA0RlvhGudWSH2BwEq3IRYQ
+ mxSArooGnRuhbh/QBwhOjYqpK6Rwv8+1+12+wbZxoNrugMAAA==
+X-Change-ID: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-1b0d6
 
+Changes in v9:
+- Added patch to unwind pm subdomains in reverse order.
+  It would also be possible to squash this patch into patch#2 but,
+  my own preference is for more granular patches like this instead of
+  "slipping in" functional changes in larger patches like #2. - bod
+- Unwinding pm subdomain on error in patch #2.
+  To facilitate this change patch #1 was created - Vlad
+- Drops Bjorn's RB on patch #2. There is a small churn in this patch
+  but enough that a reviewer might reasonably expect RB to be given again.
+- Amends commit log for patch #3 further.
+  v8 added a lot to the commit log to provide further information but, it
+  is clear from the comments I received on the commit log that the added
+  verbiage was occlusive not elucidative.
+  Reduce down the commit log of patch #3 - especially Q&A item #1.
+  Sometimes less is more.
+- Link to v8: https://lore.kernel.org/r/20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org
 
+Changes in v8:
+- Picks up change I agreed with Vlad but failed to cherry-pick into my b4
+  tree - Vlad/Bod
+- Rewords the commit log for patch #3. As I read it I decided I might
+  translate bits of it from thought-stream into English - Bod
+- Link to v7: https://lore.kernel.org/r/20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-0-7e302fd09488@linaro.org
 
-On 12/30/2024 1:46 PM, Krzysztof Kozlowski wrote:
-> On 30/12/2024 08:50, Manikanta Mylavarapu wrote:
->>
->>
->> On 12/27/2024 3:00 PM, Krzysztof Kozlowski wrote:
->>> On 27/12/2024 10:18, Manikanta Mylavarapu wrote:
->>>>
->>>>
->>>> On 12/27/2024 1:06 PM, Krzysztof Kozlowski wrote:
->>>>> On 27/12/2024 08:24, Manikanta Mylavarapu wrote:
->>>>>> SPI protocol runs on serial engine 4. Hence rename
->>>>>> spi0 pins to spi4 like spi0_cs to spi4_cs etc.
->>>>>>
->>>>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>>>>> ---
->>>>>
->>>>>
->>>>> <form letter>
->>>>> This is a friendly reminder during the review process.
->>>>>
->>>>> It looks like you received a tag and forgot to add it.
->>>>>
->>>>> If you do not know the process, here is a short explanation:
->>>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
->>>>> of patchset, under or above your Signed-off-by tag, unless patch changed
->>>>> significantly (e.g. new properties added to the DT bindings). Tag is
->>>>> "received", when provided in a message replied to you on the mailing
->>>>> list. Tools like b4 can help here. However, there's no need to repost
->>>>> patches *only* to add the tags. The upstream maintainer will do that for
->>>>> tags received on the version they apply.
->>>>>
->>>>> Please read:
->>>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
->>>>>
->>>>> If a tag was not added on purpose, please state why and what changed.
->>>>> </form letter>
->>>>>
->>>>
->>>> Hi Krzysztof,
->>>>
->>>> 	Patches #1 to #4 are newly added in V3 (to rename SPI0 to SPI4). Hence, there are no A-b/R-b
->>>> 	tags associated with these patches. I mentioned this information in the cover letter.
->>>> 	
->>>> 	I assume you are referring to Patch #1 from the V2 series.
->>>> 	Patch #1 [1] and #2 [2] from the V2 series have been merged into linux-next.
->>>> 	[1] https://lore.kernel.org/linux-arm-msm/20241217091308.3253897-2-quic_mmanikan@quicinc.com/
->>>> 	[2] https://lore.kernel.org/linux-arm-msm/20241217091308.3253897-3-quic_mmanikan@quicinc.com/
->>>>
->>>> 	Please let me know if i missed anything.
->>>
->>> v3 mislead me here and three different subsystems in one patchset.
->>>
->>> Anyway, if this is different patch then review follows - there is no ABI
->>> impact explanation and this is an ABI break. What's more, entries are
->>> not sorted anymore and why there is a gap? spi4, spi1 and spi10? Where
->>> is spi3?
->>>
->>> Not sure if this renaming is useful or correct, especially considering
->>> not many arguments in commit msg (e.g. datasheet?).
->>>
->>>
->>
->> Hi Krzysztof,
->>
->> 	The IPQ5424 supports two SPI instances on serial engine 4 and 5.
->> 	Previously, SPI clocks, gpio pins and DTS node names were named
->> 	according to protocol instances like spi0 and spi1.
->>
->> 	As per the feedback received in
->> 	https://lore.kernel.org/linux-arm-msm/ca0ecc07-fd45-4116-9927-8eb3e737505f@oss.qualcomm.com/,
->> 	spi0 has been renamed to spi4 to align with the serial engine instance.
->>
->> 	Kindly advice if it's not acceptable.
-> 
-> The advice was not about pins, though. My comments stands for commit
-> msg. Nothing about ABI, nothing about datasheet...
-> 
+Changes in v7:
+- Expand commit log in patch #3
+  I've discussed with Bjorn on IRC and video what to put into the log here
+  and captured most of what we discussed.
 
-I will update the commit message in the next version.
+  Mostly the point here is voting for voltages in the power-domain list
+  is up to the drivers to do with performance states/opp-tables not for the
+  GDSC code. - Bjorn/Bryan
+- Link to v6: https://lore.kernel.org/r/20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-0-24486a608b86@linaro.org
 
-Thanks & Regards,
-Manikanta.
+Changes in v6:
+- Passes NULL to second parameter of devm_pm_domain_attach_list - Vlad
+- Link to v5: https://lore.kernel.org/r/20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-0-ca2826c46814@linaro.org
+
+Changes in v5:
+- In-lines devm_pm_domain_attach_list() in probe() directly - Vlad
+- Link to v4: https://lore.kernel.org/r/20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org
+
+v4:
+- Adds Bjorn's RB to first patch - Bjorn
+- Drops the 'd' in "and int" - Bjorn
+- Amends commit log of patch 3 to capture a number of open questions -
+  Bjorn
+- Link to v3: https://lore.kernel.org/r/20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org
+
+v3:
+- Fixes commit log "per which" - Bryan
+- Link to v2: https://lore.kernel.org/r/20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-0-a5e7554d7e45@linaro.org
+
+v2:
+The main change in this version is Bjorn's pointing out that pm_runtime_*
+inside of the gdsc_enable/gdsc_disable path would be recursive and cause a
+lockdep splat. Dmitry alluded to this too.
+
+Bjorn pointed to stuff being done lower in the gdsc_register() routine that
+might be a starting point.
+
+I iterated around that idea and came up with patch #3. When a gdsc has no
+parent and the pd_list is non-NULL then attach that orphan GDSC to the
+clock controller power-domain list.
+
+Existing subdomain code in gdsc_register() will connect the parent GDSCs in
+the clock-controller to the clock-controller subdomain, the new code here
+does that same job for a list of power-domains the clock controller depends
+on.
+
+To Dmitry's point about MMCX and MCX dependencies for the registers inside
+of the clock controller, I have switched off all references in a test dtsi
+and confirmed that accessing the clock-controller regs themselves isn't
+required.
+
+On the second point I also verified my test branch with lockdep on which
+was a concern with the pm_domain version of this solution but I wanted to
+cover it anyway with the new approach for completeness sake.
+
+Here's the item-by-item list of changes:
+
+- Adds a patch to capture pm_genpd_add_subdomain() result code - Bryan
+- Changes changelog of second patch to remove singleton and generally
+  to make the commit log easier to understand - Bjorn
+- Uses demv_pm_domain_attach_list - Vlad
+- Changes error check to if (ret < 0 && ret != -EEXIST) - Vlad
+- Retains passing &pd_data instead of NULL - because NULL doesn't do
+  the same thing - Bryan/Vlad
+- Retains standalone function qcom_cc_pds_attach() because the pd_data
+  enumeration looks neater in a standalone function - Bryan/Vlad
+- Drops pm_runtime in favour of gdsc_add_subdomain_list() for each
+  power-domain in the pd_list.
+  The pd_list will be whatever is pointed to by power-domains = <>
+  in the dtsi - Bjorn
+- Link to v1: https://lore.kernel.org/r/20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org
+
+v1:
+On x1e80100 and it's SKUs the Camera Clock Controller - CAMCC has
+multiple power-domains which power it. Usually with a single power-domain
+the core platform code will automatically switch on the singleton
+power-domain for you. If you have multiple power-domains for a device, in
+this case the clock controller, you need to switch those power-domains
+on/off yourself.
+
+The clock controllers can also contain Global Distributed
+Switch Controllers - GDSCs which themselves can be referenced from dtsi
+nodes ultimately triggering a gdsc_en() in drivers/clk/qcom/gdsc.c.
+
+As an example:
+
+cci0: cci@ac4a000 {
+	power-domains = <&camcc TITAN_TOP_GDSC>;
+};
+
+This series adds the support to attach a power-domain list to the
+clock-controllers and the GDSCs those controllers provide so that in the
+case of the above example gdsc_toggle_logic() will trigger the power-domain
+list with pm_runtime_resume_and_get() and pm_runtime_put_sync()
+respectively.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      clk: qcom: gdsc: Release pm subdomains in reverse add order
+      clk: qcom: gdsc: Capture pm_genpd_add_subdomain result code
+      clk: qcom: common: Add support for power-domain attachment
+      clk: qcom: Support attaching GDSCs to multiple parents
+
+ drivers/clk/qcom/common.c |  6 ++++
+ drivers/clk/qcom/gdsc.c   | 75 +++++++++++++++++++++++++++++++++++++++--------
+ drivers/clk/qcom/gdsc.h   |  1 +
+ 3 files changed, 69 insertions(+), 13 deletions(-)
+---
+base-commit: 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2
+change-id: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
