@@ -1,161 +1,146 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C659B155345;
-	Mon, 30 Dec 2024 07:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EC4156C6F;
+	Mon, 30 Dec 2024 07:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735545052; cv=none; b=jXd4OkPnWtP2e+QCNVkm8jpdKGfpg/PmM7lESKjVCeMMKdeuwt3/+Z8kcTbghWyz9hiaklGHQQUB1pTTgUv2+hz0q8VODEyToD89k6ZNVnj3znAyFgIQxbyT990WXEXN6gK1w3Eu4xOvo4LcNpRPA7U9KBpoTBrJrEgsp+mzbdQ=
+	t=1735545280; cv=none; b=pFKn9xZKfVZtSE8Rju1ryb5HqQ6nA+Sz2DA2l8ZJgk+FNqCXrqFqm/s3+w1ZaxB8PMP7BcsGfnnhuGmDbDcdSeuRzqN/cD3A/MRZfdEaUGL6LgGyxaD6Ctzvc0qcIBQ9QpFqHC9N4ikf6Z/Fw6QwHrpzMaqkwHnEJpp02C+FURA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735545052; c=relaxed/simple;
-	bh=gnI9nX+tGwonTRbDAHcvIM2xSVjUaJjLTFrHnTjAqJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Dx5OWcfEtX6bSLAqKmzoe8HMy0Bey/UQgnAkuwJAaqVsREkjpaJkptHD2tkHFQC/8yaHa6O12moPEfaM7qOb2o8kNMNhcKHB02tNaSThbys2YfbcLzyA7bTfmdu4bZbDBjXcto0xIosX4Tc2VhZUP5qZYA2pVMP8sqXtN2zl7S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LqyjVTEn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1735545280; c=relaxed/simple;
+	bh=183EA7MfCyWxhhzwpT8mT9bghaFpDjOqGIviGpm0Xd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+pUuwzKVRKaxTVZRrdQxpBtaQ/NpKL/Bf4xdix9N/0cHNj5wGC11q3jF21o8go6nfFVFnE8MZuG/FHVjpVVuL0qc8s/nCkDVquCy1t9STs2gsQOP+sjntpJ7NK3Nly9GJtnvg2Vq5hK8YgxLtC0cLx9zdcEmQEqtI5alCGvE+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvlVmJTP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LqyjVTEn"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BTMd21s014531;
-	Mon, 30 Dec 2024 07:50:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FBSe9XsWu5bcsf4UbEBMl0aEkgZHUnZCrNCXB26edL4=; b=LqyjVTEnYgj2SQys
-	WL+a3P0/5ou/RP9PcMDY8o8KlyM1IQHeuKQlrpmNpoW09Pw2cp5i5x7mAZph02sN
-	knKd7fGbSc7W7tWfIjXENT+TQ4ogCYiSRHNg13+zFx5UDVvm2m7yAXJr1ox32Xqw
-	uHm7tWdSNTZpU5nRuJLTds0uWBWU2dvt2AQX/LLreEv7lXHMsk87MUAIhUeHZzm7
-	agDkFEAdjkvmt+GYxY9f8pliPBuC9Ek6H95SnSNr1/eJl9Zpi22L89Hyeg6CqQ6t
-	aFHUPqz7GrHeGZHadWZEgyKHoNCOUc9iB6XQGcgniUiAhpfcKNtZw4G95CrMAOQl
-	wSwXDw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43u9tm95sy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Dec 2024 07:50:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BU7ojYh013829
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Dec 2024 07:50:45 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 29 Dec
- 2024 23:50:40 -0800
-Message-ID: <ea31d59b-38da-4844-9ea5-32e51b8578fd@quicinc.com>
-Date: Mon, 30 Dec 2024 13:20:36 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvlVmJTP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAD2C4CED0;
+	Mon, 30 Dec 2024 07:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735545279;
+	bh=183EA7MfCyWxhhzwpT8mT9bghaFpDjOqGIviGpm0Xd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JvlVmJTPsEilkeHz2NgEIfo56yDGjFOw+rqKFtEMD86H+dR/pquZbRjNMjMNwmywS
+	 K9yF5bxbhXPdF4q4tY0T7Lt6JQWpjiaw6Yp1tAbTrfOgdQjoLgnbRWe1RgFXk1pDm5
+	 hRx3n0d+bs6BTXkYSQ/eRZcfT50IbBnazT9lXA5XgqL7Y3QM03LIypZlTa4HA39glp
+	 e82iS08bcaoD35Jg5mnILgrJzD+knjtIecoJ3E3huzy/BE03zeou3jhBfFGpS4U+iE
+	 ZljgEhmXkp18UNHAvrFiF2h/fj9tSvzRFWu0bEY/Zn0vKaPrYpqZGV4U63YeoLnR1S
+	 lk3MYOa9OLJuQ==
+Date: Mon, 30 Dec 2024 08:54:36 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Xukai Wang <kingxukai@zohomail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Troy Mitchell <TroyMitchell988@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+Message-ID: <zfjj33otyxiamsc7u2uwnvygcuhe7u2tfgiz6txp62emnddbw5@5iozmjg4eugn>
+References: <20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com>
+ <20241229-b4-k230-clk-v1-1-221a917e80ed@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: pinctrl: qcom: rename spi0 pins on
- IPQ5424
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20241227072446.2545148-1-quic_mmanikan@quicinc.com>
- <20241227072446.2545148-2-quic_mmanikan@quicinc.com>
- <fbdf716d-0c4c-4f51-9f54-0f38931e26cd@kernel.org>
- <2234c9d5-f434-48cf-ba77-38e9109541eb@quicinc.com>
- <88b6e7ec-0265-4507-9ce1-a72217563e32@kernel.org>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <88b6e7ec-0265-4507-9ce1-a72217563e32@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ccQWW536jdlqfc_Ljm3OfJNHKjwgtAzs
-X-Proofpoint-ORIG-GUID: ccQWW536jdlqfc_Ljm3OfJNHKjwgtAzs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 clxscore=1015
- priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 spamscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412300065
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241229-b4-k230-clk-v1-1-221a917e80ed@zohomail.com>
 
-
-
-On 12/27/2024 3:00 PM, Krzysztof Kozlowski wrote:
-> On 27/12/2024 10:18, Manikanta Mylavarapu wrote:
->>
->>
->> On 12/27/2024 1:06 PM, Krzysztof Kozlowski wrote:
->>> On 27/12/2024 08:24, Manikanta Mylavarapu wrote:
->>>> SPI protocol runs on serial engine 4. Hence rename
->>>> spi0 pins to spi4 like spi0_cs to spi4_cs etc.
->>>>
->>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>>> ---
->>>
->>>
->>> <form letter>
->>> This is a friendly reminder during the review process.
->>>
->>> It looks like you received a tag and forgot to add it.
->>>
->>> If you do not know the process, here is a short explanation:
->>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
->>> of patchset, under or above your Signed-off-by tag, unless patch changed
->>> significantly (e.g. new properties added to the DT bindings). Tag is
->>> "received", when provided in a message replied to you on the mailing
->>> list. Tools like b4 can help here. However, there's no need to repost
->>> patches *only* to add the tags. The upstream maintainer will do that for
->>> tags received on the version they apply.
->>>
->>> Please read:
->>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
->>>
->>> If a tag was not added on purpose, please state why and what changed.
->>> </form letter>
->>>
->>
->> Hi Krzysztof,
->>
->> 	Patches #1 to #4 are newly added in V3 (to rename SPI0 to SPI4). Hence, there are no A-b/R-b
->> 	tags associated with these patches. I mentioned this information in the cover letter.
->> 	
->> 	I assume you are referring to Patch #1 from the V2 series.
->> 	Patch #1 [1] and #2 [2] from the V2 series have been merged into linux-next.
->> 	[1] https://lore.kernel.org/linux-arm-msm/20241217091308.3253897-2-quic_mmanikan@quicinc.com/
->> 	[2] https://lore.kernel.org/linux-arm-msm/20241217091308.3253897-3-quic_mmanikan@quicinc.com/
->>
->> 	Please let me know if i missed anything.
+On Sun, Dec 29, 2024 at 09:21:08PM +0800, Xukai Wang wrote:
+> This patch adds the Device Tree binding for the clock controller
+> on Canaan k230. The binding defines the new clocks available and
+> the required properties to configure them correctly.
 > 
-> v3 mislead me here and three different subsystems in one patchset.
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+> ---
+>  .../devicetree/bindings/clock/canaan,k230-clk.yaml | 41 ++++++++++++++++++
+>  include/dt-bindings/clock/k230-clk.h               | 49 ++++++++++++++++++++++
+>  2 files changed, 90 insertions(+)
+
+Please run scripts/checkpatch.pl and fix reported warnings. After that,
+run also 'scripts/checkpatch.pl --strict' and (probably) fix more
+warnings. Some warnings can be ignored, especially from --strict run,
+but the code here looks like it needs a fix. Feel free to get in touch
+if the warning is not clear.
+
 > 
-> Anyway, if this is different patch then review follows - there is no ABI
-> impact explanation and this is an ABI break. What's more, entries are
-> not sorted anymore and why there is a gap? spi4, spi1 and spi10? Where
-> is spi3?
-> 
-> Not sure if this renaming is useful or correct, especially considering
-> not many arguments in commit msg (e.g. datasheet?).
-> 
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ffd4e0b052455bf3dcedd9355d93764119df3d68
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+> @@ -0,0 +1,41 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Canaan Kendryte K230 Clock
+> +
+> +maintainers:
+> +  - Xukai Wang <kingxukai@zohomail.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: canaan,k230-clk
+> +
+> +  clocks: 
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 2
+> +    minItems: 1
 
-Hi Krzysztof,
+List and describe the items instead.
 
-	The IPQ5424 supports two SPI instances on serial engine 4 and 5.
-	Previously, SPI clocks, gpio pins and DTS node names were named
-	according to protocol instances like spi0 and spi1.
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@91102000 {
+> +        compatible = "canaan,k230-clk";
+> +        reg = <0x91102000 0x1000>, <0x91100000 0x1000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&osc24m>;
+> +    };
+> diff --git a/include/dt-bindings/clock/k230-clk.h b/include/dt-bindings/clock/k230-clk.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..31d1f82fbcff654072ef1a8985a884377d801e72
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/k230-clk.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Kendryte Canaan K230 Clock Drivers
+> + *
+> + * Author: Xukai Wang <kingxukai@zohomail.com>
+> + */
+> +
+> +#ifndef CLOCK_K230_CLK_H
+> +#define CLOCK_K230_CLK_H
+> +
+> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
+> +#define	K230_CPU0_SRC			0
 
-	As per the feedback received in
-	https://lore.kernel.org/linux-arm-msm/ca0ecc07-fd45-4116-9927-8eb3e737505f@oss.qualcomm.com/,
-	spi0 has been renamed to spi4 to align with the serial engine instance.
 
-	Kindly advice if it's not acceptable.
+Drop the indentation after '#define'
 
-Thanks & Regards,
-Manikanta.
+Best regards,
+Krzysztof
+
