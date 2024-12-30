@@ -1,224 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608FF1DA3D;
-	Mon, 30 Dec 2024 19:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B8718A6A9;
+	Mon, 30 Dec 2024 22:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735587976; cv=none; b=oFYjd601dZix+OobPVKc3UxB3KThy/3GtC49ABd4J+Zo7GHtC+Gyh4xrFdkOfcRLxH8q78h7clUSP46e54QgnCZ1REfAQSWVIiKA05PMTZPb8b+oezhmn5zzi/DvMk/DfXXB5IPuMmFye/XBbKUWf3xz6YwCvVtmHco1bTEpPb4=
+	t=1735596789; cv=none; b=hiJftrlGMduI0bb463R2BDrUuqTIe+cfkaF2cjbrhOLIzVDNmv2GjK8pI6PEN22t30c640k5vvQ7lO0kT3dVH2UpjOetmoYjWSoCXTTc8pUDmLrDS/rODKEW3ngcPUmUFclWCZ42pzsZmvzBn/pItE8PuW76PAZHdgA4aObAhEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735587976; c=relaxed/simple;
-	bh=pwrekhb6iM83fDn68y5eSWMedNMkXIUJlXGtlqvUncU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uD7hr+PKvkeazF+tqmGH8F6eFOgObb0YRX/pjF4pWg34rcWLjsPJlLmtskr7km0WyVvj52cH3+BfWKphsXbyoCfmtkwlkGiv/2ZAH+rqFRhr4pH8eLsO3gW0qiMeFRM/l4GZmsi2GqehQAlIQwaCqEqBgCCe7B/Js61bepxoIu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2syL2h7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735596789; c=relaxed/simple;
+	bh=ImqFqnAeyLa1KMzB+h1qlpbhFbskkaUEg4JAlpjCKT8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tzYwxxKcS9u1jKmYZN1h94IHZYZnYO5/NMKGzNYaKHEU14/gdKW1KB/KBzdDXR+7ZAiSfD7+jg71pz3b4+Knt7T5nftjk+2pwsPpXQp3/TjDlxKqEx9WWDwZThZaXxLTN+fOg5oqy4I7Szs/+myztcxOhmUURVDxVeIoWmM1fk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=l/cA2Eos; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2syL2h7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B389EC4CED0;
-	Mon, 30 Dec 2024 19:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735587976;
-	bh=pwrekhb6iM83fDn68y5eSWMedNMkXIUJlXGtlqvUncU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H2syL2h7c1H/BozWL16h/OzfOBlnIRu8dh7Z//BI3m7p9XHEnHDF4+x3DYhy80AUa
-	 3WEOy3DgqaTWajuNRF5YAG37O257V96k59NmVRl1UUUc41NLre13BInqbIDT+Ik0aq
-	 truXv+6jZQD3QCmVb+K25WCDScDro3Gs3gDzNqyW4cBa8q/Ci1S9+Scv2hag9KL+iC
-	 M5nIJHZ5Qj3z0xeARPKFSFzlIqApFjO4cZmJ76KNEfBsnRvpi/HPl6YYM85xukxKUh
-	 3pJ0m2DTUdUCTR+SvY2HDRenZt3m7F3bY1gYuGwVjTCQ/89JEonOvvm28YIplfsyWa
-	 kD555Nw0ltMRw==
-Date: Mon, 30 Dec 2024 13:46:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: akemnade@kernel.org
-Cc: Tero Kristo <kristo@kernel.org>, Andreas Kemnade <andreas@kemnade.info>,
-	Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: clock: ti: Convert composite.txt to
- json-schema
-Message-ID: <20241230194614.GA2255009-robh@kernel.org>
-References: <20241229135351.5014-1-akemnade@kernel.org>
- <20241229135351.5014-3-akemnade@kernel.org>
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="l/cA2Eos"
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BUM2jtq021623;
+	Mon, 30 Dec 2024 16:12:52 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=VIsLp/AR6UosPP0g
+	+lq0c71dGWHpBDHQ7ASpPGtIpT8=; b=l/cA2Eosm6H2YyLGXx8SZzw++Lg+NFvz
+	tqM/xEynvNtAaoK7jSWLOS3yMEPmwX3eDMVTz1AsrOM5AINVfO3E+HTnlVFg1Hqn
+	dqUE3SYYXLRLZtSVTMj87Hq6/yqzLm/AIiM60zyEeeqhAjJcJQlnm8XrbvKN9RFl
+	BvueZVWBLdyQwzyj18PIAeiy/ZgO85MIoywBIeBUsLnxf+cL86x0PzYMydhQ/tev
+	rv9HA+M01BECn4c61srBVmIM3854d4z0FwcNcpKCWua3cxWxOdlHZwLQVl3ToDQs
+	X6eOv6bQQV0jTOzIimrmiLiaP8Ieo2UPI44PavfrxgyHRh8CGgrxFw==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43temk26vp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Dec 2024 16:12:52 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Mon, 30 Dec
+ 2024 22:12:50 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Mon, 30 Dec 2024 22:12:50 +0000
+Received: from paulha.crystal.cirrus.com (paulha.ad.cirrus.com [141.131.145.123])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 12FEC820247;
+	Mon, 30 Dec 2024 22:12:48 +0000 (UTC)
+From: Paul Handrigan <paulha@opensource.cirrus.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <devicetree@vger.kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <patches@opensource.cirrus.com>,
+        Paul Handrigan
+	<paulha@opensource.cirrus.com>
+Subject: [PATCH v4 0/2] Cirrus Logic CS2600 clock device
+Date: Mon, 30 Dec 2024 16:12:44 -0600
+Message-ID: <20241230221246.3927158-1-paulha@opensource.cirrus.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241229135351.5014-3-akemnade@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 5_P0wAWx1bzOGuQEPTWPJ530FcajKi4_
+X-Proofpoint-ORIG-GUID: 5_P0wAWx1bzOGuQEPTWPJ530FcajKi4_
+X-Proofpoint-Spam-Reason: safe
 
-On Sun, Dec 29, 2024 at 02:53:51PM +0100, akemnade@kernel.org wrote:
-> From: Andreas Kemnade <andreas@kemnade.info>
-> 
-> Convert the OMAP gate clock device tree binding to json-schema.
-> Specify the creator of the original binding as a maintainer.
-> Choose GPL-only license because original binding was also GPL.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  .../bindings/clock/ti/composite.txt           | 55 -------------
->  .../bindings/clock/ti/ti,composite-clock.yaml | 80 +++++++++++++++++++
->  2 files changed, 80 insertions(+), 55 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/ti/composite.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,composite-clock.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
-> deleted file mode 100644
-> index 238e6f7d74f8..000000000000
-> --- a/Documentation/devicetree/bindings/clock/ti/composite.txt
-> +++ /dev/null
-> @@ -1,55 +0,0 @@
-> -Binding for TI composite clock.
-> -
-> -This binding uses the common clock binding[1]. It assumes a
-> -register-mapped composite clock with multiple different sub-types;
-> -
-> -a multiplexer clock with multiple input clock signals or parents, one
-> -of which can be selected as output, this behaves exactly as [2]
-> -
-> -an adjustable clock rate divider, this behaves exactly as [3]
-> -
-> -a gating function which can be used to enable and disable the output
-> -clock, this behaves exactly as [4]
-> -
-> -The binding must provide a list of the component clocks that shall be
-> -merged to this clock. The component clocks shall be of one of the
-> -"ti,*composite*-clock" types.
-> -
-> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> -[3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> -[4] Documentation/devicetree/bindings/clock/ti/gate.txt
-> -
-> -Required properties:
-> -- compatible : shall be: "ti,composite-clock"
-> -- clocks : link phandles of component clocks
-> -- #clock-cells : from common clock binding; shall be set to 0.
-> -
-> -Optional properties:
-> -- clock-output-names : from common clock binding.
-> -
-> -Examples:
-> -
-> -usb_l4_gate_ick: usb_l4_gate_ick {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,composite-interface-clock";
-> -	clocks = <&l4_ick>;
-> -	ti,bit-shift = <5>;
-> -	reg = <0x0a10>;
-> -};
-> -
-> -usb_l4_div_ick: usb_l4_div_ick {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,composite-divider-clock";
-> -	clocks = <&l4_ick>;
-> -	ti,bit-shift = <4>;
-> -	ti,max-div = <1>;
-> -	reg = <0x0a40>;
-> -	ti,index-starts-at-one;
-> -};
-> -
-> -usb_l4_ick: usb_l4_ick {
-> -	#clock-cells = <0>;
-> -	compatible = "ti,composite-clock";
-> -	clocks = <&usb_l4_gate_ick>, <&usb_l4_div_ick>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,composite-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,composite-clock.yaml
-> new file mode 100644
-> index 000000000000..b7063764bc0a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/ti,composite-clock.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti/ti,composite-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments composite clock
-> +
-> +maintainers:
-> +  - Tero Kristo <kristo@kernel.org>
-> +
-> +description: |
-> +  This binding assumes a register-mapped composite clock with multiple
-> +  different sub-types;
+This patch set provides Common Clock Framework support for the latest
+Cirrus Logic clocking device, the CS2600.
 
-s/;/:/
+This device has two input clocks and three output clocks.  One of the
+input clocks, the REFCLK, can be a constant reference clock input, a
+crystal reference input, or not available and use the internal clock.
+The second input is the CLK_IN digital clock input.
 
-> +
-> +  a multiplexer clock with multiple input clock signals or parents, one
-> +  of which can be selected as output, this behaves exactly as [1].
-> +
-> +  an adjustable clock rate divider, this behaves exactly as [2].
-> +
-> +  a gating function which can be used to enable and disable the output
-> +  clock, this behaves exactly as [3].
+The three clock outputs are CLK_OUT, BCLK_OUT, and FSYNC_OUT.
 
-Indent these 3 paragraphs more since they are a list.
+v2 changes:
+- Remove | from after "discription" in DT binding.
+- Remove discription from "clocks" in DT binding.
+- Change ref_clk to xti
+- Clarify auxiliary clock pin
+- Change DT example to not have "reg" for the bus
+- Change DT example to change i2c@0 to i2c
+- Remove "OUTPUT" from the clock ouputs in the dt binding include file.
+- Remove AUX_OUT defines
+- Use do_div when dividing u64 by a u32
+- Include the dt bindings include file
+- Use the includes from the dt bindings include file aux output.
+- Move of_device_id and i2c_device_id tables next to i2c_driver struct.
 
-> +
-> +  The binding must provide a list of the component clocks that shall be
-> +  merged to this clock. The component clocks shall be of one of the
-> +  "ti,*composite*-clock" types.
-> +
-> +  [1] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> +  [2] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> +  [3] Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,composite-clock
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clocks: true
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    bus {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      usb_l4_gate_ick: clock-controller@a10 {
-> +        #clock-cells = <0>;
-> +        compatible = "ti,composite-interface-clock";
-> +        clocks = <&l4_ick>;
-> +        ti,bit-shift = <5>;
-> +        reg = <0x0a10>;
-> +      };
-> +
-> +      usb_l4_div_ick: clock-controller@a40 {
-> +        #clock-cells = <0>;
-> +        compatible = "ti,composite-divider-clock";
-> +        clocks = <&l4_ick>;
-> +        ti,bit-shift = <4>;
-> +        ti,max-div = <1>;
-> +        reg = <0x0a40>;
-> +        ti,index-starts-at-one;
-> +      };
-> +    };
-> +
-> +    clock-controller {
-> +      #clock-cells = <0>;
-> +      compatible = "ti,composite-clock";
-> +      clocks = <&usb_l4_gate_ick>, <&usb_l4_div_ick>;
-> +    };
-> -- 
-> 2.39.5
-> 
+
+v3 changes:
+- Changed clock-names in device tree to an emum since the both clocks
+  are not always required.
+- Changed cirrus,aux-output-source to a string input.
+- Added cirrus,clock-mode as a string input.
+- Fixed ordering in DT example.
+- Removed dt-bindings .h file.
+- Add in_range to allow for acceptable ranges for clock rates.
+
+v4 changes:
+- Change DT discription to add more detial.
+- Move reg property to keep consistant with the required list.
+- Add enum to string DT inputs and change the input values to lower case.
+- Change unevauatedProperties to additionalProperties
+- Reove black line.
+
+Paul Handrigan (2):
+  dt-binding: clock: cs2600: Add support for the CS2600
+  clk: cs2600: Add Fractional-N clock driver
+
+ .../bindings/clock/cirrus,cs2600.yaml         |   89 ++
+ drivers/clk/Kconfig                           |    9 +
+ drivers/clk/Makefile                          |    2 +
+ drivers/clk/clk-cs2600.c                      | 1177 +++++++++++++++++
+ drivers/clk/clk-cs2600.h                      |  173 +++
+ 5 files changed, 1450 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
+ create mode 100644 drivers/clk/clk-cs2600.c
+ create mode 100644 drivers/clk/clk-cs2600.h
+
+-- 
+2.34.1
+
