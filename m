@@ -1,66 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556493C30;
-	Mon, 30 Dec 2024 02:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6688156C71
+	for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 05:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735524242; cv=none; b=rRbiEoQDjINCCGHVOVns/LxdPNUhKZVyQT1Dbuu2QZR8djj903SatKpANuQUpWnIeR9rsBQ3chLTrfYmApqDYPVXyHM6hVddQcwA/FHGpjPCn6ztoGsXPyDK3sf64xvvT2axQ0LHN/76J/8BLmoy+LWpX9m1XkFBCptvKZv6oNE=
+	t=1735536553; cv=none; b=l0HLDf9ysltV6F+sgLIdqzZf7ZEVkASgPUtEvyHeNzGRwKtIoak+Dh7KzSsdilQ0or+UlWD7GajLuoljruFvxQjpybZGrl9z1hZDYmjk7Mat4JLnpkymLLeWbpeJXT0NS+W0d4w11mAAJSMRWqzPlqIRU61/gERSK7j/zMxNgqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735524242; c=relaxed/simple;
-	bh=akOrPjt3XdoM5akY0esxKzrsROwQ7JK2XuafowoF/Fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5dOsl8VUuQ66s7zPMPEugPEv0Dr/lPYR2D+9m7Sfm3FwOJNpaGZPPvHFsMcjX77xwbzoZK0lViEFs6JBm4pQl6mD+oS6EyH/HVGCyluOHSoiGy8IWPQ0cg1OlSsUJU21xvepHYkKJDtMVYVM9PXJK8aOYbzYdd9Dse+asj5ee4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHPlrbn7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735536553; c=relaxed/simple;
+	bh=z1tbn6LI4vl+YBo18LDIWQRtOtRiBFMCb910mSXG7cw=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dJ6889bJUWgE+3qrYl3kxKW10hs3p1UP+9ukzDAXN+J3Pa9U9jV/5wVqjEhoMya3YvQpa7rajKD7xTo95lEDcAHxs0GblfGQYYCsMmDZn7L5KytqVvUNL5D/yz7wom6zYynOX3Dwtn46Oev8FqZYqpzhTBSXb27n26OlEKt0CiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=Zz+OiCX2; arc=none smtp.client-ip=185.70.40.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHPlrbn7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF45C4CED1;
-	Mon, 30 Dec 2024 02:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735524241;
-	bh=akOrPjt3XdoM5akY0esxKzrsROwQ7JK2XuafowoF/Fo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uHPlrbn7mO8242IRDpg5lLlWWEcNnR5Aky7XRYk3BifO4LxLFE5jo8lnVTqNSuLyp
-	 vsjlZ9FkNq9xFVXmwQZybxjB0x0MmOrOaI9qxhgE6N7Rtfw042M8l0xJ6vkJA0r5ka
-	 MOg1g+xmGu0nsSKTKY65CqH6MyGX5BoiuBLf6chpkcyFkNW6odee+ZCe0imL3PPjJl
-	 XVe2fzzzYOa7niTMoeBlX7q4i0iOEIkPubiq7DxidhO48SkLRr3g503sNXTPy4GWBZ
-	 h22j60OJPjIE0Qepw3LpL83pW3jjpiKaBamoU8Ex0JN/EMXsqkqf5lApllP1L5zRuA
-	 SdisoHDhlv6ag==
-Date: Mon, 30 Dec 2024 03:03:56 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: i2c: qcom-cci: Document x1e80100
- compatible
-Message-ID: <5jj2ptvqcp7x44nsj2kdmbpqi5nz4yqgu6wcb3oytp2uox6ddu@sjzugevhprsm>
-References: <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org>
- <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-1-06fdd5a7d5bb@linaro.org>
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="Zz+OiCX2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=protonmail3; t=1735536542; x=1735795742;
+	bh=z1tbn6LI4vl+YBo18LDIWQRtOtRiBFMCb910mSXG7cw=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=Zz+OiCX2Xx5bWEmeK5nnR0zJicm4mDJY2qP8WXWcGEm4CJRfBzyhIk5nUpHMlrAiy
+	 qACymolqPfeQ0oRmKFgNO83NaaKuLDi6eMm49luMd7Ox4WN3V97Rk7yuVqUHRQpWmu
+	 qFb0V3RTJsYHfyKb2yN4J6APE/odc9bHOO5O9r1JVwIvQH7m2Dp0p3e6e/gSL49dQZ
+	 qqgXjR0AB0Fg8UrxUnEBN+eYQ5gAtRPnI6ahDrEhIP7lJ22DASd65oZK7F7nCy00aV
+	 sPYOx3QD+SphcicQgA1RTvrwznPwidKQWxc1ech84w/SmBarlzbETAxM8Ug5JDu8yQ
+	 w2yS26kefmBZQ==
+Date: Mon, 30 Dec 2024 05:28:58 +0000
+To: kristo@kernel.org
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: [PATCH] clk: ti: use kcalloc() instead of kzalloc()
+Message-ID: <xfjn4wqrhukvi45dkgkbulamq3242eijn7567vxwaxznh4ebdr@waat7u3l2mhi>
+Feedback-ID: 28410670:user:proton
+X-Pm-Message-ID: b630a1367cff86984b54c694637490e109da7999
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-1-06fdd5a7d5bb@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-hi Bryan,
+Use 2-factor multiplication argument form kcalloc() instead
+of kzalloc().
 
-On Fri, Dec 27, 2024 at 01:11:34PM +0000, Bryan O'Donoghue wrote:
-> Add the x1e80100 CCI device string compatible.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Link: https://github.com/KSPP/linux/issues/162
 
-Just this patch number 1: merged to i2c/i2c-host.
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ drivers/clk/ti/mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Andi
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 216d85d6aac6..f684fc306ecc 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -180,7 +180,7 @@ static void of_mux_clk_setup(struct device_node *node)
+ =09=09pr_err("mux-clock %pOFn must have parents\n", node);
+ =09=09return;
+ =09}
+-=09parent_names =3D kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
++=09parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+ =09if (!parent_names)
+ =09=09goto cleanup;
+=20
+--=20
+2.47.1
+
