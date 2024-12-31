@@ -1,133 +1,113 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1C517ADE8;
-	Tue, 31 Dec 2024 10:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20443944E
+	for <linux-clk@vger.kernel.org>; Tue, 31 Dec 2024 11:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735642002; cv=none; b=HVoGgAadEP4mm7FK2/qM9IeZ63cOrMl2eWkJzXa8IZ9i599kDoaW1/YsyPWv9jkMy+UggCkhX95LyiX8vlYQJxGOR/GMXmoHyen5hi85tDyx544TR7sVw7gsprYl72QScUAwq9tcImydlJdTQr55X9hDyGojLg4BHd+9eZhs0Is=
+	t=1735645714; cv=none; b=hu7xVBF6S0TqyUIT7SPg1WTdjysS27yRLacQA8zMaQOQCdjtTfUAbifkMvh4IXvhqPKOejYrIxvw6EXSBJx/+eSGiQDT2b+kKRYfaQBp1xPMG/wEsTJ3O0yueOafFFnALCmURpv/6XOuvr+7rUApFL9U4LiAV5gqzYpNANnCrmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735642002; c=relaxed/simple;
-	bh=PeqzRnmwAi0xLgYzIk3NedBm/pACjMxFpJJVElERFiw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1SprPwnv3jSj+xGeuNlljYJHBHfEtSUeZke4FYz04/WwpBNGCUKHjPr3bgzcLTzAL5oRiO1+ISYAFDI3ytKyKcDlyPHtgJTWnnRx3PSoxlc/qBa19geqSzvGGh5p+48FymCyK8kMSdAUaS5tEJ4qVVJZ9GEdWM3+wVwmeZ8T90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyUKSSa/; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1735645714; c=relaxed/simple;
+	bh=UfGb538qS6fTheMXDVXwLaYxOh/Fu2Le7j4lot7dN8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AN4F99FyEDqiHdpxOequPsumDP8ecC11V+YfgrCcqfhm+HpOAh0gcQ4sJI2bHohGM92GKDc8gxjnh3F573yFDpnSoCYzLjis1SQhWid1to2Ffj9qK3eSh9Fcj5t5sFg49x6KazyrDXCKlYZe242rg0820uJYfQ8J+t2DUSnNZ2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n5dNKcqj; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyUKSSa/"
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5189105c5f5so5157131e0c.0;
-        Tue, 31 Dec 2024 02:46:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n5dNKcqj"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5401ba1fc38so1456762e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 31 Dec 2024 03:48:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735642000; x=1736246800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ECrxZWFteGbiA0AVoVEioe8ufF6tpnDyhkcPwnPNfZw=;
-        b=gyUKSSa/wRpegtqtmXWjlT6X61LVT5ej49+RZUQz7Q/hGmdjb4B+XJ14Z6SmGcGr8U
-         7ZQrkWcekTrC63aZyYGN0sJbb5TvTnE2RONIIH+tLyYgaFKDPftl+xwFYZVQK0LUxbkw
-         euXMeZXFE+34o2tD5QaLyDuptw1xxV4Vq1KH3jJF8YQp4wp/86dOPhs3Pi6XzLZyr2db
-         IbPgf0zo3YQrhqUrBkT3R9W1NpJU+4scVlXVO8SalsHI8ZtccX4ndLIKG1soy7I7t3mU
-         rlBBqjSsM+YWd6EqV97aZtqew0H/vbV1Dk8X5O+d01SW2tUe9cMsapT+4QVxM3dRe7r2
-         e7rQ==
+        d=linaro.org; s=google; t=1735645710; x=1736250510; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aPcpvSMA+nWrZjqrSVYEniXrHyrlHzlkdD9s2BkwZx0=;
+        b=n5dNKcqjq/W1+4mOIsfXadO8n6DVG4L/lPbrbp89BBsFgq5bg8QraiVjlWiu5T9Zhi
+         3/nL3O/HLAkmQnBitY+s8H1hk+04iaZKNubizhmKGj3d2PKvVSdNaRs4NWiW4l8omAmm
+         kexY5kmifmg6Jhhkl2buX//3ZaZObiiIfoAkzsXgv96+nei9kflhJ44+7N5qhWyRWDvw
+         8esDLntCgdoz1kdRHV8KR1/XbZhcY4T3oT2xuZv6ARUd9gFgNw10+V1fBZLVkM115Jhb
+         Me6IKSVNlP/8RgdFdE1E65Gc8OGh9Ac5rDjaYbZn+IaB/N31WAO1HzrR9dMwF3mdihAO
+         intw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735642000; x=1736246800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ECrxZWFteGbiA0AVoVEioe8ufF6tpnDyhkcPwnPNfZw=;
-        b=O/OuTVfWHejX1UZd7vu89qm+clN5r//I6yb0wGNJ28pZRnSRaYQYYgaZY9j4+iY8Ze
-         K//J02ehgrW1+xbm4v4LuqOMiksm1U8aGzKRDXiDW1xVBT899mPyxG3PP8EYRnhZDAoQ
-         uAMjdW1NLTNt3pqreQstpip3zX3NUykn1hMY0BFH0Dvz9IwC99MK5BjLx09cGgpetgTw
-         rpFu1+7I/DriCsuWVss2Rsw+hQzoH1tZm0Js6igUz/evFwMGmnGLqQwbnQcr7QRe5/cv
-         q3hw2aiVlKrW8btCHz4V74VgmI6ZXjxXb1RnUE58uFS0kXiqxkJEA87UPFPy6eejuNWj
-         J6sA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ2qEkZpXhhF/bITNaf8VutilRwhIEHzStJ9PchVpL9JG4kNUZgiyiw5jkI2M2qJhre5PWeFiWP9Y=@vger.kernel.org, AJvYcCUecTFoZEpVPIwP9YD7hVHBzl0Ewkr1P9g4dR04wHPdNx0gIjuFMaROllQ1nzfJ8ST37IM/5c1Xr3LVOLDgZ2pZ9Kg=@vger.kernel.org, AJvYcCVkrOer1SzkE7Y+RHSyIUB/Iyny1gJm4JtWOr1d+EqvXY1O31nlLG3wSMUARPBNqFhv/Tkpfqxbl7hngE5Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwV+ffQ6wI7en8QB6XPmsrxZHRtbl3peq4h2jd8rtXJ1DqSX63
-	jD6Tt1Da9HFQVP8ufhMn1sK0gp5mWf8p/PHgDeLHnmf/A1VmLjDwSWtYJBJmF4suS+y3zGFAj+P
-	UkhsFlAjhx6kNkVBr0oNdy6DuxSlPIgE+
-X-Gm-Gg: ASbGncvBqMeF9jRaJvoziHjnCyLxtmZP18ZTlEhpVb1b2uEr5n3eU5iyoFKheHkN+9d
-	ARhN1ZaM9AYeP81gaOiSWH6u9w/mla02s9wVgNFxJ93VGv14cIekh9ereqHC+q4cwXSBf
-X-Google-Smtp-Source: AGHT+IFXSvINUea7k4y9Wy4P16DYUslqpiAlCW1qTkPOOoFRk93FuoXHVIQPc79OzjAvkZRDs4pzI7hkvC9e/kbPaQo=
-X-Received: by 2002:a05:6122:660a:b0:518:9040:6700 with SMTP id
- 71dfb90a1353d-51b75d6b195mr33000356e0c.11.1735642000368; Tue, 31 Dec 2024
- 02:46:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735645710; x=1736250510;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aPcpvSMA+nWrZjqrSVYEniXrHyrlHzlkdD9s2BkwZx0=;
+        b=m07wSdLHBaVFkvhiZdRhx9/mK6fMKgxuxVzqb1iaj+ef9DW4fiqV05U1hSgOZhK1MN
+         r/Q9vSvMTlMIAzTqKbNliySHuqSRUKVBnYZEPozRLkgKLHBmia+WnYXGO88w7afpjaRF
+         oJz0l3YTM7GkwXRAcg4Vn0SZnYGFOPoYMWhVhfjOZgxJGO/It6JAwx+hzyM99takpWpW
+         HFwX2KNThroeVTre+f+ahlOtivYV6bfHHV7wWbKdXtKPMJBNVviY9ZmHGvcXPZT0g9uC
+         bD4co9AkwRPstE0Aw733K+06FjQIsKrNb32DpcPdRChL/voE4SsWmrx//oUAOnjhx/wl
+         rvDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnF8tergwZTL4oWSF0sOIReHtlw/coq5hH4jk2CgSh3ThD8w3jzmBgMyjeTKQdpm7WK4jKeA2i2BI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLmxDXl5TpbDFz3OV739c5Ut59agr9xsyZ1vYzGP4dp0tHkVaI
+	tHUO4R1sLe45xd3SAZChoVGVz6yosWT8GN3MCPy8H1od8sHW5IWdjG3VTEpQu0w=
+X-Gm-Gg: ASbGncs9NzqmPHzDs9nL/HodpfXD68CXRIpWUfvvaIQER3e5PL4ywiA174MO9KoDilx
+	dDHgoibsKblFBLVHdqeCwm3uUr2FlRv0YUIHSJRpKhHNHSn31CRnYb3p148BPIiAhRrYBfK++qX
+	A2hDgYjyO9FtCMHSI771STInsz6f9dheHvd8BFcigfNZEHSNKwm9WrJe9Xv7QzmBvaANrGWwltR
+	aEf5eFY8c32FXPNVph8bs2jowkEXijAQGdGKgnAAms4hLGm84PGihlKGSwd7DtOmKXTgNgB4htG
+	HhsqVhPOFgZWFaZF6xVKqstjdj5C+isc0HE=
+X-Google-Smtp-Source: AGHT+IGw+IBxZDLIPKW1ctolrza83QDB3dHGcJZYelTmKDc4ccY0ytsjd0iQG/jRP+F7A5JDhTDPWA==
+X-Received: by 2002:a05:6512:3a8f:b0:53e:3756:80b4 with SMTP id 2adb3069b0e04-5422956b95emr3552488e87.12.1735645710298;
+        Tue, 31 Dec 2024 03:48:30 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-542235f61c2sm3323915e87.32.2024.12.31.03.48.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Dec 2024 03:48:28 -0800 (PST)
+Message-ID: <244c58dd-b36a-49a3-901f-8a60dc936726@linaro.org>
+Date: Tue, 31 Dec 2024 13:48:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241223173708.384108-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241223173708.384108-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVfcqHVkJ3ea=uN7zGAw=ho=gLGVJjFFB_O82C-RTU11Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdVfcqHVkJ3ea=uN7zGAw=ho=gLGVJjFFB_O82C-RTU11Q@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 31 Dec 2024 10:46:14 +0000
-Message-ID: <CA+V-a8vm-NbJaV6Gu_9SJo=k9QJPYhMtk2-p2+JramfzqFDnjA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] clk: renesas: rzv2h: Simplify BUS_MSTOP macros and
- field extraction
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org>
+ <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-4-06fdd5a7d5bb@linaro.org>
+ <aaead9e5-a978-4b3b-8635-bd8be647ae35@linaro.org>
+ <c9d97c40-d3bf-486f-b348-91ffedeece5a@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <c9d97c40-d3bf-486f-b348-91ffedeece5a@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+On 12/31/24 00:34, Bryan O'Donoghue wrote:
+> On 30/12/2024 19:45, Vladimir Zapolskiy wrote:
+>>> +            status = "disabled";
+>>
+>> Please do not disable the clock controller, it was discussed in the
+>> past, that
+>> all clock controllers should be enabled by default.
+> 
+> Looks true but, news to me.
+> 
+> Do you have a link to the discussion?
+> 
 
-Thank you for the review.
+Please take a look at this discussion:
 
-On Fri, Dec 27, 2024 at 2:33=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, Dec 23, 2024 at 6:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Replace manual bit manipulation in `BUS_MSTOP` with `FIELD_PREP_CONST` =
-and
-> > `FIELD_GET` macros for better clarity and maintainability. Introduce
-> > explicit masks (`BUS_MSTOP_IDX_MASK`, `BUS_MSTOP_BITS_MASK`) to improve
-> > readability.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > @@ -582,8 +582,8 @@ static struct rzv2h_mstop
-> >         if (!mstop)
-> >                 return NULL;
-> >
-> > -       mstop->idx =3D (mstop_data >> 16) & 0xffff;
-> > -       mstop->mask =3D mstop_data & 0xffff;
-> > +       mstop->idx =3D FIELD_GET(BUS_MSTOP_IDX_MASK, (mstop_data));
-> > +       mstop->mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, (mstop_data));
->
-> Nit: no need for the parentheses around mstop_data.
->
-Agreed, I'll get rid of it in the next version.
+https://lore.kernel.org/all/c240075d-55d1-28f6-18ad-3897e55f8e59@somainline.org/
 
-Cheers,
-Prabhakar
-
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+--
+Best wishes,
+Vladimir
