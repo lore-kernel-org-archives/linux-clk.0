@@ -1,92 +1,87 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACE419BBA;
-	Tue, 31 Dec 2024 15:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE81217ADE8;
+	Tue, 31 Dec 2024 16:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735658823; cv=none; b=QRtEUoeg/qvQuBmU2KXv63sgaW91XS8m66f06yfSMjhg5j6mBcGWP3umsBqpPK1qUQ3UflST8TYQUAPfu8slxY3VWimcGHHficNzP8ZXOAWlrOpOCcoqhBvNmLUk4sMGvFSquqsLEUn7awB7ciu52guAmCEgQNRT94dXA9NTpqY=
+	t=1735661401; cv=none; b=kPPDG/kj569Z6snlKCTlF/Y2ZPme1+7jl3b/yzuH3079W6wHkLHtmwSEguwOMfdm/0o31/ldqadfs8/G7XxOosKCthx9QQsVUyY6s6GGOGkpm5Kv7gqqa27eu1g7d5rjrrYyM2yTn7Y9aTyuxQ0ve64echsEzVYvAw2nFP6boqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735658823; c=relaxed/simple;
-	bh=pFxFqtIZKbQkJulPI+qvjilsw83pSrHIlOHF4B0gP5I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFlnD+WFgNob6OYX+PrZTwp8NafVt+9Yot/oQeat2NVcpsM27Yd5QPPJaDLaSiSjg2Vy497LMxAA0p1YYjC10Y6mZrGtl2ekLhabxJ7+lxznjFHNBDTHcclqjXrzfJAu16gvSjBypb6Bb/avmBYxwfS84bYEeLrs/+VXbDrRx8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Jgb0ZMPm; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1735661401; c=relaxed/simple;
+	bh=7npF4ShDytvlwANsqYPDFUzlP0Q6NH3M99kf0rBKN1U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iR3HtSHhbiAw48GRMHAqAAfCQyuytgVa/isxTMUi/ihNvkqQ+U4Aszwcxme/JvoZOHZYmWM/9R0RLzkjG0RI3rsp6rLbm9kEvK4sydKiJ53UL5H1jpLJILnycyaNaB6f3/C3eDIeQDbgSNa2zHLHCBtKAWd9N/t329dgz5mCHYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=T8y6FY2y; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Jgb0ZMPm"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BVFNcU4019633;
-	Tue, 31 Dec 2024 09:26:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=zoIDOqVjMZBqcHJl/z
-	Tm1Doxm4E16/9zX/9BSPmc/VA=; b=Jgb0ZMPmBu2ianjgw/I8e/kUrB4qEoDFKJ
-	2GxquEbJbrE9eAdT/W2uLEuKjYviExrakxBrZu47lvuRks9DQdlCcygGQQ8Q8Idm
-	UoJgEW+hw01ULgw26606lN2B9en6U2QyoXglXXIwGvwbHhvzBH+xOn1/zCD9lht0
-	uGB55/pYMNXTDg9rxGR195ia48Lui2w0g6aWLn0ENzY8KSBHjXjI6KQorwDxBs34
-	HEuTgN/igCUP8lLZJtl7iO1wmNUKr6S31Ivv0QOLdT1GgY3VoyMYgLUYHR5Q0h22
-	YGpX3GvIedZ+F1bCS3AzaaZ82eiiVxMAKJZCz3sjCpZ6QhQaV8wQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 43tfm2trnk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 31 Dec 2024 09:26:58 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Tue, 31 Dec
- 2024 15:26:55 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.13 via Frontend Transport; Tue, 31 Dec 2024 15:26:55 +0000
-Received: by ediswmail9.ad.cirrus.com (Postfix, from userid 15641)
-	id C2143820247; Tue, 31 Dec 2024 15:26:55 +0000 (UTC)
-Date: Tue, 31 Dec 2024 15:26:55 +0000
-From: Paul Handrigan <paulha@opensource.cirrus.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <devicetree@vger.kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <conor+dt@kernel.org>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v4 1/2] dt-binding: clock: cs2600: Add support for the
- CS2600
-Message-ID: <Z3QNP/NqtZOQr/JN@ediswmail9.ad.cirrus.com>
-References: <20241230221246.3927158-1-paulha@opensource.cirrus.com>
- <20241230221246.3927158-2-paulha@opensource.cirrus.com>
- <8f662cd8-19cf-4ae3-8cb6-668781eebb4b@kernel.org>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="T8y6FY2y"
+Received: from [192.168.30.162] (254C25E0.nat.pool.telekom.hu [37.76.37.224])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 0B829E452D;
+	Tue, 31 Dec 2024 16:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1735660874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=N2bPHktKV4lvD/TJJZkmZ9SgBxvu268x0W3WFie6Df8=;
+	b=T8y6FY2ys1bUJ2RPpElgH6H4H9W4utGye9rE4GPsw0GZX+BBERGK8A/Ia9zktm9lwh7P4C
+	6R/e8Rua3Oyr9ncoZCy8HHPfX1CyVZQ40DBLI40KvrOrngGvr1f99hTq7qa3uhmHxIA1CX
+	cSOdqf/WZ/ps8+7Fi+nxMWK0f580OILifnUybKqOo78Z1nzPBcVusmsmsmrXEDIpTQXfvb
+	fO6LgGizUlLlrNaT+u63TgY4mjKruiwjdgNxZOqtSzRA8Nvev4N/RhJgZc7qQJfgTkFwMs
+	fioGvJ6Tkr6jajE2t26PGU6WIfCpggmYbR2CxwukjZgkK6J+fH1i2vXqF/n8gA==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH 0/4] Add rpm clocks for MSM8937/MSM8940
+Date: Tue, 31 Dec 2024 17:00:48 +0100
+Message-Id: <20241231-rpmcc-v1-0-1212df9b2042@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <8f662cd8-19cf-4ae3-8cb6-668781eebb4b@kernel.org>
-X-Proofpoint-GUID: hV-I_Ik-JtxqezFfWIQzXmV6dW9r6MSz
-X-Proofpoint-ORIG-GUID: hV-I_Ik-JtxqezFfWIQzXmV6dW9r6MSz
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADAVdGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI2ND3aKC3ORkXSPL5BTj5GSLpDQTMyWg2oKi1LTMCrA50bG1tQDN5NA
+ fVwAAAA==
+X-Change-ID: 20241231-rpmcc-29cd3cc8bf46
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Daniil Titov <daniilt971@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735660873; l=738;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=7npF4ShDytvlwANsqYPDFUzlP0Q6NH3M99kf0rBKN1U=;
+ b=OSBgP8u5zEu66iEs3ZPcz2cTwXqXof3YQKaJZ1AXEarTDJBqdkRxZAWeGp4zbNI7DXPn0+pvI
+ IEWWspQxcorC9RR2Z+vxZLtaCy7pQdBH+oDrYLn4c+khE+WIep7Q4T5
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Tue, Dec 31, 2024 at 09:17:22AM +0100, Krzysztof Kozlowski wrote:
-> 
-> I was wondering why this is not picked up by my filters... now I now:
-> wrong subject prefix. It's dt-bindings.
+This patchset contains rpm clocks for MSM8937 and MSM8940 SoCs.
 
-Ack
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Daniil Titov (4):
+      dt-bindings: clock: qcom,rpmcc: Add MSM8937 compatible
+      clk: qcom: smd-rpm: Add clocks for MSM8937
+      dt-bindings: clock: qcom,rpmcc: Add MSM8940 compatible
+      clk: qcom: smd-rpm: Add clocks for MSM8940
 
-> > +    maxItems: 2
-> 
-> This does not match clock-names. Missing minItems. I already commented
-> on this last time. Implement all comments I asked for.
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |  4 ++
+ drivers/clk/qcom/clk-smd-rpm.c                     | 56 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+---
+base-commit: 8503810115fbff903f626adc0788daa048302bc0
+change-id: 20241231-rpmcc-29cd3cc8bf46
 
-Sorry, I misunderstood.  I will add in minItems as well.
-> 
-> 
-> Drop comments, you just repeated the value. If you want to add comment,
-> say something different than the value is saying.
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
-Ack
-
-> 
-
-Regards,
-Paul
