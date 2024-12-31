@@ -1,149 +1,110 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0786CA4B;
-	Tue, 31 Dec 2024 14:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F2EEDE
+	for <linux-clk@vger.kernel.org>; Tue, 31 Dec 2024 15:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735655184; cv=none; b=k63KrpXhpaZEdF0RHx2xehn89kRH/9kOUoD9mVfuibQGr9Cd5leChoM5tvMbEUPHJD83N5iqaDUyrXrNCJUv6+pdO4Xs/PVGeczwvXOotlatXkOklvXD6CxdpfFmYR9303xwHHJsiI8Kwq4JAqtJ9SPCW6edrWrK3QV3E0KWVCQ=
+	t=1735657311; cv=none; b=ecRoLj1w8NPUKwGf5MTnLq7F54an5y7cf8elxNsgwR6gGK0U4QmRwD1Xys16U20KQ76rVWlgCCs3S5lBmUIXcV+9x5Mo6eJrAYMByoGE3c0WKgJ9H83gsfvcneOhyXGz9mvWXFyrDZNrtsK77ayTk951s80RhwsCkuA6f4LZygU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735655184; c=relaxed/simple;
-	bh=T5ttWLj21ZemjHsfaaTlAwMCQD/0dHhbmm9mhFxso+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MV1scukAVpJJ/EClH9gNzaExyx5REonzu6xvtkA0QzaUWc0rTqnCYmUvIQVLw3Mm88Ujzu4CzPwf3AJBAArohSUBPEfx86yqbjA3zw9OUvpwVM5JEkt7Q9phVWZ6EkSTce7A2YRho7CjqzYKxrtztzr0FJYO1US+MyVNvfrFdvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4afeb79b52fso2743471137.0;
-        Tue, 31 Dec 2024 06:26:22 -0800 (PST)
+	s=arc-20240116; t=1735657311; c=relaxed/simple;
+	bh=dO6CdgTSt/+zcXVhJ2Uz5ywJklO9Ho5WIRCjmPAxMTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tvK7eKx0IPbtMnZRcWcKXUHki4PgYYySszKlJvLIaXDmEF88jiYh/HKVFKwtbL/ngQ8qRnHYVMxTxZ3lRLj3YdSQsFMbiWEoNvqBkeqkN2kP7/ZfHmOpJvtLHd7P3stQBFPIJYmgj/5oopqFObYhBYV++eZBkgSi7MKJ4YsZ0kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=EbccG/lo; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="EbccG/lo"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaee0b309adso1020904966b.3
+        for <linux-clk@vger.kernel.org>; Tue, 31 Dec 2024 07:01:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1735657308; x=1736262108; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfpchHbExO0XW754q8DbjVQ1byQNlSKH4QhxgnPxvYU=;
+        b=EbccG/lovL437LA7t63hWEC1h6UiI2pyUUTvdSsF+knZ6rsFNAwHvG2s0RuTleBUh6
+         aVzQowLA70GZCBVxmNfZyrytwC2CVilwXSnIUUd51GJZeB1V9JAeLflEl7YjFA08xnbz
+         ljUoF5iEkB+pUsM3LZC+D6uMaTe3+xvr7ly38=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735655180; x=1736259980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xXXm7jXSyAHpmGAH3x9taDLedDu+p3wnULbeaYvIinw=;
-        b=AFZb8FN0Jxsqxos7B0XgX/g9Bb1LUevjA/NdBtuXNs02es1mXKzkf6oHkcxrUHcB0h
-         Xft5FcR6UniiwjbCxP0sYpeL69SDLM2BGqBp1WYXuvsYODW2FF5Nm5PZ+jUGij4aYpD4
-         2FSZt0lM1Oir3uOMEGPZB+273/+bXxFSlnNN5zXQI2D7ZRXHCKAN1HhlIy54lay+bJ/8
-         IZP0EWl5/Nnb8o1KOOLxuoUSAGOyu6Iy6nO/0+43y3ngPr8GYpLN9enKoormnddM3ba5
-         2PdiP8BxuYJcllMclKB2RwmgGXh29rFf00pA/HbWiSJjkG14feXggPJyenwMaU4pyAV1
-         ZC1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ8/K3aAVBxrASsPRuxYH5lAukn8yUy325nqU/05ansvdMZNQnBOteR8fyDBc9vY6dBHeXU98BPn8=@vger.kernel.org, AJvYcCWksOnEC3tzNSSLBvm5dSpEIvrQW1mkSHIx0X9qUpbWCo4aMAPbz6L9rSKXcILEXEQBlaWffFABwl+ZWYjk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx13MRUTddFM7i7gK6gtVqjB6UXmZZabDtalIRiaCqCb6FnPtcP
-	a2ldQNRc/hYGp222sIoRm0VS2/QCV3y8RxCgv0SkbWOqfEGwwrYrbNSXsKUA
-X-Gm-Gg: ASbGncsn4k2m68fuU/wdcgI/2v9yUx0IKIkjvjR3aKb/OAyo6aQMpaWJTn901PfK8GJ
-	yfnAAgbHPLxPPykrS9BSCdr8ZhMm1waXCyckCK7Mb49i2Xt1SWBeZiqZgN5tLW0EW88MVqnchCa
-	adEFWBLXTuNiHOIWUTbZIclHDesNewUwsTlO1Df+TXwfURZNO1OxgKYXsi54n7eS0oG82Se1ehk
-	gfLfzL0YrHFYIr3yc8OO7QyRdvt+iWB6vmNkqf6xgm5sGAVEwgRMeaGjatN66z3npuCTMPX0knv
-	uhArWOiHIyASRL+M/1A=
-X-Google-Smtp-Source: AGHT+IEL1RazsK9JsQMAQWjTJlYY/jkcFHmAu+f/nA4hMBhLstBNwQd4syZGorrKUHo7CpP4J10OVg==
-X-Received: by 2002:a05:6102:3ca5:b0:4af:5f65:4fd3 with SMTP id ada2fe7eead31-4b2cc31a04bmr30393720137.6.1735655180022;
-        Tue, 31 Dec 2024 06:26:20 -0800 (PST)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8610ad5a3fesm4407464241.33.2024.12.31.06.26.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Dec 2024 06:26:19 -0800 (PST)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4afeb79b52fso2743456137.0;
-        Tue, 31 Dec 2024 06:26:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWPab7GSsnpfkHfLolOoHLdyBqrqsUC4lH3AR0Ne+5E651yIH0YvYP2pN3LoVlMErvNfjQT4sHtjgM5wmWw@vger.kernel.org, AJvYcCWUlaxnackm1XZnWxJEN82a2q/9denzBEKuT3hmhigiBmublRA1iY/pCyjsrLHsGGcPHVjeVasQyPI=@vger.kernel.org
-X-Received: by 2002:a05:6102:38ce:b0:4af:f6e5:2b46 with SMTP id
- ada2fe7eead31-4b2cc359cebmr27414041137.9.1735655179221; Tue, 31 Dec 2024
- 06:26:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735657308; x=1736262108;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TfpchHbExO0XW754q8DbjVQ1byQNlSKH4QhxgnPxvYU=;
+        b=B3ul+8UaoyRCRYuG1sewgoL6lHQUC195QPt9nInhxvW/m4NHSGsnDSG711ROAMtSF+
+         r3VdNrdQbDFUgUGSVgFocscM5oA3p8t7yP5IA6SYHDiUhKj9ddnYDateFqw5o2KWyDL/
+         LWmVmSaBW82wYL39kLpVtDxerJD8Vx910tTpL83TLInGtS71rmrX4xaYJ3KLph9+qoc/
+         9zHMNxAeaSOKEc/3GiEFxdZmCS/ASsDiM1zs8Mhkb8V9qu4ZoJ4ZwlY6gbJBytf/PJTc
+         xniUsWPl4e0MnEMALLsnxfg7vjJDbbfJaZ7MbYForTUf8wMePh4wtJ9izCWq3lDcxM+W
+         aymA==
+X-Forwarded-Encrypted: i=1; AJvYcCWb/949YNHXsYmPMSfXrom2v3mP7Lg8YMU2EzbPIu/bzn7B3+q1hNxGz+yaJd2bUXnCBTLh6lS6qPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/URWJGt28RsAfb+7p1QJzlWJnnGea1oJV4Y/jjnD1awiB9c9s
+	lSxnbBeRaCiomnn55u6yyiCqOre340nbJHGkKE/wZYjxxzJW0PMWK5IcqUD/FVU=
+X-Gm-Gg: ASbGncuOPQXk3seFcqsXrE1NhdJ8cuLVMSLgIZExvBrxa4yGzlB9FvLvBZg+snO1Pcr
+	NtNRUEVi1gDRetP1BHnCKEtHUiie2SgsUqxruipSUIH9fqwm6k/b67BzXyWL5Trg/iTiBUAR+9c
+	79qKg1jvlZATtq+5Cs93cwCcaKnr2Zvwr9tw8480SnR9YZL3qKQJeVhsCFE7VAMLPijzW3CTc6i
+	/bbRiEJ6121U6q1uU7FPCSbaWDtwpoC3ZGipkkYvaXRMbZlthQIfU6hHjmpS1F0OM4dZsA8udlJ
+	kp3U7EfF9TzFOyIz8Ptczw==
+X-Google-Smtp-Source: AGHT+IFTYNVf4PANRTY/pECtc8/bJhsdH1GsC3hZP7+Sn/hJKwsBL1qJz0Y+j7y+5zffKEeOjC6D9w==
+X-Received: by 2002:a17:907:2cc5:b0:aa6:8676:3b33 with SMTP id a640c23a62f3a-aac3464f929mr3338245566b.47.1735657307900;
+        Tue, 31 Dec 2024 07:01:47 -0800 (PST)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.43.175])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e89598csm1575905766b.56.2024.12.31.07.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Dec 2024 07:01:47 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH 1/2] dt-bindings: clock: st,stm32mp1-rcc: fix reference paths
+Date: Tue, 31 Dec 2024 16:01:40 +0100
+Message-ID: <20241231150144.4035938-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241226122023.3439559-1-rohit.visavalia@amd.com>
- <20241226122023.3439559-2-rohit.visavalia@amd.com> <5227cdd506bcb0239657216bd36de12f.sboyd@kernel.org>
- <CH2PR12MB48751A8B003E9E30A9A4CDE8E50A2@CH2PR12MB4875.namprd12.prod.outlook.com>
-In-Reply-To: <CH2PR12MB48751A8B003E9E30A9A4CDE8E50A2@CH2PR12MB4875.namprd12.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 31 Dec 2024 15:26:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX57SvuVsRhisF1RDtP+TgQsa2i+hBg334yQUxTMsqDPw@mail.gmail.com>
-Message-ID: <CAMuHMdX57SvuVsRhisF1RDtP+TgQsa2i+hBg334yQUxTMsqDPw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: xilinx: vcu: Update vcu init/reset sequence
-To: "Visavalia, Rohit" <rohit.visavalia@amd.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, 
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "Sagar, Vishal" <vishal.sagar@amd.com>, 
-	"javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>, 
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, 
-	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Rohit,
+The path of the two files was wrong even at the time they were added.
+Let's fix them so they can be correctly referenced.
 
-On Tue, Dec 31, 2024 at 3:16=E2=80=AFPM Visavalia, Rohit
-<rohit.visavalia@amd.com> wrote:
-> >Subject: Re: [PATCH 1/3] clk: xilinx: vcu: Update vcu init/reset sequenc=
-e
-> >Quoting Rohit Visavalia (2024-12-26 04:20:21)
-> >> diff --git a/drivers/clk/xilinx/xlnx_vcu.c
-> >> b/drivers/clk/xilinx/xlnx_vcu.c index 81501b48412e..f294a2398cb4
-> >> 100644
-> >> --- a/drivers/clk/xilinx/xlnx_vcu.c
-> >> +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> >> @@ -676,6 +679,24 @@ static int xvcu_probe(struct platform_device *pde=
-v)
-> >>          * Bit 0 : Gasket isolation
-> >>          * Bit 1 : put VCU out of reset
-> >>          */
-> >> +       xvcu->reset_gpio =3D devm_gpiod_get_optional(&pdev->dev, "rese=
-t",
-> >> +                                                  GPIOD_OUT_LOW);
-> >> +       if (IS_ERR(xvcu->reset_gpio)) {
-> >> +               ret =3D PTR_ERR(xvcu->reset_gpio);
-> >> +               dev_err(&pdev->dev, "failed to get reset gpio for
-> >> + vcu.\n");
-> >
-> >Use dev_err_probe() and friends.
-> I will take care in v2 patch series.
->
-> >
-> >> +               goto error_get_gpio;
-> >> +       }
-> >> +
-> >> +       if (xvcu->reset_gpio) {
-> >> +               gpiod_set_value(xvcu->reset_gpio, 0);
-> >> +               /* min 2 clock cycle of vcu pll_ref, slowest freq is 3=
-3.33KHz */
-> >> +               usleep_range(60, 120);
-> >> +               gpiod_set_value(xvcu->reset_gpio, 1);
-> >> +               usleep_range(60, 120);
-> >> +       } else {
-> >> +               dev_warn(&pdev->dev, "No reset gpio info from dts for
-> >> + vcu. This may lead to incorrect functionality if VCU isolation is
-> >> + removed post initialization.\n");
-> >
-> >Is it 'vcu' or 'VCU'? Pick one please. Also, this is going to be an unfi=
-xable warning
-> >message if the reset isn't there. Why have this warning at all?
-> I will use 'VCU' in next(v2) patch series.
-> Added warning just to inform user that if design has the reset gpio and i=
-t is missing in dt node then it could lead to issue.
+Fixes: 722dc8a1d5c8 ("dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC")
+Fixes: 20107d7328cc ("dt-bindings: rcc: Convert stm32mp1 rcc bindings to json-schema")
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
 
-If it could lead to issues, shouldn't the reset GPIO be required instead of
-optional?
+ Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regardless, the reset GPIO should be documented in the DT bindings.
-And perhaps marked required, so "make dtbs_check" will flag it when
-it's missing?
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+index 9b3aaae546cb..ca75b1972470 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
++++ b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+@@ -40,8 +40,8 @@ description: |
+           = 0x180 / 4 * 32 + 0 = 3072
+ 
+   The list of valid indices for STM32MP1 is available in:
+-  include/dt-bindings/reset-controller/stm32mp1-resets.h
+-  include/dt-bindings/reset-controller/stm32mp13-resets.h
++  include/dt-bindings/reset/stm32mp1-resets.h
++  include/dt-bindings/reset/stm32mp13-resets.h
+ 
+   This file implements defines like:
+   #define LTDC_R	3072
+-- 
+2.43.0
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
