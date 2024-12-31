@@ -1,104 +1,59 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68B0199EA1
-	for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 22:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C9E64A;
+	Tue, 31 Dec 2024 00:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735598078; cv=none; b=DVwfXKJgNML03EJXg5TDV5+UIHZILSDqve/aaK5SQJayBywRzlQGDnYz7gIqwmTznqPr6EuUIb64T/50Cfgd3doX4K0FlFYKccIkGAbZ2T9d6IS/gUJt6j1RQbBzFtKElMNIQivE6qK1MmF7gyLxkXLD2P2Kvqyp2wyfsZxQMLI=
+	t=1735604820; cv=none; b=KQOeQb9XXOxmD/ltVdtij3isd+BjGTqqwkpf+btsMgBnMg5zIFh+vAFuWDuzgJkHhoek0JEeNUX6xYdn2liZSCtlzkAvwdQQRGbqE2pNhV90wfkFPZNSGJyALJfnQevrVFEXLGqTKr/+UWQWsxVJPRaktajuZwjVspOjitFdtJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735598078; c=relaxed/simple;
-	bh=LOO1Rh2481JcNYNndqVuMRmZHFmkQrOk9y9yQ01ttTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kpRHRvb07Uf7cr/iVqIvmMUAqb8lC+KTArFPMGEzbJ/UPvsoCE8WeB6MDrwXxRtsCb/RGjS9CMqad8C3o0GzfpNN6mYIKfZoLhyHB85vuwG0P5aVPVzOucSbb8y3fZKNHxdD2WqeqTS++QG7Ar9DuxRtdzgKbd3uM/mfvibQXmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JQ6my9fM; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735604820; c=relaxed/simple;
+	bh=mVqcKmLLfuhSGS3gshPLQdbKu6p2tqxAbOx6us0UBEg=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=fEIDtFEmufj+D+9OS0bRSmL7wZLH7FsYvxnSChJeIhu4lCq6FAP1hjLVYsrf2EMjO1/715VsmODFz0biY3Al+dL97MOUy8OQx2eiWyohHW3Ep0PgoAjjcsOlNTTtlvmeADZfukLwd4Svf5LzaFlQuRKotxOFhG40w9tibayxooE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qygM0ByG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JQ6my9fM"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-436637e8c8dso96905375e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 30 Dec 2024 14:34:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735598075; x=1736202875; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qf+6YUKEAK6RmW0Zawgag6y0Zk8iAO/X5OAFkTK3r3s=;
-        b=JQ6my9fMV6X2iAKiGGq1e9qXhQMIRbn11BzoUst1O7bkFQvjYJbMjtGCtCFCVnFwCT
-         l/m8PyjDh50YbMickMpckrFpWf97vnZ8gPwzOPp0mT8mD/Dq0T6O4c7apfVqv7L2qyaz
-         bXmhWTXLwfnTDz8Prvo+ykF6yFbly3hW+zVROtgiBoUMjIFTlh1Bi7bJBluqcig8Vpio
-         9zOksAh01c2OGD0VAtP3mjnmA3Q9Q6Vn/VK8KUUvctsbTF2HpKdUKyBAFdiiAFDxOoEC
-         aLnQZHA9GhXvLr+y2p3y8aMSL/uU/X5nzLCLWwK1WcKNSi+swPEY87p9OTfpGOvKJ8pb
-         Axwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735598075; x=1736202875;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qf+6YUKEAK6RmW0Zawgag6y0Zk8iAO/X5OAFkTK3r3s=;
-        b=OvHaqjUjQESwImmIfQxX55U/PmI+Qk4FHcDz3PM1Vq04ubmqHXmMihNC59QTwaRqWg
-         N8gFeOVOBsQhEp63HPzwwCssJWmQQlwakefyeQTQCClhUrQeWiPql1jBjuP5PPyNc94k
-         /fVi7Pgd7ewFBrbQy4EjKelFBa4AxRZt71ZGVtQ9EmItQkOz2pJtrRNMg92VpTBHmlb4
-         QxQKbHJyIHbv9hxZhrXvSsfaTegoA64yg7cj3txwT7tSDRDyGriJJg2qUvQzxwsHF35/
-         /c8Gkx+04C8Pbx5XC9KjlNIUONhPgrSYrw+RVpGqn/XuRc5468WiEKPZSAJEemW5Y0K6
-         WI7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVtL2f3jo342BAzq2QDyhc1ITZwH+pZFzUurZtd+VwlsrGCSXT3W2Y3Tq2vmuKtYVmUxLsjAEtigZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Sdm8yABzSicIXANMoVqZ6UYNe0FApGAc4t9dgqhmrgwnudnO
-	ewpm2hi/lOwGaXjXe6fDUuiL28LMBFLDNqmmdjGLH4qpbZ6aRkesiUkc2dWCCoU=
-X-Gm-Gg: ASbGnctbCgQQsG1DZDR3JuexLF+KF6O8yfmh480pt+fdlyQLwY0yWIw+wrEfdEp9egU
-	1NUIOdM9ghy6avNPcmzTVsWumneSpetNMGU2J+kHxJhLmMT/yD8XW1AD/U89xNVL+bkjBbJdV/i
-	N28KwfnND0ay144rR0rORFMeMNCypLSjlLw30KY61lkaOHPcOfOwA88QDPuWtwXHBFBoNGU7VbM
-	KBspNl9zmrDTMESPvmRgaaCPG+wXbonMoO8VYIUSezLz7xVXknWd/eDqd1sBzVs8y2/iw==
-X-Google-Smtp-Source: AGHT+IEkGNe23vunsFVznIzhni6Rd6kVfbzGRe+omgR6DEZtQKbekPwmqGHbmW4xitobE7MNowwCkQ==
-X-Received: by 2002:a05:600c:3b23:b0:436:4708:9fb6 with SMTP id 5b1f17b1804b1-43668b5e02dmr275300155e9.20.1735598075131;
-        Mon, 30 Dec 2024 14:34:35 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43665cd9c29sm349733625e9.14.2024.12.30.14.34.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Dec 2024 14:34:34 -0800 (PST)
-Message-ID: <c9d97c40-d3bf-486f-b348-91ffedeece5a@linaro.org>
-Date: Mon, 30 Dec 2024 22:34:33 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qygM0ByG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94977C4CED0;
+	Tue, 31 Dec 2024 00:26:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735604819;
+	bh=mVqcKmLLfuhSGS3gshPLQdbKu6p2tqxAbOx6us0UBEg=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=qygM0ByG4CVsbJJyDrg7s9qDcCvr15UnD7ar5nPo3j3+xq/vJHt3/iX12IlAPTcrH
+	 rM7RsDNh/uPtGCnnTFZf3Oi4fBOrXHcbore5++0wbeqhMxhPvsX/CaNGeLlzAbl560
+	 n3b8abaGwdM4n6AWL+oAgUKmFWhPimU550Ix+fMinRiTpdCzkUaCJIf+NvAReSmYjp
+	 dl/ppki552FIo/cBptccQI978B0Iqw7gfW72IGWnSxtApljmKSCGWhlk/uVJNLJD2d
+	 l0OAR09acKZVaNT2givjksfEv1UVUG8KFifMI1xUomJIQkdyoer5lOpmZ+FR6dpv5w
+	 DtnELtUBEjS6g==
+Message-ID: <bd1f8992ac2cc60b3192ea93402ed186.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
- definition
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org>
- <20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-4-06fdd5a7d5bb@linaro.org>
- <aaead9e5-a978-4b3b-8635-bd8be647ae35@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <aaead9e5-a978-4b3b-8635-bd8be647ae35@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241229135351.5014-2-akemnade@kernel.org>
+References: <20241229135351.5014-1-akemnade@kernel.org> <20241229135351.5014-2-akemnade@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: ti: Convert gate.txt to json-schema
+From: Stephen Boyd <sboyd@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>, akemnade@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Date: Mon, 30 Dec 2024 16:26:57 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On 30/12/2024 19:45, Vladimir Zapolskiy wrote:
->> +            status = "disabled";
-> 
-> Please do not disable the clock controller, it was discussed in the 
-> past, that
-> all clock controllers should be enabled by default.
+Quoting akemnade@kernel.org (2024-12-29 05:53:50)
+> From: Andreas Kemnade <andreas@kemnade.info>
+>=20
+> Convert the OMAP gate clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
+> Choose GPL-only license because original binding was also GPL.
+> Clean up the examples during conversion to meet modern standards and
+> remove examples with no additional value.
+> Due to usage in code and existing devicetree binding, add the
+> ti,set-rate-parent property.
 
-Looks true but, news to me.
-
-Do you have a link to the discussion?
-
----
-bod
+Can we somehow mark these bindings as "undesirable"? We don't want new
+bindings to be written that use one node per clock. At the least we
+should put that into the description.
